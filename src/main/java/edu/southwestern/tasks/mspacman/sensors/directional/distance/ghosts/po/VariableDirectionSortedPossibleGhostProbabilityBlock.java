@@ -21,6 +21,10 @@ public class VariableDirectionSortedPossibleGhostProbabilityBlock extends Variab
 
 	private final int order;
 	
+	public VariableDirectionSortedPossibleGhostProbabilityBlock(int order) {
+		this(-1, order);
+	}
+	
 	public VariableDirectionSortedPossibleGhostProbabilityBlock(int dir, int order) {
 		super(dir);
 		this.order = order;

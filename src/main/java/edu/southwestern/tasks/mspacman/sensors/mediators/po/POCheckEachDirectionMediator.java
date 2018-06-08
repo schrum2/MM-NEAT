@@ -24,7 +24,7 @@ import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDire
 import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSortedGhostIncomingBlock;
 import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSortedGhostTrappedBlock;
 import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSpecificGhostIncomingBlock;
-
+import edu.southwestern.util.MiscUtil;
 //NEW PO STUFF
 import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.po.VariableDirectionSortedPossibleGhostDistanceBlock;
 import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.po.VariableDirectionSortedPossibleGhostProbabilityBlock;;
@@ -44,10 +44,11 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		boolean imprisonedWhileEdible = Parameters.parameters.booleanParameter("imprisonedWhileEdible");
 
 		blocks.add(new BiasBlock());
-		// Distances
-		//TODO: implement pill model correctly for this to work
+
+//		// Distances
+//		//TODO: implement pill model correctly for this to work
 		blocks.add(new VariableDirectionPillDistanceBlock(direction)); // ASSUME PILL MODEL INFLUENCES THESE IN GAMEFACADE
-		//TODO: implement pill model and add support for tracking power pills for this to work
+//		//TODO: implement pill model and add support for tracking power pills for this to work
 		blocks.add(new VariableDirectionPowerPillDistanceBlock(direction));
 		
 		
@@ -60,20 +61,19 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		if (Parameters.parameters.booleanParameter("specificGhostProximityOrder")) {
 			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
 				
-				
 				//if we are using the ghostModel
 				if(Parameters.parameters.booleanParameter("useGhostModel")) {
+					System.out.println("DEBUG: WE BETTER BE ADDING THESE BLOCKS IN POCheckEachDirectionMediator");
 					//this will keep track of the nearest four ghosts, but with probabilities, there can be many more than
 					//just four probable ghosts
-					for(int j = 0; j < 4; j++) {
-						blocks.add(new VariableDirectionSortedPossibleGhostDistanceBlock(j, i));
-						blocks.add(new VariableDirectionSortedPossibleGhostProbabilityBlock(j, i));
-					}
+					blocks.add(new VariableDirectionSortedPossibleGhostDistanceBlock(i));
+					blocks.add(new VariableDirectionSortedPossibleGhostProbabilityBlock(i));
 				} else {
+					System.out.println("DEBUG: WE BETTER NOT BE ADDING THESE BLOCKS IN POCheckEachDirectionMediator");
 					blocks.add(new VariableDirectionSortedGhostDistanceBlock(i));
 				}
 				
-				
+				//READD
 				if (incoming) {
 					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i));
 				}
@@ -88,7 +88,9 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 				}
 			}
 		}
-		// Split ghost sensors: edible and threat
+		
+
+//		// Split ghost sensors: edible and threat
 		boolean split = Parameters.parameters.booleanParameter("specificGhostEdibleThreatSplit");
 		if (split) {
 			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
@@ -111,29 +113,37 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 			}
 		}
 		
-		// Look ahead
-		//TODO: implement pill model
+	
+//		// Look ahead
+//		//TODO: implement pill model
 		blocks.add(new VariableDirectionKStepPillCountBlock(direction));
-		//Works with PO, this information is always available
+//		//Works with PO, this information is always available
 		blocks.add(new VariableDirectionKStepJunctionCountBlock(direction));
-		
+
+
 		// Counts
 		blocks.add(new PowerPillsRemainingBlock(true, false));
 		blocks.add(new PillsRemainingBlock(true, false));
+		
 		
 		// For limited edible time
 		if (!infiniteEdibleTime) {
 			blocks.add(new CountEdibleGhostsBlock(true, false));
 			blocks.add(new EdibleTimesBlock());
 		}
+		
+
 		// Other
 		blocks.add(new AnyEdibleGhostBlock());
 		blocks.add(new AllThreatsPresentBlock());
 		blocks.add(new IsCloseToPowerPill());
+		
+		
 		// High level
 		// blocks.add(new
 		// VariableDirectionDistanceFromJunctionToGhostBlock(direction, true, true));
 		// blocks.add(new VariableDirectionCountAllPillsInKStepsBlock(direction));
+
 		if (Parameters.parameters.booleanParameter("highLevel")) {
 			blocks.add(new VariableDirectionCountJunctionOptionsBlock());
 			// These sensors don't seem to help

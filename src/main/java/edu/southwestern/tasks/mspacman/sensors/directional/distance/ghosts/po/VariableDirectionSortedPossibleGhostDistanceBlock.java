@@ -28,6 +28,11 @@ public class VariableDirectionSortedPossibleGhostDistanceBlock extends VariableD
 	
 	private final int order;
 	
+	public VariableDirectionSortedPossibleGhostDistanceBlock(int order) {
+		this(-1, order);
+	}
+	
+	
 	/**
 	 * Handles PO pacman. Considers possible ghost locations on top of ghost locations that are visible.
 	 * @param dir the direction this block is observing
