@@ -338,6 +338,7 @@ public class Parameters {
 		integerOptions.add("utEvolvingBotSkill", 7, "Skill (1-7) of evolving UT2004 bot (affects accuracy)");
 		integerOptions.add("utNativeBotSkill", 3, "Skill (1-7) of native UT2004 bots to evaluate against");
 		integerOptions.add("utNumOpponents", 1, "Number of opponents to evolve against in UT2004");
+		integerOptions.add("utTeamSize", 2 , "dictates the number of players on each team");
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");

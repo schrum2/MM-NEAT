@@ -43,11 +43,11 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	public UT2004SensorModel sensorModel;
 	public UT2004OutputInterpretation outputModel;
 	public UT2004WeaponManager weaponManager;
-	private final String map;
-	private final int[] nativeBotSkills;
-	private final int evalMinutes;
-	private final int desiredSkill;
-	private final BotController[] opponents;
+	protected final String map;
+	protected final int[] nativeBotSkills;
+	protected final int evalMinutes;
+	protected final int desiredSkill;
+	protected final BotController[] opponents;
 	public ArrayList<UT2004FitnessFunction<T>> fitness = new ArrayList<UT2004FitnessFunction<T>>();
 	public ArrayList<UT2004FitnessFunction<T>> others = new ArrayList<UT2004FitnessFunction<T>>();
 

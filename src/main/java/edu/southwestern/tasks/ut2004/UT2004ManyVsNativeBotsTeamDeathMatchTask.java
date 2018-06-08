@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.ut2004;
 
+import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.Network;
@@ -7,18 +8,19 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.fitness.*;
+import edu.southwestern.util.datastructures.Pair;
 
 /**
- * launches a deathmatch server with the evolving bot and native bots
+ * launches a team deathmatch server with the evolving bot and native bots
  * @author Jacob Schrum
  * @param <T> evolved phenotype
  */
-public class UT2004OneVsNativeBotsTeamDeathMatchTask<T extends Network> extends UT2004Task<T> {
+public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends UT2004Task<T> {
 
 	/**
 	 * sets the parameters for the server and evaluation
 	 */
-	public UT2004OneVsNativeBotsTeamDeathMatchTask() {
+	public UT2004ManyVsNativeBotsTeamDeathMatchTask() {
 		this(Parameters.parameters.stringParameter("utMap"),
 				new int[] { Parameters.parameters.integerParameter("utNativeBotSkill") },
 				Parameters.parameters.integerParameter("utEvalMinutes"),
@@ -32,9 +34,10 @@ public class UT2004OneVsNativeBotsTeamDeathMatchTask<T extends Network> extends 
 	 * @param evalMinutes (how long the eval will last)
 	 * @param desiredSkill (skill level of the evolving bot)
 	 */
-	public UT2004OneVsNativeBotsTeamDeathMatchTask(String map, int[] nativeBotSkills, int evalMinutes, int desiredSkill) {
+	public UT2004ManyVsNativeBotsTeamDeathMatchTask(String map, int[] nativeBotSkills, int evalMinutes, int desiredSkill) {
 		super(map, nativeBotSkills, evalMinutes, desiredSkill, new BotController[0]);
 		// Fitness objectives
+		//add one for team score
 		addObjective(new DamageDealtFitness<T>(), fitness, true);
 		addObjective(new DamageReceivedFitness<T>(), fitness, true);
 		// Other stats to track
@@ -48,17 +51,26 @@ public class UT2004OneVsNativeBotsTeamDeathMatchTask<T extends Network> extends 
 		System.out.println("Other Scores:" + others);
 	}
 
-	/**
-	 * Testing
-	 * @param args
-	 */
-	@SuppressWarnings("rawtypes")
-	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] { "utDrive:D", "trials:2", "io:false", "netio:false", 
-				"task:edu.southwestern.tasks.ut2004.UT2004OneVsNativeBotsDeathMatchTask" });
-		MMNEAT.loadClasses();
-		UT2004Task utTask = (UT2004Task) MMNEAT.task;
-		new UT2004OneVsNativeBotsTeamDeathMatchTask<TWEANN>("DM-TrainingDay", new int[] { 3, 4, 5 }, 5, 1).evaluate(
-				new TWEANNGenotype(utTask.sensorModel.numberOfSensors(), utTask.outputModel.numberOfOutputs(), 0));
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+
+		Genotype[] teamArray = new Genotype[Parameters.parameters.integerParameter("utTeamSize")];
+		for(int i = 0; i < teamArray.length; i++) {
+			teamArray[i] = individual.copy();
+		}
+		//create an array of genotypes that is size of team
+		//loop through and each one is copy of individual
+		
+		
+				Pair<double[], double[]>[] result = evaluateMultipleGenotypes(new Genotype[] {individual}, map,
+				sensorModel, outputModel, weaponManager, opponents,
+				nativeBotSkills, evalMinutes, desiredSkill,
+				fitness, others);
+				
+				//result[0] = ;
+				//have array of results, make that a single result for whole team
+				return result[0]; // TODO change
 	}
 }
