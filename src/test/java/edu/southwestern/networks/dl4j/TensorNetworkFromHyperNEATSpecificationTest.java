@@ -36,7 +36,7 @@ public class TensorNetworkFromHyperNEATSpecificationTest {
 				"hyperNEAT:true", // Prevents extra bias input
 				"inputsUseID:true", // DL4J does this, so the HyperNEAT network must too to be compatible
 				"linkExpressionThreshold:-0.1", // Express all links
-				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
+				"stride:1","receptiveFieldHeight:3","receptiveFieldWidth:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				"ftype:"+ActivationFunctions.FTYPE_RE_LU, "heterogeneousSubstrateActivations:false",
 				"experiment:edu.southwestern.experiment.rl.EvaluateDL4JNetworkExperiment"});
@@ -145,7 +145,7 @@ public class TensorNetworkFromHyperNEATSpecificationTest {
 				"hyperNEAT:true", // Prevents extra bias input
 				"inputsUseID:true", // DL4J does this, so the HyperNEAT network must too to be compatible
 				"linkExpressionThreshold:-0.1", // Express all links
-				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
+				"stride:1","receptiveFieldHeight:3","receptiveFieldWidth:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				// This is how this test differs from the previous
 				"ftype:"+ActivationFunctions.FTYPE_TANH, "heterogeneousSubstrateActivations:false", 
@@ -205,7 +205,7 @@ public class TensorNetworkFromHyperNEATSpecificationTest {
 				"hyperNEAT:true", // Prevents extra bias input
 				"inputsUseID:true", // DL4J does this, so the HyperNEAT network must too to be compatible
 				"linkExpressionThreshold:-0.1", // Express all links
-				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
+				"stride:1","receptiveFieldHeight:3","receptiveFieldWidth:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				// This is how this test differs from the previous
 				"ftype:"+ActivationFunctions.FTYPE_TANH, "heterogeneousSubstrateActivations:true", 
