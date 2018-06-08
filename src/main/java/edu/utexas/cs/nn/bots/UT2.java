@@ -1,5 +1,18 @@
 package edu.utexas.cs.nn.bots;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import cz.cuni.amis.pogamut.base.agent.impl.AgentId;
 import cz.cuni.amis.pogamut.base.agent.navigation.PathExecutorState;
 import cz.cuni.amis.pogamut.base.agent.params.IRemoteAgentParameters;
@@ -18,15 +31,24 @@ import cz.cuni.amis.pogamut.ut2004.agent.utils.UT2004BotDescriptor;
 import cz.cuni.amis.pogamut.ut2004.bot.IUT2004BotController;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType.Category;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.AddInventoryMsg;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotDamaged;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotKilled;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.ConfigChange;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.GameInfo;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.InitedMessage;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoint;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.PlayerKilled;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Self;
 import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
 import cz.cuni.amis.pogamut.ut2004.utils.MultipleUT2004BotRunner;
 import cz.cuni.amis.pogamut.ut2004.utils.PogamutUT2004Property;
-import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.utils.exception.PogamutException;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
@@ -35,23 +57,23 @@ import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.retrace.HumanRetraceController;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable.WeaponTableEntry;
-import fr.enib.mirrorbot4.MirrorBot4;
-import fr.enib.mirrorbot4.MirrorBotParameters;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mockcz.cuni.pogamut.Client.AgentMemory;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
 import utopia.agentmodel.ActionLog;
-import utopia.agentmodel.actions.*;
+import utopia.agentmodel.actions.Action;
+import utopia.agentmodel.actions.EmptyAction;
+import utopia.agentmodel.actions.GotoItemAction;
+import utopia.agentmodel.actions.QuickTurnAction;
+import utopia.agentmodel.actions.StillAction;
 import utopia.controllers.TWEANN.TWEANNController;
-import utopia.controllers.scripted.*;
+import utopia.controllers.scripted.ChasingController;
+import utopia.controllers.scripted.DistantPathController;
+import utopia.controllers.scripted.JudgingController;
+import utopia.controllers.scripted.ObservingController;
+import utopia.controllers.scripted.PathController;
+import utopia.controllers.scripted.ShieldGunController;
+import utopia.controllers.scripted.UnstuckController;
+import utopia.controllers.scripted.WaterController;
 import wox.serial.Easy;
 
 /**
@@ -68,19 +90,37 @@ public class UT2 extends BaseBot {
         private TWEANNController battleController;
         private IUT2004Server server;
         private int evalTime;
+
+        /**
+         * Loads default controller with no server, but specifies an eval time
+         * @param evalTime Time after which bot will terminate itself
+         */
+        public UT2Parameters(int evalTime) {
+        	this((TWEANNController) Easy.load(UT2.DEFAULT_FILE), null, evalTime);
+        }
         
+        /**
+         * Default controller, no server, and maximum run time
+         */
         public UT2Parameters() {
         	this((TWEANNController) Easy.load(UT2.DEFAULT_FILE), null);
         }
 
-        public UT2Parameters(int evalTime) {
-        	this.evalTime = evalTime;
-        }
-
+        /**
+         * Specific TWEANN controller and server, but maximum eval time
+         * @param cont A TWEANN controller instance
+         * @param server Server the bot is running on
+         */
         public UT2Parameters(TWEANNController cont, IUT2004Server server) {
         	this(cont ,server, Integer.MAX_VALUE);
         } 
         
+        /**
+         * Specify controller, server, and eval time
+         * @param cont Battle controller for agent
+         * @param server Server bot runs on
+         * @param evalTime Time after which bot terminates self
+         */
         public UT2Parameters(TWEANNController cont, IUT2004Server server, int evalTime) {
         	this.evalTime = evalTime;
             this.battleController = cont;
