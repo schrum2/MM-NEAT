@@ -5,6 +5,8 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.DisconnectB
 import java.util.concurrent.*;
 
 /**
+ * Launches a thread to kill the bot as thoroughly as possible,
+ * with follow-up actions in case something goes wrong.
  *
  * @author Jacob Schrum
  */
@@ -15,7 +17,7 @@ public class BotKiller implements Callable<Boolean> {
 		try {
 			pond = Executors.newFixedThreadPool(1);
 			Future<Boolean> future = pond.submit(new BotKiller(bot));
-			Boolean result = future.get();
+			future.get();
 		} catch (InterruptedException ex) {
 			System.out.println("Bot kill interrupted");
 		} catch (ExecutionException ex) {

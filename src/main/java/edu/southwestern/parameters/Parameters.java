@@ -289,6 +289,9 @@ public class Parameters {
 		integerOptions.add("numModesToPrefer", -1, "If non-negative, then a fitness function rewards even usage of this many modes");
 		integerOptions.add("numMonsterRays", 5, "Number of ray trace sensors on each monster");
 		integerOptions.add("numShapeInnovationSamples", 3, "Number of angles to take 2D image of 3D shape from for shape innovation task");
+		integerOptions.add("numHunterBots", 0, "dictates how many hunter bots will be loaded into the server");
+		integerOptions.add("numMirrorBots", 0, "dictates how many mirror bots will be loaded into the server");
+		integerOptions.add("numUT2Bots", 0, "determines how many UT^2 bots will be loaded into the server");
 		integerOptions.add("numberPredsSensedByPreds", -1, "the number of closest predators that will be sensed by other predators (all by default, see boolean)");
 		integerOptions.add("numberPredsSensedByPrey", -1, "the number of closest predators that will be sensed by prey (all by default, see boolean)");
 		integerOptions.add("numberPreySensedByPreds", -1, "the number of closest prey that will be sensed by predators (all by default, see boolean)");
@@ -338,10 +341,11 @@ public class Parameters {
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
-		// Boolean parameters
+		// Boolean parameters 
 		booleanOptions.add("averageScoreHistory", false, "Surviving parent fitness averaged across generations");
 		booleanOptions.add("boardGameIncreasingRandomOpens", false, "Number of random moves at the start of each game increases as evolved agents improve");
 		booleanOptions.add("boardGameWinPercentFitness", false, "Is percentage of games won a fitness function for board games?");
+		booleanOptions.add("botprizeMod", false, "Whether or not to use the 2012 BotPrize mod in UT2004 games");
 		booleanOptions.add("convolution", false, "HyperNEAT phenotypes allow convolutional structure");
 		booleanOptions.add("convolutionDeltas", false, "HyperNEAT encoding of convolutional structure uses the delta offset approach of Verbancsics");
 		booleanOptions.add("convolutionWeightSharing", false, "HyperNEAT convolutional networks repeat the same weights across all receptive fields from one substrate to another");
@@ -353,6 +357,7 @@ public class Parameters {
 		booleanOptions.add("doomFullScreenInput", false, "Detemines if we should use all of the screen inputs or just the given row");
 		booleanOptions.add("evolveHyperNEATBias", true, "adds an output to evolved cppn that outputs bias of node");
 		booleanOptions.add("extraHNLinks", false, "adds connections between the input and output substrate layers of hyperNEAT substrates");
+		booleanOptions.add("GBHUDMutator", false, "Determines whether the HUD options are displayed");
 		booleanOptions.add("ghostPO", false, "Used for popacman. Decides whether or not ghosts have partial observability");
 		booleanOptions.add("ghostMessage", false, "Whether or not popacman ghosts can communicate with one another");
 		booleanOptions.add("heterogeneousSubstrateActivations", false, "HyperNEAT phenotypes can have a mix of activation functions");
@@ -373,6 +378,8 @@ public class Parameters {
 		booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
 		booleanOptions.add("moMario", false, "Mario is multiobjective");
 		booleanOptions.add("monitorSubstrates", false, "Allows us to visualizen the features (raw inputs) of a HyperNEAT agent");
+		booleanOptions.add("navGrid", false, "Choses whether or not the navigation grid is displayed"); //DOES NOT WORK
+		booleanOptions.add("navCubes", false, "Choses whether or not navigation points are displayed as cubes"); //DOES NOT WORK
 		booleanOptions.add("overrideImageSize", false, "For image match task, draw CPPNs with different size than actual image size");
 		booleanOptions.add("pacManFullScreenOutput", false, "Output substrate has a cell for every 5x5 block on pacman screen");
 		booleanOptions.add("pacmanBothThreatAndEdibleSubstrate", false, "whether or not to have 2 substrates for threat and edible ghosts");
@@ -413,8 +420,6 @@ public class Parameters {
 		booleanOptions.add("watchLastBest", false, "shows best result from last generation");
 		booleanOptions.add("watchLastBestOfTeams", false, "shows best result from each population from last generation (coevolution)");
 		booleanOptions.add("zeroPadding", false, "Whether the input border for convolutional structures is padded with zeros");
-		//cooperativeIndividualAndTeamSelection is irrelevant because cooperative team selection already includes the cooperativeIndividualSelection functions
-		//So it will just have two copies of the same fitnesses 
 		booleanOptions.add("absenceNegative", false, "Sense absence of input as -1 instead of 0");
 		booleanOptions.add("absolute", false, "Use Pacman absolute location sensors");
 		booleanOptions.add("afterStates", false, "Pacman picks action by looking at after states");
@@ -669,6 +674,7 @@ public class Parameters {
 		booleanOptions.add("useHyperNEATCustomArchitecture", false, "allows for hyperNEAT custom architectures");
 		booleanOptions.add("useTetrisLinesBDCharacterization", false, "turns on tetris characterization vector for 1, 2, 3, or 4 lines cleared");
 		booleanOptions.add("utJumps", true, "UT2004 agent can jump");
+		booleanOptions.add("utBotLogOutput", false, "determines what output will be displayed");
 		booleanOptions.add("veryClose", true, "Use Pacman very close sensors");
 		booleanOptions.add("viewFinalCamps", false, "Look at final training camps from 'final'");
 		booleanOptions.add("viewModePreference", false, "Watch the behavior of preference neurons");

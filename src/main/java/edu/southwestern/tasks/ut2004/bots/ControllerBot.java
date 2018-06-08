@@ -15,12 +15,26 @@ import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
 import cz.cuni.amis.pogamut.ut2004.utils.MultipleUT2004BotRunner;
 import cz.cuni.amis.pogamut.ut2004.utils.PogamutUT2004Property;
 import cz.cuni.amis.utils.exception.PogamutException;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.actions.BotAction;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.DummyController;
 import edu.southwestern.tasks.ut2004.controller.RandomNavPointPathExplorer;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
+import edu.utexas.cs.nn.bots.UT2;
+import fr.enib.mirrorbot4.MirrorBot4;
+import fr.enib.mirrorbot4.MirrorBotParameters;
+import pogamut.hunter.HunterBot;
+import pogamut.hunter.HunterBotParameters;
+import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
 
+/**
+ * A specific type of UT2004 that is controlled by a BotController "brain"
+ * that returns a BotAction given the current bot state.
+ * 
+ * @author Jacob Schrum
+ */
+@SuppressWarnings("rawtypes")
 @AgentScoped
 public class ControllerBot extends UT2004BotModuleController {
 
@@ -58,19 +72,29 @@ public class ControllerBot extends UT2004BotModuleController {
 		return new Initialize().setName(params.getName()).setDesiredSkill(params.getDesiredSkill());
 	}
 
+	/**
+	 * ends the evaluation period for the bot and retrieves its fitnesses
+	 */
 	public void endEval() {
-		// System.out.println("End eval");
 		getParams().getStats().endEval(this);
 		BotKiller.killBot(bot);
-		// ServerKiller.killServer(getParams().getServer());
 	}
 
 	@Override
+	/**
+	 * initializes the brain with the game data
+	 * @param info (data feedback from the game)
+	 * @param currentConfig (the current configuration of the bot being sent to the server)
+	 * @param init (initial message sent to the server)
+	 */
 	public void botInitialized(GameInfo info, ConfigChange currentConfig, InitedMessage init) {
 		brain.initialize(this);
 	}
 
 	@Override
+	/**
+	 * assigns actions for the bot to execute
+	 */
 	public void logic() throws PogamutException {
 		if (game.getTime() > getParams().getEvalSeconds()) {
 			endEval();
@@ -78,10 +102,15 @@ public class ControllerBot extends UT2004BotModuleController {
 		// Consult brain and act
 		BotAction action = brain.control(this);
 		String description = action.execute(this);
-		System.out.println(getParams().getBotPort() + ":" + getInfo().getName() + ":" + description);
+		if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+			System.out.println(getParams().getBotPort() + ":" + getInfo().getName() + ":" + description);
+		}
 	}
 
 	@Override
+	/**
+	 * resets the brain and the bot when it is killed
+	 */
 	public void botKilled(BotKilled event) {
 		brain.reset(this);
 	}
@@ -90,46 +119,83 @@ public class ControllerBot extends UT2004BotModuleController {
 	 * Launches a bot onto the provided host:port using the given network brain
 	 * to control it
 	 *
-         * @param server
-         *            Server instance
+	 * @param server
+	 *            Server instance
 	 * @param name
 	 *            In-game name of bot
-         * @param controllers
-         *            Bot controllers to run in game
-         * @param evalSeconds 
-         *            Number of seconds to spend in evaluation
-         * @param desiredSkill
-         *            Skill parameter for bots (affects accuracy)
+	 * @param controllers
+	 *            Bot controllers to run in game
+	 * @param evalSeconds 
+	 *            Number of seconds to spend in evaluation
+	 * @param desiredSkill
+	 *            Skill parameter for bots (affects accuracy)
 	 * @param host
 	 *            host of pre-loaded server
 	 * @param botPort
 	 *            port on server to connect bot
-         * @return Array of game data about each controller in game
+	 * @return Array of game data about each controller in game
 	 * @throws PogamutException
 	 */
-	public static GameDataCollector[] launchBot(IUT2004Server server, String name, BotController[] controllers,
+	public static GameDataCollector[] launchBot(IUT2004Server server, String[] names, BotController[] controllers,
 			int evalSeconds, int desiredSkill, String host, int botPort) {
 		GameDataCollector[] collectors = new GameDataCollector[controllers.length];
-		IRemoteAgentParameters[] params = new IRemoteAgentParameters[controllers.length];
+		int numHunterBots = Parameters.parameters.integerParameter("numHunterBots");
+		int numMirrorBots = Parameters.parameters.integerParameter("numMirrorBots");
+		int numUT2Bots = Parameters.parameters.integerParameter("numUT2Bots");
+		int totalBots = controllers.length + numHunterBots + numMirrorBots + numUT2Bots;
+		IRemoteAgentParameters[] params = new IRemoteAgentParameters[totalBots];
+		Class[] classes = new Class[totalBots];
+
+		int classIndex = 0;
+		//adds all ControllerBots
 		for (int i = 0; i < controllers.length; i++) {
-			collectors[i] = new GameDataCollector();
-			params[i] = new ControllerBotParameters(server, controllers[i], name, collectors[i], evalSeconds,
+			classes[classIndex] = ControllerBot.class;
+			collectors[classIndex] = new GameDataCollector();
+			params[classIndex] = new ControllerBotParameters(server, controllers[i], names[i], collectors[i], evalSeconds,
 					desiredSkill, botPort);
+			classIndex++;
 		}
-		try {
-			MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner("MultipleBots").setHost(host).setPort(botPort);
-			UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(ControllerBot.class)
-					.setAgentParameters(params);
-			multi.setMain(true).startAgents(bots);
-		} catch (PogamutException e) {
-			// Obligatory exception that happens from stopping the bot
-			// System.out.println("Exception after evaluation");
-			// e.printStackTrace();
+
+		//adds hunter bots to the spaces in the array after ControllerBots
+		for(int i = 0; i < numHunterBots; i++) {
+			classes[classIndex] = HunterBot.class;
+			params[classIndex] = new HunterBotParameters(evalSeconds); // HunterBot also needs to know when to stop
+			classIndex++;
 		}
-		System.out.println("Match over: ");
-		for (int i = 0; i < collectors.length; i++) {
-			System.out.println("\t" + collectors[i]);
+		
+		//adds mirror bots to the spaces in the array after ControllerBots
+		for(int i = 0; i < numMirrorBots; i++) {
+			classes[classIndex] = MirrorBot4.class;
+			params[classIndex] = new MirrorBotParameters(evalSeconds); // MirrorBot also needs to know when to stop
+			classIndex++;
 		}
+		
+		//adds UT^2 bots to the spaces in the array after ControllerBots
+		for(int i = 0; i < numUT2Bots; i++) {
+			classes[classIndex] = UT2.class;
+			params[classIndex] = new UT2.UT2Parameters(evalSeconds); // UT2 also needs to know when to stop
+			classIndex++;
+		}
+
+		// This method still has some problems and causes weird exceptions sometimes
+		MultiBotLauncher.launchMultipleBots(classes, params, host, botPort);
+
+		// Old version of this code
+		//		try {
+		//			MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner("MultipleBots").setHost(host).setPort(botPort);
+		//			@SuppressWarnings("unchecked")
+		//			UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(ControllerBot.class).setAgentParameters(params);
+		//			multi.setMain(true).startAgents(bots);
+		//		} catch (PogamutException e) {
+		//			// Obligatory exception that happens from stopping the bot
+		//			// System.out.println("Exception after evaluation");
+		//			// e.printStackTrace();
+		//		}		
+
+		//		System.out.println("Match over: ");
+		//		for (int i = 0; i < collectors.length; i++) {
+		//			System.out.println("\t" + collectors[i]);
+		//		}
 		return collectors;
 	}
 

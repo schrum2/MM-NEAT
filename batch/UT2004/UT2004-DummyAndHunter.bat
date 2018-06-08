@@ -1,0 +1,3 @@
+cd ..
+cd ..
+java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:%1 randomSeed:%1 base:ut2004 trials:1 maxGens:100 mu:2 io:true netio:true mating:true task:edu.southwestern.tasks.ut2004.UT2004OneVsGBBotsDeathMatchTask cleanOldNetworks:true fs:false log:UT2004-DummyAndHunter saveTo:DummyAndHunter utMap:DM-Curse4 utEvalMinutes:1 utGameBotsOpponent:edu.southwestern.tasks.ut2004.controller.DummyController utDrive:C utPath:SCOPE2018\UT2004 navCubes:true parallelEvaluations:false threads:1 utNumOpponents:2 numHunterBots:2
