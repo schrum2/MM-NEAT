@@ -4,6 +4,7 @@ import static pacman.game.Constants.MAG;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import pacman.game.internal.Maze;
 import pacman.game.Drawable;
 import pacman.game.Game;
 import popacman.prediction.GhostLocation;
-import popacman.prediction.MyPillModel;
+import popacman.prediction.PillModel;
 import popacman.prediction.fast.GhostPredictionsFast;
 
 /**
@@ -28,9 +29,10 @@ import popacman.prediction.fast.GhostPredictionsFast;
 public class OldToNewPacManIntermediaryController extends pacman.controllers.PacmanController implements Drawable {
 
 	protected final oldpacman.controllers.NewPacManController oldpacman;
-	public MyPillModel pillModel = null;
+	public PillModel pillModel = null;
 	public Maze currentMaze;
 	public GhostPredictionsFast ghostPredictions = null;
+	ArrayList<Integer> eatenPills;
 	public int[] ghostEdibleTime;
     private Color[] redAlphas;
     private Game mostRecentGame;
@@ -45,7 +47,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
         for (int i = 0; i < 256; i++) {
             redAlphas[i] = new Color(255, 0, 0, i);
         }
-
+        
         ghostEdibleTime = new int[GHOST.values().length];
 	}
 	
@@ -103,18 +105,23 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
     	   	
     	//Draw Pill Model based on parameter
     	if(Parameters.parameters.booleanParameter("drawPillModel")) {
+    		
+    		//for every node in the game
     		for (int i = 0; i < mostRecentGame.getNumberOfNodes(); i++) {
-	    		boolean isPillAvailable = pillModel.getPills().get(mostRecentGame.getCurrentMaze().graph[i].nodeIndex);
+	    		//
+    			boolean isPillAvailable = pillModel.getPills().get(mostRecentGame.getCurrentMaze().graph[i].nodeIndex);
 		    		if(isPillAvailable) {
-		    			graphics.setColor(new Color(255, 0, 0, 255));
-		    			graphics.fillRect(
-		    					mostRecentGame.getNodeXCood(i) * MAG + 5,
-		    					mostRecentGame.getNodeYCood(i) * MAG + 6,
-		    					2, 2
-		    					);
+		    			if(!eatenPills.contains(mostRecentGame.getCurrentMaze().graph[i].nodeIndex)) {
+			    			graphics.setColor(new Color(255, 0, 0, 255));
+			    			graphics.fillRect(
+			    					mostRecentGame.getNodeXCood(i) * MAG + 5,
+			    					mostRecentGame.getNodeYCood(i) * MAG + 8,
+			    					2, 2
+			    					);	
+		    			}
 		    		}
     		}
-
+    		
     		//DRAWS PILLS WE CAN SEE
 	        for(int pill : mostRecentGame.getActivePillsIndices()) {
 	        	assert pillModel != null : "why is this null";
@@ -128,18 +135,17 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	    					2, 2
 	    					);
 	    		}
+	        
 	        }
     	}
+ 
     		
     	//Draw predicted Ghost Locations based on parameter
     	if(Parameters.parameters.booleanParameter("drawGhostPredictions")) {
-    		//System.out.println("Drawing Ghost Predictions");
     		if(ghostPredictions != null) {
 	        	for (int i = 0; i < mostRecentGame.getNumberOfNodes(); i++) {      	
 	                double probability = ghostPredictions.calculate(i);
-	                //System.out.println(probability);
 	                if (probability >= GHOST_THRESHOLD) {
-	                    //System.out.println("A noteable probability");
 	                	graphics.setColor(redAlphas[(int) Math.min(255 * probability, 255)]);
 	                    graphics.fillRect(
 	                            mostRecentGame.getNodeXCood(i) * MAG - 1,
@@ -187,15 +193,17 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	           
 				//Piers' Code
 				//ORIGINAL
-				pillModel = new MyPillModel(game.getNumberOfPills());
+				pillModel = new PillModel(game.getNumberOfPills());
 				
 				//EXPERIMENTAL
-				//pillModel = new MyPillModel(informedGameFacade.poG.getNumberOfNodes());
+				//pillModel = new PillModel(informedGameFacade.poG.getNumberOfNodes());
 				
 	            int[] indices = informedGameFacade.poG.getCurrentMaze().pillIndices;
 	            for (int index : indices) {
 	                pillModel.observe(index, true);
 	            }
+	            
+	            eatenPills = new ArrayList<Integer>();
 	            
 	            informedGameFacade.setPillModel(pillModel);
 	        
@@ -204,19 +212,17 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 			assert pillModel != null : "there is an if that checks it above. A null pillModel would break this code";
 			
 			//tell the game what the pill model looks like
-	        int pillIndex = informedGameFacade.poG.getPillIndex(informedGameFacade.poG.getPacmanCurrentNodeIndex());
-	        System.out.println("pillIndex: " + pillIndex + " pacman index: " + informedGameFacade.poG.getPacmanCurrentNodeIndex());				        
+	        int pillIndex = informedGameFacade.poG.getPillIndex(informedGameFacade.poG.getPacmanCurrentNodeIndex());				        
 			if (pillIndex != -1) {
-	        	pillModel.getPills().set(pillIndex);
-	        	pillModel.pillsEaten += 1;
 	            Boolean pillState = informedGameFacade.poG.isPillStillAvailable(pillIndex);
 	            if (pillState != null && !pillState) {
-	            	pillModel.update(pillIndex);
+	            	pillModel.update(informedGameFacade.poG.getPacmanCurrentNodeIndex());
+	            	eatenPills.add(informedGameFacade.poG.getPacmanCurrentNodeIndex());
 	            }
 	        }
 	        
+			
 	        informedGameFacade.setPillModel(pillModel);
-	        //System.out.println("PILLS EATEN: " + pillModel.getPillsEaten());
 		}
 		
 		
