@@ -154,7 +154,7 @@ public class RayData{
 			}
 		}
 		
-		if (moveDir.getLength() > 0.0)
+		if (moveDir.getLength() > 0.0) {
 			moveDir = moveDir.getNormalized();
 		}else{
 			moveDir = new Location(Math.random()-0.5, Math.random()-0.5, 0.0);
