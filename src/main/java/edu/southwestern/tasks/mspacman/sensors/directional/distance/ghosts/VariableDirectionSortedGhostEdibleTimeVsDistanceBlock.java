@@ -17,7 +17,7 @@ import edu.southwestern.util.datastructures.Pair;
 import oldpacman.game.Constants;
 
 /**
- * TODO: how to handle PO conditions
+ * should handle PO conditions (TODO: test)
  * @author Jacob Schrum
  */
 public class VariableDirectionSortedGhostEdibleTimeVsDistanceBlock extends VariableDirectionSortedGhostDistanceBlock {
@@ -64,7 +64,7 @@ public class VariableDirectionSortedGhostEdibleTimeVsDistanceBlock extends Varia
 
 	@Override
 	/**
-	 * TODO: how to handle PO conditions
+	 * should handle PO conditions
 	 */
 	public double getValue(GameFacade gf) {
 		if (numberToExclude == 0) {

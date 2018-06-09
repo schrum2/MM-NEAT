@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.function.Function;
+import edu.southwestern.util.MiscUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,7 @@ public class CustomExecutor {
 	public static boolean logOutput;
 	public static MMNEATLog watch;
 	public static MMNEATLog noWatch;
-	public static boolean hold = false;
+	public static boolean hold = Parameters.parameters.booleanParameter("stepByStep");
 	public static DeathLocationsLog deaths = null;
     ////////////////////////////////////////////////////////////////////
 
@@ -271,7 +272,7 @@ public class CustomExecutor {
      * @param description      Description for the stats
      * @return Stats[] containing the scores in index 0 and the ticks in position 1
      */
-    public Stats[] runExperiment(Controller<MOVE> pacManController, MASController ghostController, int trials, String description, Game game) {
+    public void runExperiment(Controller<MOVE> pacManController, MASController ghostController, int trials, String description, Game game) {
         Stats stats = new Stats(description);
         Stats ticks = new Stats(description + " Ticks");
         MASController ghostControllerCopy = ghostController.copy(ghostPO);
@@ -303,7 +304,7 @@ public class CustomExecutor {
         stats.setMsTaken(timeTaken);
         ticks.setMsTaken(timeTaken);
 
-        return new Stats[]{stats, ticks};
+        //return new Stats[]{stats, ticks};
     }
 
     // We send in the Game externally instead of setting it up inside of this class.
@@ -364,17 +365,34 @@ public class CustomExecutor {
                 break;
             }
             handlePeek(game);
-            game.advanceGame(
-                    pacManController.getMove(getPacmanCopy(game), System.currentTimeMillis() + timeLimit),
-                    ghostControllerCopy.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
+            if(hold) {
+            	System.out.println("There is a MiscUtil.wait in ln 369 of CustomExectuor");
+                MiscUtil.waitForReadStringAndEnterKeyPress();
+            	game.advanceGame(
+                        pacManController.getMove(getPacmanCopy(game), System.currentTimeMillis() + timeLimit),
+                        ghostControllerCopy.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
 
-            try {
-                Thread.sleep(delay);
-            } catch (Exception e) {
-            }
+                try {
+                    Thread.sleep(delay);
+                } catch (Exception e) {
+                }
 
-            if (visuals) {
-                gv.repaint();
+                if (visuals) {
+                	gv.repaint();
+                }	
+            } else {
+                game.advanceGame(
+                        pacManController.getMove(getPacmanCopy(game), System.currentTimeMillis() + timeLimit),
+                        ghostControllerCopy.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
+
+                try {
+                    Thread.sleep(delay);
+                } catch (Exception e) {
+                }
+
+                if (visuals) {
+                    gv.repaint();
+                }	
             }
         }
         System.out.println(game.getScore());
@@ -390,10 +408,11 @@ public class CustomExecutor {
         gv = new GameView(game, setDaemon);
         gv.setScaleFactor(scaleFactor);
         gv.showGame();
+        gv.setPO(Parameters.parameters.booleanParameter("observePacManPO"));
         if (pacManController instanceof HumanController) {
             gv.setFocusable(true);
             gv.requestFocus();
-            gv.setPO(true);
+            //gv.setPO(true);
             gv.addKeyListener(((HumanController) pacManController).getKeyboardInput());
         }
 
@@ -424,19 +443,38 @@ public class CustomExecutor {
                 break;
             }
             handlePeek(game);
-            pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
-            ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+            if(hold) {
+            	System.out.println("There is a miscutil.wait... in CustomExecutor.java");
+                MiscUtil.waitForReadStringAndEnterKeyPress();
+            	pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
+                ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
 
-            try {
-                Thread.sleep(DELAY);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+                try {
+                    Thread.sleep(DELAY);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-            game.advanceGame(pacManController.getMove(), ghostControllerCopy.getMove());
+                game.advanceGame(pacManController.getMove(), ghostControllerCopy.getMove());
 
-            if (showVisuals) {
-                gv.repaint();
+                if (showVisuals) {
+                    gv.repaint();
+                }	
+            } else {
+                pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
+                ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+
+                try {
+                    Thread.sleep(DELAY);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                game.advanceGame(pacManController.getMove(), ghostControllerCopy.getMove());
+
+                if (showVisuals) {
+                    gv.repaint();
+                }
             }
         }
 
@@ -468,9 +506,15 @@ public class CustomExecutor {
                 break;
             }
             handlePeek(game);
-            pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
-            ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
-
+            if(hold) {
+            	System.out.println("There is a miscutil.wait... in CustomExecutor.java");
+            	MiscUtil.waitForReadStringAndEnterKeyPress();
+                pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
+                ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+            } else {
+                pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
+                ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+            }
             try {
                 long waited = DELAY / INTERVAL_WAIT;
 
@@ -542,9 +586,18 @@ public class CustomExecutor {
                 break;
             }
             handlePeek(game);
-            pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
-            ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+            if (hold) {
+            	System.out.println("there is a miscUtil.wait in CustomExecutor.java");
+            	MiscUtil.waitForReadStringAndEnterKeyPress();
+            	pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
+                ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
 
+            } else {
+            	pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
+                ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+
+            }
+            
             try {
                 Thread.sleep(DELAY);
             } catch (InterruptedException e) {
@@ -619,4 +672,33 @@ public class CustomExecutor {
 		}
 	}
 	///////////////////////////////////////////////////////////////////////
+	
+	
+	/**
+	 * Used for testing purposes. If, in some JUnit test class, you have a pacManController and a ghostController that you have set to do 
+	 * something specific, just pass those controllers here and the game will advance. The MOVE you send decides what move pacman makes.
+	 * @param pacManController
+	 * @param ghostController
+	 * @param game
+	 */
+	public GameView forceGame(Controller<MOVE> pacManController, MASController ghostController, Game game, MOVE move, boolean visuals, GameView gv) {
+		
+        if (visuals && gv == null) {
+            gv = new GameView(game, setDaemon);
+            gv.setScaleFactor(scaleFactor);
+            gv.setPO(Parameters.parameters.booleanParameter("observePacManPO"));
+            gv.showGame();
+        }
+        
+        if(visuals && gv != null) {
+        	gv.repaint();
+        }
+        
+		game.advanceGame(
+                move,
+                ghostController.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
+		
+		return gv;
+		
+	}
 }
