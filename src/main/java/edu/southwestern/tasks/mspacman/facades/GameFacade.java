@@ -717,6 +717,8 @@ public class GameFacade {
 	public int[] getShortestPath(int from, int to) {
 		
 		//PO conditions
+		assert from != -1 && to != -1 : "Why are they -1?";
+		
 		if(from == -1 || to == -1) {
 			return null;
 		}
@@ -1073,7 +1075,23 @@ public class GameFacade {
 	public int[] getActivePillsIndices() {
 		if(oldG == null) {
 			//Without pill model, we may get an empty array
-			return poG.getActivePillsIndices();	
+			ArrayList<Integer> temp = new ArrayList<Integer>();
+			if(usePillModel) {
+				for(int i = 0; i < pillModel.getPills().length(); i++) {
+					if(pillModel.getPills().get(i)) {
+						temp.add(i);
+					}
+				}
+				
+				int[] result = new int[temp.size()];
+				for(int i = 0; i < temp.size(); i++) {
+					result[i] = temp.get(i);
+				}
+				return result;
+				
+			} else {
+				return poG.getActivePillsIndices();	
+			}	
 		} else {
 			return oldG.getActivePillsIndices();	
 		}
