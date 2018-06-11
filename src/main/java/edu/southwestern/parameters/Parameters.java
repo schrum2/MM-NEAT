@@ -304,7 +304,8 @@ public class Parameters {
 		integerOptions.add("randomSeed", -1, "Random seed used to control algorithmic randomness (not domain randomness)");
 		integerOptions.add("rawInputWindowSize", 5, "Raw input window size");
 		integerOptions.add("recentPastMemLength", -1, "Length of queue of past pacman states");
-		integerOptions.add("receptiveFieldSize", 3, "Size of input windows for convolutional structures");
+		integerOptions.add("receptiveFieldHeight", 3, "height of input windows for convolutional structures");
+		integerOptions.add("receptiveFieldWidth", 3, "width of input windows for convolutional structures");
 		integerOptions.add("remixImageWindow", 10, "Size of window being remixed by CPPN in Picture Remixer");
 		integerOptions.add("rlBatchSize", 20, "Number of state transitions to log before doing an RL experience replay batch update");
 		integerOptions.add("runNumber", 0, "Number to designate this run of an experiment");
@@ -379,6 +380,7 @@ public class Parameters {
 		booleanOptions.add("loopAnimationInReverse", false, "loops animations in reverse for 2dAnimationBreeder and 3dAnimationBreeder");
 		booleanOptions.add("moMario", false, "Mario is multiobjective");
 		booleanOptions.add("monitorSubstrates", false, "Allows us to visualizen the features (raw inputs) of a HyperNEAT agent");
+		booleanOptions.add("observePacManPO", true, "whether or not we observe the depiction of pacman agents with PO");
 		booleanOptions.add("navGrid", false, "Choses whether or not the navigation grid is displayed"); //DOES NOT WORK
 		booleanOptions.add("navCubes", false, "Choses whether or not navigation points are displayed as cubes"); //DOES NOT WORK
 		booleanOptions.add("overrideImageSize", false, "For image match task, draw CPPNs with different size than actual image size");
@@ -419,6 +421,8 @@ public class Parameters {
 		booleanOptions.add("tetrisAllowZShape", true, "Determines whether or not ZShape pieces will shown up in Tetris");
 		booleanOptions.add("torusInvertSensorInputs", false, "Causes agents' sensor inputs to be inverted in torusPredPreyTask");
 		booleanOptions.add("torusSenseByProximity", true, "Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
+		booleanOptions.add("usePillModel", true, "decide whether or not to model the state of pills in pacman PO");
+		booleanOptions.add("useGhostModel", true, "decide whether or not to model a predicted state of the ghosts in pacman PO");
 		booleanOptions.add("watchLastBest", false, "shows best result from last generation");
 		booleanOptions.add("watchLastBestOfTeams", false, "shows best result from each population from last generation (coevolution)");
 		booleanOptions.add("zeroPadding", false, "Whether the input border for convolutional structures is padded with zeros");
@@ -459,6 +463,8 @@ public class Parameters {
 		booleanOptions.add("deterministic", false, "Make evaluations deterministic, if supported");
 		booleanOptions.add("dieOnImproperPowerPillEating", false, "Pacman dies if power pill is eaten when less than 4 threat ghosts are present");
 		booleanOptions.add("diff", true, "Use Pacman distance difference sensors");
+		booleanOptions.add("drawGhostPredictions", true, "Determines whether or not to visualize the predictions of ghost locations for PO pacman");
+		booleanOptions.add("drawPillModel", true, "Determines whether or not to visualize the model of pill locations for PO pacman");
 		booleanOptions.add("eTimeVsGDis", false, "Sense edible time minus ghost distance");
 		booleanOptions.add("eachComponentTracksScoreToo", false, "Each subcomponent uses game score as reward in addition to preferred fitness");
 		booleanOptions.add("eligibilityOnEarnedFitness", false, "For earned fitness, track eligibility scores");
@@ -744,6 +750,7 @@ public class Parameters {
 		doubleOptions.add("preEatenPillPercentage", 0.0,"Portion of pills that are eaten before the start of pacman eval");
 		doubleOptions.add("preferenceNeuronDecay", 0.0,"Portion of remaining preference neuron fatigue each time step");
 		doubleOptions.add("preferenceNeuronFatigueUnit", 0.0, "Amount of fatigue from preference neuron use");
+		doubleOptions.add("probabilityThreshold", 1 / 256.0d, "Used in GhostPredictionsFast.java. Determines the smallest probability that we model ghost locations to.");
 		doubleOptions.add("realMutateRate", 0.3, "Mutation rate for modifying indexes in real-valued string");
 		doubleOptions.add("redirectLinkRate", 0.0, "Mutation rate for redirecting network links");
 		doubleOptions.add("remainingTUGGoalRatio", 1.0,"What portion of TUG goal remains when objective is active (positive objectives only!)");
@@ -1039,11 +1046,19 @@ public class Parameters {
 				base = value;
 			}
 		}
-
+		String logAfterHypen = "";
+		for(int i = 0; i < log.length(); i++) {
+			if (log.charAt(i) == '-') {
+				logAfterHypen = log.substring(i + 1);
+				break;
+			}
+		}
+		if (!logAfterHypen.equals(saveTo))  {
+			throw new IllegalArgumentException("string of log must equal string after hypen in saveTo");
+		}
 		if (base.equals("") && saveTo.equals("")) {
 			return null;
 		}
-
 		return base + "/" + saveTo + run + "/" + log + run + "_parameters.txt";
 	}
 

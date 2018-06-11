@@ -275,13 +275,13 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		addObjective(new GameScore<T>(), otherScores, new Max(), false);
 		// Pill Score
 		pillScoreIndexInOtherScores = otherScores.size();
-		addObjective(new PillScore<T>(), otherScores, new Average(), false);
 		maxPillScoreIndexInOtherScores = otherScores.size();
-		addObjective(new PillScore<T>(), otherScores, new Max(), false);
 		// Ghost Reward
 		if(!partiallyObservablePacman) {
 			addObjective(new GhostsPerPowerPillScore<T>(true), otherScores, new Average(), false);
 			addObjective(new GhostsPerPowerPillScore<T>(false), otherScores, new Average(), false);
+			addObjective(new PillScore<T>(), otherScores, new Average(), false);
+			addObjective(new PillScore<T>(), otherScores, new Max(), false);
 		}
 		ghostRewardIndexInOtherScores = otherScores.size();
 		if(!partiallyObservablePacman) {
@@ -539,13 +539,16 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 					new PacManControllerFacade((NewPacManController) ((NNMsPacMan<T>) organism).controller);
 		}
 
+		
+		
 		// Side-effects to "game"
 		agentEval(mspacman, num);
+		
 		if (mspacman.oldP instanceof MultinetworkMsPacManController && individual instanceof NetworkGenotype) {
 			// Track subnet selections as if they were modes
 			((NetworkGenotype<T>) individual).setModuleUsage(((MultinetworkMsPacManController) mspacman.oldP).fullUsage);
 		}
-
+		
 		double[] fitnesses = new double[this.numObjectives()];
 		double[] scores = new double[this.numOtherScores()];
 		// When evolving ghosts, all fitness scores are flipped to negative,
