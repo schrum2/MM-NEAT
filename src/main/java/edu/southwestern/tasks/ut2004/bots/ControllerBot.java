@@ -69,7 +69,7 @@ public class ControllerBot extends UT2004BotModuleController {
 		brain = params.getController();
 		// Listerners on these objects needed to track scores
 		params.getStats().registerListeners(this);
-		return new Initialize().setName(params.getName()).setDesiredSkill(params.getDesiredSkill());
+		return new Initialize().setName(params.getName()).setDesiredSkill(params.getDesiredSkill()).setSkin("Aliens.AlienFemaleB");
 	}
 
 	/**

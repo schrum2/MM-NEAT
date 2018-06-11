@@ -79,6 +79,7 @@ public class MirrorBot4 extends UT2004BotModuleController{
 			init.setName("MirrorBot");
 			init.setAutoPickupOff(false);
 			init.setDesiredSkill(2+(int)(Math.random()*5));
+			init.setSkin("HumanFemaleA.EgyptFemaleA");
 		}
 
 		return init;
