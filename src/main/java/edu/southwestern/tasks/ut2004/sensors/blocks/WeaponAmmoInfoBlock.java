@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.ut2004.sensors.blocks;
 
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
@@ -22,7 +18,7 @@ public class WeaponAmmoInfoBlock implements UT2004SensorBlock {
 	/**
 	 * creates sensor block
 	 */
-	public void prepareBlock(UT2004BotModuleController bot) {
+	public void prepareBlock(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
 
 	/**
@@ -33,7 +29,7 @@ public class WeaponAmmoInfoBlock implements UT2004SensorBlock {
 	 * @param inputs (an array that collects the values from the statuses)
 	 * @return returns next address for sensor allocation
 	 */
-	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
+	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
 		Weaponry weaponry = bot.getWeaponry();
 		Weapon w = weaponry.getCurrentWeapon();
 		WeaponDescriptor wd = w.getDescriptor();
@@ -76,6 +72,6 @@ public class WeaponAmmoInfoBlock implements UT2004SensorBlock {
 	 * @return returns the number of sensors
 	 */
 	public int numberOfSensors() {
-		return 2 * 2;
+		return 4;
 	}
 }

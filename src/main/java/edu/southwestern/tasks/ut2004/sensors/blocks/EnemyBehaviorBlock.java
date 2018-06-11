@@ -16,7 +16,7 @@ public class EnemyBehaviorBlock implements UT2004SensorBlock {
 	 * creates the sensor block
 	 * @param bot (bot which will use the sensor data)
 	 */
-	public void prepareBlock(UT2004BotModuleController bot) {
+	public void prepareBlock(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
 
 	/**
@@ -25,7 +25,7 @@ public class EnemyBehaviorBlock implements UT2004SensorBlock {
 	 * @param inputs (an array that collects the values from the statuses)
 	 * @return returns next address for sensor allocation
 	 */
-	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
+	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
 		Player opponent = bot.getPlayers().getNearestEnemy(MEMORY_TIME);
 
 		inputs[in++] = opponent != null && opponent.getFiring() > 0 ? 1 : 0;
