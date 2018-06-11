@@ -1,25 +1,29 @@
 package edu.southwestern.tasks.mspacman.facades;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.stats.StatisticsUtilities;
-import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
-import pacman.game.Game;
 import popacman.prediction.GhostLocation;
 import popacman.prediction.PillModel;
 import popacman.prediction.fast.GhostPredictionsFast;
-
-import java.awt.Color;
-import java.util.*;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.encog.ml.prg.extension.ParamTemplate;
 
 /**
  *Contains pac man game. Includes harnesses for both
@@ -467,7 +471,7 @@ public class GameFacade {
 		if(oldG == null) {
 			if(usePillModel) {
 				//TODO: test
-				assert pillModel != null : "the information handling in OldToNewPacManIntermediaryController should handle this";
+				//assert pillModel != null : "the information handling in OldToNewPacManIntermediaryController should handle this";
 				return pillModel.getPillsEaten();
 			} else {
 				//Without pillModel, we cannot track this
