@@ -1,6 +1,7 @@
 package edu.southwestern.evolution.genotypes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,6 +13,7 @@ import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.networks.hyperneat.SubstrateArchitectureDefinition;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
@@ -44,7 +46,7 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 * defines a HyperNEATCPPNAndSubstrateArchitectureGenotype from the hiddenArchitecture and substrate connectivity
 	 * @param hiddenArchitecture List of triples that specifies each substrate with the index of each triple being its layer.
 	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
-	 * @param networkHiddenConnections list of triples that specifies connectivity of network.
+	 * @param allSubstrateConnectivity list of triples that specifies connectivity of network.
 	 * 		Looks like (source substrate, target substrate, capable of convolution)
 	 */
 	public HyperNEATCPPNAndSubstrateArchitectureGenotype(List<Triple<Integer, Integer, Integer>> hiddenArchitecture, List<Triple<String, String, Boolean>> allSubstrateConnectivity) {
@@ -81,16 +83,18 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		super(networkInputs, networkOutputs, archetypeIndex);
 		this.hiddenArchitecture = FlexibleSubstrateArchitecture.getHiddenArchitecture((HyperNEATTask) MMNEAT.task);
 		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getAllSubstrateConnectivity((HyperNEATTask) MMNEAT.task);
+		assert allSubstrateConnectivity.size() > 0 : "allSubstrateConnectivity size must be greater than 0";
 	}
 	
 	/**
-	 * TODO
-	 * @param archetypeIndex
-	 * @param links
-	 * @param genes
-	 * @param outputNeurons
-	 * @param hiddenArchitecture
-	 * @param allSubstrateConnectivity
+	 * @param archetypeIndex index of genotype in archetype
+	 * @param links edges of neural network
+	 * @param genes nodes of neural network
+	 * @param outputNeurons output nodes
+	 * @param hiddenArchitecture List of triples that specifies each substrate with the index of each triple being its layer.
+	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
+	 * @param allSubstrateConnectivity list of triples that specifies connectivity of network.
+	 * 		Looks like (source substrate, target substrate, capable of convolution)
 	 */
 	private HyperNEATCPPNAndSubstrateArchitectureGenotype(int archetypeIndex, ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons,
 			List<Triple<Integer, Integer, Integer>> hiddenArchitecture, List<Triple<String, String, Boolean>> allSubstrateConnectivity) {
@@ -138,16 +142,20 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 				newSubstrateInformation.add(currentSubstrate);
 			} 
 		}
+		
+		System.out.println("getSubstrateInformation:" + newSubstrateInformation);
+		
 		//substrate output layer information end
 		return newSubstrateInformation;
 	}
 
 	/**
 	 * @return all the connectivity between links. list of triples that specifies connectivity of network.
-	 * Looks like (source substrate, target substrate, capable of convolution)
+	 * 		looks like (source substrate, target substrate, capable of convolution)
 	 */
 	@Override
 	public List<Triple<String, String, Boolean>> getSubstrateConnectivity(HyperNEATTask HNTask) {
+		System.out.println("getSubstrateConnectivity:" + allSubstrateConnectivity);
 		return allSubstrateConnectivity;
 	}
 
@@ -157,14 +165,19 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 */
 	@Override
 	public Genotype<TWEANN> copy() {
+		int[] temp = moduleUsage;
+		
+		// Copy the architecture
 		List<Triple<Integer, Integer, Integer>> copyHiddenArchitecture = new ArrayList<Triple<Integer, Integer, Integer>>();
 		for(Triple<Integer, Integer, Integer> layer: this.hiddenArchitecture) {
-			copyHiddenArchitecture.add(layer);
+			copyHiddenArchitecture.add(layer.copy());
 		}
 		List<Triple<String, String, Boolean>> copyAllSubstrateConnectivity = new ArrayList<Triple<String, String, Boolean>>();
 		for(Triple<String, String, Boolean> connectionId: this.allSubstrateConnectivity) {
-			copyAllSubstrateConnectivity.add(connectionId);
+			copyAllSubstrateConnectivity.add(connectionId.copy());
 		}
+		
+		// Copy the link and node genes
 		ArrayList<LinkGene> copyLinks = new ArrayList<LinkGene>(this.links.size());
 		for (LinkGene lg : this.links) {// needed for a deep copy
 			copyLinks.add(newLinkGene(lg.sourceInnovation, lg.targetInnovation, lg.weight, lg.innovation, false));
@@ -173,11 +186,25 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		for (NodeGene ng : this.nodes) {// needed for a deep copy
 			copyGenes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias()));
 		}
-		return new HyperNEATCPPNAndSubstrateArchitectureGenotype(this.archetypeIndex, copyLinks, copyGenes, this.numOut, copyHiddenArchitecture, copyAllSubstrateConnectivity);
+		
+		// Construct the copy
+		HyperNEATCPPNAndSubstrateArchitectureGenotype copy = new HyperNEATCPPNAndSubstrateArchitectureGenotype(
+				this.archetypeIndex, copyLinks, copyGenes, this.numOut, copyHiddenArchitecture, copyAllSubstrateConnectivity);
+
+		moduleUsage = temp;
+		copy.moduleUsage = new int[temp.length];
+		System.arraycopy(this.moduleUsage, 0, copy.moduleUsage, 0, moduleUsage.length);
+		return copy;
 	}
 
+	/**
+	 * creates a new instance of HyperNEATCPPNAndSubstrateArchitectureGenotype
+	 */
 	@Override
 	public Genotype<TWEANN> newInstance() {
-		return new HyperNEATCPPNAndSubstrateArchitectureGenotype(HyperNEATUtil.numCPPNInputs(), HyperNEATUtil.numCPPNOutputs(), this.archetypeIndex); 
+		HyperNEATCPPNAndSubstrateArchitectureGenotype copy = new HyperNEATCPPNAndSubstrateArchitectureGenotype(
+				HyperNEATUtil.numCPPNInputs(), HyperNEATUtil.numCPPNOutputs(), this.archetypeIndex);
+		copy.moduleUsage = new int[copy.numModules];
+		return copy; 
 	}
 }

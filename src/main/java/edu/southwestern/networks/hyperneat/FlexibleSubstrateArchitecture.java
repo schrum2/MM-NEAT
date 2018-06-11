@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
@@ -13,7 +14,7 @@ import edu.southwestern.util.datastructures.Triple;
  */
 
 public class FlexibleSubstrateArchitecture {
-	
+
 	/**
 	 * @param hnt the hyperNEATTask
 	 * @return A list of triples where the length of the list is equal to the depth of the number of hidden layers.
@@ -24,33 +25,34 @@ public class FlexibleSubstrateArchitecture {
 	 */
 	public static List<Triple<Integer, Integer, Integer>> getHiddenArchitecture(HyperNEATTask hnt) {
 		List<Triple<Integer, Integer, Integer>> hiddenArchitecture = new ArrayList<Triple<Integer, Integer, Integer>>();
-		List<Substrate> substrateInformation = hnt.getSubstrateInformation();
-		int currentXCoordLocation;
-		int previousXCoordLocation = -1; //a valid substrate location cannot have an x coordinate of -1. This is just to initialize.
-		int xCoordCount = 0;
+		List<Substrate> substrateInformation = hnt.getSubstrateInformation();	
+		int currentYCoordinate;
+		int previousYCoordinate = -1; //a valid substrate location cannot have an x coordinate of -1. This is just to initialize.
+		int yCoordCount = 1;
 		int previousWidth = -1; //this is an invalid width. it is just to initialize
 		int previousHeight = -1; //this is an invalid height. it is just to initialize
-		currentXCoordLocation = substrateInformation.get(0).getSubLocation().t1;
+		int previousSubstrateType = Substrate.INPUT_SUBSTRATE;
 		Iterator<Substrate> it_substrateInformation = substrateInformation.iterator();
-		
 		while (it_substrateInformation.hasNext()) {
-			Substrate currentSubstrate = it_substrateInformation.next();
-			if (currentSubstrate.getStype() == Substrate.PROCCESS_SUBSTRATE) {
-				currentXCoordLocation = currentSubstrate.getSubLocation().t1;
-				if (previousXCoordLocation == -1 || currentXCoordLocation == previousXCoordLocation) {
-					xCoordCount++;
-				} else {
-					hiddenArchitecture.add(new Triple<Integer, Integer, Integer>(xCoordCount, previousWidth, previousHeight));
-					xCoordCount = 0;
+			Substrate currentSubstrate = it_substrateInformation.next(); 
+			currentYCoordinate = currentSubstrate.getSubLocation().t2;
+			if (previousYCoordinate == -1 || currentYCoordinate == previousYCoordinate) {
+				yCoordCount++;
+			} else {
+				if (previousSubstrateType == Substrate.PROCCESS_SUBSTRATE) {
+					hiddenArchitecture.add(new Triple<Integer, Integer, Integer>(yCoordCount, previousWidth, previousHeight));
 				}
-				previousXCoordLocation = currentXCoordLocation;
-				previousWidth = currentSubstrate.getSize().t1;
-				previousHeight = currentSubstrate.getSize().t2;
+				yCoordCount = 1;
 			}
+			previousYCoordinate = currentYCoordinate;
+			previousWidth = currentSubstrate.getSize().t1;
+			previousHeight = currentSubstrate.getSize().t2;
+			previousSubstrateType = currentSubstrate.getStype();
 		}
+		assert hiddenArchitecture.size() > 0;
 		return hiddenArchitecture;
 	}
-	
+
 	/**
 	 * @param hnt the HyperNEATTask
 	 * @return List of all substrate connections as given by a Triple where the first String is the unique identifier
@@ -61,7 +63,7 @@ public class FlexibleSubstrateArchitecture {
 		Pair<List<String>,List<String>> inputAndOutputNames = getInputAndOutputNames(hnt);
 		return getSubstrateConnectivity(inputAndOutputNames.t1, inputAndOutputNames.t2, getHiddenArchitecture(hnt));
 	}
-	
+
 	/**
 	 * gets the input and output names from the hyperNEATTask
 	 * @param hnt theHyperNEATTask
@@ -80,7 +82,7 @@ public class FlexibleSubstrateArchitecture {
 		}
 		return new Pair<List<String>, List<String>>(inputSubstrateNames, outputSubstrateNames);
 	}
-	
+
 	/**
 	 * @param inputSubstrateNames List of input substrate names
 	 * @param outputSubstrateNames List of output substrate names
@@ -97,6 +99,7 @@ public class FlexibleSubstrateArchitecture {
 
 		//connects input layer to first hidden/process layer, convolutional because boolean = true
 		addFirstLayerConnectivity(networkConnectivity, inputSubstrateNames, networkHiddenArchitecture, true);
+
 
 		//connects adjacent convolutional hidden layers
 		addHiddenLayerConnectivity(networkConnectivity, networkHiddenArchitecture);
@@ -120,6 +123,7 @@ public class FlexibleSubstrateArchitecture {
 			List<String> inputSubstrateNames, 
 			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture, 
 			boolean capableOfConvolution) {
+		System.out.println(networkHiddenArchitecture.size());
 		int firstHiddenLayerWidth = (networkHiddenArchitecture.size() > 0)? networkHiddenArchitecture.get(0).t1: 0;
 		for (String in: inputSubstrateNames) {
 			for (int i = 0; i < firstHiddenLayerWidth; i++) {
@@ -127,6 +131,7 @@ public class FlexibleSubstrateArchitecture {
 				(in, "process(" + i + ",0)", capableOfConvolution));
 			}
 		}
+		assert networkConnectivity.size() > 0;
 	}
 
 	/**
@@ -147,7 +152,7 @@ public class FlexibleSubstrateArchitecture {
 					// Need to generalize this more later: Currently, we assume convolution will be used if the next layer up is exactly the
 					// right size to allow it without zero padding.
 					boolean capableOfConvolution = networkHiddenArchitecture.get(i).t2 + 2*stride == networkHiddenArchitecture.get(i+1).t2 &&
-											       networkHiddenArchitecture.get(i).t3 + 2*stride == networkHiddenArchitecture.get(i+1).t3;
+							networkHiddenArchitecture.get(i).t3 + 2*stride == networkHiddenArchitecture.get(i+1).t3;
 					networkConnectivity.add(new Triple<String, String, Boolean>("process(" + src + "," + i + ")", "process(" + target + "," + (i + 1) + ")", capableOfConvolution));
 				}
 			}

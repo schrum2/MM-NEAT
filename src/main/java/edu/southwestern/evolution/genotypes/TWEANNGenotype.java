@@ -441,7 +441,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      */
     public TWEANNGenotype(ArrayList<NodeGene> nodes, ArrayList<LinkGene> links, int neuronsPerModule,
             boolean standardMultitask, boolean hierarchicalMultitask, int archetypeIndex) {
-        this.archetypeIndex = archetypeIndex;
+
+    	assert neuronsPerModule > 0 : "Cannot have 0 neurons in a module!";
+    	
+    	this.archetypeIndex = archetypeIndex;
         this.nodes = nodes;
         this.links = links;
         this.neuronsPerModule = neuronsPerModule;

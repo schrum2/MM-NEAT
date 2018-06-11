@@ -53,7 +53,7 @@ public class MiscUtil {
 	public static String waitForReadStringAndEnterKeyPress(String msg) {
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			System.out.println("message: " + msg);
+			System.out.println("\nmessage: " + msg);
 			//source here: https://stackoverflow.com/questions/11306811/how-to-get-the-caller-class-in-java
 			StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
 			String callerClassName = null;
