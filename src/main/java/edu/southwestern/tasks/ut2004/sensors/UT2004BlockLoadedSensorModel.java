@@ -23,7 +23,7 @@ public abstract class UT2004BlockLoadedSensorModel implements UT2004SensorModel 
 	/**
 	 * prepares the blocks array
 	 */
-	public void prepareSensorModel(UT2004BotModuleController bot) {
+	public void prepareSensorModel(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		for (int i = 0; i < blocks.size(); i++) {
 			blocks.get(i).prepareBlock(bot); //sets the array up to host sensors
 		}
@@ -33,7 +33,7 @@ public abstract class UT2004BlockLoadedSensorModel implements UT2004SensorModel 
 	 * reads the inputs from the sensors and interprets them
 	 * @return returns the data gathered in an array of inputs
 	 */
-	public double[] readSensors(UT2004BotModuleController bot) {
+	public double[] readSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		double[] inputs = new double[numberOfSensors()];
 		int in = 0;
 		for (int i = 0; i < blocks.size(); i++) { //collects the data from the sensors
