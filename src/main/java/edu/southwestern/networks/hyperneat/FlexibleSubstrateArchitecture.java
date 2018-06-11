@@ -28,7 +28,7 @@ public class FlexibleSubstrateArchitecture {
 		List<Substrate> substrateInformation = hnt.getSubstrateInformation();	
 		int currentYCoordinate;
 		int previousYCoordinate = -1; //a valid substrate location cannot have an x coordinate of -1. This is just to initialize.
-		int yCoordCount = 1;
+		int yCoordCount = 0;
 		int previousWidth = -1; //this is an invalid width. it is just to initialize
 		int previousHeight = -1; //this is an invalid height. it is just to initialize
 		int previousSubstrateType = Substrate.INPUT_SUBSTRATE;
@@ -36,13 +36,12 @@ public class FlexibleSubstrateArchitecture {
 		while (it_substrateInformation.hasNext()) {
 			Substrate currentSubstrate = it_substrateInformation.next(); 
 			currentYCoordinate = currentSubstrate.getSubLocation().t2;
-			if (previousYCoordinate == -1 || currentYCoordinate == previousYCoordinate) {
-				yCoordCount++;
-			} else {
+			yCoordCount++;
+			if (previousYCoordinate != -1 && currentYCoordinate != previousYCoordinate) {
 				if (previousSubstrateType == Substrate.PROCCESS_SUBSTRATE) {
 					hiddenArchitecture.add(new Triple<Integer, Integer, Integer>(yCoordCount, previousWidth, previousHeight));
 				}
-				yCoordCount = 1;
+				yCoordCount = 0;
 			}
 			previousYCoordinate = currentYCoordinate;
 			previousWidth = currentSubstrate.getSize().t1;
