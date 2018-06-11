@@ -20,6 +20,7 @@ public class JunctionNodes extends NodeCollection {
 	}
 
 	public void updateNodes(GameFacade gs, int current, boolean draw) {
+		assert current != -1 : "current is -1 in JunctionNodes.updatenodes()";
 		if (gs.isJunction(current)) {
 			// System.out.println("Remove " + current);
 			lastNodeVisited = current;

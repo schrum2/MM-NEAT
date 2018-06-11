@@ -84,7 +84,6 @@ public class GhostControllerFacade {
 	public void reset() {
 		if(oldG == null) {
 			//TODO:
-			System.out.println("TODO: implement reset() in GhostControllerFacade.java, ln 78");
 		} else {
 			oldG.reset();
 		}

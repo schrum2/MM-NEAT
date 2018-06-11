@@ -174,7 +174,6 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
             ghostPredictions = null;
             pillModel = null;
             Arrays.fill(ghostEdibleTime, -1);
-            System.out.println("New Maze");
         }
 		      
         //We need to pass the model of the game to the new gameFacade
