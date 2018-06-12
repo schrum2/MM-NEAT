@@ -26,7 +26,7 @@ public class JunctionNodes extends NodeCollection {
 			lastNodeVisited = current;
 		}
 		final int[] junctions = gs.getJunctionIndices();
-
+		assert junctions != null : "getJunctionIndices should always give a non-null list";
 		// Always update
 		// Get most junctions, and then some
 		ArrayList<Integer> escapeNodes = new ArrayList<Integer>(junctions.length);
