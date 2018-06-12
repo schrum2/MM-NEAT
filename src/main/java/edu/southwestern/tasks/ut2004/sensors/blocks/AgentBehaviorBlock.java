@@ -7,10 +7,15 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
  * Monitors the behaviour of an enemy
  * @author Jacob Schrum
  */
-public class EnemyBehaviorBlock implements UT2004SensorBlock {
+public class AgentBehaviorBlock implements UT2004SensorBlock {
 
 	public static final int MEMORY_TIME = 5;
 	public static final double VELOCITY_EPSILON = 10;
+	public final boolean senseEnemy; 
+	
+	public AgentBehaviorBlock(boolean enemySetting) {
+		senseEnemy = enemySetting;
+	}
 
 	/**
 	 * creates the sensor block
@@ -26,11 +31,13 @@ public class EnemyBehaviorBlock implements UT2004SensorBlock {
 	 * @return returns next address for sensor allocation
 	 */
 	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
-		Player opponent = bot.getPlayers().getNearestEnemy(MEMORY_TIME);
+		Player agent = senseEnemy ? 
+				bot.getPlayers().getNearestEnemy(MEMORY_TIME) :
+				bot.getPlayers().getNearestFriend(MEMORY_TIME);
 
-		inputs[in++] = opponent != null && opponent.getFiring() > 0 ? 1 : 0;
-		inputs[in++] = isStill(opponent) ? 1 : 0;
-		inputs[in++] = isJumping(opponent) ? 1 : 0;
+		inputs[in++] = agent != null && agent.getFiring() > 0 ? 1 : 0;
+		inputs[in++] = isStill(agent) ? 1 : 0;
+		inputs[in++] = isJumping(agent) ? 1 : 0;
 
 		return in;
 	}
