@@ -487,7 +487,7 @@ public class HyperNEATUtil {
 	 * @param hnt HyperNEATTask that specifies substrate connectivity
 	 * @return number of bias outputs needed by CPPN
 	 */
-	static int numBiasOutputsNeeded(HyperNEATTask hnt) {
+	public static int numBiasOutputsNeeded(HyperNEATTask hnt) {
 		// If substrate coordinates are inputs to the CPPN, then
 		// biases on difference substrates can be different based on the
 		// inputs rather than having separate outputs for each substrate.
@@ -869,6 +869,9 @@ public class HyperNEATUtil {
 	}
 
 	public static int numCPPNInputs(HyperNEATTask task) {
+		assert task.numCPPNInputs() > 0 : "The number of CPPN in puts must be positive";
+		// Adds four inputs if doing weight sharing or using substrate location inputs (substrate location inputs must be used with weight sharing):
+		// Specifically, source and target locations of substrate (height and position within layer)
 		return task.numCPPNInputs() + (CommonConstants.substrateLocationInputs || Parameters.parameters.booleanParameter("convolutionWeightSharing") ? 4 : 0);
 	}
 
