@@ -3356,41 +3356,5 @@ public class GameFacade {
 	}
 	
 	
-	//credit to piers on 6/01/18.
-	//See InfromationSetMCTSPacMan
-	public PillModel initPillModel() {
-		pillModel = new PillModel(poG.getNumberOfPills());
-        int[] indices = poG.getCurrentMaze().pillIndices;
-        for (int index : indices) {
-            pillModel.observe(index, true);
-        }
-        
-//        Arrays.sort(indices);
-//        System.out.println(Arrays.toString(indices));
-//        System.out.println(indices.length);
-//        MiscUtil.waitForReadStringAndEnterKeyPress();
-        
-        return pillModel;
-	}
-	
-	//credit to piers on 6/01/18.
-	//See InfromationSetMCTSPacMan
-	public PillModel updatePillModel() {
-		System.out.println("Update pill model: " + pillModel);
-        int pillIndex = poG.getPillIndex(poG.getPacmanCurrentNodeIndex());
-        System.out.println(Arrays.toString(poG.getCurrentMaze().pillIndices));
-        if (pillIndex != -1) {
-            Boolean pillState = poG.isPillStillAvailable(pillIndex);
-        	System.out.println("Pill at: " + pillIndex + " " + pillState);
-            if (pillState != null && !pillState) {
-            	System.out.println("\tUPDATE for " + pillIndex + " BEFORE " + pillModel.getPills().cardinality());
-                pillModel.observe(pillIndex, false);
-                //pillModel.update(pillIndex);
-            	System.out.println("\tUPDATED: " + pillModel.getPills().cardinality());
-            }
-        }
-        return pillModel;
-	}
-	
 	
 }
