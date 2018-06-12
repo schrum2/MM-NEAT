@@ -7,6 +7,7 @@ import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.TWEANN;
+import edu.southwestern.networks.hyperneat.CascadeNetworks;
 import edu.southwestern.networks.hyperneat.FlexibleSubstrateArchitecture;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
@@ -155,6 +156,13 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	@Override
 	public List<Triple<String, String, Boolean>> getSubstrateConnectivity(HyperNEATTask HNTask) {
 		return allSubstrateConnectivity;
+	}
+	
+	public Pair<List<Triple<Integer, Integer, Integer>>, List<Triple<String, String, Boolean>>> cascadeExpansion (
+			int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, boolean capableOfConvolution) {
+		return CascadeNetworks.cascadeExpansion(this.hiddenArchitecture, this.allSubstrateConnectivity, 
+				FlexibleSubstrateArchitecture.getInputAndOutputNames((HyperNEATTask) MMNEAT.task).t2,
+				newLayerWidth, newSubstratesWidth, newsubstratesHeight, capableOfConvolution);
 	}
 
 	/**
