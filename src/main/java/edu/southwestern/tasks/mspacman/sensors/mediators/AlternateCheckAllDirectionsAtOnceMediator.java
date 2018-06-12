@@ -58,4 +58,14 @@ public class AlternateCheckAllDirectionsAtOnceMediator extends MsPacManControlle
 	public int numIn() {
 		return mediators.length * mediators[0].numIn();
 	}
+
+	/**
+	 * Added 6/11/18
+	 * 
+	 * This is meant to help make parallel evaluations work.
+	 */
+	@Override
+	public MsPacManControllerInputOutputMediator copy() {
+		return new AlternateCheckAllDirectionsAtOnceMediator();
+	}
 }

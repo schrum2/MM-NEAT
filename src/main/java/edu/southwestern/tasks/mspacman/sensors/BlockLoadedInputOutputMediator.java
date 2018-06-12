@@ -84,4 +84,24 @@ public class BlockLoadedInputOutputMediator extends MsPacManControllerInputOutpu
 			b.reset();
 		}
 	}
+
+	@Override
+	public MsPacManControllerInputOutputMediator copy() {
+		
+		throw new UnsupportedOperationException("The copy method of input/output mediators should be overridden by specific super classes");
+		
+//		ArrayList<MsPacManSensorBlock> copies = new ArrayList<MsPacManSensorBlock>(blocks.size());
+//	
+//		int num = 0;
+//		for(MsPacManSensorBlock x : blocks) {
+//			num += x.numberAdded();
+//			copies.add(x);
+//		}
+//		
+//		BlockLoadedInputOutputMediator copy = new BlockLoadedInputOutputMediator();
+//		copy.blocks = copies;
+//		copy.numSensors = num;
+//		
+//		return copy;
+	}
 }

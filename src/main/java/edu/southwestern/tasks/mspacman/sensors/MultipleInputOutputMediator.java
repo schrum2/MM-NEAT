@@ -103,4 +103,17 @@ public class MultipleInputOutputMediator extends MsPacManControllerInputOutputMe
 		}
 		return in;
 	}
+
+	/**
+	 * Added to support parallel evaluations
+	 */
+	@Override
+	public MsPacManControllerInputOutputMediator copy() {
+		MsPacManControllerInputOutputMediator[] copies = new MsPacManControllerInputOutputMediator[mediators.length];
+		for(int i = 0; i < copies.length; i++) {
+			copies[i] = mediators[i].copy();
+		}
+
+		return new MultipleInputOutputMediator(copies);
+	}
 }
