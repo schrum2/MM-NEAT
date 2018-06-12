@@ -5,6 +5,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.fitness.*;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.MiscUtil;
 
 /**
  * Launches servers to evolve bots against the DummyBots (which spawn at a random location on the map and stand there)
@@ -28,6 +29,7 @@ public class UT2004OneVsGBBotsDeathMatchTask<T extends Network> extends UT2004Ta
 	 * @return returns the opponent array
 	 */
 	public static BotController[] getOpponents(int num) {
+		System.out.println("CREATE " + num + " ControllerBot opponents");
 		BotController[] result = new BotController[num];
 		try {
 			for (int i = 0; i < num; i++) {

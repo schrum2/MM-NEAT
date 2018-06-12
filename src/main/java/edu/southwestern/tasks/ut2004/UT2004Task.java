@@ -204,8 +204,8 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 					// Evaluate network controllers and fixed controllers
 					GameDataCollector[] collectors = evaluateAgentsOnServer(server, controllers, botPort, gamePort, nativeBotSkills, evalMinutes, desiredSkill);
 					
-					// Transfer stats data to result
-					for(int j = 0; j < collectors.length; j++) {
+					// Transfer stats data to result: only evolved organisms
+					for(int j = 0; j < organisms.length; j++) {
 						if (collectors[j].evalWasSuccessful()) {
 							result[j] = relevantScores(collectors[j], organisms[j], fitness, others);
 						}
