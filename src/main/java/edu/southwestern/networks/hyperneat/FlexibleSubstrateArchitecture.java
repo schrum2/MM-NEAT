@@ -26,27 +26,30 @@ public class FlexibleSubstrateArchitecture {
 	public static List<Triple<Integer, Integer, Integer>> getHiddenArchitecture(HyperNEATTask hnt) {
 		List<Triple<Integer, Integer, Integer>> hiddenArchitecture = new ArrayList<Triple<Integer, Integer, Integer>>();
 		List<Substrate> substrateInformation = hnt.getSubstrateInformation();	
-		int currentYCoordinate;
-		int previousYCoordinate = -1; //a valid substrate location cannot have an x coordinate of -1. This is just to initialize.
-		int yCoordCount = 0;
-		int previousWidth = -1; //this is an invalid width. it is just to initialize
-		int previousHeight = -1; //this is an invalid height. it is just to initialize
+		int yCoordCount = 0; //this will equal the number of substrates per layer when it is added to hiddenArchitecture
 		int previousSubstrateType = Substrate.INPUT_SUBSTRATE;
+		int previousYCoordinate = -1, previousWidth = -1, previousHeight = -1; //these are invalid values. they are just here to initialize.
+		int currentSubstrateType, currentWidth, currentHeight, currentYCoordinate;
 		Iterator<Substrate> it_substrateInformation = substrateInformation.iterator();
 		while (it_substrateInformation.hasNext()) {
+			//alter while loop to avoid output substrates?
 			Substrate currentSubstrate = it_substrateInformation.next(); 
+			currentSubstrateType = currentSubstrate.getStype();
 			currentYCoordinate = currentSubstrate.getSubLocation().t2;
-			yCoordCount++;
-			if (previousYCoordinate != -1 && currentYCoordinate != previousYCoordinate) {
-				if (previousSubstrateType == Substrate.PROCCESS_SUBSTRATE) {
-					hiddenArchitecture.add(new Triple<Integer, Integer, Integer>(yCoordCount, previousWidth, previousHeight));
-				}
+			currentWidth = currentSubstrate.getSize().t1;
+			currentHeight = currentSubstrate.getSize().t2;
+			if (previousSubstrateType == Substrate.PROCCESS_SUBSTRATE && currentYCoordinate != previousYCoordinate) {
+				assert previousWidth > 0 && previousHeight > 0 && yCoordCount > 0;
+				hiddenArchitecture.add(new Triple<Integer, Integer, Integer>(yCoordCount, previousWidth, previousHeight));
 				yCoordCount = 0;
 			}
+			if (currentSubstrateType == Substrate.PROCCESS_SUBSTRATE) {
+				yCoordCount++;
+			}
+			previousSubstrateType = currentSubstrateType;
 			previousYCoordinate = currentYCoordinate;
-			previousWidth = currentSubstrate.getSize().t1;
-			previousHeight = currentSubstrate.getSize().t2;
-			previousSubstrateType = currentSubstrate.getStype();
+			previousWidth = currentWidth;
+			previousHeight = currentHeight;
 		}
 		assert hiddenArchitecture.size() > 0;
 		return hiddenArchitecture;
