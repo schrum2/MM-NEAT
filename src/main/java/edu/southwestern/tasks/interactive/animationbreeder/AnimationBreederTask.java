@@ -38,7 +38,7 @@ import edu.southwestern.util.graphics.AnimationUtil;
 public class AnimationBreederTask<T extends Network> extends InteractiveEvolutionTask<T>{
 
 	private boolean reverse = Parameters.parameters.booleanParameter("loopAnimationInReverse");
-	
+
 	protected JSlider animationLength;
 	protected JSlider pauseLength;
 	protected JSlider pauseLengthBetweenFrames;
@@ -80,16 +80,22 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				//adds images to array at index of specified button (imageID)
 				if(animations[imageID].size() < Parameters.parameters.integerParameter("defaultAnimationLength")) {
 					int start = animations[imageID].size();
-					BufferedImage[] newFrames = getAnimationImages(scores.get(imageID).individual.getPhenotype(), start, end, false);
-					for(BufferedImage bi : newFrames) {
-						if(abort) break; // stop loading if animation is aborted
-						animations[imageID].add(bi);
-					}
-					if(!abort && reverse) {
-						for (int i = newFrames.length-1; i >= 0; i--) {
+					try {
+						BufferedImage[] newFrames = getAnimationImages(scores.get(imageID).individual.getPhenotype(), start, end, false);
+						for(BufferedImage bi : newFrames) {
 							if(abort) break; // stop loading if animation is aborted
-							animations[imageID].add(newFrames[i]);
+							animations[imageID].add(bi);
 						}
+						if(!abort && reverse) {
+							for (int i = newFrames.length-1; i >= 0; i--) {
+								if(abort) break; // stop loading if animation is aborted
+								animations[imageID].add(newFrames[i]);
+							}
+						}
+					} catch(IndexOutOfBoundsException e) {
+						// Suppressing this exception seems like a bad idea.
+						System.out.println("Scores not ready for animation " + imageID);
+						abort = true;
 					}
 				}
 			}
