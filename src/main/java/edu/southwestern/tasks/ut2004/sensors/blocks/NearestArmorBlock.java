@@ -22,7 +22,7 @@ public class NearestArmorBlock extends NearestItemBlock {
 	 * @return returns the location of the nearest armor pack 
 	 */
 	@Override
-	protected List<Item> possibleItems(UT2004BotModuleController bot) {
+	protected List<Item> possibleItems(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		return MyCollections.getFiltered(bot.getItems().getSpawnedItems(ItemType.Category.ARMOR).values(),
 				recentlyVisitedItems);
 	}

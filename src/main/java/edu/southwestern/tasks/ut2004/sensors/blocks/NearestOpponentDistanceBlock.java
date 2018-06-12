@@ -14,10 +14,10 @@ public class NearestOpponentDistanceBlock implements UT2004SensorBlock {
 	public static final int MAX_DISTANCE = 1000;
 	public static final int MEMORY_TIME = 5;
 
-	public void prepareBlock(UT2004BotModuleController bot) {
+	public void prepareBlock(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
 
-	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
+	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
 		Player opponent = bot.getPlayers().getNearestEnemy(MEMORY_TIME);
 		Location botLocation = bot.getInfo().getLocation();
 		Location opponentLocation = opponent == null ? null : opponent.getLocation();

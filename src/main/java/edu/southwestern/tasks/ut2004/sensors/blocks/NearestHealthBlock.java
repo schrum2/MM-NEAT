@@ -22,7 +22,7 @@ public class NearestHealthBlock extends NearestItemBlock {
 	 * @return returns the location of the nearest health pack 
 	 */
 	@Override
-	protected List<Item> possibleItems(UT2004BotModuleController bot) {
+	protected List<Item> possibleItems(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		return MyCollections.getFiltered(bot.getItems().getSpawnedItems(ItemType.Category.HEALTH).values(),
 				recentlyVisitedItems);
 	}

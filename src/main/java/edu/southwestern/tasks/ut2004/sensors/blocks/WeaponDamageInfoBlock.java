@@ -21,7 +21,7 @@ public class WeaponDamageInfoBlock implements UT2004SensorBlock {
 	/**
 	 * creates the block of sensors
 	 */
-	public void prepareBlock(UT2004BotModuleController bot) {
+	public void prepareBlock(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
 
 	/**
@@ -32,7 +32,7 @@ public class WeaponDamageInfoBlock implements UT2004SensorBlock {
 	 * @param inputs (an array that collects the values from the statuses)
 	 * @return returns next address for sensor allocation
 	 */
-	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
+	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
 		Weaponry weaponry = bot.getWeaponry();
 		Weapon w = weaponry.getCurrentWeapon();
 		WeaponDescriptor wd = w.getDescriptor();

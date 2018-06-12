@@ -20,7 +20,7 @@ public class PieSliceOpponentSensorBlock implements UT2004SensorBlock {
 	 * creates the sensor block
 	 * @param bot (bot which will use the sensor data)
 	 */
-	public void prepareBlock(UT2004BotModuleController bot) {
+	public void prepareBlock(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
 
 	/**
@@ -30,13 +30,13 @@ public class PieSliceOpponentSensorBlock implements UT2004SensorBlock {
 	 * @param inputs (an array that collects the values from the statuses)
 	 * @return returns next address for sensor allocation
 	 */
-	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
+	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
 		// Gather data in slices
 		double[] slices = new double[numberOfSlices()];
 		Map<UnrealId, Player> seenPlayers = bot.getPlayers().getVisibleEnemies();
 		double frontLeftDist = 0;
 		double frontRightDist = 0;
-		int numPlayers = 0;
+		@SuppressWarnings("unused")	int numPlayers = 0;
 		Location botLocation = bot.getInfo().getLocation();
 		for (Player seenPlayer : seenPlayers.values()) {
 			Location playerLocation = seenPlayer.getLocation();
