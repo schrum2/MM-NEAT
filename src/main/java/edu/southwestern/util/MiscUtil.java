@@ -54,21 +54,7 @@ public class MiscUtil {
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("\nmessage: " + msg);
-			//source here: https://stackoverflow.com/questions/11306811/how-to-get-the-caller-class-in-java
-			StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
-			String callerClassName = null;
-			System.out.println("waiting here:");
-			for (int i=1; i<stElements.length; i++) {
-				StackTraceElement ste = stElements[i];
-				if (!ste.getClassName().equals(MiscUtil.class.getName())&& ste.getClassName().indexOf("java.lang.Thread")!=0) {
-					if (callerClassName==null) {
-						callerClassName = ste.getClassName();
-					} else if (!callerClassName.equals(ste.getClassName())) {
-						System.out.println(ste.getClassName());
-					}
-				}
-			}
-			//end source
+			printStackTraceAndPause();
 			String s = br.readLine();
 			return s;
 		} catch (IOException e) {
@@ -76,5 +62,26 @@ public class MiscUtil {
 			System.exit(1);
 		}
 		return null;
+	}
+	
+	/**
+	 * Prints the stack trace and pauses execution
+	 * source here: https://stackoverflow.com/questions/11306811/how-to-get-the-caller-class-in-java
+	 */
+	public static void printStackTraceAndPause() {
+		StackTraceElement[] stElements = Thread.currentThread().getStackTrace();
+		String callerClassName = null;
+		System.out.println("\nwaiting here:");
+		for (int i=1; i<stElements.length; i++) {
+			StackTraceElement ste = stElements[i];
+			if (!ste.getClassName().equals(MiscUtil.class.getName())&& ste.getClassName().indexOf("java.lang.Thread")!=0) {
+				if (callerClassName==null) {
+					callerClassName = ste.getClassName();
+				} else if (!callerClassName.equals(ste.getClassName())) {
+					System.out.println(ste.getClassName());
+				}
+			}
+		}
+		waitForReadStringAndEnterKeyPress();
 	}
 }

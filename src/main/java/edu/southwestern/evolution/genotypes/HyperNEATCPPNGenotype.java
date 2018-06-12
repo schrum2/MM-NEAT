@@ -13,6 +13,7 @@ import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;

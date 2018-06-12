@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
@@ -125,7 +124,6 @@ public class FlexibleSubstrateArchitecture {
 			List<String> inputSubstrateNames, 
 			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture, 
 			boolean capableOfConvolution) {
-		System.out.println(networkHiddenArchitecture.size());
 		int firstHiddenLayerWidth = (networkHiddenArchitecture.size() > 0)? networkHiddenArchitecture.get(0).t1: 0;
 		for (String in: inputSubstrateNames) {
 			for (int i = 0; i < firstHiddenLayerWidth; i++) {

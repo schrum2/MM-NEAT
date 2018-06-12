@@ -112,12 +112,14 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		List<Substrate> newSubstrateInformation = new LinkedList<Substrate>();
 		List<Substrate> oldSubstrateInformation = HNTask.getSubstrateInformation();
 		Iterator<Substrate> subItr = oldSubstrateInformation.iterator();
+		Substrate firstOutputSubstrate = null;
 		//substrate input layer information
 		while(subItr.hasNext()) {
 			Substrate currentSubstrate = subItr.next();
 			if(currentSubstrate.getStype() == Substrate.INPUT_SUBSTRATE) {
 				newSubstrateInformation.add(currentSubstrate);
 			} else if(currentSubstrate.getStype() == Substrate.OUTPUT_SUBSTRATE) {
+				firstOutputSubstrate = currentSubstrate; //this will be added to list after the hidden layers
 				break; // Break out once output substrate is found
 			}
 			// Nothing occurs when hidden substrate is found. We just skip them.
@@ -136,15 +138,14 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		}
 		//substrate hidden layer information end
 		//substrate output layer information
+		assert firstOutputSubstrate != null;
+		newSubstrateInformation.add(firstOutputSubstrate);
 		while(subItr.hasNext()) {
 			Substrate currentSubstrate = subItr.next();
 			if(currentSubstrate.getStype() == Substrate.OUTPUT_SUBSTRATE) {
 				newSubstrateInformation.add(currentSubstrate);
 			} 
-		}
-		
-		System.out.println("getSubstrateInformation:" + newSubstrateInformation);
-		
+		}		
 		//substrate output layer information end
 		return newSubstrateInformation;
 	}
@@ -155,7 +156,6 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 */
 	@Override
 	public List<Triple<String, String, Boolean>> getSubstrateConnectivity(HyperNEATTask HNTask) {
-		System.out.println("getSubstrateConnectivity:" + allSubstrateConnectivity);
 		return allSubstrateConnectivity;
 	}
 
