@@ -86,10 +86,9 @@ public class FlexibleSubstrateArchitecture {
 	/**
 	 * @param inputSubstrateNames List of input substrate names
 	 * @param outputSubstrateNames List of output substrate names
-	 * @return List of all substrate connections as given by a Triple where the first String is the unique identifier
+	 * @return List of adjacent substrate connections as given by a Triple where the first String is the unique identifier
 	 * 	of a particular input/process substrate, the second String is the unique identifier of a particular output/process
-	 *  substrate. The boolean is true for each layer except the last two, which are fully connected(boolean is true if substrates
-	 *  are capable of being convolutional).
+	 *  substrate. Boolean is true if substrates are capable of being convolutional.
 	 */
 	public static List<Triple<String, String, Boolean>> getSubstrateConnectivity(
 			List<String> inputSubstrateNames, 
@@ -100,8 +99,7 @@ public class FlexibleSubstrateArchitecture {
 		//connects input layer to first hidden/process layer, convolutional because boolean = true
 		addFirstLayerConnectivity(networkConnectivity, inputSubstrateNames, networkHiddenArchitecture, true);
 
-
-		//connects adjacent convolutional hidden layers
+		//connects adjacent, possibly convolutional hidden layers
 		addHiddenLayerConnectivity(networkConnectivity, networkHiddenArchitecture);
 
 		//connects last hidden/process layer to output layer, fully connected because boolean = false

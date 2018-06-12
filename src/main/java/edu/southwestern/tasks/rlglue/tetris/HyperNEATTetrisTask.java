@@ -2,6 +2,7 @@ package edu.southwestern.tasks.rlglue.tetris;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import org.rlcommunity.environments.tetris.TetrisState;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -13,7 +14,6 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.featureextractors.tetris.ExtendedBertsekasTsitsiklisTetrisExtractor;
 import edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
