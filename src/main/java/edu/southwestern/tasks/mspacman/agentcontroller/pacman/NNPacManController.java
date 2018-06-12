@@ -51,7 +51,7 @@ public abstract class NNPacManController extends NewPacManController {
 		nn = n;
 		maxLevel = Parameters.parameters.integerParameter("pacmanMaxLevel");
 
-		inputMediator = MMNEAT.pacmanInputOutputMediator.copy();
+		inputMediator = MMNEAT.pacmanInputOutputMediator;
 		if (inputMediator != null) {
 			inputMediator.reset();
 		}

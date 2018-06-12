@@ -16,7 +16,6 @@ import edu.southwestern.util.ClassCreation;
 public abstract class MsPacManControllerInputOutputMediator {
 
 	protected final int absence;
-	// Schrum: 6/11/18: Is it ok for this to be static when mediators are copied for each new NN?
 	public static NodeCollection escapeNodes = null;
 	private final boolean evolveNetworkSelector;
 	private final boolean externalPreferenceNeurons;
@@ -104,12 +103,4 @@ public abstract class MsPacManControllerInputOutputMediator {
 	 * @return number of inputs
 	 */
 	public abstract int numIn();
-
-	/**
-	 * There needs to be a way to copy the mediators in order to use multiple
-	 * parallel threads for evaluation, since each controller needs to use a different mediator.
-	 * In particular, the mediator has internal state ... or rather, some of the sensor blocks do.
-	 * @return Copy of the mediator
-	 */
-	public abstract MsPacManControllerInputOutputMediator copy();
 }

@@ -2,7 +2,6 @@ package edu.southwestern.tasks.mspacman.sensors.mediators;
 
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
 import edu.southwestern.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
 import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.AllThreatsPresentBlock;
 import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.AnyEdibleGhostBlock;
@@ -127,10 +126,5 @@ public class IICheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 			// blocks.add(new VariableDirectionGhostBlocksJunctionBlock(direction));
 		}
 		// blocks.add(new VariableDirectionOneStepSafeBlock());
-	}
-
-	@Override
-	public MsPacManControllerInputOutputMediator copy() {
-		return new IICheckEachDirectionMediator();
 	}
 }
