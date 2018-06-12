@@ -9,18 +9,26 @@ import edu.southwestern.tasks.ut2004.Util;
  *
  * @author Jacob Schrum
  */
-public class NearestOpponentDistanceBlock implements UT2004SensorBlock {
+public class NearestAgentDistanceBlock implements UT2004SensorBlock {
 
 	public static final int MAX_DISTANCE = 1000;
 	public static final int MEMORY_TIME = 5;
+	public final boolean senseEnemy; 
+	
+	public NearestAgentDistanceBlock(boolean enemySetting) {
+		senseEnemy = enemySetting;
+	}
 
 	public void prepareBlock(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
 
 	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
-		Player opponent = bot.getPlayers().getNearestEnemy(MEMORY_TIME);
+		Player agent = senseEnemy ? 
+				bot.getPlayers().getNearestEnemy(MEMORY_TIME) :
+				bot.getPlayers().getNearestFriend(MEMORY_TIME);
+		
 		Location botLocation = bot.getInfo().getLocation();
-		Location opponentLocation = opponent == null ? null : opponent.getLocation();
+		Location opponentLocation = agent == null ? null : agent.getLocation();
 		double distance = (botLocation == null || opponentLocation == null) ? MAX_DISTANCE
 				: botLocation.getDistance(opponentLocation);
 		double distance2D = (botLocation == null || opponentLocation == null) ? MAX_DISTANCE

@@ -14,7 +14,7 @@ public class OpponentRelativeSensorModel extends UT2004BlockLoadedSensorModel {
 	public OpponentRelativeSensorModel() { //adds the specific sensor blocks
 		blocks.add(new AutoRayTraceSensorBlock());
 		blocks.add(new PieSliceOpponentSensorBlock());
-		blocks.add(new NearestOpponentDistanceBlock());
+		blocks.add(new NearestAgentDistanceBlock(true)); //true means that the bot senses an ENEMY nearby
 		blocks.add(new EnemyBehaviorBlock());
 		blocks.add(new SelfAwarenessBlock());
 	}
