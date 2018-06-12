@@ -11,10 +11,15 @@ import java.util.Map;
  * Tells the bot how close enemies are to it based on pie slices of the areas around it
  * @author Jacob Schrum
  */
-public class PieSliceOpponentSensorBlock implements UT2004SensorBlock {
+public class PieSliceAgentSensorBlock implements UT2004SensorBlock {
 
 	public static int MAX_DISTANCE = 1000;
 	public double[] sliceLimits = new double[] { 0, Math.PI / 128, Math.PI / 32, Math.PI / 4, Math.PI / 2, Math.PI };
+	public final boolean senseEnemy; 
+	
+	public PieSliceAgentSensorBlock(boolean enemySetting) {
+		senseEnemy = enemySetting;
+	}
 
 	/**
 	 * creates the sensor block
@@ -38,7 +43,13 @@ public class PieSliceOpponentSensorBlock implements UT2004SensorBlock {
 		double frontRightDist = 0;
 		@SuppressWarnings("unused")	int numPlayers = 0;
 		Location botLocation = bot.getInfo().getLocation();
+//		Player agent = senseEnemy ? 
+//				bot.getPlayers().getNearestEnemy(MEMORY_TIME) :
+//				bot.getPlayers().getNearestFriend(MEMORY_TIME);
 		for (Player seenPlayer : seenPlayers.values()) {
+			seenPlayer = senseEnemy ? 
+				bot.getPlayers().getNearestEnemy(MEMORY_TIME) :
+				bot.getPlayers().getNearestFriend(MEMORY_TIME);
 			Location playerLocation = seenPlayer.getLocation();
 			if (playerLocation == null || botLocation == null) {
 				continue;
