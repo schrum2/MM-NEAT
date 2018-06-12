@@ -31,7 +31,6 @@ public class FlexibleSubstrateArchitecture {
 		int currentSubstrateType, currentWidth, currentHeight, currentYCoordinate;
 		Iterator<Substrate> it_substrateInformation = substrateInformation.iterator();
 		while (it_substrateInformation.hasNext()) {
-			//alter while loop to avoid output substrates?
 			Substrate currentSubstrate = it_substrateInformation.next(); 
 			currentSubstrateType = currentSubstrate.getStype();
 			currentYCoordinate = currentSubstrate.getSubLocation().t2;
