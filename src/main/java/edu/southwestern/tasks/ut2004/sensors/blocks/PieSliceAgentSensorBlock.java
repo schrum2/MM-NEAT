@@ -16,6 +16,8 @@ public class PieSliceAgentSensorBlock implements UT2004SensorBlock {
 	public static int MAX_DISTANCE = 1000;
 	public double[] sliceLimits = new double[] { 0, Math.PI / 128, Math.PI / 32, Math.PI / 4, Math.PI / 2, Math.PI };
 	public final boolean senseEnemy; 
+	@SuppressWarnings("rawtypes")
+	public UT2004BotModuleController bot;
 	
 	public PieSliceAgentSensorBlock(boolean enemySetting) {
 		senseEnemy = enemySetting;
@@ -26,6 +28,7 @@ public class PieSliceAgentSensorBlock implements UT2004SensorBlock {
 	 * @param bot (bot which will use the sensor data)
 	 */
 	public void prepareBlock(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
+		this.bot = bot;
 	}
 
 	/**
@@ -41,24 +44,24 @@ public class PieSliceAgentSensorBlock implements UT2004SensorBlock {
 		Map<UnrealId, Player> seenPlayers = bot.getPlayers().getVisibleEnemies();
 		double frontLeftDist = 0;
 		double frontRightDist = 0;
-		@SuppressWarnings("unused")	int numPlayers = 0;
 		Location botLocation = bot.getInfo().getLocation();
-//		Player agent = senseEnemy ? 
-//				bot.getPlayers().getNearestEnemy(MEMORY_TIME) :
-//				bot.getPlayers().getNearestFriend(MEMORY_TIME);
 		for (Player seenPlayer : seenPlayers.values()) {
-			seenPlayer = senseEnemy ? 
-				bot.getPlayers().getNearestEnemy(MEMORY_TIME) :
-				bot.getPlayers().getNearestFriend(MEMORY_TIME);
+			
+			if( // If only sensing enemies, but the player is on the same team, skip it
+				(senseEnemy  && seenPlayer.getTeam() == bot.getInfo().getTeam()) ||
+				// If not sensing enemies, and the player is on a different team, skip it
+				(!senseEnemy && seenPlayer.getTeam() != bot.getInfo().getTeam())) {
+				continue; // Skip this player
+			}
+			
+			// Get the location of the player
 			Location playerLocation = seenPlayer.getLocation();
 			if (playerLocation == null || botLocation == null) {
-				continue;
+				continue; // Skip the player if it's location of the bot's is unclear
 			}
 
 			double distance = Util.scale(botLocation.getDistance(playerLocation), MAX_DISTANCE);
-			numPlayers++;
-			double angle = Util.relativeAngleToTarget(botLocation, bot.getInfo().getHorizontalRotation(),
-					playerLocation);
+			double angle = Util.relativeAngleToTarget(botLocation, bot.getInfo().getHorizontalRotation(),playerLocation);
 			if (angle > 0) {
 				for (int i = 0; i < sliceLimits.length - 1; i++) {
 					if (sliceLimits[i] < angle && angle <= sliceLimits[i + 1]) {
