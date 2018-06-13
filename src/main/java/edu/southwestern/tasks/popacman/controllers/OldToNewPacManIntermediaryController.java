@@ -34,6 +34,8 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	public GhostPredictionsFast ghostPredictions = null;
 	ArrayList<Integer> eatenPills;
 	ArrayList<Integer> eatenPowerPills;
+	public int lastPowerPillEatenTime = -1;
+	public int lastPillEatenTime = -1;
 	public int[] ghostEdibleTime;
     private Color[] redAlphas;
     private Game mostRecentGame;
@@ -188,6 +190,8 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
             currentMaze = game.getCurrentMaze();
             ghostPredictions = null;
             pillModel = null;
+            lastPillEatenTime = -1;
+            lastPowerPillEatenTime = -1;
             Arrays.fill(ghostEdibleTime, -1);
         }
 		      
@@ -218,6 +222,8 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	            eatenPowerPills = new ArrayList<Integer>();
 	            
 	            informedGameFacade.setPillModel(pillModel);
+	            informedGameFacade.setTimeOfLastPowerPillEaten(lastPowerPillEatenTime);
+	            informedGameFacade.setTimeOfLastPillEaten(lastPillEatenTime);
 	        
 			} 
 
@@ -230,6 +236,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	            if (pillState != null && !pillState) {
 	            	pillModel.update(informedGameFacade.poG.getPacmanCurrentNodeIndex());
 	            	eatenPills.add(informedGameFacade.poG.getPacmanCurrentNodeIndex());
+	            	informedGameFacade.setTimeOfLastPillEaten(informedGameFacade.getCurrentLevelTime());
 	            }
 	        }
 		    
@@ -239,10 +246,12 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		        if (powerPillState != null && !powerPillState) {
 		        	pillModel.update(informedGameFacade.poG.getPacmanCurrentNodeIndex());
 		        	eatenPowerPills.add(informedGameFacade.poG.getPacmanCurrentNodeIndex());
+		        	informedGameFacade.setTimeOfLastPowerPillEaten(informedGameFacade.getCurrentLevelTime());
 		        }
 			}
 	        
-			
+			informedGameFacade.setTimeOfLastPillEaten(lastPillEatenTime);
+			informedGameFacade.setTimeOfLastPowerPillEaten(lastPowerPillEatenTime);
 	        informedGameFacade.setPillModel(pillModel);
 		}
 		
