@@ -235,7 +235,6 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		    
 			int powerPillIndex = informedGameFacade.poG.getPowerPillIndex(informedGameFacade.poG.getPacmanCurrentNodeIndex());				        
 			if (powerPillIndex != -1) {
-				System.out.println(powerPillIndex);
 		        Boolean powerPillState = informedGameFacade.poG.isPowerPillStillAvailable(powerPillIndex);
 		        if (powerPillState != null && !powerPillState) {
 		        	pillModel.update(informedGameFacade.poG.getPacmanCurrentNodeIndex());

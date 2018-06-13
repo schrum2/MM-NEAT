@@ -44,6 +44,8 @@ public class GameFacade {
 	public pacman.game.Game poG = null; // New pacman from Maven
 	public boolean usePillModel = Parameters.parameters.booleanParameter("usePillModel");
 	public boolean useGhostModel = Parameters.parameters.booleanParameter("useGhostModel");
+	public int timeOfLastEatenPill;
+	public int timeOfLastEatenPowerPill;
 
 	/**
 	 * Has a popacman version.
@@ -1051,10 +1053,28 @@ public class GameFacade {
 	 * @return indices of power pills
 	 */
 	public int[] getActivePowerPillsIndices() {
-		return oldG == null ?
-				//(TODO: understand output), add support for tracking power pills vs regular pills in PillModel
-				poG.getActivePowerPillsIndices():
-				oldG.getActivePowerPillsIndices();
+		if(oldG == null) {
+			if(usePillModel) {
+				assert pillModel != null : "we are using the pill model!";
+				ArrayList<Integer> temp = new ArrayList<Integer>();
+				for(int i = 0; i < pillModel.getPowerPills().length(); i++) {
+					if(pillModel.getPowerPills().get(i)) {
+						temp.add(i);
+					}
+				}
+				
+				int[] result = new int[temp.size()];
+				for(int i = 0; i < temp.size(); i++) {
+					result[i] = temp.get(i);
+				}
+				return result;
+				
+			} else {
+				return poG.getActivePillsIndices();	
+			}	
+		} else {
+			return oldG.getActivePillsIndices();	
+		}
 	}
 
 	/**
@@ -1081,6 +1101,7 @@ public class GameFacade {
 			//Without pill model, we may get an empty array
 			ArrayList<Integer> temp = new ArrayList<Integer>();
 			if(usePillModel) {
+				assert pillModel != null : "we are using the pill model!";
 				for(int i = 0; i < pillModel.getPills().length(); i++) {
 					if(pillModel.getPills().get(i)) {
 						temp.add(i);
@@ -3355,6 +3376,21 @@ public class GameFacade {
 		this.ghostPredictions = gp;
 	}
 	
+	public int getTimeOfLastPillEaten() {
+		return this.timeOfLastEatenPill;
+	}
+	
+	public void setTimeOfLastPillEaten(int time) {
+		this.timeOfLastEatenPill = time;
+	}
+	
+	public int getTimeOfLastPowerPillEaten() {
+		return this.timeOfLastEatenPowerPill;
+	}
+	
+	public void setTimeOfLastPowerPillEaten(int time) {
+		this.timeOfLastEatenPill = time;
+	}
 	
 	
 }
