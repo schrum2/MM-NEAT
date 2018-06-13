@@ -394,10 +394,12 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @param s1Index Index in substrate list of source substrate
 	 * @param s2Index Index in substrate list of target substrate
 	 * @param subs List of substrates
+	 * @param substrateHorizontalCoordinate Used by global coordinates
+	 * @param substrateVerticalCoordinate Used by global coordinates
 	 */
 	void convolutionalLoopThroughLinks(HyperNEATTask hnt, ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex,
 			Substrate s1, Substrate s2, int s1Index, int s2Index,
-			List<Substrate> subs, int layersWidth, int layersHeight) {
+			List<Substrate> subs, int substrateHorizontalCoordinate, int substrateVerticalCoordinate) {
 
 		boolean convolutionDeltas = Parameters.parameters.booleanParameter("convolutionDeltas");
 		boolean convolutionWeightSharing = Parameters.parameters.booleanParameter("convolutionWeightSharing");
@@ -468,8 +470,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 										// Convolutional weight sharing requires substrate location inputs to prevent all receptive fields across all layers from being the same.
 										if(CommonConstants.substrateLocationInputs || convolutionWeightSharing) {
-											ILocated2D scaledSubstrate1Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s1.getSubLocation().t1, s1.getSubLocation().t2), layersWidth, layersHeight);
-											ILocated2D scaledSubstrate2Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s2.getSubLocation().t1, s2.getSubLocation().t2), layersWidth, layersHeight);
+											ILocated2D scaledSubstrate1Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s1.getSubLocation().t1, s1.getSubLocation().t2), substrateHorizontalCoordinate, substrateVerticalCoordinate);
+											ILocated2D scaledSubstrate2Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s2.getSubLocation().t1, s2.getSubLocation().t2), substrateHorizontalCoordinate, substrateVerticalCoordinate);
 
 											// Phillip Verbancsics approach from his paper on Generative Neuro-Evolution for Deep Learning
 											if(convolutionDeltas) {
