@@ -28,7 +28,7 @@ public class EdibleGhostTimeRemainingPOBlock extends MsPacManSensorBlock {
 		//The edible time of level "levelcount"
 		double newEdibleTime = (int) (EDIBLE_TIME * (Math.pow(EDIBLE_TIME_REDUCTION, levelCount % LEVEL_RESET_REDUCTION)));
 		
-		//TODO: make this more sophisticated
+		//TODO: Add handling of threat ghosts
 		//If there is a visible threat ghost, assume we dont have edible power
 //		if(gf.anyIsThreat()) {
 //			inputs[startPoint++] = 0;

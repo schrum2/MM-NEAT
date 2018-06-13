@@ -116,10 +116,9 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		}
 		
 	
-//		// Look ahead
-//		//TODO: implement pill model
+		// Look ahead
 		blocks.add(new VariableDirectionKStepPillCountBlock(direction));
-//		//Works with PO, this information is always available
+		//Works with PO, this information is always available
 		blocks.add(new VariableDirectionKStepJunctionCountBlock(direction));
 
 
