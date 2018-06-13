@@ -9,7 +9,7 @@ public class SubstrateConnectivity {
 	public static final int CTYPE_CONVOLUTION = 1;
 	public final String SOURCE_SUBSTRATE_NAME;
 	public final String TARGET_SUBSTRATE_NAME;
-	public final int connectivityType;
+	public int connectivityType;
 	
 	/**
 	 * defines the source, target, and connection type of a link between substrates 
@@ -27,10 +27,27 @@ public class SubstrateConnectivity {
 	 * @param substrateConnectivity
 	 * @return the subtrate connectivity as a string
 	 */
-	public String toString (SubstrateConnectivity substrateConnectivity) {
+	public String toString() {
 		String result = "";
-		result.concat("substrate connectivity: from " + SOURCE_SUBSTRATE_NAME + " to " + 
-				TARGET_SUBSTRATE_NAME + " with type " + connectivityType);
+		result = result.concat("substrate connectivity: from " + SOURCE_SUBSTRATE_NAME + " to " + 
+							   TARGET_SUBSTRATE_NAME + " with type " + connectivityType);
 		return result;
+	}
+	
+	/**
+	 * @return a deep copy of the calling SubstrateConnectivity
+	 */
+	public SubstrateConnectivity copy() {
+		return new SubstrateConnectivity(this.SOURCE_SUBSTRATE_NAME, this.TARGET_SUBSTRATE_NAME, this.connectivityType);
+	}
+	
+	public boolean equals(Object other) {
+		if(other instanceof SubstrateConnectivity) {
+			SubstrateConnectivity sc = (SubstrateConnectivity) other;
+			return sc.connectivityType == this.connectivityType &&
+				   sc.SOURCE_SUBSTRATE_NAME.equals(this.SOURCE_SUBSTRATE_NAME) &&
+				   sc.TARGET_SUBSTRATE_NAME.equals(this.TARGET_SUBSTRATE_NAME);
+		}
+		return false;
 	}
 }

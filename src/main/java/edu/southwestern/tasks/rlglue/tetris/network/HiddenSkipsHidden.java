@@ -6,6 +6,7 @@ import java.util.List;
 import edu.southwestern.networks.hyperneat.FlexibleSubstrateArchitecture;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.SubstrateArchitectureDefinition;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
@@ -17,6 +18,9 @@ import edu.southwestern.util.datastructures.Triple;
  */
 public class HiddenSkipsHidden implements SubstrateArchitectureDefinition{
 
+	/**
+	 * TODO
+	 */
 	@Override
 	public List<Triple<Integer, Integer, Integer>> getNetworkHiddenArchitecture() {
 		List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture = new ArrayList<Triple<Integer, Integer, Integer>>();
@@ -25,16 +29,23 @@ public class HiddenSkipsHidden implements SubstrateArchitectureDefinition{
 		return networkHiddenArchitecture;
 	}
 
-	private List<Triple<String, String, Boolean>> getSubstrateConnectivity (List<String> inputSubstrateNames, List<String> outputSubstrateNames) {
-		List<Triple<String, String, Boolean>> substrateConnectivity = FlexibleSubstrateArchitecture.getSubstrateConnectivity(inputSubstrateNames, outputSubstrateNames, getNetworkHiddenArchitecture());
-		for(String out: outputSubstrateNames) {
-			substrateConnectivity.add(new Triple<String, String, Boolean>("process(0,0)", out, false));
-		}
+	/**
+	 * TODO
+	 * @param inputSubstrateNames
+	 * @param outputSubstrateNames
+	 * @return
+	 */
+	private List<SubstrateConnectivity> getSubstrateConnectivity (List<String> inputSubstrateNames, List<String> outputSubstrateNames) {
+		List<SubstrateConnectivity> substrateConnectivity = FlexibleSubstrateArchitecture.getSubstrateConnectivity(inputSubstrateNames, outputSubstrateNames, getNetworkHiddenArchitecture());
+		substrateConnectivity.add(new SubstrateConnectivity("process(0,0)", outputSubstrateNames.get(0), SubstrateConnectivity.CTYPE_FULL));
 		return substrateConnectivity;
 	}
 	
+	/**
+	 * TODO
+	 */
 	@Override
-	public List<Triple<String, String,Boolean>> getSubstrateConnectivity(HyperNEATTask task) {
+	public List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask task) {
 		Pair<List<String>, List<String>> io = FlexibleSubstrateArchitecture.getInputAndOutputNames(task);
 		return getSubstrateConnectivity(io.t1, io.t2);
 	}

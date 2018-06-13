@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
@@ -55,11 +56,9 @@ public class FlexibleSubstrateArchitecture {
 
 	/**
 	 * @param hnt the HyperNEATTask
-	 * @return List of all substrate connections as given by a Triple where the first String is the unique identifier
-	 * 	for a particular input/process substrate, the second String is the unique identifier for a particular ouput/process
-	 *  substrate, and the boolean is true if the connectivity is capable of being convolutional and false otherwise.
+	 * @return List of the SubstrateConnectivity of the network
 	 */
-	public static List<Triple<String, String, Boolean>> getAllSubstrateConnectivity(HyperNEATTask hnt) {
+	public static List<SubstrateConnectivity> getAllSubstrateConnectivity(HyperNEATTask hnt) {
 		Pair<List<String>,List<String>> inputAndOutputNames = getInputAndOutputNames(hnt);
 		return getSubstrateConnectivity(inputAndOutputNames.t1, inputAndOutputNames.t2, getHiddenArchitecture(hnt));
 	}
@@ -86,25 +85,22 @@ public class FlexibleSubstrateArchitecture {
 	/**
 	 * @param inputSubstrateNames List of input substrate names
 	 * @param outputSubstrateNames List of output substrate names
-	 * @return List of adjacent substrate connections as given by a Triple where the first String is the unique identifier
-	 * 	of a particular input/process substrate, the second String is the unique identifier of a particular output/process
-	 *  substrate. Boolean is true if substrates are capable of being convolutional.
+	 * @return List of SubstrateConnectivity of the network
 	 */
-	public static List<Triple<String, String, Boolean>> getSubstrateConnectivity(
+	public static List<SubstrateConnectivity> getSubstrateConnectivity(
 			List<String> inputSubstrateNames, 
 			List<String> outputSubstrateNames, 
 			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture) {
-		List<Triple<String, String, Boolean>> networkConnectivity = new ArrayList<Triple<String, String, Boolean>>();
-
-		//connects input layer to first hidden/process layer, convolutional because boolean = true
-		addFirstLayerConnectivity(networkConnectivity, inputSubstrateNames, networkHiddenArchitecture, true);
+		List<SubstrateConnectivity> networkConnectivity = new ArrayList<SubstrateConnectivity>();
+		//connects input layer to first hidden/process layer
+		addFirstLayerConnectivity(networkConnectivity, inputSubstrateNames, networkHiddenArchitecture, SubstrateConnectivity.CTYPE_CONVOLUTION);
 
 		//connects adjacent, possibly convolutional hidden layers
 		addHiddenLayerConnectivity(networkConnectivity, networkHiddenArchitecture);
 
-		//connects last hidden/process layer to output layer, fully connected because boolean = false
-		addLastLayerConnectivity(networkConnectivity, outputSubstrateNames, networkHiddenArchitecture, false);
-
+		//connects last hidden/process layer to output layer
+		addLastLayerConnectivity(networkConnectivity, outputSubstrateNames, networkHiddenArchitecture, SubstrateConnectivity.CTYPE_FULL);
+		
 		return networkConnectivity;
 	}
 
@@ -113,19 +109,18 @@ public class FlexibleSubstrateArchitecture {
 	 * @param networkConnectivity list that connectivity is appended to
 	 * @param inputSubstrateNames list of each input substrate name
 	 * @param networkHiddenArchitecture architecture of hidden layers
-	 * @param capableOfConvolution if true and if parameter convolution = true in batch file
-	 * 		then this layer will be convolutional else it will be fully connected
+	 * @param connectivityType how these two substrates are connected(i.e. full, convolutional,...)
 	 */
 	private static void addFirstLayerConnectivity(
-			List<Triple<String, String, Boolean>> networkConnectivity, 
+			List<SubstrateConnectivity> networkConnectivity, 
 			List<String> inputSubstrateNames, 
 			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture, 
-			boolean capableOfConvolution) {
+			int connectivityType) {
 		int firstHiddenLayerWidth = (networkHiddenArchitecture.size() > 0)? networkHiddenArchitecture.get(0).t1: 0;
 		for (String in: inputSubstrateNames) {
 			for (int i = 0; i < firstHiddenLayerWidth; i++) {
-				networkConnectivity.add(new Triple <String, String, Boolean>
-				(in, "process(" + i + ",0)", capableOfConvolution));
+				networkConnectivity.add(new SubstrateConnectivity
+				(in, "process(" + i + ",0)", connectivityType));
 			}
 		}
 		assert networkConnectivity.size() > 0;
@@ -135,11 +130,10 @@ public class FlexibleSubstrateArchitecture {
 	 * connects two adjacent hidden substrate layers
 	 * @param networkConnectivity list that connectivity is appended to
 	 * @param networkHiddenArchitecture architecture of hidden layers
-	 * @param capableOfConvolution if true and if parameter convolution = true in batch file
-	 * 		then this layer will be convolutional else it will be fully connected
+	 * @param CONNECTIVITY_TYPE how these two substrates are connected (i.e. full, convolutional,...)
 	 */
 	private static void addHiddenLayerConnectivity(
-			List<Triple<String, String, Boolean>> networkConnectivity, 
+			List<SubstrateConnectivity> networkConnectivity, 
 			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture) {
 		int stride = Parameters.parameters.integerParameter("stride");
 		int numLayers = networkHiddenArchitecture.size();
@@ -148,9 +142,9 @@ public class FlexibleSubstrateArchitecture {
 				for (int target = 0; target < networkHiddenArchitecture.get(i + 1).t1; target++) {
 					// Need to generalize this more later: Currently, we assume convolution will be used if the next layer up is exactly the
 					// right size to allow it without zero padding.
-					boolean capableOfConvolution = networkHiddenArchitecture.get(i).t2 + 2*stride == networkHiddenArchitecture.get(i+1).t2 &&
-							networkHiddenArchitecture.get(i).t3 + 2*stride == networkHiddenArchitecture.get(i+1).t3;
-					networkConnectivity.add(new Triple<String, String, Boolean>("process(" + src + "," + i + ")", "process(" + target + "," + (i + 1) + ")", capableOfConvolution));
+					int connectivityType = (networkHiddenArchitecture.get(i).t2 + 2*stride == networkHiddenArchitecture.get(i+1).t2 &&
+							networkHiddenArchitecture.get(i).t3 + 2*stride == networkHiddenArchitecture.get(i+1).t3)? SubstrateConnectivity.CTYPE_FULL: SubstrateConnectivity.CTYPE_CONVOLUTION;
+					networkConnectivity.add(new SubstrateConnectivity("process(" + src + "," + i + ")", "process(" + target + "," + (i + 1) + ")", connectivityType));
 				}
 			}
 		}
@@ -167,19 +161,18 @@ public class FlexibleSubstrateArchitecture {
 	 * @param networkConnectivity list that connectivity is appended to
 	 * @param outputSubstrateNames list of each output substrate name
 	 * @param lastHiddenLayerWidth the width of the last hidden layer
-	 * @param capableOfConvolution if true and if parameter convolution = true in batch file
-	 * 		then this layer will be convolutional else it will be fully connected
+	 * @param connectivityType how these two substrates are connected (i.e. full, convolutional,...)
 	 */
 	private static void addLastLayerConnectivity(
-			List<Triple<String, String, Boolean>> networkConnectivity, 
+			List<SubstrateConnectivity> networkConnectivity, 
 			List<String> outputSubstrateNames,
 			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture,
-			boolean capableOfConvolution) {
+			int connectivityType) {
 		int lastHiddenLayerWidth = (networkHiddenArchitecture.size() > 0)? networkHiddenArchitecture.get(networkHiddenArchitecture.size() - 1).t1: 0; 
 		for (int i = 0; i < lastHiddenLayerWidth; i++) {
 			for (String out: outputSubstrateNames) {
-				networkConnectivity.add(new Triple<String, String, Boolean>
-				("process(" + i + "," + (networkHiddenArchitecture.size() - 1) + ")", out, capableOfConvolution));
+				networkConnectivity.add(new SubstrateConnectivity
+				("process(" + i + "," + (networkHiddenArchitecture.size() - 1) + ")", out, connectivityType));
 			}
 		}
 	}

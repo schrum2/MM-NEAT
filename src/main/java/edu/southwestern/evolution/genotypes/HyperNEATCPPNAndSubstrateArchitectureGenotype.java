@@ -13,6 +13,7 @@ import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.networks.hyperneat.SubstrateArchitectureDefinition;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
@@ -23,8 +24,8 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	public List<Triple<Integer, Integer, Integer>> hiddenArchitecture;
 	// Describes connectivity between ALL substrates, including the input and output substrates
 	// list of triples that specifies connectivity of network.
-	// Looks like (source substrate, target substrate, capable of convolution)
-	public List<Triple<String, String, Boolean>> allSubstrateConnectivity;
+	// Looks like (source substrate, target substrate, connectivityType)
+	public List<SubstrateConnectivity> allSubstrateConnectivity;
 
 	/**
 	 * defines a HyperNEATCPPNAndSubstrateArchitectureGenotype from the HyperNEAT task
@@ -45,10 +46,9 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 * defines a HyperNEATCPPNAndSubstrateArchitectureGenotype from the hiddenArchitecture and substrate connectivity
 	 * @param hiddenArchitecture List of triples that specifies each substrate with the index of each triple being its layer.
 	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
-	 * @param allSubstrateConnectivity list of triples that specifies connectivity of network.
-	 * 		Looks like (source substrate, target substrate, capable of convolution)
+	 * @param CONNECTIVITY_TYPE how these two substrates are connected (i.e. full, convolutional,...)
 	 */
-	public HyperNEATCPPNAndSubstrateArchitectureGenotype(List<Triple<Integer, Integer, Integer>> hiddenArchitecture, List<Triple<String, String, Boolean>> allSubstrateConnectivity) {
+	public HyperNEATCPPNAndSubstrateArchitectureGenotype(List<Triple<Integer, Integer, Integer>> hiddenArchitecture, List<SubstrateConnectivity> allSubstrateConnectivity) {
 		super();
 		this.hiddenArchitecture = hiddenArchitecture;
 		this.allSubstrateConnectivity = allSubstrateConnectivity;
@@ -91,11 +91,10 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 * @param outputNeurons output nodes
 	 * @param hiddenArchitecture List of triples that specifies each substrate with the index of each triple being its layer.
 	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
-	 * @param allSubstrateConnectivity list of triples that specifies connectivity of network.
-	 * 		Looks like (source substrate, target substrate, capable of convolution)
+	 * @param CONNECTIVITY_TYPE how these two substrates are connected (i.e. full, convolutional,...)
 	 */
 	private HyperNEATCPPNAndSubstrateArchitectureGenotype(int archetypeIndex, ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons,
-			List<Triple<Integer, Integer, Integer>> hiddenArchitecture, List<Triple<String, String, Boolean>> allSubstrateConnectivity) {
+			List<Triple<Integer, Integer, Integer>> hiddenArchitecture, List<SubstrateConnectivity> allSubstrateConnectivity) {
 		super(archetypeIndex, links, genes, outputNeurons);
 		this.allSubstrateConnectivity = allSubstrateConnectivity;
 		this.hiddenArchitecture = hiddenArchitecture;
@@ -150,10 +149,10 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 
 	/**
 	 * @return all the connectivity between links. list of triples that specifies connectivity of network.
-	 * 		looks like (source substrate, target substrate, capable of convolution)
+	 * 		looks like (source substrate, target substrate, connectivityType)
 	 */
 	@Override
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity(HyperNEATTask HNTask) {
+	public List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask HNTask) {
 		return allSubstrateConnectivity;
 	}
 	
@@ -162,13 +161,13 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 * @param newLayerWidth the width(the number of substrates) of the new layer
 	 * @param newSubstratesWidth the width of each substrate that is added
 	 * @param newsubstratesHeight the height of each substrate that is added
-	 * @param capableOfConvolution if true and convolution:true in batch file then
+	 * @param connectivityType how these two substrates are connected (i.e. full, convolutional,...)
 	 */
-	public void cascadeExpansion (int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, boolean capableOfConvolution) {
-		Pair<List<Triple<Integer, Integer, Integer>>, List<Triple<String, String, Boolean>>> newDefiniton = 
+	public void cascadeExpansion (int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, int connectivityType) {
+		Pair<List<Triple<Integer, Integer, Integer>>, List<SubstrateConnectivity>> newDefiniton = 
 				CascadeNetworks.cascadeExpansion(this.hiddenArchitecture, this.allSubstrateConnectivity, 
 				FlexibleSubstrateArchitecture.getInputAndOutputNames((HyperNEATTask) MMNEAT.task).t2,
-				newLayerWidth, newSubstratesWidth, newsubstratesHeight, capableOfConvolution);
+				newLayerWidth, newSubstratesWidth, newsubstratesHeight, connectivityType);
 		this.hiddenArchitecture = newDefiniton.t1;
 		this.allSubstrateConnectivity = newDefiniton.t2;
 	}
@@ -186,8 +185,8 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		for(Triple<Integer, Integer, Integer> layer: this.hiddenArchitecture) {
 			copyHiddenArchitecture.add(layer.copy());
 		}
-		List<Triple<String, String, Boolean>> copyAllSubstrateConnectivity = new ArrayList<Triple<String, String, Boolean>>();
-		for(Triple<String, String, Boolean> connectionId: this.allSubstrateConnectivity) {
+		List<SubstrateConnectivity> copyAllSubstrateConnectivity = new ArrayList<SubstrateConnectivity>();
+		for(SubstrateConnectivity connectionId: this.allSubstrateConnectivity) {
 			copyAllSubstrateConnectivity.add(connectionId.copy());
 		}
 		

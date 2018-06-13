@@ -1,7 +1,6 @@
 package edu.southwestern.networks.hyperneat;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import edu.southwestern.util.datastructures.Pair;
@@ -15,7 +14,7 @@ public class CascadeNetworks {
 	/**
 	 * Adds a new layer in between the previous last hidden layer and the output layer with
 	 * connectivity from the previous last hidden layer to this new last hidden layer as 
-	 * capableOfConvolution and connectivity from this new last hidden layer to the output
+	 * connectivityType and connectivity from this new last hidden layer to the output
 	 * layer as being fully connected
 	 * @param originalHiddenArchitecture hidden architecture that a new layer will be added to
 	 * @param originalConnectivity connectivity that new connectivity will be added to
@@ -23,16 +22,14 @@ public class CascadeNetworks {
 	 * @param newLayerWidth the width(the number of substrates) of the new layer
 	 * @param newSubstratesWidth the width of each substrate that is added
 	 * @param newsubstratesHeight the height of each substrate that is added
-	 * @param capableOfConvolution if true and convolution:true in batch file then 
-	 * 		the layer between the previous last hidden layer and new last hidden layer
-	 * 		will be convolutional otherwise it will be fully connected
+	 * @param connectionType how these two substrates are connected(i.e. full, convolutional,...)
 	 * @return a deep copy of the previous architecture and connectivity with the new layer added
 	 */
-	public static Pair<List<Triple<Integer, Integer, Integer>>, List<Triple<String, String, Boolean>>> cascadeExpansion (
+	public static Pair<List<Triple<Integer, Integer, Integer>>, List<SubstrateConnectivity>> cascadeExpansion (
 			List<Triple<Integer, Integer, Integer>> originalHiddenArchitecture,
-			List<Triple<String, String, Boolean>> originalConnectivity,
+			List<SubstrateConnectivity> originalConnectivity,
 			List<String> outputSubstrateNames,
-			int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, boolean capableOfConvolution) {
+			int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, int connectivityType) {
 		//create new hidden architecture
 		List<Triple<Integer, Integer, Integer>> newArchitecture = new ArrayList<Triple<Integer, Integer, Integer>>();
 		for(Triple<Integer, Integer, Integer> layer : originalHiddenArchitecture) {
@@ -41,31 +38,31 @@ public class CascadeNetworks {
 		newArchitecture.add(new Triple<Integer, Integer, Integer>(newLayerWidth, newSubstratesWidth, newsubstratesHeight));
 		//create new hidden architecture end
 		//create new connectivity
-		List<Triple<String, String, Boolean>> newConnectivity = new ArrayList<Triple<String, String, Boolean>>();
-		for(Triple<String, String, Boolean> connection: originalConnectivity) {
+		List<SubstrateConnectivity> newConnectivity = new ArrayList<SubstrateConnectivity>();
+		for(SubstrateConnectivity connection: originalConnectivity) {
 			newConnectivity.add(connection.copy());
 		}
 		//connect new layer to last hidden layer
 		int lastHiddenLayerLocation = originalHiddenArchitecture.size() - 1; //y location of last hidden layer and location of last hidden layer in originalHiddenArchitecture
 		for(int i = 0; i < originalHiddenArchitecture.get(lastHiddenLayerLocation).t1; i++) { //originalHiddenArchitecture.get(lastHiddenLayerLocation).t1 = the width of the last hidden layer
 			for(int j = 0; j < newLayerWidth; j++) {
-				newConnectivity.add(new Triple<String, String, Boolean>(
+				newConnectivity.add(new SubstrateConnectivity(
 						"process(" + i + "," + lastHiddenLayerLocation + ")", 
-						"process(" + j + "," + (lastHiddenLayerLocation + 1) + ")", capableOfConvolution));
+						"process(" + j + "," + (lastHiddenLayerLocation + 1) + ")", connectivityType));
 			}
 		}
 		//connect new layer to last hidden layer end
 		//connect new layer to output layer
 		for(int i = 0; i < newLayerWidth; i++) {
 			for(String outputSubstrateName: outputSubstrateNames) {
-				newConnectivity.add(new Triple<String, String, Boolean>(
+				newConnectivity.add(new SubstrateConnectivity(
 						"process(" + i + "," + (lastHiddenLayerLocation + 1) + ")",
-						outputSubstrateName, false));
+						outputSubstrateName, SubstrateConnectivity.CTYPE_FULL));
 			}
 		}
 		//connect new layer to output layer end
 		//create new connectivity end
-		return new Pair<List<Triple<Integer, Integer, Integer>>, List<Triple<String, String, Boolean>>>(newArchitecture, newConnectivity);
+		return new Pair<List<Triple<Integer, Integer, Integer>>, List<SubstrateConnectivity>>(newArchitecture, newConnectivity);
 	}
 	
 	/**
@@ -80,13 +77,13 @@ public class CascadeNetworks {
 	 * @param newLayerWidth the width(the number of substrates) of the new layer
 	 * @return a deep copy of the previous architecture and connectivity with the new layer added
 	 */
-	public static Pair<List<Triple<Integer, Integer, Integer>>, List<Triple<String, String, Boolean>>> cascadeExpansion (
+	public static Pair<List<Triple<Integer, Integer, Integer>>, List<SubstrateConnectivity>> cascadeExpansion (
 			List<Triple<Integer, Integer, Integer>> originalHiddenArchitecture,
-			List<Triple<String, String, Boolean>> originalConnectivity,
+			List<SubstrateConnectivity> originalConnectivity,
 			List<String> outputSubstrateNames,
 			int newLayerWidth) {
 		Triple<Integer, Integer, Integer> lastHiddenLayer = originalHiddenArchitecture.get(originalHiddenArchitecture.size() - 1);
 		return cascadeExpansion (originalHiddenArchitecture, originalConnectivity, outputSubstrateNames, newLayerWidth,
-				lastHiddenLayer.t2,  lastHiddenLayer.t3, false);
+				lastHiddenLayer.t2,  lastHiddenLayer.t3, SubstrateConnectivity.CTYPE_FULL);
 	}
 }

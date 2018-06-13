@@ -2,6 +2,7 @@ package edu.southwestern.evolution.genotypes;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -11,8 +12,8 @@ import org.junit.Test;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
-import edu.southwestern.networks.hyperneat.FlexibleSubstrateArchitecture;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
 import edu.southwestern.tasks.rlglue.tetris.network.HiddenSkipsHidden;
@@ -46,10 +47,9 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 		
 		HiddenSkipsHidden hsh = new HiddenSkipsHidden();
 		HyperNEATTask hshTask = ((HyperNEATTask) MMNEAT.task);
+
 		HyperNEATCPPNAndSubstrateArchitectureGenotype hncasag = new HyperNEATCPPNAndSubstrateArchitectureGenotype();
-		hncasag.cascadeExpansion(1, 10, 20, false);
-		//hncasag.cascadeExpansion(hncasag.hiddenArchitecture, hncasag.allSubstrateConnectivity, 
-		//		FlexibleSubstrateArchitecture.getInputAndOutputNames((HyperNEATTask) MMNEAT.task).t2, 1, 10, 20, false);
+		hncasag.cascadeExpansion(1, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
 		
 		//check hidden architecture equality
 		Iterator<Triple<Integer, Integer, Integer>> it_hsh = hsh.getNetworkHiddenArchitecture().iterator();
@@ -59,12 +59,10 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 		}
 		
 		//check connectivity set equality
-		assertTrue(hsh != null);
-		assertTrue(hshTask != null);
-		List<Triple<String, String, Boolean>> hshConnectivity = hsh.getSubstrateConnectivity(hshTask);
+		List<SubstrateConnectivity> hshConnectivity = hsh.getSubstrateConnectivity(hshTask);
 		assertEquals(hshConnectivity.size(), hncasag.allSubstrateConnectivity.size());
-		for(Triple<String, String, Boolean> sub: hncasag.allSubstrateConnectivity) {
-			assertTrue(hshConnectivity.contains(sub));
+		for(SubstrateConnectivity sub: hshConnectivity) {
+			assertTrue(hncasag.allSubstrateConnectivity.contains(sub));
 		}
 	}
 }

@@ -8,8 +8,8 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.datastructures.Triple;
 
 public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 
@@ -45,7 +45,7 @@ public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 		//offsets to all links accessed through RealValuedGenotype
 		ArrayList<Double> offsets = rvg.getPhenotype();
 		//substrate connectivity of HyperNEATTask used to access all source and target substrate indexes
-		List<Triple<String, String, Boolean>> connections = HyperNEATUtil.getHyperNEATTask().getSubstrateConnectivity();
+		List<SubstrateConnectivity> connections = HyperNEATUtil.getHyperNEATTask().getSubstrateConnectivity();
 		//substrate info used to access all source and target substrates at obtained indexes
 		List<Substrate> subs = HyperNEATUtil.getHyperNEATTask().getSubstrateInformation();
 		HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
@@ -56,8 +56,8 @@ public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 		int offsetIndex = 0;
 		//loop through all substrates
 		for (int j = 0; j < connections.size(); j++) { // For each pair of substrates that are connected
-			int sourceSubstrateIndex = substrateIndexMapping.get(connections.get(j).t1);
-			int targetSubstrateIndex = substrateIndexMapping.get(connections.get(j).t2);
+			int sourceSubstrateIndex = substrateIndexMapping.get(connections.get(j).SOURCE_SUBSTRATE_NAME);
+			int targetSubstrateIndex = substrateIndexMapping.get(connections.get(j).TARGET_SUBSTRATE_NAME);
 			Substrate sourceSubstrate = subs.get(sourceSubstrateIndex);
 			Substrate targetSubstrate = subs.get(targetSubstrateIndex);
 			// This loop goes through every (x,y) coordinate in Substrate s1: source substrate

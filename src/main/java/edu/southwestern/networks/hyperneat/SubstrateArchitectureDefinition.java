@@ -19,9 +19,7 @@ public interface SubstrateArchitectureDefinition {
 		
 		/**
 		 *  @param the HyperNEATTask
-		 *  @return List of all substrate connections as given by a Triple where the first String is the unique identifier
-		 * 	for a particular input/process substrate, the second String is the unique identifier for a particular ouput/process
-		 *  substrate, and the boolean is true if the connectivity is capable of being convolutional and false otherwise. 
+		 *  @return List of SubstrateConnectivity of the network
 		 */
-		public List<Triple<String, String,Boolean>> getSubstrateConnectivity(HyperNEATTask hnt);
+		public List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask hnt);
 };

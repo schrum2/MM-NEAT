@@ -10,13 +10,12 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CartesianGeometricUtilities;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.util2D.ILocated2D;
 import edu.southwestern.util.util2D.Tuple2D;
 
@@ -136,7 +135,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		//long time = System.currentTimeMillis(); // for timing
 		TWEANN cppn = getCPPN();// CPPN used to create TWEANN network
 		List<Substrate> subs = getSubstrateInformation(hnt);// extract substrate information from domain
-		List<Triple<String, String, Boolean>> connections = getSubstrateConnectivity(hnt);// extract substrate connectivity from domain
+		List<SubstrateConnectivity> connections = getSubstrateConnectivity(hnt);// extract substrate connectivity from domain
 		ArrayList<NodeGene> newNodes = null;
 		ArrayList<LinkGene> newLinks = null;
 
@@ -206,7 +205,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @return List of triples that specifies each substrate with the index of each triple being its layer.
 	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
 	 */
-	List<Triple<String, String, Boolean>> getSubstrateConnectivity(HyperNEATTask HNTask) {
+	List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask HNTask) {
 		return HNTask.getSubstrateConnectivity();
 	}
 
@@ -354,24 +353,17 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *
 	 * @return array list containing all the links between substrates
 	 */
-	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<Triple<String, String, Boolean>> connections, List<Substrate> subs, HashMap<String, Integer> sIMap, int layersWidth, int layersHeight) {
+	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<SubstrateConnectivity> connections, List<Substrate> subs, HashMap<String, Integer> sIMap, int layersWidth, int layersHeight) {
 		ArrayList<LinkGene> result = new ArrayList<LinkGene>();
 		for (int i = 0; i < connections.size(); i++) { // For each pair of substrates that are connected
-			assert sIMap != null : "SIMap is null";
-			assert connections != null : "connections is null ";
-			assert connections.get(i) != null : "Null: " + i + " in connections: " + connections;
-			assert connections.get(i).t1 != null : "Null: " + connections.get(i) + " in connections: " + connections;
-			assert sIMap.get(connections.get(i).t1) != null : "Null: " + connections.get(i).t1 + " in connections: " + connections + "\n" + sIMap;
-			int sourceSubstrateIndex = sIMap.get(connections.get(i).t1);
-			assert connections.get(i).t2 != null :"this is null";
-			
-			assert sIMap.get(connections.get(i).t2) != null :"null in " + sIMap + "\nat " + connections.get(i).t2 + "\nat " + i;
-			int targetSubstrateIndex = sIMap.get(connections.get(i).t2);
+			int sourceSubstrateIndex = sIMap.get(connections.get(i).SOURCE_SUBSTRATE_NAME);
+			assert sIMap.get(connections.get(i).TARGET_SUBSTRATE_NAME) != null :"null in " + sIMap + "\nat " + connections.get(i).TARGET_SUBSTRATE_NAME + "\nat " + i;
+			int targetSubstrateIndex = sIMap.get(connections.get(i).TARGET_SUBSTRATE_NAME);
 			Substrate sourceSubstrate = subs.get(sourceSubstrateIndex);
 			Substrate targetSubstrate = subs.get(targetSubstrateIndex);
 
 			// Whether to connect these layers used convolutional structure instead of standard fully connected structure
-			boolean convolution = connections.get(i).t3 && CommonConstants.convolution;
+			boolean convolution = connections.get(i).connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION && CommonConstants.convolution;
 			int outputIndex = CommonConstants.substrateLocationInputs ? 0 : i;
 			// both options add links from between two substrates to whole list of links
 			if(convolution) {
