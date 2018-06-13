@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.networks.hyperneat.FlexibleSubstrateArchitecture;
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.SubstrateArchitectureDefinition;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
 /**
@@ -20,15 +22,20 @@ public class HiddenSkipsHidden implements SubstrateArchitectureDefinition{
 		List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture = new ArrayList<Triple<Integer, Integer, Integer>>();
 		networkHiddenArchitecture.add(new Triple<Integer, Integer, Integer>(1, 10, 20));
 		networkHiddenArchitecture.add(new Triple<Integer, Integer, Integer>(1, 10, 20));
-		return null;
+		return networkHiddenArchitecture;
 	}
 
-	@Override
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity (List<String> inputSubstrateNames, List<String> outputSubstrateNames) {
+	private List<Triple<String, String, Boolean>> getSubstrateConnectivity (List<String> inputSubstrateNames, List<String> outputSubstrateNames) {
 		List<Triple<String, String, Boolean>> substrateConnectivity = FlexibleSubstrateArchitecture.getSubstrateConnectivity(inputSubstrateNames, outputSubstrateNames, getNetworkHiddenArchitecture());
 		for(String out: outputSubstrateNames) {
 			substrateConnectivity.add(new Triple<String, String, Boolean>("process(0,0)", out, false));
 		}
 		return substrateConnectivity;
+	}
+	
+	@Override
+	public List<Triple<String, String,Boolean>> getSubstrateConnectivity(HyperNEATTask task) {
+		Pair<List<String>, List<String>> io = FlexibleSubstrateArchitecture.getInputAndOutputNames(task);
+		return getSubstrateConnectivity(io.t1, io.t2);
 	}
 }

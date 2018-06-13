@@ -20,11 +20,11 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	// Describes the sequence of hidden layers. The input and output layers are still provided by the HyperNEATTask.
 	// List of triples that specifies each substrate with the index of each triple being its layer.
 	// Each triple looks like (width of layer, width of substrate, height of substrate)
-	List<Triple<Integer, Integer, Integer>> hiddenArchitecture;
+	public List<Triple<Integer, Integer, Integer>> hiddenArchitecture;
 	// Describes connectivity between ALL substrates, including the input and output substrates
 	// list of triples that specifies connectivity of network.
 	// Looks like (source substrate, target substrate, capable of convolution)
-	List<Triple<String, String, Boolean>> allSubstrateConnectivity;
+	public List<Triple<String, String, Boolean>> allSubstrateConnectivity;
 
 	/**
 	 * defines a HyperNEATCPPNAndSubstrateArchitectureGenotype from the HyperNEAT task
@@ -64,8 +64,7 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		super();
 		this.hiddenArchitecture = substrateArchitectureDefinition.getNetworkHiddenArchitecture();
 		assert this.hiddenArchitecture != null;
-		Pair<List<String>,List<String>> inputAndOutputNames = FlexibleSubstrateArchitecture.getInputAndOutputNames(HNTask);
-		this.allSubstrateConnectivity = substrateArchitectureDefinition.getSubstrateConnectivity(inputAndOutputNames.t1, inputAndOutputNames.t2);
+		this.allSubstrateConnectivity = substrateArchitectureDefinition.getSubstrateConnectivity(HNTask);
 	}
 	
 	/**
@@ -158,11 +157,20 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		return allSubstrateConnectivity;
 	}
 	
-	public Pair<List<Triple<Integer, Integer, Integer>>, List<Triple<String, String, Boolean>>> cascadeExpansion (
-			int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, boolean capableOfConvolution) {
-		return CascadeNetworks.cascadeExpansion(this.hiddenArchitecture, this.allSubstrateConnectivity, 
+	/**
+	 * Adds a new layer in between the previous last hidden layer and the output layer with given specification
+	 * @param newLayerWidth the width(the number of substrates) of the new layer
+	 * @param newSubstratesWidth the width of each substrate that is added
+	 * @param newsubstratesHeight the height of each substrate that is added
+	 * @param capableOfConvolution if true and convolution:true in batch file then
+	 */
+	public void cascadeExpansion (int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, boolean capableOfConvolution) {
+		Pair<List<Triple<Integer, Integer, Integer>>, List<Triple<String, String, Boolean>>> newDefiniton = 
+				CascadeNetworks.cascadeExpansion(this.hiddenArchitecture, this.allSubstrateConnectivity, 
 				FlexibleSubstrateArchitecture.getInputAndOutputNames((HyperNEATTask) MMNEAT.task).t2,
 				newLayerWidth, newSubstratesWidth, newsubstratesHeight, capableOfConvolution);
+		this.hiddenArchitecture = newDefiniton.t1;
+		this.allSubstrateConnectivity = newDefiniton.t2;
 	}
 
 	/**

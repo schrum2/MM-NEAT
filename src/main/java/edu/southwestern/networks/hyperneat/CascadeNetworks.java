@@ -35,12 +35,16 @@ public class CascadeNetworks {
 			int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, boolean capableOfConvolution) {
 		//create new hidden architecture
 		List<Triple<Integer, Integer, Integer>> newArchitecture = new ArrayList<Triple<Integer, Integer, Integer>>();
-		Collections.copy(newArchitecture, originalHiddenArchitecture);
+		for(Triple<Integer, Integer, Integer> layer : originalHiddenArchitecture) {
+			newArchitecture.add(layer.copy());
+		}
 		newArchitecture.add(new Triple<Integer, Integer, Integer>(newLayerWidth, newSubstratesWidth, newsubstratesHeight));
 		//create new hidden architecture end
 		//create new connectivity
 		List<Triple<String, String, Boolean>> newConnectivity = new ArrayList<Triple<String, String, Boolean>>();
-		Collections.copy(newConnectivity, originalConnectivity);
+		for(Triple<String, String, Boolean> connection: originalConnectivity) {
+			newConnectivity.add(connection.copy());
+		}
 		//connect new layer to last hidden layer
 		int lastHiddenLayerLocation = originalHiddenArchitecture.size() - 1; //y location of last hidden layer and location of last hidden layer in originalHiddenArchitecture
 		for(int i = 0; i < originalHiddenArchitecture.get(lastHiddenLayerLocation).t1; i++) { //originalHiddenArchitecture.get(lastHiddenLayerLocation).t1 = the width of the last hidden layer

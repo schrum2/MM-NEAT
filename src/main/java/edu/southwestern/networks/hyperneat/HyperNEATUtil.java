@@ -718,11 +718,8 @@ public class HyperNEATUtil {
 	 */
 	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, List<String> outputNames) {
 		if(Parameters.parameters.booleanParameter("useHyperNEATCustomArchitecture")) {
-			List<String> inputSubstrateNames = new LinkedList<String>();
-			for(int i = 0; i < numInputSubstrates; i++) {
-				inputSubstrateNames.add("Input(" + i + ")");
-			}
-			return MMNEAT.substrateArchitectureDefinition.getSubstrateConnectivity(inputSubstrateNames, outputNames);
+			// TODO: HyperNEATSeed tasks currently do not support custom architectures
+			return MMNEAT.substrateArchitectureDefinition.getSubstrateConnectivity((HyperNEATTask) MMNEAT.task);
 		} else {
 			int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
 			int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
