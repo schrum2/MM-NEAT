@@ -140,7 +140,7 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		//blocks.add(new AllThreatsPresentBlock());
 		blocks.add(new IsCloseToPowerPill());
 		blocks.add(new TimeLeftBlock());
-		//blocks.add(new EdibleGhostTimeRemainingPOBlock());
+		blocks.add(new EdibleGhostTimeRemainingPOBlock());
 		
 		// High level
 		// blocks.add(new

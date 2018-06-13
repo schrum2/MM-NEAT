@@ -194,6 +194,11 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
             lastPowerPillEatenTime = -1;
             Arrays.fill(ghostEdibleTime, -1);
         }
+		
+		if(game.wasPacManEaten()) {
+            lastPillEatenTime = -1;
+            lastPowerPillEatenTime = -1;
+		}
 		      
         //We need to pass the model of the game to the new gameFacade
 		GameFacade informedGameFacade = new GameFacade(game);
@@ -236,6 +241,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	            if (pillState != null && !pillState) {
 	            	pillModel.update(informedGameFacade.poG.getPacmanCurrentNodeIndex());
 	            	eatenPills.add(informedGameFacade.poG.getPacmanCurrentNodeIndex());
+	            	lastPillEatenTime = informedGameFacade.getCurrentLevelTime();
 	            	informedGameFacade.setTimeOfLastPillEaten(informedGameFacade.getCurrentLevelTime());
 	            }
 	        }
@@ -246,6 +252,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		        if (powerPillState != null && !powerPillState) {
 		        	pillModel.update(informedGameFacade.poG.getPacmanCurrentNodeIndex());
 		        	eatenPowerPills.add(informedGameFacade.poG.getPacmanCurrentNodeIndex());
+		        	lastPowerPillEatenTime = informedGameFacade.getCurrentLevelTime();
 		        	informedGameFacade.setTimeOfLastPowerPillEaten(informedGameFacade.getCurrentLevelTime());
 		        }
 			}

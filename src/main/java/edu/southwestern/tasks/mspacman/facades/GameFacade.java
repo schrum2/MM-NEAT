@@ -3377,19 +3377,19 @@ public class GameFacade {
 	}
 	
 	public int getTimeOfLastPillEaten() {
-		return this.timeOfLastEatenPill;
+		return timeOfLastEatenPill;
 	}
 	
 	public void setTimeOfLastPillEaten(int time) {
-		this.timeOfLastEatenPill = time;
+		timeOfLastEatenPill = time;
 	}
 	
 	public int getTimeOfLastPowerPillEaten() {
-		return this.timeOfLastEatenPowerPill;
+		return timeOfLastEatenPowerPill;
 	}
 	
 	public void setTimeOfLastPowerPillEaten(int time) {
-		this.timeOfLastEatenPill = time;
+		timeOfLastEatenPowerPill = time;
 	}
 	
 	
