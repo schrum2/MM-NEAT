@@ -79,7 +79,7 @@ public class InformationSetMCTSPacMan extends PacmanController implements Drawab
 
             int[] indices = game.getCurrentMaze().pillIndices;
             for (int index : indices) {
-                pillModel.observe(index, true);
+                pillModel.observePill(index, true);
             }
         }
 
@@ -89,7 +89,7 @@ public class InformationSetMCTSPacMan extends PacmanController implements Drawab
             Boolean pillState = game.isPillStillAvailable(pillIndex);
             if (pillState != null && !pillState) {
             	//System.out.println("\tUPDATE for " + pillIndex + " BEFORE " + pillModel.getPills().cardinality());
-                pillModel.observe(pillIndex, false);
+                pillModel.observePill(pillIndex, false);
                 //System.out.println("\tUPDATED: " + pillModel.getPills().cardinality() + "\n");
             }
         }

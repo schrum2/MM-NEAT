@@ -9,7 +9,9 @@ import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDi
 import edu.southwestern.util.datastructures.Pair;
 
 /**
- * handles PO conditions (TODO: test)
+ * In a given direction, find the nearest junction. If it can be safely reached,
+ * then count the junctions reachable from it. In other words, could the number
+ * of safe junctions two steps away.
  * @author Jacob Schrum
  */
 public class VariableDirectionCountJunctionOptionsBlock extends VariableDirectionBlock {

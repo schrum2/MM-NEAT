@@ -14,7 +14,7 @@ public class CountEdibleGhostsBlock extends TargetPortionRemainingBlock {
 
 	@Override
 	/**
-	 * Supports popacman (TODO: test)
+	 * Supports popacman
 	 */
 	public int getTargetMax(GameFacade gf) {
 		return gf.getNumActiveGhosts();

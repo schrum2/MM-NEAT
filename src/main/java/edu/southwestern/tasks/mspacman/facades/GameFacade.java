@@ -1,25 +1,29 @@
 package edu.southwestern.tasks.mspacman.facades;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.stats.StatisticsUtilities;
-import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
-import pacman.game.Game;
 import popacman.prediction.GhostLocation;
 import popacman.prediction.PillModel;
 import popacman.prediction.fast.GhostPredictionsFast;
-
-import java.awt.Color;
-import java.util.*;
-
-import org.apache.commons.lang3.ArrayUtils;
-import org.encog.ml.prg.extension.ParamTemplate;
 
 /**
  *Contains pac man game. Includes harnesses for both
@@ -40,6 +44,8 @@ public class GameFacade {
 	public pacman.game.Game poG = null; // New pacman from Maven
 	public boolean usePillModel = Parameters.parameters.booleanParameter("usePillModel");
 	public boolean useGhostModel = Parameters.parameters.booleanParameter("useGhostModel");
+	public int timeOfLastEatenPill;
+	public int timeOfLastEatenPowerPill;
 
 	/**
 	 * Has a popacman version.
@@ -467,7 +473,7 @@ public class GameFacade {
 		if(oldG == null) {
 			if(usePillModel) {
 				//TODO: test
-				assert pillModel != null : "the information handling in OldToNewPacManIntermediaryController should handle this";
+				//assert pillModel != null : "the information handling in OldToNewPacManIntermediaryController should handle this";
 				return pillModel.getPillsEaten();
 			} else {
 				//Without pillModel, we cannot track this
@@ -717,6 +723,8 @@ public class GameFacade {
 	public int[] getShortestPath(int from, int to) {
 		
 		//PO conditions
+		assert from != -1 && to != -1 : "Why are they -1?";
+		
 		if(from == -1 || to == -1) {
 			return null;
 		}
@@ -1045,10 +1053,28 @@ public class GameFacade {
 	 * @return indices of power pills
 	 */
 	public int[] getActivePowerPillsIndices() {
-		return oldG == null ?
-				//(TODO: understand output), add support for tracking power pills vs regular pills in PillModel
-				poG.getActivePowerPillsIndices():
-				oldG.getActivePowerPillsIndices();
+		if(oldG == null) {
+			if(usePillModel) {
+				assert pillModel != null : "we are using the pill model!";
+				ArrayList<Integer> temp = new ArrayList<Integer>();
+				for(int i = 0; i < pillModel.getPowerPills().length(); i++) {
+					if(pillModel.getPowerPills().get(i)) {
+						temp.add(i);
+					}
+				}
+				
+				int[] result = new int[temp.size()];
+				for(int i = 0; i < temp.size(); i++) {
+					result[i] = temp.get(i);
+				}
+				return result;
+				
+			} else {
+				return poG.getActivePillsIndices();	
+			}	
+		} else {
+			return oldG.getActivePillsIndices();	
+		}
 	}
 
 	/**
@@ -1073,7 +1099,24 @@ public class GameFacade {
 	public int[] getActivePillsIndices() {
 		if(oldG == null) {
 			//Without pill model, we may get an empty array
-			return poG.getActivePillsIndices();	
+			ArrayList<Integer> temp = new ArrayList<Integer>();
+			if(usePillModel) {
+				assert pillModel != null : "we are using the pill model!";
+				for(int i = 0; i < pillModel.getPills().length(); i++) {
+					if(pillModel.getPills().get(i)) {
+						temp.add(i);
+					}
+				}
+				
+				int[] result = new int[temp.size()];
+				for(int i = 0; i < temp.size(); i++) {
+					result[i] = temp.get(i);
+				}
+				return result;
+				
+			} else {
+				return poG.getActivePillsIndices();	
+			}	
 		} else {
 			return oldG.getActivePillsIndices();	
 		}
@@ -3333,41 +3376,20 @@ public class GameFacade {
 		this.ghostPredictions = gp;
 	}
 	
-	
-	//credit to piers on 6/01/18.
-	//See InfromationSetMCTSPacMan
-	public PillModel initPillModel() {
-		pillModel = new PillModel(poG.getNumberOfPills());
-        int[] indices = poG.getCurrentMaze().pillIndices;
-        for (int index : indices) {
-            pillModel.observe(index, true);
-        }
-        
-//        Arrays.sort(indices);
-//        System.out.println(Arrays.toString(indices));
-//        System.out.println(indices.length);
-//        MiscUtil.waitForReadStringAndEnterKeyPress();
-        
-        return pillModel;
+	public int getTimeOfLastPillEaten() {
+		return timeOfLastEatenPill;
 	}
 	
-	//credit to piers on 6/01/18.
-	//See InfromationSetMCTSPacMan
-	public PillModel updatePillModel() {
-		System.out.println("Update pill model: " + pillModel);
-        int pillIndex = poG.getPillIndex(poG.getPacmanCurrentNodeIndex());
-        System.out.println(Arrays.toString(poG.getCurrentMaze().pillIndices));
-        if (pillIndex != -1) {
-            Boolean pillState = poG.isPillStillAvailable(pillIndex);
-        	System.out.println("Pill at: " + pillIndex + " " + pillState);
-            if (pillState != null && !pillState) {
-            	System.out.println("\tUPDATE for " + pillIndex + " BEFORE " + pillModel.getPills().cardinality());
-                pillModel.observe(pillIndex, false);
-                //pillModel.update(pillIndex);
-            	System.out.println("\tUPDATED: " + pillModel.getPills().cardinality());
-            }
-        }
-        return pillModel;
+	public void setTimeOfLastPillEaten(int time) {
+		timeOfLastEatenPill = time;
+	}
+	
+	public int getTimeOfLastPowerPillEaten() {
+		return timeOfLastEatenPowerPill;
+	}
+	
+	public void setTimeOfLastPowerPillEaten(int time) {
+		timeOfLastEatenPowerPill = time;
 	}
 	
 	

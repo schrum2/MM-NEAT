@@ -35,7 +35,6 @@ public class PacManControllerFacade {
 	public void reset() {
 		if(oldP == null) {
 			//TODO
-			System.out.println("TODO: implement reset() in PacManControllerFacade.java, ln 38");
 		} else {
 			oldP.reset();	
 		}

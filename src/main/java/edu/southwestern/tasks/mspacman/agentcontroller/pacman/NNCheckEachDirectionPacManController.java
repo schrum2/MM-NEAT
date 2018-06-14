@@ -40,44 +40,18 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
 	public static int[] totalChosenDirectionJunctionThreatModeUsageCounts = null;
 	// Needed so each direction can have its own recurrent state
 	private final Network[] directionalNetworks;
-	private final int[] usageCounts = new int[GameFacade.NUM_DIRS]; // track
-																	// when each
-																	// network
-																	// is
-																	// actually
-																	// used
-	private final int[][] edibleModeUsageCounts = new int[GameFacade.NUM_DIRS][]; // Mode
-																					// usage
-																					// when
-																					// ghosts
-																					// are
-																					// edible
-	private final int[][] edibleJunctionModeUsageCounts = new int[GameFacade.NUM_DIRS][]; // Mode
-																							// usage
-																							// at
-																							// junctions
-																							// when
-																							// ghosts
-																							// are
-																							// edible
-	private final int[][] threatModeUsageCounts = new int[GameFacade.NUM_DIRS][]; // Mode
-																					// usage
-																					// when
-																					// ghosts
-																					// are
-																					// threats
-	private final int[][] threatJunctionModeUsageCounts = new int[GameFacade.NUM_DIRS][]; // Mode
-																							// usage
-																							// at
-																							// junctions
-																							// when
-																							// ghosts
-																							// are
-																							// threats
-	private final int[][] junctionModeUsageCounts = new int[GameFacade.NUM_DIRS][]; // Mode
-																					// usage
-																					// at
-																					// junctions
+	// track when each network is actually used
+	private final int[] usageCounts = new int[GameFacade.NUM_DIRS]; 
+	// Mode usage when ghosts are edible
+	private final int[][] edibleModeUsageCounts = new int[GameFacade.NUM_DIRS][]; 
+	// Mode usage at junctions when ghosts are edible
+	private final int[][] edibleJunctionModeUsageCounts = new int[GameFacade.NUM_DIRS][]; 
+	// Mode usage when ghosts are threats
+	private final int[][] threatModeUsageCounts = new int[GameFacade.NUM_DIRS][]; 
+	// Mode usage at junctions when ghosts are threats
+	private final int[][] threatJunctionModeUsageCounts = new int[GameFacade.NUM_DIRS][]; 
+	// Mode usage at junctions
+	private final int[][] junctionModeUsageCounts = new int[GameFacade.NUM_DIRS][]; 
 	private final int[] chosenDirectionModeUsageCounts;
 	private final int[] chosenJunctionDirectionModeUsageCounts;
 	private final int[] chosenDirectionEdibleModeUsageCounts;

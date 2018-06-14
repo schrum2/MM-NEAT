@@ -53,14 +53,9 @@ public abstract class NodeCollection {
 		int[] activePills = gs.getActivePillsIndices();
 		int nearestPill = gs.getClosestNodeIndexFromNodeIndex(current, activePills);
 		int farthestPill = gs.getFarthestNodeIndexFromNodeIndex(current, activePills);
-		if(farthestPill == -1) {
-			System.out.println("How should we handle this situation? NodeCollection.addExtraNodes()");
-		}
+		assert nearestPill != -1 : "The pillModel should stop this from happening";
+		assert farthestPill != -1 : "The pillModel should stop this from happening";
 		int[] tempPath = gs.getShortestPath(nearestPill, farthestPill);
-		if(tempPath == null) {
-			System.out.println("How should we handle this situation? NodeCollection.addExtraNodes()");
-			tempPath = new int[] {-1};
-		}
 		assert tempPath != null : "tempPath is null in NodeCollection.addExtraNodes";
 		int[] pillPath = new int[tempPath.length + 1];
 		System.arraycopy(tempPath, 0, pillPath, 0, tempPath.length);

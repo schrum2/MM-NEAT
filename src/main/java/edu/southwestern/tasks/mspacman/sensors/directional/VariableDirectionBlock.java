@@ -4,18 +4,28 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
 
 /**
- * TODO
+ * A sensor block defined with respect to a particular direction. The direction
+ * can be set in each of the available directions and then checks repeatedly to
+ * get different readings for each direction.
  * @author Jacob Schrum
  */
 public abstract class VariableDirectionBlock extends MsPacManSensorBlock {
 
 	public int dir = -1;
 
+	/**
+	 * A fixed direction can be specified, though it is common to change the direction
+	 * before each sensor reading.
+	 * @param dir
+	 */
 	public VariableDirectionBlock(int dir) {
-		// setDirection(dir);
 		this.dir = dir;
 	}
 
+	/**
+	 * Setting the direction immediately before taking a sensor reading
+	 * @param dir
+	 */
 	public final void setDirection(int dir) {
 		assert dir >= 0 && dir <= 3 : "Valid directions are from 0 to 3. " + dir + " is not valid!";
 		this.dir = dir;
@@ -31,8 +41,18 @@ public abstract class VariableDirectionBlock extends MsPacManSensorBlock {
 		return in;
 	}
 
+	/**
+	 * Reading that this sensor gives if the designated direction currently points
+	 * at a wall.
+	 * @return Sensor value associated with a wall
+	 */
 	public abstract double wallValue();
 
+	/**
+	 * Specific sensor reading for the current direction
+	 * @param gf Game state through a facade
+	 * @return Sensor reading when there is no wall
+	 */
 	public abstract double getValue(GameFacade gf);
 
 	public int incorporateLabels(String[] labels, int startPoint) {
@@ -40,8 +60,15 @@ public abstract class VariableDirectionBlock extends MsPacManSensorBlock {
 		return startPoint;
 	}
 
+	/**
+	 * Label of what is being read
+	 * @return 
+	 */
 	public abstract String getLabel();
 
+	/**
+	 * There is always only one sensor for the given direction
+	 */
 	public int numberAdded() {
 		return 1;
 	}

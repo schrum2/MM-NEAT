@@ -8,7 +8,7 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.util.MiscUtil;
 
 /**
- * should support popacman (TODO: test)
+ * Supports PO pacman
  * @author Jacob Schrum
  */
 public class PowerPillsRemainingBlock extends TargetPortionRemainingBlock {

@@ -1,6 +1,8 @@
 package edu.southwestern.tasks.mspacman.sensors.mediators.po;
 
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.EdibleGhostTimeRemainingPOBlock;
 import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.TimeLeftBlock;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
 import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.AllThreatsPresentBlock;
@@ -75,16 +77,16 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 				
 				//READD
 				if (incoming) {
-					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i));
+					//blocks.add(new VariableDirectionSortedGhostIncomingBlock(i));
 				}
 				if (Parameters.parameters.booleanParameter("trapped")) {
-					blocks.add(new VariableDirectionSortedGhostTrappedBlock(i));
+					//blocks.add(new VariableDirectionSortedGhostTrappedBlock(i));
 				}
 				if (Parameters.parameters.booleanParameter("eTimeVsGDis")) {
-					blocks.add(new VariableDirectionSortedGhostEdibleTimeVsDistanceBlock(i));
+					//blocks.add(new VariableDirectionSortedGhostEdibleTimeVsDistanceBlock(i));
 				}
 				if (!imprisonedWhileEdible) {
-					blocks.add(new VariableDirectionSortedGhostEdibleBlock(i));
+					//blocks.add(new VariableDirectionSortedGhostEdibleBlock(i));
 				}
 			}
 		}
@@ -95,29 +97,28 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		if (split) {
 			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
 				// Threat prox
-				blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, false, false));
+				//blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, false, false));
 				// Edible prox
-				blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, true, false));
+				//blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, true, false));
 				if (incoming) {
 					// Threat incoming
-					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, false, false));
+					//blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, false, false));
 					// Edible incoming
-					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, true, false));
+					//blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, true, false));
 				}
 				if (Parameters.parameters.booleanParameter("trapped")) {
 					// Threat trapped
-					blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, false, false));
+					//blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, false, false));
 					// Edible trapped
-					blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, true, false));
+					//blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, true, false));
 				}
 			}
 		}
 		
 	
-//		// Look ahead
-//		//TODO: implement pill model
+		// Look ahead
 		blocks.add(new VariableDirectionKStepPillCountBlock(direction));
-//		//Works with PO, this information is always available
+		//Works with PO, this information is always available
 		blocks.add(new VariableDirectionKStepJunctionCountBlock(direction));
 
 
@@ -135,9 +136,10 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 
 		// Other
 		blocks.add(new AnyEdibleGhostBlock());
-		blocks.add(new AllThreatsPresentBlock());
+		//blocks.add(new AllThreatsPresentBlock());
 		blocks.add(new IsCloseToPowerPill());
-		
+		blocks.add(new TimeLeftBlock());
+		blocks.add(new EdibleGhostTimeRemainingPOBlock());
 		
 		// High level
 		// blocks.add(new
