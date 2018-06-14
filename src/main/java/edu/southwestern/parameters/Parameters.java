@@ -811,9 +811,9 @@ public class Parameters {
 		stringOptions.add("seedArchetype3", "", "Archetype for seed sub-population 3");
 		stringOptions.add("seedArchetype4", "", "Archetype for seed sub-population 4");
 		stringOptions.add("seedGenotype", "", "Path to xml file with seed genotype for population");
-		stringOptions.add("utDrive", "D", "Drive where UT2004 resides");
+		stringOptions.add("utDrive", "C", "Drive where UT2004 resides");
 		stringOptions.add("utMap", "DM-TrainingDay", "Map to play in Unreal Tournament 2004");
-		stringOptions.add("utPath", "ut\\game", "Path (excluding drive) to root dir of Unreal Tournament 2004 installation");
+		stringOptions.add("utPath", "SCOPE2018\\UT2004", "Path (excluding drive) to root dir of Unreal Tournament 2004 installation");
 		stringOptions.add("utGameType", "BotDeathMatch", "sets the game type for the server");
 		// Class options
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");

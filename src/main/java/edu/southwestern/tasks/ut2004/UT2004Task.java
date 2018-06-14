@@ -134,18 +134,18 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	/**
 	 * Evaluate multiple genotypes and return evaluation information on each of them.
 	 * 
-	 * @param individuals Genotypes that can fill NetworkControllers
-	 * @param num Evaluation number
-	 * @param map UT2004 map
-	 * @param sensorModel Sensor model used by evolved bots
-	 * @param outputModel Output model used by evolved bots
-	 * @param weaponManager How evolved bot selects its weapons
-	 * @param opponents Hard-coded opponent bot controllers
-	 * @param nativeBotSkills Skill levels of each native bot in match
-	 * @param evalMinutes Number of minutes to evaluate for
-	 * @param desiredSkill Skill setting for evolved bots
-	 * @param fitness List of fitness scores used to evaluate agents
-	 * @param others List of other scores tracked from evaluation
+	 * @param individuals (Genotypes that can fill NetworkControllers)
+	 * @param num (Evaluation number)
+	 * @param map (UT2004 map)
+	 * @param sensorModel (Sensor model used by evolved bots)
+	 * @param outputModel (Output model used by evolved bots
+	 * @param weaponManager (How evolved bot selects its weapons)
+	 * @param opponents (Hard-coded opponent bot controllers)
+	 * @param nativeBotSkills (Skill levels of each native bot in match)
+	 * @param evalMinutes (Number of minutes to evaluate for)
+	 * @param desiredSkill (Skill setting for evolved bots)
+	 * @param fitness (List of fitness scores used to evaluate agents)
+	 * @param others (List of other scores tracked from evaluation)
 	 * @return Array of paired fitness and other scores for the evolved agents
 	 */
 	@SuppressWarnings("unchecked")
@@ -165,7 +165,8 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		MyUCCWrapper ucc = null;
 		Pair<double[], double[]>[] result = new Pair[individuals.length + opponents.length];
 		int attempts = 1; //tracks the number of attempts to launch the server
-		while (ArrayUtil.anyNull(result)) { // Loop as long as there are problems with the results
+		while (ArrayUtil.anyNull(result) || // Loop as long as there are problems with the results
+			   individuals.length == 0) { // Special case to run the server when no genotypes are being evolved
 			System.out.println("Eval attempt " + (attempts++));
 			try {
 				ucc = new MyUCCWrapper(config);
