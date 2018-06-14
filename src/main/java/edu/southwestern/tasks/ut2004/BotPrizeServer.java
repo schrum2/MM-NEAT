@@ -10,7 +10,7 @@ import edu.southwestern.tasks.ut2004.fitness.UT2004FitnessFunction;
 
 public class BotPrizeServer {
 	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false"});
+		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:2", "numMirrorBots:2", "botprizeMod:true"});
 		
 		@SuppressWarnings("unchecked")
 		Genotype<TWEANN>[] individuals = new Genotype[0];
