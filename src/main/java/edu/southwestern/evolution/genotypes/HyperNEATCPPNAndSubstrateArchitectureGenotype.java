@@ -17,6 +17,9 @@ import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
+/**
+ * @author Devon Fulcher
+ */
 public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPNGenotype {
 	// Describes the sequence of hidden layers. The input and output layers are still provided by the HyperNEATTask.
 	// List of triples that specifies each substrate with the index of each triple being its layer.
@@ -99,6 +102,16 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		this.allSubstrateConnectivity = allSubstrateConnectivity;
 		this.hiddenArchitecture = hiddenArchitecture;
 	}
+	
+	/**
+	 * @param hngt the HyperNEAT CPPN genotype
+	 */
+	public HyperNEATCPPNAndSubstrateArchitectureGenotype(HyperNEATCPPNGenotype hngt) {
+		super(hngt.numIn, hngt.numOut, hngt.archetypeIndex);
+		HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
+		this.hiddenArchitecture = FlexibleSubstrateArchitecture.getHiddenArchitecture(task);
+		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getAllSubstrateConnectivity(task);
+	}
 
 	/**
 	 * @param HNTask the HyperNEATTask
@@ -155,6 +168,7 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	public List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask HNTask) {
 		return allSubstrateConnectivity;
 	}
+	
 	
 	/**
 	 * Adds a new layer in between the previous last hidden layer and the output layer with given specification
