@@ -125,7 +125,7 @@ public class CombinatoricUtilities {
 		case 6:
 			return new float[] { 1, 1, 1 };
 		default:
-			throw new IllegalArgumentException("mapTuple only takes values from 0 to 6 inclusive");
+			throw new IllegalArgumentException("mapTuple only takes values from 0 to 6 inclusive:" + x);
 		}
 	}
 

@@ -2,6 +2,7 @@ package edu.southwestern.tasks.mspacman;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,6 +58,7 @@ import edu.southwestern.tasks.mspacman.objectives.SurvivalAndSpeedTimeScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeFramesGhostScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeFramesPillScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeToEatAllGhostsScore;
+import edu.southwestern.tasks.popacman.controllers.OldToNewPacManIntermediaryController;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -65,11 +67,15 @@ import edu.southwestern.util.stats.Average;
 import edu.southwestern.util.stats.Max;
 import edu.southwestern.util.stats.Mode;
 import edu.southwestern.util.stats.Statistic;
-import pacman.Executor;
-import pacman.controllers.NewGhostController;
-import pacman.controllers.NewPacManController;
-import pacman.game.Constants;
-import pacman.game.Game;
+import oldpacman.Executor;
+import oldpacman.controllers.NewGhostController;
+import oldpacman.controllers.NewPacManController;
+import oldpacman.game.Constants;
+import oldpacman.game.Game;
+import pacman.controllers.IndividualGhostController;
+import pacman.controllers.MASController;
+import popacman.CustomExecutor;
+
 
 /**
  * Ms. Pac-Man vs. four ghosts across four mazes.
@@ -159,7 +165,9 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	 */
 	public MsPacManTask(boolean det) {
 		super();//constructor for noisy loner task
-		exec = new ExecutorFacade(new Executor());
+		exec = Parameters.parameters.booleanParameter("partiallyObservablePacman") ?
+				new ExecutorFacade(new CustomExecutor.Builder().build()) :
+				new ExecutorFacade(new Executor());
 		this.deterministic = det;//if game is deterministic
 		tcManager = new TrainingCampManager();
 
@@ -185,6 +193,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		boolean avgGhostsPerPowerPill = Parameters.parameters.booleanParameter("avgGhostsPerPowerPill");
 		boolean punishDeadSpace = Parameters.parameters.booleanParameter("punishDeadSpace");
 		boolean randomSelection = Parameters.parameters.booleanParameter("randomSelection");
+		boolean partiallyObservablePacman = Parameters.parameters.booleanParameter("partiallyObservablePacman");
 
 		objectives = new ArrayList<MsPacManObjective<T>>(17);//why 17? TODO
 		otherScores = new ArrayList<MsPacManObjective<T>>(17);//why 17? TODO
@@ -202,7 +211,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			if (!noPowerPills && CommonConstants.numActiveGhosts > 0) {//power pills still present and ghosts still active
 				if (!Parameters.parameters.booleanParameter("ignoreGhostScores")) {//"No fitness from edible ghosts in Ms Pac-Man, even though there are present"
 					usedGhostScoreIndex = objectives.size();//keeps track of ghost scores since not used by agent TODO
-					if (avgGhostsPerPowerPill) {//command line parameter, "Ghost score used is the average eaten per power pill eaten"
+					if (avgGhostsPerPowerPill && !partiallyObservablePacman) {//command line parameter, "Ghost score used is the average eaten per power pill eaten"
 						addObjective(new GhostsPerPowerPillScore<T>(true), objectives, true);
 					} else if (rewardFasterGhostEating) {//command line parameter, "Ghost reward fitness gives higher fitness to eating ghosts quickly after power pills"
 						addObjective(new FastGhostEatingScore<T>(), objectives, true);
@@ -212,7 +221,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 						addObjective(new GhostRewardScore<T>(), objectives, true);
 					}
 					//command line parameter, "Include negative fitness for ghosts that pacman fails to eat"
-					if (Parameters.parameters.booleanParameter("ghostRegretFitness")) {
+					if (Parameters.parameters.booleanParameter("ghostRegretFitness") && !partiallyObservablePacman) {
 						addObjective(new GhostRegretScore<T>(), objectives, true);
 					}//command line parameter, "Fitness based on time to eat all ghosts after power pill"
 					if (Parameters.parameters.booleanParameter("timeToEatAllFitness")) {
@@ -266,16 +275,22 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		addObjective(new GameScore<T>(), otherScores, new Max(), false);
 		// Pill Score
 		pillScoreIndexInOtherScores = otherScores.size();
-		addObjective(new PillScore<T>(), otherScores, new Average(), false);
 		maxPillScoreIndexInOtherScores = otherScores.size();
-		addObjective(new PillScore<T>(), otherScores, new Max(), false);
 		// Ghost Reward
-		addObjective(new GhostsPerPowerPillScore<T>(true), otherScores, new Average(), false);
-		addObjective(new GhostsPerPowerPillScore<T>(false), otherScores, new Average(), false);
+		if(!partiallyObservablePacman) {
+			addObjective(new GhostsPerPowerPillScore<T>(true), otherScores, new Average(), false);
+			addObjective(new GhostsPerPowerPillScore<T>(false), otherScores, new Average(), false);
+			addObjective(new PillScore<T>(), otherScores, new Average(), false);
+			addObjective(new PillScore<T>(), otherScores, new Max(), false);
+		}
 		ghostRewardIndexInOtherScores = otherScores.size();
-		addObjective(new GhostRewardScore<T>(), otherScores, new Average(), false);
+		if(!partiallyObservablePacman) {
+			addObjective(new GhostRewardScore<T>(), otherScores, new Average(), false);	
+		}
 		maxGhostRewardIndexInOtherScores = otherScores.size();
-		addObjective(new GhostRewardScore<T>(), otherScores, new Max(), false);
+		if(!partiallyObservablePacman) {
+			addObjective(new GhostRewardScore<T>(), otherScores, new Max(), false);
+		}
 		// Level Scores
 		avgLevelIndexInOtherScores = otherScores.size();
 		addObjective(new LevelScore<T>(), otherScores, new Average(), false);
@@ -288,18 +303,27 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		addObjective(new EatenGhostScore<T>(), otherScores, new Max(), false);
 		// Missed Ghosts
 		ghostRegretScoreInOtherScores = otherScores.size();
-		addObjective(new GhostRegretScore<T>(), otherScores, new Average(), false);
+		if(!partiallyObservablePacman) {
+			addObjective(new GhostRegretScore<T>(), otherScores, new Average(), false);
+		}
 		// Luring
 		luringScoreIndexInOtherScores = otherScores.size();
-		addObjective(new LuringScore<T>(), otherScores, false);
+		if(!partiallyObservablePacman) {
+			addObjective(new LuringScore<T>(), otherScores, false);
+		}
 		// How/When Power Pills Are Eaten
 		properPowerPillIndexInOtherScores = otherScores.size();
-		addObjective(new ProperlyEatenPowerPillScore<T>(), otherScores, false);
+		if(!partiallyObservablePacman) {
+			addObjective(new ProperlyEatenPowerPillScore<T>(), otherScores, false);
+		}
 		improperPowerPillIndexInOtherScores = otherScores.size();
-		addObjective(new ImproperlyEatenPowerPillScore<T>(), otherScores, false);
+		if(!partiallyObservablePacman) {	
+			addObjective(new ImproperlyEatenPowerPillScore<T>(), otherScores, false);
+		}
 		powerPillEatenWhenGhostFarIndexInOtherScores = otherScores.size();
-		addObjective(new PowerPillEatenWhenGhostFarScore<T>(), otherScores, false);
-
+		if(!partiallyObservablePacman) {
+			addObjective(new PowerPillEatenWhenGhostFarScore<T>(), otherScores, false);
+		}
 		addObjective(new SurvivalAndSpeedTimeScore<T>(), otherScores, new Average(), false);
 		addObjective(new SurvivalAndSpeedTimeScore<T>(), otherScores, new Max(), false);
 
@@ -421,7 +445,31 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	public void loadGhosts() {
 		if (ghosts == null) {
 			try {
-				this.ghosts = new GhostControllerFacade((NewGhostController) ClassCreation.createObject("ghostTeam"));
+				
+				//TODO: generalize this by allowing the GhostTeam to be specified as a class parameter
+				if(Parameters.parameters.booleanParameter("partiallyObservablePacman")) {
+
+					//create individual ghost controllers
+					popacman.examples.StarterGhost.POGhost blinky = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.BLINKY);
+					popacman.examples.StarterGhost.POGhost pinky = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.PINKY);
+					popacman.examples.StarterGhost.POGhost inky = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.INKY);
+					popacman.examples.StarterGhost.POGhost sue = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.SUE);	
+					
+					//create an EnumMap of ghosts to controllers
+					EnumMap<pacman.game.Constants.GHOST, IndividualGhostController> map = new EnumMap<pacman.game.Constants.GHOST, IndividualGhostController>(pacman.game.Constants.GHOST.class);
+					
+					//put controllers in map
+					map.put(pacman.game.Constants.GHOST.BLINKY, blinky);
+					map.put(pacman.game.Constants.GHOST.PINKY, pinky);
+					map.put(pacman.game.Constants.GHOST.INKY, inky);
+					map.put(pacman.game.Constants.GHOST.SUE, sue);
+					
+					//create GhostControllerFacade
+					this.ghosts = new GhostControllerFacade(new MASController(map));
+				} else {
+					this.ghosts = new GhostControllerFacade((NewGhostController) ClassCreation.createObject("ghostTeam"));
+				}
+				
 			} catch (NoSuchMethodException ex) {
 				ex.printStackTrace();
 				System.exit(1);
@@ -440,7 +488,16 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	public void loadPacMan() {
 		if (mspacman == null) {
 			try {
-				this.mspacman = new PacManControllerFacade((NewPacManController) ClassCreation.createObject("staticPacMan"));
+				//an oldpacman controller
+				NewPacManController controller = (NewPacManController) ClassCreation.createObject("staticPacMan");
+				
+				//if partially observable
+				this.mspacman = Parameters.parameters.booleanParameter("partiallyObservablePacman") ?
+						//convert controller from oldpacman to popacman via OldToNewPacManInterMediaryController
+						new PacManControllerFacade(new OldToNewPacManIntermediaryController(controller)) :
+						//else use the oldpacman controller
+						new PacManControllerFacade(controller);
+			
 			} catch (NoSuchMethodException ex) {
 				ex.printStackTrace();
 				System.exit(1);
@@ -475,16 +532,23 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			loadPacMan();
 			ghosts = new GhostControllerFacade((NewGhostController) ((SharedNNGhosts<T>) organism).controller);
 		} else {
-			mspacman = new PacManControllerFacade((NewPacManController) ((NNMsPacMan<T>) organism).controller);
+			mspacman = Parameters.parameters.booleanParameter("partiallyObservablePacman") ?
+					//convert the controls from oldpacman controls to popacman controls
+					new PacManControllerFacade(new OldToNewPacManIntermediaryController((NewPacManController) ((NNMsPacMan<T>) organism).controller)):
+					//use oldpacman controller, don't convert to popacman
+					new PacManControllerFacade((NewPacManController) ((NNMsPacMan<T>) organism).controller);
 		}
 
+		
+		
 		// Side-effects to "game"
 		agentEval(mspacman, num);
-		if (mspacman.newP instanceof MultinetworkMsPacManController && individual instanceof NetworkGenotype) {
+		
+		if (mspacman.oldP instanceof MultinetworkMsPacManController && individual instanceof NetworkGenotype) {
 			// Track subnet selections as if they were modes
-			((NetworkGenotype<T>) individual).setModuleUsage(((MultinetworkMsPacManController) mspacman.newP).fullUsage);
+			((NetworkGenotype<T>) individual).setModuleUsage(((MultinetworkMsPacManController) mspacman.oldP).fullUsage);
 		}
-
+		
 		double[] fitnesses = new double[this.numObjectives()];
 		double[] scores = new double[this.numOtherScores()];
 		// When evolving ghosts, all fitness scores are flipped to negative,
@@ -504,19 +568,25 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			loadGhosts();
 		}
 		tcManager.preEval();
-		game = new GameFacade(new Game(deterministic ? num : RandomNumbers.randomGenerator.nextLong()));
-		game.setExitLairEdible(exitLairEdible);
-		game.setEndOnlyOnTimeLimit(endOnlyOnTimeLimit);
-		game.setRandomLairExit(randomLairExit);
-		game.setLairExitDatabase(lairExitDatabase);
-		game.setSimultaneousLairExit(simultaneousLairExit);
-		game.setGhostsStartOutsideLair(ghostsStartOutsideLair);
-		game.setOnlyOneLairExitAllowed(onlyOneLairExitAllowed);
-		game.setEndAfterGhostEatingChances(endAfterGhostEatingChances);
-		game.setRemovePillsNearPowerPills(removePillsNearPowerPills);
-		game.playWithoutPills(noPills);
-		game.playWithoutPowerPills(noPowerPills);
-		game.setEndAfterPowerPillsEaten(luringTask);
+		game = Parameters.parameters.booleanParameter("partiallyObservablePacman") ? 
+				new GameFacade(new pacman.game.Game(deterministic ? num : RandomNumbers.randomGenerator.nextLong())) : 
+				new GameFacade(new Game(deterministic ? num : RandomNumbers.randomGenerator.nextLong()));
+
+		// Collection of options that are not currently possible to set in PO PacMan
+		if(!Parameters.parameters.booleanParameter("partiallyObservablePacman")) {
+			game.setExitLairEdible(exitLairEdible);
+			game.setEndOnlyOnTimeLimit(endOnlyOnTimeLimit);
+			game.setRandomLairExit(randomLairExit);
+			game.setLairExitDatabase(lairExitDatabase);
+			game.setSimultaneousLairExit(simultaneousLairExit);
+			game.setGhostsStartOutsideLair(ghostsStartOutsideLair);
+			game.setOnlyOneLairExitAllowed(onlyOneLairExitAllowed);
+			game.setEndAfterGhostEatingChances(endAfterGhostEatingChances);
+			game.setRemovePillsNearPowerPills(removePillsNearPowerPills);
+			game.playWithoutPills(noPills);
+			game.playWithoutPowerPills(noPowerPills);
+			game.setEndAfterPowerPillsEaten(luringTask);
+		}
 		int campNum = tcManager.campSetup(game, num);
 		int startingLevel = game.getCurrentLevel();
 		mspacman.reset();

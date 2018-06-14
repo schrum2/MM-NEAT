@@ -1,0 +1,3 @@
+cd ..
+cd ..
+java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:%1 randomSeed:%1 base:tetris trials:3 maxGens:500 mu:50 io:true netio:true mating:true task:edu.southwestern.tasks.rlglue.tetris.TetrisTask rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.ExtendedBertsekasTsitsiklisTetrisExtractor tetrisTimeSteps:true tetrisBlocksOnScreen:false rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent splitRawTetrisInputs:true senseHolesDifferently:true log:Tetris-StandardNEATSZ saveTo:StandardNEATSZ steps:500000 tetrisAllowLine:false tetrisAllowSquare:false tetrisAllowTri:false tetrisAllowLShape:false tetrisAllowJShape:false

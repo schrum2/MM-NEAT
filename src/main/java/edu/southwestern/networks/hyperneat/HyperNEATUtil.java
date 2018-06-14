@@ -10,11 +10,13 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.FullLinkGene;
 import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.TWEANN.Node;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.CombinatoricUtilities;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.graphics.DrawingPanel;
@@ -93,7 +95,7 @@ public class HyperNEATUtil {
 		public void setColor(Color c) {
 			this.c = c;
 		}
-		
+
 		/**
 		 * Compares this VisualNode to a specified other VisualNode
 		 * and returns an Integer value that describes the relationship between
@@ -170,7 +172,7 @@ public class HyperNEATUtil {
 			}
 		}
 	}
-	
+
 	/**
 	 * Resets the Substrates of the HyperNEAT
 	 */
@@ -295,14 +297,14 @@ public class HyperNEATUtil {
 				activations.get(currentIndex).setColor(Color.MAGENTA);
 				currentIndex--;
 			}
-//			activations.get(currentIndex).setColor(Color.MAGENTA);
+			//			activations.get(currentIndex).setColor(Color.MAGENTA);
 		}  
 
 		for(VisualNode vn : activations) {
 			vn.drawNode(p);
 		}
 	}
-	
+
 	/**
 	 * Converts defined MMNEAT task into a HyperNEATTask and returns it
 	 * 
@@ -320,6 +322,8 @@ public class HyperNEATUtil {
 	 * @return color of value
 	 */
 	public static Color regularVisualization(double activation) { 
+		// Temporary debugging: Fiddle with activation range to allow visualization outside range [-1,1]
+		// activation /= 10;
 		activation = Math.max(-1, Math.min(activation, 1.0));// For unusual activation functions that go outside of the [-1,1] range
 		return new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
 	}
@@ -331,7 +335,7 @@ public class HyperNEATUtil {
 	 * @param hnt hyperNEAT task
 	 * @return the weight panels
 	 */
-	public static List<DrawingPanel> drawWeight(TWEANNGenotype genotype, HyperNEATTask hnt) {
+	public static List<DrawingPanel> drawWeight(TWEANNGenotype genotype, HyperNEATTask hnt, int numCPPNModules) {
 		//gets all relevant information needed to draw link weights
 		tg = (TWEANNGenotype)genotype.copy();
 		connections = hnt.getSubstrateConnectivity();
@@ -361,7 +365,10 @@ public class HyperNEATUtil {
 			int s1StartingIndex = getSubstrateNodeStartingIndex(s1);
 			int s2StartingIndex = getSubstrateNodeStartingIndex(s2);
 			//actually creates panel with weights
-			weightPanels.add(drawWeight(s1, s2, s1StartingIndex, s2StartingIndex));
+			weightPanels.add(drawWeight(s1, s2, s1StartingIndex, s2StartingIndex, false));
+			if(numCPPNModules > 1) {
+				weightPanels.add(drawWeight(s1, s2, s1StartingIndex, s2StartingIndex, true));
+			}
 			//sets locations of panels so they're not right on top of one another
 			weightPanels.get(i).setLocation(weightPanelsWidth, weightPanelsHeight);
 			weightPanelsWidth += weightPanels.get(i).getFrame().getWidth() + LINK_WINDOW_SPACING;
@@ -407,7 +414,7 @@ public class HyperNEATUtil {
 	 * @param s2Index starting index of nodes in s2
 	 * @return drawingPanel with drawn weights
 	 */
-	static DrawingPanel drawWeight(Substrate s1, Substrate s2, int s1Index, int s2Index) {
+	static DrawingPanel drawWeight(Substrate s1, Substrate s2, int s1Index, int s2Index, boolean showMultipleModules) {
 		//create new panel here
 		int xCoord = 0;
 		int yCoord = 0;
@@ -417,12 +424,12 @@ public class HyperNEATUtil {
 		int panelHeight  = s2.getSize().t2 * nodeVisHeight  + s2.getSize().t2 - 1;
 
 		//instantiates panel
-		DrawingPanel wPanel = new DrawingPanel(panelWidth, panelHeight, s1.getName() + "->" + s2.getName());
+		DrawingPanel wPanel = new DrawingPanel(panelWidth, panelHeight, (showMultipleModules ? "M" : "W") + ":" + s1.getName() + "->" + s2.getName());
 		wPanel.getGraphics().setBackground(Color.white);
 		//for every node in s1, draws all links from it to s2
 		for(int i = s2Index; i < (s2Index + (s2.getSize().t1 * s2.getSize().t2)); i++) {//goes through every node in target substrate
 			//drawBorder(wPanel, xCoord, yCoord, nodeVisWidth + 2, nodeVisHeight + 2);
-			drawNodeWeight(wPanel, nodes.get(i), xCoord , yCoord , s1Index, s1Index + (s1.getSize().t1 * s1.getSize().t2), nodeVisWidth, nodeVisHeight);
+			drawNodeWeight(wPanel, nodes.get(i), xCoord , yCoord , s1Index, s1Index + (s1.getSize().t1 * s1.getSize().t2), nodeVisWidth, nodeVisHeight, showMultipleModules);
 			xCoord += nodeVisWidth + 1;
 			if(xCoord >= panelWidth) {
 				xCoord = 0;
@@ -445,16 +452,20 @@ public class HyperNEATUtil {
 	 * @param endingNodeIndex ending index of first node in second substrate
 	 * @param nodeWidth width of node 1
 	 * @param nodeHeight height of node 1
+	 * @param if true visualization will show module source. if false visualization will show default
 	 */
-	private  static void  drawNodeWeight(DrawingPanel dPanel, TWEANNGenotype.NodeGene targetNode, int xCoord, int yCoord, int startingNodeIndex, int endingNodeIndex, int nodeWidth, int nodeHeight) {
+	private  static void  drawNodeWeight(DrawingPanel dPanel, TWEANNGenotype.NodeGene targetNode, int xCoord, int yCoord, int startingNodeIndex, int endingNodeIndex, int nodeWidth, int nodeHeight, boolean showModuleSource) {
 		int xLeftEdge = xCoord;
 		for(int j = startingNodeIndex; j < endingNodeIndex; j++) {//goes through every node in second substrate
 			Color c = Color.gray;
 			TWEANNGenotype.NodeGene node = nodes.get(j);
-			TWEANNGenotype.LinkGene link = tg.getLinkBetween(node.innovation, targetNode.innovation);
+			TWEANNGenotype.FullLinkGene link = (FullLinkGene) tg.getLinkBetween(node.innovation, targetNode.innovation);
 			if(link != null) {
-				double weight = link.weight;
-				c = regularVisualization(ActivationFunctions.activation(ActivationFunctions.FTYPE_TANH, weight));
+				if(showModuleSource) {
+					c = CombinatoricUtilities.colorFromInt(link.getModuleSource());
+				} else {					
+					c = regularVisualization(ActivationFunctions.activation(ActivationFunctions.FTYPE_TANH, link.weight));
+				}
 			}
 			dPanel.getGraphics().setColor(c);
 			dPanel.getGraphics().fillRect(xCoord, yCoord, WEIGHT_GRID_SIZE, WEIGHT_GRID_SIZE);
@@ -469,7 +480,7 @@ public class HyperNEATUtil {
 	public static int numBiasOutputsNeeded() {
 		return numBiasOutputsNeeded(getHyperNEATTask());
 	}
-	
+
 	/**
 	 * If HyperNEAT neuron bias values are evolved, then this method determines
 	 * how many CPPN outputs are needed to specify them: 1 per non-input substrate layer.
@@ -481,7 +492,7 @@ public class HyperNEATUtil {
 		// biases on difference substrates can be different based on the
 		// inputs rather than having separate outputs for each substrate.
 		if(CommonConstants.substrateBiasLocationInputs) return 1;
-		
+
 		List<Substrate> subs = hnt.getSubstrateInformation();
 		int count = 0;
 		for(Substrate s : subs) {
@@ -489,7 +500,7 @@ public class HyperNEATUtil {
 		}
 		return count;
 	}
-	
+
 	/**
 	 * If bias outputs are used in CPPN, they will appear after all others.
 	 * There should be one output group per layer pairing, so the number of
@@ -515,30 +526,30 @@ public class HyperNEATUtil {
 	 * @return Total possible links
 	 */
 	public static int totalPossibleLinks(HyperNEATTask hnt) {
-		
-		assert !CommonConstants.convolution : "The totalPossibleLinks method should not be used in conjunction with convolutional networks yet";
-		
-		// extract substrate information from domain
-		List<Substrate> subs = hnt.getSubstrateInformation();
-		List<Triple<String, String, Boolean>> connections = hnt.getSubstrateConnectivity();
-		// Will map substrate names to index in subs List
-		HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
-		for (int i = 0; i < subs.size(); i++) {
-			substrateIndexMapping.put(subs.get(i).getName(), i);
-		}
 
-		int count = 0;
-		for(int i = 0; i < connections.size(); i++) {
-			String source = connections.get(i).t1;
-			String target = connections.get(i).t2;
-			Substrate subSource = subs.get(substrateIndexMapping.get(source));
-			Substrate subTarget = subs.get(substrateIndexMapping.get(target));
-			count += subSource.getSize().t1 * subSource.getSize().t2 * subTarget.getSize().t1 * subTarget.getSize().t2; 
-		}
-		
-		return count;
+		assert !CommonConstants.convolution : "The totalPossibleLinks method should not be used in conjunction with convolutional networks yet";
+
+	// extract substrate information from domain
+	List<Substrate> subs = hnt.getSubstrateInformation();
+	List<Triple<String, String, Boolean>> connections = hnt.getSubstrateConnectivity();
+	// Will map substrate names to index in subs List
+	HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
+	for (int i = 0; i < subs.size(); i++) {
+		substrateIndexMapping.put(subs.get(i).getName(), i);
 	}
-	
+
+	int count = 0;
+	for(int i = 0; i < connections.size(); i++) {
+		String source = connections.get(i).t1;
+		String target = connections.get(i).t2;
+		Substrate subSource = subs.get(substrateIndexMapping.get(source));
+		Substrate subTarget = subs.get(substrateIndexMapping.get(target));
+		count += subSource.getSize().t1 * subSource.getSize().t2 * subTarget.getSize().t1 * subTarget.getSize().t2; 
+	}
+
+	return count;
+	}
+
 	/**
 	 * Generalizes the retrieval of Substrate Information
 	 * 
@@ -550,36 +561,15 @@ public class HyperNEATUtil {
 	 * @return Substrate Information
 	 */	
 	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, List<Triple<String, Integer, Integer>> output){
-		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
-		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
-		return getSubstrateInformation(inputWidth, inputHeight, numInputSubstrates, processWidth, processDepth, output);
-	}
-	
-	/**
-	 * Generalizes the retrieval of Substrate Information
-	 * 
-	 * @param inputWidth Width of each Input and Processing Board
-	 * @param inputHeight Height of each Input and Processing Board
-	 * @param numInputSubstrates Number of Input Boards
-	 * @param processWidth Number of Processing Boards per Processing Layer
-	 * @param processDepth Number of Processing Layers
-	 * @param output List<Triple<String, Integer, Integer>> that defines the name of the substrates, followed by their sizes
-	 * 
-	 * @return Substrate Information
-	 */
-	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, int processWidth, int processDepth, List<Triple<String, Integer, Integer>> output) {		
+
+
 		List<Substrate> substrateInformation = new LinkedList<Substrate>();
 
-		// Convolutional network layer sizes depend on the size of the preceding layer,
-		// along with the receptive field size, unless zero-padding is used
-		boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
-		int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
-		assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
-		int edgeOffset = zeroPadding ? 0 : receptiveFieldSize / 2;
-		
+		// Figure out input substrates
+
 		// Different extractors correspond to different substrate configurations
 		Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(inputWidth, inputHeight);
-				
+
 		for(int i = 0; i < numInputSubstrates; i++){
 			Substrate inputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, 
 					new Triple<Integer, Integer, Integer>(i, 0, 0), // i is the x-coordinate: all are at the bottom level: y = 0, z = 0 
@@ -592,31 +582,130 @@ public class HyperNEATUtil {
 					"bias");
 			substrateInformation.add(biasSub);
 		}				
+
+		// End input substrates
+
+
+		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
+		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
+
+		List<Substrate> hiddenSubstrateInformation = Parameters.parameters.booleanParameter("useHyperNEATCustomArchitecture") ?
+				getHiddenSubstrateInformation(MMNEAT.substrateArchitectureDefinition.getNetworkHiddenArchitecture()) :
+					getHiddenSubstrateInformation(inputWidth, inputHeight, processWidth, processDepth);
+
+				if(Parameters.parameters.booleanParameter("useHyperNEATCustomArchitecture")) {
+					// Depth depends on custom architecture
+					processDepth = MMNEAT.substrateArchitectureDefinition.getNetworkHiddenArchitecture().size();
+				}
+
+
+				substrateInformation.addAll(hiddenSubstrateInformation);
+
+				// Figure out output substrates
+
+				for(int i = 0; i < output.size(); i++){
+					Substrate outputSub = new Substrate(new Pair<Integer, Integer>(output.get(i).t2, output.get(i).t3), Substrate.OUTPUT_SUBSTRATE,
+							new Triple<Integer, Integer, Integer>(i, (processDepth+1), 0), // i is the x-coordinate, y = one above the top processing layer, z = 0 
+							output.get(i).t1);
+					substrateInformation.add(outputSub);
+				}
+
+				// End output substrates
+
+				return substrateInformation;
+	}
+
+	/**
+	 * Produces hidden/process substrate information for each substrate in each layer of a given 
+	 * 	networkHiddenArchitecture specification.  
+	 * @param networkHiddenArchitecture: specification for the hidden layers of a network with the size of 
+	 * 	the list being the number of hidden layers and coordinates of the substrate being encoded into each 
+	 *  triple like this (layer, width of substrates in this layer, height of substrates in this layer)  
+	 * @return list of initialized 2 dimension Substrate objects
+	 */
+	private static List<Substrate> getHiddenSubstrateInformation(List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture) {
+		List<Substrate> substrateInformation = new LinkedList<Substrate>();
+
+		//(0,0) are placeholder values. 
+		//Devon: New Pairs were originally constructed with each iteration of the for loop below...
+		//If errors arise, revert code back to this method. 
+		Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(0,0);
+
+		//Coordinates of substrate in vector space, (x,y,z). First 2 zeros are placeholder values.
+		//Devon: New Triples were originally constructed with each iteration of the for loop below...
+		//If errors arise, revert code back to this method.
+		Triple<Integer, Integer, Integer> substrateCoordinates = new Triple<Integer, Integer, Integer>(0,0,0);
+
+		//networkHiddenArchitecture.size() = number of hidden layers
+		// Add 2D hidden/processing layer(s)
+		for(int i = 0; i < networkHiddenArchitecture.size(); i++) {			
+			Triple<Integer,Integer,Integer> currentLayer = networkHiddenArchitecture.get(i);
+			//assigns the pair (substrate width, substrate height) of the ith hidden layer to substrateDimension
+			substrateDimension.t1 = currentLayer.t2; 
+			substrateDimension.t2 = currentLayer.t3;
+
+			//iterates for every substrate in the ith layer
+			//ithLayer.t1 = width of the ith layer
+			for(int k = 0; k < currentLayer.t1; k++) {
+				//kth substrate. i.e. x coordinate = k
+				substrateCoordinates.t1 = k;
+
+				//(i + 1)th layer. i.e. y coordinate = i + 1.
+				substrateCoordinates.t2 = i + 1;
+
+				Substrate processSubstrate = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, substrateCoordinates,
+						"process(" + k + "," + i + ")", 
+						CommonConstants.convolution ? ActivationFunctions.FTYPE_RE_LU : Substrate.DEFAULT_ACTIVATION_FUNCTION);
+				substrateInformation.add(processSubstrate);
+			}
+		}
+		return substrateInformation;
+	}
+
+	/**
+	 * Generalizes the retrieval of Substrate Information for the Hidden layers only
+	 * 
+	 * @param inputWidth Width of each Input and Processing Board
+	 * @param inputHeight Height of each Input and Processing Board
+	 * @param processWidth Number of Processing Boards per Processing Layer
+	 * @param processDepth Number of Processing Layers
+	 * 
+	 * @return Substrate Information
+	 */
+	public static List<Substrate> getHiddenSubstrateInformation(int inputWidth, int inputHeight, int processWidth, int processDepth) {		
+		List<Substrate> substrateInformation = new LinkedList<Substrate>();
+
+		// Convolutional network layer sizes depend on the size of the preceding layer,
+		// along with the receptive field size, unless zero-padding is used
+		boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
+		int receptiveFieldHeight = Parameters.parameters.integerParameter("receptiveFieldHeight");
+		assert receptiveFieldHeight % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldHeight;
+		int yEdgeOffset = zeroPadding ? 0 : receptiveFieldHeight / 2;
+		int receptiveFieldWidth = Parameters.parameters.integerParameter("receptiveFieldWidth");
+		assert receptiveFieldWidth % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldWidth;
+		int xEdgeOffset = zeroPadding ? 0 : receptiveFieldWidth / 2;
+
+		// Different extractors correspond to different substrate configurations
+		Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(inputWidth, inputHeight);
+
 		for(int i = 0; i < processDepth; i++) { // Add 2D hidden/processing layer(s)
 			if(CommonConstants.convolution) {
 				// Subsequent convolutional layers sometimes need to be smaller than preceding ones
-				substrateDimension = new Pair<Integer, Integer>(substrateDimension.t1 - 2*edgeOffset, substrateDimension.t2 - 2*edgeOffset);
+				substrateDimension = new Pair<Integer, Integer>(substrateDimension.t1 - 2*xEdgeOffset, substrateDimension.t2 - 2*yEdgeOffset);
 			}
 			for(int k = 0; k < processWidth; k++) {
 				// x coord = k, y = 1 + i because the height is the depth plus 1 (for the input layer)
 				Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(k, 1 + i, 0);
 				Substrate processSub = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processSubCoord,
-													"process(" + k + "," + i + ")", 
-													CommonConstants.convolution ? ActivationFunctions.FTYPE_RE_LU : Substrate.DEFAULT_ACTIVATION_FUNCTION);
+						"process(" + k + "," + i + ")", 
+						CommonConstants.convolution ? ActivationFunctions.FTYPE_RE_LU : Substrate.DEFAULT_ACTIVATION_FUNCTION);
 				substrateInformation.add(processSub);
 			}
 		}
-		
-		for(int i = 0; i < output.size(); i++){
-			Substrate outputSub = new Substrate(new Pair<Integer, Integer>(output.get(i).t2, output.get(i).t3), Substrate.OUTPUT_SUBSTRATE,
-					new Triple<Integer, Integer, Integer>(i, (processDepth+1), 0), // i is the x-coordinate, y = one above the top processing layer, z = 0 
-					output.get(i).t1);
-			substrateInformation.add(outputSub);
-		}
-		
+
 		return substrateInformation;
 	}
-	
+
 	/**
 	 * Generalizes the creation of HyperNEAT Substrates
 	 * 
@@ -627,10 +716,18 @@ public class HyperNEATUtil {
 	 * 
 	 * @return Substrate connectivity
 	 */
-	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, List<String> outputNames){
-		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
-		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
-		return getSubstrateConnectivity(numInputSubstrates, processWidth, processDepth, outputNames, Parameters.parameters.booleanParameter("extraHNLinks"));
+	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, List<String> outputNames) {
+		if(Parameters.parameters.booleanParameter("useHyperNEATCustomArchitecture")) {
+			List<String> inputSubstrateNames = new LinkedList<String>();
+			for(int i = 0; i < numInputSubstrates; i++) {
+				inputSubstrateNames.add("Input(" + i + ")");
+			}
+			return MMNEAT.substrateArchitectureDefinition.getSubstrateConnectivity(inputSubstrateNames, outputNames);
+		} else {
+			int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
+			int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
+			return getSubstrateConnectivity(numInputSubstrates, processWidth, processDepth, outputNames, Parameters.parameters.booleanParameter("extraHNLinks"));
+		}
 	}
 
 	/**
@@ -649,7 +746,7 @@ public class HyperNEATUtil {
 		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
 		return getSubstrateConnectivity(numInputSubstrates, processWidth, processDepth, outputNames, connectInputsToOutputs);
 	}
-	
+
 	/**
 	 * Generalizes the creation of HyperNEAT Substrates
 	 * 
@@ -665,7 +762,7 @@ public class HyperNEATUtil {
 	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames){
 		return getSubstrateConnectivity(numInputSubstrates, processWidth, processDepth, outputNames, Parameters.parameters.booleanParameter("extraHNLinks"));
 	}
-	
+
 	/**
 	 * Generalizes the creation of HyperNEAT Substrates
 	 * 
@@ -680,9 +777,9 @@ public class HyperNEATUtil {
 	 * @return Substrate connectivity
 	 */
 	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames, boolean connectInputsToOutputs){
-		
+
 		List<Triple<String, String, Boolean>> substrateConnectivity = null;
-		
+
 		substrateConnectivity = new LinkedList<Triple<String, String, Boolean>>();
 		// Different extractors correspond to different substrate configurations
 		if(processDepth > 0) {
@@ -691,14 +788,14 @@ public class HyperNEATUtil {
 				for(int i = 0; i < numInputSubstrates; i++){
 					substrateConnectivity.add(new Triple<String, String, Boolean>("Input(" + i + ")", "process(" + k + ",0)", Boolean.TRUE));
 				}
-				
+
 				if(!CommonConstants.hyperNEAT){
 					// connect bias to the bottom layer of processing substrates: no convolution
 					substrateConnectivity.add(new Triple<String, String, Boolean>("bias", "process(" + k + ",0)", Boolean.FALSE));
 				}
 			}
 		}
-			
+
 		// hidden layer connectivity is the same, regardless of input configuration
 		for(int i = 0; i < (processDepth - 1); i++) {
 			for(int k = 0; k < processWidth; k++) {
@@ -714,7 +811,7 @@ public class HyperNEATUtil {
 
 			}
 		}
-		
+
 		if(processDepth > 0) {
 			for(int k = 0; k < processWidth; k++) {
 				// Link the final processing layer to the output layer
@@ -723,7 +820,7 @@ public class HyperNEATUtil {
 				}
 			}
 		}
-		
+
 		if(connectInputsToOutputs) { // Connect each input substrate directly to the output neuron
 			// Link the input layer to the output layer
 			for(int i = 0; i < numInputSubstrates; i++){
@@ -743,7 +840,7 @@ public class HyperNEATUtil {
 
 		return substrateConnectivity;
 	}
-	
+
 	/**
 	 * Number of outputs that CPPNs are supposed to have.
 	 * May not work with coevolution in the case where different populations used different
@@ -770,11 +867,11 @@ public class HyperNEATUtil {
 	public static int numCPPNInputs() {
 		return numCPPNInputs(HyperNEATUtil.getHyperNEATTask());
 	}
-	
+
 	public static int numCPPNInputs(HyperNEATTask task) {
 		return task.numCPPNInputs() + (CommonConstants.substrateLocationInputs || Parameters.parameters.booleanParameter("convolutionWeightSharing") ? 4 : 0);
 	}
-	
+
 	/**
 	 * Assumes that all input substrates have the same width and height, and returns
 	 * the shape of the input volume. Meant to be used by convolutional networks in DL4J.
@@ -793,7 +890,7 @@ public class HyperNEATUtil {
 		// The 1 at the front is the mini-batch size, which is a single frame for RL domains (change? generalize?)
 		return new int[] {1, depth, size.t2, size.t1};
 	}
-	
+
 	/**
 	 * Count the number of outputs across all output substrates
 	 * @param substrates Substrate list

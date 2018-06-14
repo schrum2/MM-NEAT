@@ -11,20 +11,33 @@
   <url>http://maven.apache.org</url>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
+  
+  		<unirest.version>1.4.9</unirest.version>
+        <jackson.version>2.5.1</jackson.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <nd4j.version>1.0.0-beta</nd4j.version>
+        <dl4j.version>1.0.0-beta</dl4j.version>
+        <javacv.version>1.4.1</javacv.version>
+        <javacpp.version>1.4.1</javacpp.version>
+        <javacpp-presets.version>1.4.1</javacpp-presets.version>
+        <opencv.version>3.4.1</opencv.version>
+        <ffmpeg.version>3.4.2</ffmpeg.version>
+        <ale.version>0.6.0</ale.version>
+        <slf4j.version>1.7.12</slf4j.version>
+        <logback.version>1.1.2</logback.version>
+        <lombok.version>1.16.16</lombok.version>
+  
     
-    <!-- DL4J properties -->
         <!-- Change the nd4j.backend property to nd4j-cuda-7.5-platform or nd4j-cuda-8.0-platform to use CUDA GPUs -->
         <nd4j.backend>nd4j-native-platform</nd4j.backend>
         <!-- <nd4j.backend>nd4j-cuda-8.0-platform</nd4j.backend> -->
-        <nd4j.version>0.9.1</nd4j.version>
-        <dl4j.version>0.9.1</dl4j.version>
-        <datavec.version>0.9.1</datavec.version>
-        <arbiter.version>0.9.1</arbiter.version>
-        <rl4j.version>0.9.1</rl4j.version>
 
-        <logback.version>1.1.7</logback.version>    
+		<!-- Change these below? -->
+        <datavec.version>1.0.0-beta</datavec.version>
+        <arbiter.version>1.0.0-beta</arbiter.version>
+        <rl4j.version>1.0.0-beta</rl4j.version>
+
   </properties>
 
   <build>
@@ -72,14 +85,11 @@
     </repository>
 
 	<!-- For Pogamut -->
-	<!--  No longer active? Or just temporarily down? -->
-	<!--
-    <repository>
+	<repository>
     	<id>amis-artifactory</id>
 		<name>AMIS Artifactory</name>
 		<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
     </repository>
-    -->
     
     <!-- For DL4J and RL4J -->
     <repository>
@@ -119,6 +129,11 @@
                 <artifactId>nd4j-cuda-7.5</artifactId>
                 <version>${nd4j.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -142,14 +157,12 @@
 		<dependency>
     		<groupId>org.deeplearning4j</groupId>
     		<artifactId>deeplearning4j-zoo</artifactId>
-    	<!--  	<version>${deeplearning4j.version}</version> -->
-			<version>0.9.1</version>
+    		<version>${dl4j.version}</version>
 		</dependency>
 		<dependency>
     		<groupId>org.deeplearning4j</groupId>
     		<artifactId>deeplearning4j-modelimport</artifactId>
-    	<!--  	<version>${deeplearning4j.version}</version> -->
-			<version>0.9.1</version>
+    		<version>${dl4j.version}</version>
 		</dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -224,29 +237,68 @@
 	</dependency>
 	
     <!--  pogamut libraries -->
+    <!--  These are all local now: should fix this eventually -->
 	<dependency>
 		<groupId>cz.cuni.amis.pogamut</groupId>
 		<artifactId>pogamut-ut2004</artifactId>
-		<version>3.3.0</version>
+		<version>3.7.0</version>
+		<!-- <version>3.3.0</version> -->
 	</dependency>
     
 	<dependency>
 		<groupId>cz.cuni.amis.pogamut</groupId>
 		<artifactId>pogamut-unreal</artifactId>
-		<version>3.3.0</version>
+		<version>3.7.0</version>
+		<!-- <version>3.3.0</version> -->
 	</dependency>
     
 	<dependency>
 		<groupId>cz.cuni.amis.pogamut</groupId>
 		<artifactId>pogamut-base</artifactId>
-		<version>3.3.0</version>
+		<version>3.7.0</version>
+		<!-- <version>3.3.0</version> -->
 	</dependency>
     
 	<dependency>
 		<groupId>cz.cuni.amis</groupId>
 		<artifactId>amis-utils</artifactId>
-		<version>3.3.0</version>
+		<version>3.7.0</version>
+		<!-- <version>3.3.0</version> -->
 	</dependency>
+	
+	<dependency>
+   		<groupId>com.massisframework</groupId>
+   		<artifactId>sposh-core</artifactId>
+   		<version>1.2.20</version>
+	</dependency>
+
+      <dependency>
+		<groupId>cz.cuni.amis.pogamut.ut2004</groupId>
+		<artifactId>ut2004-team-comm</artifactId>
+		<version>3.7.0</version>
+	  </dependency>
+	  	
+    <dependency>
+      <groupId>cz.cuni.amis.pogamut.ut2004</groupId>
+      <artifactId>yaposh-ut2004</artifactId>
+      <version>3.7.1-SNAPSHOT</version>
+    </dependency>
+    
+	<!--  Added to support the retrace elements of the UT^2 bot -->	  	
+	<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
+	<dependency>
+    	<groupId>org.xerial</groupId>
+    	<artifactId>sqlite-jdbc</artifactId>
+    	<version>3.21.0</version>
+	</dependency>
+	
+	<!-- libraries for Pogamut that are pulled down from internet repositories -->    
+	<!-- https://mvnrepository.com/artifact/com.google.inject/guice -->
+	<dependency>
+    	<groupId>com.google.inject</groupId>
+    	<artifactId>guice</artifactId>
+    	<version>4.0</version>
+	</dependency>	    
 	    
 	<!--  RL-Viz libraries -->
 	<dependency>
@@ -272,6 +324,18 @@
 		<artifactId>RLVizLib</artifactId>
 		<version>1.0</version>
 	</dependency>
+		
+	<!-- for Ms. Pac-Man vs Ghosts PO competition -->
+	  <dependency>
+            <groupId>uk.co.pacmanvghosts</groupId>
+            <artifactId>pacman-main</artifactId>
+            <version>[2,]</version>
+      </dependency>
+      <dependency>
+            <groupId>io.jenetics</groupId>
+            <artifactId>jenetics</artifactId>
+            <version>3.7.0</version>
+      </dependency>
 		
   </dependencies>
 </project>

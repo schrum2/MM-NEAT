@@ -49,7 +49,7 @@ public class CommonTaskUtil {
 					if(Parameters.parameters.booleanParameter("showWeights")){
 						// Weight panels disposed of in HyperNEATUtil
 						HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
-						HyperNEATUtil.drawWeight(hngt.getSubstrateGenotype(task),task); //TODO
+						HyperNEATUtil.drawWeight(hngt.getSubstrateGenotype(task),task,hngt.numModules()); 
 					}
 
 				}

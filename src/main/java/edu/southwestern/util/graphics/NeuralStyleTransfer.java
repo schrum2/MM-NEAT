@@ -5,6 +5,7 @@ import edu.southwestern.util.random.RandomNumbers;
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
+import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.model.VGG16;
@@ -200,7 +201,9 @@ public class NeuralStyleTransfer {
             INDArray backPropContent = backPropagateContent(vgg16FineTune, activationsContentMap, activationsCombMap);
             INDArray backPropAllValues = backPropContent.muli(ALPHA).addi(styleBackProb.muli(BETA));
 
-            adamUpdater.applyUpdater(backPropAllValues, itr);
+            // Schrum: The update to the new version of DL4J required an additional parameter for the epoch here.
+            //         I just set it to 0. Don't know if this will cause problems.
+            adamUpdater.applyUpdater(backPropAllValues, itr, 0);
             combination.subi(backPropAllValues);
         }
         System.out.println("done");
@@ -370,7 +373,8 @@ public class NeuralStyleTransfer {
 
         for (int i = startFrom; i > 0; i--) {
             Layer layer = vgg16FineTune.getLayer(ALL_LAYERS[i]);
-            dLdANext = layer.backpropGradient(dLdANext).getSecond();
+            // Added LayerWorkspaceMgr.noWorkspaces() in the upgrade to DL4J 1.0.0-beta 
+            dLdANext = layer.backpropGradient(dLdANext, LayerWorkspaceMgr.noWorkspaces()).getSecond();
         }
         return dLdANext;
     }
@@ -476,7 +480,7 @@ public class NeuralStyleTransfer {
 
     private static ComputationGraph loadModel() throws IOException {
         @SuppressWarnings("rawtypes")
-		ZooModel zooModel = new VGG16();
+		ZooModel zooModel = VGG16.builder().numClasses(ImageNetClassification.NUM_IMAGE_NET_CLASSES).build();
         ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
         vgg16.initGradientsView();
         System.out.println(vgg16.summary());

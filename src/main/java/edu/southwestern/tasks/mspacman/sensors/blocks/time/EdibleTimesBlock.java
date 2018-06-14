@@ -1,17 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.sensors.blocks.time;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
+import oldpacman.game.Constants;
+
 import java.util.Arrays;
-import pacman.game.Constants;
 
 /**
- *
+ * Supports popacman (TODO: test)
  * @author Jacob Schrum
  */
 public class EdibleTimesBlock extends MsPacManSensorBlock {
@@ -54,16 +51,25 @@ public class EdibleTimesBlock extends MsPacManSensorBlock {
 		this.absence = Parameters.parameters.booleanParameter("absenceNegative") ? -1 : 0;
 	}
 
+	/**
+	 * Supports popacman (TODO: test)
+	 */
 	public int incorporateSensors(double[] inputs, int in, GameFacade gf, int lastDirection) {
+		//times could contain -1s for each non-visible ghost
 		int[] times = gf.getGhostEdibleTimes();
 		Arrays.sort(times); // smallest to highest
+		
 		// System.out.println(Arrays.toString(mask) + Arrays.toString(times) +
 		// ":" + Constants.EDIBLE_TIME);
+		
 		for (int i = times.length - 1; i >= 0; i--) {
+			//pretty sure that mask determines whether or not we pay attention to the ghost
 			if (mask[i]) {
 				// inputs[in++] = times[i] == 0 ? absence : times[i] /
 				// ((Constants.EDIBLE_TIME - DANGEROUS_TIME) * 1.0);
-				inputs[in++] = times[i] == 0 ? absence : times[i] / (Constants.EDIBLE_TIME * 1.0);
+				
+				//times[i] =] 0 means we know the ghost isn't edible, times[i] == -1 means we cannot see the ghost
+				inputs[in++] = (times[i] == 0 || times[i] == -1) ? absence : times[i] / (Constants.EDIBLE_TIME * 1.0);
 			}
 		}
 		return in;

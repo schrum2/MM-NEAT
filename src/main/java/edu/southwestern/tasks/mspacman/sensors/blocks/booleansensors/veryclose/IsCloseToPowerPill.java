@@ -1,13 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.veryclose;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.util.MiscUtil;
 
 /**
- *
+ * should support popacman (TODO: test)
  * @author Jacob Schrum
  */
 public class IsCloseToPowerPill extends IsCloseBlock {

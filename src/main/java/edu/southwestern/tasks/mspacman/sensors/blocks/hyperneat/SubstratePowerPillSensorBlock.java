@@ -3,7 +3,7 @@ package edu.southwestern.tasks.mspacman.sensors.blocks.hyperneat;
 import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
-import pacman.game.Constants;
+import oldpacman.game.Constants;
 /**
  * Gets sensor block for power pill substrate in hyperNEAT msPacMan task
  * @author Lauren Gillespie

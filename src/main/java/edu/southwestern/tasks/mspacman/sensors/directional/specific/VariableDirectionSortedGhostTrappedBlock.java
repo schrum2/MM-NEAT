@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.sensors.directional.specific;
 
 import edu.southwestern.parameters.CommonConstants;
@@ -13,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- *
+ * TODO: test support for popacman. It should support popacman
  * @author Jacob
  */
 public class VariableDirectionSortedGhostTrappedBlock extends VariableDirectionBlock {
@@ -21,7 +17,10 @@ public class VariableDirectionSortedGhostTrappedBlock extends VariableDirectionB
 	private final int order;
 	private final boolean edibleClose;
 	private final boolean proximityOnly;
-
+	
+	/**
+	 * TODO: test the support for popacman
+	 */
 	public VariableDirectionSortedGhostTrappedBlock(int order) {
 		this(order, true, true);
 	}
@@ -38,6 +37,9 @@ public class VariableDirectionSortedGhostTrappedBlock extends VariableDirectionB
 		return 0;
 	}
 
+	/**
+	 * TODO: test the support for popacman
+	 */
 	@Override
 	public double getValue(GameFacade gf) {
 		ArrayList<Integer> ghosts = gf.getGhostIndices(edibleClose, proximityOnly);
