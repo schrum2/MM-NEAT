@@ -40,7 +40,7 @@ public class SubstrateConnectivity {
 	public SubstrateConnectivity (String sourceSubstrateName, String targetSubstrateName, int receptiveFieldWidth, int receptiveFieldHeight) {
 		this.SOURCE_SUBSTRATE_NAME = sourceSubstrateName;
 		this.TARGET_SUBSTRATE_NAME = targetSubstrateName;
-		this.connectivityType = CTYPE_CONVOLUTION;
+		this.connectivityType = receptiveFieldWidth > 0 && receptiveFieldHeight > 0? CTYPE_CONVOLUTION: CTYPE_FULL;
 		this.receptiveFieldWidth = receptiveFieldWidth;
 		this.receptiveFieldHeight = receptiveFieldHeight;
 	}
@@ -61,7 +61,7 @@ public class SubstrateConnectivity {
 	public String toString() {
 		String result = "";
 		result = result.concat("substrate connectivity: from " + SOURCE_SUBSTRATE_NAME + " to " + 
-							   TARGET_SUBSTRATE_NAME + " with type " + connectivityType);
+							   TARGET_SUBSTRATE_NAME + " with type " + connectivityType + " and field size " + receptiveFieldWidth + "x" + receptiveFieldHeight);
 		return result;
 	}
 	
