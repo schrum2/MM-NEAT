@@ -134,7 +134,7 @@ public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 	 * @return array list of substrate genotypes from population ArrayList
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> ArrayList<Genotype<T>> getSubstrateGenotypesFromCPPNs(HyperNEATTask hnt, ArrayList<Genotype<T>> population) {
+	public static <T> ArrayList<Genotype<T>> getSubstrateGenotypesFromCPPNs(ArrayList<Genotype<T>> population) {
 		ArrayList<Genotype<T>> substrateGenotypes = new ArrayList<>();
 		for(int i = 0; i < population.size(); i++) {
 			OffsetHybrIDGenotype genotype = new OffsetHybrIDGenotype((HyperNEATCPPNGenotype) population.get(i));

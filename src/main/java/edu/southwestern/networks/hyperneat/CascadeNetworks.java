@@ -3,6 +3,10 @@ package edu.southwestern.networks.hyperneat;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.southwestern.evolution.genotypes.OffsetHybrIDGenotype;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
@@ -86,4 +90,21 @@ public class CascadeNetworks {
 		return cascadeExpansion (originalHiddenArchitecture, originalConnectivity, outputSubstrateNames, newLayerWidth,
 				lastHiddenLayer.t2,  lastHiddenLayer.t3, SubstrateConnectivity.CTYPE_FULL);
 	}
+	
+	/**
+	 * TODO
+	 * @param hnt
+	 * @param population
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> ArrayList<Genotype<T>> getSubstrateGenotypesFromCPPNs(ArrayList<Genotype<T>> population, int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, int connectivityType) {
+		ArrayList<Genotype<T>> substrateGenotypes = new ArrayList<>();
+		for(int i = 0; i < population.size(); i++) {
+			HyperNEATCPPNAndSubstrateArchitectureGenotype genotype = new HyperNEATCPPNAndSubstrateArchitectureGenotype((HyperNEATCPPNGenotype) population.get(i));
+			genotype.cascadeExpansion(newLayerWidth, newSubstratesWidth, newsubstratesHeight, connectivityType);
+			substrateGenotypes.add((Genotype<T>) genotype);
+		}
+		return substrateGenotypes;
+	}  
 }

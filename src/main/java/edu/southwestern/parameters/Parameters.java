@@ -201,6 +201,7 @@ public class Parameters {
 		integerOptions.add("boardGameStaticOpponentRuns", 1, "Number of Board Game matches to play against the Static Opponent Fitness Function");
 		integerOptions.add("breve2DAgentHealth", 50, "Hitpoints of agents in breve 2D domains");
 		integerOptions.add("breve2DTimeLimit", 1000, "Number of time steps allowed in breve 2D domains");
+		integerOptions.add("cascadeExpansionSwitchGeneration", 100, "The generation that a cascade expansion will occur in HyperNEAT. Hardcoded for now");
 		integerOptions.add("cleanFrequency", 10, "How frequently the archetype needs to be cleaned out");
 		integerOptions.add("clipLength", Keyboard.NOTE_LENGTH_DEFAULT, "Length of clip played in Breedesizer");
 		integerOptions.add("closeGhostDistance", 35, "Distance at which threat ghosts are considered too close for safety");
@@ -347,6 +348,7 @@ public class Parameters {
 		booleanOptions.add("boardGameIncreasingRandomOpens", false, "Number of random moves at the start of each game increases as evolved agents improve");
 		booleanOptions.add("boardGameWinPercentFitness", false, "Is percentage of games won a fitness function for board games?");
 		booleanOptions.add("botprizeMod", false, "Whether or not to use the 2012 BotPrize mod in UT2004 games");
+		booleanOptions.add("cascadeExpansion", false, "allows for cascade expansion in HyperNEAT, adding layers during evaluation");
 		booleanOptions.add("convolution", false, "HyperNEAT phenotypes allow convolutional structure");
 		booleanOptions.add("convolutionDeltas", false, "HyperNEAT encoding of convolutional structure uses the delta offset approach of Verbancsics");
 		booleanOptions.add("convolutionWeightSharing", false, "HyperNEAT convolutional networks repeat the same weights across all receptive fields from one substrate to another");
