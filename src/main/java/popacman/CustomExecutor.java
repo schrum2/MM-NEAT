@@ -302,7 +302,7 @@ public class CustomExecutor {
 	                stats.add(game.getScore());
 	                ticks.add(game.getCurrentLevelTime());
 	                i++;
-	                System.out.println("Game finished: " + i + "   " + description);
+	                //System.out.println("Game finished: " + i + "   " + description);
             } catch (Exception e) {
                 e.printStackTrace();
             }
