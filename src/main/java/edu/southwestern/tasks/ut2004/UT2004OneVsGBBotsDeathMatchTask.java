@@ -3,9 +3,14 @@ package edu.southwestern.tasks.ut2004;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.controller.BotController;
-import edu.southwestern.tasks.ut2004.fitness.*;
+import edu.southwestern.tasks.ut2004.fitness.DamageDealtFitness;
+import edu.southwestern.tasks.ut2004.fitness.DamageReceivedFitness;
+import edu.southwestern.tasks.ut2004.fitness.DeathsFitness;
+import edu.southwestern.tasks.ut2004.fitness.FragFitness;
+import edu.southwestern.tasks.ut2004.fitness.HighestEnemyScoreFitness;
+import edu.southwestern.tasks.ut2004.fitness.ScoreFitness;
+import edu.southwestern.tasks.ut2004.fitness.StreakFitness;
 import edu.southwestern.util.ClassCreation;
-import edu.southwestern.util.MiscUtil;
 
 /**
  * Launches servers to evolve bots against the DummyBots (which spawn at a random location on the map and stand there)

@@ -1,13 +1,17 @@
 package edu.southwestern.tasks.ut2004;
 
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.genotypes.TWEANNGenotype;
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.Network;
-import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.controller.BotController;
-import edu.southwestern.tasks.ut2004.fitness.*;
+import edu.southwestern.tasks.ut2004.fitness.DamageDealtFitness;
+import edu.southwestern.tasks.ut2004.fitness.DamageReceivedFitness;
+import edu.southwestern.tasks.ut2004.fitness.DeathsFitness;
+import edu.southwestern.tasks.ut2004.fitness.FragFitness;
+import edu.southwestern.tasks.ut2004.fitness.HighestEnemyScoreFitness;
+import edu.southwestern.tasks.ut2004.fitness.ScoreFitness;
+import edu.southwestern.tasks.ut2004.fitness.StreakFitness;
+import edu.southwestern.tasks.ut2004.fitness.TeamScoreFitness;
 import edu.southwestern.util.datastructures.Pair;
 
 /**
@@ -27,7 +31,7 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 				Parameters.parameters.integerParameter("utEvalMinutes"),
 				Parameters.parameters.integerParameter("utEvolvingBotSkill"));
 	}
-	
+
 	public static int[] getNativeBotSkillArray() {
 		//array of native bots with all Parameters.parameters.integerParameter("utNativeBotSkill")
 		int[] nativeBotArray = new int[Parameters.parameters.integerParameter("utNumNativeBots")];
@@ -67,21 +71,22 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 
+		@SuppressWarnings("rawtypes")
 		Genotype[] teamArray = new Genotype[Parameters.parameters.integerParameter("utTeamSize")];
 		for(int i = 0; i < teamArray.length; i++) {
 			teamArray[i] = individual.copy();
 		}
 		//create an array of genotypes that is size of team
 		//loop through and each one is copy of individual
-		
-		
-				Pair<double[], double[]>[] result = evaluateMultipleGenotypes(teamArray, map,
+
+
+		Pair<double[], double[]>[] result = evaluateMultipleGenotypes(teamArray, map,
 				sensorModel, outputModel, weaponManager, opponents,
 				nativeBotSkills, evalMinutes, desiredSkill,
 				fitness, others);
-				
-				//result[0] = ;
-				//have array of results, make that a single result for whole team
-				return result[0]; // TODO change
+
+		//result[0] = ;
+		//have array of results, make that a single result for whole team
+		return result[0]; // TODO change
 	}
 }
