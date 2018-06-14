@@ -40,7 +40,6 @@ public class SubstrateConnectivity {
 	public SubstrateConnectivity (String sourceSubstrateName, String targetSubstrateName, int receptiveFieldWidth, int receptiveFieldHeight) {
 		this.SOURCE_SUBSTRATE_NAME = sourceSubstrateName;
 		this.TARGET_SUBSTRATE_NAME = targetSubstrateName;
-		assert CommonConstants.convolution: "convolution is not turned on";
 		this.connectivityType = CTYPE_CONVOLUTION;
 		this.receptiveFieldWidth = receptiveFieldWidth;
 		this.receptiveFieldHeight = receptiveFieldHeight;
