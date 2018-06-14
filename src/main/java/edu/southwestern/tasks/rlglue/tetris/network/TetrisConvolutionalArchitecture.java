@@ -37,7 +37,7 @@ public class TetrisConvolutionalArchitecture implements SubstrateArchitectureDef
 	}
 
 	private List<SubstrateConnectivity> getSubstrateConnectivity (List<String> inputSubstrateNames, List<String> outputSubstrateNames) {
-		return FlexibleSubstrateArchitecture.getSubstrateConnectivity(inputSubstrateNames, outputSubstrateNames, getNetworkHiddenArchitecture());
+		return FlexibleSubstrateArchitecture.getDefaultConnectivity(inputSubstrateNames, outputSubstrateNames, getNetworkHiddenArchitecture());
 	}
 	
 	@Override

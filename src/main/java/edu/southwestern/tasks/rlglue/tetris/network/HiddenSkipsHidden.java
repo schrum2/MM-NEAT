@@ -36,7 +36,7 @@ public class HiddenSkipsHidden implements SubstrateArchitectureDefinition{
 	 * @return
 	 */
 	private List<SubstrateConnectivity> getSubstrateConnectivity (List<String> inputSubstrateNames, List<String> outputSubstrateNames) {
-		List<SubstrateConnectivity> substrateConnectivity = FlexibleSubstrateArchitecture.getSubstrateConnectivity(inputSubstrateNames, outputSubstrateNames, getNetworkHiddenArchitecture());
+		List<SubstrateConnectivity> substrateConnectivity = FlexibleSubstrateArchitecture.getDefaultConnectivity(inputSubstrateNames, outputSubstrateNames, getNetworkHiddenArchitecture());
 		substrateConnectivity.add(new SubstrateConnectivity("process(0,0)", outputSubstrateNames.get(0), SubstrateConnectivity.CTYPE_FULL));
 		return substrateConnectivity;
 	}

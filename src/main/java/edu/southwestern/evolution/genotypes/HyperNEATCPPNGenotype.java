@@ -356,24 +356,48 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<SubstrateConnectivity> connections, List<Substrate> subs, HashMap<String, Integer> sIMap, int layersWidth, int layersHeight) {
 		ArrayList<LinkGene> result = new ArrayList<LinkGene>();
 		for (int i = 0; i < connections.size(); i++) { // For each pair of substrates that are connected
-			int sourceSubstrateIndex = sIMap.get(connections.get(i).SOURCE_SUBSTRATE_NAME);
-			assert sIMap.get(connections.get(i).TARGET_SUBSTRATE_NAME) != null :"null in " + sIMap + "\nat " + connections.get(i).TARGET_SUBSTRATE_NAME + "\nat " + i;
-			int targetSubstrateIndex = sIMap.get(connections.get(i).TARGET_SUBSTRATE_NAME);
+			SubstrateConnectivity currentConnection = connections.get(i);
+			int sourceSubstrateIndex = sIMap.get(currentConnection.SOURCE_SUBSTRATE_NAME);
+			assert sIMap.get(currentConnection.TARGET_SUBSTRATE_NAME) != null :"null in " + sIMap + "\nat " + connections.get(i).TARGET_SUBSTRATE_NAME + "\nat " + i;
+			int targetSubstrateIndex = sIMap.get(currentConnection.TARGET_SUBSTRATE_NAME);
 			Substrate sourceSubstrate = subs.get(sourceSubstrateIndex);
 			Substrate targetSubstrate = subs.get(targetSubstrateIndex);
 
 			// Whether to connect these layers used convolutional structure instead of standard fully connected structure
-			boolean convolution = connections.get(i).connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION && CommonConstants.convolution;
+			boolean convolution = currentConnection.connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION && CommonConstants.convolution;
 			int outputIndex = CommonConstants.substrateLocationInputs ? 0 : i;
 			// both options add links from between two substrates to whole list of links
 			if(convolution) {
-				convolutionalLoopThroughLinks(hnt, result, cppn, outputIndex, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs, layersWidth, layersHeight);
+				convolutionalLoopThroughLinks(hnt, result, cppn, outputIndex, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex,
+						subs, layersWidth, layersHeight, currentConnection.receptiveFieldWidth, currentConnection.receptiveFieldHeight);
 			} else {
 				loopThroughLinks(hnt, result, cppn, outputIndex, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs, layersWidth, layersHeight);
 			}
 		}
 		return result;
 	}
+	
+	/**
+	 * TODO: uncomment
+	 * Connect two substrate layers using convolutional link structures
+	 * @param hnt HyperNEATTask instance with
+	 * @param linksSoFar List of link genes to add to
+	 * @param cppn Network generating link weights
+	 * @param outputIndex index from cppn outputs to be used as weight in creating link
+	 * @param s1 Where links come from
+	 * @param s2 Where links go to
+	 * @param s1Index Index in substrate list of source substrate
+	 * @param s2Index Index in substrate list of target substrate
+	 * @param subs List of substrates
+	 * @param substrateHorizontalCoordinate Used by global coordinates
+	 * @param substrateVerticalCoordinate Used by global coordinates
+	 */
+//	void convolutionalLoopThroughLinks(HyperNEATTask hnt, ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex,
+//			Substrate s1, Substrate s2, int s1Index, int s2Index,
+//			List<Substrate> subs, int substrateHorizontalCoordinate, int substrateVerticalCoordinate) {
+//		convolutionalLoopThroughLinks(hnt, linksSoFar, cppn, outputIndex, s1, s2, s1Index, s2Index, subs,
+//				substrateHorizontalCoordinate, substrateVerticalCoordinate, 3, 3);
+//	}
 
 	/**
 	 * Connect two substrate layers using convolutional link structures
@@ -388,17 +412,16 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @param subs List of substrates
 	 * @param substrateHorizontalCoordinate Used by global coordinates
 	 * @param substrateVerticalCoordinate Used by global coordinates
+	 * @param receptiveFieldWidth the width of the receptive field window
+	 * @param receptiveFieldHeight the hieght of the receptive field window
 	 */
 	void convolutionalLoopThroughLinks(HyperNEATTask hnt, ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex,
 			Substrate s1, Substrate s2, int s1Index, int s2Index,
-			List<Substrate> subs, int substrateHorizontalCoordinate, int substrateVerticalCoordinate) {
+			List<Substrate> subs, int substrateHorizontalCoordinate, int substrateVerticalCoordinate, int receptiveFieldWidth, int receptiveFieldHeight) {
 
 		boolean convolutionDeltas = Parameters.parameters.booleanParameter("convolutionDeltas");
 		boolean convolutionWeightSharing = Parameters.parameters.booleanParameter("convolutionWeightSharing");
-
-		int receptiveFieldHeight = Parameters.parameters.integerParameter("receptiveFieldHeight");
 		assert receptiveFieldHeight % 2 == 1 : "Receptive field height needs to be odd to be centered: " + receptiveFieldHeight;
-		int receptiveFieldWidth = Parameters.parameters.integerParameter("receptiveFieldWidth");
 		assert receptiveFieldWidth % 2 == 1 : "Receptive field width needs to be odd to be centered: " + receptiveFieldWidth;
 		// Need to watch out for links that want to connect out of bounds
 		boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
