@@ -1,18 +1,18 @@
 package edu.southwestern.tasks.ut2004;
 
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.fitness.UT2004FitnessFunction;
-
-import static java.nio.file.StandardCopyOption.*;
 
 /**
  * Launches a server with the botprize modifier and botprize agents:
