@@ -167,6 +167,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		int attempts = 1; //tracks the number of attempts to launch the server
 		while (ArrayUtil.anyNull(result) || // Loop as long as there are problems with the results
 			   individuals.length == 0) { // Special case to run the server when no genotypes are being evolved
+			if(individuals.length == 0) System.out.println("No evolving bots!");
 			System.out.println("Eval attempt " + (attempts++));
 			try {
 				ucc = new MyUCCWrapper(config);
@@ -225,6 +226,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				if (ArrayUtil.anyNull(result)) {//repeats the evaluation if it is unsucessful the first time
 					System.out.println("Evaluation failed: repeat: " + botPort);
 				}
+				if(individuals.length == 0) System.out.println("No evolving bots! Repeat evaluation");
 			}
 		}
 		return result;
