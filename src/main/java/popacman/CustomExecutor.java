@@ -24,12 +24,14 @@ import edu.southwestern.parameters.Parameters;
 import pacman.controllers.Controller;
 import pacman.controllers.HumanController;
 import pacman.controllers.MASController;
+import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Drawable;
 import pacman.game.Game;
 import pacman.game.GameView;
 import pacman.game.comms.BasicMessenger;
 import pacman.game.comms.Messenger;
+import pacman.game.internal.Ghost;
 import pacman.game.internal.POType;
 import pacman.game.util.Stats;
 
@@ -281,21 +283,26 @@ public class CustomExecutor {
         Long startTime = System.currentTimeMillis();
         for (int i = 0; i < trials; ) {
             try {
-                //game = setupGame();
-
-                while (!game.gameOver()) {
-                    if (tickLimit != -1 && tickLimit < game.getTotalTime()) {
-                        break;
-                    }
-                    handlePeek(game);
-                    game.advanceGame(
-                            pacManController.getMove(getPacmanCopy(game), System.currentTimeMillis() + timeLimit),
-                            ghostControllerCopy.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
-                }
-                stats.add(game.getScore());
-                ticks.add(game.getCurrentLevelTime());
-                i++;
-                System.out.println("Game finished: " + i + "   " + description);
+            	while (!game.gameOver()) {
+            		
+            		//hacky code: the difference on the left side of the equation equates to the number of lives lost
+            		//If that number is equal to our parameter for number of lives, kill the game
+	            	if(pacman.game.Constants.NUM_LIVES - game.getPacmanNumberOfLivesRemaining() == Parameters.parameters.integerParameter("pacmanLives")) {
+	            		game = killGame(game);
+	            	}
+	            	
+	            	if (tickLimit != -1 && tickLimit < game.getTotalTime()) {
+	                        break;
+	                }
+	                    handlePeek(game);
+	                    game.advanceGame(
+	                            pacManController.getMove(getPacmanCopy(game), System.currentTimeMillis() + timeLimit),
+	                            ghostControllerCopy.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
+	                }
+	                stats.add(game.getScore());
+	                ticks.add(game.getCurrentLevelTime());
+	                i++;
+	                //System.out.println("Game finished: " + i + "   " + description);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -326,6 +333,13 @@ public class CustomExecutor {
         Long startTime = System.currentTimeMillis();
         for (int i = 0; i < trials; i++) {
             //game = setupGame();
+        	
+    		//hacky code: the difference on the left side of the equation equates to the number of lives lost
+    		//If that number is equal to our parameter for number of lives, kill the game
+        	if(pacman.game.Constants.NUM_LIVES - game.getPacmanNumberOfLivesRemaining() == Parameters.parameters.integerParameter("pacmanLives")) {
+        		game = killGame(game);
+        	}
+        	
 
             while (!game.gameOver()) {
                 handlePeek(game);
@@ -361,6 +375,16 @@ public class CustomExecutor {
         MASController ghostControllerCopy = ghostController.copy(ghostPO);
 
         while (!game.gameOver()) {
+        	
+    		//hacky code: the difference on the left side of the equation equates to the number of lives lost
+    		//If that number is equal to our parameter for number of lives, kill the game and close the game view
+        	if(pacman.game.Constants.NUM_LIVES - game.getPacmanNumberOfLivesRemaining() == Parameters.parameters.integerParameter("pacmanLives")) {
+        		game = killGame(game);
+        		if(gv != null) {
+        			gv.closeGame();
+        		}
+        	}
+        	        	
             if (tickLimit != -1 && tickLimit < game.getTotalTime()) {
                 break;
             }
@@ -438,7 +462,17 @@ public class CustomExecutor {
         new Thread(pacManController).start();
         new Thread(ghostControllerCopy).start();
 
-        while (!game.gameOver()) {
+        while (!game.gameOver()) {       	
+        	
+    		//hacky code: the difference on the left side of the equation equates to the number of lives lost
+    		//If that number is equal to our parameter for number of lives, kill the game and close the game view
+        	if(pacman.game.Constants.NUM_LIVES - game.getPacmanNumberOfLivesRemaining() == Parameters.parameters.integerParameter("pacmanLives")) {
+        		game = killGame(game);
+        		if(gv != null) {
+        			gv.closeGame();
+        		}
+        	}
+        	        	
             if (tickLimit != -1 && tickLimit < game.getTotalTime()) {
                 break;
             }
@@ -502,9 +536,20 @@ public class CustomExecutor {
         new Thread(pacManController).start();
         new Thread(ghostControllerCopy).start();
         while (!game.gameOver()) {
+        	      	
             if (tickLimit != -1 && tickLimit < game.getTotalTime()) {
                 break;
             }
+            
+    		//hacky code: the difference on the left side of the equation equates to the number of lives lost
+    		//If that number is equal to our parameter for number of lives, kill the game and close the game view
+        	if(pacman.game.Constants.NUM_LIVES - game.getPacmanNumberOfLivesRemaining() == Parameters.parameters.integerParameter("pacmanLives")) {
+        		game = killGame(game);
+        		if(gv != null) {
+        			gv.closeGame();
+        		}
+        	}
+        	            
             handlePeek(game);
             if(hold) {
             	System.out.println("There is a miscutil.wait... in CustomExecutor.java");
@@ -563,7 +608,8 @@ public class CustomExecutor {
 
         GameView gv = null;
         MASController ghostControllerCopy = ghostController.copy(ghostPO);
-
+        
+        
         if (visual) {
             gv = new GameView(game, setDaemon);
             gv.setScaleFactor(scaleFactor);
@@ -582,6 +628,16 @@ public class CustomExecutor {
         new Thread(ghostControllerCopy).start();
 
         while (!game.gameOver()) {
+        	
+    		//hacky code: the difference on the left side of the equation equates to the number of lives lost
+    		//If that number is equal to our parameter for number of lives, kill the game and close the game view
+        	if(pacman.game.Constants.NUM_LIVES - game.getPacmanNumberOfLivesRemaining() == Parameters.parameters.integerParameter("pacmanLives")) {
+        		game = killGame(game);
+        		if(gv != null) {
+        			gv.closeGame();
+        		}
+        	}
+        	        	
             if (tickLimit != -1 && tickLimit < game.getTotalTime()) {
                 break;
             }
@@ -690,6 +746,15 @@ public class CustomExecutor {
             gv.showGame();
         }
         
+		//hacky code: the difference on the left side of the equation equates to the number of lives lost
+		//If that number is equal to our parameter for number of lives, kill the game and close the game view
+    	if(pacman.game.Constants.NUM_LIVES - game.getPacmanNumberOfLivesRemaining() == Parameters.parameters.integerParameter("pacmanLives")) {
+    		game = killGame(game);
+    		if(gv != null) {
+    			gv.closeGame();
+    		}
+    	}
+    	        
         if(visuals && gv != null) {
         	gv.repaint();
         }
@@ -700,5 +765,55 @@ public class CustomExecutor {
 		
 		return gv;
 		
+	}
+	
+	/**
+	 * This method takes a game, sets the game state to one that equates to a finished game (the in game time is infinity),
+	 * and returns the game with the new state.
+	 * @param game
+	 * @return
+	 */
+	public Game killGame(Game game) {
+	
+		StringBuilder sb = new StringBuilder();
+
+        sb.append(game.getMazeIndex() + "," + Integer.MAX_VALUE + "," + game.getScore() + "," + game.getCurrentLevelTime() + "," 
+        			+ 0 + "," + game.getPacmanCurrentNodeIndex() + "," + game.getPacmanLastMoveMade() + "," + -1 + "," + false + ",");
+        
+		
+        for (int i = 0; i < 4; i++) {
+            sb.append( 1 + "," + 1 + "," + 1+ "," + pacman.game.Constants.MOVE.LEFT + ",");
+        }
+
+        for (int i = 0; i < game.getCurrentMaze().pillIndices.length; i++) {
+                sb.append("1");
+        }
+
+        sb.append(",");
+
+        for (int i = 0; i < game.getCurrentMaze().powerPillIndices.length; i++) {
+               sb.append("0");
+        }
+
+        sb.append(",");
+        sb.append(game.getTimeOfLastGlobalReversal());
+        sb.append(",");
+        sb.append(true);
+        sb.append(",");
+
+        for (GHOST ghost : GHOST.values()) {
+            sb.append(false);
+            sb.append(",");
+        }
+
+        sb.append(false);
+        sb.append(",");
+        sb.append(false);
+        
+        game.setGameState(sb.toString());
+		
+		game.gameOver();
+		
+		return game;
 	}
 }

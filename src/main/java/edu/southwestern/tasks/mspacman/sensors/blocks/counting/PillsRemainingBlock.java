@@ -4,7 +4,7 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.util.MiscUtil;
 
 /**
- * should support popacman (TODO: test)
+ * Support PO pacman
  * @author Jacob Schrum
  */
 public class PillsRemainingBlock extends TargetPortionRemainingBlock {
