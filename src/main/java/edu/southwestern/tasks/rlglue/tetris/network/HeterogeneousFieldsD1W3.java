@@ -28,9 +28,9 @@ public class HeterogeneousFieldsD1W3 implements SubstrateArchitectureDefinition{
 		FlexibleSubstrateArchitecture.connectInputToHidden(substrateConnectivity, io.t1, getNetworkHiddenArchitecture(), 5, 5);
 		FlexibleSubstrateArchitecture.connectInputToHidden(substrateConnectivity, io.t1, getNetworkHiddenArchitecture(), 3, 3);
 		FlexibleSubstrateArchitecture.connectInputToHidden(substrateConnectivity, io.t1, getNetworkHiddenArchitecture(), 1, 1);
-		FlexibleSubstrateArchitecture.connectHiddenToOutput(substrateConnectivity, io.t2, getNetworkHiddenArchitecture(), -1, -1, 0);
-		FlexibleSubstrateArchitecture.connectHiddenToOutput(substrateConnectivity, io.t2, getNetworkHiddenArchitecture(), -1, -1, 1);
-		FlexibleSubstrateArchitecture.connectHiddenToOutput(substrateConnectivity, io.t2, getNetworkHiddenArchitecture(), -1, -1, 2);
+//		FlexibleSubstrateArchitecture.connectHiddenToOutput(substrateConnectivity, io.t2, getNetworkHiddenArchitecture(), -1, -1, 0);
+//		FlexibleSubstrateArchitecture.connectHiddenToOutput(substrateConnectivity, io.t2, getNetworkHiddenArchitecture(), -1, -1, 1);
+//		FlexibleSubstrateArchitecture.connectHiddenToOutput(substrateConnectivity, io.t2, getNetworkHiddenArchitecture(), -1, -1, 2);
 		return substrateConnectivity;
 	}
 

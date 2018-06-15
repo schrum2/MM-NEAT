@@ -209,7 +209,7 @@ public class FlexibleSubstrateArchitecture {
 			connectLastHiddenToOutput(networkConnectivity, outputSubstrateNames, networkHiddenArchitecture, -1, -1);
 		}
 	}
-	
+
 	/**
 	 * connects last hidden layer to output layer
 	 * @param networkConnectivity list that connectivity is appended to
@@ -223,10 +223,11 @@ public class FlexibleSubstrateArchitecture {
 			List<String> outputSubstrateNames,
 			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture,
 			int receptiveFieldWidth, int receptiveFieldHeight) {
-		connectHiddenToOutput(networkConnectivity, outputSubstrateNames, networkHiddenArchitecture, receptiveFieldWidth, receptiveFieldHeight, 
-				(networkHiddenArchitecture.size() > 0)? networkHiddenArchitecture.get(networkHiddenArchitecture.size() - 1).t1: 0);
+		if (networkHiddenArchitecture.size() > 0) {
+			connectHiddenToOutput(networkConnectivity, outputSubstrateNames, networkHiddenArchitecture, receptiveFieldWidth, receptiveFieldHeight, networkHiddenArchitecture.size() - 1);
+		}
 	}
-	
+
 	/**
 	 * connects hidden layer to output layer
 	 * @param networkConnectivity list that connectivity is appended to
@@ -249,6 +250,5 @@ public class FlexibleSubstrateArchitecture {
 			}
 		}
 	}
-	
 }
 
