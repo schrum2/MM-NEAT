@@ -8,7 +8,7 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.util.MiscUtil;
 
 /**
- * TODO: what to do in PO conditions
+ * handles PO conditions (TODO: implement PillModel to finish this)
  * @author Jacob Schrum
  */
 public class VariableDirectionPillDistanceBlock extends VariableDirectionDistanceBlock {
@@ -23,13 +23,17 @@ public class VariableDirectionPillDistanceBlock extends VariableDirectionDistanc
 	}
 
 	@Override
+	/**
+	 * The targets for this sensor are the active pill indicies in the current maze. In non-PO
+	 * conditions, we always have access to this information.
+	 * 
+	 * In PO conditions, if we are using a pill model (see parameters, booleanOption usePillModel), then 
+	 * we get the active pill indices from the GameFacade's PillModel (TODO: get PillModel up and running).
+	 * 
+	 * If we are not using a pill model bu are in PO conditions, we recieve an array of pills that we can see. 
+	 * This array could be empty if we cannot see any pills.
+	 */
 	public int[] getTargets(GameFacade gf) {
-		//TODO: what should be returned if no targets are visible?
-//		int[] intermediate = gf.getActivePillsIndices();;
-//		for(int i = 0; i < intermediate.length; i++) {
-//			System.out.println(intermediate[i]);
-//		}
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		return gf.getActivePillsIndices();
 	}
 }

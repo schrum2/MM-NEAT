@@ -31,9 +31,9 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.datastructures.Triple;
 
 public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 
@@ -71,8 +71,9 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
                 //.regularization(true) // Causes error in new DL4J: 1.0.0-beta
         		.optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT);
                 
-        int kernel = Parameters.parameters.integerParameter("receptiveFieldSize");
-        int[] kernelArray = new int[]{kernel, kernel};
+        int xKernel = Parameters.parameters.integerParameter("receptiveFieldWidth");
+        int yKernel = Parameters.parameters.integerParameter("receptiveFieldHeight");
+        int[] kernelArray = new int[]{xKernel, yKernel};
         int stride = Parameters.parameters.integerParameter("stride");
         int[] strideArray = new int[]{stride, stride};
         boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
@@ -187,14 +188,15 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 		
         List<Substrate> substrates = hnt.getSubstrateInformation();
         
-        List<Triple<String, String, Boolean>> substrateConnectivity = hnt.getSubstrateConnectivity();
+        List<SubstrateConnectivity> substrateConnectivity = hnt.getSubstrateConnectivity();
         // Quick look-up for whether layers are joined in a convolutional manner
-        HashMap<String, Boolean> areConnectionsConvolutional = new HashMap<>();
-        for(Triple<String, String, Boolean> trip : substrateConnectivity) {
-        	areConnectionsConvolutional.put(trip.t1 + "_" + trip.t2, trip.t3);
+        HashMap<String, Integer> areConnectionsConvolutional = new HashMap<>();
+        for(SubstrateConnectivity trip : substrateConnectivity) {
+        	areConnectionsConvolutional.put(trip.SOURCE_SUBSTRATE_NAME + "_" + trip.TARGET_SUBSTRATE_NAME, trip.connectivityType);
         }
         
-        int kernel = Parameters.parameters.integerParameter("receptiveFieldSize");
+        int xKernel = Parameters.parameters.integerParameter("receptiveFieldWidth");
+        int yKernel = Parameters.parameters.integerParameter("receptiveFieldHeight");
 		
 		// This method heavily relies on the fact that node innovation numbers
 		// in a substrate network's genotype start at 0 and are sequentially numbered
@@ -229,7 +231,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 			Substrate firstTargetSubstrate = substrates.get(firstTargetSubstrateIndex); 
 			
 			// If substrate connections are convolutional, then assume all layer connections are
-			if(areConnectionsConvolutional.get(firstSourceSubstrate.getName() + "_" + firstTargetSubstrate.getName())) {				
+			if(SubstrateConnectivity.CTYPE_CONVOLUTION == (areConnectionsConvolutional.get(firstSourceSubstrate.getName() + "_" + firstTargetSubstrate.getName()))) {				
 				INDArray weights = layer.getParam("W"); // Convolutional weights
 				INDArray biases = layer.getParam("b"); // Biases: one per target substrate
 				
@@ -244,8 +246,8 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 					biases.putScalar(targetChannel, newBias);
 					int sourceNeuronsToSkip = 0; // Reset for each target substrate
 					for(int sourceChannel = 0; sourceChannel < substratesInSourceLayer; sourceChannel++) {						
-						for(int height = 0; height < kernel; height++) {
-							for(int width = 0; width < kernel; width++) {
+						for(int height = 0; height < yKernel; height++) {
+							for(int width = 0; width < xKernel; width++) {
 								// Figure out source neuron in TWEANNGenotype, and rely on weight sharing
 								long sourceInnovation = layerStartInnovation + sourceNeuronsToSkip + (height*sourceSubstrateWidth) + width;
 								// Get weight from TWEANNGenotype
@@ -361,7 +363,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 				"linkExpressionThreshold:-0.1", // Express all links
 				"heterogeneousSubstrateActivations:true", // Allow mix of activation functions
 				"inputsUseID:true", // Inputs are Identity (mandatory in DL4J?)
-				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
+				"stride:1","receptiveFieldHeight:3","receptiveFieldWidth:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				"experiment:edu.southwestern.experiment.rl.EvaluateDL4JNetworkExperiment"});
 		MMNEAT.loadClasses();

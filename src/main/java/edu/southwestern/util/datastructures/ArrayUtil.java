@@ -450,6 +450,20 @@ public class ArrayUtil {
 		}
 		return true;
 	}
+	
+	/**
+	 * Check if the array contains any null entries
+	 * @param array Array of Objects
+	 * @return true if any entries are null, false otherwise
+	 */
+	public static boolean anyNull(Object[] array) {
+		for(int i = 0; i < array.length; i++) {
+			if(array[i] == null) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Returns true if every member of long lhs is also in rhs, i.e. lhs is a

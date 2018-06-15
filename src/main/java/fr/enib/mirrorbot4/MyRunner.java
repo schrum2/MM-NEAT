@@ -1,5 +1,6 @@
 package fr.enib.mirrorbot4;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,8 +18,6 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Move;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPointNeighbourLink;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import cz.cuni.amis.utils.NullCheck;
-import java.util.Map;
-import net.sf.saxon.om.Navigator;
 
 /**
  * Responsible for direct running to location.
@@ -90,39 +89,32 @@ public class MyRunner implements IUT2004PathRunner {
 	
 	private RayData rayData;
 	
-	public void setRayData(RayData rd)
-	{
+	public void setRayData(RayData rd){
 		rayData = rd;
 	}
 	
-	public RayData getRayData()
-	{
+	public RayData getRayData(){
 		return rayData;
 	}
 	
-	private void movementFilter(Location firstLocation, Location secondLocation, ILocated focus)
-	{
+	private void movementFilter(Location firstLocation, Location secondLocation, ILocated focus){
 		Location toFirstLoc = firstLocation.sub(memory.getLocation()).getNormalized();
-		
 		Location avoidance = getEnemyAvoidance();
-		
 		if (avoidance.getLength() > 0.0) toFirstLoc = toFirstLoc.add(avoidance);
-		
 		firstLocation = memory.getLocation().add(toFirstLoc.getNormalized().scale(300.0));
-		
 		bot.getAct().act(addFocus(new Move().setFirstLocation(firstLocation).setSecondLocation(secondLocation), focus));
 	}
 	
-	private void keyboardMove(Location firstLocation, Location secondLocation, ILocated focus)
-	{
+	@SuppressWarnings("unused")
+	private void keyboardMove(Location firstLocation, Location secondLocation, ILocated focus){
 		//if (firstLocation != null) firstLocation = convertToKeyboardLocation(firstLocation);
 		//if (secondLocation != null) secondLocation = convertToKeyboardLocation(secondLocation);
 		
 		bot.getAct().act(addFocus(new Move().setFirstLocation(firstLocation).setSecondLocation(secondLocation), focus));
 	}
 	
-	private Location convertToKeyboardLocation(Location loc)
-	{
+	@SuppressWarnings("unused")
+	private Location convertToKeyboardLocation(Location loc){
 		if ((bot.getLocation() == null) || (bot.getRotation() == null)) return loc;
 		Location myPos = bot.getLocation();
 		Location myRot = bot.getRotation().toLocation();
@@ -134,8 +126,7 @@ public class MyRunner implements IUT2004PathRunner {
 		Location movDir = loc.sub(myPos);
 		
 		Location keybDir = myPos;
-		if ((movDir.getLength() > 0.0) && (myRot.getLength() > 0.0))
-		{
+		if ((movDir.getLength() > 0.0) && (myRot.getLength() > 0.0)){
 			Location forwardBack = myRot.scale(myRot.dot(movDir));
 			Location leftRight = movDir.sub(forwardBack);
 			
@@ -144,8 +135,7 @@ public class MyRunner implements IUT2004PathRunner {
 				forwardBack.setX(0.0);
 				forwardBack.setY(0.0);
 				forwardBack.setZ(0.0);
-			}
-			else forwardBack = forwardBack.getNormalized();
+			}else forwardBack = forwardBack.getNormalized();
 			
 			if (leftRight.getLength() < 40.0) {
 				//leftRight.setTo(0.0, 0.0, 0.0);
@@ -157,25 +147,22 @@ public class MyRunner implements IUT2004PathRunner {
 			
 			Location result = forwardBack.add(leftRight);
 			
-			if (result.getLength() > 0.0)
-			{
+			if (result.getLength() > 0.0){
 				result = result.getNormalized().scale(memory.getBaseSpeed()); //(movDir.getLength()/10.0);
 				keybDir = keybDir.add(result);
 			}
 		}
-		
 		return keybDir;
 	}
 	
-	public Location getEnemyAvoidance()
-	{
+	public Location getEnemyAvoidance(){
 		//avoid eye contact
 		Location avoidance = new Location(0.0, 0.0, 0.0);
 		Location avoidanceNoShoot = new Location(0.0, 0.0, 0.0);
 		Map<UnrealId, Player> players = rayData.getCtrl().getPlayers().getVisiblePlayers();
-		for (Map.Entry<UnrealId,Player> entry : players.entrySet())
-		{
-			UnrealId key=entry.getKey();
+		for (Map.Entry<UnrealId,Player> entry : players.entrySet()){
+			// Unused: schrum: 6/7/19
+			//UnrealId key=entry.getKey();
 			Player player=entry.getValue();
 
 			Location pLoc = player.getLocation();
@@ -188,14 +175,10 @@ public class MyRunner implements IUT2004PathRunner {
 			Location posVec = rayData.getCtrl().getInfo().getLocation().sub(pLoc).getNormalized();
 			double dotprod = posVec.dot(aimVec);
 			
-			if (dotprod > 0.90)
-			{
-				if (player.getFiring() > 0)
-				{
+			if (dotprod > 0.90){
+				if (player.getFiring() > 0){
 					avoidance = avoidance.add(posVec.sub(aimVec.scale(dotprod)).getNormalized());
-				}
-				else
-				{
+				}else{
 					//aimVec.setTo(Math.random(), Math.random(), 0.0);
 					aimVec.setX(Math.random());
 					aimVec.setY(Math.random());
@@ -208,7 +191,6 @@ public class MyRunner implements IUT2004PathRunner {
 		
 		if (avoidance.getLength() > 0.0) avoidance = avoidance.getNormalized();
 		if ((avoidanceNoShoot.getLength() > 0.0) && (avoidance.getLength() == 0.0)) avoidance = avoidance.add(avoidanceNoShoot.getNormalized());
-		
 		if (avoidance.getLength() > 0.0) avoidance = avoidance.getNormalized();
 		
 		return avoidance;
@@ -219,8 +201,7 @@ public class MyRunner implements IUT2004PathRunner {
     /**
      * Initializes direct running to the given destination.
      */
-    public void reset()
-    {
+    public void reset(){
         // reset working info
         runnerStep = 0;
         runnerSingleJump = 0;
@@ -229,12 +210,10 @@ public class MyRunner implements IUT2004PathRunner {
         collisionSpot = null;
     }
 	
-	public void stopMovement(ILocated focus)
-	{
+	public void stopMovement(ILocated focus){
 		rayData.getCtrl().getMove().stopMovement();
 		reset();
-		if (focus != null)
-		{
+		if (focus != null){
 			rayData.getCtrl().getMove().turnTo(focus);
 		}
 	}
@@ -294,20 +273,16 @@ public class MyRunner implements IUT2004PathRunner {
      * @param reachable Whether the location is reachable.
      * @return True, if no problem occured.
      */
-	public boolean runToLocation (Location fromLocation, Location firstLocation, Location secondLocation, ILocated focus, NavPointNeighbourLink navPointsLink, boolean reachable)
-	{
+	public boolean runToLocation (Location fromLocation, Location firstLocation, Location secondLocation, ILocated focus, NavPointNeighbourLink navPointsLink, boolean reachable){
 		return runToLocation (fromLocation, firstLocation, secondLocation, focus, navPointsLink, reachable, 0);
 	}
 	
 	//jumptype: 0=choose, 1=forbidden, 2=forced
-    public boolean runToLocation (Location fromLocation, Location firstLocation, Location secondLocation, ILocated focus, NavPointNeighbourLink navPointsLink, boolean reachable, int jumpType)
-    {
+    public boolean runToLocation (Location fromLocation, Location firstLocation, Location secondLocation, ILocated focus, NavPointNeighbourLink navPointsLink, boolean reachable, int jumpType){
 
-        if (log != null && log.isLoggable(Level.FINER)) {            
-     	            log.finer(
-	                "Runner.runToLocation(): runnerStep is "
-	                + runnerStep + ", reachable is " + reachable + ",  navPointsLink is" + navPointsLink
-	            );            
+        if (log != null && log.isLoggable(Level.FINER)) {
+        	log.finer("Runner.runToLocation(): runnerStep is "
+	                + runnerStep + ", reachable is " + reachable + ",  navPointsLink is" + navPointsLink);            
         }
         
         // take another step
@@ -322,8 +297,7 @@ public class MyRunner implements IUT2004PathRunner {
 
         // are we just starting a new runner request? the first step should
         // always be like this, in order to gain speed/direction before jumps
-        if (runnerStep <= 1)
-        {
+        if (runnerStep <= 1){
             // start running to that location..
             movementFilter(firstLocation, secondLocation, focus);
 
@@ -340,41 +314,33 @@ public class MyRunner implements IUT2004PathRunner {
                     Location velocityDir = new Location(memory.getVelocity().asVector3d()).getNormalized();
                     Double result = Math.acos(direction.dot(velocityDir));
 					
-					if (jumpType != 1) //if jump not forbidden
-					{
+					if (jumpType != 1){ //if jump not forbidden
 						// we will jump if our speed is reasonable and our direction differs max. 20 degrees
 						// or just jump if it's forced !
 						if ((jumpType==2) || (memory.getVelocity().size() > 200 && !result.isNaN() && result < (Math.PI / 9)))
 							return resolveJump(firstLocation, secondLocation, focus, navPointsLink, reachable);
 					}
                  }
-             }                
-         
+             }
             return true;
         }
 
         // are we single-jumping already?
-        if (runnerSingleJump > 0)
-        {
+        if (runnerSingleJump > 0){
             // continue with the single-jump
             return iterateSingleJumpSequence (firstLocation, secondLocation, focus, reachable);
-        }
-        // are we double-jumping already?
-        else if (runnerDoubleJump > 0)
-        {
+        }else if (runnerDoubleJump > 0){// are we double-jumping already?
             // continue with the double-jump
             return iterateDoubleJumpSequence (firstLocation, secondLocation, focus, reachable);
         }
         // collision experienced?
-        if (senses.isCollidingOnce())
-        {
+        if (senses.isCollidingOnce()){
             // try to resolve it
             return resolveCollision (firstLocation, secondLocation, focus, reachable);
         }
         // are we going to jump now?
         else 
-        if 
-        (
+        if (
             // the agent is not jumping already
             (runnerSingleJump == 0) && (runnerDoubleJump == 0)
             &&
@@ -397,8 +363,7 @@ public class MyRunner implements IUT2004PathRunner {
                 //|| (Math.random () < .03)
             )
         ) 
-        {
-            // try to start a jump
+        {   // try to start a jump
             return resolveJump (firstLocation, secondLocation, focus, navPointsLink, reachable);
         }
 
@@ -406,11 +371,8 @@ public class MyRunner implements IUT2004PathRunner {
         movementFilter(firstLocation, secondLocation, focus);
 
         if (log != null && log.isLoggable(Level.FINER)) {
-     	            log.finer(
-	                "Runner.runToLocation(): issuing default move command to: " + firstLocation
-	            );
+     	            log.finer("Runner.runToLocation(): issuing default move command to: " + firstLocation);
         }
-        
         return true;
     }
 
@@ -428,8 +390,7 @@ public class MyRunner implements IUT2004PathRunner {
      * @param reachable Whether the location is reachable.
      * @return True, if no problem occured.
      */
-    private boolean resolveCollision (Location firstLocation, Location secondLocation, ILocated focus, boolean reachable)
-    {
+    private boolean resolveCollision (Location firstLocation, Location secondLocation, ILocated focus, boolean reachable){
         // are we colliding at a new spot?
         if (
             // no collision yet
@@ -438,11 +399,10 @@ public class MyRunner implements IUT2004PathRunner {
             || (memory.getLocation().getDistance2D(collisionSpot) > 120)
         ) {
             // setup new collision spot info
-        	if (log != null && log.isLoggable(Level.FINER)) 
-	            log.finer(
-	                "Runner.resolveCollision(): collision at "
-	                + (int) memory.getLocation().getDistance2D(firstLocation)
-	            );
+        	if (log != null && log.isLoggable(Level.FINER)) { 
+	            log.finer("Runner.resolveCollision(): collision at "
+	            			+ (int) memory.getLocation().getDistance2D(firstLocation));
+        	}
             collisionSpot = memory.getLocation();
             collisionCount = 1;
             // meanwhile: keep running to the location..
@@ -455,11 +415,10 @@ public class MyRunner implements IUT2004PathRunner {
         	switch (collisionCount++ % 2) {
             case 0:
                 // ..first by a double jump sequnce
-            	if (log != null && log.isLoggable(Level.FINER)) 
-	                log.finer(
-	                    "Runner.resolveCollision(): repeated collision (" + collisionCount + "):"
-	                    + " double-jumping at " + (int) memory.getLocation().getDistance2D(firstLocation)
-	                );
+            	if (log != null && log.isLoggable(Level.FINER)) { 
+	                log.finer("Runner.resolveCollision(): repeated collision (" + collisionCount + "):"
+	                		  + " double-jumping at " + (int) memory.getLocation().getDistance2D(firstLocation));
+            	}
                 return initDoubleJumpSequence (firstLocation, secondLocation, focus, reachable);
 
             default:
@@ -489,8 +448,7 @@ public class MyRunner implements IUT2004PathRunner {
      * @param reachable Whether the location is reachable.
      * @return True, if no problem occured.
      */
-    private boolean resolveJump (Location firstLocation, Location secondLocation, ILocated focus, NavPointNeighbourLink navPointsLink, boolean reachable)
-    {    		
+    private boolean resolveJump (Location firstLocation, Location secondLocation, ILocated focus, NavPointNeighbourLink navPointsLink, boolean reachable){    		
         // get the distance of the target location
         int distance = (int) memory.getLocation().getDistance2D(firstLocation);
         // get the agent overall velocity
@@ -509,7 +467,9 @@ public class MyRunner implements IUT2004PathRunner {
         // adjust jumping distance for jumps into lower/higher positions
         jumpDistance += Math.min (200, Math.max (-200, zDistance));
         
-        if (log != null && log.isLoggable(Level.FINER)) log.finer("Runner.resolveJump: distance = " + distance + ", velocity = " + velocity + ", jumpDistance = " + jumpDistance + ", zDistance = " + zDistance);        
+        if (log != null && log.isLoggable(Level.FINER)) {
+        	log.finer("Runner.resolveJump: distance = " + distance + ", velocity = " + velocity + ", jumpDistance = " + jumpDistance + ", zDistance = " + zDistance);        
+        }
         
         // TODO: [Jimmy] test it!
         boolean enforceDoubleJump = false;
@@ -522,12 +482,13 @@ public class MyRunner implements IUT2004PathRunner {
         	// we should jump && the zDistance between our position and the target is more than 60units
         	// we won't ever make it with ordinary jump
         	enforceDoubleJump = true;
-        	if (log != null && log.isLoggable(Level.FINEST)) log.finest("Runner.resolveJump(): double jump indicated");
+        	if (log != null && log.isLoggable(Level.FINEST)) {
+        		log.finest("Runner.resolveJump(): double jump indicated");
+        	}
         }
 
         // we already missed all jumping opportunities
-        if (jumpDistance < 370)
-        {
+        if (jumpDistance < 370){
             //TODO: test - michal bida
             //We force jump when needed jump is true or when jump flag is set
             if (navPointsLink != null) {
@@ -539,8 +500,7 @@ public class MyRunner implements IUT2004PathRunner {
             
             // if it's reachable, don't worry, we'll make it no matter what
             // if it's unreachable: well, are we waiting for the next jump?
-            if (reachable || (distance >= 1000))
-            {
+            if (reachable || (distance >= 1000)){
                 // just keep running to that location..
                 movementFilter(firstLocation, secondLocation, focus);
                 return true;
@@ -556,8 +516,7 @@ public class MyRunner implements IUT2004PathRunner {
             return true;
         }
         // this is the right space for a single-jump
-        else if (jumpDistance < 470)
-        {
+        else if (jumpDistance < 470){
         	// is double jump enforced?
         	if (enforceDoubleJump) return initDoubleJumpSequence(firstLocation, secondLocation, focus, reachable);
             // start a single-jump sequences        	
@@ -565,8 +524,7 @@ public class MyRunner implements IUT2004PathRunner {
         }
         // we already missed the double-jump opportunity
         // this is the space for waiting for a single-jump
-        else if (jumpDistance < 600)
-        {
+        else if (jumpDistance < 600){
         	// but if the double jump is enforced... we should try that!
         	if (enforceDoubleJump) {
         		// even though we've missed the opportunity, the ordinary jump won't help us!
@@ -580,8 +538,7 @@ public class MyRunner implements IUT2004PathRunner {
         }
         // this is the right space for double-jumping
         // but only, if we have the necessary speed
-        else if ((jumpDistance < 700) && (velocity > 300))
-        {
+        else if ((jumpDistance < 700) && (velocity > 300)){
         	if (!enforceDoubleJump) {
         		// we do not need double jump
         		// so... don't use double jump when link is R_Jump (for that we need just single jump)
@@ -617,8 +574,7 @@ public class MyRunner implements IUT2004PathRunner {
      * @param reachable Whether the location is reachable.
      * @return True, if no problem occured.
      */
-    private boolean initSingleJumpSequence (Location firstLocation, Location secondLocation, ILocated focus, boolean reachable)
-    {
+    private boolean initSingleJumpSequence (Location firstLocation, Location secondLocation, ILocated focus, boolean reachable){
         // do not allow two jumping sequences
         if ((runnerSingleJump > 0) || (runnerDoubleJump > 0))
             throw new RuntimeException ("jumping sequence aleady started");
@@ -642,23 +598,22 @@ public class MyRunner implements IUT2004PathRunner {
      * @param reachable Whether the location is reachable.
      * @return True, if no problem occured.
      */
-    private boolean iterateSingleJumpSequence (Location firstLocation, Location secondLocation, ILocated focus, boolean reachable)
-    {
+    private boolean iterateSingleJumpSequence (Location firstLocation, Location secondLocation, ILocated focus, boolean reachable){
         // get the distance of the target location
         int distance = (int) memory.getLocation().getDistance2D(firstLocation);
         // get the agent vertical velocity (e.g. is the agent jumping/falling?)..
         int zVelocity = (int) memory.getVelocity().z;
 
         // what phase of the single-jump sequence?
-        switch (runnerSingleJump)
-        {
+        switch (runnerSingleJump){
             // the first phase: wait for the jump
             case 1:
                 // did the agent started the jump already?
-                if (zVelocity > 100)
-                {
+                if (zVelocity > 100){
                     // continue the jump sequence by waiting for a peak
-                	if (log != null && log.isLoggable(Level.FINER)) log.finer("Runner.iterateSingleJumpSequence(): single-jump registered at " + distance + ", z-velo " + zVelocity);
+                	if (log != null && log.isLoggable(Level.FINER)) {
+                		log.finer("Runner.iterateSingleJumpSequence(): single-jump registered at " + distance + ", z-velo " + zVelocity);
+                	}
                     runnerSingleJump++;
                 }
                 // meanwhile: just wait for the jump to start
@@ -668,10 +623,11 @@ public class MyRunner implements IUT2004PathRunner {
             //  the last phase: finish the jump
             default:
                 // did the agent started to fall already
-                if (zVelocity <= 0)
-                {
+                if (zVelocity <= 0){
                     // kill the single-jump sequence
-                	if (log != null && log.isLoggable(Level.FINER)) log.finer("Runner.iterateSingleJumpSequence(): single-jump completed at " + distance + ", z-velo " + zVelocity);
+                	if (log != null && log.isLoggable(Level.FINER)) {
+                		log.finer("Runner.iterateSingleJumpSequence(): single-jump completed at " + distance + ", z-velo " + zVelocity);
+                	}
                     runnerSingleJump = 0;
                 }
                 // meanwhile: just wait for the jump to start
@@ -694,8 +650,7 @@ public class MyRunner implements IUT2004PathRunner {
      * @param reachable Whether the location is reachable.
      * @return True, if no problem occured.
      */
-    private boolean initDoubleJumpSequence (Location firstLocation, Location secondLocation, ILocated focus, boolean reachable)
-    {
+    private boolean initDoubleJumpSequence (Location firstLocation, Location secondLocation, ILocated focus, boolean reachable){
         // do not allow two jumping sequences
         if ((runnerSingleJump > 0) || (runnerDoubleJump > 0))
             throw new RuntimeException ("jumping sequence aleady started");
@@ -711,9 +666,13 @@ public class MyRunner implements IUT2004PathRunner {
         // if we want to jump 70 units up we use -> delay 0.39 / jumpZ 680
         double distanceZ = firstLocation.getDistanceZ(memory.getLocation());
         double distance2D = firstLocation.getDistance2D(memory.getLocation());
-        if (log != null && log.isLoggable(Level.FINER)) log.finer("Runner.initDoubleJumpSequence(): disntane2D = " + distance2D + ", distanceZ = " + distanceZ);
+        if (log != null && log.isLoggable(Level.FINER)) {
+        	log.finer("Runner.initDoubleJumpSequence(): disntane2D = " + distance2D + ", distanceZ = " + distanceZ);
+        }
         if (distanceZ > 0) {
-        	if (log != null && log.isLoggable(Level.FINER)) log.finer("Runner.initDoubleJumpSequence(): JUMPING UP! Adjusting parameters of the jump...");
+        	if (log != null && log.isLoggable(Level.FINER)) {
+        		log.finer("Runner.initDoubleJumpSequence(): JUMPING UP! Adjusting parameters of the jump...");
+        	}
         	
         	double  jumpZ_up = 680 * distanceZ / 70;
         	boolean doubleJump_up = jumpZ_up > 340;
@@ -768,7 +727,9 @@ public class MyRunner implements IUT2004PathRunner {
         	}
         }
         
-        if (log != null && log.isLoggable(Level.FINER)) log.finer("Runner.initDoubleJumpSequence(): " + (doubleJump ? "double jumping, double jump delay = " + delay : "single jumping") + ", jumpZ = " + jumpZ);
+        if (log != null && log.isLoggable(Level.FINER)) {
+        	log.finer("Runner.initDoubleJumpSequence(): " + (doubleJump ? "double jumping, double jump delay = " + delay : "single jumping") + ", jumpZ = " + jumpZ);
+        }
 	        
 	    // make some inferation about the doubleJump parameters 
 	        
@@ -787,23 +748,22 @@ public class MyRunner implements IUT2004PathRunner {
      * @param reachable Whether the location is reachable.
      * @return True, if no problem occured.
      */
-    private boolean iterateDoubleJumpSequence (Location firstLocation, Location secondLocation, ILocated focus, boolean reachable)
-    {
+    private boolean iterateDoubleJumpSequence (Location firstLocation, Location secondLocation, ILocated focus, boolean reachable){
         // get the distance of the target location
         int distance = (int) memory.getLocation().getDistance2D(firstLocation);
         // get the agent vertical velocity (e.g. is the agent jumping/falling?)..
         int zVelocity = (int) memory.getVelocity().z;
 
         // what phase of the double-jump sequence?
-        switch (runnerDoubleJump)
-        {
+        switch (runnerDoubleJump){
             // the first phase: wait for the jump
             case 1:
                 // did the agent started the jump already?
-                if (zVelocity > 100)
-                {
+                if (zVelocity > 100){
                     // continue the double-jump sequence by waiting for a peak
-                    if (log != null && log.isLoggable(Level.FINER)) log.finer("Runner.iterateDoubleJumpSequence(): double-jump registered at " + distance + ", z-velo " + zVelocity);
+                    if (log != null && log.isLoggable(Level.FINER)) {
+                    	log.finer("Runner.iterateDoubleJumpSequence(): double-jump registered at " + distance + ", z-velo " + zVelocity);
+                    }
                     runnerDoubleJump++;
                 }
                 // meanwhile: just wait for the jump to start
@@ -813,10 +773,11 @@ public class MyRunner implements IUT2004PathRunner {
             // the second phase: claim the extra boost at jump peak..
             case 2:
                 // is this the awaited jump peak?
-                if (zVelocity < 150)
-                {
+                if (zVelocity < 150){
                     // continue the double-jump sequence by a single jump boost
-                    if (log != null && log.isLoggable(Level.FINER)) log.finer("Runner.iterateDoubleJumpSequence(): double-jump boost at " + distance + ", z-velo " + zVelocity);
+                    if (log != null && log.isLoggable(Level.FINER)) {
+                    	log.finer("Runner.iterateDoubleJumpSequence(): double-jump boost at " + distance + ", z-velo " + zVelocity);
+                    }
                     body.jump ();
                     runnerDoubleJump++;
                     return true;
@@ -828,8 +789,7 @@ public class MyRunner implements IUT2004PathRunner {
             // the last phase:  finish the double-jump
             default:
                 // did the agent started to fall already
-                if (zVelocity <= 0)
-                {
+                if (zVelocity <= 0){
                     // kill the doule-jump sequence
                     runnerDoubleJump = 0;
                 }
@@ -842,7 +802,8 @@ public class MyRunner implements IUT2004PathRunner {
     /*========================================================================*/
 
     /** Agent's bot. */
-    protected UT2004Bot bot;
+    @SuppressWarnings("rawtypes")
+	protected UT2004Bot bot;
     /** Loque memory. */
     protected AgentInfo memory;
     /** Agent's body. */
@@ -859,7 +820,7 @@ public class MyRunner implements IUT2004PathRunner {
      * @param bot Agent's bot.
      * @param memory Loque memory.
      */
-    public MyRunner (UT2004Bot bot, AgentInfo agentInfo, AdvancedLocomotion locomotion, Logger log) {
+    public MyRunner (@SuppressWarnings("rawtypes") UT2004Bot bot, AgentInfo agentInfo, AdvancedLocomotion locomotion, Logger log) {
         // setup reference to agent
     	NullCheck.check(bot, "bot");
     	this.bot = bot;

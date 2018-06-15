@@ -176,15 +176,15 @@ public class HyperNEATUtilTest {
 		outputNames.add("o2");
 		outputNames.add("o3");
 		
-		List<Triple<String,String,Boolean>> test = HyperNEATUtil.getSubstrateConnectivity(3, 2, 3, outputNames, false);
+		List<SubstrateConnectivity> test = HyperNEATUtil.getSubstrateConnectivity(3, 2, 3, outputNames, false);
 		
-		assertEquals(test.get(0), new Triple<String, String, Boolean>("Input(0)", "process(0,0)", Boolean.TRUE));
+		assertEquals(test.get(0), new SubstrateConnectivity("Input(0)", "process(0,0)", SubstrateConnectivity.CTYPE_CONVOLUTION));
 		
 		int index = 0;
 		
 		for(int i = 0; i < 2; i++){ // Process Width
 			for(int j = 0; j < 3; j++){ // Number of Inputs
-				assertEquals(test.get(index++), new Triple<String, String, Boolean>("Input("+ j +")", "process(" + i + ",0)", Boolean.TRUE));
+				assertEquals(test.get(index++), new SubstrateConnectivity("Input("+ j +")", "process(" + i + ",0)", SubstrateConnectivity.CTYPE_CONVOLUTION));
 			}
 		}
 		
@@ -192,14 +192,14 @@ public class HyperNEATUtilTest {
 		for(int i = 0; i < 2; i++){ // Process Depth-1
 			for(int j = 0; j < 2; j++){ // Process Width
 				for(int k = 0; k < 2; k++){ // Process Width
-					assertEquals(test.get(index++), new Triple<String, String, Boolean>("process("+ j + "," + i +")", "process(" + k + ","+ (i+1) + ")", Boolean.TRUE));
+					assertEquals(test.get(index++), new SubstrateConnectivity("process("+ j + "," + i +")", "process(" + k + ","+ (i+1) + ")", SubstrateConnectivity.CTYPE_CONVOLUTION));
 				}
 			}
 		}
 		
 		for(int i = 0; i < 2; i++){ // Process Width
 			for(int j = 0; j < 3; j++){ // Number of Outputs
-				assertEquals(test.get(index++), new Triple<String, String, Boolean>("process(" + i + ",2)", "o" + (j+1),  Boolean.FALSE));
+				assertEquals(test.get(index++), new SubstrateConnectivity("process(" + i + ",2)", "o" + (j+1), SubstrateConnectivity.CTYPE_FULL));
 			}
 		}
 		

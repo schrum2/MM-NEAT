@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.sensors.directional.specific;
 
 import edu.southwestern.parameters.CommonConstants;
@@ -41,10 +37,10 @@ public class VariableDirectionSortedGhostTrappedBlock extends VariableDirectionB
 		return 0;
 	}
 
-	@Override
 	/**
 	 * TODO: test the support for popacman
 	 */
+	@Override
 	public double getValue(GameFacade gf) {
 		ArrayList<Integer> ghosts = gf.getGhostIndices(edibleClose, proximityOnly);
 		if (order >= ghosts.size()) {
