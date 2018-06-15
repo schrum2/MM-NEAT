@@ -10,21 +10,28 @@ import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
-public class HeterogeneousFields implements SubstrateArchitectureDefinition{
+public class HeterogeneousFieldsD1W3 implements SubstrateArchitectureDefinition{
+
 	@Override
 	public List<Triple<Integer, Integer, Integer>> getNetworkHiddenArchitecture() {
 		List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture = new ArrayList<Triple<Integer, Integer, Integer>>();
-		networkHiddenArchitecture.add(new Triple<Integer, Integer, Integer>(1, 6, 16)); //5x5 receptive field
-		networkHiddenArchitecture.add(new Triple<Integer, Integer, Integer>(1, 4, 14)); //3x3 receptive field
+		networkHiddenArchitecture.add(new Triple<Integer, Integer, Integer>(1, 8, 18));
+		networkHiddenArchitecture.add(new Triple<Integer, Integer, Integer>(1, 6, 16));
+		networkHiddenArchitecture.add(new Triple<Integer, Integer, Integer>(1, 10, 20));
 		return networkHiddenArchitecture;
 	}
+
 	@Override
 	public List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask hnt) {
 		List<SubstrateConnectivity> substrateConnectivity = new ArrayList<SubstrateConnectivity>();
 		Pair<List<String>, List<String>> io = FlexibleSubstrateArchitecture.getInputAndOutputNames(hnt);
 		FlexibleSubstrateArchitecture.connectInputToHidden(substrateConnectivity, io.t1, getNetworkHiddenArchitecture(), 5, 5);
-		FlexibleSubstrateArchitecture.connectAdjacentHiddenLayers(substrateConnectivity, getNetworkHiddenArchitecture(), 3, 3);
-		FlexibleSubstrateArchitecture.connectLastHiddenToOutput(substrateConnectivity, io.t2, getNetworkHiddenArchitecture(), SubstrateConnectivity.CTYPE_FULL);
+		FlexibleSubstrateArchitecture.connectInputToHidden(substrateConnectivity, io.t1, getNetworkHiddenArchitecture(), 3, 3);
+		FlexibleSubstrateArchitecture.connectInputToHidden(substrateConnectivity, io.t1, getNetworkHiddenArchitecture(), 1, 1);
+		FlexibleSubstrateArchitecture.connectHiddenToOutput(substrateConnectivity, io.t2, getNetworkHiddenArchitecture(), -1, -1, 0);
+		FlexibleSubstrateArchitecture.connectHiddenToOutput(substrateConnectivity, io.t2, getNetworkHiddenArchitecture(), -1, -1, 1);
+		FlexibleSubstrateArchitecture.connectHiddenToOutput(substrateConnectivity, io.t2, getNetworkHiddenArchitecture(), -1, -1, 2);
 		return substrateConnectivity;
 	}
+
 }
