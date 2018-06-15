@@ -12,7 +12,7 @@ import edu.southwestern.tasks.ut2004.actions.EmptyAction;
 import edu.southwestern.tasks.ut2004.actions.NavigateToLocationAction;
 
 /**
- * TODO
+ * Instructs the bot to explore the map, providing it with nav points that are dangerous or a bad idea to go to
  *
  * @author Jacob Schrum
  */
@@ -23,10 +23,12 @@ public abstract class SequentialPathExplorer implements BotController {
 	 * NavPoints to it for a certain time, marking them as "unavailable".
 	 */
 	protected TabooSet<NavPoint> tabooNavPoints;
+	
 	/**
 	 * Current navigation point we're navigating to.
 	 */
 	protected NavPoint targetNavPoint;
+	
 	/**
 	 * Path auto fixer watches for navigation failures and if some navigation
 	 * link is found to be unwalkable, it removes it from underlying navigation
@@ -121,7 +123,7 @@ public abstract class SequentialPathExplorer implements BotController {
 	/**
 	 * Randomly picks some navigation point to head to.
 	 *
-         * @param bot Bot that is navigating
+     * @param bot Bot that is navigating
 	 * @return randomly chosen navpoint
 	 */
 	@SuppressWarnings("rawtypes")
@@ -129,6 +131,7 @@ public abstract class SequentialPathExplorer implements BotController {
 
         @SuppressWarnings("rawtypes")
 		@Override
+	
 	public void reset(UT2004BotModuleController bot) {
 		bot.getNavigation().stopNavigation();
 	}
