@@ -17,17 +17,25 @@ public class VariableDirectionSortedGhostDistanceBlock extends VariableDirection
 	private final int order;
 	private final boolean edibleClose;
 	private final boolean proximityOnly;
-
+	
+	/**
+	 * Creates a new VariableDirectionSortedGhostDistanceBlock from the other constructor:
+	 * VariableDirectionSortedGhostDistanceBlock(int dir, int order, boolean edibleClose, boolean proximityOnly)
+	 * Sets dir to -1.	
+	 * Sets edibleClose to true.	
+	 * Sets proximityOnly to true.	
+	 * @param order sets order in the other constructor.
+	 */
 	public VariableDirectionSortedGhostDistanceBlock(int order) {
 		this(-1, order, true, true);
 	}
 	
 	/**
-	 * handles popacman (TODO: test the handling of poconditions)
-	 * @param dir
-	 * @param order
+	 * Handles PO pacman
+	 * @param dir the direction this block is observing
+	 * @param order the orderith (nth) ghost away
 	 * @param edibleClose
-	 * @param proximityOnly
+	 * @param proximityOnly whether or not proximity matters more than type of ghost: edible or threat
 	 */
 	public VariableDirectionSortedGhostDistanceBlock(int dir, int order, boolean edibleClose, boolean proximityOnly) {
 		super(dir);
@@ -56,6 +64,8 @@ public class VariableDirectionSortedGhostDistanceBlock extends VariableDirection
 				CommonConstants.checkEachAbsoluteDistanceGhostSort ? new GhostComparator(gf, edibleClose, proximityOnly)
 						: new DirectionalGhostComparator(gf, edibleClose, proximityOnly, dir));
 		// System.out.println("Time:"+gf.getTotalTime()+":dir:"+dir+":Order:"+order+":ghost:"+ghosts.get(order));
+		
+		//returns the shortest path to the order (1st, 2nd, 3rd, etc) ghost away
 		return new int[] { gf.getGhostCurrentNodeIndex(ghosts.get(order)) };
 	}
 }

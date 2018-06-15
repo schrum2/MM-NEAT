@@ -75,6 +75,7 @@ $RECYCLE.BIN/
 /match/
 /multiplelivesconflict/
 /imprisonconflict/
+/imprisonsplit/
 /isolatedconflict/
 /toruspred/
 /torusprey/
@@ -82,6 +83,7 @@ $RECYCLE.BIN/
 /puddle/
 /sunset1/
 /vizdoombasic/
+/vizdoomdefendcenter/
 /onelifesplit/
 /sztetris/
 /othello/
@@ -90,6 +92,7 @@ $RECYCLE.BIN/
 /innovationshapes/
 /microRTS/
 /ut2004/
+/popacman/
 *.zds
 vizdoom/bin/vizdoom-He_Deceives.ini
 *.bmp

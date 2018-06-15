@@ -9,6 +9,7 @@ import pacman.entries.pacman.MyPacMan;
 import pacman.game.Constants.GHOST;
 import popacman.entrants.ghosts.spooky.*;
 import popacman.entrants.pacman.spooky.*;
+import popacman.examples.StarterISMCTS.InformationSetMCTSPacMan;
 
 /**
  * Created by pwillic on 06/05/2016.
@@ -29,6 +30,6 @@ public class Main {
         controllers.put(GHOST.PINKY, new Paul());
         controllers.put(GHOST.SUE, new John());
 
-        executor.runGameTimed(new Derpy(), new MASController(controllers));
+        executor.runGameTimed(new InformationSetMCTSPacMan(), new MASController(controllers));
     }
 }

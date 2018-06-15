@@ -1,6 +1,8 @@
 package edu.southwestern.tasks.mspacman.sensors.mediators.po;
 
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.EdibleGhostTimeRemainingPOBlock;
 import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.TimeLeftBlock;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
 import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.AllThreatsPresentBlock;
@@ -24,15 +26,15 @@ import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDire
 import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSortedGhostIncomingBlock;
 import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSortedGhostTrappedBlock;
 import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSpecificGhostIncomingBlock;
+import edu.southwestern.util.MiscUtil;
+//NEW PO STUFF
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.po.VariableDirectionSortedPossibleGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.po.VariableDirectionSortedPossibleGhostProbabilityBlock;;
 
 /**
- * Mediator for the infinite imprison task (though has been extended beyond
- * that). Of interest: One sensor for whether ghosts are edible or not, which
- * simplifies things; incoming ghost sensors can be turned on or off; Can sense
- * if all threats are present (which should inform decision to eat power pill);
- * can sense if very close to power pill.
+ * TODO: Describe
  * 
- * @author Jacob Schrum
+ * @author Will Price
  */
 public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedInputOutputMediator {
 
@@ -44,81 +46,106 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		boolean imprisonedWhileEdible = Parameters.parameters.booleanParameter("imprisonedWhileEdible");
 
 		blocks.add(new BiasBlock());
-		// Distances
-		blocks.add(new VariableDirectionPillDistanceBlock(direction));
+
+//		// Distances
+//		//TODO: implement pill model correctly for this to work
+		blocks.add(new VariableDirectionPillDistanceBlock(direction)); // ASSUME PILL MODEL INFLUENCES THESE IN GAMEFACADE
+//		//TODO: implement pill model and add support for tracking power pills for this to work
 		blocks.add(new VariableDirectionPowerPillDistanceBlock(direction));
+		
+		
 		for (int i = 0; i < numJunctionsToSense; i++) {
+			//Works with PO, this info is always available
 			blocks.add(new VariableDirectionJunctionDistanceBlock(direction, i));
 		}
-		// Specific Ghosts: Probably never use again
-		if (Parameters.parameters.booleanParameter("specific")) {
-			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-				blocks.add(new VariableDirectionSpecificGhostDistanceBlock(direction, i));
-				if (incoming) {
-					blocks.add(new VariableDirectionSpecificGhostIncomingBlock(i));
-				}
-				// blocks.add(new SpecificGhostIsEdibleBlock(i));
-			}
-		}
+
 		// Ghosts By Distance
 		if (Parameters.parameters.booleanParameter("specificGhostProximityOrder")) {
 			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-				blocks.add(new VariableDirectionSortedGhostDistanceBlock(i));
+				
+				//if we are using the ghostModel
+				if(Parameters.parameters.booleanParameter("useGhostModel")) {
+					System.out.println("DEBUG: WE BETTER BE ADDING THESE BLOCKS IN POCheckEachDirectionMediator");
+					//this will keep track of the nearest four ghosts, but with probabilities, there can be many more than
+					//just four probable ghosts
+					blocks.add(new VariableDirectionSortedPossibleGhostDistanceBlock(i));
+					blocks.add(new VariableDirectionSortedPossibleGhostProbabilityBlock(i));
+				} else {
+					System.out.println("DEBUG: WE BETTER NOT BE ADDING THESE BLOCKS IN POCheckEachDirectionMediator");
+					blocks.add(new VariableDirectionSortedGhostDistanceBlock(i));
+				}
+				
+				//READD
 				if (incoming) {
-					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i));
+					//blocks.add(new VariableDirectionSortedGhostIncomingBlock(i));
 				}
 				if (Parameters.parameters.booleanParameter("trapped")) {
-					blocks.add(new VariableDirectionSortedGhostTrappedBlock(i));
+					//blocks.add(new VariableDirectionSortedGhostTrappedBlock(i));
 				}
 				if (Parameters.parameters.booleanParameter("eTimeVsGDis")) {
-					blocks.add(new VariableDirectionSortedGhostEdibleTimeVsDistanceBlock(i));
+					//blocks.add(new VariableDirectionSortedGhostEdibleTimeVsDistanceBlock(i));
 				}
 				if (!imprisonedWhileEdible) {
-					blocks.add(new VariableDirectionSortedGhostEdibleBlock(i));
+					//blocks.add(new VariableDirectionSortedGhostEdibleBlock(i));
 				}
 			}
 		}
-		// Split ghost sensors: edible and threat
+		
+
+//		// Split ghost sensors: edible and threat
 		boolean split = Parameters.parameters.booleanParameter("specificGhostEdibleThreatSplit");
 		if (split) {
 			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
 				// Threat prox
-				blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, false, false));
+				//blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, false, false));
 				// Edible prox
-				blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, true, false));
+				//blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, true, false));
 				if (incoming) {
 					// Threat incoming
-					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, false, false));
+					//blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, false, false));
 					// Edible incoming
-					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, true, false));
+					//blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, true, false));
 				}
 				if (Parameters.parameters.booleanParameter("trapped")) {
 					// Threat trapped
-					blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, false, false));
+					//blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, false, false));
 					// Edible trapped
-					blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, true, false));
+					//blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, true, false));
 				}
 			}
 		}
+		
+	
 		// Look ahead
 		blocks.add(new VariableDirectionKStepPillCountBlock(direction));
+		//Works with PO, this information is always available
 		blocks.add(new VariableDirectionKStepJunctionCountBlock(direction));
+
+
 		// Counts
 		blocks.add(new PowerPillsRemainingBlock(true, false));
 		blocks.add(new PillsRemainingBlock(true, false));
+		
+		
 		// For limited edible time
 		if (!infiniteEdibleTime) {
 			blocks.add(new CountEdibleGhostsBlock(true, false));
 			blocks.add(new EdibleTimesBlock());
 		}
+		
+
 		// Other
 		blocks.add(new AnyEdibleGhostBlock());
-		blocks.add(new AllThreatsPresentBlock());
+		//blocks.add(new AllThreatsPresentBlock());
 		blocks.add(new IsCloseToPowerPill());
+		blocks.add(new TimeLeftBlock());
+		blocks.add(new EdibleGhostTimeRemainingPOBlock());
+		
 		// High level
 		// blocks.add(new
 		// VariableDirectionDistanceFromJunctionToGhostBlock(direction, true, true));
 		// blocks.add(new VariableDirectionCountAllPillsInKStepsBlock(direction));
+
 		if (Parameters.parameters.booleanParameter("highLevel")) {
 			blocks.add(new VariableDirectionCountJunctionOptionsBlock());
 			// These sensors don't seem to help

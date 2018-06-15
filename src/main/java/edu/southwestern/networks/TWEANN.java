@@ -95,6 +95,7 @@ public class TWEANN implements Network {
 		}
 
 		protected void transmit(double signal) {
+			assert target != null : "Link target is null? " + innovation + " with weight " + weight;
 			assert!Double.isNaN(target.sum) : "target.sum is NaN before transmit";
 			assert!Double.isNaN(signal) : "signal is NaN before transmit";
 			assert!Double.isNaN(weight) : "weight is NaN before transmit";
@@ -1395,7 +1396,7 @@ public class TWEANN implements Network {
 			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 2);
 		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions")) { // TODO: Just move this to where the node is drawn in the first place?
 			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 2);
-		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions") && display.frozen) {
+		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions") && display.frozen) { // TODO: Is this case even reachable?
 			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 4);
 			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 4);
 		}

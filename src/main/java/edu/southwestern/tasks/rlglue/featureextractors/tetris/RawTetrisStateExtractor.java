@@ -50,9 +50,17 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 			if(senseHoles && TetrisExtractorUtil.isHole(i, o.intArray)){
 				if(CommonConstants.splitRawTetrisInputs) {
 					result[i] = 0;
-					result[i + worldSize] = -1;
+					if(Parameters.parameters.booleanParameter("senseTetrisHolesAsPositive")) {
+						result[i + worldSize] = 1;
+					} else {						
+						result[i + worldSize] = -1;
+					}
 				} else {
-					result[i] = -1;
+					if(Parameters.parameters.booleanParameter("senseTetrisHolesAsPositive")) {
+						result[i] = 1;
+					} else {
+						result[i] = -1;
+					}
 				}
 			} else if(Math.signum(o.intArray[i]) == 0){
 				int temp = negative ? -1 : 0;

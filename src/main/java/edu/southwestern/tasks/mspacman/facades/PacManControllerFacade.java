@@ -6,9 +6,9 @@ package edu.southwestern.tasks.mspacman.facades;
  */
 public class PacManControllerFacade {
 
-	//actual pacman controller
+	// pacman controller for old code
 	public oldpacman.controllers.NewPacManController oldP = null;
-	//TODO: test
+	// pacman controller for new partially observable code
 	public pacman.controllers.PacmanController poP = null;
 
 	/**
@@ -35,7 +35,6 @@ public class PacManControllerFacade {
 	public void reset() {
 		if(oldP == null) {
 			//TODO
-			System.out.println("TODO: implement reset() in PacManControllerFacade.java, ln 38");
 		} else {
 			oldP.reset();	
 		}

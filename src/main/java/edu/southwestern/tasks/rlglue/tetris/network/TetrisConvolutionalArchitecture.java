@@ -3,8 +3,11 @@ package edu.southwestern.tasks.rlglue.tetris.network;
 import java.util.ArrayList;
 import java.util.List;
 import edu.southwestern.networks.hyperneat.SubstrateArchitectureDefinition;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.networks.hyperneat.FlexibleSubstrateArchitecture;
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
 
 /**
  * Defines convolutional architecture such that the number of feature maps increases as the size decreases
@@ -33,8 +36,13 @@ public class TetrisConvolutionalArchitecture implements SubstrateArchitectureDef
 		return tetrisConvolutionalArchitecture;
 	}
 
+	private List<SubstrateConnectivity> getSubstrateConnectivity (List<String> inputSubstrateNames, List<String> outputSubstrateNames) {
+		return FlexibleSubstrateArchitecture.getDefaultConnectivity(inputSubstrateNames, outputSubstrateNames, getNetworkHiddenArchitecture());
+	}
+	
 	@Override
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity (List<String> inputSubstrateNames, List<String> outputSubstrateNames) {
-		return FlexibleSubstrateArchitecture.getSubstrateConnectivity(inputSubstrateNames, outputSubstrateNames, getNetworkHiddenArchitecture());
+	public List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask task) {
+		Pair<List<String>, List<String>> io = FlexibleSubstrateArchitecture.getInputAndOutputNames(task);
+		return getSubstrateConnectivity(io.t1, io.t2);
 	}
 }

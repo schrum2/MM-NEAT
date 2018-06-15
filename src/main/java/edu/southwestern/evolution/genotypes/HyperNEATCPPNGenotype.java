@@ -10,12 +10,12 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CartesianGeometricUtilities;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.util2D.ILocated2D;
 import edu.southwestern.util.util2D.Tuple2D;
 
@@ -134,8 +134,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		constructingNetwork = true; // prevent displaying of substrates
 		//long time = System.currentTimeMillis(); // for timing
 		TWEANN cppn = getCPPN();// CPPN used to create TWEANN network
-		List<Substrate> subs = hnt.getSubstrateInformation();// extract substrate information from domain
-		List<Triple<String, String, Boolean>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain
+		List<Substrate> subs = getSubstrateInformation(hnt);// extract substrate information from domain
+		List<SubstrateConnectivity> connections = getSubstrateConnectivity(hnt);// extract substrate connectivity from domain
 		ArrayList<NodeGene> newNodes = null;
 		ArrayList<LinkGene> newLinks = null;
 
@@ -186,6 +186,27 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		// problems, since the archetype is only needed for mutations and crossover.
 		TWEANNGenotype tg = new TWEANNGenotype(newNodes,newLinks, phenotypeOutputs, false, false, -1);
 		return tg;
+	}
+	
+	/**
+ 	 * Method that returns a list of information about the substrate layers
+	 * contained in the network.
+	 * @param the HyperNEAT task
+	 * @return List of Substrates in order from inputs to hidden to output
+	 *         layers
+	 */
+	List<Substrate> getSubstrateInformation(HyperNEATTask HNTask) {
+		return HNTask.getSubstrateInformation();
+		
+	}
+
+	/**
+	 * @param hntask the HyperNEAT task
+	 * @return List of triples that specifies each substrate with the index of each triple being its layer.
+	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
+	 */
+	List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask HNTask) {
+		return HNTask.getSubstrateConnectivity();
 	}
 
 	/**
@@ -332,34 +353,51 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *
 	 * @return array list containing all the links between substrates
 	 */
-	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<Triple<String, String, Boolean>> connections, List<Substrate> subs, HashMap<String, Integer> sIMap, int layersWidth, int layersHeight) {
+	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<SubstrateConnectivity> connections, List<Substrate> subs, HashMap<String, Integer> sIMap, int layersWidth, int layersHeight) {
 		ArrayList<LinkGene> result = new ArrayList<LinkGene>();
 		for (int i = 0; i < connections.size(); i++) { // For each pair of substrates that are connected
-			assert sIMap != null : "SIMap is null";
-			assert connections != null : "connections is null ";
-			assert connections.get(i) != null : "Null: " + i + " in connections: " + connections;
-			assert connections.get(i).t1 != null : "Null: " + connections.get(i) + " in connections: " + connections;
-			assert sIMap.get(connections.get(i).t1) != null : "Null: " + connections.get(i).t1 + " in connections: " + connections + "\n" + sIMap;
-			int sourceSubstrateIndex = sIMap.get(connections.get(i).t1);
-			assert connections.get(i).t2 != null :"this is null";
-			
-			assert sIMap.get(connections.get(i).t2) != null :"null in " + sIMap + "\nat " + connections.get(i).t2 + "\nat " + i;
-			int targetSubstrateIndex = sIMap.get(connections.get(i).t2);
+			SubstrateConnectivity currentConnection = connections.get(i);
+			int sourceSubstrateIndex = sIMap.get(currentConnection.SOURCE_SUBSTRATE_NAME);
+			assert sIMap.get(currentConnection.TARGET_SUBSTRATE_NAME) != null :"null in " + sIMap + "\nat " + connections.get(i).TARGET_SUBSTRATE_NAME + "\nat " + i;
+			int targetSubstrateIndex = sIMap.get(currentConnection.TARGET_SUBSTRATE_NAME);
 			Substrate sourceSubstrate = subs.get(sourceSubstrateIndex);
 			Substrate targetSubstrate = subs.get(targetSubstrateIndex);
 
 			// Whether to connect these layers used convolutional structure instead of standard fully connected structure
-			boolean convolution = connections.get(i).t3 && CommonConstants.convolution;
+			boolean convolution = currentConnection.connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION && CommonConstants.convolution;
 			int outputIndex = CommonConstants.substrateLocationInputs ? 0 : i;
 			// both options add links from between two substrates to whole list of links
 			if(convolution) {
-				convolutionalLoopThroughLinks(hnt, result, cppn, outputIndex, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs, layersWidth, layersHeight);
+				convolutionalLoopThroughLinks(hnt, result, cppn, outputIndex, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex,
+						subs, layersWidth, layersHeight, currentConnection.receptiveFieldWidth, currentConnection.receptiveFieldHeight);
 			} else {
 				loopThroughLinks(hnt, result, cppn, outputIndex, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs, layersWidth, layersHeight);
 			}
 		}
 		return result;
 	}
+	
+	/**
+	 * TODO: uncomment
+	 * Connect two substrate layers using convolutional link structures
+	 * @param hnt HyperNEATTask instance with
+	 * @param linksSoFar List of link genes to add to
+	 * @param cppn Network generating link weights
+	 * @param outputIndex index from cppn outputs to be used as weight in creating link
+	 * @param s1 Where links come from
+	 * @param s2 Where links go to
+	 * @param s1Index Index in substrate list of source substrate
+	 * @param s2Index Index in substrate list of target substrate
+	 * @param subs List of substrates
+	 * @param substrateHorizontalCoordinate Used by global coordinates
+	 * @param substrateVerticalCoordinate Used by global coordinates
+	 */
+//	void convolutionalLoopThroughLinks(HyperNEATTask hnt, ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex,
+//			Substrate s1, Substrate s2, int s1Index, int s2Index,
+//			List<Substrate> subs, int substrateHorizontalCoordinate, int substrateVerticalCoordinate) {
+//		convolutionalLoopThroughLinks(hnt, linksSoFar, cppn, outputIndex, s1, s2, s1Index, s2Index, subs,
+//				substrateHorizontalCoordinate, substrateVerticalCoordinate, 3, 3);
+//	}
 
 	/**
 	 * Connect two substrate layers using convolutional link structures
@@ -372,17 +410,18 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @param s1Index Index in substrate list of source substrate
 	 * @param s2Index Index in substrate list of target substrate
 	 * @param subs List of substrates
+	 * @param substrateHorizontalCoordinate Used by global coordinates
+	 * @param substrateVerticalCoordinate Used by global coordinates
+	 * @param receptiveFieldWidth the width of the receptive field window
+	 * @param receptiveFieldHeight the hieght of the receptive field window
 	 */
 	void convolutionalLoopThroughLinks(HyperNEATTask hnt, ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex,
 			Substrate s1, Substrate s2, int s1Index, int s2Index,
-			List<Substrate> subs, int layersWidth, int layersHeight) {
+			List<Substrate> subs, int substrateHorizontalCoordinate, int substrateVerticalCoordinate, int receptiveFieldWidth, int receptiveFieldHeight) {
 
 		boolean convolutionDeltas = Parameters.parameters.booleanParameter("convolutionDeltas");
 		boolean convolutionWeightSharing = Parameters.parameters.booleanParameter("convolutionWeightSharing");
-
-		int receptiveFieldHeight = Parameters.parameters.integerParameter("receptiveFieldHeight");
 		assert receptiveFieldHeight % 2 == 1 : "Receptive field height needs to be odd to be centered: " + receptiveFieldHeight;
-		int receptiveFieldWidth = Parameters.parameters.integerParameter("receptiveFieldWidth");
 		assert receptiveFieldWidth % 2 == 1 : "Receptive field width needs to be odd to be centered: " + receptiveFieldWidth;
 		// Need to watch out for links that want to connect out of bounds
 		boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
@@ -436,18 +475,18 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 											}
 											// This approach maintains all values in the scaled range
 											
-											// PUT THESE BACK LATER!
-//											assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
-//											assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
-//											assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
-//											assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
-//											assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
+											
+											assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
+											assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
+											assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
+											assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
+											assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
 										}
 
 										// Convolutional weight sharing requires substrate location inputs to prevent all receptive fields across all layers from being the same.
 										if(CommonConstants.substrateLocationInputs || convolutionWeightSharing) {
-											ILocated2D scaledSubstrate1Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s1.getSubLocation().t1, s1.getSubLocation().t2), layersWidth, layersHeight);
-											ILocated2D scaledSubstrate2Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s2.getSubLocation().t1, s2.getSubLocation().t2), layersWidth, layersHeight);
+											ILocated2D scaledSubstrate1Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s1.getSubLocation().t1, s1.getSubLocation().t2), substrateHorizontalCoordinate, substrateVerticalCoordinate);
+											ILocated2D scaledSubstrate2Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s2.getSubLocation().t1, s2.getSubLocation().t2), substrateHorizontalCoordinate, substrateVerticalCoordinate);
 
 											// Phillip Verbancsics approach from his paper on Generative Neuro-Evolution for Deep Learning
 											if(convolutionDeltas) {
