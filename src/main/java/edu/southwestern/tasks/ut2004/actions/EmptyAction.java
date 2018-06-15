@@ -43,7 +43,7 @@ public class EmptyAction implements BotAction {
 	 * @param bot (the bot that will execute the command)
 	 * @return what the bot is doing + the descriptive string
 	 */
-	public String execute(UT2004BotModuleController bot) {
+	public String execute(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		// Doing "Nothing" means not shooting anymore
 		if (stopShooting) {
 			bot.getShoot().stopShooting();
