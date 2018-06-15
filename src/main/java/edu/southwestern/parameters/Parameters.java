@@ -201,6 +201,7 @@ public class Parameters {
 		integerOptions.add("boardGameStaticOpponentRuns", 1, "Number of Board Game matches to play against the Static Opponent Fitness Function");
 		integerOptions.add("breve2DAgentHealth", 50, "Hitpoints of agents in breve 2D domains");
 		integerOptions.add("breve2DTimeLimit", 1000, "Number of time steps allowed in breve 2D domains");
+		integerOptions.add("cascadeExpansionSwitchGeneration", 100, "The generation that a cascade expansion will occur in HyperNEAT. Hardcoded for now");
 		integerOptions.add("cleanFrequency", 10, "How frequently the archetype needs to be cleaned out");
 		integerOptions.add("clipLength", Keyboard.NOTE_LENGTH_DEFAULT, "Length of clip played in Breedesizer");
 		integerOptions.add("closeGhostDistance", 35, "Distance at which threat ghosts are considered too close for safety");
@@ -347,6 +348,7 @@ public class Parameters {
 		booleanOptions.add("boardGameIncreasingRandomOpens", false, "Number of random moves at the start of each game increases as evolved agents improve");
 		booleanOptions.add("boardGameWinPercentFitness", false, "Is percentage of games won a fitness function for board games?");
 		booleanOptions.add("botprizeMod", false, "Whether or not to use the 2012 BotPrize mod in UT2004 games");
+		booleanOptions.add("cascadeExpansion", false, "allows for cascade expansion in HyperNEAT, adding layers during evaluation");
 		booleanOptions.add("convolution", false, "HyperNEAT phenotypes allow convolutional structure");
 		booleanOptions.add("convolutionDeltas", false, "HyperNEAT encoding of convolutional structure uses the delta offset approach of Verbancsics");
 		booleanOptions.add("convolutionWeightSharing", false, "HyperNEAT convolutional networks repeat the same weights across all receptive fields from one substrate to another");
@@ -377,6 +379,7 @@ public class Parameters {
 		booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
 		booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");
 		booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
+		booleanOptions.add("loopAnimationInReverse", false, "loops animations in reverse for 2dAnimationBreeder and 3dAnimationBreeder");
 		booleanOptions.add("moMario", false, "Mario is multiobjective");
 		booleanOptions.add("monitorSubstrates", false, "Allows us to visualizen the features (raw inputs) of a HyperNEAT agent");
 		booleanOptions.add("observePacManPO", true, "whether or not we observe the depiction of pacman agents with PO");
@@ -400,6 +403,7 @@ public class Parameters {
 		booleanOptions.add("scaleTrials", false, "Whether or not to scale the number of trials as the number of generations increases");
 		booleanOptions.add("senseHolesDifferently", false, "Makes inputs for a hole different than input of a blank space");
 		booleanOptions.add("senseHyperNEATGhostPath", false, "shows nearest path to ghost with stronger activation as pacman gets closer to the ghost");
+		booleanOptions.add("senseTetrisHolesAsPositive", false, "sense Tetris holes as positive instead of negative so that ReLU does not nullify them");
 		booleanOptions.add("setDaemon", false, "Used in popacman CustomExecutor");
 		booleanOptions.add("showCPPN", false, "shows evolved CPPN during post evals");
 		booleanOptions.add("showHighestActivatedOutput", false, "highlights most activated output neuron as green in visualizations");
@@ -630,6 +634,7 @@ public class Parameters {
 		booleanOptions.add("recordPacman", false, "Record pacman game to save file");
 		booleanOptions.add("recurrency", true, "Allow recurrent links");
 		booleanOptions.add("relativePacmanDirections", true, "Ms. Pac-Man senses and actions for directions are relative to current direction");
+		booleanOptions.add("rememberObservations", false, "remember the inputs/observations of an evaluation to be used for the syllabus of Behavioral Diversity");
 		booleanOptions.add("removePillsNearPowerPills", false, "Pills in a c-path with power pills are absent");
 		booleanOptions.add("replayPacman", false, "Replay pacman game from save file");
 		booleanOptions.add("requireFitnessDifferenceForChange", false, "If the tournament selection between two individuals reveals no fitness difference, then don't mutate or crossover the victor");
@@ -754,6 +759,7 @@ public class Parameters {
 		doubleOptions.add("rlEpsilon", 0.1, "Frequency of completely random actions during Reinforcement Learning");
 		doubleOptions.add("rlGamma", 0.99, "Discount factor used for Reinforcement Learning");
 		doubleOptions.add("scentDecay", 0.99, "Portion of scent remaining after each time step");
+		doubleOptions.add("syllabusChangeProbability", .01, "The probability that a vector will be swapped out for another in the syllabus for intelligent vectors with Behavioral Diversity");
 		//TODO
 		doubleOptions.add("scaleFactor", 1.0, "Used in customExecutor. Scales the size of the image?");
 		doubleOptions.add("softmaxTemperature", 0.25, "Temperature parameter for softmax selection");

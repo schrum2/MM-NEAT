@@ -24,11 +24,13 @@ public class CosineSimilarity extends RealBehaviorVector{
 	
 
 	/**
-	 * Is finding longer and shorter necessary?
+	 * Cosine Similarity is an optional way to measure similarity for behavioral diversity
+	 * @param vector that calling vector will be compared with
+	 * @return distance between calling vector and param vector 
 	 */
 	@Override
 	public double distance(BehaviorVector rhs) {
-		ArrayList<Double>[] shorterAndLonger = DistanceUtil.getShorterAndLonger(v, ((RealBehaviorVector) rhs).v);
-		return DistanceUtil.getCosineSimilarity(shorterAndLonger[0], shorterAndLonger[1]);
+		ArrayList<Double>[] twoVectors = DistanceUtil.resizeVector(v, ((RealBehaviorVector) rhs).v);
+		return DistanceUtil.getCosineSimilarity(twoVectors[0], twoVectors[1]);
 	}
 }

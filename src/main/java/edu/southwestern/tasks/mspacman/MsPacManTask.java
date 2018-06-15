@@ -17,6 +17,7 @@ import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -97,7 +98,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	// Substrate index that deals with power pills
 	public static final int POWER_PILL_SUBSTRATE_INDEX = 1; 
 	public List<Substrate> subs = null; // filled below
-	public List<Triple<String, String, Boolean>> connections = null; // filled below
+	public List<SubstrateConnectivity> connections = null; // filled below
 	public HashMap<Integer, List<Substrate>> substratesForMaze = new HashMap<Integer, List<Substrate>>();
 	public static String saveFilePrefix = "";
 	//boolean variables
@@ -723,7 +724,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	}
 
 	@Override
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
+	public List<SubstrateConnectivity> getSubstrateConnectivity() {
 		if(connections == null) {
 			List<String> outputNames = new LinkedList<>();
 			if(Parameters.parameters.booleanParameter("pacManFullScreenOutput")) {
@@ -734,9 +735,9 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			connections = HyperNEATUtil.getSubstrateConnectivity(getNumInputSubstrates(), outputNames);			
 			// The four input power pill substrate does not contain visual information
 			if(!Parameters.parameters.booleanParameter("pacmanFullScreenPowerInput")) {
-				for(Triple<String, String, Boolean> triple : connections) { // So do not allow convolution
-					if(triple.t1.equals("Input(" + POWER_PILL_SUBSTRATE_INDEX + ")")) { // Power pill substrate
-						triple.t3 = Boolean.FALSE; // Convolution not allowed
+				for(SubstrateConnectivity sub : connections) { // So do not allow convolution
+					if(sub.SOURCE_SUBSTRATE_NAME.equals("Input(" + POWER_PILL_SUBSTRATE_INDEX + ")")) { // Power pill substrate
+						sub.connectivityType = SubstrateConnectivity.CTYPE_FULL; // Convolution not allowed
 					}
 					
 				}

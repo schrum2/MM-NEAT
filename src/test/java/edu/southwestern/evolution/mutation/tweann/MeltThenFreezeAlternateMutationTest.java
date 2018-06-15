@@ -19,6 +19,7 @@ public class MeltThenFreezeAlternateMutationTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		TWEANNGenotype.smallerGenotypes = false; // Only large genotypes support freezing
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "freezeAlternateRate:1.0"});
 		MMNEAT.loadClasses();
 		tg1 = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, 0);
