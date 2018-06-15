@@ -153,7 +153,7 @@ public class HyperNEATUtil {
 	private static HyperNEATTask hyperNEATTask;
 	private static TWEANNGenotype tg;
 	private static List<Substrate> substrates;
-	private static List<Triple<String, String, Boolean>> connections;
+	private static List<SubstrateConnectivity> connections;
 	private static List<TWEANNGenotype.NodeGene> nodes;
 
 	/**
@@ -356,8 +356,8 @@ public class HyperNEATUtil {
 
 		//creates each a panel for each connection between substrates
 		for(int i = 0; i < connections.size(); i++) {
-			String sub1 = connections.get(i).t1;
-			String sub2 = connections.get(i).t2;
+			String sub1 = connections.get(i).SOURCE_SUBSTRATE_NAME;
+			String sub2 = connections.get(i).TARGET_SUBSTRATE_NAME;
 			Substrate s1 = getSubstrate(sub1);
 			Substrate s2 = getSubstrate(sub2);
 			//this block of code gets the substrates and their nodes and indices
@@ -487,7 +487,7 @@ public class HyperNEATUtil {
 	 * @param hnt HyperNEATTask that specifies substrate connectivity
 	 * @return number of bias outputs needed by CPPN
 	 */
-	static int numBiasOutputsNeeded(HyperNEATTask hnt) {
+	public static int numBiasOutputsNeeded(HyperNEATTask hnt) {
 		// If substrate coordinates are inputs to the CPPN, then
 		// biases on difference substrates can be different based on the
 		// inputs rather than having separate outputs for each substrate.
@@ -531,7 +531,7 @@ public class HyperNEATUtil {
 
 	// extract substrate information from domain
 	List<Substrate> subs = hnt.getSubstrateInformation();
-	List<Triple<String, String, Boolean>> connections = hnt.getSubstrateConnectivity();
+	List<SubstrateConnectivity> connections = hnt.getSubstrateConnectivity();
 	// Will map substrate names to index in subs List
 	HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
 	for (int i = 0; i < subs.size(); i++) {
@@ -540,8 +540,8 @@ public class HyperNEATUtil {
 
 	int count = 0;
 	for(int i = 0; i < connections.size(); i++) {
-		String source = connections.get(i).t1;
-		String target = connections.get(i).t2;
+		String source = connections.get(i).SOURCE_SUBSTRATE_NAME;
+		String target = connections.get(i).TARGET_SUBSTRATE_NAME;
 		Substrate subSource = subs.get(substrateIndexMapping.get(source));
 		Substrate subTarget = subs.get(substrateIndexMapping.get(target));
 		count += subSource.getSize().t1 * subSource.getSize().t2 * subTarget.getSize().t1 * subTarget.getSize().t2; 
@@ -716,13 +716,10 @@ public class HyperNEATUtil {
 	 * 
 	 * @return Substrate connectivity
 	 */
-	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, List<String> outputNames) {
+	public static List<SubstrateConnectivity> getSubstrateConnectivity(int numInputSubstrates, List<String> outputNames) {
 		if(Parameters.parameters.booleanParameter("useHyperNEATCustomArchitecture")) {
-			List<String> inputSubstrateNames = new LinkedList<String>();
-			for(int i = 0; i < numInputSubstrates; i++) {
-				inputSubstrateNames.add("Input(" + i + ")");
-			}
-			return MMNEAT.substrateArchitectureDefinition.getSubstrateConnectivity(inputSubstrateNames, outputNames);
+			// TODO: HyperNEATSeed tasks currently do not support custom architectures
+			return MMNEAT.substrateArchitectureDefinition.getSubstrateConnectivity((HyperNEATTask) MMNEAT.task);
 		} else {
 			int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
 			int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
@@ -741,7 +738,7 @@ public class HyperNEATUtil {
 	 * 
 	 * @return Substrate connectivity
 	 */
-	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, List<String> outputNames, boolean connectInputsToOutputs){
+	public static List<SubstrateConnectivity> getSubstrateConnectivity(int numInputSubstrates, List<String> outputNames, boolean connectInputsToOutputs){
 		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
 		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
 		return getSubstrateConnectivity(numInputSubstrates, processWidth, processDepth, outputNames, connectInputsToOutputs);
@@ -759,7 +756,7 @@ public class HyperNEATUtil {
 	 * 
 	 * @return Substrate connectivity
 	 */
-	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames){
+	public static List<SubstrateConnectivity> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames){
 		return getSubstrateConnectivity(numInputSubstrates, processWidth, processDepth, outputNames, Parameters.parameters.booleanParameter("extraHNLinks"));
 	}
 
@@ -776,22 +773,20 @@ public class HyperNEATUtil {
 	 * 
 	 * @return Substrate connectivity
 	 */
-	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames, boolean connectInputsToOutputs){
+	public static List<SubstrateConnectivity> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames, boolean connectInputsToOutputs){
 
-		List<Triple<String, String, Boolean>> substrateConnectivity = null;
-
-		substrateConnectivity = new LinkedList<Triple<String, String, Boolean>>();
+		List<SubstrateConnectivity> substrateConnectivity = new LinkedList<SubstrateConnectivity>();
 		// Different extractors correspond to different substrate configurations
 		if(processDepth > 0) {
 			for(int k = 0; k < processWidth; k++) {
 				// Link the input layer to the processing layer: allows convolution
 				for(int i = 0; i < numInputSubstrates; i++){
-					substrateConnectivity.add(new Triple<String, String, Boolean>("Input(" + i + ")", "process(" + k + ",0)", Boolean.TRUE));
+					substrateConnectivity.add(new SubstrateConnectivity("Input(" + i + ")", "process(" + k + ",0)", SubstrateConnectivity.CTYPE_CONVOLUTION));
 				}
 
 				if(!CommonConstants.hyperNEAT){
 					// connect bias to the bottom layer of processing substrates: no convolution
-					substrateConnectivity.add(new Triple<String, String, Boolean>("bias", "process(" + k + ",0)", Boolean.FALSE));
+					substrateConnectivity.add(new SubstrateConnectivity("bias", "process(" + k + ",0)", SubstrateConnectivity.CTYPE_FULL));
 				}
 			}
 		}
@@ -801,12 +796,12 @@ public class HyperNEATUtil {
 			for(int k = 0; k < processWidth; k++) {
 				for(int q = 0; q < processWidth; q++) {
 					// Each processing substrate at one depth connected to processing subsrates at next depth
-					substrateConnectivity.add(new Triple<String, String, Boolean>("process("+k+","+i+")", "process("+q+","+(i + 1)+")", Boolean.TRUE));
+					substrateConnectivity.add(new SubstrateConnectivity("process("+k+","+i+")", "process("+q+","+(i + 1)+")", SubstrateConnectivity.CTYPE_CONVOLUTION));
 				}
 
 				if(!CommonConstants.hyperNEAT){
 					// connect bias to each remaining processing substrate
-					substrateConnectivity.add(new Triple<String, String, Boolean>("bias", "process("+k+","+(i + 1)+")", Boolean.FALSE));
+					substrateConnectivity.add(new SubstrateConnectivity("bias", "process("+k+","+(i + 1)+")", SubstrateConnectivity.CTYPE_FULL));
 				}
 
 			}
@@ -816,7 +811,7 @@ public class HyperNEATUtil {
 			for(int k = 0; k < processWidth; k++) {
 				// Link the final processing layer to the output layer
 				for(String name : outputNames){
-					substrateConnectivity.add(new Triple<String, String, Boolean>("process(" + k + "," + (processDepth-1) + ")", name, Boolean.FALSE));
+					substrateConnectivity.add(new SubstrateConnectivity("process(" + k + "," + (processDepth-1) + ")", name, SubstrateConnectivity.CTYPE_FULL));
 				}
 			}
 		}
@@ -825,7 +820,7 @@ public class HyperNEATUtil {
 			// Link the input layer to the output layer
 			for(int i = 0; i < numInputSubstrates; i++){
 				for(String name : outputNames) {
-					substrateConnectivity.add(new Triple<String, String, Boolean>("Input(" + i + ")", name, Boolean.FALSE));
+					substrateConnectivity.add(new SubstrateConnectivity("Input(" + i + ")", name, SubstrateConnectivity.CTYPE_FULL));
 				}
 			}
 
@@ -833,7 +828,7 @@ public class HyperNEATUtil {
 			if(!CommonConstants.hyperNEAT){
 				for(String name : outputNames){
 					// Each output substrate has a bias connection
-					substrateConnectivity.add(new Triple<String, String, Boolean>("bias", name, Boolean.FALSE));
+					substrateConnectivity.add(new SubstrateConnectivity("bias", name, SubstrateConnectivity.CTYPE_FULL));
 				}
 			}
 		}
@@ -869,6 +864,9 @@ public class HyperNEATUtil {
 	}
 
 	public static int numCPPNInputs(HyperNEATTask task) {
+		assert task.numCPPNInputs() > 0 : "The number of CPPN in puts must be positive";
+		// Adds four inputs if doing weight sharing or using substrate location inputs (substrate location inputs must be used with weight sharing):
+		// Specifically, source and target locations of substrate (height and position within layer)
 		return task.numCPPNInputs() + (CommonConstants.substrateLocationInputs || Parameters.parameters.booleanParameter("convolutionWeightSharing") ? 4 : 0);
 	}
 

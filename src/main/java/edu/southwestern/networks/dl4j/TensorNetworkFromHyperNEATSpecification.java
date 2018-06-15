@@ -31,9 +31,9 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.datastructures.Triple;
 
 public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 
@@ -188,11 +188,11 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 		
         List<Substrate> substrates = hnt.getSubstrateInformation();
         
-        List<Triple<String, String, Boolean>> substrateConnectivity = hnt.getSubstrateConnectivity();
+        List<SubstrateConnectivity> substrateConnectivity = hnt.getSubstrateConnectivity();
         // Quick look-up for whether layers are joined in a convolutional manner
-        HashMap<String, Boolean> areConnectionsConvolutional = new HashMap<>();
-        for(Triple<String, String, Boolean> trip : substrateConnectivity) {
-        	areConnectionsConvolutional.put(trip.t1 + "_" + trip.t2, trip.t3);
+        HashMap<String, Integer> areConnectionsConvolutional = new HashMap<>();
+        for(SubstrateConnectivity trip : substrateConnectivity) {
+        	areConnectionsConvolutional.put(trip.SOURCE_SUBSTRATE_NAME + "_" + trip.TARGET_SUBSTRATE_NAME, trip.connectivityType);
         }
         
         int xKernel = Parameters.parameters.integerParameter("receptiveFieldWidth");
@@ -231,7 +231,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 			Substrate firstTargetSubstrate = substrates.get(firstTargetSubstrateIndex); 
 			
 			// If substrate connections are convolutional, then assume all layer connections are
-			if(areConnectionsConvolutional.get(firstSourceSubstrate.getName() + "_" + firstTargetSubstrate.getName())) {				
+			if(SubstrateConnectivity.CTYPE_CONVOLUTION == (areConnectionsConvolutional.get(firstSourceSubstrate.getName() + "_" + firstTargetSubstrate.getName()))) {				
 				INDArray weights = layer.getParam("W"); // Convolutional weights
 				INDArray biases = layer.getParam("b"); // Biases: one per target substrate
 				

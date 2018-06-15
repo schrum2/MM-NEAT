@@ -19,6 +19,7 @@ import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
@@ -807,7 +808,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		return substrateInformation;
 	}
 
-	private List<Triple<String, String, Boolean>> substrateConnectivity = null;
+	private List<SubstrateConnectivity> substrateConnectivity = null;
 
 	/**
 	 * Returns a list of connections between substrates
@@ -815,13 +816,13 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * @return list of connections between substrates
 	 */
 	@Override
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
+	public List<SubstrateConnectivity> getSubstrateConnectivity() {
 		if (substrateConnectivity == null) {
-			substrateConnectivity = new LinkedList<Triple<String, String, Boolean>>();
-			substrateConnectivity.add(new Triple<String, String, Boolean>(preyEvolve ? "input_predator" : "input_prey", "process_0", Boolean.FALSE));
+			substrateConnectivity = new LinkedList<SubstrateConnectivity>();
+			substrateConnectivity.add(new SubstrateConnectivity(preyEvolve ? "input_predator" : "input_prey", "process_0", SubstrateConnectivity.CTYPE_FULL));
 			if (Parameters.parameters.booleanParameter("torusSenseTeammates"))
-				substrateConnectivity.add(new Triple<String, String, Boolean>(preyEvolve ? "input_prey" : "input_predator", "process_0", Boolean.FALSE));
-			substrateConnectivity.add(new Triple<String, String, Boolean>("process_0", "output_0", Boolean.FALSE));
+				substrateConnectivity.add(new SubstrateConnectivity(preyEvolve ? "input_prey" : "input_predator", "process_0", SubstrateConnectivity.CTYPE_FULL));
+			substrateConnectivity.add(new SubstrateConnectivity("process_0", "output_0", SubstrateConnectivity.CTYPE_FULL));
 		}
 		return substrateConnectivity;
 	}
