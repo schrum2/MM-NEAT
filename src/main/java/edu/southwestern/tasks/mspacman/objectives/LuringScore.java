@@ -1,13 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.objectives;
 
 import edu.southwestern.evolution.Organism;
 import edu.southwestern.networks.Network;
 
 /**
+ * Fitness score meant to reward Ms. Pac-Man for luring ghosts to the power pills before eating them.
  *
  * @author Jacob Schrum
  */

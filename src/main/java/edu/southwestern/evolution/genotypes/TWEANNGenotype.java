@@ -76,6 +76,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     public static class NodeGene extends Gene {
         public int ntype;
         public int ftype;
+        protected double bias;
 
         /**
          * New node gene
@@ -86,10 +87,11 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          * @param frozen = false if node can accept new inputs
          * @param bias = bias offset to sum of this node before activation
          */
-        private NodeGene(int ftype, int ntype, long innovation) {
+        private NodeGene(int ftype, int ntype, double bias, long innovation) {
             super(innovation);
             this.ftype = ftype;
             this.ntype = ntype;
+            this.bias = bias;
         }
 
         // These methods are overridden and filled out
@@ -105,7 +107,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         }
         
         public double getBias() {
-            return 0.0;
+            return bias;
         }
         
         /**
@@ -152,7 +154,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      */
     public static class FullNodeGene extends NodeGene {
         protected boolean fromCombiningCrossover = false;
-        protected double bias;
         protected boolean frozen;
 
         /**
@@ -165,7 +166,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          * @param bias = bias offset to sum of this node before activation
          */
         private FullNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
-            super(ftype, ntype, innovation);
+            super(ftype, ntype, bias, innovation);
             this.frozen = frozen;
             this.bias = bias;
         }
@@ -195,9 +196,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             fromCombiningCrossover = true;
         }
         
-        @Override
-        public double getBias() {
-            return bias;
+        public String toString() {
+        	return "Full"+super.toString();
         }
     }
         
@@ -231,7 +231,15 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             this.weight = weight;
         }
 
-        // These methods are overridden and filled out
+        /**
+         * Small LinkGenes do not track their module source
+         * @return Always -1
+         */
+        public int getModuleSource() {
+			return -1; 
+		}
+
+		// These methods are overridden and filled out
         // in the link gene class that is
         // fully featured. They are left blank here
         // to allow for reduced memory versions of the genes.
@@ -278,6 +286,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         protected boolean active;
         protected boolean recurrent;
         protected boolean frozen;
+        protected int moduleSource;
 
         /**
          * New link gene in which it needs to be specified whether or not it is
@@ -291,11 +300,14 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          * @param recurrent Whether the link is considered recurrent
          * @param frozen Whether the link is immune to modifications by mutation
          */
-        private FullLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
+        private FullLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen, int moduleSource) {
             super(sourceInnovation, targetInnovation, weight, innovation);
             this.active = active;
             this.recurrent = recurrent;
             this.frozen = frozen;
+            this.moduleSource = moduleSource;
+            // When constructing substrate network, each link must have a particular module as its source.
+            assert !(HyperNEATCPPNGenotype.constructingNetwork && moduleSource == -1) : sourceInnovation + " -> " + targetInnovation + " with weight " + weight + " innovation " + innovation + " active "+ active;
         }
 
         @Override
@@ -313,6 +325,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             return frozen;
         }
         
+        @Override
+        public int getModuleSource() {
+        	return moduleSource;
+        }
         
         @Override
         public boolean isActive() {
@@ -322,6 +338,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         @Override
         public void setActive(boolean newValue) {
             active = newValue;
+        }
+        
+        public String toString() {
+        	return "Full" + super.toString();
         }
     }    
     
@@ -337,11 +357,15 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     public static final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent, boolean frozen) {
         return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, frozen);
     }
-    
+
     public static final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
+    	return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen, -1);
+    }
+    
+    public static final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen, int moduleSource) {
         return smallerGenotypes
                 ? new LinkGene(sourceInnovation, targetInnovation, weight, innovation)
-                : new FullLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen);
+                : new FullLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen, moduleSource);
     }
     
     public static final NodeGene newNodeGene(int ftype, int ntype, long innovation) {
@@ -353,7 +377,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     		ftype = ActivationFunctions.FTYPE_ID; // Force input nodes to use ID activation function
     	}
         return smallerGenotypes
-                ? new NodeGene(ftype, ntype, innovation)
+                ? new NodeGene(ftype, ntype, bias, innovation)
                 : new FullNodeGene(ftype, ntype, innovation, frozen, bias);
     }
     
@@ -417,7 +441,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      */
     public TWEANNGenotype(ArrayList<NodeGene> nodes, ArrayList<LinkGene> links, int neuronsPerModule,
             boolean standardMultitask, boolean hierarchicalMultitask, int archetypeIndex) {
-        this.archetypeIndex = archetypeIndex;
+
+    	assert neuronsPerModule > 0 : "Cannot have 0 neurons in a module!";
+    	
+    	this.archetypeIndex = archetypeIndex;
         this.nodes = nodes;
         this.links = links;
         this.neuronsPerModule = neuronsPerModule;
@@ -505,7 +532,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             nodes.add(ng);
             LinkedList<LinkGene> temp = new LinkedList<LinkGene>();
             for (TWEANN.Link l : n.outputs) {
-                LinkGene lg = newLinkGene(n.innovation, l.target.innovation, l.weight, l.innovation, n.isLinkRecurrent(l.target.innovation), l.frozen);
+                LinkGene lg = newLinkGene(n.innovation, l.target.innovation, l.weight, l.innovation, true, n.isLinkRecurrent(l.target.innovation), l.frozen, l.moduleSource);
                 temp.add(lg);
             }
             for (int k = 0; k < temp.size(); k++) {
@@ -583,8 +610,12 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         if (numModules == 1) {
             return Double.MAX_VALUE;
         } else {
-            ArrayList<double[]> syllabus = GeneralNetworkCharacterization
-                    .newRandomSyllabus(CommonConstants.syllabusSize);
+        	ArrayList<double[]> syllabus;
+        	if (Parameters.parameters.booleanParameter("rememberObservations")) {
+        		syllabus = GeneralNetworkCharacterization.newPastExperiencesSyllabus(CommonConstants.syllabusSize);
+        	} else {
+        		syllabus = GeneralNetworkCharacterization.newRandomSyllabus(CommonConstants.syllabusSize);
+        	}
             ArrayList<Double> last = new ArrayList<Double>();
             ArrayList<Double> prev = new ArrayList<Double>();
             TWEANN t = this.getPhenotype();

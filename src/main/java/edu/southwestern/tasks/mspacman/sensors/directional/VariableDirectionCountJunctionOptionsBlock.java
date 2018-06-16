@@ -9,7 +9,9 @@ import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDi
 import edu.southwestern.util.datastructures.Pair;
 
 /**
- * 
+ * In a given direction, find the nearest junction. If it can be safely reached,
+ * then count the junctions reachable from it. In other words, could the number
+ * of safe junctions two steps away.
  * @author Jacob Schrum
  */
 public class VariableDirectionCountJunctionOptionsBlock extends VariableDirectionBlock {
@@ -23,10 +25,18 @@ public class VariableDirectionCountJunctionOptionsBlock extends VariableDirectio
 	}
 
 	@Override
+	/**
+	 * TODO: how to handle PO conditions
+	 */
 	public double getValue(GameFacade gf) {
 		int[] junctions = gf.getJunctionIndices();
+		
 		// Closest junction
 		Pair<Integer, int[]> closest = gf.getTargetInDir(gf.getPacmanCurrentNodeIndex(), junctions, dir);
+		if(closest == new Pair<Integer, int[]>(new Integer(-1),null)) {
+			throw new UnsupportedOperationException("Need to implement PO conditions");
+		}
+		
 		int[] ghostsToCheck = new int[] { 0, 1, 2, 3 };
 		if (!VariableDirectionCloserToTargetThanThreatGhostBlock.canReachClosestTargetSafelyInDirection(gf,
 				new int[] { closest.t1 }, dir, ghostsToCheck)) {

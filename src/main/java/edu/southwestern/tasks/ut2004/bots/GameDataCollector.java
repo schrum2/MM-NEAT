@@ -8,10 +8,12 @@ import cz.cuni.amis.pogamut.base3d.worldview.object.event.WorldObjectDisappeared
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weaponry;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.AgentInfo;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.AgentStats;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Game;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.Util;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -28,13 +30,10 @@ import java.util.TreeMap;
  * <li>TODO add more</li>
  * </ul>
  *
- * @author Ik
+ * @author Igor Karpov
  */
 public class GameDataCollector implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	public double evalTime = 0;
 	private boolean successfulEval = false;
@@ -66,6 +65,9 @@ public class GameDataCollector implements Serializable {
 	protected AgentInfo info = null;
 	protected Weaponry weaponry = null;
 
+	/**
+	 * sets up listeners, starts them at null to be filled
+	 */
 	public void unregisterListeners() {
 		seePlayerListener = null;
 		disappearPlayerListener = null;
@@ -89,7 +91,11 @@ public class GameDataCollector implements Serializable {
 	transient protected IWorldEventListener<Bumped> bumpedListener;
 	transient protected IWorldEventListener<WallCollision> wallCollisionListener;
 	transient protected IWorldObjectEventListener<Self, WorldObjectUpdatedEvent<Self>> selfListener;
+	private AgentStats stats;
 
+	/**
+	 * collects data on the status of the game
+	 */
 	public GameDataCollector() {
 		frags = 0;
 		// System.out.println("Reset frags: " + frags);
@@ -102,14 +108,24 @@ public class GameDataCollector implements Serializable {
 	}
 
 	@Override
+	/**
+	 * overrides the toString() function
+	 */
 	public String toString() {
 		return "Frags:" + frags + ",Deaths:" + deaths + ",Wall:" + wallHits + ",Best Enemy Score:" + bestEnemyScore();
 	}
 
+	/**
+	 * @return returns whether the eval was successful
+	 */
 	public boolean evalWasSuccessful() {
 		return this.successfulEval;
 	}
 
+	/**
+	 * evaluates the state of the game and looks at enemy scores
+	 * @param bot (bot to be evaluated)
+	 */
 	@SuppressWarnings("rawtypes")
 	public void endEval(UT2004BotModuleController bot) {
 		this.successfulEval = true;
@@ -121,6 +137,10 @@ public class GameDataCollector implements Serializable {
 		}
 	}
 
+	/**
+	 * defines the listeners for the bot to use for various events
+	 * @param bot (bot that will use the listener)
+	 */
 	@SuppressWarnings("rawtypes")
 	public void registerListeners(final UT2004BotModuleController bot) {
 		this.info = bot.getInfo();
@@ -280,7 +300,9 @@ public class GameDataCollector implements Serializable {
 
 						Map<ItemType, Integer> ammos = weaponry.getAmmos();
 						for (ItemType weapon : ammos.keySet()) {
-							System.out.println(weapon.getName());
+							if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+								System.out.println(weapon.getName());
+							}
 							int currentAmmo = ammos.get(weapon);
 							if (!previousAmmo.containsKey(weapon)) {
 								previousAmmo.put(weapon, 0);
@@ -298,33 +320,30 @@ public class GameDataCollector implements Serializable {
 								previousAmmo.put(weapon, currentAmmo);
 							}
 						}
-						System.out.println("=======================");
+						if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+							System.out.println("=======================");
+						}
 					}
 				});
 	}
 
 	/**
-	 * Get score of player
-	 *
-	 * @param id
-	 *            unreal id of player
-	 * @return game score
+	 * @param id (unreal id of player)
+	 * @return returns the score of a given player
 	 */
 	public int getEnemyScore(Game g, UnrealId id) {
 		return g.getPlayerScore(id);
 	}
 
 	/**
-	 * Returns the highest score that an enemy player has
-	 *
-	 * @return
+	 * @return Returns the highest score that an enemy player has
 	 */
 	public int bestEnemyScore() {
 		return bestEnemyScore;
 	}
 
 	/**
-	 * @return Number of bots killed by this bot.
+	 * @return Number of other players killed by this bot.
 	 */
 	public int getFrags() {
 		return frags;
@@ -352,21 +371,23 @@ public class GameDataCollector implements Serializable {
 	}
 
 	/**
-	 * @return a map with playerID's linked to how much damage they received
-	 *         from this agent when they were still alive
+	 * @return a map with playerID's linked to how much damage they received from this agent when they were still alive
 	 */
 	public Map<String, Integer> getDamageDone() {
 		return damageDone;
 	}
 
 	/**
-	 * @return Map of damage dealt with each specific weapon (String name of
-	 *         weapon)
+	 * @return Map of damage dealt with each specific weapon (String name of weapon)
 	 */
 	public Map<String, Integer> getWeaponDamage() {
 		return weaponDamage;
 	}
 
+	/**
+	 * @param weapon (weapon to get data for)
+	 * @return returns the damage done with a given weapon
+	 */
 	public int getWeaponDamage(ItemType weapon) {
 		return weaponDamage.get(weapon.getName()) == null ? 0 : weaponDamage.get(weapon.getName());
 	}
@@ -378,26 +399,44 @@ public class GameDataCollector implements Serializable {
 		return damageSuffered;
 	}
 
+	/**
+	 * @return returns the bot's last health level
+	 */
 	public int getLastHealth() {
 		return previousHealth;
 	}
 
+	/**
+	 * @return returns number of times the bot bumped into other players
+	 */
 	public int getBumps() {
 		return bumps;
 	}
 
+	/**
+	 * @return returns the items the bot picked up
+	 */
 	public int getItemsCollected() {
 		return pickups;
 	}
 
+	/**
+	 * @return returns average amount of times the bot focused on an enemy
+	 */
 	public double averageFocus() {
 		return (this.opponentSightings == 0.0) ? Math.PI : (this.focusAccumulation / this.opponentSightings);
 	}
 
+	/**
+	 * @return returns the number of times the bot hit the walls
+	 */
 	public int getWallHits() {
 		return wallHits;
 	}
 
+	/**
+	 * @return returns the bot's score
+	 */
 	public int getScore() {
 		if (info != null) {
 			score = info.getScore();
@@ -405,22 +444,41 @@ public class GameDataCollector implements Serializable {
 		return score;
 	}
 
+	/**
+	 * @return returns number of times the bot damaged other players
+	 */
 	public int getDamageEvents() {
 		return damageEvents;
 	}
 
+	//inherited method
 	public void endExperiment() {
 	}
 
+	/**
+	 * @return returns the number of times an enemy disappeared from view
+	 */
 	public double getNumberEscapes() {
 		return enemyEscapes;
 	}
 
+	/**
+	 * @param weapon (weapon to collect ammo data on)
+	 * @return returns ammount of ammo used by a given weapon
+	 */
 	public int ammoUsed(ItemType weapon) {
 		if (ammoUsed.containsKey(weapon)) {
 			return ammoUsed.get(weapon);
 		} else {
 			return 0;
 		}
+	}
+
+	public void giveAgentStats(AgentStats stats) {
+		this.stats = stats;
+	}
+	
+	public AgentStats getAgentStats() {
+		return stats;
 	}
 }

@@ -13,6 +13,8 @@ import javax.vecmath.Vector3d;
  * @author Jacob Schrum
  */
 public class Util {
+	//info found at https://wiki.beyondunreal.com/Legacy:General_Scale_And_Dimensions
+	public static final int NUMBER_OF_UNREAL_UNITS_IN_A_FULL_CIRCLE = 65536;
 
 	/**
 	 * Designed for scaling down input sensor values to a common range
@@ -51,11 +53,24 @@ public class Util {
 		return angle;
 	}
 
+	/**
+	 * converts the rotation to a vector
+	 * @param r (the bot's rotation)
+	 * @return returns the rotation as a vector
+	 */
 	public static Vector3d rotationToVector(Rotation r) {
 		return (r == null ? null : new Vector3d(r.pitch, r.yaw, r.roll));
 	}
 
         // Pretty complicated. I can't remember where the math for this came from.
+	/**
+	 * adjusts the yaw, pitch, and roll of the vector
+	 * @param a (the vector)
+	 * @param yawRad (the vector's yaw)
+	 * @param pitchRad (the vector's pitch)
+	 * @param rollRad (the vector's roll)
+	 * @return returns the vector
+	 */
 	public static Vector3d rotateYawPitchRoll(Vector3d a, double yawRad, double pitchRad, double rollRad) {
 		return new Vector3d(
 				  (Math.cos(pitchRad) * Math.cos(yawRad))  * a.getX() 
@@ -107,6 +122,11 @@ public class Util {
 		return (lowValue < value && value < highValue);
 	}
 
+	/**
+	 * 
+	 * @param rotationInUTUnits (in UTUnits (0..65535) pitch, yaw, roll (same order as sent by GameBots)) 
+	 * @return returns the rotatin as a vector
+	 */
 	public static Vector3d rotationAsVectorUTUnits(Rotation rotationInUTUnits) {
 		return rotationAsVectorUTUnits(rotationToVector(rotationInUTUnits));
 	}
@@ -115,16 +135,20 @@ public class Util {
 	 * @param rotationInUTUnits
 	 *            in UTUnits (0..65535) pitch, yaw, roll (same order as sent by
 	 *            GameBots)
-	 * @return
+	 * @return returns the vector in UT units
 	 */
 	public static Vector3d rotationAsVectorUTUnits(Vector3d rotationInUTUnits) {
 		return rotateYawPitchRoll(new Vector3d(1, 0, 0), utAngleToRad(rotationInUTUnits.getY()),
 				utAngleToRad(rotationInUTUnits.getX()), utAngleToRad(rotationInUTUnits.getZ()));
 	}
 
-        // Remove the magic number
+	/**
+	 * converts angle to radians
+	 * @param angle (angle to be converted)
+	 * @return returns the converted angle
+	 */
 	public static double utAngleToRad(double angle) {
-		return angle / 65536 * 2 * Math.PI;
+		return angle / NUMBER_OF_UNREAL_UNITS_IN_A_FULL_CIRCLE * 2 * Math.PI;
 	}
 
 	/**

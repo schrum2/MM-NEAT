@@ -1,19 +1,25 @@
 package edu.southwestern.evolution.mulambda;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.HybrIDUtil.*;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SinglePopulationGenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype;
 import edu.southwestern.evolution.genotypes.OffsetHybrIDGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
-import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.southwestern.log.FitnessLog;
 import edu.southwestern.log.PlotLog;
 import edu.southwestern.networks.TWEANN;
+import edu.southwestern.networks.hyperneat.CascadeNetworks;
+import edu.southwestern.networks.hyperneat.FlexibleSubstrateArchitecture;
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -26,6 +32,7 @@ import edu.southwestern.tasks.mspacman.multitask.DangerousAreaModeSelector;
 import edu.southwestern.tasks.mspacman.sensors.directional.scent.VariableDirectionKStepDeathScentBlock;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
@@ -129,7 +136,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 *
 	 * @param example
 	 *            = used to generate random genotypes
-	 * @return = the initial parent population
+	 * @return = the initial parent population size
 	 */
 	@Override
 	public ArrayList<Genotype<T>> initialPopulation(Genotype<T> example) {
@@ -399,40 +406,16 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		ArrayList<Genotype<T>> result = selectAndAdvance(parentScores, childrenScores);
 		if(CommonConstants.hybrID && currentGeneration() == Parameters.parameters.integerParameter("hybrIDSwitchGeneration")) {	
 			if(Parameters.parameters.booleanParameter("offsetHybrID")) { //offsetHybrid is being used
-				result = OffsetHybrIDGenotype.getSubstrateGenotypesFromCPPNs(HyperNEATUtil.getHyperNEATTask(), result);
+				result = OffsetHybrIDGenotype.getSubstrateGenotypesFromCPPNs(result);
 			} else { //if preset-switch HybrID is being used
-				// Turn HyperNEAT off
-				CommonConstants.hyperNEAT = false;
-				Parameters.parameters.setBoolean("hyperNEAT", false);
-				// HyperNEAT disables monitorInputs, but if the parameter was true, then hybrID can turn it back on
-				CommonConstants.monitorInputs = Parameters.parameters.booleanParameter("monitorInputs");
-				// Turn off HyperNEAT visualizations
-				HyperNEATUtil.clearHyperNEATVisualizations();
-				// Need small genes because there are so many of them
-				TWEANNGenotype.smallerGenotypes = true; 
-				// Switch from CPPNs to plain TWEANNs
-				Parameters.parameters.setClass("genotype", TWEANNGenotype.class);
-				// Substrate networks cannot have different activation functions
-				CommonConstants.netChangeActivationRate = 0;
-				Parameters.parameters.setDouble("netChangeActivationRate", 0);
-				// Only CPPNs have multiple activation functions, but standard NNs do not
-				CommonConstants.allowMultipleFunctions = false;
-				Parameters.parameters.setBoolean("allowMultipleFunctions", false);
-				// Get substrate genotypes
-				result = PopulationUtil.getSubstrateGenotypesFromCPPNs(HyperNEATUtil.getHyperNEATTask(), result, 0); // 0 is only population
-				// Reset archetype because the evolved CPPN genes are no longer relevant.
-				// 0 indicates that there is only one population, null will cause the archetype to reset, 
-				// and the nodes from the nodes from the first member of the new population will define the genotype	
-				TWEANNGenotype exemplar = (TWEANNGenotype) result.get(0).copy();
-				// Reset next innovation based on the maximum in the exemplar genotype
-				long maxInnovation = 0;
-				for(LinkGene lg : exemplar.links) {
-					maxInnovation = Math.max(maxInnovation, lg.innovation);
-				}
-				EvolutionaryHistory.setInnovation(maxInnovation+1);
-				EvolutionaryHistory.initArchetype(0, null, exemplar);
+				result = HybrIDUtil.switchPhenotypeToNEAT(result);
 			}
 		}
+		// TEMPORARY FOR TESTING
+		if(CommonConstants.cascadeExpansion && currentGeneration() == Parameters.parameters.integerParameter("cascadeExpansionSwitchGeneration")) {
+			result = CascadeNetworks.getSubstrateGenotypesFromCPPNs(result, 1, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
+		}
+		
 		return result;
 	}
 

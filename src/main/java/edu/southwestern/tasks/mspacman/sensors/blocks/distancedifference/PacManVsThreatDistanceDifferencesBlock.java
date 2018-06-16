@@ -7,10 +7,11 @@ import edu.southwestern.tasks.mspacman.facades.GhostControllerFacade;
 import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.StatisticsUtilities;
+import oldpacman.controllers.examples.AggressiveGhosts;
+import oldpacman.game.Constants;
+
 import java.awt.Color;
 import java.util.Arrays;
-import pacman.controllers.examples.AggressiveGhosts;
-import pacman.game.Constants;
 
 /**
  *

@@ -31,7 +31,7 @@ import edu.southwestern.tasks.mspacman.sensors.blocks.combining.SubNetworkBlock;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.file.FileUtilities;
-import pacman.game.Constants;
+import oldpacman.game.Constants;
 import wox.serial.Easy;
 /**
  * Initializes ms Pac Man

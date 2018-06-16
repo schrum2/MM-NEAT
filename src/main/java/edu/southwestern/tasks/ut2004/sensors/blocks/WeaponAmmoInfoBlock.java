@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.ut2004.sensors.blocks;
 
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
@@ -19,10 +15,21 @@ import cz.cuni.amis.pogamut.ut2004.communication.translator.itemdescriptor.Weapo
  */
 public class WeaponAmmoInfoBlock implements UT2004SensorBlock {
 
-	public void prepareBlock(UT2004BotModuleController bot) {
+	/**
+	 * creates sensor block
+	 */
+	public void prepareBlock(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
 
-	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
+	/**
+	 * Collects data on the bot's weapon status and puts it into an array
+	 * 
+	 * @param bot (bot which will use the sensor data)
+	 * @param in (address to start at in array)
+	 * @param inputs (an array that collects the values from the statuses)
+	 * @return returns next address for sensor allocation
+	 */
+	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
 		Weaponry weaponry = bot.getWeaponry();
 		Weapon w = weaponry.getCurrentWeapon();
 		WeaponDescriptor wd = w.getDescriptor();
@@ -40,6 +47,13 @@ public class WeaponAmmoInfoBlock implements UT2004SensorBlock {
 		return in;
 	}
 
+	/**
+	 * populates the labels array so statuses can be identified
+	 * 
+	 * @param in (address in the array to be labeled)
+	 * @param labels (an empty array that will be populated)
+	 * @return returns the next address to be labeled
+	 */
 	public int incorporateLabels(int in, String[] labels) {
 		// Primary ammo
 		// labels[in++] = "Primary Ammo Clip Size";
@@ -54,7 +68,10 @@ public class WeaponAmmoInfoBlock implements UT2004SensorBlock {
 		return in;
 	}
 
+	/**
+	 * @return returns the number of sensors
+	 */
 	public int numberOfSensors() {
-		return 2 * 2;
+		return 4;
 	}
 }

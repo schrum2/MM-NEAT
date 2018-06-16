@@ -20,6 +20,7 @@ import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
@@ -30,9 +31,9 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.datastructures.Triple;
 
 public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 
@@ -61,18 +62,18 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
         NeuralNetConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(Parameters.parameters.integerParameter("randomSeed"))
                 .cacheMode(CacheMode.DEVICE) // KEEP THIS?
-                .learningRate(Parameters.parameters.doubleParameter("backpropLearningRate"))
                 //.biasLearningRate(0.02) // KEEP?
-                .updater(new Nesterovs(0.9))  //.updater(Updater.ADAM) // Use Nesterovs or ADAM or something else?
-                .iterations(1) // CHANGE THIS?
+                .updater(new Nesterovs(Parameters.parameters.doubleParameter("backpropLearningRate"), 0.9))  //.updater(Updater.ADAM) // Use Nesterovs or ADAM or something else?
+                //.iterations(1) // Causes error in new DL4J: 1.0.0-beta
                 .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer) // normalize to prevent vanishing or exploding gradients
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 //.l1(1e-4) // KEEP?
                 //.l2(5 * 1e-4) // KEEP?
-                .regularization(true); // KEEP?
+                //.regularization(true) // Causes error in new DL4J: 1.0.0-beta
+        		.optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT);
                 
-        int kernel = Parameters.parameters.integerParameter("receptiveFieldSize");
-        int[] kernelArray = new int[]{kernel, kernel};
+        int xKernel = Parameters.parameters.integerParameter("receptiveFieldWidth");
+        int yKernel = Parameters.parameters.integerParameter("receptiveFieldHeight");
+        int[] kernelArray = new int[]{xKernel, yKernel};
         int stride = Parameters.parameters.integerParameter("stride");
         int[] strideArray = new int[]{stride, stride};
         boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
@@ -120,8 +121,9 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 						//.learningRateDecayPolicy(LearningRatePolicy.Step) // KEEP?
 						//.learningRate(1e-2) // KEEP? 
 						.biasInit(1e-2) // Change?
-						.biasLearningRate(1e-2*2); // Change?
-
+						//.biasLearningRate(1e-2*2); // Causses error in new DL4J: 1.0.0-beta
+						.updater(new Adam(1e-2*2)); // Replaced biasLearningRate above
+						
 				listBuilder = listBuilder.layer(hiddenLayer, layer.build());
 			} else {
 				throw new UnsupportedOperationException("Can only use DL4J to set up convolutional networks for now");
@@ -186,14 +188,15 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 		
         List<Substrate> substrates = hnt.getSubstrateInformation();
         
-        List<Triple<String, String, Boolean>> substrateConnectivity = hnt.getSubstrateConnectivity();
+        List<SubstrateConnectivity> substrateConnectivity = hnt.getSubstrateConnectivity();
         // Quick look-up for whether layers are joined in a convolutional manner
-        HashMap<String, Boolean> areConnectionsConvolutional = new HashMap<>();
-        for(Triple<String, String, Boolean> trip : substrateConnectivity) {
-        	areConnectionsConvolutional.put(trip.t1 + "_" + trip.t2, trip.t3);
+        HashMap<String, Integer> areConnectionsConvolutional = new HashMap<>();
+        for(SubstrateConnectivity trip : substrateConnectivity) {
+        	areConnectionsConvolutional.put(trip.SOURCE_SUBSTRATE_NAME + "_" + trip.TARGET_SUBSTRATE_NAME, trip.connectivityType);
         }
         
-        int kernel = Parameters.parameters.integerParameter("receptiveFieldSize");
+        int xKernel = Parameters.parameters.integerParameter("receptiveFieldWidth");
+        int yKernel = Parameters.parameters.integerParameter("receptiveFieldHeight");
 		
 		// This method heavily relies on the fact that node innovation numbers
 		// in a substrate network's genotype start at 0 and are sequentially numbered
@@ -228,7 +231,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 			Substrate firstTargetSubstrate = substrates.get(firstTargetSubstrateIndex); 
 			
 			// If substrate connections are convolutional, then assume all layer connections are
-			if(areConnectionsConvolutional.get(firstSourceSubstrate.getName() + "_" + firstTargetSubstrate.getName())) {				
+			if(SubstrateConnectivity.CTYPE_CONVOLUTION == (areConnectionsConvolutional.get(firstSourceSubstrate.getName() + "_" + firstTargetSubstrate.getName()))) {				
 				INDArray weights = layer.getParam("W"); // Convolutional weights
 				INDArray biases = layer.getParam("b"); // Biases: one per target substrate
 				
@@ -243,8 +246,8 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 					biases.putScalar(targetChannel, newBias);
 					int sourceNeuronsToSkip = 0; // Reset for each target substrate
 					for(int sourceChannel = 0; sourceChannel < substratesInSourceLayer; sourceChannel++) {						
-						for(int height = 0; height < kernel; height++) {
-							for(int width = 0; width < kernel; width++) {
+						for(int height = 0; height < yKernel; height++) {
+							for(int width = 0; width < xKernel; width++) {
 								// Figure out source neuron in TWEANNGenotype, and rely on weight sharing
 								long sourceInnovation = layerStartInnovation + sourceNeuronsToSkip + (height*sourceSubstrateWidth) + width;
 								// Get weight from TWEANNGenotype
@@ -360,7 +363,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 				"linkExpressionThreshold:-0.1", // Express all links
 				"heterogeneousSubstrateActivations:true", // Allow mix of activation functions
 				"inputsUseID:true", // Inputs are Identity (mandatory in DL4J?)
-				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
+				"stride:1","receptiveFieldHeight:3","receptiveFieldWidth:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				"experiment:edu.southwestern.experiment.rl.EvaluateDL4JNetworkExperiment"});
 		MMNEAT.loadClasses();
@@ -371,12 +374,12 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
                 .seed(123)
                 .miniBatch(true) 
                 .cacheMode(CacheMode.DEVICE) 
-                .learningRate(.01) 
-                .updater(new Nesterovs(0.9)) 
-                .iterations(1) 
+                //.learningRate(.01) // Error in 1.0.0-beta: Moved into Nesterovs below
+                .updater(new Nesterovs(.01, 0.9)) 
+                //.iterations(1) // Error in 1.0.0-beta
                 .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer) 
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .regularization(true); // KEEP?
+                //.regularization(true); // Error in 1.0.0-beta
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT);
                 
         int[] kernelArray = new int[]{3,3};
         int[] strideArray = new int[]{1,1};
@@ -392,9 +395,11 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
         		.nOut(processWidth)
         		.weightInit(WeightInit.XAVIER_UNIFORM)
         		.activation(Activation.RELU)
-        		.learningRate(1e-2) 
+        		//.learningRate(1e-2) // Error in 1.0.0-beta: Moved to Adam below
+        		.updater(new Adam(1e-2))
         		.biasInit(1e-2) 
-        		.biasLearningRate(1e-2*2).build());
+        		//.biasLearningRate(1e-2*2) // Error in 1.0.0-beta
+        		.build());
 
         listBuilder = listBuilder.layer(1, new ConvolutionLayer.Builder(kernelArray, strideArray, zeroPaddingArray)
         		.name("cnn2")
@@ -402,30 +407,36 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
         		.nOut(processWidth)
         		.weightInit(WeightInit.XAVIER_UNIFORM)
         		.activation(Activation.RELU)
-        		.learningRate(1e-2) 
+        		//.learningRate(1e-2) // Error in 1.0.0-beta: Moved to Adam below
+        		.updater(new Adam(1e-2))
         		.biasInit(1e-2) 
-        		.biasLearningRate(1e-2*2).build());
-				
+        		//.biasLearningRate(1e-2*2) // Error in 1.0.0-beta
+        		.build());
+
         listBuilder = listBuilder.layer(2, new ConvolutionLayer.Builder(kernelArray, strideArray, zeroPaddingArray)
         		.name("cnn3")
         		.convolutionMode(ConvolutionMode.Strict)
         		.nOut(processWidth)
         		.weightInit(WeightInit.XAVIER_UNIFORM)
         		.activation(Activation.RELU)
-        		.learningRate(1e-2) 
+        		//.learningRate(1e-2) // Error in 1.0.0-beta: Moved to Adam below
+        		.updater(new Adam(1e-2))
         		.biasInit(1e-2) 
-        		.biasLearningRate(1e-2*2).build());
-				
+        		//.biasLearningRate(1e-2*2) // Error in 1.0.0-beta
+        		.build());
+
         listBuilder = listBuilder.layer(3, new ConvolutionLayer.Builder(kernelArray, strideArray, zeroPaddingArray)
         		.name("cnn4")
         		.convolutionMode(ConvolutionMode.Strict)
         		.nOut(processWidth)
         		.weightInit(WeightInit.XAVIER_UNIFORM)
         		.activation(Activation.RELU)
-        		.learningRate(1e-2) 
+        		//.learningRate(1e-2) // Error in 1.0.0-beta: Moved to Adam below
+        		.updater(new Adam(1e-2))
         		.biasInit(1e-2) 
-        		.biasLearningRate(1e-2*2).build());
-				
+        		//.biasLearningRate(1e-2*2) // Error in 1.0.0-beta
+        		.build());
+
 		listBuilder = listBuilder
 				.layer(4, new OutputLayer.Builder(LossFunctions.LossFunction.MSE) 
 						.name("output")

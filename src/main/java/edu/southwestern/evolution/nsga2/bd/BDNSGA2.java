@@ -55,12 +55,12 @@ public class BDNSGA2<T> extends NSGA2<T> {
 	 *            Population of scores: Genotypes have already been evaluated.
 	 * @return List of one behavior vector per population member
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked"})
 	public ArrayList<BehaviorVector> getBehaviorVectors(ArrayList<Score<T>> population) {
 		ArrayList<BehaviorVector> behaviorVectors = new ArrayList<BehaviorVector>(population.size());
 		for (int i = 0; i < population.size(); i++) {// one behavior vector per
-														// member of the
-														// population
+			// member of the
+			// population
 			behaviorVectors.add(characterization.getBehaviorVector(population.get(i)));
 		}
 		if (maxArchiveSize > 0) { // Use an archive
@@ -94,8 +94,8 @@ public class BDNSGA2<T> extends NSGA2<T> {
 		BehaviorVector individualBehavior = behaviorVectors.get(individualIndex);
 		for (int i = 0; i < behaviorVectors.size(); i++) {
 			if (i != individualIndex) {// finds the lowest diversity between all
-										// other population members for
-										// comparison
+				// other population members for
+				// comparison
 				diversityScore = Math.min(diversityScore, behaviorVectors.get(i).distance(individualBehavior));
 			}
 		}
@@ -103,7 +103,7 @@ public class BDNSGA2<T> extends NSGA2<T> {
 			for (int i = 0; i < archiveBehaviors.size(); i++) {
 				double distance = archiveBehaviors.get(i).distance(individualBehavior);
 				if (distance > 0) { // Assume that only identical agent would
-									// have zero distance (fix later?)
+					// have zero distance (fix later?)
 					diversityScore = Math.min(diversityScore, distance);
 				}
 			}
@@ -135,7 +135,7 @@ public class BDNSGA2<T> extends NSGA2<T> {
 			}
 		}
 		if (compareArchive) { // Use an archive: add most diverse individual
-								// from new population
+			// from new population
 			indexToAdd = mostDiverseIndex;
 		}
 		if (writeOutput) {
@@ -153,7 +153,7 @@ public class BDNSGA2<T> extends NSGA2<T> {
 	public ArrayList<Score<T>> prepareSourcePopulation(ArrayList<Score<T>> parentScores,
 			ArrayList<Score<T>> childrenScores) {
 		ArrayList<Score<T>> population = super.prepareSourcePopulation(parentScores, childrenScores);
-		characterization.prepare();// gets a random syllabus
+		characterization.prepare();// gets a syllabus
 		ArrayList<BehaviorVector> behaviorVectors = getBehaviorVectors(population);
 		ArrayList<Double> diversityScores = allDiversityScores(behaviorVectors, maxArchiveSize > 0);
 

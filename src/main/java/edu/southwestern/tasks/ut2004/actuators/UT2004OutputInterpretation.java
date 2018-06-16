@@ -8,6 +8,7 @@ import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import edu.southwestern.tasks.ut2004.actions.BotAction;
 
 /**
+ * How the bot interprets output into actions
  *
  * @author Jacob Schrum
  */

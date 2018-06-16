@@ -8,9 +8,9 @@ import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
  */
 public interface UT2004SensorModel {
 
-	public void prepareSensorModel(UT2004BotModuleController bot);
+	public void prepareSensorModel(@SuppressWarnings("rawtypes") UT2004BotModuleController bot);
 
-	public double[] readSensors(UT2004BotModuleController bot);
+	public double[] readSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot);
 
 	public String[] sensorLabels();
 

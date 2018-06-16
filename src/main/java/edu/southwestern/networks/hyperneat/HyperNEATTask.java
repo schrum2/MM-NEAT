@@ -2,8 +2,6 @@ package edu.southwestern.networks.hyperneat;
 
 import java.util.List;
 
-import edu.southwestern.util.datastructures.Triple;
-
 /**
  * A task that HyperNEAT can be applied to. Need to get substrate defining info
  * from the domain.
@@ -68,5 +66,5 @@ public interface HyperNEATTask {
 	 * @return Last of String pairs where all Strings are names of Substrates
 	 *         for the domain.
 	 */
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity();
+	public List<SubstrateConnectivity> getSubstrateConnectivity();
 }
