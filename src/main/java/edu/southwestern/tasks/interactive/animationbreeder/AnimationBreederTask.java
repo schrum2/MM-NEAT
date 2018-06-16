@@ -37,6 +37,8 @@ import edu.southwestern.util.graphics.AnimationUtil;
  */
 public class AnimationBreederTask<T extends Network> extends InteractiveEvolutionTask<T>{
 
+	private boolean reverse = Parameters.parameters.booleanParameter("loopAnimationInReverse");
+
 	protected JSlider animationLength;
 	protected JSlider pauseLength;
 	protected JSlider pauseLengthBetweenFrames;
@@ -47,18 +49,26 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		return AnimationUtil.imagesFromCPPN(cppn, picSize, picSize, startFrame, endFrame, getInputMultipliers());
 	}
 
-	// use private inner class to run animation in a loop
+	/**
+	 * Private inner class to run animations in a loop
+	 */
 	protected class AnimationThread extends Thread {
 		private int imageID;
 		private boolean abort;
 
-
+		/**
+		 * Default constructor
+		 * 
+		 * @param imageID ID of image to use in animation
+		 */
 		public AnimationThread(int imageID) {
 			this.imageID = imageID;
 			this.abort = false;
 		}
 
-
+		/**
+		 * Begin animation loop
+		 */
 		public void run() {
 			if(showNetwork) {
 				stopAnimation();
@@ -70,10 +80,22 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				//adds images to array at index of specified button (imageID)
 				if(animations[imageID].size() < Parameters.parameters.integerParameter("defaultAnimationLength")) {
 					int start = animations[imageID].size();
-					BufferedImage[] newFrames = getAnimationImages(scores.get(imageID).individual.getPhenotype(), start, end, false);
-					for(BufferedImage bi : newFrames) {
-						if(abort) break; // stop loading if animation is aborted
-						animations[imageID].add(bi);
+					try {
+						BufferedImage[] newFrames = getAnimationImages(scores.get(imageID).individual.getPhenotype(), start, end, false);
+						for(BufferedImage bi : newFrames) {
+							if(abort) break; // stop loading if animation is aborted
+							animations[imageID].add(bi);
+						}
+						if(!abort && reverse) {
+							for (int i = newFrames.length-1; i >= 0; i--) {
+								if(abort) break; // stop loading if animation is aborted
+								animations[imageID].add(newFrames[i]);
+							}
+						}
+					} catch(IndexOutOfBoundsException e) {
+						// Suppressing this exception seems like a bad idea.
+						System.out.println("Scores not ready for animation " + imageID);
+						abort = true;
 					}
 				}
 			}
@@ -81,7 +103,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 
 			while(!abort) {
 				// One animation loop
-				for(int frame = 0; !abort && frame < end; frame++) {
+				int actualAnimationLength = reverse ? end*2 : end;
+				for(int frame = 0; !abort && frame < actualAnimationLength; frame++) {
 					// set button over and over
 					setButtonImage(animations[imageID].get(frame), imageID);
 					try {
@@ -100,6 +123,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			}
 		}
 
+		/**
+		 * Halts animation loop
+		 */
 		public void stopAnimation() {
 			abort = true;
 		}		
@@ -112,6 +138,11 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	public ArrayList<BufferedImage>[] animations;
 	protected AnimationThread[] animationThreads;
 
+	/**
+	 * Default constructor
+	 * 
+	 * @throws IllegalAccessException
+	 */
 	public AnimationBreederTask() throws IllegalAccessException {
 		this(true);
 	}
@@ -257,7 +288,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(framePause);
 		}
-		
+
 		if(!alwaysAnimate) {
 			//Enables MouseListener so that animation on a button will play when mouse is hovering over it
 			for(JButton button: buttons) {
@@ -292,21 +323,37 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 	}
 
+	/**
+	 * X and Y input labels, distance from center is useful for radial distance,
+	 * time, bias is required for all neural networks.
+	 */
 	@Override
 	public String[] sensorLabels() {
 		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "time", "bias" };
 	}
 
+	/**
+	 * Hue, saturation, and brightness values being output by CPPN
+	 */
 	@Override
 	public String[] outputLabels() {
 		return new String[] { "hue-value", "saturation-value", "brightness-value" };
 	}
 
+	/** 
+	 * Window Title
+	 */
 	@Override
 	protected String getWindowTitle() {
 		return "AnimationBreeder";
 	}
 
+	/**
+	 * Save generated animated images from CPPN
+	 * 
+	 * @param file Desired file name
+	 * @param i Index of item being saved
+	 */
 	@Override
 	protected void save(String filename, int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
@@ -321,12 +368,21 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		System.out.println("image " + filename + " was saved successfully");
 	}
 
+	/**
+	 * Create BufferedImage from CPPN
+	 */
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
 		return AnimationUtil.imagesFromCPPN(phenotype, picSize, picSize, 0, 1, getInputMultipliers())[0];
 	}
-	
+
+	/**
+	 * Change image on button to given image
+	 * 
+	 * @param gmi replacing image
+	 * @param buttonIndex index of button 
+	 */
 	@Override
 	protected void setButtonImage(BufferedImage gmi, int buttonIndex) {
 		if(animationThreads[buttonIndex] != null && showNetwork) animationThreads[buttonIndex].stopAnimation();
@@ -337,25 +393,47 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 	}
 
+	/**
+	 * This method does nothing since no additional behavior of 
+	 * click other than initial response is used
+	 */
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
 		// do nothing
 	}
 
+
+	/**
+	 * Evaluates all genotypes in a population. 
+	 * 
+	 * @param population ArrayList<Genotype<T>> list of genotypes
+	 * @return ArrayList<Score<T>> list of scores
+	 */
+	@Override
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		clearAnimations(population.size());
 		return super.evaluateAll(population); // wait for user choices
 	}
 
+	/**
+	 * Clears all animations in each image array by replacing each with a
+	 * new ArrayList  
+	 * 
+	 * @param num int value of number image arrays
+	 */
 	@SuppressWarnings("unchecked")
 	private void clearAnimations(int num) {
 		// Load all Image arrays with animations
-		animations = new ArrayList[num];
+		animations = new ArrayList[num]; // Suppression for warning on type for ArrayLists
 		for(int i = 0; i < animations.length; i++) {
 			animations[i] = new ArrayList<BufferedImage>();
 		}		
 	}
 
+	/**
+	 * Undoes previous evolution call
+	 */
+	@Override
 	protected void setUndo() {
 		clearAnimations(scores.size());
 		if(alwaysAnimate) {
@@ -366,6 +444,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		super.setUndo();
 	}
 
+	/**
+	 * Resets all buttons. If hardReset is true, cache is cleared
+	 */
 	@Override
 	public void resetButtons(boolean hardReset) {
 		super.resetButtons(hardReset);
@@ -391,6 +472,12 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 	}
 
+	/**
+	 * Resets image on a button using specified genotype
+	 * 
+	 * @param individual Genotype used  to replace the button image
+	 * @param x index of the button to be modified
+	 */
 	@Override
 	protected void resetButton(Genotype<T> individual, int x) {
 		super.resetButton(individual, x);
@@ -401,6 +488,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 	}
 
+	/**
+	 * Resets to a new random population
+	 */
 	@Override
 	protected void reset() {
 		if(alwaysAnimate) {
@@ -418,6 +508,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		super.reset();
 	}
 
+	/**
+	 * Stops all animations and saves current score evaluations 
+	 */
 	@Override
 	protected void evolve() {
 		super.evolve();
@@ -428,11 +521,17 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 	}
 
+	/**
+	 * Returns the number of inputs used in the interactive evolution task
+	 */
 	@Override
 	public int numCPPNInputs() {
 		return CPPN_NUM_INPUTS;
 	}
 
+	/**
+	 * Returns the number of outputs used in the interactive evolution task
+	 */
 	@Override
 	public int numCPPNOutputs() {
 		return CPPN_NUM_OUTPUTS;
@@ -444,17 +543,23 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Returns type of file being saved (GIF)
+	 */
 	@Override
 	protected String getFileType() {
 		return "GIF";
 	}
 
+	/**
+	 * Returns extension of saved images (.gif)
+	 */
 	@Override
 	protected String getFileExtension() {
 		return "gif";

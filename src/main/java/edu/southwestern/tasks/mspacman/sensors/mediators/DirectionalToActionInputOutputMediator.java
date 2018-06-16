@@ -18,7 +18,7 @@ import edu.southwestern.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPow
 import edu.southwestern.tasks.mspacman.sensors.blocks.paths.GhostsToFarthestEdibleBlock;
 import edu.southwestern.tasks.mspacman.sensors.blocks.time.EdibleTimesBlock;
 import edu.southwestern.tasks.mspacman.sensors.blocks.time.LairTimesBlock;
-import pacman.controllers.examples.AggressiveGhosts;
+import oldpacman.controllers.examples.AggressiveGhosts;
 
 /**
  *

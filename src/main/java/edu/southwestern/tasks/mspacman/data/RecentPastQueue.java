@@ -6,7 +6,8 @@ package edu.southwestern.tasks.mspacman.data;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import pacman.game.Game;
+
+import oldpacman.game.Game;
 
 /**
  * The purpose of this class is to track a collection of pacman game states of a

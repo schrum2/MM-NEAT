@@ -9,9 +9,10 @@ import edu.southwestern.tasks.mspacman.data.ScentPath;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.multitask.MsPacManModeSelector;
 import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
+import oldpacman.controllers.NewPacManController;
+import oldpacman.game.Game;
+
 import java.util.Arrays;
-import pacman.controllers.NewPacManController;
-import pacman.game.Game;
 
 /**
  * defines the evolved pac man controller

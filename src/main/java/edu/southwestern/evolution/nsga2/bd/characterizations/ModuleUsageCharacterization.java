@@ -1,5 +1,7 @@
 package edu.southwestern.evolution.nsga2.bd.characterizations;
 
+import java.util.ArrayList;
+
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.nsga2.bd.vectors.BehaviorVector;
 import edu.southwestern.evolution.nsga2.bd.vectors.RealBehaviorVector;

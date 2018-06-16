@@ -30,35 +30,59 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	public static final int CPPN_NUM_INPUTS	= 4;
 	public static final int CPPN_NUM_OUTPUTS = 3;
 
+	/** 
+	 * Default constructor
+	 * 
+	 * @throws IllegalAccessException
+	 */
 	public PicbreederTask() throws IllegalAccessException {
 		super();
 	}
 
+	/**
+	 * X and Y input labels, distance from center is useful for radial distance,
+	 * bias is required for all neural networks.
+	 */
 	@Override
 	public String[] sensorLabels() {
 		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "bias" };
 	}
 
+	/**
+	 * Hue, saturation, and brightness values being output by CPPN
+	 */
 	@Override
 	public String[] outputLabels() {
 		return new String[] { "hue-value", "saturation-value", "brightness-value" };
 	}
 
+	/**
+	 * Window title
+	 */
 	@Override
 	protected String getWindowTitle() {
 		return "Picbreeder";
 	}
 
+	/**
+	 * Create BufferedImage from CPPN
+	 */
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		return GraphicsUtil.imageFromCPPN(phenotype, width, height, inputMultipliers);
 	}
 
+	/**
+	 * No additional behavior of click other than initial response is used
+	 */
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
 		// Do nothing
 	}
 
+	/**
+	 * Save generated images from CPPN
+	 */
 	@Override
 	protected void save(String filename, int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
@@ -68,13 +92,17 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		System.out.println("image " + filename + " was saved successfully");
 	}
 
-
+    /**
+     * Returns the number of inputs used in the interactive evolution task
+     */
 	@Override
 	public int numCPPNInputs() {
 		return CPPN_NUM_INPUTS;
 	}
 
-
+	/**
+	 * Returns the number of outputs used in the interactive evolution task
+	 */
 	@Override
 	public int numCPPNOutputs() {
 		return CPPN_NUM_OUTPUTS;
@@ -92,11 +120,17 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		}
 	}
 
+	/**
+	 * Returns type of file being saved (BMP)
+	 */
 	@Override
 	protected String getFileType() {
 		return "BMP Images";
 	}
 
+	/**
+	 * Returns extension of saved images (.bmp)
+	 */
 	@Override
 	protected String getFileExtension() {
 		return "bmp";

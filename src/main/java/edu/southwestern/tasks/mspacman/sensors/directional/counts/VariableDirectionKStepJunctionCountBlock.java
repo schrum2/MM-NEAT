@@ -7,7 +7,7 @@ package edu.southwestern.tasks.mspacman.sensors.directional.counts;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 
 /**
- *
+ * Supports popacman. JunctionIndices are always available in both PO and non-PO conditions.
  * @author Jacob Schrum
  */
 public class VariableDirectionKStepJunctionCountBlock extends VariableDirectionKStepCountBlock {
@@ -17,6 +17,9 @@ public class VariableDirectionKStepJunctionCountBlock extends VariableDirectionK
 	}
 
 	@Override
+	/**
+	 * This information is always freely available in both PO and non-PO conditions.
+	 */
 	public int[] getCountTargets(GameFacade gf) {
 		return gf.getJunctionIndices();
 	}

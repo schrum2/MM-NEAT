@@ -7,7 +7,7 @@ import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBloc
 
 /**
  * An extension of the BlockLoadedInputOutputMediator which allows for
- * variations in direction
+ * variations in direction. *Should* support popacman.
  * 
  * @author Jacob Schrum
  */

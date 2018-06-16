@@ -45,6 +45,7 @@ public abstract class MsPacManControllerInputOutputMediator {
 	 */
 	public void mediatorStateUpdate(GameFacade gs) {
 		int current = gs.getPacmanCurrentNodeIndex();
+		assert current != -1 : "current is -1 in MsPacManControllerInputOutputMediator.mediatorStateUpdate()";
 		escapeNodes.updateNodes(gs, current);
 	}
 

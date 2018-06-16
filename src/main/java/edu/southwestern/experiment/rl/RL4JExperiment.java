@@ -11,6 +11,7 @@ import org.deeplearning4j.rl4j.network.dqn.DQNFactoryStdDense;
 import org.deeplearning4j.rl4j.policy.DQNPolicy;
 import org.deeplearning4j.rl4j.space.DiscreteSpace;
 import org.deeplearning4j.rl4j.util.DataManager;
+import org.nd4j.linalg.learning.config.Adam;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.experiment.Experiment;
@@ -57,7 +58,7 @@ public class RL4JExperiment implements Experiment {
     public static DQNFactoryStdDense.Configuration QNET =
         DQNFactoryStdDense.Configuration.builder()
             .l2(0.001)
-            .learningRate(0.0005)
+            .updater(new Adam(0.0005))
             .numHiddenNodes(16)
             .numLayer(3)
             .build();

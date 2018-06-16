@@ -6,11 +6,11 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import oldpacman.game.Constants;
+
 import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
-
-import pacman.game.Constants;
 
 /**
  *
@@ -173,8 +173,15 @@ public abstract class VariableDirectionCloserToTargetThanThreatGhostBlock extend
 				// target,
 				// then the ghost will reach it first, but it is still safe to
 				// go there.
-				if (gf.isJunction(ghostLocation)
-						|| !(ArrayUtil.subset(ghostPath, path) && ArrayUtils.contains(path, ghostLocation))) {
+				
+				//We cannot see the ghost, so we assume the path is not safe.
+				if(ghostLocation == -1) {
+					return 0;
+				}
+				
+				assert ghostPath != null : "ghostPath is null";
+				assert path != null : "path is null";
+				if (gf.isJunction(ghostLocation) || !(ArrayUtil.subset(ghostPath, path) && ArrayUtils.contains(path, ghostLocation))) {
 					// If the ghost and pacman paths collide head-on, then path is unsafe
 					if (ArrayUtils.contains(path, ghostLocation) && gf.ghostApproachingPacman(ghostsToCheck[i])) {
 						// if (CommonConstants.watch) {

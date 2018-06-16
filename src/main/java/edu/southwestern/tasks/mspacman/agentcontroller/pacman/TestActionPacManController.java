@@ -6,9 +6,9 @@ import edu.southwestern.tasks.mspacman.data.JunctionNodes;
 import edu.southwestern.tasks.mspacman.data.NodeCollection;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.facades.GhostControllerFacade;
-import pacman.controllers.NewPacManController;
-import pacman.controllers.examples.AggressiveGhosts;
-import pacman.game.Game;
+import oldpacman.controllers.NewPacManController;
+import oldpacman.controllers.examples.AggressiveGhosts;
+import oldpacman.game.Game;
 
 /**
  *

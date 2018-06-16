@@ -75,6 +75,7 @@ $RECYCLE.BIN/
 /match/
 /multiplelivesconflict/
 /imprisonconflict/
+/imprisonsplit/
 /isolatedconflict/
 /toruspred/
 /torusprey/
@@ -82,13 +83,16 @@ $RECYCLE.BIN/
 /puddle/
 /sunset1/
 /vizdoombasic/
+/vizdoomdefendcenter/
 /onelifesplit/
 /sztetris/
 /othello/
 /gvgai/
 /innovation/
 /innovationshapes/
+/microRTS/
 /ut2004/
+/popacman/
 *.zds
 vizdoom/bin/vizdoom-He_Deceives.ini
 *.bmp
@@ -107,6 +111,7 @@ _vizdoom.ini
 
 .svn
 *.docx
+*.xml.log
 
 *.bash
 
@@ -119,4 +124,5 @@ rl-glue-cartpole
 src/main/python/imagenet-vgg-verydeep-19.mat
 *.pyc
 *.json
+*UT^2-null
 dependency-reduced-pom.xml
