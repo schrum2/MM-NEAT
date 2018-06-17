@@ -1,21 +1,34 @@
 package edu.southwestern.tasks.interactive.gvgai;
 
+import java.awt.FlowLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.util.datastructures.Triangle;
 import gvgai.core.game.BasicGame;
 import gvgai.core.game.Game;
 import gvgai.core.vgdl.VGDLFactory;
@@ -23,7 +36,7 @@ import gvgai.core.vgdl.VGDLParser;
 import gvgai.core.vgdl.VGDLRegistry;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
 
-public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
+public class LevelBreederTask extends InteractiveEvolutionTask<TWEANN> {
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
 	
@@ -43,6 +56,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	public static final int RANDOM_ITEMS_INDEX = 2;
 	public static final int FLOOR_INDEX = 3; // Will always only have one character
 	public static final int WALL_INDEX = 3; // Will always only have one character
+	public static final int BOTTOM_ITEMS_INDEX = 4; // Items that prefer to be at the bottom of the screen
 	static {
 		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("zelda", new char[][] {
@@ -50,7 +64,8 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'g','+','A'}, // There is one gate, one key, and one avatar
 			new char[]{'1','2','3'}, // There are random monsters dignified by 1, 2, 3
 			new char[]{'.'},
-			new char[]{'w'}});
+			new char[]{'w'},
+			new char[0]});
 		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("blacksmoke", new char[][] {
 			new char[]{'w','b','c'}, // There are fixed walls, destructible blocks, and black death squares
@@ -69,10 +84,11 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 		//TODO: fix aliens: everything spawns yet some levels are broken, force the spawn of the avatar and the aliens
 		SPECIFIC_GAME_LEVEL_CHARS.put("aliens", new char[][] {
 			new char[]{'.'}, // floor
-			new char[]{'1','2','A'}, // There is one slow portal, one fast portal, and one avatar
+			new char[]{'1','2'}, // There is one slow portal, one fast portal, and one avatar
 			new char[]{'0'}, // There are base blocks dignified by 0 
 			new char[]{'.'},
-			new char[]{'w'}});
+			new char[]{'w'},
+			new char[]{'A'}});
 		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("pacman", new char[][] {
 			new char[]{'w'}, // Walls are fixed
@@ -699,7 +715,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'0','1','2'}, // wide wall, tight wall, cat wall
 			new char[]{'.'},
 			new char[]{'w'}});
-		
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("wildgunman", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
@@ -714,6 +730,8 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	private String fullGameFile;
 	private String gameFile;
 	private char[][] gameCharData;
+	
+	protected JComboBox<String> gameChoice;
 	
 	public LevelBreederTask() throws IllegalAccessException {
 		super();
@@ -731,6 +749,55 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 		play.setName("" + PLAY_BUTTON_INDEX);
 		play.addActionListener(this);
 		top.add(play);
+		
+		
+		//creates a string of all game names
+		Set<String> gameNames = SPECIFIC_GAME_LEVEL_CHARS.keySet();
+		//converts the string to an array
+		String[] choices = gameNames.toArray(new String[gameNames.size()]);
+		//sorts list alphabetically
+		Arrays.sort(choices);
+		
+		JLabel Loading = new JLabel ("Loading...", JLabel.RIGHT);
+		top.setLayout(new FlowLayout());
+		
+		gameChoice = new JComboBox<String>(choices);
+		gameChoice.setSelectedIndex(choices.length - 1); 
+		gameChoice.setSize(90, 40);
+		gameChoice.setSelectedItem(gameFile);
+		gameChoice.addItemListener(new ItemListener() {
+			@SuppressWarnings({ "unchecked"})
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				
+				top.add(Loading);
+				JComboBox<String> source = (JComboBox<String>)e.getSource();
+				gameFile = (String) source.getSelectedItem();
+				Parameters.parameters.setString("gvgaiGame", gameFile);
+				fullGameFile = GAMES_PATH + gameFile + ".txt";
+				System.out.println("fullGameFile");
+				gameCharData = SPECIFIC_GAME_LEVEL_CHARS.get(gameFile);
+				System.out.println("gameCharData");
+				
+				VGDLFactory.GetInstance().init();
+				VGDLRegistry.GetInstance().init();
+				
+				// New to reset all network population configurations because different games require different numbers of outputs
+				MMNEAT.setNNInputParameters(numCPPNInputs(), numCPPNOutputs());
+				// Make new TWEANNGenotype for archetype index 0
+				TWEANNGenotype newStart = new TWEANNGenotype(numCPPNInputs(), numCPPNOutputs(), 0);				
+				EvolutionaryHistory.initArchetype(0, null, newStart);
+				scores.get(0).individual = newStart; // Is used in the call to reset() in a moment
+				// Resets the population using the first agent as a prototype
+				reset();
+				// Replace images on buttons
+				resetButtons(true);
+				top.remove(Loading);
+			}
+
+		});
+		
+		top.add(gameChoice);
 
 	}
 
@@ -742,7 +809,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	@Override
 	public String[] outputLabels() {
 		ArrayList<String> outputs = new ArrayList<String>(10);
-		outputs.add("FixedPresence");
+		outputs.add("");
 		
 		for(Character c : gameCharData[FIXED_ITEMS_INDEX]) {
 			outputs.add("Fixed-"+c);
@@ -766,7 +833,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	@Override
 	protected void save(String file, int i) {
 		String[] level = GVGAIUtil.generateLevelFromCPPN((Network)scores.get(i).individual.getPhenotype(), inputMultipliers, GAME_GRID_WIDTH, GAME_GRID_HEIGHT, gameCharData[FLOOR_INDEX][0], gameCharData[WALL_INDEX][0], 
-				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS);
+				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS, gameCharData[BOTTOM_ITEMS_INDEX]);
 		// Prepare text file
 		try {
 			PrintStream ps = new PrintStream(new File(file));
@@ -781,7 +848,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			return;
 		}
 	}
-
+	
 	/**
 	 * Use a CPPN to create a level and wrap in a game bundle with a new game.
 	 * @param phenotype CPPN
@@ -789,7 +856,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	 */
 	public GameBundle setUpGameWithLevelFromCPPN(Network phenotype) {
 		String[] level = GVGAIUtil.generateLevelFromCPPN(phenotype, inputMultipliers, GAME_GRID_WIDTH, GAME_GRID_HEIGHT, gameCharData[FLOOR_INDEX][0], gameCharData[WALL_INDEX][0], 
-				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS);
+				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS, gameCharData[BOTTOM_ITEMS_INDEX]);
 		int seed = 0; // TODO: Use parameter?
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 
@@ -799,7 +866,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	}
 	
 	@Override
-	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
+	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		GameBundle bundle = setUpGameWithLevelFromCPPN(phenotype);
 		BufferedImage levelImage = GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed);
 		return levelImage;
@@ -820,6 +887,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 				public void run() {
 					// True is to watch the game being played
 					GVGAIUtil.runOneGame(bundle, true);
+					
 				}
 			}.start();
 			System.out.println("Launched");
@@ -828,9 +896,8 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	}
 
 	@Override
-	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
+	protected void additionalButtonClickAction(int scoreIndex, Genotype<TWEANN> individual) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -855,7 +922,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:wildgunman","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:zelda","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
