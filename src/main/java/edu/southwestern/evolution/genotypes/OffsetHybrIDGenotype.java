@@ -8,7 +8,7 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
-import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
+import edu.southwestern.networks.hyperneat.architecture.SubstrateConnectivity;
 import edu.southwestern.util.datastructures.Pair;
 
 public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {

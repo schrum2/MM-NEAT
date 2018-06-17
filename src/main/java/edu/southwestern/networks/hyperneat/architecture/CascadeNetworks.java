@@ -1,4 +1,4 @@
-package edu.southwestern.networks.hyperneat;
+package edu.southwestern.networks.hyperneat.architecture;
 
 import java.util.ArrayList;
 import java.util.List;

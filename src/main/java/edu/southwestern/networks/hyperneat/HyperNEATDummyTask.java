@@ -3,6 +3,7 @@ package edu.southwestern.networks.hyperneat;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.networks.hyperneat.architecture.SubstrateConnectivity;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.Task;
 import edu.southwestern.util.datastructures.Pair;

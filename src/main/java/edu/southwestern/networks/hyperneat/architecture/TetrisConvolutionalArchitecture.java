@@ -1,12 +1,10 @@
-package edu.southwestern.tasks.rlglue.tetris.network;
+package edu.southwestern.networks.hyperneat.architecture;
 
 import java.util.ArrayList;
 import java.util.List;
-import edu.southwestern.networks.hyperneat.SubstrateArchitectureDefinition;
-import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
+
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
-import edu.southwestern.networks.hyperneat.FlexibleSubstrateArchitecture;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 
 /**

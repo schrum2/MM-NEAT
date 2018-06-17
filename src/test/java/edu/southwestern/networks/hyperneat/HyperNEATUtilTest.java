@@ -14,6 +14,7 @@ import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.TWEANN.Node;
+import edu.southwestern.networks.hyperneat.architecture.SubstrateConnectivity;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
 import edu.southwestern.util.datastructures.Pair;
