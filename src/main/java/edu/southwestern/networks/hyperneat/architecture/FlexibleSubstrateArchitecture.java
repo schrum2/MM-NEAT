@@ -57,15 +57,6 @@ public class FlexibleSubstrateArchitecture {
 	}
 
 	/**
-	 * @param hnt the HyperNEATTask
-	 * @return List of the SubstrateConnectivity of the network
-	 */
-	public static List<SubstrateConnectivity> getAllSubstrateConnectivity(HyperNEATTask hnt) {
-		Pair<List<String>,List<String>> inputAndOutputNames = getInputAndOutputNames(hnt);
-		return getDefaultConnectivity(inputAndOutputNames.t1, inputAndOutputNames.t2, getHiddenArchitecture(hnt));
-	}
-
-	/**
 	 * gets the input and output names from the hyperNEATTask
 	 * @param hnt theHyperNEATTask
 	 * @return the input and output names stored in a pair. looks like (input names, output names)
@@ -82,6 +73,15 @@ public class FlexibleSubstrateArchitecture {
 			}
 		}
 		return new Pair<List<String>, List<String>>(inputSubstrateNames, outputSubstrateNames);
+	}
+	
+	/**
+	 * @param hnt the HyperNEATTask
+	 * @return List of the SubstrateConnectivity of the network
+	 */
+	public static List<SubstrateConnectivity> getDefaultConnectivity(HyperNEATTask hnt) {
+		Pair<List<String>,List<String>> inputAndOutputNames = getInputAndOutputNames(hnt);
+		return getDefaultConnectivity(inputAndOutputNames.t1, inputAndOutputNames.t2, getHiddenArchitecture(hnt));
 	}
 
 	/**
