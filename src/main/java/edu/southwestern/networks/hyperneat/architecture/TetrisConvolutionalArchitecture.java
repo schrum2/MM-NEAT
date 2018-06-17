@@ -6,6 +6,7 @@ import java.util.List;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 
 /**
  * Defines convolutional architecture such that the number of feature maps increases as the size decreases

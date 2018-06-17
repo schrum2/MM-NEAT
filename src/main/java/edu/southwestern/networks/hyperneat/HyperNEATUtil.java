@@ -14,7 +14,6 @@ import edu.southwestern.evolution.genotypes.TWEANNGenotype.FullLinkGene;
 import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.TWEANN.Node;
-import edu.southwestern.networks.hyperneat.architecture.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CombinatoricUtilities;

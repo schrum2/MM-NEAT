@@ -1,4 +1,4 @@
-package edu.southwestern.networks.hyperneat.architecture;
+package edu.southwestern.networks.hyperneat;
 
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;

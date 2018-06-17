@@ -2,8 +2,6 @@ package edu.southwestern.networks.hyperneat;
 
 import java.util.List;
 
-import edu.southwestern.networks.hyperneat.architecture.SubstrateConnectivity;
-
 /**
  * A task that HyperNEAT can be applied to. Need to get substrate defining info
  * from the domain.
