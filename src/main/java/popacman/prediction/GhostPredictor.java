@@ -44,9 +44,9 @@ public class GhostPredictor {
         observationMade = true;
     }
 
-    public void observeNotPresent(GHOST ghost, int ghostIndex){
+    public void observeNotPresent(GHOST ghost, int ghostIndex, GameFacade game){
         if(ghostPredictions.isEmpty()) return;
-        ghostPredictions.get(0).observeNotPresent(ghost, ghostIndex);
+        ghostPredictions.get(0).observeNotPresent(ghost, ghostIndex, game);
         observationMade = true;
     }
 

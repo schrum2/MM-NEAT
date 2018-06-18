@@ -3392,5 +3392,14 @@ public class GameFacade {
 		timeOfLastEatenPowerPill = time;
 	}
 	
+	public double calculateRemainingPillBuffTime() {
+		double newEdibleTime = (int) (pacman.game.Constants.EDIBLE_TIME * (Math.pow(pacman.game.Constants.EDIBLE_TIME_REDUCTION, 3 % pacman.game.Constants.LEVEL_RESET_REDUCTION)));
+		return this.timeOfLastEatenPowerPill / newEdibleTime;
+	}
+	
+	public double calculateRemainingPillBuffTimeAdjustment() {
+		double newEdibleTime = (int) (pacman.game.Constants.EDIBLE_TIME * (Math.pow(pacman.game.Constants.EDIBLE_TIME_REDUCTION, 3 % pacman.game.Constants.LEVEL_RESET_REDUCTION)));
+		return this.timeOfLastEatenPowerPill + 1 / newEdibleTime;
+	}
 	
 }

@@ -309,7 +309,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	            } else {
 	                List<GhostLocation> locations = ghostPredictions.getGhostLocations(ghost);
 	                locations.stream().filter(location -> informedGameFacade.poG.isNodeObservable(location.getIndex())).forEach(location -> {
-	                	ghostPredictions.observeNotPresent(ghost, location.getIndex());
+	                	ghostPredictions.observeNotPresent(ghost, location.getIndex(), informedGameFacade);
 	                });
 	            }
 	        }
