@@ -30,6 +30,7 @@ import mockcz.cuni.pogamut.Client.AgentMemory;
  * @author Rudolf Kadlec aka ik
  * @author Jakub Gemrot aka Jimmy
  */
+@SuppressWarnings("rawtypes")
 @AgentScoped
 public class BaseBot extends UT2004BotModuleController<UT2004Bot> {
 

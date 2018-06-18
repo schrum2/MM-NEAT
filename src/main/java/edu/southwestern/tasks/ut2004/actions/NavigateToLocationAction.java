@@ -26,7 +26,7 @@ public class NavigateToLocationAction implements BotAction {
 	 * 
 	 * @param bot (bot to execute command)
 	 */
-	public String execute(UT2004BotModuleController bot) {
+	public String execute(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		bot.getNavigation().navigate(target);
 		return "[Goto " + target.getLocation() + "]"
 				+ (target instanceof NavPoint

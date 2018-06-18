@@ -8,6 +8,7 @@ import cz.cuni.amis.pogamut.base3d.worldview.object.event.WorldObjectDisappeared
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weaponry;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.AgentInfo;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.AgentStats;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Game;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
@@ -90,6 +91,7 @@ public class GameDataCollector implements Serializable {
 	transient protected IWorldEventListener<Bumped> bumpedListener;
 	transient protected IWorldEventListener<WallCollision> wallCollisionListener;
 	transient protected IWorldObjectEventListener<Self, WorldObjectUpdatedEvent<Self>> selfListener;
+	private AgentStats stats;
 
 	/**
 	 * collects data on the status of the game
@@ -470,5 +472,13 @@ public class GameDataCollector implements Serializable {
 		} else {
 			return 0;
 		}
+	}
+
+	public void giveAgentStats(AgentStats stats) {
+		this.stats = stats;
+	}
+	
+	public AgentStats getAgentStats() {
+		return stats;
 	}
 }

@@ -12,7 +12,7 @@ public class SelfAwarenessBlock implements UT2004SensorBlock {
 	 * creates the sensor block
 	 * @param bot (bot which will use the sensor data)
 	 */
-	public void prepareBlock(UT2004BotModuleController bot) {
+	public void prepareBlock(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
 
 	/**
@@ -23,7 +23,7 @@ public class SelfAwarenessBlock implements UT2004SensorBlock {
 	 * @param inputs (an array that collects the values from the statuses)
 	 * @return returns next address for sensor allocation
 	 */
-	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
+	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
 
 		inputs[in++] = bot.getInfo().getArmor() / 100.0;
 		inputs[in++] = bot.getInfo().getHealth() / 100.0;

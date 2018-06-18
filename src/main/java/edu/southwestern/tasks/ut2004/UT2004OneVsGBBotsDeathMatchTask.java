@@ -3,7 +3,13 @@ package edu.southwestern.tasks.ut2004;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.controller.BotController;
-import edu.southwestern.tasks.ut2004.fitness.*;
+import edu.southwestern.tasks.ut2004.fitness.DamageDealtFitness;
+import edu.southwestern.tasks.ut2004.fitness.DamageReceivedFitness;
+import edu.southwestern.tasks.ut2004.fitness.DeathsFitness;
+import edu.southwestern.tasks.ut2004.fitness.FragFitness;
+import edu.southwestern.tasks.ut2004.fitness.HighestEnemyScoreFitness;
+import edu.southwestern.tasks.ut2004.fitness.ScoreFitness;
+import edu.southwestern.tasks.ut2004.fitness.StreakFitness;
 import edu.southwestern.util.ClassCreation;
 
 /**
@@ -28,6 +34,7 @@ public class UT2004OneVsGBBotsDeathMatchTask<T extends Network> extends UT2004Ta
 	 * @return returns the opponent array
 	 */
 	public static BotController[] getOpponents(int num) {
+		System.out.println("CREATE " + num + " ControllerBot opponents");
 		BotController[] result = new BotController[num];
 		try {
 			for (int i = 0; i < num; i++) {

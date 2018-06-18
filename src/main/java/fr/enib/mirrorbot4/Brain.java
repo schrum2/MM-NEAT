@@ -17,6 +17,7 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.SetCrouch;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotDamaged;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.AgentInfo;
 
 
 /**
@@ -404,13 +405,15 @@ public class Brain{
 		Map<UnrealId, Player> players = ctrl.getPlayers().getVisiblePlayers();
 
 		playerData.getTargetData().clearTargets(); //get a clear image before doing any shooting
-
+		int myTeam = ctrl.getInfo().getTeam(); // Added to allow team play
 		for (Entry<UnrealId,Player> entry : players.entrySet()){
 			// Wasn't used: schrum: 6/7/18
 			//UnrealId key=entry.getKey();
 			Player player=entry.getValue();
-
-			playerData.addData(player);
+			// Restriction added to prevent MirrorBot from attacking teammates
+			int otherTeam = player.getTeam();
+			if(otherTeam != myTeam) // Only add enemies
+				playerData.addData(player);
 		}
 	}
 

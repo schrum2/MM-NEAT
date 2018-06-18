@@ -69,7 +69,7 @@ public class ControllerBot extends UT2004BotModuleController {
 		brain = params.getController();
 		// Listerners on these objects needed to track scores
 		params.getStats().registerListeners(this);
-		return new Initialize().setName(params.getName()).setDesiredSkill(params.getDesiredSkill());
+		return new Initialize().setName(params.getName()).setDesiredSkill(params.getDesiredSkill()).setSkin("Aliens.AlienFemaleB");
 	}
 
 	/**
@@ -89,6 +89,7 @@ public class ControllerBot extends UT2004BotModuleController {
 	 */
 	public void botInitialized(GameInfo info, ConfigChange currentConfig, InitedMessage init) {
 		brain.initialize(this);
+		this.getParams().giveStats(this.getStats());
 	}
 
 	@Override
@@ -157,23 +158,26 @@ public class ControllerBot extends UT2004BotModuleController {
 		}
 
 		//adds hunter bots to the spaces in the array after ControllerBots
+		if(controllers.length == 0) System.out.println("Add " + numHunterBots + " HunterBots");
 		for(int i = 0; i < numHunterBots; i++) {
 			classes[classIndex] = HunterBot.class;
-			params[classIndex] = new HunterBotParameters(evalSeconds); // HunterBot also needs to know when to stop
+			params[classIndex] = new HunterBotParameters(evalSeconds).setTeam(1); // HunterBot also needs to know when to stop
 			classIndex++;
 		}
 		
 		//adds mirror bots to the spaces in the array after ControllerBots
+		if(controllers.length == 0) System.out.println("Add " + numMirrorBots + " MirrorBots");
 		for(int i = 0; i < numMirrorBots; i++) {
 			classes[classIndex] = MirrorBot4.class;
-			params[classIndex] = new MirrorBotParameters(evalSeconds); // MirrorBot also needs to know when to stop
+			params[classIndex] = new MirrorBotParameters(evalSeconds).setTeam(1); // MirrorBot also needs to know when to stop
 			classIndex++;
 		}
 		
 		//adds UT^2 bots to the spaces in the array after ControllerBots
+		if(controllers.length == 0) System.out.println("Add " + numUT2Bots + " UT^2 bots");
 		for(int i = 0; i < numUT2Bots; i++) {
 			classes[classIndex] = UT2.class;
-			params[classIndex] = new UT2.UT2Parameters(evalSeconds); // UT2 also needs to know when to stop
+			params[classIndex] = new UT2.UT2Parameters(evalSeconds).setTeam(1); // UT2 also needs to know when to stop
 			classIndex++;
 		}
 
