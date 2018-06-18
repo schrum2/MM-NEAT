@@ -49,12 +49,15 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 * defines a HyperNEATCPPNAndSubstrateArchitectureGenotype from the hiddenArchitecture and substrate connectivity
 	 * @param hiddenArchitecture List of triples that specifies each substrate with the index of each triple being its layer.
 	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
-	 * @param CONNECTIVITY_TYPE how these two substrates are connected (i.e. full, convolutional,...)
+	 * @param allSubstrateConnectivity how each substrate is connected
 	 */
 	public HyperNEATCPPNAndSubstrateArchitectureGenotype(List<Triple<Integer, Integer, Integer>> hiddenArchitecture, List<SubstrateConnectivity> allSubstrateConnectivity) {
 		super();
 		this.hiddenArchitecture = hiddenArchitecture;
 		this.allSubstrateConnectivity = allSubstrateConnectivity;
+		assert allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME != null : "How was a null name constructed?";
+		assert !allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME.equals("null") : "How was a null string name constructed?";
+
 		assert this.hiddenArchitecture != null;
 	}
 
@@ -68,6 +71,10 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		this.hiddenArchitecture = substrateArchitectureDefinition.getNetworkHiddenArchitecture();
 		assert this.hiddenArchitecture != null;
 		this.allSubstrateConnectivity = substrateArchitectureDefinition.getSubstrateConnectivity(HNTask);
+		assert allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME != null : "How was a null name constructed?";
+		assert !allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME.equals("null") : "How was a null string name constructed?";
+
+
 	}
 	
 	/**
@@ -85,6 +92,10 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		this.hiddenArchitecture = FlexibleSubstrateArchitecture.getHiddenArchitecture((HyperNEATTask) MMNEAT.task);
 		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getDefaultConnectivity((HyperNEATTask) MMNEAT.task);
 		assert allSubstrateConnectivity.size() > 0 : "allSubstrateConnectivity size must be greater than 0";
+		assert allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME != null : "How was a null name constructed?";
+		assert !allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME.equals("null") : "How was a null string name constructed?";
+
+
 	}
 	
 	/**
@@ -94,12 +105,15 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 * @param outputNeurons output nodes
 	 * @param hiddenArchitecture List of triples that specifies each substrate with the index of each triple being its layer.
 	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
-	 * @param CONNECTIVITY_TYPE how these two substrates are connected (i.e. full, convolutional,...)
+	 * @param allSubstrateConnectivity how each substrate is connected
 	 */
 	private HyperNEATCPPNAndSubstrateArchitectureGenotype(int archetypeIndex, ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons,
 			List<Triple<Integer, Integer, Integer>> hiddenArchitecture, List<SubstrateConnectivity> allSubstrateConnectivity) {
 		super(archetypeIndex, links, genes, outputNeurons);
 		this.allSubstrateConnectivity = allSubstrateConnectivity;
+		assert allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME != null : "How was a null name constructed?";
+		assert !allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME.equals("null") : "How was a null string name constructed?";
+
 		this.hiddenArchitecture = hiddenArchitecture;
 	}
 	
@@ -111,6 +125,8 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
 		this.hiddenArchitecture = FlexibleSubstrateArchitecture.getHiddenArchitecture(task);
 		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getDefaultConnectivity(task);
+		assert allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME != null : "How was a null name constructed?";
+		assert !allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME.equals("null") : "How was a null string name constructed?";
 	}
 
 	/**
@@ -166,6 +182,10 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 */
 	@Override
 	public List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask HNTask) {
+		assert allSubstrateConnectivity != null;
+		assert allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME != null : "How was a null name constructed?";
+		assert !allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME.equals("null") : "How was a null string name constructed?";
+
 		return allSubstrateConnectivity;
 	}
 	
@@ -184,6 +204,8 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 				newLayerWidth, newSubstratesWidth, newsubstratesHeight, connectivityType);
 		this.hiddenArchitecture = newDefiniton.t1;
 		this.allSubstrateConnectivity = newDefiniton.t2;
+		assert allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME != null : "How was a null name constructed?";
+
 	}
 
 	/**
@@ -203,6 +225,8 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		for(SubstrateConnectivity connectionId: this.allSubstrateConnectivity) {
 			copyAllSubstrateConnectivity.add(connectionId.copy());
 		}
+		assert allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME != null : "How was a null name constructed?";
+		assert copyAllSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME != null : "How was a null name constructed?";
 		
 		// Copy the link and node genes
 		ArrayList<LinkGene> copyLinks = new ArrayList<LinkGene>(this.links.size());
@@ -218,6 +242,8 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		HyperNEATCPPNAndSubstrateArchitectureGenotype copy = new HyperNEATCPPNAndSubstrateArchitectureGenotype(
 				this.archetypeIndex, copyLinks, copyGenes, this.numOut, copyHiddenArchitecture, copyAllSubstrateConnectivity);
 
+		assert copy.allSubstrateConnectivity.get(0).SOURCE_SUBSTRATE_NAME != null : "How was a null name constructed?";
+		
 		moduleUsage = temp;
 		copy.moduleUsage = new int[temp.length];
 		System.arraycopy(this.moduleUsage, 0, copy.moduleUsage, 0, moduleUsage.length);

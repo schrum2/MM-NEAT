@@ -23,29 +23,31 @@ public class SubstrateConnectivity {
 	 * @param connectivityType how these two substrates are connected(i.e. full, convolutional,...)
 	 */
 	public SubstrateConnectivity (String sourceSubstrateName, String targetSubstrateName, int connectivityType) {
-		this.SOURCE_SUBSTRATE_NAME = sourceSubstrateName;
-		this.TARGET_SUBSTRATE_NAME = targetSubstrateName;
-		this.connectivityType = connectivityType;
-		if (connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION) {
-			//default receptive height and width is 3
-			this.receptiveFieldWidth = Parameters.parameters.integerParameter("receptiveFieldWidth");
-			this.receptiveFieldHeight = Parameters.parameters.integerParameter("receptiveFieldHeight");
-		} else {
-			this.receptiveFieldWidth = -1;
-			this.receptiveFieldHeight = -1;
-		}
+		this(sourceSubstrateName, targetSubstrateName, connectivityType, 
+				connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION ? Parameters.parameters.integerParameter("receptiveFieldWidth") : -1,
+				connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION ? Parameters.parameters.integerParameter("receptiveFieldHeight") : -1);		
 	}
 	
 	public SubstrateConnectivity (String sourceSubstrateName, String targetSubstrateName, int receptiveFieldWidth, int receptiveFieldHeight) {
-		this.SOURCE_SUBSTRATE_NAME = sourceSubstrateName;
-		this.TARGET_SUBSTRATE_NAME = targetSubstrateName;
-		this.connectivityType = receptiveFieldWidth > 0 && receptiveFieldHeight > 0? CTYPE_CONVOLUTION: CTYPE_FULL;
-		this.receptiveFieldWidth = receptiveFieldWidth;
-		this.receptiveFieldHeight = receptiveFieldHeight;
+		this(sourceSubstrateName, targetSubstrateName, receptiveFieldWidth > 0 && receptiveFieldHeight > 0 ? CTYPE_CONVOLUTION : CTYPE_FULL, receptiveFieldWidth, receptiveFieldHeight);
 	}
 	
-	private SubstrateConnectivity (String sourceSubstrateName, String targetSubstrateName, 
-			int connectivityType, int receptiveFieldWidth, int receptiveFieldHeight) {
+	/**
+	 * Constructor that specifies all values
+	 * @param sourceSubstrateName
+	 * @param targetSubstrateName
+	 * @param connectivityType
+	 * @param receptiveFieldWidth
+	 * @param receptiveFieldHeight
+	 */
+	private SubstrateConnectivity (String sourceSubstrateName, String targetSubstrateName, int connectivityType, int receptiveFieldWidth, int receptiveFieldHeight) {
+		assert sourceSubstrateName != null : "sourceSubstrateName must be specified";
+		assert targetSubstrateName != null : "targetSubstrateName must be specified";
+		assert !sourceSubstrateName.equals("null") : "sourceSubstrateName must be specified";
+		assert !targetSubstrateName.equals("null") : "targetSubstrateName must be specified";
+		assert receptiveFieldWidth != 0 : "Receptive field width cannot be 0";
+		assert receptiveFieldHeight != 0 : "Receptive field height cannot be 0";
+				
 		this.SOURCE_SUBSTRATE_NAME = sourceSubstrateName;
 		this.TARGET_SUBSTRATE_NAME = targetSubstrateName;
 		this.connectivityType = connectivityType;

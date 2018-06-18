@@ -14,6 +14,7 @@ import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.util2D.ILocated2D;
@@ -136,6 +137,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		TWEANN cppn = getCPPN();// CPPN used to create TWEANN network
 		List<Substrate> subs = getSubstrateInformation(hnt);// extract substrate information from domain
 		List<SubstrateConnectivity> connections = getSubstrateConnectivity(hnt);// extract substrate connectivity from domain
+		
+		assert connections.get(0).SOURCE_SUBSTRATE_NAME != null : "How was a null name constructed";
+		
 		ArrayList<NodeGene> newNodes = null;
 		ArrayList<LinkGene> newLinks = null;
 
@@ -362,7 +366,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			int targetSubstrateIndex = sIMap.get(currentConnection.TARGET_SUBSTRATE_NAME);
 			Substrate sourceSubstrate = subs.get(sourceSubstrateIndex);
 			Substrate targetSubstrate = subs.get(targetSubstrateIndex);
-
+			
 			// Whether to connect these layers used convolutional structure instead of standard fully connected structure
 			boolean convolution = currentConnection.connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION && CommonConstants.convolution;
 			int outputIndex = CommonConstants.substrateLocationInputs ? 0 : i;
