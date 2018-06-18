@@ -8,7 +8,7 @@ import edu.southwestern.tasks.ut2004.Util;
 import javax.vecmath.Vector3d;
 
 /**
- *This class determines how the bot should move in relation to an identifies opponent
+ *This class determines how the bot should move in relation to an identified opponent
  *
  * @author Jacob Schrum
  */

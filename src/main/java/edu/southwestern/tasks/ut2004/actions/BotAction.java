@@ -12,8 +12,7 @@ public interface BotAction {
 	/**
 	 * Bot executes action and returns a String description of what it did
 	 *
-	 * @param bot
-	 *            bot
+	 * @param bot (bot)
 	 * @return description of action
 	 */
 	public String execute(UT2004BotModuleController bot);
