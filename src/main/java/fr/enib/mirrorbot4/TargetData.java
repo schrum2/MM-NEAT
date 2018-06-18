@@ -3,6 +3,7 @@ package fr.enib.mirrorbot4;
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.AgentInfo;
 import java.util.HashMap;
 
 public class TargetData{
@@ -36,16 +37,17 @@ public class TargetData{
 		return false;
 	}
 	
-	public void addUrgency(Player p){
+	public void addUrgency(Player player){
+		//p.isEnemy();
 		if ((archEnemy == null) || (archTime + archThresh < System.currentTimeMillis())) { //if no enemy or 4.211 seconds passed
-			archEnemy = p.getId();
+			archEnemy = player.getId();
 			archTime = System.currentTimeMillis();
 		}else{
-			if (p.getId().equals(archEnemy)){
+			if (player.getId().equals(archEnemy)){
 				archTime = System.currentTimeMillis(); //refresh time
 			}else if (ctrl.getPlayers().getVisiblePlayer(archEnemy) == null){
 				archEnemy = null;
-				addUrgency(p);
+				addUrgency(player);
 			}
 		}
 	}
@@ -58,21 +60,21 @@ public class TargetData{
 		blackList.clear();
 	}
 	
-	public void addTarget(Player p)	{
+	public void addTarget(Player player)	{
 		if (archEnemy != null)		{
-			if (p.getId().equals(archEnemy)) addUrgency(p);
+			if (player.getId().equals(archEnemy)) addUrgency(player);
 		}
-		if (blackList.containsKey(p.getId())){
-			blackList.put(p.getId(), (blackList.get(p.getId())+1));
+		if (blackList.containsKey(player.getId())){
+			blackList.put(player.getId(), (blackList.get(player.getId())+1));
 		}else{
-			blackList.put(p.getId(), 1);
+			blackList.put(player.getId(), 1);
 		}
 		
 		//add to oldlist too
-		if (oldList.containsKey(p.getId())){
-			oldList.put(p.getId(), (oldList.get(p.getId())+1));
+		if (oldList.containsKey(player.getId())){
+			oldList.put(player.getId(), (oldList.get(player.getId())+1));
 		}else{
-			oldList.put(p.getId(), 1);
+			oldList.put(player.getId(), 1);
 		}
 	}
 	

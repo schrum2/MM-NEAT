@@ -30,7 +30,7 @@ public class NearestItemBlock implements UT2004SensorBlock {
 	 * creates the sensor block array for the items
 	 * @param bot (bot that is looking for the items)
 	 */
-	public void prepareBlock(UT2004BotModuleController bot) {
+	public void prepareBlock(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		this.recentlyVisitedItems = new TabooSet<ILocated>(bot.getBot());
 		bot.getWorld().addEventListener(ItemPickedUp.class, new IWorldEventListener<ItemPickedUp>() {
 			public void notify(ItemPickedUp add) {
@@ -50,7 +50,7 @@ public class NearestItemBlock implements UT2004SensorBlock {
 	 * @param inputs (an array that collects the values from the statuses)
 	 * @return returns next address for sensor allocation
 	 */
-	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
+	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
 		Item item = getItemOfInterest(bot);
 
 		Location botLocation = bot.getInfo().getLocation();
@@ -96,7 +96,7 @@ public class NearestItemBlock implements UT2004SensorBlock {
 	 * @param bot (the bot that will pick up the items
 	 * @return returns a list of the nearby items
 	 */
-	protected List<Item> possibleItems(UT2004BotModuleController bot) {
+	protected List<Item> possibleItems(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		return MyCollections.getFiltered(bot.getItems().getSpawnedItems().values(), recentlyVisitedItems);
 	}
 
@@ -105,7 +105,7 @@ public class NearestItemBlock implements UT2004SensorBlock {
 	 * @param bot (bot that will pick up the item)
 	 * @return returns null
 	 */
-	protected Item getItemOfInterest(UT2004BotModuleController bot) {
+	protected Item getItemOfInterest(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		List<Item> items = possibleItems(bot);
 		ILocated botLocation = bot.getInfo().getLocation();
 		if (botLocation != null && !items.isEmpty()) {

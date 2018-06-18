@@ -18,6 +18,7 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import cz.cuni.amis.utils.collections.MyCollections;
 import cz.cuni.amis.utils.flag.FlagListener;
 import cz.cuni.amis.utils.future.FutureStatus;
+import edu.southwestern.parameters.Parameters;
 import edu.utexas.cs.nn.Constants;
 import java.io.PrintWriter;
 import java.util.*;
@@ -121,7 +122,9 @@ public class DistantPathController extends PathController {
 
     protected Action newPathAction(Location current) {
         if (current == null) {
-            System.out.println("Null location in newPathAction()");
+        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        		System.out.println("Null location in newPathAction()");
+        	}
             return new EmptyAction();
         }
         currentPlanner = PATH_PLANNER_UTASTAR;
@@ -179,7 +182,9 @@ public class DistantPathController extends PathController {
                             // is faster than the logic cycle
                             Action a = newPathAction(farthestOfX(3));
                             if (Constants.PRINT_ACTIONS.getBoolean()) {
-                                System.out.println("PATH:" + changedValue.getState() + " -> NEXT:" + itemName() + ":" + a);
+                            	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                            		System.out.println("PATH:" + changedValue.getState() + " -> NEXT:" + itemName() + ":" + a);
+                            	}
                             }
                             takeAction("Path After State Change");
                             a.execute(memory.body);
@@ -255,7 +260,8 @@ public class DistantPathController extends PathController {
             }
             result = new EmptyAction();
         } else {
-            System.out.println("Need New Path: "
+        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        		System.out.println("Need New Path: "
                     + (wasStuck ? "wasStuck " : "")
                     + (retraceFailed ? "retraceFailed " : "")
                     + (nullItem ? "nullItem " : "")
@@ -263,6 +269,7 @@ public class DistantPathController extends PathController {
                     + (!focused ? "not focused " : "")
                     + (!longLengthLeft ? "not longLengthLeft " : "")
                     + (!lastPathRecent ? "not lastPathRecent " : ""));
+        	}
 
             lastNewPathTime = memory.game.getTime();
             pathExecutor.setFocus(null);
@@ -329,7 +336,9 @@ public class DistantPathController extends PathController {
         boolean noSafeItems = items.isEmpty();
         if (noSafeItems) {
             items = candidates;
-            System.out.println("\tClear " + tabooItems.size() + " taboo items");
+            if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            	System.out.println("\tClear " + tabooItems.size() + " taboo items");
+            }
             tabooItems.clear();
         }
 
@@ -343,7 +352,9 @@ public class DistantPathController extends PathController {
             }
         }
         if (!sameLevel.isEmpty()) {
-            System.out.println("\tPursue items at current level or higher");
+        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        		System.out.println("\tPursue items at current level or higher");
+        	}
             items = sameLevel;
         }
 
@@ -355,11 +366,15 @@ public class DistantPathController extends PathController {
             }
         }
         if (!visible.isEmpty()) {
-            System.out.println("\tPursue visible items");
+        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        		System.out.println("\tPursue visible items");
+        	}
             items = visible;
         }
 
-        System.out.println("\t" + items.size() + " options");
+        if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        	System.out.println("\t" + items.size() + " options");
+        }
         return items;
     }
 
@@ -375,7 +390,9 @@ public class DistantPathController extends PathController {
         ArrayList<Item> keepers = new ArrayList<Item>(num);
         for (int i = 0; i < num; i++) {
             Item option = MyCollections.getRandom(candidates);
-            System.out.println("\tOption:" + option.getType().getName());
+            if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            	System.out.println("\tOption:" + option.getType().getName());
+            }
             keepers.add(option);
         }
         //System.out.println("PICKS: " + candidates);

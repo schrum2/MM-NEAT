@@ -7,6 +7,7 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotDamaged;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
+import edu.southwestern.parameters.Parameters;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -232,12 +233,18 @@ public class AlwaysShootTWEANNController extends TWEANNController {
                     || // Close wall in front, and enemy is farther away
                     (memory.frontWallClose() && distance > AgentBody.CLOSE_WALL_DISTANCE))) {
                 forcedActionCount[RETREAT_OUTPUT]++;
-                System.out.println("\tForced RETREAT");
+                if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                	System.out.println("\tForced RETREAT");
+                }
                 if (distance < NO_STILL_ZONE && snipingWeapon) {
-                    System.out.println("\tToo close to snipe, so RETREAT");
+                	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                		System.out.println("\tToo close to snipe, so RETREAT");
+                	}
                 }
                 if (memory.frontWallClose() && distance > AgentBody.CLOSE_WALL_DISTANCE) {
-                    System.out.println("\tStaring at wall, so RETREAT");
+                	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                		System.out.println("\tStaring at wall, so RETREAT");
+                	}
                 }
                 return RETREAT_OUTPUT;
             }
@@ -265,8 +272,12 @@ public class AlwaysShootTWEANNController extends TWEANNController {
                 && (distance >= WeaponPreferenceTable.WeaponTableEntry.MAX_MELEE_RANGE * 2))
                 || farWithCloseWeapon)) {
             forcedActionCount[ADVANCE_OUTPUT]++;
-            System.out.println("\tForced ADVANCE");
-            System.out.println("\tADVANCE for Bio Rifle charge");
+            if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            	System.out.println("\tForced ADVANCE");
+            }
+            if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            	System.out.println("\tADVANCE for Bio Rifle charge");
+            }
             return ADVANCE_OUTPUT;
         }
 
@@ -301,7 +312,9 @@ public class AlwaysShootTWEANNController extends TWEANNController {
         boolean damagedRecently = false;
         boolean damagedSelf = damaged != null && damaged.getInstigator() != null && damaged.getInstigator().equals(memory.info.getId());
         if(damagedSelf){
-            System.out.println("DAMAGED SELF:" + damaged.getWeaponName() + ":" + damaged.getDamageType());
+        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        		System.out.println("DAMAGED SELF:" + damaged.getWeaponName() + ":" + damaged.getDamageType());
+        	}
         }
         if (damaged != null && !damaged.isCausedByWorld() && damaged.getInstigator() != null && !damaged.getInstigator().equals(memory.info.getId())) {
             double currentTime = memory.info.getTime();
@@ -335,7 +348,8 @@ public class AlwaysShootTWEANNController extends TWEANNController {
                 || farWithCloseWeapon) {
             actionchoices[STILL_OUTPUT] = -Double.MAX_VALUE;
             disallowStill = true;
-            System.out.println((consecutiveStills > CONSECUTIVE_STILL_LIMIT ? "Still Limit, " : "")
+            if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            	System.out.println((consecutiveStills > CONSECUTIVE_STILL_LIMIT ? "Still Limit, " : "")
                     + (notFacing && !highGround ? "won't shoot " : "")
                     + (damagedRecently ? "damagedRecently, " : "")
                     + (snipingEnemy ? "snipingEnemy, " : "")
@@ -345,9 +359,12 @@ public class AlwaysShootTWEANNController extends TWEANNController {
                     + (onElevator ? "onElevator, " : "")
                     + ((distance < NO_STILL_ZONE) ? "Too Close, " : "")
                     + (farWithCloseWeapon ? "farWithCloseWeapon, " : ""));
+            }
             if (choice == STILL_OUTPUT) {
                 choice = argmax(actionchoices);
-                System.out.println("\tSwap STILL with " + choice);
+                if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                	System.out.println("\tSwap STILL with " + choice);
+                }
             }
         }
 
@@ -375,10 +392,14 @@ public class AlwaysShootTWEANNController extends TWEANNController {
                 sniping)) {
             stillForcedChoices[STILL_FORCED_YES]++;
             forcedActionCount[STILL_OUTPUT]++;
-            System.out.println("\tForced STILL");
-            System.out.println((safeWithFarWeapon ? "safeWithFarWeapon " : "")
+            if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            	System.out.println("\tForced STILL");
+            }
+            if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            	System.out.println((safeWithFarWeapon ? "safeWithFarWeapon " : "")
                     + (safeWithCloseWeapon ? "safeWithCloseWeapon " : "")
                     + (sniping ? "sniping " : ""));
+            }
             return STILL_OUTPUT;
         } else if (choice == STILL_OUTPUT) {
             stillForcedChoices[STILL_FORCED_NO]++;
@@ -386,15 +407,19 @@ public class AlwaysShootTWEANNController extends TWEANNController {
 
         if (!disallowStrafe && choice == LEFT_OUTPUT && memory.sideWallClose(true)) {
             forcedActionCount[RIGHT_OUTPUT]++;
-            System.out.println("\tForced RIGHT");
-            System.out.println("\tRIGHT away from close wall");
+            if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            	System.out.println("\tForced RIGHT");
+            	System.out.println("\tRIGHT away from close wall");
+            }
             return RIGHT_OUTPUT;
         }
 
         if (!disallowStrafe && choice == RIGHT_OUTPUT && memory.sideWallClose(false)) {
             forcedActionCount[LEFT_OUTPUT]++;
-            System.out.println("\tForced LEFT");
-            System.out.println("\tLEFT away from close wall");
+            if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            	System.out.println("\tForced LEFT");
+            	System.out.println("\tLEFT away from close wall");
+            }
             return LEFT_OUTPUT;
         }
         //System.out.println("End choice = " + choice);
