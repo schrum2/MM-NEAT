@@ -164,7 +164,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	                double probability = ghostPredictions.calculate(i);
 	                if (probability >= GHOST_THRESHOLD) {
 	                	double edibleProbability = ghostPredictions.calculateEdible(i);
-	                	if(edibleProbability > 0.5) {
+	                	if(edibleProbability > 0.0) {
 	                    	graphics.setColor(new Color(0,0, 255, 255));
 		                    graphics.fillRect(
 		                            mostRecentGame.getNodeXCood(i) * MAG - 1,

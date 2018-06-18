@@ -19,7 +19,7 @@ public class GhostLocation {
     }
 
     public double getEdibleProbability() {
-    	return probability;
+    	return edibleProbability;
     }
     
     public void setEdibleProbability(double probability) {
