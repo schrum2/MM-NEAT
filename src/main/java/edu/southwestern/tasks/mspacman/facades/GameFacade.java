@@ -18,6 +18,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import pacman.game.Constants.MOVE;
@@ -245,16 +246,17 @@ public class GameFacade {
 	 * we have a prediction about (this includes ghosts we can see, those have predictions of 100%).
 	 * @return ArrayList of triples cotaining int, MOVE, double each
 	 */
-	public ArrayList<Triple<Integer, MOVE, Double>> getPossibleGhostInfo() {
+	public ArrayList<Quad<Integer, MOVE, Double, Double>> getPossibleGhostInfo() {
 		
 		assert ghostPredictions != null : "If this method is called, ghostPredictions should be set";
-		ArrayList<Triple<Integer, MOVE, Double>> ghosts = new ArrayList<Triple<Integer, MOVE, Double>>(ghostPredictions.getGhostLocations().size());
+		ArrayList<Quad<Integer, MOVE, Double, Double>> ghosts = new ArrayList<Quad<Integer, MOVE, Double, Double>>(ghostPredictions.getGhostLocations().size());
 		for (GhostLocation location : ghostPredictions.getGhostLocations()) {
-			Triple<Integer, MOVE, Double> t = new Triple<Integer, MOVE, Double>(null, null, null);
-			t.t1 = location.getIndex();
-			t.t2 = location.getLastMoveMade();
-			t.t3 = location.getProbability();
-			ghosts.add(t);			
+			Quad<Integer, MOVE, Double, Double> q = new Quad<Integer, MOVE, Double, Double>(null, null, null, null);
+			q.t1 = location.getIndex();
+			q.t2 = location.getLastMoveMade();
+			q.t3 = location.getProbability();
+			q.t4 = location.getEdibleProbability();
+			ghosts.add(q);			
 		}
 		return ghosts;
 	}
@@ -3393,13 +3395,31 @@ public class GameFacade {
 	}
 	
 	public double calculateRemainingPillBuffTime() {
-		double newEdibleTime = (int) (pacman.game.Constants.EDIBLE_TIME * (Math.pow(pacman.game.Constants.EDIBLE_TIME_REDUCTION, 3 % pacman.game.Constants.LEVEL_RESET_REDUCTION)));
-		return this.timeOfLastEatenPowerPill / newEdibleTime;
-	}
-	
-	public double calculateRemainingPillBuffTimeAdjustment() {
-		double newEdibleTime = (int) (pacman.game.Constants.EDIBLE_TIME * (Math.pow(pacman.game.Constants.EDIBLE_TIME_REDUCTION, 3 % pacman.game.Constants.LEVEL_RESET_REDUCTION)));
-		return this.timeOfLastEatenPowerPill + 1 / newEdibleTime;
+		
+		int currentLevelTime = getCurrentLevelTime();
+		int timeOfLastPowerPill = getTimeOfLastPowerPillEaten();
+		int levelCount = getCurrentLevel();
+		//The edible time of level "levelcount"
+		double newEdibleTime = (int) (pacman.game.Constants.EDIBLE_TIME * (Math.pow(pacman.game.Constants.EDIBLE_TIME_REDUCTION, levelCount % pacman.game.Constants.LEVEL_RESET_REDUCTION)));	
+		int delta;
+		
+		//If we havent eaten a pill yet, we don't want to use -1
+		//for calculating delta.
+		if(timeOfLastPowerPill == -1) {
+			delta = 0;
+		} else {
+			delta = (currentLevelTime - timeOfLastPowerPill);
+		}
+					
+		//If we havent eaten a powerpill yet or it has been longer than edible time since we last ate a power pill
+		if(timeOfLastPowerPill == -1 || delta > newEdibleTime) {
+			//we have no power pill buff time
+			return 0;
+		} else {
+			//we have a fraction of the whole power pill buff time left, normalized to EDIBLE_TIME. 
+			//This ensures that the edible time seems shorter to the agent on further levels.
+			return (newEdibleTime - delta) / pacman.game.Constants.EDIBLE_TIME;
+		}
 	}
 	
 }
