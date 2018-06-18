@@ -1,11 +1,9 @@
-package edu.southwestern.tasks.rlglue.tetris.network;
+package edu.southwestern.networks.hyperneat.architecture;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.southwestern.networks.hyperneat.FlexibleSubstrateArchitecture;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
-import edu.southwestern.networks.hyperneat.SubstrateArchitectureDefinition;
 import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -22,7 +20,7 @@ public class HeterogeneousFields implements SubstrateArchitectureDefinition{
 	public List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask hnt) {
 		List<SubstrateConnectivity> substrateConnectivity = new ArrayList<SubstrateConnectivity>();
 		Pair<List<String>, List<String>> io = FlexibleSubstrateArchitecture.getInputAndOutputNames(hnt);
-		FlexibleSubstrateArchitecture.connectInputToHidden(substrateConnectivity, io.t1, getNetworkHiddenArchitecture(), 5, 5);
+		FlexibleSubstrateArchitecture.connectInputToFirstHidden(substrateConnectivity, io.t1, getNetworkHiddenArchitecture(), 5, 5);
 		FlexibleSubstrateArchitecture.connectAdjacentHiddenLayers(substrateConnectivity, getNetworkHiddenArchitecture(), 3, 3);
 		FlexibleSubstrateArchitecture.connectLastHiddenToOutput(substrateConnectivity, io.t2, getNetworkHiddenArchitecture(), SubstrateConnectivity.CTYPE_FULL);
 		return substrateConnectivity;

@@ -14,9 +14,9 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
+import edu.southwestern.networks.hyperneat.architecture.HiddenSkipsHidden;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
-import edu.southwestern.tasks.rlglue.tetris.network.HiddenSkipsHidden;
 import edu.southwestern.util.datastructures.Triple;
 
 public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {

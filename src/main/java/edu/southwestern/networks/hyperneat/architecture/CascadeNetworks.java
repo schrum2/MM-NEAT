@@ -1,4 +1,4 @@
-package edu.southwestern.networks.hyperneat;
+package edu.southwestern.networks.hyperneat.architecture;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
-import edu.southwestern.evolution.genotypes.OffsetHybrIDGenotype;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 

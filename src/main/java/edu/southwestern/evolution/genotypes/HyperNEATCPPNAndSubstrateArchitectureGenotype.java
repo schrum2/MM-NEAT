@@ -7,13 +7,13 @@ import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.TWEANN;
-import edu.southwestern.networks.hyperneat.CascadeNetworks;
-import edu.southwestern.networks.hyperneat.FlexibleSubstrateArchitecture;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
-import edu.southwestern.networks.hyperneat.SubstrateArchitectureDefinition;
 import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
+import edu.southwestern.networks.hyperneat.architecture.CascadeNetworks;
+import edu.southwestern.networks.hyperneat.architecture.FlexibleSubstrateArchitecture;
+import edu.southwestern.networks.hyperneat.architecture.SubstrateArchitectureDefinition;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
@@ -42,7 +42,7 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 * @param hnt the HyperNEATTask
 	 */
 	public HyperNEATCPPNAndSubstrateArchitectureGenotype(HyperNEATTask hnt) {
-		this(FlexibleSubstrateArchitecture.getHiddenArchitecture(hnt), FlexibleSubstrateArchitecture.getAllSubstrateConnectivity(hnt));
+		this(FlexibleSubstrateArchitecture.getHiddenArchitecture(hnt), FlexibleSubstrateArchitecture.getDefaultConnectivity(hnt));
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		// Construct new CPPN with random weights
 		super(networkInputs, networkOutputs, archetypeIndex);
 		this.hiddenArchitecture = FlexibleSubstrateArchitecture.getHiddenArchitecture((HyperNEATTask) MMNEAT.task);
-		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getAllSubstrateConnectivity((HyperNEATTask) MMNEAT.task);
+		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getDefaultConnectivity((HyperNEATTask) MMNEAT.task);
 		assert allSubstrateConnectivity.size() > 0 : "allSubstrateConnectivity size must be greater than 0";
 	}
 	
@@ -110,7 +110,7 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		super(hngt.numIn, hngt.numOut, hngt.archetypeIndex);
 		HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
 		this.hiddenArchitecture = FlexibleSubstrateArchitecture.getHiddenArchitecture(task);
-		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getAllSubstrateConnectivity(task);
+		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getDefaultConnectivity(task);
 	}
 
 	/**

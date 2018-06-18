@@ -160,7 +160,7 @@ public class GVGAIUtil {
 	 * @return String array with level layout
 	 */
 	public static String[] generateLevelFromCPPN(Network n, double[] inputMultiples, int levelWidth, int levelHeight, 
-			char defaultBackground, char border, char[] fixed, char[] unique, char[] random, int randomItems) {
+			char defaultBackground, char border, char[] fixed, char[] unique, char[] random, int randomItems, char[] bottomItems) {
 		// Start with 2D char array to fill out level: The +2 is for the border wall.
 		char[][] level = new char[levelHeight+2][levelWidth+2];
 		// Background
@@ -226,6 +226,11 @@ public class GVGAIUtil {
 		for(int i = 0; i < unique.length; i++) {
 			level[uniqueLocations[i][1]][uniqueLocations[i][0]] = unique[i];
 		}		
+		
+		// TODO: Add game-specific hacks here
+		// TODO: For example, for aliens, put the ship near the bottom
+		
+		
 		// Convert to String array
 		String[] stringLevel = new String[levelHeight+2];
 		for(int i = 0; i < level.length; i++) {
@@ -255,6 +260,78 @@ public class GVGAIUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		Parameters.initializeParameterCollections(new String[] {});
+		//MMNEAT.loadClasses();
+		
+		VGDLFactory.GetInstance().init();
+		VGDLRegistry.GetInstance().init();
+
+		String game = "blacksmoke"; // "zelda";
+		String gamesPath = "data/gvgai/examples/gridphysics/";
+		String game_file = gamesPath + game + ".txt";
+		int playerID = 0;
+		int seed = 0;	
+		
+		////////////////////////////////////////////////////////
+		// Allows for playing a bait level defined by a random CPPN
+		TWEANNGenotype cppn = new TWEANNGenotype(4, 9, 0);
+		TWEANN net = cppn.getPhenotype();
+		String[] level = generateLevelFromCPPN(net, new double[] {1,1,1,1}, 20, 20, '.', 'w', 
+				new char[]{'w','b','c'}, new char[]{'l','k','e','A'}, new char[]{'d'}, 15, new char[0]);
+
+		Agent agent = new Agent();
+		agent.setup(null, seed, true); // null = no log, true = human 
+
+		// Image preview
+		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
+		BufferedImage levelImage = getLevelImage(((BasicGame) toPlay), level, agent, 200, 200, seed);
+		DrawingPanel panel = GraphicsUtil.drawImage(levelImage, "Level Preview", 200, 200); 
+		
+		// Reinitialize to clean up mess from image preview
+		toPlay = new VGDLParser().parseGame(game_file);
+		GameBundle bundle = new GameBundle(toPlay, level, agent, seed, playerID);
+		runOneGame(bundle, true);
+		//////////////////////////////////////////////////////	
+		
+		panel.dispose();
+		
+		//////////////////////////////////////////////////////
+
+		//Recreated the LevelBreederTask.Java in its simplest form to narrow down the errors that we receive
+		
+		//////////////////////////////////////////////////////
+		
+		VGDLFactory.GetInstance().init();
+		VGDLRegistry.GetInstance().init();
+
+		game = "zelda";
+		gamesPath = "data/gvgai/examples/gridphysics/";
+		game_file = gamesPath + game + ".txt";
+		
+		cppn = new TWEANNGenotype(4, 8 , 0);
+		net = cppn.getPhenotype();
+		level = generateLevelFromCPPN(net, new double[] {1,1,1,1}, 20, 20, '.', 'w', 
+				new char[]{'w'}, new char[]{'g','+','A'}, new char[]{'1','2','3'}, 15, new char[0]);
+
+		agent = new Agent();
+		agent.setup(null, seed, true); // null = no log, true = human 
+
+		// Image preview
+		toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
+		levelImage = getLevelImage(((BasicGame) toPlay), level, agent, 200, 200, seed);
+		panel = GraphicsUtil.drawImage(levelImage, "Level Preview", 200, 200); 
+		
+		// Reinitialize to clean up mess from image preview
+		toPlay = new VGDLParser().parseGame(game_file);
+		bundle = new GameBundle(toPlay, level, agent, seed, playerID);
+		runOneGame(bundle, true);
+		
+		//////////////////////////////////////////////////////
+		
+		panel.dispose();
+	}
+	
+	public static void troubleshooting1() {
 		Parameters.initializeParameterCollections(new String[] {});
 		//MMNEAT.loadClasses();
 		
@@ -360,7 +437,7 @@ public class GVGAIUtil {
 		TWEANNGenotype cppn = new TWEANNGenotype(4, 9, 0);
 		TWEANN net = cppn.getPhenotype();
 		String[] level = generateLevelFromCPPN(net, new double[] {1,1,1,1}, 20, 20, '.', 'w', 
-				new char[]{'w','b','c'}, new char[]{'l','k','e','A'}, new char[]{'d'}, 15);
+				new char[]{'w','b','c'}, new char[]{'l','k','e','A'}, new char[]{'d'}, 15, new char[0]);
 
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 

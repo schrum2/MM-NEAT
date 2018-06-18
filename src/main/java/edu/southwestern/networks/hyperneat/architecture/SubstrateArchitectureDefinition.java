@@ -1,7 +1,9 @@
-package edu.southwestern.networks.hyperneat;
+package edu.southwestern.networks.hyperneat.architecture;
 
 import java.util.List;
 
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.util.datastructures.Triple;
 
 public interface SubstrateArchitectureDefinition {

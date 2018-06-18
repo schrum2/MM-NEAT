@@ -1,9 +1,12 @@
-package edu.southwestern.networks.hyperneat;
+package edu.southwestern.networks.hyperneat.architecture;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
+import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -54,15 +57,6 @@ public class FlexibleSubstrateArchitecture {
 	}
 
 	/**
-	 * @param hnt the HyperNEATTask
-	 * @return List of the SubstrateConnectivity of the network
-	 */
-	public static List<SubstrateConnectivity> getAllSubstrateConnectivity(HyperNEATTask hnt) {
-		Pair<List<String>,List<String>> inputAndOutputNames = getInputAndOutputNames(hnt);
-		return getDefaultConnectivity(inputAndOutputNames.t1, inputAndOutputNames.t2, getHiddenArchitecture(hnt));
-	}
-
-	/**
 	 * gets the input and output names from the hyperNEATTask
 	 * @param hnt theHyperNEATTask
 	 * @return the input and output names stored in a pair. looks like (input names, output names)
@@ -80,6 +74,15 @@ public class FlexibleSubstrateArchitecture {
 		}
 		return new Pair<List<String>, List<String>>(inputSubstrateNames, outputSubstrateNames);
 	}
+	
+	/**
+	 * @param hnt the HyperNEATTask
+	 * @return List of the SubstrateConnectivity of the network
+	 */
+	public static List<SubstrateConnectivity> getDefaultConnectivity(HyperNEATTask hnt) {
+		Pair<List<String>,List<String>> inputAndOutputNames = getInputAndOutputNames(hnt);
+		return getDefaultConnectivity(inputAndOutputNames.t1, inputAndOutputNames.t2, getHiddenArchitecture(hnt));
+	}
 
 	/**
 	 * @param inputSubstrateNames List of input substrate names
@@ -92,7 +95,7 @@ public class FlexibleSubstrateArchitecture {
 			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture) {
 		List<SubstrateConnectivity> networkConnectivity = new ArrayList<SubstrateConnectivity>();
 		//connects input layer to first hidden/process layer
-		connectInputToHidden(networkConnectivity, inputSubstrateNames, networkHiddenArchitecture, SubstrateConnectivity.CTYPE_CONVOLUTION);
+		connectInputToFirstHidden(networkConnectivity, inputSubstrateNames, networkHiddenArchitecture, SubstrateConnectivity.CTYPE_CONVOLUTION);
 
 		//connects adjacent, possibly convolutional hidden layers
 		connectAdjacentHiddenLayers(networkConnectivity, networkHiddenArchitecture, SubstrateConnectivity.CTYPE_CONVOLUTION);
@@ -110,16 +113,16 @@ public class FlexibleSubstrateArchitecture {
 	 * @param networkHiddenArchitecture architecture of hidden layers
 	 * @param connectivityType how these two substrates are connected(i.e. full, convolutional,...)
 	 */
-	public static void connectInputToHidden(
+	public static void connectInputToFirstHidden(
 			List<SubstrateConnectivity> networkConnectivity, 
 			List<String> inputSubstrateNames, 
 			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture, 
 			int connectivityType) {
 		if (connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION) {
-			connectInputToHidden(networkConnectivity, inputSubstrateNames, networkHiddenArchitecture,
+			connectInputToFirstHidden(networkConnectivity, inputSubstrateNames, networkHiddenArchitecture,
 					Parameters.parameters.integerParameter("receptiveFieldWidth"), Parameters.parameters.integerParameter("receptiveFieldHeight"));
 		} else {
-			connectInputToHidden(networkConnectivity, inputSubstrateNames, networkHiddenArchitecture, -1 , -1);
+			connectInputToFirstHidden(networkConnectivity, inputSubstrateNames, networkHiddenArchitecture, -1 , -1);
 		}
 	}
 
@@ -131,18 +134,38 @@ public class FlexibleSubstrateArchitecture {
 	 * @param receptiveFieldWidth width of receptive field window, -1 if nonconvolutional
 	 * @param receptiveFieldHeight height of receptive field window, - 1 if nonconvolutional
 	 */
-	public static void connectInputToHidden(
+	public static void connectInputToFirstHidden(
 			List<SubstrateConnectivity> networkConnectivity, 
 			List<String> inputSubstrateNames, 
-			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture, int receptiveFieldWidth, int receptiveFieldHeight) {
-		int firstHiddenLayerWidth = (networkHiddenArchitecture.size() > 0)? networkHiddenArchitecture.get(0).t1: 0;
+			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture, 
+			int receptiveFieldWidth, int receptiveFieldHeight) {
+		if (networkHiddenArchitecture.size() > 0) {
+			connectInputToHidden(networkConnectivity, inputSubstrateNames, networkHiddenArchitecture,
+					receptiveFieldWidth, receptiveFieldHeight, 0);
+		}
+	}
+	
+	/**
+	 * connects input layer to first hidden/process layer with specified receptive field
+	 * @param networkConnectivity list that connectivity is appended to
+	 * @param inputSubstrateNames list of each input substrate name
+	 * @param networkHiddenArchitecture architecture of hidden layers
+	 * @param receptiveFieldWidth width of receptive field window, -1 if nonconvolutional
+	 * @param receptiveFieldHeight height of receptive field window, - 1 if nonconvolutional
+	 * @param locationOfLayer the index of the hidden layer that will be connected from the input and the y position of this hidden layer in vector space
+	 */
+	public static void connectInputToHidden(
+			List<SubstrateConnectivity> networkConnectivity, 
+			List<String> inputSubstrateNames,
+			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture,
+			int receptiveFieldWidth, int receptiveFieldHeight, int locationOfLayer) {
+		int hiddenLayerWidth = networkHiddenArchitecture.get(locationOfLayer).t1; 
 		for (String in: inputSubstrateNames) {
-			for (int i = 0; i < firstHiddenLayerWidth; i++) {
+			for (int i = 0; i < hiddenLayerWidth; i++) {
 				networkConnectivity.add(new SubstrateConnectivity
-						(in, "process(" + i + ",0)", receptiveFieldWidth, receptiveFieldHeight));
+						(in, "process(" + i + "," + locationOfLayer + ")", receptiveFieldWidth, receptiveFieldHeight));
 			}
 		}
-		assert networkConnectivity.size() > 0;
 	}
 
 	/**
