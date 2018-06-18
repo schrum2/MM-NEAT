@@ -36,7 +36,7 @@ public class AutoRayTraceSensorBlock implements UT2004SensorBlock {
 	 * populates the sensor array
 	 * @param bot (bot that will use the data)
 	 */
-	public void prepareBlock(final UT2004BotModuleController bot) {
+	public void prepareBlock(@SuppressWarnings("rawtypes") final UT2004BotModuleController bot) {
 		bot.getAct().act(new RemoveRay("All"));
 		this.rays = new ArrayList<AutoTraceRay>(NUMBER_LEVEL_RAY_SENSORS + 2);
 
@@ -85,7 +85,7 @@ public class AutoRayTraceSensorBlock implements UT2004SensorBlock {
 	 * @param bFastTrace
 	 * @param bTraceActors
 	 */
-	public void addRayToAutoTrace(UT2004BotModuleController bot, int id, Vector3d v, int rayLength, boolean bFastTrace,
+	public void addRayToAutoTrace(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int id, Vector3d v, int rayLength, boolean bFastTrace,
 			boolean bTraceActors) {
 		// Floor correction is always false
 		boolean bFloorCorrection = false;
@@ -102,7 +102,7 @@ public class AutoRayTraceSensorBlock implements UT2004SensorBlock {
 	 * @param inputs (an array that collects the values from the statuses)
 	 * @return returns next address for sensor allocation
 	 */
-	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
+	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
 		for (int i = 0; i < numberOfSensors(); i++) {
 			AutoTraceRay trace = rays.get(i);
 			// System.out.println(trace);

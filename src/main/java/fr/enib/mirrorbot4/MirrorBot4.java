@@ -25,6 +25,7 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.InitedM
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Self;
 import cz.cuni.amis.utils.exception.PogamutException;
 import cz.cuni.amis.utils.flag.FlagListener;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
 
@@ -78,6 +79,7 @@ public class MirrorBot4 extends UT2004BotModuleController{
 			init.setName("MirrorBot");
 			init.setAutoPickupOff(false);
 			init.setDesiredSkill(2+(int)(Math.random()*5));
+			init.setSkin("HumanFemaleA.EgyptFemaleA");
 		}
 
 		return init;
@@ -141,7 +143,9 @@ public class MirrorBot4 extends UT2004BotModuleController{
 			double dt = (System.currentTimeMillis() - lastTime)/1000.0;
 			lastTime = System.currentTimeMillis();
 
-			System.out.println(info.getName() + ":");
+			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+				System.out.println(info.getName() + ":");
+			}
 			brain.execute(dt);
 		}
 		catch (Exception e){

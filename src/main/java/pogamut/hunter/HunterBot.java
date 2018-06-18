@@ -1,58 +1,34 @@
 package pogamut.hunter;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
 
 import cz.cuni.amis.introspection.java.JProp;
-import cz.cuni.amis.pogamut.base.agent.navigation.IPathExecutorState;
 import cz.cuni.amis.pogamut.base.agent.params.IRemoteAgentParameters;
 import cz.cuni.amis.pogamut.base.communication.worldview.listener.annotation.EventListener;
-import cz.cuni.amis.pogamut.base.utils.Pogamut;
 import cz.cuni.amis.pogamut.base.utils.guice.AgentScoped;
-import cz.cuni.amis.pogamut.base.utils.math.DistanceUtils;
-import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
 import cz.cuni.amis.pogamut.ut2004.agent.module.utils.TabooSet;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.NavigationState;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004PathAutoFixer;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004DistanceStuckDetector;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004PositionStuckDetector;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004TimeStuckDetector;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Move;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Rotate;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Stop;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.StopShooting;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotDamaged;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotKilled;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoint;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.PlayerDamaged;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.PlayerKilled;
-import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.utils.collections.MyCollections;
 import cz.cuni.amis.utils.exception.PogamutException;
 import cz.cuni.amis.utils.flag.FlagListener;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.ut2004.bots.ControllerBot;
-import edu.southwestern.tasks.ut2004.bots.ControllerBotParameters;
-import edu.southwestern.tasks.ut2004.bots.GameDataCollector;
 import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
-import edu.southwestern.tasks.ut2004.controller.DummyController;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
-import edu.utexas.cs.nn.bots.UT2;
-import edu.utexas.cs.nn.bots.UT2.UT2Parameters;
-import fr.enib.mirrorbot4.MirrorBot4;
-import pogamut.hunter.HunterBotParameters;
-import pogamut.navigationbot.NavigationBot;
 
 /**
  * Example of Simple Pogamut bot, that randomly walks around the map searching
@@ -61,6 +37,7 @@ import pogamut.navigationbot.NavigationBot;
  * @author Rudolf Kadlec aka ik
  * @author Jimmy
  */
+@SuppressWarnings("rawtypes")
 @AgentScoped
 public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 
@@ -133,6 +110,7 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 	 */
 	protected TabooSet<Item> tabooItems = null;
 
+	@SuppressWarnings("unused")
 	private UT2004PathAutoFixer autoFixer;
 
 	private static int instanceCount = 0;
@@ -150,6 +128,7 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 		// listeners        
 		navigation.getState().addListener(new FlagListener<NavigationState>() {
 
+			@SuppressWarnings("incomplete-switch")
 			@Override
 			public void flagChanged(NavigationState changedValue) {
 				switch (changedValue) {
@@ -188,7 +167,7 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 	public Initialize getInitializeCommand() {
 		// just set the name of the bot and his skill level, 1 is the lowest, 7 is the highest
 		// skill level affects how well will the bot aim
-		return new Initialize().setName("Hunter-" + (++instanceCount)).setDesiredSkill(5);
+		return new Initialize().setName("Hunter-" + (++instanceCount)).setDesiredSkill(5).setSkin("HumanMaleA.NightMaleB");
 	}
 
 	/**

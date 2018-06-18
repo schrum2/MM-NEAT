@@ -340,6 +340,8 @@ public class Parameters {
 		integerOptions.add("utEvolvingBotSkill", 7, "Skill (1-7) of evolving UT2004 bot (affects accuracy)");
 		integerOptions.add("utNativeBotSkill", 3, "Skill (1-7) of native UT2004 bots to evaluate against");
 		integerOptions.add("utNumOpponents", 1, "Number of opponents to evolve against in UT2004");
+		integerOptions.add("utNumNativeBots", 0, "dictates the number of native bots to be spawned into the server");
+		integerOptions.add("utTeamSize", 2 , "dictates the number of players on each team");
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
@@ -821,9 +823,10 @@ public class Parameters {
 		stringOptions.add("seedArchetype3", "", "Archetype for seed sub-population 3");
 		stringOptions.add("seedArchetype4", "", "Archetype for seed sub-population 4");
 		stringOptions.add("seedGenotype", "", "Path to xml file with seed genotype for population");
-		stringOptions.add("utDrive", "D", "Drive where UT2004 resides");
+		stringOptions.add("utDrive", "C", "Drive where UT2004 resides");
 		stringOptions.add("utMap", "DM-TrainingDay", "Map to play in Unreal Tournament 2004");
-		stringOptions.add("utPath", "ut\\game", "Path (excluding drive) to root dir of Unreal Tournament 2004 installation");
+		stringOptions.add("utPath", "SCOPE2018\\UT2004", "Path (excluding drive) to root dir of Unreal Tournament 2004 installation");
+		stringOptions.add("utGameType", "BotDeathMatch", "sets the game type for the server");
 		// Class options
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");

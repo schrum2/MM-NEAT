@@ -279,7 +279,7 @@ public class UT2 extends BaseBot {
      */
     @Override
     public Initialize getInitializeCommand() {
-        return new Initialize().setName(Constants.BOT_NAME.get());
+        return new Initialize().setName(Constants.BOT_NAME.get()).setSkin("Jugg.JuggMaleA");
     }
 
     /**

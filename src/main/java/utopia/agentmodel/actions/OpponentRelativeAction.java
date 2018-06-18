@@ -7,6 +7,7 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Rotate;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
+import edu.southwestern.parameters.Parameters;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable;
 import mockcz.cuni.pogamut.Client.AgentBody;
 import mockcz.cuni.pogamut.Client.AgentMemory;
@@ -334,7 +335,9 @@ public abstract class OpponentRelativeAction extends Action {
                 || notVisible
                 // Enemy is too far above or below bot for shooting to make sense
                 || tooSteep) {
-            System.out.println(memory.info.getName() + ": Shooting disallowed: " + (noFocus?"noFocus ":"")+(recentDodge?"recentDodge ":"")+(notGunReady?"notGunReady ":"")+(intoWall?"intoWall ":"")+(notFacing?"notFacing ":"")+(notVisible?"notVisible ":"")+(tooSteep?"tooSteep ":"")+(!highGround?"notHighGround ":""));
+        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        		System.out.println(memory.info.getName() + ": Shooting disallowed: " + (noFocus?"noFocus ":"")+(recentDodge?"recentDodge ":"")+(notGunReady?"notGunReady ":"")+(intoWall?"intoWall ":"")+(notFacing?"notFacing ":"")+(notVisible?"notVisible ":"")+(tooSteep?"tooSteep ":"")+(!highGround?"notHighGround ":""));
+        	}
             shoot = false;
         }
 

@@ -46,7 +46,8 @@ public class OpponentRelativeMovementAction implements BotAction {
 	 * @param bot (identifies which bot should execute the command)
 	 * @return (returns a list in the form of strings of what actions the bot executed)
 	 */
-	public String execute(UT2004BotModuleController bot) {
+	@SuppressWarnings("deprecation")
+	public String execute(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		if (opponent != null) {
 			Location opponentLocation = opponent.getLocation();
 			UnrealId opponentId = opponent.getId();
@@ -54,9 +55,8 @@ public class OpponentRelativeMovementAction implements BotAction {
 			if (opponentId != null && opponentLocation != null && botLocation != null) {
 				// vector-to-opponent
 				Location botToOpponent = opponentLocation.sub(botLocation);
-				botToOpponent = new Location(botToOpponent.x, botToOpponent.y, 0); // Ignore
-																					// height
-																					// differences
+				// Ignore height differences
+				botToOpponent = new Location(botToOpponent.x, botToOpponent.y, 0); 
 				// Counter-clockwise angle from vector-to-opponent to
 				// vector-to-destination
 				double polarAngle = Math.atan2(strafeLeftRight, moveForwardBackward);

@@ -19,6 +19,7 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType.Category;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
+import edu.southwestern.parameters.Parameters;
 import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.bots.UT2;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable;
@@ -83,7 +84,9 @@ public class AgentMemory {
             lastVolumeChanged = vol;
             if (vol.isWaterVolume()) {
                 lastTimeInWater = game.getTime();
-                System.out.println("In water at time: " + lastTimeInWater);
+                if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                	System.out.println("In water at time: " + lastTimeInWater);
+                }
             }
         }
     };
@@ -181,10 +184,16 @@ public class AgentMemory {
             return false;
         }
         Double disappearedTime = playerDisappearedTimes.get(p.getId());
-        System.out.println("Disappear time: " + disappearedTime);
-        System.out.println("Current time: " + game.getTime());
+        if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        	System.out.println("Disappear time: " + disappearedTime);
+        }
+        if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        	System.out.println("Current time: " + game.getTime());
+        }
         boolean result = (disappearedTime != null && (game.getTime() - disappearedTime) < JUST_LOST_PLAYER_TIME);
-        System.out.println(info.getName() + ":Just lost " + p.getName() + " = " + result);
+        if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        	System.out.println(info.getName() + ":Just lost " + p.getName() + " = " + result);
+        }
         return result;
     }
 
@@ -236,7 +245,9 @@ public class AgentMemory {
             }
         }
         if (!result) {
-            System.out.println(info.getName() + ":Context Switching");
+        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        		System.out.println(info.getName() + ":Context Switching");
+        	}
         }
         //System.out.println("canFocusOn(" + p.getName() + ") = " + result);
         return result;
@@ -751,7 +762,9 @@ public class AgentMemory {
             double currentTime = info.getTime();
             double lastDamagedTime = damaged.getSimTime();
             if ((currentTime - lastDamagedTime) < TIME_UNTIL_SAFE) {
-                System.out.println(enemy.getName() + " damaged me " + (currentTime - lastDamagedTime) + " ago");
+            	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            		System.out.println(enemy.getName() + " damaged me " + (currentTime - lastDamagedTime) + " ago");
+            	}
                 return true;
             }
         }
@@ -895,7 +908,9 @@ public class AgentMemory {
             if (       950 < bot.x && bot.x < 1215
                     && -1252 < bot.y && bot.y < -1085
                     && -126 < bot.z && bot.z < -90) {
-                System.out.println("In Curse4 Elevator Box");
+            	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            		System.out.println("In Curse4 Elevator Box");
+            	}
                 return true;
             }
         }
@@ -921,7 +936,11 @@ public class AgentMemory {
         if (bot != null) {
             NavPoint nearest = DistanceUtils.getNearest(navs, bot);
             boolean result = nearest.getLocation().getDistance(bot) < 300;
-            if(result) System.out.println("\tToo close to elevator to RETRACE");
+            if(result) {
+            	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            		System.out.println("\tToo close to elevator to RETRACE");
+            	}
+            }
             return result;
         }
         return false;
