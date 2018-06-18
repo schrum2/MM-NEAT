@@ -10,7 +10,7 @@ import edu.southwestern.tasks.ut2004.sensors.UT2004SensorModel;
 import edu.southwestern.tasks.ut2004.weapons.UT2004WeaponManager;
 
 /**
- *
+ * Relays directions to the bot
  * @author Jacob Schrum
  */
 public class NetworkController<T extends Network> extends Organism<T>implements BotController {
