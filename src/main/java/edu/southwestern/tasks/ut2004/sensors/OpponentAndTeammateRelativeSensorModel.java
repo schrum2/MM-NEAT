@@ -12,7 +12,7 @@ import edu.southwestern.tasks.ut2004.sensors.blocks.team.NearestTeammateBlock;
  */
 public class OpponentAndTeammateRelativeSensorModel extends UT2004BlockLoadedSensorModel {
 
-	HashMap<String,Location> teammateLocations;
+	public HashMap<String,Location> teammateLocations;
 	
 	/**
 	 * creates the block of sensors
@@ -43,10 +43,13 @@ public class OpponentAndTeammateRelativeSensorModel extends UT2004BlockLoadedSen
 	 * creates a copy of the sensor model
 	 */
 	public UT2004SensorModel copy() {
-		return new OpponentAndTeammateRelativeSensorModel(teammateLocations);
+		OpponentAndTeammateRelativeSensorModel copy = new OpponentAndTeammateRelativeSensorModel(teammateLocations);
+		assert teammateLocations != null : "Don't copy null team information";
+		return copy;
 	}
 	
 	public void giveTeamInfo(HashMap<String,Location> info) {
+		teammateLocations = info;
 		for(UT2004SensorBlock block : blocks) {
 			if(block instanceof AcceptsTeamDistances) {
 				((AcceptsTeamDistances) block).giveTeamLocations(info);

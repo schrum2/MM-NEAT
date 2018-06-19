@@ -9,12 +9,12 @@ import edu.southwestern.tasks.ut2004.sensors.AcceptsTeamDistances;
 import edu.southwestern.tasks.ut2004.sensors.blocks.UT2004SensorBlock;
 
 public class NearestTeammateBlock implements UT2004SensorBlock, AcceptsTeamDistances{
-	
+
 	public static final int MAX_DISTANCE = 1000;
 
 	HashMap<String,Location> teamLocation;
-	
-	
+
+
 	@Override
 	public void prepareBlock(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
@@ -30,24 +30,32 @@ public class NearestTeammateBlock implements UT2004SensorBlock, AcceptsTeamDista
 		}
 		return in;
 	}
-	
+
 	/**
 	 * @return returns the distance to the bot's closest ally
 	 */
 	public double distanceToClosestFriend(@SuppressWarnings("rawtypes") UT2004BotModuleController bot){
 		double minDistance = MAX_DISTANCE;
 		Location botLocation = bot.getBot().getLocation();
-		for(String s: teamLocation.keySet()) {
-		//for each location, find distance btween bot and friend
-			Location friendLocation = teamLocation.get(s);
-			double friendDistance = friendLocation.getDistance(botLocation);
-			minDistance = (Math.min(friendDistance, minDistance));
-			//location.getDistance()
+		try {
+			for(String s: teamLocation.keySet()) {
+				//for each location, find distance btween bot and friend
+				Location friendLocation = teamLocation.get(s);
+				if(friendLocation == botLocation) {
+					continue;
+				}
+				double friendDistance = friendLocation.getDistance(botLocation);
+				minDistance = (Math.min(friendDistance, minDistance));
+				//location.getDistance()
+			}
+		}catch(NullPointerException e) {
+			System.out.println(teamLocation);
+			e.printStackTrace();
 		}
 		return minDistance;
 		//Player friend = bot.
 	}
-	
+
 	/**
 	 * @return returns the 2D distance to the bot's closest ally (ignores z axis distance)
 	 */

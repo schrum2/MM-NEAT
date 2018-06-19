@@ -1,5 +1,8 @@
 package edu.southwestern.tasks.ut2004;
 
+import java.util.HashMap;
+
+import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
@@ -12,6 +15,7 @@ import edu.southwestern.tasks.ut2004.fitness.HighestEnemyScoreFitness;
 import edu.southwestern.tasks.ut2004.fitness.ScoreFitness;
 import edu.southwestern.tasks.ut2004.fitness.StreakFitness;
 import edu.southwestern.tasks.ut2004.fitness.TeamScoreFitness;
+import edu.southwestern.tasks.ut2004.sensors.OpponentAndTeammateRelativeSensorModel;
 import edu.southwestern.util.datastructures.Pair;
 
 /**
@@ -80,13 +84,16 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 		//loop through and each one is copy of individual
 
 		
-		// TODO
-		// hashMap = new HashMap<>()
-		// if(sensorModel instanceOf NewTypeOfSensorModel)
-		//		((NewTypeOfSensorModel) sensorModel).giveTeamInfo(hashMap)
-		
-		
+		// creates a place to store team info to be shared
+		HashMap<String,Location> friendDistances = new HashMap<String,Location>();
+		if(sensorModel instanceof OpponentAndTeammateRelativeSensorModel) {
+			System.out.println("Creating HashMap for team information");
+			((OpponentAndTeammateRelativeSensorModel) sensorModel).giveTeamInfo(friendDistances);
+		}
 
+		assert friendDistances != null : "How is this null? We just made it";
+		assert ((OpponentAndTeammateRelativeSensorModel) sensorModel).teammateLocations != null : "Should not pass in null team information";
+		
 		Pair<double[], double[]>[] result = evaluateMultipleGenotypes(teamArray, map,
 				sensorModel, outputModel, weaponManager, opponents,
 				nativeBotSkills, evalMinutes, desiredSkill,
