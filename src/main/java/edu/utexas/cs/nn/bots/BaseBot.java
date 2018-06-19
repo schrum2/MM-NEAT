@@ -93,7 +93,7 @@ public class BaseBot extends UT2004BotModuleController<UT2004Bot> {
     }
 
     public AgentBody getAgentBody() {
-        return (agentbody == null ? agentbody = new AgentBody(this.body, this.raycasting, this.act, this.logicModule, this.info, this.senses, this.game, this.getWorldView(), this.items, this.weaponry) : agentbody);
+        return (agentbody == null ? agentbody = new AgentBody(this.body, this.raycasting, this.act, this.info, this.senses, this.game, this.getWorldView(), this.items, this.weaponry) : agentbody);
     }
 
     /** timing for the logic */
