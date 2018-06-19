@@ -31,9 +31,9 @@ public class OpponentAndTeammateRelativeSensorModel extends UT2004BlockLoadedSen
 		blocks.add(new AgentBehaviorBlock(false)); //false means that the bot senses a FRIEND nearby
 		blocks.add(new SelfAwarenessBlock());
 		// Sensors that use shared memory on the client side
-		NearestTeammateBlock ntb = new NearestTeammateBlock();
-		ntb.giveTeamLocations(teammateLocations);
-		blocks.add(ntb);
+//		NearestTeammateBlock ntb = new NearestTeammateBlock();
+//		ntb.giveTeamLocations(teammateLocations);
+//		blocks.add(ntb);
 
 		// Saved so that it can be part of any copies that are made
 		this.teammateLocations = teammateLocations;
