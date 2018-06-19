@@ -94,10 +94,6 @@ public class GhostPredictionsFast {
         Arrays.fill(edibleProbabilities, startIndex, startIndex + mazeSize, 0);
         edibleProbabilities[arrayIndex] = game.poG.isGhostEdible(ghost) ? 
         				game.calculateRemainingPillBuffTime() : 0.0d;
-        				
-        //System.out.println("OBSERVING GHOST: " + ghost.toString() + " IS EDIBLE? "  + game.poG.isGhostEdible(ghost) + " BUFF TIME: " + game.calculateRemainingPillBuffTime() + " EDIBLE_ARRAY: " + edibleProbabilities[arrayIndex]);
-        
-    
     }
 
     public void observeNotPresent(GHOST ghost, int index, GameFacade game) {
@@ -111,10 +107,13 @@ public class GhostPredictionsFast {
             //NEW
             edibleProbabilities[i] = game.calculateRemainingPillBuffTime();
         }
-       // System.out.println("NOT OBSERVING GHOST: " + ghost.toString() + " IS EDIBLE? "  + game.poG.isGhostEdible(ghost) + " BUFF TIME: " + game.calculateRemainingPillBuffTime());
     }
 
+    
+    //TODO: clean this behemoth up
     public void update() {
+    	
+    	double edibleProbability = 0;         
         for (int ghost = 0; ghost < numGhosts; ghost++) {
             if (!beenSpotted.get(GHOST.values()[ghost])) {
                 continue;
@@ -123,8 +122,10 @@ public class GhostPredictionsFast {
                 if (probabilities[i] > THRESHOLD) {
                     Node currentNode = maze.graph[i % mazeSize];
                     int numberNodes = currentNode.numNeighbouringNodes;
-                    //TODO: decouple the edible probabilit calculations from this loop
                     double probability = probabilities[i] / (numberNodes - 1);
+                    if(edibleProbabilities[i] > 0.0) {
+                    	edibleProbability = edibleProbabilities[i] / (numberNodes - 1);
+                    }
                     
 //                  System.out.println(probability + " n: " + numberNodes + " orig: " + probabilities[i]);
                     MOVE back = moves[i].opposite();
@@ -138,26 +139,13 @@ public class GhostPredictionsFast {
                             if (backProbabilities[(mazeSize * ghost) + index] <= probabilities[(mazeSize * ghost) + index]) {
                                 backProbabilities[(mazeSize * ghost) + index] = probability;
                                 backMoves[(mazeSize * ghost) + index] = move;
-                            }
-                        }
-                    }
-                }
-                
-                if(edibleProbabilities[i] > 0.0) {
-                	Node currentNode = maze.graph[i % mazeSize];
-                    int numberNodes = currentNode.numNeighbouringNodes;
-                	double edibleProbability = edibleProbabilities[i] / (numberNodes - 1);               	
-                    MOVE back = moves[i].opposite();
-                    for (MOVE move : MOVE.values()) {
-                        if (move == back) {
-                            continue;
-                        }
-                        if (currentNode.neighbourhood.containsKey(move)) {
-                            int index = currentNode.neighbourhood.get(move);
-                            // If we haven't already written to there or what we wrote was less probable                            
-                            if (edibleBackProbabilities[(mazeSize * ghost) + index] <= edibleProbabilities[(mazeSize * ghost) + index]) {
-                            	edibleBackProbabilities[(mazeSize * ghost) + index] = edibleProbability;
-                                backMoves[(mazeSize * ghost) + index] = move;
+                              
+                                if(edibleProbabilities[i] > 0.0) {
+                                	if (edibleBackProbabilities[(mazeSize * ghost) + index] <= edibleProbabilities[(mazeSize * ghost) + index]) {
+		                            	edibleBackProbabilities[(mazeSize * ghost) + index] = edibleProbability;
+		                                backMoves[(mazeSize * ghost) + index] = move;
+		                            }
+                                }
                             }
                         }
                     }
