@@ -42,6 +42,8 @@ public class BotPrizeServer {
 	 * the botprize mode is available.
 	 * @throws IOException 
 	 */
+//TODO: move this into the edu.southwestern.tasks.ut2004.Util
+	//  create another method that will launch a file without botprize game bots
 	public static void copyBotPrizeVersionOfGameBots() throws IOException {
 		String[] filesToCopy = new String[] {
 				"GameBots2004.u",	// 2012 version of BotPrize mod
