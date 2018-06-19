@@ -168,6 +168,13 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		while (ArrayUtil.anyNull(result) || // Loop as long as there are problems with the results
 			   individuals.length == 0) { // Special case to run the server when no genotypes are being evolved
 			if(individuals.length == 0) System.out.println("No evolving bots!");
+			
+			
+			if(attempts > 3) {
+				System.out.println("Evaluation Keeps Failing! Give up");
+				System.exit(1);
+			}
+			
 			System.out.println("Eval attempt " + (attempts++));
 			try {
 				ucc = new MyUCCWrapper(config);

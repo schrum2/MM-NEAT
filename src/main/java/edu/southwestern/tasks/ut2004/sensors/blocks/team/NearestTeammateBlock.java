@@ -21,8 +21,13 @@ public class NearestTeammateBlock implements UT2004SensorBlock, AcceptsTeamDista
 
 	@Override
 	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
-		inputs[in++] = Util.scale(distanceToClosestFriend(bot), MAX_DISTANCE);
-		inputs[in++] = Util.scale(flatDistanceToClosestFriend(bot), MAX_DISTANCE);
+		try {
+			inputs[in++] = Util.scale(distanceToClosestFriend(bot), MAX_DISTANCE);
+			inputs[in++] = Util.scale(flatDistanceToClosestFriend(bot), MAX_DISTANCE);
+		}catch(Exception e) {
+			e.printStackTrace();
+			assert false : "No exceptions should occur when getting these sensor values " + e;
+		}
 		return in;
 	}
 	
@@ -46,11 +51,11 @@ public class NearestTeammateBlock implements UT2004SensorBlock, AcceptsTeamDista
 	/**
 	 * @return returns the 2D distance to the bot's closest ally (ignores z axis distance)
 	 */
-	public double flatDistanceToClosestFriend(UT2004BotModuleController bot) {
+	public double flatDistanceToClosestFriend(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		double minFlatDistance = MAX_DISTANCE;
 		Location botLocation = bot.getBot().getLocation();
 		for(String s: teamLocation.keySet()) {
-		//for each location, find distance btween bot and friend
+			//for each location, find distance btween bot and friend
 			Location friendLocation = teamLocation.get(s);
 			double friendFlatDistance = friendLocation.getDistance2D(botLocation);
 			minFlatDistance = (Math.min(friendFlatDistance, minFlatDistance));
