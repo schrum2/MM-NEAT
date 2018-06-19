@@ -8,6 +8,11 @@ import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
+/**
+ * A D2W1 architecture where the input is connected to the first hidden layer with a field of 5x5 and the second hidden layer is connected to 
+ * the output with a field of 3x3
+ * @author Devon Fulcher
+ */
 public class HeterogeneousFields implements SubstrateArchitectureDefinition{
 	@Override
 	public List<Triple<Integer, Integer, Integer>> getNetworkHiddenArchitecture() {

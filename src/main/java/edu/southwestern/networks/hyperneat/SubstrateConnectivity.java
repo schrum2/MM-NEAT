@@ -9,10 +9,10 @@ import edu.southwestern.parameters.Parameters;
 public class SubstrateConnectivity {
 	public static final int CTYPE_FULL = 0;
 	public static final int CTYPE_CONVOLUTION = 1;
-	public final String SOURCE_SUBSTRATE_NAME;
-	public final String TARGET_SUBSTRATE_NAME;
-	public final int receptiveFieldWidth;
-	public final int receptiveFieldHeight;
+	public String sourceSubstrateName;
+	public String targetSubstrateName;
+	public int receptiveFieldWidth;
+	public int receptiveFieldHeight;
 	public int connectivityType;
 	
 	/**
@@ -48,8 +48,8 @@ public class SubstrateConnectivity {
 		assert receptiveFieldWidth != 0 : "Receptive field width cannot be 0";
 		assert receptiveFieldHeight != 0 : "Receptive field height cannot be 0";
 				
-		this.SOURCE_SUBSTRATE_NAME = sourceSubstrateName;
-		this.TARGET_SUBSTRATE_NAME = targetSubstrateName;
+		this.sourceSubstrateName = sourceSubstrateName;
+		this.targetSubstrateName = targetSubstrateName;
 		this.connectivityType = connectivityType;
 		this.receptiveFieldWidth = receptiveFieldWidth;
 		this.receptiveFieldHeight = receptiveFieldHeight;
@@ -61,8 +61,8 @@ public class SubstrateConnectivity {
 	 */
 	public String toString() {
 		String result = "";
-		result = result.concat("substrate connectivity: from " + SOURCE_SUBSTRATE_NAME + " to " + 
-							   TARGET_SUBSTRATE_NAME + " with type " + connectivityType + " and field size " + receptiveFieldWidth + "x" + receptiveFieldHeight);
+		result = result.concat("substrate connectivity: from " + sourceSubstrateName + " to " + 
+							   targetSubstrateName + " with type " + connectivityType + " and field size " + receptiveFieldWidth + "x" + receptiveFieldHeight);
 		return result;
 	}
 	
@@ -70,15 +70,15 @@ public class SubstrateConnectivity {
 	 * @return a deep copy of the calling SubstrateConnectivity
 	 */
 	public SubstrateConnectivity copy() {
-		return new SubstrateConnectivity(this.SOURCE_SUBSTRATE_NAME, this.TARGET_SUBSTRATE_NAME,
+		return new SubstrateConnectivity(this.sourceSubstrateName, this.targetSubstrateName,
 				this.connectivityType, this.receptiveFieldWidth, this.receptiveFieldHeight);
 	}
 	
 	public boolean equals(Object other) {
 		if(other instanceof SubstrateConnectivity) {
 			SubstrateConnectivity sc = (SubstrateConnectivity) other;
-			return sc.SOURCE_SUBSTRATE_NAME.equals(this.SOURCE_SUBSTRATE_NAME) &&
-				   sc.TARGET_SUBSTRATE_NAME.equals(this.TARGET_SUBSTRATE_NAME) &&
+			return sc.sourceSubstrateName.equals(this.sourceSubstrateName) &&
+				   sc.targetSubstrateName.equals(this.targetSubstrateName) &&
 				   sc.connectivityType == this.connectivityType &&
 				   sc.receptiveFieldWidth == this.receptiveFieldWidth &&
 				   sc.receptiveFieldHeight == this.receptiveFieldHeight;

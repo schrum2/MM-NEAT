@@ -19,6 +19,7 @@ import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
@@ -459,6 +460,7 @@ public class PopulationUtil {
 		if (loaded instanceof Genotype) {
 			individual = (Genotype<T>) loaded;
 			System.out.println(", ID = " + individual.getId());
+			assert !(loaded instanceof HyperNEATCPPNAndSubstrateArchitectureGenotype) || ((HyperNEATCPPNAndSubstrateArchitectureGenotype) individual).allSubstrateConnectivity.get(0).sourceSubstrateName != null;
 		}
 		return individual;
 	}

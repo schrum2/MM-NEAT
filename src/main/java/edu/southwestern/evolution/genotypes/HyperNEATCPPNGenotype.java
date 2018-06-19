@@ -138,7 +138,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		List<Substrate> subs = getSubstrateInformation(hnt);// extract substrate information from domain
 		List<SubstrateConnectivity> connections = getSubstrateConnectivity(hnt);// extract substrate connectivity from domain
 		
-		assert connections.get(0).SOURCE_SUBSTRATE_NAME != null : "How was a null name constructed";
+		assert connections.get(0).sourceSubstrateName != null : "How was a null name constructed";
 		
 		ArrayList<NodeGene> newNodes = null;
 		ArrayList<LinkGene> newLinks = null;
@@ -361,9 +361,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		ArrayList<LinkGene> result = new ArrayList<LinkGene>();
 		for (int i = 0; i < connections.size(); i++) { // For each pair of substrates that are connected
 			SubstrateConnectivity currentConnection = connections.get(i);
-			int sourceSubstrateIndex = sIMap.get(currentConnection.SOURCE_SUBSTRATE_NAME);
-			assert sIMap.get(currentConnection.TARGET_SUBSTRATE_NAME) != null :"null in " + sIMap + "\nat " + connections.get(i).TARGET_SUBSTRATE_NAME + "\nat " + i;
-			int targetSubstrateIndex = sIMap.get(currentConnection.TARGET_SUBSTRATE_NAME);
+			int sourceSubstrateIndex = sIMap.get(currentConnection.sourceSubstrateName);
+			assert sIMap.get(currentConnection.targetSubstrateName) != null :"null in " + sIMap + "\nat " + connections.get(i).targetSubstrateName + "\nat " + i;
+			int targetSubstrateIndex = sIMap.get(currentConnection.targetSubstrateName);
 			Substrate sourceSubstrate = subs.get(sourceSubstrateIndex);
 			Substrate targetSubstrate = subs.get(targetSubstrateIndex);
 			

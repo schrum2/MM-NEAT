@@ -356,8 +356,8 @@ public class HyperNEATUtil {
 
 		//creates each a panel for each connection between substrates
 		for(int i = 0; i < connections.size(); i++) {
-			String sub1 = connections.get(i).SOURCE_SUBSTRATE_NAME;
-			String sub2 = connections.get(i).TARGET_SUBSTRATE_NAME;
+			String sub1 = connections.get(i).sourceSubstrateName;
+			String sub2 = connections.get(i).targetSubstrateName;
 			Substrate s1 = getSubstrate(sub1);
 			Substrate s2 = getSubstrate(sub2);
 			//this block of code gets the substrates and their nodes and indices
@@ -540,8 +540,8 @@ public class HyperNEATUtil {
 
 	int count = 0;
 	for(int i = 0; i < connections.size(); i++) {
-		String source = connections.get(i).SOURCE_SUBSTRATE_NAME;
-		String target = connections.get(i).TARGET_SUBSTRATE_NAME;
+		String source = connections.get(i).sourceSubstrateName;
+		String target = connections.get(i).targetSubstrateName;
 		Substrate subSource = subs.get(substrateIndexMapping.get(source));
 		Substrate subTarget = subs.get(substrateIndexMapping.get(target));
 		count += subSource.getSize().t1 * subSource.getSize().t2 * subTarget.getSize().t1 * subTarget.getSize().t2; 
