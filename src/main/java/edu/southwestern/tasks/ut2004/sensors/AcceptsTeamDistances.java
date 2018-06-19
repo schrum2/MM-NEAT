@@ -5,5 +5,5 @@ import java.util.HashMap;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 
 public interface AcceptsTeamDistances {
-	public void giveTeamDistances(HashMap<String,Location> distances);
+	public void giveTeamLocations(HashMap<String,Location> distances);
 }

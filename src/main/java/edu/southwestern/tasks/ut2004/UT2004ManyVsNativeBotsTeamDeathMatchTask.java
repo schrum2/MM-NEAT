@@ -85,6 +85,7 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 		// if(sensorModel instanceOf NewTypeOfSensorModel)
 		//		((NewTypeOfSensorModel) sensorModel).giveTeamInfo(hashMap)
 		
+		
 
 		Pair<double[], double[]>[] result = evaluateMultipleGenotypes(teamArray, map,
 				sensorModel, outputModel, weaponManager, opponents,
