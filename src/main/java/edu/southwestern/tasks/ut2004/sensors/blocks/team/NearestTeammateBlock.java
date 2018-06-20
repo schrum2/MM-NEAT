@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import edu.southwestern.tasks.ut2004.Util;
+import edu.southwestern.tasks.ut2004.UT2004Util;
 import edu.southwestern.tasks.ut2004.sensors.AcceptsTeamDistances;
 import edu.southwestern.tasks.ut2004.sensors.blocks.UT2004SensorBlock;
 
@@ -22,8 +22,8 @@ public class NearestTeammateBlock implements UT2004SensorBlock, AcceptsTeamDista
 	@Override
 	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
 		try {
-			inputs[in++] = Util.scale(distanceToClosestFriend(bot), MAX_DISTANCE);
-			inputs[in++] = Util.scale(flatDistanceToClosestFriend(bot), MAX_DISTANCE);
+			inputs[in++] = UT2004Util.scale(distanceToClosestFriend(bot), MAX_DISTANCE);
+			inputs[in++] = UT2004Util.scale(flatDistanceToClosestFriend(bot), MAX_DISTANCE);
 		}catch(Exception e) {
 			e.printStackTrace();
 			assert false : "No exceptions should occur when getting these sensor values " + e;

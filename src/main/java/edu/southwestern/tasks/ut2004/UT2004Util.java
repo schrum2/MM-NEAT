@@ -12,7 +12,7 @@ import javax.vecmath.Vector3d;
  * 
  * @author Jacob Schrum
  */
-public class Util {
+public class UT2004Util {
 	//info found at https://wiki.beyondunreal.com/Legacy:General_Scale_And_Dimensions
 	public static final int NUMBER_OF_UNREAL_UNITS_IN_A_FULL_CIRCLE = 65536;
 

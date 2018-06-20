@@ -3,7 +3,7 @@ package edu.southwestern.tasks.ut2004.actions;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import edu.southwestern.tasks.ut2004.Util;
+import edu.southwestern.tasks.ut2004.UT2004Util;
 import javax.vecmath.Vector3d;
 
 /**
@@ -54,7 +54,7 @@ public class EgoCentricMovementAction implements BotAction {
 			String action = "";
 			if (this.shoot) {
 				action += "[Shoot]";
-				Vector3d targetVector = Util.rotationAsVectorUTUnits(botRotation);
+				Vector3d targetVector = UT2004Util.rotationAsVectorUTUnits(botRotation);
 				double scale = 10000;
 				targetVector.normalize();
 				targetVector.scale(scale);
@@ -64,14 +64,14 @@ public class EgoCentricMovementAction implements BotAction {
 			} else {
 				bot.getShoot().stopShooting();
 			}
-			boolean shouldTurn = !Util.isBetween(turn, TURN_ACTIVATION);
+			boolean shouldTurn = !UT2004Util.isBetween(turn, TURN_ACTIVATION);
 			if (move < MOVE_ACTIVATION && shouldTurn) {
 				action += "[Turn]";
 				bot.getMove().stopMovement();
 				bot.getMove().turnHorizontal((int) ((turn / Math.PI) * 180));
 			} else if (move >= MOVE_ACTIVATION) {
 				if (moveBackwards || shouldTurn) {
-					double rotation = Util.utAngleToRad(botRotation.getYaw());
+					double rotation = UT2004Util.utAngleToRad(botRotation.getYaw());
 					if (shouldTurn) {
 						rotation = rotation + this.turn;
 					}
