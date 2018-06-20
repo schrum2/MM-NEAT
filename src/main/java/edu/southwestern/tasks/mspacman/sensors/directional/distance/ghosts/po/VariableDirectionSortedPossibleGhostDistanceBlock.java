@@ -6,6 +6,7 @@ import java.util.Comparator;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.directional.distance.VariableDirectionDistanceBlock;
+import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.datastructures.Triple;
 import pacman.game.Constants.MOVE;
 
@@ -50,17 +51,17 @@ public class VariableDirectionSortedPossibleGhostDistanceBlock extends VariableD
 
 	@Override
 	public int[] getTargets(GameFacade gf) {
-		ArrayList<Triple<Integer, MOVE, Double>> ghosts = gf.getPossibleGhostInfo();
+		ArrayList<Quad<Integer, MOVE, Double, Double>> ghosts = gf.getPossibleGhostInfo();
 		
 		if (order >= ghosts.size()) {
 			return new int[0]; // Target in lair will result in distance of
 								// infinity
 		}
 		
-		Collections.sort(ghosts, new Comparator<Triple<Integer, MOVE, Double>>(){
+		Collections.sort(ghosts, new Comparator<Quad<Integer, MOVE, Double, Double>>(){
 
 			@Override
-			public int compare(Triple<Integer, MOVE, Double> arg0, Triple<Integer, MOVE, Double> arg1) {
+			public int compare(Quad<Integer, MOVE, Double, Double> arg0, Quad<Integer, MOVE, Double, Double> arg1) {
 				
 				//the length of the path from pacman to arg0 (ghost) in dir
 				int disToArg0 = gf.getDirectionalPath(gf.getPacmanCurrentNodeIndex(), arg0.t1, dir).length;
