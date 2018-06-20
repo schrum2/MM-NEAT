@@ -76,32 +76,32 @@ public class MMRTest {
 			tg2.mutate();
 		}
 
-		DrawingPanel p1 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1");
-		DrawingPanel p2 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2");
-		p2.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, 0);
-		tg1.getPhenotype().draw(p1, true);
-		tg2.getPhenotype().draw(p2, true);
+//		DrawingPanel p1 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1");
+//		DrawingPanel p2 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2");
+//		p2.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, 0);
+//		tg1.getPhenotype().draw(p1, true);
+//		tg2.getPhenotype().draw(p2, true);
 
 		new MMR().mutate(tg1);
-		DrawingPanel p3 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1 MMD");
-		p3.setLocation(0, TWEANN.NETWORK_VIEW_DIM + 10);
-		tg1.getPhenotype().draw(p3, true);
+//		DrawingPanel p3 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1 MMD");
+//		p3.setLocation(0, TWEANN.NETWORK_VIEW_DIM + 10);
+//		tg1.getPhenotype().draw(p3, true);
 
 		new MMR().mutate(tg2);
-		DrawingPanel p4 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2 MMD");
-		p4.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, TWEANN.NETWORK_VIEW_DIM + 10);
-		tg2.getPhenotype().draw(p4, true);
+//		DrawingPanel p4 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2 MMD");
+//		p4.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, TWEANN.NETWORK_VIEW_DIM + 10);
+//		tg2.getPhenotype().draw(p4, true);
 
 		TWEANNCrossover cross = new TWEANNCrossover();
 		TWEANNGenotype new2 = (TWEANNGenotype) cross.crossover(tg1, tg2);
 
-		DrawingPanel p5 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 1");
-		p5.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), 0);
-		tg1.getPhenotype().draw(p5, true);
+//		DrawingPanel p5 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 1");
+//		p5.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), 0);
+//		tg1.getPhenotype().draw(p5, true);
 
-		DrawingPanel p6 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 2");
-		p6.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), TWEANN.NETWORK_VIEW_DIM + 10);
-		new2.getPhenotype().draw(p6, true);
+//		DrawingPanel p6 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 2");
+//		p6.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), TWEANN.NETWORK_VIEW_DIM + 10);
+//		new2.getPhenotype().draw(p6, true);
 
 	}
 }
