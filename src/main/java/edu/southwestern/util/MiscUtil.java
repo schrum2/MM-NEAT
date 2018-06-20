@@ -50,7 +50,7 @@ public class MiscUtil {
 	 * @param the message
 	 * @return
 	 */
-	public static String waitForReadStringAndEnterKeyPress(String msg) {
+	public static String waitForReadStringAndEnterKeyPress(Object msg) {
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("\nmessage: " + msg);

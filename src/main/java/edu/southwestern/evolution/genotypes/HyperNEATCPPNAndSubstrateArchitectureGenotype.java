@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
@@ -14,8 +15,10 @@ import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.networks.hyperneat.architecture.CascadeNetworks;
 import edu.southwestern.networks.hyperneat.architecture.FlexibleSubstrateArchitecture;
 import edu.southwestern.networks.hyperneat.architecture.SubstrateArchitectureDefinition;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * @author Devon Fulcher
@@ -184,7 +187,6 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	public List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask HNTask) {
 		assert allSubstrateConnectivity != null;
 		assert allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
-		assert !allSubstrateConnectivity.get(0).sourceSubstrateName.equals("null") : "How was a null string name constructed?";
 
 		return allSubstrateConnectivity;
 	}
@@ -194,18 +196,24 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 * Adds a new layer in between the previous last hidden layer and the output layer with given specification
 	 * @param newLayerWidth the width(the number of substrates) of the new layer
 	 * @param newSubstratesWidth the width of each substrate that is added
-	 * @param newsubstratesHeight the height of each substrate that is added
+	 * @param newSubstratesHeight the height of each substrate that is added
 	 * @param connectivityType how these two substrates are connected (i.e. full, convolutional,...)
 	 */
-	public void cascadeExpansion (int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, int connectivityType) {
+	public void cascadeExpansion (int newLayerWidth, int newSubstratesWidth, int newSubstratesHeight, int connectivityType) {
 		Pair<List<Triple<Integer, Integer, Integer>>, List<SubstrateConnectivity>> newDefiniton = 
 				CascadeNetworks.cascadeExpansion(this.hiddenArchitecture, this.allSubstrateConnectivity, 
 				FlexibleSubstrateArchitecture.getInputAndOutputNames((HyperNEATTask) MMNEAT.task).t2,
-				newLayerWidth, newSubstratesWidth, newsubstratesHeight, connectivityType);
+				newLayerWidth, newSubstratesWidth, newSubstratesHeight, connectivityType);
 		this.hiddenArchitecture = newDefiniton.t1;
 		this.allSubstrateConnectivity = newDefiniton.t2;
 		assert allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
-
+		if (!Parameters.parameters.booleanParameter("substrateLocationInputs") && !Parameters.parameters.booleanParameter("substrateBiasLocationInputs")) {
+			int[] ftypes = new int[newLayerWidth * 2 + newLayerWidth];
+			for (int i = 0; i < ftypes.length; i++) {
+				ftypes[i] = ActivationFunctions.randomFunction();
+			}
+			addMSSNeuronsToCPPN(allSubstrateConnectivity.size(), newLayerWidth * 2, getSubstrateInformation((HyperNEATTask) MMNEAT.task).size(), newLayerWidth, ftypes);
+		}
 	}
 
 	/**
