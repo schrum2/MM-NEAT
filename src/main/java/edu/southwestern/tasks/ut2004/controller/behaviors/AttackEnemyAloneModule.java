@@ -35,6 +35,9 @@ public class AttackEnemyAloneModule implements BehaviorModule {
 	@Override
 	public boolean trigger(UT2004BotModuleController bot) {
 		// TODO Auto-generated method stub
+		if((bot.getPlayers().getNearestVisibleEnemy() != null) && (bot.getPlayers().getNearestVisibleFriend() == null)) {
+			return true;
+		}
 		return false;
 	}
 

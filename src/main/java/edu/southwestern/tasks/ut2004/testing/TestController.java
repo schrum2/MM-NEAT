@@ -7,8 +7,10 @@ import edu.southwestern.tasks.ut2004.actions.EmptyAction;
 import edu.southwestern.tasks.ut2004.actions.FollowEnemy;
 import edu.southwestern.tasks.ut2004.actions.FollowTeammate;
 import edu.southwestern.tasks.ut2004.controller.BotController;
+import edu.southwestern.tasks.ut2004.controller.behaviors.AttackEnemyAloneModule;
 
 public class TestController implements BotController {
+	AttackEnemyAloneModule attack = new AttackEnemyAloneModule();
 	
 	/**
 	 * bot will follow closest teammate, if one is not there, it will stand in place
@@ -18,13 +20,13 @@ public class TestController implements BotController {
 		Player nearestEnemy = bot.getPlayers().getNearestVisibleEnemy();
 		
 		// null check first
-		if(nearestFriend != null) {
-			return new FollowTeammate(nearestFriend);
-		}
-		
-		if(nearestEnemy != null) {
-			return new FollowEnemy(nearestEnemy);
-		}
+//		if(nearestFriend != null) {
+//			return new FollowTeammate(nearestFriend);
+//		}
+//		
+//		if(nearestEnemy != null) {
+//			return new FollowEnemy(nearestEnemy);
+//		}
 //		return new BotAction() {
 //
 //			@Override
@@ -34,6 +36,9 @@ public class TestController implements BotController {
 //			}
 //			
 //		};
+		if(attack.trigger(bot)) {
+			return attack.control(bot);
+		}
 		return new EmptyAction();
 	}
 
