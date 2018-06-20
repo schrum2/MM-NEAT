@@ -98,7 +98,7 @@ public class FlexibleSubstrateArchitecture {
 		connectInputToFirstHidden(networkConnectivity, inputSubstrateNames, networkHiddenArchitecture, SubstrateConnectivity.CTYPE_CONVOLUTION);
 
 		//connects adjacent, possibly convolutional hidden layers
-		connectAdjacentHiddenLayers(networkConnectivity, networkHiddenArchitecture, SubstrateConnectivity.CTYPE_CONVOLUTION);
+		connectAllAdjacentHiddenLayers(networkConnectivity, networkHiddenArchitecture, SubstrateConnectivity.CTYPE_CONVOLUTION);
 
 		//connects last hidden/process layer to output layer
 		connectLastHiddenToOutput(networkConnectivity, outputSubstrateNames, networkHiddenArchitecture, SubstrateConnectivity.CTYPE_FULL);
@@ -169,31 +169,31 @@ public class FlexibleSubstrateArchitecture {
 	}
 
 	/**
-	 * connects two adjacent hidden substrate layers
+	 * connects all adjacent hidden substrate layers
 	 * @param networkConnectivity
 	 * @param networkHiddenArchitecture
 	 * @param connectivityType how these two substrates are connected (i.e. full, convolutional,...)
 	 */
-	public static void connectAdjacentHiddenLayers(
+	public static void connectAllAdjacentHiddenLayers(
 			List<SubstrateConnectivity> networkConnectivity, 
 			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture,
 			int connectivityType) {
 		if (connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION) {
-			connectAdjacentHiddenLayers(networkConnectivity, networkHiddenArchitecture,
+			connectAllAdjacentHiddenLayers(networkConnectivity, networkHiddenArchitecture,
 					Parameters.parameters.integerParameter("receptiveFieldWidth"), Parameters.parameters.integerParameter("receptiveFieldHeight"));
 		} else {
-			connectAdjacentHiddenLayers(networkConnectivity, networkHiddenArchitecture, -1, -1);
+			connectAllAdjacentHiddenLayers(networkConnectivity, networkHiddenArchitecture, -1, -1);
 		}
 	}
 
 	/**
-	 * connects two adjacent hidden substrate layers with specified receptive field
+	 * connects all adjacent hidden substrate layers with specified receptive field
 	 * @param networkConnectivity list that connectivity is appended to
 	 * @param networkHiddenArchitecture architecture of hidden layers
 	 * @param receptiveFieldWidth width of receptive field window, -1 if nonconvolutional
 	 * @param receptiveFieldHeight height of receptive field window, - 1 if nonconvolutional
 	 */
-	public static void connectAdjacentHiddenLayers(
+	public static void connectAllAdjacentHiddenLayers(
 			List<SubstrateConnectivity> networkConnectivity, 
 			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture,
 			int receptiveFieldWidth, int receptiveFieldHeight) {
@@ -203,6 +203,29 @@ public class FlexibleSubstrateArchitecture {
 				for (int target = 0; target < networkHiddenArchitecture.get(i + 1).t1; target++) {
 					networkConnectivity.add(new SubstrateConnectivity("process(" + src + "," + i + ")", "process(" + target + "," + (i + 1) + ")", receptiveFieldWidth, receptiveFieldHeight));
 				}
+			}
+		}
+	}
+	
+	/**
+	 * connects two hidden substrate layers with specified receptive field
+	 * @param networkConnectivity list that connectivity is appended to
+	 * @param networkHiddenArchitecture architecture of hidden layers
+	 * @param receptiveFieldWidth width of receptive field window, -1 if nonconvolutional
+	 * @param receptiveFieldHeight height of receptive field window, - 1 if nonconvolutional
+	 * @param sourceLayerLocation the index of the source hidden layer in networkHiddenArchitecture and the y position of this hidden layer in vector space
+	 * @param targetLayerLocationthe index of the target hidden layer in networkHiddenArchitecture and the y position of this hidden layer in vector space
+	 */
+	public static void connectHiddenToHidden (
+			List<SubstrateConnectivity> networkConnectivity, 
+			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture,
+			int receptiveFieldWidth, int receptiveFieldHeight, int sourceLayerLocation, int targetLayerLocation) {
+		int sourceLayerWidth = networkHiddenArchitecture.get(sourceLayerLocation).t1;
+		int targetLayerWidth = networkHiddenArchitecture.get(targetLayerLocation).t1;
+		for (int i = 0; i < sourceLayerWidth; i++) {
+			for (int j = 0; j < targetLayerWidth; j++) {
+				networkConnectivity.add(new SubstrateConnectivity("process(" + i + "," + sourceLayerLocation + ")", "process(" + j + "," + targetLayerLocation + ")", 
+						receptiveFieldWidth, receptiveFieldHeight));
 			}
 		}
 	}

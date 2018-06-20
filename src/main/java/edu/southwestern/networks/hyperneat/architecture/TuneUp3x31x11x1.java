@@ -1,5 +1,3 @@
-
-
 package edu.southwestern.networks.hyperneat.architecture;
 
 import java.util.ArrayList;
@@ -11,17 +9,17 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
 /**
- * A custom hyperneat architecture with heterogeneous receptive fields with a depth of 2 and width of 1. The input is connected to 
- * the first hidden layer with a receptive field of 3x3 and the second hidden layer is connected to the output with a receptive field
- * of 1x1. 
+ * D3W1 convolutional architecture where the connection from the input to the first hidden layer is 3x3,
+ * the connection from the first hidden layer to the second hidden layer is 1x1, and the connection from 
+ * the second hidden layer to the third hidden layer is 1x1
  * @author Devon Fulcher
- *
  */
-public class HeterogeneousFieldsD2W1 implements SubstrateArchitectureDefinition{
+public class TuneUp3x31x11x1 implements SubstrateArchitectureDefinition{
 
 	@Override
 	public List<Triple<Integer, Integer, Integer>> getNetworkHiddenArchitecture() {
 		List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture = new ArrayList<Triple<Integer, Integer, Integer>>();
+		networkHiddenArchitecture.add(new Triple<Integer, Integer, Integer>(1, 8, 18));
 		networkHiddenArchitecture.add(new Triple<Integer, Integer, Integer>(1, 8, 18));
 		networkHiddenArchitecture.add(new Triple<Integer, Integer, Integer>(1, 8, 18));
 		return networkHiddenArchitecture;

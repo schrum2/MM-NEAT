@@ -26,7 +26,7 @@ public class HeterogeneousFields implements SubstrateArchitectureDefinition{
 		List<SubstrateConnectivity> substrateConnectivity = new ArrayList<SubstrateConnectivity>();
 		Pair<List<String>, List<String>> io = FlexibleSubstrateArchitecture.getInputAndOutputNames(hnt);
 		FlexibleSubstrateArchitecture.connectInputToFirstHidden(substrateConnectivity, io.t1, getNetworkHiddenArchitecture(), 5, 5);
-		FlexibleSubstrateArchitecture.connectAdjacentHiddenLayers(substrateConnectivity, getNetworkHiddenArchitecture(), 3, 3);
+		FlexibleSubstrateArchitecture.connectAllAdjacentHiddenLayers(substrateConnectivity, getNetworkHiddenArchitecture(), 3, 3);
 		FlexibleSubstrateArchitecture.connectLastHiddenToOutput(substrateConnectivity, io.t2, getNetworkHiddenArchitecture(), SubstrateConnectivity.CTYPE_FULL);
 		return substrateConnectivity;
 	}

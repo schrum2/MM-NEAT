@@ -1,5 +1,3 @@
-
-
 package edu.southwestern.networks.hyperneat.architecture;
 
 import java.util.ArrayList;
@@ -11,13 +9,12 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
 /**
- * A custom hyperneat architecture with heterogeneous receptive fields with a depth of 2 and width of 1. The input is connected to 
- * the first hidden layer with a receptive field of 3x3 and the second hidden layer is connected to the output with a receptive field
- * of 1x1. 
+ * D2W1 Convolutional architecture where each hidden substrate is connected to each input and output. The inputs
+ * are connected to the first hidden layer by a 3x3 receptive field and the first hidden layer is connected to the second hidden layer
+ * by a 1x1 receptive field.
  * @author Devon Fulcher
- *
  */
-public class HeterogeneousFieldsD2W1 implements SubstrateArchitectureDefinition{
+public class DenseGraph3x31x1 implements SubstrateArchitectureDefinition{
 
 	@Override
 	public List<Triple<Integer, Integer, Integer>> getNetworkHiddenArchitecture() {
@@ -34,7 +31,9 @@ public class HeterogeneousFieldsD2W1 implements SubstrateArchitectureDefinition{
 		List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture = getNetworkHiddenArchitecture();
 		FlexibleSubstrateArchitecture.connectInputToFirstHidden(substrateConnectivity, io.t1, networkHiddenArchitecture, 3, 3);
 		FlexibleSubstrateArchitecture.connectAllAdjacentHiddenLayers(substrateConnectivity, networkHiddenArchitecture, 1, 1);
+		FlexibleSubstrateArchitecture.connectInputToHidden(substrateConnectivity, io.t1, networkHiddenArchitecture, 3, 3, 1);
 		FlexibleSubstrateArchitecture.connectLastHiddenToOutput(substrateConnectivity, io.t2, networkHiddenArchitecture, SubstrateConnectivity.CTYPE_FULL);
+		FlexibleSubstrateArchitecture.connectHiddenToOutput(substrateConnectivity, io.t2, networkHiddenArchitecture, -1, -1, 0);
 		return substrateConnectivity;
 	}
 

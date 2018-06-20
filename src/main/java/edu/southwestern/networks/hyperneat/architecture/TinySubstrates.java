@@ -28,7 +28,7 @@ public class TinySubstrates implements SubstrateArchitectureDefinition{
 		Pair<List<String>, List<String>> io = FlexibleSubstrateArchitecture.getInputAndOutputNames(hnt);
 		List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture = getNetworkHiddenArchitecture();
 		FlexibleSubstrateArchitecture.connectInputToFirstHidden(substrateConnectivity, io.t1, networkHiddenArchitecture, 3, 3);
-		FlexibleSubstrateArchitecture.connectAdjacentHiddenLayers(substrateConnectivity, networkHiddenArchitecture, SubstrateConnectivity.CTYPE_FULL);
+		FlexibleSubstrateArchitecture.connectAllAdjacentHiddenLayers(substrateConnectivity, networkHiddenArchitecture, SubstrateConnectivity.CTYPE_FULL);
 		FlexibleSubstrateArchitecture.connectLastHiddenToOutput(substrateConnectivity, io.t2, networkHiddenArchitecture, SubstrateConnectivity.CTYPE_FULL);
 		return substrateConnectivity;
 	}
