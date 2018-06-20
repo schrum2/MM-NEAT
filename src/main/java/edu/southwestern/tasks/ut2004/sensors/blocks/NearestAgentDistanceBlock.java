@@ -43,8 +43,8 @@ public class NearestAgentDistanceBlock implements UT2004SensorBlock {
 	}
 
 	public int incorporateLabels(int in, String[] labels) {
-		labels[in++] = "Nearest Opponent Proximity 3D";
-		labels[in++] = "Nearest Opponent Proximity 2D";
+		labels[in++] = "Nearest " + (senseEnemy ? "Enemy" : "Friend") + "Proximity 3D";
+		labels[in++] = "Nearest " + (senseEnemy ? "Enemy" : "Friend") + "Proximity 2D";
 		return in;
 	}
 

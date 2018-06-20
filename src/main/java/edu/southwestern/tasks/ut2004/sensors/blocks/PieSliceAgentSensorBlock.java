@@ -104,13 +104,13 @@ public class PieSliceAgentSensorBlock implements UT2004SensorBlock {
 	 */
 	public int incorporateLabels(int in, String[] labels) {
 		for (int i = 1; i < sliceLimits.length; i++) {
-			labels[in++] = "Left Slice " + i;
+			labels[in++] = (senseEnemy ? "Enemy" : "Friend") + " Left Slice " + i;
 		}
 		for (int i = 1; i < sliceLimits.length; i++) {
-			labels[in++] = "Right Slice " + i;
+			labels[in++] = (senseEnemy ? "Enemy" : "Friend") + " Right Slice " + i;
 		}
-		labels[in++] = "Front Left Distance";
-		labels[in++] = "Front Right Distance";
+		labels[in++] = (senseEnemy ? "Enemy" : "Friend") + " Front Left Distance";
+		labels[in++] = (senseEnemy ? "Enemy" : "Friend") + " Front Right Distance";
 		return in;
 	}
 
