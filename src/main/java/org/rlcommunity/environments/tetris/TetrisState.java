@@ -28,7 +28,6 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.tetris.TetrisViewer;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.random.RandomNumbers;
 
 public class TetrisState {
 	/* Action values */
