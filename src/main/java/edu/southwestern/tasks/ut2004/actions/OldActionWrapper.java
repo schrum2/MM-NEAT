@@ -1,7 +1,25 @@
 package edu.southwestern.tasks.ut2004.actions;
 
+import cz.cuni.amis.pogamut.base3d.worldview.IVisionWorldView;
+import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
+import cz.cuni.amis.pogamut.unreal.agent.navigation.IUnrealPathExecutor;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weaponry;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.AgentInfo;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Game;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Items;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Players;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Senses;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.IUT2004PathNavigator;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.IUT2004PathRunner;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004PathExecutor;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.floydwarshall.FloydWarshallMap;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.loquenavigator.KefikRunner;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.loquenavigator.LoqueNavigator;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
+import mockcz.cuni.amis.pogamut.base.agent.navigation.PathPlanner;
+import mockcz.cuni.amis.pogamut.ut2004.agent.navigation.MyUTPathExecutor;
 import mockcz.cuni.pogamut.Client.AgentBody;
+import mockcz.cuni.pogamut.Client.AgentMemory;
 import utopia.agentmodel.actions.Action;
 
 /**
@@ -28,9 +46,31 @@ public class OldActionWrapper implements BotAction {
 	public String execute(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		// This is a mock AgentBody class that emulates the old deprecated AgentBody class used in Pogamut.
 		// This mock class is used by the UT^2 actions, so it has to be constructed before being passed to the execute method.
-		AgentBody body = new AgentBody(bot.getBody(), bot.getRaycasting(), bot.getAct(), bot.getInfo(), bot.getSenses(), bot.getGame(), bot.getWorldView(), bot.getItems(), bot.getWeaponry());
+		AgentBody body = getAgentBody(bot);
 		action.execute(body);
 		return action.getClass().getName();
 	}
 
+	public static AgentBody getAgentBody(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
+		return new AgentBody(bot.getBody(), bot.getRaycasting(), bot.getAct(), bot.getInfo(), bot.getSenses(), bot.getGame(), bot.getWorldView(), bot.getItems(), bot.getWeaponry());
+	}
+	
+	public static AgentMemory getAgentMemory(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
+		        
+		// Setting these up multiple times for each action is probablya  bad idea. Better to set them up once and save and resuse them somehow. Solve this issue later.
+		
+        // Set up item path executor
+        IUT2004PathRunner itemKefik = new KefikRunner(bot.getBot(), bot.getInfo(), bot.getMove(), bot.getLog());            
+        IUT2004PathNavigator<ILocated> itemLoque = new LoqueNavigator<ILocated>(bot.getBot(), bot.getInfo(), bot.getMove(), itemKefik, bot.getLog());
+        IUnrealPathExecutor<ILocated> itemPathExecutor = new UT2004PathExecutor<ILocated>(bot.getBot(), bot.getInfo(), bot.getMove(), itemLoque);
+        
+        // Set up player path executor
+        IUT2004PathRunner playerKefik = new KefikRunner(bot.getBot(), bot.getInfo(), bot.getMove(), bot.getLog());
+        IUT2004PathNavigator<ILocated> playerLoque = new LoqueNavigator<ILocated>(bot.getBot(), bot.getInfo(), bot.getMove(), playerKefik, bot.getLog());
+        IUnrealPathExecutor<ILocated> playerPathExecutor = new UT2004PathExecutor<ILocated>(bot.getBot(), bot.getInfo(), bot.getMove(), playerLoque);
+
+		
+		return new AgentMemory(getAgentBody(bot), bot.getInfo(), bot.getSenses(), bot.getPlayers(), new PathPlanner(bot.getUT2004AStarPathPlanner(), bot.getFwMap(), getAgentBody(bot)), itemPathExecutor, playerPathExecutor, bot.getItems(), bot.getWeaponry(), bot.getWorldView(), bot.getGame());
+	}
+	
 }
