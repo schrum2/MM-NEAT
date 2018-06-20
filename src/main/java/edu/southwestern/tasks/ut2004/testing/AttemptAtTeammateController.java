@@ -20,9 +20,9 @@ public class AttemptAtTeammateController implements BotController {
 		Player nearestEnemy = bot.getPlayers().getNearestVisibleEnemy();
 		
 		// null check first
-//		if(nearestFriend != null) {
-//			return new FollowTeammate(nearestFriend);
-//		}
+		if(nearestFriend != null) {
+			return new FollowTeammate(nearestFriend);
+		}
 //		
 //		if(nearestEnemy != null) {
 //			return new FollowEnemy(nearestEnemy);
