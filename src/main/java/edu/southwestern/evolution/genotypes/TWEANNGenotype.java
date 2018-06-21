@@ -11,7 +11,6 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CartesianGeometricUtilities;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
@@ -1323,7 +1322,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @return the number of output neurons that were added
 	 */
 	public int addMSSNeuronsToCPPN(int initialNumberOfSubstratePairs, int initialNumberOfHiddenSubstrates, int numberOfNewHiddenSubstrates, int[] ftypes) {
-	//public int addMSSNeuronsToCPPN(int initialNumberOfSubstratePairs, int numberOfNewSubstratePairs, int orderFirstNewHiddenSubstrate, int numberOfNewHiddenSubstrates, int[] ftypes) {
 		int numberOfNewSubstratePairs = 2 * numberOfNewHiddenSubstrates;
 		//System.out.println("nodes before " + nodes);
 		long[] emptyArray1 = new long[0];
