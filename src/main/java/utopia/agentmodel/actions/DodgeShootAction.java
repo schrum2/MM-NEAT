@@ -6,9 +6,16 @@ import mockcz.cuni.pogamut.MessageObjects.Triple;
 import java.util.ArrayList;
 import utopia.Utils;
 
+/**
+ * Tells the bot to dage around while shooting; minimizes chances of getting hit while attacking
+ * @author Jacob Schrum
+ */
 public class DodgeShootAction extends ShootingAction {
 
     @Override
+    /**
+     * allows the bot to print a description of its actions
+     */
     public String toString(){
         return "Dodge:" + (turn == null ? direction : (turn < -0.5 ? "Left" : (turn > 0.5 ? "Right" : "Forward"))) + (shoot ? ":Shoot:" + (secondaryFire ? "Alt" : "Pri") : "");
     }
@@ -27,6 +34,11 @@ public class DodgeShootAction extends ShootingAction {
         this.turn = Utils.limitBetween(turn, Math.PI);
     }
 
+    /**
+     * 
+     * @param turn
+     * @return
+     */
     private static Triple directionFromTurn(Double turn){
         if(turn == null) {
             return new Triple(Utils.randposneg() * Math.random(), Utils.randposneg() * Math.random(), Utils.randposneg() * Math.random());
@@ -42,15 +54,30 @@ public class DodgeShootAction extends ShootingAction {
         }
     }
 
+    /**
+     * initializes the action with the agent's turn, rotation, and location 
+     * @param turn
+     * @param agentRotation
+     * @param agentLocation
+     */
     public DodgeShootAction(double turn, Triple agentRotation, Triple agentLocation) {
         this(turn, false, false, agentRotation, agentLocation, null);
     }
 
+    /**
+     * initializes the action with the agent's direction, rotation, and location 
+     * @param direction (direction in which the agent is heading)
+     * @param agentRotation (how the agent is rotated)
+     * @param agentLocation (where
+     */
     public DodgeShootAction(Triple direction, Triple agentRotation, Triple agentLocation) {
         this(direction, false, false, agentRotation, agentLocation, null);
     }
 
     @Override
+    /**
+     * tells the agent to execute the action
+     */
     public void execute(AgentBody body) {
         //shooting
         super.execute(body);

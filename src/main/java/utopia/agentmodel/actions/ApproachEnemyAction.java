@@ -8,7 +8,7 @@ import mockcz.cuni.pogamut.Client.AgentBody;
 import mockcz.cuni.pogamut.Client.AgentMemory;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
 import utopia.Utils;
-
+//TODO: comment after finding out what forcePath is
 public class ApproachEnemyAction extends OpponentRelativeAction {
 
     protected boolean forcePath;

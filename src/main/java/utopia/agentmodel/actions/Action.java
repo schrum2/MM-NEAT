@@ -1,6 +1,5 @@
 package utopia.agentmodel.actions;
 
-
 import java.io.Serializable;
 import mockcz.cuni.pogamut.Client.AgentBody;
 
