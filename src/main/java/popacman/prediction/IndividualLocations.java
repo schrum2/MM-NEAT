@@ -21,9 +21,9 @@ public class IndividualLocations {
         this.maze = maze;
     }
 
-    public void observe(int index, Constants.MOVE lastMoveMade) {
+    public void observe(int index, Constants.MOVE lastMoveMade, boolean edible) {
         ghostLocations.clear();
-        GhostLocation location = new GhostLocation(index, lastMoveMade, 1.0d);
+        GhostLocation location = new GhostLocation(index, lastMoveMade, 1.0d, edible ? 1.0 : 0.0);
         ghostLocations.add(location);
     }
 
@@ -56,6 +56,8 @@ public class IndividualLocations {
 
             int numberNodes = currentNode.numNeighbouringNodes;
             double probability = location.getProbability() / (numberNodes - 1);
+            //TODO: test
+            double edibleProbability = location.getEdibleProbability() / (numberNodes -1);
             boolean hasReusedLocation = false;
 
             Constants.MOVE back = location.getLastMoveMade().opposite();
@@ -68,7 +70,6 @@ public class IndividualLocations {
                         location.setProbability(probability);
                         hasReusedLocation = true;
                     } else {
-                        newLocations.add(new GhostLocation(currentNode.neighbourhood.get(move), move, probability));
                     }
                 }
             }
@@ -82,7 +83,7 @@ public class IndividualLocations {
         IndividualLocations other = new IndividualLocations(maze);
         other.ghostLocations = new ArrayList<>(ghostLocations.size());
         for (GhostLocation location : ghostLocations) {
-            other.ghostLocations.add(new GhostLocation(location.getIndex(), location.getLastMoveMade(), location.getProbability()));
+            other.ghostLocations.add(new GhostLocation(location.getIndex(), location.getLastMoveMade(), location.getProbability(), location.getEdibleProbability()));
         }
         return other;
     }
