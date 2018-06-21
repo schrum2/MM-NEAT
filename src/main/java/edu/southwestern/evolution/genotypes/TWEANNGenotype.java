@@ -1309,8 +1309,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		numOut++;
 		EvolutionaryHistory.archetypeAdd(archetypeIndex, ng.clone(), "new output");
 		// EvolutionaryHistory.archetypeOut[archetypeIndex]++;
-		System.out.println("nodes after " + nodes);
-		MiscUtil.waitForReadStringAndEnterKeyPress("");
+		
 		return addedLinks.size();
 	}
 
@@ -1321,24 +1320,26 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @param orderFirstNewHiddenSubstrate position where the new first hidden substrate is added in nodes
 	 * @param numberOfNewHiddenSubstrates number of new substrates to add
 	 * @param ftypes activation functions of added substrates 
-	 * @return
+	 * @return the number of output neurons that were added
 	 */
-	public int addMSSNeuronsToCPPN(int initialNumberOfSubstratePairs, int numberOfNewSubstratePairs, int orderFirstNewHiddenSubstrate, int numberOfNewHiddenSubstrates, int[] ftypes) {
-		int numberOfNewSubstratePair1s = 2 * numberOfNewHiddenSubstrates;
-		//NOT NEEDED? numberOfNewSubstratePairs
+	public int addMSSNeuronsToCPPN(int initialNumberOfSubstratePairs, int initialNumberOfHiddenSubstrates, int numberOfNewHiddenSubstrates, int[] ftypes) {
+	//public int addMSSNeuronsToCPPN(int initialNumberOfSubstratePairs, int numberOfNewSubstratePairs, int orderFirstNewHiddenSubstrate, int numberOfNewHiddenSubstrates, int[] ftypes) {
+		int numberOfNewSubstratePairs = 2 * numberOfNewHiddenSubstrates;
 		System.out.println("nodes before " + nodes);
 		long[] emptyArray1 = new long[0];
 		double[] emptyArray2 = new double[0];
-		int i = 0;
+		int i = 0, position = nodes.size() - numOut + initialNumberOfSubstratePairs;
 		while (i < numberOfNewSubstratePairs) {
-			addOutputNode(ftypes[i], emptyArray1, emptyArray2, emptyArray1, i + initialNumberOfSubstratePairs + 1);
+			System.out.println(i);
+			addOutputNode(ftypes[i], emptyArray1, emptyArray2, emptyArray1, position + i);
 			i++;
 		}
-		MiscUtil.waitForReadStringAndEnterKeyPress(1234);
+		position += initialNumberOfHiddenSubstrates + i;
 		for (int j = 0; j < numberOfNewHiddenSubstrates; j++) {
-			addOutputNode(ftypes[i + j], emptyArray1, emptyArray2, emptyArray1, j + orderFirstNewHiddenSubstrate + 1);
-			j++;
+			addOutputNode(ftypes[i + j], emptyArray1, emptyArray2, emptyArray1, position + j);
 		}
+		System.out.println("nodes after " + nodes);
+		MiscUtil.waitForReadStringAndEnterKeyPress("");
 		return numberOfNewSubstratePairs + numberOfNewHiddenSubstrates;
 	}
 

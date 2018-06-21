@@ -413,7 +413,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		}
 		// TEMPORARY FOR TESTING
 		if(CommonConstants.cascadeExpansion && currentGeneration() == Parameters.parameters.integerParameter("cascadeExpansionSwitchGeneration")) {
-			result = CascadeNetworks.getSubstrateGenotypesFromCPPNs(result, 1, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
+			result = CascadeNetworks.getSubstrateGenotypesFromCPPNs(result, 4, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
 		}
 		
 		return result;

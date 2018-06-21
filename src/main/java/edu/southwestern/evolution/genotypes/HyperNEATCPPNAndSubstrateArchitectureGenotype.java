@@ -18,7 +18,6 @@ import edu.southwestern.networks.hyperneat.architecture.SubstrateArchitectureDef
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
-import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * @author Devon Fulcher
@@ -200,6 +199,14 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 * @param connectivityType how these two substrates are connected (i.e. full, convolutional,...)
 	 */
 	public void cascadeExpansion (int newLayerWidth, int newSubstratesWidth, int newSubstratesHeight, int connectivityType) {
+		if (!Parameters.parameters.booleanParameter("substrateLocationInputs") && !Parameters.parameters.booleanParameter("substrateBiasLocationInputs")) {
+			int[] ftypes = new int[newLayerWidth * 2 + newLayerWidth];
+			for (int i = 0; i < ftypes.length; i++) {
+				ftypes[i] = ActivationFunctions.randomFunction();
+			}
+			//getSubstrateInformation((HyperNEATTask) MMNEAT.task).size()
+			addMSSNeuronsToCPPN(allSubstrateConnectivity.size(), hiddenArchitecture.size(), newLayerWidth, ftypes);
+		}
 		Pair<List<Triple<Integer, Integer, Integer>>, List<SubstrateConnectivity>> newDefiniton = 
 				CascadeNetworks.cascadeExpansion(this.hiddenArchitecture, this.allSubstrateConnectivity, 
 				FlexibleSubstrateArchitecture.getInputAndOutputNames((HyperNEATTask) MMNEAT.task).t2,
@@ -207,13 +214,6 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		this.hiddenArchitecture = newDefiniton.t1;
 		this.allSubstrateConnectivity = newDefiniton.t2;
 		assert allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
-		if (!Parameters.parameters.booleanParameter("substrateLocationInputs") && !Parameters.parameters.booleanParameter("substrateBiasLocationInputs")) {
-			int[] ftypes = new int[newLayerWidth * 2 + newLayerWidth];
-			for (int i = 0; i < ftypes.length; i++) {
-				ftypes[i] = ActivationFunctions.randomFunction();
-			}
-			addMSSNeuronsToCPPN(allSubstrateConnectivity.size(), newLayerWidth * 2, getSubstrateInformation((HyperNEATTask) MMNEAT.task).size(), newLayerWidth, ftypes);
-		}
 	}
 
 	/**
