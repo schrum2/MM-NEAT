@@ -2,6 +2,15 @@ package edu.southwestern.tasks.ut2004;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;
+import edu.southwestern.parameters.Parameters;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import javax.vecmath.Vector3d;
 
 /**
@@ -168,5 +177,43 @@ public class UT2004Util {
 		double newY = (x * Math.sin(radians)) + (y * Math.cos(radians));
 
 		return new Vector3d(newX, newY, v.getZ());
+	}
+	
+	/**
+	 * Copy the version of GameBots stored in MM-NEAT into the UT2004\System directory to make sure that
+	 * the botprize mod is available.
+	 * @throws IOException 
+	 */
+	public static void copyBotPrizeVersionOfGameBots() throws IOException {
+		String[] filesToCopy = new String[] {
+				"GameBots2004.u",	// 2012 version of BotPrize mod
+				"GameBots2004.ucl", // 2012 version of BotPrize mod
+				"GameBots2004.ini"	// Configuration that disables all GameBots visualization
+		};
+		String utSystemDir = Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath") + File.separator + "System";
+		for(String file :  filesToCopy) {
+			Files.copy(Paths.get("data" + File.separatorChar + "unreal" + File.separatorChar + "BotPrizeGameBots"  + File.separatorChar + file), 
+					   Paths.get(utSystemDir + File.separatorChar + file), 
+					   REPLACE_EXISTING);
+		}
+	}
+	
+	/**
+	 * Copy the version of GameBots stored in MM-NEAT into the UT2004\System directory to make sure that
+	 * the botprize mod is not turned on.
+	 * @throws IOException 
+	 */
+	public static void copyDefaultVersionOfGameBots() throws IOException {
+		String[] filesToCopy = new String[] {
+				"GameBots2004.u",	// 2012 version of BotPrize mod
+				"GameBots2004.ucl", // 2012 version of BotPrize mod
+				"GameBots2004.ini"	// Configuration that disables all GameBots visualization
+		};
+		String utSystemDir = Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath") + File.separator + "System";
+		for(String file :  filesToCopy) {
+			Files.copy(Paths.get("data" + File.separatorChar + "unreal" + File.separatorChar + "DefaultPrizeGameBots"  + File.separatorChar + file), 
+					   Paths.get(utSystemDir + File.separatorChar + file), 
+					   REPLACE_EXISTING);
+		}
 	}
 }

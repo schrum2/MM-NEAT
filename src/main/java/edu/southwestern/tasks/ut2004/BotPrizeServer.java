@@ -23,7 +23,8 @@ public class BotPrizeServer {
 	public static void main(String[] args) throws IOException {
 		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:2", "numMirrorBots:2", "botprizeMod:true", "utEvalMinutes:15"});
 		
-		copyBotPrizeVersionOfGameBots(); // Make sure right version of GameBots is being used
+		//copyBotPrizeVersionOfGameBots(); // Make sure right version of GameBots is being used
+		UT2004Util.copyBotPrizeVersionOfGameBots();
 		
 		@SuppressWarnings("unchecked")
 		Genotype<TWEANN>[] individuals = new Genotype[0];
@@ -35,26 +36,5 @@ public class BotPrizeServer {
 		ArrayList<UT2004FitnessFunction<TWEANN>> others = new ArrayList<>();
 		//launches server
 		UT2004Task.evaluateMultipleGenotypes(individuals, "DM-TrainingDay", null, null, null, controller,	nativeBotSkills, evalMinutes, desiredSkill,	fitness, others);
-	}
-	
-	/**
-	 * Copy the version of GameBots stored in MM-NEAT into the UT2004\System directory to make sure that
-	 * the botprize mode is available.
-	 * @throws IOException 
-	 */
-//TODO: move this into the edu.southwestern.tasks.ut2004.Util
-	//  create another method that will launch a file without botprize game bots
-	public static void copyBotPrizeVersionOfGameBots() throws IOException {
-		String[] filesToCopy = new String[] {
-				"GameBots2004.u",	// 2012 version of BotPrize mod
-				"GameBots2004.ucl", // 2012 version of BotPrize mod
-				"GameBots2004.ini"	// Configuration that disables all GameBots visualization
-		};
-		String utSystemDir = Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath") + File.separator + "System";
-		for(String file :  filesToCopy) {
-			Files.copy(Paths.get("data" + File.separatorChar + "unreal" + File.separatorChar + "BotPrizeGameBots"  + File.separatorChar + file), 
-					   Paths.get(utSystemDir + File.separatorChar + file), 
-					   REPLACE_EXISTING);
-		}
 	}
 }

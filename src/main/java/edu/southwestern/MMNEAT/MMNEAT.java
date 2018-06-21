@@ -96,6 +96,7 @@ import edu.southwestern.tasks.rlglue.init.RLGlueInitialization;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.tasks.ut2004.UT2004Task;
+import edu.southwestern.tasks.ut2004.UT2004Util;
 import edu.southwestern.tasks.vizdoom.VizDoomTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.file.FileUtilities;
@@ -641,6 +642,11 @@ public class MMNEAT {
 				}
 				prepareCoevolutionArchetypes();
 			} else if (task instanceof UT2004Task) {
+				if(Parameters.parameters.booleanParameter("botprizeMod") == true) {
+					UT2004Util.copyBotPrizeVersionOfGameBots();
+				} else {
+					UT2004Util.copyDefaultVersionOfGameBots();
+				}
 				System.out.println("Setup UT2004 Task");
 				UT2004Task utTask = (UT2004Task) task;
 				setNNInputParameters(utTask.sensorModel.numberOfSensors(), utTask.outputModel.numberOfOutputs());
