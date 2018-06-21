@@ -3,6 +3,7 @@ package popacman.examples.StarterISMCTS;
 import com.fossgalaxy.object.annotations.ObjectDef;
 
 import edu.southwestern.util.MiscUtil;
+import pacman.controllers.Controller;
 import pacman.controllers.PacmanController;
 import pacman.game.Drawable;
 import pacman.game.Game;
@@ -25,7 +26,7 @@ import static pacman.game.Constants.*;
 /**
  * Created by piers on 30/09/16.
  */
-public class InformationSetMCTSPacMan extends PacmanController implements Drawable {
+public class InformationSetMCTSPacMan extends Controller<MOVE> implements Drawable {
     protected final int maxTreeDepth;
     protected final int maxRolloutDepth;
     protected Random random = new Random();

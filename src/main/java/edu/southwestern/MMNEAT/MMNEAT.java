@@ -98,6 +98,7 @@ import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.tasks.ut2004.UT2004Task;
 import edu.southwestern.tasks.vizdoom.VizDoomTask;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.random.RandomGenerator;
@@ -456,44 +457,49 @@ public class MMNEAT {
 				System.out.println("Setup Function Optimization");
 				// Already setup in setupFunctionOptimization();
 			} else if (task instanceof MsPacManTask) {
-				MsPacManInitialization.setupGenotypePoolsForMsPacman();
-				System.out.println("Setup Ms. Pac-Man Task");
-				pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
-				if (MMNEAT.pacmanInputOutputMediator instanceof VariableDirectionBlockLoadedInputOutputMediator) {
-					directionalSafetyFunction = (VariableDirectionBlock) ClassCreation.createObject("directionalSafetyFunction");
-					ensembleArbitrator = (MsPacManEnsembleArbitrator) ClassCreation.createObject("ensembleArbitrator");
-				}
-				String preferenceNet = Parameters.parameters.stringParameter("fixedPreferenceNetwork");
-				String multitaskNet = Parameters.parameters.stringParameter("fixedMultitaskPolicy");
-				if (multitaskNet != null && !multitaskNet.isEmpty()) {
-					// Preference networks are being evolved to pick outputs of
-					// fixed multitask network
-					MMNEAT.sharedMultitaskNetwork = (TWEANNGenotype) Easy.load(multitaskNet);
-					if (CommonConstants.showNetworks) {
-						DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Fixed Multitask Network");
-						MMNEAT.sharedMultitaskNetwork.getPhenotype().draw(panel);
-					}
-					// One preference neuron per multitask mode
-					setNNInputParameters(pacmanInputOutputMediator.numIn(), MMNEAT.sharedMultitaskNetwork.numModules);
-				} else if (preferenceNet != null && !preferenceNet.isEmpty()) {
-					MMNEAT.sharedPreferenceNetwork = (TWEANNGenotype) Easy.load(preferenceNet);
-					if (CommonConstants.showNetworks) {
-						DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Fixed Preference Network");
-						MMNEAT.sharedPreferenceNetwork.getPhenotype().draw(panel);
-					}
-					// One preference neuron per multitask mode
-					setNNInputParameters(pacmanInputOutputMediator.numIn(), MMNEAT.sharedPreferenceNetwork.numOut);
-				} else if (Parameters.parameters.booleanParameter("evolveGhosts")) {
-					System.out.println("Evolving the Ghosts!");
+				//TODO: Allow for evolution of ghost teams
+				if(Parameters.parameters.booleanParameter("evolveGhosts")){
+					System.out.println("we are evolving a ghost!");
 					ghostsInputOutputMediator = new GhostsCheckEachDirectionMediator();
 					setNNInputParameters(ghostsInputOutputMediator.numIn(), ghostsInputOutputMediator.numOut());
 				} else {
-					// Regular Check-Each-Direction networks
-					setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
-				}
-				MsPacManInitialization.setupMsPacmanParameters();
-				if (CommonConstants.multitaskModules > 1) {
-					pacmanMultitaskScheme = (MsPacManModeSelector) ClassCreation.createObject("pacmanMultitaskScheme");
+					MsPacManInitialization.setupGenotypePoolsForMsPacman();
+					System.out.println("Setup Ms. Pac-Man Task");
+					pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
+					if (MMNEAT.pacmanInputOutputMediator instanceof VariableDirectionBlockLoadedInputOutputMediator) {
+						directionalSafetyFunction = (VariableDirectionBlock) ClassCreation.createObject("directionalSafetyFunction");
+						ensembleArbitrator = (MsPacManEnsembleArbitrator) ClassCreation.createObject("ensembleArbitrator");
+					}
+					String preferenceNet = Parameters.parameters.stringParameter("fixedPreferenceNetwork");
+					String multitaskNet = Parameters.parameters.stringParameter("fixedMultitaskPolicy");
+					if (multitaskNet != null && !multitaskNet.isEmpty()) {
+						// Preference networks are being evolved to pick outputs of
+						// fixed multitask network
+						MMNEAT.sharedMultitaskNetwork = (TWEANNGenotype) Easy.load(multitaskNet);
+						if (CommonConstants.showNetworks) {
+							DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Fixed Multitask Network");
+							MMNEAT.sharedMultitaskNetwork.getPhenotype().draw(panel);
+						}
+						// One preference neuron per multitask mode
+						setNNInputParameters(pacmanInputOutputMediator.numIn(), MMNEAT.sharedMultitaskNetwork.numModules);
+					} else if (preferenceNet != null && !preferenceNet.isEmpty()) {
+						MMNEAT.sharedPreferenceNetwork = (TWEANNGenotype) Easy.load(preferenceNet);
+						if (CommonConstants.showNetworks) {
+							DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Fixed Preference Network");
+							MMNEAT.sharedPreferenceNetwork.getPhenotype().draw(panel);
+						}
+						// One preference neuron per multitask mode
+						setNNInputParameters(pacmanInputOutputMediator.numIn(), MMNEAT.sharedPreferenceNetwork.numOut);
+					} else if (Parameters.parameters.booleanParameter("evolveGhosts")) {
+						System.out.println("Evolving the Ghosts!");
+					} else {
+						// Regular Check-Each-Direction networks
+						setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
+					}
+					MsPacManInitialization.setupMsPacmanParameters();
+					if (CommonConstants.multitaskModules > 1) {
+						pacmanMultitaskScheme = (MsPacManModeSelector) ClassCreation.createObject("pacmanMultitaskScheme");
+					}
 				}
 			} else if (task instanceof CooperativeMsPacManTask) {
 				System.out.println("Setup Coevolution Ms. Pac-Man Task");

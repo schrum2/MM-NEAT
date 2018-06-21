@@ -38,6 +38,7 @@ import edu.southwestern.tasks.rlglue.featureextractors.StateVariableExtractor;
 import edu.southwestern.tasks.ut2004.actuators.OpponentRelativeMovementOutputModel;
 import edu.southwestern.tasks.ut2004.sensors.OpponentRelativeSensorModel;
 import edu.southwestern.tasks.ut2004.weapons.SimpleWeaponManager;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.GaussianGenerator;
 import edu.southwestern.util.sound.SoundUtilExamples;
 import edu.southwestern.util.stats.Average;
@@ -47,6 +48,8 @@ import micro.ai.mcts.uct.UCT;
 import oldpacman.controllers.examples.Legacy;
 import oldpacman.controllers.examples.StarterPacMan;
 import oldpacman.game.Constants;
+import popacman.examples.StarterPacMan.MyPacMan;
+import popacman.examples.StarterISMCTS.InformationSetMCTSPacMan;
 
 /**
  * Used for processing and containing command line parameters.
@@ -871,6 +874,8 @@ public class Parameters {
 		classOptions.add("rlGlueEnvironment", null, "Environment/domain for an RL-Glue problem");
 		classOptions.add("rlGlueExtractor", StateVariableExtractor.class, "Feature extractor to get input features from RL-Glue observations");
 		classOptions.add("staticPacMan", StarterPacMan.class, "Pac-Man used to evolve ghosts against");
+		//popacman.examples.StarterPacMan.MyPacMan.class 
+		classOptions.add("staticPacManPO", popacman.examples.StarterPacMan.MyPacMan.class, "Pac-Man used to evolve PO ghosts against");
 		classOptions.add("staticPredatorController", AggressivePredatorController.class, "This parameter specifies the predator controller that prey evolve against");
 		classOptions.add("staticPreyController", PreyFleeClosestPredatorController.class, "This parameter specifies the prey controller that predators evolve against");
 		classOptions.add("substrateMapping", CenteredSubstrateMapping.class, "Determines the type of subtrate coordinate mapping we want to use");
