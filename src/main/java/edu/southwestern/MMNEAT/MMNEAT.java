@@ -642,7 +642,7 @@ public class MMNEAT {
 				}
 				prepareCoevolutionArchetypes();
 			} else if (task instanceof UT2004Task) {
-				if(Parameters.parameters.booleanParameter("botprizeMod") == true) {
+				if(Parameters.parameters.booleanParameter("botprizeMod")) {
 					UT2004Util.copyBotPrizeVersionOfGameBots();
 				} else {
 					UT2004Util.copyDefaultVersionOfGameBots();
