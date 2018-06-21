@@ -1325,21 +1325,24 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	public int addMSSNeuronsToCPPN(int initialNumberOfSubstratePairs, int initialNumberOfHiddenSubstrates, int numberOfNewHiddenSubstrates, int[] ftypes) {
 	//public int addMSSNeuronsToCPPN(int initialNumberOfSubstratePairs, int numberOfNewSubstratePairs, int orderFirstNewHiddenSubstrate, int numberOfNewHiddenSubstrates, int[] ftypes) {
 		int numberOfNewSubstratePairs = 2 * numberOfNewHiddenSubstrates;
-		System.out.println("nodes before " + nodes);
+		//System.out.println("nodes before " + nodes);
 		long[] emptyArray1 = new long[0];
 		double[] emptyArray2 = new double[0];
-		int i = 0, position = nodes.size() - numOut + initialNumberOfSubstratePairs;
+		int i = 0, position = this.outputStartIndex() + initialNumberOfSubstratePairs;
+		//adding new outputs for substrate pairs
 		while (i < numberOfNewSubstratePairs) {
 			System.out.println(i);
 			addOutputNode(ftypes[i], emptyArray1, emptyArray2, emptyArray1, position + i);
 			i++;
 		}
+		//new substrates will be inserted after the old hidden substrates and before the output substrates
 		position += initialNumberOfHiddenSubstrates + i;
+		//adding new outputs for hidden biases
 		for (int j = 0; j < numberOfNewHiddenSubstrates; j++) {
 			addOutputNode(ftypes[i + j], emptyArray1, emptyArray2, emptyArray1, position + j);
 		}
-		System.out.println("nodes after " + nodes);
-		MiscUtil.waitForReadStringAndEnterKeyPress("");
+		//System.out.println("nodes after " + nodes);
+		//MiscUtil.waitForReadStringAndEnterKeyPress("");
 		return numberOfNewSubstratePairs + numberOfNewHiddenSubstrates;
 	}
 
