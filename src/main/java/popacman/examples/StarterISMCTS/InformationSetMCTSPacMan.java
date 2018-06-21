@@ -102,12 +102,12 @@ public class InformationSetMCTSPacMan extends PacmanController implements Drawab
 
             int ghostIndex = game.getGhostCurrentNodeIndex(ghost);
             if (ghostIndex != -1) {
-                predictions.observe(ghost, ghostIndex, game.getGhostLastMoveMade(ghost));
+                predictions.observe(ghost, ghostIndex, game.getGhostLastMoveMade(ghost), null);
                 ghostEdibleTime[ghost.ordinal()] = game.getGhostEdibleTime(ghost);
             } else {
                 List<GhostLocation> locations = predictions.getGhostLocations(ghost);
                 locations.stream().filter(location -> game.isNodeObservable(location.getIndex())).forEach(location -> {
-                    predictions.observeNotPresent(ghost, location.getIndex());
+                    predictions.observeNotPresent(ghost, location.getIndex(), null);
                 });
             }
         }

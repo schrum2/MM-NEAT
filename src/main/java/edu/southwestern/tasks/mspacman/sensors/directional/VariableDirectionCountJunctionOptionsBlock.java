@@ -10,7 +10,7 @@ import edu.southwestern.util.datastructures.Pair;
 
 /**
  * In a given direction, find the nearest junction. If it can be safely reached,
- * then count the junctions reachable from it. In other words, could the number
+ * then count the junctions reachable from it. In other words, count the number
  * of safe junctions two steps away.
  * @author Jacob Schrum
  */
@@ -25,24 +25,25 @@ public class VariableDirectionCountJunctionOptionsBlock extends VariableDirectio
 	}
 
 	@Override
-	/**
-	 * TODO: how to handle PO conditions
-	 */
 	public double getValue(GameFacade gf) {
 		int[] junctions = gf.getJunctionIndices();
 		
 		// Closest junction
 		Pair<Integer, int[]> closest = gf.getTargetInDir(gf.getPacmanCurrentNodeIndex(), junctions, dir);
+		
+		//Handling PO conditions
 		if(closest == new Pair<Integer, int[]>(new Integer(-1),null)) {
 			throw new UnsupportedOperationException("Need to implement PO conditions");
 		}
 		
+		//check to see if you can make it to the junction before any ghost
 		int[] ghostsToCheck = new int[] { 0, 1, 2, 3 };
 		if (!VariableDirectionCloserToTargetThanThreatGhostBlock.canReachClosestTargetSafelyInDirection(gf,
 				new int[] { closest.t1 }, dir, ghostsToCheck)) {
 			return 0;
 		}
 		int current = gf.getPacmanCurrentNodeIndex();
+		
 		// Neighbors of the closest junction
 		int[] neighbors = gf.neighbors(closest.t1);
 		ArrayList<Integer> d2 = new ArrayList<Integer>(GameFacade.NUM_DIRS);

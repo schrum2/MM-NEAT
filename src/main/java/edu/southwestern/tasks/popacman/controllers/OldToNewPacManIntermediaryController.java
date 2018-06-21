@@ -163,12 +163,22 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	        	for (int i = 0; i < mostRecentGame.getNumberOfNodes(); i++) {      	
 	                double probability = ghostPredictions.calculate(i);
 	                if (probability >= GHOST_THRESHOLD) {
-	                	graphics.setColor(redAlphas[(int) Math.min(255 * probability, 255)]);
-	                    graphics.fillRect(
-	                            mostRecentGame.getNodeXCood(i) * MAG - 1,
-	                            mostRecentGame.getNodeYCood(i) * MAG + 3,
-	                            14, 14
-	                    );
+	                	double edibleProbability = ghostPredictions.calculateEdible(i);
+	                	if(edibleProbability > 0.0) {
+	                    	graphics.setColor(new Color(0,0, 255, 255));
+		                    graphics.fillRect(
+		                            mostRecentGame.getNodeXCood(i) * MAG - 1,
+		                            mostRecentGame.getNodeYCood(i) * MAG + 3,
+		                            14, 14
+		                    );
+	                	} else {
+	                    	graphics.setColor(redAlphas[(int) Math.min(255 * probability, 255)]);
+		                    graphics.fillRect(
+		                            mostRecentGame.getNodeXCood(i) * MAG - 1,
+		                            mostRecentGame.getNodeYCood(i) * MAG + 3,
+		                            14, 14
+		                    );	
+	                	}
 	                }
 	            }
     		}
@@ -290,7 +300,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	            int ghostIndex = game.getGhostCurrentNodeIndex(ghost);
 	            if (ghostIndex != -1) {
 	            	try {
-	            		ghostPredictions.observe(ghost, ghostIndex, informedGameFacade.poG.getGhostLastMoveMade(ghost));
+	            		ghostPredictions.observe(ghost, ghostIndex, informedGameFacade.poG.getGhostLastMoveMade(ghost), informedGameFacade);
 	            	} catch (java.lang.ArrayIndexOutOfBoundsException e) {
 	            		//System.out.println(e.toString() + " in OldToNewPacManIntermediaryController.updateModels()");
 	            		break;
@@ -299,7 +309,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	            } else {
 	                List<GhostLocation> locations = ghostPredictions.getGhostLocations(ghost);
 	                locations.stream().filter(location -> informedGameFacade.poG.isNodeObservable(location.getIndex())).forEach(location -> {
-	                	ghostPredictions.observeNotPresent(ghost, location.getIndex());
+	                	ghostPredictions.observeNotPresent(ghost, location.getIndex(), informedGameFacade);
 	                });
 	            }
 	        }

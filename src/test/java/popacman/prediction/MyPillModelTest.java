@@ -51,10 +51,7 @@ public class MyPillModelTest {
 				"useGhostModel:false", "drawGhostPredictions:false",
 				
 				//PillModel Parameters
-				"usePillModel:true", "drawPillModel:true", 
-				
-		//REMEMBER TO REMOVE
-				"watch:true"});
+				"usePillModel:true", "drawPillModel:true"});
 		
 	}
 	
@@ -109,7 +106,7 @@ public class MyPillModelTest {
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		//TO DRAW A FRAME (AND CLOSE IT)//
-		////testExecutorFacade.forceGameView.showGame();
+		//////testExecutorFacade.forceGameView.showGame();
 		//testExecutorFacade.forceGameView.closeGame();		
 		//////////////////////////////////
 		
@@ -140,16 +137,16 @@ public class MyPillModelTest {
 			
 			//It is set above 
 			Assert.assertNotNull(testGameFacade.pillModel);
-			System.out.println("Pill Model reference at time step " + i + ": " + informedGameFacade.pillModel.toString());
+			//System.out.println("Pill Model reference at time step " + i + ": " + informedGameFacade.pillModel.toString());
 			//We have not gotten to a pill yet
 			Assert.assertFalse(testGameFacade.pillModel.getPills().get(testGameFacade.getPacmanCurrentNodeIndex()));
 			
 			//DRAW THE GAME STATE
-			////testExecutorFacade.forceGameView.showGame();
+			//////testExecutorFacade.forceGameView.showGame();
 			//testExecutorFacade.forceGameView.closeGame();
 		}
-		testExecutorFacade.forceGameView.showGame();
-		System.out.println("");
+		////testExecutorFacade.forceGameView.showGame();
+		//System.out.println("");
 		
 		//WE HAVEN'T YET EATEN A PILL
 		int pillsEatenAtTime5 = testGameFacade.pillModel.getPillsEaten();
@@ -162,13 +159,13 @@ public class MyPillModelTest {
 			activePillsAtTime5.add(i);
 		}
 
-		System.out.println("TIMESTEP 5:\t");
-		System.out.println("Active Pills before any consumption: " + activePillsAtTime5.toString());
-		System.out.println("pacmans location at time 5: " + testGameFacade.getPacmanCurrentNodeIndex());
-		System.out.println("Is there a pill at index " + testGameFacade.getPacmanCurrentNodeIndex() + "? " + testGameFacade.pillModel.getPills().get(testGameFacade.getPacmanCurrentNodeIndex()));
-		System.out.println("");
+//		System.out.println("TIMESTEP 5:\t");
+//		System.out.println("Active Pills before any consumption: " + activePillsAtTime5.toString());
+//		System.out.println("pacmans location at time 5: " + testGameFacade.getPacmanCurrentNodeIndex());
+//		System.out.println("Is there a pill at index " + testGameFacade.getPacmanCurrentNodeIndex() + "? " + testGameFacade.pillModel.getPills().get(testGameFacade.getPacmanCurrentNodeIndex()));
+//		System.out.println("");
 		
-		testExecutorFacade.forceGameView.showGame();
+		//testExecutorFacade.forceGameView.showGame();
 		Assert.assertTrue(testGameFacade.pillModel.getPills().get(972));
 		
 		//MOVE PACMAN LEFT, WE EAT A PILL ON THIS STEP
@@ -186,17 +183,17 @@ public class MyPillModelTest {
 		Assert.assertFalse(testGameFacade.getPacmanCurrentNodeIndex() == pacManLocAtTime5);
 		Assert.assertTrue(testGameFacade.getScore() == 10.0);
 		
-		System.out.println("TIMESTEP 6:\t");
-		System.out.println("pacmans location at time 6: " + testGameFacade.getPacmanCurrentNodeIndex());
-		System.out.println("Active Pills after any consumption: " + activePillsAtTime6.toString());
-		System.out.println("Is there a pill at index " + testGameFacade.getPacmanCurrentNodeIndex() + "? " + testGameFacade.pillModel.getPills().get(testGameFacade.getPacmanCurrentNodeIndex()));
-		System.out.println("");
-		
+//		System.out.println("TIMESTEP 6:\t");
+//		System.out.println("pacmans location at time 6: " + testGameFacade.getPacmanCurrentNodeIndex());
+//		System.out.println("Active Pills after any consumption: " + activePillsAtTime6.toString());
+//		System.out.println("Is there a pill at index " + testGameFacade.getPacmanCurrentNodeIndex() + "? " + testGameFacade.pillModel.getPills().get(testGameFacade.getPacmanCurrentNodeIndex()));
+//		System.out.println("");
+//		
 		testExecutorFacade.forceGame(testGameFacade, testPacManControllerFacade, testGhostControllerFacade, MOVE.LEFT);
 		
-		for(int i = 0; i < testGameFacade.getActivePillsIndices().length; i++) {
-			System.out.print(testGameFacade.getActivePillsIndices()[i] + ", ");
-		}
+//		for(int i = 0; i < testGameFacade.getActivePillsIndices().length; i++) {
+//			System.out.print(testGameFacade.getActivePillsIndices()[i] + ", ");
+//		}
 		
 		//there is no active pill at 972
 		//Assert.assertFalse(activePillsAtTime6.contains(972));
@@ -213,7 +210,7 @@ public class MyPillModelTest {
 		//Assert.assertFalse(testGameFacade.pillModel.getPills().get(testGameFacade.poG.getCurrentMaze().graph[testGameFacade.getPacmanCurrentNodeIndex()].pillIndex));
 		
 		//DRAW THE GAME
-		testExecutorFacade.forceGameView.showGame();
+		//testExecutorFacade.forceGameView.showGame();
 	
 	}
 	

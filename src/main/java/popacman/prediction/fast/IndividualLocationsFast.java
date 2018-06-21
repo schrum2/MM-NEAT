@@ -101,7 +101,7 @@ public class IndividualLocationsFast {
         double sum = 0.0d;
         for (int i = 0; i < probabilities.length; i++) {
             sum += probabilities[i];
-            if (sum >= x) return new GhostLocation(i, Constants.MOVE.values()[moves[i]], probabilities[i]);
+            if (sum >= x) return new GhostLocation(i, Constants.MOVE.values()[moves[i]], probabilities[i], 0);
         }
         return null;
     }
@@ -114,7 +114,7 @@ public class IndividualLocationsFast {
         ArrayList<GhostLocation> locations = new ArrayList<>();
         for (int i = 0; i < probabilities.length; i++) {
             if (probabilities[i] > 0) {
-                locations.add(new GhostLocation(i, Constants.MOVE.values()[moves[i]], probabilities[i]));
+                locations.add(new GhostLocation(i, Constants.MOVE.values()[moves[i]], probabilities[i], 0));
             }
         }
         return locations;
