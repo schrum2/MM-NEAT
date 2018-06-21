@@ -27,7 +27,8 @@ public class AttemptAtTeammateController implements BotController {
 		//bot should look for health pickups if it drops below 20hp
 		if(bot.getBot().getSelf().getHealth() < (FULL_HEALTH/5)) {
 			//tell bot to abandon whatever it's doing and go find health
-			Location getHealth =  bot.getItems().getNearestVisibleItem(ItemType.Category.HEALTH).getLocation();
+			Location getHealth =  bot.getItems().getNearestItem(ItemType.Category.HEALTH).getLocation();
+					//getNearestVisibleItem(ItemType.Category.HEALTH).getLocation(
 			return new NavigateToLocationAction(getHealth);
 		}
 		
