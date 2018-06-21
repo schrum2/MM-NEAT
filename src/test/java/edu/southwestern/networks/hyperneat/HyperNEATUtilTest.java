@@ -43,7 +43,7 @@ public class HyperNEATUtilTest {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
 				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
 				"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent",
-				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "hyperNEAT:true", "showWeights:true" });
+				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "hyperNEAT:true", "showWeights:false" });
 		MMNEAT.loadClasses();
 		htask = (HyperNEATTask) MMNEAT.task;
 		//MMNEAT.task = (Task) htask;
@@ -99,7 +99,7 @@ public class HyperNEATUtilTest {
 	 */
 	@Test
 	public void testDrawSubstrateVisual() {
-		HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
+		//HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
 	}
 	
 	/**
@@ -107,7 +107,7 @@ public class HyperNEATUtilTest {
 	 */
 	@Test
 	public void testDrawSubstratesVisual() { 
-		HyperNEATUtil.drawSubstrates(nodes);
+		//HyperNEATUtil.drawSubstrates(nodes);
 	}
 	
 	@Test

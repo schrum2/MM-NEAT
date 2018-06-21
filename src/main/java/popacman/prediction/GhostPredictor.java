@@ -8,6 +8,8 @@ import popacman.prediction.fast.GhostPredictionsFast;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+
 /**
  *
  * Ghost Predictor
@@ -29,15 +31,22 @@ public class GhostPredictor {
         ghostPredictions.add(new GhostPredictionsFast(maze));
     }
 
-    public void addObservation(GHOST ghost, int ghostIndex, MOVE lastMoveMade){
+    /**
+     * This didn't used to take a GameFacade, but it is necessary now.
+     * @param ghost
+     * @param ghostIndex
+     * @param lastMoveMade
+     * @param game
+     */
+    public void addObservation(GHOST ghost, int ghostIndex, MOVE lastMoveMade, GameFacade game){
         if(ghostPredictions.isEmpty()) return;
-        ghostPredictions.get(0).observe(ghost, ghostIndex, lastMoveMade);
+        ghostPredictions.get(0).observe(ghost, ghostIndex, lastMoveMade, game);
         observationMade = true;
     }
 
-    public void observeNotPresent(GHOST ghost, int ghostIndex){
+    public void observeNotPresent(GHOST ghost, int ghostIndex, GameFacade game){
         if(ghostPredictions.isEmpty()) return;
-        ghostPredictions.get(0).observeNotPresent(ghost, ghostIndex);
+        ghostPredictions.get(0).observeNotPresent(ghost, ghostIndex, game);
         observationMade = true;
     }
 
@@ -81,5 +90,18 @@ public class GhostPredictor {
         }
 
         return ghostPredictions.get(depth).calculate(index);
+    }
+    
+    public double getEdiblePredictions(int depth, int index){
+        if(ghostPredictions.isEmpty()) return 0.0d;
+        if(ghostPredictions.size() <= depth){
+            for(int i = ghostPredictions.size(); i <= depth; i++){
+                GhostPredictionsFast temp = ghostPredictions.get(i - 1).copy();
+                temp.update();
+                ghostPredictions.add(temp);
+            }
+        }
+
+        return ghostPredictions.get(depth).calculateEdible(index);
     }
 }
