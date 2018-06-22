@@ -1,11 +1,6 @@
 package edu.southwestern.tasks.ut2004;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -21,7 +16,7 @@ import edu.southwestern.tasks.ut2004.fitness.UT2004FitnessFunction;
  */
 public class BotPrizeServer {
 	public static void main(String[] args) throws IOException {
-		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:2", "numMirrorBots:2", "botprizeMod:true", "utEvalMinutes:15"});
+		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:2", "numMirrorBots:2", "botprizeMod:true", "utEvalMinutes:1"});
 		
 		//copyBotPrizeVersionOfGameBots(); // Make sure right version of GameBots is being used
 		UT2004Util.copyBotPrizeVersionOfGameBots();
@@ -34,7 +29,10 @@ public class BotPrizeServer {
 		int desiredSkill = 0;
 		ArrayList<UT2004FitnessFunction<TWEANN>> fitness = new ArrayList<>();
 		ArrayList<UT2004FitnessFunction<TWEANN>> others = new ArrayList<>();
+		
+		String[] mapList = new String[] {"DM-TrainingDay", "DM-IceHenge"};
+		
 		//launches server
-		UT2004Task.evaluateMultipleGenotypes(individuals, "DM-TrainingDay", null, null, null, controller,	nativeBotSkills, evalMinutes, desiredSkill,	fitness, others);
+		UT2004Task.evaluateMultipleGenotypesAcrossMultupleMaps(individuals, mapList, null, null, null, controller,	nativeBotSkills, evalMinutes, desiredSkill,	fitness, others);
 	}
 }
