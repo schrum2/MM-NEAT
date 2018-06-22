@@ -23,11 +23,30 @@ public class DodgeShootAction extends ShootingAction {
     private Double radiansToTurn = null;
     private Triple direction;
 
+    /**
+     * initializes the action
+     * @param direction (where the bot should face)
+     * @param shoot (should the bot shoot)
+     * @param secondaryFire (should the bot use secondary firing mode)
+     * @param agentRotation (how the bot is roated)
+     * @param agentLocation (where the bot is located)
+     * @param players (list of players)
+     */
     public DodgeShootAction(Triple direction, boolean shoot, boolean secondaryFire, Triple agentRotation, Triple agentLocation, ArrayList<Player> players) {
         super(shoot,secondaryFire,agentRotation,agentLocation,players);
         this.direction = direction;
     }
 
+   /**
+    * initializes the action with how the bot should turn, rather than direction it should face
+    * @param radiansToTurn (how the bot should turn)
+    * @param direction (where the bot should face)
+    * @param shoot (should the bot shoot)
+    * @param secondaryFire (should the bot use secondary firing mode)
+    * @param agentRotation (how the bot is roated)
+    * @param agentLocation (where the bot is located)
+    * @param players (list of players)
+    */
     public DodgeShootAction(double radiansToTurn, boolean shoot, boolean secondaryFire, Triple agentRotation, Triple agentLocation, ArrayList<Player> players) {
         this(directionFromTurn(radiansToTurn), shoot, secondaryFire, agentRotation, agentLocation,  players);
         // Just for the sake of the toString() at this point
@@ -35,9 +54,9 @@ public class DodgeShootAction extends ShootingAction {
     }
 
     /**
-     * 
+     * Tells the bot where it should be facing based on its turn
      * @param radiansToTurn
-     * @return
+     * @return returns where the bot should look
      */
     private static Triple directionFromTurn(Double radiansToTurn){
         if(radiansToTurn == null) {

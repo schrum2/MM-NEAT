@@ -13,18 +13,25 @@ public class AvoidEnemyAction extends OpponentRelativeAction {
 
     @Override
    /**
-    * allows the bot's actions to be printed out
+    * allows the bot to print out a description of it's actions
     */
     public String toString() {
         return "Avoid" + (shoot ? ":Shoot:" + (secondary ? "Alt" : "Pri") : "") + (jump ? ":Jump" : "");
     }
 
+    /**
+     * initializes the action
+     * @param memory (agent memory to use)
+     * @param shoot (should the bot shoot)
+     * @param secondary (should the bot use secondary firing mode)
+     * @param jump (should the bot jump)
+     */
     public AvoidEnemyAction(AgentMemory memory, boolean shoot, boolean secondary, boolean jump) {
         super(memory, shoot, secondary, jump);
     }
 
     /**
-     * initializes the bot's internal settings
+     * initializes the action, bot assumes it shouldn't jump
      * 
      * @param memory (bot memory)
      * @param shoot (whether or not the bot should shoot)
