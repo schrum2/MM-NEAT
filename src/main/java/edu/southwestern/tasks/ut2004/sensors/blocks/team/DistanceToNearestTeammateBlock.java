@@ -8,7 +8,7 @@ import edu.southwestern.tasks.ut2004.UT2004Util;
 import edu.southwestern.tasks.ut2004.sensors.AcceptsTeamDistances;
 import edu.southwestern.tasks.ut2004.sensors.blocks.UT2004SensorBlock;
 
-public class NearestTeammateBlock implements UT2004SensorBlock, AcceptsTeamDistances{
+public class DistanceToNearestTeammateBlock implements UT2004SensorBlock, AcceptsTeamDistances{
 
 	public static final int MAX_DISTANCE = 1000;
 

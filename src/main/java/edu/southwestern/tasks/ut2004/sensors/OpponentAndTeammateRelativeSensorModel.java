@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import edu.southwestern.tasks.ut2004.sensors.blocks.*;
-import edu.southwestern.tasks.ut2004.sensors.blocks.team.NearestTeammateBlock;
+import edu.southwestern.tasks.ut2004.sensors.blocks.team.DistanceToNearestTeammateBlock;
 
 /**
  * Finds the the bot's position and velocity with respect to the opponent it's facing 
@@ -31,7 +31,7 @@ public class OpponentAndTeammateRelativeSensorModel extends UT2004BlockLoadedSen
 		blocks.add(new AgentBehaviorBlock(false)); //false means that the bot senses a FRIEND nearby
 		blocks.add(new SelfAwarenessBlock());
 		// Sensors that use shared memory on the client side
-		NearestTeammateBlock ntb = new NearestTeammateBlock();
+		DistanceToNearestTeammateBlock ntb = new DistanceToNearestTeammateBlock();
 		ntb.giveTeamLocations(teammateLocations);
 		blocks.add(ntb);
 
