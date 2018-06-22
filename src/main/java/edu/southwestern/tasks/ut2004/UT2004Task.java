@@ -230,10 +230,13 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				// Reset all eval results
 				result = new Pair[individuals.length + opponents.length];
 			} finally {
-				if (ArrayUtil.anyNull(result)) {//repeats the evaluation if it is unsucessful the first time
+				if (ArrayUtil.anyNull(result)) {//repeats the evaluation if it is unsuccessful the first time
 					System.out.println("Evaluation failed: repeat: " + botPort);
 				}
-				if(individuals.length == 0) System.out.println("No evolving bots! Repeat evaluation");
+				// If bots are not evolving, then perform one eval before finishing
+				if(individuals.length == 0) {
+					return result; // Will be an empty result
+				}
 			}
 		}
 		return result;
@@ -263,7 +266,6 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 			int[] nativeBotSkills, int evalMinutes, int desiredSkill,
 			ArrayList<UT2004FitnessFunction<T>> fitness, ArrayList<UT2004FitnessFunction<T>> others) {    
 		
-		Pair<double[], double[]>[][] resultsArray = new Pair[map.length][];
 		double[][][] fitnessArr = new double[individuals.length][map.length][];
 		double[][][] otherScoresArr = new double[individuals.length][map.length][];
 		for(int i = 0; i < map.length; i++) {
@@ -278,7 +280,6 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		for(int i = 0; i <individuals.length; i++) {
 			resultToReturn[i] = NoisyLonerTask.averageResults(fitnessArr[i], otherScoresArr[i]);
 		}
-		
 		
 		return resultToReturn;
 	}
