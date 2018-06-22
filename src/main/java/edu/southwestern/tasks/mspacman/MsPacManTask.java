@@ -541,7 +541,8 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 				//create a GhostControllerFacade with a ghost network
 				ghosts = new GhostControllerFacade(new OldToNewGhostIntermediaryController(((SharedNNGhosts<T>) organism).controller) );
 			} else {
-				throw new UnsupportedOperationException("As of now, Ghost can only be evolved in PO conditions");
+				//throw new UnsupportedOperationException("As of now, Ghost can only be evolved in PO conditions");
+				ghosts = new GhostControllerFacade( (NewGhostController) ((SharedNNGhosts<T>) organism).controller );
 			}
 			loadPacMan();
 		//if we are not evolving ghosts, we are evolving pacman
