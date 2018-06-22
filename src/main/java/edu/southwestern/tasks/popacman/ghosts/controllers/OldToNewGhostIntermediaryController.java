@@ -96,6 +96,26 @@ public class OldToNewGhostIntermediaryController extends Controller<EnumMap<GHOS
 	}
     
     public EnumMap<GHOST, MOVE> getMove(Game game, long timeDue){
+    	EnumMap<GHOST, MOVE> map = convertMoveMapOldToPO(this.Network.getMove());
+    	for(GHOST g : map.keySet()) {
+    		switch(g) {
+    			case BLINKY:
+    				zombieBlinky.setMove(map.get(g));
+    				break;
+    			case PINKY:
+    				zombiePinky.setMove(map.get(g));
+    				break;
+    			case INKY:
+    				zombieInky.setMove(map.get(g));
+    				break;
+    			case SUE:
+    				zombieSue.setMove(map.get(g));
+    				break;
+    			default:
+    				throw new UnsupportedOperationException("invalid ghost");    				
+    		}	
+    	}
+    	
     	return convertMoveMapOldToPO(this.Network.getMove());
     }
 
