@@ -8,6 +8,11 @@ import edu.southwestern.tasks.ut2004.UT2004Util;
 import edu.southwestern.tasks.ut2004.sensors.AcceptsTeamDistances;
 import edu.southwestern.tasks.ut2004.sensors.blocks.UT2004SensorBlock;
 
+/**
+ * Finds the distance to the bot's nearest friend in both 3D and 2D space
+ * @author Adina Friedman
+ *
+ */
 public class DistanceToNearestTeammateBlock implements UT2004SensorBlock, AcceptsTeamDistances{
 
 	public static final int MAX_DISTANCE = 1000;

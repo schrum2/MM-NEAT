@@ -7,7 +7,6 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import cz.cuni.amis.utils.collections.MyCollections;
 import edu.southwestern.tasks.ut2004.actions.BotAction;
 import edu.southwestern.tasks.ut2004.actions.EmptyAction;
-import edu.southwestern.tasks.ut2004.actions.FollowEnemy;
 import edu.southwestern.tasks.ut2004.actions.FollowTeammate;
 import edu.southwestern.tasks.ut2004.actions.NavigateToLocationAction;
 import edu.southwestern.tasks.ut2004.controller.BotController;
