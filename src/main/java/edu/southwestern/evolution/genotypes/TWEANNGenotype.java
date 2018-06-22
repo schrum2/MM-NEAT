@@ -1269,7 +1269,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * network, which may be less than planned since duplicates in the list
 	 * sourceInnovations are ignored.
 	 *
-	 * This default version of the method awlays adds the new output neuron at
+	 * This default version of the method always adds the new output neuron at
 	 * the end of the list of output neurons.
 	 *
 	 * @param ftype = Activation function type

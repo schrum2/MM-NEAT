@@ -201,7 +201,7 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 */
 	public void cascadeExpansion (int newLayerWidth, int newSubstratesWidth, int newSubstratesHeight, int connectivityType) {
 		//if HyperNEAT is encoded via MSS new outputs must be added to the cppn
-		if (!Parameters.parameters.booleanParameter("substrateLocationInputs") && !Parameters.parameters.booleanParameter("substrateBiasLocationInputs")) {
+		if (!Parameters.parameters.booleanParameter("substrateLocationInputs")) {
 			int[] ftypes = new int[CommonConstants.leo ? newLayerWidth * 4 + newLayerWidth: newLayerWidth * 2 + newLayerWidth];
 			for (int i = 0; i < ftypes.length; i++) {
 				ftypes[i] = ActivationFunctions.randomFunction();
@@ -246,10 +246,10 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		for (NodeGene ng : this.nodes) {// needed for a deep copy
 			copyGenes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias()));
 		}
-		
 		// Construct the copy
 		HyperNEATCPPNAndSubstrateArchitectureGenotype copy = new HyperNEATCPPNAndSubstrateArchitectureGenotype(
 				this.archetypeIndex, copyLinks, copyGenes, this.numOut, copyHiddenArchitecture, copyAllSubstrateConnectivity);
+		//TWEANNGenotype result = new TWEANNGenotype(this.getPhenotype());
 
 		assert copy.allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
 		

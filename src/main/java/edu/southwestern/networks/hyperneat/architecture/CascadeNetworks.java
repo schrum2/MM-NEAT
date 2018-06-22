@@ -100,7 +100,9 @@ public class CascadeNetworks {
 	@SuppressWarnings("unchecked")
 	public static <T> ArrayList<Genotype<T>> getSubstrateGenotypesFromCPPNs(ArrayList<Genotype<T>> population, int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, int connectivityType) {
 		ArrayList<Genotype<T>> substrateGenotypes = new ArrayList<>();
+		assert population.get(0) instanceof HyperNEATCPPNAndSubstrateArchitectureGenotype;
 		for(int i = 0; i < population.size(); i++) {
+			//HyperNEATCPPNAndSubstrateArchitectureGenotype genotype = (HyperNEATCPPNAndSubstrateArchitectureGenotype) population.get(i).copy();
 			HyperNEATCPPNAndSubstrateArchitectureGenotype genotype = new HyperNEATCPPNAndSubstrateArchitectureGenotype((HyperNEATCPPNGenotype) population.get(i));
 			genotype.cascadeExpansion(newLayerWidth, newSubstratesWidth, newsubstratesHeight, connectivityType);
 			substrateGenotypes.add((Genotype<T>) genotype);

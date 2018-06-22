@@ -1,6 +1,5 @@
 package edu.southwestern.networks;
 
-import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
