@@ -15,6 +15,7 @@ import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.networks.hyperneat.architecture.CascadeNetworks;
 import edu.southwestern.networks.hyperneat.architecture.FlexibleSubstrateArchitecture;
 import edu.southwestern.networks.hyperneat.architecture.SubstrateArchitectureDefinition;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -199,12 +200,12 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 * @param connectivityType how these two substrates are connected (i.e. full, convolutional,...)
 	 */
 	public void cascadeExpansion (int newLayerWidth, int newSubstratesWidth, int newSubstratesHeight, int connectivityType) {
+		//if HyperNEAT is encoded via MSS new outputs must be added to the cppn
 		if (!Parameters.parameters.booleanParameter("substrateLocationInputs") && !Parameters.parameters.booleanParameter("substrateBiasLocationInputs")) {
-			int[] ftypes = new int[newLayerWidth * 2 + newLayerWidth];
+			int[] ftypes = new int[CommonConstants.leo ? newLayerWidth * 4 + newLayerWidth: newLayerWidth * 2 + newLayerWidth];
 			for (int i = 0; i < ftypes.length; i++) {
 				ftypes[i] = ActivationFunctions.randomFunction();
 			}
-			//getSubstrateInformation((HyperNEATTask) MMNEAT.task).size()
 			addMSSNeuronsToCPPN(allSubstrateConnectivity.size(), hiddenArchitecture.size(), newLayerWidth, ftypes);
 		}
 		Pair<List<Triple<Integer, Integer, Integer>>, List<SubstrateConnectivity>> newDefiniton = 

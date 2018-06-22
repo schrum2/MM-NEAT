@@ -562,10 +562,10 @@ public class TWEANN implements Network {
 			}
 		}
 		// Is true if net has one mode
-		assert(numModes != 1 || numOut <= neuronsPerModule + 1) : "Too many outputs for one mode" + "\n" + "g.getId():"
-		+ g.getId() + "\n" + "g.archetypeIndex:" + g.archetypeIndex + "\n" + "g.numIn:" + g.numIn + "\n"
-		+ "g.numOut:" + g.numOut + "\n" + "g.nodes.size():" + g.nodes.size() + "\n"
-		+ "EvolutionaryHistory.archetypeOut:" + Arrays.toString(EvolutionaryHistory.archetypeOut);
+//		assert(numModes != 1 || numOut <= neuronsPerModule + 1) : "Too many outputs for one mode" + "\n" + "g.getId():"
+//		+ g.getId() + "\n" + "g.archetypeIndex:" + g.archetypeIndex + "\n" + "g.numIn:" + g.numIn + "\n"
+//		+ "g.numOut:" + g.numOut + "\n" + "g.nodes.size():" + g.nodes.size() + "\n"
+//		+ "EvolutionaryHistory.archetypeOut:" + Arrays.toString(EvolutionaryHistory.archetypeOut);
 		// Is true if net has more than one mode
 		assert(numModes == 1
 				|| numOut == (neuronsPerModule + (standardMultitask || CommonConstants.ensembleModeMutation ? 0 : 1))

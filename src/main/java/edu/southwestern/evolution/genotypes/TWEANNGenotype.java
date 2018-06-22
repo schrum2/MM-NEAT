@@ -1285,7 +1285,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 
 	/**
 	 * Same as above, but can potentially add the new output neuron in between other output neurons.
-	 * TODO
 	 * @param ftype
 	 * @param sourceInnovations
 	 * @param weights
@@ -1313,34 +1312,36 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	}
 
 	/**
-	 * 
-	 * @param initialNumberOfSubstratePairs number of substrate pairs before addition of neurons
-	 * @param numberOfNewSubstratePairs number of substrate pairs to add
-	 * @param orderFirstNewHiddenSubstrate position where the new first hidden substrate is added in nodes
-	 * @param numberOfNewHiddenSubstrates number of new substrates to add
-	 * @param ftypes activation functions of added substrates 
-	 * @return the number of output neurons that were added
+	 * adds output neurons to cppn for new substrate connections and biases when a cascade expansion occurs
+	 * @param initialNumberOfSubstratePairs number of substrate pairs before addition of new substrate
+	 * @param initialNumberOfHiddenSubstrates number of hidden substrates in HyperNEAT network
+	 * @param numberOfNewHiddenSubstrates number of new substrates that need new outputs in cppn
+	 * @param ftypes activation functions of new cppn outputs starting with the outputs for the connections between the new substrates
+	 * 		and their leo outputs if applicable then ending with the biases for these new substrates
+	 * @return the number of output neurons that were added to the cppn
 	 */
 	public int addMSSNeuronsToCPPN(int initialNumberOfSubstratePairs, int initialNumberOfHiddenSubstrates, int numberOfNewHiddenSubstrates, int[] ftypes) {
-		int numberOfNewSubstratePairs = 2 * numberOfNewHiddenSubstrates;
-		//System.out.println("nodes before " + nodes);
-		long[] emptyArray1 = new long[0];
-		double[] emptyArray2 = new double[0];
+		int numberOfNewSubstratePairs;
+		if (CommonConstants.leo) {
+			initialNumberOfSubstratePairs *= 2; //because if leo then each substrate pair has 2 outputs in cppn
+			numberOfNewSubstratePairs = numberOfNewHiddenSubstrates * 4;
+		} else {
+			numberOfNewSubstratePairs = numberOfNewHiddenSubstrates * 2;
+		}
+		long[] emptyArray1 = new long[0]; //new output nodes start with no links
+		double[] emptyArray2 = new double[0]; //new output nodes start with no links
 		int i = 0, position = this.outputStartIndex() + initialNumberOfSubstratePairs;
 		//adding new outputs for substrate pairs
 		while (i < numberOfNewSubstratePairs) {
-			System.out.println(i);
 			addOutputNode(ftypes[i], emptyArray1, emptyArray2, emptyArray1, position + i);
 			i++;
 		}
-		//new substrates will be inserted after the old hidden substrates and before the output substrates
-		position += initialNumberOfHiddenSubstrates + i;
+		//new substrate biases will be inserted after the old hidden substrate biases and before the output substrate biases
+		position += numberOfNewSubstratePairs + initialNumberOfHiddenSubstrates;
 		//adding new outputs for hidden biases
 		for (int j = 0; j < numberOfNewHiddenSubstrates; j++) {
 			addOutputNode(ftypes[i + j], emptyArray1, emptyArray2, emptyArray1, position + j);
 		}
-		//System.out.println("nodes after " + nodes);
-		//MiscUtil.waitForReadStringAndEnterKeyPress("");
 		return numberOfNewSubstratePairs + numberOfNewHiddenSubstrates;
 	}
 
