@@ -20,7 +20,7 @@ public class ApproachEnemyAction extends OpponentRelativeAction {
 
     public ApproachEnemyAction(AgentMemory memory, boolean shoot, boolean secondary, boolean jump, boolean forcePath) {
         super(memory, shoot, secondary, jump);
-        this.forcePath = forcePath;
+        this.forcePath = forcePath; //I don't care how far you are, just get there, using nav grid
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ApproachEnemyAction extends OpponentRelativeAction {
     private void runToOrPath(AgentBody body, Player enemy) {
         Location agent = this.memory.info.getLocation();
         double distance = (agent != null && enemy.getLocation() != null) ? enemy.getLocation().getDistance(agent) : Double.MAX_VALUE;
-        if (!forcePath && distance < Constants.MAX_BATTLE_DISTANCE.getInt() && !memory.isAboveMe(enemy)) {
+        if (!forcePath && distance < Constants.MAX_BATTLE_DISTANCE.getInt() && !memory.isAboveMe(enemy)) {//ignores nav gtid and ditrectly approaches enemy
             double half = Constants.MAX_BATTLE_DISTANCE.getInt() / 2;
             Triple agentLocation = this.memory.getAgentLocation();
             Triple agentRotation = this.memory.getAgentRotation();
@@ -84,7 +84,7 @@ public class ApproachEnemyAction extends OpponentRelativeAction {
                 body.runToTarget(enemy);
             }
         } else {
-            memory.playerPathExecutor.followPath(memory.pathPlanner.computePath(enemy));
+            memory.playerPathExecutor.followPath(memory.pathPlanner.computePath(enemy)); //uses nav grid to plot a course to enemy
         }
     }
 }

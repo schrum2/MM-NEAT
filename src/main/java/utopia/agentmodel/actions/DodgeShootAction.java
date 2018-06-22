@@ -17,10 +17,10 @@ public class DodgeShootAction extends ShootingAction {
      * allows the bot to print a description of its actions
      */
     public String toString(){
-        return "Dodge:" + (turn == null ? direction : (turn < -0.5 ? "Left" : (turn > 0.5 ? "Right" : "Forward"))) + (shoot ? ":Shoot:" + (secondaryFire ? "Alt" : "Pri") : "");
+        return "Dodge:" + (radiansToTurn == null ? direction : (radiansToTurn < -0.5 ? "Left" : (radiansToTurn > 0.5 ? "Right" : "Forward"))) + (shoot ? ":Shoot:" + (secondaryFire ? "Alt" : "Pri") : "");
     }
 
-    private Double turn = null;
+    private Double radiansToTurn = null;
     private Triple direction;
 
     public DodgeShootAction(Triple direction, boolean shoot, boolean secondaryFire, Triple agentRotation, Triple agentLocation, ArrayList<Player> players) {
@@ -28,22 +28,22 @@ public class DodgeShootAction extends ShootingAction {
         this.direction = direction;
     }
 
-    public DodgeShootAction(double turn, boolean shoot, boolean secondaryFire, Triple agentRotation, Triple agentLocation, ArrayList<Player> players) {
-        this(directionFromTurn(turn), shoot, secondaryFire, agentRotation, agentLocation,  players);
+    public DodgeShootAction(double radiansToTurn, boolean shoot, boolean secondaryFire, Triple agentRotation, Triple agentLocation, ArrayList<Player> players) {
+        this(directionFromTurn(radiansToTurn), shoot, secondaryFire, agentRotation, agentLocation,  players);
         // Just for the sake of the toString() at this point
-        this.turn = Utils.limitBetween(turn, Math.PI);
+        this.radiansToTurn = Utils.limitBetween(radiansToTurn, Math.PI);
     }
 
     /**
      * 
-     * @param turn
+     * @param radiansToTurn
      * @return
      */
-    private static Triple directionFromTurn(Double turn){
-        if(turn == null) {
+    private static Triple directionFromTurn(Double radiansToTurn){
+        if(radiansToTurn == null) {
             return new Triple(Utils.randposneg() * Math.random(), Utils.randposneg() * Math.random(), Utils.randposneg() * Math.random());
         } else {
-            double temp = Utils.limitBetween(turn, Math.PI);
+            double temp = Utils.limitBetween(radiansToTurn, Math.PI);
             if (temp < -0.5) {
                 return (new Triple(0, -1, 0));
             } else if (temp > 0.5) {
@@ -56,12 +56,12 @@ public class DodgeShootAction extends ShootingAction {
 
     /**
      * initializes the action with the agent's turn, rotation, and location 
-     * @param turn
+     * @param radiansToTurn
      * @param agentRotation
      * @param agentLocation
      */
-    public DodgeShootAction(double turn, Triple agentRotation, Triple agentLocation) {
-        this(turn, false, false, agentRotation, agentLocation, null);
+    public DodgeShootAction(double radiansToTurn, Triple agentRotation, Triple agentLocation) {
+        this(radiansToTurn, false, false, agentRotation, agentLocation, null);
     }
 
     /**
