@@ -440,15 +440,6 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 				int targetXIndex = (x - xEdgeOffset) / stride; 
 				int targetYIndex = (y - yEdgeOffset) / stride;
 				
-				//TODO: ugly band-aid. For some reason, without this fix, the following assertions fail.
-				//This is needed to evole CPPN HyperNeat Visual input pacman.
-				if(targetXIndex >= s2.getSize().t1) {
-					targetXIndex = s2.getSize().t1 - 1;
-				}
-				if(targetYIndex >= s2.getSize().t2) {
-					targetYIndex = s2.getSize().t2 - 1;
-				}
-				
 				assert targetXIndex < s2.getSize().t1 : "X-Coordinate must be within substrate! " + targetXIndex + " not less than " + s2.getSize().t1;
 				assert targetYIndex < s2.getSize().t2 : "Y-Coordinate must be within substrate! " + targetYIndex + " not less than " + s2.getSize().t2 + "\n " + "(" + y + " - " + yEdgeOffset +") / " + stride + " = " + targetYIndex;
 				// If target neuron is dead, do not continue
