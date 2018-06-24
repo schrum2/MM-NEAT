@@ -352,6 +352,7 @@ public class Parameters {
 		booleanOptions.add("botprizeMod", false, "Whether or not to use the 2012 BotPrize mod in UT2004 games");
 		booleanOptions.add("cascadeExpansion", false, "allows for cascade expansion in HyperNEAT, adding layers during evaluation");
 		booleanOptions.add("convolution", false, "HyperNEAT phenotypes allow convolutional structure");
+		booleanOptions.add("convolutionCoordinates",  false,  "HyperNEAT encoding of convolutional structure using the coordinates within the substrate");
 		booleanOptions.add("convolutionDeltas", false, "HyperNEAT encoding of convolutional structure uses the delta offset approach of Verbancsics");
 		booleanOptions.add("convolutionWeightSharing", false, "HyperNEAT convolutional networks repeat the same weights across all receptive fields from one substrate to another");
 		booleanOptions.add("cooperativeAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught as a team");

@@ -424,6 +424,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			List<Substrate> subs, int substrateHorizontalCoordinate, int substrateVerticalCoordinate, int receptiveFieldWidth, int receptiveFieldHeight) {
 
 		boolean convolutionDeltas = Parameters.parameters.booleanParameter("convolutionDeltas");
+		boolean convolutionCoordinates = Parameters.parameters.booleanParameter("convolutionCoordinates");
 		boolean convolutionWeightSharing = Parameters.parameters.booleanParameter("convolutionWeightSharing");
 		assert receptiveFieldHeight % 2 == 1 : "Receptive field height needs to be odd to be centered: " + receptiveFieldHeight;
 		assert receptiveFieldWidth % 2 == 1 : "Receptive field width needs to be odd to be centered: " + receptiveFieldWidth;
@@ -466,6 +467,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 											// First two inputs are deltas between target and source scaled coordinated: (x2 - x1, y2 - y1, x2, y2, 1.0)
 											inputs = new double[]{scaledTargetCoordinates.getX() - scaledSourceCoordinates.getX(), scaledTargetCoordinates.getY() - scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
 											// These inputs may be outside the [-1,1] range
+										//} if (convolutionCoordinates) {
+										//	ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(fromXIndex, fromYIndex), s1.getSize().t1, s1.getSize().t2); 
+											//inputs = new double[]{scaledTargetCoordinates.getX() - scaledSourceCoordinates.getX(), scaledTargetCoordinates.getY() - scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
 										} else {
 											// Receptive field scaling needs to be with respect to the center of the field, regardless of what the mapping for the other coordinates is
 											ILocated2D scaledFieldCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(fX+xOffset, fY+yOffset), receptiveFieldWidth, receptiveFieldHeight);
