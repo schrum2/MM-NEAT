@@ -140,15 +140,59 @@ public class TWEANNGenotypeTest {
 		MMNEAT.loadClasses();
 		EvolutionaryHistory.initArchetype(0);
 		
-		//HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair for leo. + 2 for bias
-		//TWEANNGenotype tg1 = new TWEANNGenotype(4, 3 * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + 2, 0);
-		//MMNEAT.genotype = tg1.copy();
-		
 		HyperNEATCPPNAndSubstrateArchitectureGenotype hncasag = new HyperNEATCPPNAndSubstrateArchitectureGenotype();
 		hncasag.cascadeExpansion(1, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
-		//System.out.println("before 2nd thresh expansion" + hncasag.nodes);
+		for (int i = 0; i < 5; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 1);
+			assertEquals(currentNode.ntype, 0);
+		}
+		for (int i = 5; i < 8; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 1);
+			assertEquals(currentNode.ntype, 2);
+		}
+		assertEquals(hncasag.nodes.get(8).innovation, -11);
+		assertEquals(hncasag.nodes.get(8).ntype, 2);
+		assertEquals(hncasag.nodes.get(9).innovation, -12);
+		assertEquals(hncasag.nodes.get(9).ntype, 2);
+		assertEquals(hncasag.nodes.get(10).innovation, -9);
+		assertEquals(hncasag.nodes.get(10).ntype, 2);
+		assertEquals(hncasag.nodes.get(11).innovation, -13);
+		assertEquals(hncasag.nodes.get(11).ntype, 2);
+		assertEquals(hncasag.nodes.get(12).innovation, -10);
+		assertEquals(hncasag.nodes.get(12).ntype, 2);
 		hncasag.cascadeExpansion(4, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
-		//System.out.println("after 2nd thresh expansion" + hncasag.nodes);
+		for (int i = 0; i < 5; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 1);
+			assertEquals(currentNode.ntype, 0);
+		}
+		for (int i = 5; i < 8; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 1);
+			assertEquals(currentNode.ntype, 2);
+		}
+		assertEquals(hncasag.nodes.get(8).innovation, -11);
+		assertEquals(hncasag.nodes.get(8).ntype, 2);
+		assertEquals(hncasag.nodes.get(9).innovation, -12);
+		assertEquals(hncasag.nodes.get(9).ntype, 2);
+		for (int i = 10; i < 18; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 4);
+			assertEquals(currentNode.ntype, 2);
+		}
+		assertEquals(hncasag.nodes.get(18).innovation, -9);
+		assertEquals(hncasag.nodes.get(18).ntype, 2);
+		assertEquals(hncasag.nodes.get(19).innovation, -13);
+		assertEquals(hncasag.nodes.get(19).ntype, 2);
+		for (int i = 20; i < 24; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 2);
+			assertEquals(currentNode.ntype, 2);
+		}
+		assertEquals(hncasag.nodes.get(24).innovation, -10);
+		assertEquals(hncasag.nodes.get(24).ntype, 2);
 	}
 	
 	@Test
@@ -160,19 +204,62 @@ public class TWEANNGenotypeTest {
 		Parameters.initializeParameterCollections(new String[] {"runNumber:1", "randomSeed:1", "trials:3", "maxGens:500", "mu:50", "io:false", "netio:false", "mating:true", "task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "hyperNEAT:true", "genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype", "allowMultipleFunctions:true", "ftype:1", "netChangeActivationRate:0.3", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "steps:500000", "perLinkMutateRate:0.05", "netLinkRate:0.4", "netSpliceRate:0.2", "crossoverRate:0.5", "HNProcessDepth:1", "HNProcessWidth:1", "convolution:true", "senseTetrisHolesAsPositive:true", "leo:true"});
 		MMNEAT.loadClasses();
 		EvolutionaryHistory.initArchetype(0);
-		
-		//HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair for leo. + 2 for bias
-		//TWEANNGenotype tg1 = new TWEANNGenotype(4, 3 * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + 2, 0);
-		//MMNEAT.genotype = tg1.copy();
-		
-		HyperNEATCPPNAndSubstrateArchitectureGenotype hncasag = new HyperNEATCPPNAndSubstrateArchitectureGenotype();
-		//System.out.println("before leo expansion" + hncasag.nodes);
-		hncasag.cascadeExpansion(1, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
-		//System.out.println("after leo expansion" + hncasag.nodes);
 
-		//System.out.println("before 2nd leo expansion" + hncasag.nodes);
+		HyperNEATCPPNAndSubstrateArchitectureGenotype hncasag = new HyperNEATCPPNAndSubstrateArchitectureGenotype();
+		hncasag.cascadeExpansion(1, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
+		for (int i = 0; i < 5; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 1);
+			assertEquals(currentNode.ntype, 0);
+		}
+		for (int i = 5; i < 11; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 1);
+			assertEquals(currentNode.ntype, 2);
+		}
+		for (int i = 11; i < 15; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 3);
+			assertEquals(currentNode.ntype, 2);
+		}
+		assertEquals(hncasag.nodes.get(15).innovation, -12);
+		assertEquals(hncasag.nodes.get(15).ntype, 2);
+		assertEquals(hncasag.nodes.get(16).innovation, -18);
+		assertEquals(hncasag.nodes.get(16).ntype, 2);
+		assertEquals(hncasag.nodes.get(17).innovation, -13);
+		assertEquals(hncasag.nodes.get(17).ntype, 2);
 		hncasag.cascadeExpansion(4, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
-		//System.out.println("after 2nd leo expansion" + hncasag.nodes);
+		for (int i = 0; i < 5; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 1);
+			assertEquals(currentNode.ntype, 0);
+		}
+		for (int i = 5; i < 11; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 1);
+			assertEquals(currentNode.ntype, 2);
+		}
+		for (int i = 11; i < 15; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 3);
+			assertEquals(currentNode.ntype, 2);
+		}
+		for (int i = 15; i < 31; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 4);
+			assertEquals(currentNode.ntype, 2);
+		}
+		assertEquals(hncasag.nodes.get(31).innovation, -12);
+		assertEquals(hncasag.nodes.get(31).ntype, 2);
+		assertEquals(hncasag.nodes.get(32).innovation, -18);
+		assertEquals(hncasag.nodes.get(32).ntype, 2);
+		for (int i = 33; i < 37; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 2);
+			assertEquals(currentNode.ntype, 2);
+		}
+		assertEquals(hncasag.nodes.get(37).innovation, -13);
+		assertEquals(hncasag.nodes.get(37).ntype, 2);
 	}
 	
 }
