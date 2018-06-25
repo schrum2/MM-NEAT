@@ -788,5 +788,10 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	@Override
 	public double[] filterCPPNInputs(double[] fullInputs) {
 		return fullInputs;
+	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
 	}	
 }

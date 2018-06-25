@@ -165,4 +165,5 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 		action[2] = rawOutputs[2]; // Shoot
 		return action;
 	}
+
 }

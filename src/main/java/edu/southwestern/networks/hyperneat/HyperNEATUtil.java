@@ -488,6 +488,9 @@ public class HyperNEATUtil {
 	 * @return number of bias outputs needed by CPPN
 	 */
 	public static int numBiasOutputsNeeded(HyperNEATTask hnt) {
+		// CPPN has no bias outputs if they are not being evolved
+		if(!CommonConstants.evolveHyperNEATBias) return 0;
+		
 		// If substrate coordinates are inputs to the CPPN, then
 		// biases on difference substrates can be different based on the
 		// inputs rather than having separate outputs for each substrate.
@@ -846,11 +849,11 @@ public class HyperNEATUtil {
 		HyperNEATTask hnt = HyperNEATUtil.getHyperNEATTask();
 		if(CommonConstants.substrateLocationInputs) {
 			// All substrate pairings use the same outputs
-			return HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATCPPNGenotype.numBiasOutputs;
+			return HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATUtil.numBiasOutputsNeeded();
 		} else {
 			// Each substrate pairing has a separate set of outputs
 			int numSubstratePairings = hnt.getSubstrateConnectivity().size();
-			return numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATCPPNGenotype.numBiasOutputs;
+			return numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATUtil.numBiasOutputsNeeded();
 		}
 	}
 
