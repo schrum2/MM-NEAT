@@ -5,7 +5,6 @@ import java.util.List;
 
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype;
-import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -92,19 +91,24 @@ public class CascadeNetworks {
 	}
 	
 	/**
-	 * TODO
+	 * 
 	 * @param hnt
 	 * @param population
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> ArrayList<Genotype<T>> getSubstrateGenotypesFromCPPNs(ArrayList<Genotype<T>> population, int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, int connectivityType) {
+	public static <T> ArrayList<Genotype<T>> cascadeExpandAllGenotypes(ArrayList<Genotype<T>> population, int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, int connectivityType) {
 		ArrayList<Genotype<T>> substrateGenotypes = new ArrayList<>();
 		assert population.get(0) instanceof HyperNEATCPPNAndSubstrateArchitectureGenotype;
 		for(int i = 0; i < population.size(); i++) {
-			//HyperNEATCPPNAndSubstrateArchitectureGenotype genotype = (HyperNEATCPPNAndSubstrateArchitectureGenotype) population.get(i).copy();
-			HyperNEATCPPNAndSubstrateArchitectureGenotype genotype = new HyperNEATCPPNAndSubstrateArchitectureGenotype((HyperNEATCPPNGenotype) population.get(i));
+			int numOutBefore = ((HyperNEATCPPNAndSubstrateArchitectureGenotype) population.get(i)).numOut;
+			HyperNEATCPPNAndSubstrateArchitectureGenotype genotype = (HyperNEATCPPNAndSubstrateArchitectureGenotype) population.get(i).copy();
+			int numOutAfter = genotype.numOut;
+			assert numOutBefore == numOutAfter : "Copy breaks the numOut: " + numOutBefore + " is not " + numOutAfter;
+			//HyperNEATCPPNAndSubstrateArchitectureGenotype genotype = new HyperNEATCPPNAndSubstrateArchitectureGenotype((HyperNEATCPPNGenotype) population.get(i));
 			genotype.cascadeExpansion(newLayerWidth, newSubstratesWidth, newsubstratesHeight, connectivityType);
+			int numOutAfterExpansion = genotype.numOut;
+			assert numOutAfterExpansion > numOutAfter : "Cascade expansion did not increase number of outputs: " + numOutAfter + " and " + numOutAfterExpansion;
 			substrateGenotypes.add((Genotype<T>) genotype);
 		}
 		return substrateGenotypes;

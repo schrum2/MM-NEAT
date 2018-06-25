@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.NetworkUtil;
 import edu.southwestern.networks.TWEANN;
@@ -14,7 +15,6 @@ import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CartesianGeometricUtilities;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.util2D.ILocated2D;
@@ -31,7 +31,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	// For each substrate layer pairing, there can be multiple output neurons in the CPPN
 	public static int numCPPNOutputsPerLayerPair = -1; // Set in MMNEAT
 	// Number of output neurons needed to designate bias values across all substrates
-	public static int numBiasOutputs = -1; // Set in MMNEAT
+	//public static int numBiasOutputs = -1; // Set in MMNEAT : Being static meant that all networks had to have the same value.
 	// Within each group, the first (index 0) will always specify the link value
 	public static final int LINK_INDEX = 0;
 	// If a Link Expression Output is used, it will be second (index 1)
@@ -309,6 +309,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 					}
 
 					double[] result = cppn.process(filteredInputs);
+
 					try{
 						bias = result[biasIndex];
 					} catch(ArrayIndexOutOfBoundsException e) { 
@@ -318,7 +319,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						System.out.println("biasIndex: " + biasIndex);
 						System.out.println("CommonConstants.evolveHyperNEATBias: " + CommonConstants.evolveHyperNEATBias);
 						System.out.println("numCPPNOutputsPerLayerPair: " + numCPPNOutputsPerLayerPair);
-						System.out.println("numBiasOutputs: " + numBiasOutputs);
+						System.out.println("HyperNEATUtil.numBiasOutputsNeeded(): " + HyperNEATUtil.numBiasOutputsNeeded());
 						System.out.println("cppn.numInputs(): " + cppn.numInputs());
 						System.out.println("cppn.numOutputs(): " + cppn.numOutputs());
 						System.out.println("HyperNEATUtil.indexFirstBiasOutput(hnt): " + HyperNEATUtil.indexFirstBiasOutput(hnt));
@@ -424,7 +425,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			List<Substrate> subs, int substrateHorizontalCoordinate, int substrateVerticalCoordinate, int receptiveFieldWidth, int receptiveFieldHeight) {
 
 		boolean convolutionDeltas = Parameters.parameters.booleanParameter("convolutionDeltas");
-		boolean convolutionCoordinates = Parameters.parameters.booleanParameter("convolutionCoordinates");
+		//boolean convolutionCoordinates = Parameters.parameters.booleanParameter("convolutionCoordinates");
 		boolean convolutionWeightSharing = Parameters.parameters.booleanParameter("convolutionWeightSharing");
 		assert receptiveFieldHeight % 2 == 1 : "Receptive field height needs to be odd to be centered: " + receptiveFieldHeight;
 		assert receptiveFieldWidth % 2 == 1 : "Receptive field width needs to be odd to be centered: " + receptiveFieldWidth;

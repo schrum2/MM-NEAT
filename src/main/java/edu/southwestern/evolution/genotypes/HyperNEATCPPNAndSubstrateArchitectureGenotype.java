@@ -123,14 +123,14 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	/**
 	 * @param hngt the HyperNEAT CPPN genotype
 	 */
-	public HyperNEATCPPNAndSubstrateArchitectureGenotype(HyperNEATCPPNGenotype hngt) {
-		super(hngt.numIn, hngt.numOut, hngt.archetypeIndex);
-		HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
-		this.hiddenArchitecture = FlexibleSubstrateArchitecture.getHiddenArchitecture(task);
-		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getDefaultConnectivity(task);
-		assert allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
-		assert !allSubstrateConnectivity.get(0).sourceSubstrateName.equals("null") : "How was a null string name constructed?";
-	}
+//	public HyperNEATCPPNAndSubstrateArchitectureGenotype(HyperNEATCPPNGenotype hngt) {
+//		super(hngt.numIn, hngt.numOut, hngt.archetypeIndex);
+//		HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
+//		this.hiddenArchitecture = FlexibleSubstrateArchitecture.getHiddenArchitecture(task);
+//		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getDefaultConnectivity(task);
+//		assert allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
+//		assert !allSubstrateConnectivity.get(0).sourceSubstrateName.equals("null") : "How was a null string name constructed?";
+//	}
 
 	/**
 	 * @param HNTask the HyperNEATTask

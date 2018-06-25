@@ -443,11 +443,11 @@ public class MMNEAT {
 				// For each substrate layer pairing, there can be multiple output neurons in the CPPN
 				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = CommonConstants.leo ? 2 : 1;
 				// Number of output neurons needed to designate bias values across all substrates
-				HyperNEATCPPNGenotype.numBiasOutputs = CommonConstants.evolveHyperNEATBias ? 
-						(HNTSeedTask == null ? 
-							HyperNEATUtil.numBiasOutputsNeeded() :
-							HyperNEATUtil.numBiasOutputsNeeded(HNTSeedTask)) : 
-						0;				
+//				HyperNEATCPPNGenotype.numBiasOutputs = CommonConstants.evolveHyperNEATBias ? 
+//						(HNTSeedTask == null ? 
+//							HyperNEATUtil.numBiasOutputsNeeded() :
+//							HyperNEATUtil.numBiasOutputsNeeded(HNTSeedTask)) : 
+//						0;				
 			}
 			if(Parameters.parameters.booleanParameter("hallOfFame")){
 				hallOfFame = new HallOfFame();
@@ -731,7 +731,7 @@ public class MMNEAT {
 				int numSubstratePairings = HNTSeedTask.getSubstrateConnectivity().size();
 				System.out.println("Number of substrate pairs being connected: "+ numSubstratePairings);
 				assert HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair > 0 : "HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair must be positive";
-				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HyperNEATUtil.numCPPNInputs(HNTSeedTask),  numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATCPPNGenotype.numBiasOutputs, 0);
+				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HyperNEATUtil.numCPPNInputs(HNTSeedTask),  numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATUtil.numBiasOutputsNeeded(HNTSeedTask), 0);
 				TWEANNGenotype seedGeno = hntGeno.getSubstrateGenotypeForEvolution(HNTSeedTask);
 				genotype = seedGeno;
 				System.out.println("Genotype seeded from HyperNEAT task substrate specification");

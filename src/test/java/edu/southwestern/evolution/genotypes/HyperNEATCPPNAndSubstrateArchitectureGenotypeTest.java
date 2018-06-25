@@ -17,6 +17,7 @@ import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.networks.hyperneat.architecture.HiddenSkipsHidden;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Triple;
 
 public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
@@ -64,5 +65,24 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 		for(SubstrateConnectivity sub: hshConnectivity) {
 			assertTrue(hncasag.allSubstrateConnectivity.contains(sub));
 		}
+	}
+	
+	@Test
+	public void cascadeTest() {
+		MMNEAT.clearClasses();
+		HyperNEATTetrisTask.hardSubstrateReset();
+		EvolutionaryHistory.archetypes = null;
+		EvolutionaryHistory.setInnovation(0l);
+		Parameters.initializeParameterCollections(new String[] {"runNumber:1", "randomSeed:1", "trials:3", "maxGens:500", "mu:50", "io:false", "netio:false", "mating:true", "task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "hyperNEAT:true", "genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype", "allowMultipleFunctions:true", "ftype:1", "netChangeActivationRate:0.3", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "steps:500000", "perLinkMutateRate:0.05", "netLinkRate:0.4", "netSpliceRate:0.2", "crossoverRate:0.5", "extraHNLinks:false", "HNProcessDepth:1", "HNProcessWidth:1", "convolution:true", "senseTetrisHolesAsPositive:true"});
+		MMNEAT.loadClasses();
+		EvolutionaryHistory.initArchetype(0);
+		
+		HyperNEATCPPNAndSubstrateArchitectureGenotype hncasag = new HyperNEATCPPNAndSubstrateArchitectureGenotype();
+//		System.out.println(hncasag);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		hncasag.cascadeExpansion(1, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
+//		System.out.println(hncasag);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		assertEquals( 8, hncasag.numOut);
 	}
 }
