@@ -16,7 +16,7 @@ import utopia.controllers.scripted.ShieldGunController;
 
 @SuppressWarnings("serial")
 /**
- * 
+ * Dictates the bot's movement based on the location of an enemy that it is looking at
  * @author Jacob Schrum
  */
 public abstract class OpponentRelativeAction extends Action {
