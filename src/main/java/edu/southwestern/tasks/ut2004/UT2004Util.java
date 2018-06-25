@@ -211,7 +211,7 @@ public class UT2004Util {
 		};
 		String utSystemDir = Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath") + File.separator + "System";
 		for(String file :  filesToCopy) {
-			Files.copy(Paths.get("data" + File.separatorChar + "unreal" + File.separatorChar + "DefaultPrizeGameBots"  + File.separatorChar + file), 
+			Files.copy(Paths.get("data" + File.separatorChar + "unreal" + File.separatorChar + "DefaultGameBots"  + File.separatorChar + file), 
 					   Paths.get(utSystemDir + File.separatorChar + file), 
 					   REPLACE_EXISTING);
 		}

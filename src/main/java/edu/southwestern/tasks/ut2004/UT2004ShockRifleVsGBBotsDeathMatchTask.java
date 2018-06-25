@@ -51,7 +51,7 @@ public class UT2004ShockRifleVsGBBotsDeathMatchTask<T extends Network> extends U
 	 */
 	public UT2004ShockRifleVsGBBotsDeathMatchTask(String map, BotController[] opponents, int evalMinutes,
 			int desiredSkill) {
-		super(map, new int[0], evalMinutes, desiredSkill, opponents);
+		super(map, evalMinutes, desiredSkill, opponents);
 		// Fitness objectives
 		addObjective(new DamageDealtFitness<T>(), fitness, true);
 		addObjective(new ShockRifleAccuracyFitness<T>(), fitness, true);

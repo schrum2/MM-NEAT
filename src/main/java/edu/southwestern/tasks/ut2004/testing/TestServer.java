@@ -32,6 +32,6 @@ public class TestServer {
 		ArrayList<UT2004FitnessFunction<TWEANN>> fitness = new ArrayList<>();
 		ArrayList<UT2004FitnessFunction<TWEANN>> others = new ArrayList<>();
 		//launches server
-		UT2004Task.evaluateMultipleGenotypes(individuals, map, null, null, null, controller,	nativeBotSkills, evalMinutes, desiredSkill,	fitness, others);
+		UT2004Task.evaluateMultipleGenotypes(individuals, map, null, null, null, controller, evalMinutes, desiredSkill,	fitness, others);
 	}
 }

@@ -53,7 +53,7 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 	 * @param desiredSkill (skill level of the evolving bot)
 	 */
 	public UT2004ManyVsNativeBotsTeamDeathMatchTask(String map, int[] nativeBotSkills, int evalMinutes, int desiredSkill) {
-		super(map, nativeBotSkills, evalMinutes, desiredSkill, new BotController[0]);
+		super(map, evalMinutes, desiredSkill, new BotController[0]);
 		// Fitness objectives
 		//add one for team score
 		addObjective(new TeamScoreFitness<T>(), fitness, true);
@@ -96,7 +96,7 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 		
 		Pair<double[], double[]>[] result = evaluateMultipleGenotypes(teamArray, map,
 				sensorModel, outputModel, weaponManager, opponents,
-				nativeBotSkills, evalMinutes, desiredSkill,
+				evalMinutes, desiredSkill,
 				fitness, others);
 
 		//result[0] = ;

@@ -33,6 +33,6 @@ public class BotPrizeServer {
 		String[] mapList = new String[] {"DM-TrainingDay", "DM-IceHenge"};
 		
 		//launches server
-		UT2004Task.evaluateMultipleGenotypesAcrossMultupleMaps(individuals, mapList, null, null, null, controller,	nativeBotSkills, evalMinutes, desiredSkill,	fitness, others);
+		UT2004Task.evaluateMultipleGenotypesAcrossMultupleMaps(individuals, mapList, null, null, null, controller, evalMinutes, desiredSkill,	fitness, others);
 	}
 }

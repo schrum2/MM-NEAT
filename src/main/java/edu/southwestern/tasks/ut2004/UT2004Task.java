@@ -139,7 +139,6 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * @param outputModel (Output model used by evolved bots
 	 * @param weaponManager (How evolved bot selects its weapons)
 	 * @param opponents (Hard-coded opponent bot controllers)
-	 * @param nativeBotSkills (Skill levels of each native bot in match)
 	 * @param evalMinutes (Number of minutes to evaluate for)
 	 * @param desiredSkill (Skill setting for evolved bots)
 	 * @param fitness (List of fitness scores used to evaluate agents)
@@ -253,7 +252,6 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * @param outputModel (Output model used by evolved bots
 	 * @param weaponManager (How evolved bot selects its weapons)
 	 * @param opponents (Hard-coded opponent bot controllers)
-	 * @param nativeBotSkills (Skill levels of each native bot in match)
 	 * @param evalMinutes (Number of minutes to evaluate for)
 	 * @param desiredSkill (Skill setting for evolved bots)
 	 * @param fitness (List of fitness scores used to evaluate agents)
@@ -263,7 +261,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	@SuppressWarnings("unchecked")
 	public static <T extends Network> Pair<double[], double[]>[] evaluateMultipleGenotypesAcrossMultupleMaps(Genotype<T>[] individuals, String[] map,
 			UT2004SensorModel sensorModel, UT2004OutputInterpretation outputModel, UT2004WeaponManager weaponManager, BotController[] opponents,
-			int[] nativeBotSkills, int evalMinutes, int desiredSkill,
+			int evalMinutes, int desiredSkill,
 			ArrayList<UT2004FitnessFunction<T>> fitness, ArrayList<UT2004FitnessFunction<T>> others) {    
 		
 		double[][][] fitnessArr = new double[individuals.length][map.length][];
