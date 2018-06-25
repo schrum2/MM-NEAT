@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package utopia.agentmodel.actions;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
@@ -21,6 +17,9 @@ public class MoveToLocationAction extends Action {
     private final boolean jump;
 
     @Override
+    /**
+     * allows the bot to print out a description of its actions
+     */
     public String toString(){
         return "MoveToLocation:" + (focusEnemy == null ? "No Enemy" : focusEnemy.getName()) + ":" + target.toString();
     }

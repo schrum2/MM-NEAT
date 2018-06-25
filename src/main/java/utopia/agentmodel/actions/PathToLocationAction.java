@@ -26,10 +26,10 @@ public class PathToLocationAction extends Action {
     }
 
     /**
-     * Initializes the action with the pathExecutor, locarion, and target
-     * @param pathExecutor
-     * @param plannedPath
-     * @param target
+     * Initializes the action with the pathExecutor, location, and target
+     * @param pathExecutor (what will help the both follow the path)
+     * @param plannedPath (creates the path)
+     * @param target (where the bot wants to go)
      */
     public PathToLocationAction(MyUTPathExecutor pathExecutor, IPathFuture<? extends ILocated> plannedPath, Location target) {
         this.target = target;
@@ -37,11 +37,20 @@ public class PathToLocationAction extends Action {
         this.plannedPath = plannedPath;
     }
 
+    /**
+	 * Initializes the action with the pathExecutor, location, and target, but with a pre planned path
+     * @param pathExecutor (what will help the both follow the path)
+     * @param plannedPath (creates the path)
+     * @param target (where the bot wants to go)
+     */
     public PathToLocationAction(MyUTPathExecutor pathExecutor, PathPlanner pathPlanner, Location target) {
         this(pathExecutor, pathPlanner.computePath(target), target);
     }
 
     @Override
+    /**
+     * tells the bot to execute the action
+     */
     public void execute(AgentBody body) {
         //System.out.println("Path to " + target);
         pathExecutor.followPath(plannedPath);
