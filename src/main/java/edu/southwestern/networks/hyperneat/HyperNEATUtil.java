@@ -762,11 +762,6 @@ public class HyperNEATUtil {
 	 * @return Substrate connectivity
 	 */
 	public static List<SubstrateConnectivity> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames, boolean connectInputsToOutputs){
-
-		
-		System.out.println("in here!!!");
-		new IllegalArgumentException().printStackTrace();
-		
 		List<SubstrateConnectivity> substrateConnectivity = new LinkedList<SubstrateConnectivity>();
 		// Different extractors correspond to different substrate configurations
 		if(processDepth > 0) {

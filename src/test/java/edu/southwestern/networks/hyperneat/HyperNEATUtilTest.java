@@ -121,11 +121,10 @@ public class HyperNEATUtilTest {
 		HyperNEATUtil.resetSubstrates();
 	}
 	
-	// Method does not exist anymore
-//	@Test
-//	public void testNumBiasOutputsNeeded(){
-//		assertEquals(2, HyperNEATUtil.numBiasOutputsNeeded(htask));
-//	}
+	@Test
+	public void testNumBiasOutputsNeeded(){
+		assertEquals(2, HyperNEATUtil.numBiasOutputsNeeded(htask));
+	}
 	
 	// Method does not exist anymore
 //	@Test

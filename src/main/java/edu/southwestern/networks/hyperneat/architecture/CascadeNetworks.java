@@ -67,7 +67,6 @@ public class CascadeNetworks {
 		}
 		//connect new layer to output layer end
 		//create new connectivity end
-		System.out.println("in cascade: " + newConnectivity);
 		return new Pair<List<Triple<Integer, Integer, Integer>>, List<SubstrateConnectivity>>(newArchitecture, newConnectivity);
 	}
 	
@@ -94,25 +93,24 @@ public class CascadeNetworks {
 	}
 	
 	/**
-	 * 
-	 * @param hnt
-	 * @param population
-	 * @return
+	 * applies cascade expansion to to each genotype in a population
+	 * @param hnt hyperNeatTask
+	 * @param population collection of genotypes
+	 * @return population of genotypes after expansion
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> ArrayList<Genotype<T>> cascadeExpandAllGenotypes(ArrayList<Genotype<T>> population, int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, int connectivityType) {
 		ArrayList<Genotype<T>> substrateGenotypes = new ArrayList<>();
 		assert population.get(0) instanceof HyperNEATCPPNAndSubstrateArchitectureGenotype;
 		for(int i = 0; i < population.size(); i++) {
-			int numOutBefore = ((HyperNEATCPPNAndSubstrateArchitectureGenotype) population.get(i)).numOut;
+			//int numOutBefore = ((HyperNEATCPPNAndSubstrateArchitectureGenotype) population.get(i)).numOut;
 			HyperNEATCPPNAndSubstrateArchitectureGenotype genotype = (HyperNEATCPPNAndSubstrateArchitectureGenotype) population.get(i).copy();
-			int numOutAfter = genotype.numOut;
-			assert numOutBefore == numOutAfter : "Copy breaks the numOut: " + numOutBefore + " is not " + numOutAfter;
-			//HyperNEATCPPNAndSubstrateArchitectureGenotype genotype = new HyperNEATCPPNAndSubstrateArchitectureGenotype((HyperNEATCPPNGenotype) population.get(i));
+			//int numOutAfter = genotype.numOut;
+			//assert numOutBefore == numOutAfter : "Copy breaks the numOut: " + numOutBefore + " is not " + numOutAfter;
 			((HyperNEATTask) MMNEAT.task).flushSubstrateMemory(); // Wipe substrates each time before changing them
 			genotype.cascadeExpansion(newLayerWidth, newSubstratesWidth, newsubstratesHeight, connectivityType);
-			int numOutAfterExpansion = genotype.numOut;
-			assert numOutAfterExpansion > numOutAfter : "Cascade expansion did not increase number of outputs: " + numOutAfter + " and " + numOutAfterExpansion;
+			//int numOutAfterExpansion = genotype.numOut;
+			//assert numOutAfterExpansion > numOutAfter : "Cascade expansion did not increase number of outputs: " + numOutAfter + " and " + numOutAfterExpansion;
 			substrateGenotypes.add((Genotype<T>) genotype);
 		}
 		return substrateGenotypes;
