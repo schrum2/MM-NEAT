@@ -5,12 +5,12 @@ import java.util.HashMap;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import edu.southwestern.tasks.ut2004.sensors.blocks.UT2004SensorBlock;
 
-public class AverageTeammateHealth implements UT2004SensorBlock {
+public class AverageTeammateHealthBlock implements UT2004SensorBlock {
 	public static final double MAX_POSSIBLE_HEALTH = 199; //if player runs over helath pickups, their maximum overheal is 199, I have no idea why it isn't 200
 	public static final double SPAWN_HEALTH = 100;
 	public static HashMap<String,Double> friends;
 
-	public AverageTeammateHealth() {
+	public AverageTeammateHealthBlock() {
 	}
 	
 	@Override

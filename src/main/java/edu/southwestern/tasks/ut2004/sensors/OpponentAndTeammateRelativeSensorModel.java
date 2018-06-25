@@ -4,7 +4,10 @@ import java.util.HashMap;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import edu.southwestern.tasks.ut2004.sensors.blocks.*;
+import edu.southwestern.tasks.ut2004.sensors.blocks.team.AverageTeammateHealthBlock;
 import edu.southwestern.tasks.ut2004.sensors.blocks.team.DistanceToNearestTeammateBlock;
+import edu.southwestern.tasks.ut2004.sensors.blocks.team.HighestTeammateHealthBlock;
+import edu.southwestern.tasks.ut2004.sensors.blocks.team.LowestTeammateHealthBlock;
 
 /**
  * Finds the the bot's position and velocity with respect to the opponent it's facing 
@@ -34,6 +37,9 @@ public class OpponentAndTeammateRelativeSensorModel extends UT2004BlockLoadedSen
 		DistanceToNearestTeammateBlock ntb = new DistanceToNearestTeammateBlock();
 		ntb.giveTeamLocations(teammateLocations);
 		blocks.add(ntb);
+		blocks.add(new HighestTeammateHealthBlock());
+		blocks.add(new LowestTeammateHealthBlock());
+		blocks.add(new AverageTeammateHealthBlock());
 
 		// Saved so that it can be part of any copies that are made
 		this.teammateLocations = teammateLocations;
