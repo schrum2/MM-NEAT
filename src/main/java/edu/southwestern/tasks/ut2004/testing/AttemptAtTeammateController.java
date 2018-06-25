@@ -17,7 +17,7 @@ public class AttemptAtTeammateController implements BotController {
 	public static final int FULL_HEALTH = 100;
 	
 	/**
-	 * bot will follow closest teammate, if one is not there, it will stand in place
+	 * 
 	 */
 	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		Player nearestFriend = bot.getPlayers().getNearestVisibleFriend();
@@ -35,19 +35,7 @@ public class AttemptAtTeammateController implements BotController {
 		if(nearestFriend != null) {
 			return new FollowTeammate(nearestFriend);
 		}
-//		
-//		if(nearestEnemy != null) {
-//			return new FollowEnemy(nearestEnemy);
-//		}
-//		return new BotAction() {
-//
-//			@Override
-//			public String execute(UT2004BotModuleController bot) {
-//				bot.getBody().getLocomotion().jump();
-//				return "JUMP";
-//			}
-//			
-//		};
+
 		if(attack.trigger(bot)) {
 			return attack.control(bot);
 		}

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import edu.southwestern.tasks.ut2004.UT2004Util;
-import edu.southwestern.tasks.ut2004.sensors.AcceptsTeamDistances;
+import edu.southwestern.tasks.ut2004.sensors.AcceptsTeamLocations;
 import edu.southwestern.tasks.ut2004.sensors.blocks.UT2004SensorBlock;
 
 /**
@@ -13,7 +13,7 @@ import edu.southwestern.tasks.ut2004.sensors.blocks.UT2004SensorBlock;
  * @author Adina Friedman
  *
  */
-public class DistanceToNearestTeammateBlock implements UT2004SensorBlock, AcceptsTeamDistances{
+public class DistanceToNearestTeammateBlock implements UT2004SensorBlock, AcceptsTeamLocations{
 
 	public static final int MAX_DISTANCE = 1000;
 

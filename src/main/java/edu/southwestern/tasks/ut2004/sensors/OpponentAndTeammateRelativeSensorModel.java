@@ -37,12 +37,13 @@ public class OpponentAndTeammateRelativeSensorModel extends UT2004BlockLoadedSen
 		DistanceToNearestTeammateBlock ntb = new DistanceToNearestTeammateBlock();
 		ntb.giveTeamLocations(teammateLocations);
 		blocks.add(ntb);
-		blocks.add(new HighestTeammateHealthBlock());
-		blocks.add(new LowestTeammateHealthBlock());
-		blocks.add(new AverageTeammateHealthBlock());
+//		blocks.add(new HighestTeammateHealthBlock());
+//		blocks.add(new LowestTeammateHealthBlock());
+//		blocks.add(new AverageTeammateHealthBlock());
 
 		// Saved so that it can be part of any copies that are made
-		this.teammateLocations = teammateLocations;
+//		this.teammateLocations = teammateLocations;
+		//TODO: FIGURE OUT WHY THIS !@#$%^&* ISN'T WORKING
 	}
 
 	/**
@@ -50,15 +51,15 @@ public class OpponentAndTeammateRelativeSensorModel extends UT2004BlockLoadedSen
 	 */
 	public UT2004SensorModel copy() {
 		OpponentAndTeammateRelativeSensorModel copy = new OpponentAndTeammateRelativeSensorModel(teammateLocations);
-		assert teammateLocations != null : "Don't copy null team information";
+		//assert teammateLocations != null : "Don't copy null team information";
 		return copy;
 	}
 	
 	public void giveTeamInfo(HashMap<String,Location> info) {
 		teammateLocations = info;
 		for(UT2004SensorBlock block : blocks) {
-			if(block instanceof AcceptsTeamDistances) {
-				((AcceptsTeamDistances) block).giveTeamLocations(info);
+			if(block instanceof AcceptsTeamLocations) {
+				((AcceptsTeamLocations) block).giveTeamLocations(info);
 			}
 		}
 	}
