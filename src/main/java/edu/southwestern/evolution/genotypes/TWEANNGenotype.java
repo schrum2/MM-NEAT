@@ -1335,12 +1335,14 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		while (i < numberOfNewSubstratePairs) {
 			addOutputNode(ftypes[i], emptyArray1, emptyArray2, emptyArray1, position + i);
 			i++;
+			this.neuronsPerModule++;
 		}
 		//new substrate biases will be inserted after the old hidden substrate biases and before the output substrate biases
 		position += numberOfNewSubstratePairs + initialNumberOfHiddenSubstrates;
 		//adding new outputs for hidden biases
 		for (int j = 0; j < numberOfNewHiddenSubstrates; j++) {
 			addOutputNode(ftypes[i + j], emptyArray1, emptyArray2, emptyArray1, position + j);
+			this.neuronsPerModule++;
 		}
 		return numberOfNewSubstratePairs + numberOfNewHiddenSubstrates;
 	}

@@ -339,6 +339,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						System.out.println("numBiasOutputsNeeded(hnt): " + numBiasOutputsNeeded(hnt));
 						System.out.println("cppn.numInputs(): " + cppn.numInputs());
 						System.out.println("cppn.numOutputs(): " + cppn.numOutputs());
+						System.out.println("cppn.effectiveNumOutputs(): " + cppn.effectiveNumOutputs());
 						System.out.println("indexFirstBiasOutput(hnt): " + indexFirstBiasOutput(hnt));
 						for(Substrate s: getSubstrateInformation(hnt)) {
 							System.out.println(s);

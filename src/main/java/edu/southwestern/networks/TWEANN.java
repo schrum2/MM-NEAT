@@ -756,6 +756,8 @@ public class TWEANN implements Network {
 		} else {
 			outputs = moduleOutput(chosenModule);
 		}
+		assert outputs.length == this.numModes * this.numOut : "TWEANN Outputs: outputs.length = " + outputs.length + ", this.numModes * this.numOut = " + this.numModes + " * " + this.numOut + " = " + (this.numModes * this.numOut) + ": neuronsPerModule = " + neuronsPerModule;
+
 		if (canDraw) {
 			if(!HyperNEATCPPNGenotype.constructingNetwork && CommonConstants.hyperNEAT && CommonConstants.monitorSubstrates) {
 				animateSubstrate();
@@ -768,7 +770,7 @@ public class TWEANN implements Network {
 				assert inputs.length == numIn : "Too many inputs: " + numIn + ":" + Arrays.toString(inputs);
 				refreshActivation(inputPanel, inputs, outputs, preferences, standardMultitask, preferenceFatigue);
 			}
-		}
+		}		
 		return outputs;
 	}
 
