@@ -254,6 +254,23 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		return result;
 	}
 
+
+	/**
+	 * If bias outputs are used in CPPN, they will appear after all others.
+	 * There should be one output group per layer pairing, so the number of
+	 * layer pairings is multiplied by the neurons per output group to determine
+	 * the index of the first bias output.
+	 * @param hnt HyperNEAT task
+	 * @return index where first bias output is located, if it exists
+	 */
+	public int indexFirstBiasOutput(HyperNEATTask hnt) {
+		if(CommonConstants.substrateLocationInputs) {
+			return HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair;
+		} else {
+			return getSubstrateConnectivity(hnt).size() * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair;
+		}
+	}
+	
 	/**
 	 * creates an array list containing all the nodes from all the substrates
 	 *
@@ -267,7 +284,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 		boolean convolutionWeightSharing = Parameters.parameters.booleanParameter("convolutionWeightSharing");
 
-		int biasIndex = HyperNEATUtil.indexFirstBiasOutput(hnt); // first bias index
+		int biasIndex = indexFirstBiasOutput(hnt); // first bias index
 		ArrayList<NodeGene> newNodes = new ArrayList<NodeGene>();
 		// loops through substrate list
 		for (Substrate sub: subs) { // for each substrate
@@ -319,10 +336,16 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						System.out.println("biasIndex: " + biasIndex);
 						System.out.println("CommonConstants.evolveHyperNEATBias: " + CommonConstants.evolveHyperNEATBias);
 						System.out.println("numCPPNOutputsPerLayerPair: " + numCPPNOutputsPerLayerPair);
-						System.out.println("HyperNEATUtil.numBiasOutputsNeeded(): " + HyperNEATUtil.numBiasOutputsNeeded());
+						System.out.println("numBiasOutputsNeeded(hnt): " + numBiasOutputsNeeded(hnt));
 						System.out.println("cppn.numInputs(): " + cppn.numInputs());
 						System.out.println("cppn.numOutputs(): " + cppn.numOutputs());
-						System.out.println("HyperNEATUtil.indexFirstBiasOutput(hnt): " + HyperNEATUtil.indexFirstBiasOutput(hnt));
+						System.out.println("indexFirstBiasOutput(hnt): " + indexFirstBiasOutput(hnt));
+						for(Substrate s: getSubstrateInformation(hnt)) {
+							System.out.println(s);
+						}
+						for(SubstrateConnectivity sc : getSubstrateConnectivity(hnt)) {
+							System.out.println(sc);
+						}
 						System.out.println(cppn);
 						throw e;
 					}
@@ -342,6 +365,29 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		return newNodes;
 	}
 
+	/**
+	 * If HyperNEAT neuron bias values are evolved, then this method determines
+	 * how many CPPN outputs are needed to specify them: 1 per non-input substrate layer.
+	 * @param hnt HyperNEATTask that specifies substrate connectivity
+	 * @return number of bias outputs needed by CPPN
+	 */
+	public int numBiasOutputsNeeded(HyperNEATTask hnt) {
+		// CPPN has no bias outputs if they are not being evolved
+		if(!CommonConstants.evolveHyperNEATBias) return 0;
+		
+		// If substrate coordinates are inputs to the CPPN, then
+		// biases on difference substrates can be different based on the
+		// inputs rather than having separate outputs for each substrate.
+		if(CommonConstants.substrateBiasLocationInputs) return 1;
+
+		List<Substrate> subs = getSubstrateInformation(hnt);
+		int count = 0;
+		for(Substrate s : subs) {
+			if(s.getStype() != Substrate.INPUT_SUBSTRATE) count++;
+		}
+		return count;
+	}
+	
 	/**
 	 * creates an array list of links between substrates as dictated by
 	 * connections parameter

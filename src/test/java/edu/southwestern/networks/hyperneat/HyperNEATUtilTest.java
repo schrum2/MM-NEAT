@@ -121,15 +121,17 @@ public class HyperNEATUtilTest {
 		HyperNEATUtil.resetSubstrates();
 	}
 	
-	@Test
-	public void testNumBiasOutputsNeeded(){
-		assertEquals(2, HyperNEATUtil.numBiasOutputsNeeded(htask));
-	}
+	// Method does not exist anymore
+//	@Test
+//	public void testNumBiasOutputsNeeded(){
+//		assertEquals(2, HyperNEATUtil.numBiasOutputsNeeded(htask));
+//	}
 	
-	@Test
-	public void testIndexFirstBiasOutput(){
-		assertEquals(2, HyperNEATUtil.indexFirstBiasOutput(htask));
-	}
+	// Method does not exist anymore
+//	@Test
+//	public void testIndexFirstBiasOutput(){
+//		assertEquals(2, HyperNEATUtil.indexFirstBiasOutput(htask));
+//	}
 	
 	@Test
 	public void testGetSubstrateInformationHyperNEAT(){

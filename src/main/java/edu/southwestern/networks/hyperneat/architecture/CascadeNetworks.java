@@ -3,8 +3,10 @@ package edu.southwestern.networks.hyperneat.architecture;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype;
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -65,6 +67,7 @@ public class CascadeNetworks {
 		}
 		//connect new layer to output layer end
 		//create new connectivity end
+		System.out.println("in cascade: " + newConnectivity);
 		return new Pair<List<Triple<Integer, Integer, Integer>>, List<SubstrateConnectivity>>(newArchitecture, newConnectivity);
 	}
 	
@@ -106,6 +109,7 @@ public class CascadeNetworks {
 			int numOutAfter = genotype.numOut;
 			assert numOutBefore == numOutAfter : "Copy breaks the numOut: " + numOutBefore + " is not " + numOutAfter;
 			//HyperNEATCPPNAndSubstrateArchitectureGenotype genotype = new HyperNEATCPPNAndSubstrateArchitectureGenotype((HyperNEATCPPNGenotype) population.get(i));
+			((HyperNEATTask) MMNEAT.task).flushSubstrateMemory(); // Wipe substrates each time before changing them
 			genotype.cascadeExpansion(newLayerWidth, newSubstratesWidth, newsubstratesHeight, connectivityType);
 			int numOutAfterExpansion = genotype.numOut;
 			assert numOutAfterExpansion > numOutAfter : "Cascade expansion did not increase number of outputs: " + numOutAfter + " and " + numOutAfterExpansion;

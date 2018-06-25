@@ -504,21 +504,6 @@ public class HyperNEATUtil {
 		return count;
 	}
 
-	/**
-	 * If bias outputs are used in CPPN, they will appear after all others.
-	 * There should be one output group per layer pairing, so the number of
-	 * layer pairings is multiplied by the neurons per output group to determine
-	 * the index of the first bias output.
-	 * @param hnt HyperNEAT task
-	 * @return index where first bias output is located, if it exists
-	 */
-	public static int indexFirstBiasOutput(HyperNEATTask hnt) {
-		if(CommonConstants.substrateLocationInputs) {
-			return HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair;
-		} else {
-			return hnt.getSubstrateConnectivity().size() * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair;
-		}
-	}
 
 	/**
 	 * TODO: Generalize to handle convolutional connections as well!
@@ -762,7 +747,7 @@ public class HyperNEATUtil {
 	public static List<SubstrateConnectivity> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames){
 		return getSubstrateConnectivity(numInputSubstrates, processWidth, processDepth, outputNames, Parameters.parameters.booleanParameter("extraHNLinks"));
 	}
-
+	
 	/**
 	 * Generalizes the creation of HyperNEAT Substrates
 	 * 
@@ -778,6 +763,10 @@ public class HyperNEATUtil {
 	 */
 	public static List<SubstrateConnectivity> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames, boolean connectInputsToOutputs){
 
+		
+		System.out.println("in here!!!");
+		new IllegalArgumentException().printStackTrace();
+		
 		List<SubstrateConnectivity> substrateConnectivity = new LinkedList<SubstrateConnectivity>();
 		// Different extractors correspond to different substrate configurations
 		if(processDepth > 0) {
