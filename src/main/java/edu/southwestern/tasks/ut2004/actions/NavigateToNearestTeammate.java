@@ -11,8 +11,8 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
  * @author Adina Friedman
  */
 public class NavigateToNearestTeammate extends NavigateToLocationAction {
-	public Player friend;
-	Location nearestFriend = null;
+//	public Player friend;
+//	Location nearestFriend = null;
 	HashMap<String,Location> friendLocations;
 	public static final int MAX_DISTANCE = 1000;
 	
@@ -20,11 +20,12 @@ public class NavigateToNearestTeammate extends NavigateToLocationAction {
 		this.friendLocations = friendLocations;
 	}
 	
-	public Location locationOfNearestTeammate(UT2004BotModuleController bot) {
+	public static Location locationOfNearestTeammate(UT2004BotModuleController bot, HashMap<String,Location> friendLocs) {
 		Location botLocation = bot.getBot().getLocation();
 		double minDistance = MAX_DISTANCE;
-		for(String s: friendLocations.keySet()) {
-			Location friendLocation = friendLocations.get(s);
+		Location nearestFriend = null;
+		for(String s: friendLocs.keySet()) {
+			Location friendLocation = friendLocs.get(s);
 			if(friendLocation == botLocation) {
 				continue;
 			}
@@ -41,7 +42,7 @@ public class NavigateToNearestTeammate extends NavigateToLocationAction {
 	 * @param teamLocations (hashmap containing the locations of teammates)
 	 */
 	public NavigateToNearestTeammate(UT2004BotModuleController bot, HashMap<String,Location> teamLocations) {
-		super(locationOfNearestTeammate(bot));
+		super(locationOfNearestTeammate(bot,teamLocations));
 	}
 	
 	@Override
@@ -52,11 +53,11 @@ public class NavigateToNearestTeammate extends NavigateToLocationAction {
 	public String execute(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		//null check
 		//super.execute(bot);
-		if(nearestFriend == null) {
-			return ("do nothing");
-		}
-		super.execute(bot);
+//		if(nearestFriend == null) {
+//			return ("do nothing");
+//		}
+		String original = super.execute(bot);
 		//NavigateToLocationAction(locationOfNearestTeammate(bot));
-		return ("navigating to teammate: " + friend.getName());
+		return ("navigating to teammate: " + original); //friend.getName());
 	}
 }

@@ -39,9 +39,9 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 	public static int[] getNativeBotSkillArray() {
 		//array of native bots with all Parameters.parameters.integerParameter("utNativeBotSkill")
 		int[] nativeBotArray = new int[Parameters.parameters.integerParameter("utNumNativeBots")];
-		for(int i = 0; i < nativeBotArray.length; i++) {
-			nativeBotArray[i] = Parameters.parameters.integerParameter("utNativeBotSkill");
-		}
+//		for(int i = 0; i < nativeBotArray.length; i++) {
+//			nativeBotArray[i] = Parameters.parameters.integerParameter("utNativeBotSkill");
+//		}
 		return nativeBotArray;
 	}
 

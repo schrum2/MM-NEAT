@@ -42,12 +42,12 @@ public class UT2004ManyVsMirrorBotsTeamDeathMatchTask<T extends Network> extends
 	/**
 	 * sets up the server and the match
 	 * @param map (map the match will be played on)
-	 * @param nativeBotSkills (skill level of the native bots)
+	 * @param desiredSkill (skill level of the native bots)
 	 * @param evalMinutes (how long the eval will last)
 	 * @param desiredSkill (skill level of the evolving bot)
 	 */
 	public UT2004ManyVsMirrorBotsTeamDeathMatchTask(String map, int evalMinutes, int desiredSkill) {
-		super(map, new int[0], evalMinutes, desiredSkill, new BotController[0]);
+		super(map, evalMinutes, desiredSkill, new BotController[0]);
 		// Fitness objectives
 		//add one for team score
 		addObjective(new TeamScoreFitness<T>(), fitness, true);
@@ -80,7 +80,7 @@ public class UT2004ManyVsMirrorBotsTeamDeathMatchTask<T extends Network> extends
 
 		Pair<double[], double[]>[] result = evaluateMultipleGenotypes(teamArray, map,
 				sensorModel, outputModel, weaponManager, opponents,
-				nativeBotSkills, evalMinutes, desiredSkill,
+				evalMinutes, desiredSkill,
 				fitness, others);
 
 		//result[0] = ;
