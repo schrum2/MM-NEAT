@@ -77,8 +77,7 @@ public class UT2004ManyVsMirrorBotsTeamDeathMatchTask<T extends Network> extends
 		//create an array of genotypes that is size of team
 		//loop through and each one is copy of individual
 
-
-		Pair<double[], double[]>[] result = evaluateMultipleGenotypes(teamArray, map,
+		Pair<double[], double[]>[] result = evaluateMultipleGenotypes(teamArray, map, 0, // 0 native bots
 				sensorModel, outputModel, weaponManager, opponents,
 				evalMinutes, desiredSkill,
 				fitness, others);

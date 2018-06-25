@@ -82,7 +82,6 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 		}
 		//create an array of genotypes that is size of team
 		//loop through and each one is copy of individual
-
 		
 		// creates a place to store team info to be shared
 		HashMap<String,Location> friendDistances = new HashMap<String,Location>();
@@ -94,7 +93,7 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 		assert friendDistances != null : "How is this null? We just made it";
 		assert ((OpponentAndTeammateRelativeSensorModel) sensorModel).teammateLocations != null : "Should not pass in null team information";
 		
-		Pair<double[], double[]>[] result = evaluateMultipleGenotypes(teamArray, map,
+		Pair<double[], double[]>[] result = evaluateMultipleGenotypes(teamArray, map, teamArray.length, // Enemy team same size as evolved team
 				sensorModel, outputModel, weaponManager, opponents,
 				evalMinutes, desiredSkill,
 				fitness, others);

@@ -35,11 +35,19 @@ public class MoveToLocationAction extends Action {
         this(memory, target, enemy, false);
     }
 
+    /**
+     * 
+     * @param memory (agent memory to use)
+     * @param target (location to go to)
+     */
     public MoveToLocationAction(AgentMemory memory, Location target) {
         this(memory,target,null);
     }
 
     @Override
+   /**
+    * tells the bot to execute the action
+    */
     public void execute(AgentBody body) {
         //body.body.getLocomotion().moveTo(target);
         Move move = new Move().setFirstLocation(target);
