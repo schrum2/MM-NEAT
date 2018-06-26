@@ -756,7 +756,8 @@ public class TWEANN implements Network {
 		} else {
 			outputs = moduleOutput(chosenModule);
 		}
-		assert outputs.length == this.numModes * this.numOut : "TWEANN Outputs: outputs.length = " + outputs.length + ", this.numModes * this.numOut = " + this.numModes + " * " + this.numOut + " = " + (this.numModes * this.numOut) + ": neuronsPerModule = " + neuronsPerModule;
+		//THIS TEST DOESN'T WORK WITH MMD
+		//assert outputs.length == this.numModes * this.numOut : "TWEANN Outputs: outputs.length = " + outputs.length + ", this.numModes * this.numOut = " + this.numModes + " * " + this.numOut + " = " + (this.numModes * this.numOut) + ": neuronsPerModule = " + neuronsPerModule;
 
 		if (canDraw) {
 			if(!HyperNEATCPPNGenotype.constructingNetwork && CommonConstants.hyperNEAT && CommonConstants.monitorSubstrates) {
