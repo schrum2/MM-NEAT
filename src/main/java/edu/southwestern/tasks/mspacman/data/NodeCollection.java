@@ -49,8 +49,10 @@ public abstract class NodeCollection {
 	public abstract NodeCollection copy();
 
 	protected void addExtraNodes(ArrayList<Integer> addedNodes, int current, GameFacade gs) {
+		assert addedNodes != null : "why is this function being passed a null value?";
 		// Add last pill, if it is clear
 		int[] activePills = gs.getActivePillsIndices();
+		assert activePills != null : "Why is active pills null?";
 		int nearestPill = gs.getClosestNodeIndexFromNodeIndex(current, activePills);
 		int farthestPill = gs.getFarthestNodeIndexFromNodeIndex(current, activePills);
 		assert nearestPill != -1 : "The pillModel should stop this from happening";
