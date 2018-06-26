@@ -8,7 +8,7 @@ import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.lineage.Offspring;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
-import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.networks.hyperneat.HyperNEATVisualizationUtil;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.breve2D.Breve2DTask;
@@ -28,7 +28,7 @@ public class CommonTaskUtil {
 		if(genotype instanceof HyperNEATCPPNforDL4JGenotype) {
 			genotype = ((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN();
 		}
-		
+
 		DrawingPanel panel = null;
 		DrawingPanel cppnPanel = null;
 
@@ -48,8 +48,23 @@ public class CommonTaskUtil {
 					}
 					if(Parameters.parameters.booleanParameter("showWeights")){
 						// Weight panels disposed of in HyperNEATUtil
-						HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
-						HyperNEATUtil.drawWeight(hngt.getSubstrateGenotype(task),task,hngt.numModules()); 
+					//	if(Parameters.parameters.booleanParameter("cascadeExpansion")) {
+							HyperNEATCPPNGenotype hng = (HyperNEATCPPNGenotype) MMNEAT.genotype;
+							HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
+							HyperNEATVisualizationUtil.drawWeight(hng, task, hngt.numModules()); 
+						//	HyperNEATVisualizationUtil.drawWeight(
+						//} else {
+							//HyperNEATVisualizationUtil.drawWeight(hngt.getSubstrateGenotype(task), task, hngt.numModules()); 
+						//}
+					}
+
+					if(!HyperNEATCPPNGenotype.constructingNetwork && CommonConstants.hyperNEAT && CommonConstants.monitorSubstrates)  {
+						if(TWEANN.subsPanel != null) {
+							for(DrawingPanel dp : TWEANN.subsPanel) {
+								dp.dispose();
+							}
+						}
+						TWEANN.subsPanel = null;
 					}
 
 				}

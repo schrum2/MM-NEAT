@@ -199,7 +199,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @return List of Substrates in order from inputs to hidden to output
 	 *         layers
 	 */
-	List<Substrate> getSubstrateInformation(HyperNEATTask HNTask) {
+	public List<Substrate> getSubstrateInformation(HyperNEATTask HNTask) {
 		return HNTask.getSubstrateInformation();
 		
 	}
@@ -209,7 +209,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @return List of triples that specifies each substrate with the index of each triple being its layer.
 	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
 	 */
-	List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask HNTask) {
+	public List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask HNTask) {
 		return HNTask.getSubstrateConnectivity();
 	}
 

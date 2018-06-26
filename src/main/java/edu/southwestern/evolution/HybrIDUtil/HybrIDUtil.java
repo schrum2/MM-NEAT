@@ -7,6 +7,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.networks.hyperneat.HyperNEATVisualizationUtil;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.PopulationUtil;
@@ -36,7 +37,7 @@ public class HybrIDUtil {
 		// HyperNEAT disables monitorInputs, but if the parameter was true, then hybrID can turn it back on
 		CommonConstants.monitorInputs = Parameters.parameters.booleanParameter("monitorInputs");
 		// Turn off HyperNEAT visualizations
-		HyperNEATUtil.clearHyperNEATVisualizations();
+		//HyperNEATVisualizationUtil.clearHyperNEATVisualizations();
 		// Need small genes because there are so many of them
 		TWEANNGenotype.smallerGenotypes = true; // Since whole population is larger substrate networks, need them small
 		// Switch from CPPNs to plain TWEANNs

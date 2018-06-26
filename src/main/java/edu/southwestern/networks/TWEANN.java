@@ -1,20 +1,5 @@
 package edu.southwestern.networks;
 
-import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
-import edu.southwestern.evolution.genotypes.TWEANNGenotype;
-import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.southwestern.evolution.lineage.Offspring;
-import edu.southwestern.networks.hyperneat.HyperNEATUtil;
-import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.parameters.CommonConstants;
-import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.CombinatoricUtilities;
-import edu.southwestern.util.graphics.DrawingPanel;
-import edu.southwestern.util.graphics.GraphicsUtil;
-import edu.southwestern.util.graphics.Plot;
-import edu.southwestern.util.random.RandomNumbers;
-import edu.southwestern.util.stats.StatisticsUtilities;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -23,6 +8,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.evolution.lineage.Offspring;
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
+import edu.southwestern.networks.hyperneat.HyperNEATVisualizationUtil;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.CombinatoricUtilities;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.graphics.GraphicsUtil;
+import edu.southwestern.util.graphics.Plot;
+import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
  * My version of a Topology and Weight Evolving Neural Network. Nodes are stored
@@ -756,8 +757,6 @@ public class TWEANN implements Network {
 		} else {
 			outputs = moduleOutput(chosenModule);
 		}
-		//THIS TEST DOESN'T WORK WITH MMD
-		//assert outputs.length == this.numModes * this.numOut : "TWEANN Outputs: outputs.length = " + outputs.length + ", this.numModes * this.numOut = " + this.numModes + " * " + this.numOut + " = " + (this.numModes * this.numOut) + ": neuronsPerModule = " + neuronsPerModule;
 
 		if (canDraw) {
 			if(!HyperNEATCPPNGenotype.constructingNetwork && CommonConstants.hyperNEAT && CommonConstants.monitorSubstrates) {
@@ -861,7 +860,7 @@ public class TWEANN implements Network {
 	 * Creates and updates visuals of substrates used by h-neat tetris task 
 	 */
 	public void animateSubstrate() {
-			subsPanel = HyperNEATUtil.drawSubstrates(nodes);
+			HyperNEATVisualizationUtil.drawSubstrates(nodes, ((HyperNEATTask) MMNEAT.task).getSubstrateInformation());
 			//tweannGenotype has getLinkBetween
 			//just need to find a way to get neuron innovation numbers
 	}

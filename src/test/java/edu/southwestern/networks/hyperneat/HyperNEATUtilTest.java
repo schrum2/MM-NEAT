@@ -116,10 +116,10 @@ public class HyperNEATUtilTest {
 //		DrawingPanel d =  HyperNEATUtil.drawWeight(subs[0], subs[1], 0, 1);
 	}
 	
-	@Test
-	public void testResetSubstrates(){
-		HyperNEATUtil.resetSubstrates();
-	}
+//	@Test
+//	public void testResetSubstrates(){
+//		HyperNEATVisualizationUtil.resetSubstrates();
+//	}
 	
 	@Test
 	public void testNumBiasOutputsNeeded(){
