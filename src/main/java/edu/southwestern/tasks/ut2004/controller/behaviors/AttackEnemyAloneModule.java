@@ -15,9 +15,9 @@ public class AttackEnemyAloneModule implements BehaviorModule {
 		boolean shoot = true; 
 		boolean secondary = false; 
 		boolean jump = false; 
-		boolean forcePath = false; // What is this?
+		boolean forcePath = true;
 		
-		return new OldActionWrapper(new ApproachEnemyAction( memory,  shoot,  secondary,  jump,  forcePath));
+		return new OldActionWrapper(new ApproachEnemyAction(memory, shoot, secondary, jump, forcePath));
 	}
 
 	@Override
