@@ -229,7 +229,6 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	private static ArrayList<NodeGene> alignNodesToArchetype(ArrayList<NodeGene> list, int archetypeIndex) {
 		ArrayList<NodeGene> archetype = EvolutionaryHistory.archetypes[archetypeIndex];
 		ArrayList<NodeGene> aligned = new ArrayList<NodeGene>(archetype.size());
-
 		// Deal with matching and disjoint genes
 		int listPos = 0, archetypePos = 0;
 		while (listPos < list.size() && archetypePos < archetype.size()) {
@@ -249,7 +248,9 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 					"archetypeIndex: " + archetypeIndex + "\n" +
 					"Already passed the innovation! " + leftInnovation + "\n" +
 					"Archetype:" + archetype + "\n" +
-					"List:" + list;
+					"List:" + list + "\n" +
+					"aligned:" + aligned + "\n" + 
+					"containsInnovationAt(archetype, leftInnovation): " + containsInnovationAt(archetype, leftInnovation);
 				//printNodeAlignmentColumns(list, archetypeIndex);
 				// Fill with blanks until gene is reached
 				aligned.add(null);

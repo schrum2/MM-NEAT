@@ -11,6 +11,7 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
@@ -1280,7 +1281,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @return number of links actually added
 	 */
 	private int addOutputNode(int ftype, long[] sourceInnovations, double[] weights, long[] linkInnovations) {
-		return addOutputNode(ftype, sourceInnovations, weights, linkInnovations, nodes.size());
+		return addOutputNode(ftype, sourceInnovations, weights, linkInnovations, nodes.size(),true,-1);
 	}
 
 	/**
@@ -1292,7 +1293,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @param indexToAdd
 	 * @return
 	 */
-	private int addOutputNode(int ftype, long[] sourceInnovations, double[] weights, long[] linkInnovations, int indexToAdd) {
+	private int addOutputNode(int ftype, long[] sourceInnovations, double[] weights, long[] linkInnovations, int indexToAdd, boolean addAtEnd, int archetypeIndexToAdd) {
 		long newNodeInnovation = -(numIn + numOut) - 1;
 		NodeGene ng = newNodeGene(ftype, TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
 		HashSet<Long> addedLinks = new HashSet<Long>();
@@ -1305,9 +1306,13 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		}
 		nodes.add(indexToAdd, ng);
 		numOut++;
-		EvolutionaryHistory.archetypeAdd(archetypeIndex, ng.clone(), "new output");
-		// EvolutionaryHistory.archetypeOut[archetypeIndex]++;
-		
+		if(addAtEnd) {
+			assert archetypeIndexToAdd == -1 : "If adding at the end of the archetype, then this value should be -1 to indicate that: " + archetypeIndexToAdd;
+			EvolutionaryHistory.archetypeAdd(archetypeIndex, ng.clone(), "new output"); // Adds at end (for Module Mutation)
+		} else {
+			assert archetypeIndexToAdd != -1 : "archetypeIndexToAdd should not be -1 in this case";
+			EvolutionaryHistory.archetypeAdd(archetypeIndex, archetypeIndexToAdd, ng.clone(), false, "new output"); // adds at index (for Cascade Expansion)
+		}
 		return addedLinks.size();
 	}
 
@@ -1332,16 +1337,18 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		double[] emptyArray2 = new double[0]; //new output nodes start with no links
 		int i = 0, position = this.outputStartIndex() + initialNumberOfSubstratePairs;
 		//adding new outputs for substrate pairs
+		int archetypeAddIndex = EvolutionaryHistory.archetypes[archetypeIndex].size() - nodes.size() + position;
 		while (i < numberOfNewSubstratePairs) {
-			addOutputNode(ftypes[i], emptyArray1, emptyArray2, emptyArray1, position + i);
+			addOutputNode(ftypes[i], emptyArray1, emptyArray2, emptyArray1, position + i, false, archetypeAddIndex + i);
 			i++;
 			this.neuronsPerModule++;
 		}
 		//new substrate biases will be inserted after the old hidden substrate biases and before the output substrate biases
 		position += numberOfNewSubstratePairs + initialNumberOfHiddenSubstrates;
+		archetypeAddIndex = EvolutionaryHistory.archetypes[archetypeIndex].size() - nodes.size() + position;
 		//adding new outputs for hidden biases
 		for (int j = 0; j < numberOfNewHiddenSubstrates; j++) {
-			addOutputNode(ftypes[i + j], emptyArray1, emptyArray2, emptyArray1, position + j);
+			addOutputNode(ftypes[i + j], emptyArray1, emptyArray2, emptyArray1, position + j, false, archetypeAddIndex + j);
 			this.neuronsPerModule++;
 		}
 		return numberOfNewSubstratePairs + numberOfNewHiddenSubstrates;
