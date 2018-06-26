@@ -15,5 +15,5 @@ public interface BotAction {
 	 * @param bot (bot)
 	 * @return description of action
 	 */
-	public String execute(UT2004BotModuleController bot);
+	public String execute(@SuppressWarnings("rawtypes") UT2004BotModuleController bot);
 }

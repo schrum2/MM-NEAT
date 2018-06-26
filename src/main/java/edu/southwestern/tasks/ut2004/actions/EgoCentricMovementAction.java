@@ -47,7 +47,7 @@ public class EgoCentricMovementAction implements BotAction {
 	 * @param bot (the bot to execute the commands)
 	 * @return returns a list of commands executed by the bot in the form of a string
 	 */
-	public String execute(UT2004BotModuleController bot) {
+	public String execute(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		Rotation botRotation = bot.getInfo().getRotation();
 		Location botLocation = bot.getInfo().getLocation();
 		if (botRotation != null && botLocation != null) {

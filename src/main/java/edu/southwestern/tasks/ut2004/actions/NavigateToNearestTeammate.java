@@ -20,7 +20,7 @@ public class NavigateToNearestTeammate extends NavigateToLocationAction {
 		this.friendLocations = friendLocations;
 	}
 	
-	public static Location locationOfNearestTeammate(UT2004BotModuleController bot, HashMap<String,Location> friendLocs) {
+	public static Location locationOfNearestTeammate(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, HashMap<String,Location> friendLocs) {
 		Location botLocation = bot.getBot().getLocation();
 		double minDistance = MAX_DISTANCE;
 		Location nearestFriend = null;
