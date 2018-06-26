@@ -16,15 +16,16 @@ import edu.southwestern.tasks.ut2004.sensors.blocks.team.LowestTeammateHealthBlo
 public class OpponentAndTeammateRelativeSensorModel extends UT2004BlockLoadedSensorModel {
 
 	public HashMap<String,Location> teammateLocations;
+	public HashMap<String,Double> teammateHealths;
 	
 	/**
 	 * creates the block of sensors
 	 */
 	public OpponentAndTeammateRelativeSensorModel() { //adds the specific sensor blocks
-		this(null);
+		this(null, null);
 	}
 	
-	public OpponentAndTeammateRelativeSensorModel(HashMap<String,Location> teammateLocations) { //adds the specific sensor blocks
+	public OpponentAndTeammateRelativeSensorModel(HashMap<String,Location> teammateLocations, HashMap<String,Double> teammateHealths) { //adds the specific sensor blocks
 		blocks.add(new AutoRayTraceSensorBlock());
 		blocks.add(new PieSliceAgentSensorBlock(true)); //true means that the bot senses an ENEMY nearby
 		blocks.add(new PieSliceAgentSensorBlock(false)); //false means that the bot senses a FRIEND nearby
@@ -37,12 +38,19 @@ public class OpponentAndTeammateRelativeSensorModel extends UT2004BlockLoadedSen
 		DistanceToNearestTeammateBlock ntb = new DistanceToNearestTeammateBlock();
 		ntb.giveTeamLocations(teammateLocations);
 		blocks.add(ntb);
-//		blocks.add(new HighestTeammateHealthBlock());
-//		blocks.add(new LowestTeammateHealthBlock());
-//		blocks.add(new AverageTeammateHealthBlock());
+		HighestTeammateHealthBlock hth = new HighestTeammateHealthBlock();
+		hth.giveTeamHealthLevels(teammateHealths);
+		blocks.add(hth);
+		LowestTeammateHealthBlock lth = new LowestTeammateHealthBlock();
+		lth.giveTeamHealthLevels(teammateHealths);
+		blocks.add(lth);
+		AverageTeammateHealthBlock ath = new AverageTeammateHealthBlock();
+		ath.giveTeamHealthLevels(teammateHealths);
+		blocks.add(ath);
 
 		// Saved so that it can be part of any copies that are made
-//		this.teammateLocations = teammateLocations;
+		this.teammateLocations = teammateLocations;
+		this.teammateHealths = teammateHealths;
 		//TODO: FIGURE OUT WHY THIS !@#$%^&* ISN'T WORKING
 	}
 
@@ -50,18 +58,26 @@ public class OpponentAndTeammateRelativeSensorModel extends UT2004BlockLoadedSen
 	 * creates a copy of the sensor model
 	 */
 	public UT2004SensorModel copy() {
-		OpponentAndTeammateRelativeSensorModel copy = new OpponentAndTeammateRelativeSensorModel(teammateLocations);
-		//assert teammateLocations != null : "Don't copy null team information";
+		OpponentAndTeammateRelativeSensorModel copy = new OpponentAndTeammateRelativeSensorModel(teammateLocations, teammateHealths);
+		assert teammateLocations != null : "Don't copy null team information";
 		return copy;
 	}
 	
-	public void giveTeamInfo(HashMap<String,Location> info) {
-		teammateLocations = info;
+	public void giveTeamLocations(HashMap<String,Location> locs) {
+		teammateLocations = locs;
 		for(UT2004SensorBlock block : blocks) {
 			if(block instanceof AcceptsTeamLocations) {
-				((AcceptsTeamLocations) block).giveTeamLocations(info);
+				((AcceptsTeamLocations) block).giveTeamLocations(locs);
 			}
 		}
 	}
 
+	public void giveTeamHelathLevels(HashMap<String,Double> healthLevels) {
+		teammateHealths = healthLevels;
+		for(UT2004SensorBlock block : blocks) {
+			if(block instanceof AcceptsTeamHealthLevels) {
+				((AcceptsTeamHealthLevels) block).giveTeamHealthLevels(healthLevels);
+			}
+		}
+	}
 }

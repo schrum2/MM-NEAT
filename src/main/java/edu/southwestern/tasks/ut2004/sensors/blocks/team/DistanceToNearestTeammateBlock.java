@@ -26,6 +26,7 @@ public class DistanceToNearestTeammateBlock implements UT2004SensorBlock, Accept
 
 	@Override
 	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
+		teamLocation.put(bot.getBot().getName(), bot.getBot().getLocation());
 		try {
 			inputs[in++] = UT2004Util.scale(distanceToClosestFriend(bot), MAX_DISTANCE);
 			inputs[in++] = UT2004Util.scale(flatDistanceToClosestFriend(bot), MAX_DISTANCE);

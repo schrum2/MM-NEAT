@@ -86,9 +86,16 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 		// creates a place to store team info to be shared
 		HashMap<String,Location> friendDistances = new HashMap<String,Location>();
 		if(sensorModel instanceof OpponentAndTeammateRelativeSensorModel) {
-			System.out.println("Creating HashMap for team information");
-			((OpponentAndTeammateRelativeSensorModel) sensorModel).giveTeamInfo(friendDistances);
+			System.out.println("Creating HashMap for team distances");
+			((OpponentAndTeammateRelativeSensorModel) sensorModel).giveTeamLocations(friendDistances);
 		}
+		
+		HashMap<String,Double> friendHealthLevels = new HashMap<String,Double>();
+		if(sensorModel instanceof OpponentAndTeammateRelativeSensorModel) {
+			System.out.println("Creating HashMap for team HealthLevels");
+			((OpponentAndTeammateRelativeSensorModel) sensorModel).giveTeamHelathLevels(friendHealthLevels);;
+		}
+		//giveTeamHelathLevels
 
 		assert friendDistances != null : "How is this null? We just made it";
 		assert ((OpponentAndTeammateRelativeSensorModel) sensorModel).teammateLocations != null : "Should not pass in null team information";

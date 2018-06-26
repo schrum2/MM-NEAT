@@ -36,7 +36,7 @@ public class BehaviorListController implements BotController {
 	 * selects an action for the bot to execute
 	 * @return returns a controller for the bot
 	 */
-	public BotAction control(UT2004BotModuleController bot) {
+	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		for (int i = 0; i < behaviors.size(); i++) {
 			BehaviorModule mod = behaviors.get(i);
 			if (mod.trigger(bot)) {
@@ -49,7 +49,7 @@ public class BehaviorListController implements BotController {
 	/**
 	 * initializes the controller
 	 */
-	public void initialize(UT2004BotModuleController bot) {
+	public void initialize(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		for (int i = 0; i < behaviors.size(); i++) {
 			behaviors.get(i).initialize(bot);
 		}
@@ -58,7 +58,7 @@ public class BehaviorListController implements BotController {
 	/**
 	 * resets the controller to be reprogrammed
 	 */
-	public void reset(UT2004BotModuleController bot) {
+	public void reset(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		for (int i = 0; i < behaviors.size(); i++) {
 			behaviors.get(i).reset(bot);
 		}
