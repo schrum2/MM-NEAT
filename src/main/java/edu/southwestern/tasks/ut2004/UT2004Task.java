@@ -44,6 +44,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	public UT2004OutputInterpretation outputModel;
 	public UT2004WeaponManager weaponManager;
 	protected final String map;
+	protected final String[] mapList;
 	protected final int evalMinutes;
 	protected final int desiredSkill;
 	protected final BotController[] opponents;
@@ -58,8 +59,27 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * @param desiredSkill (the skill to be evaluated)
 	 * @param opponents (the other players the bot is playing against)
 	 */
+	public UT2004Task(String map, String[] mapList, int evalMinutes, int desiredSkill, BotController[] opponents) {
+		this.map = map;
+		this.mapList = mapList;
+		this.evalMinutes = evalMinutes;
+		this.desiredSkill = desiredSkill;
+		this.opponents = opponents;
+
+		try {
+			this.sensorModel = (UT2004SensorModel) ClassCreation.createObject("utSensorModel");
+			this.outputModel = (UT2004OutputInterpretation) ClassCreation.createObject("utOutputModel");
+			this.weaponManager = (UT2004WeaponManager) ClassCreation.createObject("utWeaponManager");
+		} catch (NoSuchMethodException ex) {
+			System.out.println("Could not load sensor/output model for UT2004");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
 	public UT2004Task(String map, int evalMinutes, int desiredSkill, BotController[] opponents) {
 		this.map = map;
+		this.mapList = null;
 		this.evalMinutes = evalMinutes;
 		this.desiredSkill = desiredSkill;
 		this.opponents = opponents;
@@ -123,6 +143,12 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		// If there is only one individual then it will be the first in the result array
+		if(Parameters.parameters.classParameter("utMapList") != null) {
+			return evaluateMultipleGenotypesAcrossMultipleMaps(new Genotype[] {individual}, mapList, Parameters.parameters.integerParameter("utNumNativeBots"), 
+					sensorModel, outputModel, weaponManager, opponents,
+					evalMinutes, desiredSkill,
+					fitness, others)[0];
+		}
 		return evaluateMultipleGenotypes(new Genotype[] {individual}, map, Parameters.parameters.integerParameter("utNumNativeBots"), 
 				sensorModel, outputModel, weaponManager, opponents,
 				evalMinutes, desiredSkill,
@@ -259,7 +285,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * @return Array of paired fitness and other scores for the evolved agents
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Network> Pair<double[], double[]>[] evaluateMultipleGenotypesAcrossMultupleMaps(Genotype<T>[] individuals, String[] map, int numNativeBots, 
+	public static <T extends Network> Pair<double[], double[]>[] evaluateMultipleGenotypesAcrossMultipleMaps(Genotype<T>[] individuals, String[] map, int numNativeBots, 
 			UT2004SensorModel sensorModel, UT2004OutputInterpretation outputModel, UT2004WeaponManager weaponManager, BotController[] opponents,
 			int evalMinutes, int desiredSkill,
 			ArrayList<UT2004FitnessFunction<T>> fitness, ArrayList<UT2004FitnessFunction<T>> others) {    

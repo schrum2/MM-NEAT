@@ -878,6 +878,7 @@ public class Parameters {
 		classOptions.add("tugGoalTargetStat", Max.class, "The stat used by TUG to determine what value objective goals should work towards reaching");
 		classOptions.add("tugPerformanceStat", Average.class, "The stat used by TUG to calculate the performance of the population");
 		classOptions.add("utGameBotsOpponent", null, "Bot to fight against while evolving");
+		classOptions.add("utMapList", null, "Gives the clas with the list of maps for the bot to evolve on");
 		classOptions.add("utOutputModel", OpponentRelativeMovementOutputModel.class, "Outputs for UT2004 bot");
 		classOptions.add("utSensorModel", OpponentRelativeSensorModel.class, "Sensors for UT2004 bot");
 		classOptions.add("utWeaponManager", SimpleWeaponManager.class, "Weapon management for UT2004 bot");
