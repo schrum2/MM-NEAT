@@ -48,16 +48,9 @@ public class CommonTaskUtil {
 					}
 					if(Parameters.parameters.booleanParameter("showWeights")){
 						// Weight panels disposed of in HyperNEATUtil
-					//	if(Parameters.parameters.booleanParameter("cascadeExpansion")) {
-							HyperNEATCPPNGenotype hng = (HyperNEATCPPNGenotype) MMNEAT.genotype;
-							HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
-							HyperNEATVisualizationUtil.drawWeight(hng, task, hngt.numModules()); 
-						//	HyperNEATVisualizationUtil.drawWeight(
-						//} else {
-							//HyperNEATVisualizationUtil.drawWeight(hngt.getSubstrateGenotype(task), task, hngt.numModules()); 
-						//}
+						HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
+						HyperNEATVisualizationUtil.drawWeight(hngt, task, hngt.numModules());
 					}
-
 					if(!HyperNEATCPPNGenotype.constructingNetwork && CommonConstants.hyperNEAT && CommonConstants.monitorSubstrates)  {
 						if(TWEANN.subsPanel != null) {
 							for(DrawingPanel dp : TWEANN.subsPanel) {

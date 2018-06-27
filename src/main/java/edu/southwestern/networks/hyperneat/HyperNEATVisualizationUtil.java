@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.FullLinkGene;
@@ -169,10 +170,10 @@ public class HyperNEATVisualizationUtil {
 			int nodeIndexStart = 0;
 			int substratePlacing = 0;
 			for(int i = 0; i < substrates.size(); i++) {
-				Substrate s = substrates.get(i);
-				TWEANN.subsPanel.add(drawSubstrate(s, nodes, nodeIndexStart));
+				Substrate substrate = substrates.get(i);
+				TWEANN.subsPanel.add(drawSubstrate(substrate, nodes, nodeIndexStart));
 				TWEANN.subsPanel.get(i).setLocation(substratePlacing, 0);
-				nodeIndexStart += s.getSize().t1 * s.getSize().t2;
+				nodeIndexStart += substrate.getSize().t1 * substrate.getSize().t2;
 				substratePlacing += TWEANN.subsPanel.get(i).getFrame().getWidth();
 			}
 		} else {
@@ -235,21 +236,20 @@ public class HyperNEATVisualizationUtil {
 	 * @param size size of substrate
 	 * @param c color of square
 	 */
-	private static void drawCoord(DrawingPanel p, Substrate s, ArrayList<Node> nodes, int nodeIndex) {
+	private static void drawCoord(DrawingPanel p, Substrate substrate, ArrayList<Node> nodes, int nodeIndex) {
 		p.getGraphics().setBackground(Color.gray);
-		boolean sort = Parameters.parameters.booleanParameter("sortOutputActivations") && s.getStype() == Substrate.OUTPUT_SUBSTRATE;
-		boolean biggest = Parameters.parameters.booleanParameter("showHighestActivatedOutput") && s.getStype() == Substrate.OUTPUT_SUBSTRATE;
+		boolean sort = Parameters.parameters.booleanParameter("sortOutputActivations") && substrate.getStype() == Substrate.OUTPUT_SUBSTRATE;
+		boolean biggest = Parameters.parameters.booleanParameter("showHighestActivatedOutput") && substrate.getStype() == Substrate.OUTPUT_SUBSTRATE;
 		ArrayList<VisualNode> activations = new ArrayList<VisualNode>(); 
-		for(int j = 0; j < s.getSize().t2; j++) {
-			for(int i = 0; i < s.getSize().t1; i++) {
+		for(int j = 0; j < substrate.getSize().t2; j++) {
+			for(int i = 0; i < substrate.getSize().t1; i++) {
 				Node node = nodes.get(nodeIndex++);
 				Color c = Color.gray;
 				double activation = node.output();
 				if(node.ntype == TWEANN.Node.NTYPE_OUTPUT || !node.outputs.isEmpty()) {
-					if(!s.isNeuronDead(i, j)) c = regularVisualization(activation);
-
+					if(!substrate.isNeuronDead(i, j)) c = regularVisualization(activation);
 				}
-				activations.add(new VisualNode(activation, i, j, c, s.isNeuronDead(i, j)));//dead neurons
+				activations.add(new VisualNode(activation, i, j, c, substrate.isNeuronDead(i, j)));//dead neurons
 			}
 		}
 		if(sort) {
@@ -285,7 +285,7 @@ public class HyperNEATVisualizationUtil {
 	 * @param s2Index starting index of nodes in s2
 	 * @return drawingPanel with drawn weights
 	 */
-	static DrawingPanel drawWeight(Substrate s1, Substrate s2, int s1Index, int s2Index, boolean showMultipleModules, List<TWEANNGenotype.NodeGene> nodes, TWEANNGenotype tg) {
+	static DrawingPanel drawWeight(Substrate s1, Substrate s2, int s1Index, int s2Index, boolean showMultipleModules, List<TWEANNGenotype.NodeGene> nodes, TWEANNGenotype substrateGenotype) {
 		//create new panel here
 		int xCoord = 0;
 		int yCoord = 0;
@@ -300,7 +300,7 @@ public class HyperNEATVisualizationUtil {
 		//for every node in s1, draws all links from it to s2
 		for(int i = s2Index; i < (s2Index + (s2.getSize().t1 * s2.getSize().t2)); i++) {//goes through every node in target substrate
 			//drawBorder(wPanel, xCoord, yCoord, nodeVisWidth + 2, nodeVisHeight + 2);
-			drawNodeWeight(wPanel, nodes, tg, nodes.get(i), xCoord , yCoord , s1Index, s1Index + (s1.getSize().t1 * s1.getSize().t2), nodeVisWidth, nodeVisHeight, showMultipleModules);
+			drawNodeWeight(wPanel, nodes, substrateGenotype, nodes.get(i), xCoord , yCoord , s1Index, s1Index + (s1.getSize().t1 * s1.getSize().t2), nodeVisWidth, nodeVisHeight, showMultipleModules);
 			xCoord += nodeVisWidth + 1;
 			if(xCoord >= panelWidth) {
 				xCoord = 0;
@@ -325,12 +325,12 @@ public class HyperNEATVisualizationUtil {
 	 * @param nodeHeight height of node 1
 	 * @param if true visualization will show module source. if false visualization will show default
 	 */
-	private  static void  drawNodeWeight(DrawingPanel dPanel, List<TWEANNGenotype.NodeGene> nodes, TWEANNGenotype tg, TWEANNGenotype.NodeGene targetNode, int xCoord, int yCoord, int startingNodeIndex, int endingNodeIndex, int nodeWidth, int nodeHeight, boolean showModuleSource) {
+	private  static void  drawNodeWeight(DrawingPanel dPanel, List<TWEANNGenotype.NodeGene> nodes, TWEANNGenotype substrateGenotype, TWEANNGenotype.NodeGene targetNode, int xCoord, int yCoord, int startingNodeIndex, int endingNodeIndex, int nodeWidth, int nodeHeight, boolean showModuleSource) {
 		int xLeftEdge = xCoord;
 		for(int j = startingNodeIndex; j < endingNodeIndex; j++) {//goes through every node in second substrate
-			Color c = Color.blue;
+			Color c = Color.gray;
 			TWEANNGenotype.NodeGene node = nodes.get(j);
-			TWEANNGenotype.FullLinkGene link = (FullLinkGene) tg.getLinkBetween(node.innovation, targetNode.innovation);
+			TWEANNGenotype.FullLinkGene link = (FullLinkGene) substrateGenotype.getLinkBetween(node.innovation, targetNode.innovation);
 			if(link != null) {
 				if(showModuleSource) {
 					c = CombinatoricUtilities.colorFromInt(link.getModuleSource());
@@ -364,29 +364,23 @@ public class HyperNEATVisualizationUtil {
 	/**
 	 * Draws the weights of the links between nodes in substrate layers to a series of drawing panels, with
 	 * one panel per connection of substrates
-	 * @param genotype genotype of network to be drawn
+	 * @param hngt genotype of network to be drawn
 	 * @param hnt hyperNEAT task
 	 * @return the weight panels
 	 */
-	//public static List<DrawingPanel> drawWeight(TWEANNGenotype genotype, HyperNEATTask hnt, int numCPPNModules) {
-	public static List<DrawingPanel> drawWeight(HyperNEATCPPNGenotype genotype, HyperNEATTask hnt, int numCPPNModules) {
+	public static List<DrawingPanel> drawWeight(HyperNEATCPPNGenotype hngt, HyperNEATTask hnt, int numCPPNModules) {
 		//gets all relevant information needed to draw link weights
-		TWEANNGenotype tg = (TWEANNGenotype)genotype.copy();
-		List<Substrate> substrates = hnt.getSubstrateInformation();
-		List<SubstrateConnectivity> connections = hnt.getSubstrateConnectivity();
-		List<TWEANNGenotype.NodeGene> nodes = genotype.nodes;
-//		List<Substrate> substrates = genotype.getSubstrateInformation(hnt);
-//		List<SubstrateConnectivity> connections = genotype.getSubstrateConnectivity(hnt);
-		System.out.println("substrates" + substrates);
-		System.out.println("connections" + connections);
-		System.out.println("nodes" + nodes);
-		
+		TWEANNGenotype substrateGenotype = hngt.getSubstrateGenotype(hnt);
+		List<TWEANNGenotype.NodeGene> nodes = substrateGenotype.nodes;
+		List<Substrate> substrates = hngt.getSubstrateInformation(hnt);
+		List<SubstrateConnectivity> connections = hngt.getSubstrateConnectivity(hnt);
+
 		//disposes of weight panels if already instantiated to clean up old panels
-		//		if(weightPanels != null) {
-		//			for(int i =0; i < weightPanels.size(); i++) {
-		//				weightPanels.get(i).dispose();
-		//			}
-		//		}
+//		if(weightPanels != null) {
+//			for(int i =0; i < weightPanels.size(); i++) {
+//				weightPanels.get(i).dispose();
+//			}
+//		}
 		//instantiates panel array
 		ArrayList<DrawingPanel> weightPanels = new ArrayList<DrawingPanel>();
 
@@ -405,14 +399,13 @@ public class HyperNEATVisualizationUtil {
 			int s1StartingIndex = getSubstrateNodeStartingIndex(s1, substrates);
 			int s2StartingIndex = getSubstrateNodeStartingIndex(s2, substrates);
 			//actually creates panel with weights
-			weightPanels.add(drawWeight(s1, s2, s1StartingIndex, s2StartingIndex, false, nodes, tg));
+			weightPanels.add(drawWeight(s1, s2, s1StartingIndex, s2StartingIndex, false, nodes, substrateGenotype));
 			if(numCPPNModules > 1) {
-				weightPanels.add(drawWeight(s1, s2, s1StartingIndex, s2StartingIndex, true, nodes, tg));
+				weightPanels.add(drawWeight(s1, s2, s1StartingIndex, s2StartingIndex, true, nodes, substrateGenotype));
 			}
 			//sets locations of panels so they're not right on top of one another
 			weightPanels.get(i).setLocation(weightPanelsWidth, weightPanelsHeight);
 			weightPanelsWidth += weightPanels.get(i).getFrame().getWidth() + LINK_WINDOW_SPACING;
-			System.out.println("yo: " + i);
 		}
 		return weightPanels;
 

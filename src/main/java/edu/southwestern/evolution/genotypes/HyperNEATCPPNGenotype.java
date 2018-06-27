@@ -115,7 +115,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	@Override
 	public TWEANN getPhenotype() {
 		TWEANNGenotype tg = getSubstrateGenotype((HyperNEATTask) MMNEAT.task) ;
-		return tg.getPhenotype();//return call to substrate genotype
+		TWEANN result = tg.getPhenotype();//return call to substrate genotype
+		result.passSubstrateInformation(getSubstrateInformation((HyperNEATTask) MMNEAT.task));
+		return result;
 	}
 
 	/**
