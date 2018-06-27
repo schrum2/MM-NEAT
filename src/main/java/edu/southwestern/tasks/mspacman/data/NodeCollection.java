@@ -55,7 +55,7 @@ public abstract class NodeCollection {
 		assert activePills != null : "Why is active pills null?";
 		int nearestPill = gs.getClosestNodeIndexFromNodeIndex(current, activePills);
 		int farthestPill = gs.getFarthestNodeIndexFromNodeIndex(current, activePills);
-		if( nearestPill != -1 && farthestPill != -1) {
+		if(nearestPill != -1 && farthestPill != -1) {
 			assert nearestPill != -1 : "The pillModel should stop this from happening";
 			assert farthestPill != -1 : "The pillModel should stop this from happening";
 			int[] tempPath = gs.getShortestPath(nearestPill, farthestPill);
@@ -68,22 +68,18 @@ public abstract class NodeCollection {
 				//assert gs.nodeInMaze(farthestPill) : "Farthest pill " + farthestPill + " not in maze";
 				addedNodes.add(farthestPill);
 			}
-
-			if (escapeToPowerPills) {
-				int[] activePowerPills = gs.getActivePowerPillsIndices();
-				for (Integer j : activePowerPills) {
-					if (j == current || j == lastNodeVisited) { // Can't escape to
-																// current location
-																// or previous
-																// escape node
-						continue;
-					}
-					assert gs.nodeInMaze(j) : "Power pill " + j + " not in maze";
-					addedNodes.add(j);
+		}	
+		if (escapeToPowerPills) {
+			int[] activePowerPills = gs.getActivePowerPillsIndices();
+			for (Integer j : activePowerPills) {
+				// Can't escape to current location or previous escape node
+				if (j == current || j == lastNodeVisited) { 
+					continue;
 				}
-			}	
-		}
-
+				assert gs.nodeInMaze(j) : "Power pill " + j + " not in maze";
+				addedNodes.add(j);
+			}
+		}	
 	}
 
 	protected void removeLastNodeVisited(int current, int[] junctions, GameFacade gs) {
