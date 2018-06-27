@@ -1063,7 +1063,7 @@ public class TWEANN implements Network {
 	 * @param frozen if link is frozen
 	 * @param recurrent if link is recurrent
 	 */
-	private void setLinkColor(Graphics2D g, boolean frozen, boolean recurrent) {
+	private void setLinkColor(Graphics2D g, boolean recurrent, boolean frozen) {
 		if (frozen) {
 			g.setColor(Color.CYAN);
 		} else if (!recurrent) {
@@ -1086,7 +1086,12 @@ public class TWEANN implements Network {
 					Node target = disLink.target;
 					checkLinkTarget(target);
 					if (showInnovationNumbers)drawLinkInnovationNumbersAndWeights(g, display, target, disLink, showWeights);
-					setLinkColor(g, disLink.recurrent, disLink.frozen);
+					setLinkColor(g, 
+							disLink.recurrent || // Explicitly labeling a link as recurrent is possible, but isn't really done
+							(archetypeIndex != -1 && // Substrate networks do not have archetypes so order cannot be checked
+							// But we can check if the target node precedes the source in the archetype
+							EvolutionaryHistory.indexOfArchetypeInnovation(archetypeIndex, disLink.target.innovation) < EvolutionaryHistory.indexOfArchetypeInnovation(archetypeIndex, display.innovation)), 
+							disLink.frozen);
 					drawLink(g, display, target, disLink, disLink.recurrent ? -1 : 1);
 				}
 			}
