@@ -39,10 +39,10 @@ public class AttemptAtTeammateController implements BotController {
 	 * 
 	 */
 	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {//loops thourhg over and over again
-		Player nearestFriend = bot.getPlayers().getNearestVisibleFriend();
-		Player lastSeenFriend = bot.getPlayers().getNearestFriend(10);
-		Player nearestEnemy = bot.getPlayers().getNearestVisibleEnemy();
-		Player lastSeenEnemy = bot.getPlayers().getNearestEnemy(10);
+		Player visibleFriend = bot.getPlayers().getNearestVisibleFriend();
+		Player lastSeenFriend = bot.getPlayers().getNearestFriend(10); //friend who bot just saw but if now out of view
+		Player visibleEnemy = bot.getPlayers().getNearestVisibleEnemy();
+		Player lastSeenEnemy = bot.getPlayers().getNearestEnemy(10); //enemy who bot just saw but if now out of view
 		
 		/**bot will look for health pickups if it drops below 20hp*/
 		if((bot.getBot().getSelf().getHealth()) < THRESHOLD_HEALTH_LEVEL) {
@@ -53,7 +53,15 @@ public class AttemptAtTeammateController implements BotController {
 		}
 		
 		/**if bot sees friend when no enemies are nearby, it should follow teammate*/
-		//if()
+//		if(visibleFriend != null || lastSeenFriend != null) {
+			if(visibleFriend != null) { //follow visible teammate
+				lastSeenFriend = visibleFriend;
+				return new FollowTeammateAction(visibleFriend);
+			}
+//			if(visibleFriend == null && lastSeenFriend != null) {//go to location of last visible friend
+//				
+//			}
+//		}
 		//follow teammate
 		//still for too long, ditch them
 		
@@ -114,6 +122,8 @@ public class AttemptAtTeammateController implements BotController {
 	public void initialize(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		memory = OldActionWrapper.getAgentMemory(bot);
 		body = OldActionWrapper.getAgentBody(bot);
+		//getComponentId().getName().setFlag()
+		bot.getBot().getComponentId().getName().setFlag("Jude");
 		//this.chaseController = new ChasingController(bot.getBot(), memory);
 	}
 
