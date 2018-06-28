@@ -24,6 +24,7 @@ import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.Triple;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 
@@ -102,11 +103,13 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 		MMNEAT.loadClasses();
 		EvolutionaryHistory.initArchetype(0);
 
-		HiddenSkipsHidden hsh = new HiddenSkipsHidden();
-		HyperNEATTask hshTask = ((HyperNEATTask) MMNEAT.task);
-
 		HyperNEATCPPNAndSubstrateArchitectureGenotype hncasag = new HyperNEATCPPNAndSubstrateArchitectureGenotype();
 		ArrayList<Genotype<TWEANN>> constantPopulation = PopulationUtil.initialPopulation(hncasag, PARENT_POPULATION);
+		ArrayList<TWEANN> originalTWEANNs = new ArrayList<TWEANN>();
+		for(Genotype<TWEANN> tg : constantPopulation) {
+			originalTWEANNs.add(tg.getPhenotype());
+		}
+		
 		ArrayList<Genotype<TWEANN>> experimentalPopulation = new ArrayList<Genotype<TWEANN>>();
 		for(int i = 0; i < constantPopulation.size(); i++) {
 			experimentalPopulation.add(constantPopulation.get(i).copy());
@@ -116,16 +119,14 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 		}
 	
 		assertEquals(experimentalPopulation.size(), constantPopulation.size());
-		Random rng = new Random();
 		int numInputs = constantPopulation.get(0).getPhenotype().numInputs();
-		for (int i = 0; i < 1000; i++) {
-			double[] inputs = new double[numInputs];
-			for (int j = 0; j < numInputs; j++) {
-				inputs[j] = rng.nextInt(1);
-			}
+		for (int i = 0; i < 50; i++) {
+			double[] inputs = RandomNumbers.randomArray(numInputs);
 			for (int j = 0; j < constantPopulation.size(); j++) {
-				constantPopulation.get(j).process(inputs);
-				experimentalPopulation.get(j);
+				double[] originalOutputs = originalTWEANNs.get(j).process(inputs);
+				double[] cascadeOutputs = experimentalPopulation.get(j).getPhenotype().process(inputs);
+				
+				assertArrayEquals(originalOutputs, cascadeOutputs, 0);
 			}
 		}
 	}
