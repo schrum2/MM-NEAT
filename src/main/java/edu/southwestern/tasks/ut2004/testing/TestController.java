@@ -4,7 +4,7 @@ import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import edu.southwestern.tasks.ut2004.actions.BotAction;
 import edu.southwestern.tasks.ut2004.actions.EmptyAction;
-import edu.southwestern.tasks.ut2004.actions.FollowTeammate;
+import edu.southwestern.tasks.ut2004.actions.FollowTeammateAction;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.behaviors.AttackEnemyAloneModule;
 

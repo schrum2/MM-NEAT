@@ -7,14 +7,14 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
  * Tells the bot to follow the nearest teammate
  * @author Adina Friedman
  */
-public class FollowTeammate extends NavigateToLocationAction {
+public class PursueEnemyAction extends NavigateToLocationAction {
 	public Player nearestFriend;
 	
 	/**
 	 * Gives the bot which teammate it needs to follow
 	 * @param friend (teammate to follow)
 	 */
-	public FollowTeammate(Player friend) {
+	public PursueEnemyAction(Player friend) {
 		super(friend.getLocation());
 		this.nearestFriend = friend;
 	}

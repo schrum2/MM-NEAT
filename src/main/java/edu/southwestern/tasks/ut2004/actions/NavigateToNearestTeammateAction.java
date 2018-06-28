@@ -10,7 +10,7 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
  * Tells the bot to navigate to the given teammate
  * @author Adina Friedman
  */
-public class NavigateToNearestTeammate extends NavigateToLocationAction {
+public class NavigateToNearestTeammateAction extends NavigateToLocationAction {
 //	public Player friend;
 //	Location nearestFriend = null;
 	HashMap<String,Location> friendLocations;
@@ -41,7 +41,7 @@ public class NavigateToNearestTeammate extends NavigateToLocationAction {
 	/**
 	 * @param teamLocations (hashmap containing the locations of teammates)
 	 */
-	public NavigateToNearestTeammate(UT2004BotModuleController bot, HashMap<String,Location> teamLocations) {
+	public NavigateToNearestTeammateAction(UT2004BotModuleController bot, HashMap<String,Location> teamLocations) {
 		super(locationOfNearestTeammate(bot,teamLocations));
 	}
 	
