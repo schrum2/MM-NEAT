@@ -1,5 +1,7 @@
 package edu.southwestern.tasks;
 
+import java.util.List;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
@@ -21,6 +23,8 @@ public class CommonTaskUtil {
 
 	public static final int NETWORK_WINDOW_OFFSET = 0;
 
+	public static List<DrawingPanel> lastSubstrateWeightPanelsReturned = null;
+	
 	public static Pair<DrawingPanel, DrawingPanel> getDrawingPanels(Genotype<?> genotype){
 
 		// This is not a TWEANNGenotype because it generates a DL4J network,
@@ -47,9 +51,14 @@ public class CommonTaskUtil {
 						hngt.getCPPN().draw(cppnPanel);
 					}
 					if(Parameters.parameters.booleanParameter("showWeights")){
-						// Weight panels disposed of in HyperNEATUtil
+						// Dispose of weight panels
+						if(lastSubstrateWeightPanelsReturned != null) {
+							for(DrawingPanel dp: lastSubstrateWeightPanelsReturned) {
+								dp.dispose();
+							}
+						}
 						HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
-						HyperNEATVisualizationUtil.drawWeight(hngt, task, hngt.numModules());
+						lastSubstrateWeightPanelsReturned = HyperNEATVisualizationUtil.drawWeight(hngt, task, hngt.numModules());
 					}
 					if(!HyperNEATCPPNGenotype.constructingNetwork && CommonConstants.hyperNEAT && CommonConstants.monitorSubstrates)  {
 						if(TWEANN.subsPanel != null) {

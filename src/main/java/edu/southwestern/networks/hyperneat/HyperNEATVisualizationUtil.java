@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.FullLinkGene;
@@ -18,8 +17,8 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.graphics.DrawingPanel;
 
 public class HyperNEATVisualizationUtil {
-	//private List<DrawingPanel> substratePanels;
-	//private List<DrawingPanel> weightPanels;
+	private List<DrawingPanel> substratePanels = null;
+	private static List<DrawingPanel> weightPanels = null;
 	public static final int SUBS_GRID_SIZE = Parameters.parameters.integerParameter("substrateGridSize");
 	public static final int WEIGHT_GRID_SIZE = Parameters.parameters.integerParameter("substrateWeightSize");
 	public final static int LINK_WINDOW_SPACING = 5;
@@ -165,6 +164,7 @@ public class HyperNEATVisualizationUtil {
 	 * @return List<DrawingPanel> of DrawingPanels used to draw the Substrates
 	 */
 	public static void drawSubstrates(ArrayList<Node> nodes, List<Substrate> substrates) {
+		System.out.println("panel" + TWEANN.subsPanel);
 		if(TWEANN.subsPanel == null) {
 			TWEANN.subsPanel = new ArrayList<DrawingPanel>();
 			int nodeIndexStart = 0;
@@ -376,11 +376,12 @@ public class HyperNEATVisualizationUtil {
 		List<SubstrateConnectivity> connections = hngt.getSubstrateConnectivity(hnt);
 
 		//disposes of weight panels if already instantiated to clean up old panels
-//		if(weightPanels != null) {
-//			for(int i =0; i < weightPanels.size(); i++) {
-//				weightPanels.get(i).dispose();
-//			}
-//		}
+		if(weightPanels != null) {
+			System.out.println("in here");
+			for(int i =0; i < weightPanels.size(); i++) {
+				weightPanels.get(i).dispose();
+			}
+		}
 		//instantiates panel array
 		ArrayList<DrawingPanel> weightPanels = new ArrayList<DrawingPanel>();
 

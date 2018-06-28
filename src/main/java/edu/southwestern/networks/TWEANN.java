@@ -10,16 +10,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.southwestern.evolution.lineage.Offspring;
-import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATVisualizationUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CombinatoricUtilities;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.graphics.Plot;
@@ -866,6 +867,9 @@ public class TWEANN implements Network {
 	 * Creates and updates visuals of substrates used by h-neat tetris task 
 	 */
 	public void animateSubstrate() {
+//			for(Substrate s : substrateInformation) { 
+//				System.out.println(s);
+//			}
 			HyperNEATVisualizationUtil.drawSubstrates(nodes, substrateInformation);
 			//tweannGenotype has getLinkBetween
 			//just need to find a way to get neuron innovation numbers
