@@ -54,10 +54,13 @@ public class AttemptAtTeammateController implements BotController {
 		
 		/**if bot sees friend when no enemies are nearby, it should follow teammate*/
 //		if(visibleFriend != null || lastSeenFriend != null) {
-			if(visibleFriend != null) { //follow visible teammate
-				lastSeenFriend = visibleFriend;
-				return new FollowTeammateAction(visibleFriend);
-			}
+		if(visibleFriend != null) { //follow visible teammate
+			lastSeenFriend = visibleFriend;
+			return new FollowTeammateAction(visibleFriend);
+		} //if it loses sight of friend, go tot he last location it saw friend at
+		if(visibleFriend == null && lastSeenFriend != null) {
+			return new NavigateToLocationAction(lastSeenFriend.getLocation());
+		}
 //			if(visibleFriend == null && lastSeenFriend != null) {//go to location of last visible friend
 //				
 //			}
