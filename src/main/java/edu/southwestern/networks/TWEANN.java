@@ -20,7 +20,6 @@ import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CombinatoricUtilities;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.graphics.Plot;

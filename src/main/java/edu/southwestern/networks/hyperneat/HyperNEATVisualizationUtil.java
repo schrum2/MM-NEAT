@@ -17,7 +17,6 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.graphics.DrawingPanel;
 
 public class HyperNEATVisualizationUtil {
-	private List<DrawingPanel> substratePanels = null;
 	private static List<DrawingPanel> weightPanels = null;
 	public static final int SUBS_GRID_SIZE = Parameters.parameters.integerParameter("substrateGridSize");
 	public static final int WEIGHT_GRID_SIZE = Parameters.parameters.integerParameter("substrateWeightSize");
@@ -164,7 +163,6 @@ public class HyperNEATVisualizationUtil {
 	 * @return List<DrawingPanel> of DrawingPanels used to draw the Substrates
 	 */
 	public static void drawSubstrates(ArrayList<Node> nodes, List<Substrate> substrates) {
-		System.out.println("panel" + TWEANN.subsPanel);
 		if(TWEANN.subsPanel == null) {
 			TWEANN.subsPanel = new ArrayList<DrawingPanel>();
 			int nodeIndexStart = 0;

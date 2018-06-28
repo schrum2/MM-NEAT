@@ -13,13 +13,16 @@ import org.junit.Test;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
+import edu.southwestern.networks.hyperneat.architecture.CascadeNetworks;
 import edu.southwestern.networks.hyperneat.architecture.CascadeTest;
 import edu.southwestern.networks.hyperneat.architecture.HiddenSkipsHidden;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
 import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.Triple;
 
 public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
@@ -38,7 +41,7 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 	}
 
 	@Test
-	public void cascadeequalityTest() {
+	public void cascadeEqualityTest() {
 
 		MMNEAT.clearClasses();
 		HyperNEATTetrisTask.hardSubstrateReset();
@@ -50,9 +53,6 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 
 		HiddenSkipsHidden hsh = new HiddenSkipsHidden();
 		HyperNEATTask hshTask = ((HyperNEATTask) MMNEAT.task);
-		
-		CascadeTest ct = new CascadeTest();
-		HyperNEATTask ctTask = ((HyperNEATTask) MMNEAT.task);
 
 		HyperNEATCPPNAndSubstrateArchitectureGenotype hncasag = new HyperNEATCPPNAndSubstrateArchitectureGenotype();
 		hncasag.cascadeExpansion(1, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
@@ -68,23 +68,6 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 		List<SubstrateConnectivity> hshConnectivity = hsh.getSubstrateConnectivity(hshTask);
 		assertEquals(hshConnectivity.size(), hncasag.allSubstrateConnectivity.size());
 		for(SubstrateConnectivity sub: hshConnectivity) {
-			assertTrue(hncasag.allSubstrateConnectivity.contains(sub));
-		}
-
-		hncasag.cascadeExpansion(4, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
-
-		//check hidden architecture equality
-		Iterator<Triple<Integer, Integer, Integer>> it_ct = ct.getNetworkHiddenArchitecture().iterator();
-		assertEquals(ct.getNetworkHiddenArchitecture().size(), hncasag.hiddenArchitecture.size());
-		for(Triple<Integer, Integer, Integer> substrate: hncasag.hiddenArchitecture) {
-			assertEquals(substrate, it_ct.next());
-		}
-
-		//check connectivity set equality
-		List<SubstrateConnectivity> ctConnectivity = ct.getSubstrateConnectivity(ctTask);
-		assertEquals(ctConnectivity.size(), hncasag.allSubstrateConnectivity.size());
-		for(SubstrateConnectivity sub: ctConnectivity) {
-			System.out.print("here" + sub);
 			assertTrue(hncasag.allSubstrateConnectivity.contains(sub));
 		}
 	}
@@ -114,7 +97,8 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 		HyperNEATTetrisTask.hardSubstrateReset();
 		EvolutionaryHistory.archetypes = null;
 		EvolutionaryHistory.setInnovation(0l);
-		Parameters.initializeParameterCollections(new String[] {"runNumber:1", "randomSeed:1", "trials:3", "maxGens:500", "mu:50", "io:false", "netio:false", "mating:true", "task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "hyperNEAT:true", "genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype", "allowMultipleFunctions:true", "ftype:1", "netChangeActivationRate:0.3", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "steps:500000", "perLinkMutateRate:0.05", "netLinkRate:0.4", "netSpliceRate:0.2", "crossoverRate:0.5", "extraHNLinks:false", "HNProcessDepth:1", "HNProcessWidth:1", "convolution:true", "senseTetrisHolesAsPositive:true"});
+		final int PARENT_POPULATION = 10;
+		Parameters.initializeParameterCollections(new String[] {"runNumber:1", "randomSeed:1", "trials:3", "maxGens:500", "mu:" + PARENT_POPULATION, "io:false", "netio:false", "mating:true", "task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "hyperNEAT:true", "genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype", "allowMultipleFunctions:true", "ftype:1", "netChangeActivationRate:0.3", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "steps:500000", "perLinkMutateRate:0.05", "netLinkRate:0.4", "netSpliceRate:0.2", "crossoverRate:0.5", "extraHNLinks:false", "HNProcessDepth:1", "HNProcessWidth:1", "convolution:true", "senseTetrisHolesAsPositive:true"});
 		MMNEAT.loadClasses();
 		EvolutionaryHistory.initArchetype(0);
 
@@ -122,11 +106,27 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 		HyperNEATTask hshTask = ((HyperNEATTask) MMNEAT.task);
 
 		HyperNEATCPPNAndSubstrateArchitectureGenotype hncasag = new HyperNEATCPPNAndSubstrateArchitectureGenotype();
-		hncasag.cascadeExpansion(1, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
-
-		Random rng = new Random(1);
+		ArrayList<Genotype<TWEANN>> constantPopulation = PopulationUtil.initialPopulation(hncasag, PARENT_POPULATION);
+		ArrayList<Genotype<TWEANN>> experimentalPopulation = new ArrayList<Genotype<TWEANN>>();
+		for(int i = 0; i < constantPopulation.size(); i++) {
+			experimentalPopulation.add(constantPopulation.get(i).copy());
+		}
+		for(Genotype<TWEANN> i : experimentalPopulation) {			
+			((HyperNEATCPPNAndSubstrateArchitectureGenotype) i).cascadeExpansion(1, 6, 16, SubstrateConnectivity.CTYPE_CONVOLUTION);
+		}
+	
+		assertEquals(experimentalPopulation.size(), constantPopulation.size());
+		Random rng = new Random();
+		int numInputs = constantPopulation.get(0).getPhenotype().numInputs();
 		for (int i = 0; i < 1000; i++) {
-
+			double[] inputs = new double[numInputs];
+			for (int j = 0; j < numInputs; j++) {
+				inputs[j] = rng.nextInt(1);
+			}
+			for (int j = 0; j < constantPopulation.size(); j++) {
+				constantPopulation.get(j).process(inputs);
+				experimentalPopulation.get(j);
+			}
 		}
 	}
 }

@@ -17,7 +17,6 @@ import edu.southwestern.networks.hyperneat.architecture.FlexibleSubstrateArchite
 import edu.southwestern.networks.hyperneat.architecture.SubstrateArchitectureDefinition;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
