@@ -5,8 +5,10 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import edu.southwestern.tasks.ut2004.actions.BotAction;
 import edu.southwestern.tasks.ut2004.actions.EmptyAction;
 import edu.southwestern.tasks.ut2004.actions.FollowTeammateAction;
+import edu.southwestern.tasks.ut2004.actions.OldActionWrapper;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.behaviors.AttackEnemyAloneModule;
+import utopia.agentmodel.actions.ApproachEnemyAction;
 
 public class TestController implements BotController {
 	AttackEnemyAloneModule attack = new AttackEnemyAloneModule();
@@ -35,8 +37,11 @@ public class TestController implements BotController {
 //			}
 //			
 //		};
-		if(attack.trigger(bot)) {
-			return attack.control(bot);
+//		if(attack.trigger(bot)) {
+//			return attack.control(bot);
+//		}
+		if(nearestEnemy != null){
+			return new OldActionWrapper(new ApproachEnemyAction(OldActionWrapper.getAgentMemory(bot), true, true, false, true));
 		}
 		return new EmptyAction();
 	}

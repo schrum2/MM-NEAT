@@ -38,8 +38,9 @@ public class AttemptAtTeammateController implements BotController {
 	 */
 	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {//loops thourhg over and over again
 		Player nearestFriend = bot.getPlayers().getNearestVisibleFriend();
-		Player lastSeenEnemy = bot.getPlayers().getNearestEnemy(10);
+		Player lastSeenFriend = bot.getPlayers().getNearestFriend(10);
 		Player nearestEnemy = bot.getPlayers().getNearestVisibleEnemy();
+		Player lastSeenEnemy = bot.getPlayers().getNearestEnemy(10);
 		
 		//bot should look for health pickups if it drops below 20hp
 		if(bot.getBot().getSelf().getHealth() < (THRESHOLD_HEALTH_LEVEL)) {
@@ -53,49 +54,34 @@ public class AttemptAtTeammateController implements BotController {
 			return runAround.control(bot);
 		}
 		
-		if(nearestEnemy !=  null) {
-			if(shouldChase(nearestEnemy, bot)) {
-				return new OldActionWrapper(new ApproachEnemyAction(OldActionWrapper.getAgentMemory(bot), true, true, false, true));
-			}
-			return attackAlone.control(bot);
+		if(bot.getSenses().isBeingDamaged() && nearestEnemy == null) {
+			return new OldActionWrapper(new QuickTurnAction(OldActionWrapper.getAgentMemory(bot)));
+		}
+		
+		
+		if(nearestEnemy !=  null && nearestFriend == null) {
+//			if(shouldChase(nearestEnemy, bot)) {
+			return new OldActionWrapper(new ApproachEnemyAction(OldActionWrapper.getAgentMemory(bot), true, true, false, true));
+//			}
+			//return attackAlone.control(bot);
 		}
 		
 //		if(nearestEnemy == null && lastSeenEnemy != null) {
 //			
 //		}
 		
-		if(bot.getSenses().isBeingDamaged() && nearestEnemy == null) {
-			return new OldActionWrapper(new QuickTurnAction(OldActionWrapper.getAgentMemory(bot)));
-		}
-		
-		// null check first
-		if(nearestFriend != null) {
+		if(nearestFriend != null) { //do you see your friend?
 			return new FollowTeammateAction(nearestFriend);
 		}
 //
-//		if(attackAlone.trigger(bot)) {
-//			return attackAlone.control(bot);
-//		}
+		if(attackAlone.trigger(bot)) {
+			return attackAlone.control(bot);
+		}
 //		return new EmptyAction();	
 		return runAround.control(bot);
 	}
 	
-	//copied and adjusted from UT2
-    public boolean shouldChase(Player currentTarget, UT2004BotModuleController bot) {
-        Player chasingEnemy = this.chaseController.getLastEnemy();
-        if (currentTarget != null && chasingEnemy != null
-                && currentTarget.getId().equals(chasingEnemy.getId())) {
-//            // Fight what can be seen
-            return false;
-        }
-        Player nearest = OldActionWrapper.getAgentMemory(bot).getSeeEnemy();
-        if (OldActionWrapper.getAgentMemory(bot).numVisibleOpponents() > 2 && nearest != null && nearest.getLocation().getDistance(bot.getInfo().getLocation()) < WeaponPreferenceTable.WeaponTableEntry.MAX_RANGED_RANGE) {
-            return false;
-        }
-        // Only chase if can't see target
-        return OldActionWrapper.getAgentMemory(bot).canFocusOn(chasingEnemy);
-    //	return false;
-    }
+
 
 	
 	/**
@@ -103,7 +89,7 @@ public class AttemptAtTeammateController implements BotController {
 	 */
 	public void initialize(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		memory = OldActionWrapper.getAgentMemory(bot);
-		this.chaseController = new ChasingController(bot.getBot(), memory);
+		//this.chaseController = new ChasingController(bot.getBot(), memory);
 	}
 
 	
