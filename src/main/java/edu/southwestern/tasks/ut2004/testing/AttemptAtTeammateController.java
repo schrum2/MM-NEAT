@@ -32,7 +32,7 @@ public class AttemptAtTeammateController implements BotController {
 	AgentBody body;
 	private ChasingController chaseController;
 	
-	public static final int FULL_HEALTH = 100;
+	public static final int FULL_HEALTH = 100; //players spawn with 100 hp, and can overheal to a level of 199 hp
 	public static final int THRESHOLD_HEALTH_LEVEL = 20;
 	//var timesteps teammate hasn't moved
 	/**
@@ -52,20 +52,17 @@ public class AttemptAtTeammateController implements BotController {
 			return new NavigateToLocationAction(healthLoc);
 		}
 		
+		
 		/**if bot sees friend when no enemies are nearby, it should follow teammate*/
 //		if(visibleFriend != null || lastSeenFriend != null) {
 		if(visibleFriend != null) { //follow visible teammate
 			lastSeenFriend = visibleFriend;
 			return new FollowTeammateAction(visibleFriend);
-		} //if it loses sight of friend, go tot he last location it saw friend at
+		} //if it loses sight of friend, go to the last location it saw friend at - this carries the cchance that the bot will see friend again,
 		if(visibleFriend == null && lastSeenFriend != null) {
 			return new NavigateToLocationAction(lastSeenFriend.getLocation());
 		}
-//			if(visibleFriend == null && lastSeenFriend != null) {//go to location of last visible friend
-//				
-//			}
-//		}
-		//follow teammate
+		
 		//still for too long, ditch them
 		
 		//start randomly running around to get items
@@ -118,6 +115,14 @@ public class AttemptAtTeammateController implements BotController {
 //    //	return false;
 //    }
 
+	/**
+	 * determines whether the bot should chase it's enemy
+	 * @param targetEnemy (enemy the bot is looking at)
+	 * @return
+	 */
+	public boolean shouldChase(Player targetEnemy, UT2004BotModuleController bot) {
+		return false;
+	}
 	
 	/**
 	 * initializes the controller
