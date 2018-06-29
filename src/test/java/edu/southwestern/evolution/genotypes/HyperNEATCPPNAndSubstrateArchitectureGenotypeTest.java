@@ -72,7 +72,7 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 			assertTrue(hncasag.allSubstrateConnectivity.contains(sub));
 		}
 	}
-
+	
 	@Test
 	public void cascadeTest() {
 		MMNEAT.clearClasses();

@@ -411,9 +411,10 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 				result = HybrIDUtil.switchPhenotypeToNEAT(result);
 			}
 		}
-		// TEMPORARY FOR TESTING
-		if(CommonConstants.cascadeExpansion && currentGeneration() == Parameters.parameters.integerParameter("cascadeExpansionSwitchGeneration")) {
-			result = CascadeNetworks.cascadeExpandAllGenotypes(result, 1, 8, 18, SubstrateConnectivity.CTYPE_CONVOLUTION);
+		
+		if(CommonConstants.cascadeExpansion && currentGeneration() != 0 && currentGeneration() % Parameters.parameters.integerParameter("cascadeExpansionGenerationInterval") == 0) {
+			//adds a hidden convolutional substrate in between the last hidden substrate and the output for each member of the population
+			result = CascadeNetworks.cascadeExpandAllGenotypes(result);
 		}
 		return result;
 	}

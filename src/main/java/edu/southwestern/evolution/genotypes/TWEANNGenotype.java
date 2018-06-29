@@ -11,7 +11,6 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CartesianGeometricUtilities;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
@@ -1336,6 +1335,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		long[] emptyArray1 = new long[0]; //new output nodes start with no links
 		double[] emptyArray2 = new double[0]; //new output nodes start with no links
 		int i = 0, position = this.outputStartIndex() + initialNumberOfSubstratePairs;
+		if (Parameters.parameters.booleanParameter("extraHNLinks")) {
+			position += 2;
+		}
 		//adding new outputs for substrate pairs
 		int archetypeAddIndex = EvolutionaryHistory.archetypes[archetypeIndex].size() - nodes.size() + position;
 		while (i < numberOfNewSubstratePairs) {

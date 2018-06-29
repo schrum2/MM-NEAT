@@ -24,4 +24,5 @@ public interface SubstrateArchitectureDefinition {
 		 *  @return List of SubstrateConnectivity of the network
 		 */
 		public List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask hnt);
+		
 };

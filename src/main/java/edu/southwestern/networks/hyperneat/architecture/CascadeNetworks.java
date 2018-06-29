@@ -8,6 +8,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
@@ -91,6 +92,28 @@ public class CascadeNetworks {
 		return cascadeExpansion (originalHiddenArchitecture, originalConnectivity, outputSubstrateNames, newLayerWidth,
 				lastHiddenLayer.t2,  lastHiddenLayer.t3, SubstrateConnectivity.CTYPE_FULL);
 	}
+
+	/**
+	 * Causes a cascade expansion on each member of the HyperNEATCPPNAndSubstrateArchitectureGenotype population. This assumes that each member of the population is identical.
+	 * The expansion on each network will be a new layer of width 1 with convolutional connectivity defined by the parameters receptiveFieldWidth and receptiveFieldHeight.
+	 * The width and height of this new substrate is derived from the receptiveFieldWidth and receptiveFieldHeight.
+	 * @param population population of HyperNEATCPPNAndSubstrateArchitectureGenotype instances
+	 * @return population of genotypes after expansion or null if another convolutional layer of the appropriate size is not permitted
+	 */
+	public static <T> ArrayList<Genotype<T>> cascadeExpandAllGenotypes(ArrayList<Genotype<T>> population) {
+		assert population.get(0) instanceof HyperNEATCPPNAndSubstrateArchitectureGenotype;
+		List<Triple<Integer,Integer,Integer>> exemplarNetworksHiddenArchitecture = ((HyperNEATCPPNAndSubstrateArchitectureGenotype) population.get(0)).hiddenArchitecture;
+		Triple<Integer, Integer, Integer> lastLayerInExemplar = exemplarNetworksHiddenArchitecture.get(exemplarNetworksHiddenArchitecture.size() - 1);
+		int receptiveFieldHeight = Parameters.parameters.integerParameter("receptiveFieldHeight");
+		int receptiveFieldWidth = Parameters.parameters.integerParameter("receptiveFieldWidth");
+		int newSubstrateWidth = lastLayerInExemplar.t2 - (2 * (receptiveFieldWidth / 2));
+		int newSubstrateHeight = lastLayerInExemplar.t3 - (2 * (receptiveFieldHeight / 2));
+		if (newSubstrateWidth > 0 && newSubstrateHeight > 0) {			
+			return cascadeExpandAllGenotypes(population, 1, newSubstrateWidth, newSubstrateHeight, SubstrateConnectivity.CTYPE_CONVOLUTION);
+		} else {
+			return null;
+		}
+	}
 	
 	/**
 	 * applies cascade expansion to to each genotype in a population
@@ -99,7 +122,7 @@ public class CascadeNetworks {
 	 * @return population of genotypes after expansion
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> ArrayList<Genotype<T>> cascadeExpandAllGenotypes(ArrayList<Genotype<T>> population, int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, int connectivityType) {
+	public static <T> ArrayList<Genotype<T>> cascadeExpandAllGenotypes(ArrayList<Genotype<T>> population, int newLayerWidth, int newSubstratesWidth, int newSubstratesHeight, int connectivityType) {
 		ArrayList<Genotype<T>> substrateGenotypes = new ArrayList<>();
 		assert population.get(0) instanceof HyperNEATCPPNAndSubstrateArchitectureGenotype;
 		for(int i = 0; i < population.size(); i++) {
@@ -108,7 +131,7 @@ public class CascadeNetworks {
 			//int numOutAfter = genotype.numOut;
 			//assert numOutBefore == numOutAfter : "Copy breaks the numOut: " + numOutBefore + " is not " + numOutAfter;
 			((HyperNEATTask) MMNEAT.task).flushSubstrateMemory(); // Wipe substrates each time before changing them
-			genotype.cascadeExpansion(newLayerWidth, newSubstratesWidth, newsubstratesHeight, connectivityType);
+			genotype.cascadeExpansion(newLayerWidth, newSubstratesWidth, newSubstratesHeight, connectivityType);
 			//int numOutAfterExpansion = genotype.numOut;
 			//assert numOutAfterExpansion > numOutAfter : "Cascade expansion did not increase number of outputs: " + numOutAfter + " and " + numOutAfterExpansion;
 			substrateGenotypes.add((Genotype<T>) genotype);

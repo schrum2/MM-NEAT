@@ -39,7 +39,7 @@ public class TWEANNGenotypeTest {
 	public void tearDown() throws Exception {
 		MMNEAT.clearClasses();
 	}
-	
+
 	@Test
 	public void test_Equals() {
 		Parameters.initializeParameterCollections(
@@ -107,10 +107,10 @@ public class TWEANNGenotypeTest {
 			tg1.mutate();
 		}
 
-//		System.out.println(tg1);
-//		System.out.println(EvolutionaryHistory.largestUnusedInnovationNumber);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-		
+		//		System.out.println(tg1);
+		//		System.out.println(EvolutionaryHistory.largestUnusedInnovationNumber);
+		//		MiscUtil.waitForReadStringAndEnterKeyPress();
+
 		ArrayList<NodeGene> tg1Genes = tg1.nodes;
 		ArrayList<LinkGene> tg1Links = tg1.links;
 
@@ -129,7 +129,7 @@ public class TWEANNGenotypeTest {
 
 		assertEquals(trueMaxInno,maxInno); // Failed?
 	}
-	
+
 	@Test
 	public void test_addMSSNeuronsToCPPNThreshold() {
 		MMNEAT.clearClasses();
@@ -139,9 +139,11 @@ public class TWEANNGenotypeTest {
 		Parameters.initializeParameterCollections(new String[] {"runNumber:1", "randomSeed:1", "trials:3", "maxGens:500", "mu:50", "io:false", "netio:false", "mating:true", "task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "hyperNEAT:true", "genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype", "allowMultipleFunctions:true", "ftype:1", "netChangeActivationRate:0.3", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "steps:500000", "perLinkMutateRate:0.05", "netLinkRate:0.4", "netSpliceRate:0.2", "crossoverRate:0.5", "HNProcessDepth:1", "HNProcessWidth:1", "convolution:true", "senseTetrisHolesAsPositive:true"});
 		MMNEAT.loadClasses();
 		EvolutionaryHistory.initArchetype(0);
-		
+
 		HyperNEATCPPNAndSubstrateArchitectureGenotype hncasag = new HyperNEATCPPNAndSubstrateArchitectureGenotype();
+		System.out.println("nodes before no extra: " + hncasag.nodes);
 		hncasag.cascadeExpansion(1, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
+		System.out.println("nodes after no extra: " + hncasag.nodes);
 		for (int i = 0; i < 5; i++) {
 			NodeGene currentNode = hncasag.nodes.get(i);
 			assertEquals(currentNode.innovation, -i - 1);
@@ -194,7 +196,7 @@ public class TWEANNGenotypeTest {
 		assertEquals(hncasag.nodes.get(24).innovation, -10);
 		assertEquals(hncasag.nodes.get(24).ntype, 2);
 	}
-	
+
 	@Test
 	public void test_addMSSNeuronsToCPPNLeo() {
 		MMNEAT.clearClasses();
@@ -261,5 +263,77 @@ public class TWEANNGenotypeTest {
 		assertEquals(hncasag.nodes.get(37).innovation, -13);
 		assertEquals(hncasag.nodes.get(37).ntype, 2);
 	}
-	
+
+	@Test
+	public void test_addMSSExtraNeuronsToCPPNThreshold() {
+		MMNEAT.clearClasses();
+		HyperNEATTetrisTask.hardSubstrateReset();
+		EvolutionaryHistory.archetypes = null;
+		EvolutionaryHistory.setInnovation(0l);
+		Parameters.initializeParameterCollections(new String[] {"extraHNLinks:true", "runNumber:1", "randomSeed:1", "trials:3", "maxGens:500", "mu:50", "io:false", "netio:false", "mating:true", "task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "hyperNEAT:true", "genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype", "allowMultipleFunctions:true", "ftype:1", "netChangeActivationRate:0.3", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "steps:500000", "perLinkMutateRate:0.05", "netLinkRate:0.4", "netSpliceRate:0.2", "crossoverRate:0.5", "HNProcessDepth:1", "HNProcessWidth:1", "convolution:true", "senseTetrisHolesAsPositive:true"});
+		MMNEAT.loadClasses();
+		EvolutionaryHistory.initArchetype(0);
+		
+		HyperNEATCPPNAndSubstrateArchitectureGenotype hncasag = new HyperNEATCPPNAndSubstrateArchitectureGenotype();
+		System.out.println("nodes before extra: " + hncasag.nodes);
+		hncasag.cascadeExpansion(1, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
+		System.out.println("nodes after extra: " + hncasag.nodes);
+//		for (int i = 0; i < 5; i++) {
+//			NodeGene currentNode = hncasag.nodes.get(i);
+//			assertEquals(currentNode.innovation, -i - 1);
+//			assertEquals(currentNode.ntype, 0);
+//		}
+//		for (int i = 5; i < 8; i++) {
+//			NodeGene currentNode = hncasag.nodes.get(i);
+//			assertEquals(currentNode.innovation, -i - 1);
+//			assertEquals(currentNode.ntype, 2);
+//		}
+//		assertEquals(hncasag.nodes.get(8).innovation, -11);
+//		assertEquals(hncasag.nodes.get(8).ntype, 2);
+//		assertEquals(hncasag.nodes.get(9).innovation, -12);
+//		assertEquals(hncasag.nodes.get(9).ntype, 2);
+//		assertEquals(hncasag.nodes.get(10).innovation, -9);
+//		assertEquals(hncasag.nodes.get(10).ntype, 2);
+//		assertEquals(hncasag.nodes.get(11).innovation, -13);
+//		assertEquals(hncasag.nodes.get(11).ntype, 2);
+//		assertEquals(hncasag.nodes.get(12).innovation, -10);
+//		assertEquals(hncasag.nodes.get(12).ntype, 2);
+		hncasag.cascadeExpansion(4, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
+		System.out.println("nodes after 2nd expansion extra: " + hncasag.nodes);
+//		for (int i = 0; i < 5; i++) {
+//			NodeGene currentNode = hncasag.nodes.get(i);
+//			assertEquals(currentNode.innovation, -i - 1);
+//			assertEquals(currentNode.ntype, 0);
+//		}
+//		for (int i = 5; i < 8; i++) {
+//			NodeGene currentNode = hncasag.nodes.get(i);
+//			assertEquals(currentNode.innovation, -i - 1);
+//			assertEquals(currentNode.ntype, 2);
+//		}
+//		assertEquals(hncasag.nodes.get(8).innovation, -11);
+//		assertEquals(hncasag.nodes.get(8).ntype, 2);
+//		assertEquals(hncasag.nodes.get(9).innovation, -12);
+//		assertEquals(hncasag.nodes.get(9).ntype, 2);
+//		for (int i = 10; i < 18; i++) {
+//			NodeGene currentNode = hncasag.nodes.get(i);
+//			assertEquals(currentNode.innovation, -i - 4);
+//			assertEquals(currentNode.ntype, 2);
+//		}
+//		assertEquals(hncasag.nodes.get(18).innovation, -9);
+//		assertEquals(hncasag.nodes.get(18).ntype, 2);
+//		assertEquals(hncasag.nodes.get(19).innovation, -13);
+//		assertEquals(hncasag.nodes.get(19).ntype, 2);
+//		for (int i = 20; i < 24; i++) {
+//			NodeGene currentNode = hncasag.nodes.get(i);
+//			assertEquals(currentNode.innovation, -i - 2);
+//			assertEquals(currentNode.ntype, 2);
+//		}
+//		assertEquals(hncasag.nodes.get(24).innovation, -10);
+//		assertEquals(hncasag.nodes.get(24).ntype, 2);
+	}
+
+	@Test
+	public void test_addMSSExtraNeuronsToCPPNLeo() {
+
+	}
 }
