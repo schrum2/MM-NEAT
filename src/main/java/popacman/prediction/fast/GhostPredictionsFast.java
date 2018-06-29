@@ -10,6 +10,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
+import pacman.game.Game;
 import pacman.game.internal.Maze;
 import pacman.game.internal.Node;
 import popacman.prediction.GhostLocation;
@@ -237,6 +238,26 @@ public class GhostPredictionsFast {
         System.arraycopy(this.moves, 0, other.moves, 0, moves.length);
         System.arraycopy(this.backMoves, 0, other.backMoves, 0, backMoves.length);
         return other;
+    }
+    
+    public void atePill(GameFacade game) {
+    	int ghostOneQuadrent = (0 * mazeSize);
+    	int ghostTwoQuadrent = (1 * mazeSize);
+    	int ghostThreeQuadrent = (2 * mazeSize);
+    	int ghostFourQuadrent = (3 * mazeSize);
+        
+    	for(int i = 0; i < this.probabilities.length; i++) {
+    		
+    		if(i <= ghostOneQuadrent) {
+    			this.observe(GHOST.BLINKY, i, moves[i], game);
+    		} else if( i > ghostTwoQuadrent && i <= ghostThreeQuadrent) {
+    			this.observe(GHOST.PINKY, i, moves[i], game);
+    		} else if( i > ghostThreeQuadrent && i <= ghostFourQuadrent) {
+    			this.observe(GHOST.INKY, i, moves[i], game);
+    		} else {
+    			this.observe(GHOST.SUE, i, moves[i], game);
+    		}
+    	}
     }
     
     /**

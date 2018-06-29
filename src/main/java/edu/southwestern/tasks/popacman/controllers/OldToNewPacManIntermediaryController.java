@@ -10,6 +10,7 @@ import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.util.datastructures.Quad;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 //TODO: this could be useful
@@ -264,6 +265,9 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		        	eatenPowerPills.add(informedGameFacade.poG.getPacmanCurrentNodeIndex());
 		        	lastPowerPillEatenTime = informedGameFacade.getCurrentLevelTime();
 		        	informedGameFacade.setTimeOfLastPowerPillEaten(informedGameFacade.getCurrentLevelTime());
+		        	if(useGhostModel) {
+			        	informedGameFacade.ghostPredictions.atePill(informedGameFacade);
+		        	}
 		        }
 			}
 	        
