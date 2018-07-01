@@ -1,74 +1,60 @@
-package ch.idsia.mario.engine.sprites;
+package competition.cig.robinbaumgarten.astar.sprites;
 
+import competition.cig.robinbaumgarten.astar.LevelScene;
+import competition.cig.robinbaumgarten.astar.level.Level;
 
-import ch.idsia.mario.engine.Art;
 import ch.idsia.mario.engine.GlobalOptions;
-import ch.idsia.mario.engine.LevelScene;
 import ch.idsia.mario.engine.Scene;
-import ch.idsia.mario.engine.level.Level;
 
 
-public class Mario extends Sprite {
-	// Schrum: Added for clarity
-	private static final float SLIDING_JUMP_SPEED = -2.0f;
-	private static final float STILL_JUMP_SPEED = -1.9f;
-	private static final int INITIAL_STILL_JUMP_TIME = 7;
-	private static final int INITIAL_SLIDING_JUMP_TIME = -6;	
-
+public class Mario extends Sprite implements Cloneable
+{
     public boolean large = false;
     public boolean fire = false;
-    public int coins = 0;
-    public int lives = 1024;
-    private int status = STATUS_RUNNING;
+    public static int coins = 0;
+    public static int lives = 1024;
+    public int damage = 0; // counts +1 everytime mario is hurt
+    public static int numberOfAttempts = 0;
+    public static String levelString = "none";
+    public int status = STATUS_RUNNING;
     private final int FractionalPowerUpTime = 0;
-    public int gainedMushrooms;
-    public int gainedFlowers;
-    public static boolean isMarioInvulnerable;
 
-    // These define the level of power up Mario/Luigi starts a level with
-    public static boolean defaultLarge;
-    public static boolean defaultFire;
+    public Sprite carried = null;
     
-    public static void setDefaultStart(int marioMode) {
-        defaultLarge = marioMode > 0;
-        defaultFire = marioMode == 2;
-    }
-    
-    /**
-     * Resets the properties of this Mario agent.
-     * I changed this from static to non-static
-     * to allow multiple Mario agents.
-     * @param marioMode
-     */
-    public void reset() {
-        large = defaultLarge;
-        fire = defaultFire;
+    public void resetStatic()
+    {
+        large = true;
+        fire = false;
         coins = 0;
-        gainedMushrooms = 0;
-        gainedFlowers = 0;
+        lives = 65536;
+        levelString = "none";
+        numberOfAttempts = 0;
     }
 
-    /**
-     * Set small, large, or fire.
-     * Changed from static to allow multiple Marios
-     * @param mode
-     */
-    public void setMode(MODE mode) {
+    @Override
+	public Object clone() throws CloneNotSupportedException
+    {
+    	Mario m = (Mario) super.clone();
+    	boolean[] k = new boolean[5];
+    	for (int i = 0; i < 5; i++)
+    		k[i] = keys[i];
+    	m.keys = k;
+    	return m;    	
+    }
+    
+    public void setMode(MODE mode)
+    {
         large = (mode == MODE.MODE_LARGE);
         fire = (mode == MODE.MODE_FIRE);
     }
 
-    public int getMode() {
-        return ((large) ? 1 : 0) + ((fire) ? 1 : 0);
-    }
 
     public static enum MODE {MODE_SMALL, MODE_LARGE, MODE_FIRE}
 
-    /**
-     * Made non-static to allow multiple Marios
-     */
-    public void resetCoins() {
+    public static void resetCoins()
+    {
         coins = 0;
+        ++numberOfAttempts;
     }
 
     public static final int KEY_LEFT = 0;
@@ -86,18 +72,19 @@ public class Mario extends Sprite {
     public static final int STATUS_WIN = 1;
     public static final int STATUS_DEAD = 0;
 
-    private static final float GROUND_INERTIA = 0.89f;
-    private static final float AIR_INERTIA = 0.89f;
 
-    public boolean[] keys;
-    public boolean[] cheatKeys;
+    private static float GROUND_INERTIA = 0.89f;
+    private static float AIR_INERTIA = 0.89f;
+
+    public boolean[] keys = new boolean[5];
+    //public boolean[] cheatKeys;
     private float runTime;
     boolean wasOnGround = false;
-    boolean onGround = false;
+    public boolean onGround = false;
     private boolean mayJump = false;
     private boolean ducking = false;
-    private boolean sliding = false;
-    private int jumpTime = 0;
+    public boolean sliding = false;
+    public int jumpTime = 0;
     private float xJumpSpeed;
     private float yJumpSpeed;
     private boolean canShoot = false;
@@ -115,69 +102,38 @@ public class Mario extends Sprite {
     public int winTime = 0;
     private int invulnerableTime = 0;
 
-    public Sprite carried = null;
+    //private static Mario instance;
 
-    public Mario(LevelScene world) {
-    	// TODO: Potential problem: does this prevent tracking of coin collection, etc. across levels?
-    	reset(); // Added to reset Mario state at the beginning of each instantiation
-    	kind = KIND_MARIO;
+    public Mario(LevelScene world)
+    {
+        kind = KIND_MARIO;
+        //Mario.instance = this;
         this.world = world;
-        keys = Scene.keys;      // SK: in fact, this is already redundant due to using Agent
-        cheatKeys = Scene.keys; // SK: in fact, this is already redundant due to using Agent
+        //keys = Scene.keys;      // SK: in fact, this is already redundant due to using Agent
+        //cheatKeys = Scene.keys; // SK: in fact, this is already redundant due to using Agent
         x = 32;
         y = 0;
 
         facing = 1;
-        setLarge(large, fire);
+        setLarge(true, true);
     }
-    
-    private boolean lastLarge;
-    private boolean lastFire;
-    private boolean newLarge;
-    private boolean newFire;
-    
-    private void blink(boolean on) {
-        large = on?newLarge:lastLarge;
-        fire = on?newFire:lastFire;
-        
-        if (large)
-        {
-            sheet = Art.mario;
-            if (fire)
-                sheet = Art.fireMario;
+     
 
-            xPicO = 16;
-            yPicO = 31;
-            wPic = hPic = 32;
-        }
-        else
-        {
-            sheet = Art.smallMario;
-
-            xPicO = 8;
-            yPicO = 15;
-            wPic = hPic = 16;
-        }
-
-        calcPic();
-    }
-
-    void setLarge(boolean large, boolean fire) {
+    void setLarge(boolean large, boolean fire)
+    {
         if (fire) large = true;
         if (!large) fire = false;
         
-        lastLarge = large;
-        lastFire = fire;
-        
         this.large = large;
         this.fire = fire;
-
-        newLarge = this.large;
-        newFire = this.fire;
-        
-        blink(true);
     }
 
+    public void setKeys(boolean[] k)
+    {
+    	for (int i = 0; i < 5; i++)
+    		keys[i] = k[i];
+    }
+    
     public void move()
     {
         if (winTime > 0)
@@ -210,28 +166,28 @@ public class Mario extends Sprite {
             return;
         }
 
+        //if (world.paused) 
+        //	System.out.println("Sim World Paused!");
         if (powerUpTime != 0)
         {
             if (powerUpTime > 0)
             {
                 powerUpTime--;
-                blink(((powerUpTime / 3) & 1) == 0);
             }
             else
             {
                 powerUpTime++;
-                blink(((-powerUpTime / 3) & 1) == 0);
             }
 
-            if (powerUpTime == 0) world.paused = false;
-
-            calcPic();
+            if (powerUpTime == 0)             
+            {
+            	if (world.paused) System.out.println("Sim World Unpaused!");
+            	world.paused = false;
+            }
             return;
         }
 
         if (invulnerableTime > 0) invulnerableTime--;
-        visible = ((invulnerableTime / 2) & 1) == 0;
-
         wasOnGround = onGround;
         float sideWaysSpeed = keys[KEY_SPEED] ? 1.2f : 0.6f;
         //        float sideWaysSpeed = onGround ? 2.5f : 1.2f;
@@ -268,8 +224,8 @@ public class Mario extends Sprite {
             else if (onGround && mayJump)
             {
                 xJumpSpeed = 0;
-                yJumpSpeed = STILL_JUMP_SPEED;
-                jumpTime = INITIAL_STILL_JUMP_TIME;
+                yJumpSpeed = -1.9f;
+                jumpTime = 7;
                 ya = jumpTime * yJumpSpeed;
                 onGround = false;
                 sliding = false;
@@ -277,8 +233,8 @@ public class Mario extends Sprite {
             else if (sliding && mayJump)
             {
                 xJumpSpeed = -facing * 6.0f;
-                yJumpSpeed = SLIDING_JUMP_SPEED;
-                jumpTime = INITIAL_SLIDING_JUMP_TIME;
+                yJumpSpeed = -2.0f;
+                jumpTime = -6;
                 xa = xJumpSpeed;
                 ya = -jumpTime * yJumpSpeed;
                 onGround = false;
@@ -318,30 +274,14 @@ public class Mario extends Sprite {
         
         if (keys[KEY_SPEED] && canShoot && this.fire && world.fireballsOnScreen<2)
         {
+        	//System.out.println("Adding fireball!");
             world.addSprite(new Fireball(world, x+facing*6, y-20, facing));
         }
-        // Cheats:
-        if (GlobalOptions.PowerRestoration && keys[KEY_SPEED] && (!this.large || !this.fire))
-            setLarge(true, true);
-        if (cheatKeys[KEY_LIFE_UP])
-        	this.lives++;
+
         world.paused = GlobalOptions.pauseWorld;
-        if (cheatKeys[KEY_WIN])
-            win();
-//        if (keys[KEY_DUMP_CURRENT_WORLD])
-//            try {
-//                System.out.println("DUMP:");
-////                world.LevelSceneAroundMarioASCII(System.out);
-//                //world.level.save(System.out);
-//                System.out.println("DUMPED:");
-//            } catch (IOException e) {
-//                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//            }
         canShoot = !keys[KEY_SPEED];
 
         mayJump = (onGround || sliding) && !keys[KEY_JUMP];
-
-        xFlipPic = facing == -1;
 
         runTime += (Math.abs(xa)) + 5;
         if (Math.abs(xa) < 0.5f)
@@ -350,14 +290,8 @@ public class Mario extends Sprite {
             xa = 0;
         }
 
-        calcPic();
-
         if (sliding)
         {
-            for (int i = 0; i < 1; i++)
-            {
-                world.addSprite(new Sparkle((int) (x + Math.random() * 4 - 2) + facing * 8, (int) (y + Math.random() * 4) - 24, (float) (Math.random() * 2 - 1), (float) Math.random() * 1, 0, 1, 5));
-            }
             ya *= 0.5f;
         }
 
@@ -365,6 +299,7 @@ public class Mario extends Sprite {
         move(xa, 0);
         move(0, ya);
 
+        //System.out.println("Mario Sim Speed: "+xa);
         if (y > world.level.height * 16 + 16)
         {
             die();
@@ -378,7 +313,6 @@ public class Mario extends Sprite {
 
         if (x > world.level.xExit * 16)
         {
-            x = world.level.xExit * 16;
             win();
         }
 
@@ -409,139 +343,14 @@ public class Mario extends Sprite {
             carried.y = y - 2;
             if (!keys[KEY_SPEED])
             {
+            	//System.out.println("Releasing shell!");
                 carried.release(this);
                 carried = null;
             }
         }
+        //System.out.println("Mariopos: "+x+" "+y);
     }
 
-    private void calcPic()
-    {
-        int runFrame = 0;
-
-        if (large)
-        {
-            runFrame = ((int) (runTime / 20)) % 4;
-            if (runFrame == 3) runFrame = 1;
-            if (carried == null && Math.abs(xa) > 10) runFrame += 3;
-            if (carried != null) runFrame += 10;
-            if (!onGround)
-            {
-                if (carried != null) runFrame = 12;
-                else if (Math.abs(xa) > 10) runFrame = 7;
-                else runFrame = 6;
-            }
-        }
-        else
-        {
-            runFrame = ((int) (runTime / 20)) % 2;
-            if (carried == null && Math.abs(xa) > 10) runFrame += 2;
-            if (carried != null) runFrame += 8;
-            if (!onGround)
-            {
-                if (carried != null) runFrame = 9;
-                else if (Math.abs(xa) > 10) runFrame = 5;
-                else runFrame = 4;
-            }
-        }
-
-        if (onGround && ((facing == -1 && xa > 0) || (facing == 1 && xa < 0)))
-        {
-            if (xa > 1 || xa < -1) runFrame = large ? 9 : 7;
-
-            if (xa > 3 || xa < -3)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    world.addSprite(new Sparkle((int) (x + Math.random() * 8 - 4), (int) (y + Math.random() * 4), (float) (Math.random() * 2 - 1), (float) Math.random() * -1, 0, 1, 5));
-                }
-            }
-        }
-
-        if (large)
-        {
-            if (ducking) runFrame = 14;
-            height = ducking ? 12 : 24;
-        }
-        else
-        {
-            height = 12;
-        }
-
-        xPic = runFrame;
-    }
-
-    /**
-     * Check if different Marios are colliding with each other
-     */
-    public void collideCheck()
-    {
-        // Allow for extra playful Mario
-        Mario[] marios = new Mario[LevelScene.twoPlayers ? 2 : 1];
-        marios[0] = world.mario;
-        if(LevelScene.twoPlayers) {
-        	marios[1] = world.luigi;
-        }
-
-        for(Mario mario : marios) {
-        	if(mario == this) continue; // Do not collide with self
-        	
-        	float xMarioD = mario.x - x;
-        	float yMarioD = mario.y - y;
-        	float w = 16;
-        	if (xMarioD > -w && xMarioD < w)
-        	{
-        		if (yMarioD > -height && yMarioD < mario.height)
-        		{
-        			// If mario on top of other
-        			if(Math.abs(yMarioD) > height - 5) { // Right on top
-        				if(y < mario.y) {
-//        					this.move(0,-30);
-        	                yJumpSpeed = STILL_JUMP_SPEED;
-        	                jumpTime = INITIAL_STILL_JUMP_TIME;
-        	                ya = jumpTime * yJumpSpeed;
-        				} else {
-//        					mario.move(0,-30);        					
-        					mario.yJumpSpeed = STILL_JUMP_SPEED;
-        					mario.jumpTime = INITIAL_STILL_JUMP_TIME;
-        					mario.ya = jumpTime * yJumpSpeed;
-        				}
-        				continue; // No sideways pushes
-        			} 
-
-        			// Both marios colliding
-        			if(0 < xMarioD) {
-        				float push = (w - xMarioD)/2.0f;
-        				if(!isBlocking(x, y, -push, 0)) {
-            				this.move(-push, 0);
-        				}
-        				if(!mario.isBlocking(mario.x, mario.y, push, 0)) {
-            				mario.move(push, 0);
-        				}
-        			} else {
-        				float push = (w + xMarioD)/2.0f;
-        				if(!isBlocking(x, y, push, 0)) {
-        					this.move(push,0);
-        				}
-        				if(!mario.isBlocking(mario.x, mario.y, -push, 0)) {
-        					mario.move(-push,0);
-        				}        				
-        			}        			        			        			
-        		}
-        	}
-        }
-    } 
-    
-    /**
-     * Move this Mario sprite xa units horizontally and
-     * ya units vertically, if the surrounding landscape allows.
-     * Obstacles will prevent movement. Meathod indicates whether
-     * movement was carried out unhindered.
-     * 
-     * @param xa Horozontal movement (negative for left, pos for right)
-     * @param ya Vertical movement (pos for up, neg for down)
-     * @return true if movement occurred, false if blocked by obstacle.
-     */
     private boolean move(float xa, float ya)
     {
         while (xa > 8)
@@ -645,35 +454,39 @@ public class Mario extends Sprite {
 
         if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_PICKUPABLE) > 0)
         {
-            this.getCoin();
+            getCoin();
             world.level.setBlock(x, y, (byte) 0);
-            for (int xx = 0; xx < 2; xx++)
-                for (int yy = 0; yy < 2; yy++)
-                    world.addSprite(new Sparkle(x * 16 + xx * 8 + (int) (Math.random() * 8), y * 16 + yy * 8 + (int) (Math.random() * 8), 0, 0, 0, 2, 5));
         }
 
         if (blocking && ya < 0)
         {
             world.bump(x, y, large);
+            if (world.verbose > 0) System.out.println("Sim Mario bumps a crate!");
         }
-
+        //System.out.println("Sim Mario blockcheck: pos: " + _x + " "+_y + " discrete: "+x + " "+y+
+        //		" block: "+block+" blocking?: " + (blocking? "true":"false") + "behaviourvalue: "
+        //		+ ((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_PICKUPABLE));
         return blocking;
     }
-    
+
     public void stomp(Enemy enemy)
     {
+    	if (world.verbose > 0) System.out.println("Prestomp!");
         if (deathTime > 0 || world.paused) return;
 
         float targetY = enemy.y - enemy.height / 2;
+        if (world.verbose > 0) System.out.println("STOMP! targetY: " + targetY + " enemyy: " + enemy.y + " height: " + enemy.height);
         move(0, targetY - y);
 
         xJumpSpeed = 0;
-        yJumpSpeed = STILL_JUMP_SPEED;
+        yJumpSpeed = -1.9f;
         jumpTime = 8;
         ya = jumpTime * yJumpSpeed;
+        if (world.verbose > 0) System.out.println("Stomp ya: "+ya+ " marioY: " + this.y);
         onGround = false;
         sliding = false;
         invulnerableTime = 1;
+        world.enemiesJumpedOn++;
     }
 
     public void stomp(Shell shell)
@@ -684,6 +497,7 @@ public class Mario extends Sprite {
         {
             carried = shell;
             shell.carried = true;
+            world.otherTricks+=2;
         }
         else
         {
@@ -691,29 +505,34 @@ public class Mario extends Sprite {
             move(0, targetY - y);
 
             xJumpSpeed = 0;
-            yJumpSpeed = STILL_JUMP_SPEED;
+            yJumpSpeed = -1.9f;
             jumpTime = 8;
             ya = jumpTime * yJumpSpeed;
             onGround = false;
             sliding = false;
             invulnerableTime = 1;
+            world.otherTricks++;
         }
     }
 
     public void getHurt()
     {
-        if (deathTime > 0 || world.paused || isMarioInvulnerable) return;
-
+    	if (world.verbose > 1) System.out.print("[hurt!]");
+    	damage++;
+        //if (deathTime > 0 || world.paused) return;
         if (invulnerableTime > 0) return;
 
         if (large)
         {
             world.paused = true;
             powerUpTime = -3 * FractionalPowerUpTime;
-            if (fire) {
-                this.setLarge(true, false);
-            } else {
-                this.setLarge(false, false);
+            if (fire)
+            {
+                setLarge(true, false);
+            }
+            else
+            {
+                setLarge(false, false);
             }
             invulnerableTime = 32;
         }
@@ -734,11 +553,13 @@ public class Mario extends Sprite {
 
     public void die()
     {
-        xDeathPos = (int) x;
+    	if (world.verbose > 1) System.out.println("[die!]");
+    	damage+=2;
+    	xDeathPos = (int) x;
         yDeathPos = (int) y;
         world.paused = true;
-        deathTime = 25;
-        status = Mario.STATUS_DEAD;
+        deathTime = 1;
+        status = Mario.STATUS_DEAD;       
     }
 
 
@@ -750,13 +571,13 @@ public class Mario extends Sprite {
         {
             world.paused = true;
             powerUpTime = 3 * FractionalPowerUpTime;
-            this.setLarge(true, true);
+            world.mario.setLarge(true, true);
+            world.powerUpsCollected++;
         }
         else
         {
-        	this.getCoin();
+            getCoin();
         }
-        ++gainedFlowers;
     }
 
     public void getMushroom()
@@ -767,18 +588,18 @@ public class Mario extends Sprite {
         {
             world.paused = true;
             powerUpTime = 3 * FractionalPowerUpTime;
-            this.setLarge(true, false);
+            world.mario.setLarge(true, false);
+            world.powerUpsCollected++;
         }
         else
         {
-        	this.getCoin();
+            getCoin();
         }
-        ++gainedMushrooms;        
     }
 
     public void kick(Shell shell)
     {
-//        if (deathTime > 0 || world.paused) return;
+        //if (deathTime > 0 || world.paused) return;
 
         if (keys[KEY_SPEED])
         {
@@ -793,18 +614,21 @@ public class Mario extends Sprite {
 
     public void stomp(BulletBill bill)
     {
-        if (deathTime > 0 || world.paused) return;
 
+    	if (world.verbose > 5) System.out.println("Simstomping Bullet Bill!");
+        if (deathTime > 0 || world.paused) return;
         float targetY = bill.y - bill.height / 2;
         move(0, targetY - y);
-
+        if (world.verbose > 0) System.out.println("STOMP! targetY: " + targetY + " enemyy: " + bill.y + " height: " + bill.height);
+        
         xJumpSpeed = 0;
-        yJumpSpeed = STILL_JUMP_SPEED;
+        yJumpSpeed = -1.9f;
         jumpTime = 8;
         ya = jumpTime * yJumpSpeed;
         onGround = false;
         sliding = false;
         invulnerableTime = 1;
+        world.enemiesJumpedOn++;
     }
 
     public byte getKeyMask()
@@ -825,20 +649,15 @@ public class Mario extends Sprite {
         }
     }
 
-    /**
-     * Made non-static to allow multiple Marios
-     */
-    public void get1Up()
+    public static void get1Up()
     {
         lives++;
     }
     
-    /*
-     * Made non-static to allow multiple Marios
-     */
     public void getCoin()
     {
         coins++;
+        world.coinsCollected++;
         if (coins % 100 == 0)
             get1Up();
     }

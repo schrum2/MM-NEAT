@@ -1,22 +1,20 @@
-package ch.idsia.mario.engine.sprites;
+package competition.cig.robinbaumgarten.astar.sprites;
 
-import ch.idsia.mario.engine.Art;
-import ch.idsia.mario.engine.LevelScene;
-
+import competition.cig.robinbaumgarten.astar.LevelScene;
 
 public class Shell extends Sprite
 {
     private static float GROUND_INERTIA = 0.89f;
     private static float AIR_INERTIA = 0.89f;
 
-    @SuppressWarnings("unused")
-	private float runTime;
+    private float runTime;
     private boolean onGround = false;
 
     private int width = 4;
     int height = 24;
 
-    private LevelScene world;
+    
+    //private LevelScene world;
     public int facing;
 
     public boolean avoidCliffs = false;
@@ -24,26 +22,20 @@ public class Shell extends Sprite
 
     public boolean dead = false;
     private int deadTime = 0;
-    public boolean carried;
+    public boolean carried = false;
 
 
     public Shell(LevelScene world, float x, float y, int type)
     {
         kind = KIND_SHELL;
-        sheet = Art.enemies;
+        //sheet = Art.enemies;
 
         this.x = x;
         this.y = y;
         this.world = world;
-        xPicO = 8;
-        yPicO = 31;
 
-        yPic = type;
         height = 12;
         facing = 0;
-        wPic = 16;
-
-        xPic = 4;
         ya = -5;
     }
     
@@ -64,8 +56,6 @@ public class Shell extends Sprite
                 ya = -5;
                 if (spriteTemplate != null) spriteTemplate.isDead = true;
                 deadTime = 100;
-                hPic = -hPic;
-                yPicO = -yPicO + 16;
                 return true;
             }
         }
@@ -74,55 +64,46 @@ public class Shell extends Sprite
 
     public void collideCheck()
     {
-    	if (carried || dead || deadTime>0) return;
+        if (carried || dead || deadTime>0) return;
 
-    	// Treat Mario and Luigi the same
-    	Mario[] marios = new Mario[LevelScene.twoPlayers ? 2 : 1];
-    	marios[0] = world.mario;
-    	if(LevelScene.twoPlayers) {
-    		marios[1] = world.luigi;
-    	}
-
-    	for(Mario mario: marios) {
-    		float xMarioD = mario.x - x;
-    		float yMarioD = mario.y - y;
-    		float w = 16;
-    		if (xMarioD > -w && xMarioD < w)
-    		{
-    			if (yMarioD > -height && yMarioD < mario.height)
-    			{
-    				if (mario.ya > 0 && yMarioD <= 0 && (!mario.onGround || !mario.wasOnGround))
-    				{
-    					mario.stomp(this);
-    					if (facing != 0)
-    					{
-    						xa = 0;
-    						facing = 0;
-    					}
-    					else
-    					{
-    						facing = mario.facing;
-    					}
-    				}
-    				else
-    				{
-    					if (facing != 0)
-    					{
-    						mario.getHurt();
-    					}
-    					else
-    					{
-    						mario.kick(this);
-    						facing = mario.facing;
-    					}
-    				}
-    			}
-    		}
-    	}
+        float xMarioD = world.mario.x - x;
+        float yMarioD = world.mario.y - y;
+        if (xMarioD > -16 && xMarioD < 16)
+        {
+            if (yMarioD > -height && yMarioD < world.mario.height)
+            {
+                if (world.mario.ya > 0 && yMarioD <= 0 && (!world.mario.onGround || !world.mario.wasOnGround))
+                {
+                    world.mario.stomp(this);
+                    if (facing != 0)
+                    {
+                        xa = 0;
+                        facing = 0;
+                    }
+                    else
+                    {
+                        facing = world.mario.facing;
+                    }
+                }
+                else
+                {
+                    if (facing != 0)
+                    {
+                        world.mario.getHurt();
+                    }
+                    else
+                    {
+                        world.mario.kick(this);
+                        facing = world.mario.facing;
+                    }
+                }
+            }
+        }
     }
 
     public void move()
     {
+    	//System.out.println("Moving shell.");
         if (carried)
         {
             world.checkShellCollide(this);
@@ -138,7 +119,7 @@ public class Shell extends Sprite
                 deadTime = 1;
                 for (int i = 0; i < 8; i++)
                 {
-                    world.addSprite(new Sparkle((int) (x + Math.random() * 16 - 8) + 4, (int) (y - Math.random() * 8) + 4, (float) (Math.random() * 2 - 1), (float) Math.random() * -1, 0, 1, 5));
+                    //world.addSprite(new Sparkle((int) (x + Math.random() * 16 - 8) + 4, (int) (y - Math.random() * 8) + 4, (float) (Math.random() * 2 - 1), (float) Math.random() * -1, 0, 1, 5));
                 }
                 spriteContext.removeSprite(this);
             }
@@ -148,6 +129,7 @@ public class Shell extends Sprite
             ya *= 0.95;
             ya += 1;
 
+        	//System.out.println("Moved shell. Pos: " + x + " " + y + " a: "+ xa + " " + ya);
             return;
         }
 
@@ -172,13 +154,7 @@ public class Shell extends Sprite
             world.checkShellCollide(this);
         }
 
-        xFlipPic = facing == -1;
-
         runTime += (Math.abs(xa)) + 5;
-
-        xPic = (anim / 2) % 4 + 3;
-
-
 
         if (!move(xa, 0))
         {
@@ -296,9 +272,6 @@ public class Shell extends Sprite
         if (x == (int) (this.x / 16) && y == (int) (this.y / 16)) return false;
 
         boolean blocking = world.level.isBlocking(x, y, xa, ya);
-
-        @SuppressWarnings("unused")
-		byte block = world.level.getBlock(x, y);
         
         if (blocking && ya == 0 && xa!=0)
         {

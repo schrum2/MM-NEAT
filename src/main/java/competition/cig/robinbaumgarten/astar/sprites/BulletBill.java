@@ -1,16 +1,13 @@
-package ch.idsia.mario.engine.sprites;
+package competition.cig.robinbaumgarten.astar.sprites;
 
-import ch.idsia.mario.engine.Art;
-import ch.idsia.mario.engine.LevelScene;
+import competition.cig.robinbaumgarten.astar.LevelScene;
+
 
 
 public class BulletBill extends Sprite
 {
-    @SuppressWarnings("unused")
-	private int width = 4;
     int height = 24;
-
-    private LevelScene world;
+    
     public int facing;
 
     public boolean avoidCliffs = false;
@@ -22,21 +19,12 @@ public class BulletBill extends Sprite
 
     public BulletBill(LevelScene world, float x, float y, int dir)
     {
-        kind = KIND_BULLET_BILL;     //added by SK
-        sheet = Art.enemies;
-
+        kind = Sprite.KIND_BULLET_BILL;     //added by SK
         this.x = x;
         this.y = y;
         this.world = world;
-        xPicO = 8;
-        yPicO = 31;
-
         height = 12;
         facing = 0;
-        wPic = 16;
-        yPic = 5;
-
-        xPic = 0;
         ya = -5;
         this.facing = dir;
     }
@@ -45,36 +33,27 @@ public class BulletBill extends Sprite
     {
         if (dead) return;
 
-        // Treat Mario and Luigi the same
-        Mario[] marios = new Mario[LevelScene.twoPlayers ? 2 : 1];
-        marios[0] = world.mario;
-        if(LevelScene.twoPlayers) {
-        	marios[1] = world.luigi;
-        }
-        
-        for(Mario mario: marios) {
-        	float xMarioD = mario.x - x;
-        	float yMarioD = mario.y - y;
-        	float w = 16;
-        	if (xMarioD > -w && xMarioD < w)
-        	{
-        		if (yMarioD > -height && yMarioD < mario.height)
-        		{
-        			if (mario.ya > 0 && yMarioD <= 0 && (!mario.onGround || !mario.wasOnGround))
-        			{
-        				mario.stomp(this);
-        				dead = true;
+        float xMarioD = world.mario.x - x;
+        float yMarioD = world.mario.y - y;
+        if (xMarioD > -16 && xMarioD < 16)
+        {
+            if (yMarioD > -height && yMarioD < world.mario.height)
+            {
+                if (world.mario.ya > 0 && yMarioD <= 0 && (!world.mario.onGround || !world.mario.wasOnGround))
+                {
+                    world.mario.stomp(this);
+                    //System.out.println("Sim bullet bill stomped on. Mario ya: "+world.mario.ya);
+                    dead = true;
 
-        				xa = 0;
-        				ya = 1;
-        				deadTime = 100;
-        			}
-        			else
-        			{
-        				mario.getHurt();
-        			}
-        		}
-        	}
+                    xa = 0;
+                    ya = 1;
+                    deadTime = 100;
+                }
+                else
+                {
+                    world.mario.getHurt();
+                }
+            }
         }
     }
 
@@ -87,10 +66,7 @@ public class BulletBill extends Sprite
             if (deadTime == 0)
             {
                 deadTime = 1;
-                for (int i = 0; i < 8; i++)
-                {
-                    world.addSprite(new Sparkle((int) (x + Math.random() * 16 - 8) + 4, (int) (y - Math.random() * 8) + 4, (float) (Math.random() * 2 - 1), (float) Math.random() * -1, 0, 1, 5));
-                }
+                
                 spriteContext.removeSprite(this);
             }
 
@@ -105,7 +81,6 @@ public class BulletBill extends Sprite
         float sideWaysSpeed = 4f;
 
         xa = facing * sideWaysSpeed;
-        xFlipPic = facing == -1;
         move(xa, 0);
     }
 

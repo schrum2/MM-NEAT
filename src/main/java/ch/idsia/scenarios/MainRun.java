@@ -13,6 +13,7 @@ import ch.idsia.utils.StatisticalSummary;
 
 import java.util.List;
 
+import competition.cig.robinbaumgarten.AStarAgent;
 import competition.cig.sergeykarakovskiy.SergeyKarakovskiy_JumpingAgent;
 
 /**
@@ -71,7 +72,7 @@ public class MainRun
 //            AgentsPool.addAgent(new AIwesome());
 //            AgentsPool.addAgent(new TutchekAgent());
         //    AgentsPool.addAgent(new SlowAgent());
-        //    AgentsPool.addAgent(new AStarAgent());
+            AgentsPool.addAgent(new AStarAgent());
 //            AgentsPool.addAgent(new RjAgent());
             AgentsPool.addAgent(new SergeyKarakovskiy_JumpingAgent());
         }
