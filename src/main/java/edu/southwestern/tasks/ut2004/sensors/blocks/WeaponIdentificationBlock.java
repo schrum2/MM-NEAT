@@ -16,18 +16,18 @@ public class WeaponIdentificationBlock implements UT2004SensorBlock {
 	/**
 	 * creates the sensor block
 	 */
-	public void prepareBlock(UT2004BotModuleController bot) {
+	public void prepareBlock(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
 
 	/**
-	 * Collects data on the weapon statuses and puts it into an array
+	 * populates the sensor array with the weapon data
 	 * 
 	 * @param bot (bot which will use the sensor data)
 	 * @param in (address to start at in array)
 	 * @param inputs (an array that collects the values from the statuses)
 	 * @return returns next address for sensor allocation
 	 */
-	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
+	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs) {
 		Weaponry weaponry = bot.getWeaponry();
 		Weapon w = weaponry.getCurrentWeapon();
 		ItemType type = w.getType();

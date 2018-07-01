@@ -38,7 +38,7 @@ public class HybrIDUtil {
 		// Turn off HyperNEAT visualizations
 		HyperNEATUtil.clearHyperNEATVisualizations();
 		// Need small genes because there are so many of them
-		// TWEANNGenotype.smallerGenotypes = true; // <--- Commented out for now, but we may consider adding back later
+		TWEANNGenotype.smallerGenotypes = true; // Since whole population is larger substrate networks, need them small
 		// Switch from CPPNs to plain TWEANNs
 		Parameters.parameters.setClass("genotype", TWEANNGenotype.class);
 		// Substrate networks cannot have different activation functions
@@ -54,7 +54,7 @@ public class HybrIDUtil {
 	 * @param population the hyperNEAT population
 	 * @return the NEAT population
 	 */
-	public static <T> ArrayList<Genotype<T>> switchSubstrateToNEAT(ArrayList<Genotype<T>> population) {
+	public static <T> ArrayList<Genotype<T>> switchPhenotypeToNEAT(ArrayList<Genotype<T>> population) {
 		deactivateHyperNEAT();
 
 		// Get substrate genotypes

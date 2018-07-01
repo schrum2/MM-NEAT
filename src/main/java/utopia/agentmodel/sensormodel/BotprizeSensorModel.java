@@ -10,6 +10,14 @@ import mockcz.cuni.pogamut.MessageObjects.Triple;
 import java.util.ArrayList;
 import utopia.Utils;
 
+/**
+ * Despite the name, this class is actually extended by BestSensorModel,
+ * which is the actual sensor model used by UT^2. This model was used in
+ * an older version of the bot, but still has several features that survived
+ * into the final version of UT^2.
+ * 
+ * @author J Schrum
+ */
 public class BotprizeSensorModel extends SensorModel {
 
     public static final double PI = Math.PI;

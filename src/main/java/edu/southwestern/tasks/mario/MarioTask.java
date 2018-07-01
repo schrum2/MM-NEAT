@@ -18,6 +18,7 @@ import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
@@ -218,20 +219,20 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T> implements N
 	 *         for the domain.
 	 */
 	@Override
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity(){
-		ArrayList<Triple<String, String, Boolean>> conn = new ArrayList<Triple<String, String, Boolean>>();
-		conn.add(new Triple<String, String, Boolean>("Inputs World", "Processing", Boolean.FALSE));
-		conn.add(new Triple<String, String, Boolean>("Inputs Enemies", "Processing", Boolean.FALSE));
-		conn.add(new Triple<String, String, Boolean>("Processing", "Outputs D-Pad", Boolean.FALSE));	
-		conn.add(new Triple<String, String, Boolean>("Processing", "Output Speed", Boolean.FALSE));	
-		conn.add(new Triple<String, String, Boolean>("Processing", "Output Jump", Boolean.FALSE));
+	public List<SubstrateConnectivity> getSubstrateConnectivity(){
+		ArrayList<SubstrateConnectivity> conn = new ArrayList<SubstrateConnectivity>();
+		conn.add(new SubstrateConnectivity("Inputs World", "Processing", SubstrateConnectivity.CTYPE_FULL));
+		conn.add(new SubstrateConnectivity("Inputs Enemies", "Processing", SubstrateConnectivity.CTYPE_FULL));
+		conn.add(new SubstrateConnectivity("Processing", "Outputs D-Pad", SubstrateConnectivity.CTYPE_FULL));	
+		conn.add(new SubstrateConnectivity("Processing", "Output Speed", SubstrateConnectivity.CTYPE_FULL));	
+		conn.add(new SubstrateConnectivity("Processing", "Output Jump", SubstrateConnectivity.CTYPE_FULL));
 		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-			conn.add(new Triple<String, String, Boolean>("Inputs World", "Outputs D-Pad", Boolean.FALSE));
-			conn.add(new Triple<String, String, Boolean>("Inputs Enemies", "Outputs D-Pad", Boolean.FALSE));
-			conn.add(new Triple<String, String, Boolean>("Inputs World", "Outputs Speed", Boolean.FALSE));
-			conn.add(new Triple<String, String, Boolean>("Inputs Enemies", "Outputs Speed", Boolean.FALSE));
-			conn.add(new Triple<String, String, Boolean>("Inputs World", "Outputs Jump", Boolean.FALSE));
-			conn.add(new Triple<String, String, Boolean>("Inputs Enemies", "Outputs Jump", Boolean.FALSE));
+			conn.add(new SubstrateConnectivity("Inputs World", "Outputs D-Pad", SubstrateConnectivity.CTYPE_FULL));
+			conn.add(new SubstrateConnectivity("Inputs Enemies", "Outputs D-Pad", SubstrateConnectivity.CTYPE_FULL));
+			conn.add(new SubstrateConnectivity("Inputs World", "Outputs Speed", SubstrateConnectivity.CTYPE_FULL));
+			conn.add(new SubstrateConnectivity("Inputs Enemies", "Outputs Speed", SubstrateConnectivity.CTYPE_FULL));
+			conn.add(new SubstrateConnectivity("Inputs World", "Outputs Jump", SubstrateConnectivity.CTYPE_FULL));
+			conn.add(new SubstrateConnectivity("Inputs Enemies", "Outputs Jump", SubstrateConnectivity.CTYPE_FULL));
 		}
 		return conn;
 	}

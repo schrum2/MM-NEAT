@@ -12,6 +12,7 @@ public class CommonConstants {
 
 
 	// boolean
+	public static boolean cascadeExpansion;
 	public static boolean inputsUseID;
 	public static boolean substrateBiasLocationInputs;
 	public static boolean substrateLocationInputs;
@@ -122,6 +123,7 @@ public class CommonConstants {
 	 */
 	public static void load() {
 		// boolean
+		cascadeExpansion = Parameters.parameters.booleanParameter("cascadeExpansion");
 		inputsUseID = Parameters.parameters.booleanParameter("inputsUseID");
 		averageScoreHistory = Parameters.parameters.booleanParameter("averageScoreHistory");
 		convolution = Parameters.parameters.booleanParameter("convolution");

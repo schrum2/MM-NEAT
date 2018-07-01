@@ -1,15 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.ut2004.weapons;
 
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 
 /**
- *
- * @author He_Deceives
+ *Dictates the methods needed for weapon managers
+ * @author Jacob Schrum
  */
 public interface UT2004WeaponManager {
 

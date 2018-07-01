@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.ut2004.sensors.blocks;
 
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
@@ -12,7 +8,7 @@ import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
  */
 public interface UT2004SensorBlock {
 
-	public void prepareBlock(UT2004BotModuleController bot);
+	public void prepareBlock(@SuppressWarnings("rawtypes") UT2004BotModuleController bot);
 
 	/**
 	 * Pass in array of inputs so far and add to them
@@ -25,7 +21,7 @@ public interface UT2004SensorBlock {
 	 *            partially filled array of inputs to add to
 	 * @return number of inputs that are now filled in array
 	 */
-	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs);
+	public int incorporateSensors(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, int in, double[] inputs);
 
 	public int incorporateLabels(int in, String[] labels);
 

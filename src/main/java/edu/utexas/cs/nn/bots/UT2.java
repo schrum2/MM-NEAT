@@ -1,7 +1,21 @@
 package edu.utexas.cs.nn.bots;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import cz.cuni.amis.pogamut.base.agent.impl.AgentId;
 import cz.cuni.amis.pogamut.base.agent.navigation.PathExecutorState;
+import cz.cuni.amis.pogamut.base.agent.params.IRemoteAgentParameters;
 import cz.cuni.amis.pogamut.base.communication.worldview.event.IWorldEventListener;
 import cz.cuni.amis.pogamut.base.communication.worldview.object.IWorldObjectEventListener;
 import cz.cuni.amis.pogamut.base.utils.Pogamut;
@@ -17,34 +31,49 @@ import cz.cuni.amis.pogamut.ut2004.agent.utils.UT2004BotDescriptor;
 import cz.cuni.amis.pogamut.ut2004.bot.IUT2004BotController;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType.Category;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.AddInventoryMsg;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotDamaged;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotKilled;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.ConfigChange;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.GameInfo;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.InitedMessage;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoint;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.PlayerKilled;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Self;
 import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
 import cz.cuni.amis.pogamut.ut2004.utils.MultipleUT2004BotRunner;
 import cz.cuni.amis.pogamut.ut2004.utils.PogamutUT2004Property;
-import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.utils.exception.PogamutException;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
+import edu.southwestern.tasks.ut2004.server.BotKiller;
 import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.retrace.HumanRetraceController;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable.WeaponTableEntry;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import mockcz.cuni.pogamut.Client.AgentMemory;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
 import utopia.agentmodel.ActionLog;
-import utopia.agentmodel.actions.*;
+import utopia.agentmodel.actions.Action;
+import utopia.agentmodel.actions.EmptyAction;
+import utopia.agentmodel.actions.GotoItemAction;
+import utopia.agentmodel.actions.QuickTurnAction;
+import utopia.agentmodel.actions.StillAction;
 import utopia.controllers.TWEANN.TWEANNController;
-import utopia.controllers.scripted.*;
+import utopia.controllers.scripted.ChasingController;
+import utopia.controllers.scripted.DistantPathController;
+import utopia.controllers.scripted.JudgingController;
+import utopia.controllers.scripted.ObservingController;
+import utopia.controllers.scripted.PathController;
+import utopia.controllers.scripted.ShieldGunController;
+import utopia.controllers.scripted.UnstuckController;
+import utopia.controllers.scripted.WaterController;
 import wox.serial.Easy;
 
 /**
@@ -56,15 +85,52 @@ import wox.serial.Easy;
 @AgentScoped
 public class UT2 extends BaseBot {
 
-    private static class UT2Parameters extends UT2004BotParameters {
+    public static class UT2Parameters extends UT2004BotParameters {
 
         private TWEANNController battleController;
         private IUT2004Server server;
+        private int evalTime;
 
+        /**
+         * Loads default controller with no server, but specifies an eval time
+         * @param evalTime Time after which bot will terminate itself
+         */
+        public UT2Parameters(int evalTime) {
+        	this((TWEANNController) Easy.load(UT2.DEFAULT_FILE), null, evalTime);
+        }
+        
+        /**
+         * Default controller, no server, and maximum run time
+         */
+        public UT2Parameters() {
+        	this((TWEANNController) Easy.load(UT2.DEFAULT_FILE), null);
+        }
+
+        /**
+         * Specific TWEANN controller and server, but maximum eval time
+         * @param cont A TWEANN controller instance
+         * @param server Server the bot is running on
+         */
         public UT2Parameters(TWEANNController cont, IUT2004Server server) {
+        	this(cont ,server, Integer.MAX_VALUE);
+        } 
+        
+        /**
+         * Specify controller, server, and eval time
+         * @param cont Battle controller for agent
+         * @param server Server bot runs on
+         * @param evalTime Time after which bot terminates self
+         */
+        public UT2Parameters(TWEANNController cont, IUT2004Server server, int evalTime) {
+        	this.evalTime = evalTime;
             this.battleController = cont;
             this.server = server;
         }
+        
+        public int getEvalTime() {
+        	return evalTime;
+        }
+        
 
         public TWEANNController getBattleController() {
             return this.battleController;
@@ -93,7 +159,8 @@ public class UT2 extends BaseBot {
     public static WeaponPreferenceTable weaponPreferences;
     private int notMoving;
     private static final int MAX_STILL_TIME = 8;
-    private static final int INTERESTING_HEALTH_ITEM = 5;
+    @SuppressWarnings("unused") // Is referenced in a commented section of code
+	private static final int INTERESTING_HEALTH_ITEM = 5;
     private static final int OFF_GRID_DISTANCE = 600;
     private static final double TIME_BETWEEN_QUICK_TURNS = 2.5;
     private static boolean printActions = Constants.PRINT_ACTIONS.getBoolean();
@@ -136,7 +203,9 @@ public class UT2 extends BaseBot {
                             || id.equals("DM-DE-GrendelKeep.PathNode30") // lower
                             || id.equals("DM-DE-GrendelKeep.PathNode32")) // upper
                     {
-                        System.out.println("\tGrendelKeep Rim");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("\tGrendelKeep Rim");
+                    	}
                         return true;
                     }
                 }
@@ -157,7 +226,7 @@ public class UT2 extends BaseBot {
      * anything from the environment.
      */
     @Override
-    public void prepareBot(UT2004Bot bot) {
+    public void prepareBot(@SuppressWarnings("rawtypes") UT2004Bot bot) {
         UT2Parameters params = (UT2Parameters) bot.getParams();
         this.battleController = params.getBattleController();
         super.server = params.getServer();
@@ -210,7 +279,7 @@ public class UT2 extends BaseBot {
      */
     @Override
     public Initialize getInitializeCommand() {
-        return new Initialize().setName(Constants.BOT_NAME.get());
+        return new Initialize().setName(Constants.BOT_NAME.get()).setSkin("Jugg.JuggMaleA");
     }
 
     /**
@@ -296,7 +365,9 @@ public class UT2 extends BaseBot {
         @Override
         public void notify(AddInventoryMsg add) {
             if (printActions) {
-                System.out.println(getIdentifier() + ":Added " + add.getType());
+            	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            		System.out.println(getIdentifier() + ":Added " + add.getType());
+            	}
             }
             if (add.getDescriptor().getItemCategory().equals(UT2004ItemType.Category.WEAPON)) {
                 // Controller only focuses on weapons
@@ -335,7 +406,9 @@ public class UT2 extends BaseBot {
             actions.takeAction("Quick Turn");
             if (printActions) {
                 String label = (getIdentifier() + ":QUICK_TURN:" + reason);
-                System.out.println(label);
+                if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                	System.out.println(label);
+                }
                 if (!ANONYMOUS_NAME) {
                     config.setName(label);
                 }
@@ -371,9 +444,13 @@ public class UT2 extends BaseBot {
     /**
      * timing for the logic
      */
-    private long[] timing = new long[10];
+// Unsure where this was used: schrum: 6/7/18
+//    private long[] timing = new long[10];
 //    boolean first = true;
 
+    public UT2Parameters getParams() {
+    	return (UT2Parameters) bot.getParams();
+    }
     /**
      * Main method that controls the bot - makes decisions what to do next. It
      * is called iteratively by Pogamut engine every time a synchronous batch
@@ -385,6 +462,10 @@ public class UT2 extends BaseBot {
      */
     @Override
     public void logic() throws PogamutException {
+		if (game.getTime() > getParams().getEvalTime()) {
+			endEval();
+		}
+		
 // This code tests if the STOPSHOOT command works. Keep until Phil fixes mod.
 //        if (first) {
 //            this.getBody().getShooting().shoot();
@@ -461,6 +542,10 @@ public class UT2 extends BaseBot {
 
         getAgentMemory().updatePosition();
     }
+    
+	public void endEval() {
+		BotKiller.killBot(bot);
+	}
 
     /**
      * Name of map bot is currently on. Caches the result for later use during
@@ -472,7 +557,9 @@ public class UT2 extends BaseBot {
     private String getMapName() {
         if (cachedMap == null) {
             cachedMap = game.getMapName();
-            System.out.println("Map is: " + cachedMap);
+            if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            	System.out.println("Map is: " + cachedMap);
+            }
         }
         return cachedMap;
     }
@@ -525,9 +612,10 @@ public class UT2 extends BaseBot {
      * Goes through all control modules in priority order and returns an action
      * from the controller/module with highest priority and a firing trigger.
      *
-     * @return
+     * @return Bot action for current logic cycle
      */
-    private Action getAction() {
+    @SuppressWarnings("unused") // Some sections depend on constants that can be turned on/off
+	private Action getAction() {
         Action result;
         StringBuilder label = new StringBuilder();
         label.append(getIdentifier());
@@ -554,7 +642,9 @@ public class UT2 extends BaseBot {
 
         Location botLoc = info.getLocation();
         if (botLoc == null) {
-            System.out.println("\tDon't know where bot is");
+        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        		System.out.println("\tDon't know where bot is");
+        	}
             return new EmptyAction();
         }
 
@@ -626,7 +716,9 @@ public class UT2 extends BaseBot {
                     label.append(":");
                     label.append(result);
 
-                    System.out.println(label);
+                    if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    	System.out.println(label);
+                    }
                     if (!ANONYMOUS_NAME) {
                         config.setName(label.toString());
                     }
@@ -655,7 +747,9 @@ public class UT2 extends BaseBot {
                     label.append(":");
                     label.append(result);
 
-                    System.out.println(label);
+                    if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    	System.out.println(label);
+                    }
                     if (!ANONYMOUS_NAME) {
                         config.setName(label.toString());
                     }
@@ -679,7 +773,9 @@ public class UT2 extends BaseBot {
                     label.append(":");
                     label.append(result);
 
-                    System.out.println(label);
+                    if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    	System.out.println(label);
+                    }
                     if (!ANONYMOUS_NAME) {
                         config.setName(label.toString());
                     }
@@ -703,7 +799,9 @@ public class UT2 extends BaseBot {
                     label.append(":");
                     label.append(result);
 
-                    System.out.println(label);
+                    if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    	System.out.println(label);
+                    }
                     if (!ANONYMOUS_NAME) {
                         config.setName(label.toString());
                     }
@@ -712,7 +810,8 @@ public class UT2 extends BaseBot {
             }
         }
 
-        Weapon current = weaponry.getCurrentWeapon();
+        @SuppressWarnings("unused")
+		Weapon current = weaponry.getCurrentWeapon();
         double distance = Double.MAX_VALUE;
         if (target != null && target.getLocation() != null) {
             distance = target.getLocation().getDistance(info.getLocation());
@@ -737,7 +836,9 @@ public class UT2 extends BaseBot {
                     label.append("JUDGE:");
                     label.append(result);
 
-                    System.out.println(label);
+                    if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    	System.out.println(label);
+                    }
                     if (!ANONYMOUS_NAME) {
                         config.setName(label.toString());
                     }
@@ -787,7 +888,9 @@ public class UT2 extends BaseBot {
                     label.append(":");
                     label.append(result);
 
-                    System.out.println(label);
+                    if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    	System.out.println(label);
+                    }
                     if (!ANONYMOUS_NAME) {
                         config.setName(label.toString());
                     }
@@ -812,7 +915,9 @@ public class UT2 extends BaseBot {
                     label.append(":");
                     label.append(result);
 
-                    System.out.println(label);
+                    if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    	System.out.println(label);
+                    }
                     if (!ANONYMOUS_NAME) {
                         config.setName(label.toString());
                     }
@@ -842,7 +947,9 @@ public class UT2 extends BaseBot {
                     label.append(":");
                     label.append(result);
 
-                    System.out.println(label);
+                    if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    	System.out.println(label);
+                    }
                     if (!ANONYMOUS_NAME) {
                         config.setName(label.toString());
                     }
@@ -864,7 +971,9 @@ public class UT2 extends BaseBot {
                     label.append(":");
                     label.append(chaseController.chaseTargetName(getAgentMemory()));
 
-                    System.out.println(label);
+                    if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    	System.out.println(label);
+                    }
                     if (!ANONYMOUS_NAME) {
                         config.setName(label.toString());
                     }
@@ -882,15 +991,21 @@ public class UT2 extends BaseBot {
                 if (id.equals(map + ".InventorySpot93")
                         || id.equals(map + ".InventorySpot92")
                         || id.equals(map + ".PathNode48")) {
-                    System.out.println("By secret UDamage in Curse4");
+                	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                		System.out.println("By secret UDamage in Curse4");
+                	}
                     //Location uDamageLocation = new Location(-1936.21,-1172.24,49.90);
                     Map<UnrealId, Item> uDamage = items.getSpawnedItems(UT2004ItemType.U_DAMAGE_PACK);
                     if (!uDamage.isEmpty()) {
                         for (Item i : uDamage.values()) {
-                            System.out.println("SPECIAL:Setting up door shoot");
+                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                        		System.out.println("SPECIAL:Setting up door shoot");
+                        	}
                             this.getBody().getLocomotion().strafeTo(getAgentMemory().getNavPoint(map + ".InventorySpot93"), i.getLocation());
                             if (this.getInfo().isFacing(i.getLocation())) {
-                                System.out.println("SPECIAL:Shoot open UDamage door");
+                            	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                            		System.out.println("SPECIAL:Shoot open UDamage door");
+                            	}
                                 this.getBody().getShooting().shootPrimary(i.getLocation());
                             }
                         }
@@ -900,7 +1015,9 @@ public class UT2 extends BaseBot {
 
                 // 450 is magic height in Curse4
                 if (id.equals(map + ".LiftCenter1") && botLoc.z > 450) {
-                    System.out.println("SPECIAL:Step off elevator");
+                	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                		System.out.println("SPECIAL:Step off elevator");
+                	}
                     NavPoint navTarget = getAgentMemory().getNavPoint(map + ".PathNode44");
                     this.getBody().getLocomotion().strafeTo(navTarget, navTarget);
                     return new EmptyAction();
@@ -910,7 +1027,9 @@ public class UT2 extends BaseBot {
                         //|| id.equals(map + ".LiftExit3")
                         || id.equals(map + ".PathNode44")) {
                     // Leave elevator in correct direction
-                    System.out.println("SPECIAL:Move further from elevator");
+                	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                		System.out.println("SPECIAL:Move further from elevator");
+                	}
                     NavPoint navTarget = getAgentMemory().getNavPoint(map + ".PathNode16");
                     this.getBody().getLocomotion().strafeTo(navTarget, navTarget);
                     return new EmptyAction();
@@ -922,7 +1041,9 @@ public class UT2 extends BaseBot {
                     // Continue through shaft
                     result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot99");
                     if (result != null) {
-                        System.out.println("SPECIAL:Path through Curse4 shaft");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("SPECIAL:Path through Curse4 shaft");
+                    	}
                         return result;
                     }
                 }
@@ -943,7 +1064,9 @@ public class UT2 extends BaseBot {
                             this.getBody().getLocomotion().strafeTo(i.getLocation(), i.getLocation());
                             result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot97");
                             if (result != null) {
-                                System.out.println("SPECIAL:Get the shield pack in Antalus cave");
+                            	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                            		System.out.println("SPECIAL:Get the shield pack in Antalus cave");
+                            	}
                                 return result;
                             }
                         }
@@ -951,7 +1074,9 @@ public class UT2 extends BaseBot {
                     // Shield pack was not present, but bot still in problem area
                     result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot103");
                     if (result != null) {
-                        System.out.println("SPECIAL:Path to UDamage in Antalus");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("SPECIAL:Path to UDamage in Antalus");
+                    	}
                         return result;
                     }
                 }
@@ -965,11 +1090,15 @@ public class UT2 extends BaseBot {
                         || id.equals(map + ".LiftExit10")
                         || id.equals(map + ".InventorySpot532")) {
 
-                    System.out.println("Exiting problem elevator in GrendelKeep");
+                	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                		System.out.println("Exiting problem elevator in GrendelKeep");
+                	}
                     Map<UnrealId, Item> shields = items.getSpawnedItems(UT2004ItemType.SUPER_SHIELD_PACK);
                     if (!shields.isEmpty()) {
                         for (Item i : shields.values()) {
-                            System.out.println("SPECIAL:Get the shield pack");
+                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                        		System.out.println("SPECIAL:Get the shield pack");
+                        	}
                             this.getBody().getLocomotion().strafeTo(i.getLocation(), i.getLocation());
                         }
                         return new EmptyAction();
@@ -977,7 +1106,9 @@ public class UT2 extends BaseBot {
                     // Shield pack was not present, but bot still in problem area
                     result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot558");
                     if (result != null) {
-                        System.out.println("SPECIAL:Path from GrendelKeep platform");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("SPECIAL:Path from GrendelKeep platform");
+                    	}
                         return result;
                     }
                 }
@@ -996,7 +1127,9 @@ public class UT2 extends BaseBot {
 
                     result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot17");
                     if (result != null) {
-                        System.out.println("SPECIAL:Goto elevator to get UDamage in Osiris2");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("SPECIAL:Goto elevator to get UDamage in Osiris2");
+                    	}
                         return result;
                     }
                 }
@@ -1010,7 +1143,9 @@ public class UT2 extends BaseBot {
 
                     result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot17");
                     if (result != null) {
-                        System.out.println("SPECIAL:Goto UDamage from elevator in Osiris2");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("SPECIAL:Goto UDamage from elevator in Osiris2");
+                    	}
                         return result;
                     }
                 }
@@ -1020,7 +1155,9 @@ public class UT2 extends BaseBot {
                         || (id.equals(map + ".PathNode68") && info.isFacing(getAgentMemory().getNavPoint(map + ".PathNode69"), 60))) {
                     result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot11");
                     if (result != null) {
-                        System.out.println("SPECIAL:Goto underground Lightning Gun in Osiris2");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("SPECIAL:Goto underground Lightning Gun in Osiris2");
+                    	}
                         return result;
                     }
                 }
@@ -1029,7 +1166,9 @@ public class UT2 extends BaseBot {
                 if (id.equals(map + ".PathNode13") && info.isFacing(getAgentMemory().getNavPoint(map + ".PathNode9"), 60)) {
                     result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot12");
                     if (result != null) {
-                        System.out.println("SPECIAL:Goto Flak Cannon in Osiris2");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("SPECIAL:Goto Flak Cannon in Osiris2");
+                    	}
                         return result;
                     }
                 }
@@ -1038,7 +1177,9 @@ public class UT2 extends BaseBot {
                 if (id.equals(map + ".PathNode68") && info.isFacing(getAgentMemory().getNavPoint(map + ".PathNode65"), 60)) {
                     result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot13");
                     if (result != null) {
-                        System.out.println("SPECIAL:Goto Shock Rifle in Osiris2");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("SPECIAL:Goto Shock Rifle in Osiris2");
+                    	}
                         return result;
                     }
                 }
@@ -1055,7 +1196,9 @@ public class UT2 extends BaseBot {
                         || (id.equals(map + ".LiftCenter1") && botLoc.z > 700)) {
                     result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot16");
                     if (result != null) {
-                        System.out.println("SPECIAL:Goto Lightning Gun after leaving elevator in Asbestos");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("SPECIAL:Goto Lightning Gun after leaving elevator in Asbestos");
+                    	}
                         return result;
                     }
                 }
@@ -1064,7 +1207,9 @@ public class UT2 extends BaseBot {
                         || (id.equals(map + ".LiftCenter0") && botLoc.z > 440)) {
                     result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot29");
                     if (result != null) {
-                        System.out.println("SPECIAL:Goto UDamage after leaving elevator in Asbestos");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("SPECIAL:Goto UDamage after leaving elevator in Asbestos");
+                    	}
                         return result;
                     }
                 }
@@ -1072,7 +1217,9 @@ public class UT2 extends BaseBot {
                 if (id.equals(map + ".PathNode177") && info.isFacing(pathNode180, 60)) {
                     result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot57");
                     if (result != null) {
-                        System.out.println("SPECIAL:Round corner of ditch in Asbestos");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("SPECIAL:Round corner of ditch in Asbestos");
+                    	}
                         return result;
                     }
                 }
@@ -1081,7 +1228,9 @@ public class UT2 extends BaseBot {
                     //NavPoint ditchExit = getAgentMemory().getNavPoint(map + ".InventorySpot47");
                     result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".PathNode37");
                     if (result != null) {
-                        System.out.println("SPECIAL:Escape ditch in Asbestos");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("SPECIAL:Escape ditch in Asbestos");
+                    	}
                         return result;
                     }
                 }
@@ -1091,14 +1240,18 @@ public class UT2 extends BaseBot {
                         //result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".PathNode92");
                         result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot28");
                         if (result != null) {
-                            System.out.println("SPECIAL:Go up stairs1 in Asbestos");
+                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                        		System.out.println("SPECIAL:Go up stairs1 in Asbestos");
+                        	}
                             return result;
                         }
                     } else if (info.isFacing(getAgentMemory().getNavPoint(map + ".PathNode25"), 60)) {
                         //result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".PathNode25");
                         result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot27");
                         if (result != null) {
-                            System.out.println("SPECIAL:Go down stairs1 in Asbestos");
+                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                        		System.out.println("SPECIAL:Go down stairs1 in Asbestos");
+                        	}
                             return result;
                         }
                     }
@@ -1109,14 +1262,18 @@ public class UT2 extends BaseBot {
                         //result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".PathNode11");
                         result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot28");
                         if (result != null) {
-                            System.out.println("SPECIAL:Go up stairs2 in Asbestos");
+                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                        		System.out.println("SPECIAL:Go up stairs2 in Asbestos");
+                        	}
                             return result;
                         }
                     } else if (info.isFacing(getAgentMemory().getNavPoint(map + ".PathNode9"), 60)) {
                         //result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".PathNode9");
                         result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".PathNode2");
                         if (result != null) {
-                            System.out.println("SPECIAL:Go down stairs2 in Asbestos");
+                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                        		System.out.println("SPECIAL:Go down stairs2 in Asbestos");
+                        	}
                             return result;
                         }
                     }
@@ -1125,7 +1282,9 @@ public class UT2 extends BaseBot {
                 if (id.equals(map + ".PathNode184") || id.equals(map + ".PathNode92")) {
                     result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".PathNode11");
                     if (result != null) {
-                        System.out.println("SPECIAL:Avoid corner at top of stairs in Asbestos");
+                    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    		System.out.println("SPECIAL:Avoid corner at top of stairs in Asbestos");
+                    	}
                         return result;
                     }
                 }
@@ -1134,13 +1293,17 @@ public class UT2 extends BaseBot {
                     if (id.equals(map + ".InventorySpot37")) {
                         result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".PathNode122");
                         if (result != null) {
-                            System.out.println("SPECIAL:Go left around water pool in Asbestos");
+                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                        		System.out.println("SPECIAL:Go left around water pool in Asbestos");
+                        	}
                             return result;
                         }
                     } else if (id.equals(map + ".InventorySpot38") || id.equals(map + ".PathNode0")) {
                         result = ((DistantPathController) this.pathController).proceedToNavPoint(map + ".InventorySpot8");
                         if (result != null) {
-                            System.out.println("SPECIAL:Go right around water pool in Asbestos");
+                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                        		System.out.println("SPECIAL:Go right around water pool in Asbestos");
+                        	}
                             return result;
                         }
                     }
@@ -1177,7 +1340,9 @@ public class UT2 extends BaseBot {
                     label.append(":");
                     label.append(result);
 
-                    System.out.println(label);
+                    if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    	System.out.println(label);
+                    }
                     if (!ANONYMOUS_NAME) {
                         config.setName(label.toString());
                     }
@@ -1189,7 +1354,9 @@ public class UT2 extends BaseBot {
                     label.append("ABORT RETRACE:");
                     label.append(humanTraceController.lastActionLabel());
 
-                    System.out.println(label);
+                    if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    	System.out.println(label);
+                    }
                     if (!ANONYMOUS_NAME) {
                         config.setName(label.toString());
                     }
@@ -1215,7 +1382,9 @@ public class UT2 extends BaseBot {
                         label.append(":");
                         label.append(result);
 
-                        System.out.println(label);
+                        if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                        	System.out.println(label);
+                        }
                         if (!ANONYMOUS_NAME) {
                             config.setName(label.toString());
                         }
@@ -1234,7 +1403,9 @@ public class UT2 extends BaseBot {
                     label.append(":");
                     label.append(result);
 
-                    System.out.println(label);
+                    if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                    	System.out.println(label);
+                    }
                     if (!ANONYMOUS_NAME) {
                         config.setName(label.toString());
                     }
@@ -1249,7 +1420,9 @@ public class UT2 extends BaseBot {
             label.append("EMPTY:");
             label.append(result);
 
-            System.out.println(label);
+            if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+            	System.out.println(label);
+            }
             if (!ANONYMOUS_NAME) {
                 config.setName(label.toString());
             }
@@ -1424,21 +1597,25 @@ public class UT2 extends BaseBot {
             System.err.println("COULD NOT CREATE LOG!");
         }
 
-        actionLog.println("Log for " + name);
-        actionLog.println("Using: " + battleController.filename);
-        actionLog.println("Map: " + map);
-        actionLog.println("Score: " + info.getScore());
-        actionLog.println("Suicides: " + info.getSuicides());
-        actionLog.println("Deaths: " + info.getDeaths());
-        actionLog.println("Kills: " + info.getKills());
-        actionLog.println();
-
-        actionLog.println("PLAYER SCORES");
-        Collection<String> keys = this.judgingController.playerScores.keySet();
-        for (String p : keys) {
-            actionLog.println("PLAYER:" + p + " has " + this.judgingController.playerScores.get(p));
+        if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        	actionLog.println("Log for " + name);
+        	actionLog.println("Using: " + battleController.filename);
+        	actionLog.println("Map: " + map);
+        	actionLog.println("Score: " + info.getScore());
+        	actionLog.println("Suicides: " + info.getSuicides());
+        	actionLog.println("Deaths: " + info.getDeaths());
+        	actionLog.println("Kills: " + info.getKills());
+        	actionLog.println();
         }
-        actionLog.println();
+
+        if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        	actionLog.println("PLAYER SCORES");
+        	Collection<String> keys = this.judgingController.playerScores.keySet();
+        	for (String p : keys) {
+        		actionLog.println("PLAYER:" + p + " has " + this.judgingController.playerScores.get(p));
+        	}
+        	actionLog.println();
+        }
 
         actions.logActionChoices(actionLog);
         stuckTriggers.logActionChoices(actionLog);
@@ -1577,7 +1754,9 @@ public class UT2 extends BaseBot {
                 if (distance > WeaponPreferenceTable.WeaponTableEntry.MAX_RANGED_RANGE
                         || ((myWeaponType.equals(UT2004ItemType.ASSAULT_RIFLE) || myWeaponType.equals(UT2004ItemType.BIO_RIFLE))
                         && distance > 2 * WeaponPreferenceTable.WeaponTableEntry.MAX_MELEE_RANGE)) {
-                    System.out.println("Should not fight, weapons/distance unfavorable");
+                	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+                		System.out.println("Should not fight, weapons/distance unfavorable");
+                	}
                     return false;
                 }
             }
@@ -1632,50 +1811,60 @@ public class UT2 extends BaseBot {
     }
 
     public static void main(String args[]) throws PogamutException {
+    	@SuppressWarnings("rawtypes")
+		Class[] botClasses = new Class[] {UT2.class};
 
-        if (args.length > 0 && args[0].equals("retrace")) {
-            new UT2004BotRunner(HumanRetraceBot.class, "HumanRetraceBot").startAgent();
-        } else {
-            // java -jar 00-EmptyBot.jar <network.xml> <host> <port>
-            switch (args.length) {
-                case 0:
-                    while (true) {
-                        try {
-                            System.out.println("Launch bot");
-                            launchBot();
-                        } catch (Exception e) {
-                            System.out.println("Connection broken, try resetting bot");
-                        }
-                    }
-                //break;
-                case 1:
-                    //launchBot(args[0]);
-                    //break;
-                    //case 2:
-                    //launchBot(args[0], Integer.parseInt(args[1]));
-                    //break;
-                    //case 3:
-                    while (true) {
-                        try {
-                            System.out.println("Launch bot");
-                            launchBot(DEFAULT_FILE, 0, args[0]);
-                        } catch (Exception e) {
-                            System.out.println("Connection broken, try resetting bot");
-                        }
-                    }
-                //launchBot(args[0], Integer.parseInt(args[1]), args[2]);
-                //break;
-                case 4:
-                    launchBot(args[0], Integer.parseInt(args[1]), args[2], Integer.parseInt(args[3]));
-                    break;
-                default:
-                    System.out.println("Improper number of arguments");
-                    System.out.println("Test one bot:");
-                    System.out.println("       java -jar 04-Hunter.jar [battleController.xml [numOpponents [host [port]]]]");
-                    System.out.println("Evolve bots:");
-                    System.out.println("       java -jar 04-Hunter.jar evolve generations:int population:int repetitions:int controller:EvolvableController descriptor:<BaseExperimentDescriptor> [descriptor args]");
-            }
-        }
+		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new UT2Parameters()};
+		MultiBotLauncher.launchMultipleBots(botClasses, params, "localhost", 3000);//launchMultipleBots(botClasses, params, "localhost", 3000);
+		
+		// Original version was a bit more flexible because it processed command line params
+//        if (args.length > 0 && args[0].equals("retrace")) {
+//            new UT2004BotRunner(HumanRetraceBot.class, "HumanRetraceBot").startAgent();
+//        } else {
+//            // java -jar 00-EmptyBot.jar <network.xml> <host> <port>
+//            switch (args.length) {
+//                case 0:
+//                    while (true) {
+//                        try {
+//                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+//                        		System.out.println("Launch bot");
+//                        	}
+//                            launchBot();
+//                        } catch (Exception e) {
+//                            System.out.println("Connection broken, try resetting bot");
+//                        }
+//                    }
+//                //break;
+//                case 1:
+//                    //launchBot(args[0]);
+//                    //break;
+//                    //case 2:
+//                    //launchBot(args[0], Integer.parseInt(args[1]));
+//                    //break;
+//                    //case 3:
+//                    while (true) {
+//                        try {
+//                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+//                        		System.out.println("Launch bot");
+//                        	}
+//                            launchBot(DEFAULT_FILE, 0, args[0]);
+//                        } catch (Exception e) {
+//                            System.out.println("Connection broken, try resetting bot");
+//                        }
+//                    }
+//                //launchBot(args[0], Integer.parseInt(args[1]), args[2]);
+//                //break;
+//                case 4:
+//                    launchBot(args[0], Integer.parseInt(args[1]), args[2], Integer.parseInt(args[3]));
+//                    break;
+//                default:
+//                    System.out.println("Improper number of arguments");
+//                    System.out.println("Test one bot:");
+//                    System.out.println("       java -jar 04-Hunter.jar [battleController.xml [numOpponents [host [port]]]]");
+//                    System.out.println("Evolve bots:");
+//                    System.out.println("       java -jar 04-Hunter.jar evolve generations:int population:int repetitions:int controller:EvolvableController descriptor:<BaseExperimentDescriptor> [descriptor args]");
+//            }
+//        }
     }
 
     public static void launchBot() {
@@ -1706,7 +1895,9 @@ public class UT2 extends BaseBot {
     }
 
     public static void launchBot(String battleControllerFile, int opponents, String host, int port) {
-        System.out.println("Loading from file: " + battleControllerFile);
+    	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+    		System.out.println("Loading from file: " + battleControllerFile);
+    	}
         TWEANNController controller = (TWEANNController) Easy.load(battleControllerFile);
         controller.filename = battleControllerFile;
         launchBot(controller, opponents, host, port);
@@ -1730,26 +1921,32 @@ public class UT2 extends BaseBot {
         launchBot(battleController, null, opponents, host, port);
     }
 
-    public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents) {
+    @SuppressWarnings("rawtypes")
+	public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents) {
         launchBot(battleController, opponentClass, opponents, 0, null);
     }
 
-    public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents, int nativeBots, IUT2004Server server) {
+    @SuppressWarnings("rawtypes")
+	public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents, int nativeBots, IUT2004Server server) {
         PogamutPlatform pl = Pogamut.getPlatform();
         launchBot(battleController, opponentClass, opponents, nativeBots, server,
                 pl.getProperty(PogamutUT2004Property.POGAMUT_UT2004_BOT_HOST.getKey()),
                 pl.getIntProperty(PogamutUT2004Property.POGAMUT_UT2004_BOT_PORT.getKey()));
     }
 
-    public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents, String host, int port) {
+    @SuppressWarnings("rawtypes")
+	public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents, String host, int port) {
         launchBot(battleController, opponentClass, opponents, 0, null, host, port);
     }
 
-    public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents, int nativeBots, IUT2004Server server, String host, int port) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents, int nativeBots, IUT2004Server server, String host, int port) {
         long start = System.currentTimeMillis();
-        System.out.println(port + ":launchBot at: " + start);
+        if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        	System.out.println(port + ":launchBot at: " + start);
+        }
 
-        UT2004BotDescriptor ut2 = new UT2004BotDescriptor().setController(UT2.class).addParams(new UT2Parameters(battleController, server).setAgentId(new AgentId(Constants.BOT_NAME.get())));
+		UT2004BotDescriptor ut2 = new UT2004BotDescriptor().setController(UT2.class).addParams(new UT2Parameters(battleController, server).setAgentId(new AgentId(Constants.BOT_NAME.get())));
 
         // Add native bots
         //if (server != null) {
@@ -1758,18 +1955,22 @@ public class UT2 extends BaseBot {
         //    }
         //}
 
-        UT2004BotDescriptor opps = new UT2004BotDescriptor().setController(opponentClass);
+		UT2004BotDescriptor opps = new UT2004BotDescriptor().setController(opponentClass);
         for (int i = 0; i < opponents; i++) {
             opps.addParams(new UT2004AgentParameters().setAgentId(new AgentId(opponentClass.getSimpleName() + "(" + i + ")")));
         }
         // Run bots
         MultipleUT2004BotRunner runner = new MultipleUT2004BotRunner("Multiple").setHost(host).setPort(port);
 
-        System.out.println("Launch single bot: UT^2");
+        if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        	System.out.println("Launch single bot: UT^2");
+        }
         try {
             runner.setMain(true).startAgents(ut2);
         } catch (Exception e) {
-            System.out.println(e.getClass().getName() + " in launchBot()");
+        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+        		System.out.println(e.getClass().getName() + " in launchBot()");
+        	}
         }
     }
 

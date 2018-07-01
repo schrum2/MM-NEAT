@@ -5,9 +5,10 @@
 package edu.southwestern.tasks.mspacman.sensors.blocks.counting;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.util.MiscUtil;
 
 /**
- *
+ * Supports PO pacman
  * @author Jacob Schrum
  */
 public class PowerPillsRemainingBlock extends TargetPortionRemainingBlock {

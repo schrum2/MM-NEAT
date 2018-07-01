@@ -27,7 +27,7 @@ public class MyPathExecutor<PATH_ELEMENT extends ILocated> extends UT2004PathExe
 //	}
 
 	// Added by J. Schrum 5/25/18
-	public MyPathExecutor(UT2004Bot bot, AgentInfo info, AdvancedLocomotion move, IUT2004PathNavigator<PATH_ELEMENT> navigator, Logger log) {
+	public MyPathExecutor(@SuppressWarnings("rawtypes") UT2004Bot bot, AgentInfo info, AdvancedLocomotion move, IUT2004PathNavigator<PATH_ELEMENT> navigator, Logger log) {
 		super(bot, info, move, navigator, log);
 	}
 	

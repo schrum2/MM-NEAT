@@ -43,6 +43,7 @@ import edu.southwestern.networks.hyperneat.HyperNEATDummyTask;
 import edu.southwestern.networks.hyperneat.HyperNEATSpeedTask;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.networks.hyperneat.SubstrateArchitectureDefinition;
 import edu.southwestern.networks.hyperneat.SubstrateCoordinateMapping;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
@@ -104,7 +105,7 @@ import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.Statistic;
-import pacman.Executor;
+import oldpacman.Executor;
 import wox.serial.Easy;
 
 /**
@@ -165,6 +166,7 @@ public class MMNEAT {
 	public static BoardGame boardGame;
 	@SuppressWarnings("rawtypes")
 	public static TwoDimensionalBoardGameViewer boardGameViewer;
+	public static SubstrateArchitectureDefinition substrateArchitectureDefinition;
 	
 	public static MMNEAT mmneat;
 
@@ -435,11 +437,19 @@ public class MMNEAT {
 				Parameters.parameters.setDouble("preEatenPillPercentage", 0.999);
 			}
 			
-			if(CommonConstants.hyperNEAT) {
+			HyperNEATTask HNTSeedTask = (HyperNEATTask) ClassCreation.createObject("hyperNEATSeedTask");
+			if(CommonConstants.hyperNEAT || HNTSeedTask != null) {
+				if(Parameters.parameters.booleanParameter("useHyperNEATCustomArchitecture")) {
+					substrateArchitectureDefinition = (SubstrateArchitectureDefinition) ClassCreation.createObject("hyperNEATCustomArchitecture");
+				}
 				// For each substrate layer pairing, there can be multiple output neurons in the CPPN
 				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = CommonConstants.leo ? 2 : 1;
 				// Number of output neurons needed to designate bias values across all substrates
-				HyperNEATCPPNGenotype.numBiasOutputs = CommonConstants.evolveHyperNEATBias ? HyperNEATUtil.numBiasOutputsNeeded() : 0;
+				HyperNEATCPPNGenotype.numBiasOutputs = CommonConstants.evolveHyperNEATBias ? 
+						(HNTSeedTask == null ? 
+							HyperNEATUtil.numBiasOutputsNeeded() :
+							HyperNEATUtil.numBiasOutputsNeeded(HNTSeedTask)) : 
+						0;				
 			}
 			if(Parameters.parameters.booleanParameter("hallOfFame")){
 				hallOfFame = new HallOfFame();
@@ -686,8 +696,6 @@ public class MMNEAT {
 				hyperNEATOverrides();
 			}
 
-			HyperNEATTask HNTSeedTask = (HyperNEATTask) ClassCreation.createObject("hyperNEATSeedTask");
-			//TODO add boolean if hntseedtask is set, as it will be recycled after the first run
 			setupMetaHeuristics();
 			// An EA is always needed. Currently only GenerationalEA classes are supported
 			if (!loadFrom) {
@@ -727,6 +735,7 @@ public class MMNEAT {
 				substrateMapping = (SubstrateCoordinateMapping) ClassCreation.createObject("substrateMapping");
 				int numSubstratePairings = HNTSeedTask.getSubstrateConnectivity().size();
 				System.out.println("Number of substrate pairs being connected: "+ numSubstratePairings);
+				assert HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair > 0 : "HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair must be positive";
 				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HyperNEATUtil.numCPPNInputs(HNTSeedTask),  numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATCPPNGenotype.numBiasOutputs, 0);
 				TWEANNGenotype seedGeno = hntGeno.getSubstrateGenotypeForEvolution(HNTSeedTask);
 				genotype = seedGeno;

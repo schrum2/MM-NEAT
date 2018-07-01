@@ -43,7 +43,7 @@ public class HyperNEATUtilTest {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
 				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
 				"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent",
-				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "hyperNEAT:true", "showWeights:true" });
+				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "hyperNEAT:true", "showWeights:false" });
 		MMNEAT.loadClasses();
 		htask = (HyperNEATTask) MMNEAT.task;
 		//MMNEAT.task = (Task) htask;
@@ -99,7 +99,7 @@ public class HyperNEATUtilTest {
 	 */
 	@Test
 	public void testDrawSubstrateVisual() {
-		HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
+		//HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
 	}
 	
 	/**
@@ -107,7 +107,7 @@ public class HyperNEATUtilTest {
 	 */
 	@Test
 	public void testDrawSubstratesVisual() { 
-		HyperNEATUtil.drawSubstrates(nodes);
+		//HyperNEATUtil.drawSubstrates(nodes);
 	}
 	
 	@Test
@@ -134,38 +134,38 @@ public class HyperNEATUtilTest {
 	@Test
 	public void testGetSubstrateInformationHyperNEAT(){
 		
-		List<Triple<String, Integer, Integer>> output = new ArrayList<Triple<String, Integer, Integer>>();
-		output.add(new Triple<String, Integer, Integer>("o1", 5, 5));
-		output.add(new Triple<String, Integer, Integer>("o2", 10, 10));
-		output.add(new Triple<String, Integer, Integer>("o3", 1, 1));
+//		List<Triple<String, Integer, Integer>> output = new ArrayList<Triple<String, Integer, Integer>>();
+//		output.add(new Triple<String, Integer, Integer>("o1", 5, 5));
+//		output.add(new Triple<String, Integer, Integer>("o2", 10, 10));
+//		output.add(new Triple<String, Integer, Integer>("o3", 1, 1));
 		
-		List<Substrate> test = HyperNEATUtil.getSubstrateInformation(10, 20, 3, 2, 3, output); // Should have 12 Substrates
+		List<Substrate> test = HyperNEATUtil.getHiddenSubstrateInformation(10, 20, 2, 3); // Should have 6 Substrates
 		
-		for(int i = 0; i < 9; i++){ // Tests the size of the non-output substrates
+		for(int i = 0; i < 6; i++){ // Tests the size of the non-output substrates
 			assertEquals(test.get(i).getSize(), new Pair<Integer, Integer>(10, 20));
 		}
 		
-		// Tests the Size of the three Output Substrates
-		assertEquals(test.get(9).getSize(), new Pair<Integer, Integer>(5, 5));
-		assertEquals(test.get(10).getSize(), new Pair<Integer, Integer>(10, 10));
-		assertEquals(test.get(11).getSize(), new Pair<Integer, Integer>(1, 1));
+		// Tests the Size of the three Output Substrates: Not included any more, Schrum 5/24/18
+//		assertEquals(test.get(9).getSize(), new Pair<Integer, Integer>(5, 5));
+//		assertEquals(test.get(10).getSize(), new Pair<Integer, Integer>(10, 10));
+//		assertEquals(test.get(11).getSize(), new Pair<Integer, Integer>(1, 1));
 		
 		// Tests the Names of each Substrate
+		// Not included any more, Schrum 5/24/18
+//		for(int i = 0; i < 3; i++){
+//			assertEquals(test.get(i).getName(), "Input(" + i + ")");			
+//		}
 		
-		for(int i = 0; i < 3; i++){
-			assertEquals(test.get(i).getName(), "Input(" + i + ")");			
-		}
-		
-		int index = 3;
+		int index = 0;
 		for(int i = 0; i < 3; i++){ // Process Depth
 			for(int j = 0; j < 2; j++){ // Process Width
 				assertEquals(test.get(index++).getName(), "process(" + j + "," + i + ")");
 			}
 		}
 		
-		assertEquals(test.get(9).getName(), "o1");
-		assertEquals(test.get(10).getName(), "o2");
-		assertEquals(test.get(11).getName(), "o3");
+//		assertEquals(test.get(9).getName(), "o1");
+//		assertEquals(test.get(10).getName(), "o2");
+//		assertEquals(test.get(11).getName(), "o3");
 	}
 	
 	@Test
@@ -176,15 +176,15 @@ public class HyperNEATUtilTest {
 		outputNames.add("o2");
 		outputNames.add("o3");
 		
-		List<Triple<String,String,Boolean>> test = HyperNEATUtil.getSubstrateConnectivity(3, 2, 3, outputNames, false);
+		List<SubstrateConnectivity> test = HyperNEATUtil.getSubstrateConnectivity(3, 2, 3, outputNames, false);
 		
-		assertEquals(test.get(0), new Triple<String, String, Boolean>("Input(0)", "process(0,0)", Boolean.TRUE));
+		assertEquals(test.get(0), new SubstrateConnectivity("Input(0)", "process(0,0)", SubstrateConnectivity.CTYPE_CONVOLUTION));
 		
 		int index = 0;
 		
 		for(int i = 0; i < 2; i++){ // Process Width
 			for(int j = 0; j < 3; j++){ // Number of Inputs
-				assertEquals(test.get(index++), new Triple<String, String, Boolean>("Input("+ j +")", "process(" + i + ",0)", Boolean.TRUE));
+				assertEquals(test.get(index++), new SubstrateConnectivity("Input("+ j +")", "process(" + i + ",0)", SubstrateConnectivity.CTYPE_CONVOLUTION));
 			}
 		}
 		
@@ -192,14 +192,14 @@ public class HyperNEATUtilTest {
 		for(int i = 0; i < 2; i++){ // Process Depth-1
 			for(int j = 0; j < 2; j++){ // Process Width
 				for(int k = 0; k < 2; k++){ // Process Width
-					assertEquals(test.get(index++), new Triple<String, String, Boolean>("process("+ j + "," + i +")", "process(" + k + ","+ (i+1) + ")", Boolean.TRUE));
+					assertEquals(test.get(index++), new SubstrateConnectivity("process("+ j + "," + i +")", "process(" + k + ","+ (i+1) + ")", SubstrateConnectivity.CTYPE_CONVOLUTION));
 				}
 			}
 		}
 		
 		for(int i = 0; i < 2; i++){ // Process Width
 			for(int j = 0; j < 3; j++){ // Number of Outputs
-				assertEquals(test.get(index++), new Triple<String, String, Boolean>("process(" + i + ",2)", "o" + (j+1),  Boolean.FALSE));
+				assertEquals(test.get(index++), new SubstrateConnectivity("process(" + i + ",2)", "o" + (j+1), SubstrateConnectivity.CTYPE_FULL));
 			}
 		}
 		

@@ -15,7 +15,7 @@ import edu.southwestern.tasks.mspacman.sensors.blocks.counting.PowerPillsRemaini
 import edu.southwestern.tasks.mspacman.sensors.blocks.distance.*;
 import edu.southwestern.tasks.mspacman.sensors.blocks.time.EdibleTimesBlock;
 import edu.southwestern.tasks.mspacman.sensors.blocks.time.LairTimesBlock;
-import pacman.controllers.examples.AggressiveGhosts;
+import oldpacman.controllers.examples.AggressiveGhosts;
 
 /**
  * Input sensors partially based on those from paper by Alhejali and Lucas

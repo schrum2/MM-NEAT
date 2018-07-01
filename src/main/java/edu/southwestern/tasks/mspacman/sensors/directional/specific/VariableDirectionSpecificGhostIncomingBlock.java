@@ -8,7 +8,7 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 
 /**
- *
+ * should handle PO conditions (TODO: test)
  * @author Jacob
  */
 public class VariableDirectionSpecificGhostIncomingBlock extends VariableDirectionBlock {
@@ -25,6 +25,9 @@ public class VariableDirectionSpecificGhostIncomingBlock extends VariableDirecti
 	}
 
 	@Override
+	/**
+	 * should support popacman
+	 */
 	public double getValue(GameFacade gf) {
 		return gf.isGhostIncoming(dir, ghostIndex) ? 1 : 0;
 	}

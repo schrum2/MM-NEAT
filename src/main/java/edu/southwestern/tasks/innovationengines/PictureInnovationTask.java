@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -53,7 +52,7 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 		if(CommonConstants.watch) {
 			DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
 			// Prints top 4 labels
-			String decodedLabels = new ImageNetLabels().decodePredictions(scores);
+			String decodedLabels = ImageNetClassification.getImageNetLabelsInstance().decodePredictions(scores);
 			System.out.println(decodedLabels);
 			// Wait for user
 			MiscUtil.waitForReadStringAndEnterKeyPress();
