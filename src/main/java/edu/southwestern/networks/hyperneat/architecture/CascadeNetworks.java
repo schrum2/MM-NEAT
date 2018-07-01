@@ -106,12 +106,14 @@ public class CascadeNetworks {
 		Triple<Integer, Integer, Integer> lastLayerInExemplar = exemplarNetworksHiddenArchitecture.get(exemplarNetworksHiddenArchitecture.size() - 1);
 		int receptiveFieldHeight = Parameters.parameters.integerParameter("receptiveFieldHeight");
 		int receptiveFieldWidth = Parameters.parameters.integerParameter("receptiveFieldWidth");
+		//newSubstrateWidth is defined by the previous layer and the truncated receptiveFieldWidth
 		int newSubstrateWidth = lastLayerInExemplar.t2 - (2 * (receptiveFieldWidth / 2));
+		//newSubstrateHeight is defined by the previous layer and the truncated receptiveFieldHeight
 		int newSubstrateHeight = lastLayerInExemplar.t3 - (2 * (receptiveFieldHeight / 2));
 		if (newSubstrateWidth > 0 && newSubstrateHeight > 0) {			
 			return cascadeExpandAllGenotypes(population, 1, newSubstrateWidth, newSubstrateHeight, SubstrateConnectivity.CTYPE_CONVOLUTION);
 		} else {
-			return null;
+			return population;
 		}
 	}
 	

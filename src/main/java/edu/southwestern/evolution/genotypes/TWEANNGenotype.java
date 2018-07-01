@@ -1332,28 +1332,34 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		} else {
 			numberOfNewSubstratePairs = numberOfNewHiddenSubstrates * 2;
 		}
-		long[] emptyArray1 = new long[0]; //new output nodes start with no links
-		double[] emptyArray2 = new double[0]; //new output nodes start with no links
-		int i = 0, position = this.outputStartIndex() + initialNumberOfSubstratePairs;
+		int numAdditionalNodes = initialNumberOfSubstratePairs + initialNumberOfHiddenSubstrates;
+		long[] linkInnovations = new long[0];
+		long[] sourceInnovations = new long[0];
+		double[] weights = new double[0];
+		int numIncomingLinksForCascadeExpansion = Parameters.parameters.integerParameter("numIncomingLinksForCascadeExpansion");
+		for (int i = 0; i < numIncomingLinksForCascadeExpansion * numAdditionalNodes; i++) {
+			sourceInnovations[i] = getRandomNonOutputNodeInnovationNumber();
+			linkInnovations[i] = EvolutionaryHistory.nextInnovation();
+			weights[i] = RandomNumbers.fullSmallRand();
+		}
+		int position = this.outputStartIndex() + initialNumberOfSubstratePairs;
 		if (Parameters.parameters.booleanParameter("extraHNLinks")) {
 			position += 2;
 		}
 		//adding new outputs for substrate pairs
 		int archetypeAddIndex = EvolutionaryHistory.archetypes[archetypeIndex].size() - nodes.size() + position;
-		while (i < numberOfNewSubstratePairs) {
-			addOutputNode(ftypes[i], emptyArray1, emptyArray2, emptyArray1, position + i, false, archetypeAddIndex + i);
-			i++;
-			this.neuronsPerModule++;
+		for (int i = 0; i < numberOfNewSubstratePairs; i++) {
+			addOutputNode(ftypes[i], sourceInnovations, weights, linkInnovations, position + i, false, archetypeAddIndex + i);
 		}
 		//new substrate biases will be inserted after the old hidden substrate biases and before the output substrate biases
 		position += numberOfNewSubstratePairs + initialNumberOfHiddenSubstrates;
 		archetypeAddIndex = EvolutionaryHistory.archetypes[archetypeIndex].size() - nodes.size() + position;
 		//adding new outputs for hidden biases
 		for (int j = 0; j < numberOfNewHiddenSubstrates; j++) {
-			addOutputNode(ftypes[i + j], emptyArray1, emptyArray2, emptyArray1, position + j, false, archetypeAddIndex + j);
-			this.neuronsPerModule++;
+			addOutputNode(ftypes[numberOfNewSubstratePairs + j], sourceInnovations, weights, linkInnovations, position + j, false, archetypeAddIndex + j);
 		}
-		return numberOfNewSubstratePairs + numberOfNewHiddenSubstrates;
+		this.neuronsPerModule += numAdditionalNodes;
+		return numAdditionalNodes;
 	}
 
 	/**

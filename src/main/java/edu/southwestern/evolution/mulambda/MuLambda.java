@@ -413,7 +413,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		}
 		
 		if(CommonConstants.cascadeExpansion && currentGeneration() != 0 && currentGeneration() % Parameters.parameters.integerParameter("cascadeExpansionGenerationInterval") == 0) {
-			//adds a hidden convolutional substrate in between the last hidden substrate and the output for each member of the population
+			//adds a hidden convolutional substrate in between the last hidden substrate and the output for each member of the population if the receptive field size allows for it
 			result = CascadeNetworks.cascadeExpandAllGenotypes(result);
 		}
 		return result;
