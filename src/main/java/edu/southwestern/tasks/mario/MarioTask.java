@@ -26,7 +26,7 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.random.RandomNumbers;
 
-public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask, HyperNEATTask {
+public class MarioTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask {
 
 	private EvaluationOptions options;
 	public static final int MARIO_OUTPUTS = 5; //need to find a way to make sure this isn't hardcoded
