@@ -287,6 +287,7 @@ public class Parameters {
 		integerOptions.add("numActiveGhosts", 4, "Number of moving ghosts in pacman");
 		integerOptions.add("numBreve2DMonsters", 4, "Number of evolving breve 2D monsters");
 		integerOptions.add("numCoevolutionSubpops", 0, "When evolving a selector, number of populations of subcontrollers to choose from");
+		integerOptions.add("numIncomingLinksForCascadeExpansion", 0, "When using MSS with cascade, this is the number of links connected to the cppn outputs of new substrate layers");
 		integerOptions.add("numModesToPrefer", -1, "If non-negative, then a fitness function rewards even usage of this many modes");
 		integerOptions.add("numMonsterRays", 5, "Number of ray trace sensors on each monster");
 		integerOptions.add("numShapeInnovationSamples", 3, "Number of angles to take 2D image of 3D shape from for shape innovation task");
