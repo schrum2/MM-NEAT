@@ -1317,46 +1317,38 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 
 	/**
 	 * adds output neurons to cppn for new substrate connections and biases when a cascade expansion occurs
-	 * @param initialNumberOfSubstratePairs number of substrate pairs before addition of new substrate
-	 * @param initialNumberOfHiddenSubstrates number of hidden substrates in HyperNEAT network
-	 * @param numberOfNewHiddenSubstrates number of new substrates that need new outputs in cppn
+	 * @param initialNumSubstratePairs number of substrate pairs before addition of new substrate
+	 * @param numInitialHiddenSubstrates number of hidden substrates in HyperNEAT network
+	 * @param numNewHiddenSubstrates number of new substrates that need new outputs in cppn
 	 * @param ftypes activation functions of new cppn outputs starting with the outputs for the connections between the new substrates
 	 * 		and their leo outputs if applicable then ending with the biases for these new substrates
 	 * @return the number of output neurons that were added to the cppn
 	 */
-	public int addMSSNeuronsToCPPN(int initialNumberOfSubstratePairs, int initialNumberOfHiddenSubstrates, int numberOfNewHiddenSubstrates, int[] ftypes) {
-		int numberOfNewSubstratePairs;
-		if (CommonConstants.leo) {
-			initialNumberOfSubstratePairs *= 2; //because if leo then each substrate pair has 2 outputs in cppn
-			numberOfNewSubstratePairs = numberOfNewHiddenSubstrates * 4;
-		} else {
-			numberOfNewSubstratePairs = numberOfNewHiddenSubstrates * 2;
-		}
-		int numAdditionalNodes = initialNumberOfSubstratePairs + initialNumberOfHiddenSubstrates;
-		long[] linkInnovations = new long[0];
-		long[] sourceInnovations = new long[0];
-		double[] weights = new double[0];
-		int numIncomingLinksForCascadeExpansion = Parameters.parameters.integerParameter("numIncomingLinksForCascadeExpansion");
-		for (int i = 0; i < numIncomingLinksForCascadeExpansion * numAdditionalNodes; i++) {
+	public int addMSSNeuronsToCPPN(int initialNumSubstratePairs, int numInitialHiddenSubstrates, int numNewHiddenSubstrates, int[] ftypes) {
+		int numInitialCPPNOutputsForSubstratePairs = initialNumSubstratePairs * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair;
+		int numNewCPPNOutputsForSubstratePairs = numNewHiddenSubstrates * 2 * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair;
+		int numAdditionalNodes = numNewCPPNOutputsForSubstratePairs + numNewHiddenSubstrates;
+		int numAdditionalLinks = numAdditionalNodes * Parameters.parameters.integerParameter("numIncomingLinksForCascadeExpansion");
+		long[] linkInnovations = new long[numAdditionalLinks];
+		long[] sourceInnovations = new long[numAdditionalLinks];
+		double[] weights = new double[numAdditionalLinks];
+		for (int i = 0; i < numAdditionalLinks; i++) {
 			sourceInnovations[i] = getRandomNonOutputNodeInnovationNumber();
 			linkInnovations[i] = EvolutionaryHistory.nextInnovation();
 			weights[i] = RandomNumbers.fullSmallRand();
 		}
-		int position = this.outputStartIndex() + initialNumberOfSubstratePairs;
-		if (Parameters.parameters.booleanParameter("extraHNLinks")) {
-			position += 2;
-		}
-		//adding new outputs for substrate pairs
+		int position = this.outputStartIndex() + numInitialCPPNOutputsForSubstratePairs;
 		int archetypeAddIndex = EvolutionaryHistory.archetypes[archetypeIndex].size() - nodes.size() + position;
-		for (int i = 0; i < numberOfNewSubstratePairs; i++) {
+		//adding new outputs for substrate pairs
+		for (int i = 0; i < numNewCPPNOutputsForSubstratePairs; i++) {
 			addOutputNode(ftypes[i], sourceInnovations, weights, linkInnovations, position + i, false, archetypeAddIndex + i);
 		}
 		//new substrate biases will be inserted after the old hidden substrate biases and before the output substrate biases
-		position += numberOfNewSubstratePairs + initialNumberOfHiddenSubstrates;
+		position += numNewCPPNOutputsForSubstratePairs + numInitialHiddenSubstrates;
 		archetypeAddIndex = EvolutionaryHistory.archetypes[archetypeIndex].size() - nodes.size() + position;
 		//adding new outputs for hidden biases
-		for (int j = 0; j < numberOfNewHiddenSubstrates; j++) {
-			addOutputNode(ftypes[numberOfNewSubstratePairs + j], sourceInnovations, weights, linkInnovations, position + j, false, archetypeAddIndex + j);
+		for (int j = 0; j < numNewHiddenSubstrates; j++) {
+			addOutputNode(ftypes[numNewCPPNOutputsForSubstratePairs + j], sourceInnovations, weights, linkInnovations, position + j, false, archetypeAddIndex + j);
 		}
 		this.neuronsPerModule += numAdditionalNodes;
 		return numAdditionalNodes;

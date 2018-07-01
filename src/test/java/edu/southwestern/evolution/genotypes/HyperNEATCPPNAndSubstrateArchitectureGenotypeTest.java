@@ -92,7 +92,7 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 		assertEquals(8, hncasag.numOut);
 	}
 
-	@Test
+	//@Test
 	public void behaviorAfterCascadeTest() {
 		MMNEAT.clearClasses();
 		HyperNEATTetrisTask.hardSubstrateReset();
@@ -118,14 +118,13 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 			((HyperNEATCPPNAndSubstrateArchitectureGenotype) i).cascadeExpansion(1, 6, 16, SubstrateConnectivity.CTYPE_CONVOLUTION);
 		}
 	
-		assertEquals(experimentalPopulation.size(), constantPopulation.size());
 		int numInputs = constantPopulation.get(0).getPhenotype().numInputs();
+		assertEquals(experimentalPopulation.size(), constantPopulation.size());
 		for (int i = 0; i < 50; i++) {
 			double[] inputs = RandomNumbers.randomArray(numInputs);
 			for (int j = 0; j < constantPopulation.size(); j++) {
 				double[] originalOutputs = originalTWEANNs.get(j).process(inputs);
 				double[] cascadeOutputs = experimentalPopulation.get(j).getPhenotype().process(inputs);
-				
 				assertArrayEquals(originalOutputs, cascadeOutputs, 0);
 			}
 		}
