@@ -270,7 +270,8 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             // Jacob: Added to abort evaluations that are not progressing
             if(mario.x <= marioProgress) {
             	stepsWithoutProgress++;
-            	if(stepsWithoutProgress > Parameters.parameters.integerParameter("marioStuckTimeout")) {
+            	// Null check on Parameters makes it easier to launch Mario from a main method that bypasses MM-NEAT
+            	if(Parameters.parameters != null && stepsWithoutProgress > Parameters.parameters.integerParameter("marioStuckTimeout")) {
             		//System.out.println("Mario dies from timeout");
             		mario.die(); // Killing mario ends the evaluation
             	}
