@@ -33,6 +33,11 @@ import edu.southwestern.tasks.mario.level.MarioLevelUtil;
  * @param <T>
  */
 public class MarioLevelBreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
+
+	// Labels for CPPN
+	public static final String[] INPUTS = new String[] {"x-coordinate","y-coordinate","bias"};
+	public static final String[] OUTPUTS = new String[] {"Present?", "Rock", "Breakable", "Question", "Coin", "Pipes", "Cannon", "Goomba", "GreenKoopa", "RedKoopa", "Spiky", "Winged?"};
+
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
 	
@@ -92,12 +97,12 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 	@Override
 	public String[] sensorLabels() {
 		// Consider using radial distance from bottom-left
-		return new String[] {"x-coordinate","y-coordinate","bias"};
+		return INPUTS;
 	}
 
 	@Override
 	public String[] outputLabels() {
-		return new String[] {"Present?", "Rock", "Breakable", "Question", "Coin", "Pipes", "Cannon", "Goomba", "GreenKoopa", "RedKoopa", "Spiky", "Winged?"};
+		return OUTPUTS;
 	}
 
 	@Override

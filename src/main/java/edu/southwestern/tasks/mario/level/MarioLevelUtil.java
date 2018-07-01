@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
@@ -11,7 +12,9 @@ import ch.idsia.ai.tasks.ProgressTask;
 import ch.idsia.mario.engine.LevelRenderer;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.tools.CmdLineOptions;
+import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
+import ch.idsia.tools.Evaluator;
 import ch.idsia.tools.ToolsConfigurator;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
@@ -19,6 +22,7 @@ import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplac
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
@@ -207,6 +211,17 @@ public class MarioLevelUtil {
 	}
 
 	/**
+	 * Generates a level assuming all CPPN inputs are turned on.
+	 * Default behavior.
+	 * @param net CPPN that generates level
+	 * @param width Width of level in tiles
+	 * @return A Mario level
+	 */
+	public static Level generateLevelFromCPPN(Network net, int width) {
+		return generateLevelFromCPPN(net, ArrayUtil.doubleOnes(net.numInputs()), width);
+	}
+	
+	/**
 	 * Take a cppn and a width and completely generate the level
 	 * @param net CPPN
 	 * @param width In Mario blocks
@@ -253,15 +268,34 @@ public class MarioLevelUtil {
 	 * @param agent
 	 * @return
 	 */
-	public static double[] agentPlaysLevel(Level level, Agent agent) {
+	public static List<EvaluationInfo> agentPlaysLevel(Level level, Agent agent) {
 		EvaluationOptions options = new CmdLineOptions(new String[]{});
+		return agentPlaysLevel(level, agent, options);
+	}
+
+	/**
+	 * Same as above, but allows custom eval options that change many settings.
+	 * @param level Level to evaluate in
+	 * @param agent Agent to evaluate
+	 * @param options Mario configuration options (but not the level or agent)
+	 * @return list of information about the evaluations
+	 */
+	public static List<EvaluationInfo> agentPlaysLevel(Level level, Agent agent, EvaluationOptions options) {
 		options.setAgent(agent);
-		ProgressTask task = new ProgressTask(options);
         options.setLevel(level);
-		task.setOptions(options);
-		double[] result = task.evaluate(options.getAgent());
+        return agentPlaysLevel(options);
+	}
+        
+	/**
+	 * Now, the evaluation options must also specify the level and the agent.
+	 * @param options Mario options, including level and agent
+	 * @return evaluation results
+	 */
+   	public static List<EvaluationInfo> agentPlaysLevel(EvaluationOptions options) {
+        Evaluator evaluator = new Evaluator(options);
+		List<EvaluationInfo> results = evaluator.evaluate();
 		ToolsConfigurator.DestroyMarioComponentFrame();
-		return result;
+		return results;
 	}
 	
 	/**
