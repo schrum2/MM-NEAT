@@ -264,7 +264,7 @@ public class TWEANNGenotypeTest {
 		assertEquals(hncasag.nodes.get(37).ntype, 2);
 	}
 
-	@Test
+	//@Test
 	public void test_addMSSExtraNeuronsToCPPNThreshold() {
 		MMNEAT.clearClasses();
 		HyperNEATTetrisTask.hardSubstrateReset();
