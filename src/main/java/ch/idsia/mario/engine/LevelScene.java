@@ -18,12 +18,16 @@ import java.util.List;
 
 public class LevelScene extends Scene implements SpriteContext
 {
+	// Two Mario sprites present
+	public static boolean twoPlayers = false;
+	
     private List<Sprite> sprites = new ArrayList<Sprite>();
     private List<Sprite> spritesToAdd = new ArrayList<Sprite>();
     private List<Sprite> spritesToRemove = new ArrayList<Sprite>();
 
     public Level level;
     public Mario mario;
+    public Mario luigi; 
     public float xCam, yCam, xCamO, yCamO;
     public static Image tmpImage;
     private int tick;
@@ -657,6 +661,10 @@ public class LevelScene extends Scene implements SpriteContext
         }
         mario = new Mario(this);
         sprites.add(mario);
+        if(twoPlayers) {
+        	luigi = new Mario(this);
+        	sprites.add(luigi);
+        }
         startTime = 1;
 
         timeLeft = totalTime*15;
@@ -688,6 +696,9 @@ public class LevelScene extends Scene implements SpriteContext
         if (timeLeft==0)
         {
             mario.die();
+            if(luigi != null) {
+                luigi.die();
+            }
         }
         xCamO = xCam;
         yCamO = yCam;
@@ -697,6 +708,7 @@ public class LevelScene extends Scene implements SpriteContext
             startTime++;
         }
 
+        // TODO: Make keep both Marios in frame?
         float targetXCam = mario.x - 160;
 
         xCam = targetXCam;
@@ -718,7 +730,8 @@ public class LevelScene extends Scene implements SpriteContext
 
         for (Sprite sprite : sprites)
         {
-            if (sprite != mario)
+        	// Don't remove Mario or Luigi for leaving screen
+            if (sprite != mario && sprite != luigi)
             {
                 float xd = sprite.x - xCam;
                 float yd = sprite.y - yCam;
@@ -740,7 +753,7 @@ public class LevelScene extends Scene implements SpriteContext
         {
             for (Sprite sprite : sprites)
             {
-                if (sprite == mario)
+                if (sprite == mario || sprite == luigi)
                 {
                     sprite.tick();
                 }
@@ -763,6 +776,7 @@ public class LevelScene extends Scene implements SpriteContext
                 {
                     int dir = 0;
 
+                    // Cannon fire direction only depends on Mario, not Luigi
                     if (x * 16 + 8 > mario.x + 16) dir = -1;
                     if (x * 16 + 8 < mario.x - 16) dir = 1;
 
@@ -824,6 +838,14 @@ public class LevelScene extends Scene implements SpriteContext
                             if (mario.carried == shell && !shell.dead)
                             {
                                 mario.carried = null;
+                                shell.die();
+                                ++LevelScene.killedCreaturesTotal;
+                            }
+                            
+                            // Make Luigi's carried shells be lost too
+                            if (luigi != null && luigi.carried == shell && !shell.dead)
+                            {
+                            	luigi.carried = null;
                                 shell.die();
                                 ++LevelScene.killedCreaturesTotal;
                             }
@@ -925,9 +947,10 @@ public class LevelScene extends Scene implements SpriteContext
         drawStringDropShadow(g, "SEED:" + this.levelSeed, 0, 1, 7);
         drawStringDropShadow(g, "TYPE:" + LEVEL_TYPES[this.levelType], 0, 2, 7);                  drawStringDropShadow(g, "ALL KILLS: " + killedCreaturesTotal, 19, 1, 1);
         drawStringDropShadow(g, "LENGTH:" + (int)mario.x/16 + " of " + this.levelLength, 0, 3, 7); drawStringDropShadow(g, "by Fire  : " + killedCreaturesByFireBall, 19, 2, 1);
-        drawStringDropShadow(g,"COINS    : " + df.format(Mario.coins), 0, 4, 4);                      drawStringDropShadow(g, "by Shell : " + killedCreaturesByShell, 19, 3, 1);
-        drawStringDropShadow(g, "MUSHROOMS: " + df.format(Mario.gainedMushrooms), 0, 5, 4);                  drawStringDropShadow(g, "by Stomp : " + killedCreaturesByStomp, 19, 4, 1);
-        drawStringDropShadow(g, "FLOWERS  : " + df.format(Mario.gainedFlowers), 0, 6, 4);
+        // Only Mario's stats are tracked here. Track Luigi too?
+        drawStringDropShadow(g, "COINS    : " + df.format(mario.coins), 0, 4, 4);                      drawStringDropShadow(g, "by Shell : " + killedCreaturesByShell, 19, 3, 1);
+        drawStringDropShadow(g, "MUSHROOMS: " + df.format(mario.gainedMushrooms), 0, 5, 4);                  drawStringDropShadow(g, "by Stomp : " + killedCreaturesByStomp, 19, 4, 1);
+        drawStringDropShadow(g, "FLOWERS  : " + df.format(mario.gainedFlowers), 0, 6, 4);
 
 
         drawStringDropShadow(g, "TIME", 33, 0, 7);
@@ -1093,18 +1116,16 @@ public class LevelScene extends Scene implements SpriteContext
 
             if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_SPECIAL) > 0)
             {
-                if (!Mario.large)
-                {
+            	// If Mario or Luigi are small, then only Mushrooms appear
+                if (!mario.large || (luigi != null && !luigi.large)) {
                     addSprite(new Mushroom(this, x * 16 + 8, y * 16 + 8));
-                }
-                else
-                {
+                } else { // If both are large, then a Fire Flower appears
                     addSprite(new FireFlower(this, x * 16 + 8, y * 16 + 8));
                 }
             }
             else
             {
-                Mario.getCoin();
+                mario.getCoin(); // Only Mario collects coins ... not Luigi?
                 addSprite(new CoinAnim(x, y));
             }
         }
@@ -1131,7 +1152,7 @@ public class LevelScene extends Scene implements SpriteContext
         byte block = level.getBlock(x, y);
         if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_PICKUPABLE) > 0)
         {
-            Mario.getCoin();
+            mario.getCoin(); // Only Mario gets coins ... not Luigi?
             level.setBlock(x, y, (byte) 0);
             addSprite(new CoinAnim(x, y + 1));
         }
@@ -1141,11 +1162,6 @@ public class LevelScene extends Scene implements SpriteContext
             sprite.bumpCheck(x, y);
         }
     }
-
-//    public void update(boolean[] action)
-//    {
-//        System.arraycopy(action, 0, mario.keys, 0, 6);
-//    }
 
     public int getStartTime() {  return startTime / 15;    }
 

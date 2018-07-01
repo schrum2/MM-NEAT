@@ -1,7 +1,7 @@
-package ch.idsia.mario.engine.sprites;
+package competition.cig.robinbaumgarten.astar.sprites;
 
-import ch.idsia.mario.engine.Art;
-import ch.idsia.mario.engine.LevelScene;
+import competition.cig.robinbaumgarten.astar.LevelScene;
+
 
 
 public class Mushroom extends Sprite
@@ -9,17 +9,12 @@ public class Mushroom extends Sprite
     private static float GROUND_INERTIA = 0.89f;
     private static float AIR_INERTIA = 0.89f;
 
-    @SuppressWarnings("unused")
-	private float runTime;
+    private float runTime;
     private boolean onGround = false;
-    @SuppressWarnings("unused")
-	private boolean mayJump = false;
-    @SuppressWarnings("unused")
-	private int jumpTime = 0;
-    @SuppressWarnings("unused")
-	private float xJumpSpeed;
-    @SuppressWarnings("unused")
-	private float yJumpSpeed;
+    /*private boolean mayJump = false;
+    private int jumpTime = 0;
+    private float xJumpSpeed;
+    private float yJumpSpeed;*/
 
     private int width = 4;
     int height = 24;
@@ -32,44 +27,27 @@ public class Mushroom extends Sprite
 
     public Mushroom(LevelScene world, int x, int y)
     {
-        kind = KIND_MUSHROOM;
-        sheet = Art.items;
+        kind = 91;
 
         this.x = x;
         this.y = y;
         this.world = world;
-        xPicO = 8;
-        yPicO = 15;
-
-        yPic = 0;
         height = 12;
         facing = 1;
-        wPic  = hPic = 16;
         life = 0;
     }
 
     public void collideCheck()
     {
-    	
-    	// Treat Mario and Luigi the same
-        Mario[] marios = new Mario[LevelScene.twoPlayers ? 2 : 1];
-        marios[0] = world.mario;
-        if(LevelScene.twoPlayers) {
-        	marios[1] = world.luigi;
-        }
-
-        for(Mario mario: marios) {
-        	float xMarioD = mario.x - x;
-        	float yMarioD = mario.y - y;
-        	float w = 16;
-        	if (xMarioD > -w && xMarioD < w)
-        	{
-        		if (yMarioD > -height && yMarioD < mario.height)
-        		{
-        			mario.getMushroom();
-        			spriteContext.removeSprite(this);
-        		}
-        	}
+        float xMarioD = world.mario.x - x;
+        float yMarioD = world.mario.y - y;
+        if (xMarioD > -16 && xMarioD < 16)
+        {
+            if (yMarioD > -height && yMarioD < world.mario.height)
+            {
+                world.mario.getMushroom();
+                spriteContext.removeSprite(this);
+            }
         }
     }
 
@@ -96,10 +74,6 @@ public class Mushroom extends Sprite
         }
 
         xa = facing * sideWaysSpeed;
-
-        mayJump = (onGround);
-
-        xFlipPic = facing == -1;
 
         runTime += (Math.abs(xa)) + 5;
 
@@ -194,7 +168,7 @@ public class Mushroom extends Sprite
             if (ya < 0)
             {
                 y = (int) ((y - height) / 16) * 16 + height;
-                jumpTime = 0;
+                //jumpTime = 0;
                 this.ya = 0;
             }
             if (ya > 0)
@@ -220,8 +194,7 @@ public class Mushroom extends Sprite
 
         boolean blocking = world.level.isBlocking(x, y, xa, ya);
 
-        @SuppressWarnings("unused")
-		byte block = world.level.getBlock(x, y);
+        //byte block = world.level.getBlock(x, y);
 
         return blocking;
     }

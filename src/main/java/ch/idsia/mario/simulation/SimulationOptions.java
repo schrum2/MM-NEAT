@@ -16,7 +16,7 @@ import ch.idsia.utils.ParameterContainer;
 public class SimulationOptions extends ParameterContainer
 {
     protected Agent agent;
-//    protected MarioComponent marioComponent = null;
+    protected Agent agent2;
 
     // Schrum: Generally unused
 	public Level level = null;
@@ -29,11 +29,11 @@ public class SimulationOptions extends ParameterContainer
 //        resetCurrentTrial();
     }
 
-
     public SimulationOptions getSimulationOptionsCopy()
     {
         SimulationOptions ret = new SimulationOptions();
         ret.setAgent(getAgent());
+        ret.setAgent2(getAgent2());
         ret.setLevel(this.level);
         ret.setLevelDifficulty(getLevelDifficulty());
         ret.setLevelLength(getLevelLength());
@@ -55,14 +55,29 @@ public class SimulationOptions extends ParameterContainer
 
     // Agent
     public Agent getAgent() {
-//        return a(getParameterValue("-ag"));      }
-        return agent; }
+    	return agent; 
+    }
 
+    /**
+     * Get player 2 Luigi agent
+     * @return
+     */
+    public Agent getAgent2() {
+    	return agent2; 
+    }
+    
     public void setAgent(Agent agent) {
-//        setParameterValue("-ag", s(agent));
         this.agent = agent;
     }
 
+    /**
+     * Added for setting the player 2 Luigi agent
+     * @return
+     */
+    public void setAgent2(Agent agent) {
+        this.agent2 = agent;
+    }
+    
     // TODO? LEVEL_TYPE enum?
     // LevelType
     public int getLevelType() {
