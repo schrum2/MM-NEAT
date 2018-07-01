@@ -275,61 +275,59 @@ public class TWEANNGenotypeTest {
 		EvolutionaryHistory.initArchetype(0);
 		
 		HyperNEATCPPNAndSubstrateArchitectureGenotype hncasag = new HyperNEATCPPNAndSubstrateArchitectureGenotype();
-		System.out.println("nodes before extra: " + hncasag.nodes);
 		hncasag.cascadeExpansion(1, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
-		System.out.println("nodes after extra: " + hncasag.nodes);
-//		for (int i = 0; i < 5; i++) {
-//			NodeGene currentNode = hncasag.nodes.get(i);
-//			assertEquals(currentNode.innovation, -i - 1);
-//			assertEquals(currentNode.ntype, 0);
-//		}
-//		for (int i = 5; i < 8; i++) {
-//			NodeGene currentNode = hncasag.nodes.get(i);
-//			assertEquals(currentNode.innovation, -i - 1);
-//			assertEquals(currentNode.ntype, 2);
-//		}
-//		assertEquals(hncasag.nodes.get(8).innovation, -11);
-//		assertEquals(hncasag.nodes.get(8).ntype, 2);
-//		assertEquals(hncasag.nodes.get(9).innovation, -12);
-//		assertEquals(hncasag.nodes.get(9).ntype, 2);
-//		assertEquals(hncasag.nodes.get(10).innovation, -9);
-//		assertEquals(hncasag.nodes.get(10).ntype, 2);
-//		assertEquals(hncasag.nodes.get(11).innovation, -13);
-//		assertEquals(hncasag.nodes.get(11).ntype, 2);
-//		assertEquals(hncasag.nodes.get(12).innovation, -10);
-//		assertEquals(hncasag.nodes.get(12).ntype, 2);
+		for (int i = 0; i < 5; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 1);
+			assertEquals(currentNode.ntype, 0);
+		}
+		for (int i = 5; i < 10; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 1);
+			assertEquals(currentNode.ntype, 2);
+		}
+		assertEquals(hncasag.nodes.get(10).innovation, -13);
+		assertEquals(hncasag.nodes.get(10).ntype, 2);
+		assertEquals(hncasag.nodes.get(11).innovation, -14);
+		assertEquals(hncasag.nodes.get(11).ntype, 2);
+		assertEquals(hncasag.nodes.get(12).innovation, -11);
+		assertEquals(hncasag.nodes.get(12).ntype, 2);
+		assertEquals(hncasag.nodes.get(13).innovation, -15);
+		assertEquals(hncasag.nodes.get(13).ntype, 2);
+		assertEquals(hncasag.nodes.get(14).innovation, -12);
+		assertEquals(hncasag.nodes.get(14).ntype, 2);
 		hncasag.cascadeExpansion(4, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
 		System.out.println("nodes after 2nd expansion extra: " + hncasag.nodes);
-//		for (int i = 0; i < 5; i++) {
-//			NodeGene currentNode = hncasag.nodes.get(i);
-//			assertEquals(currentNode.innovation, -i - 1);
-//			assertEquals(currentNode.ntype, 0);
-//		}
-//		for (int i = 5; i < 8; i++) {
-//			NodeGene currentNode = hncasag.nodes.get(i);
-//			assertEquals(currentNode.innovation, -i - 1);
-//			assertEquals(currentNode.ntype, 2);
-//		}
-//		assertEquals(hncasag.nodes.get(8).innovation, -11);
-//		assertEquals(hncasag.nodes.get(8).ntype, 2);
-//		assertEquals(hncasag.nodes.get(9).innovation, -12);
-//		assertEquals(hncasag.nodes.get(9).ntype, 2);
-//		for (int i = 10; i < 18; i++) {
-//			NodeGene currentNode = hncasag.nodes.get(i);
-//			assertEquals(currentNode.innovation, -i - 4);
-//			assertEquals(currentNode.ntype, 2);
-//		}
-//		assertEquals(hncasag.nodes.get(18).innovation, -9);
-//		assertEquals(hncasag.nodes.get(18).ntype, 2);
-//		assertEquals(hncasag.nodes.get(19).innovation, -13);
-//		assertEquals(hncasag.nodes.get(19).ntype, 2);
-//		for (int i = 20; i < 24; i++) {
-//			NodeGene currentNode = hncasag.nodes.get(i);
-//			assertEquals(currentNode.innovation, -i - 2);
-//			assertEquals(currentNode.ntype, 2);
-//		}
-//		assertEquals(hncasag.nodes.get(24).innovation, -10);
-//		assertEquals(hncasag.nodes.get(24).ntype, 2);
+		for (int i = 0; i < 5; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 1);
+			assertEquals(currentNode.ntype, 0);
+		}
+		for (int i = 5; i < 11; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 1);
+			assertEquals(currentNode.ntype, 2);
+		}
+		assertEquals(hncasag.nodes.get(11).innovation, -13);
+		assertEquals(hncasag.nodes.get(11).ntype, 2);
+		assertEquals(hncasag.nodes.get(12).innovation, -14);
+		assertEquals(hncasag.nodes.get(12).ntype, 2);
+		for (int i = 13; i < 21; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 5);
+			assertEquals(currentNode.ntype, 2);
+		}
+		assertEquals(hncasag.nodes.get(21).innovation, -11);
+		assertEquals(hncasag.nodes.get(21).ntype, 2);
+		assertEquals(hncasag.nodes.get(22).innovation, -15);
+		assertEquals(hncasag.nodes.get(22).ntype, 2);
+		for (int i = 23; i < 27; i++) {
+			NodeGene currentNode = hncasag.nodes.get(i);
+			assertEquals(currentNode.innovation, -i - 1);
+			assertEquals(currentNode.ntype, 2);
+		}
+		assertEquals(hncasag.nodes.get(24).innovation, -12);
+		assertEquals(hncasag.nodes.get(24).ntype, 2);
 	}
 
 	@Test
