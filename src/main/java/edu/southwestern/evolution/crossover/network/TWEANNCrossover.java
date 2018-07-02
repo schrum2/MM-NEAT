@@ -81,7 +81,6 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 		// aligns links to facilitate crossover
 		ArrayList<ArrayList<LinkGene>> alignedLinks = alignLinkGenes(((TWEANNGenotype) toModify).links, tr.links);
 		ArrayList<ArrayList<LinkGene>> crossedLinks = cross(alignedLinks.get(0), alignedLinks.get(1));// crosses links
-
 		// Assign new lists
 		int[] originalAssociations = Arrays.copyOf(tm.moduleAssociations, tm.moduleAssociations.length);
 		tm.nodes = crossedNodes.get(0);
@@ -229,7 +228,6 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	private static ArrayList<NodeGene> alignNodesToArchetype(ArrayList<NodeGene> list, int archetypeIndex) {
 		ArrayList<NodeGene> archetype = EvolutionaryHistory.archetypes[archetypeIndex];
 		ArrayList<NodeGene> aligned = new ArrayList<NodeGene>(archetype.size());
-
 		// Deal with matching and disjoint genes
 		int listPos = 0, archetypePos = 0;
 		while (listPos < list.size() && archetypePos < archetype.size()) {
@@ -249,7 +247,9 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 					"archetypeIndex: " + archetypeIndex + "\n" +
 					"Already passed the innovation! " + leftInnovation + "\n" +
 					"Archetype:" + archetype + "\n" +
-					"List:" + list;
+					"List:" + list + "\n" +
+					"aligned:" + aligned + "\n" + 
+					"containsInnovationAt(archetype, leftInnovation): " + containsInnovationAt(archetype, leftInnovation);
 				//printNodeAlignmentColumns(list, archetypeIndex);
 				// Fill with blanks until gene is reached
 				aligned.add(null);

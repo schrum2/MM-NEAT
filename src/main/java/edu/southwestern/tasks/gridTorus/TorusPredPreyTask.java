@@ -926,4 +926,12 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		return fullInputs;
 	}
 	
+	/**
+	 * Clears connectivity and information
+	 */
+	@Override
+	public void flushSubstrateMemory() {
+		substrateConnectivity = null;
+		substrateInformation = null;
+	}
 }

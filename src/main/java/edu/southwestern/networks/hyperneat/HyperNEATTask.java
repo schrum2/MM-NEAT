@@ -67,4 +67,13 @@ public interface HyperNEATTask {
 	 *         for the domain.
 	 */
 	public List<SubstrateConnectivity> getSubstrateConnectivity();
+	
+	/**
+	 * Many HyperNEAT tasks cache their substrate connectivity information so it
+	 * does not need to be regenerated each time a genotype is made. However, this
+	 * causes problems when the architecture changes in the middle of evolution,
+	 * so this method assures that all tasks have a way of flushing out any
+	 * cached information, if they happen to store any.
+	 */
+	public void flushSubstrateMemory();
 }
