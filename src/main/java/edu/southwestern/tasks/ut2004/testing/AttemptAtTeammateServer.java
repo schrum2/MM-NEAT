@@ -9,6 +9,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.UT2004Task;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.fitness.UT2004FitnessFunction;
+import edu.southwestern.tasks.ut2004.weapons.SimpleWeaponManager;
 
 public class AttemptAtTeammateServer {
 	public static void main(String[] args) throws IOException {
@@ -19,7 +20,8 @@ public class AttemptAtTeammateServer {
 		Genotype<TWEANN>[] individuals = new Genotype[0];
 		BotController[] controller = new BotController[1];
 
-		BotController behaviorListController = new AttemptAtTeammateController();
+		SimpleWeaponManager weaponManager = new SimpleWeaponManager();
+		BotController behaviorListController = new AttemptAtTeammateController(weaponManager);
 		
 		controller[0] = behaviorListController;
 		

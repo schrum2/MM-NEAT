@@ -34,10 +34,16 @@ public class AttemptAtTeammateController implements BotController {
 	//public final UT2004WeaponManager weaponManager;
 	private ChasingController chaseController;
 
+	public final UT2004WeaponManager weaponManager;
 	public static final int FULL_HEALTH = 100; //players spawn with 100 hp, and can overheal to a level of 199 hp
 	public static final int THRESHOLD_HEALTH_LEVEL = 20;
 	public static final int DNE_HEALTH_LEVEL = 30; //DNE = do not engage. if the bot is below this health it should avoid an enemy it sees
 	//var timesteps teammate hasn't moved
+	
+	public AttemptAtTeammateController(UT2004WeaponManager weaponManager) {
+		this.weaponManager = weaponManager;
+	}
+	
 	/**
 	 * 
 	 */
@@ -84,22 +90,7 @@ public class AttemptAtTeammateController implements BotController {
 		//		return runAround.control(bot);
 	}
 
-	//	//copied and adjusted from UT2
-	//    public boolean shouldChase(Player currentTarget, UT2004BotModuleController bot) {
-	//        Player chasingEnemy = this.chaseController.getLastEnemy();
-	//        if (currentTarget != null && chasingEnemy != null
-	//                && currentTarget.getId().equals(chasingEnemy.getId())) {
-	////            // Fight what can be seen
-	//            return false;
-	//        }
-	//        Player nearest = OldActionWrapper.getAgentMemory(bot).getSeeEnemy();
-	//        if (OldActionWrapper.getAgentMemory(bot).numVisibleOpponents() > 2 && nearest != null && nearest.getLocation().getDistance(bot.getInfo().getLocation()) < WeaponPreferenceTable.WeaponTableEntry.MAX_RANGED_RANGE) {
-	//            return false;
-	//        }
-	//        // Only chase if can't see target
-	//        return OldActionWrapper.getAgentMemory(bot).canFocusOn(chasingEnemy);
-	//    //	return false;
-	//    }
+
 
 	/**
 	 * determines whether the bot should chase it's enemy
@@ -108,6 +99,7 @@ public class AttemptAtTeammateController implements BotController {
 	 */
 	public boolean shouldEngage(UT2004BotModuleController bot) {
 		//check ammo
+		//bot.getBot().
 		if((bot.getBot().getSelf().getHealth()) < DNE_HEALTH_LEVEL) {
 			return false;
 		}

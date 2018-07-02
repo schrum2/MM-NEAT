@@ -49,7 +49,7 @@ public class MultiBotLauncher {
 						@SuppressWarnings("rawtypes")
 						UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(botClasses[index]).setAgentParameters(new IRemoteAgentParameters[] {params[index]});
 						// I believe the setMain causes certain exceptions to be caught and suppressed
-						multi.setMain(true).setLogLevel(Level.ALL).startAgents(bots);
+						multi.setMain(true).setLogLevel(Level.OFF).startAgents(bots);
 					} catch (PogamutException e) {
 						e.printStackTrace();
 						// Obligatory exception that happens from stopping the bot. Just suppress.
