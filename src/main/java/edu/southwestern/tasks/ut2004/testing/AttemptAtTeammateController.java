@@ -61,7 +61,6 @@ public class AttemptAtTeammateController implements BotController {
 			return new NavigateToLocationAction(healthLoc);
 		}
 
-
 		/**if an enemy is visible attack?*/
 		if(visibleEnemy != null){
 			if(shouldEngage(bot)) { //fight if you have health and ammo
@@ -93,17 +92,18 @@ public class AttemptAtTeammateController implements BotController {
 
 
 	/**
-	 * determines whether the bot should chase it's enemy
-	 * @param targetEnemy (enemy the bot is looking at)
-	 * @return
+	 * determines whether the bot should try to fight the enemy it's looking at.
+	 * engage if hp > 30 and has ammo
+	 * @return returns whether bot should engage
 	 */
 	public boolean shouldEngage(UT2004BotModuleController bot) {
 		//check ammo
-		//bot.getBot().
-		if((bot.getBot().getSelf().getHealth()) < DNE_HEALTH_LEVEL) {
-			return false;
+		boolean hasGun = bot.getWeaponry().hasLoadedWeapon();
+		boolean hasHealth = (bot.getBot().getSelf().getHealth()) > DNE_HEALTH_LEVEL;
+		if(hasGun && hasHealth) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	/**
