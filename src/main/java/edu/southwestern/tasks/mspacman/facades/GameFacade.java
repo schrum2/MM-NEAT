@@ -232,18 +232,18 @@ public class GameFacade {
 	 * @return list of ghost indices
 	 */
 	public ArrayList<Integer> getGhostIndices(boolean edibleVsThreatOnly, boolean all) {
-		ArrayList<Integer> ghosts = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (!ghostInLair(i) && (all || (edibleVsThreatOnly && isGhostEdible(i)) || (!edibleVsThreatOnly && isGhostThreat(i)))) {
-				ghosts.add(i);
+			ArrayList<Integer> ghosts = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (!ghostInLair(i) && (all || (edibleVsThreatOnly && isGhostEdible(i)) || (!edibleVsThreatOnly && isGhostThreat(i)))) {
+					ghosts.add(i);
+				}
 			}
-		}
-		return ghosts;
+			return ghosts;
 	}
 	
 	/**
-	 * Returns an ArrayList of triples containing the index, the last move of, and the probability of a ghost that 
-	 * we have a prediction about (this includes ghosts we can see, those have predictions of 100%).
+	 * Returns an ArrayList of Quads containing the index, the last move of, the probability of a ghost is there, and the probability that the ghost is
+	 * edible for ghosts we have a prediction about (this includes ghosts we can see, those have predictions of 100%).
 	 * @return ArrayList of triples cotaining int, MOVE, double each
 	 */
 	public ArrayList<Quad<Integer, MOVE, Double, Double>> getPossibleGhostInfo() {

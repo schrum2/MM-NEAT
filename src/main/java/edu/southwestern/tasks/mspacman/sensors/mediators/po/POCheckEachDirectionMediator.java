@@ -47,10 +47,7 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 
 		blocks.add(new BiasBlock());
 
-//		// Distances
-//		//TODO: implement pill model correctly for this to work
-		blocks.add(new VariableDirectionPillDistanceBlock(direction)); // ASSUME PILL MODEL INFLUENCES THESE IN GAMEFACADE
-//		//TODO: implement pill model and add support for tracking power pills for this to work
+		blocks.add(new VariableDirectionPillDistanceBlock(direction));
 		blocks.add(new VariableDirectionPowerPillDistanceBlock(direction));
 		
 		
