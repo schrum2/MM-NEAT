@@ -92,7 +92,7 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotypeTest {
 		assertEquals(8, hncasag.numOut);
 	}
 
-	//@Test
+	@Test
 	public void behaviorAfterCascadeTest() {
 		MMNEAT.clearClasses();
 		HyperNEATTetrisTask.hardSubstrateReset();

@@ -205,7 +205,8 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 			for (int i = 0; i < ftypes.length; i++) {
 				ftypes[i] = ActivationFunctions.randomFunction();
 			}
-			addMSSNeuronsToCPPN(allSubstrateConnectivity.size(), hiddenArchitecture.size(), newLayerWidth, ftypes);
+			int numOutputsInPhenotype = FlexibleSubstrateArchitecture.getInputAndOutputNames(((HyperNEATTask) MMNEAT.task)).t2.size();
+			addMSSNeuronsToCPPN(allSubstrateConnectivity.size(), hiddenArchitecture.size(), numOutputsInPhenotype, newLayerWidth, ftypes);
 		}
 		Pair<List<Triple<Integer, Integer, Integer>>, List<SubstrateConnectivity>> newDefiniton = 
 				CascadeNetworks.cascadeExpansion(this.hiddenArchitecture, this.allSubstrateConnectivity, 

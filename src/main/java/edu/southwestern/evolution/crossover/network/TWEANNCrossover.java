@@ -81,7 +81,6 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 		// aligns links to facilitate crossover
 		ArrayList<ArrayList<LinkGene>> alignedLinks = alignLinkGenes(((TWEANNGenotype) toModify).links, tr.links);
 		ArrayList<ArrayList<LinkGene>> crossedLinks = cross(alignedLinks.get(0), alignedLinks.get(1));// crosses links
-
 		// Assign new lists
 		int[] originalAssociations = Arrays.copyOf(tm.moduleAssociations, tm.moduleAssociations.length);
 		tm.nodes = crossedNodes.get(0);
