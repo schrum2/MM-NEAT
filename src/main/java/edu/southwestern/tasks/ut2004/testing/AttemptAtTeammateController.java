@@ -33,9 +33,8 @@ import utopia.agentmodel.actions.QuickTurnAction;
 import utopia.controllers.scripted.ChasingController;
 
 /**
- * 
+ * Creates a 
  * @author Adina Friedman
- *
  */
 public class AttemptAtTeammateController implements BotController {
 
@@ -218,11 +217,11 @@ public class AttemptAtTeammateController implements BotController {
 		memory = OldActionWrapper.getAgentMemory(bot);
 		body = OldActionWrapper.getAgentBody(bot);
 		//getComponentId().getName().setFlag()
-		bot.getBot().getComponentId().getName().setFlag("Jude");
+		//bot.getBot().getComponentId().getName().setFlag("Jude");
 		//this.chaseController = new ChasingController(bot.getBot(), memory);
-	}
-
-
+		
+		bot.getBot().getBotName().setNameBase("Jude");
+	}	
 
 	/**
 	 * resets the controller
