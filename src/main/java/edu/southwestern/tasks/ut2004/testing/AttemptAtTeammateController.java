@@ -33,7 +33,8 @@ import utopia.agentmodel.actions.QuickTurnAction;
 import utopia.controllers.scripted.ChasingController;
 
 /**
- * Creates a 
+ * Provides the control for a bot created to aid players
+ * bot should follow it's teammate if they are in view and attack enemies, if it finds itself alone, it will run around collecting items until it encounters someone else
  * @author Adina Friedman
  */
 public class AttemptAtTeammateController implements BotController {
@@ -42,10 +43,6 @@ public class AttemptAtTeammateController implements BotController {
 	RandomItemPathExplorer runAround = new RandomItemPathExplorer();
 	AgentMemory memory;
 	AgentBody body;
-	//public final UT2004WeaponManager weaponManager;
-	private ChasingController chaseController;
-	
-
 	public final UT2004WeaponManager weaponManager;
 	public static WeaponPreferenceTable weaponPreferences;
 	public static final int FULL_HEALTH = 100; //players spawn with 100 hp, and can overheal to a level of 199 hp
@@ -61,13 +58,13 @@ public class AttemptAtTeammateController implements BotController {
 	}
 	
 	/**
-	 * 
+	 * contains the actual logic for the bot to move around see interior comments for more details
 	 */
 	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {//loops thourhg over and over again
 		Player visibleFriend = bot.getPlayers().getNearestVisibleFriend();
 		Player lastSeenFriend = bot.getPlayers().getNearestFriend(10); //friend who bot just saw but if now out of view
 		Player visibleEnemy = bot.getPlayers().getNearestVisibleEnemy();
-		Player lastSeenEnemy = bot.getPlayers().getNearestEnemy(10); //enemy who bot just saw but if now out of view
+		Player lastSeenEnemy = bot.getPlayers().getNearestEnemy(5); //enemy who bot just saw but if now out of view
 
 		equipBestWeapon(bot);
 		/**bot will look for health pickups if it drops below 20hp*/
@@ -78,6 +75,11 @@ public class AttemptAtTeammateController implements BotController {
 			return new NavigateToLocationAction(healthLoc);
 		}
 
+		/**if bot is being damaged but doesn't see an enemy, turn to see who it is*/
+		if(bot.getSenses().isBeingDamaged() && visibleEnemy == null && lastSeenEnemy == null) {
+			return new OldActionWrapper(new QuickTurnAction(OldActionWrapper.getAgentMemory(bot)));
+		}
+		
 		/**if an enemy is visible attack?*/
 		if(visibleEnemy != null){
 			if(shouldEngage(bot)) { //fight if you have health and ammo
@@ -215,11 +217,7 @@ public class AttemptAtTeammateController implements BotController {
 	 */
 	public void initialize(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		memory = OldActionWrapper.getAgentMemory(bot);
-		body = OldActionWrapper.getAgentBody(bot);
-		//getComponentId().getName().setFlag()
-		//bot.getBot().getComponentId().getName().setFlag("Jude");
-		//this.chaseController = new ChasingController(bot.getBot(), memory);
-		
+		body = OldActionWrapper.getAgentBody(bot);		
 		bot.getBot().getBotName().setNameBase("Jude");
 	}	
 
