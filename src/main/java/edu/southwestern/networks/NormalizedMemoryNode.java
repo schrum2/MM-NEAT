@@ -7,10 +7,10 @@ public class NormalizedMemoryNode extends TWEANN.Node{
 	//the last nodeNormMemoryLength values that this node has seen
 	private int numActivationsSeenSoFar;
 	private double memoryMean; //change name
-	private double memoryVariance;
+	private double memorySS;
 	private double gamma;
 	private double beta;
-	private double epsilon;
+	private static final double EPSILON = 0.0001; // Smal value to assure no division by 0 occurs
 
 	public NormalizedMemoryNode(TWEANN tweann, int ftype, int ntype, long innovation) {
 		this(tweann, ftype, ntype, innovation, 0.0);
@@ -24,29 +24,31 @@ public class NormalizedMemoryNode extends TWEANN.Node{
 		tweann.super(ftype, ntype, innovation, frozen, bias);
 		this.numActivationsSeenSoFar = 0;
 		this.memoryMean = 0;
-		this.memoryVariance = 0;
+		this.memorySS = 0;
 		//expensive to compute for every node. Should this be a common constant?
 	}
 	
 	@Override
 	protected void activateAndTransmit() {
-		activation = ActivationFunctions.activation(ftype, sum);
+		double immediateActivation = ActivationFunctions.activation(ftype, sum);
 		numActivationsSeenSoFar++;
-		double oldMean = memoryMean;
-		memoryMean = oldMean + ((activation - memoryMean) / numActivationsSeenSoFar);
-		double oldVariance = memoryVariance;
-		memoryVariance = oldVariance + (activation - oldMean) * (activation - memoryMean);
+		
+		//calculate mean
+		double oldMean = memoryMean; // Save for Sum of Squares calculation below
+		memoryMean += ((immediateActivation - memoryMean) / numActivationsSeenSoFar);
+		
+		//calculate variance
+		memorySS += (immediateActivation - oldMean) * (immediateActivation - memoryMean);
+		double variance = memorySS / numActivationsSeenSoFar;
 		
 		//normalize activation
-		activation = (activation - memoryMean) / Math.sqrt(memoryVariance + epsilon);
+		activation = (immediateActivation - memoryMean) / Math.sqrt(variance + EPSILON);
 		
 		//scale and shift
 		activation = gamma * activation + beta;
 		
-		//should this be here instead
-		//normalizedMemory.add(activation);
-		
         // reset sum to original bias after activation 
+		// Standard code from original activateAndTransmit method
 		sum = bias;
 		for (Link l : outputs) {
 			l.transmit(activation);
