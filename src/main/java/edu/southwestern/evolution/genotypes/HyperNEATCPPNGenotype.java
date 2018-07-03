@@ -248,7 +248,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 		ArrayList<NodeGene> genes = new ArrayList<NodeGene>(this.nodes.size());
 		for (NodeGene ng : this.nodes) {// needed for a deep copy
-			genes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias(), normalizedNodeMemory));
+			genes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias(), false)); // CPPN nodes are not normalized
 		}
 		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(this.archetypeIndex, linksCopy, genes, this.numOut);
 

@@ -14,6 +14,7 @@ import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.NormalizedMemoryNodeGene;
 import edu.southwestern.evolution.lineage.Offspring;
 import edu.southwestern.networks.hyperneat.HyperNEATVisualizationUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
@@ -522,7 +523,9 @@ public class TWEANN implements Network {
 		int section = Node.NTYPE_INPUT;
 		for (int i = 0; i < g.nodes.size(); i++) {
 			TWEANNGenotype.NodeGene ng = g.nodes.get(i);
-			Node n = new Node(ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.getBias());
+			Node n = ng instanceof NormalizedMemoryNodeGene ? 
+					new NormalizedMemoryNode(this, ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.getBias()): 
+					new Node(ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.getBias());
 			switch (ng.ntype) {
 			case Node.NTYPE_INPUT:
 				assert(section == Node.NTYPE_INPUT) : "Genome encoded false network: inputs: \n" + g;
@@ -1407,13 +1410,13 @@ public class TWEANN implements Network {
 	 */
 	private void checkNode(Graphics2D g, Node display)	 {
 		double activation = display.activation;
-		if (display.frozen) {
-			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 2);
-		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions")) { // TODO: Just move this to where the node is drawn in the first place?
-			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 2);
-		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions") && display.frozen) { // TODO: Is this case even reachable?
+		if(Parameters.parameters.booleanParameter("allowMultipleFunctions") && display.frozen) { // TODO: Is this case even reachable?
 			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 4);
 			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 4);
+		} else if (display.frozen) {
+			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 2);
+		} else if (Parameters.parameters.booleanParameter("allowMultipleFunctions")) { // TODO: Just move this to where the node is drawn in the first place?
+			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 2);
 		}
 	}
 
