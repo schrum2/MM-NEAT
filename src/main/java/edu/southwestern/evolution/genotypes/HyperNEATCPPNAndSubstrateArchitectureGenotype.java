@@ -244,7 +244,7 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		}
 		ArrayList<NodeGene> copyGenes = new ArrayList<NodeGene>(this.nodes.size());
 		for (NodeGene ng : this.nodes) {// needed for a deep copy
-			copyGenes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias()));
+			copyGenes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias(), normalizedNodeMemory));
 		}
 		// Construct the copy
 		HyperNEATCPPNAndSubstrateArchitectureGenotype copy = new HyperNEATCPPNAndSubstrateArchitectureGenotype(

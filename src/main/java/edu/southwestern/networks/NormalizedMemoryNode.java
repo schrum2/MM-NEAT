@@ -3,14 +3,12 @@ package edu.southwestern.networks;
 import edu.southwestern.networks.TWEANN.Link;
 
 public class NormalizedMemoryNode extends TWEANN.Node{
-	
-	//the last nodeNormMemoryLength values that this node has seen
 	private int numActivationsSeenSoFar;
-	private double memoryMean; //change name
-	private double memorySS;
+	private double memoryMean;
+	private double memorySumOfSquares;
 	private double gamma;
 	private double beta;
-	private static final double EPSILON = 0.0001; // Smal value to assure no division by 0 occurs
+	private static final double EPSILON = 0.0001; // Small value to assure no division by 0 occurs
 
 	public NormalizedMemoryNode(TWEANN tweann, int ftype, int ntype, long innovation) {
 		this(tweann, ftype, ntype, innovation, 0.0);
@@ -24,8 +22,7 @@ public class NormalizedMemoryNode extends TWEANN.Node{
 		tweann.super(ftype, ntype, innovation, frozen, bias);
 		this.numActivationsSeenSoFar = 0;
 		this.memoryMean = 0;
-		this.memorySS = 0;
-		//expensive to compute for every node. Should this be a common constant?
+		this.memorySumOfSquares = 0;
 	}
 	
 	@Override
@@ -38,8 +35,8 @@ public class NormalizedMemoryNode extends TWEANN.Node{
 		memoryMean += ((immediateActivation - memoryMean) / numActivationsSeenSoFar);
 		
 		//calculate variance
-		memorySS += (immediateActivation - oldMean) * (immediateActivation - memoryMean);
-		double variance = memorySS / numActivationsSeenSoFar;
+		memorySumOfSquares += (immediateActivation - oldMean) * (immediateActivation - memoryMean);
+		double variance = memorySumOfSquares / numActivationsSeenSoFar;
 		
 		//normalize activation
 		activation = (immediateActivation - memoryMean) / Math.sqrt(variance + EPSILON);
@@ -47,8 +44,8 @@ public class NormalizedMemoryNode extends TWEANN.Node{
 		//scale and shift
 		activation = gamma * activation + beta;
 		
-        // reset sum to original bias after activation 
 		// Standard code from original activateAndTransmit method
+		// reset sum to original bias after activation 
 		sum = bias;
 		for (Link l : outputs) {
 			l.transmit(activation);

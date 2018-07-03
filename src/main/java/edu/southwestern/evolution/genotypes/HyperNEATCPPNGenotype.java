@@ -41,6 +41,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	public transient static boolean constructingNetwork = false;
 	public transient int innovationID = 0;// provides unique innovation numbers for links and genes
 
+	// Determines whether node normalization occurs across past activations in substrate networks
+	public static boolean normalizedNodeMemory;
+	
 	/**
 	 * Default constructor
 	 */
@@ -245,7 +248,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 		ArrayList<NodeGene> genes = new ArrayList<NodeGene>(this.nodes.size());
 		for (NodeGene ng : this.nodes) {// needed for a deep copy
-			genes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias()));
+			genes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias(), normalizedNodeMemory));
 		}
 		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(this.archetypeIndex, linksCopy, genes, this.numOut);
 
@@ -353,7 +356,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						throw e;
 					}
 				}
-				newNodes.add(newNodeGene(sub.getFtype(), sub.getStype(), innovationID++, false, bias));
+				newNodes.add(newNodeGene(sub.getFtype(), sub.getStype(), innovationID++, false, bias, normalizedNodeMemory));
 			}
 
 			if(CommonConstants.evolveHyperNEATBias && !CommonConstants.substrateBiasLocationInputs && sub.getStype() != Substrate.INPUT_SUBSTRATE) {
