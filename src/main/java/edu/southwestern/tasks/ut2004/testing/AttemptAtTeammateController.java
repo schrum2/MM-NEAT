@@ -73,17 +73,25 @@ public class AttemptAtTeammateController implements BotController {
 			//tell bot to abandon whatever it's doing and go find a SPAWNED health kit, standing at a spawn point waiting = certain death 
 			Item nearestHealth = bot.getItems().getNearestSpawnedItem(ItemType.Category.HEALTH);
 			Location healthLoc =  nearestHealth.getLocation();
+			System.out.println("Going to health");
 			return new NavigateToLocationAction(healthLoc);
 		}
 
 		/**if bot is being damaged but doesn't see an enemy, turn to see who it is*/
 		if(bot.getSenses().isBeingDamaged() && visibleEnemy == null && lastSeenEnemy == null) {
+			System.out.println("Turning around");
 			return new OldActionWrapper(new QuickTurnAction(OldActionWrapper.getAgentMemory(bot)));
+		} else {
+			System.out.println("NOT TURNING!");
+			System.out.println("bot.getSenses().isBeingDamaged() = " + bot.getSenses().isBeingDamaged());
+			System.out.println("visibleEnemy == null = " + (visibleEnemy == null));
+			System.out.println("lastSeenEnemy == null = " + (lastSeenEnemy == null));
 		}
 		
 		/**if an enemy is visible attack?*/
 		if(visibleEnemy != null){
 			if(shouldEngage(bot)) { //fight if you have health and ammo
+				System.out.println("Attacking enemy");
 				return new OldActionWrapper(new ApproachEnemyAction(OldActionWrapper.getAgentMemory(bot), true, true, false, true));
 			}else { //RUN BITCH! TODO: take this out before you get in trouble
 				return new NavigateToLocationAction(bot.getItems().getNearestSpawnedItem(ItemType.Category.HEALTH).getLocation());
@@ -92,12 +100,13 @@ public class AttemptAtTeammateController implements BotController {
 		}
 
 		/**if bot sees friend when no enemies are nearby, it should follow teammate*/
-		//		if(visibleFriend != null || lastSeenFriend != null) {
 		if(visibleFriend != null) { //follow visible teammate
 			lastSeenFriend = visibleFriend;
+			System.out.println("Following friend");
 			return new FollowTeammateAction(visibleFriend);
 		} //if it loses sight of friend, go to the last location it saw friend at - this carries the cchance that the bot will see friend again,
 		if(visibleFriend == null && lastSeenFriend != null) {
+			System.out.println("Following friend");
 			return new NavigateToLocationAction(lastSeenFriend.getLocation());
 		}
 		
@@ -109,9 +118,11 @@ public class AttemptAtTeammateController implements BotController {
 			Location itemLocation =  bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON).getLocation();
 			double itemDistance = itemLocation.getDistance(bot.getBot().getLocation());
 			if(itemDistance < MAX_DISTANCE_TO_ITEM) {
+				System.out.println("getting weapon");
 				return new NavigateToLocationAction(itemLocation);
 			}
 		}
+		System.out.println("running like a headless chicken");
 		return runAround.control(bot);
 	}
 

@@ -1,5 +1,7 @@
 package edu.southwestern.tasks.ut2004.actions;
 
+import java.util.logging.Level;
+
 import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
 import cz.cuni.amis.pogamut.unreal.agent.navigation.IUnrealPathExecutor;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.IUT2004PathNavigator;
@@ -49,6 +51,8 @@ public class OldActionWrapper implements BotAction {
 	public static AgentMemory getAgentMemory(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		        
 		// Setting these up multiple times for each action is probably a  bad idea. Better to set them up once and save and resuse them somehow. Solve this issue later.
+
+		bot.getLog().setLevel(Level.OFF);
 		
         // Set up item path executor
         IUT2004PathRunner itemKefik = new KefikRunner(bot.getBot(), bot.getInfo(), bot.getMove(), bot.getLog());            
