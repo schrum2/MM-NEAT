@@ -21,6 +21,7 @@ import edu.southwestern.tasks.ut2004.actions.OldActionWrapper;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.RandomItemPathExplorer;
 import edu.southwestern.tasks.ut2004.controller.behaviors.AttackEnemyAloneModule;
+import edu.southwestern.tasks.ut2004.controller.behaviors.ItemExplorationBehaviorModule;
 import edu.southwestern.tasks.ut2004.weapons.UT2004WeaponManager;
 import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable;
@@ -48,7 +49,7 @@ public class AttemptAtTeammateController implements BotController {
 	public static final int FULL_HEALTH = 100; //players spawn with 100 hp, and can overheal to a level of 199 hp
 	public static final int THRESHOLD_HEALTH_LEVEL = 20;
 	public static final int DNE_HEALTH_LEVEL = 30; //DNE = do not engage. if the bot is below this health it should avoid an enemy it sees
-	//var timesteps teammate hasn't moved
+	public static final double MAX_DISTANCE_TO_ITEM = 300;
 	
 	public AttemptAtTeammateController(UT2004WeaponManager weaponManager) {
 		this.weaponManager = weaponManager;
@@ -99,13 +100,19 @@ public class AttemptAtTeammateController implements BotController {
 		if(visibleFriend == null && lastSeenFriend != null) {
 			return new NavigateToLocationAction(lastSeenFriend.getLocation());
 		}
-
-		//still for too long, ditch them
-
+		
 		//start randomly running around to get items
+		/**if the bot does not see anyone nearby run around collecting items*/
 
-		return new EmptyAction();	
-		//		return runAround.control(bot);
+		//make sure to pick up weapons
+		if(bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON) != null){
+			Location itemLocation =  bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON).getLocation();
+			double itemDistance = itemLocation.getDistance(bot.getBot().getLocation());
+			if(itemDistance < MAX_DISTANCE_TO_ITEM) {
+				return new NavigateToLocationAction(itemLocation);
+			}
+		}
+		return runAround.control(bot);
 	}
 
 
