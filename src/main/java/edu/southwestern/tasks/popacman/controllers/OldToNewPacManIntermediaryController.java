@@ -265,7 +265,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		        	eatenPowerPills.add(informedGameFacade.poG.getPacmanCurrentNodeIndex());
 		        	lastPowerPillEatenTime = informedGameFacade.getCurrentLevelTime();
 		        	informedGameFacade.setTimeOfLastPowerPillEaten(informedGameFacade.getCurrentLevelTime());
-		        	if(useGhostModel) {
+		        	if(useGhostModel && ghostPredictions != null && informedGameFacade.ghostPredictions != null) {
 			        	informedGameFacade.ghostPredictions.atePill(informedGameFacade);
 		        	}
 		        }

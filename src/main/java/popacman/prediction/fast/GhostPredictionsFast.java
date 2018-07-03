@@ -240,6 +240,7 @@ public class GhostPredictionsFast {
         return other;
     }
     
+    //Should set the edible probability of all predicted ghosts when this method is called
     public void atePill(GameFacade game) {
     	int ghostOneQuadrent = (0 * mazeSize);
     	int ghostTwoQuadrent = (1 * mazeSize);
