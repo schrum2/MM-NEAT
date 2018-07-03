@@ -284,6 +284,7 @@ public class Parameters {
 		integerOptions.add("multinetworkComboReached", 0, "Tracks highest multinetwork combo reached so far to allow resuming after failure");
 		integerOptions.add("multitaskModes", 1, "Number of multitask modes (1 if not multitask at all)");
 		integerOptions.add("neuralStyleIterations", 50, "Number of iterations to run the Neural Style Transfer algorithm using CPPN style images");
+		integerOptions.add("nodeNormMemoryLength", 0, "The number of activations that a node stores when node normalization is used");
 		integerOptions.add("numActiveGhosts", 4, "Number of moving ghosts in pacman");
 		integerOptions.add("numBreve2DMonsters", 4, "Number of evolving breve 2D monsters");
 		integerOptions.add("numCoevolutionSubpops", 0, "When evolving a selector, number of populations of subcontrollers to choose from");
