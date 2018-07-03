@@ -165,7 +165,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		 * @param frozen = false if node can accept new inputs
 		 * @param bias = bias offset to sum of this node before activation
 		 */
-		private FullNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
+		protected FullNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
 			super(ftype, ntype, bias, innovation);
 			this.frozen = frozen;
 			this.bias = bias;
