@@ -16,7 +16,7 @@ import edu.southwestern.tasks.ut2004.fitness.UT2004FitnessFunction;
  */
 public class BotPrizeServer {
 	public static void main(String[] args) throws IOException {
-		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:2", "numMirrorBots:2", "botprizeMod:true", "utEvalMinutes:1"});
+		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:2", "numMirrorBots:2", "botprizeMod:true", "utEvalMinutes:10"});
 		
 		//copyBotPrizeVersionOfGameBots(); // Make sure right version of GameBots is being used
 		UT2004Util.copyBotPrizeVersionOfGameBots();
@@ -30,7 +30,7 @@ public class BotPrizeServer {
 		ArrayList<UT2004FitnessFunction<TWEANN>> fitness = new ArrayList<>();
 		ArrayList<UT2004FitnessFunction<TWEANN>> others = new ArrayList<>();
 		
-		String[] mapList = new String[] {"DM-TrainingDay", "DM-IceHenge"};
+		String[] mapList = new String[] {"DM-GoatswoodPlay", "DM-Flux2", "DM-JunkYard", "DM-DE-OSIRIS2", "DM-Antalus", "DM-IceHenge"};
 		
 		//launches server
 		UT2004Task.evaluateMultipleGenotypesAcrossMultipleMaps(individuals, mapList, numNativeBots, null, null, null, controller, evalMinutes, desiredSkill, fitness, others);
