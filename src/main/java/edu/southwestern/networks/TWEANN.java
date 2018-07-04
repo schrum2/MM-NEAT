@@ -524,7 +524,7 @@ public class TWEANN implements Network {
 		for (int i = 0; i < g.nodes.size(); i++) {
 			TWEANNGenotype.NodeGene ng = g.nodes.get(i);
 			Node n = ng instanceof NormalizedMemoryNodeGene ? 
-					new NormalizedMemoryNode(this, ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.getBias()): 
+					new NormalizedMemoryNode(this, ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.getBias(), ng.getMemoryGamma(), ng.getMemoryBeta()): 
 					new Node(ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.getBias());
 			switch (ng.ntype) {
 			case Node.NTYPE_INPUT:

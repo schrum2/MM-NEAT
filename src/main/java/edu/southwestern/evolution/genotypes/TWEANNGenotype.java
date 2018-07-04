@@ -11,6 +11,7 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
@@ -223,9 +224,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @author fulcherd
 	 */
 	public static class NormalizedMemoryNodeGene extends FullNodeGene{
-		//hardcoded identity for now
-		private double gamma = 1;
-		private double beta = 0;
+		private double gamma;
+		private double beta;
 
 		protected NormalizedMemoryNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias, double gamma, double beta) {
 			super(ftype, ntype, innovation, frozen, bias);
