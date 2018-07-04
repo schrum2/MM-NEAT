@@ -591,6 +591,11 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		return conn;
 	}	
 	
+	@Override
+	public void flushSubstrateMemory() {
+		// Does not cache substrates
+	}
+	
 	/**
 	 * Default behavior
 	 */

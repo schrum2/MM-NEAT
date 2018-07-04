@@ -1,21 +1,5 @@
 package edu.southwestern.networks;
 
-import edu.southwestern.evolution.EvolutionaryHistory;
-import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
-import edu.southwestern.evolution.genotypes.TWEANNGenotype;
-import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.southwestern.evolution.lineage.Offspring;
-import edu.southwestern.networks.hyperneat.HyperNEATUtil;
-import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.parameters.CommonConstants;
-import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.CombinatoricUtilities;
-import edu.southwestern.util.graphics.DrawingPanel;
-import edu.southwestern.util.graphics.GraphicsUtil;
-import edu.southwestern.util.graphics.Plot;
-import edu.southwestern.util.random.RandomNumbers;
-import edu.southwestern.util.stats.StatisticsUtilities;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -24,6 +8,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.evolution.lineage.Offspring;
+import edu.southwestern.networks.hyperneat.HyperNEATVisualizationUtil;
+import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.CombinatoricUtilities;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.graphics.GraphicsUtil;
+import edu.southwestern.util.graphics.Plot;
+import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
  * My version of a Topology and Weight Evolving Neural Network. Nodes are stored
@@ -562,10 +563,10 @@ public class TWEANN implements Network {
 			}
 		}
 		// Is true if net has one mode
-		assert(numModes != 1 || numOut <= neuronsPerModule + 1) : "Too many outputs for one mode" + "\n" + "g.getId():"
-		+ g.getId() + "\n" + "g.archetypeIndex:" + g.archetypeIndex + "\n" + "g.numIn:" + g.numIn + "\n"
-		+ "g.numOut:" + g.numOut + "\n" + "g.nodes.size():" + g.nodes.size() + "\n"
-		+ "EvolutionaryHistory.archetypeOut:" + Arrays.toString(EvolutionaryHistory.archetypeOut);
+//		assert(numModes != 1 || numOut <= neuronsPerModule + 1) : "Too many outputs for one mode" + "\n" + "g.getId():"
+//		+ g.getId() + "\n" + "g.archetypeIndex:" + g.archetypeIndex + "\n" + "g.numIn:" + g.numIn + "\n"
+//		+ "g.numOut:" + g.numOut + "\n" + "g.nodes.size():" + g.nodes.size() + "\n"
+//		+ "EvolutionaryHistory.archetypeOut:" + Arrays.toString(EvolutionaryHistory.archetypeOut);
 		// Is true if net has more than one mode
 		assert(numModes == 1
 				|| numOut == (neuronsPerModule + (standardMultitask || CommonConstants.ensembleModeMutation ? 0 : 1))
@@ -757,11 +758,11 @@ public class TWEANN implements Network {
 		} else {
 			outputs = moduleOutput(chosenModule);
 		}
+
 		if (canDraw) {
 			if(!HyperNEATCPPNGenotype.constructingNetwork && CommonConstants.hyperNEAT && CommonConstants.monitorSubstrates) {
 				animateSubstrate();
 			}
-				
 			if (panel != null && Parameters.parameters.booleanParameter("animateNetwork")) {
 				draw(panel);
 			}
@@ -769,7 +770,7 @@ public class TWEANN implements Network {
 				assert inputs.length == numIn : "Too many inputs: " + numIn + ":" + Arrays.toString(inputs);
 				refreshActivation(inputPanel, inputs, outputs, preferences, standardMultitask, preferenceFatigue);
 			}
-		}
+		}		
 		return outputs;
 	}
 
@@ -855,11 +856,20 @@ public class TWEANN implements Network {
 		}
 	}
 
+	// Only used within substrate networks to visualize substrate activations
+	private List<Substrate> substrateInformation = null;
+	public void passSubstrateInformation(List<Substrate> substrateInformation) {
+		this.substrateInformation = substrateInformation;
+	}
+	
 	/**
 	 * Creates and updates visuals of substrates used by h-neat tetris task 
 	 */
 	public void animateSubstrate() {
-			subsPanel = HyperNEATUtil.drawSubstrates(nodes);
+//			for(Substrate s : substrateInformation) { 
+//				System.out.println(s);
+//			}
+			HyperNEATVisualizationUtil.drawSubstrates(nodes, substrateInformation);
 			//tweannGenotype has getLinkBetween
 			//just need to find a way to get neuron innovation numbers
 	}

@@ -244,7 +244,7 @@ public class MicroRTSUtility {
 		if(Parameters.parameters.booleanParameter("mRTSResourceProportion")) { // This substrate should not allow convolution
 			int index = getNumInputSubstrates() - 1;
 			for(SubstrateConnectivity sub : result) {
-				if(sub.SOURCE_SUBSTRATE_NAME.equals("Input(" + index + ")")) { // This is the resource proportion substrate
+				if(sub.sourceSubstrateName.equals("Input(" + index + ")")) { // This is the resource proportion substrate
 					sub.connectivityType = SubstrateConnectivity.CTYPE_FULL; // Convolution not allowed
 				}
 				

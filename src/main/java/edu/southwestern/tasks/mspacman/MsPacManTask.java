@@ -758,7 +758,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			// The four input power pill substrate does not contain visual information
 			if(!Parameters.parameters.booleanParameter("pacmanFullScreenPowerInput")) {
 				for(SubstrateConnectivity sub : connections) { // So do not allow convolution
-					if(sub.SOURCE_SUBSTRATE_NAME.equals("Input(" + POWER_PILL_SUBSTRATE_INDEX + ")")) { // Power pill substrate
+					if(sub.sourceSubstrateName.equals("Input(" + POWER_PILL_SUBSTRATE_INDEX + ")")) { // Power pill substrate
 						sub.connectivityType = SubstrateConnectivity.CTYPE_FULL; // Convolution not allowed
 					}
 					
@@ -810,5 +810,10 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	@Override
 	public double[] filterCPPNInputs(double[] fullInputs) {
 		return fullInputs;
+	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
 	}	
 }
