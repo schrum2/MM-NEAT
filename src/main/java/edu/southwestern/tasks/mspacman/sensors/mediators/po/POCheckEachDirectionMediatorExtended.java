@@ -36,9 +36,9 @@ import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.po.Va
  * 
  * @author Will Price
  */
-public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedInputOutputMediator {
+public class POCheckEachDirectionMediatorExtended extends VariableDirectionBlockLoadedInputOutputMediator {
 
-	public POCheckEachDirectionMediator() {
+	public POCheckEachDirectionMediatorExtended() {
 		int direction = -1;
 		int numJunctionsToSense = Parameters.parameters.integerParameter("junctionsToSense");
 		boolean incoming = Parameters.parameters.booleanParameter("incoming");
@@ -46,6 +46,7 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		boolean imprisonedWhileEdible = Parameters.parameters.booleanParameter("imprisonedWhileEdible");
 
 		blocks.add(new BiasBlock());
+
 
 		blocks.add(new VariableDirectionPillDistanceBlock(direction));
 		blocks.add(new VariableDirectionPowerPillDistanceBlock(direction));
@@ -62,28 +63,24 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 				
 				//if we are using the ghostModel
 				if(Parameters.parameters.booleanParameter("useGhostModel")) {
-					System.out.println("DEBUG: WE BETTER BE ADDING THESE BLOCKS IN POCheckEachDirectionMediator");
-					//this will keep track of the nearest four ghosts, but with probabilities, there can be many more than
-					//just four probable ghosts
 					blocks.add(new VariableDirectionSortedPossibleGhostDistanceBlock(i));
 					blocks.add(new VariableDirectionSortedPossibleGhostProbabilityBlock(i));
 				} else {
-					System.out.println("DEBUG: WE BETTER NOT BE ADDING THESE BLOCKS IN POCheckEachDirectionMediator");
 					blocks.add(new VariableDirectionSortedGhostDistanceBlock(i));
 				}
 				
 				//READD
 				if (incoming) {
-					//blocks.add(new VariableDirectionSortedGhostIncomingBlock(i));
+					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i));
 				}
 				if (Parameters.parameters.booleanParameter("trapped")) {
-					//blocks.add(new VariableDirectionSortedGhostTrappedBlock(i));
+					blocks.add(new VariableDirectionSortedGhostTrappedBlock(i));
 				}
 				if (Parameters.parameters.booleanParameter("eTimeVsGDis")) {
-					//blocks.add(new VariableDirectionSortedGhostEdibleTimeVsDistanceBlock(i));
+					blocks.add(new VariableDirectionSortedGhostEdibleTimeVsDistanceBlock(i));
 				}
 				if (!imprisonedWhileEdible) {
-					//blocks.add(new VariableDirectionSortedGhostEdibleBlock(i));
+					blocks.add(new VariableDirectionSortedGhostEdibleBlock(i));
 				}
 			}
 		}
@@ -94,20 +91,20 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		if (split) {
 			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
 				// Threat prox
-				//blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, false, false));
+				blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, false, false));
 				// Edible prox
-				//blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, true, false));
+				blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, true, false));
 				if (incoming) {
 					// Threat incoming
-					//blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, false, false));
+					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, false, false));
 					// Edible incoming
-					//blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, true, false));
+					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, true, false));
 				}
 				if (Parameters.parameters.booleanParameter("trapped")) {
 					// Threat trapped
-					//blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, false, false));
+					blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, false, false));
 					// Edible trapped
-					//blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, true, false));
+					blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, true, false));
 				}
 			}
 		}
