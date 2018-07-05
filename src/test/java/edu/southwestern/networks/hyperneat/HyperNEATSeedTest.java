@@ -23,7 +23,7 @@ public class HyperNEATSeedTest {
 		EvolutionaryHistory.initArchetype(0);
 		HyperNEATTask HNTSeedTask = (HyperNEATTask) ClassCreation.createObject("hyperNEATSeedTask");
 		int numSubstratePairings = HNTSeedTask.getSubstrateConnectivity().size();
-		HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HyperNEATUtil.numCPPNInputs(HNTSeedTask), numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATCPPNGenotype.numBiasOutputs, 0);
+		HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HyperNEATUtil.numCPPNInputs(HNTSeedTask), numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATUtil.numBiasOutputsNeeded(HNTSeedTask), 0);
 		TWEANNGenotype seedGeno = hntGeno.getSubstrateGenotypeForEvolution(HNTSeedTask);
 		assertEquals(seedGeno.links.size(), 8*18+8*18+8*18*3*3+8*18*3*3+1+10*20+10*20);
 	}

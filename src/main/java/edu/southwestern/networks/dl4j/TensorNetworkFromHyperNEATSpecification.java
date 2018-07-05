@@ -192,7 +192,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
         // Quick look-up for whether layers are joined in a convolutional manner
         HashMap<String, Integer> areConnectionsConvolutional = new HashMap<>();
         for(SubstrateConnectivity trip : substrateConnectivity) {
-        	areConnectionsConvolutional.put(trip.SOURCE_SUBSTRATE_NAME + "_" + trip.TARGET_SUBSTRATE_NAME, trip.connectivityType);
+        	areConnectionsConvolutional.put(trip.sourceSubstrateName + "_" + trip.targetSubstrateName, trip.connectivityType);
         }
         
         int xKernel = Parameters.parameters.integerParameter("receptiveFieldWidth");

@@ -296,7 +296,7 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Test
 	public void testLinkExpressionThreshold() {
-		// This particular test needs the default expression threashold to work
+		// This particular test needs the default expression threshold to work
 		CommonConstants.linkExpressionThreshold = 0.2;
 		
 		double x = 1.0;

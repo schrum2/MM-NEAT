@@ -1,6 +1,5 @@
 package edu.southwestern.networks.hyperneat;
 
-import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 
 /**
@@ -10,10 +9,10 @@ import edu.southwestern.parameters.Parameters;
 public class SubstrateConnectivity {
 	public static final int CTYPE_FULL = 0;
 	public static final int CTYPE_CONVOLUTION = 1;
-	public final String SOURCE_SUBSTRATE_NAME;
-	public final String TARGET_SUBSTRATE_NAME;
-	public final int receptiveFieldWidth;
-	public final int receptiveFieldHeight;
+	public String sourceSubstrateName;
+	public String targetSubstrateName;
+	public int receptiveFieldWidth;
+	public int receptiveFieldHeight;
 	public int connectivityType;
 	
 	/**
@@ -24,31 +23,33 @@ public class SubstrateConnectivity {
 	 * @param connectivityType how these two substrates are connected(i.e. full, convolutional,...)
 	 */
 	public SubstrateConnectivity (String sourceSubstrateName, String targetSubstrateName, int connectivityType) {
-		this.SOURCE_SUBSTRATE_NAME = sourceSubstrateName;
-		this.TARGET_SUBSTRATE_NAME = targetSubstrateName;
-		this.connectivityType = connectivityType;
-		if (connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION) {
-			//default receptive height and width is 3
-			this.receptiveFieldWidth = Parameters.parameters.integerParameter("receptiveFieldWidth");
-			this.receptiveFieldHeight = Parameters.parameters.integerParameter("receptiveFieldHeight");
-		} else {
-			this.receptiveFieldWidth = -1;
-			this.receptiveFieldHeight = -1;
-		}
+		this(sourceSubstrateName, targetSubstrateName, connectivityType, 
+				connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION ? Parameters.parameters.integerParameter("receptiveFieldWidth") : -1,
+				connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION ? Parameters.parameters.integerParameter("receptiveFieldHeight") : -1);		
 	}
 	
 	public SubstrateConnectivity (String sourceSubstrateName, String targetSubstrateName, int receptiveFieldWidth, int receptiveFieldHeight) {
-		this.SOURCE_SUBSTRATE_NAME = sourceSubstrateName;
-		this.TARGET_SUBSTRATE_NAME = targetSubstrateName;
-		this.connectivityType = receptiveFieldWidth > 0 && receptiveFieldHeight > 0? CTYPE_CONVOLUTION: CTYPE_FULL;
-		this.receptiveFieldWidth = receptiveFieldWidth;
-		this.receptiveFieldHeight = receptiveFieldHeight;
+		this(sourceSubstrateName, targetSubstrateName, receptiveFieldWidth > 0 && receptiveFieldHeight > 0 ? CTYPE_CONVOLUTION : CTYPE_FULL, receptiveFieldWidth, receptiveFieldHeight);
 	}
 	
-	private SubstrateConnectivity (String sourceSubstrateName, String targetSubstrateName, 
-			int connectivityType, int receptiveFieldWidth, int receptiveFieldHeight) {
-		this.SOURCE_SUBSTRATE_NAME = sourceSubstrateName;
-		this.TARGET_SUBSTRATE_NAME = targetSubstrateName;
+	/**
+	 * Constructor that specifies all values
+	 * @param sourceSubstrateName
+	 * @param targetSubstrateName
+	 * @param connectivityType
+	 * @param receptiveFieldWidth
+	 * @param receptiveFieldHeight
+	 */
+	private SubstrateConnectivity (String sourceSubstrateName, String targetSubstrateName, int connectivityType, int receptiveFieldWidth, int receptiveFieldHeight) {
+		assert sourceSubstrateName != null : "sourceSubstrateName must be specified";
+		assert targetSubstrateName != null : "targetSubstrateName must be specified";
+		assert !sourceSubstrateName.equals("null") : "sourceSubstrateName must be specified";
+		assert !targetSubstrateName.equals("null") : "targetSubstrateName must be specified";
+		assert receptiveFieldWidth != 0 : "Receptive field width cannot be 0";
+		assert receptiveFieldHeight != 0 : "Receptive field height cannot be 0";
+				
+		this.sourceSubstrateName = sourceSubstrateName;
+		this.targetSubstrateName = targetSubstrateName;
 		this.connectivityType = connectivityType;
 		this.receptiveFieldWidth = receptiveFieldWidth;
 		this.receptiveFieldHeight = receptiveFieldHeight;
@@ -60,8 +61,8 @@ public class SubstrateConnectivity {
 	 */
 	public String toString() {
 		String result = "";
-		result = result.concat("substrate connectivity: from " + SOURCE_SUBSTRATE_NAME + " to " + 
-							   TARGET_SUBSTRATE_NAME + " with type " + connectivityType + " and field size " + receptiveFieldWidth + "x" + receptiveFieldHeight);
+		result = result.concat("substrate connectivity: from " + sourceSubstrateName + " to " + 
+							   targetSubstrateName + " with type " + connectivityType + " and field size " + receptiveFieldWidth + "x" + receptiveFieldHeight);
 		return result;
 	}
 	
@@ -69,15 +70,15 @@ public class SubstrateConnectivity {
 	 * @return a deep copy of the calling SubstrateConnectivity
 	 */
 	public SubstrateConnectivity copy() {
-		return new SubstrateConnectivity(this.SOURCE_SUBSTRATE_NAME, this.TARGET_SUBSTRATE_NAME,
+		return new SubstrateConnectivity(this.sourceSubstrateName, this.targetSubstrateName,
 				this.connectivityType, this.receptiveFieldWidth, this.receptiveFieldHeight);
 	}
 	
 	public boolean equals(Object other) {
 		if(other instanceof SubstrateConnectivity) {
 			SubstrateConnectivity sc = (SubstrateConnectivity) other;
-			return sc.SOURCE_SUBSTRATE_NAME.equals(this.SOURCE_SUBSTRATE_NAME) &&
-				   sc.TARGET_SUBSTRATE_NAME.equals(this.TARGET_SUBSTRATE_NAME) &&
+			return sc.sourceSubstrateName.equals(this.sourceSubstrateName) &&
+				   sc.targetSubstrateName.equals(this.targetSubstrateName) &&
 				   sc.connectivityType == this.connectivityType &&
 				   sc.receptiveFieldWidth == this.receptiveFieldWidth &&
 				   sc.receptiveFieldHeight == this.receptiveFieldHeight;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.NetworkUtil;
 import edu.southwestern.networks.TWEANN;
@@ -30,7 +31,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	// For each substrate layer pairing, there can be multiple output neurons in the CPPN
 	public static int numCPPNOutputsPerLayerPair = -1; // Set in MMNEAT
 	// Number of output neurons needed to designate bias values across all substrates
-	public static int numBiasOutputs = -1; // Set in MMNEAT
+	//public static int numBiasOutputs = -1; // Set in MMNEAT : Being static meant that all networks had to have the same value.
 	// Within each group, the first (index 0) will always specify the link value
 	public static final int LINK_INDEX = 0;
 	// If a Link Expression Output is used, it will be second (index 1)
@@ -114,7 +115,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	@Override
 	public TWEANN getPhenotype() {
 		TWEANNGenotype tg = getSubstrateGenotype((HyperNEATTask) MMNEAT.task) ;
-		return tg.getPhenotype();//return call to substrate genotype
+		TWEANN result = tg.getPhenotype();//return call to substrate genotype
+		result.passSubstrateInformation(getSubstrateInformation((HyperNEATTask) MMNEAT.task));
+		return result;
 	}
 
 	/**
@@ -136,6 +139,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		TWEANN cppn = getCPPN();// CPPN used to create TWEANN network
 		List<Substrate> subs = getSubstrateInformation(hnt);// extract substrate information from domain
 		List<SubstrateConnectivity> connections = getSubstrateConnectivity(hnt);// extract substrate connectivity from domain
+		
+		assert connections.get(0).sourceSubstrateName != null : "How was a null name constructed";
+		
 		ArrayList<NodeGene> newNodes = null;
 		ArrayList<LinkGene> newLinks = null;
 
@@ -195,7 +201,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @return List of Substrates in order from inputs to hidden to output
 	 *         layers
 	 */
-	List<Substrate> getSubstrateInformation(HyperNEATTask HNTask) {
+	public List<Substrate> getSubstrateInformation(HyperNEATTask HNTask) {
 		return HNTask.getSubstrateInformation();
 		
 	}
@@ -205,7 +211,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @return List of triples that specifies each substrate with the index of each triple being its layer.
 	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
 	 */
-	List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask HNTask) {
+	public List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask HNTask) {
 		return HNTask.getSubstrateConnectivity();
 	}
 
@@ -250,6 +256,23 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		return result;
 	}
 
+
+	/**
+	 * If bias outputs are used in CPPN, they will appear after all others.
+	 * There should be one output group per layer pairing, so the number of
+	 * layer pairings is multiplied by the neurons per output group to determine
+	 * the index of the first bias output.
+	 * @param hnt HyperNEAT task
+	 * @return index where first bias output is located, if it exists
+	 */
+	public int indexFirstBiasOutput(HyperNEATTask hnt) {
+		if(CommonConstants.substrateLocationInputs) {
+			return HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair;
+		} else {
+			return getSubstrateConnectivity(hnt).size() * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair;
+		}
+	}
+	
 	/**
 	 * creates an array list containing all the nodes from all the substrates
 	 *
@@ -263,7 +286,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 		boolean convolutionWeightSharing = Parameters.parameters.booleanParameter("convolutionWeightSharing");
 
-		int biasIndex = HyperNEATUtil.indexFirstBiasOutput(hnt); // first bias index
+		int biasIndex = indexFirstBiasOutput(hnt); // first bias index
 		ArrayList<NodeGene> newNodes = new ArrayList<NodeGene>();
 		// loops through substrate list
 		for (Substrate sub: subs) { // for each substrate
@@ -305,6 +328,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 					}
 
 					double[] result = cppn.process(filteredInputs);
+
 					try{
 						bias = result[biasIndex];
 					} catch(ArrayIndexOutOfBoundsException e) { 
@@ -314,10 +338,17 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						System.out.println("biasIndex: " + biasIndex);
 						System.out.println("CommonConstants.evolveHyperNEATBias: " + CommonConstants.evolveHyperNEATBias);
 						System.out.println("numCPPNOutputsPerLayerPair: " + numCPPNOutputsPerLayerPair);
-						System.out.println("numBiasOutputs: " + numBiasOutputs);
+						System.out.println("numBiasOutputsNeeded(hnt): " + numBiasOutputsNeeded(hnt));
 						System.out.println("cppn.numInputs(): " + cppn.numInputs());
 						System.out.println("cppn.numOutputs(): " + cppn.numOutputs());
-						System.out.println("HyperNEATUtil.indexFirstBiasOutput(hnt): " + HyperNEATUtil.indexFirstBiasOutput(hnt));
+						System.out.println("cppn.effectiveNumOutputs(): " + cppn.effectiveNumOutputs());
+						System.out.println("indexFirstBiasOutput(hnt): " + indexFirstBiasOutput(hnt));
+						for(Substrate s: getSubstrateInformation(hnt)) {
+							System.out.println(s);
+						}
+						for(SubstrateConnectivity sc : getSubstrateConnectivity(hnt)) {
+							System.out.println(sc);
+						}
 						System.out.println(cppn);
 						throw e;
 					}
@@ -338,6 +369,29 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	}
 
 	/**
+	 * If HyperNEAT neuron bias values are evolved, then this method determines
+	 * how many CPPN outputs are needed to specify them: 1 per non-input substrate layer.
+	 * @param hnt HyperNEATTask that specifies substrate connectivity
+	 * @return number of bias outputs needed by CPPN
+	 */
+	public int numBiasOutputsNeeded(HyperNEATTask hnt) {
+		// CPPN has no bias outputs if they are not being evolved
+		if(!CommonConstants.evolveHyperNEATBias) return 0;
+		
+		// If substrate coordinates are inputs to the CPPN, then
+		// biases on difference substrates can be different based on the
+		// inputs rather than having separate outputs for each substrate.
+		if(CommonConstants.substrateBiasLocationInputs) return 1;
+
+		List<Substrate> subs = getSubstrateInformation(hnt);
+		int count = 0;
+		for(Substrate s : subs) {
+			if(s.getStype() != Substrate.INPUT_SUBSTRATE) count++;
+		}
+		return count;
+	}
+	
+	/**
 	 * creates an array list of links between substrates as dictated by
 	 * connections parameter
 	 *
@@ -357,12 +411,12 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		ArrayList<LinkGene> result = new ArrayList<LinkGene>();
 		for (int i = 0; i < connections.size(); i++) { // For each pair of substrates that are connected
 			SubstrateConnectivity currentConnection = connections.get(i);
-			int sourceSubstrateIndex = sIMap.get(currentConnection.SOURCE_SUBSTRATE_NAME);
-			assert sIMap.get(currentConnection.TARGET_SUBSTRATE_NAME) != null :"null in " + sIMap + "\nat " + connections.get(i).TARGET_SUBSTRATE_NAME + "\nat " + i;
-			int targetSubstrateIndex = sIMap.get(currentConnection.TARGET_SUBSTRATE_NAME);
+			int sourceSubstrateIndex = sIMap.get(currentConnection.sourceSubstrateName);
+			assert sIMap.get(currentConnection.targetSubstrateName) != null :"null in " + sIMap + "\nat " + connections.get(i).targetSubstrateName + "\nat " + i;
+			int targetSubstrateIndex = sIMap.get(currentConnection.targetSubstrateName);
 			Substrate sourceSubstrate = subs.get(sourceSubstrateIndex);
 			Substrate targetSubstrate = subs.get(targetSubstrateIndex);
-
+			
 			// Whether to connect these layers used convolutional structure instead of standard fully connected structure
 			boolean convolution = currentConnection.connectivityType == SubstrateConnectivity.CTYPE_CONVOLUTION && CommonConstants.convolution;
 			int outputIndex = CommonConstants.substrateLocationInputs ? 0 : i;
@@ -420,6 +474,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			List<Substrate> subs, int substrateHorizontalCoordinate, int substrateVerticalCoordinate, int receptiveFieldWidth, int receptiveFieldHeight) {
 
 		boolean convolutionDeltas = Parameters.parameters.booleanParameter("convolutionDeltas");
+		//boolean convolutionCoordinates = Parameters.parameters.booleanParameter("convolutionCoordinates");
 		boolean convolutionWeightSharing = Parameters.parameters.booleanParameter("convolutionWeightSharing");
 		assert receptiveFieldHeight % 2 == 1 : "Receptive field height needs to be odd to be centered: " + receptiveFieldHeight;
 		assert receptiveFieldWidth % 2 == 1 : "Receptive field width needs to be odd to be centered: " + receptiveFieldWidth;
@@ -467,6 +522,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 											// First two inputs are deltas between target and source scaled coordinated: (x2 - x1, y2 - y1, x2, y2, 1.0)
 											inputs = new double[]{scaledTargetCoordinates.getX() - scaledSourceCoordinates.getX(), scaledTargetCoordinates.getY() - scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
 											// These inputs may be outside the [-1,1] range
+										//} if (convolutionCoordinates) {
+										//	ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(fromXIndex, fromYIndex), s1.getSize().t1, s1.getSize().t2); 
+											//inputs = new double[]{scaledTargetCoordinates.getX() - scaledSourceCoordinates.getX(), scaledTargetCoordinates.getY() - scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
 										} else {
 											// Receptive field scaling needs to be with respect to the center of the field, regardless of what the mapping for the other coordinates is
 											ILocated2D scaledFieldCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(fX+xOffset, fY+yOffset), receptiveFieldWidth, receptiveFieldHeight);

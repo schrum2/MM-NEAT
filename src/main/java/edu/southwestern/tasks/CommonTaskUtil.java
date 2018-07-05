@@ -1,5 +1,7 @@
 package edu.southwestern.tasks;
 
+import java.util.List;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
@@ -8,7 +10,7 @@ import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.lineage.Offspring;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
-import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.networks.hyperneat.HyperNEATVisualizationUtil;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.breve2D.Breve2DTask;
@@ -21,6 +23,8 @@ public class CommonTaskUtil {
 
 	public static final int NETWORK_WINDOW_OFFSET = 0;
 
+	public static List<DrawingPanel> lastSubstrateWeightPanelsReturned = null;
+	
 	public static Pair<DrawingPanel, DrawingPanel> getDrawingPanels(Genotype<?> genotype){
 
 		// This is not a TWEANNGenotype because it generates a DL4J network,
@@ -28,7 +32,7 @@ public class CommonTaskUtil {
 		if(genotype instanceof HyperNEATCPPNforDL4JGenotype) {
 			genotype = ((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN();
 		}
-		
+
 		DrawingPanel panel = null;
 		DrawingPanel cppnPanel = null;
 
@@ -47,9 +51,22 @@ public class CommonTaskUtil {
 						hngt.getCPPN().draw(cppnPanel);
 					}
 					if(Parameters.parameters.booleanParameter("showWeights")){
-						// Weight panels disposed of in HyperNEATUtil
+						// Dispose of weight panels
+						if(lastSubstrateWeightPanelsReturned != null) {
+							for(DrawingPanel dp: lastSubstrateWeightPanelsReturned) {
+								dp.dispose();
+							}
+						}
 						HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
-						HyperNEATUtil.drawWeight(hngt.getSubstrateGenotype(task),task,hngt.numModules()); 
+						lastSubstrateWeightPanelsReturned = HyperNEATVisualizationUtil.drawWeight(hngt, task, hngt.numModules());
+					}
+					if(!HyperNEATCPPNGenotype.constructingNetwork && CommonConstants.hyperNEAT && CommonConstants.monitorSubstrates)  {
+						if(TWEANN.subsPanel != null) {
+							for(DrawingPanel dp : TWEANN.subsPanel) {
+								dp.dispose();
+							}
+						}
+						TWEANN.subsPanel = null;
 					}
 
 				}
