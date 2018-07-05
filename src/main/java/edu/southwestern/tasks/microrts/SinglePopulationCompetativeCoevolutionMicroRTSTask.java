@@ -285,4 +285,10 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	public int getNumInputSubstrates() {
 		return Math.max(ef1.getNumInputSubstrates(),ef2.getNumInputSubstrates());
 	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
+	}
+
 }

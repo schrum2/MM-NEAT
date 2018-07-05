@@ -480,8 +480,7 @@ public class EvolutionaryHistory {
 	 * @param populationIndex
 	 *            index of population
 	 * @param pos
-	 *            index of where node is to be added in archetype, corresponds
-	 *            to innovation number
+	 *            index of where node is to be added in archetype
 	 * @param node
 	 *            genotype to be added to archetype
 	 * @param combineCopy
@@ -492,15 +491,15 @@ public class EvolutionaryHistory {
 	 *            debugging purposes only
 	 */
 	public static void archetypeAdd(int populationIndex, int pos, NodeGene node, boolean combineCopy, String origin) {
-		if (archetypes != null && archetypes[populationIndex] != null) {
-			// node.origin = origin + " (" + (order++) + ")";
-			// System.out.println("Archetype " + populationIndex + " Add
-			// "+pos+": " + node.innovation + ":" + node);
+		// If archetype exists, and the node does not currently exist in the archetype
+		if (archetypes != null && archetypes[populationIndex] != null && indexOfArchetypeInnovation(populationIndex, node.innovation) == -1) {
 			archetypes[populationIndex].add(pos, node);
 			if (CommonConstants.trackCombiningCrossover && combineCopy) {
-				// this statement only runs if we will be tracking combining
-				// crossover information
+				// this statement only runs if we will be tracking combining crossover information
 				CombiningTWEANNCrossover.addToArchetypeForCombiningCrossover(populationIndex, pos, node, combineCopy, origin);
+			}
+			if (node.ntype == TWEANN.Node.NTYPE_OUTPUT) {
+				archetypeOut[populationIndex]++;
 			}
 		}
 		assert orderedArchetype(populationIndex) : "Archetype " + populationIndex + " added at pos " + pos

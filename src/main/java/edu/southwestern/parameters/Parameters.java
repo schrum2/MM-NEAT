@@ -62,7 +62,7 @@ public class Parameters {
 	public ParameterCollection<Double> doubleOptions;
 	public ParameterCollection<String> stringOptions;
 	// Class can be any type, hence <T> details are inappropriate
-	@SuppressWarnings("rawtypes") 
+	@SuppressWarnings("rawtypes")
 	public ParameterCollection<Class> classOptions;
 
 	/**
@@ -97,8 +97,8 @@ public class Parameters {
 	}
 
 	/**
-	 * Load file name filled with parameters and use contents to fille all
-	 * parameter collections in the standard static Parameters instance
+	 * Load file name filled with parameters and use contents to fille all parameter
+	 * collections in the standard static Parameters instance
 	 *
 	 * @param parameterFile
 	 *            file to load from
@@ -113,8 +113,8 @@ public class Parameters {
 	}
 
 	/**
-	 * Load file name filled with parameters and use contents to fill all
-	 * parameter collections.
+	 * Load file name filled with parameters and use contents to fill all parameter
+	 * collections.
 	 *
 	 * @param filename
 	 *            File name to load parameters from
@@ -154,8 +154,8 @@ public class Parameters {
 	}
 
 	/**
-	 * Save parameters to the path and filename specified by the "base",
-	 * "saveTo", "log", and "runNumber" parameters
+	 * Save parameters to the path and filename specified by the "base", "saveTo",
+	 * "log", and "runNumber" parameters
 	 */
 	public void saveParameters() {
 		String path = stringParameter("base") + "/" + stringParameter("saveTo") + integerParameter("runNumber");
@@ -201,7 +201,7 @@ public class Parameters {
 		integerOptions.add("boardGameStaticOpponentRuns", 1, "Number of Board Game matches to play against the Static Opponent Fitness Function");
 		integerOptions.add("breve2DAgentHealth", 50, "Hitpoints of agents in breve 2D domains");
 		integerOptions.add("breve2DTimeLimit", 1000, "Number of time steps allowed in breve 2D domains");
-		integerOptions.add("cascadeExpansionSwitchGeneration", 100, "The generation that a cascade expansion will occur in HyperNEAT. Hardcoded for now");
+		integerOptions.add("cascadeExpansionGenerationInterval", 50, "HyperNEAT will expand at each generation interval if the parameter cascadeExpansion is true");
 		integerOptions.add("cleanFrequency", 10, "How frequently the archetype needs to be cleaned out");
 		integerOptions.add("clipLength", Keyboard.NOTE_LENGTH_DEFAULT, "Length of clip played in Breedesizer");
 		integerOptions.add("closeGhostDistance", 35, "Distance at which threat ghosts are considered too close for safety");
@@ -287,6 +287,7 @@ public class Parameters {
 		integerOptions.add("numActiveGhosts", 4, "Number of moving ghosts in pacman");
 		integerOptions.add("numBreve2DMonsters", 4, "Number of evolving breve 2D monsters");
 		integerOptions.add("numCoevolutionSubpops", 0, "When evolving a selector, number of populations of subcontrollers to choose from");
+		integerOptions.add("numIncomingLinksForCascadeExpansion", 0, "When using MSS with cascade, this is the number of links connected to the cppn outputs of new substrate layers");
 		integerOptions.add("numModesToPrefer", -1, "If non-negative, then a fitness function rewards even usage of this many modes");
 		integerOptions.add("numMonsterRays", 5, "Number of ray trace sensors on each monster");
 		integerOptions.add("numShapeInnovationSamples", 3, "Number of angles to take 2D image of 3D shape from for shape innovation task");
@@ -352,6 +353,7 @@ public class Parameters {
 		booleanOptions.add("botprizeMod", false, "Whether or not to use the 2012 BotPrize mod in UT2004 games");
 		booleanOptions.add("cascadeExpansion", false, "allows for cascade expansion in HyperNEAT, adding layers during evaluation");
 		booleanOptions.add("convolution", false, "HyperNEAT phenotypes allow convolutional structure");
+		booleanOptions.add("convolutionCoordinates",  false,  "HyperNEAT encoding of convolutional structure using the coordinates within the substrate");
 		booleanOptions.add("convolutionDeltas", false, "HyperNEAT encoding of convolutional structure uses the delta offset approach of Verbancsics");
 		booleanOptions.add("convolutionWeightSharing", false, "HyperNEAT convolutional networks repeat the same weights across all receptive fields from one substrate to another");
 		booleanOptions.add("cooperativeAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught as a team");
@@ -948,7 +950,7 @@ public class Parameters {
 	 * @return corresponding Class parameter value
 	 */
 	// Class needs to be raw because any type can be returned
-	@SuppressWarnings("rawtypes") 
+	@SuppressWarnings("rawtypes")
 	public Class classParameter(String label) {
 		return classOptions.get(label);
 	}
@@ -1009,18 +1011,19 @@ public class Parameters {
 				System.out.println("Did not recognize \"" + entity + "\" with value \"" + value + "\"");
 				if (terminateOnUnrecognized) {
 					throw new IllegalArgumentException(entity + " is not a valid parameter");
-					//usage(1);
+					// usage(1);
 				}
 			}
 		}
 	}
 
 	/**
-	 * Based on the String arguments passed at the command line, extract
-	 * the path and file name of the parameter log file (if it exists). 
-	 * This makes it easy to check for an existing experiment run and
-	 * resume it.
-	 * @param args Same arguments passed to main from command line
+	 * Based on the String arguments passed at the command line, extract the path
+	 * and file name of the parameter log file (if it exists). This makes it easy to
+	 * check for an existing experiment run and resume it.
+	 * 
+	 * @param args
+	 *            Same arguments passed to main from command line
 	 * @return path and file name of potential parameter log file.
 	 */
 	public static String getLogFilename(String[] args) {
@@ -1053,13 +1056,13 @@ public class Parameters {
 			}
 		}
 		String logAfterHypen = "";
-		for(int i = 0; i < log.length(); i++) {
+		for (int i = 0; i < log.length(); i++) {
 			if (log.charAt(i) == '-') {
 				logAfterHypen = log.substring(i + 1);
 				break;
 			}
 		}
-		if (!logAfterHypen.equals(saveTo))  {
+		if (!logAfterHypen.equals(saveTo)) {
 			throw new IllegalArgumentException("string of log must equal string after hypen in saveTo");
 		}
 		if (base.equals("") && saveTo.equals("")) {
@@ -1070,8 +1073,10 @@ public class Parameters {
 
 	/**
 	 * Show the descriptive help message of each parameter
-	 * @param status The status that the program will exit with after
-	 *               showing the information.
+	 * 
+	 * @param status
+	 *            The status that the program will exit with after showing the
+	 *            information.
 	 */
 	public void usage(int status) {
 		System.out.println("Usage:");
@@ -1092,8 +1097,11 @@ public class Parameters {
 
 	/**
 	 * Set integer option value
-	 * @param label label for int parameter
-	 * @param value new value
+	 * 
+	 * @param label
+	 *            label for int parameter
+	 * @param value
+	 *            new value
 	 */
 	public void setInteger(String label, int value) {
 		this.integerOptions.change(label, value);
@@ -1101,8 +1109,11 @@ public class Parameters {
 
 	/**
 	 * Set long option value
-	 * @param label label for long parameter
-	 * @param value new value
+	 * 
+	 * @param label
+	 *            label for long parameter
+	 * @param value
+	 *            new value
 	 */
 	public void setLong(String label, long value) {
 		this.longOptions.change(label, value);
@@ -1110,8 +1121,11 @@ public class Parameters {
 
 	/**
 	 * Set double option value
-	 * @param label label for double parameter
-	 * @param value new value
+	 * 
+	 * @param label
+	 *            label for double parameter
+	 * @param value
+	 *            new value
 	 */
 	public void setDouble(String label, double value) {
 		this.doubleOptions.change(label, value);
@@ -1119,8 +1133,11 @@ public class Parameters {
 
 	/**
 	 * Set boolean option value
-	 * @param label label for boolean parameter
-	 * @param value new value
+	 * 
+	 * @param label
+	 *            label for boolean parameter
+	 * @param value
+	 *            new value
 	 */
 	public void setBoolean(String label, boolean value) {
 		this.booleanOptions.change(label, value);
@@ -1128,8 +1145,11 @@ public class Parameters {
 
 	/**
 	 * Set String option value
-	 * @param label label for String parameter
-	 * @param value new value
+	 * 
+	 * @param label
+	 *            label for String parameter
+	 * @param value
+	 *            new value
 	 */
 	public void setString(String label, String value) {
 		this.stringOptions.change(label, value);
@@ -1137,8 +1157,11 @@ public class Parameters {
 
 	/**
 	 * Set Class option value
-	 * @param label label for Class parameter
-	 * @param value new value
+	 * 
+	 * @param label
+	 *            label for Class parameter
+	 * @param value
+	 *            new value
 	 */
 	@SuppressWarnings("rawtypes")
 	public void setClass(String label, Class value) {
