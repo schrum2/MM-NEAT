@@ -429,7 +429,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		if(CommonConstants.inputsUseID && ntype == TWEANN.Node.NTYPE_INPUT) {
 			ftype = ActivationFunctions.FTYPE_ID; // Force input nodes to use ID activation function
 		}
-		if(normalizedNodes && ntype != TWEANN.Node.NTYPE_INPUT) {
+		if(normalizedNodes && ntype != TWEANN.Node.NTYPE_INPUT) { //this could be a parameter option later
 			return new NormalizedMemoryNodeGene(ftype, ntype, innovation, frozen, bias, memGamma, memBeta);
 		} else if (smallerGenotypes) {
 			return new NodeGene(ftype, ntype, bias, innovation);

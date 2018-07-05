@@ -356,7 +356,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						throw e;
 					}
 				}
-				newNodes.add(newNodeGene(sub.getFtype(), sub.getStype(), innovationID++, false, bias, normalizedNodeMemory));
+				//newNodes.add(newNodeGene(sub.getFtype(), sub.getStype(), innovationID++, false, bias, normalizedNodeMemory));
+				newNodes.add(newSubstrateNodeGene(sub, bias));
 			}
 
 			if(CommonConstants.evolveHyperNEATBias && !CommonConstants.substrateBiasLocationInputs && sub.getStype() != Substrate.INPUT_SUBSTRATE) {
@@ -369,6 +370,18 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			}
 		}
 		return newNodes;
+	}
+	
+	/**
+	 * This method creates a new neuron for a substrate.
+	 * Can be overridden to create different types of neurons.
+	 * 
+	 * @param sub Substrate that neuron is being defined in
+	 * @param bias Bias of this particular neuron
+	 * @return NodeGene for substrate
+	 */
+	public NodeGene newSubstrateNodeGene(Substrate sub, double bias) {
+		return newNodeGene(sub.getFtype(), sub.getStype(), innovationID++, false, bias, normalizedNodeMemory);
 	}
 
 	/**

@@ -15,7 +15,7 @@ import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class NormalizedMemoryNodeTest {
 
-	@Test
+	//@Test
 	public void testMeanNetwork() {
 		Parameters.initializeParameterCollections(new String[0]);
 		ArrayList<NodeGene> nodes = new ArrayList<NodeGene>();
