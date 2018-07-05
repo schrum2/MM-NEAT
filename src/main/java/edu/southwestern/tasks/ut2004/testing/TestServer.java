@@ -26,10 +26,11 @@ public class TestServer {
 		int evalMinutes = Parameters.parameters.integerParameter("utEvalMinutes");
 		String map = Parameters.parameters.stringParameter("utMap");
 		int desiredSkill = 0;
+		int nativeBotSkill = 0;
 		int numNativeBots = 0;
 		ArrayList<UT2004FitnessFunction<TWEANN>> fitness = new ArrayList<>();
 		ArrayList<UT2004FitnessFunction<TWEANN>> others = new ArrayList<>();
 		//launches server
-		UT2004Task.evaluateMultipleGenotypes(individuals, map, numNativeBots, null, null, null, controller, evalMinutes, desiredSkill,	fitness, others);
+		UT2004Task.evaluateMultipleGenotypes(individuals, map, numNativeBots, null, null, null, controller, evalMinutes, desiredSkill, nativeBotSkill, fitness, others);
 	}
 }

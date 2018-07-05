@@ -28,10 +28,11 @@ public class AttemptAtTeammateServer {
 		int evalMinutes = Parameters.parameters.integerParameter("utEvalMinutes");
 		String map = Parameters.parameters.stringParameter("utMap");
 		int desiredSkill = 0;
+		int nativeBotSkill = 3;
 		int numNativeBotOpponents = 0; // TODO: Change
 		ArrayList<UT2004FitnessFunction<TWEANN>> fitness = new ArrayList<>();
 		ArrayList<UT2004FitnessFunction<TWEANN>> others = new ArrayList<>();
 		//launches server
-		UT2004Task.evaluateMultipleGenotypes(individuals, map, numNativeBotOpponents, null, null, null, controller, evalMinutes, desiredSkill,	fitness, others);
+		UT2004Task.evaluateMultipleGenotypes(individuals, map, numNativeBotOpponents, null, null, null, controller, evalMinutes, desiredSkill, nativeBotSkill,	fitness, others);
 	}
 }

@@ -82,10 +82,10 @@ public class AttemptAtTeammateController implements BotController {
 			System.out.println("Turning around");
 			return new OldActionWrapper(new QuickTurnAction(OldActionWrapper.getAgentMemory(bot)));
 		} else {
-			System.out.println("NOT TURNING!");
-			System.out.println("bot.getSenses().isBeingDamaged() = " + bot.getSenses().isBeingDamaged());
-			System.out.println("visibleEnemy == null = " + (visibleEnemy == null));
-			System.out.println("lastSeenEnemy == null = " + (lastSeenEnemy == null));
+//			System.out.println("NOT TURNING!");
+//			System.out.println("bot.getSenses().isBeingDamaged() = " + bot.getSenses().isBeingDamaged());
+//			System.out.println("visibleEnemy == null = " + (visibleEnemy == null));
+//			System.out.println("lastSeenEnemy == null = " + (lastSeenEnemy == null));
 		}
 		
 		/**if an enemy is visible attack?*/

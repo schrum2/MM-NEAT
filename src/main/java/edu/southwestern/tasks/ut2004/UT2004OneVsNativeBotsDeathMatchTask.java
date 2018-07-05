@@ -32,7 +32,7 @@ public class UT2004OneVsNativeBotsDeathMatchTask<T extends Network> extends UT20
 	 * @param desiredSkill (skill level of the evolving bot)
 	 */
 	public UT2004OneVsNativeBotsDeathMatchTask(String map, int evalMinutes, int desiredSkill) {
-		super(map, evalMinutes, desiredSkill, new BotController[0]);
+		super(evalMinutes, desiredSkill, new BotController[0]);
 		// Fitness objectives
 		addObjective(new DamageDealtFitness<T>(), fitness, true);
 		addObjective(new DamageReceivedFitness<T>(), fitness, true);

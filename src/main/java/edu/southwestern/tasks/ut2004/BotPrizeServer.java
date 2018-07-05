@@ -26,13 +26,14 @@ public class BotPrizeServer {
 		BotController[] controller = new BotController[0];
 		int evalMinutes = Parameters.parameters.integerParameter("utEvalMinutes");
 		int desiredSkill = 0;
-		int numNativeBots = 0; // However, the BotPrize server may auto-add native bots
+		int nativeBotSkill =  7;
+		int numNativeBots = 5; // However, the BotPrize server may auto-add native bots
 		ArrayList<UT2004FitnessFunction<TWEANN>> fitness = new ArrayList<>();
 		ArrayList<UT2004FitnessFunction<TWEANN>> others = new ArrayList<>();
 		
 		String[] mapList = new String[] {"DM-GoatswoodPlay", "DM-Flux2", "DM-JunkYard", "DM-DE-OSIRIS2", "DM-Antalus", "DM-IceHenge"};
 		
 		//launches server
-		UT2004Task.evaluateMultipleGenotypesAcrossMultipleMaps(individuals, mapList, numNativeBots, null, null, null, controller, evalMinutes, desiredSkill, fitness, others);
+		UT2004Task.evaluateMultipleGenotypesAcrossMultipleMaps(individuals, mapList, numNativeBots, null, null, null, controller, evalMinutes, desiredSkill, nativeBotSkill, fitness, others);
 	}
 }
