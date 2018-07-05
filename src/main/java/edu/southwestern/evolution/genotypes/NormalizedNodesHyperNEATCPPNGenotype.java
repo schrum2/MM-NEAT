@@ -63,8 +63,8 @@ public class NormalizedNodesHyperNEATCPPNGenotype extends HyperNEATCPPNGenotype{
 		System.out.println("gamma: " + gammaValues.getPhenotype());
 		System.out.println("beta: " + betaValues.getPhenotype());
 		System.out.println("innovationID" + innovationID);
-		double gammaValue = gammaValues.getPhenotype().get(innovationID);
-		double betaValue = betaValues.getPhenotype().get(innovationID);
+		double gammaValue = gammaValues.getPhenotype().get(0);
+		double betaValue = betaValues.getPhenotype().get(0);
 		return newNodeGene(sub.getFtype(), sub.getStype(), innovationID++, false, bias, normalizedNodeMemory, gammaValue, betaValue);
 	}
 	
