@@ -96,7 +96,7 @@ public class TWEANN implements Network {
 			this.moduleSource = moduleSource;
 		}
 
-		protected void transmit(double signal) {
+		protected void transmit(double signal) {			
 			assert target != null : "Link target is null? " + innovation + " with weight " + weight;
 			assert!Double.isNaN(target.sum) : "target.sum is NaN before transmit";
 			assert!Double.isNaN(signal) : "signal is NaN before transmit";
@@ -104,7 +104,7 @@ public class TWEANN implements Network {
 			assert!Double.isNaN(signal * weight) : "signal * weight is NaN before transmit: " + signal + "*" + weight;
 			//if(target.innovation == 9) System.out.print(" to "+target.innovation+ ":" + target.sum + " += receiving " + signal + "*"+weight+"; ");
             target.sum += (signal * weight);
-			//if(target.innovation == 9) System.out.println("new sum:" + target.sum);
+            //if(target.innovation == 9) System.out.println("new sum:" + target.sum);
 			assert!Double.isNaN(target.sum) : "target.sum is NaN after transmit: " + signal + "*" + weight;
 		}
 	}
