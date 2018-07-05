@@ -20,6 +20,7 @@ import edu.southwestern.tasks.ut2004.actions.NavigateToLocationAction;
 import edu.southwestern.tasks.ut2004.actions.OldActionWrapper;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.RandomItemPathExplorer;
+import edu.southwestern.tasks.ut2004.controller.SequentialPathExplorer;
 import edu.southwestern.tasks.ut2004.controller.behaviors.AttackEnemyAloneModule;
 import edu.southwestern.tasks.ut2004.controller.behaviors.ItemExplorationBehaviorModule;
 import edu.southwestern.tasks.ut2004.weapons.UT2004WeaponManager;
@@ -30,6 +31,7 @@ import mockcz.cuni.pogamut.Client.AgentBody;
 import mockcz.cuni.pogamut.Client.AgentMemory;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
 import utopia.agentmodel.actions.ApproachEnemyAction;
+import utopia.agentmodel.actions.GotoItemAction;
 import utopia.agentmodel.actions.QuickTurnAction;
 import utopia.controllers.scripted.ChasingController;
 
@@ -41,7 +43,8 @@ import utopia.controllers.scripted.ChasingController;
 public class AttemptAtTeammateController implements BotController {
 
 	AttackEnemyAloneModule attackAlone = new AttackEnemyAloneModule();
-	RandomItemPathExplorer runAround = new RandomItemPathExplorer();
+	RandomItemPathExplorer runAroundItems = new RandomItemPathExplorer();
+	//SequentialPathExplorer runAroundGeneral = new SequentialPathExplorer();
 	AgentMemory memory;
 	AgentBody body;
 	public final UT2004WeaponManager weaponManager;
@@ -50,6 +53,7 @@ public class AttemptAtTeammateController implements BotController {
 	public static final int THRESHOLD_HEALTH_LEVEL = 20;
 	public static final int DNE_HEALTH_LEVEL = 30; //DNE = do not engage. if the bot is below this health it should avoid an enemy it sees
 	public static final double MAX_DISTANCE_TO_ITEM = 300;
+	public static final double COMBAT_TYPE_THRESHOLD_DISTANCE = 150; //distance for approach enemy vs dodge shoot
 	
 	public AttemptAtTeammateController(UT2004WeaponManager weaponManager) {
 		this.weaponManager = weaponManager;
@@ -90,13 +94,25 @@ public class AttemptAtTeammateController implements BotController {
 		
 		/**if an enemy is visible attack?*/
 		if(visibleEnemy != null){
+			double enemyDistance = visibleEnemy.getLocation().getDistance(bot.getBot().getLocation());
+			lastSeenEnemy = visibleEnemy;
 			if(shouldEngage(bot)) { //fight if you have health and ammo
-				System.out.println("Attacking enemy");
-				return new OldActionWrapper(new ApproachEnemyAction(OldActionWrapper.getAgentMemory(bot), true, true, false, true));
+//				if(enemyDistance > COMBAT_TYPE_THRESHOLD_DISTANCE) {
+					System.out.println("Attacking enemy far away");
+					return new OldActionWrapper(new ApproachEnemyAction(OldActionWrapper.getAgentMemory(bot), true, true, false, true));
+//				} else {
+//					System.out.println("Attacking enemy close by");
+//					return new OldActionWrapper(new DodgeShootAction());
+//				}
 			}else { //RUN BITCH! TODO: take this out before you get in trouble
 				return new NavigateToLocationAction(bot.getItems().getNearestSpawnedItem(ItemType.Category.HEALTH).getLocation());
 				//go get health because enemy might have seen bot, and bot's gonna need it
 			}
+		}
+		
+		/**should you go after the last enemy you saw?*/
+		if(shouldEngage(bot) && visibleEnemy == null && lastSeenEnemy != null) {
+			
 		}
 
 		/**if bot sees friend when no enemies are nearby, it should follow teammate*/
@@ -115,15 +131,17 @@ public class AttemptAtTeammateController implements BotController {
 
 		//make sure to pick up weapons
 		if(bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON) != null){
+			Item nearestItem = bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON);
 			Location itemLocation =  bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON).getLocation();
 			double itemDistance = itemLocation.getDistance(bot.getBot().getLocation());
 			if(itemDistance < MAX_DISTANCE_TO_ITEM) {
 				System.out.println("getting weapon");
-				return new NavigateToLocationAction(itemLocation);
+				//return new NavigateToLocationAction(itemLocation);
+				return new OldActionWrapper(new GotoItemAction(OldActionWrapper.getAgentMemory(bot), nearestItem));
 			}
 		}
 		System.out.println("running like a headless chicken");
-		return runAround.control(bot);
+		return runAroundItems.control(bot);
 	}
 
 
@@ -142,6 +160,13 @@ public class AttemptAtTeammateController implements BotController {
 		}
 		return false;
 	}
+	
+//	public boolean shouldChase(UT2004BotModuleController bot, boolean shouldEngage) {
+//		if(shouldEngage = true) {
+//			Location attackLocation =  
+//		}
+//		return false;
+//	}
 	
     /**
      * Equips the best weapon for the current situation and returns true if the
