@@ -548,8 +548,6 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 												inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
 											}
 											// This approach maintains all values in the scaled range
-											
-											
 											assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
 											assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
 											assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
@@ -573,8 +571,6 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 											// In Verbancsics' scheme: (f2 - f1, z2 - z1, f2, z2)
 											inputs = ArrayUtil.combineArrays(inputs, new double[]{scaledSubstrate2Coordinates.getX() - scaledSubstrate1Coordinates.getX(), scaledSubstrate2Coordinates.getY() - scaledSubstrate1Coordinates.getY(), scaledSubstrate2Coordinates.getX(), scaledSubstrate2Coordinates.getY()});											
 											// These inputs may be outside the [-1,1] range
-											} else if (convolutionCoordinates) {
-												//TODO
 											} else {												
 												// Extra inputs are locations of the substrates (just x/y coordinates)
 												// In Verbancsics' scheme: (f1, z1, f2, z2)
