@@ -33,10 +33,7 @@ public class PursueEnemyAction extends NavigateToLocationAction {
 	public String execute(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		AgentBody body = OldActionWrapper.getAgentBody(bot);
 		super.execute(bot);
-
-		
-		
-		return ("Following teammate: " + nearestEnemy.getName());
+		return ("Following enemy: " + nearestEnemy.getName());
 	}
 
 }

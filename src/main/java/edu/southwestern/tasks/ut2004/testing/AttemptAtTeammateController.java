@@ -18,6 +18,7 @@ import edu.southwestern.tasks.ut2004.actions.EmptyAction;
 import edu.southwestern.tasks.ut2004.actions.FollowTeammateAction;
 import edu.southwestern.tasks.ut2004.actions.NavigateToLocationAction;
 import edu.southwestern.tasks.ut2004.actions.OldActionWrapper;
+import edu.southwestern.tasks.ut2004.actions.PursueEnemyAction;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.RandomItemPathExplorer;
 import edu.southwestern.tasks.ut2004.controller.SequentialPathExplorer;
@@ -31,6 +32,7 @@ import mockcz.cuni.pogamut.Client.AgentBody;
 import mockcz.cuni.pogamut.Client.AgentMemory;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
 import utopia.agentmodel.actions.ApproachEnemyAction;
+import utopia.agentmodel.actions.DodgeShootAction;
 import utopia.agentmodel.actions.GotoItemAction;
 import utopia.agentmodel.actions.QuickTurnAction;
 import utopia.controllers.scripted.ChasingController;
@@ -97,22 +99,21 @@ public class AttemptAtTeammateController implements BotController {
 			double enemyDistance = visibleEnemy.getLocation().getDistance(bot.getBot().getLocation());
 			lastSeenEnemy = visibleEnemy;
 			if(shouldEngage(bot)) { //fight if you have health and ammo
-//				if(enemyDistance > COMBAT_TYPE_THRESHOLD_DISTANCE) {
-					System.out.println("Attacking enemy far away");
+				if(enemyDistance > COMBAT_TYPE_THRESHOLD_DISTANCE) {
+					System.out.println("Attacking enemy");
 					return new OldActionWrapper(new ApproachEnemyAction(OldActionWrapper.getAgentMemory(bot), true, true, false, true));
-//				} else {
-//					System.out.println("Attacking enemy close by");
-//					return new OldActionWrapper(new DodgeShootAction());
-//				}
+				}
 			}else { //RUN BITCH! TODO: take this out before you get in trouble
-				return new NavigateToLocationAction(bot.getItems().getNearestSpawnedItem(ItemType.Category.HEALTH).getLocation());
+				Item nearestHealth = bot.getItems().getNearestSpawnedItem(ItemType.Category.HEALTH);
+				return new OldActionWrapper(new GotoItemAction(OldActionWrapper.getAgentMemory(bot), nearestHealth));
 				//go get health because enemy might have seen bot, and bot's gonna need it
 			}
 		}
 		
 		/**should you go after the last enemy you saw?*/
 		if(shouldEngage(bot) && visibleEnemy == null && lastSeenEnemy != null) {
-			
+			//HUNT THEM DOWN
+			return new PursueEnemyAction(lastSeenEnemy, true);		
 		}
 
 		/**if bot sees friend when no enemies are nearby, it should follow teammate*/
@@ -131,15 +132,29 @@ public class AttemptAtTeammateController implements BotController {
 
 		//make sure to pick up weapons
 		if(bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON) != null){
-			Item nearestItem = bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON);
-			Location itemLocation =  bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON).getLocation();
-			double itemDistance = itemLocation.getDistance(bot.getBot().getLocation());
-			if(itemDistance < MAX_DISTANCE_TO_ITEM) {
+			Item nearestWeapon = bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON);
+			Location weaponLocation =  bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON).getLocation();
+			double weaponDistance = weaponLocation.getDistance(bot.getBot().getLocation());
+			if(weaponDistance < MAX_DISTANCE_TO_ITEM) {
 				System.out.println("getting weapon");
 				//return new NavigateToLocationAction(itemLocation);
-				return new OldActionWrapper(new GotoItemAction(OldActionWrapper.getAgentMemory(bot), nearestItem));
+				return new OldActionWrapper(new GotoItemAction(OldActionWrapper.getAgentMemory(bot), nearestWeapon));
 			}
 		}
+		
+		//make sure to pick up armour
+		if(bot.getItems().getNearestVisibleItem(ItemType.Category.ARMOR) != null){
+			Item nearestArmour = bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON);
+			Location armourLocation =  bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON).getLocation();
+			double armourDistance = armourLocation.getDistance(bot.getBot().getLocation());
+			if(armourDistance < MAX_DISTANCE_TO_ITEM) {
+				System.out.println("getting weapon");
+				//return new NavigateToLocationAction(itemLocation);
+				return new OldActionWrapper(new GotoItemAction(OldActionWrapper.getAgentMemory(bot), nearestArmour));
+			}
+		}
+		
+		
 		System.out.println("running like a headless chicken");
 		return runAroundItems.control(bot);
 	}

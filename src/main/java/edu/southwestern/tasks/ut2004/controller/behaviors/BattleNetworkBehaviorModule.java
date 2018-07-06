@@ -39,6 +39,7 @@ public class BattleNetworkBehaviorModule<T extends Network> extends NetworkContr
 	 * tells the bot whether to follow this behaviour
 	 */
 	public boolean trigger(UT2004BotModuleController bot) {
-		return bot.getPlayers().canSeeEnemies() && bot.getWeaponry().hasLoadedRangedWeapon();
+		return (bot.getPlayers().canSeePlayers() && bot.getWeaponry().hasLoadedRangedWeapon());
+		//neural network will now trigger if the bot sees friends or enemies
 	}
 }
