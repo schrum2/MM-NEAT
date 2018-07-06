@@ -2,11 +2,12 @@ package edu.southwestern.evolution.genotypes;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+
 import org.junit.Test;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
-import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
 
@@ -23,9 +24,27 @@ public class NormalizedNodesHyperNEATCPPNGenotypeTest {
 		EvolutionaryHistory.initArchetype(0);
 		
 		NormalizedNodesHyperNEATCPPNGenotype nnhncg = new NormalizedNodesHyperNEATCPPNGenotype();
-		TWEANN nnhncgPhenotype = nnhncg.getPhenotype();
-		for(double i = -1; i < 1; i += .01) {
-			nnhncgPhenotype.process(new double[] {i});
+		nnhncg.mutate();
+		ArrayList<Double> mutatedBeta = nnhncg.betaValues.getPhenotype();
+		//System.out.println("mutatedBeta: " + mutatedBeta);
+		boolean mutatedValueExists = false;
+		for(Double i: mutatedBeta) {
+			if(i != 1.0) {
+				mutatedValueExists = true;
+				break;
+			}
 		}
+		assertTrue(mutatedValueExists);
+		ArrayList<Double> mutatedGamma = nnhncg.gammaValues.getPhenotype();
+		//System.out.println("mutatedGamma: " + mutatedGamma);
+		mutatedValueExists = false;
+		for(Double i: mutatedGamma) {
+			if(i != 0.0) {
+				mutatedValueExists = true;
+				break;
+			}
+		}
+		assertTrue(mutatedValueExists);
+		
 	}
 }
