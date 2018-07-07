@@ -57,6 +57,7 @@ import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.retrace.HumanRetraceController;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable.WeaponTableEntry;
+import mockcz.cuni.amis.pogamut.ut2004.agent.navigation.MyUTPathExecutor;
 import mockcz.cuni.pogamut.Client.AgentMemory;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
 import utopia.agentmodel.ActionLog;
@@ -310,7 +311,7 @@ public class UT2 extends BaseBot {
             this.judgingController = new JudgingController(getAgentMemory(), battleController);
         }
         this.chaseController = new ChasingController(bot, getAgentMemory());
-        this.pathController = new DistantPathController(bot, getAgentMemory().itemPathExecutor, getAgentMemory().pathPlanner, getAgentMemory());
+        this.pathController = new DistantPathController(bot, (MyUTPathExecutor) getAgentMemory().itemPathExecutor, getAgentMemory().pathPlanner, getAgentMemory());
         this.shieldGunController = new ShieldGunController(this.pathController);
 
         String map = game.getMapName();

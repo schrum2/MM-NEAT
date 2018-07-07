@@ -37,7 +37,7 @@ public class ChasingController extends Controller {
     public ChasingController(UT2004Bot bot, final AgentMemory memory) {
         super();
         change = false;
-        this.playerPathExecutor = memory.playerPathExecutor;
+        this.playerPathExecutor = (MyUTPathExecutor) memory.playerPathExecutor;
 
         register("Abort/Too Many Turns");
         register("Abort/What Direction");

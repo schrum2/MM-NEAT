@@ -6,7 +6,7 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Configurati
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.RemoveRay;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.AutoTraceRay;
 import cz.cuni.amis.utils.flag.FlagListener;
-import edu.southwestern.tasks.ut2004.Util;
+import edu.southwestern.tasks.ut2004.UT2004Util;
 import java.util.ArrayList;
 import javax.vecmath.Vector3d;
 
@@ -109,7 +109,7 @@ public class AutoRayTraceSensorBlock implements UT2004SensorBlock {
 			Location botLocation = bot.getInfo().getLocation();
 			Location hitLocation = trace.getHitLocation();
 			double distance = (botLocation == null || hitLocation == null) ? 0 : (botLocation.getDistance(hitLocation));
-			inputs[in++] = trace.isResult() ? Util.scale(distance, RAY_LENGTH) : 0;
+			inputs[in++] = trace.isResult() ? UT2004Util.scale(distance, RAY_LENGTH) : 0;
 		}
 		return in;
 	}

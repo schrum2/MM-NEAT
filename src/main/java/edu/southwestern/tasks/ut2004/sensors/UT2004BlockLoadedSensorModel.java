@@ -61,6 +61,7 @@ public abstract class UT2004BlockLoadedSensorModel implements UT2004SensorModel 
 	public int numberOfSensors() {
 		int count = 0;
 		for (int i = 0; i < blocks.size(); i++) {
+			//System.out.println(blocks.get(i) + " adds " + blocks.get(i).numberOfSensors());
 			count += blocks.get(i).numberOfSensors(); //loops through the array to count the sensors
 		}
 		return count;

@@ -4,11 +4,11 @@ import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
-import edu.southwestern.tasks.ut2004.Util;
+import edu.southwestern.tasks.ut2004.UT2004Util;
 import javax.vecmath.Vector3d;
 
 /**
- *This class determines how the bot should move in relation to an identifies opponent
+ *This class determines how the bot should move in relation to an identified opponent
  *
  * @author Jacob Schrum
  */
@@ -61,7 +61,7 @@ public class OpponentRelativeMovementAction implements BotAction {
 				// vector-to-destination
 				double polarAngle = Math.atan2(strafeLeftRight, moveForwardBackward);
 				// vector-to-destination
-				Vector3d botToDestination = Util.rotateVectorInPlane(botToOpponent.asVector3d(), polarAngle);
+				Vector3d botToDestination = UT2004Util.rotateVectorInPlane(botToOpponent.asVector3d(), polarAngle);
 				// Destination
 				Location destination = botLocation
 						.add(new Location(botToDestination.x, botToDestination.y, botToDestination.z));

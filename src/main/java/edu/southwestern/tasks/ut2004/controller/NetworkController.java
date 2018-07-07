@@ -10,7 +10,7 @@ import edu.southwestern.tasks.ut2004.sensors.UT2004SensorModel;
 import edu.southwestern.tasks.ut2004.weapons.UT2004WeaponManager;
 
 /**
- *
+ * Relays directions to the bot
  * @author Jacob Schrum
  */
 public class NetworkController<T extends Network> extends Organism<T>implements BotController {
@@ -40,7 +40,7 @@ public class NetworkController<T extends Network> extends Organism<T>implements 
 	/**
 	 * resets the controller to be reprogrammed
 	 */
-	public void reset(UT2004BotModuleController bot) {
+	public void reset(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		brain.flush();
 	}
 
@@ -48,7 +48,7 @@ public class NetworkController<T extends Network> extends Organism<T>implements 
 	 * reads data from the inputs, and interprets it into actions
 	 * @return returns the next action for the bot to take
 	 */
-	public BotAction control(UT2004BotModuleController bot) {
+	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		// pick best weapon
 		bot.getWeaponry().changeWeapon(weaponManager.chooseWeapon(bot));
 		// Get sensot values
@@ -69,7 +69,7 @@ public class NetworkController<T extends Network> extends Organism<T>implements 
 	/**
 	 * creates the module controller
 	 */
-	public void initialize(UT2004BotModuleController bot) {
+	public void initialize(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		sensorModel.prepareSensorModel(bot);
 		weaponManager.prepareWeaponPreferences(bot);
 	}
