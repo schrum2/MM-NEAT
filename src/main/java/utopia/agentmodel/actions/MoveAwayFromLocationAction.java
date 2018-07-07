@@ -5,7 +5,7 @@ import mockcz.cuni.pogamut.Client.AgentBody;
 import mockcz.cuni.pogamut.Client.AgentMemory;
 
 /**
- *
+ * Tells the bot to avoid a location and move away from it
  * @author nvh
  */
 public class MoveAwayFromLocationAction extends Action {
@@ -13,16 +13,27 @@ public class MoveAwayFromLocationAction extends Action {
     private final AgentMemory memory;
 
     @Override
+    /**
+     * allows the bot to print out a description of it's actions
+     */
     public String toString(){
         return "MoveAwayFromLocationAction:" + avoid.toString();
     }
 
+    /**
+     * Initializes the action with the memory, and location to avoid
+     * @param memory (agent memory to use)
+     * @param avoid (a location that the bot is told to avoid)
+     */
     public MoveAwayFromLocationAction(AgentMemory memory, Location avoid) {
         this.avoid = avoid;
         this.memory = memory;
     }
 
     @Override
+    /**
+     * tells the bot to execute the action
+     */
     public void execute(AgentBody body) {
         Location agentLocation = body.info.getLocation();
         if(avoid != null && agentLocation != null){

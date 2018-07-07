@@ -15,6 +15,10 @@ import mockcz.cuni.pogamut.MessageObjects.Triple;
 import utopia.controllers.scripted.ShieldGunController;
 
 @SuppressWarnings("serial")
+/**
+ * Dictates the bot's movement based on the location of an enemy that it is looking at
+ * @author Jacob Schrum
+ */
 public abstract class OpponentRelativeAction extends Action {
 
     public static final double AIM_VELOCITY_DIFFERENCE_DISTORTION = 40.0; // Higher values make aim better
@@ -32,6 +36,14 @@ public abstract class OpponentRelativeAction extends Action {
     protected boolean jump;
     protected boolean observing;
 
+    /**
+     * initializes the action's
+     * 
+     * @param memory (the agent memory to use for access)
+     * @param shoot (should the bot shoot)
+     * @param secondary (should the bot use secondary firing mode)
+     * @param jump (should the bot jump)
+     */
     public OpponentRelativeAction(AgentMemory memory, boolean shoot, boolean secondary, boolean jump) {
         this.memory = memory;
         this.shoot = shoot;
@@ -40,25 +52,56 @@ public abstract class OpponentRelativeAction extends Action {
         this.observing = false;
     }
 
+    /**
+     * initializes the action without jumping, bot assumes it SHOULD NOT jump
+     * 
+     * @param memory (the agent memory to use for access)
+     * @param shoot (should the bot shoot)
+     * @param secondary (should the bot use secondary firing mode)
+     */
     public OpponentRelativeAction(AgentMemory memory, boolean shoot, boolean secondary) {
         this(memory, shoot, secondary, false);
     }
 
+    /**
+     * tells the bot to look at an enemy and NOT shoot
+     */
     public void observe(){
         this.observing = true;
         this.shoot = false;
     }
 
+    /**
+     * shoot if the bot is NOT observing, call a more complicated shootDecision method
+     * 
+     * @param enemy (opponent to shoot)
+     * @return (returns whether or not the bot will shoot)
+     */
     public boolean shootDecision(Player enemy) {
         if(observing) return false;
         return shootDecision(memory, enemy, this.shoot, this.secondary);
     }
 
+    /**
+     * adds a random disturbance to the bot's aim with weapons that fire in arcs, so it isn't always killing 
+     * everyone perfectly with a hard to aim weapon
+     * 
+     * @param enemy (enemy the bot is shooting at)
+     * @param agent (the bot shooting)
+     * @return returns a slight disturbance so the bot doesn't have perfect aim
+     */
     private static Triple lobAdjustment(Player enemy, Triple agent) {
         Triple target = Triple.locationToTriple(enemy.getLocation());
         return Triple.subtract(agent, target).multiplyByNumber((Math.random() * 0.3) + 0.3);
     }
 
+    /**
+     * helps the bot lead an opponent for projectiles that take time to reach their target
+     * 
+     * @param enemy (enemy the bot is shooting at)
+     * @param agent (the bot shooting)
+     * @return returns where the bot should shoot
+     */
     private static Triple slowAdjustment(Player enemy, Triple agent) {
         Triple adjust = Triple.velocityToTriple(enemy.getVelocity()).multiplyByNumber((Math.random() * 0.2) + 0.8);
         if (enemy.getLocation().z > agent.z) {
@@ -69,6 +112,15 @@ public abstract class OpponentRelativeAction extends Action {
         return adjust;
     }
 
+    /**
+     * Decides whether or not the bot should shoot
+     * 
+     * @param memory (agent memory to be used)
+     * @param enemy (opponent the bot is looking at)
+     * @param shoot (is the bot shooting)
+     * @param secondary (should the bot use secondary firing mode)
+     * @return
+     */
     public static boolean shootDecision(AgentMemory memory, Player enemy, boolean shoot, boolean secondary) {
         double distance = enemy.getLocation().getDistance(memory.info.getLocation());
         double shootingAllowanceAngle = SHOOT_FACING_ALLOWANCE;
@@ -354,6 +406,11 @@ public abstract class OpponentRelativeAction extends Action {
         }
     }
 
+    
+    /**
+     * Decides whether or not the bot should jump
+     * @param body
+     */
     public void jumpDecision(AgentBody body) {
         Player enemy = memory.getCombatTarget();
         double distance = 0;

@@ -40,7 +40,7 @@ public class EgoCentricMovementOutputModel implements UT2004OutputInterpretation
 	 * @param bot (bot that will execute the action
 	 * @param outputs (an array of numbers for the outputs)
 	 */
-	public BotAction interpretOutputs(UT2004BotModuleController bot, double[] outputs) {
+	public BotAction interpretOutputs(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, double[] outputs) {
 		double moveForwardBackward = outputs[OUTPUT_INDEX_MOVEMENT];
 		double turnLeftRight = outputs[OUTPUT_INDEX_TURNING];
 		boolean shoot = outputs[OUTPUT_INDEX_SHOOT] > 0;

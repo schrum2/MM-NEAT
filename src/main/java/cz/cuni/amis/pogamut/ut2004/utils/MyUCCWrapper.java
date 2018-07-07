@@ -92,6 +92,7 @@ public class MyUCCWrapper extends UCCWrapper {
 			throw ex3;
 		} catch (Exception ex3) {
 			exception = true;
+			ex3.printStackTrace();
 			throw new UCCStartException("Exception.", ex3);
 		} finally {
 			if (exception) {

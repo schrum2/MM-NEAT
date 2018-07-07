@@ -25,8 +25,7 @@ public class UT2004ManyVsMirrorBotsTeamDeathMatchTask<T extends Network> extends
 	 * sets the parameters for the server and evaluation
 	 */
 	public UT2004ManyVsMirrorBotsTeamDeathMatchTask() {
-		this(Parameters.parameters.stringParameter("utMap"),
-				Parameters.parameters.integerParameter("utEvalMinutes"),
+		this(	Parameters.parameters.integerParameter("utEvalMinutes"),
 				Parameters.parameters.integerParameter("utEvolvingBotSkill"));
 	}
 	//	
@@ -42,12 +41,12 @@ public class UT2004ManyVsMirrorBotsTeamDeathMatchTask<T extends Network> extends
 	/**
 	 * sets up the server and the match
 	 * @param map (map the match will be played on)
-	 * @param nativeBotSkills (skill level of the native bots)
+	 * @param desiredSkill (skill level of the native bots)
 	 * @param evalMinutes (how long the eval will last)
 	 * @param desiredSkill (skill level of the evolving bot)
 	 */
-	public UT2004ManyVsMirrorBotsTeamDeathMatchTask(String map, int evalMinutes, int desiredSkill) {
-		super(map, new int[0], evalMinutes, desiredSkill, new BotController[0]);
+	public UT2004ManyVsMirrorBotsTeamDeathMatchTask(int evalMinutes, int desiredSkill) {
+		super(evalMinutes, desiredSkill, new BotController[0]);
 		// Fitness objectives
 		//add one for team score
 		addObjective(new TeamScoreFitness<T>(), fitness, true);
@@ -77,10 +76,9 @@ public class UT2004ManyVsMirrorBotsTeamDeathMatchTask<T extends Network> extends
 		//create an array of genotypes that is size of team
 		//loop through and each one is copy of individual
 
-
-		Pair<double[], double[]>[] result = evaluateMultipleGenotypes(teamArray, map,
+		Pair<double[], double[]>[] result = evaluateMultipleGenotypesAcrossMultipleMaps(teamArray, super.mapList, 0, // 0 native bots
 				sensorModel, outputModel, weaponManager, opponents,
-				nativeBotSkills, evalMinutes, desiredSkill,
+				evalMinutes, desiredSkill, 3, // native bot skill irrelevant, set to 3
 				fitness, others);
 
 		//result[0] = ;
