@@ -1,5 +1,8 @@
 package edu.southwestern.tasks.ut2004;
 
+import java.util.HashMap;
+
+import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
@@ -12,6 +15,7 @@ import edu.southwestern.tasks.ut2004.fitness.HighestEnemyScoreFitness;
 import edu.southwestern.tasks.ut2004.fitness.ScoreFitness;
 import edu.southwestern.tasks.ut2004.fitness.StreakFitness;
 import edu.southwestern.tasks.ut2004.fitness.TeamScoreFitness;
+import edu.southwestern.tasks.ut2004.sensors.OpponentAndTeammateRelativeSensorModel;
 import edu.southwestern.util.datastructures.Pair;
 
 /**
@@ -35,9 +39,9 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 	public static int[] getNativeBotSkillArray() {
 		//array of native bots with all Parameters.parameters.integerParameter("utNativeBotSkill")
 		int[] nativeBotArray = new int[Parameters.parameters.integerParameter("utNumNativeBots")];
-		for(int i = 0; i < nativeBotArray.length; i++) {
-			nativeBotArray[i] = Parameters.parameters.integerParameter("utNativeBotSkill");
-		}
+//		for(int i = 0; i < nativeBotArray.length; i++) {
+//			nativeBotArray[i] = Parameters.parameters.integerParameter("utNativeBotSkill");
+//		}
 		return nativeBotArray;
 	}
 
@@ -49,7 +53,7 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 	 * @param desiredSkill (skill level of the evolving bot)
 	 */
 	public UT2004ManyVsNativeBotsTeamDeathMatchTask(String map, int[] nativeBotSkills, int evalMinutes, int desiredSkill) {
-		super(map, nativeBotSkills, evalMinutes, desiredSkill, new BotController[0]);
+		super(evalMinutes, desiredSkill, new BotController[0]);
 		// Fitness objectives
 		//add one for team score
 		addObjective(new TeamScoreFitness<T>(), fitness, true);
@@ -78,11 +82,27 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 		}
 		//create an array of genotypes that is size of team
 		//loop through and each one is copy of individual
+		
+		// creates a place to store team info to be shared
+		HashMap<String,Location> friendDistances = new HashMap<String,Location>();
+		if(sensorModel instanceof OpponentAndTeammateRelativeSensorModel) {
+			System.out.println("Creating HashMap for team distances");
+			((OpponentAndTeammateRelativeSensorModel) sensorModel).giveTeamLocations(friendDistances);
+		}
+		
+		HashMap<String,Double> friendHealthLevels = new HashMap<String,Double>();
+		if(sensorModel instanceof OpponentAndTeammateRelativeSensorModel) {
+			System.out.println("Creating HashMap for team HealthLevels");
+			((OpponentAndTeammateRelativeSensorModel) sensorModel).giveTeamHelathLevels(friendHealthLevels);;
+		}
+		//giveTeamHelathLevels
 
-
-		Pair<double[], double[]>[] result = evaluateMultipleGenotypes(teamArray, map,
+		assert friendDistances != null : "How is this null? We just made it";
+		assert ((OpponentAndTeammateRelativeSensorModel) sensorModel).teammateLocations != null : "Should not pass in null team information";
+		
+		Pair<double[], double[]>[] result = evaluateMultipleGenotypesAcrossMultipleMaps(teamArray, mapList, teamArray.length, // Enemy team same size as evolved team
 				sensorModel, outputModel, weaponManager, opponents,
-				nativeBotSkills, evalMinutes, desiredSkill,
+				evalMinutes, desiredSkill,  Parameters.parameters.integerParameter("utNativeBotSkill"),
 				fitness, others);
 
 		//result[0] = ;

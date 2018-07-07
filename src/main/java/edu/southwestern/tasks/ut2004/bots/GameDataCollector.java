@@ -14,7 +14,7 @@ import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.ut2004.Util;
+import edu.southwestern.tasks.ut2004.UT2004Util;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -192,7 +192,7 @@ public class GameDataCollector implements Serializable {
 							return;
 						}
 
-						double angle = Util.relativeAngleToTarget(agentLocation, info.getRotation(), playerLocation);
+						double angle = UT2004Util.relativeAngleToTarget(agentLocation, info.getRotation(), playerLocation);
 						opponentSightings++;
 						// The more the bot looks at the player, the smaller
 						// this will be.

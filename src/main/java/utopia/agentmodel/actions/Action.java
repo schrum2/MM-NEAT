@@ -1,6 +1,5 @@
 package utopia.agentmodel.actions;
 
-
 import java.io.Serializable;
 import mockcz.cuni.pogamut.Client.AgentBody;
 
@@ -8,6 +7,7 @@ import mockcz.cuni.pogamut.Client.AgentBody;
  * The Action class represents an action that can be applied to on AgentBody
  * @author Niels van Hoorn
  */
+@SuppressWarnings("serial")
 public abstract class Action  implements Serializable {
 
     /**

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.ut2004.sensors.blocks;
 
 import cz.cuni.amis.pogamut.base.communication.worldview.event.IWorldEventListener;
@@ -13,7 +9,7 @@ import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.ItemPickedUp;
 import cz.cuni.amis.utils.collections.MyCollections;
-import edu.southwestern.tasks.ut2004.Util;
+import edu.southwestern.tasks.ut2004.UT2004Util;
 import java.util.List;
 
 /**
@@ -62,8 +58,8 @@ public class NearestItemBlock implements UT2004SensorBlock {
 		distance = Math.min(distance, MAX_ITEM_DISTANCE);
 		distance2D = Math.min(distance2D, MAX_ITEM_DISTANCE);
 
-		inputs[in++] = Util.scale(distance, MAX_ITEM_DISTANCE);
-		inputs[in++] = Util.scale(distance2D, MAX_ITEM_DISTANCE);
+		inputs[in++] = UT2004Util.scale(distance, MAX_ITEM_DISTANCE);
+		inputs[in++] = UT2004Util.scale(distance2D, MAX_ITEM_DISTANCE);
 
 		return in;
 	}
