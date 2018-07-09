@@ -129,7 +129,23 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		 */
 		@Override
 		public NodeGene clone() {
-			return newNodeGene(ftype, ntype, innovation, isFrozen(), getBias());
+			return newNodeGene(ftype, ntype, innovation, isFrozen(), getBias(), this instanceof NormalizedMemoryNodeGene, getMemoryGamma(), getMemoryBeta());
+		}
+
+		/**
+		 * only used in normalized node memory genes
+		 * @return
+		 */
+		public double getMemoryBeta() {
+			return 0;
+		}
+
+		/**
+		 * only used in normalized node memory genes
+		 * @return
+		 */
+		public double getMemoryGamma() {
+			return 0;
 		}
 
 		/**
@@ -165,7 +181,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		 * @param frozen = false if node can accept new inputs
 		 * @param bias = bias offset to sum of this node before activation
 		 */
-		private FullNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
+		protected FullNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
 			super(ftype, ntype, bias, innovation);
 			this.frozen = frozen;
 			this.bias = bias;
@@ -198,6 +214,36 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 
 		public String toString() {
 			return "Full"+super.toString();
+		}
+	}
+
+	/**
+	 * Used for "batch" normalization.
+	 * 
+	 * @author Devon Fulcher
+	 */
+	public static class NormalizedMemoryNodeGene extends FullNodeGene{
+		private double gamma;
+		private double beta;
+
+		protected NormalizedMemoryNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias, double gamma, double beta) {
+			super(ftype, ntype, innovation, frozen, bias);
+			this.gamma = gamma;
+			this.beta = beta;
+		}
+
+		public String toString() {
+			return "Norm"+super.toString();
+		}
+
+		@Override
+		public double getMemoryBeta() {
+			return beta;
+		}
+
+		@Override
+		public double getMemoryGamma() {
+			return gamma;
 		}
 	}
 
@@ -369,16 +415,26 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	}
 
 	public static final NodeGene newNodeGene(int ftype, int ntype, long innovation) {
-		return newNodeGene(ftype, ntype, innovation, false, 0.0);
+		return newNodeGene(ftype, ntype, innovation, false, 0.0, false, 0, 0);
 	}
 
-	public static final NodeGene newNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
+	public static final NodeGene newNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias, boolean normalizedNodes) {
+		double hardCodedGamma = 1;
+		double hardCodedBeta = 0;
+		return newNodeGene(ftype, ntype, innovation, frozen, bias, normalizedNodes, hardCodedGamma, hardCodedBeta);
+	}
+	
+	public static final NodeGene newNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias, boolean normalizedNodes, double memGamma, double memBeta) {
 		if(CommonConstants.inputsUseID && ntype == TWEANN.Node.NTYPE_INPUT) {
 			ftype = ActivationFunctions.FTYPE_ID; // Force input nodes to use ID activation function
 		}
-		return smallerGenotypes
-				? new NodeGene(ftype, ntype, bias, innovation)
-						: new FullNodeGene(ftype, ntype, innovation, frozen, bias);
+		if(normalizedNodes && ntype != TWEANN.Node.NTYPE_INPUT) { //this could be a parameter option later
+			return new NormalizedMemoryNodeGene(ftype, ntype, innovation, frozen, bias, memGamma, memBeta);
+		} else if (smallerGenotypes) {
+			return new NodeGene(ftype, ntype, bias, innovation);
+		} else {
+			return new FullNodeGene(ftype, ntype, innovation, frozen, bias);
+		}
 	}
 
 	/**
@@ -528,7 +584,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 
 		for (int i = 0; i < tweann.nodes.size(); i++) {
 			TWEANN.Node n = tweann.nodes.get(i);
-			NodeGene ng = newNodeGene(n.ftype, n.ntype, n.innovation, n.frozen, n.bias);
+			NodeGene ng = newNodeGene(n.ftype, n.ntype, n.innovation, n.frozen, n.bias, false, 0, 0);
 			nodes.add(ng);
 			LinkedList<LinkGene> temp = new LinkedList<LinkGene>();
 			for (TWEANN.Link l : n.outputs) {
