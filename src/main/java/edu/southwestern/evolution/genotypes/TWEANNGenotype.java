@@ -2152,7 +2152,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @return long corresponding to biggest innovation number
 	 */
 	public long biggestInnovation() {
-		long max = 0;
+		long max = Integer.MIN_VALUE; // Max innovation could actually be negative.
 		for (NodeGene ng : nodes) {
 			if (ng.innovation > max) {
 				max = ng.innovation;
