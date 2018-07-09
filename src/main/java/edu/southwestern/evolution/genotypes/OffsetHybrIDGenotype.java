@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.networks.TWEANN;
-import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.networks.hyperneat.SubstrateConnectivity;

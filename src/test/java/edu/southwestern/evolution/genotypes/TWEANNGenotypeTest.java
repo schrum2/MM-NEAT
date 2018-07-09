@@ -127,6 +127,11 @@ public class TWEANNGenotypeTest {
 		long trueMaxInno = Math.max(trueMaxInnoGene, trueMaxInnoLink);
 		long maxInno = tg1.biggestInnovation();
 
+		if (trueMaxInno != maxInno) {
+			System.out.print("TWEANNGenotype: " + tg1 + "\n" + "trueMaxInnoGene: " + trueMaxInnoGene + "\n" +
+					"trueMaxInnoLink" + trueMaxInnoLink + "\n" + "tg1innoGene" + tg1innoGene + "\n" +
+					"tg1innoLink" + tg1innoLink + "\n");
+		}
 		assertEquals(trueMaxInno,maxInno); // Failed?
 	}
 
