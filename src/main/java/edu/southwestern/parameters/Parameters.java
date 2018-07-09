@@ -342,7 +342,7 @@ public class Parameters {
 		integerOptions.add("tugAdvancementTimeLimit", Integer.MAX_VALUE, "How many gens new goals can remain unachieved before RWAs are reset");
 		integerOptions.add("utEvalMinutes", 5, "Number of minutes an evaluation in UT2004 lasts");
 		integerOptions.add("utEvolvingBotSkill", 7, "Skill (1-7) of evolving UT2004 bot (affects accuracy)");
-		integerOptions.add("utNativeBotSkill", 3, "Skill (1-7) of native UT2004 bots to evaluate against");
+		integerOptions.add("utNativeBotSkill", 3, "Skill (1-7) of native UT2004 bots to evaluate against"); 
 		integerOptions.add("utNumOpponents", 1, "Number of opponents to evolve against in UT2004");
 		integerOptions.add("utNumNativeBots", 0, "dictates the number of native bots to be spawned into the server");
 		integerOptions.add("utTeamSize", 2 , "dictates the number of players on each team");
@@ -885,6 +885,7 @@ public class Parameters {
 		classOptions.add("tugGoalTargetStat", Max.class, "The stat used by TUG to determine what value objective goals should work towards reaching");
 		classOptions.add("tugPerformanceStat", Average.class, "The stat used by TUG to calculate the performance of the population");
 		classOptions.add("utGameBotsOpponent", null, "Bot to fight against while evolving");
+		classOptions.add("utMapList", null, "Gives the clas with the list of maps for the bot to evolve on");
 		classOptions.add("utOutputModel", OpponentRelativeMovementOutputModel.class, "Outputs for UT2004 bot");
 		classOptions.add("utSensorModel", OpponentRelativeSensorModel.class, "Sensors for UT2004 bot");
 		classOptions.add("utWeaponManager", SimpleWeaponManager.class, "Weapon management for UT2004 bot");

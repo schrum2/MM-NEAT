@@ -4,7 +4,7 @@ import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
-import edu.southwestern.tasks.ut2004.Util;
+import edu.southwestern.tasks.ut2004.UT2004Util;
 import java.util.Map;
 
 /**
@@ -60,8 +60,8 @@ public class PieSliceAgentSensorBlock implements UT2004SensorBlock {
 				continue; // Skip the player if it's location of the bot's is unclear
 			}
 
-			double distance = Util.scale(botLocation.getDistance(playerLocation), MAX_DISTANCE);
-			double angle = Util.relativeAngleToTarget(botLocation, bot.getInfo().getHorizontalRotation(),playerLocation);
+			double distance = UT2004Util.scale(botLocation.getDistance(playerLocation), MAX_DISTANCE);
+			double angle = UT2004Util.relativeAngleToTarget(botLocation, bot.getInfo().getHorizontalRotation(),playerLocation);
 			if (angle > 0) {
 				for (int i = 0; i < sliceLimits.length - 1; i++) {
 					if (sliceLimits[i] < angle && angle <= sliceLimits[i + 1]) {
@@ -104,13 +104,13 @@ public class PieSliceAgentSensorBlock implements UT2004SensorBlock {
 	 */
 	public int incorporateLabels(int in, String[] labels) {
 		for (int i = 1; i < sliceLimits.length; i++) {
-			labels[in++] = "Left Slice " + i;
+			labels[in++] = (senseEnemy ? "Enemy" : "Friend") + " Left Slice " + i;
 		}
 		for (int i = 1; i < sliceLimits.length; i++) {
-			labels[in++] = "Right Slice " + i;
+			labels[in++] = (senseEnemy ? "Enemy" : "Friend") + " Right Slice " + i;
 		}
-		labels[in++] = "Front Left Distance";
-		labels[in++] = "Front Right Distance";
+		labels[in++] = (senseEnemy ? "Enemy" : "Friend") + " Front Left Distance";
+		labels[in++] = (senseEnemy ? "Enemy" : "Friend") + " Front Right Distance";
 		return in;
 	}
 

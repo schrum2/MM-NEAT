@@ -56,7 +56,7 @@ public class UT2004OneVsGBBotsDeathMatchTask<T extends Network> extends UT2004Ta
 	 * @param desiredSkill (the skill level of the bot and opponent)
 	 */
 	public UT2004OneVsGBBotsDeathMatchTask(String map, BotController[] opponents, int evalMinutes, int desiredSkill) {
-		super(map, new int[0], evalMinutes, desiredSkill, opponents);
+		super(evalMinutes, desiredSkill, opponents);
 		// Fitness objectives
 		addObjective(new DamageDealtFitness<T>(), fitness, true);
 		addObjective(new DamageReceivedFitness<T>(), fitness, true);

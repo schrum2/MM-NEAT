@@ -10,6 +10,7 @@ import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Velocity;
 import cz.cuni.amis.pogamut.base3d.worldview.object.event.WorldObjectAppearedEvent;
+import cz.cuni.amis.pogamut.unreal.agent.navigation.IUnrealPathExecutor;
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Raycasting;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
@@ -54,8 +55,8 @@ public class AgentMemory {
     public final AgentBody body;
     public final Raycasting raycasting;
     public final IVisionWorldView world;
-    public final MyUTPathExecutor itemPathExecutor;
-    public final MyUTPathExecutor playerPathExecutor;
+    public final IUnrealPathExecutor<ILocated> itemPathExecutor;
+    public final IUnrealPathExecutor<ILocated> playerPathExecutor;
     public final Game game;
     public UnrealId lastPlayerDamaged = null;
     private Player judgeTarget = null;
@@ -153,7 +154,7 @@ public class AgentMemory {
         }
     };
 
-    public AgentMemory(AgentBody body, AgentInfo info, Senses senses, Players players, PathPlanner pathPlanner, MyUTPathExecutor itemPathExecutor, MyUTPathExecutor playerPathExecutor, Items items, Weaponry weaponry, IVisionWorldView world, Game game) {
+    public AgentMemory(AgentBody body, AgentInfo info, Senses senses, Players players, PathPlanner pathPlanner, IUnrealPathExecutor<ILocated> itemPathExecutor, IUnrealPathExecutor<ILocated> playerPathExecutor, Items items, Weaponry weaponry, IVisionWorldView world, Game game) {
         this.body = body;
         this.info = info;
         this.senses = senses;

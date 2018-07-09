@@ -17,7 +17,7 @@ public class RandomItemPathExplorer extends SequentialPathExplorer {
 	 * finds the next nav point with an item on it for the bot to go to
 	 * @return returns a random nav point with an item
 	 */
-	public NavPoint getNextNavPoint(UT2004BotModuleController bot) {
+	public NavPoint getNextNavPoint(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		// List of non-taboo navpoints
 		List<NavPoint> navs = MyCollections.getFiltered(bot.getWorldView().getAll(NavPoint.class).values(),
 				tabooNavPoints);
