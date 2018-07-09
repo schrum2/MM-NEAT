@@ -66,8 +66,6 @@ public class VariableDirectionSortedPossibleGhostDistanceBlock extends VariableD
 	@Override
 	public int[] getTargets(GameFacade gf) {
 		
-		System.out.println(this.getType());
-		
 		ArrayList<Quad<Integer, MOVE, Double, Double>> ghosts = gf.getPossibleGhostInfo();
 		
 		if(sortThreats && !sortEdibles) {

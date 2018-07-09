@@ -48,8 +48,6 @@ public class VariableDirectionSortedPossibleGhostProbabilityBlock extends Variab
 	@Override
 	public double getValue(GameFacade gf) {
 		
-		System.out.println(this.getLabel());
-		
 		ArrayList<Quad<Integer, MOVE, Double, Double>> ghosts = gf.getPossibleGhostInfo();
 			
 		if(sortThreats && !sortEdibles) {
