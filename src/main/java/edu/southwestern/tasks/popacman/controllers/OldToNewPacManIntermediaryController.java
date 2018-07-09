@@ -39,6 +39,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	public int lastPillEatenTime = -1;
 	public int[] ghostEdibleTime;
     private Color[] redAlphas;
+    private Color[] blueAlphas;
     private Game mostRecentGame;
 	public boolean usePillModel = Parameters.parameters.booleanParameter("usePillModel");
 	public boolean useGhostModel = Parameters.parameters.booleanParameter("useGhostModel");
@@ -48,8 +49,10 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		this.oldpacman = oldpacman;
 		
         redAlphas = new Color[256];
+        blueAlphas = new Color[256];
         for (int i = 0; i < 256; i++) {
             redAlphas[i] = new Color(255, 0, 0, i);
+            blueAlphas[i] = new Color(0, 0, 255, i);
         }
         
         ghostEdibleTime = new int[GHOST.values().length];
@@ -166,7 +169,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	                if (probability >= GHOST_THRESHOLD) {
 	                	double edibleProbability = ghostPredictions.calculateEdible(i);
 	                	if(edibleProbability > 0.0) {
-	                    	graphics.setColor(new Color(0,0, 255, 255));
+	                    	graphics.setColor(blueAlphas[(int) Math.min(255 * probability, 255)]);
 		                    graphics.fillRect(
 		                            mostRecentGame.getNodeXCood(i) * MAG - 1,
 		                            mostRecentGame.getNodeYCood(i) * MAG + 3,
@@ -209,7 +212,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		if(game.wasPacManEaten()) {
             lastPillEatenTime = -1;
             lastPowerPillEatenTime = -1;
-		}
+        }
 		      
         //We need to pass the model of the game to the new gameFacade
 		GameFacade informedGameFacade = new GameFacade(game);
@@ -265,9 +268,9 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		        	eatenPowerPills.add(informedGameFacade.poG.getPacmanCurrentNodeIndex());
 		        	lastPowerPillEatenTime = informedGameFacade.getCurrentLevelTime();
 		        	informedGameFacade.setTimeOfLastPowerPillEaten(informedGameFacade.getCurrentLevelTime());
-		        	if(useGhostModel && ghostPredictions != null && informedGameFacade.ghostPredictions != null) {
-			        	informedGameFacade.ghostPredictions.atePill(informedGameFacade);
-		        	}
+//		        	if(useGhostModel && ghostPredictions != null && informedGameFacade.ghostPredictions != null) {
+//			        	informedGameFacade.ghostPredictions.atePill(informedGameFacade);
+//		        	}
 		        }
 			}
 	        
@@ -287,7 +290,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 			//init the ghost predictions
 			if(ghostPredictions == null){				
 				//create a new ghostPredictionFast object, initialize it, and pass it to informedGameFacade
-				ghostPredictions = new GhostPredictionsFast(informedGameFacade.poG.getCurrentMaze());
+				ghostPredictions = new GhostPredictionsFast(informedGameFacade.poG.getCurrentMaze(), ghostEdibleTime);
 	            ghostPredictions.preallocate();
 	            informedGameFacade.setGhostPredictions(this.ghostPredictions);
 			} 

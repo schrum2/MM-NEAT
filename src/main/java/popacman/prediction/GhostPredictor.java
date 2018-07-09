@@ -28,7 +28,7 @@ public class GhostPredictor {
      */
     public void clear(Maze maze){
         ghostPredictions.clear();
-        ghostPredictions.add(new GhostPredictionsFast(maze));
+        ghostPredictions.add(new GhostPredictionsFast(maze, null)); // SUPPOSEDLY NEVER USED. DELETE?
     }
 
     /**

@@ -71,7 +71,7 @@ public class InformationSetMCTSPacMan extends Controller<MOVE> implements Drawab
         }
 
         if (predictions == null) {
-            predictions = new GhostPredictionsFast(game.getCurrentMaze());
+            predictions = new GhostPredictionsFast(game.getCurrentMaze(), null); // NEVER USED? DELETE?
             predictions.preallocate();
         }
         

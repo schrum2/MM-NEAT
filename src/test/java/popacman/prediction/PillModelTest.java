@@ -33,7 +33,7 @@ import pacman.game.Constants.MOVE;
  * @author Will Price
  *
  */
-public class MyPillModelTest {
+public class PillModelTest {
 	
 	static OldToNewPacManIntermediaryController infoManager;
 
