@@ -27,7 +27,6 @@ public class POProbableGhostStateModeSelector3Mod extends MsPacManModeSelector {
 	@Override
 	public int mode() {
 		predictedGhostInfo = gs.getPossibleGhostInfo();
-		System.out.println(predictedGhostInfo);
 		
 		//there are no predicted ghosts
 		if(predictedGhostInfo.size() == 0) {
@@ -51,7 +50,7 @@ public class POProbableGhostStateModeSelector3Mod extends MsPacManModeSelector {
 	private boolean containsOnlyEdibleGhosts(ArrayList<Quad<Integer, MOVE, Double, Double>> predictedGhostInfo) {
 		//for each predicted ghost location
 		for(Quad<Integer, MOVE, Double, Double> q : predictedGhostInfo) {
-			//if the probability that it is edible is 0
+			//if the probability that it is edible is 0 or -1 (The ghost isn't edible)
 			if(q.t4 == 0 || q.t4 == -1) {
 				return false;
 			}
@@ -62,7 +61,7 @@ public class POProbableGhostStateModeSelector3Mod extends MsPacManModeSelector {
 	@Override
 	public int numModes() {
 		//We have four modes
-		return 4;
+		return 3;
 	}
 
 	@Override
