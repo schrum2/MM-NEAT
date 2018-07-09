@@ -14,7 +14,6 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
-import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
