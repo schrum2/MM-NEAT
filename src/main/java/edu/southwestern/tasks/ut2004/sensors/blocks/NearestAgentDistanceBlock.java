@@ -3,7 +3,7 @@ package edu.southwestern.tasks.ut2004.sensors.blocks;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
-import edu.southwestern.tasks.ut2004.Util;
+import edu.southwestern.tasks.ut2004.UT2004Util;
 
 /**
  *
@@ -36,15 +36,15 @@ public class NearestAgentDistanceBlock implements UT2004SensorBlock {
 		distance = Math.min(distance, MAX_DISTANCE);
 		distance2D = Math.min(distance2D, MAX_DISTANCE);
 
-		inputs[in++] = Util.scale(distance, MAX_DISTANCE);
-		inputs[in++] = Util.scale(distance2D, MAX_DISTANCE);
+		inputs[in++] = UT2004Util.scale(distance, MAX_DISTANCE);
+		inputs[in++] = UT2004Util.scale(distance2D, MAX_DISTANCE);
 
 		return in;
 	}
 
 	public int incorporateLabels(int in, String[] labels) {
-		labels[in++] = "Nearest Opponent Proximity 3D";
-		labels[in++] = "Nearest Opponent Proximity 2D";
+		labels[in++] = "Nearest " + (senseEnemy ? "Enemy" : "Friend") + "Proximity 3D";
+		labels[in++] = "Nearest " + (senseEnemy ? "Enemy" : "Friend") + "Proximity 2D";
 		return in;
 	}
 

@@ -59,9 +59,9 @@ public class AgentBehaviorBlock implements UT2004SensorBlock {
 	 * @return returns the next address to be labeled
 	 */
 	public int incorporateLabels(int in, String[] labels) {
-		labels[in++] = "Opponent Firing?";
-		labels[in++] = "Opponent Still?";
-		labels[in++] = "Opponent Jumping?";
+		labels[in++] = (senseEnemy ? "Enemy" : "Friend") + " Firing?";
+		labels[in++] = (senseEnemy ? "Enemy" : "Friend") + " Still?";
+		labels[in++] = (senseEnemy ? "Enemy" : "Friend") + " Jumping?";
 		return in;
 	}
 

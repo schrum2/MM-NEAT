@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package utopia.agentmodel.actions;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
@@ -11,18 +7,25 @@ import mockcz.cuni.pogamut.Client.AgentMemory;
 import utopia.Utils;
 
 /**
- *
+ * Helps the bot get around obstacles and avoid becoming stuck
  * @author HeDeceives
  */
 public class SimpleUnstuckAction extends Action {
 
     private final AgentMemory memory;
 
+    /**
+     * Initializes the action with the agent memory
+     * @param memory (agent memory to use)
+     */
     public SimpleUnstuckAction(AgentMemory memory) {
         this.memory = memory;
     }
 
     @Override
+    /**
+     * allows the bot to print out a description of its action in the form of a string
+     */
     public String toString(){
         return "SimpleUnstuck:" + (choice == null ? "?" : choice);
     }
@@ -30,6 +33,9 @@ public class SimpleUnstuckAction extends Action {
     public String choice = null;
 
     @Override
+    /**
+     * tells the bot to execute the action
+     */
     public void execute(AgentBody body) {
         Location agentLocation = memory.info.getLocation();
         if (agentLocation != null && memory.senses.isCollidingOnce() && memory.senses.getCollisionLocation() != null) {

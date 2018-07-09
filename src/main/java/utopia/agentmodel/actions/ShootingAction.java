@@ -6,6 +6,10 @@ import mockcz.cuni.pogamut.MessageObjects.Triple;
 import java.util.ArrayList;
 import utopia.Utils;
 
+/**
+ * tells the bot to shoot
+ * @author Jacob Schrum
+ */
 public abstract class ShootingAction extends Action {
 
     private static final double AIM_THRESHOLD = 0.1;
@@ -15,6 +19,14 @@ public abstract class ShootingAction extends Action {
     protected Triple agentLocation;
     private ArrayList<Player> players;
 
+    /**
+     * Initializes the action
+     * @param shoot (should the bot shoot)
+     * @param secondaryFire (should the bot use the secondary fire mode)
+     * @param agentRotation
+     * @param agentLocation (where the bot is located)
+     * @param players (opponents)
+     */
     public ShootingAction(boolean shoot, boolean secondaryFire, Triple agentRotation, Triple agentLocation, ArrayList<Player> players) {
         this.shoot = shoot;
         this.secondaryFire = secondaryFire;
@@ -23,11 +35,19 @@ public abstract class ShootingAction extends Action {
         this.players = players;
     }
 
+    /**
+     * initializes the action using the player as a reference
+     * @param agentRotation
+     * @param agentLocation (where the bot is located)
+     */
     public ShootingAction(Triple agentRotation, Triple agentLocation) {
         this(false, false, agentRotation, agentLocation, null);
     }
 
     @Override
+    /**
+     * Tells the bot to shoot the given target
+     */
     public void execute(AgentBody body) {
         if (this.shoot) {
             Triple targetVector = Triple.rotationAsVectorUTUnits(agentRotation);

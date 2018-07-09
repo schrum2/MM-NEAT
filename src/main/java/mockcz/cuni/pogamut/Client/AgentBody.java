@@ -1,11 +1,15 @@
 package mockcz.cuni.pogamut.Client;
 
+import java.util.ArrayList;
+import java.util.Map;
+
+import javax.vecmath.Vector3d;
+
 import cz.cuni.amis.pogamut.base.communication.command.IAct;
 import cz.cuni.amis.pogamut.base.communication.worldview.object.WorldObjectId;
 import cz.cuni.amis.pogamut.base3d.worldview.IVisionWorldView;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Velocity;
-import cz.cuni.amis.pogamut.ut2004.agent.module.logic.SyncUT2004BotLogic;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Raycasting;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weaponry;
@@ -23,9 +27,6 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoin
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import cz.cuni.amis.utils.flag.FlagListener;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable;
-import java.util.ArrayList;
-import java.util.Map;
-import javax.vecmath.Vector3d;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
 import utopia.Utils;
 
@@ -42,7 +43,7 @@ public class AgentBody {
     public ArrayList<AutoTraceRay> rays;
     public final IAct act;
     private boolean pendingAutoTraceEnable;
-    public final SyncUT2004BotLogic logic;
+    //public final SyncUT2004BotLogic logic;
     public final AgentInfo info;
     public final Senses senses;
     public final Game game;
@@ -53,14 +54,14 @@ public class AgentBody {
     public static final double CLOSE_WALL_DISTANCE = 150;
     public double lastDodgeTime = 0;
 
-    public AgentBody(CompleteBotCommandsWrapper body, Raycasting raycasting, IAct act, SyncUT2004BotLogic logic, AgentInfo info, Senses senses, Game game, IVisionWorldView world, Items items, Weaponry weaponry) {
+    public AgentBody(CompleteBotCommandsWrapper body, Raycasting raycasting, IAct act, AgentInfo info, Senses senses, Game game, IVisionWorldView world, Items items, Weaponry weaponry) {
         this.body = body;
         this.raycasting = raycasting;
         this.act = act;
         this.autoTraceIds = new ArrayList<String>();
         this.rays = new ArrayList<AutoTraceRay>();
         this.pendingAutoTraceEnable = false;
-        this.logic = logic;
+        //this.logic = logic;
         this.info = info;
         this.senses = senses;
         this.game = game;
@@ -208,7 +209,8 @@ public class AgentBody {
         stopShoot(false);
     }
 
-    public void stopShoot(boolean force) {
+    @SuppressWarnings("deprecation")
+	public void stopShoot(boolean force) {
         // Only stop shooting if not charging, unless force is used
         Weapon w = weaponry.getCurrentWeapon();
         if (force || !(isSecondaryChargingWeapon(w) && info.isSecondaryShooting() && weaponry.getCurrentAlternateAmmo() > 1)) {
