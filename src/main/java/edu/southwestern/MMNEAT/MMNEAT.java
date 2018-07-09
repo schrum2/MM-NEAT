@@ -805,6 +805,7 @@ public class MMNEAT {
 			// Other tasks may also use this mapping in the future.
 			HyperNEATTetrisTask.reduce2DTo1D = true;
 		}		
+		HyperNEATCPPNGenotype.normalizedNodeMemory = Parameters.parameters.booleanParameter("normalizedNodeMemory");
 	}
 
 	/**

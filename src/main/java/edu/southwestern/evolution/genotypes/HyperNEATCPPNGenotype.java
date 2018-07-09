@@ -41,6 +41,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	public transient static boolean constructingNetwork = false;
 	public transient int innovationID = 0;// provides unique innovation numbers for links and genes
 
+	// Determines whether node normalization occurs across past activations in substrate networks
+	public static boolean normalizedNodeMemory;
+	
 	/**
 	 * Default constructor
 	 */
@@ -245,7 +248,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 		ArrayList<NodeGene> genes = new ArrayList<NodeGene>(this.nodes.size());
 		for (NodeGene ng : this.nodes) {// needed for a deep copy
-			genes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias()));
+			genes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias(), false)); // CPPN nodes are not normalized
 		}
 		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(this.archetypeIndex, linksCopy, genes, this.numOut);
 
@@ -353,7 +356,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						throw e;
 					}
 				}
-				newNodes.add(newNodeGene(sub.getFtype(), sub.getStype(), innovationID++, false, bias));
+				//newNodes.add(newNodeGene(sub.getFtype(), sub.getStype(), innovationID++, false, bias, normalizedNodeMemory));
+				newNodes.add(newSubstrateNodeGene(sub, bias));
 			}
 
 			if(CommonConstants.evolveHyperNEATBias && !CommonConstants.substrateBiasLocationInputs && sub.getStype() != Substrate.INPUT_SUBSTRATE) {
@@ -366,6 +370,18 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			}
 		}
 		return newNodes;
+	}
+	
+	/**
+	 * This method creates a new neuron for a substrate.
+	 * Can be overridden to create different types of neurons.
+	 * 
+	 * @param sub Substrate that neuron is being defined in
+	 * @param bias Bias of this particular neuron
+	 * @return NodeGene for substrate
+	 */
+	public NodeGene newSubstrateNodeGene(Substrate sub, double bias) {
+		return newNodeGene(sub.getFtype(), sub.getStype(), innovationID++, false, bias, normalizedNodeMemory);
 	}
 
 	/**
@@ -474,7 +490,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			List<Substrate> subs, int substrateHorizontalCoordinate, int substrateVerticalCoordinate, int receptiveFieldWidth, int receptiveFieldHeight) {
 
 		boolean convolutionDeltas = Parameters.parameters.booleanParameter("convolutionDeltas");
-		//boolean convolutionCoordinates = Parameters.parameters.booleanParameter("convolutionCoordinates");
+		boolean convolutionCoordinates = Parameters.parameters.booleanParameter("convolutionCoordinates");
 		boolean convolutionWeightSharing = Parameters.parameters.booleanParameter("convolutionWeightSharing");
 		assert receptiveFieldHeight % 2 == 1 : "Receptive field height needs to be odd to be centered: " + receptiveFieldHeight;
 		assert receptiveFieldWidth % 2 == 1 : "Receptive field width needs to be odd to be centered: " + receptiveFieldWidth;
@@ -522,9 +538,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 											// First two inputs are deltas between target and source scaled coordinated: (x2 - x1, y2 - y1, x2, y2, 1.0)
 											inputs = new double[]{scaledTargetCoordinates.getX() - scaledSourceCoordinates.getX(), scaledTargetCoordinates.getY() - scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
 											// These inputs may be outside the [-1,1] range
-										//} if (convolutionCoordinates) {
-										//	ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(fromXIndex, fromYIndex), s1.getSize().t1, s1.getSize().t2); 
-											//inputs = new double[]{scaledTargetCoordinates.getX() - scaledSourceCoordinates.getX(), scaledTargetCoordinates.getY() - scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
+										} else if(convolutionCoordinates) {
+											ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(fromXIndex, fromYIndex), s1.getSize().t1, s1.getSize().t2); 
+											inputs = new double[]{scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
 										} else {
 											// Receptive field scaling needs to be with respect to the center of the field, regardless of what the mapping for the other coordinates is
 											ILocated2D scaledFieldCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(fX+xOffset, fY+yOffset), receptiveFieldWidth, receptiveFieldHeight);
@@ -537,8 +553,6 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 												inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
 											}
 											// This approach maintains all values in the scaled range
-											
-											
 											assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
 											assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
 											assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];

@@ -389,6 +389,7 @@ public class Parameters {
 		booleanOptions.add("loopAnimationInReverse", false, "loops animations in reverse for 2dAnimationBreeder and 3dAnimationBreeder");
 		booleanOptions.add("moMario", false, "Mario is multiobjective");
 		booleanOptions.add("monitorSubstrates", false, "Allows us to visualizen the features (raw inputs) of a HyperNEAT agent");
+		booleanOptions.add("normalizedNodeMemory", false, "If true, every node will normalize its activations based on the history of activations that it has seen");
 		booleanOptions.add("observePacManPO", true, "whether or not we observe the depiction of pacman agents with PO");
 		booleanOptions.add("navGrid", false, "Choses whether or not the navigation grid is displayed"); //DOES NOT WORK
 		booleanOptions.add("navCubes", false, "Choses whether or not navigation points are displayed as cubes"); //DOES NOT WORK
