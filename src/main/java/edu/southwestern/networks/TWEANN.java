@@ -14,6 +14,7 @@ import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.NormalizedMemoryNodeGene;
 import edu.southwestern.evolution.lineage.Offspring;
 import edu.southwestern.networks.hyperneat.HyperNEATVisualizationUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
@@ -95,7 +96,7 @@ public class TWEANN implements Network {
 			this.moduleSource = moduleSource;
 		}
 
-		protected void transmit(double signal) {
+		protected void transmit(double signal) {			
 			assert target != null : "Link target is null? " + innovation + " with weight " + weight;
 			assert!Double.isNaN(target.sum) : "target.sum is NaN before transmit";
 			assert!Double.isNaN(signal) : "signal is NaN before transmit";
@@ -103,7 +104,7 @@ public class TWEANN implements Network {
 			assert!Double.isNaN(signal * weight) : "signal * weight is NaN before transmit: " + signal + "*" + weight;
 			//if(target.innovation == 9) System.out.print(" to "+target.innovation+ ":" + target.sum + " += receiving " + signal + "*"+weight+"; ");
             target.sum += (signal * weight);
-			//if(target.innovation == 9) System.out.println("new sum:" + target.sum);
+            //if(target.innovation == 9) System.out.println("new sum:" + target.sum);
 			assert!Double.isNaN(target.sum) : "target.sum is NaN after transmit: " + signal + "*" + weight;
 		}
 	}
@@ -522,7 +523,9 @@ public class TWEANN implements Network {
 		int section = Node.NTYPE_INPUT;
 		for (int i = 0; i < g.nodes.size(); i++) {
 			TWEANNGenotype.NodeGene ng = g.nodes.get(i);
-			Node n = new Node(ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.getBias());
+			Node n = ng instanceof NormalizedMemoryNodeGene ? 
+					new NormalizedMemoryNode(this, ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.getBias(), ng.getMemoryGamma(), ng.getMemoryBeta()): 
+					new Node(ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.getBias());
 			switch (ng.ntype) {
 			case Node.NTYPE_INPUT:
 				assert(section == Node.NTYPE_INPUT) : "Genome encoded false network: inputs: \n" + g;
@@ -1407,13 +1410,13 @@ public class TWEANN implements Network {
 	 */
 	private void checkNode(Graphics2D g, Node display)	 {
 		double activation = display.activation;
-		if (display.frozen) {
-			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 2);
-		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions")) { // TODO: Just move this to where the node is drawn in the first place?
-			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 2);
-		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions") && display.frozen) { // TODO: Is this case even reachable?
+		if(Parameters.parameters.booleanParameter("allowMultipleFunctions") && display.frozen) { // TODO: Is this case even reachable?
 			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 4);
 			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 4);
+		} else if (display.frozen) {
+			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 2);
+		} else if (Parameters.parameters.booleanParameter("allowMultipleFunctions")) { // TODO: Just move this to where the node is drawn in the first place?
+			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 2);
 		}
 	}
 
