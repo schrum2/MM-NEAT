@@ -10,7 +10,7 @@ public class SmallMapSequence implements MapList {
 	public String[] getMapList() {
 		String[] list = new String[3];
 		list[0] = "DM-TrainingDay";
-		list[1] = "DM-Albatross";
+		list[1] = "DM-1on1-Albatross";
 		list[2] = "DM-Insidious";
 		return list;
 	}

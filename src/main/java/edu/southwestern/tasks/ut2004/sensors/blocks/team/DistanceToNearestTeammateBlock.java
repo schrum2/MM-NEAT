@@ -71,9 +71,11 @@ public class DistanceToNearestTeammateBlock implements UT2004SensorBlock, Accept
 		for(String s: teamLocation.keySet()) {
 			//for each location, find distance btween bot and friend
 			Location friendLocation = teamLocation.get(s);
-			double friendFlatDistance = friendLocation.getDistance2D(botLocation);
-			minFlatDistance = (Math.min(friendFlatDistance, minFlatDistance));
-			//location.getDistance()
+			if(friendLocation != null) { // Why would this happen?
+				double friendFlatDistance = friendLocation.getDistance2D(botLocation);
+				minFlatDistance = (Math.min(friendFlatDistance, minFlatDistance));
+				//location.getDistance()
+			}
 		}
 		return minFlatDistance;
 	}
