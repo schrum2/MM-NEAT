@@ -67,22 +67,14 @@ public class AttemptAtTeammateController implements BotController {
 	/**
 	 * contains the actual logic for the bot to move around see interior comments for more details
 	 */
-	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {//loops thourhg over and over again
+	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {//loops through over and over again
 		Player visibleFriend = bot.getPlayers().getNearestVisibleFriend();
-		Player lastSeenFriend = bot.getPlayers().getNearestFriend(10); //friend who bot just saw but if now out of view
+		Player lastSeenFriend = bot.getPlayers().getNearestFriend(10); //friend who bot just saw but is now out of view
 		Player visibleEnemy = bot.getPlayers().getNearestVisibleEnemy();
-		Player lastSeenEnemy = bot.getPlayers().getNearestEnemy(5); //enemy who bot just saw but if now out of view
+		Player lastSeenEnemy = bot.getPlayers().getNearestEnemy(10); //enemy who bot just saw but is now out of view
 
 		equipBestWeapon(bot);
-		/**bot will look for health pickups if it drops below 20hp*/
-		if((bot.getBot().getSelf().getHealth()) < THRESHOLD_HEALTH_LEVEL) {
-			//tell bot to abandon whatever it's doing and go find a SPAWNED health kit, standing at a spawn point waiting = certain death 
-			Item nearestHealth = bot.getItems().getNearestSpawnedItem(ItemType.Category.HEALTH);
-			Location healthLoc =  nearestHealth.getLocation();
-			System.out.println("Going to health");
-			return new NavigateToLocationAction(healthLoc);
-		}
-
+		
 		/**if bot is being damaged but doesn't see an enemy, turn to see who it is*/
 		if(bot.getSenses().isBeingDamaged() && visibleEnemy == null && lastSeenEnemy == null) {
 			System.out.println("Turning around");
@@ -94,15 +86,22 @@ public class AttemptAtTeammateController implements BotController {
 //			System.out.println("lastSeenEnemy == null = " + (lastSeenEnemy == null));
 		}
 		
+		/**bot will look for health pickups if it drops below 20hp*/
+		if((bot.getBot().getSelf().getHealth()) < THRESHOLD_HEALTH_LEVEL) {
+			//tell bot to abandon whatever it's doing and go find a SPAWNED health kit, standing at a spawn point waiting = certain death 
+			Item nearestHealth = bot.getItems().getNearestSpawnedItem(ItemType.Category.HEALTH);
+			Location healthLoc =  nearestHealth.getLocation();
+			System.out.println("Going to health");
+			return new NavigateToLocationAction(healthLoc);
+		}
+		
 		/**if an enemy is visible attack?*/
 		if(visibleEnemy != null){
 			double enemyDistance = visibleEnemy.getLocation().getDistance(bot.getBot().getLocation());
 			lastSeenEnemy = visibleEnemy;
 			if(shouldEngage(bot)) { //fight if you have health and ammo
-				if(enemyDistance > COMBAT_TYPE_THRESHOLD_DISTANCE) {
 					System.out.println("Attacking enemy");
 					return new OldActionWrapper(new ApproachEnemyAction(OldActionWrapper.getAgentMemory(bot), true, true, false, true));
-				}
 			}else { //RUN BITCH! TODO: take this out before you get in trouble
 				Item nearestHealth = bot.getItems().getNearestSpawnedItem(ItemType.Category.HEALTH);
 				return new OldActionWrapper(new GotoItemAction(OldActionWrapper.getAgentMemory(bot), nearestHealth));
@@ -144,8 +143,8 @@ public class AttemptAtTeammateController implements BotController {
 		
 		//make sure to pick up armour
 		if(bot.getItems().getNearestVisibleItem(ItemType.Category.ARMOR) != null){
-			Item nearestArmour = bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON);
-			Location armourLocation =  bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON).getLocation();
+			Item nearestArmour = bot.getItems().getNearestVisibleItem(ItemType.Category.ARMOR);
+			Location armourLocation =  bot.getItems().getNearestVisibleItem(ItemType.Category.ARMOR	).getLocation();
 			double armourDistance = armourLocation.getDistance(bot.getBot().getLocation());
 			if(armourDistance < MAX_DISTANCE_TO_ITEM) {
 				System.out.println("getting weapon");

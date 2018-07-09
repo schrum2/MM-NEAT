@@ -13,7 +13,7 @@ import edu.southwestern.tasks.ut2004.weapons.SimpleWeaponManager;
 
 public class AttemptAtTeammateServer {
 	public static void main(String[] args) throws IOException {
-		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:0", "numMirrorBots:0", "botprizeMod:true", "utEvalMinutes:15", "utNumOpponents:1", "utGameType:botTeamGame", "utMap:DM-1on1-IronDust"});
+		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:0", "numMirrorBots:0", "botprizeMod:true", "utEvalMinutes:15", "utNumOpponents:1", "utGameType:botTeamGame", "utMap:DM-1on1-IronDust","utBotLogOutput:true"});
 		
 		
 		@SuppressWarnings("unchecked")
