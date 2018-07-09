@@ -18,7 +18,6 @@ public class POProbableGhostStateModeSelector3Mod extends MsPacManModeSelector {
 	public static final int NO_GHOSTS_VISIBLE = 0;
 	public static final int EDIBLE_GHOSTS_VISIBLE = 1;
 	public static final int THREAT_GHOSTS_VISIBLE = 2;
-	public static final int MIXED_GHOSTS_VISIBLE = 3;
 	ArrayList<Quad<Integer, MOVE, Double, Double>> predictedGhostInfo;
 	
 	public POProbableGhostStateModeSelector3Mod() {
@@ -28,30 +27,7 @@ public class POProbableGhostStateModeSelector3Mod extends MsPacManModeSelector {
 	@Override
 	public int mode() {
 		predictedGhostInfo = gs.getPossibleGhostInfo();
-		if(predictedGhostInfo.size() == 0) {
-			return 0;	
-		}
-				
-		//The count of visible, edible ghosts. We need a specific count because we
-		//do not know if a ghost is edible when we cannot see it, even if we have a prediction
-		//of its location.
-		//int visibleEdibleGhostCount = 0;
-		//For all predicted ghosts
-//		for(Quad<Integer, MOVE, Double, Double> ghost : predictedGhostInfo) {
-//			//if they are visible
-//			A:if(gs.poG.isNodeObservable(ghost.t1)) {
-//				//if we can eat them
-//				try {
-//					for(int i = 0; i < pacman.game.Constants.NUM_GHOSTS; i++) {
-//						if(gs.isGhostEdible(i)) {					
-//							visibleEdibleGhostCount++;
-//						}
-//					}
-//				} catch (Exception e) {
-//					break A;
-//				}
-//			}
-//		}
+		System.out.println(predictedGhostInfo);
 		
 		//there are no predicted ghosts
 		if(predictedGhostInfo.size() == 0) {
@@ -76,7 +52,7 @@ public class POProbableGhostStateModeSelector3Mod extends MsPacManModeSelector {
 		//for each predicted ghost location
 		for(Quad<Integer, MOVE, Double, Double> q : predictedGhostInfo) {
 			//if the probability that it is edible is 0
-			if(q.t4 == 0) {
+			if(q.t4 == 0 || q.t4 == -1) {
 				return false;
 			}
 		}
