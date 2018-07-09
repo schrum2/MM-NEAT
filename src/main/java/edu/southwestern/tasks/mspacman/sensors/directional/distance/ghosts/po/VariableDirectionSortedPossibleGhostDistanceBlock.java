@@ -28,9 +28,15 @@ public class VariableDirectionSortedPossibleGhostDistanceBlock extends VariableD
 	//VariableDirectionSortedGhostDistanceBlock
 	
 	private final int order;
+	private final boolean sortThreats;
+	private final boolean sortEdibles;
+	
+	public VariableDirectionSortedPossibleGhostDistanceBlock(int order, boolean sortThreats, boolean sortEdibles) {
+		this(-1, order, sortThreats, sortEdibles);
+	}
 	
 	public VariableDirectionSortedPossibleGhostDistanceBlock(int order) {
-		this(-1, order);
+		this(-1, order, true, true);
 	}
 	
 	
@@ -39,19 +45,48 @@ public class VariableDirectionSortedPossibleGhostDistanceBlock extends VariableD
 	 * @param dir the direction this block is observing
 	 * @param order the orderith (nth) ghost away
 	 */
-	public VariableDirectionSortedPossibleGhostDistanceBlock(int dir, int order) {
+	public VariableDirectionSortedPossibleGhostDistanceBlock(int dir, int order, boolean sortThreats, boolean sortEdibles) {
 		super(dir);
 		this.order = order;
+		this.sortEdibles = sortEdibles;
+		this.sortThreats = sortThreats;
 	}
 
 	@Override
 	public String getType() {
-		return order + " Closest Possible Ghost in " + dir + "direction";
+		if(sortThreats && !sortEdibles) {
+			return order + " Closest Possible Threat Ghost in " + dir + "direction";
+		} else if(!sortThreats && sortEdibles) {
+			return order + " Closest Possible Edible Ghost in " + dir + "direction";
+		} else {
+			return order + " Closest Possible Ghost in " + dir + "direction";	
+		}
 	}
 
 	@Override
 	public int[] getTargets(GameFacade gf) {
+		
+		System.out.println(this.getType());
+		
 		ArrayList<Quad<Integer, MOVE, Double, Double>> ghosts = gf.getPossibleGhostInfo();
+		
+		if(sortThreats && !sortEdibles) {
+			//remove edible ghosts from the list
+			for(int i = 0; i < ghosts.size(); i++) {
+				if(ghosts.get(i).t4 > 0) {
+					ghosts.remove(i);
+				}
+			}
+		} else if(!sortThreats && sortEdibles) {
+			//remove threat ghosts from the list
+			for(int i = 0; i < ghosts.size(); i++) {
+				if(ghosts.get(i).t4 <= 0) {
+					ghosts.remove(i);
+				}
+			}
+		} else {
+			//DO NOTHING
+		}
 		
 		if (order >= ghosts.size()) {
 			return new int[0]; // Target in lair will result in distance of

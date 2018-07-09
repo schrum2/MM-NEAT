@@ -47,11 +47,11 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 				"useGhostModel:true", "drawGhostPredictions:true", "partiallyObservablePacman:true",  "pacmanPO:true",
 				"rawScorePacMan:true", "ghostPO:false", "observePacManPO:true", "usePillModel:false" });
 		
-		firstClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,0);
-		secondClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,1);
-		thirdClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,2);
-		fourthClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,3);
-		fifthClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,4);
+		firstClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,0, true, true);
+		secondClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,1, true, true);
+		thirdClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,2, true, true);
+		fourthClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,3, true, true);
+		fifthClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,4, true, true);
 	}
 	
 	@AfterClass
