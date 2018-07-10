@@ -3,6 +3,7 @@ package edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.po;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.ListIterator;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
@@ -51,20 +52,28 @@ public class VariableDirectionSortedPossibleGhostProbabilityBlock extends Variab
 		ArrayList<Quad<Integer, MOVE, Double, Double>> ghosts = gf.getPossibleGhostInfo();
 			
 		if(sortThreats && !sortEdibles) {
+			ListIterator<Quad<Integer, MOVE, Double, Double>> itr = ghosts.listIterator();
 			//remove edible ghosts from the list
-			for(int i = 0; i < ghosts.size(); i++) {
-				if(ghosts.get(i).t4 > 0) {
-					ghosts.remove(i);
+			while(itr.hasNext()) {
+				Quad<Integer, MOVE, Double, Double> current = itr.next();
+				if(current.t4 > 0) {
+					itr.remove();
 				}
 			}
 		} else if(!sortThreats && sortEdibles) {
+			ListIterator<Quad<Integer, MOVE, Double, Double>> itr = ghosts.listIterator();
 			//remove threat ghosts from the list
-			for(int i = 0; i < ghosts.size(); i++) {
-				if(ghosts.get(i).t4 <= 0) {
-					ghosts.remove(i);
+			while(itr.hasNext()) {
+				Quad<Integer, MOVE, Double, Double> current = itr.next();
+				if(current.t4 <= 0) {
+					itr.remove();
 				}
 			}
-		} 
+		}
+		
+//		System.out.println("----------------------------------------");
+//		System.out.println(this.getLabel() + " in " + dir + ": ");
+//		System.out.println(ghosts);
 		
 		if (order >= ghosts.size()) {
 			return 0.0; // Target in lair will result in distance of
@@ -91,9 +100,10 @@ public class VariableDirectionSortedPossibleGhostProbabilityBlock extends Variab
 				
 			}
 		});
+			
 		
 		//returns the shortest path to the order (1st, 2nd, 3rd, etc) possible ghost away
-		return ghosts.get(order).t3 ;
+		return ghosts.get(order).t3;
 	}
 
 	@Override
