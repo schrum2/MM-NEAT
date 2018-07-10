@@ -55,11 +55,11 @@ public class VariableDirectionSortedPossibleGhostDistanceBlock extends VariableD
 	@Override
 	public String getType() {
 		if(sortThreats && !sortEdibles) {
-			return order + " Closest Possible Threat Ghost in " + dir + "direction";
+			return  order + " Possible Threat Ghost in " + dir + "direction";
 		} else if(!sortThreats && sortEdibles) {
-			return order + " Closest Possible Edible Ghost in " + dir + "direction";
+			return  order + " Possible Edible Ghost in " + dir + "direction";
 		} else {
-			return order + " Closest Possible Ghost in " + dir + "direction";	
+			return order + " Possible Ghost in " + dir + "direction";	
 		}
 	}
 

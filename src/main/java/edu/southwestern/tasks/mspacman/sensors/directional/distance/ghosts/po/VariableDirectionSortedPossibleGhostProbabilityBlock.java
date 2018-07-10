@@ -64,9 +64,7 @@ public class VariableDirectionSortedPossibleGhostProbabilityBlock extends Variab
 					ghosts.remove(i);
 				}
 			}
-		} else {
-			//DO NOTHING
-		}
+		} 
 		
 		if (order >= ghosts.size()) {
 			return 0.0; // Target in lair will result in distance of
