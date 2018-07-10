@@ -154,10 +154,10 @@ public class AttemptAtTeammateController implements BotController {
 		}
 		
 		
-//		System.out.println("running like a headless chicken");
-//		return runAroundItems.control(bot);
-		System.out.println("standing still");
-		return new EmptyAction();
+		System.out.println("running like a headless chicken");
+		return runAroundItems.control(bot);
+//		System.out.println("standing still");
+//		return new EmptyAction();
 	}
 
 
