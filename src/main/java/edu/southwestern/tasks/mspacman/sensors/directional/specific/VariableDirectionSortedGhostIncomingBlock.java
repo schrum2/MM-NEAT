@@ -37,9 +37,6 @@ public class VariableDirectionSortedGhostIncomingBlock extends VariableDirection
 	}
 
 	@Override
-	/**
-	 * TODO: test popacman support
-	 */
 	public double getValue(GameFacade gf) {
 		ArrayList<Integer> ghosts = gf.getGhostIndices(edibleClose, proximityOnly);
 		if (order >= ghosts.size()) {
