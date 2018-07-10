@@ -1,6 +1,6 @@
 package edu.southwestern.networks.hyperneat;
 
-import org.junit.Test;
+//import org.junit.Test;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
@@ -8,16 +8,16 @@ import edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectur
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.CommonTaskUtil;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
-import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.random.RandomNumbers;
 
 
 public class HyperNEATVisualizationUtilTest {
 
-	@Test
+	// This is not actually a test because it doesn't make any assertions.
+	// It simply makes test visualizations pop up, but this behavior is undesirable for pure terminal environments.
+	//@Test
 	public void test_substrateVisualization() throws NoSuchMethodException {
 		MMNEAT.clearClasses();
 		HyperNEATTetrisTask.hardSubstrateReset();
