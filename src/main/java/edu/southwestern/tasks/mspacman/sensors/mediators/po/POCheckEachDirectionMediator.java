@@ -22,6 +22,7 @@ import edu.southwestern.tasks.mspacman.sensors.directional.distance.VariableDire
 import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.VariableDirectionSortedGhostDistanceBlock;
 import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.VariableDirectionSortedGhostEdibleTimeVsDistanceBlock;
 import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.specific.VariableDirectionSpecificGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.specific.po.VariableDirectionSortedPossibleGhostIncomingBlock;
 import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSortedGhostEdibleBlock;
 import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSortedGhostIncomingBlock;
 import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSortedGhostTrappedBlock;
@@ -74,9 +75,9 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 							blocks.add(new VariableDirectionSortedPossibleGhostProbabilityBlock(i, false, true));
 							if (incoming) {
 								// Threat incoming
-								//blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, false, false));
+								blocks.add(new VariableDirectionSortedPossibleGhostIncomingBlock(i, true, false));
 								// Edible incoming
-								//blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, true, false));
+								blocks.add(new VariableDirectionSortedPossibleGhostIncomingBlock(i, false, true));
 							}
 							if (Parameters.parameters.booleanParameter("trapped")) {
 								// Threat trapped
