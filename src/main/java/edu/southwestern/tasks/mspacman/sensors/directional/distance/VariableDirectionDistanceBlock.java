@@ -7,7 +7,9 @@ import edu.southwestern.util.datastructures.Pair;
 import java.util.ArrayList;
 
 /**
- * TODO
+ * Figure out sensor value indicating distance to element of a candidate group
+ * in a particular direction.
+ * 
  * @author Jacob Schrum
  */
 public abstract class VariableDirectionDistanceBlock extends VariableDirectionBlock {
@@ -25,9 +27,6 @@ public abstract class VariableDirectionDistanceBlock extends VariableDirectionBl
 		this.numberToExclude = exclude;
 	}
 
-	/**
-	 * TODO: how to handle PO conditions
-	 */
 	public double getValue(GameFacade gf) {
 		
 		if (numberToExclude == 0) {
