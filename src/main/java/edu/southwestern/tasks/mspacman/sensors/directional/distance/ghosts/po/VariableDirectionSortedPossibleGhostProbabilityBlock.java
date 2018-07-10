@@ -4,8 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.ghosts.DirectionalGhostComparator;
+import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.VariableDirectionDistanceBlock;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.datastructures.Triple;
 import pacman.game.Constants.MOVE;
@@ -18,7 +23,7 @@ import pacman.game.Constants.MOVE;
  * @author Will Price
  *
  */
-public class VariableDirectionSortedPossibleGhostProbabilityBlock extends VariableDirectionBlock{
+public class VariableDirectionSortedPossibleGhostProbabilityBlock extends VariableDirectionDistanceBlock { //VariableDirectionBlock{
 
 	private final int order;
 	private final boolean sortThreats;
@@ -40,14 +45,13 @@ public class VariableDirectionSortedPossibleGhostProbabilityBlock extends Variab
 	}
 
 	@Override
-	public double wallValue() {
-		//if there is a wall, the probability of a ghost being there is surely zero
-		return 0;
+	public String getType() {
+		return order + " Closest " + (!(sortEdibles && sortThreats) ? (sortEdibles ? "Edible " : "Threat ") : "") + "Ghost";
 	}
 
 	@Override
-	public double getValue(GameFacade gf) {
-		
+	public int[] getTargets(GameFacade gf) {
+
 		ArrayList<Quad<Integer, MOVE, Double, Double>> ghosts = gf.getPossibleGhostInfo();
 			
 		if(sortThreats && !sortEdibles) {
@@ -64,12 +68,11 @@ public class VariableDirectionSortedPossibleGhostProbabilityBlock extends Variab
 					ghosts.remove(i);
 				}
 			}
-		} else {
-			//DO NOTHING
-		}
-		
+		} 
+
+		// Sensing a ghost beyond the number of locations present: No targets
 		if (order >= ghosts.size()) {
-			return 0.0; // Target in lair will result in distance of
+			return new int[0]; // Target in lair will result in distance of
 								// infinity
 		}
 		
@@ -93,21 +96,79 @@ public class VariableDirectionSortedPossibleGhostProbabilityBlock extends Variab
 				
 			}
 		});
-		
-		//returns the shortest path to the order (1st, 2nd, 3rd, etc) possible ghost away
-		return ghosts.get(order).t3 ;
+
+		return new int[] {ghosts.get(order).t1};
 	}
 
-	@Override
-	public String getLabel() {
-		if(sortThreats && !sortEdibles) {
-			return "Probability of " + order + " Closest Possible Threat Ghost in " + dir + "direction";
-		} else if(!sortThreats && sortEdibles) {
-			return "Probability of " + order + " Closest Possible Edible Ghost in " + dir + "direction";
-		} else {
-			return "Probability of " + order + " Closest Possible Ghost in " + dir + "direction";	
-		}
-	}
+//	@Override
+//	public double wallValue() {
+//		//if there is a wall, the probability of a ghost being there is surely zero
+//		return 0;
+//	}
+
+//	@Override
+//	public double getValue(GameFacade gf) {
+//		
+//		ArrayList<Quad<Integer, MOVE, Double, Double>> ghosts = gf.getPossibleGhostInfo();
+//			
+//		if(sortThreats && !sortEdibles) {
+//			//remove edible ghosts from the list
+//			for(int i = 0; i < ghosts.size(); i++) {
+//				if(ghosts.get(i).t4 > 0) {
+//					ghosts.remove(i);
+//				}
+//			}
+//		} else if(!sortThreats && sortEdibles) {
+//			//remove threat ghosts from the list
+//			for(int i = 0; i < ghosts.size(); i++) {
+//				if(ghosts.get(i).t4 <= 0) {
+//					ghosts.remove(i);
+//				}
+//			}
+//		} else {
+//			//DO NOTHING
+//		}
+//		
+//		if (order >= ghosts.size()) {
+//			return 0.0; // Target in lair will result in distance of
+//								// infinity
+//		}
+//		
+//		Collections.sort(ghosts, new Comparator<Quad<Integer, MOVE, Double, Double>>(){
+//
+//			@Override
+//			public int compare(Quad<Integer, MOVE, Double, Double> arg0, Quad<Integer, MOVE, Double, Double> arg1) {
+//				
+//				//the length of the path from pacman to arg0 (ghost) in dir
+//				int disToArg0 = gf.getDirectionalPath(gf.getPacmanCurrentNodeIndex(), arg0.t1, dir).length;
+//				//the length of the path from pacman to arg1 (ghost) in dir
+//				int disToArg1 = gf.getDirectionalPath(gf.getPacmanCurrentNodeIndex(), arg1.t1, dir).length;
+//				
+//				if(disToArg0 > disToArg1) {
+//					return 1;
+//				} else if (disToArg0 == disToArg1) {
+//					return 0;
+//				} else {
+//					return -1;
+//				}
+//				
+//			}
+//		});
+//		
+//		//returns the shortest path to the order (1st, 2nd, 3rd, etc) possible ghost away
+//		return ghosts.get(order).t3 ;
+//	}
+
+//	@Override
+//	public String getLabel() {
+//		if(sortThreats && !sortEdibles) {
+//			return "Probability of " + order + " Closest Possible Threat Ghost in " + dir + "direction";
+//		} else if(!sortThreats && sortEdibles) {
+//			return "Probability of " + order + " Closest Possible Edible Ghost in " + dir + "direction";
+//		} else {
+//			return "Probability of " + order + " Closest Possible Ghost in " + dir + "direction";	
+//		}
+//	}
 	
 
 }
