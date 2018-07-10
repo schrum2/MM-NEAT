@@ -81,9 +81,7 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 							}
 							if (Parameters.parameters.booleanParameter("trapped")) {
 								// Threat trapped
-								//blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, false, false));
-								// Edible trapped
-								//blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, true, false));
+								blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, false, false));
 							}
 						
 					} else {
