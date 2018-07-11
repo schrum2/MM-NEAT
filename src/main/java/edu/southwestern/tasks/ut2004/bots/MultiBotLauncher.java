@@ -55,6 +55,7 @@ public class MultiBotLauncher {
 						if(params[index] instanceof ControllerBotParameters) {
 							// The evaluation was not successful, then we need to know the reason
 							if(!((ControllerBotParameters) params[index]).getStats().evalWasSuccessful()) {
+								System.out.println("ControllerBot evaluation failed!");
 								e.printStackTrace();
 							}
 							// Otherwise, the exception is suppressed, because it is the standard complaint about killing an active bot
