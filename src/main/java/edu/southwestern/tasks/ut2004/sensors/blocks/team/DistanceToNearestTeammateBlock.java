@@ -71,6 +71,9 @@ public class DistanceToNearestTeammateBlock implements UT2004SensorBlock, Accept
 	public double flatDistanceToClosestFriend(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		double minFlatDistance = MAX_DISTANCE;
 		Location botLocation = bot.getBot().getLocation();
+		if(botLocation == null) {
+			return MAX_DISTANCE;
+		}
 		for(String s: teamLocation.keySet()) {
 			//for each location, find distance btween bot and friend
 			Location friendLocation = teamLocation.get(s);

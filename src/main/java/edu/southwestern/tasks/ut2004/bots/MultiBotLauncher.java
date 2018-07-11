@@ -30,7 +30,7 @@ public class MultiBotLauncher {
 	 * @param host (the host of the server)
 	 * @param port (the port that the server will connect to)
 	 */
-	public static void launchMultipleBots(@SuppressWarnings("rawtypes") Class[] botClasses, IRemoteAgentParameters[] params,String host, int port) {
+	public static void launchMultipleBots(@SuppressWarnings("rawtypes") Class[] botClasses, IRemoteAgentParameters[] params, String host, int port) {
 		assert botClasses.length == params.length : "List of bots and bot parameters must be same length";
 		Thread[] threads = new Thread[botClasses.length];
 		System.out.println("===== Launch bots: " + Arrays.toString(botClasses));
@@ -51,7 +51,17 @@ public class MultiBotLauncher {
 						// I believe the setMain causes certain exceptions to be caught and suppressed
 						multi.setMain(true).setLogLevel(Level.OFF).startAgents(bots);
 					} catch (PogamutException e) {
-						e.printStackTrace();
+						// For ControllerBots, we can check if the eval ended properly or badly
+						if(params[index] instanceof ControllerBotParameters) {
+							// The evaluation was not successful, then we need to know the reason
+							if(!((ControllerBotParameters) params[index]).getStats().evalWasSuccessful()) {
+								e.printStackTrace();
+							}
+							// Otherwise, the exception is suppressed, because it is the standard complaint about killing an active bot
+						} else {
+							System.out.println("NOT A ControllerBot. Uncertain if exception is problematic");
+							e.printStackTrace();
+						}
 						// Obligatory exception that happens from stopping the bot. Just suppress.
 					}
 				}
