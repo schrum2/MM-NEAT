@@ -3,6 +3,7 @@ package edu.southwestern.tasks.ut2004;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
 
 import cz.cuni.amis.pogamut.base.component.exception.ComponentCantStartException;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.AddBot;
@@ -188,6 +189,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 			System.out.println("Eval attempt " + (attempts++));
 			try {
 				ucc = new MyUCCWrapper(config);
+				ucc.getLogger().setLevel(Level.OFF); // Stop logging (too much clutter)
 				IUT2004Server server = ucc.getUTServer();
 				System.out.println(botPort + ": Confirming empty server");
 				//responsible for launching native bots into the server, resets if the port is not empty
@@ -203,6 +205,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				// Server was launched?
 				int claimTicket = ServerUtil.addServer(ucc);
 				System.out.println(botPort + ": Empty server gets ticekt: " + claimTicket);
+				server.getLogger().setLevel(Level.OFF); // Turn off the server log info (too much clutter)
 				try {
 					// Make controller for each genotype
 					NetworkController<T>[] organisms = new NetworkController[individuals.length];
