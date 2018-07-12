@@ -101,21 +101,24 @@ public class VariableDirectionSortedPossibleGhostDistanceBlock extends VariableD
 		Collections.sort(ghosts, new Comparator<Quad<Integer, MOVE, Double, Double>>(){
 
 			@Override
-			public int compare(Quad<Integer, MOVE, Double, Double> arg0, Quad<Integer, MOVE, Double, Double> arg1) {
-				
-				//the length of the path from pacman to arg0 (ghost) in dir
-				int disToArg0 = gf.getDirectionalPath(gf.getPacmanCurrentNodeIndex(), arg0.t1, dir).length;
-				//the length of the path from pacman to arg1 (ghost) in dir
-				int disToArg1 = gf.getDirectionalPath(gf.getPacmanCurrentNodeIndex(), arg1.t1, dir).length;
-				
-				if(disToArg0 > disToArg1) {
-					return 1;
-				} else if (disToArg0 == disToArg1) {
-					return 0;
-				} else {
-					return -1;
+			public int compare(Quad<Integer, MOVE, Double, Double> arg0, Quad<Integer, MOVE, Double, Double> arg1) {	
+				try {
+					//the length of the path from pacman to arg0 (ghost) in dir
+					int disToArg0 = gf.getDirectionalPath(gf.getPacmanCurrentNodeIndex(), arg0.t1, dir).length;
+					//the length of the path from pacman to arg1 (ghost) in dir
+					int disToArg1 = gf.getDirectionalPath(gf.getPacmanCurrentNodeIndex(), arg1.t1, dir).length;
+
+					if(disToArg0 > disToArg1) {
+						return 1;
+					} else if (disToArg0 == disToArg1) {
+						return 0;
+					} else {
+						return -1;
+					}
+				}catch(AssertionError e) {
+					System.out.println("ERROR: " + arg0 + ":" + arg1);
+					throw e;
 				}
-				
 			}
 		});
 		

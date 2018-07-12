@@ -10,8 +10,6 @@ import edu.southwestern.tasks.popacman.controllers.MyPacMan;
 import pacman.game.Constants.GHOST;
 import popacman.entrants.ghosts.spooky.*;
 import popacman.entrants.pacman.spooky.*;
-import popacman.examples.StarterISMCTS.InformationSetMCTSPacMan;
-
 
 /**
  * Created by pwillic on 06/05/2016.

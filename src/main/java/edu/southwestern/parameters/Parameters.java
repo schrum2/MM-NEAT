@@ -49,7 +49,6 @@ import oldpacman.controllers.examples.Legacy;
 import oldpacman.controllers.examples.StarterPacMan;
 import oldpacman.game.Constants;
 import popacman.examples.StarterPacMan.MyPacMan;
-import popacman.examples.StarterISMCTS.InformationSetMCTSPacMan;
 
 /**
  * Used for processing and containing command line parameters.

@@ -1,17 +1,13 @@
 package edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.specific.po;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.ListIterator;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
-import edu.southwestern.tasks.mspacman.ghosts.DirectionalGhostComparator;
-import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 import edu.southwestern.util.datastructures.Quad;
 import pacman.game.Constants.MOVE;
@@ -98,9 +94,13 @@ public class VariableDirectionSortedPossibleGhostIncomingBlock extends VariableD
 		assert current != -1 : "we can't see pacman";
 		int[] neighbors = gf.neighbors(current);
 		//assert neighbors[pacmanDir] != -1 : "Pacman dir is a wall: " + pacmanDir + "; " + Arrays.toString(neighbors);
+		try {
 		int[] ghostPath = gf.poG.getShortestPath(ghosts.get(order).t1.intValue(), current, ghosts.get(order).t2);
-		
 		return ArrayUtils.contains(ghostPath, neighbors[dir]) ? 1 : 0;
+		} catch(java.lang.NullPointerException e) {
+			System.out.println(ghosts);
+			throw e;
+		}
 	}
 
 	@Override
