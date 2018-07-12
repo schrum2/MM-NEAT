@@ -50,7 +50,7 @@ public class DistanceToNearestTeammateBlock implements UT2004SensorBlock, Accept
 			for(String s: teamLocation.keySet()) {
 				//for each location, find distance btween bot and friend
 				Location friendLocation = teamLocation.get(s);
-				if(friendLocation.equals(botLocation)) {
+				if(friendLocation == null || friendLocation.equals(botLocation)) {
 					continue;
 				}
 				double friendDistance = friendLocation.getDistance(botLocation);
@@ -75,13 +75,13 @@ public class DistanceToNearestTeammateBlock implements UT2004SensorBlock, Accept
 			return MAX_DISTANCE;
 		}
 		for(String s: teamLocation.keySet()) {
-			//for each location, find distance btween bot and friend
+			//for each location, find distance between bot and friend
 			Location friendLocation = teamLocation.get(s);
-			if(friendLocation != null) { // Why would this happen?
-				double friendFlatDistance = friendLocation.getDistance2D(botLocation);
-				minFlatDistance = (Math.min(friendFlatDistance, minFlatDistance));
-				//location.getDistance()
+			if(friendLocation == null || friendLocation.equals(botLocation)) {
+				continue;
 			}
+			double friendFlatDistance = friendLocation.getDistance2D(botLocation);
+			minFlatDistance = (Math.min(friendFlatDistance, minFlatDistance));
 		}
 		return minFlatDistance;
 	}
