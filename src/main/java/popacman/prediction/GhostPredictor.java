@@ -28,7 +28,7 @@ public class GhostPredictor {
      */
     public void clear(Maze maze){
         ghostPredictions.clear();
-        ghostPredictions.add(new GhostPredictionsFast(maze, null)); // SUPPOSEDLY NEVER USED. DELETE?
+        ghostPredictions.add(new GhostPredictionsFast(null, null)); // SUPPOSEDLY NEVER USED. DELETE?
     }
 
     /**
@@ -84,7 +84,7 @@ public class GhostPredictor {
         if(ghostPredictions.size() <= depth){
             for(int i = ghostPredictions.size(); i <= depth; i++){
                 GhostPredictionsFast temp = ghostPredictions.get(i - 1).copy();
-                temp.update();
+                temp.update(null);
                 ghostPredictions.add(temp);
             }
         }
@@ -97,7 +97,7 @@ public class GhostPredictor {
         if(ghostPredictions.size() <= depth){
             for(int i = ghostPredictions.size(); i <= depth; i++){
                 GhostPredictionsFast temp = ghostPredictions.get(i - 1).copy();
-                temp.update();
+                temp.update(null);
                 ghostPredictions.add(temp);
             }
         }

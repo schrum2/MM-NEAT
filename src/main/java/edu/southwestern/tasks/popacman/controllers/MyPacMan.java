@@ -333,7 +333,7 @@ public class MyPacMan extends PacmanController{
 	            }
 	        }
 			
-	        ghostPredictions.update();
+	        ghostPredictions.update(informedGameFacade);
 	        informedGameFacade.setGhostPredictions(ghostPredictions);
 		}
 		

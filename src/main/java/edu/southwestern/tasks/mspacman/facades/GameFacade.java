@@ -19,7 +19,6 @@ import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Quad;
-import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import pacman.game.Constants.MOVE;
 import popacman.prediction.GhostLocation;
@@ -1036,6 +1035,7 @@ public class GameFacade {
 	 * @return shortest directional path
 	 */
 	public int[] getDirectionalPath(int from, int to, int direction) {
+		assert from != to : "Don't get a path from a point to itself: " + from + "->" + to;
 		//Can't path to an unknown location
 		if(from == -1 || to == -1) {
 			return null;
@@ -3394,13 +3394,17 @@ public class GameFacade {
 		timeOfLastEatenPowerPill = time;
 	}
 	
-	public double calculateRemainingPillBuffTime() {
-		
-		int currentLevelTime = getCurrentLevelTime();
-		int timeOfLastPowerPill = getTimeOfLastPowerPillEaten();
+	public int calculateRawRemainingPillBuffTime() {		
 		int levelCount = getCurrentLevel();
 		//The edible time of level "levelcount"
-		double newEdibleTime = (int) (pacman.game.Constants.EDIBLE_TIME * (Math.pow(pacman.game.Constants.EDIBLE_TIME_REDUCTION, levelCount % pacman.game.Constants.LEVEL_RESET_REDUCTION)));	
+		int newEdibleTime = (int)(pacman.game.Constants.EDIBLE_TIME * (Math.pow(pacman.game.Constants.EDIBLE_TIME_REDUCTION, levelCount % pacman.game.Constants.LEVEL_RESET_REDUCTION)));	
+		return newEdibleTime;
+	}	
+		
+	public double calculateRemainingPillBuffTime() {
+		int currentLevelTime = getCurrentLevelTime();
+		int timeOfLastPowerPill = getTimeOfLastPowerPillEaten();
+		double newEdibleTime = calculateRawRemainingPillBuffTime();
 		int delta;
 		
 		//If we havent eaten a pill yet, we don't want to use -1
