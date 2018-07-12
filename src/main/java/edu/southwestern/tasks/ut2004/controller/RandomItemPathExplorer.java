@@ -19,8 +19,7 @@ public class RandomItemPathExplorer extends SequentialPathExplorer {
 	 */
 	public NavPoint getNextNavPoint(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		// List of non-taboo navpoints
-		List<NavPoint> navs = MyCollections.getFiltered(bot.getWorldView().getAll(NavPoint.class).values(),
-				tabooNavPoints);
+		List<NavPoint> navs = MyCollections.getFiltered(bot.getWorldView().getAll(NavPoint.class).values(), tabooNavPoints);
 		// Get a random navpoint now (before list is changed) in case it is
 		// needed later
 		NavPoint random = null;
@@ -50,7 +49,6 @@ public class RandomItemPathExplorer extends SequentialPathExplorer {
 
 	@Override
 	public String getSkin() {
-		// TODO Auto-generated method stub
 		return "HumanMaleA.EgyptMaleA";
 	}
 }

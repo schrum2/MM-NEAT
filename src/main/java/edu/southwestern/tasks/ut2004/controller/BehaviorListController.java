@@ -66,7 +66,6 @@ public class BehaviorListController implements BotController {
 
 	@Override
 	public String getSkin() {
-		// TODO Auto-generated method stub
 		return "Aliens.AlienFemaleA";
 	}
 }

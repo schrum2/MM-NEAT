@@ -238,6 +238,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				} finally {
 					System.out.println(botPort + ": Past evaluate block: " + System.currentTimeMillis());
 					ServerUtil.removeServer(claimTicket);
+					server.stop(); // Will this cause a problematic exception?
 				}
 			} catch (ComponentCantStartException ccse) {//gets rid of the server if it can't be started
 				System.out.println("EXCEPTION: Can't start the server. Failed eval. Destroy server");
