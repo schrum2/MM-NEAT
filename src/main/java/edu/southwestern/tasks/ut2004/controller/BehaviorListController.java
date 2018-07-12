@@ -63,4 +63,10 @@ public class BehaviorListController implements BotController {
 			behaviors.get(i).reset(bot);
 		}
 	}
+
+	@Override
+	public String getSkin() {
+		// TODO Auto-generated method stub
+		return "Aliens.AlienFemaleA";
+	}
 }

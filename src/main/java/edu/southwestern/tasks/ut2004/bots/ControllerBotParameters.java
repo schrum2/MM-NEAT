@@ -12,6 +12,7 @@ import edu.southwestern.tasks.ut2004.controller.BotController;
 public class ControllerBotParameters extends UT2004BotParameters {
 
 	private final String name;
+	private final String skin;
 	private final BotController controller;
 	private final GameDataCollector stats;
 	private final IUT2004Server server;
@@ -30,7 +31,7 @@ public class ControllerBotParameters extends UT2004BotParameters {
 	 * @param botPort (what port the bot will use)
 	 */
 	public ControllerBotParameters(IUT2004Server server, BotController controller, String name, GameDataCollector stats,
-			int evalSeconds, int desiredSkill, int botPort) {
+			int evalSeconds, int desiredSkill, int botPort, String skin) {
 		this.controller = controller;
 		this.name = name;
 		this.stats = stats;
@@ -38,6 +39,7 @@ public class ControllerBotParameters extends UT2004BotParameters {
 		this.evalSeconds = evalSeconds;
 		this.desiredSkill = desiredSkill;
 		this.botPort = botPort;
+		this.skin = skin;
 	}
 
 	/**
@@ -99,6 +101,14 @@ public class ControllerBotParameters extends UT2004BotParameters {
 	 */
 	public void giveStats(AgentStats stats) {
 		this.stats.giveAgentStats(stats);
+	}
+
+	/**
+	 * Specify skin of bot
+	 * @return
+	 */
+	public String getSkin() {
+		return skin;
 	}
 	
 }

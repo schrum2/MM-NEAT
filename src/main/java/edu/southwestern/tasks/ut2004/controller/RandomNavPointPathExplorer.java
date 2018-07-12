@@ -29,4 +29,10 @@ public class RandomNavPointPathExplorer extends SequentialPathExplorer {
 		// random
 		return MyCollections.getRandom(bot.getWorldView().getAll(NavPoint.class).values());
 	}
+
+	@Override
+	public String getSkin() {
+		// TODO Auto-generated method stub
+		return "HumanMaleA.MercMaleB";
+	}
 }

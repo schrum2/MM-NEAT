@@ -102,7 +102,7 @@ public class MultiBotLauncher {
 		Class[] botClasses = new Class[] {HunterBot.class, NavigationBot.class, UT2.class, MirrorBot4.class, ControllerBot.class};
 
 		UT2Parameters ut2params = new UT2Parameters();
-		ControllerBotParameters dummyParameters = new ControllerBotParameters(null, new DummyController(), "Dummy", new GameDataCollector(), 300, 4, 3000);
+		ControllerBotParameters dummyParameters = new ControllerBotParameters(null, new DummyController(), "Dummy", new GameDataCollector(), 300, 4, 3000, "Bot.BotC");
 
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new HunterBotParameters(), new UT2004BotParameters(), ut2params, new MirrorBotParameters(), dummyParameters};
 		launchMultipleBots(botClasses, params, "localhost", 3000);

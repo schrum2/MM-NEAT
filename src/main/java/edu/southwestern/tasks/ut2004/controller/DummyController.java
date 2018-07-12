@@ -32,4 +32,10 @@ public class DummyController implements BotController {
 	 */
 	public void reset(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
+
+	@Override
+	public String getSkin() {
+		// TODO Auto-generated method stub
+		return "HumanFemaleA.EgyptFemaleA";
+	}
 }

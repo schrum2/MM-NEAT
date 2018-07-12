@@ -155,9 +155,9 @@ public class AttemptAtTeammateController implements BotController {
 
 
 		System.out.println("running like a headless chicken");
-		return runAroundItems.control(bot);
+		//return runAroundItems.control(bot);
 		//		System.out.println("standing still");
-		//		return new EmptyAction();
+				return new EmptyAction();
 	}
 
 
@@ -278,14 +278,18 @@ public class AttemptAtTeammateController implements BotController {
 		memory = OldActionWrapper.getAgentMemory(bot);
 		body = OldActionWrapper.getAgentBody(bot);		
 		bot.getBot().getBotName().setNameBase("Jude");
-		//bot.getInitializeCommand().setSkin("Aliens.Alien")
-		//bot.getBot()
 	}	
 
 	/**
 	 * resets the controller
 	 */
 	public void reset(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
+	}
+
+	@Override
+	public String getSkin() {
+		// TODO Auto-generated method stub
+		return "HumanFemaleA.MercFemaleB";
 	}
 
 }

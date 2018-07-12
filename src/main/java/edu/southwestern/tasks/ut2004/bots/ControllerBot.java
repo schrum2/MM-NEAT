@@ -69,7 +69,7 @@ public class ControllerBot extends UT2004BotModuleController {
 		brain = params.getController();
 		// Listerners on these objects needed to track scores
 		params.getStats().registerListeners(this);
-		return new Initialize().setName(params.getName()).setDesiredSkill(params.getDesiredSkill()).setSkin("Aliens.AlienFemaleB");
+		return new Initialize().setName(params.getName()).setDesiredSkill(params.getDesiredSkill()).setSkin(params.getSkin());
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class ControllerBot extends UT2004BotModuleController {
 			classes[classIndex] = ControllerBot.class;
 			collectors[classIndex] = new GameDataCollector();
 			params[classIndex] = new ControllerBotParameters(server, controllers[i], names[i], collectors[i], evalSeconds,
-					desiredSkill, botPort);
+					desiredSkill, botPort, controllers[i].getSkin());
 			classIndex++;
 		}
 
@@ -208,9 +208,9 @@ public class ControllerBot extends UT2004BotModuleController {
 		int port = Pogamut.getPlatform().getIntProperty(PogamutUT2004Property.POGAMUT_UT2004_BOT_PORT.getKey());
 		MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner("TEST").setHost("localhost").setPort(port);
 		ControllerBotParameters b1 = new ControllerBotParameters(null, new RandomNavPointPathExplorer(),
-				"ExplorationBot", new GameDataCollector(), 500, 1, port);
+				"ExplorationBot", new GameDataCollector(), 500, 1, port, "Aliens.AlienMaleA");
 		ControllerBotParameters b2 = new ControllerBotParameters(null, new DummyController(), "DummyBot",
-				new GameDataCollector(), 500, 1, port);
+				new GameDataCollector(), 500, 1, port, "Bot.BotD");
 		UT2004BotDescriptor test = new UT2004BotDescriptor().setController(ControllerBot.class)
 				.setAgentParameters(new IRemoteAgentParameters[] { b1, b2 });
 		multi.setMain(true).startAgents(test);
