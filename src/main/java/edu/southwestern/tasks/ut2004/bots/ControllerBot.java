@@ -152,7 +152,8 @@ public class ControllerBot extends UT2004BotModuleController {
 		for (int i = 0; i < controllers.length; i++) {
 			classes[classIndex] = ControllerBot.class;
 			collectors[classIndex] = new GameDataCollector();
-			params[classIndex] = new ControllerBotParameters(server, controllers[i], names[i], collectors[i], evalSeconds,
+			params[classIndex] = new ControllerBotParameters(
+					server, controllers[i], names[i], collectors[i], evalSeconds,
 					desiredSkill, botPort, controllers[i].getSkin());
 			classIndex++;
 		}
@@ -184,22 +185,7 @@ public class ControllerBot extends UT2004BotModuleController {
 		// This method still has some problems and causes weird exceptions sometimes
 		MultiBotLauncher.launchMultipleBots(classes, params, host, botPort);
 
-		// Old version of this code
-		//		try {
-		//			MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner("MultipleBots").setHost(host).setPort(botPort);
-		//			@SuppressWarnings("unchecked")
-		//			UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(ControllerBot.class).setAgentParameters(params);
-		//			multi.setMain(true).startAgents(bots);
-		//		} catch (PogamutException e) {
-		//			// Obligatory exception that happens from stopping the bot
-		//			// System.out.println("Exception after evaluation");
-		//			// e.printStackTrace();
-		//		}		
-
-		//		System.out.println("Match over: ");
-		//		for (int i = 0; i < collectors.length; i++) {
-		//			System.out.println("\t" + collectors[i]);
-		//		}
+		// References to the collectors were passed in via ControllerBotParameters, and now their values are updated
 		return collectors;
 	}
 
@@ -214,8 +200,5 @@ public class ControllerBot extends UT2004BotModuleController {
 		UT2004BotDescriptor test = new UT2004BotDescriptor().setController(ControllerBot.class)
 				.setAgentParameters(new IRemoteAgentParameters[] { b1, b2 });
 		multi.setMain(true).startAgents(test);
-		// GameDataCollector data = launchBot(null, "DummyBot", new
-		// DummyController(), 500, 1, "localhost", port);
-		// System.out.println(data);
 	}
 }

@@ -360,11 +360,10 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 */
 	public static GameDataCollector[] evaluateAgentsOnServer(IUT2004Server server, BotController[] controllers, int botPort, int gamePort,
 			int numNativeBots, int evalMinutes, int desiredSkill, int nativeBotSkill) {
-		//TODO botskill
 		// Launch Native Bots
 		for (int i = 0; i < numNativeBots; i++) {
-			//server.connectNativeBot("Bot" + i, "Type" + i, nativeBotSkills[i]);
 			//server.connectNativeBot("Bot" + i, "Type" + i, 1); // TEAM 1: All on opposing team	
+			// The connectNativeBot method above is insufficient because it does not allow the bot skill to be set.
 			server.getAct().act(new AddBot("Bot" + i, null, null, nativeBotSkill, 1, "Type" + i));
 		}
 		// Create names for all bot controllers
