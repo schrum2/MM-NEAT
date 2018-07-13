@@ -42,7 +42,7 @@ import utopia.controllers.scripted.ChasingController;
  * bot should follow it's teammate if they are in view and attack enemies, if it finds itself alone, it will run around collecting items until it encounters someone else
  * @author Adina Friedman
  */
-public class AttemptAtTeammateController implements BotController {
+public class HardCodedTeammateController implements BotController {
 
 	AttackEnemyAloneModule attackAlone = new AttackEnemyAloneModule();
 	RandomItemPathExplorer runAroundItems = new RandomItemPathExplorer();
@@ -57,7 +57,7 @@ public class AttemptAtTeammateController implements BotController {
 	public static final double MAX_DISTANCE_TO_ITEM = 300;
 	public static final double COMBAT_TYPE_THRESHOLD_DISTANCE = 150; //distance for approach enemy vs dodge shoot
 
-	public AttemptAtTeammateController(UT2004WeaponManager weaponManager) {
+	public HardCodedTeammateController(UT2004WeaponManager weaponManager) {
 		this.weaponManager = weaponManager;
 		if (weaponPreferences == null) {
 			weaponPreferences = new WeaponPreferenceTable();
