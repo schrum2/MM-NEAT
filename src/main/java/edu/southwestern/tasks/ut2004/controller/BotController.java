@@ -17,4 +17,6 @@ public interface BotController {
 	public void initialize(@SuppressWarnings("rawtypes") UT2004BotModuleController bot);
 
 	public void reset(@SuppressWarnings("rawtypes") UT2004BotModuleController bot);
+
+	public String getSkin();
 }
