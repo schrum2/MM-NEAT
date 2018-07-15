@@ -168,7 +168,7 @@ public class MMNEAT {
 	@SuppressWarnings("rawtypes")
 	public static TwoDimensionalBoardGameViewer boardGameViewer;
 	public static SubstrateArchitectureDefinition substrateArchitectureDefinition;
-	
+
 	public static MMNEAT mmneat;
 
 	@SuppressWarnings("rawtypes")
@@ -243,8 +243,8 @@ public class MMNEAT {
 
 	private static void setupTWEANNGenotypeDataTracking(boolean coevolution) {
 		if (genotype instanceof TWEANNGenotype || 
-			genotype instanceof CombinedGenotype || // Assume first member of pair is TWEANNGenotype
-			genotype instanceof HyperNEATCPPNforDL4JGenotype) { // Contains CPPN that is TWEANNGenotype
+				genotype instanceof CombinedGenotype || // Assume first member of pair is TWEANNGenotype
+				genotype instanceof HyperNEATCPPNforDL4JGenotype) { // Contains CPPN that is TWEANNGenotype
 			if (Parameters.parameters.booleanParameter("io")
 					&& Parameters.parameters.booleanParameter("logTWEANNData")) {
 				System.out.println("Init TWEANN Log");
@@ -258,11 +258,11 @@ public class MMNEAT {
 			long biggestInnovation = genotype instanceof CombinedGenotype ? 
 					((TWEANNGenotype) ((CombinedGenotype) genotype).t1).biggestInnovation() :
 						(genotype instanceof HyperNEATCPPNforDL4JGenotype ?
-						((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN().biggestInnovation()	:
-					((TWEANNGenotype) genotype).biggestInnovation());
-			if (biggestInnovation > EvolutionaryHistory.largestUnusedInnovationNumber) {
-				EvolutionaryHistory.setInnovation(biggestInnovation + 1);
-			}
+								((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN().biggestInnovation()	:
+									((TWEANNGenotype) genotype).biggestInnovation());
+					if (biggestInnovation > EvolutionaryHistory.largestUnusedInnovationNumber) {
+						EvolutionaryHistory.setInnovation(biggestInnovation + 1);
+					}
 		}
 	}
 
@@ -413,7 +413,7 @@ public class MMNEAT {
 					modesToTrack = multitaskModes;
 				}
 			}
-			
+
 			if(Parameters.parameters.classParameter("boardGame") != null){
 				boardGame = (BoardGame) ClassCreation.createObject("boardGame");
 				if(boardGame instanceof TwoDimensionalBoardGame){
@@ -426,7 +426,7 @@ public class MMNEAT {
 					boardGameViewer = null;
 				}
 			}
-			
+
 			task = (Task) ClassCreation.createObject("task");
 			System.out.println("Load task: " + task);
 			boolean multiPopulationCoevolution = false;
@@ -437,7 +437,7 @@ public class MMNEAT {
 				System.out.println("Set pre-eaten pills high, since we are scaling pills with generation");
 				Parameters.parameters.setDouble("preEatenPillPercentage", 0.999);
 			}
-			
+
 			HyperNEATTask HNTSeedTask = (HyperNEATTask) ClassCreation.createObject("hyperNEATSeedTask");
 			if(CommonConstants.hyperNEAT || HNTSeedTask != null) {
 				if(Parameters.parameters.booleanParameter("useHyperNEATCustomArchitecture")) {
@@ -446,11 +446,11 @@ public class MMNEAT {
 				// For each substrate layer pairing, there can be multiple output neurons in the CPPN
 				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = CommonConstants.leo ? 2 : 1;
 				// Number of output neurons needed to designate bias values across all substrates
-//				HyperNEATCPPNGenotype.numBiasOutputs = CommonConstants.evolveHyperNEATBias ? 
-//						(HNTSeedTask == null ? 
-//							HyperNEATUtil.numBiasOutputsNeeded() :
-//							HyperNEATUtil.numBiasOutputsNeeded(HNTSeedTask)) : 
-//						0;				
+				//				HyperNEATCPPNGenotype.numBiasOutputs = CommonConstants.evolveHyperNEATBias ? 
+				//						(HNTSeedTask == null ? 
+				//							HyperNEATUtil.numBiasOutputsNeeded() :
+				//							HyperNEATUtil.numBiasOutputsNeeded(HNTSeedTask)) : 
+				//						0;				
 			}
 			if(Parameters.parameters.booleanParameter("hallOfFame")){
 				hallOfFame = new HallOfFame();
@@ -521,7 +521,7 @@ public class MMNEAT {
 			} else if (task instanceof SinglePopulationCompetativeCoevolutionMicroRTSTask){
 				SinglePopulationCompetativeCoevolutionMicroRTSTask temp = (SinglePopulationCompetativeCoevolutionMicroRTSTask) task;
 				setNNInputParameters(temp.sensorLabels().length, 1); //only one output because it is utility value for state being evaluated
-				
+
 			} else if (task instanceof RLGlueTask) {
 				setNNInputParameters(rlGlueExtractor.numFeatures(), RLGlueTask.agent.getNumberOutputs());
 			} else if (task instanceof PinballTask) {
@@ -536,7 +536,7 @@ public class MMNEAT {
 			} else if (task instanceof MultiPopulationCompetativeCoevolutionBoardGameTask) {
 				System.out.println("Setup Multi-Population Board Game Coevolution Task");
 				multiPopulationCoevolution = true;
-				
+
 				MultiPopulationCompetativeCoevolutionBoardGameTask temp = (MultiPopulationCompetativeCoevolutionBoardGameTask) task;
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);	
 
@@ -547,11 +547,11 @@ public class MMNEAT {
 					if(genotype instanceof TWEANNGenotype) {
 						((TWEANNGenotype) gene).archetypeIndex = i;
 					}
-					
+
 					genotypeExamples.add(gene);
 				}
 				prepareCoevolutionArchetypes();
-				
+
 			} else if (task instanceof GVGAISinglePlayerTask) {
 				GVGAISinglePlayerTask temp = (GVGAISinglePlayerTask) task;
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
@@ -644,10 +644,12 @@ public class MMNEAT {
 				}
 				prepareCoevolutionArchetypes();
 			} else if (task instanceof UT2004Task) {
-				if(Parameters.parameters.booleanParameter("botprizeMod")) {
-					UT2004Util.copyBotPrizeVersionOfGameBots();
-				} else {
-					UT2004Util.copyDefaultVersionOfGameBots();
+				if(Parameters.parameters.booleanParameter("overwriteGameBots")) {
+					if(Parameters.parameters.booleanParameter("botprizeMod")) {
+						UT2004Util.copyBotPrizeVersionOfGameBots();
+					} else {
+						UT2004Util.copyDefaultVersionOfGameBots();
+					}
 				}
 				System.out.println("Setup UT2004 Task");
 				UT2004Task utTask = (UT2004Task) task;
@@ -692,7 +694,7 @@ public class MMNEAT {
 				System.out.println(task);
 				System.exit(1);
 			}
-			
+
 			// Only loads if settings indicate that this should be used
 			ScoreHistory.load();
 

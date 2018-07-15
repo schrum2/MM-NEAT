@@ -43,11 +43,14 @@ public class DistanceToNearestTeammateBlock implements UT2004SensorBlock, Accept
 	public double distanceToClosestFriend(@SuppressWarnings("rawtypes") UT2004BotModuleController bot){
 		double minDistance = MAX_DISTANCE;
 		Location botLocation = bot.getBot().getLocation();
+		if(botLocation == null) {
+			return MAX_DISTANCE;
+		}
 		try {
 			for(String s: teamLocation.keySet()) {
 				//for each location, find distance btween bot and friend
 				Location friendLocation = teamLocation.get(s);
-				if(friendLocation == botLocation) {
+				if(friendLocation == null || friendLocation.equals(botLocation)) {
 					continue;
 				}
 				double friendDistance = friendLocation.getDistance(botLocation);
@@ -68,12 +71,17 @@ public class DistanceToNearestTeammateBlock implements UT2004SensorBlock, Accept
 	public double flatDistanceToClosestFriend(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		double minFlatDistance = MAX_DISTANCE;
 		Location botLocation = bot.getBot().getLocation();
+		if(botLocation == null) {
+			return MAX_DISTANCE;
+		}
 		for(String s: teamLocation.keySet()) {
-			//for each location, find distance btween bot and friend
+			//for each location, find distance between bot and friend
 			Location friendLocation = teamLocation.get(s);
+			if(friendLocation == null || friendLocation.equals(botLocation)) {
+				continue;
+			}
 			double friendFlatDistance = friendLocation.getDistance2D(botLocation);
 			minFlatDistance = (Math.min(friendFlatDistance, minFlatDistance));
-			//location.getDistance()
 		}
 		return minFlatDistance;
 	}
