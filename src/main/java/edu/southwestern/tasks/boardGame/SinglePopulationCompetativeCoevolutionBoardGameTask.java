@@ -8,7 +8,6 @@ import edu.southwestern.boardGame.agents.BoardGamePlayer;
 import edu.southwestern.boardGame.agents.HeuristicBoardGamePlayer;
 import edu.southwestern.boardGame.featureExtractor.BoardGameFeatureExtractor;
 import edu.southwestern.boardGame.fitnessFunction.BoardGameFitnessFunction;
-import edu.southwestern.boardGame.fitnessFunction.CheckersAdvancedFitness;
 import edu.southwestern.boardGame.fitnessFunction.HallOfFameFitness;
 import edu.southwestern.boardGame.fitnessFunction.OthelloPieceFitness;
 import edu.southwestern.boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
@@ -21,11 +20,11 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.SinglePopulationCoevolutionTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.datastructures.Triple;
 
 public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Network, S extends BoardGameState> extends SinglePopulationCoevolutionTask<T> implements NetworkTask, HyperNEATTask  {
 
@@ -52,9 +51,6 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		// Add Fitness Functions here to act as Selection Functions
 		if(Parameters.parameters.booleanParameter("boardGameSimpleFitness")){
 			fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
-		}
-		if(Parameters.parameters.booleanParameter("boardGameCheckersFitness")){
-			fitFunctions.add(new CheckersAdvancedFitness<S>());
 		}
 		if(Parameters.parameters.booleanParameter("hallOfFame")){
 			fitFunctions.add(new HallOfFameFitness<T,S>());
@@ -136,7 +132,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		return BoardGameUtil.getSubstrateInformation(MMNEAT.boardGame);
 	}
 	
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
+	public List<SubstrateConnectivity> getSubstrateConnectivity() {
 		return BoardGameUtil.getSubstrateConnectivity();
 	}
 	
@@ -163,6 +159,11 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	@Override
 	public void preEval() {
 		// No action required
+	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
 	}
 
 

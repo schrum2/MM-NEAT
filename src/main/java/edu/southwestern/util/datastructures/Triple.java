@@ -43,4 +43,8 @@ public class Triple<X, Y, Z> {
 		hash = 71 * hash + (this.t3 != null ? this.t3.hashCode() : 0);
 		return hash;
 	}
+	
+	public Triple<X,Y,Z> copy() {
+		return new Triple<>(t1,t2,t3);
+	}
 }

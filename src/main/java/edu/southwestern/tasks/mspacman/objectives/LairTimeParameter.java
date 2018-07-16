@@ -6,7 +6,7 @@ package edu.southwestern.tasks.mspacman.objectives;
 
 import edu.southwestern.evolution.Organism;
 import edu.southwestern.networks.Network;
-import pacman.game.Constants;
+import oldpacman.game.Constants;
 
 /**
  *

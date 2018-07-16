@@ -9,21 +9,30 @@ import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.fitness.*;
 
 /**
- *
+ * launches a deathmatch server with the evolving bot and native bots
  * @author Jacob Schrum
  * @param <T> evolved phenotype
  */
 public class UT2004OneVsNativeBotsDeathMatchTask<T extends Network> extends UT2004Task<T> {
 
+	/**
+	 * sets the parameters for the server and evaluation
+	 */
 	public UT2004OneVsNativeBotsDeathMatchTask() {
 		this(Parameters.parameters.stringParameter("utMap"),
-				new int[] { Parameters.parameters.integerParameter("utNativeBotSkill") },
 				Parameters.parameters.integerParameter("utEvalMinutes"),
 				Parameters.parameters.integerParameter("utEvolvingBotSkill"));
 	}
 
-	public UT2004OneVsNativeBotsDeathMatchTask(String map, int[] nativeBotSkills, int evalMinutes, int desiredSkill) {
-		super(map, nativeBotSkills, evalMinutes, desiredSkill, new BotController[0]);
+	/**
+	 * sets up the server and the match
+	 * @param map (map the match will be played on)
+	 * @param nativeBotSkills (skill level of the native bots)
+	 * @param evalMinutes (how long the eval will last)
+	 * @param desiredSkill (skill level of the evolving bot)
+	 */
+	public UT2004OneVsNativeBotsDeathMatchTask(String map, int evalMinutes, int desiredSkill) {
+		super(evalMinutes, desiredSkill, new BotController[0]);
 		// Fitness objectives
 		addObjective(new DamageDealtFitness<T>(), fitness, true);
 		addObjective(new DamageReceivedFitness<T>(), fitness, true);
@@ -40,7 +49,6 @@ public class UT2004OneVsNativeBotsDeathMatchTask<T extends Network> extends UT20
 
 	/**
 	 * Testing
-	 *
 	 * @param args
 	 */
 	@SuppressWarnings("rawtypes")
@@ -49,7 +57,7 @@ public class UT2004OneVsNativeBotsDeathMatchTask<T extends Network> extends UT20
 				"task:edu.southwestern.tasks.ut2004.UT2004OneVsNativeBotsDeathMatchTask" });
 		MMNEAT.loadClasses();
 		UT2004Task utTask = (UT2004Task) MMNEAT.task;
-		new UT2004OneVsNativeBotsDeathMatchTask<TWEANN>("DM-TrainingDay", new int[] { 3, 4, 5 }, 5, 1).evaluate(
+		new UT2004OneVsNativeBotsDeathMatchTask<TWEANN>("DM-TrainingDay", 5, 1).evaluate(
 				new TWEANNGenotype(utTask.sensorModel.numberOfSensors(), utTask.outputModel.numberOfOutputs(), 0));
 	}
 }

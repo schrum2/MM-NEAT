@@ -9,7 +9,6 @@ import edu.southwestern.boardGame.agents.BoardGamePlayer;
 import edu.southwestern.boardGame.agents.HeuristicBoardGamePlayer;
 import edu.southwestern.boardGame.featureExtractor.BoardGameFeatureExtractor;
 import edu.southwestern.boardGame.fitnessFunction.BoardGameFitnessFunction;
-import edu.southwestern.boardGame.fitnessFunction.CheckersAdvancedFitness;
 import edu.southwestern.boardGame.fitnessFunction.OthelloPieceFitness;
 import edu.southwestern.boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import edu.southwestern.boardGame.fitnessFunction.WinPercentageBoardGameFitness;
@@ -19,6 +18,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.GroupTask;
@@ -55,9 +55,6 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 		// Add Fitness Functions here to act as Selection Functions
 		if(Parameters.parameters.booleanParameter("boardGameSimpleFitness")){
 			fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
-		}
-		if(Parameters.parameters.booleanParameter("boardGameCheckersFitness")){
-			fitFunctions.add(new CheckersAdvancedFitness<S>());
 		}
 		if(Parameters.parameters.booleanParameter("boardGameOthelloFitness")){
 			fitFunctions.add((BoardGameFitnessFunction<S>) new OthelloPieceFitness());
@@ -156,7 +153,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 	}
 
 	@Override
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
+	public List<SubstrateConnectivity> getSubstrateConnectivity() {
 		return BoardGameUtil.getSubstrateConnectivity();
 	}
 
@@ -168,6 +165,11 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 	@Override
 	public String[] outputLabels() {
 		return new String[]{"Utility"};
+	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
 	}
 
 }

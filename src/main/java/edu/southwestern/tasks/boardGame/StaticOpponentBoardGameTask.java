@@ -9,7 +9,6 @@ import edu.southwestern.boardGame.agents.BoardGamePlayer;
 import edu.southwestern.boardGame.agents.HeuristicBoardGamePlayer;
 import edu.southwestern.boardGame.featureExtractor.BoardGameFeatureExtractor;
 import edu.southwestern.boardGame.fitnessFunction.BoardGameFitnessFunction;
-import edu.southwestern.boardGame.fitnessFunction.CheckersAdvancedFitness;
 import edu.southwestern.boardGame.fitnessFunction.OpeningRandomMovesScore;
 import edu.southwestern.boardGame.fitnessFunction.OthelloPieceFitness;
 import edu.southwestern.boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
@@ -22,13 +21,13 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.datastructures.Triple;
 
 public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameState> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask {
 
@@ -60,9 +59,6 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 		// Add Fitness Functions here to add as Selection Functions
 		if(Parameters.parameters.booleanParameter("boardGameSimpleFitness")){
 			fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
-		}
-		if(Parameters.parameters.booleanParameter("boardGameCheckersFitness")){
-			fitFunctions.add(new CheckersAdvancedFitness<S>());
 		}
 		if(Parameters.parameters.booleanParameter("boardGameOthelloFitness")){
 			fitFunctions.add((BoardGameFitnessFunction<S>) new OthelloPieceFitness());
@@ -214,8 +210,13 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 		return BoardGameUtil.getSubstrateInformation(MMNEAT.boardGame);
 	}
 	
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
+	public List<SubstrateConnectivity> getSubstrateConnectivity() {
 		return BoardGameUtil.getSubstrateConnectivity();
+	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
 	}
 	
 }

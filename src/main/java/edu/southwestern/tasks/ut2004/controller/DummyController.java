@@ -11,16 +11,31 @@ import edu.southwestern.tasks.ut2004.actions.EmptyAction;
  */
 public class DummyController implements BotController {
 
-        @Override
-	public BotAction control(UT2004BotModuleController bot) {
+	@Override
+	/**
+	 * creates the controller with no actions
+	 */
+	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		return new EmptyAction();
 	}
 
-        @Override
-	public void initialize(UT2004BotModuleController bot) {
+	@Override
+	/**
+	 * initializes the controller (does nothing here, because the bot is stationary)
+	 */
+	public void initialize(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
 
-        @Override
-	public void reset(UT2004BotModuleController bot) {
+	@Override
+	/**
+	 * resets the controller
+	 */
+	public void reset(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
+	}
+
+	@Override
+	public String getSkin() {
+		// TODO Auto-generated method stub
+		return "HumanFemaleA.EgyptFemaleA";
 	}
 }

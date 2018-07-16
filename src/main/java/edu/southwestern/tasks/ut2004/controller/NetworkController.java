@@ -10,7 +10,7 @@ import edu.southwestern.tasks.ut2004.sensors.UT2004SensorModel;
 import edu.southwestern.tasks.ut2004.weapons.UT2004WeaponManager;
 
 /**
- *
+ * Relays directions to the bot
  * @author Jacob Schrum
  */
 public class NetworkController<T extends Network> extends Organism<T>implements BotController {
@@ -20,6 +20,14 @@ public class NetworkController<T extends Network> extends Organism<T>implements 
 	public final UT2004OutputInterpretation outputModel;
 	public final UT2004WeaponManager weaponManager;
 
+	/**
+	 * Sets up the controller for the bot
+	 * 
+	 * @param g (the genotype of the bot)
+	 * @param sensorModel (sensors for the bot to use)
+	 * @param outputModel (how the bot will dictate actions)
+	 * @param weaponManager (sets the bot's weapon preferences)
+	 */
 	public NetworkController(Genotype<T> g, UT2004SensorModel sensorModel, UT2004OutputInterpretation outputModel,
 			UT2004WeaponManager weaponManager) {
 		super(g);
@@ -29,11 +37,18 @@ public class NetworkController<T extends Network> extends Organism<T>implements 
 		this.weaponManager = weaponManager;
 	}
 
-	public void reset(UT2004BotModuleController bot) {
+	/**
+	 * resets the controller to be reprogrammed
+	 */
+	public void reset(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		brain.flush();
 	}
 
-	public BotAction control(UT2004BotModuleController bot) {
+	/**
+	 * reads data from the inputs, and interprets it into actions
+	 * @return returns the next action for the bot to take
+	 */
+	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		// pick best weapon
 		bot.getWeaponry().changeWeapon(weaponManager.chooseWeapon(bot));
 		// Get sensot values
@@ -51,8 +66,17 @@ public class NetworkController<T extends Network> extends Organism<T>implements 
 		return action;
 	}
 
-	public void initialize(UT2004BotModuleController bot) {
+	/**
+	 * creates the module controller
+	 */
+	public void initialize(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		sensorModel.prepareSensorModel(bot);
 		weaponManager.prepareWeaponPreferences(bot);
+	}
+
+	@Override
+	public String getSkin() {
+		// TODO Auto-generated method stub
+		return "HumanFemaleA.MercFemaleA";
 	}
 }

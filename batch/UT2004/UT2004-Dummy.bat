@@ -1,3 +1,3 @@
 cd ..
 cd ..
-java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:%1 randomSeed:%1 base:ut2004 trials:3 maxGens:100 mu:50 io:true netio:true mating:true task:edu.southwestern.tasks.ut2004.UT2004ShockRifleVsGBBotsDeathMatchTask cleanOldNetworks:true fs:false log:UT2004-Dummy saveTo:Dummy utMap:DM-TrainingDay utNumOpponents:1 utEvalMinutes:3 utGameBotsOpponent:edu.southwestern.tasks.ut2004.controller.DummyController utDrive:D utPath:ut\game
+java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:%1 randomSeed:%1 base:ut2004 trials:3 maxGens:100 mu:50 io:true netio:true mating:true task:edu.southwestern.tasks.ut2004.UT2004ShockRifleVsGBBotsDeathMatchTask cleanOldNetworks:true fs:false log:UT2004-Dummy saveTo:Dummy utMap:DM-TrainingDay utNumOpponents:1 utEvalMinutes:3 utGameBotsOpponent:edu.southwestern.tasks.ut2004.controller.DummyController utDrive:C utPath:SCOPE2018\UT2004

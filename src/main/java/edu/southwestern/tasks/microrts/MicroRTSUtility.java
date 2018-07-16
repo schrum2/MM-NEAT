@@ -8,6 +8,7 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.microrts.fitness.ProgressiveFitnessFunction;
@@ -231,20 +232,20 @@ public class MicroRTSUtility {
 	} 
 
 	/**
-	 * HyperNEAT method that connects substrates to eachother
+	 * HyperNEAT method that connects substrates to each other
 	 * @param pgs 
 	 * 			physical game state in use
 	 * @return
 	 */
-	public static List<Triple<String, String, Boolean>> getSubstrateConnectivity(PhysicalGameState pgs) {
+	public static List<SubstrateConnectivity> getSubstrateConnectivity(PhysicalGameState pgs) {
 		List<String> outputNames = new LinkedList<>();
 		outputNames.add("Utility");
-		List<Triple<String, String, Boolean>> result = HyperNEATUtil.getSubstrateConnectivity(getNumInputSubstrates(), outputNames);
+		List<SubstrateConnectivity> result = HyperNEATUtil.getSubstrateConnectivity(getNumInputSubstrates(), outputNames);
 		if(Parameters.parameters.booleanParameter("mRTSResourceProportion")) { // This substrate should not allow convolution
 			int index = getNumInputSubstrates() - 1;
-			for(Triple<String, String, Boolean> triple : result) {
-				if(triple.t1.equals("Input(" + index + ")")) { // This is the resource proportion substrate
-					triple.t3 = Boolean.FALSE; // Convolution not allowed
+			for(SubstrateConnectivity sub : result) {
+				if(sub.sourceSubstrateName.equals("Input(" + index + ")")) { // This is the resource proportion substrate
+					sub.connectivityType = SubstrateConnectivity.CTYPE_FULL; // Convolution not allowed
 				}
 				
 			}

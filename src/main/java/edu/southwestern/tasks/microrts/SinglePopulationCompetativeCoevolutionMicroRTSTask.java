@@ -13,6 +13,7 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.SinglePopulationCoevolutionTask;
@@ -21,7 +22,6 @@ import edu.southwestern.tasks.microrts.fitness.RTSFitnessFunction;
 import edu.southwestern.tasks.microrts.iterativeevolution.MapSequence;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.datastructures.Triple;
 import micro.ai.HasEvaluationFunction;
 import micro.ai.core.AI;
 import micro.gui.PhysicalGameStateJFrame;
@@ -129,7 +129,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	}
 
 	@Override
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
+	public List<SubstrateConnectivity> getSubstrateConnectivity() {
 		return MicroRTSUtility.getSubstrateConnectivity(pgs);
 	}
 
@@ -285,4 +285,10 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	public int getNumInputSubstrates() {
 		return Math.max(ef1.getNumInputSubstrates(),ef2.getNumInputSubstrates());
 	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
+	}
+
 }

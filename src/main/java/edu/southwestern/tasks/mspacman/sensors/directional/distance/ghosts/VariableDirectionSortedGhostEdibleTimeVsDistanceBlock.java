@@ -14,10 +14,10 @@ import edu.southwestern.tasks.mspacman.ghosts.DirectionalGhostComparator;
 import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
-import pacman.game.Constants;
+import oldpacman.game.Constants;
 
 /**
- *
+ * should handle PO conditions (TODO: test)
  * @author Jacob Schrum
  */
 public class VariableDirectionSortedGhostEdibleTimeVsDistanceBlock extends VariableDirectionSortedGhostDistanceBlock {
@@ -41,6 +41,9 @@ public class VariableDirectionSortedGhostEdibleTimeVsDistanceBlock extends Varia
 	}
 
 	@Override
+	/**
+	 * supports popacman (TODO: test)
+	 */
 	public int[] getTargets(GameFacade gf) {
 		ArrayList<Integer> ghosts = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
@@ -60,6 +63,9 @@ public class VariableDirectionSortedGhostEdibleTimeVsDistanceBlock extends Varia
 	}
 
 	@Override
+	/**
+	 * should handle PO conditions
+	 */
 	public double getValue(GameFacade gf) {
 		if (numberToExclude == 0) {
 			excludedNodes.clear();
@@ -73,6 +79,9 @@ public class VariableDirectionSortedGhostEdibleTimeVsDistanceBlock extends Varia
 			return -1.0; // Distance is "infinity"
 		} else {
 			Pair<Integer, int[]> pair = gf.getTargetInDir(current, targets, dir);
+			if(pair == new Pair<Integer, int[]>(-1, null)) {
+				throw new UnsupportedOperationException("TODO: how to handle PO conditions");
+			}
 			excludedNodes.add(pair.t1); // Exclude this result from the next
 										// call
 			int[] path = pair.t2;

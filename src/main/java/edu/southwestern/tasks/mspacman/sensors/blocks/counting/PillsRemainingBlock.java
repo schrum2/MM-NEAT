@@ -1,13 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.sensors.blocks.counting;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.util.MiscUtil;
 
 /**
- *
+ * Support PO pacman
  * @author Jacob Schrum
  */
 public class PillsRemainingBlock extends TargetPortionRemainingBlock {

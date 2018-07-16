@@ -1,5 +1,18 @@
 package ch.idsia.mario.engine;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.image.VolatileImage;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JComponent;
+
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.CheaterKeyboardAgent;
 import ch.idsia.mario.engine.level.Level;
@@ -8,20 +21,7 @@ import ch.idsia.mario.environments.Environment;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.GameViewer;
 import ch.idsia.tools.tcp.ServerAgent;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.image.VolatileImage;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
+import edu.southwestern.parameters.Parameters;
 
 
 public class MarioComponent extends JComponent implements Runnable, /*KeyListener,*/ FocusListener, Environment {
@@ -49,12 +49,17 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
     private GameViewer gameViewer = null;
 
     private Agent agent = null;
+    private Agent agent2 = null; // Player 2
     private CheaterKeyboardAgent cheatAgent = null;
 
     private KeyAdapter prevHumanKeyBoardAgent;
-    private Mario mario = null;
+    public Mario mario = null;
+    public Mario luigi = null; // Player 2
     private LevelScene levelScene = null;
 
+    // Added to make agent pause before starting
+    public static int startDelay = 0; //5000;
+    
     public MarioComponent(int width, int height) {
         adjustFPS();
 
@@ -137,15 +142,23 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         addFocusListener(this);
 
         // Remember the starting time
+        long start = System.currentTimeMillis();
         long tm = System.currentTimeMillis();
         long tick = tm;
         int marioStatus = Mario.STATUS_RUNNING;
 
         mario = ((LevelScene) scene).mario;
+        mario.resetCoins();
+        if(agent2 != null) {
+        	luigi = ((LevelScene) scene).luigi;
+        	luigi.resetCoins();
+        }
         int totalActionsPerfomed = 0;
-// TODO: Manage better place for this:
-        Mario.resetCoins();
 
+        // Added to track if Mario can't or is not progressing
+        float marioProgress = mario.x;
+        int stepsWithoutProgress = 0;
+        
         while (/*Thread.currentThread() == animator*/ running) {
             // Display the next frame of animation.
 //                repaint();
@@ -168,6 +181,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             }
 
             boolean[] action = agent.getAction(this/*DummyEnvironment*/);
+            boolean[] action2 = agent2 == null ? null : agent2.getAction(this/*DummyEnvironment*/);
             if (action != null)
             {
                 for (int i = 0; i < Environment.numberOfButtons; ++i)
@@ -186,10 +200,16 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 
 
             //Apply action;
-//            scene.keys = action;
-            ((LevelScene) scene).mario.keys = action;
-            ((LevelScene) scene).mario.cheatKeys = cheatAgent.getAction(null);
-
+            long diff = System.currentTimeMillis() - start;
+            //System.out.println(diff + " " + tm + " " + System.currentTimeMillis() + " " + startDelay);
+            if(diff >= startDelay) { // Agent pauses a bit before starting
+            	mario.keys = action;
+            }
+            mario.cheatKeys = cheatAgent.getAction(null);
+            if(agent2 != null) {
+            	luigi.keys = action2;
+            }
+            
             if (GlobalOptions.VisualizationOn) {
 
                 String msg = "Agent: " + agent.getName();
@@ -246,12 +266,25 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
                 }
             // Advance the frame
             frame++;
+            
+            // Jacob: Added to abort evaluations that are not progressing
+            if(mario.x <= marioProgress) {
+            	stepsWithoutProgress++;
+            	// Null check on Parameters makes it easier to launch Mario from a main method that bypasses MM-NEAT
+            	if(Parameters.parameters != null && stepsWithoutProgress > Parameters.parameters.integerParameter("marioStuckTimeout")) {
+            		//System.out.println("Mario dies from timeout");
+            		mario.die(); // Killing mario ends the evaluation
+            	}
+            } else {
+            	stepsWithoutProgress = 0;
+            }
+            marioProgress = mario.x;
         }
 //=========
         evaluationInfo.agentType = agent.getClass().getSimpleName();
         evaluationInfo.agentName = agent.getName();
         evaluationInfo.marioStatus = mario.getStatus();
-        evaluationInfo.livesLeft = Mario.lives;
+        evaluationInfo.livesLeft = mario.lives; // TODO: Also track Luigi's lives?
         evaluationInfo.lengthOfLevelPassedPhys = mario.x;
         evaluationInfo.lengthOfLevelPassedCells = mario.mapX;
         evaluationInfo.totalLengthOfLevelCells = levelScene.level.getWidthCells();
@@ -259,8 +292,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         evaluationInfo.timeSpentOnLevel = levelScene.getStartTime();
         evaluationInfo.timeLeft = levelScene.getTimeLeft();
         evaluationInfo.totalTimeGiven = levelScene.getTotalTime();
-        evaluationInfo.numberOfGainedCoins = Mario.coins;
-//        evaluationInfo.totalNumberOfCoins   = -1 ; // TODO: total Number of coins.
+        evaluationInfo.numberOfGainedCoins = mario.coins; // TODO: Also track Luigi's coins?
         evaluationInfo.totalActionsPerfomed = totalActionsPerfomed; // Counted during the play/simulation process
         evaluationInfo.totalFramesPerfomed = frame;
         evaluationInfo.marioMode = mario.getMode();
@@ -307,8 +339,8 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 	}
 
     public void levelFailed() {
-//        scene = mapScene;
-        Mario.lives--;
+        mario.lives--;
+        // TODO: Also subtract Luigi's lives?
         stop();
     }
 
@@ -322,14 +354,9 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 
     public void levelWon() {
         stop();
-//        scene = mapScene;
-//        mapScene.levelWon();
     }
 
     public void toTitle() {
-//        Mario.resetStatic();
-//        scene = new TitleScene(this, graphicsConfiguration);
-//        scene.init();
     }
 
     public List<String> getTextObservation(boolean Enemies, boolean LevelMap, boolean Complete, int ZLevelMap, int ZLevelEnemies) {
@@ -431,8 +458,27 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         }
     }
 
-    public void setMarioInvulnerable(boolean invulnerable)
-    {
+    /**
+     * Schrum: I added this to allow for setting the second "Luigi" agent.
+     * @param agent Controller for Luigi
+     */
+    public void setAgent2(Agent agent) {
+        this.agent2 = agent;
+        if (agent2 instanceof KeyAdapter) {
+            if (prevHumanKeyBoardAgent != null)
+                this.removeKeyListener(prevHumanKeyBoardAgent);
+            this.prevHumanKeyBoardAgent = (KeyAdapter) agent;
+            this.addKeyListener(prevHumanKeyBoardAgent);
+        }
+    }    
+    
+    /**
+     * This seems to be used exclusively for debugging purposes.
+     * Can make Mario invincible to test out the level. It
+     * also makes Luigi invulnerable.
+     * @param invulnerable
+     */
+    public void setMarioInvulnerable(boolean invulnerable) {
         Mario.isMarioInvulnerable = invulnerable;
     }
 

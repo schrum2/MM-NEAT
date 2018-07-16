@@ -2,8 +2,6 @@ package edu.southwestern.networks.hyperneat;
 
 import java.util.List;
 
-import edu.southwestern.util.datastructures.Triple;
-
 /**
  * A task that HyperNEAT can be applied to. Need to get substrate defining info
  * from the domain.
@@ -68,5 +66,14 @@ public interface HyperNEATTask {
 	 * @return Last of String pairs where all Strings are names of Substrates
 	 *         for the domain.
 	 */
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity();
+	public List<SubstrateConnectivity> getSubstrateConnectivity();
+	
+	/**
+	 * Many HyperNEAT tasks cache their substrate connectivity information so it
+	 * does not need to be regenerated each time a genotype is made. However, this
+	 * causes problems when the architecture changes in the middle of evolution,
+	 * so this method assures that all tasks have a way of flushing out any
+	 * cached information, if they happen to store any.
+	 */
+	public void flushSubstrateMemory();
 }

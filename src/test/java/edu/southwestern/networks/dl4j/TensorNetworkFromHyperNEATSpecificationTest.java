@@ -1,6 +1,7 @@
 package edu.southwestern.networks.dl4j;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class TensorNetworkFromHyperNEATSpecificationTest {
@@ -36,7 +38,7 @@ public class TensorNetworkFromHyperNEATSpecificationTest {
 				"hyperNEAT:true", // Prevents extra bias input
 				"inputsUseID:true", // DL4J does this, so the HyperNEAT network must too to be compatible
 				"linkExpressionThreshold:-0.1", // Express all links
-				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
+				"stride:1","receptiveFieldHeight:3","receptiveFieldWidth:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				"ftype:"+ActivationFunctions.FTYPE_RE_LU, "heterogeneousSubstrateActivations:false",
 				"experiment:edu.southwestern.experiment.rl.EvaluateDL4JNetworkExperiment"});
@@ -99,7 +101,7 @@ public class TensorNetworkFromHyperNEATSpecificationTest {
 		
 		
 		// Now do timing benchmark
-//		final int CYCLES = 500;
+//		final int CYCLES = 100;
 //	    double[] randomInput = RandomNumbers.randomArray(substrateGenotype.numIn);
 //	    
 //	    long startDL4J = System.currentTimeMillis();
@@ -145,7 +147,7 @@ public class TensorNetworkFromHyperNEATSpecificationTest {
 				"hyperNEAT:true", // Prevents extra bias input
 				"inputsUseID:true", // DL4J does this, so the HyperNEAT network must too to be compatible
 				"linkExpressionThreshold:-0.1", // Express all links
-				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
+				"stride:1","receptiveFieldHeight:3","receptiveFieldWidth:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				// This is how this test differs from the previous
 				"ftype:"+ActivationFunctions.FTYPE_TANH, "heterogeneousSubstrateActivations:false", 
@@ -205,7 +207,7 @@ public class TensorNetworkFromHyperNEATSpecificationTest {
 				"hyperNEAT:true", // Prevents extra bias input
 				"inputsUseID:true", // DL4J does this, so the HyperNEAT network must too to be compatible
 				"linkExpressionThreshold:-0.1", // Express all links
-				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
+				"stride:1","receptiveFieldHeight:3","receptiveFieldWidth:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				// This is how this test differs from the previous
 				"ftype:"+ActivationFunctions.FTYPE_TANH, "heterogeneousSubstrateActivations:true", 

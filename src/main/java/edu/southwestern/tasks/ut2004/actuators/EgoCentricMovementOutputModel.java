@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.ut2004.actuators;
 
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
@@ -10,28 +6,46 @@ import edu.southwestern.tasks.ut2004.actions.BotAction;
 import edu.southwestern.tasks.ut2004.actions.EgoCentricMovementAction;
 
 /**
+ *How the bot interprets output into actions with respect to itself
  *
  * @author Jacob Schrum
  */
 public class EgoCentricMovementOutputModel implements UT2004OutputInterpretation {
 
 	private final boolean utJumps;
+	public static final int OUTPUT_INDEX_MOVEMENT = 0;
+	public static final int OUTPUT_INDEX_TURNING = 1;
+	public static final int  OUTPUT_INDEX_SHOOT = 2;
+	public static final int OUTPUT_INDEX_JUMP = 3;
+	
 
+	/**
+	 * sets the parameters of utJumps
+	 */
 	public EgoCentricMovementOutputModel() {
 		this.utJumps = Parameters.parameters.booleanParameter("utJumps");
 	}
 
+	/**
+	 * @return returns a 
+	 */
 	public String[] outputLabels() {
-		return utJumps ? new String[] { "Left/right turn", "Towards/back movement", "Shoot", "Jump" }
-				: new String[] { "Left/right turn", "Towards/back movement", "Shoot" };
+		return utJumps ? new String[] { "Towards/back movement", "Left/right turn", "Shoot", "Jump" }
+				: new String[] { "Towards/back movement", "Left/right turn", "Shoot" };
 	}
 
-	public BotAction interpretOutputs(UT2004BotModuleController bot, double[] outputs) {
-		double towards = outputs[0];
-		double side = outputs[1];
-		boolean shoot = outputs[2] > 0;
-		boolean jump = utJumps ? outputs[3] > 0 : false;
-		return new EgoCentricMovementAction(towards, side, shoot, jump);
+	/**
+	 * Interprets given outputs as an action
+	 * 
+	 * @param bot (bot that will execute the action
+	 * @param outputs (an array of numbers for the outputs)
+	 */
+	public BotAction interpretOutputs(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, double[] outputs) {
+		double moveForwardBackward = outputs[OUTPUT_INDEX_MOVEMENT];
+		double turnLeftRight = outputs[OUTPUT_INDEX_TURNING];
+		boolean shoot = outputs[OUTPUT_INDEX_SHOOT] > 0;
+		boolean jump = utJumps ? outputs[OUTPUT_INDEX_JUMP] > 0 : false;
+		return new EgoCentricMovementAction(moveForwardBackward, turnLeftRight, shoot, jump);
 	}
 
 	/**
@@ -39,12 +53,15 @@ public class EgoCentricMovementOutputModel implements UT2004OutputInterpretation
 	 * forward/back movement impulse - True/false shoot - True/false jump, if
 	 * jumping allowed
 	 *
-	 * @return
+	 * @return 
 	 */
 	public int numberOfOutputs() {
 		return utJumps ? 4 : 3;
 	}
 
+	/**
+	 * @return returns a copy of the output model
+	 */
 	public UT2004OutputInterpretation copy() {
 		return new EgoCentricMovementOutputModel();
 	}

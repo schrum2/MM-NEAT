@@ -217,17 +217,17 @@ public class ThreeDimensionalUtil {
 						inputs[i] = inputs[i] * inputMultipliers[i];
 					}	
 					double[] output = cppn.process(inputs);
-					if(output[THREE_DIMENSIONAL_VOXEL_INDEX] > VOXEL_EXPRESSION_THRESHOLD) { 
+					if(output[THREE_DIMENSIONAL_VOXEL_INDEX] > VOXEL_EXPRESSION_THRESHOLD) { // If cube is even present
 						double actualX = -(cubeSize*shapeWidth/2.0) + halfCube + x*cubeSize;
 						double actualY = -(cubeSize*shapeHeight/2.0) + halfCube + y*cubeSize;
 						double actualZ = -(cubeSize*shapeDepth/2.0) + halfCube + z*cubeSize; 
-						if(output.length > ThreeDimensionalObjectBreederTask.CPPN_NUM_OUTPUTS) { //if 3DAnimationBreeder
+						if(output.length > ThreeDimensionalObjectBreederTask.CPPN_NUM_OUTPUTS) { //if cube locations are displaced by CPPN
 							actualX += output[THREE_DIMENSIONAL_X_DISPLACEMENT_INDEX]*halfCube;
 							actualY += output[THREE_DIMENSIONAL_Y_DISPLACEMENT_INDEX]*halfCube;
 							actualZ += output[THREE_DIMENSIONAL_Z_DISPLACEMENT_INDEX]*halfCube;
 						}
 						centers.add(new Vertex(actualX, actualY, actualZ));
-						if(color == null) {
+						if(color == null) { // Means the color is evolved
 							float[] hsb = GraphicsUtil.rangeRestrictHSB(new double[]{output[THREE_DIMENSIONAL_HUE_INDEX],output[THREE_DIMENSIONAL_SATURATION_INDEX],output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]});
 							int rgb = Color.HSBtoRGB(hsb[GraphicsUtil.HUE_INDEX], hsb[GraphicsUtil.SATURATION_INDEX], hsb[GraphicsUtil.BRIGHTNESS_INDEX]);
 							Color evolvedColor = new Color(rgb, true);

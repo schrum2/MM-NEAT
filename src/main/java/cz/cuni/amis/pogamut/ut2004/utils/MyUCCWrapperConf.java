@@ -9,7 +9,7 @@ package cz.cuni.amis.pogamut.ut2004.utils;
  * 
  * @author Jacob Schrum
  */
-public class MyUCCWrapperConf extends UCCWrapper.UCCWrapperConf {
+public class MyUCCWrapperConf extends UCCWrapperConf {
 
 	/**
 	 * Auto-generated serial ID
@@ -27,5 +27,12 @@ public class MyUCCWrapperConf extends UCCWrapper.UCCWrapperConf {
 	 */
 	public void setPlayerPort(int gamePort) {
 		this.playerPort = gamePort;
+	}
+	
+	/**
+	 * Look at all pertinent details of configuration
+	 */
+	public String toString() {
+		return super.toString() + "[playerPort=" + playerPort + "]";
 	}
 }

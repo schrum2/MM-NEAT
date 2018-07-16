@@ -7,7 +7,7 @@ package edu.southwestern.tasks.mspacman.sensors.directional;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.StatisticsUtilities;
-import pacman.game.Constants;
+import oldpacman.game.Constants;
 
 /**
  *

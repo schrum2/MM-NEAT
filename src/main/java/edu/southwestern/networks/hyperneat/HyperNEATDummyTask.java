@@ -52,10 +52,10 @@ public class HyperNEATDummyTask<T> implements HyperNEATTask, Task, SinglePopulat
 	 * returns connections from dummy task
 	 */
 	@Override
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
-		Triple<String, String, Boolean> connect1 = new Triple<String, String, Boolean>(input.getName(), process.getName(), Boolean.FALSE);
-		Triple<String, String, Boolean> connect2 = new Triple<String, String, Boolean>(process.getName(), output.getName(), Boolean.FALSE);
-		ArrayList<Triple<String, String, Boolean>>	pairs = new ArrayList<Triple<String, String, Boolean>>();
+	public List<SubstrateConnectivity> getSubstrateConnectivity() {
+		SubstrateConnectivity connect1 = new SubstrateConnectivity(input.getName(), process.getName(), SubstrateConnectivity.CTYPE_FULL);
+		SubstrateConnectivity connect2 = new SubstrateConnectivity(process.getName(), output.getName(), SubstrateConnectivity.CTYPE_FULL);
+		ArrayList<SubstrateConnectivity>	pairs = new ArrayList<SubstrateConnectivity>();
 		pairs.add(connect1);
 		pairs.add(connect2);
 		return pairs;
@@ -97,6 +97,12 @@ public class HyperNEATDummyTask<T> implements HyperNEATTask, Task, SinglePopulat
 	@Override
 	public ArrayList evaluateAll(ArrayList population) {
 		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
 	}
 
 }
