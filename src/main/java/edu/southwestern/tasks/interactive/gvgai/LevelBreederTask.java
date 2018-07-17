@@ -62,7 +62,7 @@ public class LevelBreederTask extends InteractiveEvolutionTask<TWEANN> {
 		SPECIFIC_GAME_LEVEL_CHARS.put("zelda", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','+','A'}, // There is one gate, one key, and one avatar
-			new char[]{'1','2','3'}, // There are random monsters dignified by 1, 2, 3
+			new char[]{'1','2','3'}, // There are random monsters signified by 1, 2, 3
 			new char[]{'.'},
 			new char[]{'w'},
 			new char[0]});
