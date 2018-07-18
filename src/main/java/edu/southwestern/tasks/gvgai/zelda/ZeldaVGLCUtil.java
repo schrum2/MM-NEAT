@@ -2,8 +2,15 @@ package edu.southwestern.tasks.gvgai.zelda;
 
 import java.awt.Point;
 
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.util.random.RandomNumbers;
+import gvgai.core.game.Game;
+import gvgai.core.vgdl.VGDLFactory;
+import gvgai.core.vgdl.VGDLParser;
+import gvgai.core.vgdl.VGDLRegistry;
 import gvgai.tools.IO;
+import gvgai.tracks.singlePlayer.tools.human.Agent;
 
 public class ZeldaVGLCUtil {
 
@@ -105,10 +112,29 @@ public class ZeldaVGLCUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		Parameters.initializeParameterCollections(new String[] {});
+		//MMNEAT.loadClasses();
+		
+		VGDLFactory.GetInstance().init();
+		VGDLRegistry.GetInstance().init();
+
+		String game = "zelda";
+		String gamesPath = "data/gvgai/examples/gridphysics/";
+		String game_file = gamesPath + game + ".txt";
+		int playerID = 0;
+		int seed = 0;
+
 		String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+"tloz1_1.txt", new Point(40,63));
 		
 		for(String line : level) {
 			System.out.println(line);
 		}
+		
+		Agent agent = new Agent();
+		agent.setup(null, 0, true); // null = no log, true = human 
+
+		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
+		GVGAIUtil.runOneGame(toPlay, level, true, agent, seed, playerID);
+
 	}
 }
