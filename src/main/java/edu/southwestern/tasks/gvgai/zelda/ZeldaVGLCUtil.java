@@ -1,5 +1,7 @@
 package edu.southwestern.tasks.gvgai.zelda;
 
+import java.awt.Point;
+
 import edu.southwestern.util.random.RandomNumbers;
 import gvgai.tools.IO;
 
@@ -10,25 +12,31 @@ public class ZeldaVGLCUtil {
 	/**
 	 * Get converted VGLC -> GVG-AI level by specifying file name of source VGLC level
 	 * @param fileName
+	 * @param startLocation This location is replaced with the 'A' tile for the avatar, unless it is null
 	 * @return
 	 */
-	public static String[] convertZeldaLevelFileVGLCtoGVGAI(String fileName) {
+	public static String[] convertZeldaLevelFileVGLCtoGVGAI(String fileName, Point startLocation) {
 		String[] level = new IO().readFile(fileName);
-		return convertZeldaLevelVGLCtoGVGAI(level);
+		return convertZeldaLevelVGLCtoGVGAI(level, startLocation);
 	}
 	
 	/**
 	 * Take Zelda level as a String array (converted from VGLC file) and
 	 * return a version with tiles swapped to those used by GVG-AI.
 	 * @param level
+	 * @param startLocation This location is replaced with the 'A' tile for the avatar, unless it is null
 	 * @return
 	 */
-	public static String[] convertZeldaLevelVGLCtoGVGAI(String[] level) {
+	public static String[] convertZeldaLevelVGLCtoGVGAI(String[] level, Point startLocation) {
 		String[] result = new String[level.length];
 		for(int i = 0; i < level.length; i++) {
 			StringBuilder sb = new StringBuilder();
 			for(int j = 0; j < level[i].length(); j++) {
-				sb.append(convertZeldaTileVGLCtoGVGAI(level[i].charAt(j)));
+				char tile = convertZeldaTileVGLCtoGVGAI(level[i].charAt(j));
+				if(new Point(i,j).equals(startLocation)) { // Replace designated start location with Zelda avatar
+					tile = 'A';
+				}
+				sb.append(tile);
 			}
 			result[i] = sb.toString();
 		}
@@ -52,7 +60,7 @@ public class ZeldaVGLCUtil {
 	 * w = wall
 	 * g = gate
 	 * + = key
-	 * A = avatar
+	 * A = avatar (This is never used)
 	 * 1,2,3 = different enemies
 	 * . = floor
 	 * 
@@ -97,7 +105,7 @@ public class ZeldaVGLCUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+"tloz1_1.txt");
+		String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+"tloz1_1.txt", new Point(40,63));
 		
 		for(String line : level) {
 			System.out.println(line);
