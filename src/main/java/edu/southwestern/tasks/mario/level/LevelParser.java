@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mario.level;
 
 import ch.idsia.mario.engine.level.Level;
@@ -17,7 +12,7 @@ import java.util.List;
 
 /**
  *
- * @author vv
+ * @author Vanessa Volz
  */
 public class LevelParser {
 
@@ -60,7 +55,7 @@ public class LevelParser {
 	public static boolean isEnemy(char code) {
 		return isEnemy(code+"");
 	}
-	
+
 	/**
 	 * Based on the list of enemy types above
 	 * @param code
@@ -69,7 +64,7 @@ public class LevelParser {
 	public static boolean isEnemy(String code) {
 		return code.equals("E") || code.equals("W") || code.equals("G") || code.equals("g") || code.equals("r") || code.equals("R") || code.equals("^") || code.equals("&");
 	}
-	
+
 	/**
 	 * Generate sprites based on the enemy codes above
 	 * @param code
@@ -176,7 +171,7 @@ public class LevelParser {
 		return level;
 	}
 
-	public Level createLevelJson(List<List<Integer>> input)
+	public static Level createLevelJson(List<List<Integer>> input)
 	{
 		int width = input.get(0).size();
 		int height = input.size();
@@ -220,7 +215,7 @@ public class LevelParser {
 
 
 
-	public int codeParser(int code){
+	public static int codeParser(int code){
 		int output = 0;
 		switch(code){
 		case 0: output = 9; break; //rocks
@@ -231,10 +226,10 @@ public class LevelParser {
 		case 8: output = 26; break; //"[" : ["solid","left pipe","pipe"]
 		case 9: output = 27; break; //"]" : ["solid","right pipe","pipe"]
 		case 10: output = 34; break; //"o" : ["coin","collectable","passable"]
-        // Bullet Bill cannons not described in VDLC json, but were present in the data
-        case 11: output = 14; break; //"B" : Top of a Bullet Bill cannon, solid
-        // There may be a problem here: VGLC uses "b" to represent what is either sprite 30 or 46 in Infinite Mario
-        case 12: output = 46; break; //"b" : Body/support of a Bullet Bill cannon, solid
+		// Bullet Bill cannons not described in VDLC json, but were present in the data
+		case 11: output = 14; break; //"B" : Top of a Bullet Bill cannon, solid
+		// There may be a problem here: VGLC uses "b" to represent what is either sprite 30 or 46 in Infinite Mario
+		case 12: output = 46; break; //"b" : Body/support of a Bullet Bill cannon, solid
 		default: output=0; break; //"-" : ["passable","empty"],  "Q" : ["solid","question block", "empty question block"],  "E" : ["enemy","damaging","hazard","moving"],
 		}
 		return output;
@@ -251,10 +246,10 @@ public class LevelParser {
 		case "[": output = 26; break; //"[" : ["solid","left pipe","pipe"]
 		case "]": output = 27; break; //"]" : ["solid","right pipe","pipe"]
 		case "o": output = 34; break; //"o" : ["coin","collectable","passable"]
-        // Bullet Bill cannons not described in VDLC json, but were present in the data
-        case "B": output = 14; break; //"B" : Top of a Bullet Bill cannon, solid
-        // There may be a problem here: VGLC uses "b" to represent what is either sprite 30 or 46 in Infinite Mario
-        case "b": output = 46; break; //"b" : Body/support of a Bullet Bill cannon, solid
+		// Bullet Bill cannons not described in VDLC json, but were present in the data
+		case "B": output = 14; break; //"B" : Top of a Bullet Bill cannon, solid
+		// There may be a problem here: VGLC uses "b" to represent what is either sprite 30 or 46 in Infinite Mario
+		case "b": output = 46; break; //"b" : Body/support of a Bullet Bill cannon, solid
 		default: output=0; break; //"-" : ["passable","empty"],  "Q" : ["solid","question block", "empty question block"],  "E" : ["enemy","damaging","hazard","moving"],
 		}
 		return output;
