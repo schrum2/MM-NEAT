@@ -65,7 +65,7 @@ public class PythonNeuralStyleTransfer {
 	        try {
 	            PYTHON_EXECUTABLE = Files.readAllLines(Paths.get("my_python_path.txt")).get(0); // Should only have one line, get first
 	        } catch (IOException e) {
-	            System.err.println("Can not find the my_python_path.txt which specifies the python program and locates under DagstuhlGAN.");
+	            System.err.println("Can not find the my_python_path.txt which specifies the python program and should be in the main MM-NEAT directory.");
 	            e.printStackTrace();
 	        }
 	    }
