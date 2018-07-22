@@ -41,7 +41,7 @@ public class PythonNeuralStyleTransfer {
 	    public static final int SUBSTRING_LENGTH = 20;
 	    
 	    public static String PYTHON_EXECUTABLE = "python"; // Overwritten by setting the python executable
-	    public static final String PYTHON_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator;
+	    public static final String PYTHON_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "NeuralStyleTransfer" + File.separator;
 	    public static final String PYTHON_PROGRAM = "neural_style_json.py";
 	    // You need to download this file yourself and store in the PYTHON_PATH: http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat
 	    public static final String VGG_NET_FILE = "imagenet-vgg-verydeep-19.mat"; 
