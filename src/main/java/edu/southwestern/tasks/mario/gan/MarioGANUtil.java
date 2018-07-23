@@ -4,9 +4,17 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import ch.idsia.ai.agents.Agent;
+import ch.idsia.ai.agents.human.HumanKeyboardAgent;
+import ch.idsia.ai.tasks.ProgressTask;
+import ch.idsia.mario.engine.LevelRenderer;
 import ch.idsia.mario.engine.level.Level;
+import ch.idsia.tools.CmdLineOptions;
+import ch.idsia.tools.EvaluationOptions;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 import edu.southwestern.tasks.mario.level.LevelParser;
+import edu.southwestern.tasks.mario.level.MarioLevelUtil;
+import edu.southwestern.util.graphics.DrawingPanel;
 
 /**
  * Create Mario levels using a trained GAN as done in the Mario GAN paper.
@@ -24,8 +32,17 @@ public class MarioGANUtil {
 	 * @return Process running the Mario GAN
 	 */
 	private static GANProcess getGANProcess() {
+		// This code comes from the constructor for MarioEvalFunction in the MarioGAN project
 		if(ganProcess == null) {
-			// TODO
+			Settings.setPythonProgram(); // TODO: Replace this by using a PythonUtil class
+			// set up process for GAN
+			ganProcess = new GANProcess();
+			ganProcess.start();
+			// consume all start-up messages that are not data responses
+			String response = "";
+			while(!response.equals("READY")) {
+				response = ganProcess.commRecv();
+			}
 		}
 		return ganProcess;
 	}
@@ -58,8 +75,14 @@ public class MarioGANUtil {
 		return newArray;
 	}
 
-	
-	public static Level generateLevelFromGAN(String pathToGAN, double[] latentVector) {
+	/**
+	 * Has same core functionality as the levelFromLatentVector method in MarioEvalFunction
+	 * of MarioGAN project
+
+	 * @param latentVector
+	 * @return Mario level
+	 */
+	public static Level generateLevelFromGAN(double[] latentVector) {
 		latentVector = mapArrayToOne(latentVector); // Range restrict the values
 		// Generate a level from the vector
 		// Brackets required since generator.py expects of list of multiple levels, though only one is being sent here
@@ -95,4 +118,31 @@ public class MarioGANUtil {
 		return result;
 	}
 
+	/**
+	 * For quick testing
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		Level level = generateLevelFromGAN(new double[] {0.9881835842209917, -0.9986077315374948, 0.9995512051242508, 0.9998643432807639, -0.9976165917284504, -0.9995247114230822, -0.9997001909358728, 0.9995694511739592, -0.9431036754879115, 0.9998155541290887, 0.9997863689962382, -0.8761392912669269, -0.999843833016589, 0.9993230720045649, 0.9995470247917402, -0.9998847606084427, -0.9998322053148382, 0.9997707200294411, -0.9998905141832997, -0.9999512510490688, -0.9533512808031753, 0.9997703088007039, -0.9992229823819915, 0.9953917828622341, 0.9973473366437476, 0.9943030781608361, 0.9995290290713732, -0.9994945079679955, 0.9997109900652238, -0.9988379572928884, 0.9995070647543864, 0.9994132207570211});
+
+		// Code below is the same as in MarioLevelUtil, which generates CPPN levels.
+		// Should these utility classes be merged?
+		
+		Agent controller = new HumanKeyboardAgent(); //new SergeyKarakovskiy_JumpingAgent();
+		EvaluationOptions options = new CmdLineOptions(new String[]{});
+		options.setAgent(controller);
+		ProgressTask task = new ProgressTask(options);
+
+		// Added to change level
+        options.setLevel(level);
+
+		task.setOptions(options);
+
+		int relevantWidth = (level.width - (2*LevelParser.BUFFER_WIDTH)) * MarioLevelUtil.BLOCK_SIZE;
+		DrawingPanel levelPanel = new DrawingPanel(relevantWidth,MarioLevelUtil.LEVEL_HEIGHT*MarioLevelUtil.BLOCK_SIZE, "Level");
+		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, LevelParser.BUFFER_WIDTH*MarioLevelUtil.BLOCK_SIZE, 0, relevantWidth, MarioLevelUtil.LEVEL_HEIGHT*MarioLevelUtil.BLOCK_SIZE);
+		
+		System.out.println ("Score: " + task.evaluate(options.getAgent())[0]);
+				
+	}
 }
