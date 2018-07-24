@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -22,6 +20,7 @@ import com.google.gson.JsonElement;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.PythonUtil;
 
 /**
  * This class interfaces with a Python program that uses
@@ -40,7 +39,6 @@ public class PythonNeuralStyleTransfer {
 	    // For tracking messages to/from Python process
 	    public static final int SUBSTRING_LENGTH = 20;
 	    
-	    public static String PYTHON_EXECUTABLE = "python"; // Overwritten by setting the python executable
 	    public static final String PYTHON_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "NeuralStyleTransfer" + File.separator;
 	    public static final String PYTHON_PROGRAM = "neural_style_json.py";
 	    // You need to download this file yourself and store in the PYTHON_PATH: http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat
@@ -57,25 +55,13 @@ public class PythonNeuralStyleTransfer {
 	    public NeuralStyleTransferProcess(String content) {
 	    	contentImage = content;
 	    }
-	    
-	    /**
-	     * Specify the path to the Python executable that will be used
-	     */
-	    public static void setPythonProgram() {
-	        try {
-	            PYTHON_EXECUTABLE = Files.readAllLines(Paths.get("my_python_path.txt")).get(0); // Should only have one line, get first
-	        } catch (IOException e) {
-	            System.err.println("Can not find the my_python_path.txt which specifies the python program and should be in the main MM-NEAT directory.");
-	            e.printStackTrace();
-	        }
-	    }
-	    
+	    	    
 	    /**
 	     * Launches the actual Python process that waits for input
 	     */
 	    protected void launchPythonProcess() {
-	    	setPythonProgram();
-	    	ProcessBuilder builder = new ProcessBuilder(PYTHON_EXECUTABLE, PYTHON_PATH+PYTHON_PROGRAM, 
+	    	PythonUtil.setPythonProgram();
+	    	ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, PYTHON_PATH+PYTHON_PROGRAM, 
 	    												"--network", PYTHON_PATH+VGG_NET_FILE, 
 	    												"--content", contentImage,
 	    												"--iterations", ""+Parameters.parameters.integerParameter("neuralStyleIterations"),

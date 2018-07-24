@@ -14,6 +14,7 @@ import ch.idsia.tools.EvaluationOptions;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 import edu.southwestern.tasks.mario.level.LevelParser;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
+import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
 
 /**
@@ -34,7 +35,7 @@ public class MarioGANUtil {
 	private static GANProcess getGANProcess() {
 		// This code comes from the constructor for MarioEvalFunction in the MarioGAN project
 		if(ganProcess == null) {
-			Settings.setPythonProgram(); // TODO: Replace this by using a PythonUtil class
+			PythonUtil.setPythonProgram(); // TODO: Replace this by using a PythonUtil class
 			// set up process for GAN
 			ganProcess = new GANProcess();
 			ganProcess.start();
