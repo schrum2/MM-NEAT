@@ -140,8 +140,8 @@ public class MarioGANUtil {
 		task.setOptions(options);
 
 		int relevantWidth = (level.width - (2*LevelParser.BUFFER_WIDTH)) * MarioLevelUtil.BLOCK_SIZE;
-		DrawingPanel levelPanel = new DrawingPanel(relevantWidth,MarioLevelUtil.LEVEL_HEIGHT*MarioLevelUtil.BLOCK_SIZE, "Level");
-		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, LevelParser.BUFFER_WIDTH*MarioLevelUtil.BLOCK_SIZE, 0, relevantWidth, MarioLevelUtil.LEVEL_HEIGHT*MarioLevelUtil.BLOCK_SIZE);
+		DrawingPanel levelPanel = new DrawingPanel(relevantWidth,level.height*MarioLevelUtil.BLOCK_SIZE, "Level");
+		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, LevelParser.BUFFER_WIDTH*MarioLevelUtil.BLOCK_SIZE, 0, relevantWidth, level.height*MarioLevelUtil.BLOCK_SIZE);
 		
 		System.out.println ("Score: " + task.evaluate(options.getAgent())[0]);
 				
