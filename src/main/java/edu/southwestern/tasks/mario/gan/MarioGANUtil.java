@@ -27,6 +27,10 @@ public class MarioGANUtil {
 
 	private static GANProcess ganProcess = null;
 
+	public static int latentVectorLength() {
+		return getGANProcess().getLatentVectorSize();
+	}
+	
 	/**
 	 * Start the GAN process running in Python if it has not started already.
 	 * Otherwise, just return the reference to the process.

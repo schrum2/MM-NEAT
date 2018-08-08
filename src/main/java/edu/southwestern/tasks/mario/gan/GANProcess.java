@@ -40,6 +40,14 @@ public class GANProcess extends Comm {
 	}
 
 	/**
+	 * Length of each latent input vector
+	 * @return
+	 */
+	public int getLatentVectorSize() {
+		return GANDim;
+	}
+	
+	/**
 	 * Launch GAN, this should be called only once
 	 */
 	public void launchGAN() {

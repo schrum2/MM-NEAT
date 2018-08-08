@@ -25,7 +25,7 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	public BoundedRealValuedGenotype() {
 		// May need to change this if other tasks start using the real-coded
 		// genotype
-		this(MMNEAT.fos.getLowerBounds(), MMNEAT.fos.getUpperBounds());
+		this(MMNEAT.getLowerBounds(), MMNEAT.getUpperBounds());
 	}
 
 	public BoundedRealValuedGenotype(double[] lower, double[] upper) {

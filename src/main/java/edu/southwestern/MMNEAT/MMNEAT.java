@@ -67,8 +67,10 @@ import edu.southwestern.tasks.innovationengines.PictureInnovationTask;
 import edu.southwestern.tasks.innovationengines.ShapeInnovationTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.interactive.mario.MarioLevelBreederTask;
+import edu.southwestern.tasks.mario.MarioGANLevelTask;
 import edu.southwestern.tasks.mario.MarioLevelTask;
 import edu.southwestern.tasks.mario.MarioTask;
+import edu.southwestern.tasks.mario.gan.MarioGANUtil;
 import edu.southwestern.tasks.microrts.MicroRTSTask;
 import edu.southwestern.tasks.microrts.SinglePopulationCompetativeCoevolutionMicroRTSTask;
 import edu.southwestern.tasks.motests.FunctionOptimization;
@@ -100,6 +102,7 @@ import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.tasks.ut2004.UT2004Task;
 import edu.southwestern.tasks.vizdoom.VizDoomTask;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.random.RandomGenerator;
@@ -670,6 +673,7 @@ public class MMNEAT {
 				setNNInputParameters(((Parameters.parameters.integerParameter("marioInputWidth") * Parameters.parameters.integerParameter("marioInputHeight")) * 2) + 1, MarioTask.MARIO_OUTPUTS); //hard coded for now, 5 button outputs
 				System.out.println("Set up Mario Task");
 			} else if (task instanceof MarioLevelTask) {
+				// This line only matters for the CPPN version of the task, but doesn't hurt the GAN version, which does evolve networks
 				setNNInputParameters(MarioLevelBreederTask.INPUTS.length, MarioLevelBreederTask.OUTPUTS.length);
 				System.out.println("Set up Mario Level Task");
 			} else if(task instanceof HyperNEATDummyTask) {
@@ -1080,5 +1084,33 @@ public class MMNEAT {
 	public static <T> void logPerformanceInformation(ArrayList<Score<T>> combined, int generation) {
 		if (performanceLog != null)
 			performanceLog.log(combined, generation);
+	}
+
+	/**
+	 * This method only applies to bounded real-valued genotypes.
+	 * Bounded real-valued genotypes are currently only used in two types of domains.
+	 * @return
+	 */
+	public static double[] getLowerBounds() {
+		// Function Optimization Tasks use these genotypes and know their lower bounds
+		if(fos != null) return fos.getLowerBounds();
+		// For Mario GAN, the latent vector length determines the size, but the lower bounds are all zero
+		else if(task instanceof MarioGANLevelTask) return new double[MarioGANUtil.latentVectorLength()]; // all zeroes
+		else {
+			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario GAN");
+		}
+	}
+
+	/**
+	 * Similar to the lower bounds method above. Only used
+	 * for two domains, currently.
+	 * @return
+	 */
+	public static double[] getUpperBounds() {
+		if(fos != null) return fos.getUpperBounds();
+		else if(task instanceof MarioGANLevelTask) return ArrayUtil.doubleOnes(MarioGANUtil.latentVectorLength()); // all ones
+		else {
+			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario GAN");
+		}
 	}
 }
