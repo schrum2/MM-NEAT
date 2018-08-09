@@ -3,6 +3,7 @@ package edu.southwestern.tasks.ut2004;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
 
 import cz.cuni.amis.pogamut.base.component.exception.ComponentCantStartException;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.AddBot;
@@ -188,6 +189,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 			System.out.println("Eval attempt " + (attempts++));
 			try {
 				ucc = new MyUCCWrapper(config);
+				ucc.getLogger().setLevel(Level.OFF); // Stop logging (too much clutter)
 				IUT2004Server server = ucc.getUTServer();
 				System.out.println(botPort + ": Confirming empty server");
 				//responsible for launching native bots into the server, resets if the port is not empty
@@ -203,6 +205,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				// Server was launched?
 				int claimTicket = ServerUtil.addServer(ucc);
 				System.out.println(botPort + ": Empty server gets ticekt: " + claimTicket);
+				server.getLogger().setLevel(Level.OFF); // Turn off the server log info (too much clutter)
 				try {
 					// Make controller for each genotype
 					NetworkController<T>[] organisms = new NetworkController[individuals.length];
@@ -235,6 +238,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				} finally {
 					System.out.println(botPort + ": Past evaluate block: " + System.currentTimeMillis());
 					ServerUtil.removeServer(claimTicket);
+					server.stop(); // Will this cause a problematic exception?
 				}
 			} catch (ComponentCantStartException ccse) {//gets rid of the server if it can't be started
 				System.out.println("EXCEPTION: Can't start the server. Failed eval. Destroy server");
@@ -356,11 +360,10 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 */
 	public static GameDataCollector[] evaluateAgentsOnServer(IUT2004Server server, BotController[] controllers, int botPort, int gamePort,
 			int numNativeBots, int evalMinutes, int desiredSkill, int nativeBotSkill) {
-		//TODO botskill
 		// Launch Native Bots
 		for (int i = 0; i < numNativeBots; i++) {
-			//server.connectNativeBot("Bot" + i, "Type" + i, nativeBotSkills[i]);
 			//server.connectNativeBot("Bot" + i, "Type" + i, 1); // TEAM 1: All on opposing team	
+			// The connectNativeBot method above is insufficient because it does not allow the bot skill to be set.
 			server.getAct().act(new AddBot("Bot" + i, null, null, nativeBotSkill, 1, "Type" + i));
 		}
 		// Create names for all bot controllers

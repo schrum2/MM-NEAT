@@ -73,4 +73,10 @@ public class NetworkController<T extends Network> extends Organism<T>implements 
 		sensorModel.prepareSensorModel(bot);
 		weaponManager.prepareWeaponPreferences(bot);
 	}
+
+	@Override
+	public String getSkin() {
+		// TODO Auto-generated method stub
+		return "HumanFemaleA.MercFemaleA";
+	}
 }

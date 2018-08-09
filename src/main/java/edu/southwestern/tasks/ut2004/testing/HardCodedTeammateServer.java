@@ -11,9 +11,9 @@ import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.fitness.UT2004FitnessFunction;
 import edu.southwestern.tasks.ut2004.weapons.SimpleWeaponManager;
 
-public class AttemptAtTeammateServer {
+public class HardCodedTeammateServer {
 	public static void main(String[] args) throws IOException {
-		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:0", "numMirrorBots:0", "botprizeMod:true", "utEvalMinutes:15", "utNumOpponents:1", "utGameType:botTeamGame", "utMap:DM-1on1-IronDust"});
+		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:0", "numMirrorBots:0", "botprizeMod:true", "utEvalMinutes:15", "utNumOpponents:1", "utGameType:botTeamGame", "utMap:DM-Phobos2","utBotLogOutput:true"});
 		
 		
 		@SuppressWarnings("unchecked")
@@ -21,7 +21,7 @@ public class AttemptAtTeammateServer {
 		BotController[] controller = new BotController[1];
 
 		SimpleWeaponManager weaponManager = new SimpleWeaponManager();
-		BotController behaviorListController = new AttemptAtTeammateController(weaponManager);
+		BotController behaviorListController = new HardCodedTeammateController(weaponManager);
 		
 		controller[0] = behaviorListController;
 		

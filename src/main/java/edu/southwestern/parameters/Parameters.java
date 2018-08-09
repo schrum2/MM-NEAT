@@ -592,6 +592,7 @@ public class Parameters {
 		booleanOptions.add("onlyModeMutationWhenModesSame", false, "Only allow mode mutation if whole population has same number of modes");
 		booleanOptions.add("onlyWatchPareto", true, "When using LoadAndWatchExperiment, only watch the Pareto front");
 		booleanOptions.add("otherDirSensors", false, "Check-Each mediators include sensors that tell the current dir about other dirs");
+		booleanOptions.add("overwriteGameBots", true, "determines whether the version of gamebots present on the computer should be overwritten");
 		booleanOptions.add("pacManGainsLives", false, "Whether or not Pac-Man can gain new lives");
 		booleanOptions.add("pacManLureFitness", false, "Pacman evolved using luring fitness");
 		booleanOptions.add("pacManSensorCaching", true, "Allows multiple networks to use same sensors without recalculating");

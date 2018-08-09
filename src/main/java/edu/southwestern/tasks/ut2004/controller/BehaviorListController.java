@@ -63,4 +63,9 @@ public class BehaviorListController implements BotController {
 			behaviors.get(i).reset(bot);
 		}
 	}
+
+	@Override
+	public String getSkin() {
+		return "Aliens.AlienFemaleA";
+	}
 }

@@ -60,4 +60,11 @@ public class TestController implements BotController {
 	public void reset(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
 
+
+	@Override
+	public String getSkin() {
+		return "HumanMaleA.NightMaleB";
+		// TODO Auto-generated method stub
+	}
+
 }
