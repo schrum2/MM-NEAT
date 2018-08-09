@@ -153,6 +153,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         	luigi = ((LevelScene) scene).luigi;
         	luigi.resetCoins();
         }
+        int jumpActionsPerformed = 0; // Added for MarioGAN fitness
         int totalActionsPerfomed = 0;
 
         // Added to track if Mario can't or is not progressing
@@ -187,6 +188,9 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
                 for (int i = 0; i < Environment.numberOfButtons; ++i)
                     if (action[i])
                     {
+                    	if(i==Mario.KEY_JUMP){ // Added for Mario GAN fitness
+                            jumpActionsPerformed++;
+                        }
                         ++totalActionsPerfomed;
                         break;
                     }
@@ -292,6 +296,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         evaluationInfo.timeSpentOnLevel = levelScene.getStartTime();
         evaluationInfo.timeLeft = levelScene.getTimeLeft();
         evaluationInfo.totalTimeGiven = levelScene.getTotalTime();
+        evaluationInfo.jumpActionsPerformed = jumpActionsPerformed; // Counted during play/simulation
         evaluationInfo.numberOfGainedCoins = mario.coins; // TODO: Also track Luigi's coins?
         evaluationInfo.totalActionsPerfomed = totalActionsPerfomed; // Counted during the play/simulation process
         evaluationInfo.totalFramesPerfomed = frame;

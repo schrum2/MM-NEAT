@@ -27,6 +27,7 @@ public class EvaluationInfo
 //    public int totalNumberOfCoins = MagicNumberUndef;
     public int totalActionsPerfomed = MagicNumberUndef;
     public int totalFramesPerfomed = MagicNumberUndef;
+	public int jumpActionsPerformed = MagicNumberUndef;
     // Number Of collisions with creatures
     // if large
     // if fire

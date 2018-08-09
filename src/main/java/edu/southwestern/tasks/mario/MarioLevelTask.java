@@ -30,6 +30,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	// There is space in each level that Mario cannot traverse because it is after the goal post.
 	// This constant allows that space to be subtracted out.
 	public static final int SPACE_AT_LEVEL_END = 225;
+	public static boolean useProgressPlusJumpsFitness = true;
 	
 	private Agent agent;
 	
@@ -38,11 +39,15 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		agent = new AStarAgent();
 		
 		// Fitness
-		// TODO: Add other fitness functions Vanessa used in Mario GAN
-        MMNEAT.registerFitnessFunction("ProgressPlusTime");
+		if(useProgressPlusJumpsFitness) {
+			MMNEAT.registerFitnessFunction("ProgressPlusJumps");
+		} else {
+			MMNEAT.registerFitnessFunction("ProgressPlusTime");
+		}
         // Other scores
         MMNEAT.registerFitnessFunction("Distance", false);
         MMNEAT.registerFitnessFunction("Time", false);
+        MMNEAT.registerFitnessFunction("Jumps", false);
 
 	}
 	
@@ -55,7 +60,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	}
 	
 	public int numOtherScores() {
-		return 2; // Distance and Time
+		return 3; // Distance, Time, and Jumps
 	}
 
 	@Override
@@ -80,16 +85,20 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		double distancePassed = info.lengthOfLevelPassedPhys;
 		double totalDistanceInLevel = info.totalLengthOfLevelPhys;
 		double time = info.timeSpentOnLevel;
+		double jumps = info.jumpActionsPerformed;
 
-		double[] otherScores = new double[] {distancePassed, time};
-		//System.out.println(distancePassed +":"+ totalDistanceInLevel);
-		// TODO: More elaborate and varied fitness options
+		double[] otherScores = new double[] {distancePassed, time, jumps};
+		
 		if(distancePassed < totalDistanceInLevel - SPACE_AT_LEVEL_END) {
-			// If level is not completed, score the amount of distance covered
+			// If level is not completed, score the amount of distance covered.
+			// This is true whether time or jumps are added.
 			return new Pair<double[],double[]>(new double[]{distancePassed}, otherScores);
-		} else {
-			// Add in the time so that more complicated, challenging levels will be favored
-			return new Pair<double[],double[]>(new double[]{distancePassed+time}, otherScores);
+		} else { // Level beaten
+			if(useProgressPlusJumpsFitness) { // Add Jumps to favor harder levels requiring more jumping
+				return new Pair<double[],double[]>(new double[]{distancePassed+jumps}, otherScores);
+			} else { // Add in the time so that more complicated, challenging levels will be favored
+				return new Pair<double[],double[]>(new double[]{distancePassed+time}, otherScores);
+			}
 		}
 	}
 	
