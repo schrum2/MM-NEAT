@@ -252,6 +252,7 @@ public class Parameters {
 		integerOptions.add("lastSavedGeneration", 0, "Last generation where genotypes were saved");
 		integerOptions.add("layersToView", 1, "How many Pareto layers to view in multinetwork experiment");
 		integerOptions.add("litterSize", 10, "Number of offspring from a single source to evaluate for culling methods");
+		integerOptions.add("marioGANInputSize", 32, "Latent vector input size for Mario GAN level evolution");
 		integerOptions.add("marioInputHeight", 3, "The height for a Mario input section");
 		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputStartY", -1, "The y coordinate offset for Mario inputs grid");
@@ -798,6 +799,7 @@ public class Parameters {
 		stringOptions.add("loadFrom", "", "Where ReplayEA loads networks from");
 		stringOptions.add("log", "log", "Name of prefix for log files of experiment data");
 		stringOptions.add("map", "8x8/basesWorkers8x8.xml", "filepath from maps folder to desired map file for MicroRTSTask");
+		stringOptions.add("marioGANModel", "GECCO2018GAN_World1-1_Epoch5000.pth", "File name of GAN model to use for Mario GAN level evolution");
 		stringOptions.add("matchImageFile", "data" + File.separator + "imagematch" + File.separator + "cat.jpg", "path of the image for image match task");
 		stringOptions.add("mazePowerPillGhostMapping", "", "File with saved locations of ghosts when particular power pills are eaten");
 		stringOptions.add("multinetworkPopulation1", "", "Source of first population to combine into multinetworks");

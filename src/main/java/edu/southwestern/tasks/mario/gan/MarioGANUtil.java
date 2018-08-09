@@ -39,7 +39,7 @@ public class MarioGANUtil {
 	private static GANProcess getGANProcess() {
 		// This code comes from the constructor for MarioEvalFunction in the MarioGAN project
 		if(ganProcess == null) {
-			PythonUtil.setPythonProgram(); // TODO: Replace this by using a PythonUtil class
+			PythonUtil.setPythonProgram();
 			// set up process for GAN
 			ganProcess = new GANProcess();
 			ganProcess.start();

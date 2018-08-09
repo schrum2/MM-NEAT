@@ -3,6 +3,7 @@ package edu.southwestern.tasks.mario.gan;
 import java.io.*;
 import java.lang.ProcessBuilder.Redirect;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.PythonUtil;
 
 public class GANProcess extends Comm {
@@ -10,10 +11,6 @@ public class GANProcess extends Comm {
 	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "MarioGAN" + File.separator;
 	// Program for converting a latent vector to a level via a GAN
 	public static final String WASSERSTEIN_PATH = PYTHON_BASE_PATH + "generator_ws.py";
-	// Default GAN from MarioGAN GECCO 2018 trained on first level of the game
-	public static final String WASSERSTEIN_GAN = PYTHON_BASE_PATH + "netG_epoch_5000.pth";
-	// Default latent vector size for MarioGAN defined above
-	public static final int GAN_DIM = 32;
 	
 	String GANPath = null;
 	int GANDim = -1; 
@@ -22,7 +19,7 @@ public class GANProcess extends Comm {
 	 * Loads the default Mario GAN on the first level of the game from the original Maio GAN publication (GECCO 2018)
 	 */
 	public GANProcess() {
-		this(WASSERSTEIN_GAN, GAN_DIM);
+		this(PYTHON_BASE_PATH + Parameters.parameters.stringParameter("marioGANModel"), Parameters.parameters.integerParameter("marioGANInputSize"));
 	}
 
 	/**
