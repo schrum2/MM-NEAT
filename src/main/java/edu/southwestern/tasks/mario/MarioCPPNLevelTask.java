@@ -41,7 +41,7 @@ public class MarioCPPNLevelTask<T extends Network> extends MarioLevelTask<T> {
 	 * @throws NoSuchMethodException
 	 */
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main("runNumber:0 randomSeed:0 trials:1 mu:10 maxGens:500 io:false netio:false mating:true fs:false task:edu.southwestern.tasks.mario.MarioCPPNLevelTask allowMultipleFunctions:true ftype:0 netChangeActivationRate:0.3 cleanFrequency:50 recurrency:false saveInteractiveSelections:false simplifiedInteractiveInterface:false saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:true".split(" "));
+		MMNEAT.main("runNumber:0 randomSeed:0 base:mariocppn log:MarioCPPN-Test saveTo:Test trials:1 mu:10 maxGens:500 io:true netio:true mating:true fs:false task:edu.southwestern.tasks.mario.MarioCPPNLevelTask allowMultipleFunctions:true ftype:0 netChangeActivationRate:0.3 cleanFrequency:50 recurrency:false saveInteractiveSelections:false simplifiedInteractiveInterface:false saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:true".split(" "));
 	}
 
 

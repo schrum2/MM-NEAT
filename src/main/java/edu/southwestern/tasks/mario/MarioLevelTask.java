@@ -90,10 +90,12 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		double[] otherScores = new double[] {distancePassed, time, jumps};
 		
 		if(distancePassed < totalDistanceInLevel - SPACE_AT_LEVEL_END) {
+			//System.out.println(distancePassed + " < " + (totalDistanceInLevel - SPACE_AT_LEVEL_END));
 			// If level is not completed, score the amount of distance covered.
 			// This is true whether time or jumps are added.
 			return new Pair<double[],double[]>(new double[]{distancePassed}, otherScores);
 		} else { // Level beaten
+			//System.out.println("BEAT LEVEL");
 			if(useProgressPlusJumpsFitness) { // Add Jumps to favor harder levels requiring more jumping
 				return new Pair<double[],double[]>(new double[]{distancePassed+jumps}, otherScores);
 			} else { // Add in the time so that more complicated, challenging levels will be favored
