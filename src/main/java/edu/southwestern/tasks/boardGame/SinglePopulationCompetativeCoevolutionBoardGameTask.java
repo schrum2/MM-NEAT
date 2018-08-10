@@ -161,5 +161,10 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		// No action required
 	}
 
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
+	}
+
 
 }

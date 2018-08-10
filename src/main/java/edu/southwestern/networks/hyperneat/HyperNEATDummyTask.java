@@ -99,4 +99,10 @@ public class HyperNEATDummyTask<T> implements HyperNEATTask, Task, SinglePopulat
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
+	}
+
 }

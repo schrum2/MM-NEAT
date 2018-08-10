@@ -167,4 +167,9 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 		return new String[]{"Utility"};
 	}
 
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
+	}
+
 }

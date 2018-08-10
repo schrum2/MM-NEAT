@@ -184,4 +184,10 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		return substrateConnectivity;
 	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		substrateInformation = null;
+		substrateConnectivity = null;
+	}
 }

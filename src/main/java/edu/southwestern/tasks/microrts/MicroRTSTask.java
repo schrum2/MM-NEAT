@@ -355,4 +355,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public int getNumInputSubstrates() {
 		return ef.getNumInputSubstrates();
 	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
+	}
 }

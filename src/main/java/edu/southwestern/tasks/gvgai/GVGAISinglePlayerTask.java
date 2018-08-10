@@ -189,4 +189,9 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 		String args = "runNumber:0 randomSeed:0 trials:2 maxGens:500 mu:100 io:false netio:false mating:true task:edu.southwestern.tasks.gvgai.GVGAISinglePlayerTask cleanOldNetworks:true fs:false log:Zelda-ZeldaReactive saveTo:ZeldaReactive gvgaiGame:zelda gvgaiLevel:0 gvgaiPlayer:edu.southwestern.tasks.gvgai.GVGAIReactiveNNPlayer watch:true";
 		MMNEAT.main(args.split(" "));
 	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
+	}
 }

@@ -84,4 +84,9 @@ public class HyperNEATSpeedTask implements HyperNEATTask, Task, SinglePopulation
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
+	}
 }

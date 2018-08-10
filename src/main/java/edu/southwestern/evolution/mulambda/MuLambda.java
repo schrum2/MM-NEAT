@@ -15,11 +15,11 @@ import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.log.FitnessLog;
 import edu.southwestern.log.PlotLog;
 import edu.southwestern.networks.TWEANN;
-import edu.southwestern.networks.hyperneat.CascadeNetworks;
-import edu.southwestern.networks.hyperneat.FlexibleSubstrateArchitecture;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
+import edu.southwestern.networks.hyperneat.architecture.CascadeNetworks;
+import edu.southwestern.networks.hyperneat.architecture.FlexibleSubstrateArchitecture;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -411,11 +411,11 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 				result = HybrIDUtil.switchPhenotypeToNEAT(result);
 			}
 		}
-		// TEMPORARY FOR TESTING
-		if(CommonConstants.cascadeExpansion && currentGeneration() == Parameters.parameters.integerParameter("cascadeExpansionSwitchGeneration")) {
-			result = CascadeNetworks.getSubstrateGenotypesFromCPPNs(result, 1, 10, 20, SubstrateConnectivity.CTYPE_CONVOLUTION);
-		}
 		
+		if(CommonConstants.cascadeExpansion && currentGeneration() != 0 && currentGeneration() % Parameters.parameters.integerParameter("cascadeExpansionGenerationInterval") == 0) {
+			//adds a hidden convolutional substrate in between the last hidden substrate and the output for each member of the population if the receptive field size allows for it
+			result = CascadeNetworks.cascadeExpandAllGenotypes(result);
+		}
 		return result;
 	}
 

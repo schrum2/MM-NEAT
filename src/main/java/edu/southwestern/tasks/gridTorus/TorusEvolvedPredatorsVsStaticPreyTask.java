@@ -67,4 +67,5 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 
 		return staticAgents;
 	}
+
 }

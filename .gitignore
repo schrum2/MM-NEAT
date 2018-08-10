@@ -95,6 +95,8 @@ $RECYCLE.BIN/
 /ut2004/
 /mariogan/
 /popacman/
+# Some of UT^2's log files end up with this naming convention
+*-null
 *.zds
 vizdoom/bin/vizdoom-He_Deceives.ini
 *.bmp

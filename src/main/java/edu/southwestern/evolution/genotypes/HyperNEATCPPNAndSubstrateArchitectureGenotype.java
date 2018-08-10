@@ -6,14 +6,17 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.TWEANN;
-import edu.southwestern.networks.hyperneat.CascadeNetworks;
-import edu.southwestern.networks.hyperneat.FlexibleSubstrateArchitecture;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
-import edu.southwestern.networks.hyperneat.SubstrateArchitectureDefinition;
 import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
+import edu.southwestern.networks.hyperneat.architecture.CascadeNetworks;
+import edu.southwestern.networks.hyperneat.architecture.FlexibleSubstrateArchitecture;
+import edu.southwestern.networks.hyperneat.architecture.SubstrateArchitectureDefinition;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
@@ -42,19 +45,22 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 * @param hnt the HyperNEATTask
 	 */
 	public HyperNEATCPPNAndSubstrateArchitectureGenotype(HyperNEATTask hnt) {
-		this(FlexibleSubstrateArchitecture.getHiddenArchitecture(hnt), FlexibleSubstrateArchitecture.getAllSubstrateConnectivity(hnt));
+		this(FlexibleSubstrateArchitecture.getHiddenArchitecture(hnt), FlexibleSubstrateArchitecture.getDefaultConnectivity(hnt));
 	}
 
 	/**
 	 * defines a HyperNEATCPPNAndSubstrateArchitectureGenotype from the hiddenArchitecture and substrate connectivity
 	 * @param hiddenArchitecture List of triples that specifies each substrate with the index of each triple being its layer.
 	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
-	 * @param CONNECTIVITY_TYPE how these two substrates are connected (i.e. full, convolutional,...)
+	 * @param allSubstrateConnectivity how each substrate is connected
 	 */
 	public HyperNEATCPPNAndSubstrateArchitectureGenotype(List<Triple<Integer, Integer, Integer>> hiddenArchitecture, List<SubstrateConnectivity> allSubstrateConnectivity) {
 		super();
 		this.hiddenArchitecture = hiddenArchitecture;
 		this.allSubstrateConnectivity = allSubstrateConnectivity;
+		assert allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
+		assert !allSubstrateConnectivity.get(0).sourceSubstrateName.equals("null") : "How was a null string name constructed?";
+
 		assert this.hiddenArchitecture != null;
 	}
 
@@ -68,6 +74,10 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		this.hiddenArchitecture = substrateArchitectureDefinition.getNetworkHiddenArchitecture();
 		assert this.hiddenArchitecture != null;
 		this.allSubstrateConnectivity = substrateArchitectureDefinition.getSubstrateConnectivity(HNTask);
+		assert allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
+		assert !allSubstrateConnectivity.get(0).sourceSubstrateName.equals("null") : "How was a null string name constructed?";
+
+
 	}
 	
 	/**
@@ -83,8 +93,12 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		// Construct new CPPN with random weights
 		super(networkInputs, networkOutputs, archetypeIndex);
 		this.hiddenArchitecture = FlexibleSubstrateArchitecture.getHiddenArchitecture((HyperNEATTask) MMNEAT.task);
-		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getAllSubstrateConnectivity((HyperNEATTask) MMNEAT.task);
+		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getDefaultConnectivity((HyperNEATTask) MMNEAT.task);
 		assert allSubstrateConnectivity.size() > 0 : "allSubstrateConnectivity size must be greater than 0";
+		assert allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
+		assert !allSubstrateConnectivity.get(0).sourceSubstrateName.equals("null") : "How was a null string name constructed?";
+
+
 	}
 	
 	/**
@@ -94,24 +108,29 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 * @param outputNeurons output nodes
 	 * @param hiddenArchitecture List of triples that specifies each substrate with the index of each triple being its layer.
 	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
-	 * @param CONNECTIVITY_TYPE how these two substrates are connected (i.e. full, convolutional,...)
+	 * @param allSubstrateConnectivity how each substrate is connected
 	 */
 	private HyperNEATCPPNAndSubstrateArchitectureGenotype(int archetypeIndex, ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons,
 			List<Triple<Integer, Integer, Integer>> hiddenArchitecture, List<SubstrateConnectivity> allSubstrateConnectivity) {
 		super(archetypeIndex, links, genes, outputNeurons);
 		this.allSubstrateConnectivity = allSubstrateConnectivity;
+		assert allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
+		assert !allSubstrateConnectivity.get(0).sourceSubstrateName.equals("null") : "How was a null string name constructed?";
+
 		this.hiddenArchitecture = hiddenArchitecture;
 	}
 	
 	/**
 	 * @param hngt the HyperNEAT CPPN genotype
 	 */
-	public HyperNEATCPPNAndSubstrateArchitectureGenotype(HyperNEATCPPNGenotype hngt) {
-		super(hngt.numIn, hngt.numOut, hngt.archetypeIndex);
-		HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
-		this.hiddenArchitecture = FlexibleSubstrateArchitecture.getHiddenArchitecture(task);
-		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getAllSubstrateConnectivity(task);
-	}
+//	public HyperNEATCPPNAndSubstrateArchitectureGenotype(HyperNEATCPPNGenotype hngt) {
+//		super(hngt.numIn, hngt.numOut, hngt.archetypeIndex);
+//		HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
+//		this.hiddenArchitecture = FlexibleSubstrateArchitecture.getHiddenArchitecture(task);
+//		this.allSubstrateConnectivity = FlexibleSubstrateArchitecture.getDefaultConnectivity(task);
+//		assert allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
+//		assert !allSubstrateConnectivity.get(0).sourceSubstrateName.equals("null") : "How was a null string name constructed?";
+//	}
 
 	/**
 	 * @param HNTask the HyperNEATTask
@@ -166,6 +185,8 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 */
 	@Override
 	public List<SubstrateConnectivity> getSubstrateConnectivity(HyperNEATTask HNTask) {
+		assert allSubstrateConnectivity != null;
+		assert allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
 		return allSubstrateConnectivity;
 	}
 	
@@ -174,16 +195,26 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	 * Adds a new layer in between the previous last hidden layer and the output layer with given specification
 	 * @param newLayerWidth the width(the number of substrates) of the new layer
 	 * @param newSubstratesWidth the width of each substrate that is added
-	 * @param newsubstratesHeight the height of each substrate that is added
+	 * @param newSubstratesHeight the height of each substrate that is added
 	 * @param connectivityType how these two substrates are connected (i.e. full, convolutional,...)
 	 */
-	public void cascadeExpansion (int newLayerWidth, int newSubstratesWidth, int newsubstratesHeight, int connectivityType) {
+	public void cascadeExpansion (int newLayerWidth, int newSubstratesWidth, int newSubstratesHeight, int connectivityType) {
+		//if HyperNEAT is encoded via MSS new outputs must be added to the cppn
+		if (!Parameters.parameters.booleanParameter("substrateLocationInputs")) {
+			int[] ftypes = new int[CommonConstants.leo ? newLayerWidth * 4 + newLayerWidth: newLayerWidth * 2 + newLayerWidth];
+			for (int i = 0; i < ftypes.length; i++) {
+				ftypes[i] = ActivationFunctions.randomFunction();
+			}
+			int numOutputsInPhenotype = FlexibleSubstrateArchitecture.getInputAndOutputNames(((HyperNEATTask) MMNEAT.task)).t2.size();
+			addMSSNeuronsToCPPN(allSubstrateConnectivity.size(), hiddenArchitecture.size(), numOutputsInPhenotype, newLayerWidth, ftypes);
+		}
 		Pair<List<Triple<Integer, Integer, Integer>>, List<SubstrateConnectivity>> newDefiniton = 
 				CascadeNetworks.cascadeExpansion(this.hiddenArchitecture, this.allSubstrateConnectivity, 
 				FlexibleSubstrateArchitecture.getInputAndOutputNames((HyperNEATTask) MMNEAT.task).t2,
-				newLayerWidth, newSubstratesWidth, newsubstratesHeight, connectivityType);
+				newLayerWidth, newSubstratesWidth, newSubstratesHeight, connectivityType);
 		this.hiddenArchitecture = newDefiniton.t1;
 		this.allSubstrateConnectivity = newDefiniton.t2;
+		assert allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
 	}
 
 	/**
@@ -203,6 +234,8 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		for(SubstrateConnectivity connectionId: this.allSubstrateConnectivity) {
 			copyAllSubstrateConnectivity.add(connectionId.copy());
 		}
+		assert allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
+		assert copyAllSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
 		
 		// Copy the link and node genes
 		ArrayList<LinkGene> copyLinks = new ArrayList<LinkGene>(this.links.size());
@@ -211,13 +244,15 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		}
 		ArrayList<NodeGene> copyGenes = new ArrayList<NodeGene>(this.nodes.size());
 		for (NodeGene ng : this.nodes) {// needed for a deep copy
-			copyGenes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias()));
+			copyGenes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias(), false)); // CPPN nodes are not normalized
 		}
-		
 		// Construct the copy
 		HyperNEATCPPNAndSubstrateArchitectureGenotype copy = new HyperNEATCPPNAndSubstrateArchitectureGenotype(
 				this.archetypeIndex, copyLinks, copyGenes, this.numOut, copyHiddenArchitecture, copyAllSubstrateConnectivity);
+		//TWEANNGenotype result = new TWEANNGenotype(this.getPhenotype());
 
+		assert copy.allSubstrateConnectivity.get(0).sourceSubstrateName != null : "How was a null name constructed?";
+		
 		moduleUsage = temp;
 		copy.moduleUsage = new int[temp.length];
 		System.arraycopy(this.moduleUsage, 0, copy.moduleUsage, 0, moduleUsage.length);

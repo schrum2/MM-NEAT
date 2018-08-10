@@ -15,7 +15,7 @@ public class RandomNavPointPathExplorer extends SequentialPathExplorer {
 	 * choses a random nav point from the ones already explored
 	 * @return returns the next nav point for the bot to go to
 	 */
-	public NavPoint getNextNavPoint(UT2004BotModuleController bot) {
+	public NavPoint getNextNavPoint(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		// choose one feasible navpoint (== not belonging to tabooNavPoints)
 		// randomly
 		NavPoint chosen = MyCollections.getRandomFiltered(bot.getWorldView().getAll(NavPoint.class).values(),
@@ -28,5 +28,11 @@ public class RandomNavPointPathExplorer extends SequentialPathExplorer {
 		// ok, all navpoints have been visited probably, try to pick one at
 		// random
 		return MyCollections.getRandom(bot.getWorldView().getAll(NavPoint.class).values());
+	}
+
+	@Override
+	public String getSkin() {
+		// TODO Auto-generated method stub
+		return "HumanMaleA.MercMaleB";
 	}
 }

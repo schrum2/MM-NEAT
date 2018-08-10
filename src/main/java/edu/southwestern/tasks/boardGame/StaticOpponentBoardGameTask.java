@@ -213,5 +213,10 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 	public List<SubstrateConnectivity> getSubstrateConnectivity() {
 		return BoardGameUtil.getSubstrateConnectivity();
 	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
+	}
 	
 }

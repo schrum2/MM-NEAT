@@ -30,7 +30,7 @@ public class MultiBotLauncher {
 	 * @param host (the host of the server)
 	 * @param port (the port that the server will connect to)
 	 */
-	public static void launchMultipleBots(@SuppressWarnings("rawtypes") Class[] botClasses, IRemoteAgentParameters[] params,String host, int port) {
+	public static void launchMultipleBots(@SuppressWarnings("rawtypes") Class[] botClasses, IRemoteAgentParameters[] params, String host, int port) {
 		assert botClasses.length == params.length : "List of bots and bot parameters must be same length";
 		Thread[] threads = new Thread[botClasses.length];
 		System.out.println("===== Launch bots: " + Arrays.toString(botClasses));
@@ -51,6 +51,18 @@ public class MultiBotLauncher {
 						// I believe the setMain causes certain exceptions to be caught and suppressed
 						multi.setMain(true).setLogLevel(Level.OFF).startAgents(bots);
 					} catch (PogamutException e) {
+						// For ControllerBots, we can check if the eval ended properly or badly
+						if(params[index] instanceof ControllerBotParameters) {
+							// The evaluation was not successful, then we need to know the reason
+							if(!((ControllerBotParameters) params[index]).getStats().evalWasSuccessful()) {
+								System.out.println("ControllerBot evaluation failed!");
+								e.printStackTrace();
+							}
+							// Otherwise, the exception is suppressed, because it is the standard complaint about killing an active bot
+						} else {
+							System.out.println("NOT A ControllerBot. Uncertain if exception is problematic");
+							e.printStackTrace();
+						}
 						// Obligatory exception that happens from stopping the bot. Just suppress.
 					}
 				}
@@ -90,7 +102,7 @@ public class MultiBotLauncher {
 		Class[] botClasses = new Class[] {HunterBot.class, NavigationBot.class, UT2.class, MirrorBot4.class, ControllerBot.class};
 
 		UT2Parameters ut2params = new UT2Parameters();
-		ControllerBotParameters dummyParameters = new ControllerBotParameters(null, new DummyController(), "Dummy", new GameDataCollector(), 300, 4, 3000);
+		ControllerBotParameters dummyParameters = new ControllerBotParameters(null, new DummyController(), "Dummy", new GameDataCollector(), 300, 4, 3000, "Bot.BotC");
 
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new HunterBotParameters(), new UT2004BotParameters(), ut2params, new MirrorBotParameters(), dummyParameters};
 		launchMultipleBots(botClasses, params, "localhost", 3000);

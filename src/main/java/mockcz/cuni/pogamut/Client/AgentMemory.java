@@ -1,5 +1,15 @@
 package mockcz.cuni.pogamut.Client;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
+
+import javax.vecmath.Matrix3d;
+import javax.vecmath.Vector3d;
+
 import cz.cuni.amis.pogamut.base.communication.worldview.event.IWorldEventListener;
 import cz.cuni.amis.pogamut.base.communication.worldview.object.IWorldObjectEventListener;
 import cz.cuni.amis.pogamut.base.communication.worldview.object.WorldObjectId;
@@ -10,29 +20,41 @@ import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Velocity;
 import cz.cuni.amis.pogamut.base3d.worldview.object.event.WorldObjectAppearedEvent;
+import cz.cuni.amis.pogamut.unreal.agent.navigation.IUnrealPathExecutor;
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Raycasting;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weaponry;
-import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.*;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.AgentInfo;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Game;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Items;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Players;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Senses;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType.Category;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.AutoTraceRay;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotDamaged;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.IncomingProjectile;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoint;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.PlayerDamaged;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.VolumeChanged;
 import edu.southwestern.parameters.Parameters;
 import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.bots.UT2;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable;
-import java.util.*;
-import javax.vecmath.Matrix3d;
-import javax.vecmath.Vector3d;
 import mockcz.cuni.amis.pogamut.base.agent.navigation.PathPlanner;
-import mockcz.cuni.amis.pogamut.ut2004.agent.navigation.MyUTPathExecutor;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
 
 /**
+ * Older versions of Pogamut included an AgentMemory class that was a central storage point for much information about
+ * the bot. Later versions separated the components of this class and spread them across several other classes. This mock
+ * recreation of the original class stored the various classes that are separate and isolated in the newer versions of
+ * Pogamut.
  *
- * @author HeDeceives
+ * @author Jacob Schrum
  */
 public class AgentMemory {
 
@@ -54,8 +76,8 @@ public class AgentMemory {
     public final AgentBody body;
     public final Raycasting raycasting;
     public final IVisionWorldView world;
-    public final MyUTPathExecutor itemPathExecutor;
-    public final MyUTPathExecutor playerPathExecutor;
+    public final IUnrealPathExecutor<ILocated> itemPathExecutor;
+    public final IUnrealPathExecutor<ILocated> playerPathExecutor;
     public final Game game;
     public UnrealId lastPlayerDamaged = null;
     private Player judgeTarget = null;
@@ -153,7 +175,7 @@ public class AgentMemory {
         }
     };
 
-    public AgentMemory(AgentBody body, AgentInfo info, Senses senses, Players players, PathPlanner pathPlanner, MyUTPathExecutor itemPathExecutor, MyUTPathExecutor playerPathExecutor, Items items, Weaponry weaponry, IVisionWorldView world, Game game) {
+    public AgentMemory(AgentBody body, AgentInfo info, Senses senses, Players players, PathPlanner pathPlanner, IUnrealPathExecutor<ILocated> itemPathExecutor, IUnrealPathExecutor<ILocated> playerPathExecutor, Items items, Weaponry weaponry, IVisionWorldView world, Game game) {
         this.body = body;
         this.info = info;
         this.senses = senses;

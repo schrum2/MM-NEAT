@@ -6,6 +6,10 @@ import mockcz.cuni.pogamut.Client.AgentBody;
 import mockcz.cuni.pogamut.Client.AgentMemory;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
 
+/**
+ * Instructs the bot to strafe in relation to a given enemey
+ * @author Jacob Schrum
+ */
 public class EnemyRelativeStrafeAction extends OpponentRelativeAction {
 
     @Override

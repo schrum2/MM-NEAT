@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package utopia.agentmodel.actions;
 
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
@@ -10,31 +6,50 @@ import mockcz.cuni.pogamut.Client.AgentMemory;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
 
 /**
- *
+ * Tells the bot to avoid enemies that it sees
  * @author nvh
  */
 public class AvoidEnemyAction extends OpponentRelativeAction {
 
     @Override
+   /**
+    * allows the bot to print out a description of it's actions
+    */
     public String toString() {
         return "Avoid" + (shoot ? ":Shoot:" + (secondary ? "Alt" : "Pri") : "") + (jump ? ":Jump" : "");
     }
 
+    /**
+     * initializes the action
+     * @param memory (agent memory to use)
+     * @param shoot (should the bot shoot)
+     * @param secondary (should the bot use secondary firing mode)
+     * @param jump (should the bot jump)
+     */
     public AvoidEnemyAction(AgentMemory memory, boolean shoot, boolean secondary, boolean jump) {
         super(memory, shoot, secondary, jump);
     }
 
+    /**
+     * initializes the action, bot assumes it shouldn't jump
+     * 
+     * @param memory (bot memory)
+     * @param shoot (whether or not the bot should shoot)
+     * @param secondary (whether or not the bot will be using the secondary firing mode)
+     */
     public AvoidEnemyAction(AgentMemory memory, boolean shoot, boolean secondary) {
         this(memory, shoot, secondary, false);
     }
 
     @Override
+    /**
+     * Tells bot how to execute the actions
+     */
     public void execute(AgentBody body) {
-        Player enemy = this.memory.getCombatTarget();
-        Triple agentLocation = this.memory.getAgentLocation();
+        Player enemy = this.memory.getCombatTarget(); //ID's enemy
+        Triple agentLocation = this.memory.getAgentLocation(); //gives enemy location
         if (enemy != null && enemy.getLocation() != null && agentLocation != null) {
             super.shootDecision(enemy);
-
             Triple lookAt = Triple.locationToTriple(enemy.getLocation());
             Triple target = Triple.subtract(agentLocation, Triple.subtract(lookAt, agentLocation));
             target.z = agentLocation.z; // lookAt.z;
@@ -44,6 +59,6 @@ public class AvoidEnemyAction extends OpponentRelativeAction {
             Triple target = Triple.subtract(agentLocation, Triple.subtract(lookAt, agentLocation));
             body.strafeToLocation(target, lookAt, 100);
         }
-        jumpDecision(body);
+        jumpDecision(body); //does the bot need to jump?
     }
 }

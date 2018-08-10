@@ -27,7 +27,7 @@ public class OpponentRelativeMovementOutputModel implements UT2004OutputInterpre
 	 * 
 	 * @returns returns an array of outputs based on the opponent's movements
 	 */
-	public BotAction interpretOutputs(UT2004BotModuleController bot, double[] outputs) {
+	public BotAction interpretOutputs(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, double[] outputs) {
 		Player opponent = bot.getPlayers().getNearestEnemy(MEMORY_TIME);
 		double moveForwardBackward = outputs[OUTPUT_INDEX_MOVEMENT];
 		double strafeLeftRight = outputs[OUTPUT_INDEX_STRAFING];
