@@ -26,8 +26,8 @@ public class EvaluationInfo
     public int numberOfGainedCoins = MagicNumberUndef;
 //    public int totalNumberOfCoins = MagicNumberUndef;
     public int totalActionsPerfomed = MagicNumberUndef;
+    public int jumpActionsPerformed = MagicNumberUndef;
     public int totalFramesPerfomed = MagicNumberUndef;
-	public int jumpActionsPerformed = MagicNumberUndef;
     // Number Of collisions with creatures
     // if large
     // if fire
@@ -45,7 +45,7 @@ public class EvaluationInfo
         // neglect totalActionsPerfomed;
         // neglect totalLengthOfLevelCells;
         // neglect totalNumberOfCoins;
-        return lengthOfLevelPassedPhys - timeSpentOnLevel + numberOfGainedCoins + marioStatus*5000;
+        return (lengthOfLevelPassedPhys - timeSpentOnLevel + numberOfGainedCoins + marioStatus*5000)/5000;
     }
 
     public double computeDistancePassed()
@@ -56,6 +56,10 @@ public class EvaluationInfo
     public int computeKillsTotal()
     {
         return this.killsTotal;
+    }
+    
+    public double computeJumpFraction(){
+        return (double)this.jumpActionsPerformed/this.totalActionsPerfomed;
     }
 
     //TODO: possible fitnesses adjustments: penalize for collisions with creatures and especially for  suicide. It's a sin.

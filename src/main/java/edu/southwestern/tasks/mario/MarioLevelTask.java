@@ -27,9 +27,6 @@ import edu.southwestern.util.datastructures.Pair;
  * @param <T>
  */
 public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
-	// There is space in each level that Mario cannot traverse because it is after the goal post.
-	// This constant allows that space to be subtracted out.
-	public static final int SPACE_AT_LEVEL_END = 225;
 	public static boolean useProgressPlusJumpsFitness = true;
 	
 	private Agent agent;
@@ -69,7 +66,19 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		return 0; // Not used
 	}
 
+	/**
+	 * Different level generators use the genotype to generate a level in different ways
+	 * @param individual
+	 * @return
+	 */
 	public abstract Level getMarioLevelFromGenotype(Genotype<T> individual);
+	
+	/**
+	 * Different level generators generate levels of different lengths
+	 * @param info 
+	 * @return
+	 */
+	public abstract double totalPassableDistance(EvaluationInfo info);
 	
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
@@ -84,8 +93,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		// For now, assume a single evaluation
 		EvaluationInfo info = infos.get(0);
 		double distancePassed = info.lengthOfLevelPassedPhys;
-		double totalDistanceInLevel = info.totalLengthOfLevelPhys;
-		double percentLevelPassed = distancePassed / (totalDistanceInLevel - SPACE_AT_LEVEL_END);
+		double percentLevelPassed = distancePassed / totalPassableDistance(info);
 		double time = info.timeSpentOnLevel;
 		double jumps = info.jumpActionsPerformed;
 
