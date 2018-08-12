@@ -42,7 +42,7 @@ public class MarioGANLevelTask extends MarioLevelTask<ArrayList<Double>> {
 	 * @throws NoSuchMethodException
 	 */
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main("runNumber:0 randomSeed:0 base:mariogan log:MarioGAN-Test saveTo:Test trials:1 mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:true".split(" "));
+		MMNEAT.main("runNumber:0 randomSeed:0 base:mariogan log:MarioGAN-Test saveTo:Test trials:1 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:true".split(" "));
 	}
 
 }

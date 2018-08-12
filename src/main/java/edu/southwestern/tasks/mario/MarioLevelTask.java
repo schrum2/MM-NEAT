@@ -46,6 +46,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		}
         // Other scores
         MMNEAT.registerFitnessFunction("Distance", false);
+        MMNEAT.registerFitnessFunction("PercentDistance", false);
         MMNEAT.registerFitnessFunction("Time", false);
         MMNEAT.registerFitnessFunction("Jumps", false);
 
@@ -60,7 +61,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	}
 	
 	public int numOtherScores() {
-		return 3; // Distance, Time, and Jumps
+		return 4; // Distance, Percentage, Time, and Jumps
 	}
 
 	@Override
@@ -84,22 +85,23 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		EvaluationInfo info = infos.get(0);
 		double distancePassed = info.lengthOfLevelPassedPhys;
 		double totalDistanceInLevel = info.totalLengthOfLevelPhys;
+		double percentLevelPassed = distancePassed / (totalDistanceInLevel - SPACE_AT_LEVEL_END);
 		double time = info.timeSpentOnLevel;
 		double jumps = info.jumpActionsPerformed;
 
-		double[] otherScores = new double[] {distancePassed, time, jumps};
+		double[] otherScores = new double[] {distancePassed, percentLevelPassed, time, jumps};
 		
-		if(distancePassed < totalDistanceInLevel - SPACE_AT_LEVEL_END) {
+		if(percentLevelPassed < 1.0) {
 			//System.out.println(distancePassed + " < " + (totalDistanceInLevel - SPACE_AT_LEVEL_END));
 			// If level is not completed, score the amount of distance covered.
 			// This is true whether time or jumps are added.
-			return new Pair<double[],double[]>(new double[]{distancePassed}, otherScores);
+			return new Pair<double[],double[]>(new double[]{percentLevelPassed}, otherScores);
 		} else { // Level beaten
 			//System.out.println("BEAT LEVEL");
 			if(useProgressPlusJumpsFitness) { // Add Jumps to favor harder levels requiring more jumping
-				return new Pair<double[],double[]>(new double[]{distancePassed+jumps}, otherScores);
+				return new Pair<double[],double[]>(new double[]{1.0+jumps}, otherScores);
 			} else { // Add in the time so that more complicated, challenging levels will be favored
-				return new Pair<double[],double[]>(new double[]{distancePassed+time}, otherScores);
+				return new Pair<double[],double[]>(new double[]{1.0+time}, otherScores);
 			}
 		}
 	}
