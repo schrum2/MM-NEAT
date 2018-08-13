@@ -2,6 +2,7 @@ package oldpacman.controllers.examples;
 
 import java.util.EnumMap;
 
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import oldpacman.controllers.NewGhostController;
 import oldpacman.game.Game;
 import oldpacman.game.Constants.DM;
@@ -53,5 +54,14 @@ public class BetterLegacy extends NewGhostController {
 		}
 
 		return myMoves;
+	}
+
+	@Override
+	/**
+	 * Should never be used but is necessary to compile. this method is required
+	 * for the PO Ghost team to interface with the game facade.
+	 */
+	public int getAction(GameFacade gs, long timeDue, GHOST ghost) {
+		return 0;
 	}
 }

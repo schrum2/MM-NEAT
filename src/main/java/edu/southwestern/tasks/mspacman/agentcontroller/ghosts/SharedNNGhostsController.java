@@ -6,6 +6,7 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
 import oldpacman.controllers.NewGhostController;
 import oldpacman.game.Game;
+import pacman.controllers.IndividualGhostController;
 import oldpacman.game.Constants.GHOST;
 import oldpacman.game.Constants.MOVE;
 
@@ -19,12 +20,21 @@ public abstract class SharedNNGhostsController extends NewGhostController {
 
 	protected Network nn;
 	public GhostControllerInputOutputMediator inputMediator;
+	//Used for OldToNewGhostIntermediaryController
+	public final EnumMap<GHOST, IndividualGhostController> controllers;
 	// No such thing yet
 	// protected GhostModeSelector ms = null;
 
 	public SharedNNGhostsController(Network n) {
 		this.nn = n;
 		this.inputMediator = MMNEAT.ghostsInputOutputMediator;
+		this.controllers = null;
+	}
+	
+	public SharedNNGhostsController(Network n, EnumMap<GHOST, IndividualGhostController> map) {
+		this.nn = n;
+		this.inputMediator = MMNEAT.ghostsInputOutputMediator;
+		this.controllers = map;
 	}
 
 	EnumMap<GHOST, MOVE> myMoves = new EnumMap<GHOST, MOVE>(GHOST.class);

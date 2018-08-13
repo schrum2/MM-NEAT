@@ -3,6 +3,8 @@ package edu.southwestern.tasks.mspacman.agentcontroller.ghosts;
 import edu.southwestern.networks.Network;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.ghosts.VariableDirectionGhostBlockLoadedInputOutputMediator;
+import oldpacman.game.Constants.GHOST;
+
 import java.util.Arrays;
 
 /**
@@ -32,5 +34,14 @@ public class SharedNNCheckEachDirectionGhostsController extends SharedNNDirectio
 			}
 		}
 		return preferences;
+	}
+
+	@Override
+	/**
+	 * Should never be used but is necessary to compile. this method is required
+	 * for the PO Ghost team to interface with the game facade.
+	 */
+	public int getAction(GameFacade gs, long timeDue, GHOST ghost) {
+		return 0;
 	}
 }

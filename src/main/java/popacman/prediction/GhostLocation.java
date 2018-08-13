@@ -9,21 +9,21 @@ public class GhostLocation {
     private int index;
     private Constants.MOVE lastMoveMade;
     private double probability;
-    private double edibleProbability;
+    private double edibleTime;
 
-    public GhostLocation(int index, Constants.MOVE lastMoveMade, double probability, double edibleProbability) {
+    public GhostLocation(int index, Constants.MOVE lastMoveMade, double probability, double edibleTime) {
         this.index = index;
         this.lastMoveMade = lastMoveMade;
         this.probability = probability;
-        this.edibleProbability = edibleProbability;
+        this.edibleTime = edibleTime;
     }
 
     public double getEdibleProbability() {
-    	return edibleProbability;
+    	return edibleTime;
     }
     
     public void setEdibleProbability(double probability) {
-    	this.edibleProbability = probability;
+    	this.edibleTime = probability;
     }
     
     public int getIndex() {
@@ -56,7 +56,7 @@ public class GhostLocation {
                 "index=" + index +
                 ", lastMoveMade=" + lastMoveMade +
                 ", probability=" + probability +
-                ", edibleProbability=" + edibleProbability +
+                ", edibleTime=" + edibleTime +
                 '}';
     }
 }
