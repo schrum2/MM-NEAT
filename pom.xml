@@ -223,11 +223,14 @@
 	
     <!--  local files -->
     <!--  write xml files of classes -->
+    <!--  added source directly to project -->
+    <!-- 
     <dependency>
 		<groupId>woxser</groupId>
 		<artifactId>woxser</artifactId>
 		<version>1.0</version>
 	</dependency>
+	 -->
 	
 	<!--  vizdoom -->
     <dependency>

@@ -34,9 +34,6 @@ public class GhostComparator implements Comparator<Integer> {
 		this.proximityOnly = proximityOnly;
 	}
 	
-	/**
-	 * TODO: is this how we want to handle PO conditions? see the else
-	 */
 	public int compare(Integer o1, Integer o2) {
 		if (!proximityOnly && gs.isGhostEdible(o1) && !gs.isGhostEdible(o2)) {
 			return -1 * sign;

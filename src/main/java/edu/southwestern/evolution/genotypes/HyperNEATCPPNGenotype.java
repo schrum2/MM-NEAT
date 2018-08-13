@@ -508,10 +508,13 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			for(int y = yEdgeOffset; y < s1.getSize().t2 - yEdgeOffset; y += stride) {
 				// There is a direct correspondence between each receptive field and
 				// its target neuron in the next layer
-				int targetXindex = (x - xEdgeOffset) / stride; 
+				int targetXIndex = (x - xEdgeOffset) / stride; 
 				int targetYIndex = (y - yEdgeOffset) / stride;
+				
+				assert targetXIndex < s2.getSize().t1 : "X-Coordinate must be within substrate! " + targetXIndex + " not less than " + s2.getSize().t1;
+				assert targetYIndex < s2.getSize().t2 : "Y-Coordinate must be within substrate! " + targetYIndex + " not less than " + s2.getSize().t2 + "\n " + "(" + y + " - " + yEdgeOffset +") / " + stride + " = " + targetYIndex;
 				// If target neuron is dead, do not continue
-				if(!s2.isNeuronDead(targetXindex, targetYIndex)) {
+				if(!s2.isNeuronDead(targetXIndex, targetYIndex)) {
 					// Loop through all neurons in the receptive field
 					for(int fX = -xOffset; fX <= xOffset; fX++) {
 						// Source neuron is offset from receptive field center
@@ -523,8 +526,10 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 								if(fromYIndex >= 0 && fromYIndex < s1.getSize().t2) {
 									// Do not continue if source neuron is dead
 									if(!s1.isNeuronDead(fromXIndex, fromYIndex)) {
+										assert targetXIndex < s2.getSize().t1 : "X-Coordinate must be within substrate! " + targetXIndex + " not less than " + s2.getSize().t1;
+										assert targetYIndex < s2.getSize().t2 : "Y-Coordinate must be within substrate! " + targetYIndex + " not less than " + s2.getSize().t2;
 										// Target coordinates can use the standard substrate mapping, which may not be centered
-										ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(targetXindex, targetYIndex), s2.getSize().t1, s2.getSize().t2);										
+										ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(targetXIndex, targetYIndex), s2.getSize().t1, s2.getSize().t2);										
 										double[] inputs; // Defined below
 										// Phillip Verbancsics approach from his paper on Generative Neuro-Evolution for Deep Learning
 										if(convolutionDeltas) {
@@ -551,7 +556,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 											assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
 											assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
 											assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
-											assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
+											assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3] + " target:" + (new Tuple2D(targetXIndex, targetYIndex)) + " in " + (new Tuple2D(s2.getSize().t1, s2.getSize().t2)) + " with " + MMNEAT.substrateMapping;
 											assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
 										}
 
@@ -582,7 +587,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 												assert -1 <= inputs[8] && inputs[8] <= 1 : "CPPN input 8 out of range: " + inputs[8];
 											}
 										}
-										conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs, innovationID++);
+										conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXIndex, targetYIndex, s2Index, subs, innovationID++);
 									}	
 								}
 							}						

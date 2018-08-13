@@ -60,6 +60,7 @@ import edu.southwestern.tasks.mspacman.objectives.TimeFramesGhostScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeFramesPillScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeToEatAllGhostsScore;
 import edu.southwestern.tasks.popacman.controllers.OldToNewPacManIntermediaryController;
+import edu.southwestern.tasks.popacman.ghosts.controllers.OldToNewGhostIntermediaryController;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -75,6 +76,7 @@ import oldpacman.game.Constants;
 import oldpacman.game.Game;
 import pacman.controllers.IndividualGhostController;
 import pacman.controllers.MASController;
+import pacman.game.Constants.GHOST;
 import popacman.CustomExecutor;
 
 
@@ -445,11 +447,9 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	 */
 	public void loadGhosts() {
 		if (ghosts == null) {
-			try {
-				
+			try {			
 				//TODO: generalize this by allowing the GhostTeam to be specified as a class parameter
 				if(Parameters.parameters.booleanParameter("partiallyObservablePacman")) {
-
 					//create individual ghost controllers
 					popacman.examples.StarterGhost.POGhost blinky = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.BLINKY);
 					popacman.examples.StarterGhost.POGhost pinky = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.PINKY);
@@ -490,15 +490,21 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		if (mspacman == null) {
 			try {
 				//an oldpacman controller
-				NewPacManController controller = (NewPacManController) ClassCreation.createObject("staticPacMan");
+				NewPacManController controller = (NewPacManController) ClassCreation.createObject("staticPacMan");				
+				pacman.controllers.PacmanController poController = (pacman.controllers.PacmanController) ClassCreation.createObject("staticPacManPO");
+				//pacman.controllers.PacmanController poController = (pacman.controllers.PacmanController) ClassCreation.createObject(popacman.examples.StarterPacMan.MyPacMan.class);
 				
-				//if partially observable
-				this.mspacman = Parameters.parameters.booleanParameter("partiallyObservablePacman") ?
-						//convert controller from oldpacman to popacman via OldToNewPacManInterMediaryController
-						new PacManControllerFacade(new OldToNewPacManIntermediaryController(controller)) :
-						//else use the oldpacman controller
-						new PacManControllerFacade(controller);
-			
+
+				if(evolveGhosts && Parameters.parameters.booleanParameter("partiallyObservablePacman")) {
+					this.mspacman = new PacManControllerFacade(poController);
+				} else {
+					//if partially observable
+					this.mspacman = Parameters.parameters.booleanParameter("partiallyObservablePacman") ?
+							//convert controller from oldpacman to popacman via OldToNewPacManInterMediaryController
+							new PacManControllerFacade(new OldToNewPacManIntermediaryController(controller)) :
+							//else use the oldpacman controller
+							new PacManControllerFacade(controller);
+				}
 			} catch (NoSuchMethodException ex) {
 				ex.printStackTrace();
 				System.exit(1);
@@ -529,21 +535,28 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		Organism<T> organism = evolveGhosts ? new SharedNNGhosts<T>(individual) : new NNMsPacMan<T>(individual);
+		//if we are evolving ghosts
 		if (evolveGhosts) {
+			if(Parameters.parameters.booleanParameter("partiallyObservablePacman")) {
+				//create a GhostControllerFacade with a ghost network
+				ghosts = new GhostControllerFacade(new OldToNewGhostIntermediaryController(((SharedNNGhosts<T>) organism).controller) );
+			} else {
+				//throw new UnsupportedOperationException("As of now, Ghost can only be evolved in PO conditions");
+				ghosts = new GhostControllerFacade( (NewGhostController) ((SharedNNGhosts<T>) organism).controller );
+			}
 			loadPacMan();
-			ghosts = new GhostControllerFacade((NewGhostController) ((SharedNNGhosts<T>) organism).controller);
+		//if we are not evolving ghosts, we are evolving pacman
 		} else {
 			mspacman = Parameters.parameters.booleanParameter("partiallyObservablePacman") ?
 					//convert the controls from oldpacman controls to popacman controls
 					new PacManControllerFacade(new OldToNewPacManIntermediaryController((NewPacManController) ((NNMsPacMan<T>) organism).controller)):
 					//use oldpacman controller, don't convert to popacman
 					new PacManControllerFacade((NewPacManController) ((NNMsPacMan<T>) organism).controller);
+			loadGhosts();	
 		}
 
-		
-		
 		// Side-effects to "game"
-		agentEval(mspacman, num);
+		agentEval(mspacman, ghosts, num);
 		
 		if (mspacman.oldP instanceof MultinetworkMsPacManController && individual instanceof NetworkGenotype) {
 			// Track subnet selections as if they were modes
@@ -563,11 +576,18 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		return new Pair<double[], double[]>(fitnesses, scores);
 	}
 
+	/**
+	 * Only use if not evolving the ghosts
+	 * @param mspacman
+	 * @param num
+	 * @return
+	 */
 	public GameFacade agentEval(PacManControllerFacade mspacman, int num) {
-		// System.out.println("Agent Eval");
-		if (!evolveGhosts) {
-			loadGhosts();
-		}
+		loadGhosts();
+		return agentEval(mspacman, this.ghosts, num);
+	}	
+	
+	public GameFacade agentEval(PacManControllerFacade mspacman, GhostControllerFacade ghosts, int num) {
 		tcManager.preEval();
 		game = Parameters.parameters.booleanParameter("partiallyObservablePacman") ? 
 				new GameFacade(new pacman.game.Game(deterministic ? num : RandomNumbers.randomGenerator.nextLong())) : 
@@ -588,9 +608,11 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			game.playWithoutPowerPills(noPowerPills);
 			game.setEndAfterPowerPillsEaten(luringTask);
 		}
+		
 		int campNum = tcManager.campSetup(game, num);
 		int startingLevel = game.getCurrentLevel();
 		mspacman.reset();
+		
 		if (CommonConstants.recordPacman) {
 			exec.runGameTimedRecorded(game, mspacman, ghosts, CommonConstants.watch,
 					saveFilePrefix + Parameters.parameters.stringParameter("pacmanSaveFile"));

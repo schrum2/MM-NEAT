@@ -12,11 +12,9 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
-//TODO: this could be useful
-import pacman.game.info.GameInfo;
-import pacman.game.internal.Maze;
 import pacman.game.Drawable;
 import pacman.game.Game;
+import pacman.game.internal.Maze;
 import popacman.prediction.GhostLocation;
 import popacman.prediction.PillModel;
 import popacman.prediction.fast.GhostPredictionsFast;
@@ -38,6 +36,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	public int lastPillEatenTime = -1;
 	public int[] ghostEdibleTime;
     private Color[] redAlphas;
+    private Color[] blueAlphas;
     private Game mostRecentGame;
 	public boolean usePillModel = Parameters.parameters.booleanParameter("usePillModel");
 	public boolean useGhostModel = Parameters.parameters.booleanParameter("useGhostModel");
@@ -47,8 +46,10 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		this.oldpacman = oldpacman;
 		
         redAlphas = new Color[256];
+        blueAlphas = new Color[256];
         for (int i = 0; i < 256; i++) {
             redAlphas[i] = new Color(255, 0, 0, i);
+            blueAlphas[i] = new Color(0, 0, 255, i);
         }
         
         ghostEdibleTime = new int[GHOST.values().length];
@@ -61,9 +62,18 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	 * Used for popacman
 	 */
 	public MOVE getMove(Game game, long timeDue) {
-        
+		for(int i = 0; i < ghostEdibleTime.length; i++) {
+			if(game.wasGhostEaten(GameFacade.indexToGhostPO(i))) {
+				// If a ghost was just eaten, it is no longer edible
+				ghostEdibleTime[i] = -1;
+			}
+		}
 		
 		GameFacade informedGameFacade = updateModels(game, timeDue);
+		
+        //System.out.println("Time: " + game.getCurrentLevelTime() + ": " + Arrays.toString(ghostEdibleTime));
+        
+		//this.ghostPredictions.gf = informedGameFacade;
 
 		//get the action to be made
 		int action = oldpacman.getAction(informedGameFacade, timeDue);
@@ -109,7 +119,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
     	//Draw Pill Model based on parameter
     	if(Parameters.parameters.booleanParameter("drawPillModel")) {
     		
-    		
+    		//Draw Pills
     		for (int i = 0; i < mostRecentGame.getNumberOfNodes(); i++) {
     			boolean isPillAvailable = pillModel.getPills().get(mostRecentGame.getCurrentMaze().graph[i].nodeIndex);
 		    		if(isPillAvailable) {
@@ -124,7 +134,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		    		}
     		}
     		
-    		
+    		//Draw Power Pills
     		for (int i = 0; i < mostRecentGame.getNumberOfNodes(); i++) {
     			boolean isPillAvailable = pillModel.getPowerPills().get(mostRecentGame.getCurrentMaze().graph[i].nodeIndex);
 		    		if(isPillAvailable) {
@@ -140,47 +150,67 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
     		}
     		
     		//DRAWS PILLS WE CAN SEE
-	        for(int pill : mostRecentGame.getActivePillsIndices()) {
-	        	assert pillModel != null : "why is this null";
-	        	assert pillModel.getPills() != null : "why is this null";
-	    		boolean isPillAvailable = pillModel.getPills().get(pill);
-	    		if(isPillAvailable) {
-	    			graphics.setColor(new Color(0, 0, 255, 255));
-	    			graphics.fillRect(
-	    					mostRecentGame.getNodeXCood(pill) * MAG + 4,
-	    					mostRecentGame.getNodeYCood(pill) * MAG + 12,
-	    					2, 2
-	    					);
-	    		}
-	        
-	        }
+//	        for(int pill : mostRecentGame.getActivePillsIndices()) {
+//	        	assert pillModel != null : "why is this null";
+//	        	assert pillModel.getPills() != null : "why is this null";
+//	    		boolean isPillAvailable = pillModel.getPills().get(pill);
+//	    		if(isPillAvailable) {
+//	    			graphics.setColor(new Color(0, 0, 255, 255));
+//	    			graphics.fillRect(
+//	    					mostRecentGame.getNodeXCood(pill) * MAG + 4,
+//	    					mostRecentGame.getNodeYCood(pill) * MAG + 12,
+//	    					2, 2
+//	    					);
+//	    		}
+//	        
+//	        }
     	}
  
     		
     	//Draw predicted Ghost Locations based on parameter
     	if(Parameters.parameters.booleanParameter("drawGhostPredictions")) {
     		if(ghostPredictions != null) {
-	        	for (int i = 0; i < mostRecentGame.getNumberOfNodes(); i++) {      	
-	                double probability = ghostPredictions.calculate(i);
-	                if (probability >= GHOST_THRESHOLD) {
-	                	double edibleProbability = ghostPredictions.calculateEdible(i);
-	                	if(edibleProbability > 0.0) {
-	                    	graphics.setColor(new Color(0,0, 255, 255));
+//	        	for (int i = 0; i < mostRecentGame.getNumberOfNodes(); i++) {      	
+//	                double probability = ghostPredictions.calculate(i);
+//	                if (probability >= GHOST_THRESHOLD) {
+//	                	double edibleProbability = ghostPredictions.calculateEdible(i);
+//	                	if(edibleProbability > 0.0) {
+//	                    	graphics.setColor(blueAlphas[(int) Math.min(255 * probability, 255)]);
+//		                    graphics.fillRect(
+//		                            mostRecentGame.getNodeXCood(i) * MAG - 1,
+//		                            mostRecentGame.getNodeYCood(i) * MAG + 3,
+//		                            14, 14
+//		                    );
+//	                	} else {
+//	                    	graphics.setColor(redAlphas[(int) Math.min(255 * probability, 255)]);
+//		                    graphics.fillRect(
+//		                            mostRecentGame.getNodeXCood(i) * MAG - 1,
+//		                            mostRecentGame.getNodeYCood(i) * MAG + 3,
+//		                            14, 14
+//		                    );	
+//	                	}
+//	                }
+//	            }
+    			
+    			for(GhostLocation g : ghostPredictions.getGhostLocations()) {
+    				if(g.getProbability() > 0) {
+						if(g.getEdibleProbability() > 0) {
+		                	graphics.setColor(blueAlphas[(int) Math.min(255 * g.getEdibleProbability(), 255)]);
 		                    graphics.fillRect(
-		                            mostRecentGame.getNodeXCood(i) * MAG - 1,
-		                            mostRecentGame.getNodeYCood(i) * MAG + 3,
+		                            mostRecentGame.getNodeXCood(g.getIndex()) * MAG - 1,
+		                            mostRecentGame.getNodeYCood(g.getIndex()) * MAG + 3,
 		                            14, 14
 		                    );
-	                	} else {
-	                    	graphics.setColor(redAlphas[(int) Math.min(255 * probability, 255)]);
+						} else {
+		                	graphics.setColor(redAlphas[(int) Math.min(255 * g.getProbability(), 255)]);
 		                    graphics.fillRect(
-		                            mostRecentGame.getNodeXCood(i) * MAG - 1,
-		                            mostRecentGame.getNodeYCood(i) * MAG + 3,
+		                            mostRecentGame.getNodeXCood(g.getIndex()) * MAG - 1,
+		                            mostRecentGame.getNodeYCood(g.getIndex()) * MAG + 3,
 		                            14, 14
 		                    );	
-	                	}
-	                }
-	            }
+						}	
+    				}
+    			}
     		}
        	}
     }
@@ -208,7 +238,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		if(game.wasPacManEaten()) {
             lastPillEatenTime = -1;
             lastPowerPillEatenTime = -1;
-		}
+        }
 		      
         //We need to pass the model of the game to the new gameFacade
 		GameFacade informedGameFacade = new GameFacade(game);
@@ -264,6 +294,9 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		        	eatenPowerPills.add(informedGameFacade.poG.getPacmanCurrentNodeIndex());
 		        	lastPowerPillEatenTime = informedGameFacade.getCurrentLevelTime();
 		        	informedGameFacade.setTimeOfLastPowerPillEaten(informedGameFacade.getCurrentLevelTime());
+//		        	if(useGhostModel && ghostPredictions != null && informedGameFacade.ghostPredictions != null) {
+//			        	informedGameFacade.ghostPredictions.atePill(informedGameFacade);
+//		        	}
 		        }
 			}
 	        
@@ -283,7 +316,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 			//init the ghost predictions
 			if(ghostPredictions == null){				
 				//create a new ghostPredictionFast object, initialize it, and pass it to informedGameFacade
-				ghostPredictions = new GhostPredictionsFast(informedGameFacade.poG.getCurrentMaze());
+				ghostPredictions = new GhostPredictionsFast(informedGameFacade.poG.getCurrentMaze(), ghostEdibleTime);
 	            ghostPredictions.preallocate();
 	            informedGameFacade.setGhostPredictions(this.ghostPredictions);
 			} 
@@ -302,10 +335,17 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	            	try {
 	            		ghostPredictions.observe(ghost, ghostIndex, informedGameFacade.poG.getGhostLastMoveMade(ghost), informedGameFacade);
 	            	} catch (java.lang.ArrayIndexOutOfBoundsException e) {
-	            		//System.out.println(e.toString() + " in OldToNewPacManIntermediaryController.updateModels()");
+	            		// Caused when the observed location is in the ghost lair: Ignore
 	            		break;
 	            	}
-	                ghostEdibleTime[ghost.ordinal()] = game.getGhostEdibleTime(ghost);
+	            	if(game.getGhostEdibleTime(ghost) > 0) {
+	            		//System.out.println("Ghost " + ghost.ordinal() + " made edible from observation at time " + game.getCurrentLevelTime());
+	                	// If any ghost is edible, then all must have the same edible time, if it is edible (exclude those in the layer or that are threats)
+	            		for(int i = 0; i < ghostEdibleTime.length; i++) {
+	            			if(ghostEdibleTime[ghost.ordinal()] > 0) // If already edible, then edible time may shoot back up
+	            				ghostEdibleTime[ghost.ordinal()] = game.getGhostEdibleTime(ghost);
+	            		}
+	            	}
 	            } else {
 	                List<GhostLocation> locations = ghostPredictions.getGhostLocations(ghost);
 	                locations.stream().filter(location -> informedGameFacade.poG.isNodeObservable(location.getIndex())).forEach(location -> {
@@ -314,7 +354,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	            }
 	        }
 			
-	        ghostPredictions.update();
+	        ghostPredictions.update(informedGameFacade);
 	        informedGameFacade.setGhostPredictions(ghostPredictions);
 		}
 		

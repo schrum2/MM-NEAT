@@ -19,17 +19,15 @@ import popacman.prediction.GhostLocation;
  */
 public class GhostPredictionsFast {
     private static final int numGhosts = GHOST.values().length;
+    //public GameFacade gf;
     // First mazeSize indices are for ghost Ordinal 0 etc ...
     private double[] probabilities;
     private double[] backProbabilities;
-    private double[] edibleProbabilities;
-    private double[] edibleBackProbabilities;
+    private int[] ghostEdibleTime; // This is a reference to an array that is updated elsewhere
     private MOVE[] moves;
     private MOVE[] backMoves;
     private Maze maze;
     private int mazeSize;
-    //ORIGINAL
-    //private static final double THRESHOLD = 1 / 256.0d;
     
     //MODIFIED
     private static final double THRESHOLD = Parameters.parameters.doubleParameter("probabilityThreshold");
@@ -40,9 +38,11 @@ public class GhostPredictionsFast {
     /**
      * 
      * @param maze
+     * @param ghostEdibleTime Array of edible ghost times
      */
-    public GhostPredictionsFast(Maze maze) {
-        this.maze = maze;
+    public GhostPredictionsFast(Maze currentMaze, int[] ghostEdibleTime) {
+        this.maze = currentMaze;
+        //this.gf = gf;
         // Cut out the end node - it always has no neighbours
         mazeSize = maze.graph.length - 1;
         probabilities = new double[mazeSize * numGhosts];
@@ -55,9 +55,10 @@ public class GhostPredictionsFast {
         backMoves = new MOVE[mazeSize * numGhosts];
         random = new Random();
         
-        //NEW
-        edibleProbabilities = new double[mazeSize * numGhosts];
-        edibleBackProbabilities = new double[mazeSize * numGhosts];
+        //OUR CODE
+        assert ghostEdibleTime != null;
+        this.ghostEdibleTime = ghostEdibleTime;
+
     }
 
     public void preallocate() {
@@ -65,9 +66,6 @@ public class GhostPredictionsFast {
         double probability = 1 / ((probabilities.length * 1.0d) / GHOST.values().length);
         Arrays.fill(probabilities, probability);
         Arrays.fill(moves, MOVE.NEUTRAL);
-        
-        //NEW
-        Arrays.fill(edibleProbabilities, 0.0);
     }
 
     /**
@@ -85,80 +83,88 @@ public class GhostPredictionsFast {
         Arrays.fill(probabilities, startIndex, startIndex + mazeSize, 0);
         //fill this ghosts portion of the recorded Move probabilities with zeros
         Arrays.fill(moves, startIndex, startIndex + mazeSize, null);
-        //record that we saw it here with 1005 probability
+        //record that we saw it here with 100% probability
         probabilities[arrayIndex] = 1.0d;
         beenSpotted.put(ghost, true);
         moves[arrayIndex] = lastMoveMade;
-        
-        //NEW
-        Arrays.fill(edibleProbabilities, startIndex, startIndex + mazeSize, 0);
-        edibleProbabilities[arrayIndex] = game.poG.isGhostEdible(ghost) ? 
-        				game.calculateRemainingPillBuffTime() : 0.0d;
+
+        //System.out.println("Distance to ghost " +ghost.ordinal()+ " is " + game.getPathDistance(game.getPacmanCurrentNodeIndex(), game.getGhostCurrentNodeIndex(ghost.ordinal())));
+        if(game.isGhostEdible(ghost.ordinal())) {
+        	//System.out.println("Ghost at " + game.getGhostCurrentNodeIndex(ghost.ordinal()) + " and pacman at " + game.getPacmanCurrentNodeIndex());
+        	
+        	//System.out.println("Saw that ghost " + ghost.ordinal() + " is edible for time " + game.getGhostEdibleTime(ghost.ordinal()));
+        	ghostEdibleTime[ghost.ordinal()] = game.getGhostEdibleTime(ghost.ordinal());
+        }
     }
 
     public void observeNotPresent(GHOST ghost, int index, GameFacade game) {
         int startIndex = (ghost.ordinal() * mazeSize);
         int arrayIndex = startIndex + index;
         double probabilityAdjustment = (1 - probabilities[arrayIndex]);
-        probabilities[arrayIndex] = 0;
-        moves[arrayIndex] = null;
-        for (int i = startIndex; i < startIndex + mazeSize; i++) {
-            probabilities[i] /= probabilityAdjustment;
-            //NEW
-            edibleProbabilities[i] = game.calculateRemainingPillBuffTime();
+
+        // Only apply these changes for ghosts that actually move. Not true for edible ghost on a pause step
+        if(ghostEdibleTime[ghost.ordinal()] <= 0 || (game.getCurrentLevelTime() - game.getTimeOfLastPowerPillEaten()) % pacman.game.Constants.GHOST_SPEED_REDUCTION == 0) {	
+    		//System.out.println("Ghost " + ghost.ordinal() + " was observed not present at time " + game.getCurrentLevelTime());
+        	probabilities[arrayIndex] = 0;
+        	moves[arrayIndex] = null;
+        	for (int i = startIndex; i < startIndex + mazeSize; i++) {
+        		probabilities[i] /= probabilityAdjustment;
+        	}
         }
     }
 
     
-    //TODO: clean this behemoth up
-    public void update() {
-    	
-    	double edibleProbability = 0;         
+    public void update(GameFacade gf) {
         for (int ghost = 0; ghost < numGhosts; ghost++) {
-            if (!beenSpotted.get(GHOST.values()[ghost])) {
+        	if (!beenSpotted.get(GHOST.values()[ghost])) {
                 continue;
             }
             for (int i = (mazeSize * ghost); i < (mazeSize * (ghost + 1)); i++) {
-                if (probabilities[i] > THRESHOLD) {
+            	if (probabilities[i] > THRESHOLD) {
+            		// Model thinks the ghost is a threat, but Ms. Pac-Man just ate a power pill
+                	if(		// Cannot see the ghost
+                			gf.poG.getGhostCurrentNodeIndex(GameFacade.indexToGhostPO(ghost)) == -1	&& 
+                			// Think it is a threat
+                			ghostEdibleTime[ghost] <= 0 && 
+                			// Just ate power pill
+                			gf.poG.wasPowerPillEaten()) {
+                		ghostEdibleTime[ghost] = gf.calculateRawRemainingPillBuffTime();
+                		moves[i] = moves[i].opposite(); // Ghosts change direction when a power pill is eaten
+                		//System.out.println("Ghost " + ghost + " made from threat to edible even though it is not visible at time " + gf.getCurrentLevelTime());
+                	}
+                	
                     Node currentNode = maze.graph[i % mazeSize];
-                    int numberNodes = currentNode.numNeighbouringNodes;
-                    double probability = probabilities[i] / (numberNodes - 1);
-                    if(edibleProbabilities[i] > 0.0) {
-                    	edibleProbability = edibleProbabilities[i] / (numberNodes - 1);
-                    }
-                    
-//                  System.out.println(probability + " n: " + numberNodes + " orig: " + probabilities[i]);
-                    MOVE back = moves[i].opposite();
-                    for (MOVE move : MOVE.values()) {
-                        if (move == back) {
-                            continue;
-                        }
-                        if (currentNode.neighbourhood.containsKey(move)) {
-                            int index = currentNode.neighbourhood.get(move);
-                            // If we haven't already written to there or what we wrote was less probable
-                            if (backProbabilities[(mazeSize * ghost) + index] <= probabilities[(mazeSize * ghost) + index]) {
-                                backProbabilities[(mazeSize * ghost) + index] = probability;
-                                backMoves[(mazeSize * ghost) + index] = move;
-                              
-                                if(edibleProbabilities[i] > 0.0) {
-                                	if (edibleBackProbabilities[(mazeSize * ghost) + index] <= edibleProbabilities[(mazeSize * ghost) + index]) {
-		                            	edibleBackProbabilities[(mazeSize * ghost) + index] = edibleProbability;
-		                                backMoves[(mazeSize * ghost) + index] = move;
-		                            }
-                                }
-                            }
-                        }
-                    }
+                    // If the ghost does move (is a threat, or is an edible ghost on a movement step)
+                    if(ghostEdibleTime[ghost] <= 0 || (gf.getCurrentLevelTime() - gf.getTimeOfLastPowerPillEaten()) % pacman.game.Constants.GHOST_SPEED_REDUCTION == 0) {	
+                    	int numberNodes = currentNode.numNeighbouringNodes;
+            			double probability = probabilities[i] / (numberNodes - 1);
+            			MOVE back = moves[i].opposite();
+            			for (MOVE move : MOVE.values()) {
+            				if (move == back) {
+            					continue;
+            				}
+            				if (currentNode.neighbourhood.containsKey(move)) {
+            					int index = currentNode.neighbourhood.get(move);
+            					// If we haven't already written to there or what we wrote was less probable
+            					if (backProbabilities[(mazeSize * ghost) + index] <= probabilities[(mazeSize * ghost) + index]) {
+            						backProbabilities[(mazeSize * ghost) + index] = probability;
+            						backMoves[(mazeSize * ghost) + index] = move;
+            					}
+            				}
+            			}
+
+            		} else { // If ghost does not move
+            			if(backProbabilities[i] <= probabilities[i]) {
+            				backProbabilities[i] = probabilities[i];
+            				backMoves[i] = moves[i];
+            			}
+            		}
                 }
             }
         }
 
         System.arraycopy(backProbabilities, 0, probabilities, 0, probabilities.length);
         Arrays.fill(backProbabilities, 0.0d);
-        
-        //NEW
-        System.arraycopy(edibleBackProbabilities, 0, edibleProbabilities, 0, edibleProbabilities.length);
-        Arrays.fill(edibleBackProbabilities, 0.0d);
 
         System.arraycopy(backMoves, 0, moves, 0, moves.length);
         Arrays.fill(backMoves, null);
@@ -190,7 +196,8 @@ public class GhostPredictionsFast {
     	if(index >= mazeSize) return 0;
     	double sum = 1.0d;
     	for(int ghost = 0; ghost < numGhosts; ghost++) {
-    		sum *= (1 - edibleProbabilities[(mazeSize * ghost) + index]);
+    		if(ghostEdibleTime[ghost] > 0)
+    			sum *= (1 - probabilities[(mazeSize * ghost) + index]);
     	}
     	return 1 - sum;
     }
@@ -229,16 +236,14 @@ public class GhostPredictionsFast {
     }
 
     public GhostPredictionsFast copy() {
-        GhostPredictionsFast other = new GhostPredictionsFast(this.maze);
+        GhostPredictionsFast other = new GhostPredictionsFast(this.maze, this.ghostEdibleTime);
         System.arraycopy(this.probabilities, 0, other.probabilities, 0, probabilities.length);
         System.arraycopy(this.backProbabilities, 0, other.backProbabilities, 0, backProbabilities.length);
-        System.arraycopy(this.edibleProbabilities, 0, other.edibleProbabilities, 0, edibleProbabilities.length);
-        System.arraycopy(this.edibleBackProbabilities, 0, other.edibleBackProbabilities, 0, edibleBackProbabilities.length);
         System.arraycopy(this.moves, 0, other.moves, 0, moves.length);
         System.arraycopy(this.backMoves, 0, other.backMoves, 0, backMoves.length);
         return other;
     }
-    
+     
     /**
      * Takes a ghost, and returns an array list of ghost locations representing that ghost. 
      * Each location represents an index on the map.
@@ -246,17 +251,17 @@ public class GhostPredictionsFast {
      * @return
      */
     public List<GhostLocation> getGhostLocations(GHOST ghost) {
-        ArrayList<GhostLocation> locations = new ArrayList<>();
-        
-        //for this ghosts chuck of the recorded probabilites
-        for (int i = ghost.ordinal() * mazeSize; i < (ghost.ordinal() + 1) * mazeSize; i++) {
-            //if there is more than a zero percent chance the ghost is there
-        	if (probabilities[i] > 0) {
-        		//add a ghost location with all of the recorded information about that maze index to what we return
-        		locations.add(new GhostLocation(i % mazeSize, moves[i], probabilities[i], edibleProbabilities[i]));
-          	}
-        }
-        return locations;
+    	ArrayList<GhostLocation> locations = new ArrayList<>();
+
+    	//for this ghosts chuck of the recorded probabilites
+    	for (int i = ghost.ordinal() * mazeSize; i < (ghost.ordinal() + 1) * mazeSize; i++) {
+    		//if there is more than a zero percent chance the ghost is there
+    		if (probabilities[i] > 0) {
+    			//add a ghost location with all of the recorded information about that maze index to what we return
+    			locations.add(new GhostLocation(i % mazeSize, moves[i], probabilities[i], ghostEdibleTime[i / mazeSize]));	
+    		}
+    	}
+    	return locations;
     }
 
     /**
@@ -264,17 +269,14 @@ public class GhostPredictionsFast {
      * @return
      */
     public List<GhostLocation> getGhostLocations() {
-        ArrayList<GhostLocation> locations = new ArrayList<>();
-        //for every recorded probability
-        for (int i = 0; i < probabilities.length; i++) {
-            //if that probability is greater than 0%
-        	if (probabilities[i] > 0) {
-        		//add that to what we are returning
-            	locations.add(new GhostLocation(i % mazeSize, moves[i], probabilities[i], edibleProbabilities[i]));
-        	}
-        	
-        }
-        return locations;
+    	ArrayList<GhostLocation> locations = new ArrayList<>();
+    	//for every recorded probability
+    	for (int i = 0; i < probabilities.length; i++) {
+    		if(probabilities[i] > 0) {
+    			locations.add(new GhostLocation(i % mazeSize, moves[i], probabilities[i], ghostEdibleTime[i / mazeSize]));	
+    		}
+    	}
+    	return locations;
     }
 
     /**
