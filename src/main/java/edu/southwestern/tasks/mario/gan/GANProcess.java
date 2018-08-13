@@ -19,7 +19,7 @@ public class GANProcess extends Comm {
 	 * Loads the default Mario GAN on the first level of the game from the original Maio GAN publication (GECCO 2018)
 	 */
 	public GANProcess() {
-		this(PYTHON_BASE_PATH + Parameters.parameters.stringParameter("marioGANModel"), Parameters.parameters.integerParameter("marioGANInputSize"));
+		this(PYTHON_BASE_PATH + "GANs" + File.separator + Parameters.parameters.stringParameter("marioGANModel"), Parameters.parameters.integerParameter("marioGANInputSize"));
 	}
 
 	/**
