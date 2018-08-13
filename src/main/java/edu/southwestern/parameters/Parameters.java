@@ -553,6 +553,7 @@ public class Parameters {
 		booleanOptions.add("logLock", false, "Don't mess with log files at all");
 		booleanOptions.add("logPacManEvals", false, "Log score from every pacman game");
 		booleanOptions.add("luringTask", false, "Pac-Man rewarded for luring ghosts to power pills before eating pill");
+		booleanOptions.add("marioGANUsesOriginalEncoding", true, "True if the GECCO 2018 encoding is used, false if updated encoding is used");
 		booleanOptions.add("mRTSAll", true, "whether there is a substrate with everything in it");
 		booleanOptions.add("mRTSAllSqrt3MobileUnits", false, "whether there is a substrate with mobile units scored using the simple sqrt 3 evaluation function scoring");
 		booleanOptions.add("mRTSBuildings", false, "whether there is a substrate dedicated to (both players') NON-movable units");
