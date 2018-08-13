@@ -12,7 +12,7 @@ import ch.idsia.mario.engine.level.Level;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationOptions;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
-import edu.southwestern.tasks.mario.level.LevelParser;
+import edu.southwestern.tasks.mario.level.OldLevelParser;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
@@ -118,7 +118,7 @@ public class MarioGANUtil {
 		Level[] result = new Level[allLevels.size()];
 		int index = 0;
 		for(List<List<Integer>> listRepresentation : allLevels) {
-			result[index++] = LevelParser.createLevelJson(listRepresentation);
+			result[index++] = OldLevelParser.createLevelJson(listRepresentation);
 		}
 		return result;
 	}
@@ -143,9 +143,9 @@ public class MarioGANUtil {
 
 		task.setOptions(options);
 
-		int relevantWidth = (level.width - (2*LevelParser.BUFFER_WIDTH)) * MarioLevelUtil.BLOCK_SIZE;
+		int relevantWidth = (level.width - (2*OldLevelParser.BUFFER_WIDTH)) * MarioLevelUtil.BLOCK_SIZE;
 		DrawingPanel levelPanel = new DrawingPanel(relevantWidth,level.height*MarioLevelUtil.BLOCK_SIZE, "Level");
-		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, LevelParser.BUFFER_WIDTH*MarioLevelUtil.BLOCK_SIZE, 0, relevantWidth, level.height*MarioLevelUtil.BLOCK_SIZE);
+		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, OldLevelParser.BUFFER_WIDTH*MarioLevelUtil.BLOCK_SIZE, 0, relevantWidth, level.height*MarioLevelUtil.BLOCK_SIZE);
 		
 		System.out.println ("Score: " + task.evaluate(options.getAgent())[0]);
 				

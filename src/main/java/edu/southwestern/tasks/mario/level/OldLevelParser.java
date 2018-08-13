@@ -11,10 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This level parser is used by the original version of Mario GAN presented in our GECCO 2018
+ * paper, and is also used by CPPN level generation. However, Vanessa later made improvements
+ * to the level parser and enhanced the GAN capabilities, and these changes are in the LevelParser class.
  *
  * @author Vanessa Volz
  */
-public class LevelParser {
+public class OldLevelParser {
 
 	public static final int BUFFER_WIDTH = 15;
 
