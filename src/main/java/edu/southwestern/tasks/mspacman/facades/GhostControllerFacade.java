@@ -1,6 +1,10 @@
 package edu.southwestern.tasks.mspacman.facades;
 
 import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.popacman.ghosts.controllers.OldToNewGhostIntermediaryController;
+import pacman.controllers.IndividualGhostController;
+import pacman.controllers.MASController;
+import pacman.game.Constants;
 
 import java.util.EnumMap;
 import java.util.Map.Entry;
@@ -13,9 +17,9 @@ import java.util.Map.Entry;
 public class GhostControllerFacade {
 
 	//actual ghost controller
-	oldpacman.controllers.NewGhostController oldG = null;
+	public oldpacman.controllers.NewGhostController oldG = null;
 	//actual ghost controller for PO conditions
-	pacman.controllers.MASController poG = null;
+	public pacman.controllers.MASController poG = null;
 	
 	/**
 	 * Constructor
@@ -31,6 +35,15 @@ public class GhostControllerFacade {
 	 * @param g ghostController
 	 */
 	public GhostControllerFacade(pacman.controllers.MASController g) {
+		poG = g;
+	}
+	
+	public GhostControllerFacade(OldToNewGhostIntermediaryController g) {
+		poG = g.MASController;
+	}
+	
+	public GhostControllerFacade(EnumMap<Constants.GHOST,IndividualGhostController> map) {
+		pacman.controllers.MASController g = new pacman.controllers.MASController(map);
 		poG = g;
 	}
 

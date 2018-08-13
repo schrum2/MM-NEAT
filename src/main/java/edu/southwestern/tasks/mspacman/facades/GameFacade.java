@@ -19,7 +19,6 @@ import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Quad;
-import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import pacman.game.Constants.MOVE;
 import popacman.prediction.GhostLocation;
@@ -232,18 +231,18 @@ public class GameFacade {
 	 * @return list of ghost indices
 	 */
 	public ArrayList<Integer> getGhostIndices(boolean edibleVsThreatOnly, boolean all) {
-		ArrayList<Integer> ghosts = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (!ghostInLair(i) && (all || (edibleVsThreatOnly && isGhostEdible(i)) || (!edibleVsThreatOnly && isGhostThreat(i)))) {
-				ghosts.add(i);
+			ArrayList<Integer> ghosts = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (!ghostInLair(i) && (all || (edibleVsThreatOnly && isGhostEdible(i)) || (!edibleVsThreatOnly && isGhostThreat(i)))) {
+					ghosts.add(i);
+				}
 			}
-		}
-		return ghosts;
+			return ghosts;
 	}
 	
 	/**
-	 * Returns an ArrayList of triples containing the index, the last move of, and the probability of a ghost that 
-	 * we have a prediction about (this includes ghosts we can see, those have predictions of 100%).
+	 * Returns an ArrayList of Quads containing the index, the last move of, the probability of a ghost is there, and the probability that the ghost is
+	 * edible for ghosts we have a prediction about (this includes ghosts we can see, those have predictions of 100%).
 	 * @return ArrayList of triples cotaining int, MOVE, double each
 	 */
 	public ArrayList<Quad<Integer, MOVE, Double, Double>> getPossibleGhostInfo() {
@@ -1036,6 +1035,7 @@ public class GameFacade {
 	 * @return shortest directional path
 	 */
 	public int[] getDirectionalPath(int from, int to, int direction) {
+		assert from != to : "Don't get a path from a point to itself: " + from + "->" + to;
 		//Can't path to an unknown location
 		if(from == -1 || to == -1) {
 			return null;
@@ -3394,13 +3394,17 @@ public class GameFacade {
 		timeOfLastEatenPowerPill = time;
 	}
 	
-	public double calculateRemainingPillBuffTime() {
-		
-		int currentLevelTime = getCurrentLevelTime();
-		int timeOfLastPowerPill = getTimeOfLastPowerPillEaten();
+	public int calculateRawRemainingPillBuffTime() {		
 		int levelCount = getCurrentLevel();
 		//The edible time of level "levelcount"
-		double newEdibleTime = (int) (pacman.game.Constants.EDIBLE_TIME * (Math.pow(pacman.game.Constants.EDIBLE_TIME_REDUCTION, levelCount % pacman.game.Constants.LEVEL_RESET_REDUCTION)));	
+		int newEdibleTime = (int)(pacman.game.Constants.EDIBLE_TIME * (Math.pow(pacman.game.Constants.EDIBLE_TIME_REDUCTION, levelCount % pacman.game.Constants.LEVEL_RESET_REDUCTION)));	
+		return newEdibleTime;
+	}	
+		
+	public double calculateRemainingPillBuffTime() {
+		int currentLevelTime = getCurrentLevelTime();
+		int timeOfLastPowerPill = getTimeOfLastPowerPillEaten();
+		double newEdibleTime = calculateRawRemainingPillBuffTime();
 		int delta;
 		
 		//If we havent eaten a pill yet, we don't want to use -1
