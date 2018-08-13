@@ -42,6 +42,13 @@ if __name__ == '__main__':
  else:
  	nz = 32
 
+ #Jacob: I added this to maintain backwards compatibility
+ if len(sys.argv) >=4:
+    # User can set this to 10 to recreate behavior of original Mario GAN in GECCO 2018
+ 	z_dims = int(sys.argv[3])
+ else:
+ 	z_dims = 13 # This is the new default
+
 
  batchSize = 1
  #nz = 10 #Dimensionality of latent vector
@@ -50,7 +57,7 @@ if __name__ == '__main__':
  ngf = 64
  ngpu = 1
  n_extra_layers = 0
- z_dims = 10 #number different titles
+ #z_dims = 10 #number different titles: set by command line above
 
  generator = dcgan.DCGAN_G(imageSize, nz, z_dims, ngf, ngpu, n_extra_layers)
  #generator.load_state_dict(torch.load('netG_epoch_24.pth', map_location=lambda storage, loc: storage))
