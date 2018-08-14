@@ -78,8 +78,8 @@ if __name__ == '__main__':
      goodValue = deprecatedModel[badKey]
      fixedModel[goodKey] = goodValue
 
- print(fixedModel)
-   
+ #print(fixedModel)
+ # Load the parameters with the fixed labels  
  generator.load_state_dict(fixedModel)
 
  testing = False
