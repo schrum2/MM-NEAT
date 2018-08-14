@@ -38,7 +38,6 @@ import edu.southwestern.tasks.rlglue.featureextractors.StateVariableExtractor;
 import edu.southwestern.tasks.ut2004.actuators.OpponentRelativeMovementOutputModel;
 import edu.southwestern.tasks.ut2004.sensors.OpponentRelativeSensorModel;
 import edu.southwestern.tasks.ut2004.weapons.SimpleWeaponManager;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.GaussianGenerator;
 import edu.southwestern.util.sound.SoundUtilExamples;
 import edu.southwestern.util.stats.Average;
@@ -48,7 +47,6 @@ import micro.ai.mcts.uct.UCT;
 import oldpacman.controllers.examples.Legacy;
 import oldpacman.controllers.examples.StarterPacMan;
 import oldpacman.game.Constants;
-import popacman.examples.StarterPacMan.MyPacMan;
 
 /**
  * Used for processing and containing command line parameters.
@@ -255,6 +253,7 @@ public class Parameters {
 		integerOptions.add("layersToView", 1, "How many Pareto layers to view in multinetwork experiment");
 		integerOptions.add("litterSize", 10, "Number of offspring from a single source to evaluate for culling methods");
 		integerOptions.add("marioGANInputSize", 32, "Latent vector input size for Mario GAN level evolution");
+		integerOptions.add("marioGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MarioGAN");
 		integerOptions.add("marioInputHeight", 3, "The height for a Mario input section");
 		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputStartY", -1, "The y coordinate offset for Mario inputs grid");

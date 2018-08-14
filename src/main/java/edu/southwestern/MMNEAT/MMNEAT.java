@@ -1109,7 +1109,7 @@ public class MMNEAT {
 		// Function Optimization Tasks use these genotypes and know their lower bounds
 		if(fos != null) return fos.getLowerBounds();
 		// For Mario GAN, the latent vector length determines the size, but the lower bounds are all zero
-		else if(task instanceof MarioGANLevelTask) return new double[MarioGANUtil.latentVectorLength()]; // all zeroes
+		else if(task instanceof MarioGANLevelTask) return new double[MarioGANUtil.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")]; // all zeroes
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario GAN");
 		}
@@ -1122,7 +1122,7 @@ public class MMNEAT {
 	 */
 	public static double[] getUpperBounds() {
 		if(fos != null) return fos.getUpperBounds();
-		else if(task instanceof MarioGANLevelTask) return ArrayUtil.doubleOnes(MarioGANUtil.latentVectorLength()); // all ones
+		else if(task instanceof MarioGANLevelTask) return ArrayUtil.doubleOnes(MarioGANUtil.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario GAN");
 		}
