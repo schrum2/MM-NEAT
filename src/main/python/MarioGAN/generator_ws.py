@@ -14,6 +14,7 @@ import models.dcgan as dcgan
 import math
 
 import random
+from collections import OrderedDict
 
 def combine_images(generated_images):
     num = generated_images.shape[0]
@@ -59,9 +60,27 @@ if __name__ == '__main__':
  n_extra_layers = 0
  #z_dims = 10 #number different titles: set by command line above
 
+ # This is a new DCGAN model that has the proper state dict labels/keys for the latest version of PyTorch (no periods '.')
  generator = dcgan.DCGAN_G(imageSize, nz, z_dims, ngf, ngpu, n_extra_layers)
- #generator.load_state_dict(torch.load('netG_epoch_24.pth', map_location=lambda storage, loc: storage))
- generator.load_state_dict(torch.load(modelToLoad, map_location=lambda storage, loc: storage))
+ #print(generator.state_dict()) 
+ # This is a state dictionary with deprecated key labels/names
+ deprecatedModel = torch.load(modelToLoad, map_location=lambda storage, loc: storage)
+ #print(deprecatedModel)
+ # Make new model with weights/parameters from deprecatedModel but labels/keys from generator.state_dict()
+ fixedModel = OrderedDict()
+ for (goodKey,ignore) in generator.state_dict().items():
+   # Take the good key and replace the : with . in order to get the deprecated key so the associated value can be retrieved
+   badKey = goodKey.replace(":",".")
+   #print(goodKey)
+   #print(badKey)
+   # Some parameter settings of the generator.state_dict() are not actually part of the saved models
+   if badKey in deprecatedModel:
+     goodValue = deprecatedModel[badKey]
+     fixedModel[goodKey] = goodValue
+
+ print(fixedModel)
+   
+ generator.load_state_dict(fixedModel)
 
  testing = False
 
