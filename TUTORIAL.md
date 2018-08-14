@@ -213,6 +213,13 @@ several board games, Super Mario, and VizDoom. Several ways of interactively cre
 art and sounds are also available (see [INTERACTIVE_EVOLUTION.md](https://github.com/schrum2/MM-NEAT/blob/master/INTERACTIVE_EVOLUTION.md)). 
 Please explore!
 
+### Python
+
+Although most code is in Java, some domains make limited use of Python scripts. In order to make use of these domains, 
+you must create a text file called ``my_python_path.txt`` in the root MM-NEAT directory that contains the path to your
+python executable. If you only have one version of Python on your machine, and it is part of your PATH environment variable,
+then you can simply put ``python'' into this text file.
+
 ## MAKING YOUR OWN DOMAINS
 
 All of the pre-existing domains should provide useful examples of how to integrate a new
