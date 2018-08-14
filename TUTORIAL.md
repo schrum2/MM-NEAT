@@ -218,7 +218,7 @@ Please explore!
 Although most code is in Java, some domains make limited use of Python scripts. In order to make use of these domains, 
 you must create a text file called ``my_python_path.txt`` in the root MM-NEAT directory that contains the path to your
 python executable. If you only have one version of Python on your machine, and it is part of your PATH environment variable,
-then you can simply put ``python'' into this text file.
+then you might be able to simply put ``python`` into this text file. However, a full path is recommended.
 
 ## MAKING YOUR OWN DOMAINS
 
