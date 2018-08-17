@@ -13,6 +13,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
+import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Pair;
 
 /**
@@ -33,7 +34,13 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	
 	public MarioLevelTask() {
 		// Replace this with a command line parameter
-		agent = new AStarAgent();
+		try {
+			agent = (Agent) ClassCreation.createObject("marioLevelAgent");
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			System.out.println("Could not instantiate Mario agent");
+			System.exit(1);
+		}
 		
 		// Fitness
 		if(useProgressPlusJumpsFitness) {
@@ -87,7 +94,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		EvaluationOptions options = new CmdLineOptions(new String[]{});
 		options.setAgent(agent);
         options.setLevel(level);
-        options.setMaxFPS(true);
+        options.setMaxFPS(!(agent instanceof ch.idsia.ai.agents.human.HumanKeyboardAgent)); // Run fast when not playing
         options.setVisualization(CommonConstants.watch);
 		List<EvaluationInfo> infos = MarioLevelUtil.agentPlaysLevel(options);
 		// For now, assume a single evaluation

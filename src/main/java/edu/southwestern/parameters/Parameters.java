@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+import competition.cig.robinbaumgarten.AStarAgent;
 import edu.southwestern.boardGame.agents.BoardGamePlayerOneStepEval;
 import edu.southwestern.boardGame.agents.BoardGamePlayerRandom;
 import edu.southwestern.boardGame.featureExtractor.TwoDimensionalRawBoardGameFeatureExtractor;
@@ -858,6 +859,7 @@ public class Parameters {
 		classOptions.add("hyperNEATCustomArchitecture", null, "Custom substrate architecture for a HyperNEAT task (overrides HNProcessDepth and HNProcessWidth)");
 		classOptions.add("imageNetModel", VGG19Wrapper.class, "DL4J model that was trained on ImageNet to classify images");
 		classOptions.add("mapElitesBinLabels", null, "class containing way of putting genotypes in bins of the MAP Elites archive");
+		classOptions.add("marioLevelAgent", AStarAgent.class, "Agent that plays evolved Mario levels");
 		classOptions.add("microRTSAgent", UCT.class, "File containing AI to evolve in MicroRTSTask");
 		classOptions.add("microRTSEnemySequence", null, "class containing sequence of opponents for iterative evolution");
 		classOptions.add("microRTSEvaluationFunction", NNComplexEvaluationFunction.class, "File containing evaluation function for MicroRTSTask");
