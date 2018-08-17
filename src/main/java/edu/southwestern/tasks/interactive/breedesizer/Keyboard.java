@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import edu.southwestern.networks.Network;
-import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.tasks.interactive.InteractiveNetworkEvolutionTask;
 import edu.southwestern.util.sound.PlayDoubleArray;
 import edu.southwestern.util.sound.SoundFromCPPNUtil;
 
@@ -198,7 +198,7 @@ public class Keyboard extends JFrame implements MouseListener, KeyListener {
 	 */
 	public void playFrequency(double[] frequencyArray, int i) {
 		double freq = frequencyArray[i];
-		double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(currentCPPN, NOTE_LENGTH_DEFAULT, freq, InteractiveEvolutionTask.getInputMultipliers());
+		double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(currentCPPN, NOTE_LENGTH_DEFAULT, freq, InteractiveNetworkEvolutionTask.getInputMultipliers());
 		PlayDoubleArray.playDoubleArray(amplitude);
 	}
 

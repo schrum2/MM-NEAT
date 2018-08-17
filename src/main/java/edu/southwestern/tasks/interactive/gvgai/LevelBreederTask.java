@@ -27,7 +27,7 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
-import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.tasks.interactive.InteractiveNetworkEvolutionTask;
 import edu.southwestern.util.datastructures.Triangle;
 import gvgai.core.game.BasicGame;
 import gvgai.core.game.Game;
@@ -36,7 +36,7 @@ import gvgai.core.vgdl.VGDLParser;
 import gvgai.core.vgdl.VGDLRegistry;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
 
-public class LevelBreederTask extends InteractiveEvolutionTask<TWEANN> {
+public class LevelBreederTask extends InteractiveNetworkEvolutionTask<TWEANN> {
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
 	

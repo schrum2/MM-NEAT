@@ -20,7 +20,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.tasks.interactive.InteractiveNetworkEvolutionTask;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.sound.MIDIUtil;
 import edu.southwestern.util.sound.PlayDoubleArray;
@@ -30,7 +30,7 @@ import edu.southwestern.util.sound.SoundFromCPPNUtil;
 /**
  * Class that builds an interface with a variety of sound waves that have been generated with
  * an input CPPN. These sound waves are represented with an image and with audio, and can be evolved,
- * saved, and mutated with various activation functions. This class extends InteractiveEvolutionTask,
+ * saved, and mutated with various activation functions. This class extends InteractiveNetworkEvolutionTask,
  * which is also used to design the Picbreeder and Remixbreeder interfaces. 
  * 
  * Original Breedesizer paper: 
@@ -43,7 +43,7 @@ import edu.southwestern.util.sound.SoundFromCPPNUtil;
  *
  * @param <T>
  */
-public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask<T> {
+public class BreedesizerTask<T extends Network> extends InteractiveNetworkEvolutionTask<T> {
 
 	//private static final int LENGTH_DEFAULT = 60000; //default length of generated amplitude
 	public static final int FREQUENCY_DEFAULT = 440; //default frequency of generated amplitude: A440

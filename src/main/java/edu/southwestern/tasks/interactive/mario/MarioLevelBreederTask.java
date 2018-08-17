@@ -20,7 +20,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.tasks.interactive.InteractiveNetworkEvolutionTask;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
 
 /**
@@ -32,7 +32,7 @@ import edu.southwestern.tasks.mario.level.MarioLevelUtil;
  *
  * @param <T>
  */
-public class MarioLevelBreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
+public class MarioLevelBreederTask<T extends Network> extends InteractiveNetworkEvolutionTask<T> {
 
 	// Labels for CPPN
 	public static final String[] INPUTS = new String[] {"x-coordinate","y-coordinate","bias"};

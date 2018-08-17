@@ -24,7 +24,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
-import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.tasks.interactive.InteractiveNetworkEvolutionTask;
 import edu.southwestern.util.graphics.AnimationUtil;
 
 /**
@@ -35,7 +35,7 @@ import edu.southwestern.util.graphics.AnimationUtil;
  *
  * @param <T>
  */
-public class AnimationBreederTask<T extends Network> extends InteractiveEvolutionTask<T>{
+public class AnimationBreederTask<T extends Network> extends InteractiveNetworkEvolutionTask<T>{
 
 	private boolean reverse = Parameters.parameters.booleanParameter("loopAnimationInReverse");
 

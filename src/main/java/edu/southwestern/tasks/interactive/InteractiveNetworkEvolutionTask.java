@@ -68,7 +68,7 @@ import edu.southwestern.util.random.RandomNumbers;
  *
  * @param <T>
  */
-public abstract class InteractiveEvolutionTask<T extends Network> implements SinglePopulationTask<T>, ActionListener, ChangeListener, NetworkTask {
+public abstract class InteractiveNetworkEvolutionTask<T extends Network> implements SinglePopulationTask<T>, ActionListener, ChangeListener, NetworkTask {
 	
 	//Global static final variables
 	public static final int NUM_COLUMNS	= 5;
@@ -131,15 +131,15 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * Default Constructor
 	 * @throws IllegalAccessException 
 	 */
-	public InteractiveEvolutionTask() throws IllegalAccessException {		
+	public InteractiveNetworkEvolutionTask() throws IllegalAccessException {		
 		inputMultipliers = new double[numCPPNInputs()];
 
 		selectedCPPNs = new LinkedList<Integer>(); //keeps track of selected CPPNs for MIDI playback with multiple CPPNS in Breedesizer
 
 		MMNEAT.registerFitnessFunction("User Preference");
 		//sets mu to a divisible number
-		if(Parameters.parameters.integerParameter("mu") % InteractiveEvolutionTask.NUM_COLUMNS != 0) { 
-			Parameters.parameters.setInteger("mu", InteractiveEvolutionTask.NUM_COLUMNS * ((Parameters.parameters.integerParameter("mu") / InteractiveEvolutionTask.NUM_COLUMNS) + 1));
+		if(Parameters.parameters.integerParameter("mu") % InteractiveNetworkEvolutionTask.NUM_COLUMNS != 0) { 
+			Parameters.parameters.setInteger("mu", InteractiveNetworkEvolutionTask.NUM_COLUMNS * ((Parameters.parameters.integerParameter("mu") / InteractiveNetworkEvolutionTask.NUM_COLUMNS) + 1));
 			System.out.println("Changing population size to: " + Parameters.parameters.integerParameter("mu"));
 		}
 
@@ -349,7 +349,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	public static double[] getInputMultipliers() {
 		@SuppressWarnings("rawtypes")
-		InteractiveEvolutionTask task = (InteractiveEvolutionTask) MMNEAT.task;
+		InteractiveNetworkEvolutionTask task = (InteractiveNetworkEvolutionTask) MMNEAT.task;
 		double[] inputMultipliersCopy = Arrays.copyOf(task.inputMultipliers, task.numCPPNInputs());
 		return inputMultipliersCopy;
 	}
