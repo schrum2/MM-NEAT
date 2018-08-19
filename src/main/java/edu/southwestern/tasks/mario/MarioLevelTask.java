@@ -7,7 +7,6 @@ import ch.idsia.mario.engine.level.Level;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
-import competition.cig.robinbaumgarten.AStarAgent;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.CommonConstants;

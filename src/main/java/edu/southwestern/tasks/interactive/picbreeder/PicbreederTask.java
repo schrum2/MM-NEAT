@@ -7,11 +7,11 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.interactive.InteractiveNetworkEvolutionTask;
+import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
- * Implementation of picbreeder that extends InteractiveNetworkEvolutionTask
+ * Implementation of picbreeder that extends InteractiveEvolutionTask
  * and uses Java Swing components for graphical interface
  * 
  * Original Picbreeder paper: 
@@ -25,7 +25,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  *
  * @param <T>
  */
-public class PicbreederTask<T extends Network> extends InteractiveNetworkEvolutionTask<T> {
+public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
 
 	public static final int CPPN_NUM_INPUTS	= 4;
 	public static final int CPPN_NUM_OUTPUTS = 3;

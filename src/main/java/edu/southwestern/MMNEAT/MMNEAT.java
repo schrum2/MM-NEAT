@@ -65,7 +65,7 @@ import edu.southwestern.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAnd
 import edu.southwestern.tasks.gvgai.GVGAISinglePlayerTask;
 import edu.southwestern.tasks.innovationengines.PictureInnovationTask;
 import edu.southwestern.tasks.innovationengines.ShapeInnovationTask;
-import edu.southwestern.tasks.interactive.InteractiveNetworkEvolutionTask;
+import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.interactive.mario.MarioLevelBreederTask;
 import edu.southwestern.tasks.mario.MarioGANLevelTask;
 import edu.southwestern.tasks.mario.MarioLevelTask;
@@ -670,9 +670,9 @@ public class MMNEAT {
 				System.out.println("Set up VizDoom Task");
 				VizDoomTask t = (VizDoomTask) task;
 				setNNInputParameters(t.numInputs(), t.numActions());
-			} else if(task instanceof InteractiveNetworkEvolutionTask) {
+			} else if(task instanceof InteractiveEvolutionTask) {
 				System.out.println("set up Interactive Evolution Task");
-				InteractiveNetworkEvolutionTask temp = (InteractiveNetworkEvolutionTask) task;
+				InteractiveEvolutionTask temp = (InteractiveEvolutionTask) task;
 				setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
 			} else if(task instanceof PictureInnovationTask) {
 				System.out.println("set up Innovation Engine Task");
