@@ -68,7 +68,8 @@ import edu.southwestern.util.random.RandomNumbers;
  *
  * @param <T>
  */
-public abstract class InteractiveEvolutionTask<T extends Network> implements SinglePopulationTask<T>, ActionListener, ChangeListener, NetworkTask {
+@SuppressWarnings("unused")
+public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTask<T>, ActionListener, ChangeListener, NetworkTask {
 	
 	//Global static final variables
 	public static final int NUM_COLUMNS	= 5;
@@ -118,7 +119,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	// This is a weird magic number that is used to track the checkboxes
 	public static final int CHECKBOX_IDENTIFIER_START = -25;
 
-	protected Network currentCPPN;
+	protected T currentCPPN;
 
 	private HashMap<Long,BufferedImage> cachedButtonImages = new HashMap<Long,BufferedImage>();
 
