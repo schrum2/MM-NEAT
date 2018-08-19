@@ -92,6 +92,19 @@ public class MarioGANUtil {
 	 * @return Mario level
 	 */
 	public static Level generateLevelFromGAN(double[] latentVector) {
+		ArrayList<List<Integer>> oneLevel = generateLevelListRepresentationFromGAN(latentVector);
+		// Create one level from the merged level representation
+		Level level = Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding") ? OldLevelParser.createLevelJson(oneLevel) : LevelParser.createLevelJson(oneLevel);
+		return level;
+	}
+
+	/**
+	 * Intermediate step of generateLevelFromGAN that gets the list representation of the level
+	 * 
+	 * @param latentVector
+	 * @return
+	 */
+	public static ArrayList<List<Integer>> generateLevelListRepresentationFromGAN(double[] latentVector) {
 		latentVector = mapArrayToOne(latentVector); // Range restrict the values
 		int chunk_length = Integer.valueOf(getGANProcess().GANDim);
         String levelString = "";
@@ -128,9 +141,7 @@ public class MarioGANUtil {
 				oneLevel.get(index++).addAll(row);
 			}	
 		}
-		// Create one level from the merged level representation
-		Level level = Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding") ? OldLevelParser.createLevelJson(oneLevel) : LevelParser.createLevelJson(oneLevel);
-		return level;
+		return oneLevel;
 	}	
 	
 	/**

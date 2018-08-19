@@ -198,15 +198,15 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		if(undo) return true; // Click must have been a bad activation checkbox choice. Skip rest
 		// Play original sound if they click the button
 		if(itemID == (MIDI_PLAY_BUTTON_INDEX)) {
-			Network[] cppns = new Network[selectedCPPNs.size()];
+			Network[] cppns = new Network[selectedItems.size()];
 			if(!justStopped) { // Pressing original button can stop playback too
 				if(!MIDIPlaybackType.isSelected()) { // action for simple MIDI playback
 					midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN, noteLengthScale);
 				} else { // action for advanced MIDI playback
 					//read in all CPPNs from selectedCPPNS list to an array of networks
 					// Read backwards so most recent selection is present
-					for(int i = selectedCPPNs.size() - 1; i >= 0; i--) { 
-						cppns[i] = scores.get(selectedCPPNs.get(i)).individual.getPhenotype();
+					for(int i = selectedItems.size() - 1; i >= 0; i--) { 
+						cppns[i] = scores.get(selectedItems.get(i)).individual.getPhenotype();
 					}
 					midiPlay = MIDIUtil.playMIDIWithCPPNsFromString(Parameters.parameters.stringParameter("remixMIDIFile"), cppns, noteLengthScale);
 				}

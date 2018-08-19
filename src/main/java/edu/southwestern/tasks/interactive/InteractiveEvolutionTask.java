@@ -126,16 +126,20 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	private JPanel topper;
 	protected JPanel top;
 
-	public LinkedList<Integer> selectedCPPNs;
+	public LinkedList<Integer> selectedItems;
 
+	public InteractiveEvolutionTask() throws IllegalAccessException {		
+		this(true); // By default, evolve CPPNs
+	}
+	
 	/**
 	 * Default Constructor
 	 * @throws IllegalAccessException 
 	 */
-	public InteractiveEvolutionTask() throws IllegalAccessException {		
-		inputMultipliers = new double[numCPPNInputs()];
+	public InteractiveEvolutionTask(boolean evolveCPPNs) throws IllegalAccessException {		
+		if(evolveCPPNs) inputMultipliers = new double[numCPPNInputs()];
 
-		selectedCPPNs = new LinkedList<Integer>(); //keeps track of selected CPPNs for MIDI playback with multiple CPPNS in Breedesizer
+		selectedItems = new LinkedList<Integer>(); //keeps track of selected CPPNs for MIDI playback with multiple CPPNS in Breedesizer
 
 		MMNEAT.registerFitnessFunction("User Preference");
 		//sets mu to a divisible number
@@ -317,7 +321,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		//adds buttons to button panels
 		addButtonsToPanel(0);
 		//add input checkboxes
-		inputCheckBoxes();
+		if(evolveCPPNs) inputCheckBoxes();
 	}
 
 	/**
@@ -544,10 +548,10 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 * @return Image for button
 	 */
 	protected BufferedImage getButtonImage(boolean checkCache, T phenotype, int width, int height, double[] inputMultipliers) {
-		// Will this interface ever be used with items that are not TWEANNs?
-		long id = ((TWEANN) phenotype).getId();
 		// See if image is already in hash map to be retrieved
 		if(checkCache) {
+			// Will this interface ever be used with items that are not TWEANNs?
+			long id = ((TWEANN) phenotype).getId();
 			if(cachedButtonImages.containsKey(id)) {
 				// Return pre-computed image instead of watsing time
 				return cachedButtonImages.get(id);
@@ -555,7 +559,11 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		}
 		// If fails, or if not allowing cache checks, do the default call to getButtonImage
 		BufferedImage image = getButtonImage(phenotype, width, height, inputMultipliers);
-		cachedButtonImages.put(id, image);
+		if(checkCache) {
+			// Use of checkCache avoids the cast to TWEANN for non-TWEANN phenotypes
+			long id = ((TWEANN) phenotype).getId();
+			cachedButtonImages.put(id, image);
+		}
 		return image;
 	}
 	
@@ -617,12 +625,12 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 */
 	private void buttonPressed(int scoreIndex) {
 		if(chosen[scoreIndex]) {//if image has already been clicked, reset
-			selectedCPPNs.remove(new Integer(scoreIndex)); //remove CPPN from list of currently selected CPPNs
+			selectedItems.remove(new Integer(scoreIndex)); //remove CPPN from list of currently selected CPPNs
 			chosen[scoreIndex] = false;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 			scores.get(scoreIndex).replaceScores(new double[]{0});
 		} else {//if image has not been clicked, set it
-			selectedCPPNs.add(scoreIndex); //add CPPN to list of currently selected CPPNs
+			selectedItems.add(scoreIndex); //add CPPN to list of currently selected CPPNs
 			chosen[scoreIndex] = true;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.BLUE, BORDER_THICKNESS));
 			scores.get(scoreIndex).replaceScores(new double[]{1.0});

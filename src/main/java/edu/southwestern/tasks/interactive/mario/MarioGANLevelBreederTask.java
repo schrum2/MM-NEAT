@@ -5,7 +5,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -18,25 +20,21 @@ import ch.idsia.ai.agents.human.HumanKeyboardAgent;
 import ch.idsia.mario.engine.level.Level;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.tasks.mario.gan.MarioGANUtil;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 /**
- * Interactively evolve Mario levels. Users selectively
- * breed levels based on appearance, but can also choose
- * to play any of the evolved levels.
+ * Interactively evolve Mario levels
+ * in the latent space of a GAN.
  * 
  * @author Jacob
  *
  * @param <T>
  */
-public class MarioLevelBreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
-
-	// Labels for CPPN
-	public static final String[] INPUTS = new String[] {"x-coordinate","y-coordinate","bias"};
-	public static final String[] OUTPUTS = new String[] {"Present?", "Rock", "Breakable", "Question", "Coin", "Pipes", "Cannon", "Goomba", "GreenKoopa", "RedKoopa", "Spiky", "Winged?"};
+public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList<Double>> {
 
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
@@ -47,8 +45,9 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 	private boolean initializationComplete = false;
 	protected JSlider levelWidthSlider; // Allows for changing levelWidth
 	
-	public MarioLevelBreederTask() throws IllegalAccessException {
-		super();
+	public MarioGANLevelBreederTask() throws IllegalAccessException {
+		super(false); // false indicates that we are NOT evolving CPPNs
+		
 		//Construction of JSlider to determine length of generated CPPN amplitude
 		// Width ranged from 20 to 200 blocks
 		levelWidthSlider = new JSlider(JSlider.HORIZONTAL, LEVEL_LENGTH_SHORTEST, LEVEL_LENGTH_LONGEST, Parameters.parameters.integerParameter("marioLevelLength"));
@@ -96,23 +95,30 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 
 	@Override
 	public String[] sensorLabels() {
-		// Consider using radial distance from bottom-left
-		return INPUTS;
+		return new String[0];
+		//throw new UnsupportedOperationException("Genotypes for MarioGAN are actually not networks, so there are no sensor labels");
 	}
 
 	@Override
 	public String[] outputLabels() {
-		return OUTPUTS;
+		return new String[0];
+		//throw new UnsupportedOperationException("Genotypes for MarioGAN are actually not networks, so there are no output labels");
 	}
 
 	@Override
 	protected String getWindowTitle() {
-		return "Mario Level Breeder";
+		return "MarioGAN Level Breeder";
 	}
 
 	@Override
 	protected void save(String file, int i) {
-		String[] level = MarioLevelUtil.generateLevelLayoutFromCPPN((Network)scores.get(i).individual.getPhenotype(), inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
+		ArrayList<Double> latentVector = scores.get(i).individual.getPhenotype();
+		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
+		ArrayList<List<Integer>> levelList = MarioGANUtil.generateLevelListRepresentationFromGAN(doubleArray);
+
+		// TODO: Convert levelList to String[] representation
+		
+		String[] level = null; //MarioLevelUtil.generateLevelLayoutFromCPPN((Network)scores.get(i).individual.getPhenotype(), inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
 		// Prepare text file
 		try {
 			PrintStream ps = new PrintStream(new File(file));
@@ -129,8 +135,9 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 	}
 
 	@Override
-	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
-		Level level = MarioLevelUtil.generateLevelFromCPPN(phenotype, inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
+	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height, double[] inputMultipliers) {
+		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
+		Level level = MarioGANUtil.generateLevelFromGAN(doubleArray);
 		BufferedImage image = MarioLevelUtil.getLevelImage(level);
 		return image;
 	}
@@ -143,8 +150,9 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 		if(undo) return true; // Click must have been a bad activation checkbox choice. Skip rest
 		// Human plays level
 		if(itemID == PLAY_BUTTON_INDEX && selectedItems.size() > 0) {
-			Network cppn = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
-			Level level = MarioLevelUtil.generateLevelFromCPPN(cppn, inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
+			ArrayList<Double> phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
+			double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
+			Level level = MarioGANUtil.generateLevelFromGAN(doubleArray);
 			Agent agent = new HumanKeyboardAgent();
 			// Must launch game in own thread, or won't animate or listen for events
 			new Thread() {
@@ -157,7 +165,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 	}	
 	
 	@Override
-	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
+	protected void additionalButtonClickAction(int scoreIndex, Genotype<ArrayList<Double>> individual) {
 		// do nothing
 	}
 
@@ -173,17 +181,23 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 
 	@Override
 	public int numCPPNInputs() {
-		return this.sensorLabels().length;
+		throw new UnsupportedOperationException("There are no CPPNs, and therefore no inputs");
 	}
 
 	@Override
 	public int numCPPNOutputs() {
-		return this.outputLabels().length;
+		throw new UnsupportedOperationException("There are no CPPNs, and therefore no outputs");
 	}
 
+	@Override
+	protected BufferedImage getButtonImage(boolean checkCache, ArrayList<Double> phenotype, int width, int height, double[] inputMultipliers) {
+		// Setting checkCache to false makes sure that the phenotype is not cast to a TWEANN in an attempt to acquire its ID
+		return super.getButtonImage(false, phenotype, width, height, inputMultipliers);
+	}
+	
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.mario.MarioLevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:true","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.mario.MarioGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

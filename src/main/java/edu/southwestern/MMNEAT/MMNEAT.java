@@ -66,6 +66,7 @@ import edu.southwestern.tasks.gvgai.GVGAISinglePlayerTask;
 import edu.southwestern.tasks.innovationengines.PictureInnovationTask;
 import edu.southwestern.tasks.innovationengines.ShapeInnovationTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.tasks.interactive.mario.MarioGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.mario.MarioLevelBreederTask;
 import edu.southwestern.tasks.mario.MarioGANLevelTask;
 import edu.southwestern.tasks.mario.MarioLevelTask;
@@ -673,7 +674,8 @@ public class MMNEAT {
 			} else if(task instanceof InteractiveEvolutionTask) {
 				System.out.println("set up Interactive Evolution Task");
 				InteractiveEvolutionTask temp = (InteractiveEvolutionTask) task;
-				setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
+				// Since this task uses real-vector genotypes, to not set the NN params
+				if(!(temp instanceof MarioGANLevelBreederTask)) setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
 			} else if(task instanceof PictureInnovationTask) {
 				System.out.println("set up Innovation Engine Task");
 				PictureInnovationTask temp = (PictureInnovationTask) task;
@@ -1109,7 +1111,7 @@ public class MMNEAT {
 		// Function Optimization Tasks use these genotypes and know their lower bounds
 		if(fos != null) return fos.getLowerBounds();
 		// For Mario GAN, the latent vector length determines the size, but the lower bounds are all zero
-		else if(task instanceof MarioGANLevelTask) return new double[MarioGANUtil.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")]; // all zeroes
+		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return new double[MarioGANUtil.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")]; // all zeroes
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario GAN");
 		}
@@ -1122,7 +1124,7 @@ public class MMNEAT {
 	 */
 	public static double[] getUpperBounds() {
 		if(fos != null) return fos.getUpperBounds();
-		else if(task instanceof MarioGANLevelTask) return ArrayUtil.doubleOnes(MarioGANUtil.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
+		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return ArrayUtil.doubleOnes(MarioGANUtil.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario GAN");
 		}
