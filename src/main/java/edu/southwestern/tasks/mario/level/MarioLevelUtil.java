@@ -256,9 +256,9 @@ public class MarioLevelUtil {
 		task.setOptions(options);
 
 		int relevantWidth = (level.width - (2*OldLevelParser.BUFFER_WIDTH)) * MarioLevelUtil.BLOCK_SIZE;
-		BufferedImage image = new BufferedImage(relevantWidth, MarioLevelUtil.LEVEL_HEIGHT*MarioLevelUtil.BLOCK_SIZE, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage(relevantWidth, (1+level.height)*MarioLevelUtil.BLOCK_SIZE, BufferedImage.TYPE_INT_ARGB);
 		// Skips buffer zones at start and end of level
-		LevelRenderer.renderArea((Graphics2D) image.getGraphics(), level, 0, 0, OldLevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, LEVEL_HEIGHT*BLOCK_SIZE);
+		LevelRenderer.renderArea((Graphics2D) image.getGraphics(), level, 0, 0, OldLevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, (1+level.height)*BLOCK_SIZE);
 		return image;
 	}
 	

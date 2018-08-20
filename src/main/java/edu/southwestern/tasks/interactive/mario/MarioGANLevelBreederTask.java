@@ -134,6 +134,15 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 		}
 	}
 
+	/**
+	 * Disallow image caching since this only applies to CPPNs
+	 */
+	@Override
+	protected BufferedImage getButtonImage(boolean checkCache, ArrayList<Double> phenotype, int width, int height, double[] inputMultipliers) {
+		// Setting checkCache to false makes sure that the phenotype is not cast to a TWEANN in an attempt to acquire its ID
+		return super.getButtonImage(false, phenotype, width, height, inputMultipliers);
+	}
+	
 	@Override
 	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height, double[] inputMultipliers) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
@@ -189,12 +198,6 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 		throw new UnsupportedOperationException("There are no CPPNs, and therefore no outputs");
 	}
 
-	@Override
-	protected BufferedImage getButtonImage(boolean checkCache, ArrayList<Double> phenotype, int width, int height, double[] inputMultipliers) {
-		// Setting checkCache to false makes sure that the phenotype is not cast to a TWEANN in an attempt to acquire its ID
-		return super.getButtonImage(false, phenotype, width, height, inputMultipliers);
-	}
-	
 	public static void main(String[] args) {
 		try {
 			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.mario.MarioGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
