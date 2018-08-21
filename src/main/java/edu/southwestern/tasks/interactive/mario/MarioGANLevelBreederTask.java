@@ -19,8 +19,10 @@ import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
 import ch.idsia.mario.engine.level.Level;
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.gan.MarioGANUtil;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
@@ -39,31 +41,30 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
 	
-	public static final int LEVEL_LENGTH_SHORTEST = 20;
-	public static final int LEVEL_LENGTH_LONGEST = 200;
+	public static final int LEVEL_MIN_CHUNKS = 1;
+	public static final int LEVEL_MAX_CHUNKS = 10;
 	
 	private boolean initializationComplete = false;
-	protected JSlider levelWidthSlider; // Allows for changing levelWidth
+	protected JSlider levelChunksSlider; // Allows for changing levelWidth
 	
 	public MarioGANLevelBreederTask() throws IllegalAccessException {
 		super(false); // false indicates that we are NOT evolving CPPNs
 		
-		//Construction of JSlider to determine length of generated CPPN amplitude
-		// Width ranged from 20 to 200 blocks
-		levelWidthSlider = new JSlider(JSlider.HORIZONTAL, LEVEL_LENGTH_SHORTEST, LEVEL_LENGTH_LONGEST, Parameters.parameters.integerParameter("marioLevelLength"));
-		levelWidthSlider.setMinorTickSpacing(10000);
-		levelWidthSlider.setPaintTicks(true);
+		//Construction of JSlider to determine number of latent vector level chunks
+		levelChunksSlider = new JSlider(JSlider.HORIZONTAL, LEVEL_MIN_CHUNKS, LEVEL_MAX_CHUNKS, Parameters.parameters.integerParameter("marioGANLevelChunks"));
+		levelChunksSlider.setMinorTickSpacing(1);
+		levelChunksSlider.setPaintTicks(true);
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
-		labels.put(LEVEL_LENGTH_SHORTEST, new JLabel("Shorter Level"));
-		labels.put(LEVEL_LENGTH_LONGEST, new JLabel("Longer Level"));
-		levelWidthSlider.setLabelTable(labels);
-		levelWidthSlider.setPaintLabels(true);
-		levelWidthSlider.setPreferredSize(new Dimension(200, 40));
+		labels.put(LEVEL_MIN_CHUNKS, new JLabel("Shorter Level"));
+		labels.put(LEVEL_MAX_CHUNKS, new JLabel("Longer Level"));
+		levelChunksSlider.setLabelTable(labels);
+		levelChunksSlider.setPaintLabels(true);
+		levelChunksSlider.setPreferredSize(new Dimension(200, 40));
 
 		/**
 		 * Changed level width picture previews
 		 */
-		levelWidthSlider.addChangeListener(new ChangeListener() {
+		levelChunksSlider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				if(!initializationComplete) return;
@@ -71,17 +72,42 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 				JSlider source = (JSlider)e.getSource();
 				if(!source.getValueIsAdjusting()) {
 
-					int newLength = (int) source.getValue();
+					int oldValue = Parameters.parameters.integerParameter("marioGANLevelChunks");
+					int newValue = (int) source.getValue();
+					Parameters.parameters.setInteger("marioGANLevelChunks", newValue);
+					
+					if(oldValue != newValue) {
+						int oldLength = oldValue * MarioGANUtil.latentVectorLength();
+						int newLength = newValue * MarioGANUtil.latentVectorLength();
+						// Modify all genotypes' lengths accordingly. This means chopping off,
+						// or elongating by duplicating
+						for(Score<ArrayList<Double>> s : scores) {
+							ArrayList<Double> oldPhenotype = s.individual.getPhenotype();
+							ArrayList<Double> newPhenotype = null;
+							if(newLength < oldLength) { // Get sublist
+								newPhenotype = new ArrayList<>(oldPhenotype.subList(0, newLength));
+							} else if(newLength > oldLength) { // Repeat copies of the original
+								newPhenotype = new ArrayList<>(oldPhenotype); // Start with original
+								while(newPhenotype.size() < newLength) {
+									// Add a full copy (oldLength), or as much as is needed to reach the new length (difference from current size)
+									newPhenotype.addAll(oldPhenotype.subList(0, Math.min(oldLength, newLength - newPhenotype.size())));
+								}
+							} else {
+								throw new IllegalArgumentException("Should not have equal chunk size at this point");
+							}
+							s.individual = new BoundedRealValuedGenotype(newPhenotype,MMNEAT.getLowerBounds(),MMNEAT.getUpperBounds());
+						}
 
-					Parameters.parameters.setInteger("marioLevelLength", newLength);
-					// reset buttons
-					resetButtons(true);
+
+						// reset buttons
+						resetButtons(true);
+					}
 				}
 			}
 		});
 		
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
-			top.add(levelWidthSlider);	
+			top.add(levelChunksSlider);	
 		}
 		
 		//Construction of button that lets user plays the level
