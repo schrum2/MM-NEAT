@@ -36,6 +36,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.SinglePopulationGenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.lineage.Offspring;
 import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
 import edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA;
@@ -68,7 +69,8 @@ import edu.southwestern.util.random.RandomNumbers;
  *
  * @param <T>
  */
-public abstract class InteractiveEvolutionTask<T extends Network> implements SinglePopulationTask<T>, ActionListener, ChangeListener, NetworkTask {
+@SuppressWarnings("unused")
+public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTask<T>, ActionListener, ChangeListener, NetworkTask {
 	
 	//Global static final variables
 	public static final int NUM_COLUMNS	= 5;
@@ -118,23 +120,27 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	// This is a weird magic number that is used to track the checkboxes
 	public static final int CHECKBOX_IDENTIFIER_START = -25;
 
-	protected Network currentCPPN;
+	protected T currentCPPN;
 
 	private HashMap<Long,BufferedImage> cachedButtonImages = new HashMap<Long,BufferedImage>();
 
 	private JPanel topper;
 	protected JPanel top;
 
-	public LinkedList<Integer> selectedCPPNs;
+	public LinkedList<Integer> selectedItems;
 
+	public InteractiveEvolutionTask() throws IllegalAccessException {		
+		this(true); // By default, evolve CPPNs
+	}
+	
 	/**
 	 * Default Constructor
 	 * @throws IllegalAccessException 
 	 */
-	public InteractiveEvolutionTask() throws IllegalAccessException {		
-		inputMultipliers = new double[numCPPNInputs()];
+	public InteractiveEvolutionTask(boolean evolveCPPNs) throws IllegalAccessException {		
+		if(evolveCPPNs) inputMultipliers = new double[numCPPNInputs()];
 
-		selectedCPPNs = new LinkedList<Integer>(); //keeps track of selected CPPNs for MIDI playback with multiple CPPNS in Breedesizer
+		selectedItems = new LinkedList<Integer>(); //keeps track of selected CPPNs for MIDI playback with multiple CPPNS in Breedesizer
 
 		MMNEAT.registerFitnessFunction("User Preference");
 		//sets mu to a divisible number
@@ -151,8 +157,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		//showLineage = false;
 		showNetwork = false;
 		waitingForUser = false;
+		
 		activation = new boolean[ActivationFunctions.MAX_POSSIBLE_ACTIVATION_FUNCTIONS]; // Leaves many gaps in array
 		Arrays.fill(activation, true);
+		
 		if(MMNEAT.browseLineage) {
 			// Do not setup the JFrame if browsing the lineage
 			return;
@@ -198,8 +206,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		//ImageIcon lineage = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"lineage.png");
 		//Image lineage2 = lineage.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		ImageIcon network = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"network.png");
-		Image network2 = network.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
+		ImageIcon network = evolveCPPNs ? new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"network.png") : null;
+		Image network2 = evolveCPPNs ? network.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1) : null;
 
 		ImageIcon undo = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"undo.png");
 		Image undo2 = undo.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
@@ -209,7 +217,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		JButton evolveButton = new JButton(new ImageIcon(evolve2));
 		//JButton closeButton = new JButton(new ImageIcon(close2));
 		//JButton lineageButton = new JButton(new ImageIcon(lineage2));
-		JButton networkButton = new JButton(new ImageIcon(network2));
+		JButton networkButton = evolveCPPNs ? new JButton(new ImageIcon(network2)) : null;
 		JButton undoButton = new JButton( new ImageIcon(undo2));
 
 		//to make it work on my mac
@@ -217,7 +225,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		saveButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		evolveButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		//lineageButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
-		networkButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+		if(evolveCPPNs) networkButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		undoButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		//closeButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 
@@ -225,7 +233,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		saveButton.setText("Save");
 		evolveButton.setText("Evolve!");
 		//lineageButton.setText("Lineage");
-		networkButton.setText("Network");
+		if(evolveCPPNs) networkButton.setText("Network");
 		undoButton.setText("Undo");
 		//closeButton.setText("Close");
 
@@ -244,8 +252,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		//closeButton.setToolTipText("Close button");
 		//lineageButton.setName("" + LINEAGE_BUTTON_INDEX);
 		//lineageButton.setToolTipText("Lineage button");
-		networkButton.setName("" + NETWORK_BUTTON_INDEX);
-		networkButton.setToolTipText("Network button");
+		if(evolveCPPNs) {
+			networkButton.setName("" + NETWORK_BUTTON_INDEX);
+			networkButton.setToolTipText("Network button");
+		}
 		undoButton.setName("" + UNDO_BUTTON_INDEX);
 		undoButton.setToolTipText("Undo button");
 
@@ -263,7 +273,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		evolveButton.addActionListener(this);
 		//closeButton.addActionListener(this);
 		//lineageButton.addActionListener(this);
-		networkButton.addActionListener(this);
+		if(evolveCPPNs) networkButton.addActionListener(this);
 		undoButton.addActionListener(this);
 
 		mutationsPerGeneration.addChangeListener(this);
@@ -279,30 +289,32 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(saveButton);
-			top.add(networkButton);
+			if(evolveCPPNs) top.add(networkButton);
 			top.add(undoButton);
 		}
 
 		//top.add(closeButton);
 		top.add(mutationsPerGeneration);	
 
-		//instantiates activation function checkboxes
-		for(Integer ftype : ActivationFunctions.allPossibleActivationFunctions()) {
-			boolean checked = ActivationFunctions.availableActivationFunctions.contains(ftype);
-			JCheckBox functionCheckbox = new JCheckBox(ActivationFunctions.activationName(ftype).replaceAll(" ", "_"), checked);
-			int id = Math.abs(ftype); // leaves many gaps in array 
-			activation[id] = checked;			
-			// IDs are negative to they do not conflict with item selection.
-			// They are offset by -100 so they do not conflict with other buttons like save, network, etc.
-			functionCheckbox.setName("" + (-ACTIVATION_CHECKBOX_OFFSET - id)); 
-			functionCheckbox.addActionListener(this);
-			//set checkbox colors to match activation function color
-			functionCheckbox.setForeground(CombinatoricUtilities.colorFromInt(ftype));
-			if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
-				//add activation function checkboxes to interface
-				bottom.add(functionCheckbox);
-			}
-		}		
+		if(evolveCPPNs) {
+			//instantiates activation function checkboxes
+			for(Integer ftype : ActivationFunctions.allPossibleActivationFunctions()) {
+				boolean checked = ActivationFunctions.availableActivationFunctions.contains(ftype);
+				JCheckBox functionCheckbox = new JCheckBox(ActivationFunctions.activationName(ftype).replaceAll(" ", "_"), checked);
+				int id = Math.abs(ftype); // leaves many gaps in array 
+				activation[id] = checked;			
+				// IDs are negative to they do not conflict with item selection.
+				// They are offset by -100 so they do not conflict with other buttons like save, network, etc.
+				functionCheckbox.setName("" + (-ACTIVATION_CHECKBOX_OFFSET - id)); 
+				functionCheckbox.addActionListener(this);
+				//set checkbox colors to match activation function color
+				functionCheckbox.setForeground(CombinatoricUtilities.colorFromInt(ftype));
+				if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
+					//add activation function checkboxes to interface
+					bottom.add(functionCheckbox);
+				}
+			}		
+		}
 
 		topper.add(top);
 		topper.add(bottom);
@@ -316,7 +328,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		//adds buttons to button panels
 		addButtonsToPanel(0);
 		//add input checkboxes
-		inputCheckBoxes();
+		if(evolveCPPNs) inputCheckBoxes();
 	}
 
 	/**
@@ -543,10 +555,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @return Image for button
 	 */
 	protected BufferedImage getButtonImage(boolean checkCache, T phenotype, int width, int height, double[] inputMultipliers) {
-		// Will this interface ever be used with items that are not TWEANNs?
-		long id = ((TWEANN) phenotype).getId();
 		// See if image is already in hash map to be retrieved
 		if(checkCache) {
+			// Will this interface ever be used with items that are not TWEANNs?
+			long id = ((TWEANN) phenotype).getId();
 			if(cachedButtonImages.containsKey(id)) {
 				// Return pre-computed image instead of watsing time
 				return cachedButtonImages.get(id);
@@ -554,7 +566,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		}
 		// If fails, or if not allowing cache checks, do the default call to getButtonImage
 		BufferedImage image = getButtonImage(phenotype, width, height, inputMultipliers);
-		cachedButtonImages.put(id, image);
+		if(checkCache) {
+			// Use of checkCache avoids the cast to TWEANN for non-TWEANN phenotypes
+			long id = ((TWEANN) phenotype).getId();
+			cachedButtonImages.put(id, image);
+		}
 		return image;
 	}
 	
@@ -616,12 +632,12 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	private void buttonPressed(int scoreIndex) {
 		if(chosen[scoreIndex]) {//if image has already been clicked, reset
-			selectedCPPNs.remove(new Integer(scoreIndex)); //remove CPPN from list of currently selected CPPNs
+			selectedItems.remove(new Integer(scoreIndex)); //remove CPPN from list of currently selected CPPNs
 			chosen[scoreIndex] = false;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 			scores.get(scoreIndex).replaceScores(new double[]{0});
 		} else {//if image has not been clicked, set it
-			selectedCPPNs.add(scoreIndex); //add CPPN to list of currently selected CPPNs
+			selectedItems.add(scoreIndex); //add CPPN to list of currently selected CPPNs
 			chosen[scoreIndex] = true;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.BLUE, BORDER_THICKNESS));
 			scores.get(scoreIndex).replaceScores(new double[]{1.0});
@@ -651,7 +667,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		scores = new ArrayList<Score<T>>();
 		ActivationFunctionRandomReplacement frr = new ActivationFunctionRandomReplacement();
 		for(int i = 0; i < newPop.size(); i++) {
-			frr.mutate((Genotype<TWEANN>) newPop.get(i));
+			if(newPop.get(i) instanceof TWEANNGenotype) frr.mutate((Genotype<TWEANN>) newPop.get(i));
 			resetButton(newPop.get(i), i);
 		}	
 	}

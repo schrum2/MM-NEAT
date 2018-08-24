@@ -61,7 +61,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 /build/
-/coghosts/
 /dist/
 /nbproject/
 /bin
@@ -94,6 +93,8 @@ $RECYCLE.BIN/
 /innovationshapes/
 /microRTS/
 /ut2004/
+/mariogan/
+/mariocppn/
 /coghosts/
 /poghosts/
 /popacman/
@@ -127,7 +128,7 @@ log4j.log
 doom-end.model
 rl-glue-cartpole
 *.model
-src/main/python/imagenet-vgg-verydeep-19.mat
+src/main/python/NeuralStyleTransfer/imagenet-vgg-verydeep-19.mat
 *.pyc
 *.json
 *UT^2-null

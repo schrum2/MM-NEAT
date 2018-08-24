@@ -80,10 +80,9 @@ public class StatisticsUtilities {
 	 */
 	public static int argmax(double[] xs) {
 		assert xs.length > 0;
-		double max = -Double.MAX_VALUE; // Stores the maximum value; assumed to be the smallest possible Double value (to allow for comparison)
+		double max = Double.NEGATIVE_INFINITY; // Stores the maximum value; assumed to be the smallest possible Double value (to allow for comparison)
 		ArrayList<Integer> equalMaxIndexes = new ArrayList<Integer>(xs.length);
 		for (int i = 0; i < xs.length; i++) {
-			assert i != 0 || xs[i] > max : "The first value must be greater than -Double.MAX_VALUE: "+xs[i];
 			if (xs[i] == max) { // Current value is equal to the maximum value
 				equalMaxIndexes.add(i);
 			} else if (xs[i] > max) { // Current value is greater than the maximum value

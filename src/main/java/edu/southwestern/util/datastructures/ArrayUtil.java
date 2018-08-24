@@ -791,7 +791,7 @@ public class ArrayUtil {
 	 * @return sub-array
 	 */
 	public static double[] portion(double[] array, int startIndex, int endIndex) {
-		assert startIndex >= 0 && endIndex >= startIndex && endIndex < array.length : "Indeces not in bounds!";
+		assert startIndex >= 0 && endIndex >= startIndex && endIndex < array.length : "Indices not in bounds!";
 		double[] result = new double[endIndex - startIndex + 1];
 		System.arraycopy(array, startIndex, result, 0, endIndex - startIndex + 1);
 		return result;
