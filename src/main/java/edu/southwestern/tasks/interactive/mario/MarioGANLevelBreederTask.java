@@ -132,22 +132,24 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
 		ArrayList<List<Integer>> levelList = MarioGANUtil.generateLevelListRepresentationFromGAN(doubleArray);
 
-		// TODO: Convert levelList to String[] representation
+		throw new UnsupportedOperationException("MarioGAN Levels cannot be saved yet");
 		
-		String[] level = null; //MarioLevelUtil.generateLevelLayoutFromCPPN((Network)scores.get(i).individual.getPhenotype(), inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
-		// Prepare text file
-		try {
-			PrintStream ps = new PrintStream(new File(file));
-			// Write String array to text file 
-			for(String line : level) {
-				ps.println(line);
-			}
-			ps.close();
-		} catch (FileNotFoundException e) {
-			System.out.println("Could not save file: " + file);
-			e.printStackTrace();
-			return;
-		}
+		// Transfer list into String array
+//		String[] level = null; // TODO
+//		
+//		// Prepare text file
+//		try {
+//			PrintStream ps = new PrintStream(new File(file));
+//			// Write String array to text file 
+//			for(String line : level) {
+//				ps.println(line);
+//			}
+//			ps.close();
+//		} catch (FileNotFoundException e) {
+//			System.out.println("Could not save file: " + file);
+//			e.printStackTrace();
+//			return;
+//		}
 	}
 
 	/**
