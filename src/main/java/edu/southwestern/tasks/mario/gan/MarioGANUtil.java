@@ -36,6 +36,16 @@ public class MarioGANUtil {
 	}
 	
 	/**
+	 * Destroy GAN process so a new one can be started
+	 */
+	public static void terminateGANProcess() {
+		if(ganProcess != null) {
+			ganProcess.process.destroy();
+			ganProcess = null;
+		}
+	}
+	
+	/**
 	 * Start the GAN process running in Python if it has not started already.
 	 * Otherwise, just return the reference to the process.
 	 * @return Process running the Mario GAN

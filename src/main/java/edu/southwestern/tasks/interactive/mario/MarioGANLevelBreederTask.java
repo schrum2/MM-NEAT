@@ -10,10 +10,12 @@ import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
@@ -40,7 +42,8 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
-	
+	private static final int FILE_LOADER_BUTTON_INDEX = -21;
+
 	public static final int LEVEL_MIN_CHUNKS = 1;
 	public static final int LEVEL_MAX_CHUNKS = 10;
 	
@@ -79,26 +82,7 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 					if(oldValue != newValue) {
 						int oldLength = oldValue * MarioGANUtil.latentVectorLength();
 						int newLength = newValue * MarioGANUtil.latentVectorLength();
-						// Modify all genotypes' lengths accordingly. This means chopping off,
-						// or elongating by duplicating
-						for(Score<ArrayList<Double>> s : scores) {
-							ArrayList<Double> oldPhenotype = s.individual.getPhenotype();
-							ArrayList<Double> newPhenotype = null;
-							if(newLength < oldLength) { // Get sublist
-								newPhenotype = new ArrayList<>(oldPhenotype.subList(0, newLength));
-							} else if(newLength > oldLength) { // Repeat copies of the original
-								newPhenotype = new ArrayList<>(oldPhenotype); // Start with original
-								while(newPhenotype.size() < newLength) {
-									// Add a full copy (oldLength), or as much as is needed to reach the new length (difference from current size)
-									newPhenotype.addAll(oldPhenotype.subList(0, Math.min(oldLength, newLength - newPhenotype.size())));
-								}
-							} else {
-								throw new IllegalArgumentException("Should not have equal chunk size at this point");
-							}
-							s.individual = new BoundedRealValuedGenotype(newPhenotype,MMNEAT.getLowerBounds(),MMNEAT.getUpperBounds());
-						}
-
-
+						resizeGenotypeVectors(oldLength, newLength);
 						// reset buttons
 						resetButtons(true);
 					}
@@ -106,8 +90,14 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 			}
 		});
 		
+		JButton fileLoadButton = new JButton();
+		fileLoadButton.setText("SelectGANModel");
+		fileLoadButton.setName("" + FILE_LOADER_BUTTON_INDEX);
+		fileLoadButton.addActionListener(this);
+		
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(levelChunksSlider);	
+			top.add(fileLoadButton);
 		}
 		
 		//Construction of button that lets user plays the level
@@ -196,8 +186,72 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 				}
 			}.start();
 		}
+		if(itemID == FILE_LOADER_BUTTON_INDEX) {
+			JFileChooser chooser = new JFileChooser();//used to get new file
+			chooser.setApproveButtonText("Open");
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("GAN Model", "pth");
+			chooser.setFileFilter(filter);
+			// This is where all the GANs are stored (only allowable spot)
+			chooser.setCurrentDirectory(new File("src\\main\\python\\MarioGAN\\GANs"));
+			int returnVal = chooser.showOpenDialog(frame);
+			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
+				int marioGANLevelChunks = Parameters.parameters.integerParameter("marioGANLevelChunks");
+				int oldLength = marioGANLevelChunks * MarioGANUtil.latentVectorLength(); // for old model
+				
+				String model = chooser.getSelectedFile().getName();
+				Parameters.parameters.setString("marioGANModel", model);
+				if(model.equals("GECCO2018GAN_World1-1_32_Epoch5000.pth")) {
+					Parameters.parameters.setInteger("marioGANInputSize", 32); // Default latent vector size
+					Parameters.parameters.setBoolean("marioGANUsesOriginalEncoding", true);
+				} else {
+					// Need to parse the model name to find out the latent vector size
+					String dropDataSource = model.substring(model.indexOf("_")+1);
+					String dropType = dropDataSource.substring(dropDataSource.indexOf("_")+1);
+					String latentSize = dropType.substring(0,dropType.indexOf("_"));
+					int size = Integer.parseInt(latentSize);
+					Parameters.parameters.setInteger("marioGANInputSize", size);
+					Parameters.parameters.setBoolean("marioGANUsesOriginalEncoding", false);
+				}
+				MarioGANUtil.terminateGANProcess();
+				// Because Python process was terminated, latentVectorLength will reinitialize with the new params
+				int newLength = marioGANLevelChunks * MarioGANUtil.latentVectorLength(); // new model
+				resizeGenotypeVectors(oldLength, newLength);
+			}
+			// reset necessary?
+			resetButtons(true);
+		}
+
 		return false; // no undo: every thing is fine
 	}	
+	
+	/**
+	 * Resize the vectors as a result of slider changes or changing the GAN model.
+	 * Some similarity is attempted despite the transformation, but this should mostly
+	 * be used before much evolution occurs.
+	 * 
+	 * @param oldLength
+	 * @param newLength
+	 */
+	private void resizeGenotypeVectors(int oldLength, int newLength) {
+		// Modify all genotypes' lengths accordingly. This means chopping off,
+		// or elongating by duplicating
+		for(Score<ArrayList<Double>> s : scores) {
+			ArrayList<Double> oldPhenotype = s.individual.getPhenotype();
+			ArrayList<Double> newPhenotype = null;
+			if(newLength < oldLength) { // Get sublist
+				newPhenotype = new ArrayList<>(oldPhenotype.subList(0, newLength));
+			} else if(newLength > oldLength) { // Repeat copies of the original
+				newPhenotype = new ArrayList<>(oldPhenotype); // Start with original
+				while(newPhenotype.size() < newLength) {
+					// Add a full copy (oldLength), or as much as is needed to reach the new length (difference from current size)
+					newPhenotype.addAll(oldPhenotype.subList(0, Math.min(oldLength, newLength - newPhenotype.size())));
+				}
+			} else {
+				throw new IllegalArgumentException("Should not have equal chunk size at this point");
+			}
+			s.individual = new BoundedRealValuedGenotype(newPhenotype,MMNEAT.getLowerBounds(),MMNEAT.getUpperBounds());
+		}
+	}
 	
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<ArrayList<Double>> individual) {
