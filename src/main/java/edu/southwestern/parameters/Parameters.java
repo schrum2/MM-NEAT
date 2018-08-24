@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+import competition.cig.robinbaumgarten.AStarAgent;
 import edu.southwestern.boardGame.agents.BoardGamePlayerOneStepEval;
 import edu.southwestern.boardGame.agents.BoardGamePlayerRandom;
 import edu.southwestern.boardGame.featureExtractor.TwoDimensionalRawBoardGameFeatureExtractor;
@@ -38,7 +39,6 @@ import edu.southwestern.tasks.rlglue.featureextractors.StateVariableExtractor;
 import edu.southwestern.tasks.ut2004.actuators.OpponentRelativeMovementOutputModel;
 import edu.southwestern.tasks.ut2004.sensors.OpponentRelativeSensorModel;
 import edu.southwestern.tasks.ut2004.weapons.SimpleWeaponManager;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.GaussianGenerator;
 import edu.southwestern.util.sound.SoundUtilExamples;
 import edu.southwestern.util.stats.Average;
@@ -48,7 +48,6 @@ import micro.ai.mcts.uct.UCT;
 import oldpacman.controllers.examples.Legacy;
 import oldpacman.controllers.examples.StarterPacMan;
 import oldpacman.game.Constants;
-import popacman.examples.StarterPacMan.MyPacMan;
 
 /**
  * Used for processing and containing command line parameters.
@@ -254,6 +253,8 @@ public class Parameters {
 		integerOptions.add("lastSavedGeneration", 0, "Last generation where genotypes were saved");
 		integerOptions.add("layersToView", 1, "How many Pareto layers to view in multinetwork experiment");
 		integerOptions.add("litterSize", 10, "Number of offspring from a single source to evaluate for culling methods");
+		integerOptions.add("marioGANInputSize", 32, "Latent vector input size for Mario GAN level evolution");
+		integerOptions.add("marioGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MarioGAN");
 		integerOptions.add("marioInputHeight", 3, "The height for a Mario input section");
 		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputStartY", -1, "The y coordinate offset for Mario inputs grid");
@@ -552,6 +553,7 @@ public class Parameters {
 		booleanOptions.add("logLock", false, "Don't mess with log files at all");
 		booleanOptions.add("logPacManEvals", false, "Log score from every pacman game");
 		booleanOptions.add("luringTask", false, "Pac-Man rewarded for luring ghosts to power pills before eating pill");
+		booleanOptions.add("marioGANUsesOriginalEncoding", true, "True if the GECCO 2018 encoding is used, false if updated encoding is used");
 		booleanOptions.add("mRTSAll", true, "whether there is a substrate with everything in it");
 		booleanOptions.add("mRTSAllSqrt3MobileUnits", false, "whether there is a substrate with mobile units scored using the simple sqrt 3 evaluation function scoring");
 		booleanOptions.add("mRTSBuildings", false, "whether there is a substrate dedicated to (both players') NON-movable units");
@@ -804,6 +806,7 @@ public class Parameters {
 		stringOptions.add("loadFrom", "", "Where ReplayEA loads networks from");
 		stringOptions.add("log", "log", "Name of prefix for log files of experiment data");
 		stringOptions.add("map", "8x8/basesWorkers8x8.xml", "filepath from maps folder to desired map file for MicroRTSTask");
+		stringOptions.add("marioGANModel", "GECCO2018GAN_World1-1_32_Epoch5000.pth", "File name of GAN model to use for Mario GAN level evolution");
 		stringOptions.add("matchImageFile", "data" + File.separator + "imagematch" + File.separator + "cat.jpg", "path of the image for image match task");
 		stringOptions.add("mazePowerPillGhostMapping", "", "File with saved locations of ghosts when particular power pills are eaten");
 		stringOptions.add("multinetworkPopulation1", "", "Source of first population to combine into multinetworks");
@@ -856,6 +859,7 @@ public class Parameters {
 		classOptions.add("hyperNEATCustomArchitecture", null, "Custom substrate architecture for a HyperNEAT task (overrides HNProcessDepth and HNProcessWidth)");
 		classOptions.add("imageNetModel", VGG19Wrapper.class, "DL4J model that was trained on ImageNet to classify images");
 		classOptions.add("mapElitesBinLabels", null, "class containing way of putting genotypes in bins of the MAP Elites archive");
+		classOptions.add("marioLevelAgent", AStarAgent.class, "Agent that plays evolved Mario levels");
 		classOptions.add("microRTSAgent", UCT.class, "File containing AI to evolve in MicroRTSTask");
 		classOptions.add("microRTSEnemySequence", null, "class containing sequence of opponents for iterative evolution");
 		classOptions.add("microRTSEvaluationFunction", NNComplexEvaluationFunction.class, "File containing evaluation function for MicroRTSTask");

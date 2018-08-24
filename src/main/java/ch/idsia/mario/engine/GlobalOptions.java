@@ -17,6 +17,8 @@ public class GlobalOptions {
 
     public static boolean VisualizationOn = true;
     public static boolean GameVeiwerOn = true;
+    public static boolean JsonAsString = true; // Added specifically for Mario GAN code
+
 
 
     private static MarioComponent marioComponent = null;

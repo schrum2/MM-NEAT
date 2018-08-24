@@ -1,0 +1,8 @@
+The following command uses saved files to create a neural style transfer image from a CPPN image:
+python .\neural_style.py --content ..\..\..\..\data\imagematch\cat.jpg --styles ..\..\..\..\data\imagematch\supercreepypersonimage.jpg --output TEMP.jpg --iterations 100 --style-layer-weight-exp 0.2
+
+Mac/Linux example
+python neural_style.py --content ../../../../data/imagematch/cat.jpg --styles ../../../../data/imagematch/supercreepypersonimage.jpg --output TEMP.jpg --iterations 100 --style-layer-weight-exp 0.2
+
+Windows: This code will load a style "image" saved as a json file and apply it to a specified content image:
+Get-Content .\image_example0.json | python .\neural_style_json.py --content ..\..\..\..\data\imagematch\car.jpg
