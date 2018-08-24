@@ -50,17 +50,26 @@ public class Mushroom extends Sprite
 
     public void collideCheck()
     {
-        float xMarioD = world.mario.x - x;
-        float yMarioD = world.mario.y - y;
-        @SuppressWarnings("unused")
-		float w = 16;
-        if (xMarioD > -16 && xMarioD < 16)
-        {
-            if (yMarioD > -height && yMarioD < world.mario.height)
-            {
-                world.mario.getMushroom();
-                spriteContext.removeSprite(this);
-            }
+    	
+    	// Treat Mario and Luigi the same
+        Mario[] marios = new Mario[LevelScene.twoPlayers ? 2 : 1];
+        marios[0] = world.mario;
+        if(LevelScene.twoPlayers) {
+        	marios[1] = world.luigi;
+        }
+
+        for(Mario mario: marios) {
+        	float xMarioD = mario.x - x;
+        	float yMarioD = mario.y - y;
+        	float w = 16;
+        	if (xMarioD > -w && xMarioD < w)
+        	{
+        		if (yMarioD > -height && yMarioD < mario.height)
+        		{
+        			mario.getMushroom();
+        			spriteContext.removeSprite(this);
+        		}
+        	}
         }
     }
 

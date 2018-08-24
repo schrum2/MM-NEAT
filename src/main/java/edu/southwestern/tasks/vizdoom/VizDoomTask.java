@@ -12,6 +12,7 @@ import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
@@ -580,15 +581,20 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 *         for the domain.
 	 */
 	@Override
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity(){
+	public List<SubstrateConnectivity> getSubstrateConnectivity(){
 		int color = Parameters.parameters.integerParameter("doomInputColorVal");
 		int start = (color == NUM_COLORS ? 0 : color);
 		int end = (color == NUM_COLORS ? NUM_COLORS : color + 1);
 		
-		List<Triple<String, String, Boolean>> conn = HyperNEATUtil.getSubstrateConnectivity((end - start), getOutputNames());
+		List<SubstrateConnectivity> conn = HyperNEATUtil.getSubstrateConnectivity((end - start), getOutputNames());
 		
 		return conn;
 	}	
+	
+	@Override
+	public void flushSubstrateMemory() {
+		// Does not cache substrates
+	}
 	
 	/**
 	 * Default behavior

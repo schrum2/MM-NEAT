@@ -1,263 +1,202 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mario.level;
+
+import java.util.HashMap;
+import java.util.List;
 
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.level.SpriteTemplate;
 import ch.idsia.mario.engine.sprites.Enemy;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
+ * This is the upgraded version of LevelParser that allows for more expressivity
+ * from MarioGAN, and autofixes problems like pipe and bullet bill tiles. The
+ * OldLevelParser is kept around for backwards compatibility with the old GAN,
+ * and is (currently) also used by CPPNs generating levels.
  *
- * @author vv
+ * @author Vanessa Volz
  */
 public class LevelParser {
-
-	public static final int BUFFER_WIDTH = 15;
-
-	/*
-	 "tiles" : {
-    0    "X" : ["solid","ground"],
-    1    "S" : ["solid","breakable"],
-    2    "-" : ["passable","empty"],
-    3    "?" : ["solid","question block", "full question block"],
-    4    "Q" : ["solid","question block", "empty question block"],
-    5    "E" : ["enemy","damaging","hazard","moving"], // Results in a generic ground goomba
-    6    "<" : ["solid","top-left pipe","pipe"],
-    7    ">" : ["solid","top-right pipe","pipe"],
-    8    "[" : ["solid","left pipe","pipe"],
-    9    "]" : ["solid","right pipe","pipe"],
-    10   "o" : ["coin","collectable","passable"]
-    11   "B" : Top of a Bullet Bill cannon, solid
-    12   "b" : Body/support of a Bullet Bill cannon, solid
-	 */
-
-	/**
-	 * Types added by schrum2:
-	 * 
-	 * W = winged goomba
-	 * g = green shelled koopa
-	 * r = red shelled koopa
-	 * G = winged green koopa
-	 * R = winged red koopa
-	 * ^ = spiky shelled enemy
-	 * & = winged spiky shelled enemy
-	 */
-
-	/**
-	 * char based version of method below
-	 * @param code
-	 * @return
-	 */
-	public static boolean isEnemy(char code) {
-		return isEnemy(code+"");
-	}
 	
-	/**
-	 * Based on the list of enemy types above
-	 * @param code
-	 * @return
-	 */
-	public static boolean isEnemy(String code) {
-		return code.equals("E") || code.equals("W") || code.equals("G") || code.equals("g") || code.equals("r") || code.equals("R") || code.equals("^") || code.equals("&");
-	}
+	//////////// --- Vanessa originally had the code below in a file called Settings.java, but I moved it directly here
+    public static final java.util.Map<Character, Integer> tiles = new HashMap<>();
+    
+    static {
+        tiles.put('X', 0); //solid
+        tiles.put('x', 1); //breakable
+        tiles.put('-', 2); //passable
+        tiles.put('q', 3); //question with coin
+        tiles.put('Q', 4); //question with power up
+        tiles.put('o', 5); //coin
+        tiles.put('t', 6); //tube
+        tiles.put('p', 7); //piranha plant tube
+        tiles.put('b', 8); //bullet bill
+        tiles.put('g', 9); //goomba
+        tiles.put('k', 10); //green koopas + paratroopas
+        tiles.put('r', 11); //red koopas + paratroopas
+        tiles.put('s', 12); //spiny + winged spiny
+    }
+    
+    public static final java.util.Map<Integer, Integer> tilesMario = new HashMap<>();
+    //encoding can be found in LevelScene ZMap    
+    static {
+        tilesMario.put(0, 9); //solid
+        tilesMario.put(1, 16); //breakable
+        tilesMario.put(2, 0); //passable
+        tilesMario.put(3, 21); //question with coin
+        tilesMario.put(4, 22); //question with power up
+        tilesMario.put(5, 34); //coin
+    }
+    
+    public static final java.util.Map<String, Integer> tilesAdv = new HashMap<>();
+    //numbers from the picture files "mapsheet.png"
+    static{
+        tilesAdv.put("bb", 14+0*16); //bullet bill shooter
+        tilesAdv.put("bbt", 14+1*16); //bullet bill top
+        tilesAdv.put("bbb", 14+2*16); //bullet bill bottom
+        tilesAdv.put("ttl", 10+0+0*16); //tube top left
+        tilesAdv.put("ttr", 10+1+0*16); //tube top right
+        tilesAdv.put("tbl", 10+0+1*16); //tube bottom left
+        tilesAdv.put("tbr", 10+1+1*16); //tube bottom right
+    }
+    //////////////////////// -- End of code from Settings.java
 	
-	/**
-	 * Generate sprites based on the enemy codes above
-	 * @param code
-	 * @return
-	 */
-	private SpriteTemplate spriteForCode(String code) {
-		switch(code) {
-		case "E":
-			return new SpriteTemplate(Enemy.ENEMY_GOOMBA, false);
-		case "W":
-			return new SpriteTemplate(Enemy.ENEMY_GOOMBA, true);
-		case "g":
-			return new SpriteTemplate(Enemy.ENEMY_GREEN_KOOPA, false);
-		case "G":
-			return new SpriteTemplate(Enemy.ENEMY_GREEN_KOOPA, true);
-		case "r":
-			return new SpriteTemplate(Enemy.ENEMY_RED_KOOPA, false);
-		case "R":
-			return new SpriteTemplate(Enemy.ENEMY_RED_KOOPA, true);
-		case "^":
-			return new SpriteTemplate(Enemy.ENEMY_SPIKY, false);
-		case "&":
-			return new SpriteTemplate(Enemy.ENEMY_SPIKY, true);
-		default:
-			throw new IllegalArgumentException("Invalid enemy sprite code: " + code);
-		}
-	}
+    
+    public static final int BUFFER_WIDTH = 15; // This is the extra space added at the start and ends of levels
+    public LevelParser(){
+        
+    }    
+    
+     
+    // Jacob: I commented this out so I would not need to include the MarioReader class, but may add it back later.
+    //For Testing purposes to create straight from example files
+//    public static Level createLevelASCII(String filename) throws Exception
+//    {
+//    	int[][] level = MarioReader.readLevel(new Scanner(new FileInputStream(filename)));
+//        return createLevel(level);        
+//    }
 
+    public static Level createLevel(int[][] input){
+        int width = input[0].length;
+    	int height = input.length;
+    	int extraStones = BUFFER_WIDTH;
+    	Level level = new Level(width+2*extraStones,height);
+        //Set Level Exit
+        //Extend level by that
+        level.xExit = width+extraStones+1; // Push exit point over by 1 so that goal post does not overlap with other level sprites
+        level.yExit = height-1;
+        
+        for(int i=0; i<extraStones; i++){
+            level.setBlock(i, height-1, (byte) 9);
+        }
+        for(int i=0; i<extraStones; i++){
+            level.setBlock(width+i+extraStones, height-1, (byte) 9);
+        }
+        
+        //set Level map
+        //revert order of iterating rows bottom -> top (so that below tiles can be checked for building tubes etc)
+        for(int i=height-1; i>=0; i--){
+            for(int j=width-1; j>=0; j--){
+                int code = input[i][j];
+                if(code>=9){
+                    //set Enemy
+                    int code_below=0;
+                    if(i+1<height){//just in case we are in bottom row
+                       code_below = input[i+1][j]; 
+                    }
+                    level.setSpriteTemplate(j+extraStones, i, getEnemySprite(code,code_below==2));
+                }else if(code==8){//bullet bill
+                    level.setBlock(j + extraStones, i, tilesAdv.get("bb").byteValue());//bullet bill shooter
+                    if(i+1<height && input[i+1][j]==2){
+                        level.setBlock(j + extraStones, i+1, tilesAdv.get("bbt").byteValue());//bullet bill top 
+                        for(int k=i+2; k<height; k++){
+                            if(input[k][j]==2){
+                                level.setBlock(j+extraStones, k, tilesAdv.get("bbb").byteValue());
+                            }else{
+                                break;
+                            }
+                        }
+                    }
+                }else if(code==6 || code==7){//tubes + plants
+                    level.setBlock(j + extraStones, i, tilesAdv.get("ttl").byteValue());
+                    level.setBlock(j + extraStones +1, i, tilesAdv.get("ttr").byteValue());
+                    for(int k=i+1; k<height; k++){
+                        if(input[k][j]==2 || (j<width-1 && input[k][j+1]==2)){
+                            level.setBlock(j+extraStones, k, tilesAdv.get("tbl").byteValue());
+                            level.setBlock(j+extraStones+1, k, tilesAdv.get("tbr").byteValue());
+                        }else{
+                            break;
+                        }
+                    }
+                    if(code==7){
+                        level.setSpriteTemplate(j + extraStones, i, new SpriteTemplate(Enemy.ENEMY_FLOWER, false));
+                    }
+                }else if(code!=2) {
+                    level.setBlock(j+extraStones, i, tilesMario.get(code).byteValue());
+                }
+            }
+        }
+                
+        return level;
+    }
 
-
-
-	/**
-	 * Create level from text file with 2D arrangement of
-	 * level content.
-	 * 
-	 * @param filename
-	 * @return
-	 */
-	public Level createLevelASCII(String filename) {
-		//Read in level representation
-		ArrayList<String> lines = new ArrayList<String>();
-		try {
-			File file = new File(filename);
-			FileReader fileReader = new FileReader(file);
-			BufferedReader bufferedReader = new BufferedReader(fileReader);
-			String line;
-			while ((line = bufferedReader.readLine()) != null) {
-				lines.add(line);
-			}
-			fileReader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return createLevelASCII(lines);
-	}        
-
-	/**
-	 * Create level from list of Strings corresponding to the 2D
-	 * layout of the level.
-	 * 
-	 * @param lines
-	 * @return
-	 */
-	public Level createLevelASCII(ArrayList<String> lines) {
-		int width = lines.get(0).length();
-		int height = lines.size();
-		int actualWidth = width+2*BUFFER_WIDTH;
-		Level level = new Level(actualWidth,height);
-
-		//Set Level Exit
-		//Extend level by that
-		level.xExit = width+BUFFER_WIDTH+1;
-		level.yExit = height-1;
-
-		for(int i=0; i<BUFFER_WIDTH; i++){
-			level.setBlock(i, height-1, (byte) 9);
-		}
-
-		for(int i=0; i<BUFFER_WIDTH; i++){
-			level.setBlock(width+i+BUFFER_WIDTH, height-1, (byte) 9);
-		}
-
-		//set Level map
-		for(int i=0; i<height; i++){
-			for(int j=0; j<lines.get(i).length(); j++){
-				String code = String.valueOf(lines.get(i).charAt(j));
-				if(isEnemy(code)){
-					//set Enemy
-					//new SpriteTemplate(type, boolean winged)
-					level.setSpriteTemplate(j+BUFFER_WIDTH, i, spriteForCode(code));
-					//System.out.println("j: "+j+" i:"+i);
-					//set passable tile: everything not set is passable
-				}else{
-					int encoded = codeParserASCII(code);
-					if(encoded !=0){
-						level.setBlock(j+BUFFER_WIDTH, i, (byte) encoded);
-						//System.out.println("j: "+j+" i:"+i+" encoded: "+encoded);
-					}
-				}
-			}
-		}
-
-		return level;
-	}
-
-	public Level createLevelJson(List<List<Integer>> input)
-	{
-		int width = input.get(0).size();
-		int height = input.size();
-		int extraStones = 15;
-		Level level = new Level(width+2*extraStones,height);
-
-		//Set Level Exit
-		//Extend level by that
-		level.xExit = width+extraStones;
-		level.yExit = height-1;
-
-		for(int i=0; i<extraStones; i++){
-			level.setBlock(i, height-1, (byte) 9);
-		}
-		for(int i=0; i<extraStones; i++){
-			level.setBlock(width+i+extraStones, height-1, (byte) 9);
-		}
-
-		//set Level map
-		for(int i=0; i<height; i++){
-			for(int j=0; j<width; j++){
-				int code = input.get(i).get(j);
-				if(5==code){
-					//set Enemy
-					//new SpriteTemplate(type, boolean winged)
-					level.setSpriteTemplate(j+extraStones, i, new SpriteTemplate(Enemy.ENEMY_GOOMBA, false));
-					//System.out.println("j: "+j+" i:"+i);
-					//set passable tile: everything not set is passable
-				}else{
-					int encoded = codeParser(code);
-					if(encoded !=0){
-						level.setBlock(j+extraStones, i, (byte) encoded);
-						//System.out.println("j: "+j+" i:"+i+" encoded: "+encoded);
-					}
-				}
-			}
-		}
-
-		return level;
-	}
-
-
-
-	public int codeParser(int code){
-		int output = 0;
-		switch(code){
-		case 0: output = 9; break; //rocks
-		case 1: output = 16; break; //"S" : ["solid","breakable"]
-		case 3: output = 21; break; //"?" : ["solid","question block", "full question block"]
-		case 6: output = 10; break; //"<" : ["solid","top-left pipe","pipe"]
-		case 7: output = 11; break; //">" : ["solid","top-right pipe","pipe"]
-		case 8: output = 26; break; //"[" : ["solid","left pipe","pipe"]
-		case 9: output = 27; break; //"]" : ["solid","right pipe","pipe"]
-		case 10: output = 34; break; //"o" : ["coin","collectable","passable"]
-        // Bullet Bill cannons not described in VDLC json, but were present in the data
-        case 11: output = 14; break; //"B" : Top of a Bullet Bill cannon, solid
-        // There may be a problem here: VGLC uses "b" to represent what is either sprite 30 or 46 in Infinite Mario
-        case 12: output = 46; break; //"b" : Body/support of a Bullet Bill cannon, solid
-		default: output=0; break; //"-" : ["passable","empty"],  "Q" : ["solid","question block", "empty question block"],  "E" : ["enemy","damaging","hazard","moving"],
-		}
-		return output;
-	}
-
-	public int codeParserASCII(String code){
-		int output = 0;
-		switch(code){
-		case "X": output = 9; break; //rocks
-		case "S": output = 16; break; //"S" : ["solid","breakable"]
-		case "?": output = 21; break; //"?" : ["solid","question block", "full question block"]
-		case "<": output = 10; break; //"<" : ["solid","top-left pipe","pipe"]
-		case ">": output = 11; break; //">" : ["solid","top-right pipe","pipe"]
-		case "[": output = 26; break; //"[" : ["solid","left pipe","pipe"]
-		case "]": output = 27; break; //"]" : ["solid","right pipe","pipe"]
-		case "o": output = 34; break; //"o" : ["coin","collectable","passable"]
-        // Bullet Bill cannons not described in VDLC json, but were present in the data
-        case "B": output = 14; break; //"B" : Top of a Bullet Bill cannon, solid
-        // There may be a problem here: VGLC uses "b" to represent what is either sprite 30 or 46 in Infinite Mario
-        case "b": output = 46; break; //"b" : Body/support of a Bullet Bill cannon, solid
-		default: output=0; break; //"-" : ["passable","empty"],  "Q" : ["solid","question block", "empty question block"],  "E" : ["enemy","damaging","hazard","moving"],
-		}
-		return output;
-	}
-
+    private static int[] toIntArray(List<Integer> list){
+        int[] ret = new int[list.size()];
+        for(int i = 0;i < ret.length;i++)
+            ret[i] = list.get(i);
+        return ret;
+    }
+    
+    public static Level createLevelJson(List<List<Integer>> input)
+    {
+        int[][] output = new int[input.size()][];
+        int i = 0;
+        for (List<Integer> nestedList : input) {
+            output[i++] = toIntArray(nestedList);
+        }
+        return createLevel(output);
+    }
+  
+    
+    public static SpriteTemplate getEnemySprite(int code, boolean flying){
+        int type = 0;
+        switch(code){
+            case 9:
+                type=Enemy.ENEMY_GOOMBA;
+                break;
+            case 10:
+                type=Enemy.ENEMY_GREEN_KOOPA;
+                break;
+            case 11:
+                type=Enemy.ENEMY_RED_KOOPA;
+                break;
+            case 12:
+                type=Enemy.ENEMY_SPIKY;
+                break;
+        }
+        SpriteTemplate enemy = new SpriteTemplate(type, flying);
+        return enemy;
+    }
+    
+    
+       public Level test(){
+        Level level = new Level(202,14);
+        level.setBlock(1, 13, (byte) 9);
+        level.setBlock(2, 13, (byte) 9);
+        level.setBlock(3, 13, (byte) 9);
+        level.setBlock(4, 13, (byte) 9);
+        level.setBlock(5, 13, (byte) 9);
+        level.setBlock(6, 13, (byte) 9);
+        level.setBlock(7, 13, (byte) 9);
+        level.setBlock(4, 10, (byte) 9);
+        //level.setSpriteTemplate(3,10, new SpriteTemplate(100, false));
+        //level.setBlock(6,10,(byte)(14));
+        //level.setBlock(6,11,(byte)(14+16));
+        //level.setBlock(6,12,(byte)(14+2*16));
+        level.setBlock(3, 10, (byte) 24);
+        level.setBlock(6, 10, (byte) 25);
+        level.setBlock(7, 10, (byte) 18);
+        level.setBlock(5, 10, (byte) 23);
+        
+        return level;
+    }
 }

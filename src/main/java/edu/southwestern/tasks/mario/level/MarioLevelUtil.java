@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
@@ -11,7 +12,9 @@ import ch.idsia.ai.tasks.ProgressTask;
 import ch.idsia.mario.engine.LevelRenderer;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.tools.CmdLineOptions;
+import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
+import ch.idsia.tools.Evaluator;
 import ch.idsia.tools.ToolsConfigurator;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
@@ -19,6 +22,7 @@ import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplac
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
@@ -154,8 +158,8 @@ public class MarioLevelUtil {
 								   level[current].charAt(leftEdge+1) == EMPTY_CHAR ||
 								   level[current].charAt(leftEdge) == COIN_CHAR ||
 								   level[current].charAt(leftEdge+1) == COIN_CHAR ||
-								   LevelParser.isEnemy(level[current].charAt(leftEdge)) ||
-								   LevelParser.isEnemy(level[current].charAt(leftEdge+1)))) {
+								   OldLevelParser.isEnemy(level[current].charAt(leftEdge)) ||
+								   OldLevelParser.isEnemy(level[current].charAt(leftEdge+1)))) {
 								level[current] = level[current].substring(0, leftEdge) + "[]" + level[current].substring(leftEdge+2); // body
 								//System.out.println(level[current]);
 								current++;
@@ -174,7 +178,7 @@ public class MarioLevelUtil {
 								(isCannon(level[current].charAt(edge)) ||
 										level[current].charAt(edge) == EMPTY_CHAR ||
 										level[current].charAt(edge) == COIN_CHAR ||
-										LevelParser.isEnemy(level[current].charAt(edge)))) {
+										OldLevelParser.isEnemy(level[current].charAt(edge)))) {
 							level[current] = level[current].substring(0, edge) + "b" + level[current].substring(edge+1); // support
 							current++;
 						}						
@@ -207,6 +211,17 @@ public class MarioLevelUtil {
 	}
 
 	/**
+	 * Generates a level assuming all CPPN inputs are turned on.
+	 * Default behavior.
+	 * @param net CPPN that generates level
+	 * @param width Width of level in tiles
+	 * @return A Mario level
+	 */
+	public static Level generateLevelFromCPPN(Network net, int width) {
+		return generateLevelFromCPPN(net, ArrayUtil.doubleOnes(net.numInputs()), width);
+	}
+	
+	/**
 	 * Take a cppn and a width and completely generate the level
 	 * @param net CPPN
 	 * @param width In Mario blocks
@@ -221,7 +236,7 @@ public class MarioLevelUtil {
 			lines.add(stringBlock[i]);
 		}
 
-		LevelParser parse = new LevelParser();
+		OldLevelParser parse = new OldLevelParser();
 		Level level = parse.createLevelASCII(lines);
 		return level;
 	}
@@ -240,10 +255,10 @@ public class MarioLevelUtil {
         options.setLevel(level);
 		task.setOptions(options);
 
-		int relevantWidth = (level.width - (2*LevelParser.BUFFER_WIDTH)) * MarioLevelUtil.BLOCK_SIZE;
-		BufferedImage image = new BufferedImage(relevantWidth, MarioLevelUtil.LEVEL_HEIGHT*MarioLevelUtil.BLOCK_SIZE, BufferedImage.TYPE_INT_ARGB);
+		int relevantWidth = (level.width - (2*OldLevelParser.BUFFER_WIDTH)) * MarioLevelUtil.BLOCK_SIZE;
+		BufferedImage image = new BufferedImage(relevantWidth, (1+level.height)*MarioLevelUtil.BLOCK_SIZE, BufferedImage.TYPE_INT_ARGB);
 		// Skips buffer zones at start and end of level
-		LevelRenderer.renderArea((Graphics2D) image.getGraphics(), level, 0, 0, LevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, LEVEL_HEIGHT*BLOCK_SIZE);
+		LevelRenderer.renderArea((Graphics2D) image.getGraphics(), level, 0, 0, OldLevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, (1+level.height)*BLOCK_SIZE);
 		return image;
 	}
 	
@@ -253,15 +268,34 @@ public class MarioLevelUtil {
 	 * @param agent
 	 * @return
 	 */
-	public static double[] agentPlaysLevel(Level level, Agent agent) {
+	public static List<EvaluationInfo> agentPlaysLevel(Level level, Agent agent) {
 		EvaluationOptions options = new CmdLineOptions(new String[]{});
+		return agentPlaysLevel(level, agent, options);
+	}
+
+	/**
+	 * Same as above, but allows custom eval options that change many settings.
+	 * @param level Level to evaluate in
+	 * @param agent Agent to evaluate
+	 * @param options Mario configuration options (but not the level or agent)
+	 * @return list of information about the evaluations
+	 */
+	public static List<EvaluationInfo> agentPlaysLevel(Level level, Agent agent, EvaluationOptions options) {
 		options.setAgent(agent);
-		ProgressTask task = new ProgressTask(options);
         options.setLevel(level);
-		task.setOptions(options);
-		double[] result = task.evaluate(options.getAgent());
+        return agentPlaysLevel(options);
+	}
+        
+	/**
+	 * Now, the evaluation options must also specify the level and the agent.
+	 * @param options Mario options, including level and agent
+	 * @return evaluation results
+	 */
+   	public static List<EvaluationInfo> agentPlaysLevel(EvaluationOptions options) {
+        Evaluator evaluator = new Evaluator(options);
+		List<EvaluationInfo> results = evaluator.evaluate();
 		ToolsConfigurator.DestroyMarioComponentFrame();
-		return result;
+		return results;
 	}
 	
 	/**
@@ -315,11 +349,11 @@ public class MarioLevelUtil {
 
 		task.setOptions(options);
 
-		int relevantWidth = (level.width - (2*LevelParser.BUFFER_WIDTH)) * BLOCK_SIZE;
+		int relevantWidth = (level.width - (2*OldLevelParser.BUFFER_WIDTH)) * BLOCK_SIZE;
 		//System.out.println("level.width:"+level.width);
 		//System.out.println("relevantWidth:"+relevantWidth);
 		DrawingPanel levelPanel = new DrawingPanel(relevantWidth,LEVEL_HEIGHT*BLOCK_SIZE, "Level");
-		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, LevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, LEVEL_HEIGHT*BLOCK_SIZE);
+		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, OldLevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, LEVEL_HEIGHT*BLOCK_SIZE);
 		
 		System.out.println ("Score: " + task.evaluate(options.getAgent())[0]);
 		

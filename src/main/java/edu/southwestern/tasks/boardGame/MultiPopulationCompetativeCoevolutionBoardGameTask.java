@@ -18,6 +18,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.GroupTask;
@@ -152,7 +153,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 	}
 
 	@Override
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
+	public List<SubstrateConnectivity> getSubstrateConnectivity() {
 		return BoardGameUtil.getSubstrateConnectivity();
 	}
 
@@ -164,6 +165,11 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 	@Override
 	public String[] outputLabels() {
 		return new String[]{"Utility"};
+	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
 	}
 
 }

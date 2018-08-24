@@ -28,7 +28,6 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.tetris.TetrisViewer;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.random.RandomNumbers;
 
 public class TetrisState {
 	/* Action values */
@@ -53,7 +52,7 @@ public class TetrisState {
 			+ TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS + 5;
 	public static final int[] BLOCK_ROTATIONS = { 2, 1, 4, 2, 2, 4, 4 };
 
-	private Random randomGenerator = RandomNumbers.randomGenerator;
+	public static Random randomGenerator;
 	public boolean blockMobile = true;
 	public int currentBlockId;/* which block we're using in the block table */
 
@@ -62,6 +61,7 @@ public class TetrisState {
 
 	public int currentY;
 	public int score;/* what is the current_score */
+	private int linesCleared; /* the total number of lines cleared */
 
 	public boolean is_game_over;/* have we reached the end state yet */
 
@@ -127,6 +127,7 @@ public class TetrisState {
 		currentX = worldWidth / 2 - 1;
 		currentY = 0;
 		score = 0;
+		linesCleared = 0;
 		for (int i = 0; i < worldState.length; i++) {
 			worldState[i] = 0;
 		}
@@ -534,6 +535,7 @@ public class TetrisState {
 		// 3 lines == 4
 		// 4 lines == 8
 		score += java.lang.Math.pow(2.0d, numRowsCleared - 1);
+		linesCleared += numRowsCleared;
 	}
 
 	/**
@@ -595,6 +597,14 @@ public class TetrisState {
 	 */
 	public int get_score() {
 		return score;
+	}
+	
+	/**
+	 * total number of lines cleared for current evaluation
+	 * @return total number of lines cleared
+	 */
+	public int get_linesCleared() {
+		return linesCleared;
 	}
 	
 	/**
@@ -667,6 +677,7 @@ public class TetrisState {
 		this.currentX = stateToCopy.currentX;
 		this.currentY = stateToCopy.currentY;
 		this.score = stateToCopy.score;
+		this.linesCleared = stateToCopy.linesCleared;
 		this.is_game_over = stateToCopy.is_game_over;
 
 		this.worldState = new int[stateToCopy.worldState.length];

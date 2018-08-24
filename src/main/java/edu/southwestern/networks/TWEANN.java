@@ -1,21 +1,5 @@
 package edu.southwestern.networks;
 
-import edu.southwestern.evolution.EvolutionaryHistory;
-import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
-import edu.southwestern.evolution.genotypes.TWEANNGenotype;
-import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.southwestern.evolution.lineage.Offspring;
-import edu.southwestern.networks.hyperneat.HyperNEATUtil;
-import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.parameters.CommonConstants;
-import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.CombinatoricUtilities;
-import edu.southwestern.util.graphics.DrawingPanel;
-import edu.southwestern.util.graphics.GraphicsUtil;
-import edu.southwestern.util.graphics.Plot;
-import edu.southwestern.util.random.RandomNumbers;
-import edu.southwestern.util.stats.StatisticsUtilities;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -24,6 +8,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.NormalizedMemoryNodeGene;
+import edu.southwestern.evolution.lineage.Offspring;
+import edu.southwestern.networks.hyperneat.HyperNEATVisualizationUtil;
+import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.CombinatoricUtilities;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.graphics.GraphicsUtil;
+import edu.southwestern.util.graphics.Plot;
+import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
  * My version of a Topology and Weight Evolving Neural Network. Nodes are stored
@@ -61,6 +63,7 @@ public class TWEANN implements Network {
 		public final long innovation;
 		public final boolean recurrent;
 		public final boolean frozen;
+		public final int moduleSource;
 
 		@Override
 		public String toString() {
@@ -84,22 +87,24 @@ public class TWEANN implements Network {
 		 * @param frozen
 		 *            whether link can be changed by mutation
 		 */
-		public Link(Node target, double weight, long innovation, boolean recurrent, boolean frozen) {
+		public Link(Node target, double weight, long innovation, boolean recurrent, boolean frozen, int moduleSource) {
 			this.target = target;
 			this.weight = weight;
 			this.innovation = innovation;
 			this.recurrent = recurrent;
 			this.frozen = frozen;
+			this.moduleSource = moduleSource;
 		}
 
-		protected void transmit(double signal) {
+		protected void transmit(double signal) {			
+			assert target != null : "Link target is null? " + innovation + " with weight " + weight;
 			assert!Double.isNaN(target.sum) : "target.sum is NaN before transmit";
 			assert!Double.isNaN(signal) : "signal is NaN before transmit";
 			assert!Double.isNaN(weight) : "weight is NaN before transmit";
 			assert!Double.isNaN(signal * weight) : "signal * weight is NaN before transmit: " + signal + "*" + weight;
 			//if(target.innovation == 9) System.out.print(" to "+target.innovation+ ":" + target.sum + " += receiving " + signal + "*"+weight+"; ");
             target.sum += (signal * weight);
-			//if(target.innovation == 9) System.out.println("new sum:" + target.sum);
+            //if(target.innovation == 9) System.out.println("new sum:" + target.sum);
 			assert!Double.isNaN(target.sum) : "target.sum is NaN after transmit: " + signal + "*" + weight;
 		}
 	}
@@ -280,6 +285,8 @@ public class TWEANN implements Network {
 
 		/**
 		 * Creates connection from this Node to target Node via a new Link.
+		 * The module source for the link is -1 because this feature only makes
+		 * sense for HyperNEAT networks.
 		 *
 		 * @param target
 		 *            Node to link to
@@ -293,7 +300,22 @@ public class TWEANN implements Network {
 		 *            whether or not link can be changed
 		 */
 		protected void connect(Node target, double weight, long innovation, boolean recurrent, boolean frozen) {
-			Link l = new Link(target, weight, innovation, recurrent, frozen);
+			connect(target, weight, innovation, recurrent, frozen, -1);
+		}
+		
+		/**
+		 * Same as above, but specifies the module that defined the link
+		 * (meaning that a CPPN module defined this substrate network link)
+		 * 
+		 * @param target
+		 * @param weight
+		 * @param innovation
+		 * @param recurrent
+		 * @param frozen
+		 * @param linkModuleSource
+		 */
+		protected void connect(Node target, double weight, long innovation, boolean recurrent, boolean frozen, int linkModuleSource) {
+			Link l = new Link(target, weight, innovation, recurrent, frozen, linkModuleSource);
 			outputs.add(l);
 		}
 
@@ -501,7 +523,9 @@ public class TWEANN implements Network {
 		int section = Node.NTYPE_INPUT;
 		for (int i = 0; i < g.nodes.size(); i++) {
 			TWEANNGenotype.NodeGene ng = g.nodes.get(i);
-			Node n = new Node(ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.getBias());
+			Node n = ng instanceof NormalizedMemoryNodeGene ? 
+					new NormalizedMemoryNode(this, ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.getBias(), ng.getMemoryGamma(), ng.getMemoryBeta()): 
+					new Node(ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.getBias());
 			switch (ng.ntype) {
 			case Node.NTYPE_INPUT:
 				assert(section == Node.NTYPE_INPUT) : "Genome encoded false network: inputs: \n" + g;
@@ -542,10 +566,10 @@ public class TWEANN implements Network {
 			}
 		}
 		// Is true if net has one mode
-		assert(numModes != 1 || numOut <= neuronsPerModule + 1) : "Too many outputs for one mode" + "\n" + "g.getId():"
-		+ g.getId() + "\n" + "g.archetypeIndex:" + g.archetypeIndex + "\n" + "g.numIn:" + g.numIn + "\n"
-		+ "g.numOut:" + g.numOut + "\n" + "g.nodes.size():" + g.nodes.size() + "\n"
-		+ "EvolutionaryHistory.archetypeOut:" + Arrays.toString(EvolutionaryHistory.archetypeOut);
+//		assert(numModes != 1 || numOut <= neuronsPerModule + 1) : "Too many outputs for one mode" + "\n" + "g.getId():"
+//		+ g.getId() + "\n" + "g.archetypeIndex:" + g.archetypeIndex + "\n" + "g.numIn:" + g.numIn + "\n"
+//		+ "g.numOut:" + g.numOut + "\n" + "g.nodes.size():" + g.nodes.size() + "\n"
+//		+ "EvolutionaryHistory.archetypeOut:" + Arrays.toString(EvolutionaryHistory.archetypeOut);
 		// Is true if net has more than one mode
 		assert(numModes == 1
 				|| numOut == (neuronsPerModule + (standardMultitask || CommonConstants.ensembleModeMutation ? 0 : 1))
@@ -561,7 +585,7 @@ public class TWEANN implements Network {
 				Node target = getNode(lg.targetInnovation);
 				assert(target != null) : "No target: " + lg + "\nNet:" + g.getId();
 				assert(source != null) : "How could the source be null?";
-				source.connect(target, lg.weight, lg.innovation, lg.isRecurrent(), lg.isFrozen());
+				source.connect(target, lg.weight, lg.innovation, lg.isRecurrent(), lg.isFrozen(), lg.getModuleSource());
 			}
 		}
 		outputStart = nodes.size() - numOut;
@@ -737,11 +761,11 @@ public class TWEANN implements Network {
 		} else {
 			outputs = moduleOutput(chosenModule);
 		}
+
 		if (canDraw) {
 			if(!HyperNEATCPPNGenotype.constructingNetwork && CommonConstants.hyperNEAT && CommonConstants.monitorSubstrates) {
 				animateSubstrate();
 			}
-				
 			if (panel != null && Parameters.parameters.booleanParameter("animateNetwork")) {
 				draw(panel);
 			}
@@ -749,7 +773,7 @@ public class TWEANN implements Network {
 				assert inputs.length == numIn : "Too many inputs: " + numIn + ":" + Arrays.toString(inputs);
 				refreshActivation(inputPanel, inputs, outputs, preferences, standardMultitask, preferenceFatigue);
 			}
-		}
+		}		
 		return outputs;
 	}
 
@@ -835,11 +859,20 @@ public class TWEANN implements Network {
 		}
 	}
 
+	// Only used within substrate networks to visualize substrate activations
+	private List<Substrate> substrateInformation = null;
+	public void passSubstrateInformation(List<Substrate> substrateInformation) {
+		this.substrateInformation = substrateInformation;
+	}
+	
 	/**
 	 * Creates and updates visuals of substrates used by h-neat tetris task 
 	 */
 	public void animateSubstrate() {
-			subsPanel = HyperNEATUtil.drawSubstrates(nodes);
+//			for(Substrate s : substrateInformation) { 
+//				System.out.println(s);
+//			}
+			HyperNEATVisualizationUtil.drawSubstrates(nodes, substrateInformation);
 			//tweannGenotype has getLinkBetween
 			//just need to find a way to get neuron innovation numbers
 	}
@@ -1036,7 +1069,7 @@ public class TWEANN implements Network {
 	 * @param frozen if link is frozen
 	 * @param recurrent if link is recurrent
 	 */
-	private void setLinkColor(Graphics2D g, boolean frozen, boolean recurrent) {
+	private void setLinkColor(Graphics2D g, boolean recurrent, boolean frozen) {
 		if (frozen) {
 			g.setColor(Color.CYAN);
 		} else if (!recurrent) {
@@ -1059,7 +1092,12 @@ public class TWEANN implements Network {
 					Node target = disLink.target;
 					checkLinkTarget(target);
 					if (showInnovationNumbers)drawLinkInnovationNumbersAndWeights(g, display, target, disLink, showWeights);
-					setLinkColor(g, disLink.recurrent, disLink.frozen);
+					setLinkColor(g, 
+							disLink.recurrent || // Explicitly labeling a link as recurrent is possible, but isn't really done
+							(archetypeIndex != -1 && // Substrate networks do not have archetypes so order cannot be checked
+							// But we can check if the target node precedes the source in the archetype
+							EvolutionaryHistory.indexOfArchetypeInnovation(archetypeIndex, disLink.target.innovation) < EvolutionaryHistory.indexOfArchetypeInnovation(archetypeIndex, display.innovation)), 
+							disLink.frozen);
 					drawLink(g, display, target, disLink, disLink.recurrent ? -1 : 1);
 				}
 			}
@@ -1372,13 +1410,13 @@ public class TWEANN implements Network {
 	 */
 	private void checkNode(Graphics2D g, Node display)	 {
 		double activation = display.activation;
-		if (display.frozen) {
-			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 2);
-		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions")) { // TODO: Just move this to where the node is drawn in the first place?
-			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 2);
-		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions") && display.frozen) {
+		if(Parameters.parameters.booleanParameter("allowMultipleFunctions") && display.frozen) { // TODO: Is this case even reachable?
 			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 4);
 			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 4);
+		} else if (display.frozen) {
+			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 2);
+		} else if (Parameters.parameters.booleanParameter("allowMultipleFunctions")) { // TODO: Just move this to where the node is drawn in the first place?
+			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 2);
 		}
 	}
 

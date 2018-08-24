@@ -25,7 +25,7 @@ public class Quad<W, X, Y, Z> {
 
 	@Override
 	public String toString() {
-		return "(" + t1.toString() + "," + t2.toString() + "," + t3.toString() + "," + t4.toString() + ")";
+		return "(" + t1 + "," + t2 + "," + t3 + "," + t4 + ")";
 	}
 
 	@Override

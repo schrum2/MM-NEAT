@@ -13,6 +13,7 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
@@ -147,7 +148,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	} 
 
 	@Override
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
+	public List<SubstrateConnectivity> getSubstrateConnectivity() {
 		return MicroRTSUtility.getSubstrateConnectivity(initialPgs);
 	}
 
@@ -353,5 +354,10 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	@Override
 	public int getNumInputSubstrates() {
 		return ef.getNumInputSubstrates();
+	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
 	}
 }

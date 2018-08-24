@@ -80,14 +80,43 @@ public class StatisticsUtilities {
 	 */
 	public static int argmax(double[] xs) {
 		assert xs.length > 0;
-		double max = -Double.MAX_VALUE; // Stores the maximum value; assumed to be the smallest possible Double value (to allow for comparison)
+		double max = Double.NEGATIVE_INFINITY; // Stores the maximum value; assumed to be the smallest possible Double value (to allow for comparison)
 		ArrayList<Integer> equalMaxIndexes = new ArrayList<Integer>(xs.length);
 		for (int i = 0; i < xs.length; i++) {
-			assert i != 0 || xs[i] > max : "The first value must be greater than -Double.MAX_VALUE: "+xs[i];
 			if (xs[i] == max) { // Current value is equal to the maximum value
 				equalMaxIndexes.add(i);
 			} else if (xs[i] > max) { // Current value is greater than the maximum value
 				max = xs[i]; // Updates the max value
+				equalMaxIndexes.clear(); // Clears the ArrayList
+				equalMaxIndexes.add(i); // Adds the current Index to the ArrayList
+			}
+		}
+		assert equalMaxIndexes.size() > 0;
+//		System.out.println(equalMaxIndexes);
+//		System.out.println(equalMaxIndexes.size());
+		return equalMaxIndexes.get(CommonConstants.randomArgMaxTieBreak
+				? RandomNumbers.randomGenerator.nextInt(equalMaxIndexes.size()) : 0); // Returns an Index containing the maxumim value
+	}
+	
+	/**
+	 * The values in xs are checked for the max value, and the array index
+	 * corresponding to the max is returned. If there is a tie, then the
+	 * randomArgMaxTieBreak setting determines whether a random max is chosen or
+	 * the first of the maxes is chosen.
+	 * 
+	 * @param xs ArrayList of Doubles; contains values to check for max
+	 * @return Array Index corresponding to max
+	 */
+	public static int argmax(ArrayList<Double> xs) {
+		assert xs.size() > 0;
+		double max = -Double.MAX_VALUE; // Stores the maximum value; assumed to be the smallest possible Double value (to allow for comparison)
+		ArrayList<Integer> equalMaxIndexes = new ArrayList<Integer>(xs.size());
+		for (int i = 0; i < xs.size(); i++) {
+			assert i != 0 || xs.get(i) > max : "The first value must be greater than -Double.MAX_VALUE: " + xs.get(i);
+			if (xs.get(i) == max) { // Current value is equal to the maximum value
+				equalMaxIndexes.add(i);
+			} else if (xs.get(i) > max) { // Current value is greater than the maximum value
+				max = xs.get(i); // Updates the max value
 				equalMaxIndexes.clear(); // Clears the ArrayList
 				equalMaxIndexes.add(i); // Adds the current Index to the ArrayList
 			}
@@ -152,6 +181,8 @@ public class StatisticsUtilities {
 		});
 		return indexValuePairs[rank].t1;
 	}
+	
+	
 
 	/**
 	 * The values in xs are checked for the min value, and the array index
@@ -347,6 +378,21 @@ public class StatisticsUtilities {
 		}
 		return max; // Returns the maximum value in the given Array
 	}
+	
+	/**
+	 * Returns the maximum value in a given Array of Ints
+	 * 
+	 * @param xs Array of Doubles
+	 * @return Maximum value in xs
+	 */
+	public static int maximum(int[] xs) {
+		int max = xs[0]; // Stores the maximum value to be returned later; is assumed to be the value at the first Index
+		for (int i = 1; i < xs.length; i++) { // Cycles through the Array to search for the maximum value
+			max = Math.max(max, xs[i]); // If the value at the current Index is greater than the previously greatest encountered value, update max
+		}
+		return max; // Returns the maximum value in the given Array
+	}
+
 
 	/**
 	 * Returns the maximum number in a given Collection of Integers

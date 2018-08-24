@@ -11,6 +11,7 @@ import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
@@ -166,7 +167,7 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 	}
 
 	@Override
-	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
+	public List<SubstrateConnectivity> getSubstrateConnectivity() {
 		List<String> outputNames = new LinkedList<String>();
 		outputNames.add("Utility Output");	
 
@@ -187,5 +188,10 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 	public static void main(String[] ignore) throws FileNotFoundException, NoSuchMethodException {
 		String args = "runNumber:0 randomSeed:0 trials:2 maxGens:500 mu:100 io:false netio:false mating:true task:edu.southwestern.tasks.gvgai.GVGAISinglePlayerTask cleanOldNetworks:true fs:false log:Zelda-ZeldaReactive saveTo:ZeldaReactive gvgaiGame:zelda gvgaiLevel:0 gvgaiPlayer:edu.southwestern.tasks.gvgai.GVGAIReactiveNNPlayer watch:true";
 		MMNEAT.main(args.split(" "));
+	}
+
+	@Override
+	public void flushSubstrateMemory() {
+		// Does nothing: This task does not cache substrate information
 	}
 }

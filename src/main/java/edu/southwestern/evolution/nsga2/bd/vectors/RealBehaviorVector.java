@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class RealBehaviorVector implements BehaviorVector {
 
-	private final ArrayList<Double> v;
+	protected final ArrayList<Double> v;
 
 	/**
 	 * Characterization of agent behavior consisting of a fixed-length

@@ -3,10 +3,11 @@ package edu.southwestern.tasks.ut2004.actions;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import edu.southwestern.tasks.ut2004.Util;
+import edu.southwestern.tasks.ut2004.UT2004Util;
 import javax.vecmath.Vector3d;
 
 /**
+ *Moves the bot in relation to itself, using turns instead of strafing
  *
  * @author Jacob Schrum
  */
@@ -24,22 +25,36 @@ public class EgoCentricMovementAction implements BotAction {
 	private final boolean jump;
 	private final boolean moveBackwards;
 
-	public EgoCentricMovementAction(double towards, double turn, boolean shoot, boolean jump) {
-		this.moveBackwards = towards < 0;
-		this.move = Math.abs(towards * 2);
+	/**
+	 * assigns variables based on the bot status
+	 * 
+	 * @param moveForwardBackward (negative = backward, positive = forward, magnitude = speed)
+	 * @param turn (negative = left, positive = right, magnitude = speed)
+	 * @param shoot (should the bot shoot)
+	 * @param jump (should the bot jump_
+	 */
+	public EgoCentricMovementAction(double moveForwardBackward, double turn, boolean shoot, boolean jump) {
+		this.moveBackwards = moveForwardBackward < 0;
+		this.move = Math.abs(moveForwardBackward * 2);
 		this.turn = turn * Math.PI;
 		this.shoot = shoot;
 		this.jump = jump;
 	}
 
-	public String execute(UT2004BotModuleController bot) {
+	/**
+	 * Tells the bot how it should move without taking any other players into account
+	 * 
+	 * @param bot (the bot to execute the commands)
+	 * @return returns a list of commands executed by the bot in the form of a string
+	 */
+	public String execute(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		Rotation botRotation = bot.getInfo().getRotation();
 		Location botLocation = bot.getInfo().getLocation();
 		if (botRotation != null && botLocation != null) {
 			String action = "";
 			if (this.shoot) {
 				action += "[Shoot]";
-				Vector3d targetVector = Util.rotationAsVectorUTUnits(botRotation);
+				Vector3d targetVector = UT2004Util.rotationAsVectorUTUnits(botRotation);
 				double scale = 10000;
 				targetVector.normalize();
 				targetVector.scale(scale);
@@ -49,14 +64,14 @@ public class EgoCentricMovementAction implements BotAction {
 			} else {
 				bot.getShoot().stopShooting();
 			}
-			boolean shouldTurn = !Util.isBetween(turn, TURN_ACTIVATION);
+			boolean shouldTurn = !UT2004Util.isBetween(turn, TURN_ACTIVATION);
 			if (move < MOVE_ACTIVATION && shouldTurn) {
 				action += "[Turn]";
 				bot.getMove().stopMovement();
 				bot.getMove().turnHorizontal((int) ((turn / Math.PI) * 180));
 			} else if (move >= MOVE_ACTIVATION) {
 				if (moveBackwards || shouldTurn) {
-					double rotation = Util.utAngleToRad(botRotation.getYaw());
+					double rotation = UT2004Util.utAngleToRad(botRotation.getYaw());
 					if (shouldTurn) {
 						rotation = rotation + this.turn;
 					}

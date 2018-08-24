@@ -79,7 +79,7 @@ public class EvaluateDL4JNetworkExperiment implements Experiment {
 				"inputsUseID:true", // Inputs are Identity (mandatory in DL4J?)
 				"rlGamma:0.99", "rlBackprop:true", "backpropLearningRate:0.01", "rlBatchSize:1", "rlEpsilonGreedy:false", "rlEpsilon:0.1",
 				"ftype:"+ActivationFunctions.FTYPE_RE_LU, // Because Tetris scores are unbounded positive values
-				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
+				"stride:1","receptiveFieldHeight:3", "receptiveFieldWidth:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				"experiment:edu.southwestern.experiment.rl.EvaluateDL4JNetworkExperiment"});
 	}

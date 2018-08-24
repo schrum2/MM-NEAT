@@ -34,8 +34,8 @@ public class BoardGamePlayerMinimaxTest {
 	@Test
 	public void test() {
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
-				"boardGame:edu.southwestern.boardGame.connectFour.ConnectFour", "boardGameOpponent:edu.southwestern.boardGame.agents.BoardGamePlayerHuman2DBoard",
-				"boardGamePlayer:edu.southwestern.boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true"});
+				"boardGame:edu.southwestern.boardGame.ttt.TicTacToe", "boardGameOpponent:edu.southwestern.boardGame.agents.BoardGamePlayerHuman2DBoard",
+				"boardGamePlayer:edu.southwestern.boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:false"});
 		
 		MMNEAT.loadClasses();
 		

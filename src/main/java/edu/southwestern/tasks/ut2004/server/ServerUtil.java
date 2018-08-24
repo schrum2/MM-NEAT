@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- *
+ * Manages the servers running games, either adding them to the list to be tracked, or deleting them.
  * @author Jacob Schrum
  */
 public class ServerUtil {
@@ -22,6 +22,10 @@ public class ServerUtil {
 	private static HashMap<Integer, UCCWrapper> runningServers = new HashMap<Integer, UCCWrapper>();
 	private static int tickets = 0;
 
+	/**
+	 * finds an available port with which to connect the server
+	 * @return returns the port number to connect to
+	 */
 	public static int getAvailablePort() {
 		runningServersLock.lock();
 		int port;
@@ -37,6 +41,11 @@ public class ServerUtil {
 		return port;
 	}
 
+	/**
+	 * stops the server running, along with anything associated with it
+	 * @param ucc (what class will manage the server)
+	 * @param killAll (whether or not to stop all the servers)
+	 */
 	public static void destroyServer(UCCWrapper ucc, boolean killAll) {
 		if (ucc != null) {
 			IUT2004Server server = ucc.getUTServer();
@@ -55,6 +64,11 @@ public class ServerUtil {
 		}
 	}
 
+	/**
+	 * kills the agents in a given server
+	 * @param server (server with agents be killed)
+	 * @param all (whether to kill all the agents)
+	 */
 	public static void killServerAgents(IUT2004Server server, boolean all) {
 		final ObservableCollection<? extends NativeUnrealBotAdapter> nativeAgents = server.getNativeAgents();
 		synchronized (nativeAgents) {
@@ -76,6 +90,11 @@ public class ServerUtil {
 		}
 	}
 
+	/**
+	 * adds a server to the list of ones to be monitored
+	 * @param newUCC (what class will manage the server)
+	 * @return returns the ticket number for the server
+	 */
 	public static int addServer(UCCWrapper newUCC) {
 		runningServersLock.lock();
 		int ticket = -1;
@@ -88,6 +107,11 @@ public class ServerUtil {
 		return ticket;
 	}
 
+	/**
+	 * destroys a server, and removes it from the list of serfers being monitored
+	 * @param ticket (the number of the server to be removed)
+	 * @return returns which server was removed
+	 */
 	public static UCCWrapper removeServer(int ticket) {
 		runningServersLock.lock();
 		UCCWrapper removed = null;

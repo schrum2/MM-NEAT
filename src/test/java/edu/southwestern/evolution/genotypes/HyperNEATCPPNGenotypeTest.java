@@ -210,6 +210,8 @@ public class HyperNEATCPPNGenotypeTest {
 				
 			}
 		}
+		
+		
 	
 	}
 
@@ -220,7 +222,7 @@ public class HyperNEATCPPNGenotypeTest {
 	 * Tests creation of list of nodes in substrates. Order of substrates is not
 	 * important as long as mapping is accurate
 	 */
-	@Test
+	//@Test
 	public void testCreateSubstrateNodesSlow() {
 		ArrayList<NodeGene> nodes = hcppn.createSubstrateNodes((HyperNEATTask) MMNEAT.task,  hcppn.getCPPN(), subs, 2, 1);
 		//Asserts that the size of the array list created is equal to the sum of the areas of the two substrates
@@ -275,7 +277,7 @@ public class HyperNEATCPPNGenotypeTest {
 	 * Checks to make sure get phenotype returns the created network and that
 	 * the getCPPN returns the cppn used
 	 */
-	@Test
+	//@Test
 	public void testGetPhenotype()  {
 		hcppn.getPhenotype();
 		assertTrue(!hcppn.getPhenotype().equals(hcppn.getCPPN()));
@@ -294,7 +296,7 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Test
 	public void testLinkExpressionThreshold() {
-		// This particular test needs the default expression threashold to work
+		// This particular test needs the default expression threshold to work
 		CommonConstants.linkExpressionThreshold = 0.2;
 		
 		double x = 1.0;
@@ -353,14 +355,17 @@ public class HyperNEATCPPNGenotypeTest {
 		MMNEAT.loadClasses();
 		assertTrue(CommonConstants.evolveHyperNEATBias);
 		hcppn = new HyperNEATCPPNGenotype();
-		TWEANN t = hcppn.getPhenotype();
-		ArrayList<Node> nodes = t.nodes;
+		TWEANN cppn = hcppn.getCPPN();
+		System.out.println("bias test CPPN: " + cppn.toString());
+		System.out.println("bias test network: " + hcppn.getPhenotype());
+		TWEANN phenotype = hcppn.getPhenotype();
+		ArrayList<Node> nodes = phenotype.nodes;
 		for(Node node : nodes) {
 			if(node.ntype != TWEANN.Node.NTYPE_INPUT)
 				assertTrue(node + " bias is " + node.bias, node.bias != 0.0);
 		}
-		t.flush();
-		nodes = t.nodes;
+		phenotype.flush();
+		nodes = phenotype.nodes;
 		double[] biases = new double[nodes.size()];
 		int x = 0;
 		for(Node node: nodes) {
@@ -369,11 +374,11 @@ public class HyperNEATCPPNGenotypeTest {
 			biases[x++] = node.bias;
 		}
 		double[] inputs = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-		t.process(inputs);
-		nodes = t.nodes;
+		phenotype.process(inputs);
+		nodes = phenotype.nodes;
 		int y = 0;
 		for(Node node : nodes) { 
-			assertEquals(biases[y++], node.bias, .0001);
+			assertEquals(biases[y++], node.bias, 0.0);
 		}
 	}
 }

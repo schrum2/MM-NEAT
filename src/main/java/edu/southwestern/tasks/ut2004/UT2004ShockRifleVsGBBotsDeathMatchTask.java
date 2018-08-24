@@ -7,12 +7,15 @@ import edu.southwestern.tasks.ut2004.fitness.*;
 import edu.southwestern.util.ClassCreation;
 
 /**
- *
+ * Evolves the bot using the shock rifle against the dummy bots
  * @author Jacob Schrum
  * @param <T> Evolved phenotype
  */
 public class UT2004ShockRifleVsGBBotsDeathMatchTask<T extends Network> extends UT2004Task<T> {
 
+	/**
+	 * sets the parameters for the server and evaluation 
+	 */
 	public UT2004ShockRifleVsGBBotsDeathMatchTask() {
 		this(Parameters.parameters.stringParameter("utMap"),
 				getOpponents(Parameters.parameters.integerParameter("utNumOpponents")),
@@ -20,6 +23,11 @@ public class UT2004ShockRifleVsGBBotsDeathMatchTask<T extends Network> extends U
 				Parameters.parameters.integerParameter("utEvolvingBotSkill"));
 	}
 
+	/**
+	 * creates an array of the bot's opponents
+	 * @param num (the address in the array where the opponent will be asigned)
+	 * @return returns the array of opponents
+	 */
 	public static BotController[] getOpponents(int num) {
 		BotController[] result = new BotController[num];
 		try {
@@ -34,9 +42,16 @@ public class UT2004ShockRifleVsGBBotsDeathMatchTask<T extends Network> extends U
 		return result;
 	}
 
+	/**
+	 * sets up the server and the match
+	 * @param map (the map that will be used)
+	 * @param opponents (the array of opponents)
+	 * @param evalMinutes (how long the eval will last)
+	 * @param desiredSkill (the skill level of the bot and opponent)
+	 */
 	public UT2004ShockRifleVsGBBotsDeathMatchTask(String map, BotController[] opponents, int evalMinutes,
 			int desiredSkill) {
-		super(map, new int[0], evalMinutes, desiredSkill, opponents);
+		super(evalMinutes, desiredSkill, opponents);
 		// Fitness objectives
 		addObjective(new DamageDealtFitness<T>(), fitness, true);
 		addObjective(new ShockRifleAccuracyFitness<T>(), fitness, true);

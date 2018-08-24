@@ -20,6 +20,7 @@ import com.google.gson.JsonElement;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.PythonUtil;
 
 /**
  * This class interfaces with a Python program that uses
@@ -38,7 +39,7 @@ public class PythonNeuralStyleTransfer {
 	    // For tracking messages to/from Python process
 	    public static final int SUBSTRING_LENGTH = 20;
 	    
-	    public static final String PYTHON_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator;
+	    public static final String PYTHON_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "NeuralStyleTransfer" + File.separator;
 	    public static final String PYTHON_PROGRAM = "neural_style_json.py";
 	    // You need to download this file yourself and store in the PYTHON_PATH: http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat
 	    public static final String VGG_NET_FILE = "imagenet-vgg-verydeep-19.mat"; 
@@ -54,12 +55,13 @@ public class PythonNeuralStyleTransfer {
 	    public NeuralStyleTransferProcess(String content) {
 	    	contentImage = content;
 	    }
-	    
+	    	    
 	    /**
 	     * Launches the actual Python process that waits for input
 	     */
 	    protected void launchPythonProcess() {
-	    	ProcessBuilder builder = new ProcessBuilder("python", PYTHON_PATH+PYTHON_PROGRAM, 
+	    	PythonUtil.setPythonProgram();
+	    	ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, PYTHON_PATH+PYTHON_PROGRAM, 
 	    												"--network", PYTHON_PATH+VGG_NET_FILE, 
 	    												"--content", contentImage,
 	    												"--iterations", ""+Parameters.parameters.integerParameter("neuralStyleIterations"),

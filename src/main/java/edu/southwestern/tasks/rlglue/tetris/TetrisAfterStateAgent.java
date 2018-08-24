@@ -12,6 +12,7 @@ import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.nsga2.bd.characterizations.RemembersObservations;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.dl4j.DL4JNetworkWrapper;
 import edu.southwestern.parameters.CommonConstants;
@@ -190,7 +191,9 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 		double[] inputs = MMNEAT.rlGlueExtractor.extract(s.get_observation(false));
 		// Scaled to range [0,1] for the neural network
 		double[] inputsScaled = MMNEAT.rlGlueExtractor.scaleInputs(inputs);
-
+		if(Parameters.parameters.booleanParameter("rememberObservations")) {
+			((RemembersObservations) MMNEAT.task).addObservation(inputsScaled);
+		}
 		policy.flush(); // remove recurrent activation
 		// outputs is an array of length 1
 		double[] outputs = this.consultPolicy(inputsScaled);
