@@ -1,6 +1,5 @@
 package edu.southwestern.tasks.ut2004;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -339,7 +338,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		config.setOptions(mutatorString//sets the preferences for the game, and players
 				+ "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
 				+ botPort + "?ControlServerPort=" + controlPort + "?ObservingServerPort=" + observePort);
-		config.setUnrealHome(Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath"));
+		config.setUnrealHome(UT2004Util.getUnrealHomeDir());
 		//System.out.println(config);
 		return config;
 	}
