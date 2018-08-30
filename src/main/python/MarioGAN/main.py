@@ -43,6 +43,7 @@ parser.add_argument('--Diters', type=int, default=5, help='number of D iters per
 parser.add_argument('--n_extra_layers', type=int, default=0, help='Number of extra layers on gen and disc')
 parser.add_argument('--experiment', default=None, help='Where to store samples and models')
 parser.add_argument('--adam', action='store_true', help='Whether to use adam (default is rmsprop)')
+parser.add_argument('--json', default=None, help='Json file')
 parser.add_argument('--problem', type=int, default=0, help='Level examples')
 opt = parser.parse_args()
 print(opt)
@@ -63,12 +64,15 @@ if torch.cuda.is_available() and not opt.cuda:
  
 map_size = 32
 
-if opt.problem == 0:
-    examplesJson = "example.json"
+if opt.json is None:
+    if opt.problem == 0:
+        examplesJson = "example.json"
+    else:
+        examplesJson = "sepEx/examplemario{}.json".format(opt.problem)
 else:
-    examplesJson= "sepEx/examplemario{}.json".format(opt.problem)
+    examplesJson = opt.json
 X = np.array ( json.load(open(examplesJson)) )
-z_dims = 10 #Numer different title types
+z_dims = 13 #Numer different title types
 
 num_batches = X.shape[0] / opt.batchSize
 

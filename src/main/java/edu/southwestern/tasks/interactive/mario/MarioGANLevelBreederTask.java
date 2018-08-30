@@ -248,8 +248,8 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 					// Add a full copy (oldLength), or as much as is needed to reach the new length (difference from current size)
 					newPhenotype.addAll(oldPhenotype.subList(0, Math.min(oldLength, newLength - newPhenotype.size())));
 				}
-			} else {
-				throw new IllegalArgumentException("Should not have equal chunk size at this point");
+			} else { // Possible when switching between different models with same latent vector length
+				newPhenotype = oldPhenotype;
 			}
 			s.individual = new BoundedRealValuedGenotype(newPhenotype,MMNEAT.getLowerBounds(),MMNEAT.getUpperBounds());
 		}

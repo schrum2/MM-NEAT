@@ -63,7 +63,7 @@ if __name__ == '__main__':
  # This is a new DCGAN model that has the proper state dict labels/keys for the latest version of PyTorch (no periods '.')
  generator = dcgan.DCGAN_G(imageSize, nz, z_dims, ngf, ngpu, n_extra_layers)
  #print(generator.state_dict()) 
- # This is a state dictionary with deprecated key labels/names
+ # This is a state dictionary that might have deprecated key labels/names
  deprecatedModel = torch.load(modelToLoad, map_location=lambda storage, loc: storage)
  #print(deprecatedModel)
  # Make new model with weights/parameters from deprecatedModel but labels/keys from generator.state_dict()
@@ -78,9 +78,14 @@ if __name__ == '__main__':
      goodValue = deprecatedModel[badKey]
      fixedModel[goodKey] = goodValue
 
- #print(fixedModel)
- # Load the parameters with the fixed labels  
- generator.load_state_dict(fixedModel)
+ if not fixedModel:
+   #print("LOAD REGULAR")
+   #print(deprecatedModel)
+   # If the fixedModel was empty, then the model was trained with the new labels, and the regular load process is fine
+   generator.load_state_dict(deprecatedModel)
+ else:
+   # Load the parameters with the fixed labels  
+   generator.load_state_dict(fixedModel)
 
  testing = False
 
