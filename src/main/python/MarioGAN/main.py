@@ -45,6 +45,7 @@ parser.add_argument('--experiment', default=None, help='Where to store samples a
 parser.add_argument('--adam', action='store_true', help='Whether to use adam (default is rmsprop)')
 parser.add_argument('--json', default=None, help='Json file')
 parser.add_argument('--problem', type=int, default=0, help='Level examples')
+parser.add_argument('--tiles', type=int, default=13, help='Number of tile types')
 opt = parser.parse_args()
 print(opt)
 
@@ -72,7 +73,7 @@ if opt.json is None:
 else:
     examplesJson = opt.json
 X = np.array ( json.load(open(examplesJson)) )
-z_dims = 13 #Numer different title types
+z_dims = opt.tiles
 
 num_batches = X.shape[0] / opt.batchSize
 

@@ -124,12 +124,12 @@ public class ZeldaVGLCUtil {
 	 * F -> 0:.
 	 * B -> 1:w (in Zelda, blocks are sometimes movable, though the corpus does not indicate which ones can move)
 	 * M -> 2:Random choice between 1, 2, and 3
-	 * P -> 3:w (in Zelda, projectiles can move over these tiles)
+	 * P -> 1:w (in Zelda, projectiles can move over these tiles)
 	 * O -> 0:. (not fully clear what this represents, but I think it is a passable tile)
-	 * I -> 3:w (not clear what this is either)
-	 * D -> 4:g (This is probably not a semantically appropriate choice for GVG-AI, but it should look good)
-	 * S -> 4:g (Also questionable, though a staircase probably is a way of exiting an area)
-	 * W -> 3:w
+	 * I -> 1:w (not clear what this is either)
+	 * D -> 3:g (This is probably not a semantically appropriate choice for GVG-AI, but it should look good)
+	 * S -> 3:g (Also questionable, though a staircase probably is a way of exiting an area)
+	 * W -> 1:w
 	 * - -> 0:.
 	 * 
 	 * @param tile From VGLC
@@ -172,12 +172,12 @@ public class ZeldaVGLCUtil {
 		case 'P':
 		case 'I':
 		case 'W':
-			return 3;	// Impassable
+			return 1;	// Impassable
 		case 'M':
 			return 2;	// Monster
 		case 'D':
 		case 'S':
-			return 4;	// Door
+			return 3;	// Door
 		default:
 			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
 		}
