@@ -99,6 +99,29 @@ public class ZeldaVGLCUtil {
 	}
 	
 	/**
+	 * Take a single list of lists of tile codes representing a single Zelda room
+	 * and convert it into a GVG-AI level String representation.
+	 * @param room One room as a list of lists
+	 * @param startLocation Where the Zelda avatar should be placed in the room (override tile code)
+	 * @return String array of the level representation
+	 */
+	public static String[] convertZeldaRoomListtoGVGAI(List<List<Integer>> room, Point startLocation) {
+		String[] result = new String[room.size()];
+		for(int i = 0; i < room.size(); i++) {
+			StringBuilder sb = new StringBuilder();
+			for(int j = 0; j < room.get(i).size(); j++) {
+				char tile = convertZeldaTileCodestoGVGAI(room.get(i).get(j));
+				if(new Point(i,j).equals(startLocation)) { // Replace designated start location with Zelda avatar
+					tile = 'A';
+				}
+				sb.append(tile);
+			}
+			result[i] = sb.toString();
+		}
+		return result;
+	}
+	
+	/**
 	 * VGLC uses the following tiles:
 	 * F = FLOOR
 	 * B = BLOCK
@@ -153,6 +176,23 @@ public class ZeldaVGLCUtil {
 				return 'g';
 			default:
 				throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
+		}
+	}
+	
+	/**
+	 * Take the code for an individual tile output by the ZeldaGAN and convert to a GVG-AI
+	 * tile character.
+	 * @param code 0 through 3
+	 * @return Corresponding GVG-AI code
+	 */
+	public static char convertZeldaTileCodestoGVGAI(int code) {
+		switch(code) {
+		case 0: return '.';
+		case 1: return 'w';
+		case 2: return (char)('1' + RandomNumbers.randomGenerator.nextInt(3)); // 1, 2, or 3 : Random Monster
+		case 3: return 'g';
+		default:
+			throw new IllegalArgumentException("Invalid GAN code for Zelda: code = " + code);
 		}
 	}
 
