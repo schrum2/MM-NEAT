@@ -19,6 +19,7 @@ public class ZeldaVGLCUtil {
 	public static final String ZELDA_LEVEL_PATH = "data/VGLC/Zelda/Processed/";
 	public static final int ZELDA_ROOM_COLUMNS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int ZELDA_ROOM_ROWS = 16; // Equivalent to width in original game
+	public static final int ZELDA_GVGAI_TILE_TYPES = 4;
 	
 	/**
 	 * Get converted VGLC -> GVG-AI level by specifying file name of source VGLC level

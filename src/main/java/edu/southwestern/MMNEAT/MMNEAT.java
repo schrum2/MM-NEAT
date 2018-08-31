@@ -688,7 +688,8 @@ public class MMNEAT {
 				setNNInputParameters(((Parameters.parameters.integerParameter("marioInputWidth") * Parameters.parameters.integerParameter("marioInputHeight")) * 2) + 1, MarioTask.MARIO_OUTPUTS); //hard coded for now, 5 button outputs
 				System.out.println("Set up Mario Task");
 			} else if (task instanceof MarioLevelTask) {
-				// This line only matters for the CPPN version of the task, but doesn't hurt the GAN version, which does evolve networks
+				GANProcess.type = GANProcess.GAN_TYPE.MARIO;
+				// This line only matters for the CPPN version of the task, but doesn't hurt the GAN version, which does not evolve networks
 				setNNInputParameters(MarioLevelBreederTask.INPUTS.length, MarioLevelBreederTask.OUTPUTS.length);
 				System.out.println("Set up Mario Level Task");
 			} else if(task instanceof HyperNEATDummyTask) {

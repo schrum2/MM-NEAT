@@ -4,6 +4,7 @@ import java.io.*;
 import java.lang.ProcessBuilder.Redirect;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.util.PythonUtil;
 
 public class GANProcess extends Comm {
@@ -16,6 +17,10 @@ public class GANProcess extends Comm {
 	
 	private static GANProcess ganProcess = null;
 
+	public enum GAN_TYPE {MARIO, ZELDA};
+	
+	public static GAN_TYPE type = GAN_TYPE.MARIO;
+	
 	public static int latentVectorLength() {
 		return getGANProcess().getLatentVectorSize();
 	}
@@ -40,7 +45,16 @@ public class GANProcess extends Comm {
 		if(ganProcess == null) {
 			PythonUtil.setPythonProgram();
 			// set up process for GAN
-			ganProcess = new GANProcess();
+			switch(type) {
+			// Default constructor is for Mario
+			case MARIO: 
+				ganProcess = new GANProcess(); 
+				break;
+			// Details for Zelda will change as code develops
+			case ZELDA: 
+				ganProcess = new GANProcess(PYTHON_BASE_PATH+"ZeldaDungeon01_5000_30.pth",30,ZeldaVGLCUtil.ZELDA_GVGAI_TILE_TYPES);
+				break;
+			}
 			ganProcess.start();
 			// consume all start-up messages that are not data responses
 			String response = "";
@@ -83,12 +97,15 @@ public class GANProcess extends Comm {
 	
 	String GANPath = null;
 	int GANDim = -1; 
+	int GANTileTypes = -1;
 
 	/**
-	 * Loads the default Mario GAN on the first level of the game from the original Maio GAN publication (GECCO 2018)
+	 * Loads the Mario GAN trained on the specified model with the specified latent vector size
 	 */
 	public GANProcess() {
-		this(PYTHON_BASE_PATH + "GANs" + File.separator + Parameters.parameters.stringParameter("marioGANModel"), Parameters.parameters.integerParameter("marioGANInputSize"));
+		this(PYTHON_BASE_PATH + "GANs" + File.separator + Parameters.parameters.stringParameter("marioGANModel"), 
+			 Parameters.parameters.integerParameter("marioGANInputSize"), 
+			 Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding") ? 10 : 13);
 	}
 
 	/**
@@ -98,11 +115,12 @@ public class GANProcess extends Comm {
 	 * @param GANPath Path to GAN pth file
 	 * @param GANDim Input size
 	 */
-	public GANProcess(String GANPath, int GANDim) {
+	public GANProcess(String GANPath, int GANDim, int numTiles) {
 		super();
 		this.threadName = "GANThread";
 		this.GANPath = GANPath;
 		this.GANDim = GANDim;
+		this.GANTileTypes = numTiles;
 	}
 
 	/**
@@ -123,8 +141,7 @@ public class GANProcess extends Comm {
 		}
 
 		// Run program with model architecture and weights specified as parameters
-		int numTileTypes = Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding") ? 10 : 13;
-		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, WASSERSTEIN_PATH, this.GANPath, ""+this.GANDim, ""+numTileTypes);
+		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, WASSERSTEIN_PATH, this.GANPath, ""+this.GANDim, ""+GANTileTypes);
 		builder.redirectError(Redirect.INHERIT); // Standard error will print to console
 		try {
 			System.out.println(builder.command());

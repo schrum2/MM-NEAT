@@ -52,6 +52,7 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 	
 	public MarioGANLevelBreederTask() throws IllegalAccessException {
 		super(false); // false indicates that we are NOT evolving CPPNs
+		GANProcess.type = GANProcess.GAN_TYPE.MARIO;
 		
 		//Construction of JSlider to determine number of latent vector level chunks
 		levelChunksSlider = new JSlider(JSlider.HORIZONTAL, LEVEL_MIN_CHUNKS, LEVEL_MAX_CHUNKS, Parameters.parameters.integerParameter("marioGANLevelChunks"));
