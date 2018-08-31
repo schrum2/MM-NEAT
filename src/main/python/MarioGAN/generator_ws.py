@@ -50,6 +50,17 @@ if __name__ == '__main__':
  else:
  	z_dims = 13 # This is the new default
 
+ # This is an ugly hack that assumes we can figure out the output dimension based on 
+ # the number of different tile types. It is true for now, because Zelda and Mario 
+ # are the only options, and they have very different tile counts. But the count for Zelda
+ # may change, and we may add more domains, so a better solution is needed in the long term.
+ 
+ if z_dims < 9 : # Assume this is Zelda (4 tiles, currently)
+ 	out_height = 16
+ 	out_width = 11
+ else: # Assume this is Mario (10 or 13 tiles, depending)
+ 	out_height = 14
+ 	out_width = 28
 
  batchSize = 1
  #nz = 10 #Dimensionality of latent vector
@@ -102,7 +113,7 @@ if __name__ == '__main__':
    #latent_vector = numpy.array(json.loads(line))
    levels = generator(Variable(latent_vector, volatile=True))
    im = levels.data.cpu().numpy()
-   im = im[:,:,:14,:28] #Cut of rest to fit the 14x28 tile dimensions
+   im = im[:,:,:out_height,:out_width] #Cut off rest to fit the 14x28 tile dimensions
    im = numpy.argmax( im, axis = 1)
    #print(json.dumps(levels.data.tolist()))
    print("Saving to file ")
@@ -129,7 +140,7 @@ if __name__ == '__main__':
   #levels.data = levels.data[:,:,:14,:28] #Cut of rest to fit the 14x28 tile dimensions
 
   level = levels.data.cpu().numpy()
-  level = level[:,:,:14,:28] #Cut of rest to fit the 14x28 tile dimensions
+  level = level[:,:,:out_height,:out_width] #Cut of rest to fit the 14x28 tile dimensions
   level = numpy.argmax( level, axis = 1)
    
 

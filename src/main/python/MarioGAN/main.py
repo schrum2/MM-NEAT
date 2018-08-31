@@ -81,7 +81,7 @@ print ("SHAPE ",X.shape)
 X_onehot = np.eye(z_dims, dtype='uint8')[X]
 
 X_onehot = np.rollaxis(X_onehot, 3, 1)
-print ("SHAPE ",X_onehot.shape)    #(173, 14, 28, 16)
+print ("SHAPE ",X_onehot.shape)
 
 X_train = np.zeros ( (X.shape[0], z_dims, map_size, map_size) )*2
 
