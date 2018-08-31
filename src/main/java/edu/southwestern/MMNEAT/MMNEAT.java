@@ -71,7 +71,7 @@ import edu.southwestern.tasks.interactive.mario.MarioLevelBreederTask;
 import edu.southwestern.tasks.mario.MarioGANLevelTask;
 import edu.southwestern.tasks.mario.MarioLevelTask;
 import edu.southwestern.tasks.mario.MarioTask;
-import edu.southwestern.tasks.mario.gan.MarioGANUtil;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.microrts.MicroRTSTask;
 import edu.southwestern.tasks.microrts.SinglePopulationCompetativeCoevolutionMicroRTSTask;
 import edu.southwestern.tasks.motests.FunctionOptimization;
@@ -1111,7 +1111,7 @@ public class MMNEAT {
 		// Function Optimization Tasks use these genotypes and know their lower bounds
 		if(fos != null) return fos.getLowerBounds();
 		// For Mario GAN, the latent vector length determines the size, but the lower bounds are all zero
-		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return new double[MarioGANUtil.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")]; // all zeroes
+		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return new double[GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")]; // all zeroes
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario GAN");
 		}
@@ -1124,7 +1124,7 @@ public class MMNEAT {
 	 */
 	public static double[] getUpperBounds() {
 		if(fos != null) return fos.getUpperBounds();
-		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return ArrayUtil.doubleOnes(MarioGANUtil.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
+		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario GAN");
 		}

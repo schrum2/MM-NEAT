@@ -12,6 +12,75 @@ public class GANProcess extends Comm {
 	// Program for converting a latent vector to a level via a GAN
 	public static final String WASSERSTEIN_PATH = PYTHON_BASE_PATH + "generator_ws.py";
 	
+	////////// These are static variables representing the active GAN process (only one) ////////////////
+	
+	private static GANProcess ganProcess = null;
+
+	public static int latentVectorLength() {
+		return getGANProcess().getLatentVectorSize();
+	}
+	
+	/**
+	 * Destroy GAN process so a new one can be started
+	 */
+	public static void terminateGANProcess() {
+		if(ganProcess != null) {
+			ganProcess.process.destroy();
+			ganProcess = null;
+		}
+	}
+	
+	/**
+	 * Start the GAN process running in Python if it has not started already.
+	 * Otherwise, just return the reference to the process.
+	 * @return Process running the Mario GAN
+	 */
+	public static GANProcess getGANProcess() {
+		// This code comes from the constructor for MarioEvalFunction in the MarioGAN project
+		if(ganProcess == null) {
+			PythonUtil.setPythonProgram();
+			// set up process for GAN
+			ganProcess = new GANProcess();
+			ganProcess.start();
+			// consume all start-up messages that are not data responses
+			String response = "";
+			while(!response.equals("READY")) {
+				response = ganProcess.commRecv();
+			}
+		}
+		return ganProcess;
+	}
+	
+	/**
+	 * From MarioGAN
+	 * 
+	 * Map the value in R to (-1, 1)
+	 * @param valueInR
+	 * @return Range restricted value
+	 */
+	public static double mapToOne(double valueInR) {
+		return ( valueInR / Math.sqrt(1+valueInR*valueInR) );
+	}
+
+	/**
+	 * From MarioGAN
+	 * 
+	 * Perform the operation above to a whole array
+	 * 
+	 * @param arrayInR
+	 * @return Array with values in range
+	 */
+	public static double[] mapArrayToOne(double[] arrayInR) {
+		double[] newArray = new double[arrayInR.length];
+		for(int i=0; i<newArray.length; i++) {
+			double valueInR = arrayInR[i];
+			newArray[i] = mapToOne(valueInR);
+		}
+		return newArray;
+	}
+
+	//////////Code below here is associated with the GAN instance ////////////////
+	
 	String GANPath = null;
 	int GANDim = -1; 
 

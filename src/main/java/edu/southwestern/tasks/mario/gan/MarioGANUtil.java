@@ -29,71 +29,6 @@ import edu.southwestern.util.graphics.DrawingPanel;
  */
 public class MarioGANUtil {
 
-	private static GANProcess ganProcess = null;
-
-	public static int latentVectorLength() {
-		return getGANProcess().getLatentVectorSize();
-	}
-	
-	/**
-	 * Destroy GAN process so a new one can be started
-	 */
-	public static void terminateGANProcess() {
-		if(ganProcess != null) {
-			ganProcess.process.destroy();
-			ganProcess = null;
-		}
-	}
-	
-	/**
-	 * Start the GAN process running in Python if it has not started already.
-	 * Otherwise, just return the reference to the process.
-	 * @return Process running the Mario GAN
-	 */
-	private static GANProcess getGANProcess() {
-		// This code comes from the constructor for MarioEvalFunction in the MarioGAN project
-		if(ganProcess == null) {
-			PythonUtil.setPythonProgram();
-			// set up process for GAN
-			ganProcess = new GANProcess();
-			ganProcess.start();
-			// consume all start-up messages that are not data responses
-			String response = "";
-			while(!response.equals("READY")) {
-				response = ganProcess.commRecv();
-			}
-		}
-		return ganProcess;
-	}
-	
-	/**
-	 * From MarioGAN
-	 * 
-	 * Map the value in R to (-1, 1)
-	 * @param valueInR
-	 * @return Range restricted value
-	 */
-	public static double mapToOne(double valueInR) {
-		return ( valueInR / Math.sqrt(1+valueInR*valueInR) );
-	}
-
-	/**
-	 * From MarioGAN
-	 * 
-	 * Perform the operation above to a whole array
-	 * 
-	 * @param arrayInR
-	 * @return Array with values in range
-	 */
-	public static double[] mapArrayToOne(double[] arrayInR) {
-		double[] newArray = new double[arrayInR.length];
-		for(int i=0; i<newArray.length; i++) {
-			double valueInR = arrayInR[i];
-			newArray[i] = mapToOne(valueInR);
-		}
-		return newArray;
-	}
-
 	/**
 	 * Has same core functionality as the levelFromLatentVector method in MarioEvalFunction
 	 * of MarioGAN project
@@ -115,20 +50,20 @@ public class MarioGANUtil {
 	 * @return
 	 */
 	public static ArrayList<List<Integer>> generateLevelListRepresentationFromGAN(double[] latentVector) {
-		latentVector = mapArrayToOne(latentVector); // Range restrict the values
-		int chunk_length = Integer.valueOf(getGANProcess().GANDim);
+		latentVector = GANProcess.mapArrayToOne(latentVector); // Range restrict the values
+		int chunk_length = Integer.valueOf(GANProcess.getGANProcess().GANDim);
         String levelString = "";
         for(int i = 0; i < latentVector.length; i+=chunk_length){
             double[] chunk = Arrays.copyOfRange(latentVector, i, i+chunk_length);
             // Generate a level from the vector
             // Brackets required since generator.py expects of list of multiple levels, though only one is being sent here
             try {
-            	getGANProcess().commSend("[" + Arrays.toString(chunk) + "]");
+            	GANProcess.getGANProcess().commSend("[" + Arrays.toString(chunk) + "]");
             } catch (IOException e) {
             	e.printStackTrace();
             	System.exit(1); // Cannot continue without the GAN process
             }
-            String oneLevelChunk = getGANProcess().commRecv(); // Response to command just sent
+            String oneLevelChunk = GANProcess.getGANProcess().commRecv(); // Response to command just sent
             levelString = levelString + ", " + oneLevelChunk;  
         }
         // These two lines remove the , from the first append to an empty string

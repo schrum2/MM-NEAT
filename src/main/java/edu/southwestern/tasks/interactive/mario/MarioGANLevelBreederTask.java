@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -26,6 +25,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.MarioGANUtil;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -80,8 +80,8 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 					Parameters.parameters.setInteger("marioGANLevelChunks", newValue);
 					
 					if(oldValue != newValue) {
-						int oldLength = oldValue * MarioGANUtil.latentVectorLength();
-						int newLength = newValue * MarioGANUtil.latentVectorLength();
+						int oldLength = oldValue * GANProcess.latentVectorLength();
+						int newLength = newValue * GANProcess.latentVectorLength();
 						resizeGenotypeVectors(oldLength, newLength);
 						// reset buttons
 						resetButtons(true);
@@ -198,7 +198,7 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 			int returnVal = chooser.showOpenDialog(frame);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
 				int marioGANLevelChunks = Parameters.parameters.integerParameter("marioGANLevelChunks");
-				int oldLength = marioGANLevelChunks * MarioGANUtil.latentVectorLength(); // for old model
+				int oldLength = marioGANLevelChunks * GANProcess.latentVectorLength(); // for old model
 				
 				String model = chooser.getSelectedFile().getName();
 				Parameters.parameters.setString("marioGANModel", model);
@@ -214,9 +214,9 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 					Parameters.parameters.setInteger("marioGANInputSize", size);
 					Parameters.parameters.setBoolean("marioGANUsesOriginalEncoding", false);
 				}
-				MarioGANUtil.terminateGANProcess();
+				GANProcess.terminateGANProcess();
 				// Because Python process was terminated, latentVectorLength will reinitialize with the new params
-				int newLength = marioGANLevelChunks * MarioGANUtil.latentVectorLength(); // new model
+				int newLength = marioGANLevelChunks * GANProcess.latentVectorLength(); // new model
 				resizeGenotypeVectors(oldLength, newLength);
 			}
 			// reset necessary?
