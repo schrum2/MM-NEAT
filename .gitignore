@@ -109,6 +109,7 @@ vizdoom.ini
 *.pdf
 *.plot
 *.pptx
+*.pth
 *.jpg
 *.ppt
 .settings/org.eclipse.jdt.core.prefs
