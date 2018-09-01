@@ -4,9 +4,9 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -130,27 +130,32 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 	@Override
 	protected void save(String file, int i) {
 		ArrayList<Double> latentVector = scores.get(i).individual.getPhenotype();
-		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
-		ArrayList<List<Integer>> levelList = MarioGANUtil.generateLevelListRepresentationFromGAN(doubleArray);
-
-		throw new UnsupportedOperationException("MarioGAN Levels cannot be saved yet");
+		
+		/**
+		 * Rather than save a text representation of the level, I simply save
+		 * the latent vector and the model name, which are sufficient to
+		 * recreate any level
+		 */
+//		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
+//		ArrayList<List<Integer>> levelList = MarioGANUtil.generateLevelListRepresentationFromGAN(doubleArray);
+//
+//		throw new UnsupportedOperationException("MarioGAN Levels cannot be saved yet");
 		
 		// Transfer list into String array
 //		String[] level = null; // TODO
 //		
-//		// Prepare text file
-//		try {
-//			PrintStream ps = new PrintStream(new File(file));
-//			// Write String array to text file 
-//			for(String line : level) {
-//				ps.println(line);
-//			}
-//			ps.close();
-//		} catch (FileNotFoundException e) {
-//			System.out.println("Could not save file: " + file);
-//			e.printStackTrace();
-//			return;
-//		}
+		// Prepare text file
+		try {
+			PrintStream ps = new PrintStream(new File(file));
+			// Write String array to text file 
+			ps.println(Parameters.parameters.stringParameter("marioGANModel"));
+			ps.println(latentVector);
+			ps.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Could not save file: " + file);
+			e.printStackTrace();
+			return;
+		}
 	}
 
 	/**

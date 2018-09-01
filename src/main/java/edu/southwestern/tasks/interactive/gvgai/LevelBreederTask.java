@@ -10,9 +10,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -28,7 +26,6 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
-import edu.southwestern.util.datastructures.Triangle;
 import gvgai.core.game.BasicGame;
 import gvgai.core.game.Game;
 import gvgai.core.vgdl.VGDLFactory;
