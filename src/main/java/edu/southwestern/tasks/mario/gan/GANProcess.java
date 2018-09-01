@@ -104,7 +104,7 @@ public class GANProcess extends Comm {
 	 */
 	public GANProcess() {
 		this(PYTHON_BASE_PATH + "MarioGAN" + File.separator + Parameters.parameters.stringParameter("marioGANModel"), 
-			 Parameters.parameters.integerParameter("marioGANInputSize"), 
+			 Parameters.parameters.integerParameter("GANInputSize"), 
 			 Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding") ? 10 : 13);
 	}
 
