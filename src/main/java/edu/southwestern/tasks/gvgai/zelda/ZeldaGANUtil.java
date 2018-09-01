@@ -60,7 +60,7 @@ public class ZeldaGANUtil {
 	 */
 	public static void main(String[] args) {
 		int size = 10;
-		Parameters.initializeParameterCollections(new String[] {"GANInputSize:"+size});
+		Parameters.initializeParameterCollections(new String[] {"GANInputSize:"+size,"zeldaGANModel:ZeldaDungeon02_5000_10.pth"});
 		//MMNEAT.loadClasses();
 		
 		VGDLFactory.GetInstance().init();
