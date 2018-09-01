@@ -836,6 +836,7 @@ public class Parameters {
 		stringOptions.add("utMap", "DM-TrainingDay", "Map to play in Unreal Tournament 2004");
 		stringOptions.add("utPath", "SCOPE2018\\UT2004", "Path (excluding drive) to root dir of Unreal Tournament 2004 installation");
 		stringOptions.add("utGameType", "BotDeathMatch", "sets the game type for the server");
+		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		// Class options
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");

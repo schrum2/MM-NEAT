@@ -52,7 +52,9 @@ public class GANProcess extends Comm {
 				break;
 			// Details for Zelda will change as code develops
 			case ZELDA: 
-				ganProcess = new GANProcess(PYTHON_BASE_PATH+"ZeldaGAN"+ File.separator +"ZeldaDungeon01_5000_30.pth",30,ZeldaVGLCUtil.ZELDA_GVGAI_TILE_TYPES);
+				ganProcess = new GANProcess(PYTHON_BASE_PATH+"ZeldaGAN"+ File.separator +Parameters.parameters.stringParameter("zeldaGANModel"),
+											Parameters.parameters.integerParameter("GANInputSize"),
+											ZeldaVGLCUtil.ZELDA_GVGAI_TILE_TYPES);
 				break;
 			}
 			ganProcess.start();

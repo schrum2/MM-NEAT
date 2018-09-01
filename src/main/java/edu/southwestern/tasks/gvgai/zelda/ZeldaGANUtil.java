@@ -59,7 +59,8 @@ public class ZeldaGANUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] {});
+		int size = 10;
+		Parameters.initializeParameterCollections(new String[] {"GANInputSize:"+size});
 		//MMNEAT.loadClasses();
 		
 		VGDLFactory.GetInstance().init();
@@ -72,7 +73,7 @@ public class ZeldaGANUtil {
 		int seed = 0;
 
 		GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
-		double[] latentVector = RandomNumbers.randomArray(30);
+		double[] latentVector = RandomNumbers.randomArray(size);
 		String[] level = generateGVGAILevelFromGAN(latentVector, new Point(8,8));
 		
 		for(String line : level) {
