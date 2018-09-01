@@ -9,7 +9,7 @@ import edu.southwestern.util.PythonUtil;
 
 public class GANProcess extends Comm {
 	
-	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "MarioGAN" + File.separator;
+	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "GAN" + File.separator;
 	// Program for converting a latent vector to a level via a GAN
 	public static final String WASSERSTEIN_PATH = PYTHON_BASE_PATH + "generator_ws.py";
 	
@@ -103,7 +103,7 @@ public class GANProcess extends Comm {
 	 * Loads the Mario GAN trained on the specified model with the specified latent vector size
 	 */
 	public GANProcess() {
-		this(PYTHON_BASE_PATH + "GANs" + File.separator + Parameters.parameters.stringParameter("marioGANModel"), 
+		this(PYTHON_BASE_PATH + "MarioGAN" + File.separator + Parameters.parameters.stringParameter("marioGANModel"), 
 			 Parameters.parameters.integerParameter("marioGANInputSize"), 
 			 Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding") ? 10 : 13);
 	}

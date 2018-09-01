@@ -195,7 +195,7 @@ public class MarioGANLevelBreederTask extends InteractiveEvolutionTask<ArrayList
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("GAN Model", "pth");
 			chooser.setFileFilter(filter);
 			// This is where all the GANs are stored (only allowable spot)
-			chooser.setCurrentDirectory(new File("src\\main\\python\\MarioGAN\\GANs"));
+			chooser.setCurrentDirectory(new File("src\\main\\python\\GAN\\MarioGAN"));
 			int returnVal = chooser.showOpenDialog(frame);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
 				int marioGANLevelChunks = Parameters.parameters.integerParameter("marioGANLevelChunks");
