@@ -2,10 +2,12 @@ package edu.southwestern.tasks.gvgai.zelda;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import gvgai.core.game.Game;
 import gvgai.core.vgdl.VGDLFactory;
@@ -20,7 +22,7 @@ public class ZeldaVGLCUtil {
 	public static final int ZELDA_ROOM_COLUMNS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int ZELDA_ROOM_ROWS = 16; // Equivalent to width in original game
 	public static final int ZELDA_GVGAI_TILE_TYPES = 4;
-	
+
 	/**
 	 * Get converted VGLC -> GVG-AI level by specifying file name of source VGLC level
 	 * @param fileName
@@ -31,7 +33,7 @@ public class ZeldaVGLCUtil {
 		String[] level = new IO().readFile(fileName);
 		return convertZeldaLevelVGLCtoGVGAI(level, startLocation);
 	}
-	
+
 	/**
 	 * Takes VGLC text file for a single dungeon, identifies the individual rooms of the dungeon,
 	 * converts them to lists of lists of number codes, and combines the results into a list of
@@ -58,7 +60,7 @@ public class ZeldaVGLCUtil {
 		}		
 		return rooms;
 	}
-	
+
 	/**
 	 * Takes VGLC room and converts it to a list of lists of numeric codes
 	 * @param room String array representing one dungeon room
@@ -75,7 +77,7 @@ public class ZeldaVGLCUtil {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Take Zelda level as a String array (converted from VGLC file) and
 	 * return a version with tiles swapped to those used by GVG-AI.
@@ -98,7 +100,7 @@ public class ZeldaVGLCUtil {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Take a single list of lists of tile codes representing a single Zelda room
 	 * and convert it into a GVG-AI level String representation.
@@ -121,7 +123,7 @@ public class ZeldaVGLCUtil {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * VGLC uses the following tiles:
 	 * F = FLOOR
@@ -161,25 +163,25 @@ public class ZeldaVGLCUtil {
 	 */
 	public static char convertZeldaTileVGLCtoGVGAI(char tile) {
 		switch(tile) {
-			case 'F':
-			case 'O':
-			case '-':
-				return '.';
-			case 'B': 
-			case 'P':
-			case 'I':
-			case 'W':
-				return 'w';
-			case 'M':
-				return (char)('1' + RandomNumbers.randomGenerator.nextInt(3)); // 1, 2, or 3
-			case 'D':
-			case 'S':
-				return 'g';
-			default:
-				throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
+		case 'F':
+		case 'O':
+		case '-':
+			return '.';
+		case 'B': 
+		case 'P':
+		case 'I':
+		case 'W':
+			return 'w';
+		case 'M':
+			return (char)('1' + RandomNumbers.randomGenerator.nextInt(3)); // 1, 2, or 3
+		case 'D':
+		case 'S':
+			return 'g';
+		default:
+			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
 		}
 	}
-	
+
 	/**
 	 * Take the code for an individual tile output by the ZeldaGAN and convert to a GVG-AI
 	 * tile character.
@@ -224,7 +226,7 @@ public class ZeldaVGLCUtil {
 		}
 	}
 
-	
+
 	/**
 	 * For quick tests
 	 * @param args
@@ -232,7 +234,7 @@ public class ZeldaVGLCUtil {
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] {});
 		//MMNEAT.loadClasses();
-		
+
 		VGDLFactory.GetInstance().init();
 		VGDLRegistry.GetInstance().init();
 
@@ -242,21 +244,35 @@ public class ZeldaVGLCUtil {
 		int playerID = 0;
 		int seed = 0;
 
-		String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+"tloz1_1.txt", new Point(40,63));
+		HashSet<List<List<Integer>>> roomSet = new HashSet<>();
 		
-		for(String line : level) {
-			System.out.println(line);
+		for(int i = 1; i <= 9; i++) {
+			for(int j = 1; j <= 2; j++) {
+				String file = "tloz"+i+"_"+j+".txt";
+				String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+file, new Point(2,2));
+
+				for(String line : level) {
+					System.out.println(line);
+				}
+
+				List<List<List<Integer>>> roomList = convertZeldaLevelFileVGLCtoListOfRooms(ZELDA_LEVEL_PATH+file);
+
+				roomSet.addAll(roomList);
+				
+				//System.out.println(roomList);
+
+				
+				// PLAY THE LEVEL
+//				Agent agent = new Agent();
+//				agent.setup(null, 0, true); // null = no log, true = human 
+//
+//				Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
+//				GVGAIUtil.runOneGame(toPlay, level, true, agent, seed, playerID);
+//
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
+			}
 		}
 		
-		List<List<List<Integer>>> roomList = convertZeldaLevelFileVGLCtoListOfRooms(ZELDA_LEVEL_PATH+"tloz1_1.txt");
-		
-		System.out.println(roomList);
-		
-		Agent agent = new Agent();
-		agent.setup(null, 0, true); // null = no log, true = human 
-
-		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
-		GVGAIUtil.runOneGame(toPlay, level, true, agent, seed, playerID);
-
+		System.out.println(roomSet);
 	}
 }
