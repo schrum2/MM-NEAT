@@ -60,6 +60,8 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+ZeldaDungeon01_5000_10*
+ZeldaDungeon02_5000_10*
 ZeldaAllDungeons*
 /build/
 /dist/
