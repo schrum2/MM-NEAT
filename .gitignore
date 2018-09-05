@@ -60,6 +60,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+ZeldaAllDungeons*
 /build/
 /dist/
 /nbproject/
