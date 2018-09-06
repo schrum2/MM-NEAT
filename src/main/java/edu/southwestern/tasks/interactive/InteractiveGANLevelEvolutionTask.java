@@ -1,13 +1,26 @@
 package edu.southwestern.tasks.interactive;
 
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -27,6 +40,9 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
 	private static final int FILE_LOADER_BUTTON_INDEX = -21;
+	private static final int VECTOR_EXPLORER_BUTTON_INDEX = -22;
+	
+	private static final int SLIDER_RANGE = 100; // Latent vector sliders (divide by this to get vector value)
 
 	/**
 	 * Do domain specific GAN settings
@@ -47,9 +63,15 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 		fileLoadButton.setText("SelectGANModel");
 		fileLoadButton.setName("" + FILE_LOADER_BUTTON_INDEX);
 		fileLoadButton.addActionListener(this);
-
+		
+		JButton vectorExplorerButton = new JButton();
+		vectorExplorerButton.setText("ExploreLatentSpace");
+		vectorExplorerButton.setName("" + VECTOR_EXPLORER_BUTTON_INDEX);
+		vectorExplorerButton.addActionListener(this);
+		
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(fileLoadButton);
+			top.add(vectorExplorerButton);
 		}
 
 		//Construction of button that lets user plays the level
@@ -127,6 +149,78 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 				resizeGenotypeVectors(lengths.t1, lengths.t2);
 			}
 			resetButtons(true);
+		}
+		if(itemID == VECTOR_EXPLORER_BUTTON_INDEX) {
+			final int populationIndex = selectedItems.get(selectedItems.size() - 1);
+			ArrayList<Double> phenotype = scores.get(populationIndex).individual.getPhenotype();
+			JFrame explorer = new JFrame("Explore Latent Space");
+			// Image of level
+			BufferedImage level = getButtonImage(false, phenotype, 2*picSize,2*picSize, inputMultipliers);
+			ImageIcon img = new ImageIcon(level.getScaledInstance(2*picSize,2*picSize,Image.SCALE_DEFAULT));
+			final JLabel imageLabel = new JLabel(img);
+			JPanel vectorSliders = new JPanel();
+			vectorSliders.setLayout(new GridLayout(phenotype.size(), 1));
+			// Add a slider for each latent vector variable
+			for(int i = 0; i < phenotype.size(); i++) {
+				JSlider vectorValue = new JSlider(JSlider.HORIZONTAL, 0, SLIDER_RANGE, (int)(SLIDER_RANGE*phenotype.get(i)));
+				vectorValue.setMinorTickSpacing(1);
+				vectorValue.setPaintTicks(true);
+				Hashtable<Integer,JLabel> labels = new Hashtable<>();
+				labels.put(0, new JLabel("0.0"));
+				labels.put(SLIDER_RANGE, new JLabel("1.0"));
+				vectorValue.setLabelTable(labels);
+				vectorValue.setPaintLabels(true);
+				vectorValue.setPreferredSize(new Dimension(200, 40));
+
+				/**
+				 * Changed level width picture previews
+				 */
+				final int latentVariableIndex = i;
+				vectorValue.addChangeListener(new ChangeListener() {
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						// get value
+						JSlider source = (JSlider)e.getSource();
+						if(!source.getValueIsAdjusting()) {
+							int newValue = (int) source.getValue();
+							double scaledValue = (1.0 * newValue) / SLIDER_RANGE;
+							// Actually change the value of the phenotype in the population
+							phenotype.set(latentVariableIndex, scaledValue);
+							// Update image
+							BufferedImage level = getButtonImage(false, phenotype, 2*picSize,2*picSize, inputMultipliers);
+							ImageIcon img = new ImageIcon(level.getScaledInstance(2*picSize,2*picSize,Image.SCALE_DEFAULT));
+							imageLabel.setIcon(img);
+							// Genotype references the phenotype, so it is changed by the modifications above
+							resetButton(scores.get(populationIndex).individual, populationIndex);
+						}
+					}
+				});
+
+				vectorSliders.add(vectorValue);
+			}
+
+			// Play the modified level
+			JButton play = new JButton("Play");
+			// Population index of last clicked level
+			play.setName(""+populationIndex);
+			play.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String name = ((JButton) e.getSource()).getName();
+					int populationIndex = Integer.parseInt(name);
+					ArrayList<Double> phenotype = scores.get(populationIndex).individual.getPhenotype();
+					playLevel(phenotype);
+				}
+			});
+
+			JPanel main = new JPanel();
+			main.add(vectorSliders);
+			main.add(imageLabel);
+			main.add(play);
+			explorer.getContentPane().add(main);
+			
+			explorer.pack();
+			explorer.setVisible(true);
 		}
 
 		return false; // no undo: every thing is fine

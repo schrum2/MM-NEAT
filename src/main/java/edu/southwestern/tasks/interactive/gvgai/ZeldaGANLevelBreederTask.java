@@ -29,8 +29,8 @@ import gvgai.tracks.singlePlayer.tools.human.Agent;
  */
 public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 
-	private static final String gameFile = "zelda";
-	private static final String fullGameFile = LevelBreederTask.GAMES_PATH + gameFile + ".txt";
+	private static final String GAME_FILE = "zelda";
+	private static final String FULL_GAME_FILE = LevelBreederTask.GAMES_PATH + GAME_FILE + ".txt";
 
 	public ZeldaGANLevelBreederTask() throws IllegalAccessException {
 		super();
@@ -55,7 +55,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		int seed = 0; // TODO: Use parameter?
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 
-		Game game = new VGDLParser().parseGame(fullGameFile); // Initialize the game	
+		Game game = new VGDLParser().parseGame(FULL_GAME_FILE); // Initialize the game	
 
 		return new GameBundle(game, level, agent, seed, 0);
 	}
@@ -106,14 +106,13 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 			public void run() {
 				// True is to watch the game being played
 				GVGAIUtil.runOneGame(bundle, true);
-
 			}
 		}.start();
 	}
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","watch:false","cleanFrequency:-1","simplifiedInteractiveInterface:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","zeldaGANModel:ZeldaDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","watch:false","cleanFrequency:-1","simplifiedInteractiveInterface:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
