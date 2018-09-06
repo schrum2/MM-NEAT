@@ -159,7 +159,7 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 			ImageIcon img = new ImageIcon(level.getScaledInstance(2*picSize,2*picSize,Image.SCALE_DEFAULT));
 			final JLabel imageLabel = new JLabel(img);
 			JPanel vectorSliders = new JPanel();
-			vectorSliders.setLayout(new GridLayout(phenotype.size(), 1));
+			vectorSliders.setLayout(new GridLayout(10, phenotype.size() / 10));
 			// Add a slider for each latent vector variable
 			for(int i = 0; i < phenotype.size(); i++) {
 				JSlider vectorValue = new JSlider(JSlider.HORIZONTAL, 0, SLIDER_RANGE, (int)(SLIDER_RANGE*phenotype.get(i)));
