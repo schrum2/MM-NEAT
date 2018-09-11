@@ -48,7 +48,16 @@ public class HardCodedTeammateController implements BotController {
 	public static final double MAX_DISTANCE_TO_ITEM = 300;
 	public static final double COMBAT_TYPE_THRESHOLD_DISTANCE = 150; //distance for approach enemy vs dodge shoot
 
+	private String name;
+	private String skin;
+
 	public HardCodedTeammateController(UT2004WeaponManager weaponManager) {
+		this(weaponManager, "Jude", "HumanFemaleA.MercFemaleB"); // Default name and skin
+	}
+	
+	public HardCodedTeammateController(UT2004WeaponManager weaponManager, String name, String skin) {
+		this.name = name;
+		this.skin = skin;
 		this.weaponManager = weaponManager;
 		if (weaponPreferences == null) {
 			weaponPreferences = new WeaponPreferenceTable();
@@ -269,7 +278,7 @@ public class HardCodedTeammateController implements BotController {
 	public void initialize(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		memory = OldActionWrapper.getAgentMemory(bot);
 		body = OldActionWrapper.getAgentBody(bot);		
-		bot.getBot().getBotName().setNameBase("Jude");
+		bot.getBot().getBotName().setNameBase(name);
 	}	
 
 	/**
@@ -280,8 +289,7 @@ public class HardCodedTeammateController implements BotController {
 
 	@Override
 	public String getSkin() {
-		// TODO Auto-generated method stub
-		return "HumanFemaleA.MercFemaleB";
+		return skin;
 	}
 
 }

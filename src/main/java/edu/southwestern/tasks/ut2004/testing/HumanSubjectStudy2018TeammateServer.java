@@ -31,6 +31,9 @@ public class HumanSubjectStudy2018TeammateServer {
 	public static void runTrial(BOT_TYPE type) throws IOException {		
 		//UT2004Util.copyDefaultVersionOfGameBots();
 		
+		// A generic teammate skin to be used by both Jude and Ethan
+		String teammateSkin = "HumanMaleA.MercMaleA";
+		
 		Genotype<TWEANN>[] individuals;
 		BotController[] controller;
 		SimpleWeaponManager weaponManager = new SimpleWeaponManager();
@@ -52,7 +55,7 @@ public class HumanSubjectStudy2018TeammateServer {
 		} else if(type.equals(BOT_TYPE.Jude)) { // Jude is the hard coded bot
 			individuals = new Genotype[0]; 
 			controller = new BotController[1]; // The one controller will be for Jude
-			BotController behaviorListController = new HardCodedTeammateController(weaponManager);
+			BotController behaviorListController = new HardCodedTeammateController(weaponManager, "Friend", teammateSkin);
 			controller[0] = behaviorListController;
 		} else {
 			throw new IllegalArgumentException("Must be using either Ethan or Jude as the bot in this study");
@@ -71,7 +74,7 @@ public class HumanSubjectStudy2018TeammateServer {
 	
 	public static void main(String[] args) throws IOException {
 		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:0", "numMirrorBots:0", "utNumNativeBots:2", "botprizeMod:false", "utEvalMinutes:10", "utNumOpponents:1", "utGameType:botTeamGame", "utMap:DM-Flux2","utBotLogOutput:true"});
-		//runTrial(BOT_TYPE.Jude);
-		runTrial(BOT_TYPE.Ethan);
+		runTrial(BOT_TYPE.Jude);
+		//runTrial(BOT_TYPE.Ethan);
 	}
 }
