@@ -212,6 +212,10 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 					BotController[] controllers = new BotController[individuals.length + opponents.length];
 					for(int i = 0; i < organisms.length; i++) {		
 						// Each controller gets its own copy of the sensor model, output model, and weapon manager
+						assert individuals[i] != null;
+						assert sensorModel != null;
+						assert outputModel != null;
+						assert weaponManager != null;
 						organisms[i] = new NetworkController<T>(individuals[i], sensorModel.copy(), outputModel.copy(), weaponManager.copy());
 						// The evolved network controllers use the network for battle, and have a basic item exploration module
 						ArrayList<BehaviorModule> behaviors = new ArrayList<BehaviorModule>(2);

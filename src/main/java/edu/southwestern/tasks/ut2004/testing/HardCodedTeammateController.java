@@ -5,37 +5,28 @@ import java.util.Map;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weaponry;
-import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Senses;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
-import cz.cuni.amis.utils.collections.MyCollections;
 import edu.southwestern.tasks.ut2004.actions.BotAction;
-import edu.southwestern.tasks.ut2004.actions.EmptyAction;
 import edu.southwestern.tasks.ut2004.actions.FollowTeammateAction;
 import edu.southwestern.tasks.ut2004.actions.NavigateToLocationAction;
 import edu.southwestern.tasks.ut2004.actions.OldActionWrapper;
 import edu.southwestern.tasks.ut2004.actions.PursueEnemyAction;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.RandomItemPathExplorer;
-import edu.southwestern.tasks.ut2004.controller.SequentialPathExplorer;
 import edu.southwestern.tasks.ut2004.controller.behaviors.AttackEnemyAloneModule;
-import edu.southwestern.tasks.ut2004.controller.behaviors.ItemExplorationBehaviorModule;
 import edu.southwestern.tasks.ut2004.weapons.UT2004WeaponManager;
-import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable.WeaponTableEntry;
 import mockcz.cuni.pogamut.Client.AgentBody;
 import mockcz.cuni.pogamut.Client.AgentMemory;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
 import utopia.agentmodel.actions.ApproachEnemyAction;
-import utopia.agentmodel.actions.DodgeShootAction;
 import utopia.agentmodel.actions.GotoItemAction;
 import utopia.agentmodel.actions.QuickTurnAction;
-import utopia.controllers.scripted.ChasingController;
 
 /**
  * Provides the control for a bot created to aid players
@@ -97,7 +88,8 @@ public class HardCodedTeammateController implements BotController {
 
 		/**if an enemy is visible attack?*/
 		if(visibleEnemy != null){
-			double enemyDistance = visibleEnemy.getLocation().getDistance(bot.getBot().getLocation());
+			// Schrum: Not used?
+			//double enemyDistance = visibleEnemy.getLocation().getDistance(bot.getBot().getLocation());
 			lastSeenEnemy = visibleEnemy;
 			if(shouldEngage(bot)) { //fight if you have health and ammo
 				System.out.println("Attacking enemy");
@@ -167,7 +159,7 @@ public class HardCodedTeammateController implements BotController {
 	 * engage if hp > 30 and has ammo
 	 * @return returns whether bot should engage
 	 */
-	public boolean shouldEngage(UT2004BotModuleController bot) {
+	public boolean shouldEngage(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		//check ammo
 		boolean hasGun = bot.getWeaponry().hasLoadedWeapon();
 		boolean hasHealth = (bot.getBot().getSelf().getHealth()) > DNE_HEALTH_LEVEL;
@@ -191,7 +183,7 @@ public class HardCodedTeammateController implements BotController {
 	 *
 	 * @return true if the weapon is good for fighting.
 	 */
-	public boolean equipBestWeapon(UT2004BotModuleController bot) {
+	public boolean equipBestWeapon(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		return equipBestWeapon(bot, false);
 	}
 
@@ -204,7 +196,7 @@ public class HardCodedTeammateController implements BotController {
 	 * combat
 	 * @return whether the weapons it good to fight with
 	 */
-	public boolean equipBestWeapon(UT2004BotModuleController bot, boolean added) {
+	public boolean equipBestWeapon(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, boolean added) {
 		Weaponry weaponry = bot.getWeaponry();//added by adina for compatibility
 		boolean hasGoodWeapon = weaponPreferences.hasGoodWeapon(weaponry.getLoadedRangedWeapons(), bot.getPlayers(), OldActionWrapper.getAgentMemory(bot));
 		Weapon recommendation = weaponPreferences.savedRec;
