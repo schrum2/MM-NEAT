@@ -217,12 +217,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 						assert outputModel != null;
 						assert weaponManager != null;
 						organisms[i] = new NetworkController<T>(individuals[i], sensorModel.copy(), outputModel.copy(), weaponManager.copy());
-						// The evolved network controllers use the network for battle, and have a basic item exploration module
-						ArrayList<BehaviorModule> behaviors = new ArrayList<BehaviorModule>(2);
-						behaviors.add(new BattleNetworkBehaviorModule<T>(organisms[i]));
-						behaviors.add(new ItemExplorationBehaviorModule());
-						BotController controller = new BehaviorListController(behaviors);
-						controllers[i] = controller;
+						controllers[i] = wrapNetworkInBehaviorListController(organisms[i]);
 					}
 					// Copy the fixed opponent controllers into the controllers array after the evolved network controllers
 					System.arraycopy(opponents, 0, controllers, individuals.length, opponents.length);
@@ -259,6 +254,21 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Take a network controller for combat and make a complete agent that
+	 * has a list of other (basic) behaviors to use outside of combat.
+	 * @param organism Network controller derived from genotype
+	 * @return Complete controller using a list of behaviors
+	 */
+	public static <T extends Network> BotController wrapNetworkInBehaviorListController(NetworkController<T> organism) {
+		// The evolved network controllers use the network for battle, and have a basic item exploration module
+		ArrayList<BehaviorModule> behaviors = new ArrayList<BehaviorModule>(2);
+		behaviors.add(new BattleNetworkBehaviorModule<T>(organism));
+		behaviors.add(new ItemExplorationBehaviorModule());
+		BotController controller = new BehaviorListController(behaviors);
+		return controller;
 	}
 	
 	

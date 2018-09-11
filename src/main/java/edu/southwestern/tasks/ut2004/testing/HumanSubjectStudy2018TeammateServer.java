@@ -13,6 +13,7 @@ import edu.southwestern.tasks.ut2004.UT2004Task;
 import edu.southwestern.tasks.ut2004.actuators.OpponentAndTeammateRelativeMovementOutputModel;
 import edu.southwestern.tasks.ut2004.actuators.UT2004OutputInterpretation;
 import edu.southwestern.tasks.ut2004.controller.BotController;
+import edu.southwestern.tasks.ut2004.controller.NetworkController;
 import edu.southwestern.tasks.ut2004.fitness.UT2004FitnessFunction;
 import edu.southwestern.tasks.ut2004.sensors.OpponentAndTeammateRelativeSensorModel;
 import edu.southwestern.tasks.ut2004.sensors.UT2004SensorModel;
@@ -34,15 +35,13 @@ public class HumanSubjectStudy2018TeammateServer {
 		// A generic teammate skin to be used by both Jude and Ethan
 		String teammateSkin = "HumanMaleA.MercMaleA";
 		
-		Genotype<TWEANN>[] individuals;
-		BotController[] controller;
+		Genotype<TWEANN>[] individuals = new Genotype[0]; 
+		BotController[] controller = new BotController[1]; // The one controller will be for Jude
 		SimpleWeaponManager weaponManager = new SimpleWeaponManager();
 		UT2004SensorModel sensorModel = null;
 		UT2004OutputInterpretation outputModel = null;
 		if(type.equals(BOT_TYPE.Ethan)) { // Ethan is the evolved bot
 			Genotype<TWEANN> ethan = (Genotype<TWEANN>) Easy.load("data" + File.separator + "unreal" + File.separator + "Study2018" + File.separator + "Ethan.xml");
-			individuals = new Genotype[] {ethan};
-			controller = new BotController[0]; // No controller needed, since the genotype will handle it			
 			sensorModel = new OpponentAndTeammateRelativeSensorModel();
 			outputModel = new OpponentAndTeammateRelativeMovementOutputModel();
 			
@@ -50,11 +49,12 @@ public class HumanSubjectStudy2018TeammateServer {
 			HashMap<String,Location> friendDistances = new HashMap<String,Location>();
 			((OpponentAndTeammateRelativeSensorModel) sensorModel).giveTeamLocations(friendDistances);
 			HashMap<String,Double> friendHealthLevels = new HashMap<String,Double>();
-			((OpponentAndTeammateRelativeSensorModel) sensorModel).giveTeamHelathLevels(friendHealthLevels);;
+			((OpponentAndTeammateRelativeSensorModel) sensorModel).giveTeamHelathLevels(friendHealthLevels);
 			
+			NetworkController<TWEANN> organism = new NetworkController<TWEANN>(ethan, sensorModel.copy(), outputModel.copy(), weaponManager.copy());
+			controller[0] = UT2004Task.wrapNetworkInBehaviorListController(organism);
 		} else if(type.equals(BOT_TYPE.Jude)) { // Jude is the hard coded bot
 			individuals = new Genotype[0]; 
-			controller = new BotController[1]; // The one controller will be for Jude
 			BotController behaviorListController = new HardCodedTeammateController(weaponManager, "Friend", teammateSkin);
 			controller[0] = behaviorListController;
 		} else {
@@ -74,7 +74,7 @@ public class HumanSubjectStudy2018TeammateServer {
 	
 	public static void main(String[] args) throws IOException {
 		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:0", "numMirrorBots:0", "utNumNativeBots:2", "botprizeMod:false", "utEvalMinutes:10", "utNumOpponents:1", "utGameType:botTeamGame", "utMap:DM-Flux2","utBotLogOutput:true"});
-		runTrial(BOT_TYPE.Jude);
-		//runTrial(BOT_TYPE.Ethan);
+		//runTrial(BOT_TYPE.Jude);
+		runTrial(BOT_TYPE.Ethan);
 	}
 }

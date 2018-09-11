@@ -76,7 +76,6 @@ public class NetworkController<T extends Network> extends Organism<T>implements 
 
 	@Override
 	public String getSkin() {
-		// TODO Auto-generated method stub
 		return "HumanFemaleA.MercFemaleA";
 	}
 }
