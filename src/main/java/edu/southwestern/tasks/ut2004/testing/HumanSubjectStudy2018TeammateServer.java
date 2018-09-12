@@ -21,7 +21,7 @@ import edu.southwestern.tasks.ut2004.weapons.SimpleWeaponManager;
 import wox.serial.Easy;
 
 public class HumanSubjectStudy2018TeammateServer {
-	enum BOT_TYPE {Ethan, Jude}; // Ethan = evolved, Jude = hard-coded
+	enum BOT_TYPE {Ethan, Jude, Native}; // Ethan = evolved, Jude = hard-coded, or native UT2004 bot
 	
 	/**
 	 * Assumes parameters have been initialized elsewhere
@@ -36,12 +36,13 @@ public class HumanSubjectStudy2018TeammateServer {
 		String teammateSkin = "HumanMaleA.MercMaleA";
 		
 		Genotype<TWEANN>[] individuals = new Genotype[0]; 
-		BotController[] controller = new BotController[1]; // The one controller will be for Jude
+		BotController[] controller = new BotController[1]; // The one controller will be for Jude or Ethan
 		SimpleWeaponManager weaponManager = new SimpleWeaponManager();
 		UT2004SensorModel sensorModel = null;
 		UT2004OutputInterpretation outputModel = null;
 		int[] nativeTeams = null; 
 		String[] nativeNames = null;
+		int numNativeBotOpponents = Parameters.parameters.integerParameter("utNumNativeBots"); 
 		if(type.equals(BOT_TYPE.Ethan)) { // Ethan is the evolved bot
 			Genotype<TWEANN> ethan = (Genotype<TWEANN>) Easy.load("data" + File.separator + "unreal" + File.separator + "Study2018" + File.separator + "Ethan.xml");
 			sensorModel = new OpponentAndTeammateRelativeSensorModel();
@@ -59,15 +60,19 @@ public class HumanSubjectStudy2018TeammateServer {
 			individuals = new Genotype[0]; 
 			BotController behaviorListController = new HardCodedTeammateController(weaponManager, "Friend", teammateSkin);
 			controller[0] = behaviorListController;
+		} else if(type.equals(BOT_TYPE.Native)) {
+			controller = new BotController[0]; // There will be no controllers
+			nativeTeams = new int[] {0, 1, 1}; // One friend and two opponents
+			nativeNames = new String[] {"Friend", "Bot0", "Bot1"};
+			numNativeBotOpponents++; // One more than expected
 		} else {
-			throw new IllegalArgumentException("Must be using either Ethan or Jude as the bot in this study");
+			throw new IllegalArgumentException("Must be using Ethan, Jude, or a native bot as the bot in this study");
 		}
 		
 		int evalMinutes = Parameters.parameters.integerParameter("utEvalMinutes");
 		String map = Parameters.parameters.stringParameter("utMap");
 		int desiredSkill = Parameters.parameters.integerParameter("utEvolvingBotSkill"); 
 		int nativeBotSkill = Parameters.parameters.integerParameter("utNativeBotSkill");
-		int numNativeBotOpponents = Parameters.parameters.integerParameter("utNumNativeBots"); 
 		ArrayList<UT2004FitnessFunction<TWEANN>> fitness = new ArrayList<>();
 		ArrayList<UT2004FitnessFunction<TWEANN>> others = new ArrayList<>();
 		//launches server
@@ -77,6 +82,7 @@ public class HumanSubjectStudy2018TeammateServer {
 	public static void main(String[] args) throws IOException {
 		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:0", "numMirrorBots:0", "utNumNativeBots:2", "botprizeMod:false", "utEvalMinutes:10", "utNumOpponents:1", "utGameType:botTeamGame", "utMap:DM-Flux2","utBotLogOutput:true"});
 		//runTrial(BOT_TYPE.Jude);
-		runTrial(BOT_TYPE.Ethan);
+		//runTrial(BOT_TYPE.Ethan);
+		runTrial(BOT_TYPE.Native);
 	}
 }
