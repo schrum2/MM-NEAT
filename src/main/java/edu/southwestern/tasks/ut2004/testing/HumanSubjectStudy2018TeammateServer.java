@@ -40,6 +40,8 @@ public class HumanSubjectStudy2018TeammateServer {
 		SimpleWeaponManager weaponManager = new SimpleWeaponManager();
 		UT2004SensorModel sensorModel = null;
 		UT2004OutputInterpretation outputModel = null;
+		int[] nativeTeams = null; 
+		String[] nativeNames = null;
 		if(type.equals(BOT_TYPE.Ethan)) { // Ethan is the evolved bot
 			Genotype<TWEANN> ethan = (Genotype<TWEANN>) Easy.load("data" + File.separator + "unreal" + File.separator + "Study2018" + File.separator + "Ethan.xml");
 			sensorModel = new OpponentAndTeammateRelativeSensorModel();
@@ -69,7 +71,7 @@ public class HumanSubjectStudy2018TeammateServer {
 		ArrayList<UT2004FitnessFunction<TWEANN>> fitness = new ArrayList<>();
 		ArrayList<UT2004FitnessFunction<TWEANN>> others = new ArrayList<>();
 		//launches server
-		UT2004Task.evaluateMultipleGenotypes(individuals, map, numNativeBotOpponents, sensorModel, outputModel, weaponManager, controller, evalMinutes, desiredSkill, nativeBotSkill,	fitness, others);
+		UT2004Task.evaluateMultipleGenotypes(individuals, map, numNativeBotOpponents, sensorModel, outputModel, weaponManager, controller, evalMinutes, desiredSkill, nativeBotSkill, nativeTeams, nativeNames, fitness, others);
 	}
 	
 	public static void main(String[] args) throws IOException {
