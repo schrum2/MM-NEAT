@@ -995,13 +995,27 @@ public class MMNEAT {
 			Parameters.initializeParameterCollections(args); // file should exist
 			loadClasses();
 			process(runs);
-		} else if (args[0].startsWith("ut2004:")) {
+		} else if (args[0].startsWith("utStudyTeammate:")) {
 			// This launch code is associated with the 2018 Human Subject Study using
 			// Unreal Tournament 2004. The purpose is to evaluate different types of
 			// teammates in team deathmatch.
 			
-			// TODO: Need to set this type from the command line
-			HumanSubjectStudy2018TeammateServer.BOT_TYPE type = HumanSubjectStudy2018TeammateServer.BOT_TYPE.Ethan;
+			Parameters.initializeParameterCollections(args);
+			String teammateString = Parameters.parameters.stringParameter("utStudyTeammate");
+			HumanSubjectStudy2018TeammateServer.BOT_TYPE type; 
+			switch(teammateString) {
+			case "jude":
+				type = HumanSubjectStudy2018TeammateServer.BOT_TYPE.Jude;
+				break;
+			case "ethan":
+				type = HumanSubjectStudy2018TeammateServer.BOT_TYPE.Ethan;
+				break;
+			case "native":
+				type = HumanSubjectStudy2018TeammateServer.BOT_TYPE.Native;
+				break;
+			default:
+				throw new IllegalArgumentException("utStudyTeammate parameter must be ethan, jude, or native");
+			}
 			try {
 				HumanSubjectStudy2018TeammateServer.runTrial(type);
 			} catch (IOException e) {
