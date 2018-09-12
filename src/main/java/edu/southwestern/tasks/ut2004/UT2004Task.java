@@ -413,6 +413,9 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 			className = className.substring(className.lastIndexOf('.')+1)+i;
 			names[i] = className;
 		}
+		
+		// TODO: If there are no bots (only native bots) I need to find a way to keep the server running
+		
 		// Launch bots on server and retrieve collected fitness info
 		GameDataCollector[] collectors = ControllerBot.launchBot(
 				server, names, controllers,

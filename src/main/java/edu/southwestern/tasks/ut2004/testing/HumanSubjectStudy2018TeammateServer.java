@@ -21,7 +21,7 @@ import edu.southwestern.tasks.ut2004.weapons.SimpleWeaponManager;
 import wox.serial.Easy;
 
 public class HumanSubjectStudy2018TeammateServer {
-	enum BOT_TYPE {Ethan, Jude, Native}; // Ethan = evolved, Jude = hard-coded, or native UT2004 bot
+	public enum BOT_TYPE {Ethan, Jude, Native}; // Ethan = evolved, Jude = hard-coded, or native UT2004 bot
 	
 	/**
 	 * Assumes parameters have been initialized elsewhere

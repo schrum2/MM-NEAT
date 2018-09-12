@@ -2,6 +2,7 @@ package edu.southwestern.MMNEAT;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -102,6 +103,7 @@ import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.tasks.ut2004.UT2004Task;
 import edu.southwestern.tasks.ut2004.UT2004Util;
+import edu.southwestern.tasks.ut2004.testing.HumanSubjectStudy2018TeammateServer;
 import edu.southwestern.tasks.vizdoom.VizDoomTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -993,6 +995,21 @@ public class MMNEAT {
 			Parameters.initializeParameterCollections(args); // file should exist
 			loadClasses();
 			process(runs);
+		} else if (args[0].startsWith("ut2004:")) {
+			// This launch code is associated with the 2018 Human Subject Study using
+			// Unreal Tournament 2004. The purpose is to evaluate different types of
+			// teammates in team deathmatch.
+			
+			// TODO: Need to set this type from the command line
+			HumanSubjectStudy2018TeammateServer.BOT_TYPE type = HumanSubjectStudy2018TeammateServer.BOT_TYPE.Ethan;
+			try {
+				HumanSubjectStudy2018TeammateServer.runTrial(type);
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("\n\n\n");
+				System.out.println("This trial terminated unexpectedly. Please inform the researcher immediately.");
+				System.exit(1);
+			}
 		} else {
 			evolutionaryRun(args);
 		}
