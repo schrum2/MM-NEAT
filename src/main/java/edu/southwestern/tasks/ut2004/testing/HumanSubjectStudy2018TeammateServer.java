@@ -52,7 +52,7 @@ public class HumanSubjectStudy2018TeammateServer {
 			((OpponentAndTeammateRelativeSensorModel) sensorModel).giveTeamHelathLevels(friendHealthLevels);
 			
 			NetworkController<TWEANN> organism = new NetworkController<TWEANN>(ethan, sensorModel.copy(), outputModel.copy(), weaponManager.copy());
-			controller[0] = UT2004Task.wrapNetworkInBehaviorListController(organism);
+			controller[0] = UT2004Task.wrapNetworkInBehaviorListController(organism, "Friend", teammateSkin);
 		} else if(type.equals(BOT_TYPE.Jude)) { // Jude is the hard coded bot
 			individuals = new Genotype[0]; 
 			BotController behaviorListController = new HardCodedTeammateController(weaponManager, "Friend", teammateSkin);

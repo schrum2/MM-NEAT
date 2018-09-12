@@ -263,11 +263,17 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * @return Complete controller using a list of behaviors
 	 */
 	public static <T extends Network> BotController wrapNetworkInBehaviorListController(NetworkController<T> organism) {
+		return wrapNetworkInBehaviorListController(organism, null, null); // Use default name and skin
+	}
+	
+	public static <T extends Network> BotController wrapNetworkInBehaviorListController(NetworkController<T> organism, String name, String skin) {
 		// The evolved network controllers use the network for battle, and have a basic item exploration module
 		ArrayList<BehaviorModule> behaviors = new ArrayList<BehaviorModule>(2);
 		behaviors.add(new BattleNetworkBehaviorModule<T>(organism));
 		behaviors.add(new ItemExplorationBehaviorModule());
-		BotController controller = new BehaviorListController(behaviors);
+		BotController controller = name == null || skin == null ? // If name or skin not overridden
+				new BehaviorListController(behaviors) : // Use default
+				new BehaviorListController(behaviors, name, skin); // Else use specified skin and name
 		return controller;
 	}
 	
