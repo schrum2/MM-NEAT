@@ -97,7 +97,8 @@ public class ControllerBot extends UT2004BotModuleController {
 	 * assigns actions for the bot to execute
 	 */
 	public void logic() throws PogamutException {
-		if (game.getTime() > getParams().getEvalSeconds()) {
+		if (game.getTime() > getParams().getEvalSeconds() &&
+			Parameters.parameters.booleanParameter("utBotKilledAtEnd")) {
 			endEval();
 		}
 		// Consult brain and act

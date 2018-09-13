@@ -703,7 +703,6 @@ public class Parameters {
 		booleanOptions.add("watchFitness", false, "Show min/max fitness scores");
 		booleanOptions.add("weakenBeforeModeMutation", false, "Existing network mode preferences are weakened before new mode is added");
 		booleanOptions.add("weightedAverageModeAggregation", false, "Merge multiple modes via weighted average of preference neurons");
-		//booleanOptions.add("gvgaiSave", false, "If true, save the actions from the GVGAI game that was just played.");
 		booleanOptions.add("allowCubeDisplacement", true, "Allows displacement of individual voxels in 3D objects and animations");
 		booleanOptions.add("gvgaiScore", false, "Use the GVGAI Score as a Selection Function");
 		booleanOptions.add("gvgaiTimestep", false, "Use the GVGAI Timestep as a Selection Function");
@@ -711,6 +710,7 @@ public class Parameters {
 		booleanOptions.add("rlBackprop", false, "Whether to do backprop learning updates during reinforcement learning");
 		booleanOptions.add("rlEpsilonGreedy", false, "Whether to use an epsilon greedy policy when using reinforcement learning");
 		booleanOptions.add("simplifiedInteractiveInterface", true, "Determines how many buttons to show on the interactive evolution interfaces");
+		booleanOptions.add("utBotKilledAtEnd", true, "True if UT2004 bots are forcibly killed at time limit (instead of running until server dies)");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
