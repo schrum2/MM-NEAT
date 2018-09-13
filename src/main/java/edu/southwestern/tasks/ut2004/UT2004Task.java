@@ -228,13 +228,25 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 					// Copy the fixed opponent controllers into the controllers array after the evolved network controllers
 					System.arraycopy(opponents, 0, controllers, individuals.length, opponents.length);
 					// Evaluate network controllers and fixed controllers
+					long evaluateStartTime = System.currentTimeMillis();
 					GameDataCollector[] collectors = evaluateAgentsOnServer(server, controllers, botPort, gamePort, numNativeBots, evalMinutes, desiredSkill, nativeBotSkill, nativeTeams, nativeNames); 					
 					// Transfer stats data to result: only evolved organisms
 					for(int j = 0; j < organisms.length; j++) {
 						if (collectors[j].evalWasSuccessful()) {
 							result[j] = relevantScores(collectors[j], organisms[j], fitness, others);
+						}						
+					}
+					// If we want to run a server with only native bots
+					long evalTimeMillis = evalMinutes*60*1000; // Eval time in milliseconds
+					while(collectors.length == 0 && // No gamebots agents are running 
+						  System.currentTimeMillis() - evaluateStartTime < evalTimeMillis) { // time not up
+						// Will hopefully only sleep once
+						try {
+							Thread.sleep(evalTimeMillis);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+							System.out.println("Interrupted while waiting for server");
 						}
-						
 					}
 				} finally {
 					System.out.println(botPort + ": Past evaluate block: " + System.currentTimeMillis());
