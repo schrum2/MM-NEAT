@@ -269,6 +269,13 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		return wrapNetworkInBehaviorListController(organism, null, null); // Use default name and skin
 	}
 	
+	/**
+	 * Same as above, but specifies the name and skin of the bot
+	 * @param organism Network controller for agent
+	 * @param name String displayed for agent in game
+	 * @param skin String that defines a skin class for the agent to use
+	 * @return Controller with a list of behaviors, including the network for combat
+	 */
 	public static <T extends Network> BotController wrapNetworkInBehaviorListController(NetworkController<T> organism, String name, String skin) {
 		// The evolved network controllers use the network for battle, and have a basic item exploration module
 		ArrayList<BehaviorModule> behaviors = new ArrayList<BehaviorModule>(2);
@@ -279,7 +286,6 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				new BehaviorListController(behaviors, name, skin); // Else use specified skin and name
 		return controller;
 	}
-	
 	
 	/**
 	 * Evaluate multiple genotypes across different maps and return evaluation information on each of them.
@@ -308,6 +314,24 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				fitness, others);
 	}
 	
+	/**
+	 * Same as above, but adds team specification for each native bot, and name specification for each native bot.
+	 * @param individuals
+	 * @param map
+	 * @param numNativeBots
+	 * @param sensorModel
+	 * @param outputModel
+	 * @param weaponManager
+	 * @param opponents
+	 * @param evalMinutes
+	 * @param desiredSkill
+	 * @param nativeBotSkill
+	 * @param nativeTeams
+	 * @param nativeNames
+	 * @param fitness
+	 * @param others
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Network> Pair<double[], double[]>[] evaluateMultipleGenotypesAcrossMultipleMaps(Genotype<T>[] individuals, String[] map, int numNativeBots, 
 			UT2004SensorModel sensorModel, UT2004OutputInterpretation outputModel, UT2004WeaponManager weaponManager, BotController[] opponents,
@@ -331,9 +355,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		
 		return resultToReturn;
 	}
-	//use average as aggregation method
 	
-
 	/**
 	 * Configure the server with several ports as well as command line parameter information
 	 * 
@@ -352,7 +374,6 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		config.setGameBotsPack("GameBots2004");
 		config.setGameType(Parameters.parameters.stringParameter("utGameType"));
 
-
 		//Creates an arraylist of mutators that will be applied to the server
 		ArrayList<String> mutators = new ArrayList<>();
 		if(Parameters.parameters.booleanParameter("botprizeMod")) {
@@ -365,7 +386,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 			mutators.add("Gamebots2004.GBHUD");
 		}
 
-		//converts the srraylist into a string that will be given to the server as a command
+		//converts the arraylist into a string that will be given to the server as a command
 		String mutatorString = mutators.isEmpty() ? "":"?mutator=" + String.join(",", mutators);
 
 		// Setup the server configuration
