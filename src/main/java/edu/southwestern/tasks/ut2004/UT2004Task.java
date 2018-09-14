@@ -242,7 +242,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 						  System.currentTimeMillis() - evaluateStartTime < evalTimeMillis) { // time not up
 						// Will hopefully only sleep once
 						try {
-							Thread.sleep(evalTimeMillis);
+							Thread.sleep(1000); // Sleep in small increments
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 							System.out.println("Interrupted while waiting for server");
