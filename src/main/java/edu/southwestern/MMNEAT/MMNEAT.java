@@ -1004,6 +1004,9 @@ public class MMNEAT {
 			String teammateString = Parameters.parameters.stringParameter("utStudyTeammate");
 			HumanSubjectStudy2018TeammateServer.BOT_TYPE type; 
 			switch(teammateString) {
+			case "none":
+				type = HumanSubjectStudy2018TeammateServer.BOT_TYPE.None;
+				break;
 			case "jude":
 				type = HumanSubjectStudy2018TeammateServer.BOT_TYPE.Jude;
 				break;

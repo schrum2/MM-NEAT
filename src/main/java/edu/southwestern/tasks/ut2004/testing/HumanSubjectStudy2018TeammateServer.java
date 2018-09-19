@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
@@ -21,7 +22,7 @@ import edu.southwestern.tasks.ut2004.weapons.SimpleWeaponManager;
 import wox.serial.Easy;
 
 public class HumanSubjectStudy2018TeammateServer {
-	public enum BOT_TYPE {Ethan, Jude, Native}; // Ethan = evolved, Jude = hard-coded, or native UT2004 bot
+	public enum BOT_TYPE {Ethan, Jude, Native, None}; // Ethan = evolved, Jude = hard-coded, or native UT2004 bot, or none
 	
 	/**
 	 * Assumes parameters have been initialized elsewhere
@@ -65,6 +66,11 @@ public class HumanSubjectStudy2018TeammateServer {
 			nativeTeams = new int[] {0, 1, 1}; // One friend and two opponents
 			nativeNames = new String[] {"Friend", "Bot0", "Bot1"};
 			numNativeBotOpponents++; // One more than expected
+		} else if(type.equals(BOT_TYPE.None)) {
+			controller = new BotController[0]; // There will be no controllers
+			nativeTeams = new int[] {1}; // One opponent
+			nativeNames = new String[] {"Enemy"};
+			numNativeBotOpponents = 1; 			
 		} else {
 			throw new IllegalArgumentException("Must be using Ethan, Jude, or a native bot as the bot in this study");
 		}
@@ -79,10 +85,13 @@ public class HumanSubjectStudy2018TeammateServer {
 		UT2004Task.evaluateMultipleGenotypes(individuals, map, numNativeBotOpponents, sensorModel, outputModel, weaponManager, controller, evalMinutes, desiredSkill, nativeBotSkill, nativeTeams, nativeNames, fitness, others);
 	}
 	
-	public static void main(String[] args) throws IOException {
-		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:0", "numMirrorBots:0", "utNumNativeBots:2", "botprizeMod:false", "utEvalMinutes:10", "utNumOpponents:1", "utGameType:botTeamGame", "utMap:DM-Flux2","utBotLogOutput:true"});
+	public static void main(String[] args) throws IOException, NoSuchMethodException {
+		MMNEAT.main("utStudyTeammate:ethan runNumber:1 randomSeed:1 base:ut2004 io:true netio:false log:UT2004-Ethan saveTo:Ethan numUT2Bots:0 numMirrorBots:0 utNumNativeBots:2 botprizeMod:false utEvalMinutes:1 utNumOpponents:1 utGameType:botTeamGame utMap:DM-Flux2 utBotLogOutput:true utBotKilledAtEnd:false".split(" "));
+		
+		
+		//Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:0", "numMirrorBots:0", "utNumNativeBots:2", "botprizeMod:false", "utEvalMinutes:10", "utNumOpponents:1", "utGameType:botTeamGame", "utMap:DM-Flux2","utBotLogOutput:true"});
 		//runTrial(BOT_TYPE.Jude);
 		//runTrial(BOT_TYPE.Ethan);
-		runTrial(BOT_TYPE.Native);
+		//runTrial(BOT_TYPE.Native);
 	}
 }

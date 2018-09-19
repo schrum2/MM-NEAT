@@ -1,3 +1,10 @@
+START UT2004-Record.bat Subject-%1-Tutorial
+START UT2004-Tutorial.bat %1
+CALL UT2004-JoinLocal.bat
+
+ECHO "Press a key after your tutorial to go to the first match"
+PAUSE
+
 set /a id=%1
 
 set /a divnumber=%id%/2
