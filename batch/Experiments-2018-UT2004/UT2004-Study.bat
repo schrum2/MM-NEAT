@@ -1,4 +1,5 @@
 mkdir Subject-%1
+taskkill /F /IM ucc.exe /T
 START UT2004-Tutorial.bat %1
 START UT2004-JoinLocal.bat
 START UT2004-Record.bat Subject-%1\Subject-%1-Tutorial
@@ -18,6 +19,7 @@ if %id% NEQ %sum% goto odds
 if %id% EQU %sum% goto evens
 
 :odds
+taskkill /F /IM ucc.exe /T
 START UT2004-Ethan.bat %1
 START UT2004-JoinLocal.bat
 START UT2004-Record.bat Subject-%1\Subject-%1-EthanMatch-1
@@ -31,6 +33,7 @@ ECHO "Press a key after completing the first survey to start your next match"
 PAUSE
 REM get back to starting directory
 cd %0\..\
+taskkill /F /IM ucc.exe /T
 START UT2004-Native.bat %1
 START UT2004-JoinLocal.bat
 START UT2004-Record.bat Subject-%1\Subject-%1-JudeMatch-2 
@@ -43,6 +46,7 @@ START "" https://goo.gl/forms/8gQ68KJnMbQk2Ppz2
 goto finished
 
 :evens
+taskkill /F /IM ucc.exe /T
 START UT2004-Native.bat %1
 START UT2004-JoinLocal.bat
 START UT2004-Record.bat Subject-%1\Subject-%1-JudeMatch-1
@@ -56,6 +60,7 @@ ECHO "Press a key after completing the first survey to start your next match"
 PAUSE
 REM get back to starting directory
 cd %0\..\
+taskkill /F /IM ucc.exe /T
 START UT2004-Ethan.bat %1
 START UT2004-JoinLocal.bat
 START UT2004-Record.bat Subject-%1\Subject-%1-EthanMatch-2
