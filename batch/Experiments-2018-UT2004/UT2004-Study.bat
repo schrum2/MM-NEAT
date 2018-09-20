@@ -1,3 +1,6 @@
+REM Do not overwrite existing directory
+IF exist Subject-%1 goto finished
+
 mkdir Subject-%1
 taskkill /F /IM ucc.exe /T
 START UT2004-Tutorial.bat %1
@@ -71,3 +74,4 @@ REM Survey 2
 START "" https://goo.gl/forms/8gQ68KJnMbQk2Ppz2
 
 :finished
+ECHO "DONE"

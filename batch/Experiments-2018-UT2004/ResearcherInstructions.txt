@@ -1,0 +1,14 @@
+ 1. Hold shift and right-click the directory background. Select "Open command window here"
+ 2. Type "UT2004-Study.bat N" where N is the subject's unique ID number. N should be one more than the number in the highest existing experiment subdir (ex. Subject-5)
+ 3. If you selected a number that already exists, the script will exit immediately to avoid overwriting files.
+ 4. If an unused number was provided, a 5-minute 1-on-1 tutorial match will start.
+ 5. Stay in the room during the tutorial match and answer the subjects questions. The subject may also need your help reconfiguring the controls to suit them.
+ 6. At the end of the match the game camera will focus on the winner. Press F1 to show the score board, then help the subject exit the game at this point.
+ 7. There will be a black console window with colored text. Select this one and press q to stop the recording. Close this window.
+ 8. If the console window running MM-NEAT is not finished, then wait (it should close on its own).
+ 9. Tell the subject to wait for you after the end of the next match. Remind the subject that they will be asked questions about their teammate afterward.
+10. There will be one console left with the message "Press any key to continue . . ." at the bottom. Let the subject press a key to start the first match.
+11. This match will take 10 minutes. Leave the room but stay nearby if you are needed. Try to return to the room in time to quietly observe the end of the match.
+12. At the end of the match the game camera will focus on the winner. Press F1 to show the score board, then help the subject exit the game at this point.
+13. There will be a black console window with colored text. Select this one and press q to stop the recording. Close this window.
+14. If the console window running MM-NEAT is not finished, then wait (it should close on its own).
