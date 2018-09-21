@@ -19,7 +19,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.actions.BotAction;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.DummyController;
-import edu.southwestern.tasks.ut2004.controller.RandomNavPointPathExplorer;
+import edu.southwestern.tasks.ut2004.controller.pathexplorers.RandomNavPointPathExplorer;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
 import edu.utexas.cs.nn.bots.UT2;
 import fr.enib.mirrorbot4.MirrorBot4;

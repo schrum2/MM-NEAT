@@ -86,11 +86,11 @@ public class HumanSubjectStudy2018TeammateServer {
 	}
 	
 	public static void main(String[] args) throws IOException, NoSuchMethodException {
-		MMNEAT.main("utStudyTeammate:ethan runNumber:1 randomSeed:1 base:ut2004 io:true netio:false log:UT2004-Ethan saveTo:Ethan numUT2Bots:0 numMirrorBots:0 utNumNativeBots:2 botprizeMod:false utEvalMinutes:1 utNumOpponents:1 utGameType:botTeamGame utMap:DM-Flux2 utBotLogOutput:true utBotKilledAtEnd:false".split(" "));
+		//MMNEAT.main("utStudyTeammate:ethan runNumber:1 randomSeed:1 base:ut2004 io:true netio:false log:UT2004-Ethan saveTo:Ethan numUT2Bots:0 numMirrorBots:0 utNumNativeBots:2 botprizeMod:false utEvalMinutes:1 utNumOpponents:1 utGameType:botTeamGame utMap:DM-Flux2 utBotLogOutput:true utBotKilledAtEnd:false".split(" "));
 		
 		
-		//Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:0", "numMirrorBots:0", "utNumNativeBots:2", "botprizeMod:false", "utEvalMinutes:10", "utNumOpponents:1", "utGameType:botTeamGame", "utMap:DM-Flux2","utBotLogOutput:true"});
-		//runTrial(BOT_TYPE.Jude);
+		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:0", "numMirrorBots:0", "utNumNativeBots:2", "botprizeMod:false", "utEvalMinutes:10", "utNumOpponents:1", "utGameType:botTeamGame", "utMap:DM-Flux2","utBotLogOutput:true"});
+		runTrial(BOT_TYPE.Jude);
 		//runTrial(BOT_TYPE.Ethan);
 		//runTrial(BOT_TYPE.Native);
 	}

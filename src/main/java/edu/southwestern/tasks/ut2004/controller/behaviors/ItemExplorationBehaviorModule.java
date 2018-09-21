@@ -1,7 +1,7 @@
 package edu.southwestern.tasks.ut2004.controller.behaviors;
 
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import edu.southwestern.tasks.ut2004.controller.RandomItemPathExplorer;
+import edu.southwestern.tasks.ut2004.controller.pathexplorers.RandomItemPathExplorer;
 
 /**
  * instructs the bot to move around the map picking up items
