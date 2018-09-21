@@ -12,7 +12,7 @@ public class AimlessExplorationBehaviorModule extends RandomNavPointPathExplorer
 	/**
 	 * tells the bot whether or not to execute this action
 	 */
-	public boolean trigger(UT2004BotModuleController bot) {
+	public boolean trigger(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		// Bottom level behavior
 		return true;
 	}

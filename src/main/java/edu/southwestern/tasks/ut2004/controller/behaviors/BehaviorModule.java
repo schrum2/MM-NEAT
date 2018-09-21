@@ -9,11 +9,11 @@ import edu.southwestern.tasks.ut2004.actions.BotAction;
  */
 public interface BehaviorModule {
 
-	public BotAction control(UT2004BotModuleController bot);
+	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot);
 
-	public void initialize(UT2004BotModuleController bot);
+	public void initialize(@SuppressWarnings("rawtypes") UT2004BotModuleController bot);
 
-	public void reset(UT2004BotModuleController bot);
+	public void reset(@SuppressWarnings("rawtypes") UT2004BotModuleController bot);
 
-	public boolean trigger(UT2004BotModuleController bot);
+	public boolean trigger(@SuppressWarnings("rawtypes") UT2004BotModuleController bot);
 }

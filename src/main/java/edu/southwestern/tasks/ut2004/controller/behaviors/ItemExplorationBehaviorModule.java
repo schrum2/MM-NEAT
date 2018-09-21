@@ -12,7 +12,7 @@ public class ItemExplorationBehaviorModule extends RandomItemPathExplorer implem
 	/**
 	 * Tells the bot whether or not to execute this behavior
 	 */
-	public boolean trigger(UT2004BotModuleController bot) {
+	public boolean trigger(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		// Bottom level behavior
 		return true;
 	}
