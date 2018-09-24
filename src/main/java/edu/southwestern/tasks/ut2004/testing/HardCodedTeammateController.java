@@ -14,6 +14,7 @@ import edu.southwestern.tasks.ut2004.actions.BotAction;
 import edu.southwestern.tasks.ut2004.actions.FollowTeammateAction;
 import edu.southwestern.tasks.ut2004.actions.NavigateToLocationAction;
 import edu.southwestern.tasks.ut2004.actions.OldActionWrapper;
+import edu.southwestern.tasks.ut2004.actions.OpponentRelativeMovementAction;
 import edu.southwestern.tasks.ut2004.actions.PursueEnemyAction;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.behaviors.AttackEnemyAloneModule;
@@ -105,8 +106,13 @@ public class HardCodedTeammateController implements BotController {
 			lastSeenEnemy = visibleEnemy;
 			if(shouldEngage(bot)) { //fight if you have health and ammo
 				System.out.println("Attacking enemy");
-				// Shoot=true, secondary=false, jump=false, forcePath=false
-				return new OldActionWrapper(new ApproachEnemyAction(memory, true, false, false, false), body);
+				// This action from the old UT^2 is simply not working correctly
+				// Shoot=true, secondary=false, jump=false, forcePath=false, forceShoot=true
+				//return new OldActionWrapper(new ApproachEnemyAction(memory, true, false, false, false, true), body);
+				
+				// Schrum: Using action from evolving agent
+				double randomStrafing = (Math.random()*2) - 1; // Random value from [-1,1] to allow some strafing
+				return new OpponentRelativeMovementAction(visibleEnemy, 1.0, randomStrafing, true, false); // Shoot but don't jump
 			}else { //RUN BITCH! 
 				//go get health because enemy might have seen bot, and bot's gonna need it
 				return healthExplorer.control(bot);
@@ -154,7 +160,13 @@ public class HardCodedTeammateController implements BotController {
 			}
 		}
 
-
+		//Get a weapon if you don't have it: Added by Dr. Schrum
+		Item nearestWeapon = bot.getItems().getNearestItem(ItemType.Category.WEAPON);
+		if(nearestWeapon != null && !bot.getWeaponry().hasWeapon(nearestWeapon.getType())){
+			System.out.println("getting weapon I don't have");
+			return weaponExplorer.control(bot);
+		}
+		
 		System.out.println("running like a headless chicken");
 		return runAroundItems.control(bot);
 		} catch(Exception e) {
