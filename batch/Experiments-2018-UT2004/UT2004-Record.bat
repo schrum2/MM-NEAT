@@ -6,3 +6,5 @@ ffmpeg -f gdigrab -framerate 30 -offset_x 0 -offset_y 0 -video_size 1280x1024 -s
 
 REM vlc cannot handle full screen game recording well
 REM vlc screen:// -I rc --screen-follow-mouse --screen-fps 24 :sout=#transcode{vcodec=h264,vb=1800,scale=1}:std{access=file,dst=%1.mp4}
+
+exit
