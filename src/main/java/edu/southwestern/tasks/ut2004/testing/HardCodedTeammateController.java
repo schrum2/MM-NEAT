@@ -119,8 +119,8 @@ public class HardCodedTeammateController implements BotController {
 			}
 		}
 
-		/**should you go after the last enemy you saw?*/
-		if(shouldEngage(bot) && visibleEnemy == null && lastSeenEnemy != null) {
+		/**should you go after the last enemy you saw? Only if a visible friend is not nearby (let friend take the lead))*/
+		if(visibleFriend == null && shouldEngage(bot) && visibleEnemy == null && lastSeenEnemy != null) {
 			//HUNT THEM DOWN
 			return new PursueEnemyAction(lastSeenEnemy, true);		
 		}
