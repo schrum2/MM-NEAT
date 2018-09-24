@@ -37,7 +37,7 @@ PAUSE
 REM get back to starting directory
 cd %0\..\
 taskkill /F /IM ucc.exe /T
-START UT2004-Native.bat %1
+START UT2004-Jude.bat %1
 START UT2004-JoinLocal.bat
 START UT2004-Record.bat Subject-%1\Subject-%1-JudeMatch-2 
 
@@ -50,7 +50,7 @@ goto finished
 
 :evens
 taskkill /F /IM ucc.exe /T
-START UT2004-Native.bat %1
+START UT2004-Jude.bat %1
 START UT2004-JoinLocal.bat
 START UT2004-Record.bat Subject-%1\Subject-%1-JudeMatch-1
 
