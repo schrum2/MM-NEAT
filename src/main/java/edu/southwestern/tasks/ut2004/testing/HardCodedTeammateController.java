@@ -28,7 +28,6 @@ import edu.utexas.cs.nn.weapons.WeaponPreferenceTable.WeaponTableEntry;
 import mockcz.cuni.pogamut.Client.AgentBody;
 import mockcz.cuni.pogamut.Client.AgentMemory;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
-import utopia.agentmodel.actions.ApproachEnemyAction;
 import utopia.agentmodel.actions.QuickTurnAction;
 
 /**
@@ -111,16 +110,19 @@ public class HardCodedTeammateController implements BotController {
 				//return new OldActionWrapper(new ApproachEnemyAction(memory, true, false, false, false, true), body);
 				
 				// Schrum: Using action from evolving agent
-				double randomStrafing = (Math.random()*2) - 1; // Random value from [-1,1] to allow some strafing
-				return new OpponentRelativeMovementAction(visibleEnemy, 1.0, randomStrafing, true, false); // Shoot but don't jump
+				//double randomStrafing = (Math.random()*2) - 1; // Random value from [-1,1] to allow some strafing
+				double noStrafe = 0;
+				return new OpponentRelativeMovementAction(visibleEnemy, 1.0, noStrafe, true, false); // Shoot but don't jump
 			}else { //RUN BITCH! 
 				//go get health because enemy might have seen bot, and bot's gonna need it
 				return healthExplorer.control(bot);
 			}
 		}
 
-		/**should you go after the last enemy you saw? Only if a visible friend is not nearby (let friend take the lead))*/
-		if(visibleFriend == null && shouldEngage(bot) && visibleEnemy == null && lastSeenEnemy != null) {
+		/**should you go after the last enemy you saw? Only if a friend is not nearby (let friend take the lead))*/
+		if(visibleFriend == null && lastSeenFriend == null && // No friends nearby
+		   shouldEngage(bot) && // Want to fight 
+		   visibleEnemy == null && lastSeenEnemy != null) { // Enemy just escaped
 			//HUNT THEM DOWN
 			return new PursueEnemyAction(lastSeenEnemy, true);		
 		}
