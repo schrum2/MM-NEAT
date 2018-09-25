@@ -237,7 +237,8 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 						}						
 					}
 					// If we want to run a server with only native bots
-					long evalTimeMillis = evalMinutes*60*1000; // Eval time in milliseconds
+					long bufferTime = 40*1000; // 40 seconds
+					long evalTimeMillis = evalMinutes*60*1000 + bufferTime; // Eval time in milliseconds
 					while(collectors.length == 0 && // No gamebots agents are running 
 						  System.currentTimeMillis() - evaluateStartTime < evalTimeMillis) { // time not up
 						// Will hopefully only sleep once
