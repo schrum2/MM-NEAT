@@ -43,7 +43,7 @@ public class ControllerBot extends UT2004BotModuleController {
 	 */
 	private BotController brain;
 	// When does the bot actually enter the world?
-	private long initializeTime;
+	private long initializeTime = -1; // Will change on first logic loop
 
 	/**
 	 * This method returns the parameters of the bot, to be used. It is using
@@ -90,7 +90,6 @@ public class ControllerBot extends UT2004BotModuleController {
 	 * @param init (initial message sent to the server)
 	 */
 	public void botInitialized(GameInfo info, ConfigChange currentConfig, InitedMessage init) {
-		initializeTime = System.currentTimeMillis();
 		brain.initialize(this);
 		this.getParams().giveStats(this.getStats());
 	}
@@ -100,16 +99,21 @@ public class ControllerBot extends UT2004BotModuleController {
 	 * assigns actions for the bot to execute
 	 */
 	public void logic() throws PogamutException {
+		if(initializeTime == -1) { // Make sure initial time is during actual evaluation
+			initializeTime = System.currentTimeMillis();
+		}
 		// Set time expired and bot terminates
 		boolean evalTimeSurpassed = (game.getTime() > getParams().getEvalSeconds() && Parameters.parameters.booleanParameter("utBotKilledAtEnd"));
 	
 		// game.getRemainingTime() seems seriously flawed
 		//boolean serverTimeSurpassed = (game.getRemainingTime() <= 0 && game.getTeamScore(0) != game.getTeamScore(1));
-		int bufferSeconds = 60;
-		boolean serverTimeSurpassed = ((System.currentTimeMillis() - initializeTime)/1000.0) + bufferSeconds > getParams().getEvalSeconds();
+		int bufferSeconds = 0;
+		long currentTime = System.currentTimeMillis();
+		boolean serverTimeSurpassed = ((currentTime - initializeTime)/1000.0) + bufferSeconds > getParams().getEvalSeconds();
 		if ( evalTimeSurpassed || serverTimeSurpassed ) { 
 			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
 				System.out.println("End Eval for Agent: " + this.getName());
+				System.out.println(initializeTime + " to " + currentTime);
 				System.out.println("evalTimeSurpassed = " + evalTimeSurpassed);
 				System.out.println("serverTimeSurpassed = " + serverTimeSurpassed);
 				System.out.println("getParams().getEvalSeconds() = "+ getParams().getEvalSeconds());
