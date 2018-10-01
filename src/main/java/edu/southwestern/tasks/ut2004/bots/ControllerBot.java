@@ -42,6 +42,8 @@ public class ControllerBot extends UT2004BotModuleController {
 	 * Controller for bot
 	 */
 	private BotController brain;
+	// When does the bot actually enter the world?
+	private long initializeTime;
 
 	/**
 	 * This method returns the parameters of the bot, to be used. It is using
@@ -88,6 +90,7 @@ public class ControllerBot extends UT2004BotModuleController {
 	 * @param init (initial message sent to the server)
 	 */
 	public void botInitialized(GameInfo info, ConfigChange currentConfig, InitedMessage init) {
+		initializeTime = System.currentTimeMillis();
 		brain.initialize(this);
 		this.getParams().giveStats(this.getStats());
 	}
@@ -99,8 +102,11 @@ public class ControllerBot extends UT2004BotModuleController {
 	public void logic() throws PogamutException {
 		// Set time expired and bot terminates
 		boolean evalTimeSurpassed = (game.getTime() > getParams().getEvalSeconds() && Parameters.parameters.booleanParameter("utBotKilledAtEnd"));
-		// Make sure not in team overtime (why is an extra minute needed?)
-		boolean serverTimeSurpassed = (game.getRemainingTime() <= -1 && game.getTeamScore(0) != game.getTeamScore(1));
+	
+		// game.getRemainingTime() seems seriously flawed
+		//boolean serverTimeSurpassed = (game.getRemainingTime() <= 0 && game.getTeamScore(0) != game.getTeamScore(1));
+		
+		boolean serverTimeSurpassed = ((System.currentTimeMillis() - initializeTime)/1000.0) > getParams().getEvalSeconds();
 		if ( evalTimeSurpassed || serverTimeSurpassed ) { 
 			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
 				System.out.println("End Eval for Agent: " + this.getName());
