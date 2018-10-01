@@ -25,6 +25,7 @@ import edu.southwestern.tasks.ut2004.controller.NetworkController;
 import edu.southwestern.tasks.ut2004.controller.behaviors.BattleNetworkBehaviorModule;
 import edu.southwestern.tasks.ut2004.controller.behaviors.BehaviorModule;
 import edu.southwestern.tasks.ut2004.controller.behaviors.ItemExplorationBehaviorModule;
+import edu.southwestern.tasks.ut2004.controller.behaviors.WeaponGrabBehaviorModule;
 import edu.southwestern.tasks.ut2004.fitness.UT2004FitnessFunction;
 import edu.southwestern.tasks.ut2004.maps.MapList;
 import edu.southwestern.tasks.ut2004.sensors.UT2004SensorModel;
@@ -294,8 +295,9 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	public static <T extends Network> BotController wrapNetworkInBehaviorListController(NetworkController<T> organism, String name, String skin) {
 		// The evolved network controllers use the network for battle, and have a basic item exploration module
 		ArrayList<BehaviorModule> behaviors = new ArrayList<BehaviorModule>(2);
-		behaviors.add(new BattleNetworkBehaviorModule<T>(organism));
-		behaviors.add(new ItemExplorationBehaviorModule());
+		behaviors.add(new BattleNetworkBehaviorModule<T>(organism)); // Fighting with evolved network takes top priority
+		behaviors.add(new WeaponGrabBehaviorModule());	// Getting a weapon is also important
+		behaviors.add(new ItemExplorationBehaviorModule()); // Grab random items otherwise
 		BotController controller = name == null || skin == null ? // If name or skin not overridden
 				new BehaviorListController(behaviors) : // Use default
 				new BehaviorListController(behaviors, name, skin); // Else use specified skin and name
