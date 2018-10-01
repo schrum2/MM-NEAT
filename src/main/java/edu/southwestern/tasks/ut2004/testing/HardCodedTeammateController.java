@@ -76,9 +76,9 @@ public class HardCodedTeammateController implements BotController {
 	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {//loops through over and over again
 		try {
 		Player visibleFriend = bot.getPlayers().getNearestVisibleFriend();
-		Player lastSeenFriend = bot.getPlayers().getNearestFriend(10); //friend who bot just saw but is now out of view
+		Player lastSeenFriend = bot.getPlayers().getNearestFriend(1000); //friend who bot just saw but is now out of view
 		Player visibleEnemy = bot.getPlayers().getNearestVisibleEnemy();
-		Player lastSeenEnemy = bot.getPlayers().getNearestEnemy(10); //enemy who bot just saw but is now out of view
+		Player lastSeenEnemy = bot.getPlayers().getNearestEnemy(1000); //enemy who bot just saw but is now out of view
 
 		equipBestWeapon(bot);
 
