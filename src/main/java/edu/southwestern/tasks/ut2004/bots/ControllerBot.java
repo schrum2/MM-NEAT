@@ -97,12 +97,15 @@ public class ControllerBot extends UT2004BotModuleController {
 	 * assigns actions for the bot to execute
 	 */
 	public void logic() throws PogamutException {
-		if ( (game.getTime() > getParams().getEvalSeconds() &&
-			  Parameters.parameters.booleanParameter("utBotKilledAtEnd")) ||
-			 (game.getRemainingTime() <= 0 && // Match has ended
-			  game.getTeamScore(0) != game.getTeamScore(1))) { // Make sure we are not in overtime for team match (does not work for regular deathmatch)
+		// Set time expired and bot terminates
+		boolean evalTimeSurpassed = (game.getTime() > getParams().getEvalSeconds() && Parameters.parameters.booleanParameter("utBotKilledAtEnd"));
+		// Make sure not in team overtime
+		boolean serverTimeSurpassed = (game.getRemainingTime() <= 0 && game.getTeamScore(0) != game.getTeamScore(1));
+		if ( evalTimeSurpassed || serverTimeSurpassed ) { 
 			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
 				System.out.println("End Eval for Agent: " + this.getName());
+				System.out.println("evalTimeSurpassed = " + evalTimeSurpassed);
+				System.out.println("serverTimeSurpassed = " + serverTimeSurpassed);
 				System.out.println("Remaining Time: " + game.getRemainingTime() + " Team 0:" + game.getTeamScore(0) + " Team 1:" + game.getTeamScore(1));
 			}	
 			endEval();

@@ -230,6 +230,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 					// Evaluate network controllers and fixed controllers
 					long evaluateStartTime = System.currentTimeMillis();
 					GameDataCollector[] collectors = evaluateAgentsOnServer(server, controllers, botPort, gamePort, numNativeBots, evalMinutes, desiredSkill, nativeBotSkill, nativeTeams, nativeNames); 					
+					System.out.println("evaluateAgentsOnServer finished: " + evaluateStartTime + " to " + System.currentTimeMillis());
 					// Transfer stats data to result: only evolved organisms
 					for(int j = 0; j < organisms.length; j++) {
 						if (collectors[j].evalWasSuccessful()) {
@@ -242,6 +243,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 					while(collectors.length == 0 && // No gamebots agents are running 
 						  System.currentTimeMillis() - evaluateStartTime < evalTimeMillis) { // time not up
 						// Will hopefully only sleep once
+						System.out.println("Sleep to delay at: " + System.currentTimeMillis());
 						try {
 							Thread.sleep(1000); // Sleep in small increments
 						} catch (InterruptedException e) {
@@ -448,8 +450,6 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 			className = className.substring(className.lastIndexOf('.')+1)+i;
 			names[i] = className;
 		}
-		
-		// TODO: If there are no bots (only native bots) I need to find a way to keep the server running
 		
 		// Launch bots on server and retrieve collected fitness info
 		GameDataCollector[] collectors = ControllerBot.launchBot(
