@@ -29,3 +29,4 @@
 25. Enter the unique ID number for the user (same value that the experiment was launched with).
 26. Leave the room while the user answers other questions. Tell them to call you back after submitting their answers.
 27. If the survey has been successfully submitted, they are done!
+28. Give the subject their food voucher and copy of their consent form before leaving!
