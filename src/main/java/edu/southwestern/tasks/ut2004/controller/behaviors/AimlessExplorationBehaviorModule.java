@@ -1,7 +1,7 @@
 package edu.southwestern.tasks.ut2004.controller.behaviors;
 
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import edu.southwestern.tasks.ut2004.controller.RandomNavPointPathExplorer;
+import edu.southwestern.tasks.ut2004.controller.pathexplorers.RandomNavPointPathExplorer;
 
 /**
  * Tells the bot to move around the map using the RandomNavPointPathExplorer
@@ -12,7 +12,7 @@ public class AimlessExplorationBehaviorModule extends RandomNavPointPathExplorer
 	/**
 	 * tells the bot whether or not to execute this action
 	 */
-	public boolean trigger(UT2004BotModuleController bot) {
+	public boolean trigger(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		// Bottom level behavior
 		return true;
 	}
