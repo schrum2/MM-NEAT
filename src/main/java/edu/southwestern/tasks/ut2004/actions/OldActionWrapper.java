@@ -26,20 +26,21 @@ public class OldActionWrapper implements BotAction {
 
 	// An old style action, as used by UT^2
 	Action action;
+	AgentBody body;
 	
 	/**
 	 * Take an action for UT^2 and save it
 	 * @param oldAction Old style action
+	 * @param memory AgentMemory
+	 * @param body AgentBody
 	 */
-	public OldActionWrapper(Action oldAction) {
+	public OldActionWrapper(Action oldAction, AgentBody body) {
 		action = oldAction;
+		this.body = body;
 	}
 	
 	@Override
 	public String execute(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
-		// This is a mock AgentBody class that emulates the old deprecated AgentBody class used in Pogamut.
-		// This mock class is used by the UT^2 actions, so it has to be constructed before being passed to the execute method.
-		AgentBody body = getAgentBody(bot);
 		action.execute(body);
 		return action.getClass().getName();
 	}

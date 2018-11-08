@@ -5,37 +5,30 @@ import java.util.Map;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weaponry;
-import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Senses;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
-import cz.cuni.amis.utils.collections.MyCollections;
 import edu.southwestern.tasks.ut2004.actions.BotAction;
-import edu.southwestern.tasks.ut2004.actions.EmptyAction;
 import edu.southwestern.tasks.ut2004.actions.FollowTeammateAction;
 import edu.southwestern.tasks.ut2004.actions.NavigateToLocationAction;
 import edu.southwestern.tasks.ut2004.actions.OldActionWrapper;
+import edu.southwestern.tasks.ut2004.actions.OpponentRelativeMovementAction;
 import edu.southwestern.tasks.ut2004.actions.PursueEnemyAction;
 import edu.southwestern.tasks.ut2004.controller.BotController;
-import edu.southwestern.tasks.ut2004.controller.RandomItemPathExplorer;
-import edu.southwestern.tasks.ut2004.controller.SequentialPathExplorer;
 import edu.southwestern.tasks.ut2004.controller.behaviors.AttackEnemyAloneModule;
-import edu.southwestern.tasks.ut2004.controller.behaviors.ItemExplorationBehaviorModule;
+import edu.southwestern.tasks.ut2004.controller.pathexplorers.ArmorItemPathExplorer;
+import edu.southwestern.tasks.ut2004.controller.pathexplorers.HealthItemPathExplorer;
+import edu.southwestern.tasks.ut2004.controller.pathexplorers.RandomItemPathExplorer;
+import edu.southwestern.tasks.ut2004.controller.pathexplorers.WeaponItemPathExplorer;
 import edu.southwestern.tasks.ut2004.weapons.UT2004WeaponManager;
-import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable.WeaponTableEntry;
 import mockcz.cuni.pogamut.Client.AgentBody;
 import mockcz.cuni.pogamut.Client.AgentMemory;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
-import utopia.agentmodel.actions.ApproachEnemyAction;
-import utopia.agentmodel.actions.DodgeShootAction;
-import utopia.agentmodel.actions.GotoItemAction;
 import utopia.agentmodel.actions.QuickTurnAction;
-import utopia.controllers.scripted.ChasingController;
 
 /**
  * Provides the control for a bot created to aid players
@@ -46,7 +39,9 @@ public class HardCodedTeammateController implements BotController {
 
 	AttackEnemyAloneModule attackAlone = new AttackEnemyAloneModule();
 	RandomItemPathExplorer runAroundItems = new RandomItemPathExplorer();
-	//SequentialPathExplorer runAroundGeneral = new SequentialPathExplorer();
+	HealthItemPathExplorer healthExplorer = new HealthItemPathExplorer();
+	ArmorItemPathExplorer armorExplorer = new ArmorItemPathExplorer();
+	WeaponItemPathExplorer weaponExplorer = new WeaponItemPathExplorer();
 	AgentMemory memory;
 	AgentBody body;
 	public final UT2004WeaponManager weaponManager;
@@ -57,28 +52,40 @@ public class HardCodedTeammateController implements BotController {
 	public static final double MAX_DISTANCE_TO_ITEM = 300;
 	public static final double COMBAT_TYPE_THRESHOLD_DISTANCE = 150; //distance for approach enemy vs dodge shoot
 
+	private String name;
+	private String skin;
+
 	public HardCodedTeammateController(UT2004WeaponManager weaponManager) {
+		this(weaponManager, "Jude", "HumanFemaleA.MercFemaleB"); // Default name and skin
+	}
+	
+	public HardCodedTeammateController(UT2004WeaponManager weaponManager, String name, String skin) {
+		this.name = name;
+		this.skin = skin;
 		this.weaponManager = weaponManager;
 		if (weaponPreferences == null) {
 			weaponPreferences = new WeaponPreferenceTable();
 		}
+		memory = null; // Starts empty, but is filled in later
+		body = null; // Also filled later
 	}
 
 	/**
 	 * contains the actual logic for the bot to move around see interior comments for more details
 	 */
 	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {//loops through over and over again
+		try {
 		Player visibleFriend = bot.getPlayers().getNearestVisibleFriend();
-		Player lastSeenFriend = bot.getPlayers().getNearestFriend(10); //friend who bot just saw but is now out of view
+		Player lastSeenFriend = bot.getPlayers().getNearestFriend(1000); //friend who bot just saw but is now out of view
 		Player visibleEnemy = bot.getPlayers().getNearestVisibleEnemy();
-		Player lastSeenEnemy = bot.getPlayers().getNearestEnemy(10); //enemy who bot just saw but is now out of view
+		Player lastSeenEnemy = bot.getPlayers().getNearestEnemy(1000); //enemy who bot just saw but is now out of view
 
 		equipBestWeapon(bot);
 
 		/**if bot is being damaged but doesn't see an enemy, turn to see who it is*/
 		if(bot.getSenses().isBeingDamaged() && visibleEnemy == null && lastSeenEnemy == null) {
 			System.out.println("Turning around");
-			return new OldActionWrapper(new QuickTurnAction(OldActionWrapper.getAgentMemory(bot)));
+			return new OldActionWrapper(new QuickTurnAction(memory), body);
 		} else {
 			//			System.out.println("NOT TURNING!");
 			//			System.out.println("bot.getSenses().isBeingDamaged() = " + bot.getSenses().isBeingDamaged());
@@ -89,28 +96,33 @@ public class HardCodedTeammateController implements BotController {
 		/**bot will look for health pickups if it drops below 20hp*/
 		if((bot.getBot().getSelf().getHealth()) < THRESHOLD_HEALTH_LEVEL) {
 			//tell bot to abandon whatever it's doing and go find a SPAWNED health kit, standing at a spawn point waiting = certain death 
-			Item nearestHealth = bot.getItems().getNearestSpawnedItem(ItemType.Category.HEALTH);
-			Location healthLoc =  nearestHealth.getLocation();
 			System.out.println("Going to health");
-			return new NavigateToLocationAction(healthLoc);
+			return healthExplorer.control(bot);
 		}
 
 		/**if an enemy is visible attack?*/
 		if(visibleEnemy != null){
-			double enemyDistance = visibleEnemy.getLocation().getDistance(bot.getBot().getLocation());
 			lastSeenEnemy = visibleEnemy;
 			if(shouldEngage(bot)) { //fight if you have health and ammo
 				System.out.println("Attacking enemy");
-				return new OldActionWrapper(new ApproachEnemyAction(OldActionWrapper.getAgentMemory(bot), true, true, false, true));
-			}else { //RUN BITCH! TODO: take this out before you get in trouble
-				Item nearestHealth = bot.getItems().getNearestSpawnedItem(ItemType.Category.HEALTH);
-				return new OldActionWrapper(new GotoItemAction(OldActionWrapper.getAgentMemory(bot), nearestHealth));
+				// This action from the old UT^2 is simply not working correctly
+				// Shoot=true, secondary=false, jump=false, forcePath=false, forceShoot=true
+				//return new OldActionWrapper(new ApproachEnemyAction(memory, true, false, false, false, true), body);
+				
+				// Schrum: Using action from evolving agent
+				//double randomStrafing = (Math.random()*2) - 1; // Random value from [-1,1] to allow some strafing
+				double noStrafe = 0;
+				return new OpponentRelativeMovementAction(visibleEnemy, 1.0, noStrafe, true, false); // Shoot but don't jump
+			}else { //RUN BITCH! 
 				//go get health because enemy might have seen bot, and bot's gonna need it
+				return healthExplorer.control(bot);
 			}
 		}
 
-		/**should you go after the last enemy you saw?*/
-		if(shouldEngage(bot) && visibleEnemy == null && lastSeenEnemy != null) {
+		/**should you go after the last enemy you saw? Only if a friend is not nearby (let friend take the lead))*/
+		if(visibleFriend == null && lastSeenFriend == null && // No friends nearby
+		   shouldEngage(bot) && // Want to fight 
+		   visibleEnemy == null && lastSeenEnemy != null) { // Enemy just escaped
 			//HUNT THEM DOWN
 			return new PursueEnemyAction(lastSeenEnemy, true);		
 		}
@@ -134,30 +146,36 @@ public class HardCodedTeammateController implements BotController {
 			Item nearestWeapon = bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON);
 			Location weaponLocation =  bot.getItems().getNearestVisibleItem(ItemType.Category.WEAPON).getLocation();
 			double weaponDistance = weaponLocation.getDistance(bot.getBot().getLocation());
-			if(weaponDistance < MAX_DISTANCE_TO_ITEM) {
+			if(weaponDistance < MAX_DISTANCE_TO_ITEM && !bot.getWeaponry().hasWeapon(nearestWeapon.getType())) {
 				System.out.println("getting weapon");
-				//return new NavigateToLocationAction(itemLocation);
-				return new OldActionWrapper(new GotoItemAction(OldActionWrapper.getAgentMemory(bot), nearestWeapon));
+				return weaponExplorer.control(bot);
 			}
 		}
 
-		//make sure to pick up armour
+		//make sure to pick up armor
 		if(bot.getItems().getNearestVisibleItem(ItemType.Category.ARMOR) != null){
-			Item nearestArmour = bot.getItems().getNearestVisibleItem(ItemType.Category.ARMOR);
-			Location armourLocation =  bot.getItems().getNearestVisibleItem(ItemType.Category.ARMOR	).getLocation();
+			Location armourLocation =  bot.getItems().getNearestVisibleItem(ItemType.Category.ARMOR).getLocation();
 			double armourDistance = armourLocation.getDistance(bot.getBot().getLocation());
 			if(armourDistance < MAX_DISTANCE_TO_ITEM) {
-				System.out.println("getting weapon");
-				//return new NavigateToLocationAction(itemLocation);
-				return new OldActionWrapper(new GotoItemAction(OldActionWrapper.getAgentMemory(bot), nearestArmour));
+				System.out.println("getting armor");
+				return armorExplorer.control(bot);
 			}
 		}
 
-
+		//Get a weapon if you don't have it: Added by Dr. Schrum
+		Item nearestWeapon = bot.getItems().getNearestItem(ItemType.Category.WEAPON);
+		if(nearestWeapon != null && !bot.getWeaponry().hasWeapon(nearestWeapon.getType())){
+			System.out.println("getting weapon I don't have");
+			return weaponExplorer.control(bot);
+		}
+		
 		System.out.println("running like a headless chicken");
 		return runAroundItems.control(bot);
-		//		System.out.println("standing still");
-		//		return new EmptyAction();
+		} catch(Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return null;
 	}
 
 
@@ -167,7 +185,7 @@ public class HardCodedTeammateController implements BotController {
 	 * engage if hp > 30 and has ammo
 	 * @return returns whether bot should engage
 	 */
-	public boolean shouldEngage(UT2004BotModuleController bot) {
+	public boolean shouldEngage(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		//check ammo
 		boolean hasGun = bot.getWeaponry().hasLoadedWeapon();
 		boolean hasHealth = (bot.getBot().getSelf().getHealth()) > DNE_HEALTH_LEVEL;
@@ -191,7 +209,7 @@ public class HardCodedTeammateController implements BotController {
 	 *
 	 * @return true if the weapon is good for fighting.
 	 */
-	public boolean equipBestWeapon(UT2004BotModuleController bot) {
+	public boolean equipBestWeapon(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		return equipBestWeapon(bot, false);
 	}
 
@@ -204,15 +222,15 @@ public class HardCodedTeammateController implements BotController {
 	 * combat
 	 * @return whether the weapons it good to fight with
 	 */
-	public boolean equipBestWeapon(UT2004BotModuleController bot, boolean added) {
+	public boolean equipBestWeapon(@SuppressWarnings("rawtypes") UT2004BotModuleController bot, boolean added) {
 		Weaponry weaponry = bot.getWeaponry();//added by adina for compatibility
-		boolean hasGoodWeapon = weaponPreferences.hasGoodWeapon(weaponry.getLoadedRangedWeapons(), bot.getPlayers(), OldActionWrapper.getAgentMemory(bot));
+		boolean hasGoodWeapon = weaponPreferences.hasGoodWeapon(weaponry.getLoadedRangedWeapons(), bot.getPlayers(), memory);
 		Weapon recommendation = weaponPreferences.savedRec;
 		Weapon current = weaponry.getCurrentWeapon();
 
 		double distance = WeaponTableEntry.MAX_RANGED_RANGE - 1;
-		if (bot.getPlayers().canSeeEnemies() && OldActionWrapper.getAgentMemory(bot).getCombatTarget() != null && OldActionWrapper.getAgentMemory(bot).getCombatTarget().getLocation() != null && bot.getInfo().getLocation() != null) {
-			distance = Triple.distanceInSpace(OldActionWrapper.getAgentMemory(bot).getCombatTarget().getLocation(), bot.getInfo().getLocation());
+		if (bot.getPlayers().canSeeEnemies() && memory.getCombatTarget() != null && memory.getCombatTarget().getLocation() != null && bot.getInfo().getLocation() != null) {
+			distance = Triple.distanceInSpace(memory.getCombatTarget().getLocation(), bot.getInfo().getLocation());
 		}
 
 		// Don't switch weapons in the heat of battle, unless out of ammo, or just got new weapon, or using crap weapon
@@ -224,9 +242,9 @@ public class HardCodedTeammateController implements BotController {
 				&& !current.getType().equals(UT2004ItemType.LIGHTNING_GUN) // Sniping weapons are crap at close range
 				&& !current.getType().equals(UT2004ItemType.SNIPER_RIFLE)
 				&& !current.getType().equals(UT2004ItemType.SHIELD_GUN)
-				&& !(OldActionWrapper.getAgentBody(bot).isSecondaryChargingWeapon(current) && bot.getInfo().isSecondaryShooting())
-				&& (OldActionWrapper.getAgentMemory(bot)).isThreatened()
-				|| OldActionWrapper.getAgentMemory(bot).isThreatening(OldActionWrapper.getAgentMemory(bot).getCombatTarget())
+				&& !(body.isSecondaryChargingWeapon(current) && bot.getInfo().isSecondaryShooting())
+				&& memory.isThreatened()
+				|| memory.isThreatening(memory.getCombatTarget())
 				|| bot.getInfo().isShooting()
 				|| (distance < WeaponPreferenceTable.WeaponTableEntry.MAX_MELEE_RANGE * 2)
 				&& weaponry.hasAmmoForWeapon(current.getType())) {
@@ -236,7 +254,7 @@ public class HardCodedTeammateController implements BotController {
 		if (recommendation != null && recommendation != null) {
 			if (current == null || !current.getType().equals(recommendation.getType())) {
 				weaponry.changeWeapon(recommendation);
-				OldActionWrapper.getAgentMemory(bot).weaponSwitchTime = bot.getGame().getTime();//game.getTime();
+				memory.weaponSwitchTime = bot.getGame().getTime();//game.getTime();
 			}
 		}
 		current = weaponry.getCurrentWeapon();
@@ -277,7 +295,7 @@ public class HardCodedTeammateController implements BotController {
 	public void initialize(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		memory = OldActionWrapper.getAgentMemory(bot);
 		body = OldActionWrapper.getAgentBody(bot);		
-		bot.getBot().getBotName().setNameBase("Jude");
+		bot.getBot().getBotName().setNameBase(name);
 	}	
 
 	/**
@@ -288,8 +306,7 @@ public class HardCodedTeammateController implements BotController {
 
 	@Override
 	public String getSkin() {
-		// TODO Auto-generated method stub
-		return "HumanFemaleA.MercFemaleB";
+		return skin;
 	}
 
 }

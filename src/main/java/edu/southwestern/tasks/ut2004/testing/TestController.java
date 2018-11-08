@@ -4,14 +4,17 @@ import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import edu.southwestern.tasks.ut2004.actions.BotAction;
 import edu.southwestern.tasks.ut2004.actions.EmptyAction;
-import edu.southwestern.tasks.ut2004.actions.FollowTeammateAction;
 import edu.southwestern.tasks.ut2004.actions.OldActionWrapper;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.behaviors.AttackEnemyAloneModule;
+import mockcz.cuni.pogamut.Client.AgentBody;
+import mockcz.cuni.pogamut.Client.AgentMemory;
 import utopia.agentmodel.actions.ApproachEnemyAction;
 
 public class TestController implements BotController {
 	AttackEnemyAloneModule attack = new AttackEnemyAloneModule();
+	private AgentMemory memory;
+	private AgentBody body;
 	
 	/**
 	 * bot will follow closest teammate, if one is not there, it will stand in place
@@ -41,7 +44,7 @@ public class TestController implements BotController {
 //			return attack.control(bot);
 //		}
 		if(nearestEnemy != null){
-			return new OldActionWrapper(new ApproachEnemyAction(OldActionWrapper.getAgentMemory(bot), true, true, false, true));
+			return new OldActionWrapper(new ApproachEnemyAction(memory, true, true, false, true),body);
 		}
 		return new EmptyAction();
 	}
@@ -51,6 +54,8 @@ public class TestController implements BotController {
 	 * initializes the controller
 	 */
 	public void initialize(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
+		memory = OldActionWrapper.getAgentMemory(bot);
+		body = OldActionWrapper.getAgentBody(bot);		
 	}
 
 	
@@ -58,6 +63,8 @@ public class TestController implements BotController {
 	 * resets the controller
 	 */
 	public void reset(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
+		memory = OldActionWrapper.getAgentMemory(bot);
+		body = OldActionWrapper.getAgentBody(bot);		
 	}
 
 

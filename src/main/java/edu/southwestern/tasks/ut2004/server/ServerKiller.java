@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.ut2004.server;
 
 import cz.cuni.amis.pogamut.base.agent.state.level1.IAgentStateDown;
@@ -10,7 +6,7 @@ import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
 import java.util.concurrent.*;
 
 /**
- *
+ * Terminate a running UT2004 server
  * @author Jacob Schrum
  */
 public class ServerKiller implements Callable<Boolean> {
@@ -20,7 +16,7 @@ public class ServerKiller implements Callable<Boolean> {
 		try {
 			pond = Executors.newFixedThreadPool(1);
 			Future<Boolean> future = pond.submit(new ServerKiller(server));
-			Boolean result = future.get();
+			future.get();
 		} catch (InterruptedException ex) {
 			System.out.println("Server kill interrupted");
 		} catch (ExecutionException ex) {

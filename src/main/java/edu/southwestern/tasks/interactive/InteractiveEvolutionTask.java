@@ -482,6 +482,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 */
 	protected String getDialogFileName(String type, String extension) {
 		JFileChooser chooser = new JFileChooser();//used to get save name 
+		chooser.setCurrentDirectory(new File("."));
 		chooser.setApproveButtonText("Save");
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(type, extension);
 		chooser.setFileFilter(filter);

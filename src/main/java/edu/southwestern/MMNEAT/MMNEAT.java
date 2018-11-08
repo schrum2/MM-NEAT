@@ -2,6 +2,7 @@ package edu.southwestern.MMNEAT;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
@@ -66,12 +67,13 @@ import edu.southwestern.tasks.gvgai.GVGAISinglePlayerTask;
 import edu.southwestern.tasks.innovationengines.PictureInnovationTask;
 import edu.southwestern.tasks.innovationengines.ShapeInnovationTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.mario.MarioGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.mario.MarioLevelBreederTask;
 import edu.southwestern.tasks.mario.MarioGANLevelTask;
 import edu.southwestern.tasks.mario.MarioLevelTask;
 import edu.southwestern.tasks.mario.MarioTask;
-import edu.southwestern.tasks.mario.gan.MarioGANUtil;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.microrts.MicroRTSTask;
 import edu.southwestern.tasks.microrts.SinglePopulationCompetativeCoevolutionMicroRTSTask;
 import edu.southwestern.tasks.motests.FunctionOptimization;
@@ -102,6 +104,7 @@ import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.tasks.ut2004.UT2004Task;
 import edu.southwestern.tasks.ut2004.UT2004Util;
+import edu.southwestern.tasks.ut2004.testing.HumanSubjectStudy2018TeammateServer;
 import edu.southwestern.tasks.vizdoom.VizDoomTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -674,8 +677,8 @@ public class MMNEAT {
 			} else if(task instanceof InteractiveEvolutionTask) {
 				System.out.println("set up Interactive Evolution Task");
 				InteractiveEvolutionTask temp = (InteractiveEvolutionTask) task;
-				// Since this task uses real-vector genotypes, to not set the NN params
-				if(!(temp instanceof MarioGANLevelBreederTask)) setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
+				// Since these tasks use real-vector genotypes, to not set the NN params
+				if(!(temp instanceof MarioGANLevelBreederTask) && !(temp instanceof ZeldaGANLevelBreederTask)) setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
 			} else if(task instanceof PictureInnovationTask) {
 				System.out.println("set up Innovation Engine Task");
 				PictureInnovationTask temp = (PictureInnovationTask) task;
@@ -688,7 +691,8 @@ public class MMNEAT {
 				setNNInputParameters(((Parameters.parameters.integerParameter("marioInputWidth") * Parameters.parameters.integerParameter("marioInputHeight")) * 2) + 1, MarioTask.MARIO_OUTPUTS); //hard coded for now, 5 button outputs
 				System.out.println("Set up Mario Task");
 			} else if (task instanceof MarioLevelTask) {
-				// This line only matters for the CPPN version of the task, but doesn't hurt the GAN version, which does evolve networks
+				GANProcess.type = GANProcess.GAN_TYPE.MARIO;
+				// This line only matters for the CPPN version of the task, but doesn't hurt the GAN version, which does not evolve networks
 				setNNInputParameters(MarioLevelBreederTask.INPUTS.length, MarioLevelBreederTask.OUTPUTS.length);
 				System.out.println("Set up Mario Level Task");
 			} else if(task instanceof HyperNEATDummyTask) {
@@ -993,6 +997,38 @@ public class MMNEAT {
 			Parameters.initializeParameterCollections(args); // file should exist
 			loadClasses();
 			process(runs);
+		} else if (args[0].startsWith("utStudyTeammate:")) {
+			// This launch code is associated with the 2018 Human Subject Study using
+			// Unreal Tournament 2004. The purpose is to evaluate different types of
+			// teammates in team deathmatch.
+			
+			Parameters.initializeParameterCollections(args);
+			String teammateString = Parameters.parameters.stringParameter("utStudyTeammate");
+			HumanSubjectStudy2018TeammateServer.BOT_TYPE type; 
+			switch(teammateString) {
+			case "none":
+				type = HumanSubjectStudy2018TeammateServer.BOT_TYPE.None;
+				break;
+			case "jude":
+				type = HumanSubjectStudy2018TeammateServer.BOT_TYPE.Jude;
+				break;
+			case "ethan":
+				type = HumanSubjectStudy2018TeammateServer.BOT_TYPE.Ethan;
+				break;
+			case "native":
+				type = HumanSubjectStudy2018TeammateServer.BOT_TYPE.Native;
+				break;
+			default:
+				throw new IllegalArgumentException("utStudyTeammate parameter must be ethan, jude, or native");
+			}
+			try {
+				HumanSubjectStudy2018TeammateServer.runTrial(type);
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("\n\n\n");
+				System.out.println("This trial terminated unexpectedly. Please inform the researcher immediately.");
+				System.exit(1);
+			}
 		} else {
 			evolutionaryRun(args);
 		}
@@ -1111,9 +1147,11 @@ public class MMNEAT {
 		// Function Optimization Tasks use these genotypes and know their lower bounds
 		if(fos != null) return fos.getLowerBounds();
 		// For Mario GAN, the latent vector length determines the size, but the lower bounds are all zero
-		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return new double[MarioGANUtil.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")]; // all zeroes
+		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return new double[GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")]; // all zeroes
+		// Similar for ZeldaGAN
+		else if(task instanceof ZeldaGANLevelBreederTask) return new double[GANProcess.latentVectorLength()]; // all zeroes
 		else {
-			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario GAN");
+			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda GAN");
 		}
 	}
 
@@ -1124,9 +1162,10 @@ public class MMNEAT {
 	 */
 	public static double[] getUpperBounds() {
 		if(fos != null) return fos.getUpperBounds();
-		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return ArrayUtil.doubleOnes(MarioGANUtil.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
+		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
+		else if(task instanceof ZeldaGANLevelBreederTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength()); // all ones
 		else {
-			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario GAN");
+			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda GAN");
 		}
 	}
 }

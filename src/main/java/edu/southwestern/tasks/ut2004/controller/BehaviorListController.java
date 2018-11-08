@@ -16,12 +16,14 @@ public class BehaviorListController implements BotController {
 	 * constructs an ArrayList of the bot's behaviour modules
 	 */
 	public ArrayList<BehaviorModule> behaviors;
+	private String name;
+	private String skin;
 
 	/**
 	 * initializes the BehaviorListController as a blank ArrayList
 	 */
 	public BehaviorListController() {
-		this.behaviors = new ArrayList<BehaviorModule>();
+		this(new ArrayList<BehaviorModule>());
 	}
 
 	/**
@@ -29,7 +31,14 @@ public class BehaviorListController implements BotController {
 	 * @param behaviors (ArrayList of behaviors)
 	 */
 	public BehaviorListController(ArrayList<BehaviorModule> behaviors) {
+		// Default skin and name
+		this(behaviors, "BehaviorListController", "Aliens.AlienFemaleA");
+	}
+	
+	public BehaviorListController(ArrayList<BehaviorModule> behaviors, String name, String skin) {
 		this.behaviors = behaviors;
+		this.name = name;
+		this.skin = skin;
 	}
 
 	/**
@@ -53,6 +62,7 @@ public class BehaviorListController implements BotController {
 		for (int i = 0; i < behaviors.size(); i++) {
 			behaviors.get(i).initialize(bot);
 		}
+		bot.getBot().getBotName().setNameBase(name);
 	}
 
 	/**
@@ -66,6 +76,6 @@ public class BehaviorListController implements BotController {
 
 	@Override
 	public String getSkin() {
-		return "Aliens.AlienFemaleA";
+		return skin;
 	}
 }

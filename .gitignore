@@ -60,6 +60,11 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+ZeldaDungeon01_5000_10*
+ZeldaDungeon02_5000_10*
+ZeldaAllDungeons*
+/animationbreeder/
+/picbreeder/
 /build/
 /dist/
 /nbproject/
@@ -98,6 +103,7 @@ $RECYCLE.BIN/
 /coghosts/
 /poghosts/
 /popacman/
+/src/main/python/MarioGAN/Zelda-30-5000
 # Some of UT^2's log files end up with this naming convention
 *-null
 *.zds
@@ -133,3 +139,4 @@ src/main/python/NeuralStyleTransfer/imagenet-vgg-verydeep-19.mat
 *.json
 *UT^2-null
 dependency-reduced-pom.xml
+*.mkv
