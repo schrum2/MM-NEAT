@@ -1,17 +1,18 @@
 package edu.southwestern.tasks.ut2004;
 
-import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
-import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;
-import edu.southwestern.parameters.Parameters;
-
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Scanner;
 
 import javax.vecmath.Vector3d;
+
+import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
+import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;
+import edu.southwestern.parameters.Parameters;
 
 /**
  * These are all util methods for UT2004, but I think some
@@ -180,6 +181,31 @@ public class UT2004Util {
 	}
 	
 	/**
+	 * Determine where UT2004 is install on this machine. If the file my_ut2004_path.txt
+	 * exists, then it can provide this information, but otherwise it should be retrieved
+	 * from command line parameters.
+	 * @return Path to the base UT2004 home directory
+	 */
+	public static String getUnrealHomeDir() {
+		File my_ut2004_path = new File("my_ut2004_path.txt");
+		String path = "";
+		if(my_ut2004_path.exists()) { // Read the path from file
+			try {
+				Scanner scan = new Scanner(my_ut2004_path);
+				path = scan.nextLine();
+				scan.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("my_ut2004_path.txt exists, but there was a problem reading it. Should contain path to UT2004 home directory, e.g. C:\\UT2004");
+				System.exit(1);
+			}
+		} else { // Read path from command line parameters
+			path = Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath");
+		}
+		return path;
+	}
+	
+	/**
 	 * Copy the version of GameBots stored in MM-NEAT into the UT2004\System directory to make sure that
 	 * the botprize mod is available.
 	 * @throws IOException 
@@ -190,7 +216,7 @@ public class UT2004Util {
 				"GameBots2004.ucl", // 2012 version of BotPrize mod
 				"GameBots2004.ini"	// Configuration that disables all GameBots visualization
 		};
-		String utSystemDir = Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath") + File.separator + "System";
+		String utSystemDir = getUnrealHomeDir() + File.separator + "System";
 		for(String file :  filesToCopy) {
 			Files.copy(Paths.get("data" + File.separatorChar + "unreal" + File.separatorChar + "BotPrizeGameBots"  + File.separatorChar + file), 
 					   Paths.get(utSystemDir + File.separatorChar + file), 
@@ -209,7 +235,7 @@ public class UT2004Util {
 				"GameBots2004.ucl", // 2012 version of BotPrize mod
 				"GameBots2004.ini"	// Configuration that disables all GameBots visualization
 		};
-		String utSystemDir = Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath") + File.separator + "System";
+		String utSystemDir = getUnrealHomeDir() + File.separator + "System";
 		for(String file :  filesToCopy) {
 			Files.copy(Paths.get("data" + File.separatorChar + "unreal" + File.separatorChar + "DefaultGameBots"  + File.separatorChar + file), 
 					   Paths.get(utSystemDir + File.separatorChar + file), 

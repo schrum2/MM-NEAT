@@ -13,6 +13,7 @@ import utopia.Utils;
  * Decides how and if the bot should approach an enemy
  * @author Jacob Schrum
  */
+@SuppressWarnings("serial")
 public class ApproachEnemyAction extends OpponentRelativeAction {
     protected boolean forcePath; //if true: I don't care how far you are, just get there, using nav grid (don't walk off a cliff)
 

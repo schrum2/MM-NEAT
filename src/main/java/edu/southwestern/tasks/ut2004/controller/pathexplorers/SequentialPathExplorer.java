@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.ut2004.controller;
+package edu.southwestern.tasks.ut2004.controller.pathexplorers;
 
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathExecutorState;
 import cz.cuni.amis.pogamut.base.agent.navigation.PathExecutorState;
@@ -10,6 +10,7 @@ import cz.cuni.amis.utils.flag.FlagListener;
 import edu.southwestern.tasks.ut2004.actions.BotAction;
 import edu.southwestern.tasks.ut2004.actions.EmptyAction;
 import edu.southwestern.tasks.ut2004.actions.NavigateToLocationAction;
+import edu.southwestern.tasks.ut2004.controller.BotController;
 
 /**
  * Instructs the bot to explore the map, providing it with nav points that are dangerous or a bad idea to go to
@@ -50,8 +51,10 @@ public abstract class SequentialPathExplorer implements BotController {
 	private BotAction handleNavPointNavigation(UT2004BotModuleController bot) {
 		if (bot.getNavigation().isNavigating()) {
 			// WE'RE NAVIGATING TO SOME NAVPOINT
-			return new EmptyAction("[Still going to " + targetNavPoint.getId().getStringId() + "]"
-					+ (targetNavPoint.isInvSpot() ? targetNavPoint.getItemClass().getName() : ""));
+			return new EmptyAction("[Still going to "
+					+ (targetNavPoint == null ? "UNKNOWN" :
+					  targetNavPoint.getId().getStringId() + "]"
+					+ (targetNavPoint.isInvSpot() ? targetNavPoint.getItemClass().getName() : "")));
 		}
 
 		// NAVIGATION HAS STOPPED ...

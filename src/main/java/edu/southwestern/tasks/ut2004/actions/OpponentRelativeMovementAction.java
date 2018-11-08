@@ -46,7 +46,6 @@ public class OpponentRelativeMovementAction implements BotAction {
 	 * @param bot (identifies which bot should execute the command)
 	 * @return (returns a list in the form of strings of what actions the bot executed)
 	 */
-	@SuppressWarnings("deprecation")
 	public String execute(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		if (opponent != null) {
 			Location opponentLocation = opponent.getLocation();
@@ -74,7 +73,7 @@ public class OpponentRelativeMovementAction implements BotAction {
 				if (shoot) {
 					bot.getShoot().shoot(opponentId);
 				} else {
-					bot.getShoot().stopShoot();
+					bot.getShoot().stopShooting();
 				}
 				return "[Move " + destination + "]" + (jump ? "[Jump]" : "") + (shoot ? "[Shoot]" : "");
 			}
