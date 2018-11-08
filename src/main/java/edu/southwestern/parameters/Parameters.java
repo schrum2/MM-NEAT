@@ -253,7 +253,7 @@ public class Parameters {
 		integerOptions.add("lastSavedGeneration", 0, "Last generation where genotypes were saved");
 		integerOptions.add("layersToView", 1, "How many Pareto layers to view in multinetwork experiment");
 		integerOptions.add("litterSize", 10, "Number of offspring from a single source to evaluate for culling methods");
-		integerOptions.add("marioGANInputSize", 32, "Latent vector input size for Mario GAN level evolution");
+		integerOptions.add("GANInputSize", 32, "Latent vector input size for GAN level evolution");
 		integerOptions.add("marioGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MarioGAN");
 		integerOptions.add("marioInputHeight", 3, "The height for a Mario input section");
 		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
@@ -836,6 +836,7 @@ public class Parameters {
 		stringOptions.add("utMap", "DM-TrainingDay", "Map to play in Unreal Tournament 2004");
 		stringOptions.add("utPath", "SCOPE2018\\UT2004", "Path (excluding drive) to root dir of Unreal Tournament 2004 installation");
 		stringOptions.add("utGameType", "BotDeathMatch", "sets the game type for the server");
+		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("utStudyTeammate", "", "The type of teammate agent for the 2018 human subject study: jude, ethan, native");
 		// Class options
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
