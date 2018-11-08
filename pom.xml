@@ -170,6 +170,22 @@
             <version>${logback.version}</version>
         </dependency>
 
+<!-- https://mvnrepository.com/artifact/org.reflections/reflections-maven -->
+<!-- This is part of Java, but the latest versions restrict it as "not API" -->
+<dependency>
+    <groupId>org.reflections</groupId>
+    <artifactId>reflections-maven</artifactId>
+    <version>0.9.8</version>
+</dependency>
+
+<!-- This is part of Java, but the latest versions restrict it as "not API" -->
+        <dependency>
+            <groupId>com.github.demidenko05</groupId>
+            <artifactId>a-javabeans</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+
+
 	<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 	<dependency>
     	<groupId>com.google.code.gson</groupId>
