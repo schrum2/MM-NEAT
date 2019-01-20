@@ -7,8 +7,8 @@
 
 Requirements for this code to run:
 
-* Java 1.8+
-* Maven 3.5+
+* Java 1.8
+* Maven 3.5
 
 MM-NEAT version 3.0 introduces integration with Maven, a dependency management system
 that automatically downloads libraries needed for the code to function so that you do not
