@@ -7,8 +7,8 @@
 
 Requirements for this code to run:
 
-* Java 1.8+
-* Maven 3.5+
+* Java 1.8
+* Maven 3.5
 
 MM-NEAT version 3.0 introduces integration with Maven, a dependency management system
 that automatically downloads libraries needed for the code to function so that you do not
@@ -215,10 +215,13 @@ Please explore!
 
 ### Python
 
-Although most code is in Java, some domains make limited use of Python scripts. In order to make use of these domains, 
+Although most code is in Java, some domains make limited use of Python scripts. Specifically, Python 3.6. 
+In order to make use of these domains, 
 you must create a text file called ``my_python_path.txt`` in the root MM-NEAT directory that contains the path to your
 python executable. If you only have one version of Python on your machine, and it is part of your PATH environment variable,
 then you might be able to simply put ``python`` into this text file. However, a full path is recommended.
+
+Some code also makes use of PyTorch 1.0.
 
 ## MAKING YOUR OWN DOMAINS
 
