@@ -71,12 +71,14 @@ public class LevelRenderer
      * A Graphics2D object and a Level are sent in, along with some information
      * about the area to view. The level is then drawn to the Graphics2D, which
      * is modified by side effects.
-     * @param g
-     * @param level
-     * @param x0
-     * @param y0
-     * @param w
-     * @param h
+     * @param g Graphics object that is taking image of level
+     * @param level Mario level
+     * @param x0 x start of level (should always be 0?)
+     * @param y0 y start of level (should always be 0?)
+     * @param xCam How far to shift over from left (pixels)
+     * @param yCam How far to shift down from top (pixels)
+     * @param w width to render (pixels)
+     * @param h height to render (pixels)
      */
     public static void renderArea(Graphics2D g, Level level, int x0, int y0, int xCam, int yCam, int w, int h)
     {
@@ -99,9 +101,10 @@ public class LevelRenderer
 			{
 				int b = level.getBlock(x, y) & 0xff;
 				g.drawImage(Art.level[b % 16][b / 16], (x << 4) - xCam, (y << 4) - yCam, null);
-				SpriteTemplate sprite = level.getSpriteTemplate((xCam/MarioLevelUtil.BLOCK_SIZE) + x,y);
+				//SpriteTemplate sprite = level.getSpriteTemplate((xCam/MarioLevelUtil.BLOCK_SIZE) + x,y);
+				SpriteTemplate sprite = level.getSpriteTemplate(x,y);
 				if(sprite != null) {
-					sprite.spawn(world, x, y, -1); // dir = -1 means face left
+					sprite.spawn(world, x - (xCam/MarioLevelUtil.BLOCK_SIZE), y, -1); // dir = -1 means face left
 					sprite.sprite.render(g, 0); // alpha = 0 means fully visible
 				}
 			}
