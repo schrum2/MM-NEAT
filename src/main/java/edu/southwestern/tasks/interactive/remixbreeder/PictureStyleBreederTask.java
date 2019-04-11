@@ -182,7 +182,7 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 	@Override
 	protected void save(String filename, int i) {
 		// Retrieve image without generating it again
-		BufferedImage toSave = (BufferedImage) ((ImageIcon) this.buttons.get(i).getIcon()).getImage();
+		BufferedImage toSave = GraphicsUtil.toBufferedImage(((ImageIcon) this.buttons.get(i).getIcon()).getImage());
 		filename += ".bmp";
 		GraphicsUtil.saveImage(toSave, filename);
 		System.out.println("image " + filename + " was saved successfully");
@@ -194,7 +194,7 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","trials:1","mu:20","maxGens:500","neuralStyleIterations:20","io:false","netio:false","mating:true", "fs:false", "task:edu.southwestern.tasks.interactive.remixbreeder.PictureStyleBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","trials:1","simplifiedInteractiveInterface:false","mu:20","maxGens:500","neuralStyleIterations:20","io:false","netio:false","mating:true", "fs:false", "task:edu.southwestern.tasks.interactive.remixbreeder.PictureStyleBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
