@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
@@ -117,6 +118,13 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public List<List<Integer>> levelListRepresentation(double[] latentVector) {
+		return ZeldaGANUtil.generateRoomListRepresentationFromGAN(latentVector);
+	}
+
+
 
 
 }
