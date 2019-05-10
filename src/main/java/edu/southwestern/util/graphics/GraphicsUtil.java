@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -57,6 +58,7 @@ public class GraphicsUtil {
 		String extension = filename.substring(filename.lastIndexOf(".") + 1);
 		// write file
 		try {
+			System.out.println("Save image: "+filename);
 			ImageIO.write(image, extension, new java.io.File(filename));
 		} catch (java.io.IOException e) {
 			System.err.println("Unable to save image:\n" + e);
@@ -564,5 +566,30 @@ public class GraphicsUtil {
 	 */
 	public static int invert(double y, double max, double min, int totalHeight) {
 		return (totalHeight - (2 * Plot.OFFSET)) - scale(y, max, min, totalHeight);
+	}
+	
+	/**
+	 * Converts a given Image into a BufferedImage
+	 * Thanks to https://stackoverflow.com/questions/13605248/java-converting-image-to-bufferedimage/13605411
+	 * @param img The Image to be converted
+	 * @return The converted BufferedImage
+	 */
+	public static BufferedImage toBufferedImage(Image img)
+	{
+	    if (img instanceof BufferedImage)
+	    {
+	        return (BufferedImage) img;
+	    }
+
+	    // Create a buffered image with transparency
+	    BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+	    // Draw the image on to the buffered image
+	    Graphics2D bGr = bimage.createGraphics();
+	    bGr.drawImage(img, 0, 0, null);
+	    bGr.dispose();
+
+	    // Return the buffered image
+	    return bimage;
 	}
 }
