@@ -93,7 +93,7 @@ public class Doom {
         DataManager manager = new DataManager(true);
 
         //setup the Doom environment through VizDoom
-        VizDoom mdp = getMDP(false);
+        VizDoom mdp = getMDP(true); // Boolean determines visualization
 
         //load the previous agent
         DQNPolicy<VizDoom.GameScreen> dqn = null;
