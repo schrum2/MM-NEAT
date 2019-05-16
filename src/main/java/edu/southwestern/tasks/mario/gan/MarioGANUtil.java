@@ -28,6 +28,22 @@ import edu.southwestern.util.graphics.DrawingPanel;
  *
  */
 public class MarioGANUtil {
+	
+	// Each integer corresponds to a block
+	// This is an array representation to easily map integers to a character
+	public static final char[] BLOCK_INDEX = {
+			'X', // 0: Solid block
+			'S', // 1: Breakable block
+			'-', // 2: Air block
+			'?', // 3: Question block
+			'#', // 4: Invisible block????
+			'E', // 5: Goomba block
+			'<', // 6: Top left pipe
+			'>', // 7: Top right pipe
+			'[', // 8: Left pipe
+			']', // 9: Right pipe
+			'K', // 10: Koopa
+	};
 
 	/**
 	 * Has same core functionality as the levelFromLatentVector method in MarioEvalFunction
@@ -87,7 +103,32 @@ public class MarioGANUtil {
 			}	
 		}
 		return oneLevel;
-	}	
+	}
+	
+	/**
+	 * Generate a Mario level, similar to the CPPN variant, from a 2D list of integers
+	 * @param levelList level represented in a 2D list of integers
+	 * @return String array with each index being a row in the level
+	 */
+	public static String[] generateTextLevel(ArrayList<List<Integer>> levelList) {
+		String[] level = new String[levelList.size()]; // Set the array to the size of the level (the height)
+		// Initialize every index in the string
+		for(int i = 0; i < level.length; i++)
+			level[i] = "";
+		
+		int i = 0; // Row index for level array
+		for(List<Integer> row : levelList) { // Iterate through the ArryList to get rows
+			for(Integer block : row) { // iterate through the row to get individual ints
+				if(block < BLOCK_INDEX.length) { // If the block int is in the BLOCK_INDEX array, add it to the string
+					level[i] += String.valueOf(BLOCK_INDEX[block]);
+				} else { // If we don't know the specific block, output the number to later add it to to the array
+					level[i] += String.valueOf(block);
+				}
+			}
+			i++; // Increment our index to move to the next row
+		}
+		return level;
+	}
 	
 	/**
 	 * From MarioGAN
