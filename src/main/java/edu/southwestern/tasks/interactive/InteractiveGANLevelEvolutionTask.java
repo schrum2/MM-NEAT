@@ -66,10 +66,14 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 
 	/**
 	 * Return the String parameter label that has the file name of the GAN model
-	 * @return
+	 * @return file name of GAN model
 	 */
 	public abstract String getGANModelParameterName();
 	
+	/**
+	 * Constructor sets up Buttons for window
+	 * @throws IllegalAccessException
+	 */
 	public InteractiveGANLevelEvolutionTask() throws IllegalAccessException {
 		super(false); // false indicates that we are NOT evolving CPPNs
 		configureGAN();
@@ -129,8 +133,12 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	}
 
 	/**
-	 * @param paramLabel
-	 * @return
+	 * Generate a slider for the window
+	 * @param paramLabel What integer parameter we would like to use for the initial value of the slider
+	 * @param min Minimum value of slider
+	 * @param max Maximum value of slider
+	 * @param name Label to put at the middle of the slider
+	 * @return JSlider Generated JSlider to add to window
 	 */
 	private JSlider klDivSlider(String paramLabel, int min, int max, String name) {
 		JSlider filterSlider = new JSlider(JSlider.HORIZONTAL, min, max, Parameters.parameters.integerParameter(paramLabel));
@@ -156,16 +164,29 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 		return filterSlider;
 	}
 
+	/**
+	 * Override sensor labels to return an empty string array
+	 * @returns empty string array
+	 */
 	@Override
 	public String[] sensorLabels() {
 		return new String[0]; // Not a network task, so there are no sensor labels
 	}
 
+	/**
+	 * Override output labels to return an empty string array
+	 * @returns empty string array
+	 */
 	@Override
 	public String[] outputLabels() {
 		return new String[0]; // Not a network task, so there are no output labels
 	}
 
+	/**
+	 * Override the save function to save the latent vector and model name of the selected level
+	 * @param file Name of the file
+	 * @param i Index of item being saved
+	 */
 	@Override
 	protected void save(String file, int i) {
 		ArrayList<Double> latentVector = scores.get(i).individual.getPhenotype();
@@ -190,6 +211,12 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 
 	/**
 	 * Disallow image caching since this only applies to CPPNs
+	 * @param checkCache Check if image is already generated, will always be false
+	 * @param phenotype Latent vector
+	 * @param width Image width in pixels
+	 * @param height Image height in pixels
+	 * @param inputMultipliers determines whether CPPN inputs are on or off
+	 * @returns BufferedImage Image of button
 	 */
 	@Override
 	protected BufferedImage getButtonImage(boolean checkCache, ArrayList<Double> phenotype, int width, int height, double[] inputMultipliers) {
@@ -199,6 +226,8 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 
 	/**
 	 * Responds to a button to actually play a selected level
+	 * @param itemID Unique integer stored in each button to determine which one was pressed
+	 * @returns boolean True if we need to undo the click
 	 */
 	@SuppressWarnings("unchecked")
 	protected boolean respondToClick(int itemID) {
@@ -395,10 +424,10 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	}
 
 	/**
-	 * 
+	 * Generate the Level Image to go on the Buttons
 	 * @param itemIndex Index in population
 	 * @param picSize Size of image
-	 * @return
+	 * @return JLabel representing an image of the level
 	 */
 	private JLabel getLevelImageLabel(int itemIndex, int picSize) {
 		int leftPopulationIndex = selectedItems.get(itemIndex);
@@ -408,9 +437,10 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	}
 
 	/**
+	 * Generate the Zelda level based on the phenotype
 	 * @param picSize Size of image
 	 * @param phenotype Latent vector
-	 * @return
+	 * @return JLabel representation of the given Zelda level to be used in the GUI
 	 */
 	public JLabel getLevelImageLabel(int picSize, ArrayList<Double> phenotype) {
 		ImageIcon img = getLevelImageIcon(picSize, phenotype);
@@ -422,7 +452,7 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	 * Get the ImageIcon to put on a JLabel
 	 * @param picSize Image size
 	 * @param phenotype latent vector
-	 * @return
+	 * @return ImageIcon representing the Zelda level
 	 */
 	public ImageIcon getLevelImageIcon(int picSize, ArrayList<Double> phenotype) {
 		BufferedImage leftLevel = getButtonImage(false, phenotype, picSize,picSize, inputMultipliers);
@@ -617,13 +647,13 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	 * launcing a new one. Returns a pair containing both the old latent vector length
 	 * and the net latent vector length for the chosen model.
 	 * @param model
-	 * @return
+	 * @return Pair of integers representing the old latent vector and the net latent vector
 	 */
 	public abstract Pair<Integer, Integer> resetAndReLaunchGAN(String model);
 	
 	/**
-	 * Where are GAN models for this particulay domain saved?
-	 * @return
+	 * Where are GAN models for this particular domain saved?
+	 * @return String of the path of the GAN Model
 	 */
 	public abstract String getGANModelDirectory();
 
@@ -669,21 +699,35 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 		// do nothing
 	}
 
+	/**
+	 * Override the type of file we want to generate
+	 * @return String of file type
+	 */
 	@Override
 	protected String getFileType() {
 		return "Text File";
 	}
 
+	/**
+	 * The extenstion of the file type
+	 * @return String file extension
+	 */
 	@Override
 	protected String getFileExtension() {
 		return "txt";
 	}
 
+	/**
+	 * Not using CPPN
+	 */
 	@Override
 	public int numCPPNInputs() {
 		throw new UnsupportedOperationException("There are no CPPNs, and therefore no inputs");
 	}
 
+	/**
+	 * Not using CPPN
+	 */
 	@Override
 	public int numCPPNOutputs() {
 		throw new UnsupportedOperationException("There are no CPPNs, and therefore no outputs");
