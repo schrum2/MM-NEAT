@@ -163,7 +163,7 @@ public class Doom {
 	 * This method will initialize the stage so as to enable the trained network to run 
 	 * through it. The environment is initialized, and our most recent iteration of the
 	 * network is loaded into the environment. The network plays through and receives a
-	 * "reward" based on its performance.
+	 * "reward" based on its performance in the stage.
 	 */ 
     public static void loadDoom() throws IOException{
         //define the mdp from gym (name, render)
