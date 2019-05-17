@@ -64,6 +64,8 @@ import edu.southwestern.tasks.gridTorus.competitive.CompetitiveHomogeneousPredat
 import edu.southwestern.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPreyTask;
 import edu.southwestern.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAndCooperativePredatorsVsPreyTask;
 import edu.southwestern.tasks.gvgai.GVGAISinglePlayerTask;
+import edu.southwestern.tasks.gvgai.zelda.ZeldaGANLevelTask;
+import edu.southwestern.tasks.gvgai.zelda.ZeldaLevelTask;
 import edu.southwestern.tasks.innovationengines.PictureInnovationTask;
 import edu.southwestern.tasks.innovationengines.ShapeInnovationTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
@@ -695,6 +697,9 @@ public class MMNEAT {
 				// This line only matters for the CPPN version of the task, but doesn't hurt the GAN version, which does not evolve networks
 				setNNInputParameters(MarioLevelBreederTask.INPUTS.length, MarioLevelBreederTask.OUTPUTS.length);
 				System.out.println("Set up Mario Level Task");
+			} else if (task instanceof ZeldaLevelTask){
+				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
+				System.out.println("Set up Zelda Level Task");
 			} else if(task instanceof HyperNEATDummyTask) {
 				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
 			} else if(task instanceof HyperNEATSpeedTask) {
@@ -1149,7 +1154,7 @@ public class MMNEAT {
 		// For Mario GAN, the latent vector length determines the size, but the lower bounds are all zero
 		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return new double[GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")]; // all zeroes
 		// Similar for ZeldaGAN
-		else if(task instanceof ZeldaGANLevelBreederTask) return new double[GANProcess.latentVectorLength()]; // all zeroes
+		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return new double[GANProcess.latentVectorLength()]; // all zeroes
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda GAN");
 		}
@@ -1163,7 +1168,7 @@ public class MMNEAT {
 	public static double[] getUpperBounds() {
 		if(fos != null) return fos.getUpperBounds();
 		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
-		else if(task instanceof ZeldaGANLevelBreederTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength()); // all ones
+		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength()); // all ones
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda GAN");
 		}

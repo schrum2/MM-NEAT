@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -145,6 +147,39 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 				GVGAIUtil.runOneGame(bundle, true);
 			}
 		}.start();
+	}
+	
+	@Override
+	protected void save(String file, int i) {
+		ArrayList<Double> phenotype = scores.get(i).individual.getPhenotype();
+		double[] latentVector = ArrayUtil.doubleArrayFromList(phenotype);
+		List<List<Integer>> level = ZeldaGANUtil.generateRoomListRepresentationFromGAN(latentVector);
+		int[][] levelArray = ZeldaLevelUtil.listToArray(level);
+		int distance = ZeldaLevelUtil.findMaxDistanceOfLevel(levelArray, 5, 7);
+
+		/**
+		 * Rather than save a text representation of the level, I simply save
+		 * the latent vector and the model name, which are sufficient to
+		 * recreate any level
+		 */
+		try {
+			PrintStream ps = new PrintStream(new File(file));
+			// Write String array to text file 
+			ps.println(Parameters.parameters.stringParameter(getGANModelParameterName()));
+			ps.println(phenotype);
+			for(List<Integer> row : level) {
+				for(Integer tile : row) {
+					ps.print(tile + " ");
+				}
+				ps.println();
+			}
+			ps.println("Max Distance : " + distance);
+			ps.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Could not save file: " + file);
+			e.printStackTrace();
+			return;
+		}
 	}
 
 
