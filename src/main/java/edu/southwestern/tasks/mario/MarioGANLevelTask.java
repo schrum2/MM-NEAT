@@ -18,8 +18,6 @@ import edu.southwestern.util.datastructures.ArrayUtil;
  * like the Mario A* Agent, as a means of evaluating
  * 
  * @author Jacob Schrum
- *
- * @param <T> real vector
  */
 public class MarioGANLevelTask extends MarioLevelTask<ArrayList<Double>> {
 
@@ -62,6 +60,6 @@ public class MarioGANLevelTask extends MarioLevelTask<ArrayList<Double>> {
 		// Uses underworld GAN to combine three level segments
 		//MMNEAT.main("runNumber:0 randomSeed:0 base:mariogan log:MarioGAN-UnderWorld3Segments saveTo:UnderWorld3Segments marioGANLevelChunks:3 trials:1 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Underground_30_Epoch_5000.pth GANInputSize:30 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:true".split(" "));
 		// Uses overworld GAN to combine 4 level segments
-		MMNEAT.main("runNumber:0 randomSeed:0 base:mariogan log:MarioGAN-OverWorld4Segments saveTo:OverWorld4Segments marioGANLevelChunks:4 trials:1 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_30_Epoch5000.pth GANInputSize:30 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:true".split(" "));
+		MMNEAT.main("runNumber:0 randomSeed:0 base:mariogan log:MarioGAN-OverWorld4Segments saveTo:OverWorld4Segments marioGANLevelChunks:4 trials:1 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_30_Epoch5000.pth GANInputSize:30 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false".split(" "));
 	}
 }
