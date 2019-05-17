@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
@@ -31,18 +32,21 @@ public class MarioGANUtil {
 	
 	// Each integer corresponds to a block
 	// This is an array representation to easily map integers to a character
+	// OldLevelParser doesn't provide an easy way to map ints to chars
 	public static final char[] BLOCK_INDEX = {
 			'X', // 0: Solid block
 			'S', // 1: Breakable block
 			'-', // 2: Air block
 			'?', // 3: Question block
-			'#', // 4: Invisible block????
+			'Q', // 4: Empty Question block(?)
 			'E', // 5: Goomba block
 			'<', // 6: Top left pipe
 			'>', // 7: Top right pipe
 			'[', // 8: Left pipe
 			']', // 9: Right pipe
-			'K', // 10: Koopa
+			'o', // 10: Coin,
+			'B', // 11: Top of bullet bill cannon thing
+			'b', // 12: Bottom of bullet bill
 	};
 
 	/**
@@ -116,20 +120,41 @@ public class MarioGANUtil {
 		for(int i = 0; i < level.length; i++)
 			level[i] = "";
 		
-		int i = 0; // Row index for level array
-		for(List<Integer> row : levelList) { // Iterate through the ArryList to get rows
-			for(Integer block : row) { // iterate through the row to get individual ints
-				if(block < BLOCK_INDEX.length) { // If the block int is in the BLOCK_INDEX array, add it to the string
-					level[i] += String.valueOf(BLOCK_INDEX[block]);
-				} else { // If we don't know the specific block, output the number to later add it to to the array
-					level[i] += String.valueOf(block);
-				}
+		if(Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding")) {
+			int i = 0; 
+			for(List<Integer> row : levelList) { 
+				for(Integer block : row)
+					level[i] += BLOCK_INDEX[block];
+				
+				i++; // Increment our index to move to the next row
 			}
-			i++; // Increment our index to move to the next row
+		} else {
+			int i = 0; 
+			for(List<Integer> row : levelList) { 
+				for(Integer block : row)
+					level[i] += getTileCharNewEncoding(block);
+				
+				i++; // Increment our index to move to the next row
+			}
 		}
+		
+		
+		
 		return level;
 	}
 	
+	/**
+	 * For the new encoding get the char block from the int
+	 * @param block Int of block
+	 * @return char of block
+	 */
+	private static char getTileCharNewEncoding(Integer block) {
+		for(Entry<Character, Integer> entry : LevelParser.tiles.entrySet()) {
+			if(entry.getValue().equals(block)) return entry.getKey();
+		}
+		return ' ';
+	}
+
 	/**
 	 * From MarioGAN
 	 * 
