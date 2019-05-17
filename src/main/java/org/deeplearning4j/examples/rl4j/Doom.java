@@ -17,8 +17,11 @@ import java.util.logging.Logger; /* Logger is a class in the logging package, wh
 import org.deeplearning4j.rl4j.learning.HistoryProcessor;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.QLearning;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.discrete.QLearningDiscreteConv;
+import org.deeplearning4j.rl4j.mdp.vizdoom.Basic;
 import org.deeplearning4j.rl4j.mdp.vizdoom.DeadlyCorridor;
 import org.deeplearning4j.rl4j.mdp.vizdoom.HealthGather;
+import org.deeplearning4j.rl4j.mdp.vizdoom.PredictPosition;
+import org.deeplearning4j.rl4j.mdp.vizdoom.TakeCover;
 import org.deeplearning4j.rl4j.mdp.vizdoom.VizDoom;
 import org.deeplearning4j.rl4j.network.dqn.DQNFactoryStdConv;
 import org.deeplearning4j.rl4j.policy.DQNPolicy;
@@ -76,8 +79,6 @@ public class Doom {
                     true      //double-dqn
             );
 
-
-
 	// Added comment regarding the data types of the nulled variables.
     public static DQNFactoryStdConv.Configuration DOOM_NET =
             new DQNFactoryStdConv.Configuration(
@@ -98,7 +99,6 @@ public class Doom {
                     0,       //cropping y offset
                     4        //skip mod (one frame is picked every x
             );
-
 
     /** 
 	 * Pretty much all this main method does is in setting the Java path to vizdoom.dll
@@ -123,8 +123,11 @@ public class Doom {
 	 * will be an empty ArrayList.
 	 */
     public static VizDoom getMDP(boolean render) {
+    	//VizDoom mdp = new Basic(render);
     	VizDoom mdp = new DeadlyCorridor(render);
         //VizDoom mdp = new HealthGather(render);
+    	//VizDoom mdp = new PredictPosition(render);
+    	//VizDoom mdp = new TakeCover(render);
     	return mdp;
     }
     
