@@ -29,25 +29,6 @@ import edu.southwestern.util.graphics.DrawingPanel;
  *
  */
 public class MarioGANUtil {
-	
-	// Each integer corresponds to a block
-	// This is an array representation to easily map integers to a character
-	// OldLevelParser doesn't provide an easy way to map ints to chars
-	public static final char[] BLOCK_INDEX = {
-			'X', // 0: Solid block
-			'S', // 1: Breakable block
-			'-', // 2: Air block
-			'?', // 3: Question block
-			'Q', // 4: Empty Question block(?)
-			'E', // 5: Goomba block
-			'<', // 6: Top left pipe
-			'>', // 7: Top right pipe
-			'[', // 8: Left pipe
-			']', // 9: Right pipe
-			'o', // 10: Coin,
-			'B', // 11: Top of bullet bill cannon thing
-			'b', // 12: Bottom of bullet bill
-	};
 
 	/**
 	 * Has same core functionality as the levelFromLatentVector method in MarioEvalFunction
@@ -124,7 +105,7 @@ public class MarioGANUtil {
 			int i = 0; 
 			for(List<Integer> row : levelList) { 
 				for(Integer block : row)
-					level[i] += BLOCK_INDEX[block];
+					level[i] += OldLevelParser.BLOCK_INDEX[block];
 				
 				i++; // Increment our index to move to the next row
 			}
