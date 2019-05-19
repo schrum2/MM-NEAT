@@ -350,6 +350,7 @@ public class Parameters {
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		// Boolean parameters 
+		booleanOptions.add("blackAndWhitePicbreeder", false, "Picbreeder creates starck black/white images");
 		booleanOptions.add("averageScoreHistory", false, "Surviving parent fitness averaged across generations");
 		booleanOptions.add("boardGameIncreasingRandomOpens", false, "Number of random moves at the start of each game increases as evolved agents improve");
 		booleanOptions.add("boardGameWinPercentFitness", false, "Is percentage of games won a fitness function for board games?");
@@ -1109,11 +1110,8 @@ public class Parameters {
 
 	/**
 	 * Set integer option value
-	 * 
-	 * @param label
-	 *            label for int parameter
-	 * @param value
-	 *            new value
+	 * @param label label for int parameter
+	 * @param value new value
 	 */
 	public void setInteger(String label, int value) {
 		this.integerOptions.change(label, value);
@@ -1121,11 +1119,8 @@ public class Parameters {
 
 	/**
 	 * Set long option value
-	 * 
-	 * @param label
-	 *            label for long parameter
-	 * @param value
-	 *            new value
+	 * @param label label for long parameter
+	 * @param value new value
 	 */
 	public void setLong(String label, long value) {
 		this.longOptions.change(label, value);
@@ -1133,11 +1128,8 @@ public class Parameters {
 
 	/**
 	 * Set double option value
-	 * 
-	 * @param label
-	 *            label for double parameter
-	 * @param value
-	 *            new value
+	 * @param label label for double parameter
+	 * @param value new value
 	 */
 	public void setDouble(String label, double value) {
 		this.doubleOptions.change(label, value);
@@ -1145,23 +1137,25 @@ public class Parameters {
 
 	/**
 	 * Set boolean option value
-	 * 
-	 * @param label
-	 *            label for boolean parameter
-	 * @param value
-	 *            new value
+	 * @param label label for boolean parameter
+	 * @param value new value
 	 */
 	public void setBoolean(String label, boolean value) {
 		this.booleanOptions.change(label, value);
 	}
 
 	/**
+	 * Change a boolean parameter to its opposite value
+	 * @param string label for boolean parameter
+	 */
+	public void changeBoolean(String label) {
+		this.booleanOptions.change(label, !booleanOptions.get(label));
+	}	
+	
+	/**
 	 * Set String option value
-	 * 
-	 * @param label
-	 *            label for String parameter
-	 * @param value
-	 *            new value
+	 * @param label label for String parameter
+	 * @param value new value
 	 */
 	public void setString(String label, String value) {
 		this.stringOptions.change(label, value);
@@ -1169,11 +1163,8 @@ public class Parameters {
 
 	/**
 	 * Set Class option value
-	 * 
-	 * @param label
-	 *            label for Class parameter
-	 * @param value
-	 *            new value
+	 * @param label label for Class parameter
+	 * @param value new value
 	 */
 	@SuppressWarnings("rawtypes")
 	public void setClass(String label, Class value) {

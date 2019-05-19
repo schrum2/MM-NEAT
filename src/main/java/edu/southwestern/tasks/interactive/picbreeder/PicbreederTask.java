@@ -1,7 +1,11 @@
 package edu.southwestern.tasks.interactive.picbreeder;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
+
+import javax.swing.JCheckBox;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -30,6 +34,8 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	public static final int CPPN_NUM_INPUTS	= 4;
 	public static final int CPPN_NUM_OUTPUTS = 3;
 
+	public static final int BLACK_WHITE_OFFSET = 200;
+		
 	/** 
 	 * Default constructor
 	 * 
@@ -37,6 +43,21 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 */
 	public PicbreederTask() throws IllegalAccessException {
 		super();
+		
+		// A check box that switches the output between colorful and black/white
+		JCheckBox blackAndWhite = new JCheckBox("black&white", false);
+		blackAndWhite.setName("" + (-BLACK_WHITE_OFFSET)); 
+		blackAndWhite.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Switch to opposite of current setting
+				Parameters.parameters.changeBoolean("blackAndWhitePicbreeder");
+				// Need to change all images and re-load
+				resetButtons(true);
+			}
+		});
+		
+		top.add(blackAndWhite);
 	}
 
 	/**

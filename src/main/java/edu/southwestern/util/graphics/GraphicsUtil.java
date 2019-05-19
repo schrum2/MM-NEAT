@@ -16,6 +16,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.activationfunctions.FullLinearPiecewiseFunction;
 import edu.southwestern.networks.activationfunctions.HalfLinearPiecewiseFunction;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.util.CartesianGeometricUtilities;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -107,12 +108,18 @@ public class GraphicsUtil {
 		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < imageWidth; x++) {// scans across whole image
 			for (int y = 0; y < imageHeight; y++) {
-				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples, time);
 				// network outputs computed on hsb, not rgb scale because
-				// creates better images
-				Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX]);
-				// set back to RGB to draw picture to JFrame
-				image.setRGB(x, y, childColor.getRGB());
+				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples, time);
+				
+				if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) { // Stark black and white
+					Color childColor = Color.getHSBColor(0, 0, hsb[BRIGHTNESS_INDEX]);
+					// set back to RGB to draw picture to JFrame
+					image.setRGB(x, y, childColor.getRGB());
+				} else { // Original Picbreeder color encoding
+					Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX]);
+					// set back to RGB to draw picture to JFrame
+					image.setRGB(x, y, childColor.getRGB());
+				}
 			}
 		}
 		return image;

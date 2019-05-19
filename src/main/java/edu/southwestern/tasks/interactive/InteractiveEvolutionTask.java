@@ -560,6 +560,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		if(checkCache) {
 			// Will this interface ever be used with items that are not TWEANNs?
 			long id = ((TWEANN) phenotype).getId();
+			System.out.println("Cache image for: " + id);
 			if(cachedButtonImages.containsKey(id)) {
 				// Return pre-computed image instead of watsing time
 				return cachedButtonImages.get(id);
@@ -757,6 +758,10 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 * Used to reset the buttons when an Effect CheckBox is clicked
 	 */
 	public void resetButtons(boolean hardReset){
+		if(hardReset) {
+			// Hard reset invalidates the cache
+			cachedButtonImages.clear();
+		}
 		for(int i = 0; i < scores.size(); i++) {
 			// If not doing hard reset, there is a chance to load from cache
 			setButtonImage(getButtonImage(!hardReset, scores.get(i).individual.getPhenotype(),  picSize, picSize, inputMultipliers), i);
