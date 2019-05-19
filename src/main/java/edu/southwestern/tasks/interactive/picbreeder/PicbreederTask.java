@@ -34,8 +34,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	public static final int CPPN_NUM_INPUTS	= 4;
 	public static final int CPPN_NUM_OUTPUTS = 3;
 
-	public static final int BLACK_WHITE_OFFSET = 200;
-		
 	/** 
 	 * Default constructor
 	 * 
@@ -45,19 +43,33 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		super();
 		
 		// A check box that switches the output between colorful and black/white
-		JCheckBox blackAndWhite = new JCheckBox("black&white", false);
-		blackAndWhite.setName("" + (-BLACK_WHITE_OFFSET)); 
+		JCheckBox blackAndWhite = new JCheckBox("black&white", Parameters.parameters.booleanParameter("blackAndWhitePicbreeder"));
 		blackAndWhite.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("Flip Black/White");
 				// Switch to opposite of current setting
 				Parameters.parameters.changeBoolean("blackAndWhitePicbreeder");
 				// Need to change all images and re-load
 				resetButtons(true);
 			}
 		});
+
+		// A check box that switches the output between two brightness levels and continuous
+		JCheckBox stark = new JCheckBox("stark", Parameters.parameters.booleanParameter("starkPicbreeder"));
+		stark.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Flip Stark Brightness");
+				// Switch to opposite of current setting
+				Parameters.parameters.changeBoolean("starkPicbreeder");
+				// Need to change all images and re-load
+				resetButtons(true);
+			}
+		});
 		
 		top.add(blackAndWhite);
+		top.add(stark);
 	}
 
 	/**

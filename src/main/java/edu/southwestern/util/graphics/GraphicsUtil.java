@@ -106,12 +106,16 @@ public class GraphicsUtil {
 	 */
 	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time) {
 		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+		// Min and max brightness levels used for stark coloring
+		float maxB = 0;
+		float minB = 1;
 		for (int x = 0; x < imageWidth; x++) {// scans across whole image
-			for (int y = 0; y < imageHeight; y++) {
+			for (int y = 0; y < imageHeight; y++) {				
 				// network outputs computed on hsb, not rgb scale because
 				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples, time);
-				
-				if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) { // Stark black and white
+				maxB = Math.max(maxB, hsb[BRIGHTNESS_INDEX]);
+				minB = Math.min(minB, hsb[BRIGHTNESS_INDEX]);
+				if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) { // black and white
 					Color childColor = Color.getHSBColor(0, 0, hsb[BRIGHTNESS_INDEX]);
 					// set back to RGB to draw picture to JFrame
 					image.setRGB(x, y, childColor.getRGB());
@@ -122,6 +126,25 @@ public class GraphicsUtil {
 				}
 			}
 		}
+		
+		// From Sarah F. Anna K., and Alice Q.
+		if(Parameters.parameters.booleanParameter("starkPicbreeder")) {
+			// Restricts image to two brightness levels
+			float midB = (maxB-minB)/2;
+			for (int x = 0; x < imageWidth; x++) {// scans across whole image
+				for (int y = 0; y < imageHeight; y++) {
+					// Rather the use the CPPN, grab colors from the image and change the brightness
+					int originalColor = image.getRGB(x, y);
+					Color original = new Color(originalColor);
+					// Get HSB values (null means a new array is created)
+					float[] hsb = Color.RGBtoHSB(original.getRed(), original.getGreen(), original.getBlue(), null);
+					// Change brightness to 0 or 1 in comparison with mid value
+					Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX] > midB ? 1 : 0);
+					image.setRGB(x, y, childColor.getRGB());
+				}
+			}		
+		}
+		
 		return image;
 	}
 

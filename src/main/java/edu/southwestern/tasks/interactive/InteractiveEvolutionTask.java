@@ -560,7 +560,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		if(checkCache) {
 			// Will this interface ever be used with items that are not TWEANNs?
 			long id = ((TWEANN) phenotype).getId();
-			System.out.println("Cache image for: " + id);
+			//System.out.println("Cache image for: " + id);
 			if(cachedButtonImages.containsKey(id)) {
 				// Return pre-computed image instead of watsing time
 				return cachedButtonImages.get(id);
