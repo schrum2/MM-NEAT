@@ -28,6 +28,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.aqwis.SimpleTiledZentangle;
+
 import edu.southwestern.util.random.RandomNumbers;
 
 public class SimpleTiledWFCModel extends WFCModel {
@@ -49,7 +51,8 @@ public class SimpleTiledWFCModel extends WFCModel {
         this.periodic = periodic;
         this.black = black;
 
-        File xmlFile = new File(String.format("WaveFunctionCollapse/samples/%s/data.xml", name));
+        // TODO: This probably should not be hard coded
+        File xmlFile = new File(SimpleTiledZentangle.getSaveDirectory()+"/data.xml");
         Document document = null;
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 
@@ -455,7 +458,7 @@ public class SimpleTiledWFCModel extends WFCModel {
             if (cardinality != "L")
             {
             	// Jacob: Not sure what this code is doing ... seemingly nothing
-            	boolean addCard = RandomNumbers.coinFlip();
+            	//boolean addCard = RandomNumbers.coinFlip();
 
 //            	for(int i = 0; i < numElements; i++) {
 //                	for(int j = 0; j < 3; j+=2) {
@@ -468,7 +471,7 @@ public class SimpleTiledWFCModel extends WFCModel {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes"); 
             DOMSource source = new DOMSource(doc);
-            PrintWriter dataFile = new PrintWriter(new FileWriter("WaveFunctionCollapse/samples/picbreeder/data.xml"));
+            PrintWriter dataFile = new PrintWriter(new FileWriter(SimpleTiledZentangle.getSaveDirectory() + "/data.xml"));
             StreamResult data = new StreamResult(dataFile);
             transformer.transform(source, data);
  

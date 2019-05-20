@@ -18,6 +18,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import com.aqwis.Main;
+import com.aqwis.SimpleTiledZentangle;
 import com.aqwis.models.SimpleTiledWFCModel;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -26,6 +27,7 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.util.BooleanUtil;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
@@ -140,9 +142,12 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		if(!BooleanUtil.any(chosen)){
 			System.out.println("Can't Zentangle if no tiles are chosen! :(");
 		} else {
-			//Save chosen tiles to WaveFunctionCollapse/samples/picbreeder
-			String waveFunctionSaveLocation = "WaveFunctionCollapse/samples/picbreeder/"; 
-
+			String waveFunctionSaveLocation = SimpleTiledZentangle.getSaveDirectory(); 
+			File dir = new File(waveFunctionSaveLocation);
+			if (!dir.exists()) { // Create save directory if it does not exist
+				dir.mkdir();
+			}
+			
 			String[] tileNames = new String[20*4]; //20 images in picbreeder * 4 reflections each
 			int numSaved = 0;
 			int numStored = 0;
@@ -179,9 +184,8 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					firstTileIndex++;
 				}
 				SimpleTiledWFCModel.writeAdjacencyRules(tilesToProcess, 1);
-				String[] args = {};
 				try {
-					Main.main(args,i);
+					SimpleTiledZentangle.simpleTiledZentangle(i);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

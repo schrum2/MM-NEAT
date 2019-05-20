@@ -21,7 +21,7 @@ import static javafx.application.Platform.exit;
 public class Main {
 
     private static Document document;
-    private static WFCModel wfcModel;
+    static WFCModel wfcModel;
 
     private static Boolean attributeFromString(Node item, Boolean defaultValue) { return item == null ? defaultValue : Boolean.parseBoolean(item.getNodeValue()); }
     private static Integer attributeFromString(Node item, Integer defaultValue) { return item == null ? defaultValue : Integer.parseInt(item.getNodeValue()); }
