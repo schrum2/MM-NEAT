@@ -199,7 +199,7 @@ public class SimpleTiledWFCModel extends WFCModel {
             	*/
                 for (int t = 0; t < cardinality; t++)
                 {
-                	File bitmapFile = new File(String.format("WaveFunctionCollapse/samples/%s/%s/ %d.bmp", name, tilename, t));
+                	File bitmapFile = new File(String.format(SimpleTiledZentangle.getSaveDirectory() + "/%s/ %d.bmp", tilename, t));
                     //System.out.println(bitmapFile);
                     //System.out.println(bitmapFile.getAbsolutePath());
                     BufferedImage bitmap = ImageIO.read(bitmapFile);
@@ -208,7 +208,7 @@ public class SimpleTiledWFCModel extends WFCModel {
             }
             else
             {
-                File bitmapFile = new File(String.format("WaveFunctionCollapse/samples/%s/%s.bmp", name, tilename));
+                File bitmapFile = new File(String.format(SimpleTiledZentangle.getSaveDirectory() + "/%s.bmp", tilename));
                 System.out.println(bitmapFile.getAbsolutePath());
                 BufferedImage bitmap = ImageIO.read(bitmapFile);
                 tiles.add(tile.apply((x, y) -> new Color(bitmap.getRGB(x, y))));

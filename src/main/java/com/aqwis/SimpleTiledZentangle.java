@@ -9,8 +9,6 @@ import javax.imageio.ImageIO;
 
 import com.aqwis.models.SimpleTiledWFCModel;
 
-import edu.southwestern.util.file.FileUtilities;
-
 /**
  * The normal Main class for WFC is too general and depends on loading files from disk.
  * This simpler, more specialized version accomplishes the same launch specifically for

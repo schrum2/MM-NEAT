@@ -140,7 +140,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		if(!BooleanUtil.any(chosen)){
 			System.out.println("Can't Zentangle if no tiles are chosen! :(");
 		} else {
-			String waveFunctionSaveLocation = SimpleTiledZentangle.getSaveDirectory(); 
+			String waveFunctionSaveLocation = SimpleTiledZentangle.getSaveDirectory() + "/"; 
 			File dir = new File(waveFunctionSaveLocation);
 			if (!dir.exists()) { // Create save directory if it does not exist
 				dir.mkdir();
@@ -165,7 +165,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					tileNames[numStored++] = fullName + "3";
 					tileNames[numStored++] = fullName + "4";
 
-					// TODO: Change save location (do we even need these?)
 					saveSingle(waveFunctionSaveLocation+fullName,i,tileSize); //adds another number to the end
 					//images are saved as reflections so they tile better
 
@@ -208,22 +207,22 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			BufferedImage firstImage = null;
 			BufferedImage secondImage = null;
 			try {
-				bgImage = ImageIO.read(new File(waveFunctionSaveLocation+"background1.bmp"));
+				bgImage = ImageIO.read(new File(waveFunctionSaveLocation+"/background1.bmp"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			try {
-				firstImage = ImageIO.read(new File("WaveFunctionCollapse/samples/picbreederZentangle"+1+".jpg"));
+				firstImage = ImageIO.read(new File(waveFunctionSaveLocation+"/picbreederZentangle"+1+".jpg"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			try {
-				secondImage = ImageIO.read(new File("WaveFunctionCollapse/samples/picbreederZentangle"+2+".jpg"));
+				secondImage = ImageIO.read(new File(waveFunctionSaveLocation+"/picbreederZentangle"+2+".jpg"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 			BufferedImage zentangle = GraphicsUtil.zentangleImages(bgImage,firstImage,secondImage);
-		    File outputfile = new File(waveFunctionSaveLocation+"zentangle.png");
+		    File outputfile = new File(waveFunctionSaveLocation+"/zentangle.png");
 		    try {
 				ImageIO.write(zentangle, "png", outputfile);
 			} catch (IOException e) {
