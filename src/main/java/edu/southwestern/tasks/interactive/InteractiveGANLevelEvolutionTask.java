@@ -5,6 +5,8 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -66,10 +69,14 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 
 	/**
 	 * Return the String parameter label that has the file name of the GAN model
-	 * @return
+	 * @return file name of GAN model
 	 */
 	public abstract String getGANModelParameterName();
 	
+	/**
+	 * Constructor sets up Buttons for window
+	 * @throws IllegalAccessException
+	 */
 	public InteractiveGANLevelEvolutionTask() throws IllegalAccessException {
 		super(false); // false indicates that we are NOT evolving CPPNs
 		configureGAN();
@@ -129,8 +136,12 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	}
 
 	/**
-	 * @param paramLabel
-	 * @return
+	 * Generate a slider for the window
+	 * @param paramLabel What integer parameter we would like to use for the initial value of the slider
+	 * @param min Minimum value of slider
+	 * @param max Maximum value of slider
+	 * @param name Label to put at the middle of the slider
+	 * @return JSlider Generated JSlider to add to window
 	 */
 	private JSlider klDivSlider(String paramLabel, int min, int max, String name) {
 		JSlider filterSlider = new JSlider(JSlider.HORIZONTAL, min, max, Parameters.parameters.integerParameter(paramLabel));
@@ -156,16 +167,29 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 		return filterSlider;
 	}
 
+	/**
+	 * Override sensor labels to return an empty string array
+	 * @returns empty string array
+	 */
 	@Override
 	public String[] sensorLabels() {
 		return new String[0]; // Not a network task, so there are no sensor labels
 	}
 
+	/**
+	 * Override output labels to return an empty string array
+	 * @returns empty string array
+	 */
 	@Override
 	public String[] outputLabels() {
 		return new String[0]; // Not a network task, so there are no output labels
 	}
 
+	/**
+	 * Override the save function to save the latent vector and model name of the selected level
+	 * @param file Name of the file
+	 * @param i Index of item being saved
+	 */
 	@Override
 	protected void save(String file, int i) {
 		ArrayList<Double> latentVector = scores.get(i).individual.getPhenotype();
@@ -190,6 +214,12 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 
 	/**
 	 * Disallow image caching since this only applies to CPPNs
+	 * @param checkCache Check if image is already generated, will always be false
+	 * @param phenotype Latent vector
+	 * @param width Image width in pixels
+	 * @param height Image height in pixels
+	 * @param inputMultipliers determines whether CPPN inputs are on or off
+	 * @returns BufferedImage Image of button
 	 */
 	@Override
 	protected BufferedImage getButtonImage(boolean checkCache, ArrayList<Double> phenotype, int width, int height, double[] inputMultipliers) {
@@ -199,6 +229,8 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 
 	/**
 	 * Responds to a button to actually play a selected level
+	 * @param itemID Unique integer stored in each button to determine which one was pressed
+	 * @returns boolean True if we need to undo the click
 	 */
 	@SuppressWarnings("unchecked")
 	protected boolean respondToClick(int itemID) {
@@ -395,10 +427,10 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	}
 
 	/**
-	 * 
+	 * Generate the Level Image to go on the Buttons
 	 * @param itemIndex Index in population
 	 * @param picSize Size of image
-	 * @return
+	 * @return JLabel representing an image of the level
 	 */
 	private JLabel getLevelImageLabel(int itemIndex, int picSize) {
 		int leftPopulationIndex = selectedItems.get(itemIndex);
@@ -408,9 +440,10 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	}
 
 	/**
+	 * Generate the Zelda level based on the phenotype
 	 * @param picSize Size of image
 	 * @param phenotype Latent vector
-	 * @return
+	 * @return JLabel representation of the given Zelda level to be used in the GUI
 	 */
 	public JLabel getLevelImageLabel(int picSize, ArrayList<Double> phenotype) {
 		ImageIcon img = getLevelImageIcon(picSize, phenotype);
@@ -422,7 +455,7 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	 * Get the ImageIcon to put on a JLabel
 	 * @param picSize Image size
 	 * @param phenotype latent vector
-	 * @return
+	 * @return ImageIcon representing the Zelda level
 	 */
 	public ImageIcon getLevelImageIcon(int picSize, ArrayList<Double> phenotype) {
 		BufferedImage leftLevel = getButtonImage(false, phenotype, picSize,picSize, inputMultipliers);
@@ -466,6 +499,7 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 		vectorSliders.setLayout(new GridLayout(10, phenotype.size() / 10));
 		// Add a slider for each latent vector variable
 		for(int i = 0; i < phenotype.size(); i++) {
+			JPanel slider = new JPanel();
 			JSlider vectorValue = new JSlider(JSlider.HORIZONTAL, 0, SLIDER_RANGE, (int)(SLIDER_RANGE*phenotype.get(i)));
 			vectorValue.setMinorTickSpacing(1);
 			vectorValue.setPaintTicks(true);
@@ -475,6 +509,9 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 			vectorValue.setLabelTable(labels);
 			vectorValue.setPaintLabels(true);
 			vectorValue.setPreferredSize(new Dimension(200, 40));
+			
+			JTextField vectorInput = new JTextField(5);
+			vectorInput.setText(String.valueOf((1.0 * vectorValue.getValue()) / SLIDER_RANGE));
 
 			/**
 			 * Changed level width picture previews
@@ -488,6 +525,7 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 					if(!source.getValueIsAdjusting()) {
 						int newValue = (int) source.getValue();
 						double scaledValue = (1.0 * newValue) / SLIDER_RANGE;
+						vectorInput.setText(String.valueOf(scaledValue));
 						// Actually change the value of the phenotype in the population
 						phenotype.set(latentVariableIndex, scaledValue);
 						// Update image
@@ -506,8 +544,34 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 					}
 				}
 			});
+			
+			vectorInput.addKeyListener(new KeyListener() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+						String typed = vectorInput.getText();
+		                vectorValue.setValue(0);
+		                if(!typed.matches("\\d+(\\.\\d*)?")) {
+		                    return;
+		                }
+		                double value = Double.parseDouble(typed) * SLIDER_RANGE;
+		                vectorValue.setValue((int)value);
+					}
+					
+				}
 
-			vectorSliders.add(vectorValue);
+				@Override
+				public void keyReleased(KeyEvent e) {}
+
+				@Override
+				public void keyTyped(KeyEvent e) {}
+
+			});
+			
+			slider.add(vectorValue);
+			slider.add(vectorInput);
+
+			vectorSliders.add(slider);
 		}
 
 		// Play the modified level
@@ -617,13 +681,13 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	 * launcing a new one. Returns a pair containing both the old latent vector length
 	 * and the net latent vector length for the chosen model.
 	 * @param model
-	 * @return
+	 * @return Pair of integers representing the old latent vector and the net latent vector
 	 */
 	public abstract Pair<Integer, Integer> resetAndReLaunchGAN(String model);
 	
 	/**
-	 * Where are GAN models for this particulay domain saved?
-	 * @return
+	 * Where are GAN models for this particular domain saved?
+	 * @return String of the path of the GAN Model
 	 */
 	public abstract String getGANModelDirectory();
 
@@ -669,21 +733,35 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 		// do nothing
 	}
 
+	/**
+	 * Override the type of file we want to generate
+	 * @return String of file type
+	 */
 	@Override
 	protected String getFileType() {
 		return "Text File";
 	}
 
+	/**
+	 * The extenstion of the file type
+	 * @return String file extension
+	 */
 	@Override
 	protected String getFileExtension() {
 		return "txt";
 	}
 
+	/**
+	 * Not using CPPN
+	 */
 	@Override
 	public int numCPPNInputs() {
 		throw new UnsupportedOperationException("There are no CPPNs, and therefore no inputs");
 	}
 
+	/**
+	 * Not using CPPN
+	 */
 	@Override
 	public int numCPPNOutputs() {
 		throw new UnsupportedOperationException("There are no CPPNs, and therefore no outputs");

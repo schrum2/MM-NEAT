@@ -104,6 +104,7 @@ ZeldaAllDungeons*
 /coghosts/
 /poghosts/
 /popacman/
+/zeldagan/
 /src/main/python/MarioGAN/Zelda-30-5000
 # Some of UT^2's log files end up with this naming convention
 *-null

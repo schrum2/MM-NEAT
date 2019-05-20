@@ -20,6 +20,25 @@ import java.util.List;
 public class OldLevelParser {
 
 	public static final int BUFFER_WIDTH = 15;
+	
+	// Each integer corresponds to a block
+	// This is an array representation to easily map integers to a character
+	// OldLevelParser doesn't provide an easy way to map ints to chars
+	public static final char[] BLOCK_INDEX = {
+			'X', // 0: Solid block
+			'S', // 1: Breakable block
+			'-', // 2: Air block
+			'?', // 3: Question block
+			'Q', // 4: Empty Question block(?)
+			'E', // 5: Goomba block
+			'<', // 6: Top left pipe
+			'>', // 7: Top right pipe
+			'[', // 8: Left pipe
+			']', // 9: Right pipe
+			'o', // 10: Coin,
+			'B', // 11: Top of bullet bill cannon thing
+			'b', // 12: Bottom of bullet bill
+	};
 
 	/*
 	 "tiles" : {
@@ -52,8 +71,8 @@ public class OldLevelParser {
 
 	/**
 	 * char based version of method below
-	 * @param code
-	 * @return
+	 * @param code character of block
+	 * @return True if the code 
 	 */
 	public static boolean isEnemy(char code) {
 		return isEnemy(code+"");
@@ -61,8 +80,8 @@ public class OldLevelParser {
 
 	/**
 	 * Based on the list of enemy types above
-	 * @param code
-	 * @return
+	 * @param code String of the tile
+	 * @return True if the code corresponds to an enemy
 	 */
 	public static boolean isEnemy(String code) {
 		return code.equals("E") || code.equals("W") || code.equals("G") || code.equals("g") || code.equals("r") || code.equals("R") || code.equals("^") || code.equals("&");
@@ -70,8 +89,8 @@ public class OldLevelParser {
 
 	/**
 	 * Generate sprites based on the enemy codes above
-	 * @param code
-	 * @return
+	 * @param code String representing a tile of a level
+	 * @return SpriteTemplete based on the code
 	 */
 	private SpriteTemplate spriteForCode(String code) {
 		switch(code) {
@@ -103,8 +122,8 @@ public class OldLevelParser {
 	 * Create level from text file with 2D arrangement of
 	 * level content.
 	 * 
-	 * @param filename
-	 * @return
+	 * @param filename string of the filename of the level
+	 * @return Level based on an ASCII representation
 	 */
 	public Level createLevelASCII(String filename) {
 		//Read in level representation
@@ -121,7 +140,8 @@ public class OldLevelParser {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
+		// Create level line by line from file
 		return createLevelASCII(lines);
 	}        
 
@@ -129,13 +149,13 @@ public class OldLevelParser {
 	 * Create level from list of Strings corresponding to the 2D
 	 * layout of the level.
 	 * 
-	 * @param lines
-	 * @return
+	 * @param lines List of strings with each string being a row of the level
+	 * @return Level based on the rows of the ASCII representation
 	 */
 	public Level createLevelASCII(ArrayList<String> lines) {
-		int width = lines.get(0).length();
-		int height = lines.size();
-		int actualWidth = width+2*BUFFER_WIDTH;
+		int width = lines.get(0).length(); // Get width of level
+		int height = lines.size(); // Get height of level
+		int actualWidth = width+2*BUFFER_WIDTH; // Actual width corresponds to the width of the level instance
 		Level level = new Level(actualWidth,height);
 
 		//Set Level Exit
@@ -143,10 +163,11 @@ public class OldLevelParser {
 		level.xExit = width+BUFFER_WIDTH+1;
 		level.yExit = height-1;
 
+		// Set the left side of the level to solid blocks
 		for(int i=0; i<BUFFER_WIDTH; i++){
 			level.setBlock(i, height-1, (byte) 9);
 		}
-
+		// Set the right side of the level to solid blocks
 		for(int i=0; i<BUFFER_WIDTH; i++){
 			level.setBlock(width+i+BUFFER_WIDTH, height-1, (byte) 9);
 		}
@@ -154,7 +175,7 @@ public class OldLevelParser {
 		//set Level map
 		for(int i=0; i<height; i++){
 			for(int j=0; j<lines.get(i).length(); j++){
-				String code = String.valueOf(lines.get(i).charAt(j));
+				String code = String.valueOf(lines.get(i).charAt(j)); // Get code by row and then position in string
 				if(isEnemy(code)){
 					//set Enemy
 					//new SpriteTemplate(type, boolean winged)
@@ -174,23 +195,30 @@ public class OldLevelParser {
 		return level;
 	}
 
+	/**
+	 * Generate a level based on the JSON representation, 2D ints
+	 * @param input 2D array of integers
+	 * @return Level mario level based on input
+	 */
 	public static Level createLevelJson(List<List<Integer>> input)
 	{
 		int width = input.get(0).size();
 		int height = input.size();
-		int extraStones = 15;
-		Level level = new Level(width+2*extraStones,height);
+		Level level = new Level(width+2*BUFFER_WIDTH,height);
 
 		//Set Level Exit
 		//Extend level by that
-		level.xExit = width+extraStones;
+		level.xExit = width+BUFFER_WIDTH;
 		level.yExit = height-1;
 
-		for(int i=0; i<extraStones; i++){
+		// Set left side of level
+		for(int i=0; i<BUFFER_WIDTH; i++){
 			level.setBlock(i, height-1, (byte) 9);
 		}
-		for(int i=0; i<extraStones; i++){
-			level.setBlock(width+i+extraStones, height-1, (byte) 9);
+		
+		// Set right side of level
+		for(int i=0; i<BUFFER_WIDTH; i++){
+			level.setBlock(width+i+BUFFER_WIDTH, height-1, (byte) 9);
 		}
 
 		//set Level map
@@ -200,13 +228,13 @@ public class OldLevelParser {
 				if(5==code){
 					//set Enemy
 					//new SpriteTemplate(type, boolean winged)
-					level.setSpriteTemplate(j+extraStones, i, new SpriteTemplate(Enemy.ENEMY_GOOMBA, false));
+					level.setSpriteTemplate(j+BUFFER_WIDTH, i, new SpriteTemplate(Enemy.ENEMY_GOOMBA, false));
 					//System.out.println("j: "+j+" i:"+i);
 					//set passable tile: everything not set is passable
 				}else{
 					int encoded = codeParser(code);
 					if(encoded !=0){
-						level.setBlock(j+extraStones, i, (byte) encoded);
+						level.setBlock(j+BUFFER_WIDTH, i, (byte) encoded);
 						//System.out.println("j: "+j+" i:"+i+" encoded: "+encoded);
 					}
 				}
@@ -217,7 +245,11 @@ public class OldLevelParser {
 	}
 
 
-
+	/**
+	 * If given ints as the level input, use this parser to	code it to something Level can understand
+	 * @param code int from input
+	 * @return int representing a block in a level
+	 */
 	public static int codeParser(int code){
 		int output = 0;
 		switch(code){
@@ -238,6 +270,11 @@ public class OldLevelParser {
 		return output;
 	}
 
+	/**
+	 * If given a strings as level input, use this parser to code it something Level can understand
+	 * @param code String representation of a tile
+	 * @return int representing a block in the level
+	 */
 	public int codeParserASCII(String code){
 		int output = 0;
 		switch(code){
