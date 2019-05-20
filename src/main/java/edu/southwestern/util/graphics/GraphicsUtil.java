@@ -149,6 +149,33 @@ public class GraphicsUtil {
 	}
 
 	/**
+	 * Code from Sarah Friday, Anna Krolikowski, and Alice Quintanilla from their final Spring 2019 AI project.
+	 * 
+	 * Creates a zentangled image by overlaying two patterns into the black and white areas of the
+	 * background image.
+	 * 
+	 * @param backgroundImage Image into which zentangle will be applied
+	 * @param pattern1 First zentangle pattern
+	 * @param pattern2 Second zentangle pattern
+	 * @return The resulting image
+	 */
+	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2) {
+		int imageWidth = backgroundImage.getWidth();
+		int imageHeight = backgroundImage.getHeight();
+		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+		for (int x = 0; x < imageWidth; x++) {// scans across whole image
+			for (int y = 0; y < imageHeight; y++) {
+				if(backgroundImage.getRGB(x, y) == Color.BLACK.getRGB()) {
+					image.setRGB(x, y, pattern1.getRGB(x, y));
+				} else {
+					image.setRGB(x, y, pattern2.getRGB(x, y));
+				}
+			}
+		}
+		return image;
+	}
+	
+	/**
 	 * Returns adjusted image based on manipulation of an input image with a CPPN. To add
 	 * more variation, each pixel is manipulated based on the average HSB of its surrounding pixels.
 	 * 

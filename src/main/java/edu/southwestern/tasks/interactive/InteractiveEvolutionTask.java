@@ -94,8 +94,8 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	private static final int MPG_MAX = 10;//maximum # of mutations per generation
 
 	// Activation Button Widths and Heights
-	private static final int ACTION_BUTTON_WIDTH = 80;
-	private static final int ACTION_BUTTON_HEIGHT = 60;	
+	protected static final int ACTION_BUTTON_WIDTH = 80;
+	protected static final int ACTION_BUTTON_HEIGHT = 60;	
 
 	//Private final variables
 	private static int numRows;
