@@ -75,21 +75,28 @@ public class LevelParser {
 //        return createLevel(level);        
 //    }
 
+    /**
+     * Create level based on 2D array of inputs
+     * @param input 2D array of integers representing the level
+     * @return Level instance
+     */
     public static Level createLevel(int[][] input){
         int width = input[0].length;
     	int height = input.length;
-    	int extraStones = BUFFER_WIDTH;
-    	Level level = new Level(width+2*extraStones,height);
+    	Level level = new Level(width+2*BUFFER_WIDTH,height);
         //Set Level Exit
         //Extend level by that
-        level.xExit = width+extraStones+1; // Push exit point over by 1 so that goal post does not overlap with other level sprites
+        level.xExit = width+BUFFER_WIDTH+1; // Push exit point over by 1 so that goal post does not overlap with other level sprites
         level.yExit = height-1;
         
-        for(int i=0; i<extraStones; i++){
+        // Set left side of level
+        for(int i=0; i<BUFFER_WIDTH; i++){
             level.setBlock(i, height-1, (byte) 9);
         }
-        for(int i=0; i<extraStones; i++){
-            level.setBlock(width+i+extraStones, height-1, (byte) 9);
+        
+        // Set right side of level
+        for(int i=0; i<BUFFER_WIDTH; i++){
+            level.setBlock(width+i+BUFFER_WIDTH, height-1, (byte) 9);
         }
         
         //set Level map
@@ -103,35 +110,35 @@ public class LevelParser {
                     if(i+1<height){//just in case we are in bottom row
                        code_below = input[i+1][j]; 
                     }
-                    level.setSpriteTemplate(j+extraStones, i, getEnemySprite(code,code_below==2));
+                    level.setSpriteTemplate(j+BUFFER_WIDTH, i, getEnemySprite(code,code_below==2));
                 }else if(code==8){//bullet bill
-                    level.setBlock(j + extraStones, i, tilesAdv.get("bb").byteValue());//bullet bill shooter
+                    level.setBlock(j + BUFFER_WIDTH, i, tilesAdv.get("bb").byteValue());//bullet bill shooter
                     if(i+1<height && input[i+1][j]==2){
-                        level.setBlock(j + extraStones, i+1, tilesAdv.get("bbt").byteValue());//bullet bill top 
+                        level.setBlock(j + BUFFER_WIDTH, i+1, tilesAdv.get("bbt").byteValue());//bullet bill top 
                         for(int k=i+2; k<height; k++){
                             if(input[k][j]==2){
-                                level.setBlock(j+extraStones, k, tilesAdv.get("bbb").byteValue());
+                                level.setBlock(j+BUFFER_WIDTH, k, tilesAdv.get("bbb").byteValue());
                             }else{
                                 break;
                             }
                         }
                     }
                 }else if(code==6 || code==7){//tubes + plants
-                    level.setBlock(j + extraStones, i, tilesAdv.get("ttl").byteValue());
-                    level.setBlock(j + extraStones +1, i, tilesAdv.get("ttr").byteValue());
+                    level.setBlock(j + BUFFER_WIDTH, i, tilesAdv.get("ttl").byteValue());
+                    level.setBlock(j + BUFFER_WIDTH +1, i, tilesAdv.get("ttr").byteValue());
                     for(int k=i+1; k<height; k++){
                         if(input[k][j]==2 || (j<width-1 && input[k][j+1]==2)){
-                            level.setBlock(j+extraStones, k, tilesAdv.get("tbl").byteValue());
-                            level.setBlock(j+extraStones+1, k, tilesAdv.get("tbr").byteValue());
+                            level.setBlock(j+BUFFER_WIDTH, k, tilesAdv.get("tbl").byteValue());
+                            level.setBlock(j+BUFFER_WIDTH+1, k, tilesAdv.get("tbr").byteValue());
                         }else{
                             break;
                         }
                     }
                     if(code==7){
-                        level.setSpriteTemplate(j + extraStones, i, new SpriteTemplate(Enemy.ENEMY_FLOWER, false));
+                        level.setSpriteTemplate(j + BUFFER_WIDTH, i, new SpriteTemplate(Enemy.ENEMY_FLOWER, false));
                     }
                 }else if(code!=2) {
-                    level.setBlock(j+extraStones, i, tilesMario.get(code).byteValue());
+                    level.setBlock(j+BUFFER_WIDTH, i, tilesMario.get(code).byteValue());
                 }
             }
         }
@@ -139,13 +146,23 @@ public class LevelParser {
         return level;
     }
 
+    /**
+     * Convert list of int to array
+     * @param list List of integers
+     * @return Array of integers
+     */
     private static int[] toIntArray(List<Integer> list){
         int[] ret = new int[list.size()];
         for(int i = 0;i < ret.length;i++)
             ret[i] = list.get(i);
         return ret;
     }
-    
+
+    /**
+     * Create level based on 2D list of integers
+     * @param input 2D list of ints representing the level
+     * @return Level mario level instance
+     */
     public static Level createLevelJson(List<List<Integer>> input)
     {
         int[][] output = new int[input.size()][];
@@ -156,7 +173,12 @@ public class LevelParser {
         return createLevel(output);
     }
   
-    
+    /**
+     * Get type of enemy based on code and whether they're flying or not
+     * @param code Int code of enemey
+     * @param flying Boolean whether they're flying or not
+     * @return SpriteTemplate representing the enemy
+     */
     public static SpriteTemplate getEnemySprite(int code, boolean flying){
         int type = 0;
         switch(code){
