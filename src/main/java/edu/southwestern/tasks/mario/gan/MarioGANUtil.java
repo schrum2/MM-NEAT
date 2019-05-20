@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
@@ -87,8 +88,54 @@ public class MarioGANUtil {
 			}	
 		}
 		return oneLevel;
-	}	
+	}
 	
+	/**
+	 * Generate a Mario level, similar to the CPPN variant, from a 2D list of integers
+	 * @param levelList level represented in a 2D list of integers
+	 * @return String array with each index being a row in the level
+	 */
+	public static String[] generateTextLevel(ArrayList<List<Integer>> levelList) {
+		String[] level = new String[levelList.size()]; // Set the array to the size of the level (the height)
+		// Initialize every index in the string
+		for(int i = 0; i < level.length; i++)
+			level[i] = "";
+		
+		if(Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding")) {
+			int i = 0; 
+			for(List<Integer> row : levelList) { 
+				for(Integer block : row)
+					level[i] += OldLevelParser.BLOCK_INDEX[block];
+				
+				i++; // Increment our index to move to the next row
+			}
+		} else {
+			int i = 0; 
+			for(List<Integer> row : levelList) { 
+				for(Integer block : row)
+					level[i] += getTileCharNewEncoding(block);
+				
+				i++; // Increment our index to move to the next row
+			}
+		}
+		
+		
+		
+		return level;
+	}
+	
+	/**
+	 * For the new encoding get the char block from the int
+	 * @param block Int of block
+	 * @return char of block
+	 */
+	private static char getTileCharNewEncoding(Integer block) {
+		for(Entry<Character, Integer> entry : LevelParser.tiles.entrySet()) {
+			if(entry.getValue().equals(block)) return entry.getKey();
+		}
+		return ' ';
+	}
+
 	/**
 	 * From MarioGAN
 	 * 

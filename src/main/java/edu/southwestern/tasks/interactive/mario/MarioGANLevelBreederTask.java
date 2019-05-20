@@ -4,8 +4,10 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JSlider;
@@ -117,6 +119,15 @@ public class MarioGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		if(model.equals("GECCO2018GAN_World1-1_32_Epoch5000.pth")) {
 			Parameters.parameters.setInteger("GANInputSize", 32); // Default latent vector size
 			Parameters.parameters.setBoolean("marioGANUsesOriginalEncoding", true);
+		} else if(model.startsWith("GECCOEncoding")) { // Old encoding, but created after GECCO
+			// Need to parse the model name to find out the latent vector size
+			String dropEncodingLabel = model.substring(model.indexOf("_")+1);
+			String dropDataSource = dropEncodingLabel.substring(model.indexOf("_")+1);
+			String dropType = dropDataSource.substring(dropDataSource.indexOf("_")+1);
+			String latentSize = dropType.substring(0,dropType.indexOf("_"));
+			int size = Integer.parseInt(latentSize);
+			Parameters.parameters.setInteger("GANInputSize", size);
+			Parameters.parameters.setBoolean("marioGANUsesOriginalEncoding", true);
 		} else {
 			// Need to parse the model name to find out the latent vector size
 			String dropDataSource = model.substring(model.indexOf("_")+1);
@@ -149,6 +160,29 @@ public class MarioGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 			}
 		}.start();
 	}
+
+	@Override
+	protected void save(String file, int i) {
+		ArrayList<Double> latentVector = scores.get(i).individual.getPhenotype();
+		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
+		ArrayList<List<Integer>> levelList = MarioGANUtil.generateLevelListRepresentationFromGAN(doubleArray);
+		String[] level = MarioGANUtil.generateTextLevel(levelList); // Generate the level from 2D integers
+
+		// Prepare text file
+		try {
+			PrintStream ps = new PrintStream(new File(file));
+//			ps.println(Parameters.parameters.stringParameter("marioGANModel"));
+			// Write String array to text file 
+			for(String row : level) {
+				ps.println(row);
+			}
+			ps.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Could not save file: " + file);
+			e.printStackTrace();
+			return;
+		}
+	}
 	
 	public static void main(String[] args) {
 		try {
@@ -157,4 +191,10 @@ public class MarioGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public List<List<Integer>> levelListRepresentation(double[] latentVector) {
+		return MarioGANUtil.generateLevelListRepresentationFromGAN(latentVector);
+	}
+
 }

@@ -4,13 +4,16 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -32,12 +35,20 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	private static final String GAME_FILE = "zelda";
 	private static final String FULL_GAME_FILE = LevelBreederTask.GAMES_PATH + GAME_FILE + ".txt";
 
+	/**
+	 * Initializes the InteractiveGANLevelEvolutionTask and everything required for GVG-AI
+	 * @throws IllegalAccessException
+	 */
 	public ZeldaGANLevelBreederTask() throws IllegalAccessException {
-		super();
-		VGDLFactory.GetInstance().init();
-		VGDLRegistry.GetInstance().init();
+		super(); // Initialize InteractiveGANLevelEvolutionTask
+		VGDLFactory.GetInstance().init(); // Get an instant of VGDL Factor and initialize the characters cache
+		VGDLRegistry.GetInstance().init(); // Get an instance of VGDL Registry and initialize the sprite factory
 	}
 
+	/**
+	 * Override to set the window title to associate with our ZeldaGAN
+	 * @return String for title of window
+	 */
 	@Override
 	protected String getWindowTitle() {
 		return "ZeldaGAN Level Breeder";
@@ -49,7 +60,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	 * @param phenotype Latent vector
 	 * @return GameBundle for playing GVG-AI game
 	 */
-	public GameBundle setUpGameWithLevelFromLatentVector(ArrayList<Double> phenotype) {
+	public static GameBundle setUpGameWithLevelFromLatentVector(ArrayList<Double> phenotype) {
 		double[] latentVector = ArrayUtil.doubleArrayFromList(phenotype);
 		String[] level = ZeldaGANUtil.generateGVGAILevelFromGAN(latentVector, new Point(8,8));
 		int seed = 0; // TODO: Use parameter?
@@ -60,23 +71,43 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		return new GameBundle(game, level, agent, seed, 0);
 	}
 
+	/**
+	 * Creates a BufferedImage that represents the level on the button
+	 * @param phenotype Latent vector
+	 * @param width Width of image in pixels
+	 * @param height Height of image in pixels
+	 * @param inputMultipliers Determines whether CPPN is on or off, not used in function
+	 * @returns BufferedImage image of the level on the button
+	 */
 	@Override
 	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height, double[] inputMultipliers) {
-		GameBundle bundle = setUpGameWithLevelFromLatentVector(phenotype);
-		BufferedImage levelImage = GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed);
+		GameBundle bundle = setUpGameWithLevelFromLatentVector(phenotype); // Use the above function to build our ZeldaGAN
+		BufferedImage levelImage = GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed); // Make image of zelda level
 		return levelImage;
 	}
 
+	/**
+	 * Set the GAN Process to type ZELDA
+	 */
 	@Override
 	public void configureGAN() {
 		GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
 	}
 
+	/**
+	 * Function to get the file name of the Zelda GAN Model
+	 * @returns String the file name of the GAN Model
+	 */
 	@Override
 	public String getGANModelParameterName() {
 		return "zeldaGANModel";
 	}
 
+	/**
+	 * 
+	 * @param model Name of the model to reconfigure
+	 * @returns Pair of the old latent vector and the net latent vector
+	 */
 	@Override
 	public Pair<Integer, Integer> resetAndReLaunchGAN(String model) {
 		int oldLength = GANProcess.latentVectorLength(); // for old model
@@ -93,11 +124,19 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		return new Pair<>(oldLength, newLength);
 	}
 
+	/**
+	 * Set the path of the Zelda GAN Model
+	 * @returns String path to GAN model
+	 */
 	@Override
 	public String getGANModelDirectory() {
 		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"ZeldaGAN";
 	}
 
+	/**
+	 * Called from window to play the selected Zelda level
+	 * @param phenotype Latent vector of the Zelda level to be played
+	 */
 	@Override
 	public void playLevel(ArrayList<Double> phenotype) {
 		GameBundle bundle = setUpGameWithLevelFromLatentVector(phenotype);
@@ -109,14 +148,57 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 			}
 		}.start();
 	}
+	
+	@Override
+	protected void save(String file, int i) {
+		ArrayList<Double> phenotype = scores.get(i).individual.getPhenotype();
+		double[] latentVector = ArrayUtil.doubleArrayFromList(phenotype);
+		List<List<Integer>> level = ZeldaGANUtil.generateRoomListRepresentationFromGAN(latentVector);
+		int[][] levelArray = ZeldaLevelUtil.listToArray(level);
+		int distance = ZeldaLevelUtil.findMaxDistanceOfLevel(levelArray, 5, 7);
+
+		/**
+		 * Rather than save a text representation of the level, I simply save
+		 * the latent vector and the model name, which are sufficient to
+		 * recreate any level
+		 */
+		try {
+			PrintStream ps = new PrintStream(new File(file));
+			// Write String array to text file 
+			ps.println(Parameters.parameters.stringParameter(getGANModelParameterName()));
+			ps.println(phenotype);
+			for(List<Integer> row : level) {
+				for(Integer tile : row) {
+					ps.print(tile + " ");
+				}
+				ps.println();
+			}
+			ps.println("Max Distance : " + distance);
+			ps.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Could not save file: " + file);
+			e.printStackTrace();
+			return;
+		}
+	}
+
 
 	public static void main(String[] args) {
 		try {
+			// Run the MMNeat Main method with parameters specifying that we want to run the Zedla GAN 
 			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","zeldaGANModel:ZeldaDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","watch:false","cleanFrequency:-1","simplifiedInteractiveInterface:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
 	}
 
-
+	/**
+	 * Transform latent vector into a 2D list representing a Zelda level
+	 * @param latentVector 1D double array of the latent vector
+	 * @returns List<List<Integer>> 2D list of integers representing tiles of the Zelda level
+	 */
+	@Override
+	public List<List<Integer>> levelListRepresentation(double[] latentVector) {
+		return ZeldaGANUtil.generateRoomListRepresentationFromGAN(latentVector);
+	}
 }

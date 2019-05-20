@@ -36,7 +36,7 @@ public class ZeldaGANUtil {
 	 * @param latentVector Latent vector to generate room
 	 * @return One room in list form
 	 */
-	private static List<List<Integer>> generateRoomListRepresentationFromGAN(double[] latentVector) {
+	public static List<List<Integer>> generateRoomListRepresentationFromGAN(double[] latentVector) {
 		assert GANProcess.type.equals(GANProcess.GAN_TYPE.ZELDA);
 		latentVector = GANProcess.mapArrayToOne(latentVector); // Range restrict the values
 		// Generate room from vector
