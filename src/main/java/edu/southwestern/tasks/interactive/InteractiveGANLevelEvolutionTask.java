@@ -5,6 +5,8 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,6 +23,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -496,6 +499,7 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 		vectorSliders.setLayout(new GridLayout(10, phenotype.size() / 10));
 		// Add a slider for each latent vector variable
 		for(int i = 0; i < phenotype.size(); i++) {
+			JPanel slider = new JPanel();
 			JSlider vectorValue = new JSlider(JSlider.HORIZONTAL, 0, SLIDER_RANGE, (int)(SLIDER_RANGE*phenotype.get(i)));
 			vectorValue.setMinorTickSpacing(1);
 			vectorValue.setPaintTicks(true);
@@ -505,6 +509,9 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 			vectorValue.setLabelTable(labels);
 			vectorValue.setPaintLabels(true);
 			vectorValue.setPreferredSize(new Dimension(200, 40));
+			
+			JTextField vectorInput = new JTextField(5);
+			vectorInput.setText(String.valueOf((1.0 * vectorValue.getValue()) / SLIDER_RANGE));
 
 			/**
 			 * Changed level width picture previews
@@ -518,6 +525,7 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 					if(!source.getValueIsAdjusting()) {
 						int newValue = (int) source.getValue();
 						double scaledValue = (1.0 * newValue) / SLIDER_RANGE;
+						vectorInput.setText(String.valueOf(scaledValue));
 						// Actually change the value of the phenotype in the population
 						phenotype.set(latentVariableIndex, scaledValue);
 						// Update image
@@ -536,8 +544,34 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 					}
 				}
 			});
+			
+			vectorInput.addKeyListener(new KeyListener() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+						String typed = vectorInput.getText();
+		                vectorValue.setValue(0);
+		                if(!typed.matches("\\d+(\\.\\d*)?")) {
+		                    return;
+		                }
+		                double value = Double.parseDouble(typed) * SLIDER_RANGE;
+		                vectorValue.setValue((int)value);
+					}
+					
+				}
 
-			vectorSliders.add(vectorValue);
+				@Override
+				public void keyReleased(KeyEvent e) {}
+
+				@Override
+				public void keyTyped(KeyEvent e) {}
+
+			});
+			
+			slider.add(vectorValue);
+			slider.add(vectorInput);
+
+			vectorSliders.add(slider);
 		}
 
 		// Play the modified level
