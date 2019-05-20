@@ -18,7 +18,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -45,7 +44,7 @@ public class SimpleTiledWFCModel extends WFCModel {
     private static Character attributeFromString(Node item, Character defaultValue) { return item == null ? defaultValue : item.getNodeValue().toCharArray()[0]; }
 
     public SimpleTiledWFCModel(String name, String subsetName, int width, int height, boolean periodic, boolean black) throws Exception
-    {
+    {    	
         FMX = width;
         FMY = height;
         this.periodic = periodic;
@@ -466,9 +465,11 @@ public class SimpleTiledWFCModel extends WFCModel {
 //                	}
 //                }
             }
- 
+             
             // output DOM XML to console 
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            //Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            // Had to exclusively use xalan instead of saxon
+            Transformer transformer = new org.apache.xalan.processor.TransformerFactoryImpl().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes"); 
             DOMSource source = new DOMSource(doc);
             PrintWriter dataFile = new PrintWriter(new FileWriter(SimpleTiledZentangle.getSaveDirectory() + "/data.xml"));
