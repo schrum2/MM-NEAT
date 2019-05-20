@@ -6,6 +6,8 @@ import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
+import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
 
@@ -18,6 +20,11 @@ public class ZeldaGANLevelTask extends ZeldaLevelTask<ArrayList<Double>>{
 		return ZeldaGANUtil.generateRoomListRepresentationFromGAN(room);
 	}
 	
+	@Override
+	public GameBundle getBundleFromGenotype(Genotype<ArrayList<Double>> individual) {
+		return ZeldaGANLevelBreederTask.setUpGameWithLevelFromLatentVector(individual.getPhenotype());
+	}
+	
 	/**
 	 * For quick testing
 	 * @param args
@@ -26,7 +33,9 @@ public class ZeldaGANLevelTask extends ZeldaLevelTask<ArrayList<Double>>{
 	 */
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// zeldaGANModel:ZeldaDungeonsAll_5000_10.pth
-		MMNEAT.main("runNumber:0 randomSeed:0 base:zeldagan log:ZeldaGAN-AllDungeons saveTo:AllDungeons trials:1 zeldaGANModel:ZeldaDungeonsAll_5000_10.pth GANInputSize:10 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.gvgai.zelda.ZeldaGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false watch:false".split(" "));
+		MMNEAT.main("runNumber:1 randomSeed:0 base:zeldagan log:ZeldaGAN-AllDungeons saveTo:AllDungeons trials:1 zeldaGANModel:ZeldaDungeonsAll_5000_10.pth GANInputSize:10 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.gvgai.zelda.ZeldaGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false watch:false".split(" "));
 	}
+
+
 	
 }

@@ -60,7 +60,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	 * @param phenotype Latent vector
 	 * @return GameBundle for playing GVG-AI game
 	 */
-	public GameBundle setUpGameWithLevelFromLatentVector(ArrayList<Double> phenotype) {
+	public static GameBundle setUpGameWithLevelFromLatentVector(ArrayList<Double> phenotype) {
 		double[] latentVector = ArrayUtil.doubleArrayFromList(phenotype);
 		String[] level = ZeldaGANUtil.generateGVGAILevelFromGAN(latentVector, new Point(8,8));
 		int seed = 0; // TODO: Use parameter?
