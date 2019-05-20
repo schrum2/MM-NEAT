@@ -17,7 +17,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-import com.aqwis.Main;
 import com.aqwis.SimpleTiledZentangle;
 import com.aqwis.models.SimpleTiledWFCModel;
 
@@ -27,7 +26,6 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.util.BooleanUtil;
-import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
@@ -167,13 +165,13 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					tileNames[numStored++] = fullName + "3";
 					tileNames[numStored++] = fullName + "4";
 
+					// TODO: Change save location (do we even need these?)
 					saveSingle(waveFunctionSaveLocation+fullName,i,tileSize); //adds another number to the end
 					//images are saved as reflections so they tile better
 
 					numSaved++;
 				}
 			}
-
 
 			//use wfc to create final zentangle image, save it as zentangle.bmp
 			int firstTileIndex=0;
@@ -183,7 +181,9 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					tilesToProcess[j] = tileNames[firstTileIndex];
 					firstTileIndex++;
 				}
+				// This is supposed to write data.xml
 				SimpleTiledWFCModel.writeAdjacencyRules(tilesToProcess, 1);
+				// data.xml gets read in this next method
 				try {
 					SimpleTiledZentangle.simpleTiledZentangle(i);
 				} catch (Exception e) {
@@ -203,6 +203,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 //					e.printStackTrace();
 //				}
 			}
+						
 			BufferedImage bgImage = null;
 			BufferedImage firstImage = null;
 			BufferedImage secondImage = null;
