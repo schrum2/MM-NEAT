@@ -158,8 +158,20 @@ public class RandomNumbers {
 		return result;
 	}
 
+	/**
+	 * Randomly return 1 or -1
+	 * @return 1 or -1, 50% chance
+	 */
 	public static double randomSign() {
 		return randomGenerator.nextBoolean() ? 1 : -1;
+	}
+	
+	/**
+	 * Random boolean
+	 * @return true or false, 50% chance of each
+	 */
+	public static boolean coinFlip() {
+		return randomGenerator.nextBoolean();
 	}
 
 	/**
