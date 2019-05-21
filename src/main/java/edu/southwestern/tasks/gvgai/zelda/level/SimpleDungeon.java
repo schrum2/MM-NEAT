@@ -25,7 +25,7 @@ public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 		Random random = new Random();
 		
 		while(levelList.size() > 0) {
-			if(x < 0 || x >= dungeon[y].length || y < 0 || y >= dungeon.length) break;
+			if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length) break;
 			
 			if(dungeon[y][x] == null) {
 				dungeon[y][x] = levelList.pop();

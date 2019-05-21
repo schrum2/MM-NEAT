@@ -52,7 +52,7 @@ public class Test {
                     "sokoban", "solarfox", "superman", "surround", "survivezombies", // 75-79
                     "tercio", "thecitadel", "thesnowman", "waitforbreakfast", "watergame", // 80-84
                     "waves", "whackamole", "wildgunman", "witnessprotection", "wrapsokoban", // 85-89
-                    "zelda", "zenpuzzle"}; // 90, 91
+                    "zelda", "zeldacopy", "zenpuzzle"}; // 90, 91
 
         }else{
             gamesPath = contGamesPath;
@@ -66,8 +66,8 @@ public class Test {
 		int seed = RandomNumbers.randomGenerator.nextInt();
 
 		// Game and level to play
-		int gameIdx = 88; //90; // 19 is chipschallenge
-		int levelIdx = 2; // level names from 0 to 4 (game_lvlN.txt).
+		int gameIdx = 91 ; // 19 is chipschallenge
+		int levelIdx = 0; // level names from 0 to 4 (game_lvlN.txt).
 		String game = gamesPath + games[gameIdx] + ".txt";
 		String level1 = gamesPath + games[gameIdx] + "_lvl" + levelIdx + ".txt";
 

@@ -1,6 +1,8 @@
 package edu.southwestern.tasks.interactive.gvgai;
 
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,6 +19,7 @@ import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
+import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.SimpleDungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
@@ -38,10 +41,14 @@ import gvgai.tracks.singlePlayer.tools.human.Agent;
 public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 
 	private static final int DUNGEONIZE_BUTTON_INDEX = -19;
+	private static final int DUNGEONIZE_PLAY_BUTTON_INDEX = -20;
 	
-	private static final String GAME_FILE = "zelda";
+	// Change GAME_FILE to zeldacopy "enhanced" version of original GVGAI version to test dungeon
+	private static final String GAME_FILE = "zeldacopy";
 	private static final String FULL_GAME_FILE = LevelBreederTask.GAMES_PATH + GAME_FILE + ".txt";
 
+	private SimpleDungeon sd;
+	
 	/**
 	 * Initializes the InteractiveGANLevelEvolutionTask and everything required for GVG-AI
 	 * @throws IllegalAccessException
@@ -49,10 +56,35 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	public ZeldaGANLevelBreederTask() throws IllegalAccessException {
 		super(); // Initialize InteractiveGANLevelEvolutionTask
 		
+		sd = new SimpleDungeon();
+		
 		JButton dungeonize = new JButton("Dungeonize");
 		dungeonize.setName("" + DUNGEONIZE_BUTTON_INDEX);
 		dungeonize.addActionListener(this);
 		top.add(dungeonize);
+		
+		JButton play_dungeon = new JButton("Play Dungeon");
+		play_dungeon.setName("" + DUNGEONIZE_PLAY_BUTTON_INDEX);
+		play_dungeon.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Dungeon dungeon = sd.convertDungeon();
+				if(dungeon.getCurrentlevel() == null) {
+					System.out.println("Couldn't play since there's no current level (null)");
+					return;
+				}
+				GameBundle bundle = setUpGameWithDungeon(dungeon);
+				new Thread() {
+					public void run() {
+						// True is to watch the game being played
+						GVGAIUtil.runDungeon(bundle, true, dungeon);
+					}
+				}.start();
+			}
+			
+		});
+		top.add(play_dungeon);
 		
 		VGDLFactory.GetInstance().init(); // Get an instant of VGDL Factor and initialize the characters cache
 		VGDLRegistry.GetInstance().init(); // Get an instance of VGDL Registry and initialize the sprite factory
@@ -91,6 +123,16 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	 */
 	public static GameBundle setUpGameWithLevelFromList(List<List<Integer>> level) {
 		String[] stringLevel = ZeldaVGLCUtil.convertZeldaRoomListtoGVGAI(level, new Point(8, 8));
+		int seed = 0; // TODO: Use parameter?
+		Agent agent = new Agent();
+		agent.setup(null, seed, true); // null = no log, true = human 
+		Game game = new VGDLParser().parseGame(FULL_GAME_FILE); // Initialize the game	
+
+		return new GameBundle(game, stringLevel, agent, seed, 0);
+	}
+	
+	public static GameBundle setUpGameWithDungeon(Dungeon dungeon) {
+		String[] stringLevel = dungeon.getCurrentlevel().level.getStringLevel(new Point(5, 8));
 		int seed = 0; // TODO: Use parameter?
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 
@@ -219,7 +261,6 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 				phenotypes.add(scores.get(i).individual.getPhenotype());
 			}
 			
-			SimpleDungeon sd = new SimpleDungeon();
 			sd.showDungeon(phenotypes, 5);
 		}
 		return false;
