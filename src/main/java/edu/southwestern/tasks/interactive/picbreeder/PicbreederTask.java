@@ -154,8 +154,9 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 			// Index of item that was selected first
 			int firstSelection = this.selectedItems.get(0);
+			// Item that user clicked first becomes the backgorund template
 			saveSingle(waveFunctionSaveLocation+"background", firstSelection, backgroundSize);
-			
+			// All other selected items also saved
 			for(int i = 0; i < scores.size(); i++) {
 				if(chosen[i]) {
 					//reserve names for the 4 mirroring of these tile
@@ -173,17 +174,17 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 			//use wfc to create final zentangle image, save it as zentangle.bmp
 			int firstTileIndex=0;
-			for(int i = 0; i < numSaved; i++) {
+			//for(int i = 0; i < numSaved; i++) {
 				String[] tilesToProcess = new String[4];
 				for(int j = 0; j < 4; j++) {
 					tilesToProcess[j] = tileNames[firstTileIndex];
 					firstTileIndex++;
 				}
-				// This is supposed to write data.xml
+				// Writes data.xml
 				SimpleTiledWFCModel.writeAdjacencyRules(tilesToProcess, 1);
 				// data.xml gets read in this next method
 				try {
-					SimpleTiledZentangle.simpleTiledZentangle(i);
+					SimpleTiledZentangle.simpleTiledZentangle(0);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -200,7 +201,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 //					// TODO Auto-generated catch block
 //					e.printStackTrace();
 //				}
-			}
+			//}
 						
 			BufferedImage bgImage = null;
 			BufferedImage firstImage = null;
