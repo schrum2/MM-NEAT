@@ -34,7 +34,7 @@ public class RougelikeApp extends JFrame implements KeyListener{
 	public RougelikeApp(Dungeon dungeon) {
 		super();
 		terminal = new AsciiPanel();
-		terminal.setAsciiFont(AsciiFont.TALRYTH_15_15);
+		terminal.setAsciiFont(AsciiFont.CP437_16x16);
 		add(terminal);
 		pack();
 		screen = new StartScreen(dungeon);

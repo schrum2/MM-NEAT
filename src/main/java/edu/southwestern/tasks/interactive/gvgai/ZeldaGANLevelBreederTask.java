@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
@@ -45,7 +46,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	private static final int DUNGEONIZE_PLAY_BUTTON_INDEX = -20;
 	
 	// Change GAME_FILE to zeldacopy "enhanced" version of original GVGAI version to test dungeon
-	private static final String GAME_FILE = "zelda";
+	private static final String GAME_FILE = "zeldacopy";
 	private static final String FULL_GAME_FILE = LevelBreederTask.GAMES_PATH + GAME_FILE + ".txt";
 
 	private SimpleDungeon sd;
@@ -64,6 +65,18 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		dungeonize.addActionListener(this);
 		top.add(dungeonize);
 		
+		JCheckBox useGvg = new JCheckBox("useGvgai", !Parameters.parameters.booleanParameter("gvgAIForZeldaGAN"));
+		useGvg.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Parameters.parameters.changeBoolean("gvgAIForZeldaGAN");
+				resetButtons(true);
+			}
+			
+		});
+		top.add(useGvg);
+		
 		JButton play_dungeon = new JButton("Play Dungeon");
 		play_dungeon.setName("" + DUNGEONIZE_PLAY_BUTTON_INDEX);
 		play_dungeon.addActionListener(new ActionListener() {
@@ -75,14 +88,17 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 					System.out.println("Couldn't play since there's no current level (null)");
 					return;
 				}
-				RougelikeApp.startDungeon(dungeon);
-//				GameBundle bundle = setUpGameWithDungeon(dungeon);
-//				new Thread() {
-//					public void run() {
-//						// True is to watch the game being played
-//						GVGAIUtil.runDungeon(bundle, true, dungeon);
-//					}
-//				}.start();
+				if(Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
+					RougelikeApp.startDungeon(dungeon);
+				} else {
+					GameBundle bundle = setUpGameWithDungeon(dungeon);
+					new Thread() {
+						public void run() {
+							// True is to watch the game being played
+							GVGAIUtil.runDungeon(bundle, true, dungeon);
+						}
+					}.start();
+				}
 			}
 			
 		});
