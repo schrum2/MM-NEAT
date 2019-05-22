@@ -10,13 +10,17 @@ import me.jakerg.rougelike.PlayerAi;
 import me.jakerg.rougelike.World;
 import me.jakerg.rougelike.WorldBuilder;
 
+/**
+ * Default screen from starter code, still here to test out
+ * @author gutierr8
+ *
+ */
 public class PlayScreen implements Screen {
 	private World world;
     private Creature player;
     private int screenWidth;
     private int screenHeight;
-    private Dungeon dungeon;
-
+    
     public PlayScreen(){
         screenWidth = 80;
         screenHeight = 21;

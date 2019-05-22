@@ -1,5 +1,10 @@
 package me.jakerg.rougelike;
 
+/**
+ * Player AI from starter code
+ * @author gutierr8
+ *
+ */
 public class PlayerAi extends CreatureAi{
 
 	public PlayerAi(Creature creature) {
