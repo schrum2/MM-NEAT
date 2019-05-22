@@ -402,17 +402,11 @@ public class SimpleTiledWFCModel extends WFCModel {
     
     /**
      * Randomly chooses a cardinality assignment for a tile to be zentangled.
-     * Only chooses from L, T, and I cardinalities
      * @return String cardinality
      */
-    public static String randomCardinality() {
-    	
-    	String cardinalities [] = {"L", "T", "I"};
-    	int n = cardinalities.length - 1;
-    	
-    	int cindex = (int)RandomNumbers.boundedRandom(0, n);
-    	
-    	return cardinalities[cindex];
+    public static String randomCardinality() {    	
+    	String[] cardinalities = {"L", "T", "I", "X", "\\"};
+    	return RandomNumbers.randomElement(cardinalities);
     }
     
     /**
@@ -454,16 +448,15 @@ public class SimpleTiledWFCModel extends WFCModel {
             }
             
             // Randomly choose to add additional adjacency rules
-            if (cardinality != "L")
+            if (!cardinality.equals("L"))
             {
-            	// Jacob: Not sure what this code is doing ... seemingly nothing
-            	//boolean addCard = RandomNumbers.coinFlip();
-
-//            	for(int i = 0; i < numElements; i++) {
-//                	for(int j = 0; j < 3; j+=2) {
-//                		neighborsElement.appendChild(getNeighbor(doc,patternNames[i]+" "+j,patternNames[i]+" "+(int)(j+1)));
-//                	}
-//                }
+            	if(RandomNumbers.coinFlip()) {
+            		for(int i = 0; i < numElements; i++) {
+            			for(int j = 1; j < 4; j+=2) {
+            				neighborsElement.appendChild(getNeighbor(doc,patternNames[i]+" "+j,patternNames[i]+" "+(int)(j+1)));
+            			}
+            		}
+            	}
             }
              
             // output DOM XML to console 

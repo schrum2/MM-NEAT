@@ -174,7 +174,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 			//use wfc to create final zentangle image, save it as zentangle.bmp
 			int firstTileIndex=0;
-			//for(int i = 0; i < numSaved; i++) {
+			for(int i = 0; i < numSaved; i++) {
 				String[] tilesToProcess = new String[4];
 				for(int j = 0; j < 4; j++) {
 					tilesToProcess[j] = tileNames[firstTileIndex];
@@ -184,7 +184,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				SimpleTiledWFCModel.writeAdjacencyRules(tilesToProcess, 1);
 				// data.xml gets read in this next method
 				try {
-					SimpleTiledZentangle.simpleTiledZentangle(0);
+					SimpleTiledZentangle.simpleTiledZentangle(i);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -201,7 +201,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 //					// TODO Auto-generated catch block
 //					e.printStackTrace();
 //				}
-			//}
+			}
 						
 			BufferedImage bgImage = null;
 			BufferedImage firstImage = null;
@@ -316,7 +316,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
