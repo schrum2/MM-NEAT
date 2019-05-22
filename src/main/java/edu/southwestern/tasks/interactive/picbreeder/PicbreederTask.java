@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -146,7 +147,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				dir.mkdir();
 			}
 			
-			String[] tileNames = new String[scores.size()]; // 4 reflections for each image
+			String[] tileNames = new String[scores.size()];
 			int numSaved = 0;
 			int numStored = 0;
 			int backgroundSize = 1440; // Hard coded image size: TODO: Use param
@@ -170,20 +171,27 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			}
 
 			//use wfc to create final zentangle image, save it as zentangle.bmp
+
+			int numPartitions = 2; //numSaved;
+			int standardSize = numSaved / numPartitions;
+			ArrayList<String> tilesToProcess = new ArrayList<>();
+			int zentangleNumber = 1;
 			for(int i = 0; i < numSaved; i++) {
-				// Makes no sense to have this size-1 array
-				String[] tilesToProcess = new String[1];
-				tilesToProcess[0] = tileNames[i];
-				// Writes data.xml
-				SimpleTiledWFCModel.writeAdjacencyRules(tilesToProcess, 1);
-				// data.xml gets read in this next method
-				try {
-					SimpleTiledZentangle.simpleTiledZentangle(i);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				tilesToProcess.add(tileNames[i]);
+				// The partition is full, create a zentangle with WFC
+				if((i+1) % standardSize == 0) {					
+					// Writes data.xml
+					SimpleTiledWFCModel.writeAdjacencyRules(tilesToProcess.toArray(new String[tilesToProcess.size()]));
+					// data.xml gets read in this next method
+					try {
+						SimpleTiledZentangle.simpleTiledZentangle(zentangleNumber++);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					tilesToProcess.clear(); // Empty out partition
 				}
-			}
+			}							
 						
 			BufferedImage bgImage = null;
 			BufferedImage firstImage = null;

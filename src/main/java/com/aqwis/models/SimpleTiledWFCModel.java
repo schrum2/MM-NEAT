@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -209,7 +210,7 @@ public class SimpleTiledWFCModel extends WFCModel {
             else
             {
                 File bitmapFile = new File(String.format(SimpleTiledZentangle.getSaveDirectory() + "/%s.bmp", tilename));
-                System.out.println(bitmapFile.getAbsolutePath());
+                //System.out.println(bitmapFile.getAbsolutePath());
                 BufferedImage bitmap = ImageIO.read(bitmapFile);
                 tiles.add(tile.apply((x, y) -> new Color(bitmap.getRGB(x, y))));
                 for (int t = 1; t < cardinality; t++) {
@@ -417,7 +418,8 @@ public class SimpleTiledWFCModel extends WFCModel {
      * @param int numElements the number of tiles
      */
     // found info on how to write an XML file here: https://crunchify.com/java-simple-way-to-write-xml-dom-file-in-java/
-    public static void writeAdjacencyRules(String[] patternNames, int numElements) {
+    public static void writeAdjacencyRules(String[] patternNames) {
+    	System.out.println(Arrays.toString(patternNames));
         DocumentBuilderFactory icFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder icBuilder;
         try {
@@ -432,7 +434,7 @@ public class SimpleTiledWFCModel extends WFCModel {
             
             // Write the tiles with randomly generated cardinalities
             ArrayList<String> cardinalities = new ArrayList<>(); // Do I need to save these?
-            for(int i = 0; i < numElements; i++) {
+            for(int i = 0; i < patternNames.length; i++) {
             	cardinalities.add(randomCardinality());
                 tilesElement.appendChild(getTile(doc, patternNames[i], cardinalities.get(i)));
             }
@@ -440,21 +442,26 @@ public class SimpleTiledWFCModel extends WFCModel {
             Element neighborsElement = doc.createElement("neighbors");
             mainRootElement.appendChild(neighborsElement);
             
-            for(int i = 0; i < numElements; i++) {
-            	for(int j = 0; j < 3; j+=2) {
-            		neighborsElement.appendChild(getNeighbor(doc,patternNames[i]+" "+j,patternNames[i]+" "+(int)(j+1)));
+            // k and i loops needed to allow tiles to be adjacent to their own rotations, but also
+            // to tiles of different types
+            for(int k = 0; k < patternNames.length; k++) {
+            	for(int i = 0; i < patternNames.length; i++) {
+            		// Some tiles won't be able to be adjacent to others: Disabled
+            		//if(neighborsElement.getChildNodes().getLength() == 0 || RandomNumbers.coinFlip()) {
+            			// In this loop and the next, j corresponds to a given rotation of the tiles
+            			for(int j = 0; j < 3; j+=2) {
+            				neighborsElement.appendChild(getNeighbor(doc,patternNames[i]+" "+j,patternNames[k]+" "+(int)(j+1)));
+            			}
+            			// Randomly choose to add additional adjacency rules
+            			if(RandomNumbers.coinFlip()) {
+            				for(int j = 1; j < 4; j+=2) {
+            					neighborsElement.appendChild(getNeighbor(doc,patternNames[i]+" "+j,patternNames[k]+" "+(int)(j+1)));
+            				}
+            			}
+            		//}
             	}
             }
-            
-            // Randomly choose to add additional adjacency rules
-            for(int i = 0; i < numElements; i++) {
-            	if(RandomNumbers.coinFlip()) {
-            		for(int j = 1; j < 4; j+=2) {
-            			neighborsElement.appendChild(getNeighbor(doc,patternNames[i]+" "+j,patternNames[i]+" "+(int)(j+1)));
-            		}
-            	}
-            }
-             
+                         
             // output DOM XML to console 
             //Transformer transformer = TransformerFactory.newInstance().newTransformer();
             // Had to exclusively use xalan instead of saxon
