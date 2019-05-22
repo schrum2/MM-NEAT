@@ -24,6 +24,8 @@ import gvgai.core.game.BasicGame;
 import gvgai.tools.Vector2d;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
 import math.geom2d.Vector2D;
+import me.jakerg.rougelike.Tile;
+import me.jakerg.rougelike.TileUtil;
 
 
 public abstract class ZeldaDungeon<T> {
@@ -206,9 +208,11 @@ public abstract class ZeldaDungeon<T> {
 	public static class Level{
 		List<List<Integer>> intLevel;
 		String[] stringLevel;
+		Tile[][] rougeTiles;
 		
 		public Level(List<List<Integer>> intLevel) {
 			this.intLevel = intLevel;
+			this.rougeTiles = TileUtil.listToTile(intLevel);
 		}
 		
 		public List<List<Integer>> getLevel(){
@@ -217,6 +221,10 @@ public abstract class ZeldaDungeon<T> {
 		
 		public String[] getStringLevel(Point startingPoint) {
 			return this.stringLevel = ZeldaVGLCUtil.convertZeldaRoomListtoGVGAI(intLevel, startingPoint);
+		}
+		
+		public Tile[][] getTiles(){
+			return this.rougeTiles;
 		}
 	}
 	
