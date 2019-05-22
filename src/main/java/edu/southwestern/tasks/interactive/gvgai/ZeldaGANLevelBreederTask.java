@@ -65,7 +65,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		dungeonize.addActionListener(this);
 		top.add(dungeonize);
 		
-		JCheckBox useGvg = new JCheckBox("useGvgai", !Parameters.parameters.booleanParameter("gvgAIForZeldaGAN"));
+		JCheckBox useGvg = new JCheckBox("useGvgai", Parameters.parameters.booleanParameter("gvgAIForZeldaGAN"));
 		useGvg.addActionListener(new ActionListener() {
 
 			@Override
@@ -88,8 +88,12 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 					System.out.println("Couldn't play since there's no current level (null)");
 					return;
 				}
-				if(Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
-					RougelikeApp.startDungeon(dungeon);
+				if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
+					new Thread() {
+						public void run() {
+							RougelikeApp.startDungeon(dungeon);
+						}
+					}.start();
 				} else {
 					GameBundle bundle = setUpGameWithDungeon(dungeon);
 					new Thread() {
