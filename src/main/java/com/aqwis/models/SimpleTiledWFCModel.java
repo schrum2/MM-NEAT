@@ -431,11 +431,10 @@ public class SimpleTiledWFCModel extends WFCModel {
             mainRootElement.appendChild(tilesElement);
             
             // Write the tiles with randomly generated cardinalities
-            
-            String cardinality = randomCardinality();
-            
+            ArrayList<String> cardinalities = new ArrayList<>(); // Do I need to save these?
             for(int i = 0; i < numElements; i++) {
-            	tilesElement.appendChild(getTile(doc, patternNames[i], cardinality));
+            	cardinalities.add(randomCardinality());
+                tilesElement.appendChild(getTile(doc, patternNames[i], cardinalities.get(i)));
             }
             
             Element neighborsElement = doc.createElement("neighbors");
@@ -448,13 +447,10 @@ public class SimpleTiledWFCModel extends WFCModel {
             }
             
             // Randomly choose to add additional adjacency rules
-            if (!cardinality.equals("L"))
-            {
+            for(int i = 0; i < numElements; i++) {
             	if(RandomNumbers.coinFlip()) {
-            		for(int i = 0; i < numElements; i++) {
-            			for(int j = 1; j < 4; j+=2) {
-            				neighborsElement.appendChild(getNeighbor(doc,patternNames[i]+" "+j,patternNames[i]+" "+(int)(j+1)));
-            			}
+            		for(int j = 1; j < 4; j+=2) {
+            			neighborsElement.appendChild(getNeighbor(doc,patternNames[i]+" "+j,patternNames[i]+" "+(int)(j+1)));
             		}
             	}
             }

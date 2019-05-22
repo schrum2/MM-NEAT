@@ -189,18 +189,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
-				//show zentangle in another window TODO
-
-//				System.out.println();
-//				String username = System.getProperty("user.name");
-//				File file = new File("C:\\Users\\"+username+"\\Desktop/picbreederZentangle"+i+".jpg");
-//				try {
-//					Desktop.getDesktop().open(file);
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
 			}
 						
 			BufferedImage bgImage = null;
@@ -230,7 +218,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				e.printStackTrace();
 			}
 			
-			System.out.println("image " + "zentangle" + " was saved successfully");
+			System.out.println("image was saved successfully");
 			
 			try {
 				Desktop.getDesktop().open(outputfile);
