@@ -146,18 +146,18 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				dir.mkdir();
 			}
 			
-			String[] tileNames = new String[20*4]; //20 images in picbreeder * 4 reflections each
+			String[] tileNames = new String[scores.size()*4]; // 4 reflections for each image
 			int numSaved = 0;
 			int numStored = 0;
-			int backgroundSize = 1440;
-			int tileSize = 48;
+			int backgroundSize = 1440; // Hard coded image size: TODO: Use param
+			int tileSize = 48; // Hard coded: TODO: param
+
+			// Index of item that was selected first
+			int firstSelection = this.selectedItems.get(0);
+			saveSingle(waveFunctionSaveLocation+"background", firstSelection, backgroundSize);
 			
 			for(int i = 0; i < scores.size(); i++) {
 				if(chosen[i]) {
-
-					if(numSaved == 0){ //first tile selected becomes background image
-						saveSingle(waveFunctionSaveLocation+"background", i, backgroundSize);
-					}
 					//reserve names for the 4 mirroring of these tile
 					String fullName = "tile" + numSaved + "_";
 					tileNames[numStored++] = fullName + "1";
@@ -167,7 +167,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 					saveSingle(waveFunctionSaveLocation+fullName,i,tileSize); //adds another number to the end
 					//images are saved as reflections so they tile better
-
 					numSaved++;
 				}
 			}
