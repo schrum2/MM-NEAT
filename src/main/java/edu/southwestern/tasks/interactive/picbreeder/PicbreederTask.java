@@ -146,7 +146,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				dir.mkdir();
 			}
 			
-			String[] tileNames = new String[scores.size()*4]; // 4 reflections for each image
+			String[] tileNames = new String[scores.size()]; // 4 reflections for each image
 			int numSaved = 0;
 			int numStored = 0;
 			int backgroundSize = 1440; // Hard coded image size: TODO: Use param
@@ -162,9 +162,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					//reserve names for the 4 mirroring of these tile
 					String fullName = "tile" + numSaved + "_";
 					tileNames[numStored++] = fullName + "1";
-					tileNames[numStored++] = fullName + "2";
-					tileNames[numStored++] = fullName + "3";
-					tileNames[numStored++] = fullName + "4";
 
 					saveSingle(waveFunctionSaveLocation+fullName,i,tileSize); //adds another number to the end
 					//images are saved as reflections so they tile better
@@ -173,13 +170,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			}
 
 			//use wfc to create final zentangle image, save it as zentangle.bmp
-			int firstTileIndex=0;
 			for(int i = 0; i < numSaved; i++) {
-				String[] tilesToProcess = new String[4];
-				for(int j = 0; j < 4; j++) {
-					tilesToProcess[j] = tileNames[firstTileIndex];
-					firstTileIndex++;
-				}
+				// Makes no sense to have this size-1 array
+				String[] tilesToProcess = new String[1];
+				tilesToProcess[0] = tileNames[i];
 				// Writes data.xml
 				SimpleTiledWFCModel.writeAdjacencyRules(tilesToProcess, 1);
 				// data.xml gets read in this next method
