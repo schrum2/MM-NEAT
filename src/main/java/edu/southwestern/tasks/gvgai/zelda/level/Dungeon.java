@@ -10,9 +10,11 @@ public class Dungeon {
 
 	private HashMap<String, Node> levels;
 	private Node currentLevel;
+	private String[][] levelThere;
 	
 	public Dungeon() {
 		levels = new HashMap<>();
+		levelThere = null;
 	}
 	
 	public HashMap<String, Node> getLevels(){
@@ -31,6 +33,14 @@ public class Dungeon {
 	
 	public void setCurrentLevel(String name) {
 		this.currentLevel = levels.get(name);
+	}
+	
+	public void setLevelThere(String[][] levelThere) {
+		this.levelThere = levelThere;
+	}
+	
+	public String[][] getLevelThere(){
+		return this.levelThere;
 	}
 	
 	@SuppressWarnings("unused")

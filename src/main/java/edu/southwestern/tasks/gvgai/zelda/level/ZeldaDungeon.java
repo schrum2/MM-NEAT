@@ -42,6 +42,7 @@ public abstract class ZeldaDungeon<T> {
 		Dungeon dungeonInstance = new Dungeon();
 		
 		UUID[][] uuidLabels = new UUID[dungeon.length][dungeon[0].length];
+		String[][] levelThere = new String[dungeon.length][dungeon[0].length];
 		
 		for(int y = 0; y < dungeon.length; y++) {
 			for(int x = 0; x < dungeon[y].length; x++) {
@@ -49,7 +50,7 @@ public abstract class ZeldaDungeon<T> {
 					if(uuidLabels[y][x] == null)
 						uuidLabels[y][x] = UUID.randomUUID();
 					String name = uuidLabels[y][x].toString();
-					
+					levelThere[y][x] = name;
 					Node newNode = dungeonInstance.newNode(name, dungeon[y][x]);
 					
 					addAdjacencyIfAvailable(dungeonInstance, uuidLabels, newNode, x + 1, y, "RIGHT");
@@ -63,6 +64,7 @@ public abstract class ZeldaDungeon<T> {
 		String name = uuidLabels[(uuidLabels.length - 1) / 2][(uuidLabels[0].length - 1) /2].toString();
 		
 		dungeonInstance.setCurrentLevel(name);
+		dungeonInstance.setLevelThere(levelThere);
 		
 		return dungeonInstance;
 	}
