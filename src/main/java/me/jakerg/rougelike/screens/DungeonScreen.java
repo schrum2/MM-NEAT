@@ -39,14 +39,13 @@ public class DungeonScreen implements Screen {
         oX = 80 / 2 - screenWidth / 2;
     	oY = 26 / 2 - screenHeight / 2;
         this.dungeon = dungeon;
-        // Set dungeon builder along with current world
-        dungeonBuilder = new DungeonBuilder(dungeon);
-        this.world = dungeonBuilder.getCurrentWorld();
         // Creature factory to create our player
         CreatureFactory cf = new CreatureFactory(world);
         player = cf.newDungeonPlayer(dungeon);
         player.x = 5; // Start in middle of dungeon
         player.y = 5;
+        // Set dungeon builder along with current world
+        dungeonBuilder = new DungeonBuilder(dungeon, player);
         // Make map screen to the left of the dungeon screen
         mapScreen = new MapScreen(dungeon, oX + w + 1, oY + h / 2 - dungeon.getLevelThere().length / 2 - 1);
     }
@@ -58,11 +57,11 @@ public class DungeonScreen implements Screen {
 		this.world = dungeonBuilder.getCurrentWorld();
 		player.setWorld(this.world);
         // display stuff to terminal
+		world.update(); // Move enemies (basically)
 		displayTiles(terminal);
 		mapScreen.displayOutput(terminal);
 		player.display(terminal, oX + screenWidth + 1, oY);
         terminal.write(player.glyph(), player.x + oX, player.y + oY, player.color());
-        world.update(); // Move enemies (basically)
 	}
 
 	/**

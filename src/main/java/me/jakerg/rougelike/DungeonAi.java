@@ -82,6 +82,7 @@ public class DungeonAi extends CreatureAi{
 			// Convert to string
 			String exitPoint = cX + " : " + cY;
 			// Get the point to move to based on where the player went in from
+			creature.getWorld().remove(this.creature);
 			Point p = creature.getDungeon().getNextNode(exitPoint);
 			
 			// The way the points were made is reversed so GVG-AI could use them properly, so we NEED to reverse them

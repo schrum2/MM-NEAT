@@ -112,6 +112,10 @@ public class World {
 		c.y = y;
 	}
 	
+	public void addCreature(Creature c) {
+		creatures.add(c);
+	}
+	
 	/**
 	 * Remove creature
 	 * @param other Creature to remove

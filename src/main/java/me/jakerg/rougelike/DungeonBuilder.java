@@ -15,14 +15,17 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
 public class DungeonBuilder {
 	private Tile[][] tiles;
 	private Dungeon dungeon;
+	private Creature player;
 	private HashMap<String, World> levelWorlds;
 	
 	/**
 	 * Create a new dungeon builder and convert the worlds
 	 * @param dungeon
+	 * @param player 
 	 */
-	public DungeonBuilder(Dungeon dungeon) {
+	public DungeonBuilder(Dungeon dungeon, Creature player) {
 	    this.dungeon = dungeon;
+	    this.player = player;
 	    createWorlds();
 	}
 	
@@ -35,7 +38,7 @@ public class DungeonBuilder {
 		for(Entry<String, Node> entry : map.entrySet()) {
 			String name = entry.getKey();
 			Level level = entry.getValue().level;
-			World w = TileUtil.makeWorld(level.getLevel());
+			World w = TileUtil.makeWorld(level.getLevel(), player);
 			levelWorlds.put(name, w);
 		}
 	}
