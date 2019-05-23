@@ -14,7 +14,7 @@ public enum Tile {
 	WALL((char)219, AsciiPanel.yellow),
 	CURRENT((char)219, AsciiPanel.brightYellow),
 	EXIT((char)239, AsciiPanel.green),
-	DOOR((char)194, AsciiPanel.brightCyan),
+	DOOR((char)239, AsciiPanel.green),
 	HIDDEN((char)219, AsciiPanel.yellow),
 	BOUNDS('x', AsciiPanel.brightBlack);
 	

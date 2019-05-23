@@ -165,12 +165,11 @@ public class World {
 	 * Update the creatures (move around)
 	 */
 	public void update() {
-		for(Creature c : creatures)
-			c.update();
-		
 		for(Item i : items)
 			i.update();
 		
+		for(Creature c : creatures)
+			c.update();		
 	}
 
 	/**
@@ -193,7 +192,7 @@ public class World {
 	}
 
 	/**
-	 * Bomb the location, essentialy set it to a floor
+	 * Bomb the location, essentially set it to a floor
 	 * @param wx World X
 	 * @param wy World Y
 	 */

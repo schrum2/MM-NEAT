@@ -38,7 +38,7 @@ public class EnemyAi extends CreatureAi{
 		else if(dX == 0) mX = 0;
 		else mX = -1;
 		
-		if(mX != 0) {
+		if(mX == 0 || Math.random() < 0.2) {
 			if(dY > 0) mY = 1;
 			else if(dY == 0) mY = 0;
 			else mY = -1;
