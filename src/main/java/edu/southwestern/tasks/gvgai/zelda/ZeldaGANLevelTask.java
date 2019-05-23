@@ -33,7 +33,7 @@ public class ZeldaGANLevelTask extends ZeldaLevelTask<ArrayList<Double>>{
 	 */
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// zeldaGANModel:ZeldaDungeonsAll_5000_10.pth
-		MMNEAT.main("runNumber:1 randomSeed:0 base:zeldagan log:ZeldaGAN-AllDungeons saveTo:AllDungeons trials:1 zeldaGANModel:ZeldaDungeonsAll_5000_10.pth GANInputSize:10 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.gvgai.zelda.ZeldaGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false watch:false".split(" "));
+		MMNEAT.main("runNumber:2 randomSeed:0 base:zeldagan log:ZeldaGAN-AllDungeons saveTo:AllDungeons trials:1 zeldaGANModel:ZeldaDungeonsAll_5000_10.pth GANInputSize:10 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.gvgai.zelda.ZeldaGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false watch:false".split(" "));
 	}
 
 
