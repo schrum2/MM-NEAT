@@ -7,7 +7,8 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import com.aqwis.models.SimpleTiledWFCModel;
+import com.aqwis.models.SimpleTiledZentangleWFCModel;
+import com.aqwis.models.WFCModel;
 
 /**
  * The normal Main class for WFC is too general and depends on loading files from disk.
@@ -41,7 +42,7 @@ public class SimpleTiledZentangle {
 //					attributeFromString(attributes.getNamedItem("foundation"), 0)
 //					);
 //		} else if (nodeName.equals("simpletiled")) {
-			Main.wfcModel = new SimpleTiledWFCModel(
+			WFCModel wfcModel = new SimpleTiledZentangleWFCModel(
 					"picbreeder", // name (the save directory?)
 					null, // subset
 					30,   // width
@@ -56,12 +57,12 @@ public class SimpleTiledZentangle {
 		for (int k = 0; k < 10; k++) {
 			System.out.print("> ");
 			int seed = random.nextInt();
-			boolean finished = Main.wfcModel.run(seed, 0); // The "limit" is 0?
+			boolean finished = wfcModel.run(seed, 0); // The "limit" is 0?
 
 			if (finished) {
 				System.out.println("DONE");
 
-				BufferedImage graphics = Main.wfcModel.graphics();
+				BufferedImage graphics = wfcModel.graphics();
 				File file = new File(getSaveDirectory()+"/picbreederZentangle"+index+".jpg");
 				try {
 					ImageIO.write(graphics, "jpg", file);
