@@ -1,18 +1,27 @@
 package edu.southwestern.tasks.interactive.gvgai;
 
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
+import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
+import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.level.SimpleDungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
@@ -24,6 +33,7 @@ import gvgai.core.vgdl.VGDLFactory;
 import gvgai.core.vgdl.VGDLParser;
 import gvgai.core.vgdl.VGDLRegistry;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
+import me.jakerg.rougelike.RougelikeApp;
 
 /**
  * Evolve Zelda rooms using a GAN
@@ -32,15 +42,72 @@ import gvgai.tracks.singlePlayer.tools.human.Agent;
  */
 public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 
-	private static final String GAME_FILE = "zelda";
+	private static final int DUNGEONIZE_BUTTON_INDEX = -19;
+	private static final int DUNGEONIZE_PLAY_BUTTON_INDEX = -20;
+	
+	// Change GAME_FILE to zeldacopy "enhanced" version of original GVGAI version to test dungeon
+	private static final String GAME_FILE = "zeldacopy";
 	private static final String FULL_GAME_FILE = LevelBreederTask.GAMES_PATH + GAME_FILE + ".txt";
 
+	private SimpleDungeon sd;
+	
 	/**
 	 * Initializes the InteractiveGANLevelEvolutionTask and everything required for GVG-AI
 	 * @throws IllegalAccessException
 	 */
 	public ZeldaGANLevelBreederTask() throws IllegalAccessException {
 		super(); // Initialize InteractiveGANLevelEvolutionTask
+		
+		sd = new SimpleDungeon();
+		
+		JButton dungeonize = new JButton("Dungeonize");
+		dungeonize.setName("" + DUNGEONIZE_BUTTON_INDEX);
+		dungeonize.addActionListener(this);
+		top.add(dungeonize);
+		
+		JCheckBox useGvg = new JCheckBox("useGvgai", Parameters.parameters.booleanParameter("gvgAIForZeldaGAN"));
+		useGvg.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Parameters.parameters.changeBoolean("gvgAIForZeldaGAN");
+				resetButtons(true);
+			}
+			
+		});
+		top.add(useGvg);
+		
+		JButton play_dungeon = new JButton("Play Dungeon");
+		play_dungeon.setName("" + DUNGEONIZE_PLAY_BUTTON_INDEX);
+		play_dungeon.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Dungeon dungeon = sd.convertDungeon();
+				if(dungeon.getCurrentlevel() == null) {
+					System.out.println("Couldn't play since there's no current level (null)");
+					return;
+				}
+				if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
+					new Thread() {
+						public void run() {
+							RougelikeApp.startDungeon(dungeon);
+						}
+					}.start();
+				} else {
+					GameBundle bundle = setUpGameWithDungeon(dungeon);
+					new Thread() {
+						public void run() {
+							// True is to watch the game being played
+							GVGAIUtil.runDungeon(bundle, true, dungeon);
+						}
+					}.start();
+				}
+			}
+			
+		});
+		top.add(play_dungeon);
+		
 		VGDLFactory.GetInstance().init(); // Get an instant of VGDL Factor and initialize the characters cache
 		VGDLRegistry.GetInstance().init(); // Get an instance of VGDL Registry and initialize the sprite factory
 	}
@@ -69,6 +136,31 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		Game game = new VGDLParser().parseGame(FULL_GAME_FILE); // Initialize the game	
 
 		return new GameBundle(game, level, agent, seed, 0);
+	}
+	
+	/**
+	 * Like setUpGameWithLevelFromLatentVector but accepts a 2D list of integers to generate a game bundle
+	 * @param level - 2D list of integers
+	 * @return GameBundle for player GVG-AI game
+	 */
+	public static GameBundle setUpGameWithLevelFromList(List<List<Integer>> level) {
+		String[] stringLevel = ZeldaVGLCUtil.convertZeldaRoomListtoGVGAI(level, new Point(8, 8));
+		int seed = 0; // TODO: Use parameter?
+		Agent agent = new Agent();
+		agent.setup(null, seed, true); // null = no log, true = human 
+		Game game = new VGDLParser().parseGame(FULL_GAME_FILE); // Initialize the game	
+
+		return new GameBundle(game, stringLevel, agent, seed, 0);
+	}
+	
+	public static GameBundle setUpGameWithDungeon(Dungeon dungeon) {
+		String[] stringLevel = dungeon.getCurrentlevel().level.getStringLevel(new Point(5, 8));
+		int seed = 0; // TODO: Use parameter?
+		Agent agent = new Agent();
+		agent.setup(null, seed, true); // null = no log, true = human 
+		Game game = new VGDLParser().parseGame(FULL_GAME_FILE); // Initialize the game	
+
+		return new GameBundle(game, stringLevel, agent, seed, 0);
 	}
 
 	/**
@@ -182,7 +274,20 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		}
 	}
 
-
+	protected boolean respondToClick(int itemID) {
+		boolean undo = super.respondToClick(itemID);
+		if (undo) return true;
+		if(itemID == DUNGEONIZE_BUTTON_INDEX && selectedItems.size() > 0) {
+			ArrayList<ArrayList<Double>> phenotypes = new ArrayList<>();
+			for(Integer i : selectedItems) {
+				phenotypes.add(scores.get(i).individual.getPhenotype());
+			}
+			
+			sd.showDungeon(phenotypes, 5);
+		}
+		return false;
+	}
+	
 	public static void main(String[] args) {
 		try {
 			// Run the MMNeat Main method with parameters specifying that we want to run the Zedla GAN 
