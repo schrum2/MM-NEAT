@@ -37,9 +37,9 @@ public class Bomb extends Item{
 	public void attack(Creature other) {
 		System.out.println(this.glyph + " attacking " + other.glyph());
         int amount = Math.max(0, attack - other.defenseValue()); // Get whatever is higher: 0 or the total attack value, dont want negative attack
-    
+        
         amount = (int)(Math.random() * amount) + 1; // Add randomness to ammount
-    
+        other.doAction("Bomb did " + amount + " damage to " + other.glyph());
         other.modifyHp(-amount); // Modify hp of the the other creature
 	}
 	

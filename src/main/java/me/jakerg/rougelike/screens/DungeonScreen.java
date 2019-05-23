@@ -8,6 +8,7 @@ import me.jakerg.rougelike.Creature;
 import me.jakerg.rougelike.CreatureFactory;
 import me.jakerg.rougelike.DungeonBuilder;
 import me.jakerg.rougelike.Item;
+import me.jakerg.rougelike.Log;
 import me.jakerg.rougelike.World;
 
 /**
@@ -25,7 +26,9 @@ public class DungeonScreen implements Screen {
 	private int oX; // offset for x axis, dont want to render in the top left
 	private int oY; // offset for y axis, ""
 	private MapScreen mapScreen; // This is the view of the overview of the dungeon
+	private MessageScreen messageScreen; // View our latest actions
 	private DungeonBuilder dungeonBuilder; // Keeps track of the worlds along with the current world
+	private Log log;
     
 	/**
 	 * Screen if a dungeon is to be played
@@ -35,20 +38,23 @@ public class DungeonScreen implements Screen {
     	// Set offsets
     	int h = dungeon.getCurrentlevel().level.getLevel().size();
     	int w = dungeon.getCurrentlevel().level.getLevel().get(0).size();
+        log = new Log(6);
     	screenWidth = w;
         screenHeight = h;
         oX = 80 / 2 - screenWidth / 2;
     	oY = 26 / 2 - screenHeight / 2;
         this.dungeon = dungeon;
         // Creature factory to create our player
-        CreatureFactory cf = new CreatureFactory(world);
+        CreatureFactory cf = new CreatureFactory(world, log);
         player = cf.newDungeonPlayer(dungeon);
         player.x = 5; // Start in middle of dungeon
         player.y = 5;
         // Set dungeon builder along with current world
-        dungeonBuilder = new DungeonBuilder(dungeon, player);
+        dungeonBuilder = new DungeonBuilder(dungeon, player, log);
         // Make map screen to the left of the dungeon screen
         mapScreen = new MapScreen(dungeon, oX + w + 1, oY + h / 2 - dungeon.getLevelThere().length / 2 - 1);
+
+        messageScreen = new MessageScreen(80 / 2 - w / 2 - 5, oY + h + 2, 6, log);
     }
 
 	
@@ -61,6 +67,7 @@ public class DungeonScreen implements Screen {
 		world.update(); // Move enemies (basically)
 		displayTiles(terminal);
 		mapScreen.displayOutput(terminal);
+		messageScreen.displayOutput(terminal);
 		player.display(terminal, oX + screenWidth + 1, oY);
         terminal.write(player.glyph(), player.x + oX, player.y + oY, player.color());
 	}

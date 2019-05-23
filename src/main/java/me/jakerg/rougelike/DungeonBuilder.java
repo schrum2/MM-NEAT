@@ -16,6 +16,7 @@ public class DungeonBuilder {
 	private Tile[][] tiles;
 	private Dungeon dungeon;
 	private Creature player;
+	private Log log;
 	private HashMap<String, World> levelWorlds;
 	
 	/**
@@ -23,9 +24,10 @@ public class DungeonBuilder {
 	 * @param dungeon
 	 * @param player 
 	 */
-	public DungeonBuilder(Dungeon dungeon, Creature player) {
+	public DungeonBuilder(Dungeon dungeon, Creature player, Log log) {
 	    this.dungeon = dungeon;
 	    this.player = player;
+	    this.log = log;
 	    createWorlds();
 	}
 	
@@ -38,7 +40,7 @@ public class DungeonBuilder {
 		for(Entry<String, Node> entry : map.entrySet()) {
 			String name = entry.getKey();
 			Level level = entry.getValue().level;
-			World w = TileUtil.makeWorld(level.getLevel(), player);
+			World w = TileUtil.makeWorld(level.getLevel(), player, log);
 			levelWorlds.put(name, w);
 		}
 	}

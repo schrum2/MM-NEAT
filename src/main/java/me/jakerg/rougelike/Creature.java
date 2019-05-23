@@ -47,6 +47,8 @@ public class Creature {
 	
 	public int numKeys = 0;
 	public int keys() { return numKeys; }
+	
+	private Log log;
     
     /**
      * If a creature is told to display, let the ai control take care of it
@@ -102,8 +104,9 @@ public class Creature {
      * @param maxHp Maximum health of creature
      * @param attack How much damage the creature can do
      * @param defense How much can it defend from attacks
+     * @param Log list of messages
      */
-    public Creature(World world, char glyph, Color color, int maxHp, int attack, int defense){
+    public Creature(World world, char glyph, Color color, int maxHp, int attack, int defense, Log log){
         this.world = world;
         this.glyph = glyph;
         this.color = color;
@@ -111,6 +114,7 @@ public class Creature {
         this.hp = maxHp;
         this.attackValue = attack;
         this.defenseValue = defense;
+        this.log = log;
     }
     
     /**
@@ -122,8 +126,9 @@ public class Creature {
      * @param attack How much damage the creature can do
      * @param defense How much can it defend from attacks
      * @param Dungeon dungeon for the creature to be on
+     * @param Log list of messages
      */
-    public Creature(World world, char glyph, Color color, int maxHp, int attack, int defense, Dungeon dungeon){
+    public Creature(World world, char glyph, Color color, int maxHp, int attack, int defense, Dungeon dungeon, Log log){
         this.world = world;
         this.glyph = glyph;
         this.color = color;
@@ -132,6 +137,7 @@ public class Creature {
         this.attackValue = attack;
         this.defenseValue = defense;
         this.dungeon = dungeon;
+        this.log = log;
     }
     
     /**
@@ -182,6 +188,7 @@ public class Creature {
     
         amount = (int)(Math.random() * amount) + 1; // Add randomness to ammount
     
+        doAction(glyph + " did " + amount + " damage to " + other.glyph);
         other.modifyHp(-amount); // Modify hp of the the other creature
     }
 
@@ -192,8 +199,10 @@ public class Creature {
     public void modifyHp(int amount) {
         hp += amount; // Add amount
     
-        if (hp < 1) // If the health is less than 1 then remove from world
-         world.remove(this);
+        if (hp < 1) {
+            world.remove(this);
+            doAction(glyph + " died.");
+        }
     }
     
     /**
@@ -221,7 +230,7 @@ public class Creature {
 	}
 	
 	/**
-	 * Let the creature place a bomb at coords
+	 * Let the creature place a bomb at coords based on the last direction
 	 */
 	public void placeBomb() {
 		if(!isPlayer()) return; // Let only the player place bombs
@@ -242,5 +251,13 @@ public class Creature {
 		
 		if(world.placeBomb(wx, wy))
 			numBombs--;
+	}
+	
+	/**
+	 * Tell the log what the creature is doing
+	 * @param action What the action is
+	 */
+	public void doAction(String action) {
+		log.addMessage(action);
 	}
 }
