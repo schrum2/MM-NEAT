@@ -7,7 +7,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import com.aqwis.models.SimpleTiledWFCModel;
+import com.aqwis.models.SimpleTiledZentangleWFCModel;
 import com.aqwis.models.WFCModel;
 
 /**
@@ -42,7 +42,7 @@ public class SimpleTiledZentangle {
 //					attributeFromString(attributes.getNamedItem("foundation"), 0)
 //					);
 //		} else if (nodeName.equals("simpletiled")) {
-			WFCModel wfcModel = new SimpleTiledWFCModel(
+			WFCModel wfcModel = new SimpleTiledZentangleWFCModel(
 					"picbreeder", // name (the save directory?)
 					null, // subset
 					30,   // width

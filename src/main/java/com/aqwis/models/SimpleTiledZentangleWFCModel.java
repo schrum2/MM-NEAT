@@ -32,7 +32,7 @@ import com.aqwis.SimpleTiledZentangle;
 
 import edu.southwestern.util.random.RandomNumbers;
 
-public class SimpleTiledWFCModel extends WFCModel {
+public class SimpleTiledZentangleWFCModel extends WFCModel {
     private boolean[][][] propagator;
 
     private List<Color[]> tiles;
@@ -44,7 +44,7 @@ public class SimpleTiledWFCModel extends WFCModel {
     private static Integer attributeFromString(Node item, Integer defaultValue) { return item == null ? defaultValue : Integer.parseInt(item.getNodeValue()); }
     private static Character attributeFromString(Node item, Character defaultValue) { return item == null ? defaultValue : item.getNodeValue().toCharArray()[0]; }
 
-    public SimpleTiledWFCModel(String name, String subsetName, int width, int height, boolean periodic, boolean black) throws Exception
+    public SimpleTiledZentangleWFCModel(String name, String subsetName, int width, int height, boolean periodic, boolean black) throws Exception
     {    	
         FMX = width;
         FMY = height;
