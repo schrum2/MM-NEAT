@@ -38,6 +38,16 @@ public class Creature {
     private int defenseValue;
     public int defenseValue() { return defenseValue; }
     
+	private Move lastDirection = Move.NONE;
+	public Move getLastDirection() { return lastDirection; }
+	public void setDirection(Move m) { this.lastDirection = m; }
+	
+	private int numBombs = 4;
+	public int bombs() { return numBombs; }
+	
+	public int numKeys = 0;
+	public int keys() { return numKeys; }
+    
     /**
      * If a creature is told to display, let the ai control take care of it
      * @param terminal output
@@ -131,6 +141,8 @@ public class Creature {
      */
     public void moveBy(int mx, int my){
     	if(mx == 0 && my == 0) return; // If the the character is staying still, it may kill itself so return
+    	
+    	setLastDirection(mx, my); // Set the last direction of the creature
     	Creature other = world.creature(x+mx, y+my); // Get the creature that is where the creature is moving
 
     	
@@ -142,6 +154,25 @@ public class Creature {
     }
     
     /**
+     * Set the direction of the creature based on the distance moving
+     * @param dX Direction creature is moving on x (-1,0,1)
+     * @param dY Direction creature is moving on y (-1,0,1)
+     */
+    public void setLastDirection(int dX, int dY) {
+    	if(dX == 0 && dY == 1)
+			setDirection(Move.DOWN);
+		else if(dX == 0 && dY == -1)
+			setDirection(Move.UP);
+		else if(dX == 1 && dY == 0)
+			setDirection(Move.RIGHT);
+		else if(dX == -1 && dY == 0)
+			setDirection(Move.LEFT);
+		else
+			setDirection(Move.NONE);
+		
+    	System.out.println(glyph + "'s last direction is " + getLastDirection().name());
+	}
+	/**
      * Attack another creature
      * @param other the other creature
      */
@@ -181,5 +212,35 @@ public class Creature {
 		ai.onUpdate();
 	}
 	
-
+	/**
+	 * To let us know if the character is a player by checking the glyph
+	 * @return True if the character is a player
+	 */
+	public boolean isPlayer() {
+		return glyph == '@';
+	}
+	
+	/**
+	 * Let the creature place a bomb at coords
+	 */
+	public void placeBomb() {
+		if(!isPlayer()) return; // Let only the player place bombs
+		Move direction = getLastDirection();
+		if(direction.equals(Move.NONE) || numBombs == 0) return; // Don't place a bomb if they haven't moved 
+		int wx = x;
+		int wy = y;
+		
+		if(direction.equals(Move.RIGHT))
+			wx++;
+		else if (direction.equals(Move.LEFT))
+			wx--;
+		
+		if(direction.equals(Move.UP))
+			wy--;
+		else if(direction.equals(Move.DOWN))
+			wy++;
+		
+		if(world.placeBomb(wx, wy))
+			numBombs--;
+	}
 }

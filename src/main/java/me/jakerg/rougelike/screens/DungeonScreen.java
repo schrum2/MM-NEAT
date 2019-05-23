@@ -7,6 +7,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.*;
 import me.jakerg.rougelike.Creature;
 import me.jakerg.rougelike.CreatureFactory;
 import me.jakerg.rougelike.DungeonBuilder;
+import me.jakerg.rougelike.Item;
 import me.jakerg.rougelike.World;
 
 /**
@@ -78,7 +79,7 @@ public class DungeonScreen implements Screen {
         case KeyEvent.VK_K: player.moveBy( 0,-1); break;
         case KeyEvent.VK_DOWN:
         case KeyEvent.VK_J: player.moveBy( 0, 1); break;
-      
+        case KeyEvent.VK_B: player.placeBomb(); break;
 		}
 	  return this;
 	}
@@ -93,8 +94,11 @@ public class DungeonScreen implements Screen {
             	
             	// If there's a creature at that position display it
             	Creature c = world.creature(x, y);
+            	Item i = world.item(x, y);
             	if (c != null)
             		terminal.write(c.glyph(), c.x + oX, c.y + oY, c.color());
+            	else if(i != null)
+            		terminal.write(i.glyph(), i.x + oX, i.y + oY, i.color());
             	else
             		terminal.write(world.glyph(x, y), x + oX, y + oY, world.color(x, y));
             }
