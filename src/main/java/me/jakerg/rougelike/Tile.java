@@ -9,11 +9,13 @@ import asciiPanel.AsciiPanel;
  *
  */
 public enum Tile {
+	// Refer to Code Page 437 for the number representation of the char
 	FLOOR((char)250, AsciiPanel.yellow),
 	WALL((char)219, AsciiPanel.yellow),
 	CURRENT((char)219, AsciiPanel.brightYellow),
 	EXIT((char)239, AsciiPanel.green),
-	DOOR((char)194, AsciiPanel.brightCyan),
+	DOOR((char)239, AsciiPanel.green),
+	HIDDEN((char)219, AsciiPanel.yellow),
 	BOUNDS('x', AsciiPanel.brightBlack);
 	
 	private char glyph;
@@ -45,7 +47,7 @@ public enum Tile {
 	 * @return True if it's not a wall and not a bound
 	 */
 	public boolean isGround() {
-		return this != WALL && this != BOUNDS;
+		return this != WALL && this != BOUNDS && this != BOUNDS;
 	}
 	
 	/**
@@ -54,5 +56,9 @@ public enum Tile {
 	 */
 	public boolean isExit() {
 		return this == EXIT;
+	}
+	
+	public boolean isBombable() {
+		return this == WALL || this == HIDDEN || this == FLOOR;
 	}
 }

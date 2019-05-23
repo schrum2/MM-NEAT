@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 
+import asciiPanel.AsciiPanel;
+
 /**
  * Class to represent a room
  * @author gutierr8
@@ -12,6 +14,7 @@ import java.util.List;
 public class World {
 	private Tile[][] tiles; // 2D list of tiles to render
 	private List<Creature> creatures; // A list of creatures
+	private List<Item> items;
 	private int width;
 	private int height;
 	
@@ -24,6 +27,7 @@ public class World {
 		this.width = tiles.length;
 		this.height = tiles[0].length;
 		this.creatures = new LinkedList<>();
+		this.items = new LinkedList<>();
 	}
 	
 	public int getWidth() {
@@ -79,6 +83,21 @@ public class World {
 	}
 	
 	/**
+	 * Place a bomb tile at coords
+	 * @param x X coord to place bomb
+	 * @param y Y coord
+	 */
+	public boolean placeBomb(int x, int y) {
+		if(item(x, y) != null) return false;
+		if(tile(x, y).isBombable()) {
+			items.add(new Bomb(this, 'b', AsciiPanel.white, x, y, 4, 5));
+			return true;
+		}
+			
+		return false;
+	}
+	
+	/**
 	 * Set the tiles of the world
 	 * @param tiles
 	 */
@@ -125,11 +144,32 @@ public class World {
 	}
 	
 	/**
+	 * Get the item at x and y location
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @return
+	 */
+	public Item item(int x, int y) {
+		for(Item i : items)
+			if(i.x == x && i.y == y) 
+				return i;
+		
+		return null;
+	}
+	
+	public void removeItem(Item i) {
+		items.remove(i);
+	}
+	
+	/**
 	 * Update the creatures (move around)
 	 */
 	public void update() {
+		for(Item i : items)
+			i.update();
+		
 		for(Creature c : creatures)
-			c.update();
+			c.update();		
 	}
 
 	/**
@@ -149,5 +189,16 @@ public class World {
 
 	    creature.x = x;
 	    creature.y = y;
+	}
+
+	/**
+	 * Bomb the location, essentially set it to a floor
+	 * @param wx World X
+	 * @param wy World Y
+	 */
+	public void bomb(int wx, int wy) {
+		tiles[wx][wy] = Tile.FLOOR;
+		
+			
 	}
 }

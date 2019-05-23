@@ -25,17 +25,17 @@ public class TileUtil {
 	 * @param player 
 	 * @return World
 	 */
-	public static World makeWorld(List<List<Integer>> level, Creature player) {
+	public static World makeWorld(List<List<Integer>> level, Creature player, Log log) {
 		Tile[][] tiles = listToTile(level);
 		World newWorld = new World(tiles);
 		newWorld.addCreature(player);
+		CreatureFactory cf = new CreatureFactory(newWorld, log);
 		
 		// Convert ints to enemies (only 2 in this case)
 		for(int i = 0; i < tiles.length; i++) {
 			for(int j = 0; j < tiles[i].length; j++) {
 				if(level.get(j).get(i) == 2) {
-					new CreatureFactory(newWorld)
-							.newEnemey(i, j, player);
+					cf.newEnemey(i, j, player);
 				}
 			}
 		}

@@ -38,6 +38,18 @@ public class Creature {
     private int defenseValue;
     public int defenseValue() { return defenseValue; }
     
+	private Move lastDirection = Move.NONE;
+	public Move getLastDirection() { return lastDirection; }
+	public void setDirection(Move m) { this.lastDirection = m; }
+	
+	private int numBombs = 4;
+	public int bombs() { return numBombs; }
+	
+	public int numKeys = 0;
+	public int keys() { return numKeys; }
+	
+	private Log log;
+    
     /**
      * If a creature is told to display, let the ai control take care of it
      * @param terminal output
@@ -92,8 +104,9 @@ public class Creature {
      * @param maxHp Maximum health of creature
      * @param attack How much damage the creature can do
      * @param defense How much can it defend from attacks
+     * @param Log list of messages
      */
-    public Creature(World world, char glyph, Color color, int maxHp, int attack, int defense){
+    public Creature(World world, char glyph, Color color, int maxHp, int attack, int defense, Log log){
         this.world = world;
         this.glyph = glyph;
         this.color = color;
@@ -101,6 +114,7 @@ public class Creature {
         this.hp = maxHp;
         this.attackValue = attack;
         this.defenseValue = defense;
+        this.log = log;
     }
     
     /**
@@ -112,8 +126,9 @@ public class Creature {
      * @param attack How much damage the creature can do
      * @param defense How much can it defend from attacks
      * @param Dungeon dungeon for the creature to be on
+     * @param Log list of messages
      */
-    public Creature(World world, char glyph, Color color, int maxHp, int attack, int defense, Dungeon dungeon){
+    public Creature(World world, char glyph, Color color, int maxHp, int attack, int defense, Dungeon dungeon, Log log){
         this.world = world;
         this.glyph = glyph;
         this.color = color;
@@ -122,6 +137,7 @@ public class Creature {
         this.attackValue = attack;
         this.defenseValue = defense;
         this.dungeon = dungeon;
+        this.log = log;
     }
     
     /**
@@ -131,6 +147,8 @@ public class Creature {
      */
     public void moveBy(int mx, int my){
     	if(mx == 0 && my == 0) return; // If the the character is staying still, it may kill itself so return
+    	
+    	setLastDirection(mx, my); // Set the last direction of the creature
     	Creature other = world.creature(x+mx, y+my); // Get the creature that is where the creature is moving
 
     	
@@ -142,6 +160,25 @@ public class Creature {
     }
     
     /**
+     * Set the direction of the creature based on the distance moving
+     * @param dX Direction creature is moving on x (-1,0,1)
+     * @param dY Direction creature is moving on y (-1,0,1)
+     */
+    public void setLastDirection(int dX, int dY) {
+    	if(dX == 0 && dY == 1)
+			setDirection(Move.DOWN);
+		else if(dX == 0 && dY == -1)
+			setDirection(Move.UP);
+		else if(dX == 1 && dY == 0)
+			setDirection(Move.RIGHT);
+		else if(dX == -1 && dY == 0)
+			setDirection(Move.LEFT);
+		else
+			setDirection(Move.NONE);
+		
+    	System.out.println(glyph + "'s last direction is " + getLastDirection().name());
+	}
+	/**
      * Attack another creature
      * @param other the other creature
      */
@@ -151,6 +188,7 @@ public class Creature {
     
         amount = (int)(Math.random() * amount) + 1; // Add randomness to ammount
     
+        doAction(glyph + " did " + amount + " damage to " + other.glyph);
         other.modifyHp(-amount); // Modify hp of the the other creature
     }
 
@@ -161,8 +199,10 @@ public class Creature {
     public void modifyHp(int amount) {
         hp += amount; // Add amount
     
-        if (hp < 1) // If the health is less than 1 then remove from world
-         world.remove(this);
+        if (hp < 1) {
+            world.remove(this);
+            doAction(glyph + " died.");
+        }
     }
     
     /**
@@ -181,5 +221,43 @@ public class Creature {
 		ai.onUpdate();
 	}
 	
-
+	/**
+	 * To let us know if the character is a player by checking the glyph
+	 * @return True if the character is a player
+	 */
+	public boolean isPlayer() {
+		return glyph == '@';
+	}
+	
+	/**
+	 * Let the creature place a bomb at coords based on the last direction
+	 */
+	public void placeBomb() {
+		if(!isPlayer()) return; // Let only the player place bombs
+		Move direction = getLastDirection();
+		if(direction.equals(Move.NONE) || numBombs == 0) return; // Don't place a bomb if they haven't moved 
+		int wx = x;
+		int wy = y;
+		
+		if(direction.equals(Move.RIGHT))
+			wx++;
+		else if (direction.equals(Move.LEFT))
+			wx--;
+		
+		if(direction.equals(Move.UP))
+			wy--;
+		else if(direction.equals(Move.DOWN))
+			wy++;
+		
+		if(world.placeBomb(wx, wy))
+			numBombs--;
+	}
+	
+	/**
+	 * Tell the log what the creature is doing
+	 * @param action What the action is
+	 */
+	public void doAction(String action) {
+		log.addMessage(action);
+	}
 }

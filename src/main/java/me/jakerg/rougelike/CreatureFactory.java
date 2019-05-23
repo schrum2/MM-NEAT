@@ -10,9 +10,11 @@ import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
  */
 public class CreatureFactory {
     private World world;
+    private Log log;
 
-    public CreatureFactory(World world){
+    public CreatureFactory(World world, Log log){
         this.world = world;
+        this.log = log;
     }
     
     /**
@@ -34,7 +36,7 @@ public class CreatureFactory {
      * @return Creature with enemy ai
      */
     public Creature newEnemey(int x, int y, Creature player) {
-    	Creature enemy = new Creature(world, 'e', AsciiPanel.brightRed, 1, 1, 0);
+    	Creature enemy = new Creature(world, 'e', AsciiPanel.brightRed, 1, 1, 0, log);
     	world.addCreatureAt(x, y, enemy);
     	new EnemyAi(enemy, player);
     	return enemy;
@@ -46,7 +48,7 @@ public class CreatureFactory {
      * @return Creature with player ai
      */
     public Creature newDungeonPlayer(Dungeon dungeon) {
-    	Creature player = new Creature(world, '@', AsciiPanel.brightWhite, 10, 5, 0, dungeon);
+    	Creature player = new Creature(world, '@', AsciiPanel.brightWhite, 10, 5, 0, dungeon, log);
         new DungeonAi(player);
         return player;
     }
