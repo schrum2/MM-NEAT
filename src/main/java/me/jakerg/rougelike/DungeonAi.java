@@ -38,34 +38,22 @@ public class DungeonAi extends CreatureAi{
 			creature.x = x;
 			creature.y = y;
 		} 
-		if(tile.isExit()) {
+		if(tile.equals(Tile.DOOR)) {
 			double cX = creature.x;
 			double cY = creature.y;
+			Point exitPoint = new Point(creature.x, creature.y);
+			System.out.println("Exit point is " + exitPoint);
 			
-			// Get the exit point and convert it into something the dungeon can understand
-			if(cX == 10.0 && cY == 8.0) {
-				cX = 450.;
-				cY = 400.;
-			} else if(cX == 5.0 && cY == 15.0) {
-				cX = 250.;
-				cY = 700.;
-			} else if(cX == 5.0 && cY == 0.0) {
-				cX = 250.;
-				cY = 50.;
-			} else if (cX == 0. && cY == 8.) {
-				cX = 50.;
-				cY = 400.;
-			}
+			String startingPoint = creature.getDungeon().getCurrentlevel().adjacency.get(exitPoint.toString()).t2.toString();
+			System.out.println("Starting point would be ... " + startingPoint);
 			
-			// Convert to string
-			String exitPoint = cX + " : " + cY;
-			// Get the point to move to based on where the player went in from
+//			 Get the point to move to based on where the player went in from
 			creature.getWorld().remove(this.creature);
-			Point p = creature.getDungeon().getNextNode(exitPoint);
+			Point p = creature.getDungeon().getNextNode(exitPoint.toString());
 			
 			// The way the points were made is reversed so GVG-AI could use them properly, so we NEED to reverse them
-			creature.x  = p.y;
-			creature.y = p.x;
+			creature.x  = p.x;
+			creature.y = p.y;
 			creature.setDirection(Move.NONE);
 		}
 	}

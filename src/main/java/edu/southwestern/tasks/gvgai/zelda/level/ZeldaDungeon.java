@@ -72,42 +72,96 @@ public abstract class ZeldaDungeon<T> {
 	private void addAdjacencyIfAvailable(Dungeon dungeonInstance, UUID[][] uuidLabels, Node newNode, int x, int y, String direction) {
 		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length) return;
 		
-		if(dungeon[y][x] == null) return;
+		int tileToSetTo = 3;
 		
-		String exitPoint;
-		Point startPoint;
+		if(dungeon[y][x] == null) // If theres no dungeon there set the tiles to wall
+			tileToSetTo = 1;
+		
+		setLevels(direction, newNode, tileToSetTo);
+		
+		if(dungeon[y][x] == null) return; // Finally get out if there's no adjacency
+		
+		if(uuidLabels[y][x] == null) uuidLabels[y][x] = UUID.randomUUID();
+		String whereTo = uuidLabels[y][x].toString();
+
 		switch(direction) {
 		case("UP"):
-			exitPoint = new Vector2d(250, 50).toString();
-			startPoint = new Point(14, 5);
+			addUpAdjencies(newNode, whereTo);
 			break;
 		case("RIGHT"):
-			exitPoint = new Vector2d(450, 400).toString();
-			startPoint = new Point(8, 1);
+			setRightAdjencies(newNode, whereTo);
 			break;
 		case("DOWN"):
-			exitPoint = new Vector2d(250, 700).toString();
-			startPoint = new Point(1, 5);
-			break;
+			addDownAdjencies(newNode, whereTo);
+			break;	
 		case("LEFT"):
-			exitPoint = new Vector2d(50, 400).toString();
-			startPoint = new Point(8, 9);
+			setLeftAdjencies(newNode, whereTo);
 			break;
 		default: return;
 		}
 		
-		if(uuidLabels[y][x] == null) uuidLabels[y][x] = UUID.randomUUID();
-		String whereTo = uuidLabels[y][x].toString();
-		
-		newNode.setAdjacency(exitPoint, whereTo, startPoint);
-		
 	}
 	
+	// Going up to down
+	private void addUpAdjencies(Node newNode, String whereTo) {
+		int y = 1;
+		for(int x = 4; x <= 6; x++) {
+			Point exitPoint = new Point(x, y);
+			Point startPoint = new Point(x, 13);
+			newNode.setAdjacency(exitPoint.toString(), whereTo, startPoint);
+		}
+	}
+	
+	// Going down to up
+	private void addDownAdjencies(Node newNode, String whereTo) {
+		int y = 14;
+		for(int x = 4; x <= 6; x++) {
+			Point exitPoint = new Point(x, y);
+			Point startPoint = new Point(x, 2);
+			newNode.setAdjacency(exitPoint.toString(), whereTo, startPoint);
+		}
+	}
+	
+	// Going from right to left
+	private void setRightAdjencies(Node newNode, String whereTo) {
+		int x = 9;
+		for(int y = 7; y <= 8; y++) {
+			Point exitPoint = new Point(x, y);
+			Point startPoint = new Point(2, y);
+			newNode.setAdjacency(exitPoint.toString(), whereTo, startPoint);
+		}
+	}
+	
+	// Going from left to right
+	private void setLeftAdjencies(Node newNode, String whereTo) {
+		int x = 1;
+		for(int y = 7; y <= 8; y++) {
+			Point exitPoint = new Point(x, y);
+			Point startPoint = new Point(8, y);
+			newNode.setAdjacency(exitPoint.toString(), whereTo, startPoint);
+		}
+	}
+	
+	private void setLevels(String direction, Node node, int tile) {
+		List<List<Integer>> level = node.level.intLevel;
+		if(direction == "UP" || direction == "DOWN") { // Add doors at top or bottom
+			int y = (direction == "UP") ? 1 : 14; // Set y based on side 1 if up 14 if bottom
+			for(int x = 4; x <= 6; x++) {
+				level.get(y).set(x, tile);
+			}
+		} else if (direction == "LEFT" || direction == "RIGHT") { // Add doors at left or right
+			int x = (direction == "LEFT") ? 1 : 9; // Set x based on side 1 if left 9 if right
+			for(int y = 7; y <=8; y++) {
+				level.get(y).set(x, tile);
+			}
+		}
+	}
+
 	public abstract List<List<Integer>> getLevelFromLatentVector(T phenotype);
 	
 	public void showDungeon(ArrayList<T> phenotypes, int numRooms) {
 		dungeon = makeDungeon(phenotypes, numRooms);
-		dungeon = postHocDungeon(dungeon);
+//		dungeon = postHocDungeon(dungeon);
 		
 		JFrame frame = new JFrame("Dungeon Viewer");
 		frame.setSize(1000, 1000);
