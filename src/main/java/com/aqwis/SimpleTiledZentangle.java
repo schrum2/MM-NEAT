@@ -25,7 +25,7 @@ public class SimpleTiledZentangle {
 	
 	public static void simpleTiledZentangle(int index) throws Exception {
 
-		Random random = new Random();
+		Random random = new Random(index);
 		
 		// Only support simpletiled for now
 

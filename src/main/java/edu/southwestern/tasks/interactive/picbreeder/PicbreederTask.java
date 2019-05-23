@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -146,62 +147,51 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				dir.mkdir();
 			}
 			
-			String[] tileNames = new String[20*4]; //20 images in picbreeder * 4 reflections each
+			String[] tileNames = new String[scores.size()];
 			int numSaved = 0;
 			int numStored = 0;
-			int backgroundSize = 1440;
-			int tileSize = 48;
-			
+			int backgroundSize = 1440; // Hard coded image size: TODO: Use param
+			int tileSize = 48; // Hard coded: TODO: param
+
+			// Index of item that was selected first
+			int firstSelection = this.selectedItems.get(0);
+			// Item that user clicked first becomes the backgorund template
+			saveSingle(waveFunctionSaveLocation+"background", firstSelection, backgroundSize);
+			// All other selected items also saved
 			for(int i = 0; i < scores.size(); i++) {
 				if(chosen[i]) {
-
-					if(numSaved == 0){ //first tile selected becomes background image
-						saveSingle(waveFunctionSaveLocation+"background", i, backgroundSize);
-					}
 					//reserve names for the 4 mirroring of these tile
 					String fullName = "tile" + numSaved + "_";
 					tileNames[numStored++] = fullName + "1";
-					tileNames[numStored++] = fullName + "2";
-					tileNames[numStored++] = fullName + "3";
-					tileNames[numStored++] = fullName + "4";
 
 					saveSingle(waveFunctionSaveLocation+fullName,i,tileSize); //adds another number to the end
 					//images are saved as reflections so they tile better
-
 					numSaved++;
 				}
 			}
 
 			//use wfc to create final zentangle image, save it as zentangle.bmp
-			int firstTileIndex=0;
+
+			int numPartitions = 2; //numSaved;
+			int standardSize = numSaved / numPartitions;
+			ArrayList<String> tilesToProcess = new ArrayList<>();
+			int zentangleNumber = 1;
 			for(int i = 0; i < numSaved; i++) {
-				String[] tilesToProcess = new String[4];
-				for(int j = 0; j < 4; j++) {
-					tilesToProcess[j] = tileNames[firstTileIndex];
-					firstTileIndex++;
+				tilesToProcess.add(tileNames[i]);
+				// The partition is full, create a zentangle with WFC
+				if((i+1) % standardSize == 0) {					
+					// Writes data.xml
+					SimpleTiledWFCModel.writeAdjacencyRules(tilesToProcess.toArray(new String[tilesToProcess.size()]));
+					// data.xml gets read in this next method
+					try {
+						SimpleTiledZentangle.simpleTiledZentangle(zentangleNumber++);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					tilesToProcess.clear(); // Empty out partition
 				}
-				// This is supposed to write data.xml
-				SimpleTiledWFCModel.writeAdjacencyRules(tilesToProcess, 1);
-				// data.xml gets read in this next method
-				try {
-					SimpleTiledZentangle.simpleTiledZentangle(i);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				//show zentangle in another window TODO
-
-//				System.out.println();
-//				String username = System.getProperty("user.name");
-//				File file = new File("C:\\Users\\"+username+"\\Desktop/picbreederZentangle"+i+".jpg");
-//				try {
-//					Desktop.getDesktop().open(file);
-//				} catch (IOException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-			}
+			}							
 						
 			BufferedImage bgImage = null;
 			BufferedImage firstImage = null;
@@ -230,7 +220,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				e.printStackTrace();
 			}
 			
-			System.out.println("image " + "zentangle" + " was saved successfully");
+			System.out.println("image was saved successfully");
 			
 			try {
 				Desktop.getDesktop().open(outputfile);
@@ -316,7 +306,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
