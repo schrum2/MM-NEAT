@@ -86,16 +86,16 @@ public abstract class ZeldaDungeon<T> {
 
 		switch(direction) {
 		case("UP"):
-			addUpAdjencies(newNode, whereTo);
+			addUpAdjacencies(newNode, whereTo);
 			break;
 		case("RIGHT"):
-			setRightAdjencies(newNode, whereTo);
+			setRightAdjacencies(newNode, whereTo);
 			break;
 		case("DOWN"):
-			addDownAdjencies(newNode, whereTo);
+			addDownAdjacencies(newNode, whereTo);
 			break;	
 		case("LEFT"):
-			setLeftAdjencies(newNode, whereTo);
+			setLeftAdjacencies(newNode, whereTo);
 			break;
 		default: return;
 		}
@@ -103,7 +103,7 @@ public abstract class ZeldaDungeon<T> {
 	}
 	
 	// Going up to down
-	private void addUpAdjencies(Node newNode, String whereTo) {
+	private void addUpAdjacencies(Node newNode, String whereTo) {
 		int y = 1;
 		for(int x = 4; x <= 6; x++) {
 			Point exitPoint = new Point(x, y);
@@ -113,7 +113,7 @@ public abstract class ZeldaDungeon<T> {
 	}
 	
 	// Going down to up
-	private void addDownAdjencies(Node newNode, String whereTo) {
+	private void addDownAdjacencies(Node newNode, String whereTo) {
 		int y = 14;
 		for(int x = 4; x <= 6; x++) {
 			Point exitPoint = new Point(x, y);
@@ -123,7 +123,7 @@ public abstract class ZeldaDungeon<T> {
 	}
 	
 	// Going from right to left
-	private void setRightAdjencies(Node newNode, String whereTo) {
+	private void setRightAdjacencies(Node newNode, String whereTo) {
 		int x = 9;
 		for(int y = 7; y <= 8; y++) {
 			Point exitPoint = new Point(x, y);
@@ -133,7 +133,7 @@ public abstract class ZeldaDungeon<T> {
 	}
 	
 	// Going from left to right
-	private void setLeftAdjencies(Node newNode, String whereTo) {
+	private void setLeftAdjacencies(Node newNode, String whereTo) {
 		int x = 1;
 		for(int y = 7; y <= 8; y++) {
 			Point exitPoint = new Point(x, y);
