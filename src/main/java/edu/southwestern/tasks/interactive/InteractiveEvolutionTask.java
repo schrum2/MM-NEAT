@@ -593,6 +593,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 */
 	@Override
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
+		selectedItems.clear();
 		waitingForUser = true;
 		scores = new ArrayList<Score<T>>();
 		if(population.size() != numButtonOptions) {
