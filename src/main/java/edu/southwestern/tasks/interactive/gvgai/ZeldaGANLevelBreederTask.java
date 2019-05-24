@@ -43,7 +43,6 @@ import me.jakerg.rougelike.RougelikeApp;
 public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 
 	private static final int DUNGEONIZE_BUTTON_INDEX = -19;
-	private static final int DUNGEONIZE_PLAY_BUTTON_INDEX = -20;
 	
 	// Change GAME_FILE to zeldacopy "enhanced" version of original GVGAI version to test dungeon
 	private static final String GAME_FILE = "zeldacopy";
