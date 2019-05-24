@@ -4,17 +4,23 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
@@ -24,6 +30,7 @@ import gvgai.core.game.BasicGame;
 import gvgai.tools.Vector2d;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
 import math.geom2d.Vector2D;
+import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
 import me.jakerg.rougelike.TileUtil;
 
@@ -163,8 +170,52 @@ public abstract class ZeldaDungeon<T> {
 		dungeon = makeDungeon(phenotypes, numRooms);
 //		dungeon = postHocDungeon(dungeon);
 		
+		Dungeon dungeonI = convertDungeon(); // Make dungeon instance
+		
 		JFrame frame = new JFrame("Dungeon Viewer");
 		frame.setSize(1000, 1000);
+		
+		JPanel container = new JPanel();
+		container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+		
+		JPanel buttons = new JPanel();
+		
+		JButton playDungeon = new JButton("Play Dungeon");
+		playDungeon.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
+					new Thread() {
+						public void run() {
+							RougelikeApp.startDungeon(dungeonI);
+						}
+					}.start();
+				} else {
+					GameBundle bundle = ZeldaGANLevelBreederTask.setUpGameWithDungeon(dungeonI);
+					new Thread() {
+						public void run() {
+							// True is to watch the game being played
+							GVGAIUtil.runDungeon(bundle, true, dungeonI);
+						}
+					}.start();
+				}
+			}
+			
+		});
+		buttons.add(playDungeon);
+		
+		JCheckBox useGvg = new JCheckBox("Use GVG-AI", Parameters.parameters.booleanParameter("gvgAIForZeldaGAN"));
+		useGvg.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Parameters.parameters.changeBoolean("gvgAIForZeldaGAN");
+			}
+			
+		});
+		buttons.add(useGvg);
+		
+		container.add(buttons);
 		
 		JPanel dungeonGrid = new JPanel();
 		dungeonGrid.setLayout(new GridLayout(numRooms, numRooms));
@@ -172,8 +223,8 @@ public abstract class ZeldaDungeon<T> {
 		for(int i = 0; i < dungeon.length; i++) {
 			for(int j = 0; j < dungeon[i].length; j++) {
 				if(dungeon[i][j] != null) {
-					BufferedImage level = getButtonImage(dungeon[i][j], ZELDA_WIDTH, ZELDA_HEIGHT); //creates image rep. of level)
-					ImageIcon img = new ImageIcon(level.getScaledInstance(ZELDA_WIDTH, ZELDA_HEIGHT, Image.SCALE_DEFAULT)); //creates image of level
+					BufferedImage level = getButtonImage(dungeon[i][j], ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4); //creates image rep. of level)
+					ImageIcon img = new ImageIcon(level.getScaledInstance(ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4, Image.SCALE_FAST)); //creates image of level
 					JLabel imageLabel = new JLabel(img); // places level on label
 					dungeonGrid.add(imageLabel); //add label to panel
 				} else {
@@ -187,7 +238,9 @@ public abstract class ZeldaDungeon<T> {
 			}
 		}
 		
-		frame.add(dungeonGrid);
+		container.add(dungeonGrid);
+		
+		frame.add(container);
 		frame.setVisible(true);
 	}
 	
