@@ -167,8 +167,9 @@ public class ZeldaVGLCUtil {
 		case 'O':
 		case '-':
 			return '.';
-		case 'B': 
 		case 'P':
+			return 'p';
+		case 'B': 
 		case 'I':
 		case 'W':
 			return 'w';
@@ -242,7 +243,7 @@ public class ZeldaVGLCUtil {
 		VGDLFactory.GetInstance().init();
 		VGDLRegistry.GetInstance().init();
 
-		String game = "zelda";
+		String game = "zeldacopy";
 		String gamesPath = "data/gvgai/examples/gridphysics/";
 		String game_file = gamesPath + game + ".txt";
 		int playerID = 0;
@@ -267,11 +268,11 @@ public class ZeldaVGLCUtil {
 
 				
 				// PLAY THE LEVEL
-//				Agent agent = new Agent();
-//				agent.setup(null, 0, true); // null = no log, true = human 
-//
-//				Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
-//				GVGAIUtil.runOneGame(toPlay, level, true, agent, seed, playerID);
+				Agent agent = new Agent();
+				agent.setup(null, 0, true); // null = no log, true = human 
+
+				Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
+				GVGAIUtil.runOneGame(toPlay, level, true, agent, seed, playerID);
 //
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
 			}

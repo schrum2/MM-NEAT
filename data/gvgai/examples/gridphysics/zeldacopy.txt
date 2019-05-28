@@ -15,7 +15,8 @@ BasicGame
         monsterNormal > RandomNPC cooldown=4 cons=8 img=oryx/spider2
         monsterSlow > RandomNPC cooldown=8 cons=12 img=oryx/scorpion1
       wall > Immovable autotiling=true img=oryx/wall3
-      bombWall > Immovable autotiling=true img=oryx/wall1
+    bombWall > Immovable autotiling=true img=oryx/wall1
+    waterWall > Immovable img=oryx/backLBlue
     missile > Missile
         bomb > img=newset/bomb
       	
@@ -32,6 +33,7 @@ BasicGame
     K > keyPassage
     B > bombWall
     . > floor
+    p > waterWall
     
 
   InteractionSet
