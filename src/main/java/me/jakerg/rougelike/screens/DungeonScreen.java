@@ -51,6 +51,7 @@ public class DungeonScreen implements Screen {
         player.y = 5;
         // Set dungeon builder along with current world
         dungeonBuilder = new DungeonBuilder(dungeon, player, log);
+        player.setDungeonBuilder(dungeonBuilder);
         // Make map screen to the left of the dungeon screen
         mapScreen = new MapScreen(dungeon, oX + w + 1, oY + h / 2 - dungeon.getLevelThere().length / 2 - 1);
 

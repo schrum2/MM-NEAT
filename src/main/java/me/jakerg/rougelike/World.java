@@ -225,4 +225,21 @@ public class World {
 	public void setDb(DungeonBuilder db) {
 		this.db = db;
 	}
+
+	/**
+	 * Fully unlock doors (both hidden and locked) around x and y
+	 * @param x X world coordinates
+	 * @param y Y world coordinates
+	 */
+	public void fullUnlock(int x, int y) {
+		changeToDoor(x + 1, y, Tile.LOCKED_DOOR);
+		changeToDoor(x, y + 1, Tile.LOCKED_DOOR);
+		changeToDoor(x - 1, y, Tile.LOCKED_DOOR);
+		changeToDoor(x, y - 1, Tile.LOCKED_DOOR);
+		
+		changeToDoor(x + 1, y, Tile.HIDDEN);
+		changeToDoor(x, y + 1, Tile.HIDDEN);
+		changeToDoor(x - 1, y, Tile.HIDDEN);
+		changeToDoor(x, y - 1, Tile.HIDDEN);
+	}
 }

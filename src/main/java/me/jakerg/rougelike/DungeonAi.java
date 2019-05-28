@@ -1,10 +1,7 @@
 package me.jakerg.rougelike;
 
 import java.awt.Point;
-import java.util.Map.Entry;
-
 import asciiPanel.AsciiPanel;
-import edu.southwestern.util.datastructures.Pair;
 
 /**
  * Dungeon creature that's controllable as a player
@@ -43,7 +40,7 @@ public class DungeonAi extends CreatureAi{
 //			 Get the point to move to based on where the player went in from
 			creature.getWorld().remove(this.creature);
 			Point p = creature.getDungeon().getNextNode(exitPoint.toString());
-			
+			creature.getDungeonBuilder().getCurrentWorld().fullUnlock(p.x, p.y);
 			creature.x  = p.x;
 			creature.y = p.y;
 			creature.setDirection(Move.NONE);

@@ -49,6 +49,8 @@ public class Creature {
 	public int keys() { return numKeys; }
 	
 	private Log log;
+	private DungeonBuilder dungeonBuilder;
+	public DungeonBuilder getDungeonBuilder() { return this.dungeonBuilder; }
     
     /**
      * If a creature is told to display, let the ai control take care of it
@@ -259,5 +261,9 @@ public class Creature {
 	 */
 	public void doAction(String action) {
 		log.addMessage(action);
+	}
+	
+	public void setDungeonBuilder(DungeonBuilder dungeonBuilder) {
+		this.dungeonBuilder = dungeonBuilder;
 	}
 }
