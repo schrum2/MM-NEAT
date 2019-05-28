@@ -17,6 +17,7 @@ public class World {
 	private List<Item> items;
 	private int width;
 	private int height;
+	private DungeonBuilder db;
 	
 	/**
 	 * Must initialize World with tiles
@@ -197,8 +198,31 @@ public class World {
 	 * @param wy World Y
 	 */
 	public void bomb(int wx, int wy) {
-		tiles[wx][wy] = Tile.FLOOR;
-		
+		changeToDoor(wx, wy, Tile.HIDDEN);
+	}
+	
+	public void unlockDoors(int wx, int wy) {
+		changeToDoor(wx, wy, Tile.LOCKED_DOOR);
+	}
+	
+	private void changeToDoor(int wx, int wy, Tile t) {
+		if(tile(wx, wy).equals(t)) {
 			
+			tiles[wx][wy] = Tile.DOOR;
+			
+			// Recursively unlock other doors
+			changeToDoor(wx + 1, wy, t);
+			changeToDoor(wx, wy + 1, t);
+			changeToDoor(wx - 1, wy, t);
+			changeToDoor(wx, wy - 1, t);
+		}
+	}
+
+	public DungeonBuilder getDb() {
+		return db;
+	}
+
+	public void setDb(DungeonBuilder db) {
+		this.db = db;
 	}
 }

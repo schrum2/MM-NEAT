@@ -3,6 +3,7 @@ BasicGame
     floor > Immovable randomtiling=0.9 img=oryx/floor3 hidden=True
     goal  > Door color=GREEN img=oryx/doorclosed1
     passage > Immovable img=oryx/dooropen1.png
+    keyPassage > Immovable img=oryx/door2
     key   > Immovable color=ORANGE img=oryx/key2
     sword > OrientedFlicker limit=5 singleton=True img=oryx/slash1
     movable >
@@ -14,6 +15,7 @@ BasicGame
         monsterNormal > RandomNPC cooldown=4 cons=8 img=oryx/spider2
         monsterSlow > RandomNPC cooldown=8 cons=12 img=oryx/scorpion1
       wall > Immovable autotiling=true img=oryx/wall3
+      bombWall > Immovable autotiling=true img=oryx/wall1
     missile > Missile
         bomb > img=newset/bomb
       	
@@ -27,6 +29,8 @@ BasicGame
     3 > floor monsterSlow
     e > floor passage
     w > wall
+    K > keyPassage
+    B > bombWall
     . > floor
     
 

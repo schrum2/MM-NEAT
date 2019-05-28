@@ -113,15 +113,15 @@ public abstract class ZeldaDungeon<T> {
 	 * @param direction String direction (UP, DOWN, LEFT, RIGHT)
 	 */
 	private void addAdjacencyIfAvailable(Dungeon dungeonInstance, UUID[][] uuidLabels, Node newNode, int x, int y, String direction) {
-		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length) return;
-		
 		int tileToSetTo = 3; // Door tile number
 		
-		if(dungeon[y][x] == null) // If theres no dungeon there set the tiles to wall
+		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length || 
+				dungeon[y][x] == null) // If theres no dungeon there set the tiles to wall
 			tileToSetTo = 1;
 		
 		setLevels(direction, newNode, tileToSetTo); // Set the doors in the levels
 		
+		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length) return;
 		if(dungeon[y][x] == null) return; // Finally get out if there's no adjacency
 		
 		if(uuidLabels[y][x] == null) uuidLabels[y][x] = UUID.randomUUID(); // Get the unique ID of the level
@@ -204,6 +204,14 @@ public abstract class ZeldaDungeon<T> {
 	
 	private void setLevels(String direction, Node node, int tile) {
 		List<List<Integer>> level = node.level.intLevel;
+		// Randomize tile only if the door being placed actually leads to another room
+		if(tile == 3) {
+			if(Math.random() > 0.3)
+				tile = (Math.random() > 0.5) ? 5 : 7; // Randomize 5 (locked door) or 7 (bombable wall)
+			
+			if(tile == 5) placeRandomKey(level); // If the door is now locked place a random key in the level
+		}
+			
 		if(direction == "UP" || direction == "DOWN") { // Add doors at top or bottom
 			int y = (direction == "UP") ? 1 : 14; // Set y based on side 1 if up 14 if bottom
 			for(int x = 4; x <= 6; x++) {
@@ -215,6 +223,22 @@ public abstract class ZeldaDungeon<T> {
 				level.get(y).set(x, tile);
 			}
 		}
+	}
+
+	/**
+	 * Place a random key tile on the floor
+	 * @param level
+	 */
+	private void placeRandomKey(List<List<Integer>> level) {
+		int x, y;
+		
+		do {
+	        x = (int)(Math.random() * level.get(0).size());
+	        y = (int)(Math.random() * level.size());
+	    }
+	    while (level.get(y).get(x) != 0);
+		
+		level.get(y).set(x, 6); 
 	}
 
 	/**

@@ -15,8 +15,10 @@ public enum Tile {
 	CURRENT((char)219, AsciiPanel.brightYellow),
 	EXIT((char)239, AsciiPanel.green),
 	DOOR((char)239, AsciiPanel.green),
-	HIDDEN((char)219, AsciiPanel.yellow),
-	BOUNDS('x', AsciiPanel.brightBlack);
+	LOCKED_DOOR((char)239, AsciiPanel.red),
+	HIDDEN((char)178, AsciiPanel.yellow),
+	BOUNDS('x', AsciiPanel.brightBlack),
+	KEY('k', AsciiPanel.brightYellow);
 	
 	private char glyph;
 	private Color color;
@@ -39,7 +41,7 @@ public enum Tile {
 	 * @return True if the tile is a wall
 	 */
 	public boolean isDiggable() {
-		return this == WALL;
+		return this == WALL || this == KEY;
 	}
 
 	/**
@@ -47,7 +49,7 @@ public enum Tile {
 	 * @return True if it's not a wall and not a bound
 	 */
 	public boolean isGround() {
-		return this != WALL && this != BOUNDS && this != BOUNDS;
+		return this != WALL && this != BOUNDS && this != LOCKED_DOOR && this != HIDDEN;
 	}
 	
 	/**
@@ -59,6 +61,10 @@ public enum Tile {
 	}
 	
 	public boolean isBombable() {
-		return this == WALL || this == HIDDEN || this == FLOOR;
+		return this == HIDDEN;
+	}
+	
+	public boolean isKey() {
+		return this == KEY;
 	}
 }

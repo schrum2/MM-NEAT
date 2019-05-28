@@ -195,6 +195,9 @@ public class ZeldaVGLCUtil {
 		case 2: return (char)('1' + RandomNumbers.randomGenerator.nextInt(3)); // 1, 2, or 3 : Random Monster
 		case 3: return 'g';
 		case 4: return 'e';
+		case 5: return 'K';
+		case 6: return '+';
+		case 7: return 'B';
 		default:
 			throw new IllegalArgumentException("Invalid GAN code for Zelda: code = " + code);
 		}

@@ -16,6 +16,7 @@ public class Log {
 	
 	public void addMessage(String m) {
 		overflow();
+		System.out.println("[LOG] : " + m);
 		messages.add(0, new Message(m));
 	}
 	
