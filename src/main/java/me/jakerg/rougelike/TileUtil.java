@@ -54,7 +54,7 @@ public class TileUtil {
 		case 1: return Tile.WALL;
 		case 3: return Tile.DOOR;
 		case 4: return Tile.EXIT;
-		case 5: return Tile.LOCKED_DOOR;
+		case 5: System.out.println("Got a hidden door here"); return Tile.LOCKED_DOOR;
 		case 6: return Tile.KEY;
 		case 7: return Tile.HIDDEN;
 		default: return Tile.FLOOR;

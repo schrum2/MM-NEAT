@@ -220,7 +220,7 @@ public abstract class ZeldaDungeon<T> {
 	 * Place a random key tile on the floor
 	 * @param level
 	 */
-	private void placeRandomKey(List<List<Integer>> level) {
+	public static void placeRandomKey(List<List<Integer>> level) {
 		int x, y;
 		
 		do {
@@ -499,7 +499,7 @@ public abstract class ZeldaDungeon<T> {
 		}
 		
 		public Tile[][] getTiles(){
-			return this.rougeTiles;
+			return TileUtil.listToTile(intLevel);
 		}
 	}
 	

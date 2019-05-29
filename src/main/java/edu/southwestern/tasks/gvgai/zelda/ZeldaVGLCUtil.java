@@ -222,7 +222,7 @@ public class ZeldaVGLCUtil {
 		case 'W':
 			return 1;	// Impassable
 		case 'M':
-			return 2;	// Monster
+			return 0;	// Monster
 		case 'D':
 		case 'S':
 			return 3;	// Door
