@@ -41,6 +41,7 @@ public class DungeonAi extends CreatureAi{
 			creature.getWorld().remove(this.creature);
 			Point p = creature.getDungeon().getNextNode(exitPoint.toString());
 			creature.getDungeonBuilder().getCurrentWorld().fullUnlock(p.x, p.y);
+			System.out.println("Starting point :" + p);
 			creature.x  = p.x;
 			creature.y = p.y;
 			creature.setDirection(Move.NONE);
