@@ -31,6 +31,7 @@ public class Creature {
 
     private int hp;
     public int hp() { return hp; }
+    public void setHP(int n) { hp = n; }
 
     private int attackValue;
     public int attackValue() { return attackValue; }
@@ -44,12 +45,16 @@ public class Creature {
 	
 	private int numBombs = 4;
 	public int bombs() { return numBombs; }
+	public void setBombs(int b) { numBombs = b; }
 	
 	public int numKeys = 0;
 	public int keys() { return numKeys; }
 	
+	private boolean win = false;
+	public boolean win() {return this.win; }
+	
 	private Log log;
-	private DungeonBuilder dungeonBuilder;
+	private DungeonBuilder dungeonBuilder;	
 	public DungeonBuilder getDungeonBuilder() { return this.dungeonBuilder; }
     
     /**
@@ -265,5 +270,9 @@ public class Creature {
 	
 	public void setDungeonBuilder(DungeonBuilder dungeonBuilder) {
 		this.dungeonBuilder = dungeonBuilder;
+	}
+	public void setWin(boolean b) {
+		this.win = b;
+		
 	}
 }

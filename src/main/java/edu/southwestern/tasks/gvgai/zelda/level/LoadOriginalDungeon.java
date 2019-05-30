@@ -22,6 +22,7 @@ public class LoadOriginalDungeon {
 	
 	public static final int ZELDA_ROOM_ROWS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int ZELDA_ROOM_COLUMNS = 16;
+	private static final boolean ROUGE_DEBUG = true;
 	private static String ORIGINAL_FILE = "tloz2_1_flip";
 	private static String GRAPH_FILE = "data/VGLC/Zelda/Graph Processed/" + ORIGINAL_FILE + ".dot";
 	private static String LEVEL_PATH = "data/VGLC/Zelda/Processed/" + ORIGINAL_FILE;
@@ -37,7 +38,7 @@ public class LoadOriginalDungeon {
 		loadGraph(dungeon, numberToString); // Load the graph representation to dungeon
 		System.out.println("Generating 2D map");
 		dungeon.setLevelThere(generateLevelThere(dungeon, numberToString)); // Generate the 2D map of the dungeon
-		RougelikeApp.startDungeon(dungeon); // start game
+		RougelikeApp.startDungeon(dungeon, ROUGE_DEBUG); // start game
 	}
 
 	/**
@@ -222,9 +223,19 @@ public class LoadOriginalDungeon {
 			case "s": // Room is starting point
 				dungeon.setCurrentLevel(nodeName);
 				break;
+			case "t":
+				addTriforce(node);
+				break;
 			}
 		}
 		scanner.close();
+	}
+
+	private static void addTriforce(Node node) {
+		List<List<Integer>> level = node.level.intLevel;
+		int y = level.size() / 2;
+		int x = level.get(y).size() / 2;
+		level.get(y).set(x, 8);
 	}
 
 	/**

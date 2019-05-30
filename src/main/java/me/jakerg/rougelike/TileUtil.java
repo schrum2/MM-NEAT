@@ -57,6 +57,7 @@ public class TileUtil {
 		case 5: System.out.println("Got a hidden door here"); return Tile.LOCKED_DOOR;
 		case 6: return Tile.KEY;
 		case 7: return Tile.HIDDEN;
+		case 8: return Tile.TRIFORCE;
 		default: return Tile.FLOOR;
 		}
 	}

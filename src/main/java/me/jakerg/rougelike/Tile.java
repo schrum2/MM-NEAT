@@ -18,7 +18,8 @@ public enum Tile {
 	LOCKED_DOOR((char)239, AsciiPanel.red),
 	HIDDEN((char)178, AsciiPanel.yellow),
 	BOUNDS('x', AsciiPanel.brightBlack),
-	KEY('k', AsciiPanel.brightYellow);
+	KEY('k', AsciiPanel.brightYellow),
+	TRIFORCE((char)30, AsciiPanel.brightYellow);
 	
 	private char glyph;
 	private Color color;

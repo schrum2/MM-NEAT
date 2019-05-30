@@ -63,6 +63,9 @@ public class DungeonAi extends CreatureAi{
 			creature.getWorld().dig(x, y);
 			creature.doAction("You picked up a key");
 		}
+		if(tile.equals(Tile.TRIFORCE)) {
+			creature.setWin(true);
+		}
 	}
 
 

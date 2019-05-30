@@ -24,6 +24,8 @@ public class RougelikeApp extends JFrame implements KeyListener{
 	private AsciiPanel terminal;
 	private Screen screen; // Which screen to display?
 	
+	public static boolean DEBUG = false;
+	
 	/**
 	 * Constructor to test basic Rougelike functionality
 	 */
@@ -89,5 +91,11 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Dispose on close closes that window ONLY not every JFrame window
 		app.setVisible(true);
 	}
+	
+	public static void startDungeon(Dungeon dungeon, boolean debug) {
+		DEBUG = debug;
+		startDungeon(dungeon);
+	}
+
 
 }
