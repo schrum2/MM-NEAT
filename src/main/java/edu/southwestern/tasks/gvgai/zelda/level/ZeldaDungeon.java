@@ -143,10 +143,22 @@ public abstract class ZeldaDungeon<T> {
 	 * @param whereTo String representation of the room you're going to
 	 */
 	private void addUpAdjacencies(Node newNode, String whereTo) {
-		int y = 1;
-		for(int x = 4; x <= 6; x++) {
+		int y, minX, maxX = 0, startY;
+		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
+			y = 1;
+			minX = 4;
+			minX = 6;
+			startY = 13;
+		} else {
+			y = 1;
+			minX = 7;
+			maxX = 8;
+			startY = 8;			
+		}
+
+		for(int x = minX; x <= maxX; x++) {
 			Point exitPoint = new Point(x, y);
-			Point startPoint = new Point(x, 13);
+			Point startPoint = new Point(x, startY);
 			newNode.setAdjacency(exitPoint.toString(), whereTo, startPoint);
 		}
 	}
@@ -157,8 +169,18 @@ public abstract class ZeldaDungeon<T> {
 	 * @param whereTo String representation of the room you're going to
 	 */
 	private void addDownAdjacencies(Node newNode, String whereTo) {
-		int y = 14;
-		for(int x = 4; x <= 6; x++) {
+		int y, minX, maxX;
+		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
+			y = 14;
+			minX = 4;
+			maxX = 6;
+		} else {
+			y = 9;
+			minX = 7;
+			maxX = 8;
+
+		}
+		for(int x = minX; x <= maxX; x++) {
 			Point exitPoint = new Point(x, y);
 			Point startPoint = new Point(x, 2);
 			newNode.setAdjacency(exitPoint.toString(), whereTo, startPoint);
@@ -171,8 +193,18 @@ public abstract class ZeldaDungeon<T> {
 	 * @param whereTo String representation of the room you're going to
 	 */
 	private void setRightAdjacencies(Node newNode, String whereTo) {
-		int x = 9;
-		for(int y = 7; y <= 8; y++) {
+		int x, minY, maxY;
+		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
+			x = 9;
+			minY = 7;
+			maxY = 8;
+		} else {
+			x = 14;
+			minY = 4;
+			maxY = 6;
+		}
+		
+		for(int y = minY; y <= maxY; y++) {
 			Point exitPoint = new Point(x, y);
 			Point startPoint = new Point(2, y);
 			newNode.setAdjacency(exitPoint.toString(), whereTo, startPoint);
@@ -185,12 +217,24 @@ public abstract class ZeldaDungeon<T> {
 	 * @param whereTo String representation of the room you're going to
 	 */
 	private void setLeftAdjacencies(Node newNode, String whereTo) {
-		int x = 1;
-		for(int y = 7; y <= 8; y++) {
+		int x, minY, maxY = 0, startX;
+		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")){
+			x = 1;
+			minY = 7;
+			minY = 8;
+			startX = 8;
+		} else {
+			x = 1;
+			minY = 4;
+			maxY = 6;
+			startX = 13;
+		}
+		for(int y = minY; y <= maxY; y++) {
 			Point exitPoint = new Point(x, y);
-			Point startPoint = new Point(8, y);
+			Point startPoint = new Point(startX, y);
 			newNode.setAdjacency(exitPoint.toString(), whereTo, startPoint);
 		}
+
 	}
 	
 	private void setLevels(String direction, Node node, int tile) {
@@ -202,18 +246,32 @@ public abstract class ZeldaDungeon<T> {
 			
 			if(tile == 5) placeRandomKey(level); // If the door is now locked place a random key in the level
 		}
-			
-		if(direction == "UP" || direction == "DOWN") { // Add doors at top or bottom
-			int y = (direction == "UP") ? 1 : 14; // Set y based on side 1 if up 14 if bottom
-			for(int x = 4; x <= 6; x++) {
-				level.get(y).set(x, tile);
+		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
+			if(direction == "UP" || direction == "DOWN") { // Add doors at top or bottom
+				int y = (direction == "UP") ? 1 : 14; // Set y based on side 1 if up 14 if bottom
+				for(int x = 4; x <= 6; x++) {
+					level.get(y).set(x, tile);
+				}
+			} else if (direction == "LEFT" || direction == "RIGHT") { // Add doors at left or right
+				int x = (direction == "LEFT") ? 1 : 9; // Set x based on side 1 if left 9 if right
+				for(int y = 7; y <=8; y++) {
+					level.get(y).set(x, tile);
+				}
 			}
-		} else if (direction == "LEFT" || direction == "RIGHT") { // Add doors at left or right
-			int x = (direction == "LEFT") ? 1 : 9; // Set x based on side 1 if left 9 if right
-			for(int y = 7; y <=8; y++) {
-				level.get(y).set(x, tile);
+		} else {
+			if(direction.equals("UP")  || direction.equals("DOWN")) { // Add doors at top or bottom
+				int y = (direction.equals("UP")) ? 1 : 9; // Set x based on side 1 if left 9 if right
+				for(int x = 7; x <=8; x++) {
+					level.get(y).set(x, tile);
+				}
+			} else if (direction.equals("LEFT") || direction.equals("RIGHT") ) { // Add doors at left or right
+				int x = (direction.equals("LEFT")) ? 1 : 14; // Set y based on side 1 if up 14 if bottom
+				for(int y = 4; y <= 6; y++) {
+					level.get(y).set(x, tile);
+				}
 			}
 		}
+
 	}
 
 	/**

@@ -19,6 +19,8 @@ BasicGame
     waterWall > Immovable img=oryx/backLBlue
     missile > Missile
         bomb > img=newset/bomb
+    nine > Immovable img=oryx/backRed
+    ten > Immovable img=oryx/backGreen
       	
 
   LevelMapping
@@ -32,6 +34,8 @@ BasicGame
     w > wall
     K > keyPassage
     B > bombWall
+    R > nine
+    G > ten
     . > floor
     p > waterWall
     

@@ -139,7 +139,6 @@ rl-glue-cartpole
 *.model
 src/main/python/NeuralStyleTransfer/imagenet-vgg-verydeep-19.mat
 *.pyc
-*.json
 *UT^2-null
 dependency-reduced-pom.xml
 *.mkv
