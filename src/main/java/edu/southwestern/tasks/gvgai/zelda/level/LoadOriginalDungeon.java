@@ -3,11 +3,8 @@ package edu.southwestern.tasks.gvgai.zelda.level;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
@@ -25,7 +22,7 @@ public class LoadOriginalDungeon {
 	
 	public static final int ZELDA_ROOM_ROWS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int ZELDA_ROOM_COLUMNS = 16;
-	private static String ORIGINAL_FILE = "tloz1_1_flip";
+	private static String ORIGINAL_FILE = "tloz2_1_flip";
 	private static String GRAPH_FILE = "data/VGLC/Zelda/Graph Processed/" + ORIGINAL_FILE + ".dot";
 	private static String LEVEL_PATH = "data/VGLC/Zelda/Processed/" + ORIGINAL_FILE;
 	private static HashMap<String, Stack<Pair<String, String>>> directional;
@@ -34,8 +31,11 @@ public class LoadOriginalDungeon {
 		Dungeon dungeon = new Dungeon(); // Make new dungeon instance
 		directional = new HashMap<>(); // Make directional hashmap
 		HashMap<Integer, String> numberToString = new HashMap<>(); // Map the numbers to strings (node name)
+		System.out.println("Loading .txt levels");
 		loadLevels(dungeon, numberToString); // Load the levels (txt files) to dungeon
+		System.out.println("Loading levels from graph");
 		loadGraph(dungeon, numberToString); // Load the graph representation to dungeon
+		System.out.println("Generating 2D map");
 		dungeon.setLevelThere(generateLevelThere(dungeon, numberToString)); // Generate the 2D map of the dungeon
 		RougelikeApp.startDungeon(dungeon); // start game
 	}
@@ -167,20 +167,26 @@ public class LoadOriginalDungeon {
 	 * @param numberToString map to keep track of the numbered rooms and node names
 	 * @throws FileNotFoundException
 	 */
-	@SuppressWarnings("resource")
 	private static void loadGraph(Dungeon dungeon, HashMap<Integer, String> numberToString) throws FileNotFoundException {
 		File graphFile = new File(GRAPH_FILE);
 		Scanner scanner = new Scanner(graphFile);
 		scanner.nextLine(); // "digraph" crap
 		while(scanner.hasNextLine()) {
 			String line = scanner.nextLine();
-			if (line.indexOf("}") != -1) return; // If the line contains the ending bracked get out
+			if (line.indexOf("}") != -1) {
+				System.out.println("Got to end of graph file");
+				scanner.close();
+				return;
+			}; // If the line contains the ending bracked get out
 			if(line.indexOf("->") != -1) { // if the line contains an arrow, it's an edge
+				System.out.println("Found edge : " + line);
 				addEdge(dungeon, numberToString, line);
 			} else { // otherwise the line contains the room data
+				System.out.println("Found level : " + line);
 				convertRoom(dungeon, numberToString, line);
 			}
 		}
+		scanner.close();
 	}
 
 	/**
@@ -194,14 +200,21 @@ public class LoadOriginalDungeon {
 		
 		int nodeNumber = scanner.nextInt();
 		String nodeName = numberToString.get(nodeNumber);
-		if(nodeName == null) return;
+		if(nodeName == null) {
+			System.out.println("Nodename " + nodeName + " not found.");
+			scanner.close();
+			return;
+		}
 		Node node = dungeon.getNode(nodeName);
 		
 		String[] values = getLabelValues(scanner.next());
+		System.out.println("Got values : " + values);
 		for(String value : values) {
 			switch(value) {
+			case "m":
 			case "e": // Room has enemies
 				addRandomEnemy(node);
+				System.out.println("Adding enemy | " + value);
 				break;
 			case "k": // Room has a key in it
 				ZeldaDungeon.placeRandomKey(node.level.intLevel);
@@ -211,6 +224,7 @@ public class LoadOriginalDungeon {
 				break;
 			}
 		}
+		scanner.close();
 	}
 
 	/**
@@ -231,6 +245,7 @@ public class LoadOriginalDungeon {
 		    while (level.get(y).get(x) != 0);
 			
 			level.get(y).set(x, 2); 
+			System.out.println("Added enemy number " + (i + 1));
 		}
 	}
 
@@ -240,7 +255,6 @@ public class LoadOriginalDungeon {
 	 * @param numberToString map to keep track of the numbered rooms and node names
 	 * @param line String of necessary edge information
 	 */
-	@SuppressWarnings("resource")
 	private static void addEdge(Dungeon dungeon, HashMap<Integer, String> numberToString, String line) {
 		Scanner scanner = new Scanner(line);
 		
@@ -251,10 +265,15 @@ public class LoadOriginalDungeon {
 		
 		int whereToNumber = scanner.nextInt();
 		String whereTo = numberToString.get(whereToNumber);
-		if(nodeName == null || whereTo == null) return;
+		if(nodeName == null || whereTo == null) {
+			scanner.close();
+			return;
+		}
 		
 		String[] values = getLabelValues(scanner.next());
 		addAdjacency(values, dungeon, nodeName, whereTo);
+		
+		scanner.close();
 	}
 
 	/**
@@ -270,6 +289,8 @@ public class LoadOriginalDungeon {
 		if(values[0] != direction) {
 			String action = values[0];
 			switch(action) {
+			case "l": // Soft lock, treat as open door for now
+				setLevels(direction, node, 3);
 			case "k": // Locked door
 				setLevels(direction, node, 5);
 				break;
@@ -445,7 +466,6 @@ public class LoadOriginalDungeon {
 	 * @param name Node name
 	 * @throws FileNotFoundException
 	 */
-	@SuppressWarnings("resource")
 	private static void loadOneLevel(File file, Dungeon dungeon, String name) throws FileNotFoundException {
 		String[] levelString = new String[ZELDA_ROOM_ROWS];
 		Scanner scanner = new Scanner(file);
@@ -456,5 +476,6 @@ public class LoadOriginalDungeon {
 		List<List<Integer>> levelInt = ZeldaVGLCUtil.convertZeldaLevelVGLCtoRoomAsList(levelString);
 		Level level = new Level(levelInt);
 		dungeon.newNode(name, level);
+		scanner.close();
 	}
 }

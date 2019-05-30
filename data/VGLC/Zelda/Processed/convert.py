@@ -1,5 +1,5 @@
 level_array = []
-file_name = 'tloz1_1'
+file_name = 'tloz2_1'
 
 with open(file_name + '.txt') as file:
     for line in file:
