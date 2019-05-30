@@ -43,7 +43,6 @@ import me.jakerg.rougelike.RougelikeApp;
 public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 
 	private static final int DUNGEONIZE_BUTTON_INDEX = -19;
-	private static final int DUNGEONIZE_PLAY_BUTTON_INDEX = -20;
 	
 	// Change GAME_FILE to zeldacopy "enhanced" version of original GVGAI version to test dungeon
 	private static final String GAME_FILE = "zeldacopy";
@@ -64,49 +63,6 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		dungeonize.setName("" + DUNGEONIZE_BUTTON_INDEX);
 		dungeonize.addActionListener(this);
 		top.add(dungeonize);
-		
-		JCheckBox useGvg = new JCheckBox("useGvgai", Parameters.parameters.booleanParameter("gvgAIForZeldaGAN"));
-		useGvg.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				Parameters.parameters.changeBoolean("gvgAIForZeldaGAN");
-				resetButtons(true);
-			}
-			
-		});
-		top.add(useGvg);
-		
-		JButton play_dungeon = new JButton("Play Dungeon");
-		play_dungeon.setName("" + DUNGEONIZE_PLAY_BUTTON_INDEX);
-		play_dungeon.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				Dungeon dungeon = sd.convertDungeon();
-				if(dungeon.getCurrentlevel() == null) {
-					System.out.println("Couldn't play since there's no current level (null)");
-					return;
-				}
-				if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
-					new Thread() {
-						public void run() {
-							RougelikeApp.startDungeon(dungeon);
-						}
-					}.start();
-				} else {
-					GameBundle bundle = setUpGameWithDungeon(dungeon);
-					new Thread() {
-						public void run() {
-							// True is to watch the game being played
-							GVGAIUtil.runDungeon(bundle, true, dungeon);
-						}
-					}.start();
-				}
-			}
-			
-		});
-		top.add(play_dungeon);
 		
 		VGDLFactory.GetInstance().init(); // Get an instant of VGDL Factor and initialize the characters cache
 		VGDLRegistry.GetInstance().init(); // Get an instance of VGDL Registry and initialize the sprite factory

@@ -167,8 +167,9 @@ public class ZeldaVGLCUtil {
 		case 'O':
 		case '-':
 			return '.';
-		case 'B': 
 		case 'P':
+			return 'p';
+		case 'B': 
 		case 'I':
 		case 'W':
 			return 'w';
@@ -195,6 +196,9 @@ public class ZeldaVGLCUtil {
 		case 2: return (char)('1' + RandomNumbers.randomGenerator.nextInt(3)); // 1, 2, or 3 : Random Monster
 		case 3: return 'g';
 		case 4: return 'e';
+		case 5: return 'K';
+		case 6: return '+';
+		case 7: return 'B';
 		default:
 			throw new IllegalArgumentException("Invalid GAN code for Zelda: code = " + code);
 		}
@@ -218,7 +222,7 @@ public class ZeldaVGLCUtil {
 		case 'W':
 			return 1;	// Impassable
 		case 'M':
-			return 2;	// Monster
+			return 0;	// Monster
 		case 'D':
 		case 'S':
 			return 3;	// Door
@@ -239,7 +243,7 @@ public class ZeldaVGLCUtil {
 		VGDLFactory.GetInstance().init();
 		VGDLRegistry.GetInstance().init();
 
-		String game = "zelda";
+		String game = "zeldacopy";
 		String gamesPath = "data/gvgai/examples/gridphysics/";
 		String game_file = gamesPath + game + ".txt";
 		int playerID = 0;
@@ -264,11 +268,11 @@ public class ZeldaVGLCUtil {
 
 				
 				// PLAY THE LEVEL
-//				Agent agent = new Agent();
-//				agent.setup(null, 0, true); // null = no log, true = human 
-//
-//				Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
-//				GVGAIUtil.runOneGame(toPlay, level, true, agent, seed, playerID);
+				Agent agent = new Agent();
+				agent.setup(null, 0, true); // null = no log, true = human 
+
+				Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
+				GVGAIUtil.runOneGame(toPlay, level, true, agent, seed, playerID);
 //
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
 			}

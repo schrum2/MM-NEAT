@@ -1,10 +1,7 @@
 package me.jakerg.rougelike;
 
 import java.awt.Point;
-import java.util.Map.Entry;
-
 import asciiPanel.AsciiPanel;
-import edu.southwestern.util.datastructures.Pair;
 
 /**
  * Dungeon creature that's controllable as a player
@@ -39,22 +36,32 @@ public class DungeonAi extends CreatureAi{
 			creature.y = y;
 		} 
 		if(tile.equals(Tile.DOOR)) {
-			double cX = creature.x;
-			double cY = creature.y;
 			Point exitPoint = new Point(creature.x, creature.y);
-			System.out.println("Exit point is " + exitPoint);
-			
-			String startingPoint = creature.getDungeon().getCurrentlevel().adjacency.get(exitPoint.toString()).t2.toString();
-			System.out.println("Starting point would be ... " + startingPoint);
-			
 //			 Get the point to move to based on where the player went in from
 			creature.getWorld().remove(this.creature);
 			Point p = creature.getDungeon().getNextNode(exitPoint.toString());
-			
-			// The way the points were made is reversed so GVG-AI could use them properly, so we NEED to reverse them
+			creature.getDungeonBuilder().getCurrentWorld().fullUnlock(p.x, p.y);
+			System.out.println("Starting point :" + p);
 			creature.x  = p.x;
 			creature.y = p.y;
 			creature.setDirection(Move.NONE);
+		}
+		if(tile.equals(Tile.LOCKED_DOOR)) {
+			
+			if(creature.keys() > 0) {
+				creature.numKeys--;
+				creature.getWorld().unlockDoors(x, y);
+				creature.doAction("You unlocked a door");
+			} else
+				creature.doAction("You need a key to open the door");
+		}
+		if(tile.isKey()){
+			creature.x = x;
+			creature.y = y;
+			
+			creature.numKeys++;
+			creature.getWorld().dig(x, y);
+			creature.doAction("You picked up a key");
 		}
 	}
 
