@@ -59,4 +59,4 @@ print(v)
 dev.off()
 
 print("Success!")
-print(paste("File saved in ",getwd(),"/",resultDir,".png"), sep="")
+print(paste("File saved in ",getwd(),"/",resultDir,".png",sep=""))
