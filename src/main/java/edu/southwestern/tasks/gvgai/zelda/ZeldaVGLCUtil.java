@@ -19,8 +19,8 @@ import gvgai.tracks.singlePlayer.tools.human.Agent;
 public class ZeldaVGLCUtil {
 
 	public static final String ZELDA_LEVEL_PATH = "data/VGLC/Zelda/Processed/";
-	public static final int ZELDA_ROOM_COLUMNS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
-	public static final int ZELDA_ROOM_ROWS = 16; // Equivalent to width in original game
+	public static final int ZELDA_ROOM_COLUMNS = 16; // This is actually the room height from the original game, since VGLC rotates rooms
+	public static final int ZELDA_ROOM_ROWS = 11; // Equivalent to width in original game
 	public static final int ZELDA_GVGAI_TILE_TYPES = 4;
 
 	/**
@@ -230,10 +230,45 @@ public class ZeldaVGLCUtil {
 			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
 		}
 	}
-
-
+	
 	/**
-	 * For quick tests
+	 * Shares the mapping above, but returns the arbitrary number code.
+	 * Used for GAN learning.
+	 * @param tile A VGLC tile
+	 * @return Number code associated with different classes of tile
+	 */
+	public static int convertZeldaModifiedTileVGLCtoNumberCode(char tile) {
+		switch(tile) {
+		case 'F':
+			return 1;
+		case 'O':
+			return 2;
+		case '-':
+			return 3;	// Passable
+		case 'B': 
+			return 4;
+		case 'P':
+			return 5;
+		case 'I':
+			return 6;
+		case 'W':
+			return 7;	// Impassable
+		case 'M':
+			return 8;	// Monster
+		case 'D':
+			return 9;
+		case 'S':
+			return 10;	// Door
+		default:
+			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
+		}
+	}
+
+	
+	
+	/**
+	 * Modified to generate the json files for training the Zelda GAN
+	 * using the complete information from the modified VGLC data.
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -251,9 +286,9 @@ public class ZeldaVGLCUtil {
 
 		HashSet<List<List<Integer>>> roomSet = new HashSet<>();
 		
-		for(int i = 1; i <= 9; i++) {
-			for(int j = 1; j <= 2; j++) {
-				String file = "tloz"+i+"_"+j+".txt";
+		for(int i = 1; i <= 2; i++) {
+			for(int j = 1; j <= 1; j++) {
+				String file = "tloz"+i+"_"+j+"_flip.txt";
 				String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+file, new Point(2,2));
 
 				for(String line : level) {
@@ -280,4 +315,55 @@ public class ZeldaVGLCUtil {
 		
 		System.out.println(roomSet);
 	}
+	
+
+	/**
+	 * Used to generate the original json files for training the Zelda GAN
+	 * @param args
+	 */
+//	public static void main(String[] args) {
+//		Parameters.initializeParameterCollections(new String[] {});
+//		//MMNEAT.loadClasses();
+//
+//		VGDLFactory.GetInstance().init();
+//		VGDLRegistry.GetInstance().init();
+//
+//		String game = "zeldacopy";
+//		String gamesPath = "data/gvgai/examples/gridphysics/";
+//		String game_file = gamesPath + game + ".txt";
+//		int playerID = 0;
+//		int seed = 0;
+//
+//		HashSet<List<List<Integer>>> roomSet = new HashSet<>();
+//		
+//		for(int i = 1; i <= 9; i++) {
+//			for(int j = 1; j <= 2; j++) {
+//				String file = "tloz"+i+"_"+j+".txt";
+//				String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+file, new Point(2,2));
+//
+//				for(String line : level) {
+//					System.out.println(line);
+//				}
+//
+//				List<List<List<Integer>>> roomList = convertZeldaLevelFileVGLCtoListOfRooms(ZELDA_LEVEL_PATH+file);
+//
+//				roomSet.addAll(roomList);
+//				
+//				//System.out.println(roomList);
+//
+//				
+//				// PLAY THE LEVEL
+//				Agent agent = new Agent();
+//				agent.setup(null, 0, true); // null = no log, true = human 
+//
+//				Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
+//				GVGAIUtil.runOneGame(toPlay, level, true, agent, seed, playerID);
+//
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
+//			}
+//		}
+//		
+//		System.out.println(roomSet);
+//	}
+	
 }
