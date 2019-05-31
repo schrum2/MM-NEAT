@@ -58,15 +58,20 @@ for(t in types) {
 #            thirdQuartile = quantile(score, 0.75))
   
 alteredData <- evolutionData %>% 
-  filter(generation %% 10 == 0) %>%  # Make this a parameter?
+  mutate(plotInterval = generation %% 10 == 0) %>%  # Make this a parameter?
   mutate(genF = as.factor(generation)) %>% # Boxplot needs generation as factor
   select(-generation) # Remove numeric generation
   
+f <- function(theData) {
+  result <- theData %>% filter(plotInterval == TRUE)
+  return (result)
+}
+
 saveFile <- paste("BW-",resultDir,args[3],".png",sep="")
 png(saveFile, width=2000, height=1000)
 v <- ggplot(alteredData, aes(x = genF, y = score, fill = type)) +
-  geom_line(aes(group = type, color = type), size = 1.5) + 
-  geom_boxplot() +
+  geom_line(aes(group = type, color = type)) + #, size = 1.5) + 
+  geom_boxplot(data = f) +
   #facet_wrap(~type) + # For separate plots
   #ggtitle("INSERT COOL TITLE HERE") +
   ylab("Score") +
