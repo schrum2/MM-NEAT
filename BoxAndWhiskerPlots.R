@@ -47,21 +47,26 @@ for(t in types) {
   }
 }
 
-# Extract states: mean, lower confidence bound, upper confidence bound
-evolutionStats <- evolutionData %>%
-  group_by(type, generation) %>%
-  summarize(n = length(run), 
-            medianScore = median(score), 
-            minScore = min(score),
-            maxScore = max(score),
-            firstQuartile = quantile(score, 0.25),
-            thirdQuartile = quantile(score, 0.75))
+# This collects the boxplot data, but I don't know how to plot this data as boxplots
+#evolutionStats <- evolutionData %>%
+#  group_by(type, generation) %>%
+#  summarize(n = length(run), 
+#            medianScore = median(score), 
+#            minScore = min(score),
+#            maxScore = max(score),
+#            firstQuartile = quantile(score, 0.25),
+#            thirdQuartile = quantile(score, 0.75))
+  
+alteredData <- evolutionData %>% 
+  filter(generation %% 10 == 0) %>%  # Make this a parameter?
+  mutate(genF = as.factor(generation)) %>% # Boxplot needs generation as factor
+  select(-generation) # Remove numeric generation
   
 saveFile <- paste("BW-",resultDir,args[3],".png",sep="")
 png(saveFile, width=2000, height=1000)
-v <- ggplot(evolutionStats, aes(x = generation, y = medianScore, color = type)) +
-  geom_ribbon(aes(ymin = minScore, ymax = maxScore, fill = type, alpha = 0.05)) +
-  geom_line(size = 1.5) + 
+v <- ggplot(alteredData, aes(x = genF, y = score, fill = type)) +
+  geom_line(aes(group = type, color = type), size = 1.5) + 
+  geom_boxplot() +
   #facet_wrap(~type) + # For separate plots
   #ggtitle("INSERT COOL TITLE HERE") +
   ylab("Score") +
@@ -81,14 +86,3 @@ dev.off()
 
 print("Success!")
 print(paste("File saved in ",getwd(),"/",saveFile,sep=""))
-
-# Ignoring most of the above, this is pretty close to what I want, but not there yet.
-evolutionData %>% 
-  filter(generation %% 10 == 0) %>%
-  mutate(genF = as.factor(generation)) %>%
-  select(-generation) %>%
-  ggplot(aes(x = genF, y = score, fill = type)) +
-  geom_line(aes(group = type)) +
-  geom_boxplot() 
-
-
