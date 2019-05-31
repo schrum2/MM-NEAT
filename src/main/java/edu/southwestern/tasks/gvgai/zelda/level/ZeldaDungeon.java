@@ -108,7 +108,7 @@ public abstract class ZeldaDungeon<T> {
 		
 		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length || 
 				dungeon[y][x] == null) // If theres no dungeon there set the tiles to wall
-			tileToSetTo = 1;
+			tileToSetTo = Tile.WALL.getNum();
 		
 		setLevels(direction, newNode, tileToSetTo); // Set the doors in the levels
 		
@@ -242,9 +242,9 @@ public abstract class ZeldaDungeon<T> {
 		// Randomize tile only if the door being placed actually leads to another room
 		if(tile == 3) {
 			if(Math.random() > 0.3)
-				tile = (Math.random() > 0.5) ? 5 : 7; // Randomize 5 (locked door) or 7 (bombable wall)
+				tile = (Math.random() > 0.5) ? Tile.LOCKED_DOOR.getNum() : Tile.HIDDEN.getNum(); // Randomize 5 (locked door) or 7 (bombable wall)
 			
-			if(tile == 5) placeRandomKey(level); // If the door is now locked place a random key in the level
+			if(tile == Tile.LOCKED_DOOR.getNum()) placeRandomKey(level); // If the door is now locked place a random key in the level
 		}
 		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
 			if(direction == "UP" || direction == "DOWN") { // Add doors at top or bottom
@@ -285,9 +285,9 @@ public abstract class ZeldaDungeon<T> {
 	        x = (int)(Math.random() * level.get(0).size());
 	        y = (int)(Math.random() * level.size());
 	    }
-	    while (level.get(y).get(x) != 0);
+	    while (!Tile.findNum(level.get(y).get(x)).playerPassable());
 		
-		level.get(y).set(x, 6); 
+		level.get(y).set(x, Tile.KEY.getNum()); 
 	}
 
 	/**

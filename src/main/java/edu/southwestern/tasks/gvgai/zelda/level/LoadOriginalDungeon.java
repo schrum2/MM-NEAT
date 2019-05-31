@@ -17,6 +17,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
 import edu.southwestern.util.datastructures.Pair;
 import me.jakerg.rougelike.RougelikeApp;
+import me.jakerg.rougelike.Tile;
 
 public class LoadOriginalDungeon {
 	
@@ -235,7 +236,7 @@ public class LoadOriginalDungeon {
 		List<List<Integer>> level = node.level.intLevel;
 		int y = level.size() / 2;
 		int x = level.get(y).size() / 2;
-		level.get(y).set(x, 8);
+		level.get(y).set(x, Tile.TRIFORCE.getNum());
 	}
 
 	/**
@@ -301,12 +302,12 @@ public class LoadOriginalDungeon {
 			String action = values[0];
 			switch(action) {
 			case "l": // Soft lock, treat as open door for now
-				setLevels(direction, node, 3);
+				setLevels(direction, node, Tile.DOOR);
 			case "k": // Locked door
-				setLevels(direction, node, 5);
+				setLevels(direction, node, Tile.LOCKED_DOOR);
 				break;
 			case "b": // Hidden door
-				setLevels(direction, node, 7);
+				setLevels(direction, node, Tile.HIDDEN);
 				break;
 			}
 		}
@@ -427,19 +428,20 @@ public class LoadOriginalDungeon {
 	 * Set the int level doors based on direction
 	 * @param direction Direction of where the exit point is
 	 * @param node Node to add the doors to
-	 * @param tile Specific door (5 for locked, 7 for hidden)
+	 * @param tile Tile type
 	 */
-	private static void setLevels(String direction, Node node, int tile) {
+	private static void setLevels(String direction, Node node, Tile tile) {
+		int num = tile.getNum();
 		List<List<Integer>> level = node.level.intLevel;
 		if(direction.equals("UP")  || direction.equals("DOWN")) { // Add doors at top or bottom
 			int y = (direction.equals("UP")) ? 1 : 9; // Set x based on side 1 if left 9 if right
 			for(int x = 7; x <=8; x++) {
-				level.get(y).set(x, tile);
+				level.get(y).set(x, num);
 			}
 		} else if (direction.equals("LEFT") || direction.equals("RIGHT") ) { // Add doors at left or right
 			int x = (direction.equals("LEFT")) ? 1 : 14; // Set y based on side 1 if up 14 if bottom
 			for(int y = 4; y <= 6; y++) {
-				level.get(y).set(x, tile);
+				level.get(y).set(x, num);
 			}
 		}
 	}

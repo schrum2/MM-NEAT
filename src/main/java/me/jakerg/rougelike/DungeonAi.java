@@ -31,7 +31,7 @@ public class DungeonAi extends CreatureAi{
 	 */
 	public void onEnter(int x, int y, Tile tile) {		
 		// If the tile the character is trying to move to group, then move character at point
-		if(tile.isGround()) {
+		if(tile.playerPassable()) {
 			creature.x = x;
 			creature.y = y;
 		} 

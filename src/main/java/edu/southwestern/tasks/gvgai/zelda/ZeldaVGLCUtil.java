@@ -202,6 +202,8 @@ public class ZeldaVGLCUtil {
 		case 8: return 'b';
 		case 9: return 'R';
 		case 10: return 'G';
+		case -7: return 'B';
+		case -5: return 'K';
 		default:
 			throw new IllegalArgumentException("Invalid GAN code for Zelda: code = " + code);
 		}
@@ -253,7 +255,7 @@ public class ZeldaVGLCUtil {
 		case 'P':
 			return 5;
 		case 'M':
-			return 2;	// Monster
+			return 5;	// Monster
 		case 'D':
 			return 3;
 		case 'S':

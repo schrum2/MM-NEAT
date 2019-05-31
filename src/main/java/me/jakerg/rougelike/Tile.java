@@ -10,19 +10,21 @@ import asciiPanel.AsciiPanel;
  */
 public enum Tile {
 	// Refer to Code Page 437 for the number representation of the char
-	FLOOR((char)250, AsciiPanel.yellow),
-	WALL((char)219, AsciiPanel.yellow),
-	CURRENT((char)219, AsciiPanel.brightYellow),
-	EXIT((char)239, AsciiPanel.green),
-	DOOR((char)239, AsciiPanel.green),
-	LOCKED_DOOR((char)239, AsciiPanel.red),
-	HIDDEN((char)178, AsciiPanel.yellow),
-	BOUNDS('x', AsciiPanel.brightBlack),
-	KEY('k', AsciiPanel.brightYellow),
-	TRIFORCE((char)30, AsciiPanel.brightYellow);
+	FLOOR((char)250, AsciiPanel.yellow, 0),
+	WALL((char)219, AsciiPanel.yellow, 1),
+	CURRENT((char)219, AsciiPanel.brightYellow, -99),
+	EXIT((char)239, AsciiPanel.green, 4),
+	DOOR((char)239, AsciiPanel.green, 3),
+	BLOCK((char)177, AsciiPanel.yellow, 5),
+	LOCKED_DOOR((char)239, AsciiPanel.red, -5),
+	HIDDEN((char)178, AsciiPanel.yellow, -7),
+	BOUNDS('x', AsciiPanel.brightBlack, -99),
+	KEY('k', AsciiPanel.brightYellow, 6),
+	TRIFORCE((char)30, AsciiPanel.brightYellow, 8);
 	
 	private char glyph;
 	private Color color;
+	private int number;
 	
 	public char getGlyph() {
 		return glyph;
@@ -32,9 +34,14 @@ public enum Tile {
 		return color;
 	}
 	
-	Tile(char glyph, Color color){
+	public int getNum() {
+		return number;
+	}
+	
+	Tile(char glyph, Color color, int number){
 		this.glyph = glyph;
 		this.color = color;
+		this.number = number;
 	}
 
 	/**
@@ -53,6 +60,14 @@ public enum Tile {
 		return this != WALL && this != BOUNDS && this != LOCKED_DOOR && this != HIDDEN;
 	}
 	
+	public boolean isBlock() {
+		return this == BLOCK;
+	}
+	
+	public boolean playerPassable() {
+		return this.isGround() && !this.isBlock();
+	}
+	
 	/**
 	 * If the tile is an exit
 	 * @return True of the tile is EXIT
@@ -68,4 +83,14 @@ public enum Tile {
 	public boolean isKey() {
 		return this == KEY;
 	}
+	
+	public static Tile findNum(int num) {
+		for(Tile tile : Tile.values()) {
+			if(num == tile.getNum())
+				return tile;
+		}
+		System.out.println("Couldn't find tile for : " + num);
+		return null;
+	}
+
 }
