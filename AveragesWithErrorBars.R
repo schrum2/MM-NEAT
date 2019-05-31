@@ -6,12 +6,14 @@ library(dplyr)
 
 args = commandArgs(trailingOnly=TRUE)
 
-if (length(args)==0) {
-  stop("Specify name of result directory as command line parameter.", call.=FALSE)
+if (length(args) != 2) {
+  stop("Specify name of result directory and a log prefix as command line parameters.", call.=FALSE)
 } 
 # Set working directory and move into it
 resultDir <- args[1]
 setwd(paste("./",resultDir,sep=""))
+# Get log prefix
+logPrefix <- args[2]
 # Determine the different experimental conditions
 types <- unique(sub("\\d+","",list.files(".",pattern="[a-zA-Z]+\\d+")))
 # Initialize empty data
@@ -22,7 +24,7 @@ for(t in types) {
   directories <- list.files(".",pattern=paste("^",t,"\\d*", sep = ""))
   for(d in directories) {
     # Read each individual file
-    temp <- read.table(file = paste(d,"/RL-",d,"_parents_log.txt", sep = ""), sep = '\t', header = FALSE)
+    temp <- read.table(file = paste(d,"/",logPrefix,"-",d,"_parents_log.txt", sep = ""), sep = '\t', header = FALSE)
     evolutionData <- rbind(evolutionData, data.frame(generation = temp$V1, 
                                        type = paste(t,sep=""),
                                        run = substring(d,nchar(t)+1), # Get the number following the type
