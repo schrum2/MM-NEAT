@@ -54,7 +54,7 @@ public class GANProcess extends Comm {
 			case ZELDA: 
 				ganProcess = new GANProcess(PYTHON_BASE_PATH+"ZeldaGAN"+ File.separator +Parameters.parameters.stringParameter("zeldaGANModel"),
 											Parameters.parameters.integerParameter("GANInputSize"),
-											Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? 4 : 11);
+											Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? 4 : 6);
 				break;
 			}
 			ganProcess.start();

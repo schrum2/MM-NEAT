@@ -32,12 +32,12 @@ BasicGame
     3 > floor monsterSlow
     e > floor passage
     w > wall
-    K > keyPassage
+    K > waterWall
     B > bombWall
     R > nine
     G > ten
     . > floor
-    p > waterWall
+    p > keyPassage
     
 
   InteractionSet

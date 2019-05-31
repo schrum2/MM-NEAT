@@ -244,18 +244,16 @@ public class ZeldaVGLCUtil {
 		switch(tile) {
 		case 'F':
 		case '-':
-			return 0;
 		case 'O':
-			return 2; // Passable
+			return 0; // Passable
 		case 'W':
-		case 'B': 
+		case 'B':
+		case 'I':
 			return 1;
 		case 'P':
 			return 5;
-		case 'I':
-			return 6; // Impassable
 		case 'M':
-			return 7;	// Monster
+			return 2;	// Monster
 		case 'D':
 			return 3;
 		case 'S':
