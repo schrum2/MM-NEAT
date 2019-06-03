@@ -56,6 +56,17 @@ evolutionStats <- evolutionData %>%
   mutate(stderrScore = qt(0.975, df = n - 1)*stdevScore/sqrt(n)) %>%
   mutate(lowScore = avgScore - stderrScore, highScore = avgScore + stderrScore)
 
+#temp <- evolutionStats
+
+# Do comparative t-tests
+#for(t1 in types) {
+#  colName <- paste("betterThan",t1, sep="")
+#  temp <- temp %>%
+#    mutate(!!colName := "Nothing")
+#}
+
+# Look into dcast, melt, and spread
+  
 saveFile <- paste("AVG-",resultDir,args[3],".png",sep="")
 png(saveFile, width=2000, height=1000)
 v <- ggplot(evolutionStats, aes(x = generation, y = avgScore, color = type)) +
