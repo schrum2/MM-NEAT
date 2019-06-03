@@ -59,6 +59,11 @@ for(t in types) {
   
 alteredData <- evolutionData %>% 
   mutate(plotInterval = generation %% 10 == 0) %>%  # Make this a parameter?
+  mutate(typeRunCombo = paste(type,run)) %>%
+  mutate(typeGenCombo = paste(type,generation)) %>%
+  group_by(typeGenCombo) %>%
+  mutate(medianScoreByGeneration = median(score)) %>%
+  ungroup() %>%
   mutate(genF = as.factor(generation)) %>% # Boxplot needs generation as factor
   select(-generation) # Remove numeric generation
   
@@ -70,8 +75,8 @@ f <- function(theData) {
 saveFile <- paste("BW-",resultDir,args[3],".png",sep="")
 png(saveFile, width=2000, height=1000)
 v <- ggplot(alteredData, aes(x = genF, y = score, fill = type)) +
-  geom_line(aes(group = type, color = type)) + #, size = 1.5) + 
-  geom_boxplot(data = f) +
+  geom_line(aes(y = medianScoreByGeneration, color = type, group = type)) + #, size = 1.5) + 
+  geom_boxplot(data = f, width=4.0) + # Filters to only print every so many generations
   #facet_wrap(~type) + # For separate plots
   #ggtitle("INSERT COOL TITLE HERE") +
   ylab("Score") +
