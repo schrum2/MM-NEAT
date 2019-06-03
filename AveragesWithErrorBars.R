@@ -47,6 +47,8 @@ for(t in types) {
   }
 }
 
+maxScore = max(evolutionData$score)
+
 # Extract states: mean, lower confidence bound, upper confidence bound
 evolutionStats <- evolutionData %>%
   group_by(type, generation) %>%
@@ -57,10 +59,11 @@ evolutionStats <- evolutionData %>%
 saveFile <- paste("AVG-",resultDir,args[3],".png",sep="")
 png(saveFile, width=2000, height=1000)
 v <- ggplot(evolutionStats, aes(x = generation, y = avgScore, color = type)) +
-  geom_ribbon(aes(ymin = lowScore, ymax = highScore, fill = type, alpha = 0.05)) +
+  geom_ribbon(aes(ymin = lowScore, ymax = highScore, fill = type), alpha = 0.05) +
   geom_line(size = 1.5) + 
   #facet_wrap(~type) + # For separate plots
   #ggtitle("INSERT COOL TITLE HERE") +
+  coord_cartesian(ylim=c(0,maxScore)) +
   ylab("Average Score") +
   xlab("Generation") +
   theme(
@@ -69,7 +72,7 @@ v <- ggplot(evolutionStats, aes(x = generation, y = avgScore, color = type)) +
     axis.text.x = element_text(size=25, face="bold"),
     axis.title.y = element_text(size=25, face="bold"),
     axis.text.y = element_text(size=25, face="bold"),
-    legend.title = element_text(size=25, face="bold"),
+    legend.title = element_blank(),
     legend.text = element_text(size=25, face="bold"),
     legend.position = c(0.8, 0.2)
   )
