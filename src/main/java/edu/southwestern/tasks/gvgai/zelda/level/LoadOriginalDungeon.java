@@ -24,12 +24,18 @@ public class LoadOriginalDungeon {
 	public static final int ZELDA_ROOM_ROWS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int ZELDA_ROOM_COLUMNS = 16;
 	private static final boolean ROUGE_DEBUG = true;
-	private static String ORIGINAL_FILE = "tloz2_1_flip";
+	private static String ORIGINAL_FILE = "tloz3_1_flip";
 	private static String GRAPH_FILE = "data/VGLC/Zelda/Graph Processed/" + ORIGINAL_FILE + ".dot";
 	private static String LEVEL_PATH = "data/VGLC/Zelda/Processed/" + ORIGINAL_FILE;
 	private static HashMap<String, Stack<Pair<String, String>>> directional;
-	                      // Node name  direct, whereTo
-	public static void main(String[] args) throws FileNotFoundException {
+						  // Node name        direct, whereTo
+	
+	// Some levels have additional parts that aren't included that have keys in those parts leading to doors that can't
+	// be opened since you can't get a key for it. So keep track of the number of keys to balance it out later
+	private static int numKeys = 0;
+	private static int numDoors = 0;
+	                      
+	public static void main(String[] args) throws Exception {
 		Dungeon dungeon = new Dungeon(); // Make new dungeon instance
 		directional = new HashMap<>(); // Make directional hashmap
 		HashMap<Integer, String> numberToString = new HashMap<>(); // Map the numbers to strings (node name)
@@ -39,7 +45,38 @@ public class LoadOriginalDungeon {
 		loadGraph(dungeon, numberToString); // Load the graph representation to dungeon
 		System.out.println("Generating 2D map");
 		dungeon.setLevelThere(generateLevelThere(dungeon, numberToString)); // Generate the 2D map of the dungeon
+		System.out.println("Num Keys : " + numKeys + " | numDoors : " + numDoors / 2);
+		numDoors /= 2;
+		balanceKeyToDoors(dungeon, numberToString);
 		RougelikeApp.startDungeon(dungeon, ROUGE_DEBUG); // start game
+	}
+
+	/**
+	 * If the number of locked doors (by half) exceed the number of keys, add keys to levels that initially don't have keys
+	 * @param dungeon
+	 * @param numberToString 
+	 */
+	private static void balanceKeyToDoors(Dungeon dungeon, HashMap<Integer, String> numberToString) {
+		Random r = new Random();
+
+		while(numKeys < numDoors) {
+			int i = r.nextInt(numberToString.size() - 1);
+			Node currentNode = dungeon.getNode(numberToString.get(i));
+			if(!haveKey(currentNode)) {
+				ZeldaDungeon.placeRandomKey(currentNode.level.intLevel);
+				numKeys++;
+				System.out.println("Added key! Now has : " + numKeys + " keys");
+			}
+		}
+	}
+
+	private static boolean haveKey(Node currentNode) {
+		List<List<Integer>> level = currentNode.level.intLevel;
+		for(List<Integer> row : level)
+			for(Integer cell : row)
+				if(cell == Tile.KEY.getNum() || cell == Tile.TRIFORCE.getNum())
+					return true;
+		return false;
 	}
 
 	/**
@@ -47,11 +84,16 @@ public class LoadOriginalDungeon {
 	 * @param dungeon Dungeon instance
 	 * @param numberToString Number to string representation
 	 * @return 2D String array of where the levels are
+	 * @throws Exception 
 	 */
-	private static String[][] generateLevelThere(Dungeon dungeon, HashMap<Integer, String> numberToString) {
+	private static String[][] generateLevelThere(Dungeon dungeon, HashMap<Integer, String> numberToString) throws Exception {
 		String[][] levelThere = new String[numberToString.size()][numberToString.size()];
 		
 		String node = dungeon.getCurrentlevel().name; // Starting point of recursive funciton
+		
+		if(node == null)
+			throw new Exception("The Dungeon's current level wasn't set, make sure that it is set in the .dot file.");
+		
 		
 		// Visited stack to keep track of where we have been
 		Stack<String> visited = new Stack<>();
@@ -98,7 +140,8 @@ public class LoadOriginalDungeon {
 				break;
 			default: return;
 			}
-			levelThere[y][x] = pair.t2; // Place node
+			if(levelThere[y][x] == null)
+				levelThere[y][x] = pair.t2; // Place node
 			visited.push(pair.t2); // Push the node to visited
 			recursiveLevelThere(levelThere, visited); // keep on truckin
 
@@ -219,13 +262,15 @@ public class LoadOriginalDungeon {
 				System.out.println("Adding enemy | " + value);
 				break;
 			case "k": // Room has a key in it
+				numKeys++;
 				ZeldaDungeon.placeRandomKey(node.level.intLevel);
 				break;
 			case "s": // Room is starting point
 				dungeon.setCurrentLevel(nodeName);
 				break;
 			case "t":
-				addTriforce(node);
+				if(values.length == 1)
+					addTriforce(node);
 				break;
 			}
 		}
@@ -304,6 +349,7 @@ public class LoadOriginalDungeon {
 			case "l": // Soft lock, treat as open door for now
 				setLevels(direction, node, Tile.DOOR);
 			case "k": // Locked door
+				numDoors++;
 				setLevels(direction, node, Tile.LOCKED_DOOR);
 				break;
 			case "b": // Hidden door

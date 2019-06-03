@@ -85,6 +85,7 @@ public enum Tile {
 	}
 	
 	public static Tile findNum(int num) {
+		if(num == 2) return Tile.FLOOR; //Enemy
 		for(Tile tile : Tile.values()) {
 			if(num == tile.getNum())
 				return tile;
