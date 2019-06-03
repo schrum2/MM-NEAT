@@ -3,7 +3,9 @@ package edu.southwestern.tasks.gvgai.zelda.level;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -15,7 +17,11 @@ import org.apache.commons.lang.StringUtils;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.search.AStarSearch;
+import edu.southwestern.util.search.Heuristic;
+import edu.southwestern.util.search.Search;
 import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
 
@@ -24,11 +30,13 @@ public class LoadOriginalDungeon {
 	public static final int ZELDA_ROOM_ROWS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int ZELDA_ROOM_COLUMNS = 16;
 	private static final boolean ROUGE_DEBUG = true;
-	private static String ORIGINAL_FILE = "tloz3_1_flip";
+	private static String ORIGINAL_FILE = "tloz1_1_flip";
 	private static String GRAPH_FILE = "data/VGLC/Zelda/Graph Processed/" + ORIGINAL_FILE + ".dot";
 	private static String LEVEL_PATH = "data/VGLC/Zelda/Processed/" + ORIGINAL_FILE;
 	private static HashMap<String, Stack<Pair<String, String>>> directional;
 						  // Node name        direct, whereTo
+	private static int gX, gY;
+	private static String gName;
 	
 	// Some levels have additional parts that aren't included that have keys in those parts leading to doors that can't
 	// be opened since you can't get a key for it. So keep track of the number of keys to balance it out later
@@ -36,6 +44,37 @@ public class LoadOriginalDungeon {
 	private static int numDoors = 0;
 	                      
 	public static void main(String[] args) throws Exception {
+		Dungeon dungeon = loadOriginalDungeon(ORIGINAL_FILE);
+		
+		Point goalPoint = dungeon.getCoords(gName);
+		int gDX = goalPoint.x;
+		int gDY = goalPoint.y;
+		
+		Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
+
+			@Override
+			public double h(ZeldaState s) {
+				int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
+				int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY);
+				return i + j; 
+			}
+		};
+		
+		ZeldaState initial = new ZeldaState(5, 5, 0, 9999, dungeon);
+		
+		Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
+		ArrayList<GridAction> result = search.search(initial);
+			
+		System.out.println(result);
+		for(GridAction a : result)
+			System.out.println(a.getD().toString());
+		
+		
+//		RougelikeApp.startDungeon(dungeon, ROUGE_DEBUG); // start game
+	}
+	
+	public static Dungeon loadOriginalDungeon(String name) throws Exception {
+		ORIGINAL_FILE = name;
 		Dungeon dungeon = new Dungeon(); // Make new dungeon instance
 		directional = new HashMap<>(); // Make directional hashmap
 		HashMap<Integer, String> numberToString = new HashMap<>(); // Map the numbers to strings (node name)
@@ -48,7 +87,7 @@ public class LoadOriginalDungeon {
 		System.out.println("Num Keys : " + numKeys + " | numDoors : " + numDoors / 2);
 		numDoors /= 2;
 		balanceKeyToDoors(dungeon, numberToString);
-		RougelikeApp.startDungeon(dungeon, ROUGE_DEBUG); // start game
+		return dungeon;
 	}
 
 	/**
@@ -282,6 +321,9 @@ public class LoadOriginalDungeon {
 		int y = level.size() / 2;
 		int x = level.get(y).size() / 2;
 		level.get(y).set(x, Tile.TRIFORCE.getNum());
+		gX = x;
+		gY = y;
+		gName = node.name;
 	}
 
 	/**

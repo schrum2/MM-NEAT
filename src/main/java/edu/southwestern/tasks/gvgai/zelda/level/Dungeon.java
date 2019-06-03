@@ -87,6 +87,28 @@ public class Dungeon {
 		return next.t2;
 	}
 	
+	public Point getCoords(String name) {
+		if(!levels.containsKey(name)) return null;
+		
+		for(int y = 0; y < levelThere.length; y++)
+			for(int x = 0; x < levelThere[y].length; x++)
+				if(name == levelThere[y][x])
+					return new Point(x, y);
+		
+		return null;
+	}
+	
+	public Pair<String, Point> getNextLevel(Node node, String exitPoint) {
+		System.out.println("Exit point   " + exitPoint);
+		System.out.println("Node : " + node);
+		HashMap<String, Pair<String, Point>> adjacency = node.adjacency;
+		return adjacency.get(exitPoint);
+	}
+	
+	public Point getCoords(Node node) {
+		return getCoords(node.name);
+	}
+	
 	public Node getCurrentlevel() {
 		return levels.get(currentLevel);
 	}
@@ -106,6 +128,12 @@ public class Dungeon {
 					r[y][x] = null;
 
 		return r;
+	}
+	
+	public Node getNodeAt(int x, int y) {
+		if(x < 0 || x >= levelThere[0].length || y < 0 || y >= levelThere.length) return null;
+		
+		return getNode(levelThere[y][x]);
 	}
 	
 	public class Node{
