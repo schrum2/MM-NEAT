@@ -20,7 +20,7 @@ logPrefix <- args[2]
 # Add 1 to skip generations, each score takes up four columns, but the third is the max
 scoreIndex <- 1 + (strtoi(args[3], base = 0L) * 4) + 3
 # Determine the different experimental conditions
-types <- unique(sub("\\d+","",list.files(".",pattern="[a-zA-Z]+\\d+")))
+types <- unique(sub("\\d+$","",list.files(".",pattern="[a-zA-Z]+\\d+$")))
 # Remove any that were excluded at the command line
 index = 4
 while(index <= length(args)) {
