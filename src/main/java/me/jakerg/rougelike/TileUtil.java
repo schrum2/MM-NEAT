@@ -13,9 +13,15 @@ public class TileUtil {
 		// Some of the operations are reversed because of how the level was made
 		for(int i = 0; i < tiles.length; i++) {
 			for(int j = 0; j < tiles[i].length; j++) {
-				tiles[i][j] = mapIntToTile(level.get(j).get(i));
+				try {
+					tiles[i][j] = mapIntToTile(level.get(j).get(i));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
+		
 		return tiles;
 	}
 	
@@ -47,17 +53,15 @@ public class TileUtil {
 	 * Based on the block return the corresponding Tile
 	 * @param block Int representing the block
 	 * @return Tile of block
+	 * @throws Exception 
 	 */
-	private static Tile mapIntToTile(int block) {
-		switch(block) {
-		case 0: return Tile.FLOOR;
-		case 1: return Tile.WALL;
-		case 3: return Tile.DOOR;
-		case 4: return Tile.EXIT;
-		case 5: System.out.println("Got a hidden door here"); return Tile.LOCKED_DOOR;
-		case 6: return Tile.KEY;
-		case 7: return Tile.HIDDEN;
-		default: return Tile.FLOOR;
-		}
+	private static Tile mapIntToTile(int block) throws Exception {
+		if(block == 2) return Tile.FLOOR;
+		Tile tile =  Tile.findNum(block);
+		if(tile == null)
+			throw new Exception("No tile for block : " + block);
+		if(tile.equals(Tile.KEY))
+			System.out.println("Key found!!");
+		return tile;
 	}
 }
