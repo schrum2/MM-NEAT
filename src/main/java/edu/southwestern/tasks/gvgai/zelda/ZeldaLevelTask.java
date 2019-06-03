@@ -16,7 +16,10 @@ import gvgai.core.vgdl.VGDLRegistry;
 public abstract class ZeldaLevelTask<T> extends NoisyLonerTask<T> {
 
 	public ZeldaLevelTask() {
-		MMNEAT.registerFitnessFunction("MaxDistance");
+		MMNEAT.registerFitnessFunction("MaxDistanceSouth");
+		MMNEAT.registerFitnessFunction("MaxDistanceNorth");
+		MMNEAT.registerFitnessFunction("MaxDistanceEast");
+		MMNEAT.registerFitnessFunction("MaxDistanceWest");
 		
 		if(CommonConstants.watch) {
 			VGDLFactory.GetInstance().init(); // Get an instant of VGDL Factor and initialize the characters cache
@@ -27,7 +30,7 @@ public abstract class ZeldaLevelTask<T> extends NoisyLonerTask<T> {
 	@Override
 	public int numObjectives() {
 		// longest shortest path distance of zelda level
-		return 1;  
+		return 4;  
 	}
 	
 	public int numOtherScores() {
@@ -47,13 +50,16 @@ public abstract class ZeldaLevelTask<T> extends NoisyLonerTask<T> {
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		List<List<Integer>> room = getZeldaLevelFromGenotype(individual);
 		int[][] level = ZeldaLevelUtil.listToArray(room);
-		double maxDistance = ZeldaLevelUtil.findMaxDistanceOfLevel(level, 8, 8);
+		double maxDistanceS = ZeldaLevelUtil.findMaxDistanceOfLevel(level, 8, 8);
+		double maxDistanceN = ZeldaLevelUtil.findMaxDistanceOfLevel(level, 8, 2);
+		double maxDistanceW = ZeldaLevelUtil.findMaxDistanceOfLevel(level, 2, 6);
+		double maxDistanceE = ZeldaLevelUtil.findMaxDistanceOfLevel(level, 13, 6);
 		
 		if(CommonConstants.watch) {
 			GameBundle bundle = getBundleFromGenotype(individual);
 			GVGAIUtil.runOneGame(bundle, true);
 		}
 		
-		return new Pair<double[], double[]>(new double[]{maxDistance}, new double[0]);
+		return new Pair<double[], double[]>(new double[]{maxDistanceS, maxDistanceN, maxDistanceE, maxDistanceW}, new double[0]);
 	}
 }

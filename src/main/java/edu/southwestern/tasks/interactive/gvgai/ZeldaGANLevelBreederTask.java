@@ -166,6 +166,9 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		int size = Integer.parseInt(latentSize);
 		Parameters.parameters.setInteger("GANInputSize", size);
 
+		boolean fixed = model.startsWith("ZeldaFixed");
+		Parameters.parameters.setBoolean("zeldaGANUsesOriginalEncoding", !fixed);
+		
 		GANProcess.terminateGANProcess();
 		// Because Python process was terminated, latentVectorLength will reinitialize with the new params
 		int newLength = GANProcess.latentVectorLength(); // new model

@@ -9,6 +9,7 @@ import me.jakerg.rougelike.CreatureFactory;
 import me.jakerg.rougelike.DungeonBuilder;
 import me.jakerg.rougelike.Item;
 import me.jakerg.rougelike.Log;
+import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.World;
 
 /**
@@ -49,6 +50,10 @@ public class DungeonScreen implements Screen {
         player = cf.newDungeonPlayer(dungeon);
         player.x = 5; // Start in middle of dungeon
         player.y = 5;
+        if(RougelikeApp.DEBUG) {
+        	player.setBombs(9999);
+        	player.setHP(20);
+        }
         // Set dungeon builder along with current world
         dungeonBuilder = new DungeonBuilder(dungeon, player, log);
         player.setDungeonBuilder(dungeonBuilder);
@@ -91,6 +96,10 @@ public class DungeonScreen implements Screen {
         case KeyEvent.VK_J: player.moveBy( 0, 1); break;
         case KeyEvent.VK_B: player.placeBomb(); break;
 		}
+		
+		if(player.win()) return new WinScreen();
+		
+		if(player.hp() <= 0) return new LoseScreen();
 	  return this;
 	}
 

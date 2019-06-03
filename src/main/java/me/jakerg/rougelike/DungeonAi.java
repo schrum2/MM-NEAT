@@ -31,7 +31,7 @@ public class DungeonAi extends CreatureAi{
 	 */
 	public void onEnter(int x, int y, Tile tile) {		
 		// If the tile the character is trying to move to group, then move character at point
-		if(tile.isGround()) {
+		if(tile.playerPassable()) {
 			creature.x = x;
 			creature.y = y;
 		} 
@@ -62,6 +62,9 @@ public class DungeonAi extends CreatureAi{
 			creature.numKeys++;
 			creature.getWorld().dig(x, y);
 			creature.doAction("You picked up a key");
+		}
+		if(tile.equals(Tile.TRIFORCE)) {
+			creature.setWin(true);
 		}
 	}
 
