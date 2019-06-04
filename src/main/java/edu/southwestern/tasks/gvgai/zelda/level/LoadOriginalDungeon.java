@@ -60,7 +60,7 @@ public class LoadOriginalDungeon {
 			}
 		};
 		
-		ZeldaState initial = new ZeldaState(5, 5, 0, 9999, dungeon);
+		ZeldaState initial = new ZeldaState(8, 8, 0, 9999, dungeon);
 		
 		Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
 		ArrayList<GridAction> result = search.search(initial);

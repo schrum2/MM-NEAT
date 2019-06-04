@@ -3,10 +3,13 @@ package edu.southwestern.tasks.gvgai.zelda.level;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction.DIRECTION;
 import edu.southwestern.util.search.Action;
 import edu.southwestern.util.search.State;
@@ -21,8 +24,9 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 	public int dY;
 	private int numKeys = 0;
 	private int numBombs = 0;
-	private HashMap<String, List<String>> unlocked;
-	private HashMap<String, List<String>> bombed;
+	private HashMap<String, Set<String>> unlocked;
+	private HashMap<String, Set<String>> bombed;
+	private HashMap<String, Set<Point>> keys;
 	private Dungeon dungeon;
 	private Node currentNode;
 	
@@ -33,12 +37,13 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		this.numKeys = 0;
 		unlocked = new HashMap<>();
 		bombed = new HashMap<>();
+		keys = new HashMap<>();
 		this.dungeon = dungeon;
 		currentNode = dungeon.getCurrentlevel();
 	}
 	
 	public ZeldaState(int x, int y, int numKeys, int numBombs, Dungeon dungeon, String node,
-			HashMap<String, List<String>> unlocked, HashMap<String, List<String>> bombed) {
+			HashMap<String, Set<String>> unlocked, HashMap<String, Set<String>> bombed, HashMap<String, Set<Point>> keys) {
 		this.x = x;
 		this.y = y;
 		this.numKeys = numKeys;
@@ -47,6 +52,7 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		this.currentNode = dungeon.getNode(node);
 		this.unlocked = unlocked;
 		this.bombed = bombed;
+		this.keys = keys;
 		Point p = dungeon.getCoords(node);
 		this.dX = p.x;
 		this.dY = p.y;
@@ -72,50 +78,54 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 			Tile tile = Tile.findNum(currentNode.level.intLevel.get(newY).get(newX));
 			if(tile.equals(Tile.HIDDEN)) {
 				if(!bombed.containsKey(currentNode.name))
-					bombed.put(currentNode.name, new LinkedList<>());
+					bombed.put(currentNode.name, new HashSet<>());
 				
-				if(!bombed.get(currentNode.name).contains(a.direction.toString())) {
-					if(numBombs < 0) return null;
-					
-					numBombs--;
-					
-					bombed.get(currentNode.name).add(a.direction.toString());
-					
-					if(!bombed.containsKey(newRoom.t1))
-						bombed.put(newRoom.t1, new LinkedList<>());
-					
-					if(!bombed.get(newRoom.t1).contains(oppositeDirection(a.direction).toString()))
-						bombed.get(newRoom.t1).add(oppositeDirection(a.direction).toString());
-				}
+				if(numBombs < 0) return null;
+				
+				numBombs--;
+				
+				bombed.get(currentNode.name).add(a.direction.toString());
+				
+				if(!bombed.containsKey(newRoom.t1))
+					bombed.put(newRoom.t1, new HashSet<>());
+				
+				bombed.get(newRoom.t1).add(oppositeDirection(a.direction).toString());
 				
 			} else if(tile.equals(Tile.LOCKED_DOOR)) {
 				if(!unlocked.containsKey(currentNode.name))
-					unlocked.put(currentNode.name, new LinkedList<>());
+					unlocked.put(currentNode.name, new HashSet<>());
 				
-				if(!unlocked.get(currentNode.name).contains(a.direction.toString())) {
-					if(numKeys < 0) return null;
-					numKeys--;
+				if(numKeys < 0) return null;
+				numKeys--;
 
-					unlocked.get(currentNode.name).add(a.direction.toString());
+				unlocked.get(currentNode.name).add(a.direction.toString());
 
-					if(!unlocked.containsKey(newRoom.t1))
-						unlocked.put(newRoom.t1, new LinkedList<>());
+				if(!unlocked.containsKey(newRoom.t1))
+					unlocked.put(newRoom.t1, new HashSet<>());
 					
-					if(!unlocked.get(newRoom.t1).contains(oppositeDirection(a.direction).toString()))
-						unlocked.get(newRoom.t1).add(oppositeDirection(a.direction).toString());
-				}
+				unlocked.get(newRoom.t1).add(oppositeDirection(a.direction).toString());
+				
 
 			}
-			if(dungeon.getNode(newRoom.t1).level.intLevel.get(newRoom.t2.y).get(newRoom.t2.x).equals(Tile.KEY.getNum()))
-				numKeys++;
-			return new ZeldaState(newRoom.t2.x, newRoom.t2.y, numKeys, numBombs, dungeon, newRoom.t1, unlocked, bombed);
+			if(dungeon.getNode(newRoom.t1).level.intLevel.get(newRoom.t2.y).get(newRoom.t2.x).equals(Tile.KEY.getNum())) {
+				pickUpKey(newRoom.t1, newRoom.t2);
+			}
+				
+			return new ZeldaState(newRoom.t2.x, newRoom.t2.y, numKeys, numBombs, dungeon, newRoom.t1, unlocked, bombed, keys);
 		} else {
 			if(currentNode.level.intLevel.get(newY).get(newX).equals(Tile.KEY.getNum()))
-				numKeys++;
-			return new ZeldaState(newX, newY, numKeys, numBombs, dungeon, currentNode.name, unlocked, bombed);
+				pickUpKey(currentNode.name, new Point(newX, newY));
+			return new ZeldaState(newX, newY, numKeys, numBombs, dungeon, currentNode.name, unlocked, bombed, keys);
 		}
 			
 		
+	}
+
+	private void pickUpKey(String name, Point point) {
+		if(!keys.containsKey(name))
+			keys.put(name, new HashSet<>());
+		
+		keys.get(name).add(point);
 	}
 
 	private Object oppositeDirection(DIRECTION direction) {
@@ -164,8 +174,11 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((bombed == null) ? 0 : bombed.hashCode());
+		result = prime * result + ((currentNode == null) ? 0 : currentNode.hashCode());
 		result = prime * result + dX;
 		result = prime * result + dY;
+		result = prime * result + ((dungeon == null) ? 0 : dungeon.hashCode());
+		result = prime * result + ((keys == null) ? 0 : keys.hashCode());
 		result = prime * result + numBombs;
 		result = prime * result + numKeys;
 		result = prime * result + ((unlocked == null) ? 0 : unlocked.hashCode());
@@ -177,48 +190,50 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (!(obj instanceof ZeldaState)) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		ZeldaState other = (ZeldaState) obj;
 		if (bombed == null) {
-			if (other.bombed != null) {
+			if (other.bombed != null)
 				return false;
-			}
-		} else if (!bombed.equals(other.bombed)) {
+		} else if (!bombed.equals(other.bombed))
 			return false;
-		}
-		if (dX != other.dX) {
+		if (currentNode == null) {
+			if (other.currentNode != null)
+				return false;
+		} else if (!currentNode.equals(other.currentNode))
 			return false;
-		}
-		if (dY != other.dY) {
+		if (dX != other.dX)
 			return false;
-		}
-		if (numBombs != other.numBombs) {
+		if (dY != other.dY)
 			return false;
-		}
-		if (numKeys != other.numKeys) {
+		if (dungeon == null) {
+			if (other.dungeon != null)
+				return false;
+		} else if (!dungeon.equals(other.dungeon))
 			return false;
-		}
+		if (keys == null) {
+			if (other.keys != null)
+				return false;
+		} else if (!keys.equals(other.keys))
+			return false;
+		if (numBombs != other.numBombs)
+			return false;
+		if (numKeys != other.numKeys)
+			return false;
 		if (unlocked == null) {
-			if (other.unlocked != null) {
+			if (other.unlocked != null)
 				return false;
-			}
-		} else if (!unlocked.equals(other.unlocked)) {
+		} else if (!unlocked.equals(other.unlocked))
 			return false;
-		}
-		if (x != other.x) {
+		if (x != other.x)
 			return false;
-		}
-		if (y != other.y) {
+		if (y != other.y)
 			return false;
-		}
 		return true;
 	}
 
