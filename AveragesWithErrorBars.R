@@ -81,17 +81,20 @@ evolutionStats <- evolutionData %>%
   mutate(stderrScore = qt(0.975, df = n - 1)*stdevScore/sqrt(n)) %>%
   mutate(lowScore = avgScore - stderrScore, highScore = avgScore + stderrScore)
 
-# Look into dcast, melt, and spread
+# Configure space at bottom for t-test data
+spaceForTests <- maxScore / 6
+spacePerComparison <- spaceForTests / length(comparisonList)
   
 saveFile <- paste("AVG-",resultDir,args[3],".png",sep="")
 png(saveFile, width=2000, height=1000)
 v <- ggplot(evolutionStats, aes(x = generation, y = avgScore, color = type)) +
   geom_ribbon(aes(ymin = lowScore, ymax = highScore, fill = type), alpha = 0.05) +
   geom_line(size = 1.5) + 
-  geom_point(data = testData, aes(x = generation, y = if_else(significant, -10000*match(type, comparisonList), -100000), size = 5, color = type, shape = type), alpha = 0.5, show.legend = FALSE) +
+  geom_point(data = testData, aes(x = generation, y = if_else(significant, -spacePerComparison*match(type, comparisonList), -100000), size = 5, color = type, shape = type), alpha = 0.5, show.legend = FALSE) +
   #facet_wrap(~type) + # For separate plots
   #ggtitle("INSERT COOL TITLE HERE") +
-  coord_cartesian(ylim=c(-60000,maxScore)) +
+  coord_cartesian(ylim=c(-spaceForTests,maxScore)) +
+  guides(size = FALSE, alpha = FALSE) +
   ylab("Average Score") +
   xlab("Generation") +
   theme(
