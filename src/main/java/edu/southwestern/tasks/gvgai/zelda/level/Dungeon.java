@@ -16,6 +16,8 @@ public class Dungeon {
 	private HashMap<String, Node> levels;
 	private String currentLevel;
 	private String[][] levelThere;
+	private String goal;
+	private Point goalPoint;
 	
 	public Dungeon() {
 		levels = new HashMap<>();
@@ -143,6 +145,22 @@ public class Dungeon {
 		return getNode(levelThere[y][x]);
 	}
 	
+	public void setGoal(String g) {
+		this.goal = g;
+	}
+	
+	public String getGoal() {
+		return goal;
+	}
+	
+	public Point getGoalPoint() {
+		return goalPoint;
+	}
+
+	public void setGoalPoint(Point goalPoint) {
+		this.goalPoint = goalPoint;
+	}
+
 	public class Node{
 		public Level level;
 		public String name;

@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction.DIRECTION;
@@ -23,17 +24,15 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 	public int dX;
 	public int dY;
 	private int numKeys = 0;
-	private int numBombs = 0;
 	private HashMap<String, Set<String>> unlocked;
 	private HashMap<String, Set<String>> bombed;
 	private HashMap<String, Set<Point>> keys;
 	private Dungeon dungeon;
 	private Node currentNode;
 	
-	public ZeldaState(int x, int y, int numKeys, int numBombs, Dungeon dungeon) {
+	public ZeldaState(int x, int y, int numKeys, Dungeon dungeon) {
 		this.x = x;
 		this.y = y;
-		this.numBombs = 999999;
 		this.numKeys = 0;
 		unlocked = new HashMap<>();
 		bombed = new HashMap<>();
@@ -45,12 +44,11 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		this.dY = p.y;
 	}
 	
-	public ZeldaState(int x, int y, int numKeys, int numBombs, Dungeon dungeon, String node,
+	public ZeldaState(int x, int y, int numKeys, Dungeon dungeon, String node,
 			HashMap<String, Set<String>> unlocked, HashMap<String, Set<String>> bombed, HashMap<String, Set<Point>> keys) {
 		this.x = x;
 		this.y = y;
 		this.numKeys = numKeys;
-		this.numBombs = numBombs;
 		this.dungeon = dungeon;
 		this.currentNode = dungeon.getNode(node);
 		this.unlocked = unlocked;
@@ -59,13 +57,15 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		Point p = dungeon.getCoords(node);
 		this.dX = p.x;
 		this.dY = p.y;
+		if(currentNode.level.intLevel.get(y).get(x).equals(Tile.KEY.getNum()))
+			pickUpKey(node, new Point(x, y));
 	}
 
 	@Override
 	public State<ZeldaState.GridAction> getSuccessor(GridAction a) {
 		int newX = x;
 		int newY = y;
-		String nextRoom;
+		String nextRoom = null;
 		switch(a.direction) {
 		case UP:
 			newY -= 1;
@@ -79,8 +79,9 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		case RIGHT:
 			newX += 1;
 			break;
+		default:
+			assert false : "Illegal action! " + a;
 		}
-		
 		
 		Pair<String, Point> newRoom = dungeon.getNextLevel(currentNode, new Point(newX, newY).toString());
 		if(newRoom != null) {
@@ -90,54 +91,53 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 				if(!bombed.containsKey(currentNode.name))
 					bombed.put(currentNode.name, new HashSet<>());
 				
-				if(numBombs <= 0) return null;
-				
-				numBombs--;
-				
 				bombed.get(currentNode.name).add(a.direction.toString());
 				
 				if(!bombed.containsKey(newRoom.t1))
 					bombed.put(newRoom.t1, new HashSet<>());
 				
 				bombed.get(newRoom.t1).add(oppositeDirection(a.direction).toString());
-				
 			} else if(tile.equals(Tile.LOCKED_DOOR)) {
-				if(!unlocked.containsKey(currentNode.name))
-					unlocked.put(currentNode.name, new HashSet<>());
-				
-				if(numKeys <= 0) return null;
-				numKeys--;
-
-				unlocked.get(currentNode.name).add(a.direction.toString());
-
-				if(!unlocked.containsKey(newRoom.t1))
-					unlocked.put(newRoom.t1, new HashSet<>());
+				if(unlocked.containsKey(currentNode.name) && 
+						unlocked.get(currentNode.name).contains(a.direction.toString())) {
+					System.out.println("WHEEEEE");
+				} else if(numKeys > 0) {
+					if(!unlocked.containsKey(currentNode.name))
+						unlocked.put(currentNode.name, new HashSet<>());
 					
-				unlocked.get(newRoom.t1).add(oppositeDirection(a.direction).toString());
+					numKeys--;
 
+					unlocked.get(currentNode.name).add(a.direction.toString());
+
+					if(!unlocked.containsKey(newRoom.t1))
+						unlocked.put(newRoom.t1, new HashSet<>());
+						
+					unlocked.get(newRoom.t1).add(oppositeDirection(a.direction).toString());
+				} else return null;
+					
 			}
+
 			newX = newRoom.t2.x;
 			newY = newRoom.t2.y;
 			nextRoom = newRoom.t1;
 			if(dungeon.getNode(newRoom.t1).level.intLevel.get(newRoom.t2.y).get(newRoom.t2.x).equals(Tile.KEY.getNum())) {
 				pickUpKey(newRoom.t1, newRoom.t2);
 			}
-
+			
 		} else {
 			System.out.println("No new room");
 			nextRoom = currentNode.name;
-			if(currentNode.level.intLevel.get(newY).get(newX).equals(Tile.KEY.getNum()))
-				pickUpKey(currentNode.name, new Point(newX, newY));
-
 		}
 		
 		HashMap<String, Set<String>> newUnlocked = getNewHashMapString(unlocked);
 		HashMap<String, Set<String>> newBombed = getNewHashMapString(bombed);
 		HashMap<String, Set<Point>> newKeys = getNewHashMapPoint(keys);
 		
-		ZeldaState zs =  new ZeldaState(newX, newY, numKeys, numBombs, dungeon, nextRoom, 
+		ZeldaState zs;
+		
+		zs = new ZeldaState(newX, newY, numKeys, dungeon, nextRoom, 
 				newUnlocked, newBombed, newKeys);
-
+		
 		System.out.println("-----------------------");
 		System.out.print(this);
 		System.out.print(": " + a.direction);
@@ -180,8 +180,11 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 	private void pickUpKey(String name, Point point) {
 		if(!keys.containsKey(name))
 			keys.put(name, new HashSet<>());
-		
-		keys.get(name).add(point);
+		else if(!keys.get(name).contains(point)) {
+			numKeys++;
+			keys.get(name).add(point);
+		}
+
 	}
 
 	/**
@@ -211,13 +214,15 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 			GridAction possible = new GridAction(a);
 			ZeldaState result = (ZeldaState) getSuccessor(possible);
 			if(result == null) continue;
-			List<List<Integer>> level = result.currentNode.level.intLevel;
-			if(result.x >= 0 && result.x < level.get(0).size() && result.y >= 0 && result.y < level.size())
-				if(Tile.findNum(level.get(result.y).get(result.x)).playerPassable()) {
-					System.out.println("\t\t-----------------TILE : " + level.get(result.y).get(result.x));
-					legal.add(possible);
-				}
-
+			if(result != null) {
+				List<List<Integer>> level = result.currentNode.level.intLevel;
+				if(result.x >= 0 && result.x < level.get(0).size() && result.y >= 0 && result.y < level.size())
+					if(Tile.findNum(level.get(result.y).get(result.x)).playerPassable()) {
+						System.out.println("\t\t-----------------TILE : " + level.get(result.y).get(result.x));
+						legal.add(possible);
+						
+					}	
+			}
 				
 		}
 		return legal;
@@ -243,7 +248,6 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		result = prime * result + dY;
 		result = prime * result + ((dungeon == null) ? 0 : dungeon.hashCode());
 		result = prime * result + ((keys == null) ? 0 : keys.hashCode());
-		result = prime * result + numBombs;
 		result = prime * result + numKeys;
 		result = prime * result + ((unlocked == null) ? 0 : unlocked.hashCode());
 		result = prime * result + x;
@@ -280,8 +284,6 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 				return false;
 		} else if (!keys.equals(other.keys))
 			return false;
-		if (numBombs != other.numBombs)
-			return false;
 		if (numKeys != other.numKeys)
 			return false;
 		if (unlocked == null) {
@@ -317,11 +319,19 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 			}
 			return false;
 		}
+		
+		public String toString() {
+			return direction.toString();
+		}
 	}
 	
 	public String toString() {
 		return "Level: " + currentNode.name  + " (" + x + ", " + y + ")" + 
-				numKeys + "x Keys;" + numBombs + "x Bombs";
+				numKeys + "x Keys;";
+	}
+
+	public Dungeon getDungeon() {
+		return dungeon;
 	}
 
 }
