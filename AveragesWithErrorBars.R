@@ -48,6 +48,31 @@ for(t in types) {
 }
 
 maxScore = max(evolutionData$score)
+maxGeneration = max(evolutionData$generation)
+
+# Do comparative t-tests
+testData <- data.frame(generation = integer(), p = double(), significant = logical())
+comparisonList <- list()
+
+for(i in seq(1,length(types)-1,1)) {
+  for(j in seq(i+1,length(types),1)) {
+    t1 = types[i]
+    t2 = types[j]
+    typeName <- paste(t1,"Vs",t2, sep="")
+    comparisonList <- append(comparisonList, typeName)
+    for(g in seq(1,maxGeneration,1)) {
+      t1Data <- evolutionData %>% filter(generation == g, type == t1) %>% select(score)
+      t2Data <- evolutionData %>% filter(generation == g, type == t2) %>% select(score)
+      if(length(t1Data$score) > 1 && length(t2Data$score)) {
+        tresult <- t.test(t1Data, t2Data)
+        testData <- rbind(testData, data.frame(type = typeName,
+                                               generation = g,
+                                               p = tresult[['p.value']],
+                                               significant = tresult[['p.value']] < 0.05))
+      }
+    }
+  }
+}
 
 # Extract states: mean, lower confidence bound, upper confidence bound
 evolutionStats <- evolutionData %>%
@@ -56,15 +81,6 @@ evolutionStats <- evolutionData %>%
   mutate(stderrScore = qt(0.975, df = n - 1)*stdevScore/sqrt(n)) %>%
   mutate(lowScore = avgScore - stderrScore, highScore = avgScore + stderrScore)
 
-#temp <- evolutionStats
-
-# Do comparative t-tests
-#for(t1 in types) {
-#  colName <- paste("betterThan",t1, sep="")
-#  temp <- temp %>%
-#    mutate(!!colName := "Nothing")
-#}
-
 # Look into dcast, melt, and spread
   
 saveFile <- paste("AVG-",resultDir,args[3],".png",sep="")
@@ -72,9 +88,10 @@ png(saveFile, width=2000, height=1000)
 v <- ggplot(evolutionStats, aes(x = generation, y = avgScore, color = type)) +
   geom_ribbon(aes(ymin = lowScore, ymax = highScore, fill = type), alpha = 0.05) +
   geom_line(size = 1.5) + 
+  geom_point(data = testData, aes(x = generation, y = if_else(significant, -10000*match(type, comparisonList), -100000), size = 5, color = type, shape = type), alpha = 0.5, show.legend = FALSE) +
   #facet_wrap(~type) + # For separate plots
   #ggtitle("INSERT COOL TITLE HERE") +
-  coord_cartesian(ylim=c(0,maxScore)) +
+  coord_cartesian(ylim=c(-60000,maxScore)) +
   ylab("Average Score") +
   xlab("Generation") +
   theme(
