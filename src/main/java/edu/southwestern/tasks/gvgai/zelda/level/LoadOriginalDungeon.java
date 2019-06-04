@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -76,6 +75,12 @@ public class LoadOriginalDungeon {
 		RougelikeApp.startDungeon(dungeon, ROUGE_DEBUG); // start game
 	}
 	
+	/**
+	 * Loads a dungeon given the name with random key placement
+	 * @param name Name of dungeon (title of dir and dot file)
+	 * @return Dungeon instance
+	 * @throws Exception
+	 */
 	public static Dungeon loadOriginalDungeon(String name) throws Exception {
 		return loadOriginalDungeon(name, true);
 	}

@@ -4,13 +4,10 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction.DIRECTION;
 import edu.southwestern.util.search.Action;
 import edu.southwestern.util.search.State;
@@ -61,6 +58,9 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 			pickUpKey(node, new Point(x, y));
 	}
 
+	/**
+	 * Get the next state based on the direction, includes going to the next level through hidden and locked doors
+	 */
 	@Override
 	public State<ZeldaState.GridAction> getSuccessor(GridAction a) {
 		int newX = x;
@@ -98,10 +98,12 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 				
 				bombed.get(newRoom.t1).add(oppositeDirection(a.direction).toString());
 			} else if(tile.equals(Tile.LOCKED_DOOR)) {
+				// If we've been through that door dont take off keys
 				if(unlocked.containsKey(currentNode.name) && 
 						unlocked.get(currentNode.name).contains(a.direction.toString())) {
 					System.out.println("WHEEEEE");
 				} else if(numKeys > 0) {
+					// If we havent visited and the number of keys is high enough
 					if(!unlocked.containsKey(currentNode.name))
 						unlocked.put(currentNode.name, new HashSet<>());
 					
@@ -113,29 +115,26 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 						unlocked.put(newRoom.t1, new HashSet<>());
 						
 					unlocked.get(newRoom.t1).add(oppositeDirection(a.direction).toString());
-				} else return null;
+				} else return null; // No keys and we havent vistied door yet
 					
 			}
 
+			// Set variables for the agent's new position
 			newX = newRoom.t2.x;
 			newY = newRoom.t2.y;
 			nextRoom = newRoom.t1;
-			if(dungeon.getNode(newRoom.t1).level.intLevel.get(newRoom.t2.y).get(newRoom.t2.x).equals(Tile.KEY.getNum())) {
-				pickUpKey(newRoom.t1, newRoom.t2);
-			}
 			
 		} else {
 			System.out.println("No new room");
 			nextRoom = currentNode.name;
 		}
 		
+		// Deep copy of hashmaps
 		HashMap<String, Set<String>> newUnlocked = getNewHashMapString(unlocked);
 		HashMap<String, Set<String>> newBombed = getNewHashMapString(bombed);
 		HashMap<String, Set<Point>> newKeys = getNewHashMapPoint(keys);
 		
-		ZeldaState zs;
-		
-		zs = new ZeldaState(newX, newY, numKeys, dungeon, nextRoom, 
+		ZeldaState zs = new ZeldaState(newX, newY, numKeys, dungeon, nextRoom, 
 				newUnlocked, newBombed, newKeys);
 		
 		System.out.println("-----------------------");
@@ -149,6 +148,11 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		return zs;
 	}
 
+	/**
+	 * Deep copy of a hashmap w the key being a string and the value being a set of points
+	 * @param obj Hashmap with string key and set of points as values
+	 * @return Copy of obj
+	 */
 	private HashMap<String, Set<Point>> getNewHashMapPoint(HashMap<String, Set<Point>> obj) {
 		HashMap<String, Set<Point>> newObj = new HashMap<>();
 		
@@ -162,7 +166,12 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		
 		return newObj;
 	}
-
+	
+	/**
+	 * Deep copy of a hashmap w the key being a string and the value being a set of strings
+	 * @param obj Hashmap with string key and set of strings as values
+	 * @return Copy of obj
+	 */
 	private HashMap<String, Set<String>> getNewHashMapString(HashMap<String, Set<String>> obj) {
 		HashMap<String, Set<String>> newObj = new HashMap<>();
 		
@@ -177,6 +186,11 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		return newObj;
 	}
 
+	/**
+	 * Pick up the key if we haven't done so already and increment keys
+	 * @param name Room name of the key
+	 * @param point X, Y coordinates of key in the room
+	 */
 	private void pickUpKey(String name, Point point) {
 		if(!keys.containsKey(name))
 			keys.put(name, new HashSet<>());
@@ -207,6 +221,9 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		}
 	}
 
+	/**
+	 * Get legal actions based off of all four directions
+	 */
 	@Override
 	public ArrayList<GridAction> getLegalActions(State<GridAction> s) {
 		ArrayList<GridAction> legal = new ArrayList<GridAction>();
@@ -230,6 +247,7 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 
 	@Override
 	public boolean isGoal() {
+		// Getting the triforce is the goal
 		return currentNode.level.intLevel.get(y).get(x).equals(Tile.TRIFORCE.getNum());
 	}
 
