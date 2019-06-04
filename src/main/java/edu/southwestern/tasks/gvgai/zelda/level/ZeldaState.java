@@ -40,6 +40,9 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		keys = new HashMap<>();
 		this.dungeon = dungeon;
 		currentNode = dungeon.getCurrentlevel();
+		Point p = dungeon.getCoords(currentNode);
+		this.dX = p.x;
+		this.dY = p.y;
 	}
 	
 	public ZeldaState(int x, int y, int numKeys, int numBombs, Dungeon dungeon, String node,
@@ -62,25 +65,32 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 	public State<ZeldaState.GridAction> getSuccessor(GridAction a) {
 		int newX = x;
 		int newY = y;
+		String nextRoom;
 		switch(a.direction) {
 		case UP:
 			newY -= 1;
+			break;
 		case DOWN:
 			newY += 1;
+			break;
 		case LEFT:
 			newX -= 1;
+			break;
 		case RIGHT:
 			newX += 1;
+			break;
 		}
+		
 		
 		Pair<String, Point> newRoom = dungeon.getNextLevel(currentNode, new Point(newX, newY).toString());
 		if(newRoom != null) {
 			Tile tile = Tile.findNum(currentNode.level.intLevel.get(newY).get(newX));
+			System.out.println("\t\tNext Node : " + newRoom.t1);
 			if(tile.equals(Tile.HIDDEN)) {
 				if(!bombed.containsKey(currentNode.name))
 					bombed.put(currentNode.name, new HashSet<>());
 				
-				if(numBombs < 0) return null;
+				if(numBombs <= 0) return null;
 				
 				numBombs--;
 				
@@ -95,7 +105,7 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 				if(!unlocked.containsKey(currentNode.name))
 					unlocked.put(currentNode.name, new HashSet<>());
 				
-				if(numKeys < 0) return null;
+				if(numKeys <= 0) return null;
 				numKeys--;
 
 				unlocked.get(currentNode.name).add(a.direction.toString());
@@ -104,21 +114,67 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 					unlocked.put(newRoom.t1, new HashSet<>());
 					
 				unlocked.get(newRoom.t1).add(oppositeDirection(a.direction).toString());
-				
 
 			}
+			newX = newRoom.t2.x;
+			newY = newRoom.t2.y;
+			nextRoom = newRoom.t1;
 			if(dungeon.getNode(newRoom.t1).level.intLevel.get(newRoom.t2.y).get(newRoom.t2.x).equals(Tile.KEY.getNum())) {
 				pickUpKey(newRoom.t1, newRoom.t2);
 			}
-				
-			return new ZeldaState(newRoom.t2.x, newRoom.t2.y, numKeys, numBombs, dungeon, newRoom.t1, unlocked, bombed, keys);
+
 		} else {
+			System.out.println("No new room");
+			nextRoom = currentNode.name;
 			if(currentNode.level.intLevel.get(newY).get(newX).equals(Tile.KEY.getNum()))
 				pickUpKey(currentNode.name, new Point(newX, newY));
-			return new ZeldaState(newX, newY, numKeys, numBombs, dungeon, currentNode.name, unlocked, bombed, keys);
+
 		}
-			
 		
+		HashMap<String, Set<String>> newUnlocked = getNewHashMapString(unlocked);
+		HashMap<String, Set<String>> newBombed = getNewHashMapString(bombed);
+		HashMap<String, Set<Point>> newKeys = getNewHashMapPoint(keys);
+		
+		ZeldaState zs =  new ZeldaState(newX, newY, numKeys, numBombs, dungeon, nextRoom, 
+				newUnlocked, newBombed, newKeys);
+
+		System.out.println("-----------------------");
+		System.out.print(this);
+		System.out.print(": " + a.direction);
+		System.out.print(" -> " + zs);
+		System.out.println("----------------------");
+		
+//		if(true) System.exit(0);
+		
+		return zs;
+	}
+
+	private HashMap<String, Set<Point>> getNewHashMapPoint(HashMap<String, Set<Point>> obj) {
+		HashMap<String, Set<Point>> newObj = new HashMap<>();
+		
+		for(String name : obj.keySet()) {
+			Set<Point> newSet = new HashSet<>();
+			for(Point p : obj.get(name)) {
+				newSet.add(p);
+			}
+			newObj.put(name, newSet);
+		}
+		
+		return newObj;
+	}
+
+	private HashMap<String, Set<String>> getNewHashMapString(HashMap<String, Set<String>> obj) {
+		HashMap<String, Set<String>> newObj = new HashMap<>();
+		
+		for(String name : obj.keySet()) {
+			Set<String> newSet = new HashSet<>();
+			for(String s : obj.get(name)) {
+				newSet.add(s);
+			}
+			newObj.put(name, newSet);
+		}
+		
+		return newObj;
 	}
 
 	private void pickUpKey(String name, Point point) {
@@ -128,6 +184,11 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		keys.get(name).add(point);
 	}
 
+	/**
+	 * Get the opposite direction (UP -> DOWN) based on direction
+	 * @param direction Direction enum
+	 * @return Opposite direction of direction
+	 */
 	private Object oppositeDirection(DIRECTION direction) {
 		switch(direction) {
 		case UP:
@@ -152,8 +213,11 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 			if(result == null) continue;
 			List<List<Integer>> level = result.currentNode.level.intLevel;
 			if(result.x >= 0 && result.x < level.get(0).size() && result.y >= 0 && result.y < level.size())
-				if(Tile.findNum(level.get(result.y).get(result.x)).playerPassable())
+				if(Tile.findNum(level.get(result.y).get(result.x)).playerPassable()) {
+					System.out.println("\t\t-----------------TILE : " + level.get(result.y).get(result.x));
 					legal.add(possible);
+				}
+
 				
 		}
 		return legal;
@@ -205,16 +269,11 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		if (currentNode == null) {
 			if (other.currentNode != null)
 				return false;
-		} else if (!currentNode.equals(other.currentNode))
+		} else if (currentNode.name != other.currentNode.name)
 			return false;
 		if (dX != other.dX)
 			return false;
 		if (dY != other.dY)
-			return false;
-		if (dungeon == null) {
-			if (other.dungeon != null)
-				return false;
-		} else if (!dungeon.equals(other.dungeon))
 			return false;
 		if (keys == null) {
 			if (other.keys != null)
@@ -258,6 +317,11 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 			}
 			return false;
 		}
+	}
+	
+	public String toString() {
+		return "Level: " + currentNode.name  + " (" + x + ", " + y + ")" + 
+				numKeys + "x Keys;" + numBombs + "x Bombs";
 	}
 
 }

@@ -99,10 +99,17 @@ public class Dungeon {
 	}
 	
 	public Pair<String, Point> getNextLevel(Node node, String exitPoint) {
-		System.out.println("Exit point   " + exitPoint);
-		System.out.println("Node : " + node);
+		System.out.println("Exiting at " + exitPoint);
 		HashMap<String, Pair<String, Point>> adjacency = node.adjacency;
-		return adjacency.get(exitPoint);
+		Pair<String, Point> r = adjacency.get(exitPoint);
+		System.out.println("Exiting points...");
+		
+		for(String st : adjacency.keySet())
+			System.out.println("\t" + st);
+			
+		if(r == null)
+			System.out.println("Returning null");
+		return r;
 	}
 	
 	public Point getCoords(Node node) {

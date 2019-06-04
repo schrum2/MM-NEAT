@@ -30,7 +30,7 @@ public class LoadOriginalDungeon {
 	public static final int ZELDA_ROOM_ROWS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int ZELDA_ROOM_COLUMNS = 16;
 	private static final boolean ROUGE_DEBUG = true;
-	private static String ORIGINAL_FILE = "tloz1_1_flip";
+	private static String ORIGINAL_FILE = "tloz3_1_flip";
 	private static String GRAPH_FILE = "data/VGLC/Zelda/Graph Processed/" + ORIGINAL_FILE + ".dot";
 	private static String LEVEL_PATH = "data/VGLC/Zelda/Processed/" + ORIGINAL_FILE;
 	private static HashMap<String, Stack<Pair<String, String>>> directional;
@@ -54,23 +54,25 @@ public class LoadOriginalDungeon {
 
 			@Override
 			public double h(ZeldaState s) {
+				System.out.println("Calculating H for : " + s);
 				int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
-				int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY);
+				int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY) * ZELDA_ROOM_ROWS;
 				return i + j; 
 			}
 		};
 		
-		ZeldaState initial = new ZeldaState(8, 8, 0, 9999, dungeon);
+		ZeldaState initial = new ZeldaState(5, 5, 0, 9999, dungeon);
 		
 		Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
 		ArrayList<GridAction> result = search.search(initial);
 			
 		System.out.println(result);
-		for(GridAction a : result)
-			System.out.println(a.getD().toString());
+		if(result != null)
+			for(GridAction a : result)
+				System.out.println(a.getD().toString());
 		
 		
-//		RougelikeApp.startDungeon(dungeon, ROUGE_DEBUG); // start game
+		RougelikeApp.startDungeon(dungeon, ROUGE_DEBUG); // start game
 	}
 	
 	public static Dungeon loadOriginalDungeon(String name) throws Exception {
@@ -110,6 +112,7 @@ public class LoadOriginalDungeon {
 	}
 
 	private static boolean haveKey(Node currentNode) {
+		if(currentNode == null) return false;
 		List<List<Integer>> level = currentNode.level.intLevel;
 		for(List<Integer> row : level)
 			for(Integer cell : row)
