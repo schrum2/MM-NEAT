@@ -194,7 +194,8 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 	private void pickUpKey(String name, Point point) {
 		if(!keys.containsKey(name))
 			keys.put(name, new HashSet<>());
-		else if(!keys.get(name).contains(point)) {
+		
+		if(!keys.get(name).contains(point)) {
 			numKeys++;
 			keys.get(name).add(point);
 		}

@@ -70,14 +70,6 @@ public class ZeldaStateTest {
 		Search<GridAction,ZeldaState> search1 = new AStarSearch<>(manhattan);
 		ArrayList<GridAction> result1 = search1.search(initial1);
 		
-		System.out.println("----- Dungeon 1 -----");
-		if(result1 != null)
-			for(GridAction a : result1)
-				System.out.println(a.getD().toString());
-		
-		RougelikeApp.startDungeon(dungeon1);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		
 		itr = result1.iterator();
 		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
@@ -95,14 +87,56 @@ public class ZeldaStateTest {
 		Search<GridAction,ZeldaState> search2 = new AStarSearch<>(manhattan);
 		ArrayList<GridAction> result2 = search2.search(initial2);
 		
-		System.out.println("----- Dungeon 2 -----");
-		if(result2 != null)
-			for(GridAction a : result2)
-				System.out.println(a.getD().toString());
-		
-		RougelikeApp.startDungeon(dungeon2);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		System.out.println("Whoo");
+		itr = result2.iterator();
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.DOWN), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.DOWN), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.DOWN), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.DOWN), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.DOWN), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.DOWN), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertFalse(itr.hasNext());
 	}
 
 }
