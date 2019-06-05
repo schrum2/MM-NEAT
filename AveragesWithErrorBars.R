@@ -54,6 +54,10 @@ maxGeneration = max(evolutionData$generation)
 testData <- data.frame(generation = integer(), p = double(), significant = logical())
 comparisonList <- list()
 
+# This testData is actually ignored below (commented out). You can uncomment that to
+# get all pair-wise differences. However, it is probably better to tweak the selection of
+# specific conditions that are compared on a pair-wise basis.
+
 for(i in seq(1,length(types)-1,1)) {
   for(j in seq(i+1,length(types),1)) {
     t1 = types[i]
