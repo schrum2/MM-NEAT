@@ -88,12 +88,22 @@ spacePerComparison <- spaceForTests / length(comparisonList)
 saveFile <- paste("AVG-",resultDir,args[3],".png",sep="")
 png(saveFile, width=2000, height=1000)
 v <- ggplot(evolutionStats, aes(x = generation, y = avgScore, color = type)) +
-  geom_ribbon(aes(ymin = lowScore, ymax = highScore, fill = type), alpha = 0.05) +
+  geom_ribbon(aes(ymin = lowScore, ymax = highScore, fill = type), alpha = 0.05, show.legend = FALSE) +
   geom_line(size = 1.5) + 
-  geom_point(data = testData, aes(x = generation, y = if_else(significant, -spacePerComparison*match(type, comparisonList), -100000), size = 5, color = type, shape = type), alpha = 0.5, show.legend = FALSE) +
-  #facet_wrap(~type) + # For separate plots
+  # Should the 10 here be a parameter? Controls frequency of point plotting. Change size too?
+  geom_point(data = subset(evolutionStats, generation %% 10 == 0), size = 15, aes(shape = type)) + 
+  # This can be adapted to indicate significant pairwise differences.
+  # However, some work needs to be done to make sure testData compares the relevant cases
+  #geom_point(data = testData, 
+  #           aes(x = generation, 
+  #               y = if_else(significant, -spacePerComparison*match(type, comparisonList), -100000), 
+  #               size = 5, color = type, shape = type), 
+  #           alpha = 0.5, show.legend = FALSE) +
+  # For separate plots
+  #facet_wrap(~type) + 
   #ggtitle("INSERT COOL TITLE HERE") +
   coord_cartesian(ylim=c(-spaceForTests,maxScore)) +
+  scale_color_discrete(breaks=types) +
   guides(size = FALSE, alpha = FALSE) +
   ylab("Average Score") +
   xlab("Generation") +
