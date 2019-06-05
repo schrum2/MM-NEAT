@@ -40,7 +40,7 @@ public class LoadOriginalDungeon {
 	private static int numDoors = 0;
 	                      
 	public static void main(String[] args) throws Exception {
-		Dungeon dungeon = loadOriginalDungeon("a_test_2", false);
+		Dungeon dungeon = loadOriginalDungeon("tloz3_1_flip", false);
 		
 		Point goalPoint = dungeon.getCoords(dungeon.getGoal());
 		int gDX = goalPoint.x;
@@ -54,7 +54,6 @@ public class LoadOriginalDungeon {
 
 			@Override
 			public double h(ZeldaState s) {
-				System.out.println("Calculating H for : " + s);
 				int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
 				int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY) * ZELDA_ROOM_ROWS;
 				return i + j; 
@@ -70,6 +69,8 @@ public class LoadOriginalDungeon {
 		if(result != null)
 			for(GridAction a : result)
 				System.out.println(a.getD().toString());
+		
+		System.out.println("Lenght of path : " + result.size());
 		
 		
 		RougelikeApp.startDungeon(dungeon, ROUGE_DEBUG); // start game
@@ -115,7 +116,7 @@ public class LoadOriginalDungeon {
 		while(numKeys < numDoors) {
 			int i = r.nextInt(numberToString.size() - 1);
 			Node currentNode = dungeon.getNode(numberToString.get(i));
-			if(!haveKey(currentNode)) {
+			if(currentNode != null && !haveKey(currentNode)) {
 				if(RANDOM_KEY)
 					ZeldaDungeon.placeRandomKey(currentNode.level.intLevel);
 				else
@@ -390,7 +391,8 @@ public class LoadOriginalDungeon {
 		}
 		
 		String[] values = getLabelValues(scanner.next());
-		addAdjacency(values, dungeon, nodeName, whereTo);
+		if(values.length > 0)
+			addAdjacency(values, dungeon, nodeName, whereTo);
 		
 		scanner.close();
 	}

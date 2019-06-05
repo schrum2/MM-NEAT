@@ -66,9 +66,11 @@ public abstract class ZeldaDungeon<T> {
 			Point g = d.getGoalPoint();
 			int gX = g.x;
 			int gY = g.y;
-			System.out.println("Calculating H for : " + s);
 			int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
 			int j = Math.abs(gDX - s.dX) * w + Math.abs(gDY - s.dY) * h;
+			
+			
+			
 			return i + j; 
 		}
 	};

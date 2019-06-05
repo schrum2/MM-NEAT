@@ -89,7 +89,6 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		Pair<String, Point> newRoom = dungeon.getNextLevel(currentNode, new Point(newX, newY).toString());
 		if(newRoom != null) {
 			Tile tile = Tile.findNum(currentNode.level.intLevel.get(newY).get(newX));
-			System.out.println("\t\tNext Node : " + newRoom.t1);
 			if(tile.equals(Tile.HIDDEN)) {
 				if(!bombed.containsKey(currentNode.name))
 					bombed.put(currentNode.name, new HashSet<>());
@@ -104,7 +103,6 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 				// If we've been through that door dont take off keys
 				if(unlocked.containsKey(currentNode.name) && 
 						unlocked.get(currentNode.name).contains(a.direction.toString())) {
-					System.out.println("WHEEEEE");
 				} else if(numKeys > 0) {
 					// If we havent visited and the number of keys is high enough
 					if(!unlocked.containsKey(currentNode.name))
@@ -139,12 +137,6 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		
 		ZeldaState zs = new ZeldaState(newX, newY, numKeys, dungeon, nextRoom, 
 				newUnlocked, newBombed, newKeys);
-		
-		System.out.println("-----------------------");
-		System.out.print(this);
-		System.out.print(": " + a.direction);
-		System.out.print(" -> " + zs);
-		System.out.println("----------------------");
 		
 //		if(true) System.exit(0);
 		
@@ -239,7 +231,6 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 				List<List<Integer>> level = result.currentNode.level.intLevel;
 				if(result.x >= 0 && result.x < level.get(0).size() && result.y >= 0 && result.y < level.size())
 					if(Tile.findNum(level.get(result.y).get(result.x)).playerPassable()) {
-						System.out.println("\t\t-----------------TILE : " + level.get(result.y).get(result.x));
 						legal.add(possible);
 						
 					}	

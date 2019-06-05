@@ -144,3 +144,5 @@ dependency-reduced-pom.xml
 *.mkv
 
 **/netG*.pth
+
+*.swp

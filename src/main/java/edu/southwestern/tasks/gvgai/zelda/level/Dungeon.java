@@ -107,7 +107,6 @@ public class Dungeon {
 	}
 	
 	public Pair<String, Point> getNextLevel(Node node, String exitPoint) {
-		System.out.println("Exiting at " + exitPoint);
 		HashMap<String, Pair<String, Point>> adjacency = node.adjacency;
 		Pair<String, Point> r = adjacency.get(exitPoint);			
 		if(r == null)

@@ -2,7 +2,14 @@ package me.jakerg.rougelike;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
 import javax.swing.JFrame;
 
 import asciiPanel.AsciiFont;
@@ -90,6 +97,25 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		RougelikeApp app = new RougelikeApp(dungeon);
 		app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Dispose on close closes that window ONLY not every JFrame window
 		app.setVisible(true);
+		Player player = null;
+		String filename = "data/rouge/sound/dungeon.mp3";
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(filename);
+			BufferedInputStream bis = new BufferedInputStream(fis);
+		    player = new Player(bis);
+		} catch (FileNotFoundException | JavaLayerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			player.play();
+		} catch (JavaLayerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       
+	        
 	}
 	
 	public static void startDungeon(Dungeon dungeon, boolean debug) {
