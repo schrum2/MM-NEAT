@@ -1,8 +1,13 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
+import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 
+import edu.southwestern.scores.Score;
 import edu.southwestern.util.datastructures.Triple;
 
 /**
@@ -11,6 +16,7 @@ import edu.southwestern.util.datastructures.Triple;
  *
  */
 public class ZeldaLevelUtil {
+	
 	/**
 	 * Find the longest shortest path distance given a 2D array and start points
 	 * @param level 2D int array representing the level, passable = 0
@@ -19,38 +25,79 @@ public class ZeldaLevelUtil {
 	 * @return int longest shortest distance
 	 */
 	public static int findMaxDistanceOfLevel(int[][] level, int startX, int startY) {
+		int max = 0;
+		LinkedList<Node> visited = uniformCostSearch(level, startX, startY);
+		for(Node n : visited) {
+			max = Math.max(max, n.gScore);
+		}
+		return max;
+	}
+	
+	public static LinkedList<Node> uniformCostSearch(int[][] level, int startX, int startY) {
 		// List of all the points we have visited included distance
-		LinkedList<Triple<Integer, Integer, Integer>> visited = new LinkedList<>();
-		int[][] dist = new int[level.length][level[0].length]; // Keep track of where we have visited in relation to x, y coordiantes
-		int max = 0; // Our max so far
+		LinkedList<Node> visited = new LinkedList<>();
+	
+		Node source = new Node(startX, startY, 0); // use manhattan
+		source.fScore = 0;
+		
+		PriorityQueue<Node> queue = new PriorityQueue<Node>(new Comparator<Node>(){
+                         //override compare method
+			         public int compare(Node i, Node j){
+			        	 return (int) Math.signum(i.fScore - j.fScore);
+			         }
+                }
+		);	
 		
 		// Push the initial point, startX and startY with a distance of 0
-		visited.push(new Triple<Integer, Integer, Integer>(startX, startY, 0));
-		
-		// Initialize our dist array with -1, where we haven't visited
-		for(int i = 0; i < dist.length; i++)
-			for(int j = 0; j < dist[i].length; j++)
-				dist[i][j] = -1;
-		
-		// While we have points to visit
-		while(visited.size() != 0) {
-			Triple<Integer, Integer, Integer> point = visited.remove(0); // Get the top of the list
-			int currentX = point.t1;
-			int currentY = point.t2;
-			int d = point.t3;
+		queue.add(source);
+
+		while((!queue.isEmpty())) {
+			Node current = queue.poll();
+			visited.add(current);
 			
-			// Set this to visited marking the distance
-			dist[currentY][currentX] = d;
-			max = Math.max(max, d); // Set max
-			
-			// Check points horizontally and vertically and add them if they pass the test
-			checkPointToAdd(level, dist, visited, currentX + 1, currentY, d + 1);
-			checkPointToAdd(level, dist, visited, currentX, currentY + 1, d + 1);
-			checkPointToAdd(level, dist, visited, currentX - 1, currentY, d + 1);
-			checkPointToAdd(level, dist, visited, currentX, currentY - 1, d + 1);
+			checkPoint(level, queue, visited, current.point.x + 1, current.point.y, current);
+			checkPoint(level, queue, visited, current.point.x, current.point.y + 1, current);
+			checkPoint(level, queue, visited, current.point.x - 1, current.point.y, current);
+			checkPoint(level, queue, visited, current.point.x, current.point.y - 1, current);
+		}
+
+
+		for(Node n : visited) {
+			System.out.println(n);
 		}
 		
-		return max;
+		return visited;
+	}
+
+	private static void checkPoint(int[][] level, PriorityQueue<Node> queue, LinkedList<Node> visited, int x, int y,
+			Node current) {
+		// TODO Auto-generated method stub
+		if(x < 0 || x >= level[0].length || y < 0 || y >= level.length) return;
+		
+		if(level[y][x] != 0) return;
+		
+		int newGScore = current.gScore + 1; 
+		int newFScore = newGScore;
+		
+		Node newNode = new Node(x, y, newGScore);
+		newNode.hScore = 0;
+		newNode.fScore = newFScore;
+		
+		if(visited.contains(newNode)) return;
+		else if(!queue.contains(newNode) || newFScore < current.fScore) {
+			if(queue.contains(newNode))
+				queue.remove(newNode);
+			
+			queue.add(newNode);
+		}
+	}
+	
+	private static boolean hasPoint(ArrayList<Node> visited, Node node) {
+		for(Node n : visited)
+			if(node.point.x == n.point.x && node.point.y == n.point.y)
+				return true;
+		
+		return false;
 	}
 
 	/**
@@ -96,5 +143,38 @@ public class ZeldaLevelUtil {
 				lev[i][j] = level.get(i).get(j);
 		
 		return lev;
+	}
+	
+	private static class Node{
+		public Point point;
+		public int gScore;
+		public int hScore;
+		public int fScore = 0;
+		
+		public Node(int x, int y, int dist) {
+			point = new Point(x, y);
+			gScore = dist;
+		}
+		
+		@Override
+		public boolean equals(Object other){
+			boolean r = false;
+			if(other instanceof Node) {
+				Node node = (Node) other;
+				r = this.point.x == node.point.x && this.point.y == node.point.y;
+			}
+			return r;
+		}
+		
+		public void copy(Node other) {
+			this.point = other.point;
+			this.gScore = other.gScore;
+			this.hScore = other.hScore;
+			this.fScore = other.fScore;
+		}
+		
+		public String toString() {
+			return "(" + point.x +", " + point.y + "), f = " + fScore + " = (h:" + hScore + " + g:" + gScore +")";
+		}
 	}
 }

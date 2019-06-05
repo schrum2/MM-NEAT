@@ -1,5 +1,5 @@
 level_array = []
-file_name = 'tloz2_1_flip'
+file_name = 'tloz3_1_flip'
 
 with open(file_name + '.txt') as file:
     for line in file:
