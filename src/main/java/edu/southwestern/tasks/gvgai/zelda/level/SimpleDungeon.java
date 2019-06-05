@@ -7,6 +7,7 @@ import java.util.Random;
 
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import me.jakerg.rougelike.Tile;
 
 public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 
@@ -25,21 +26,49 @@ public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 		Random random = new Random();
 		
 		while(levelList.size() > 0) {
-			if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length) break;
-			
-			if(dungeon[y][x] == null) {
-				dungeon[y][x] = levelList.pop();
+			if(levelList.size() == 1) {
+				Level level = levelList.pop();
+				levelList.add(placeTriforce(level));
 			}
+			
+			
+			if(x >= 0 && x < dungeon[0].length && y >= 0 && y < dungeon.length)
+				if(dungeon[y][x] == null)
+					dungeon[y][x] = levelList.pop();
+			
+			
 			random = new Random();
 			switch(random.nextInt(4)) {
 			case 0: x--; break; // left
 			case 1: x++; break; // right
 			case 2: y--; break; // down
 			case 3: y++; break; // up
+			
 			}
+
+			// Make sure the coordinates don't go too far out of bounds
+			x = Math.max(Math.min(x, dungeon[0].length), 0);
+			y = Math.max(Math.min(y, dungeon.length), 0);
 		}
 		
 		return dungeon;
+		
+	}
+
+	private Level placeTriforce(Level level) {
+		List<List<Integer>> ints = level.intLevel;
+		int x = (ints.get(0).size() - 1) / 2;
+		int y = (ints.size() - 1) / 2;
+		while(!Tile.findNum(ints.get(y).get(x)).playerPassable()) {
+			if(x % 2 == 0)
+				x--;
+			else
+				y--;
+		}
+		ints.get(y).set(x, Tile.TRIFORCE.getNum());
+		level.intLevel = ints;
+		return level;
+		
 		
 	}
 

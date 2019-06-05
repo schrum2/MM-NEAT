@@ -34,7 +34,11 @@ import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
+import edu.southwestern.util.search.AStarSearch;
+import edu.southwestern.util.search.Heuristic;
+import edu.southwestern.util.search.Search;
 import gvgai.core.game.BasicGame;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
 import me.jakerg.rougelike.RougelikeApp;
@@ -46,6 +50,29 @@ public abstract class ZeldaDungeon<T> {
 	
 	private static final int ZELDA_HEIGHT = (176/11)*16;//Parameters.parameters.integerParameter("zeldaImageHeight");
 	private static final int ZELDA_WIDTH = 176;//Parameters.parameters.integerParameter("zeldaImageWidth");
+	
+	public static Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
+
+		@Override
+		public double h(ZeldaState s) {
+			Dungeon d = s.getDungeon();
+			Point goalPoint = d.getCoords(d.getGoal());
+			int gDX = goalPoint.x;
+			int gDY = goalPoint.y;
+			
+			int w = s.getDungeon().getLevelWidth();
+			int h = s.getDungeon().getLevelHeight();
+			
+			Point g = d.getGoalPoint();
+			int gX = g.x;
+			int gY = g.y;
+			System.out.println("Calculating H for : " + s);
+			int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
+			int j = Math.abs(gDX - s.dX) * w + Math.abs(gDY - s.dY) * h;
+			return i + j; 
+		}
+	};
+	
 	
 	private Level[][] dungeon = null;
 	private Dungeon dungeonInstance = null;
@@ -67,16 +94,14 @@ public abstract class ZeldaDungeon<T> {
 		if (dungeon == null) return null;
 		Dungeon dungeonInstance = new Dungeon();
 		
-		UUID[][] uuidLabels = new UUID[dungeon.length][dungeon[0].length];
-		String[][] levelThere = new String[dungeon.length][dungeon[0].length];
+		String[][] uuidLabels = new String[dungeon.length][dungeon[0].length];
 		
 		for(int y = 0; y < dungeon.length; y++) {
 			for(int x = 0; x < dungeon[y].length; x++) {
 				if(dungeon[y][x] != null) {
 					if(uuidLabels[y][x] == null)
-						uuidLabels[y][x] = UUID.randomUUID();
-					String name = uuidLabels[y][x].toString();
-					levelThere[y][x] = name;
+						uuidLabels[y][x] = UUID.randomUUID().toString();
+					String name = uuidLabels[y][x];
 					Node newNode = dungeonInstance.newNode(name, dungeon[y][x]);
 					
 					addAdjacencyIfAvailable(dungeonInstance, uuidLabels, newNode, x + 1, y, "RIGHT");
@@ -90,7 +115,7 @@ public abstract class ZeldaDungeon<T> {
 		String name = uuidLabels[(uuidLabels.length - 1) / 2][(uuidLabels[0].length - 1) /2].toString();
 		
 		dungeonInstance.setCurrentLevel(name);
-		dungeonInstance.setLevelThere(levelThere);
+		dungeonInstance.setLevelThere(uuidLabels);
 		
 		this.dungeonInstance = dungeonInstance;
 		return dungeonInstance;
@@ -105,7 +130,7 @@ public abstract class ZeldaDungeon<T> {
 	 * @param y Y coordinate to check
 	 * @param direction String direction (UP, DOWN, LEFT, RIGHT)
 	 */
-	private void addAdjacencyIfAvailable(Dungeon dungeonInstance, UUID[][] uuidLabels, Node newNode, int x, int y, String direction) {
+	private void addAdjacencyIfAvailable(Dungeon dungeonInstance, String[][] uuidLabels, Node newNode, int x, int y, String direction) {
 		int tileToSetTo = 3; // Door tile number
 		
 		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length || 
@@ -113,12 +138,13 @@ public abstract class ZeldaDungeon<T> {
 			tileToSetTo = Tile.WALL.getNum();
 		
 		setLevels(direction, newNode, tileToSetTo); // Set the doors in the levels
+		findAndAddGoal(dungeonInstance, newNode);
 		
 		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length) return;
 		if(dungeon[y][x] == null) return; // Finally get out if there's no adjacency
 		
-		if(uuidLabels[y][x] == null) uuidLabels[y][x] = UUID.randomUUID(); // Get the unique ID of the level
-		String whereTo = uuidLabels[y][x].toString(); // This will be the where to in the edge
+		if(uuidLabels[y][x] == null) uuidLabels[y][x] = UUID.randomUUID().toString(); // Get the unique ID of the level
+		String whereTo = uuidLabels[y][x]; // This will be the where to in the edge
 
 		// Set the edges based on the direction
 		switch(direction) {
@@ -139,6 +165,19 @@ public abstract class ZeldaDungeon<T> {
 		
 	}
 	
+	private void findAndAddGoal(Dungeon dungeon, Node newNode) {
+		List<List<Integer>> ints = newNode.level.intLevel;
+		String name = newNode.name;
+		for(int y = 0; y < ints.size(); y++) {
+			for(int x = 0; x < ints.get(y).size(); x++) {
+				if(ints.get(y).get(x).equals(Tile.TRIFORCE.getNum())) {
+					dungeon.setGoalPoint(new Point(x, y));
+					dungeon.setGoal(name);
+				}
+			}
+		}
+	}
+
 	/**
 	 * Set edges when you're going UP
 	 * @param newNode Node to add the edge too
@@ -323,6 +362,15 @@ public abstract class ZeldaDungeon<T> {
 		playDungeon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				ZeldaState initial = new ZeldaState(5, 5, 0, dungeonInstance);
+				
+				Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
+				ArrayList<GridAction> result = search.search(initial);
+				
+				if(result != null)
+					for(GridAction a : result)
+						System.out.println(a.getD().toString());
+//				
 				if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
 					new Thread() {
 						public void run() {

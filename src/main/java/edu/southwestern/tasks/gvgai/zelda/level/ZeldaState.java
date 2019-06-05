@@ -52,6 +52,9 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		this.bombed = bombed;
 		this.keys = keys;
 		Point p = dungeon.getCoords(node);
+		assert p != null : "The coords of " + node + " returned null";
+		System.out.println(node);
+		System.out.println(p);
 		this.dX = p.x;
 		this.dY = p.y;
 		if(currentNode.level.intLevel.get(y).get(x).equals(Tile.KEY.getNum()))

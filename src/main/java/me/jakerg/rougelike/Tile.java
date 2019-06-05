@@ -57,7 +57,7 @@ public enum Tile {
 	 * @return True if it's not a wall and not a bound
 	 */
 	public boolean isGround() {
-		return this != WALL && this != BOUNDS;
+		return this != WALL && this != BOUNDS && this != HIDDEN && this != LOCKED_DOOR;
 	}
 	
 	public boolean isBlock() {

@@ -18,6 +18,8 @@ public class Dungeon {
 	private String[][] levelThere;
 	private String goal;
 	private Point goalPoint;
+	private int levelWidth = -1;
+	private int levelHeight = -1;
 	
 	public Dungeon() {
 		levels = new HashMap<>();
@@ -90,25 +92,24 @@ public class Dungeon {
 	}
 	
 	public Point getCoords(String name) {
-		if(!levels.containsKey(name)) return null;
+		if(!levels.containsKey(name)) {
+			System.out.println("Name isn't in list : " + name);
+			return null;
+		}
 		
 		for(int y = 0; y < levelThere.length; y++)
 			for(int x = 0; x < levelThere[y].length; x++)
 				if(name == levelThere[y][x])
 					return new Point(x, y);
 		
+		System.out.println("Couldnt find name : " + name);
 		return null;
 	}
 	
 	public Pair<String, Point> getNextLevel(Node node, String exitPoint) {
 		System.out.println("Exiting at " + exitPoint);
 		HashMap<String, Pair<String, Point>> adjacency = node.adjacency;
-		Pair<String, Point> r = adjacency.get(exitPoint);
-		System.out.println("Exiting points...");
-		
-		for(String st : adjacency.keySet())
-			System.out.println("\t" + st);
-			
+		Pair<String, Point> r = adjacency.get(exitPoint);			
 		if(r == null)
 			System.out.println("Returning null");
 		return r;
@@ -159,6 +160,20 @@ public class Dungeon {
 
 	public void setGoalPoint(Point goalPoint) {
 		this.goalPoint = goalPoint;
+	}
+	
+	public int getLevelWidth() {
+		if(levelWidth == -1)
+			levelWidth = getCurrentlevel().level.intLevel.get(0).size();
+		
+		return levelWidth;
+	}
+	
+	public int getLevelHeight() {
+		if(levelHeight == -1)
+			levelHeight = getCurrentlevel().level.intLevel.size();
+		
+		return levelHeight;
 	}
 
 	public class Node{
