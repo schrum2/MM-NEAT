@@ -76,7 +76,7 @@ f <- function(theData) {
 saveFile <- paste("BW-",resultDir,args[3],".png",sep="")
 png(saveFile, width=2000, height=1000)
 v <- ggplot(alteredData, aes(x = genF, y = score, fill = type)) +
-  geom_line(aes(y = medianScoreByGeneration, color = type, group = type)) + #, size = 1.5) + 
+  geom_line(aes(y = medianScoreByGeneration, color = type, group = type), size = 1.5) + 
   geom_boxplot(data = f, width=4.0) + # Filters to only print every so many generations
   #facet_wrap(~type) + # For separate plots
   #ggtitle("INSERT COOL TITLE HERE") +
