@@ -3,6 +3,7 @@ package edu.southwestern.tasks.gvgai.zelda.level;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -15,7 +16,11 @@ import org.apache.commons.lang.StringUtils;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.search.AStarSearch;
+import edu.southwestern.util.search.Heuristic;
+import edu.southwestern.util.search.Search;
 import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
 
@@ -24,11 +29,10 @@ public class LoadOriginalDungeon {
 	public static final int ZELDA_ROOM_ROWS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int ZELDA_ROOM_COLUMNS = 16;
 	private static final boolean ROUGE_DEBUG = true;
-	private static String ORIGINAL_FILE = "tloz3_1_flip";
-	private static String GRAPH_FILE = "data/VGLC/Zelda/Graph Processed/" + ORIGINAL_FILE + ".dot";
-	private static String LEVEL_PATH = "data/VGLC/Zelda/Processed/" + ORIGINAL_FILE;
 	private static HashMap<String, Stack<Pair<String, String>>> directional;
 						  // Node name        direct, whereTo
+	
+	public static boolean RANDOM_KEY = false;
 	
 	// Some levels have additional parts that aren't included that have keys in those parts leading to doors that can't
 	// be opened since you can't get a key for it. So keep track of the number of keys to balance it out later
@@ -36,19 +40,68 @@ public class LoadOriginalDungeon {
 	private static int numDoors = 0;
 	                      
 	public static void main(String[] args) throws Exception {
+		Dungeon dungeon = loadOriginalDungeon("a_test_2", false);
+		
+		Point goalPoint = dungeon.getCoords(dungeon.getGoal());
+		int gDX = goalPoint.x;
+		int gDY = goalPoint.y;
+		
+		Point g = dungeon.getGoalPoint();
+		int gX = g.x;
+		int gY = g.y;
+		
+		Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
+
+			@Override
+			public double h(ZeldaState s) {
+				System.out.println("Calculating H for : " + s);
+				int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
+				int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY) * ZELDA_ROOM_ROWS;
+				return i + j; 
+			}
+		};
+		
+		ZeldaState initial = new ZeldaState(5, 5, 0, dungeon);
+		
+		Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
+		ArrayList<GridAction> result = search.search(initial);
+			
+		System.out.println(result);
+		if(result != null)
+			for(GridAction a : result)
+				System.out.println(a.getD().toString());
+		
+		
+		RougelikeApp.startDungeon(dungeon, ROUGE_DEBUG); // start game
+	}
+	
+	/**
+	 * Loads a dungeon given the name with random key placement
+	 * @param name Name of dungeon (title of dir and dot file)
+	 * @return Dungeon instance
+	 * @throws Exception
+	 */
+	public static Dungeon loadOriginalDungeon(String name) throws Exception {
+		return loadOriginalDungeon(name, true);
+	}
+	
+	public static Dungeon loadOriginalDungeon(String name, boolean randomKey) throws Exception {
+		RANDOM_KEY = randomKey;
+		String graphFile = "data/VGLC/Zelda/Graph Processed/" + name + ".dot";
+		String levelPath = "data/VGLC/Zelda/Processed/" + name;
 		Dungeon dungeon = new Dungeon(); // Make new dungeon instance
 		directional = new HashMap<>(); // Make directional hashmap
 		HashMap<Integer, String> numberToString = new HashMap<>(); // Map the numbers to strings (node name)
 		System.out.println("Loading .txt levels");
-		loadLevels(dungeon, numberToString); // Load the levels (txt files) to dungeon
+		loadLevels(dungeon, numberToString, levelPath); // Load the levels (txt files) to dungeon
 		System.out.println("Loading levels from graph");
-		loadGraph(dungeon, numberToString); // Load the graph representation to dungeon
+		loadGraph(dungeon, numberToString, graphFile); // Load the graph representation to dungeon
 		System.out.println("Generating 2D map");
 		dungeon.setLevelThere(generateLevelThere(dungeon, numberToString)); // Generate the 2D map of the dungeon
 		System.out.println("Num Keys : " + numKeys + " | numDoors : " + numDoors / 2);
 		numDoors /= 2;
 		balanceKeyToDoors(dungeon, numberToString);
-		RougelikeApp.startDungeon(dungeon, ROUGE_DEBUG); // start game
+		return dungeon;
 	}
 
 	/**
@@ -63,7 +116,10 @@ public class LoadOriginalDungeon {
 			int i = r.nextInt(numberToString.size() - 1);
 			Node currentNode = dungeon.getNode(numberToString.get(i));
 			if(!haveKey(currentNode)) {
-				ZeldaDungeon.placeRandomKey(currentNode.level.intLevel);
+				if(RANDOM_KEY)
+					ZeldaDungeon.placeRandomKey(currentNode.level.intLevel);
+				else
+					ZeldaDungeon.placeNormalKey(currentNode.level.intLevel);
 				numKeys++;
 				System.out.println("Added key! Now has : " + numKeys + " keys");
 			}
@@ -71,6 +127,7 @@ public class LoadOriginalDungeon {
 	}
 
 	private static boolean haveKey(Node currentNode) {
+		if(currentNode == null) return false;
 		List<List<Integer>> level = currentNode.level.intLevel;
 		for(List<Integer> row : level)
 			for(Integer cell : row)
@@ -212,8 +269,8 @@ public class LoadOriginalDungeon {
 	 * @param numberToString map to keep track of the numbered rooms and node names
 	 * @throws FileNotFoundException
 	 */
-	private static void loadGraph(Dungeon dungeon, HashMap<Integer, String> numberToString) throws FileNotFoundException {
-		File graphFile = new File(GRAPH_FILE);
+	private static void loadGraph(Dungeon dungeon, HashMap<Integer, String> numberToString, String graph) throws FileNotFoundException {
+		File graphFile = new File(graph);
 		Scanner scanner = new Scanner(graphFile);
 		scanner.nextLine(); // "digraph" crap
 		while(scanner.hasNextLine()) {
@@ -263,25 +320,30 @@ public class LoadOriginalDungeon {
 				break;
 			case "k": // Room has a key in it
 				numKeys++;
-				ZeldaDungeon.placeRandomKey(node.level.intLevel);
+				if(RANDOM_KEY)
+					ZeldaDungeon.placeRandomKey(node.level.intLevel);
+				else
+					ZeldaDungeon.placeNormalKey(node.level.intLevel);
 				break;
 			case "s": // Room is starting point
 				dungeon.setCurrentLevel(nodeName);
 				break;
 			case "t":
-				if(values.length == 1)
-					addTriforce(node);
+				addTriforce(node, dungeon);
 				break;
 			}
 		}
 		scanner.close();
 	}
 
-	private static void addTriforce(Node node) {
+	private static void addTriforce(Node node, Dungeon dungeon) {
+		System.out.println("Set triforce");
 		List<List<Integer>> level = node.level.intLevel;
 		int y = level.size() / 2;
 		int x = level.get(y).size() / 2;
 		level.get(y).set(x, Tile.TRIFORCE.getNum());
+		dungeon.setGoalPoint(new Point(x, y));
+		dungeon.setGoal(node.name);
 	}
 
 	/**
@@ -508,8 +570,8 @@ public class LoadOriginalDungeon {
 	 * @param numberToString number to string name
 	 * @throws FileNotFoundException
 	 */
-	private static void loadLevels(Dungeon dungeon, HashMap<Integer, String> numberToString) throws FileNotFoundException {
-		File levelFolder = new File(LEVEL_PATH);
+	private static void loadLevels(Dungeon dungeon, HashMap<Integer, String> numberToString, String levelPath) throws FileNotFoundException {
+		File levelFolder = new File(levelPath);
 		for(File entry : levelFolder.listFiles()) {
 			String fileName = entry.getName();
 			int number = Integer.valueOf(fileName.substring(0, fileName.indexOf('.')));

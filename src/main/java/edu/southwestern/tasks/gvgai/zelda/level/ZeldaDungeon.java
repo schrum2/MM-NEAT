@@ -23,6 +23,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.apache.log4j.Level;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
@@ -559,6 +561,23 @@ public abstract class ZeldaDungeon<T> {
 		public Tile[][] getTiles(){
 			return TileUtil.listToTile(intLevel);
 		}
+	}
+
+	/**
+	 * Place a key starting in the middle of the level and going to the upper left
+	 * @param intLevel 2D list of ints
+	 */
+	public static void placeNormalKey(List<List<Integer>> intLevel) {
+		int x = intLevel.get(0).size() / 2;
+		int y = intLevel.size() / 2;
+		
+		while(!Tile.findNum(intLevel.get(y).get(x)).playerPassable()){
+			x--;
+			y--;
+		}
+		
+		intLevel.get(y).set(x, Tile.KEY.getNum());
+		
 	}
 	
 }

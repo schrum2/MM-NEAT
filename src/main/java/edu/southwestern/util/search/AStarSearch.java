@@ -48,6 +48,7 @@ public class AStarSearch<A extends Action, S extends State<A>> implements Search
 			    for(Triple<State<A>,A,Double> triple : successors) {
 			    	@SuppressWarnings("unchecked")
 					S nextState = (S) triple.t1;
+			    	assert nextState != null : "State is null! Parent was " + s + ", and action was " + triple.t2;
 			    	ArrayList<A> actionsSoFar = new ArrayList<A>();
 			    	actionsSoFar.addAll(actions); // Previous actions
 			    	actionsSoFar.add(triple.t2); // Next step to new action

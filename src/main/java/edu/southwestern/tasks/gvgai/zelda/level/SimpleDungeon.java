@@ -30,6 +30,7 @@ public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 			if(dungeon[y][x] == null) {
 				dungeon[y][x] = levelList.pop();
 			}
+			random = new Random();
 			switch(random.nextInt(4)) {
 			case 0: x--; break; // left
 			case 1: x++; break; // right
