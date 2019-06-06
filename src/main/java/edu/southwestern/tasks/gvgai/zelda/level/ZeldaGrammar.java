@@ -7,7 +7,9 @@ public enum ZeldaGrammar implements Grammar{
 	LOCK("Lock", "l", false),
 	MONSTER("Monster", "e", false),
 	ROOM("Room", "", false),
-	TREASURE("Treasure", "t", false);
+	TREASURE("Treasure", "t", false),
+	START("Start", "s", false),
+	FORK("FORK", "F", true);
 	
 	private final String labelName;
 	private final String levelType;

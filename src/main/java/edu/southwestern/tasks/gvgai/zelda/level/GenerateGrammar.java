@@ -53,7 +53,7 @@ public class GenerateGrammar<T extends Grammar> {
 		grammar.addRule(ZeldaGrammar.OBSTACLE, new ZeldaGrammar[] {ZeldaGrammar.MONSTER, ZeldaGrammar.OBSTACLE});
 		grammar.addRule(ZeldaGrammar.OBSTACLE, new ZeldaGrammar[] {ZeldaGrammar.KEY, ZeldaGrammar.OBSTACLE, ZeldaGrammar.LOCK, ZeldaGrammar.OBSTACLE});
 		
-		grammar.addRule(ZeldaGrammar.DUNGEON, new ZeldaGrammar[] {ZeldaGrammar.OBSTACLE, ZeldaGrammar.TREASURE});
+		grammar.addRule(ZeldaGrammar.DUNGEON, new ZeldaGrammar[] {ZeldaGrammar.START, ZeldaGrammar.OBSTACLE, ZeldaGrammar.TREASURE});
 		
 		List<ZeldaGrammar> generated = grammar.generate(ZeldaGrammar.DUNGEON);
 		
