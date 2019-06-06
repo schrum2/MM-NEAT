@@ -40,7 +40,7 @@ public class LoadOriginalDungeon {
 	private static int numDoors = 0;
 	                      
 	public static void main(String[] args) throws Exception {
-		Dungeon dungeon = loadOriginalDungeon("tloz3_1_flip", false);
+		Dungeon dungeon = loadOriginalDungeon("a_test_1", false);
 		
 		Point goalPoint = dungeon.getCoords(dungeon.getGoal());
 		int gDX = goalPoint.x;
@@ -66,11 +66,13 @@ public class LoadOriginalDungeon {
 		ArrayList<GridAction> result = search.search(initial);
 			
 		System.out.println(result);
-		if(result != null)
+		if(result != null) {
 			for(GridAction a : result)
 				System.out.println(a.getD().toString());
-		
-		System.out.println("Lenght of path : " + result.size());
+			
+			System.out.println("Lenght of path : " + result.size());
+		}
+
 		
 		
 		RougelikeApp.startDungeon(dungeon, ROUGE_DEBUG); // start game

@@ -15,7 +15,7 @@ public enum Tile {
 	CURRENT((char)219, AsciiPanel.brightYellow, -99),
 	EXIT((char)239, AsciiPanel.green, 4),
 	DOOR((char)239, AsciiPanel.green, 3),
-	BLOCK((char)177, AsciiPanel.yellow, 5),
+	BLOCK((char)177, AsciiPanel.yellow, 5), // this is the 'P' water block thing
 	LOCKED_DOOR((char)239, AsciiPanel.red, -5),
 	HIDDEN((char)178, AsciiPanel.yellow, -7),
 	BOUNDS('x', AsciiPanel.brightBlack, -99),
@@ -85,13 +85,12 @@ public enum Tile {
 	}
 	
 	public static Tile findNum(int num) {
-		if(num == 2) return Tile.FLOOR; //Enemy
 		for(Tile tile : Tile.values()) {
 			if(num == tile.getNum())
 				return tile;
 		}
 		System.out.println("Couldn't find tile for : " + num);
-		return null;
+		return Tile.FLOOR;
 	}
 
 }

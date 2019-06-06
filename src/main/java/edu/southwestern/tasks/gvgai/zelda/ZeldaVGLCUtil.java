@@ -260,6 +260,8 @@ public class ZeldaVGLCUtil {
 			return 3;
 		case 'S':
 			return 4;	// Door
+		case '#':
+			return -6;
 		default:
 			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
 		}

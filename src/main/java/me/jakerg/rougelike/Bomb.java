@@ -17,6 +17,7 @@ public class Bomb extends Item{
 		super(world, glpyh, color, x, y);
 		this.counter = counter;
 		this.attack = attack;
+		this.pickupable = false;
 	}
 	
 	public void update() {

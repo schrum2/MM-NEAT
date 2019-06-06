@@ -1,6 +1,8 @@
 package me.jakerg.rougelike;
 
 import java.awt.Color;
+import java.util.LinkedList;
+import java.util.List;
 
 import asciiPanel.AsciiPanel;
 import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
@@ -52,6 +54,9 @@ public class Creature {
 	
 	private boolean win = false;
 	public boolean win() {return this.win; }
+	
+	public List<Item> items = new LinkedList<>();
+	public List<Item> getItems() { return this.items; }
 	
 	private Log log;
 	private DungeonBuilder dungeonBuilder;	
@@ -271,8 +276,31 @@ public class Creature {
 	public void setDungeonBuilder(DungeonBuilder dungeonBuilder) {
 		this.dungeonBuilder = dungeonBuilder;
 	}
+	
+	/**
+	 * Set win condition
+	 * @param b True if won the game, false if not
+	 */
 	public void setWin(boolean b) {
 		this.win = b;
+	}
+	
+	public boolean hasItem(char glyph) {
+		for(Item i : items)
+			if(i.glyph == glyph)
+				return true;
 		
+		return false;
+	}
+	
+	public boolean hasItem(Item item) {
+		return hasItem(item.glyph);
+	}
+	
+	
+	public void addItem(Item item) {
+		if(hasItem(item)) return;
+		items.add(item);
+		doAction("You picked up " + item.glyph);
 	}
 }

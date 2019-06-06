@@ -242,4 +242,8 @@ public class World {
 		changeToDoor(x - 1, y, Tile.HIDDEN);
 		changeToDoor(x, y - 1, Tile.HIDDEN);
 	}
+
+	public void newItem(Item i) {
+		items.add(i);
+	}
 }

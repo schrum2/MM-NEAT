@@ -24,6 +24,14 @@ public class DungeonAi extends CreatureAi{
 
 		for(int i = 0; i < creature.hp(); i++)
 			terminal.write((char) 3, oX + i, oY + 3, AsciiPanel.brightRed);
+		
+		terminal.write("Items", oX, oY + 5);
+		int i = 0;
+		for(Item item: creature.getItems()) {
+			terminal.write(item.glyph(), oX + i, oY + 6, item.color());
+			i += 2;
+		}
+			
 	}
 	
 	/**
@@ -31,6 +39,13 @@ public class DungeonAi extends CreatureAi{
 	 */
 	public void onEnter(int x, int y, Tile tile) {		
 		// If the tile the character is trying to move to group, then move character at point
+		Item item = creature.getWorld().item(x, y);
+		if(item != null) {
+			creature.addItem(item);
+			creature.getWorld().removeItem(item);
+		}
+
+		
 		if(tile.playerPassable()) {
 			creature.x = x;
 			creature.y = y;
@@ -66,6 +81,10 @@ public class DungeonAi extends CreatureAi{
 		}
 		if(tile.equals(Tile.TRIFORCE)) {
 			creature.setWin(true);
+		}
+		if(tile.equals(Tile.BLOCK) && creature.hasItem('#') && !creature.getWorld().tile(creature.x, creature.y).equals(Tile.BLOCK)) {
+			creature.x = x;
+			creature.y = y;
 		}
 	}
 
