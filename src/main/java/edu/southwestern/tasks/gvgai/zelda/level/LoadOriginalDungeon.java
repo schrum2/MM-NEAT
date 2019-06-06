@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
@@ -40,7 +41,9 @@ public class LoadOriginalDungeon {
 	private static int numDoors = 0;
 	                      
 	public static void main(String[] args) throws Exception {
-		Dungeon dungeon = loadOriginalDungeon("a_test_1", false);
+		Dungeon dungeon = loadOriginalDungeon("tloz4_1_flip", false);
+		
+		dungeon.printLevelThere();
 		
 		Point goalPoint = dungeon.getCoords(dungeon.getGoal());
 		int gDX = goalPoint.x;
@@ -104,6 +107,10 @@ public class LoadOriginalDungeon {
 		System.out.println("Num Keys : " + numKeys + " | numDoors : " + numDoors / 2);
 		numDoors /= 2;
 		balanceKeyToDoors(dungeon, numberToString);
+		for(Entry<Integer, String> set : numberToString.entrySet()) {
+			String n = set.getValue();
+			System.out.println(set.getKey() + " -> " + n.substring(n.length() - 5, n.length() - 1));
+		}
 		return dungeon;
 	}
 
@@ -408,6 +415,7 @@ public class LoadOriginalDungeon {
 	 */
 	private static void addAdjacency(String[] values, Dungeon dungeon, String nodeName, String whereTo) {
 		String direction = getDirection(values);
+		if(direction == null) return;
 		Node node = dungeon.getNode(nodeName);
 		if(values[0] != direction) {
 			String action = values[0];
