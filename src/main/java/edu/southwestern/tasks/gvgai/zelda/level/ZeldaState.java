@@ -21,6 +21,7 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 	public int dX;
 	public int dY;
 	private int numKeys = 0;
+	private boolean hasLadder = false;
 	private HashMap<String, Set<String>> unlocked;
 	private HashMap<String, Set<String>> bombed;
 	private HashMap<String, Set<Point>> keys;
@@ -41,7 +42,7 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		this.dY = p.y;
 	}
 	
-	public ZeldaState(int x, int y, int numKeys, Dungeon dungeon, String node,
+	public ZeldaState(int x, int y, int numKeys, Dungeon dungeon, String node, boolean hasLadder,
 			HashMap<String, Set<String>> unlocked, HashMap<String, Set<String>> bombed, HashMap<String, Set<Point>> keys) {
 		this.x = x;
 		this.y = y;
@@ -52,13 +53,23 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		this.bombed = bombed;
 		this.keys = keys;
 		Point p = dungeon.getCoords(node);
-		assert p != null : "The coords of " + node + " returned null";
-		System.out.println(node);
-		System.out.println(p);
 		this.dX = p.x;
 		this.dY = p.y;
-		if(currentNode.level.intLevel.get(y).get(x).equals(Tile.KEY.getNum()))
-			pickUpKey(node, new Point(x, y));
+		this.hasLadder = hasLadder;
+		pickupItems();
+	}
+
+	/**
+	 * Function to pickup items (key or ladder) when zelda state is initialized
+	 */
+	private void pickupItems() {
+		int tileNum = currentNode.level.intLevel.get(y).get(x);
+		if(tileNum == Tile.KEY.getNum()) {
+			pickUpKey(currentNode.name, new Point(x, y));
+		} else if (tileNum == -6) { // Ladder number
+			System.out.println("Picked up ladder");
+			hasLadder = true; // "pickup" ladder
+		}
 	}
 
 	/**
@@ -126,7 +137,6 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 			nextRoom = newRoom.t1;
 			
 		} else {
-			System.out.println("No new room");
 			nextRoom = currentNode.name;
 		}
 		
@@ -136,7 +146,7 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		HashMap<String, Set<Point>> newKeys = getNewHashMapPoint(keys);
 		
 		ZeldaState zs = new ZeldaState(newX, newY, numKeys, dungeon, nextRoom, 
-				newUnlocked, newBombed, newKeys);
+				hasLadder, newUnlocked, newBombed, newKeys);
 		
 //		if(true) System.exit(0);
 		
@@ -229,11 +239,18 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 			if(result == null) continue;
 			if(result != null) {
 				List<List<Integer>> level = result.currentNode.level.intLevel;
-				if(result.x >= 0 && result.x < level.get(0).size() && result.y >= 0 && result.y < level.size())
-					if(Tile.findNum(level.get(result.y).get(result.x)).playerPassable()) {
+				if(result.x >= 0 && result.x < level.get(0).size() && result.y >= 0 && result.y < level.size()) {
+					Tile tile = Tile.findNum(level.get(y).get(x));
+					Tile nextTile = Tile.findNum(level.get(result.y).get(result.x));
+					System.out.println(hasLadder);
+					if(nextTile.playerPassable()) 
 						legal.add(possible);
-						
-					}	
+					else if (nextTile.equals(Tile.BLOCK) && hasLadder && !tile.equals(Tile.BLOCK))
+						legal.add(possible);
+				
+				}
+				
+
 			}
 				
 		}
@@ -307,6 +324,8 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		if (x != other.x)
 			return false;
 		if (y != other.y)
+			return false;
+		if (hasLadder != other.hasLadder)
 			return false;
 		return true;
 	}
