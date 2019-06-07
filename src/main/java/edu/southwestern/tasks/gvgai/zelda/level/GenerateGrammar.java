@@ -49,13 +49,13 @@ public class GenerateGrammar<T extends Grammar> {
 	public static void main(String[] args) {
 		GenerateGrammar<ZeldaGrammar> grammar = new GenerateGrammar<>();
 		
-		grammar.addRule(ZeldaGrammar.OBSTACLE, new ZeldaGrammar[] {ZeldaGrammar.ROOM});
-		grammar.addRule(ZeldaGrammar.OBSTACLE, new ZeldaGrammar[] {ZeldaGrammar.MONSTER, ZeldaGrammar.OBSTACLE});
-		grammar.addRule(ZeldaGrammar.OBSTACLE, new ZeldaGrammar[] {ZeldaGrammar.KEY, ZeldaGrammar.OBSTACLE, ZeldaGrammar.LOCK, ZeldaGrammar.OBSTACLE});
+		grammar.addRule(ZeldaGrammar.OBSTACLE_S, new ZeldaGrammar[] {ZeldaGrammar.ROOM});
+		grammar.addRule(ZeldaGrammar.OBSTACLE_S, new ZeldaGrammar[] {ZeldaGrammar.MONSTER, ZeldaGrammar.OBSTACLE_S});
+		grammar.addRule(ZeldaGrammar.OBSTACLE_S, new ZeldaGrammar[] {ZeldaGrammar.KEY, ZeldaGrammar.OBSTACLE_S, ZeldaGrammar.LOCK, ZeldaGrammar.OBSTACLE_S});
 		
-		grammar.addRule(ZeldaGrammar.DUNGEON, new ZeldaGrammar[] {ZeldaGrammar.START, ZeldaGrammar.OBSTACLE, ZeldaGrammar.TREASURE});
+		grammar.addRule(ZeldaGrammar.DUNGEON_S, new ZeldaGrammar[] {ZeldaGrammar.START, ZeldaGrammar.OBSTACLE_S, ZeldaGrammar.TREASURE});
 		
-		List<ZeldaGrammar> generated = grammar.generate(ZeldaGrammar.DUNGEON);
+		List<ZeldaGrammar> generated = grammar.generate(ZeldaGrammar.DUNGEON_S);
 		
 		for(ZeldaGrammar z : generated) {
 			System.out.print(z.getLabelName() + " ");

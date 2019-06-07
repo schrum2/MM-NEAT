@@ -1,15 +1,21 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
 public enum ZeldaGrammar implements Grammar{
-	DUNGEON("Dungeon", "", true),
-	OBSTACLE("Obstacle", "", true),
+	DUNGEON_S("Dungeon", "", true),
+	OBSTACLE_S("Obstacle", "", true),
 	KEY("Key", "k", false),
+	KEY_S("KEY", "K", true),
 	LOCK("Lock", "l", false),
 	MONSTER("Monster", "e", false),
 	ROOM("Room", "", false),
 	TREASURE("Treasure", "t", false),
+	START_S("START", "S", true),
 	START("Start", "s", false),
-	FORK("FORK", "F", true);
+	FORK_S("FORK", "F", true),
+	ENEMY_S("ENEMY", "E", true),
+	ENEMY("Enemy", "e", false), 
+	LOCK_S("LOCK", "L", true),
+	NOTHING("Nothing", "n", false);
 	
 	private final String labelName;
 	private final String levelType;
