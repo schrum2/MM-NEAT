@@ -332,8 +332,8 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 
 
 	public static class GridAction implements Action {
-		public enum DIRECTION {UP, DOWN, LEFT, RIGHT}
-		private DIRECTION direction;;
+		public enum DIRECTION {UP, DOWN, LEFT, RIGHT};
+		private DIRECTION direction;
 		public GridAction(DIRECTION d) {
 			this.direction = d;
 		}
