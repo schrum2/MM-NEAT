@@ -1,9 +1,12 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 import edu.southwestern.util.datastructures.Graph;
+import edu.southwestern.util.datastructures.GraphUtil;
 
 public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 	public ZeldaGraphGrammar() {
@@ -124,6 +127,13 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		}
 
 		System.out.println("After size " + graph.size());
+		
+		try {
+			GraphUtil.saveGrammarGraph(graph, "data/VGLC/graph.dot");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 }

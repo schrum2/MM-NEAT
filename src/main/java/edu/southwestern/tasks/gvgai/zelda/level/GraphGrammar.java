@@ -51,11 +51,8 @@ public class GraphGrammar<T extends Grammar> {
 	public void setOtherGraph(Graph<T>.Node newStart, 
 			Graph<T>.Node newEnd, Graph<T> otherG) {
 		
-		List<Graph<T>.Node> nodes = otherG.breadthFirstTraversal();
-		for(Graph<T>.Node n : nodes)
-			System.out.println("\t" + n.getData().toString());
-		System.out.println();
-
+		System.out.println("START--------");
+		System.out.println(otherG.size());
 		for(Graph<T>.Node n : start.adjacencies())
 			otherG.addNode(n);
 		
@@ -68,11 +65,9 @@ public class GraphGrammar<T extends Grammar> {
 			newEnd.copy(end);
 		}
 		
-		nodes = otherG.breadthFirstTraversal();
-		for(Graph<T>.Node n : nodes)
-			System.out.println("\t\t" +n.getData().toString());
-		System.out.println();
-
+		
+		System.out.println(otherG.size());
+		System.out.println("END--------");
 	}
 	
 	public Graph<T> getGraph(){

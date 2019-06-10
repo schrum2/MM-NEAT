@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+import org.apache.commons.lang.RandomStringUtils;
+
 public class Graph<T>{
 	
 	private List<Node> nodes;
@@ -98,9 +100,11 @@ public class Graph<T>{
 	public class Node{
 		private T data;
 		List<Node> adjacencies;
+		private String id;
 		public Node(T d){
 			setData(d);
 			adjacencies = new LinkedList<>();
+			id = RandomStringUtils.randomAlphabetic(4);
 		}
 		public List<Node> adjacencies() {
 			return adjacencies;
@@ -111,10 +115,22 @@ public class Graph<T>{
 		public T getData() {
 			return data;
 		}
+		public String getID() {
+			return id;
+		}
+		
 		public void copy(Node other) {
 			this.data = other.data;
 			for(Node n : other.adjacencies)
 				adjacencies.add(n);
+		}
+		
+		@Override
+		public boolean equals(Object other) {
+			if(!(other instanceof Graph.Node)) return false;
+			Node on = (Node) other;
+			return on.id == this.id;
+			
 		}
 		
 		public String toString() {
