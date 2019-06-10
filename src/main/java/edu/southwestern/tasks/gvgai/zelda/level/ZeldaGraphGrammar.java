@@ -93,6 +93,10 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
 		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
 	}
 	
 	public static void main(String[] args) {
@@ -104,6 +108,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		initialList.add(ZeldaGrammar.TREASURE);
 		
 		Graph<ZeldaGrammar> graph = new Graph<>(initialList);
+		System.out.println("Before size " + graph.size());
 		List<Graph<ZeldaGrammar>.Node> traversal = graph.breadthFirstTraversal();
 		for(Graph<ZeldaGrammar>.Node n : traversal) {
 			System.out.println(n.getData().toString());
@@ -117,6 +122,8 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		for(Graph<ZeldaGrammar>.Node n : traversal) {
 			System.out.println(n.getData().toString());
 		}
+
+		System.out.println("After size " + graph.size());
 		
 	}
 }

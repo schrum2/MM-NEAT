@@ -116,10 +116,18 @@ public class Graph<T>{
 			for(Node n : other.adjacencies)
 				adjacencies.add(n);
 		}
+		
+		public String toString() {
+			return data.toString();
+		}
 	}
 
 	public Node root() {
 		return root;
+	}
+
+	public int size() {
+		return nodes.size();
 	}
 
 

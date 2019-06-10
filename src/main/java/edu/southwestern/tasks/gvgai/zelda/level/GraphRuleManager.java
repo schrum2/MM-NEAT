@@ -1,7 +1,9 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Stack;
 
 import edu.southwestern.util.datastructures.Graph;
@@ -29,7 +31,7 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		List<GraphRule<T>> rules = new LinkedList<>();
 		
 		for(GraphRule<T> r : graphRules) {
-			if(r.getSymbolStart().equals(start) &&
+			if(r.getSymbolStart().equals(start) && r.getSymbolEnd() != null &&
 					r.getSymbolEnd().equals(end))
 				rules.add(r);
 		}
@@ -43,17 +45,28 @@ abstract public class GraphRuleManager<T extends Grammar> {
 	public Graph<T> applyRules(Graph<T> graph) {
 		boolean symbols = true;
 		boolean appliedRule = false;
-		Stack<Graph<T>.Node> visited = new Stack<>();
-		Node node = graph.root();
-		visited.push(node);
-		while(!visited.isEmpty()) {
-			Graph<T>.Node current = visited.pop();
-			List<Graph<T>.Node> adj = current.adjacencies();
-			for(Graph<T>.Node n : adj) {
-				applyRule(graph, current, n);
-				visited.push(n);
+		while(symbols) {
+			symbols = false;
+			List<Graph<T>.Node> visited = new ArrayList<>();
+			Queue<Graph<T>.Node> queue = new LinkedList<>();
+			Graph<T>.Node node = graph.root();
+			visited.add(node);
+			queue.add(node);
+			while(!queue.isEmpty()) {
+				Graph<T>.Node current = queue.poll();
+				symbols = symbols || current.getData().isSymbol();
+				System.out.println(current);
+				List<Graph<T>.Node> adj = new LinkedList<>(current.adjacencies());
+				for(Graph<T>.Node n : adj) {
+					if(!visited.contains(n)) {
+						applyRule(graph, current, n);
+						visited.add(n);
+						queue.add(n);
+					}
+				}
 			}
 		}
+
 //		while(symbols) {
 //			symbols = false;
 //			List<Graph<T>.Node> nodes = graph.breadthFirstTraversal();
@@ -81,6 +94,7 @@ abstract public class GraphRuleManager<T extends Grammar> {
 	
 	public void applyRule(Graph<T> graph, Graph<T>.Node node, Graph<T>.Node nextNode) {
 		List<GraphRule<T>> rules = findRule(node.getData(), nextNode.getData());
+		System.out.println(node + "->" + nextNode);
 		if(rules.size() > 0) {
 			GraphRule<T> ruleToApply = rules.get((int) Math.random() * rules.size());
 			if(ruleToApply != null) {
