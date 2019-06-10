@@ -53,14 +53,14 @@ public class GraphGrammar<T extends Grammar> {
 		
 		System.out.println("START--------");
 		System.out.println(otherG.size());
-		for(Graph<T>.Node n : start.adjacencies())
-			otherG.addNode(n);
+//		for(Graph<T>.Node n : start.adjacencies())
+//			otherG.addNode(n);
 		
 		newStart.copy(start);
 
 		if(end != null) {
-			for(Graph<T>.Node n : end.adjacencies())
-				otherG.addNode(n);
+//			for(Graph<T>.Node n : end.adjacencies())
+//				otherG.addNode(n);
 
 			newEnd.copy(end);
 		}

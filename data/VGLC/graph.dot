@@ -1,29 +1,21 @@
 graph {
-pUgt[label="s"]
-SDbI[label="k"]
-TePx[label="e"]
-iIrN[label="e"]
-DlKu[label="e"]
-zsfG[label="l"]
-gBvr[label="s"]
-CcEs[label="k"]
-GVZr[label="e"]
-wfIM[label="t"]
-qpIT[label="e"]
-URHd[label="e"]
-zeMj[label="e"]
-Sfie[label="t"]
-pUgt -- SDbI
-pUgt -- TePx
-pUgt -- iIrN
-pUgt -- DlKu
-SDbI -- zsfG
-TePx -- gBvr
-DlKu -- CcEs
-zsfG -- GVZr
-GVZr -- wfIM
-GVZr -- qpIT
-GVZr -- URHd
-qpIT -- zeMj
-URHd -- Sfie
+PCZT[label="s"]
+rDPe[label="e"]
+ktUp[label="n"]
+QHRL[label="e"]
+SQPn[label="e"]
+CrkF[label="k"]
+TjIA[label="l"]
+dQNh[label="e"]
+UuxO[label="e"]
+eHMD[label="t"]
+PCZT -- rDPe
+PCZT -- ktUp
+PCZT -- QHRL
+PCZT -- SQPn
+QHRL -- CrkF
+CrkF -- TjIA
+CrkF -- dQNh
+TjIA -- UuxO
+UuxO -- eHMD
 }

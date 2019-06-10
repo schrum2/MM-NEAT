@@ -1,12 +1,15 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Stack;
 
 import edu.southwestern.util.datastructures.Graph;
+import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.datastructures.Graph.Node;
 
 abstract public class GraphRuleManager<T extends Grammar> {
@@ -45,6 +48,7 @@ abstract public class GraphRuleManager<T extends Grammar> {
 	public Graph<T> applyRules(Graph<T> graph) {
 		boolean symbols = true;
 		boolean appliedRule = false;
+		int i = 0;
 		while(symbols) {
 			symbols = false;
 			List<Graph<T>.Node> visited = new ArrayList<>();
@@ -59,12 +63,13 @@ abstract public class GraphRuleManager<T extends Grammar> {
 				List<Graph<T>.Node> adj = new LinkedList<>(current.adjacencies());
 				for(Graph<T>.Node n : adj) {
 					if(!visited.contains(n)) {
-						applyRule(graph, current, n);
+						applyRule(graph, current, n, i++);
 						visited.add(n);
 						queue.add(n);
 					}
 				}
 			}
+
 		}
 
 //		while(symbols) {
@@ -92,13 +97,21 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		return graph;
 	}
 	
-	public void applyRule(Graph<T> graph, Graph<T>.Node node, Graph<T>.Node nextNode) {
+	public void applyRule(Graph<T> graph, Graph<T>.Node node, Graph<T>.Node nextNode, int i) {
 		List<GraphRule<T>> rules = findRule(node.getData(), nextNode.getData());
+		System.out.println("Found rules " + rules.size());
 		System.out.println(node + "->" + nextNode);
 		if(rules.size() > 0) {
-			GraphRule<T> ruleToApply = rules.get((int) Math.random() * rules.size());
+			Random r = new Random();
+			GraphRule<T> ruleToApply = rules.get(r.nextInt(rules.size()));
 			if(ruleToApply != null) {
 				ruleToApply.grammar().setOtherGraph(node, nextNode, graph);
+				try {
+					GraphUtil.saveGrammarGraph(graph, "data/VGLC/graph_test_" + i + ".dot");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 	}
