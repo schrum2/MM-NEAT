@@ -16,8 +16,8 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule.grammar().setStart(ZeldaGrammar.START);
 		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeBetween(ZeldaGrammar.NOTHING);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		
 //		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.ENEMY_S);

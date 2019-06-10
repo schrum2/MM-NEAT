@@ -106,12 +106,6 @@ abstract public class GraphRuleManager<T extends Grammar> {
 			GraphRule<T> ruleToApply = rules.get(r.nextInt(rules.size()));
 			if(ruleToApply != null) {
 				ruleToApply.grammar().setOtherGraph(node, nextNode, graph);
-				try {
-					GraphUtil.saveGrammarGraph(graph, "data/VGLC/graph_test_" + i + ".dot");
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 		}
 	}

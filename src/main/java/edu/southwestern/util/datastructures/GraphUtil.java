@@ -37,19 +37,18 @@ public class GraphUtil {
 			
 		}
 	
-		
 		n = graph.root();
 		visited = new ArrayList<>();
 		queue = new LinkedList<>();
 		queue.add(n);
-		visited.add(n);
 		while(!queue.isEmpty()) {
 			Graph<? extends Grammar>.Node node = queue.poll();
+
+			visited.add(node);
 			for(Graph<? extends Grammar>.Node v : node.adjacencies()) {
 				if(!visited.contains(v)) {
 					w.write(node.getID() + " -- " + v.getID() +"\n");
-					visited.add(v);
-					queue.add(v);
+					queue.add(v);				
 				}
 			}
 			
