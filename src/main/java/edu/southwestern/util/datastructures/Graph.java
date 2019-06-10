@@ -2,20 +2,22 @@ package edu.southwestern.util.datastructures;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 import org.apache.commons.lang.RandomStringUtils;
 
 public class Graph<T>{
 	
-	private List<Node> nodes;
+	private Set<Node> nodes;
 	private Node root;
 	
 	public Graph() {
-		setNodes(new LinkedList<>());
+		setNodes(new HashSet<>());
 		root = null;
 	}
 	
@@ -35,17 +37,16 @@ public class Graph<T>{
 		}
 	}
 
-	public List<Node> getNodes() {
+	public Set<Graph<T>.Node> getNodes() {
 		return nodes;
 	}
 
-	public void setNodes(List<Node> nodes) {
+	public void setNodes(Set<Graph<T>.Node> nodes) {
 		this.nodes = nodes;
 	}
 	
 	public void addNode(Node n) {
-		if(!nodes.contains(n))
-			nodes.add(n);
+		nodes.add(n);
 	}
 	
 	public Node addNode(T data) {
@@ -67,8 +68,8 @@ public class Graph<T>{
 	}
 	
 	public void removeEdge(Node n1, Node n2) {
-		List<Node> l1 = n1.adjacencies;
-		List<Node> l2 = n2.adjacencies;
+		Set<Node> l1 = n1.adjacencies;
+		Set<Node> l2 = n2.adjacencies;
 		if(l1 != null)
 			l1.remove(n2);
 		if(l2 != null)
@@ -99,14 +100,14 @@ public class Graph<T>{
 
 	public class Node{
 		private T data;
-		List<Node> adjacencies;
+		Set<Node> adjacencies;
 		private String id;
 		public Node(T d){
 			setData(d);
-			adjacencies = new LinkedList<>();
+			adjacencies = new HashSet<>();
 			id = RandomStringUtils.randomAlphabetic(4);
 		}
-		public List<Node> adjacencies() {
+		public Set<Graph<T>.Node> adjacencies() {
 			return adjacencies;
 		}
 		public void setData(T data) {
@@ -118,11 +119,15 @@ public class Graph<T>{
 		public String getID() {
 			return id;
 		}
+		public void setID(String id) {
+			this.id = id;
+		}
 		
 		public void copy(Node other) {
 			this.data = other.data;
 			for(Node n : other.adjacencies)
 				adjacencies.add(n);
+			this.id = other.id;
 		}
 		
 		@Override
