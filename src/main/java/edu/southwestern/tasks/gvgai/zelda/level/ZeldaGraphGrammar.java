@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
+import me.jakerg.rougelike.RougelikeApp;
 
 public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 	public ZeldaGraphGrammar() {
@@ -60,10 +62,9 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
-		rule.grammar().setStart(ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY_S);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
@@ -101,6 +102,10 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.LOCK);
 		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		graphRules.add(rule);
 	}
 	
 	public static void main(String[] args) {
@@ -133,6 +138,16 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		try {
 			GraphUtil.saveGrammarGraph(graph, "data/VGLC/graph.dot");
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Parameters.initializeParameterCollections(new String[] {});
+		
+		Dungeon d;
+		try {
+			d = GraphUtil.convertToDungeon(graph);
+			RougelikeApp.startDungeon(d, true);
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

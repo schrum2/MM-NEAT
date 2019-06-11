@@ -7,7 +7,6 @@ import java.util.Random;
 
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import me.jakerg.rougelike.Tile;
 
 public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 
@@ -28,7 +27,7 @@ public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 		while(levelList.size() > 0) {
 			if(levelList.size() == 1) {
 				Level level = levelList.pop();
-				levelList.add(placeTriforce(level));
+				levelList.add(level.placeTriforce(null));
 			}
 			
 			
@@ -52,23 +51,6 @@ public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 		}
 		
 		return dungeon;
-		
-	}
-
-	private Level placeTriforce(Level level) {
-		List<List<Integer>> ints = level.intLevel;
-		int x = (ints.get(0).size() - 1) / 2;
-		int y = (ints.size() - 1) / 2;
-		while(!Tile.findNum(ints.get(y).get(x)).playerPassable()) {
-			if(x % 2 == 0)
-				x--;
-			else
-				y--;
-		}
-		ints.get(y).set(x, Tile.TRIFORCE.getNum());
-		level.intLevel = ints;
-		return level;
-		
 		
 	}
 
