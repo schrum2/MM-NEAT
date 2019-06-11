@@ -82,6 +82,8 @@ public class GraphUtil {
 		levelThere[y][x] = dNode.name;
 		dungeon.setCurrentLevel(dNode.name);
 		
+		Queue<Graph<? extends Grammar>.Node> backlog = new LinkedList<>();
+		
 		List<Graph<? extends Grammar>.Node> visited = new ArrayList<>();
 		Queue<Graph<? extends Grammar>.Node> queue = new LinkedList<>();
 		queue.add(n);
@@ -90,10 +92,12 @@ public class GraphUtil {
 			Dungeon.Node dN = dungeon.getNode(node.getID());
 			visited.add(node);
 			Point p = getCoords(levelThere, node.getID());
+			
+			handleBacklog(levelThere, dungeon, backlog);
 			if(p == null)
 				throw new Exception("Node : " + node.getID() + " not found in level there");
 			for(Graph<? extends Grammar>.Node adjNode : node.adjacencies()) {
-				if(!visited.contains(adjNode)) {
+				if(!visited.contains(adjNode) && !queue.contains(adjNode)) {
 					System.out.println("Going to node: " + adjNode.getID());
 					Point legal = getNextLegalPoint(p, levelThere);
 					if(legal != null) {
@@ -106,8 +110,9 @@ public class GraphUtil {
 						setAdjacencies(newNode, legal, p, dN.name, tile);
 						queue.add(adjNode);
 					} else {
+						backlog.add(adjNode);
 						print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
-						throw new Exception("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
+//						throw new Exception("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
 					}
 				}
 			}
@@ -117,10 +122,32 @@ public class GraphUtil {
 		return dungeon;
 	}
 	
+	private static void handleBacklog(String[][] levelThere, Dungeon dungeon, 
+			Queue<Graph<? extends Grammar>.Node> backlog) throws Exception {
+		while(!backlog.isEmpty()) {
+			Graph<? extends Grammar>.Node node = backlog.poll();
+			Dungeon.Node dN = dungeon.getNode(node.getID());
+			for(Graph<? extends Grammar>.Node adjNode : node.adjacencies()) {
+				Point p = getCoords(levelThere, adjNode.getID());
+				if(p != null) {
+					Point legal = getNextLegalPoint(p, levelThere);
+					if(legal != null) {
+						levelThere[legal.y][legal.x] = node.getID();
+						Level newLevel = loadLevel(node, dungeon);
+						Dungeon.Node newNode = dungeon.newNode(node.getID(), newLevel);
+						int tile = (node.getData().getLevelType() == "l") ? Tile.LOCKED_DOOR.getNum() : Tile.DOOR.getNum();
+						setAdjacencies(dN, p, legal, newNode.name, tile);
+						setAdjacencies(newNode, legal, p, dN.name, tile);
+					}
+				}
+			}
+		}
+	}
+
 	private static void print2DArray(String[][] array) {
 		for(String[] row : array) {
 			for(String s : row) {
-				System.out.println(s +",");
+				System.out.print(s +",");
 			}
 			System.out.println();
 		}
