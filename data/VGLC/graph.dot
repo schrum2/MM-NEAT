@@ -1,31 +1,28 @@
 graph {
-Pnpu[label="s"]
-UmZe[label="e"]
-arVl[label="e"]
-WCfY[label="e"]
-jadF[label="n"]
-hBcz[label="e"]
-wahL[label="l"]
-WWJa[label="e"]
-myPG[label="k"]
-mliT[label="e"]
-xPpm[label="e"]
-ZYKU[label="t"]
-EUUp[label="e"]
-Pnpu -- UmZe
-Pnpu -- arVl
-Pnpu -- WCfY
-Pnpu -- jadF
-arVl -- WCfY
-WCfY -- hBcz
-WCfY -- jadF
-hBcz -- wahL
-hBcz -- WWJa
-hBcz -- myPG
-wahL -- WWJa
-wahL -- mliT
-mliT -- xPpm
-mliT -- ZYKU
-mliT -- EUUp
-ZYKU -- EUUp
+AERP[label="s"]
+NHEh[label="e"]
+rgEs[label="e"]
+jPZf[label="e"]
+bIgR[label="n"]
+EArp[label="k"]
+iQcP[label="l"]
+PfWE[label="e"]
+QHWy[label="e"]
+QzNZ[label="e"]
+ohAB[label="t"]
+siNd[label="e"]
+AERP -- NHEh
+AERP -- rgEs
+AERP -- jPZf
+AERP -- bIgR
+rgEs -- jPZf
+jPZf -- EArp
+jPZf -- bIgR
+EArp -- iQcP
+EArp -- PfWE
+iQcP -- QHWy
+QHWy -- QzNZ
+QHWy -- ohAB
+QHWy -- siNd
+QzNZ -- ohAB
 }

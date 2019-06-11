@@ -23,8 +23,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.apache.log4j.Level;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
@@ -79,6 +77,12 @@ public abstract class ZeldaDungeon<T> {
 	private Level[][] dungeon = null;
 	private Dungeon dungeonInstance = null;
 	JPanel dungeonGrid;
+	
+	public ZeldaDungeon() {}
+	
+	public ZeldaDungeon(Dungeon dungeon) {
+		this.dungeonInstance = dungeon;
+	}
 	
 	/**
 	 * Function specified by the specific dungeon making process to make their own dungeon
@@ -151,16 +155,16 @@ public abstract class ZeldaDungeon<T> {
 		// Set the edges based on the direction
 		switch(direction) {
 		case("UP"):
-			addUpAdjacencies(newNode, whereTo);
+			ZeldaLevelUtil.addUpAdjacencies(newNode, whereTo);
 			break;
 		case("RIGHT"):
-			setRightAdjacencies(newNode, whereTo);
+			ZeldaLevelUtil.addRightAdjacencies(newNode, whereTo);
 			break;
 		case("DOWN"):
-			addDownAdjacencies(newNode, whereTo);
+			ZeldaLevelUtil.addDownAdjacencies(newNode, whereTo);
 			break;	
 		case("LEFT"):
-			setLeftAdjacencies(newNode, whereTo);
+			ZeldaLevelUtil.addLeftAdjacencies(newNode, whereTo);
 			break;
 		default: return;
 		}
@@ -180,106 +184,6 @@ public abstract class ZeldaDungeon<T> {
 		}
 	}
 
-	/**
-	 * Set edges when you're going UP
-	 * @param newNode Node to add the edge too
-	 * @param whereTo String representation of the room you're going to
-	 */
-	private void addUpAdjacencies(Node newNode, String whereTo) {
-		int y, minX, maxX = 0, startY;
-		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
-			y = 1;
-			minX = 4;
-			minX = 6;
-			startY = 13;
-		} else {
-			y = 1;
-			minX = 7;
-			maxX = 8;
-			startY = 8;			
-		}
-
-		for(int x = minX; x <= maxX; x++) {
-			Point exitPoint = new Point(x, y);
-			Point startPoint = new Point(x, startY);
-			newNode.setAdjacency(exitPoint.toString(), whereTo, startPoint);
-		}
-	}
-	
-	/**
-	 * Set edges when you're going DOWN
-	 * @param newNode Node to add the edge too
-	 * @param whereTo String representation of the room you're going to
-	 */
-	private void addDownAdjacencies(Node newNode, String whereTo) {
-		int y, minX, maxX;
-		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
-			y = 14;
-			minX = 4;
-			maxX = 6;
-		} else {
-			y = 9;
-			minX = 7;
-			maxX = 8;
-
-		}
-		for(int x = minX; x <= maxX; x++) {
-			Point exitPoint = new Point(x, y);
-			Point startPoint = new Point(x, 2);
-			newNode.setAdjacency(exitPoint.toString(), whereTo, startPoint);
-		}
-	}
-	
-	/**
-	 * Set edges when you're going RIGHT
-	 * @param newNode Node to add the edge too
-	 * @param whereTo String representation of the room you're going to
-	 */
-	private void setRightAdjacencies(Node newNode, String whereTo) {
-		int x, minY, maxY;
-		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
-			x = 9;
-			minY = 7;
-			maxY = 8;
-		} else {
-			x = 14;
-			minY = 4;
-			maxY = 6;
-		}
-		
-		for(int y = minY; y <= maxY; y++) {
-			Point exitPoint = new Point(x, y);
-			Point startPoint = new Point(2, y);
-			newNode.setAdjacency(exitPoint.toString(), whereTo, startPoint);
-		}
-	}
-	
-	/**
-	 * Set edges when you're going LEFT
-	 * @param newNode Node to add the edge too
-	 * @param whereTo String representation of the room you're going to
-	 */
-	private void setLeftAdjacencies(Node newNode, String whereTo) {
-		int x, minY, maxY = 0, startX;
-		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")){
-			x = 1;
-			minY = 7;
-			minY = 8;
-			startX = 8;
-		} else {
-			x = 1;
-			minY = 4;
-			maxY = 6;
-			startX = 13;
-		}
-		for(int y = minY; y <= maxY; y++) {
-			Point exitPoint = new Point(x, y);
-			Point startPoint = new Point(startX, y);
-			newNode.setAdjacency(exitPoint.toString(), whereTo, startPoint);
-		}
-
-	}
-	
 	private void setLevels(String direction, Node node, int tile) {
 		List<List<Integer>> level = node.level.intLevel;
 		// Randomize tile only if the door being placed actually leads to another room
@@ -287,52 +191,12 @@ public abstract class ZeldaDungeon<T> {
 			if(Math.random() > 0.3)
 				tile = (Math.random() > 0.5) ? Tile.LOCKED_DOOR.getNum() : Tile.HIDDEN.getNum(); // Randomize 5 (locked door) or 7 (bombable wall)
 			
-			if(tile == Tile.LOCKED_DOOR.getNum()) placeRandomKey(level); // If the door is now locked place a random key in the level
+			if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level); // If the door is now locked place a random key in the level
 		}
-		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
-			if(direction == "UP" || direction == "DOWN") { // Add doors at top or bottom
-				int y = (direction == "UP") ? 1 : 14; // Set y based on side 1 if up 14 if bottom
-				for(int x = 4; x <= 6; x++) {
-					level.get(y).set(x, tile);
-				}
-			} else if (direction == "LEFT" || direction == "RIGHT") { // Add doors at left or right
-				int x = (direction == "LEFT") ? 1 : 9; // Set x based on side 1 if left 9 if right
-				for(int y = 7; y <=8; y++) {
-					level.get(y).set(x, tile);
-				}
-			}
-		} else {
-			if(direction.equals("UP")  || direction.equals("DOWN")) { // Add doors at top or bottom
-				int y = (direction.equals("UP")) ? 1 : 9; // Set x based on side 1 if left 9 if right
-				for(int x = 7; x <=8; x++) {
-					level.get(y).set(x, tile);
-				}
-			} else if (direction.equals("LEFT") || direction.equals("RIGHT") ) { // Add doors at left or right
-				int x = (direction.equals("LEFT")) ? 1 : 14; // Set y based on side 1 if up 14 if bottom
-				for(int y = 4; y <= 6; y++) {
-					level.get(y).set(x, tile);
-				}
-			}
-		}
+		ZeldaLevelUtil.setDoors(direction, level, tile);
 
 	}
-
-	/**
-	 * Place a random key tile on the floor
-	 * @param level
-	 */
-	public static void placeRandomKey(List<List<Integer>> level) {
-		int x, y;
-		
-		do {
-	        x = (int)(Math.random() * level.get(0).size());
-	        y = (int)(Math.random() * level.size());
-	    }
-	    while (!Tile.findNum(level.get(y).get(x)).playerPassable());
-		
-		level.get(y).set(x, Tile.KEY.getNum()); 
-	}
-
+	
 	/**
 	 * Function specified by the dungeon to get a 2D list of ints from the latent vector
 	 * @param phenotype The phenotype of the level
@@ -375,6 +239,7 @@ public abstract class ZeldaDungeon<T> {
 //				
 				if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
 					new Thread() {
+						@Override
 						public void run() {
 							RougelikeApp.startDungeon(dungeonInstance);
 						}
@@ -382,6 +247,7 @@ public abstract class ZeldaDungeon<T> {
 				} else {
 					GameBundle bundle = ZeldaGANLevelBreederTask.setUpGameWithDungeon(dungeonInstance);
 					new Thread() {
+						@Override
 						public void run() {
 							// True is to watch the game being played
 							GVGAIUtil.runDungeon(bundle, true, dungeonInstance);
@@ -477,7 +343,7 @@ public abstract class ZeldaDungeon<T> {
 		
 		for(int i = 0; i < dungeon.length; i++) {
 			for(int j = 0; j < dungeon[i].length; j++) {
-				if(dungeon[i][j] != null) {
+				if(dungeonInstance.getLevelThere()[i][j] != null) {
 					BufferedImage level = getButtonImage(dungeon[i][j], ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4); //creates image rep. of level)
 					ImageIcon img = new ImageIcon(level.getScaledInstance(ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4, Image.SCALE_FAST)); //creates image of level
 					JLabel imageLabel = new JLabel(img); // places level on label
@@ -591,9 +457,9 @@ public abstract class ZeldaDungeon<T> {
 	 *
 	 */
 	public static class Level{
-		List<List<Integer>> intLevel;
-		String[] stringLevel;
-		Tile[][] rougeTiles;
+		public List<List<Integer>> intLevel;
+		public String[] stringLevel;
+		public Tile[][] rougeTiles;
 		
 		public Level(List<List<Integer>> intLevel) {
 			this.intLevel = intLevel;
@@ -610,6 +476,23 @@ public abstract class ZeldaDungeon<T> {
 		
 		public Tile[][] getTiles(){
 			return TileUtil.listToTile(intLevel);
+		}
+
+		public Level placeTriforce(Dungeon dungeon) {
+			List<List<Integer>> ints = intLevel;
+			int x = (ints.get(0).size() - 1) / 2;
+			int y = (ints.size() - 1) / 2;
+			while(!Tile.findNum(ints.get(y).get(x)).playerPassable()) {
+				if(x % 2 == 0)
+					x--;
+				else
+					y--;
+			}
+			ints.get(y).set(x, Tile.TRIFORCE.getNum());
+			intLevel = ints;
+			if(dungeon != null)
+				dungeon.setGoalPoint(new Point(x, y));;
+			return this;
 		}
 	}
 

@@ -127,7 +127,7 @@ public class LoadOriginalDungeon {
 			Node currentNode = dungeon.getNode(numberToString.get(i));
 			if(currentNode != null && !haveKey(currentNode)) {
 				if(RANDOM_KEY)
-					ZeldaDungeon.placeRandomKey(currentNode.level.intLevel);
+					ZeldaLevelUtil.placeRandomKey(currentNode.level.intLevel);
 				else
 					ZeldaDungeon.placeNormalKey(currentNode.level.intLevel);
 				numKeys++;
@@ -168,7 +168,7 @@ public class LoadOriginalDungeon {
 		
 		// Start recursive funciton
 		recursiveLevelThere(levelThere, visited);
-		return trimLevelThere(levelThere); // Trim the levelThere and return
+		return ZeldaLevelUtil.trimLevelThere(levelThere); // Trim the levelThere and return
 	}
 
 	/**
@@ -216,61 +216,6 @@ public class LoadOriginalDungeon {
 			directional.remove(node);
 		}
 		
-	}
-
-	/**
-	 * Since levelThere is a huge 2D array, trim it to the necessary parts
-	 * @param levelThere Large 2D level array
-	 * @return Trimmed level array
-	 */
-	private static String[][] trimLevelThere(String[][] levelThere) {
-		int minY = 0, maxY = 0, minX = 0, maxX = 0;
-		
-		// Get the min y value 
-		for(int y = 0; y < levelThere.length; y++)
-			for(int x = 0; x < levelThere[y].length; x++)
-				if(levelThere[y][x] != null) {
-					minY = y + 1;
-					break;
-				}
-		
-		// Get the min x value
-		for(int x = 0; x < levelThere[0].length; x++)
-			for(int y = 0; y < levelThere.length; y++)
-				if(levelThere[y][x] != null) {
-					minX = x + 1;
-					break;
-				}
-		
-		// Get the max Y value
-		for(int y = levelThere.length - 1; y >= 0; y--)
-			for(int x = levelThere[y].length - 1; x >= 0; x--)
-				if(levelThere[y][x] != null) {
-					maxY = y;
-					break;
-				}
-		
-		// Get the max x value
-		for(int x = levelThere[0].length - 1; x >= 0; x--)
-			for(int y = levelThere.length - 1; y >= 0; y--)
-				if(levelThere[y][x] != null) {
-					maxX = x;
-					break;
-				}
-		
-		// Calculate size of trimmed down array
-		int newY = minY - maxY;
-		int newX = minX - maxX;
-		
-		// Make new level array
-		String[][] newLevelThere = new String[newY][newX];
-		
-		// transfer contents from old to new
-		for(int i = 0; i < newLevelThere.length; i++)
-			for(int j = 0; j < newLevelThere[i].length; j++)
-				newLevelThere[i][j] = levelThere[maxY + i][maxX + j];
-			
-		return newLevelThere;
 	}
 
 	/**
@@ -325,13 +270,13 @@ public class LoadOriginalDungeon {
 			switch(value) {
 			case "m":
 			case "e": // Room has enemies
-				addRandomEnemy(node);
+				ZeldaLevelUtil.addRandomEnemy(node.level.intLevel);
 				System.out.println("Adding enemy | " + value);
 				break;
 			case "k": // Room has a key in it
 				numKeys++;
 				if(RANDOM_KEY)
-					ZeldaDungeon.placeRandomKey(node.level.intLevel);
+					ZeldaLevelUtil.placeRandomKey(node.level.intLevel);
 				else
 					ZeldaDungeon.placeNormalKey(node.level.intLevel);
 				break;
@@ -354,28 +299,6 @@ public class LoadOriginalDungeon {
 		level.get(y).set(x, Tile.TRIFORCE.getNum());
 		dungeon.setGoalPoint(new Point(x, y));
 		dungeon.setGoal(node.name);
-	}
-
-	/**
-	 * Add 1 - 3 enemies at random locations
-	 * @param node Node to add the enemies to
-	 */
-	private static void addRandomEnemy(Node node) {
-		List<List<Integer>> level = node.level.intLevel;
-		Random r = new Random();
-		int numEnemies = r.nextInt(3) + 1;
-		for(int i = 0; i < numEnemies; i++) {
-			int x, y;
-			
-			do {
-		        x = (int)(Math.random() * level.get(0).size());
-		        y = (int)(Math.random() * level.size());
-		    }
-		    while (level.get(y).get(x) != 0);
-			
-			level.get(y).set(x, 2); 
-			System.out.println("Added enemy number " + (i + 1));
-		}
 	}
 
 	/**
