@@ -1,28 +1,23 @@
 graph {
-AERP[label="s"]
-NHEh[label="e"]
-rgEs[label="e"]
-jPZf[label="e"]
-bIgR[label="n"]
-EArp[label="k"]
-iQcP[label="l"]
-PfWE[label="e"]
-QHWy[label="e"]
-QzNZ[label="e"]
-ohAB[label="t"]
-siNd[label="e"]
-AERP -- NHEh
-AERP -- rgEs
-AERP -- jPZf
-AERP -- bIgR
-rgEs -- jPZf
-jPZf -- EArp
-jPZf -- bIgR
-EArp -- iQcP
-EArp -- PfWE
-iQcP -- QHWy
-QHWy -- QzNZ
-QHWy -- ohAB
-QHWy -- siNd
-QzNZ -- ohAB
+uwiU[label="s"]
+DsNs[label="e"]
+FHgZ[label="e"]
+fCNb[label="e"]
+gcOM[label="n"]
+snhR[label="k"]
+YMFu[label="l"]
+dgKt[label="e"]
+yXbr[label="e"]
+LKSJ[label="t"]
+uwiU -- DsNs
+uwiU -- FHgZ
+uwiU -- fCNb
+uwiU -- gcOM
+FHgZ -- fCNb
+fCNb -- snhR
+fCNb -- gcOM
+snhR -- YMFu
+snhR -- dgKt
+YMFu -- yXbr
+yXbr -- LKSJ
 }

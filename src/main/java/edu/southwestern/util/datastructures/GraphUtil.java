@@ -222,6 +222,7 @@ public class GraphUtil {
 			break;
 		case "e":
 			ZeldaLevelUtil.addRandomEnemy(level.intLevel);
+			break;
 		case "t":
 			level = level.placeTriforce(dungeon);
 			dungeon.setGoal(n.getID());
