@@ -1,24 +1,29 @@
 graph {
-eVtn[label="s"]
-pzFF[label="e"]
-dCxt[label="e"]
-xmrO[label="e"]
-zhsh[label="n"]
-bvDv[label="e"]
-nedf[label="l"]
-xLQv[label="k"]
-XtKO[label="e"]
-FpfA[label="t"]
-eVtn -- pzFF
-eVtn -- dCxt
-eVtn -- xmrO
-eVtn -- zhsh
-dCxt -- xmrO
-xmrO -- bvDv
-xmrO -- zhsh
-bvDv -- nedf
-bvDv -- xLQv
-nedf -- xLQv
-nedf -- XtKO
-XtKO -- FpfA
+apUE[label="s"]
+PQPN[label="e"]
+rnqY[label="e"]
+jQmi[label="e"]
+fCaI[label="n"]
+aYkU[label="e"]
+tiEq[label="l"]
+KrgS[label="k"]
+Gelj[label="e"]
+Txre[label="e"]
+NpvN[label="t"]
+soDP[label="e"]
+apUE -- PQPN
+apUE -- rnqY
+apUE -- jQmi
+apUE -- fCaI
+rnqY -- jQmi
+jQmi -- aYkU
+jQmi -- fCaI
+aYkU -- tiEq
+aYkU -- KrgS
+tiEq -- KrgS
+tiEq -- Gelj
+Gelj -- Txre
+Gelj -- NpvN
+Gelj -- soDP
+Txre -- NpvN
 }

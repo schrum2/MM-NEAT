@@ -128,6 +128,13 @@ public class GraphUtil {
 						print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
 //						throw new Exception("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
 					}
+				} else if (visited.contains(adjNode) && !node.getData().equals(ZeldaGrammar.LOCK)
+						&& !adjNode.getData().equals(ZeldaGrammar.LOCK)) {
+					Dungeon.Node newNode = dungeon.getNode(adjNode.getID());
+					int tile = Tile.DOOR.getNum();
+					Point to = getCoords(levelThere, adjNode.getID());
+					setAdjacencies(dN, p, to, newNode.name, tile);
+					setAdjacencies(newNode, to, p, dN.name, tile);
 				}
 				print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
 				System.out.println();
@@ -160,11 +167,6 @@ public class GraphUtil {
 						Dungeon.Node newNode = dungeon.newNode(node.getID(), newLevel);
 						Dungeon.Node dN = dungeon.getNode(adjNode.getID());
 						int tile = (node.getData().getLevelType() == "l") ? Tile.LOCKED_DOOR.getNum() : Tile.DOOR.getNum();
-						System.out.println(dN.name);
-						System.out.println(p);
-						System.out.println(legal);
-						System.out.println(newNode.name);
-						System.out.println(tile);
 						
 						setAdjacencies(dN, p, legal, newNode.name, tile);
 						setAdjacencies(newNode, legal, p, dN.name, tile);
@@ -199,6 +201,8 @@ public class GraphUtil {
 	private static void setAdjacencies(Dungeon.Node fromNode, Point from,
 			Point to, String whereTo, int tile) throws Exception {
 		String direction = getDirection(from, to);
+		
+		if(direction == null) return;
 
 		switch(direction) {
 		case "UP":
