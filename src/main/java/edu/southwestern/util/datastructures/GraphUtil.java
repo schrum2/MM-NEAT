@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -115,6 +116,8 @@ public class GraphUtil {
 //						throw new Exception("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
 					}
 				}
+				print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
+				System.out.println();
 			}
 
 		}
@@ -126,7 +129,6 @@ public class GraphUtil {
 			Queue<Graph<? extends Grammar>.Node> backlog) throws Exception {
 		while(!backlog.isEmpty()) {
 			Graph<? extends Grammar>.Node node = backlog.poll();
-			Dungeon.Node dN = dungeon.getNode(node.getID());
 			for(Graph<? extends Grammar>.Node adjNode : node.adjacencies()) {
 				Point p = getCoords(levelThere, adjNode.getID());
 				if(p != null) {
@@ -135,7 +137,14 @@ public class GraphUtil {
 						levelThere[legal.y][legal.x] = node.getID();
 						Level newLevel = loadLevel(node, dungeon);
 						Dungeon.Node newNode = dungeon.newNode(node.getID(), newLevel);
+						Dungeon.Node dN = dungeon.getNode(adjNode.getID());
 						int tile = (node.getData().getLevelType() == "l") ? Tile.LOCKED_DOOR.getNum() : Tile.DOOR.getNum();
+						System.out.println(dN.name);
+						System.out.println(p);
+						System.out.println(legal);
+						System.out.println(newNode.name);
+						System.out.println(tile);
+						
 						setAdjacencies(dN, p, legal, newNode.name, tile);
 						setAdjacencies(newNode, legal, p, dN.name, tile);
 					}
@@ -198,21 +207,12 @@ public class GraphUtil {
 		int y = p.y;
 		int x = p.x;
 		int tries = 0;
-		while(tries < 4) {
-			switch(tries) {
-			case 0: //UP
-				y--;
-				break;
-			case 2: //DOWN
-				y++;
-				break;
-			case 1: // Left
-				x--;
-				break;
-			case 3:
-				x++;
-				break;
-			}
+		List<Point> options = new LinkedList<>(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y - 1)));
+		while(!options.isEmpty()) {
+			Random r = new Random();
+			Point opt = options.remove(r.nextInt(options.size()));
+			x = opt.x;
+			y = opt.y;
 			
 			if(x >= 0 && x < levelThere[0].length && y >= 0 && y < levelThere.length) {
 				if(levelThere[y][x] == null) {
@@ -221,9 +221,7 @@ public class GraphUtil {
 				}
 					
 			}
-			tries++;
-			y = p.y;
-			x = p.x;
+		
 		}
 		return null;
 	}

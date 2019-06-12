@@ -1,0 +1,24 @@
+graph {
+eVtn[label="s"]
+pzFF[label="e"]
+dCxt[label="e"]
+xmrO[label="e"]
+zhsh[label="n"]
+bvDv[label="e"]
+nedf[label="l"]
+xLQv[label="k"]
+XtKO[label="e"]
+FpfA[label="t"]
+eVtn -- pzFF
+eVtn -- dCxt
+eVtn -- xmrO
+eVtn -- zhsh
+dCxt -- xmrO
+xmrO -- bvDv
+xmrO -- zhsh
+bvDv -- nedf
+bvDv -- xLQv
+nedf -- xLQv
+nedf -- XtKO
+XtKO -- FpfA
+}
