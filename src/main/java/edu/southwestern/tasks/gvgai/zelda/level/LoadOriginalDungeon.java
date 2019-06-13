@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
@@ -14,6 +16,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
@@ -161,63 +164,72 @@ public class LoadOriginalDungeon {
 		if(node == null)
 			throw new Exception("The Dungeon's current level wasn't set, make sure that it is set in the .dot file.");
 		
-		
+		int y = (levelThere.length - 1) / 2;
+		int x = (levelThere.length - 1) / 2;
+		levelThere[y][x] = node;
+		int tX, tY;
 		// Visited stack to keep track of where we have been
 		Stack<String> visited = new Stack<>();
-		visited.push(node);
+		Queue<String> queue = new LinkedList<>();
+		queue.add(node);
+		while(!directional.isEmpty()) {
+			String n = queue.poll();
+			visited.add(n);
+			
+			Point p = getCoords(n, levelThere);
+			y = p.y;
+			x = p.x;
+						
+			Stack<Pair<String, String>> st = directional.get(n);
+
+			System.out.println(st);
+			if(st != null) {
+				while(!st.isEmpty()) {
+					Pair<String, String> pair = st.pop();
+					String direction = pair.t1;
+					String whereTo = pair.t2;
+					
+					if(visited.contains(whereTo) || queue.contains(whereTo)) continue;
+					System.out.println(n + " - " + direction + " - " + whereTo);
+					tY = y;
+					tX = x;
+					switch(direction) {
+					case "UP":
+						tY--;
+						break;
+					case "DOWN":
+						tY++;
+						break;
+					case "RIGHT":
+						tX++;
+						break;
+					case "LEFT":
+						tX--;
+						break;
+					default:
+						continue;
+					}
+					
+					
+					levelThere[tY][tX] = whereTo;
+					queue.add(whereTo);
+				}
+				directional.remove(n);
+			}
+
+		}
 		
-		// Start recursive funciton
-		recursiveLevelThere(levelThere, visited);
+		
 		return ZeldaLevelUtil.trimLevelThere(levelThere); // Trim the levelThere and return
 	}
-
-	/**
-	 * Recursive function to generate the 2D string map
-	 * @param levelThere 2D string map
-	 * @param visited Visited stack
-	 */
-	private static void recursiveLevelThere(String[][] levelThere, Stack<String> visited) {
-		String node = "";
-		while(!visited.isEmpty()) { // While there is still a visited stack to keep track of
-			node = visited.peek(); // Get the top of stack
-			if(directional.containsKey(node) && !directional.get(node).isEmpty()) // If the directional map has the node and the node's list is not empty: use it
-				break;
-			else
-				visited.pop(); // Otherwise go on to the next node
-		}
-		if(visited.isEmpty() || directional.size() == 0) return; // If the visited stack is empty or the directional map is empty return
-		Point p = findNodeName(node, levelThere); // Get the point of the node on levelthere
-		int x = p.x;
-		int y = p.y;
+	
+	private static Point getCoords(String name, String[][] levelThere) {
+		for(int y = 0; y < levelThere.length; y++)
+			for(int x = 0; x < levelThere[y].length; x++) 
+				if(levelThere[y][x] == name)
+					return new Point(x, y);
 		
-		if(directional.containsKey(node) && !directional.get(node).isEmpty()) {// ensure that there's still an existing list to use
-			Pair<String, String> pair = directional.get(node).pop(); // Get the top of the node list
-			switch(pair.t1) { // Get where to place the whereTo node based on the direction
-			case "UP":
-				y--;
-				break;
-			case "DOWN":
-				y++;
-				break;
-			case "LEFT":
-				x--;
-				break;
-			case "RIGHT":
-				x++;
-				break;
-			default: 
-				System.out.println("Got direction as " + pair.t1 + " returning...");
-				return;
-			}
-			if(levelThere[y][x] == null)
-				levelThere[y][x] = pair.t2; // Place node
-			visited.push(pair.t2); // Push the node to visited
-			recursiveLevelThere(levelThere, visited); // keep on truckin
-
-		} else if(directional.get(node).isEmpty()) { // If the node's list is empty, remove the node from the directional map
-			directional.remove(node);
-		}
-		
+		return null;
 	}
 
 	/**
