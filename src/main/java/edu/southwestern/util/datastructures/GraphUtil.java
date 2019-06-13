@@ -107,12 +107,11 @@ public class GraphUtil {
 			visited.add(node);
 			Point p = getCoords(levelThere, node.getID());
 			
-			handleBacklog(levelThere, dungeon, backlog);
+			handleBacklog(levelThere, dungeon, backlog, visited);
 			if(p == null)
 				throw new Exception("Node : " + node.getID() + " not found in level there");
 			for(Graph<? extends Grammar>.Node adjNode : node.adjacencies()) {
 				if(!visited.contains(adjNode) && !queue.contains(adjNode)) {
-					System.out.println("Going to node: " + adjNode.getID());
 					Point legal = getNextLegalPoint(p, levelThere);
 					if(legal != null) {
 						System.out.println("Placing " + adjNode.getID() + " at (" + legal.x + ", " + legal.y + ")");
@@ -151,10 +150,11 @@ public class GraphUtil {
 	 * @param levelThere 2D representation of the level where each cell is the name of the level
 	 * @param dungeon Dungeon instance
 	 * @param backlog Queue of the adjancencies to take care of
+	 * @param visited 
 	 * @throws Exception
 	 */
 	private static void handleBacklog(String[][] levelThere, Dungeon dungeon, 
-			Queue<Graph<? extends Grammar>.Node> backlog) throws Exception {
+			Queue<Graph<? extends Grammar>.Node> backlog, List<Graph<? extends Grammar>.Node> visited) throws Exception {
 		while(!backlog.isEmpty()) {
 			Graph<? extends Grammar>.Node node = backlog.poll();
 			for(Graph<? extends Grammar>.Node adjNode : node.adjacencies()) {
@@ -162,6 +162,7 @@ public class GraphUtil {
 				if(p != null) {
 					Point legal = getNextLegalPoint(p, levelThere);
 					if(legal != null) {
+						System.out.println("Placing from backlog: " + node.getID() + " at (" + legal.x + ", " + legal.y + ")");
 						levelThere[legal.y][legal.x] = node.getID();
 						Level newLevel = loadLevel(node, dungeon);
 						Dungeon.Node newNode = dungeon.newNode(node.getID(), newLevel);
@@ -173,6 +174,7 @@ public class GraphUtil {
 					}
 				}
 			}
+			visited.add(node);
 		}
 	}
 
