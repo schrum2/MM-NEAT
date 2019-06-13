@@ -177,6 +177,7 @@ public class Dungeon {
 		public Level level;
 		public String name;
 		public HashMap<String, Pair<String, Point>> adjacency;
+		public ZeldaGrammar grammar;
 		
 		public Node(String name, Level level) {
 			this.name = name;

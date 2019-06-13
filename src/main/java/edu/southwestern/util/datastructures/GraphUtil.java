@@ -1,6 +1,12 @@
 package edu.southwestern.util.datastructures;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -104,7 +110,9 @@ public class GraphUtil {
 		while(!queue.isEmpty()) {
 			Graph<? extends Grammar>.Node node = queue.poll();
 			Dungeon.Node dN = dungeon.getNode(node.getID());
+			dN.grammar = (ZeldaGrammar) node.getData();
 			visited.add(node);
+			graph.addNode((Graph.Node) node);
 			Point p = getCoords(levelThere, node.getID());
 			
 			handleBacklog(levelThere, dungeon, backlog, visited);
@@ -166,7 +174,9 @@ public class GraphUtil {
 						levelThere[legal.y][legal.x] = node.getID();
 						Level newLevel = loadLevel(node, dungeon);
 						Dungeon.Node newNode = dungeon.newNode(node.getID(), newLevel);
+						newNode.grammar = (ZeldaGrammar) node.getData();
 						Dungeon.Node dN = dungeon.getNode(adjNode.getID());
+						
 						int tile = (node.getData().getLevelType() == "l") ? Tile.LOCKED_DOOR.getNum() : Tile.DOOR.getNum();
 						
 						setAdjacencies(dN, p, legal, newNode.name, tile);
@@ -337,4 +347,53 @@ public class GraphUtil {
 		scanner.close();
 		return level;
 	}
+	
+	public static BufferedImage imageOfDungeon(Dungeon dungeon) {
+		int BLOCK_SIZE = 300;
+		String[][] levelThere = dungeon.getLevelThere();
+		int width = levelThere[0].length * BLOCK_SIZE;
+		int height = levelThere.length * BLOCK_SIZE;
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2d = (Graphics2D) image.getGraphics();
+		
+		g2d.setRenderingHint(
+			    RenderingHints.KEY_ANTIALIASING,
+			    RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setRenderingHint(
+			    RenderingHints.KEY_TEXT_ANTIALIASING,
+			    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
+		image = g2d.getDeviceConfiguration().createCompatibleImage(width, height);
+		Graphics g = image.getGraphics();
+		
+		Font f = new Font("Trebuchet MS", Font.PLAIN, BLOCK_SIZE / 2);
+		g.setFont(f);
+		
+		for(int y = 0; y < levelThere.length; y++) {
+			for(int x = 0; x < levelThere[y].length; x++) {
+				Dungeon.Node n = dungeon.getNodeAt(x, y);
+				System.out.println("(" + x + ", " + y + ")");
+				int oX = x * BLOCK_SIZE;
+				int oY = y * BLOCK_SIZE;
+				if(n != null) {
+					g.setColor(Color.GRAY);
+					g.fillRect(oX, oY, oX + BLOCK_SIZE, oY + BLOCK_SIZE);
+					g.setColor(Color.BLACK);
+					oX = (oX + BLOCK_SIZE) - (BLOCK_SIZE / 2) - (BLOCK_SIZE / 4);
+					oY = (oY + BLOCK_SIZE) - (BLOCK_SIZE / 2) + (BLOCK_SIZE / 4);
+					g.drawString(n.grammar.getLevelType(), oX, oY);
+				} else {
+					g.setColor(Color.WHITE);
+					g.fillRect(oX, oY, oX + BLOCK_SIZE, oY + BLOCK_SIZE);
+				}
+			}
+		}
+		
+		g.dispose();
+		g2d.dispose();
+		
+		return image;
+	}
+	
+	
 }

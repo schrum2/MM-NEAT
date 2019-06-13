@@ -1,9 +1,13 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.Graph;
@@ -143,14 +147,22 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		}
 		Parameters.initializeParameterCollections(new String[] {});
 		
-		Dungeon d;
+		Dungeon d = null;
 		try {
 			d = GraphUtil.convertToDungeon(graph);
+			
+			BufferedImage image = GraphUtil.imageOfDungeon(d);
+			File file = new File("data/VGLC/Zelda/dungeon.png");
+			ImageIO.write(image, "png", file);
+			
 			RougelikeApp.startDungeon(d, true);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
+
 		
 	}
 }
