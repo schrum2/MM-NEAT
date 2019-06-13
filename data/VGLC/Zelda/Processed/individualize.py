@@ -1,4 +1,5 @@
 import argparse
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument('file_name', type=str, help="File name and directory")
@@ -7,6 +8,9 @@ args = parser.parse_args()
 
 level_array = []
 file_name = args.file_name
+
+if not os.path.exists(file_name):
+    os.makedirs(file_name)
 
 with open(file_name + '.txt') as file:
     for line in file:

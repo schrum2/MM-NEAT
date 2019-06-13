@@ -41,7 +41,7 @@ public class LoadOriginalDungeon {
 	private static int numDoors = 0;
 	                      
 	public static void main(String[] args) throws Exception {
-		Dungeon dungeon = loadOriginalDungeon("tloz4_1_flip", false);
+		Dungeon dungeon = loadOriginalDungeon("tloz5_1_flip", false);
 		
 		dungeon.printLevelThere();
 		
