@@ -48,36 +48,36 @@ public class LoadOriginalDungeon {
 		
 		dungeon.printLevelThere();
 		
-//		Point goalPoint = dungeon.getCoords(dungeon.getGoal());
-//		int gDX = goalPoint.x;
-//		int gDY = goalPoint.y;
-//		
-//		Point g = dungeon.getGoalPoint();
-//		int gX = g.x;
-//		int gY = g.y;
-//		
-//		Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
-//
-//			@Override
-//			public double h(ZeldaState s) {
-//				int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
-//				int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY) * ZELDA_ROOM_ROWS;
-//				return i + j; 
-//			}
-//		};
-//		
-//		ZeldaState initial = new ZeldaState(5, 5, 0, dungeon);
-//		
-//		Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
-//		ArrayList<GridAction> result = search.search(initial);
-//			
-//		System.out.println(result);
-//		if(result != null) {
-//			for(GridAction a : result)
-//				System.out.println(a.getD().toString());
-//			
-//			System.out.println("Lenght of path : " + result.size());
-//		}
+		Point goalPoint = dungeon.getCoords(dungeon.getGoal());
+		int gDX = goalPoint.x;
+		int gDY = goalPoint.y;
+		
+		Point g = dungeon.getGoalPoint();
+		int gX = g.x;
+		int gY = g.y;
+		
+		Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
+
+			@Override
+			public double h(ZeldaState s) {
+				int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
+				int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY) * ZELDA_ROOM_ROWS;
+				return i + j; 
+			}
+		};
+		
+		ZeldaState initial = new ZeldaState(5, 5, 0, dungeon);
+		
+		Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
+		ArrayList<GridAction> result = search.search(initial);
+			
+		System.out.println(result);
+		if(result != null) {
+			for(GridAction a : result)
+				System.out.println(a.getD().toString());
+			
+			System.out.println("Lenght of path : " + result.size());
+		}
 
 		
 		

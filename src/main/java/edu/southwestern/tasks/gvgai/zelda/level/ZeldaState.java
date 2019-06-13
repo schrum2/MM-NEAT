@@ -67,7 +67,6 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		if(tileNum == Tile.KEY.getNum()) {
 			pickUpKey(currentNode.name, new Point(x, y));
 		} else if (tileNum == -6) { // Ladder number
-			System.out.println("Picked up ladder");
 			hasLadder = true; // "pickup" ladder
 		}
 	}
@@ -242,7 +241,6 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 				if(result.x >= 0 && result.x < level.get(0).size() && result.y >= 0 && result.y < level.size()) {
 					Tile tile = Tile.findNum(level.get(y).get(x));
 					Tile nextTile = Tile.findNum(level.get(result.y).get(result.x));
-					System.out.println(hasLadder);
 					if(nextTile.playerPassable()) 
 						legal.add(possible);
 					else if (nextTile.equals(Tile.BLOCK) && hasLadder && !tile.equals(Tile.BLOCK))
