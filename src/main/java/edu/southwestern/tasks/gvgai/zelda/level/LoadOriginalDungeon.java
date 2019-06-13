@@ -41,40 +41,40 @@ public class LoadOriginalDungeon {
 	private static int numDoors = 0;
 	                      
 	public static void main(String[] args) throws Exception {
-		Dungeon dungeon = loadOriginalDungeon("tloz5_1_flip", false);
+		Dungeon dungeon = loadOriginalDungeon("tloz6_1_flip", false);
 		
 		dungeon.printLevelThere();
 		
-		Point goalPoint = dungeon.getCoords(dungeon.getGoal());
-		int gDX = goalPoint.x;
-		int gDY = goalPoint.y;
-		
-		Point g = dungeon.getGoalPoint();
-		int gX = g.x;
-		int gY = g.y;
-		
-		Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
-
-			@Override
-			public double h(ZeldaState s) {
-				int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
-				int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY) * ZELDA_ROOM_ROWS;
-				return i + j; 
-			}
-		};
-		
-		ZeldaState initial = new ZeldaState(5, 5, 0, dungeon);
-		
-		Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
-		ArrayList<GridAction> result = search.search(initial);
-			
-		System.out.println(result);
-		if(result != null) {
-			for(GridAction a : result)
-				System.out.println(a.getD().toString());
-			
-			System.out.println("Lenght of path : " + result.size());
-		}
+//		Point goalPoint = dungeon.getCoords(dungeon.getGoal());
+//		int gDX = goalPoint.x;
+//		int gDY = goalPoint.y;
+//		
+//		Point g = dungeon.getGoalPoint();
+//		int gX = g.x;
+//		int gY = g.y;
+//		
+//		Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
+//
+//			@Override
+//			public double h(ZeldaState s) {
+//				int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
+//				int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY) * ZELDA_ROOM_ROWS;
+//				return i + j; 
+//			}
+//		};
+//		
+//		ZeldaState initial = new ZeldaState(5, 5, 0, dungeon);
+//		
+//		Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
+//		ArrayList<GridAction> result = search.search(initial);
+//			
+//		System.out.println(result);
+//		if(result != null) {
+//			for(GridAction a : result)
+//				System.out.println(a.getD().toString());
+//			
+//			System.out.println("Lenght of path : " + result.size());
+//		}
 
 		
 		
@@ -205,7 +205,9 @@ public class LoadOriginalDungeon {
 			case "RIGHT":
 				x++;
 				break;
-			default: return;
+			default: 
+				System.out.println("Got direction as " + pair.t1 + " returning...");
+				return;
 			}
 			if(levelThere[y][x] == null)
 				levelThere[y][x] = pair.t2; // Place node
@@ -358,16 +360,35 @@ public class LoadOriginalDungeon {
 		// Add the necessary starting and exit points
 		switch(direction) {
 		case "UP":
+		case "AcrossU":
 			addUpAdjacencies(node, whereTo);
 			break;
 		case "DOWN":
+		case "AcrossD":
 			addDownAdjacencies(node, whereTo);
 			break;
 		case "LEFT":
+		case "AcrossL":
 			addLeftAdjacencies(node, whereTo);
 			break;
 		case "RIGHT":
+		case "AcrossR":
 			addRightAdjacencies(node, whereTo);
+			break;
+		}
+		
+		switch(direction) {
+		case "L":
+			direction = "LEFT";
+			break;
+		case "R":
+			direction = "RIGHT";
+			break;
+		case "U":
+			direction = "UP";
+			break;
+		case "D":
+			direction = "DOWN";
 			break;
 		}
 		
@@ -460,9 +481,23 @@ public class LoadOriginalDungeon {
 	 */
 	private static String getDirection(String[] values) {
 		for(String value : values) {
-			if(value.equals("UP") || value.equals("DOWN") ||
-					value.equals("LEFT") || value.equals("RIGHT"))
+			switch(value) {
+			case "UP":
+			case "DOWN":
+			case "LEFT":
+			case "RIGHT":
+			case "AcrossU":
+			case "AcrossD":
+			case "AcrossL":
+			case "AcrossR":
+			case "L":
+			case "R":
+			case "U":
+			case "D":
 				return value;
+			}
+				
+					
 		}
 		return null;
 	}
@@ -474,6 +509,20 @@ public class LoadOriginalDungeon {
 	 * @param tile Tile type
 	 */
 	private static void setLevels(String direction, Node node, Tile tile) {
+		switch(direction) {
+		case "AcrossU":
+			direction = "UP";
+			break;
+		case "AcrossD":
+			direction = "DOWN";
+			break;
+		case "AcrossL":
+			direction = "LEFT";
+			break;
+		case "AcrossR":
+			direction = "RIGHT";
+			break;
+		}
 		int num = tile.getNum();
 		List<List<Integer>> level = node.level.intLevel;
 		if(direction.equals("UP")  || direction.equals("DOWN")) { // Add doors at top or bottom
