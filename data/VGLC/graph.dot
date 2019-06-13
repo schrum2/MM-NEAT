@@ -1,29 +1,29 @@
 graph {
-apUE[label="s"]
-PQPN[label="e"]
-rnqY[label="e"]
-jQmi[label="e"]
-fCaI[label="n"]
-aYkU[label="e"]
-tiEq[label="l"]
-KrgS[label="k"]
-Gelj[label="e"]
-Txre[label="e"]
-NpvN[label="t"]
-soDP[label="e"]
-apUE -- PQPN
-apUE -- rnqY
-apUE -- jQmi
-apUE -- fCaI
-rnqY -- jQmi
-jQmi -- aYkU
-jQmi -- fCaI
-aYkU -- tiEq
-aYkU -- KrgS
-tiEq -- KrgS
-tiEq -- Gelj
-Gelj -- Txre
-Gelj -- NpvN
-Gelj -- soDP
-Txre -- NpvN
+htdm[label="s"]
+uAPO[label="e"]
+UHIr[label="e"]
+twGV[label="e"]
+tlkR[label="n"]
+bPrO[label="e"]
+Uzcm[label="l"]
+SIeA[label="k"]
+AEgI[label="e"]
+jYIN[label="e"]
+Fznn[label="t"]
+qNfz[label="e"]
+htdm -- uAPO
+htdm -- UHIr
+htdm -- twGV
+htdm -- tlkR
+UHIr -- twGV
+twGV -- bPrO
+twGV -- tlkR
+bPrO -- Uzcm
+bPrO -- SIeA
+Uzcm -- SIeA
+Uzcm -- AEgI
+AEgI -- jYIN
+AEgI -- Fznn
+AEgI -- qNfz
+jYIN -- Fznn
 }
