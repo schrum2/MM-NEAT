@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
+import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -155,7 +156,11 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			File file = new File("data/VGLC/Zelda/dungeon.png");
 			ImageIO.write(image, "png", file);
 			
-			RougelikeApp.startDungeon(d, true);
+			Desktop desk = Desktop.getDesktop();
+			desk.open(file);
+			
+			
+//			RougelikeApp.startDungeon(d, true);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

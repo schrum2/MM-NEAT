@@ -126,7 +126,13 @@ public class GraphUtil {
 			handleBacklog(levelThere, dungeon, backlog, visited);
 			if(p == null)
 				throw new Exception("Node : " + node.getID() + " not found in level there");
-			for(Graph<? extends Grammar>.Node adjNode : node.adjacencies()) {
+			
+			List<Graph<? extends Grammar>.Node> adjs = new LinkedList<>(node.adjacencies);
+			
+			while(!adjs.isEmpty()) {
+				Random r = new Random();
+				Graph<? extends Grammar>.Node adjNode = adjs.remove(r.nextInt(adjs.size()));
+				
 				if(!visited.contains(adjNode) && !queue.contains(adjNode)) {
 					Point legal = getNextLegalPoint(p, levelThere);
 					if(legal != null) {
@@ -139,7 +145,7 @@ public class GraphUtil {
 						setAdjacencies(newNode, legal, p, dN.name, tile);
 						queue.add(adjNode);
 					} else {
-						backlog.add(adjNode);
+//						backlog.add(adjNode);
 						print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
 //						throw new Exception("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
 					}
@@ -275,7 +281,7 @@ public class GraphUtil {
 	private static Point getNextLegalPoint(Point p, String[][] levelThere) {
 		int y = p.y;
 		int x = p.x;
-		List<Point> options = new LinkedList<>(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y - 1)));
+		List<Point> options = new LinkedList<>(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
 		while(!options.isEmpty()) {
 			Random r = new Random();
 			Point opt = options.remove(r.nextInt(options.size()));
@@ -419,6 +425,7 @@ public class GraphUtil {
 		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = image.createGraphics();
 		panel.paint(g);
+		g.dispose();
 		return image;
 		
 	}
