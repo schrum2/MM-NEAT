@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Point;
@@ -34,6 +35,7 @@ import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
+import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
@@ -265,6 +267,11 @@ public abstract class ZeldaDungeon<T> {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				Parameters.parameters.changeBoolean("gvgAIForZeldaGAN");
+				container.remove(dungeonGrid); 
+				dungeonGrid = getDungeonGrid(numRooms);
+				container.add(dungeonGrid);
+				frame.validate();
+				frame.repaint();
 			}
 			
 		});
@@ -344,9 +351,11 @@ public abstract class ZeldaDungeon<T> {
 		for(int i = 0; i < dungeon.length; i++) {
 			for(int j = 0; j < dungeon[i].length; j++) {
 				if(dungeonInstance.getLevelThere()[i][j] != null) {
-					BufferedImage level = getButtonImage(dungeon[i][j], ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4); //creates image rep. of level)
-					ImageIcon img = new ImageIcon(level.getScaledInstance(ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4, Image.SCALE_FAST)); //creates image of level
+					Node n = dungeonInstance.getNodeAt(j, i);
+					BufferedImage level = getButtonImage(n, ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4); //creates image rep. of level)
+					ImageIcon img = new ImageIcon(level.getScaledInstance(level.getWidth(), level.getHeight(), Image.SCALE_FAST)); //creates image of level
 					JLabel imageLabel = new JLabel(img); // places level on label
+					imageLabel.setPreferredSize(new Dimension(300, 300));
 					panel.add(imageLabel); //add label to panel
 				} else {
 					JLabel blankText = new JLabel("");
@@ -441,14 +450,20 @@ public abstract class ZeldaDungeon<T> {
 
 	/**
 	 * Helper funciton to get the button image for the dungeon viewer
-	 * @param level Level to get the image for
+	 * @param n Level to get the image for
 	 * @param width Width of image in pixels
 	 * @param height Height of image in pixels
 	 * @return BufferedImage for Image label
 	 */
-	private BufferedImage getButtonImage(Level level, int width, int height) {
-		GameBundle bundle = ZeldaGANLevelBreederTask.setUpGameWithLevelFromList(level.getLevel());
-		return GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed);
+	private BufferedImage getButtonImage(Node n, int width, int height) {
+		if(Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
+			Level level = n.level;
+			GameBundle bundle = ZeldaGANLevelBreederTask.setUpGameWithLevelFromList(level.getLevel());
+			return GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed);
+		} else {
+			return GraphUtil.getLevelImage(n, dungeonInstance);
+		}
+		
 	}
 	
 	/**

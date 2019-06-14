@@ -429,7 +429,7 @@ public class GraphUtil {
 		CreatureFactory cf = new CreatureFactory(world, log);
 		Creature p = cf.newDungeonPlayer(dungeon);
 		world = TileUtil.makeWorld(node.level.intLevel, p, log);
-		boolean isStart = node.grammar.equals(ZeldaGrammar.START);
+		boolean isStart = dungeon.getCurrentlevel().equals(node);
 		if(isStart) {
 			p.x = 5;
 			p.y = 5;

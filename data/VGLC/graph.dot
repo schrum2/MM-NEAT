@@ -1,27 +1,29 @@
 graph {
-dDKw[label="s"]
-amNj[label="e"]
-zViF[label="e"]
-kqFH[label="e"]
-pUET[label="n"]
-EzwW[label="k"]
-dsHF[label="l"]
-WDvA[label="e"]
-EYoF[label="e"]
-eRHu[label="t"]
-PjUN[label="e"]
-dDKw -- amNj
-dDKw -- zViF
-dDKw -- kqFH
-dDKw -- pUET
-zViF -- kqFH
-kqFH -- EzwW
-kqFH -- pUET
-EzwW -- dsHF
-EzwW -- WDvA
-dsHF -- WDvA
-dsHF -- EYoF
-EYoF -- eRHu
-EYoF -- PjUN
-eRHu -- PjUN
+GPMB[label="s"]
+PznW[label="e"]
+jGGN[label="e"]
+nvkZ[label="e"]
+rhYE[label="n"]
+tBrP[label="e"]
+waUi[label="k"]
+XwdM[label="l"]
+WvbC[label="e"]
+cKJS[label="e"]
+Jvuj[label="t"]
+XgNT[label="e"]
+GPMB -- PznW
+GPMB -- jGGN
+GPMB -- nvkZ
+GPMB -- rhYE
+jGGN -- nvkZ
+nvkZ -- tBrP
+nvkZ -- rhYE
+tBrP -- waUi
+tBrP -- XwdM
+tBrP -- WvbC
+XwdM -- cKJS
+XwdM -- WvbC
+cKJS -- Jvuj
+cKJS -- XgNT
+Jvuj -- XgNT
 }

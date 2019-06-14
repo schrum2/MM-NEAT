@@ -145,7 +145,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Parameters.initializeParameterCollections(new String[] {});
+		Parameters.initializeParameterCollections(new String[] {"zeldaGANUsesOriginalEncoding:false"});
 		
 		Dungeon d = null;
 		try {
