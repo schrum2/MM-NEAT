@@ -1,0 +1,9 @@
+graph {
+ycxz [label="e, GS"]
+VvMz [label="t, GE"]
+OmkA [label="e"]
+ePyb [label="e"]
+ycxz -- OmkA
+ycxz -- ePyb
+OmkA -- VvMz
+}

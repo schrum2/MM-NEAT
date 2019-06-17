@@ -1,12 +1,16 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Stack;
+
+import org.codehaus.plexus.util.FileUtils;
 
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
@@ -17,6 +21,11 @@ abstract public class GraphRuleManager<T extends Grammar> {
 	
 	public GraphRuleManager() {
 		graphRules = new LinkedList<>();
+	}
+	
+	public GraphRuleManager(File directory) {
+		this();
+		loadRules(directory);
 	}
 	
 	public List<GraphRule<T>> findRule(T start) {
@@ -107,6 +116,29 @@ abstract public class GraphRuleManager<T extends Grammar> {
 			if(ruleToApply != null) {
 				ruleToApply.grammar().setOtherGraph(node, nextNode, graph);
 			}
+		}
+	}
+	
+	/**
+	 * Save the graph grammar and rules to a directory
+	 * @param file Directory to save the rules
+	 * @throws IOException
+	 */
+	public void saveRules(File file) throws IOException{
+		Files.createDirectories(file.toPath());
+		FileUtils.cleanDirectory(file);
+		int i = 0;
+		for(GraphRule<T> rule : graphRules)
+			rule.saveToFile(i++, file);
+	}
+	
+	/**
+	 * Load graph grammar + rules from directory
+	 * @param file Directory to load the rules
+	 */
+	public void loadRules(File file) {
+		for(File f : file.listFiles()) {
+			graphRules.add(new GraphRule<>(f));
 		}
 	}
 }

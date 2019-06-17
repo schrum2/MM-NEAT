@@ -1,0 +1,12 @@
+graph {
+ZjCH [label="s, GS"]
+YISp [label="e, GE"]
+ggJE [label="e"]
+kvpT [label="n"]
+RBUb [label="e"]
+ZjCH -- ggJE
+ZjCH -- kvpT
+ZjCH -- RBUb
+ggJE -- YISp
+kvpT -- YISp
+}

@@ -113,6 +113,10 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		graphRules.add(rule);
 	}
 	
+	public ZeldaGraphGrammar(File directory) {
+		super(directory);
+	}
+	
 	public static void main(String[] args) {
 		List<ZeldaGrammar> initialList = new LinkedList<>();
 		initialList.add(ZeldaGrammar.START_S);
@@ -131,7 +135,8 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		
 		System.out.println("\n-----------------------------\n");
 		
-		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
+//		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
+		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar(new File("data/VGLC/Zelda/rules/1"));
 		grammar.applyRules(graph);
 		traversal = graph.breadthFirstTraversal();
 		for(Graph<ZeldaGrammar>.Node n : traversal) {
@@ -167,7 +172,12 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		}
 		
 		
-
+		try {
+			grammar.saveRules(new File("data/VGLC/Zelda/rules/1"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 }

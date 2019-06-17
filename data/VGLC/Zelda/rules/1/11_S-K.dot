@@ -1,0 +1,7 @@
+graph {
+QnUc [label="s, GS"]
+WNSm [label="k, GE"]
+ONcv [label="e"]
+QnUc -- ONcv
+ONcv -- WNSm
+}

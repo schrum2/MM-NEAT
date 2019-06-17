@@ -42,4 +42,14 @@ public enum ZeldaGrammar implements Grammar{
 		return this.isSymbol;
 	}
 
+	public static ZeldaGrammar getByType(String type) throws Exception {
+		for(ZeldaGrammar g : ZeldaGrammar.values()) {
+			if(g.getLevelType().equals(type))
+				return g;
+		}
+
+		
+		throw new Exception("Didn't find Grammar for type : " + type);
+	}
+
 }
