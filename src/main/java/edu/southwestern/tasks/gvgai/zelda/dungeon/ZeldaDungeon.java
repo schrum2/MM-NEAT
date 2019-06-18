@@ -22,6 +22,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.google.gson.Gson;
@@ -291,6 +294,32 @@ public abstract class ZeldaDungeon<T> {
 			
 		});
 		buttons.add(loadDungeon);
+		
+		JPanel enemySlider = new JPanel();
+		
+		JLabel enemyLabel = new JLabel("Enemy Health");
+		JLabel enemyNumber = new JLabel("1");
+		
+		JSlider enemyHealth = new JSlider(1, 21);
+		enemyHealth.setValue(1);
+		enemyHealth.setPaintTicks(true);
+		enemyHealth.setMajorTickSpacing(10);
+		enemyHealth.setPaintLabels(true);
+		enemyHealth.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				Parameters.parameters.setInteger("rougeEnemyHealth", (int) enemyHealth.getValue());
+				enemyNumber.setText(String.valueOf(enemyHealth.getValue())); 
+			}
+			
+		});
+		
+		enemySlider.add(enemyLabel);
+		enemySlider.add(enemyNumber);
+		enemySlider.add(enemyHealth);
+		
+		buttons.add(enemySlider);
 		
 		container.add(buttons);
 		

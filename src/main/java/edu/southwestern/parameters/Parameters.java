@@ -313,6 +313,7 @@ public class Parameters {
 		integerOptions.add("receptiveFieldWidth", 3, "width of input windows for convolutional structures");
 		integerOptions.add("remixImageWindow", 10, "Size of window being remixed by CPPN in Picture Remixer");
 		integerOptions.add("rlBatchSize", 20, "Number of state transitions to log before doing an RL experience replay batch update");
+		integerOptions.add("rougeEnemyHealth", 1, "Set the health of an enemy in rouge-like");
 		integerOptions.add("runNumber", 0, "Number to designate this run of an experiment");
 		integerOptions.add("scentMode", -1, "Whenever this mode gets used, drop pheremone on scent path");
 		integerOptions.add("sightLimit", 50, "How far an agent can see in popacman");
