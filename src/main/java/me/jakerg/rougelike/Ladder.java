@@ -14,4 +14,10 @@ public class Ladder extends Item{
 		this.pickupable = true;
 	}
 
+	@Override
+	public void onPickup(Creature creature) {
+		if(creature.isPlayer())
+			creature.addItem(this);
+	}
+
 }

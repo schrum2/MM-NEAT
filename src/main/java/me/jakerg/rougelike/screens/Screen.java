@@ -10,7 +10,7 @@ import asciiPanel.AsciiPanel;
  *
  */
 public interface Screen {
-	public void displayOutput(AsciiPanel terminal);
+	public void displayOutput(AsciiPanel terminal, boolean update);
 	
 	public Screen respondToUserInput(KeyEvent key);
 }

@@ -8,4 +8,10 @@ public class Health extends Item{
 		super(world, glpyh, color, x, y);
 		this.pickupable = true;
 	}
+
+	@Override
+	public void onPickup(Creature creature) {
+		if(creature.isPlayer())
+			creature.addHP();
+	}
 }

@@ -28,7 +28,7 @@ public class StartScreen implements Screen {
 		this.dungeon = dungeon;
 	}
 
-	public void displayOutput(AsciiPanel terminal) {
+	public void displayOutput(AsciiPanel terminal, boolean update) {
 		int y = 1;
 		try {
 			List<String> title = TitleUtil.loadTitleFromFile("data/rouge/titles/loz.txt");

@@ -53,6 +53,12 @@ public class Bomb extends Item{
         other.doAction("Bomb did " + amount + " damage to " + other.glyph());
         other.modifyHp(-amount); // Modify hp of the the other creature
 	}
+	@Override
+	public void onPickup(Creature creature) {
+		if(creature.isPlayer())
+			creature.addBomb();
+		
+	}
 	
 	
 

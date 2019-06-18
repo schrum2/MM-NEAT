@@ -26,6 +26,8 @@ public class Creature {
     private Color color;
     public Color color() { return color; }
     
+    private Color previous = null;
+    
     private CreatureAi ai;
     public void setCreatureAi(CreatureAi ai) { this.ai = ai; }
     
@@ -171,6 +173,8 @@ public class Creature {
     		ai.onEnter(x+mx, y+my, world.tile(x+mx, y+my));
     	else // Otherwise attack the creature
     		attack(other);
+    	
+
     		
     }
     
@@ -214,20 +218,10 @@ public class Creature {
     public void modifyHp(int amount) {
         hp += amount; // Add amount
     
-        if (hp < 1) {
-            world.remove(this);
-            doAction(glyph + " died.");
-            if(!isPlayer()) {
-            	Random r = new Random();
-            	if(r.nextDouble() >= 0.1) { // 90 % chance
-            		List<Item> items = new LinkedList<>();
-            		items.add(new Bomb(this.world, 'b', AsciiPanel.white, x, y, 4, 5, true));
-            		items.add(new Health(this.world, (char)3, AsciiPanel.brightRed, x, y));
-            		Item itemToDrop = items.get(r.nextInt(items.size()));
-            		this.world.addItem(itemToDrop);
-            	}
-            }
-        }
+        if(previous == null) {
+        	previous = this.color;
+        	this.color = AsciiPanel.brightYellow;
+        } 
     }
     
     /**
@@ -243,6 +237,24 @@ public class Creature {
      * Update to let ai update
      */
 	public void update() {
+    	if(previous != null) {
+    		this.color = previous;
+    		previous = null;
+    	}
+    	if (hp < 1 && previous == null) {
+            world.remove(this);
+            doAction(glyph + " died.");
+            if(!isPlayer()) {
+            	Random r = new Random();
+            	if(r.nextDouble() >= 0.1) { // 90 % chance
+            		List<Item> items = new LinkedList<>();
+            		items.add(new Bomb(this.world, 'b', AsciiPanel.white, x, y, 4, 5, true));
+            		items.add(new Health(this.world, (char)3, AsciiPanel.brightRed, x, y));
+            		Item itemToDrop = items.get(r.nextInt(items.size()));
+            		this.world.addItem(itemToDrop);
+            	}
+            }
+        }
 		ai.onUpdate();
 	}
 	

@@ -29,4 +29,6 @@ public abstract class Item {
     
     public void update() {}
     
+    public abstract void onPickup(Creature creature);
+    
 }
