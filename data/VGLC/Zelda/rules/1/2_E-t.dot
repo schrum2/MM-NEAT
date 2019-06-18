@@ -1,0 +1,7 @@
+graph {
+xOmm [label="e, GS"]
+OGPP [label="t, GE"]
+bPNd [label="e"]
+xOmm -- bPNd
+bPNd -- OGPP
+}

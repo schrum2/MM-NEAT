@@ -1,12 +1,12 @@
 graph {
-ZjCH [label="s, GS"]
-YISp [label="e, GE"]
-ggJE [label="e"]
-kvpT [label="n"]
-RBUb [label="e"]
-ZjCH -- ggJE
-ZjCH -- kvpT
-ZjCH -- RBUb
-ggJE -- YISp
-kvpT -- YISp
+gtdL [label="s, GS"]
+dtyK [label="e, GE"]
+ogDP [label="e"]
+YbCA [label="e"]
+mbdz [label="n"]
+gtdL -- ogDP
+gtdL -- YbCA
+gtdL -- mbdz
+YbCA -- dtyK
+mbdz -- dtyK
 }

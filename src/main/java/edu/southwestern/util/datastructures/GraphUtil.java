@@ -24,12 +24,13 @@ import java.util.Scanner;
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.Grammar;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon;
+import edu.southwestern.tasks.gvgai.zelda.level.LevelLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
 import edu.southwestern.util.datastructures.Graph.Node;
 import me.jakerg.rougelike.Creature;
 import me.jakerg.rougelike.CreatureFactory;
@@ -97,7 +98,7 @@ public class GraphUtil {
 	 * @return Dungeon from the graph
 	 * @throws Exception
 	 */
-	public static Dungeon convertToDungeon(Graph<? extends Grammar> graph) throws Exception {
+	public static Dungeon convertToDungeon(Graph<? extends Grammar> graph, LevelLoader loader) throws Exception {
 		Dungeon dungeon = new Dungeon();
 		String[][] levelThere = new String[100][100];
 		int x = (levelThere.length - 1) / 2;
@@ -105,7 +106,7 @@ public class GraphUtil {
 
 		Graph<? extends Grammar>.Node n = graph.root();
 		
-		Level l = loadLevel(n, dungeon);
+		Level l = loadLevel(n, dungeon, loader);
 		Dungeon.Node dNode = dungeon.newNode(n.getID(), l);
 		levelThere[y][x] = dNode.name;
 		dungeon.setCurrentLevel(dNode.name);
@@ -123,7 +124,7 @@ public class GraphUtil {
 			graph.addNode((Graph.Node) node);
 			Point p = getCoords(levelThere, node.getID());
 			
-			handleBacklog(levelThere, dungeon, backlog, visited);
+			handleBacklog(levelThere, dungeon, backlog, visited, loader);
 			if(p == null)
 				throw new Exception("Node : " + node.getID() + " not found in level there");
 			
@@ -136,9 +137,9 @@ public class GraphUtil {
 				if(!visited.contains(adjNode) && !queue.contains(adjNode)) {
 					Point legal = getNextLegalPoint(p, levelThere);
 					if(legal != null) {
-						System.out.println("Placing " + adjNode.getID() + " at (" + legal.x + ", " + legal.y + ")");
+						System.out.println("Placing " + adjNode.getID() + " at (" + legal.x + ", " + legal.y + ") " + adjNode.getData().getLabelName());
 						levelThere[legal.y][legal.x] = adjNode.getID();
-						Level newLevel = loadLevel(adjNode, dungeon);
+						Level newLevel = loadLevel(adjNode, dungeon, loader);
 						Dungeon.Node newNode = dungeon.newNode(adjNode.getID(), newLevel);
 						int tile = (node.getData().getLevelType() == "l") ? Tile.LOCKED_DOOR.getNum() : Tile.DOOR.getNum();
 						setAdjacencies(dN, p, legal, newNode.name, tile);
@@ -176,7 +177,7 @@ public class GraphUtil {
 	 * @throws Exception
 	 */
 	private static void handleBacklog(String[][] levelThere, Dungeon dungeon, 
-			Queue<Graph<? extends Grammar>.Node> backlog, List<Graph<? extends Grammar>.Node> visited) throws Exception {
+			Queue<Graph<? extends Grammar>.Node> backlog, List<Graph<? extends Grammar>.Node> visited, LevelLoader loader) throws Exception {
 		while(!backlog.isEmpty()) {
 			Graph<? extends Grammar>.Node node = backlog.poll();
 			for(Graph<? extends Grammar>.Node adjNode : node.adjacencies()) {
@@ -186,7 +187,7 @@ public class GraphUtil {
 					if(legal != null) {
 						System.out.println("Placing from backlog: " + node.getID() + " at (" + legal.x + ", " + legal.y + ")");
 						levelThere[legal.y][legal.x] = node.getID();
-						Level newLevel = loadLevel(node, dungeon);
+						Level newLevel = loadLevel(node, dungeon, loader);
 						Dungeon.Node newNode = dungeon.newNode(node.getID(), newLevel);
 						newNode.grammar = (ZeldaGrammar) node.getData();
 						Dungeon.Node dN = dungeon.getNode(adjNode.getID());
@@ -323,8 +324,8 @@ public class GraphUtil {
 	 * @return Modified level based off of n
 	 * @throws FileNotFoundException
 	 */
-	private static Level loadLevel(Graph<? extends Grammar>.Node n, Dungeon dungeon) throws FileNotFoundException {
-		Level level = loadOneLevel(new File("data/VGLC/Zelda/n.txt"));
+	private static Level loadLevel(Graph<? extends Grammar>.Node n, Dungeon dungeon, LevelLoader loader) throws FileNotFoundException {
+		Level level = loadOneLevel(loader);
 		switch(n.getData().getLevelType()) {
 		case "k":
 			ZeldaLevelUtil.placeRandomKey(level.intLevel);
@@ -349,19 +350,44 @@ public class GraphUtil {
 	 * @return Level representation of the file
 	 * @throws FileNotFoundException
 	 */
-	private static Level loadOneLevel(File file) throws FileNotFoundException {
-		Scanner scanner = new Scanner(file);
-		String[] levelString = new String[11];
-		int i = 0;
-		while(scanner.hasNextLine())
-			levelString[i++] = scanner.nextLine();
-			
-		List<List<Integer>> levelInt = ZeldaVGLCUtil.convertZeldaLevelVGLCtoRoomAsList(levelString);
-		Level level = new Level(levelInt);
-		scanner.close();
+	private static Level loadOneLevel(LevelLoader loader) throws FileNotFoundException {
+		Random r = new Random();
+		List<List<List<Integer>>> levels = loader.getLevels();
+		List<List<Integer>> randomLevel = levels.get(r.nextInt(levels.size()));
+		randomLevel = remove(randomLevel);
+		for(List<Integer> row : randomLevel) {
+			for(Integer i : row) {
+				System.out.print(i + ", ");
+			}
+			System.out.println();
+		}
+		return new Level(randomLevel);
+	}
+	
+	private static List<List<Integer>> remove(List<List<Integer>> levelInt) {
+		List<List<Integer>> level = new LinkedList<>(levelInt);
+		for(int y = 0; y < level.size(); y++) {
+			for(int x = 0; x < level.get(y).size(); x++) {
+				int num = level.get(y).get(x);
+				Tile tile = Tile.findNum(num);
+				System.out.println("Found tile: " + tile);
+				if(tile.equals(Tile.DOOR) || tile.equals(Tile.LOCKED_DOOR))
+					num = Tile.WALL.getNum();
+				else if(tile.equals(Tile.TRIFORCE) || tile.equals(Tile.KEY) || num == 2)
+					num = Tile.FLOOR.getNum();
+				level.get(y).set(x, num);
+					
+			}
+		}
+		
 		return level;
 	}
 	
+	/**
+	 * Generate a buffered image of a dungeon as a rouge-like
+	 * @param dungeon Dungeon to generate an image with
+	 * @return BufferedImage representing dungeon
+	 */
 	public static BufferedImage imageOfDungeon(Dungeon dungeon) {
 		int BLOCK_HEIGHT = dungeon.getCurrentlevel().level.intLevel.size() * 16;
 		int BLOCK_WIDTH = dungeon.getCurrentlevel().level.intLevel.get(0).size() * 16;
@@ -412,6 +438,12 @@ public class GraphUtil {
 		return image;
 	}
 	
+	/**
+	 * Get an individual level image from a dungeon
+	 * @param node Dungeon node as the level
+	 * @param dungeon Dungeon where the level is from
+	 * @return Image of level
+	 */
 	public static BufferedImage getLevelImage(Dungeon.Node node, Dungeon dungeon) {
 		int lHeight = node.level.intLevel.size();
 		int lWidth = node.level.intLevel.get(0).size();
@@ -430,6 +462,12 @@ public class GraphUtil {
 		
 	}
 
+	/**
+	 * Generate a world from the rouge-like and draw the terminal panel
+	 * @param panel AsciiPanel to draw to
+	 * @param node Individual level
+	 * @param dungeon Dungeon
+	 */
 	private static void drawToPanel(AsciiPanel panel, Dungeon.Node node, Dungeon dungeon) {
 		World world = null;
 		Log log = new Log(0);

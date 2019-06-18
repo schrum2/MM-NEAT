@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.gvgai.zelda.level;
+package edu.southwestern.tasks.gvgai.zelda.dungeon;
 
 import java.awt.Point;
 import java.io.File;
@@ -18,8 +18,10 @@ import org.apache.commons.lang.StringUtils;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.search.AStarSearch;

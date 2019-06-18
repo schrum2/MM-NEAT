@@ -8,6 +8,8 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.search.AStarSearch;

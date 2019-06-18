@@ -1,9 +1,0 @@
-graph {
-OtPt [label="s, GS"]
-iTBF [label="k, GE"]
-oAVE [label="e"]
-awcN [label="e"]
-OtPt -- oAVE
-OtPt -- awcN
-awcN -- iTBF
-}

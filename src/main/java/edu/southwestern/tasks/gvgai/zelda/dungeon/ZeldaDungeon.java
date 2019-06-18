@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.gvgai.zelda.level;
+package edu.southwestern.tasks.gvgai.zelda.dungeon;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -32,7 +32,9 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
 import edu.southwestern.util.datastructures.GraphUtil;
@@ -77,7 +79,7 @@ public abstract class ZeldaDungeon<T> {
 	
 	
 	private Level[][] dungeon = null;
-	private Dungeon dungeonInstance = null;
+	protected Dungeon dungeonInstance = null;
 	JPanel dungeonGrid;
 	
 	public ZeldaDungeon() {}
@@ -87,60 +89,25 @@ public abstract class ZeldaDungeon<T> {
 	}
 	
 	/**
-	 * Function specified by the specific dungeon making process to make their own dungeon
-	 * @param phenotypes The phenotypes to generate the dungeon from
-	 * @param numRooms Number of rooms for the dungeon
-	 * @return 2D array of levels
-	 */
-	public abstract Level[][] makeDungeon(ArrayList<T> phenotypes, int numRooms);
-	
-	/**
 	 * Convert the 2D array of levels to a dungeon
+	 * @param numRooms 
+	 * @param phenotypes 
 	 * @return converted Dungeon
 	 */
-	public Dungeon convertDungeon() {
-		if (dungeon == null) return null;
-		Dungeon dungeonInstance = new Dungeon();
-		
-		String[][] uuidLabels = new String[dungeon.length][dungeon[0].length];
-		
-		for(int y = 0; y < dungeon.length; y++) {
-			for(int x = 0; x < dungeon[y].length; x++) {
-				if(dungeon[y][x] != null) {
-					if(uuidLabels[y][x] == null)
-						uuidLabels[y][x] = UUID.randomUUID().toString();
-					String name = uuidLabels[y][x];
-					Node newNode = dungeonInstance.newNode(name, dungeon[y][x]);
-					
-					addAdjacencyIfAvailable(dungeonInstance, uuidLabels, newNode, x + 1, y, "RIGHT");
-					addAdjacencyIfAvailable(dungeonInstance, uuidLabels, newNode, x, y - 1, "UP");
-					addAdjacencyIfAvailable(dungeonInstance, uuidLabels, newNode, x - 1, y, "LEFT");
-					addAdjacencyIfAvailable(dungeonInstance, uuidLabels, newNode, x, y + 1, "DOWN");
-				}	
-			}
-		}
-		
-		String name = uuidLabels[(uuidLabels.length - 1) / 2][(uuidLabels[0].length - 1) /2].toString();
-		
-		dungeonInstance.setCurrentLevel(name);
-		dungeonInstance.setLevelThere(uuidLabels);
-		
-		this.dungeonInstance = dungeonInstance;
-		return dungeonInstance;
-	}
+	public abstract Dungeon makeDungeon(ArrayList<T> phenotypes, int numRooms);
 	
 	/**
 	 * For each node, if there's a level next to it (based on the direction and coordinates) add the necessary edges
 	 * @param dungeonInstance Instance of the dungeon
+	 * @param dungeon 
 	 * @param uuidLabels Unique IDs for each level
 	 * @param newNode The node to add the edges to
 	 * @param x X coordinate to check
 	 * @param y Y coordinate to check
 	 * @param direction String direction (UP, DOWN, LEFT, RIGHT)
 	 */
-	private void addAdjacencyIfAvailable(Dungeon dungeonInstance, String[][] uuidLabels, Node newNode, int x, int y, String direction) {
+	protected void addAdjacencyIfAvailable(Dungeon dungeonInstance, Level[][] dungeon, String[][] uuidLabels, Node newNode, int x, int y, String direction) {
 		int tileToSetTo = 3; // Door tile number
-		
 		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length || 
 				dungeon[y][x] == null) // If theres no dungeon there set the tiles to wall
 			tileToSetTo = Tile.WALL.getNum();
@@ -196,7 +163,6 @@ public abstract class ZeldaDungeon<T> {
 			if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level); // If the door is now locked place a random key in the level
 		}
 		ZeldaLevelUtil.setDoors(direction, level, tile);
-
 	}
 	
 	/**
@@ -213,10 +179,7 @@ public abstract class ZeldaDungeon<T> {
 	 * @param numRooms Number of rooms to fill the level with
 	 */
 	public void showDungeon(ArrayList<T> phenotypes, int numRooms) {
-		dungeon = makeDungeon(phenotypes, numRooms);
-//		dungeon = postHocDungeon(dungeon);
-		
-		convertDungeon(); // Make dungeon instance
+		dungeonInstance = makeDungeon(phenotypes, numRooms);
 		
 		JFrame frame = new JFrame("Dungeon Viewer");
 		frame.setSize(1000, 1000);
@@ -346,28 +309,35 @@ public abstract class ZeldaDungeon<T> {
 	 */
 	protected JPanel getDungeonGrid(int numRooms) {
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(numRooms, numRooms));
 		
-		for(int i = 0; i < dungeon.length; i++) {
-			for(int j = 0; j < dungeon[i].length; j++) {
-				if(dungeonInstance.getLevelThere()[i][j] != null) {
-					Node n = dungeonInstance.getNodeAt(j, i);
-					BufferedImage level = getButtonImage(n, ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4); //creates image rep. of level)
-					ImageIcon img = new ImageIcon(level.getScaledInstance(level.getWidth(), level.getHeight(), Image.SCALE_FAST)); //creates image of level
-					JLabel imageLabel = new JLabel(img); // places level on label
-					imageLabel.setPreferredSize(new Dimension(300, 300));
-					panel.add(imageLabel); //add label to panel
-				} else {
-					JLabel blankText = new JLabel("");
-					blankText.setForeground(Color.WHITE);
-					JPanel blankBack = new JPanel();
-					blankBack.setBackground(Color.BLACK);
-					blankBack.add(blankText);
-					panel.add(blankBack);
+		if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
+			BufferedImage image = GraphUtil.imageOfDungeon(dungeonInstance);
+			JLabel label = new JLabel(new ImageIcon(image));
+			panel.add(label);
+		} else {
+			panel.setLayout(new GridLayout(numRooms, numRooms));
+			String[][] levelThere = dungeonInstance.getLevelThere();
+			for(int i = 0; i < levelThere.length; i++) {
+				for(int j = 0; j < levelThere[i].length; j++) {
+					if(levelThere[i][j] != null) {
+						Node n = dungeonInstance.getNodeAt(j, i);
+						BufferedImage level = getButtonImage(n, ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4); //creates image rep. of level)
+						ImageIcon img = new ImageIcon(level.getScaledInstance(level.getWidth(), level.getHeight(), Image.SCALE_FAST)); //creates image of level
+						JLabel imageLabel = new JLabel(img); // places level on label
+						imageLabel.setPreferredSize(new Dimension(300, 300));
+						panel.add(imageLabel); //add label to panel
+					} else {
+						JLabel blankText = new JLabel("");
+						blankText.setForeground(Color.WHITE);
+						JPanel blankBack = new JPanel();
+						blankBack.setBackground(Color.BLACK);
+						blankBack.add(blankText);
+						panel.add(blankBack);
+					}
 				}
 			}
 		}
-		
+
 		return panel;
 	}
 

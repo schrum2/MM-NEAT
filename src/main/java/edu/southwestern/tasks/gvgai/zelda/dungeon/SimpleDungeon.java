@@ -1,17 +1,18 @@
-package edu.southwestern.tasks.gvgai.zelda.level;
+package edu.southwestern.tasks.gvgai.zelda.dungeon;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
 public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 
-	@Override
-	public Level[][] makeDungeon(ArrayList<ArrayList<Double>> phenotypes, int numRooms) {
+	public Level[][] makeLevels(ArrayList<ArrayList<Double>> phenotypes, int numRooms) {
 		LinkedList<Level> levelList = new LinkedList<>();
 		
 		for(ArrayList<Double> phenotype : phenotypes)
@@ -51,13 +52,45 @@ public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 		}
 		
 		return dungeon;
-		
 	}
 
 	@Override
 	public List<List<Integer>> getLevelFromLatentVector(ArrayList<Double> latentVector) {
 		double[] room = ArrayUtil.doubleArrayFromList(latentVector);
 		return ZeldaGANUtil.generateRoomListRepresentationFromGAN(room);
+	}
+
+	@Override
+	public Dungeon makeDungeon(ArrayList<ArrayList<Double>> phenotypes, int numRooms) {
+		Level[][] dungeon = makeLevels(phenotypes, numRooms);
+		if (dungeon == null) return null;
+		Dungeon dungeonInstance = new Dungeon();
+		
+		String[][] uuidLabels = new String[dungeon.length][dungeon[0].length];
+		
+		for(int y = 0; y < dungeon.length; y++) {
+			for(int x = 0; x < dungeon[y].length; x++) {
+				if(dungeon[y][x] != null) {
+					if(uuidLabels[y][x] == null)
+						uuidLabels[y][x] = UUID.randomUUID().toString();
+					String name = uuidLabels[y][x];
+					Node newNode = dungeonInstance.newNode(name, dungeon[y][x]);
+					
+					addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x + 1, y, "RIGHT");
+					addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x, y - 1, "UP");
+					addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x - 1, y, "LEFT");
+					addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x, y + 1, "DOWN");
+				}	
+			}
+		}
+		
+		String name = uuidLabels[(uuidLabels.length - 1) / 2][(uuidLabels[0].length - 1) /2].toString();
+		
+		dungeonInstance.setCurrentLevel(name);
+		dungeonInstance.setLevelThere(uuidLabels);
+		
+		this.dungeonInstance = dungeonInstance;
+		return dungeonInstance;
 	}
 	
 }

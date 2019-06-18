@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.gvgai.zelda.level;
+package edu.southwestern.tasks.gvgai.zelda.dungeon;
 
 import java.awt.Point;
 import java.io.BufferedReader;
@@ -7,7 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import com.google.gson.Gson;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
+
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.util.datastructures.Pair;
 
 

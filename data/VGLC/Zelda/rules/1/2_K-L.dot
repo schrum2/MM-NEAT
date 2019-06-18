@@ -1,9 +1,0 @@
-graph {
-zbBV [label="e, GS"]
-wBPm [label="l, GE"]
-XYDC [label="k"]
-ylNt [label="e"]
-zbBV -- XYDC
-zbBV -- ylNt
-ylNt -- wBPm
-}

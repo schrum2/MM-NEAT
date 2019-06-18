@@ -1,7 +1,9 @@
 graph {
-HPFK [label="k, GS"]
-eOtU [label="l, GE"]
-JrcI [label="e"]
-HPFK -- JrcI
-JrcI -- eOtU
+BfTW [label="e, GS"]
+ymkK [label="l, GE"]
+Aetz [label="e"]
+rghJ [label="k"]
+BfTW -- Aetz
+BfTW -- rghJ
+Aetz -- ymkK
 }

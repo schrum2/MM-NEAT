@@ -1,7 +1,7 @@
 package me.jakerg.rougelike;
 
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 
 /**
  * Factory class to take care of creating new enemies or a player

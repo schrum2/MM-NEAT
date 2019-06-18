@@ -1,0 +1,7 @@
+graph {
+PCgx [label="e, GS"]
+YxDS [label="l, GE"]
+Kygk [label="k"]
+PCgx -- Kygk
+Kygk -- YxDS
+}

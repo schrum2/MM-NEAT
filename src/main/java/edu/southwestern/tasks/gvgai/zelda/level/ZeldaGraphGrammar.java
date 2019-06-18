@@ -11,6 +11,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
 import me.jakerg.rougelike.RougelikeApp;
@@ -127,21 +128,13 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		initialList.add(ZeldaGrammar.TREASURE);
 		
 		Graph<ZeldaGrammar> graph = new Graph<>(initialList);
-		System.out.println("Before size " + graph.size());
-		List<Graph<ZeldaGrammar>.Node> traversal = graph.breadthFirstTraversal();
-		for(Graph<ZeldaGrammar>.Node n : traversal) {
-			System.out.println(n.getData().toString());
-		}
 		
 		System.out.println("\n-----------------------------\n");
 		
 //		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
 		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar(new File("data/VGLC/Zelda/rules/1"));
 		grammar.applyRules(graph);
-		traversal = graph.breadthFirstTraversal();
-		for(Graph<ZeldaGrammar>.Node n : traversal) {
-			System.out.println(n.getData().toString());
-		}
+
 
 		System.out.println("After size " + graph.size());
 		
@@ -155,7 +148,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		
 		Dungeon d = null;
 		try {
-			d = GraphUtil.convertToDungeon(graph);
+			d = GraphUtil.convertToDungeon(graph, new OriginalLoader());
 			
 			BufferedImage image = GraphUtil.imageOfDungeon(d);
 			File file = new File("data/VGLC/Zelda/dungeon.png");

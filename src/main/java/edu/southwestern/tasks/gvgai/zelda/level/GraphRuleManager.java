@@ -115,6 +115,10 @@ abstract public class GraphRuleManager<T extends Grammar> {
 			GraphRule<T> ruleToApply = rules.get(r.nextInt(rules.size()));
 			if(ruleToApply != null) {
 				ruleToApply.grammar().setOtherGraph(node, nextNode, graph);
+				System.out.println("--------------------------------------");
+				System.out.println(ruleToApply.getSymbolStart().getLevelType());
+				System.out.println(ruleToApply.grammar().getDOTString());
+				System.out.println(ruleToApply.getSymbolEnd().getLevelType());
 			}
 		}
 	}

@@ -1,0 +1,9 @@
+graph {
+KFLM [label="e, GS"]
+Qfqy [label="t, GE"]
+vsgB [label="e"]
+PQNN [label="e"]
+KFLM -- vsgB
+KFLM -- PQNN
+vsgB -- Qfqy
+}

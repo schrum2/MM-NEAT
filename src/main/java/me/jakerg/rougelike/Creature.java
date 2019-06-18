@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 
 public class Creature {
     private World world;

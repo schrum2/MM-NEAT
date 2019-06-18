@@ -7,7 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction.DIRECTION;
 import edu.southwestern.util.search.Action;
 import edu.southwestern.util.search.State;

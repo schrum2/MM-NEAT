@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import me.jakerg.rougelike.TitleUtil;
 /**
  * Screen that is first seen on the app

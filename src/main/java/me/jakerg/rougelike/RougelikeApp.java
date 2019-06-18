@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import me.jakerg.rougelike.screens.*;
 
 

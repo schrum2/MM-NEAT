@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -26,6 +27,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.apache.commons.lang.SerializationUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
@@ -34,6 +37,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
 import edu.southwestern.util.datastructures.Triple;
@@ -427,6 +431,23 @@ public class ZeldaLevelUtil {
 				newLevelThere[i][j] = levelThere[maxY + i][maxX + j];
 			
 		return newLevelThere;
+	}
+	
+	// TODO: deep copy of linkedlist
+	@SuppressWarnings("unchecked")
+	public static <E> List<E> copyList(List<E> list){
+		List<E> copy = new LinkedList<>();
+		for(E obj : list) {
+			if(obj instanceof List) {
+				List<E> l = (List<E>) obj;
+				l = copyList(l);
+				copy.add((E) l);
+			} else {
+				copy.add(obj);
+			}
+		}
+		
+		return copy;
 	}
 	
 //	public static void viewDungeon(Dungeon d) {

@@ -20,12 +20,16 @@ import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
-import edu.southwestern.tasks.gvgai.zelda.level.SimpleDungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.GraphDungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.SimpleDungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.datastructures.Pair;
 import gvgai.core.game.BasicGame;
 import gvgai.core.game.Game;
@@ -48,7 +52,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	private static final String GAME_FILE = "zeldacopy";
 	private static final String FULL_GAME_FILE = LevelBreederTask.GAMES_PATH + GAME_FILE + ".txt";
 
-	private SimpleDungeon sd;
+	private GraphDungeon sd;
 	
 	/**
 	 * Initializes the InteractiveGANLevelEvolutionTask and everything required for GVG-AI
@@ -57,7 +61,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	public ZeldaGANLevelBreederTask() throws IllegalAccessException {
 		super(); // Initialize InteractiveGANLevelEvolutionTask
 		
-		sd = new SimpleDungeon();
+		sd = new GraphDungeon();
 		
 		JButton dungeonize = new JButton("Dungeonize");
 		dungeonize.setName("" + DUNGEONIZE_BUTTON_INDEX);
@@ -129,9 +133,25 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	 */
 	@Override
 	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height, double[] inputMultipliers) {
-		GameBundle bundle = setUpGameWithLevelFromLatentVector(phenotype); // Use the above function to build our ZeldaGAN
-		BufferedImage levelImage = GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed); // Make image of zelda level
-		return levelImage;
+		if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
+			Dungeon dummy = new Dungeon();
+			List<List<Integer>> ints = ZeldaGANUtil.generateRoomListRepresentationFromGAN(ArrayUtil.doubleArrayFromList(phenotype));
+			for(List<Integer> row : ints) {
+				for(Integer i : row) {
+					System.out.print(i + ", ");
+				}
+				System.out.println();
+			}
+			Level level = new Level(ints);
+			Dungeon.Node n = dummy.newNode("ASDF", level);
+			dummy.setCurrentLevel("ASDF");
+			return GraphUtil.getLevelImage(n, dummy);
+		} else {
+			GameBundle bundle = setUpGameWithLevelFromLatentVector(phenotype); // Use the above function to build our ZeldaGAN
+			BufferedImage levelImage = GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed); // Make image of zelda level
+			return levelImage;
+		}
+		
 	}
 
 	/**
