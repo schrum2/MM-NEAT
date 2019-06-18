@@ -41,7 +41,14 @@ public class DungeonAi extends CreatureAi{
 		// If the tile the character is trying to move to group, then move character at point
 		Item item = creature.getWorld().item(x, y);
 		if(item != null) {
-			creature.addItem(item);
+			if(item instanceof Ladder)
+				creature.addItem(item);
+			else {
+				if(item instanceof Health)
+					creature.addHP();
+				else if (item instanceof Bomb)
+					creature.addBomb();
+			}
 			creature.getWorld().removeItem(item);
 		}
 

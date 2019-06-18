@@ -98,6 +98,11 @@ public class World {
 		return false;
 	}
 	
+	public void addItem(Item item) {
+		if(item(item.x, item.y) != null) return;
+		items.add(item);
+	}
+	
 	/**
 	 * Set the tiles of the world
 	 * @param tiles

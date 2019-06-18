@@ -3,6 +3,7 @@ package me.jakerg.rougelike;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import asciiPanel.AsciiPanel;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
@@ -34,6 +35,7 @@ public class Creature {
     private int hp;
     public int hp() { return hp; }
     public void setHP(int n) { hp = n; }
+    public void addHP() { hp++; }
 
     private int attackValue;
     public int attackValue() { return attackValue; }
@@ -48,6 +50,7 @@ public class Creature {
 	private int numBombs = 4;
 	public int bombs() { return numBombs; }
 	public void setBombs(int b) { numBombs = b; }
+	public void addBomb() { numBombs++; }
 	
 	public int numKeys = 0;
 	public int keys() { return numKeys; }
@@ -214,6 +217,16 @@ public class Creature {
         if (hp < 1) {
             world.remove(this);
             doAction(glyph + " died.");
+            if(!isPlayer()) {
+            	Random r = new Random();
+            	if(r.nextDouble() >= 0.1) { // 90 % chance
+            		List<Item> items = new LinkedList<>();
+            		items.add(new Bomb(this.world, 'b', AsciiPanel.white, x, y, 4, 5, true));
+            		items.add(new Health(this.world, (char)3, AsciiPanel.brightRed, x, y));
+            		Item itemToDrop = items.get(r.nextInt(items.size()));
+            		this.world.addItem(itemToDrop);
+            	}
+            }
         }
     }
     
