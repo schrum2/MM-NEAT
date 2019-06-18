@@ -310,7 +310,6 @@ public abstract class ZeldaDungeon<T> {
 	protected JPanel getDungeonGrid(int numRooms) {
 		JPanel panel = new JPanel();
 		
-<<<<<<< HEAD:src/main/java/edu/southwestern/tasks/gvgai/zelda/dungeon/ZeldaDungeon.java
 		if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
 			BufferedImage image = GraphUtil.imageOfDungeon(dungeonInstance);
 			JLabel label = new JLabel(new ImageIcon(image));
@@ -335,24 +334,6 @@ public abstract class ZeldaDungeon<T> {
 						blankBack.add(blankText);
 						panel.add(blankBack);
 					}
-=======
-		for(int i = 0; i < dungeon.length; i++) {
-			for(int j = 0; j < dungeon[i].length; j++) {
-				if(dungeonInstance.getLevelThere()[i][j] != null) {
-					Node n = dungeonInstance.getNodeAt(j, i);
-					BufferedImage level = getButtonImage(n, ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4); //creates image rep. of level)
-					ImageIcon img = new ImageIcon(level.getScaledInstance(level.getWidth(), level.getHeight(), Image.SCALE_FAST)); //creates image of level
-					JLabel imageLabel = new JLabel(img); // places level on label
-					imageLabel.setPreferredSize(new Dimension(300, 300));
-					panel.add(imageLabel); //add label to panel
-				} else {
-					JLabel blankText = new JLabel("");
-					blankText.setForeground(Color.WHITE);
-					JPanel blankBack = new JPanel();
-					blankBack.setBackground(Color.BLACK);
-					blankBack.add(blankText);
-					panel.add(blankBack);
->>>>>>> dev_zelda:src/main/java/edu/southwestern/tasks/gvgai/zelda/level/ZeldaDungeon.java
 				}
 			}
 		}

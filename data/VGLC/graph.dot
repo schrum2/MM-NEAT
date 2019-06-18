@@ -1,61 +1,26 @@
 graph {
-<<<<<<< HEAD
-zoll[label="s"]
-gDfh[label="n"]
-EMil[label="e"]
-zNDI[label="e"]
-kKop[label="e"]
-kcQl[label="e"]
-Thlk[label="k"]
-dcLJ[label="l"]
-Uuwb[label="e"]
-KkeF[label="e"]
-IiGw[label="t"]
-iVny[label="e"]
-zoll -- gDfh
-zoll -- EMil
-zoll -- zNDI
-zoll -- kKop
-gDfh -- EMil
-EMil -- kcQl
-EMil -- kKop
-kcQl -- Thlk
-kcQl -- dcLJ
-Thlk -- dcLJ
-dcLJ -- Uuwb
-Uuwb -- KkeF
-Uuwb -- IiGw
-Uuwb -- iVny
-IiGw -- iVny
-=======
-ZjCH[label="s"]
-YISp[label="e"]
-ggJE[label="e"]
-kvpT[label="n"]
-RBUb[label="e"]
-zbBV[label="e"]
-wBPm[label="l"]
-XYDC[label="k"]
-ylNt[label="e"]
-ycxz[label="e"]
-OmkA[label="e"]
-VvMz[label="t"]
-ePyb[label="e"]
-ZjCH -- YISp
-ZjCH -- ggJE
-ZjCH -- kvpT
-ZjCH -- RBUb
-YISp -- zbBV
-YISp -- ggJE
-YISp -- kvpT
-zbBV -- wBPm
-zbBV -- XYDC
-zbBV -- ylNt
-wBPm -- ylNt
-wBPm -- ycxz
-ycxz -- OmkA
-ycxz -- VvMz
-ycxz -- ePyb
-OmkA -- VvMz
->>>>>>> dev_zelda
+ctMF[label="s"]
+IkfM[label="e"]
+gFsw[label="n"]
+IHdf[label="e"]
+CswV[label="e"]
+MGXb[label="k"]
+NJHU[label="e"]
+oPMr[label="l"]
+JAUM[label="e"]
+wKtj[label="t"]
+WKrE[label="e"]
+ctMF -- IkfM
+ctMF -- gFsw
+ctMF -- IHdf
+ctMF -- CswV
+gFsw -- IHdf
+IHdf -- MGXb
+IHdf -- CswV
+MGXb -- NJHU
+MGXb -- oPMr
+oPMr -- JAUM
+JAUM -- wKtj
+JAUM -- WKrE
+wKtj -- WKrE
 }

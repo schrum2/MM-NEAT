@@ -355,12 +355,7 @@ public class GraphUtil {
 		List<List<List<Integer>>> levels = loader.getLevels();
 		List<List<Integer>> randomLevel = levels.get(r.nextInt(levels.size()));
 		randomLevel = remove(randomLevel);
-		for(List<Integer> row : randomLevel) {
-			for(Integer i : row) {
-				System.out.print(i + ", ");
-			}
-			System.out.println();
-		}
+
 		return new Level(randomLevel);
 	}
 	
@@ -438,15 +433,12 @@ public class GraphUtil {
 		return image;
 	}
 	
-<<<<<<< HEAD
 	/**
 	 * Get an individual level image from a dungeon
 	 * @param node Dungeon node as the level
 	 * @param dungeon Dungeon where the level is from
 	 * @return Image of level
 	 */
-=======
->>>>>>> dev_zelda
 	public static BufferedImage getLevelImage(Dungeon.Node node, Dungeon dungeon) {
 		int lHeight = node.level.intLevel.size();
 		int lWidth = node.level.intLevel.get(0).size();
@@ -465,15 +457,12 @@ public class GraphUtil {
 		
 	}
 
-<<<<<<< HEAD
 	/**
 	 * Generate a world from the rouge-like and draw the terminal panel
 	 * @param panel AsciiPanel to draw to
 	 * @param node Individual level
 	 * @param dungeon Dungeon
 	 */
-=======
->>>>>>> dev_zelda
 	private static void drawToPanel(AsciiPanel panel, Dungeon.Node node, Dungeon dungeon) {
 		World world = null;
 		Log log = new Log(0);
