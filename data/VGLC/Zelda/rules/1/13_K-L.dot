@@ -1,0 +1,7 @@
+graph {
+CfqW [label="e, GS"]
+EXUh [label="l, GE"]
+NIoj [label="k"]
+CfqW -- NIoj
+NIoj -- EXUh
+}

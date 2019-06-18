@@ -1,0 +1,7 @@
+graph {
+AWPX [label="e, GS"]
+ocYi [label="t, GE"]
+mmxA [label="e"]
+AWPX -- mmxA
+mmxA -- ocYi
+}

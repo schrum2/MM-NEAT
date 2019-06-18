@@ -1,0 +1,6 @@
+graph {
+deIy [label="k, GS"]
+aXcM [label="l, GE"]
+MkXp [label="e"]
+deIy -- MkXp
+}
