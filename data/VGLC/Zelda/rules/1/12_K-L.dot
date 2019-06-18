@@ -1,0 +1,7 @@
+graph {
+HPFK [label="k, GS"]
+eOtU [label="l, GE"]
+JrcI [label="e"]
+HPFK -- JrcI
+JrcI -- eOtU
+}

@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
+import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -112,6 +113,10 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		graphRules.add(rule);
 	}
 	
+	public ZeldaGraphGrammar(File directory) {
+		super(directory);
+	}
+	
 	public static void main(String[] args) {
 		List<ZeldaGrammar> initialList = new LinkedList<>();
 		initialList.add(ZeldaGrammar.START_S);
@@ -130,7 +135,8 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		
 		System.out.println("\n-----------------------------\n");
 		
-		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
+//		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
+		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar(new File("data/VGLC/Zelda/rules/1"));
 		grammar.applyRules(graph);
 		traversal = graph.breadthFirstTraversal();
 		for(Graph<ZeldaGrammar>.Node n : traversal) {
@@ -145,7 +151,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Parameters.initializeParameterCollections(new String[] {});
+		Parameters.initializeParameterCollections(new String[] {"zeldaGANUsesOriginalEncoding:false"});
 		
 		Dungeon d = null;
 		try {
@@ -155,14 +161,23 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			File file = new File("data/VGLC/Zelda/dungeon.png");
 			ImageIO.write(image, "png", file);
 			
-			RougelikeApp.startDungeon(d, true);
+			Desktop desk = Desktop.getDesktop();
+			desk.open(file);
+			
+			
+//			RougelikeApp.startDungeon(d, true);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		
-
+		try {
+			grammar.saveRules(new File("data/VGLC/Zelda/rules/1"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 }

@@ -21,6 +21,8 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Scanner;
 
+import asciiPanel.AsciiFont;
+import asciiPanel.AsciiPanel;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.Grammar;
@@ -29,7 +31,13 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
 import edu.southwestern.util.datastructures.Graph.Node;
+import me.jakerg.rougelike.Creature;
+import me.jakerg.rougelike.CreatureFactory;
+import me.jakerg.rougelike.Item;
+import me.jakerg.rougelike.Log;
 import me.jakerg.rougelike.Tile;
+import me.jakerg.rougelike.TileUtil;
+import me.jakerg.rougelike.World;
 
 public class GraphUtil {
 	
@@ -118,7 +126,13 @@ public class GraphUtil {
 			handleBacklog(levelThere, dungeon, backlog, visited);
 			if(p == null)
 				throw new Exception("Node : " + node.getID() + " not found in level there");
-			for(Graph<? extends Grammar>.Node adjNode : node.adjacencies()) {
+			
+			List<Graph<? extends Grammar>.Node> adjs = new LinkedList<>(node.adjacencies);
+			
+			while(!adjs.isEmpty()) {
+				Random r = new Random();
+				Graph<? extends Grammar>.Node adjNode = adjs.remove(r.nextInt(adjs.size()));
+				
 				if(!visited.contains(adjNode) && !queue.contains(adjNode)) {
 					Point legal = getNextLegalPoint(p, levelThere);
 					if(legal != null) {
@@ -131,7 +145,7 @@ public class GraphUtil {
 						setAdjacencies(newNode, legal, p, dN.name, tile);
 						queue.add(adjNode);
 					} else {
-						backlog.add(adjNode);
+//						backlog.add(adjNode);
 						print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
 //						throw new Exception("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
 					}
@@ -267,7 +281,7 @@ public class GraphUtil {
 	private static Point getNextLegalPoint(Point p, String[][] levelThere) {
 		int y = p.y;
 		int x = p.x;
-		List<Point> options = new LinkedList<>(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y - 1)));
+		List<Point> options = new LinkedList<>(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
 		while(!options.isEmpty()) {
 			Random r = new Random();
 			Point opt = options.remove(r.nextInt(options.size()));
@@ -349,10 +363,11 @@ public class GraphUtil {
 	}
 	
 	public static BufferedImage imageOfDungeon(Dungeon dungeon) {
-		int BLOCK_SIZE = 300;
+		int BLOCK_HEIGHT = dungeon.getCurrentlevel().level.intLevel.size() * 16;
+		int BLOCK_WIDTH = dungeon.getCurrentlevel().level.intLevel.get(0).size() * 16;
 		String[][] levelThere = dungeon.getLevelThere();
-		int width = levelThere[0].length * BLOCK_SIZE;
-		int height = levelThere.length * BLOCK_SIZE;
+		int width = levelThere[0].length * BLOCK_WIDTH;
+		int height = levelThere.length * BLOCK_HEIGHT;
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = (Graphics2D) image.getGraphics();
 		
@@ -366,25 +381,27 @@ public class GraphUtil {
 		image = g2d.getDeviceConfiguration().createCompatibleImage(width, height);
 		Graphics g = image.getGraphics();
 		
-		Font f = new Font("Trebuchet MS", Font.PLAIN, BLOCK_SIZE / 2);
-		g.setFont(f);
+//		Font f = new Font("Trebuchet MS", Font.PLAIN, BLOCK_SIZE / 2);
+//		g.setFont(f);
 		
 		for(int y = 0; y < levelThere.length; y++) {
 			for(int x = 0; x < levelThere[y].length; x++) {
 				Dungeon.Node n = dungeon.getNodeAt(x, y);
 				System.out.println("(" + x + ", " + y + ")");
-				int oX = x * BLOCK_SIZE;
-				int oY = y * BLOCK_SIZE;
+				int oX = x * BLOCK_WIDTH;
+				int oY = y * BLOCK_HEIGHT;
 				if(n != null) {
+					BufferedImage bi = getLevelImage(n, dungeon);
 					g.setColor(Color.GRAY);
-					g.fillRect(oX, oY, oX + BLOCK_SIZE, oY + BLOCK_SIZE);
-					g.setColor(Color.BLACK);
-					oX = (oX + BLOCK_SIZE) - (BLOCK_SIZE / 2) - (BLOCK_SIZE / 4);
-					oY = (oY + BLOCK_SIZE) - (BLOCK_SIZE / 2) + (BLOCK_SIZE / 4);
-					g.drawString(n.grammar.getLevelType(), oX, oY);
+					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);
+					g.drawImage(bi, oX, oY, null);
+//					g.setColor(Color.BLACK);
+//					oX = (oX + BLOCK_SIZE) - (BLOCK_SIZE / 2) - (BLOCK_SIZE / 4);
+//					oY = (oY + BLOCK_SIZE) - (BLOCK_SIZE / 2) + (BLOCK_SIZE / 4);
+//					g.drawString(n.grammar.getLevelType(), oX, oY);
 				} else {
-					g.setColor(Color.WHITE);
-					g.fillRect(oX, oY, oX + BLOCK_SIZE, oY + BLOCK_SIZE);
+					g.setColor(Color.BLACK);
+					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);
 				}
 			}
 		}
@@ -395,5 +412,49 @@ public class GraphUtil {
 		return image;
 	}
 	
+	public static BufferedImage getLevelImage(Dungeon.Node node, Dungeon dungeon) {
+		int lHeight = node.level.intLevel.size();
+		int lWidth = node.level.intLevel.get(0).size();
+		
+		AsciiPanel panel = new AsciiPanel(lWidth, lHeight, AsciiFont.CP437_16x16);
+		
+		drawToPanel(panel, node, dungeon);
+		
+		int w = panel.getCharWidth() * lWidth;
+		int h = panel.getCharHeight() * lHeight;
+		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = image.createGraphics();
+		panel.paint(g);
+		g.dispose();
+		return image;
+		
+	}
+
+	private static void drawToPanel(AsciiPanel panel, Dungeon.Node node, Dungeon dungeon) {
+		World world = null;
+		Log log = new Log(0);
+		CreatureFactory cf = new CreatureFactory(world, log);
+		Creature p = cf.newDungeonPlayer(dungeon);
+		world = TileUtil.makeWorld(node.level.intLevel, p, log);
+		boolean isStart = dungeon.getCurrentlevel().equals(node);
+		if(isStart) {
+			p.x = 5;
+			p.y = 5;
+		}
+		for (int y = 0; y < world.getHeight(); y++){
+            for (int x = 0; x < world.getWidth(); x++){
+            	
+            	// If there's a creature at that position display it
+            	Creature c = world.creature(x, y);
+            	Item i = world.item(x, y);
+            	if (c != null && (!c.isPlayer() || isStart) )
+            		panel.write(c.glyph(), c.x, c.y, c.color());
+            	else if(i != null)
+            		panel.write(i.glyph(), i.x, i.y, i.color());
+            	else
+            		panel.write(world.glyph(x, y), x, y, world.color(x, y));
+            }
+        }
+	}
 	
 }
