@@ -20,6 +20,10 @@ public class World {
 	private int height;
 	private DungeonBuilder db;
 	
+	
+	private boolean locked = false;
+	public boolean locked()	{ return locked; }
+	
 	/**
 	 * Must initialize World with tiles
 	 * @param tiles 2D tiles of world
@@ -189,7 +193,23 @@ public class World {
 			i.update();
 		
 		for(Creature c : creatures)
-			c.update();		
+			c.update();	
+		
+		checkToUnlock();
+	}
+
+	private void checkToUnlock() {
+		if(!hasEnemies() && locked == true) {
+			unlockRoom();
+			locked = false;
+		}
+	}
+
+	private void unlockRoom() {
+		for(int y = 0; y < tiles.length; y++)
+			for(int x = 0; x < tiles[y].length; x++)
+				if(tiles[y][x].equals(Tile.LOCKED_DOOR))
+					tiles[y][x] = Tile.DOOR;
 	}
 
 	/**
@@ -268,5 +288,29 @@ public class World {
 	 */
 	public void dropItem(Item i) {
 		items.add(i);
+	}
+	
+	public void checkToLock() {
+		if(hasEnemies()) {
+			lockRoom();
+			locked = true;
+		}
+	}
+
+	private void lockRoom() {
+		for(int y = 0; y < tiles.length; y++)
+			for(int x = 0; x < tiles[y].length; x++)
+				if(tiles[y][x].equals(Tile.DOOR) || tiles[y][x].equals(Tile.HIDDEN))
+					tiles[y][x] = Tile.LOCKED_DOOR;
+			
+	}
+
+	private boolean hasEnemies() {
+		for(Creature c : creatures)
+			if(c.glyph() == 'e')
+				return true;
+		
+		return false;
+			
 	}
 }
