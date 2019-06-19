@@ -17,6 +17,7 @@ import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
@@ -45,44 +46,45 @@ public class LoadOriginalDungeon {
 	private static int numKeys = 0;
 	private static int numDoors = 0;
 	                      
+	@SuppressWarnings("unused")
 	public static void main(String[] args) throws Exception {
-		Dungeon dungeon = loadOriginalDungeon("tloz6_1_flip", false);
+		Dungeon dungeon = loadOriginalDungeon("tloz1_1_flip", false);
+		Parameters.initializeParameterCollections(new String[] {"rougeEnemyHealth:2"});
 		
 		dungeon.printLevelThere();
-		
-		Point goalPoint = dungeon.getCoords(dungeon.getGoal());
-		int gDX = goalPoint.x;
-		int gDY = goalPoint.y;
-		
-		Point g = dungeon.getGoalPoint();
-		int gX = g.x;
-		int gY = g.y;
-		
-		Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
+		if (false) {
+			Point goalPoint = dungeon.getCoords(dungeon.getGoal());
+			int gDX = goalPoint.x;
+			int gDY = goalPoint.y;
+			
+			Point g = dungeon.getGoalPoint();
+			int gX = g.x;
+			int gY = g.y;
+			
+			Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
 
-			@Override
-			public double h(ZeldaState s) {
-				int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
-				int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY) * ZELDA_ROOM_ROWS;
-				return i + j; 
+				@Override
+				public double h(ZeldaState s) {
+					int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
+					int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY) * ZELDA_ROOM_ROWS;
+					return i + j; 
+				}
+			};
+			
+			ZeldaState initial = new ZeldaState(5, 5, 0, dungeon);
+			
+			Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
+			ArrayList<GridAction> result = search.search(initial);
+				
+			System.out.println(result);
+			if(result != null) {
+				for(GridAction a : result)
+					System.out.println(a.getD().toString());
+				
+				System.out.println("Lenght of path : " + result.size());
 			}
-		};
-		
-		ZeldaState initial = new ZeldaState(5, 5, 0, dungeon);
-		
-		Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
-		ArrayList<GridAction> result = search.search(initial);
-			
-		System.out.println(result);
-		if(result != null) {
-			for(GridAction a : result)
-				System.out.println(a.getD().toString());
-			
-			System.out.println("Lenght of path : " + result.size());
 		}
 
-		
-		
 		RougelikeApp.startDungeon(dungeon, ROUGE_DEBUG); // start game
 	}
 	

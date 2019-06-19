@@ -88,6 +88,10 @@ public class DungeonAi extends CreatureAi{
 			creature.x = x;
 			creature.y = y;
 		}
+		if(tile.isMovable()){
+			if(creature.getWorld().move(x, y, creature.getLastDirection()))
+				creature.doAction("You moved a block");
+		}
 	}
 
 

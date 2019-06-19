@@ -43,7 +43,7 @@ public class TileUtil {
 				if(level.get(j).get(i) == 2) {
 					cf.newEnemey(i, j, player);
 				} else if(level.get(j).get(i) == -6) {
-					newWorld.newItem(new Ladder(newWorld, i, j));
+					newWorld.dropItem(new Ladder(newWorld, i, j));
 				}
 			}
 		}

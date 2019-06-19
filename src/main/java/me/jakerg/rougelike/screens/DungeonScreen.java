@@ -116,10 +116,8 @@ public class DungeonScreen implements Screen {
             	// If there's a creature at that position display it
             	Creature c = world.creature(x, y);
             	Item i = world.item(x, y);
-            	if (c != null) {
+            	if (c != null)
             		terminal.write(c.glyph(), c.x + oX, c.y + oY, c.color());
-            		System.out.println(c.color());
-            	}
             	else if(i != null)
             		terminal.write(i.glyph(), i.x + oX, i.y + oY, i.color());
             	else

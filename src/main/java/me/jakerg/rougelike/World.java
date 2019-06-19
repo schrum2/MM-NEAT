@@ -1,6 +1,7 @@
 package me.jakerg.rougelike;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -81,6 +82,19 @@ public class World {
 		if(tile(x, y).isDiggable())
 			tiles[x][y] = Tile.FLOOR;
 		
+	}
+	
+	public boolean move(int x, int y, Move creature) {
+		if(tile(x, y).isMovable() && tile(x, y).getDirection().equals(creature)) {
+			Tile move = tile(x, y);
+			dig(x, y);
+			Point p = move.getDirection().getPoint();
+			x += p.x;
+			y += p.y;
+			tiles[x][y] = Tile.BLOCK;
+			return true;
+		}
+		return false;
 	}
 	
 	/**
@@ -248,7 +262,11 @@ public class World {
 		changeToDoor(x, y - 1, Tile.HIDDEN);
 	}
 
-	public void newItem(Item i) {
+	/**
+	 * Drop the specified item in the world
+	 * @param i Item to drop
+	 */
+	public void dropItem(Item i) {
 		items.add(i);
 	}
 }
