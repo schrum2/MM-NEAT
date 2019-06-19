@@ -17,6 +17,7 @@ public enum Tile {
 	DOOR((char)239, AsciiPanel.green, 3),
 	BLOCK((char)177, AsciiPanel.yellow, 5), // this is the 'P' water block thing
 	LOCKED_DOOR((char)239, AsciiPanel.red, -5),
+	SOFT_LOCK_DOOR((char)239, AsciiPanel.brightBlue, -55),
 	HIDDEN((char)178, AsciiPanel.yellow, -7),
 	BOUNDS('x', AsciiPanel.brightBlack, -99),
 	KEY('k', AsciiPanel.brightYellow, 6),
@@ -101,7 +102,6 @@ public enum Tile {
 			if(num == tile.getNum())
 				return tile;
 		}
-		System.out.println("Couldn't find tile for : " + num);
 		return Tile.FLOOR;
 	}
 

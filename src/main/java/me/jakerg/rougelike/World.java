@@ -198,17 +198,23 @@ public class World {
 		checkToUnlock();
 	}
 
+	/**
+	 * Check to unlocked the room if the room is locked
+	 */
 	private void checkToUnlock() {
-		if(!hasEnemies() && locked == true) {
+		if(!hasEnemies()) {
 			unlockRoom();
 			locked = false;
 		}
 	}
 
+	/**
+	 * Go through and replace tiles that are locked doors with unlocked doors
+	 */
 	private void unlockRoom() {
 		for(int y = 0; y < tiles.length; y++)
 			for(int x = 0; x < tiles[y].length; x++)
-				if(tiles[y][x].equals(Tile.LOCKED_DOOR))
+				if(tiles[y][x].equals(Tile.SOFT_LOCK_DOOR))
 					tiles[y][x] = Tile.DOOR;
 	}
 
@@ -290,13 +296,19 @@ public class World {
 		items.add(i);
 	}
 	
+	/*
+	 * Check to lock the room, if the room has more than one enemy
+	 */
 	public void checkToLock() {
-		if(hasEnemies()) {
-			lockRoom();
-			locked = true;
-		}
+//		if(hasEnemies()) {
+//			lockRoom();
+//			locked = true;
+//		}
 	}
 
+	/**
+	 * Go through and replaced unlocked doors and hidden doors with locked doors
+	 */
 	private void lockRoom() {
 		for(int y = 0; y < tiles.length; y++)
 			for(int x = 0; x < tiles[y].length; x++)
@@ -305,6 +317,10 @@ public class World {
 			
 	}
 
+	/**
+	 * Check if there are enemy creatures in the room
+	 * @return True if there are enemies, false if not
+	 */
 	private boolean hasEnemies() {
 		for(Creature c : creatures)
 			if(c.glyph() == 'e')

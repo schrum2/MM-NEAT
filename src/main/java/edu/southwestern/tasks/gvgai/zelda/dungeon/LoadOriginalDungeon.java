@@ -48,11 +48,11 @@ public class LoadOriginalDungeon {
 	                      
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws Exception {
-		Dungeon dungeon = loadOriginalDungeon("tloz1_1_flip", false);
+		Dungeon dungeon = loadOriginalDungeon("tloz7_1_flip", false);
 		Parameters.initializeParameterCollections(new String[] {"rougeEnemyHealth:2"});
 		
 		dungeon.printLevelThere();
-		if (false) {
+		if (true) {
 			Point goalPoint = dungeon.getCoords(dungeon.getGoal());
 			int gDX = goalPoint.x;
 			int gDY = goalPoint.y;
@@ -178,12 +178,15 @@ public class LoadOriginalDungeon {
 		queue.add(node);
 		while(!directional.isEmpty()) {
 			String n = queue.poll();
-			visited.add(n);
+			
 			
 			Point p = getCoords(n, levelThere);
+			if(p == null) continue;
+			visited.add(n);
 			y = p.y;
 			x = p.x;
-						
+			
+			
 			Stack<Pair<String, String>> st = directional.get(n);
 
 			System.out.println(st);
@@ -362,7 +365,8 @@ public class LoadOriginalDungeon {
 			String action = values[0];
 			switch(action) {
 			case "l": // Soft lock, treat as open door for now
-				setLevels(direction, node, Tile.DOOR);
+				setLevels(direction, node, Tile.SOFT_LOCK_DOOR);
+				break;
 			case "k": // Locked door
 				numDoors++;
 				setLevels(direction, node, Tile.LOCKED_DOOR);
