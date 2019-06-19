@@ -50,7 +50,7 @@ public class DungeonAi extends CreatureAi{
 			creature.x = x;
 			creature.y = y;
 		} 
-		if(tile.equals(Tile.DOOR)) {
+		if(tile.equals(Tile.DOOR) && !creature.getWorld().locked()) {
 			Point exitPoint = new Point(creature.x, creature.y);
 //			 Get the point to move to based on where the player went in from
 			System.out.println("Exiting at " + exitPoint);
@@ -58,13 +58,15 @@ public class DungeonAi extends CreatureAi{
 			Point p = creature.getDungeon().getNextNode(exitPoint.toString());
 			if(p != null) {
 				creature.getDungeonBuilder().getCurrentWorld().fullUnlock(p.x, p.y);
+				if(Math.random()>= 0.8)
+					creature.getDungeonBuilder().getCurrentWorld().checkToLock();
 				System.out.println("Starting point :" + p);
 				creature.x  = p.x;
 				creature.y = p.y;
 				creature.setDirection(Move.NONE);
 			}
 		}
-		if(tile.equals(Tile.LOCKED_DOOR)) {
+		if(tile.equals(Tile.LOCKED_DOOR) && !creature.getWorld().locked()) {
 			
 			if(creature.keys() > 0) {
 				creature.numKeys--;
