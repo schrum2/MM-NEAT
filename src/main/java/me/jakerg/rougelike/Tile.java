@@ -20,7 +20,8 @@ public enum Tile {
 	HIDDEN((char)178, AsciiPanel.yellow, -7),
 	BOUNDS('x', AsciiPanel.brightBlack, -99),
 	KEY('k', AsciiPanel.brightYellow, 6),
-	TRIFORCE((char)30, AsciiPanel.brightYellow, 8);
+	TRIFORCE((char)30, AsciiPanel.brightYellow, 8),
+	MOVABLE_BLOCK((char)219, AsciiPanel.yellow, 10);
 	
 	private char glyph;
 	private Color color;
@@ -49,7 +50,7 @@ public enum Tile {
 	 * @return True if the tile is a wall
 	 */
 	public boolean isDiggable() {
-		return this == WALL || this == KEY;
+		return this == WALL || this == KEY || this.isMovable();
 	}
 
 	/**
@@ -61,7 +62,7 @@ public enum Tile {
 	}
 	
 	public boolean isBlock() {
-		return this == BLOCK;
+		return this == BLOCK || this.isMovable();
 	}
 	
 	public boolean playerPassable() {
@@ -82,6 +83,17 @@ public enum Tile {
 	
 	public boolean isKey() {
 		return this == KEY;
+	}
+	
+	public boolean isMovable() {
+		return this == MOVABLE_BLOCK;
+	}
+	
+	public Move getDirection() {
+		if(this == MOVABLE_BLOCK)
+			return Move.UP;
+		else
+			return Move.NONE;
 	}
 	
 	public static Tile findNum(int num) {
