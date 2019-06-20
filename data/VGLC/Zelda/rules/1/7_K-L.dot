@@ -1,0 +1,6 @@
+graph {
+foHI [label="k, GS"]
+aPPe [label="l, GE"]
+lPlM [label="e"]
+foHI -- lPlM
+}

@@ -16,7 +16,7 @@ public class PhenotypeLoader implements LevelLoader{
 		levels = new LinkedList<>();
 		for(ArrayList<Double> phenotype : phenotypes) {
 			double[] room = ArrayUtil.doubleArrayFromList(phenotype);
-			List<List<Integer>> level =  ZeldaGANUtil.generateRoomListRepresentationFromGAN(room);
+			List<List<Integer>> level =  ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(room);
 			
 			levels.add(remove(level));
 		}

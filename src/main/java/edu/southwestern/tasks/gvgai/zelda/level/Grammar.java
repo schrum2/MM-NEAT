@@ -4,4 +4,5 @@ public interface Grammar {
 	public String getLabelName();
 	public String getLevelType();
 	public boolean isSymbol();
+	public boolean isCyclable();
 }

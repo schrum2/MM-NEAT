@@ -51,5 +51,9 @@ public enum ZeldaGrammar implements Grammar{
 		
 		throw new Exception("Didn't find Grammar for type : " + type);
 	}
+	
+	public boolean isCyclable() {
+		return this == NOTHING || this == ENEMY;
+	}
 
 }

@@ -1,28 +1,27 @@
 graph {
-HCYs[label="s"]
-ItHX[label="e"]
-vVwQ[label="e"]
-ioPB[label="n"]
-nITM[label="e"]
-sHNJ[label="k"]
-kiLH[label="e"]
-XDtZ[label="l"]
-BXyJ[label="e"]
-TVnM[label="e"]
-GgnM[label="e"]
-MSey[label="t"]
-HCYs -- ItHX
-HCYs -- vVwQ
-HCYs -- ioPB
-HCYs -- nITM
-ItHX -- sHNJ
-ItHX -- vVwQ
-ItHX -- ioPB
-sHNJ -- kiLH
-sHNJ -- XDtZ
-XDtZ -- BXyJ
-BXyJ -- TVnM
-BXyJ -- GgnM
-BXyJ -- MSey
-TVnM -- MSey
+ZKIs[label="s"]
+lMvF[label="e"]
+Cqed[label="e"]
+guAL[label="n"]
+RURE[label="e"]
+HIjk[label="e"]
+gtrf[label="l"]
+oHdZ[label="k"]
+kMse[label="e"]
+PquH[label="t"]
+gRyV[label="e"]
+ZKIs -- lMvF
+ZKIs -- Cqed
+ZKIs -- guAL
+ZKIs -- RURE
+lMvF -- HIjk
+lMvF -- guAL
+lMvF -- RURE
+HIjk -- gtrf
+HIjk -- oHdZ
+gtrf -- oHdZ
+gtrf -- kMse
+kMse -- PquH
+kMse -- gRyV
+PquH -- gRyV
 }

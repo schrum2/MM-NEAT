@@ -1,0 +1,7 @@
+graph {
+HIjk [label="e, GS"]
+gtrf [label="l, GE"]
+oHdZ [label="k"]
+HIjk -- oHdZ
+oHdZ -- gtrf
+}

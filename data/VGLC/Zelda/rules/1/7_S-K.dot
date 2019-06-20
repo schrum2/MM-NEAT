@@ -1,9 +1,0 @@
-graph {
-cwSn [label="s, GS"]
-aPyx [label="k, GE"]
-GFnj [label="e"]
-rdsa [label="e"]
-cwSn -- GFnj
-cwSn -- rdsa
-GFnj -- aPyx
-}

@@ -148,7 +148,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		
 		Dungeon d = null;
 		try {
-			d = GraphUtil.convertToDungeon(graph, new OriginalLoader());
+			d = GraphUtil.convertToDungeon(graph, new GANLoader());
 			
 			BufferedImage image = GraphUtil.imageOfDungeon(d);
 			File file = new File("data/VGLC/Zelda/dungeon.png");

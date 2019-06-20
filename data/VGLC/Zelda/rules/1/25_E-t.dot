@@ -1,0 +1,7 @@
+graph {
+EwwP [label="e, GS"]
+NoSY [label="t, GE"]
+LKHH [label="e"]
+EwwP -- LKHH
+LKHH -- NoSY
+}

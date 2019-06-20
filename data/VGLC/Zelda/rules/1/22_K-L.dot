@@ -1,0 +1,7 @@
+graph {
+yqGm [label="k, GS"]
+BocQ [label="l, GE"]
+VXGx [label="e"]
+yqGm -- VXGx
+VXGx -- BocQ
+}

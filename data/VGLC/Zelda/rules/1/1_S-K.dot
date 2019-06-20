@@ -1,0 +1,7 @@
+graph {
+tphZ [label="s, GS"]
+Kvyt [label="k, GE"]
+CVUx [label="e"]
+tphZ -- CVUx
+CVUx -- Kvyt
+}

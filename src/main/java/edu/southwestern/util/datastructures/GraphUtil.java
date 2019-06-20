@@ -150,8 +150,8 @@ public class GraphUtil {
 						print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
 //						throw new Exception("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
 					}
-				} else if (visited.contains(adjNode) && !node.getData().equals(ZeldaGrammar.LOCK)
-						&& !adjNode.getData().equals(ZeldaGrammar.LOCK)) {
+				} else if (visited.contains(adjNode) && node.getData().isCyclable()
+						&& adjNode.getData().isCyclable()) {
 					Dungeon.Node newNode = dungeon.getNode(adjNode.getID());
 					int tile = Tile.DOOR.getNum();
 					Point to = getCoords(levelThere, adjNode.getID());

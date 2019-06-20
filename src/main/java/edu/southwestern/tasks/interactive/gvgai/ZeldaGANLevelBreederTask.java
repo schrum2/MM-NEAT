@@ -52,7 +52,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	private static final String GAME_FILE = "zeldacopy";
 	private static final String FULL_GAME_FILE = LevelBreederTask.GAMES_PATH + GAME_FILE + ".txt";
 
-	private GraphDungeon sd;
+	private ZeldaDungeon<ArrayList<Double>> sd;
 	
 	/**
 	 * Initializes the InteractiveGANLevelEvolutionTask and everything required for GVG-AI
@@ -135,7 +135,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height, double[] inputMultipliers) {
 		if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
 			Dungeon dummy = new Dungeon();
-			List<List<Integer>> ints = ZeldaGANUtil.generateRoomListRepresentationFromGAN(ArrayUtil.doubleArrayFromList(phenotype));
+			List<List<Integer>> ints = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(ArrayUtil.doubleArrayFromList(phenotype));
 			for(List<Integer> row : ints) {
 				for(Integer i : row) {
 					System.out.print(i + ", ");
@@ -224,7 +224,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	protected void save(String file, int i) {
 		ArrayList<Double> phenotype = scores.get(i).individual.getPhenotype();
 		double[] latentVector = ArrayUtil.doubleArrayFromList(phenotype);
-		List<List<Integer>> level = ZeldaGANUtil.generateRoomListRepresentationFromGAN(latentVector);
+		List<List<Integer>> level = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVector);
 		int[][] levelArray = ZeldaLevelUtil.listToArray(level);
 		int distance = ZeldaLevelUtil.findMaxDistanceOfLevel(levelArray, 5, 7);
 
@@ -283,6 +283,6 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	 */
 	@Override
 	public List<List<Integer>> levelListRepresentation(double[] latentVector) {
-		return ZeldaGANUtil.generateRoomListRepresentationFromGAN(latentVector);
+		return ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVector);
 	}
 }

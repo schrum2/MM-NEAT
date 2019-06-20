@@ -1,7 +1,0 @@
-graph {
-YXxC [label="k, GS"]
-jvuG [label="l, GE"]
-eLKP [label="e"]
-YXxC -- eLKP
-eLKP -- jvuG
-}

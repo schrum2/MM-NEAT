@@ -1,7 +1,4 @@
 graph {
-xOmm [label="e, GS"]
-OGPP [label="t, GE"]
-bPNd [label="e"]
-xOmm -- bPNd
-bPNd -- OGPP
+LTno [label="e, GS"]
+cbSy [label="t, GE"]
 }

@@ -1,0 +1,9 @@
+graph {
+MaWf [label="k, GS"]
+RCLm [label="e, GE"]
+baXi [label="e"]
+clps [label="e"]
+MaWf -- baXi
+MaWf -- clps
+clps -- RCLm
+}

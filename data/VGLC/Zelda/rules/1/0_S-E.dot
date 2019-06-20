@@ -1,25 +1,12 @@
 graph {
-<<<<<<< HEAD
-gtdL [label="s, GS"]
-dtyK [label="e, GE"]
-ogDP [label="e"]
-YbCA [label="e"]
-mbdz [label="n"]
-gtdL -- ogDP
-gtdL -- YbCA
-gtdL -- mbdz
-YbCA -- dtyK
-mbdz -- dtyK
-=======
-ZjCH [label="s, GS"]
-YISp [label="e, GE"]
-ggJE [label="e"]
-kvpT [label="n"]
-RBUb [label="e"]
-ZjCH -- ggJE
-ZjCH -- kvpT
-ZjCH -- RBUb
-ggJE -- YISp
-kvpT -- YISp
->>>>>>> dev_zelda
+ZKIs [label="s, GS"]
+lMvF [label="e, GE"]
+Cqed [label="e"]
+guAL [label="n"]
+RURE [label="e"]
+ZKIs -- Cqed
+ZKIs -- guAL
+ZKIs -- RURE
+guAL -- lMvF
+RURE -- lMvF
 }

@@ -1,6 +1,0 @@
-graph {
-wZRj [label="k, GS"]
-tIEB [label="l, GE"]
-DtRX [label="e"]
-wZRj -- DtRX
-}

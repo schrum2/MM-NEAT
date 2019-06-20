@@ -1,7 +1,0 @@
-graph {
-wxBD [label="s, GS"]
-Rxbl [label="k, GE"]
-qZhF [label="e"]
-wxBD -- qZhF
-qZhF -- Rxbl
-}

@@ -1,9 +1,0 @@
-graph {
-sjEx [label="k, GS"]
-idzU [label="e, GE"]
-oNBI [label="e"]
-AIpa [label="e"]
-sjEx -- oNBI
-sjEx -- AIpa
-AIpa -- idzU
-}

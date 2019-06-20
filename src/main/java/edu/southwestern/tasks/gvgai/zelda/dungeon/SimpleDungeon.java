@@ -57,7 +57,7 @@ public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 	@Override
 	public List<List<Integer>> getLevelFromLatentVector(ArrayList<Double> latentVector) {
 		double[] room = ArrayUtil.doubleArrayFromList(latentVector);
-		return ZeldaGANUtil.generateRoomListRepresentationFromGAN(room);
+		return ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(room);
 	}
 
 	@Override

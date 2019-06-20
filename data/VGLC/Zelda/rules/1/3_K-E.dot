@@ -1,9 +1,0 @@
-graph {
-FGvS [label="k, GS"]
-KTcx [label="e, GE"]
-cIrK [label="e"]
-iZXJ [label="e"]
-FGvS -- cIrK
-FGvS -- iZXJ
-cIrK -- KTcx
-}

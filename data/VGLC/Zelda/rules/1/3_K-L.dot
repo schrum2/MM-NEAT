@@ -1,0 +1,7 @@
+graph {
+tYOe [label="k, GS"]
+LciD [label="l, GE"]
+eGHS [label="e"]
+tYOe -- eGHS
+eGHS -- LciD
+}

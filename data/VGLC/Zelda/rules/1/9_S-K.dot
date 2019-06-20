@@ -1,11 +1,11 @@
 graph {
-CYoG [label="s, GS"]
-YBIU [label="k, GE"]
-FSzs [label="e"]
-FbOb [label="e"]
-YaSf [label="e"]
-CYoG -- FSzs
-CYoG -- FbOb
-CYoG -- YaSf
-FSzs -- YBIU
+sxId [label="s, GS"]
+YyRk [label="k, GE"]
+lIfK [label="e"]
+ZcJX [label="e"]
+ROdn [label="e"]
+sxId -- lIfK
+sxId -- ZcJX
+sxId -- ROdn
+ZcJX -- YyRk
 }

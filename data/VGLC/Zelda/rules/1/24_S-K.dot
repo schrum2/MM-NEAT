@@ -1,0 +1,9 @@
+graph {
+GtOe [label="s, GS"]
+Wxfl [label="k, GE"]
+NgvI [label="e"]
+lNxV [label="e"]
+GtOe -- NgvI
+GtOe -- lNxV
+lNxV -- Wxfl
+}
