@@ -11,7 +11,7 @@ public class GANLoader implements LevelLoader{
 
 	public GANLoader() {
 		assert Parameters.parameters != null;
-		Parameters.parameters.setString("zeldaGANModel", "ZeldaFixedDungeonsAll_5000_10.pth");
+		Parameters.parameters.setString("zeldaGANModel", "ZeldaFixedDungeonsAlNoDoors_10000_10.pth");
 		Parameters.parameters.setInteger("GANInputSize", 10);
 		Parameters.parameters.setBoolean("zeldaGANUsesOriginalEncoding", false);
 		GANProcess.type = GANProcess.GAN_TYPE.ZELDA;

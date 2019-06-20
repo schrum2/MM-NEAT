@@ -1,9 +1,9 @@
 graph {
-tcmg [label="e, GS"]
-zwcD [label="k, GE"]
-BJIm [label="b"]
-djAV [label="e"]
-tcmg -- BJIm
-BJIm -- djAV
-BJIm -- zwcD
+riaR [label="e, GS"]
+ijYW [label="k, GE"]
+OZpx [label="b"]
+KtcT [label="e"]
+riaR -- OZpx
+OZpx -- KtcT
+OZpx -- ijYW
 }

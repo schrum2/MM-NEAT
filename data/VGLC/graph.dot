@@ -1,37 +1,33 @@
 graph {
-LZCk[label="s"]
-DOmq[label="e"]
-WCSH[label="e"]
-ofgQ[label="e"]
-BJIm[label="b"]
-bZPY[label="k"]
-djAV[label="e"]
-pGbb[label="l"]
-dgyE[label="sl"]
-tcmg[label="e"]
-lnRE[label="e"]
-zwcD[label="k"]
-teaL[label="l"]
-wmUN[label="e"]
-GRBi[label="t"]
-CDYC[label="e"]
-LZCk -- DOmq
-LZCk -- WCSH
-LZCk -- ofgQ
-LZCk -- BJIm
-WCSH -- bZPY
-WCSH -- ofgQ
-WCSH -- BJIm
-BJIm -- djAV
-bZPY -- pGbb
-bZPY -- dgyE
-BJIm -- djAV
-pGbb -- tcmg
-dgyE -- lnRE
-tcmg -- zwcD
-zwcD -- teaL
-teaL -- wmUN
-wmUN -- GRBi
-wmUN -- CDYC
-GRBi -- CDYC
+cOwR[label="s"]
+PwTB[label="e"]
+gNer[label="e"]
+MBpb[label="e"]
+OZpx[label="b"]
+MpVd[label="k"]
+KtcT[label="e"]
+qTWQ[label="e"]
+xQse[label="l"]
+riaR[label="e"]
+ijYW[label="k"]
+jsTg[label="l"]
+EhXl[label="e"]
+LIVA[label="t"]
+cOwR -- PwTB
+cOwR -- gNer
+cOwR -- MBpb
+cOwR -- OZpx
+gNer -- MpVd
+gNer -- MBpb
+gNer -- OZpx
+OZpx -- KtcT
+MpVd -- qTWQ
+MpVd -- xQse
+OZpx -- KtcT
+qTWQ -- xQse
+xQse -- riaR
+riaR -- ijYW
+ijYW -- jsTg
+jsTg -- EhXl
+EhXl -- LIVA
 }

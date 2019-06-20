@@ -1,5 +1,5 @@
 graph {
-dgyE [label="sl, GS"]
-lnRE [label="e"]
-dgyE -- lnRE
+OLuk [label="sl, GS"]
+gaED [label="e"]
+OLuk -- gaED
 }

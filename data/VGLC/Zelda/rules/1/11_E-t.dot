@@ -1,9 +1,9 @@
 graph {
-rQkA [label="e, GS"]
-gOAB [label="t, GE"]
-siai [label="e"]
-QEMD [label="e"]
-rQkA -- siai
-rQkA -- QEMD
-siai -- gOAB
+Tfyy [label="e, GS"]
+eopo [label="t, GE"]
+XRFz [label="e"]
+xodd [label="e"]
+Tfyy -- XRFz
+Tfyy -- xodd
+XRFz -- eopo
 }

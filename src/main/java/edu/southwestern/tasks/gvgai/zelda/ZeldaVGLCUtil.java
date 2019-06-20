@@ -258,11 +258,11 @@ public class ZeldaVGLCUtil {
 		case 'M':
 			return 5;	// Monster
 		case 'D':
-			return 3;
+			return 1;
 		case 'S':
 			return 4;	// Door
 		case '#':
-			return -6; // Ladder block
+			return 0; // Ladder block
 		case 'U':
 			return Tile.MOVABLE_BLOCK.getNum();
 		default:

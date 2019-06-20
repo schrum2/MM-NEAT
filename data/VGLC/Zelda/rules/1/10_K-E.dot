@@ -1,9 +1,9 @@
 graph {
-lUBR [label="k, GS"]
-lSzt [label="e, GE"]
-WGjS [label="e"]
-couw [label="e"]
-lUBR -- WGjS
-lUBR -- couw
-WGjS -- lSzt
+IKZy [label="k, GS"]
+pOFZ [label="e, GE"]
+ycSy [label="e"]
+aydP [label="e"]
+IKZy -- ycSy
+IKZy -- aydP
+ycSy -- pOFZ
 }

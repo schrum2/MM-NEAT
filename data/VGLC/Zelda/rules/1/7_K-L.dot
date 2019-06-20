@@ -1,7 +1,7 @@
 graph {
-HCTi [label="e, GS"]
-mzjf [label="l, GE"]
-jDiy [label="k"]
-HCTi -- jDiy
-jDiy -- mzjf
+bSdD [label="e, GS"]
+qXUj [label="l, GE"]
+FMrz [label="k"]
+bSdD -- FMrz
+FMrz -- qXUj
 }

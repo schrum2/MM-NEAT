@@ -1,14 +1,14 @@
 graph {
-LZCk [label="s, GS"]
-WCSH [label="e, GE"]
-DOmq [label="e"]
-ofgQ [label="e"]
-BJIm [label="b"]
-djAV [label="e"]
-LZCk -- DOmq
-LZCk -- ofgQ
-LZCk -- BJIm
-ofgQ -- WCSH
-BJIm -- djAV
-BJIm -- WCSH
+cOwR [label="s, GS"]
+gNer [label="e, GE"]
+PwTB [label="e"]
+MBpb [label="e"]
+OZpx [label="b"]
+KtcT [label="e"]
+cOwR -- PwTB
+cOwR -- MBpb
+cOwR -- OZpx
+MBpb -- gNer
+OZpx -- KtcT
+OZpx -- gNer
 }

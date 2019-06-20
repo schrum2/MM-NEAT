@@ -1,9 +1,9 @@
 graph {
-iKiW [label="s, GS"]
-Nmcp [label="k, GE"]
-NaqT [label="e"]
-Rxvk [label="e"]
-iKiW -- NaqT
-iKiW -- Rxvk
-NaqT -- Nmcp
+irum [label="s, GS"]
+dXaU [label="k, GE"]
+dgbf [label="e"]
+kBtF [label="e"]
+irum -- dgbf
+irum -- kBtF
+dgbf -- dXaU
 }

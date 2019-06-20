@@ -1,8 +1,6 @@
 graph {
-bZPY [label="k, GS"]
-pGbb [label="l, GE"]
-dgyE [label="sl"]
-lnRE [label="e"]
-bZPY -- dgyE
-dgyE -- lnRE
+XcJE [label="k, GS"]
+GSGH [label="l, GE"]
+FwTd [label="S"]
+XcJE -- FwTd
 }
