@@ -1,0 +1,9 @@
+graph {
+GzJx [label="s, GS"]
+qEKd [label="k, GE"]
+Jhlv [label="e"]
+KlRu [label="b"]
+GzJx -- Jhlv
+GzJx -- KlRu
+KlRu -- qEKd
+}

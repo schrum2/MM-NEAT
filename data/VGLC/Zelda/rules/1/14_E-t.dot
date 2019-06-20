@@ -1,7 +1,0 @@
-graph {
-kMse [label="e, GS"]
-PquH [label="t, GE"]
-gRyV [label="e"]
-kMse -- gRyV
-gRyV -- PquH
-}

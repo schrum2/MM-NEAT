@@ -6,6 +6,8 @@ public enum ZeldaGrammar implements Grammar{
 	KEY("Key", "k", false),
 	KEY_S("KEY", "K", true),
 	LOCK("Lock", "l", false),
+	BOMB("Bomb", "b", false),
+	SOFT_LOCK("SoftLock", "s", false),
 	MONSTER("Monster", "e", false),
 	ROOM("Room", "", false),
 	TREASURE("Treasure", "t", false),
@@ -15,7 +17,8 @@ public enum ZeldaGrammar implements Grammar{
 	ENEMY_S("ENEMY", "E", true),
 	ENEMY("Enemy", "e", false), 
 	LOCK_S("LOCK", "L", true),
-	NOTHING("Nothing", "n", false);
+	NOTHING("Nothing", "n", false), 
+	BOMB_S("BOMB", "B", true);
 	
 	private final String labelName;
 	private final String levelType;

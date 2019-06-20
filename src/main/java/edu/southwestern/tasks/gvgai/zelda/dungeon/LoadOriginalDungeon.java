@@ -48,7 +48,7 @@ public class LoadOriginalDungeon {
 	                      
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws Exception {
-		Dungeon dungeon = loadOriginalDungeon("tloz7_1_flip", false);
+		Dungeon dungeon = loadOriginalDungeon("tloz1_1_flip", false);
 		Parameters.initializeParameterCollections(new String[] {"rougeEnemyHealth:2"});
 		
 		dungeon.printLevelThere();

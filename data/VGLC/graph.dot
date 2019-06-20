@@ -1,27 +1,26 @@
 graph {
-ZKIs[label="s"]
-lMvF[label="e"]
-Cqed[label="e"]
-guAL[label="n"]
-RURE[label="e"]
-HIjk[label="e"]
-gtrf[label="l"]
-oHdZ[label="k"]
-kMse[label="e"]
-PquH[label="t"]
-gRyV[label="e"]
-ZKIs -- lMvF
-ZKIs -- Cqed
-ZKIs -- guAL
-ZKIs -- RURE
-lMvF -- HIjk
-lMvF -- guAL
-lMvF -- RURE
-HIjk -- gtrf
-HIjk -- oHdZ
-gtrf -- oHdZ
-gtrf -- kMse
-kMse -- PquH
-kMse -- gRyV
-PquH -- gRyV
+yJkK[label="s"]
+OcNE[label="e"]
+MVXJ[label="e"]
+wnwV[label="e"]
+tMJA[label="n"]
+HCfL[label="e"]
+eVWP[label="k"]
+FgOe[label="l"]
+DClL[label="b"]
+lvhv[label="e"]
+lepp[label="t"]
+yJkK -- OcNE
+yJkK -- MVXJ
+yJkK -- wnwV
+yJkK -- tMJA
+MVXJ -- wnwV
+wnwV -- HCfL
+wnwV -- tMJA
+HCfL -- eVWP
+HCfL -- FgOe
+eVWP -- FgOe
+FgOe -- DClL
+DClL -- lvhv
+DClL -- lepp
 }

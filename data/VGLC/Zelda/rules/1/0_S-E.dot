@@ -1,12 +1,12 @@
 graph {
-ZKIs [label="s, GS"]
-lMvF [label="e, GE"]
-Cqed [label="e"]
-guAL [label="n"]
-RURE [label="e"]
-ZKIs -- Cqed
-ZKIs -- guAL
-ZKIs -- RURE
-guAL -- lMvF
-RURE -- lMvF
+yJkK [label="s, GS"]
+wnwV [label="e, GE"]
+OcNE [label="e"]
+MVXJ [label="e"]
+tMJA [label="n"]
+yJkK -- OcNE
+yJkK -- MVXJ
+yJkK -- tMJA
+MVXJ -- wnwV
+tMJA -- wnwV
 }

@@ -1,0 +1,7 @@
+graph {
+mLJZ [label="k, GS"]
+Dman [label="l, GE"]
+kqeO [label="e"]
+mLJZ -- kqeO
+kqeO -- Dman
+}

@@ -1,9 +1,0 @@
-graph {
-biCl [label="e, GS"]
-DFLH [label="l, GE"]
-RtBR [label="e"]
-QzVn [label="k"]
-biCl -- RtBR
-biCl -- QzVn
-RtBR -- DFLH
-}

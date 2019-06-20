@@ -1,0 +1,7 @@
+graph {
+AZvG [label="s, GS"]
+EdYc [label="k, GE"]
+NdCv [label="e"]
+AZvG -- NdCv
+NdCv -- EdYc
+}

@@ -1,6 +1,9 @@
 graph {
-foHI [label="k, GS"]
-aPPe [label="l, GE"]
-lPlM [label="e"]
-foHI -- lPlM
+WrxG [label="e, GS"]
+sYuu [label="l, GE"]
+loUM [label="e"]
+qLMa [label="k"]
+WrxG -- loUM
+WrxG -- qLMa
+loUM -- sYuu
 }

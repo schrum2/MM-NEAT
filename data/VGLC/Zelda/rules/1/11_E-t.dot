@@ -1,0 +1,6 @@
+graph {
+DClL [label="b, GS"]
+lepp [label="t, GE"]
+lvhv [label="e"]
+DClL -- lvhv
+}

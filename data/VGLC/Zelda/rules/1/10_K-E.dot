@@ -1,9 +1,0 @@
-graph {
-SxDP [label="k, GS"]
-kaVx [label="e, GE"]
-Tles [label="e"]
-NWPv [label="e"]
-SxDP -- Tles
-SxDP -- NWPv
-NWPv -- kaVx
-}

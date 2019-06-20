@@ -1,9 +1,0 @@
-graph {
-shuz [label="e, GS"]
-BxMY [label="t, GE"]
-VitN [label="e"]
-qPIc [label="e"]
-shuz -- VitN
-shuz -- qPIc
-VitN -- BxMY
-}

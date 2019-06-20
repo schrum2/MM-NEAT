@@ -141,7 +141,7 @@ public class GraphUtil {
 						levelThere[legal.y][legal.x] = adjNode.getID();
 						Level newLevel = loadLevel(adjNode, dungeon, loader);
 						Dungeon.Node newNode = dungeon.newNode(adjNode.getID(), newLevel);
-						int tile = (node.getData().getLevelType() == "l") ? Tile.LOCKED_DOOR.getNum() : Tile.DOOR.getNum();
+						int tile = getTile(node);
 						setAdjacencies(dN, p, legal, newNode.name, tile);
 						setAdjacencies(newNode, legal, p, dN.name, tile);
 						queue.add(adjNode);
@@ -167,6 +167,19 @@ public class GraphUtil {
 		return dungeon;
 	}
 	
+	private static int getTile(Graph<? extends Grammar>.Node node) {
+		String type = node.getData().getLevelType();
+		switch(type) {
+		case "l":
+			return Tile.LOCKED_DOOR.getNum();
+		case "b":
+			System.out.println("Placing hidden wall");
+			return Tile.HIDDEN.getNum();
+		default:
+			return Tile.DOOR.getNum();
+		}
+	}
+
 	/**
 	 * Backlog is where there are too many adjacencies for a node to add, which the additional adjacencies get added to the backlog.
 	 * The backlog looks for the adjacencies and attempts to add to an adjacency if it's already there in the graph
@@ -192,7 +205,7 @@ public class GraphUtil {
 						newNode.grammar = (ZeldaGrammar) node.getData();
 						Dungeon.Node dN = dungeon.getNode(adjNode.getID());
 						
-						int tile = (node.getData().getLevelType() == "l") ? Tile.LOCKED_DOOR.getNum() : Tile.DOOR.getNum();
+						int tile = getTile(node);
 						
 						setAdjacencies(dN, p, legal, newNode.name, tile);
 						setAdjacencies(newNode, legal, p, dN.name, tile);
@@ -402,8 +415,8 @@ public class GraphUtil {
 		image = g2d.getDeviceConfiguration().createCompatibleImage(width, height);
 		Graphics g = image.getGraphics();
 		
-//		Font f = new Font("Trebuchet MS", Font.PLAIN, BLOCK_SIZE / 2);
-//		g.setFont(f);
+		Font f = new Font("Trebuchet MS", Font.PLAIN, BLOCK_HEIGHT / 4);
+		g.setFont(f);
 		
 		for(int y = 0; y < levelThere.length; y++) {
 			for(int x = 0; x < levelThere[y].length; x++) {
@@ -416,10 +429,10 @@ public class GraphUtil {
 					g.setColor(Color.GRAY);
 					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);
 					g.drawImage(bi, oX, oY, null);
-//					g.setColor(Color.BLACK);
-//					oX = (oX + BLOCK_SIZE) - (BLOCK_SIZE / 2) - (BLOCK_SIZE / 4);
-//					oY = (oY + BLOCK_SIZE) - (BLOCK_SIZE / 2) + (BLOCK_SIZE / 4);
-//					g.drawString(n.grammar.getLevelType(), oX, oY);
+					g.setColor(Color.WHITE);
+					oX = (oX + BLOCK_WIDTH) - (BLOCK_WIDTH / 2) - (BLOCK_WIDTH / 4);
+					oY = (oY + BLOCK_HEIGHT) - (BLOCK_HEIGHT / 2) + (BLOCK_HEIGHT / 4);
+					g.drawString(n.grammar.getLevelType(), oX, oY);
 				} else {
 					g.setColor(Color.BLACK);
 					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);

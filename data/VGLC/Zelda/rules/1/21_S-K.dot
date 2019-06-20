@@ -1,7 +1,0 @@
-graph {
-xiSJ [label="s, GS"]
-waox [label="k, GE"]
-cBMa [label="e"]
-xiSJ -- cBMa
-cBMa -- waox
-}

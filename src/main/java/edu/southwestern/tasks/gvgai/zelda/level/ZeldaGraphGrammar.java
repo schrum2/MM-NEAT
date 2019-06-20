@@ -34,19 +34,28 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 //		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 //		graphRules.add(rule);
 		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.START);
 		rule.grammar().setEnd(ZeldaGrammar.KEY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.START);
 		rule.grammar().setEnd(ZeldaGrammar.KEY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
@@ -101,7 +110,8 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.TREASURE);
-		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
 		graphRules.add(rule);
 		
@@ -131,9 +141,15 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		
 		System.out.println("\n-----------------------------\n");
 		
-//		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
-		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar(new File("data/VGLC/Zelda/rules/1"));
-		grammar.applyRules(graph);
+		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
+//		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar(new File("data/VGLC/Zelda/rules/1"));
+		try {
+			grammar.applyRules(graph);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			System.exit(0);
+		}
 
 
 		System.out.println("After size " + graph.size());

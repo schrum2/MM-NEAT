@@ -1,9 +1,0 @@
-graph {
-kZgy [label="e, GS"]
-HVnk [label="t, GE"]
-aXgX [label="e"]
-OGbH [label="e"]
-kZgy -- aXgX
-kZgy -- OGbH
-OGbH -- HVnk
-}

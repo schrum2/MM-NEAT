@@ -1,7 +1,0 @@
-graph {
-JwrK [label="e, GS"]
-ULzQ [label="l, GE"]
-cwYh [label="k"]
-JwrK -- cwYh
-cwYh -- ULzQ
-}

@@ -31,7 +31,12 @@ public class GraphDungeon extends ZeldaDungeon<ArrayList<Double>>{
 		
 //		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
 		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar(new File("data/VGLC/Zelda/rules/1"));
-		grammar.applyRules(graph);
+		try {
+			grammar.applyRules(graph);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		
 		try {

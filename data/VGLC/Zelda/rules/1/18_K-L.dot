@@ -1,6 +1,0 @@
-graph {
-eWyK [label="k, GS"]
-Jxpm [label="l, GE"]
-rLNq [label="e"]
-eWyK -- rLNq
-}

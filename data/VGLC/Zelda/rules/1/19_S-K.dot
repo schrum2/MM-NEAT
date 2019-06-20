@@ -1,9 +1,0 @@
-graph {
-WdCe [label="s, GS"]
-hldL [label="k, GE"]
-ozvi [label="e"]
-nUwF [label="e"]
-WdCe -- ozvi
-WdCe -- nUwF
-ozvi -- hldL
-}

@@ -54,11 +54,12 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		return rules;
 	}
 	
-	public Graph<T> applyRules(Graph<T> graph) {
+	public Graph<T> applyRules(Graph<T> graph) throws Exception {
 		boolean symbols = true;
 		boolean appliedRule = false;
 		int i = 0;
-		while(symbols) {
+		int times = 0;
+		while(symbols && times <= 4) {
 			symbols = false;
 			List<Graph<T>.Node> visited = new ArrayList<>();
 			Queue<Graph<T>.Node> queue = new LinkedList<>();
@@ -67,19 +68,23 @@ abstract public class GraphRuleManager<T extends Grammar> {
 			queue.add(node);
 			while(!queue.isEmpty()) {
 				Graph<T>.Node current = queue.poll();
+				visited.add(current);
 				symbols = symbols || current.getData().isSymbol();
-				System.out.println(current);
+				System.out.println("Current rule: " + current);
 				List<Graph<T>.Node> adj = new LinkedList<>(current.adjacencies());
 				for(Graph<T>.Node n : adj) {
 					if(!visited.contains(n)) {
+						System.out.println("Finding rule for: " + current);
 						applyRule(graph, current, n, i++);
-						visited.add(n);
 						queue.add(n);
 					}
 				}
 			}
-
+			times++;
 		}
+		
+		if(times > 4)
+			throw new Exception("Graph chouldn't be completed");
 
 //		while(symbols) {
 //			symbols = false;
@@ -118,7 +123,8 @@ abstract public class GraphRuleManager<T extends Grammar> {
 				System.out.println("--------------------------------------");
 				System.out.println(ruleToApply.getSymbolStart().getLevelType());
 				System.out.println(ruleToApply.grammar().getDOTString());
-				System.out.println(ruleToApply.getSymbolEnd().getLevelType());
+				if(ruleToApply.getSymbolEnd() != null)
+					System.out.println(ruleToApply.getSymbolEnd().getLevelType());
 			}
 		}
 	}
