@@ -1,7 +1,11 @@
 graph {
-AZvG [label="s, GS"]
-EdYc [label="k, GE"]
-NdCv [label="e"]
-AZvG -- NdCv
-NdCv -- EdYc
+SiHF [label="s, GS"]
+gmOP [label="k, GE"]
+iUtZ [label="e"]
+KgaX [label="e"]
+LQLJ [label="e"]
+SiHF -- iUtZ
+SiHF -- KgaX
+SiHF -- LQLJ
+iUtZ -- gmOP
 }

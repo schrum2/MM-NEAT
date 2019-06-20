@@ -1,9 +1,0 @@
-graph {
-nktt [label="e, GS"]
-bFSJ [label="t, GE"]
-oHnp [label="e"]
-hkoL [label="e"]
-nktt -- oHnp
-nktt -- hkoL
-hkoL -- bFSJ
-}

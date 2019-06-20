@@ -1,9 +1,7 @@
 graph {
-WrxG [label="e, GS"]
-sYuu [label="l, GE"]
-loUM [label="e"]
-qLMa [label="k"]
-WrxG -- loUM
-WrxG -- qLMa
-loUM -- sYuu
+HCTi [label="e, GS"]
+mzjf [label="l, GE"]
+jDiy [label="k"]
+HCTi -- jDiy
+jDiy -- mzjf
 }

@@ -56,7 +56,6 @@ abstract public class GraphRuleManager<T extends Grammar> {
 	
 	public Graph<T> applyRules(Graph<T> graph) throws Exception {
 		boolean symbols = true;
-		boolean appliedRule = false;
 		int i = 0;
 		int times = 0;
 		while(symbols && times <= 4) {
@@ -72,13 +71,18 @@ abstract public class GraphRuleManager<T extends Grammar> {
 				symbols = symbols || current.getData().isSymbol();
 				System.out.println("Current rule: " + current);
 				List<Graph<T>.Node> adj = new LinkedList<>(current.adjacencies());
+				boolean appliedRule = false;
 				for(Graph<T>.Node n : adj) {
 					if(!visited.contains(n)) {
 						System.out.println("Finding rule for: " + current);
-						applyRule(graph, current, n, i++);
+						appliedRule = applyRule(graph, current, n, i++);
 						queue.add(n);
 					}
 				}
+				if(!appliedRule) {
+					applyRule(graph, current, null, i++);
+				}
+
 			}
 			times++;
 		}
@@ -111,8 +115,13 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		return graph;
 	}
 	
-	public void applyRule(Graph<T> graph, Graph<T>.Node node, Graph<T>.Node nextNode, int i) {
-		List<GraphRule<T>> rules = findRule(node.getData(), nextNode.getData());
+	public boolean applyRule(Graph<T> graph, Graph<T>.Node node, Graph<T>.Node nextNode, int i) {
+		boolean appliedRule = false;
+		List<GraphRule<T>> rules;
+		if(nextNode != null)
+			rules = findRule(node.getData(), nextNode.getData());
+		else
+			rules = findRule(node.getData());
 		System.out.println("Found rules " + rules.size());
 		System.out.println(node + "->" + nextNode);
 		if(rules.size() > 0) {
@@ -125,8 +134,10 @@ abstract public class GraphRuleManager<T extends Grammar> {
 				System.out.println(ruleToApply.grammar().getDOTString());
 				if(ruleToApply.getSymbolEnd() != null)
 					System.out.println(ruleToApply.getSymbolEnd().getLevelType());
+				appliedRule = true;
 			}
 		}
+		return appliedRule;
 	}
 	
 	/**

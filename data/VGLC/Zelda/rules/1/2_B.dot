@@ -1,0 +1,5 @@
+graph {
+BJIm [label="b, GS"]
+djAV [label="e"]
+BJIm -- djAV
+}

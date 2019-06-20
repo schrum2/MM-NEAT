@@ -24,7 +24,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule.grammar().setStart(ZeldaGrammar.START);
 		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeBetween(ZeldaGrammar.NOTHING);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
 		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		
@@ -38,24 +38,26 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.KEY);
 		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
+		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S);
 		rule.grammar().setStart(ZeldaGrammar.BOMB);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		
-		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
-		rule.grammar().setStart(ZeldaGrammar.START);
-		rule.grammar().setEnd(ZeldaGrammar.KEY);
-		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.START);
 		rule.grammar().setEnd(ZeldaGrammar.KEY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.START);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
@@ -79,14 +81,14 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
-		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
 		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
-		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.ENEMY_S);
@@ -110,8 +112,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.TREASURE);
-		rule.grammar().setStart(ZeldaGrammar.BOMB);
-		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
 		graphRules.add(rule);
 		
@@ -122,6 +123,11 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
 		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
 	}
 	
 	public ZeldaGraphGrammar(File directory) {
@@ -131,6 +137,9 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 	public static void main(String[] args) {
 		List<ZeldaGrammar> initialList = new LinkedList<>();
 		initialList.add(ZeldaGrammar.START_S);
+		initialList.add(ZeldaGrammar.ENEMY_S);
+		initialList.add(ZeldaGrammar.KEY_S);
+		initialList.add(ZeldaGrammar.LOCK_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
 		initialList.add(ZeldaGrammar.KEY_S);
 		initialList.add(ZeldaGrammar.LOCK_S);

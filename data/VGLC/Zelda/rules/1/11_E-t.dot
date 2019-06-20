@@ -1,6 +1,9 @@
 graph {
-DClL [label="b, GS"]
-lepp [label="t, GE"]
-lvhv [label="e"]
-DClL -- lvhv
+rQkA [label="e, GS"]
+gOAB [label="t, GE"]
+siai [label="e"]
+QEMD [label="e"]
+rQkA -- siai
+rQkA -- QEMD
+siai -- gOAB
 }

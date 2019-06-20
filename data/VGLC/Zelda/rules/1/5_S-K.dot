@@ -1,0 +1,7 @@
+graph {
+cGrd [label="s, GS"]
+PPlV [label="k, GE"]
+JGyL [label="e"]
+cGrd -- JGyL
+JGyL -- PPlV
+}

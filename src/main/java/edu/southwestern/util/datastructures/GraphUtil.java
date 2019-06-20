@@ -175,6 +175,8 @@ public class GraphUtil {
 		case "b":
 			System.out.println("Placing hidden wall");
 			return Tile.HIDDEN.getNum();
+		case "sl":
+			return Tile.SOFT_LOCK_DOOR.getNum();
 		default:
 			return Tile.DOOR.getNum();
 		}

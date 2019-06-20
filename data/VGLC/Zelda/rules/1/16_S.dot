@@ -1,0 +1,5 @@
+graph {
+dgyE [label="sl, GS"]
+lnRE [label="e"]
+dgyE -- lnRE
+}

@@ -1,7 +1,0 @@
-graph {
-HCfL [label="e, GS"]
-FgOe [label="l, GE"]
-eVWP [label="k"]
-HCfL -- eVWP
-eVWP -- FgOe
-}

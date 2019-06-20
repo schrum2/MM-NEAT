@@ -1,9 +1,0 @@
-graph {
-QqBZ [label="k, GS"]
-kjkX [label="e, GE"]
-GnZz [label="e"]
-eDDv [label="e"]
-QqBZ -- GnZz
-QqBZ -- eDDv
-eDDv -- kjkX
-}

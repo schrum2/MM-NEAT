@@ -1,7 +1,0 @@
-graph {
-HpCb [label="e, GS"]
-jgNX [label="t, GE"]
-rdLO [label="e"]
-HpCb -- rdLO
-rdLO -- jgNX
-}

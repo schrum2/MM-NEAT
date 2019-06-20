@@ -1,12 +1,14 @@
 graph {
-yJkK [label="s, GS"]
-wnwV [label="e, GE"]
-OcNE [label="e"]
-MVXJ [label="e"]
-tMJA [label="n"]
-yJkK -- OcNE
-yJkK -- MVXJ
-yJkK -- tMJA
-MVXJ -- wnwV
-tMJA -- wnwV
+LZCk [label="s, GS"]
+WCSH [label="e, GE"]
+DOmq [label="e"]
+ofgQ [label="e"]
+BJIm [label="b"]
+djAV [label="e"]
+LZCk -- DOmq
+LZCk -- ofgQ
+LZCk -- BJIm
+ofgQ -- WCSH
+BJIm -- djAV
+BJIm -- WCSH
 }

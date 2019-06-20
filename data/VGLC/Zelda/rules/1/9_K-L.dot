@@ -1,0 +1,9 @@
+graph {
+uUBU [label="e, GS"]
+LhUV [label="l, GE"]
+pCni [label="S"]
+kjbP [label="k"]
+uUBU -- pCni
+uUBU -- kjbP
+pCni -- LhUV
+}

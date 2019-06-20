@@ -1,26 +1,37 @@
 graph {
-yJkK[label="s"]
-OcNE[label="e"]
-MVXJ[label="e"]
-wnwV[label="e"]
-tMJA[label="n"]
-HCfL[label="e"]
-eVWP[label="k"]
-FgOe[label="l"]
-DClL[label="b"]
-lvhv[label="e"]
-lepp[label="t"]
-yJkK -- OcNE
-yJkK -- MVXJ
-yJkK -- wnwV
-yJkK -- tMJA
-MVXJ -- wnwV
-wnwV -- HCfL
-wnwV -- tMJA
-HCfL -- eVWP
-HCfL -- FgOe
-eVWP -- FgOe
-FgOe -- DClL
-DClL -- lvhv
-DClL -- lepp
+LZCk[label="s"]
+DOmq[label="e"]
+WCSH[label="e"]
+ofgQ[label="e"]
+BJIm[label="b"]
+bZPY[label="k"]
+djAV[label="e"]
+pGbb[label="l"]
+dgyE[label="sl"]
+tcmg[label="e"]
+lnRE[label="e"]
+zwcD[label="k"]
+teaL[label="l"]
+wmUN[label="e"]
+GRBi[label="t"]
+CDYC[label="e"]
+LZCk -- DOmq
+LZCk -- WCSH
+LZCk -- ofgQ
+LZCk -- BJIm
+WCSH -- bZPY
+WCSH -- ofgQ
+WCSH -- BJIm
+BJIm -- djAV
+bZPY -- pGbb
+bZPY -- dgyE
+BJIm -- djAV
+pGbb -- tcmg
+dgyE -- lnRE
+tcmg -- zwcD
+zwcD -- teaL
+teaL -- wmUN
+wmUN -- GRBi
+wmUN -- CDYC
+GRBi -- CDYC
 }

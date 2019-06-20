@@ -1,0 +1,8 @@
+graph {
+bZPY [label="k, GS"]
+pGbb [label="l, GE"]
+dgyE [label="sl"]
+lnRE [label="e"]
+bZPY -- dgyE
+dgyE -- lnRE
+}

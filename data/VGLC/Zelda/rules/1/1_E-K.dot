@@ -1,0 +1,9 @@
+graph {
+tcmg [label="e, GS"]
+zwcD [label="k, GE"]
+BJIm [label="b"]
+djAV [label="e"]
+tcmg -- BJIm
+BJIm -- djAV
+BJIm -- zwcD
+}

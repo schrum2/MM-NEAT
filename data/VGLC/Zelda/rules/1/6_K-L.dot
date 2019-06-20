@@ -1,6 +1,7 @@
 graph {
-euWZ [label="k, GS"]
-sZiN [label="l, GE"]
-pHuf [label="e"]
-euWZ -- pHuf
+kquP [label="k, GS"]
+WsJy [label="l, GE"]
+hRsI [label="e"]
+kquP -- hRsI
+hRsI -- WsJy
 }

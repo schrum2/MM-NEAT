@@ -1,0 +1,9 @@
+graph {
+iKiW [label="s, GS"]
+Nmcp [label="k, GE"]
+NaqT [label="e"]
+Rxvk [label="e"]
+iKiW -- NaqT
+iKiW -- Rxvk
+NaqT -- Nmcp
+}

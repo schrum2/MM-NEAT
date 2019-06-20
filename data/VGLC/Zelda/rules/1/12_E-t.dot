@@ -1,0 +1,7 @@
+graph {
+wmUN [label="e, GS"]
+GRBi [label="t, GE"]
+CDYC [label="e"]
+wmUN -- CDYC
+CDYC -- GRBi
+}
