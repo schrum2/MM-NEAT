@@ -1,7 +1,7 @@
 graph {
-bSdD [label="e, GS"]
-qXUj [label="l, GE"]
-FMrz [label="k"]
-bSdD -- FMrz
-FMrz -- qXUj
+opas [label="e, GS"]
+Sosm [label="l, GE"]
+GHid [label="k"]
+opas -- GHid
+GHid -- Sosm
 }

@@ -1,11 +1,11 @@
 graph {
-bajH [label="s, GS"]
-JWiX [label="k, GE"]
-GSWc [label="e"]
-dyZz [label="e"]
-ZJCM [label="e"]
-bajH -- GSWc
-bajH -- dyZz
-bajH -- ZJCM
-GSWc -- JWiX
+eket [label="s, GS"]
+IqMV [label="k, GE"]
+OVTF [label="e"]
+RXNF [label="e"]
+YxOT [label="e"]
+eket -- OVTF
+eket -- RXNF
+eket -- YxOT
+OVTF -- IqMV
 }

@@ -1,7 +1,7 @@
 graph {
-byRk [label="s, GS"]
-vDhs [label="k, GE"]
-rRNK [label="e"]
-byRk -- rRNK
-rRNK -- vDhs
+Ekcr [label="s, GS"]
+DlCL [label="k, GE"]
+emJF [label="e"]
+Ekcr -- emJF
+emJF -- DlCL
 }

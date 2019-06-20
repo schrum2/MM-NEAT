@@ -1,9 +1,9 @@
 graph {
-riaR [label="e, GS"]
-ijYW [label="k, GE"]
-OZpx [label="b"]
-KtcT [label="e"]
-riaR -- OZpx
-OZpx -- KtcT
-OZpx -- ijYW
+DtGd [label="e, GS"]
+RugF [label="k, GE"]
+QNbP [label="b"]
+Dmcm [label="e"]
+DtGd -- QNbP
+QNbP -- Dmcm
+QNbP -- RugF
 }

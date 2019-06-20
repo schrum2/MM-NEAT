@@ -1,9 +1,9 @@
 graph {
-GWEJ [label="e, GS"]
-mVLZ [label="l, GE"]
-IKut [label="S"]
-tIXu [label="k"]
-GWEJ -- IKut
-GWEJ -- tIXu
-IKut -- mVLZ
+QCuA [label="e, GS"]
+QmOv [label="l, GE"]
+kZER [label="S"]
+Davw [label="k"]
+QCuA -- kZER
+QCuA -- Davw
+kZER -- QmOv
 }

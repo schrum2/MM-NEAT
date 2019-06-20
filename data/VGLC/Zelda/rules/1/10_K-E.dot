@@ -1,9 +1,9 @@
 graph {
-IKZy [label="k, GS"]
-pOFZ [label="e, GE"]
-ycSy [label="e"]
-aydP [label="e"]
-IKZy -- ycSy
-IKZy -- aydP
-ycSy -- pOFZ
+yNDh [label="k, GS"]
+gsdW [label="e, GE"]
+qxMR [label="e"]
+sSJi [label="e"]
+yNDh -- qxMR
+yNDh -- sSJi
+qxMR -- gsdW
 }

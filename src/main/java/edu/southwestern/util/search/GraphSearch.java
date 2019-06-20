@@ -8,16 +8,22 @@ import edu.southwestern.util.datastructures.Triple;
 
 public abstract class GraphSearch<A extends Action, S extends State<A>> implements Search<A,S> {
 
+	private HashSet<S> visited;
+
+	@Override
+	public ArrayList<A> search(S start) {
+		return search(start, true); // Reset search by default
+	}
+	
 	/**
 	 * All graph search algorithms have the same general structure. They only differ in
 	 * the data structure used to maintain the fringe. This comes from getQueueStrategy().
 	 */
-	@Override
-	public ArrayList<A> search(S start) {
+	public ArrayList<A> search(S start, boolean reset) {
 		Queue<Triple<S, ArrayList<A>, Double>> pq = getQueueStrategy();
 		// No actions or cost to reach starting point
 		pq.add(new Triple<S,ArrayList<A>,Double>(start, new ArrayList<A>(), new Double(0)));
-		HashSet<S> visited = new HashSet<>();
+		if(reset) visited = new HashSet<>();
 		while(!pq.isEmpty()) {
 			// Each state includes the path that led to it, and cost of that path
 			Triple<S,ArrayList<A>,Double> current = pq.poll();
@@ -54,6 +60,10 @@ public abstract class GraphSearch<A extends Action, S extends State<A>> implemen
 	 * @return
 	 */
 	public abstract Queue<Triple<S, ArrayList<A>, Double>> getQueueStrategy();
+	
+	public HashSet<S> getVisited(){
+		return this.visited;
+	}
 
 	
 	

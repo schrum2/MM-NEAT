@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,31 +55,7 @@ import me.jakerg.rougelike.TileUtil;
 public abstract class ZeldaDungeon<T> {
 	
 	private static final int ZELDA_HEIGHT = (176/11)*16;//Parameters.parameters.integerParameter("zeldaImageHeight");
-	private static final int ZELDA_WIDTH = 176;//Parameters.parameters.integerParameter("zeldaImageWidth");
-	
-	public static Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
-
-		@Override
-		public double h(ZeldaState s) {
-			Dungeon d = s.getDungeon();
-			Point goalPoint = d.getCoords(d.getGoal());
-			int gDX = goalPoint.x;
-			int gDY = goalPoint.y;
-			
-			int w = s.getDungeon().getLevelWidth();
-			int h = s.getDungeon().getLevelHeight();
-			
-			Point g = d.getGoalPoint();
-			int gX = g.x;
-			int gY = g.y;
-			int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
-			int j = Math.abs(gDX - s.dX) * w + Math.abs(gDY - s.dY) * h;
-			
-			
-			
-			return i + j; 
-		}
-	};
+	private static final int ZELDA_WIDTH = 176;//Parameters.parameters.integerParameter("zeldaImageWidth");\
 	
 	
 	private Level[][] dungeon = null;
@@ -198,7 +175,7 @@ public abstract class ZeldaDungeon<T> {
 			public void actionPerformed(ActionEvent arg0) {
 				ZeldaState initial = new ZeldaState(5, 5, 0, dungeonInstance);
 				
-				Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
+				Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
 				ArrayList<GridAction> result = search.search(initial);
 				
 				if(result != null)
@@ -340,7 +317,7 @@ public abstract class ZeldaDungeon<T> {
 		JPanel panel = new JPanel();
 		
 		if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
-			BufferedImage image = GraphUtil.imageOfDungeon(dungeonInstance);
+			BufferedImage image = GraphUtil.imageOfDungeon(dungeonInstance, null);
 			JLabel label = new JLabel(new ImageIcon(image));
 			panel.add(label);
 		} else {
@@ -507,6 +484,17 @@ public abstract class ZeldaDungeon<T> {
 			if(dungeon != null)
 				dungeon.setGoalPoint(new Point(x, y));;
 			return this;
+		}
+		
+		public List<Point> getFloorTiles(){
+			List<Point> points = new LinkedList<>();
+			for(int y = 0; y < intLevel.size(); y++)
+				for(int x = 0; x < intLevel.get(y).size(); x++)
+					if(intLevel.get(y).get(x).equals(Tile.FLOOR.getNum()))
+						points.add(new Point(x, y));
+			
+			return points;
+					
 		}
 	}
 

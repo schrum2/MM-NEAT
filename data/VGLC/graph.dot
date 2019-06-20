@@ -1,33 +1,36 @@
 graph {
-cOwR[label="s"]
-PwTB[label="e"]
-gNer[label="e"]
-MBpb[label="e"]
-OZpx[label="b"]
-MpVd[label="k"]
-KtcT[label="e"]
-qTWQ[label="e"]
-xQse[label="l"]
-riaR[label="e"]
-ijYW[label="k"]
-jsTg[label="l"]
-EhXl[label="e"]
-LIVA[label="t"]
-cOwR -- PwTB
-cOwR -- gNer
-cOwR -- MBpb
-cOwR -- OZpx
-gNer -- MpVd
-gNer -- MBpb
-gNer -- OZpx
-OZpx -- KtcT
-MpVd -- qTWQ
-MpVd -- xQse
-OZpx -- KtcT
-qTWQ -- xQse
-xQse -- riaR
-riaR -- ijYW
-ijYW -- jsTg
-jsTg -- EhXl
-EhXl -- LIVA
+GXEX[label="s"]
+EEIz[label="e"]
+anrH[label="e"]
+wmkA[label="e"]
+QNbP[label="b"]
+opas[label="e"]
+Dmcm[label="e"]
+Sosm[label="l"]
+GHid[label="k"]
+DtGd[label="e"]
+RugF[label="k"]
+ejJp[label="l"]
+SdMI[label="e"]
+WVfm[label="t"]
+VFvY[label="e"]
+GXEX -- EEIz
+GXEX -- anrH
+GXEX -- wmkA
+GXEX -- QNbP
+anrH -- opas
+anrH -- wmkA
+anrH -- QNbP
+QNbP -- Dmcm
+opas -- Sosm
+opas -- GHid
+QNbP -- Dmcm
+Sosm -- GHid
+Sosm -- DtGd
+DtGd -- RugF
+RugF -- ejJp
+ejJp -- SdMI
+SdMI -- WVfm
+SdMI -- VFvY
+WVfm -- VFvY
 }

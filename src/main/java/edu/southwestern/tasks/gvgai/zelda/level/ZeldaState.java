@@ -27,7 +27,7 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 	private HashMap<String, Set<String>> bombed;
 	private HashMap<String, Set<Point>> keys;
 	private Dungeon dungeon;
-	private Node currentNode;
+	public Node currentNode;
 	
 	public ZeldaState(int x, int y, int numKeys, Dungeon dungeon) {
 		this.x = x;

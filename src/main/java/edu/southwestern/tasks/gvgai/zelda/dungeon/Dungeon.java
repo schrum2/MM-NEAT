@@ -6,11 +6,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
+
 import com.google.gson.Gson;
 
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.util.datastructures.Pair;
+import me.jakerg.rougelike.Tile;
 
 
 public class Dungeon {
@@ -193,6 +196,17 @@ public class Dungeon {
 		
 		public String toString() {
 			return this.name;
+		}
+
+		public boolean hasLock() {
+			List<List<Integer>> ints = level.intLevel;
+			for(int y = 0; y < ints.size(); y++) 
+				for(int x = 0; x < ints.get(y).size(); x++) 
+					if(ints.get(y).get(x).equals(Tile.LOCKED_DOOR.getNum()))
+						return true;
+				
+			
+			return false;
 		}
 	}
 

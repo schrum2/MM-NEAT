@@ -15,11 +15,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Stack;
 
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
@@ -31,7 +34,10 @@ import edu.southwestern.tasks.gvgai.zelda.level.Grammar;
 import edu.southwestern.tasks.gvgai.zelda.level.LevelLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.datastructures.Graph.Node;
+import edu.southwestern.util.search.AStarSearch;
 import me.jakerg.rougelike.Creature;
 import me.jakerg.rougelike.CreatureFactory;
 import me.jakerg.rougelike.Item;
@@ -164,9 +170,59 @@ public class GraphUtil {
 
 		}
 		dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
+		addCycles(dungeon);
 		return dungeon;
 	}
 	
+	private static void addCycles(Dungeon dungeon) throws Exception {
+		String[][] levels = dungeon.getLevelThere();
+		for(int y = 0; y < levels.length; y++) {
+			for(int x = 0; x < levels[y].length; x++) {
+				if(levels[y][x] != null) {		
+					Stack<Point> options = new Stack<>();
+					options.addAll(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
+					Point p = pointToCheck(dungeon, x, y, options);
+					while(p != null) {
+						System.out.println("Checking point");
+						Dungeon.Node n = dungeon.getNodeAt(x, y);
+						Dungeon.Node adj = dungeon.getNodeAt(p.x, p.y);
+						setAdjacencies(n, new Point(x, y), p, adj.name, Tile.DOOR.getNum());
+						setAdjacencies(adj, p, new Point(x, y), n.name, Tile.DOOR.getNum());
+						p = pointToCheck(dungeon, x, y, options);
+					}
+				}
+			}
+		}
+	}
+
+	private static Point pointToCheck(Dungeon dungeon, int x, int y, Stack<Point> options) {
+		Dungeon.Node n = dungeon.getNodeAt(x, y);
+		if(n.hasLock()) return null;
+		while(options.size() > 0) {
+			Point check = options.pop();
+			int cX = x + check.x;
+			int cY = y + check.y;
+			boolean hasAdj = false;
+			Dungeon.Node cN = dungeon.getNodeAt(cX, cY);
+			if(cN == null)
+				continue;
+			
+			for(Pair<String, Point> values : n.adjacency.values())
+				if(values.t1 == cN.name)
+					hasAdj = true;
+			
+			System.out.println("hasAdj " + hasAdj);
+			if(!hasAdj && !cN.hasLock() && cN.grammar.isCyclable()) {
+				System.out.println("Returning point : " + new Point(cX, cY));
+				return new Point(cX, cY);
+			}
+
+			
+		}
+		
+		return null;
+	}
+
 	private static int getTile(Graph<? extends Grammar>.Node node) {
 		String type = node.getData().getLevelType();
 		switch(type) {
@@ -380,7 +436,6 @@ public class GraphUtil {
 			for(int x = 0; x < level.get(y).size(); x++) {
 				int num = level.get(y).get(x);
 				Tile tile = Tile.findNum(num);
-				System.out.println("Found tile: " + tile);
 				if(tile.equals(Tile.DOOR) || tile.equals(Tile.LOCKED_DOOR))
 					num = Tile.WALL.getNum();
 				else if(tile.equals(Tile.TRIFORCE) || tile.equals(Tile.KEY) || num == 2)
@@ -398,7 +453,7 @@ public class GraphUtil {
 	 * @param dungeon Dungeon to generate an image with
 	 * @return BufferedImage representing dungeon
 	 */
-	public static BufferedImage imageOfDungeon(Dungeon dungeon) {
+	public static BufferedImage imageOfDungeon(Dungeon dungeon, HashSet<ZeldaState> visited) {
 		int BLOCK_HEIGHT = dungeon.getCurrentlevel().level.intLevel.size() * 16;
 		int BLOCK_WIDTH = dungeon.getCurrentlevel().level.intLevel.get(0).size() * 16;
 		String[][] levelThere = dungeon.getLevelThere();
@@ -420,6 +475,13 @@ public class GraphUtil {
 		Font f = new Font("Trebuchet MS", Font.PLAIN, BLOCK_HEIGHT / 4);
 		g.setFont(f);
 		
+		HashMap<Dungeon.Node, List<Point>> nodes = null;
+		
+		if(visited != null) {
+			setFloorTiles(dungeon, visited);
+			nodes = getUnexplored(visited);
+		}
+
 		for(int y = 0; y < levelThere.length; y++) {
 			for(int x = 0; x < levelThere[y].length; x++) {
 				Dungeon.Node n = dungeon.getNodeAt(x, y);
@@ -427,6 +489,7 @@ public class GraphUtil {
 				int oX = x * BLOCK_WIDTH;
 				int oY = y * BLOCK_HEIGHT;
 				if(n != null) {
+					
 					BufferedImage bi = getLevelImage(n, dungeon);
 					g.setColor(Color.GRAY);
 					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);
@@ -435,6 +498,12 @@ public class GraphUtil {
 					oX = (oX + BLOCK_WIDTH) - (BLOCK_WIDTH / 2) - (BLOCK_WIDTH / 4);
 					oY = (oY + BLOCK_HEIGHT) - (BLOCK_HEIGHT / 2) + (BLOCK_HEIGHT / 4);
 					g.drawString(n.grammar.getLevelType(), oX, oY);
+					
+					if(nodes != null && nodes.containsKey(n))
+						g.setColor(Color.RED);
+					
+					oX = (oX) + (BLOCK_WIDTH / 4);
+					g.drawString(n.name, oX, oY);
 				} else {
 					g.setColor(Color.BLACK);
 					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);
@@ -448,6 +517,36 @@ public class GraphUtil {
 		return image;
 	}
 	
+	private static HashMap<Dungeon.Node, List<Point>> getUnexplored(HashSet<ZeldaState> visited) {
+		HashMap<Dungeon.Node, List<Point>> nodes = new HashMap<>();
+		
+		for(ZeldaState state : visited) {
+			Dungeon.Node n = state.currentNode;
+			if(!nodes.containsKey(n))
+				nodes.put(n, n.level.getFloorTiles());
+			
+			Point p = new Point(state.x, state.y);
+			nodes.get(n).remove(p);
+
+			if(nodes.get(n).size() == 0)
+				nodes.remove(n);
+			
+		}
+		
+		for(Dungeon.Node n : nodes.keySet()) {
+			System.out.println(n.name);
+		}
+		
+		return nodes;
+	}
+
+	private static void setFloorTiles(Dungeon dungeon, HashSet<ZeldaState> visited) {
+		for(ZeldaState state : visited) {
+			state.currentNode.level.intLevel.get(state.y).set(state.x, Tile.VISITED.getNum());
+		}
+		
+	}
+
 	/**
 	 * Get an individual level image from a dungeon
 	 * @param node Dungeon node as the level

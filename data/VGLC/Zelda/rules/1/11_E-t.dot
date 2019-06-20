@@ -1,9 +1,9 @@
 graph {
-Tfyy [label="e, GS"]
-eopo [label="t, GE"]
-XRFz [label="e"]
-xodd [label="e"]
-Tfyy -- XRFz
-Tfyy -- xodd
-XRFz -- eopo
+lMNr [label="e, GS"]
+PrRa [label="t, GE"]
+exMt [label="e"]
+dJts [label="e"]
+lMNr -- exMt
+lMNr -- dJts
+exMt -- PrRa
 }

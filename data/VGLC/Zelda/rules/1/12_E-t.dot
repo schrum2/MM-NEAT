@@ -1,7 +1,7 @@
 graph {
-DRTg [label="e, GS"]
-bdQp [label="t, GE"]
-txTm [label="e"]
-DRTg -- txTm
-txTm -- bdQp
+SdMI [label="e, GS"]
+WVfm [label="t, GE"]
+VFvY [label="e"]
+SdMI -- VFvY
+VFvY -- WVfm
 }

@@ -42,6 +42,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.search.AStarSearch;
+import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
 import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
@@ -450,90 +451,28 @@ public class ZeldaLevelUtil {
 		return copy;
 	}
 	
-//	public static void viewDungeon(Dungeon d) {
-//		JFrame frame = new JFrame("Dungeon Viewer");
-//		frame.setSize(1000, 1000);
-//		
-//		JPanel container = new JPanel();
-//		container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-//		
-//		JPanel buttons = new JPanel();
-//		
-//		JButton playDungeon = new JButton("Play Dungeon");
-//		playDungeon.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent arg0) {
-////				ZeldaState initial = new ZeldaState(5, 5, 0, d);
-////				
-////				Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
-////				ArrayList<GridAction> result = search.search(initial);
-////				
-////				if(result != null)
-////					for(GridAction a : result)
-////						System.out.println(a.getD().toString());
-////					
-//				if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
-//					new Thread() {
-//						@Override
-//						public void run() {
-//							RougelikeApp.startDungeon(d);
-//						}
-//					}.start();
-//				} else {
-//					GameBundle bundle = ZeldaGANLevelBreederTask.setUpGameWithDungeon(d);
-//					new Thread() {
-//						@Override
-//						public void run() {
-//							// True is to watch the game being played
-//							GVGAIUtil.runDungeon(bundle, true, d);
-//						}
-//					}.start();
-//				}
-//			}
-//			
-//		});
-//		buttons.add(playDungeon);
-//		
-//		JCheckBox useGvg = new JCheckBox("Use GVG-AI", Parameters.parameters.booleanParameter("gvgAIForZeldaGAN"));
-//		useGvg.addActionListener(new ActionListener() {
-//
-//			@Override
-//			public void actionPerformed(ActionEvent arg0) {
-//				Parameters.parameters.changeBoolean("gvgAIForZeldaGAN");
-//			}
-//			
-//		});
-//		buttons.add(useGvg);
-//		
-//		container.add(buttons);
-//		
-//		String[][] levelThere = d.getLevelThere();
-//		
-//		JPanel dungeonGrid = new JPanel();
-//		dungeonGrid.setLayout(new GridLayout(levelThere[0].length, levelThere.length));
-//
-//		for(int i = 0; i < levelThere.length; i++) {
-//			for(int j = 0; j < levelThere[i].length; j++) {
-//				if(levelThere[i][j] != null) {
-//					BufferedImage level = getButtonImage(levelThere[i][j], 16 * 3 / 4, 11 * 3 / 4); //creates image rep. of level)
-//					ImageIcon img = new ImageIcon(level.getScaledInstance(16 * 3 / 4, 11 * 3 / 4, Image.SCALE_FAST)); //creates image of level
-//					JLabel imageLabel = new JLabel(img); // places level on label
-//					dungeonGrid.add(imageLabel); //add label to panel
-//				} else {
-//					JLabel blankText = new JLabel("");
-//					blankText.setForeground(Color.WHITE);
-//					JPanel blankBack = new JPanel();
-//					blankBack.setBackground(Color.BLACK);
-//					blankBack.add(blankText);
-//					dungeonGrid.add(blankBack);
-//				}
-//			}
-//		}
-//		
-//		container.add(dungeonGrid);
-//		
-//		frame.add(container);
-//		frame.setVisible(true);
-//		}
+	public static Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
+
+		@Override
+		public double h(ZeldaState s) {
+			Dungeon d = s.getDungeon();
+			Point goalPoint = d.getCoords(d.getGoal());
+			int gDX = goalPoint.x;
+			int gDY = goalPoint.y;
+			
+			int w = s.getDungeon().getLevelWidth();
+			int h = s.getDungeon().getLevelHeight();
+			
+			Point g = d.getGoalPoint();
+			int gX = g.x;
+			int gY = g.y;
+			int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
+			int j = Math.abs(gDX - s.dX) * w + Math.abs(gDY - s.dY) * h;
+			
+			
+			
+			return i + j; 
+		}
+	};
 	
 }

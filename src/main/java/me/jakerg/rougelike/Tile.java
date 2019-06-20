@@ -11,11 +11,12 @@ import asciiPanel.AsciiPanel;
 public enum Tile {
 	// Refer to Code Page 437 for the number representation of the char
 	FLOOR((char)250, AsciiPanel.yellow, 0),
+	VISITED('x', AsciiPanel.white, 101),
 	WALL((char)219, AsciiPanel.yellow, 1),
 	CURRENT((char)219, AsciiPanel.brightYellow, -99),
 	EXIT((char)239, AsciiPanel.green, 4),
 	DOOR((char)239, AsciiPanel.green, 3),
-	BLOCK((char)177, AsciiPanel.yellow, 5), // this is the 'P' water block thing
+	BLOCK((char)177, AsciiPanel.cyan, 5), // this is the 'P' water block thing
 	LOCKED_DOOR((char)239, AsciiPanel.red, -5),
 	SOFT_LOCK_DOOR((char)239, AsciiPanel.brightBlue, -55),
 	HIDDEN((char)178, AsciiPanel.yellow, -7),

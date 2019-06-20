@@ -1,5 +1,5 @@
 graph {
-OLuk [label="sl, GS"]
-gaED [label="e"]
-OLuk -- gaED
+DMej [label="sl, GS"]
+qeHr [label="e"]
+DMej -- qeHr
 }

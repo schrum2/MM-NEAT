@@ -1,10 +1,14 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
 import java.awt.Desktop;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,8 +16,14 @@ import javax.imageio.ImageIO;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
+import edu.southwestern.util.search.AStarSearch;
+import edu.southwestern.util.search.Heuristic;
+import edu.southwestern.util.search.Search;
 import me.jakerg.rougelike.RougelikeApp;
 
 public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
@@ -171,11 +181,31 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		}
 		Parameters.initializeParameterCollections(new String[] {"zeldaGANUsesOriginalEncoding:false"});
 		
+		
+		
+
+		
+		
 		Dungeon d = null;
 		try {
 			d = GraphUtil.convertToDungeon(graph, new GANLoader());
 			
-			BufferedImage image = GraphUtil.imageOfDungeon(d);
+			ZeldaState initial = new ZeldaState(5, 5, 0, d);
+			
+			Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
+			ArrayList<GridAction> result = search.search(initial);
+			HashSet<ZeldaState> visited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
+			
+			System.out.println(result);
+			if(result != null) {
+				for(GridAction a : result)
+					System.out.println(a.getD().toString());
+				
+				System.out.println("Length of path : " + result.size());
+				visited = null;
+			}
+			
+			BufferedImage image = GraphUtil.imageOfDungeon(d, visited);
 			File file = new File("data/VGLC/Zelda/dungeon.png");
 			ImageIO.write(image, "png", file);
 			
@@ -188,6 +218,9 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
+
 		
 		
 		try {
