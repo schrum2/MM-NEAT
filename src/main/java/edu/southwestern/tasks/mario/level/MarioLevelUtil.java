@@ -245,8 +245,8 @@ public class MarioLevelUtil {
 	 * Return an image of the level, excluding the buffer zones at the
 	 * beginning and end of every CPPN generated level. Also excludes
 	 * the background, Mario, and enemy sprites.
-	 * @param level
-	 * @return
+	 * @param level A Mario Level
+	 * @return Image of Mario level
 	 */
 	public static BufferedImage getLevelImage(Level level) {
 		EvaluationOptions options = new CmdLineOptions(new String[0]);

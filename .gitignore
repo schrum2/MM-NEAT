@@ -100,10 +100,12 @@ ZeldaAllDungeons*
 /microRTS/
 /ut2004/
 /mariogan/
+/zentangle/
 /mariocppn/
 /coghosts/
 /poghosts/
 /popacman/
+/zeldagan/
 /src/main/python/MarioGAN/Zelda-30-5000
 # Some of UT^2's log files end up with this naming convention
 *-null
@@ -137,7 +139,8 @@ rl-glue-cartpole
 *.model
 src/main/python/NeuralStyleTransfer/imagenet-vgg-verydeep-19.mat
 *.pyc
-*.json
 *UT^2-null
 dependency-reduced-pom.xml
 *.mkv
+
+**/netG*.pth

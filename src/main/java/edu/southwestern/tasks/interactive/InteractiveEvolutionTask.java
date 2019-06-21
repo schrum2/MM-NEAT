@@ -94,8 +94,8 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	private static final int MPG_MAX = 10;//maximum # of mutations per generation
 
 	// Activation Button Widths and Heights
-	private static final int ACTION_BUTTON_WIDTH = 80;
-	private static final int ACTION_BUTTON_HEIGHT = 60;	
+	protected static final int ACTION_BUTTON_WIDTH = 80;
+	protected static final int ACTION_BUTTON_HEIGHT = 60;	
 
 	//Private final variables
 	private static int numRows;
@@ -177,7 +177,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		//frame.setSize(PIC_SIZE * NUM_COLUMNS + 200, PIC_SIZE * NUM_ROWS + 700);
 		frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
 		picSize = Math.min(picSize, frame.getWidth() / NUM_COLUMNS);
-		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
+		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new GridLayout(numRows + 1, 0));// the + 1 includes room for the title panel
 		frame.setVisible(true);
@@ -560,6 +560,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		if(checkCache) {
 			// Will this interface ever be used with items that are not TWEANNs?
 			long id = ((TWEANN) phenotype).getId();
+			//System.out.println("Cache image for: " + id);
 			if(cachedButtonImages.containsKey(id)) {
 				// Return pre-computed image instead of watsing time
 				return cachedButtonImages.get(id);
@@ -592,6 +593,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 */
 	@Override
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
+		selectedItems.clear();
 		waitingForUser = true;
 		scores = new ArrayList<Score<T>>();
 		if(population.size() != numButtonOptions) {
@@ -757,6 +759,10 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 * Used to reset the buttons when an Effect CheckBox is clicked
 	 */
 	public void resetButtons(boolean hardReset){
+		if(hardReset) {
+			// Hard reset invalidates the cache
+			cachedButtonImages.clear();
+		}
 		for(int i = 0; i < scores.size(); i++) {
 			// If not doing hard reset, there is a chance to load from cache
 			setButtonImage(getButtonImage(!hardReset, scores.get(i).individual.getPhenotype(),  picSize, picSize, inputMultipliers), i);
