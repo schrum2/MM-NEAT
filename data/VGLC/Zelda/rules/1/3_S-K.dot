@@ -1,11 +1,11 @@
 graph {
-eket [label="s, GS"]
-IqMV [label="k, GE"]
-OVTF [label="e"]
-RXNF [label="e"]
-YxOT [label="e"]
-eket -- OVTF
-eket -- RXNF
-eket -- YxOT
-OVTF -- IqMV
+rDQr [label="s, GS"]
+pDHc [label="k, GE"]
+xmGg [label="e"]
+ESBo [label="e"]
+ReXo [label="e"]
+rDQr -- xmGg
+rDQr -- ESBo
+rDQr -- ReXo
+xmGg -- pDHc
 }

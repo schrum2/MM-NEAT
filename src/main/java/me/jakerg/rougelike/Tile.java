@@ -60,7 +60,7 @@ public enum Tile {
 	 * @return True if it's not a wall and not a bound
 	 */
 	public boolean isGround() {
-		return this != WALL && this != BOUNDS && this != HIDDEN && this != LOCKED_DOOR;
+		return this != WALL && this != BOUNDS && this != HIDDEN && this != LOCKED_DOOR && this != DOOR && this != SOFT_LOCK_DOOR;
 	}
 	
 	public boolean isBlock() {
@@ -69,6 +69,14 @@ public enum Tile {
 	
 	public boolean playerPassable() {
 		return this.isGround() && !this.isBlock();
+	}
+	
+	public boolean isDoor() {
+		return this == DOOR || this == HIDDEN || this == SOFT_LOCK_DOOR || this == LOCKED_DOOR;
+	}
+	
+	public boolean isInterest() {
+		return this == KEY || this == TRIFORCE;
 	}
 	
 	/**

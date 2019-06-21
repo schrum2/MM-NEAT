@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Random;
 import java.util.Stack;
 
 import org.codehaus.plexus.util.FileUtils;
@@ -15,6 +14,7 @@ import org.codehaus.plexus.util.FileUtils;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.datastructures.Graph.Node;
+import edu.southwestern.util.random.RandomNumbers;
 
 abstract public class GraphRuleManager<T extends Grammar> {
 	protected List<GraphRule<T>> graphRules;
@@ -125,8 +125,7 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		System.out.println("Found rules " + rules.size());
 		System.out.println(node + "->" + nextNode);
 		if(rules.size() > 0) {
-			Random r = new Random();
-			GraphRule<T> ruleToApply = rules.get(r.nextInt(rules.size()));
+			GraphRule<T> ruleToApply = rules.get(RandomNumbers.randomGenerator.nextInt(rules.size()));
 			if(ruleToApply != null) {
 				ruleToApply.grammar().setOtherGraph(node, nextNode, graph);
 				System.out.println("--------------------------------------");

@@ -1,5 +1,5 @@
 graph {
-QNbP [label="b, GS"]
-Dmcm [label="e"]
-QNbP -- Dmcm
+yhDa [label="b, GS"]
+OAPR [label="e"]
+yhDa -- OAPR
 }

@@ -1,7 +1,7 @@
 graph {
-gnqv [label="k, GS"]
-dmxp [label="l, GE"]
-gzGi [label="e"]
-gnqv -- gzGi
-gzGi -- dmxp
+RBkf [label="k, GS"]
+zvjR [label="l, GE"]
+iTso [label="e"]
+RBkf -- iTso
+iTso -- zvjR
 }

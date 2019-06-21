@@ -1,9 +1,9 @@
 graph {
-lMNr [label="e, GS"]
-PrRa [label="t, GE"]
-exMt [label="e"]
-dJts [label="e"]
-lMNr -- exMt
-lMNr -- dJts
-exMt -- PrRa
+yBJN [label="e, GS"]
+LmmC [label="t, GE"]
+AjWn [label="e"]
+EQiR [label="e"]
+yBJN -- AjWn
+yBJN -- EQiR
+AjWn -- LmmC
 }

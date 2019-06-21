@@ -1,7 +1,7 @@
 graph {
-Ekcr [label="s, GS"]
-DlCL [label="k, GE"]
-emJF [label="e"]
-Ekcr -- emJF
-emJF -- DlCL
+Wzqv [label="s, GS"]
+uzVP [label="k, GE"]
+kxkZ [label="e"]
+Wzqv -- kxkZ
+kxkZ -- uzVP
 }

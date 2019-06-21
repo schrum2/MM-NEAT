@@ -1,7 +1,7 @@
 graph {
-opas [label="e, GS"]
-Sosm [label="l, GE"]
-GHid [label="k"]
-opas -- GHid
-GHid -- Sosm
+OHje [label="e, GS"]
+lrRy [label="l, GE"]
+oqIU [label="k"]
+OHje -- oqIU
+oqIU -- lrRy
 }

@@ -1,9 +1,9 @@
 graph {
-QCuA [label="e, GS"]
-QmOv [label="l, GE"]
-kZER [label="S"]
-Davw [label="k"]
-QCuA -- kZER
-QCuA -- Davw
-kZER -- QmOv
+OkTw [label="e, GS"]
+Fkpu [label="l, GE"]
+fcFV [label="S"]
+tLCL [label="k"]
+OkTw -- fcFV
+OkTw -- tLCL
+fcFV -- Fkpu
 }

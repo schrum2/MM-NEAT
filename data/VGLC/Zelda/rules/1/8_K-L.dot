@@ -1,6 +1,8 @@
 graph {
-xZUZ [label="k, GS"]
-Zvin [label="l, GE"]
-bTdw [label="S"]
-xZUZ -- bTdw
+zHsT [label="k, GS"]
+WOAI [label="l, GE"]
+cBrl [label="sl"]
+wTrV [label="e"]
+zHsT -- cBrl
+cBrl -- wTrV
 }

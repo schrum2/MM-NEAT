@@ -1,36 +1,34 @@
 graph {
-GXEX[label="s"]
-EEIz[label="e"]
-anrH[label="e"]
-wmkA[label="e"]
-QNbP[label="b"]
-opas[label="e"]
-Dmcm[label="e"]
-Sosm[label="l"]
-GHid[label="k"]
-DtGd[label="e"]
-RugF[label="k"]
-ejJp[label="l"]
-SdMI[label="e"]
-WVfm[label="t"]
-VFvY[label="e"]
-GXEX -- EEIz
-GXEX -- anrH
-GXEX -- wmkA
-GXEX -- QNbP
-anrH -- opas
-anrH -- wmkA
-anrH -- QNbP
-QNbP -- Dmcm
-opas -- Sosm
-opas -- GHid
-QNbP -- Dmcm
-Sosm -- GHid
-Sosm -- DtGd
-DtGd -- RugF
-RugF -- ejJp
-ejJp -- SdMI
-SdMI -- WVfm
-SdMI -- VFvY
-WVfm -- VFvY
+Yoaf[label="s"]
+TLfR[label="e"]
+uHWn[label="e"]
+Osgz[label="e"]
+yhDa[label="b"]
+zHsT[label="k"]
+OAPR[label="e"]
+WOAI[label="l"]
+cBrl[label="sl"]
+PtTY[label="e"]
+wTrV[label="e"]
+cwTz[label="k"]
+VGbN[label="l"]
+QHzH[label="e"]
+DhGS[label="t"]
+Yoaf -- TLfR
+Yoaf -- uHWn
+Yoaf -- Osgz
+Yoaf -- yhDa
+uHWn -- zHsT
+uHWn -- Osgz
+uHWn -- yhDa
+yhDa -- OAPR
+zHsT -- WOAI
+zHsT -- cBrl
+yhDa -- OAPR
+WOAI -- PtTY
+cBrl -- wTrV
+PtTY -- cwTz
+cwTz -- VGbN
+VGbN -- QHzH
+QHzH -- DhGS
 }

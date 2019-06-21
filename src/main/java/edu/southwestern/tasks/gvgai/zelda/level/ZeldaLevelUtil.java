@@ -41,6 +41,7 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
 import edu.southwestern.util.datastructures.Triple;
+import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
@@ -223,8 +224,8 @@ public class ZeldaLevelUtil {
 		int x, y;
 		
 		do {
-	        x = (int)(Math.random() * level.get(0).size());
-	        y = (int)(Math.random() * level.size());
+			x = (int) RandomNumbers.boundedRandom(0, level.get(0).size());
+			y = (int) RandomNumbers.boundedRandom(0, level.size());
 	    }
 	    while (!Tile.findNum(level.get(y).get(x)).playerPassable());
 		
@@ -370,8 +371,8 @@ public class ZeldaLevelUtil {
 			int x, y;
 			
 			do {
-		        x = (int)(Math.random() * level.get(0).size());
-		        y = (int)(Math.random() * level.size());
+				x = (int) RandomNumbers.boundedRandom(0, level.get(0).size());
+				y = (int) RandomNumbers.boundedRandom(0, level.size());
 		    }
 		    while (level.get(y).get(x) != 0);
 			

@@ -21,6 +21,7 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
+import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
@@ -145,6 +146,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 	}
 	
 	public static void main(String[] args) {
+		RandomNumbers.reset(345678);
 		List<ZeldaGrammar> initialList = new LinkedList<>();
 		initialList.add(ZeldaGrammar.START_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
@@ -180,10 +182,6 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			e.printStackTrace();
 		}
 		Parameters.initializeParameterCollections(new String[] {"zeldaGANUsesOriginalEncoding:false"});
-		
-		
-		
-
 		
 		
 		Dungeon d = null;

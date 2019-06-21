@@ -1,9 +1,9 @@
 graph {
-DtGd [label="e, GS"]
-RugF [label="k, GE"]
-QNbP [label="b"]
-Dmcm [label="e"]
-DtGd -- QNbP
-QNbP -- Dmcm
-QNbP -- RugF
+PtTY [label="e, GS"]
+cwTz [label="k, GE"]
+yhDa [label="b"]
+OAPR [label="e"]
+PtTY -- yhDa
+yhDa -- OAPR
+yhDa -- cwTz
 }

@@ -12,7 +12,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,24 +19,18 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Random;
-import java.util.Scanner;
 import java.util.Stack;
 
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.Grammar;
 import edu.southwestern.tasks.gvgai.zelda.level.LevelLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
-import edu.southwestern.util.datastructures.Graph.Node;
-import edu.southwestern.util.search.AStarSearch;
+import edu.southwestern.util.random.RandomNumbers;
 import me.jakerg.rougelike.Creature;
 import me.jakerg.rougelike.CreatureFactory;
 import me.jakerg.rougelike.Item;
@@ -137,8 +130,7 @@ public class GraphUtil {
 			List<Graph<? extends Grammar>.Node> adjs = new LinkedList<>(node.adjacencies);
 			
 			while(!adjs.isEmpty()) {
-				Random r = new Random();
-				Graph<? extends Grammar>.Node adjNode = adjs.remove(r.nextInt(adjs.size()));
+				Graph<? extends Grammar>.Node adjNode = adjs.remove(RandomNumbers.randomGenerator.nextInt(adjs.size()));
 				
 				if(!visited.contains(adjNode) && !queue.contains(adjNode)) {
 					Point legal = getNextLegalPoint(p, levelThere);
@@ -355,8 +347,7 @@ public class GraphUtil {
 		int x = p.x;
 		List<Point> options = new LinkedList<>(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
 		while(!options.isEmpty()) {
-			Random r = new Random();
-			Point opt = options.remove(r.nextInt(options.size()));
+			Point opt = options.remove(RandomNumbers.randomGenerator.nextInt(options.size()));
 			x = opt.x;
 			y = opt.y;
 			
@@ -422,9 +413,8 @@ public class GraphUtil {
 	 * @throws FileNotFoundException
 	 */
 	private static Level loadOneLevel(LevelLoader loader) throws FileNotFoundException {
-		Random r = new Random();
 		List<List<List<Integer>>> levels = loader.getLevels();
-		List<List<Integer>> randomLevel = levels.get(r.nextInt(levels.size()));
+		List<List<Integer>> randomLevel = levels.get(RandomNumbers.randomGenerator.nextInt(levels.size()));
 		randomLevel = remove(randomLevel);
 
 		return new Level(randomLevel);
@@ -478,7 +468,7 @@ public class GraphUtil {
 		HashMap<Dungeon.Node, List<Point>> nodes = null;
 		
 		if(visited != null) {
-			setFloorTiles(dungeon, visited);
+			setFloorTiles(visited);
 			nodes = getUnexplored(visited);
 		}
 
@@ -517,6 +507,11 @@ public class GraphUtil {
 		return image;
 	}
 	
+	/**
+	 * Get the unexplored rooms of the dungeon
+	 * @param visited Visited set of ZeldaStates
+	 * @return HashMap of nodes to list of points
+	 */
 	private static HashMap<Dungeon.Node, List<Point>> getUnexplored(HashSet<ZeldaState> visited) {
 		HashMap<Dungeon.Node, List<Point>> nodes = new HashMap<>();
 		
@@ -533,6 +528,8 @@ public class GraphUtil {
 			
 		}
 		
+		cleanRoom(nodes);
+		
 		for(Dungeon.Node n : nodes.keySet()) {
 			System.out.println(n.name);
 		}
@@ -540,7 +537,207 @@ public class GraphUtil {
 		return nodes;
 	}
 
-	private static void setFloorTiles(Dungeon dungeon, HashSet<ZeldaState> visited) {
+	/**
+	 * Go through rooms and see if the doors are visited, if not all of the doors are visited, remvoe them from the set
+	 * @param nodes HashMap of nodes to list of points where the agent has not visited
+	 */
+	private static void cleanRoom(HashMap<Dungeon.Node, List<Point>> nodes) {
+		for(Dungeon.Node n : nodes.keySet()) {
+			cleanUpRoom(n, nodes.get(n));
+		}
+		
+	}
+
+	/**
+	 * Check the exit points of the level, see if there's a door, and see if the agent has been there
+	 * @param n Node of the level to check
+	 * @param list List of points of where the player has not been
+	 * @return
+	 */
+	private static void cleanUpRoom(Dungeon.Node n, List<Point> list) {
+		List<Point> interest = getPointsOfInterest(n);
+		List<Point> unvisitedI = new LinkedList<>();
+		for(Point unvisited : list) {
+			if(interest.contains(unvisited)) {
+				unvisitedI.add(unvisited);
+				interest.remove(unvisited);
+			}
+		}
+		System.out.println(n.name + " unvisited intersts: ");
+		for(Point p : unvisitedI) {
+			System.out.println("\t" + p);
+		}
+		System.out.println(n.name + " visited intersts: ");
+		for(Point p : interest) {
+			System.out.println("\t" + p);
+		}
+		if(unvisitedI.size() == 0)
+			return;
+		Point uI = unvisitedI.get(RandomNumbers.randomGenerator.nextInt(unvisitedI.size()));
+		Point iP = interest.get(RandomNumbers.randomGenerator.nextInt(interest.size()));
+		List<Point> pointsToFloor = bresenham(uI, iP);
+		System.out.println("Applying floors to : " + n.name);
+		for(Point p : pointsToFloor) {
+			System.out.println("\t" + p);
+			n.level.intLevel.get(p.y).set(p.x, Tile.CURRENT.getNum());
+		}
+		
+	}
+	
+	private static List<Point> bresenhamToList(Point a, Point b) {
+		List<Point> pointsToFloor = new LinkedList<>();
+		int mNew = 2 * (b.y - a.y);
+		int slopeErr = mNew - (b.x - a.x);
+		for(int x = a.x, y = a.y; x < b.x; x++) {
+			pointsToFloor.add(new Point(x, y));
+			slopeErr += mNew;
+			if(slopeErr >= 0) {
+				y++;
+				slopeErr -= 2 * (b.x - a.x);
+				pointsToFloor.add(new Point(x, y));
+			}
+		}
+//		double dX = b.x - a.x;
+//		double dY = b.y - a.y;
+//		if(dX == 0) {
+//			for(int y = a.y; y < b.y; y++) {
+//				pointsToFloor.add(new Point(a.x, y));
+//			}
+//			return pointsToFloor;
+//		}
+//		double dError = Math.abs(dY / dX);
+//		double err = 0.0;
+//		int y = a.y;
+//		for(int x = a.x; x < b.x; x++) {
+//			pointsToFloor.add(new Point(x, y));
+//			err += dError;
+//			if (err >= 0.5) {
+//				y += Math.signum(dError) * 1;
+//				err -= 1;
+//				pointsToFloor.add(new Point(x, y));
+//			}
+//		}
+		return pointsToFloor;
+	}
+	
+	private static List<Point> bresenhamLow(Point a, Point b){
+		List<Point> pointsToFloor = new LinkedList<>();
+		int dx = b.x - a.x;
+		int dy = b.y - a.y;
+		int yi = 1;
+		if (dy < 0){
+			yi = -1;
+			dy = -dy;
+		}
+		int D = 2 * dy - dx;
+		int y = a.y;
+		
+		for(int x = a.x; x < b.x; x++) {
+			pointsToFloor.add(new Point(x, y));
+			if (D > 0) {
+				y += yi;
+				D -= 2 * dx;
+				pointsToFloor.add(new Point(x, y));
+			}
+			D += 2 * dy;
+		}
+		return pointsToFloor;
+	}
+	
+	private static List<Point> bresenhamHigh(Point a, Point b){
+		List<Point> pointsToFloor = new LinkedList<>();
+		int dx = b.x - a.x;
+		int dy = b.y - a.y;
+		int xi = 1;
+		if (dx < 0){
+			xi = -1;
+			dx = -dx;
+		}
+		int D = 2 * dx - dy;
+		int x = a.x;
+		
+		for(int y = a.y; y < b.x; y++) {
+			pointsToFloor.add(new Point(x, y));
+			if (D > 0) {
+				x += xi;
+				D -= 2 * dy;
+				pointsToFloor.add(new Point(x, y));
+			}
+			D += 2 * dx;
+		}
+		return pointsToFloor;
+	}
+	
+	private static List<Point> bresenham(Point a, Point b){
+		if (Math.abs(b.y - a.y) < Math.abs(b.x - a.x)) {
+			if(a.x > b.x)
+				return bresenhamLow(b, a);
+			else
+				return bresenhamLow(a, b);
+		} else {
+			if(a.y > b.y)
+				return bresenhamHigh(b, a);
+			else
+				return bresenhamHigh(a, b);
+		}
+	}
+
+
+	private static List<Point> getPointsOfInterest(Dungeon.Node n) {
+		List<List<Integer>> intLevel = n.level.intLevel;
+		List<Point> points = new LinkedList<>();
+		addExitPoints(points, intLevel);
+		addInterestPoints(points, intLevel);
+		System.out.println(n.name + " point of interest: ");
+		for(Point p : points) {
+			System.out.println("\t" + p);
+		}
+		return points;
+	}
+
+	/**
+	 * Get the items of interest in the level
+	 * @param points
+	 * @param intLevel
+	 */
+	private static void addInterestPoints(List<Point> points, List<List<Integer>> intLevel) {
+		for(int y = 0; y < intLevel.size(); y++) {
+			for(int x = 0; x < intLevel.get(y).size(); x++) {
+				Tile t = Tile.findNum(intLevel.get(y).get(x));
+				if(t != null && t.isInterest()) {
+					points.add(new Point(x, y));
+					System.out.println("Added to interests : " + t);
+				}
+					
+			}
+		}
+	}
+
+	private static void addExitPoints(List<Point> points, List<List<Integer>> intLevel) {
+		Point[] doors = new Point[] {new Point(8, 1), new Point(7, 9), new Point(1, 4), new Point(14, 6)};
+		Point[] dirs = new Point[] {new Point(0, 1), new Point(0, -1), new Point(1, 0), new Point(0, 1)};
+		
+		for(int i = 0; i < dirs.length; i++) {
+			Point p = new Point();
+			p.x = doors[i].x + dirs[i].x;
+			p.y = doors[i].y + dirs[i].y;
+			dirs[i] = p;
+		}
+		
+		for(int i = 0; i < doors.length; i++) {
+			Point p = doors[i];
+			Tile t = Tile.findNum(intLevel.get(p.y).get(p.x));
+			if(t.isDoor())
+				points.add(dirs[i]);
+			
+		}
+	}
+
+	/**
+	 * Set the tile to visited if the agent has visited the tile
+	 * @param visited Visited states
+	 */
+	private static void setFloorTiles(HashSet<ZeldaState> visited) {
 		for(ZeldaState state : visited) {
 			state.currentNode.level.intLevel.get(state.y).set(state.x, Tile.VISITED.getNum());
 		}

@@ -1,9 +1,9 @@
 graph {
-VKxg [label="s, GS"]
-VQPq [label="k, GE"]
-opeN [label="e"]
-tRow [label="e"]
-VKxg -- opeN
-VKxg -- tRow
-opeN -- VQPq
+NsnI [label="s, GS"]
+gxKF [label="k, GE"]
+KDeF [label="e"]
+jmHI [label="e"]
+NsnI -- KDeF
+NsnI -- jmHI
+KDeF -- gxKF
 }

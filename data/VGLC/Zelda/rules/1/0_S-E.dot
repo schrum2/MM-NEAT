@@ -1,14 +1,14 @@
 graph {
-GXEX [label="s, GS"]
-anrH [label="e, GE"]
-EEIz [label="e"]
-wmkA [label="e"]
-QNbP [label="b"]
-Dmcm [label="e"]
-GXEX -- EEIz
-GXEX -- wmkA
-GXEX -- QNbP
-wmkA -- anrH
-QNbP -- Dmcm
-QNbP -- anrH
+Yoaf [label="s, GS"]
+uHWn [label="e, GE"]
+TLfR [label="e"]
+Osgz [label="e"]
+yhDa [label="b"]
+OAPR [label="e"]
+Yoaf -- TLfR
+Yoaf -- Osgz
+Yoaf -- yhDa
+Osgz -- uHWn
+yhDa -- OAPR
+yhDa -- uHWn
 }

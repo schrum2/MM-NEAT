@@ -489,9 +489,12 @@ public abstract class ZeldaDungeon<T> {
 		public List<Point> getFloorTiles(){
 			List<Point> points = new LinkedList<>();
 			for(int y = 0; y < intLevel.size(); y++)
-				for(int x = 0; x < intLevel.get(y).size(); x++)
-					if(intLevel.get(y).get(x).equals(Tile.FLOOR.getNum()))
+				for(int x = 0; x < intLevel.get(y).size(); x++) {
+					Tile t = Tile.findNum(intLevel.get(y).get(x));
+					if(t.playerPassable())
 						points.add(new Point(x, y));
+				}
+
 			
 			return points;
 					
