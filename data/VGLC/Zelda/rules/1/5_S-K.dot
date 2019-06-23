@@ -1,7 +1,7 @@
 graph {
-Wzqv [label="s, GS"]
-uzVP [label="k, GE"]
-kxkZ [label="e"]
-Wzqv -- kxkZ
-kxkZ -- uzVP
+QfjL [label="s, GS"]
+rcsV [label="k, GE"]
+apfT [label="e"]
+QfjL -- apfT
+apfT -- rcsV
 }

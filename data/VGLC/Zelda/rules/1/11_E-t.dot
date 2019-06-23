@@ -1,9 +1,9 @@
 graph {
-yBJN [label="e, GS"]
-LmmC [label="t, GE"]
-AjWn [label="e"]
-EQiR [label="e"]
-yBJN -- AjWn
-yBJN -- EQiR
-AjWn -- LmmC
+bRLT [label="e, GS"]
+fQRt [label="t, GE"]
+vdDn [label="e"]
+nihT [label="e"]
+bRLT -- vdDn
+bRLT -- nihT
+vdDn -- fQRt
 }

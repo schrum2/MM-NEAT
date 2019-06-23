@@ -1,9 +1,9 @@
 graph {
-fxMe [label="k, GS"]
-Hhms [label="e, GE"]
-hlTU [label="e"]
-Jdsw [label="e"]
-fxMe -- hlTU
-fxMe -- Jdsw
-hlTU -- Hhms
+XSlD [label="k, GS"]
+dhHL [label="e, GE"]
+YzXh [label="e"]
+BTCA [label="e"]
+XSlD -- YzXh
+XSlD -- BTCA
+YzXh -- dhHL
 }

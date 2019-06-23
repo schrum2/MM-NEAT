@@ -1,14 +1,14 @@
 graph {
-Yoaf [label="s, GS"]
-uHWn [label="e, GE"]
-TLfR [label="e"]
-Osgz [label="e"]
-yhDa [label="b"]
-OAPR [label="e"]
-Yoaf -- TLfR
-Yoaf -- Osgz
-Yoaf -- yhDa
-Osgz -- uHWn
-yhDa -- OAPR
-yhDa -- uHWn
+qvyM [label="s, GS"]
+rCun [label="e, GE"]
+iyhv [label="e"]
+mdsh [label="e"]
+lzNy [label="b"]
+ZrNU [label="e"]
+qvyM -- iyhv
+qvyM -- mdsh
+qvyM -- lzNy
+mdsh -- rCun
+lzNy -- ZrNU
+lzNy -- rCun
 }

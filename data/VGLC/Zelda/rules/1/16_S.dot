@@ -1,5 +1,5 @@
 graph {
-cBrl [label="sl, GS"]
-wTrV [label="e"]
-cBrl -- wTrV
+HEBE [label="sl, GS"]
+QMFN [label="e"]
+HEBE -- QMFN
 }

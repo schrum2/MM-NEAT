@@ -1,8 +1,8 @@
 graph {
-zHsT [label="k, GS"]
-WOAI [label="l, GE"]
-cBrl [label="sl"]
-wTrV [label="e"]
-zHsT -- cBrl
-cBrl -- wTrV
+sJgS [label="k, GS"]
+maeK [label="l, GE"]
+HEBE [label="sl"]
+QMFN [label="e"]
+sJgS -- HEBE
+HEBE -- QMFN
 }

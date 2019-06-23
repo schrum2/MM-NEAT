@@ -12,6 +12,7 @@ public enum Tile {
 	// Refer to Code Page 437 for the number representation of the char
 	FLOOR((char)250, AsciiPanel.yellow, 0),
 	VISITED('x', AsciiPanel.white, 101),
+	UNVISITED('x', AsciiPanel.red, 110),
 	WALL((char)219, AsciiPanel.yellow, 1),
 	CURRENT((char)219, AsciiPanel.brightYellow, -99),
 	EXIT((char)239, AsciiPanel.green, 4),
@@ -60,7 +61,7 @@ public enum Tile {
 	 * @return True if it's not a wall and not a bound
 	 */
 	public boolean isGround() {
-		return this != WALL && this != BOUNDS && this != HIDDEN && this != LOCKED_DOOR && this != DOOR && this != SOFT_LOCK_DOOR;
+		return this != WALL && this != BOUNDS && !this.isDoor();
 	}
 	
 	public boolean isBlock() {
@@ -69,6 +70,10 @@ public enum Tile {
 	
 	public boolean playerPassable() {
 		return this.isGround() && !this.isBlock();
+	}
+	
+	public boolean isStatePassable() {
+		return this == FLOOR || this.isInterest();
 	}
 	
 	public boolean isDoor() {

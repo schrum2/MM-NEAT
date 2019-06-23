@@ -215,6 +215,11 @@ public class GraphUtil {
 		return null;
 	}
 
+	/**
+	 * Get the tile to place the door as representated as an int based on the Grammar label
+	 * @param node Node of where the doors need to be placed
+	 * @return Number representing the tile
+	 */
 	private static int getTile(Graph<? extends Grammar>.Node node) {
 		String type = node.getData().getLevelType();
 		switch(type) {
@@ -519,20 +524,17 @@ public class GraphUtil {
 			Dungeon.Node n = state.currentNode;
 			if(!nodes.containsKey(n))
 				nodes.put(n, n.level.getFloorTiles());
+		}
+		
+		for(ZeldaState state : visited) {
+			Dungeon.Node n = state.currentNode;
 			
 			Point p = new Point(state.x, state.y);
-			nodes.get(n).remove(p);
-
-			if(nodes.get(n).size() == 0)
-				nodes.remove(n);
+			if(!nodes.get(n).isEmpty() && nodes.get(n).remove(p));
 			
 		}
 		
 		cleanRoom(nodes);
-		
-		for(Dungeon.Node n : nodes.keySet()) {
-			System.out.println(n.name);
-		}
 		
 		return nodes;
 	}
@@ -571,15 +573,28 @@ public class GraphUtil {
 		for(Point p : interest) {
 			System.out.println("\t" + p);
 		}
+		
+		Point a = null, b = null;
+		
 		if(unvisitedI.size() == 0)
 			return;
-		Point uI = unvisitedI.get(RandomNumbers.randomGenerator.nextInt(unvisitedI.size()));
-		Point iP = interest.get(RandomNumbers.randomGenerator.nextInt(interest.size()));
-		List<Point> pointsToFloor = bresenham(uI, iP);
+		else {
+			if(interest.size() == 0 && unvisitedI.size() >= 2) {
+				a = unvisitedI.remove(RandomNumbers.randomGenerator.nextInt(unvisitedI.size()));
+				b = unvisitedI.remove(RandomNumbers.randomGenerator.nextInt(unvisitedI.size()));
+			} else {
+				a = unvisitedI.remove(RandomNumbers.randomGenerator.nextInt(unvisitedI.size()));
+				b = interest.remove(RandomNumbers.randomGenerator.nextInt(interest.size()));
+			}
+		}
+		
+		List<Point> pointsToFloor = bresenham(a, b);
 		System.out.println("Applying floors to : " + n.name);
 		for(Point p : pointsToFloor) {
 			System.out.println("\t" + p);
-			n.level.intLevel.get(p.y).set(p.x, Tile.CURRENT.getNum());
+			Tile t = Tile.findNum(n.level.intLevel.get(p.y).get(p.x));
+			if(t != null && !t.isInterest())
+				n.level.intLevel.get(p.y).set(p.x, Tile.CURRENT.getNum());
 		}
 		
 	}
@@ -714,8 +729,8 @@ public class GraphUtil {
 	}
 
 	private static void addExitPoints(List<Point> points, List<List<Integer>> intLevel) {
-		Point[] doors = new Point[] {new Point(8, 1), new Point(7, 9), new Point(1, 4), new Point(14, 6)};
-		Point[] dirs = new Point[] {new Point(0, 1), new Point(0, -1), new Point(1, 0), new Point(0, 1)};
+		Point[] doors = new Point[] {new Point(8, 1), new Point(7, 9), new Point(1, 5), new Point(14, 5)};
+		Point[] dirs = new Point[] {new Point(0, 1), new Point(0, -1), new Point(1, 0), new Point(-1, 0)};
 		
 		for(int i = 0; i < dirs.length; i++) {
 			Point p = new Point();
@@ -739,7 +754,9 @@ public class GraphUtil {
 	 */
 	private static void setFloorTiles(HashSet<ZeldaState> visited) {
 		for(ZeldaState state : visited) {
-			state.currentNode.level.intLevel.get(state.y).set(state.x, Tile.VISITED.getNum());
+			Tile t = Tile.findNum(state.currentNode.level.intLevel.get(state.y).get(state.x));
+			if(t != null && t.equals(Tile.FLOOR))
+				state.currentNode.level.intLevel.get(state.y).set(state.x, Tile.VISITED.getNum());
 		}
 		
 	}

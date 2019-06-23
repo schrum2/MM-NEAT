@@ -1,9 +1,9 @@
 graph {
-PtTY [label="e, GS"]
-cwTz [label="k, GE"]
-yhDa [label="b"]
-OAPR [label="e"]
-PtTY -- yhDa
-yhDa -- OAPR
-yhDa -- cwTz
+lIfo [label="e, GS"]
+lrMa [label="k, GE"]
+lzNy [label="b"]
+ZrNU [label="e"]
+lIfo -- lzNy
+lzNy -- ZrNU
+lzNy -- lrMa
 }

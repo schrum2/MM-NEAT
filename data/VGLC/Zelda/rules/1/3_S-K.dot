@@ -1,11 +1,11 @@
 graph {
-rDQr [label="s, GS"]
-pDHc [label="k, GE"]
-xmGg [label="e"]
-ESBo [label="e"]
-ReXo [label="e"]
-rDQr -- xmGg
-rDQr -- ESBo
-rDQr -- ReXo
-xmGg -- pDHc
+oUmP [label="s, GS"]
+XIHL [label="k, GE"]
+TtMQ [label="e"]
+ESbw [label="e"]
+IDqZ [label="e"]
+oUmP -- TtMQ
+oUmP -- ESbw
+oUmP -- IDqZ
+TtMQ -- XIHL
 }

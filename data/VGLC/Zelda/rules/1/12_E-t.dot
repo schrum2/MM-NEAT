@@ -1,7 +1,7 @@
 graph {
-Zbtc [label="e, GS"]
-kgjx [label="t, GE"]
-XnhC [label="e"]
-Zbtc -- XnhC
-XnhC -- kgjx
+IpHF [label="e, GS"]
+wUbD [label="t, GE"]
+Lgub [label="e"]
+IpHF -- Lgub
+Lgub -- wUbD
 }

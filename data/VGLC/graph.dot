@@ -1,34 +1,34 @@
 graph {
-Yoaf[label="s"]
-TLfR[label="e"]
-uHWn[label="e"]
-Osgz[label="e"]
-yhDa[label="b"]
-zHsT[label="k"]
-OAPR[label="e"]
-WOAI[label="l"]
-cBrl[label="sl"]
-PtTY[label="e"]
-wTrV[label="e"]
-cwTz[label="k"]
-VGbN[label="l"]
-QHzH[label="e"]
-DhGS[label="t"]
-Yoaf -- TLfR
-Yoaf -- uHWn
-Yoaf -- Osgz
-Yoaf -- yhDa
-uHWn -- zHsT
-uHWn -- Osgz
-uHWn -- yhDa
-yhDa -- OAPR
-zHsT -- WOAI
-zHsT -- cBrl
-yhDa -- OAPR
-WOAI -- PtTY
-cBrl -- wTrV
-PtTY -- cwTz
-cwTz -- VGbN
-VGbN -- QHzH
-QHzH -- DhGS
+qvyM[label="s"]
+iyhv[label="e"]
+rCun[label="e"]
+mdsh[label="e"]
+lzNy[label="b"]
+sJgS[label="k"]
+ZrNU[label="e"]
+maeK[label="l"]
+HEBE[label="sl"]
+lIfo[label="e"]
+QMFN[label="e"]
+lrMa[label="k"]
+uPKf[label="l"]
+Qghr[label="e"]
+kava[label="t"]
+qvyM -- iyhv
+qvyM -- rCun
+qvyM -- mdsh
+qvyM -- lzNy
+rCun -- sJgS
+rCun -- mdsh
+rCun -- lzNy
+lzNy -- ZrNU
+sJgS -- maeK
+sJgS -- HEBE
+lzNy -- ZrNU
+maeK -- lIfo
+HEBE -- QMFN
+lIfo -- lrMa
+lrMa -- uPKf
+uPKf -- Qghr
+Qghr -- kava
 }

@@ -1,7 +1,7 @@
 graph {
-OHje [label="e, GS"]
-lrRy [label="l, GE"]
-oqIU [label="k"]
-OHje -- oqIU
-oqIU -- lrRy
+tsUK [label="e, GS"]
+rnMJ [label="l, GE"]
+dgqy [label="k"]
+tsUK -- dgqy
+dgqy -- rnMJ
 }
