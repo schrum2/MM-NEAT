@@ -1,9 +1,9 @@
 graph {
-lIfo [label="e, GS"]
-lrMa [label="k, GE"]
-lzNy [label="b"]
-ZrNU [label="e"]
-lIfo -- lzNy
-lzNy -- ZrNU
-lzNy -- lrMa
+qzYG [label="e, GS"]
+YMHO [label="k, GE"]
+PHOh [label="b"]
+cCDp [label="e"]
+qzYG -- PHOh
+PHOh -- cCDp
+PHOh -- YMHO
 }

@@ -1,9 +1,9 @@
 graph {
-Mefh [label="e, GS"]
-uCrw [label="l, GE"]
-lJje [label="S"]
-QrOU [label="k"]
-Mefh -- lJje
-Mefh -- QrOU
-lJje -- uCrw
+yXAd [label="e, GS"]
+iOkf [label="l, GE"]
+WkEV [label="S"]
+gzwC [label="k"]
+yXAd -- WkEV
+yXAd -- gzwC
+WkEV -- iOkf
 }

@@ -1,7 +1,7 @@
 graph {
-tsUK [label="e, GS"]
-rnMJ [label="l, GE"]
-dgqy [label="k"]
-tsUK -- dgqy
-dgqy -- rnMJ
+jPbB [label="e, GS"]
+DPNJ [label="l, GE"]
+uMqp [label="k"]
+jPbB -- uMqp
+uMqp -- DPNJ
 }

@@ -1,34 +1,34 @@
 graph {
-qvyM[label="s"]
-iyhv[label="e"]
-rCun[label="e"]
-mdsh[label="e"]
-lzNy[label="b"]
-sJgS[label="k"]
-ZrNU[label="e"]
-maeK[label="l"]
-HEBE[label="sl"]
-lIfo[label="e"]
-QMFN[label="e"]
-lrMa[label="k"]
-uPKf[label="l"]
-Qghr[label="e"]
-kava[label="t"]
-qvyM -- iyhv
-qvyM -- rCun
-qvyM -- mdsh
-qvyM -- lzNy
-rCun -- sJgS
-rCun -- mdsh
-rCun -- lzNy
-lzNy -- ZrNU
-sJgS -- maeK
-sJgS -- HEBE
-lzNy -- ZrNU
-maeK -- lIfo
-HEBE -- QMFN
-lIfo -- lrMa
-lrMa -- uPKf
-uPKf -- Qghr
-Qghr -- kava
+mAzP[label="s"]
+TuQU[label="e"]
+tWQZ[label="e"]
+JRIr[label="e"]
+PHOh[label="b"]
+KjSh[label="k"]
+cCDp[label="e"]
+HkNM[label="l"]
+DfBe[label="sl"]
+qzYG[label="e"]
+BYzB[label="e"]
+YMHO[label="k"]
+uXov[label="l"]
+ytvO[label="e"]
+kAzt[label="t"]
+mAzP -- TuQU
+mAzP -- tWQZ
+mAzP -- JRIr
+mAzP -- PHOh
+tWQZ -- KjSh
+tWQZ -- JRIr
+tWQZ -- PHOh
+PHOh -- cCDp
+KjSh -- HkNM
+KjSh -- DfBe
+PHOh -- cCDp
+HkNM -- qzYG
+DfBe -- BYzB
+qzYG -- YMHO
+YMHO -- uXov
+uXov -- ytvO
+ytvO -- kAzt
 }

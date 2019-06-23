@@ -1,7 +1,7 @@
 graph {
-IpHF [label="e, GS"]
-wUbD [label="t, GE"]
-Lgub [label="e"]
-IpHF -- Lgub
-Lgub -- wUbD
+VduX [label="e, GS"]
+GulQ [label="t, GE"]
+wwgJ [label="e"]
+VduX -- wwgJ
+wwgJ -- GulQ
 }

@@ -1,14 +1,14 @@
 graph {
-qvyM [label="s, GS"]
-rCun [label="e, GE"]
-iyhv [label="e"]
-mdsh [label="e"]
-lzNy [label="b"]
-ZrNU [label="e"]
-qvyM -- iyhv
-qvyM -- mdsh
-qvyM -- lzNy
-mdsh -- rCun
-lzNy -- ZrNU
-lzNy -- rCun
+mAzP [label="s, GS"]
+tWQZ [label="e, GE"]
+TuQU [label="e"]
+JRIr [label="e"]
+PHOh [label="b"]
+cCDp [label="e"]
+mAzP -- TuQU
+mAzP -- JRIr
+mAzP -- PHOh
+JRIr -- tWQZ
+PHOh -- cCDp
+PHOh -- tWQZ
 }

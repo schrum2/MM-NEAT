@@ -1,9 +1,9 @@
 graph {
-bRLT [label="e, GS"]
-fQRt [label="t, GE"]
-vdDn [label="e"]
-nihT [label="e"]
-bRLT -- vdDn
-bRLT -- nihT
-vdDn -- fQRt
+IXqf [label="e, GS"]
+Xbsl [label="t, GE"]
+Yysx [label="e"]
+UZpm [label="e"]
+IXqf -- Yysx
+IXqf -- UZpm
+Yysx -- Xbsl
 }

@@ -1,11 +1,11 @@
 graph {
-oUmP [label="s, GS"]
-XIHL [label="k, GE"]
-TtMQ [label="e"]
-ESbw [label="e"]
-IDqZ [label="e"]
-oUmP -- TtMQ
-oUmP -- ESbw
-oUmP -- IDqZ
-TtMQ -- XIHL
+Wzvh [label="s, GS"]
+qFii [label="k, GE"]
+swyl [label="e"]
+kARb [label="e"]
+GvwK [label="e"]
+Wzvh -- swyl
+Wzvh -- kARb
+Wzvh -- GvwK
+swyl -- qFii
 }

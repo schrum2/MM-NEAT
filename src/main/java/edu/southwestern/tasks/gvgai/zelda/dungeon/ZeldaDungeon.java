@@ -317,7 +317,7 @@ public abstract class ZeldaDungeon<T> {
 		JPanel panel = new JPanel();
 		
 		if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
-			BufferedImage image = GraphUtil.imageOfDungeon(dungeonInstance, null);
+			BufferedImage image = GraphUtil.imageOfDungeon(dungeonInstance);
 			JLabel label = new JLabel(new ImageIcon(image));
 			panel.add(label);
 		} else {

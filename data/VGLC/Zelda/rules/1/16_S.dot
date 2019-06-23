@@ -1,5 +1,5 @@
 graph {
-HEBE [label="sl, GS"]
-QMFN [label="e"]
-HEBE -- QMFN
+DfBe [label="sl, GS"]
+BYzB [label="e"]
+DfBe -- BYzB
 }

@@ -1,8 +1,8 @@
 graph {
-sJgS [label="k, GS"]
-maeK [label="l, GE"]
-HEBE [label="sl"]
-QMFN [label="e"]
-sJgS -- HEBE
-HEBE -- QMFN
+KjSh [label="k, GS"]
+HkNM [label="l, GE"]
+DfBe [label="sl"]
+BYzB [label="e"]
+KjSh -- DfBe
+DfBe -- BYzB
 }

@@ -1,9 +1,9 @@
 graph {
-XSlD [label="k, GS"]
-dhHL [label="e, GE"]
-YzXh [label="e"]
-BTCA [label="e"]
-XSlD -- YzXh
-XSlD -- BTCA
-YzXh -- dhHL
+tMbF [label="k, GS"]
+jakZ [label="e, GE"]
+ngOw [label="e"]
+bKNU [label="e"]
+tMbF -- ngOw
+tMbF -- bKNU
+ngOw -- jakZ
 }

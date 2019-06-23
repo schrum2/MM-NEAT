@@ -1,9 +1,9 @@
 graph {
-gOPD [label="s, GS"]
-xRNN [label="k, GE"]
-TdEc [label="e"]
-vUPJ [label="e"]
-gOPD -- TdEc
-gOPD -- vUPJ
-TdEc -- xRNN
+AYDB [label="s, GS"]
+gBPG [label="k, GE"]
+jNaZ [label="e"]
+gZpb [label="e"]
+AYDB -- jNaZ
+AYDB -- gZpb
+jNaZ -- gBPG
 }

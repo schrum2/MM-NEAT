@@ -187,23 +187,8 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		Dungeon d = null;
 		try {
 			d = GraphUtil.convertToDungeon(graph, new GANLoader());
-			
-			ZeldaState initial = new ZeldaState(5, 5, 0, d);
-			
-			Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
-			ArrayList<GridAction> result = search.search(initial);
-			HashSet<ZeldaState> visited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
-			
-			System.out.println(result);
-			if(result != null) {
-				for(GridAction a : result)
-					System.out.println(a.getD().toString());
-				
-				System.out.println("Length of path : " + result.size());
-				visited = null;
-			}
-			
-			BufferedImage image = GraphUtil.imageOfDungeon(d, visited);
+			GraphUtil.makeDungeonPlayable(d);
+			BufferedImage image = GraphUtil.imageOfDungeon(d);
 			File file = new File("data/VGLC/Zelda/dungeon.png");
 			ImageIO.write(image, "png", file);
 			

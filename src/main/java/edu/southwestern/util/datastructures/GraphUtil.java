@@ -30,7 +30,10 @@ import edu.southwestern.tasks.gvgai.zelda.level.LevelLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.search.AStarSearch;
+import edu.southwestern.util.search.Search;
 import me.jakerg.rougelike.Creature;
 import me.jakerg.rougelike.CreatureFactory;
 import me.jakerg.rougelike.Item;
@@ -448,7 +451,7 @@ public class GraphUtil {
 	 * @param dungeon Dungeon to generate an image with
 	 * @return BufferedImage representing dungeon
 	 */
-	public static BufferedImage imageOfDungeon(Dungeon dungeon, HashSet<ZeldaState> visited) {
+	public static BufferedImage imageOfDungeon(Dungeon dungeon) {
 		int BLOCK_HEIGHT = dungeon.getCurrentlevel().level.intLevel.size() * 16;
 		int BLOCK_WIDTH = dungeon.getCurrentlevel().level.intLevel.get(0).size() * 16;
 		String[][] levelThere = dungeon.getLevelThere();
@@ -471,11 +474,6 @@ public class GraphUtil {
 		g.setFont(f);
 		
 		HashMap<Dungeon.Node, List<Point>> nodes = null;
-		
-		if(visited != null) {
-			setFloorTiles(visited);
-			nodes = getUnexplored(visited);
-		}
 
 		for(int y = 0; y < levelThere.length; y++) {
 			for(int x = 0; x < levelThere[y].length; x++) {
@@ -513,11 +511,30 @@ public class GraphUtil {
 	}
 	
 	/**
+	 * Use A* agent to to see if it's playable, if it's not playable change layout of room. Do this over and over
+	 * until dungeon is playable
+	 * @param dungeon Generated dungeon
+	 */
+	public static void makeDungeonPlayable(Dungeon dungeon) {
+		Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
+		while(true) {			
+			ZeldaState state = new ZeldaState(5, 5, 0, dungeon);
+			ArrayList<GridAction> result = search.search(state);
+			HashSet<ZeldaState> visited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
+			
+			System.out.println(result);
+			if(result == null)
+				makePlayable(visited);
+			else break;
+		}
+	}
+	
+	/**
 	 * Get the unexplored rooms of the dungeon
 	 * @param visited Visited set of ZeldaStates
 	 * @return HashMap of nodes to list of points
 	 */
-	private static HashMap<Dungeon.Node, List<Point>> getUnexplored(HashSet<ZeldaState> visited) {
+	private static HashMap<Dungeon.Node, List<Point>> makePlayable(HashSet<ZeldaState> visited) {
 		HashMap<Dungeon.Node, List<Point>> nodes = new HashMap<>();
 		
 		for(ZeldaState state : visited) {
@@ -594,7 +611,7 @@ public class GraphUtil {
 			System.out.println("\t" + p);
 			Tile t = Tile.findNum(n.level.intLevel.get(p.y).get(p.x));
 			if(t != null && !t.isInterest())
-				n.level.intLevel.get(p.y).set(p.x, Tile.CURRENT.getNum());
+				n.level.intLevel.get(p.y).set(p.x, Tile.FLOOR.getNum());
 		}
 		
 	}

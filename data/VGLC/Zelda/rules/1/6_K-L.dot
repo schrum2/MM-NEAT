@@ -1,7 +1,7 @@
 graph {
-UrKR [label="k, GS"]
-lhlo [label="l, GE"]
-rbAK [label="e"]
-UrKR -- rbAK
-rbAK -- lhlo
+sbnq [label="k, GS"]
+jyFU [label="l, GE"]
+UYxl [label="e"]
+sbnq -- UYxl
+UYxl -- jyFU
 }
