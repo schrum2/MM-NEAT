@@ -187,14 +187,12 @@ public class LoadOriginalDungeon {
 		queue.add(node);
 		while(!directional.isEmpty()) {
 			String n = queue.poll();
-			
-			
+			System.out.println("Got from queue: " + n);
 			Point p = getCoords(n, levelThere);
 			if(p == null) continue;
 			visited.add(n);
 			y = p.y;
 			x = p.x;
-			
 			
 			Stack<Pair<String, String>> st = directional.get(n);
 

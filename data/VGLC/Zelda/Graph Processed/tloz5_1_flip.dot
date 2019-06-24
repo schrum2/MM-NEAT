@@ -60,8 +60,6 @@ digraph {
 20 -> 19 [label="k,RIGHT"]
 3 -> 2 [label="k,LEFT"]
 2 -> 3 [label="k,RIGHT"]
-2 -> 6 [label="l"]
-6 -> 2 [label="l"]
 22 -> 4 [label="l,UP"]
 4 -> 22 [label="l,DOWN"]
 0 -> 22 [label="l,UP"]
@@ -76,4 +74,8 @@ digraph {
 11 -> 12 [label="k,LEFT"]
 18 -> 17 [label="s,RIGHT"]
 17 -> 18 [label="s,LEFT"]
+14 -> 3 [label="AcrossD"]
+3 -> 14 [label="AcrossU"]
+2 -> 5 [label="D"]
+5 -> 2 [label="U"]
 }
