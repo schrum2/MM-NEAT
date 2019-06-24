@@ -740,18 +740,16 @@ public class DungeonUtil {
 	 */
 	public static void makeDungeonPlayable(Dungeon dungeon) {
 		Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
-		ZeldaState state = new ZeldaState(5, 5, 0, dungeon);
+		
 		boolean reset = true;
 		while(true) {			
+			ZeldaState state = new ZeldaState(5, 5, 0, dungeon);
 			ArrayList<GridAction> result = ((AStarSearch<GridAction, ZeldaState>) search).search(state, reset);
-			reset = false;
 			HashSet<ZeldaState> visited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
 			
 			System.out.println(result);
 			if(result == null)
-				state = makePlayable(visited);
-				if(state == null)
-					state = new ZeldaState(5, 5, 0, dungeon);
+				makePlayable(visited);
 			else break;
 		}
 	}

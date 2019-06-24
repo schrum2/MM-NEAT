@@ -1,7 +1,7 @@
 graph {
-MPAb [label="e, GS"]
-QCSV [label="l, GE"]
-wsxu [label="k"]
-MPAb -- wsxu
-wsxu -- QCSV
+Stlt [label="e, GS"]
+eflS [label="l, GE"]
+bPvr [label="k"]
+Stlt -- bPvr
+bPvr -- eflS
 }

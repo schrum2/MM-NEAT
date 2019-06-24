@@ -1,8 +1,8 @@
 graph {
-dEsk [label="e, GS"]
-SbvN [label="t, GE"]
-yQLx [label="sl"]
-IKLc [label="e"]
-dEsk -- yQLx
-yQLx -- IKLc
+GiEt [label="e, GS"]
+tDYT [label="t, GE"]
+hoxE [label="sl"]
+iIMY [label="e"]
+GiEt -- hoxE
+hoxE -- iIMY
 }

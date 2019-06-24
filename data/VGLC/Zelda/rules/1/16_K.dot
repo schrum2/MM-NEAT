@@ -1,5 +1,5 @@
 graph {
-smjD [label="k, GS"]
-dETA [label="S"]
-smjD -- dETA
+TRKj [label="k, GS"]
+POXl [label="S"]
+TRKj -- POXl
 }

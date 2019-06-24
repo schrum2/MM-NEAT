@@ -1,9 +1,9 @@
 graph {
-XLgU [label="s, GS"]
-Dvcq [label="k, GE"]
-OrAM [label="e"]
-CTWv [label="e"]
-XLgU -- OrAM
-XLgU -- CTWv
-CTWv -- Dvcq
+Kaai [label="s, GS"]
+nWye [label="k, GE"]
+lpwN [label="e"]
+NNpy [label="e"]
+Kaai -- lpwN
+Kaai -- NNpy
+NNpy -- nWye
 }

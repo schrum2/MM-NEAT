@@ -1,6 +1,6 @@
 graph {
-JRcg [label="k, GS"]
-hfdt [label="l, GE"]
-RukT [label="e"]
-JRcg -- RukT
+SZmv [label="k, GS"]
+KsDQ [label="l, GE"]
+KHLJ [label="e"]
+SZmv -- KHLJ
 }

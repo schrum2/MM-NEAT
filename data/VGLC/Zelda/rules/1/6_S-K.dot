@@ -1,7 +1,7 @@
 graph {
-Txqa [label="s, GS"]
-PNtz [label="k, GE"]
-vwie [label="e"]
-Txqa -- vwie
-vwie -- PNtz
+piBZ [label="s, GS"]
+oEWX [label="k, GE"]
+XtXz [label="e"]
+piBZ -- XtXz
+XtXz -- oEWX
 }

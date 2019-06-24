@@ -1,9 +1,9 @@
 graph {
-XtMM [label="k, GS"]
-hDGp [label="e, GE"]
-QUwr [label="e"]
-QaCf [label="e"]
-XtMM -- QUwr
-XtMM -- QaCf
-QUwr -- hDGp
+xsyc [label="k, GS"]
+NjjX [label="e, GE"]
+bGAr [label="e"]
+MQml [label="e"]
+xsyc -- bGAr
+xsyc -- MQml
+bGAr -- NjjX
 }
