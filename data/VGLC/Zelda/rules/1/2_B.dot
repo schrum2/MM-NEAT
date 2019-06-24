@@ -1,5 +1,0 @@
-graph {
-PHOh [label="b, GS"]
-cCDp [label="e"]
-PHOh -- cCDp
-}

@@ -1,9 +1,6 @@
 graph {
-yXAd [label="e, GS"]
-iOkf [label="l, GE"]
-WkEV [label="S"]
-gzwC [label="k"]
-yXAd -- WkEV
-yXAd -- gzwC
-WkEV -- iOkf
+JRcg [label="k, GS"]
+hfdt [label="l, GE"]
+RukT [label="e"]
+JRcg -- RukT
 }

@@ -1,9 +1,11 @@
 graph {
-AYDB [label="s, GS"]
-gBPG [label="k, GE"]
-jNaZ [label="e"]
-gZpb [label="e"]
-AYDB -- jNaZ
-AYDB -- gZpb
-jNaZ -- gBPG
+aDrV [label="s, GS"]
+Gjhf [label="k, GE"]
+SmOu [label="e"]
+lHti [label="e"]
+OIxU [label="e"]
+aDrV -- SmOu
+aDrV -- lHti
+aDrV -- OIxU
+SmOu -- Gjhf
 }

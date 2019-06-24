@@ -1,9 +1,0 @@
-graph {
-tMbF [label="k, GS"]
-jakZ [label="e, GE"]
-ngOw [label="e"]
-bKNU [label="e"]
-tMbF -- ngOw
-tMbF -- bKNU
-ngOw -- jakZ
-}

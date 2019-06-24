@@ -1,0 +1,8 @@
+graph {
+dEsk [label="e, GS"]
+SbvN [label="t, GE"]
+yQLx [label="sl"]
+IKLc [label="e"]
+dEsk -- yQLx
+yQLx -- IKLc
+}

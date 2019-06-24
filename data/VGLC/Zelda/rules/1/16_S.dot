@@ -1,5 +1,0 @@
-graph {
-DfBe [label="sl, GS"]
-BYzB [label="e"]
-DfBe -- BYzB
-}

@@ -41,7 +41,6 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
-import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
@@ -317,7 +316,7 @@ public abstract class ZeldaDungeon<T> {
 		JPanel panel = new JPanel();
 		
 		if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
-			BufferedImage image = GraphUtil.imageOfDungeon(dungeonInstance);
+			BufferedImage image = DungeonUtil.imageOfDungeon(dungeonInstance);
 			JLabel label = new JLabel(new ImageIcon(image));
 			panel.add(label);
 		} else {
@@ -437,7 +436,7 @@ public abstract class ZeldaDungeon<T> {
 			GameBundle bundle = ZeldaGANLevelBreederTask.setUpGameWithLevelFromList(level.getLevel());
 			return GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed);
 		} else {
-			return GraphUtil.getLevelImage(n, dungeonInstance);
+			return DungeonUtil.getLevelImage(n, dungeonInstance);
 		}
 		
 	}

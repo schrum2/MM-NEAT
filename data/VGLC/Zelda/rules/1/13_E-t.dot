@@ -1,4 +1,7 @@
 graph {
-ytvO [label="e, GS"]
-kAzt [label="t, GE"]
+cIrj [label="e, GS"]
+ZtIH [label="t, GE"]
+MnEN [label="e"]
+cIrj -- MnEN
+MnEN -- ZtIH
 }

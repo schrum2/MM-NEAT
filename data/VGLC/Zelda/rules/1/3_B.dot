@@ -1,0 +1,5 @@
+graph {
+sFJf [label="b, GS"]
+CwyV [label="e"]
+sFJf -- CwyV
+}

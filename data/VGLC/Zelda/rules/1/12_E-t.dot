@@ -1,7 +1,9 @@
 graph {
-VduX [label="e, GS"]
-GulQ [label="t, GE"]
-wwgJ [label="e"]
-VduX -- wwgJ
-wwgJ -- GulQ
+KCAh [label="e, GS"]
+AKOg [label="t, GE"]
+mBAZ [label="e"]
+RJNr [label="e"]
+KCAh -- mBAZ
+KCAh -- RJNr
+mBAZ -- AKOg
 }

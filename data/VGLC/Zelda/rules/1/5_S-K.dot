@@ -1,7 +1,9 @@
 graph {
-GwQe [label="s, GS"]
-HnDT [label="k, GE"]
-mPZT [label="e"]
-GwQe -- mPZT
-mPZT -- HnDT
+XLgU [label="s, GS"]
+Dvcq [label="k, GE"]
+OrAM [label="e"]
+CTWv [label="e"]
+XLgU -- OrAM
+XLgU -- CTWv
+CTWv -- Dvcq
 }
