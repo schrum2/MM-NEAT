@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.gvgai.zelda.dungeon;
 
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -8,6 +9,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+
+import javax.imageio.ImageIO;
+
 import java.util.Queue;
 import java.util.Random;
 import java.util.Scanner;
@@ -48,8 +52,13 @@ public class LoadOriginalDungeon {
 	                      
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws Exception {
-		Dungeon dungeon = loadOriginalDungeon("tloz1_1_flip", false);
 		Parameters.initializeParameterCollections(new String[] {"rougeEnemyHealth:2"});
+		
+		String title = "tloz5_1_flip";
+		Dungeon dungeon = loadOriginalDungeon(title, false);
+		BufferedImage image = DungeonUtil.imageOfDungeon(dungeon);
+		File file = new File("data/VGLC/Zelda/" + title + ".png");
+		ImageIO.write(image, "png", file);
 		
 		dungeon.printLevelThere();
 		if (true) {
@@ -375,6 +384,8 @@ public class LoadOriginalDungeon {
 				setLevels(direction, node, Tile.HIDDEN);
 				break;
 			}
+		} else {
+			setLevels(direction, node, Tile.DOOR);
 		}
 		
 		// Add the necessary starting and exit points

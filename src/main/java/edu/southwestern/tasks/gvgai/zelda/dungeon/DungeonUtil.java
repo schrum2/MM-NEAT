@@ -330,18 +330,6 @@ public class DungeonUtil {
 	}
 
 	/**
-	 * Go through rooms and see if the doors are visited, if not all of the doors are visited, remvoe them from the set
-	 * @param nodes HashMap of nodes to list of points where the agent has not visited
-	 */
-	public static void cleanRoom(HashMap<Dungeon.Node, List<Point>> nodes) {
-		for(Dungeon.Node n : nodes.keySet()) {
-			if(cleanUpRoom(n, nodes.get(n)))
-				return ;
-		}
-		
-	}
-
-	/**
 	 * Check the exit points of the level, see if there's a door, and see if the agent has been there
 	 * @param n Node of the level to check
 	 * @param list List of points of where the player has not been
@@ -659,7 +647,8 @@ public class DungeonUtil {
 					g.setColor(Color.WHITE);
 					oX = (oX + BLOCK_WIDTH) - (BLOCK_WIDTH / 2) - (BLOCK_WIDTH / 4);
 					oY = (oY + BLOCK_HEIGHT) - (BLOCK_HEIGHT / 2) + (BLOCK_HEIGHT / 4);
-					g.drawString(n.grammar.getLevelType(), oX, oY);
+					if(n.grammar != null)
+						g.drawString(n.grammar.getLevelType(), oX, oY);
 					
 					if(nodes != null && nodes.containsKey(n))
 						g.setColor(Color.RED);

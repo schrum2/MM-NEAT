@@ -36,7 +36,7 @@ public class CreatureFactory {
      * @param player 
      * @return Creature with enemy ai
      */
-    public Creature newEnemey(int x, int y, Creature player) {
+    public Creature newEnemy(int x, int y, Creature player) {
     	int maxHP = Parameters.parameters.integerParameter("rougeEnemyHealth");
     	Creature enemy = new Creature(world, 'e', AsciiPanel.brightRed, maxHP, 1, 0, log);
     	world.addCreatureAt(x, y, enemy);

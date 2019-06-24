@@ -1,34 +1,30 @@
 graph {
-TLxh[label="s"]
-Aymp[label="e"]
-eNHC[label="sl"]
-eeeW[label="e"]
-fQYC[label="e"]
-KPAp[label="e"]
-EkXS[label="l"]
-MkkU[label="k"]
-fenp[label="e"]
-bSFO[label="k"]
-ukFG[label="b"]
-IYsw[label="l"]
-QApU[label="e"]
-vlWz[label="e"]
-PsPe[label="t"]
-TLxh -- Aymp
-TLxh -- eNHC
-TLxh -- eeeW
-eNHC -- eeeW
-eNHC -- fQYC
-eeeW -- KPAp
-KPAp -- EkXS
-KPAp -- MkkU
-EkXS -- fenp
-fenp -- bSFO
-fenp -- ukFG
-bSFO -- IYsw
-bSFO -- ukFG
-ukFG -- QApU
-IYsw -- vlWz
-ukFG -- QApU
-vlWz -- PsPe
+rINX[label="s"]
+Vgnd[label="b"]
+KyTP[label="e"]
+mdzd[label="e"]
+mpDO[label="e"]
+wfda[label="e"]
+hDqu[label="k"]
+BVxa[label="e"]
+zHdN[label="l"]
+aNEZ[label="e"]
+NIoQ[label="t"]
+GVNB[label="sl"]
+YCQJ[label="e"]
+rINX -- Vgnd
+rINX -- KyTP
+rINX -- mdzd
+rINX -- mpDO
+Vgnd -- wfda
+Vgnd -- mdzd
+KyTP -- mdzd
+mdzd -- hDqu
+hDqu -- BVxa
+hDqu -- zHdN
+BVxa -- zHdN
+zHdN -- aNEZ
+aNEZ -- NIoQ
+aNEZ -- GVNB
+GVNB -- YCQJ
 }

@@ -41,7 +41,7 @@ public class TileUtil {
 		for(int i = 0; i < tiles.length; i++) {
 			for(int j = 0; j < tiles[i].length; j++) {
 				if(level.get(j).get(i) == 2) {
-					cf.newEnemey(i, j, player);
+					cf.newEnemy(i, j, player);
 				} else if(level.get(j).get(i) == -6) {
 					newWorld.dropItem(new Ladder(newWorld, i, j));
 				}

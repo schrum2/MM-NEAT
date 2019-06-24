@@ -198,6 +198,7 @@ public abstract class ZeldaDungeon<T> {
 						}
 					}.start();
 				}
+				Parameters.parameters.setBoolean("netio", false);
 			}
 			
 		});
