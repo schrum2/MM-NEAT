@@ -1,25 +1,12 @@
 graph {
-<<<<<<< HEAD
-xDMz [label="s, GS"]
-SdOO [label="e, GE"]
-njcW [label="e"]
-UiZg [label="e"]
-DoLj [label="B"]
-xDMz -- njcW
-xDMz -- UiZg
-xDMz -- DoLj
-UiZg -- SdOO
-DoLj -- SdOO
-=======
-pbar [label="s, GS"]
-CpeR [label="e, GE"]
-UxhC [label="e"]
-VExy [label="e"]
-Qmhq [label="B"]
-pbar -- UxhC
-pbar -- VExy
-pbar -- Qmhq
-VExy -- CpeR
-Qmhq -- CpeR
->>>>>>> dev_zelda
+JZpS [label="s, GS"]
+bDVK [label="e, GE"]
+wQid [label="e"]
+LEhJ [label="e"]
+hQgi [label="B"]
+JZpS -- wQid
+JZpS -- LEhJ
+JZpS -- hQgi
+LEhJ -- bDVK
+hQgi -- bDVK
 }

@@ -1,15 +1,7 @@
 graph {
-<<<<<<< HEAD
-piBZ [label="s, GS"]
-oEWX [label="k, GE"]
-XtXz [label="e"]
-piBZ -- XtXz
-XtXz -- oEWX
-=======
-Txqa [label="s, GS"]
-PNtz [label="k, GE"]
-vwie [label="e"]
-Txqa -- vwie
-vwie -- PNtz
->>>>>>> dev_zelda
+KXEX [label="s, GS"]
+NFEY [label="k, GE"]
+EyQw [label="e"]
+KXEX -- EyQw
+EyQw -- NFEY
 }

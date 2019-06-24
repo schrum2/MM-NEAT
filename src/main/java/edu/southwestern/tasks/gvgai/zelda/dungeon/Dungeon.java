@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.google.gson.Gson;
 
@@ -86,6 +87,9 @@ public class Dungeon {
 		Node n = getCurrentlevel();
 		System.out.println("Node : " + n);
 		HashMap<String, Pair<String, Point>> adjacency = n.adjacency;
+		for(Entry<String, Pair<String, Point>> entries : n.adjacency.entrySet()) {
+			System.out.println("\t Exit point: " + entries.getKey());
+		}
 		Pair<String, Point> next = adjacency.get(exitPoint);
 		if (next == null) {
 			System.out.println("No next, returning null");

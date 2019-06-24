@@ -7,11 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,7 +28,6 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.datastructures.Graph;
-import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
@@ -60,11 +55,12 @@ public class DungeonUtil {
 						System.out.println("Checking point");
 						Dungeon.Node n = dungeon.getNodeAt(x, y);
 						Dungeon.Node adj = dungeon.getNodeAt(p.x, p.y);
-						GraphUtil.setAdjacencies(n, new Point(x, y), p, adj.name, Tile.DOOR.getNum());
-						GraphUtil.setAdjacencies(adj, p, new Point(x, y), n.name, Tile.DOOR.getNum());
+						DungeonUtil.setAdjacencies(n, new Point(x, y), p, adj.name, Tile.DOOR.getNum());
+						DungeonUtil.setAdjacencies(adj, p, new Point(x, y), n.name, Tile.DOOR.getNum());
 						p = DungeonUtil.pointToCheck(dungeon, x, y, options);
 					}
 				}
+				
 			}
 		}
 	}
@@ -154,8 +150,8 @@ public class DungeonUtil {
 						
 						int tile = getTile(node);
 						
-						GraphUtil.setAdjacencies(dN, p, legal, newNode.name, tile);
-						GraphUtil.setAdjacencies(newNode, legal, p, dN.name, tile);
+						DungeonUtil.setAdjacencies(dN, p, legal, newNode.name, tile);
+						DungeonUtil.setAdjacencies(newNode, legal, p, dN.name, tile);
 					}
 				}
 			}
@@ -517,129 +513,79 @@ public class DungeonUtil {
 	}
 
 	/**
-	 * Save a graph of type that extends Grammar, will be saved as a DOT file
-	 * @param graph Graph instance with type extending Grammar
-	 * @param file File location as a string, including the .dot
-	 * @throws IOException
+	 * Take a graph of type grammar and make a dungeon out of it using BFS
+	 * @param graph Graph to use
+	 * @return Dungeon from the graph
+	 * @throws Exception
 	 */
-	public static void saveGrammarGraph(Graph<? extends Grammar> graph, String file) throws IOException {
-		File f = new File(file);
-		BufferedWriter w = new BufferedWriter(new FileWriter(f.getAbsolutePath()));
-		w.write("graph {\n");
-		
+	public static Dungeon convertToDungeon(Graph<? extends Grammar> graph, LevelLoader loader) throws Exception {
+		Dungeon dungeon = new Dungeon();
+		String[][] levelThere = new String[100][100];
+		int x = (levelThere.length - 1) / 2;
+		int y = (levelThere.length - 1) / 2;
+
 		Graph<? extends Grammar>.Node n = graph.root();
+		
+		Level l = loadLevel(n, dungeon, loader);
+		Dungeon.Node dNode = dungeon.newNode(n.getID(), l);
+		levelThere[y][x] = dNode.name;
+		dungeon.setCurrentLevel(dNode.name);
+		
+		Queue<Graph<? extends Grammar>.Node> backlog = new LinkedList<>();
+		
 		List<Graph<? extends Grammar>.Node> visited = new ArrayList<>();
 		Queue<Graph<? extends Grammar>.Node> queue = new LinkedList<>();
 		queue.add(n);
-		visited.add(n);
 		while(!queue.isEmpty()) {
 			Graph<? extends Grammar>.Node node = queue.poll();
-			w.write(node.getID() + "[label=\"" + node.getData().getLevelType() + "\"]\n");
-			for(Graph<? extends Grammar>.Node v : node.adjacencies()) {
-				if(!visited.contains(v)) {
-					visited.add(v);
-					queue.add(v);
-				}
-			}
-			
-		}
-	
-		n = graph.root();
-		visited = new ArrayList<>();
-		queue = new LinkedList<>();
-		queue.add(n);
-		while(!queue.isEmpty()) {
-			Graph<? extends Grammar>.Node node = queue.poll();
-	
+			Dungeon.Node dN = dungeon.getNode(node.getID());
+			dN.grammar = (ZeldaGrammar) node.getData();
 			visited.add(node);
-			for(Graph<? extends Grammar>.Node v : node.adjacencies()) {
-				if(!visited.contains(v)) {
-					w.write(node.getID() + " -- " + v.getID() +"\n");
-					queue.add(v);				
-				}
-			}
+			graph.addNode((Graph.Node) node);
+			Point p = getCoords(levelThere, node.getID());
 			
-		}
-		
-		
-		w.write("}");
-		w.close();
-	}
-
-	/**
-		 * Take a graph of type grammar and make a dungeon out of it using BFS
-		 * @param graph Graph to use
-		 * @return Dungeon from the graph
-		 * @throws Exception
-		 */
-		public static Dungeon convertToDungeon(Graph<? extends Grammar> graph, LevelLoader loader) throws Exception {
-			Dungeon dungeon = new Dungeon();
-			String[][] levelThere = new String[100][100];
-			int x = (levelThere.length - 1) / 2;
-			int y = (levelThere.length - 1) / 2;
-	
-			Graph<? extends Grammar>.Node n = graph.root();
+			handleBacklog(levelThere, dungeon, backlog, visited, loader);
+			if(p == null)
+				throw new Exception("Node : " + node.getID() + " not found in level there");
 			
-			Level l = loadLevel(n, dungeon, loader);
-			Dungeon.Node dNode = dungeon.newNode(n.getID(), l);
-			levelThere[y][x] = dNode.name;
-			dungeon.setCurrentLevel(dNode.name);
+			List<Graph<? extends Grammar>.Node> adjs = new LinkedList<>(node.adjacencies());
 			
-			Queue<Graph<? extends Grammar>.Node> backlog = new LinkedList<>();
-			
-			List<Graph<? extends Grammar>.Node> visited = new ArrayList<>();
-			Queue<Graph<? extends Grammar>.Node> queue = new LinkedList<>();
-			queue.add(n);
-			while(!queue.isEmpty()) {
-				Graph<? extends Grammar>.Node node = queue.poll();
-				Dungeon.Node dN = dungeon.getNode(node.getID());
-				dN.grammar = (ZeldaGrammar) node.getData();
-				visited.add(node);
-				graph.addNode((Graph.Node) node);
-				Point p = getCoords(levelThere, node.getID());
+			while(!adjs.isEmpty()) {
+				Graph<? extends Grammar>.Node adjNode = adjs.remove((int) RandomNumbers.boundedRandom(0, adjs.size()));
 				
-				handleBacklog(levelThere, dungeon, backlog, visited, loader);
-				if(p == null)
-					throw new Exception("Node : " + node.getID() + " not found in level there");
-				
-				List<Graph<? extends Grammar>.Node> adjs = new LinkedList<>(node.adjacencies());
-				
-				while(!adjs.isEmpty()) {
-					Graph<? extends Grammar>.Node adjNode = adjs.remove((int) RandomNumbers.boundedRandom(0, adjs.size()));
-					
-					if(!visited.contains(adjNode) && !queue.contains(adjNode)) {
-						Point legal = getNextLegalPoint(p, levelThere);
-						if(legal != null) {
-							System.out.println("Placing " + adjNode.getID() + " at (" + legal.x + ", " + legal.y + ") " + adjNode.getData().getLabelName());
-							levelThere[legal.y][legal.x] = adjNode.getID();
-							Level newLevel = loadLevel(adjNode, dungeon, loader);
-							Dungeon.Node newNode = dungeon.newNode(adjNode.getID(), newLevel);
-							int tile = getTile(node);
-							GraphUtil.setAdjacencies(dN, p, legal, newNode.name, tile);
-							GraphUtil.setAdjacencies(newNode, legal, p, dN.name, tile);
-							queue.add(adjNode);
-						} else {
-	//						backlog.add(adjNode);
-							print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
-	//						throw new Exception("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
-						}
-					} else if (visited.contains(adjNode) && node.getData().isCyclable()
-							&& adjNode.getData().isCyclable()) {
-						Dungeon.Node newNode = dungeon.getNode(adjNode.getID());
-						int tile = Tile.DOOR.getNum();
-						Point to = getCoords(levelThere, adjNode.getID());
-						GraphUtil.setAdjacencies(dN, p, to, newNode.name, tile);
-						GraphUtil.setAdjacencies(newNode, to, p, dN.name, tile);
+				if(!visited.contains(adjNode) && !queue.contains(adjNode)) {
+					Point legal = getNextLegalPoint(p, levelThere);
+					if(legal != null) {
+						System.out.println("Placing " + adjNode.getID() + " at (" + legal.x + ", " + legal.y + ") " + adjNode.getData().getLabelName());
+						levelThere[legal.y][legal.x] = adjNode.getID();
+						Level newLevel = loadLevel(adjNode, dungeon, loader);
+						Dungeon.Node newNode = dungeon.newNode(adjNode.getID(), newLevel);
+						int tile = getTile(node);
+						DungeonUtil.setAdjacencies(dN, p, legal, newNode.name, tile);
+						DungeonUtil.setAdjacencies(newNode, legal, p, dN.name, tile);
+						queue.add(adjNode);
+					} else {
+//						backlog.add(adjNode);
+						print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
+//						throw new Exception("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
 					}
-					print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
-					System.out.println();
+				} else if (visited.contains(adjNode) && node.getData().isCyclable()
+						&& adjNode.getData().isCyclable()) {
+					Dungeon.Node newNode = dungeon.getNode(adjNode.getID());
+					int tile = Tile.DOOR.getNum();
+					Point to = getCoords(levelThere, adjNode.getID());
+					DungeonUtil.setAdjacencies(dN, p, to, newNode.name, tile);
+					DungeonUtil.setAdjacencies(newNode, to, p, dN.name, tile);
 				}
-	
+				print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
+				System.out.println();
 			}
-			dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
-			addCycles(dungeon);
-			return dungeon;
+
 		}
+		dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
+		addCycles(dungeon);
+		return dungeon;
+	}
 
 	public static Point pointToCheck(Dungeon dungeon, int x, int y, Stack<Point> options) {
 		Dungeon.Node n = dungeon.getNodeAt(x, y);
@@ -740,30 +686,17 @@ public class DungeonUtil {
 	 */
 	public static void makeDungeonPlayable(Dungeon dungeon) {
 		Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
-<<<<<<< HEAD
-		
-		boolean reset = true;
-		while(true) {			
-			ZeldaState state = new ZeldaState(5, 5, 0, dungeon);
-			ArrayList<GridAction> result = ((AStarSearch<GridAction, ZeldaState>) search).search(state, reset);
-=======
+
 		ZeldaState state = new ZeldaState(5, 5, 0, dungeon);
 		boolean reset = true;
 		while(true) {			
 			ArrayList<GridAction> result = ((AStarSearch<GridAction, ZeldaState>) search).search(state, reset);
-			reset = false;
->>>>>>> dev_zelda
+			reset = true;
 			HashSet<ZeldaState> visited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
 			
 			System.out.println(result);
 			if(result == null)
-<<<<<<< HEAD
 				makePlayable(visited);
-=======
-				state = makePlayable(visited);
-				if(state == null)
-					state = new ZeldaState(5, 5, 0, dungeon);
->>>>>>> dev_zelda
 			else break;
 		}
 	}
@@ -790,6 +723,41 @@ public class DungeonUtil {
 		g.dispose();
 		return image;
 		
+	}
+
+	/**
+	 * Set the adjacencies, the exit and starting points
+	 * @param fromNode Node where the ajancencie originates
+	 * @param from exit Point
+	 * @param to starting Point
+	 * @param whereTo Name of the room the starting point is going to
+	 * @param tile Tile to place the at exit point as a number
+	 * @throws Exception
+	 */
+	public static void setAdjacencies(Dungeon.Node fromNode, Point from,
+			Point to, String whereTo, int tile) throws Exception {
+		String direction = getDirection(from, to);
+		System.out.println("From node " + fromNode.name + " going " + direction + " to " + whereTo);
+		if(direction == null) return;
+	
+		switch(direction) {
+		case "UP":
+			ZeldaLevelUtil.addUpAdjacencies(fromNode, whereTo);
+			break;
+		case "DOWN":
+			ZeldaLevelUtil.addDownAdjacencies(fromNode, whereTo);
+			break;
+		case "LEFT":
+			ZeldaLevelUtil.addLeftAdjacencies(fromNode, whereTo);
+			break;
+		case "RIGHT":
+			ZeldaLevelUtil.addRightAdjacencies(fromNode, whereTo);
+			break;
+		default:
+			throw new Exception ("DIRECTION AINT HEREE");
+		}
+		
+		ZeldaLevelUtil.setDoors(direction, fromNode.level.intLevel, tile);
 	}
 
 }

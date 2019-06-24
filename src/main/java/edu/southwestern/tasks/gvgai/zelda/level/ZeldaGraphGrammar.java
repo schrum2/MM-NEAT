@@ -21,6 +21,7 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.datastructures.Graph;
+import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
@@ -178,7 +179,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		System.out.println("After size " + graph.size());
 		
 		try {
-			DungeonUtil.saveGrammarGraph(graph, "data/VGLC/graph.dot");
+			GraphUtil.saveGrammarGraph(graph, "data/VGLC/graph.dot");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -198,7 +199,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			desk.open(file);
 			
 			
-//			RougelikeApp.startDungeon(d, true);
+			RougelikeApp.startDungeon(d, true);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

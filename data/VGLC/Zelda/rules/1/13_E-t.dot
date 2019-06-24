@@ -1,15 +1,7 @@
 graph {
-<<<<<<< HEAD
-TJSv [label="e, GS"]
-agyn [label="t, GE"]
-bNFZ [label="e"]
-TJSv -- bNFZ
-bNFZ -- agyn
-=======
-cIrj [label="e, GS"]
-ZtIH [label="t, GE"]
-MnEN [label="e"]
-cIrj -- MnEN
-MnEN -- ZtIH
->>>>>>> dev_zelda
+jVDg [label="e, GS"]
+CCYB [label="t, GE"]
+kpbm [label="e"]
+jVDg -- kpbm
+kpbm -- CCYB
 }

@@ -1,19 +1,9 @@
 graph {
-<<<<<<< HEAD
-Kaai [label="s, GS"]
-nWye [label="k, GE"]
-lpwN [label="e"]
-NNpy [label="e"]
-Kaai -- lpwN
-Kaai -- NNpy
-NNpy -- nWye
-=======
-XLgU [label="s, GS"]
-Dvcq [label="k, GE"]
-OrAM [label="e"]
-CTWv [label="e"]
-XLgU -- OrAM
-XLgU -- CTWv
-CTWv -- Dvcq
->>>>>>> dev_zelda
+vZyM [label="s, GS"]
+jUHK [label="k, GE"]
+PhuQ [label="e"]
+yBFh [label="e"]
+vZyM -- PhuQ
+vZyM -- yBFh
+yBFh -- jUHK
 }

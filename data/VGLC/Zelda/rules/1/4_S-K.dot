@@ -1,23 +1,11 @@
 graph {
-<<<<<<< HEAD
-xzOH [label="s, GS"]
-YczC [label="k, GE"]
-tgfj [label="e"]
-TYRn [label="e"]
-zwMm [label="e"]
-xzOH -- tgfj
-xzOH -- TYRn
-xzOH -- zwMm
-tgfj -- YczC
-=======
-aDrV [label="s, GS"]
-Gjhf [label="k, GE"]
-SmOu [label="e"]
-lHti [label="e"]
-OIxU [label="e"]
-aDrV -- SmOu
-aDrV -- lHti
-aDrV -- OIxU
-SmOu -- Gjhf
->>>>>>> dev_zelda
+VOyq [label="s, GS"]
+zIDe [label="k, GE"]
+lkzN [label="e"]
+Hebb [label="e"]
+KpsA [label="e"]
+VOyq -- lkzN
+VOyq -- Hebb
+VOyq -- KpsA
+lkzN -- zIDe
 }

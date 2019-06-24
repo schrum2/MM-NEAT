@@ -1,46 +1,67 @@
 package edu.southwestern.util.datastructures;
 
-import java.awt.Point;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
-import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
+import edu.southwestern.tasks.gvgai.zelda.level.Grammar;
+import edu.southwestern.util.datastructures.Graph.Node;
 
 public class GraphUtil {
-	
-	/**
-	 * Set the adjacencies, the exit and starting points
-	 * @param fromNode Node where the ajancencie originates
-	 * @param from exit Point
-	 * @param to starting Point
-	 * @param whereTo Name of the room the starting point is going to
-	 * @param tile Tile to place the at exit point as a number
-	 * @throws Exception
-	 */
-	public static void setAdjacencies(Dungeon.Node fromNode, Point from,
-			Point to, String whereTo, int tile) throws Exception {
-		String direction = DungeonUtil.getDirection(from, to);
-		
-		if(direction == null) return;
 
-		switch(direction) {
-		case "UP":
-			ZeldaLevelUtil.addUpAdjacencies(fromNode, whereTo);
-			break;
-		case "DOWN":
-			ZeldaLevelUtil.addDownAdjacencies(fromNode, whereTo);
-			break;
-		case "LEFT":
-			ZeldaLevelUtil.addLeftAdjacencies(fromNode, whereTo);
-			break;
-		case "RIGHT":
-			ZeldaLevelUtil.addRightAdjacencies(fromNode, whereTo);
-			break;
-		default:
-			throw new Exception ("DIRECTION AINT HEREE");
+	/**
+	 * Save a graph of type that extends Grammar, will be saved as a DOT file
+	 * @param graph Graph instance with type extending Grammar
+	 * @param file File location as a string, including the .dot
+	 * @throws IOException
+	 */
+	public static void saveGrammarGraph(Graph<? extends Grammar> graph, String file) throws IOException {
+		File f = new File(file);
+		BufferedWriter w = new BufferedWriter(new FileWriter(f.getAbsolutePath()));
+		w.write("graph {\n");
+		
+		Graph<? extends Grammar>.Node n = graph.root();
+		List<Graph<? extends Grammar>.Node> visited = new ArrayList<>();
+		Queue<Graph<? extends Grammar>.Node> queue = new LinkedList<>();
+		queue.add(n);
+		visited.add(n);
+		while(!queue.isEmpty()) {
+			Graph<? extends Grammar>.Node node = queue.poll();
+			w.write(node.getID() + "[label=\"" + node.getData().getLevelType() + "\"]\n");
+			for(Graph<? extends Grammar>.Node v : node.adjacencies()) {
+				if(!visited.contains(v)) {
+					visited.add(v);
+					queue.add(v);
+				}
+			}
+			
+		}
+	
+		n = graph.root();
+		visited = new ArrayList<>();
+		queue = new LinkedList<>();
+		queue.add(n);
+		while(!queue.isEmpty()) {
+			Graph<? extends Grammar>.Node node = queue.poll();
+	
+			visited.add(node);
+			for(Graph<? extends Grammar>.Node v : node.adjacencies()) {
+				if(!visited.contains(v)) {
+					w.write(node.getID() + " -- " + v.getID() +"\n");
+					queue.add(v);				
+				}
+			}
+			
 		}
 		
-		ZeldaLevelUtil.setDoors(direction, fromNode.level.intLevel, tile);
+		
+		w.write("}");
+		w.close();
 	}
 	
 }

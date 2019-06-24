@@ -13,6 +13,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGraphGrammar;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Graph;
+import edu.southwestern.util.datastructures.GraphUtil;
 
 public class GraphDungeon extends ZeldaDungeon<ArrayList<Double>>{
 
@@ -28,8 +29,8 @@ public class GraphDungeon extends ZeldaDungeon<ArrayList<Double>>{
 		
 		Graph<ZeldaGrammar> graph = new Graph<>(initialList);
 		
-//		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
-		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar(new File("data/VGLC/Zelda/rules/1"));
+		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
+//		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar(new File("data/VGLC/Zelda/rules/1"));
 		try {
 			grammar.applyRules(graph);
 		} catch (Exception e1) {
@@ -39,7 +40,7 @@ public class GraphDungeon extends ZeldaDungeon<ArrayList<Double>>{
 
 		
 		try {
-			DungeonUtil.saveGrammarGraph(graph, "data/VGLC/graph.dot");
+			GraphUtil.saveGrammarGraph(graph, "data/VGLC/graph.dot");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

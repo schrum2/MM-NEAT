@@ -1,15 +1,7 @@
 graph {
-<<<<<<< HEAD
-Stlt [label="e, GS"]
-eflS [label="l, GE"]
-bPvr [label="k"]
-Stlt -- bPvr
-bPvr -- eflS
-=======
-MPAb [label="e, GS"]
-QCSV [label="l, GE"]
-wsxu [label="k"]
-MPAb -- wsxu
-wsxu -- QCSV
->>>>>>> dev_zelda
+XweA [label="e, GS"]
+Gfxv [label="l, GE"]
+HBrh [label="k"]
+XweA -- HBrh
+HBrh -- Gfxv
 }

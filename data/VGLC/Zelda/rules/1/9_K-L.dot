@@ -1,13 +1,6 @@
 graph {
-<<<<<<< HEAD
-SZmv [label="k, GS"]
-KsDQ [label="l, GE"]
-KHLJ [label="e"]
-SZmv -- KHLJ
-=======
-JRcg [label="k, GS"]
-hfdt [label="l, GE"]
-RukT [label="e"]
-JRcg -- RukT
->>>>>>> dev_zelda
+nSvN [label="k, GS"]
+QTAw [label="l, GE"]
+AnOT [label="e"]
+nSvN -- AnOT
 }

@@ -1,17 +1,8 @@
 graph {
-<<<<<<< HEAD
-GiEt [label="e, GS"]
-tDYT [label="t, GE"]
-hoxE [label="sl"]
-iIMY [label="e"]
-GiEt -- hoxE
-hoxE -- iIMY
-=======
-dEsk [label="e, GS"]
-SbvN [label="t, GE"]
-yQLx [label="sl"]
-IKLc [label="e"]
-dEsk -- yQLx
-yQLx -- IKLc
->>>>>>> dev_zelda
+vlWz [label="e, GS"]
+PsPe [label="t, GE"]
+eNHC [label="sl"]
+fQYC [label="e"]
+vlWz -- eNHC
+eNHC -- fQYC
 }

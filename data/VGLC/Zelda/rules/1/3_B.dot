@@ -1,11 +1,5 @@
 graph {
-<<<<<<< HEAD
-Tben [label="b, GS"]
-LbQD [label="e"]
-Tben -- LbQD
-=======
-sFJf [label="b, GS"]
-CwyV [label="e"]
-sFJf -- CwyV
->>>>>>> dev_zelda
+ukFG [label="b, GS"]
+QApU [label="e"]
+ukFG -- QApU
 }

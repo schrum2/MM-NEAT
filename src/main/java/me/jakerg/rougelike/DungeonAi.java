@@ -51,7 +51,7 @@ public class DungeonAi extends CreatureAi{
 			creature.y = y;
 		} 
 		if(tile.equals(Tile.DOOR) && !creature.getWorld().locked()) {
-			Point exitPoint = new Point(creature.x, creature.y);
+			Point exitPoint = new Point(x, y);
 //			 Get the point to move to based on where the player went in from
 			System.out.println("Exiting at " + exitPoint);
 			creature.getWorld().remove(this.creature);
