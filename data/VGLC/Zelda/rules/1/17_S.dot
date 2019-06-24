@@ -1,5 +1,11 @@
 graph {
+<<<<<<< HEAD
 hoxE [label="sl, GS"]
 iIMY [label="e"]
 hoxE -- iIMY
+=======
+yQLx [label="sl, GS"]
+IKLc [label="e"]
+yQLx -- IKLc
+>>>>>>> dev_zelda
 }

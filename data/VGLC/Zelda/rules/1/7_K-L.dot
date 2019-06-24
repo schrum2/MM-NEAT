@@ -1,7 +1,15 @@
 graph {
+<<<<<<< HEAD
 LQJd [label="k, GS"]
 ujAi [label="l, GE"]
 jspZ [label="e"]
 LQJd -- jspZ
 jspZ -- ujAi
+=======
+DYyT [label="k, GS"]
+iSSX [label="l, GE"]
+DbLl [label="e"]
+DYyT -- DbLl
+DbLl -- iSSX
+>>>>>>> dev_zelda
 }

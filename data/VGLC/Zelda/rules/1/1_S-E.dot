@@ -1,4 +1,5 @@
 graph {
+<<<<<<< HEAD
 UuPC [label="s, GS"]
 fiVK [label="e, GE"]
 jgTo [label="e"]
@@ -8,4 +9,15 @@ UuPC -- jgTo
 UuPC -- hoxE
 hoxE -- fiVK
 hoxE -- iIMY
+=======
+AVZt [label="s, GS"]
+NEaa [label="e, GE"]
+UdEC [label="e"]
+yQLx [label="sl"]
+IKLc [label="e"]
+AVZt -- UdEC
+AVZt -- yQLx
+yQLx -- NEaa
+yQLx -- IKLc
+>>>>>>> dev_zelda
 }

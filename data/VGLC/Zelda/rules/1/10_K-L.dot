@@ -1,6 +1,13 @@
 graph {
+<<<<<<< HEAD
 qbnt [label="e, GS"]
 REmG [label="l, GE"]
 JvaU [label="k"]
 qbnt -- JvaU
+=======
+YmHp [label="e, GS"]
+AXlM [label="l, GE"]
+lTvc [label="k"]
+YmHp -- lTvc
+>>>>>>> dev_zelda
 }

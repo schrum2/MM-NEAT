@@ -1,4 +1,5 @@
 graph {
+<<<<<<< HEAD
 xzOH [label="s, GS"]
 YczC [label="k, GE"]
 tgfj [label="e"]
@@ -8,4 +9,15 @@ xzOH -- tgfj
 xzOH -- TYRn
 xzOH -- zwMm
 tgfj -- YczC
+=======
+aDrV [label="s, GS"]
+Gjhf [label="k, GE"]
+SmOu [label="e"]
+lHti [label="e"]
+OIxU [label="e"]
+aDrV -- SmOu
+aDrV -- lHti
+aDrV -- OIxU
+SmOu -- Gjhf
+>>>>>>> dev_zelda
 }

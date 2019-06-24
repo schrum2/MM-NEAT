@@ -1,5 +1,11 @@
 graph {
+<<<<<<< HEAD
 TRKj [label="k, GS"]
 POXl [label="S"]
 TRKj -- POXl
+=======
+smjD [label="k, GS"]
+dETA [label="S"]
+smjD -- dETA
+>>>>>>> dev_zelda
 }

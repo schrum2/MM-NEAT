@@ -1,4 +1,5 @@
 graph {
+<<<<<<< HEAD
 UuPC[label="s"]
 jgTo[label="e"]
 hoxE[label="sl"]
@@ -31,4 +32,38 @@ Tben -- LbQD
 lLcp -- GiEt
 Tben -- LbQD
 GiEt -- tDYT
+=======
+AVZt[label="s"]
+UdEC[label="e"]
+yQLx[label="sl"]
+NEaa[label="e"]
+IKLc[label="e"]
+YmHp[label="e"]
+AXlM[label="l"]
+lTvc[label="k"]
+Uehw[label="e"]
+oyvb[label="k"]
+sFJf[label="b"]
+WfUo[label="l"]
+CwyV[label="e"]
+dEsk[label="e"]
+SbvN[label="t"]
+AVZt -- UdEC
+AVZt -- yQLx
+AVZt -- NEaa
+yQLx -- NEaa
+yQLx -- IKLc
+NEaa -- YmHp
+YmHp -- AXlM
+YmHp -- lTvc
+AXlM -- Uehw
+Uehw -- oyvb
+Uehw -- sFJf
+oyvb -- WfUo
+oyvb -- sFJf
+sFJf -- CwyV
+WfUo -- dEsk
+sFJf -- CwyV
+dEsk -- SbvN
+>>>>>>> dev_zelda
 }

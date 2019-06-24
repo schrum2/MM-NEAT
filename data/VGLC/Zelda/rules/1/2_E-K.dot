@@ -1,4 +1,5 @@
 graph {
+<<<<<<< HEAD
 FgxX [label="e, GS"]
 EBHR [label="k, GE"]
 Tben [label="b"]
@@ -6,4 +7,13 @@ LbQD [label="e"]
 FgxX -- Tben
 Tben -- EBHR
 Tben -- LbQD
+=======
+Uehw [label="e, GS"]
+oyvb [label="k, GE"]
+sFJf [label="b"]
+CwyV [label="e"]
+Uehw -- sFJf
+sFJf -- oyvb
+sFJf -- CwyV
+>>>>>>> dev_zelda
 }

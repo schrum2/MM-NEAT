@@ -1,4 +1,5 @@
 graph {
+<<<<<<< HEAD
 speL [label="e, GS"]
 YXoy [label="t, GE"]
 FYLY [label="e"]
@@ -6,4 +7,13 @@ dykh [label="e"]
 speL -- FYLY
 speL -- dykh
 FYLY -- YXoy
+=======
+KCAh [label="e, GS"]
+AKOg [label="t, GE"]
+mBAZ [label="e"]
+RJNr [label="e"]
+KCAh -- mBAZ
+KCAh -- RJNr
+mBAZ -- AKOg
+>>>>>>> dev_zelda
 }

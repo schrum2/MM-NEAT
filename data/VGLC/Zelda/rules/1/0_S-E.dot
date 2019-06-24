@@ -1,4 +1,5 @@
 graph {
+<<<<<<< HEAD
 xDMz [label="s, GS"]
 SdOO [label="e, GE"]
 njcW [label="e"]
@@ -9,4 +10,16 @@ xDMz -- UiZg
 xDMz -- DoLj
 UiZg -- SdOO
 DoLj -- SdOO
+=======
+pbar [label="s, GS"]
+CpeR [label="e, GE"]
+UxhC [label="e"]
+VExy [label="e"]
+Qmhq [label="B"]
+pbar -- UxhC
+pbar -- VExy
+pbar -- Qmhq
+VExy -- CpeR
+Qmhq -- CpeR
+>>>>>>> dev_zelda
 }
