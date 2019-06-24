@@ -1,0 +1,11 @@
+graph {
+AVZt [label="s, GS"]
+NEaa [label="e, GE"]
+UdEC [label="e"]
+yQLx [label="sl"]
+IKLc [label="e"]
+AVZt -- UdEC
+AVZt -- yQLx
+yQLx -- NEaa
+yQLx -- IKLc
+}

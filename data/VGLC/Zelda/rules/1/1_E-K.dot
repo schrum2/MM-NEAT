@@ -1,9 +1,0 @@
-graph {
-qzYG [label="e, GS"]
-YMHO [label="k, GE"]
-PHOh [label="b"]
-cCDp [label="e"]
-qzYG -- PHOh
-PHOh -- cCDp
-PHOh -- YMHO
-}

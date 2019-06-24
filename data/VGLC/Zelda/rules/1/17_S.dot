@@ -1,0 +1,5 @@
+graph {
+yQLx [label="sl, GS"]
+IKLc [label="e"]
+yQLx -- IKLc
+}

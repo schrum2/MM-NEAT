@@ -1,8 +1,7 @@
 graph {
-KjSh [label="k, GS"]
-HkNM [label="l, GE"]
-DfBe [label="sl"]
-BYzB [label="e"]
-KjSh -- DfBe
-DfBe -- BYzB
+MPAb [label="e, GS"]
+QCSV [label="l, GE"]
+wsxu [label="k"]
+MPAb -- wsxu
+wsxu -- QCSV
 }

@@ -1,14 +1,12 @@
 graph {
-mAzP [label="s, GS"]
-tWQZ [label="e, GE"]
-TuQU [label="e"]
-JRIr [label="e"]
-PHOh [label="b"]
-cCDp [label="e"]
-mAzP -- TuQU
-mAzP -- JRIr
-mAzP -- PHOh
-JRIr -- tWQZ
-PHOh -- cCDp
-PHOh -- tWQZ
+pbar [label="s, GS"]
+CpeR [label="e, GE"]
+UxhC [label="e"]
+VExy [label="e"]
+Qmhq [label="B"]
+pbar -- UxhC
+pbar -- VExy
+pbar -- Qmhq
+VExy -- CpeR
+Qmhq -- CpeR
 }

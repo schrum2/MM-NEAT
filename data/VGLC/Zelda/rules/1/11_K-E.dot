@@ -1,0 +1,9 @@
+graph {
+XtMM [label="k, GS"]
+hDGp [label="e, GE"]
+QUwr [label="e"]
+QaCf [label="e"]
+XtMM -- QUwr
+XtMM -- QaCf
+QUwr -- hDGp
+}

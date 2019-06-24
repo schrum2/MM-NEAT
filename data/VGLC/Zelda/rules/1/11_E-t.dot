@@ -1,9 +1,0 @@
-graph {
-IXqf [label="e, GS"]
-Xbsl [label="t, GE"]
-Yysx [label="e"]
-UZpm [label="e"]
-IXqf -- Yysx
-IXqf -- UZpm
-Yysx -- Xbsl
-}

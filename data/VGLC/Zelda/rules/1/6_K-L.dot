@@ -1,7 +1,0 @@
-graph {
-sbnq [label="k, GS"]
-jyFU [label="l, GE"]
-UYxl [label="e"]
-sbnq -- UYxl
-UYxl -- jyFU
-}

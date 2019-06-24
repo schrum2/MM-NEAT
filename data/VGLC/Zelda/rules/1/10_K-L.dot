@@ -1,0 +1,6 @@
+graph {
+YmHp [label="e, GS"]
+AXlM [label="l, GE"]
+lTvc [label="k"]
+YmHp -- lTvc
+}

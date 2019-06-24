@@ -1,0 +1,5 @@
+graph {
+smjD [label="k, GS"]
+dETA [label="S"]
+smjD -- dETA
+}

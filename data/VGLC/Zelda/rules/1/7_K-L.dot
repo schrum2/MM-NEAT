@@ -1,7 +1,7 @@
 graph {
-jPbB [label="e, GS"]
-DPNJ [label="l, GE"]
-uMqp [label="k"]
-jPbB -- uMqp
-uMqp -- DPNJ
+DYyT [label="k, GS"]
+iSSX [label="l, GE"]
+DbLl [label="e"]
+DYyT -- DbLl
+DbLl -- iSSX
 }

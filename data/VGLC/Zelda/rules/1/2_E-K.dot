@@ -1,0 +1,9 @@
+graph {
+Uehw [label="e, GS"]
+oyvb [label="k, GE"]
+sFJf [label="b"]
+CwyV [label="e"]
+Uehw -- sFJf
+sFJf -- oyvb
+sFJf -- CwyV
+}

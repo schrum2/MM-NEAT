@@ -21,6 +21,7 @@ import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.GraphDungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.SimpleDungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
@@ -29,7 +30,6 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.datastructures.Pair;
 import gvgai.core.game.BasicGame;
 import gvgai.core.game.Game;
@@ -145,7 +145,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 			Level level = new Level(ints);
 			Dungeon.Node n = dummy.newNode("ASDF", level);
 			dummy.setCurrentLevel("ASDF");
-			return GraphUtil.getLevelImage(n, dummy);
+			return DungeonUtil.getLevelImage(n, dummy);
 		} else {
 			GameBundle bundle = setUpGameWithLevelFromLatentVector(phenotype); // Use the above function to build our ZeldaGAN
 			BufferedImage levelImage = GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed); // Make image of zelda level

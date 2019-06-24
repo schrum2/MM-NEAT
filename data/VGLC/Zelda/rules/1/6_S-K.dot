@@ -1,0 +1,7 @@
+graph {
+Txqa [label="s, GS"]
+PNtz [label="k, GE"]
+vwie [label="e"]
+Txqa -- vwie
+vwie -- PNtz
+}

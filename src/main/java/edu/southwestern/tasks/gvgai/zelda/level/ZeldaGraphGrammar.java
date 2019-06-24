@@ -17,10 +17,10 @@ import javax.imageio.ImageIO;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.datastructures.Graph;
-import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
@@ -39,11 +39,12 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		
-//		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.ENEMY_S);
-//		rule.grammar().setStart(ZeldaGrammar.START);
-//		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
-//		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-//		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.START);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
@@ -92,14 +93,13 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
-		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
 		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
-		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.ENEMY_S);
@@ -125,6 +125,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.TREASURE);
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S);
@@ -133,6 +134,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S);
@@ -176,7 +178,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		System.out.println("After size " + graph.size());
 		
 		try {
-			GraphUtil.saveGrammarGraph(graph, "data/VGLC/graph.dot");
+			DungeonUtil.saveGrammarGraph(graph, "data/VGLC/graph.dot");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -186,9 +188,9 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		
 		Dungeon d = null;
 		try {
-			d = GraphUtil.convertToDungeon(graph, new GANLoader());
-			GraphUtil.makeDungeonPlayable(d);
-			BufferedImage image = GraphUtil.imageOfDungeon(d);
+			d = DungeonUtil.convertToDungeon(graph, new GANLoader());
+			DungeonUtil.makeDungeonPlayable(d);
+			BufferedImage image = DungeonUtil.imageOfDungeon(d);
 			File file = new File("data/VGLC/Zelda/dungeon.png");
 			ImageIO.write(image, "png", file);
 			
