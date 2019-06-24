@@ -1,5 +1,5 @@
 graph {
-LzHp [label="k, GS"]
-nNSx [label="S"]
-LzHp -- nNSx
+yCer [label="k, GS"]
+VNtz [label="S"]
+yCer -- VNtz
 }

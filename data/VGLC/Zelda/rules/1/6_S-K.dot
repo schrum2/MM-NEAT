@@ -1,7 +1,7 @@
 graph {
-KXEX [label="s, GS"]
-NFEY [label="k, GE"]
-EyQw [label="e"]
-KXEX -- EyQw
-EyQw -- NFEY
+Gqvf [label="s, GS"]
+dQpK [label="k, GE"]
+Lczz [label="e"]
+Gqvf -- Lczz
+Lczz -- dQpK
 }

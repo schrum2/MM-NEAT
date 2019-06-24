@@ -1,11 +1,11 @@
 graph {
-VOyq [label="s, GS"]
-zIDe [label="k, GE"]
-lkzN [label="e"]
-Hebb [label="e"]
-KpsA [label="e"]
-VOyq -- lkzN
-VOyq -- Hebb
-VOyq -- KpsA
-lkzN -- zIDe
+smrj [label="s, GS"]
+JKNL [label="k, GE"]
+RCja [label="e"]
+OCax [label="e"]
+uodr [label="e"]
+smrj -- RCja
+smrj -- OCax
+smrj -- uodr
+RCja -- JKNL
 }

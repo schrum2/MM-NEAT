@@ -1,9 +1,9 @@
 graph {
-TAHu [label="e, GS"]
-UDiW [label="t, GE"]
-hAWV [label="e"]
-tqAh [label="e"]
-TAHu -- hAWV
-TAHu -- tqAh
-hAWV -- UDiW
+icbi [label="e, GS"]
+LhKn [label="t, GE"]
+JJdo [label="e"]
+OrMB [label="e"]
+icbi -- JJdo
+icbi -- OrMB
+JJdo -- LhKn
 }

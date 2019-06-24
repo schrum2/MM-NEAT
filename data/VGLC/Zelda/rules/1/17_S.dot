@@ -1,5 +1,5 @@
 graph {
-eNHC [label="sl, GS"]
-fQYC [label="e"]
-eNHC -- fQYC
+AzMk [label="sl, GS"]
+hybW [label="e"]
+AzMk -- hybW
 }

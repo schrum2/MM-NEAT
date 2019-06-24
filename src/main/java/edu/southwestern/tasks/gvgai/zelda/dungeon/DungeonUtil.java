@@ -671,21 +671,22 @@ public class DungeonUtil {
 	/**
 	 * Use A* agent to to see if it's playable, if it's not playable change layout of room. Do this over and over
 	 * until dungeon is playable
+	 * 
+	 * Dr. Schrum, look at this function
 	 * @param dungeon Generated dungeon
 	 */
 	public static void makeDungeonPlayable(Dungeon dungeon) {
 		Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
-
 		ZeldaState state = new ZeldaState(5, 5, 0, dungeon);
 		boolean reset = true;
 		while(true) {			
 			ArrayList<GridAction> result = ((AStarSearch<GridAction, ZeldaState>) search).search(state, reset);
-			reset = true;
+			reset = true; // Usually false so that it doesn't reset after the first one, but left at true otherwise it won't work
 			HashSet<ZeldaState> visited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
 			
 			System.out.println(result);
 			if(result == null)
-				makePlayable(visited);
+				makePlayable(visited); // This functions returns a state where the V-UV algo was applied
 			else break;
 		}
 	}

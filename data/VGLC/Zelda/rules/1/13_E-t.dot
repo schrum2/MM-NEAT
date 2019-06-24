@@ -1,7 +1,7 @@
 graph {
-jVDg [label="e, GS"]
-CCYB [label="t, GE"]
-kpbm [label="e"]
-jVDg -- kpbm
-kpbm -- CCYB
+sFOY [label="e, GS"]
+SQbW [label="t, GE"]
+CzbV [label="e"]
+sFOY -- CzbV
+CzbV -- SQbW
 }

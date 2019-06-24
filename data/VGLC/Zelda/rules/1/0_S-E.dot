@@ -1,12 +1,12 @@
 graph {
-JZpS [label="s, GS"]
-bDVK [label="e, GE"]
-wQid [label="e"]
-LEhJ [label="e"]
-hQgi [label="B"]
-JZpS -- wQid
-JZpS -- LEhJ
-JZpS -- hQgi
-LEhJ -- bDVK
-hQgi -- bDVK
+rNkp [label="s, GS"]
+HLQR [label="e, GE"]
+pNmF [label="e"]
+QZkc [label="e"]
+GRjP [label="B"]
+rNkp -- pNmF
+rNkp -- QZkc
+rNkp -- GRjP
+QZkc -- HLQR
+GRjP -- HLQR
 }

@@ -1,7 +1,7 @@
 graph {
-XweA [label="e, GS"]
-Gfxv [label="l, GE"]
-HBrh [label="k"]
-XweA -- HBrh
-HBrh -- Gfxv
+YDyS [label="e, GS"]
+LZcB [label="l, GE"]
+GJoN [label="k"]
+YDyS -- GJoN
+GJoN -- LZcB
 }

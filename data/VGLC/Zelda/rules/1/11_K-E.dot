@@ -1,9 +1,9 @@
 graph {
-eMwA [label="k, GS"]
-EkyN [label="e, GE"]
-BOun [label="e"]
-gCub [label="e"]
-eMwA -- BOun
-eMwA -- gCub
-BOun -- EkyN
+aQNi [label="k, GS"]
+EAMk [label="e, GE"]
+pgMD [label="e"]
+WrQV [label="e"]
+aQNi -- pgMD
+aQNi -- WrQV
+pgMD -- EAMk
 }

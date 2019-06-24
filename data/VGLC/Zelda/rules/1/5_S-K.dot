@@ -1,9 +1,9 @@
 graph {
-vZyM [label="s, GS"]
-jUHK [label="k, GE"]
-PhuQ [label="e"]
-yBFh [label="e"]
-vZyM -- PhuQ
-vZyM -- yBFh
-yBFh -- jUHK
+xruK [label="s, GS"]
+FjNZ [label="k, GE"]
+VSMJ [label="e"]
+MXSm [label="e"]
+xruK -- VSMJ
+xruK -- MXSm
+MXSm -- FjNZ
 }

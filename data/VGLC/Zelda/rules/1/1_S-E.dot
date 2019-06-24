@@ -1,11 +1,11 @@
 graph {
-TLxh [label="s, GS"]
-eeeW [label="e, GE"]
-Aymp [label="e"]
-eNHC [label="sl"]
-fQYC [label="e"]
-TLxh -- Aymp
-TLxh -- eNHC
-eNHC -- eeeW
-eNHC -- fQYC
+TUKp [label="s, GS"]
+pWZN [label="e, GE"]
+fEKp [label="e"]
+AzMk [label="sl"]
+hybW [label="e"]
+TUKp -- fEKp
+TUKp -- AzMk
+AzMk -- pWZN
+AzMk -- hybW
 }
