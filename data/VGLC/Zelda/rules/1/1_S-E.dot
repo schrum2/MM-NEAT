@@ -1,11 +1,11 @@
 graph {
-ssnC [label="s, GS"]
-VdFP [label="e, GE"]
-FcMv [label="e"]
-EyAV [label="sl"]
-OnMZ [label="e"]
-ssnC -- FcMv
-ssnC -- EyAV
-EyAV -- VdFP
-EyAV -- OnMZ
+kArH [label="s, GS"]
+AAqY [label="e, GE"]
+BUNB [label="e"]
+PVvz [label="sl"]
+teGJ [label="e"]
+kArH -- BUNB
+kArH -- PVvz
+PVvz -- AAqY
+PVvz -- teGJ
 }

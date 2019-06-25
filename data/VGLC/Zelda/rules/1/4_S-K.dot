@@ -1,11 +1,11 @@
 graph {
-BGAc [label="s, GS"]
-vBsa [label="k, GE"]
-vMoU [label="e"]
-BqwL [label="e"]
-MhLv [label="e"]
-BGAc -- vMoU
-BGAc -- BqwL
-BGAc -- MhLv
-vMoU -- vBsa
+kVFs [label="s, GS"]
+KmXx [label="k, GE"]
+FHQZ [label="e"]
+GxCP [label="e"]
+ogvV [label="e"]
+kVFs -- FHQZ
+kVFs -- GxCP
+kVFs -- ogvV
+FHQZ -- KmXx
 }

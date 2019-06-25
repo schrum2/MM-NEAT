@@ -1,7 +1,7 @@
 graph {
-tMnO [label="k, GS"]
-OBIJ [label="l, GE"]
-eTgx [label="e"]
-tMnO -- eTgx
-eTgx -- OBIJ
+pXsW [label="k, GS"]
+gtpn [label="l, GE"]
+vUPq [label="e"]
+pXsW -- vUPq
+vUPq -- gtpn
 }

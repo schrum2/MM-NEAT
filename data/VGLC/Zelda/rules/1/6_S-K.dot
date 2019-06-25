@@ -1,7 +1,7 @@
 graph {
-EnQd [label="s, GS"]
-qQxa [label="k, GE"]
-EzHG [label="e"]
-EnQd -- EzHG
-EzHG -- qQxa
+rfoC [label="s, GS"]
+zGeH [label="k, GE"]
+NobW [label="e"]
+rfoC -- NobW
+NobW -- zGeH
 }

@@ -1,9 +1,9 @@
 graph {
-bfrY [label="e, GS"]
-uajz [label="k, GE"]
-sbvD [label="b"]
-iyPm [label="e"]
-bfrY -- sbvD
-sbvD -- uajz
-sbvD -- iyPm
+gIhu [label="e, GS"]
+sXqq [label="k, GE"]
+WsJf [label="b"]
+XTXP [label="e"]
+gIhu -- WsJf
+WsJf -- sXqq
+WsJf -- XTXP
 }

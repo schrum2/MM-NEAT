@@ -1,34 +1,38 @@
 graph {
-ssnC[label="s"]
-FcMv[label="e"]
-EyAV[label="sl"]
-VdFP[label="e"]
-OnMZ[label="e"]
-XJpJ[label="e"]
-qjou[label="l"]
-anQS[label="k"]
-bfrY[label="e"]
-uajz[label="k"]
-sbvD[label="b"]
-XYCu[label="l"]
-iyPm[label="e"]
-yFRT[label="e"]
-Vslk[label="t"]
-ssnC -- FcMv
-ssnC -- EyAV
-ssnC -- VdFP
-EyAV -- VdFP
-EyAV -- OnMZ
-VdFP -- XJpJ
-XJpJ -- qjou
-XJpJ -- anQS
-qjou -- bfrY
-bfrY -- uajz
-bfrY -- sbvD
-uajz -- XYCu
-uajz -- sbvD
-sbvD -- iyPm
-XYCu -- yFRT
-sbvD -- iyPm
-yFRT -- Vslk
+kArH[label="s"]
+BUNB[label="e"]
+PVvz[label="sl"]
+AAqY[label="e"]
+teGJ[label="e"]
+lpYu[label="e"]
+FVGs[label="l"]
+lXmD[label="k"]
+gIhu[label="e"]
+sXqq[label="k"]
+WsJf[label="b"]
+kmqW[label="l"]
+XTXP[label="e"]
+yKvz[label="e"]
+ofPo[label="t"]
+qHzw[label="e"]
+kArH -- BUNB
+kArH -- PVvz
+kArH -- AAqY
+PVvz -- AAqY
+PVvz -- teGJ
+AAqY -- lpYu
+lpYu -- FVGs
+lpYu -- lXmD
+FVGs -- lXmD
+FVGs -- gIhu
+gIhu -- sXqq
+gIhu -- WsJf
+sXqq -- kmqW
+sXqq -- WsJf
+WsJf -- XTXP
+kmqW -- yKvz
+WsJf -- XTXP
+yKvz -- ofPo
+yKvz -- qHzw
+ofPo -- qHzw
 }

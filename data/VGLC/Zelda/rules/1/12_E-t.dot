@@ -1,9 +1,9 @@
 graph {
-CNWL [label="e, GS"]
-WWNk [label="t, GE"]
-XYie [label="e"]
-jlti [label="e"]
-CNWL -- XYie
-CNWL -- jlti
-XYie -- WWNk
+OpfF [label="e, GS"]
+jnsq [label="t, GE"]
+qQER [label="e"]
+CNDR [label="e"]
+OpfF -- qQER
+OpfF -- CNDR
+qQER -- jnsq
 }

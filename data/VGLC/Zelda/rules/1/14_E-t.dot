@@ -1,8 +1,6 @@
 graph {
-yFRT [label="e, GS"]
-Vslk [label="t, GE"]
-EyAV [label="sl"]
-OnMZ [label="e"]
-yFRT -- EyAV
-EyAV -- OnMZ
+OflW [label="e, GS"]
+Vmcz [label="t, GE"]
+Jxzc [label="S"]
+OflW -- Jxzc
 }

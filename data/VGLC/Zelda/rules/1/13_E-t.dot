@@ -1,7 +1,7 @@
 graph {
-QtZL [label="e, GS"]
-fgJj [label="t, GE"]
-WIMl [label="e"]
-QtZL -- WIMl
-WIMl -- fgJj
+yKvz [label="e, GS"]
+ofPo [label="t, GE"]
+qHzw [label="e"]
+yKvz -- qHzw
+qHzw -- ofPo
 }

@@ -1,5 +1,5 @@
 graph {
-EyAV [label="sl, GS"]
-OnMZ [label="e"]
-EyAV -- OnMZ
+PVvz [label="sl, GS"]
+teGJ [label="e"]
+PVvz -- teGJ
 }
