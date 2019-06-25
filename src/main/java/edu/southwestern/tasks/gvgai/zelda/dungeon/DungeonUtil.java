@@ -680,12 +680,15 @@ public class DungeonUtil {
 		boolean reset = true;
 		while(true) {			
 			ArrayList<GridAction> result = ((AStarSearch<GridAction, ZeldaState>) search).search(state, reset);
-			reset = true;
+			// Would prefer not to start from scratch when resuming the search after a fix, but currently
+			// we get an infinite loop if this is changed to false.
+			reset = true; 
 			HashSet<ZeldaState> visited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
 			
 			System.out.println(result);
 			if(result == null)
-				makePlayable(visited);
+				// Resume search from new state: but is this actually the state if should be?
+				state = makePlayable(visited); 
 			else break;
 		}
 	}
