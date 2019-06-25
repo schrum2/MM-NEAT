@@ -237,25 +237,37 @@ public class ZeldaLevelUtil {
 		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
 			if(direction == "UP" || direction == "DOWN") { // Add doors at top or bottom
 				int y = (direction == "UP") ? 1 : 14; // Set y based on side 1 if up 14 if bottom
+				int dy = (direction.equals("UP")) ? 1 : -1;
 				for(int x = 4; x <= 6; x++) {
 					level.get(y).set(x, tile);
+					if(!Tile.findNum(level.get(y + dy).get(x)).playerPassable())
+						level.get(y + dy).set(x, Tile.FLOOR.getNum());
 				}
 			} else if (direction == "LEFT" || direction == "RIGHT") { // Add doors at left or right
 				int x = (direction == "LEFT") ? 1 : 9; // Set x based on side 1 if left 9 if right
+				int dx = (direction.equals("LEFT")) ? 1 : -1;
 				for(int y = 7; y <=8; y++) {
 					level.get(y).set(x, tile);
+					if(!Tile.findNum(level.get(y).get(x + dx)).playerPassable())
+						level.get(y).set(x + dx, Tile.FLOOR.getNum());
 				}
 			}
 		} else {
 			if(direction.equals("UP")  || direction.equals("DOWN")) { // Add doors at top or bottom
 				int y = (direction.equals("UP")) ? 1 : 9; // Set x based on side 1 if left 9 if right
-				for(int x = 7; x <=8; x++) {
+				int dy = (direction.equals("UP")) ? 1 : -1;
+				for(int x = 7; x <= 8; x++) {
 					level.get(y).set(x, tile);
+					if(!Tile.findNum(level.get(x + dy).get(x)).playerPassable())
+						level.get(y + dy).set(x, Tile.FLOOR.getNum());
 				}
 			} else if (direction.equals("LEFT") || direction.equals("RIGHT") ) { // Add doors at left or right
 				int x = (direction.equals("LEFT")) ? 1 : 14; // Set y based on side 1 if up 14 if bottom
+				int dx = (direction.equals("LEFT")) ? 1 : -1;
 				for(int y = 4; y <= 6; y++) {
 					level.get(y).set(x, tile);
+					if(!Tile.findNum(level.get(y).get(x + dx)).playerPassable())
+						level.get(y).set(x + dx, Tile.FLOOR.getNum());
 				}
 			}
 		}

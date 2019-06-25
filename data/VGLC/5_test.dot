@@ -1,39 +1,39 @@
 graph {
-jLcI[label="s"]
-LLxm[label="e"]
-ISXu[label="sl"]
-dkEA[label="e"]
-Zent[label="k"]
-EyKI[label="e"]
-qFEP[label="l"]
-EBPI[label="e"]
-SNeL[label="e"]
-dWPH[label="k"]
-GXmi[label="b"]
-MXJw[label="l"]
-Lkmo[label="e"]
-Ftdd[label="e"]
-gevY[label="t"]
-LNQp[label="e"]
-jLcI -- LLxm
-jLcI -- ISXu
-jLcI -- dkEA
-LLxm -- Zent
-LLxm -- ISXu
-ISXu -- EyKI
-Zent -- qFEP
-Zent -- EBPI
-ISXu -- EyKI
-qFEP -- EBPI
-qFEP -- SNeL
-SNeL -- dWPH
-SNeL -- GXmi
-dWPH -- MXJw
-dWPH -- GXmi
-GXmi -- Lkmo
-MXJw -- Ftdd
-GXmi -- Lkmo
-Ftdd -- gevY
-Ftdd -- LNQp
-gevY -- LNQp
+Hfvq[label="s"]
+TJfg[label="e"]
+lSKS[label="sl"]
+WHEd[label="e"]
+RhIp[label="k"]
+aLIC[label="e"]
+NNyp[label="l"]
+XUvM[label="e"]
+VPNu[label="e"]
+TXzk[label="k"]
+Ozhb[label="b"]
+nROX[label="l"]
+FwfZ[label="e"]
+CuyX[label="e"]
+LYVT[label="t"]
+rqBb[label="e"]
+Hfvq -- TJfg
+Hfvq -- lSKS
+Hfvq -- WHEd
+TJfg -- RhIp
+TJfg -- lSKS
+lSKS -- aLIC
+RhIp -- NNyp
+RhIp -- XUvM
+lSKS -- aLIC
+NNyp -- XUvM
+NNyp -- VPNu
+VPNu -- TXzk
+VPNu -- Ozhb
+TXzk -- nROX
+TXzk -- Ozhb
+Ozhb -- FwfZ
+nROX -- CuyX
+Ozhb -- FwfZ
+CuyX -- LYVT
+CuyX -- rqBb
+LYVT -- rqBb
 }

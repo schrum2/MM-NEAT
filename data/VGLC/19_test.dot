@@ -1,0 +1,41 @@
+graph {
+tXtm[label="s"]
+VlTh[label="e"]
+Ckej[label="sl"]
+VjLc[label="e"]
+RNUw[label="e"]
+urDI[label="e"]
+cMAb[label="l"]
+TKAr[label="k"]
+Clgt[label="e"]
+vAeX[label="k"]
+QZQZ[label="b"]
+rWOZ[label="l"]
+jeYX[label="e"]
+PYYR[label="e"]
+fuHT[label="e"]
+BRIL[label="e"]
+ZUtJ[label="t"]
+tXtm -- VlTh
+tXtm -- Ckej
+tXtm -- VjLc
+VlTh -- RNUw
+VlTh -- Ckej
+Ckej -- urDI
+RNUw -- cMAb
+RNUw -- TKAr
+Ckej -- urDI
+cMAb -- Clgt
+cMAb -- TKAr
+Clgt -- vAeX
+Clgt -- QZQZ
+vAeX -- QZQZ
+vAeX -- rWOZ
+QZQZ -- jeYX
+QZQZ -- jeYX
+rWOZ -- PYYR
+PYYR -- fuHT
+PYYR -- BRIL
+PYYR -- ZUtJ
+BRIL -- ZUtJ
+}

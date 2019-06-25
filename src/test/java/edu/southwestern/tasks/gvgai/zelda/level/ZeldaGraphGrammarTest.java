@@ -17,6 +17,7 @@ import org.junit.Test;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.random.RandomNumbers;
@@ -66,6 +67,7 @@ public class ZeldaGraphGrammarTest {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				MiscUtil.waitForReadStringAndEnterKeyPress();
 				fail("Test number : " + i + " failed");
 			}
 		}

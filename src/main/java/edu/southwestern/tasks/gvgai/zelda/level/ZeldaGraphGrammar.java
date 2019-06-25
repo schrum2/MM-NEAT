@@ -149,7 +149,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 	}
 	
 	public static void main(String[] args) {
-		RandomNumbers.reset(345678);
+		RandomNumbers.reset(19);
 		List<ZeldaGrammar> initialList = new LinkedList<>();
 		initialList.add(ZeldaGrammar.START_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);

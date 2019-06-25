@@ -220,6 +220,8 @@ public class DungeonUtil {
 			x = opt.x;
 			y = opt.y;
 			
+			if(getAvailableSpace(opt, levelThere) <= 1) continue;
+			
 			if(x >= 0 && x < levelThere[0].length && y >= 0 && y < levelThere.length) {
 				if(levelThere[y][x] == null) {
 					System.out.println(levelThere[y][x]);
@@ -230,6 +232,22 @@ public class DungeonUtil {
 		
 		}
 		return null;
+	}
+	
+	private static int getAvailableSpace(Point p, String[][] levelThere) {
+		int space = 0;
+		int y = p.y;
+		int x = p.x;
+		List<Point> options = new LinkedList<>(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
+		for(Point option : options) {
+			if(x >= 0 && x < levelThere[0].length && y >= 0 && y < levelThere.length) {
+				if(levelThere[option.y][option.x] == null) {
+					space++;
+				}
+					
+			}
+		}
+		return space;
 	}
 
 	/**

@@ -1,0 +1,34 @@
+graph {
+lzvY[label="s"]
+wGIs[label="e"]
+FNBO[label="sl"]
+glqy[label="e"]
+xQfY[label="k"]
+mDxU[label="e"]
+EtZB[label="l"]
+SLGx[label="e"]
+bNGV[label="e"]
+muca[label="b"]
+sPnH[label="k"]
+BYga[label="e"]
+cVxR[label="l"]
+IkTr[label="e"]
+MPDk[label="t"]
+lzvY -- wGIs
+lzvY -- FNBO
+lzvY -- glqy
+wGIs -- FNBO
+wGIs -- xQfY
+FNBO -- mDxU
+FNBO -- mDxU
+xQfY -- EtZB
+xQfY -- SLGx
+EtZB -- bNGV
+bNGV -- muca
+bNGV -- sPnH
+muca -- sPnH
+muca -- BYga
+sPnH -- cVxR
+cVxR -- IkTr
+IkTr -- MPDk
+}

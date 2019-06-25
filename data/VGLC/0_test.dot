@@ -1,0 +1,39 @@
+graph {
+VFjE[label="s"]
+MDBA[label="e"]
+NbvR[label="sl"]
+prUv[label="e"]
+wlMw[label="k"]
+MfKp[label="e"]
+aiGM[label="e"]
+FaVl[label="l"]
+FcWS[label="e"]
+DBvT[label="k"]
+gbZr[label="b"]
+JawX[label="l"]
+GlJg[label="e"]
+cXtW[label="e"]
+yPCG[label="e"]
+xBkS[label="t"]
+VFjE -- MDBA
+VFjE -- NbvR
+VFjE -- prUv
+MDBA -- wlMw
+MDBA -- NbvR
+NbvR -- MfKp
+wlMw -- aiGM
+wlMw -- FaVl
+NbvR -- MfKp
+aiGM -- FaVl
+FaVl -- FcWS
+FcWS -- DBvT
+FcWS -- gbZr
+DBvT -- JawX
+DBvT -- gbZr
+gbZr -- GlJg
+JawX -- cXtW
+gbZr -- GlJg
+cXtW -- yPCG
+cXtW -- xBkS
+yPCG -- xBkS
+}
