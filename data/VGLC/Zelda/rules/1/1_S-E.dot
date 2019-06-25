@@ -1,11 +1,11 @@
 graph {
-TUKp [label="s, GS"]
-pWZN [label="e, GE"]
-fEKp [label="e"]
-AzMk [label="sl"]
-hybW [label="e"]
-TUKp -- fEKp
-TUKp -- AzMk
-AzMk -- pWZN
-AzMk -- hybW
+ssnC [label="s, GS"]
+VdFP [label="e, GE"]
+FcMv [label="e"]
+EyAV [label="sl"]
+OnMZ [label="e"]
+ssnC -- FcMv
+ssnC -- EyAV
+EyAV -- VdFP
+EyAV -- OnMZ
 }

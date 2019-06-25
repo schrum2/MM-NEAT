@@ -1,9 +1,9 @@
 graph {
-aQNi [label="k, GS"]
-EAMk [label="e, GE"]
-pgMD [label="e"]
-WrQV [label="e"]
-aQNi -- pgMD
-aQNi -- WrQV
-pgMD -- EAMk
+uycO [label="k, GS"]
+Nmac [label="e, GE"]
+egXV [label="e"]
+hoUP [label="e"]
+uycO -- egXV
+uycO -- hoUP
+egXV -- Nmac
 }

@@ -1,5 +1,5 @@
 graph {
-yCer [label="k, GS"]
-VNtz [label="S"]
-yCer -- VNtz
+STWU [label="k, GS"]
+OQVy [label="S"]
+STWU -- OQVy
 }

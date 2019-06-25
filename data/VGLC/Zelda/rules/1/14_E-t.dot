@@ -1,8 +1,8 @@
 graph {
-wBqV [label="e, GS"]
-eMCR [label="t, GE"]
-AzMk [label="sl"]
-hybW [label="e"]
-wBqV -- AzMk
-AzMk -- hybW
+yFRT [label="e, GS"]
+Vslk [label="t, GE"]
+EyAV [label="sl"]
+OnMZ [label="e"]
+yFRT -- EyAV
+EyAV -- OnMZ
 }

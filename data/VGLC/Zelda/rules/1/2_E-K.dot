@@ -1,9 +1,9 @@
 graph {
-qsJG [label="e, GS"]
-Efvi [label="k, GE"]
-ySac [label="b"]
-qRgP [label="e"]
-qsJG -- ySac
-ySac -- Efvi
-ySac -- qRgP
+bfrY [label="e, GS"]
+uajz [label="k, GE"]
+sbvD [label="b"]
+iyPm [label="e"]
+bfrY -- sbvD
+sbvD -- uajz
+sbvD -- iyPm
 }

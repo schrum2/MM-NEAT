@@ -1,9 +1,9 @@
 graph {
-icbi [label="e, GS"]
-LhKn [label="t, GE"]
-JJdo [label="e"]
-OrMB [label="e"]
-icbi -- JJdo
-icbi -- OrMB
-JJdo -- LhKn
+CNWL [label="e, GS"]
+WWNk [label="t, GE"]
+XYie [label="e"]
+jlti [label="e"]
+CNWL -- XYie
+CNWL -- jlti
+XYie -- WWNk
 }

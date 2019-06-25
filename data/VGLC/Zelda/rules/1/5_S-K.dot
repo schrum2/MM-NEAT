@@ -1,9 +1,9 @@
 graph {
-xruK [label="s, GS"]
-FjNZ [label="k, GE"]
-VSMJ [label="e"]
-MXSm [label="e"]
-xruK -- VSMJ
-xruK -- MXSm
-MXSm -- FjNZ
+wAJS [label="s, GS"]
+fhjc [label="k, GE"]
+QaRR [label="e"]
+EOSr [label="e"]
+wAJS -- QaRR
+wAJS -- EOSr
+EOSr -- fhjc
 }

@@ -1,34 +1,34 @@
 graph {
-TUKp[label="s"]
-fEKp[label="e"]
-AzMk[label="sl"]
-pWZN[label="e"]
-hybW[label="e"]
-gkFr[label="e"]
-wdUh[label="l"]
-hkuQ[label="k"]
-qsJG[label="e"]
-Efvi[label="k"]
-ySac[label="b"]
-TEYv[label="l"]
-qRgP[label="e"]
-wBqV[label="e"]
-eMCR[label="t"]
-TUKp -- fEKp
-TUKp -- AzMk
-TUKp -- pWZN
-AzMk -- pWZN
-AzMk -- hybW
-pWZN -- gkFr
-gkFr -- wdUh
-gkFr -- hkuQ
-wdUh -- qsJG
-qsJG -- Efvi
-qsJG -- ySac
-Efvi -- TEYv
-Efvi -- ySac
-ySac -- qRgP
-TEYv -- wBqV
-ySac -- qRgP
-wBqV -- eMCR
+ssnC[label="s"]
+FcMv[label="e"]
+EyAV[label="sl"]
+VdFP[label="e"]
+OnMZ[label="e"]
+XJpJ[label="e"]
+qjou[label="l"]
+anQS[label="k"]
+bfrY[label="e"]
+uajz[label="k"]
+sbvD[label="b"]
+XYCu[label="l"]
+iyPm[label="e"]
+yFRT[label="e"]
+Vslk[label="t"]
+ssnC -- FcMv
+ssnC -- EyAV
+ssnC -- VdFP
+EyAV -- VdFP
+EyAV -- OnMZ
+VdFP -- XJpJ
+XJpJ -- qjou
+XJpJ -- anQS
+qjou -- bfrY
+bfrY -- uajz
+bfrY -- sbvD
+uajz -- XYCu
+uajz -- sbvD
+sbvD -- iyPm
+XYCu -- yFRT
+sbvD -- iyPm
+yFRT -- Vslk
 }

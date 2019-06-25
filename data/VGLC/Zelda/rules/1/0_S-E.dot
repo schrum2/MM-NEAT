@@ -1,12 +1,12 @@
 graph {
-rNkp [label="s, GS"]
-HLQR [label="e, GE"]
-pNmF [label="e"]
-QZkc [label="e"]
-GRjP [label="B"]
-rNkp -- pNmF
-rNkp -- QZkc
-rNkp -- GRjP
-QZkc -- HLQR
-GRjP -- HLQR
+relW [label="s, GS"]
+FGbS [label="e, GE"]
+zMSV [label="e"]
+dsUb [label="e"]
+oJgu [label="B"]
+relW -- zMSV
+relW -- dsUb
+relW -- oJgu
+dsUb -- FGbS
+oJgu -- FGbS
 }

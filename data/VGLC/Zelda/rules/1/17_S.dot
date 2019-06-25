@@ -1,5 +1,5 @@
 graph {
-AzMk [label="sl, GS"]
-hybW [label="e"]
-AzMk -- hybW
+EyAV [label="sl, GS"]
+OnMZ [label="e"]
+EyAV -- OnMZ
 }

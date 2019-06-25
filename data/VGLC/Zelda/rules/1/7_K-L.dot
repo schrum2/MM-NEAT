@@ -1,7 +1,7 @@
 graph {
-Ayxt [label="k, GS"]
-Budo [label="l, GE"]
-pjNd [label="e"]
-Ayxt -- pjNd
-pjNd -- Budo
+tMnO [label="k, GS"]
+OBIJ [label="l, GE"]
+eTgx [label="e"]
+tMnO -- eTgx
+eTgx -- OBIJ
 }

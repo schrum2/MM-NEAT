@@ -61,6 +61,19 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 	}
 
 	/**
+	 * Copying state but chaning location within room
+	 * @param state State to copy
+	 * @param p Point to change to
+	 */
+	public ZeldaState(ZeldaState state, Point p) {
+		this(p.x,p.y, state.numKeys, state.dungeon, state.currentNode.name, state.hasLadder, null, null, new HashMap<>());
+		this.unlocked = this.getNewHashMapString(state.unlocked);
+		this.bombed = this.getNewHashMapString(state.bombed);
+		this.keys = this.getNewHashMapPoint(state.keys);
+		pickupItems();
+	}
+
+	/**
 	 * Function to pickup items (key or ladder) when zelda state is initialized
 	 */
 	private void pickupItems() {

@@ -17,6 +17,13 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import org.apache.commons.math3.distribution.GeometricDistribution;
+
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
@@ -27,6 +34,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
@@ -321,12 +329,11 @@ public class DungeonUtil {
 		for(ZeldaState state : visited) {
 			Dungeon.Node n = state.currentNode;
 			
-			boolean cleanedUp = cleanUpRoom(n, nodes.get(n));
-			if(cleanedUp)
-				return state;
+			Point p = cleanUpRoom(n, nodes.get(n));
+			if(p != null)
+				return new ZeldaState(state, p);
 		}
-		return null;
-		
+		throw new IllegalArgumentException("Somehow it was impossible to make this dungeon beatable given these visited states: " + visited);
 	}
 
 	/**
@@ -335,8 +342,8 @@ public class DungeonUtil {
 	 * @param list List of points of where the player has not been
 	 * @return
 	 */
-	private static boolean cleanUpRoom(Dungeon.Node n, List<Point> list) {
-		boolean cleanedUp = false;
+	private static Point cleanUpRoom(Dungeon.Node n, List<Point> list) {
+		// TODO : One of the points of interest should be one that's been visited
 		List<Point> interest = getPointsOfInterest(n);
 		List<Point> unvisitedI = new LinkedList<>();
 		for(Point unvisited : list) {
@@ -357,7 +364,7 @@ public class DungeonUtil {
 		Point a = null, b = null;
 		
 		if(unvisitedI.size() == 0)
-			return cleanedUp;
+			return null;
 		else {
 			if(interest.size() == 0 && unvisitedI.size() >= 2) {
 				a = unvisitedI.remove((int) RandomNumbers.boundedRandom(0, unvisitedI.size()));
@@ -370,14 +377,19 @@ public class DungeonUtil {
 		
 		List<Point> pointsToFloor = bresenham(a, b);
 		System.out.println("Applying floors to : " + n.name);
+		Point resumePoint = null;
 		for(Point p : pointsToFloor) {
-			cleanedUp = true;
 			System.out.println("\t" + p);
 			Tile t = Tile.findNum(n.level.intLevel.get(p.y).get(p.x));
-			if(t != null && !t.isInterest())
+			if(t != null && !t.isInterest() && !t.equals(Tile.FLOOR)) {
+				if(resumePoint == null) resumePoint = p;
 				n.level.intLevel.get(p.y).set(p.x, Tile.FLOOR.getNum());
+			}
 		}
-		return cleanedUp;
+		if(resumePoint == null) {
+			throw new NullPointerException("Were there no points on the line? " + pointsToFloor + "\nOne should be converted to a floor tile.");
+		}
+		return resumePoint;
 	}
 
 	public static List<Point> bresenhamLow(Point a, Point b){
@@ -606,9 +618,10 @@ public class DungeonUtil {
 	/**
 	 * Generate a buffered image of a dungeon as a rouge-like
 	 * @param dungeon Dungeon to generate an image with
+	 * @param visited 
 	 * @return BufferedImage representing dungeon
 	 */
-	public static BufferedImage imageOfDungeon(Dungeon dungeon) {
+	public static BufferedImage imageOfDungeon(Dungeon dungeon, HashSet<ZeldaState> visited) {
 		int BLOCK_HEIGHT = dungeon.getCurrentlevel().level.intLevel.size() * 16;
 		int BLOCK_WIDTH = dungeon.getCurrentlevel().level.intLevel.get(0).size() * 16;
 		String[][] levelThere = dungeon.getLevelThere();
@@ -631,6 +644,9 @@ public class DungeonUtil {
 		g.setFont(f);
 		
 		HashMap<Dungeon.Node, List<Point>> nodes = null;
+		
+		if(visited != null)
+			setUnvisited(visited);
 	
 		for(int y = 0; y < levelThere.length; y++) {
 			for(int x = 0; x < levelThere[y].length; x++) {
@@ -668,6 +684,13 @@ public class DungeonUtil {
 		return image;
 	}
 
+	private static void setUnvisited(HashSet<ZeldaState> visited) {
+		for(ZeldaState state : visited) {
+			state.currentNode.level.intLevel.get(state.y).set(state.x, Tile.VISITED.getNum());
+		}
+		
+	}
+
 	/**
 	 * Use A* agent to to see if it's playable, if it's not playable change layout of room. Do this over and over
 	 * until dungeon is playable
@@ -681,14 +704,34 @@ public class DungeonUtil {
 		boolean reset = true;
 		while(true) {			
 			ArrayList<GridAction> result = ((AStarSearch<GridAction, ZeldaState>) search).search(state, reset);
-			reset = true; // Usually false so that it doesn't reset after the first one, but left at true otherwise it won't work
+			// Would prefer not to start from scratch when resuming the search after a fix, but currently
+			// we get an infinite loop if this is changed to false.
+			reset = false; 
 			HashSet<ZeldaState> visited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
 			
 			System.out.println(result);
-			if(result == null)
-				makePlayable(visited); // This functions returns a state where the V-UV algo was applied
+			if(result == null) {
+				// Warning: visited tiles will be replaced with X (Could affect keys)
+				//viewDungeon(dungeon, visited);
+				//viewDungeon(dungeon, new HashSet<>());
+				//MiscUtil.waitForReadStringAndEnterKeyPress();
+				// Resume search from new state: but is this actually the state if should be?
+				state = makePlayable(visited); 
+				System.out.println(state);
+			}
 			else break;
 		}
+	}
+
+	private static void viewDungeon(Dungeon dungeon, HashSet<ZeldaState> visited) {
+		BufferedImage image = imageOfDungeon(dungeon, visited);
+		JFrame frame = new JFrame();
+		JPanel panel = new JPanel();
+		JLabel label = new JLabel(new ImageIcon(image));
+		panel.add(label);
+		frame.add(panel);
+		frame.pack();
+		frame.setVisible(true);
 	}
 
 	/**
@@ -748,6 +791,10 @@ public class DungeonUtil {
 		}
 		
 		ZeldaLevelUtil.setDoors(direction, fromNode.level.intLevel, tile);
+	}
+
+	public static BufferedImage imageOfDungeon(Dungeon dungeon) {
+		return imageOfDungeon(dungeon, null);
 	}
 
 }
