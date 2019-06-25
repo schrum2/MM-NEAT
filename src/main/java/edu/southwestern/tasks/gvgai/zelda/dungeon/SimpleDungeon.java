@@ -9,6 +9,7 @@ import java.util.UUID;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 
@@ -23,8 +24,6 @@ public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 		int x = numRooms / 2;
 		int y = x;
 		
-		Random random = new Random();
-		
 		while(levelList.size() > 0) {
 			if(levelList.size() == 1) {
 				Level level = levelList.pop();
@@ -37,8 +36,7 @@ public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 					dungeon[y][x] = levelList.pop();
 			
 			
-			random = new Random();
-			switch(random.nextInt(4)) {
+			switch(RandomNumbers.randomGenerator.nextInt(4)) {
 			case 0: x--; break; // left
 			case 1: x++; break; // right
 			case 2: y--; break; // down

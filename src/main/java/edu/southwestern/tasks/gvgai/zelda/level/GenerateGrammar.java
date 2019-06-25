@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
+import edu.southwestern.util.random.RandomNumbers;
+
 public class GenerateGrammar<T extends Grammar> {
 	private HashMap<T, List<T[]>> rules;
 	
@@ -36,8 +39,7 @@ public class GenerateGrammar<T extends Grammar> {
 	public void generate(T grammar, List<T> generated) {
 		if(grammar.isSymbol()) {
 			List<T[]> replacements = rules.get(grammar);
-			Random r = new Random();
-			T[] rule = replacements.get(r.nextInt(replacements.size()));
+			T[] rule = replacements.get(RandomNumbers.randomGenerator.nextInt(replacements.size()));
 			for(T g : rule)
 				generate(g, generated);
 		} else {

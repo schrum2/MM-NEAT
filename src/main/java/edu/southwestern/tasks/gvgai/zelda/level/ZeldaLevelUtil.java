@@ -38,6 +38,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
 import edu.southwestern.util.datastructures.Triple;
@@ -365,8 +366,7 @@ public class ZeldaLevelUtil {
 	 * @param node Node to add the enemies to
 	 */
 	public static void addRandomEnemy(List<List<Integer>> level) {
-		Random r = new Random();
-		int numEnemies = r.nextInt(3) + 1;
+		int numEnemies = RandomNumbers.randomGenerator.nextInt(3) + 1;
 		for(int i = 0; i < numEnemies; i++) {
 			int x, y;
 			

@@ -9,18 +9,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
-
-import javax.imageio.ImageIO;
-
 import java.util.Queue;
-import java.util.Random;
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
+
 import org.apache.commons.lang.StringUtils;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
@@ -29,6 +26,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
@@ -54,7 +52,7 @@ public class LoadOriginalDungeon {
 	public static void main(String[] args) throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"rougeEnemyHealth:2"});
 		
-		String title = "tloz5_1_flip";
+		String title = "tloz7_1_flip";
 		Dungeon dungeon = loadOriginalDungeon(title, false);
 		BufferedImage image = DungeonUtil.imageOfDungeon(dungeon);
 		File file = new File("data/VGLC/Zelda/" + title + ".png");
@@ -136,10 +134,8 @@ public class LoadOriginalDungeon {
 	 * @param numberToString 
 	 */
 	private static void balanceKeyToDoors(Dungeon dungeon, HashMap<Integer, String> numberToString) {
-		Random r = new Random();
-
 		while(numKeys < numDoors) {
-			int i = r.nextInt(numberToString.size() - 1);
+			int i = RandomNumbers.randomGenerator.nextInt(numberToString.size() - 1);
 			Node currentNode = dungeon.getNode(numberToString.get(i));
 			if(currentNode != null && !haveKey(currentNode)) {
 				if(RANDOM_KEY)

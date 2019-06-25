@@ -1,0 +1,34 @@
+graph {
+RFJW[label="s"]
+nxEa[label="sl"]
+yKVM[label="e"]
+PLsK[label="e"]
+xpnr[label="e"]
+DJbr[label="e"]
+Gmfu[label="l"]
+faxJ[label="k"]
+EDaj[label="e"]
+nlRR[label="b"]
+EVJT[label="k"]
+ssxQ[label="e"]
+yjtC[label="l"]
+SHdL[label="e"]
+DCEp[label="t"]
+RFJW -- nxEa
+RFJW -- yKVM
+RFJW -- PLsK
+nxEa -- PLsK
+nxEa -- xpnr
+PLsK -- DJbr
+DJbr -- Gmfu
+DJbr -- faxJ
+Gmfu -- EDaj
+Gmfu -- faxJ
+EDaj -- nlRR
+EDaj -- EVJT
+nlRR -- EVJT
+nlRR -- ssxQ
+EVJT -- yjtC
+yjtC -- SHdL
+SHdL -- DCEp
+}

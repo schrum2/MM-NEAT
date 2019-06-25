@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -87,8 +88,11 @@ public class DungeonUtil {
 		for(int i = 0; i < doors.length; i++) {
 			Point p = doors[i];
 			Tile t = Tile.findNum(intLevel.get(p.y).get(p.x));
-			if(t.isDoor())
-				points.add(dirs[i]);
+			if(t.isDoor()) {
+				Point dir = dirs[i];
+				intLevel.get(dir.y).set(dir.x, Tile.FLOOR.getNum());
+				points.add(dir);
+			}
 			
 		}
 	}
@@ -343,6 +347,10 @@ public class DungeonUtil {
 	 * @return
 	 */
 	private static Point cleanUpRoom(Dungeon.Node n, List<Point> list) {
+		System.out.println("Unvisited points: ");
+		for(Point p : list) {
+			System.out.println("\t" + p);
+		}
 		// TODO : One of the points of interest should be one that's been visited
 		List<Point> interest = getPointsOfInterest(n);
 		List<Point> unvisitedI = new LinkedList<>();
@@ -428,7 +436,7 @@ public class DungeonUtil {
 		int D = 2 * dx - dy;
 		int x = a.x;
 		
-		for(int y = a.y; y < b.x; y++) {
+		for(int y = a.y; y < b.y; y++) {
 			pointsToFloor.add(new Point(x, y));
 			if (D > 0) {
 				x += xi;
@@ -686,7 +694,9 @@ public class DungeonUtil {
 
 	private static void setUnvisited(HashSet<ZeldaState> visited) {
 		for(ZeldaState state : visited) {
-			state.currentNode.level.intLevel.get(state.y).set(state.x, Tile.VISITED.getNum());
+			Tile t = Tile.findNum(state.currentNode.level.intLevel.get(state.y).get(state.x));
+			if(t.equals(Tile.FLOOR))
+				state.currentNode.level.intLevel.get(state.y).set(state.x, Tile.VISITED.getNum());
 		}
 		
 	}
@@ -706,13 +716,15 @@ public class DungeonUtil {
 			ArrayList<GridAction> result = ((AStarSearch<GridAction, ZeldaState>) search).search(state, reset);
 			// Would prefer not to start from scratch when resuming the search after a fix, but currently
 			// we get an infinite loop if this is changed to false.
-			reset = false; 
+			// Leaving it to false occasionally leads to errors
+			reset = true; 
 			HashSet<ZeldaState> visited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
 			
 			System.out.println(result);
 			if(result == null) {
 				// Warning: visited tiles will be replaced with X (Could affect keys)
-				//viewDungeon(dungeon, visited);
+				setUnvisited(visited);
+//				viewDungeon(dungeon, visited);
 				//viewDungeon(dungeon, new HashSet<>());
 				//MiscUtil.waitForReadStringAndEnterKeyPress();
 				// Resume search from new state: but is this actually the state if should be?
@@ -723,11 +735,11 @@ public class DungeonUtil {
 		}
 	}
 
-	private static void viewDungeon(Dungeon dungeon, HashSet<ZeldaState> visited) {
+	public static void viewDungeon(Dungeon dungeon, HashSet<ZeldaState> visited) {
 		BufferedImage image = imageOfDungeon(dungeon, visited);
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
-		JLabel label = new JLabel(new ImageIcon(image));
+		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(image.getWidth() / 2, image.getHeight() / 2, Image.SCALE_FAST)));
 		panel.add(label);
 		frame.add(panel);
 		frame.pack();
@@ -795,6 +807,10 @@ public class DungeonUtil {
 
 	public static BufferedImage imageOfDungeon(Dungeon dungeon) {
 		return imageOfDungeon(dungeon, null);
+	}
+
+	public static void viewDungeon(Dungeon d) {
+		DungeonUtil.viewDungeon(d, new HashSet<>());
 	}
 
 }

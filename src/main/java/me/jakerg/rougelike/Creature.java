@@ -7,6 +7,8 @@ import java.util.Random;
 
 import asciiPanel.AsciiPanel;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class Creature {
     private World world;
@@ -249,12 +251,11 @@ public class Creature {
             world.remove(this);
             doAction(glyph + " died.");
             if(!isPlayer()) {
-            	Random r = new Random();
-            	if(r.nextDouble() >= 0.1) { // 90 % chance
+            	if(RandomNumbers.randomGenerator.nextDouble() >= 0.1) { // 90 % chance
             		List<Item> items = new LinkedList<>();
             		items.add(new Bomb(this.world, 'b', AsciiPanel.white, x, y, 4, 5, true));
             		items.add(new Health(this.world, (char)3, AsciiPanel.brightRed, x, y));
-            		Item itemToDrop = items.get(r.nextInt(items.size()));
+            		Item itemToDrop = items.get(RandomNumbers.randomGenerator.nextInt(items.size()));
             		this.world.addItem(itemToDrop);
             	}
             }
