@@ -1,9 +1,9 @@
 graph {
-OpfF [label="e, GS"]
-jnsq [label="t, GE"]
-qQER [label="e"]
-CNDR [label="e"]
-OpfF -- qQER
-OpfF -- CNDR
-qQER -- jnsq
+ODKf [label="e, GS"]
+DkQw [label="t, GE"]
+Osly [label="e"]
+zxyx [label="e"]
+ODKf -- Osly
+ODKf -- zxyx
+Osly -- DkQw
 }

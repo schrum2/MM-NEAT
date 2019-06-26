@@ -1,7 +1,7 @@
 graph {
-rfoC [label="s, GS"]
-zGeH [label="k, GE"]
-NobW [label="e"]
-rfoC -- NobW
-NobW -- zGeH
+HMyG [label="s, GS"]
+RTAj [label="k, GE"]
+Xauq [label="e"]
+HMyG -- Xauq
+Xauq -- RTAj
 }

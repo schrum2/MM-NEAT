@@ -1,7 +1,7 @@
 graph {
-lpYu [label="e, GS"]
-FVGs [label="l, GE"]
-lXmD [label="k"]
-lpYu -- lXmD
-lXmD -- FVGs
+pEbT [label="e, GS"]
+hLEw [label="l, GE"]
+YuNC [label="k"]
+pEbT -- YuNC
+YuNC -- hLEw
 }

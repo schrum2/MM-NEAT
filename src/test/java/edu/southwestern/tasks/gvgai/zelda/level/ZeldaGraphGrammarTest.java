@@ -27,9 +27,12 @@ public class ZeldaGraphGrammarTest {
 
 	List<ZeldaGrammar> initialList;
 	ZeldaGraphGrammar grammar;
+	LevelLoader loader;
 	
 	@Before
 	public void setUp() {
+		Parameters.initializeParameterCollections(new String[] {"zeldaGANUsesOriginalEncoding:false"});
+		
 		initialList = new LinkedList<>();
 		initialList.add(ZeldaGrammar.START_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
@@ -43,7 +46,9 @@ public class ZeldaGraphGrammarTest {
 		
 		grammar = new ZeldaGraphGrammar();
 		
-		Parameters.initializeParameterCollections(new String[] {"zeldaGANUsesOriginalEncoding:false"});
+		loader = new GANLoader();
+		
+		RandomNumbers.reset();
 	}
 	
 	@Test
@@ -55,9 +60,11 @@ public class ZeldaGraphGrammarTest {
 			Dungeon d = null;
 			try {
 				grammar.applyRules(graph);
-				d = DungeonUtil.convertToDungeon(graph, new GANLoader());
+				d = DungeonUtil.convertToDungeon(graph, loader);
 				DungeonUtil.makeDungeonPlayable(d);				
-
+				BufferedImage image = DungeonUtil.imageOfDungeon(d);
+				File file = new File("data/VGLC/Zelda/dungeon_"+ i +"_test.png");
+				ImageIO.write(image, "png", file);
 			} catch (Exception e) {
 				e.printStackTrace();
 				DungeonUtil.viewDungeon(d);
@@ -70,6 +77,9 @@ public class ZeldaGraphGrammarTest {
 				MiscUtil.waitForReadStringAndEnterKeyPress();
 				fail("Test number : " + i + " failed");
 			}
+		    System.out.print("\033[H\033[2J");  
+		    System.out.flush();
+			RandomNumbers.reset();
 		}
 	}
 

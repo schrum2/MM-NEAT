@@ -1,9 +1,9 @@
 graph {
-gIhu [label="e, GS"]
-sXqq [label="k, GE"]
-WsJf [label="b"]
-XTXP [label="e"]
-gIhu -- WsJf
-WsJf -- sXqq
-WsJf -- XTXP
+ADMZ [label="e, GS"]
+prMH [label="k, GE"]
+IeBA [label="b"]
+PMZo [label="e"]
+ADMZ -- IeBA
+IeBA -- prMH
+IeBA -- PMZo
 }

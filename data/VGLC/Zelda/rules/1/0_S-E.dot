@@ -1,12 +1,12 @@
 graph {
-gBaJ [label="s, GS"]
-wRUh [label="e, GE"]
-CeEz [label="e"]
-oDrE [label="e"]
-IZaI [label="B"]
-gBaJ -- CeEz
-gBaJ -- oDrE
-gBaJ -- IZaI
-oDrE -- wRUh
-IZaI -- wRUh
+RebE [label="s, GS"]
+unNt [label="e, GE"]
+aRIN [label="e"]
+JpVt [label="e"]
+Dfin [label="B"]
+RebE -- aRIN
+RebE -- JpVt
+RebE -- Dfin
+JpVt -- unNt
+Dfin -- unNt
 }

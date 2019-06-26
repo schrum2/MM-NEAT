@@ -1,0 +1,39 @@
+graph {
+cjxD[label="s"]
+fFbu[label="e"]
+MEqp[label="e"]
+Qggg[label="sl"]
+PVLc[label="e"]
+meck[label="e"]
+aLBZ[label="l"]
+zFfl[label="k"]
+gAUR[label="e"]
+CBOo[label="b"]
+LycB[label="k"]
+PAZp[label="e"]
+Klpl[label="l"]
+KJCK[label="e"]
+aEZu[label="t"]
+ZHsX[label="e"]
+DfFa[label="e"]
+cjxD -- fFbu
+cjxD -- MEqp
+cjxD -- Qggg
+MEqp -- PVLc
+MEqp -- Qggg
+Qggg -- meck
+PVLc -- aLBZ
+PVLc -- zFfl
+Qggg -- meck
+aLBZ -- gAUR
+gAUR -- CBOo
+gAUR -- LycB
+CBOo -- LycB
+CBOo -- PAZp
+LycB -- Klpl
+Klpl -- KJCK
+KJCK -- aEZu
+KJCK -- ZHsX
+KJCK -- DfFa
+aEZu -- ZHsX
+}

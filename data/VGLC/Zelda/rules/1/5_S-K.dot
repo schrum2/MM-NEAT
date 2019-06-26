@@ -1,9 +1,9 @@
 graph {
-jhmv [label="s, GS"]
-BKWQ [label="k, GE"]
-dFqv [label="e"]
-EdGt [label="e"]
-jhmv -- dFqv
-jhmv -- EdGt
-EdGt -- BKWQ
+ycJv [label="s, GS"]
+JObh [label="k, GE"]
+QRlI [label="e"]
+twSa [label="e"]
+ycJv -- QRlI
+ycJv -- twSa
+twSa -- JObh
 }

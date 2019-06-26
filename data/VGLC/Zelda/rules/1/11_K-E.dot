@@ -1,9 +1,9 @@
 graph {
-DQRB [label="k, GS"]
-yjiu [label="e, GE"]
-itku [label="e"]
-xtxP [label="e"]
-DQRB -- itku
-DQRB -- xtxP
-itku -- yjiu
+fGSt [label="k, GS"]
+YJok [label="e, GE"]
+WOCq [label="e"]
+SDdn [label="e"]
+fGSt -- WOCq
+fGSt -- SDdn
+WOCq -- YJok
 }

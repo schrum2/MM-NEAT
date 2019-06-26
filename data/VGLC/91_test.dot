@@ -1,0 +1,35 @@
+graph {
+uRiJ[label="s"]
+qGsJ[label="e"]
+GtjW[label="e"]
+bQYX[label="sl"]
+qBki[label="k"]
+fCJR[label="e"]
+dkKw[label="l"]
+SYZL[label="e"]
+RUYN[label="e"]
+aOXP[label="k"]
+OeBW[label="b"]
+KeeP[label="l"]
+dwus[label="e"]
+JQxq[label="e"]
+OECh[label="t"]
+uRiJ -- qGsJ
+uRiJ -- GtjW
+uRiJ -- bQYX
+qGsJ -- qBki
+qGsJ -- bQYX
+bQYX -- fCJR
+qBki -- dkKw
+qBki -- SYZL
+bQYX -- fCJR
+dkKw -- RUYN
+RUYN -- aOXP
+RUYN -- OeBW
+aOXP -- KeeP
+aOXP -- OeBW
+OeBW -- dwus
+KeeP -- JQxq
+OeBW -- dwus
+JQxq -- OECh
+}

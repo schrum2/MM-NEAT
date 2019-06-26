@@ -90,7 +90,7 @@ public class DungeonUtil {
 			Tile t = Tile.findNum(intLevel.get(p.y).get(p.x));
 			if(t.isDoor()) {
 				Point dir = dirs[i];
-				intLevel.get(dir.y).set(dir.x, Tile.FLOOR.getNum());
+//				intLevel.get(dir.y).set(dir.x, Tile.FLOOR.getNum());
 				points.add(dir);
 			}
 			
@@ -277,6 +277,7 @@ public class DungeonUtil {
 		Level level = loadOneLevel(loader);
 		switch(n.getData().getLevelType()) {
 		case "k":
+			System.out.println("Putting key for: " + n.getID());
 			ZeldaLevelUtil.placeRandomKey(level.intLevel);
 			break;
 		case "n":
@@ -365,10 +366,10 @@ public class DungeonUtil {
 	 * @return
 	 */
 	private static Point cleanUpRoom(Dungeon.Node n, List<Point> list) {
-		System.out.println("Unvisited points: ");
-		for(Point p : list) {
-			System.out.println("\t" + p);
-		}
+//		System.out.println("Unvisited points: ");
+//		for(Point p : list) {
+//			System.out.println("\t" + p);
+//		}
 		// TODO : One of the points of interest should be one that's been visited
 		List<Point> interest = getPointsOfInterest(n);
 		List<Point> unvisitedI = new LinkedList<>();
@@ -378,14 +379,14 @@ public class DungeonUtil {
 				interest.remove(unvisited);
 			}
 		}
-		System.out.println(n.name + " unvisited intersts: ");
-		for(Point p : unvisitedI) {
-			System.out.println("\t" + p);
-		}
-		System.out.println(n.name + " visited intersts: ");
-		for(Point p : interest) {
-			System.out.println("\t" + p);
-		}
+//		System.out.println(n.name + " unvisited intersts: ");
+//		for(Point p : unvisitedI) {
+//			System.out.println("\t" + p);
+//		}
+//		System.out.println(n.name + " visited intersts: ");
+//		for(Point p : interest) {
+//			System.out.println("\t" + p);
+//		}
 		
 		Point a = null, b = null;
 		
@@ -402,10 +403,10 @@ public class DungeonUtil {
 		}
 		
 		List<Point> pointsToFloor = bresenham(a, b);
-		System.out.println("Applying floors to : " + n.name);
+//		System.out.println("Applying floors to : " + n.name);
 		Point resumePoint = null;
 		for(Point p : pointsToFloor) {
-			System.out.println("\t" + p);
+//			System.out.println("\t" + p);
 			Tile t = Tile.findNum(n.level.intLevel.get(p.y).get(p.x));
 			if(t != null && !t.isInterest() && !t.equals(Tile.FLOOR)) {
 				if(resumePoint == null) resumePoint = p;
@@ -485,10 +486,12 @@ public class DungeonUtil {
 		List<Point> points = new LinkedList<>();
 		addExitPoints(points, intLevel);
 		addInterestPoints(points, intLevel);
-		System.out.println(n.name + " point of interest: ");
-		for(Point p : points) {
-			System.out.println("\t" + p);
-		}
+		if(n.grammar.equals(ZeldaGrammar.START))
+			points.add(new Point(5, 5));
+//		System.out.println(n.name + " point of interest: ");
+//		for(Point p : points) {
+//			System.out.println("\t" + p);
+//		}
 		return points;
 	}
 

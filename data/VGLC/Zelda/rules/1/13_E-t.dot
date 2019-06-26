@@ -1,7 +1,7 @@
 graph {
-yKvz [label="e, GS"]
-ofPo [label="t, GE"]
-qHzw [label="e"]
-yKvz -- qHzw
-qHzw -- ofPo
+ZPSn [label="e, GS"]
+hPmu [label="t, GE"]
+iXxe [label="e"]
+ZPSn -- iXxe
+iXxe -- hPmu
 }

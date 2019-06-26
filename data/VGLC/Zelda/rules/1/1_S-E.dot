@@ -1,11 +1,11 @@
 graph {
-kArH [label="s, GS"]
-AAqY [label="e, GE"]
-BUNB [label="e"]
-PVvz [label="sl"]
-teGJ [label="e"]
-kArH -- BUNB
-kArH -- PVvz
-PVvz -- AAqY
-PVvz -- teGJ
+QObz [label="s, GS"]
+xxaH [label="e, GE"]
+nzmz [label="e"]
+KVpi [label="sl"]
+saAx [label="e"]
+QObz -- nzmz
+QObz -- KVpi
+KVpi -- xxaH
+KVpi -- saAx
 }

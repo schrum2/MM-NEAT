@@ -228,8 +228,9 @@ public class ZeldaLevelUtil {
 			x = (int) RandomNumbers.boundedRandom(0, level.get(0).size());
 			y = (int) RandomNumbers.boundedRandom(0, level.size());
 	    }
-	    while (!Tile.findNum(level.get(y).get(x)).playerPassable());
+	    while (!Tile.findNum(level.get(y).get(x)).equals(Tile.FLOOR));
 		
+		System.out.println("Put key at " + x + ", " + y);
 		level.get(y).set(x, Tile.KEY.getNum()); 
 	}
 
@@ -258,7 +259,7 @@ public class ZeldaLevelUtil {
 				int dy = (direction.equals("UP")) ? 1 : -1;
 				for(int x = 7; x <= 8; x++) {
 					level.get(y).set(x, tile);
-					if(!Tile.findNum(level.get(x + dy).get(x)).playerPassable())
+					if(!Tile.findNum(level.get(y + dy).get(x)).playerPassable())
 						level.get(y + dy).set(x, Tile.FLOOR.getNum());
 				}
 			} else if (direction.equals("LEFT") || direction.equals("RIGHT") ) { // Add doors at left or right

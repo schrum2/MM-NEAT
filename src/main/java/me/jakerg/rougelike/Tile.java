@@ -69,7 +69,7 @@ public enum Tile {
 	}
 	
 	public boolean playerPassable() {
-		return this.isGround() && !this.isBlock();
+		return this.isGround() && !this.isBlock() || this == KEY || this == TRIFORCE;
 	}
 	
 	public boolean isStatePassable() {

@@ -149,7 +149,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 	}
 	
 	public static void main(String[] args) {
-		RandomNumbers.reset(11);
+		RandomNumbers.reset(14);
 		List<ZeldaGrammar> initialList = new LinkedList<>();
 		initialList.add(ZeldaGrammar.START_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
@@ -201,6 +201,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			
 			RougelikeApp.startDungeon(d, true);
 		} catch (Exception e) {
+			DungeonUtil.viewDungeon(d);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
