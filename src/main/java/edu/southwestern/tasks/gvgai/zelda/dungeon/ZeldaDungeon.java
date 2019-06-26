@@ -141,7 +141,7 @@ public abstract class ZeldaDungeon<T> {
 			
 			if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level); // If the door is now locked place a random key in the level
 		}
-		ZeldaLevelUtil.setDoors(direction, level, tile);
+		ZeldaLevelUtil.setDoors(direction, node, tile);
 	}
 	
 	/**

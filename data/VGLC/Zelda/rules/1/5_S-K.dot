@@ -1,9 +1,9 @@
 graph {
-pAZR [label="s, GS"]
-SfYr [label="k, GE"]
-fTRL [label="e"]
-wHGQ [label="e"]
-pAZR -- fTRL
-pAZR -- wHGQ
-wHGQ -- SfYr
+xQUk [label="s, GS"]
+xpHF [label="k, GE"]
+eIIE [label="e"]
+GSIY [label="e"]
+xQUk -- eIIE
+xQUk -- GSIY
+GSIY -- xpHF
 }

@@ -1,12 +1,12 @@
 graph {
-QbFZ [label="s, GS"]
-BQBn [label="e, GE"]
-kfLJ [label="e"]
-LnxF [label="e"]
-NXJS [label="B"]
-QbFZ -- kfLJ
-QbFZ -- LnxF
-QbFZ -- NXJS
-LnxF -- BQBn
-NXJS -- BQBn
+Hbcb [label="s, GS"]
+vfHU [label="e, GE"]
+NgYq [label="e"]
+JkTn [label="e"]
+ptWB [label="B"]
+Hbcb -- NgYq
+Hbcb -- JkTn
+Hbcb -- ptWB
+JkTn -- vfHU
+ptWB -- vfHU
 }

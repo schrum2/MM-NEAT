@@ -1,0 +1,38 @@
+graph {
+xhHh[label="s"]
+kxkE[label="e"]
+yXem[label="e"]
+vqFr[label="sl"]
+yffa[label="k"]
+lQdB[label="e"]
+jPiC[label="l"]
+ZNgK[label="e"]
+jsSy[label="e"]
+cFwY[label="k"]
+ZwNI[label="b"]
+QzQY[label="l"]
+SVaI[label="e"]
+noNK[label="e"]
+aExj[label="t"]
+fRzt[label="e"]
+xhHh -- kxkE
+xhHh -- yXem
+xhHh -- vqFr
+kxkE -- yffa
+kxkE -- vqFr
+vqFr -- lQdB
+yffa -- jPiC
+yffa -- ZNgK
+vqFr -- lQdB
+jPiC -- jsSy
+jsSy -- cFwY
+jsSy -- ZwNI
+cFwY -- ZwNI
+cFwY -- QzQY
+ZwNI -- SVaI
+ZwNI -- SVaI
+QzQY -- noNK
+noNK -- aExj
+noNK -- fRzt
+aExj -- fRzt
+}

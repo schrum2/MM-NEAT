@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Random;
 
 import javax.swing.BoxLayout;
@@ -40,12 +41,14 @@ import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction.DIRECTION;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
+import me.jakerg.rougelike.Move;
 import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
 
@@ -234,7 +237,8 @@ public class ZeldaLevelUtil {
 		level.get(y).set(x, Tile.KEY.getNum()); 
 	}
 
-	public static void setDoors(String direction, List<List<Integer>> level, int tile) {
+	public static void setDoors(String direction, Dungeon.Node fromNode, int tile) {
+		List<List<Integer>> level = fromNode.level.intLevel;
 		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
 			if(direction == "UP" || direction == "DOWN") { // Add doors at top or bottom
 				int y = (direction == "UP") ? 1 : 14; // Set y based on side 1 if up 14 if bottom
@@ -272,6 +276,62 @@ public class ZeldaLevelUtil {
 				}
 			}
 		}
+		
+		Tile t = Tile.findNum(tile);
+		if(t != null && t.equals(Tile.SOFT_LOCK_DOOR) && 
+				fromNode.grammar != null && fromNode.grammar.equals(ZeldaGrammar.ENEMY))
+			handleSoftLock(direction, level);
+	}
+
+	private static void handleSoftLock(String direction, List<List<Integer>> level) {
+		int x, y;
+		switch(direction) {
+		case "UP":
+			x = 7;
+			y = 2;
+			break;
+		case "DOWN":
+			x = 8;
+			y = 8;
+			break;
+		case "LEFT":
+			x = 2;
+			y = 5;
+			break;
+		case "RIGHT":
+			x = 13;
+			y = 5;
+			break;
+		default:
+			return;
+		}
+		
+		List<Point> points = getVisitedPoints(x, y, level);
+		int r = RandomNumbers.randomGenerator.nextInt(2) + 1;
+		for(int i = 0; i < r; i++) {
+			Point rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
+			level.get(rP.y).set(rP.x, 2);
+		}
+	}
+
+	private static List<Point> getVisitedPoints(int x, int y, List<List<Integer>> level) {
+		List<Point> visited = new LinkedList<>();
+		Queue<Point> queue = new LinkedList<>();
+		queue.add(new Point(x, y));
+		while(!queue.isEmpty()) {
+			Point p = queue.poll();
+			visited.add(p);
+			for(Move m : Move.values()) {
+				Point d = m.getPoint();
+				int dx = p.x + d.x;
+				int dy = p.y + d.y;
+				Point c = new Point(dx, dy);
+				Tile t = Tile.findNum(level.get(dy).get(dx));
+				if(t.playerPassable() && !visited.contains(c))
+					queue.add(c);
+			}
+		}
+		return visited;
 	}
 
 	/**

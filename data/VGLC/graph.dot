@@ -1,39 +1,39 @@
 graph {
-bouf[label="s"]
-PLPV[label="e"]
-GXnp[label="sl"]
-xCmt[label="e"]
-dWKA[label="e"]
-astF[label="e"]
-WkkM[label="l"]
-SrXp[label="k"]
-pFdW[label="e"]
-Dwlk[label="k"]
-MKup[label="b"]
-rTKK[label="l"]
-uKbm[label="e"]
-dCsj[label="e"]
-cSSk[label="t"]
-wEhV[label="e"]
-wAjZ[label="e"]
-bouf -- PLPV
-bouf -- GXnp
-bouf -- xCmt
-GXnp -- xCmt
-GXnp -- dWKA
-xCmt -- astF
-astF -- WkkM
-astF -- SrXp
-WkkM -- pFdW
-pFdW -- Dwlk
-pFdW -- MKup
-Dwlk -- rTKK
-Dwlk -- MKup
-MKup -- uKbm
-rTKK -- dCsj
-MKup -- uKbm
-dCsj -- cSSk
-dCsj -- wEhV
-dCsj -- wAjZ
-cSSk -- wEhV
+npIj[label="s"]
+xqdE[label="e"]
+pVJh[label="sl"]
+LHxu[label="e"]
+uCMm[label="e"]
+bOrC[label="e"]
+tXWQ[label="l"]
+ekzu[label="k"]
+lgyq[label="e"]
+PJNQ[label="k"]
+zLVF[label="b"]
+ahcm[label="l"]
+aJWP[label="e"]
+nxNJ[label="e"]
+nghq[label="t"]
+ejso[label="e"]
+fgcO[label="e"]
+npIj -- xqdE
+npIj -- pVJh
+npIj -- LHxu
+pVJh -- LHxu
+pVJh -- uCMm
+LHxu -- bOrC
+bOrC -- tXWQ
+bOrC -- ekzu
+tXWQ -- lgyq
+lgyq -- PJNQ
+lgyq -- zLVF
+PJNQ -- ahcm
+PJNQ -- zLVF
+zLVF -- aJWP
+ahcm -- nxNJ
+zLVF -- aJWP
+nxNJ -- nghq
+nxNJ -- ejso
+nxNJ -- fgcO
+nghq -- ejso
 }

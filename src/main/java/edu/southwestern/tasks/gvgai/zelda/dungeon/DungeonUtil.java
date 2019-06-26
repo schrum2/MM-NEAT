@@ -61,7 +61,7 @@ public class DungeonUtil {
 					options.addAll(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
 					Point p = DungeonUtil.pointToCheck(dungeon, x, y, options);
 					while(p != null) {
-						System.out.println("Checking point");
+//						System.out.println("Checking point");
 						Dungeon.Node n = dungeon.getNodeAt(x, y);
 						Dungeon.Node adj = dungeon.getNodeAt(p.x, p.y);
 						DungeonUtil.setAdjacencies(n, new Point(x, y), p, adj.name, Tile.DOOR.getNum());
@@ -108,7 +108,7 @@ public class DungeonUtil {
 				Tile t = Tile.findNum(intLevel.get(y).get(x));
 				if(t != null && t.isInterest()) {
 					points.add(new Point(x, y));
-					System.out.println("Added to interests : " + t);
+//					System.out.println("Added to interests : " + t);
 				}
 					
 			}
@@ -126,7 +126,7 @@ public class DungeonUtil {
 		case "l":
 			return Tile.LOCKED_DOOR.getNum();
 		case "b":
-			System.out.println("Placing hidden wall");
+//			System.out.println("Placing hidden wall");
 			return Tile.HIDDEN.getNum();
 		case "sl":
 			return Tile.SOFT_LOCK_DOOR.getNum();
@@ -153,14 +153,13 @@ public class DungeonUtil {
 				if(p != null) {
 					Point legal = getNextLegalPoint(p, levelThere);
 					if(legal != null) {
-						System.out.println("Placing from backlog: " + node.getID() + " at (" + legal.x + ", " + legal.y + ")");
+//						System.out.println("Placing from backlog: " + node.getID() + " at (" + legal.x + ", " + legal.y + ")");
 						levelThere[legal.y][legal.x] = node.getID();
-						Level newLevel = loadLevel(node, dungeon, loader);
+						int tile = getTile(node);
+						Level newLevel = loadLevel(node, dungeon, loader, Tile.findNum(tile));
 						Dungeon.Node newNode = dungeon.newNode(node.getID(), newLevel);
 						newNode.grammar = (ZeldaGrammar) node.getData();
 						Dungeon.Node dN = dungeon.getNode(adjNode.getID());
-						
-						int tile = getTile(node);
 						
 						DungeonUtil.setAdjacencies(dN, p, legal, newNode.name, tile);
 						DungeonUtil.setAdjacencies(newNode, legal, p, dN.name, tile);
@@ -224,7 +223,7 @@ public class DungeonUtil {
 			
 			if(x >= 0 && x < levelThere[0].length && y >= 0 && y < levelThere.length) {
 				if(levelThere[y][x] == null) {
-					System.out.println(levelThere[y][x]);
+//					System.out.println(levelThere[y][x]);
 					return new Point(x, y);
 				}
 					
@@ -273,18 +272,19 @@ public class DungeonUtil {
 	 * @return Modified level based off of n
 	 * @throws FileNotFoundException
 	 */
-	private static Level loadLevel(Graph<? extends Grammar>.Node n, Dungeon dungeon, LevelLoader loader) throws FileNotFoundException {
+	private static Level loadLevel(Graph<? extends Grammar>.Node n, Dungeon dungeon, LevelLoader loader, Tile tile) throws FileNotFoundException {
 		Level level = loadOneLevel(loader);
 		switch(n.getData().getLevelType()) {
 		case "k":
-			System.out.println("Putting key for: " + n.getID());
+//			System.out.println("Putting key for: " + n.getID());
 			ZeldaLevelUtil.placeRandomKey(level.intLevel);
 			break;
 		case "n":
 		case "l":
 			break;
 		case "e":
-			ZeldaLevelUtil.addRandomEnemy(level.intLevel);
+			if(tile == null || (tile != null && !tile.equals(Tile.SOFT_LOCK_DOOR)))
+				ZeldaLevelUtil.addRandomEnemy(level.intLevel);
 			break;
 		case "t":
 			level = level.placeTriforce(dungeon);
@@ -555,8 +555,9 @@ public class DungeonUtil {
 
 		Graph<? extends Grammar>.Node n = graph.root();
 		
-		Level l = loadLevel(n, dungeon, loader);
+		Level l = loadLevel(n, dungeon, loader, null);
 		Dungeon.Node dNode = dungeon.newNode(n.getID(), l);
+		dNode.grammar = (ZeldaGrammar) n.getData();
 		levelThere[y][x] = dNode.name;
 		dungeon.setCurrentLevel(dNode.name);
 		
@@ -568,7 +569,6 @@ public class DungeonUtil {
 		while(!queue.isEmpty()) {
 			Graph<? extends Grammar>.Node node = queue.poll();
 			Dungeon.Node dN = dungeon.getNode(node.getID());
-			dN.grammar = (ZeldaGrammar) node.getData();
 			visited.add(node);
 			graph.addNode((Graph.Node) node);
 			Point p = getCoords(levelThere, node.getID());
@@ -587,9 +587,10 @@ public class DungeonUtil {
 					if(legal != null) {
 						System.out.println("Placing " + adjNode.getID() + " at (" + legal.x + ", " + legal.y + ") " + adjNode.getData().getLabelName());
 						levelThere[legal.y][legal.x] = adjNode.getID();
-						Level newLevel = loadLevel(adjNode, dungeon, loader);
-						Dungeon.Node newNode = dungeon.newNode(adjNode.getID(), newLevel);
 						int tile = getTile(node);
+						Level newLevel = loadLevel(adjNode, dungeon, loader, Tile.findNum(tile));
+						Dungeon.Node newNode = dungeon.newNode(adjNode.getID(), newLevel);
+						newNode.grammar = (ZeldaGrammar) adjNode.getData();
 						DungeonUtil.setAdjacencies(dN, p, legal, newNode.name, tile);
 						DungeonUtil.setAdjacencies(newNode, legal, p, dN.name, tile);
 						queue.add(adjNode);
@@ -606,8 +607,8 @@ public class DungeonUtil {
 					DungeonUtil.setAdjacencies(dN, p, to, newNode.name, tile);
 					DungeonUtil.setAdjacencies(newNode, to, p, dN.name, tile);
 				}
-				print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
-				System.out.println();
+//				print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
+//				System.out.println();
 			}
 
 		}
@@ -632,9 +633,9 @@ public class DungeonUtil {
 				if(values.t1 == cN.name)
 					hasAdj = true;
 			
-			System.out.println("hasAdj " + hasAdj);
+//			System.out.println("hasAdj " + hasAdj);
 			if(!hasAdj && !cN.hasLock() && cN.grammar.isCyclable()) {
-				System.out.println("Returning point : " + new Point(cX, cY));
+//				System.out.println("Returning point : " + new Point(cX, cY));
 				return new Point(cX, cY);
 			}
 	
@@ -680,7 +681,6 @@ public class DungeonUtil {
 		for(int y = 0; y < levelThere.length; y++) {
 			for(int x = 0; x < levelThere[y].length; x++) {
 				Dungeon.Node n = dungeon.getNodeAt(x, y);
-				System.out.println("(" + x + ", " + y + ")");
 				int oX = x * BLOCK_WIDTH;
 				int oY = y * BLOCK_HEIGHT;
 				if(n != null) {
@@ -823,7 +823,7 @@ public class DungeonUtil {
 			throw new Exception ("DIRECTION AINT HEREE");
 		}
 		
-		ZeldaLevelUtil.setDoors(direction, fromNode.level.intLevel, tile);
+		ZeldaLevelUtil.setDoors(direction, fromNode, tile);
 	}
 
 	public static BufferedImage imageOfDungeon(Dungeon dungeon) {

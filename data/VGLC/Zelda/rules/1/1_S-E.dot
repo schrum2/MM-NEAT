@@ -1,11 +1,11 @@
 graph {
-bouf [label="s, GS"]
-xCmt [label="e, GE"]
-PLPV [label="e"]
-GXnp [label="sl"]
-dWKA [label="e"]
-bouf -- PLPV
-bouf -- GXnp
-GXnp -- xCmt
-GXnp -- dWKA
+npIj [label="s, GS"]
+LHxu [label="e, GE"]
+xqdE [label="e"]
+pVJh [label="sl"]
+uCMm [label="e"]
+npIj -- xqdE
+npIj -- pVJh
+pVJh -- LHxu
+pVJh -- uCMm
 }

@@ -201,9 +201,10 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			
 			RougelikeApp.startDungeon(d, true);
 		} catch (Exception e) {
+			e.printStackTrace();
 			DungeonUtil.viewDungeon(d);
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
 		}
 		
 		

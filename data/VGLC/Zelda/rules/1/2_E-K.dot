@@ -1,9 +1,9 @@
 graph {
-pFdW [label="e, GS"]
-Dwlk [label="k, GE"]
-MKup [label="b"]
-uKbm [label="e"]
-pFdW -- MKup
-MKup -- Dwlk
-MKup -- uKbm
+lgyq [label="e, GS"]
+PJNQ [label="k, GE"]
+zLVF [label="b"]
+aJWP [label="e"]
+lgyq -- zLVF
+zLVF -- PJNQ
+zLVF -- aJWP
 }

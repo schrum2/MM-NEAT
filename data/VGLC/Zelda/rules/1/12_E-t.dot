@@ -1,9 +1,9 @@
 graph {
-dCsj [label="e, GS"]
-cSSk [label="t, GE"]
-wEhV [label="e"]
-wAjZ [label="e"]
-dCsj -- wEhV
-dCsj -- wAjZ
-wEhV -- cSSk
+nxNJ [label="e, GS"]
+nghq [label="t, GE"]
+ejso [label="e"]
+fgcO [label="e"]
+nxNJ -- ejso
+nxNJ -- fgcO
+ejso -- nghq
 }

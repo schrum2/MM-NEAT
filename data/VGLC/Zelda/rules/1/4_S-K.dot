@@ -1,11 +1,11 @@
 graph {
-MXHt [label="s, GS"]
-kRKU [label="k, GE"]
-NsfY [label="e"]
-LZfR [label="e"]
-FYvA [label="e"]
-MXHt -- NsfY
-MXHt -- LZfR
-MXHt -- FYvA
-NsfY -- kRKU
+kIxT [label="s, GS"]
+Vrzy [label="k, GE"]
+DTbT [label="e"]
+cJpk [label="e"]
+btdY [label="e"]
+kIxT -- DTbT
+kIxT -- cJpk
+kIxT -- btdY
+DTbT -- Vrzy
 }

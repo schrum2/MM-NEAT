@@ -1,0 +1,35 @@
+graph {
+GEZN[label="s"]
+trka[label="e"]
+EPSI[label="e"]
+oAVh[label="sl"]
+IFpB[label="k"]
+aJJT[label="e"]
+AasO[label="l"]
+dZaz[label="e"]
+eqNq[label="e"]
+nBRj[label="k"]
+qWce[label="b"]
+ybHd[label="l"]
+XfPw[label="e"]
+qAJF[label="e"]
+wsnn[label="t"]
+GEZN -- trka
+GEZN -- EPSI
+GEZN -- oAVh
+EPSI -- IFpB
+EPSI -- oAVh
+oAVh -- aJJT
+IFpB -- AasO
+IFpB -- dZaz
+oAVh -- aJJT
+AasO -- eqNq
+eqNq -- nBRj
+eqNq -- qWce
+nBRj -- ybHd
+nBRj -- qWce
+qWce -- XfPw
+ybHd -- qAJF
+qWce -- XfPw
+qAJF -- wsnn
+}

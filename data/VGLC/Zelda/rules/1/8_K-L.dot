@@ -1,7 +1,7 @@
 graph {
-PLws [label="e, GS"]
-GVMN [label="l, GE"]
-DclF [label="k"]
-PLws -- DclF
-DclF -- GVMN
+FkQy [label="e, GS"]
+yCPE [label="l, GE"]
+ANgz [label="k"]
+FkQy -- ANgz
+ANgz -- yCPE
 }

@@ -1,7 +1,7 @@
 graph {
-VaWa [label="e, GS"]
-tqpL [label="t, GE"]
-caVX [label="e"]
-VaWa -- caVX
-caVX -- tqpL
+dbPk [label="e, GS"]
+rEGb [label="t, GE"]
+UutV [label="e"]
+dbPk -- UutV
+UutV -- rEGb
 }

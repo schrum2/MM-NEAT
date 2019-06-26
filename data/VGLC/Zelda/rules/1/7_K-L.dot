@@ -1,7 +1,7 @@
 graph {
-GkeI [label="k, GS"]
-CUBW [label="l, GE"]
-QMdB [label="e"]
-GkeI -- QMdB
-QMdB -- CUBW
+qMtO [label="k, GS"]
+VlFJ [label="l, GE"]
+AJxc [label="e"]
+qMtO -- AJxc
+AJxc -- VlFJ
 }

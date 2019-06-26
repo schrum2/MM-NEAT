@@ -1,9 +1,9 @@
 graph {
-OFid [label="k, GS"]
-XZBX [label="e, GE"]
-bdLz [label="e"]
-VPsC [label="e"]
-OFid -- bdLz
-OFid -- VPsC
-bdLz -- XZBX
+mNhn [label="k, GS"]
+ACXj [label="e, GE"]
+FWpM [label="e"]
+HteR [label="e"]
+mNhn -- FWpM
+mNhn -- HteR
+FWpM -- ACXj
 }
