@@ -260,11 +260,12 @@ public class ZeldaVGLCUtil {
 		case 'D':
 			return 1;
 		case 'S':
-			return 4;	// Door
+			return 1;	// Door
 		case '#':
-			return -6; // Ladder block
+			return 0; // Ladder block
 		case 'U':
-			return Tile.MOVABLE_BLOCK.getNum();
+			return 1;
+//			return Tile.MOVABLE_BLOCK.getNum();
 		default:
 			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
 		}
