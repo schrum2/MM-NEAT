@@ -1,5 +1,5 @@
 graph {
-KMhu [label="k, GS"]
-aEMd [label="S"]
-KMhu -- aEMd
+rNbF [label="k, GS"]
+KmLt [label="S"]
+rNbF -- KmLt
 }

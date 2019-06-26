@@ -20,6 +20,7 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
+import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.random.RandomNumbers;
@@ -184,12 +185,12 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Parameters.initializeParameterCollections(new String[] {"zeldaGANUsesOriginalEncoding:false"});
+		Parameters.initializeParameterCollections(new String[] {"zeldaGANUsesOriginalEncoding:false", "zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader"});
 		
 		
 		Dungeon d = null;
 		try {
-			d = DungeonUtil.convertToDungeon(graph, new GANLoader());
+			d = DungeonUtil.convertToDungeon(graph, (LevelLoader) ClassCreation.createObject("zeldaLevelLoader"));
 			DungeonUtil.makeDungeonPlayable(d);
 			BufferedImage image = DungeonUtil.imageOfDungeon(d);
 			File file = new File("data/VGLC/Zelda/dungeon.png");

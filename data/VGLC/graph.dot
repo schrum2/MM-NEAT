@@ -1,39 +1,39 @@
 graph {
-QObz[label="s"]
-nzmz[label="e"]
-KVpi[label="sl"]
-xxaH[label="e"]
-saAx[label="e"]
-QxrT[label="e"]
-GvIv[label="l"]
-cUhE[label="k"]
-ADMZ[label="e"]
-prMH[label="k"]
-IeBA[label="b"]
-TkPS[label="l"]
-PMZo[label="e"]
-ODKf[label="e"]
-DkQw[label="t"]
-Osly[label="e"]
-zxyx[label="e"]
-QObz -- nzmz
-QObz -- KVpi
-QObz -- xxaH
-KVpi -- xxaH
-KVpi -- saAx
-xxaH -- QxrT
-QxrT -- GvIv
-QxrT -- cUhE
-GvIv -- ADMZ
-ADMZ -- prMH
-ADMZ -- IeBA
-prMH -- TkPS
-prMH -- IeBA
-IeBA -- PMZo
-TkPS -- ODKf
-IeBA -- PMZo
-ODKf -- DkQw
-ODKf -- Osly
-ODKf -- zxyx
-DkQw -- Osly
+maxI[label="s"]
+aWxV[label="e"]
+EHMe[label="sl"]
+qvcW[label="e"]
+mHok[label="e"]
+qkXE[label="e"]
+QqtH[label="l"]
+GULj[label="k"]
+XQtH[label="e"]
+HpAB[label="k"]
+ZDpM[label="b"]
+uhdU[label="l"]
+QQug[label="e"]
+bqKF[label="e"]
+BgSU[label="t"]
+nkzw[label="e"]
+vNTn[label="e"]
+maxI -- aWxV
+maxI -- EHMe
+maxI -- qvcW
+EHMe -- qvcW
+EHMe -- mHok
+qvcW -- qkXE
+qkXE -- QqtH
+qkXE -- GULj
+QqtH -- XQtH
+XQtH -- HpAB
+XQtH -- ZDpM
+HpAB -- uhdU
+HpAB -- ZDpM
+ZDpM -- QQug
+uhdU -- bqKF
+ZDpM -- QQug
+bqKF -- BgSU
+bqKF -- nkzw
+bqKF -- vNTn
+BgSU -- nkzw
 }

@@ -1,5 +1,5 @@
 graph {
-KVpi [label="sl, GS"]
-saAx [label="e"]
-KVpi -- saAx
+EHMe [label="sl, GS"]
+mHok [label="e"]
+EHMe -- mHok
 }

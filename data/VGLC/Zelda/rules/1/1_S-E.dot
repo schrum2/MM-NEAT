@@ -1,11 +1,11 @@
 graph {
-QObz [label="s, GS"]
-xxaH [label="e, GE"]
-nzmz [label="e"]
-KVpi [label="sl"]
-saAx [label="e"]
-QObz -- nzmz
-QObz -- KVpi
-KVpi -- xxaH
-KVpi -- saAx
+maxI [label="s, GS"]
+qvcW [label="e, GE"]
+aWxV [label="e"]
+EHMe [label="sl"]
+mHok [label="e"]
+maxI -- aWxV
+maxI -- EHMe
+EHMe -- qvcW
+EHMe -- mHok
 }

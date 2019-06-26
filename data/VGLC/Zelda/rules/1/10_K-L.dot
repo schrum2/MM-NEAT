@@ -1,6 +1,6 @@
 graph {
-QxrT [label="e, GS"]
-GvIv [label="l, GE"]
-cUhE [label="k"]
-QxrT -- cUhE
+qkXE [label="e, GS"]
+QqtH [label="l, GE"]
+GULj [label="k"]
+qkXE -- GULj
 }

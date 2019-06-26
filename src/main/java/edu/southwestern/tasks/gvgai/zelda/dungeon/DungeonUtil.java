@@ -744,7 +744,7 @@ public class DungeonUtil {
 			System.out.println(result);
 			if(result == null) {
 				// Warning: visited tiles will be replaced with X (Could affect keys)
-				setUnvisited(visited);
+//				setUnvisited(visited);
 //				viewDungeon(dungeon, visited);
 				//viewDungeon(dungeon, new HashSet<>());
 				//MiscUtil.waitForReadStringAndEnterKeyPress();

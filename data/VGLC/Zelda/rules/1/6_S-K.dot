@@ -1,7 +1,7 @@
 graph {
-HMyG [label="s, GS"]
-RTAj [label="k, GE"]
-Xauq [label="e"]
-HMyG -- Xauq
-Xauq -- RTAj
+EQSQ [label="s, GS"]
+zCWL [label="k, GE"]
+ubpw [label="e"]
+EQSQ -- ubpw
+ubpw -- zCWL
 }

@@ -1,9 +1,9 @@
 graph {
-ycJv [label="s, GS"]
-JObh [label="k, GE"]
-QRlI [label="e"]
-twSa [label="e"]
-ycJv -- QRlI
-ycJv -- twSa
-twSa -- JObh
+UNMn [label="s, GS"]
+VLbv [label="k, GE"]
+HHeA [label="e"]
+zJeA [label="e"]
+UNMn -- HHeA
+UNMn -- zJeA
+zJeA -- VLbv
 }

@@ -1,7 +1,7 @@
 graph {
-ZPSn [label="e, GS"]
-hPmu [label="t, GE"]
-iXxe [label="e"]
-ZPSn -- iXxe
-iXxe -- hPmu
+EJWg [label="e, GS"]
+Bljm [label="t, GE"]
+jAaA [label="e"]
+EJWg -- jAaA
+jAaA -- Bljm
 }

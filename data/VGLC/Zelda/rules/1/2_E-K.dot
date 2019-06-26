@@ -1,9 +1,9 @@
 graph {
-ADMZ [label="e, GS"]
-prMH [label="k, GE"]
-IeBA [label="b"]
-PMZo [label="e"]
-ADMZ -- IeBA
-IeBA -- prMH
-IeBA -- PMZo
+XQtH [label="e, GS"]
+HpAB [label="k, GE"]
+ZDpM [label="b"]
+QQug [label="e"]
+XQtH -- ZDpM
+ZDpM -- HpAB
+ZDpM -- QQug
 }
