@@ -1,9 +1,9 @@
 graph {
-UNMn [label="s, GS"]
-VLbv [label="k, GE"]
-HHeA [label="e"]
-zJeA [label="e"]
-UNMn -- HHeA
-UNMn -- zJeA
-zJeA -- VLbv
+pAZR [label="s, GS"]
+SfYr [label="k, GE"]
+fTRL [label="e"]
+wHGQ [label="e"]
+pAZR -- fTRL
+pAZR -- wHGQ
+wHGQ -- SfYr
 }

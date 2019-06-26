@@ -16,6 +16,7 @@ import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 
 import edu.southwestern.parameters.Parameters;
@@ -52,7 +53,7 @@ public class LoadOriginalDungeon {
 	public static void main(String[] args) throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"rougeEnemyHealth:2"});
 		
-		String title = "tloz7_1_flip";
+		String title = "tloz8_1_flip";
 		Dungeon dungeon = loadOriginalDungeon(title, false);
 		BufferedImage image = DungeonUtil.imageOfDungeon(dungeon);
 		File file = new File("data/VGLC/Zelda/" + title + ".png");
@@ -114,6 +115,9 @@ public class LoadOriginalDungeon {
 		HashMap<Integer, String> numberToString = new HashMap<>(); // Map the numbers to strings (node name)
 		System.out.println("Loading .txt levels");
 		loadLevels(dungeon, numberToString, levelPath); // Load the levels (txt files) to dungeon
+		for(Entry<Integer, String> entry : numberToString.entrySet()) {
+			System.out.println(entry.getKey() + " --- " + entry.getValue());
+		}
 		System.out.println("Loading levels from graph");
 		loadGraph(dungeon, numberToString, graphFile); // Load the graph representation to dungeon
 		System.out.println("Generating 2D map");
@@ -123,7 +127,7 @@ public class LoadOriginalDungeon {
 		balanceKeyToDoors(dungeon, numberToString);
 		for(Entry<Integer, String> set : numberToString.entrySet()) {
 			String n = set.getValue();
-			System.out.println(set.getKey() + " -> " + n.substring(n.length() - 5, n.length() - 1));
+			System.out.println(set.getKey() + " -> " + n.substring(n.length() - 4, n.length()));
 		}
 		return dungeon;
 	}
@@ -183,6 +187,11 @@ public class LoadOriginalDungeon {
 		queue.add(node);
 		while(!directional.isEmpty()) {
 			String n = queue.poll();
+			
+			if(n == null)
+				throw new Exception("Top of queue was null");
+			
+			
 			System.out.println("Got from queue: " + n);
 			Point p = getCoords(n, levelThere);
 			if(p == null) continue;
@@ -200,31 +209,37 @@ public class LoadOriginalDungeon {
 					String whereTo = pair.t2;
 					
 					if(visited.contains(whereTo) || queue.contains(whereTo)) continue;
+					queue.add(whereTo);
+					
 					System.out.println(n + " - " + direction + " - " + whereTo);
 					tY = y;
 					tX = x;
 					switch(direction) {
 					case "UP":
+					case "U":
 						tY--;
 						break;
 					case "DOWN":
+					case "D":
 						tY++;
 						break;
 					case "RIGHT":
+					case "R":
 						tX++;
 						break;
 					case "LEFT":
+					case "L":
 						tX--;
 						break;
 					default:
 						continue;
 					}
 					
-					
+
 					levelThere[tY][tX] = whereTo;
-					queue.add(whereTo);
 				}
 				directional.remove(n);
+				System.out.println(directional);
 			}
 
 		}
@@ -402,25 +417,10 @@ public class LoadOriginalDungeon {
 			break;
 		}
 		
-		switch(direction) {
-		case "L":
-			direction = "LEFT";
-			break;
-		case "R":
-			direction = "RIGHT";
-			break;
-		case "U":
-			direction = "UP";
-			break;
-		case "D":
-			direction = "DOWN";
-			break;
-		}
-		
 		if(!directional.containsKey(nodeName)) // Add the node's list for creating the 2D map
 			directional.put(nodeName, new Stack<Pair<String,String>>());
-		
-		directional.get(nodeName).push(new Pair<String, String>(direction, whereTo));
+		if(!direction.startsWith("Across"))
+			directional.get(nodeName).push(new Pair<String, String>(direction, whereTo));
 	}
 
 	/**
@@ -584,7 +584,7 @@ public class LoadOriginalDungeon {
 		for(File entry : levelFolder.listFiles()) {
 			String fileName = entry.getName();
 			int number = Integer.valueOf(fileName.substring(0, fileName.indexOf('.')));
-			numberToString.put(number, UUID.randomUUID().toString());
+			numberToString.put(number, RandomStringUtils.randomAlphabetic(4));
 			loadOneLevel(entry, dungeon, numberToString.get(number));
 		}
 	}

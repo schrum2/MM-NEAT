@@ -1,39 +1,39 @@
 graph {
-ndTz[label="s"]
-MOpG[label="e"]
-GeJw[label="e"]
-yftw[label="sl"]
-FoDw[label="k"]
-EYYo[label="e"]
-cgSx[label="e"]
-ujRq[label="l"]
-qqZN[label="e"]
-hqyL[label="b"]
-utka[label="k"]
-roCL[label="e"]
-KUXc[label="l"]
-uLqk[label="e"]
-MTPs[label="t"]
-vrZE[label="e"]
-fYup[label="e"]
-ndTz -- MOpG
-ndTz -- GeJw
-ndTz -- yftw
-GeJw -- FoDw
-GeJw -- yftw
-yftw -- EYYo
-FoDw -- cgSx
-FoDw -- ujRq
-yftw -- EYYo
-ujRq -- qqZN
-qqZN -- hqyL
-qqZN -- utka
-hqyL -- utka
-hqyL -- roCL
-utka -- KUXc
-KUXc -- uLqk
-uLqk -- MTPs
-uLqk -- vrZE
-uLqk -- fYup
-MTPs -- vrZE
+LBbY[label="s"]
+DdMA[label="e"]
+hdvc[label="e"]
+Lghw[label="sl"]
+PAZy[label="k"]
+zrBN[label="e"]
+Qkpt[label="e"]
+QpvO[label="l"]
+ZSWv[label="e"]
+UyOI[label="b"]
+HJlt[label="k"]
+VyGh[label="e"]
+vwgk[label="l"]
+pUFR[label="e"]
+tEjH[label="t"]
+FiZc[label="e"]
+uexz[label="e"]
+LBbY -- DdMA
+LBbY -- hdvc
+LBbY -- Lghw
+hdvc -- PAZy
+hdvc -- Lghw
+Lghw -- zrBN
+PAZy -- Qkpt
+PAZy -- QpvO
+Lghw -- zrBN
+QpvO -- ZSWv
+ZSWv -- UyOI
+ZSWv -- HJlt
+UyOI -- HJlt
+UyOI -- VyGh
+HJlt -- vwgk
+vwgk -- pUFR
+pUFR -- tEjH
+pUFR -- FiZc
+pUFR -- uexz
+tEjH -- FiZc
 }

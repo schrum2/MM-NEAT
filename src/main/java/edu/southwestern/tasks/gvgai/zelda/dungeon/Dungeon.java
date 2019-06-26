@@ -215,10 +215,6 @@ public class Dungeon {
 		for(int y = 0; y < levelThere.length; y++) {
 			for(int x = 0; x < levelThere[y].length; x++) {
 				String n = levelThere[y][x];
-				if(n != null) {
-					n = n.substring(n.length() - 5, n.length() - 1);
-					
-				}
 				System.out.print(n + " ");
 			}
 			System.out.println();

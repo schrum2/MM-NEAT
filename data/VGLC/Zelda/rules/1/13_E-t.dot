@@ -1,7 +1,7 @@
 graph {
-EJWg [label="e, GS"]
-Bljm [label="t, GE"]
-jAaA [label="e"]
-EJWg -- jAaA
-jAaA -- Bljm
+VaWa [label="e, GS"]
+tqpL [label="t, GE"]
+caVX [label="e"]
+VaWa -- caVX
+caVX -- tqpL
 }

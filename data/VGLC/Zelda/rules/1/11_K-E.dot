@@ -1,9 +1,9 @@
 graph {
-EDof [label="k, GS"]
-cojk [label="e, GE"]
-fmhi [label="e"]
-ETgj [label="e"]
-EDof -- fmhi
-EDof -- ETgj
-fmhi -- cojk
+OFid [label="k, GS"]
+XZBX [label="e, GE"]
+bdLz [label="e"]
+VPsC [label="e"]
+OFid -- bdLz
+OFid -- VPsC
+bdLz -- XZBX
 }

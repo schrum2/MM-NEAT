@@ -1,12 +1,12 @@
 graph {
-gRij [label="s, GS"]
-ForN [label="e, GE"]
-oylZ [label="e"]
-tfzj [label="e"]
-oWZi [label="B"]
-gRij -- oylZ
-gRij -- tfzj
-gRij -- oWZi
-tfzj -- ForN
-oWZi -- ForN
+QbFZ [label="s, GS"]
+BQBn [label="e, GE"]
+kfLJ [label="e"]
+LnxF [label="e"]
+NXJS [label="B"]
+QbFZ -- kfLJ
+QbFZ -- LnxF
+QbFZ -- NXJS
+LnxF -- BQBn
+NXJS -- BQBn
 }

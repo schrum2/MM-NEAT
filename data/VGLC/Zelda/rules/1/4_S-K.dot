@@ -1,11 +1,11 @@
 graph {
-EvIZ [label="s, GS"]
-eXKS [label="k, GE"]
-yQVg [label="e"]
-Wbpr [label="e"]
-Rnps [label="e"]
-EvIZ -- yQVg
-EvIZ -- Wbpr
-EvIZ -- Rnps
-yQVg -- eXKS
+MXHt [label="s, GS"]
+kRKU [label="k, GE"]
+NsfY [label="e"]
+LZfR [label="e"]
+FYvA [label="e"]
+MXHt -- NsfY
+MXHt -- LZfR
+MXHt -- FYvA
+NsfY -- kRKU
 }

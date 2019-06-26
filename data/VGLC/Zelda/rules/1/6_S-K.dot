@@ -1,7 +1,7 @@
 graph {
-EQSQ [label="s, GS"]
-zCWL [label="k, GE"]
-ubpw [label="e"]
-EQSQ -- ubpw
-ubpw -- zCWL
+vBtz [label="s, GS"]
+BYti [label="k, GE"]
+RCDz [label="e"]
+vBtz -- RCDz
+RCDz -- BYti
 }
