@@ -1,5 +1,11 @@
 graph {
+<<<<<<< HEAD
 DUku [label="sl, GS"]
 uWlI [label="e"]
 DUku -- uWlI
+=======
+gkPn [label="sl, GS"]
+rQYV [label="e"]
+gkPn -- rQYV
+>>>>>>> dev_zelda
 }

@@ -1,5 +1,11 @@
 graph {
+<<<<<<< HEAD
 avSx [label="k, GS"]
 MPQF [label="S"]
 avSx -- MPQF
+=======
+VPYL [label="k, GS"]
+hUWs [label="S"]
+VPYL -- hUWs
+>>>>>>> dev_zelda
 }
