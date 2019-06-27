@@ -308,10 +308,7 @@ public class ZeldaLevelUtil {
 		
 		List<Point> points = getVisitedPoints(x, y, level);
 		int r = RandomNumbers.randomGenerator.nextInt(3) + 1;
-		for(Point p : points) {
-			level.get(p.y).set(p.x, Tile.VISITED.getNum());
-		}
-		for(int i = 0; i < r; i++) {
+		for(int i = 0; i < r && points.size() > 0; i++) {
 			Point rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
 			level.get(rP.y).set(rP.x, 2);
 		}
