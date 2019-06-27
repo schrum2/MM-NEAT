@@ -1,7 +1,7 @@
 graph {
-ETiF [label="e, GS"]
-mtiu [label="k, GE"]
-vhYD [label="e"]
-ETiF -- vhYD
-vhYD -- mtiu
+crWd [label="e, GS"]
+BZGH [label="k, GE"]
+wolJ [label="e"]
+crWd -- wolJ
+wolJ -- BZGH
 }

@@ -1,7 +1,7 @@
 graph {
-Uein [label="e, GS"]
-sSRx [label="t, GE"]
-Ltjb [label="e"]
-Uein -- Ltjb
-Ltjb -- sSRx
+jTzY [label="e, GS"]
+bYlf [label="t, GE"]
+aDPO [label="e"]
+jTzY -- aDPO
+aDPO -- bYlf
 }

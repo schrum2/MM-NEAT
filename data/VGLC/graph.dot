@@ -1,36 +1,34 @@
 graph {
-fOmu[label="s"]
-JOMF[label="e"]
-gkPn[label="sl"]
-aCrn[label="e"]
-rQYV[label="e"]
-qDph[label="e"]
-STip[label="l"]
-IeHQ[label="k"]
-ETiF[label="e"]
-mtiu[label="k"]
-vhYD[label="e"]
-qDQG[label="l"]
-OvUc[label="e"]
-qhvE[label="t"]
-kMsp[label="e"]
-lZuB[label="e"]
-fOmu -- JOMF
-fOmu -- gkPn
-fOmu -- aCrn
-gkPn -- aCrn
-gkPn -- rQYV
-aCrn -- qDph
-qDph -- STip
-qDph -- IeHQ
-STip -- ETiF
-ETiF -- mtiu
-ETiF -- vhYD
-mtiu -- qDQG
-mtiu -- vhYD
-qDQG -- OvUc
-OvUc -- qhvE
-OvUc -- kMsp
-OvUc -- lZuB
-qhvE -- kMsp
+aEcc[label="s"]
+NMKk[label="e"]
+DUku[label="sl"]
+OIrI[label="e"]
+uWlI[label="e"]
+uJOL[label="k"]
+FceA[label="l"]
+elqI[label="e"]
+crWd[label="e"]
+BZGH[label="k"]
+wolJ[label="e"]
+lvyG[label="l"]
+jTzY[label="e"]
+bYlf[label="t"]
+aDPO[label="e"]
+aEcc -- NMKk
+aEcc -- DUku
+aEcc -- OIrI
+DUku -- OIrI
+DUku -- uWlI
+OIrI -- uJOL
+uJOL -- FceA
+uJOL -- elqI
+FceA -- crWd
+crWd -- BZGH
+crWd -- wolJ
+BZGH -- lvyG
+BZGH -- wolJ
+lvyG -- jTzY
+jTzY -- bYlf
+jTzY -- aDPO
+bYlf -- aDPO
 }

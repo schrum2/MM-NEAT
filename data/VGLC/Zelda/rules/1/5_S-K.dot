@@ -1,9 +1,9 @@
 graph {
-FxMY [label="s, GS"]
-ZETh [label="k, GE"]
-rgaT [label="e"]
-vIKD [label="e"]
-FxMY -- rgaT
-FxMY -- vIKD
-rgaT -- ZETh
+xvsF [label="s, GS"]
+OYsA [label="k, GE"]
+DYsR [label="e"]
+eRhz [label="e"]
+xvsF -- DYsR
+xvsF -- eRhz
+DYsR -- OYsA
 }

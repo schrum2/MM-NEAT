@@ -1,7 +1,7 @@
 graph {
-eZRp [label="k, GS"]
-vBqs [label="l, GE"]
-DdkW [label="e"]
-eZRp -- DdkW
-DdkW -- vBqs
+soEu [label="k, GS"]
+PeyO [label="l, GE"]
+rzPg [label="e"]
+soEu -- rzPg
+rzPg -- PeyO
 }

@@ -1,7 +1,7 @@
 graph {
-EDpU [label="e, GS"]
-IJOj [label="l, GE"]
-RNkJ [label="k"]
-EDpU -- RNkJ
-RNkJ -- IJOj
+YPOs [label="e, GS"]
+BWdV [label="l, GE"]
+ZUbX [label="k"]
+YPOs -- ZUbX
+ZUbX -- BWdV
 }

@@ -667,7 +667,7 @@ public class DungeonUtil {
 			if (levelThere[p.y][p.x] == null) {
 				levelThere[p.y][p.x] = next.getID();
 				
-				Level l = loadLevel(next, dungeon, loader, null);
+				Level l = loadLevel(next, dungeon, loader, (parent != null) ? Tile.findNum(getTile(parent)) : null);
 				Dungeon.Node dNode = dungeon.newNode(next.getID(), l);
 				dNode.grammar = (ZeldaGrammar) next.getData();
 				
@@ -898,7 +898,7 @@ public class DungeonUtil {
 
 	/**
 	 * Set the adjacencies, the exit and starting points
-	 * @param fromNode Node where the ajancencie originates
+	 * @param fromNode Node where the ajancency originates
 	 * @param from exit Point
 	 * @param to starting Point
 	 * @param whereTo Name of the room the starting point is going to
