@@ -1,6 +1,6 @@
 graph {
-qNGb [label="e, GS"]
-EHXw [label="l, GE"]
-ZCpu [label="k"]
-qNGb -- ZCpu
+qDph [label="e, GS"]
+STip [label="l, GE"]
+IeHQ [label="k"]
+qDph -- IeHQ
 }

@@ -1,7 +1,7 @@
 graph {
-tNQW [label="e, GS"]
-vsqP [label="k, GE"]
-gjqu [label="e"]
-tNQW -- gjqu
-gjqu -- vsqP
+ETiF [label="e, GS"]
+mtiu [label="k, GE"]
+vhYD [label="e"]
+ETiF -- vhYD
+vhYD -- mtiu
 }

@@ -1,7 +1,7 @@
 graph {
-ORQM [label="k, GS"]
-rfbZ [label="l, GE"]
-nIoF [label="e"]
-ORQM -- nIoF
-nIoF -- rfbZ
+eZRp [label="k, GS"]
+vBqs [label="l, GE"]
+DdkW [label="e"]
+eZRp -- DdkW
+DdkW -- vBqs
 }

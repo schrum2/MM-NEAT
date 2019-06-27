@@ -1,11 +1,11 @@
 graph {
-KbIl [label="s, GS"]
-qoAt [label="e, GE"]
-wAhC [label="e"]
-BGEw [label="sl"]
-AYRY [label="e"]
-KbIl -- wAhC
-KbIl -- BGEw
-BGEw -- qoAt
-BGEw -- AYRY
+fOmu [label="s, GS"]
+aCrn [label="e, GE"]
+JOMF [label="e"]
+gkPn [label="sl"]
+rQYV [label="e"]
+fOmu -- JOMF
+fOmu -- gkPn
+gkPn -- aCrn
+gkPn -- rQYV
 }

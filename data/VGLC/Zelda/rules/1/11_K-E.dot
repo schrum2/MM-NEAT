@@ -1,9 +1,9 @@
 graph {
-UvHk [label="k, GS"]
-jbvj [label="e, GE"]
-gvzX [label="e"]
-geYs [label="e"]
-UvHk -- gvzX
-UvHk -- geYs
-geYs -- jbvj
+LRkz [label="k, GS"]
+KFQa [label="e, GE"]
+iupl [label="e"]
+iTzt [label="e"]
+LRkz -- iupl
+LRkz -- iTzt
+iTzt -- KFQa
 }

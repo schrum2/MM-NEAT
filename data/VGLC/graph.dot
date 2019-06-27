@@ -1,36 +1,36 @@
 graph {
-KbIl[label="s"]
-wAhC[label="e"]
-BGEw[label="sl"]
-qoAt[label="e"]
-AYRY[label="e"]
-qNGb[label="e"]
-EHXw[label="l"]
-ZCpu[label="k"]
-tNQW[label="e"]
-vsqP[label="k"]
-gjqu[label="e"]
-mzzy[label="l"]
-OWoh[label="e"]
-DJHg[label="t"]
-QKBn[label="e"]
-Urmu[label="e"]
-KbIl -- wAhC
-KbIl -- BGEw
-KbIl -- qoAt
-BGEw -- qoAt
-BGEw -- AYRY
-qoAt -- qNGb
-qNGb -- EHXw
-qNGb -- ZCpu
-EHXw -- tNQW
-tNQW -- vsqP
-tNQW -- gjqu
-vsqP -- mzzy
-vsqP -- gjqu
-mzzy -- OWoh
-OWoh -- DJHg
-OWoh -- QKBn
-OWoh -- Urmu
-DJHg -- QKBn
+fOmu[label="s"]
+JOMF[label="e"]
+gkPn[label="sl"]
+aCrn[label="e"]
+rQYV[label="e"]
+qDph[label="e"]
+STip[label="l"]
+IeHQ[label="k"]
+ETiF[label="e"]
+mtiu[label="k"]
+vhYD[label="e"]
+qDQG[label="l"]
+OvUc[label="e"]
+qhvE[label="t"]
+kMsp[label="e"]
+lZuB[label="e"]
+fOmu -- JOMF
+fOmu -- gkPn
+fOmu -- aCrn
+gkPn -- aCrn
+gkPn -- rQYV
+aCrn -- qDph
+qDph -- STip
+qDph -- IeHQ
+STip -- ETiF
+ETiF -- mtiu
+ETiF -- vhYD
+mtiu -- qDQG
+mtiu -- vhYD
+qDQG -- OvUc
+OvUc -- qhvE
+OvUc -- kMsp
+OvUc -- lZuB
+qhvE -- kMsp
 }

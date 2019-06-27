@@ -1,7 +1,7 @@
 graph {
-KUxg [label="e, GS"]
-Xwfg [label="t, GE"]
-vIEF [label="e"]
-KUxg -- vIEF
-vIEF -- Xwfg
+Uein [label="e, GS"]
+sSRx [label="t, GE"]
+Ltjb [label="e"]
+Uein -- Ltjb
+Ltjb -- sSRx
 }

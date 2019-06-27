@@ -1,6 +1,6 @@
 graph {
-RhKi [label="k, GS"]
-LgAb [label="l, GE"]
-TAAw [label="e"]
-RhKi -- TAAw
+UAbk [label="k, GS"]
+rauF [label="l, GE"]
+aSoB [label="e"]
+UAbk -- aSoB
 }

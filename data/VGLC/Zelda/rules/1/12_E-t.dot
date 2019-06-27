@@ -1,9 +1,9 @@
 graph {
-OWoh [label="e, GS"]
-DJHg [label="t, GE"]
-QKBn [label="e"]
-Urmu [label="e"]
-OWoh -- QKBn
-OWoh -- Urmu
-QKBn -- DJHg
+OvUc [label="e, GS"]
+qhvE [label="t, GE"]
+kMsp [label="e"]
+lZuB [label="e"]
+OvUc -- kMsp
+OvUc -- lZuB
+kMsp -- qhvE
 }
