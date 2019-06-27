@@ -1,12 +1,12 @@
 graph {
-cHLu [label="s, GS"]
-xjKJ [label="e, GE"]
-pJYp [label="e"]
-PsVM [label="e"]
-YKKV [label="B"]
-cHLu -- pJYp
-cHLu -- PsVM
-cHLu -- YKKV
-PsVM -- xjKJ
-YKKV -- xjKJ
+bAHU [label="s, GS"]
+GREa [label="e, GE"]
+Dckd [label="e"]
+yNpZ [label="e"]
+xUkg [label="B"]
+bAHU -- Dckd
+bAHU -- yNpZ
+bAHU -- xUkg
+yNpZ -- GREa
+xUkg -- GREa
 }

@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -294,6 +295,9 @@ public class DungeonUtil {
 		case "t":
 			level = level.placeTriforce(dungeon);
 			dungeon.setGoal(n.getID());
+			break;
+		case "s":
+			dungeon.setCurrentLevel(n.getID());
 			break;
 		}
 		return level;
@@ -623,83 +627,95 @@ public class DungeonUtil {
 	
 	public static <T extends Grammar> Dungeon recursiveGenerateDungeon(Graph<T> graph, LevelLoader loader) throws Exception {
 		Dungeon dungeon = new Dungeon();
-		List<Graph<T>.Node> visited = new LinkedList<>();
-		Stack<Graph<T>.Node> stack = new Stack<>();
-		Stack<String> recentlyPlaced = new Stack<>();
+		Deque<Pair<Graph<T>.Node, Graph<T>.Node>> pending = getGraphNodes(graph);
+		Stack<Graph<T>.Node> placed = new Stack<>();
+		HashMap<String, Point> locations = new HashMap<>();
 		
 		String[][] levelThere = new String[100][100];
-		int x = (levelThere.length - 1) / 2;
-		int y = (levelThere.length - 1) / 2;
-		
-		Graph<T>.Node n = graph.root();
-		stack.push(n);
 		
 		// catch boolean for error check
-		recursiveGenerateDungeon(graph, dungeon, visited, stack, recentlyPlaced, levelThere, loader, new Point(x, y), null);
-		
+		recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations);
 		dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
 		
 		return dungeon;
 	}
-
-	private static <T extends Grammar> boolean recursiveGenerateDungeon(Graph<T> graph, Dungeon dungeon, List<Graph<T>.Node> visited,
-			Stack<Graph<T>.Node> stack, Stack<String> recentlyPlaced, String[][] levelThere, LevelLoader loader, Point toPlace, Dungeon.Node parent) throws Exception {
+	
+	
+	private static <T extends Grammar> boolean recursiveGenerateDungeon(Graph<T> graph, LevelLoader loader, Dungeon dungeon,
+			Deque<Pair<Graph<T>.Node, Graph<T>.Node>> pending, Stack<Graph<T>.Node> placed, String[][] levelThere,
+			HashMap<String, Point> locations) throws Exception {
 		
-		if(stack.empty()) return true;
+		if(pending.isEmpty()) return true;
 		
-		if(levelThere[toPlace.y][toPlace.x] != null)
-			return false;
+		Pair<Graph<T>.Node, Graph<T>.Node> pair = pending.pop();
+		System.out.println(pending);
+		Graph<T>.Node next = pair.t1;
+		System.out.println("Got " + next.getID() + " from list (" + next + ")");
+		Graph<T>.Node parent = pair.t2;
+		Point location = null;
+		if(parent == null)
+			location = new Point(levelThere.length / 2, levelThere[0].length / 2);
+		else
+			location = locations.get(parent.getID());
 		
-		Graph<T>.Node n = stack.pop();
-		System.out.println("got : " + n.getID() + " from the stack");
-		visited.add(n);
-		
-		Level l = loadLevel(n, dungeon, loader, null);
-		Dungeon.Node dNode = dungeon.newNode(n.getID(), l);
-		dNode.grammar = (ZeldaGrammar) n.getData();
-		
-		levelThere[toPlace.y][toPlace.x] = dNode.name;
-
-		if(dNode.grammar.equals(ZeldaGrammar.START))
-			dungeon.setCurrentLevel(dNode.name);
-		
-		if(parent != null) {
-			int tile = getTile(parent);
-			Point previousPoint = getCoords(levelThere, parent.name);
-			DungeonUtil.setAdjacencies(parent, previousPoint, toPlace, dNode.name, tile);
-			DungeonUtil.setAdjacencies(dNode, toPlace, previousPoint, parent.name, tile);
-			
-		}
-		recentlyPlaced.push(dNode.name);
-		
-		
-		List<Graph<T>.Node> adjs = new LinkedList<>(n.adjacencies());
-		if(adjs.isEmpty())
-			System.out.println(n.getID() + " has no adjacencies");
-		
-		while(!adjs.isEmpty()) {
-			Graph<T>.Node adj = adjs.remove(RandomNumbers.randomGenerator.nextInt(adjs.size()));
-			if(!visited.contains(adj)) {
-				stack.push(adj);
-				System.out.println("Pushed : " + adj.getID() + " to stack from node " + n.getID());
-				int y = toPlace.y;
-				int x = toPlace.x;
-				List<Point> options = new LinkedList<>(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
-				Collections.shuffle(options, RandomNumbers.randomGenerator);
-				for(Point p : options) {
-					boolean success = recursiveGenerateDungeon(graph, dungeon, visited, stack, recentlyPlaced, levelThere, loader, p, dNode);
-					if(!success)
-						continue;
-					else
-						return true;
+		placed.push(next);
+		int x = location.x;
+		int y = location.y;
+		List<Point> options = new LinkedList<>(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
+		Collections.shuffle(options, RandomNumbers.randomGenerator);
+		for(Point p : options) {
+			if (levelThere[p.y][p.x] == null) {
+				levelThere[p.y][p.x] = next.getID();
+				
+				Level l = loadLevel(next, dungeon, loader, null);
+				Dungeon.Node dNode = dungeon.newNode(next.getID(), l);
+				dNode.grammar = (ZeldaGrammar) next.getData();
+				
+				if(parent != null) {
+					int tile = getTile(parent);
+					Dungeon.Node parentDN = dungeon.getNode(parent.getID());
+					DungeonUtil.setAdjacencies(parentDN, location, p, dNode.name, tile);
+					DungeonUtil.setAdjacencies(dNode, p, location, parentDN.name, tile);
 				}
-				return false;
-			} else {
-				System.out.println(adj.getID() + " is apparently visited");
+
+				locations.put(next.getID(), p);
+				
+				boolean success = recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations);
+				if(success)
+					return true;
+				else {
+					locations.remove(next.getID());
+					dungeon.removeNode(next.getID());
+					levelThere[p.y][p.x] = null;
+				}
 			}
 		}
 		
-		return true;
+		 placed.pop();
+		 pending.addFirst(pair);
+		 return false;
+		
+	}
+
+	private static <T extends Grammar> Deque<Pair<Graph<T>.Node, Graph<T>.Node>> getGraphNodes(Graph<T> graph) {
+		Deque<Pair<Graph<T>.Node, Graph<T>.Node>> deque = new LinkedList<>();
+		List<String> visited = new LinkedList<>();
+		Queue<Graph<T>.Node> queue = new LinkedList<>();
+		queue.add(graph.root());
+		visited.add(graph.root().getID());
+		deque.add(new Pair<Graph<T>.Node, Graph<T>.Node>(graph.root(), null));
+		while(!queue.isEmpty()) {
+			Graph<T>.Node node = queue.poll();
+			for(Graph<T>.Node v : node.adjacencies()) {
+				if(!visited.contains(v.getID())) {
+					visited.add(v.getID());
+					queue.add(v);
+					deque.add(new Pair<Graph<T>.Node, Graph<T>.Node>(v, node));
+				}
+			}
+		}
+		return deque;
+		
 	}
 
 	private static int getTile(Dungeon.Node node) {

@@ -60,7 +60,7 @@ public class ZeldaGraphGrammarTest {
 			Dungeon d = null;
 			try {
 				grammar.applyRules(graph);
-				d = DungeonUtil.convertToDungeon(graph, loader);
+				d = DungeonUtil.recursiveGenerateDungeon(graph, loader);
 				DungeonUtil.makeDungeonPlayable(d);				
 				BufferedImage image = DungeonUtil.imageOfDungeon(d);
 				File file = new File("data/VGLC/Zelda/dungeon_"+ i +"_test.png");

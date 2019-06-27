@@ -1,7 +1,7 @@
 graph {
-smfY [label="e, GS"]
-xUKO [label="l, GE"]
-tuDB [label="k"]
-smfY -- tuDB
-tuDB -- xUKO
+EDpU [label="e, GS"]
+IJOj [label="l, GE"]
+RNkJ [label="k"]
+EDpU -- RNkJ
+RNkJ -- IJOj
 }

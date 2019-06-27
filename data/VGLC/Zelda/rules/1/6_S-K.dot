@@ -1,7 +1,7 @@
 graph {
-fjPY [label="s, GS"]
-mJET [label="k, GE"]
-QKag [label="e"]
-fjPY -- QKag
-QKag -- mJET
+gqye [label="s, GS"]
+HdzT [label="k, GE"]
+Bmuy [label="e"]
+gqye -- Bmuy
+Bmuy -- HdzT
 }
