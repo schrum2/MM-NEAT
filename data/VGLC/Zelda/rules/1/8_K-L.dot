@@ -1,7 +1,7 @@
 graph {
-FkQy [label="e, GS"]
-yCPE [label="l, GE"]
-ANgz [label="k"]
-FkQy -- ANgz
-ANgz -- yCPE
+smfY [label="e, GS"]
+xUKO [label="l, GE"]
+tuDB [label="k"]
+smfY -- tuDB
+tuDB -- xUKO
 }

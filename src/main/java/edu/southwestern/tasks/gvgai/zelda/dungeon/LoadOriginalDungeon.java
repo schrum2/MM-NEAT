@@ -577,9 +577,9 @@ public class LoadOriginalDungeon {
 	 * Load the text levels based on the folder of where they are stored
 	 * @param dungeon Dungeon instance
 	 * @param numberToString number to string name
-	 * @throws FileNotFoundException
+	 * @throws Exception 
 	 */
-	private static void loadLevels(Dungeon dungeon, HashMap<Integer, String> numberToString, String levelPath) throws FileNotFoundException {
+	private static void loadLevels(Dungeon dungeon, HashMap<Integer, String> numberToString, String levelPath) throws Exception {
 		File levelFolder = new File(levelPath);
 		for(File entry : levelFolder.listFiles()) {
 			String fileName = entry.getName();
@@ -594,9 +594,9 @@ public class LoadOriginalDungeon {
 	 * @param file File instance of individual level
 	 * @param dungeon Dungeon instance
 	 * @param name Node name
-	 * @throws FileNotFoundException
+	 * @throws Exception 
 	 */
-	private static void loadOneLevel(File file, Dungeon dungeon, String name) throws FileNotFoundException {
+	private static void loadOneLevel(File file, Dungeon dungeon, String name) throws Exception {
 		String[] levelString = new String[ZELDA_ROOM_ROWS];
 		Scanner scanner = new Scanner(file);
 		int i = 0;

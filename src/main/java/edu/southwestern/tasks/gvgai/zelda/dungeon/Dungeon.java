@@ -6,10 +6,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
 import com.google.gson.Gson;
+import com.sun.org.apache.xpath.internal.axes.NodeSequence;
 
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
@@ -54,8 +56,10 @@ public class Dungeon {
 		return this.levels;
 	}
 
-	public Node newNode(String name, Level level) {
+	public Node newNode(String name, Level level) throws Exception {
 		Node node = new Node(name, level);
+		if(levels.get(name) != null)
+			throw new Exception("Unable to place new node : " + name);
 		levels.put(name, node);
 		return node;
 	}
@@ -178,11 +182,20 @@ public class Dungeon {
 		
 		return levelHeight;
 	}
+	
+	public void removeNode(String name) {
+		Node n = getNode(name);
+		// Remove adjacencies from the node adjacencies
+		n.adjacency.values().forEach(p -> getNode(p.t1).adjacency.entrySet().removeIf(e -> e.getValue().t1 == name));
+		
+		levels.remove(name);
+	}
 
 	public class Node{
 		public Level level;
 		public String name;
 		public HashMap<String, Pair<String, Point>> adjacency;
+					// Exit point   Node    Starting point
 		public ZeldaGrammar grammar;
 		
 		public Node(String name, Level level) {

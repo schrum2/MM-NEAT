@@ -146,3 +146,5 @@ dependency-reduced-pom.xml
 **/netG*.pth
 
 *.swp
+
+data/VGLC/Zelda/rules/1/

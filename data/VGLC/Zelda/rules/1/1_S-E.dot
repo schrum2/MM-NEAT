@@ -1,11 +1,11 @@
 graph {
-npIj [label="s, GS"]
-LHxu [label="e, GE"]
-xqdE [label="e"]
-pVJh [label="sl"]
-uCMm [label="e"]
-npIj -- xqdE
-npIj -- pVJh
-pVJh -- LHxu
-pVJh -- uCMm
+KbIl [label="s, GS"]
+qoAt [label="e, GE"]
+wAhC [label="e"]
+BGEw [label="sl"]
+AYRY [label="e"]
+KbIl -- wAhC
+KbIl -- BGEw
+BGEw -- qoAt
+BGEw -- AYRY
 }

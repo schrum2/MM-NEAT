@@ -1,9 +1,7 @@
 graph {
-lgyq [label="e, GS"]
-PJNQ [label="k, GE"]
-zLVF [label="b"]
-aJWP [label="e"]
-lgyq -- zLVF
-zLVF -- PJNQ
-zLVF -- aJWP
+tNQW [label="e, GS"]
+vsqP [label="k, GE"]
+gjqu [label="e"]
+tNQW -- gjqu
+gjqu -- vsqP
 }

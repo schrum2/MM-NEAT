@@ -1,11 +1,11 @@
 graph {
-kIxT [label="s, GS"]
-Vrzy [label="k, GE"]
-DTbT [label="e"]
-cJpk [label="e"]
-btdY [label="e"]
-kIxT -- DTbT
-kIxT -- cJpk
-kIxT -- btdY
-DTbT -- Vrzy
+EtrW [label="s, GS"]
+oveZ [label="k, GE"]
+cuuj [label="e"]
+vwBy [label="e"]
+qMXy [label="e"]
+EtrW -- cuuj
+EtrW -- vwBy
+EtrW -- qMXy
+cuuj -- oveZ
 }

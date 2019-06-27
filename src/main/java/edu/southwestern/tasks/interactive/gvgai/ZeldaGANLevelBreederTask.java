@@ -143,7 +143,13 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 				System.out.println();
 			}
 			Level level = new Level(ints);
-			Dungeon.Node n = dummy.newNode("ASDF", level);
+			Dungeon.Node n = null;
+			try {
+				n = dummy.newNode("ASDF", level);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			dummy.setCurrentLevel("ASDF");
 			return DungeonUtil.getLevelImage(n, dummy);
 		} else {
@@ -262,7 +268,12 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 				phenotypes.add(scores.get(i).individual.getPhenotype());
 			}
 			
-			sd.showDungeon(phenotypes, 5);
+			try {
+				sd.showDungeon(phenotypes, 5);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return false;
 	}

@@ -1,7 +1,7 @@
 graph {
-qMtO [label="k, GS"]
-VlFJ [label="l, GE"]
-AJxc [label="e"]
-qMtO -- AJxc
-AJxc -- VlFJ
+ORQM [label="k, GS"]
+rfbZ [label="l, GE"]
+nIoF [label="e"]
+ORQM -- nIoF
+nIoF -- rfbZ
 }

@@ -55,8 +55,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S);
-		rule.grammar().setStart(ZeldaGrammar.BOMB);
-		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
@@ -190,7 +189,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		
 		Dungeon d = null;
 		try {
-			d = DungeonUtil.convertToDungeon(graph, (LevelLoader) ClassCreation.createObject("zeldaLevelLoader"));
+			d = DungeonUtil.recursiveGenerateDungeon(graph, (LevelLoader) ClassCreation.createObject("zeldaLevelLoader"));
 			DungeonUtil.makeDungeonPlayable(d);
 			BufferedImage image = DungeonUtil.imageOfDungeon(d);
 			File file = new File("data/VGLC/Zelda/dungeon.png");

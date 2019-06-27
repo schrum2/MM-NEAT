@@ -1,9 +1,9 @@
 graph {
-nxNJ [label="e, GS"]
-nghq [label="t, GE"]
-ejso [label="e"]
-fgcO [label="e"]
-nxNJ -- ejso
-nxNJ -- fgcO
-ejso -- nghq
+OWoh [label="e, GS"]
+DJHg [label="t, GE"]
+QKBn [label="e"]
+Urmu [label="e"]
+OWoh -- QKBn
+OWoh -- Urmu
+QKBn -- DJHg
 }

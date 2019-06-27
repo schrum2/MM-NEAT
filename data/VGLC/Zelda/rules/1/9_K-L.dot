@@ -1,6 +1,6 @@
 graph {
-VQDH [label="k, GS"]
-Tble [label="l, GE"]
-hlPL [label="e"]
-VQDH -- hlPL
+RhKi [label="k, GS"]
+LgAb [label="l, GE"]
+TAAw [label="e"]
+RhKi -- TAAw
 }

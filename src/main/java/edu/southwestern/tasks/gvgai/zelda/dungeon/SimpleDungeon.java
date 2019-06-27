@@ -59,7 +59,7 @@ public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 	}
 
 	@Override
-	public Dungeon makeDungeon(ArrayList<ArrayList<Double>> phenotypes, int numRooms) {
+	public Dungeon makeDungeon(ArrayList<ArrayList<Double>> phenotypes, int numRooms) throws Exception {
 		Level[][] dungeon = makeLevels(phenotypes, numRooms);
 		if (dungeon == null) return null;
 		Dungeon dungeonInstance = new Dungeon();

@@ -72,8 +72,9 @@ public abstract class ZeldaDungeon<T> {
 	 * @param numRooms 
 	 * @param phenotypes 
 	 * @return converted Dungeon
+	 * @throws Exception 
 	 */
-	public abstract Dungeon makeDungeon(ArrayList<T> phenotypes, int numRooms);
+	public abstract Dungeon makeDungeon(ArrayList<T> phenotypes, int numRooms) throws Exception;
 	
 	/**
 	 * For each node, if there's a level next to it (based on the direction and coordinates) add the necessary edges
@@ -156,8 +157,9 @@ public abstract class ZeldaDungeon<T> {
 	 * Show the dungeon to the viewer, this is also where the actualy dungeon making happens
 	 * @param phenotypes Latent vectors of levels
 	 * @param numRooms Number of rooms to fill the level with
+	 * @throws Exception 
 	 */
-	public void showDungeon(ArrayList<T> phenotypes, int numRooms) {
+	public void showDungeon(ArrayList<T> phenotypes, int numRooms) throws Exception {
 		dungeonInstance = makeDungeon(phenotypes, numRooms);
 		
 		JFrame frame = new JFrame("Dungeon Viewer");

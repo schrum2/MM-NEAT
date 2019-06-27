@@ -1,39 +1,36 @@
 graph {
-npIj[label="s"]
-xqdE[label="e"]
-pVJh[label="sl"]
-LHxu[label="e"]
-uCMm[label="e"]
-bOrC[label="e"]
-tXWQ[label="l"]
-ekzu[label="k"]
-lgyq[label="e"]
-PJNQ[label="k"]
-zLVF[label="b"]
-ahcm[label="l"]
-aJWP[label="e"]
-nxNJ[label="e"]
-nghq[label="t"]
-ejso[label="e"]
-fgcO[label="e"]
-npIj -- xqdE
-npIj -- pVJh
-npIj -- LHxu
-pVJh -- LHxu
-pVJh -- uCMm
-LHxu -- bOrC
-bOrC -- tXWQ
-bOrC -- ekzu
-tXWQ -- lgyq
-lgyq -- PJNQ
-lgyq -- zLVF
-PJNQ -- ahcm
-PJNQ -- zLVF
-zLVF -- aJWP
-ahcm -- nxNJ
-zLVF -- aJWP
-nxNJ -- nghq
-nxNJ -- ejso
-nxNJ -- fgcO
-nghq -- ejso
+KbIl[label="s"]
+wAhC[label="e"]
+BGEw[label="sl"]
+qoAt[label="e"]
+AYRY[label="e"]
+qNGb[label="e"]
+EHXw[label="l"]
+ZCpu[label="k"]
+tNQW[label="e"]
+vsqP[label="k"]
+gjqu[label="e"]
+mzzy[label="l"]
+OWoh[label="e"]
+DJHg[label="t"]
+QKBn[label="e"]
+Urmu[label="e"]
+KbIl -- wAhC
+KbIl -- BGEw
+KbIl -- qoAt
+BGEw -- qoAt
+BGEw -- AYRY
+qoAt -- qNGb
+qNGb -- EHXw
+qNGb -- ZCpu
+EHXw -- tNQW
+tNQW -- vsqP
+tNQW -- gjqu
+vsqP -- mzzy
+vsqP -- gjqu
+mzzy -- OWoh
+OWoh -- DJHg
+OWoh -- QKBn
+OWoh -- Urmu
+DJHg -- QKBn
 }

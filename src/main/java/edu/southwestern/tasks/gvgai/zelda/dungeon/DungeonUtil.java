@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -46,6 +47,7 @@ import me.jakerg.rougelike.Creature;
 import me.jakerg.rougelike.CreatureFactory;
 import me.jakerg.rougelike.Item;
 import me.jakerg.rougelike.Log;
+import me.jakerg.rougelike.Move;
 import me.jakerg.rougelike.Tile;
 import me.jakerg.rougelike.TileUtil;
 import me.jakerg.rougelike.World;
@@ -120,8 +122,13 @@ public class DungeonUtil {
 	 * @param node Node of where the doors need to be placed
 	 * @return Number representing the tile
 	 */
-	private static int getTile(Graph<? extends Grammar>.Node node) {
-		String type = node.getData().getLevelType();
+	private static <T extends Grammar> int getTile(Graph<T>.Node node) {
+		return getTile(node.getData());
+		
+	}
+	
+	private static <T extends Grammar> int getTile(T grammar) {
+		String type = grammar.getLevelType();
 		switch(type) {
 		case "l":
 			return Tile.LOCKED_DOOR.getNum();
@@ -218,8 +225,6 @@ public class DungeonUtil {
 			Point opt = options.remove((int) RandomNumbers.boundedRandom(0, options.size()));
 			x = opt.x;
 			y = opt.y;
-			
-			if(getAvailableSpace(opt, levelThere) <= 1) continue;
 			
 			if(x >= 0 && x < levelThere[0].length && y >= 0 && y < levelThere.length) {
 				if(levelThere[y][x] == null) {
@@ -595,9 +600,8 @@ public class DungeonUtil {
 						DungeonUtil.setAdjacencies(newNode, legal, p, dN.name, tile);
 						queue.add(adjNode);
 					} else {
-//						backlog.add(adjNode);
 						print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
-//						throw new Exception("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
+						throw new Exception("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
 					}
 				} else if (visited.contains(adjNode) && node.getData().isCyclable()
 						&& adjNode.getData().isCyclable()) {
@@ -615,6 +619,91 @@ public class DungeonUtil {
 		dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
 		addCycles(dungeon);
 		return dungeon;
+	}
+	
+	public static <T extends Grammar> Dungeon recursiveGenerateDungeon(Graph<T> graph, LevelLoader loader) throws Exception {
+		Dungeon dungeon = new Dungeon();
+		List<Graph<T>.Node> visited = new LinkedList<>();
+		Stack<Graph<T>.Node> stack = new Stack<>();
+		Stack<String> recentlyPlaced = new Stack<>();
+		
+		String[][] levelThere = new String[100][100];
+		int x = (levelThere.length - 1) / 2;
+		int y = (levelThere.length - 1) / 2;
+		
+		Graph<T>.Node n = graph.root();
+		stack.push(n);
+		
+		// catch boolean for error check
+		recursiveGenerateDungeon(graph, dungeon, visited, stack, recentlyPlaced, levelThere, loader, new Point(x, y), null);
+		
+		dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
+		
+		return dungeon;
+	}
+
+	private static <T extends Grammar> boolean recursiveGenerateDungeon(Graph<T> graph, Dungeon dungeon, List<Graph<T>.Node> visited,
+			Stack<Graph<T>.Node> stack, Stack<String> recentlyPlaced, String[][] levelThere, LevelLoader loader, Point toPlace, Dungeon.Node parent) throws Exception {
+		
+		if(stack.empty()) return true;
+		
+		if(levelThere[toPlace.y][toPlace.x] != null)
+			return false;
+		
+		Graph<T>.Node n = stack.pop();
+		System.out.println("got : " + n.getID() + " from the stack");
+		visited.add(n);
+		
+		Level l = loadLevel(n, dungeon, loader, null);
+		Dungeon.Node dNode = dungeon.newNode(n.getID(), l);
+		dNode.grammar = (ZeldaGrammar) n.getData();
+		
+		levelThere[toPlace.y][toPlace.x] = dNode.name;
+
+		if(dNode.grammar.equals(ZeldaGrammar.START))
+			dungeon.setCurrentLevel(dNode.name);
+		
+		if(parent != null) {
+			int tile = getTile(parent);
+			Point previousPoint = getCoords(levelThere, parent.name);
+			DungeonUtil.setAdjacencies(parent, previousPoint, toPlace, dNode.name, tile);
+			DungeonUtil.setAdjacencies(dNode, toPlace, previousPoint, parent.name, tile);
+			
+		}
+		recentlyPlaced.push(dNode.name);
+		
+		
+		List<Graph<T>.Node> adjs = new LinkedList<>(n.adjacencies());
+		if(adjs.isEmpty())
+			System.out.println(n.getID() + " has no adjacencies");
+		
+		while(!adjs.isEmpty()) {
+			Graph<T>.Node adj = adjs.remove(RandomNumbers.randomGenerator.nextInt(adjs.size()));
+			if(!visited.contains(adj)) {
+				stack.push(adj);
+				System.out.println("Pushed : " + adj.getID() + " to stack from node " + n.getID());
+				int y = toPlace.y;
+				int x = toPlace.x;
+				List<Point> options = new LinkedList<>(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
+				Collections.shuffle(options, RandomNumbers.randomGenerator);
+				for(Point p : options) {
+					boolean success = recursiveGenerateDungeon(graph, dungeon, visited, stack, recentlyPlaced, levelThere, loader, p, dNode);
+					if(!success)
+						continue;
+					else
+						return true;
+				}
+				return false;
+			} else {
+				System.out.println(adj.getID() + " is apparently visited");
+			}
+		}
+		
+		return true;
+	}
+
+	private static int getTile(Dungeon.Node node) {
+		return getTile(node.grammar);
 	}
 
 	public static Point pointToCheck(Dungeon dungeon, int x, int y, Stack<Point> options) {
@@ -805,24 +894,25 @@ public class DungeonUtil {
 		String direction = getDirection(from, to);
 		System.out.println("From node " + fromNode.name + " going " + direction + " to " + whereTo);
 		if(direction == null) return;
-	
-		switch(direction) {
-		case "UP":
-			ZeldaLevelUtil.addUpAdjacencies(fromNode, whereTo);
-			break;
-		case "DOWN":
-			ZeldaLevelUtil.addDownAdjacencies(fromNode, whereTo);
-			break;
-		case "LEFT":
-			ZeldaLevelUtil.addLeftAdjacencies(fromNode, whereTo);
-			break;
-		case "RIGHT":
-			ZeldaLevelUtil.addRightAdjacencies(fromNode, whereTo);
-			break;
-		default:
-			throw new Exception ("DIRECTION AINT HEREE");
+		if(!Tile.findNum(tile).equals(Tile.WALL)) {
+			switch(direction) {
+			case "UP":
+				ZeldaLevelUtil.addUpAdjacencies(fromNode, whereTo);
+				break;
+			case "DOWN":
+				ZeldaLevelUtil.addDownAdjacencies(fromNode, whereTo);
+				break;
+			case "LEFT":
+				ZeldaLevelUtil.addLeftAdjacencies(fromNode, whereTo);
+				break;
+			case "RIGHT":
+				ZeldaLevelUtil.addRightAdjacencies(fromNode, whereTo);
+				break;
+			default:
+				throw new Exception ("DIRECTION AINT HEREE");
+			}
 		}
-		
+
 		ZeldaLevelUtil.setDoors(direction, fromNode, tile);
 	}
 

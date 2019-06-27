@@ -1,7 +1,7 @@
 graph {
-WBbh [label="s, GS"]
-PfAG [label="k, GE"]
-KQoT [label="e"]
-WBbh -- KQoT
-KQoT -- PfAG
+fjPY [label="s, GS"]
+mJET [label="k, GE"]
+QKag [label="e"]
+fjPY -- QKag
+QKag -- mJET
 }
