@@ -176,7 +176,7 @@ public class RandomNumbers {
 
 	/**
 	 * Randomly pick x of the integers in the range [0,y) where no value can be
-	 * picked more than once.
+	 * picked more than once.1
 	 *
 	 * @param x
 	 *            number of random values to pick

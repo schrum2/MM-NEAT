@@ -41,7 +41,9 @@ public class TileUtil {
 		for(int i = 0; i < tiles.length; i++) {
 			for(int j = 0; j < tiles[i].length; j++) {
 				if(level.get(j).get(i) == 2) {
-					cf.newEnemey(i, j, player);
+					cf.newEnemy(i, j, player);
+				} else if(level.get(j).get(i) == -6) {
+					newWorld.dropItem(new Ladder(newWorld, i, j));
 				}
 			}
 		}
@@ -56,12 +58,9 @@ public class TileUtil {
 	 * @throws Exception 
 	 */
 	private static Tile mapIntToTile(int block) throws Exception {
-		if(block == 2) return Tile.FLOOR;
 		Tile tile =  Tile.findNum(block);
 		if(tile == null)
-			throw new Exception("No tile for block : " + block);
-		if(tile.equals(Tile.KEY))
-			System.out.println("Key found!!");
+			tile = Tile.FLOOR;
 		return tile;
 	}
 }

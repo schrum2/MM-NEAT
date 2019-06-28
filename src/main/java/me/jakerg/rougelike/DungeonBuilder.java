@@ -3,9 +3,10 @@ package me.jakerg.rougelike;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.*;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
 
 /**
  * Dungeon builder keeps track of the different rooms of the dungeon

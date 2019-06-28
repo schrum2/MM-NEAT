@@ -3,6 +3,7 @@ package me.jakerg.rougelike.screens;
 import java.awt.event.KeyEvent;
 
 import asciiPanel.AsciiPanel;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.*;
 import me.jakerg.rougelike.Creature;
 import me.jakerg.rougelike.CreatureFactory;
@@ -67,15 +68,16 @@ public class DungeonScreen implements Screen {
 
 	
 	@Override
-	public void displayOutput(AsciiPanel terminal) {
+	public void displayOutput(AsciiPanel terminal, boolean update) {
 		// Update the current world to get any changes
 		this.world = dungeonBuilder.getCurrentWorld();
 		player.setWorld(this.world);
         // display stuff to terminal
-		world.update(); // Move enemies (basically)
+		if(update)
+			world.update(); // Move enemies (basically)
 		displayTiles(terminal);
-		if(mapScreen != null) mapScreen.displayOutput(terminal);
-		messageScreen.displayOutput(terminal);
+		if(mapScreen != null) mapScreen.displayOutput(terminal, update);
+		messageScreen.displayOutput(terminal, update);
 		player.display(terminal, oX + screenWidth + 1, oY);
         terminal.write(player.glyph(), player.x + oX, player.y + oY, player.color());
 	}

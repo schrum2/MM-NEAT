@@ -20,8 +20,12 @@ import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
-import edu.southwestern.tasks.gvgai.zelda.level.SimpleDungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.GraphDungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.SimpleDungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
@@ -48,7 +52,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	private static final String GAME_FILE = "zeldacopy";
 	private static final String FULL_GAME_FILE = LevelBreederTask.GAMES_PATH + GAME_FILE + ".txt";
 
-	private SimpleDungeon sd;
+	private ZeldaDungeon<ArrayList<Double>> sd;
 	
 	/**
 	 * Initializes the InteractiveGANLevelEvolutionTask and everything required for GVG-AI
@@ -57,7 +61,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	public ZeldaGANLevelBreederTask() throws IllegalAccessException {
 		super(); // Initialize InteractiveGANLevelEvolutionTask
 		
-		sd = new SimpleDungeon();
+		sd = new GraphDungeon();
 		
 		JButton dungeonize = new JButton("Dungeonize");
 		dungeonize.setName("" + DUNGEONIZE_BUTTON_INDEX);
@@ -129,9 +133,31 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	 */
 	@Override
 	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height, double[] inputMultipliers) {
-		GameBundle bundle = setUpGameWithLevelFromLatentVector(phenotype); // Use the above function to build our ZeldaGAN
-		BufferedImage levelImage = GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed); // Make image of zelda level
-		return levelImage;
+		if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
+			Dungeon dummy = new Dungeon();
+			List<List<Integer>> ints = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(ArrayUtil.doubleArrayFromList(phenotype));
+			for(List<Integer> row : ints) {
+				for(Integer i : row) {
+					System.out.print(i + ", ");
+				}
+				System.out.println();
+			}
+			Level level = new Level(ints);
+			Dungeon.Node n = null;
+			try {
+				n = dummy.newNode("ASDF", level);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			dummy.setCurrentLevel("ASDF");
+			return DungeonUtil.getLevelImage(n, dummy);
+		} else {
+			GameBundle bundle = setUpGameWithLevelFromLatentVector(phenotype); // Use the above function to build our ZeldaGAN
+			BufferedImage levelImage = GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed); // Make image of zelda level
+			return levelImage;
+		}
+		
 	}
 
 	/**
@@ -204,7 +230,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	protected void save(String file, int i) {
 		ArrayList<Double> phenotype = scores.get(i).individual.getPhenotype();
 		double[] latentVector = ArrayUtil.doubleArrayFromList(phenotype);
-		List<List<Integer>> level = ZeldaGANUtil.generateRoomListRepresentationFromGAN(latentVector);
+		List<List<Integer>> level = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVector);
 		int[][] levelArray = ZeldaLevelUtil.listToArray(level);
 		int distance = ZeldaLevelUtil.findMaxDistanceOfLevel(levelArray, 5, 7);
 
@@ -242,7 +268,12 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 				phenotypes.add(scores.get(i).individual.getPhenotype());
 			}
 			
-			sd.showDungeon(phenotypes, 5);
+			try {
+				sd.showDungeon(phenotypes, 5);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return false;
 	}
@@ -250,7 +281,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	public static void main(String[] args) {
 		try {
 			// Run the MMNeat Main method with parameters specifying that we want to run the Zedla GAN 
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","zeldaGANModel:ZeldaDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","watch:false","cleanFrequency:-1","simplifiedInteractiveInterface:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","zeldaGANModel:ZeldaFixedDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","watch:false","cleanFrequency:-1","simplifiedInteractiveInterface:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200", "zeldaGANUsesOriginalEncoding:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
@@ -263,6 +294,6 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	 */
 	@Override
 	public List<List<Integer>> levelListRepresentation(double[] latentVector) {
-		return ZeldaGANUtil.generateRoomListRepresentationFromGAN(latentVector);
+		return ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVector);
 	}
 }

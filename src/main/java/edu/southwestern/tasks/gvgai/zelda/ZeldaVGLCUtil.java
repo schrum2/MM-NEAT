@@ -15,6 +15,7 @@ import gvgai.core.vgdl.VGDLParser;
 import gvgai.core.vgdl.VGDLRegistry;
 import gvgai.tools.IO;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
+import me.jakerg.rougelike.Tile;
 
 public class ZeldaVGLCUtil {
 
@@ -257,9 +258,13 @@ public class ZeldaVGLCUtil {
 		case 'M':
 			return 5;	// Monster
 		case 'D':
-			return 3;
+			return 1;
 		case 'S':
-			return 4;	// Door
+			return 1;	// Door
+		case '#':
+			return -6; // Ladder block
+		case 'U':
+			return Tile.MOVABLE_BLOCK.getNum();
 		default:
 			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
 		}

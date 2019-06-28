@@ -9,7 +9,7 @@ import me.jakerg.rougelike.TitleUtil;
 
 public class LoseScreen implements Screen {
 
-    public void displayOutput(AsciiPanel terminal) {
+    public void displayOutput(AsciiPanel terminal, boolean update) {
         int y = 10;
         int x = 5;
         try {

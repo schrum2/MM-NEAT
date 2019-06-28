@@ -3,7 +3,7 @@ package me.jakerg.rougelike.screens;
 import java.awt.event.KeyEvent;
 
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import me.jakerg.rougelike.Tile;
 
 public class MapScreen implements Screen {
@@ -19,7 +19,7 @@ public class MapScreen implements Screen {
 	}
 	
 	@Override
-	public void displayOutput(AsciiPanel terminal) {
+	public void displayOutput(AsciiPanel terminal, boolean update) {
 		String[][] levels = dungeon.getLevelThere();
 		String current = dungeon.getCurrentlevel().name;
 		for(int y = 0; y < levels.length; y++) {

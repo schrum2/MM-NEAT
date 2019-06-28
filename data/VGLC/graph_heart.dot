@@ -1,0 +1,26 @@
+graph {
+ssDp[label="s"]
+beVe[label="e"]
+LDPD[label="e"]
+cyGq[label="e"]
+Nqfr[label="n"]
+UPEe[label="k"]
+TRfl[label="l"]
+zqcf[label="e"]
+tUnf[label="e"]
+vMNt[label="t"]
+yzGi[label="e"]
+ssDp -- beVe
+ssDp -- LDPD
+ssDp -- cyGq
+ssDp -- Nqfr
+LDPD -- cyGq
+cyGq -- UPEe
+cyGq -- Nqfr
+UPEe -- TRfl
+UPEe -- zqcf
+TRfl -- tUnf
+tUnf -- vMNt
+tUnf -- yzGi
+vMNt -- yzGi
+}

@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.gvgai.zelda.level;
+package edu.southwestern.tasks.gvgai.zelda.dungeon;
 
 import java.awt.Point;
 import java.io.BufferedReader;
@@ -6,9 +6,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map.Entry;
+
 import com.google.gson.Gson;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
+import com.sun.org.apache.xpath.internal.axes.NodeSequence;
+
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.util.datastructures.Pair;
+import me.jakerg.rougelike.Tile;
 
 
 public class Dungeon {
@@ -18,6 +26,8 @@ public class Dungeon {
 	private String[][] levelThere;
 	private String goal;
 	private Point goalPoint;
+	private int levelWidth = -1;
+	private int levelHeight = -1;
 	
 	public Dungeon() {
 		levels = new HashMap<>();
@@ -46,8 +56,10 @@ public class Dungeon {
 		return this.levels;
 	}
 
-	public Node newNode(String name, Level level) {
+	public Node newNode(String name, Level level) throws Exception {
 		Node node = new Node(name, level);
+		if(levels.get(name) != null)
+			throw new Exception("Unable to place new node : " + name);
 		levels.put(name, node);
 		return node;
 	}
@@ -90,27 +102,23 @@ public class Dungeon {
 	}
 	
 	public Point getCoords(String name) {
-		if(!levels.containsKey(name)) return null;
+		if(!levels.containsKey(name)) {
+			System.out.println("Name isn't in list : " + name);
+			return null;
+		}
 		
 		for(int y = 0; y < levelThere.length; y++)
 			for(int x = 0; x < levelThere[y].length; x++)
 				if(name == levelThere[y][x])
 					return new Point(x, y);
 		
+		System.out.println("Couldnt find name : " + name);
 		return null;
 	}
 	
 	public Pair<String, Point> getNextLevel(Node node, String exitPoint) {
-		System.out.println("Exiting at " + exitPoint);
 		HashMap<String, Pair<String, Point>> adjacency = node.adjacency;
-		Pair<String, Point> r = adjacency.get(exitPoint);
-		System.out.println("Exiting points...");
-		
-		for(String st : adjacency.keySet())
-			System.out.println("\t" + st);
-			
-		if(r == null)
-			System.out.println("Returning null");
+		Pair<String, Point> r = adjacency.get(exitPoint);			
 		return r;
 	}
 	
@@ -160,11 +168,35 @@ public class Dungeon {
 	public void setGoalPoint(Point goalPoint) {
 		this.goalPoint = goalPoint;
 	}
+	
+	public int getLevelWidth() {
+		if(levelWidth == -1)
+			levelWidth = getCurrentlevel().level.intLevel.get(0).size();
+		
+		return levelWidth;
+	}
+	
+	public int getLevelHeight() {
+		if(levelHeight == -1)
+			levelHeight = getCurrentlevel().level.intLevel.size();
+		
+		return levelHeight;
+	}
+	
+	public void removeNode(String name) {
+		Node n = getNode(name);
+		// Remove adjacencies from the node adjacencies
+		n.adjacency.values().forEach(p -> getNode(p.t1).adjacency.entrySet().removeIf(e -> e.getValue().t1 == name));
+		
+		levels.remove(name);
+	}
 
 	public class Node{
 		public Level level;
 		public String name;
 		public HashMap<String, Pair<String, Point>> adjacency;
+					// Exit point   Node    Starting point
+		public ZeldaGrammar grammar;
 		
 		public Node(String name, Level level) {
 			this.name = name;
@@ -178,6 +210,27 @@ public class Dungeon {
 		
 		public String toString() {
 			return this.name;
+		}
+
+		public boolean hasLock() {
+			List<List<Integer>> ints = level.intLevel;
+			for(int y = 0; y < ints.size(); y++) 
+				for(int x = 0; x < ints.get(y).size(); x++) 
+					if(ints.get(y).get(x).equals(Tile.LOCKED_DOOR.getNum()))
+						return true;
+				
+			
+			return false;
+		}
+	}
+
+	public void printLevelThere() {
+		for(int y = 0; y < levelThere.length; y++) {
+			for(int x = 0; x < levelThere[y].length; x++) {
+				String n = levelThere[y][x];
+				System.out.print(n + " ");
+			}
+			System.out.println();
 		}
 	}
 
