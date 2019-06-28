@@ -16,6 +16,9 @@ public abstract class Item {
     protected Color color;
     public Color color() { return color; }
     
+    protected boolean pickupable;
+    public boolean isPickupable() { return pickupable; }
+    
     public Item(World world, char glpyh, Color color, int x, int y) {
     	this.world = world;
     	this.glyph = glpyh;
@@ -25,5 +28,7 @@ public abstract class Item {
     }
     
     public void update() {}
+    
+    public abstract void onPickup(Creature creature);
     
 }

@@ -143,7 +143,7 @@ public class ZeldaKLDivTest {
 	}
 	
 	public static List<List<Integer>> levelListRepresentation(double[] latentVector) {
-		return ZeldaGANUtil.generateRoomListRepresentationFromGAN(latentVector);
+		return ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVector);
 	}
 
 	public static GameBundle setUpGameWithLevelFromLatentVector(ArrayList<Double> phenotype) {

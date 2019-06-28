@@ -1,0 +1,15 @@
+graph {
+<<<<<<< HEAD
+crWd [label="e, GS"]
+BZGH [label="k, GE"]
+wolJ [label="e"]
+crWd -- wolJ
+wolJ -- BZGH
+=======
+ETiF [label="e, GS"]
+mtiu [label="k, GE"]
+vhYD [label="e"]
+ETiF -- vhYD
+vhYD -- mtiu
+>>>>>>> dev_zelda
+}

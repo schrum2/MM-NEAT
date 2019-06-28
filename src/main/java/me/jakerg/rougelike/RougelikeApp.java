@@ -2,12 +2,19 @@ package me.jakerg.rougelike;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
 import javax.swing.JFrame;
 
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import me.jakerg.rougelike.screens.*;
 
 
@@ -24,6 +31,8 @@ public class RougelikeApp extends JFrame implements KeyListener{
 	private AsciiPanel terminal;
 	private Screen screen; // Which screen to display?
 	
+	public static RougelikeApp app;
+	
 	public static boolean DEBUG = false;
 	
 	/**
@@ -38,6 +47,7 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		screen = new StartScreen();
 		addKeyListener(this);
 		repaint();
+		app = this;
 	}
 	
 	public RougelikeApp(Dungeon dungeon) {
@@ -49,14 +59,19 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		screen = new StartScreen(dungeon); // Set the start screen with a dungeon to let start screen know that we want to play the dungon provided
 		addKeyListener(this);
 		repaint();
+		app = this;
 	}
 	
 	/**
 	 * Anytime there is input this is called to display to the terminal
 	 */
 	public void repaint() {
+		repaint(true);
+	}
+	
+	public void repaint(boolean update) {
 		terminal.clear();
-		screen.displayOutput(terminal);
+		screen.displayOutput(terminal, update);
 		super.repaint();
 	}
 
@@ -70,7 +85,9 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		repaint();
 	}
 
-	public void keyReleased(KeyEvent e) {} // Not used
+	public void keyReleased(KeyEvent e) {
+		repaint(false);
+	} // Not used
 	
 	/**
 	 * Main method to test rougelike w/o dungeon (will load random caves)
@@ -90,6 +107,8 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		RougelikeApp app = new RougelikeApp(dungeon);
 		app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Dispose on close closes that window ONLY not every JFrame window
 		app.setVisible(true);
+       
+	        
 	}
 	
 	public static void startDungeon(Dungeon dungeon, boolean debug) {

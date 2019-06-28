@@ -1,6 +1,7 @@
 package me.jakerg.rougelike;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,6 +19,10 @@ public class World {
 	private int width;
 	private int height;
 	private DungeonBuilder db;
+	
+	
+	private boolean locked = false;
+	public boolean locked()	{ return locked; }
 	
 	/**
 	 * Must initialize World with tiles
@@ -83,6 +88,19 @@ public class World {
 		
 	}
 	
+	public boolean move(int x, int y, Move creature) {
+		if(tile(x, y).isMovable() && tile(x, y).getDirection().equals(creature)) {
+			Tile move = tile(x, y);
+			dig(x, y);
+			Point p = move.getDirection().getPoint();
+			x += p.x;
+			y += p.y;
+			tiles[x][y] = Tile.BLOCK;
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * Place a bomb tile at coords
 	 * @param x X coord to place bomb
@@ -96,6 +114,11 @@ public class World {
 		}
 			
 		return false;
+	}
+	
+	public void addItem(Item item) {
+		if(item(item.x, item.y) != null) return;
+		items.add(item);
 	}
 	
 	/**
@@ -170,7 +193,29 @@ public class World {
 			i.update();
 		
 		for(Creature c : creatures)
-			c.update();		
+			c.update();	
+		
+		checkToUnlock();
+	}
+
+	/**
+	 * Check to unlocked the room if the room is locked
+	 */
+	private void checkToUnlock() {
+		if(!hasEnemies()) {
+			unlockRoom();
+			locked = false;
+		}
+	}
+
+	/**
+	 * Go through and replace tiles that are locked doors with unlocked doors
+	 */
+	private void unlockRoom() {
+		for(int y = 0; y < tiles.length; y++)
+			for(int x = 0; x < tiles[y].length; x++)
+				if(tiles[y][x].equals(Tile.SOFT_LOCK_DOOR))
+					tiles[y][x] = Tile.DOOR;
 	}
 
 	/**
@@ -241,5 +286,47 @@ public class World {
 		changeToDoor(x, y + 1, Tile.HIDDEN);
 		changeToDoor(x - 1, y, Tile.HIDDEN);
 		changeToDoor(x, y - 1, Tile.HIDDEN);
+	}
+
+	/**
+	 * Drop the specified item in the world
+	 * @param i Item to drop
+	 */
+	public void dropItem(Item i) {
+		items.add(i);
+	}
+	
+	/*
+	 * Check to lock the room, if the room has more than one enemy
+	 */
+	public void checkToLock() {
+//		if(hasEnemies()) {
+//			lockRoom();
+//			locked = true;
+//		}
+	}
+
+	/**
+	 * Go through and replaced unlocked doors and hidden doors with locked doors
+	 */
+	private void lockRoom() {
+		for(int y = 0; y < tiles.length; y++)
+			for(int x = 0; x < tiles[y].length; x++)
+				if(tiles[y][x].equals(Tile.DOOR) || tiles[y][x].equals(Tile.HIDDEN))
+					tiles[y][x] = Tile.LOCKED_DOOR;
+			
+	}
+
+	/**
+	 * Check if there are enemy creatures in the room
+	 * @return True if there are enemies, false if not
+	 */
+	private boolean hasEnemies() {
+		for(Creature c : creatures)
+			if(c.glyph() == 'e')
+				return true;
+		
+		return false;
+			
 	}
 }

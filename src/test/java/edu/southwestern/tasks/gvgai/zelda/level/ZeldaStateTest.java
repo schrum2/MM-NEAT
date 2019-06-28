@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -8,12 +9,12 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
-import me.jakerg.rougelike.RougelikeApp;
 
 public class ZeldaStateTest {
 	
@@ -36,7 +37,6 @@ public class ZeldaStateTest {
 				Point g = d.getGoalPoint();
 				int gX = g.x;
 				int gY = g.y;
-				System.out.println("Calculating H for : " + s);
 				int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
 				int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY) * ZELDA_ROOM_ROWS;
 				return i + j; 
@@ -74,13 +74,30 @@ public class ZeldaStateTest {
 		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.DOWN), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.DOWN), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.DOWN), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
+		assertFalse(itr.hasNext());
 		
 		Dungeon dungeon2 = LoadOriginalDungeon.loadOriginalDungeon("a_test_2", false);
 		ZeldaState initial2 = new ZeldaState(5, 5, 0, dungeon2);

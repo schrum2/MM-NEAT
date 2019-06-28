@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import me.jakerg.rougelike.TitleUtil;
 /**
  * Screen that is first seen on the app
@@ -28,7 +28,7 @@ public class StartScreen implements Screen {
 		this.dungeon = dungeon;
 	}
 
-	public void displayOutput(AsciiPanel terminal) {
+	public void displayOutput(AsciiPanel terminal, boolean update) {
 		int y = 1;
 		try {
 			List<String> title = TitleUtil.loadTitleFromFile("data/rouge/titles/loz.txt");

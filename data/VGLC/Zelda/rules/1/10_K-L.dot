@@ -1,0 +1,6 @@
+graph {
+qDph [label="e, GS"]
+STip [label="l, GE"]
+IeHQ [label="k"]
+qDph -- IeHQ
+}

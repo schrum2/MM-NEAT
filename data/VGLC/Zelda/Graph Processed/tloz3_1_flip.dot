@@ -15,7 +15,7 @@ digraph {
 13 [label="e,k"]
 14 [label="s"]
 15 [label="e"]
-16 [label="e,i,t"]
+16 [label="e,i"]
 17 [label="ei"]
 18 [label="e"]
 19 [label="b"]
