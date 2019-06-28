@@ -170,7 +170,7 @@ public class LoadOriginalDungeon {
 	 * @throws Exception 
 	 */
 	private static String[][] generateLevelThere(Dungeon dungeon, HashMap<Integer, String> numberToString) throws Exception {
-		String[][] levelThere = new String[numberToString.size()][numberToString.size()];
+		String[][] levelThere = new String[numberToString.size() * 2][numberToString.size() * 2];
 		
 		String node = dungeon.getCurrentlevel().name; // Starting point of recursive funciton
 		
