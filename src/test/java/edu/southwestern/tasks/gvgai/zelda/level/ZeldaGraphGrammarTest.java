@@ -1,8 +1,7 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
-import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +20,6 @@ import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.random.RandomNumbers;
-import me.jakerg.rougelike.RougelikeApp;
 
 public class ZeldaGraphGrammarTest {
 
