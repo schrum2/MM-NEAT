@@ -44,6 +44,8 @@ public class DungeonAi extends CreatureAi{
 			item.onPickup(creature);
 			if(!(item instanceof MovableBlock))
 				creature.getWorld().removeItem(item);
+			else
+				return;
 		}
 
 		

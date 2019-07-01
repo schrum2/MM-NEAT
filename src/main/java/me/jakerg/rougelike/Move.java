@@ -43,4 +43,17 @@ public enum Move {
 	public Point getPoint() {
 		return point;
 	}
+
+	public Move opposite() {
+		if(this == UP)
+			return DOWN;
+		else if(this == DOWN)
+			return UP;
+		else if(this == LEFT)
+			return RIGHT;
+		else if(this == RIGHT)
+			return LEFT;
+		
+		return null;
+	}
 }

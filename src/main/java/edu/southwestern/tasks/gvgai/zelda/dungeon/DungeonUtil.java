@@ -695,9 +695,9 @@ public class DungeonUtil {
 				locations.put(next.getID(), p);
 				dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
 				
-				BufferedImage image = imageOfDungeon(dungeon);
-				File file = new File("data/VGLC/Zelda/Dungeons/dungeon_" + times + ".png");
-				ImageIO.write(image, "png", file);
+//				BufferedImage image = imageOfDungeon(dungeon);
+//				File file = new File("data/VGLC/Zelda/Dungeons/dungeon_" + times + ".png");
+//				ImageIO.write(image, "png", file);
 				
 				boolean success = recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, ++times);
 				if(success)

@@ -1,37 +1,33 @@
 graph {
-EpoB[label="s"]
-jvoF[label="e"]
-QIyq[label="e"]
-jNmB[label="sl"]
-xOLb[label="k"]
-ZvMP[label="e"]
-KpgB[label="l"]
-siQp[label="e"]
-WDQq[label="e"]
-kUqA[label="k"]
-akzb[label="e"]
-PdqF[label="l"]
-MvAE[label="e"]
-eFDk[label="t"]
-Kjfp[label="e"]
-sKle[label="p"]
-EpoB -- jvoF
-EpoB -- QIyq
-EpoB -- jNmB
-jvoF -- xOLb
-jvoF -- jNmB
-jNmB -- ZvMP
-xOLb -- KpgB
-xOLb -- siQp
-jNmB -- ZvMP
-KpgB -- WDQq
-WDQq -- kUqA
-WDQq -- akzb
-kUqA -- PdqF
-kUqA -- akzb
-PdqF -- MvAE
-MvAE -- eFDk
-MvAE -- Kjfp
-MvAE -- sKle
-eFDk -- sKle
+FzPg[label="s"]
+bXSc[label="e"]
+UOVj[label="e"]
+vAwm[label="sl"]
+dksJ[label="k"]
+Tobx[label="e"]
+defm[label="p"]
+qsun[label="l"]
+MuTK[label="e"]
+doJa[label="k"]
+gMWQ[label="e"]
+pXyq[label="l"]
+iXbJ[label="e"]
+WhrE[label="t"]
+FzPg -- bXSc
+FzPg -- UOVj
+FzPg -- vAwm
+bXSc -- dksJ
+bXSc -- vAwm
+vAwm -- Tobx
+dksJ -- defm
+dksJ -- qsun
+vAwm -- Tobx
+defm -- qsun
+qsun -- MuTK
+MuTK -- doJa
+MuTK -- gMWQ
+doJa -- pXyq
+doJa -- gMWQ
+pXyq -- iXbJ
+iXbJ -- WhrE
 }
