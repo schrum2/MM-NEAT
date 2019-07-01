@@ -78,13 +78,13 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.START);
 		rule.grammar().setEnd(ZeldaGrammar.KEY);
-		rule.grammar().addNodeBetween(ZeldaGrammar.PUZZLE);
+		rule.grammar().setNodeBetween(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
-		rule.grammar().addNodeBetween(ZeldaGrammar.PUZZLE);
+		rule.grammar().setNodeBetween(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);

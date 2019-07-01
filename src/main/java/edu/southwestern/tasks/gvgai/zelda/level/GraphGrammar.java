@@ -20,6 +20,8 @@ public class GraphGrammar<T extends Grammar> {
 	private Graph<T>.Node end;
 	private Graph<T> graph;
 	
+	private boolean removeEdge = false;
+	
 	public GraphGrammar() {
 		this.graph = new Graph<>();
 	}
@@ -58,6 +60,16 @@ public class GraphGrammar<T extends Grammar> {
 			graph.addEdge(newNode, end);
 	}
 	
+	public void setNodeBetween(T data) {
+		Graph<T>.Node newNode = graph.addNode(data);
+		graph.addEdge(start, newNode);
+		if(end != null) {
+			graph.addEdge(newNode, end);
+			graph.removeEdge(start, end);
+			removeEdge = true;
+		}
+	}
+	
 	public void setOtherGraph(Graph<T>.Node newStart, 
 			Graph<T>.Node newEnd, Graph<T> otherG) {
 		
@@ -73,6 +85,8 @@ public class GraphGrammar<T extends Grammar> {
 //				otherG.addNode(n);
 
 			newEnd.copy(end);
+			if(removeEdge)
+				otherG.removeEdge(newStart, newEnd);
 		}
 		
 		
