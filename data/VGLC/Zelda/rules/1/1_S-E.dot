@@ -1,11 +1,11 @@
 graph {
-liGO [label="s, GS"]
-ipic [label="e, GE"]
-VYRu [label="e"]
-fYZl [label="sl"]
-XVTP [label="e"]
-liGO -- VYRu
-liGO -- fYZl
-fYZl -- ipic
-fYZl -- XVTP
+ndTM [label="s, GS"]
+GWvu [label="e, GE"]
+Tuch [label="e"]
+gzte [label="sl"]
+aVYw [label="e"]
+ndTM -- Tuch
+ndTM -- gzte
+gzte -- GWvu
+gzte -- aVYw
 }

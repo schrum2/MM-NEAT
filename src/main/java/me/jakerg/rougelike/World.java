@@ -329,4 +329,13 @@ public class World {
 		return false;
 			
 	}
+
+	public void forceKey() {
+		for(Item i : items) {
+			if(i instanceof Key) {
+				((Key) i).showKey();
+				return;
+			}
+		}
+	}
 }

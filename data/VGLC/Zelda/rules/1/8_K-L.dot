@@ -1,7 +1,7 @@
 graph {
-OeLP [label="e, GS"]
-fQyc [label="l, GE"]
-Upsu [label="k"]
-OeLP -- Upsu
-Upsu -- fQyc
+ipQo [label="e, GS"]
+tbEy [label="l, GE"]
+PCnE [label="k"]
+ipQo -- PCnE
+PCnE -- tbEy
 }

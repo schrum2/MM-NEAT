@@ -1,5 +1,5 @@
 graph {
-peQD [label="k, GS"]
-GpPp [label="S"]
-peQD -- GpPp
+fPIA [label="k, GS"]
+tpSv [label="S"]
+fPIA -- tpSv
 }

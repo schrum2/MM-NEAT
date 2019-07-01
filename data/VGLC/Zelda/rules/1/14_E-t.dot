@@ -1,8 +1,8 @@
 graph {
-lxhL [label="e, GS"]
-hAkm [label="t, GE"]
-fYZl [label="sl"]
-XVTP [label="e"]
-lxhL -- fYZl
-fYZl -- XVTP
+rCTS [label="e, GS"]
+UHOL [label="t, GE"]
+gzte [label="sl"]
+aVYw [label="e"]
+rCTS -- gzte
+gzte -- aVYw
 }

@@ -1,7 +1,7 @@
 graph {
-LtHf [label="k, GS"]
-PQIO [label="l, GE"]
-IvmD [label="e"]
-LtHf -- IvmD
-IvmD -- PQIO
+fAhn [label="k, GS"]
+URyO [label="l, GE"]
+pPCT [label="e"]
+fAhn -- pPCT
+pPCT -- URyO
 }

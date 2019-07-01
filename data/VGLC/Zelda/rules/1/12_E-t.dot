@@ -1,9 +1,9 @@
 graph {
-iAuY [label="e, GS"]
-mlFf [label="t, GE"]
-jvmh [label="e"]
-ckGZ [label="e"]
-iAuY -- jvmh
-iAuY -- ckGZ
-jvmh -- mlFf
+DWEQ [label="e, GS"]
+Kexz [label="t, GE"]
+gRYe [label="e"]
+Zwlh [label="e"]
+DWEQ -- gRYe
+DWEQ -- Zwlh
+gRYe -- Kexz
 }

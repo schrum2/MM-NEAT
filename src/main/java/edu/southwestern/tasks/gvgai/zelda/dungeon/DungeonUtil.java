@@ -531,6 +531,7 @@ public class DungeonUtil {
 		CreatureFactory cf = new CreatureFactory(world, log);
 		Creature p = cf.newDungeonPlayer(dungeon);
 		world = TileUtil.makeWorld(node.level.intLevel, p, log);
+		world.forceKey();
 		boolean isStart = dungeon.getCurrentlevel().equals(node);
 		if(isStart) {
 			p.x = 5;

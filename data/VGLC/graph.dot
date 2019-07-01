@@ -1,23 +1,23 @@
 graph {
-liGO[label="s"]
-VYRu[label="e"]
-ipic[label="e"]
-fYZl[label="sl"]
-NhYi[label="k"]
-XVTP[label="e"]
-MFfF[label="l"]
-nnwJ[label="e"]
-lxhL[label="e"]
-hAkm[label="t"]
-liGO -- VYRu
-liGO -- ipic
-liGO -- fYZl
-ipic -- NhYi
-ipic -- fYZl
-fYZl -- XVTP
-NhYi -- MFfF
-NhYi -- nnwJ
-fYZl -- XVTP
-MFfF -- lxhL
-lxhL -- hAkm
+ndTM[label="s"]
+Tuch[label="e"]
+GWvu[label="e"]
+gzte[label="sl"]
+jDeU[label="k"]
+aVYw[label="e"]
+PWIw[label="l"]
+RKzf[label="e"]
+rCTS[label="e"]
+UHOL[label="t"]
+ndTM -- Tuch
+ndTM -- GWvu
+ndTM -- gzte
+GWvu -- jDeU
+GWvu -- gzte
+gzte -- aVYw
+jDeU -- PWIw
+jDeU -- RKzf
+gzte -- aVYw
+PWIw -- rCTS
+rCTS -- UHOL
 }

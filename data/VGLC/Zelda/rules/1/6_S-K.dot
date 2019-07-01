@@ -1,7 +1,7 @@
 graph {
-fpRp [label="s, GS"]
-sapf [label="k, GE"]
-loQO [label="e"]
-fpRp -- loQO
-loQO -- sapf
+sTQh [label="s, GS"]
+dmaU [label="k, GE"]
+gMSt [label="e"]
+sTQh -- gMSt
+gMSt -- dmaU
 }

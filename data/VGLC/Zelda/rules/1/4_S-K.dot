@@ -1,11 +1,11 @@
 graph {
-kLmo [label="s, GS"]
-RVGp [label="k, GE"]
-oJpj [label="e"]
-NmZF [label="e"]
-gqnc [label="e"]
-kLmo -- oJpj
-kLmo -- NmZF
-kLmo -- gqnc
-NmZF -- RVGp
+qgxX [label="s, GS"]
+fjPd [label="k, GE"]
+MoVO [label="e"]
+Amas [label="e"]
+wqqX [label="e"]
+qgxX -- MoVO
+qgxX -- Amas
+qgxX -- wqqX
+Amas -- fjPd
 }

@@ -24,4 +24,9 @@ public class Key extends Item{
 		if(creature.isPlayer() && this.glyph == Tile.KEY.getGlyph())
 			creature.addKey();
 	}
+
+	public void showKey() {
+		this.glyph = Tile.KEY.getGlyph();
+		this.color = Tile.KEY.getColor();
+	}
 }
