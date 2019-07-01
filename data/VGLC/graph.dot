@@ -1,36 +1,23 @@
 graph {
-fOmu[label="s"]
-JOMF[label="e"]
-gkPn[label="sl"]
-aCrn[label="e"]
-rQYV[label="e"]
-qDph[label="e"]
-STip[label="l"]
-IeHQ[label="k"]
-ETiF[label="e"]
-mtiu[label="k"]
-vhYD[label="e"]
-qDQG[label="l"]
-OvUc[label="e"]
-qhvE[label="t"]
-kMsp[label="e"]
-lZuB[label="e"]
-fOmu -- JOMF
-fOmu -- gkPn
-fOmu -- aCrn
-gkPn -- aCrn
-gkPn -- rQYV
-aCrn -- qDph
-qDph -- STip
-qDph -- IeHQ
-STip -- ETiF
-ETiF -- mtiu
-ETiF -- vhYD
-mtiu -- qDQG
-mtiu -- vhYD
-qDQG -- OvUc
-OvUc -- qhvE
-OvUc -- kMsp
-OvUc -- lZuB
-qhvE -- kMsp
+vxIW[label="s"]
+FSCt[label="e"]
+Klsm[label="e"]
+ZgYC[label="sl"]
+lHVY[label="k"]
+rGCG[label="e"]
+nJnX[label="l"]
+Ucnd[label="e"]
+hENW[label="e"]
+EQoK[label="t"]
+vxIW -- FSCt
+vxIW -- Klsm
+vxIW -- ZgYC
+Klsm -- lHVY
+Klsm -- ZgYC
+ZgYC -- rGCG
+lHVY -- nJnX
+lHVY -- Ucnd
+ZgYC -- rGCG
+nJnX -- hENW
+hENW -- EQoK
 }

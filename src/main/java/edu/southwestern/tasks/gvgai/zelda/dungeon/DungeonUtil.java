@@ -8,7 +8,9 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,11 +22,13 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.distribution.GeometricDistribution;
 
 import asciiPanel.AsciiFont;
@@ -64,7 +68,6 @@ public class DungeonUtil {
 					options.addAll(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
 					Point p = DungeonUtil.pointToCheck(dungeon, x, y, options);
 					while(p != null) {
-//						System.out.println("Checking point");
 						Dungeon.Node n = dungeon.getNodeAt(x, y);
 						Dungeon.Node adj = dungeon.getNodeAt(p.x, p.y);
 						DungeonUtil.setAdjacencies(n, new Point(x, y), p, adj.name, Tile.DOOR.getNum());
@@ -626,6 +629,15 @@ public class DungeonUtil {
 	}
 	
 	public static <T extends Grammar> Dungeon recursiveGenerateDungeon(Graph<T> graph, LevelLoader loader) throws Exception {
+		try {
+			FileUtils.forceDelete(new File("data/VGLC/Zelda/Dungeons"));
+			FileUtils.forceMkdir(new File("data/VGLC/Zelda/Dungeons"));
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			FileUtils.forceMkdir(new File("data/VGLC/Zelda/Dungeons"));
+			e2.printStackTrace();
+		}
+		
 		Dungeon dungeon = new Dungeon();
 		Deque<Pair<Graph<T>.Node, Graph<T>.Node>> pending = getGraphNodes(graph);
 		Stack<Graph<T>.Node> placed = new Stack<>();
@@ -634,16 +646,16 @@ public class DungeonUtil {
 		String[][] levelThere = new String[100][100];
 		
 		// catch boolean for error check
-		recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations);
+		recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, 0);
 		dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
-		
+		addCycles(dungeon);
 		return dungeon;
 	}
 	
 	
 	private static <T extends Grammar> boolean recursiveGenerateDungeon(Graph<T> graph, LevelLoader loader, Dungeon dungeon,
 			Deque<Pair<Graph<T>.Node, Graph<T>.Node>> pending, Stack<Graph<T>.Node> placed, String[][] levelThere,
-			HashMap<String, Point> locations) throws Exception {
+			HashMap<String, Point> locations, int times) throws Exception {
 		
 		if(pending.isEmpty()) return true;
 		
@@ -679,13 +691,22 @@ public class DungeonUtil {
 				}
 
 				locations.put(next.getID(), p);
+				dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
 				
-				boolean success = recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations);
+				BufferedImage image = imageOfDungeon(dungeon);
+				File file = new File("data/VGLC/Zelda/Dungeons/dungeon_" + times + ".png");
+				ImageIO.write(image, "png", file);
+				
+				boolean success = recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, ++times);
 				if(success)
 					return true;
 				else {
 					locations.remove(next.getID());
 					dungeon.removeNode(next.getID());
+					if(parent != null) {
+						Dungeon.Node parentDN = dungeon.getNode(parent.getID());
+						DungeonUtil.setAdjacencies(parentDN, location, p, dNode.name, Tile.WALL.getNum());
+					}
 					levelThere[p.y][p.x] = null;
 				}
 			}
@@ -727,8 +748,8 @@ public class DungeonUtil {
 		if(n.hasLock()) return null;
 		while(options.size() > 0) {
 			Point check = options.pop();
-			int cX = x + check.x;
-			int cY = y + check.y;
+			int cX = check.x;
+			int cY = check.y;
 			boolean hasAdj = false;
 			Dungeon.Node cN = dungeon.getNodeAt(cX, cY);
 			if(cN == null)
@@ -794,17 +815,17 @@ public class DungeonUtil {
 					g.setColor(Color.GRAY);
 					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);
 					g.drawImage(bi, oX, oY, null);
-					g.setColor(Color.WHITE);
-					oX = (oX + BLOCK_WIDTH) - (BLOCK_WIDTH / 2) - (BLOCK_WIDTH / 4);
-					oY = (oY + BLOCK_HEIGHT) - (BLOCK_HEIGHT / 2) + (BLOCK_HEIGHT / 4);
-					if(n.grammar != null)
-						g.drawString(n.grammar.getLevelType(), oX, oY);
-					
-					if(nodes != null && nodes.containsKey(n))
-						g.setColor(Color.RED);
-					
-					oX = (oX) + (BLOCK_WIDTH / 4);
-					g.drawString(n.name, oX, oY);
+//					g.setColor(Color.WHITE);
+//					oX = (oX + BLOCK_WIDTH) - (BLOCK_WIDTH / 2) - (BLOCK_WIDTH / 4);
+//					oY = (oY + BLOCK_HEIGHT) - (BLOCK_HEIGHT / 2) + (BLOCK_HEIGHT / 4);
+//					if(n.grammar != null)
+//						g.drawString(n.grammar.getLevelType(), oX, oY);
+//					
+//					if(nodes != null && nodes.containsKey(n))
+//						g.setColor(Color.RED);
+//					
+//					oX = (oX) + (BLOCK_WIDTH / 4);
+//					g.drawString(n.name, oX, oY);
 				} else {
 					g.setColor(Color.BLACK);
 					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);

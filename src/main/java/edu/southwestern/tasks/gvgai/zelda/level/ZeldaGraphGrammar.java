@@ -14,6 +14,8 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FileUtils;
+
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
@@ -148,20 +150,31 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		super(directory);
 	}
 	
-	public static void main(String[] args) {
-		RandomNumbers.reset(6);
+	public static void main(String[] args) throws IOException {
+		RandomNumbers.reset(8);
+		
+		try {
+			FileUtils.forceDelete(new File("data/VGLC/Zelda/GraphDOTs"));
+			FileUtils.forceMkdir(new File("data/VGLC/Zelda/GraphDOTs"));
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			FileUtils.forceMkdir(new File("data/VGLC/Zelda/GraphDOTs"));
+			e2.printStackTrace();
+		}
+		
 		List<ZeldaGrammar> initialList = new LinkedList<>();
 		initialList.add(ZeldaGrammar.START_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
 		initialList.add(ZeldaGrammar.KEY_S);
 		initialList.add(ZeldaGrammar.LOCK_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
-		initialList.add(ZeldaGrammar.KEY_S);
-		initialList.add(ZeldaGrammar.LOCK_S);
-		initialList.add(ZeldaGrammar.ENEMY_S);
+//		initialList.add(ZeldaGrammar.KEY_S);
+//		initialList.add(ZeldaGrammar.LOCK_S);
+//		initialList.add(ZeldaGrammar.ENEMY_S);
 		initialList.add(ZeldaGrammar.TREASURE);
 		
 		Graph<ZeldaGrammar> graph = new Graph<>(initialList);
+		GraphUtil.saveGrammarGraph(graph, "data/VGLC/Zelda/GraphDOTs/start.dot");
 		
 		System.out.println("\n-----------------------------\n");
 		
@@ -174,7 +187,6 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			e1.printStackTrace();
 			System.exit(0);
 		}
-
 
 		System.out.println("After size " + graph.size());
 		
@@ -205,7 +217,6 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			// TODO Auto-generated catch block
 			
 		}
-		
 		
 		try {
 			grammar.saveRules(new File("data/VGLC/Zelda/rules/1"));

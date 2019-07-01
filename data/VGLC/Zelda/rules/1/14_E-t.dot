@@ -1,13 +1,8 @@
 graph {
-<<<<<<< HEAD
-uYJP [label="e, GS"]
-LBhi [label="t, GE"]
-igeP [label="S"]
-uYJP -- igeP
-=======
-kdOs [label="e, GS"]
-zeKi [label="t, GE"]
-nNUv [label="S"]
-kdOs -- nNUv
->>>>>>> dev_zelda
+hENW [label="e, GS"]
+EQoK [label="t, GE"]
+ZgYC [label="sl"]
+rGCG [label="e"]
+hENW -- ZgYC
+ZgYC -- rGCG
 }

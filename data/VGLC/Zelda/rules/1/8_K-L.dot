@@ -1,15 +1,7 @@
 graph {
-<<<<<<< HEAD
-YPOs [label="e, GS"]
-BWdV [label="l, GE"]
-ZUbX [label="k"]
-YPOs -- ZUbX
-ZUbX -- BWdV
-=======
-EDpU [label="e, GS"]
-IJOj [label="l, GE"]
-RNkJ [label="k"]
-EDpU -- RNkJ
-RNkJ -- IJOj
->>>>>>> dev_zelda
+Egrv [label="e, GS"]
+inwL [label="l, GE"]
+QhLZ [label="k"]
+Egrv -- QhLZ
+QhLZ -- inwL
 }

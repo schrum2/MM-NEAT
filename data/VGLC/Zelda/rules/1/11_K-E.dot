@@ -1,19 +1,9 @@
 graph {
-<<<<<<< HEAD
-gSPX [label="k, GS"]
-bKqK [label="e, GE"]
-FVzN [label="e"]
-Ypng [label="e"]
-gSPX -- FVzN
-gSPX -- Ypng
-Ypng -- bKqK
-=======
-LRkz [label="k, GS"]
-KFQa [label="e, GE"]
-iupl [label="e"]
-iTzt [label="e"]
-LRkz -- iupl
-LRkz -- iTzt
-iTzt -- KFQa
->>>>>>> dev_zelda
+BQde [label="k, GS"]
+gTHr [label="e, GE"]
+MlZj [label="e"]
+Skix [label="e"]
+BQde -- MlZj
+BQde -- Skix
+MlZj -- gTHr
 }

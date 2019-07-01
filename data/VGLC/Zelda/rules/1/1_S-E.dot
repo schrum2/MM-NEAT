@@ -1,23 +1,11 @@
 graph {
-<<<<<<< HEAD
-aEcc [label="s, GS"]
-OIrI [label="e, GE"]
-NMKk [label="e"]
-DUku [label="sl"]
-uWlI [label="e"]
-aEcc -- NMKk
-aEcc -- DUku
-DUku -- OIrI
-DUku -- uWlI
-=======
-fOmu [label="s, GS"]
-aCrn [label="e, GE"]
-JOMF [label="e"]
-gkPn [label="sl"]
-rQYV [label="e"]
-fOmu -- JOMF
-fOmu -- gkPn
-gkPn -- aCrn
-gkPn -- rQYV
->>>>>>> dev_zelda
+vxIW [label="s, GS"]
+Klsm [label="e, GE"]
+FSCt [label="e"]
+ZgYC [label="sl"]
+rGCG [label="e"]
+vxIW -- FSCt
+vxIW -- ZgYC
+ZgYC -- Klsm
+ZgYC -- rGCG
 }

@@ -1,23 +1,11 @@
 graph {
-<<<<<<< HEAD
-VPIn [label="s, GS"]
-XmFK [label="k, GE"]
-RrAL [label="e"]
-zLwl [label="e"]
-wzOc [label="e"]
-VPIn -- RrAL
-VPIn -- zLwl
-VPIn -- wzOc
-RrAL -- XmFK
-=======
-TaZI [label="s, GS"]
-ChaS [label="k, GE"]
-vdZb [label="e"]
-hBgp [label="e"]
-GfEC [label="e"]
-TaZI -- vdZb
-TaZI -- hBgp
-TaZI -- GfEC
-vdZb -- ChaS
->>>>>>> dev_zelda
+QZAE [label="s, GS"]
+IkyR [label="k, GE"]
+EbBv [label="e"]
+aUOM [label="e"]
+zVGH [label="e"]
+QZAE -- EbBv
+QZAE -- aUOM
+QZAE -- zVGH
+aUOM -- IkyR
 }
