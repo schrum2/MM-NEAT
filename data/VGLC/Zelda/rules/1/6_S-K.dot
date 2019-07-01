@@ -1,7 +1,7 @@
 graph {
-WmGb [label="s, GS"]
-hfwQ [label="k, GE"]
-CDrI [label="e"]
-WmGb -- CDrI
-CDrI -- hfwQ
+fpRp [label="s, GS"]
+sapf [label="k, GE"]
+loQO [label="e"]
+fpRp -- loQO
+loQO -- sapf
 }

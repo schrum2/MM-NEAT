@@ -1,7 +1,7 @@
 graph {
-fbgR [label="e, GS"]
-SkLv [label="t, GE"]
-uudR [label="e"]
-fbgR -- uudR
-uudR -- SkLv
+AUpS [label="e, GS"]
+zOyg [label="t, GE"]
+mSjf [label="e"]
+AUpS -- mSjf
+mSjf -- zOyg
 }

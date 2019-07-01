@@ -19,6 +19,10 @@ public abstract class Item {
     protected boolean pickupable;
     public boolean isPickupable() { return pickupable; }
     
+    public Item(World world) {
+    	this.world = world;
+    }
+    
     public Item(World world, char glpyh, Color color, int x, int y) {
     	this.world = world;
     	this.glyph = glpyh;

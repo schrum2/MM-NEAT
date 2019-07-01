@@ -1,5 +1,5 @@
 graph {
-poDH [label="k, GS"]
-FQNV [label="S"]
-poDH -- FQNV
+peQD [label="k, GS"]
+GpPp [label="S"]
+peQD -- GpPp
 }

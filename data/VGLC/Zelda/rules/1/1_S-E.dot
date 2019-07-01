@@ -1,11 +1,11 @@
 graph {
-vxIW [label="s, GS"]
-Klsm [label="e, GE"]
-FSCt [label="e"]
-ZgYC [label="sl"]
-rGCG [label="e"]
-vxIW -- FSCt
-vxIW -- ZgYC
-ZgYC -- Klsm
-ZgYC -- rGCG
+liGO [label="s, GS"]
+ipic [label="e, GE"]
+VYRu [label="e"]
+fYZl [label="sl"]
+XVTP [label="e"]
+liGO -- VYRu
+liGO -- fYZl
+fYZl -- ipic
+fYZl -- XVTP
 }

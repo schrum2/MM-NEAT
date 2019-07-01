@@ -1,12 +1,12 @@
 graph {
-awmF [label="s, GS"]
-zFfh [label="e, GE"]
-VpcX [label="e"]
-PkYJ [label="e"]
-xqQy [label="B"]
-awmF -- VpcX
-awmF -- PkYJ
-awmF -- xqQy
-PkYJ -- zFfh
-xqQy -- zFfh
+DKRu [label="s, GS"]
+LfRU [label="e, GE"]
+YAbe [label="e"]
+WFgr [label="e"]
+KxYY [label="B"]
+DKRu -- YAbe
+DKRu -- WFgr
+DKRu -- KxYY
+WFgr -- LfRU
+KxYY -- LfRU
 }

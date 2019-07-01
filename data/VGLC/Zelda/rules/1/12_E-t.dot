@@ -1,9 +1,9 @@
 graph {
-Ptgr [label="e, GS"]
-NqZD [label="t, GE"]
-attt [label="e"]
-nIws [label="e"]
-Ptgr -- attt
-Ptgr -- nIws
-attt -- NqZD
+iAuY [label="e, GS"]
+mlFf [label="t, GE"]
+jvmh [label="e"]
+ckGZ [label="e"]
+iAuY -- jvmh
+iAuY -- ckGZ
+jvmh -- mlFf
 }

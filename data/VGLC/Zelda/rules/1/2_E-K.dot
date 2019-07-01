@@ -1,7 +1,7 @@
 graph {
-KxxG [label="e, GS"]
-AKxq [label="k, GE"]
-TOwD [label="B"]
-KxxG -- TOwD
-TOwD -- AKxq
+qlIy [label="e, GS"]
+ItHD [label="k, GE"]
+xzoV [label="B"]
+qlIy -- xzoV
+xzoV -- ItHD
 }

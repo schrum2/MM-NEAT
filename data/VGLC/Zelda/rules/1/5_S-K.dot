@@ -1,9 +1,9 @@
 graph {
-AsLP [label="s, GS"]
-MUrg [label="k, GE"]
-beEo [label="e"]
-IkrX [label="e"]
-AsLP -- beEo
-AsLP -- IkrX
-IkrX -- MUrg
+noMN [label="s, GS"]
+XTMl [label="k, GE"]
+puPS [label="e"]
+HQld [label="e"]
+noMN -- puPS
+noMN -- HQld
+HQld -- XTMl
 }

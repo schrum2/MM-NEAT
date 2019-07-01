@@ -1,8 +1,8 @@
 graph {
-hENW [label="e, GS"]
-EQoK [label="t, GE"]
-ZgYC [label="sl"]
-rGCG [label="e"]
-hENW -- ZgYC
-ZgYC -- rGCG
+lxhL [label="e, GS"]
+hAkm [label="t, GE"]
+fYZl [label="sl"]
+XVTP [label="e"]
+lxhL -- fYZl
+fYZl -- XVTP
 }

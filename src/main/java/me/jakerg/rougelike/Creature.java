@@ -58,6 +58,7 @@ public class Creature {
 	
 	public int numKeys = 0;
 	public int keys() { return numKeys; }
+	public void addKey() { ++numKeys; }
 	
 	private boolean win = false;
 	public boolean win() {return this.win; }

@@ -321,7 +321,7 @@ public class World {
 	 * Check if there are enemy creatures in the room
 	 * @return True if there are enemies, false if not
 	 */
-	private boolean hasEnemies() {
+	public boolean hasEnemies() {
 		for(Creature c : creatures)
 			if(c.glyph() == 'e')
 				return true;

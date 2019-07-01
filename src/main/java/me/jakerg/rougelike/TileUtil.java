@@ -1,5 +1,6 @@
 package me.jakerg.rougelike;
 
+import java.awt.Point;
 import java.util.List;
 
 public class TileUtil {
@@ -44,6 +45,8 @@ public class TileUtil {
 					cf.newEnemy(i, j, player);
 				} else if(level.get(j).get(i) == -6) {
 					newWorld.dropItem(new Ladder(newWorld, i, j));
+				} else if(level.get(j).get(i) == Tile.KEY.getNum()) {
+					newWorld.dropItem(new Key(newWorld, new Point(i, j)));
 				}
 			}
 		}
@@ -60,6 +63,8 @@ public class TileUtil {
 	private static Tile mapIntToTile(int block) throws Exception {
 		Tile tile =  Tile.findNum(block);
 		if(tile == null)
+			tile = Tile.FLOOR;
+		else if (tile.equals(Tile.KEY))
 			tile = Tile.FLOOR;
 		return tile;
 	}

@@ -1,9 +1,9 @@
 graph {
-BQde [label="k, GS"]
-gTHr [label="e, GE"]
-MlZj [label="e"]
-Skix [label="e"]
-BQde -- MlZj
-BQde -- Skix
-MlZj -- gTHr
+iprG [label="k, GS"]
+obcA [label="e, GE"]
+tMrL [label="e"]
+Jyct [label="e"]
+iprG -- tMrL
+iprG -- Jyct
+tMrL -- obcA
 }

@@ -1,23 +1,23 @@
 graph {
-vxIW[label="s"]
-FSCt[label="e"]
-Klsm[label="e"]
-ZgYC[label="sl"]
-lHVY[label="k"]
-rGCG[label="e"]
-nJnX[label="l"]
-Ucnd[label="e"]
-hENW[label="e"]
-EQoK[label="t"]
-vxIW -- FSCt
-vxIW -- Klsm
-vxIW -- ZgYC
-Klsm -- lHVY
-Klsm -- ZgYC
-ZgYC -- rGCG
-lHVY -- nJnX
-lHVY -- Ucnd
-ZgYC -- rGCG
-nJnX -- hENW
-hENW -- EQoK
+liGO[label="s"]
+VYRu[label="e"]
+ipic[label="e"]
+fYZl[label="sl"]
+NhYi[label="k"]
+XVTP[label="e"]
+MFfF[label="l"]
+nnwJ[label="e"]
+lxhL[label="e"]
+hAkm[label="t"]
+liGO -- VYRu
+liGO -- ipic
+liGO -- fYZl
+ipic -- NhYi
+ipic -- fYZl
+fYZl -- XVTP
+NhYi -- MFfF
+NhYi -- nnwJ
+fYZl -- XVTP
+MFfF -- lxhL
+lxhL -- hAkm
 }

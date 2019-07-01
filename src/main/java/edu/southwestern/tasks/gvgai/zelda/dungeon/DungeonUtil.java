@@ -284,13 +284,12 @@ public class DungeonUtil {
 	private static Level loadLevel(Graph<? extends Grammar>.Node n, Dungeon dungeon, LevelLoader loader, Tile tile) throws FileNotFoundException {
 		Level level = loadOneLevel(loader);
 		switch(n.getData().getLevelType()) {
-		case "k":
-//			System.out.println("Putting key for: " + n.getID());
-			ZeldaLevelUtil.placeRandomKey(level.intLevel);
-			break;
 		case "n":
 		case "l":
 			break;
+		case "k":
+//			System.out.println("Putting key for: " + n.getID());
+			ZeldaLevelUtil.placeRandomKey(level.intLevel);
 		case "e":
 			if(tile == null || (tile != null && !tile.equals(Tile.SOFT_LOCK_DOOR)))
 				ZeldaLevelUtil.addRandomEnemy(level.intLevel);
