@@ -1,7 +1,0 @@
-graph {
-TyFk [label="e, GS"]
-TqyL [label="k, GE"]
-TAUQ [label="B"]
-TyFk -- TAUQ
-TAUQ -- TqyL
-}

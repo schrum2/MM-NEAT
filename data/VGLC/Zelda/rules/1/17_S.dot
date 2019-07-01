@@ -1,5 +1,0 @@
-graph {
-gzte [label="sl, GS"]
-aVYw [label="e"]
-gzte -- aVYw
-}

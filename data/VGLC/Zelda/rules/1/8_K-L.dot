@@ -1,7 +1,0 @@
-graph {
-ipQo [label="e, GS"]
-tbEy [label="l, GE"]
-PCnE [label="k"]
-ipQo -- PCnE
-PCnE -- tbEy
-}

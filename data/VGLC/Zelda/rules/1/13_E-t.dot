@@ -1,7 +1,0 @@
-graph {
-uDzu [label="e, GS"]
-goMy [label="t, GE"]
-cNgT [label="e"]
-uDzu -- cNgT
-cNgT -- goMy
-}

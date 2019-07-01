@@ -249,7 +249,6 @@ public class Creature {
     		previous = null;
     	}
     	if (hp < 1 && previous == null) {
-            world.remove(this);
             doAction(glyph + " died.");
             if(!isPlayer()) {
             	if(RandomNumbers.randomGenerator.nextDouble() >= 0.1) { // 90 % chance
@@ -260,6 +259,7 @@ public class Creature {
             		this.world.addItem(itemToDrop);
             	}
             }
+            return;
         }
 		ai.onUpdate();
 	}

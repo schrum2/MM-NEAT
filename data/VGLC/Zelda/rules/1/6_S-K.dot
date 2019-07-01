@@ -1,7 +1,0 @@
-graph {
-sTQh [label="s, GS"]
-dmaU [label="k, GE"]
-gMSt [label="e"]
-sTQh -- gMSt
-gMSt -- dmaU
-}

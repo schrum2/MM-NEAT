@@ -1,7 +1,0 @@
-graph {
-fAhn [label="k, GS"]
-URyO [label="l, GE"]
-pPCT [label="e"]
-fAhn -- pPCT
-pPCT -- URyO
-}

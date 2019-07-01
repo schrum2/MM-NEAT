@@ -45,8 +45,14 @@ public class TileUtil {
 					cf.newEnemy(i, j, player);
 				} else if(level.get(j).get(i) == -6) {
 					newWorld.dropItem(new Ladder(newWorld, i, j));
-				} else if(level.get(j).get(i) == Tile.KEY.getNum()) {
-					newWorld.dropItem(new Key(newWorld, new Point(i, j)));
+				} else {
+					Tile t = Tile.findNum(level.get(j).get(i));
+					if(t != null) {
+						if(t.equals(Tile.KEY))
+							newWorld.dropItem(new Key(newWorld, new Point(i, j)));
+						else if(t.isMovable())
+							newWorld.dropItem(new MovableBlock(newWorld, new Point(i, j), t.getDirection()));
+					}
 				}
 			}
 		}
@@ -64,7 +70,7 @@ public class TileUtil {
 		Tile tile =  Tile.findNum(block);
 		if(tile == null)
 			tile = Tile.FLOOR;
-		else if (tile.equals(Tile.KEY))
+		else if (tile.equals(Tile.KEY) || tile.isMovable())
 			tile = Tile.FLOOR;
 		return tile;
 	}

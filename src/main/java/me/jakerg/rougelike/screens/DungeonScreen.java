@@ -68,16 +68,15 @@ public class DungeonScreen implements Screen {
 
 	
 	@Override
-	public void displayOutput(AsciiPanel terminal, boolean update) {
+	public void displayOutput(AsciiPanel terminal) {
 		// Update the current world to get any changes
 		this.world = dungeonBuilder.getCurrentWorld();
 		player.setWorld(this.world);
         // display stuff to terminal
-		if(update)
-			world.update(); // Move enemies (basically)
+		world.update(); // Move enemies (basically)
 		displayTiles(terminal);
-		if(mapScreen != null) mapScreen.displayOutput(terminal, update);
-		messageScreen.displayOutput(terminal, update);
+		if(mapScreen != null) mapScreen.displayOutput(terminal);
+		messageScreen.displayOutput(terminal);
 		player.display(terminal, oX + screenWidth + 1, oY);
         terminal.write(player.glyph(), player.x + oX, player.y + oY, player.color());
 	}

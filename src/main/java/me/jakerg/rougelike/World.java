@@ -188,12 +188,14 @@ public class World {
 	/**
 	 * Update the creatures (move around)
 	 */
-	public void update() {
-		for(Item i : items)
-			i.update();
-		
+	public void update() {		
 		for(Creature c : creatures)
 			c.update();	
+		
+		creatures.removeIf(c -> c.hp() < 1);
+		
+		for(Item i : items)
+			i.update();
 		
 		checkToUnlock();
 	}
@@ -335,6 +337,15 @@ public class World {
 			if(i instanceof Key) {
 				((Key) i).showKey();
 				return;
+			}
+		}
+	}
+
+	public void unlockPuzzle() {
+		for(int y = 0; y < tiles.length; y++) {
+			for(int x = 0; x < tiles[y].length; x++) {
+				if(tiles[y][x].equals(Tile.PUZZLE_LOCKED))
+					tiles[y][x] = Tile.DOOR;
 			}
 		}
 	}

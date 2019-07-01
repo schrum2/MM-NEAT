@@ -24,6 +24,21 @@ public enum Move {
 		this.direction = direction;
 		this.point = p;
 	}
+	
+	public static Move getByString(String s) {
+		switch(s) {
+		case "UP":
+			return UP;
+		case "DOWN":
+			return DOWN;
+		case "LEFT":
+			return LEFT;
+		case "RIGHT":
+			return RIGHT;
+		default:
+			return NONE;
+		}
+	}
 
 	public Point getPoint() {
 		return point;

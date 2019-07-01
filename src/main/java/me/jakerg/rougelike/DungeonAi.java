@@ -42,7 +42,8 @@ public class DungeonAi extends CreatureAi{
 		Item item = creature.getWorld().item(x, y);
 		if(item != null) {
 			item.onPickup(creature);
-			creature.getWorld().removeItem(item);
+			if(!(item instanceof MovableBlock))
+				creature.getWorld().removeItem(item);
 		}
 
 		
@@ -89,10 +90,6 @@ public class DungeonAi extends CreatureAi{
 		if(tile.equals(Tile.BLOCK) && creature.hasItem('#') && !creature.getWorld().tile(creature.x, creature.y).equals(Tile.BLOCK)) {
 			creature.x = x;
 			creature.y = y;
-		}
-		if(tile.isMovable()){
-			if(creature.getWorld().move(x, y, creature.getLastDirection()))
-				creature.doAction("You moved a block");
 		}
 	}
 

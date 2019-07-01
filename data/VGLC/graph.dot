@@ -1,23 +1,37 @@
 graph {
-ndTM[label="s"]
-Tuch[label="e"]
-GWvu[label="e"]
-gzte[label="sl"]
-jDeU[label="k"]
-aVYw[label="e"]
-PWIw[label="l"]
-RKzf[label="e"]
-rCTS[label="e"]
-UHOL[label="t"]
-ndTM -- Tuch
-ndTM -- GWvu
-ndTM -- gzte
-GWvu -- jDeU
-GWvu -- gzte
-gzte -- aVYw
-jDeU -- PWIw
-jDeU -- RKzf
-gzte -- aVYw
-PWIw -- rCTS
-rCTS -- UHOL
+EpoB[label="s"]
+jvoF[label="e"]
+QIyq[label="e"]
+jNmB[label="sl"]
+xOLb[label="k"]
+ZvMP[label="e"]
+KpgB[label="l"]
+siQp[label="e"]
+WDQq[label="e"]
+kUqA[label="k"]
+akzb[label="e"]
+PdqF[label="l"]
+MvAE[label="e"]
+eFDk[label="t"]
+Kjfp[label="e"]
+sKle[label="p"]
+EpoB -- jvoF
+EpoB -- QIyq
+EpoB -- jNmB
+jvoF -- xOLb
+jvoF -- jNmB
+jNmB -- ZvMP
+xOLb -- KpgB
+xOLb -- siQp
+jNmB -- ZvMP
+KpgB -- WDQq
+WDQq -- kUqA
+WDQq -- akzb
+kUqA -- PdqF
+kUqA -- akzb
+PdqF -- MvAE
+MvAE -- eFDk
+MvAE -- Kjfp
+MvAE -- sKle
+eFDk -- sKle
 }

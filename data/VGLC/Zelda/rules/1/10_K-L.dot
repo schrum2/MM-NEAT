@@ -1,6 +1,0 @@
-graph {
-zZDl [label="e, GS"]
-HRBf [label="l, GE"]
-etXF [label="k"]
-zZDl -- etXF
-}

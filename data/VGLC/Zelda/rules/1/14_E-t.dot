@@ -1,8 +1,0 @@
-graph {
-rCTS [label="e, GS"]
-UHOL [label="t, GE"]
-gzte [label="sl"]
-aVYw [label="e"]
-rCTS -- gzte
-gzte -- aVYw
-}

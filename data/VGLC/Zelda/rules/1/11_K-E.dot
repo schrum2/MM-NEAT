@@ -1,9 +1,0 @@
-graph {
-brju [label="k, GS"]
-RgFQ [label="e, GE"]
-rGeX [label="e"]
-ywIE [label="e"]
-brju -- rGeX
-brju -- ywIE
-rGeX -- RgFQ
-}

@@ -278,12 +278,57 @@ public class ZeldaLevelUtil {
 		}
 		
 		Tile t = Tile.findNum(tile);
-		if(t != null && t.equals(Tile.SOFT_LOCK_DOOR) && 
-				fromNode.grammar != null && fromNode.grammar.equals(ZeldaGrammar.ENEMY))
+		if(t == null || fromNode.grammar == null) return;
+		if(t.equals(Tile.SOFT_LOCK_DOOR) && fromNode.grammar.equals(ZeldaGrammar.ENEMY))
 			handleSoftLock(direction, level);
+		else if(fromNode.grammar.equals(ZeldaGrammar.PUZZLE))
+			placePuzzle(direction, level);
+	}
+
+	private static void placePuzzle(String direction, List<List<Integer>> level) {
+		List<Point> points = getVisitedPoints(direction, level);
+		Move d = Move.getByString(direction);
+		Point rP = points.get(RandomNumbers.randomGenerator.nextInt(points.size()));
+		
+		level.get(rP.y).set(rP.x, Tile.FLOOR.getNum());
+		rP.y += d.getPoint().y;
+		rP.x += d.getPoint().x;
+		level.get(rP.y).set(rP.x, Tile.findByMove(d).getNum());
+		rP.y += d.getPoint().y;
+		rP.x += d.getPoint().x;
+		level.get(rP.y).set(rP.x, Tile.FLOOR.getNum());
 	}
 
 	private static void handleSoftLock(String direction, List<List<Integer>> level) {
+		List<Point> points = getVisitedPoints(direction, level);
+		int r = RandomNumbers.randomGenerator.nextInt(3) + 1;
+		for(int i = 0; i < r && points.size() > 0; i++) {
+			Point rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
+			level.get(rP.y).set(rP.x, 2);
+		}
+	}
+
+	public static List<Point> getVisitedPoints(int x, int y, List<List<Integer>> level) {
+		List<Point> visited = new LinkedList<>();
+		Queue<Point> queue = new LinkedList<>();
+		queue.add(new Point(x, y));
+		while(!queue.isEmpty()) {
+			Point p = queue.poll();
+			visited.add(p);
+			for(Move m : Move.values()) {
+				Point d = m.getPoint();
+				int dx = p.x + d.x;
+				int dy = p.y + d.y;
+				Point c = new Point(dx, dy);
+				Tile t = Tile.findNum(level.get(dy).get(dx));
+				if(t.playerPassable() && !visited.contains(c))
+					queue.add(c);
+			}
+		}
+		return visited;
+	}
+	
+	public static List<Point> getVisitedPoints(String direction, List<List<Integer>> level){
 		int x, y;
 		switch(direction) {
 		case "UP":
@@ -303,35 +348,10 @@ public class ZeldaLevelUtil {
 			y = 5;
 			break;
 		default:
-			return;
+			return null;
 		}
 		
-		List<Point> points = getVisitedPoints(x, y, level);
-		int r = RandomNumbers.randomGenerator.nextInt(3) + 1;
-		for(int i = 0; i < r && points.size() > 0; i++) {
-			Point rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
-			level.get(rP.y).set(rP.x, 2);
-		}
-	}
-
-	private static List<Point> getVisitedPoints(int x, int y, List<List<Integer>> level) {
-		List<Point> visited = new LinkedList<>();
-		Queue<Point> queue = new LinkedList<>();
-		queue.add(new Point(x, y));
-		while(!queue.isEmpty()) {
-			Point p = queue.poll();
-			visited.add(p);
-			for(Move m : Move.values()) {
-				Point d = m.getPoint();
-				int dx = p.x + d.x;
-				int dy = p.y + d.y;
-				Point c = new Point(dx, dy);
-				Tile t = Tile.findNum(level.get(dy).get(dx));
-				if(t.playerPassable() && !visited.contains(c))
-					queue.add(c);
-			}
-		}
-		return visited;
+		return getVisitedPoints(x, y, level);
 	}
 
 	/**

@@ -13,6 +13,7 @@ public class Key extends Item{
 	}
 	
 	public void update() {
+		System.out.println("Updating key");
 		if(this.glyph != Tile.KEY.getGlyph() && !this.world.hasEnemies()) {
 			this.glyph = Tile.KEY.getGlyph();
 			this.color = Tile.KEY.getColor();

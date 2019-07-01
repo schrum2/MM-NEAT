@@ -1,5 +1,0 @@
-graph {
-fPIA [label="k, GS"]
-tpSv [label="S"]
-fPIA -- tpSv
-}

@@ -1,9 +1,0 @@
-graph {
-ivPD [label="s, GS"]
-rDzX [label="k, GE"]
-yrpa [label="e"]
-Nomv [label="e"]
-ivPD -- yrpa
-ivPD -- Nomv
-Nomv -- rDzX
-}

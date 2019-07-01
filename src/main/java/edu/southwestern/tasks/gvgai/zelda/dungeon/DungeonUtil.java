@@ -141,6 +141,8 @@ public class DungeonUtil {
 			return Tile.HIDDEN.getNum();
 		case "sl":
 			return Tile.SOFT_LOCK_DOOR.getNum();
+		case "P":
+			return Tile.PUZZLE_LOCKED.getNum();
 		default:
 			return Tile.DOOR.getNum();
 		}
@@ -648,7 +650,7 @@ public class DungeonUtil {
 		// catch boolean for error check
 		recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, 0);
 		dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
-		addCycles(dungeon);
+//		addCycles(dungeon);
 		return dungeon;
 	}
 	
@@ -815,17 +817,17 @@ public class DungeonUtil {
 					g.setColor(Color.GRAY);
 					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);
 					g.drawImage(bi, oX, oY, null);
-//					g.setColor(Color.WHITE);
-//					oX = (oX + BLOCK_WIDTH) - (BLOCK_WIDTH / 2) - (BLOCK_WIDTH / 4);
-//					oY = (oY + BLOCK_HEIGHT) - (BLOCK_HEIGHT / 2) + (BLOCK_HEIGHT / 4);
-//					if(n.grammar != null)
-//						g.drawString(n.grammar.getLevelType(), oX, oY);
-//					
-//					if(nodes != null && nodes.containsKey(n))
-//						g.setColor(Color.RED);
-//					
-//					oX = (oX) + (BLOCK_WIDTH / 4);
-//					g.drawString(n.name, oX, oY);
+					g.setColor(Color.WHITE);
+					oX = (oX + BLOCK_WIDTH) - (BLOCK_WIDTH / 2) - (BLOCK_WIDTH / 4);
+					oY = (oY + BLOCK_HEIGHT) - (BLOCK_HEIGHT / 2) + (BLOCK_HEIGHT / 4);
+					if(n.grammar != null)
+						g.drawString(n.grammar.getLevelType(), oX, oY);
+					
+					if(nodes != null && nodes.containsKey(n))
+						g.setColor(Color.RED);
+					
+					oX = (oX) + (BLOCK_WIDTH / 4);
+					g.drawString(n.name, oX, oY);
 				} else {
 					g.setColor(Color.BLACK);
 					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);

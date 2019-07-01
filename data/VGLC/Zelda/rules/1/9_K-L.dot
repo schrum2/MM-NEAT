@@ -1,6 +1,0 @@
-graph {
-jDeU [label="k, GS"]
-PWIw [label="l, GE"]
-RKzf [label="e"]
-jDeU -- RKzf
-}

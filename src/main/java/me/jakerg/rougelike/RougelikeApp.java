@@ -62,16 +62,10 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		app = this;
 	}
 	
-	/**
-	 * Anytime there is input this is called to display to the terminal
-	 */
-	public void repaint() {
-		repaint(true);
-	}
 	
-	public void repaint(boolean update) {
+	public void repaint() {
 		terminal.clear();
-		screen.displayOutput(terminal, update);
+		screen.displayOutput(terminal);
 		super.repaint();
 	}
 
@@ -86,8 +80,7 @@ public class RougelikeApp extends JFrame implements KeyListener{
 	}
 
 	public void keyReleased(KeyEvent e) {
-		repaint(false);
-	} // Not used
+		} // Not used
 	
 	/**
 	 * Main method to test rougelike w/o dungeon (will load random caves)
