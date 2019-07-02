@@ -1,19 +1,32 @@
 graph {
-CzWY[label="s"]
-micM[label="e"]
-SIih[label="e"]
-BUrk[label="sl"]
-omrX[label="k"]
-YknZ[label="e"]
-AqAs[label="p"]
-WkKx[label="l"]
-CzWY -- micM
-CzWY -- SIih
-CzWY -- BUrk
-micM -- omrX
-micM -- BUrk
-BUrk -- YknZ
-omrX -- AqAs
-BUrk -- YknZ
-AqAs -- WkKx
+tdQq[label="s"]
+MXwK[label="e"]
+ebPA[label="e"]
+NqOx[label="sl"]
+nfNN[label="k"]
+DtwW[label="e"]
+Vuhq[label="p"]
+UyNr[label="l"]
+EOFc[label="e"]
+WbRM[label="k"]
+bxmg[label="e"]
+FEOX[label="l"]
+JQAK[label="e"]
+phIq[label="t"]
+tdQq -- MXwK
+tdQq -- ebPA
+tdQq -- NqOx
+MXwK -- nfNN
+MXwK -- NqOx
+NqOx -- DtwW
+nfNN -- Vuhq
+NqOx -- DtwW
+Vuhq -- UyNr
+UyNr -- EOFc
+EOFc -- WbRM
+EOFc -- bxmg
+WbRM -- FEOX
+WbRM -- bxmg
+FEOX -- JQAK
+JQAK -- phIq
 }

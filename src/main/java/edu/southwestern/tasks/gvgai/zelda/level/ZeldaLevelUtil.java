@@ -289,8 +289,9 @@ public class ZeldaLevelUtil {
 		List<Point> points = getVisitedPoints(direction, level);
 		Move d = Move.getByString(direction).opposite();
 		Point rP = null;
+		System.out.println();
 		do {
-			rP = points.get(RandomNumbers.randomGenerator.nextInt(points.size()));
+			rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
 		} while(!withinBounds(rP, d));
 
 		
@@ -304,6 +305,7 @@ public class ZeldaLevelUtil {
 	}
 
 	private static boolean withinBounds(Point rP, Move direction) {
+		System.out.println(direction + " point " + rP);
 		if(direction.equals(Move.UP))
 			if(rP.y >= 4)
 				return true;
@@ -311,10 +313,10 @@ public class ZeldaLevelUtil {
 			if(rP.y <= 6)
 				return true;
 		else if(direction.equals(Move.LEFT))
-			if(rP.x >= 4)
+			if(rP.x <= 12)
 				return true;
 		else if(direction.equals(Move.RIGHT))
-			if(rP.x <= 12)
+			if(rP.x >= 4)
 				return true;
 		
 		return false;

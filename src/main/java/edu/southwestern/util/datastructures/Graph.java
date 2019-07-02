@@ -11,6 +11,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.RandomStringUtils;
 
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
+
 public class Graph<T>{
 	
 	private Set<Node> nodes;
@@ -72,10 +74,15 @@ public class Graph<T>{
 	public void removeEdge(Node n1, Node n2) {
 		Set<Node> l1 = n1.adjacencies;
 		Set<Node> l2 = n2.adjacencies;
+		System.out.println(l1);
+		System.out.println(l2);
 		if(l1 != null)
 			l1.remove(n2);
 		if(l2 != null)
 			l2.remove(n1);
+		System.out.println(l1);
+		System.out.println(l2);
+
 	}
 	
 	public List<Node> breadthFirstTraversal(){
@@ -103,7 +110,7 @@ public class Graph<T>{
 	public class Node{
 		private T data;
 		Set<Node> adjacencies;
-		private String id;
+		public String id;
 		public Node(T d){
 			setData(d);
 			adjacencies = new HashSet<>();
@@ -127,8 +134,14 @@ public class Graph<T>{
 		
 		public void copy(Node other) {
 			this.data = other.data;
-			for(Node n : other.adjacencies)
+			for(Node n : other.adjacencies) {
+				if(data instanceof ZeldaGrammar) {
+					ZeldaGrammar g = (ZeldaGrammar) data;
+					if(g.equals(ZeldaGrammar.LOCK) || g.equals(ZeldaGrammar.LOCK_S))
+						System.out.println("copy " +  n + " to " + this);
+				}
 				adjacencies.add(n);
+			}
 			this.id = other.id;
 		}
 		
@@ -141,7 +154,7 @@ public class Graph<T>{
 		}
 		
 		public String toString() {
-			return data.toString();
+			return data.toString() + ": " + id;
 		}
 	}
 

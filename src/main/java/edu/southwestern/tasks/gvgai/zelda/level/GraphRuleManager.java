@@ -128,7 +128,14 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		if(rules.size() > 0) {
 			GraphRule<T> ruleToApply = rules.get((int) RandomNumbers.boundedRandom(0, rules.size()));
 			if(ruleToApply != null) {
+//				if(nextNode != null) graph.removeEdge(node, nextNode);
 				ruleToApply.grammar().setOtherGraph(node, nextNode, graph);
+				System.out.println(node.id);
+				System.out.println(node.adjacencies());
+				if(nextNode != null) {
+					System.out.println(nextNode.id);
+					System.out.println(nextNode.adjacencies());
+				}
 				System.out.println("--------------------------------------");
 				System.out.println(ruleToApply.getSymbolStart().getLevelType());
 				System.out.println(ruleToApply.grammar().getDOTString());

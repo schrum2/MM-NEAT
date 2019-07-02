@@ -244,11 +244,8 @@ public class Creature {
      * Update to let ai update
      */
 	public void update() {
-    	if(previous != null) {
-    		this.color = previous;
-    		previous = null;
-    	}
-    	if (hp < 1 && previous == null) {
+
+    	if (hp < 1) {
             doAction(glyph + " died.");
             if(!isPlayer()) {
             	if(RandomNumbers.randomGenerator.nextDouble() >= 0.1) { // 90 % chance

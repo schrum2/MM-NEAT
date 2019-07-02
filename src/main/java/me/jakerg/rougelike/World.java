@@ -189,13 +189,18 @@ public class World {
 	 * Update the creatures (move around)
 	 */
 	public void update() {		
-		for(Creature c : creatures)
+		for(Creature c : creatures) {
 			c.update();	
+			System.out.println(c.glyph() + "'s health : " + c.hp());
+		}
 		
 		creatures.removeIf(c -> c.hp() < 1);
 		
-		for(Item i : items)
+		for(Item i : items) {
+			System.out.println("Updating item : " + i.glyph);
 			i.update();
+		}
+
 		
 		checkToUnlock();
 	}
@@ -332,6 +337,9 @@ public class World {
 			
 	}
 
+	/**
+	 * Force the key to showup on the world, used for debugging purposes
+	 */
 	public void forceKey() {
 		for(Item i : items) {
 			if(i instanceof Key) {
@@ -341,6 +349,9 @@ public class World {
 		}
 	}
 
+	/**
+	 * Change all puzzle locked doors to unlocked doors
+	 */
 	public void unlockPuzzle() {
 		for(int y = 0; y < tiles.length; y++) {
 			for(int x = 0; x < tiles[y].length; x++) {
