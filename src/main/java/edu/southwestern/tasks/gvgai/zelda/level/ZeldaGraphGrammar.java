@@ -210,7 +210,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			Desktop desk = Desktop.getDesktop();
 			desk.open(file);
 			
-			RougelikeApp.startDungeon(d, true);
+			RougelikeApp.startDungeon(d);
 		} catch (Exception e) {
 			e.printStackTrace();
 			DungeonUtil.viewDungeon(d);

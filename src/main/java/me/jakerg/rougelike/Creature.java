@@ -245,6 +245,11 @@ public class Creature {
      */
 	public void update() {
 
+		if(previous != null) {
+			this.color = previous;
+			previous = null;
+		}
+		
     	if (hp < 1) {
             doAction(glyph + " died.");
             if(!isPlayer()) {
