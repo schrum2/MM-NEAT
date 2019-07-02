@@ -100,9 +100,9 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
-		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
-		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setNodeBetween(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.ENEMY_S);
@@ -151,7 +151,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		RandomNumbers.reset(15);
+		RandomNumbers.reset(22);
 		
 		try {
 			FileUtils.forceDelete(new File("data/VGLC/Zelda/GraphDOTs"));
@@ -168,9 +168,9 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		initialList.add(ZeldaGrammar.KEY_S);
 		initialList.add(ZeldaGrammar.LOCK_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
-		initialList.add(ZeldaGrammar.KEY_S);
-		initialList.add(ZeldaGrammar.LOCK_S);
-		initialList.add(ZeldaGrammar.ENEMY_S);
+//		initialList.add(ZeldaGrammar.KEY_S);
+//		initialList.add(ZeldaGrammar.LOCK_S);
+//		initialList.add(ZeldaGrammar.ENEMY_S);
 		initialList.add(ZeldaGrammar.TREASURE);
 		
 		Graph<ZeldaGrammar> graph = new Graph<>(initialList);

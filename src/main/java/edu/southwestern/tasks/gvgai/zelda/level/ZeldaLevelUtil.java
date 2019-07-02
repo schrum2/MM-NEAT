@@ -281,7 +281,7 @@ public class ZeldaLevelUtil {
 		if(t == null || fromNode.grammar == null) return;
 		if(t.equals(Tile.SOFT_LOCK_DOOR) && fromNode.grammar.equals(ZeldaGrammar.ENEMY))
 			handleSoftLock(direction, level);
-		else if(t.equals(Tile.PUZZLE_LOCKED) && fromNode.grammar.equals(ZeldaGrammar.PUZZLE))
+		else if(!t.equals(Tile.PUZZLE_LOCKED) && fromNode.grammar.equals(ZeldaGrammar.PUZZLE))
 			placePuzzle(direction, level);
 	}
 
@@ -312,11 +312,10 @@ public class ZeldaLevelUtil {
 			if(rP.y <= 6)
 				return true;
 		if(direction.equals(Move.LEFT))
-			System.out.println("checking " + direction);
-			if(rP.x <= 12)
+			if(rP.x >= 4)
 				return true;
 		if(direction.equals(Move.RIGHT))
-			if(rP.x >= 4)
+			if(rP.x <= 12)
 				return true;
 		
 		return false;

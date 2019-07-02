@@ -1,32 +1,26 @@
 graph {
-OrLq[label="s"]
-ovtq[label="e"]
-fEkm[label="e"]
-yvLA[label="sl"]
-NxVh[label="k"]
-PfdK[label="e"]
-umGl[label="p"]
-CxJo[label="l"]
-dZHy[label="e"]
-BqVP[label="k"]
-pKyZ[label="e"]
-ZMCg[label="l"]
-aTTl[label="e"]
-ZZxN[label="t"]
-OrLq -- ovtq
-OrLq -- fEkm
-OrLq -- yvLA
-ovtq -- NxVh
-ovtq -- yvLA
-yvLA -- PfdK
-NxVh -- umGl
-yvLA -- PfdK
-umGl -- CxJo
-CxJo -- dZHy
-dZHy -- BqVP
-dZHy -- pKyZ
-BqVP -- ZMCg
-BqVP -- pKyZ
-ZMCg -- aTTl
-aTTl -- ZZxN
+rTUE[label="s"]
+iZXG[label="e"]
+oEVg[label="e"]
+IUKO[label="sl"]
+dnIp[label="k"]
+lZkT[label="e"]
+heDh[label="p"]
+PcjG[label="l"]
+lSSQ[label="e"]
+VafH[label="e"]
+iXDE[label="t"]
+rTUE -- iZXG
+rTUE -- oEVg
+rTUE -- IUKO
+oEVg -- dnIp
+oEVg -- IUKO
+IUKO -- lZkT
+dnIp -- heDh
+IUKO -- lZkT
+heDh -- PcjG
+PcjG -- lSSQ
+lSSQ -- VafH
+lSSQ -- iXDE
+VafH -- iXDE
 }
