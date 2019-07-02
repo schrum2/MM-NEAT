@@ -141,8 +141,8 @@ public class DungeonUtil {
 			return Tile.HIDDEN.getNum();
 		case "sl":
 			return Tile.SOFT_LOCK_DOOR.getNum();
-		case "P":
-			return Tile.PUZZLE_LOCKED.getNum();
+		case "p":
+			return Tile.PUZZLE_LOCKED.getNum();	
 		default:
 			return Tile.DOOR.getNum();
 		}

@@ -1,32 +1,32 @@
 graph {
-tdQq[label="s"]
-MXwK[label="e"]
-ebPA[label="e"]
-NqOx[label="sl"]
-nfNN[label="k"]
-DtwW[label="e"]
-Vuhq[label="p"]
-UyNr[label="l"]
-EOFc[label="e"]
-WbRM[label="k"]
-bxmg[label="e"]
-FEOX[label="l"]
-JQAK[label="e"]
-phIq[label="t"]
-tdQq -- MXwK
-tdQq -- ebPA
-tdQq -- NqOx
-MXwK -- nfNN
-MXwK -- NqOx
-NqOx -- DtwW
-nfNN -- Vuhq
-NqOx -- DtwW
-Vuhq -- UyNr
-UyNr -- EOFc
-EOFc -- WbRM
-EOFc -- bxmg
-WbRM -- FEOX
-WbRM -- bxmg
-FEOX -- JQAK
-JQAK -- phIq
+OrLq[label="s"]
+ovtq[label="e"]
+fEkm[label="e"]
+yvLA[label="sl"]
+NxVh[label="k"]
+PfdK[label="e"]
+umGl[label="p"]
+CxJo[label="l"]
+dZHy[label="e"]
+BqVP[label="k"]
+pKyZ[label="e"]
+ZMCg[label="l"]
+aTTl[label="e"]
+ZZxN[label="t"]
+OrLq -- ovtq
+OrLq -- fEkm
+OrLq -- yvLA
+ovtq -- NxVh
+ovtq -- yvLA
+yvLA -- PfdK
+NxVh -- umGl
+yvLA -- PfdK
+umGl -- CxJo
+CxJo -- dZHy
+dZHy -- BqVP
+dZHy -- pKyZ
+BqVP -- ZMCg
+BqVP -- pKyZ
+ZMCg -- aTTl
+aTTl -- ZZxN
 }

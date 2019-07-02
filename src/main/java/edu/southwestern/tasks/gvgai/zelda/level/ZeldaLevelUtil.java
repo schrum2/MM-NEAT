@@ -281,7 +281,7 @@ public class ZeldaLevelUtil {
 		if(t == null || fromNode.grammar == null) return;
 		if(t.equals(Tile.SOFT_LOCK_DOOR) && fromNode.grammar.equals(ZeldaGrammar.ENEMY))
 			handleSoftLock(direction, level);
-		else if(fromNode.grammar.equals(ZeldaGrammar.PUZZLE))
+		else if(t.equals(Tile.PUZZLE_LOCKED) && fromNode.grammar.equals(ZeldaGrammar.PUZZLE))
 			placePuzzle(direction, level);
 	}
 
@@ -290,9 +290,8 @@ public class ZeldaLevelUtil {
 		Move d = Move.getByString(direction).opposite();
 		Point rP = null;
 		System.out.println();
-		do {
-			rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
-		} while(!withinBounds(rP, d));
+		points.removeIf(p -> !withinBounds(p, d));
+		rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
 
 		
 		level.get(rP.y).set(rP.x, Tile.FLOOR.getNum());
@@ -309,13 +308,14 @@ public class ZeldaLevelUtil {
 		if(direction.equals(Move.UP))
 			if(rP.y >= 4)
 				return true;
-		else if(direction.equals(Move.DOWN))
+		if(direction.equals(Move.DOWN))
 			if(rP.y <= 6)
 				return true;
-		else if(direction.equals(Move.LEFT))
+		if(direction.equals(Move.LEFT))
+			System.out.println("checking " + direction);
 			if(rP.x <= 12)
 				return true;
-		else if(direction.equals(Move.RIGHT))
+		if(direction.equals(Move.RIGHT))
 			if(rP.x >= 4)
 				return true;
 		

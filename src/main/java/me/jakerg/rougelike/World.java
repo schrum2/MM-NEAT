@@ -293,6 +293,11 @@ public class World {
 		changeToDoor(x, y + 1, Tile.HIDDEN);
 		changeToDoor(x - 1, y, Tile.HIDDEN);
 		changeToDoor(x, y - 1, Tile.HIDDEN);
+		
+		changeToDoor(x + 1, y, Tile.PUZZLE_LOCKED);
+		changeToDoor(x, y + 1, Tile.PUZZLE_LOCKED);
+		changeToDoor(x - 1, y, Tile.PUZZLE_LOCKED);
+		changeToDoor(x, y - 1, Tile.PUZZLE_LOCKED);
 	}
 
 	/**
