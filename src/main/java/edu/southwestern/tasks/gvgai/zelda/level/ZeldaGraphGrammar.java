@@ -151,7 +151,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		RandomNumbers.reset(22);
+		RandomNumbers.reset(24);
 		
 		try {
 			FileUtils.forceDelete(new File("data/VGLC/Zelda/GraphDOTs"));
@@ -168,9 +168,9 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		initialList.add(ZeldaGrammar.KEY_S);
 		initialList.add(ZeldaGrammar.LOCK_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
-//		initialList.add(ZeldaGrammar.KEY_S);
-//		initialList.add(ZeldaGrammar.LOCK_S);
-//		initialList.add(ZeldaGrammar.ENEMY_S);
+		initialList.add(ZeldaGrammar.KEY_S);
+		initialList.add(ZeldaGrammar.LOCK_S);
+		initialList.add(ZeldaGrammar.ENEMY_S);
 		initialList.add(ZeldaGrammar.TREASURE);
 		
 		Graph<ZeldaGrammar> graph = new Graph<>(initialList);

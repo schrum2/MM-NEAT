@@ -38,7 +38,7 @@ public class LoadOriginalDungeon {
 	
 	public static final int ZELDA_ROOM_ROWS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int ZELDA_ROOM_COLUMNS = 16;
-	private static final boolean ROUGE_DEBUG = true;
+	private static final boolean ROUGE_DEBUG = false;
 	private static HashMap<String, Stack<Pair<String, String>>> directional;
 						  // Node name        direct, whereTo
 	

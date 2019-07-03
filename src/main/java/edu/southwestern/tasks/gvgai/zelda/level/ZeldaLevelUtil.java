@@ -280,9 +280,11 @@ public class ZeldaLevelUtil {
 		Tile t = Tile.findNum(tile);
 		if(t == null || fromNode.grammar == null) return;
 		if(t.equals(Tile.SOFT_LOCK_DOOR) && fromNode.grammar.equals(ZeldaGrammar.ENEMY))
-			handleSoftLock(direction, level);
+			placeReachableEnemies(direction, level, 3);
 		else if(!t.equals(Tile.PUZZLE_LOCKED) && fromNode.grammar.equals(ZeldaGrammar.PUZZLE))
 			placePuzzle(direction, level);
+		else if(fromNode.grammar.equals(ZeldaGrammar.KEY))
+			placeReachableEnemies(direction, level, 2);
 	}
 
 	public static void placePuzzle(String direction, List<List<Integer>> level) {
@@ -321,9 +323,9 @@ public class ZeldaLevelUtil {
 		return false;
 	}
 
-	private static void handleSoftLock(String direction, List<List<Integer>> level) {
+	private static void placeReachableEnemies(String direction, List<List<Integer>> level, int max) {
 		List<Point> points = getVisitedPoints(direction, level);
-		int r = RandomNumbers.randomGenerator.nextInt(3) + 1;
+		int r = RandomNumbers.randomGenerator.nextInt(max) + 1;
 		for(int i = 0; i < r && points.size() > 0; i++) {
 			Point rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
 			level.get(rP.y).set(rP.x, 2);

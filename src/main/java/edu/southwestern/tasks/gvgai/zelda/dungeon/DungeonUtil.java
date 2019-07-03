@@ -292,6 +292,7 @@ public class DungeonUtil {
 		case "k":
 //			System.out.println("Putting key for: " + n.getID());
 			ZeldaLevelUtil.placeRandomKey(level.intLevel);
+			break;
 		case "e":
 			if(tile == null || (tile != null && !tile.equals(Tile.SOFT_LOCK_DOOR)))
 				ZeldaLevelUtil.addRandomEnemy(level.intLevel);
@@ -695,9 +696,9 @@ public class DungeonUtil {
 				locations.put(next.getID(), p);
 				dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
 				
-//				BufferedImage image = imageOfDungeon(dungeon);
-//				File file = new File("data/VGLC/Zelda/Dungeons/dungeon_" + times + ".png");
-//				ImageIO.write(image, "png", file);
+				BufferedImage image = imageOfDungeon(dungeon);
+				File file = new File("data/VGLC/Zelda/Dungeons/dungeon_" + times + ".png");
+				ImageIO.write(image, "png", file);
 				
 				boolean success = recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, ++times);
 				if(success)
@@ -780,6 +781,8 @@ public class DungeonUtil {
 	 * @return BufferedImage representing dungeon
 	 */
 	public static BufferedImage imageOfDungeon(Dungeon dungeon, HashSet<ZeldaState> visited) {
+		boolean debug = false;
+		
 		int BLOCK_HEIGHT = dungeon.getCurrentlevel().level.intLevel.size() * 16;
 		int BLOCK_WIDTH = dungeon.getCurrentlevel().level.intLevel.get(0).size() * 16;
 		String[][] levelThere = dungeon.getLevelThere();
@@ -817,17 +820,19 @@ public class DungeonUtil {
 					g.setColor(Color.GRAY);
 					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);
 					g.drawImage(bi, oX, oY, null);
-					g.setColor(Color.WHITE);
-					oX = (oX + BLOCK_WIDTH) - (BLOCK_WIDTH / 2) - (BLOCK_WIDTH / 4);
-					oY = (oY + BLOCK_HEIGHT) - (BLOCK_HEIGHT / 2) + (BLOCK_HEIGHT / 4);
-					if(n.grammar != null)
-						g.drawString(n.grammar.getLevelType(), oX, oY);
-					
-					if(nodes != null && nodes.containsKey(n))
-						g.setColor(Color.RED);
-					
-					oX = (oX) + (BLOCK_WIDTH / 4);
-					g.drawString(n.name, oX, oY);
+					if(debug) {
+						g.setColor(Color.WHITE);
+						oX = (oX + BLOCK_WIDTH) - (BLOCK_WIDTH / 2) - (BLOCK_WIDTH / 4);
+						oY = (oY + BLOCK_HEIGHT) - (BLOCK_HEIGHT / 2) + (BLOCK_HEIGHT / 4);
+						if(n.grammar != null)
+							g.drawString(n.grammar.getLevelType(), oX, oY);
+						
+						if(nodes != null && nodes.containsKey(n))
+							g.setColor(Color.RED);
+						
+						oX = (oX) + (BLOCK_WIDTH / 4);
+						g.drawString(n.name, oX, oY);
+					}
 				} else {
 					g.setColor(Color.BLACK);
 					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);
