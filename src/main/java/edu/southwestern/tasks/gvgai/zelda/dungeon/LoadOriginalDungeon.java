@@ -53,7 +53,7 @@ public class LoadOriginalDungeon {
 	public static void main(String[] args) throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"rougeEnemyHealth:2"});
 		
-		String title = "tloz1_1_flip";
+		String title = "tloz8_1_flip";
 		Dungeon dungeon = loadOriginalDungeon(title, false);
 		BufferedImage image = DungeonUtil.imageOfDungeon(dungeon);
 		File file = new File("data/VGLC/Zelda/" + title + ".png");
