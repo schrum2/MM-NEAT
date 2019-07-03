@@ -1,32 +1,44 @@
 graph {
-yGNc[label="s"]
-TaQF[label="e"]
-xfXM[label="e"]
-rdYM[label="sl"]
-PxNK[label="k"]
-uzOC[label="e"]
-UpMA[label="p"]
-LyuJ[label="l"]
-rPQV[label="e"]
-cbsz[label="k"]
-xclu[label="e"]
-iepB[label="l"]
-wRBA[label="e"]
-szDW[label="t"]
-yGNc -- TaQF
-yGNc -- xfXM
-yGNc -- rdYM
-TaQF -- PxNK
-TaQF -- rdYM
-rdYM -- uzOC
-PxNK -- UpMA
-rdYM -- uzOC
-UpMA -- LyuJ
-LyuJ -- rPQV
-rPQV -- cbsz
-rPQV -- xclu
-cbsz -- iepB
-cbsz -- xclu
-iepB -- wRBA
-wRBA -- szDW
+cHyT[label="s"]
+tJVs[label="e"]
+ERkU[label="e"]
+geaq[label="e"]
+OEzn[label="e"]
+jmrH[label="e"]
+qmhW[label="l"]
+MxNz[label="k"]
+eXit[label="e"]
+IlaF[label="k"]
+OjVK[label="l"]
+xjyx[label="e"]
+iqyo[label="t"]
+JrVx[label="sl"]
+LJoR[label="e"]
+cHyT -- tJVs
+cHyT -- ERkU
+cHyT -- geaq
+cHyT -- OEzn
+tJVs -- ERkU
+ERkU -- jmrH
+ERkU -- geaq
+ERkU -- jmrH
+jmrH -- qmhW
+jmrH -- MxNz
+jmrH -- qmhW
+jmrH -- MxNz
+qmhW -- MxNz
+qmhW -- eXit
+qmhW -- eXit
+eXit -- IlaF
+eXit -- IlaF
+IlaF -- OjVK
+IlaF -- OjVK
+OjVK -- xjyx
+OjVK -- xjyx
+xjyx -- iqyo
+xjyx -- JrVx
+xjyx -- iqyo
+xjyx -- JrVx
+JrVx -- LJoR
+JrVx -- LJoR
 }

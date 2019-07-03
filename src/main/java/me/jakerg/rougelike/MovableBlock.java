@@ -15,6 +15,7 @@ public class MovableBlock extends Item{
 		this.color = Tile.MOVABLE_BLOCK_UP.getColor();
 		this.move = move;
 		moved = false;
+		this.removable = false;
 	}
 
 	@Override

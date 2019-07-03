@@ -117,8 +117,10 @@ public class World {
 	}
 	
 	public void addItem(Item item) {
-		if(item(item.x, item.y) != null) return;
-		items.add(item);
+		if(item(item.x, item.y) == null) {
+			items.add(item);
+		}
+		
 	}
 	
 	/**
@@ -197,7 +199,7 @@ public class World {
 		creatures.removeIf(c -> c.hp() < 1);
 		
 		for(Item i : items) {
-			System.out.println("Updating item : " + i.glyph);
+			System.out.println("Updating item : " + i.glyph + " at (" + i.x + ", " + i.y + ")" );
 			i.update();
 		}
 

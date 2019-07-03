@@ -19,6 +19,9 @@ public abstract class Item {
     protected boolean pickupable;
     public boolean isPickupable() { return pickupable; }
     
+    protected boolean removable;
+    public boolean isRemovable() { return removable; }
+    
     public Item(World world) {
     	this.world = world;
     }
@@ -29,6 +32,7 @@ public abstract class Item {
     	this.color = color;
     	this.x = x;
     	this.y = y;
+    	this.removable = true;
     }
     
     public void update() {}

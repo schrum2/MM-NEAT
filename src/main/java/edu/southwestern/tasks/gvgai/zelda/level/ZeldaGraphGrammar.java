@@ -151,7 +151,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		RandomNumbers.reset(24);
+		RandomNumbers.reset((int) System.currentTimeMillis());
 		
 		try {
 			FileUtils.forceDelete(new File("data/VGLC/Zelda/GraphDOTs"));

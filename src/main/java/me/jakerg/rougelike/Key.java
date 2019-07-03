@@ -10,6 +10,7 @@ public class Key extends Item{
 		this.color = Tile.FLOOR.getColor();
 		this.x = p.x;
 		this.y = p.y;
+		this.removable = false;
 	}
 	
 	public void update() {
@@ -21,8 +22,12 @@ public class Key extends Item{
 
 	@Override
 	public void onPickup(Creature creature) {
-		if(creature.isPlayer() && this.glyph == Tile.KEY.getGlyph())
+		if(creature.isPlayer() && this.glyph == Tile.KEY.getGlyph()) {
+			System.out.println("Picking up the KEEEEEEYYYY");
 			creature.addKey();
+			this.world.removeItem(this);
+		}
+			
 	}
 
 	public void showKey() {
