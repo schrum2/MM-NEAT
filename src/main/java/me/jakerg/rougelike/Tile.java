@@ -81,7 +81,7 @@ public enum Tile {
 	}
 	
 	public boolean isDoor() {
-		return this == DOOR || this == HIDDEN || this == SOFT_LOCK_DOOR || this == LOCKED_DOOR;
+		return this == DOOR || this == HIDDEN || this == SOFT_LOCK_DOOR || this == LOCKED_DOOR || this == Tile.PUZZLE_LOCKED;
 	}
 	
 	public boolean isInterest() {

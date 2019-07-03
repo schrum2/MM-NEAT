@@ -112,9 +112,15 @@ public class DungeonUtil {
 		for(int y = 0; y < intLevel.size(); y++) {
 			for(int x = 0; x < intLevel.get(y).size(); x++) {
 				Tile t = Tile.findNum(intLevel.get(y).get(x));
-				if(t != null && t.isInterest()) {
+				if(t == null) continue;
+				if(t.isInterest()) {
 					points.add(new Point(x, y));
 //					System.out.println("Added to interests : " + t);
+				}
+				if(t.isMovable()) {
+					int newX = x + t.getDirection().getPoint().x * 2;
+					int newY = y + t.getDirection().getPoint().y * 2;
+					points.add(new Point(newX, newY));
 				}
 					
 			}
@@ -404,6 +410,8 @@ public class DungeonUtil {
 		
 		Point a = null, b = null;
 		
+		Point resumePoint = null;
+		
 		if(unvisitedI.size() == 0)
 			return null;
 		else {
@@ -413,16 +421,16 @@ public class DungeonUtil {
 			} else {
 				a = unvisitedI.remove((int) RandomNumbers.boundedRandom(0, unvisitedI.size()));
 				b = interest.remove((int) RandomNumbers.boundedRandom(0, interest.size()));
+				resumePoint = b;
 			}
 		}
 		
 		List<Point> pointsToFloor = bresenham(a, b);
 //		System.out.println("Applying floors to : " + n.name);
-		Point resumePoint = null;
 		for(Point p : pointsToFloor) {
 //			System.out.println("\t" + p);
 			Tile t = Tile.findNum(n.level.intLevel.get(p.y).get(p.x));
-			if(t != null && !t.isInterest() && !t.equals(Tile.FLOOR)) {
+			if(t != null && !t.isInterest() && !t.equals(Tile.FLOOR) && !t.isMovable()) {
 				if(resumePoint == null) resumePoint = p;
 				n.level.intLevel.get(p.y).set(p.x, Tile.FLOOR.getNum());
 			}
@@ -873,7 +881,7 @@ public class DungeonUtil {
 			// Leaving it to false occasionally leads to errors
 			reset = true; 
 			HashSet<ZeldaState> visited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
-			
+//			setUnvisited(visited);
 			System.out.println(result);
 			if(result == null) {
 				// Warning: visited tiles will be replaced with X (Could affect keys)
@@ -883,6 +891,7 @@ public class DungeonUtil {
 				//MiscUtil.waitForReadStringAndEnterKeyPress();
 				// Resume search from new state: but is this actually the state if should be?
 				state = makePlayable(visited); 
+//				state = new ZeldaState(5, 5, 0, dungeon);
 				System.out.println(state);
 			}
 			else break;

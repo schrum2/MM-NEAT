@@ -255,8 +255,9 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 				if(result.x >= 0 && result.x < level.get(0).size() && result.y >= 0 && result.y < level.size()) {
 					Tile tile = Tile.findNum(level.get(y).get(x));
 					Tile nextTile = Tile.findNum(level.get(result.y).get(result.x));
-					if(nextTile.playerPassable()) 
+					if(nextTile.playerPassable() && !nextTile.isMovable()) {
 						legal.add(possible);
+					}
 					else if (nextTile.equals(Tile.BLOCK) && hasLadder && !tile.equals(Tile.BLOCK))
 						legal.add(possible);
 				
