@@ -325,6 +325,7 @@ public class ZeldaLevelUtil {
 
 	private static void placeReachableEnemies(String direction, List<List<Integer>> level, int max) {
 		List<Point> points = getVisitedPoints(direction, level);
+		points.removeIf(p -> !Tile.findNum(level.get(p.y).get(p.x)).equals(Tile.FLOOR));
 		int r = RandomNumbers.randomGenerator.nextInt(max) + 1;
 		for(int i = 0; i < r && points.size() > 0; i++) {
 			Point rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));

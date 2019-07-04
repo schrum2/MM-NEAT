@@ -91,13 +91,14 @@ public class GraphGrammar<T extends Grammar> {
 	
 	public void setOtherGraph(Graph<T>.Node newStart, 
 			Graph<T>.Node newEnd, Graph<T> otherG) {
-		if(removeEdge && end != null) {
+		if(removeEdge) {
 			otherG.removeEdge(newStart, newEnd);
 		}
 		newStart.copy(start);
 		if(end != null) {
 			newEnd.copy(end);
-			end.copy(newEnd);
+			if(removeEdge)
+				end.copy(newEnd);
 		}
 
 	}

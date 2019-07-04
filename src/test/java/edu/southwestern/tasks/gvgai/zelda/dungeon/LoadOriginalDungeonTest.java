@@ -30,8 +30,6 @@ public class LoadOriginalDungeonTest {
 	
 	@Test
 	public void test() {
-		for(String dungeon : toTest)
-			System.out.println(dungeon);
 		for(String dungeon : toTest) {
 			System.out.println("Testing dungeon : " + dungeon);
 			try {
