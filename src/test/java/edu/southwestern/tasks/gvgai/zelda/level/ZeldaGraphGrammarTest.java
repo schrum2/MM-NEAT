@@ -60,7 +60,7 @@ public class ZeldaGraphGrammarTest {
 				grammar.applyRules(graph);
 				d = DungeonUtil.recursiveGenerateDungeon(graph, loader);
 				System.out.println("Starting dungeon playable for dungeon: " + i);
-				GraphUtil.saveGrammarGraph(graph, "data/VGLC/" + i +"_test.dot");
+//				GraphUtil.saveGrammarGraph(graph, "data/VGLC/" + i +"_test.dot");
 				DungeonUtil.makeDungeonPlayable(d);				
 				BufferedImage image = DungeonUtil.imageOfDungeon(d);
 				File file = new File("data/VGLC/Zelda/dungeon_"+ i +"_test.png");
