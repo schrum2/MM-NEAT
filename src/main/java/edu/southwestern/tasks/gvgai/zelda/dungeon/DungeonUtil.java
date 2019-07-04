@@ -671,7 +671,7 @@ public class DungeonUtil {
 		if(pending.isEmpty()) return true;
 		
 		Pair<Graph<T>.Node, Graph<T>.Node> pair = pending.pop();
-		System.out.println(pending);
+//		System.out.println(pending);
 		Graph<T>.Node next = pair.t1;
 		System.out.println("Got " + next.getID() + " from list (" + next + ")");
 		Graph<T>.Node parent = pair.t2;
@@ -704,9 +704,9 @@ public class DungeonUtil {
 				locations.put(next.getID(), p);
 				dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
 				
-				BufferedImage image = imageOfDungeon(dungeon);
-				File file = new File("data/VGLC/Zelda/Dungeons/dungeon_" + times + ".png");
-				ImageIO.write(image, "png", file);
+//				BufferedImage image = imageOfDungeon(dungeon);
+//				File file = new File("data/VGLC/Zelda/Dungeons/dungeon_" + times + ".png");
+//				ImageIO.write(image, "png", file);
 				
 				boolean success = recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, ++times);
 				if(success)
@@ -945,7 +945,7 @@ public class DungeonUtil {
 	public static void setAdjacencies(Dungeon.Node fromNode, Point from,
 			Point to, String whereTo, int tile) throws Exception {
 		String direction = getDirection(from, to);
-		System.out.println("From node " + fromNode.name + " going " + direction + " to " + whereTo);
+//		System.out.println("From node " + fromNode.name + " going " + direction + " to " + whereTo);s
 		if(direction == null) return;
 		if(!Tile.findNum(tile).equals(Tile.WALL)) {
 			switch(direction) {

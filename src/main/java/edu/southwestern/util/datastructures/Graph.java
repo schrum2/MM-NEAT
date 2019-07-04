@@ -135,11 +135,6 @@ public class Graph<T>{
 		public void copy(Node other) {
 			this.data = other.data;
 			for(Node n : other.adjacencies) {
-				if(data instanceof ZeldaGrammar) {
-					ZeldaGrammar g = (ZeldaGrammar) data;
-					if(g.equals(ZeldaGrammar.LOCK) || g.equals(ZeldaGrammar.LOCK_S))
-						System.out.println("copy " +  n + " to " + this);
-				}
 				adjacencies.add(n);
 			}
 			this.id = other.id;
