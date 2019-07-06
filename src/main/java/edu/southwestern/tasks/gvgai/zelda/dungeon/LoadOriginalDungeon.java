@@ -103,7 +103,7 @@ public class LoadOriginalDungeon {
 	 * @throws Exception
 	 */
 	public static Dungeon loadOriginalDungeon(String name) throws Exception {
-		return loadOriginalDungeon(name, true);
+		return loadOriginalDungeon(name, false);
 	}
 	
 	public static Dungeon loadOriginalDungeon(String name, boolean randomKey) throws Exception {
