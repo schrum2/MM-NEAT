@@ -117,8 +117,10 @@ public class World {
 	}
 	
 	public void addItem(Item item) {
-		if(item(item.x, item.y) != null) return;
-		items.add(item);
+		if(item(item.x, item.y) == null) {
+			items.add(item);
+		}
+		
 	}
 	
 	/**
@@ -188,12 +190,19 @@ public class World {
 	/**
 	 * Update the creatures (move around)
 	 */
-	public void update() {
-		for(Item i : items)
-			i.update();
-		
-		for(Creature c : creatures)
+	public void update() {		
+		for(Creature c : creatures) {
 			c.update();	
+			System.out.println(c.glyph() + "'s health : " + c.hp());
+		}
+		
+		creatures.removeIf(c -> c.hp() < 1);
+		
+		for(Item i : items) {
+			System.out.println("Updating item : " + i.glyph + " at (" + i.x + ", " + i.y + ")" );
+			i.update();
+		}
+
 		
 		checkToUnlock();
 	}
@@ -286,6 +295,11 @@ public class World {
 		changeToDoor(x, y + 1, Tile.HIDDEN);
 		changeToDoor(x - 1, y, Tile.HIDDEN);
 		changeToDoor(x, y - 1, Tile.HIDDEN);
+		
+		changeToDoor(x + 1, y, Tile.PUZZLE_LOCKED);
+		changeToDoor(x, y + 1, Tile.PUZZLE_LOCKED);
+		changeToDoor(x - 1, y, Tile.PUZZLE_LOCKED);
+		changeToDoor(x, y - 1, Tile.PUZZLE_LOCKED);
 	}
 
 	/**
@@ -321,12 +335,36 @@ public class World {
 	 * Check if there are enemy creatures in the room
 	 * @return True if there are enemies, false if not
 	 */
-	private boolean hasEnemies() {
+	public boolean hasEnemies() {
 		for(Creature c : creatures)
 			if(c.glyph() == 'e')
 				return true;
 		
 		return false;
 			
+	}
+
+	/**
+	 * Force the key to showup on the world, used for debugging purposes
+	 */
+	public void forceKey() {
+		for(Item i : items) {
+			if(i instanceof Key) {
+				((Key) i).showKey();
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Change all puzzle locked doors to unlocked doors
+	 */
+	public void unlockPuzzle() {
+		for(int y = 0; y < tiles.length; y++) {
+			for(int x = 0; x < tiles[y].length; x++) {
+				if(tiles[y][x].equals(Tile.PUZZLE_LOCKED))
+					tiles[y][x] = Tile.DOOR;
+			}
+		}
 	}
 }

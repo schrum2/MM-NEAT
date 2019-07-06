@@ -58,7 +58,8 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		boolean symbols = true;
 		int i = 0;
 		int times = 0;
-		while(symbols && times <= 4) {
+		int maxTries = 5;
+		while(symbols && times <= maxTries) {
 			symbols = false;
 			List<Graph<T>.Node> visited = new ArrayList<>();
 			Queue<Graph<T>.Node> queue = new LinkedList<>();
@@ -82,12 +83,12 @@ abstract public class GraphRuleManager<T extends Grammar> {
 				if(!appliedRule) {
 					applyRule(graph, current, null, i++);
 				}
-
+				
 			}
 			times++;
 		}
 		
-		if(times > 4)
+		if(times > maxTries)
 			throw new Exception("Graph chouldn't be completed");
 
 //		while(symbols) {
@@ -127,13 +128,28 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		if(rules.size() > 0) {
 			GraphRule<T> ruleToApply = rules.get((int) RandomNumbers.boundedRandom(0, rules.size()));
 			if(ruleToApply != null) {
+//				if(nextNode != null) graph.removeEdge(node, nextNode);
 				ruleToApply.grammar().setOtherGraph(node, nextNode, graph);
+				System.out.println(node.id);
+				System.out.println(node.adjacencies());
+				if(nextNode != null) {
+					System.out.println(nextNode.id);
+					System.out.println(nextNode.adjacencies());
+				}
 				System.out.println("--------------------------------------");
 				System.out.println(ruleToApply.getSymbolStart().getLevelType());
 				System.out.println(ruleToApply.grammar().getDOTString());
 				if(ruleToApply.getSymbolEnd() != null)
 					System.out.println(ruleToApply.getSymbolEnd().getLevelType());
 				appliedRule = true;
+			}
+		}
+		if(appliedRule) {
+			try {
+				GraphUtil.saveGrammarGraph(graph, "data/VGLC/Zelda/GraphDOTs/graph_" + i + ".dot");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		return appliedRule;

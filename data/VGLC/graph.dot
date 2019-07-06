@@ -1,36 +1,35 @@
 graph {
-fOmu[label="s"]
-JOMF[label="e"]
-gkPn[label="sl"]
-aCrn[label="e"]
-rQYV[label="e"]
-qDph[label="e"]
-STip[label="l"]
-IeHQ[label="k"]
-ETiF[label="e"]
-mtiu[label="k"]
-vhYD[label="e"]
-qDQG[label="l"]
-OvUc[label="e"]
-qhvE[label="t"]
-kMsp[label="e"]
-lZuB[label="e"]
-fOmu -- JOMF
-fOmu -- gkPn
-fOmu -- aCrn
-gkPn -- aCrn
-gkPn -- rQYV
-aCrn -- qDph
-qDph -- STip
-qDph -- IeHQ
-STip -- ETiF
-ETiF -- mtiu
-ETiF -- vhYD
-mtiu -- qDQG
-mtiu -- vhYD
-qDQG -- OvUc
-OvUc -- qhvE
-OvUc -- kMsp
-OvUc -- lZuB
-qhvE -- kMsp
+zkfO[label="s"]
+QoSt[label="e"]
+ShJo[label="e"]
+LYGb[label="sl"]
+skHR[label="k"]
+GQrh[label="e"]
+BKQL[label="p"]
+szZm[label="l"]
+JxHv[label="e"]
+MYlk[label="k"]
+BHxf[label="e"]
+uoJj[label="l"]
+GDzG[label="e"]
+ZTRZ[label="e"]
+bwQT[label="t"]
+zkfO -- QoSt
+zkfO -- ShJo
+zkfO -- LYGb
+QoSt -- skHR
+QoSt -- LYGb
+LYGb -- GQrh
+skHR -- BKQL
+LYGb -- GQrh
+BKQL -- szZm
+szZm -- JxHv
+JxHv -- MYlk
+JxHv -- BHxf
+MYlk -- uoJj
+MYlk -- BHxf
+uoJj -- GDzG
+GDzG -- ZTRZ
+GDzG -- bwQT
+ZTRZ -- bwQT
 }

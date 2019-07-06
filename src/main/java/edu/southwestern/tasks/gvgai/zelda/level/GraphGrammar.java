@@ -20,6 +20,8 @@ public class GraphGrammar<T extends Grammar> {
 	private Graph<T>.Node end;
 	private Graph<T> graph;
 	
+	private boolean removeEdge = false;
+	
 	public GraphGrammar() {
 		this.graph = new Graph<>();
 	}
@@ -36,21 +38,37 @@ public class GraphGrammar<T extends Grammar> {
 		this.end = e;
 	}
 	
+	/**
+	 * Set the start node for the grammar
+	 * @param data Data for the new start node
+	 */
 	public void setStart(T data) {
 		Graph<T>.Node s = graph.addNode(data);
 		this.start = s;
 	}
 	
+	/**
+	 * Set the end node for the grammar
+	 * @param data Data to replace the end node in the rule
+	 */
 	public void setEnd(T data) {
 		Graph<T>.Node e = graph.addNode(data);
 		this.end = e;
 	}
 	
+	/**
+	 * Add a new node with an adjacency to the start node
+	 * @param data T data for the node
+	 */
 	public void addNodeToStart(T data) {
 		Graph<T>.Node newNode = graph.addNode(data);
 		graph.addEdge(start, newNode);
 	}
 	
+	/**
+	 * Add a new node between the start and end nodes, leaving the adjacency between start and end
+	 * @param data
+	 */
 	public void addNodeBetween(T data) {
 		Graph<T>.Node newNode = graph.addNode(data);
 		graph.addEdge(start, newNode);
@@ -58,26 +76,31 @@ public class GraphGrammar<T extends Grammar> {
 			graph.addEdge(newNode, end);
 	}
 	
+	/**
+	 * Set a new node between the start and end nodes, removing the adjacency between start and end when applying the rule
+	 * @param data
+	 */
+	public void setNodeBetween(T data) {
+		Graph<T>.Node newNode = graph.addNode(data);
+		graph.addEdge(start, newNode);
+		if(end != null) {
+			graph.addEdge(newNode, end);
+			removeEdge = true;
+		}
+	}
+	
 	public void setOtherGraph(Graph<T>.Node newStart, 
 			Graph<T>.Node newEnd, Graph<T> otherG) {
-		
-//		System.out.println("START--------");
-//		System.out.println(otherG.size());
-//		for(Graph<T>.Node n : start.adjacencies())
-//			otherG.addNode(n);
-		
-		newStart.copy(start);
-
-		if(end != null) {
-//			for(Graph<T>.Node n : end.adjacencies())
-//				otherG.addNode(n);
-
-			newEnd.copy(end);
+		if(removeEdge) {
+			otherG.removeEdge(newStart, newEnd);
 		}
-		
-		
-//		System.out.println(otherG.size());
-//		System.out.println("END--------");
+		newStart.copy(start);
+		if(end != null) {
+			newEnd.copy(end);
+			if(removeEdge)
+				end.copy(newEnd);
+		}
+
 	}
 	
 	public Graph<T> getGraph(){
@@ -107,7 +130,6 @@ public class GraphGrammar<T extends Grammar> {
 			visited.add(end);
 		}
 		
-		
 		queue.add(start);
 		while(!queue.isEmpty()) {
 			Graph<T>.Node n = queue.poll();
@@ -132,7 +154,6 @@ public class GraphGrammar<T extends Grammar> {
 			}
 			
 		}
-		
 		
 		r += "}";
 		return r;

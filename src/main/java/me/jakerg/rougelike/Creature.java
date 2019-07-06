@@ -58,6 +58,7 @@ public class Creature {
 	
 	public int numKeys = 0;
 	public int keys() { return numKeys; }
+	public void addKey() { ++numKeys; }
 	
 	private boolean win = false;
 	public boolean win() {return this.win; }
@@ -196,8 +197,6 @@ public class Creature {
 			setDirection(Move.LEFT);
 		else
 			setDirection(Move.NONE);
-		
-    	System.out.println(glyph + "'s last direction is " + getLastDirection().name());
 	}
 	/**
      * Attack another creature
@@ -243,15 +242,18 @@ public class Creature {
      * Update to let ai update
      */
 	public void update() {
-    	if(previous != null) {
-    		this.color = previous;
-    		previous = null;
-    	}
-    	if (hp < 1 && previous == null) {
-            world.remove(this);
+
+		System.out.println("Creature : " + glyph + " at (" + x + ", " + y + ")");
+		
+		if(previous != null) {
+			this.color = previous;
+			previous = null;
+		}
+		
+    	if (hp < 1) {
             doAction(glyph + " died.");
             if(!isPlayer()) {
-            	if(RandomNumbers.randomGenerator.nextDouble() >= 0.1) { // 90 % chance
+            	if(RandomNumbers.randomGenerator.nextDouble() >= 0.1){ // 90 % chance
             		List<Item> items = new LinkedList<>();
             		items.add(new Bomb(this.world, 'b', AsciiPanel.white, x, y, 4, 5, true));
             		items.add(new Health(this.world, (char)3, AsciiPanel.brightRed, x, y));
@@ -259,6 +261,7 @@ public class Creature {
             		this.world.addItem(itemToDrop);
             	}
             }
+            return;
         }
 		ai.onUpdate();
 	}

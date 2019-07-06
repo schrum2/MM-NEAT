@@ -19,7 +19,8 @@ public enum ZeldaGrammar implements Grammar{
 	ENEMY("Enemy", "e", false), 
 	LOCK_S("LOCK", "L", true),
 	NOTHING("Nothing", "n", false), 
-	BOMB_S("BOMB", "B", true);
+	BOMB_S("BOMB", "B", true),
+	PUZZLE("Puzzle", "p", false);
 	
 	private final String labelName;
 	private final String levelType;

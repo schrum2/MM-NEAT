@@ -92,10 +92,4 @@ public class PlayScreen implements Screen {
         }
     }
 
-	@Override
-	public void displayOutput(AsciiPanel terminal, boolean update) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

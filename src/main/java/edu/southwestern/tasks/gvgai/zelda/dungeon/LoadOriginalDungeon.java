@@ -38,7 +38,7 @@ public class LoadOriginalDungeon {
 	
 	public static final int ZELDA_ROOM_ROWS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int ZELDA_ROOM_COLUMNS = 16;
-	private static final boolean ROUGE_DEBUG = true;
+	private static final boolean ROUGE_DEBUG = false;
 	private static HashMap<String, Stack<Pair<String, String>>> directional;
 						  // Node name        direct, whereTo
 	
@@ -53,7 +53,7 @@ public class LoadOriginalDungeon {
 	public static void main(String[] args) throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"rougeEnemyHealth:2"});
 		
-		String title = "tloz7_1_flip";
+		String title = "tloz8_1_flip";
 		Dungeon dungeon = loadOriginalDungeon(title, false);
 		BufferedImage image = DungeonUtil.imageOfDungeon(dungeon);
 		File file = new File("data/VGLC/Zelda/" + title + ".png");
@@ -103,7 +103,7 @@ public class LoadOriginalDungeon {
 	 * @throws Exception
 	 */
 	public static Dungeon loadOriginalDungeon(String name) throws Exception {
-		return loadOriginalDungeon(name, true);
+		return loadOriginalDungeon(name, false);
 	}
 	
 	public static Dungeon loadOriginalDungeon(String name, boolean randomKey) throws Exception {
