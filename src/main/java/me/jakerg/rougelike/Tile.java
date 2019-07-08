@@ -35,6 +35,12 @@ public enum Tile {
 	private int number;
 	
 	public char getGlyph() {
+		if(this == HIDDEN) {
+			if(RougelikeApp.DEBUG)
+				return glyph;
+			else
+				return WALL.glyph;
+		}
 		return glyph;
 	}
 	
@@ -97,7 +103,7 @@ public enum Tile {
 	}
 	
 	public boolean isBombable() {
-		return this == HIDDEN;
+		return this == FLOOR || this == HIDDEN || this == WALL;
 	}
 	
 	public boolean isKey() {

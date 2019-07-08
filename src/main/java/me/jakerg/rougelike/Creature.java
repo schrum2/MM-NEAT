@@ -51,7 +51,7 @@ public class Creature {
 	public Move getLastDirection() { return lastDirection; }
 	public void setDirection(Move m) { this.lastDirection = m; }
 	
-	private int numBombs = 4;
+	private int numBombs = 0;
 	public int bombs() { return numBombs; }
 	public void setBombs(int b) { numBombs = b; }
 	public void addBomb() { numBombs++; }
