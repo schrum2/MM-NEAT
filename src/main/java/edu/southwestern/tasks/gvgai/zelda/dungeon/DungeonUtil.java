@@ -329,21 +329,7 @@ public class DungeonUtil {
 	}
 
 	private static List<List<Integer>> remove(List<List<Integer>> levelInt) {
-		List<List<Integer>> level = new LinkedList<>(levelInt);
-		for(int y = 0; y < level.size(); y++) {
-			for(int x = 0; x < level.get(y).size(); x++) {
-				int num = level.get(y).get(x);
-				Tile tile = Tile.findNum(num);
-				if(tile.equals(Tile.DOOR) || tile.equals(Tile.LOCKED_DOOR))
-					num = Tile.WALL.getNum();
-				else if(tile.equals(Tile.TRIFORCE) || tile.equals(Tile.KEY) || num == 2)
-					num = Tile.FLOOR.getNum();
-				level.get(y).set(x, num);
-					
-			}
-		}
-		
-		return level;
+		return ZeldaLevelUtil.copyList(levelInt);
 	}
 
 	/**

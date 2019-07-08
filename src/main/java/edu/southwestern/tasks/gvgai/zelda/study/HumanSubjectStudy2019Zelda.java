@@ -68,6 +68,7 @@ public class HumanSubjectStudy2019Zelda {
 		
 		System.out.println("Play dungeon");
 		try {
+			DungeonUtil.viewDungeon(dungeonToPlay);
 			RougelikeApp.startDungeon(dungeonToPlay, true, false);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
@@ -83,8 +84,8 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-//		MMNEAT.main("zeldaType:generated randomSeed:1 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
-		MMNEAT.main("zeldaType:original randomSeed:0".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:1 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader".split(" "));
+//		MMNEAT.main("zeldaType:original randomSeed:0".split(" "));
 	}
 
 }

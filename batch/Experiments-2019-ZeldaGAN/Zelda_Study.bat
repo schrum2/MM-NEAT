@@ -1,3 +1,4 @@
+@echo off
 mkdir Subject-%1
 
 ECHO "Press enter to play an original dungeon..."
