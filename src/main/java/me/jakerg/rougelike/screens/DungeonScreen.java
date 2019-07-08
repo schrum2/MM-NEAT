@@ -79,6 +79,7 @@ public class DungeonScreen implements Screen {
 		messageScreen.displayOutput(terminal);
 		player.display(terminal, oX + screenWidth + 1, oY);
         terminal.write(player.glyph(), player.x + oX, player.y + oY, player.color());
+		log.clear();
 	}
 
 	/**

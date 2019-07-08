@@ -29,8 +29,16 @@ public class EnemyAi extends CreatureAi{
 	}
 	
 	private void moveTowardsPlayer() {
+		System.out.println("Moving towards player at (" + player.x + ", " + player.y + ")");
 		int dX = player.x - creature.x;
 		int dY = player.y - creature.y;
+		System.out.println("\t dX :" + dX + ", dY: " + dY);
+		
+		if(dX == 0 && dY == 0) {
+			creature.setHP(0);
+			creature.doAction("You ate " + creature.glyph());
+			return;
+		}
 		
 		int mX = 0;
 		int mY = 0;

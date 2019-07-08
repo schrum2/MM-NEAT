@@ -203,6 +203,8 @@ public class Creature {
      * @param other the other creature
      */
 	public void attack(Creature other){
+		if(this.glyph == other.glyph) return;
+		
 		if(Math.random() >= 0.5 || isPlayer()){			
 	        int amount = Math.max(0, attackValue() - other.defenseValue()); // Get whatever is higher: 0 or the total attack value, dont want negative attack
 	    
