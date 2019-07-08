@@ -67,6 +67,8 @@ public class Creature {
 	public List<Item> getItems() { return this.items; }
 	
 	private Log log;
+	public Log log() { return log; };
+	
 	private DungeonBuilder dungeonBuilder;	
 	public DungeonBuilder getDungeonBuilder() { return this.dungeonBuilder; }
     

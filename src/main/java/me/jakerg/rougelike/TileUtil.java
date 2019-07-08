@@ -43,6 +43,7 @@ public class TileUtil {
 			for(int j = 0; j < tiles[i].length; j++) {
 				if(level.get(j).get(i) == 2) {
 					cf.newEnemy(i, j, player);
+					newWorld.setEnemyRoom(true);
 				} else if(level.get(j).get(i) == -6) {
 					newWorld.dropItem(new Ladder(newWorld, i, j));
 				} else {

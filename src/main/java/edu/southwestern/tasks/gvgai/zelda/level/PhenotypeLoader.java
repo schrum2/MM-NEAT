@@ -60,7 +60,7 @@ public class PhenotypeLoader implements LevelLoader{
 
 	@Override
 	public List<List<List<Integer>>> getLevels() {
-		return ZeldaLevelUtil.copyList(levels);
+		return 	(levels);
 	}
 
 }

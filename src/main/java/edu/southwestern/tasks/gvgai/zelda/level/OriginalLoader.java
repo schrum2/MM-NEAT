@@ -3,9 +3,11 @@ package edu.southwestern.tasks.gvgai.zelda.level;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.UUID;
 
 import edu.southwestern.parameters.Parameters;
@@ -14,12 +16,12 @@ import me.jakerg.rougelike.Tile;
 
 public class OriginalLoader implements LevelLoader {
 
-	List<List<List<Integer>>> levels;
+	Set<List<List<Integer>>> levels;
 	
 	public OriginalLoader() {
 		Parameters.parameters.setBoolean("zeldaGANUsesOriginalEncoding", false);
-		levels = new LinkedList<>();
-		String[] dungeonsToLoad = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip"};
+		levels = new HashSet<>();
+		String[] dungeonsToLoad = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip"};
 		loadLevels(dungeonsToLoad);
 		
 	}

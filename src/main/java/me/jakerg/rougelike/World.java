@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import asciiPanel.AsciiPanel;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Class to represent a room
@@ -20,6 +21,9 @@ public class World {
 	private int height;
 	private DungeonBuilder db;
 	
+	private boolean enemyRoom;
+	public boolean isEnemyRoom() { return enemyRoom; };
+	public void setEnemyRoom(boolean b) { enemyRoom = b; };
 	
 	private boolean locked = false;
 	public boolean locked()	{ return locked; }
@@ -108,6 +112,7 @@ public class World {
 	 */
 	public boolean placeBomb(int x, int y) {
 		if(item(x, y) != null) return false;
+		System.out.println(tile(x, y));
 		if(tile(x, y).isBombable()) {
 			items.add(new Bomb(this, 'b', AsciiPanel.white, x, y, 4, 5));
 			return true;
@@ -364,6 +369,31 @@ public class World {
 			for(int x = 0; x < tiles[y].length; x++) {
 				if(tiles[y][x].equals(Tile.PUZZLE_LOCKED))
 					tiles[y][x] = Tile.DOOR;
+			}
+		}
+	}
+	
+	/**
+	 * Respawn enemies in room if player has no bombs and the room has enemies before
+	 * @param player Player for the enemy to reference to
+	 * @param log Log to call doAction
+	 */
+	public void respawnEnemies(Creature player, Log log) {
+		System.out.println("Attempting to respawn enemies...");
+		if(isEnemyRoom() && !hasEnemies()) {
+			CreatureFactory cf = new CreatureFactory(this, log);
+			int numEnemies = RandomNumbers.randomGenerator.nextInt(3) + 1;
+			for(int i = 0; i < numEnemies; i++) {
+				System.out.println("Respawning");
+				int x, y;
+				
+				do {
+					x = (int) RandomNumbers.boundedRandom(0, width);
+					y = (int) RandomNumbers.boundedRandom(0, height);
+			    }
+			    while (!tile(x, y).playerPassable());
+				
+				cf.newEnemy(x, y, player);
 			}
 		}
 	}

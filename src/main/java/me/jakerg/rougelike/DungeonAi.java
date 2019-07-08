@@ -55,12 +55,14 @@ public class DungeonAi extends CreatureAi{
 			Point exitPoint = new Point(x, y);
 //			 Get the point to move to based on where the player went in from
 			System.out.println("Exiting at " + exitPoint);
-			creature.getWorld().remove(this.creature);
+			creature.getWorld().remove(creature);
 			Point p = creature.getDungeon().getNextNode(exitPoint.toString());
 			if(p != null) {
 				creature.getDungeonBuilder().getCurrentWorld().fullUnlock(p.x, p.y);
-				if(Math.random()>= 0.8)
-					creature.getDungeonBuilder().getCurrentWorld().checkToLock();
+				if(creature.bombs() <= 0) {
+					creature.getDungeonBuilder().getCurrentWorld().respawnEnemies(creature, creature.log());
+				}
+				creature.getDungeonBuilder().getCurrentWorld().addCreature(creature);
 				System.out.println("Starting point :" + p);
 				creature.x  = p.x;
 				creature.y = p.y;

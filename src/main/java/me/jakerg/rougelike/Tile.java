@@ -79,7 +79,7 @@ public enum Tile {
 	}
 	
 	public boolean playerPassable() {
-		return this.isGround() && !this.isBlock() || this == KEY || this == TRIFORCE;
+		return this.isGround() && !this.isBlock() || this.isInterest();
 	}
 	
 	public boolean isStatePassable() {
@@ -111,7 +111,7 @@ public enum Tile {
 	}
 	
 	public boolean isMovable() {
-		return this == MOVABLE_BLOCK_UP || this == MOVABLE_BLOCK_DOWN || this == MOVABLE_BLOCK_LEFT || this == Tile.MOVABLE_BLOCK_RIGHT;
+		return this == MOVABLE_BLOCK_UP || this == MOVABLE_BLOCK_DOWN || this == MOVABLE_BLOCK_LEFT || this == MOVABLE_BLOCK_RIGHT;
 	}
 	
 	public Move getDirection() {
