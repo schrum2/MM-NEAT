@@ -85,7 +85,7 @@ public class HumanSubjectStudy2019Zelda {
 		
 		
 //		MMNEAT.main("zeldaType:generated randomSeed:5 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader".split(" "));
-		MMNEAT.main("zeldaType:original randomSeed:5".split(" "));
+		MMNEAT.main("zeldaType:original randomSeed:2".split(" "));
 	}
 
 }

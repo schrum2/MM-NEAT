@@ -28,7 +28,7 @@ public enum Tile {
 	MOVABLE_BLOCK_DOWN((char)219, AsciiPanel.yellow, 100),
 	MOVABLE_BLOCK_LEFT((char)219, AsciiPanel.yellow, 1000),
 	MOVABLE_BLOCK_RIGHT((char)219, AsciiPanel.yellow, 10000),
-	PUZZLE_LOCKED((char)219, AsciiPanel.yellow, -10);
+	PUZZLE_LOCKED((char)239, Color.ORANGE, -10);
 	
 	private char glyph;
 	private Color color;

@@ -392,6 +392,9 @@ public class LoadOriginalDungeon {
 			case "b": // Hidden door
 				setLevels(direction, node, Tile.HIDDEN);
 				break;
+			case "s":
+				setLevels(direction, node, Tile.PUZZLE_LOCKED);
+				break;
 			}
 		} else {
 			setLevels(direction, node, Tile.DOOR);
