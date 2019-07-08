@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import me.jakerg.rougelike.Tile;
 
@@ -16,6 +17,7 @@ public class OriginalLoader implements LevelLoader {
 	List<List<List<Integer>>> levels;
 	
 	public OriginalLoader() {
+		Parameters.parameters.setBoolean("zeldaGANUsesOriginalEncoding", false);
 		levels = new LinkedList<>();
 		String[] dungeonsToLoad = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip"};
 		loadLevels(dungeonsToLoad);
