@@ -6,11 +6,16 @@ pause
 
 START Zelda_PlayOriginal %1
 
+echo;
+echo;
 ECHO "Press enter to play a generated dungeon with original rooms..."
 pause
 
 START Zelda_PlayGeneratedOriginal %1
 
+echo;
+echo;
 ECHO "Press enter to play a generated dungeon with GAN rooms..."
 pause
+
 START Zelda_PlayGeneratedGAN %1
