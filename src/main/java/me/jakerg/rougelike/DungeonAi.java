@@ -1,5 +1,6 @@
 package me.jakerg.rougelike;
 
+import java.awt.Color;
 import java.awt.Point;
 import asciiPanel.AsciiPanel;
 
@@ -22,8 +23,14 @@ public class DungeonAi extends CreatureAi{
 		terminal.write("Keys x" + creature.keys(), oX, oY);
 		terminal.write("Bombs x" + creature.bombs(), oX, oY + 1); 
 
-		for(int i = 0; i < creature.hp(); i++)
-			terminal.write((char) 3, oX + i, oY + 3, AsciiPanel.brightRed);
+		for(int i = 0; i < creature.maxHp(); i++) {
+			Color c = AsciiPanel.brightRed;
+			if(i > creature.hp())
+				c = AsciiPanel.brightBlack;
+			
+			terminal.write((char) 3, oX + i, oY + 3, c);
+			
+		}
 		
 		terminal.write("Items", oX, oY + 5);
 		int i = 0;

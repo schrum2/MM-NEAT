@@ -35,11 +35,12 @@ public class Creature {
     
     private int maxHp;
     public int maxHp() { return maxHp; }
+	public void setMaxHp(int hp) { maxHp = hp; }
 
     private int hp;
     public int hp() { return hp; }
     public void setHP(int n) { hp = n; }
-    public void addHP() { hp++; }
+    public void addHP() { if(hp < maxHp) hp++; }
 
     private int attackValue;
     public int attackValue() { return attackValue; }
@@ -340,4 +341,5 @@ public class Creature {
 		items.add(item);
 		doAction("You picked up " + item.glyph);
 	}
+
 }
