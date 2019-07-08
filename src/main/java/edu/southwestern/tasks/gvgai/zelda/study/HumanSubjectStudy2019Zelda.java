@@ -26,7 +26,7 @@ public class HumanSubjectStudy2019Zelda {
 		RandomNumbers.reset();
 		
 		if(type.equals(Type.ORIGINAL)) {
-			String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip"};
+			String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip"};
 			int seed = Parameters.parameters.integerParameter("randomSeed");
 			String dungeonName = names[seed % names.length];
 			try {
@@ -83,8 +83,8 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
-//		MMNEAT.main("zeldaType:original randomSeed:0".split(" "));
+//		MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
+		MMNEAT.main("zeldaType:original randomSeed:4".split(" "));
 	}
 
 }
