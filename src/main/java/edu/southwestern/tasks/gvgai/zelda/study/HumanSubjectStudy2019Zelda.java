@@ -14,6 +14,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGraphGrammar;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
+import edu.southwestern.util.random.RandomNumbers;
 import me.jakerg.rougelike.RougelikeApp;
 
 public class HumanSubjectStudy2019Zelda {
@@ -21,6 +22,8 @@ public class HumanSubjectStudy2019Zelda {
 	
 	public static void runTrial(Type type) {
 		Dungeon dungeonToPlay = null;
+		
+		RandomNumbers.reset();
 		
 		if(type.equals(Type.ORIGINAL)) {
 			String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip"};
@@ -80,8 +83,8 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-//		MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
-		MMNEAT.main("zeldaType:original randomSeed:0".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
+//		MMNEAT.main("zeldaType:original randomSeed:0".split(" "));
 	}
 
 }
