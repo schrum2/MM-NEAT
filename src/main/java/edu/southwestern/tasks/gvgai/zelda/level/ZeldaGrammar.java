@@ -20,7 +20,8 @@ public enum ZeldaGrammar implements Grammar{
 	LOCK_S("LOCK", "L", true),
 	NOTHING("Nothing", "n", false), 
 	BOMB_S("BOMB", "B", true),
-	PUZZLE("Puzzle", "p", false);
+	PUZZLE("Puzzle", "p", false), 
+	PUZZLE_S("PUZZEL", "P", true);
 	
 	private final String labelName;
 	private final String levelType;

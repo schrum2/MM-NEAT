@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -213,7 +214,7 @@ public class Dungeon {
 		}
 
 		public boolean hasLock() {
-			List<List<Integer>> ints = level.intLevel;
+			ArrayList<ArrayList<Integer>> ints = level.intLevel;
 			for(int y = 0; y < ints.size(); y++) 
 				for(int x = 0; x < ints.get(y).size(); x++) 
 					if(ints.get(y).get(x).equals(Tile.LOCKED_DOOR.getNum()))

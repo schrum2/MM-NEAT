@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
@@ -16,7 +16,7 @@ import me.jakerg.rougelike.Tile;
 
 public class OriginalLoader implements LevelLoader {
 
-	Set<List<List<Integer>>> levels;
+	Set<ArrayList<ArrayList<Integer>>> levels;
 	
 	public OriginalLoader() {
 		Parameters.parameters.setBoolean("zeldaGANUsesOriginalEncoding", false);
@@ -49,7 +49,7 @@ public class OriginalLoader implements LevelLoader {
 				
 			List<List<Integer>> levelInt = ZeldaVGLCUtil.convertZeldaLevelVGLCtoRoomAsList(levelString);
 			removeDoors(levelInt);
-			levels.add(levelInt);
+			levels.add(ZeldaLevelUtil.listToArrayList(levelInt));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -80,8 +80,8 @@ public class OriginalLoader implements LevelLoader {
 
 
 	@Override
-	public List<List<List<Integer>>> getLevels() {
-		return new LinkedList<>(levels);
+	public ArrayList<ArrayList<ArrayList<Integer>>> getLevels() {
+		return new ArrayList<>(levels);
 	}
 
 }

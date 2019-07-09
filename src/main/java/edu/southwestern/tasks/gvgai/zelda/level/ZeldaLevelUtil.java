@@ -222,23 +222,23 @@ public class ZeldaLevelUtil {
 
 	/**
 	 * Place a random key tile on the floor
-	 * @param level
+	 * @param intLevel
 	 */
-	public static void placeRandomKey(List<List<Integer>> level) {
+	public static void placeRandomKey(ArrayList<ArrayList<Integer>> intLevel) {
 		int x, y;
 		
 		do {
-			x = (int) RandomNumbers.boundedRandom(0, level.get(0).size());
-			y = (int) RandomNumbers.boundedRandom(0, level.size());
+			x = (int) RandomNumbers.boundedRandom(0, intLevel.get(0).size());
+			y = (int) RandomNumbers.boundedRandom(0, intLevel.size());
 	    }
-	    while (!Tile.findNum(level.get(y).get(x)).equals(Tile.FLOOR));
+	    while (!Tile.findNum(intLevel.get(y).get(x)).equals(Tile.FLOOR));
 		
 		System.out.println("Put key at " + x + ", " + y);
-		level.get(y).set(x, Tile.KEY.getNum()); 
+		intLevel.get(y).set(x, Tile.KEY.getNum()); 
 	}
 
 	public static void setDoors(String direction, Dungeon.Node fromNode, int tile) {
-		List<List<Integer>> level = fromNode.level.intLevel;
+		ArrayList<ArrayList<Integer>> level = fromNode.level.intLevel;
 		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
 			if(direction == "UP" || direction == "DOWN") { // Add doors at top or bottom
 				int y = (direction == "UP") ? 1 : 14; // Set y based on side 1 if up 14 if bottom
@@ -287,7 +287,7 @@ public class ZeldaLevelUtil {
 			placeReachableEnemies(direction, level, 2);
 	}
 
-	public static void placePuzzle(String direction, List<List<Integer>> level) {
+	public static void placePuzzle(String direction, ArrayList<ArrayList<Integer>> level) {
 		List<Point> points = getVisitedPoints(direction, level);
 		Move d = Move.getByString(direction).opposite();
 		Point rP = null;
@@ -317,13 +317,13 @@ public class ZeldaLevelUtil {
 			if(rP.x >= 4)
 				return true;
 		if(direction.equals(Move.RIGHT))
-			if(rP.x <= 12)
+			if(rP.x <= 11)
 				return true;
 		
 		return false;
 	}
 
-	private static void placeReachableEnemies(String direction, List<List<Integer>> level, int max) {
+	private static void placeReachableEnemies(String direction, ArrayList<ArrayList<Integer>> level, int max) {
 		List<Point> points = getVisitedPoints(direction, level);
 		points.removeIf(p -> !Tile.findNum(level.get(p.y).get(p.x)).equals(Tile.FLOOR));
 		int r = RandomNumbers.randomGenerator.nextInt(max) + 1;
@@ -333,7 +333,7 @@ public class ZeldaLevelUtil {
 		}
 	}
 
-	public static List<Point> getVisitedPoints(int x, int y, List<List<Integer>> level) {
+	public static List<Point> getVisitedPoints(int x, int y, ArrayList<ArrayList<Integer>> level) {
 		List<Point> visited = new LinkedList<>();
 		Queue<Point> queue = new LinkedList<>();
 		queue.add(new Point(x, y));
@@ -353,7 +353,7 @@ public class ZeldaLevelUtil {
 		return visited;
 	}
 	
-	public static List<Point> getVisitedPoints(String direction, List<List<Integer>> level){
+	public static List<Point> getVisitedPoints(String direction, ArrayList<ArrayList<Integer>> level){
 		int x, y;
 		switch(direction) {
 		case "UP":
@@ -483,18 +483,18 @@ public class ZeldaLevelUtil {
 	 * Add 1 - 3 enemies at random locations
 	 * @param node Node to add the enemies to
 	 */
-	public static void addRandomEnemy(List<List<Integer>> level) {
+	public static void addRandomEnemy(ArrayList<ArrayList<Integer>> intLevel) {
 		int numEnemies = RandomNumbers.randomGenerator.nextInt(3) + 1;
 		for(int i = 0; i < numEnemies; i++) {
 			int x, y;
 			
 			do {
-				x = (int) RandomNumbers.boundedRandom(0, level.get(0).size());
-				y = (int) RandomNumbers.boundedRandom(0, level.size());
+				x = (int) RandomNumbers.boundedRandom(0, intLevel.get(0).size());
+				y = (int) RandomNumbers.boundedRandom(0, intLevel.size());
 		    }
-		    while (level.get(y).get(x) != 0);
+		    while (intLevel.get(y).get(x) != 0);
 			
-			level.get(y).set(x, 2); 
+			intLevel.get(y).set(x, 2); 
 		}
 	}
 
@@ -570,6 +570,36 @@ public class ZeldaLevelUtil {
 		return copy;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static <E> ArrayList<ArrayList<E>> listToArrayList(List<List<E>> list){
+		ArrayList<ArrayList<E>> copy = new ArrayList<>();
+		for(int i = 0; i < list.size(); i++) {
+			copy.add(new ArrayList<>());
+			ArrayList<E> al = copy.get(i);
+			for(int j = 0; j < list.get(i).size(); j++) {
+				al.add(list.get(i).get(j));
+			}
+		}
+		
+		return copy;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <E> ArrayList<E> copyList(ArrayList<E> list){
+		ArrayList<E> copy = new ArrayList<>();
+		for(E obj : list) {
+			if(obj instanceof ArrayList) {
+				ArrayList<E> l = (ArrayList<E>) obj;
+				l = copyList(l);
+				copy.add((E) l);
+			} else {
+				copy.add(obj);
+			}
+		}
+		
+		return copy;
+	}
+	
 	public static Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
 
 		@Override
@@ -593,5 +623,11 @@ public class ZeldaLevelUtil {
 			return i + j; 
 		}
 	};
+
+	public static <E> List<List<E>> arrayListToList(ArrayList<ArrayList<E>> intLevel) {
+		List<List<E>> copy = new LinkedList<>(intLevel);
+
+		return copy;
+	}
 	
 }

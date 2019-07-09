@@ -80,7 +80,7 @@ public class DungeonUtil {
 		}
 	}
 
-	public static void addExitPoints(List<Point> points, List<List<Integer>> intLevel) {
+	public static void addExitPoints(List<Point> points, ArrayList<ArrayList<Integer>> intLevel) {
 		Point[] doors = new Point[] {new Point(8, 1), new Point(7, 9), new Point(1, 5), new Point(14, 5)};
 		Point[] dirs = new Point[] {new Point(0, 1), new Point(0, -1), new Point(1, 0), new Point(-1, 0)};
 		
@@ -108,7 +108,7 @@ public class DungeonUtil {
 	 * @param points
 	 * @param intLevel
 	 */
-	public static void addInterestPoints(List<Point> points, List<List<Integer>> intLevel) {
+	public static void addInterestPoints(List<Point> points, ArrayList<ArrayList<Integer>> intLevel) {
 		for(int y = 0; y < intLevel.size(); y++) {
 			for(int x = 0; x < intLevel.get(y).size(); x++) {
 				Tile t = Tile.findNum(intLevel.get(y).get(x));
@@ -150,6 +150,9 @@ public class DungeonUtil {
 		case "p":
 			return Tile.PUZZLE_LOCKED.getNum();	
 		default:
+			if(RandomNumbers.randomCoin(0.4) && !grammar.equals(ZeldaGrammar.START))
+				return Tile.HIDDEN.getNum();
+			
 			return Tile.DOOR.getNum();
 		}
 	}
@@ -321,15 +324,15 @@ public class DungeonUtil {
 	 * @throws FileNotFoundException
 	 */
 	public static Level loadOneLevel(LevelLoader loader) throws FileNotFoundException {
-		List<List<List<Integer>>> levels = loader.getLevels();
-		List<List<Integer>> randomLevel = levels.get((int) RandomNumbers.boundedRandom(0, levels.size()));
+		ArrayList<ArrayList<ArrayList<Integer>>> levels = loader.getLevels();
+		ArrayList<ArrayList<Integer>> randomLevel = levels.get((int) RandomNumbers.boundedRandom(0, levels.size()));
 		randomLevel = remove(randomLevel);
 	
 		return new Level(randomLevel);
 	}
 
-	private static List<List<Integer>> remove(List<List<Integer>> levelInt) {
-		return ZeldaLevelUtil.copyList(levelInt);
+	private static ArrayList<ArrayList<Integer>> remove(ArrayList<ArrayList<Integer>> randomLevel) {
+		return ZeldaLevelUtil.copyList(randomLevel);
 	}
 
 	/**
@@ -490,7 +493,7 @@ public class DungeonUtil {
 	}
 
 	private static List<Point> getPointsOfInterest(Dungeon.Node n) {
-		List<List<Integer>> intLevel = n.level.intLevel;
+		ArrayList<ArrayList<Integer>> intLevel = n.level.intLevel;
 		List<Point> points = new LinkedList<>();
 		addExitPoints(points, intLevel);
 		addInterestPoints(points, intLevel);

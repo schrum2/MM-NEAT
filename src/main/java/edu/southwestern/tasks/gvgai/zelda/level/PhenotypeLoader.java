@@ -10,30 +10,21 @@ import me.jakerg.rougelike.Tile;
 
 public class PhenotypeLoader implements LevelLoader{
 
-	private List<List<List<Integer>>> levels;
+	private ArrayList<ArrayList<ArrayList<Integer>>> levels;
 	
 	public PhenotypeLoader(ArrayList<ArrayList<Double>> phenotypes) {
-		levels = new LinkedList<>();
+		levels = new ArrayList<>();
 		for(ArrayList<Double> phenotype : phenotypes) {
 			double[] room = ArrayUtil.doubleArrayFromList(phenotype);
 			List<List<Integer>> level =  ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(room);
-			
-			levels.add(remove(level));
+			levels.add(remove(ZeldaLevelUtil.listToArrayList(level)));
 		}
-		for(List<List<Integer>> levelInt : levels) {
-			for(List<Integer> row : levelInt) {
-				for(Integer i : row) {
-					System.out.print(i + ", ");
-				}
-				System.out.println();
-			}
-			System.out.println();
-		}
+
 			
 	}
 	
-	private List<List<Integer>> remove(List<List<Integer>> levelInt) {
-		List<List<Integer>> level = new LinkedList<>(levelInt);
+	private ArrayList<ArrayList<Integer>> remove(ArrayList<ArrayList<Integer>> levelInt) {
+		ArrayList<ArrayList<Integer>> level = new ArrayList<>(levelInt);
 		for(int y = 0; y < level.size(); y++) {
 			for(int x = 0; x < level.get(y).size(); x++) {
 				int num = level.get(y).get(x);
@@ -59,7 +50,7 @@ public class PhenotypeLoader implements LevelLoader{
 	}
 
 	@Override
-	public List<List<List<Integer>>> getLevels() {
+	public ArrayList<ArrayList<ArrayList<Integer>>> getLevels() {
 		return 	(levels);
 	}
 

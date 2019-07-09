@@ -1,35 +1,37 @@
 graph {
-zkfO[label="s"]
-QoSt[label="e"]
-ShJo[label="e"]
-LYGb[label="sl"]
-skHR[label="k"]
-GQrh[label="e"]
-BKQL[label="p"]
-szZm[label="l"]
-JxHv[label="e"]
-MYlk[label="k"]
-BHxf[label="e"]
-uoJj[label="l"]
-GDzG[label="e"]
-ZTRZ[label="e"]
-bwQT[label="t"]
-zkfO -- QoSt
-zkfO -- ShJo
-zkfO -- LYGb
-QoSt -- skHR
-QoSt -- LYGb
-LYGb -- GQrh
-skHR -- BKQL
-LYGb -- GQrh
-BKQL -- szZm
-szZm -- JxHv
-JxHv -- MYlk
-JxHv -- BHxf
-MYlk -- uoJj
-MYlk -- BHxf
-uoJj -- GDzG
-GDzG -- ZTRZ
-GDzG -- bwQT
-ZTRZ -- bwQT
+nMGJ[label="s"]
+ztxc[label="sl"]
+Fqfh[label="e"]
+QUDc[label="e"]
+KiqH[label="e"]
+KBlP[label="e"]
+ZjDc[label="l"]
+McgV[label="k"]
+xSgH[label="e"]
+MGJp[label="k"]
+VhLo[label="b"]
+TCyw[label="p"]
+CkAc[label="l"]
+uvVx[label="e"]
+FYSl[label="t"]
+WarZ[label="e"]
+nMGJ -- ztxc
+nMGJ -- Fqfh
+nMGJ -- QUDc
+ztxc -- QUDc
+ztxc -- KiqH
+QUDc -- KBlP
+KBlP -- ZjDc
+KBlP -- McgV
+ZjDc -- McgV
+ZjDc -- xSgH
+xSgH -- MGJp
+xSgH -- VhLo
+MGJp -- VhLo
+MGJp -- TCyw
+TCyw -- CkAc
+CkAc -- uvVx
+uvVx -- FYSl
+uvVx -- WarZ
+FYSl -- WarZ
 }

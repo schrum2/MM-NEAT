@@ -100,11 +100,11 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	
 	/**
 	 * Like setUpGameWithLevelFromLatentVector but accepts a 2D list of integers to generate a game bundle
-	 * @param level - 2D list of integers
+	 * @param arrayList - 2D list of integers
 	 * @return GameBundle for player GVG-AI game
 	 */
-	public static GameBundle setUpGameWithLevelFromList(List<List<Integer>> level) {
-		String[] stringLevel = ZeldaVGLCUtil.convertZeldaRoomListtoGVGAI(level, new Point(8, 8));
+	public static GameBundle setUpGameWithLevelFromList(List<List<Integer>> arrayList) {
+		String[] stringLevel = ZeldaVGLCUtil.convertZeldaRoomListtoGVGAI(arrayList, new Point(8, 8));
 		int seed = 0; // TODO: Use parameter?
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 
