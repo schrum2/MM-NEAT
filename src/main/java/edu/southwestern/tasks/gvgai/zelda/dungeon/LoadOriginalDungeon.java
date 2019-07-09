@@ -312,6 +312,7 @@ public class LoadOriginalDungeon {
 			switch(value) {
 			case "m":
 			case "e": // Room has enemies
+			case "b":
 				ZeldaLevelUtil.addRandomEnemy(node.level.intLevel);
 				System.out.println("Adding enemy | " + value);
 				break;
