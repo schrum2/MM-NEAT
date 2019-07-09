@@ -51,10 +51,12 @@ public class DungeonAi extends CreatureAi{
 			item.onPickup(creature);
 			if(item.removable)
 				item.world.removeItem(item);
+			if(item instanceof MovableBlock)
+				return;
 		}
 
 		
-		if(tile.playerPassable()) {
+		if(tile.playerPassable() ) {
 			creature.x = x;
 			creature.y = y;
 		} 
