@@ -154,7 +154,7 @@ public class LoadOriginalDungeon {
 
 	private static boolean haveKey(Node currentNode) {
 		if(currentNode == null) return false;
-		List<List<Integer>> level = currentNode.level.intLevel;
+		ArrayList<ArrayList<Integer>> level = currentNode.level.intLevel;
 		for(List<Integer> row : level)
 			for(Integer cell : row)
 				if(cell == Tile.KEY.getNum() || cell == Tile.TRIFORCE.getNum())
@@ -174,6 +174,8 @@ public class LoadOriginalDungeon {
 		
 		String node = dungeon.getCurrentlevel().name; // Starting point of recursive funciton
 		
+		directional.entrySet().removeIf(e -> e.getValue().size() == 0);
+		
 		if(node == null)
 			throw new Exception("The Dungeon's current level wasn't set, make sure that it is set in the .dot file.");
 		
@@ -185,6 +187,7 @@ public class LoadOriginalDungeon {
 		Stack<String> visited = new Stack<>();
 		Queue<String> queue = new LinkedList<>();
 		queue.add(node);
+		
 		while(!directional.isEmpty()) {
 			String n = queue.poll();
 			
@@ -332,7 +335,7 @@ public class LoadOriginalDungeon {
 
 	private static void addTriforce(Node node, Dungeon dungeon) {
 		System.out.println("Set triforce");
-		List<List<Integer>> level = node.level.intLevel;
+		ArrayList<ArrayList<Integer>> level = node.level.intLevel;
 		int y = level.size() / 2;
 		int x = level.get(y).size() / 2;
 		level.get(y).set(x, Tile.TRIFORCE.getNum());
@@ -552,7 +555,7 @@ public class LoadOriginalDungeon {
 			break;
 		}
 		int num = tile.getNum();
-		List<List<Integer>> level = node.level.intLevel;
+		ArrayList<ArrayList<Integer>> level = node.level.intLevel;
 		if(direction.equals("UP")  || direction.equals("DOWN")) { // Add doors at top or bottom
 			int y = (direction.equals("UP")) ? 1 : 9; // Set x based on side 1 if left 9 if right
 			for(int x = 7; x <=8; x++) {
