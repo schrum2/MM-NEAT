@@ -1,8 +1,6 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
-import static org.junit.Assert.*;
-
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 

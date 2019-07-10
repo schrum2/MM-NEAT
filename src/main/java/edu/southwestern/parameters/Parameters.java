@@ -27,6 +27,7 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
 import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
+import edu.southwestern.tasks.gvgai.zelda.level.SimpleLoader;
 import edu.southwestern.tasks.interactive.breedesizer.Keyboard;
 import edu.southwestern.tasks.microrts.evaluation.NNComplexEvaluationFunction;
 import edu.southwestern.tasks.microrts.fitness.WinLossFitnessFunction;
@@ -313,6 +314,7 @@ public class Parameters {
 		integerOptions.add("receptiveFieldWidth", 3, "width of input windows for convolutional structures");
 		integerOptions.add("remixImageWindow", 10, "Size of window being remixed by CPPN in Picture Remixer");
 		integerOptions.add("rlBatchSize", 20, "Number of state transitions to log before doing an RL experience replay batch update");
+		integerOptions.add("rougeEnemyHealth", 1, "Set the health of an enemy in rouge-like");
 		integerOptions.add("runNumber", 0, "Number to designate this run of an experiment");
 		integerOptions.add("scentMode", -1, "Whenever this mode gets used, drop pheremone on scent path");
 		integerOptions.add("sightLimit", 50, "How far an agent can see in popacman");
@@ -346,6 +348,7 @@ public class Parameters {
 		integerOptions.add("utNumOpponents", 1, "Number of opponents to evolve against in UT2004");
 		integerOptions.add("utNumNativeBots", 0, "dictates the number of native bots to be spawned into the server");
 		integerOptions.add("utTeamSize", 2 , "dictates the number of players on each team");
+		integerOptions.add("zeldaMaxHealth", 15, "Set the max health for the main character in the rouge-like.");
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
@@ -840,8 +843,9 @@ public class Parameters {
 		stringOptions.add("utMap", "DM-TrainingDay", "Map to play in Unreal Tournament 2004");
 		stringOptions.add("utPath", "SCOPE2018\\UT2004", "Path (excluding drive) to root dir of Unreal Tournament 2004 installation");
 		stringOptions.add("utGameType", "BotDeathMatch", "sets the game type for the server");
-		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("utStudyTeammate", "", "The type of teammate agent for the 2018 human subject study: jude, ethan, native");
+		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
+		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
 		// Class options
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
@@ -901,6 +905,7 @@ public class Parameters {
 		classOptions.add("utSensorModel", OpponentRelativeSensorModel.class, "Sensors for UT2004 bot");
 		classOptions.add("utWeaponManager", SimpleWeaponManager.class, "Weapon management for UT2004 bot");
 		classOptions.add("weightPerturber", GaussianGenerator.class, "Random generator used to perturb mutated weights");
+		classOptions.add("zeldaLevelLoader", SimpleLoader.class, "Loader to use when the dungeon is picking levels");
 	}
 
 	/**

@@ -3,6 +3,8 @@ package me.jakerg.rougelike.screens;
 import java.awt.event.KeyEvent;
 
 import asciiPanel.AsciiPanel;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.*;
 import me.jakerg.rougelike.Creature;
 import me.jakerg.rougelike.CreatureFactory;
@@ -78,6 +80,7 @@ public class DungeonScreen implements Screen {
 		messageScreen.displayOutput(terminal);
 		player.display(terminal, oX + screenWidth + 1, oY);
         terminal.write(player.glyph(), player.x + oX, player.y + oY, player.color());
+		log.clear();
 	}
 
 	/**

@@ -1,10 +1,12 @@
 package me.jakerg.rougelike;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.util.LinkedList;
 import java.util.List;
 
 import asciiPanel.AsciiPanel;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Class to represent a room
@@ -18,6 +20,13 @@ public class World {
 	private int width;
 	private int height;
 	private DungeonBuilder db;
+	
+	private boolean enemyRoom;
+	public boolean isEnemyRoom() { return enemyRoom; };
+	public void setEnemyRoom(boolean b) { enemyRoom = b; };
+	
+	private boolean locked = false;
+	public boolean locked()	{ return locked; }
 	
 	/**
 	 * Must initialize World with tiles
@@ -83,6 +92,19 @@ public class World {
 		
 	}
 	
+	public boolean move(int x, int y, Move creature) {
+		if(tile(x, y).isMovable() && tile(x, y).getDirection().equals(creature)) {
+			Tile move = tile(x, y);
+			dig(x, y);
+			Point p = move.getDirection().getPoint();
+			x += p.x;
+			y += p.y;
+			tiles[x][y] = Tile.BLOCK;
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * Place a bomb tile at coords
 	 * @param x X coord to place bomb
@@ -90,12 +112,20 @@ public class World {
 	 */
 	public boolean placeBomb(int x, int y) {
 		if(item(x, y) != null) return false;
+		System.out.println(tile(x, y));
 		if(tile(x, y).isBombable()) {
 			items.add(new Bomb(this, 'b', AsciiPanel.white, x, y, 4, 5));
 			return true;
 		}
 			
 		return false;
+	}
+	
+	public void addItem(Item item) {
+		if(item(item.x, item.y) == null) {
+			items.add(item);
+		}
+		
 	}
 	
 	/**
@@ -165,12 +195,41 @@ public class World {
 	/**
 	 * Update the creatures (move around)
 	 */
-	public void update() {
-		for(Item i : items)
-			i.update();
+	public void update() {		
+		for(Creature c : creatures) {
+			c.update();	
+			System.out.println(c.glyph() + "'s health : " + c.hp());
+		}
 		
-		for(Creature c : creatures)
-			c.update();		
+		creatures.removeIf(c -> c.hp() < 1);
+		
+		for(Item i : items) {
+			System.out.println("Updating item : " + i.glyph + " at (" + i.x + ", " + i.y + ")" );
+			i.update();
+		}
+
+		
+		checkToUnlock();
+	}
+
+	/**
+	 * Check to unlocked the room if the room is locked
+	 */
+	private void checkToUnlock() {
+		if(!hasEnemies()) {
+			unlockRoom();
+			locked = false;
+		}
+	}
+
+	/**
+	 * Go through and replace tiles that are locked doors with unlocked doors
+	 */
+	private void unlockRoom() {
+		for(int y = 0; y < tiles.length; y++)
+			for(int x = 0; x < tiles[y].length; x++)
+				if(tiles[y][x].equals(Tile.SOFT_LOCK_DOOR))
+					tiles[y][x] = Tile.DOOR;
 	}
 
 	/**
@@ -241,5 +300,101 @@ public class World {
 		changeToDoor(x, y + 1, Tile.HIDDEN);
 		changeToDoor(x - 1, y, Tile.HIDDEN);
 		changeToDoor(x, y - 1, Tile.HIDDEN);
+		
+		changeToDoor(x + 1, y, Tile.PUZZLE_LOCKED);
+		changeToDoor(x, y + 1, Tile.PUZZLE_LOCKED);
+		changeToDoor(x - 1, y, Tile.PUZZLE_LOCKED);
+		changeToDoor(x, y - 1, Tile.PUZZLE_LOCKED);
+	}
+
+	/**
+	 * Drop the specified item in the world
+	 * @param i Item to drop
+	 */
+	public void dropItem(Item i) {
+		items.add(i);
+	}
+	
+	/*
+	 * Check to lock the room, if the room has more than one enemy
+	 */
+	public void checkToLock() {
+//		if(hasEnemies()) {
+//			lockRoom();
+//			locked = true;
+//		}
+	}
+
+	/**
+	 * Go through and replaced unlocked doors and hidden doors with locked doors
+	 */
+	private void lockRoom() {
+		for(int y = 0; y < tiles.length; y++)
+			for(int x = 0; x < tiles[y].length; x++)
+				if(tiles[y][x].equals(Tile.DOOR) || tiles[y][x].equals(Tile.HIDDEN))
+					tiles[y][x] = Tile.LOCKED_DOOR;
+			
+	}
+
+	/**
+	 * Check if there are enemy creatures in the room
+	 * @return True if there are enemies, false if not
+	 */
+	public boolean hasEnemies() {
+		for(Creature c : creatures)
+			if(c.glyph() == 'e')
+				return true;
+		
+		return false;
+			
+	}
+
+	/**
+	 * Force the key to showup on the world, used for debugging purposes
+	 */
+	public void forceKey() {
+		for(Item i : items) {
+			if(i instanceof Key) {
+				((Key) i).showKey();
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Change all puzzle locked doors to unlocked doors
+	 */
+	public void unlockPuzzle() {
+		for(int y = 0; y < tiles.length; y++) {
+			for(int x = 0; x < tiles[y].length; x++) {
+				if(tiles[y][x].equals(Tile.PUZZLE_LOCKED))
+					tiles[y][x] = Tile.DOOR;
+			}
+		}
+	}
+	
+	/**
+	 * Respawn enemies in room if player has no bombs and the room has enemies before
+	 * @param player Player for the enemy to reference to
+	 * @param log Log to call doAction
+	 */
+	public void respawnEnemies(Creature player, Log log) {
+		System.out.println("Attempting to respawn enemies...");
+		if(isEnemyRoom() && !hasEnemies()) {
+			CreatureFactory cf = new CreatureFactory(this, log);
+			int numEnemies = RandomNumbers.randomGenerator.nextInt(3) + 1;
+			for(int i = 0; i < numEnemies; i++) {
+				System.out.println("Respawning");
+				int x, y;
+				
+				do {
+					x = (int) RandomNumbers.boundedRandom(0, width);
+					y = (int) RandomNumbers.boundedRandom(0, height);
+			    }
+			    while (!tile(x, y).playerPassable());
+				
+				cf.newEnemy(x, y, player);
+			}
+		}
 	}
 }

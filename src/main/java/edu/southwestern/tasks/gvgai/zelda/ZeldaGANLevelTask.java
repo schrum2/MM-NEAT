@@ -17,7 +17,7 @@ public class ZeldaGANLevelTask extends ZeldaLevelTask<ArrayList<Double>>{
 	public List<List<Integer>> getZeldaLevelFromGenotype(Genotype<ArrayList<Double>> individual) {
 		ArrayList<Double> latentVector = individual.getPhenotype();
 		double[] room = ArrayUtil.doubleArrayFromList(latentVector);
-		return ZeldaGANUtil.generateRoomListRepresentationFromGAN(room);
+		return ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(room);
 	}
 	
 	@Override

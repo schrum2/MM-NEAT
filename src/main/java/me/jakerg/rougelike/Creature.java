@@ -1,9 +1,14 @@
 package me.jakerg.rougelike;
 
 import java.awt.Color;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class Creature {
     private World world;
@@ -23,15 +28,19 @@ public class Creature {
     private Color color;
     public Color color() { return color; }
     
+    private Color previous = null;
+    
     private CreatureAi ai;
     public void setCreatureAi(CreatureAi ai) { this.ai = ai; }
     
     private int maxHp;
     public int maxHp() { return maxHp; }
+	public void setMaxHp(int hp) { maxHp = hp; }
 
     private int hp;
     public int hp() { return hp; }
     public void setHP(int n) { hp = n; }
+    public void addHP() { if(hp < maxHp) hp++; }
 
     private int attackValue;
     public int attackValue() { return attackValue; }
@@ -43,17 +52,24 @@ public class Creature {
 	public Move getLastDirection() { return lastDirection; }
 	public void setDirection(Move m) { this.lastDirection = m; }
 	
-	private int numBombs = 4;
+	private int numBombs = 0;
 	public int bombs() { return numBombs; }
 	public void setBombs(int b) { numBombs = b; }
+	public void addBomb() { numBombs++; }
 	
 	public int numKeys = 0;
 	public int keys() { return numKeys; }
+	public void addKey() { ++numKeys; }
 	
 	private boolean win = false;
 	public boolean win() {return this.win; }
 	
+	public List<Item> items = new LinkedList<>();
+	public List<Item> getItems() { return this.items; }
+	
 	private Log log;
+	public Log log() { return log; };
+	
 	private DungeonBuilder dungeonBuilder;	
 	public DungeonBuilder getDungeonBuilder() { return this.dungeonBuilder; }
     
@@ -163,6 +179,8 @@ public class Creature {
     		ai.onEnter(x+mx, y+my, world.tile(x+mx, y+my));
     	else // Otherwise attack the creature
     		attack(other);
+    	
+
     		
     }
     
@@ -182,21 +200,25 @@ public class Creature {
 			setDirection(Move.LEFT);
 		else
 			setDirection(Move.NONE);
-		
-    	System.out.println(glyph + "'s last direction is " + getLastDirection().name());
 	}
 	/**
      * Attack another creature
      * @param other the other creature
      */
 	public void attack(Creature other){
-		System.out.println(this.glyph + " attacking " + other.glyph());
-        int amount = Math.max(0, attackValue() - other.defenseValue()); // Get whatever is higher: 0 or the total attack value, dont want negative attack
-    
-        amount = (int)(Math.random() * amount) + 1; // Add randomness to ammount
-    
-        doAction(glyph + " did " + amount + " damage to " + other.glyph);
-        other.modifyHp(-amount); // Modify hp of the the other creature
+		if(this.glyph == other.glyph) return;
+		
+		if(Math.random() >= 0.5 || isPlayer()){			
+	        int amount = Math.max(0, attackValue() - other.defenseValue()); // Get whatever is higher: 0 or the total attack value, dont want negative attack
+	    
+	        amount = (int)(Math.random() * amount) + 1; // Add randomness to ammount
+	    
+	        doAction(glyph + " did " + amount + " damage to " + other.glyph);
+	        other.modifyHp(-amount); // Modify hp of the the other creature
+		} else {
+			doAction(glyph + " missed");
+		}
+
     }
 
 	/**
@@ -206,10 +228,10 @@ public class Creature {
     public void modifyHp(int amount) {
         hp += amount; // Add amount
     
-        if (hp < 1) {
-            world.remove(this);
-            doAction(glyph + " died.");
-        }
+        if(previous == null) {
+        	previous = this.color;
+        	this.color = AsciiPanel.brightYellow;
+        } 
     }
     
     /**
@@ -225,6 +247,27 @@ public class Creature {
      * Update to let ai update
      */
 	public void update() {
+
+		System.out.println("Creature : " + glyph + " at (" + x + ", " + y + ")");
+		
+		if(previous != null) {
+			this.color = previous;
+			previous = null;
+		}
+		
+    	if (hp < 1) {
+            doAction(glyph + " died.");
+            if(!isPlayer()) {
+            	if(RandomNumbers.randomGenerator.nextDouble() >= 0.1){ // 90 % chance
+            		List<Item> items = new LinkedList<>();
+            		items.add(new Bomb(this.world, 'b', AsciiPanel.white, x, y, 4, 5, true));
+            		items.add(new Health(this.world, (char)3, AsciiPanel.brightRed, x, y));
+            		Item itemToDrop = items.get(RandomNumbers.randomGenerator.nextInt(items.size()));
+            		this.world.addItem(itemToDrop);
+            	}
+            }
+            return;
+        }
 		ai.onUpdate();
 	}
 	
@@ -271,8 +314,32 @@ public class Creature {
 	public void setDungeonBuilder(DungeonBuilder dungeonBuilder) {
 		this.dungeonBuilder = dungeonBuilder;
 	}
+	
+	/**
+	 * Set win condition
+	 * @param b True if won the game, false if not
+	 */
 	public void setWin(boolean b) {
 		this.win = b;
-		
 	}
+	
+	public boolean hasItem(char glyph) {
+		for(Item i : items)
+			if(i.glyph == glyph)
+				return true;
+		
+		return false;
+	}
+	
+	public boolean hasItem(Item item) {
+		return hasItem(item.glyph);
+	}
+	
+	
+	public void addItem(Item item) {
+		if(hasItem(item)) return;
+		items.add(item);
+		doAction("You picked up " + item.glyph);
+	}
+
 }

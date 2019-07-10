@@ -3,7 +3,7 @@ package me.jakerg.rougelike.screens;
 import java.awt.event.KeyEvent;
 
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import me.jakerg.rougelike.Tile;
 
 public class MapScreen implements Screen {

@@ -144,3 +144,13 @@ dependency-reduced-pom.xml
 *.mkv
 
 **/netG*.pth
+
+*.swp
+
+data/VGLC/Zelda/rules/1/
+
+data/VGLC/Zelda/GraphDOTs/
+
+data/VGLC/Zelda/Untitled1\.psd
+
+*.dot
