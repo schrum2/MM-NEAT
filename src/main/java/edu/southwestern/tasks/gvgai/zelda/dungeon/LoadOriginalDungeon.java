@@ -53,14 +53,14 @@ public class LoadOriginalDungeon {
 	public static void main(String[] args) throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"rougeEnemyHealth:2"});
 		
-		String title = "tloz8_1_flip";
+		String title = "tloz9_1_flip";
 		Dungeon dungeon = loadOriginalDungeon(title, false);
 		BufferedImage image = DungeonUtil.imageOfDungeon(dungeon);
 		File file = new File("data/VGLC/Zelda/" + title + ".png");
 		ImageIO.write(image, "png", file);
 		
 		dungeon.printLevelThere();
-		if (true) {
+		if (false) {
 			Point goalPoint = dungeon.getCoords(dungeon.getGoal());
 			int gDX = goalPoint.x;
 			int gDY = goalPoint.y;
@@ -124,7 +124,7 @@ public class LoadOriginalDungeon {
 		dungeon.setLevelThere(generateLevelThere(dungeon, numberToString)); // Generate the 2D map of the dungeon
 		System.out.println("Num Keys : " + numKeys + " | numDoors : " + numDoors / 2);
 		numDoors /= 2;
-		balanceKeyToDoors(dungeon, numberToString);
+//		balanceKeyToDoors(dungeon, numberToString);
 		for(Entry<Integer, String> set : numberToString.entrySet()) {
 			String n = set.getValue();
 			System.out.println(set.getKey() + " -> " + n.substring(n.length() - 4, n.length()));
@@ -191,8 +191,11 @@ public class LoadOriginalDungeon {
 		while(!directional.isEmpty()) {
 			String n = queue.poll();
 			
-			if(n == null)
-				throw new Exception("Top of queue was null");
+			if(n == null) {
+				queue.add(directional.keySet().iterator().next());
+				continue;
+			}
+				
 			
 			
 			System.out.println("Got from queue: " + n);
