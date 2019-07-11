@@ -47,9 +47,10 @@ public class HumanSubjectStudy2019Zelda {
 			initialList.add(ZeldaGrammar.KEY_S);
 			initialList.add(ZeldaGrammar.LOCK_S);
 			initialList.add(ZeldaGrammar.ENEMY_S);
-//			initialList.add(ZeldaGrammar.KEY_S);
-//			initialList.add(ZeldaGrammar.LOCK_S);
-//			initialList.add(ZeldaGrammar.ENEMY_S);
+			initialList.add(ZeldaGrammar.KEY_S);
+			initialList.add(ZeldaGrammar.PUZZLE_S);
+			initialList.add(ZeldaGrammar.LOCK_S);
+			initialList.add(ZeldaGrammar.ENEMY_S);
 			initialList.add(ZeldaGrammar.TREASURE);
 			Graph<ZeldaGrammar> graph = new Graph<>(initialList);
 			
