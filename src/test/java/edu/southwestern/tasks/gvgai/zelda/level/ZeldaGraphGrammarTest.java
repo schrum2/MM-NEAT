@@ -36,7 +36,6 @@ public class ZeldaGraphGrammarTest {
 		initialList.add(ZeldaGrammar.START_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
 		initialList.add(ZeldaGrammar.KEY_S);
-//		initialList.add(ZeldaGrammar.BOMB_S);
 		initialList.add(ZeldaGrammar.LOCK_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
 		initialList.add(ZeldaGrammar.KEY_S);
@@ -54,7 +53,8 @@ public class ZeldaGraphGrammarTest {
 	
 	@Test
 	public void test() {
-		for(int i = 0; i <= 100; i++) {
+		// Good to test up to 100 dungeons, but to speed things up when mvn compiling
+		for(int i = 0; i <= 10; i++) {
 			RandomNumbers.reset(i);
 			Graph<ZeldaGrammar> graph = new Graph<>(initialList);
 			
