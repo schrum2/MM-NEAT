@@ -1,38 +1,34 @@
 graph {
-KNmb[label="s"]
-MHIK[label="sl"]
-vpFJ[label="e"]
-LLZv[label="e"]
-dPhg[label="e"]
-rJpX[label="k"]
-otlv[label="l"]
-lPKL[label="e"]
-jOKT[label="e"]
-vJDS[label="k"]
-LnsR[label="e"]
-eKuQ[label="p"]
-GlUS[label="l"]
-ackd[label="e"]
-kQYN[label="t"]
-VSln[label="e"]
-JEMM[label="e"]
-KNmb -- MHIK
-KNmb -- vpFJ
-KNmb -- LLZv
-MHIK -- LLZv
-MHIK -- dPhg
-LLZv -- rJpX
-rJpX -- otlv
-rJpX -- lPKL
-otlv -- jOKT
-jOKT -- vJDS
-jOKT -- LnsR
-vJDS -- LnsR
-vJDS -- eKuQ
-eKuQ -- GlUS
-GlUS -- ackd
-ackd -- kQYN
-ackd -- VSln
-ackd -- JEMM
-kQYN -- JEMM
+UeyE[label="s"]
+GdwZ[label="e"]
+MQci[label="b"]
+vIss[label="e"]
+qBom[label="e"]
+bXwT[label="k"]
+rOMO[label="l"]
+jtxI[label="e"]
+oLZG[label="e"]
+Bpoi[label="k"]
+HMgs[label="p"]
+TYIA[label="l"]
+lCHt[label="e"]
+nqyN[label="e"]
+Dxna[label="t"]
+UeyE -- GdwZ
+UeyE -- MQci
+UeyE -- vIss
+UeyE -- qBom
+GdwZ -- bXwT
+GdwZ -- MQci
+GdwZ -- vIss
+bXwT -- rOMO
+bXwT -- jtxI
+rOMO -- oLZG
+oLZG -- Bpoi
+Bpoi -- HMgs
+HMgs -- TYIA
+TYIA -- lCHt
+lCHt -- nqyN
+lCHt -- Dxna
+nqyN -- Dxna
 }
