@@ -4,8 +4,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JFrame;
+
+import org.apache.commons.io.FileUtils;
 
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
@@ -29,6 +33,7 @@ public class RougelikeApp extends JFrame implements KeyListener{
 	public static RougelikeApp app;
 	
 	public static boolean DEBUG = false;
+	public static int TRIES = 3;
 	
 	/**
 	 * Constructor to test basic Rougelike functionality
@@ -133,6 +138,12 @@ public class RougelikeApp extends JFrame implements KeyListener{
 	                app.setVisible(false);
 	                lock.notify();
 	            }
+	            try {
+	    			FileUtils.deleteDirectory(new File("data/rouge/tmp"));
+	    		} catch (IOException e) {
+	    			// TODO Auto-generated catch block
+	    			e.printStackTrace();
+	    		}
 	        }
 		});
 		t.join();
