@@ -1,34 +1,36 @@
 graph {
-UeyE[label="s"]
-GdwZ[label="e"]
-MQci[label="b"]
-vIss[label="e"]
-qBom[label="e"]
-bXwT[label="k"]
-rOMO[label="l"]
-jtxI[label="e"]
-oLZG[label="e"]
-Bpoi[label="k"]
-HMgs[label="p"]
-TYIA[label="l"]
-lCHt[label="e"]
-nqyN[label="e"]
-Dxna[label="t"]
-UeyE -- GdwZ
-UeyE -- MQci
-UeyE -- vIss
-UeyE -- qBom
-GdwZ -- bXwT
-GdwZ -- MQci
-GdwZ -- vIss
-bXwT -- rOMO
-bXwT -- jtxI
-rOMO -- oLZG
-oLZG -- Bpoi
-Bpoi -- HMgs
-HMgs -- TYIA
-TYIA -- lCHt
-lCHt -- nqyN
-lCHt -- Dxna
-nqyN -- Dxna
+oekH[label="s"]
+cvQp[label="sl"]
+guDK[label="e"]
+fIab[label="e"]
+JSnQ[label="e"]
+cLNP[label="k"]
+uxXv[label="l"]
+oyCf[label="e"]
+ukrf[label="e"]
+jcJF[label="k"]
+Inqt[label="e"]
+moap[label="p"]
+ktbc[label="l"]
+yjGu[label="e"]
+ndJp[label="e"]
+zloH[label="t"]
+oekH -- cvQp
+oekH -- guDK
+oekH -- fIab
+cvQp -- fIab
+cvQp -- JSnQ
+fIab -- cLNP
+cLNP -- uxXv
+cLNP -- oyCf
+uxXv -- ukrf
+ukrf -- jcJF
+ukrf -- Inqt
+jcJF -- Inqt
+jcJF -- moap
+moap -- ktbc
+ktbc -- yjGu
+yjGu -- ndJp
+yjGu -- zloH
+ndJp -- zloH
 }
