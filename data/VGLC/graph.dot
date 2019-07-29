@@ -1,36 +1,33 @@
 graph {
-oekH[label="s"]
-cvQp[label="sl"]
-guDK[label="e"]
-fIab[label="e"]
-JSnQ[label="e"]
-cLNP[label="k"]
-uxXv[label="l"]
-oyCf[label="e"]
-ukrf[label="e"]
-jcJF[label="k"]
-Inqt[label="e"]
-moap[label="p"]
-ktbc[label="l"]
-yjGu[label="e"]
-ndJp[label="e"]
-zloH[label="t"]
-oekH -- cvQp
-oekH -- guDK
-oekH -- fIab
-cvQp -- fIab
-cvQp -- JSnQ
-fIab -- cLNP
-cLNP -- uxXv
-cLNP -- oyCf
-uxXv -- ukrf
-ukrf -- jcJF
-ukrf -- Inqt
-jcJF -- Inqt
-jcJF -- moap
-moap -- ktbc
-ktbc -- yjGu
-yjGu -- ndJp
-yjGu -- zloH
-ndJp -- zloH
+yuLB[label="s"]
+Jccx[label="sl"]
+jVNi[label="e"]
+wYDZ[label="e"]
+oert[label="e"]
+hYWc[label="k"]
+nvLX[label="l"]
+qPZE[label="e"]
+BxVj[label="e"]
+UiGn[label="k"]
+obxk[label="e"]
+zixF[label="p"]
+IMAI[label="l"]
+wknZ[label="e"]
+jmnq[label="t"]
+yuLB -- Jccx
+yuLB -- jVNi
+yuLB -- wYDZ
+Jccx -- wYDZ
+Jccx -- oert
+wYDZ -- hYWc
+hYWc -- nvLX
+hYWc -- qPZE
+nvLX -- BxVj
+BxVj -- UiGn
+BxVj -- obxk
+UiGn -- obxk
+UiGn -- zixF
+zixF -- IMAI
+IMAI -- wknZ
+wknZ -- jmnq
 }

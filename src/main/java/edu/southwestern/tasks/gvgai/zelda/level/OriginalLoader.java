@@ -48,7 +48,7 @@ public class OriginalLoader implements LevelLoader {
 				levelString[i++] = scanner.nextLine();
 				
 			List<List<Integer>> levelInt = ZeldaVGLCUtil.convertZeldaLevelVGLCtoRoomAsList(levelString);
-			removeDoors(levelInt);
+			removeJunk(levelInt);
 			levels.add(ZeldaLevelUtil.listToArrayList(levelInt));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -58,7 +58,7 @@ public class OriginalLoader implements LevelLoader {
 		
 	}
 
-	private void removeDoors(List<List<Integer>> levelInt) {
+	private void removeJunk(List<List<Integer>> levelInt) {
 		for(int y = 0; y < levelInt.size(); y++) {
 			for(int x = 0; x < levelInt.get(y).size(); x++) {
 				Integer num = levelInt.get(y).get(x);
@@ -72,6 +72,10 @@ public class OriginalLoader implements LevelLoader {
 					num = Tile.FLOOR.getNum();
 					break;
 				}
+				if(tile.isMovable())
+					num = Tile.WALL.getNum();
+				if(num == -6) // Ladder item
+					num = Tile.FLOOR.getNum();
 				levelInt.get(y).set(x, num);
 					
 			}
