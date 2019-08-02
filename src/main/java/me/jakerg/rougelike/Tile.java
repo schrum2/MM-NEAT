@@ -24,13 +24,23 @@ public enum Tile {
 	BOUNDS('x', AsciiPanel.brightBlack, -99),
 	KEY('k', AsciiPanel.brightYellow, 6),
 	TRIFORCE((char)30, AsciiPanel.brightYellow, 8),
-	MOVABLE_BLOCK((char)219, AsciiPanel.yellow, 10);
+	MOVABLE_BLOCK_UP((char)219, AsciiPanel.yellow, 10),
+	MOVABLE_BLOCK_DOWN((char)219, AsciiPanel.yellow, 100),
+	MOVABLE_BLOCK_LEFT((char)219, AsciiPanel.yellow, 1000),
+	MOVABLE_BLOCK_RIGHT((char)219, AsciiPanel.yellow, 10000),
+	PUZZLE_LOCKED((char)239, Color.ORANGE, -10);
 	
 	private char glyph;
 	private Color color;
 	private int number;
 	
 	public char getGlyph() {
+		if(this == HIDDEN) {
+			if(RougelikeApp.DEBUG)
+				return glyph;
+			else
+				return WALL.glyph;
+		}
 		return glyph;
 	}
 	
@@ -69,7 +79,7 @@ public enum Tile {
 	}
 	
 	public boolean playerPassable() {
-		return this.isGround() && !this.isBlock() || this == KEY || this == TRIFORCE;
+		return this.isGround() && !this.isBlock() || this.isInterest();
 	}
 	
 	public boolean isStatePassable() {
@@ -77,7 +87,7 @@ public enum Tile {
 	}
 	
 	public boolean isDoor() {
-		return this == DOOR || this == HIDDEN || this == SOFT_LOCK_DOOR || this == LOCKED_DOOR;
+		return this == DOOR || this == HIDDEN || this == SOFT_LOCK_DOOR || this == LOCKED_DOOR || this == Tile.PUZZLE_LOCKED;
 	}
 	
 	public boolean isInterest() {
@@ -93,7 +103,7 @@ public enum Tile {
 	}
 	
 	public boolean isBombable() {
-		return this == HIDDEN;
+		return this == FLOOR || this == HIDDEN || this == WALL;
 	}
 	
 	public boolean isKey() {
@@ -101,12 +111,18 @@ public enum Tile {
 	}
 	
 	public boolean isMovable() {
-		return this == MOVABLE_BLOCK;
+		return this == MOVABLE_BLOCK_UP || this == MOVABLE_BLOCK_DOWN || this == MOVABLE_BLOCK_LEFT || this == MOVABLE_BLOCK_RIGHT;
 	}
 	
 	public Move getDirection() {
-		if(this == MOVABLE_BLOCK)
+		if(this == MOVABLE_BLOCK_UP)
 			return Move.UP;
+		else if(this == MOVABLE_BLOCK_DOWN)
+			return Move.DOWN;
+		else if(this == MOVABLE_BLOCK_LEFT)
+			return Move.LEFT;
+		else if(this == Tile.MOVABLE_BLOCK_RIGHT)
+			return Move.RIGHT;
 		else
 			return Move.NONE;
 	}
@@ -117,6 +133,21 @@ public enum Tile {
 				return tile;
 		}
 		return Tile.FLOOR;
+	}
+
+	public static Tile findByMove(Move d) {
+		switch(d) {
+		case UP:
+			return MOVABLE_BLOCK_UP;
+		case DOWN:
+			return MOVABLE_BLOCK_DOWN;
+		case LEFT:
+			return MOVABLE_BLOCK_LEFT;
+		case RIGHT:
+			return MOVABLE_BLOCK_RIGHT;
+		default:
+			return null;	
+		}
 	}
 
 }

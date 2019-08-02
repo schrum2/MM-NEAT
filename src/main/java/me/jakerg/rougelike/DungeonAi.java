@@ -1,5 +1,6 @@
 package me.jakerg.rougelike;
 
+import java.awt.Color;
 import java.awt.Point;
 import asciiPanel.AsciiPanel;
 
@@ -22,8 +23,14 @@ public class DungeonAi extends CreatureAi{
 		terminal.write("Keys x" + creature.keys(), oX, oY);
 		terminal.write("Bombs x" + creature.bombs(), oX, oY + 1); 
 
-		for(int i = 0; i < creature.hp(); i++)
-			terminal.write((char) 3, oX + i, oY + 3, AsciiPanel.brightRed);
+		for(int i = 0; i < creature.maxHp(); i++) {
+			Color c = AsciiPanel.brightRed;
+			if(i > creature.hp())
+				c = AsciiPanel.brightBlack;
+			
+			terminal.write((char) 3, oX + i, oY + 3, c);
+			
+		}
 		
 		terminal.write("Items", oX, oY + 5);
 		int i = 0;
@@ -42,11 +49,14 @@ public class DungeonAi extends CreatureAi{
 		Item item = creature.getWorld().item(x, y);
 		if(item != null) {
 			item.onPickup(creature);
-			creature.getWorld().removeItem(item);
+			if(item.removable)
+				item.world.removeItem(item);
+			if(item instanceof MovableBlock)
+				return;
 		}
 
 		
-		if(tile.playerPassable()) {
+		if(tile.playerPassable() ) {
 			creature.x = x;
 			creature.y = y;
 		} 
@@ -54,12 +64,14 @@ public class DungeonAi extends CreatureAi{
 			Point exitPoint = new Point(x, y);
 //			 Get the point to move to based on where the player went in from
 			System.out.println("Exiting at " + exitPoint);
-			creature.getWorld().remove(this.creature);
+			creature.getWorld().remove(creature);
 			Point p = creature.getDungeon().getNextNode(exitPoint.toString());
 			if(p != null) {
 				creature.getDungeonBuilder().getCurrentWorld().fullUnlock(p.x, p.y);
-				if(Math.random()>= 0.8)
-					creature.getDungeonBuilder().getCurrentWorld().checkToLock();
+				if(creature.bombs() <= 0) {
+					creature.getDungeonBuilder().getCurrentWorld().respawnEnemies(creature, creature.log());
+				}
+				creature.getDungeonBuilder().getCurrentWorld().addCreature(creature);
 				System.out.println("Starting point :" + p);
 				creature.x  = p.x;
 				creature.y = p.y;
@@ -89,10 +101,6 @@ public class DungeonAi extends CreatureAi{
 		if(tile.equals(Tile.BLOCK) && creature.hasItem('#') && !creature.getWorld().tile(creature.x, creature.y).equals(Tile.BLOCK)) {
 			creature.x = x;
 			creature.y = y;
-		}
-		if(tile.isMovable()){
-			if(creature.getWorld().move(x, y, creature.getLastDirection()))
-				creature.doAction("You moved a block");
 		}
 	}
 

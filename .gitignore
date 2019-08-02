@@ -148,3 +148,9 @@ dependency-reduced-pom.xml
 *.swp
 
 data/VGLC/Zelda/rules/1/
+
+data/VGLC/Zelda/GraphDOTs/
+
+data/VGLC/Zelda/Untitled1\.psd
+
+*.dot

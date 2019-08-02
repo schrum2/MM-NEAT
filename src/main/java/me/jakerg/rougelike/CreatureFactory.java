@@ -50,7 +50,8 @@ public class CreatureFactory {
      * @return Creature with player ai
      */
     public Creature newDungeonPlayer(Dungeon dungeon) {
-    	Creature player = new Creature(world, '@', AsciiPanel.brightWhite, 10, 5, 0, dungeon, log);
+    	int hp = Parameters.parameters.integerParameter("zeldaMaxHealth");
+    	Creature player = new Creature(world, '@', AsciiPanel.brightWhite, hp, 5, 0, dungeon, log);
         new DungeonAi(player);
         return player;
     }

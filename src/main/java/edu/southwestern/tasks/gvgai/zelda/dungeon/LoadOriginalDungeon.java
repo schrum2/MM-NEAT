@@ -38,7 +38,7 @@ public class LoadOriginalDungeon {
 	
 	public static final int ZELDA_ROOM_ROWS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int ZELDA_ROOM_COLUMNS = 16;
-	private static final boolean ROUGE_DEBUG = true;
+	private static final boolean ROUGE_DEBUG = false;
 	private static HashMap<String, Stack<Pair<String, String>>> directional;
 						  // Node name        direct, whereTo
 	
@@ -53,14 +53,14 @@ public class LoadOriginalDungeon {
 	public static void main(String[] args) throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"rougeEnemyHealth:2"});
 		
-		String title = "tloz7_1_flip";
+		String title = "tloz9_1_flip";
 		Dungeon dungeon = loadOriginalDungeon(title, false);
 		BufferedImage image = DungeonUtil.imageOfDungeon(dungeon);
 		File file = new File("data/VGLC/Zelda/" + title + ".png");
 		ImageIO.write(image, "png", file);
 		
 		dungeon.printLevelThere();
-		if (true) {
+		if (false) {
 			Point goalPoint = dungeon.getCoords(dungeon.getGoal());
 			int gDX = goalPoint.x;
 			int gDY = goalPoint.y;
@@ -103,7 +103,7 @@ public class LoadOriginalDungeon {
 	 * @throws Exception
 	 */
 	public static Dungeon loadOriginalDungeon(String name) throws Exception {
-		return loadOriginalDungeon(name, true);
+		return loadOriginalDungeon(name, false);
 	}
 	
 	public static Dungeon loadOriginalDungeon(String name, boolean randomKey) throws Exception {
@@ -124,7 +124,7 @@ public class LoadOriginalDungeon {
 		dungeon.setLevelThere(generateLevelThere(dungeon, numberToString)); // Generate the 2D map of the dungeon
 		System.out.println("Num Keys : " + numKeys + " | numDoors : " + numDoors / 2);
 		numDoors /= 2;
-		balanceKeyToDoors(dungeon, numberToString);
+//		balanceKeyToDoors(dungeon, numberToString);
 		for(Entry<Integer, String> set : numberToString.entrySet()) {
 			String n = set.getValue();
 			System.out.println(set.getKey() + " -> " + n.substring(n.length() - 4, n.length()));
@@ -154,7 +154,7 @@ public class LoadOriginalDungeon {
 
 	private static boolean haveKey(Node currentNode) {
 		if(currentNode == null) return false;
-		List<List<Integer>> level = currentNode.level.intLevel;
+		ArrayList<ArrayList<Integer>> level = currentNode.level.intLevel;
 		for(List<Integer> row : level)
 			for(Integer cell : row)
 				if(cell == Tile.KEY.getNum() || cell == Tile.TRIFORCE.getNum())
@@ -174,6 +174,8 @@ public class LoadOriginalDungeon {
 		
 		String node = dungeon.getCurrentlevel().name; // Starting point of recursive funciton
 		
+		directional.entrySet().removeIf(e -> e.getValue().size() == 0);
+		
 		if(node == null)
 			throw new Exception("The Dungeon's current level wasn't set, make sure that it is set in the .dot file.");
 		
@@ -185,11 +187,15 @@ public class LoadOriginalDungeon {
 		Stack<String> visited = new Stack<>();
 		Queue<String> queue = new LinkedList<>();
 		queue.add(node);
+		
 		while(!directional.isEmpty()) {
 			String n = queue.poll();
 			
-			if(n == null)
-				throw new Exception("Top of queue was null");
+			if(n == null) {
+				queue.add(directional.keySet().iterator().next());
+				continue;
+			}
+				
 			
 			
 			System.out.println("Got from queue: " + n);
@@ -309,6 +315,7 @@ public class LoadOriginalDungeon {
 			switch(value) {
 			case "m":
 			case "e": // Room has enemies
+			case "b":
 				ZeldaLevelUtil.addRandomEnemy(node.level.intLevel);
 				System.out.println("Adding enemy | " + value);
 				break;
@@ -332,7 +339,7 @@ public class LoadOriginalDungeon {
 
 	private static void addTriforce(Node node, Dungeon dungeon) {
 		System.out.println("Set triforce");
-		List<List<Integer>> level = node.level.intLevel;
+		ArrayList<ArrayList<Integer>> level = node.level.intLevel;
 		int y = level.size() / 2;
 		int x = level.get(y).size() / 2;
 		level.get(y).set(x, Tile.TRIFORCE.getNum());
@@ -391,6 +398,9 @@ public class LoadOriginalDungeon {
 				break;
 			case "b": // Hidden door
 				setLevels(direction, node, Tile.HIDDEN);
+				break;
+			case "s":
+				setLevels(direction, node, Tile.PUZZLE_LOCKED);
 				break;
 			}
 		} else {
@@ -549,7 +559,7 @@ public class LoadOriginalDungeon {
 			break;
 		}
 		int num = tile.getNum();
-		List<List<Integer>> level = node.level.intLevel;
+		ArrayList<ArrayList<Integer>> level = node.level.intLevel;
 		if(direction.equals("UP")  || direction.equals("DOWN")) { // Add doors at top or bottom
 			int y = (direction.equals("UP")) ? 1 : 9; // Set x based on side 1 if left 9 if right
 			for(int x = 7; x <=8; x++) {

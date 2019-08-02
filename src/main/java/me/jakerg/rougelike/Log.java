@@ -24,4 +24,8 @@ public class Log {
 		if(messages.size() + 1 > max())
 			messages.remove(messages.size() - 1);
 	}
+	
+	public void clear() {
+		messages().clear();
+	}
 }

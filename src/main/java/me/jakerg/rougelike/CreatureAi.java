@@ -26,7 +26,7 @@ public class CreatureAi {
      * @param tile Tile the character is going to
      */
     public void onEnter(int x, int y, Tile tile) {
-    	if (tile.isGround()){
+    	if (!(creature.getWorld().item(x, y) instanceof MovableBlock) && tile.isGround()){
             creature.x = x;
             creature.y = y;
        }

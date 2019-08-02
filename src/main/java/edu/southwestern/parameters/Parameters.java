@@ -348,6 +348,7 @@ public class Parameters {
 		integerOptions.add("utNumOpponents", 1, "Number of opponents to evolve against in UT2004");
 		integerOptions.add("utNumNativeBots", 0, "dictates the number of native bots to be spawned into the server");
 		integerOptions.add("utTeamSize", 2 , "dictates the number of players on each team");
+		integerOptions.add("zeldaMaxHealth", 15, "Set the max health for the main character in the rouge-like.");
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
@@ -842,8 +843,9 @@ public class Parameters {
 		stringOptions.add("utMap", "DM-TrainingDay", "Map to play in Unreal Tournament 2004");
 		stringOptions.add("utPath", "SCOPE2018\\UT2004", "Path (excluding drive) to root dir of Unreal Tournament 2004 installation");
 		stringOptions.add("utGameType", "BotDeathMatch", "sets the game type for the server");
-		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("utStudyTeammate", "", "The type of teammate agent for the 2018 human subject study: jude, ethan, native");
+		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
+		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
 		// Class options
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");

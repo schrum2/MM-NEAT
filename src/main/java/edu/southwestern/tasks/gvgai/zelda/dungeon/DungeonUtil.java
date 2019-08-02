@@ -8,7 +8,9 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,11 +22,13 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.distribution.GeometricDistribution;
 
 import asciiPanel.AsciiFont;
@@ -64,7 +68,6 @@ public class DungeonUtil {
 					options.addAll(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
 					Point p = DungeonUtil.pointToCheck(dungeon, x, y, options);
 					while(p != null) {
-//						System.out.println("Checking point");
 						Dungeon.Node n = dungeon.getNodeAt(x, y);
 						Dungeon.Node adj = dungeon.getNodeAt(p.x, p.y);
 						DungeonUtil.setAdjacencies(n, new Point(x, y), p, adj.name, Tile.DOOR.getNum());
@@ -77,7 +80,7 @@ public class DungeonUtil {
 		}
 	}
 
-	public static void addExitPoints(List<Point> points, List<List<Integer>> intLevel) {
+	public static void addExitPoints(List<Point> points, ArrayList<ArrayList<Integer>> intLevel) {
 		Point[] doors = new Point[] {new Point(8, 1), new Point(7, 9), new Point(1, 5), new Point(14, 5)};
 		Point[] dirs = new Point[] {new Point(0, 1), new Point(0, -1), new Point(1, 0), new Point(-1, 0)};
 		
@@ -105,13 +108,19 @@ public class DungeonUtil {
 	 * @param points
 	 * @param intLevel
 	 */
-	public static void addInterestPoints(List<Point> points, List<List<Integer>> intLevel) {
+	public static void addInterestPoints(List<Point> points, ArrayList<ArrayList<Integer>> intLevel) {
 		for(int y = 0; y < intLevel.size(); y++) {
 			for(int x = 0; x < intLevel.get(y).size(); x++) {
 				Tile t = Tile.findNum(intLevel.get(y).get(x));
-				if(t != null && t.isInterest()) {
+				if(t == null) continue;
+				if(t.isInterest()) {
 					points.add(new Point(x, y));
 //					System.out.println("Added to interests : " + t);
+				}
+				if(t.isMovable()) {
+					int newX = x + t.getDirection().getPoint().x * 2;
+					int newY = y + t.getDirection().getPoint().y * 2;
+					points.add(new Point(newX, newY));
 				}
 					
 			}
@@ -138,7 +147,12 @@ public class DungeonUtil {
 			return Tile.HIDDEN.getNum();
 		case "sl":
 			return Tile.SOFT_LOCK_DOOR.getNum();
+		case "p":
+			return Tile.PUZZLE_LOCKED.getNum();	
 		default:
+			if(RandomNumbers.randomCoin(0.4) && !grammar.equals(ZeldaGrammar.START))
+				return Tile.HIDDEN.getNum();
+			
 			return Tile.DOOR.getNum();
 		}
 	}
@@ -281,12 +295,12 @@ public class DungeonUtil {
 	private static Level loadLevel(Graph<? extends Grammar>.Node n, Dungeon dungeon, LevelLoader loader, Tile tile) throws FileNotFoundException {
 		Level level = loadOneLevel(loader);
 		switch(n.getData().getLevelType()) {
+		case "n":
+		case "l":
+			break;
 		case "k":
 //			System.out.println("Putting key for: " + n.getID());
 			ZeldaLevelUtil.placeRandomKey(level.intLevel);
-			break;
-		case "n":
-		case "l":
 			break;
 		case "e":
 			if(tile == null || (tile != null && !tile.equals(Tile.SOFT_LOCK_DOOR)))
@@ -310,29 +324,15 @@ public class DungeonUtil {
 	 * @throws FileNotFoundException
 	 */
 	public static Level loadOneLevel(LevelLoader loader) throws FileNotFoundException {
-		List<List<List<Integer>>> levels = loader.getLevels();
-		List<List<Integer>> randomLevel = levels.get((int) RandomNumbers.boundedRandom(0, levels.size()));
+		ArrayList<ArrayList<ArrayList<Integer>>> levels = loader.getLevels();
+		ArrayList<ArrayList<Integer>> randomLevel = levels.get((int) RandomNumbers.boundedRandom(0, levels.size()));
 		randomLevel = remove(randomLevel);
 	
 		return new Level(randomLevel);
 	}
 
-	private static List<List<Integer>> remove(List<List<Integer>> levelInt) {
-		List<List<Integer>> level = new LinkedList<>(levelInt);
-		for(int y = 0; y < level.size(); y++) {
-			for(int x = 0; x < level.get(y).size(); x++) {
-				int num = level.get(y).get(x);
-				Tile tile = Tile.findNum(num);
-				if(tile.equals(Tile.DOOR) || tile.equals(Tile.LOCKED_DOOR))
-					num = Tile.WALL.getNum();
-				else if(tile.equals(Tile.TRIFORCE) || tile.equals(Tile.KEY) || num == 2)
-					num = Tile.FLOOR.getNum();
-				level.get(y).set(x, num);
-					
-			}
-		}
-		
-		return level;
+	private static ArrayList<ArrayList<Integer>> remove(ArrayList<ArrayList<Integer>> randomLevel) {
+		return ZeldaLevelUtil.copyList(randomLevel);
 	}
 
 	/**
@@ -399,6 +399,8 @@ public class DungeonUtil {
 		
 		Point a = null, b = null;
 		
+		Point resumePoint = null;
+		
 		if(unvisitedI.size() == 0)
 			return null;
 		else {
@@ -408,16 +410,16 @@ public class DungeonUtil {
 			} else {
 				a = unvisitedI.remove((int) RandomNumbers.boundedRandom(0, unvisitedI.size()));
 				b = interest.remove((int) RandomNumbers.boundedRandom(0, interest.size()));
+				resumePoint = b;
 			}
 		}
 		
 		List<Point> pointsToFloor = bresenham(a, b);
 //		System.out.println("Applying floors to : " + n.name);
-		Point resumePoint = null;
 		for(Point p : pointsToFloor) {
 //			System.out.println("\t" + p);
 			Tile t = Tile.findNum(n.level.intLevel.get(p.y).get(p.x));
-			if(t != null && !t.isInterest() && !t.equals(Tile.FLOOR)) {
+			if(t != null && !t.isInterest() && !t.equals(Tile.FLOOR) && !t.isMovable()) {
 				if(resumePoint == null) resumePoint = p;
 				n.level.intLevel.get(p.y).set(p.x, Tile.FLOOR.getNum());
 			}
@@ -491,7 +493,7 @@ public class DungeonUtil {
 	}
 
 	private static List<Point> getPointsOfInterest(Dungeon.Node n) {
-		List<List<Integer>> intLevel = n.level.intLevel;
+		ArrayList<ArrayList<Integer>> intLevel = n.level.intLevel;
 		List<Point> points = new LinkedList<>();
 		addExitPoints(points, intLevel);
 		addInterestPoints(points, intLevel);
@@ -529,6 +531,7 @@ public class DungeonUtil {
 		CreatureFactory cf = new CreatureFactory(world, log);
 		Creature p = cf.newDungeonPlayer(dungeon);
 		world = TileUtil.makeWorld(node.level.intLevel, p, log);
+		world.forceKey();
 		boolean isStart = dungeon.getCurrentlevel().equals(node);
 		if(isStart) {
 			p.x = 5;
@@ -626,6 +629,15 @@ public class DungeonUtil {
 	}
 	
 	public static <T extends Grammar> Dungeon recursiveGenerateDungeon(Graph<T> graph, LevelLoader loader) throws Exception {
+		try {
+			FileUtils.forceDelete(new File("data/VGLC/Zelda/Dungeons"));
+			FileUtils.forceMkdir(new File("data/VGLC/Zelda/Dungeons"));
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			FileUtils.forceMkdir(new File("data/VGLC/Zelda/Dungeons"));
+			e2.printStackTrace();
+		}
+		
 		Dungeon dungeon = new Dungeon();
 		Deque<Pair<Graph<T>.Node, Graph<T>.Node>> pending = getGraphNodes(graph);
 		Stack<Graph<T>.Node> placed = new Stack<>();
@@ -634,21 +646,21 @@ public class DungeonUtil {
 		String[][] levelThere = new String[100][100];
 		
 		// catch boolean for error check
-		recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations);
+		recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, 0);
 		dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
-		
+//		addCycles(dungeon);
 		return dungeon;
 	}
 	
 	
 	private static <T extends Grammar> boolean recursiveGenerateDungeon(Graph<T> graph, LevelLoader loader, Dungeon dungeon,
 			Deque<Pair<Graph<T>.Node, Graph<T>.Node>> pending, Stack<Graph<T>.Node> placed, String[][] levelThere,
-			HashMap<String, Point> locations) throws Exception {
+			HashMap<String, Point> locations, int times) throws Exception {
 		
 		if(pending.isEmpty()) return true;
 		
 		Pair<Graph<T>.Node, Graph<T>.Node> pair = pending.pop();
-		System.out.println(pending);
+//		System.out.println(pending);
 		Graph<T>.Node next = pair.t1;
 		System.out.println("Got " + next.getID() + " from list (" + next + ")");
 		Graph<T>.Node parent = pair.t2;
@@ -679,13 +691,22 @@ public class DungeonUtil {
 				}
 
 				locations.put(next.getID(), p);
+				dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
 				
-				boolean success = recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations);
+//				BufferedImage image = imageOfDungeon(dungeon);
+//				File file = new File("data/VGLC/Zelda/Dungeons/dungeon_" + times + ".png");
+//				ImageIO.write(image, "png", file);
+				
+				boolean success = recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, ++times);
 				if(success)
 					return true;
 				else {
 					locations.remove(next.getID());
 					dungeon.removeNode(next.getID());
+					if(parent != null) {
+						Dungeon.Node parentDN = dungeon.getNode(parent.getID());
+						DungeonUtil.setAdjacencies(parentDN, location, p, dNode.name, Tile.WALL.getNum());
+					}
 					levelThere[p.y][p.x] = null;
 				}
 			}
@@ -727,8 +748,8 @@ public class DungeonUtil {
 		if(n.hasLock()) return null;
 		while(options.size() > 0) {
 			Point check = options.pop();
-			int cX = x + check.x;
-			int cY = y + check.y;
+			int cX = check.x;
+			int cY = check.y;
 			boolean hasAdj = false;
 			Dungeon.Node cN = dungeon.getNodeAt(cX, cY);
 			if(cN == null)
@@ -757,6 +778,8 @@ public class DungeonUtil {
 	 * @return BufferedImage representing dungeon
 	 */
 	public static BufferedImage imageOfDungeon(Dungeon dungeon, HashSet<ZeldaState> visited) {
+		boolean debug = false;
+		
 		int BLOCK_HEIGHT = dungeon.getCurrentlevel().level.intLevel.size() * 16;
 		int BLOCK_WIDTH = dungeon.getCurrentlevel().level.intLevel.get(0).size() * 16;
 		String[][] levelThere = dungeon.getLevelThere();
@@ -794,17 +817,19 @@ public class DungeonUtil {
 					g.setColor(Color.GRAY);
 					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);
 					g.drawImage(bi, oX, oY, null);
-					g.setColor(Color.WHITE);
-					oX = (oX + BLOCK_WIDTH) - (BLOCK_WIDTH / 2) - (BLOCK_WIDTH / 4);
-					oY = (oY + BLOCK_HEIGHT) - (BLOCK_HEIGHT / 2) + (BLOCK_HEIGHT / 4);
-					if(n.grammar != null)
-						g.drawString(n.grammar.getLevelType(), oX, oY);
-					
-					if(nodes != null && nodes.containsKey(n))
-						g.setColor(Color.RED);
-					
-					oX = (oX) + (BLOCK_WIDTH / 4);
-					g.drawString(n.name, oX, oY);
+					if(debug) {
+						g.setColor(Color.WHITE);
+						oX = (oX + BLOCK_WIDTH) - (BLOCK_WIDTH / 2) - (BLOCK_WIDTH / 4);
+						oY = (oY + BLOCK_HEIGHT) - (BLOCK_HEIGHT / 2) + (BLOCK_HEIGHT / 4);
+						if(n.grammar != null)
+							g.drawString(n.grammar.getLevelType(), oX, oY);
+						
+						if(nodes != null && nodes.containsKey(n))
+							g.setColor(Color.RED);
+						
+						oX = (oX) + (BLOCK_WIDTH / 4);
+						g.drawString(n.name, oX, oY);
+					}
 				} else {
 					g.setColor(Color.BLACK);
 					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);
@@ -845,7 +870,7 @@ public class DungeonUtil {
 			// Leaving it to false occasionally leads to errors
 			reset = true; 
 			HashSet<ZeldaState> visited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
-			
+//			setUnvisited(visited);
 			System.out.println(result);
 			if(result == null) {
 				// Warning: visited tiles will be replaced with X (Could affect keys)
@@ -855,6 +880,7 @@ public class DungeonUtil {
 				//MiscUtil.waitForReadStringAndEnterKeyPress();
 				// Resume search from new state: but is this actually the state if should be?
 				state = makePlayable(visited); 
+//				state = new ZeldaState(5, 5, 0, dungeon);
 				System.out.println(state);
 			}
 			else break;
@@ -908,7 +934,7 @@ public class DungeonUtil {
 	public static void setAdjacencies(Dungeon.Node fromNode, Point from,
 			Point to, String whereTo, int tile) throws Exception {
 		String direction = getDirection(from, to);
-		System.out.println("From node " + fromNode.name + " going " + direction + " to " + whereTo);
+//		System.out.println("From node " + fromNode.name + " going " + direction + " to " + whereTo);s
 		if(direction == null) return;
 		if(!Tile.findNum(tile).equals(Tile.WALL)) {
 			switch(direction) {

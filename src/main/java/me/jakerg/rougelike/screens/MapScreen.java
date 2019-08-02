@@ -19,7 +19,7 @@ public class MapScreen implements Screen {
 	}
 	
 	@Override
-	public void displayOutput(AsciiPanel terminal, boolean update) {
+	public void displayOutput(AsciiPanel terminal) {
 		String[][] levels = dungeon.getLevelThere();
 		String current = dungeon.getCurrentlevel().name;
 		for(int y = 0; y < levels.length; y++) {

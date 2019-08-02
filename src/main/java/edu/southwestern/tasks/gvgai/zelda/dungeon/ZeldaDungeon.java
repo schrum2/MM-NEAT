@@ -121,7 +121,7 @@ public abstract class ZeldaDungeon<T> {
 	}
 	
 	private void findAndAddGoal(Dungeon dungeon, Node newNode) {
-		List<List<Integer>> ints = newNode.level.intLevel;
+		ArrayList<ArrayList<Integer>> ints = newNode.level.intLevel;
 		String name = newNode.name;
 		for(int y = 0; y < ints.size(); y++) {
 			for(int x = 0; x < ints.get(y).size(); x++) {
@@ -134,7 +134,7 @@ public abstract class ZeldaDungeon<T> {
 	}
 
 	private void setLevels(String direction, Node node, int tile) {
-		List<List<Integer>> level = node.level.intLevel;
+		ArrayList<ArrayList<Integer>> level = node.level.intLevel;
 		// Randomize tile only if the door being placed actually leads to another room
 		if(tile == 3) {
 			if(Math.random() > 0.3)
@@ -358,7 +358,7 @@ public abstract class ZeldaDungeon<T> {
 		for(int y = 0; y < d.length; y++) {
 			for(int x = 0; x < d[y].length; x++) {
 				if(d[y][x] != null) {
-					List<List<Integer>> level = d[y][x].intLevel;
+					ArrayList<ArrayList<Integer>> level = d[y][x].intLevel;
 					
 					// Top
 					
@@ -436,7 +436,8 @@ public abstract class ZeldaDungeon<T> {
 	private BufferedImage getButtonImage(Node n, int width, int height) {
 		if(Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
 			Level level = n.level;
-			GameBundle bundle = ZeldaGANLevelBreederTask.setUpGameWithLevelFromList(level.getLevel());
+			List<List<Integer>> list = ZeldaLevelUtil.arrayListToList(level.getLevel());
+			GameBundle bundle = ZeldaGANLevelBreederTask.setUpGameWithLevelFromList(list);
 			return GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed);
 		} else {
 			return DungeonUtil.getLevelImage(n, dungeonInstance);
@@ -450,29 +451,46 @@ public abstract class ZeldaDungeon<T> {
 	 *
 	 */
 	public static class Level{
-		public List<List<Integer>> intLevel;
+		public ArrayList<ArrayList<Integer>> intLevel;
 		public String[] stringLevel;
 		public Tile[][] rougeTiles;
 		
-		public Level(List<List<Integer>> intLevel) {
+		public Level(ArrayList<ArrayList<Integer>> intLevel) {
 			this.intLevel = intLevel;
 			this.rougeTiles = TileUtil.listToTile(intLevel);
 		}
 		
-		public List<List<Integer>> getLevel(){
+		public Level(List<List<Integer>> ints) {
+			this.intLevel = ZeldaLevelUtil.listToArrayList(ints);
+		}
+
+		public ArrayList<ArrayList<Integer>> getLevel(){
 			return this.intLevel;
 		}
 		
 		public String[] getStringLevel(Point startingPoint) {
-			return this.stringLevel = ZeldaVGLCUtil.convertZeldaRoomListtoGVGAI(intLevel, startingPoint);
+			List<List<Integer>> listInts = ZeldaLevelUtil.arrayListToList(intLevel);
+			return this.stringLevel = ZeldaVGLCUtil.convertZeldaRoomListtoGVGAI(listInts, startingPoint);
 		}
 		
 		public Tile[][] getTiles(){
 			return TileUtil.listToTile(intLevel);
 		}
+		
+		public boolean hasTile(Tile t) {
+			int i = t.getNum();
+			for(int y = 0; y < intLevel.size(); y++) {
+				for(int x = 0; x < intLevel.get(y).size(); x++) {
+					if(i == intLevel.get(y).get(x))
+						return true;
+				}
+			}
+			
+			return false;
+		}
 
 		public Level placeTriforce(Dungeon dungeon) {
-			List<List<Integer>> ints = intLevel;
+			ArrayList<ArrayList<Integer>> ints = intLevel;
 			int x = (ints.get(0).size() - 1) / 2;
 			int y = (ints.size() - 1) / 2;
 			while(!Tile.findNum(ints.get(y).get(x)).playerPassable()) {
@@ -507,7 +525,7 @@ public abstract class ZeldaDungeon<T> {
 	 * Place a key starting in the middle of the level and going to the upper left
 	 * @param intLevel 2D list of ints
 	 */
-	public static void placeNormalKey(List<List<Integer>> intLevel) {
+	public static void placeNormalKey(ArrayList<ArrayList<Integer>> intLevel) {
 		int x = intLevel.get(0).size() / 2;
 		int y = intLevel.size() / 2;
 		

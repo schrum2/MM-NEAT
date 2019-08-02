@@ -66,6 +66,7 @@ import edu.southwestern.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAnd
 import edu.southwestern.tasks.gvgai.GVGAISinglePlayerTask;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANLevelTask;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaLevelTask;
+import edu.southwestern.tasks.gvgai.zelda.study.HumanSubjectStudy2019Zelda;
 import edu.southwestern.tasks.innovationengines.PictureInnovationTask;
 import edu.southwestern.tasks.innovationengines.ShapeInnovationTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
@@ -1034,12 +1035,31 @@ public class MMNEAT {
 				System.out.println("This trial terminated unexpectedly. Please inform the researcher immediately.");
 				System.exit(1);
 			}
+		} else if(args[0].startsWith("zeldaType:")){
+			
+			Parameters.initializeParameterCollections(args);
+			String type = Parameters.parameters.stringParameter("zeldaType");
+			HumanSubjectStudy2019Zelda.Type t = null;
+			switch(type) {
+			case "original":
+				t = HumanSubjectStudy2019Zelda.Type.ORIGINAL;
+				break;
+			case "generated":
+				t = HumanSubjectStudy2019Zelda.Type.GENERATED_DUNGEON;
+				break;
+			case "tutorial":
+				t = HumanSubjectStudy2019Zelda.Type.TUTORIAL;
+				break;
+			default:
+				throw new IllegalArgumentException("zeldaType : " + type + " unrecognized. (original, generated, tutorial)");
+			}
+			HumanSubjectStudy2019Zelda.runTrial(t);
 		} else {
 			evolutionaryRun(args);
 		}
 		System.out.println("done: " + (((System.currentTimeMillis() - start) / 1000.0) / 60.0) + " minutes");
 		if (!(task instanceof FunctionOptimization)) {
-			System.exit(0);
+			System.exit(1);
 		}
 	}
 

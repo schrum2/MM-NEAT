@@ -264,7 +264,13 @@ public class ZeldaVGLCUtil {
 		case '#':
 			return -6; // Ladder block
 		case 'U':
-			return Tile.MOVABLE_BLOCK.getNum();
+			return Tile.MOVABLE_BLOCK_UP.getNum();
+		case 'L':
+			return Tile.MOVABLE_BLOCK_LEFT.getNum();
+		case 'V':
+			return Tile.MOVABLE_BLOCK_DOWN.getNum();
+		case 'R':
+			return Tile.MOVABLE_BLOCK_RIGHT.getNum();
 		default:
 			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
 		}

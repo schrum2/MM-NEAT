@@ -2,14 +2,9 @@ package me.jakerg.rougelike;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.Player;
 import javax.swing.JFrame;
 
 import asciiPanel.AsciiFont;
@@ -62,16 +57,10 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		app = this;
 	}
 	
-	/**
-	 * Anytime there is input this is called to display to the terminal
-	 */
-	public void repaint() {
-		repaint(true);
-	}
 	
-	public void repaint(boolean update) {
+	public void repaint() {
 		terminal.clear();
-		screen.displayOutput(terminal, update);
+		screen.displayOutput(terminal);
 		super.repaint();
 	}
 
@@ -86,8 +75,7 @@ public class RougelikeApp extends JFrame implements KeyListener{
 	}
 
 	public void keyReleased(KeyEvent e) {
-		repaint(false);
-	} // Not used
+		} // Not used
 	
 	/**
 	 * Main method to test rougelike w/o dungeon (will load random caves)
@@ -107,8 +95,48 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		RougelikeApp app = new RougelikeApp(dungeon);
 		app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Dispose on close closes that window ONLY not every JFrame window
 		app.setVisible(true);
-       
 	        
+	}
+	
+	public static void startDungeon(Dungeon dungeon, boolean exitOnClose, boolean debug) throws InterruptedException {
+		
+		Object lock = new Object();
+		
+		DEBUG = debug;
+		RougelikeApp app = new RougelikeApp(dungeon);
+		if(!exitOnClose)
+			app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
+		else
+			app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			
+		app.setVisible(true);
+		
+		Thread t = new Thread() {
+			public void run() {
+	            synchronized(lock) {
+	                while (app.isVisible())
+	                    try {
+	                        lock.wait();
+	                    } catch (InterruptedException e) {
+	                        e.printStackTrace();
+	                    }
+	                System.out.println("Working now");
+	            }
+	        }
+		};
+		t.start();
+		
+		app.addWindowListener(new WindowAdapter() {
+			@Override
+	        public void windowClosing(WindowEvent arg0) {
+	            synchronized (lock) {
+	                app.setVisible(false);
+	                lock.notify();
+	            }
+	        }
+		});
+		t.join();
+
 	}
 	
 	public static void startDungeon(Dungeon dungeon, boolean debug) {

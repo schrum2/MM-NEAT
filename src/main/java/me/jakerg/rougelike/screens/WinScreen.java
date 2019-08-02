@@ -9,7 +9,7 @@ import me.jakerg.rougelike.TitleUtil;
 
 public class WinScreen implements Screen {
 
-	 public void displayOutput(AsciiPanel terminal, boolean update) {
+	 public void displayOutput(AsciiPanel terminal) {
         try {
         	int y = 10;
 			List<String> title = TitleUtil.loadTitleFromFile("data/rouge/titles/win.txt");

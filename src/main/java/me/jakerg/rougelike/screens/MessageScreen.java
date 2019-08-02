@@ -27,7 +27,7 @@ public class MessageScreen implements Screen {
 	}
 	
 	@Override
-	public void displayOutput(AsciiPanel terminal, boolean update) {
+	public void displayOutput(AsciiPanel terminal) {
 		int i = 0;
 		terminal.write("Log:", oX, oY  + i++, AsciiPanel.brightGreen);
 		for(Message m : log.messages())

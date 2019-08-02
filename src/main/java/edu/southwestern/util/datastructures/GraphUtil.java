@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Queue;
 
 import edu.southwestern.tasks.gvgai.zelda.level.Grammar;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph.Node;
 
 public class GraphUtil {
@@ -29,13 +30,15 @@ public class GraphUtil {
 		List<Graph<? extends Grammar>.Node> visited = new ArrayList<>();
 		Queue<Graph<? extends Grammar>.Node> queue = new LinkedList<>();
 		queue.add(n);
-		visited.add(n);
 		while(!queue.isEmpty()) {
 			Graph<? extends Grammar>.Node node = queue.poll();
+			visited.add(node);
+			System.out.println(node.id + ":" + node.adjacencies());
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 			w.write(node.getID() + "[label=\"" + node.getData().getLevelType() + "\"]\n");
 			for(Graph<? extends Grammar>.Node v : node.adjacencies()) {
-				if(!visited.contains(v)) {
-					visited.add(v);
+				if(!visited.contains(v) && !queue.contains(v)) {
+					//visited.add(v);
 					queue.add(v);
 				}
 			}

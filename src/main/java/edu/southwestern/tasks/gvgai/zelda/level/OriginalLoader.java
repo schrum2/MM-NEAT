@@ -3,21 +3,25 @@ package edu.southwestern.tasks.gvgai.zelda.level;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
-import java.util.LinkedList;
+import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.UUID;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import me.jakerg.rougelike.Tile;
 
 public class OriginalLoader implements LevelLoader {
 
-	List<List<List<Integer>>> levels;
+	Set<ArrayList<ArrayList<Integer>>> levels;
 	
 	public OriginalLoader() {
-		levels = new LinkedList<>();
-		String[] dungeonsToLoad = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip"};
+		Parameters.parameters.setBoolean("zeldaGANUsesOriginalEncoding", false);
+		levels = new HashSet<>();
+		String[] dungeonsToLoad = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip"};
 		loadLevels(dungeonsToLoad);
 		
 	}
@@ -45,7 +49,7 @@ public class OriginalLoader implements LevelLoader {
 				
 			List<List<Integer>> levelInt = ZeldaVGLCUtil.convertZeldaLevelVGLCtoRoomAsList(levelString);
 			removeDoors(levelInt);
-			levels.add(levelInt);
+			levels.add(ZeldaLevelUtil.listToArrayList(levelInt));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -76,8 +80,8 @@ public class OriginalLoader implements LevelLoader {
 
 
 	@Override
-	public List<List<List<Integer>>> getLevels() {
-		return new LinkedList<>(levels);
+	public ArrayList<ArrayList<ArrayList<Integer>>> getLevels() {
+		return new ArrayList<>(levels);
 	}
 
 }
