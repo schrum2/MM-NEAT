@@ -4,15 +4,13 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction.DIRECTION;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.search.Action;
 import edu.southwestern.util.search.State;
-import edu.southwestern.util.datastructures.Pair;
 import me.jakerg.rougelike.Tile;
 
 public class ZeldaState extends State<ZeldaState.GridAction>{
@@ -225,16 +223,16 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 	 * @param direction Direction enum
 	 * @return Opposite direction of direction
 	 */
-	private Object oppositeDirection(DIRECTION direction) {
+	private Object oppositeDirection(GridAction.DIRECTION direction) {
 		switch(direction) {
 		case UP:
-			return DIRECTION.DOWN;
+			return GridAction.DIRECTION.DOWN;
 		case DOWN:
-			return DIRECTION.UP;
+			return GridAction.DIRECTION.UP;
 		case LEFT:
-			return DIRECTION.RIGHT;
+			return GridAction.DIRECTION.RIGHT;
 		case RIGHT:
-			return DIRECTION.LEFT;
+			return GridAction.DIRECTION.LEFT;
 		default:
 			throw new IllegalArgumentException("Not a valid direction: "+ direction);
 		}
@@ -246,7 +244,7 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 	@Override
 	public ArrayList<GridAction> getLegalActions(State<GridAction> s) {
 		ArrayList<GridAction> legal = new ArrayList<GridAction>();
-		for(DIRECTION a : DIRECTION.values()) {
+		for(GridAction.DIRECTION a : GridAction.DIRECTION.values()) {
 			GridAction possible = new GridAction(a);
 			ZeldaState result = (ZeldaState) getSuccessor(possible);
 			if(result == null) continue;
