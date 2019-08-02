@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,8 +46,11 @@ public class Dungeon {
 		try {
 			FileInputStream stream = new FileInputStream(filePath);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-			return gson.fromJson(reader, Dungeon.class);
-		} catch (FileNotFoundException e) {
+			Dungeon d = gson.fromJson(reader, Dungeon.class);
+			reader.close();
+			stream.close();
+			return d;
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

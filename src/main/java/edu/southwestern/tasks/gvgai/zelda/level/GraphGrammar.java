@@ -76,29 +76,28 @@ public class GraphGrammar<T extends Grammar> {
 			graph.addEdge(newNode, end);
 	}
 	
-	/**
-	 * Set a new node between the start and end nodes, removing the adjacency between start and end when applying the rule
-	 * @param data
-	 */
-	public void setNodeBetween(T data) {
-		Graph<T>.Node newNode = graph.addNode(data);
-		graph.addEdge(start, newNode);
-		if(end != null) {
-			graph.addEdge(newNode, end);
-			removeEdge = true;
-		}
-	}
+	// setNodeBetween complicates things when copying the nodes from the mini-graph to the backbone. Nodes in the mini-graph wouldn't have the adjs from the other graph.
+	// Using this method, nodes from the mini-graph would have to have nodes from the other graph and vice versa. This caused problems such as each edge having duplicates
+	// causing the dungeon generation to go in an infinite loop
+	
+//	/**
+//	 * Set a new node between the start and end nodes, removing the adjacency between start and end when applying the rule
+//	 * @param data
+//	 */
+//	public void setNodeBetween(T data) {
+//		Graph<T>.Node newNode = graph.addNode(data);
+//		graph.addEdge(start, newNode);
+//		if(end != null) {
+//			graph.addEdge(newNode, end);
+//			removeEdge = true;
+//		}
+//	}
 	
 	public void setOtherGraph(Graph<T>.Node newStart, 
 			Graph<T>.Node newEnd, Graph<T> otherG) {
-		if(removeEdge) {
-			otherG.removeEdge(newStart, newEnd);
-		}
 		newStart.copy(start);
 		if(end != null) {
 			newEnd.copy(end);
-			if(removeEdge)
-				end.copy(newEnd);
 		}
 
 	}

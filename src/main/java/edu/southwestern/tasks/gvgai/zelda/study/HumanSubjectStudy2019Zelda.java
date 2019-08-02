@@ -47,9 +47,10 @@ public class HumanSubjectStudy2019Zelda {
 			initialList.add(ZeldaGrammar.KEY_S);
 			initialList.add(ZeldaGrammar.LOCK_S);
 			initialList.add(ZeldaGrammar.ENEMY_S);
-//			initialList.add(ZeldaGrammar.KEY_S);
-//			initialList.add(ZeldaGrammar.LOCK_S);
-//			initialList.add(ZeldaGrammar.ENEMY_S);
+			initialList.add(ZeldaGrammar.KEY_S);
+			initialList.add(ZeldaGrammar.PUZZLE_S);
+			initialList.add(ZeldaGrammar.LOCK_S);
+			initialList.add(ZeldaGrammar.ENEMY_S);
 			initialList.add(ZeldaGrammar.TREASURE);
 			Graph<ZeldaGrammar> graph = new Graph<>(initialList);
 			
@@ -93,7 +94,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:11 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:11 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader".split(" "));
 //		MMNEAT.main("zeldaType:original randomSeed:7".split(" "));
 	}
 
