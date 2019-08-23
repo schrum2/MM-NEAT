@@ -1,6 +1,15 @@
 package me.jakerg.rougelike.screens;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
 
 import asciiPanel.AsciiPanel;
 import edu.southwestern.parameters.Parameters;
@@ -38,7 +47,7 @@ public class DungeonScreen implements Screen {
 	 * @param dungeon Dungeon to play
 	 */
     public DungeonScreen(Dungeon dungeon) {
-    	// Set offsets
+    	makeTempDungeon(dungeon);
     	int h = dungeon.getCurrentlevel().level.getLevel().size();
     	int w = dungeon.getCurrentlevel().level.getLevel().get(0).size();
         log = new Log(6);
@@ -68,6 +77,24 @@ public class DungeonScreen implements Screen {
     }
 
 	
+	private void makeTempDungeon(Dungeon d) {
+		try {
+			FileUtils.forceMkdir(new File("data/rouge/tmp"));
+			Gson gson = new GsonBuilder()
+					.setPrettyPrinting()
+					.create();
+
+			FileWriter writer = new FileWriter("data/rouge/tmp/dungeon.json");
+			gson.toJson(d, writer);
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
 	@Override
 	public void displayOutput(AsciiPanel terminal) {
 		// Update the current world to get any changes

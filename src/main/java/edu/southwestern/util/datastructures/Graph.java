@@ -119,6 +119,10 @@ public class Graph<T>{
 		public Set<Graph<T>.Node> adjacencies() {
 			return adjacencies;
 		}
+		
+		public void setAdjacencies(Set<Node> a) {
+			adjacencies = a;
+		}
 		public void setData(T data) {
 			this.data = data;
 		}
