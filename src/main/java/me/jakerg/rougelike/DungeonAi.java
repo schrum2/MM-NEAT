@@ -1,5 +1,6 @@
 package me.jakerg.rougelike;
 
+import java.awt.Color;
 import java.awt.Point;
 import asciiPanel.AsciiPanel;
 
@@ -22,8 +23,22 @@ public class DungeonAi extends CreatureAi{
 		terminal.write("Keys x" + creature.keys(), oX, oY);
 		terminal.write("Bombs x" + creature.bombs(), oX, oY + 1); 
 
-		for(int i = 0; i < creature.hp(); i++)
-			terminal.write((char) 3, oX + i, oY + 3, AsciiPanel.brightRed);
+		for(int i = 0; i < creature.maxHp(); i++) {
+			Color c = AsciiPanel.brightRed;
+			if(i > creature.hp())
+				c = AsciiPanel.brightBlack;
+			
+			terminal.write((char) 3, oX + i, oY + 3, c);
+			
+		}
+		
+		terminal.write("Items", oX, oY + 5);
+		int i = 0;
+		for(Item item: creature.getItems()) {
+			terminal.write(item.glyph(), oX + i, oY + 6, item.color());
+			i += 2;
+		}
+			
 	}
 	
 	/**
@@ -31,23 +46,39 @@ public class DungeonAi extends CreatureAi{
 	 */
 	public void onEnter(int x, int y, Tile tile) {		
 		// If the tile the character is trying to move to group, then move character at point
-		if(tile.playerPassable()) {
+		Item item = creature.getWorld().item(x, y);
+		if(item != null) {
+			item.onPickup(creature);
+			if(item.removable)
+				item.world.removeItem(item);
+			if(item instanceof MovableBlock)
+				return;
+		}
+
+		
+		if(tile.playerPassable() ) {
 			creature.x = x;
 			creature.y = y;
 		} 
-		if(tile.equals(Tile.DOOR)) {
-			Point exitPoint = new Point(creature.x, creature.y);
+		if(tile.equals(Tile.DOOR) && !creature.getWorld().locked()) {
+			Point exitPoint = new Point(x, y);
 //			 Get the point to move to based on where the player went in from
 			System.out.println("Exiting at " + exitPoint);
-			creature.getWorld().remove(this.creature);
+			creature.getWorld().remove(creature);
 			Point p = creature.getDungeon().getNextNode(exitPoint.toString());
-			creature.getDungeonBuilder().getCurrentWorld().fullUnlock(p.x, p.y);
-			System.out.println("Starting point :" + p);
-			creature.x  = p.x;
-			creature.y = p.y;
-			creature.setDirection(Move.NONE);
+			if(p != null) {
+				creature.getDungeonBuilder().getCurrentWorld().fullUnlock(p.x, p.y);
+				if(creature.bombs() <= 0) {
+					creature.getDungeonBuilder().getCurrentWorld().respawnEnemies(creature, creature.log());
+				}
+				creature.getDungeonBuilder().getCurrentWorld().addCreature(creature);
+				System.out.println("Starting point :" + p);
+				creature.x  = p.x;
+				creature.y = p.y;
+				creature.setDirection(Move.NONE);
+			}
 		}
-		if(tile.equals(Tile.LOCKED_DOOR)) {
+		if(tile.equals(Tile.LOCKED_DOOR) && !creature.getWorld().locked()) {
 			
 			if(creature.keys() > 0) {
 				creature.numKeys--;
@@ -66,6 +97,10 @@ public class DungeonAi extends CreatureAi{
 		}
 		if(tile.equals(Tile.TRIFORCE)) {
 			creature.setWin(true);
+		}
+		if(tile.equals(Tile.BLOCK) && creature.hasItem('#') && !creature.getWorld().tile(creature.x, creature.y).equals(Tile.BLOCK)) {
+			creature.x = x;
+			creature.y = y;
 		}
 	}
 

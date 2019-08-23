@@ -13,13 +13,24 @@ public class Bomb extends Item{
 	private int attack;
 	public int attack() { return attack; }
 	
+	
+	
 	public Bomb(World world, char glpyh, Color color, int x, int y, int counter, int attack) {
 		super(world, glpyh, color, x, y);
 		this.counter = counter;
 		this.attack = attack;
+		this.pickupable = false;
+	}
+	
+	public Bomb(World world, char glpyh, Color color, int x, int y, int counter, int attack, boolean pickupable) {
+		super(world, glpyh, color, x, y);
+		this.counter = counter;
+		this.attack = attack;
+		this.pickupable = pickupable;
 	}
 	
 	public void update() {
+		if(isPickupable()) return;
 		decrement();
 		if(counter == 1) color = AsciiPanel.red;
 		else if(counter == 0) {
@@ -41,6 +52,12 @@ public class Bomb extends Item{
         amount = (int)(Math.random() * amount) + 1; // Add randomness to ammount
         other.doAction("Bomb did " + amount + " damage to " + other.glyph());
         other.modifyHp(-amount); // Modify hp of the the other creature
+	}
+	@Override
+	public void onPickup(Creature creature) {
+		if(creature.isPlayer())
+			creature.addBomb();
+		
 	}
 	
 	

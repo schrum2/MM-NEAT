@@ -1,23 +1,33 @@
-package edu.southwestern.tasks.gvgai.zelda.level;
+package edu.southwestern.tasks.gvgai.zelda.dungeon;
 
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
+import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon.Node;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaDungeon.Level;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
@@ -28,7 +38,7 @@ public class LoadOriginalDungeon {
 	
 	public static final int ZELDA_ROOM_ROWS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int ZELDA_ROOM_COLUMNS = 16;
-	private static final boolean ROUGE_DEBUG = true;
+	private static final boolean ROUGE_DEBUG = false;
 	private static HashMap<String, Stack<Pair<String, String>>> directional;
 						  // Node name        direct, whereTo
 	
@@ -39,39 +49,50 @@ public class LoadOriginalDungeon {
 	private static int numKeys = 0;
 	private static int numDoors = 0;
 	                      
+	@SuppressWarnings("unused")
 	public static void main(String[] args) throws Exception {
-		Dungeon dungeon = loadOriginalDungeon("a_test_2", false);
+		Parameters.initializeParameterCollections(new String[] {"rougeEnemyHealth:2"});
 		
-		Point goalPoint = dungeon.getCoords(dungeon.getGoal());
-		int gDX = goalPoint.x;
-		int gDY = goalPoint.y;
+		String title = "tloz9_1_flip";
+		Dungeon dungeon = loadOriginalDungeon(title, false);
+		BufferedImage image = DungeonUtil.imageOfDungeon(dungeon);
+		File file = new File("data/VGLC/Zelda/" + title + ".png");
+		ImageIO.write(image, "png", file);
 		
-		Point g = dungeon.getGoalPoint();
-		int gX = g.x;
-		int gY = g.y;
-		
-		Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
-
-			@Override
-			public double h(ZeldaState s) {
-				System.out.println("Calculating H for : " + s);
-				int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
-				int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY) * ZELDA_ROOM_ROWS;
-				return i + j; 
-			}
-		};
-		
-		ZeldaState initial = new ZeldaState(5, 5, 0, dungeon);
-		
-		Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
-		ArrayList<GridAction> result = search.search(initial);
+		dungeon.printLevelThere();
+		if (false) {
+			Point goalPoint = dungeon.getCoords(dungeon.getGoal());
+			int gDX = goalPoint.x;
+			int gDY = goalPoint.y;
 			
-		System.out.println(result);
-		if(result != null)
-			for(GridAction a : result)
-				System.out.println(a.getD().toString());
-		
-		
+			Point g = dungeon.getGoalPoint();
+			int gX = g.x;
+			int gY = g.y;
+			
+			Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
+
+				@Override
+				public double h(ZeldaState s) {
+					int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
+					int j = Math.abs(gDX - s.dX) * ZELDA_ROOM_COLUMNS + Math.abs(gDY - s.dY) * ZELDA_ROOM_ROWS;
+					return i + j; 
+				}
+			};
+			
+			ZeldaState initial = new ZeldaState(5, 5, 0, dungeon);
+			
+			Search<GridAction,ZeldaState> search = new AStarSearch<>(manhattan);
+			ArrayList<GridAction> result = search.search(initial);
+				
+			System.out.println(result);
+			if(result != null) {
+				for(GridAction a : result)
+					System.out.println(a.getD().toString());
+				
+				System.out.println("Lenght of path : " + result.size());
+			}
+		}
+
 		RougelikeApp.startDungeon(dungeon, ROUGE_DEBUG); // start game
 	}
 	
@@ -82,7 +103,7 @@ public class LoadOriginalDungeon {
 	 * @throws Exception
 	 */
 	public static Dungeon loadOriginalDungeon(String name) throws Exception {
-		return loadOriginalDungeon(name, true);
+		return loadOriginalDungeon(name, false);
 	}
 	
 	public static Dungeon loadOriginalDungeon(String name, boolean randomKey) throws Exception {
@@ -94,13 +115,20 @@ public class LoadOriginalDungeon {
 		HashMap<Integer, String> numberToString = new HashMap<>(); // Map the numbers to strings (node name)
 		System.out.println("Loading .txt levels");
 		loadLevels(dungeon, numberToString, levelPath); // Load the levels (txt files) to dungeon
+		for(Entry<Integer, String> entry : numberToString.entrySet()) {
+			System.out.println(entry.getKey() + " --- " + entry.getValue());
+		}
 		System.out.println("Loading levels from graph");
 		loadGraph(dungeon, numberToString, graphFile); // Load the graph representation to dungeon
 		System.out.println("Generating 2D map");
 		dungeon.setLevelThere(generateLevelThere(dungeon, numberToString)); // Generate the 2D map of the dungeon
 		System.out.println("Num Keys : " + numKeys + " | numDoors : " + numDoors / 2);
 		numDoors /= 2;
-		balanceKeyToDoors(dungeon, numberToString);
+//		balanceKeyToDoors(dungeon, numberToString);
+		for(Entry<Integer, String> set : numberToString.entrySet()) {
+			String n = set.getValue();
+			System.out.println(set.getKey() + " -> " + n.substring(n.length() - 4, n.length()));
+		}
 		return dungeon;
 	}
 
@@ -110,14 +138,12 @@ public class LoadOriginalDungeon {
 	 * @param numberToString 
 	 */
 	private static void balanceKeyToDoors(Dungeon dungeon, HashMap<Integer, String> numberToString) {
-		Random r = new Random();
-
 		while(numKeys < numDoors) {
-			int i = r.nextInt(numberToString.size() - 1);
+			int i = RandomNumbers.randomGenerator.nextInt(numberToString.size() - 1);
 			Node currentNode = dungeon.getNode(numberToString.get(i));
-			if(!haveKey(currentNode)) {
+			if(currentNode != null && !haveKey(currentNode)) {
 				if(RANDOM_KEY)
-					ZeldaDungeon.placeRandomKey(currentNode.level.intLevel);
+					ZeldaLevelUtil.placeRandomKey(currentNode.level.intLevel);
 				else
 					ZeldaDungeon.placeNormalKey(currentNode.level.intLevel);
 				numKeys++;
@@ -128,7 +154,7 @@ public class LoadOriginalDungeon {
 
 	private static boolean haveKey(Node currentNode) {
 		if(currentNode == null) return false;
-		List<List<Integer>> level = currentNode.level.intLevel;
+		ArrayList<ArrayList<Integer>> level = currentNode.level.intLevel;
 		for(List<Integer> row : level)
 			for(Integer cell : row)
 				if(cell == Tile.KEY.getNum() || cell == Tile.TRIFORCE.getNum())
@@ -144,123 +170,97 @@ public class LoadOriginalDungeon {
 	 * @throws Exception 
 	 */
 	private static String[][] generateLevelThere(Dungeon dungeon, HashMap<Integer, String> numberToString) throws Exception {
-		String[][] levelThere = new String[numberToString.size()][numberToString.size()];
+		String[][] levelThere = new String[numberToString.size() * 2][numberToString.size() * 2];
 		
 		String node = dungeon.getCurrentlevel().name; // Starting point of recursive funciton
+		
+		directional.entrySet().removeIf(e -> e.getValue().size() == 0);
 		
 		if(node == null)
 			throw new Exception("The Dungeon's current level wasn't set, make sure that it is set in the .dot file.");
 		
-		
+		int y = (levelThere.length - 1) / 2;
+		int x = (levelThere.length - 1) / 2;
+		levelThere[y][x] = node;
+		int tX, tY;
 		// Visited stack to keep track of where we have been
 		Stack<String> visited = new Stack<>();
-		visited.push(node);
+		Queue<String> queue = new LinkedList<>();
+		queue.add(node);
 		
-		// Start recursive funciton
-		recursiveLevelThere(levelThere, visited);
-		return trimLevelThere(levelThere); // Trim the levelThere and return
-	}
-
-	/**
-	 * Recursive function to generate the 2D string map
-	 * @param levelThere 2D string map
-	 * @param visited Visited stack
-	 */
-	private static void recursiveLevelThere(String[][] levelThere, Stack<String> visited) {
-		String node = "";
-		while(!visited.isEmpty()) { // While there is still a visited stack to keep track of
-			node = visited.peek(); // Get the top of stack
-			if(directional.containsKey(node) && !directional.get(node).isEmpty()) // If the directional map has the node and the node's list is not empty: use it
-				break;
-			else
-				visited.pop(); // Otherwise go on to the next node
-		}
-		if(visited.isEmpty() || directional.size() == 0) return; // If the visited stack is empty or the directional map is empty return
-		Point p = findNodeName(node, levelThere); // Get the point of the node on levelthere
-		int x = p.x;
-		int y = p.y;
-		
-		if(directional.containsKey(node) && !directional.get(node).isEmpty()) {// ensure that there's still an existing list to use
-			Pair<String, String> pair = directional.get(node).pop(); // Get the top of the node list
-			switch(pair.t1) { // Get where to place the whereTo node based on the direction
-			case "UP":
-				y--;
-				break;
-			case "DOWN":
-				y++;
-				break;
-			case "LEFT":
-				x--;
-				break;
-			case "RIGHT":
-				x++;
-				break;
-			default: return;
-			}
-			if(levelThere[y][x] == null)
-				levelThere[y][x] = pair.t2; // Place node
-			visited.push(pair.t2); // Push the node to visited
-			recursiveLevelThere(levelThere, visited); // keep on truckin
-
-		} else if(directional.get(node).isEmpty()) { // If the node's list is empty, remove the node from the directional map
-			directional.remove(node);
-		}
-		
-	}
-
-	/**
-	 * Since levelThere is a huge 2D array, trim it to the necessary parts
-	 * @param levelThere Large 2D level array
-	 * @return Trimmed level array
-	 */
-	private static String[][] trimLevelThere(String[][] levelThere) {
-		int minY = 0, maxY = 0, minX = 0, maxX = 0;
-		
-		// Get the min y value 
-		for(int y = 0; y < levelThere.length; y++)
-			for(int x = 0; x < levelThere[y].length; x++)
-				if(levelThere[y][x] != null) {
-					minY = y + 1;
-					break;
-				}
-		
-		// Get the min x value
-		for(int x = 0; x < levelThere[0].length; x++)
-			for(int y = 0; y < levelThere.length; y++)
-				if(levelThere[y][x] != null) {
-					minX = x + 1;
-					break;
-				}
-		
-		// Get the max Y value
-		for(int y = levelThere.length - 1; y >= 0; y--)
-			for(int x = levelThere[y].length - 1; x >= 0; x--)
-				if(levelThere[y][x] != null) {
-					maxY = y;
-					break;
-				}
-		
-		// Get the max x value
-		for(int x = levelThere[0].length - 1; x >= 0; x--)
-			for(int y = levelThere.length - 1; y >= 0; y--)
-				if(levelThere[y][x] != null) {
-					maxX = x;
-					break;
-				}
-		
-		// Calculate size of trimmed down array
-		int newY = minY - maxY;
-		int newX = minX - maxX;
-		
-		// Make new level array
-		String[][] newLevelThere = new String[newY][newX];
-		
-		// transfer contents from old to new
-		for(int i = 0; i < newLevelThere.length; i++)
-			for(int j = 0; j < newLevelThere[i].length; j++)
-				newLevelThere[i][j] = levelThere[maxY + i][maxX + j];
+		while(!directional.isEmpty()) {
+			String n = queue.poll();
 			
-		return newLevelThere;
+			if(n == null) {
+				queue.add(directional.keySet().iterator().next());
+				continue;
+			}
+				
+			
+			
+			System.out.println("Got from queue: " + n);
+			Point p = getCoords(n, levelThere);
+			if(p == null) continue;
+			visited.add(n);
+			y = p.y;
+			x = p.x;
+			
+			Stack<Pair<String, String>> st = directional.get(n);
+
+			System.out.println(st);
+			if(st != null) {
+				while(!st.isEmpty()) {
+					Pair<String, String> pair = st.pop();
+					String direction = pair.t1;
+					String whereTo = pair.t2;
+					
+					if(visited.contains(whereTo) || queue.contains(whereTo)) continue;
+					queue.add(whereTo);
+					
+					System.out.println(n + " - " + direction + " - " + whereTo);
+					tY = y;
+					tX = x;
+					switch(direction) {
+					case "UP":
+					case "U":
+						tY--;
+						break;
+					case "DOWN":
+					case "D":
+						tY++;
+						break;
+					case "RIGHT":
+					case "R":
+						tX++;
+						break;
+					case "LEFT":
+					case "L":
+						tX--;
+						break;
+					default:
+						continue;
+					}
+					
+
+					levelThere[tY][tX] = whereTo;
+				}
+				directional.remove(n);
+				System.out.println(directional);
+			}
+
+		}
+		
+		
+		return ZeldaLevelUtil.trimLevelThere(levelThere); // Trim the levelThere and return
+	}
+	
+	private static Point getCoords(String name, String[][] levelThere) {
+		for(int y = 0; y < levelThere.length; y++)
+			for(int x = 0; x < levelThere[y].length; x++) 
+				if(levelThere[y][x] == name)
+					return new Point(x, y);
+		
+		return null;
 	}
 
 	/**
@@ -315,13 +315,14 @@ public class LoadOriginalDungeon {
 			switch(value) {
 			case "m":
 			case "e": // Room has enemies
-				addRandomEnemy(node);
+			case "b":
+				ZeldaLevelUtil.addRandomEnemy(node.level.intLevel);
 				System.out.println("Adding enemy | " + value);
 				break;
 			case "k": // Room has a key in it
 				numKeys++;
 				if(RANDOM_KEY)
-					ZeldaDungeon.placeRandomKey(node.level.intLevel);
+					ZeldaLevelUtil.placeRandomKey(node.level.intLevel);
 				else
 					ZeldaDungeon.placeNormalKey(node.level.intLevel);
 				break;
@@ -338,34 +339,12 @@ public class LoadOriginalDungeon {
 
 	private static void addTriforce(Node node, Dungeon dungeon) {
 		System.out.println("Set triforce");
-		List<List<Integer>> level = node.level.intLevel;
+		ArrayList<ArrayList<Integer>> level = node.level.intLevel;
 		int y = level.size() / 2;
 		int x = level.get(y).size() / 2;
 		level.get(y).set(x, Tile.TRIFORCE.getNum());
 		dungeon.setGoalPoint(new Point(x, y));
 		dungeon.setGoal(node.name);
-	}
-
-	/**
-	 * Add 1 - 3 enemies at random locations
-	 * @param node Node to add the enemies to
-	 */
-	private static void addRandomEnemy(Node node) {
-		List<List<Integer>> level = node.level.intLevel;
-		Random r = new Random();
-		int numEnemies = r.nextInt(3) + 1;
-		for(int i = 0; i < numEnemies; i++) {
-			int x, y;
-			
-			do {
-		        x = (int)(Math.random() * level.get(0).size());
-		        y = (int)(Math.random() * level.size());
-		    }
-		    while (level.get(y).get(x) != 0);
-			
-			level.get(y).set(x, 2); 
-			System.out.println("Added enemy number " + (i + 1));
-		}
 	}
 
 	/**
@@ -390,7 +369,8 @@ public class LoadOriginalDungeon {
 		}
 		
 		String[] values = getLabelValues(scanner.next());
-		addAdjacency(values, dungeon, nodeName, whereTo);
+		if(values.length > 0)
+			addAdjacency(values, dungeon, nodeName, whereTo);
 		
 		scanner.close();
 	}
@@ -404,12 +384,14 @@ public class LoadOriginalDungeon {
 	 */
 	private static void addAdjacency(String[] values, Dungeon dungeon, String nodeName, String whereTo) {
 		String direction = getDirection(values);
+		if(direction == null) return;
 		Node node = dungeon.getNode(nodeName);
 		if(values[0] != direction) {
 			String action = values[0];
 			switch(action) {
 			case "l": // Soft lock, treat as open door for now
-				setLevels(direction, node, Tile.DOOR);
+				setLevels(direction, node, Tile.SOFT_LOCK_DOOR);
+				break;
 			case "k": // Locked door
 				numDoors++;
 				setLevels(direction, node, Tile.LOCKED_DOOR);
@@ -417,29 +399,38 @@ public class LoadOriginalDungeon {
 			case "b": // Hidden door
 				setLevels(direction, node, Tile.HIDDEN);
 				break;
+			case "s":
+				setLevels(direction, node, Tile.PUZZLE_LOCKED);
+				break;
 			}
+		} else {
+			setLevels(direction, node, Tile.DOOR);
 		}
 		
 		// Add the necessary starting and exit points
 		switch(direction) {
 		case "UP":
+		case "AcrossU":
 			addUpAdjacencies(node, whereTo);
 			break;
 		case "DOWN":
+		case "AcrossD":
 			addDownAdjacencies(node, whereTo);
 			break;
 		case "LEFT":
+		case "AcrossL":
 			addLeftAdjacencies(node, whereTo);
 			break;
 		case "RIGHT":
+		case "AcrossR":
 			addRightAdjacencies(node, whereTo);
 			break;
 		}
 		
 		if(!directional.containsKey(nodeName)) // Add the node's list for creating the 2D map
 			directional.put(nodeName, new Stack<Pair<String,String>>());
-		
-		directional.get(nodeName).push(new Pair<String, String>(direction, whereTo));
+		if(!direction.startsWith("Across"))
+			directional.get(nodeName).push(new Pair<String, String>(direction, whereTo));
 	}
 
 	/**
@@ -525,9 +516,23 @@ public class LoadOriginalDungeon {
 	 */
 	private static String getDirection(String[] values) {
 		for(String value : values) {
-			if(value.equals("UP") || value.equals("DOWN") ||
-					value.equals("LEFT") || value.equals("RIGHT"))
+			switch(value) {
+			case "UP":
+			case "DOWN":
+			case "LEFT":
+			case "RIGHT":
+			case "AcrossU":
+			case "AcrossD":
+			case "AcrossL":
+			case "AcrossR":
+			case "L":
+			case "R":
+			case "U":
+			case "D":
 				return value;
+			}
+				
+					
 		}
 		return null;
 	}
@@ -539,8 +544,22 @@ public class LoadOriginalDungeon {
 	 * @param tile Tile type
 	 */
 	private static void setLevels(String direction, Node node, Tile tile) {
+		switch(direction) {
+		case "AcrossU":
+			direction = "UP";
+			break;
+		case "AcrossD":
+			direction = "DOWN";
+			break;
+		case "AcrossL":
+			direction = "LEFT";
+			break;
+		case "AcrossR":
+			direction = "RIGHT";
+			break;
+		}
 		int num = tile.getNum();
-		List<List<Integer>> level = node.level.intLevel;
+		ArrayList<ArrayList<Integer>> level = node.level.intLevel;
 		if(direction.equals("UP")  || direction.equals("DOWN")) { // Add doors at top or bottom
 			int y = (direction.equals("UP")) ? 1 : 9; // Set x based on side 1 if left 9 if right
 			for(int x = 7; x <=8; x++) {
@@ -568,14 +587,14 @@ public class LoadOriginalDungeon {
 	 * Load the text levels based on the folder of where they are stored
 	 * @param dungeon Dungeon instance
 	 * @param numberToString number to string name
-	 * @throws FileNotFoundException
+	 * @throws Exception 
 	 */
-	private static void loadLevels(Dungeon dungeon, HashMap<Integer, String> numberToString, String levelPath) throws FileNotFoundException {
+	private static void loadLevels(Dungeon dungeon, HashMap<Integer, String> numberToString, String levelPath) throws Exception {
 		File levelFolder = new File(levelPath);
 		for(File entry : levelFolder.listFiles()) {
 			String fileName = entry.getName();
 			int number = Integer.valueOf(fileName.substring(0, fileName.indexOf('.')));
-			numberToString.put(number, UUID.randomUUID().toString());
+			numberToString.put(number, RandomStringUtils.randomAlphabetic(4));
 			loadOneLevel(entry, dungeon, numberToString.get(number));
 		}
 	}
@@ -585,9 +604,9 @@ public class LoadOriginalDungeon {
 	 * @param file File instance of individual level
 	 * @param dungeon Dungeon instance
 	 * @param name Node name
-	 * @throws FileNotFoundException
+	 * @throws Exception 
 	 */
-	private static void loadOneLevel(File file, Dungeon dungeon, String name) throws FileNotFoundException {
+	private static void loadOneLevel(File file, Dungeon dungeon, String name) throws Exception {
 		String[] levelString = new String[ZELDA_ROOM_ROWS];
 		Scanner scanner = new Scanner(file);
 		int i = 0;

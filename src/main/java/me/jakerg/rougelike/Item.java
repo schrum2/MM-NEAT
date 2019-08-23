@@ -16,14 +16,27 @@ public abstract class Item {
     protected Color color;
     public Color color() { return color; }
     
+    protected boolean pickupable;
+    public boolean isPickupable() { return pickupable; }
+    
+    protected boolean removable;
+    public boolean isRemovable() { return removable; }
+    
+    public Item(World world) {
+    	this.world = world;
+    }
+    
     public Item(World world, char glpyh, Color color, int x, int y) {
     	this.world = world;
     	this.glyph = glpyh;
     	this.color = color;
     	this.x = x;
     	this.y = y;
+    	this.removable = true;
     }
     
     public void update() {}
+    
+    public abstract void onPickup(Creature creature);
     
 }

@@ -2,12 +2,14 @@ package me.jakerg.rougelike;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import me.jakerg.rougelike.screens.*;
 
 
@@ -24,6 +26,8 @@ public class RougelikeApp extends JFrame implements KeyListener{
 	private AsciiPanel terminal;
 	private Screen screen; // Which screen to display?
 	
+	public static RougelikeApp app;
+	
 	public static boolean DEBUG = false;
 	
 	/**
@@ -38,6 +42,7 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		screen = new StartScreen();
 		addKeyListener(this);
 		repaint();
+		app = this;
 	}
 	
 	public RougelikeApp(Dungeon dungeon) {
@@ -49,11 +54,10 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		screen = new StartScreen(dungeon); // Set the start screen with a dungeon to let start screen know that we want to play the dungon provided
 		addKeyListener(this);
 		repaint();
+		app = this;
 	}
 	
-	/**
-	 * Anytime there is input this is called to display to the terminal
-	 */
+	
 	public void repaint() {
 		terminal.clear();
 		screen.displayOutput(terminal);
@@ -70,7 +74,8 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		repaint();
 	}
 
-	public void keyReleased(KeyEvent e) {} // Not used
+	public void keyReleased(KeyEvent e) {
+		} // Not used
 	
 	/**
 	 * Main method to test rougelike w/o dungeon (will load random caves)
@@ -90,6 +95,48 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		RougelikeApp app = new RougelikeApp(dungeon);
 		app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Dispose on close closes that window ONLY not every JFrame window
 		app.setVisible(true);
+	        
+	}
+	
+	public static void startDungeon(Dungeon dungeon, boolean exitOnClose, boolean debug) throws InterruptedException {
+		
+		Object lock = new Object();
+		
+		DEBUG = debug;
+		RougelikeApp app = new RougelikeApp(dungeon);
+		if(!exitOnClose)
+			app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
+		else
+			app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			
+		app.setVisible(true);
+		
+		Thread t = new Thread() {
+			public void run() {
+	            synchronized(lock) {
+	                while (app.isVisible())
+	                    try {
+	                        lock.wait();
+	                    } catch (InterruptedException e) {
+	                        e.printStackTrace();
+	                    }
+	                System.out.println("Working now");
+	            }
+	        }
+		};
+		t.start();
+		
+		app.addWindowListener(new WindowAdapter() {
+			@Override
+	        public void windowClosing(WindowEvent arg0) {
+	            synchronized (lock) {
+	                app.setVisible(false);
+	                lock.notify();
+	            }
+	        }
+		});
+		t.join();
+
 	}
 	
 	public static void startDungeon(Dungeon dungeon, boolean debug) {

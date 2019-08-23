@@ -1,7 +1,8 @@
 package me.jakerg.rougelike;
 
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.level.Dungeon;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 
 /**
  * Factory class to take care of creating new enemies or a player
@@ -35,8 +36,9 @@ public class CreatureFactory {
      * @param player 
      * @return Creature with enemy ai
      */
-    public Creature newEnemey(int x, int y, Creature player) {
-    	Creature enemy = new Creature(world, 'e', AsciiPanel.brightRed, 1, 1, 0, log);
+    public Creature newEnemy(int x, int y, Creature player) {
+    	int maxHP = Parameters.parameters.integerParameter("rougeEnemyHealth");
+    	Creature enemy = new Creature(world, 'e', AsciiPanel.brightRed, maxHP, 1, 0, log);
     	world.addCreatureAt(x, y, enemy);
     	new EnemyAi(enemy, player);
     	return enemy;
@@ -48,7 +50,8 @@ public class CreatureFactory {
      * @return Creature with player ai
      */
     public Creature newDungeonPlayer(Dungeon dungeon) {
-    	Creature player = new Creature(world, '@', AsciiPanel.brightWhite, 10, 5, 0, dungeon, log);
+    	int hp = Parameters.parameters.integerParameter("zeldaMaxHealth");
+    	Creature player = new Creature(world, '@', AsciiPanel.brightWhite, hp, 5, 0, dungeon, log);
         new DungeonAi(player);
         return player;
     }
