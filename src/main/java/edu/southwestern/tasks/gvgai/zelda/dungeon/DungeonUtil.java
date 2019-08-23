@@ -313,6 +313,9 @@ public class DungeonUtil {
 		case "s":
 			dungeon.setCurrentLevel(n.getID());
 			break;
+		case "p":
+			ZeldaLevelUtil.addRandomEnemy(level.intLevel);
+			break;
 		}
 		return level;
 	}
@@ -691,7 +694,6 @@ public class DungeonUtil {
 				}
 
 				locations.put(next.getID(), p);
-				dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
 				
 //				BufferedImage image = imageOfDungeon(dungeon);
 //				File file = new File("data/VGLC/Zelda/Dungeons/dungeon_" + times + ".png");
@@ -737,10 +739,6 @@ public class DungeonUtil {
 		}
 		return deque;
 		
-	}
-
-	private static int getTile(Dungeon.Node node) {
-		return getTile(node.grammar);
 	}
 
 	public static Point pointToCheck(Dungeon dungeon, int x, int y, Stack<Point> options) {

@@ -74,7 +74,7 @@ abstract public class GraphRuleManager<T extends Grammar> {
 				List<Graph<T>.Node> adj = new LinkedList<>(current.adjacencies());
 				boolean appliedRule = false;
 				for(Graph<T>.Node n : adj) {
-					if(!visited.contains(n)) {
+					if(!visited.contains(n) && !queue.contains(n)) {
 						System.out.println("Finding rule for: " + current);
 						appliedRule = applyRule(graph, current, n, i++);
 						queue.add(n);

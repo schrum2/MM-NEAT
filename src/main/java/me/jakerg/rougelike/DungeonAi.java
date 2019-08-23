@@ -3,6 +3,7 @@ package me.jakerg.rougelike;
 import java.awt.Color;
 import java.awt.Point;
 import asciiPanel.AsciiPanel;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Dungeon creature that's controllable as a player
@@ -68,7 +69,7 @@ public class DungeonAi extends CreatureAi{
 			Point p = creature.getDungeon().getNextNode(exitPoint.toString());
 			if(p != null) {
 				creature.getDungeonBuilder().getCurrentWorld().fullUnlock(p.x, p.y);
-				if(creature.bombs() <= 0) {
+				if(creature.bombs() <= 0 || RandomNumbers.randomCoin(0.4)) {
 					creature.getDungeonBuilder().getCurrentWorld().respawnEnemies(creature, creature.log());
 				}
 				creature.getDungeonBuilder().getCurrentWorld().addCreature(creature);
