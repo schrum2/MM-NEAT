@@ -22,6 +22,13 @@ import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import me.jakerg.rougelike.RougelikeApp;
 
+/**
+ * Launches Zelda/Rogue dungeon play sessions for the 2019 human subject study comparing dungeons from
+ * the original Legend of Zelda to ones using Zelda rooms with a graph grammar dungeon, and dungeons
+ * using ZeldaGAN rooms with a graph grammar.
+ * 
+ * @author Jake Gutierrez
+ */
 public class HumanSubjectStudy2019Zelda {
 	public enum Type {TUTORIAL, ORIGINAL, GENERATED_DUNGEON}; // Use original dungeon or generated dungeon?
 	
@@ -31,7 +38,10 @@ public class HumanSubjectStudy2019Zelda {
 		RandomNumbers.reset();
 		
 		if(type.equals(Type.ORIGINAL)) {
-			String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip"};
+			// This is all of the levels, but the range of complexity across them is too much. We stick to the first few for simplicity.
+			//String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip"};
+			// Levels 1, 2, and 4. Level 3 is skipped because its layout is (inconveniently) a swastika, which could be offensive.
+			String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz4_1_flip"};
 			int seed = Parameters.parameters.integerParameter("randomSeed");
 			String dungeonName = names[seed % names.length];
 			try {
