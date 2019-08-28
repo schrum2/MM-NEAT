@@ -28,7 +28,7 @@ FOR %%G IN (5 11 17 23 29) DO (
     IF %%G EQU %id% GOTO order6
 )
 
-ECHO "Picked an illegal ID number! Too high"
+ECHO "Picked an illegal ID number! Only 0-29 allowed"
 GOTO endstudy
 
 :order1
