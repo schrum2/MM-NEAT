@@ -67,12 +67,8 @@ public class HumanSubjectStudy2019Zelda {
 			ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
 			try {
 				grammar.applyRules(graph);
-				GraphUtil.saveGrammarGraph(graph, "data/VGLC/Zelda/generated_graph.dot");
 				dungeonToPlay = DungeonUtil.recursiveGenerateDungeon(graph, (LevelLoader) ClassCreation.createObject("zeldaLevelLoader"));
 				DungeonUtil.makeDungeonPlayable(dungeonToPlay);
-				BufferedImage image = DungeonUtil.imageOfDungeon(dungeonToPlay);
-				File file = new File("data/VGLC/Zelda/dungeon.png");
-				ImageIO.write(image, "png", file);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

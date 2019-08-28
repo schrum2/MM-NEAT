@@ -29,10 +29,8 @@ public class EnemyAi extends CreatureAi{
 	}
 	
 	private void moveTowardsPlayer() {
-		System.out.println("Moving towards player at (" + player.x + ", " + player.y + ")");
-		int dX = player.x - creature.x;
-		int dY = player.y - creature.y;
-		System.out.println("\t dX :" + dX + ", dY: " + dY);
+		double dX = player.x - creature.x;
+		double dY = player.y - creature.y;
 		
 		if(dX == 0 && dY == 0) {
 			creature.setHP(0);
@@ -40,19 +38,10 @@ public class EnemyAi extends CreatureAi{
 			return;
 		}
 		
-		int mX = 0;
-		int mY = 0;
-		if(dX > 0) mX = 1;
-		else if(dX == 0) mX = 0;
-		else mX = -1;
-		
-		if(mX == 0) {
-			if(dY > 0) mY = 1;
-			else if(dY == 0) mY = 0;
-			else mY = -1;
-		}
+		// Enemy should only move by 1 space
+		int mX = (int) Math.signum(dX);
+		int mY = (int) Math.signum(dY);
 
-		
 		creature.moveBy(mX, mY);
 	}
 
