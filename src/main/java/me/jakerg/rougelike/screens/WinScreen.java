@@ -34,7 +34,7 @@ public class WinScreen implements Screen {
 				terminal.write(line, 27, y++);
 			}
 			terminal.writeCenter("You got the triforce!", y + 1);
-			terminal.writeCenter("Press [enter] to start again", y + 5);
+			terminal.writeCenter("Press [enter] to exit", y + 5);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -42,7 +42,11 @@ public class WinScreen implements Screen {
     }
 
     public Screen respondToUserInput(KeyEvent key) {
-        return key.getKeyCode() == KeyEvent.VK_ENTER ? new DungeonScreen(d) : this;
+    	if(key.getKeyCode() == KeyEvent.VK_ENTER)
+    		System.exit(1);
+    	
+    	return this;
+//        key.getKeyCode() == KeyEvent.VK_ENTER ? System.exit(1) : return this;
     }
 
 }
