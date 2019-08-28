@@ -348,7 +348,7 @@ public class Parameters {
 		integerOptions.add("utNumOpponents", 1, "Number of opponents to evolve against in UT2004");
 		integerOptions.add("utNumNativeBots", 0, "dictates the number of native bots to be spawned into the server");
 		integerOptions.add("utTeamSize", 2 , "dictates the number of players on each team");
-		integerOptions.add("zeldaMaxHealth", 15, "Set the max health for the main character in the rouge-like.");
+		integerOptions.add("zeldaMaxHealth", 4, "Set the max health for the main character in the rouge-like.");
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
