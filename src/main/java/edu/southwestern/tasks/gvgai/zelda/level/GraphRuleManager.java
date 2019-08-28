@@ -130,28 +130,28 @@ abstract public class GraphRuleManager<T extends Grammar> {
 			if(ruleToApply != null) {
 //				if(nextNode != null) graph.removeEdge(node, nextNode);
 				ruleToApply.grammar().setOtherGraph(node, nextNode, graph);
-				System.out.println(node.id);
-				System.out.println(node.adjacencies());
-				if(nextNode != null) {
-					System.out.println(nextNode.id);
-					System.out.println(nextNode.adjacencies());
-				}
-				System.out.println("--------------------------------------");
-				System.out.println(ruleToApply.getSymbolStart().getLevelType());
-				System.out.println(ruleToApply.grammar().getDOTString());
-				if(ruleToApply.getSymbolEnd() != null)
-					System.out.println(ruleToApply.getSymbolEnd().getLevelType());
+//				System.out.println(node.id);
+//				System.out.println(node.adjacencies());
+//				if(nextNode != null) {
+//					System.out.println(nextNode.id);
+//					System.out.println(nextNode.adjacencies());
+//				}
+//				System.out.println("--------------------------------------");
+//				System.out.println(ruleToApply.getSymbolStart().getLevelType());
+//				System.out.println(ruleToApply.grammar().getDOTString());
+//				if(ruleToApply.getSymbolEnd() != null)
+//					System.out.println(ruleToApply.getSymbolEnd().getLevelType());
 				appliedRule = true;
 			}
 		}
-		if(appliedRule) {
-			try {
-				GraphUtil.saveGrammarGraph(graph, "data/VGLC/Zelda/GraphDOTs/graph_" + i + ".dot");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		if(appliedRule) {
+//			try {
+//				GraphUtil.saveGrammarGraph(graph, "data/VGLC/Zelda/GraphDOTs/graph_" + i + ".dot");
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 		return appliedRule;
 	}
 	
