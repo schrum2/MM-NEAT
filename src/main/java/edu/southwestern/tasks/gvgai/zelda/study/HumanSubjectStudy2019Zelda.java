@@ -1,12 +1,8 @@
 package edu.southwestern.tasks.gvgai.zelda.study;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
@@ -18,7 +14,6 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGraphGrammar;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
-import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import me.jakerg.rougelike.RougelikeApp;
 
