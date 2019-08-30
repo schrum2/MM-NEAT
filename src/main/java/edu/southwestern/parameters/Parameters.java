@@ -791,6 +791,8 @@ public class Parameters {
 		doubleOptions.add("usageForNewMode", 10.0,"The smaller this is (down to 1) the more restricted mode mutation is");
 		doubleOptions.add("weakenPortion", 0.5, "How much the preference weakening operation weakens weights");
 		doubleOptions.add("weightBound", 50.0, "The bound for network weights used by SBX and polynomial mutation");
+		doubleOptions.add("healthDropRate", 20., "Health drop rate from enemies");
+		doubleOptions.add("bombDropRate", 40., "Bomb drop rate from enemies");
 		// String parameters
 		stringOptions.add("archetype", "", "Network that receives all mutations so as to keep other networks properly aligned");
 		stringOptions.add("base", "", "Base directory for all simulations within one experiment");

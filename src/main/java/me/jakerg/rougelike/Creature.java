@@ -258,13 +258,10 @@ public class Creature {
     	if (hp < 1) {
             doAction(glyph + " died.");
             if(!isPlayer()) {
-            	if(RandomNumbers.randomGenerator.nextDouble() >= 0.1){ // 90 % chance
-            		List<Item> items = new LinkedList<>();
-            		items.add(new Bomb(this.world, 'b', AsciiPanel.white, x, y, 4, 5, true));
-            		items.add(new Health(this.world, (char)3, AsciiPanel.brightRed, x, y));
-            		Item itemToDrop = items.get(RandomNumbers.randomGenerator.nextInt(items.size()));
-            		this.world.addItem(itemToDrop);
-            	}
+            	EnemyDrops drops = new EnemyDrops(this);
+        		Item itemToDrop = drops.getItem();
+        		if(itemToDrop != null)
+        			this.world.addItem(itemToDrop);
             }
             return;
         }
