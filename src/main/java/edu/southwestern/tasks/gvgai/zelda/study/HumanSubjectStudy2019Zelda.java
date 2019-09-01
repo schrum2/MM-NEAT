@@ -30,6 +30,7 @@ public class HumanSubjectStudy2019Zelda {
 	public static void runTrial(Type type) {
 		Dungeon dungeonToPlay = null;
 		
+		Parameters.parameters.setBoolean("zeldaHelpScreenEnabled", true);
 		RandomNumbers.reset();
 		
 		if(type.equals(Type.ORIGINAL)) {
