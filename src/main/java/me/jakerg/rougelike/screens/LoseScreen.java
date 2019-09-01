@@ -35,8 +35,12 @@ public class LoseScreen implements Screen {
 			for(String line : title)
 				terminal.write(line, x, y++, AsciiPanel.brightRed);
 			
-			terminal.writeCenter("You have " + RougelikeApp.TRIES + " tries remaining...", y + 4);
-			String action = RougelikeApp.TRIES <= 0 ? "quit" : "retry";
+			if(RougelikeApp.TRIES <= -1)
+				terminal.writeCenter("You have used up all your lives.", y + 4);
+			else
+				terminal.writeCenter("You have " + (RougelikeApp.TRIES + 1) + " tries remaining...", y + 4);
+			
+			String action = RougelikeApp.TRIES <= -1 ? "quit" : "retry";
 			terminal.writeCenter("Press [enter] to " + action , y + 5);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -46,7 +50,7 @@ public class LoseScreen implements Screen {
 
     public Screen respondToUserInput(KeyEvent key) {
     	if(key.getKeyCode() == KeyEvent.VK_ENTER) {
-    		if(RougelikeApp.TRIES <= 0)
+    		if(RougelikeApp.TRIES <= -1)
     			System.exit(1);
     		
     		return new DungeonScreen(d);
