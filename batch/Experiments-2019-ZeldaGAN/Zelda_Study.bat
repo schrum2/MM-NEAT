@@ -32,27 +32,27 @@ ECHO "Picked an illegal ID number! Only 0-29 allowed"
 GOTO endstudy
 
 :order1
-START Sequence Zelda_PlayOriginal Zelda_PlayGeneratedOriginal Zelda_PlayGeneratedGAN %id%
+START /MAX Sequence Zelda_PlayOriginal Zelda_PlayGeneratedOriginal Zelda_PlayGeneratedGAN %id%
 GOTO endstudy
 
 :order2
-START Sequence Zelda_PlayOriginal Zelda_PlayGeneratedGAN Zelda_PlayGeneratedOriginal %id%
+START /MAX Sequence Zelda_PlayOriginal Zelda_PlayGeneratedGAN Zelda_PlayGeneratedOriginal %id%
 GOTO endstudy
 
 :order3
-START Sequence Zelda_PlayGeneratedOriginal Zelda_PlayOriginal Zelda_PlayGeneratedGAN %id%
+START /MAX Sequence Zelda_PlayGeneratedOriginal Zelda_PlayOriginal Zelda_PlayGeneratedGAN %id%
 GOTO endstudy
 
 :order4
-START Sequence Zelda_PlayGeneratedOriginal Zelda_PlayGeneratedGAN Zelda_PlayOriginal %id%
+START /MAX Sequence Zelda_PlayGeneratedOriginal Zelda_PlayGeneratedGAN Zelda_PlayOriginal %id%
 GOTO endstudy
 
 :order5
-START Sequence Zelda_PlayGeneratedGAN Zelda_PlayOriginal Zelda_PlayGeneratedOriginal %id%
+START /MAX Sequence Zelda_PlayGeneratedGAN Zelda_PlayOriginal Zelda_PlayGeneratedOriginal %id%
 GOTO endstudy
 
 :order6
-START Sequence Zelda_PlayGeneratedGAN Zelda_PlayGeneratedOriginal Zelda_PlayOriginal %id%
+START /MAX Sequence Zelda_PlayGeneratedGAN Zelda_PlayGeneratedOriginal Zelda_PlayOriginal %id%
 GOTO endstudy
 
 :endstudy
