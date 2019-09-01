@@ -39,6 +39,7 @@ public class DungeonScreen implements Screen {
 	private int oY; // offset for y axis, ""
 	private MapScreen mapScreen; // This is the view of the overview of the dungeon
 	private MessageScreen messageScreen; // View our latest actions
+	private HelpScreen helpScreen; // Helpful information for player ingame
 	private DungeonBuilder dungeonBuilder; // Keeps track of the worlds along with the current world
 	private Log log;
     
@@ -105,6 +106,7 @@ public class DungeonScreen implements Screen {
 		displayTiles(terminal);
 		if(mapScreen != null) mapScreen.displayOutput(terminal);
 		messageScreen.displayOutput(terminal);
+		if(helpScreen != null) helpScreen.displayOutput(terminal);
 		player.display(terminal, oX + screenWidth + 1, oY);
         terminal.write(player.glyph(), player.x + oX, player.y + oY, player.color());
 		log.clear();

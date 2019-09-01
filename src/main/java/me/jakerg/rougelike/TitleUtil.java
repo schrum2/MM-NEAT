@@ -7,8 +7,16 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import asciiPanel.AsciiPanel;
+
 public class TitleUtil {
 	public static List<String> loadTitleFromFile(String string) throws IOException {
 		return Files.readAllLines(Paths.get(string), Charset.forName("Cp1252"));
+	}
+
+	public static int getCenterAligned(int size, AsciiPanel terminal) {
+		System.out.println(terminal.getCharHeight() / 2);
+		System.out.println(size / 2);
+		return (terminal.getHeightInCharacters() / 2) - (size / 2);
 	}
 }

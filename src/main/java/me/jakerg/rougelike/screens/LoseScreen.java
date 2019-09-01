@@ -28,10 +28,10 @@ public class LoseScreen implements Screen {
 	}
 	
     public void displayOutput(AsciiPanel terminal) {
-        int y = 10;
-        int x = 5;
         try {
 			List<String> title = TitleUtil.loadTitleFromFile("data/rouge/titles/lose.txt");
+	        int y = TitleUtil.getCenterAligned(title.size(), terminal);
+	        int x = 5;
 			for(String line : title)
 				terminal.write(line, x, y++, AsciiPanel.brightRed);
 			
