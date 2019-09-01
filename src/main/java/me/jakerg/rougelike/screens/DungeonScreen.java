@@ -48,6 +48,7 @@ public class DungeonScreen implements Screen {
 	 * @param dungeon Dungeon to play
 	 */
     public DungeonScreen(Dungeon dungeon) {
+    	setDropRates();
     	makeTempDungeon(dungeon);
     	int h = dungeon.getCurrentlevel().level.getLevel().size();
     	int w = dungeon.getCurrentlevel().level.getLevel().get(0).size();
@@ -55,7 +56,7 @@ public class DungeonScreen implements Screen {
     	screenWidth = w;
         screenHeight = h;
         oX = 80 / 2 - screenWidth / 2;
-    	oY = dungeon.getLevelThere().length + 2;
+    	oY = dungeon.getLevelThere().length + 2 + 10;
         this.dungeon = dungeon;
         // Creature factory to create our player
         CreatureFactory cf = new CreatureFactory(world, log);
@@ -72,12 +73,36 @@ public class DungeonScreen implements Screen {
         // Make map screen to the left of the dungeon screen
         if(dungeon.getLevelThere() != null)
 //        	mapScreen = new MapScreen(dungeon, 1, 1);
-        	mapScreen = new MapScreen(dungeon, oX + screenWidth / 2 - dungeon.getLevelThere().length / 2, 1);
+        	mapScreen = new MapScreen(dungeon, oX + screenWidth / 2 - dungeon.getLevelThere()[0].length / 2, oY - 2 - dungeon.getLevelThere().length);
 
         messageScreen = new MessageScreen(80 / 2 - w / 2 - 5, oY + h + 2, 6, log);
+        if(Parameters.parameters.booleanParameter("zeldaHelpScreenEnabled"))
+        	helpScreen = new HelpScreen(25, oY + 25);
     }
 
 	
+	private void setDropRates() {
+		double hDR = 30;
+		double bDR = 40;
+		int playerHealth = 4;
+		if(RougelikeApp.TRIES == 2) {
+			hDR = 60;
+			playerHealth = 6;
+		} else if(RougelikeApp.TRIES == 1) {
+			hDR = 90;
+			bDR = 10;
+			playerHealth = 8;
+		} else if(RougelikeApp.TRIES == 0) {
+			hDR = 90;
+			playerHealth = 20;
+		}
+		
+		Parameters.parameters.setDouble("healthDropRate", hDR);
+		Parameters.parameters.setDouble("bombDropRate", bDR);
+		Parameters.parameters.setInteger("zeldaMaxHealth", playerHealth);
+	}
+
+
 	private void makeTempDungeon(Dungeon d) {
 		try {
 			FileUtils.forceMkdir(new File("data/rouge/tmp"));
