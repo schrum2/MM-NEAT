@@ -24,7 +24,7 @@ public enum Tile {
 	BOUNDS('x', AsciiPanel.brightBlack, -99),
 	KEY('k', AsciiPanel.brightYellow, 6),
 	TRIFORCE((char)30, AsciiPanel.brightYellow, 8),
-	MOVABLE_BLOCK_UP((char)219, AsciiPanel.yellow, 10),
+	MOVABLE_BLOCK_UP((char)219, AsciiPanel.brightGreen, 10),
 	MOVABLE_BLOCK_DOWN((char)219, AsciiPanel.yellow, 100),
 	MOVABLE_BLOCK_LEFT((char)219, AsciiPanel.yellow, 1000),
 	MOVABLE_BLOCK_RIGHT((char)219, AsciiPanel.yellow, 10000),
