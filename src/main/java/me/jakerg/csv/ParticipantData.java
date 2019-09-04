@@ -33,7 +33,7 @@ public class ParticipantData {
 	public int deaths = 0;
 	
 	@CSVField
-	public int distintRoomsVisited = 0;
+	public int distinctRoomsVisited = 0;
 	
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] {"randomSeed:1111111"});
