@@ -1,6 +1,7 @@
 package me.jakerg.rougelike.screens;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -18,6 +19,7 @@ public class LoseScreen implements Screen {
 	
 	public LoseScreen() {
 		RougelikeApp.TRIES--;
+		RougelikeApp.PD.deaths++;
 		d = Dungeon.loadFromJson("data/rouge/tmp/dungeon.json");
 		try {
 			FileUtils.deleteDirectory(new File("data/rouge/tmp"));
@@ -51,7 +53,7 @@ public class LoseScreen implements Screen {
     public Screen respondToUserInput(KeyEvent key) {
     	if(key.getKeyCode() == KeyEvent.VK_ENTER) {
     		if(RougelikeApp.TRIES <= -1)
-    			System.exit(1);
+    			RougelikeApp.app.dispatchEvent(new WindowEvent(RougelikeApp.app, WindowEvent.WINDOW_CLOSING));
     		
     		return new DungeonScreen(d);
     	}

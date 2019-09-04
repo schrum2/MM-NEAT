@@ -14,7 +14,6 @@ public class Key extends Item{
 	}
 	
 	public void update() {
-		System.out.println("Updating key");
 		if(this.glyph != Tile.KEY.getGlyph() && !this.world.hasEnemies()) {
 			showKey();
 		}
@@ -23,8 +22,8 @@ public class Key extends Item{
 	@Override
 	public void onPickup(Creature creature) {
 		if(creature.isPlayer() && this.glyph == Tile.KEY.getGlyph()) {
-			System.out.println("Picking up the KEEEEEEYYYY");
 			creature.addKey();
+			RougelikeApp.PD.keysCollected++;
 			this.world.removeItem(this);
 		}
 			

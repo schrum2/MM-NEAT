@@ -34,6 +34,7 @@ public class Bomb extends Item{
 		decrement();
 		if(counter == 1) color = AsciiPanel.red;
 		else if(counter == 0) {
+			RougelikeApp.PD.bombsUsed++;
 			world.removeItem(this);
 			for(int wx = x - 1; wx < x + 1; wx++) {
 				for(int wy = y - 1; wy < y + 1; wy++) {
@@ -55,8 +56,11 @@ public class Bomb extends Item{
 	}
 	@Override
 	public void onPickup(Creature creature) {
-		if(creature.isPlayer())
+		if(creature.isPlayer()) {
+			RougelikeApp.PD.bombsCollected++;
 			creature.addBomb();
+		}
+			
 		
 	}
 	

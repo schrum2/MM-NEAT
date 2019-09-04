@@ -14,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import me.jakerg.csv.ParticipantData;
 import me.jakerg.rougelike.screens.*;
 
 
@@ -34,6 +35,7 @@ public class RougelikeApp extends JFrame implements KeyListener{
 	
 	public static boolean DEBUG = false;
 	public static int TRIES = 3;
+	public static ParticipantData PD = new ParticipantData();
 	
 	/**
 	 * Constructor to test basic Rougelike functionality
@@ -148,6 +150,8 @@ public class RougelikeApp extends JFrame implements KeyListener{
 	        }
 		});
 		t.join();
+		
+		RougelikeApp.app = app;
 
 	}
 	

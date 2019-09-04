@@ -1,6 +1,7 @@
 package me.jakerg.rougelike.screens;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -9,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 
 import asciiPanel.AsciiPanel;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.TitleUtil;
 
 public class WinScreen implements Screen {
@@ -42,8 +44,9 @@ public class WinScreen implements Screen {
     }
 
     public Screen respondToUserInput(KeyEvent key) {
-    	if(key.getKeyCode() == KeyEvent.VK_ENTER)
-    		System.exit(1);
+    	if(key.getKeyCode() == KeyEvent.VK_ENTER) {
+    		RougelikeApp.app.dispatchEvent(new WindowEvent(RougelikeApp.app, WindowEvent.WINDOW_CLOSING));
+    	}
     	
     	return this;
 //        key.getKeyCode() == KeyEvent.VK_ENTER ? System.exit(1) : return this;

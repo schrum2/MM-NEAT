@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.gvgai.zelda.study;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,8 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGraphGrammar;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.random.RandomNumbers;
+import me.jakerg.csv.ParticipantData;
+import me.jakerg.csv.SimpleCSV;
 import me.jakerg.rougelike.RougelikeApp;
 
 /**
@@ -33,7 +36,10 @@ public class HumanSubjectStudy2019Zelda {
 		Parameters.parameters.setBoolean("zeldaHelpScreenEnabled", true);
 		RandomNumbers.reset();
 		
+		String fileTitle = null;
+		
 		if(type.equals(Type.ORIGINAL)) {
+			fileTitle = "Original";
 			// This is all of the levels, but the range of complexity across them is too much. We stick to the first few for simplicity.
 			//String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip"};
 			// Levels 1, 2, and 4. Level 3 is skipped because its layout is (inconveniently) a swastika, which could be offensive.
@@ -63,7 +69,9 @@ public class HumanSubjectStudy2019Zelda {
 			ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
 			try {
 				grammar.applyRules(graph);
-				dungeonToPlay = DungeonUtil.recursiveGenerateDungeon(graph, (LevelLoader) ClassCreation.createObject("zeldaLevelLoader"));
+				LevelLoader loader = (LevelLoader) ClassCreation.createObject("zeldaLevelLoader");
+				fileTitle = loader.getClass().getSimpleName();
+				dungeonToPlay = DungeonUtil.recursiveGenerateDungeon(graph, loader);
 				DungeonUtil.makeDungeonPlayable(dungeonToPlay);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -81,8 +89,11 @@ public class HumanSubjectStudy2019Zelda {
 		System.out.println("Play dungeon");
 		try {
 			DungeonUtil.viewDungeon(dungeonToPlay);
-			RougelikeApp.startDungeon(dungeonToPlay, true, false);
-		} catch (InterruptedException e) {
+			RougelikeApp.startDungeon(dungeonToPlay, false, false);
+			System.out.println("Finished dungeon............");
+			SimpleCSV<ParticipantData> data = new SimpleCSV<>(RougelikeApp.PD);
+			data.saveToCSV(true, new File("data/" + fileTitle + ".csv"));
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

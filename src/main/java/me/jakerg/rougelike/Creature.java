@@ -181,7 +181,8 @@ public class Creature {
     		attack(other);
     	
 
-    		
+    	if(isPlayer())
+    		RougelikeApp.PD.actionsPerformed++;
     }
     
     /**
@@ -228,6 +229,9 @@ public class Creature {
     public void modifyHp(int amount) {
         hp += amount; // Add amount
     
+        if(isPlayer()){
+        	RougelikeApp.PD.damageReceived += -amount;
+        }
         if(previous == null) {
         	previous = this.color;
         	this.color = AsciiPanel.brightYellow;
@@ -258,6 +262,7 @@ public class Creature {
     	if (hp < 1) {
             doAction(glyph + " died.");
             if(!isPlayer()) {
+            	RougelikeApp.PD.enemiesKilled++;
             	EnemyDrops drops = new EnemyDrops(this);
         		Item itemToDrop = drops.getItem();
         		if(itemToDrop != null)
@@ -298,6 +303,8 @@ public class Creature {
 		
 		if(world.placeBomb(wx, wy))
 			numBombs--;
+		
+		RougelikeApp.PD.actionsPerformed++;
 	}
 	
 	/**
