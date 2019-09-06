@@ -211,6 +211,15 @@ public class World {
 		
 		checkToUnlock();
 	}
+	
+	public Creature getPlayer() {
+		for(Creature c : creatures) {
+			if(c.isPlayer())
+				return c;
+		}
+		
+		return null;
+	}
 
 	/**
 	 * Check to unlocked the room if the room is locked

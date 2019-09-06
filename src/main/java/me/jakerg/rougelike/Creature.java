@@ -265,12 +265,21 @@ public class Creature {
             	RougelikeApp.PD.enemiesKilled++;
             	EnemyDrops drops = new EnemyDrops(this);
         		Item itemToDrop = drops.getItem();
-        		if(itemToDrop != null)
+        		if(itemToDrop != null) {
+        			if(itemToDrop instanceof Health && this.world.getPlayer().isMaxed())
+        				itemToDrop = new Bomb(getWorld(), 'b', AsciiPanel.white, x, y, 4, 5, true);
+        			
         			this.world.addItem(itemToDrop);
+        		}
+        			
             }
             return;
         }
 		ai.onUpdate();
+	}
+	
+	public boolean isMaxed() {
+		return maxHp() == hp();
 	}
 	
 	/**
