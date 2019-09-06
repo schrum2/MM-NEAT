@@ -97,6 +97,7 @@ public class HumanSubjectStudy2019Zelda {
 		try {
 			if(DEBUG)
 				DungeonUtil.viewDungeon(dungeonToPlay);
+			RougelikeApp.PD.storeDungeonData(dungeonToPlay);
 			RougelikeApp.startDungeon(dungeonToPlay, false, DEBUG);
 			SimpleCSV<ParticipantData> data = new SimpleCSV<>(RougelikeApp.PD);
 			data.saveToCSV(true, new File("ZeldaStudy2019/" + fileTitle + ".csv"));
