@@ -92,7 +92,10 @@ public class HumanSubjectStudy2019Zelda {
 			RougelikeApp.startDungeon(dungeonToPlay, false, false);
 			System.out.println("Finished dungeon............");
 			SimpleCSV<ParticipantData> data = new SimpleCSV<>(RougelikeApp.PD);
-			data.saveToCSV(true, new File("data/" + fileTitle + ".csv"));
+			data.saveToCSV(true, new File("ZeldaStudy2019/" + fileTitle + ".csv"));
+			data.saveToTxt(new File("batch/Experiments-2019-ZeldaGAN/Subject-" + 
+			               String.valueOf(Parameters.parameters.integerParameter("randomSeed")) + 
+			               "/" + fileTitle + ".txt"));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

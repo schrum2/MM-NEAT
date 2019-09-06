@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -82,7 +83,19 @@ public class SimpleCSV<T> {
 		
 		fw.close();
 		
+	}
+	
+	public void saveToTxt(File file) throws IOException, IllegalArgumentException, IllegalAccessException {
+		if(!file.exists())
+			file.createNewFile();
 		
+		FileWriter fw = new FileWriter(file);
+		HashMap<String, String> values = getFieldHeaders();
+	
+		for(Entry<String, String> entry : values.entrySet())
+			fw.append(entry.getKey() + "=" + entry.getValue() + "\n");
+		
+		fw.close();
 		
 	}
 
