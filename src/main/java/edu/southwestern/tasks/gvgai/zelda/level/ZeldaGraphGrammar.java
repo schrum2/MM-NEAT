@@ -1,34 +1,22 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
 import java.awt.Desktop;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.io.FileUtils;
-
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.random.RandomNumbers;
-import edu.southwestern.util.search.AStarSearch;
-import edu.southwestern.util.search.Heuristic;
-import edu.southwestern.util.search.Search;
 import me.jakerg.rougelike.RougelikeApp;
 
 public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
@@ -160,6 +148,8 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 	}
 	
 	public static void main(String[] args) throws IOException {
+		System.out.println("About to reset random number generator based on time. Press enter.");
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 		RandomNumbers.reset((int) System.currentTimeMillis());
 		
 		List<ZeldaGrammar> initialList = new LinkedList<>();

@@ -3,7 +3,6 @@ package edu.southwestern.tasks.gvgai.zelda.dungeon;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;

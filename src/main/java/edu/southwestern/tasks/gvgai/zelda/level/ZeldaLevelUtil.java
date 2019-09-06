@@ -1,55 +1,20 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
-import java.awt.Color;
-import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Random;
-
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import org.apache.commons.lang.SerializationUtils;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.scores.Score;
-import edu.southwestern.tasks.gvgai.GVGAIUtil;
-import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction.DIRECTION;
-import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.random.RandomNumbers;
-import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
-import edu.southwestern.util.search.Search;
 import me.jakerg.rougelike.Move;
-import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
 
 /**
@@ -134,6 +99,7 @@ public class ZeldaLevelUtil {
 		}
 	}
 	
+	// NOT USED?
 	private static boolean hasPoint(ArrayList<Node> visited, Node node) {
 		for(Node n : visited)
 			if(node.point.x == n.point.x && node.point.y == n.point.y)
@@ -152,6 +118,7 @@ public class ZeldaLevelUtil {
 	 * @param y point to check on y
 	 * @param d distance to be added
 	 */
+	// NOT USED?
 	private static void checkPointToAdd(int[][] level, int[][] dist,
 			LinkedList<Triple<Integer, Integer, Integer>> visited, int x, int y, int d) {
 		
@@ -208,6 +175,7 @@ public class ZeldaLevelUtil {
 			return r;
 		}
 		
+		// NOT USED?
 		public void copy(Node other) {
 			this.point = other.point;
 			this.gScore = other.gScore;
@@ -228,8 +196,8 @@ public class ZeldaLevelUtil {
 		int x, y;
 		
 		do {
-			x = (int) RandomNumbers.boundedRandom(0, intLevel.get(0).size());
-			y = (int) RandomNumbers.boundedRandom(0, intLevel.size());
+			x = RandomNumbers.randomGenerator.nextInt(intLevel.get(0).size());
+			y = RandomNumbers.randomGenerator.nextInt(intLevel.size());
 	    }
 	    while (!Tile.findNum(intLevel.get(y).get(x)).equals(Tile.FLOOR));
 		
@@ -489,8 +457,8 @@ public class ZeldaLevelUtil {
 			int x, y;
 			
 			do {
-				x = (int) RandomNumbers.boundedRandom(0, intLevel.get(0).size());
-				y = (int) RandomNumbers.boundedRandom(0, intLevel.size());
+				x = RandomNumbers.randomGenerator.nextInt(intLevel.get(0).size());
+				y = RandomNumbers.randomGenerator.nextInt(intLevel.size());
 		    }
 		    while (intLevel.get(y).get(x) != 0);
 			

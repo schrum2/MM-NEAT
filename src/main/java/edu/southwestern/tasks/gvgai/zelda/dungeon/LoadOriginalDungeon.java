@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.gvgai.zelda.dungeon;
 
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -12,9 +11,6 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.Stack;
-import java.util.UUID;
-
-import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -134,6 +130,7 @@ public class LoadOriginalDungeon {
 	 * @param dungeon
 	 * @param numberToString 
 	 */
+	// NEVER USED?
 	private static void balanceKeyToDoors(Dungeon dungeon, HashMap<Integer, String> numberToString) {
 		while(numKeys < numDoors) {
 			int i = RandomNumbers.randomGenerator.nextInt(numberToString.size() - 1);
@@ -438,6 +435,7 @@ public class LoadOriginalDungeon {
 	 * @param levelThere 2D map
 	 * @return Point of coords
 	 */
+	// NEVER USED?
 	private static Point findNodeName(String nodeName, String[][] levelThere) {
 		for(int y = 0; y < levelThere.length; y++)
 			for(int x = 0; x < levelThere[y].length; x++)

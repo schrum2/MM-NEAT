@@ -22,18 +22,15 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.math3.distribution.GeometricDistribution;
 
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.Grammar;
 import edu.southwestern.tasks.gvgai.zelda.level.LevelLoader;
@@ -41,18 +38,15 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
-import edu.southwestern.util.search.GraphSearch;
 import edu.southwestern.util.search.Search;
 import me.jakerg.rougelike.Creature;
 import me.jakerg.rougelike.CreatureFactory;
 import me.jakerg.rougelike.Item;
 import me.jakerg.rougelike.Log;
-import me.jakerg.rougelike.Move;
 import me.jakerg.rougelike.Tile;
 import me.jakerg.rougelike.TileUtil;
 import me.jakerg.rougelike.World;
@@ -237,7 +231,7 @@ public class DungeonUtil {
 		int x = p.x;
 		List<Point> options = new LinkedList<>(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
 		while(!options.isEmpty()) {
-			Point opt = options.remove((int) RandomNumbers.boundedRandom(0, options.size()));
+			Point opt = options.remove(RandomNumbers.randomGenerator.nextInt(options.size()));
 			x = opt.x;
 			y = opt.y;
 			
@@ -253,6 +247,7 @@ public class DungeonUtil {
 		return null;
 	}
 	
+	// THIS IS NEVER USED. WHAT IS IT FOR?
 	private static int getAvailableSpace(Point p, String[][] levelThere) {
 		int space = 0;
 		int y = p.y;
@@ -328,7 +323,7 @@ public class DungeonUtil {
 	 */
 	public static Level loadOneLevel(LevelLoader loader) throws FileNotFoundException {
 		ArrayList<ArrayList<ArrayList<Integer>>> levels = loader.getLevels();
-		ArrayList<ArrayList<Integer>> randomLevel = levels.get((int) RandomNumbers.boundedRandom(0, levels.size()));
+		ArrayList<ArrayList<Integer>> randomLevel = levels.get(RandomNumbers.randomGenerator.nextInt(levels.size()));
 		randomLevel = remove(randomLevel);
 	
 		return new Level(randomLevel);
@@ -408,11 +403,11 @@ public class DungeonUtil {
 			return null;
 		else {
 			if(interest.size() == 0 && unvisitedI.size() >= 2) {
-				a = unvisitedI.remove((int) RandomNumbers.boundedRandom(0, unvisitedI.size()));
-				b = unvisitedI.remove((int) RandomNumbers.boundedRandom(0, unvisitedI.size()));
+				a = unvisitedI.remove(RandomNumbers.randomGenerator.nextInt(unvisitedI.size()));
+				b = unvisitedI.remove(RandomNumbers.randomGenerator.nextInt(unvisitedI.size()));
 			} else {
-				a = unvisitedI.remove((int) RandomNumbers.boundedRandom(0, unvisitedI.size()));
-				b = interest.remove((int) RandomNumbers.boundedRandom(0, interest.size()));
+				a = unvisitedI.remove(RandomNumbers.randomGenerator.nextInt(unvisitedI.size()));
+				b = interest.remove(RandomNumbers.randomGenerator.nextInt(interest.size()));
 				resumePoint = b;
 			}
 		}
@@ -513,6 +508,7 @@ public class DungeonUtil {
 	 * Set the tile to visited if the agent has visited the tile
 	 * @param visited Visited states
 	 */
+	// THIS IS NEVER USED. WHAT IS IT FOR?
 	private static void setFloorTiles(HashSet<ZeldaState> visited) {
 		for(ZeldaState state : visited) {
 			Tile t = Tile.findNum(state.currentNode.level.intLevel.get(state.y).get(state.x));
@@ -595,7 +591,7 @@ public class DungeonUtil {
 			List<Graph<? extends Grammar>.Node> adjs = new LinkedList<>(node.adjacencies());
 			
 			while(!adjs.isEmpty()) {
-				Graph<? extends Grammar>.Node adjNode = adjs.remove((int) RandomNumbers.boundedRandom(0, adjs.size()));
+				Graph<? extends Grammar>.Node adjNode = adjs.remove(RandomNumbers.randomGenerator.nextInt(adjs.size()));
 				
 				if(!visited.contains(adjNode) && !queue.contains(adjNode)) {
 					Point legal = getNextLegalPoint(p, levelThere);

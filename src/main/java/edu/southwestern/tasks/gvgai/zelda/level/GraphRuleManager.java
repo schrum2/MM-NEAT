@@ -123,7 +123,7 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		System.out.println("Found rules " + rules.size());
 		System.out.println(node + "->" + nextNode);
 		if(rules.size() > 0) {
-			GraphRule<T> ruleToApply = rules.get((int) RandomNumbers.boundedRandom(0, rules.size()));
+			GraphRule<T> ruleToApply = rules.get(RandomNumbers.randomGenerator.nextInt(rules.size()));
 			if(ruleToApply != null) {
 //				if(nextNode != null) graph.removeEdge(node, nextNode);
 				ruleToApply.grammar().setOtherGraph(node, nextNode, graph);
