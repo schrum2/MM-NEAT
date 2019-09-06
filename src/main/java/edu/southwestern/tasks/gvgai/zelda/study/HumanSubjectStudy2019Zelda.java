@@ -15,6 +15,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGraphGrammar;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
+import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import me.jakerg.csv.ParticipantData;
 import me.jakerg.csv.SimpleCSV;
@@ -37,6 +38,10 @@ public class HumanSubjectStudy2019Zelda {
 		
 		Parameters.parameters.setBoolean("zeldaHelpScreenEnabled", true);
 		RandomNumbers.reset();
+		
+		String subjectDir = "batch/Experiments-2019-ZeldaGAN/Subject-" + 
+	               String.valueOf(Parameters.parameters.integerParameter("randomSeed")) + 
+	               "/";
 		
 		String fileTitle = null;
 		
@@ -73,10 +78,10 @@ public class HumanSubjectStudy2019Zelda {
 				grammar.applyRules(graph);
 				LevelLoader loader = (LevelLoader) ClassCreation.createObject("zeldaLevelLoader");
 				fileTitle = loader.getClass().getSimpleName();
+				GraphUtil.saveGrammarGraph(graph, subjectDir + "DungeonGraph_" + fileTitle + ".dot");
 				dungeonToPlay = DungeonUtil.recursiveGenerateDungeon(graph, loader);
 				DungeonUtil.makeDungeonPlayable(dungeonToPlay);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				System.exit(1);
 			}
@@ -95,11 +100,9 @@ public class HumanSubjectStudy2019Zelda {
 			RougelikeApp.startDungeon(dungeonToPlay, false, DEBUG);
 			SimpleCSV<ParticipantData> data = new SimpleCSV<>(RougelikeApp.PD);
 			data.saveToCSV(true, new File("ZeldaStudy2019/" + fileTitle + ".csv"));
-			data.saveToTxt(new File("batch/Experiments-2019-ZeldaGAN/Subject-" + 
-			               String.valueOf(Parameters.parameters.integerParameter("randomSeed")) + 
-			               "/" + fileTitle + ".txt"));
+			data.saveToTxt(new File(subjectDir + fileTitle + ".txt"));
+			dungeonToPlay.saveToJson(subjectDir + fileTitle  + "_dungeon.json");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -112,7 +115,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:18 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:4 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 //		MMNEAT.main("zeldaType:original randomSeed:2".split(" "));
 	}
 

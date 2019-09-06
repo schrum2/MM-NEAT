@@ -232,16 +232,10 @@ public abstract class ZeldaDungeon<T> {
 				int option = fileChooser.showSaveDialog(null);
 				if(option == JFileChooser.APPROVE_OPTION) {
 					String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-					Gson gson = new GsonBuilder()
-							.setPrettyPrinting()
-							.create();
-					
 					try {
-						FileWriter writer = new FileWriter(filePath);
-						gson.toJson(dungeonInstance, writer);
-						writer.flush();
-						writer.close();
-					} catch (JsonIOException | IOException e) {
+						dungeonInstance.saveToJson(filePath);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

@@ -3,6 +3,7 @@ package edu.southwestern.tasks.gvgai.zelda.dungeon;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -11,6 +12,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.util.datastructures.Pair;
@@ -54,6 +58,18 @@ public class Dungeon {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public void saveToJson(String filePath) throws IOException {
+		Gson gson = new GsonBuilder()
+				.setPrettyPrinting()
+				.create();
+
+		FileWriter writer = new FileWriter(filePath);
+		gson.toJson(this, writer);
+		writer.flush();
+		writer.close();
+
 	}
 
 	public HashMap<String, Node> getLevels(){
