@@ -28,7 +28,9 @@ import me.jakerg.rougelike.RougelikeApp;
  * @author Jake Gutierrez
  */
 public class HumanSubjectStudy2019Zelda {
-	public enum Type {TUTORIAL, ORIGINAL, GENERATED_DUNGEON}; // Use original dungeon or generated dungeon?
+	public enum Type {TUTORIAL, ORIGINAL, GENERATED_DUNGEON}
+
+	public static final boolean DEBUG = false;; // Use original dungeon or generated dungeon?
 	
 	public static void runTrial(Type type) {
 		Dungeon dungeonToPlay = null;
@@ -88,9 +90,9 @@ public class HumanSubjectStudy2019Zelda {
 		
 		System.out.println("Play dungeon");
 		try {
-			DungeonUtil.viewDungeon(dungeonToPlay);
-			RougelikeApp.startDungeon(dungeonToPlay, false, false);
-			System.out.println("Finished dungeon............");
+			if(DEBUG)
+				DungeonUtil.viewDungeon(dungeonToPlay);
+			RougelikeApp.startDungeon(dungeonToPlay, false, DEBUG);
 			SimpleCSV<ParticipantData> data = new SimpleCSV<>(RougelikeApp.PD);
 			data.saveToCSV(true, new File("ZeldaStudy2019/" + fileTitle + ".csv"));
 			data.saveToTxt(new File("batch/Experiments-2019-ZeldaGAN/Subject-" + 

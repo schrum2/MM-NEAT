@@ -197,14 +197,16 @@ public class World {
 	 */
 	public void update() {		
 		for(Creature c : creatures) {
-			c.update();	
-			System.out.println(c.glyph() + "'s health : " + c.hp());
+			c.update();
+			if(RougelikeApp.DEBUG)
+				System.out.println(c.glyph() + "'s health : " + c.hp());
 		}
 		
 		creatures.removeIf(c -> c.hp() < 1);
 		
 		for(Item i : items) {
-			System.out.println("Updating item : " + i.glyph + " at (" + i.x + ", " + i.y + ")" );
+			if(RougelikeApp.DEBUG)
+				System.out.println("Updating item : " + i.glyph + " at (" + i.x + ", " + i.y + ")" );
 			i.update();
 		}
 

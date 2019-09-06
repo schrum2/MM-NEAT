@@ -251,8 +251,8 @@ public class Creature {
      * Update to let ai update
      */
 	public void update() {
-
-		System.out.println("Creature : " + glyph + " at (" + x + ", " + y + ")");
+		if(RougelikeApp.DEBUG)
+			System.out.println("Creature : " + glyph + " at (" + x + ", " + y + ")");
 		
 		if(previous != null) {
 			this.color = previous;

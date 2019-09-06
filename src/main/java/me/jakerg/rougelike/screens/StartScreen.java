@@ -32,9 +32,7 @@ public class StartScreen implements Screen {
 		try {
 			List<String> title = TitleUtil.loadTitleFromFile("data/rouge/titles/loz.txt");
 			int y = TitleUtil.getCenterAligned(title.size(), terminal);
-			System.out.println(y);
 			for(String line : title) {
-				System.out.println(line.length());
 				terminal.write(line, 0, y++);
 			}
 			terminal.writeCenter("[enter] start", y + 2);

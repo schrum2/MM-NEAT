@@ -38,6 +38,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
+import edu.southwestern.tasks.gvgai.zelda.study.HumanSubjectStudy2019Zelda;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
@@ -497,10 +498,7 @@ public class DungeonUtil {
 		addInterestPoints(points, intLevel);
 		if(n.grammar.equals(ZeldaGrammar.START))
 			points.add(new Point(5, 5));
-//		System.out.println(n.name + " point of interest: ");
-//		for(Point p : points) {
-//			System.out.println("\t" + p);
-//		}
+
 		return points;
 	}
 
@@ -661,7 +659,8 @@ public class DungeonUtil {
 		Pair<Graph<T>.Node, Graph<T>.Node> pair = pending.pop();
 //		System.out.println(pending);
 		Graph<T>.Node next = pair.t1;
-		System.out.println("Got " + next.getID() + " from list (" + next + ")");
+		if(HumanSubjectStudy2019Zelda.DEBUG)
+			System.out.println("Got " + next.getID() + " from list (" + next + ")");
 		Graph<T>.Node parent = pair.t2;
 		Point location = null;
 		if(parent == null)
@@ -865,7 +864,8 @@ public class DungeonUtil {
 			reset = true; 
 			HashSet<ZeldaState> visited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
 //			setUnvisited(visited);
-			System.out.println(result);
+			if(HumanSubjectStudy2019Zelda.DEBUG)
+				System.out.println(result);
 			if(result == null) {
 				// Warning: visited tiles will be replaced with X (Could affect keys)
 //				setUnvisited(visited);
@@ -875,7 +875,8 @@ public class DungeonUtil {
 				// Resume search from new state: but is this actually the state if should be?
 				state = makePlayable(visited); 
 //				state = new ZeldaState(5, 5, 0, dungeon);
-				System.out.println(state);
+				if(HumanSubjectStudy2019Zelda.DEBUG)
+					System.out.println(state);
 			}
 			else break;
 		}

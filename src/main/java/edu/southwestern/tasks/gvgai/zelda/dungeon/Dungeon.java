@@ -93,16 +93,9 @@ public class Dungeon {
 	 */
 	@SuppressWarnings("unused")
 	public Point getNextNode(String exitPoint) {
-		System.out.println("Exit point   " + exitPoint);
 		Node n = getCurrentlevel();
-		System.out.println("Node : " + n);
 		HashMap<String, Pair<String, Point>> adjacency = n.adjacency;
 		Pair<String, Point> next = adjacency.get(exitPoint);
-		if (next == null) {
-			System.out.println("No next, returning null");
-			return null;
-		}
-		System.out.println("Next thingy : " + next.t1);
 		setCurrentLevel(next.t1);
 		return next.t2;
 	}

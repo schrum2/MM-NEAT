@@ -15,8 +15,6 @@ public class TitleUtil {
 	}
 
 	public static int getCenterAligned(int size, AsciiPanel terminal) {
-		System.out.println(terminal.getCharHeight() / 2);
-		System.out.println(size / 2);
 		return (terminal.getHeightInCharacters() / 2) - (size / 2);
 	}
 }

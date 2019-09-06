@@ -274,7 +274,6 @@ public class ZeldaLevelUtil {
 	}
 
 	private static boolean withinBounds(Point rP, Move direction) {
-		System.out.println(direction + " point " + rP);
 		if(direction.equals(Move.UP))
 			if(rP.y >= 4)
 				return true;
