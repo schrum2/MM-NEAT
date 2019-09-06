@@ -1,0 +1,30 @@
+ 1. Log into the machine first so it will be ready by the time you need it
+ 2. Have the participant read and sign the consent form
+ 3. Ask if they have any questions about the form
+ 4. Read the instructions script out load to the user [TODO]
+ 5. Navigate to the directory C:\TEMP\MM-NEAT\batch\Experiments-2019-ZeldaGAN
+ 6. Open a command window in this directory
+ 7. Confirm what the next subject ID is by going one higher than the largest number already saved
+ 8. Write this ID number on the white board
+ 9. Run Zelda_Study.bat X where X is the ID number
+10. Allow the subject to take over, following instructions until the first dungeon loads
+11. Watch to make sure ffmpeg loads in the background and is recording
+12. Once the user actually loads the dungeon, point the instructions at the bottom of the screen out to them
+13. Tell the subject you will be available to answer any questions that come up
+14. Remind the subject to get your attention once they complete the dungeon
+15. Wait in the room, but give the subject some space
+16. When they are finished, make sure the recording has stopped. If not, press 'q' to stop.
+17. Follow the prompts to load the survey, and fill out the ID number for the participant.
+18. Let the subject fill out the survey and then wait for you. Tell them you will be right back.
+19. Take this opportunity to photocopy the consent form (copier by elevator)
+20. Confirm that the user has submitted the survey and help them load the next dungeon
+21. Remind them to get your attention when the dungeon is complete
+22. Confirm that recording starts, and then give the subject space to play the dungeon.
+23. Afterward, help load the survey and enter the ID number
+24. Tell them that this survey has two parts, and then let them complete it.
+25. Confirm that the user has submitted the survey and help them load the next dungeon
+26. Remind them to get your attention when the dungeon is complete
+27. Confirm that recording starts, and then give the subject space to play the dungeon.
+28. Afterward, help load the survey and enter the ID number
+29. Tell them that this survey has three parts, and then let them complete it.
+30. Give the subject their copy of the consent form, their bluetooth speaker, and say we'll be in touch about raffle results.
