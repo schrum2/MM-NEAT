@@ -34,7 +34,6 @@ public class DungeonScreen implements Screen {
     private Creature player;
     private int screenWidth;
     private int screenHeight;
-    private Dungeon dungeon;
 	private int oX; // offset for x axis, dont want to render in the top left
 	private int oY; // offset for y axis, ""
 	private MapScreen mapScreen; // This is the view of the overview of the dungeon
@@ -57,12 +56,12 @@ public class DungeonScreen implements Screen {
         screenHeight = h;
         oX = 80 / 2 - screenWidth / 2;
     	oY = dungeon.getLevelThere().length + 2 + 10;
-        this.dungeon = dungeon;
         // Creature factory to create our player
         CreatureFactory cf = new CreatureFactory(world, log);
         player = cf.newDungeonPlayer(dungeon);
         player.x = 5; // Start in middle of dungeon
         player.y = 5;
+        
         if(RougelikeApp.DEBUG) {
         	player.setBombs(9999);
         	player.setHP(20);
@@ -70,6 +69,7 @@ public class DungeonScreen implements Screen {
         // Set dungeon builder along with current world
         dungeonBuilder = new DungeonBuilder(dungeon, player, log);
         player.setDungeonBuilder(dungeonBuilder);
+        dungeonBuilder.getCurrentWorld().removeSpawn();
         // Make map screen to the left of the dungeon screen
         if(dungeon.getLevelThere() != null)
 //        	mapScreen = new MapScreen(dungeon, 1, 1);

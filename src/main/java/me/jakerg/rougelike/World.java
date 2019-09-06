@@ -406,4 +406,9 @@ public class World {
 			}
 		}
 	}
+	
+	// Remove block where player is standing
+	public void removeSpawn() {
+		tiles[5][5] = Tile.FLOOR;
+	}
 }
