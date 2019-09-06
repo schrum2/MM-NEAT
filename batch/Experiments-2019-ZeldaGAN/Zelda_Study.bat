@@ -2,6 +2,11 @@
 
 set /a id=%1
 
+if EXIST Subject-%id% (
+    ECHO "Directory for Subject-%id% already exists! Aborting"
+    exit
+)
+
 mkdir Subject-%id%
 
 FOR %%G IN (0 6 12 18 24) DO (
