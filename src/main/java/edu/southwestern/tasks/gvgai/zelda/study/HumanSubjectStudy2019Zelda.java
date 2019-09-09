@@ -100,6 +100,10 @@ public class HumanSubjectStudy2019Zelda {
 			RougelikeApp.PD.storeDungeonData(dungeonToPlay);
 			RougelikeApp.startDungeon(dungeonToPlay, false, DEBUG);
 			SimpleCSV<ParticipantData> data = new SimpleCSV<>(RougelikeApp.PD);
+			File dir = new File("ZeldaStudy2019");
+			if(!dir.exists()) {
+				dir.mkdir(); // Should only happen the first time the code is run
+			}
 			data.saveToCSV(true, new File("ZeldaStudy2019/" + fileTitle + ".csv"));
 			data.saveToTxt(new File(subjectDir + fileTitle + ".txt"));
 			dungeonToPlay.saveToJson(subjectDir + fileTitle  + "_dungeon.json");
