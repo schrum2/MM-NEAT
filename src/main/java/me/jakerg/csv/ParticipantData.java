@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
 
 public class ParticipantData {
@@ -82,7 +83,7 @@ public class ParticipantData {
 	public int bombsUsed = 0;
 	
 	@CSVField
-	public int deaths = 0;
+	public int deaths = RougelikeApp.TRIES;
 	
 	@CSVField
 	public int distinctRoomsVisited = 0;

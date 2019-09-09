@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 
 import asciiPanel.AsciiPanel;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import me.jakerg.csv.ParticipantData;
 import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.TitleUtil;
 
@@ -18,15 +19,21 @@ public class LoseScreen implements Screen {
 	Dungeon d;
 	
 	public LoseScreen() {
-		RougelikeApp.TRIES--;
-		RougelikeApp.PD.deaths++;
+		RougelikeApp.LIVES--;
+		try {
+			RougelikeApp.saveParticipantData();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		RougelikeApp.TRIES++;
 		d = Dungeon.loadFromJson("data/rouge/tmp/dungeon.json");
 		try {
 			FileUtils.deleteDirectory(new File("data/rouge/tmp"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		RougelikeApp.PD = new ParticipantData();
+		RougelikeApp.PD.storeDungeonData(d);
 	}
 	
     public void displayOutput(AsciiPanel terminal) {
@@ -37,12 +44,12 @@ public class LoseScreen implements Screen {
 			for(String line : title)
 				terminal.write(line, x, y++, AsciiPanel.brightRed);
 			
-			if(RougelikeApp.TRIES <= -1)
+			if(RougelikeApp.LIVES <= -1)
 				terminal.writeCenter("You have used up all your lives.", y + 4);
 			else
-				terminal.writeCenter("You have " + (RougelikeApp.TRIES + 1) + " tries remaining...", y + 4);
+				terminal.writeCenter("You have " + (RougelikeApp.LIVES + 1) + " tries remaining...", y + 4);
 			
-			String action = RougelikeApp.TRIES <= -1 ? "quit" : "retry";
+			String action = RougelikeApp.LIVES <= -1 ? "quit" : "retry";
 			terminal.writeCenter("Press [enter] to " + action , y + 5);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -52,7 +59,7 @@ public class LoseScreen implements Screen {
 
     public Screen respondToUserInput(KeyEvent key) {
     	if(key.getKeyCode() == KeyEvent.VK_ENTER) {
-    		if(RougelikeApp.TRIES <= -1)
+    		if(RougelikeApp.LIVES <= -1)
     			RougelikeApp.app.dispatchEvent(new WindowEvent(RougelikeApp.app, WindowEvent.WINDOW_CLOSING));
     		
     		return new DungeonScreen(d);

@@ -22,7 +22,6 @@ public class EnemyAi extends CreatureAi{
 		this.player = player;
 	}
 	
-	
 	public void onUpdate() {
 		if(player != null && playerInRange(4)) moveTowardsPlayer();
 		else wander(); // Just wander once

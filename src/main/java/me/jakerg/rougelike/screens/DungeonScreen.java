@@ -85,14 +85,14 @@ public class DungeonScreen implements Screen {
 		double hDR = 30;
 		double bDR = 40;
 		int playerHealth = 4;
-		if(RougelikeApp.TRIES == 2) {
+		if(RougelikeApp.LIVES == 2) {
 			hDR = 60;
 			playerHealth = 6;
-		} else if(RougelikeApp.TRIES == 1) {
+		} else if(RougelikeApp.LIVES == 1) {
 			hDR = 90;
 			bDR = 10;
 			playerHealth = 8;
-		} else if(RougelikeApp.TRIES == 0) {
+		} else if(RougelikeApp.LIVES == 0) {
 			hDR = 90;
 			playerHealth = 20;
 		}

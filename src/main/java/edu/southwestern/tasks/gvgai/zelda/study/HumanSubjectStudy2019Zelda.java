@@ -32,6 +32,8 @@ public class HumanSubjectStudy2019Zelda {
 	public enum Type {TUTORIAL, ORIGINAL, GENERATED_DUNGEON}
 
 	public static final boolean DEBUG = false;; // Use original dungeon or generated dungeon?
+	public static String dungeonType;
+	public static String subjectDir;
 	
 	public static void runTrial(Type type) {
 		Dungeon dungeonToPlay = null;
@@ -39,14 +41,12 @@ public class HumanSubjectStudy2019Zelda {
 		Parameters.parameters.setBoolean("zeldaHelpScreenEnabled", true);
 		RandomNumbers.reset();
 		
-		String subjectDir = "batch/Experiments-2019-ZeldaGAN/Subject-" + 
-	               String.valueOf(Parameters.parameters.integerParameter("randomSeed")) + 
-	               "/";
-		
-		String fileTitle = null;
+		subjectDir = "batch/Experiments-2019-ZeldaGAN/Subject-" + 
+	            String.valueOf(Parameters.parameters.integerParameter("randomSeed")) + 
+	            "/";
 		
 		if(type.equals(Type.ORIGINAL)) {
-			fileTitle = "Original";
+			dungeonType = "Original";
 			// This is all of the levels, but the range of complexity across them is too much. We stick to the first few for simplicity.
 			//String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip"};
 			// Levels 1, 2, and 4. Level 3 is skipped because its layout is (inconveniently) a swastika, which could be offensive.
@@ -77,8 +77,8 @@ public class HumanSubjectStudy2019Zelda {
 			try {
 				grammar.applyRules(graph);
 				LevelLoader loader = (LevelLoader) ClassCreation.createObject("zeldaLevelLoader");
-				fileTitle = loader.getClass().getSimpleName();
-				GraphUtil.saveGrammarGraph(graph, subjectDir + "DungeonGraph_" + fileTitle + ".dot");
+				dungeonType = loader.getClass().getSimpleName();
+				GraphUtil.saveGrammarGraph(graph, subjectDir + "DungeonGraph_" + dungeonType + ".dot");
 				dungeonToPlay = DungeonUtil.recursiveGenerateDungeon(graph, loader);
 				DungeonUtil.makeDungeonPlayable(dungeonToPlay);
 			} catch (Exception e) {
@@ -99,14 +99,11 @@ public class HumanSubjectStudy2019Zelda {
 				DungeonUtil.viewDungeon(dungeonToPlay);
 			RougelikeApp.PD.storeDungeonData(dungeonToPlay);
 			RougelikeApp.startDungeon(dungeonToPlay, false, DEBUG);
-			SimpleCSV<ParticipantData> data = new SimpleCSV<>(RougelikeApp.PD);
 			File dir = new File("ZeldaStudy2019");
-			if(!dir.exists()) {
+			if(!dir.exists())
 				dir.mkdir(); // Should only happen the first time the code is run
-			}
-			data.saveToCSV(true, new File("ZeldaStudy2019/" + fileTitle + ".csv"));
-			data.saveToTxt(new File(subjectDir + fileTitle + ".txt"));
-			dungeonToPlay.saveToJson(subjectDir + fileTitle  + "_dungeon.json");
+			RougelikeApp.saveParticipantData();
+			dungeonToPlay.saveToJson(subjectDir + dungeonType  + "_dungeon.json");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -121,7 +118,6 @@ public class HumanSubjectStudy2019Zelda {
 		
 		
 		MMNEAT.main("zeldaType:generated randomSeed:4 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
-//		MMNEAT.main("zeldaType:original randomSeed:2".split(" "));
 	}
 
 }
