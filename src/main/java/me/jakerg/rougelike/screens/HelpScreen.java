@@ -29,8 +29,8 @@ public class HelpScreen implements Screen {
 		helpInfo.add(HelpInfo.getFromTile(Tile.PUZZLE_LOCKED, "Push a block to open"));
 		helpInfo.add(HelpInfo.getFromTile(Tile.KEY, "Keys, dropped by enemies"));
 		helpInfo.add(new HelpInfo('b', AsciiPanel.white, "Bomb. b to use. Find secret doors."));
-		helpInfo.add(HelpInfo.getFromTile(Tile.BLOCK, "Enemies can cross, but you can't."));
-		helpInfo.add(new HelpInfo('#', AsciiPanel.brightCyan, "Cross water."));
+		helpInfo.add(HelpInfo.getFromTile(Tile.BLOCK, "Water. Enemies can cross, but you can't."));
+		helpInfo.add(new HelpInfo('#', AsciiPanel.brightCyan, "Cross water from land."));
 		helpInfo.add(HelpInfo.getFromTile(Tile.TRIFORCE, "Find this to win!"));
 	}
 
