@@ -1,7 +1,7 @@
  1. Log into the machine first so it will be ready by the time you need it
  2. Have the participant read and sign the consent form
  3. Ask if they have any questions about the form
- 4. Read the instructions script out load to the user [TODO]
+ 4. Read the instructions script out load to the user
  5. Navigate to the directory C:\TEMP\MM-NEAT\batch\Experiments-2019-ZeldaGAN
  6. Open a command window in this directory
  7. Confirm what the next subject ID is by going one higher than the largest number already saved
@@ -9,7 +9,7 @@
  9. Run Zelda_Study.bat X where X is the ID number
 10. Allow the subject to take over, following instructions until the first dungeon loads
 11. Watch to make sure ffmpeg loads in the background and is recording
-12. Once the user actually loads the dungeon, point the instructions at the bottom of the screen out to them
+12. Once the user actually loads the dungeon, point out the instructions at the bottom of the screen
 13. Tell the subject you will be available to answer any questions that come up
 14. Remind the subject to get your attention once they complete the dungeon
 15. Wait in the room, but give the subject some space
@@ -27,4 +27,4 @@
 27. Confirm that recording starts, and then give the subject space to play the dungeon.
 28. Afterward, help load the survey and enter the ID number
 29. Tell them that this survey has three parts, and then let them complete it.
-30. Give the subject their copy of the consent form, their bluetooth speaker, and say we'll be in touch about raffle results.
+30. Give the subject their copy of the consent form, their bluetooth speaker (remove battery block), and say we'll be in touch about raffle results.
