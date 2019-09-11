@@ -287,26 +287,6 @@ public class RandomNumbers {
 		return list[index];
 	}
 
-	/**
-	 * For testing
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		int size = 1000;
-		double[] cauchies = new double[size];
-		double[] gaussians = new double[size];
-		for (int i = 0; i < size; i++) {
-			cauchies[i] = randomCauchyValue();
-			gaussians[i] = randomGenerator.nextGaussian();
-		}
-		Arrays.sort(cauchies);
-		Arrays.sort(gaussians);
-		System.out.println("Cauchy\tGaussian");
-		for (int i = 0; i < size; i++) {
-			System.out.println(cauchies[i] + "\t" + gaussians[i]);
-		}
-	}
 
 	/**
 	 * Return true if random double in [0,1] is less than input, and false otherwise
@@ -315,5 +295,18 @@ public class RandomNumbers {
 	 */
 	public static boolean randomCoin(double chance) {
 		return randomGenerator.nextDouble() < chance;
+	}
+	
+
+	/**
+	 * For testing
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		RandomNumbers.reset(0);
+		for(int i = 0; i < 100; i++) {
+			RandomNumbers.randomGenerator.nextInt(100);
+		}
 	}
 }
