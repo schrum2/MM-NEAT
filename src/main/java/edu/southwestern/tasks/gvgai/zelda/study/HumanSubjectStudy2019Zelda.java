@@ -17,8 +17,6 @@ import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.random.RandomNumbers;
-import me.jakerg.csv.ParticipantData;
-import me.jakerg.csv.SimpleCSV;
 import me.jakerg.rougelike.RougelikeApp;
 
 /**
@@ -39,7 +37,7 @@ public class HumanSubjectStudy2019Zelda {
 		Dungeon dungeonToPlay = null;
 		
 		Parameters.parameters.setBoolean("zeldaHelpScreenEnabled", true);
-		RandomNumbers.reset();
+		RandomNumbers.reset(Parameters.parameters.integerParameter("randomSeed"));
 		
 		subjectDir = "batch/Experiments-2019-ZeldaGAN/Subject-" + 
 	            String.valueOf(Parameters.parameters.integerParameter("randomSeed")) + 

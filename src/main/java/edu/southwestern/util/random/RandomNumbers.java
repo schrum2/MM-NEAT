@@ -272,7 +272,17 @@ public class RandomNumbers {
 		return randomGenerator.nextDouble() < chance;
 	}
 	
-
+	/**
+	 * Generate and return an array of random bytes of a given length
+	 * @param len length of byte array
+	 * @return random byte array
+	 */
+	public static byte[] randomByteArray(int len) {
+		byte[] b = new byte[len];
+		randomGenerator.nextBytes(b);
+		return b;
+	}
+	
 	/**
 	 * For testing
 	 * 

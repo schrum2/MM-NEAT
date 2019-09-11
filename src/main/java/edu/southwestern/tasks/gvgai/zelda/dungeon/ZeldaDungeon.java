@@ -8,7 +8,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -28,10 +27,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
@@ -43,7 +38,6 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
-import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
 import gvgai.core.game.BasicGame;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
@@ -99,7 +93,7 @@ public abstract class ZeldaDungeon<T> {
 		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length) return;
 		if(dungeon[y][x] == null) return; // Finally get out if there's no adjacency
 		
-		if(uuidLabels[y][x] == null) uuidLabels[y][x] = UUID.randomUUID().toString(); // Get the unique ID of the level
+		if(uuidLabels[y][x] == null) uuidLabels[y][x] = UUID.nameUUIDFromBytes(RandomNumbers.randomByteArray(16)).toString(); // Get the unique ID of the level
 		String whereTo = uuidLabels[y][x]; // This will be the where to in the edge
 
 		// Set the edges based on the direction
