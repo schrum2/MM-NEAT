@@ -1,6 +1,10 @@
 package edu.southwestern.util.random;
 
 import edu.southwestern.parameters.Parameters;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,7 +41,27 @@ public class RandomNumbers {
 	 */
 	public static void reset(int seed) {
 		System.out.println("Reset random seed to: " + seed);
-		randomGenerator = new Random(seed);
+		try {
+			final PrintStream ps = new PrintStream(new File("RANDOM_NUMS.txt"));
+			randomGenerator = new Random(seed) {
+				public int nextInt(int x) {
+					int result = super.nextInt(x);
+					new IllegalArgumentException().printStackTrace(ps);
+					ps.println(result);
+					return result;
+				}
+				
+				public double nextDouble() {
+					double result = super.nextDouble();
+					new IllegalArgumentException().printStackTrace(ps);
+					ps.println(result);
+					return result;
+				}
+			};
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -145,7 +169,7 @@ public class RandomNumbers {
 	public static int[] randomDistinct(int num, int ceiling) {
 		assert ceiling > 0 : "There must be some numbers to choose from";
 		assert num <= ceiling : "Can't choose more numbers than are available";
-		
+
 		ArrayList<Integer> all = new ArrayList<Integer>(ceiling);
 		for (int i = 0; i < ceiling; i++) {
 			all.add(i);
@@ -165,7 +189,7 @@ public class RandomNumbers {
 	public static double randomSign() {
 		return randomGenerator.nextBoolean() ? 1 : -1;
 	}
-	
+
 	/**
 	 * Random boolean
 	 * @return true or false, 50% chance of each
@@ -262,7 +286,7 @@ public class RandomNumbers {
 		int index = randomGenerator.nextInt(list.length);
 		return list[index];
 	}
-	
+
 	/**
 	 * For testing
 	 * 
