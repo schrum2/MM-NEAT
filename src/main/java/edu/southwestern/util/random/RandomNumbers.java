@@ -1,6 +1,7 @@
 package edu.southwestern.util.random;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -29,15 +30,47 @@ public class RandomNumbers {
 		}
 	}
 
+	public static final boolean RANDOM_DEBUG = false;
+	
 	/**
 	 * Give random generator a specific new seed
 	 *
 	 * @param seed
 	 *            seed to use
 	 */
+	@SuppressWarnings("serial")
 	public static void reset(int seed) {
 		System.out.println("Reset random seed to: " + seed);
-		randomGenerator = new Random(seed);
+		// If RANDOM_DEBUG is true, then extensive information will be printed to the console whenever
+		// a random number is generated.
+		randomGenerator = !RANDOM_DEBUG ? new Random(seed) : new Random(seed) {
+			public int nextInt(int x) {
+				int result = super.nextInt(x);
+				System.out.println("int: " + result + " (out of "+x+")");
+				new IllegalArgumentException().printStackTrace(System.out);
+				return result;
+			}
+			
+			public double nextDouble() {
+				double result = super.nextDouble();
+				System.out.println("double: " + result);
+				new IllegalArgumentException().printStackTrace(System.out);
+				return result;
+			}
+
+			public boolean nextBoolean() {
+				boolean result = super.nextBoolean();
+				System.out.println("boolean: " + result);
+				new IllegalArgumentException().printStackTrace(System.out);
+				return result;
+			}
+			
+			public void nextBytes(byte[] bs) {
+				super.nextBytes(bs);
+				System.out.println("bytes: " + Arrays.toString(bs));
+				new IllegalArgumentException().printStackTrace(System.out);
+			}
+		};
 	}
 
 	/**
