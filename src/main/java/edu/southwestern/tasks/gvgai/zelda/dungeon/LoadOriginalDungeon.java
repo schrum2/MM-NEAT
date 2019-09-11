@@ -589,7 +589,9 @@ public class LoadOriginalDungeon {
 		for(File entry : levelFolder.listFiles()) {
 			String fileName = entry.getName();
 			int number = Integer.valueOf(fileName.substring(0, fileName.indexOf('.')));
-			numberToString.put(number, RandomStringUtils.randomAlphabetic(4));
+			// The random method replaced a call to randomAlphabetic. This was needed, since the more general random
+			// method is the only one that allows a random generator to be supplied, allowing reproducibility.
+			numberToString.put(number, RandomStringUtils.random(4,'A','Z',true,false,null,RandomNumbers.randomGenerator));
 			loadOneLevel(entry, dungeon, numberToString.get(number));
 		}
 	}
