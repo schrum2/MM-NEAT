@@ -253,8 +253,8 @@ public class World {
 
 	    // Check random coordinations until a coord is ground
 	    do {
-	        x = (int)(Math.random() * width);
-	        y = (int)(Math.random() * height);
+	        x = RandomNumbers.randomGenerator.nextInt(width);
+	        y = RandomNumbers.randomGenerator.nextInt(height);
 	    }
 	    while (!tile(x,y).isGround());
 

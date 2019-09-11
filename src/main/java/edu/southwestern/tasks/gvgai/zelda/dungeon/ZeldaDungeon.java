@@ -41,6 +41,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
+import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
@@ -137,8 +138,8 @@ public abstract class ZeldaDungeon<T> {
 		ArrayList<ArrayList<Integer>> level = node.level.intLevel;
 		// Randomize tile only if the door being placed actually leads to another room
 		if(tile == 3) {
-			if(Math.random() > 0.3)
-				tile = (Math.random() > 0.5) ? Tile.LOCKED_DOOR.getNum() : Tile.HIDDEN.getNum(); // Randomize 5 (locked door) or 7 (bombable wall)
+			if(RandomNumbers.randomCoin(0.7))
+				tile = (RandomNumbers.coinFlip()) ? Tile.LOCKED_DOOR.getNum() : Tile.HIDDEN.getNum(); // Randomize 5 (locked door) or 7 (bombable wall)
 			
 			if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level); // If the door is now locked place a random key in the level
 		}

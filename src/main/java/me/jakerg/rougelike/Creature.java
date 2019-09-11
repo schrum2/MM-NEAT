@@ -209,10 +209,10 @@ public class Creature {
 	public void attack(Creature other){
 		if(this.glyph == other.glyph) return;
 		
-		if(Math.random() >= 0.5 || isPlayer()){			
+		if(RandomNumbers.coinFlip() || isPlayer()){			
 	        int amount = Math.max(0, attackValue() - other.defenseValue()); // Get whatever is higher: 0 or the total attack value, dont want negative attack
 	    
-	        amount = (int)(Math.random() * amount) + 1; // Add randomness to ammount
+	        amount = RandomNumbers.randomGenerator.nextInt(amount) + 1; // Add randomness to ammount
 	    
 	        doAction(glyph + " did " + amount + " damage to " + other.glyph);
 	        other.modifyHp(-amount); // Modify hp of the the other creature
