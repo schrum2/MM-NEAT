@@ -149,8 +149,16 @@ public class Graph<T>{
 			if(!(other instanceof Graph.Node)) return false;
 			@SuppressWarnings("unchecked")
 			Node on = (Node) other;
-			return on.id == this.id;
-			
+			if(on.id == null && this.id == null)
+				return true;
+			else if(on.id != null)
+				return on.id.equals(this.id);	
+			return false;
+		}
+		
+		@Override
+		public int hashCode() {
+			return id.hashCode();
 		}
 		
 		public String toString() {
