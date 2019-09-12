@@ -117,6 +117,9 @@ public class DungeonUtil {
 					int newY = y + t.getDirection().getPoint().y * 2;
 					points.add(new Point(newX, newY));
 				}
+				
+				if(intLevel.get(y).get(x) == -6)
+					points.add(new Point(x, y));
 					
 			}
 		}

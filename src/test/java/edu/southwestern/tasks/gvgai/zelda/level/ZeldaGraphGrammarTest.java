@@ -53,7 +53,7 @@ public class ZeldaGraphGrammarTest {
 	@Test
 	public void test() {
 		// Good to test up to 100 dungeons, but to speed things up when mvn compiling
-		for(int i = 0; i <= 25; i++) {
+		for(int i = 0; i <= 10; i++) {
 			RandomNumbers.reset(i);
 			Graph<ZeldaGrammar> graph = new Graph<>(initialList);
 			

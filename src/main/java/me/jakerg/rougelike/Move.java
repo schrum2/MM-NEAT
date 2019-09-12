@@ -56,4 +56,17 @@ public enum Move {
 		
 		return null;
 	}
+	
+	public Move clockwise() {
+		if(this == UP)
+			return RIGHT;
+		else if(this == RIGHT)
+			return DOWN;
+		else if(this == DOWN)
+			return LEFT;
+		else if(this == LEFT)
+			return UP;
+		
+		return NONE;
+	}
 }

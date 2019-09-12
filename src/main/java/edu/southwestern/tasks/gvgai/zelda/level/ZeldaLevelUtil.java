@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
@@ -248,11 +249,21 @@ public class ZeldaLevelUtil {
 		Tile t = Tile.findNum(tile);
 		if(t == null || fromNode.grammar == null) return;
 		if(t.equals(Tile.SOFT_LOCK_DOOR) && fromNode.grammar.equals(ZeldaGrammar.ENEMY))
-			placeReachableEnemies(direction, level, 3);
+			placeReachableEnemiesAndRaft(direction, fromNode, 3);
 		else if(!t.equals(Tile.PUZZLE_LOCKED) && fromNode.grammar.equals(ZeldaGrammar.PUZZLE))
 			placePuzzle(direction, level);
 		else if(fromNode.grammar.equals(ZeldaGrammar.KEY))
 			placeReachableEnemies(direction, level, 2);
+	}
+
+	private static void placeReachableEnemiesAndRaft(String direction, Dungeon.Node fromNode, int i) {
+
+		List<Point> points = fromNode.level.getFloorTiles();
+		Point p = points.get(RandomNumbers.randomGenerator.nextInt(points.size()));
+		
+		fromNode.level.intLevel.get(p.y).set(p.x, -6);
+		
+		placeReachableEnemies(direction, fromNode.level.intLevel, i);
 	}
 
 	public static void placePuzzle(String direction, ArrayList<ArrayList<Integer>> level) {
@@ -271,6 +282,32 @@ public class ZeldaLevelUtil {
 		rP.y += d.getPoint().y;
 		rP.x += d.getPoint().x;
 		level.get(rP.y).set(rP.x, Tile.FLOOR.getNum());
+		placeAround(level, rP, Tile.BLOCK);
+	}
+
+	/**
+	 * Will place the tile type perpendicular to the move direction (eg: if d is UP, then it will black LEFT and RIGHT)
+	 * @param level Int array to place the block in
+	 * @param rP point to start to place
+	 * @param tile Tile to place
+	 * @param d Move
+	 */
+	private static void placeAround(ArrayList<ArrayList<Integer>> level, Point rP, Tile tile) {
+		for(Move move : Move.values()) {
+			Point check = new Point(rP.x + move.getPoint().x, rP.y + move.getPoint().y);
+			if(withinBounds(check)) {
+				if(Tile.findNum(level.get(check.y).get(check.x)).equals(Tile.WALL)) {
+					level.get(check.y).set(check.x, tile.getNum());
+				}
+			}
+			Point cw = move.clockwise().getPoint();
+			check = new Point(check.x + cw.x, check.y + cw.y);
+			if(withinBounds(check)) {
+				if(Tile.findNum(level.get(check.y).get(check.x)).equals(Tile.WALL)) {
+					level.get(check.y).set(check.x, tile.getNum());
+				}
+			}
+		}
 	}
 
 	private static boolean withinBounds(Point rP, Move direction) {
@@ -289,6 +326,18 @@ public class ZeldaLevelUtil {
 		
 		return false;
 	}
+	
+	/**
+	 * Checks if the point is inside the play area
+	 * @param p Point to check
+	 * @return True if the point is within the bounds of the play area (not the door or walls), false otherwise
+	 */
+	private static boolean withinBounds(Point p) {
+		if(p.x >= 2 && p.x <= 13 && p.y >= 2 && p.y <= 8)
+			return true;
+		return false;
+	}
+		
 
 	private static void placeReachableEnemies(String direction, ArrayList<ArrayList<Integer>> level, int max) {
 		List<Point> points = getVisitedPoints(direction, level);
