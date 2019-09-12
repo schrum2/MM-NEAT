@@ -19,7 +19,6 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
-import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class ZeldaGraphGrammarTest {
@@ -51,8 +50,7 @@ public class ZeldaGraphGrammarTest {
 		RandomNumbers.reset();
 	}
 	
-	// XX@Test
-	// Disabling this test because it fails sometimes. Need to fix, but removing now so Maven can build.
+	@Test
 	public void test() {
 		// Good to test up to 100 dungeons, but to speed things up when mvn compiling
 		for(int i = 0; i <= 25; i++) {
