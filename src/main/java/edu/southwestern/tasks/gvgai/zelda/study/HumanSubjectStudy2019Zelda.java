@@ -29,7 +29,7 @@ import me.jakerg.rougelike.RougelikeApp;
 public class HumanSubjectStudy2019Zelda {
 	public enum Type {TUTORIAL, ORIGINAL, GENERATED_DUNGEON}
 
-	public static final boolean DEBUG = true; // Use original dungeon or generated dungeon?
+	public static final boolean DEBUG = false; // Use original dungeon or generated dungeon?
 	public static String dungeonType;
 	public static String subjectDir;
 	
