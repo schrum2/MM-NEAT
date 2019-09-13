@@ -48,7 +48,9 @@ public class HumanSubjectStudy2019Zelda {
 			// This is all of the levels, but the range of complexity across them is too much. We stick to the first few for simplicity.
 			//String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip"};
 			// Levels 1, 2, and 4. Level 3 is skipped because its layout is (inconveniently) a swastika, which could be offensive.
-			String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz4_1_flip"};
+			//String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz4_1_flip"};
+			// Now we are only using level 4, because it is the level that introduces the raft item, and we wanted to introduce this in each of our dungeons as well.
+			String[] names = new String[] {"tloz4_1_flip"};
 			int seed = Parameters.parameters.integerParameter("randomSeed");
 			String dungeonName = names[seed % names.length];
 			try {
