@@ -175,6 +175,40 @@ public class GraphicsUtil {
 		return image;
 	}
 	
+	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3) {
+		int imageWidth = backgroundImage.getWidth();
+		int imageHeight = backgroundImage.getHeight();
+		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+		for (int x = 0; x < imageWidth; x++) {// scans across whole image
+			for (int y = 0; y < imageHeight; y++) {
+				if((backgroundImage.getRGB(x, y) == Color.BLACK.getRGB() && pattern1.getRGB(x, y) == Color.BLACK.getRGB()) || (backgroundImage.getRGB(x, y) == Color.WHITE.getRGB() && pattern1.getRGB(x, y) == Color.WHITE.getRGB())) {
+					image.setRGB(x, y, pattern2.getRGB(x, y));
+				} else /*if((backgroundImage.getRGB(x,  y) == Color.BLACK.getRGB() && pattern1.getRGB(x,  y) == Color.WHITE.getRGB()) || (backgroundImage.getRGB(x,  y) == Color.WHITE.getRGB() && pattern1.getRGB(x,  y) == Color.BLACK.getRGB()))*/{
+					image.setRGB(x, y, pattern3.getRGB(x, y));
+				}
+			}
+		}
+		return image;
+	}
+	
+	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3, BufferedImage pattern4) {
+		int imageWidth = backgroundImage.getWidth();
+		int imageHeight = backgroundImage.getHeight();
+		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+		for (int x = 0; x < imageWidth; x++) {// scans across whole image
+			for (int y = 0; y < imageHeight; y++) {
+				if((backgroundImage.getRGB(x, y) == Color.BLACK.getRGB() && pattern1.getRGB(x, y) == Color.BLACK.getRGB())) {
+					image.setRGB(x, y, pattern2.getRGB(x, y));
+				} else if((backgroundImage.getRGB(x,  y) == Color.BLACK.getRGB() && pattern1.getRGB(x,  y) != Color.BLACK.getRGB()) || (backgroundImage.getRGB(x,  y) != Color.BLACK.getRGB() && pattern1.getRGB(x,  y) == Color.BLACK.getRGB())){
+					image.setRGB(x, y, pattern3.getRGB(x, y));
+				} else {
+					image.setRGB(x,  y, pattern4.getRGB(x, y));
+				}
+			}
+		}
+		return image;
+	}
+	
 	/**
 	 * Returns adjusted image based on manipulation of an input image with a CPPN. To add
 	 * more variation, each pixel is manipulated based on the average HSB of its surrounding pixels.
