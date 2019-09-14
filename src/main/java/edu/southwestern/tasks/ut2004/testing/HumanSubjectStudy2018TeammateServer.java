@@ -28,15 +28,19 @@ public class HumanSubjectStudy2018TeammateServer {
 	 * @param type Either the evolved bot or the hard-coded bot
 	 * @throws IOException
 	 */
-	@SuppressWarnings("unchecked")
 	public static void runTrial(BOT_TYPE type) throws IOException {		
+		runTrial(type,1); // In the human subject study, there was only ever one teammate bot
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void runTrial(BOT_TYPE type, int numBots) throws IOException {		
 		//UT2004Util.copyDefaultVersionOfGameBots();
 		
 		// A generic teammate skin to be used by both Jude and Ethan
 		String teammateSkin = "HumanMaleA.MercMaleA";
 		
 		Genotype<TWEANN>[] individuals = new Genotype[0]; 
-		BotController[] controller = new BotController[1]; // The one controller will be for Jude or Ethan
+		BotController[] controller = new BotController[numBots]; // These controllers will be either Jude or Ethan
 		SimpleWeaponManager weaponManager = new SimpleWeaponManager();
 		UT2004SensorModel sensorModel = null;
 		UT2004OutputInterpretation outputModel = null;
@@ -54,12 +58,16 @@ public class HumanSubjectStudy2018TeammateServer {
 			HashMap<String,Double> friendHealthLevels = new HashMap<String,Double>();
 			((OpponentAndTeammateRelativeSensorModel) sensorModel).giveTeamHelathLevels(friendHealthLevels);
 			
-			NetworkController<TWEANN> organism = new NetworkController<TWEANN>(ethan, sensorModel.copy(), outputModel.copy(), weaponManager.copy());
-			controller[0] = UT2004Task.wrapNetworkInBehaviorListController(organism, "Friend", teammateSkin);
+			for(int i = 0; i < numBots; i++) {
+				NetworkController<TWEANN> organism = new NetworkController<TWEANN>(ethan.copy(), sensorModel.copy(), outputModel.copy(), weaponManager.copy());
+				controller[i] = UT2004Task.wrapNetworkInBehaviorListController(organism, "Friend"+i, teammateSkin);
+			}
 		} else if(type.equals(BOT_TYPE.Jude)) { // Jude is the hard coded bot
 			individuals = new Genotype[0]; 
-			BotController behaviorListController = new HardCodedTeammateController(weaponManager, "Friend", teammateSkin);
-			controller[0] = behaviorListController;
+			for(int i = 0; i < numBots; i++) {
+				BotController behaviorListController = new HardCodedTeammateController(weaponManager, "Friend"+i, teammateSkin);
+				controller[i] = behaviorListController;
+			}
 		} else if(type.equals(BOT_TYPE.Native)) {
 			controller = new BotController[0]; // There will be no controllers
 			nativeTeams = new int[] {0, 1, 1}; // One friend and two opponents
@@ -89,7 +97,7 @@ public class HumanSubjectStudy2018TeammateServer {
 		
 		
 		Parameters.initializeParameterCollections(new String[] {"runNumber:0", "io:false", "netio:false", "numUT2Bots:0", "numMirrorBots:0", "utNumNativeBots:2", "botprizeMod:false", "utEvalMinutes:10", "utNumOpponents:1", "utGameType:botTeamGame", "utMap:DM-Flux2","utBotLogOutput:true"});
-		runTrial(BOT_TYPE.Jude);
+		runTrial(BOT_TYPE.Ethan,2);
 		//runTrial(BOT_TYPE.Ethan);
 		//runTrial(BOT_TYPE.Native);
 	}

@@ -16,6 +16,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.activationfunctions.FullLinearPiecewiseFunction;
 import edu.southwestern.networks.activationfunctions.HalfLinearPiecewiseFunction;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.util.CartesianGeometricUtilities;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -105,19 +106,109 @@ public class GraphicsUtil {
 	 */
 	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time) {
 		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+		// Min and max brightness levels used for stark coloring
+		float maxB = 0;
+		float minB = 1;
+		for (int x = 0; x < imageWidth; x++) {// scans across whole image
+			for (int y = 0; y < imageHeight; y++) {				
+				// network outputs computed on hsb, not rgb scale because
+				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples, time);
+				maxB = Math.max(maxB, hsb[BRIGHTNESS_INDEX]);
+				minB = Math.min(minB, hsb[BRIGHTNESS_INDEX]);
+				if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) { // black and white
+					Color childColor = Color.getHSBColor(0, 0, hsb[BRIGHTNESS_INDEX]);
+					// set back to RGB to draw picture to JFrame
+					image.setRGB(x, y, childColor.getRGB());
+				} else { // Original Picbreeder color encoding
+					Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX]);
+					// set back to RGB to draw picture to JFrame
+					image.setRGB(x, y, childColor.getRGB());
+				}
+			}
+		}
+		
+		// From Sarah F. Anna K., and Alice Q.
+		if(Parameters.parameters.booleanParameter("starkPicbreeder")) {
+			// Restricts image to two brightness levels
+			float midB = (maxB-minB)/2;
+			for (int x = 0; x < imageWidth; x++) {// scans across whole image
+				for (int y = 0; y < imageHeight; y++) {
+					// Rather the use the CPPN, grab colors from the image and change the brightness
+					int originalColor = image.getRGB(x, y);
+					Color original = new Color(originalColor);
+					// Get HSB values (null means a new array is created)
+					float[] hsb = Color.RGBtoHSB(original.getRed(), original.getGreen(), original.getBlue(), null);
+					// Change brightness to 0 or 1 in comparison with mid value
+					Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX] > midB ? 1 : 0);
+					image.setRGB(x, y, childColor.getRGB());
+				}
+			}		
+		}
+		
+		return image;
+	}
+
+	/**
+	 * Code from Sarah Friday, Anna Krolikowski, and Alice Quintanilla from their final Spring 2019 AI project.
+	 * 
+	 * Creates a zentangled image by overlaying two patterns into the black and white areas of the
+	 * background image.
+	 * 
+	 * @param backgroundImage Image into which zentangle will be applied
+	 * @param pattern1 First zentangle pattern
+	 * @param pattern2 Second zentangle pattern
+	 * @return The resulting image
+	 */
+	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2) {
+		int imageWidth = backgroundImage.getWidth();
+		int imageHeight = backgroundImage.getHeight();
+		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < imageWidth; x++) {// scans across whole image
 			for (int y = 0; y < imageHeight; y++) {
-				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples, time);
-				// network outputs computed on hsb, not rgb scale because
-				// creates better images
-				Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX]);
-				// set back to RGB to draw picture to JFrame
-				image.setRGB(x, y, childColor.getRGB());
+				if(backgroundImage.getRGB(x, y) == Color.BLACK.getRGB()) {
+					image.setRGB(x, y, pattern1.getRGB(x, y));
+				} else {
+					image.setRGB(x, y, pattern2.getRGB(x, y));
+				}
 			}
 		}
 		return image;
 	}
-
+	
+	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3) {
+		int imageWidth = backgroundImage.getWidth();
+		int imageHeight = backgroundImage.getHeight();
+		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+		for (int x = 0; x < imageWidth; x++) {// scans across whole image
+			for (int y = 0; y < imageHeight; y++) {
+				if((backgroundImage.getRGB(x, y) == Color.BLACK.getRGB() && pattern1.getRGB(x, y) == Color.BLACK.getRGB()) || (backgroundImage.getRGB(x, y) == Color.WHITE.getRGB() && pattern1.getRGB(x, y) == Color.WHITE.getRGB())) {
+					image.setRGB(x, y, pattern2.getRGB(x, y));
+				} else /*if((backgroundImage.getRGB(x,  y) == Color.BLACK.getRGB() && pattern1.getRGB(x,  y) == Color.WHITE.getRGB()) || (backgroundImage.getRGB(x,  y) == Color.WHITE.getRGB() && pattern1.getRGB(x,  y) == Color.BLACK.getRGB()))*/{
+					image.setRGB(x, y, pattern3.getRGB(x, y));
+				}
+			}
+		}
+		return image;
+	}
+	
+	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3, BufferedImage pattern4) {
+		int imageWidth = backgroundImage.getWidth();
+		int imageHeight = backgroundImage.getHeight();
+		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+		for (int x = 0; x < imageWidth; x++) {// scans across whole image
+			for (int y = 0; y < imageHeight; y++) {
+				if((backgroundImage.getRGB(x, y) == Color.BLACK.getRGB() && pattern1.getRGB(x, y) == Color.BLACK.getRGB())) {
+					image.setRGB(x, y, pattern2.getRGB(x, y));
+				} else if((backgroundImage.getRGB(x,  y) == Color.BLACK.getRGB() && pattern1.getRGB(x,  y) != Color.BLACK.getRGB()) || (backgroundImage.getRGB(x,  y) != Color.BLACK.getRGB() && pattern1.getRGB(x,  y) == Color.BLACK.getRGB())){
+					image.setRGB(x, y, pattern3.getRGB(x, y));
+				} else {
+					image.setRGB(x,  y, pattern4.getRGB(x, y));
+				}
+			}
+		}
+		return image;
+	}
+	
 	/**
 	 * Returns adjusted image based on manipulation of an input image with a CPPN. To add
 	 * more variation, each pixel is manipulated based on the average HSB of its surrounding pixels.

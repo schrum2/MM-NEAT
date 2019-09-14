@@ -6,23 +6,18 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.gvgai.GVGAIUtil;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
-import gvgai.core.game.Game;
 import gvgai.core.vgdl.VGDLFactory;
-import gvgai.core.vgdl.VGDLParser;
 import gvgai.core.vgdl.VGDLRegistry;
 import gvgai.tools.IO;
-import gvgai.tracks.singlePlayer.tools.human.Agent;
+import me.jakerg.rougelike.Tile;
 
 public class ZeldaVGLCUtil {
 
 	public static final String ZELDA_LEVEL_PATH = "data/VGLC/Zelda/Processed/";
-	public static final int ZELDA_ROOM_COLUMNS = 11; // This is actually the room height from the original game, since VGLC rotates rooms
-	public static final int ZELDA_ROOM_ROWS = 16; // Equivalent to width in original game
-	public static final int ZELDA_GVGAI_TILE_TYPES = 4;
-
+	public static final int ZELDA_ROOM_COLUMNS = 16; // This is actually the room height from the original game, since VGLC rotates rooms
+	public static final int ZELDA_ROOM_ROWS = 11; // Equivalent to width in original game
+	public static final boolean USE_OLD_ENCODING = false;
 	/**
 	 * Get converted VGLC -> GVG-AI level by specifying file name of source VGLC level
 	 * @param fileName
@@ -71,7 +66,8 @@ public class ZeldaVGLCUtil {
 		for(int i = 0; i < room.length; i++) {
 			result.add(new ArrayList<Integer>(ZELDA_ROOM_COLUMNS)); // Next row of room
 			for(int j = 0; j < room[i].length(); j++) {
-				int code = convertZeldaTileVGLCtoNumberCode(room[i].charAt(j));
+				int code = (USE_OLD_ENCODING) ? convertZeldaTileVGLCtoNumberCode(room[i].charAt(j)) : 
+					convertZeldaModifiedTileVGLCtoNumberCode(room[i].charAt(j));
 				result.get(i).add(code);
 			}
 		}
@@ -167,8 +163,9 @@ public class ZeldaVGLCUtil {
 		case 'O':
 		case '-':
 			return '.';
-		case 'B': 
 		case 'P':
+			return 'p';
+		case 'B': 
 		case 'I':
 		case 'W':
 			return 'w';
@@ -194,6 +191,15 @@ public class ZeldaVGLCUtil {
 		case 1: return 'w';
 		case 2: return (char)('1' + RandomNumbers.randomGenerator.nextInt(3)); // 1, 2, or 3 : Random Monster
 		case 3: return 'g';
+		case 4: return 'e';
+		case 5: return 'K';
+		case 6: return '+';
+		case 7: return 'B';
+		case 8: return 'b';
+		case 9: return 'R';
+		case 10: return 'G';
+		case -7: return 'B';
+		case -5: return 'K';
 		default:
 			throw new IllegalArgumentException("Invalid GAN code for Zelda: code = " + code);
 		}
@@ -217,7 +223,7 @@ public class ZeldaVGLCUtil {
 		case 'W':
 			return 1;	// Impassable
 		case 'M':
-			return 2;	// Monster
+			return 0;	// Monster
 		case 'D':
 		case 'S':
 			return 3;	// Door
@@ -225,10 +231,51 @@ public class ZeldaVGLCUtil {
 			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
 		}
 	}
-
-
+	
 	/**
-	 * For quick tests
+	 * Shares the mapping above, but returns the arbitrary number code.
+	 * Used for GAN learning.
+	 * @param tile A VGLC tile
+	 * @return Number code associated with different classes of tile
+	 */
+	public static int convertZeldaModifiedTileVGLCtoNumberCode(char tile) {
+		switch(tile) {
+		case 'F':
+		case '-':
+		case 'O':
+			return 0; // Passable
+		case 'W':
+		case 'B':
+		case 'I':
+			return 1;
+		case 'P':
+			return 5;
+		case 'M':
+			return 5;	// Monster
+		case 'D':
+			return 1;
+		case 'S':
+			return 1;	// Door
+		case '#':
+			return -6; // Ladder block
+		case 'U':
+			return Tile.MOVABLE_BLOCK_UP.getNum();
+		case 'L':
+			return Tile.MOVABLE_BLOCK_LEFT.getNum();
+		case 'V':
+			return Tile.MOVABLE_BLOCK_DOWN.getNum();
+		case 'R':
+			return Tile.MOVABLE_BLOCK_RIGHT.getNum();
+		default:
+			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
+		}
+	}
+
+	
+	
+	/**
+	 * Modified to generate the json files for training the Zelda GAN
+	 * using the complete information from the modified VGLC data.
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -238,7 +285,7 @@ public class ZeldaVGLCUtil {
 		VGDLFactory.GetInstance().init();
 		VGDLRegistry.GetInstance().init();
 
-		String game = "zelda";
+		String game = "zeldacopy";
 		String gamesPath = "data/gvgai/examples/gridphysics/";
 		String game_file = gamesPath + game + ".txt";
 		int playerID = 0;
@@ -248,7 +295,7 @@ public class ZeldaVGLCUtil {
 		
 		for(int i = 1; i <= 9; i++) {
 			for(int j = 1; j <= 2; j++) {
-				String file = "tloz"+i+"_"+j+".txt";
+				String file = "tloz"+i+"_"+j+"_flip.txt";
 				String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+file, new Point(2,2));
 
 				for(String line : level) {
@@ -275,4 +322,55 @@ public class ZeldaVGLCUtil {
 		
 		System.out.println(roomSet);
 	}
+	
+
+	/**
+	 * Used to generate the original json files for training the Zelda GAN
+	 * @param args
+	 */
+//	public static void main(String[] args) {
+//		Parameters.initializeParameterCollections(new String[] {});
+//		//MMNEAT.loadClasses();
+//
+//		VGDLFactory.GetInstance().init();
+//		VGDLRegistry.GetInstance().init();
+//
+//		String game = "zeldacopy";
+//		String gamesPath = "data/gvgai/examples/gridphysics/";
+//		String game_file = gamesPath + game + ".txt";
+//		int playerID = 0;
+//		int seed = 0;
+//
+//		HashSet<List<List<Integer>>> roomSet = new HashSet<>();
+//		
+//		for(int i = 1; i <= 9; i++) {
+//			for(int j = 1; j <= 2; j++) {
+//				String file = "tloz"+i+"_"+j+".txt";
+//				String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+file, new Point(2,2));
+//
+//				for(String line : level) {
+//					System.out.println(line);
+//				}
+//
+//				List<List<List<Integer>>> roomList = convertZeldaLevelFileVGLCtoListOfRooms(ZELDA_LEVEL_PATH+file);
+//
+//				roomSet.addAll(roomList);
+//				
+//				//System.out.println(roomList);
+//
+//				
+//				// PLAY THE LEVEL
+//				Agent agent = new Agent();
+//				agent.setup(null, 0, true); // null = no log, true = human 
+//
+//				Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
+//				GVGAIUtil.runOneGame(toPlay, level, true, agent, seed, playerID);
+//
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
+//			}
+//		}
+//		
+//		System.out.println(roomSet);
+//	}
+	
 }

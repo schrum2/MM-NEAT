@@ -27,6 +27,7 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
 import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
+import edu.southwestern.tasks.gvgai.zelda.level.SimpleLoader;
 import edu.southwestern.tasks.interactive.breedesizer.Keyboard;
 import edu.southwestern.tasks.microrts.evaluation.NNComplexEvaluationFunction;
 import edu.southwestern.tasks.microrts.fitness.WinLossFitnessFunction;
@@ -313,6 +314,7 @@ public class Parameters {
 		integerOptions.add("receptiveFieldWidth", 3, "width of input windows for convolutional structures");
 		integerOptions.add("remixImageWindow", 10, "Size of window being remixed by CPPN in Picture Remixer");
 		integerOptions.add("rlBatchSize", 20, "Number of state transitions to log before doing an RL experience replay batch update");
+		integerOptions.add("rougeEnemyHealth", 1, "Set the health of an enemy in rouge-like");
 		integerOptions.add("runNumber", 0, "Number to designate this run of an experiment");
 		integerOptions.add("scentMode", -1, "Whenever this mode gets used, drop pheremone on scent path");
 		integerOptions.add("sightLimit", 50, "How far an agent can see in popacman");
@@ -346,10 +348,14 @@ public class Parameters {
 		integerOptions.add("utNumOpponents", 1, "Number of opponents to evolve against in UT2004");
 		integerOptions.add("utNumNativeBots", 0, "dictates the number of native bots to be spawned into the server");
 		integerOptions.add("utTeamSize", 2 , "dictates the number of players on each team");
+		integerOptions.add("zeldaMaxHealth", 4, "Set the max health for the main character in the rouge-like.");
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		// Boolean parameters 
+		booleanOptions.add("gvgAIForZeldaGAN", false, "Use GVG-AI representation of Zelda game");
+		booleanOptions.add("starkPicbreeder", false, "Picbreeder only uses two extreme brightness levels");
+		booleanOptions.add("blackAndWhitePicbreeder", false, "Picbreeder only uses black and white (possible gray)");
 		booleanOptions.add("averageScoreHistory", false, "Surviving parent fitness averaged across generations");
 		booleanOptions.add("boardGameIncreasingRandomOpens", false, "Number of random moves at the start of each game increases as evolved agents improve");
 		booleanOptions.add("boardGameWinPercentFitness", false, "Is percentage of games won a fitness function for board games?");
@@ -711,6 +717,8 @@ public class Parameters {
 		booleanOptions.add("rlEpsilonGreedy", false, "Whether to use an epsilon greedy policy when using reinforcement learning");
 		booleanOptions.add("simplifiedInteractiveInterface", true, "Determines how many buttons to show on the interactive evolution interfaces");
 		booleanOptions.add("utBotKilledAtEnd", true, "True if UT2004 bots are forcibly killed at time limit (instead of running until server dies)");
+		booleanOptions.add("zeldaGANUsesOriginalEncoding", true, "True if the number of tiles for the GAN is 4, otherwise 10.");
+		booleanOptions.add("zeldaHelpScreenEnabled", false, "Enable the help screen of Zelda rouge");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -784,6 +792,8 @@ public class Parameters {
 		doubleOptions.add("usageForNewMode", 10.0,"The smaller this is (down to 1) the more restricted mode mutation is");
 		doubleOptions.add("weakenPortion", 0.5, "How much the preference weakening operation weakens weights");
 		doubleOptions.add("weightBound", 50.0, "The bound for network weights used by SBX and polynomial mutation");
+		doubleOptions.add("healthDropRate", 20., "Health drop rate from enemies");
+		doubleOptions.add("bombDropRate", 40., "Bomb drop rate from enemies");
 		// String parameters
 		stringOptions.add("archetype", "", "Network that receives all mutations so as to keep other networks properly aligned");
 		stringOptions.add("base", "", "Base directory for all simulations within one experiment");
@@ -836,8 +846,9 @@ public class Parameters {
 		stringOptions.add("utMap", "DM-TrainingDay", "Map to play in Unreal Tournament 2004");
 		stringOptions.add("utPath", "SCOPE2018\\UT2004", "Path (excluding drive) to root dir of Unreal Tournament 2004 installation");
 		stringOptions.add("utGameType", "BotDeathMatch", "sets the game type for the server");
-		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("utStudyTeammate", "", "The type of teammate agent for the 2018 human subject study: jude, ethan, native");
+		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
+		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
 		// Class options
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
@@ -897,6 +908,7 @@ public class Parameters {
 		classOptions.add("utSensorModel", OpponentRelativeSensorModel.class, "Sensors for UT2004 bot");
 		classOptions.add("utWeaponManager", SimpleWeaponManager.class, "Weapon management for UT2004 bot");
 		classOptions.add("weightPerturber", GaussianGenerator.class, "Random generator used to perturb mutated weights");
+		classOptions.add("zeldaLevelLoader", SimpleLoader.class, "Loader to use when the dungeon is picking levels");
 	}
 
 	/**
@@ -1109,11 +1121,8 @@ public class Parameters {
 
 	/**
 	 * Set integer option value
-	 * 
-	 * @param label
-	 *            label for int parameter
-	 * @param value
-	 *            new value
+	 * @param label label for int parameter
+	 * @param value new value
 	 */
 	public void setInteger(String label, int value) {
 		this.integerOptions.change(label, value);
@@ -1121,11 +1130,8 @@ public class Parameters {
 
 	/**
 	 * Set long option value
-	 * 
-	 * @param label
-	 *            label for long parameter
-	 * @param value
-	 *            new value
+	 * @param label label for long parameter
+	 * @param value new value
 	 */
 	public void setLong(String label, long value) {
 		this.longOptions.change(label, value);
@@ -1133,11 +1139,8 @@ public class Parameters {
 
 	/**
 	 * Set double option value
-	 * 
-	 * @param label
-	 *            label for double parameter
-	 * @param value
-	 *            new value
+	 * @param label label for double parameter
+	 * @param value new value
 	 */
 	public void setDouble(String label, double value) {
 		this.doubleOptions.change(label, value);
@@ -1145,23 +1148,25 @@ public class Parameters {
 
 	/**
 	 * Set boolean option value
-	 * 
-	 * @param label
-	 *            label for boolean parameter
-	 * @param value
-	 *            new value
+	 * @param label label for boolean parameter
+	 * @param value new value
 	 */
 	public void setBoolean(String label, boolean value) {
 		this.booleanOptions.change(label, value);
 	}
 
 	/**
+	 * Change a boolean parameter to its opposite value
+	 * @param string label for boolean parameter
+	 */
+	public void changeBoolean(String label) {
+		this.booleanOptions.change(label, !booleanOptions.get(label));
+	}	
+	
+	/**
 	 * Set String option value
-	 * 
-	 * @param label
-	 *            label for String parameter
-	 * @param value
-	 *            new value
+	 * @param label label for String parameter
+	 * @param value new value
 	 */
 	public void setString(String label, String value) {
 		this.stringOptions.change(label, value);
@@ -1169,11 +1174,8 @@ public class Parameters {
 
 	/**
 	 * Set Class option value
-	 * 
-	 * @param label
-	 *            label for Class parameter
-	 * @param value
-	 *            new value
+	 * @param label label for Class parameter
+	 * @param value new value
 	 */
 	@SuppressWarnings("rawtypes")
 	public void setClass(String label, Class value) {

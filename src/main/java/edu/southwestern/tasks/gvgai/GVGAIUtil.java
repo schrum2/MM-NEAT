@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.gvgai;
 
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
@@ -8,6 +9,8 @@ import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.random.RandomNumbers;
@@ -21,6 +24,7 @@ import gvgai.core.vgdl.VGDLFactory;
 import gvgai.core.vgdl.VGDLParser;
 import gvgai.core.vgdl.VGDLRegistry;
 import gvgai.core.vgdl.VGDLViewer;
+import gvgai.tools.Vector2d;
 import gvgai.tracks.ArcadeMachine;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
 
@@ -89,6 +93,45 @@ public class GVGAIUtil {
 	public static double[] runOneGame(Game toPlay, String[] level, boolean visuals, AbstractPlayer agent, int randomSeed, int playerID) {
 		toPlay.buildStringLevel(level, randomSeed); // TODO: Is path finding still required?
 		return runOneGame(toPlay, visuals, agent, randomSeed, playerID);
+	}
+	
+	public static double[] runDungeon(GameBundle bundle, boolean visuals, Dungeon dungeon) {
+		// TODO Auto-generated method stub
+		return runMultiLevelGame(bundle.game, dungeon, visuals, bundle.agent, bundle.randomSeed, bundle.playerID);
+	}
+	
+	
+	public static double[] runMultiLevelGame(Game toPlay, Dungeon dungeon, boolean visuals, AbstractPlayer agent, int randomSeed, int playerID) {
+		
+		toPlay.buildStringLevel(dungeon.getCurrentlevel().level.getStringLevel(new Point(8, 5)), randomSeed); // TODO: Is path finding still required?
+		runOneGame(toPlay, visuals, agent, randomSeed, playerID);
+		Vector2d exitVec = toPlay.getAvatar().getLastPosition();
+		String exitPoint;
+		if(exitVec == null) exitPoint = "null";
+		else exitPoint = exitVec.toString();
+		
+		System.out.println("ExitPoint : " + exitPoint.toString());
+		
+		while(!exitPoint.equals("null")) {
+			Point start = dungeon.getNextNode(exitPoint);
+			Node node = dungeon.getCurrentlevel();
+			if (start == null) {
+				System.out.println("No start, exiting");
+				break;
+			}
+			toPlay.reset();
+			toPlay.buildStringLevel(node.level.getStringLevel(start), randomSeed); // TODO: Is path finding still required?
+			System.out.println("Running Game ---------------------------------");
+			runOneGame(toPlay, visuals, agent, randomSeed, playerID); // TODO: Is path finding still required?
+			System.out.println("Ending Game ---------------------------------");
+			exitVec = toPlay.getAvatar().getLastPosition();
+
+			if(exitVec == null) exitPoint = "null";
+			else exitPoint = exitVec.toString();
+			
+			System.out.println("ExitPoint : " + exitPoint.toString());
+		}
+		return toPlay.getFullResult();
 	}		
 
 	/**
@@ -118,9 +161,14 @@ public class GVGAIUtil {
 		// This, the last thing to do in this method, always:
 		toPlay.handleResult();
 		toPlay.printResult();
+		
+		System.out.println("Last position : " + toPlay.getAvatar().getLastPosition());
+		System.out.println("Dimensions : " + toPlay.getScreenSize());
 
 		return toPlay.getFullResult();
 	}	
+	
+	
 	
 	/**
 	 * Get a still preview image of what the game level looks like
@@ -455,4 +503,6 @@ public class GVGAIUtil {
 		
 		panel.dispose();
 	}
+
+
 }

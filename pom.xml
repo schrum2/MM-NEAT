@@ -102,6 +102,11 @@
         	<enabled>true</enabled>
         </snapshots>
      </repository>
+     
+     <repository>
+	  <id>jitpack.io</id>
+	  <url>https://jitpack.io</url>
+	</repository>
 </repositories>
 
     <distributionManagement>
@@ -138,6 +143,22 @@
     </dependencyManagement>
 
   <dependencies>
+  
+    <dependency>
+	  <groupId>com.github.trystan</groupId>
+	  <artifactId>AsciiPanel</artifactId>
+	  <version>ac179b1</version>
+	</dependency>
+  
+  <!--  for WFC -->
+  <!-- https://mvnrepository.com/artifact/xalan/xalan -->
+	<dependency>
+    	<groupId>xalan</groupId>
+    	<artifactId>xalan</artifactId>
+    	<version>2.7.1</version>
+	</dependency>
+  
+  
   	<!-- DL4J and RL4J -->
         <dependency>
             <groupId>org.nd4j</groupId>

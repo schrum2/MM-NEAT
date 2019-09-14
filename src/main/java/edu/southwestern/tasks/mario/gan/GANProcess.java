@@ -54,7 +54,7 @@ public class GANProcess extends Comm {
 			case ZELDA: 
 				ganProcess = new GANProcess(PYTHON_BASE_PATH+"ZeldaGAN"+ File.separator +Parameters.parameters.stringParameter("zeldaGANModel"),
 											Parameters.parameters.integerParameter("GANInputSize"),
-											ZeldaVGLCUtil.ZELDA_GVGAI_TILE_TYPES);
+											Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? 4 : 6);
 				break;
 			}
 			ganProcess.start();
@@ -75,7 +75,15 @@ public class GANProcess extends Comm {
 	 * @return Range restricted value
 	 */
 	public static double mapToOne(double valueInR) {
-		return ( valueInR / Math.sqrt(1+valueInR*valueInR) );
+		return valueInR;
+		
+		// Jacob: The code below is part of the original Dagstuhl MarioGAN repo, likely written by
+		// Vanessa or Jialin, but I can't figure out why this was done. Perhaps it has something to
+		// do with the way that CMA-ES genotypes work or with how those values are mapped, but in
+		// my code the genotype values seem to already be properly restricted to the right range,
+		// which makes this weird code unnecessary.
+		
+		//return ( valueInR / Math.sqrt(1+valueInR*valueInR) );
 	}
 
 	/**

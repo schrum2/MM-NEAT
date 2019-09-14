@@ -1,0 +1,6 @@
+digraph {
+0 [label="s,k"]
+1 [label="t"]
+0 -> 1 [label="k,UP"]
+1 -> 0 [label="k,DOWN"]
+}

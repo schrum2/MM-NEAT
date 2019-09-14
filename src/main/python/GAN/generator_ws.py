@@ -29,126 +29,129 @@ def combine_images(generated_images):
     return image
 
 if __name__ == '__main__':
- # Since the Java program is not launched from the pytorch directory,
- # it cannot find this file when it is specified as being in the current
- # working directory. This is why the network has to be a command line
- # parameter. However, this model should load by default if no parameter
- # is provided.
- if len(sys.argv) ==1:
- 	modelToLoad = "netG_epoch_5000.pth"
- else:
- 	modelToLoad = sys.argv[1]
- if len(sys.argv) >=3:
- 	nz = int(sys.argv[2])
- else:
- 	nz = 32
+	# Since the Java program is not launched from the pytorch directory,
+	# it cannot find this file when it is specified as being in the current
+	# working directory. This is why the network has to be a command line
+	# parameter. However, this model should load by default if no parameter
+	# is provided.
+	if len(sys.argv) ==1:
+		modelToLoad = "netG_epoch_5000.pth"
+	else:
+		modelToLoad = sys.argv[1]
+	if len(sys.argv) >=3:
+		nz = int(sys.argv[2])
+	else:
+		nz = 32
 
- #Jacob: I added this to maintain backwards compatibility
- if len(sys.argv) >=4:
-    # User can set this to 10 to recreate behavior of original Mario GAN in GECCO 2018
- 	z_dims = int(sys.argv[3])
- else:
- 	z_dims = 13 # This is the new default
+	#Jacob: I added this to maintain backwards compatibility
+	if len(sys.argv) >=4:
+		# User can set this to 10 to recreate behavior of original Mario GAN in GECCO 2018
+		z_dims = int(sys.argv[3])
+	else:
+		z_dims = 13 # This is the new default
 
- # This is an ugly hack that assumes we can figure out the output dimension based on 
- # the number of different tile types. It is true for now, because Zelda and Mario 
- # are the only options, and they have very different tile counts. But the count for Zelda
- # may change, and we may add more domains, so a better solution is needed in the long term.
- 
- if z_dims < 9 : # Assume this is Zelda (4 tiles, currently)
- 	out_height = 16
- 	out_width = 11
- else: # Assume this is Mario (10 or 13 tiles, depending)
- 	out_height = 14
- 	out_width = 28
+	# This is an ugly hack that assumes we can figure out the output dimension based on 
+	# the number of different tile types. It is true for now, because Zelda and Mario 
+	# are the only options, and they have very different tile counts. But the count for Zelda
+	# may change, and we may add more domains, so a better solution is needed in the long term.
 
- batchSize = 1
- #nz = 10 #Dimensionality of latent vector
+	if z_dims == 4 : # Assume this is Zelda (4 tiles, currently)
+		out_height = 16
+		out_width = 11
+	elif z_dims == 6: # Fixed Zelda with all tiles
+		out_height = 11
+		out_width = 16
+	else: # Assume this is Mario (10 or 13 tiles, depending)
+		out_height = 14
+		out_width = 28
 
- imageSize = 32
- ngf = 64
- ngpu = 1
- n_extra_layers = 0
- #z_dims = 10 #number different titles: set by command line above
+	batchSize = 1
+	#nz = 10 #Dimensionality of latent vector
 
- # This is a new DCGAN model that has the proper state dict labels/keys for the latest version of PyTorch (no periods '.')
- generator = dcgan.DCGAN_G(imageSize, nz, z_dims, ngf, ngpu, n_extra_layers)
- #print(generator.state_dict()) 
- # This is a state dictionary that might have deprecated key labels/names
- deprecatedModel = torch.load(modelToLoad, map_location=lambda storage, loc: storage)
- #print(deprecatedModel)
- # Make new model with weights/parameters from deprecatedModel but labels/keys from generator.state_dict()
- fixedModel = OrderedDict()
- for (goodKey,ignore) in generator.state_dict().items():
-   # Take the good key and replace the : with . in order to get the deprecated key so the associated value can be retrieved
-   badKey = goodKey.replace(":",".")
-   #print(goodKey)
-   #print(badKey)
-   # Some parameter settings of the generator.state_dict() are not actually part of the saved models
-   if badKey in deprecatedModel:
-     goodValue = deprecatedModel[badKey]
-     fixedModel[goodKey] = goodValue
+	imageSize = 32
+	ngf = 64
+	ngpu = 1
+	n_extra_layers = 0
+	#z_dims = 10 #number different titles: set by command line above
 
- if not fixedModel:
-   #print("LOAD REGULAR")
-   #print(deprecatedModel)
-   # If the fixedModel was empty, then the model was trained with the new labels, and the regular load process is fine
-   generator.load_state_dict(deprecatedModel)
- else:
-   # Load the parameters with the fixed labels  
-   generator.load_state_dict(fixedModel)
+	# This is a new DCGAN model that has the proper state dict labels/keys for the latest version of PyTorch (no periods '.')
+	generator = dcgan.DCGAN_G(imageSize, nz, z_dims, ngf, ngpu, n_extra_layers)
+	#print(generator.state_dict()) 
+	# This is a state dictionary that might have deprecated key labels/names
+	deprecatedModel = torch.load(modelToLoad, map_location=lambda storage, loc: storage)
+	#print(deprecatedModel)
+	# Make new model with weights/parameters from deprecatedModel but labels/keys from generator.state_dict()
+	fixedModel = OrderedDict()
+	for (goodKey,ignore) in generator.state_dict().items():
+		# Take the good key and replace the : with . in order to get the deprecated key so the associated value can be retrieved
+		badKey = goodKey.replace(":",".")
+		#print(goodKey)
+		#print(badKey)
+	# Some parameter settings of the generator.state_dict() are not actually part of the saved models
+	if badKey in deprecatedModel:
+		goodValue = deprecatedModel[badKey]
+		fixedModel[goodKey] = goodValue
 
- testing = False
+	if not fixedModel:
+		#print("LOAD REGULAR")
+		#print(deprecatedModel)
+		# If the fixedModel was empty, then the model was trained with the new labels, and the regular load process is fine
+		generator.load_state_dict(deprecatedModel)
+	else:
+		# Load the parameters with the fixed labels  
+		generator.load_state_dict(fixedModel)
 
- if testing:  
-   line = []
-   for i in range (batchSize):
-     line.append( [ random.uniform(-1.0, 1.0) ]*nz )
+	testing = False
 
-   #This is the format that we expect from sys.stdin
-   print(line)
-   line = json.dumps(line)
-   lv = numpy.array(json.loads(line))
-   latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) #torch.from_numpy(lv)# torch.FloatTensor( torch.from_numpy(lv) )
-   #latent_vector = numpy.array(json.loads(line))
-   levels = generator(Variable(latent_vector, volatile=True))
-   im = levels.data.cpu().numpy()
-   im = im[:,:,:out_height,:out_width] #Cut off rest to fit the 14x28 tile dimensions
-   im = numpy.argmax( im, axis = 1)
-   #print(json.dumps(levels.data.tolist()))
-   print("Saving to file ")
-   im = ( plt.get_cmap('rainbow')( im/float(z_dims) ) )
+	if testing:  
+		line = []
+		for i in range (batchSize):
+			line.append( [ random.uniform(-1.0, 1.0) ]*nz )
 
-   plt.imsave('fake_sample.png', combine_images(im) )
+		#This is the format that we expect from sys.stdin
+		print(line)
+		line = json.dumps(line)
+		lv = numpy.array(json.loads(line))
+		latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) #torch.from_numpy(lv)# torch.FloatTensor( torch.from_numpy(lv) )
+		#latent_vector = numpy.array(json.loads(line))
+		levels = generator(Variable(latent_vector, volatile=True))
+		im = levels.data.cpu().numpy()
+		im = im[:,:,:out_height,:out_width] #Cut off rest to fit the 14x28 tile dimensions
+		im = numpy.argmax( im, axis = 1)
+		#print(json.dumps(levels.data.tolist()))
+		print("Saving to file ")
+		im = ( plt.get_cmap('rainbow')( im/float(z_dims) ) )
 
-   exit()
+		plt.imsave('fake_sample.png', combine_images(im) )
 
- print("READY") # Java loops until it sees this special signal
- sys.stdout.flush() # Make sure Java can sense this output before Python blocks waiting for input
- #for line in sys.stdin.readlines(): # Jacob: I changed this to make this work on Windows ... did this break on Mac?
+		exit()
 
- #for line in sys.stdin:
- while 1:
-  line = sys.stdin.readline()
-  if len(line)==2 and int(line)==0:
-    break
-  lv = numpy.array(json.loads(line))
-  latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) 
+	print("READY") # Java loops until it sees this special signal
+	sys.stdout.flush() # Make sure Java can sense this output before Python blocks waiting for input
+	#for line in sys.stdin.readlines(): # Jacob: I changed this to make this work on Windows ... did this break on Mac?
 
-  levels = generator(Variable(latent_vector, volatile=True))
+	#for line in sys.stdin:
+	while 1:
+		line = sys.stdin.readline()
+		if len(line)==2 and int(line)==0:
+			break
+		lv = numpy.array(json.loads(line))
+		latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) 
 
-  #levels.data = levels.data[:,:,:14,:28] #Cut of rest to fit the 14x28 tile dimensions
+		levels = generator(Variable(latent_vector, volatile=True))
 
-  level = levels.data.cpu().numpy()
-  level = level[:,:,:out_height,:out_width] #Cut of rest to fit the 14x28 tile dimensions
-  level = numpy.argmax( level, axis = 1)
-   
+		#levels.data = levels.data[:,:,:14,:28] #Cut of rest to fit the 14x28 tile dimensions
 
-  #levels.data[levels.data > 0.] = 1  #SOLID BLOCK
-  #levels.data[levels.data < 0.] = 2  #EMPTY TILE
+		level = levels.data.cpu().numpy()
+		level = level[:,:,:out_height,:out_width] #Cut of rest to fit the 14x28 tile dimensions
+		level = numpy.argmax( level, axis = 1)
 
-   # Jacob: Only output first level, since we are only really evaluating one at a time
-  print(json.dumps(level[0].tolist()))
-  sys.stdout.flush() # Make Java sense output before blocking on next input
+
+		#levels.data[levels.data > 0.] = 1  #SOLID BLOCK
+		#levels.data[levels.data < 0.] = 2  #EMPTY TILE
+
+		# Jacob: Only output first level, since we are only really evaluating one at a time
+		print(json.dumps(level[0].tolist()))
+		sys.stdout.flush() # Make Java sense output before blocking on next input
 
 
