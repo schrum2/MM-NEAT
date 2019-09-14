@@ -3,9 +3,7 @@ package edu.southwestern.tasks.gvgai.zelda.level;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
-import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class GenerateGrammar<T extends Grammar> {

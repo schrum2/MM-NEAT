@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.gvgai.zelda.dungeon;
 
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -12,9 +11,6 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.Stack;
-import java.util.UUID;
-
-import javax.imageio.ImageIO;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -53,11 +49,8 @@ public class LoadOriginalDungeon {
 	public static void main(String[] args) throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"rougeEnemyHealth:2"});
 		
-		String title = "tloz4_1_flip";
+		String title = "tloz1_1_flip";
 		Dungeon dungeon = loadOriginalDungeon(title, false);
-		BufferedImage image = DungeonUtil.imageOfDungeon(dungeon);
-		File file = new File("data/VGLC/Zelda/" + title + ".png");
-		ImageIO.write(image, "png", file);
 		
 		dungeon.printLevelThere();
 		if (false) {
@@ -137,6 +130,7 @@ public class LoadOriginalDungeon {
 	 * @param dungeon
 	 * @param numberToString 
 	 */
+	// NEVER USED?
 	private static void balanceKeyToDoors(Dungeon dungeon, HashMap<Integer, String> numberToString) {
 		while(numKeys < numDoors) {
 			int i = RandomNumbers.randomGenerator.nextInt(numberToString.size() - 1);
@@ -441,6 +435,7 @@ public class LoadOriginalDungeon {
 	 * @param levelThere 2D map
 	 * @return Point of coords
 	 */
+	// NEVER USED?
 	private static Point findNodeName(String nodeName, String[][] levelThere) {
 		for(int y = 0; y < levelThere.length; y++)
 			for(int x = 0; x < levelThere[y].length; x++)
@@ -594,7 +589,9 @@ public class LoadOriginalDungeon {
 		for(File entry : levelFolder.listFiles()) {
 			String fileName = entry.getName();
 			int number = Integer.valueOf(fileName.substring(0, fileName.indexOf('.')));
-			numberToString.put(number, RandomStringUtils.randomAlphabetic(4));
+			// The random method replaced a call to randomAlphabetic. This was needed, since the more general random
+			// method is the only one that allows a random generator to be supplied, allowing reproducibility.
+			numberToString.put(number, RandomStringUtils.random(4,'A','Z',true,false,null,RandomNumbers.randomGenerator));
 			loadOneLevel(entry, dungeon, numberToString.get(number));
 		}
 	}

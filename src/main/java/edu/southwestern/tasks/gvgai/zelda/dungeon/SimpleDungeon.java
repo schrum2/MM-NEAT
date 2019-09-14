@@ -3,7 +3,6 @@ package edu.southwestern.tasks.gvgai.zelda.dungeon;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
@@ -69,8 +68,10 @@ public class SimpleDungeon extends ZeldaDungeon<ArrayList<Double>>{
 		for(int y = 0; y < dungeon.length; y++) {
 			for(int x = 0; x < dungeon[y].length; x++) {
 				if(dungeon[y][x] != null) {
-					if(uuidLabels[y][x] == null)
-						uuidLabels[y][x] = UUID.randomUUID().toString();
+					if(uuidLabels[y][x] == null) {
+						// Random ID generation inspired by https://stackoverflow.com/questions/17729753/generating-reproducible-ids-with-uuid
+						uuidLabels[y][x] = UUID.nameUUIDFromBytes(RandomNumbers.randomByteArray(16)).toString();
+					}
 					String name = uuidLabels[y][x];
 					Node newNode = dungeonInstance.newNode(name, dungeon[y][x]);
 					

@@ -197,19 +197,30 @@ public class World {
 	 */
 	public void update() {		
 		for(Creature c : creatures) {
-			c.update();	
-			System.out.println(c.glyph() + "'s health : " + c.hp());
+			c.update();
+			if(RougelikeApp.DEBUG)
+				System.out.println(c.glyph() + "'s health : " + c.hp());
 		}
 		
 		creatures.removeIf(c -> c.hp() < 1);
 		
 		for(Item i : items) {
-			System.out.println("Updating item : " + i.glyph + " at (" + i.x + ", " + i.y + ")" );
+			if(RougelikeApp.DEBUG)
+				System.out.println("Updating item : " + i.glyph + " at (" + i.x + ", " + i.y + ")" );
 			i.update();
 		}
 
 		
 		checkToUnlock();
+	}
+	
+	public Creature getPlayer() {
+		for(Creature c : creatures) {
+			if(c.isPlayer())
+				return c;
+		}
+		
+		return null;
 	}
 
 	/**
@@ -242,8 +253,8 @@ public class World {
 
 	    // Check random coordinations until a coord is ground
 	    do {
-	        x = (int)(Math.random() * width);
-	        y = (int)(Math.random() * height);
+	        x = RandomNumbers.randomGenerator.nextInt(width);
+	        y = RandomNumbers.randomGenerator.nextInt(height);
 	    }
 	    while (!tile(x,y).isGround());
 
@@ -396,5 +407,10 @@ public class World {
 				cf.newEnemy(x, y, player);
 			}
 		}
+	}
+	
+	// Remove block where player is standing
+	public void removeSpawn() {
+		tiles[5][5] = Tile.FLOOR;
 	}
 }

@@ -19,7 +19,6 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
-import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class ZeldaGraphGrammarTest {
@@ -72,20 +71,20 @@ public class ZeldaGraphGrammarTest {
 				grammar.applyRules(graph);
 				d = DungeonUtil.recursiveGenerateDungeon(graph, loader);
 				System.out.println("Starting dungeon playable for dungeon: " + i);
-				GraphUtil.saveGrammarGraph(graph, "data/VGLC/Zelda/GraphDOTs/" + i +"_test.dot");
+//				GraphUtil.saveGrammarGraph(graph, "data/VGLC/Zelda/GraphDOTs/" + i +"_test.dot");
 				DungeonUtil.makeDungeonPlayable(d);				
 				BufferedImage image = DungeonUtil.imageOfDungeon(d);
-				File file = new File("data/VGLC/Zelda/dungeon_"+ i +"_test.png");
+				File file = new File("data/VGLC/Zelda/dungeon_"+ i +"_no-test.png");
 				ImageIO.write(image, "png", file);
 			} catch (Exception e) {
 				e.printStackTrace();
 				DungeonUtil.viewDungeon(d);
-				try {
-					GraphUtil.saveGrammarGraph(graph, "data/VGLC/" + i +"_test.dot");
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+//				try {
+//					GraphUtil.saveGrammarGraph(graph, "data/VGLC/" + i +"_test.dot");
+//				} catch (IOException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
 				MiscUtil.waitForReadStringAndEnterKeyPress();
 				fail("Test number : " + i + " failed");
 			}

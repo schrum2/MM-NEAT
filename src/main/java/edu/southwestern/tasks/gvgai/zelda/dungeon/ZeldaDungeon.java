@@ -8,7 +8,6 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -28,10 +27,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
@@ -41,8 +36,8 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
+import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
-import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
 import gvgai.core.game.BasicGame;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
@@ -98,7 +93,7 @@ public abstract class ZeldaDungeon<T> {
 		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length) return;
 		if(dungeon[y][x] == null) return; // Finally get out if there's no adjacency
 		
-		if(uuidLabels[y][x] == null) uuidLabels[y][x] = UUID.randomUUID().toString(); // Get the unique ID of the level
+		if(uuidLabels[y][x] == null) uuidLabels[y][x] = UUID.nameUUIDFromBytes(RandomNumbers.randomByteArray(16)).toString(); // Get the unique ID of the level
 		String whereTo = uuidLabels[y][x]; // This will be the where to in the edge
 
 		// Set the edges based on the direction
@@ -137,8 +132,8 @@ public abstract class ZeldaDungeon<T> {
 		ArrayList<ArrayList<Integer>> level = node.level.intLevel;
 		// Randomize tile only if the door being placed actually leads to another room
 		if(tile == 3) {
-			if(Math.random() > 0.3)
-				tile = (Math.random() > 0.5) ? Tile.LOCKED_DOOR.getNum() : Tile.HIDDEN.getNum(); // Randomize 5 (locked door) or 7 (bombable wall)
+			if(RandomNumbers.randomCoin(0.7))
+				tile = (RandomNumbers.coinFlip()) ? Tile.LOCKED_DOOR.getNum() : Tile.HIDDEN.getNum(); // Randomize 5 (locked door) or 7 (bombable wall)
 			
 			if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level); // If the door is now locked place a random key in the level
 		}
@@ -232,16 +227,10 @@ public abstract class ZeldaDungeon<T> {
 				int option = fileChooser.showSaveDialog(null);
 				if(option == JFileChooser.APPROVE_OPTION) {
 					String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-					Gson gson = new GsonBuilder()
-							.setPrettyPrinting()
-							.create();
-					
 					try {
-						FileWriter writer = new FileWriter(filePath);
-						gson.toJson(dungeonInstance, writer);
-						writer.flush();
-						writer.close();
-					} catch (JsonIOException | IOException e) {
+						dungeonInstance.saveToJson(filePath);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

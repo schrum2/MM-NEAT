@@ -3,21 +3,22 @@ package edu.southwestern.tasks.gvgai.zelda.dungeon;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.google.gson.Gson;
-import com.sun.org.apache.xpath.internal.axes.NodeSequence;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
 
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.util.datastructures.Pair;
+import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
 
 
@@ -30,10 +31,12 @@ public class Dungeon {
 	private Point goalPoint;
 	private int levelWidth = -1;
 	private int levelHeight = -1;
+	private Set<String> levelsVisited;
 	
 	public Dungeon() {
 		levels = new HashMap<>();
 		levelThere = null;
+		levelsVisited = new HashSet<>();
 	}
 
 	/**
@@ -56,6 +59,18 @@ public class Dungeon {
 		}
 		return null;
 	}
+	
+	public void saveToJson(String filePath) throws IOException {
+		Gson gson = new GsonBuilder()
+				.setPrettyPrinting()
+				.create();
+
+		FileWriter writer = new FileWriter(filePath);
+		gson.toJson(this, writer);
+		writer.flush();
+		writer.close();
+
+	}
 
 	public HashMap<String, Node> getLevels(){
 		return this.levels;
@@ -74,6 +89,8 @@ public class Dungeon {
 	}
 	
 	public void setCurrentLevel(String name) {
+		this.levelsVisited.add(name);
+		RougelikeApp.PD.distinctRoomsVisited = Math.max(levelsVisited.size(), RougelikeApp.PD.distinctRoomsVisited);
 		this.currentLevel = name;
 	}
 	
@@ -92,16 +109,9 @@ public class Dungeon {
 	 */
 	@SuppressWarnings("unused")
 	public Point getNextNode(String exitPoint) {
-		System.out.println("Exit point   " + exitPoint);
 		Node n = getCurrentlevel();
-		System.out.println("Node : " + n);
 		HashMap<String, Pair<String, Point>> adjacency = n.adjacency;
 		Pair<String, Point> next = adjacency.get(exitPoint);
-		if (next == null) {
-			System.out.println("No next, returning null");
-			return null;
-		}
-		System.out.println("Next thingy : " + next.t1);
 		setCurrentLevel(next.t1);
 		return next.t2;
 	}
@@ -240,4 +250,3 @@ public class Dungeon {
 	}
 
 }
-

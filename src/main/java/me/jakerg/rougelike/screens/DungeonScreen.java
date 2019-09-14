@@ -34,11 +34,11 @@ public class DungeonScreen implements Screen {
     private Creature player;
     private int screenWidth;
     private int screenHeight;
-    private Dungeon dungeon;
 	private int oX; // offset for x axis, dont want to render in the top left
 	private int oY; // offset for y axis, ""
 	private MapScreen mapScreen; // This is the view of the overview of the dungeon
 	private MessageScreen messageScreen; // View our latest actions
+	private HelpScreen helpScreen; // Helpful information for player ingame
 	private DungeonBuilder dungeonBuilder; // Keeps track of the worlds along with the current world
 	private Log log;
     
@@ -47,6 +47,7 @@ public class DungeonScreen implements Screen {
 	 * @param dungeon Dungeon to play
 	 */
     public DungeonScreen(Dungeon dungeon) {
+    	setDropRates();
     	makeTempDungeon(dungeon);
     	int h = dungeon.getCurrentlevel().level.getLevel().size();
     	int w = dungeon.getCurrentlevel().level.getLevel().get(0).size();
@@ -54,13 +55,13 @@ public class DungeonScreen implements Screen {
     	screenWidth = w;
         screenHeight = h;
         oX = 80 / 2 - screenWidth / 2;
-    	oY = dungeon.getLevelThere().length + 2;
-        this.dungeon = dungeon;
+    	oY = dungeon.getLevelThere().length + 2 + 10;
         // Creature factory to create our player
         CreatureFactory cf = new CreatureFactory(world, log);
         player = cf.newDungeonPlayer(dungeon);
         player.x = 5; // Start in middle of dungeon
         player.y = 5;
+        
         if(RougelikeApp.DEBUG) {
         	player.setBombs(9999);
         	player.setHP(20);
@@ -68,15 +69,40 @@ public class DungeonScreen implements Screen {
         // Set dungeon builder along with current world
         dungeonBuilder = new DungeonBuilder(dungeon, player, log);
         player.setDungeonBuilder(dungeonBuilder);
+        dungeonBuilder.getCurrentWorld().removeSpawn();
         // Make map screen to the left of the dungeon screen
         if(dungeon.getLevelThere() != null)
 //        	mapScreen = new MapScreen(dungeon, 1, 1);
-        	mapScreen = new MapScreen(dungeon, oX + screenWidth / 2 - dungeon.getLevelThere().length / 2, 1);
+        	mapScreen = new MapScreen(dungeon, oX + screenWidth / 2 - dungeon.getLevelThere()[0].length / 2, oY - 2 - dungeon.getLevelThere().length);
 
         messageScreen = new MessageScreen(80 / 2 - w / 2 - 5, oY + h + 2, 6, log);
+        if(Parameters.parameters.booleanParameter("zeldaHelpScreenEnabled"))
+        	helpScreen = new HelpScreen(25, oY + 25);
     }
 
 	
+	private void setDropRates() {
+		double hDR = 30;
+		double bDR = 40;
+		int playerHealth = 4;
+		if(RougelikeApp.LIVES == 2) {
+			hDR = 60;
+			playerHealth = 6;
+		} else if(RougelikeApp.LIVES == 1) {
+			hDR = 90;
+			bDR = 10;
+			playerHealth = 8;
+		} else if(RougelikeApp.LIVES == 0) {
+			hDR = 90;
+			playerHealth = 20;
+		}
+		
+		Parameters.parameters.setDouble("healthDropRate", hDR);
+		Parameters.parameters.setDouble("bombDropRate", bDR);
+		Parameters.parameters.setInteger("zeldaMaxHealth", playerHealth);
+	}
+
+
 	private void makeTempDungeon(Dungeon d) {
 		try {
 			FileUtils.forceMkdir(new File("data/rouge/tmp"));
@@ -105,6 +131,7 @@ public class DungeonScreen implements Screen {
 		displayTiles(terminal);
 		if(mapScreen != null) mapScreen.displayOutput(terminal);
 		messageScreen.displayOutput(terminal);
+		if(helpScreen != null) helpScreen.displayOutput(terminal);
 		player.display(terminal, oX + screenWidth + 1, oY);
         terminal.write(player.glyph(), player.x + oX, player.y + oY, player.color());
 		log.clear();
