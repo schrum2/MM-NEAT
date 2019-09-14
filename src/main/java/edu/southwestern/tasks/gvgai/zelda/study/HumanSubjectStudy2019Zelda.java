@@ -35,13 +35,20 @@ public class HumanSubjectStudy2019Zelda {
 	
 	public static void runTrial(Type type) {
 		Dungeon dungeonToPlay = null;
-		
-		Parameters.parameters.setBoolean("zeldaHelpScreenEnabled", true);
-		RandomNumbers.reset(Parameters.parameters.integerParameter("randomSeed"));
-		
+		// Save in the experiment's subject directory
 		subjectDir = "batch/Experiments-2019-ZeldaGAN/Subject-" + 
 	            String.valueOf(Parameters.parameters.integerParameter("randomSeed")) + 
 	            "/";
+
+		Parameters.parameters.setBoolean("zeldaHelpScreenEnabled", true);
+		int seed = Parameters.parameters.integerParameter("randomSeed");
+		// There is an unbeatable level when using seed 7 with the graph grammar and original rooms.
+		// Rather than fix it properly, this hack just switches the random seed so the level is different.
+		if(seed == 7 && type.equals(Type.GENERATED_DUNGEON) && 
+		   Parameters.parameters.classParameter("zeldaLevelLoader").getSimpleName().equals("OriginalLoader")) {
+			seed = 30; // Not used as an ID for anyone else in the study
+		}	
+		RandomNumbers.reset(seed);
 		
 		if(type.equals(Type.ORIGINAL)) {
 			dungeonType = "Original";
@@ -51,7 +58,6 @@ public class HumanSubjectStudy2019Zelda {
 			//String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz4_1_flip"};
 			// Now we are only using level 4, because it is the level that introduces the raft item, and we wanted to introduce this in each of our dungeons as well.
 			String[] names = new String[] {"tloz4_1_flip"};
-			int seed = Parameters.parameters.integerParameter("randomSeed");
 			String dungeonName = names[seed % names.length];
 			try {
 				dungeonToPlay = LoadOriginalDungeon.loadOriginalDungeon(dungeonName);
@@ -117,7 +123,8 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader".split(" "));
+		//MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 	}
 
 }
