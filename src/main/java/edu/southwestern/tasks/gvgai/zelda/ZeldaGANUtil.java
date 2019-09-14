@@ -2,7 +2,6 @@ package edu.southwestern.tasks.gvgai.zelda;
 
 import java.awt.Point;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

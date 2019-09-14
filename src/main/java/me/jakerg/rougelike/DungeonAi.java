@@ -3,6 +3,7 @@ package me.jakerg.rougelike;
 import java.awt.Color;
 import java.awt.Point;
 import asciiPanel.AsciiPanel;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Dungeon creature that's controllable as a player
@@ -63,16 +64,18 @@ public class DungeonAi extends CreatureAi{
 		if(tile.equals(Tile.DOOR) && !creature.getWorld().locked()) {
 			Point exitPoint = new Point(x, y);
 //			 Get the point to move to based on where the player went in from
-			System.out.println("Exiting at " + exitPoint);
+			if(RougelikeApp.DEBUG)
+				System.out.println("Exiting at " + exitPoint);
 			creature.getWorld().remove(creature);
 			Point p = creature.getDungeon().getNextNode(exitPoint.toString());
 			if(p != null) {
 				creature.getDungeonBuilder().getCurrentWorld().fullUnlock(p.x, p.y);
-				if(creature.bombs() <= 0) {
+				if(creature.bombs() <= 0 || RandomNumbers.randomCoin(0.4)) {
 					creature.getDungeonBuilder().getCurrentWorld().respawnEnemies(creature, creature.log());
 				}
 				creature.getDungeonBuilder().getCurrentWorld().addCreature(creature);
-				System.out.println("Starting point :" + p);
+				if(RougelikeApp.DEBUG)
+					System.out.println("Starting point :" + p);
 				creature.x  = p.x;
 				creature.y = p.y;
 				creature.setDirection(Move.NONE);

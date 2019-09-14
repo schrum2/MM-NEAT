@@ -181,7 +181,8 @@ public class Creature {
     		attack(other);
     	
 
-    		
+    	if(isPlayer())
+    		RougelikeApp.PD.actionsPerformed++;
     }
     
     /**
@@ -208,10 +209,10 @@ public class Creature {
 	public void attack(Creature other){
 		if(this.glyph == other.glyph) return;
 		
-		if(Math.random() >= 0.5 || isPlayer()){			
+		if(RandomNumbers.coinFlip() || isPlayer()){			
 	        int amount = Math.max(0, attackValue() - other.defenseValue()); // Get whatever is higher: 0 or the total attack value, dont want negative attack
 	    
-	        amount = (int)(Math.random() * amount) + 1; // Add randomness to ammount
+	        amount = RandomNumbers.randomGenerator.nextInt(amount) + 1; // Add randomness to ammount
 	    
 	        doAction(glyph + " did " + amount + " damage to " + other.glyph);
 	        other.modifyHp(-amount); // Modify hp of the the other creature
@@ -228,6 +229,9 @@ public class Creature {
     public void modifyHp(int amount) {
         hp += amount; // Add amount
     
+        if(isPlayer()){
+        	RougelikeApp.PD.damageReceived += -amount;
+        }
         if(previous == null) {
         	previous = this.color;
         	this.color = AsciiPanel.brightYellow;
@@ -247,8 +251,8 @@ public class Creature {
      * Update to let ai update
      */
 	public void update() {
-
-		System.out.println("Creature : " + glyph + " at (" + x + ", " + y + ")");
+		if(RougelikeApp.DEBUG)
+			System.out.println("Creature : " + glyph + " at (" + x + ", " + y + ")");
 		
 		if(previous != null) {
 			this.color = previous;
@@ -258,17 +262,24 @@ public class Creature {
     	if (hp < 1) {
             doAction(glyph + " died.");
             if(!isPlayer()) {
-            	if(RandomNumbers.randomGenerator.nextDouble() >= 0.1){ // 90 % chance
-            		List<Item> items = new LinkedList<>();
-            		items.add(new Bomb(this.world, 'b', AsciiPanel.white, x, y, 4, 5, true));
-            		items.add(new Health(this.world, (char)3, AsciiPanel.brightRed, x, y));
-            		Item itemToDrop = items.get(RandomNumbers.randomGenerator.nextInt(items.size()));
-            		this.world.addItem(itemToDrop);
-            	}
+            	RougelikeApp.PD.enemiesKilled++;
+            	EnemyDrops drops = new EnemyDrops(this);
+        		Item itemToDrop = drops.getItem();
+        		if(itemToDrop != null) {
+        			if(itemToDrop instanceof Health && this.world.getPlayer().isMaxed())
+        				itemToDrop = new Bomb(getWorld(), 'b', AsciiPanel.white, x, y, 4, 5, true);
+        				
+        			this.world.addItem(itemToDrop);
+        		}
+        			
             }
             return;
         }
 		ai.onUpdate();
+	}
+	
+	public boolean isMaxed() {
+		return maxHp() == hp();
 	}
 	
 	/**
@@ -301,6 +312,8 @@ public class Creature {
 		
 		if(world.placeBomb(wx, wy))
 			numBombs--;
+		
+		RougelikeApp.PD.actionsPerformed++;
 	}
 	
 	/**

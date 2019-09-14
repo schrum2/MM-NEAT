@@ -7,13 +7,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Stack;
 
 import org.codehaus.plexus.util.FileUtils;
 
+import edu.southwestern.tasks.gvgai.zelda.study.HumanSubjectStudy2019Zelda;
 import edu.southwestern.util.datastructures.Graph;
-import edu.southwestern.util.datastructures.GraphUtil;
-import edu.southwestern.util.datastructures.Graph.Node;
 import edu.southwestern.util.random.RandomNumbers;
 
 abstract public class GraphRuleManager<T extends Grammar> {
@@ -70,12 +68,10 @@ abstract public class GraphRuleManager<T extends Grammar> {
 				Graph<T>.Node current = queue.poll();
 				visited.add(current);
 				symbols = symbols || current.getData().isSymbol();
-				System.out.println("Current rule: " + current);
 				List<Graph<T>.Node> adj = new LinkedList<>(current.adjacencies());
 				boolean appliedRule = false;
 				for(Graph<T>.Node n : adj) {
-					if(!visited.contains(n)) {
-						System.out.println("Finding rule for: " + current);
+					if(!visited.contains(n) && !queue.contains(n)) {
 						appliedRule = applyRule(graph, current, n, i++);
 						queue.add(n);
 					}
@@ -90,28 +86,6 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		
 		if(times > maxTries)
 			throw new Exception("Graph chouldn't be completed");
-
-//		while(symbols) {
-//			symbols = false;
-//			List<Graph<T>.Node> nodes = graph.breadthFirstTraversal();
-//			for(Graph<T>.Node n : nodes)
-//				System.out.println(n.getData().toString());
-//			System.out.println();
-//			
-//			for(int i = 0; i < nodes.size() - 1; i++) {
-//				Graph<T>.Node node = nodes.get(i);
-//				if(!appliedRule) {
-//
-//					if(!node.getData().isSymbol()) continue;
-//					Graph<T>.Node nextNode = nodes.get(i + 1);
-//					applyRule(graph, node, nextNode);
-//				}
-//
-//				if(symbols == false)
-//					symbols = node.getData().isSymbol();
-//				
-//			}
-//		}
 		
 		return graph;
 	}
@@ -123,35 +97,35 @@ abstract public class GraphRuleManager<T extends Grammar> {
 			rules = findRule(node.getData(), nextNode.getData());
 		else
 			rules = findRule(node.getData());
-		System.out.println("Found rules " + rules.size());
-		System.out.println(node + "->" + nextNode);
 		if(rules.size() > 0) {
-			GraphRule<T> ruleToApply = rules.get((int) RandomNumbers.boundedRandom(0, rules.size()));
+			GraphRule<T> ruleToApply = rules.get(RandomNumbers.randomGenerator.nextInt(rules.size()));
 			if(ruleToApply != null) {
 //				if(nextNode != null) graph.removeEdge(node, nextNode);
 				ruleToApply.grammar().setOtherGraph(node, nextNode, graph);
-				System.out.println(node.id);
-				System.out.println(node.adjacencies());
-				if(nextNode != null) {
-					System.out.println(nextNode.id);
-					System.out.println(nextNode.adjacencies());
+				if(HumanSubjectStudy2019Zelda.DEBUG) {
+					System.out.println(node.id);
+					System.out.println(node.adjacencies());
+					if(nextNode != null) {
+						System.out.println(nextNode.id);
+						System.out.println(nextNode.adjacencies());
+					}
+					System.out.println("--------------------------------------");
+					System.out.println(ruleToApply.getSymbolStart().getLevelType());
+					System.out.println(ruleToApply.grammar().getDOTString());
+					if(ruleToApply.getSymbolEnd() != null)
+						System.out.println(ruleToApply.getSymbolEnd().getLevelType());
 				}
-				System.out.println("--------------------------------------");
-				System.out.println(ruleToApply.getSymbolStart().getLevelType());
-				System.out.println(ruleToApply.grammar().getDOTString());
-				if(ruleToApply.getSymbolEnd() != null)
-					System.out.println(ruleToApply.getSymbolEnd().getLevelType());
 				appliedRule = true;
 			}
 		}
-		if(appliedRule) {
-			try {
-				GraphUtil.saveGrammarGraph(graph, "data/VGLC/Zelda/GraphDOTs/graph_" + i + ".dot");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+//		if(appliedRule) {
+//			try {
+//				GraphUtil.saveGrammarGraph(graph, "data/VGLC/Zelda/GraphDOTs/graph_" + i + ".dot");
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 		return appliedRule;
 	}
 	

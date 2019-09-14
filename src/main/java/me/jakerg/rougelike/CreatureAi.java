@@ -1,6 +1,7 @@
 package me.jakerg.rougelike;
 
 import asciiPanel.AsciiPanel;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Creature AI controls the creature given, other types of creatures will extend from this 
@@ -36,8 +37,8 @@ public class CreatureAi {
      * Basic wander function to tell creature to wander in a random direction
      */
     public void wander(){
-        int mx = (int)(Math.random() * 3) - 1;
-        int my = (int)(Math.random() * 3) - 1;
+        int mx = RandomNumbers.randomGenerator.nextInt(3) - 1;
+        int my = RandomNumbers.randomGenerator.nextInt(3) - 1;
         Creature other = creature.creature(creature.x + mx, creature.y + my); // Get creature there
         
         // If theres a creature and it's of the same type don't move

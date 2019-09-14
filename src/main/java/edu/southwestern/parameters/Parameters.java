@@ -348,7 +348,7 @@ public class Parameters {
 		integerOptions.add("utNumOpponents", 1, "Number of opponents to evolve against in UT2004");
 		integerOptions.add("utNumNativeBots", 0, "dictates the number of native bots to be spawned into the server");
 		integerOptions.add("utTeamSize", 2 , "dictates the number of players on each team");
-		integerOptions.add("zeldaMaxHealth", 15, "Set the max health for the main character in the rouge-like.");
+		integerOptions.add("zeldaMaxHealth", 4, "Set the max health for the main character in the rouge-like.");
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
@@ -718,6 +718,7 @@ public class Parameters {
 		booleanOptions.add("simplifiedInteractiveInterface", true, "Determines how many buttons to show on the interactive evolution interfaces");
 		booleanOptions.add("utBotKilledAtEnd", true, "True if UT2004 bots are forcibly killed at time limit (instead of running until server dies)");
 		booleanOptions.add("zeldaGANUsesOriginalEncoding", true, "True if the number of tiles for the GAN is 4, otherwise 10.");
+		booleanOptions.add("zeldaHelpScreenEnabled", false, "Enable the help screen of Zelda rouge");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -791,6 +792,8 @@ public class Parameters {
 		doubleOptions.add("usageForNewMode", 10.0,"The smaller this is (down to 1) the more restricted mode mutation is");
 		doubleOptions.add("weakenPortion", 0.5, "How much the preference weakening operation weakens weights");
 		doubleOptions.add("weightBound", 50.0, "The bound for network weights used by SBX and polynomial mutation");
+		doubleOptions.add("healthDropRate", 20., "Health drop rate from enemies");
+		doubleOptions.add("bombDropRate", 40., "Bomb drop rate from enemies");
 		// String parameters
 		stringOptions.add("archetype", "", "Network that receives all mutations so as to keep other networks properly aligned");
 		stringOptions.add("base", "", "Base directory for all simulations within one experiment");
