@@ -10,6 +10,8 @@ import javax.imageio.ImageIO;
 import com.aqwis.models.SimpleTiledZentangleWFCModel;
 import com.aqwis.models.WFCModel;
 
+import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
+
 /**
  * The normal Main class for WFC is too general and depends on loading files from disk.
  * This simpler, more specialized version accomplishes the same launch specifically for
@@ -21,7 +23,7 @@ import com.aqwis.models.WFCModel;
 public class SimpleTiledZentangle {
 
 	public static String getSaveDirectory() {
-		return "zentangle";
+		return "zentangle/run" + PicbreederTask.runNumber;
 	}
 	
 	public static void simpleTiledZentangle(int index) throws Exception {
