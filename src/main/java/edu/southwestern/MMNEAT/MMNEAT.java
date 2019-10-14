@@ -109,6 +109,7 @@ import edu.southwestern.tasks.ut2004.UT2004Task;
 import edu.southwestern.tasks.ut2004.UT2004Util;
 import edu.southwestern.tasks.ut2004.testing.HumanSubjectStudy2018TeammateServer;
 import edu.southwestern.tasks.vizdoom.VizDoomTask;
+import edu.southwestern.tasks.zentangle.ZentangleTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
@@ -682,6 +683,10 @@ public class MMNEAT {
 				InteractiveEvolutionTask temp = (InteractiveEvolutionTask) task;
 				// Since these tasks use real-vector genotypes, to not set the NN params
 				if(!(temp instanceof MarioGANLevelBreederTask) && !(temp instanceof ZeldaGANLevelBreederTask)) setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
+			} else if (task instanceof ZentangleTask) {
+				System.out.println("Setup Zentangle Task");
+				ZentangleTask t = (ZentangleTask) task;
+				setNNInputParameters(t.numInputs(), t.numOutputs());
 			} else if(task instanceof PictureInnovationTask) {
 				System.out.println("set up Innovation Engine Task");
 				PictureInnovationTask temp = (PictureInnovationTask) task;
