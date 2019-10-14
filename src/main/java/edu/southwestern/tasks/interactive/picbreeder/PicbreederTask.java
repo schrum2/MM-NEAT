@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -25,7 +25,9 @@ import com.aqwis.models.SimpleTiledZentangleWFCModel;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.util.BooleanUtil;
 import edu.southwestern.util.graphics.GraphicsUtil;
@@ -125,18 +127,45 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 * deserves its own method.
 	 * 
 	 * @param filename
-	 * @param i
 	 * @param dim
+	 * @param phenotype
+	 * @param inputMultipliers
 	 */
-	public void saveSingle(String filename, int i, int dim) {
+
+	public static <T> void saveSingle(String filename, int dim, T phenotype, double[] inputMultipliers) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than
 		// is on the button
-		BufferedImage toSave1 = GraphicsUtil.imageFromCPPN((Network) scores.get(i).individual.getPhenotype(), dim, dim,
-				inputMultipliers);
+		BufferedImage toSave1 = GraphicsUtil.imageFromCPPN((Network) phenotype, dim, dim, inputMultipliers);
 		String filename1 = filename + "1.bmp";
 		GraphicsUtil.saveImage(toSave1, filename1);
 
 		System.out.println("image " + filename1 + " was saved successfully");
+	}
+
+	/**
+	 * Take scores and selected items and return a list of phenotypes. This is used
+	 * by the zentangle method below.
+	 * 
+	 * @param <T>
+	 * @param scores
+	 * @param chosen 
+	 * @param selectedItems 
+	 * @return list of phenotypes
+	 */
+	public static <T> ArrayList<T> getPhenotypes(ArrayList<Score<T>> scores, boolean[] chosen,
+			LinkedList<Integer> selectedItems) {
+		int numSelected = selectedItems.size();
+		ArrayList<T> phenotypes = new ArrayList<T>();
+		if (!BooleanUtil.any(chosen) || numSelected <= 1) {
+			return null;
+		} else {
+			for (int j = 0; j < scores.size(); j++) {
+				if (chosen[j]) {
+					phenotypes.add(scores.get(j).individual.getPhenotype());
+				}
+			}
+			return phenotypes;
+		}
 	}
 
 	/**
@@ -149,64 +178,76 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 * TODO: Need to clean this code up a bit
 	 */
 	public void zentangle() {
+		ArrayList<T> chosenTiles = getPhenotypes(scores, this.chosen, this.selectedItems);
+		zentangle(SimpleTiledZentangle.getSaveDirectory(), chosenTiles, inputMultipliers);
+	}
+
+	public static <T> void zentangle(String directory, ArrayList<T> chosenTiles, double[] inputMultipliers) {
 		// Make sure zentangle directory exists
-		File d = new File("zentangle");
+		File d = new File(directory);
 		if (!d.exists()) {
-			d.mkdir();
+			d.mkdirs(); // Make all recursive directories
 		}
-		
-		int numSelected = this.selectedItems.size();
-		if (!BooleanUtil.any(chosen) || numSelected <= 1) {
+
+		if (chosenTiles == null) {
 			System.out.println("Insufficient number of tiles chosen to zentangle.");
-			JOptionPane.showMessageDialog(null, "Insufficient number of tiles chosen to zentangle. Select at least two.", "Information", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null,
+					"Insufficient number of tiles chosen to zentangle. Select at least two.", "Information",
+					JOptionPane.INFORMATION_MESSAGE);
 		} else {
+			int numSelected = chosenTiles.size();
 			runNumber++;
-			String waveFunctionSaveLocation = SimpleTiledZentangle.getSaveDirectory() + "/";
+			String waveFunctionSaveLocation = directory + "/";
 			File dir = new File(waveFunctionSaveLocation);
 			if (!dir.exists()) { // Create save directory if it does not exist
 				dir.mkdir();
 			}
 
-			String[] tileNames = new String[scores.size()];
+			String[] tileNames = new String[chosenTiles.size()];
 			int numSaved = 0;
 			int numStored = 0;
 			int backgroundSize = 1440; // Hard coded image size: TODO: Use param
 			int tileSize = 48; // Hard coded: TODO: param
 
-			// Pick two random distinct indices to determine which images make up background patterns
-			int[] bgIndices = RandomNumbers.randomDistinct(2, numSelected);			
+			// Pick two random distinct indices to determine which images make up background
+			// patterns
+			int[] bgIndices = RandomNumbers.randomDistinct(2, numSelected);
 			int bgIndex1 = bgIndices[0];
 			int bgIndex2 = bgIndices[1];
 
 			for (int i = 0; i < numSelected; i++) {
 				if (i == bgIndex1) {
 					// Represents a template pattern
-					saveSingle(waveFunctionSaveLocation + "background", this.selectedItems.get(i), backgroundSize);
-					if (numSelected < 3) { // If there are only two images, one serves as a background pattern AND a tile pattern
+					saveSingle(waveFunctionSaveLocation + "background", backgroundSize, chosenTiles.get(i),
+							inputMultipliers);
+					if (numSelected < 3) { // If there are only two images, one serves as a background pattern AND a
+											// tile pattern
 						String fullName = "tile" + numSaved + "_";
 						tileNames[numStored++] = fullName + "1";
-						saveSingle(waveFunctionSaveLocation + fullName, this.selectedItems.get(i), tileSize);
+						saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers);
 						numSaved++;
 					}
 				} else if (i == bgIndex2) {
 					// A possible second template pattern
-					saveSingle(waveFunctionSaveLocation + "background2", this.selectedItems.get(i), backgroundSize);
+					saveSingle(waveFunctionSaveLocation + "background2", backgroundSize, chosenTiles.get(i),
+							inputMultipliers);
 					String fullName = "tile" + numSaved + "_";
 					tileNames[numStored++] = fullName + "1";
-					saveSingle(waveFunctionSaveLocation + fullName, this.selectedItems.get(i), tileSize);
+					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers);
 					numSaved++;
 				} else {
 					// All other images used to create background tiles with WFC
 					String fullName = "tile" + numSaved + "_";
 					tileNames[numStored++] = fullName + "1";
-					saveSingle(waveFunctionSaveLocation + fullName, this.selectedItems.get(i), tileSize);
+					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers);
 					numSaved++;
 				}
 			}
 
-			// At this point, tileNames only stores tile images that will be used with WFC, though the array has
-			// some empty slots at then end which are null.
-			
+			// At this point, tileNames only stores tile images that will be used with WFC,
+			// though the array has
+			// some empty slots at the end which are null.
+
 			// use wfc to create final zentangle image, save it as zentangle.bmp
 
 			int numPartitions = 2;
@@ -216,15 +257,14 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			for (int i = 0; i < numStored; i++) {
 				tilesToProcess.add(tileNames[i]);
 				// The partition is full, create a zentangle with WFC
-				if (this.selectedItems.size() <= 5 || (i + 1) % standardSize == 0) {
+				if (chosenTiles.size() <= 5 || (i + 1) % standardSize == 0) {
 					// Writes data.xml
 					SimpleTiledZentangleWFCModel
-							.writeAdjacencyRules(tilesToProcess.toArray(new String[tilesToProcess.size()]));
+							.writeAdjacencyRules(directory, tilesToProcess.toArray(new String[tilesToProcess.size()]));
 					// data.xml gets read in this next method
 					try {
-						SimpleTiledZentangle.simpleTiledZentangle(zentangleNumber++);
+						SimpleTiledZentangle.simpleTiledZentangle(directory, zentangleNumber++);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					tilesToProcess.clear(); // Empty out partition
@@ -287,13 +327,14 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 			System.out.println("image was saved successfully");
 
-			try {
-				Desktop.getDesktop().open(outputfile);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (CommonConstants.watch) {
+				try {
+					Desktop.getDesktop().open(outputfile);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-
 		}
 	}
 
@@ -377,12 +418,12 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	public static void main(String[] args) {
 		// args[0] is the random seed
 		int seed = 0;
-		if(args.length == 1) {
+		if (args.length == 1) {
 			seed = Integer.parseInt(args[0]);
 		}
 		try {
-			MMNEAT.main(new String[] { "runNumber:"+seed, "randomSeed:"+seed, "trials:1", "mu:16", "maxGens:500", "io:false",
-					"netio:false", "mating:true", "fs:false", "starkPicbreeder:true",
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:16", "maxGens:500",
+					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:true",
 					"task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"simplifiedInteractiveInterface:false", "recurrency:false", "saveAllChampions:true",

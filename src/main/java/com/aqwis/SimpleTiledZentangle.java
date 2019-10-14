@@ -26,7 +26,7 @@ public class SimpleTiledZentangle {
 		return "zentangle/run" + PicbreederTask.runNumber;
 	}
 	
-	public static void simpleTiledZentangle(int index) throws Exception {
+	public static void simpleTiledZentangle(String directory, int index) throws Exception {
 
 		Random random = new Random(index);
 		
@@ -45,6 +45,7 @@ public class SimpleTiledZentangle {
 //					);
 //		} else if (nodeName.equals("simpletiled")) {
 			WFCModel wfcModel = new SimpleTiledZentangleWFCModel(
+					directory,
 					"picbreeder", // name (the save directory?)
 					null, // subset
 					30,   // width
@@ -65,7 +66,7 @@ public class SimpleTiledZentangle {
 				System.out.println("DONE");
 
 				BufferedImage graphics = wfcModel.graphics();
-				File file = new File(getSaveDirectory()+"/picbreederZentangle"+index+".jpg");
+				File file = new File(directory+"/picbreederZentangle"+index+".jpg");
 				try {
 					ImageIO.write(graphics, "jpg", file);
 				} catch (IOException e) {

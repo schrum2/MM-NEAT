@@ -284,6 +284,30 @@ public class RandomNumbers {
 		int index = randomGenerator.nextInt(list.size());
 		return list.get(index);
 	}
+	
+	/**
+	 * Return new list of num randomly selected, distinct items from the list,
+	 * without changing the original order of elements in list.
+	 * 
+	 * @param list List of items to select
+	 * @param num Number of items to select
+	 * @return List of num random items from list
+	 */
+	public static <T> ArrayList<T> randomChoose(List<T> list, int num) {
+		if(num > list.size()) throw new IllegalArgumentException("Number of items "+num+" greater than size "+list.size());
+		ArrayList<T> result = new ArrayList<T>(num);
+		ArrayList<Integer> indices = new ArrayList<>(num);
+		for(int i = 0; i < num; i++) {
+			indices.add(i); // All indices in the list
+		}
+		// Shuffle the list of indices, not the original list
+		Collections.shuffle(indices, randomGenerator);
+		for(int i = 0; i < num; i++) {
+			// Randomly shuffled indices leads to a random selection from the list
+			result.add(list.get(indices.get(i)));
+		}
+		return result;
+	}
 
 	/**
 	 * Takes in an array and selects a random index. 
