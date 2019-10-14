@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import com.google.gson.Gson;
@@ -74,6 +76,10 @@ public class Dungeon {
 
 	public HashMap<String, Node> getLevels(){
 		return this.levels;
+	}
+	
+	public List<Node> getNodes(){
+		return new LinkedList<>(levels.values());
 	}
 
 	public Node newNode(String name, Level level) throws Exception {
