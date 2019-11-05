@@ -16,6 +16,7 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.random.RandomNumbers;
@@ -52,7 +53,7 @@ public class ZentangleTask<T extends Network> extends LonerTask<T> implements Ne
 		ArrayList<Score<T>> result = super.evaluateAll(population);
 		// Population finished being evaluated, so make a Zentangle
 		@SuppressWarnings("unchecked")
-		String directory = "zentangle/gen"+((SinglePopulationGenerationalEA<T>) MMNEAT.ea).currentGeneration();
+		String directory = FileUtilities.getSaveDirectory() + "/gen"+((SinglePopulationGenerationalEA<T>) MMNEAT.ea).currentGeneration();
 		if(new File(directory).exists()) { // Made by parents ... we are in child group
 			directory += "/children";
 		} else { // New directory? Then this is parent population

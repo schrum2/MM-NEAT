@@ -130,7 +130,7 @@ public class GraphicsUtil {
 		// From Sarah F. Anna K., and Alice Q.
 		if(Parameters.parameters.booleanParameter("starkPicbreeder")) {
 			// Restricts image to two brightness levels
-			float midB = (maxB-minB)/2;
+			float midB = (maxB+minB)/2; //  Midpoint
 			for (int x = 0; x < imageWidth; x++) {// scans across whole image
 				for (int y = 0; y < imageHeight; y++) {
 					// Rather the use the CPPN, grab colors from the image and change the brightness

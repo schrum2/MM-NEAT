@@ -11,6 +11,7 @@ import com.aqwis.models.SimpleTiledZentangleWFCModel;
 import com.aqwis.models.WFCModel;
 
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
+import edu.southwestern.util.file.FileUtilities;
 
 /**
  * The normal Main class for WFC is too general and depends on loading files from disk.
@@ -23,7 +24,7 @@ import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 public class SimpleTiledZentangle {
 
 	public static String getSaveDirectory() {
-		return "zentangle/run" + PicbreederTask.runNumber;
+		return FileUtilities.getSaveDirectory() + "/run" + PicbreederTask.runNumber;
 	}
 	
 	public static void simpleTiledZentangle(String directory, int index) throws Exception {
