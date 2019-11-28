@@ -7,6 +7,7 @@ import java.util.List;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 
 public class DungeonNovelty {
@@ -79,13 +80,25 @@ public class DungeonNovelty {
 	 * @return Real number between 0 and 1, 0 being non-novel and 1 being completely novel
 	 */
 	public static double averageRoomNovelty(List<Node> rooms) {
-		double novelty = 0;
-		for(int i = 0; i < rooms.size(); i++) { // For each node in the dungeon
-			novelty += roomNovelty(rooms, i); // Calculate novelty of room and each of its neighbors
-		}
-		return novelty / rooms.size(); // Get average novelty of each room
+		return StatisticsUtilities.average(roomNovelties(rooms));
 	}
 
+	/**
+	 * Get array of novelties of all rooms with respect to each other.
+	 * 
+	 * @param rooms List of rooms
+	 * @return double array where each index is the novelty of the same index in the rooms list.
+	 */
+	public static double[] roomNovelties(List<Node> rooms) {
+		double[] novelties = new double[rooms.size()];
+		for(int i = 0; i < rooms.size(); i++) { // For each room in the list
+			novelties[i] = roomNovelty(rooms, i); // Calculate novelty of room 
+			System.out.println(i+":" + novelties[i]);
+		}
+		return novelties;
+	}
+
+	
 	
 	public static void main(String[] args) throws Exception {
 		Parameters.initializeParameterCollections(args);
