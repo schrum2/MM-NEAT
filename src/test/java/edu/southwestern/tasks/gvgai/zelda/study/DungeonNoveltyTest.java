@@ -48,5 +48,18 @@ public class DungeonNoveltyTest {
 			assertEquals(result1, result2, 0.0);
 		}
 	}
+	
+	@Test
+	public void verifyRoomConsistency() {
+		// Make sure rooms are always in some order with the same novelty values
+		Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon("tloz2_1_flip");
+		double[] result1 = DungeonNovelty.roomNovelties(dungeon.getNodes());	
+		dungeon = LoadOriginalDungeon.loadOriginalDungeon("tloz2_1_flip");
+		double[] result2 = DungeonNovelty.roomNovelties(dungeon.getNodes());	
+
+		for(int i = 0; i < result1.length; i++) {
+			assertEquals(result1[i],result2[i],0);
+		}
+	}
 
 }

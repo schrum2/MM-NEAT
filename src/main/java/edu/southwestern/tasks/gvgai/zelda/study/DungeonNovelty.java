@@ -140,23 +140,6 @@ public class DungeonNovelty {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(args);
-		Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon("tloz2_1_flip");
-		double[] result1 = roomNovelties(dungeon.getNodes());	
-		dungeon = LoadOriginalDungeon.loadOriginalDungeon("tloz2_1_flip");
-		double[] result2 = roomNovelties(dungeon.getNodes());	
-
-		boolean allGood = true;
-		for(int i = 0; i < result1.length; i++) {
-			if(result1[i] != result2[i]) {
-				System.out.println("Room " + i + " differs! " + result1[i] + " ... " + result2[i]);
-				allGood = false;
-			}
-		}
-		if(allGood) System.out.println("ALL GOOD!");
-	}
-	
-	public static void real(String[] args) {
 		final String basePath = "G:\\My Drive\\Research\\SCOPE Artifacts\\Zelda Human Subject Data\\Experiments-2019-ZeldaGAN\\Subject-";
 		
 		// To suppress output from file loading
