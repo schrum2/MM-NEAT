@@ -1,13 +1,13 @@
 package edu.southwestern.tasks.gvgai.zelda.study;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
 import edu.southwestern.util.stats.StatisticsUtilities;
+import me.jakerg.rougelike.Tile;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 
 public class DungeonNovelty {
@@ -47,14 +47,15 @@ public class DungeonNovelty {
 	 * @param node2 Another "room" of a dungeon
 	 * @return Real number between 0 and 1, 0 being identical and 1 being completely different
 	 */
-	private static double roomDistance(Node node, Node node2) {
+	public static double roomDistance(Node node, Node node2) {
 		double distance = 0;
-		ArrayList<ArrayList<Integer>> room1 = node.level.intLevel;
-		ArrayList<ArrayList<Integer>> room2 = node2.level.intLevel;
+		// Convert to levels to tiles to remove enemies, etc
+		Tile[][] room1 = node.level.getTiles();
+		Tile[][] room2 = node2.level.getTiles();
 		
-		for(int y = START.y; y < ROWS; y++) {
-			for(int x = START.x; x < COLUMNS; x++) {
-				if(room1.get(y).get(x) != room2.get(y).get(x)) // If the blocks at the same position are not the same, increment novelty
+		for(int y = START.y; y < COLUMNS; y++) {
+			for(int x = START.x; x < ROWS; x++) {
+				if(!room1[y][x].equals(room2[y][x])) // If the blocks at the same position are not the same, increment novelty
 					distance++;
 			}
 		}
@@ -72,7 +73,7 @@ public class DungeonNovelty {
 		List<Node> rooms = dungeon.getNodes();
 		return averageRoomNovelty(rooms);
 	}
-
+	
 	/**
 	 * Average novelty across a list of rooms.
 	 * 

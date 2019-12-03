@@ -9,6 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -463,7 +466,30 @@ public abstract class ZeldaDungeon<T> {
 		}
 		
 		public Tile[][] getTiles(){
-			return TileUtil.listToTile(intLevel);
+			if(rougeTiles == null)
+				rougeTiles = TileUtil.listToTile(intLevel);
+			return rougeTiles;
+		}
+		
+		public void tileLayout() {
+			if(rougeTiles == null) return;
+			
+//			try {
+//				PrintStream ps = new PrintStream(System.out, true, Charset.forName("cp437"));
+//				
+//				for(int y = 0; y < rougeTiles.length; y++) {
+//					for(int x = 0; x < rougeTiles[0].length; x++) {
+//						ps.print(rougeTiles[y][x].getGlyph());
+//					}
+//					ps.print('\n');
+//				}
+//				
+//				ps.print('\n');
+//			} catch (UnsupportedEncodingException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+				
 		}
 		
 		public boolean hasTile(Tile t) {
