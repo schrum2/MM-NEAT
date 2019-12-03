@@ -95,11 +95,11 @@ public class LoadOriginalDungeon {
 	 * @return Dungeon instance
 	 * @throws Exception
 	 */
-	public static Dungeon loadOriginalDungeon(String name) throws Exception {
+	public static Dungeon loadOriginalDungeon(String name) {
 		return loadOriginalDungeon(name, false);
 	}
 	
-	public static Dungeon loadOriginalDungeon(String name, boolean randomKey) throws Exception {
+	public static Dungeon loadOriginalDungeon(String name, boolean randomKey) {
 		RANDOM_KEY = randomKey;
 		String graphFile = "data/VGLC/Zelda/Graph Processed/" + name + ".dot";
 		String levelPath = "data/VGLC/Zelda/Processed/" + name;
@@ -163,7 +163,7 @@ public class LoadOriginalDungeon {
 	 * @return 2D String array of where the levels are
 	 * @throws Exception 
 	 */
-	private static String[][] generateLevelThere(Dungeon dungeon, HashMap<Integer, String> numberToString) throws Exception {
+	private static String[][] generateLevelThere(Dungeon dungeon, HashMap<Integer, String> numberToString) {
 		String[][] levelThere = new String[numberToString.size() * 2][numberToString.size() * 2];
 		
 		String node = dungeon.getCurrentlevel().name; // Starting point of recursive funciton
@@ -171,7 +171,7 @@ public class LoadOriginalDungeon {
 		directional.entrySet().removeIf(e -> e.getValue().size() == 0);
 		
 		if(node == null)
-			throw new Exception("The Dungeon's current level wasn't set, make sure that it is set in the .dot file.");
+			throw new IllegalStateException("The Dungeon's current level wasn't set, make sure that it is set in the .dot file.");
 		
 		int y = (levelThere.length - 1) / 2;
 		int x = (levelThere.length - 1) / 2;
@@ -263,9 +263,17 @@ public class LoadOriginalDungeon {
 	 * @param numberToString map to keep track of the numbered rooms and node names
 	 * @throws FileNotFoundException
 	 */
-	private static void loadGraph(Dungeon dungeon, HashMap<Integer, String> numberToString, String graph) throws FileNotFoundException {
+	private static void loadGraph(Dungeon dungeon, HashMap<Integer, String> numberToString, String graph) {
 		File graphFile = new File(graph);
-		Scanner scanner = new Scanner(graphFile);
+		Scanner scanner;
+		try {
+			scanner = new Scanner(graphFile);
+		} catch (FileNotFoundException e) {
+			scanner = null;
+			System.out.println(graphFile.getName() + " does not exist");
+			e.printStackTrace();
+			System.exit(1);
+		}
 		scanner.nextLine(); // "digraph" crap
 		while(scanner.hasNextLine()) {
 			String line = scanner.nextLine();
@@ -584,7 +592,7 @@ public class LoadOriginalDungeon {
 	 * @param numberToString number to string name
 	 * @throws Exception 
 	 */
-	private static void loadLevels(Dungeon dungeon, HashMap<Integer, String> numberToString, String levelPath) throws Exception {
+	private static void loadLevels(Dungeon dungeon, HashMap<Integer, String> numberToString, String levelPath)  {
 		File levelFolder = new File(levelPath);
 		for(File entry : levelFolder.listFiles()) {
 			String fileName = entry.getName();
@@ -603,9 +611,17 @@ public class LoadOriginalDungeon {
 	 * @param name Node name
 	 * @throws Exception 
 	 */
-	private static void loadOneLevel(File file, Dungeon dungeon, String name) throws Exception {
+	private static void loadOneLevel(File file, Dungeon dungeon, String name) {
 		String[] levelString = new String[ZELDA_ROOM_ROWS];
-		Scanner scanner = new Scanner(file);
+		Scanner scanner;
+		try {
+			scanner = new Scanner(file);
+		} catch (FileNotFoundException e) {
+			scanner = null;
+			System.out.println(file.getName() + " does not exist.");
+			e.printStackTrace();
+			System.exit(1);
+		}
 		int i = 0;
 		while(scanner.hasNextLine())
 			levelString[i++] = scanner.nextLine();

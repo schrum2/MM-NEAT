@@ -80,10 +80,10 @@ public class Dungeon {
 		return new LinkedList<>(levels.values());
 	}
 
-	public Node newNode(String name, Level level) throws Exception {
+	public Node newNode(String name, Level level) {
 		Node node = new Node(name, level);
 		if (levels.get(name) != null)
-			throw new Exception("Unable to place new node : " + name);
+			throw new IllegalStateException("Unable to place new node : " + name);
 		levels.put(name, node);
 		return node;
 	}
