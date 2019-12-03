@@ -106,31 +106,92 @@ public class DungeonNovelty {
 	/**
 	 * Perform an analysis of the novelty of of various dungeons from the original game and
 	 * from the human subject study conducted in 2019. Note that this command assumes the 
-	 * availability of saved dungeon data from the study.
+	 * availability of saved dungeon data from the study, stored in the location specified
+	 * by the basePath variable.
 	 * 
 	 * @param args Empty array ... just use default parameters
 	 * @throws Exception
 	 */
 	public static void main(String[] args) {
+		final String basePath = "G:\\My Drive\\Research\\SCOPE Artifacts\\Zelda Human Subject Data\\Experiments-2019-ZeldaGAN\\Subject-";
+		
 		// To suppress output from file loading
 		PrintStream original = System.out;
 		System.setOut(new NullPrintStream());
 		
 		Parameters.initializeParameterCollections(args);
 		String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip"};
-		HashMap<String,Double> novelties = new HashMap<String,Double>();
+		HashMap<String,Double> originalNovelties = new HashMap<String,Double>();
 		for(String name: names) {
 			Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon(name);
-			novelties.put(name, averageDungeonNovelty(dungeon));			
+			originalNovelties.put(name, averageDungeonNovelty(dungeon));			
 		}
 		
 		// Resume outputting text
 		System.setOut(original);
 		
 		System.out.println("Novelty of Original Dungeons");
+		double originalDungeonAverage = 0;
 		for(String name: names) {
-			System.out.println(name + ":" + novelties.get(name));
+			double novelty = originalNovelties.get(name);
+			System.out.println(novelty);
+			originalDungeonAverage += novelty;
 		}
+		// Average novelty of dungeons from original game
+		originalDungeonAverage /= names.length; 
+
+		
+		// Mute output again
+		System.setOut(new NullPrintStream());
+
+		HashMap<String,Double> graphNovelties = new HashMap<String,Double>();
+		for(int i = 0; i < 30; i++) {
+			String path = basePath + i + "\\";
+			Dungeon originalDungeon = Dungeon.loadFromJson(path + "OriginalLoader_dungeon.json");
+			graphNovelties.put("graphSubject"+i, averageDungeonNovelty(originalDungeon));
+		}
+		
+		// Resume outputting text
+		System.setOut(original);
+
+		System.out.println("Novelty of Graph Grammar Dungeons");
+		double graphGrammarAverage = 0;
+		for(int i = 0; i < 30; i++) {
+			double novelty = graphNovelties.get("graphSubject"+i);
+			System.out.println(novelty);
+			graphGrammarAverage += novelty;
+		}
+		// Average novelty of Graph Grammar dungeons from study
+		graphGrammarAverage /= 30;
+		
+		// Mute output again
+		System.setOut(new NullPrintStream());
+
+		HashMap<String,Double> graphGANNovelties = new HashMap<String,Double>();
+		for(int i = 0; i < 30; i++) {
+			String path = basePath + i + "\\";
+			Dungeon ganDungeon = Dungeon.loadFromJson(path + "GANLoader_dungeon.json");
+			//Dungeon originalDungeon = Dungeon.loadFromJson(path + "OriginalLoader_dungeon.json");
+			graphGANNovelties.put("graphGANSubject"+i, averageDungeonNovelty(ganDungeon));
+		}
+		
+		// Resume outputting text
+		System.setOut(original);
+
+		System.out.println("Novelty of Graph GAN Dungeons");
+		double graphGANAverage = 0;
+		for(int i = 0; i < 30; i++) {
+			double novelty = graphGANNovelties.get("graphGANSubject"+i);
+			System.out.println(novelty);
+			graphGANAverage += novelty;
+		}
+		// Average novelty of Graph GAN dungeons from study
+		graphGANAverage /= 30;
+	
+		System.out.println();
+		System.out.println("Original Average: "+originalDungeonAverage);
+		System.out.println("Grammar  Average: "+graphGrammarAverage);
+		System.out.println("GraphGAN Average: "+graphGANAverage);
 	}
 	
 }
