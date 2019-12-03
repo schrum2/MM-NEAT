@@ -1,12 +1,14 @@
 package edu.southwestern.tasks.gvgai.zelda.study;
 
 import java.awt.Point;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
+import edu.southwestern.util.file.NullPrintStream;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import me.jakerg.rougelike.Tile;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
@@ -110,6 +112,10 @@ public class DungeonNovelty {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) {
+		// To suppress output from file loading
+		PrintStream original = System.out;
+		System.setOut(new NullPrintStream());
+		
 		Parameters.initializeParameterCollections(args);
 		String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip"};
 		HashMap<String,Double> novelties = new HashMap<String,Double>();
@@ -118,6 +124,10 @@ public class DungeonNovelty {
 			novelties.put(name, averageDungeonNovelty(dungeon));			
 		}
 		
+		// Resume outputting text
+		System.setOut(original);
+		
+		System.out.println("Novelty of Original Dungeons");
 		for(String name: names) {
 			System.out.println(name + ":" + novelties.get(name));
 		}
