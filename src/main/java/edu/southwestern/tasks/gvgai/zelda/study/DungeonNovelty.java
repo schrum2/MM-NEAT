@@ -103,12 +103,16 @@ public class DungeonNovelty {
 			@Override
 			public int compare(Node o1, Node o2) {
 				String level1 = "";
-				for(String row: o1.level.getStringLevel(new Point(5, 8))) {
-					level1 += row;
+				for(Tile[] row: o1.level.rougeTiles) {
+					for(Tile t: row) {
+						level1 += t.name();
+					}
 				}
 				String level2 = "";
-				for(String row: o2.level.getStringLevel(new Point(5, 8))) {
-					level2 += row;
+				for(Tile[] row: o2.level.rougeTiles) {
+					for(Tile t: row) {
+						level2 += t.name();
+					}
 				}
 				return level1.compareTo(level2);
 			}
