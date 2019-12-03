@@ -32,10 +32,21 @@ public class DungeonNoveltyTest {
 		for(int i = 0; i < listOfRooms.size(); i++)
 			assertEquals(0.0, DungeonNovelty.roomDistance(listOfRooms.get(i), listOfRooms.get(i)), EPSILON);
 	}
-
+	
+	/**
+	 * The novelty of any given dungeon should be the same every time.
+	 */
 	@Test
-	public void testDungeonNovelty() {
-		fail("Not yet implemented");
+	public void testVerifyConsistency() {
+		String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip"};
+		for(String name: names) {
+			Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon(name);
+			double result1 = DungeonNovelty.averageDungeonNovelty(dungeon);		
+			// Reloading the dungeon somehow subtly changes the representation leading to a very slightly different novelty calculation!
+			dungeon = LoadOriginalDungeon.loadOriginalDungeon(name);
+			double result2 = DungeonNovelty.averageDungeonNovelty(dungeon);		
+			assertEquals(result1, result2, 0.0);
+		}
 	}
 
 }

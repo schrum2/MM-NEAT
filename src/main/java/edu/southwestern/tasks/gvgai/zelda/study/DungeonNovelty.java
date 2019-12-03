@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.gvgai.zelda.study;
 
 import java.awt.Point;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
@@ -94,18 +95,32 @@ public class DungeonNovelty {
 		double[] novelties = new double[rooms.size()];
 		for(int i = 0; i < rooms.size(); i++) { // For each room in the list
 			novelties[i] = roomNovelty(rooms, i); // Calculate novelty of room 
-			System.out.println(i+":" + novelties[i]);
+			//System.out.println(i+":" + novelties[i]);
 		}
 		return novelties;
 	}
 
 	
-	
-	public static void main(String[] args) throws Exception {
+	/**
+	 * Perform an analysis of the novelty of of various dungeons from the original game and
+	 * from the human subject study conducted in 2019. Note that this command assumes the 
+	 * availability of saved dungeon data from the study.
+	 * 
+	 * @param args Empty array ... just use default parameters
+	 * @throws Exception
+	 */
+	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(args);
-		Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon("tloz4_1_flip");
+		String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip"};
+		HashMap<String,Double> novelties = new HashMap<String,Double>();
+		for(String name: names) {
+			Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon(name);
+			novelties.put(name, averageDungeonNovelty(dungeon));			
+		}
 		
-		System.out.println(averageDungeonNovelty(dungeon));
+		for(String name: names) {
+			System.out.println(name + ":" + novelties.get(name));
+		}
 	}
 	
 }
