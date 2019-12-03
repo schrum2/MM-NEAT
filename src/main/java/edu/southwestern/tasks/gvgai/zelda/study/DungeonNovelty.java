@@ -2,12 +2,15 @@ package edu.southwestern.tasks.gvgai.zelda.study;
 
 import java.awt.Point;
 import java.io.PrintStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.file.NullPrintStream;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import me.jakerg.rougelike.Tile;
@@ -94,6 +97,26 @@ public class DungeonNovelty {
 	 * @return double array where each index is the novelty of the same index in the rooms list.
 	 */
 	public static double[] roomNovelties(List<Node> rooms) {
+		// Because the room list is derived from a HashMap, the order of the rooms
+		// can be different each time the rooms are loaded. Put into a consistent order.
+		Collections.sort(rooms, new Comparator<Node>() {
+			@Override
+			public int compare(Node o1, Node o2) {
+				String level1 = "";
+				for(String row: o1.level.getStringLevel(new Point(5, 8))) {
+					level1 += row;
+				}
+				String level2 = "";
+				for(String row: o2.level.getStringLevel(new Point(5, 8))) {
+					level2 += row;
+				}
+				return level1.compareTo(level2);
+			}
+		});
+		
+//		System.out.println("FIRST ROOM: " + rooms.get(0));
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		
 		double[] novelties = new double[rooms.size()];
 		for(int i = 0; i < rooms.size(); i++) { // For each room in the list
 			novelties[i] = roomNovelty(rooms, i); // Calculate novelty of room 
@@ -113,6 +136,20 @@ public class DungeonNovelty {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) {
+		Parameters.initializeParameterCollections(args);
+		Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon("tloz2_1_flip");
+		double[] result1 = roomNovelties(dungeon.getNodes());	
+		dungeon = LoadOriginalDungeon.loadOriginalDungeon("tloz2_1_flip");
+		double[] result2 = roomNovelties(dungeon.getNodes());	
+
+		for(int i = 0; i < result1.length; i++) {
+			if(result1[i] != result2[i]) {
+				System.out.println("Room " + i + " differs! " + result1[i] + " ... " + result2[i]);
+			}
+		}
+	}
+	
+	public static void real(String[] args) {
 		final String basePath = "G:\\My Drive\\Research\\SCOPE Artifacts\\Zelda Human Subject Data\\Experiments-2019-ZeldaGAN\\Subject-";
 		
 		// To suppress output from file loading
