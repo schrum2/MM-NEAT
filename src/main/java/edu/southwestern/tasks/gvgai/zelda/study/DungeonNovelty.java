@@ -103,13 +103,13 @@ public class DungeonNovelty {
 			@Override
 			public int compare(Node o1, Node o2) {
 				String level1 = "";
-				for(Tile[] row: o1.level.rougeTiles) {
+				for(Tile[] row: o1.level.getTiles()) {
 					for(Tile t: row) {
 						level1 += t.name();
 					}
 				}
 				String level2 = "";
-				for(Tile[] row: o2.level.rougeTiles) {
+				for(Tile[] row: o2.level.getTiles()) {
 					for(Tile t: row) {
 						level2 += t.name();
 					}
@@ -146,11 +146,14 @@ public class DungeonNovelty {
 		dungeon = LoadOriginalDungeon.loadOriginalDungeon("tloz2_1_flip");
 		double[] result2 = roomNovelties(dungeon.getNodes());	
 
+		boolean allGood = true;
 		for(int i = 0; i < result1.length; i++) {
 			if(result1[i] != result2[i]) {
 				System.out.println("Room " + i + " differs! " + result1[i] + " ... " + result2[i]);
+				allGood = false;
 			}
 		}
+		if(allGood) System.out.println("ALL GOOD!");
 	}
 	
 	public static void real(String[] args) {
