@@ -1,6 +1,8 @@
 package edu.southwestern.tasks.gvgai.zelda.study;
 
 import java.awt.Point;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Comparator;
@@ -137,9 +139,10 @@ public class DungeonNovelty {
 	 * by the basePath variable.
 	 * 
 	 * @param args Empty array ... just use default parameters
+	 * @throws FileNotFoundException 
 	 * @throws Exception
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		final String basePath = "G:\\My Drive\\Research\\SCOPE Artifacts\\Zelda Human Subject Data\\Experiments-2019-ZeldaGAN\\Subject-";
 		
 		// To suppress output from file loading
@@ -158,12 +161,15 @@ public class DungeonNovelty {
 		System.setOut(original);
 		
 		System.out.println("Novelty of Original Dungeons");
+		PrintStream originalStream = new PrintStream(new File("Zelda-Original.csv"));
 		double originalDungeonAverage = 0;
 		for(String name: names) {
 			double novelty = originalNovelties.get(name);
 			System.out.println(novelty);
+			originalStream.println(novelty);
 			originalDungeonAverage += novelty;
 		}
+		originalStream.close();
 		// Average novelty of dungeons from original game
 		originalDungeonAverage /= names.length; 
 
@@ -182,12 +188,15 @@ public class DungeonNovelty {
 		System.setOut(original);
 
 		System.out.println("Novelty of Graph Grammar Dungeons");
+		PrintStream graphGrammarStream = new PrintStream(new File("Zelda-GraphGrammar.csv"));
 		double graphGrammarAverage = 0;
 		for(int i = 0; i < 30; i++) {
 			double novelty = graphNovelties.get("graphSubject"+i);
 			System.out.println(novelty);
+			graphGrammarStream.println(novelty);
 			graphGrammarAverage += novelty;
 		}
+		graphGrammarStream.close();
 		// Average novelty of Graph Grammar dungeons from study
 		graphGrammarAverage /= 30;
 		
@@ -206,12 +215,15 @@ public class DungeonNovelty {
 		System.setOut(original);
 
 		System.out.println("Novelty of Graph GAN Dungeons");
+		PrintStream graphGANStream = new PrintStream(new File("Zelda-GraphGAN.csv"));
 		double graphGANAverage = 0;
 		for(int i = 0; i < 30; i++) {
 			double novelty = graphGANNovelties.get("graphGANSubject"+i);
 			System.out.println(novelty);
+			graphGANStream.println(novelty);
 			graphGANAverage += novelty;
 		}
+		graphGANStream.close();
 		// Average novelty of Graph GAN dungeons from study
 		graphGANAverage /= 30;
 	
