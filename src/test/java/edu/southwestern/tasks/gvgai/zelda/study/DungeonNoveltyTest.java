@@ -1,8 +1,7 @@
 package edu.southwestern.tasks.gvgai.zelda.study;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.awt.Point;
 import java.util.Arrays;
 import java.util.List;
 
@@ -66,15 +65,18 @@ public class DungeonNoveltyTest {
 	
 	@Test
 	public void testVerifyConsistencyAcrossRepresentations() {
-		String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip"};
+		// Remove level 4-1 because we artificially added an extra room
+		String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", /**"tloz4_1_flip",**/ "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip"};
 		for(String name: names) {
+			System.out.println(name);
 			Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon(name);
 			double result1 = DungeonNovelty.averageDungeonNovelty(dungeon);		
 			
 			String file = name+".txt";
 			List<List<List<Integer>>> roomList = ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(ZeldaVGLCUtil.ZELDA_LEVEL_PATH+file);
 			double result2 = DungeonNovelty.averageRoomNovelty(roomList);		
-			assertEquals(result1, result2, 0.0);
+			// Small epsilon allowed because different addition orders cause floating point discrepancies
+			assertEquals(result1, result2, 0.00000001);
 		}
 	}
 	
@@ -90,22 +92,17 @@ public class DungeonNoveltyTest {
 		List<List<List<Integer>>> roomList = ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(ZeldaVGLCUtil.ZELDA_LEVEL_PATH+file);
 		double[] result2 = DungeonNovelty.roomNovelties(roomList);		
 
-//		file = "tloz1_1_flip_simple.txt";
-//		List<List<List<Integer>>> roomListSimple = ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(ZeldaVGLCUtil.ZELDA_LEVEL_PATH+file);
-//		double[] result3 = DungeonNovelty.roomNovelties(roomListSimple);		
-
 		// These two different loading methods put the rooms in different orders, so manual reorganization is needed
 		Arrays.sort(result1);
 		Arrays.sort(result2);
-//		Arrays.sort(result3);
 		
 		assertEquals(result1.length, result2.length);
+//		for(int i = 0; i < result1.length; i++) {
+//			System.out.println(result1[i] + "\t" + result2[i]); 
+//		}
 		for(int i = 0; i < result1.length; i++) {
-			System.out.println(result1[i] + "\t" + result2[i]); // + "\t" + result3[i]);
-		}
-		for(int i = 0; i < result1.length; i++) {
-			//assertEquals(result3[i],result2[i],0);
-			assertEquals(result1[i],result2[i],0);
+			// Small epsilon allowed because different addition orders cause floating point discrepancies
+			assertEquals(result1[i],result2[i],0.00000001);
 		}
 	}
 

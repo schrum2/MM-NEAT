@@ -11,12 +11,11 @@ import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.file.NullPrintStream;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import me.jakerg.rougelike.Tile;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 
 public class DungeonNovelty {
 
@@ -68,7 +67,9 @@ public class DungeonNovelty {
 		
 		for(int y = START.y; y < START.y+COLUMNS; y++) {
 			for(int x = START.x; x < START.x+ROWS; x++) {
-				if(!room1[y][x].equals(room2[y][x])) // If the blocks at the same position are not the same, increment novelty
+				Tile compare1 = room1[y][x].equals(Tile.TRIFORCE) ? Tile.FLOOR : room1[y][x];
+				Tile compare2 = room2[y][x].equals(Tile.TRIFORCE) ? Tile.FLOOR : room2[y][x];
+				if(!compare1.equals(compare2)) // If the blocks at the same position are not the same, increment novelty
 					distance++;
 			}
 		}
@@ -87,11 +88,13 @@ public class DungeonNovelty {
 //		}
 		
 		double distance = 0;
-		for(int y = START.y; y < START.y+COLUMNS; y++) {
-			for(int x = START.x; x < START.x+ROWS; x++) {
+		for(int x = START.x; x < START.x+ROWS; x++) {
+			for(int y = START.y; y < START.y+COLUMNS; y++) {
+//				System.out.print(room1.get(x).get(y).equals(room2.get(x).get(y)) ? "_" : "X");
 				if(!room1.get(x).get(y).equals(room2.get(x).get(y))) // If the blocks at the same position are not the same, increment novelty
 					distance++;
 			}
+			System.out.println();
 		}
 		
 //		System.out.println("dist = "+distance);
