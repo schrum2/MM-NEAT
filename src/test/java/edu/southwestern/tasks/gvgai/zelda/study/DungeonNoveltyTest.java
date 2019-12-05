@@ -81,22 +81,30 @@ public class DungeonNoveltyTest {
 	@Test
 	public void verifyRoomConsistencyAcrossRepresentations() {
 		// Make sure room calculations are the same no matter how they are loaded
-		Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon("tloz2_1_flip");
-		double[] result1 = DungeonNovelty.roomNovelties(dungeon.getNodes());	
+		Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon("tloz1_1_flip");
 		
-		String file = "tloz2_1_flip.txt";
+		List<Node> nodes = dungeon.getNodes();
+		double[] result1 = DungeonNovelty.roomNovelties(nodes);	
+		
+		String file = "tloz1_1_flip.txt";
 		List<List<List<Integer>>> roomList = ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(ZeldaVGLCUtil.ZELDA_LEVEL_PATH+file);
 		double[] result2 = DungeonNovelty.roomNovelties(roomList);		
+
+//		file = "tloz1_1_flip_simple.txt";
+//		List<List<List<Integer>>> roomListSimple = ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(ZeldaVGLCUtil.ZELDA_LEVEL_PATH+file);
+//		double[] result3 = DungeonNovelty.roomNovelties(roomListSimple);		
 
 		// These two different loading methods put the rooms in different orders, so manual reorganization is needed
 		Arrays.sort(result1);
 		Arrays.sort(result2);
+//		Arrays.sort(result3);
 		
 		assertEquals(result1.length, result2.length);
 		for(int i = 0; i < result1.length; i++) {
-			System.out.println(result1[i] + "\t" + result2[i]);
+			System.out.println(result1[i] + "\t" + result2[i]); // + "\t" + result3[i]);
 		}
 		for(int i = 0; i < result1.length; i++) {
+			//assertEquals(result3[i],result2[i],0);
 			assertEquals(result1[i],result2[i],0);
 		}
 	}

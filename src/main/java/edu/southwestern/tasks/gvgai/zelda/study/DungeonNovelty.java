@@ -66,8 +66,8 @@ public class DungeonNovelty {
 		Tile[][] room1 = node.level.getTiles();
 		Tile[][] room2 = node2.level.getTiles();
 		
-		for(int y = START.y; y < COLUMNS; y++) {
-			for(int x = START.x; x < ROWS; x++) {
+		for(int y = START.y; y < START.y+COLUMNS; y++) {
+			for(int x = START.x; x < START.x+ROWS; x++) {
 				if(!room1[y][x].equals(room2[y][x])) // If the blocks at the same position are not the same, increment novelty
 					distance++;
 			}
@@ -82,13 +82,21 @@ public class DungeonNovelty {
 	 * @return Real number between 0 and 1, 0 being identical and 1 being completely different
 	 */
 	public static double roomDistance(List<List<Integer>> room1, List<List<Integer>> room2) {
+//		for(int x = START.x; x < START.x+ROWS; x++) {
+//			System.out.println(room1.get(x) + "\t" + room2.get(x));
+//		}
+		
 		double distance = 0;
-		for(int y = START.y; y < COLUMNS; y++) {
-			for(int x = START.x; x < ROWS; x++) {
+		for(int y = START.y; y < START.y+COLUMNS; y++) {
+			for(int x = START.x; x < START.x+ROWS; x++) {
 				if(!room1.get(x).get(y).equals(room2.get(x).get(y))) // If the blocks at the same position are not the same, increment novelty
 					distance++;
 			}
 		}
+		
+//		System.out.println("dist = "+distance);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		
 		return distance / (ROWS * COLUMNS);
 	}
 	
