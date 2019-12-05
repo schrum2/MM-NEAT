@@ -30,22 +30,27 @@ public class DungeonNovelty {
 	 * Find the novelty of a room (given by focus) with respect to all the other rooms of the list.
 	 * This is essentially the average distance of the room from all other rooms.
 	 * 
-	 * @param rooms List of rooms to compare with
+	 * @param rooms List of rooms to compare with. Could be List of Lists or Dungeon.Nodes
 	 * @param focus Index in rooms representing the room to compare the other rooms with
 	 * @return Real number between 0 and 1, 0 being non-novel and 1 being completely novel
 	 */
-	public static double roomNovelty(List<Dungeon.Node> rooms, int focus) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static double roomNovelty(List rooms, int focus) {
 		double novelty = 0;
 		
 		for(int i = 0; i < rooms.size(); i++) { // For each other room
 			if(i != focus) { // don't compare with self
-				novelty += roomDistance(rooms.get(focus), rooms.get(i)); 
+				if(rooms.get(focus) instanceof Dungeon.Node) {
+					novelty += roomDistance((Dungeon.Node) rooms.get(focus), (Dungeon.Node) rooms.get(i));
+				} else {
+					novelty += roomDistance((List<List<Integer>>) rooms.get(focus), (List<List<Integer>>) rooms.get(i));
+				}
 			}
 		}
 		
 		return novelty / rooms.size(); // Novelty is average distance from other rooms
 	}
-
+	
 	/**
 	 * Measure the distance between two rooms, which is like a Hamming distance
 	 * according to different tiles at each coordinate position. The distance is
@@ -71,6 +76,23 @@ public class DungeonNovelty {
 	}
 	
 	/**
+	 * Version of the same method that takes an Integer List representation of the levels
+	 * @param room1 List of Lists representing a level
+	 * @param room2 List of Lists representing a level
+	 * @return Real number between 0 and 1, 0 being identical and 1 being completely different
+	 */
+	public static double roomDistance(List<List<Integer>> room1, List<List<Integer>> room2) {
+		double distance = 0;
+		for(int y = START.y; y < COLUMNS; y++) {
+			for(int x = START.x; x < ROWS; x++) {
+				if(!room1.get(x).get(y).equals(room2.get(x).get(y))) // If the blocks at the same position are not the same, increment novelty
+					distance++;
+			}
+		}
+		return distance / (ROWS * COLUMNS);
+	}
+	
+	/**
 	 * Get the novelty of a dungeon by computing average novelty of all rooms in the dungeon
 	 * with respect to each other.
 	 * 
@@ -88,7 +110,8 @@ public class DungeonNovelty {
 	 * @param rooms List of rooms
 	 * @return Real number between 0 and 1, 0 being non-novel and 1 being completely novel
 	 */
-	public static double averageRoomNovelty(List<Node> rooms) {
+	@SuppressWarnings("rawtypes")
+	public static double averageRoomNovelty(List rooms) {
 		return StatisticsUtilities.average(roomNovelties(rooms));
 	}
 
@@ -98,27 +121,32 @@ public class DungeonNovelty {
 	 * @param rooms List of rooms
 	 * @return double array where each index is the novelty of the same index in the rooms list.
 	 */
-	public static double[] roomNovelties(List<Node> rooms) {
-		// Because the room list is derived from a HashMap, the order of the rooms
-		// can be different each time the rooms are loaded. Put into a consistent order.
-		Collections.sort(rooms, new Comparator<Node>() {
-			@Override
-			public int compare(Node o1, Node o2) {
-				String level1 = "";
-				for(Tile[] row: o1.level.getTiles()) {
-					for(Tile t: row) {
-						level1 += t.name();
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static double[] roomNovelties(List rooms) {
+		// It is assumed that dungeons loaded as lists if lists of integers will 
+		// be in consistent order, so extra sorting is not needed.
+		if(rooms.get(0) instanceof Node) {
+			// Because the room list is derived from a HashMap, the order of the rooms
+			// can be different each time the rooms are loaded. Put into a consistent order.
+			Collections.sort(rooms, new Comparator<Node>() {
+				@Override
+				public int compare(Node o1, Node o2) {
+					String level1 = "";
+					for(Tile[] row: o1.level.getTiles()) {
+						for(Tile t: row) {
+							level1 += t.name();
+						}
 					}
-				}
-				String level2 = "";
-				for(Tile[] row: o2.level.getTiles()) {
-					for(Tile t: row) {
-						level2 += t.name();
+					String level2 = "";
+					for(Tile[] row: o2.level.getTiles()) {
+						for(Tile t: row) {
+							level2 += t.name();
+						}
 					}
+					return level1.compareTo(level2);
 				}
-				return level1.compareTo(level2);
-			}
-		});
+			});
+		}
 		
 //		System.out.println("FIRST ROOM: " + rooms.get(0));
 //		MiscUtil.waitForReadStringAndEnterKeyPress();

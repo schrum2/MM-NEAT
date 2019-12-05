@@ -2,12 +2,15 @@ package edu.southwestern.tasks.gvgai.zelda.study;
 
 import static org.junit.Assert.*;
 
+import java.awt.Point;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
@@ -42,7 +45,6 @@ public class DungeonNoveltyTest {
 		for(String name: names) {
 			Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon(name);
 			double result1 = DungeonNovelty.averageDungeonNovelty(dungeon);		
-			// Reloading the dungeon somehow subtly changes the representation leading to a very slightly different novelty calculation!
 			dungeon = LoadOriginalDungeon.loadOriginalDungeon(name);
 			double result2 = DungeonNovelty.averageDungeonNovelty(dungeon);		
 			assertEquals(result1, result2, 0.0);
@@ -57,6 +59,43 @@ public class DungeonNoveltyTest {
 		dungeon = LoadOriginalDungeon.loadOriginalDungeon("tloz2_1_flip");
 		double[] result2 = DungeonNovelty.roomNovelties(dungeon.getNodes());	
 
+		for(int i = 0; i < result1.length; i++) {
+			assertEquals(result1[i],result2[i],0);
+		}
+	}
+	
+	@Test
+	public void testVerifyConsistencyAcrossRepresentations() {
+		String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip"};
+		for(String name: names) {
+			Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon(name);
+			double result1 = DungeonNovelty.averageDungeonNovelty(dungeon);		
+			
+			String file = name+".txt";
+			List<List<List<Integer>>> roomList = ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(ZeldaVGLCUtil.ZELDA_LEVEL_PATH+file);
+			double result2 = DungeonNovelty.averageRoomNovelty(roomList);		
+			assertEquals(result1, result2, 0.0);
+		}
+	}
+	
+	@Test
+	public void verifyRoomConsistencyAcrossRepresentations() {
+		// Make sure room calculations are the same no matter how they are loaded
+		Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon("tloz2_1_flip");
+		double[] result1 = DungeonNovelty.roomNovelties(dungeon.getNodes());	
+		
+		String file = "tloz2_1_flip.txt";
+		List<List<List<Integer>>> roomList = ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(ZeldaVGLCUtil.ZELDA_LEVEL_PATH+file);
+		double[] result2 = DungeonNovelty.roomNovelties(roomList);		
+
+		// These two different loading methods put the rooms in different orders, so manual reorganization is needed
+		Arrays.sort(result1);
+		Arrays.sort(result2);
+		
+		assertEquals(result1.length, result2.length);
+		for(int i = 0; i < result1.length; i++) {
+			System.out.println(result1[i] + "\t" + result2[i]);
+		}
 		for(int i = 0; i < result1.length; i++) {
 			assertEquals(result1[i],result2[i],0);
 		}
