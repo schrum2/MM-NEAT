@@ -15,7 +15,7 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
 
 public class DungeonNoveltyTest {
-	
+
 	static Dungeon originalFour;
 	static List<Node> listOfRooms;
 	static final int NEIGHBORS = 10;
@@ -34,7 +34,7 @@ public class DungeonNoveltyTest {
 		for(int i = 0; i < listOfRooms.size(); i++)
 			assertEquals(0.0, DungeonNovelty.roomDistance(listOfRooms.get(i), listOfRooms.get(i)), EPSILON);
 	}
-	
+
 	/**
 	 * The novelty of any given dungeon should be the same every time.
 	 */
@@ -49,7 +49,7 @@ public class DungeonNoveltyTest {
 			assertEquals(result1, result2, 0.0);
 		}
 	}
-	
+
 	@Test
 	public void verifyRoomConsistency() {
 		// Make sure rooms are always in some order with the same novelty values
@@ -62,47 +62,54 @@ public class DungeonNoveltyTest {
 			assertEquals(result1[i],result2[i],0);
 		}
 	}
-	
+
 	@Test
 	public void testVerifyConsistencyAcrossRepresentations() {
 		// Remove level 4-1 because we artificially added an extra room
 		String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", /**"tloz4_1_flip",**/ "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip"};
 		for(String name: names) {
-			System.out.println(name);
 			Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon(name);
 			double result1 = DungeonNovelty.averageDungeonNovelty(dungeon);		
-			
+
 			String file = name+".txt";
 			List<List<List<Integer>>> roomList = ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(ZeldaVGLCUtil.ZELDA_LEVEL_PATH+file);
 			double result2 = DungeonNovelty.averageRoomNovelty(roomList);		
 			// Small epsilon allowed because different addition orders cause floating point discrepancies
+			System.out.println(name);
 			assertEquals(result1, result2, 0.00000001);
 		}
 	}
-	
+
 	@Test
 	public void verifyRoomConsistencyAcrossRepresentations() {
-		// Make sure room calculations are the same no matter how they are loaded
-		Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon("tloz1_1_flip");
-		
-		List<Node> nodes = dungeon.getNodes();
-		double[] result1 = DungeonNovelty.roomNovelties(nodes);	
-		
-		String file = "tloz1_1_flip.txt";
-		List<List<List<Integer>>> roomList = ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(ZeldaVGLCUtil.ZELDA_LEVEL_PATH+file);
-		double[] result2 = DungeonNovelty.roomNovelties(roomList);		
 
-		// These two different loading methods put the rooms in different orders, so manual reorganization is needed
-		Arrays.sort(result1);
-		Arrays.sort(result2);
-		
-		assertEquals(result1.length, result2.length);
-//		for(int i = 0; i < result1.length; i++) {
-//			System.out.println(result1[i] + "\t" + result2[i]); 
-//		}
-		for(int i = 0; i < result1.length; i++) {
-			// Small epsilon allowed because different addition orders cause floating point discrepancies
-			assertEquals(result1[i],result2[i],0.00000001);
+		// Remove level 4-1 because we artificially added an extra room
+		String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", /**"tloz4_1_flip",**/ "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip"};
+		for(String name: names) {
+
+			// Make sure room calculations are the same no matter how they are loaded
+			Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon(name);
+
+			List<Node> nodes = dungeon.getNodes();
+			double[] result1 = DungeonNovelty.roomNovelties(nodes);	
+
+			String file = name+".txt";
+			List<List<List<Integer>>> roomList = ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(ZeldaVGLCUtil.ZELDA_LEVEL_PATH+file);
+			double[] result2 = DungeonNovelty.roomNovelties(roomList);		
+
+			// These two different loading methods put the rooms in different orders, so manual reorganization is needed
+			Arrays.sort(result1);
+			Arrays.sort(result2);
+
+			assertEquals(result1.length, result2.length);
+			for(int i = 0; i < result1.length; i++) {
+				System.out.println(result1[i] + "\t" + result2[i]); 
+			}
+			System.out.println(name);
+			for(int i = 0; i < result1.length; i++) {
+				// Small epsilon allowed because different addition orders cause floating point discrepancies
+				assertEquals(result1[i],result2[i],0.00000001);
+			}
 		}
 	}
 
