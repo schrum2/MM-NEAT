@@ -49,7 +49,7 @@ public class LoadOriginalDungeon {
 	public static void main(String[] args) throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"rougeEnemyHealth:2"});
 		
-		String title = "tloz1_1_flip";
+		String title = "tloz3_1_flip";
 		Dungeon dungeon = loadOriginalDungeon(title, false);
 		
 		dungeon.printLevelThere();

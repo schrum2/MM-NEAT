@@ -50,9 +50,11 @@ public class ZeldaVGLCUtil {
 					String[] room = new String[ZELDA_ROOM_ROWS];
 					for(int r = 0; r < ZELDA_ROOM_ROWS; r++) { // Each row of the room
 						room[r] = level[i+r].substring(j, j+ZELDA_ROOM_COLUMNS); // Only the columns for that room
+						//System.out.println(room[r]);
 					}
 					// Convert individual room to list of codes and add to rooms list
 					rooms.add(convertZeldaLevelVGLCtoRoomAsList(room));
+					//MiscUtil.waitForReadStringAndEnterKeyPress();
 				}
 			}
 		}		
@@ -73,6 +75,7 @@ public class ZeldaVGLCUtil {
 					convertZeldaModifiedTileVGLCtoNumberCode(room[i].charAt(j));
 				result.get(i).add(code);
 			}
+			//System.out.println(result.get(i));
 		}
 		return result;
 	}

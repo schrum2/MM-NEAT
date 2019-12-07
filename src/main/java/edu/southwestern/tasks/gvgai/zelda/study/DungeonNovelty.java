@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.gvgai.zelda.study;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import asciiPanel.AsciiPanel;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
@@ -68,7 +70,112 @@ public class DungeonNovelty {
 		for(int y = START.y; y < START.y+COLUMNS; y++) {
 			for(int x = START.x; x < START.x+ROWS; x++) {
 				Tile compare1 = room1[y][x].equals(Tile.TRIFORCE) ? Tile.FLOOR : room1[y][x];
+				if(room1[y][x].equals(Tile.WALL)||room1[y][x].equals(Tile.MOVABLE_BLOCK_UP)||room1[y][x].equals(Tile.MOVABLE_BLOCK_DOWN)||room1[y][x].equals(Tile.MOVABLE_BLOCK_LEFT)||room1[y][x].equals(Tile.MOVABLE_BLOCK_RIGHT))
+					compare1 = Tile.BLOCK;
 				Tile compare2 = room2[y][x].equals(Tile.TRIFORCE) ? Tile.FLOOR : room2[y][x];
+				if(room2[y][x].equals(Tile.WALL)||room2[y][x].equals(Tile.MOVABLE_BLOCK_UP)||room2[y][x].equals(Tile.MOVABLE_BLOCK_DOWN)||room2[y][x].equals(Tile.MOVABLE_BLOCK_LEFT)||room2[y][x].equals(Tile.MOVABLE_BLOCK_RIGHT))
+					compare2 = Tile.BLOCK;
+				
+				
+				
+				
+				if(compare1.equals(Tile.VISITED)) {
+					System.out.println("Tile.VISITED");
+					System.exit(1);
+				}
+
+				if(compare1.equals(Tile.UNVISITED)) {
+					System.out.println("Tile.UNVISITED");
+					System.exit(1);
+				}
+
+				if(compare1.equals(Tile.WALL)) {
+					System.out.println(y+" "+x);
+					System.out.println("Tile.WALL");
+					System.exit(1);
+				}
+
+
+				if(compare1.equals(Tile.CURRENT)) {
+					System.out.println("Tile.CURRENT");
+					System.exit(1);
+				}
+
+				if(compare1.equals(Tile.EXIT)) {
+					System.out.println("Tile.EXIT");
+					System.exit(1);
+				}
+
+				if(compare1.equals(Tile.DOOR)) {
+					System.out.println("Tile.DOOR");
+					System.exit(1);
+				}
+
+				if(compare1.equals(Tile.LOCKED_DOOR)) {
+					System.out.println("Tile.LOCKED_DOOR");
+					System.exit(1);
+				}
+				
+				if(compare1.equals(Tile.SOFT_LOCK_DOOR)) {
+					System.out.println("Tile.SOFT_LOCK_DOOR");
+					System.exit(1);
+				}
+
+				if(compare1.equals(Tile.HIDDEN)) {
+					System.out.println("Tile.HIDDEN");
+					System.exit(1);
+				}
+				
+				if(compare1.equals(Tile.BOUNDS)) {
+					System.out.println("Tile.BOUNDS");
+					System.exit(1);
+				}
+
+				if(compare1.equals(Tile.KEY)) {
+					System.out.println("Tile.KEY");
+					System.exit(1);
+				}
+
+				
+				if(compare1.equals(Tile.TRIFORCE)) {
+					System.out.println("Tile.TRIFORCE");
+					System.exit(1);
+				}
+
+				if(compare1.equals(Tile.MOVABLE_BLOCK_UP)) {
+					System.out.println("Tile.MOVABLE_BLOCK_UP");
+					System.exit(1);
+				}
+
+				if(compare1.equals(Tile.MOVABLE_BLOCK_DOWN)) {
+					System.out.println("Tile.MOVABLE_BLOCK_DOWN");
+					System.exit(1);
+				}
+
+				if(compare1.equals(Tile.MOVABLE_BLOCK_LEFT)) {
+					System.out.println("Tile.MOVABLE_BLOCK_LEFT");
+					System.exit(1);
+				}
+
+				if(compare1.equals(Tile.MOVABLE_BLOCK_RIGHT)) {
+					System.out.println("Tile.MOVABLE_BLOCK_RIGHT");
+					System.exit(1);
+				}
+
+				if(compare1.equals(Tile.PUZZLE_LOCKED)) {
+					System.out.println("Tile.PUZZLE_LOCKED");
+					System.exit(1);
+				}
+
+				
+				
+				
+				
+				
+				
+				
+				
+				
 				if(!compare1.equals(compare2)) // If the blocks at the same position are not the same, increment novelty
 					distance++;
 			}
