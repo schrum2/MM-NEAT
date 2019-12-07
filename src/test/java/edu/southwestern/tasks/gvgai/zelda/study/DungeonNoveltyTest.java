@@ -84,7 +84,8 @@ public class DungeonNoveltyTest {
 	public void verifyRoomConsistencyAcrossRepresentations() {
 
 		// Remove level 4-1 because we artificially added an extra room
-		String[] names = new String[] {/**"tloz1_1_flip", "tloz2_1_flip",**/ "tloz3_1_flip", /**"tloz4_1_flip",**/ "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip"};
+		// TODO: Crashes at level 3 currently, seemingly because of movable blocks
+		String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", /**"tloz4_1_flip",**/ "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip"};
 		for(String name: names) {
 
 			// Make sure room calculations are the same no matter how they are loaded
