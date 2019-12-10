@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
@@ -10,21 +9,21 @@ import me.jakerg.rougelike.Tile;
 
 public class PhenotypeLoader implements LevelLoader{
 
-	private ArrayList<ArrayList<ArrayList<Integer>>> levels;
+	private List<List<List<Integer>>> levels;
 	
 	public PhenotypeLoader(ArrayList<ArrayList<Double>> phenotypes) {
 		levels = new ArrayList<>();
 		for(ArrayList<Double> phenotype : phenotypes) {
 			double[] room = ArrayUtil.doubleArrayFromList(phenotype);
 			List<List<Integer>> level =  ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(room);
-			levels.add(remove(ZeldaLevelUtil.listToArrayList(level)));
+			levels.add(remove(level));
 		}
 
 			
 	}
 	
-	private ArrayList<ArrayList<Integer>> remove(ArrayList<ArrayList<Integer>> levelInt) {
-		ArrayList<ArrayList<Integer>> level = new ArrayList<>(levelInt);
+	private List<List<Integer>> remove(List<List<Integer>> level2) {
+		List<List<Integer>> level = new ArrayList<>(level2);
 		for(int y = 0; y < level.size(); y++) {
 			for(int x = 0; x < level.get(y).size(); x++) {
 				int num = level.get(y).get(x);
@@ -50,7 +49,7 @@ public class PhenotypeLoader implements LevelLoader{
 	}
 
 	@Override
-	public ArrayList<ArrayList<ArrayList<Integer>>> getLevels() {
+	public List<List<List<Integer>>> getLevels() {
 		return 	(levels);
 	}
 

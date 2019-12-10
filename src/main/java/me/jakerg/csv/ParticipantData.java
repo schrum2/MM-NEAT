@@ -1,8 +1,8 @@
 package me.jakerg.csv;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
@@ -25,7 +25,7 @@ public class ParticipantData {
 		int[] roomsWithExit = new int[4];
 		
 		for(Dungeon.Node node : levels.values()) {
-			ArrayList<ArrayList<Integer>> ints = node.level.intLevel;
+			List<List<Integer>> ints = node.level.intLevel;
 			int numDoors = 0;
 			int numBombs = 0;
 			for(Point p : pointsToCheck) {

@@ -131,30 +131,31 @@ public class LoadOriginalDungeon {
 	 * @param numberToString 
 	 */
 	// NEVER USED?
-	private static void balanceKeyToDoors(Dungeon dungeon, HashMap<Integer, String> numberToString) {
-		while(numKeys < numDoors) {
-			int i = RandomNumbers.randomGenerator.nextInt(numberToString.size() - 1);
-			Node currentNode = dungeon.getNode(numberToString.get(i));
-			if(currentNode != null && !haveKey(currentNode)) {
-				if(RANDOM_KEY)
-					ZeldaLevelUtil.placeRandomKey(currentNode.level.intLevel);
-				else
-					ZeldaDungeon.placeNormalKey(currentNode.level.intLevel);
-				numKeys++;
-				System.out.println("Added key! Now has : " + numKeys + " keys");
-			}
-		}
-	}
+//	private static void balanceKeyToDoors(Dungeon dungeon, HashMap<Integer, String> numberToString) {
+//		while(numKeys < numDoors) {
+//			int i = RandomNumbers.randomGenerator.nextInt(numberToString.size() - 1);
+//			Node currentNode = dungeon.getNode(numberToString.get(i));
+//			if(currentNode != null && !haveKey(currentNode)) {
+//				if(RANDOM_KEY)
+//					ZeldaLevelUtil.placeRandomKey(currentNode.level.intLevel);
+//				else
+//					ZeldaDungeon.placeNormalKey(currentNode.level.intLevel);
+//				numKeys++;
+//				System.out.println("Added key! Now has : " + numKeys + " keys");
+//			}
+//		}
+//	}
 
-	private static boolean haveKey(Node currentNode) {
-		if(currentNode == null) return false;
-		ArrayList<ArrayList<Integer>> level = currentNode.level.intLevel;
-		for(List<Integer> row : level)
-			for(Integer cell : row)
-				if(cell == Tile.KEY.getNum() || cell == Tile.TRIFORCE.getNum())
-					return true;
-		return false;
-	}
+	// NEVER USER?
+//	private static boolean haveKey(Node currentNode) {
+//		if(currentNode == null) return false;
+//		List<List<Integer>> level = currentNode.level.intLevel;
+//		for(List<Integer> row : level)
+//			for(Integer cell : row)
+//				if(cell == Tile.KEY.getNum() || cell == Tile.TRIFORCE.getNum())
+//					return true;
+//		return false;
+//	}
 
 	/**
 	 * Starting function to recursively generate the 2D map
@@ -341,7 +342,7 @@ public class LoadOriginalDungeon {
 
 	private static void addTriforce(Node node, Dungeon dungeon) {
 		System.out.println("Set triforce");
-		ArrayList<ArrayList<Integer>> level = node.level.intLevel;
+		List<List<Integer>> level = node.level.intLevel;
 		int y = level.size() / 2;
 		int x = level.get(y).size() / 2;
 		level.get(y).set(x, Tile.TRIFORCE.getNum());
@@ -444,17 +445,17 @@ public class LoadOriginalDungeon {
 	 * @return Point of coords
 	 */
 	// NEVER USED?
-	private static Point findNodeName(String nodeName, String[][] levelThere) {
-		for(int y = 0; y < levelThere.length; y++)
-			for(int x = 0; x < levelThere[y].length; x++)
-				if(levelThere[y][x] == nodeName)
-					return new Point(x, y);
-		
-		int x = levelThere[0].length / 2;
-		int y = levelThere.length / 2;
-		levelThere[y][x] = nodeName;
-		return new Point(x, y);
-	}
+//	private static Point findNodeName(String nodeName, String[][] levelThere) {
+//		for(int y = 0; y < levelThere.length; y++)
+//			for(int x = 0; x < levelThere[y].length; x++)
+//				if(levelThere[y][x] == nodeName)
+//					return new Point(x, y);
+//		
+//		int x = levelThere[0].length / 2;
+//		int y = levelThere.length / 2;
+//		levelThere[y][x] = nodeName;
+//		return new Point(x, y);
+//	}
 
 	/**
 	 * Set edges when you're going UP
@@ -562,7 +563,7 @@ public class LoadOriginalDungeon {
 			break;
 		}
 		int num = tile.getNum();
-		ArrayList<ArrayList<Integer>> level = node.level.intLevel;
+		List<List<Integer>> level = node.level.intLevel;
 		if(direction.equals("UP")  || direction.equals("DOWN")) { // Add doors at top or bottom
 			int y = (direction.equals("UP")) ? 1 : 9; // Set x based on side 1 if left 9 if right
 			for(int x = 7; x <=8; x++) {

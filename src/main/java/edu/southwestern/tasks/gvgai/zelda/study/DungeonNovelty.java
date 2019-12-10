@@ -4,8 +4,6 @@ import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +12,6 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.file.NullPrintStream;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import me.jakerg.rougelike.Tile;
@@ -35,74 +32,26 @@ public class DungeonNovelty {
 	 * @param focus Index in rooms representing the room to compare the other rooms with
 	 * @return Real number between 0 and 1, 0 being non-novel and 1 being completely novel
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static double roomNovelty(List rooms, int focus) {
+	public static double roomNovelty(List<List<List<Integer>>> rooms, int focus) {
 		double novelty = 0;
 		
 		for(int i = 0; i < rooms.size(); i++) { // For each other room
 			if(i != focus) { // don't compare with self
-//				if(rooms.get(focus) instanceof Dungeon.Node) {
-//					novelty += roomDistance((Dungeon.Node) rooms.get(focus), (Dungeon.Node) rooms.get(i));
-//				} else {
-					novelty += roomDistance((List<List<Integer>>) rooms.get(focus), (List<List<Integer>>) rooms.get(i));
-//				}
+				novelty += roomDistance(rooms.get(focus), rooms.get(i));
 			}
 		}
 		
 		return novelty / rooms.size(); // Novelty is average distance from other rooms
 	}
 	
-	/**
-	 * Measure the distance between two rooms, which is like a Hamming distance
-	 * according to different tiles at each coordinate position. The distance is
-	 * then normalized based on the number of tiles.
-	 * 
-	 * @param node "Room" of a dungeon
-	 * @param node2 Another "room" of a dungeon
-	 * @return Real number between 0 and 1, 0 being identical and 1 being completely different
-	 */
-	public static double roomDistance(Node node, Node node2) {
-		double distance = 0;
-		// Convert to levels to tiles to remove enemies, etc
-		Tile[][] room1 = node.level.getTiles();
-		Tile[][] room2 = node2.level.getTiles();
-//		boolean foundIt = false;
-//		String type = null;
-		for(int y = START.y; y < START.y+COLUMNS; y++) {
-			for(int x = START.x; x < START.x+ROWS; x++) {
-				Tile compare1 = room1[y][x].equals(Tile.TRIFORCE) ? Tile.FLOOR : room1[y][x];
-				// These all look like plain blocks
-//				if(room1[y][x].equals(Tile.WALL)||room1[y][x].equals(Tile.MOVABLE_BLOCK_UP)||room1[y][x].equals(Tile.MOVABLE_BLOCK_DOWN)||room1[y][x].equals(Tile.MOVABLE_BLOCK_LEFT)||room1[y][x].equals(Tile.MOVABLE_BLOCK_RIGHT))
-//					compare1 = Tile.BLOCK;
-				Tile compare2 = room2[y][x].equals(Tile.TRIFORCE) ? Tile.FLOOR : room2[y][x];
-				// These all look like plain blocks
-//				if(room2[y][x].equals(Tile.WALL)||room2[y][x].equals(Tile.MOVABLE_BLOCK_UP)||room2[y][x].equals(Tile.MOVABLE_BLOCK_DOWN)||room2[y][x].equals(Tile.MOVABLE_BLOCK_LEFT)||room2[y][x].equals(Tile.MOVABLE_BLOCK_RIGHT)) {
-////					if(room2[y][x].equals(Tile.MOVABLE_BLOCK_UP)||room2[y][x].equals(Tile.MOVABLE_BLOCK_DOWN)||room2[y][x].equals(Tile.MOVABLE_BLOCK_LEFT)||room2[y][x].equals(Tile.MOVABLE_BLOCK_RIGHT)) {
-////						type = room2[y][x].toString();
-////						foundIt = true;
-////					}
-//					compare2 = Tile.BLOCK;
-//				}
-				
-				if(!compare1.equals(compare2)) // If the blocks at the same position are not the same, increment novelty
-					distance++;
-				
-				//System.out.print(compare2.getNum());
-			}
-			System.out.println();
-		}
-//		if(foundIt) System.out.println(type);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-		return distance / (ROWS * COLUMNS);
-	}
 	
 	/**
 	 * Version of the same method that takes an Integer List representation of the levels
-	 * @param room1 List of Lists representing a level
-	 * @param room2 List of Lists representing a level
+	 * @param list List of Lists representing a level
+	 * @param list2 List of Lists representing a level
 	 * @return Real number between 0 and 1, 0 being identical and 1 being completely different
 	 */
-	public static double roomDistance(List<List<Integer>> room1, List<List<Integer>> room2) {
+	public static double roomDistance(List<List<Integer>> list, List<List<Integer>> list2) {
 //		for(int x = START.x; x < START.x+ROWS; x++) {
 //			System.out.println(room1.get(x) + "\t" + room2.get(x));
 //		}
@@ -111,7 +60,7 @@ public class DungeonNovelty {
 		for(int x = START.x; x < START.x+ROWS; x++) {
 			for(int y = START.y; y < START.y+COLUMNS; y++) {
 				
-				int compare1 = room1.get(x).get(y); 
+				int compare1 = list.get(x).get(y); 
 				if(compare1 == Tile.TRIFORCE.getNum()|| // Triforce is item, not tile
 						compare1 == Tile.KEY.getNum()||
 						compare1 == 2)  // I think this represents an enemy
@@ -124,7 +73,7 @@ public class DungeonNovelty {
 						compare1 == Tile.MOVABLE_BLOCK_RIGHT.getNum()) 
 					compare1 = Tile.BLOCK.getNum();
 				
-				int compare2 = room2.get(x).get(y); 
+				int compare2 = list2.get(x).get(y); 
 				if(compare2 == Tile.TRIFORCE.getNum()|| // Triforce is item, not tile
 						compare2 == Tile.KEY.getNum()||
 						compare2 == 2)  // I think this represents an enemy 
@@ -157,8 +106,7 @@ public class DungeonNovelty {
 	 * @return Real number between 0 and 1, 0 being non-novel and 1 being completely novel
 	 */
 	public static double averageDungeonNovelty(Dungeon dungeon) {
-		// Has to be an easier way of doing this
-		List rooms = new LinkedList();
+		List<List<List<Integer>>> rooms = new LinkedList<>();
 		for(Node x : dungeon.getLevels().values()) {
 			rooms.add(x.level.getLevel());
 		}
@@ -171,8 +119,7 @@ public class DungeonNovelty {
 	 * @param rooms List of rooms
 	 * @return Real number between 0 and 1, 0 being non-novel and 1 being completely novel
 	 */
-	@SuppressWarnings("rawtypes")
-	public static double averageRoomNovelty(List rooms) {
+	public static double averageRoomNovelty(List<List<List<Integer>>> rooms) {
 		return StatisticsUtilities.average(roomNovelties(rooms));
 	}
 
@@ -182,32 +129,31 @@ public class DungeonNovelty {
 	 * @param rooms List of rooms
 	 * @return double array where each index is the novelty of the same index in the rooms list.
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static double[] roomNovelties(List rooms) {
+	public static double[] roomNovelties(List<List<List<Integer>>> rooms) {
 		// It is assumed that dungeons loaded as lists if lists of integers will 
 		// be in consistent order, so extra sorting is not needed.
-		if(rooms.get(0) instanceof Node) {
-			// Because the room list is derived from a HashMap, the order of the rooms
-			// can be different each time the rooms are loaded. Put into a consistent order.
-			Collections.sort(rooms, new Comparator<Node>() {
-				@Override
-				public int compare(Node o1, Node o2) {
-					String level1 = "";
-					for(Tile[] row: o1.level.getTiles()) {
-						for(Tile t: row) {
-							level1 += t.name();
-						}
-					}
-					String level2 = "";
-					for(Tile[] row: o2.level.getTiles()) {
-						for(Tile t: row) {
-							level2 += t.name();
-						}
-					}
-					return level1.compareTo(level2);
-				}
-			});
-		}
+//		if(rooms.get(0) instanceof Node) {
+//			// Because the room list is derived from a HashMap, the order of the rooms
+//			// can be different each time the rooms are loaded. Put into a consistent order.
+//			Collections.sort(rooms, new Comparator<Node>() {
+//				@Override
+//				public int compare(Node o1, Node o2) {
+//					String level1 = "";
+//					for(Tile[] row: o1.level.getTiles()) {
+//						for(Tile t: row) {
+//							level1 += t.name();
+//						}
+//					}
+//					String level2 = "";
+//					for(Tile[] row: o2.level.getTiles()) {
+//						for(Tile t: row) {
+//							level2 += t.name();
+//						}
+//					}
+//					return level1.compareTo(level2);
+//				}
+//			});
+//		}
 		
 //		System.out.println("FIRST ROOM: " + rooms.get(0));
 //		MiscUtil.waitForReadStringAndEnterKeyPress();

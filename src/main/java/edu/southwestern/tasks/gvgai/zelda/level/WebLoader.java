@@ -29,7 +29,7 @@ public class WebLoader implements LevelLoader{
 	}
 
 	@Override
-	public ArrayList<ArrayList<ArrayList<Integer>>> getLevels() {
+	public List<List<List<Integer>>> getLevels() {
 
 		try {
 			con = (HttpURLConnection) url.openConnection();
@@ -55,8 +55,8 @@ public class WebLoader implements LevelLoader{
 		System.out.println(content.toString());
 		List<List<List<Integer>>> roomInList = JsonReader.JsonToInt("[" + content.toString() + "]");
 		List<List<Integer>> r = roomInList.get(0);
-		ArrayList<ArrayList<ArrayList<Integer>>> ret = new ArrayList<>();
-		ret.add(ZeldaLevelUtil.listToArrayList(r));
+		List<List<List<Integer>>> ret = new ArrayList<>();
+		ret.add(r);
 		return ret;
 	}
 

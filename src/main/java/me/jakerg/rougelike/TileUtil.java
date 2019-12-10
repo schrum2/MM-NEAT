@@ -1,7 +1,7 @@
 package me.jakerg.rougelike;
 
 import java.awt.Point;
-import java.util.ArrayList;
+import java.util.List;
 
 public class TileUtil {
 	/**
@@ -9,7 +9,7 @@ public class TileUtil {
 	 * @param intLevel 2D list of ints
 	 * @return 2D Tile array
 	 */
-	public static Tile[][] listToTile(ArrayList<ArrayList<Integer>> intLevel){
+	public static Tile[][] listToTile(List<List<Integer>> intLevel){
 		Tile[][] tiles = new Tile[intLevel.get(0).size()][intLevel.size()];
 		// Some of the operations are reversed because of how the level was made
 		for(int i = 0; i < tiles.length; i++) {
@@ -28,12 +28,12 @@ public class TileUtil {
 	
 	/**
 	 * Make the world based on 2D ints
-	 * @param level 2D list of ints
+	 * @param list 2D list of ints
 	 * @param player 
 	 * @return World
 	 */
-	public static World makeWorld(ArrayList<ArrayList<Integer>> level, Creature player, Log log) {
-		Tile[][] tiles = listToTile(level);
+	public static World makeWorld(List<List<Integer>> list, Creature player, Log log) {
+		Tile[][] tiles = listToTile(list);
 		World newWorld = new World(tiles);
 		newWorld.addCreature(player);
 		CreatureFactory cf = new CreatureFactory(newWorld, log);
@@ -41,13 +41,13 @@ public class TileUtil {
 		// Convert ints to enemies (only 2 in this case)
 		for(int i = 0; i < tiles.length; i++) {
 			for(int j = 0; j < tiles[i].length; j++) {
-				if(level.get(j).get(i) == 2) {
+				if(list.get(j).get(i) == 2) {
 					cf.newEnemy(i, j, player);
 					newWorld.setEnemyRoom(true);
-				} else if(level.get(j).get(i) == -6) {
+				} else if(list.get(j).get(i) == -6) {
 					newWorld.dropItem(new Ladder(newWorld, i, j));
 				} else {
-					Tile t = Tile.findNum(level.get(j).get(i));
+					Tile t = Tile.findNum(list.get(j).get(i));
 					if(t != null) {
 						if(t.equals(Tile.KEY))
 							newWorld.dropItem(new Key(newWorld, new Point(i, j)));

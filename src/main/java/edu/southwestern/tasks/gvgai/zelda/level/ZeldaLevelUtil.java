@@ -8,11 +8,9 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
-import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.Heuristic;
 import me.jakerg.rougelike.Move;
@@ -101,13 +99,13 @@ public class ZeldaLevelUtil {
 	}
 	
 	// NOT USED?
-	private static boolean hasPoint(ArrayList<Node> visited, Node node) {
-		for(Node n : visited)
-			if(node.point.x == n.point.x && node.point.y == n.point.y)
-				return true;
-		
-		return false;
-	}
+//	private static boolean hasPoint(ArrayList<Node> visited, Node node) {
+//		for(Node n : visited)
+//			if(node.point.x == n.point.x && node.point.y == n.point.y)
+//				return true;
+//		
+//		return false;
+//	}
 
 	/**
 	 * Figure out if we need to add the given point or not if it's not out of bounds
@@ -120,26 +118,26 @@ public class ZeldaLevelUtil {
 	 * @param d distance to be added
 	 */
 	// NOT USED?
-	private static void checkPointToAdd(int[][] level, int[][] dist,
-			LinkedList<Triple<Integer, Integer, Integer>> visited, int x, int y, int d) {
-		
-		// Out of bounds check
-		if(x < 0 || x >= level[0].length || y < 0 || y >= level.length) return;
-
-		// If haven't been visited check
-		if(dist[y][x] != -1) return;
-		
-		// If the point is possible
-		if(level[y][x] != 0) return;
-		
-		// loop through visited, and return early if the x,y coordinates are present
-		for(Triple<Integer, Integer, Integer> point : visited)
-			if(point.t1 == x && point.t2 == y) return;
-		
-		// Finally add point
-		visited.add(new Triple<Integer, Integer, Integer>(x, y, d));
-		
-	}
+//	private static void checkPointToAdd(int[][] level, int[][] dist,
+//			LinkedList<Triple<Integer, Integer, Integer>> visited, int x, int y, int d) {
+//		
+//		// Out of bounds check
+//		if(x < 0 || x >= level[0].length || y < 0 || y >= level.length) return;
+//
+//		// If haven't been visited check
+//		if(dist[y][x] != -1) return;
+//		
+//		// If the point is possible
+//		if(level[y][x] != 0) return;
+//		
+//		// loop through visited, and return early if the x,y coordinates are present
+//		for(Triple<Integer, Integer, Integer> point : visited)
+//			if(point.t1 == x && point.t2 == y) return;
+//		
+//		// Finally add point
+//		visited.add(new Triple<Integer, Integer, Integer>(x, y, d));
+//		
+//	}
 
 	/**
 	 * Helper function to convert 2D list of ints to 2d array of ints
@@ -177,12 +175,12 @@ public class ZeldaLevelUtil {
 		}
 		
 		// NOT USED?
-		public void copy(Node other) {
-			this.point = other.point;
-			this.gScore = other.gScore;
-			this.hScore = other.hScore;
-			this.fScore = other.fScore;
-		}
+//		public void copy(Node other) {
+//			this.point = other.point;
+//			this.gScore = other.gScore;
+//			this.hScore = other.hScore;
+//			this.fScore = other.fScore;
+//		}
 		
 		public String toString() {
 			return "(" + point.x +", " + point.y + "), f = " + fScore + " = (h:" + hScore + " + g:" + gScore +")";
@@ -191,23 +189,23 @@ public class ZeldaLevelUtil {
 
 	/**
 	 * Place a random key tile on the floor
-	 * @param intLevel
+	 * @param level
 	 */
-	public static void placeRandomKey(ArrayList<ArrayList<Integer>> intLevel) {
+	public static void placeRandomKey(List<List<Integer>> level) {
 		int x, y;
 		
 		do {
-			x = RandomNumbers.randomGenerator.nextInt(intLevel.get(0).size());
-			y = RandomNumbers.randomGenerator.nextInt(intLevel.size());
+			x = RandomNumbers.randomGenerator.nextInt(level.get(0).size());
+			y = RandomNumbers.randomGenerator.nextInt(level.size());
 	    }
-	    while (!Tile.findNum(intLevel.get(y).get(x)).equals(Tile.FLOOR));
+	    while (!Tile.findNum(level.get(y).get(x)).equals(Tile.FLOOR));
 		
 		System.out.println("Put key at " + x + ", " + y);
-		intLevel.get(y).set(x, Tile.KEY.getNum()); 
+		level.get(y).set(x, Tile.KEY.getNum()); 
 	}
 
 	public static void setDoors(String direction, Dungeon.Node fromNode, int tile) {
-		ArrayList<ArrayList<Integer>> level = fromNode.level.intLevel;
+		List<List<Integer>> level = fromNode.level.intLevel;
 		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
 			if(direction == "UP" || direction == "DOWN") { // Add doors at top or bottom
 				int y = (direction == "UP") ? 1 : 14; // Set y based on side 1 if up 14 if bottom
@@ -266,7 +264,7 @@ public class ZeldaLevelUtil {
 		placeReachableEnemies(direction, fromNode.level.intLevel, i);
 	}
 
-	public static void placePuzzle(String direction, ArrayList<ArrayList<Integer>> level) {
+	public static void placePuzzle(String direction, List<List<Integer>> level) {
 		List<Point> points = getVisitedPoints(direction, level);
 		Move d = Move.getByString(direction).opposite();
 		Point rP = null;
@@ -292,7 +290,7 @@ public class ZeldaLevelUtil {
 	 * @param tile Tile to place
 	 * @param d Move
 	 */
-	private static void placeAround(ArrayList<ArrayList<Integer>> level, Point rP, Tile tile) {
+	private static void placeAround(List<List<Integer>> level, Point rP, Tile tile) {
 		for(Move move : Move.values()) {
 			Point check = new Point(rP.x + move.getPoint().x, rP.y + move.getPoint().y);
 			if(withinBounds(check)) {
@@ -339,17 +337,17 @@ public class ZeldaLevelUtil {
 	}
 		
 
-	private static void placeReachableEnemies(String direction, ArrayList<ArrayList<Integer>> level, int max) {
-		List<Point> points = getVisitedPoints(direction, level);
-		points.removeIf(p -> !Tile.findNum(level.get(p.y).get(p.x)).equals(Tile.FLOOR));
+	private static void placeReachableEnemies(String direction, List<List<Integer>> intLevel, int max) {
+		List<Point> points = getVisitedPoints(direction, intLevel);
+		points.removeIf(p -> !Tile.findNum(intLevel.get(p.y).get(p.x)).equals(Tile.FLOOR));
 		int r = RandomNumbers.randomGenerator.nextInt(max) + 1;
 		for(int i = 0; i < r && points.size() > 0; i++) {
 			Point rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
-			level.get(rP.y).set(rP.x, 2);
+			intLevel.get(rP.y).set(rP.x, 2);
 		}
 	}
 
-	public static List<Point> getVisitedPoints(int x, int y, ArrayList<ArrayList<Integer>> level) {
+	public static List<Point> getVisitedPoints(int x, int y, List<List<Integer>> intLevel) {
 		List<Point> visited = new LinkedList<>();
 		Queue<Point> queue = new LinkedList<>();
 		queue.add(new Point(x, y));
@@ -361,7 +359,7 @@ public class ZeldaLevelUtil {
 				int dx = p.x + d.x;
 				int dy = p.y + d.y;
 				Point c = new Point(dx, dy);
-				Tile t = Tile.findNum(level.get(dy).get(dx));
+				Tile t = Tile.findNum(intLevel.get(dy).get(dx));
 				if(t.playerPassable() && !visited.contains(c))
 					queue.add(c);
 			}
@@ -369,7 +367,7 @@ public class ZeldaLevelUtil {
 		return visited;
 	}
 	
-	public static List<Point> getVisitedPoints(String direction, ArrayList<ArrayList<Integer>> level){
+	public static List<Point> getVisitedPoints(String direction, List<List<Integer>> intLevel){
 		int x, y;
 		switch(direction) {
 		case "UP":
@@ -392,7 +390,7 @@ public class ZeldaLevelUtil {
 			return null;
 		}
 		
-		return getVisitedPoints(x, y, level);
+		return getVisitedPoints(x, y, intLevel);
 	}
 
 	/**
@@ -499,7 +497,7 @@ public class ZeldaLevelUtil {
 	 * Add 1 - 3 enemies at random locations
 	 * @param node Node to add the enemies to
 	 */
-	public static void addRandomEnemy(ArrayList<ArrayList<Integer>> intLevel) {
+	public static void addRandomEnemy(List<List<Integer>> intLevel) {
 		int numEnemies = RandomNumbers.randomGenerator.nextInt(3) + 1;
 		for(int i = 0; i < numEnemies; i++) {
 			int x, y;
@@ -586,7 +584,6 @@ public class ZeldaLevelUtil {
 		return copy;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static <E> ArrayList<ArrayList<E>> listToArrayList(List<List<E>> list){
 		ArrayList<ArrayList<E>> copy = new ArrayList<>();
 		for(int i = 0; i < list.size(); i++) {
