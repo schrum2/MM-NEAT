@@ -1,6 +1,5 @@
 package edu.southwestern.tasks.gvgai.zelda.study;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,9 +7,9 @@ import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
-import asciiPanel.AsciiPanel;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
@@ -42,11 +41,11 @@ public class DungeonNovelty {
 		
 		for(int i = 0; i < rooms.size(); i++) { // For each other room
 			if(i != focus) { // don't compare with self
-				if(rooms.get(focus) instanceof Dungeon.Node) {
-					novelty += roomDistance((Dungeon.Node) rooms.get(focus), (Dungeon.Node) rooms.get(i));
-				} else {
+//				if(rooms.get(focus) instanceof Dungeon.Node) {
+//					novelty += roomDistance((Dungeon.Node) rooms.get(focus), (Dungeon.Node) rooms.get(i));
+//				} else {
 					novelty += roomDistance((List<List<Integer>>) rooms.get(focus), (List<List<Integer>>) rooms.get(i));
-				}
+//				}
 			}
 		}
 		
@@ -111,8 +110,34 @@ public class DungeonNovelty {
 		double distance = 0;
 		for(int x = START.x; x < START.x+ROWS; x++) {
 			for(int y = START.y; y < START.y+COLUMNS; y++) {
-//				System.out.print(room1.get(x).get(y).equals(room2.get(x).get(y)) ? "_" : "X");
-				if(!room1.get(x).get(y).equals(room2.get(x).get(y))) // If the blocks at the same position are not the same, increment novelty
+				
+				int compare1 = room1.get(x).get(y); 
+				if(compare1 == Tile.TRIFORCE.getNum()|| // Triforce is item, not tile
+						compare1 == Tile.KEY.getNum()||
+						compare1 == 2)  // I think this represents an enemy
+					compare1 = Tile.FLOOR.getNum(); 
+				// These all look like a block 
+				if(compare1 == Tile.WALL.getNum()||
+						compare1 == Tile.MOVABLE_BLOCK_UP.getNum()||
+						compare1 == Tile.MOVABLE_BLOCK_DOWN.getNum()||
+						compare1 == Tile.MOVABLE_BLOCK_LEFT.getNum()||
+						compare1 == Tile.MOVABLE_BLOCK_RIGHT.getNum()) 
+					compare1 = Tile.BLOCK.getNum();
+				
+				int compare2 = room2.get(x).get(y); 
+				if(compare2 == Tile.TRIFORCE.getNum()|| // Triforce is item, not tile
+						compare2 == Tile.KEY.getNum()||
+						compare2 == 2)  // I think this represents an enemy 
+					compare2 = Tile.FLOOR.getNum();  
+				// These all look like a block 
+				if(compare2 == Tile.WALL.getNum()||
+						compare2 == Tile.MOVABLE_BLOCK_UP.getNum()||
+						compare2 == Tile.MOVABLE_BLOCK_DOWN.getNum()||
+						compare2 == Tile.MOVABLE_BLOCK_LEFT.getNum()||
+						compare2 == Tile.MOVABLE_BLOCK_RIGHT.getNum()) 
+					compare2 = Tile.BLOCK.getNum();
+				
+				if(compare1 != compare2) // If the blocks at the same position are not the same, increment novelty
 					distance++;
 			}
 			System.out.println();
@@ -132,7 +157,11 @@ public class DungeonNovelty {
 	 * @return Real number between 0 and 1, 0 being non-novel and 1 being completely novel
 	 */
 	public static double averageDungeonNovelty(Dungeon dungeon) {
-		List<Node> rooms = dungeon.getNodes();
+		// Has to be an easier way of doing this
+		List rooms = new LinkedList();
+		for(Node x : dungeon.getLevels().values()) {
+			rooms.add(x.level.getLevel());
+		}
 		return averageRoomNovelty(rooms);
 	}
 	
