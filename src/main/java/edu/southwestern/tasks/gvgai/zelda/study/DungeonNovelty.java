@@ -50,11 +50,11 @@ public class DungeonNovelty {
 	
 	/**
 	 * Version of the same method that takes an Integer List representation of the levels
-	 * @param list List of Lists representing a level
-	 * @param list2 List of Lists representing a level
+	 * @param room1 List of Lists representing a level
+	 * @param room2 List of Lists representing a level
 	 * @return Real number between 0 and 1, 0 being identical and 1 being completely different
 	 */
-	public static double roomDistance(List<List<Integer>> list, List<List<Integer>> list2) {
+	public static double roomDistance(List<List<Integer>> room1, List<List<Integer>> room2) {
 //		for(int x = START.x; x < START.x+ROWS; x++) {
 //			System.out.println(room1.get(x) + "\t" + room2.get(x));
 //		}
@@ -62,8 +62,8 @@ public class DungeonNovelty {
 		double distance = 0;
 		for(int x = START.x; x < START.x+ROWS; x++) {
 			for(int y = START.y; y < START.y+COLUMNS; y++) {
-				int compare1 = list.get(x).get(y); 
-				int compare2 = list2.get(x).get(y); 
+				int compare1 = room1.get(x).get(y); 
+				int compare2 = room2.get(x).get(y); 
 				if(compare1 != compare2) // If the blocks at the same position are not the same, increment novelty
 					distance++;
 			}
@@ -98,6 +98,12 @@ public class DungeonNovelty {
 						compare1 == Tile.MOVABLE_BLOCK_LEFT.getNum()||
 						compare1 == Tile.MOVABLE_BLOCK_RIGHT.getNum()) 
 					room.get(x).set(y,Tile.BLOCK.getNum());
+				
+				if(compare1 < 0 || // Many door types seem to be negative
+						compare1 == Tile.DOOR.getNum()||
+						compare1 == Tile.SOFT_LOCK_DOOR.getNum()) 
+					room.get(x).set(y,Tile.BLOCK.getNum());
+						
 			}
 		}
 	}
@@ -134,7 +140,7 @@ public class DungeonNovelty {
 	 * @return double array where each index is the novelty of the same index in the rooms list.
 	 */
 	public static double[] roomNovelties(List<List<List<Integer>>> rooms) {
-
+//		System.out.println("roomNovelties!");
 		// Clean all rooms
 		for(List<List<Integer>> room : rooms) {
 			cleanRoom(room);
@@ -150,12 +156,12 @@ public class DungeonNovelty {
 			}
 		});
 
-		
-//		System.out.println("FIRST ROOM: ");
-//		for(List<Integer> row : rooms.get(0)) {
-//			System.out.println(row);
+//		for(List<List<Integer>> full : rooms) {
+//			for(List<Integer> row : full) {
+//				System.out.println(row);
+//			}
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 //		}
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
 		double[] novelties = new double[rooms.size()];
 		for(int i = 0; i < rooms.size(); i++) { // For each room in the list
