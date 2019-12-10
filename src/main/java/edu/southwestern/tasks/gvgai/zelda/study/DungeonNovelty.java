@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,6 +14,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.file.NullPrintStream;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import me.jakerg.rougelike.Tile;
@@ -59,33 +62,8 @@ public class DungeonNovelty {
 		double distance = 0;
 		for(int x = START.x; x < START.x+ROWS; x++) {
 			for(int y = START.y; y < START.y+COLUMNS; y++) {
-				
 				int compare1 = list.get(x).get(y); 
-				if(compare1 == Tile.TRIFORCE.getNum()|| // Triforce is item, not tile
-						compare1 == Tile.KEY.getNum()||
-						compare1 == 2)  // I think this represents an enemy
-					compare1 = Tile.FLOOR.getNum(); 
-				// These all look like a block 
-				if(compare1 == Tile.WALL.getNum()||
-						compare1 == Tile.MOVABLE_BLOCK_UP.getNum()||
-						compare1 == Tile.MOVABLE_BLOCK_DOWN.getNum()||
-						compare1 == Tile.MOVABLE_BLOCK_LEFT.getNum()||
-						compare1 == Tile.MOVABLE_BLOCK_RIGHT.getNum()) 
-					compare1 = Tile.BLOCK.getNum();
-				
 				int compare2 = list2.get(x).get(y); 
-				if(compare2 == Tile.TRIFORCE.getNum()|| // Triforce is item, not tile
-						compare2 == Tile.KEY.getNum()||
-						compare2 == 2)  // I think this represents an enemy 
-					compare2 = Tile.FLOOR.getNum();  
-				// These all look like a block 
-				if(compare2 == Tile.WALL.getNum()||
-						compare2 == Tile.MOVABLE_BLOCK_UP.getNum()||
-						compare2 == Tile.MOVABLE_BLOCK_DOWN.getNum()||
-						compare2 == Tile.MOVABLE_BLOCK_LEFT.getNum()||
-						compare2 == Tile.MOVABLE_BLOCK_RIGHT.getNum()) 
-					compare2 = Tile.BLOCK.getNum();
-				
 				if(compare1 != compare2) // If the blocks at the same position are not the same, increment novelty
 					distance++;
 			}
@@ -96,6 +74,32 @@ public class DungeonNovelty {
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
 		return distance / (ROWS * COLUMNS);
+	}
+	
+	/**
+	 * Cleans room for novelty comparison by removing enemies, keys, and triforce.
+	 * Also turns walls and movable blocks into plain blocks.
+	 * @param room Represented at list of list of Integers
+	 */
+	public static void cleanRoom(List<List<Integer>> room) {
+		
+		for(int x = 0; x < room.size(); x++) {
+			for(int y = 0; y < room.get(x).size(); y++) {
+				
+				int compare1 = room.get(x).get(y); 
+				if(compare1 == Tile.TRIFORCE.getNum()|| // Triforce is item, not tile
+						compare1 == Tile.KEY.getNum()||
+						compare1 == 2)  // I think this represents an enemy
+					room.get(x).set(y,Tile.FLOOR.getNum()); 
+				// These all look like a block 
+				if(compare1 == Tile.WALL.getNum()||
+						compare1 == Tile.MOVABLE_BLOCK_UP.getNum()||
+						compare1 == Tile.MOVABLE_BLOCK_DOWN.getNum()||
+						compare1 == Tile.MOVABLE_BLOCK_LEFT.getNum()||
+						compare1 == Tile.MOVABLE_BLOCK_RIGHT.getNum()) 
+					room.get(x).set(y,Tile.BLOCK.getNum());
+			}
+		}
 	}
 	
 	/**
@@ -130,32 +134,27 @@ public class DungeonNovelty {
 	 * @return double array where each index is the novelty of the same index in the rooms list.
 	 */
 	public static double[] roomNovelties(List<List<List<Integer>>> rooms) {
-		// It is assumed that dungeons loaded as lists if lists of integers will 
-		// be in consistent order, so extra sorting is not needed.
-//		if(rooms.get(0) instanceof Node) {
-//			// Because the room list is derived from a HashMap, the order of the rooms
-//			// can be different each time the rooms are loaded. Put into a consistent order.
-//			Collections.sort(rooms, new Comparator<Node>() {
-//				@Override
-//				public int compare(Node o1, Node o2) {
-//					String level1 = "";
-//					for(Tile[] row: o1.level.getTiles()) {
-//						for(Tile t: row) {
-//							level1 += t.name();
-//						}
-//					}
-//					String level2 = "";
-//					for(Tile[] row: o2.level.getTiles()) {
-//						for(Tile t: row) {
-//							level2 += t.name();
-//						}
-//					}
-//					return level1.compareTo(level2);
-//				}
-//			});
-//		}
+
+		// Clean all rooms
+		for(List<List<Integer>> room : rooms) {
+			cleanRoom(room);
+		}
 		
-//		System.out.println("FIRST ROOM: " + rooms.get(0));
+		// The order of the rooms can be different each time the rooms are loaded. Put into a consistent order.
+		Collections.sort(rooms, new Comparator<List<List<Integer>>>() {
+			@Override
+			public int compare(List<List<Integer>> o1, List<List<Integer>> o2) {
+				String level1 = o1.toString();
+				String level2 = o2.toString();
+				return level1.compareTo(level2);
+			}
+		});
+
+		
+//		System.out.println("FIRST ROOM: ");
+//		for(List<Integer> row : rooms.get(0)) {
+//			System.out.println(row);
+//		}
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
 		double[] novelties = new double[rooms.size()];
