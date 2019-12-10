@@ -15,7 +15,6 @@ import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
 
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
@@ -112,7 +111,6 @@ public class Dungeon {
 	 * @param exitPoint Exit Point of level based on string
 	 * @return Point of where to start the new level
 	 */
-	@SuppressWarnings("unused")
 	public Point getNextNode(String exitPoint) {
 		Node n = getCurrentlevel();
 		HashMap<String, Pair<String, Point>> adjacency = n.adjacency;
