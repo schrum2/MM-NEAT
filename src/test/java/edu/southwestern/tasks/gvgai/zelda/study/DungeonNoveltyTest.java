@@ -40,7 +40,7 @@ public class DungeonNoveltyTest {
 	}
 
 	/**
-	 * The novelty of any given dungeon should be the same every time.
+	 * The novelty of any given dungeon should be the same every time. Load each dungeon twice and make sure average novelty is consistent.
 	 */
 	@Test
 	public void testVerifyConsistency() {
@@ -54,6 +54,10 @@ public class DungeonNoveltyTest {
 		}
 	}
 
+	/**
+	 * The loading process should not affect calculation of room novelty. This test
+	 * loads the same dungeon twice and does a room by room comparison of novelty calculations.
+	 */
 	@Test
 	public void verifyRoomConsistency() {
 		// Make sure rooms are always in some order with the same novelty values
@@ -75,6 +79,10 @@ public class DungeonNoveltyTest {
 		}
 	}
 
+	/**
+	 * The Dungeon representation we use to play the game and the original raw VGLC representation should lead to the same
+	 * novelty calculations. Using the raw data is necessary for levels that haven't been adapted to our custom Dungeon format yet.
+	 */
 	@Test
 	public void testVerifyConsistencyAcrossRepresentations() {
 		// Remove level 4-1 because we artificially added an extra room
@@ -92,6 +100,11 @@ public class DungeonNoveltyTest {
 		}
 	}
 
+	/**
+	 * Compares Dungeon format to raw VGLC format for individual rooms. However, because rooms can be loaded in different orders,
+	 * this calculation can lead to small floating point discrepancies. Therefore, the individual room novelties are calculated
+	 * and sorted. Then the sorted novelties are compared, with some small wiggle room in the epsilon value for comparison.
+	 */
 	@Test
 	public void verifyRoomConsistencyAcrossRepresentations() {
 
