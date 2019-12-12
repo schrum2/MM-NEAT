@@ -14,7 +14,6 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.file.NullPrintStream;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import me.jakerg.rougelike.Tile;
@@ -67,7 +66,7 @@ public class DungeonNovelty {
 				if(compare1 != compare2) // If the blocks at the same position are not the same, increment novelty
 					distance++;
 			}
-			System.out.println();
+//			System.out.println();
 		}
 		
 //		System.out.println("dist = "+distance);
@@ -89,17 +88,16 @@ public class DungeonNovelty {
 				int compare1 = room.get(x).get(y); 
 				if(compare1 == Tile.TRIFORCE.getNum()|| // Triforce is item, not tile
 						compare1 == Tile.KEY.getNum()||
-						compare1 == 2)  // I think this represents an enemy
-					room.get(x).set(y,Tile.FLOOR.getNum()); 
-				// These all look like a block 
-				if(compare1 == Tile.WALL.getNum()||
+						compare1 == -6 || // I think this is the raft/ladder item
+						compare1 == 2) // I think this represents an enemy
+					room.get(x).set(y,Tile.FLOOR.getNum());
+				else if(compare1 == Tile.WALL.getNum()|| // These all look like a block 
 						compare1 == Tile.MOVABLE_BLOCK_UP.getNum()||
 						compare1 == Tile.MOVABLE_BLOCK_DOWN.getNum()||
 						compare1 == Tile.MOVABLE_BLOCK_LEFT.getNum()||
 						compare1 == Tile.MOVABLE_BLOCK_RIGHT.getNum()) 
 					room.get(x).set(y,Tile.BLOCK.getNum());
-				
-				if(compare1 < 0 || // Many door types seem to be negative
+				else if(compare1 < 0 || // Many door types seem to be negative
 						compare1 == Tile.DOOR.getNum()||
 						compare1 == Tile.SOFT_LOCK_DOOR.getNum()) 
 					room.get(x).set(y,Tile.BLOCK.getNum());
@@ -140,7 +138,7 @@ public class DungeonNovelty {
 	 * @return double array where each index is the novelty of the same index in the rooms list.
 	 */
 	public static double[] roomNovelties(List<List<List<Integer>>> rooms) {
-//		System.out.println("roomNovelties!");
+		System.out.println("roomNovelties!");
 		// Clean all rooms
 		for(List<List<Integer>> room : rooms) {
 			cleanRoom(room);

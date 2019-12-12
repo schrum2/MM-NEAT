@@ -44,7 +44,7 @@ public class TileUtil {
 				if(list.get(j).get(i) == 2) { // Magic number! This represents an enemy I believe
 					cf.newEnemy(i, j, player);
 					newWorld.setEnemyRoom(true);
-				} else if(list.get(j).get(i) == -6) { // Magic number! What is this?
+				} else if(list.get(j).get(i) == -6) { // Magic number! Ladder tile?
 					newWorld.dropItem(new Ladder(newWorld, i, j));
 				} else {
 					Tile t = Tile.findNum(list.get(j).get(i));
