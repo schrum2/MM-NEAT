@@ -11,9 +11,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
 import edu.southwestern.util.file.NullPrintStream;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import me.jakerg.rougelike.Tile;
@@ -138,7 +138,7 @@ public class DungeonNovelty {
 	 * @return double array where each index is the novelty of the same index in the rooms list.
 	 */
 	public static double[] roomNovelties(List<List<List<Integer>>> rooms) {
-		System.out.println("roomNovelties!");
+		//System.out.println("roomNovelties!");
 		// Clean all rooms
 		for(List<List<Integer>> room : rooms) {
 			cleanRoom(room);
@@ -185,14 +185,16 @@ public class DungeonNovelty {
 		
 		// To suppress output from file loading
 		PrintStream original = System.out;
-		System.setOut(new NullPrintStream());
+		//System.setOut(new NullPrintStream());
 		
 		Parameters.initializeParameterCollections(args);
-		String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip"};
+		String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip",
+									   "tloz1_2_flip", "tloz2_2_flip", "tloz3_2_flip", "tloz4_2_flip", "tloz5_2_flip", "tloz6_2_flip", "tloz7_2_flip", "tloz8_2_flip", "tloz9_2_flip"};
 		HashMap<String,Double> originalNovelties = new HashMap<String,Double>();
-		for(String name: names) {
-			Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon(name);
-			originalNovelties.put(name, averageDungeonNovelty(dungeon));			
+		for(String name: names) {			
+			String file = name+".txt";
+			List<List<List<Integer>>> roomList = ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(ZeldaVGLCUtil.ZELDA_LEVEL_PATH+file);
+			originalNovelties.put(name, averageRoomNovelty(roomList));		
 		}
 		
 		// Resume outputting text
