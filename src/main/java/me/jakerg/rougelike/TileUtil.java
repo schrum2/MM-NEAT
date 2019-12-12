@@ -41,10 +41,10 @@ public class TileUtil {
 		// Convert ints to enemies (only 2 in this case)
 		for(int i = 0; i < tiles.length; i++) {
 			for(int j = 0; j < tiles[i].length; j++) {
-				if(list.get(j).get(i) == 2) {
+				if(list.get(j).get(i) == 2) { // Magic number! This represents an enemy I believe
 					cf.newEnemy(i, j, player);
 					newWorld.setEnemyRoom(true);
-				} else if(list.get(j).get(i) == -6) {
+				} else if(list.get(j).get(i) == -6) { // Magic number! What is this?
 					newWorld.dropItem(new Ladder(newWorld, i, j));
 				} else {
 					Tile t = Tile.findNum(list.get(j).get(i));
