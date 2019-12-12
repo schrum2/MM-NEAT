@@ -4,9 +4,11 @@ import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -190,10 +192,16 @@ public class DungeonNovelty {
 		Parameters.initializeParameterCollections(args);
 		String[] names = new String[] {"tloz1_1_flip", "tloz2_1_flip", "tloz3_1_flip", "tloz4_1_flip", "tloz5_1_flip", "tloz6_1_flip", "tloz7_1_flip", "tloz8_1_flip", "tloz9_1_flip",
 									   "tloz1_2_flip", "tloz2_2_flip", "tloz3_2_flip", "tloz4_2_flip", "tloz5_2_flip", "tloz6_2_flip", "tloz7_2_flip", "tloz8_2_flip", "tloz9_2_flip"};
+
+		List<List<List<Integer>>> allOriginalRooms = new ArrayList<>();
+		List<List<List<Integer>>> allPureGrammarRooms = new ArrayList<>();
+		List<List<List<Integer>>> allGANRooms = new ArrayList<>();
+		
 		HashMap<String,Double> originalNovelties = new HashMap<String,Double>();
 		for(String name: names) {			
 			String file = name+".txt";
 			List<List<List<Integer>>> roomList = ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(ZeldaVGLCUtil.ZELDA_LEVEL_PATH+file);
+			allOriginalRooms.addAll(roomList); // Collect all rooms for final comparison at the end
 			originalNovelties.put(name, averageRoomNovelty(roomList));		
 		}
 		
@@ -222,6 +230,12 @@ public class DungeonNovelty {
 			String path = basePath + i + "\\";
 			Dungeon originalDungeon = Dungeon.loadFromJson(path + "OriginalLoader_dungeon.json");
 			graphNovelties.put("graphSubject"+i, averageDungeonNovelty(originalDungeon));
+			
+			List<List<List<Integer>>> rooms = new LinkedList<>();
+			for(Node x : originalDungeon.getLevels().values()) {
+				rooms.add(x.level.getLevel());
+			}
+			allPureGrammarRooms.addAll(rooms);
 		}
 		
 		// Resume outputting text
@@ -249,6 +263,13 @@ public class DungeonNovelty {
 			Dungeon ganDungeon = Dungeon.loadFromJson(path + "GANLoader_dungeon.json");
 			//Dungeon originalDungeon = Dungeon.loadFromJson(path + "OriginalLoader_dungeon.json");
 			graphGANNovelties.put("graphGANSubject"+i, averageDungeonNovelty(ganDungeon));
+			
+			List<List<List<Integer>>> rooms = new LinkedList<>();
+			for(Node x : ganDungeon.getLevels().values()) {
+				rooms.add(x.level.getLevel());
+			}
+			allGANRooms.addAll(rooms);
+
 		}
 		
 		// Resume outputting text
@@ -271,6 +292,35 @@ public class DungeonNovelty {
 		System.out.println("Original Average: "+originalDungeonAverage);
 		System.out.println("Grammar  Average: "+graphGrammarAverage);
 		System.out.println("GraphGAN Average: "+graphGANAverage);
+		
+		
+		
+		HashSet<List<List<Integer>>> noDuplicatesSet = new HashSet<>(allOriginalRooms);
+		List<List<List<Integer>>> noDuplicatesList = new LinkedList<>();
+		noDuplicatesList.addAll(noDuplicatesSet);
+		System.out.println(noDuplicatesList.size());
+		System.out.println("Average Set of Original Rooms: " + DungeonNovelty.averageRoomNovelty(noDuplicatesList));
+		System.out.println(allOriginalRooms.size());
+		System.out.println("Average All Original Rooms: " + DungeonNovelty.averageRoomNovelty(allOriginalRooms));
+		
+		noDuplicatesSet = new HashSet<>(allPureGrammarRooms);
+		noDuplicatesList = new LinkedList<>();
+		noDuplicatesList.addAll(noDuplicatesSet);
+		
+		System.out.println(noDuplicatesList.size());
+		System.out.println("Average Set of Grammar Rooms: " + DungeonNovelty.averageRoomNovelty(noDuplicatesList));
+		System.out.println(allPureGrammarRooms.size());
+		System.out.println("Average All Grammar Rooms: " + DungeonNovelty.averageRoomNovelty(allPureGrammarRooms));
+
+		noDuplicatesSet = new HashSet<>(allGANRooms);
+		noDuplicatesList = new LinkedList<>();
+		noDuplicatesList.addAll(noDuplicatesSet);
+
+		System.out.println(noDuplicatesList.size());
+		System.out.println("Average Set of GAN Rooms: " + DungeonNovelty.averageRoomNovelty(noDuplicatesList));
+		System.out.println(allGANRooms.size());
+		System.out.println("Average All GAN Rooms: " + DungeonNovelty.averageRoomNovelty(allGANRooms));
+		
 	}
 	
 }
