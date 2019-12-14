@@ -59,6 +59,7 @@ if __name__ == '__main__':
 		out_height = 16
 		out_width = 11
 	elif z_dims == 6: # Fixed Zelda with all tiles
+		# The fixed Zelda rotates the rooms to match the original game presentation
 		out_height = 11
 		out_width = 16
 	else: # Assume this is Mario (10 or 13 tiles, depending)
@@ -72,7 +73,6 @@ if __name__ == '__main__':
 	ngf = 64
 	ngpu = 1
 	n_extra_layers = 0
-	#z_dims = 10 #number different titles: set by command line above
 
 	# This is a new DCGAN model that has the proper state dict labels/keys for the latest version of PyTorch (no periods '.')
 	generator = dcgan.DCGAN_G(imageSize, nz, z_dims, ngf, ngpu, n_extra_layers)
