@@ -19,6 +19,7 @@ import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.GraphDungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.SimpleDungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
@@ -56,7 +57,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		// false: Has Dungeonize instead of ability to play one room.
 		super(false); // Initialize InteractiveGANLevelEvolutionTask
 		
-		sd = new GraphDungeon();
+		sd = new SimpleDungeon(); //new GraphDungeon();
 		
 		JButton dungeonize = new JButton("Dungeonize");
 		dungeonize.setName("" + DUNGEONIZE_BUTTON_INDEX);
@@ -264,6 +265,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 			}
 			
 			try {
+				// TODO: Fix: This 5 seems to be completely ignored by both Simple and Graph Dungeon
 				sd.showDungeon(phenotypes, 5);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
