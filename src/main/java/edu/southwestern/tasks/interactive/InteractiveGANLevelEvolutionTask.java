@@ -111,9 +111,12 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(fileLoadButton);
-			top.add(vectorExplorerButton);
-			top.add(interpolationButton);
-
+			
+			if(Parameters.parameters.booleanParameter("showLatentSpaceOptions")) {
+				top.add(vectorExplorerButton);
+				top.add(interpolationButton);
+			}
+			
 			if(Parameters.parameters.booleanParameter("showKLOptions")) {
 				JPanel klSliders = new JPanel();
 				klSliders.setLayout(new GridLayout(3,1));

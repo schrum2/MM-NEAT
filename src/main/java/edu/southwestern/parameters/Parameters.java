@@ -353,6 +353,7 @@ public class Parameters {
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		// Boolean parameters 
+		booleanOptions.add("showLatentSpaceOptions", true, "Interactive GAN evolution includes latent space exploration and interpolation");
 		booleanOptions.add("allowInteractiveEvolution", true, "Interactive evolution actually allows evolution");
 		booleanOptions.add("showKLOptions", true, "Interactive GAN evolution displays KL measurements");
 		booleanOptions.add("gvgAIForZeldaGAN", false, "Use GVG-AI representation of Zelda game");
