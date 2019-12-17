@@ -53,7 +53,8 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	 * @throws IllegalAccessException
 	 */
 	public ZeldaGANLevelBreederTask() throws IllegalAccessException {
-		super(); // Initialize InteractiveGANLevelEvolutionTask
+		// false: Has Dungeonize instead of ability to play one room.
+		super(false); // Initialize InteractiveGANLevelEvolutionTask
 		
 		sd = new GraphDungeon();
 		

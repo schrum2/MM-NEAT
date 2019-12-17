@@ -77,6 +77,10 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	 * @throws IllegalAccessException
 	 */
 	public InteractiveGANLevelEvolutionTask() throws IllegalAccessException {
+		this(true); // Should be able to play most games
+	}
+	
+	public InteractiveGANLevelEvolutionTask(boolean isPlayable) throws IllegalAccessException {
 		super(false); // false indicates that we are NOT evolving CPPNs
 		configureGAN();
 
@@ -117,12 +121,14 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 			}
 		}
 
-		//Construction of button that lets user plays the level
-		JButton play = new JButton("Play");
-		// Name is first available numeric label after the input disablers
-		play.setName("" + PLAY_BUTTON_INDEX);
-		play.addActionListener(this);
-		top.add(play);
+		if(isPlayable) {
+			//Construction of button that lets user plays the level
+			JButton play = new JButton("Play");
+			// Name is first available numeric label after the input disablers
+			play.setName("" + PLAY_BUTTON_INDEX);
+			play.addActionListener(this);
+			top.add(play);
+		}
 	}
 
 	/**
