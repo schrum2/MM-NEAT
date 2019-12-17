@@ -50,7 +50,6 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	public static final int PLAY_BUTTON_INDEX = -20; 
 	private static final int FILE_LOADER_BUTTON_INDEX = -21;
 	private static final int VECTOR_EXPLORER_BUTTON_INDEX = -22;
-	private static final int KL_DIV_BUTTON_INDEX = -23;
 	private static final int INTERPOLATE_BUTTON_INDEX = -24;
 	
 	private static final int SLIDER_RANGE = 100; // Latent vector sliders (divide by this to get vector value)
@@ -97,16 +96,6 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 		interpolationButton.addActionListener(this);
 
 		
-		// Jacob: 2019-01-15
-		// I'm removing the KL Div button because the latent space explorer already provides
-		// this information in a better interface
-		/**
-		JButton klDivButton = new JButton();
-		klDivButton.setText("KLDiv");
-		klDivButton.setName("" + KL_DIV_BUTTON_INDEX);
-		klDivButton.addActionListener(this);
-		*/
-		
 		JSlider widthFilterSlider = klDivSlider("receptiveFieldWidth",1,6,"KL filter width");
 		JSlider heightFilterSlider = klDivSlider("receptiveFieldHeight",1,6,"KL filter height");
 		JSlider strideFilterSlider = klDivSlider("stride",1,6,"KL filter stride");
@@ -114,17 +103,18 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(fileLoadButton);
 			top.add(vectorExplorerButton);
-			//top.add(klDivButton);
 			top.add(interpolationButton);
-			
-			JPanel klSliders = new JPanel();
-			klSliders.setLayout(new GridLayout(3,1));
-			
-			klSliders.add(widthFilterSlider);
-			klSliders.add(heightFilterSlider);
-			klSliders.add(strideFilterSlider);
-			
-			top.add(klSliders);
+
+			if(Parameters.parameters.booleanParameter("showKLOptions")) {
+				JPanel klSliders = new JPanel();
+				klSliders.setLayout(new GridLayout(3,1));
+
+				klSliders.add(widthFilterSlider);
+				klSliders.add(heightFilterSlider);
+				klSliders.add(strideFilterSlider);
+
+				top.add(klSliders);
+			}
 		}
 
 		//Construction of button that lets user plays the level
@@ -258,16 +248,6 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 			resetButtons(true);
 		}
 		
-		// This button doesn't exist any more, since the latent space explorere handles it
-		if(itemID == KL_DIV_BUTTON_INDEX) {
-			// Compare every selected level with every other selected level
-			for(Integer i : selectedItems) {
-				for(Integer j : selectedItems) {
-					System.out.println(klDivResults(i, j));
-					System.out.println(klDivSymmetricResults(i,j));
-				}
-			}
-		}
 		if(itemID == VECTOR_EXPLORER_BUTTON_INDEX) {
 			if(selectedItems.size() == 0) return false; // Nothing to explore
 			
@@ -488,13 +468,14 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 		if(globalKLDivSymLabel != null) globalKLDivSymLabel.setText("");
 		// The hard-coded assumption here is that we always compare the last two items selected
 		// Compare in both orders since KL Div not symmetric
-		globalKLDivLabel1 = new JLabel(compare ? klDivResults(selectedItems.get(selectedItems.size() - 1), selectedItems.get(selectedItems.size() - 2)) : "");
-		globalKLDivLabel2 = new JLabel(compare ? klDivResults(selectedItems.get(selectedItems.size() - 2), selectedItems.get(selectedItems.size() - 1)) : "");
-		globalKLDivSymLabel = new JLabel(compare ? klDivSymmetricResults(selectedItems.get(selectedItems.size() - 2), selectedItems.get(selectedItems.size() - 1)) : "");
-		bothKLDivStrings.add(globalKLDivLabel1);
-		bothKLDivStrings.add(globalKLDivLabel2);
-		bothKLDivStrings.add(globalKLDivSymLabel);
-		
+		if(Parameters.parameters.booleanParameter("showKLOptions")) {
+			globalKLDivLabel1 = new JLabel(compare ? klDivResults(selectedItems.get(selectedItems.size() - 1), selectedItems.get(selectedItems.size() - 2)) : "");
+			globalKLDivLabel2 = new JLabel(compare ? klDivResults(selectedItems.get(selectedItems.size() - 2), selectedItems.get(selectedItems.size() - 1)) : "");
+			globalKLDivSymLabel = new JLabel(compare ? klDivSymmetricResults(selectedItems.get(selectedItems.size() - 2), selectedItems.get(selectedItems.size() - 1)) : "");
+			bothKLDivStrings.add(globalKLDivLabel1);
+			bothKLDivStrings.add(globalKLDivLabel2);
+			bothKLDivStrings.add(globalKLDivSymLabel);
+		}
 		JPanel vectorSliders = new JPanel();
 		vectorSliders.setLayout(new GridLayout(10, phenotype.size() / 10));
 		// Add a slider for each latent vector variable
