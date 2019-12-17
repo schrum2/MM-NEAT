@@ -465,6 +465,8 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 * @param buttonIndex index of button 
 	 */
 	protected void setButtonImage(BufferedImage gmi, int buttonIndex){ 
+		// These hard-coded numbers look better in Mario
+		//ImageIcon img = new ImageIcon(gmi.getScaledInstance(350,200,Image.SCALE_DEFAULT));
 		ImageIcon img = new ImageIcon(gmi.getScaledInstance(picSize,picSize,Image.SCALE_DEFAULT));
 		buttons.get(buttonIndex).setName("" + buttonIndex);
 		buttons.get(buttonIndex).setIcon(img);
