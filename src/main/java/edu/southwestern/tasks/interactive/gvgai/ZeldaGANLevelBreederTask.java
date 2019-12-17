@@ -57,7 +57,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		// false: Has Dungeonize instead of ability to play one room.
 		super(false); // Initialize InteractiveGANLevelEvolutionTask
 		
-		sd = new SimpleDungeon(); //new GraphDungeon();
+		sd = new GraphDungeon();
 		
 		JButton dungeonize = new JButton("Dungeonize");
 		dungeonize.setName("" + DUNGEONIZE_BUTTON_INDEX);
