@@ -964,4 +964,19 @@ public class DungeonUtil {
 		DungeonUtil.viewDungeon(d, new HashSet<>());
 	}
 
+	/**
+	 * Convert a grid of rooms in the List of Lists of Integers format produced by json into
+	 * a grid of Levels, which correspond to individual Zelda rooms.
+	 * @param grid 2D array of List representations of rooms in dungeon
+	 * @return 2D array of Level representations of rooms in dungeon
+	 */
+	public static Level[][] roomGridFromJsonGrid(List<List<Integer>>[][] grid) {
+		Level[][] levelGrid = new Level[grid.length][grid[0].length];
+		for(int y = 0; y < grid.length; y++) {
+			for(int x = 0; x < grid[0].length; x++) {
+				levelGrid[y][x] = new Level(grid[y][x]);
+			}
+		}
+		return levelGrid;
+	}
 }
