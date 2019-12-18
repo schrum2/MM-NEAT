@@ -51,6 +51,7 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 	private static final int FILE_LOADER_BUTTON_INDEX = -21;
 	private static final int VECTOR_EXPLORER_BUTTON_INDEX = -22;
 	private static final int INTERPOLATE_BUTTON_INDEX = -24;
+	private static final int RANDOMIZE_BUTTON_INDEX = -25;
 
 	private static final int SLIDER_RANGE = 100; // Latent vector sliders (divide by this to get vector value)
 
@@ -104,6 +105,10 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 		interpolationButton.setName("" + INTERPOLATE_BUTTON_INDEX);
 		interpolationButton.addActionListener(this);
 
+		JButton randomizeButton = new JButton();
+		randomizeButton.setText("Randomize");
+		randomizeButton.setName("" + RANDOMIZE_BUTTON_INDEX);
+		randomizeButton.addActionListener(this);
 
 		JSlider widthFilterSlider = klDivSlider("receptiveFieldWidth",1,6,"KL filter width");
 		JSlider heightFilterSlider = klDivSlider("receptiveFieldHeight",1,6,"KL filter height");
@@ -115,6 +120,7 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 			if(Parameters.parameters.booleanParameter("showLatentSpaceOptions")) {
 				top.add(vectorExplorerButton);
 				top.add(interpolationButton);
+				top.add(randomizeButton);
 			}
 			
 			if(Parameters.parameters.booleanParameter("showKLOptions")) {
@@ -280,6 +286,14 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 				System.out.println("Will compare two levels in explorer");
 				addLevelToExploreToFrame(selectedItems.size() - 2, explorer, compareTwo);
 			}
+		}
+		if(itemID == RANDOMIZE_BUTTON_INDEX) {
+			// Replace all currently selected items with a random latent vector
+			for(Integer itemIndex : selectedItems) {
+				Score<ArrayList<Double>> score = scores.get(itemIndex);
+				score.individual = new BoundedRealValuedGenotype();
+			}
+			this.resetButtons(true);
 		}
 		if(itemID == INTERPOLATE_BUTTON_INDEX) {
 			if(selectedItems.size() < 2) {
