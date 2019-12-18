@@ -938,4 +938,28 @@ public class ArrayUtil {
 			toModify.put(0, i, Math.min(toModify.getDouble(0,i), other.getDouble(0,i)));
 		}		
 	}
+	
+	/**
+	 * Return a rotated version of a List of Lists representing a 2D grid.
+	 * 
+	 * @param <T> Any type contained in the nested lists
+	 * @param original 2D List of Lists
+	 * @return Rotated List of Lists
+	 */
+	public static <T> List<List<T>> rotateCounterClockwise(List<List<T>> original) {
+		List<List<T>> result = new ArrayList<List<T>>();
+		int width = original.get(0).size();
+		for(int j = 0; j < width; j++) {
+			result.add(new ArrayList<T>(original.size()));
+		}
+		// transfer
+		for(int i = 0; i < original.size(); i++) {
+			for(int j = 0; j < width; j++) {
+				List<T> row = original.get(i);
+				T previous = row.get(j);
+				result.get(j).add(previous);
+			}
+		}
+		return result;
+	}
 }
