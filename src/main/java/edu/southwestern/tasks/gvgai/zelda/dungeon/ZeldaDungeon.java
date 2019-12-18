@@ -81,7 +81,7 @@ public abstract class ZeldaDungeon<T> {
 	 * @param y Y coordinate to check
 	 * @param direction String direction (UP, DOWN, LEFT, RIGHT)
 	 */
-	protected void addAdjacencyIfAvailable(Dungeon dungeonInstance, Level[][] dungeon, String[][] uuidLabels, Node newNode, int x, int y, String direction) {
+	public static void addAdjacencyIfAvailable(Dungeon dungeonInstance, Level[][] dungeon, String[][] uuidLabels, Node newNode, int x, int y, String direction) {
 		int tileToSetTo = 3; // Door tile number
 		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length || 
 				dungeon[y][x] == null) // If theres no dungeon there set the tiles to wall
@@ -115,7 +115,7 @@ public abstract class ZeldaDungeon<T> {
 		
 	}
 	
-	private void findAndAddGoal(Dungeon dungeon, Node newNode) {
+	private static void findAndAddGoal(Dungeon dungeon, Node newNode) {
 		List<List<Integer>> ints = newNode.level.intLevel;
 		String name = newNode.name;
 		for(int y = 0; y < ints.size(); y++) {
@@ -128,7 +128,7 @@ public abstract class ZeldaDungeon<T> {
 		}
 	}
 
-	private void setLevels(String direction, Node node, int tile) {
+	private static void setLevels(String direction, Node node, int tile) {
 		List<List<Integer>> level = node.level.intLevel;
 		// Randomize tile only if the door being placed actually leads to another room
 		if(tile == 3) {
