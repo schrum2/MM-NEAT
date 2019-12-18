@@ -180,6 +180,10 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	 */
 	@Override
 	public Pair<Integer, Integer> resetAndReLaunchGAN(String model) {
+		return staticResetAndReLaunchGAN(model);
+	}
+
+	public static Pair<Integer, Integer> staticResetAndReLaunchGAN(String model) {
 		int oldLength = GANProcess.latentVectorLength(); // for old model
 		// Need to parse the model name to find out the latent vector size
 		String dropDataSource = model.substring(model.indexOf("_")+1);

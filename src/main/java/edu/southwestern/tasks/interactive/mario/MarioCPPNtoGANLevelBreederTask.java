@@ -60,6 +60,11 @@ public class MarioCPPNtoGANLevelBreederTask<T extends Network> extends MarioLeve
 		resetLatentVectorAndOutputs();
 	}
 
+	/**
+	 * Whenever the GAN model changes, the latent vector length is
+	 * different, and the output labels need to reset. The CPPN population
+	 * also has to reset, but that is done elsewhere.
+	 */
 	private void resetLatentVectorAndOutputs() {
 		int latentVectorLength = GANProcess.latentVectorLength();
 		outputLabels = new String[latentVectorLength];
@@ -122,6 +127,7 @@ public class MarioCPPNtoGANLevelBreederTask<T extends Network> extends MarioLeve
 				String model = chooser.getSelectedFile().getName();
 				Parameters.parameters.setString(getGANModelParameterName(), model);
 				MarioGANLevelBreederTask.staticResetAndReLaunchGAN(model);
+				reset(); // Reset the whole population, since the CPPNs need to have a different number of output neurons
 				resetLatentVectorAndOutputs();
 			}
 			resetButtons(true);
