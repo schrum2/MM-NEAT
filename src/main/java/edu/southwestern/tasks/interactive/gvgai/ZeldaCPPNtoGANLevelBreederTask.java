@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.interactive.gvgai;
 
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.util.Hashtable;
@@ -28,6 +29,7 @@ import edu.southwestern.util.CartesianGeometricUtilities;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.util2D.ILocated2D;
 import edu.southwestern.util.util2D.Tuple2D;
+import me.jakerg.rougelike.RougelikeApp;
 
 public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWEANN> {
 
@@ -69,6 +71,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		heightSlider.setPreferredSize(new Dimension(200, 40));
 
 		JPanel size = new JPanel();
+		size.setLayout(new GridLayout(2,1));
 		size.add(widthSlider);
 		size.add(heightSlider);
 		
@@ -123,13 +126,9 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	}
 
 	@Override
-	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
-		Dungeon dungeonInstance = new Dungeon();
-		
-		
-		// TODO: Build up, addd rooms. SimpleDungeon.makeDungeon might have some helpful code
-		
-		BufferedImage image = DungeonUtil.imageOfDungeon(dungeonInstance);
+	protected BufferedImage getButtonImage(TWEANN cppn, int width, int height, double[] inputMultipliers) {
+		Dungeon dungeon = cppnToDungeon(cppn, Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks"), Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks"), inputMultipliers);
+		BufferedImage image = DungeonUtil.imageOfDungeon(dungeon);
 		return image;
 	}
 
@@ -139,9 +138,13 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		// Human plays level
 		if(itemID == PLAY_BUTTON_INDEX && selectedItems.size() > 0) {
 			Network cppn = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
-			
-			// TODO: Generate and launch dungeon
-
+			Dungeon dungeon = cppnToDungeon(cppn, Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks"), Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks"), inputMultipliers);
+			new Thread() {
+				@Override
+				public void run() {
+					RougelikeApp.startDungeon(dungeon);
+				}
+			}.start();
 		}
 		return false; // no undo: every thing is fine
 	}
