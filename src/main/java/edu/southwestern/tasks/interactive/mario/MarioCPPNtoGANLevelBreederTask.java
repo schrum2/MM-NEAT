@@ -15,7 +15,6 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.MarioGANUtil;
-import edu.southwestern.util.datastructures.Pair;
 
 /**
  * Interactively evolve Mario levels. Users selectively
