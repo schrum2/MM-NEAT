@@ -894,7 +894,7 @@ public class LevelBreederTask extends InteractiveEvolutionTask<TWEANN> {
 
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<TWEANN> individual) {
-		// TODO Auto-generated method stub
+		// Not used
 	}
 
 	@Override
