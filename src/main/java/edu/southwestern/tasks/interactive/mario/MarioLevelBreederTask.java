@@ -41,8 +41,8 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
 	
-	public static final int LEVEL_LENGTH_SHORTEST = 20;
-	public static final int LEVEL_LENGTH_LONGEST = 200;
+	public int shortestLevelLength() { return 20; }
+	public int longestLevelLength() { return 200; }
 	
 	private boolean initializationComplete = false;
 	protected JSlider levelWidthSlider; // Allows for changing levelWidth
@@ -51,12 +51,12 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 		super();
 		//Construction of JSlider to determine length of generated CPPN amplitude
 		// Width ranged from 20 to 200 blocks
-		levelWidthSlider = new JSlider(JSlider.HORIZONTAL, LEVEL_LENGTH_SHORTEST, LEVEL_LENGTH_LONGEST, Parameters.parameters.integerParameter("marioLevelLength"));
+		levelWidthSlider = new JSlider(JSlider.HORIZONTAL, shortestLevelLength(), longestLevelLength(), Parameters.parameters.integerParameter("marioLevelLength"));
 		levelWidthSlider.setMinorTickSpacing(10000);
 		levelWidthSlider.setPaintTicks(true);
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
-		labels.put(LEVEL_LENGTH_SHORTEST, new JLabel("Shorter Level"));
-		labels.put(LEVEL_LENGTH_LONGEST, new JLabel("Longer Level"));
+		labels.put(shortestLevelLength(), new JLabel("Shorter Level"));
+		labels.put(longestLevelLength(), new JLabel("Longer Level"));
 		levelWidthSlider.setLabelTable(labels);
 		levelWidthSlider.setPaintLabels(true);
 		levelWidthSlider.setPreferredSize(new Dimension(200, 40));
