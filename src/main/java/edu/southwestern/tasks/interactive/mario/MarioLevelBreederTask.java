@@ -110,9 +110,20 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 		return "Mario Level Breeder";
 	}
 
+	protected String[] generateLevelLayoutFromCPPN(Network cppn, double[] inputMultipliers, int marioLevelLength) {
+		String[] level = MarioLevelUtil.generateLevelLayoutFromCPPN(cppn, inputMultipliers, marioLevelLength);
+		return level;
+	}
+	
+	protected Level generateLevelFromCPPN(Network phenotype, double[] inputMultipliers, int marioLevelLength) {
+		Level level = MarioLevelUtil.generateLevelFromCPPN(phenotype, inputMultipliers, marioLevelLength);
+		return level;
+	}
+	
+	
 	@Override
 	protected void save(String file, int i) {
-		String[] level = MarioLevelUtil.generateLevelLayoutFromCPPN((Network)scores.get(i).individual.getPhenotype(), inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
+		String[] level = generateLevelLayoutFromCPPN((Network)scores.get(i).individual.getPhenotype(), inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
 		// Prepare text file
 		try {
 			PrintStream ps = new PrintStream(new File(file));
@@ -130,7 +141,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
-		Level level = MarioLevelUtil.generateLevelFromCPPN(phenotype, inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
+		Level level = generateLevelFromCPPN(phenotype, inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
 		BufferedImage image = MarioLevelUtil.getLevelImage(level);
 		return image;
 	}
@@ -144,7 +155,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 		// Human plays level
 		if(itemID == PLAY_BUTTON_INDEX && selectedItems.size() > 0) {
 			Network cppn = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
-			Level level = MarioLevelUtil.generateLevelFromCPPN(cppn, inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
+			Level level = generateLevelFromCPPN(cppn, inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
 			Agent agent = new HumanKeyboardAgent();
 			// Must launch game in own thread, or won't animate or listen for events
 			new Thread() {

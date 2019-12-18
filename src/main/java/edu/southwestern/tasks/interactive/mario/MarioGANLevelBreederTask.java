@@ -114,6 +114,10 @@ public class MarioGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 
 	@Override
 	public Pair<Integer, Integer> resetAndReLaunchGAN(String model) {
+		return staticResetAndReLaunchGAN(model);
+	}
+	
+	public static Pair<Integer, Integer> staticResetAndReLaunchGAN(String model) {
 		int marioGANLevelChunks = Parameters.parameters.integerParameter("marioGANLevelChunks");
 		int oldLength = marioGANLevelChunks * GANProcess.latentVectorLength(); // for old model
 		if(model.equals("GECCO2018GAN_World1-1_32_Epoch5000.pth")) {
