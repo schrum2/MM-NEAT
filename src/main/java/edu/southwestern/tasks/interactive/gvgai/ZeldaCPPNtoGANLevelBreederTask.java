@@ -11,6 +11,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -38,6 +40,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	private static final int LEVEL_MAX_CHUNKS = 10; 
 	private String[] outputLabels;
 
+	private boolean initializationComplete = false;
 
 	public ZeldaCPPNtoGANLevelBreederTask() throws IllegalAccessException {
 		super();
@@ -59,6 +62,25 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		widthSlider.setLabelTable(widthLabels);
 		widthSlider.setPaintLabels(true);
 		widthSlider.setPreferredSize(new Dimension(200, 40));
+		widthSlider.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if(!initializationComplete) return;
+				// get value
+				JSlider source = (JSlider)e.getSource();
+				if(!source.getValueIsAdjusting()) {
+
+					int oldValue = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks");
+					int newValue = (int) source.getValue();
+					Parameters.parameters.setInteger("zeldaGANLevelWidthChunks", newValue);
+
+					if(oldValue != newValue) {
+						resetLatentVectorAndOutputs();
+						reset(); // resets whole population
+					}
+				}
+			}
+		});
 
 		JSlider heightSlider = new JSlider(JSlider.HORIZONTAL, LEVEL_MIN_CHUNKS, LEVEL_MAX_CHUNKS, Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks"));
 		heightSlider.setMinorTickSpacing(1);
@@ -69,7 +91,26 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		heightSlider.setLabelTable(heightLabels);
 		heightSlider.setPaintLabels(true);
 		heightSlider.setPreferredSize(new Dimension(200, 40));
+		heightSlider.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if(!initializationComplete) return;
+				// get value
+				JSlider source = (JSlider)e.getSource();
+				if(!source.getValueIsAdjusting()) {
 
+					int oldValue = Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
+					int newValue = (int) source.getValue();
+					Parameters.parameters.setInteger("zeldaGANLevelHeightChunks", newValue);
+
+					if(oldValue != newValue) {
+						resetLatentVectorAndOutputs();
+						reset(); // resets whole population
+					}
+				}
+			}
+		});
+		
 		JPanel size = new JPanel();
 		size.setLayout(new GridLayout(2,1));
 		size.add(widthSlider);
@@ -78,6 +119,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		top.add(size);
 
 		resetLatentVectorAndOutputs();
+		initializationComplete = true;
 	}
 
 	/**
