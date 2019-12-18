@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -163,8 +164,12 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 	@Override
 	protected void save(String file, int i) {
-		// TODO Auto-generated method stub
-
+		Dungeon dungeon = cppnToDungeon(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks"), Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks"), inputMultipliers);
+		try {
+			dungeon.saveToJson(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
