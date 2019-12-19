@@ -120,12 +120,14 @@ public class Dungeon {
 
 	public Point getCoords(String name) {
 		
-		System.out.println(levels);
-		System.out.println("SET:"+levels.keySet());
-		System.out.println("GET:"+levels.get(name));
-		System.out.println("CHECK:"+levels.containsKey(name));
-		
 		if (!levels.containsKey(name)) {
+			System.out.println(levels);
+			System.out.println("SET:"+levels.keySet());
+			System.out.println("GET:"+levels.get(name));
+			System.out.println("CHECK:"+levels.containsKey(name));
+			System.out.println("currentLevel:"+currentLevel);
+			System.out.println(this.goal);
+			
 			System.out.println("Name isn't in list : " + name);
 			return null;
 		}

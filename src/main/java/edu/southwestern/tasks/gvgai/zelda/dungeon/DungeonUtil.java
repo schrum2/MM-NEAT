@@ -53,7 +53,10 @@ import me.jakerg.rougelike.TileUtil;
 import me.jakerg.rougelike.World;
 
 public class DungeonUtil {
-
+	// The CPPN to GAN generation process does not make dungeons with a grammar, but using the A* check can cause problems because of this.
+	// Basically, the way it tells if a room has a start location as a point of interest is by looking at the grammar description for the room.
+	public static boolean NO_GRAMMAR_AT_ALL = false;
+	
 	public static void addCycles(Dungeon dungeon) throws Exception {
 		String[][] levels = dungeon.getLevelThere();
 		for(int y = 0; y < levels.length; y++) {
@@ -499,7 +502,8 @@ public class DungeonUtil {
 		List<Point> points = new LinkedList<>();
 		addExitPoints(points, intLevel);
 		addInterestPoints(points, intLevel);
-		if(n.grammar.equals(ZeldaGrammar.START))
+		
+		if(!NO_GRAMMAR_AT_ALL && n.grammar.equals(ZeldaGrammar.START))
 			points.add(new Point(5, 5));
 
 		return points;
