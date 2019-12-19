@@ -430,7 +430,7 @@ public class DungeonUtil {
 			}
 		}
 		if(resumePoint == null) {
-			throw new NullPointerException("Were there no points on the line? " + pointsToFloor + "\nOne should be converted to a floor tile.");
+			throw new IllegalStateException("Were there no points on the line? " + pointsToFloor + "\nOne should be converted to a floor tile.");
 		}
 		return resumePoint;
 	}
