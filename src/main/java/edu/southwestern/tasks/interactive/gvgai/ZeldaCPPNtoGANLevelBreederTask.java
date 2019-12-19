@@ -27,6 +27,7 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.CartesianGeometricUtilities;
@@ -248,22 +249,29 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		// dungeon grid until A* succeeds.
 		Dungeon dungeon = null;
 		boolean unbeatable;
+		double presenceThreshold = 0;
 		do {
 			unbeatable = false;
 			try {
-				List<List<Integer>>[][] levelAsListsGrid = levelGridFromLatentVectorGrid(latentVectorGrid,auxiliaryInformation);
+				List<List<Integer>>[][] levelAsListsGrid = levelGridFromLatentVectorGrid(latentVectorGrid,auxiliaryInformation,presenceThreshold);
+				//addRandomEnemies(levelAsListsGrid);
 				Level[][] levelGrid = DungeonUtil.roomGridFromJsonGrid(levelAsListsGrid);
 				Pair<Point,Point> startAndGoal = decideStartAndTriforceLocations(levelGrid,auxiliaryInformation);
 				Point startRoom = startAndGoal.t1;
+				// CPPN could make an empty dungeon
+				if(startRoom.x == -1 || startRoom.y == -1) {
+					throw new IllegalArgumentException("The dungeon must be empty since the start room is not in the grid");
+				}
 				Point triforceRoom = startAndGoal.t2;
 				dungeon = dungeonFromLevelGrid(levelGrid,startRoom);
 				levelGrid[triforceRoom.y][triforceRoom.x] = levelGrid[triforceRoom.y][triforceRoom.x].placeTriforce(dungeon);
 				dungeon.setGoalPoint(new Point(triforceRoom.x, triforceRoom.y));
 				dungeon.setGoal("("+triforceRoom.x+","+triforceRoom.y+")");
-				DungeonUtil.makeDungeonPlayable(dungeon);
+				//DungeonUtil.makeDungeonPlayable(dungeon);
 			} catch(IllegalArgumentException e) {
 				// Make a new room appear in dungeon
-				enableRoomActivation(auxiliaryInformation);
+				//enableRoomActivation(auxiliaryInformation);
+				presenceThreshold -= 0.01; // Make rooms more likely to appear
 				// Force loop
 				unbeatable = true;
 			}
@@ -271,6 +279,16 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		return dungeon;
 	}
 	
+	private static void addRandomEnemies(List<List<Integer>>[][] levelAsListsGrid) {
+		for(int y = 0; y < levelAsListsGrid.length; y++) {
+			for(int x = 0; x < levelAsListsGrid[y].length; x++) {
+				if(levelAsListsGrid[y][x] != null) {
+					ZeldaLevelUtil.addRandomEnemy(levelAsListsGrid[y][x]);
+				}
+			}
+		}
+	}
+
 	private static void enableRoomActivation(double[][][] auxiliaryInformation) {
 		for(int y = 0; y < auxiliaryInformation.length; y++) {
 			for(int x = 0; x < auxiliaryInformation[y].length; x++) {
@@ -394,12 +412,12 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	 * @param auxiliaryInformation Indicates whether rooms are actually present, and where triforce should be
 	 * @return Grid of corresponding Lists of Lists of Integers, which each such list is the room for a latent vector
 	 */
-	public static List<List<Integer>>[][] levelGridFromLatentVectorGrid(double[][][] latentVectorGrid,double[][][] auxiliaryInformation) {
+	public static List<List<Integer>>[][] levelGridFromLatentVectorGrid(double[][][] latentVectorGrid,double[][][] auxiliaryInformation, double presenceThreshold) {
 		@SuppressWarnings("unchecked")
 		List<List<Integer>>[][] levelAsListsGrid = (List<List<Integer>>[][]) new List[latentVectorGrid.length][latentVectorGrid[0].length];
 		for(int y = 0; y < levelAsListsGrid.length; y++) {
 			for(int x = 0; x < levelAsListsGrid[0].length; x++) {
-				if(auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] > 0) { // Room presence threshold is 0: TODO: Make parameter?
+				if(auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] > presenceThreshold) { // Room presence threshold is 0: TODO: Make parameter?
 					levelAsListsGrid[y][x] = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVectorGrid[y][x]);
 				} else {
 					levelAsListsGrid[y][x] = null;
