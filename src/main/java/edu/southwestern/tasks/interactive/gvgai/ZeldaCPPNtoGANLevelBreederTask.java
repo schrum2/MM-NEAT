@@ -254,7 +254,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			unbeatable = false;
 			try {
 				List<List<Integer>>[][] levelAsListsGrid = levelGridFromLatentVectorGrid(latentVectorGrid,auxiliaryInformation,presenceThreshold);
-				//addRandomEnemies(levelAsListsGrid);
+				addRandomEnemies(levelAsListsGrid);
 				Level[][] levelGrid = DungeonUtil.roomGridFromJsonGrid(levelAsListsGrid);
 				Pair<Point,Point> startAndGoal = decideStartAndTriforceLocations(levelGrid,auxiliaryInformation);
 				Point startRoom = startAndGoal.t1;
@@ -267,7 +267,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				levelGrid[triforceRoom.y][triforceRoom.x] = levelGrid[triforceRoom.y][triforceRoom.x].placeTriforce(dungeon);
 				dungeon.setGoalPoint(new Point(triforceRoom.x, triforceRoom.y));
 				dungeon.setGoal("("+triforceRoom.x+","+triforceRoom.y+")");
-				//DungeonUtil.makeDungeonPlayable(dungeon);
+				DungeonUtil.makeDungeonPlayable(dungeon);
 			} catch(IllegalArgumentException e) {
 				// Make a new room appear in dungeon
 				//enableRoomActivation(auxiliaryInformation);
@@ -289,17 +289,17 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		}
 	}
 
-	private static void enableRoomActivation(double[][][] auxiliaryInformation) {
-		for(int y = 0; y < auxiliaryInformation.length; y++) {
-			for(int x = 0; x < auxiliaryInformation[y].length; x++) {
-				if(auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] <= 0) {
-					auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] = 1.0;
-					return; // Found room to add ... stop
-				}
-			}
-		}
-		throw new IllegalStateException("There should have been a room that needed adding!");
-	}
+//	private static void enableRoomActivation(double[][][] auxiliaryInformation) {
+//		for(int y = 0; y < auxiliaryInformation.length; y++) {
+//			for(int x = 0; x < auxiliaryInformation[y].length; x++) {
+//				if(auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] <= 0) {
+//					auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] = 1.0;
+//					return; // Found room to add ... stop
+//				}
+//			}
+//		}
+//		throw new IllegalStateException("There should have been a room that needed adding!");
+//	}
 
 	private static Pair<Point,Point> decideStartAndTriforceLocations(Level[][] levelGrid, double[][][] auxiliaryInformation) {
 		int triforceX = -1;
