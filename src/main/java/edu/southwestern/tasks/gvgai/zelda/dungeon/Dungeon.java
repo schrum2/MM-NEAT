@@ -119,6 +119,12 @@ public class Dungeon {
 	}
 
 	public Point getCoords(String name) {
+		
+//		System.out.println(levels);
+//		System.out.println("SET:"+levels.keySet());
+//		System.out.println("GET:"+levels.get(name));
+//		System.out.println("CHECK:"+levels.containsKey(name));
+		
 		if (!levels.containsKey(name)) {
 			System.out.println("Name isn't in list : " + name);
 			return null;
@@ -126,7 +132,7 @@ public class Dungeon {
 
 		for (int y = 0; y < levelThere.length; y++)
 			for (int x = 0; x < levelThere[y].length; x++)
-				if (name == levelThere[y][x])
+				if (name.equals(levelThere[y][x]))
 					return new Point(x, y);
 
 		System.out.println("Couldnt find name : " + name);

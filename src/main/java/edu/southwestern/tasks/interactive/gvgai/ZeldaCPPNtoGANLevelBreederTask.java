@@ -6,6 +6,7 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -246,9 +247,9 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		Point triforceRoom = decideTriforceLocation(levelGrid,auxiliaryInformation);
 		Dungeon dungeon = dungeonFromLevelGrid(levelGrid);
 		levelGrid[triforceRoom.y][triforceRoom.x] = levelGrid[triforceRoom.y][triforceRoom.x].placeTriforce(dungeon);
-		
-		// TODO: Doesn't work!
-		//DungeonUtil.makeDungeonPlayable(dungeon);
+		dungeon.setGoalPoint(new Point(triforceRoom.x, triforceRoom.y));
+		dungeon.setGoal("("+triforceRoom.x+","+triforceRoom.y+")");
+		DungeonUtil.makeDungeonPlayable(dungeon);
 		return dungeon;
 	}
 	
@@ -301,6 +302,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		
 		// Put start in middle
 		String name = uuidLabels[(uuidLabels.length - 1) / 2][(uuidLabels[0].length - 1) /2].toString();
+		
+		//System.out.println(Arrays.deepToString(uuidLabels));
 		
 		dungeonInstance.setCurrentLevel(name);
 		dungeonInstance.setLevelThere(uuidLabels);
