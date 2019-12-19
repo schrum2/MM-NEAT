@@ -6,7 +6,6 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -31,7 +30,6 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.CartesianGeometricUtilities;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.util2D.ILocated2D;
@@ -245,19 +243,46 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		Pair<double[][][],double[][][]> cppnOutput = latentVectorGridFromCPPN(cppn, width, height, inputMultipliers);		
 		double[][][] auxiliaryInformation = cppnOutput.t1;
 		double[][][] latentVectorGrid = cppnOutput.t2;
-		List<List<Integer>>[][] levelAsListsGrid = levelGridFromLatentVectorGrid(latentVectorGrid,auxiliaryInformation);
-		Level[][] levelGrid = DungeonUtil.roomGridFromJsonGrid(levelAsListsGrid);
-		Pair<Point,Point> startAndGoal = decideStartAndTriforceLocations(levelGrid,auxiliaryInformation);
-		Point startRoom = startAndGoal.t1;
-		Point triforceRoom = startAndGoal.t2;
-		Dungeon dungeon = dungeonFromLevelGrid(levelGrid,startRoom);
-		levelGrid[triforceRoom.y][triforceRoom.x] = levelGrid[triforceRoom.y][triforceRoom.x].placeTriforce(dungeon);
-		dungeon.setGoalPoint(new Point(triforceRoom.x, triforceRoom.y));
-		dungeon.setGoal("("+triforceRoom.x+","+triforceRoom.y+")");
-		DungeonUtil.makeDungeonPlayable(dungeon);
+		// Because a CPPN can make disconnected dungeons, it is legitimately possible for a level
+		// to be unbeatable, even after repair by A*. This loop randomly fills in empty rooms in the
+		// dungeon grid until A* succeeds.
+		Dungeon dungeon = null;
+		boolean unbeatable;
+		do {
+			unbeatable = false;
+			try {
+				List<List<Integer>>[][] levelAsListsGrid = levelGridFromLatentVectorGrid(latentVectorGrid,auxiliaryInformation);
+				Level[][] levelGrid = DungeonUtil.roomGridFromJsonGrid(levelAsListsGrid);
+				Pair<Point,Point> startAndGoal = decideStartAndTriforceLocations(levelGrid,auxiliaryInformation);
+				Point startRoom = startAndGoal.t1;
+				Point triforceRoom = startAndGoal.t2;
+				dungeon = dungeonFromLevelGrid(levelGrid,startRoom);
+				levelGrid[triforceRoom.y][triforceRoom.x] = levelGrid[triforceRoom.y][triforceRoom.x].placeTriforce(dungeon);
+				dungeon.setGoalPoint(new Point(triforceRoom.x, triforceRoom.y));
+				dungeon.setGoal("("+triforceRoom.x+","+triforceRoom.y+")");
+				DungeonUtil.makeDungeonPlayable(dungeon);
+			} catch(IllegalArgumentException e) {
+				// Make a new room appear in dungeon
+				enableRoomActivation(auxiliaryInformation);
+				// Force loop
+				unbeatable = true;
+			}
+		} while(unbeatable);
 		return dungeon;
 	}
 	
+	private static void enableRoomActivation(double[][][] auxiliaryInformation) {
+		for(int y = 0; y < auxiliaryInformation.length; y++) {
+			for(int x = 0; x < auxiliaryInformation[y].length; x++) {
+				if(auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] <= 0) {
+					auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] = 1.0;
+					return; // Found room to add ... stop
+				}
+			}
+		}
+		throw new IllegalStateException("There should have been a room that needed adding!");
+	}
+
 	private static Pair<Point,Point> decideStartAndTriforceLocations(Level[][] levelGrid, double[][][] auxiliaryInformation) {
 		int triforceX = -1;
 		int triforceY = -1;
