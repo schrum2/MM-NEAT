@@ -250,6 +250,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		Dungeon dungeon = null;
 		boolean unbeatable;
 		double presenceThreshold = 0;
+		int numTries = 1;
 		do {
 			unbeatable = false;
 			try {
@@ -271,7 +272,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			} catch(IllegalArgumentException e) {
 				// Make a new room appear in dungeon
 				//enableRoomActivation(auxiliaryInformation);
-				presenceThreshold -= 0.01; // Make rooms more likely to appear
+				presenceThreshold -= 0.01 * (numTries++); // Make rooms more likely to appear, each time more likelier
 				// Force loop
 				unbeatable = true;
 			}
@@ -279,6 +280,10 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		return dungeon;
 	}
 	
+	/**
+	 * Add random enemies to EVERY room in the dungeon
+	 * @param levelAsListsGrid List representation of the dungeon rooms
+	 */
 	private static void addRandomEnemies(List<List<Integer>>[][] levelAsListsGrid) {
 		for(int y = 0; y < levelAsListsGrid.length; y++) {
 			for(int x = 0; x < levelAsListsGrid[y].length; x++) {
