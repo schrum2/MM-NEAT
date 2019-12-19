@@ -2,6 +2,7 @@ package edu.southwestern.tasks.interactive.gvgai;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,6 +30,7 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.util2D.ILocated2D;
 import edu.southwestern.util.util2D.Tuple2D;
@@ -36,6 +38,10 @@ import me.jakerg.rougelike.RougelikeApp;
 
 public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWEANN> {
 
+	public static final int NUM_NON_LATENT_INPUTS = 2;
+	public static final int INDEX_ROOM_PRESENCE = 0;
+	public static final int INDEX_TRIFORCE_PREFERENCE = 1;
+	
 	public static final int PLAY_BUTTON_INDEX = -20;
 	private static final int LEVEL_MIN_CHUNKS = 1;
 	private static final int LEVEL_MAX_CHUNKS = 10; 
@@ -140,9 +146,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 	private void resetLatentVectorAndOutputs() {
 		int latentVectorLength = GANProcess.latentVectorLength();
-		outputLabels = new String[latentVectorLength];
-		for(int i = 0; i < latentVectorLength; i++) {
-			outputLabels[i] = "LV"+i;
+		outputLabels = new String[latentVectorLength + NUM_NON_LATENT_INPUTS];
+		outputLabels[INDEX_ROOM_PRESENCE] = "Room Presence";
+		outputLabels[INDEX_TRIFORCE_PREFERENCE] = "Triforce Preference";
+		for(int i = NUM_NON_LATENT_INPUTS; i < outputLabels.length; i++) {
+			outputLabels[i] = "LV"+(i-NUM_NON_LATENT_INPUTS);
 		}
 	}
 
@@ -230,13 +238,39 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	}
 
 	public static Dungeon cppnToDungeon(Network cppn, int width, int height, double[] inputMultipliers) {
-		double[][][] latentVectorGrid = latentVectorGridFromCPPN(cppn, width, height, inputMultipliers);
-		List<List<Integer>>[][] levelAsListsGrid = levelGridFromLatentVectorGrid(latentVectorGrid);
+		Pair<double[][][],double[][][]> cppnOutput = latentVectorGridFromCPPN(cppn, width, height, inputMultipliers);		
+		double[][][] auxiliaryInformation = cppnOutput.t1;
+		double[][][] latentVectorGrid = cppnOutput.t2;
+		List<List<Integer>>[][] levelAsListsGrid = levelGridFromLatentVectorGrid(latentVectorGrid,auxiliaryInformation);
 		Level[][] levelGrid = DungeonUtil.roomGridFromJsonGrid(levelAsListsGrid);
+		Point triforceRoom = decideTriforceLocation(levelGrid,auxiliaryInformation);
 		Dungeon dungeon = dungeonFromLevelGrid(levelGrid);
+		levelGrid[triforceRoom.y][triforceRoom.x] = levelGrid[triforceRoom.y][triforceRoom.x].placeTriforce(dungeon);
+		
+		// TODO: Doesn't work!
+		//DungeonUtil.makeDungeonPlayable(dungeon);
 		return dungeon;
 	}
 	
+	private static Point decideTriforceLocation(Level[][] levelGrid, double[][][] auxiliaryInformation) {
+		int triforceX = -1;
+		int triforceY = -1;
+		double highestActivation = Double.NEGATIVE_INFINITY;
+		
+		for(int y = 0; y < levelGrid.length; y++) {
+			for(int x = 0; x < levelGrid[y].length; x++) {
+				if(levelGrid[y][x] != null) {
+					if(auxiliaryInformation[y][x][INDEX_TRIFORCE_PREFERENCE] > highestActivation) {
+						highestActivation = auxiliaryInformation[y][x][INDEX_TRIFORCE_PREFERENCE];
+						triforceX = x;
+						triforceY = y;
+					}
+				}
+			}
+		}		
+		return new Point(triforceX,triforceY);
+	}
+
 	/**
 	 * Make a playable Rogue-like dungeon from a 2D Level grid. Copied some code
 	 * from SimpleDungeon. Might need to refactor at some point
@@ -283,8 +317,9 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	 * @param inputMultipliers Multipliers for CPPN inputs which has potential to disable them
 	 * @return 3D array that is a 2D grid of latent vectors
 	 */
-	public static double[][][] latentVectorGridFromCPPN(Network cppn, int width, int height, double[] inputMultipliers) {
+	public static Pair<double[][][],double[][][]> latentVectorGridFromCPPN(Network cppn, int width, int height, double[] inputMultipliers) {
 		double[][][] latentVectorGrid = new double[height][width][];
+		double[][][] presenceAndTriforceGrid = new double[height][width][];
 		for(int y = 0; y < height; y++) {
 			for(int x = 0; x < width; x++) {
 				ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), width, height);
@@ -294,23 +329,34 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 					remixedInputs[i] *= inputMultipliers[i];
 				}
 				double[] vector = cppn.process(remixedInputs);
-				latentVectorGrid[y][x] = vector;
+				double[] latentVector = new double[GANProcess.latentVectorLength()]; // Shorter
+				System.arraycopy(vector, NUM_NON_LATENT_INPUTS, latentVector, 0, latentVector.length);
+				latentVectorGrid[y][x] = latentVector;
+				
+				double[] auxiliaryInformation = new double[NUM_NON_LATENT_INPUTS];
+				System.arraycopy(vector, 0, auxiliaryInformation, 0, NUM_NON_LATENT_INPUTS);
+				presenceAndTriforceGrid[y][x] = auxiliaryInformation;
 			}
 		}
-		return latentVectorGrid;
+		return new Pair<double[][][],double[][][]>(presenceAndTriforceGrid,latentVectorGrid);
 	}
 	
 	/**
 	 * Given 2D grid of latent vectors, send each to the GAN to get a 2D grid of List representations of the rooms.
 	 * @param latentVectorGrid 3D array that is 2D grid of latent vectors
+	 * @param auxiliaryInformation Indicates whether rooms are actually present, and where triforce should be
 	 * @return Grid of corresponding Lists of Lists of Integers, which each such list is the room for a latent vector
 	 */
-	public static List<List<Integer>>[][] levelGridFromLatentVectorGrid(double[][][] latentVectorGrid) {
+	public static List<List<Integer>>[][] levelGridFromLatentVectorGrid(double[][][] latentVectorGrid,double[][][] auxiliaryInformation) {
 		@SuppressWarnings("unchecked")
 		List<List<Integer>>[][] levelAsListsGrid = (List<List<Integer>>[][]) new List[latentVectorGrid.length][latentVectorGrid[0].length];
 		for(int y = 0; y < levelAsListsGrid.length; y++) {
 			for(int x = 0; x < levelAsListsGrid[0].length; x++) {
-				levelAsListsGrid[y][x] = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVectorGrid[y][x]);
+				if(auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] > 0) { // Room presence threshold is 0: TODO: Make parameter?
+					levelAsListsGrid[y][x] = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVectorGrid[y][x]);
+				} else {
+					levelAsListsGrid[y][x] = null;
+				}
 			}
 		}
 		return levelAsListsGrid;

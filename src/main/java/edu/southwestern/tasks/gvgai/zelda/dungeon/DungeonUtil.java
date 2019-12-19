@@ -974,7 +974,7 @@ public class DungeonUtil {
 		Level[][] levelGrid = new Level[grid.length][grid[0].length];
 		for(int y = 0; y < grid.length; y++) {
 			for(int x = 0; x < grid[0].length; x++) {
-				levelGrid[y][x] = new Level(grid[y][x]);
+				levelGrid[y][x] = grid[y][x] == null ? null : new Level(grid[y][x]);
 			}
 		}
 		return levelGrid;
