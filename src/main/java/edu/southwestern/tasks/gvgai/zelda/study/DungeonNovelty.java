@@ -298,6 +298,22 @@ public class DungeonNovelty {
 		HashSet<List<List<Integer>>> noDuplicatesSet = new HashSet<>(allOriginalRooms);
 		List<List<List<Integer>>> noDuplicatesList = new LinkedList<>();
 		noDuplicatesList.addAll(noDuplicatesSet);
+		
+		double[] originalRoomsNoveltySet = roomNovelties(noDuplicatesList);
+		PrintStream originalPS = new PrintStream(new File("OriginalRoomsSet.csv"));
+		for(Double d : originalRoomsNoveltySet) {
+			originalPS.println(d);
+		}
+		originalPS.close();
+
+		double[] originalRoomsNoveltyAll = roomNovelties(allOriginalRooms);
+		originalPS = new PrintStream(new File("OriginalRoomsAll.csv"));
+		for(Double d : originalRoomsNoveltyAll) {
+			originalPS.println(d);
+		}
+		originalPS.close();
+
+		
 		System.out.println(noDuplicatesList.size());
 		System.out.println("Average Set of Original Rooms: " + DungeonNovelty.averageRoomNovelty(noDuplicatesList));
 		System.out.println(allOriginalRooms.size());
@@ -306,6 +322,21 @@ public class DungeonNovelty {
 		noDuplicatesSet = new HashSet<>(allPureGrammarRooms);
 		noDuplicatesList = new LinkedList<>();
 		noDuplicatesList.addAll(noDuplicatesSet);
+
+		double[] graphRoomsNoveltySet = roomNovelties(noDuplicatesList);
+		PrintStream graphPS = new PrintStream(new File("GraphRoomsSet.csv"));
+		for(Double d : graphRoomsNoveltySet) {
+			graphPS.println(d);
+		}
+		graphPS.close();
+
+		double[] graphRoomsNoveltyAll = roomNovelties(allPureGrammarRooms);
+		graphPS = new PrintStream(new File("GraphRoomsAll.csv"));
+		for(Double d : graphRoomsNoveltyAll) {
+			graphPS.println(d);
+		}
+		graphPS.close();
+
 		
 		System.out.println(noDuplicatesList.size());
 		System.out.println("Average Set of Grammar Rooms: " + DungeonNovelty.averageRoomNovelty(noDuplicatesList));
@@ -316,6 +347,21 @@ public class DungeonNovelty {
 		noDuplicatesList = new LinkedList<>();
 		noDuplicatesList.addAll(noDuplicatesSet);
 
+		double[] ganRoomsNoveltySet = roomNovelties(noDuplicatesList);
+		PrintStream ganPS = new PrintStream(new File("GANRoomsSet.csv"));
+		for(Double d : ganRoomsNoveltySet) {
+			ganPS.println(d);
+		}
+		ganPS.close();
+
+		double[] ganRoomsNoveltyAll = roomNovelties(allGANRooms);
+		ganPS = new PrintStream(new File("GANRoomsAll.csv"));
+		for(Double d : ganRoomsNoveltyAll) {
+			ganPS.println(d);
+		}
+		ganPS.close();
+
+		
 		System.out.println(noDuplicatesList.size());
 		System.out.println("Average Set of GAN Rooms: " + DungeonNovelty.averageRoomNovelty(noDuplicatesList));
 		System.out.println(allGANRooms.size());
