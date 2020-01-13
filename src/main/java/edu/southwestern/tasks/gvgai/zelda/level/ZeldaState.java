@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
@@ -249,7 +250,7 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 			ZeldaState result = (ZeldaState) getSuccessor(possible);
 			if(result == null) continue;
 			if(result != null) {
-				ArrayList<ArrayList<Integer>> level = result.currentNode.level.intLevel;
+				List<List<Integer>> level = result.currentNode.level.intLevel;
 				if(result.x >= 0 && result.x < level.get(0).size() && result.y >= 0 && result.y < level.size()) {
 					Tile tile = Tile.findNum(level.get(y).get(x));
 					Tile nextTile = Tile.findNum(level.get(result.y).get(result.x));

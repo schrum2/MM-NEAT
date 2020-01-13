@@ -1,0 +1,12 @@
+{
+    "tiles" : {
+        "B" : ["solid","ground"],
+        "b" : ["solid","diggable","ground"],
+        "." : ["passable","empty"],
+        "-" : ["passable","climbable","rope"],
+        "#" : ["passable","climbable","ladder"],
+        "G" : ["passable","pickupable","gold"],
+        "E" : ["damaging","enemy"],
+        "M" : ["passable","spawn"]
+    }
+}

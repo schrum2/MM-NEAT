@@ -156,3 +156,10 @@ data/VGLC/Zelda/Untitled1\.psd
 *.dot
 
 data/rouge/tmp/dungeon\.json
+*.csv
+
+batch/Experiments-2019-ZeldaGAN/Subject-*
+
+.idea/
+
+MM-NEAT.iml

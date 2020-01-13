@@ -40,6 +40,7 @@ import edu.southwestern.tasks.rlglue.featureextractors.StateVariableExtractor;
 import edu.southwestern.tasks.ut2004.actuators.OpponentRelativeMovementOutputModel;
 import edu.southwestern.tasks.ut2004.sensors.OpponentRelativeSensorModel;
 import edu.southwestern.tasks.ut2004.weapons.SimpleWeaponManager;
+import edu.southwestern.tasks.zentangle.RandomImageFitness;
 import edu.southwestern.util.random.GaussianGenerator;
 import edu.southwestern.util.sound.SoundUtilExamples;
 import edu.southwestern.util.stats.Average;
@@ -348,11 +349,16 @@ public class Parameters {
 		integerOptions.add("utNumOpponents", 1, "Number of opponents to evolve against in UT2004");
 		integerOptions.add("utNumNativeBots", 0, "dictates the number of native bots to be spawned into the server");
 		integerOptions.add("utTeamSize", 2 , "dictates the number of players on each team");
-		integerOptions.add("zeldaMaxHealth", 15, "Set the max health for the main character in the rouge-like.");
+		integerOptions.add("zeldaMaxHealth", 4, "Set the max health for the main character in the rouge-like.");
+		integerOptions.add("zeldaGANLevelWidthChunks", 4, "Number of rooms per row of CPPN-GAN generated dungeons.");
+		integerOptions.add("zeldaGANLevelHeightChunks", 4, "Number of rooms per column of CPPN-GAN generated dungeons.");
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		// Boolean parameters 
+		booleanOptions.add("showLatentSpaceOptions", true, "Interactive GAN evolution includes latent space exploration and interpolation");
+		booleanOptions.add("allowInteractiveEvolution", true, "Interactive evolution actually allows evolution");
+		booleanOptions.add("showKLOptions", true, "Interactive GAN evolution displays KL measurements");
 		booleanOptions.add("gvgAIForZeldaGAN", false, "Use GVG-AI representation of Zelda game");
 		booleanOptions.add("starkPicbreeder", false, "Picbreeder only uses two extreme brightness levels");
 		booleanOptions.add("blackAndWhitePicbreeder", false, "Picbreeder only uses black and white (possible gray)");
@@ -718,6 +724,7 @@ public class Parameters {
 		booleanOptions.add("simplifiedInteractiveInterface", true, "Determines how many buttons to show on the interactive evolution interfaces");
 		booleanOptions.add("utBotKilledAtEnd", true, "True if UT2004 bots are forcibly killed at time limit (instead of running until server dies)");
 		booleanOptions.add("zeldaGANUsesOriginalEncoding", true, "True if the number of tiles for the GAN is 4, otherwise 10.");
+		booleanOptions.add("zeldaHelpScreenEnabled", false, "Enable the help screen of Zelda rouge");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -791,6 +798,8 @@ public class Parameters {
 		doubleOptions.add("usageForNewMode", 10.0,"The smaller this is (down to 1) the more restricted mode mutation is");
 		doubleOptions.add("weakenPortion", 0.5, "How much the preference weakening operation weakens weights");
 		doubleOptions.add("weightBound", 50.0, "The bound for network weights used by SBX and polynomial mutation");
+		doubleOptions.add("healthDropRate", 20., "Health drop rate from enemies");
+		doubleOptions.add("bombDropRate", 40., "Bomb drop rate from enemies");
 		// String parameters
 		stringOptions.add("archetype", "", "Network that receives all mutations so as to keep other networks properly aligned");
 		stringOptions.add("base", "", "Base directory for all simulations within one experiment");
@@ -849,6 +858,7 @@ public class Parameters {
 		// Class options
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
+		classOptions.add("imageFitness", RandomImageFitness.class, "Fitness function for evaluating images");
 		classOptions.add("boardGameFeatureExtractor", TwoDimensionalRawBoardGameFeatureExtractor.class, "Feature Extractor used by the NNBoardGamePlayer");
 		classOptions.add("boardGameOpponent", BoardGamePlayerRandom.class, "Board game Opponent being played against");
 		classOptions.add("boardGameOpponentHeuristic", PieceDifferentialBoardGameHeuristic.class, "Board game heuristic used by the Opponent");

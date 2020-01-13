@@ -109,6 +109,7 @@ import edu.southwestern.tasks.ut2004.UT2004Task;
 import edu.southwestern.tasks.ut2004.UT2004Util;
 import edu.southwestern.tasks.ut2004.testing.HumanSubjectStudy2018TeammateServer;
 import edu.southwestern.tasks.vizdoom.VizDoomTask;
+import edu.southwestern.tasks.zentangle.ZentangleTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
@@ -682,6 +683,10 @@ public class MMNEAT {
 				InteractiveEvolutionTask temp = (InteractiveEvolutionTask) task;
 				// Since these tasks use real-vector genotypes, to not set the NN params
 				if(!(temp instanceof MarioGANLevelBreederTask) && !(temp instanceof ZeldaGANLevelBreederTask)) setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
+			} else if (task instanceof ZentangleTask) {
+				System.out.println("Setup Zentangle Task");
+				ZentangleTask t = (ZentangleTask) task;
+				setNNInputParameters(t.numInputs(), t.numOutputs());
 			} else if(task instanceof PictureInnovationTask) {
 				System.out.println("set up Innovation Engine Task");
 				PictureInnovationTask temp = (PictureInnovationTask) task;
@@ -943,7 +948,8 @@ public class MMNEAT {
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Simple way of debugging using the profiler
 		//args = new String[]{"runNumber:1", "randomSeed:0", "base:tetris", "logPerformance:false", "logTWEANNData:false", "trials:1", "maxGens:300", "mu:50", "io:true", "netio:true", "mating:true", "task:edu.southwestern.tasks.rlglue.tetris.TetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "log:Tetris-moRawHNSeedFixedSplitInputs", "saveTo:moRawHNSeedFixedSplitInputs", "hyperNEATSeedTask:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "HNTTetrisProcessDepth:1", "netLinkRate:0.0", "netSpliceRate:0.0", "linkExpressionThreshold:-1"};
-
+		//args = "zeldaType:generated randomSeed:4 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" ");
+		
 		if (args.length == 0) {
 			System.out.println("First command line parameter must be one of the following:");
 			System.out.println("\tmultiple:n\twhere n is the number of experiments to run in sequence");

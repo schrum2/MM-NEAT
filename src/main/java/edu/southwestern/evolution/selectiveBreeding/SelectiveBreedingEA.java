@@ -27,7 +27,7 @@ import edu.southwestern.util.random.RandomNumbers;
  */
 public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T> {
 
-	public static int MUTATION_RATE;
+	public static int mutationChances;
 	
 	private SinglePopulationTask<T> task;
 	private int parentPop;
@@ -51,7 +51,7 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 	 * @param parentPop size of initial population
 	 */
 	public SelectiveBreedingEA(SinglePopulationTask<T> task, int parentPop) {
-		MUTATION_RATE = 1;
+		mutationChances = 1;
 		mating = Parameters.parameters.booleanParameter("mating");
 		crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 		this.task = task;
@@ -151,8 +151,8 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 				offspring.add(new Offspring(offspring1.getId(), parentId1, parentId2, generation));
 			}
 			if(i < size) {
-				for(int z = PicbreederTask.MPG_DEFAULT; z < MUTATION_RATE; z++) {
-				g1.mutate();
+				for(int z = 0; z < mutationChances; z++) {
+					g1.mutate();
 				}
 				children.add(g1);
 				if (parentId2 == -1) {

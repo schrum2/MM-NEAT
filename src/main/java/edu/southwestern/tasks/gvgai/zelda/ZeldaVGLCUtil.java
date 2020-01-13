@@ -6,15 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
-import gvgai.core.game.Game;
-import gvgai.core.vgdl.VGDLFactory;
-import gvgai.core.vgdl.VGDLParser;
-import gvgai.core.vgdl.VGDLRegistry;
+//import edu.southwestern.tasks.gvgai.GVGAIUtil;
+//import gvgai.core.game.Game;
+//import gvgai.tracks.singlePlayer.tools.human.Agent;
+import gvgai.core.vgdl.*;
 import gvgai.tools.IO;
-import gvgai.tracks.singlePlayer.tools.human.Agent;
 import me.jakerg.rougelike.Tile;
 
 public class ZeldaVGLCUtil {
@@ -52,9 +50,11 @@ public class ZeldaVGLCUtil {
 					String[] room = new String[ZELDA_ROOM_ROWS];
 					for(int r = 0; r < ZELDA_ROOM_ROWS; r++) { // Each row of the room
 						room[r] = level[i+r].substring(j, j+ZELDA_ROOM_COLUMNS); // Only the columns for that room
+						//System.out.println(room[r]);
 					}
 					// Convert individual room to list of codes and add to rooms list
 					rooms.add(convertZeldaLevelVGLCtoRoomAsList(room));
+					//MiscUtil.waitForReadStringAndEnterKeyPress();
 				}
 			}
 		}		
@@ -75,6 +75,7 @@ public class ZeldaVGLCUtil {
 					convertZeldaModifiedTileVGLCtoNumberCode(room[i].charAt(j));
 				result.get(i).add(code);
 			}
+			//System.out.println(result.get(i));
 		}
 		return result;
 	}
@@ -311,7 +312,9 @@ public class ZeldaVGLCUtil {
 
 				roomSet.addAll(roomList);
 				
-				//System.out.println(roomList);
+				System.out.println(roomList.size());
+				System.out.println(roomList);
+				MiscUtil.waitForReadStringAndEnterKeyPress();
 
 				
 				// PLAY THE LEVEL
