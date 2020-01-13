@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 
 import edu.southwestern.util.datastructures.Graph;
-import edu.southwestern.util.datastructures.Graph.Node;
 
 public class GraphGrammar<T extends Grammar> {
 	private Graph<T>.Node start;

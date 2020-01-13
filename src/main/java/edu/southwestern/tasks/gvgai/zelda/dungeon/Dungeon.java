@@ -6,21 +6,20 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
 
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.util.datastructures.Pair;
 import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
-
 
 public class Dungeon {
 
@@ -32,7 +31,7 @@ public class Dungeon {
 	private int levelWidth = -1;
 	private int levelHeight = -1;
 	private Set<String> levelsVisited;
-	
+
 	public Dungeon() {
 		levels = new HashMap<>();
 		levelThere = null;
@@ -41,6 +40,7 @@ public class Dungeon {
 
 	/**
 	 * Helper function to return a dungeon instance from a json file
+	 * 
 	 * @param filePath Path to JSON file
 	 * @return Dungeon filled with info from JSON file
 	 */
@@ -59,11 +59,9 @@ public class Dungeon {
 		}
 		return null;
 	}
-	
+
 	public void saveToJson(String filePath) throws IOException {
-		Gson gson = new GsonBuilder()
-				.setPrettyPrinting()
-				.create();
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 		FileWriter writer = new FileWriter(filePath);
 		gson.toJson(this, writer);
@@ -72,42 +70,46 @@ public class Dungeon {
 
 	}
 
-	public HashMap<String, Node> getLevels(){
+	public HashMap<String, Node> getLevels() {
 		return this.levels;
 	}
 
-	public Node newNode(String name, Level level) throws Exception {
+	public List<Node> getNodes() {
+		return new LinkedList<>(levels.values());
+	}
+
+	public Node newNode(String name, Level level) {
 		Node node = new Node(name, level);
-		if(levels.get(name) != null)
-			throw new Exception("Unable to place new node : " + name);
+		if (levels.get(name) != null)
+			throw new IllegalStateException("Unable to place new node : " + name);
 		levels.put(name, node);
 		return node;
 	}
-	
+
 	public Node getNode(String name) {
 		return levels.get(name);
 	}
-	
+
 	public void setCurrentLevel(String name) {
 		this.levelsVisited.add(name);
 		RougelikeApp.PD.distinctRoomsVisited = Math.max(levelsVisited.size(), RougelikeApp.PD.distinctRoomsVisited);
 		this.currentLevel = name;
 	}
-	
+
 	public void setLevelThere(String[][] levelThere) {
 		this.levelThere = levelThere;
 	}
-	
-	public String[][] getLevelThere(){
+
+	public String[][] getLevelThere() {
 		return this.levelThere;
 	}
 
 	/**
 	 * Set the next node based on the exit point
+	 * 
 	 * @param exitPoint Exit Point of level based on string
 	 * @return Point of where to start the new level
 	 */
-	@SuppressWarnings("unused")
 	public Point getNextNode(String exitPoint) {
 		Node n = getCurrentlevel();
 		HashMap<String, Pair<String, Point>> adjacency = n.adjacency;
@@ -115,67 +117,78 @@ public class Dungeon {
 		setCurrentLevel(next.t1);
 		return next.t2;
 	}
-	
+
 	public Point getCoords(String name) {
-		if(!levels.containsKey(name)) {
+		
+		if (!levels.containsKey(name)) {
+			System.out.println(levels);
+			System.out.println("SET:"+levels.keySet());
+			System.out.println("GET:"+levels.get(name));
+			System.out.println("CHECK:"+levels.containsKey(name));
+			System.out.println("currentLevel:"+currentLevel);
+			System.out.println(this.goal);
+			
 			System.out.println("Name isn't in list : " + name);
 			return null;
 		}
-		
-		for(int y = 0; y < levelThere.length; y++)
-			for(int x = 0; x < levelThere[y].length; x++)
-				if(name == levelThere[y][x])
+
+		for (int y = 0; y < levelThere.length; y++)
+			for (int x = 0; x < levelThere[y].length; x++)
+				if (name.equals(levelThere[y][x]))
 					return new Point(x, y);
-		
+
 		System.out.println("Couldnt find name : " + name);
 		return null;
 	}
-	
+
 	public Pair<String, Point> getNextLevel(Node node, String exitPoint) {
 		HashMap<String, Pair<String, Point>> adjacency = node.adjacency;
-		Pair<String, Point> r = adjacency.get(exitPoint);			
+		Pair<String, Point> r = adjacency.get(exitPoint);
 		return r;
 	}
-	
+
 	public Point getCoords(Node node) {
 		return getCoords(node.name);
 	}
-	
+
 	public Node getCurrentlevel() {
 		return levels.get(currentLevel);
 	}
-	
+
 	/**
-	 * Helper function to get a 2D array of levels based on the strings in levelThere
+	 * Helper function to get a 2D array of levels based on the strings in
+	 * levelThere
+	 * 
 	 * @return 2D array of levels
 	 */
 	public Level[][] getLevelArrays() {
 		Level[][] r = new Level[levelThere.length][levelThere[0].length];
-		
-		for(int y = 0; y < levelThere.length; y++)
-			for(int x = 0; x < levelThere[y].length; x++)
-				if(levelThere[y][x] != null)
+
+		for (int y = 0; y < levelThere.length; y++)
+			for (int x = 0; x < levelThere[y].length; x++)
+				if (levelThere[y][x] != null)
 					r[y][x] = levels.get(levelThere[y][x]).level;
 				else
 					r[y][x] = null;
 
 		return r;
 	}
-	
+
 	public Node getNodeAt(int x, int y) {
-		if(x < 0 || x >= levelThere[0].length || y < 0 || y >= levelThere.length) return null;
-		
+		if (x < 0 || x >= levelThere[0].length || y < 0 || y >= levelThere.length)
+			return null;
+
 		return getNode(levelThere[y][x]);
 	}
-	
+
 	public void setGoal(String g) {
 		this.goal = g;
 	}
-	
+
 	public String getGoal() {
 		return goal;
 	}
-	
+
 	public Point getGoalPoint() {
 		return goalPoint;
 	}
@@ -183,65 +196,96 @@ public class Dungeon {
 	public void setGoalPoint(Point goalPoint) {
 		this.goalPoint = goalPoint;
 	}
-	
+
 	public int getLevelWidth() {
-		if(levelWidth == -1)
+		if (levelWidth == -1)
 			levelWidth = getCurrentlevel().level.intLevel.get(0).size();
-		
+
 		return levelWidth;
 	}
-	
+
 	public int getLevelHeight() {
-		if(levelHeight == -1)
+		if (levelHeight == -1)
 			levelHeight = getCurrentlevel().level.intLevel.size();
-		
+
 		return levelHeight;
 	}
-	
+
 	public void removeNode(String name) {
 		Node n = getNode(name);
 		// Remove adjacencies from the node adjacencies
 		n.adjacency.values().forEach(p -> getNode(p.t1).adjacency.entrySet().removeIf(e -> e.getValue().t1 == name));
-		
+
 		levels.remove(name);
 	}
 
-	public class Node{
+	public class Node {
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Node other = (Node) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (name == null) {
+				if (other.name != null)
+					return false;
+			} else if (!name.equals(other.name))
+				return false;
+			return true;
+		}
+
 		public Level level;
 		public String name;
 		public HashMap<String, Pair<String, Point>> adjacency;
-					// Exit point   Node    Starting point
+		// Exit point Node Starting point
 		public ZeldaGrammar grammar;
-		
+
 		public Node(String name, Level level) {
 			this.name = name;
 			this.level = level;
 			adjacency = new HashMap<>();
 		}
-		
+
 		public void setAdjacency(String exitPoint, String whereTo, Point startPoint) {
 			adjacency.put(exitPoint, new Pair<String, Point>(whereTo, startPoint));
 		}
-		
+
 		public String toString() {
 			return this.name;
 		}
 
 		public boolean hasLock() {
-			ArrayList<ArrayList<Integer>> ints = level.intLevel;
-			for(int y = 0; y < ints.size(); y++) 
-				for(int x = 0; x < ints.get(y).size(); x++) 
-					if(ints.get(y).get(x).equals(Tile.LOCKED_DOOR.getNum()))
+			List<List<Integer>> ints = level.intLevel;
+			for (int y = 0; y < ints.size(); y++)
+				for (int x = 0; x < ints.get(y).size(); x++)
+					if (ints.get(y).get(x).equals(Tile.LOCKED_DOOR.getNum()))
 						return true;
-				
-			
+
 			return false;
+		}
+
+		private Dungeon getOuterType() {
+			return Dungeon.this;
 		}
 	}
 
 	public void printLevelThere() {
-		for(int y = 0; y < levelThere.length; y++) {
-			for(int x = 0; x < levelThere[y].length; x++) {
+		for (int y = 0; y < levelThere.length; y++) {
+			for (int x = 0; x < levelThere[y].length; x++) {
 				String n = levelThere[y][x];
 				System.out.print(n + " ");
 			}

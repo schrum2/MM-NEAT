@@ -350,10 +350,15 @@ public class Parameters {
 		integerOptions.add("utNumNativeBots", 0, "dictates the number of native bots to be spawned into the server");
 		integerOptions.add("utTeamSize", 2 , "dictates the number of players on each team");
 		integerOptions.add("zeldaMaxHealth", 4, "Set the max health for the main character in the rouge-like.");
+		integerOptions.add("zeldaGANLevelWidthChunks", 4, "Number of rooms per row of CPPN-GAN generated dungeons.");
+		integerOptions.add("zeldaGANLevelHeightChunks", 4, "Number of rooms per column of CPPN-GAN generated dungeons.");
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		// Boolean parameters 
+		booleanOptions.add("showLatentSpaceOptions", true, "Interactive GAN evolution includes latent space exploration and interpolation");
+		booleanOptions.add("allowInteractiveEvolution", true, "Interactive evolution actually allows evolution");
+		booleanOptions.add("showKLOptions", true, "Interactive GAN evolution displays KL measurements");
 		booleanOptions.add("gvgAIForZeldaGAN", false, "Use GVG-AI representation of Zelda game");
 		booleanOptions.add("starkPicbreeder", false, "Picbreeder only uses two extreme brightness levels");
 		booleanOptions.add("blackAndWhitePicbreeder", false, "Picbreeder only uses black and white (possible gray)");

@@ -84,7 +84,8 @@ public class HumanSubjectStudy2019Zelda {
 				grammar.applyRules(graph);
 				LevelLoader loader = (LevelLoader) ClassCreation.createObject("zeldaLevelLoader");
 				dungeonType = loader.getClass().getSimpleName();
-				GraphUtil.saveGrammarGraph(graph, subjectDir + "DungeonGraph_" + dungeonType + ".dot");
+				if(DEBUG)
+					GraphUtil.saveGrammarGraph(graph, subjectDir + "DungeonGraph_" + dungeonType + ".dot");
 				dungeonToPlay = DungeonUtil.recursiveGenerateDungeon(graph, loader);
 				DungeonUtil.makeDungeonPlayable(dungeonToPlay);
 			} catch (Exception e) {
@@ -123,7 +124,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.WebLoader".split(" "));
 		//MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 	}
 

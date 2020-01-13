@@ -41,8 +41,8 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
 	
-	public static final int LEVEL_LENGTH_SHORTEST = 20;
-	public static final int LEVEL_LENGTH_LONGEST = 200;
+	public int shortestLevelLength() { return 20; }
+	public int longestLevelLength() { return 200; }
 	
 	private boolean initializationComplete = false;
 	protected JSlider levelWidthSlider; // Allows for changing levelWidth
@@ -51,12 +51,12 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 		super();
 		//Construction of JSlider to determine length of generated CPPN amplitude
 		// Width ranged from 20 to 200 blocks
-		levelWidthSlider = new JSlider(JSlider.HORIZONTAL, LEVEL_LENGTH_SHORTEST, LEVEL_LENGTH_LONGEST, Parameters.parameters.integerParameter("marioLevelLength"));
+		levelWidthSlider = new JSlider(JSlider.HORIZONTAL, shortestLevelLength(), longestLevelLength(), Parameters.parameters.integerParameter("marioLevelLength"));
 		levelWidthSlider.setMinorTickSpacing(10000);
 		levelWidthSlider.setPaintTicks(true);
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
-		labels.put(LEVEL_LENGTH_SHORTEST, new JLabel("Shorter Level"));
-		labels.put(LEVEL_LENGTH_LONGEST, new JLabel("Longer Level"));
+		labels.put(shortestLevelLength(), new JLabel("Shorter Level"));
+		labels.put(longestLevelLength(), new JLabel("Longer Level"));
 		levelWidthSlider.setLabelTable(labels);
 		levelWidthSlider.setPaintLabels(true);
 		levelWidthSlider.setPreferredSize(new Dimension(200, 40));
@@ -110,9 +110,20 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 		return "Mario Level Breeder";
 	}
 
+	protected String[] generateLevelLayoutFromCPPN(Network cppn, double[] inputMultipliers, int marioLevelLength) {
+		String[] level = MarioLevelUtil.generateLevelLayoutFromCPPN(cppn, inputMultipliers, marioLevelLength);
+		return level;
+	}
+	
+	protected Level generateLevelFromCPPN(Network phenotype, double[] inputMultipliers, int marioLevelLength) {
+		Level level = MarioLevelUtil.generateLevelFromCPPN(phenotype, inputMultipliers, marioLevelLength);
+		return level;
+	}
+	
+	
 	@Override
 	protected void save(String file, int i) {
-		String[] level = MarioLevelUtil.generateLevelLayoutFromCPPN((Network)scores.get(i).individual.getPhenotype(), inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
+		String[] level = generateLevelLayoutFromCPPN((Network)scores.get(i).individual.getPhenotype(), inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
 		// Prepare text file
 		try {
 			PrintStream ps = new PrintStream(new File(file));
@@ -130,7 +141,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
-		Level level = MarioLevelUtil.generateLevelFromCPPN(phenotype, inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
+		Level level = generateLevelFromCPPN(phenotype, inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
 		BufferedImage image = MarioLevelUtil.getLevelImage(level);
 		return image;
 	}
@@ -144,7 +155,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 		// Human plays level
 		if(itemID == PLAY_BUTTON_INDEX && selectedItems.size() > 0) {
 			Network cppn = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
-			Level level = MarioLevelUtil.generateLevelFromCPPN(cppn, inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
+			Level level = generateLevelFromCPPN(cppn, inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
 			Agent agent = new HumanKeyboardAgent();
 			// Must launch game in own thread, or won't animate or listen for events
 			new Thread() {

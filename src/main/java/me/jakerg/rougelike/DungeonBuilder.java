@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
-import edu.southwestern.tasks.gvgai.zelda.level.*;
 
 /**
  * Dungeon builder keeps track of the different rooms of the dungeon
@@ -14,7 +13,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.*;
  *
  */
 public class DungeonBuilder {
-	private Tile[][] tiles;
+	//private Tile[][] tiles;
 	private Dungeon dungeon;
 	private Creature player;
 	private Log log;

@@ -41,7 +41,6 @@ import edu.southwestern.evolution.lineage.Offspring;
 import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
 import edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA;
 import edu.southwestern.networks.ActivationFunctions;
-import edu.southwestern.networks.Network;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
@@ -69,9 +68,8 @@ import edu.southwestern.util.random.RandomNumbers;
  *
  * @param <T>
  */
-@SuppressWarnings("unused")
 public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTask<T>, ActionListener, ChangeListener, NetworkTask {
-	
+
 	//Global static final variables
 	public static final int NUM_COLUMNS	= 5;
 	public static final int MPG_DEFAULT = 2;// Starting number of mutations per generation (on slider)	
@@ -132,14 +130,15 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	public InteractiveEvolutionTask() throws IllegalAccessException {		
 		this(true); // By default, evolve CPPNs
 	}
-	
+
 	/**
 	 * Default Constructor
 	 * @throws IllegalAccessException 
 	 */
 	public InteractiveEvolutionTask(boolean evolveCPPNs) throws IllegalAccessException {		
 		if(evolveCPPNs) inputMultipliers = new double[numCPPNInputs()];
-
+		boolean evolveAllowed = Parameters.parameters.booleanParameter("allowInteractiveEvolution");
+		
 		selectedItems = new LinkedList<Integer>(); //keeps track of selected CPPNs for MIDI playback with multiple CPPNS in Breedesizer
 
 		MMNEAT.registerFitnessFunction("User Preference");
@@ -157,10 +156,10 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		//showLineage = false;
 		showNetwork = false;
 		waitingForUser = false;
-		
+
 		activation = new boolean[ActivationFunctions.MAX_POSSIBLE_ACTIVATION_FUNCTIONS]; // Leaves many gaps in array
 		Arrays.fill(activation, true);
-		
+
 		if(MMNEAT.browseLineage) {
 			// Do not setup the JFrame if browsing the lineage
 			return;
@@ -185,7 +184,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		//instantiates helper buttons
 		topper = new JPanel();
 		top = new JPanel();
-		
+
 		JPanel bottom = new JPanel();
 		bottom.setPreferredSize(new Dimension(frame.getWidth(), 200)); // 200 magic number: height of checkbox area
 		bottom.setLayout(new FlowLayout());
@@ -220,100 +219,102 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		JButton networkButton = evolveCPPNs ? new JButton(new ImageIcon(network2)) : null;
 		JButton undoButton = new JButton( new ImageIcon(undo2));
 
-		//to make it work on my mac
-		resetButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
-		saveButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
-		evolveButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
-		//lineageButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
-		if(evolveCPPNs) networkButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
-		undoButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
-		//closeButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+		if(evolveAllowed) {
+			resetButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+			saveButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+			evolveButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+			//lineageButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+			if(evolveCPPNs) networkButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+			undoButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+			//closeButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 
-		resetButton.setText("Reset");
-		saveButton.setText("Save");
-		evolveButton.setText("Evolve!");
-		//lineageButton.setText("Lineage");
-		if(evolveCPPNs) networkButton.setText("Network");
-		undoButton.setText("Undo");
-		//closeButton.setText("Close");
+			resetButton.setText("Reset");
+			saveButton.setText("Save");
+			evolveButton.setText("Evolve!");
+			//lineageButton.setText("Lineage");
+			if(evolveCPPNs) networkButton.setText("Network");
+			undoButton.setText("Undo");
+			//closeButton.setText("Close");
 
-		//adds slider for mutation rate change
-		JSlider mutationsPerGeneration = new JSlider(JSlider.HORIZONTAL, MPG_MIN, MPG_MAX, MPG_DEFAULT);
+			//adds slider for mutation rate change
+			JSlider mutationsPerGeneration = new JSlider(JSlider.HORIZONTAL, MPG_MIN, MPG_MAX, MPG_DEFAULT);
 
-		Hashtable<Integer,JLabel> labels = new Hashtable<>();
-		//set graphic names and toolTip titles
-		evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
-		evolveButton.setToolTipText("Evolve button");
-		saveButton.setName("" + SAVE_BUTTON_INDEX);
-		saveButton.setToolTipText("Save button");
-		resetButton.setName("" + RESET_BUTTON_INDEX);
-		resetButton.setToolTipText("Reset button");
-		//closeButton.setName("" + CLOSE_BUTTON_INDEX);
-		//closeButton.setToolTipText("Close button");
-		//lineageButton.setName("" + LINEAGE_BUTTON_INDEX);
-		//lineageButton.setToolTipText("Lineage button");
-		if(evolveCPPNs) {
-			networkButton.setName("" + NETWORK_BUTTON_INDEX);
-			networkButton.setToolTipText("Network button");
-		}
-		undoButton.setName("" + UNDO_BUTTON_INDEX);
-		undoButton.setToolTipText("Undo button");
+			Hashtable<Integer,JLabel> labels = new Hashtable<>();
+			//set graphic names and toolTip titles
+			evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
+			evolveButton.setToolTipText("Evolve button");
+			saveButton.setName("" + SAVE_BUTTON_INDEX);
+			saveButton.setToolTipText("Save button");
+			resetButton.setName("" + RESET_BUTTON_INDEX);
+			resetButton.setToolTipText("Reset button");
+			//closeButton.setName("" + CLOSE_BUTTON_INDEX);
+			//closeButton.setToolTipText("Close button");
+			//lineageButton.setName("" + LINEAGE_BUTTON_INDEX);
+			//lineageButton.setToolTipText("Lineage button");
+			if(evolveCPPNs) {
+				networkButton.setName("" + NETWORK_BUTTON_INDEX);
+				networkButton.setToolTipText("Network button");
+			}
+			undoButton.setName("" + UNDO_BUTTON_INDEX);
+			undoButton.setToolTipText("Undo button");
 
-		mutationsPerGeneration.setMinorTickSpacing(1);
-		mutationsPerGeneration.setPaintTicks(true);
-		labels.put(0, new JLabel("Fewer Mutations"));
-		labels.put(10, new JLabel("More Mutations"));
-		mutationsPerGeneration.setLabelTable(labels);
-		mutationsPerGeneration.setPaintLabels(true);
-		mutationsPerGeneration.setPreferredSize(new Dimension(200, 40));
+			mutationsPerGeneration.setMinorTickSpacing(1);
+			mutationsPerGeneration.setPaintTicks(true);
+			labels.put(0, new JLabel("Fewer Mutations"));
+			labels.put(10, new JLabel("More Mutations"));
+			mutationsPerGeneration.setLabelTable(labels);
+			mutationsPerGeneration.setPaintLabels(true);
+			mutationsPerGeneration.setPreferredSize(new Dimension(200, 40));
 
-		//add action listeners to buttons
-		resetButton.addActionListener(this);
-		saveButton.addActionListener(this);
-		evolveButton.addActionListener(this);
-		//closeButton.addActionListener(this);
-		//lineageButton.addActionListener(this);
-		if(evolveCPPNs) networkButton.addActionListener(this);
-		undoButton.addActionListener(this);
+			//add action listeners to buttons
+			resetButton.addActionListener(this);
+			saveButton.addActionListener(this);
+			evolveButton.addActionListener(this);
+			//closeButton.addActionListener(this);
+			//lineageButton.addActionListener(this);
+			if(evolveCPPNs) networkButton.addActionListener(this);
+			undoButton.addActionListener(this);
 
-		mutationsPerGeneration.addChangeListener(this);
+			mutationsPerGeneration.addChangeListener(this);
 
-		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
-			//add additional action buttons
-			//top.add(lineageButton);
-			top.add(resetButton);
-		}
+			if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
+				//add additional action buttons
+				//top.add(lineageButton);
+				top.add(resetButton);
+			}
 
-		//add graphics to title panel
-		top.add(evolveButton);
+			//add graphics to title panel
+			top.add(evolveButton);
 
-		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
-			top.add(saveButton);
-			if(evolveCPPNs) top.add(networkButton);
-			top.add(undoButton);
-		}
+			if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
+				top.add(saveButton);
+				if(evolveCPPNs) top.add(networkButton);
+				top.add(undoButton);
+			}
 
-		//top.add(closeButton);
-		top.add(mutationsPerGeneration);	
+			//top.add(closeButton);
+			top.add(mutationsPerGeneration);	
 
-		if(evolveCPPNs) {
-			//instantiates activation function checkboxes
-			for(Integer ftype : ActivationFunctions.allPossibleActivationFunctions()) {
-				boolean checked = ActivationFunctions.availableActivationFunctions.contains(ftype);
-				JCheckBox functionCheckbox = new JCheckBox(ActivationFunctions.activationName(ftype).replaceAll(" ", "_"), checked);
-				int id = Math.abs(ftype); // leaves many gaps in array 
-				activation[id] = checked;			
-				// IDs are negative to they do not conflict with item selection.
-				// They are offset by -100 so they do not conflict with other buttons like save, network, etc.
-				functionCheckbox.setName("" + (-ACTIVATION_CHECKBOX_OFFSET - id)); 
-				functionCheckbox.addActionListener(this);
-				//set checkbox colors to match activation function color
-				functionCheckbox.setForeground(CombinatoricUtilities.colorFromInt(ftype));
-				if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
-					//add activation function checkboxes to interface
-					bottom.add(functionCheckbox);
-				}
-			}		
+			if(evolveCPPNs) {
+				//instantiates activation function checkboxes
+				for(Integer ftype : ActivationFunctions.allPossibleActivationFunctions()) {
+					boolean checked = ActivationFunctions.availableActivationFunctions.contains(ftype);
+					JCheckBox functionCheckbox = new JCheckBox(ActivationFunctions.activationName(ftype).replaceAll(" ", "_"), checked);
+					int id = Math.abs(ftype); // leaves many gaps in array 
+					activation[id] = checked;			
+					// IDs are negative to they do not conflict with item selection.
+					// They are offset by -100 so they do not conflict with other buttons like save, network, etc.
+					functionCheckbox.setName("" + (-ACTIVATION_CHECKBOX_OFFSET - id)); 
+					functionCheckbox.addActionListener(this);
+					//set checkbox colors to match activation function color
+					functionCheckbox.setForeground(CombinatoricUtilities.colorFromInt(ftype));
+					if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
+						//add activation function checkboxes to interface
+						bottom.add(functionCheckbox);
+					}
+				}		
+			}
+
 		}
 
 		topper.add(top);
@@ -465,12 +466,14 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 * @param buttonIndex index of button 
 	 */
 	protected void setButtonImage(BufferedImage gmi, int buttonIndex){ 
+		// These hard-coded numbers look better in Mario
+		//ImageIcon img = new ImageIcon(gmi.getScaledInstance(350,200,Image.SCALE_DEFAULT));
 		ImageIcon img = new ImageIcon(gmi.getScaledInstance(picSize,picSize,Image.SCALE_DEFAULT));
 		buttons.get(buttonIndex).setName("" + buttonIndex);
 		buttons.get(buttonIndex).setIcon(img);
 
 	}
-	
+
 	/**
 	 * If user is saving file to a specified location, this method obtains
 	 * the directory in which the file is saved and the desired name of the 
@@ -495,7 +498,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Generalized version of save method that accounts for user pressing 
 	 * "cancel" because this needs to be handled in all extensions of
@@ -511,7 +514,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 			System.out.println("Saving cancelled");
 		}
 	}
-	
+
 	/**
 	 * All interactive evolution interfaces must implement this
 	 * class to save generated files. 
@@ -531,7 +534,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		chosen[x] = false;
 		buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 	}
-	
+
 	/**
 	 * Creates BufferedImage representation of item to be displayed on 
 	 * the buttons of the interface.
@@ -575,7 +578,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		}
 		return image;
 	}
-	
+
 	/**
 	 * Used to get the image of a network using a drawing panel
 	 * @param tg genotype of network
@@ -648,7 +651,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		additionalButtonClickAction(scoreIndex,scores.get(scoreIndex).individual);
 		currentCPPN = scores.get(scoreIndex).individual.getPhenotype();
 	}
-	
+
 	/**
 	 * If the buttons should do something in the interface other than the initial response
 	 * to a click, the associated code should be written in this method.
@@ -686,14 +689,14 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns type of file being saved (for FileExtensionFilter for save method)
 	 * 
 	 * @return type of file being saved
 	 */
 	protected abstract String getFileType();
-	
+
 	/**
 	 * Returns extension of file being saved (for FileExtensionFilter for save method)
 	 * 
@@ -817,8 +820,8 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 			reset();
 		} else if(itemID == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
 			saveAll();
-		//} else if(itemID == LINEAGE_BUTTON_INDEX) {//If lineage button clicked
-		//	setLineage();
+			//} else if(itemID == LINEAGE_BUTTON_INDEX) {//If lineage button clicked
+			//	setLineage();
 		} else if(itemID == NETWORK_BUTTON_INDEX) {//If network button clicked
 			setNetwork();
 		} else if(itemID == UNDO_BUTTON_INDEX) {//If undo button clicked
@@ -1001,7 +1004,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 * @return number of CPPN inputs
 	 */
 	public abstract int numCPPNInputs();
-	
+
 	/**
 	 * Specifies the number of CPPN outputs used in the interactive evolution task.
 	 * 

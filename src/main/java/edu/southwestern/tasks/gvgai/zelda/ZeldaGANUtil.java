@@ -9,6 +9,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import gvgai.core.game.Game;
 import gvgai.core.vgdl.VGDLFactory;
@@ -38,7 +39,12 @@ public class ZeldaGANUtil {
 	 */
 	public static List<List<Integer>> generateOneRoomListRepresentationFromGAN(double[] latentVector) {
 		List<List<List<Integer>>> roomInList = getRoomListRepresentationFromGAN(latentVector);
-		return roomInList.get(0); // Only contains one room
+		List<List<Integer>> result = roomInList.get(0); // Only contains one room
+		if(result.size() > result.get(0).size()) {
+			// If taller than wide, then rotate
+			result = ArrayUtil.rotateCounterClockwise(result);
+		}
+		return result;
 	}
 	
 	public static List<List<List<Integer>>> getRoomListRepresentationFromGAN(double[] latentVector){
@@ -55,6 +61,13 @@ public class ZeldaGANUtil {
         oneRoom = "["+oneRoom+"]"; // Wrap room in another json array
         // Create one room in a list
         List<List<List<Integer>>> roomInList = JsonReader.JsonToInt(oneRoom);
+        // Height of first room is greater than width of first room, and all are same size
+		if(roomInList.get(0).size() > roomInList.get(0).get(0).size()) {
+			for(int i = 0; i < roomInList.size(); i++) {
+				//System.out.println("HERE:"+roomInList.get(i));
+				roomInList.set(i, ArrayUtil.rotateCounterClockwise(roomInList.get(i)));
+			}
+		}        
         return roomInList;
 	}
 	
