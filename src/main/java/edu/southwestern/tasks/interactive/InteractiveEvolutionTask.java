@@ -176,7 +176,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		//frame.setSize(PIC_SIZE * NUM_COLUMNS + 200, PIC_SIZE * NUM_ROWS + 700);
 		frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
 		picSize = Math.min(picSize, frame.getWidth() / NUM_COLUMNS);
-		frame.setLocationRelativeTo(null);
+		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new GridLayout(numRows + 1, 0));// the + 1 includes room for the title panel
 		frame.setVisible(true);
@@ -995,7 +995,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		JSlider source = (JSlider)e.getSource();
-		SelectiveBreedingEA.MUTATION_RATE = source.getValue();
+		SelectiveBreedingEA.mutationChances = source.getValue();
 
 	}
 	/**

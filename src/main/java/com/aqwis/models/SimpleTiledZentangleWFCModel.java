@@ -19,6 +19,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -27,8 +28,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.aqwis.SimpleTiledZentangle;
 
 import edu.southwestern.util.random.RandomNumbers;
 
@@ -44,7 +43,7 @@ public class SimpleTiledZentangleWFCModel extends WFCModel {
     private static Integer attributeFromString(Node item, Integer defaultValue) { return item == null ? defaultValue : Integer.parseInt(item.getNodeValue()); }
     private static Character attributeFromString(Node item, Character defaultValue) { return item == null ? defaultValue : item.getNodeValue().toCharArray()[0]; }
 
-    public SimpleTiledZentangleWFCModel(String name, String subsetName, int width, int height, boolean periodic, boolean black) throws Exception
+    public SimpleTiledZentangleWFCModel(String directory, String name, String subsetName, int width, int height, boolean periodic, boolean black) throws Exception
     {    	
         FMX = width;
         FMY = height;
@@ -52,7 +51,7 @@ public class SimpleTiledZentangleWFCModel extends WFCModel {
         this.black = black;
 
         // TODO: This probably should not be hard coded
-        File xmlFile = new File(SimpleTiledZentangle.getSaveDirectory()+"/data.xml");
+        File xmlFile = new File(directory+"/data.xml");
         Document document = null;
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 
@@ -200,7 +199,7 @@ public class SimpleTiledZentangleWFCModel extends WFCModel {
             	*/
                 for (int t = 0; t < cardinality; t++)
                 {
-                	File bitmapFile = new File(String.format(SimpleTiledZentangle.getSaveDirectory() + "/%s/ %d.bmp", tilename, t));
+                	File bitmapFile = new File(String.format(directory + "/%s/ %d.bmp", tilename, t));
                     //System.out.println(bitmapFile);
                     //System.out.println(bitmapFile.getAbsolutePath());
                     BufferedImage bitmap = ImageIO.read(bitmapFile);
@@ -209,7 +208,7 @@ public class SimpleTiledZentangleWFCModel extends WFCModel {
             }
             else
             {
-                File bitmapFile = new File(String.format(SimpleTiledZentangle.getSaveDirectory() + "/%s.bmp", tilename));
+                File bitmapFile = new File(String.format(directory + "/%s.bmp", tilename));
                 //System.out.println(bitmapFile.getAbsolutePath());
                 BufferedImage bitmap = ImageIO.read(bitmapFile);
                 tiles.add(tile.apply((x, y) -> new Color(bitmap.getRGB(x, y))));
@@ -418,7 +417,7 @@ public class SimpleTiledZentangleWFCModel extends WFCModel {
      * @param int numElements the number of tiles
      */
     // found info on how to write an XML file here: https://crunchify.com/java-simple-way-to-write-xml-dom-file-in-java/
-    public static void writeAdjacencyRules(String[] patternNames) {
+    public static void writeAdjacencyRules(String directory, String[] patternNames) {
     	System.out.println(Arrays.toString(patternNames));
         DocumentBuilderFactory icFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder icBuilder;
@@ -463,12 +462,10 @@ public class SimpleTiledZentangleWFCModel extends WFCModel {
             }
                          
             // output DOM XML to console 
-            //Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            // Had to exclusively use xalan instead of saxon
-            Transformer transformer = new org.apache.xalan.processor.TransformerFactoryImpl().newTransformer();
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes"); 
             DOMSource source = new DOMSource(doc);
-            PrintWriter dataFile = new PrintWriter(new FileWriter(SimpleTiledZentangle.getSaveDirectory() + "/data.xml"));
+            PrintWriter dataFile = new PrintWriter(new FileWriter(directory + "/data.xml"));
             StreamResult data = new StreamResult(dataFile);
             transformer.transform(source, data);
  
