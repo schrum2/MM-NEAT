@@ -206,8 +206,8 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			String[] tileNames = new String[chosenTiles.size()];
 			int numSaved = 0;
 			int numStored = 0;
-			int backgroundSize = 1440; // Hard coded image size: TODO: Use param
-			int tileSize = 48; // Hard coded: TODO: param
+			int tileSize = Parameters.parameters.integerParameter("zentangleTileDim");
+			int backgroundSize = tileSize * Parameters.parameters.integerParameter("zentanglePatternDim");
 
 			// Pick two random distinct indices to determine which images make up background
 			// patterns
@@ -329,6 +329,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 			if (CommonConstants.watch) {
 				try {
+					System.out.println("Opening " + outputfile);
 					Desktop.getDesktop().open(outputfile);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -423,16 +424,17 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		}
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:16", "maxGens:500",
+					"zentangleTileDim:100",
 					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:true",
 					"task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask", "allowMultipleFunctions:true",
-					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
+					"ftype:0", "watch:true", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"simplifiedInteractiveInterface:false", "recurrency:false", "saveAllChampions:true",
 					"cleanOldNetworks:false", "ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA",
 					"imageWidth:2000", "imageHeight:2000", "imageSize:200", "includeFullSigmoidFunction:true",
 					"includeFullGaussFunction:true", "includeCosineFunction:true", "includeGaussFunction:false",
 					"includeIdFunction:true", "includeTriangleWaveFunction:false", "includeSquareWaveFunction:false",
 					"includeFullSawtoothFunction:false", "includeSigmoidFunction:false", "includeAbsValFunction:false",
-					"includeSawtoothFunction:false", "watch:true" });
+					"includeSawtoothFunction:false" });
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
