@@ -352,6 +352,8 @@ public class Parameters {
 		integerOptions.add("zeldaMaxHealth", 4, "Set the max health for the main character in the rouge-like.");
 		integerOptions.add("zeldaGANLevelWidthChunks", 4, "Number of rooms per row of CPPN-GAN generated dungeons.");
 		integerOptions.add("zeldaGANLevelHeightChunks", 4, "Number of rooms per column of CPPN-GAN generated dungeons.");
+		integerOptions.add("zentangleTileDim", 48 , "The width and height in pixels of tiles used in a Zentangle");
+		integerOptions.add("zentanglePatternDim", 30 , "The width and height in tiles of patterns used in a Zentangle");		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");

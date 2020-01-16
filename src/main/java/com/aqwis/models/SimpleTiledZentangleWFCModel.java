@@ -29,6 +29,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class SimpleTiledZentangleWFCModel extends WFCModel {
@@ -425,7 +426,8 @@ public class SimpleTiledZentangleWFCModel extends WFCModel {
             icBuilder = icFactory.newDocumentBuilder();
             Document doc = icBuilder.newDocument();
             Element mainRootElement = doc.createElement("set");
-            mainRootElement.setAttribute("size", "48");
+            // WFC default tile size apparently 48. This can be overridden.
+            mainRootElement.setAttribute("size", Parameters.parameters == null ? "48" : Parameters.parameters.integerParameter("zentangleTileDim")+"");
             doc.appendChild(mainRootElement);
  
             Element tilesElement = doc.createElement("tiles");
