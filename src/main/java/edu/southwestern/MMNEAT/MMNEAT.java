@@ -1212,6 +1212,7 @@ public class MMNEAT {
 	 */
 	public static double[] getUpperBounds() {
 		if(fos != null) return fos.getUpperBounds();
+		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
 		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength()); // all ones
 		else if(task instanceof ZeldaGANDungeonTask) return ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones
 		else {

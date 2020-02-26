@@ -587,6 +587,7 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 			vectorValue.setMinorTickSpacing(1);
 			vectorValue.setPaintTicks(true);
 			Hashtable<Integer,JLabel> labels = new Hashtable<>();
+			labels.put(-SLIDER_RANGE, new JLabel("-1.0"));
 			labels.put(0, new JLabel("0.0"));
 			labels.put(SLIDER_RANGE, new JLabel("1.0"));
 			vectorValue.setLabelTable(labels);
