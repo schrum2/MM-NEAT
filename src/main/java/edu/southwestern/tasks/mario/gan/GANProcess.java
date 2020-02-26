@@ -1,10 +1,13 @@
 package edu.southwestern.tasks.mario.gan;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.util.PythonUtil;
 
 public class GANProcess extends Comm {
@@ -54,7 +57,8 @@ public class GANProcess extends Comm {
 			case ZELDA: 
 				ganProcess = new GANProcess(PYTHON_BASE_PATH+"ZeldaGAN"+ File.separator +Parameters.parameters.stringParameter("zeldaGANModel"),
 											Parameters.parameters.integerParameter("GANInputSize"),
-											Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? 4 : 6);
+											// This is an ugly mess meant to support backwards compatibility with previously trained models.
+											Parameters.parameters.stringParameter("zeldaGANModel").startsWith("ZeldaDungeonsAll3Tiles") ? 3 : Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? 4 : 6);
 				break;
 			}
 			ganProcess.start();
