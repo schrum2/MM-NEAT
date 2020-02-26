@@ -35,7 +35,6 @@ public class RougelikeApp extends JFrame implements KeyListener{
 	
 	public static RougelikeApp app;
 	
-	public static boolean DEBUG = false;
 	public static int LIVES = 3;
 	public static int TRIES = 0;
 	public static ParticipantData PD = new ParticipantData();
@@ -109,11 +108,10 @@ public class RougelikeApp extends JFrame implements KeyListener{
 	        
 	}
 	
-	public static void startDungeon(Dungeon dungeon, boolean exitOnClose, boolean debug) throws InterruptedException {
+	public static void startDungeon(Dungeon dungeon, boolean exitOnClose) throws InterruptedException {
 		
 		Object lock = new Object();
 		
-		DEBUG = debug;
 		RougelikeApp app = new RougelikeApp(dungeon);
 		if(!exitOnClose)
 			app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
@@ -155,11 +153,6 @@ public class RougelikeApp extends JFrame implements KeyListener{
 		
 		RougelikeApp.app = app;
 
-	}
-	
-	public static void startDungeon(Dungeon dungeon, boolean debug) {
-		DEBUG = debug;
-		startDungeon(dungeon);
 	}
 	
 	public static void saveParticipantData() throws Exception {
