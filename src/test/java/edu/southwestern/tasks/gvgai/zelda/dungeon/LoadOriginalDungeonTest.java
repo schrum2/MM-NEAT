@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
@@ -19,6 +20,7 @@ public class LoadOriginalDungeonTest {
 	
 	@Before
 	public void setUp() {
+		Parameters.initializeParameterCollections(new String[] {}); // All default parameters
 		String format = "tloz%s_1_flip";
 		int numberOfDungeons = 8;
 		// Dungeon 9: Takes a long time for A* to run but it has never been finished before
