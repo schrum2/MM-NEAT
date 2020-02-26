@@ -12,18 +12,21 @@ public abstract class GraphSearch<A extends Action, S extends State<A>> implemen
 
 	@Override
 	public ArrayList<A> search(S start) {
-		return search(start, true); // Reset search by default
+		return search(start, true, Integer.MAX_VALUE); // Reset search by default
 	}
 	
 	/**
 	 * All graph search algorithms have the same general structure. They only differ in
 	 * the data structure used to maintain the fringe. This comes from getQueueStrategy().
+	 * 
+	 * The budget is the number of iterations allowed before an exception is thrown.
 	 */
-	public ArrayList<A> search(S start, boolean reset) {
+	public ArrayList<A> search(S start, boolean reset, int budget) {
 		Queue<Triple<S, ArrayList<A>, Double>> pq = getQueueStrategy();
 		// No actions or cost to reach starting point
 		pq.add(new Triple<S,ArrayList<A>,Double>(start, new ArrayList<A>(), new Double(0)));
 		if(reset) visited = new HashSet<>();
+		int count = 0;
 		while(!pq.isEmpty()) {
 			// Each state includes the path that led to it, and cost of that path
 			Triple<S,ArrayList<A>,Double> current = pq.poll();
@@ -33,7 +36,13 @@ public abstract class GraphSearch<A extends Action, S extends State<A>> implemen
 			if(s.isGoal()) {
 				return actions; // SUCCESS!
 			} else if(!visited.contains(s)) {
+				count++;
+				if(count > budget) {
+					System.out.println("A* taking too long.");
+					throw new IllegalStateException("A* exceeded computation budget");
+				}
 			    visited.add(s);
+                            //System.out.println("Visited: " +s.toString());
 			    ArrayList<Triple<State<A>, A, Double>> successors = s.getSuccessors();
 			    for(Triple<State<A>,A,Double> triple : successors) {
 			    	@SuppressWarnings("unchecked")
