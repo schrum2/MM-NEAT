@@ -40,6 +40,17 @@ public class OldLevelParser {
 			'b', // 12: Bottom of bullet bill
 	};
 
+	public static int indexOfBlock(char c) {
+		// There is only one enemy in the encoding, but it is mapped to an enemy
+		// of a random type. So all enemies need to map back to the one enemy tile index.
+		if(c == 'R' || c == 'r' || c == 'W' || c == 'g' || c == 'G' || c == '^' || c == '&') return 5;
+		
+		for(int i = 0; i < BLOCK_INDEX.length; i++) {
+			if(BLOCK_INDEX[i] == c) return i;
+		}
+		throw new IllegalArgumentException(c + ": not a valid tile.");
+	}
+	
 	/*
 	 "tiles" : {
     0    "X" : ["solid","ground"],

@@ -10,7 +10,7 @@ import edu.southwestern.util.graphics.ImageNetClassification;
  * Return names for all ImageNet classes
  * @author Jacob Schrum
  */
-public class ImageNetBinMapping<T extends Network> implements BinLabels<T> {
+public class ImageNetBinMapping<T extends Network> implements BinLabels {
 	/**
 	 * All 1000 ImageNet labels
 	 */

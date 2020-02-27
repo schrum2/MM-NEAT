@@ -106,6 +106,21 @@ public class ArrayUtil {
 		}
 		return ones;
 	}
+	
+	/**
+	 * Return primitive double array of given size containing all negative ones
+	 *
+	 * @param size 
+	 * 			desired size of array
+	 * @return array of doubles of size 'size', all of which are -1
+	 */
+	public static double[] doubleNegativeOnes(int size) {
+		double[] ones = new double[size];
+		for (int i = 0; i < ones.length; i++) {
+			ones[i] = -1;
+		}
+		return ones;
+	}
 
 	/**
 	 * Return primitive int array of given size containing all ones
@@ -958,6 +973,23 @@ public class ArrayUtil {
 				List<T> row = original.get(i);
 				T previous = row.get(j);
 				result.get(j).add(previous);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Turn 3D array into 1D array in row major order
+	 * @param array 3D array, NOT jagged in any dimension
+	 * @return corresponding 1D array in row major order
+	 */
+	public static double[] flatten3DDoubleArray(double[][][] array) {
+		double[] result = new double[array.length*array[0].length*array[0][0].length];
+		int index = 0;
+		for(double[][] slice: array) {
+			for(double[] row: slice) {
+				System.arraycopy(row, 0, result, index, row.length);
+				index += row.length;
 			}
 		}
 		return result;

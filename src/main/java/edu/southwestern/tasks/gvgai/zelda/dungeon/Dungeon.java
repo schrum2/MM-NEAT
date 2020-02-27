@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -220,6 +221,9 @@ public class Dungeon {
 	}
 
 	public class Node {
+		// Change this value by calling markReachableRooms
+		public transient boolean reachable = false;
+		
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -290,6 +294,33 @@ public class Dungeon {
 				System.out.print(n + " ");
 			}
 			System.out.println();
+		}
+	}
+
+	/**
+	 * Put data into room Nodes indicating whether the room is actually reachable from the start room
+	 * in terms of door connectivity (does not consider walls)
+	 */
+	public void markReachableRooms() {
+		Node startNode = levels.get(currentLevel);
+		startNode.reachable = true; // Obviously reachable
+		Stack<Node> stack = new Stack<Node>();
+		stack.push(startNode);
+		// Exhaustive depth-first search
+		while(!stack.isEmpty()) { // As long as nodes can be reached
+			Node currentNode = stack.pop();
+			// Loops through the room's exit doors
+			for(Pair<String,Point> nextRoomInfo: currentNode.adjacency.values()) {
+				// Each pair is a destination room name and a location in that room, but we only need the name
+				String neighborName = nextRoomInfo.t1;
+				Node neighborNode = levels.get(neighborName); // Look up Node based on name
+				if(!neighborNode.reachable) {
+					// Wasn't reached yet, so add to search
+					stack.push(neighborNode);
+				}
+				// Has been reached, so don't search again
+				neighborNode.reachable = true;
+			}
 		}
 	}
 

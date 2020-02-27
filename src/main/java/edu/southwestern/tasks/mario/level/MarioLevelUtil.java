@@ -2,9 +2,12 @@ package edu.southwestern.tasks.mario.level;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
@@ -239,6 +242,52 @@ public class MarioLevelUtil {
 		OldLevelParser parse = new OldLevelParser();
 		Level level = parse.createLevelASCII(lines);
 		return level;
+	}
+	
+	/**
+	 * Convert a VGLC Mario level to list of lists of numbers representing the GAN encoding.
+	 * @param filename Mario level file
+	 * @return List of lists
+	 */
+	public static ArrayList<List<Integer>> listLevelFromVGLCFile(String filename) {
+		try {
+			Scanner file = new Scanner(new File(filename));
+			ArrayList<String> lines = new ArrayList<>();
+			// Read all lines from file
+			while(file.hasNextLine()) {
+				lines.add(file.nextLine());
+			}
+			file.close();
+			// Convert to array
+			String[] lineArray = lines.toArray(new String[lines.size()]);
+			// Convert to list
+			ArrayList<List<Integer>> list = listLevelFromStringLevel(lineArray);
+			return list;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		throw new IllegalStateException("Problem reading Mario level file: "+filename);
+	}
+	
+	/**
+	 * Convert from String representation to list of lists
+	 * @param stringLevel
+	 * @return
+	 */
+	public static ArrayList<List<Integer>> listLevelFromStringLevel(String[] stringLevel) {
+		ArrayList<List<Integer>> result = new ArrayList<List<Integer>>();
+		for(String row : stringLevel) {
+			List<Integer> listRow = new ArrayList<Integer>(row.length());
+			for(int i = 0; i < row.length(); i++) {
+				//System.out.println(i + ":" + row.charAt(i));
+				Integer tile = Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding") ?
+					OldLevelParser.indexOfBlock(row.charAt(i)) :
+					LevelParser.tiles.get(row.charAt(i));
+				listRow.add(tile);
+			}
+			result.add(listRow);
+		}
+		return result;
 	}
 	
 	/**

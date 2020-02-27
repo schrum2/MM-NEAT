@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.gvgai.zelda.dungeon;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Point;
@@ -12,6 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.swing.BoxLayout;
@@ -47,21 +47,22 @@ import me.jakerg.rougelike.TileUtil;
 
 
 public abstract class ZeldaDungeon<T> {
-	
+
 	private static final int ZELDA_HEIGHT = (176/11)*16;//Parameters.parameters.integerParameter("zeldaImageHeight");
 	private static final int ZELDA_WIDTH = 176;//Parameters.parameters.integerParameter("zeldaImageWidth");\
-	
-	
+
+
 	private Level[][] dungeon = null;
 	protected Dungeon dungeonInstance = null;
 	JPanel dungeonGrid;
-	
+	private ArrayList<T> originalPhenotypes;
+
 	public ZeldaDungeon() {}
-	
+
 	public ZeldaDungeon(Dungeon dungeon) {
 		this.dungeonInstance = dungeon;
 	}
-	
+
 	/**
 	 * Convert the 2D array of levels to a dungeon
 	 * @param numRooms 
@@ -70,7 +71,7 @@ public abstract class ZeldaDungeon<T> {
 	 * @throws Exception 
 	 */
 	public abstract Dungeon makeDungeon(ArrayList<T> phenotypes, int numRooms) throws Exception;
-	
+
 	/**
 	 * For each node, if there's a level next to it (based on the direction and coordinates) add the necessary edges
 	 * @param dungeonInstance Instance of the dungeon
@@ -82,17 +83,21 @@ public abstract class ZeldaDungeon<T> {
 	 * @param direction String direction (UP, DOWN, LEFT, RIGHT)
 	 */
 	public static void addAdjacencyIfAvailable(Dungeon dungeonInstance, Level[][] dungeon, String[][] uuidLabels, Node newNode, int x, int y, String direction) {
-		int tileToSetTo = 3; // Door tile number
+		addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x, y, direction, Double.NaN);
+	}
+	
+	public static void addAdjacencyIfAvailable(Dungeon dungeonInstance, Level[][] dungeon, String[][] uuidLabels, Node newNode, int x, int y, String direction, double doorEncoding) {
+		int tileToSetTo = Tile.DOOR.getNum(); // Door tile number
 		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length || 
 				dungeon[y][x] == null) // If theres no dungeon there set the tiles to wall
 			tileToSetTo = Tile.WALL.getNum();
-		
-		setLevels(direction, newNode, tileToSetTo); // Set the doors in the levels
+
+		setLevels(direction, newNode, tileToSetTo, doorEncoding); // Set the doors in the levels
 		findAndAddGoal(dungeonInstance, newNode);
-		
+
 		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length) return;
 		if(dungeon[y][x] == null) return; // Finally get out if there's no adjacency
-		
+
 		if(uuidLabels[y][x] == null) uuidLabels[y][x] = UUID.nameUUIDFromBytes(RandomNumbers.randomByteArray(16)).toString(); // Get the unique ID of the level
 		String whereTo = uuidLabels[y][x]; // This will be the where to in the edge
 
@@ -100,21 +105,21 @@ public abstract class ZeldaDungeon<T> {
 		switch(direction) {
 		case("UP"):
 			ZeldaLevelUtil.addUpAdjacencies(newNode, whereTo);
-			break;
+		break;
 		case("RIGHT"):
 			ZeldaLevelUtil.addRightAdjacencies(newNode, whereTo);
-			break;
+		break;
 		case("DOWN"):
 			ZeldaLevelUtil.addDownAdjacencies(newNode, whereTo);
-			break;	
+		break;	
 		case("LEFT"):
 			ZeldaLevelUtil.addLeftAdjacencies(newNode, whereTo);
-			break;
+		break;
 		default: return;
 		}
-		
+
 	}
-	
+
 	private static void findAndAddGoal(Dungeon dungeon, Node newNode) {
 		List<List<Integer>> ints = newNode.level.intLevel;
 		String name = newNode.name;
@@ -128,26 +133,48 @@ public abstract class ZeldaDungeon<T> {
 		}
 	}
 
-	private static void setLevels(String direction, Node node, int tile) {
+	/**
+	 * Creates door connecting rooms. 
+	 * 
+	 * @param direction Direction being moved out of the room
+	 * @param node Room being modified
+	 * @param tile New tile for door location: Will simply be a door or wall, but this method changes some doors to "special" doors
+	 * @param encodedDoorType Special encoding of door type. If NaN, then just decide type randomly.
+	 */
+	private static void setLevels(String direction, Node node, int tile, double encodedDoorType) {
 		List<List<Integer>> level = node.level.intLevel;
 		// Randomize tile only if the door being placed actually leads to another room
-		if(tile == 3) {
-			if(RandomNumbers.randomCoin(0.7))
+		if(tile == Tile.DOOR.getNum()) {
+			// NaN means use chance to create door type
+			if(Double.isNaN(encodedDoorType) && RandomNumbers.randomCoin(0.7)) {
 				tile = (RandomNumbers.coinFlip()) ? Tile.LOCKED_DOOR.getNum() : Tile.HIDDEN.getNum(); // Randomize 5 (locked door) or 7 (bombable wall)
-			
-			if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level); // If the door is now locked place a random key in the level
+				if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level, RandomNumbers.randomGenerator); // If the door is now locked place a random key in the level
+			} else { // Assume CPPN provided coded interpretation of door type
+				if(encodedDoorType > 0.66) {
+					tile = Tile.LOCKED_DOOR.getNum();
+				} else if(encodedDoorType > 0.33) {
+					tile = Tile.HIDDEN.getNum();
+				} else if(encodedDoorType > 0.00) {
+					tile = Tile.SOFT_LOCK_DOOR.getNum();
+				}
+				// else remain a plain door
+				
+				// A random generator based on the CPPN output, so placement will be consistent
+				Random rand = new Random(Double.doubleToLongBits(encodedDoorType));
+				if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level, rand); // If the door is now locked place a random key in the level
+			}
 		}
 		ZeldaLevelUtil.setDoors(direction, node, tile);
 	}
-	
+
 	/**
 	 * Function specified by the dungeon to get a 2D list of ints from the latent vector
 	 * @param phenotype The phenotype of the level
 	 * @return 2D list of the level
 	 */
 	public abstract List<List<Integer>> getLevelFromLatentVector(T phenotype);
-	
-	
+
+
 	/**
 	 * Show the dungeon to the viewer, this is also where the actualy dungeon making happens
 	 * @param phenotypes Latent vectors of levels
@@ -155,29 +182,31 @@ public abstract class ZeldaDungeon<T> {
 	 * @throws Exception 
 	 */
 	public void showDungeon(ArrayList<T> phenotypes, int numRooms) throws Exception {
-		dungeonInstance = makeDungeon(phenotypes, numRooms);
-		
+		originalPhenotypes = phenotypes;
+		dungeonInstance = makeDungeon(originalPhenotypes, numRooms);
+
 		JFrame frame = new JFrame("Dungeon Viewer");
 		frame.setSize(1000, 1000);
-		
+
 		JPanel container = new JPanel();
 		container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
-		
+
 		JPanel buttons = new JPanel();
-		
+
 		JButton playDungeon = new JButton("Play Dungeon");
+		playDungeon.setToolTipText("Play this dungeon using an ASCII-based Rogue-like interface.");
 		playDungeon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				ZeldaState initial = new ZeldaState(5, 5, 0, dungeonInstance);
-				
+
 				Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
 				ArrayList<GridAction> result = search.search(initial);
-				
+
 				if(result != null)
 					for(GridAction a : result)
 						System.out.println(a.getD().toString());
-//				
+				//				
 				if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
 					new Thread() {
 						@Override
@@ -197,108 +226,138 @@ public abstract class ZeldaDungeon<T> {
 				}
 				Parameters.parameters.setBoolean("netio", false);
 			}
-			
+
 		});
 		buttons.add(playDungeon);
 		
-		JCheckBox useGvg = new JCheckBox("Use GVG-AI", Parameters.parameters.booleanParameter("gvgAIForZeldaGAN"));
-		useGvg.addActionListener(new ActionListener() {
-
+		JButton newDungeon = new JButton("Remake Dungeon");
+		newDungeon.setToolTipText("Regenerate the dungeon using the same rooms originally selected.");
+		newDungeon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Parameters.parameters.changeBoolean("gvgAIForZeldaGAN");
-				container.remove(dungeonGrid); 
-				dungeonGrid = getDungeonGrid(numRooms);
-				container.add(dungeonGrid);
-				frame.validate();
-				frame.repaint();
-			}
-			
-		});
-		buttons.add(useGvg);
-		
-		JButton saveDungeon = new JButton("Save Dungeon");
-		saveDungeon.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("Whoops");
-				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
-				int option = fileChooser.showSaveDialog(null);
-				if(option == JFileChooser.APPROVE_OPTION) {
-					String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+				int exceptionCount = 0;
+				boolean success = false;
+				// Fails sometimes. Give three chances to get it right (need to find root cause and fix)
+				while(exceptionCount < 3 && ! success) {
 					try {
-						dungeonInstance.saveToJson(filePath);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
+						dungeonInstance = makeDungeon(originalPhenotypes, numRooms);
+						container.remove(dungeonGrid); 
+						dungeonGrid = getDungeonGrid(numRooms);
+						container.add(dungeonGrid);
+						frame.validate();
+						frame.repaint();
+						success = true;
+					} catch (Exception e) {
+						exceptionCount++;
 						e.printStackTrace();
 					}
 				}
 			}
-			
-		});
-		buttons.add(saveDungeon);
-		
-		JButton loadDungeon = new JButton("Load Dungeon");
-		loadDungeon.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser fileChooser = new JFileChooser();
-				fileChooser.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
-				fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				int option = fileChooser.showOpenDialog(null);
-				if(option == JFileChooser.APPROVE_OPTION) {
-					String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-					dungeonInstance = Dungeon.loadFromJson(filePath);
-					dungeon = dungeonInstance.getLevelArrays();
+		});
+		buttons.add(newDungeon);
+
+		if(Parameters.parameters.booleanParameter("dungeonizeAdvancedOptions")) {
+
+			JCheckBox useGvg = new JCheckBox("Use GVG-AI", Parameters.parameters.booleanParameter("gvgAIForZeldaGAN"));
+			useGvg.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					Parameters.parameters.changeBoolean("gvgAIForZeldaGAN");
 					container.remove(dungeonGrid); 
 					dungeonGrid = getDungeonGrid(numRooms);
 					container.add(dungeonGrid);
 					frame.validate();
 					frame.repaint();
 				}
-			}
-			
-		});
-		buttons.add(loadDungeon);
-		
-		JPanel enemySlider = new JPanel();
-		
-		JLabel enemyLabel = new JLabel("Enemy Health");
-		JLabel enemyNumber = new JLabel("1");
-		
-		JSlider enemyHealth = new JSlider(1, 21);
-		enemyHealth.setValue(1);
-		enemyHealth.setPaintTicks(true);
-		enemyHealth.setMajorTickSpacing(10);
-		enemyHealth.setPaintLabels(true);
-		enemyHealth.addChangeListener(new ChangeListener() {
 
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				Parameters.parameters.setInteger("rougeEnemyHealth", (int) enemyHealth.getValue());
-				enemyNumber.setText(String.valueOf(enemyHealth.getValue())); 
-			}
-			
-		});
-		
-		enemySlider.add(enemyLabel);
-		enemySlider.add(enemyNumber);
-		enemySlider.add(enemyHealth);
-		
-		buttons.add(enemySlider);
-		
+			});
+			buttons.add(useGvg);
+
+			JButton saveDungeon = new JButton("Save Dungeon");
+			saveDungeon.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					System.out.println("Whoops");
+					JFileChooser fileChooser = new JFileChooser();
+					fileChooser.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
+					int option = fileChooser.showSaveDialog(null);
+					if(option == JFileChooser.APPROVE_OPTION) {
+						String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+						try {
+							dungeonInstance.saveToJson(filePath);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+
+			});
+			buttons.add(saveDungeon);
+
+			JButton loadDungeon = new JButton("Load Dungeon");
+			loadDungeon.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JFileChooser fileChooser = new JFileChooser();
+					fileChooser.setFileFilter(new FileNameExtensionFilter("JSON file", "json"));
+					fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					int option = fileChooser.showOpenDialog(null);
+					if(option == JFileChooser.APPROVE_OPTION) {
+						String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+						dungeonInstance = Dungeon.loadFromJson(filePath);
+						dungeon = dungeonInstance.getLevelArrays();
+						container.remove(dungeonGrid); 
+						dungeonGrid = getDungeonGrid(numRooms);
+						container.add(dungeonGrid);
+						frame.validate();
+						frame.repaint();
+					}
+				}
+
+			});
+			buttons.add(loadDungeon);
+
+			JPanel enemySlider = new JPanel();
+
+			JLabel enemyLabel = new JLabel("Enemy Health");
+			JLabel enemyNumber = new JLabel("1");
+
+			JSlider enemyHealth = new JSlider(1, 21);
+			enemyHealth.setValue(1);
+			enemyHealth.setPaintTicks(true);
+			enemyHealth.setMajorTickSpacing(10);
+			enemyHealth.setPaintLabels(true);
+			enemyHealth.addChangeListener(new ChangeListener() {
+
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					Parameters.parameters.setInteger("rougeEnemyHealth", (int) enemyHealth.getValue());
+					enemyNumber.setText(String.valueOf(enemyHealth.getValue())); 
+				}
+
+			});
+
+			enemySlider.add(enemyLabel);
+			enemySlider.add(enemyNumber);
+			enemySlider.add(enemyHealth);
+
+			buttons.add(enemySlider);
+		}
+
 		container.add(buttons);
-		
+
 		dungeonGrid = getDungeonGrid(numRooms);
-		
+
 		container.add(dungeonGrid);
-		
+
 		frame.add(container);
 		frame.setVisible(true);
 	}
-	
+
 	/**
 	 * Helper function to generate the dungeon view grid
 	 * @param numRooms Number of rooms to set the grid layout
@@ -306,8 +365,9 @@ public abstract class ZeldaDungeon<T> {
 	 */
 	protected JPanel getDungeonGrid(int numRooms) {
 		JPanel panel = new JPanel();
-		
+
 		if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
+			dungeonInstance.markReachableRooms();
 			BufferedImage image = DungeonUtil.imageOfDungeon(dungeonInstance);
 			JLabel label = new JLabel(new ImageIcon(image));
 			panel.add(label);
@@ -321,7 +381,6 @@ public abstract class ZeldaDungeon<T> {
 						BufferedImage level = getButtonImage(n, ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4); //creates image rep. of level)
 						ImageIcon img = new ImageIcon(level.getScaledInstance(level.getWidth(), level.getHeight(), Image.SCALE_FAST)); //creates image of level
 						JLabel imageLabel = new JLabel(img); // places level on label
-						imageLabel.setPreferredSize(new Dimension(300, 300));
 						panel.add(imageLabel); //add label to panel
 					} else {
 						JLabel blankText = new JLabel("");
@@ -348,23 +407,23 @@ public abstract class ZeldaDungeon<T> {
 			for(int x = 0; x < d[y].length; x++) {
 				if(d[y][x] != null) {
 					List<List<Integer>> level = d[y][x].intLevel;
-					
+
 					// Top
-					
+
 					int xL = 5;
 					int yL = 0;
-					
+
 					if(shouldPostHoc(d, y - 1, x)) {
 						level.get(yL++).set(xL, 4);
 						while(level.get(yL).get(xL) != 0)
 							level.get(yL++).set(xL, 0);
 					}
-					
+
 					// Left
-					
+
 					xL = 0;
 					yL = 8;
-					
+
 					if(shouldPostHoc(d, y, x - 1)) {
 						level.get(yL).set(xL++, 4);
 						while(level.get(yL).get(xL) != 0)
@@ -372,34 +431,32 @@ public abstract class ZeldaDungeon<T> {
 					}
 
 					// Right
-					
+
 					xL = 10;
 					yL = 8;
-					
+
 					if(shouldPostHoc(d, y, x + 1)) {
 						level.get(yL).set(xL--, 4);
 						while(level.get(yL).get(xL) != 0)
 							level.get(yL).set(xL--, 0);
 					}
-						
+
 					// bottom
-					
+
 					xL = 5;
 					yL = 15;
-					
+
 					if(shouldPostHoc(d, y + 1, x)) {
 						level.get(yL--).set(xL, 4);
 						while(level.get(yL).get(xL) != 0)
 							level.get(yL--).set(xL, 0);
 					}
-
 				}
 			}
 		}
-		
 		return d;
 	}
-	
+
 	/**
 	 * Helper function to see if there's an adjacent room
 	 * @param d 2D list of levels to check
@@ -409,9 +466,9 @@ public abstract class ZeldaDungeon<T> {
 	 */
 	private boolean shouldPostHoc(Level[][] d, int y, int x) {
 		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length) return false;
-		
+
 		if(dungeon[y][x] == null) return false;
-		
+
 		return true;
 	}
 
@@ -431,9 +488,9 @@ public abstract class ZeldaDungeon<T> {
 		} else {
 			return DungeonUtil.getLevelImage(n, dungeonInstance);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Helper class to represent the levels in the dungeon
 	 * @author gutierr8
@@ -443,7 +500,7 @@ public abstract class ZeldaDungeon<T> {
 		public List<List<Integer>> intLevel;
 		public String[] stringLevel;
 		public Tile[][] rougeTiles;
-		
+
 		public Level(List<List<Integer>> intLevel) {
 			this.intLevel = intLevel;
 			this.rougeTiles = TileUtil.listToTile(intLevel);
@@ -452,39 +509,39 @@ public abstract class ZeldaDungeon<T> {
 		public List<List<Integer>> getLevel(){
 			return this.intLevel;
 		}
-		
+
 		public String[] getStringLevel(Point startingPoint) {
 			List<List<Integer>> listInts = intLevel;
 			return this.stringLevel = ZeldaVGLCUtil.convertZeldaRoomListtoGVGAI(listInts, startingPoint);
 		}
-		
+
 		public Tile[][] getTiles(){
 			if(rougeTiles == null)
 				rougeTiles = TileUtil.listToTile(intLevel);
 			return rougeTiles;
 		}
-		
+
 		public void tileLayout() {
 			if(rougeTiles == null) return;
-			
-//			try {
-//				PrintStream ps = new PrintStream(System.out, true, Charset.forName("cp437"));
-//				
-//				for(int y = 0; y < rougeTiles.length; y++) {
-//					for(int x = 0; x < rougeTiles[0].length; x++) {
-//						ps.print(rougeTiles[y][x].getGlyph());
-//					}
-//					ps.print('\n');
-//				}
-//				
-//				ps.print('\n');
-//			} catch (UnsupportedEncodingException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-				
+
+			//			try {
+			//				PrintStream ps = new PrintStream(System.out, true, Charset.forName("cp437"));
+			//				
+			//				for(int y = 0; y < rougeTiles.length; y++) {
+			//					for(int x = 0; x < rougeTiles[0].length; x++) {
+			//						ps.print(rougeTiles[y][x].getGlyph());
+			//					}
+			//					ps.print('\n');
+			//				}
+			//				
+			//				ps.print('\n');
+			//			} catch (UnsupportedEncodingException e) {
+			//				// TODO Auto-generated catch block
+			//				e.printStackTrace();
+			//			}
+
 		}
-		
+
 		public boolean hasTile(Tile t) {
 			int i = t.getNum();
 			for(int y = 0; y < intLevel.size(); y++) {
@@ -493,7 +550,6 @@ public abstract class ZeldaDungeon<T> {
 						return true;
 				}
 			}
-			
 			return false;
 		}
 
@@ -501,19 +557,37 @@ public abstract class ZeldaDungeon<T> {
 			List<List<Integer>> ints = intLevel;
 			int x = (ints.get(0).size() - 1) / 2;
 			int y = (ints.size() - 1) / 2;
-			while(!Tile.findNum(ints.get(y).get(x)).playerPassable()) {
+			while(x != -1 && y != -1 && !Tile.findNum(ints.get(y).get(x)).playerPassable()) {
 				if(x % 2 == 0)
 					x--;
 				else
 					y--;
 			}
+			// The code above sometimes reached -1 and caused an exception
+			if(x == -1 || y == -1) {
+				// Keep the choice deterministic. Find first available floor tile (this is rare anyway)
+				boolean found = false;
+				for(int i = 2; i < ints.size(); i++) {
+					for(int j = 2; j < ints.get(0).size(); j++) {
+						if(Tile.findNum(ints.get(i).get(j)).playerPassable()) {
+							x = j;
+							y = i;
+							found = true;
+							break;
+						}
+					}
+					if(found) break;
+				}
+				
+			}
+			
 			ints.get(y).set(x, Tile.TRIFORCE.getNum());
 			intLevel = ints;
 			if(dungeon != null)
 				dungeon.setGoalPoint(new Point(x, y));;
-			return this;
+				return this;
 		}
-		
+
 		public List<Point> getFloorTiles(){
 			List<Point> points = new LinkedList<>();
 			for(int y = 0; y < intLevel.size(); y++)
@@ -522,10 +596,7 @@ public abstract class ZeldaDungeon<T> {
 					if(t.playerPassable())
 						points.add(new Point(x, y));
 				}
-
-			
 			return points;
-					
 		}
 	}
 
@@ -536,14 +607,12 @@ public abstract class ZeldaDungeon<T> {
 	public static void placeNormalKey(List<List<Integer>> intLevel) {
 		int x = intLevel.get(0).size() / 2;
 		int y = intLevel.size() / 2;
-		
+
 		while(!Tile.findNum(intLevel.get(y).get(x)).playerPassable()){
 			x--;
 			y--;
 		}
-		
+
 		intLevel.get(y).set(x, Tile.KEY.getNum());
-		
 	}
-	
 }

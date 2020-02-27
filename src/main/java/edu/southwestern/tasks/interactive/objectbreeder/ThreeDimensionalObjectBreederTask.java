@@ -238,7 +238,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		previousShapes = shapes;
 		shapes = new HashMap<Long,List<Triangle>>();
 		for(Genotype<TWEANN> g : population) {
-			shapes.put(g.getId(), ThreeDimensionalUtil.trianglesFromCPPN(g.getPhenotype(), picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers()));
+			shapes.put(g.getId(), ThreeDimensionalUtil.trianglesFromCPPN(g.getPhenotype(), buttonWidth, buttonHeight, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers()));
 		}
 		return super.evaluateAll(population); // wait for user choices
 	}
@@ -268,7 +268,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 			shapes = new HashMap<Long,List<Triangle>>();
 			assert inputMultipliers.length == numCPPNInputs() : "Number of inputs should always match CPPN inputs! " + inputMultipliers.length + " vs " + numCPPNInputs();
 			for(Score<TWEANN> s : scores) {
-				shapes.put(s.individual.getId(), ThreeDimensionalUtil.trianglesFromCPPN(s.individual.getPhenotype(), picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, inputMultipliers));
+				shapes.put(s.individual.getId(), ThreeDimensionalUtil.trianglesFromCPPN(s.individual.getPhenotype(), buttonWidth, buttonHeight, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, inputMultipliers));
 			}		
 		}
 		super.resetButtons(hardReset);
@@ -315,15 +315,15 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		// If reset button cleared out triangles, then load again right before displaying
 		if(!shapes.containsKey(phenotype.getId())) {
-			shapes.put(phenotype.getId(), ThreeDimensionalUtil.trianglesFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers()));
+			shapes.put(phenotype.getId(), ThreeDimensionalUtil.trianglesFromCPPN(phenotype, buttonWidth, buttonHeight, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers()));
 		}		
-		return ThreeDimensionalUtil.imageFromTriangles(shapes.get(phenotype.getId()), picSize, picSize, heading, pitch, null);
+		return ThreeDimensionalUtil.imageFromTriangles(shapes.get(phenotype.getId()), buttonWidth, buttonHeight, heading, pitch, null);
 	}
 
 	@Override
 	protected BufferedImage[] getAnimationImages(TWEANN cppn, int startFrame, int endFrame, boolean beingSaved) {
 		//if animation images are being saved as a gif, set background to grey (similar to button background) to avoid frame overlap
-		return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch, beingSaved ? new Color(223,233,244) : null, vertical);
+		return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), buttonWidth, buttonHeight, startFrame, endFrame, heading, pitch, beingSaved ? new Color(223,233,244) : null, vertical);
 	}
 
 	/**

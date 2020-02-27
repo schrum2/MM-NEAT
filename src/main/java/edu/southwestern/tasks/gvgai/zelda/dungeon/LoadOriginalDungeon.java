@@ -298,7 +298,7 @@ public class LoadOriginalDungeon {
 	 * Add necessary information to the room
 	 * @param dungeon Dungeon instance the room is a part of
 	 * @param numberToString map to keep track of the numbered rooms and node names
-	 * @param line String of the roop information
+	 * @param line String of the room information
 	 */
 	private static void convertRoom(Dungeon dungeon, HashMap<Integer, String> numberToString, String line) {
 		Scanner scanner = new Scanner(line);
@@ -325,7 +325,7 @@ public class LoadOriginalDungeon {
 			case "k": // Room has a key in it
 				numKeys++;
 				if(RANDOM_KEY)
-					ZeldaLevelUtil.placeRandomKey(node.level.intLevel);
+					ZeldaLevelUtil.placeRandomKey(node.level.intLevel, RandomNumbers.randomGenerator);
 				else
 					ZeldaDungeon.placeNormalKey(node.level.intLevel);
 				break;
