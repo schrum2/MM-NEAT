@@ -4,14 +4,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.junit.Test;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
@@ -23,6 +28,7 @@ public class ZeldaStateTest {
 	
 	@Test
 	public void test() throws Exception {
+		Parameters.initializeParameterCollections(new String[] {}); // Default parameters
 		Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon("a_test", false);
 		
 		Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
@@ -70,29 +76,24 @@ public class ZeldaStateTest {
 		Search<GridAction,ZeldaState> search1 = new AStarSearch<>(manhattan);
 		ArrayList<GridAction> result1 = search1.search(initial1);
 		
+//		HashSet<ZeldaState> mostRecentVisited = ((AStarSearch<GridAction, ZeldaState>) search1).getVisited();
+//		HashSet<ZeldaState> solutionPath = new HashSet<>();
+//		ZeldaState currentState = initial1;
+//		solutionPath.add(currentState);
+//		for(GridAction a : result1) {
+//			currentState = (ZeldaState) currentState.getSuccessor(a);
+//			solutionPath.add(currentState);
+//		}
+//		BufferedImage image = DungeonUtil.viewDungeon(dungeon1, mostRecentVisited, solutionPath);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		
 		itr = result1.iterator();
 		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.DOWN), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.RIGHT), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.DOWN), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.DOWN), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
-		assertEquals(new GridAction(GridAction.DIRECTION.LEFT), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());
 		assertEquals(new GridAction(GridAction.DIRECTION.UP), itr.next());

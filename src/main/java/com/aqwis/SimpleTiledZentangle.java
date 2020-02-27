@@ -10,6 +10,9 @@ import javax.imageio.ImageIO;
 import com.aqwis.models.SimpleTiledZentangleWFCModel;
 import com.aqwis.models.WFCModel;
 
+import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
+import edu.southwestern.util.file.FileUtilities;
+
 /**
  * The normal Main class for WFC is too general and depends on loading files from disk.
  * This simpler, more specialized version accomplishes the same launch specifically for
@@ -21,10 +24,10 @@ import com.aqwis.models.WFCModel;
 public class SimpleTiledZentangle {
 
 	public static String getSaveDirectory() {
-		return "zentangle";
+		return FileUtilities.getSaveDirectory() + "/run" + PicbreederTask.runNumber;
 	}
 	
-	public static void simpleTiledZentangle(int index) throws Exception {
+	public static void simpleTiledZentangle(String directory, int index) throws Exception {
 
 		Random random = new Random(index);
 		
@@ -43,6 +46,7 @@ public class SimpleTiledZentangle {
 //					);
 //		} else if (nodeName.equals("simpletiled")) {
 			WFCModel wfcModel = new SimpleTiledZentangleWFCModel(
+					directory,
 					"picbreeder", // name (the save directory?)
 					null, // subset
 					30,   // width
@@ -63,7 +67,7 @@ public class SimpleTiledZentangle {
 				System.out.println("DONE");
 
 				BufferedImage graphics = wfcModel.graphics();
-				File file = new File(getSaveDirectory()+"/picbreederZentangle"+index+".jpg");
+				File file = new File(directory+"/picbreederZentangle"+index+".jpg");
 				try {
 					ImageIO.write(graphics, "jpg", file);
 				} catch (IOException e) {

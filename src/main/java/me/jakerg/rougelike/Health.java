@@ -11,7 +11,10 @@ public class Health extends Item{
 
 	@Override
 	public void onPickup(Creature creature) {
-		if(creature.isPlayer())
+		if(creature.isPlayer()) {
 			creature.addHP();
+			RougelikeApp.PD.heartsCollected++;
+		}
+			
 	}
 }

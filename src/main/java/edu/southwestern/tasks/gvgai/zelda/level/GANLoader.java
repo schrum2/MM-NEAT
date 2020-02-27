@@ -19,12 +19,12 @@ public class GANLoader implements LevelLoader{
 	}
 	
 	@Override
-	public ArrayList<ArrayList<ArrayList<Integer>>> getLevels() {
+	public List<List<List<Integer>>> getLevels() {
 		double[] latentVector = RandomNumbers.randomArray(GANProcess.latentVectorLength());
 		List<List<List<Integer>>> rs = ZeldaGANUtil.getRoomListRepresentationFromGAN(latentVector);
 		List<List<Integer>> r = rs.get(RandomNumbers.randomGenerator.nextInt(rs.size()));
-		ArrayList<ArrayList<ArrayList<Integer>>> ret = new ArrayList<>();
-		ret.add(ZeldaLevelUtil.listToArrayList(r));
+		List<List<List<Integer>>> ret = new ArrayList<>();
+		ret.add(r);
 		return ret;
 	}
 

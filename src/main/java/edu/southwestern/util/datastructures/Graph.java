@@ -1,17 +1,15 @@
 package edu.southwestern.util.datastructures;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
 import org.apache.commons.lang.RandomStringUtils;
 
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class Graph<T>{
 	
@@ -114,7 +112,9 @@ public class Graph<T>{
 		public Node(T d){
 			setData(d);
 			adjacencies = new HashSet<>();
-			id = RandomStringUtils.randomAlphabetic(4);
+			// The random method replaced a call to randomAlphabetic. This was needed, since the more general random
+			// method is the only one that allows a random generator to be supplied, allowing reproducibility.
+			id = RandomStringUtils.random(4,'A','Z',true,false,null,RandomNumbers.randomGenerator);
 		}
 		public Set<Graph<T>.Node> adjacencies() {
 			return adjacencies;
@@ -147,9 +147,18 @@ public class Graph<T>{
 		@Override
 		public boolean equals(Object other) {
 			if(!(other instanceof Graph.Node)) return false;
+			@SuppressWarnings("unchecked")
 			Node on = (Node) other;
-			return on.id == this.id;
-			
+			if(on.id == null && this.id == null)
+				return true;
+			else if(on.id != null)
+				return on.id.equals(this.id);	
+			return false;
+		}
+		
+		@Override
+		public int hashCode() {
+			return id.hashCode();
 		}
 		
 		public String toString() {

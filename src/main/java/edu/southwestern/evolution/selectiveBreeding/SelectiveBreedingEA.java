@@ -14,7 +14,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.Task;
-import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
+import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
@@ -151,8 +151,8 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 				offspring.add(new Offspring(offspring1.getId(), parentId1, parentId2, generation));
 			}
 			if(i < size) {
-				for(int z = PicbreederTask.MPG_DEFAULT; z < MUTATION_RATE; z++) {
-				g1.mutate();
+				for(int z = InteractiveEvolutionTask.MPG_DEFAULT; z < MUTATION_RATE; z++) {
+					g1.mutate();
 				}
 				children.add(g1);
 				if (parentId2 == -1) {

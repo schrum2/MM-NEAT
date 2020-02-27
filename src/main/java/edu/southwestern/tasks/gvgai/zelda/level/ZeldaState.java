@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
@@ -15,8 +16,10 @@ import me.jakerg.rougelike.Tile;
 
 public class ZeldaState extends State<ZeldaState.GridAction>{
 	
+	// Coordinates of agent in room
 	public int x;
 	public int y;
+	// Coordinates of room in dungeon
 	public int dX;
 	public int dY;
 	private int numKeys = 0;
@@ -249,14 +252,14 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 			ZeldaState result = (ZeldaState) getSuccessor(possible);
 			if(result == null) continue;
 			if(result != null) {
-				ArrayList<ArrayList<Integer>> level = result.currentNode.level.intLevel;
+				List<List<Integer>> level = result.currentNode.level.intLevel;
 				if(result.x >= 0 && result.x < level.get(0).size() && result.y >= 0 && result.y < level.size()) {
 					Tile tile = Tile.findNum(level.get(y).get(x));
 					Tile nextTile = Tile.findNum(level.get(result.y).get(result.x));
 					if(nextTile.playerPassable() && !nextTile.isMovable()) {
 						legal.add(possible);
 					}
-					else if (nextTile.equals(Tile.BLOCK) && hasLadder && !tile.equals(Tile.BLOCK))
+					else if (nextTile.equals(Tile.WATER) && hasLadder && !tile.equals(Tile.WATER))
 						legal.add(possible);
 				
 				}

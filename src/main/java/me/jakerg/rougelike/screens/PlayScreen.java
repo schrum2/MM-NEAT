@@ -3,10 +3,7 @@ package me.jakerg.rougelike.screens;
 import java.awt.event.KeyEvent;
 
 import asciiPanel.AsciiPanel;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import me.jakerg.rougelike.Creature;
-import me.jakerg.rougelike.CreatureFactory;
-import me.jakerg.rougelike.PlayerAi;
 import me.jakerg.rougelike.World;
 import me.jakerg.rougelike.WorldBuilder;
 

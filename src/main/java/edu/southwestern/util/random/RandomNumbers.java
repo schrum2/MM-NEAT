@@ -1,11 +1,12 @@
 package edu.southwestern.util.random;
 
-import edu.southwestern.parameters.Parameters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+
+import edu.southwestern.parameters.Parameters;
 
 /**
  * A central point for all random number generation to go through. 
@@ -29,15 +30,47 @@ public class RandomNumbers {
 		}
 	}
 
+	public static final boolean RANDOM_DEBUG = false;
+	
 	/**
 	 * Give random generator a specific new seed
 	 *
 	 * @param seed
 	 *            seed to use
 	 */
+	@SuppressWarnings("serial")
 	public static void reset(int seed) {
 		System.out.println("Reset random seed to: " + seed);
-		randomGenerator = new Random(seed);
+		// If RANDOM_DEBUG is true, then extensive information will be printed to the console whenever
+		// a random number is generated.
+		randomGenerator = !RANDOM_DEBUG ? new Random(seed) : new Random(seed) {
+			public int nextInt(int x) {
+				int result = super.nextInt(x);
+				System.out.println("int: " + result + " (out of "+x+")");
+				new IllegalArgumentException().printStackTrace(System.out);
+				return result;
+			}
+			
+			public double nextDouble() {
+				double result = super.nextDouble();
+				System.out.println("double: " + result);
+				new IllegalArgumentException().printStackTrace(System.out);
+				return result;
+			}
+
+			public boolean nextBoolean() {
+				boolean result = super.nextBoolean();
+				System.out.println("boolean: " + result);
+				new IllegalArgumentException().printStackTrace(System.out);
+				return result;
+			}
+			
+			public void nextBytes(byte[] bs) {
+				super.nextBytes(bs);
+				System.out.println("bytes: " + Arrays.toString(bs));
+				new IllegalArgumentException().printStackTrace(System.out);
+			}
+		};
 	}
 
 	/**
@@ -251,6 +284,30 @@ public class RandomNumbers {
 		int index = randomGenerator.nextInt(list.size());
 		return list.get(index);
 	}
+	
+	/**
+	 * Return new list of num randomly selected, distinct items from the list,
+	 * without changing the original order of elements in list.
+	 * 
+	 * @param list List of items to select
+	 * @param num Number of items to select
+	 * @return List of num random items from list
+	 */
+	public static <T> ArrayList<T> randomChoose(List<T> list, int num) {
+		if(num > list.size()) throw new IllegalArgumentException("Number of items "+num+" greater than size "+list.size());
+		ArrayList<T> result = new ArrayList<T>(num);
+		ArrayList<Integer> indices = new ArrayList<>(num);
+		for(int i = 0; i < num; i++) {
+			indices.add(i); // All indices in the list
+		}
+		// Shuffle the list of indices, not the original list
+		Collections.shuffle(indices, randomGenerator);
+		for(int i = 0; i < num; i++) {
+			// Randomly shuffled indices leads to a random selection from the list
+			result.add(list.get(indices.get(i)));
+		}
+		return result;
+	}
 
 	/**
 	 * Takes in an array and selects a random index. 
@@ -262,27 +319,6 @@ public class RandomNumbers {
 		int index = randomGenerator.nextInt(list.length);
 		return list[index];
 	}
-	
-	/**
-	 * For testing
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		int size = 1000;
-		double[] cauchies = new double[size];
-		double[] gaussians = new double[size];
-		for (int i = 0; i < size; i++) {
-			cauchies[i] = randomCauchyValue();
-			gaussians[i] = randomGenerator.nextGaussian();
-		}
-		Arrays.sort(cauchies);
-		Arrays.sort(gaussians);
-		System.out.println("Cauchy\tGaussian");
-		for (int i = 0; i < size; i++) {
-			System.out.println(cauchies[i] + "\t" + gaussians[i]);
-		}
-	}
 
 	/**
 	 * Return true if random double in [0,1] is less than input, and false otherwise
@@ -291,5 +327,28 @@ public class RandomNumbers {
 	 */
 	public static boolean randomCoin(double chance) {
 		return randomGenerator.nextDouble() < chance;
+	}
+	
+	/**
+	 * Generate and return an array of random bytes of a given length
+	 * @param len length of byte array
+	 * @return random byte array
+	 */
+	public static byte[] randomByteArray(int len) {
+		byte[] b = new byte[len];
+		randomGenerator.nextBytes(b);
+		return b;
+	}
+	
+	/**
+	 * For testing
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		RandomNumbers.reset(0);
+		for(int i = 0; i < 100; i++) {
+			RandomNumbers.randomGenerator.nextInt(100);
+		}
 	}
 }

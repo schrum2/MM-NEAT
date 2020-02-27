@@ -6,15 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
-import gvgai.core.game.Game;
-import gvgai.core.vgdl.VGDLFactory;
-import gvgai.core.vgdl.VGDLParser;
-import gvgai.core.vgdl.VGDLRegistry;
+//import edu.southwestern.tasks.gvgai.GVGAIUtil;
+//import gvgai.core.game.Game;
+//import gvgai.tracks.singlePlayer.tools.human.Agent;
+import gvgai.core.vgdl.*;
 import gvgai.tools.IO;
-import gvgai.tracks.singlePlayer.tools.human.Agent;
 import me.jakerg.rougelike.Tile;
 
 public class ZeldaVGLCUtil {
@@ -52,9 +50,11 @@ public class ZeldaVGLCUtil {
 					String[] room = new String[ZELDA_ROOM_ROWS];
 					for(int r = 0; r < ZELDA_ROOM_ROWS; r++) { // Each row of the room
 						room[r] = level[i+r].substring(j, j+ZELDA_ROOM_COLUMNS); // Only the columns for that room
+						//System.out.println(room[r]);
 					}
 					// Convert individual room to list of codes and add to rooms list
 					rooms.add(convertZeldaLevelVGLCtoRoomAsList(room));
+					//MiscUtil.waitForReadStringAndEnterKeyPress();
 				}
 			}
 		}		
@@ -75,6 +75,7 @@ public class ZeldaVGLCUtil {
 					convertZeldaModifiedTileVGLCtoNumberCode(room[i].charAt(j));
 				result.get(i).add(code);
 			}
+			//System.out.println(result.get(i));
 		}
 		return result;
 	}
@@ -245,22 +246,19 @@ public class ZeldaVGLCUtil {
 	 */
 	public static int convertZeldaModifiedTileVGLCtoNumberCode(char tile) {
 		switch(tile) {
-		case 'F':
-		case '-':
-		case 'O':
+		case 'F':	// Floor
+		case '-':	// ???
+		case 'O':	// ???
 			return 0; // Passable
-		case 'W':
-		case 'B':
-		case 'I':
+		case 'W':	// Wall	
+		case 'B':	// Block
+		case 'I':	// ????
+		case 'M':	// Monster, but is actually a statue of one
+		case 'D':	// Door: remove from walls and place them using Graph Grammar
+		case 'S':	// Stairs: remove and replace with block
 			return 1;
-		case 'P':
-			return 5;
-		case 'M':
-			return 5;	// Monster
-		case 'D':
-			return 1;
-		case 'S':
-			return 1;	// Door
+		case 'P':	// Water tile that enemies and raft can go over
+			return 2;
 		case '#':
 			return -6; // Ladder block
 		case 'U':
@@ -287,14 +285,14 @@ public class ZeldaVGLCUtil {
 		Parameters.initializeParameterCollections(new String[] {});
 		//MMNEAT.loadClasses();
 
-		VGDLFactory.GetInstance().init();
-		VGDLRegistry.GetInstance().init();
-
-		String game = "zeldacopy";
-		String gamesPath = "data/gvgai/examples/gridphysics/";
-		String game_file = gamesPath + game + ".txt";
-		int playerID = 0;
-		int seed = 0;
+//		VGDLFactory.GetInstance().init();
+//		VGDLRegistry.GetInstance().init();
+//
+//		String game = "zeldacopy";
+//		String gamesPath = "data/gvgai/examples/gridphysics/";
+//		String game_file = gamesPath + game + ".txt";
+//		int playerID = 0;
+//		int seed = 0;
 
 		HashSet<List<List<Integer>>> roomSet = new HashSet<>();
 		
@@ -303,15 +301,24 @@ public class ZeldaVGLCUtil {
 				String file = "tloz"+i+"_"+j+"_flip.txt";
 				String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+file, new Point(2,2));
 
-				for(String line : level) {
-					System.out.println(line);
-				}
+//				for(String line : level) {
+//					System.out.println(line);
+//				}
 
 				List<List<List<Integer>>> roomList = convertZeldaLevelFileVGLCtoListOfRooms(ZELDA_LEVEL_PATH+file);
 
+//				for(List<List<Integer>> room: roomList) {
+//					for(List<Integer> row: room) {
+//						System.out.println(row);
+//					}
+//					System.out.println();
+//				}
+				
 				roomSet.addAll(roomList);
 				
+				//System.out.println(roomList.size());
 				//System.out.println(roomList);
+				//MiscUtil.waitForReadStringAndEnterKeyPress();
 
 				
 				// PLAY THE LEVEL

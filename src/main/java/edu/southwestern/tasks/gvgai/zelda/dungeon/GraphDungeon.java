@@ -45,7 +45,10 @@ public class GraphDungeon extends ZeldaDungeon<ArrayList<Double>>{
 		Parameters.parameters.setBoolean("zeldaGANUsesOriginalEncoding", false);
 		
 		try {
-			return DungeonUtil.convertToDungeon(graph, new PhenotypeLoader(phenotypes));
+			Dungeon d = DungeonUtil.convertToDungeon(graph, new PhenotypeLoader(phenotypes));
+			if(Parameters.parameters.booleanParameter("makeZeldaLevelsPlayable")) 
+				DungeonUtil.makeDungeonPlayable(d);
+			return d;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
