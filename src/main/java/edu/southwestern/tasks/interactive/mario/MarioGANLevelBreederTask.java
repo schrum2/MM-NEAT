@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.interactive.mario;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,14 +48,21 @@ public class MarioGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 
 		//Construction of JSlider to determine number of latent vector level chunks
 		levelChunksSlider = new JSlider(JSlider.HORIZONTAL, LEVEL_MIN_CHUNKS, LEVEL_MAX_CHUNKS, Parameters.parameters.integerParameter("marioGANLevelChunks"));
+		levelChunksSlider.setToolTipText("Determines the number of distinct latent vectors that are sent to the GAN to create level chunks which are patched together into a single level.");
 		levelChunksSlider.setMinorTickSpacing(1);
 		levelChunksSlider.setPaintTicks(true);
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
-		labels.put(LEVEL_MIN_CHUNKS, new JLabel("Shorter Level"));
-		labels.put(LEVEL_MAX_CHUNKS, new JLabel("Longer Level"));
+		JLabel shorter = new JLabel("Shorter Level");
+		JLabel longer = new JLabel("Longer Level");
+		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
+			shorter.setFont(new Font("Arial", Font.PLAIN, 23));
+			longer.setFont(new Font("Arial", Font.PLAIN, 23));
+		}
+		labels.put(LEVEL_MIN_CHUNKS, shorter);
+		labels.put(LEVEL_MAX_CHUNKS, longer);
 		levelChunksSlider.setLabelTable(labels);
 		levelChunksSlider.setPaintLabels(true);
-		levelChunksSlider.setPreferredSize(new Dimension(200, 40));
+		levelChunksSlider.setPreferredSize(new Dimension((int)(200 * (Parameters.parameters.booleanParameter("bigInteractiveButtons") ? 1.4 : 1)), 40 * (Parameters.parameters.booleanParameter("bigInteractiveButtons") ? 2 : 1)));
 
 		/**
 		 * Changed level width picture previews
@@ -149,7 +157,7 @@ public class MarioGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 
 	@Override
 	public String getGANModelDirectory() {
-		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"MarioGAN";
+		return "python"+File.separator+"GAN"+File.separator+"MarioGAN";
 	}
 
 	@Override
@@ -190,7 +198,7 @@ public class MarioGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.mario.MarioGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","bigInteractiveButtons:true","showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.mario.MarioGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

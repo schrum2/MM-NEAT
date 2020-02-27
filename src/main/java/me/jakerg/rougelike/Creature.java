@@ -3,11 +3,10 @@ package me.jakerg.rougelike;
 import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import asciiPanel.AsciiPanel;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class Creature {
@@ -251,7 +250,7 @@ public class Creature {
      * Update to let ai update
      */
 	public void update() {
-		if(RougelikeApp.DEBUG)
+		if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
 			System.out.println("Creature : " + glyph + " at (" + x + ", " + y + ")");
 		
 		if(previous != null) {

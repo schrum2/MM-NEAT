@@ -46,7 +46,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	protected boolean alwaysAnimate = Parameters.parameters.booleanParameter("alwaysAnimate");
 
 	protected BufferedImage[] getAnimationImages(T cppn, int startFrame, int endFrame, boolean beingSaved) {
-		return AnimationUtil.imagesFromCPPN(cppn, picSize, picSize, startFrame, endFrame, getInputMultipliers());
+		return AnimationUtil.imagesFromCPPN(cppn, buttonWidth, buttonHeight, startFrame, endFrame, getInputMultipliers());
 	}
 
 	/**
@@ -374,7 +374,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
-		return AnimationUtil.imagesFromCPPN(phenotype, picSize, picSize, 0, 1, getInputMultipliers())[0];
+		return AnimationUtil.imagesFromCPPN(phenotype, buttonWidth, buttonHeight, 0, 1, getInputMultipliers())[0];
 	}
 
 	/**
@@ -479,8 +479,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 * @param x index of the button to be modified
 	 */
 	@Override
-	protected void resetButton(Genotype<T> individual, int x) {
-		super.resetButton(individual, x);
+	protected void resetButton(Genotype<T> individual, int x, boolean selected) {
+		super.resetButton(individual, x, selected);
 		if(alwaysAnimate) {
 			if(animationThreads[x] != null) animationThreads[x].stopAnimation();
 			animationThreads[x] = new AnimationThread(x);

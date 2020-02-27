@@ -1,14 +1,16 @@
 package edu.southwestern.tasks.mario;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
-import ch.idsia.mario.engine.level.Level;
 import ch.idsia.tools.EvaluationInfo;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 /**
  * 
@@ -38,9 +40,11 @@ public class MarioCPPNLevelTask<T extends Network> extends MarioLevelTask<T> {
 	 * Generate the level from a CPPN
 	 */
 	@Override
-	public Level getMarioLevelFromGenotype(Genotype<T> individual) {
+	public ArrayList<List<Integer>> getMarioLevelListRepresentationFromGenotype(Genotype<T> individual) {
 		Network cppn = individual.getPhenotype();
-		Level level = MarioLevelUtil.generateLevelFromCPPN(cppn, Parameters.parameters.integerParameter("marioLevelLength"));
+		String[] stringBlock = MarioLevelUtil.generateLevelLayoutFromCPPN(cppn, ArrayUtil.doubleOnes(cppn.numInputs()), Parameters.parameters.integerParameter("marioLevelLength"));
+		
+		ArrayList<List<Integer>> level = MarioLevelUtil.listLevelFromStringLevel(stringBlock);
 		return level;
 	}
 

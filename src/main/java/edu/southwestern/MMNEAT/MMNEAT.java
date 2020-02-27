@@ -70,9 +70,12 @@ import edu.southwestern.tasks.gvgai.zelda.study.HumanSubjectStudy2019Zelda;
 import edu.southwestern.tasks.innovationengines.PictureInnovationTask;
 import edu.southwestern.tasks.innovationengines.ShapeInnovationTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
+import edu.southwestern.tasks.interactive.mario.MarioCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.mario.MarioGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.mario.MarioLevelBreederTask;
+import edu.southwestern.tasks.mario.MarioCPPNtoGANLevelTask;
 import edu.southwestern.tasks.mario.MarioGANLevelTask;
 import edu.southwestern.tasks.mario.MarioLevelTask;
 import edu.southwestern.tasks.mario.MarioTask;
@@ -109,6 +112,9 @@ import edu.southwestern.tasks.ut2004.UT2004Task;
 import edu.southwestern.tasks.ut2004.UT2004Util;
 import edu.southwestern.tasks.ut2004.testing.HumanSubjectStudy2018TeammateServer;
 import edu.southwestern.tasks.vizdoom.VizDoomTask;
+import edu.southwestern.tasks.zelda.ZeldaCPPNtoGANDungeonTask;
+import edu.southwestern.tasks.zelda.ZeldaDungeonTask;
+import edu.southwestern.tasks.zelda.ZeldaGANDungeonTask;
 import edu.southwestern.tasks.zentangle.ZentangleTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -700,10 +706,21 @@ public class MMNEAT {
 				System.out.println("Set up Mario Task");
 			} else if (task instanceof MarioLevelTask) {
 				GANProcess.type = GANProcess.GAN_TYPE.MARIO;
-				// This line only matters for the CPPN version of the task, but doesn't hurt the GAN version, which does not evolve networks
-				setNNInputParameters(MarioLevelBreederTask.INPUTS.length, MarioLevelBreederTask.OUTPUTS.length);
+				if(task instanceof MarioCPPNtoGANLevelTask) {
+					// Evolving CPPNs that create latent vectors that are sent to a GAN
+					setNNInputParameters(MarioCPPNtoGANLevelBreederTask.UPDATED_INPUTS.length, GANProcess.latentVectorLength());
+				} else {
+					// This line only matters for the CPPN version of the task, but doesn't hurt the GAN version, which does not evolve networks
+					setNNInputParameters(MarioLevelBreederTask.INPUTS.length, MarioLevelBreederTask.OUTPUTS.length);
+				}
 				System.out.println("Set up Mario Level Task");
-			} else if (task instanceof ZeldaLevelTask){
+			} else if (task instanceof ZeldaDungeonTask) {
+				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
+				if(task instanceof ZeldaCPPNtoGANDungeonTask) {
+					// Evolving CPPNs that create latent vectors that are sent to a GAN
+					setNNInputParameters(ZeldaCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.NUM_NON_LATENT_INPUTS);
+				}
+			} else if (task instanceof ZeldaLevelTask){ // What is this? Feb 26 2020
 				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
 				System.out.println("Set up Zelda Level Task");
 			} else if(task instanceof HyperNEATDummyTask) {
@@ -883,6 +900,7 @@ public class MMNEAT {
 		System.out.println("Run");
 		experiment.run();
 		System.out.println("Experiment finished");
+		GANProcess.terminateGANProcess();
 	}
 
 	/**
@@ -1178,9 +1196,10 @@ public class MMNEAT {
 		// Function Optimization Tasks use these genotypes and know their lower bounds
 		if(fos != null) return fos.getLowerBounds();
 		// For Mario GAN, the latent vector length determines the size, but the lower bounds are all zero
-		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return new double[GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")]; // all zeroes
+		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all -1
 		// Similar for ZeldaGAN
-		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return new double[GANProcess.latentVectorLength()]; // all zeroes
+		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength()); // all -1
+		else if(task instanceof ZeldaGANDungeonTask) return ArrayUtil.doubleNegativeOnes(ZeldaGANDungeonTask.genomeLength()); // all -1
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda GAN");
 		}
@@ -1195,6 +1214,7 @@ public class MMNEAT {
 		if(fos != null) return fos.getUpperBounds();
 		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
 		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength()); // all ones
+		else if(task instanceof ZeldaGANDungeonTask) return ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda GAN");
 		}

@@ -98,11 +98,11 @@ public class DungeonNovelty {
 						compare1 == Tile.MOVABLE_BLOCK_DOWN.getNum()||
 						compare1 == Tile.MOVABLE_BLOCK_LEFT.getNum()||
 						compare1 == Tile.MOVABLE_BLOCK_RIGHT.getNum()) 
-					room.get(x).set(y,Tile.BLOCK.getNum());
+					room.get(x).set(y,Tile.WATER.getNum());
 				else if(compare1 < 0 || // Many door types seem to be negative
 						compare1 == Tile.DOOR.getNum()||
 						compare1 == Tile.SOFT_LOCK_DOOR.getNum()) 
-					room.get(x).set(y,Tile.BLOCK.getNum());
+					room.get(x).set(y,Tile.WATER.getNum());
 						
 			}
 		}

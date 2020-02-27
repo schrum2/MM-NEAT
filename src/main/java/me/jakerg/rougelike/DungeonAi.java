@@ -3,6 +3,7 @@ package me.jakerg.rougelike;
 import java.awt.Color;
 import java.awt.Point;
 import asciiPanel.AsciiPanel;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.random.RandomNumbers;
 
 /**
@@ -64,7 +65,7 @@ public class DungeonAi extends CreatureAi{
 		if(tile.equals(Tile.DOOR) && !creature.getWorld().locked()) {
 			Point exitPoint = new Point(x, y);
 //			 Get the point to move to based on where the player went in from
-			if(RougelikeApp.DEBUG)
+			if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
 				System.out.println("Exiting at " + exitPoint);
 			creature.getWorld().remove(creature);
 			Point p = creature.getDungeon().getNextNode(exitPoint.toString());
@@ -74,7 +75,7 @@ public class DungeonAi extends CreatureAi{
 					creature.getDungeonBuilder().getCurrentWorld().respawnEnemies(creature, creature.log());
 				}
 				creature.getDungeonBuilder().getCurrentWorld().addCreature(creature);
-				if(RougelikeApp.DEBUG)
+				if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
 					System.out.println("Starting point :" + p);
 				creature.x  = p.x;
 				creature.y = p.y;
@@ -101,7 +102,7 @@ public class DungeonAi extends CreatureAi{
 		if(tile.equals(Tile.TRIFORCE)) {
 			creature.setWin(true);
 		}
-		if(tile.equals(Tile.BLOCK) && creature.hasItem('#') && !creature.getWorld().tile(creature.x, creature.y).equals(Tile.BLOCK)) {
+		if(tile.equals(Tile.WATER) && creature.hasItem('#') && !creature.getWorld().tile(creature.x, creature.y).equals(Tile.WATER)) {
 			creature.x = x;
 			creature.y = y;
 		}

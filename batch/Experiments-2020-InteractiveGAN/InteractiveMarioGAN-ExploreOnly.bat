@@ -1,0 +1,3 @@
+cd ..
+cd ..
+java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:%1 randomSeed:%1 trials:1 mu:16 maxGens:500 io:true netio:true mating:true  task:edu.southwestern.tasks.interactive.mario.MarioGANLevelBreederTask watch:true cleanFrequency:-1 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype simplifiedInteractiveInterface:false saveAllChampions:true ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA imageSize:200 allowInteractiveEvolution:false marioGANLevelChunks:2 marioGANModel:Mario1_Overworld_5_Epoch5000.pth marioGANUsesOriginalEncoding:false GANInputSize:5 showInteractiveGANModelLoader:false base:interactivemariogan saveTo:Explore log:InteractiveMarioGAN-Explore cleanOldNetworks:false
