@@ -58,7 +58,7 @@ if __name__ == '__main__':
     if z_dims == 4 : # Assume this is Zelda (4 tiles, currently)
         out_height = 16
         out_width = 11
-    elif z_dims == 6: # Fixed Zelda with all tiles
+    elif z_dims == 6 or z_dims == 3: # Fixed Zelda (rotated)
         # The fixed Zelda rotates the rooms to match the original game presentation
         out_height = 11
         out_width = 16

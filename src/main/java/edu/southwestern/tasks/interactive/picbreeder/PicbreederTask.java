@@ -101,9 +101,9 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 		// Add the Zentangle button
 		ImageIcon zentangle = new ImageIcon("data\\picbreeder\\zentangle.png");
-		Image zentangle2 = zentangle.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
+		Image zentangle2 = zentangle.getImage().getScaledInstance(getActionButtonWidth(), getActionButtonHeight(), 1);
 		JButton zentangleButton = new JButton(new ImageIcon(zentangle2));
-		zentangleButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+		zentangleButton.setPreferredSize(new Dimension(getActionButtonWidth(), getActionButtonHeight()));
 		zentangleButton.setText("Zentangle");
 		zentangleButton.setName("" + ZENTANGLE_BUTTON_INDEX);
 		zentangleButton.setToolTipText("Zentangle button");

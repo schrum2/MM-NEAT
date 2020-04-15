@@ -36,17 +36,26 @@ import edu.southwestern.util.graphics.AnimationUtil;
  * @param <T>
  */
 public class AnimationBreederTask<T extends Network> extends InteractiveEvolutionTask<T>{
-
+	// Plays animation in reverse
 	private boolean reverse = Parameters.parameters.booleanParameter("loopAnimationInReverse");
-
+	// Animation specific interface options
 	protected JSlider animationLength;
 	protected JSlider pauseLength;
 	protected JSlider pauseLengthBetweenFrames;
-
+	// Animates continuously
 	protected boolean alwaysAnimate = Parameters.parameters.booleanParameter("alwaysAnimate");
 
+	/**
+	 * Returns array of all images in an animation sequence created by a CPPN.
+	 * 
+	 * @param cppn A neural network that is queried to create images
+	 * @param startFrame First time input to CPPN
+	 * @param endFrame Last time input to CPPN
+	 * @param beingSaved Ignored
+	 * @return Array of the images created by the CPPN in sequence
+	 */
 	protected BufferedImage[] getAnimationImages(T cppn, int startFrame, int endFrame, boolean beingSaved) {
-		return AnimationUtil.imagesFromCPPN(cppn, picSize, picSize, startFrame, endFrame, getInputMultipliers());
+		return AnimationUtil.imagesFromCPPN(cppn, buttonWidth, buttonHeight, startFrame, endFrame, getInputMultipliers());
 	}
 
 	/**
@@ -374,7 +383,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
-		return AnimationUtil.imagesFromCPPN(phenotype, picSize, picSize, 0, 1, getInputMultipliers())[0];
+		return AnimationUtil.imagesFromCPPN(phenotype, buttonWidth, buttonHeight, 0, 1, getInputMultipliers())[0];
 	}
 
 	/**
@@ -479,8 +488,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 * @param x index of the button to be modified
 	 */
 	@Override
-	protected void resetButton(Genotype<T> individual, int x) {
-		super.resetButton(individual, x);
+	protected void resetButton(Genotype<T> individual, int x, boolean selected) {
+		super.resetButton(individual, x, selected);
 		if(alwaysAnimate) {
 			if(animationThreads[x] != null) animationThreads[x].stopAnimation();
 			animationThreads[x] = new AnimationThread(x);

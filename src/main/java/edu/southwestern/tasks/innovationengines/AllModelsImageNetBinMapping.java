@@ -13,7 +13,7 @@ import edu.southwestern.util.graphics.ImageNetClassification;
  * Multiple copies of all ImageNet classes, prefixed by the DNN that classified the image
  * @author Jacob Schrum
  */
-public class AllModelsImageNetBinMapping<T extends Network> implements BinLabels<T> {
+public class AllModelsImageNetBinMapping<T extends Network> implements BinLabels {
 
 	// Compute at construction and save for later
 	List<String> cachedLabels;

@@ -53,26 +53,26 @@ public class MarioGANUtil {
 	public static ArrayList<List<Integer>> generateLevelListRepresentationFromGAN(double[] latentVector) {
 		latentVector = GANProcess.mapArrayToOne(latentVector); // Range restrict the values
 		int chunk_length = Integer.valueOf(GANProcess.getGANProcess().GANDim);
-        String levelString = "";
-        for(int i = 0; i < latentVector.length; i+=chunk_length){
-            double[] chunk = Arrays.copyOfRange(latentVector, i, i+chunk_length);
-            // Generate a level from the vector
-            // Brackets required since generator.py expects of list of multiple levels, though only one is being sent here
-            try {
-            	GANProcess.getGANProcess().commSend("[" + Arrays.toString(chunk) + "]");
-            } catch (IOException e) {
-            	e.printStackTrace();
-            	System.exit(1); // Cannot continue without the GAN process
-            }
-            String oneLevelChunk = GANProcess.getGANProcess().commRecv(); // Response to command just sent
-            levelString = levelString + ", " + oneLevelChunk;  
-        }
-        // These two lines remove the , from the first append to an empty string
-        levelString = levelString.replaceFirst(",", "");
-        levelString = levelString.replaceFirst(" ", "");
-        levelString = "["+levelString+"]"; // Make a bundle of several levels
-        // Create one level from all
-        List<List<List<Integer>>> allLevels = JsonReader.JsonToInt(levelString);
+		String levelString = "";
+		for(int i = 0; i < latentVector.length; i+=chunk_length){
+			double[] chunk = Arrays.copyOfRange(latentVector, i, i+chunk_length);
+			// Generate a level from the vector
+			// Brackets required since generator.py expects of list of multiple levels, though only one is being sent here
+			try {
+				GANProcess.getGANProcess().commSend("[" + Arrays.toString(chunk) + "]");
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1); // Cannot continue without the GAN process
+			}
+			String oneLevelChunk = GANProcess.getGANProcess().commRecv(); // Response to command just sent
+			levelString = levelString + ", " + oneLevelChunk;  
+		}
+		// These two lines remove the , from the first append to an empty string
+		levelString = levelString.replaceFirst(",", "");
+		levelString = levelString.replaceFirst(" ", "");
+		levelString = "["+levelString+"]"; // Make a bundle of several levels
+		// Create one level from all
+		List<List<List<Integer>>> allLevels = JsonReader.JsonToInt(levelString);
 		// This list contains several separate levels. The following code
 		// merges the levels by appending adjacent rows
 		ArrayList<List<Integer>> oneLevel = new ArrayList<List<Integer>>();
@@ -89,7 +89,7 @@ public class MarioGANUtil {
 		}
 		return oneLevel;
 	}
-	
+
 	/**
 	 * Generate a Mario level, similar to the CPPN variant, from a 2D list of integers
 	 * @param levelList level represented in a 2D list of integers
@@ -100,13 +100,13 @@ public class MarioGANUtil {
 		// Initialize every index in the string
 		for(int i = 0; i < level.length; i++)
 			level[i] = "";
-		
+
 		if(Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding")) {
 			int i = 0; 
 			for(List<Integer> row : levelList) { 
 				for(Integer block : row)
 					level[i] += OldLevelParser.BLOCK_INDEX[block];
-				
+
 				i++; // Increment our index to move to the next row
 			}
 		} else {
@@ -114,16 +114,13 @@ public class MarioGANUtil {
 			for(List<Integer> row : levelList) { 
 				for(Integer block : row)
 					level[i] += getTileCharNewEncoding(block);
-				
+
 				i++; // Increment our index to move to the next row
 			}
-		}
-		
-		
-		
+		}	
 		return level;
 	}
-	
+
 	/**
 	 * For the new encoding get the char block from the int
 	 * @param block Int of block
@@ -170,22 +167,22 @@ public class MarioGANUtil {
 
 		// Code below is the same as in MarioLevelUtil, which generates CPPN levels.
 		// Should these utility classes be merged?
-		
+
 		Agent controller = new HumanKeyboardAgent(); //new SergeyKarakovskiy_JumpingAgent();
 		EvaluationOptions options = new CmdLineOptions(new String[]{});
 		options.setAgent(controller);
 		ProgressTask task = new ProgressTask(options);
 
 		// Added to change level
-        options.setLevel(level);
+		options.setLevel(level);
 
 		task.setOptions(options);
 
 		int relevantWidth = (level.width - (2*OldLevelParser.BUFFER_WIDTH)) * MarioLevelUtil.BLOCK_SIZE;
 		DrawingPanel levelPanel = new DrawingPanel(relevantWidth,level.height*MarioLevelUtil.BLOCK_SIZE, "Level");
 		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, OldLevelParser.BUFFER_WIDTH*MarioLevelUtil.BLOCK_SIZE, 0, relevantWidth, level.height*MarioLevelUtil.BLOCK_SIZE);
-		
+
 		System.out.println ("Score: " + task.evaluate(options.getAgent())[0]);
-				
+
 	}
 }

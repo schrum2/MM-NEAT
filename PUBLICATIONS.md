@@ -53,3 +53,35 @@ This file contains full citations for all known publications that make use of MM
   https://people.southwestern.edu/~schrum2/SCOPE/tweraser.gecco18.pdf  
   Simplified version of interactive evolution code at: https://github.com/schrum2/CPPNArtEvolution
 
+* William Price, and Jacob Schrum (2019). Neuroevolution of Multimodal Ms. Pac-Man Controllers Under Partially Observable Conditions, 
+  Proceedings of the Congress on Evolutionary Computation (CEC 2019). 
+  http://www.southwestern.edu/~schrum2/SCOPE/price.cec19.pdf
+  Batch files for experiments in: [batch/Experiments-2019-CEC-POMsPacMan](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2019-CEC-POMsPacMan)
+
+* Adina Friedman, and Jacob Schrum (2019). Desirable Behaviors for Companion Bots in First-Person Shooters, 
+  Proceedings of the Conference on Games (CoG 2019). 
+  http://www.southwestern.edu/~schrum2/SCOPE/friedman.cog19.pdf
+  Batch files for experiments in: [batch/Experiments-2019-CoG-UT2004](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2019-CoG-UT2004)
+
+* Anna Krolikowski, Sarah Friday, Alice Quintanilla, and Jacob Schrum (2020). Quantum Zentanglement: Combining Picbreeder and Wave Function Collapse to Create Zentangles, 
+  International Conference on Computational Intelligence in Music, Sound, Art, and Design (EvoMUSART 2020).
+  http://www.southwestern.edu/~schrum2/re/papers/krolikowski.evomusart2020.pdf  
+  Simplified version of interactive evolution code at: https://github.com/sarahkfriday/QuantumZentanglement
+  Batch files for experiments in: [batch/Experiments-2020-EvoMUSART-Zentangles](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2020-EvoMUSART-Zentangles)
+
+* Jake Gutierrez, and Jacob Schrum (2020). Generative Adversarial Network Rooms in Generative Graph Grammar Dungeons for The Legend of Zelda, 
+  Proceedings of the Congress on Evolutionary Computation (CEC 2020).
+  TODO
+  Batch files for experiments in: [batch/Experiments-2020-CEC-ZeldaGAN](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2020-CEC-ZeldaGAN)
+
+* Jacob Schrum, Jake Gutierrez, Vanessa Volz, Jialin Liu, Simon M. Lucas, and Sebastian Risi (2020). Interactive Evolution and Exploration Within Latent Level-Design Space of Generative Adversarial Networks, 
+  Proceedings of the Genetic and Evolutionary Computation Conference (GECCO 2020).
+  https://people.southwestern.edu/~schrum2/re/papers/schrum.gecco2020interactive.pdf
+  Simplified version of code at: https://github.com/schrum2/GameGAN
+  Batch files for experiments in: [batch/Experiments-2020-GECCO-InteractiveGAN](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2020-GECCO-InteractiveGAN)
+
+* Jacob Schrum, Vanessa Volz, and Sebastian Risi (2020). CPPN2GAN: Combining Compositional Pattern Producing Networks and GANs for Large-scale Pattern Generation, 
+  Proceedings of the Genetic and Evolutionary Computation Conference (GECCO 2020).
+  https://people.southwestern.edu/~schrum2/re/papers/schrum.gecco2020interactive.pdf
+  Simplified version of code at: https://github.com/schrum2/GameGAN
+  Batch files for experiments in: [batch/Experiments-2020-GECCO-CPPN2GAN](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2020-GECCO-CPPN2GAN)

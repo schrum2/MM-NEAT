@@ -167,13 +167,13 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 	@Override
 	public BufferedImage[] getAnimationImages(T cppn, int startFrame, int endFrame, boolean beingSaved) {
 		// Grey color new Color(223,233,244) used for background
-		return AnimationUtil.shapesFromCPPN(cppn, picSize, picSize, startFrame, endFrame, beingSaved ? new Color(223,233,244) : null, heading, pitch, inputMultipliers);
+		return AnimationUtil.shapesFromCPPN(cppn, buttonWidth, buttonHeight, startFrame, endFrame, beingSaved ? new Color(223,233,244) : null, heading, pitch, inputMultipliers);
 	}
 	
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
-		return AnimationUtil.shapesFromCPPN(phenotype, picSize, picSize, 0, 1, color, heading, pitch, getInputMultipliers())[0];
+		return AnimationUtil.shapesFromCPPN(phenotype, buttonWidth, buttonHeight, 0, 1, color, heading, pitch, getInputMultipliers())[0];
 	}
 	
 	/**

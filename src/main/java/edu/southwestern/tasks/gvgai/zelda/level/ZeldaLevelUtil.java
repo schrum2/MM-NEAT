@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Random;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
@@ -191,32 +192,31 @@ public class ZeldaLevelUtil {
 	 * Place a random key tile on the floor
 	 * @param level
 	 */
-	public static void placeRandomKey(List<List<Integer>> level) {
+	public static void placeRandomKey(List<List<Integer>> level, Random rand) {
 		int x, y;
 		
 		do {
-			x = RandomNumbers.randomGenerator.nextInt(level.get(0).size());
-			y = RandomNumbers.randomGenerator.nextInt(level.size());
+			x = rand.nextInt(level.get(0).size());
+			y = rand.nextInt(level.size());
 	    }
 	    while (!Tile.findNum(level.get(y).get(x)).equals(Tile.FLOOR));
-		
-		System.out.println("Put key at " + x + ", " + y);
+		//System.out.println("Put key at " + x + ", " + y);
 		level.get(y).set(x, Tile.KEY.getNum()); 
 	}
 
 	public static void setDoors(String direction, Dungeon.Node fromNode, int tile) {
 		List<List<Integer>> level = fromNode.level.intLevel;
 		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
-			if(direction == "UP" || direction == "DOWN") { // Add doors at top or bottom
-				int y = (direction == "UP") ? 1 : 14; // Set y based on side 1 if up 14 if bottom
+			if(direction.equals("UP") || direction.equals("DOWN")) { // Add doors at top or bottom
+				int y = (direction.equals("UP")) ? 1 : 14; // Set y based on side 1 if up 14 if bottom
 				int dy = (direction.equals("UP")) ? 1 : -1;
 				for(int x = 4; x <= 6; x++) {
 					level.get(y).set(x, tile);
 					if(!Tile.findNum(level.get(y + dy).get(x)).playerPassable())
 						level.get(y + dy).set(x, Tile.FLOOR.getNum());
 				}
-			} else if (direction == "LEFT" || direction == "RIGHT") { // Add doors at left or right
-				int x = (direction == "LEFT") ? 1 : 9; // Set x based on side 1 if left 9 if right
+			} else if (direction.equals("LEFT") || direction.equals("RIGHT")) { // Add doors at left or right
+				int x = (direction.equals("LEFT")) ? 1 : 9; // Set x based on side 1 if left 9 if right
 				int dx = (direction.equals("LEFT")) ? 1 : -1;
 				for(int y = 7; y <=8; y++) {
 					level.get(y).set(x, tile);
@@ -280,7 +280,7 @@ public class ZeldaLevelUtil {
 		rP.y += d.getPoint().y;
 		rP.x += d.getPoint().x;
 		level.get(rP.y).set(rP.x, Tile.FLOOR.getNum());
-		placeAround(level, rP, Tile.BLOCK);
+		placeAround(level, rP, Tile.WATER);
 	}
 
 	/**

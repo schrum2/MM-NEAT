@@ -16,8 +16,10 @@ import me.jakerg.rougelike.Tile;
 
 public class ZeldaState extends State<ZeldaState.GridAction>{
 	
+	// Coordinates of agent in room
 	public int x;
 	public int y;
+	// Coordinates of room in dungeon
 	public int dX;
 	public int dY;
 	private int numKeys = 0;
@@ -257,7 +259,7 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 					if(nextTile.playerPassable() && !nextTile.isMovable()) {
 						legal.add(possible);
 					}
-					else if (nextTile.equals(Tile.BLOCK) && hasLadder && !tile.equals(Tile.BLOCK))
+					else if (nextTile.equals(Tile.WATER) && hasLadder && !tile.equals(Tile.WATER))
 						legal.add(possible);
 				
 				}

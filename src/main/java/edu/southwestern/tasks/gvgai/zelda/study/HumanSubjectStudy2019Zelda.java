@@ -29,7 +29,6 @@ import me.jakerg.rougelike.RougelikeApp;
 public class HumanSubjectStudy2019Zelda {
 	public enum Type {TUTORIAL, ORIGINAL, GENERATED_DUNGEON}
 
-	public static final boolean DEBUG = false; // Use original dungeon or generated dungeon?
 	public static String dungeonType;
 	public static String subjectDir;
 	
@@ -84,7 +83,7 @@ public class HumanSubjectStudy2019Zelda {
 				grammar.applyRules(graph);
 				LevelLoader loader = (LevelLoader) ClassCreation.createObject("zeldaLevelLoader");
 				dungeonType = loader.getClass().getSimpleName();
-				if(DEBUG)
+				if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
 					GraphUtil.saveGrammarGraph(graph, subjectDir + "DungeonGraph_" + dungeonType + ".dot");
 				dungeonToPlay = DungeonUtil.recursiveGenerateDungeon(graph, loader);
 				DungeonUtil.makeDungeonPlayable(dungeonToPlay);
@@ -102,10 +101,10 @@ public class HumanSubjectStudy2019Zelda {
 		
 		System.out.println("Play dungeon");
 		try {
-			if(DEBUG)
+			if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
 				DungeonUtil.viewDungeon(dungeonToPlay);
 			RougelikeApp.PD.storeDungeonData(dungeonToPlay);
-			RougelikeApp.startDungeon(dungeonToPlay, false, DEBUG);
+			RougelikeApp.startDungeon(dungeonToPlay, false);
 			File dir = new File("ZeldaStudy2019");
 			if(!dir.exists())
 				dir.mkdir(); // Should only happen the first time the code is run

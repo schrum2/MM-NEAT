@@ -15,16 +15,16 @@ import wox.serial.Easy;
 public class Archive<T> {
 	
 	Vector<Score<T>> archive; // Vector is used because it is thread-safe
-	private BinLabels<T> mapping;
+	private int occupiedBins;
+	private BinLabels mapping;
 	private boolean saveElites;
 	private String archiveDir;
 
-	@SuppressWarnings("unchecked")
 	public Archive(boolean saveElites) {
 		this.saveElites = saveElites;
 		// Initialize mapping
 		try {
-			mapping = (BinLabels<T>) ClassCreation.createObject("mapElitesBinLabels");
+			mapping = (BinLabels) ClassCreation.createObject("mapElitesBinLabels");
 		} catch (NoSuchMethodException e) {
 			System.out.println("Failed to get Bin Mapping for MAP Elites!");
 			e.printStackTrace();
@@ -32,6 +32,7 @@ public class Archive<T> {
 		}
 		int numBins = mapping.binLabels().size();
 		archive = new Vector<Score<T>>(numBins);
+		occupiedBins = 0;
 		// Archive directory
 		String experimentDir = FileUtilities.getSaveDirectory();
 		archiveDir = experimentDir + File.separator + "archive";
@@ -72,7 +73,7 @@ public class Archive<T> {
 	 * Method for putting individuals in bins
 	 * @return
 	 */
-	public BinLabels<T> getBinMapping() { 
+	public BinLabels getBinMapping() { 
 		return mapping;
 	}
 		
@@ -84,14 +85,22 @@ public class Archive<T> {
 	 * @return Whether organism was a new elite
 	 */
 	public boolean add(Score<T> candidate) {
+		// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
+		if(candidate.behaviorVector == null)
+			return false;
 		// Java's new stream features allow for easy parallelism
 		IntStream stream = IntStream.range(0, archive.size());
 		long newElites = stream.parallel().filter((i) -> {
 			Score<T> elite = archive.get(i);
 			double candidateScore = candidate.behaviorVector.get(i);
-			// If the bin is empty, or the candidate is better than the elite for that bin's score
-			if(elite == null || candidateScore > elite.behaviorVector.get(i)) {
+			// Score cannot be negative infinity. Next, check if the bin is empty, or the candidate is better than the elite for that bin's score
+			if(candidateScore > Double.NEGATIVE_INFINITY && (elite == null || candidateScore > elite.behaviorVector.get(i))) {
 				archive.set(i, candidate.copy()); // Replace elite
+				if(elite == null) { // Size is actually increasing
+					synchronized(this) {
+						occupiedBins++; // Shared variable
+					}
+				}
 				// Need to save all elites so that re-load on resume works
 				if(saveElites) {
 					// Easier to reload on resume if file name is uniform. Will also save space by overwriting
@@ -137,6 +146,27 @@ public class Archive<T> {
 	public double getBinScore(int binIndex) {
 		Score<T> elite = getElite(binIndex);
 		return elite == null ? Double.NEGATIVE_INFINITY : elite.behaviorVector.get(binIndex);
+	}
+	
+	/**
+	 * Random index, but the bin is guarranteed to be occupied
+	 * @return
+	 */
+	public int randomOccupiedBinIndex() {
+		int steps = RandomNumbers.randomGenerator.nextInt(occupiedBins);
+		int originalSteps = steps;
+		int occupiedCount = 0;
+		for(int i = 0; i < archive.size(); i++) {
+			if(archive.get(i) != null) {
+				occupiedCount++;
+				if(steps == 0) {
+					return i;
+				} else {
+					steps--;
+				}
+			}
+		}
+		throw new IllegalStateException("The number of occupied bins ("+occupiedBins+") and the archive size ("+archive.size()+") have a problem. "+steps+" steps left out of "+originalSteps +". occupiedCount = "+occupiedCount);
 	}
 	
 	/**
