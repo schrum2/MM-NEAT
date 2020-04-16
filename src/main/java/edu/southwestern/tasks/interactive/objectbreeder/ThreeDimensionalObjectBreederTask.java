@@ -43,10 +43,10 @@ import edu.southwestern.util.graphics.ThreeDimensionalUtil;
  *
  */
 public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEANN> {
-	public static final int CUBE_SIDE_LENGTH = 10; //The length of the side of the cube
-	public static final int SHAPE_WIDTH = 10; //the width of the shape
-	public static final int SHAPE_HEIGHT = 15; //the height of the shape
-	public static final int SHAPE_DEPTH = 10; //the depth of the shape
+	public static final int CUBE_SIDE_LENGTH = 10; //The length of the side of a voxel (all are same size)
+	public static final int SHAPE_WIDTH = 10; //the width of the overall shape (number of voxels)
+	public static final int SHAPE_HEIGHT = 15; //the height of the overall shape (number of voxels)
+	public static final int SHAPE_DEPTH = 10; //the depth of the overall shape (number of voxels)
 	public Color color = null; //sets the current color to null
 
 	public static final int CPPN_NUM_INPUTS = 5; //the number of inputs that the CPPN takes in
@@ -55,7 +55,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	//Brings in every color avaliable for creation
 	public static final Color[] COLORS = new Color[]{ Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.YELLOW, Color.ORANGE, Color.PINK, Color.BLACK };
 	
-	public static final int EVOLVED_COLOR_INDEX = 8; //the number of colors avaliable
+	public static final int EVOLVED_COLOR_INDEX = 8; //the number of colors available. Selecting this means voxel colors are evolved (come from CPPN)
 
 	public static final int MAX_ROTATION = 360; //the ability to rotate 360 degress
 
@@ -65,7 +65,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	protected JComboBox<String> colorChoice; //the color of choice
 	protected JComboBox<String> directionChoice; //the direction of choice
 
-	protected boolean vertical; //determines if something is vertical
+	protected boolean vertical; //determines if rotation of objects is vertical (if not, then it is horizontal)
 
 	// For undo button
 	public HashMap<Long,List<Triangle>> previousShapes;
@@ -180,9 +180,9 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 				int index = source.getSelectedIndex();
 				//if the index is the evoloved color index, the color becomes null
 				if(index == EVOLVED_COLOR_INDEX) {
-					color = null;
+					color = null; // Means colors are set by CPPN
 				} else {
-					color = COLORS[index];
+					color = COLORS[index]; // All voxels have same color
 					// change colors of triangles
 					for(List<Triangle> tris: shapes.values()) {
 						for(Triangle t: tris) {
@@ -246,8 +246,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		colorAndMovement.add(directionPanel);
 		
 
-		//if it's not a simplified interactive interface, then add colorAndMovement
-		//to top
+		//if it's not a simplified interactive interface, then add colorAndMovement to top
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(colorAndMovement);
 		}
@@ -257,8 +256,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	/**
 	 * evaluates the population to create the shapes for the user to choose
 	 * allows the user to pick the objects they preferred. 
-	 * @param population the population choice that has been made
-	 * @return super.evaluateAll(populaiton) - only evaluates the choices made by the user
+	 * @param population genomes for all objects
+	 * @return result of parent method finishing the evaluation: scores for each population member
 	 */
 	public ArrayList<Score<TWEANN>> evaluateAll(ArrayList<Genotype<TWEANN>> population) {
 		// Load all shapes in advance
@@ -367,7 +366,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 	@Override
 	/**
-	 * gets the number of CPPN outputs
+	 * gets the number of CPPN outputs.
+	 * Depends on whether cube displacement is allowed.
 	 * @return the number of CPPN outputs
 	 */
 	public int numCPPNOutputs() {
@@ -376,8 +376,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 	@Override
 	/**
-	 * gets the button image
-	 * @param phenotype - the button
+	 * gets the button image for a single evolved object from is phenotype (a CPPN)
+	 * @param phenotype - the CPPN
 	 * @param width the width of the button
 	 * @param height the height of the button
 	 * @param inputMultipliers the input multipliers
@@ -393,7 +393,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 	@Override
 	/**
-	 * gets the animation images
+	 * gets the animation images for a single CPPN's evolved shape.
+	 * Animation is from constant rotation.
 	 * @param cppn - the CPPN
 	 * @param startFrame - the start frame of the animation image
 	 * @param endframe - the end frame of the animation image
