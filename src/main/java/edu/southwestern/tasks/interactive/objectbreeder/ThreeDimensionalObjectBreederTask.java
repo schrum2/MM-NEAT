@@ -43,44 +43,48 @@ import edu.southwestern.util.graphics.ThreeDimensionalUtil;
  *
  */
 public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEANN> {
-	public static final int CUBE_SIDE_LENGTH = 10;
-	public static final int SHAPE_WIDTH = 10;
-	public static final int SHAPE_HEIGHT = 15; //20;
-	public static final int SHAPE_DEPTH = 10;
-	public Color color = null;
+	public static final int CUBE_SIDE_LENGTH = 10; //The length of the side of a voxel (all are same size)
+	public static final int SHAPE_WIDTH = 10; //the width of the overall shape (number of voxels)
+	public static final int SHAPE_HEIGHT = 15; //the height of the overall shape (number of voxels)
+	public static final int SHAPE_DEPTH = 10; //the depth of the overall shape (number of voxels)
+	public Color color = null; //sets the current color to null
 
-	public static final int CPPN_NUM_INPUTS = 5;
+	public static final int CPPN_NUM_INPUTS = 5; //the number of inputs that the CPPN takes in
 	public static final int CPPN_NUM_OUTPUTS = 4; //minimum number of outputs
 
+	//Brings in every color avaliable for creation
 	public static final Color[] COLORS = new Color[]{ Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.YELLOW, Color.ORANGE, Color.PINK, Color.BLACK };
 	
-	public static final int EVOLVED_COLOR_INDEX = 8;
+	public static final int EVOLVED_COLOR_INDEX = 8; //the number of colors available. Selecting this means voxel colors are evolved (come from CPPN)
 
-	public static final int MAX_ROTATION = 360;
+	public static final int MAX_ROTATION = 360; //the ability to rotate 360 degress
 
-	protected JSlider pitchValue;
-	protected JSlider headingValue;
-	protected JSlider pauseLengthBetweenFrames;
-	protected JComboBox<String> colorChoice;
-	protected JComboBox<String> directionChoice;
+	protected JSlider pitchValue; //the value of the pitch
+	protected JSlider headingValue; //the heading value
+	protected JSlider pauseLengthBetweenFrames; //The length of the pause between frames
+	protected JComboBox<String> colorChoice; //the color of choice
+	protected JComboBox<String> directionChoice; //the direction of choice
 
-	protected boolean vertical;
+	protected boolean vertical; //determines if rotation of objects is vertical (if not, then it is horizontal)
 
 	// For undo button
 	public HashMap<Long,List<Triangle>> previousShapes;
 	// Pre-load shapes for current generation
 	public HashMap<Long,List<Triangle>> shapes;
 
-	double pitch = (Parameters.parameters.integerParameter("defaultPitch")/(double) MAX_ROTATION) * 2 * Math.PI; 
-	double heading = (Parameters.parameters.integerParameter("defaultHeading")/(double) MAX_ROTATION) * 2 * Math.PI;
+	double pitch = (Parameters.parameters.integerParameter("defaultPitch")/(double) MAX_ROTATION) * 2 * Math.PI; //the pitch
+	double heading = (Parameters.parameters.integerParameter("defaultHeading")/(double) MAX_ROTATION) * 2 * Math.PI; //the heading
 
 	public ThreeDimensionalObjectBreederTask() throws IllegalAccessException {
 		super(false);
+		//setting the parameters
 		Parameters.parameters.setInteger("defaultPause", 0);
 		Parameters.parameters.setInteger("defaultAnimationLength", (int) (AnimationUtil.FRAMES_PER_SEC * 3));	
 		vertical = false;
 		pitchValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_ROTATION, Parameters.parameters.integerParameter("defaultPitch"));
 
+
+		//establishing a new Hashtable called pitchLabels
 		Hashtable<Integer,JLabel> pitchLabels = new Hashtable<>();
 		pitchValue.setMinorTickSpacing(72);
 		pitchValue.setPaintTicks(true);
@@ -116,8 +120,9 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		pitch.add(pitchLabel);
 		pitch.add(pitchValue);
 
+		//sets headingValue to a new slider
 		headingValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_ROTATION, Parameters.parameters.integerParameter("defaultHeading"));
-
+		//creates a new Hashtable for headingValues and sets the parameters
 		Hashtable<Integer,JLabel> headingLabels = new Hashtable<>();
 		headingValue.setMinorTickSpacing(72);
 		headingValue.setPaintTicks(true);
@@ -154,6 +159,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		heading.add(headingLabel);
 		heading.add(headingValue);
 
+		//if it's not a simplifiedInderactiveInterface and it's not 
+		//always animating, then add pitch and heading to the top
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface") && !alwaysAnimate) {
 			top.add(pitch);
 			top.add(heading);
@@ -171,10 +178,11 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 			public void itemStateChanged(ItemEvent e) {
 				JComboBox<String> source = (JComboBox<String>)e.getSource();
 				int index = source.getSelectedIndex();
+				//if the index is the evoloved color index, the color becomes null
 				if(index == EVOLVED_COLOR_INDEX) {
-					color = null;
+					color = null; // Means colors are set by CPPN
 				} else {
-					color = COLORS[index];
+					color = COLORS[index]; // All voxels have same color
 					// change colors of triangles
 					for(List<Triangle> tris: shapes.values()) {
 						for(Triangle t: tris) {
@@ -182,13 +190,17 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 						}
 					}
 				}
+				//reset buttons
 				resetButtons(true);
 			}
 
 		});
+
+		//sets panel for color and movements
 		JPanel colorAndMovement = new JPanel();
 		colorAndMovement.setLayout(new BoxLayout(colorAndMovement, BoxLayout.Y_AXIS));
 
+		//creates a panel for the color of objects
 		JPanel colorPanel = new JPanel();
 		colorPanel.setLayout(new BoxLayout(colorPanel, BoxLayout.X_AXIS));
 		JLabel colorLabel = new JLabel();
@@ -203,18 +215,24 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 			@SuppressWarnings("unchecked")
 			@Override
+			/**
+			 * determies if the item state has changed
+			 */
 			public void itemStateChanged(ItemEvent e) {
 				JComboBox<String> source = (JComboBox<String>)e.getSource();
+				//it it's horizontal, it's not vertical
 				if(source.getSelectedItem().toString() == "Horizontal") {
 					vertical = false;
-				} else if(source.getSelectedItem().toString() == "Vertical"){
+				} else if(source.getSelectedItem().toString() == "Vertical"){ //if it is vertical, then vertical is true.
 					vertical = true;
 				}
+				//reset buttons
 				resetButtons(true);
 			}
 
 		});
 
+		//sets the panel for the direction of the object
 		JPanel directionPanel = new JPanel();
 		directionPanel.setLayout(new BoxLayout(directionPanel, BoxLayout.X_AXIS));
 		JLabel directionLabel = new JLabel();
@@ -227,16 +245,25 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		colorAndMovement.add(colorPanel);
 		colorAndMovement.add(directionPanel);
 		
+
+		//if it's not a simplified interactive interface, then add colorAndMovement to top
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(colorAndMovement);
 		}
 
 	}
 
+	/**
+	 * evaluates the population to create the shapes for the user to choose
+	 * allows the user to pick the objects they preferred. 
+	 * @param population genomes for all objects
+	 * @return result of parent method finishing the evaluation: scores for each population member
+	 */
 	public ArrayList<Score<TWEANN>> evaluateAll(ArrayList<Genotype<TWEANN>> population) {
 		// Load all shapes in advance
 		previousShapes = shapes;
 		shapes = new HashMap<Long,List<Triangle>>();
+		//for every g in population, puts the shapes
 		for(Genotype<TWEANN> g : population) {
 			shapes.put(g.getId(), ThreeDimensionalUtil.trianglesFromCPPN(g.getPhenotype(), buttonWidth, buttonHeight, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers()));
 		}
@@ -244,9 +271,16 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	}
 	
 	@Override
+	/**
+	 * resets the buttons. if hardReset is true, the cache is cleared
+	 * @param hardRest (boolean) if the buttons are being hard reset or not
+	 */
 	public void resetButtons(boolean hardReset) {
+		//if it's being reset
 		if(hardReset){
+			//if it's always animating, then stop it
 			if(alwaysAnimate) {
+				//loop through to stop each animation
 				for(int x = 0; x < animationThreads.length; x++) {
 					if(animationThreads[x] != null) {
 						animationThreads[x].stopAnimation();
@@ -266,20 +300,28 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 			}
 			
 			shapes = new HashMap<Long,List<Triangle>>();
+			//asserts the correct number of inputs
 			assert inputMultipliers.length == numCPPNInputs() : "Number of inputs should always match CPPN inputs! " + inputMultipliers.length + " vs " + numCPPNInputs();
+			//for each s in scores, set the shapes
 			for(Score<TWEANN> s : scores) {
 				shapes.put(s.individual.getId(), ThreeDimensionalUtil.trianglesFromCPPN(s.individual.getPhenotype(), buttonWidth, buttonHeight, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, inputMultipliers));
 			}		
 		}
-		super.resetButtons(hardReset);
+		super.resetButtons(hardReset); //calls the super resetButtons method with hardReset boolean
 	}
 	
 	@Override
+	/**
+	 * resets the shapes
+	 * 
+	 */
 	protected void reset() { 
 		shapes = new HashMap<Long,List<Triangle>>();
 		super.reset();
 	}
-
+	/**
+	 * undoes the evolution to restore the shapes
+	 */
 	protected void setUndo() {
 		// Get the old shapes back
 		shapes = previousShapes;
@@ -287,31 +329,60 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	}
 
 	@Override
+	/**
+	 * returns the sensorLabels
+	 * @return the sensorLabels
+	 */
 	public String[] sensorLabels() {
 		return new String[] { "X-coordinate", "Y-coordinate", "Z-coordinate", "distance from center", "bias" };
 	}
 
 	@Override
+	/**
+	 * returns the outputLabels
+	 * @return the outputLabels
+	 */
 	public String[] outputLabels() {
 		return new String[] { "cube present", "hue", "saturation", "brightness" };
 	}
 
 	@Override
+	/**
+	 * gets the window title
+	 * @return "3DObjectBreeder"  - a String for the title of the window
+	 */
 	protected String getWindowTitle() {
 		return "3DObjectBreeder";
 	}
 
 	@Override
+	/**
+	 * gets the number of CPPN inputs
+	 * @return CPPN_NUM_INPUTS - the number of CPPN inputs
+	 */
 	public int numCPPNInputs() {
 		return CPPN_NUM_INPUTS;
 	}
 
 	@Override
+	/**
+	 * gets the number of CPPN outputs.
+	 * Depends on whether cube displacement is allowed.
+	 * @return the number of CPPN outputs
+	 */
 	public int numCPPNOutputs() {
 		return (Parameters.parameters.booleanParameter("allowCubeDisplacement") ? 7 : 4);
 	}
 
 	@Override
+	/**
+	 * gets the button image for a single evolved object from is phenotype (a CPPN)
+	 * @param phenotype - the CPPN
+	 * @param width the width of the button
+	 * @param height the height of the button
+	 * @param inputMultipliers the input multipliers
+	 * @return the button image
+	 */
 	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		// If reset button cleared out triangles, then load again right before displaying
 		if(!shapes.containsKey(phenotype.getId())) {
@@ -321,6 +392,15 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	}
 
 	@Override
+	/**
+	 * gets the animation images for a single CPPN's evolved shape.
+	 * Animation is from constant rotation.
+	 * @param cppn - the CPPN
+	 * @param startFrame - the start frame of the animation image
+	 * @param endframe - the end frame of the animation image
+	 * @param beingSaved - whether or not it's being saved
+	 * @return the animation image
+	 */
 	protected BufferedImage[] getAnimationImages(TWEANN cppn, int startFrame, int endFrame, boolean beingSaved) {
 		//if animation images are being saved as a gif, set background to grey (similar to button background) to avoid frame overlap
 		return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), buttonWidth, buttonHeight, startFrame, endFrame, heading, pitch, beingSaved ? new Color(223,233,244) : null, vertical);
