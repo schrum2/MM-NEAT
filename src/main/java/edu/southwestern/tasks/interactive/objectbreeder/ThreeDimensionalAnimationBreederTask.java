@@ -34,8 +34,6 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 	// list of color options for constructed object
 	public static final Color[] COLORS = new Color[]{ Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.YELLOW, Color.ORANGE, Color.PINK, Color.BLACK };
 	
-	public static final int EVOLVED_COLOR_INDEX = 8; //set to the number of colors available in the COLORS array
-	
 	public static final int MAX_ROTATION = 360;
 	
 	protected JSlider pitchValue; // vertical tilt of animated object
