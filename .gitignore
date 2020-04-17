@@ -159,3 +159,7 @@ data/rouge/tmp/dungeon\.json
 *.csv
 
 batch/Experiments-2019-ZeldaGAN/Subject-*
+
+.idea/
+
+*.iml

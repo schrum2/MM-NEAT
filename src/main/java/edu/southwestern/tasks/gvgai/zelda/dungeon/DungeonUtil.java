@@ -38,7 +38,9 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
+import edu.southwestern.tasks.gvgai.zelda.study.DungeonComparison;
 import edu.southwestern.tasks.gvgai.zelda.study.HumanSubjectStudy2019Zelda;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
@@ -366,6 +368,7 @@ public class DungeonUtil {
 			Point p = cleanUpRoom(n, nodes.get(n));
 			if(p != null)
 				return new ZeldaState(state, p);
+			
 		}
 		throw new IllegalArgumentException("Somehow it was impossible to make this dungeon beatable given these visited states: " + visited);
 	}
@@ -858,6 +861,7 @@ public class DungeonUtil {
 	public static void makeDungeonPlayable(Dungeon dungeon) {
 		Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
 		ZeldaState state = new ZeldaState(5, 5, 0, dungeon);
+		HashSet<Dungeon.Node> roomsChanged = new HashSet<>();
 		boolean reset = true;
 		while(true) {			
 			ArrayList<GridAction> result = ((AStarSearch<GridAction, ZeldaState>) search).search(state, reset);
@@ -873,15 +877,21 @@ public class DungeonUtil {
 				// Warning: visited tiles will be replaced with X (Could affect keys)
 //				setUnvisited(visited);
 //				viewDungeon(dungeon, visited);
-				//viewDungeon(dungeon, new HashSet<>());
-				//MiscUtil.waitForReadStringAndEnterKeyPress();
+//				viewDungeon(dungeon, new HashSet<>());
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
 				// Resume search from new state: but is this actually the state if should be?
 				state = makePlayable(visited); 
 //				state = new ZeldaState(5, 5, 0, dungeon);
 				if(HumanSubjectStudy2019Zelda.DEBUG)
 					System.out.println(state);
+				
+				DungeonComparison.cdData.alterations++;
+				roomsChanged.add(state.currentNode);
 			}
-			else break;
+			else {
+				DungeonComparison.cdData.roomsChanged = roomsChanged.size();
+				break;
+			}
 		}
 	}
 
