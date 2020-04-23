@@ -8,7 +8,7 @@ import java.awt.Color;
  *
  */
 public abstract class Item {
-	protected World world; // A dungeon to be created 
+	protected World world; // A dungeon to be created with get and set methods 
     public World getWorld() { return world; }
     public void setWorld(World w) { world = w; }
 
@@ -58,7 +58,7 @@ public abstract class Item {
      */
     public void update() {}
     
-
+    
     public abstract void onPickup(Creature creature);
     
 }
