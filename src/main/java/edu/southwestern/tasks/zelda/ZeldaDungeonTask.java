@@ -44,7 +44,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		// Objective functions
 		numObjectives = 0;
 		if(Parameters.parameters.booleanParameter("zeldaDungeonDistanceFitness")) {
-			MMNEAT.registerFitnessFunction("DistanceToTriforce");
+			MMNEAT.registerFitnessFunction("DistanceToTriforce"); //distance to end
 			numObjectives++;
 		}
 		if(Parameters.parameters.booleanParameter("zeldaDungeonFewRoomFitness")) {
@@ -60,7 +60,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 			numObjectives++;
 		}
 		if(Parameters.parameters.booleanParameter("zeldaDungeonRandomFitness")) {
-			MMNEAT.registerFitnessFunction("RandomFitness");
+			MMNEAT.registerFitnessFunction("RandomFitness"); //assigns a random fitness to the room
 			numObjectives++;
 		}
 		// Additional information tracked about each dungeon
@@ -72,22 +72,40 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 	}
 
 	@Override
+	/**
+	 * returns the number of objectives
+	 * @return numObjectives - the number of objectives
+	 */
 	public int numObjectives() {
 		return numObjectives;  
 	}
-
+	/**
+	 * returns the number of "other scores"
+	 * @return 4, the other scores that do not affect selection
+	 */
 	public int numOtherScores() {
 		return 4;
 	}
 
 	@Override
+	/**
+	 * returns the time stamp
+	 * This method is not used
+	 * @return 0 the time stamp that is not in use
+	 */
 	public double getTimeStamp() {
 		return 0; // Not used
 	}
 
-	public abstract Dungeon getZeldaDungeonFromGenotype(Genotype<T> individual);
+	public abstract Dungeon getZeldaDungeonFromGenotype(Genotype<T> individual); //gets the dungeon from the genotype
 
 	@Override
+	/**
+	 * 
+	 * Determines the score for the dungeon, saves the file
+	 * @param individual the genotype containing the dungeon
+	 * @return score - the MultiObjectiveScore<T>(individual, scores, behaviorVector, other) of the dungeon
+	 */
 	public Score<T> evaluate(Genotype<T> individual) {
 		// Defines the floor space (excluding walls)
 		final int ROWS = 7; // Number of rows to look through
@@ -96,12 +114,12 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		ArrayList<Double> behaviorVector = null; // Filled in later
 		Dungeon dungeon = getZeldaDungeonFromGenotype(individual);
 		int distanceToTriforce = -100; // Very bad fitness if level is not beatable 
-		int numRooms = 0;
-		int searchStatesVisited = 0;
-		int numRoomsTraversed = 0;
-		int waterTileCount = 0;
-		int wallTileCount = 0;
-		int numRoomsReachable = 0;
+		int numRooms = 0; //number of rooms
+		int searchStatesVisited = 0; //number of search states visited
+		int numRoomsTraversed = 0; //the number of rooms traversed
+		int waterTileCount = 0; //the number of water tiles
+		int wallTileCount = 0; //the number of wall tiles
+		int numRoomsReachable = 0; //the number of reachable rooms
 		if(dungeon != null) {
 			try {
 				// Determine which rooms actually connect with doors (but ignores blockage from inner walls
@@ -115,9 +133,9 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						for(int x = START.x; x < START.x+ROWS; x++) {
 							for(int y = START.y; y < START.y+COLUMNS; y++) {
 								Tile tile = room.level.rougeTiles[y][x];
-								if(tile.equals(Tile.WALL)) {
+								if(tile.equals(Tile.WALL)) { //if it's a wall tile, increase wallTileCount
 									wallTileCount++;
-								} else if(tile.equals(Tile.WATER)) {
+								} else if(tile.equals(Tile.WATER)) { //if it's a water tile, increase waterTileCount
 									waterTileCount++;
 								}
 							}
@@ -128,8 +146,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				numRooms = dungeon.getLevels().size();
 				// A* should already have been run during creation to assure beat-ability, but it is run again here to get the action sequence.
 				ArrayList<GridAction> actionSequence;
-				HashSet<ZeldaState> solutionPath = null;
-				HashSet<ZeldaState> mostRecentVisited;
+				HashSet<ZeldaState> solutionPath = null; 
+				HashSet<ZeldaState> mostRecentVisited; // the last room visited
 				//actionSequence = DungeonUtil.makeDungeonPlayable(dungeon);
 				Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
 				ZeldaState startState = new ZeldaState(5, 5, 0, dungeon);
@@ -147,12 +165,13 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						}
 
 						HashSet<Pair<Integer,Integer>> visitedRoomCoordinates = new HashSet<>();
+						//sets a pair of coordinates for each room found
 						for(ZeldaState zs: solutionPath) {
 							// Set does not allow duplicates: one Pair per room
 							visitedRoomCoordinates.add(new Pair<>(zs.dX,zs.dY));
 						}
 
-						numRoomsTraversed = visitedRoomCoordinates.size();
+						numRoomsTraversed = visitedRoomCoordinates.size(); //sets the number of rooms traversed
 					}
 				}catch(IllegalStateException e) {
 					throw e; // Pass on exception, but the finally assures we save states when things go wrong.
@@ -162,6 +181,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				}
 
 				if(CommonConstants.watch) {
+					//prints data about the dungeon to the console
 					System.out.println("Distance to Triforce: "+distanceToTriforce);
 					System.out.println("Number of rooms: "+numRooms);
 					System.out.println("Number of reachable rooms: "+numRoomsReachable);
@@ -169,12 +189,15 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					System.out.println("Number of states visited: "+searchStatesVisited);
 					// View whole dungeon layout
 					BufferedImage image = DungeonUtil.viewDungeon(dungeon, mostRecentVisited, solutionPath);
-					String saveDir = FileUtilities.getSaveDirectory();
+					String saveDir = FileUtilities.getSaveDirectory(); //save directory
 					int currentGen = ((GenerationalEA) MMNEAT.ea).currentGeneration();
+					//saves image
 					GraphicsUtil.saveImage(image, saveDir + File.separator + (currentGen == 0 ? "initial" : "gen"+ currentGen) + File.separator + "Dungeon"+individual.getId()+".png");
+					//prompts user to play or continue
 					System.out.println("Enter 'P' to play, or just press Enter to continue");
 					String input = MiscUtil.waitForReadStringAndEnterKeyPress();
 					System.out.println("Entered \""+input+"\"");
+					//if the user entered P or p, then run
 					if(input.toLowerCase().equals("p")) {
 						new Thread() {
 							@Override
@@ -225,7 +248,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 							// CHANGE!
 							BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
 							BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
-
+							//sets the fileName, binPath, and fullName
 							String fileName = String.format("%7.5f", binScore) +"-"+ binLabels.get(binIndex) +"-"+ individual.getId() + ".png";
 							String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
 							String fullName = binPath + File.separator + fileName;
@@ -245,6 +268,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		}
 
 		ArrayList<Double> fitness = new ArrayList<Double>(5);
+		//if the score is enough to affect selection (not an "other score," then add them to fitness
 		if(Parameters.parameters.booleanParameter("zeldaDungeonDistanceFitness")) 
 			fitness.add(new Double(distanceToTriforce));
 		if(Parameters.parameters.booleanParameter("zeldaDungeonFewRoomFitness")) 
@@ -257,7 +281,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 			fitness.add(new Double(RandomNumbers.fullSmallRand()));
 
 		double[] scores = new double[fitness.size()];
-
+		//stores the scores from the fitness at the index
 		for(int i = 0; i < scores.length; i++) {
 			scores[i] = fitness.get(i);
 		}
@@ -265,7 +289,12 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		double[] other = new double[] {numRooms, numRoomsTraversed, numRoomsReachable, searchStatesVisited};
 		return new MultiObjectiveScore<T>(individual, scores, behaviorVector, other);
 	}
-
+/**
+ * Main method
+ * @param args
+ * @throws FileNotFoundException
+ * @throws NoSuchMethodException
+ */
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException{
 		MMNEAT.main("runNumber:0 randomSeed:0 zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false watch:false trials:1 mu:10 makeZeldaLevelsPlayable:false base:zeldagan log:ZeldaGAN-MAPElites saveTo:MAPElites zeldaGANLevelWidthChunks:10 zeldaGANLevelHeightChunks:10 zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth maxGens:5000000 io:true netio:true GANInputSize:10 mating:true fs:false task:edu.southwestern.tasks.zelda.ZeldaGANDungeonTask cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false cleanFrequency:-1 saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.zelda.ZeldaMAPElitesBinLabels".split(" "));
 	}
