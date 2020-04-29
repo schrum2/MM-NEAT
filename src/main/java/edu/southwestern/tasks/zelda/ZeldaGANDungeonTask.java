@@ -15,7 +15,10 @@ import edu.southwestern.util.datastructures.Pair;
 public class ZeldaGANDungeonTask extends ZeldaDungeonTask<ArrayList<Double>>{
 
 	private int segmentLength;
-	//converts latent vector into a dungeon
+
+	/**
+	 * Initialize the GAN for Zelda, and configure the genome segment length (num latent variables needed per room).
+	 */
 	public ZeldaGANDungeonTask() {
 		super();
 		GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
@@ -34,7 +37,9 @@ public class ZeldaGANDungeonTask extends ZeldaDungeonTask<ArrayList<Double>>{
 	
 	@Override
 	/**
-	 * Takes in the base characteristics of, then returns, the dungeon.
+	 * Takes in a lengthy real-valued genome with latent variables for each room, then returns a dungeon.
+	 * The variables for each room also contain additional information about door connectivity/type and
+	 * where the start/end rooms of the dungeon are.
 	 * 
 	 * @param individual - the genotype containing latent vectors pertaining the Zelda dungeon
 	 * @return dungeon - the Zelda dungeon given the genotype.
