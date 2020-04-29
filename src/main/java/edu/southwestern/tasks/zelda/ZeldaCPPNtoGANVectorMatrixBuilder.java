@@ -18,8 +18,8 @@ public class ZeldaCPPNtoGANVectorMatrixBuilder implements ZeldaGANVectorMatrixBu
 
 	/**
 	 * Constructor used to set variables 
-	 * @param cppn 
-	 * @param inputMultipliers
+	 * @param cppn Compositional Pattern Producing Network that generates the dungeon
+	 * @param inputMultipliers Mask indicating how CPPN inputs should be treated (usually 1s or 0s for enabled/disabled)
 	 */
 	public ZeldaCPPNtoGANVectorMatrixBuilder(Network cppn, double[] inputMultipliers) {
 		this.cppn = cppn;
