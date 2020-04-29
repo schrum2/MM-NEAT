@@ -36,7 +36,6 @@ public class ZeldaCPPNtoGANVectorMatrixBuilder implements ZeldaGANVectorMatrixBu
 		ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), width, height); // sets a point in 2D space 
 		//sets input vector based on the point created and a bias
 		double[] remixedInputs = { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * GraphicsUtil.SQRT2, GraphicsUtil.BIAS };
-		// vector multiplication on inputs with weights 
 		// Might turn some inputs on/off
 		for(int i = 0; i < remixedInputs.length; i++) {
 			remixedInputs[i] *= inputMultipliers[i];
