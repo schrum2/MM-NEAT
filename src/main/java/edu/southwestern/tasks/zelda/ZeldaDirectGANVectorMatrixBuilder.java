@@ -16,7 +16,7 @@ public class ZeldaDirectGANVectorMatrixBuilder implements ZeldaGANVectorMatrixBu
 	/**
 	 * Constructor that sets variables to be used to find the latent vector
 	 * @param wholeVector Input vector
-	 * @param segmentLength Length of input vector
+	 * @param segmentLength Length of one input segment (corresponding to individual room)
 	 */
 	public ZeldaDirectGANVectorMatrixBuilder(double[] wholeVector, int segmentLength) {
 		this.wholeVector = wholeVector;
@@ -27,6 +27,8 @@ public class ZeldaDirectGANVectorMatrixBuilder implements ZeldaGANVectorMatrixBu
 	/**
 	 * Creates latent vector to be sent to the GAN from the 
 	 * variables that were initialized in the constructor. 
+	 * Is accessing sub-range of the whole genome vector that
+	 * the GAN can use to create a room.
 	 * Returns the latent vector as an array of doubles 
 	 */
 	@Override
