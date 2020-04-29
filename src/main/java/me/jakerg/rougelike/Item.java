@@ -4,7 +4,7 @@ import java.awt.Color;
 
 /**
  * This class abstracts the items that are present in the 
- * levels created to have specific genotype 
+ * levels for the Rogue-like 
  *
  */
 public abstract class Item {
