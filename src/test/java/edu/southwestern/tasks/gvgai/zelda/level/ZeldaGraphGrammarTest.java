@@ -18,6 +18,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.random.RandomNumbers;
 
@@ -29,6 +30,9 @@ public class ZeldaGraphGrammarTest {
 	
 	@Before
 	public void setUp() {
+		// Unreasonable to test the GAN if Python is unavailable.
+		if(!PythonUtil.pythonAvailable()) return;
+		
 		Parameters.initializeParameterCollections(new String[] {"zeldaGANUsesOriginalEncoding:false"});
 		
 		initialList = new LinkedList<>();
@@ -52,6 +56,9 @@ public class ZeldaGraphGrammarTest {
 	
 	@Test
 	public void test() {
+		// Unreasonable to test the GAN if Python is unavailable.
+		if(!PythonUtil.pythonAvailable()) return;
+
 		// Good to test up to 100 dungeons, but to speed things up when mvn compiling
 		for(int i = 0; i <= 10; i++) {
 			RandomNumbers.reset(i);
