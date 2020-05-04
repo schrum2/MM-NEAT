@@ -35,7 +35,7 @@ public class HumanSubjectStudy2019Zelda {
 	public static void runTrial(Type type) {
 		Dungeon dungeonToPlay = null;
 		// Save in the experiment's subject directory
-		subjectDir = "batch/Experiments-2019-ZeldaGAN/Subject-" + 
+		subjectDir = "batch/Experiments-2020-CEC-ZeldaGAN/Subject-" + 
 	            String.valueOf(Parameters.parameters.integerParameter("randomSeed")) + 
 	            "/";
 
