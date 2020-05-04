@@ -265,7 +265,8 @@ public class Creature {
             	EnemyDrops drops = new EnemyDrops(this);
         		Item itemToDrop = drops.getItem();
         		if(itemToDrop != null) {
-        			if(itemToDrop instanceof Health && this.world.getPlayer().isMaxed())
+        			Creature player = this.world.getPlayer();
+        			if(itemToDrop instanceof Health && player != null && player.isMaxed())
         				itemToDrop = new Bomb(getWorld(), 'b', AsciiPanel.white, x, y, 4, 5, true);
         				
         			this.world.addItem(itemToDrop);
