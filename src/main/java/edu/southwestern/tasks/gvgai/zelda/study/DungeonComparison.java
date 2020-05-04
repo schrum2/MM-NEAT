@@ -17,6 +17,12 @@ import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.random.RandomNumbers;
 import me.jakerg.csv.SimpleCSV;
 
+/**
+ * Quickly thrown together to count the number of room alterations caused
+ * by A* in response to the WCCI paper reviews.
+ * 
+ * @author Jake Gutierrez
+ */
 public class DungeonComparison {
 	
 	public static ChangedDungeonData cdData = new ChangedDungeonData();
