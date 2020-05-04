@@ -40,6 +40,7 @@ import edu.southwestern.tasks.rlglue.featureextractors.StateVariableExtractor;
 import edu.southwestern.tasks.ut2004.actuators.OpponentRelativeMovementOutputModel;
 import edu.southwestern.tasks.ut2004.sensors.OpponentRelativeSensorModel;
 import edu.southwestern.tasks.ut2004.weapons.SimpleWeaponManager;
+import edu.southwestern.tasks.zentangle.RandomImageFitness;
 import edu.southwestern.util.random.GaussianGenerator;
 import edu.southwestern.util.sound.SoundUtilExamples;
 import edu.southwestern.util.stats.Average;
@@ -330,9 +331,9 @@ public class Parameters {
 		integerOptions.add("syllabusSize", 10, "Number of examples in BD syllabus");
 		integerOptions.add("teams", 1, "Number of teams each individual is evaluated in for coevolution");
 		integerOptions.add("threads", 4, "Number of threads if evaluating in parallel");
-		//TODO
+		integerOptions.add("aStarSearchBudget", 100000, "Number of iterations after which A* gives up with exception");
+		integerOptions.add("dungeonGenerationFailChances", 10, "If dungeon cannot be created in 10 tries, then assign worst fitness.");
 		integerOptions.add("tickLimit", 4000, "used in customExecutor. Number of ticks permitted?");
-		//TODO
 		integerOptions.add("timeLimit", 40, "used in customExecutor. Length of time permitted per round?");
 		integerOptions.add("torusPredators", 3, "Number of torus predators");
 		integerOptions.add("torusPreys", 2, "Number of torus preys");
@@ -349,10 +350,39 @@ public class Parameters {
 		integerOptions.add("utNumNativeBots", 0, "dictates the number of native bots to be spawned into the server");
 		integerOptions.add("utTeamSize", 2 , "dictates the number of players on each team");
 		integerOptions.add("zeldaMaxHealth", 4, "Set the max health for the main character in the rouge-like.");
+		integerOptions.add("zeldaGANLevelWidthChunks", 4, "Number of rooms per row of CPPN-GAN generated dungeons.");
+		integerOptions.add("zeldaGANLevelHeightChunks", 4, "Number of rooms per column of CPPN-GAN generated dungeons.");
+		integerOptions.add("zentangleTileDim", 48 , "The width and height in pixels of tiles used in a Zentangle");
+		integerOptions.add("zentanglePatternDim", 30 , "The width and height in tiles of patterns used in a Zentangle");		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		// Boolean parameters 
+		booleanOptions.add("drawMarioOverlayText", true, "When playing Mario, lots of useful debugging text is displayed");
+		booleanOptions.add("marioSimpleAStarDistance", false, "Length of a simple A* path through level (not actual simulation)");
+		booleanOptions.add("marioLevelAlternatingLeniency", false, "Mario level evolves to encourage alternating amounts of leniency in segments");
+		booleanOptions.add("marioLevelAlternatingNegativeSpace", false, "Mario level evolves to encourage alternating amounts of negative space in segments");
+		booleanOptions.add("marioLevelAlternatingDecoration", false, "Mario level evolves to encourage alternating amounts of decoration in segments");
+		booleanOptions.add("marioLevelPeriodicLeniency", false, "Mario level evolves to encourage periodically repeating amounts of leniency in segments");
+		booleanOptions.add("marioLevelPeriodicNegativeSpace", false, "Mario level evolves to encourage periodically repeating amounts of negative space in segments");
+		booleanOptions.add("marioLevelPeriodicDecoration", false, "Mario level evolves to encourage periodically repeating amounts of decoration in segments");
+		booleanOptions.add("marioLevelSymmetricLeniency", false, "Mario level evolves to encourage symmetric amounts of leniency in segments");
+		booleanOptions.add("marioLevelSymmetricNegativeSpace", false, "Mario level evolves to encourage symmetric amounts of negative space in segments");
+		booleanOptions.add("marioLevelSymmetricDecoration", false, "Mario level evolves to encourage symmetric amounts of decoration in segments");
+		booleanOptions.add("marioLevelMatchFitness", false, "Mario level evolves to match a specific input level");
+		booleanOptions.add("marioProgressPlusJumpsFitness", true, "Mario Progress Plus Jumps Fitness included");
+		booleanOptions.add("marioProgressPlusTimeFitness", false, "Mario Progress Plus Time Fitness included");
+		booleanOptions.add("marioRandomFitness", false, "Mario levels evolved with random fitness");
+		booleanOptions.add("makeZeldaLevelsPlayable", true, "Use A* to check that Zelda dungeons are beatable and modify if needed");
+		booleanOptions.add("saveAllInteractiveGANData", true, "Save latent vectors, generated levels, etc.");
+		booleanOptions.add("dungeonizeAdvancedOptions", false, "Zelda Dungeonize interface includes advanced configuration options.");
+		booleanOptions.add("allowInteractiveSave", false, "Interactive evolution interface has save option");
+		booleanOptions.add("allowInteractiveUndo", false, "Interactive evolution interface has undo option");
+		booleanOptions.add("showInteractiveGANModelLoader", true, "Interactive GAN evolution shows interface for changing GAN model");
+		booleanOptions.add("showRandomizeLatent", true, "Interactive GAN evolution includes randomization option");
+		booleanOptions.add("showLatentSpaceOptions", true, "Interactive GAN evolution includes latent space exploration and interpolation");
+		booleanOptions.add("allowInteractiveEvolution", true, "Interactive evolution actually allows evolution");
+		booleanOptions.add("showKLOptions", false, "Interactive GAN evolution displays KL measurements");
 		booleanOptions.add("gvgAIForZeldaGAN", false, "Use GVG-AI representation of Zelda game");
 		booleanOptions.add("starkPicbreeder", false, "Picbreeder only uses two extreme brightness levels");
 		booleanOptions.add("blackAndWhitePicbreeder", false, "Picbreeder only uses black and white (possible gray)");
@@ -482,6 +512,7 @@ public class Parameters {
 		booleanOptions.add("drawGhostPredictions", true, "Determines whether or not to visualize the predictions of ghost locations for PO pacman");
 		booleanOptions.add("drawPillModel", true, "Determines whether or not to visualize the model of pill locations for PO pacman");
 		booleanOptions.add("eTimeVsGDis", false, "Sense edible time minus ghost distance");
+		booleanOptions.add("bigInteractiveButtons", false, "Interface buttons for interactive evolution are LARGE");
 		booleanOptions.add("eachComponentTracksScoreToo", false, "Each subcomponent uses game score as reward in addition to preferred fitness");
 		booleanOptions.add("eligibilityOnEarnedFitness", false, "For earned fitness, track eligibility scores");
 		booleanOptions.add("eliminateImpossibleDirections", true, "Pac-man only chooses from available directions to move");
@@ -718,7 +749,14 @@ public class Parameters {
 		booleanOptions.add("simplifiedInteractiveInterface", true, "Determines how many buttons to show on the interactive evolution interfaces");
 		booleanOptions.add("utBotKilledAtEnd", true, "True if UT2004 bots are forcibly killed at time limit (instead of running until server dies)");
 		booleanOptions.add("zeldaGANUsesOriginalEncoding", true, "True if the number of tiles for the GAN is 4, otherwise 10.");
-		booleanOptions.add("zeldaHelpScreenEnabled", false, "Enable the help screen of Zelda rouge");
+		booleanOptions.add("zeldaHelpScreenEnabled", true, "Enable the help screen of Zelda rouge");
+		booleanOptions.add("zeldaDungeonDistanceFitness", true, "Evolve levels that require lots of effort to traverse");
+		booleanOptions.add("zeldaDungeonFewRoomFitness", true, "Evolve levels with as few rooms as possible");
+		booleanOptions.add("zeldaPercentDungeonTraversedRoomFitness", true, "Evolve levels where player has to traverse most of the rooms");
+		booleanOptions.add("zeldaDungeonTraversedRoomFitness", true, "Evolve levels where player has to traverse more rooms");
+		booleanOptions.add("zeldaDungeonRandomFitness", false, "Evolve levels with random fitness");
+		booleanOptions.add("zeldaStudySavesParticipantData", true, "Use with 2019 human subject study");
+		booleanOptions.add("rogueLikeDebugMode", false, "Show helpful information, like locations of secret bombable passages");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -795,6 +833,7 @@ public class Parameters {
 		doubleOptions.add("healthDropRate", 20., "Health drop rate from enemies");
 		doubleOptions.add("bombDropRate", 40., "Bomb drop rate from enemies");
 		// String parameters
+		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
 		stringOptions.add("archetype", "", "Network that receives all mutations so as to keep other networks properly aligned");
 		stringOptions.add("base", "", "Base directory for all simulations within one experiment");
 		stringOptions.add("branchRoot", "", "Evolve from some other run as starting point, based off of this parameter file");
@@ -852,6 +891,7 @@ public class Parameters {
 		// Class options
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
+		classOptions.add("imageFitness", RandomImageFitness.class, "Fitness function for evaluating images");
 		classOptions.add("boardGameFeatureExtractor", TwoDimensionalRawBoardGameFeatureExtractor.class, "Feature Extractor used by the NNBoardGamePlayer");
 		classOptions.add("boardGameOpponent", BoardGamePlayerRandom.class, "Board game Opponent being played against");
 		classOptions.add("boardGameOpponentHeuristic", PieceDifferentialBoardGameHeuristic.class, "Board game heuristic used by the Opponent");

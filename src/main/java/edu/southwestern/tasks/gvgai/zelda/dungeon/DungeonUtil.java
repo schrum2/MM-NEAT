@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.gvgai.zelda.dungeon;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -7,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,6 +33,7 @@ import org.apache.commons.io.FileUtils;
 
 import asciiPanel.AsciiFont;
 import asciiPanel.AsciiPanel;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.Grammar;
 import edu.southwestern.tasks.gvgai.zelda.level.LevelLoader;
@@ -55,7 +58,10 @@ import me.jakerg.rougelike.TileUtil;
 import me.jakerg.rougelike.World;
 
 public class DungeonUtil {
-
+	// The CPPN to GAN generation process does not make dungeons with a grammar, but using the A* check can cause problems because of this.
+	// Basically, the way it tells if a room has a start location as a point of interest is by looking at the grammar description for the room.
+	public static boolean NO_GRAMMAR_AT_ALL = false;
+	
 	public static void addCycles(Dungeon dungeon) throws Exception {
 		String[][] levels = dungeon.getLevelThere();
 		for(int y = 0; y < levels.length; y++) {
@@ -77,7 +83,7 @@ public class DungeonUtil {
 		}
 	}
 
-	public static void addExitPoints(List<Point> points, ArrayList<ArrayList<Integer>> intLevel) {
+	public static void addExitPoints(List<Point> points, List<List<Integer>> intLevel) {
 		Point[] doors = new Point[] {new Point(8, 1), new Point(7, 9), new Point(1, 5), new Point(14, 5)};
 		Point[] dirs = new Point[] {new Point(0, 1), new Point(0, -1), new Point(1, 0), new Point(-1, 0)};
 		
@@ -105,7 +111,7 @@ public class DungeonUtil {
 	 * @param points
 	 * @param intLevel
 	 */
-	public static void addInterestPoints(List<Point> points, ArrayList<ArrayList<Integer>> intLevel) {
+	public static void addInterestPoints(List<Point> points, List<List<Integer>> intLevel) {
 		for(int y = 0; y < intLevel.size(); y++) {
 			for(int x = 0; x < intLevel.get(y).size(); x++) {
 				Tile t = Tile.findNum(intLevel.get(y).get(x));
@@ -254,21 +260,21 @@ public class DungeonUtil {
 	}
 	
 	// THIS IS NEVER USED. WHAT IS IT FOR?
-	private static int getAvailableSpace(Point p, String[][] levelThere) {
-		int space = 0;
-		int y = p.y;
-		int x = p.x;
-		List<Point> options = new LinkedList<>(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
-		for(Point option : options) {
-			if(x >= 0 && x < levelThere[0].length && y >= 0 && y < levelThere.length) {
-				if(levelThere[option.y][option.x] == null) {
-					space++;
-				}
-					
-			}
-		}
-		return space;
-	}
+//	private static int getAvailableSpace(Point p, String[][] levelThere) {
+//		int space = 0;
+//		int y = p.y;
+//		int x = p.x;
+//		List<Point> options = new LinkedList<>(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
+//		for(Point option : options) {
+//			if(x >= 0 && x < levelThere[0].length && y >= 0 && y < levelThere.length) {
+//				if(levelThere[option.y][option.x] == null) {
+//					space++;
+//				}
+//					
+//			}
+//		}
+//		return space;
+//	}
 
 	/**
 	 * Get the coordinates of a name
@@ -301,7 +307,7 @@ public class DungeonUtil {
 			break;
 		case "k":
 //			System.out.println("Putting key for: " + n.getID());
-			ZeldaLevelUtil.placeRandomKey(level.intLevel);
+			ZeldaLevelUtil.placeRandomKey(level.intLevel, RandomNumbers.randomGenerator);
 			break;
 		case "e":
 			if(tile == null || (tile != null && !tile.equals(Tile.SOFT_LOCK_DOOR)))
@@ -328,14 +334,14 @@ public class DungeonUtil {
 	 * @throws FileNotFoundException
 	 */
 	public static Level loadOneLevel(LevelLoader loader) throws FileNotFoundException {
-		ArrayList<ArrayList<ArrayList<Integer>>> levels = loader.getLevels();
-		ArrayList<ArrayList<Integer>> randomLevel = levels.get(RandomNumbers.randomGenerator.nextInt(levels.size()));
+		List<List<List<Integer>>> levels = loader.getLevels();
+		List<List<Integer>> randomLevel = levels.get(RandomNumbers.randomGenerator.nextInt(levels.size()));
 		randomLevel = remove(randomLevel);
 	
 		return new Level(randomLevel);
 	}
 
-	private static ArrayList<ArrayList<Integer>> remove(ArrayList<ArrayList<Integer>> randomLevel) {
+	private static List<List<Integer>> remove(List<List<Integer>> randomLevel) {
 		return ZeldaLevelUtil.copyList(randomLevel);
 	}
 
@@ -430,7 +436,7 @@ public class DungeonUtil {
 			}
 		}
 		if(resumePoint == null) {
-			throw new NullPointerException("Were there no points on the line? " + pointsToFloor + "\nOne should be converted to a floor tile.");
+			throw new IllegalStateException("Were there no points on the line? " + pointsToFloor + "\nOne should be converted to a floor tile.");
 		}
 		return resumePoint;
 	}
@@ -498,11 +504,12 @@ public class DungeonUtil {
 	}
 
 	private static List<Point> getPointsOfInterest(Dungeon.Node n) {
-		ArrayList<ArrayList<Integer>> intLevel = n.level.intLevel;
+		List<List<Integer>> intLevel = n.level.intLevel;
 		List<Point> points = new LinkedList<>();
 		addExitPoints(points, intLevel);
 		addInterestPoints(points, intLevel);
-		if(n.grammar.equals(ZeldaGrammar.START))
+		
+		if(!NO_GRAMMAR_AT_ALL && n.grammar.equals(ZeldaGrammar.START))
 			points.add(new Point(5, 5));
 
 		return points;
@@ -513,14 +520,14 @@ public class DungeonUtil {
 	 * @param visited Visited states
 	 */
 	// THIS IS NEVER USED. WHAT IS IT FOR?
-	private static void setFloorTiles(HashSet<ZeldaState> visited) {
-		for(ZeldaState state : visited) {
-			Tile t = Tile.findNum(state.currentNode.level.intLevel.get(state.y).get(state.x));
-			if(t != null && t.equals(Tile.FLOOR))
-				state.currentNode.level.intLevel.get(state.y).set(state.x, Tile.VISITED.getNum());
-		}
-		
-	}
+//	private static void setFloorTiles(HashSet<ZeldaState> visited) {
+//		for(ZeldaState state : visited) {
+//			Tile t = Tile.findNum(state.currentNode.level.intLevel.get(state.y).get(state.x));
+//			if(t != null && t.equals(Tile.FLOOR))
+//				state.currentNode.level.intLevel.get(state.y).set(state.x, Tile.VISITED.getNum());
+//		}
+//		
+//	}
 
 	/**
 	 * Generate a world from the rouge-like and draw the terminal panel
@@ -611,7 +618,7 @@ public class DungeonUtil {
 						queue.add(adjNode);
 					} else {
 						print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
-						throw new Exception("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
+						throw new IllegalStateException("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
 					}
 				} else if (visited.contains(adjNode) && node.getData().isCyclable()
 						&& adjNode.getData().isCyclable()) {
@@ -665,7 +672,7 @@ public class DungeonUtil {
 		Pair<Graph<T>.Node, Graph<T>.Node> pair = pending.pop();
 //		System.out.println(pending);
 		Graph<T>.Node next = pair.t1;
-		if(HumanSubjectStudy2019Zelda.DEBUG)
+		if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
 			System.out.println("Got " + next.getID() + " from list (" + next + ")");
 		Graph<T>.Node parent = pair.t2;
 		Point location = null;
@@ -776,7 +783,7 @@ public class DungeonUtil {
 	 * @param visited 
 	 * @return BufferedImage representing dungeon
 	 */
-	public static BufferedImage imageOfDungeon(Dungeon dungeon, HashSet<ZeldaState> visited) {
+	public static BufferedImage imageOfDungeon(Dungeon dungeon, HashSet<ZeldaState> visited, HashSet<ZeldaState> solution) {
 		boolean debug = false;
 		
 		int BLOCK_HEIGHT = dungeon.getCurrentlevel().level.intLevel.size() * 16;
@@ -795,27 +802,43 @@ public class DungeonUtil {
 			    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		
 		image = g2d.getDeviceConfiguration().createCompatibleImage(width, height);
-		Graphics g = image.getGraphics();
+		Graphics2D g = (Graphics2D) image.getGraphics();
 		
 		Font f = new Font("Trebuchet MS", Font.PLAIN, BLOCK_HEIGHT / 4);
 		g.setFont(f);
 		
 		HashMap<Dungeon.Node, List<Point>> nodes = null;
 		
+		// Mark points on path to solution
+		if(solution != null)
+			setUnvisited(solution, Tile.PATH);
+		// Mark points visited during a search
 		if(visited != null)
-			setUnvisited(visited);
+			setUnvisited(visited, Tile.VISITED);
 	
-		for(int y = 0; y < levelThere.length; y++) {
-			for(int x = 0; x < levelThere[y].length; x++) {
+		for(int y = 0; y < levelThere.length; y++) { // Each row of rooms
+			for(int x = 0; x < levelThere[y].length; x++) { // Each column of rooms
 				Dungeon.Node n = dungeon.getNodeAt(x, y);
 				int oX = x * BLOCK_WIDTH;
 				int oY = y * BLOCK_HEIGHT;
-				if(n != null) {
-					
+				if(n != null) { // A room is present
+					// Image of one room
 					BufferedImage bi = getLevelImage(n, dungeon);
 					g.setColor(Color.GRAY);
 					g.fillRect(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);
+					// Draw the one room
 					g.drawImage(bi, oX, oY, null);
+					
+					if(!n.reachable) {
+						// Can't reach the room: draw an X over it
+						g.setColor(Color.MAGENTA);
+						Stroke originalStroke = g.getStroke();
+						g.setStroke(new BasicStroke(4)); // Thicker line
+						g.drawLine(oX, oY, oX + BLOCK_WIDTH, oY + BLOCK_HEIGHT);
+						g.drawLine(oX, oY + BLOCK_HEIGHT, oX + BLOCK_WIDTH, oY);
+						g.setStroke(originalStroke); // Restore to original size
+					}
+					
 					if(debug) {
 						g.setColor(Color.WHITE);
 						oX = (oX + BLOCK_WIDTH) - (BLOCK_WIDTH / 2) - (BLOCK_WIDTH / 4);
@@ -842,36 +865,43 @@ public class DungeonUtil {
 		return image;
 	}
 
-	private static void setUnvisited(HashSet<ZeldaState> visited) {
+	private static void setUnvisited(HashSet<ZeldaState> visited, Tile tile) {
 		for(ZeldaState state : visited) {
 			Tile t = Tile.findNum(state.currentNode.level.intLevel.get(state.y).get(state.x));
 			if(t.equals(Tile.FLOOR))
-				state.currentNode.level.intLevel.get(state.y).set(state.x, Tile.VISITED.getNum());
+				state.currentNode.level.intLevel.get(state.y).set(state.x, tile.getNum());
 		}
 		
 	}
 
+	// Maintained for diagnosing problems with A*
+	public static HashSet<ZeldaState> mostRecentVisited;
+	
 	/**
 	 * Use A* agent to to see if it's playable, if it's not playable change layout of room. Do this over and over
-	 * until dungeon is playable
-	 * 
-	 * Dr. Schrum, look at this function
+	 * until dungeon is playable. Return the action sequence from start to triforce when successful.
 	 * @param dungeon Generated dungeon
 	 */
-	public static void makeDungeonPlayable(Dungeon dungeon) {
+	public static ArrayList<GridAction> makeDungeonPlayable(Dungeon dungeon) {
 		Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
 		ZeldaState state = new ZeldaState(5, 5, 0, dungeon);
 		HashSet<Dungeon.Node> roomsChanged = new HashSet<>();
 		boolean reset = true;
-		while(true) {			
-			ArrayList<GridAction> result = ((AStarSearch<GridAction, ZeldaState>) search).search(state, reset);
+		while(true) {		
+			ArrayList<GridAction> result = null;
+			try {
+				result = ((AStarSearch<GridAction, ZeldaState>) search).search(state, reset, Parameters.parameters.integerParameter("aStarSearchBudget"));
+			}catch(IllegalStateException e) {
+				throw e; // Pass on exception, but the finally assures we save states when things go wrong.
+			} finally {
+				mostRecentVisited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
+			}
 			// Would prefer not to start from scratch when resuming the search after a fix, but currently
 			// we get an infinite loop if this is changed to false.
 			// Leaving it to false occasionally leads to errors
 			reset = true; 
-			HashSet<ZeldaState> visited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited();
 //			setUnvisited(visited);
-			if(HumanSubjectStudy2019Zelda.DEBUG)
+			if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
 				System.out.println(result);
 			if(result == null) {
 				// Warning: visited tiles will be replaced with X (Could affect keys)
@@ -880,23 +910,32 @@ public class DungeonUtil {
 //				viewDungeon(dungeon, new HashSet<>());
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
 				// Resume search from new state: but is this actually the state if should be?
-				state = makePlayable(visited); 
+				state = makePlayable(mostRecentVisited); 
 //				state = new ZeldaState(5, 5, 0, dungeon);
-				if(HumanSubjectStudy2019Zelda.DEBUG)
+				if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
 					System.out.println(state);
 				
 				DungeonComparison.cdData.alterations++;
 				roomsChanged.add(state.currentNode);
 			}
 			else {
+				// Remember how many rooms were changed
 				DungeonComparison.cdData.roomsChanged = roomsChanged.size();
-				break;
+				// Success! Return action sequence
+				return result;
 			}
 		}
 	}
 
-	public static void viewDungeon(Dungeon dungeon, HashSet<ZeldaState> visited) {
-		BufferedImage image = imageOfDungeon(dungeon, visited);
+	/**
+	 * Show Dungeon in new window, and also return the resulting image.
+	 * 
+	 * @param dungeon Dungeon instance
+	 * @param visited Collection of visited states in the dungeon
+	 * @return Image off the dungeon
+	 */
+	public static BufferedImage viewDungeon(Dungeon dungeon, HashSet<ZeldaState> visited, HashSet<ZeldaState> solution) {
+		BufferedImage image = imageOfDungeon(dungeon, visited, solution);
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
 		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(image.getWidth() / 2, image.getHeight() / 2, Image.SCALE_FAST)));
@@ -904,6 +943,8 @@ public class DungeonUtil {
 		frame.add(panel);
 		frame.pack();
 		frame.setVisible(true);
+		
+		return image;
 	}
 
 	/**
@@ -967,11 +1008,26 @@ public class DungeonUtil {
 	}
 
 	public static BufferedImage imageOfDungeon(Dungeon dungeon) {
-		return imageOfDungeon(dungeon, null);
+		return imageOfDungeon(dungeon, null, null);
 	}
 
 	public static void viewDungeon(Dungeon d) {
-		DungeonUtil.viewDungeon(d, new HashSet<>());
+		DungeonUtil.viewDungeon(d, new HashSet<>(), null);
 	}
 
+	/**
+	 * Convert a grid of rooms in the List of Lists of Integers format produced by json into
+	 * a grid of Levels, which correspond to individual Zelda rooms.
+	 * @param grid 2D array of List representations of rooms in dungeon
+	 * @return 2D array of Level representations of rooms in dungeon
+	 */
+	public static Level[][] roomGridFromJsonGrid(List<List<Integer>>[][] grid) {
+		Level[][] levelGrid = new Level[grid.length][grid[0].length];
+		for(int y = 0; y < grid.length; y++) {
+			for(int x = 0; x < grid[0].length; x++) {
+				levelGrid[y][x] = grid[y][x] == null ? null : new Level(grid[y][x]);
+			}
+		}
+		return levelGrid;
+	}
 }

@@ -9,12 +9,10 @@ import org.apache.commons.io.FileUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
 
 import asciiPanel.AsciiPanel;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
-import edu.southwestern.tasks.gvgai.zelda.level.*;
 import me.jakerg.rougelike.Creature;
 import me.jakerg.rougelike.CreatureFactory;
 import me.jakerg.rougelike.DungeonBuilder;
@@ -62,7 +60,7 @@ public class DungeonScreen implements Screen {
         player.x = 5; // Start in middle of dungeon
         player.y = 5;
         
-        if(RougelikeApp.DEBUG) {
+        if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode")) {
         	player.setBombs(9999);
         	player.setHP(20);
         }

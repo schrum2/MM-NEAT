@@ -2,8 +2,8 @@ package edu.southwestern.tasks.mario;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 
-import ch.idsia.mario.engine.level.Level;
 import ch.idsia.tools.EvaluationInfo;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -18,6 +18,8 @@ import edu.southwestern.util.datastructures.ArrayUtil;
  * like the Mario A* Agent, as a means of evaluating
  * 
  * @author Jacob Schrum
+ *
+ * @param <T> real vector
  */
 public class MarioGANLevelTask extends MarioLevelTask<ArrayList<Double>> {
 
@@ -39,10 +41,10 @@ public class MarioGANLevelTask extends MarioLevelTask<ArrayList<Double>> {
 	 * Extract real-valued latent vector from genotype and then send to GAN to get a Mario level
 	 */
 	@Override
-	public Level getMarioLevelFromGenotype(Genotype<ArrayList<Double>> individual) {
+	public ArrayList<List<Integer>> getMarioLevelListRepresentationFromGenotype(Genotype<ArrayList<Double>> individual) {
 		ArrayList<Double> latentVector = individual.getPhenotype();
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
-		Level level = MarioGANUtil.generateLevelFromGAN(doubleArray);
+		ArrayList<List<Integer>> level = MarioGANUtil.generateLevelListRepresentationFromGAN(doubleArray);
 		return level;
 	}
 
@@ -60,6 +62,9 @@ public class MarioGANLevelTask extends MarioLevelTask<ArrayList<Double>> {
 		// Uses underworld GAN to combine three level segments
 		//MMNEAT.main("runNumber:0 randomSeed:0 base:mariogan log:MarioGAN-UnderWorld3Segments saveTo:UnderWorld3Segments marioGANLevelChunks:3 trials:1 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Underground_30_Epoch_5000.pth GANInputSize:30 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:true".split(" "));
 		// Uses overworld GAN to combine 4 level segments
-		MMNEAT.main("runNumber:0 randomSeed:0 base:mariogan log:MarioGAN-OverWorld4Segments saveTo:OverWorld4Segments marioGANLevelChunks:4 trials:1 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_30_Epoch5000.pth GANInputSize:30 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false".split(" "));
+		//MMNEAT.main("runNumber:0 randomSeed:0 base:mariogan log:MarioGAN-OverWorld4Segments saveTo:OverWorld4Segments marioGANLevelChunks:4 trials:1 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_30_Epoch5000.pth GANInputSize:30 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:true".split(" "));
+
+		// Trying to evolve to match a level target
+		MMNEAT.main("runNumber:0 randomSeed:0 marioGANLevelChunks:6 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_30_Epoch5000.pth GANInputSize:30 printFitness:true trials:1 mu:10 maxGens:500 io:false netio:false genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:false cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioLevelMatchFitness:true".split(" "));
 	}
 }
