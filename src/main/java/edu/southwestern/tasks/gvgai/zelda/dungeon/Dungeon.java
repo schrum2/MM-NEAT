@@ -225,15 +225,6 @@ public class Dungeon {
 		public transient boolean reachable = false;
 		
 		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result + ((name == null) ? 0 : name.hashCode());
-			return result;
-		}
-
-		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;
@@ -242,8 +233,6 @@ public class Dungeon {
 			if (getClass() != obj.getClass())
 				return false;
 			Node other = (Node) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
 			if (name == null) {
 				if (other.name != null)
 					return false;
@@ -281,9 +270,11 @@ public class Dungeon {
 
 			return false;
 		}
-
-		private Dungeon getOuterType() {
-			return Dungeon.this;
+		
+		@Override
+		public int hashCode() {
+			return name.hashCode();
+			
 		}
 	}
 

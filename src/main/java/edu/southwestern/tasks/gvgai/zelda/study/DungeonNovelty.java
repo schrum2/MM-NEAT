@@ -183,7 +183,7 @@ public class DungeonNovelty {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws FileNotFoundException {
-		final String basePath = "G:\\My Drive\\Research\\SCOPE Artifacts\\Zelda Human Subject Data\\Experiments-2019-ZeldaGAN\\Subject-";
+		final String basePath = "G:\\My Drive\\Research\\SCOPE Artifacts\\Zelda Human Subject Data\\Experiments-2020-CEC-ZeldaGAN\\Subject-";
 		
 		// To suppress output from file loading
 		PrintStream original = System.out;
