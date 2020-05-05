@@ -254,14 +254,14 @@ public class ZeldaLevelUtil {
 			placeReachableEnemies(direction, level, 2);
 	}
 
-	private static void placeReachableEnemiesAndRaft(String direction, Dungeon.Node fromNode, int i) {
-
+	private static void placeReachableEnemiesAndRaft(String direction, Dungeon.Node fromNode, int maxEnemies) {
+		// Get random floor tile: TODO: Restrict to reachable floor tiles
 		List<Point> points = fromNode.level.getFloorTiles();
 		Point p = points.get(RandomNumbers.randomGenerator.nextInt(points.size()));
-		
+		// Replace with raft
 		fromNode.level.intLevel.get(p.y).set(p.x, -6); // Magic number! I think -6 is the RAFT. But is this constant defined anywhere?
-		
-		placeReachableEnemies(direction, fromNode.level.intLevel, i);
+		// Place enemies
+		placeReachableEnemies(direction, fromNode.level.intLevel, maxEnemies);
 	}
 
 	public static void placePuzzle(String direction, List<List<Integer>> level) {
