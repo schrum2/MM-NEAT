@@ -259,7 +259,7 @@ public class ZeldaLevelUtil {
 		List<Point> points = fromNode.level.getFloorTiles();
 		Point p = points.get(RandomNumbers.randomGenerator.nextInt(points.size()));
 		
-		fromNode.level.intLevel.get(p.y).set(p.x, -6);
+		fromNode.level.intLevel.get(p.y).set(p.x, -6); // Magic number! I think -6 is the RAFT. But is this constant defined anywhere?
 		
 		placeReachableEnemies(direction, fromNode.level.intLevel, i);
 	}
@@ -340,10 +340,10 @@ public class ZeldaLevelUtil {
 	private static void placeReachableEnemies(String direction, List<List<Integer>> intLevel, int max) {
 		List<Point> points = getVisitedPoints(direction, intLevel);
 		points.removeIf(p -> !Tile.findNum(intLevel.get(p.y).get(p.x)).equals(Tile.FLOOR));
-		int r = RandomNumbers.randomGenerator.nextInt(max) + 1;
+		int r = RandomNumbers.randomGenerator.nextInt(max) + 1; // At least 1: [1,max]
 		for(int i = 0; i < r && points.size() > 0; i++) {
 			Point rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
-			intLevel.get(rP.y).set(rP.x, 2);
+			intLevel.get(rP.y).set(rP.x, 2); // Magic number! 2 is for an enemy, but where is this constant defined?
 		}
 	}
 
