@@ -246,12 +246,13 @@ public class ZeldaLevelUtil {
 		
 		Tile t = Tile.findNum(tile);
 		if(t == null || fromNode.grammar == null) return;
+		// TODO: This is the method of raft placement that assumes it appears int he first soft-locked room. This is restrictive.
 		if(t.equals(Tile.SOFT_LOCK_DOOR) && fromNode.grammar.equals(ZeldaGrammar.ENEMY))
-			placeReachableEnemiesAndRaft(direction, fromNode, 3);
+			placeReachableEnemiesAndRaft(direction, fromNode, 3); // Place a raft and 1-3 enemies in the room
 		else if(!t.equals(Tile.PUZZLE_LOCKED) && fromNode.grammar.equals(ZeldaGrammar.PUZZLE))
 			placePuzzle(direction, level);
 		else if(fromNode.grammar.equals(ZeldaGrammar.KEY))
-			placeReachableEnemies(direction, level, 2);
+			placeReachableEnemies(direction, level, 2); // Place 1 or 2 enemies in the room
 	}
 
 	private static void placeReachableEnemiesAndRaft(String direction, Dungeon.Node fromNode, int maxEnemies) {
