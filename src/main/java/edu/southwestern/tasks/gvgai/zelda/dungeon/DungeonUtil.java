@@ -650,7 +650,7 @@ public class DungeonUtil {
 		Stack<Graph<T>.Node> placed = new Stack<>();
 		HashMap<String, Point> locations = new HashMap<>();
 		
-		String[][] levelThere = new String[100][100];
+		String[][] levelThere = new String[100][100]; // Are these magic numbers for an assumed maximum possible size? I guess it would crash if the level were too large ...
 		
 		// catch boolean for error check
 		recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, 0);
@@ -673,7 +673,7 @@ public class DungeonUtil {
 			System.out.println("Got " + next.getID() + " from list (" + next + ")");
 		Graph<T>.Node parent = pair.t2;
 		Point location = null;
-		if(parent == null)
+		if(parent == null) // Arbitrarily start in the middle of the available 2D array of rooms
 			location = new Point(levelThere.length / 2, levelThere[0].length / 2);
 		else
 			location = locations.get(parent.getID());
@@ -694,6 +694,7 @@ public class DungeonUtil {
 				if(parent != null) {
 					int tile = getTile(parent);
 					Dungeon.Node parentDN = dungeon.getNode(parent.getID());
+					// Sets connections between rooms in both directions
 					DungeonUtil.setAdjacencies(parentDN, location, p, dNode.name, tile);
 					DungeonUtil.setAdjacencies(dNode, p, location, parentDN.name, tile);
 				}

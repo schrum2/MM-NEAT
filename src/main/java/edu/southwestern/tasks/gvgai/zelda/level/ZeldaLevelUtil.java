@@ -509,7 +509,7 @@ public class ZeldaLevelUtil {
 		    }
 		    while (intLevel.get(y).get(x) != 0);
 			
-			intLevel.get(y).set(x, 2); 
+			intLevel.get(y).set(x, 2); // Magic number! 2 is the code for enemies, but not sure if/where such a constant is defined
 		}
 	}
 
