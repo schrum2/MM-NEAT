@@ -258,7 +258,10 @@ public class ZeldaVGLCUtil {
 		case 'S':	// Stairs: remove and replace with block
 			return 1;
 		case 'P':	// Water tile that enemies and raft can go over
-			return 2;
+			// This value used to be 2, but that is now used for enemies. So, if
+			// any weird compatibility issues pop up with enemies/water, it can
+			// probably be traced back to this change.
+			return 5; // 2;
 		case '#':
 			return -6; // Ladder block
 		case 'U':
