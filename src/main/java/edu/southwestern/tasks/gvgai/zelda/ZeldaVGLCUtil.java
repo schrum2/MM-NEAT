@@ -260,8 +260,9 @@ public class ZeldaVGLCUtil {
 		case 'P':	// Water tile that enemies and raft can go over
 			// This value used to be 2, but that is now used for enemies. So, if
 			// any weird compatibility issues pop up with enemies/water, it can
-			// probably be traced back to this change.
-			return 5; // 2;
+			// probably be traced back to this change. 5 should be the right value moving
+			// forward, but the zeldaVGLCWaterPMapCode parameter can set it to an arbitrary value.
+			return Parameters.parameters == null ? 5 : Parameters.parameters.integerParameter("zeldaVGLCWaterPMapCode");
 		case '#':
 			return -6; // Ladder block
 		case 'U':

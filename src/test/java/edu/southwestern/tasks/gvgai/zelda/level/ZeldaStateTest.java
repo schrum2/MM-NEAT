@@ -28,7 +28,8 @@ public class ZeldaStateTest {
 	
 	@Test
 	public void test() throws Exception {
-		Parameters.initializeParameterCollections(new String[] {}); // Default parameters
+		// This unusual setting to 2 indicates that this is an older test. P is now mapped to 5
+		Parameters.initializeParameterCollections(new String[] {"zeldaVGLCWaterPMapCode:2"}); 
 		Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon("a_test", false);
 		
 		Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
