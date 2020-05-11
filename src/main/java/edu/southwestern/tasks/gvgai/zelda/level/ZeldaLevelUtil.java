@@ -14,6 +14,8 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.Heuristic;
+import me.jakerg.rougelike.Creature;
+import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.Move;
 import me.jakerg.rougelike.Tile;
 
@@ -246,22 +248,23 @@ public class ZeldaLevelUtil {
 		
 		Tile t = Tile.findNum(tile);
 		if(t == null || fromNode.grammar == null) return;
+		// TODO: This is the method of raft placement that assumes it appears in the first soft-locked room. This is restrictive.
 		if(t.equals(Tile.SOFT_LOCK_DOOR) && fromNode.grammar.equals(ZeldaGrammar.ENEMY))
-			placeReachableEnemiesAndRaft(direction, fromNode, 3);
+			placeReachableEnemiesAndRaft(direction, fromNode, 3); // Place a raft and 1-3 enemies in the room
 		else if(!t.equals(Tile.PUZZLE_LOCKED) && fromNode.grammar.equals(ZeldaGrammar.PUZZLE))
 			placePuzzle(direction, level);
 		else if(fromNode.grammar.equals(ZeldaGrammar.KEY))
-			placeReachableEnemies(direction, level, 2);
+			placeReachableEnemies(direction, level, 2); // Place 1 or 2 enemies in the room
 	}
 
-	private static void placeReachableEnemiesAndRaft(String direction, Dungeon.Node fromNode, int i) {
-
+	private static void placeReachableEnemiesAndRaft(String direction, Dungeon.Node fromNode, int maxEnemies) {
+		// Get random floor tile: TODO: Restrict to reachable floor tiles
 		List<Point> points = fromNode.level.getFloorTiles();
 		Point p = points.get(RandomNumbers.randomGenerator.nextInt(points.size()));
-		
-		fromNode.level.intLevel.get(p.y).set(p.x, -6);
-		
-		placeReachableEnemies(direction, fromNode.level.intLevel, i);
+		// Replace with raft
+		fromNode.level.intLevel.get(p.y).set(p.x, Ladder.INT_CODE); // -6 is the RAFT/Ladder
+		// Place enemies
+		placeReachableEnemies(direction, fromNode.level.intLevel, maxEnemies);
 	}
 
 	public static void placePuzzle(String direction, List<List<Integer>> level) {
@@ -340,10 +343,10 @@ public class ZeldaLevelUtil {
 	private static void placeReachableEnemies(String direction, List<List<Integer>> intLevel, int max) {
 		List<Point> points = getVisitedPoints(direction, intLevel);
 		points.removeIf(p -> !Tile.findNum(intLevel.get(p.y).get(p.x)).equals(Tile.FLOOR));
-		int r = RandomNumbers.randomGenerator.nextInt(max) + 1;
+		int r = RandomNumbers.randomGenerator.nextInt(max) + 1; // At least 1: [1,max]
 		for(int i = 0; i < r && points.size() > 0; i++) {
 			Point rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
-			intLevel.get(rP.y).set(rP.x, 2);
+			intLevel.get(rP.y).set(rP.x, Creature.ENEMY_INT_CODE); // 2 is for an enemy
 		}
 	}
 
@@ -508,7 +511,7 @@ public class ZeldaLevelUtil {
 		    }
 		    while (intLevel.get(y).get(x) != 0);
 			
-			intLevel.get(y).set(x, 2); 
+			intLevel.get(y).set(x, Creature.ENEMY_INT_CODE); // 2 is the code for enemies
 		}
 	}
 

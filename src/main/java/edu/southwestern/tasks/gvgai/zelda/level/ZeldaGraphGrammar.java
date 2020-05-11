@@ -89,13 +89,13 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
-		
+
 //		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
 //		rule.grammar().setStart(ZeldaGrammar.START);
 //		rule.grammar().setEnd(ZeldaGrammar.KEY);
 //		rule.grammar().setNodeBetween(ZeldaGrammar.PUZZLE);
 //		graphRules.add(rule);
-		
+
 		// Checking for graph errors, this rule seems to be a problem
 //		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
 //		rule.grammar().setStart(ZeldaGrammar.KEY);
@@ -119,7 +119,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
-		
+
 //		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
 //		rule.grammar().setStart(ZeldaGrammar.KEY);
 //		rule.grammar().setEnd(ZeldaGrammar.LOCK);
@@ -196,11 +196,11 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
 	}
-	
+
 	public ZeldaGraphGrammar(File directory) {
 		super(directory);
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		System.out.println("About to reset random number generator based on time. Press enter.");
 		MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -218,12 +218,12 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		initialList.add(ZeldaGrammar.LOCK_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
 		initialList.add(ZeldaGrammar.TREASURE);
-		
+
 		Graph<ZeldaGrammar> graph = new Graph<>(initialList);
 		GraphUtil.saveGrammarGraph(graph, "data/VGLC/Zelda/GraphDOTs/start.dot");
-		
+
 		System.out.println("\n-----------------------------\n");
-		
+
 		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
 //		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar(new File("data/VGLC/Zelda/rules/1"));
 		try {
@@ -235,7 +235,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		}
 
 		System.out.println("After size " + graph.size());
-		
+
 		try {
 			GraphUtil.saveGrammarGraph(graph, "data/VGLC/graph.dot"); //try saving
 		} catch (IOException e) {
@@ -253,16 +253,16 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			BufferedImage image = DungeonUtil.imageOfDungeon(d);
 			File file = new File("data/VGLC/Zelda/dungeon.png");
 			ImageIO.write(image, "png", file);
-			
+
 			Desktop desk = Desktop.getDesktop();
 			desk.open(file);
-			
+
 			RougelikeApp.startDungeon(d);
 		} catch (Exception e) {
 			e.printStackTrace();
 			DungeonUtil.viewDungeon(d);
 			// TODO Auto-generated catch block
-			
+
 		}
 		
 		try { //save the rules
@@ -271,6 +271,6 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 }

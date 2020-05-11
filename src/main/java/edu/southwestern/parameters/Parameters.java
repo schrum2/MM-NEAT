@@ -354,10 +354,12 @@ public class Parameters {
 		integerOptions.add("zeldaGANLevelHeightChunks", 4, "Number of rooms per column of CPPN-GAN generated dungeons.");
 		integerOptions.add("zentangleTileDim", 48 , "The width and height in pixels of tiles used in a Zentangle");
 		integerOptions.add("zentanglePatternDim", 30 , "The width and height in tiles of patterns used in a Zentangle");		
+		integerOptions.add("zeldaVGLCWaterPMapCode", 5 , "Int code for the character P in VGLC representation of Zelda");		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		// Boolean parameters 
+		booleanOptions.add("drawMarioOverlayText", true, "When playing Mario, lots of useful debugging text is displayed");
 		booleanOptions.add("marioSimpleAStarDistance", false, "Length of a simple A* path through level (not actual simulation)");
 		booleanOptions.add("marioLevelAlternatingLeniency", false, "Mario level evolves to encourage alternating amounts of leniency in segments");
 		booleanOptions.add("marioLevelAlternatingNegativeSpace", false, "Mario level evolves to encourage alternating amounts of negative space in segments");
@@ -757,6 +759,7 @@ public class Parameters {
 		booleanOptions.add("zeldaDungeonRandomFitness", false, "Evolve levels with random fitness");
 		booleanOptions.add("zeldaStudySavesParticipantData", true, "Use with 2019 human subject study");
 		booleanOptions.add("rogueLikeDebugMode", false, "Show helpful information, like locations of secret bombable passages");
+		booleanOptions.add("zeldaCPPNtoGANAllowsPuzzleDoors", true, "Allows puzzle doors to be placed in the dungeon");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");

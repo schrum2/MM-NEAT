@@ -3,7 +3,6 @@ package edu.southwestern.tasks.gvgai.zelda.dungeon;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
@@ -41,6 +40,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
+import edu.southwestern.tasks.gvgai.zelda.study.DungeonComparison;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
@@ -371,6 +371,7 @@ public class DungeonUtil {
 			Point p = cleanUpRoom(n, nodes.get(n));
 			if(p != null)
 				return new ZeldaState(state, p);
+			
 		}
 		throw new IllegalArgumentException("Somehow it was impossible to make this dungeon beatable given these visited states: " + visited);
 	}
@@ -649,7 +650,7 @@ public class DungeonUtil {
 		Stack<Graph<T>.Node> placed = new Stack<>();
 		HashMap<String, Point> locations = new HashMap<>();
 		
-		String[][] levelThere = new String[100][100];
+		String[][] levelThere = new String[100][100]; // Are these magic numbers for an assumed maximum possible size? I guess it would crash if the level were too large ...
 		
 		// catch boolean for error check
 		recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, 0);
@@ -672,7 +673,7 @@ public class DungeonUtil {
 			System.out.println("Got " + next.getID() + " from list (" + next + ")");
 		Graph<T>.Node parent = pair.t2;
 		Point location = null;
-		if(parent == null)
+		if(parent == null) // Arbitrarily start in the middle of the available 2D array of rooms
 			location = new Point(levelThere.length / 2, levelThere[0].length / 2);
 		else
 			location = locations.get(parent.getID());
@@ -693,6 +694,7 @@ public class DungeonUtil {
 				if(parent != null) {
 					int tile = getTile(parent);
 					Dungeon.Node parentDN = dungeon.getNode(parent.getID());
+					// Sets connections between rooms in both directions
 					DungeonUtil.setAdjacencies(parentDN, location, p, dNode.name, tile);
 					DungeonUtil.setAdjacencies(dNode, p, location, parentDN.name, tile);
 				}
@@ -881,6 +883,7 @@ public class DungeonUtil {
 	public static ArrayList<GridAction> makeDungeonPlayable(Dungeon dungeon) {
 		Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
 		ZeldaState state = new ZeldaState(5, 5, 0, dungeon);
+		HashSet<Dungeon.Node> roomsChanged = new HashSet<>();
 		boolean reset = true;
 		while(true) {		
 			ArrayList<GridAction> result = null;
@@ -902,15 +905,20 @@ public class DungeonUtil {
 				// Warning: visited tiles will be replaced with X (Could affect keys)
 //				setUnvisited(visited);
 //				viewDungeon(dungeon, visited);
-				//viewDungeon(dungeon, new HashSet<>());
-				//MiscUtil.waitForReadStringAndEnterKeyPress();
+//				viewDungeon(dungeon, new HashSet<>());
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
 				// Resume search from new state: but is this actually the state if should be?
 				state = makePlayable(mostRecentVisited); 
 //				state = new ZeldaState(5, 5, 0, dungeon);
 				if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
 					System.out.println(state);
+				
+				DungeonComparison.cdData.alterations++;
+				roomsChanged.add(state.currentNode);
 			}
 			else {
+				// Remember how many rooms were changed
+				DungeonComparison.cdData.roomsChanged = roomsChanged.size();
 				// Success! Return action sequence
 				return result;
 			}

@@ -163,7 +163,8 @@ data/rouge/tmp/dungeon\.json
 *.csv
 
 batch/Experiments-2019-ZeldaGAN/Subject-*
+batch/Experiments-2020-CEC-ZeldaGAN/Subject-*
 
 .idea/
 
-MM-NEAT.iml
+*.iml

@@ -1,17 +1,21 @@
 # INTERACTIVE EVOLUTION WITH MM-NEAT
 
-For a simplified version of MM-NEAT that only includes the code for interactive evolution using
+For a simplified version of MM-NEAT that only includes the code for interactive art evolution using
 CPPNs, go to the [CPPNArtEvolution Project](https://github.com/schrum2/CPPNArtEvolution).
+For a version focused solely on interactive evolution of video game levels, go to the
+[GameGAN Project](https://github.com/schrum2/GameGAN).
 
 Within the MM-NEAT code repository, there are several programs that are based on interactive evolution. All of
 these classes extend the same general Interactive Evolution Task, which launches an applet displaying 20 items
-that can be evolved, saved, and manipulated by the user over unlimited generations. InteractiveEvolutionTask
-uses CPPNs (Compositional Pattern Producing Networks) to mimic the process of natural evolution, utilizing 
+that can be evolved, saved, and manipulated by the user over unlimited generations. Most of these tasks use
+CPPNs (Compositional Pattern Producing Networks) to mimic the process of natural evolution, utilizing 
 various activation functions to create repetition, variation, and symmetry throughout the generated items. 
 There are buttons across the top of the interface that allow the user to reset, undo, evolve, save, and show
 the underlying networks of selected sounds/shapes/images/animations. The CPPN inputs can also be turned on and off 
 through checkboxes, and there are various activation functions to manipulate the items in interesting ways 
-that can be turned on and off through checkboxes. 
+that can be turned on and off through checkboxes. However, some of the interactive evolution tasks make
+use of a Generative Adversarial Network (GAN) that acts as a genotype-to-phenotype mapping. In most of these tasks, 
+real-valued vectors are being evolved, and then the GAN maps that into something like a video game level.
 
 ## [Picbreeder](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/interactive/picbreeder/PicbreederTask.java)
 
@@ -86,9 +90,33 @@ Currently, the results seem to merely be color shifts on the original image.
 
 ## [Mario Levels (prototype)](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/interactive/mario/MarioLevelBreederTask.java)
 
-Interactively evolves Mario levels. Users selectively breed levels based on appearance, but can also choose to play any of the evolved levels. 
+Interactively evolves Mario levels with CPPNs. Users selectively breed levels based on appearance, but can also choose to play any of the evolved levels. These levels are not as playable as the GAN-based approaches described below.
 
 * Still under development.
+
+## [Mario GAN Levels](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/interactive/mario/MarioGANLevelBreederTask.java)
+
+MarioGANLevelBreederTask evolves real-valued latent vectors, and uses a pre-trained GAN model to map those into Mario levels which can be played by the user. Users can also directly edit the latent vectors to explore the search space. Users can also choose to stitch multiple latent vectors together to make longer levels.  
+
+* Developed using MM-NEAT.
+
+## [Mario CPPN2GAN Levels](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/interactive/mario/MarioCPPNtoGANLevelBreederTask.java)
+
+MarioCPPNtoGANLevelBreederTask uses both CPPNs and a GAN to evolve Mario levels. The CPPNs are evolved, and take as input the x-coordinate of an individual level segment. The output of the CPPN is enough latent variables to define one latent vector input into the GAN. The CPPN is queried multiple times to create multiple segments that are stitched together into a single level. 
+
+* Developed using MM-NEAT.
+
+## [Zelda GAN Rooms](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/interactive/gvgai/ZeldaGANLevelBreederTask.java)
+
+ZeldaGANLevelBreederTask evolves latent vectors that can be sent through a GAN to generate individual rooms. Then the user can select multiple rooms from the population and choose to generate a complete dungeon from those rooms using a graph grammar.
+
+* Developed using MM-NEAT.
+
+## [Zelda CPPN2GAN Dungeons](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/interactive/gvgai/ZeldaCPPNtoGANLevelBreederTask.java)
+
+ZeldaCPPNtoGANLevelBreederTask evolves CPPNs that take input coordinates of x, y, and distance from center of individual rooms within the space of the entire dungeon. The output of the CPPN is enough latent variables to be sent to a pre-trained GAN to generate a room, but there are also additional outputs that determine whether the rooms is even present, whether it has doors on the right and bottom edges, what the types of those doors are, and outputs that determine the start and end locations of the dungeon.
+
+* Developed using MM-NEAT.
 
 # Create your own interactive evolution task
 

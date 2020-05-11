@@ -4,19 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import org.junit.Test;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
@@ -28,7 +24,8 @@ public class ZeldaStateTest {
 	
 	@Test
 	public void test() throws Exception {
-		Parameters.initializeParameterCollections(new String[] {}); // Default parameters
+		// This unusual setting to 2 indicates that this is an older test. P is now mapped to 5
+		Parameters.initializeParameterCollections(new String[] {"zeldaVGLCWaterPMapCode:2"}); 
 		Dungeon dungeon = LoadOriginalDungeon.loadOriginalDungeon("a_test", false);
 		
 		Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {

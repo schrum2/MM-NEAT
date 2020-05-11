@@ -35,18 +35,12 @@ public class HumanSubjectStudy2019Zelda {
 	public static void runTrial(Type type) {
 		Dungeon dungeonToPlay = null;
 		// Save in the experiment's subject directory
-		subjectDir = "batch/Experiments-2019-ZeldaGAN/Subject-" + 
+		subjectDir = "batch/Experiments-2020-CEC-ZeldaGAN/Subject-" + 
 	            String.valueOf(Parameters.parameters.integerParameter("randomSeed")) + 
 	            "/";
 
 		Parameters.parameters.setBoolean("zeldaHelpScreenEnabled", true);
-		int seed = Parameters.parameters.integerParameter("randomSeed");
-		// There is an unbeatable level when using seed 7 with the graph grammar and original rooms.
-		// Rather than fix it properly, this hack just switches the random seed so the level is different.
-		if(seed == 7 && type.equals(Type.GENERATED_DUNGEON) && 
-		   Parameters.parameters.classParameter("zeldaLevelLoader").getSimpleName().equals("OriginalLoader")) {
-			seed = 30; // Not used as an ID for anyone else in the study
-		}	
+		int seed = Parameters.parameters.integerParameter("randomSeed");	
 		RandomNumbers.reset(seed);
 		
 		if(type.equals(Type.ORIGINAL)) {
@@ -123,7 +117,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.WebLoader".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true".split(" "));
 		//MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 	}
 

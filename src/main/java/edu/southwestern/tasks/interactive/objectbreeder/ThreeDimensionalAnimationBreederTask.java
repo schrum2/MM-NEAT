@@ -34,13 +34,11 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 	// list of color options for constructed object
 	public static final Color[] COLORS = new Color[]{ Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.YELLOW, Color.ORANGE, Color.PINK, Color.BLACK };
 	
-	public static final int EVOLVED_COLOR_INDEX = 8;
-	
 	public static final int MAX_ROTATION = 360;
 	
 	protected JSlider pitchValue; // vertical tilt of animated object
 	protected JSlider headingValue; // horizontal tilt of animated object
-	protected JSlider pauseLengthBetweenFrames;
+	protected JSlider pauseLengthBetweenFrames; //a variable that can be changed with a slider in the applet, affect how quickly the animations move
 	protected JComboBox<String> colorChoice;
 	
 	double pitch = (Parameters.parameters.integerParameter("defaultPitch")/(double) MAX_ROTATION) * 2 * Math.PI; 
@@ -57,6 +55,7 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 //		JLabel threeSixtyDegreeLabel = new JLabel("360");
 //		threeSixtyDegreeLabel.setFont(threeSixtyDegreeLabel.getFont().deriveFont(10.0f));
 		
+		//initializes a slider that can be used to change the pitch
 		pitchValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_ROTATION, Parameters.parameters.integerParameter("defaultPitch"));
 //		Hashtable<Integer,JLabel> pitchLabels = new Hashtable<>();
 		pitchValue.setMinorTickSpacing(72);
@@ -75,7 +74,7 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				// get value
-				JSlider source = (JSlider)e.getSource();
+				JSlider source = (JSlider)e.getSource(); 
 				if(!source.getValueIsAdjusting()) {
 					int newLength = (int) source.getValue();
 					pitch = (newLength /(double) MAX_ROTATION) * 2 * Math.PI; 
@@ -85,11 +84,12 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 			}
 		});
 		
-		//Pitch slider
+		// creates a label for the Pitch/vertical tilt slider
 		JLabel pitchLabel = new JLabel();
 		pitchLabel.setFont(pitchLabel.getFont().deriveFont(10.0f));
 		pitchLabel.setText("Vertical Tilt");
 
+		//initializes a slider to be used for the horizontal tilt label
 		headingValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_ROTATION, Parameters.parameters.integerParameter("defaultHeading"));
 
 //		Hashtable<Integer,JLabel> headingLabels = new Hashtable<>();
@@ -120,11 +120,12 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 			}
 		});
 
-		//Heading slider
+		//creates label for the Heading/horizontal tilt slider
 		JLabel headingLabel = new JLabel();
 		headingLabel.setText("Horizontal Tilt");
 		headingLabel.setFont(headingLabel.getFont().deriveFont(10.0f));
 		
+		//formats the heading and pitch sliders and labels
 		JPanel pitchAndHeading = new JPanel();
 		pitchAndHeading.setLayout(new BoxLayout(pitchAndHeading, BoxLayout.Y_AXIS));
 		pitchAndHeading.add(pitchLabel);
@@ -132,16 +133,25 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 		pitchAndHeading.add(headingLabel);
 		pitchAndHeading.add(headingValue);
 		
+		//if the user chooses a simplified applet these labels will not be displayed
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(pitchAndHeading);
 		}
 	}
 	
+	/**
+	 * This method provides labels for the different inputs that the CPPN takes as parameters
+	 * You can check or uncheck them in the applet 
+	 */
 	@Override
 	public String[] sensorLabels() {
 		return new String[] { "X-coordinate", "Y-coordinate", "Z-coordinate", "distance from center", "bias", "time" };
 	}
 
+	/**
+	 * This method provides labels for the different outputs that the CPPN produces as outputs
+	 * these are used to develop new images based on the output of the parents you select
+	 */
 	@Override
 	public String[] outputLabels() {
 		return (Parameters.parameters.booleanParameter("allowCubeDisplacement") ? 
@@ -149,27 +159,44 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 				new String[] { "cube present", "hue", "saturation", "brightness"});
 	}
 
+	/**
+	 * This method places the title of the applet in the window
+	 */
 	@Override
 	protected String getWindowTitle() {
 		return "3DAnimationBreeder";
 	}
 
+	/**
+	 * returns the number of inputs that get passed into the CPPN
+	 * CPPN_NUM_INPUTS is currently set to 6 
+	 */
 	@Override
 	public int numCPPNInputs() {
 		return CPPN_NUM_INPUTS;
 	}
 
+	/**
+	 * returns the number of outputs 
+	 */
 	@Override
 	public int numCPPNOutputs() {
 		return (Parameters.parameters.booleanParameter("allowCubeDisplacement") ? 7 : 4);
 	}
 	
+	/**
+	 * This method updates the animation images based on the parent that you select 
+	 * to have clones made of 
+	 */
 	@Override
 	public BufferedImage[] getAnimationImages(T cppn, int startFrame, int endFrame, boolean beingSaved) {
 		// Grey color new Color(223,233,244) used for background
 		return AnimationUtil.shapesFromCPPN(cppn, buttonWidth, buttonHeight, startFrame, endFrame, beingSaved ? new Color(223,233,244) : null, heading, pitch, inputMultipliers);
 	}
 	
+	/**
+	 * This method acquires the first round of images to be place on the buttons in the applet
+	 */
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
