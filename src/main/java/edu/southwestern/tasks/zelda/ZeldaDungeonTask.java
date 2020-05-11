@@ -178,6 +178,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 
 						HashSet<Pair<Integer,Integer>> visitedRoomCoordinates = new HashSet<>();
 						HashSet<Pair<Integer,Integer>> exitedRoomCoordinates = new HashSet<>();
+						//HashSet<Pair<Integer,Integer>> backTrackRoomCoordinates = new HashSet<>();
 						Pair<Integer, Integer> prevRoom = null;
 						//sets a pair of coordinates for each room found 
 						for(ZeldaState zs: solutionPath) {
@@ -189,14 +190,15 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 							if(prevRoom!=null&&!prevRoom.equals(newRoom)){ //only ever true when leaving/entering a room
 								exitedRoomCoordinates.add(prevRoom); //add the exited room
 								if(exitedRoomCoordinates.contains(newRoom)) { //check if the room you just entered has already been visited
-								numBackTrackRooms++;
+									//backTrackRoomCoordinates.add(newRoom);
+									numBackTrackRooms++;
 								}
 							}
 							
 							prevRoom = newRoom;
 						}
 						numRoomsTraversed = visitedRoomCoordinates.size(); //sets the number of rooms traversed
-						
+						//numBackTrackRooms = backTrackRoomCoordinates.size();
 						
 						//HashSet<Pair<Integer,Integer>> backTrackRoomCoordinates = new HashSet<>();
 //						for(ZeldaState zs: backTrackSolutionPath) {
