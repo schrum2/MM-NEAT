@@ -38,6 +38,7 @@ import edu.southwestern.tasks.zelda.ZeldaGANVectorMatrixBuilder;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import me.jakerg.rougelike.RougelikeApp;
+import me.jakerg.rougelike.Tile;
 
 /**
  * Uses a CPPN to map a latent vector for a GAN to each cell in a grid,
@@ -48,8 +49,8 @@ import me.jakerg.rougelike.RougelikeApp;
 public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWEANN> {
 
 	public static final String[] SENSOR_LABELS = new String[] {"x-coordinate", "y-coordinate", "radius", "bias"};
-
-	public static final int NUM_NON_LATENT_INPUTS = 6;
+	
+	public static final int NUM_NON_LATENT_INPUTS = 6; //the first six values in the latent vector, they are the 6 directly below this line
 	public static final int INDEX_ROOM_PRESENCE = 0;	// Whether a room is present
 	public static final int INDEX_TRIFORCE_PREFERENCE = 1; // Determines both Triforce location AND starting location
 	public static final int INDEX_DOOR_DOWN = 2; // Determines if there is a door heading down (and thus a door up in the connecting room)
@@ -552,14 +553,14 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 					levelAsListsGrid[y][x] = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVectorGrid[y][x]);
 
 					//debug help 
-					System.out.println("first");
-					for(List<Integer> l : levelAsListsGrid[y][x]) {
-						System.out.println(l);
-					}
+//					System.out.println("first");
+//					for(List<Integer> l : levelAsListsGrid[y][x]) {
+//						System.out.println(l);
+//					}
 
 					//removes doors that are placed automatically by the GAN 
 					//helps to fix invalid door problem 
-					int door = 3;
+					int door = Tile.DOOR.getNum(); // Is 3 
 					for(List<Integer> l : levelAsListsGrid[y][x]) {
 						//removes all door tiles and replaces them with wall tiles to avoid invalid doors
 						while(l.contains(door)) {
@@ -571,10 +572,10 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 					}
 
 					//debug help
-					System.out.println("second");
-					for(List<Integer> l : levelAsListsGrid[y][x]) {
-						System.out.println(l);
-					}
+//					System.out.println("second");
+//					for(List<Integer> l : levelAsListsGrid[y][x]) {
+//						System.out.println(l);
+//					}
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
 
 				} else {

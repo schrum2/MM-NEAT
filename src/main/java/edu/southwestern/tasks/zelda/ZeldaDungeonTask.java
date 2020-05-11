@@ -59,8 +59,13 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 			MMNEAT.registerFitnessFunction("NumRoomsTraversed"); // Visit as many rooms as possible
 			numObjectives++;
 		}
+		
 		if(Parameters.parameters.booleanParameter("zeldaDungeonRandomFitness")) {
 			MMNEAT.registerFitnessFunction("RandomFitness"); //assigns a random fitness to the room
+			numObjectives++;
+		}
+		if(Parameters.parameters.booleanParameter("zeldaDungeonBackTrackRoomFitness")) {
+			MMNEAT.registerFitnessFunction("NumBackTrackRooms"); //backtrack as many rooms as possible
 			numObjectives++;
 		}
 		// Additional information tracked about each dungeon
@@ -68,6 +73,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		MMNEAT.registerFitnessFunction("NumRoomsTraversed",false);
 		MMNEAT.registerFitnessFunction("NumRoomsReachable",false);
 		MMNEAT.registerFitnessFunction("NumSearchStatesVisited",false);
+		MMNEAT.registerFitnessFunction("NumBackTrackRooms",false);
+
 		// More?
 	}
 
@@ -117,6 +124,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		int numRooms = 0; //number of rooms
 		int searchStatesVisited = 0; //number of search states visited
 		int numRoomsTraversed = 0; //the number of rooms traversed
+		int numBackTrackRooms = 0; //the number of rooms traversed twice
 		int waterTileCount = 0; //the number of water tiles
 		int wallTileCount = 0; //the number of wall tiles
 		int numRoomsReachable = 0; //the number of reachable rooms
@@ -157,21 +165,46 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						distanceToTriforce = actionSequence.size();
 						// Get states in the solution to plot a path
 						solutionPath = new HashSet<>();
+						//backTrackSolutionPath = new HashSet<>();
 						ZeldaState currentState = startState;
 						solutionPath.add(currentState);
+						
+						HashSet<Pair<Integer,Integer>> exitedRoomCoordinates = new HashSet<>();
+						Pair<Integer, Integer> prevRoom = null;
 						for(GridAction a : actionSequence) {
 							currentState = (ZeldaState) currentState.getSuccessor(a);
 							solutionPath.add(currentState);
+							Pair<Integer,Integer> newRoom = new Pair<>(currentState.dX,currentState.dY);
+							if(prevRoom!=null&&!prevRoom.equals(newRoom)){ //only ever true when leaving/entering a room
+								exitedRoomCoordinates.add(prevRoom); //add the exited room
+								if(exitedRoomCoordinates.contains(newRoom)) { //check if the room you just entered has already been visited
+									numBackTrackRooms++;
+								}
+							}
+							
+							prevRoom = newRoom;
+							
 						}
 
 						HashSet<Pair<Integer,Integer>> visitedRoomCoordinates = new HashSet<>();
-						//sets a pair of coordinates for each room found
-						for(ZeldaState zs: solutionPath) {
+						//sets a pair of coordinates for each room found 
+						for(ZeldaState zs: solutionPath) {							
 							// Set does not allow duplicates: one Pair per room
-							visitedRoomCoordinates.add(new Pair<>(zs.dX,zs.dY));
-						}
+							visitedRoomCoordinates.add(new Pair<>(zs.dX,zs.dY)); 
+							
 
+							
+						}
 						numRoomsTraversed = visitedRoomCoordinates.size(); //sets the number of rooms traversed
+						
+						
+
+//						System.out.println("numRoomsTraversed: "+numRoomsTraversed);
+//						System.out.println("numBackTrackTraversed: "+numBackTrackRooms);
+//						System.out.println("number of exited rooms "+exitedRoomCoordinates.size());
+
+						//MiscUtil.waitForReadStringAndEnterKeyPress();
+						
 					}
 				}catch(IllegalStateException e) {
 					throw e; // Pass on exception, but the finally assures we save states when things go wrong.
@@ -187,6 +220,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					System.out.println("Number of reachable rooms: "+numRoomsReachable);
 					System.out.println("Number of rooms traversed: "+numRoomsTraversed);
 					System.out.println("Number of states visited: "+searchStatesVisited);
+					System.out.println("Number of backtracked rooms: "+numBackTrackRooms);
+
 					// View whole dungeon layout
 					BufferedImage image = DungeonUtil.viewDungeon(dungeon, mostRecentVisited, solutionPath);
 					String saveDir = FileUtilities.getSaveDirectory(); //save directory
@@ -279,6 +314,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 			fitness.add(new Double(numRoomsTraversed));
 		if(Parameters.parameters.booleanParameter("zeldaDungeonRandomFitness")) 
 			fitness.add(new Double(RandomNumbers.fullSmallRand()));
+		if(Parameters.parameters.booleanParameter("zeldaDungeonBackTrackRoomFitness")) 
+			fitness.add(new Double(numBackTrackRooms));
 
 		double[] scores = new double[fitness.size()];
 		//stores the scores from the fitness at the index
@@ -289,13 +326,14 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		double[] other = new double[] {numRooms, numRoomsTraversed, numRoomsReachable, searchStatesVisited};
 		return new MultiObjectiveScore<T>(individual, scores, behaviorVector, other);
 	}
-/**
- * Main method
- * @param args
- * @throws FileNotFoundException
- * @throws NoSuchMethodException
- */
+	
+	/**
+	 * Main method: for quick testing
+	 * @param args
+	 * @throws FileNotFoundException
+	 * @throws NoSuchMethodException
+	 */
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException{
-		MMNEAT.main("runNumber:0 randomSeed:0 zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false watch:false trials:1 mu:10 makeZeldaLevelsPlayable:false base:zeldagan log:ZeldaGAN-MAPElites saveTo:MAPElites zeldaGANLevelWidthChunks:10 zeldaGANLevelHeightChunks:10 zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth maxGens:5000000 io:true netio:true GANInputSize:10 mating:true fs:false task:edu.southwestern.tasks.zelda.ZeldaGANDungeonTask cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false cleanFrequency:-1 saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.zelda.ZeldaMAPElitesBinLabels".split(" "));
+		MMNEAT.main("runNumber:0 randomSeed:0 zeldaDungeonBackTrackRoomFitness:true zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false zeldaDungeonBackTrackRoomFitness:true watch:true trials:1 mu:10 makeZeldaLevelsPlayable:false base:zeldagan log:ZeldaGAN-FitnessTemp saveTo:FitnessTemp zeldaGANLevelWidthChunks:10 zeldaGANLevelHeightChunks:10 zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth maxGens:5000000 io:true netio:true GANInputSize:10 mating:true fs:false task:edu.southwestern.tasks.zelda.ZeldaGANDungeonTask cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false cleanFrequency:-1 saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype".split(" "));	
 	}
 }

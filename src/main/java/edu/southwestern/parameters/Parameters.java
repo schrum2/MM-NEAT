@@ -755,9 +755,11 @@ public class Parameters {
 		booleanOptions.add("zeldaDungeonFewRoomFitness", true, "Evolve levels with as few rooms as possible");
 		booleanOptions.add("zeldaPercentDungeonTraversedRoomFitness", true, "Evolve levels where player has to traverse most of the rooms");
 		booleanOptions.add("zeldaDungeonTraversedRoomFitness", true, "Evolve levels where player has to traverse more rooms");
+		booleanOptions.add("zeldaDungeonBackTrackRoomFitness", false, "Evolve levels where player has to backtrack to more rooms"); //
 		booleanOptions.add("zeldaDungeonRandomFitness", false, "Evolve levels with random fitness");
 		booleanOptions.add("zeldaStudySavesParticipantData", true, "Use with 2019 human subject study");
 		booleanOptions.add("rogueLikeDebugMode", false, "Show helpful information, like locations of secret bombable passages");
+		booleanOptions.add("zeldaCPPNtoGANAllowsPuzzleDoors", true, "Allows puzzle doors to be placed in the dungeon");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
