@@ -157,6 +157,7 @@ public abstract class ZeldaDungeon<T> {
 		// Randomize tile only if the door being placed actually leads to another room
 		if(tile == Tile.DOOR.getNum()) {
 			// NaN means use chance to create door type
+			//if there is no door type specified then it is randomized
 			if(Double.isNaN(encodedDoorType)) {
 				if(RandomNumbers.randomCoin(0.7)) {
 					tile = (RandomNumbers.coinFlip()) ? Tile.LOCKED_DOOR.getNum() : Tile.HIDDEN.getNum(); // Randomize 5 (locked door) or 7 (bombable wall)
@@ -174,7 +175,7 @@ public abstract class ZeldaDungeon<T> {
 					}
 					// else remain a plain door
 
-				}else { //allows Puzzle doors to be added 
+				}else { //allows Puzzle doors to be added with a 25% likelihood of getting any of the four types of doors
 					if(encodedDoorType > 0.75) {
 						tile = Tile.LOCKED_DOOR.getNum();
 					} else if(encodedDoorType > 0.5) {
@@ -185,7 +186,8 @@ public abstract class ZeldaDungeon<T> {
 						tile = Tile.PUZZLE_LOCKED.getNum();
 					}
 					// else remain a plain door
-					//places a puzzle if the lock is a puzzle lock 
+					//places a puzzle block if the door is a puzzle
+					//player must move the puzzle block to unlock the door
 					if(tile == Tile.PUZZLE_LOCKED.getNum()) ZeldaLevelUtil.placePuzzle(direction, level);
 				}
 				// A random generator based on the CPPN output, so placement will be consistent, for both conditions

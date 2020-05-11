@@ -549,7 +549,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		for(int y = 0; y < levelAsListsGrid.length; y++) {
 			for(int x = 0; x < levelAsListsGrid[0].length; x++) {
 				if(auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] > presenceThreshold) { // Room presence threshold is 0: TODO: Make parameter?
-					levelAsListsGrid[y][x] = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVectorGrid[y][x]);
+					levelAsListsGrid[y][x] = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVectorGrid[y][x]); //generates a single room 
 
 					//debug help 
 					System.out.println("first");
