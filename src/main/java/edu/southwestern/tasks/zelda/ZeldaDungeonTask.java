@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import com.mashape.unirest.http.utils.MapUtil;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -59,8 +61,13 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 			MMNEAT.registerFitnessFunction("NumRoomsTraversed"); // Visit as many rooms as possible
 			numObjectives++;
 		}
+		
 		if(Parameters.parameters.booleanParameter("zeldaDungeonRandomFitness")) {
 			MMNEAT.registerFitnessFunction("RandomFitness"); //assigns a random fitness to the room
+			numObjectives++;
+		}
+		if(Parameters.parameters.booleanParameter("zeldaDungeonBackTrackRoomFitness")) {
+			MMNEAT.registerFitnessFunction("NumBackTrackRooms"); //backtrack as many rooms as possible
 			numObjectives++;
 		}
 		// Additional information tracked about each dungeon
@@ -68,6 +75,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		MMNEAT.registerFitnessFunction("NumRoomsTraversed",false);
 		MMNEAT.registerFitnessFunction("NumRoomsReachable",false);
 		MMNEAT.registerFitnessFunction("NumSearchStatesVisited",false);
+		MMNEAT.registerFitnessFunction("NumBackTrackRooms",false);
+
 		// More?
 	}
 
@@ -117,6 +126,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		int numRooms = 0; //number of rooms
 		int searchStatesVisited = 0; //number of search states visited
 		int numRoomsTraversed = 0; //the number of rooms traversed
+		int numBackTrackRooms = 0; //the number of rooms traversed twice
 		int waterTileCount = 0; //the number of water tiles
 		int wallTileCount = 0; //the number of wall tiles
 		int numRoomsReachable = 0; //the number of reachable rooms
@@ -148,6 +158,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				ArrayList<GridAction> actionSequence;
 				HashSet<ZeldaState> solutionPath = null; 
 				HashSet<ZeldaState> mostRecentVisited; // the last room visited
+				//HashSet<ZeldaState> backTrackSolutionPath = null;
 				//actionSequence = DungeonUtil.makeDungeonPlayable(dungeon);
 				Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
 				ZeldaState startState = new ZeldaState(5, 5, 0, dungeon);
@@ -157,6 +168,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						distanceToTriforce = actionSequence.size();
 						// Get states in the solution to plot a path
 						solutionPath = new HashSet<>();
+						//backTrackSolutionPath = new HashSet<>();
 						ZeldaState currentState = startState;
 						solutionPath.add(currentState);
 						for(GridAction a : actionSequence) {
@@ -165,13 +177,38 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						}
 
 						HashSet<Pair<Integer,Integer>> visitedRoomCoordinates = new HashSet<>();
-						//sets a pair of coordinates for each room found
+						HashSet<Pair<Integer,Integer>> exitedRoomCoordinates = new HashSet<>();
+						Pair<Integer, Integer> prevRoom = null;
+						//sets a pair of coordinates for each room found 
 						for(ZeldaState zs: solutionPath) {
+							Pair<Integer,Integer> newRoom = new Pair<>(zs.dX,zs.dY);
+							
 							// Set does not allow duplicates: one Pair per room
-							visitedRoomCoordinates.add(new Pair<>(zs.dX,zs.dY));
+							visitedRoomCoordinates.add(newRoom); //newroom
+							
+							if(!newRoom.equals(prevRoom)&&prevRoom!=null){ //only ever true when leaving/entering a room
+								exitedRoomCoordinates.add(prevRoom); //add the exited room
+								if(exitedRoomCoordinates.contains(newRoom)) { //check if the room you just entered has already been visited
+								numBackTrackRooms++;
+								}
+							}
+							
+							prevRoom = newRoom;
 						}
-
 						numRoomsTraversed = visitedRoomCoordinates.size(); //sets the number of rooms traversed
+						
+						
+						//HashSet<Pair<Integer,Integer>> backTrackRoomCoordinates = new HashSet<>();
+//						for(ZeldaState zs: backTrackSolutionPath) {
+//							// Set does not allow duplicates: one Pair per room
+//							backTrackRoomCoordinates.add(new Pair<>(zs.dX,zs.dY));
+//						}
+						
+						//numBackTrackRooms = backTrackRoomCoordinates.size(); //sets the number of rooms backtracked
+
+						System.out.println("numRoomsTraversed: "+numRoomsTraversed);
+						MiscUtil.waitForReadStringAndEnterKeyPress();
+						
 					}
 				}catch(IllegalStateException e) {
 					throw e; // Pass on exception, but the finally assures we save states when things go wrong.
@@ -187,6 +224,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					System.out.println("Number of reachable rooms: "+numRoomsReachable);
 					System.out.println("Number of rooms traversed: "+numRoomsTraversed);
 					System.out.println("Number of states visited: "+searchStatesVisited);
+					System.out.println("Number of backtracked rooms: "+numBackTrackRooms);
+
 					// View whole dungeon layout
 					BufferedImage image = DungeonUtil.viewDungeon(dungeon, mostRecentVisited, solutionPath);
 					String saveDir = FileUtilities.getSaveDirectory(); //save directory
@@ -279,6 +318,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 			fitness.add(new Double(numRoomsTraversed));
 		if(Parameters.parameters.booleanParameter("zeldaDungeonRandomFitness")) 
 			fitness.add(new Double(RandomNumbers.fullSmallRand()));
+		if(Parameters.parameters.booleanParameter("zeldaDungeonBackTrackRoomFitness")) 
+			fitness.add(new Double(numBackTrackRooms));
 
 		double[] scores = new double[fitness.size()];
 		//stores the scores from the fitness at the index
