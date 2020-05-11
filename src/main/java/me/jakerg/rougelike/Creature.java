@@ -71,6 +71,8 @@ public class Creature {
 	
 	private DungeonBuilder dungeonBuilder;	
 	public DungeonBuilder getDungeonBuilder() { return this.dungeonBuilder; }
+	
+	public static final int ENEMY_INT_CODE = 2; //fixes magic number issue 
     
     /**
      * If a creature is told to display, let the ai control take care of it

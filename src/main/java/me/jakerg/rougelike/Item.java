@@ -19,7 +19,7 @@ public abstract class Item {
     protected char glyph; //Corresponds to a symbol for a specific tile 
     public char glyph() { return glyph; }
 
-    protected Color color;
+    protected Color color; //corresponds to the color of an item
     public Color color() { return color; }
     
     protected boolean pickupable; // tells player if they can pick up the item or not
