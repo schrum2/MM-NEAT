@@ -560,8 +560,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 					//helps to fix invalid door problem 
 					int door = 3;
 					for(List<Integer> l : levelAsListsGrid[y][x]) {
-						if(l.contains(door)) {
-							//stem.out.println(l.indexOf(door));
+						while(l.contains(door)) {
+							//System.out.println(l.indexOf(door));
 							int index = l.indexOf(door);
 							l.remove(l.indexOf(door));
 							l.add(index, 1);
