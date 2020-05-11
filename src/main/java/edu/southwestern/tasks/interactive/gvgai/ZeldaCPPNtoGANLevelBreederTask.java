@@ -38,6 +38,7 @@ import edu.southwestern.tasks.zelda.ZeldaGANVectorMatrixBuilder;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import me.jakerg.rougelike.RougelikeApp;
+import me.jakerg.rougelike.Tile;
 
 /**
  * Uses a CPPN to map a latent vector for a GAN to each cell in a grid,
@@ -552,14 +553,14 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 					levelAsListsGrid[y][x] = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVectorGrid[y][x]);
 
 					//debug help 
-					System.out.println("first");
-					for(List<Integer> l : levelAsListsGrid[y][x]) {
-						System.out.println(l);
-					}
+//					System.out.println("first");
+//					for(List<Integer> l : levelAsListsGrid[y][x]) {
+//						System.out.println(l);
+//					}
 
 					//removes doors that are placed automatically by the GAN 
 					//helps to fix invalid door problem 
-					int door = 3;
+					int door = Tile.DOOR.getNum(); // Is 3 
 					for(List<Integer> l : levelAsListsGrid[y][x]) {
 						//removes all door tiles and replaces them with wall tiles to avoid invalid doors
 						while(l.contains(door)) {
@@ -571,10 +572,10 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 					}
 
 					//debug help
-					System.out.println("second");
-					for(List<Integer> l : levelAsListsGrid[y][x]) {
-						System.out.println(l);
-					}
+//					System.out.println("second");
+//					for(List<Integer> l : levelAsListsGrid[y][x]) {
+//						System.out.println(l);
+//					}
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
 
 				} else {
