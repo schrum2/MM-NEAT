@@ -463,7 +463,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			}
 		}
 
-		// Create all Nodes first
+		// Create all Nodes first to be referenced later using the String name associated with it from the previous loop
 		for(int y = 0; y < levelGrid.length; y++) {
 			for(int x = 0; x < levelGrid[y].length; x++) {
 				if(levelGrid[y][x] != null) {
@@ -481,7 +481,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				if(levelGrid[y][x] != null) {
 					String name = uuidLabels[y][x];
 					Node currentNode = dungeonInstance.getNode(name);
-
+					//adds door to adjacent room, sets up and down doors
 					if(auxiliaryInformation[y][x][INDEX_DOOR_DOWN] > presenceThreshold && y+1 < levelGrid.length && levelGrid[y+1][x] != null) {
 						// Create door down in this room, and door up in connecting room
 						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, levelGrid, uuidLabels, currentNode, x, y + 1, "DOWN", auxiliaryInformation[y][x][INDEX_DOWN_DOOR_TYPE]);
@@ -489,7 +489,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 						Node nodeBelow = dungeonInstance.getNode(nameBelow);
 						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, levelGrid, uuidLabels, nodeBelow, x, y, "UP", auxiliaryInformation[y][x][INDEX_DOWN_DOOR_TYPE]); // Coordinates of this room
 					}
-
+					//adds door to adjacent room, sets up and down doors
 					if(auxiliaryInformation[y][x][INDEX_DOOR_RIGHT] > presenceThreshold && x+1 < levelGrid[y].length && levelGrid[y][x+1] != null) {
 						// Create door right in this room, and door left in connecting room
 						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, levelGrid, uuidLabels, currentNode, x + 1, y, "RIGHT", auxiliaryInformation[y][x][INDEX_RIGHT_DOOR_TYPE]);
