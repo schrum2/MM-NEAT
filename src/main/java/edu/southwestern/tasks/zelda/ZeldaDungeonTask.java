@@ -156,7 +156,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				ArrayList<GridAction> actionSequence;
 				HashSet<ZeldaState> solutionPath = null; 
 				HashSet<ZeldaState> mostRecentVisited; // the last room visited
-				//HashSet<ZeldaState> backTrackSolutionPath = null;
 				//actionSequence = DungeonUtil.makeDungeonPlayable(dungeon);
 				Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
 				ZeldaState startState = new ZeldaState(5, 5, 0, dungeon);
@@ -169,52 +168,42 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						//backTrackSolutionPath = new HashSet<>();
 						ZeldaState currentState = startState;
 						solutionPath.add(currentState);
+						
+						HashSet<Pair<Integer,Integer>> exitedRoomCoordinates = new HashSet<>();
+						Pair<Integer, Integer> prevRoom = null;
 						for(GridAction a : actionSequence) {
 							currentState = (ZeldaState) currentState.getSuccessor(a);
 							solutionPath.add(currentState);
-						}
-
-						HashSet<Pair<Integer,Integer>> visitedRoomCoordinates = new HashSet<>();
-						HashSet<Pair<Integer,Integer>> exitedRoomCoordinates = new HashSet<>();
-						//HashSet<Pair<Integer,Integer>> backTrackRoomCoordinates = new HashSet<>();
-						Pair<Integer, Integer> prevRoom = null;
-						//sets a pair of coordinates for each room found 
-						for(ZeldaState zs: solutionPath) {
-							Pair<Integer,Integer> newRoom = new Pair<>(zs.dX,zs.dY);
-							
-							// Set does not allow duplicates: one Pair per room
-							visitedRoomCoordinates.add(newRoom); //newroom
-							
-
+							Pair<Integer,Integer> newRoom = new Pair<>(currentState.dX,currentState.dY);
 							if(prevRoom!=null&&!prevRoom.equals(newRoom)){ //only ever true when leaving/entering a room
 								exitedRoomCoordinates.add(prevRoom); //add the exited room
 								if(exitedRoomCoordinates.contains(newRoom)) { //check if the room you just entered has already been visited
-									//backTrackRoomCoordinates.add(newRoom);
 									numBackTrackRooms++;
-									System.out.println("new room point: "+newRoom.toString());
-									System.out.println("prev room point: "+prevRoom.toString());
-									System.out.println(exitedRoomCoordinates.toString());
 								}
 							}
 							
 							prevRoom = newRoom;
+							
+						}
+
+						HashSet<Pair<Integer,Integer>> visitedRoomCoordinates = new HashSet<>();
+						//sets a pair of coordinates for each room found 
+						for(ZeldaState zs: solutionPath) {							
+							// Set does not allow duplicates: one Pair per room
+							visitedRoomCoordinates.add(new Pair<>(zs.dX,zs.dY)); 
+							
+
+							
 						}
 						numRoomsTraversed = visitedRoomCoordinates.size(); //sets the number of rooms traversed
-						//numBackTrackRooms = backTrackRoomCoordinates.size();
 						
-						//HashSet<Pair<Integer,Integer>> backTrackRoomCoordinates = new HashSet<>();
-//						for(ZeldaState zs: backTrackSolutionPath) {
-//							// Set does not allow duplicates: one Pair per room
-//							backTrackRoomCoordinates.add(new Pair<>(zs.dX,zs.dY));
-//						}
 						
-						//numBackTrackRooms = backTrackRoomCoordinates.size(); //sets the number of rooms backtracked
 
-						System.out.println("numRoomsTraversed: "+numRoomsTraversed);
-						System.out.println("numBackTrackTraversed: "+numBackTrackRooms);
-						System.out.println("number of exited rooms "+exitedRoomCoordinates.size());
+//						System.out.println("numRoomsTraversed: "+numRoomsTraversed);
+//						System.out.println("numBackTrackTraversed: "+numBackTrackRooms);
+//						System.out.println("number of exited rooms "+exitedRoomCoordinates.size());
 
-						MiscUtil.waitForReadStringAndEnterKeyPress();
+						//MiscUtil.waitForReadStringAndEnterKeyPress();
 						
 					}
 				}catch(IllegalStateException e) {
