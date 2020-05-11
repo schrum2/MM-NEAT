@@ -22,9 +22,10 @@ import me.jakerg.rougelike.RougelikeApp;
  * This class sets various rules for the creation of new rooms in a dungeon
  * given a backbone.
  * 
- * Original ZeldaGraphGrammar paper: Jake Guttierrez, Jacob Schrum. Generative Adversarial 
+ * Original ZeldaGraphGrammar paper: Jake Gutierrez and Jacob Schrum. Generative Adversarial 
  * Network Rooms in Generative Graph Grammar Dungeons for The Legend of Zelda. 
- * DOI: https://people.southwestern.edu/~schrum2/SCOPE/gutierrez.cec2020.pdf
+ * In IEEE Congress on Evolutionary Computation. 2020
+ * https://people.southwestern.edu/~schrum2/SCOPE/gutierrez.cec2020.pdf
  * @author Jake Gutierrez
  *
  */
