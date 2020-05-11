@@ -14,6 +14,8 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.Heuristic;
+import me.jakerg.rougelike.Creature;
+import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.Move;
 import me.jakerg.rougelike.Tile;
 
@@ -260,7 +262,7 @@ public class ZeldaLevelUtil {
 		List<Point> points = fromNode.level.getFloorTiles();
 		Point p = points.get(RandomNumbers.randomGenerator.nextInt(points.size()));
 		// Replace with raft
-		fromNode.level.intLevel.get(p.y).set(p.x, -6); // Magic number! I think -6 is the RAFT. But is this constant defined anywhere?
+		fromNode.level.intLevel.get(p.y).set(p.x, Ladder.INT_CODE); // -6 is the RAFT/Ladder
 		// Place enemies
 		placeReachableEnemies(direction, fromNode.level.intLevel, maxEnemies);
 	}
@@ -344,7 +346,7 @@ public class ZeldaLevelUtil {
 		int r = RandomNumbers.randomGenerator.nextInt(max) + 1; // At least 1: [1,max]
 		for(int i = 0; i < r && points.size() > 0; i++) {
 			Point rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
-			intLevel.get(rP.y).set(rP.x, 2); // Magic number! 2 is for an enemy, but where is this constant defined?
+			intLevel.get(rP.y).set(rP.x, Creature.ENEMY_INT_CODE); // 2 is for an enemy
 		}
 	}
 
@@ -509,7 +511,7 @@ public class ZeldaLevelUtil {
 		    }
 		    while (intLevel.get(y).get(x) != 0);
 			
-			intLevel.get(y).set(x, 2); // Magic number! 2 is the code for enemies, but not sure if/where such a constant is defined
+			intLevel.get(y).set(x, Creature.ENEMY_INT_CODE); // 2 is the code for enemies
 		}
 	}
 

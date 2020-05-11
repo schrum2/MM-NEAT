@@ -8,6 +8,7 @@ import java.util.List;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.random.RandomNumbers;
 import gvgai.tools.IO;
+import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.Tile;
 
 public class ZeldaVGLCUtil {
@@ -259,7 +260,7 @@ public class ZeldaVGLCUtil {
 			// forward, but the zeldaVGLCWaterPMapCode parameter can set it to an arbitrary value.
 			return Parameters.parameters == null ? 5 : Parameters.parameters.integerParameter("zeldaVGLCWaterPMapCode");
 		case '#':
-			return -6; // Ladder block
+			return Ladder.INT_CODE; // Ladder block
 		case 'U':
 			return Tile.MOVABLE_BLOCK_UP.getNum();
 		case 'L':
