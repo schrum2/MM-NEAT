@@ -85,7 +85,7 @@ public abstract class ZeldaDungeon<T> {
 	public static void addAdjacencyIfAvailable(Dungeon dungeonInstance, Level[][] dungeon, String[][] uuidLabels, Node newNode, int x, int y, String direction) {
 		addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x, y, direction, Double.NaN);
 	}
-	
+
 	public static void addAdjacencyIfAvailable(Dungeon dungeonInstance, Level[][] dungeon, String[][] uuidLabels, Node newNode, int x, int y, String direction, double doorEncoding) {
 		int tileToSetTo = Tile.DOOR.getNum(); // Door tile number
 		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length || 
@@ -229,7 +229,7 @@ public abstract class ZeldaDungeon<T> {
 
 		});
 		buttons.add(playDungeon);
-		
+
 		JButton newDungeon = new JButton("Remake Dungeon");
 		newDungeon.setToolTipText("Regenerate the dungeon using the same rooms originally selected.");
 		newDungeon.addActionListener(new ActionListener() {
@@ -578,9 +578,9 @@ public abstract class ZeldaDungeon<T> {
 					}
 					if(found) break;
 				}
-				
+
 			}
-			
+
 			ints.get(y).set(x, Tile.TRIFORCE.getNum());
 			intLevel = ints;
 			if(dungeon != null)
