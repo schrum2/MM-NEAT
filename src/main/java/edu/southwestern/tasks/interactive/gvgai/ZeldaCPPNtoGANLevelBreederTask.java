@@ -551,6 +551,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				if(auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] > presenceThreshold) { // Room presence threshold is 0: TODO: Make parameter?
 					levelAsListsGrid[y][x] = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVectorGrid[y][x]);
 
+					//debug help 
 					System.out.println("first");
 					for(List<Integer> l : levelAsListsGrid[y][x]) {
 						System.out.println(l);
@@ -560,6 +561,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 					//helps to fix invalid door problem 
 					int door = 3;
 					for(List<Integer> l : levelAsListsGrid[y][x]) {
+						//removes all door tiles and replaces them with wall tiles to avoid invalid doors
 						while(l.contains(door)) {
 							//System.out.println(l.indexOf(door));
 							int index = l.indexOf(door);
@@ -568,6 +570,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 						}
 					}
 
+					//debug help
 					System.out.println("second");
 					for(List<Integer> l : levelAsListsGrid[y][x]) {
 						System.out.println(l);
