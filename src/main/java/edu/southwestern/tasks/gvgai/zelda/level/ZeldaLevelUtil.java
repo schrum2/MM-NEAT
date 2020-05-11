@@ -39,14 +39,20 @@ public class ZeldaLevelUtil {
 		}
 		return max;
 	}
-	
+	/**
+	 * Find the list of all visited points
+	 * @param level 2D int array representing the level, passable = 0
+	 * @param startX Where to start on the x axis
+	 * @param startY Where to start on the y axis
+	 * @return visited List of all the points we have visited
+	 */
 	public static LinkedList<Node> uniformCostSearch(int[][] level, int startX, int startY) {
 		// List of all the points we have visited included distance
 		LinkedList<Node> visited = new LinkedList<>();
 	
 		Node source = new Node(startX, startY, 0); // use manhattan
 		source.fScore = 0;
-		
+		//queue for the nodes
 		PriorityQueue<Node> queue = new PriorityQueue<Node>(new Comparator<Node>(){
                          //override compare method
 			         public int compare(Node i, Node j){
@@ -62,20 +68,30 @@ public class ZeldaLevelUtil {
 			Node current = queue.poll();
 			visited.add(current);
 			
-			checkPoint(level, queue, visited, current.point.x + 1, current.point.y, current);
-			checkPoint(level, queue, visited, current.point.x, current.point.y + 1, current);
-			checkPoint(level, queue, visited, current.point.x - 1, current.point.y, current);
-			checkPoint(level, queue, visited, current.point.x, current.point.y - 1, current);
+			checkPoint(level, queue, visited, current.point.x + 1, current.point.y, current); //x up 1
+			checkPoint(level, queue, visited, current.point.x, current.point.y + 1, current); //y up 1
+			checkPoint(level, queue, visited, current.point.x - 1, current.point.y, current); //x down 1
+			checkPoint(level, queue, visited, current.point.x, current.point.y - 1, current); //y down 1
 		}
 
 
-		for(Node n : visited) {
+		for(Node n : visited) { //for each node in visited, print the node
 			System.out.println(n);
 		}
 		
 		return visited;
 	}
-
+	/**
+	 * If the entry is out of bounds, return. If the entry is not zero, return.
+	 * If the node had been visited, return
+	 * If the queue contains the newNode and
+	 * @param level 2D int array representing the level, passable = 0
+	 * @param queue the queue containing the points
+	 * @param visited List of all the points we have visited 
+	 * @param x the x coordinate of the 2D int array
+	 * @param y the y coordinate of the 2D int array
+	 * @param current the current node
+	 */
 	private static void checkPoint(int[][] level, PriorityQueue<Node> queue, LinkedList<Node> visited, int x, int y,
 			Node current) {
 		// TODO Auto-generated method stub
