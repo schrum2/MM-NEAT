@@ -48,7 +48,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 	public static final String[] SENSOR_LABELS = new String[] {"x-coordinate", "y-coordinate", "radius", "bias"};
 	
-	public static final int NUM_NON_LATENT_INPUTS = 6;
+	public static final int NUM_NON_LATENT_INPUTS = 6; //the first six values in the latent vector, they are the 6 directly below this line
 	public static final int INDEX_ROOM_PRESENCE = 0;	// Whether a room is present
 	public static final int INDEX_TRIFORCE_PREFERENCE = 1; // Determines both Triforce location AND starting location
 	public static final int INDEX_DOOR_DOWN = 2; // Determines if there is a door heading down (and thus a door up in the connecting room)
