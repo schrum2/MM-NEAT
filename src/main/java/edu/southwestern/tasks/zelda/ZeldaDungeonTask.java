@@ -186,7 +186,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 							// Set does not allow duplicates: one Pair per room
 							visitedRoomCoordinates.add(newRoom); //newroom
 							
-							if(!newRoom.equals(prevRoom)&&prevRoom!=null){ //only ever true when leaving/entering a room
+							if(prevRoom!=null&&!prevRoom.equals(newRoom)){ //only ever true when leaving/entering a room
 								exitedRoomCoordinates.add(prevRoom); //add the exited room
 								if(exitedRoomCoordinates.contains(newRoom)) { //check if the room you just entered has already been visited
 								numBackTrackRooms++;
@@ -207,6 +207,9 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						//numBackTrackRooms = backTrackRoomCoordinates.size(); //sets the number of rooms backtracked
 
 						System.out.println("numRoomsTraversed: "+numRoomsTraversed);
+						System.out.println("numBackTrackTraversed: "+numBackTrackRooms);
+						System.out.println("number of exited rooms "+exitedRoomCoordinates.size());
+
 						MiscUtil.waitForReadStringAndEnterKeyPress();
 						
 					}
@@ -337,6 +340,5 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
  * @throws NoSuchMethodException
  */
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException{
-		MMNEAT.main("runNumber:0 randomSeed:0 zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false watch:false trials:1 mu:10 makeZeldaLevelsPlayable:false base:zeldagan log:ZeldaGAN-MAPElites saveTo:MAPElites zeldaGANLevelWidthChunks:10 zeldaGANLevelHeightChunks:10 zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth maxGens:5000000 io:true netio:true GANInputSize:10 mating:true fs:false task:edu.southwestern.tasks.zelda.ZeldaGANDungeonTask cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false cleanFrequency:-1 saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.zelda.ZeldaMAPElitesBinLabels".split(" "));
-	}
+		MMNEAT.main("runNumber:0 randomSeed:0 zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false watch:false trials:1 mu:10 makeZeldaLevelsPlayable:false base:zeldagan log:ZeldaGAN-FitnessTemp saveTo:FitnessTemp zeldaGANLevelWidthChunks:10 zeldaGANLevelHeightChunks:10 zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth maxGens:5000000 io:true netio:true GANInputSize:10 mating:true fs:false task:edu.southwestern.tasks.zelda.ZeldaGANDungeonTask cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false cleanFrequency:-1 saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype".split(" "));	}
 }
