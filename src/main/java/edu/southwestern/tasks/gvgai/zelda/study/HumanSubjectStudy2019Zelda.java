@@ -2,8 +2,8 @@ package edu.southwestern.tasks.gvgai.zelda.study;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.LinkedList;
-import java.util.List;
+//import java.util.LinkedList;
+//import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
@@ -13,6 +13,7 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.LevelLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGraphGrammar;
+import edu.southwestern.tasks.gvgai.zelda.level.grammars.HumanSubjectStudy2019Graph;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
@@ -59,18 +60,21 @@ public class HumanSubjectStudy2019Zelda {
 				System.exit(1);
 			}
 		} else if(type.equals(Type.GENERATED_DUNGEON)) {
-			List<ZeldaGrammar> initialList = new LinkedList<>();
-			initialList.add(ZeldaGrammar.START_S);
-			initialList.add(ZeldaGrammar.ENEMY_S);
-			initialList.add(ZeldaGrammar.KEY_S);
-			initialList.add(ZeldaGrammar.LOCK_S);
-			initialList.add(ZeldaGrammar.ENEMY_S);
-			initialList.add(ZeldaGrammar.KEY_S);
-			initialList.add(ZeldaGrammar.PUZZLE_S);
-			initialList.add(ZeldaGrammar.LOCK_S);
-			initialList.add(ZeldaGrammar.ENEMY_S);
-			initialList.add(ZeldaGrammar.TREASURE);
-			Graph<ZeldaGrammar> graph = new Graph<>(initialList);
+			
+			HumanSubjectStudy2019Graph ConstructGraph = new HumanSubjectStudy2019Graph();
+			
+//			List<ZeldaGrammar> initialList = new LinkedList<>();
+//			initialList.add(ZeldaGrammar.START_S);
+//			initialList.add(ZeldaGrammar.ENEMY_S);
+//			initialList.add(ZeldaGrammar.KEY_S);
+//			initialList.add(ZeldaGrammar.LOCK_S);
+//			initialList.add(ZeldaGrammar.ENEMY_S);
+//			initialList.add(ZeldaGrammar.KEY_S);
+//			initialList.add(ZeldaGrammar.PUZZLE_S);
+//			initialList.add(ZeldaGrammar.LOCK_S);
+//			initialList.add(ZeldaGrammar.ENEMY_S);
+//			initialList.add(ZeldaGrammar.TREASURE);
+			Graph<ZeldaGrammar> graph = ConstructGraph.getGraph();
 			
 			ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
 			try {
