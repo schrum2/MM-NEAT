@@ -41,6 +41,7 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
 import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.RougelikeApp;
+import me.jakerg.rougelike.Tile;
 
 
 
@@ -55,7 +56,6 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	public static final String[] SENSOR_LABELS = new String[] {"x-coordinate", "y-coordinate", "radius", "bias"};
 	
 	public static final int NUM_NON_LATENT_INPUTS = 6; //the first six values in the latent vector
-	public static final int NUM_NON_LATENT_INPUTS_ALLOWS_RAFT = 7; //adds an extra value if the level allows rafts
 	public static final int INDEX_ROOM_PRESENCE = 0;	// Whether a room is present
 	public static final int INDEX_TRIFORCE_PREFERENCE = 1; // Determines both Triforce location AND starting location
 	public static final int INDEX_DOOR_DOWN = 2; // Determines if there is a door heading down (and thus a door up in the connecting room)
@@ -167,7 +167,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	}
 	
 	
-	public static int allowRaft() {
+	public static int numberOfNonLatentVectors() {
 		int numOfNonLatentVectors = NUM_NON_LATENT_INPUTS;
 		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
 			numOfNonLatentVectors++;
@@ -192,7 +192,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 	private void resetLatentVectorAndOutputs() {
 		int latentVectorLength = GANProcess.latentVectorLength();
-		outputLabels = new String[latentVectorLength + allowRaft()];
+		outputLabels = new String[latentVectorLength + numberOfNonLatentVectors()];
 		outputLabels[INDEX_ROOM_PRESENCE] = "Room Presence";
 		outputLabels[INDEX_TRIFORCE_PREFERENCE] = "Triforce Preference";
 		outputLabels[INDEX_DOOR_DOWN] = "Door Down";
@@ -202,8 +202,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
 			outputLabels[INDEX_RAFT_PREFERENCE] = "Raft in Level";
 		}
-		for(int i = allowRaft(); i < outputLabels.length; i++) {
-			outputLabels[i] = "LV"+(i-allowRaft());
+		for(int i = numberOfNonLatentVectors(); i < outputLabels.length; i++) {
+			outputLabels[i] = "LV"+(i-numberOfNonLatentVectors());
 		}
 	}
 
@@ -528,9 +528,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		}
 		//places a raft in the level if allowed
 		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
-			Point p = pointForRandomRaft(levelGrid, auxiliaryInformation, RandomNumbers.randomGenerator);
-			Node raftNode = dungeonInstance.getNodeAt(p.x, p.y);
-			raftNode.level.intLevel.get(p.y).set(p.x, Ladder.INT_CODE); // -6 is the RAFT/Ladder
+//			Point p = pointForRandomRaft(levelGrid, auxiliaryInformation, RandomNumbers.randomGenerator);
+//			Node raftNode = dungeonInstance.getNodeAt(p.x, p.y);
+//			raftNode.level.intLevel.get(p.y).set(p.x, Ladder.INT_CODE); // -6 is the RAFT/Ladder
+			//System.out.println(pointForRandomRaft(levelGrid, auxiliaryInformation));
+			placeRandomRaft(levelGrid, dungeonInstance, pointForRandomRaft(levelGrid, auxiliaryInformation), RandomNumbers.randomGenerator);
 		}
 		// name of start room
 		String name = uuidLabels[startRoom.y][startRoom.x].toString();
@@ -542,7 +544,16 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	}
 	
 	
-
+	public static void placeRandomRaft(Level[][] levelGrid, Dungeon dungeon, Point raftRoom, Random rand) {
+//		int xRaft = rand.nextInt(raftRoom.x);
+//		int yRaft = rand.nextInt(raftRoom.y);
+		int xRaft = raftRoom.x;
+		int yRaft = raftRoom.y;
+		System.out.println("xRaft = " + xRaft);
+		System.out.println("yRaft = " + yRaft);
+		Node raftNode = dungeon.getNodeAt(xRaft,yRaft);
+		raftNode.level.intLevel.get(yRaft).set(xRaft, Ladder.INT_CODE); // -6 is the RAFT/Ladder
+	}
 
 	/**
 	 * This method places a raft in a random place in the level if allowed
@@ -551,38 +562,24 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	 * @param rand Random object
 	 * @return THe point that the raft will be placed 
 	 */
-	private static Point pointForRandomRaft(Level[][] levelGrid, double[][][] auxiliaryInformation, Random rand) {
-		int winX = -1;
-		int winY = -1;
-		int startX = -1;
-		int startY = -1;
+	public static Point pointForRandomRaft(Level[][] levelGrid, double[][][] auxiliaryInformation) {
+		int xRaft = -1;
+		int yRaft = -1;
 		double highestActivation = Double.NEGATIVE_INFINITY;
-		double lowestActivation = Double.POSITIVE_INFINITY;
 
-		//these loops find the starting room and the room with the triforce in it to win 
+		//these loops find the room to put the raft in 
 		for(int y = 0; y < levelGrid.length; y++) {
 			for(int x = 0; x < levelGrid[y].length; x++) {
+				System.out.println(auxiliaryInformation[y][x][INDEX_RAFT_PREFERENCE]);
 				if(levelGrid[y][x] != null) {
-					if(auxiliaryInformation[y][x][INDEX_TRIFORCE_PREFERENCE] > highestActivation) {
-						highestActivation = auxiliaryInformation[y][x][INDEX_TRIFORCE_PREFERENCE];
-						//Coordinates of the room with the triforce 
-						winX = x;
-						winY = y;
-					}
-					if(auxiliaryInformation[y][x][INDEX_TRIFORCE_PREFERENCE] < lowestActivation) {
-						lowestActivation = auxiliaryInformation[y][x][INDEX_TRIFORCE_PREFERENCE];
-						//coordinates of the start room 
-						startX = x;
-						startY = y;
+					if(auxiliaryInformation[y][x][INDEX_RAFT_PREFERENCE] > highestActivation) {
+						highestActivation = auxiliaryInformation[y][x][INDEX_RAFT_PREFERENCE];
+						xRaft = x;
+						yRaft = y;
 					}
 				}
 			}
 		}
-		//place raft in random room between the start room and the end room, or sets it to the midpoint if it exceeds the bounds
-		int xRaft = 1;
-		int yRaft = 1;
-		xRaft = (xRaft >= 0 && xRaft <= levelGrid[0].length) ? winX-rand.nextInt(levelGrid[0].length) : (winX-startX)/startX;
-		yRaft = (yRaft >= 0 && yRaft <= levelGrid.length) ? winY-rand.nextInt(levelGrid.length) : (winY-startY)/startY;
 		return new Point(xRaft,yRaft);
 	}
 
@@ -603,11 +600,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			for(int x = 0; x < width; x++) {
 				double[] vector = builder.latentVectorAndMiscDataForPosition(width, height, x, y);
 				double[] latentVector = new double[GANProcess.latentVectorLength()]; // Shorter
-				System.arraycopy(vector, allowRaft(), latentVector, 0, latentVector.length);
+				System.arraycopy(vector, numberOfNonLatentVectors(), latentVector, 0, latentVector.length);
 				latentVectorGrid[y][x] = latentVector;
 
-				double[] auxiliaryInformation = new double[allowRaft()];
-				System.arraycopy(vector, 0, auxiliaryInformation, 0, allowRaft());
+				double[] auxiliaryInformation = new double[numberOfNonLatentVectors()];
+				System.arraycopy(vector, 0, auxiliaryInformation, 0, numberOfNonLatentVectors());
 				presenceAndTriforceGrid[y][x] = auxiliaryInformation;
 			}
 		}
@@ -653,7 +650,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","makeZeldaLevelsPlayable:false","zeldaStudySavesParticipantData:false","showKLOptions:false","trials:1","mu:16","zeldaGANModel:ZeldaFixedDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask","cleanOldNetworks:false", "zeldaGANUsesOriginalEncoding:false","allowMultipleFunctions:true","ftype:0","watch:true","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","zeldaCPPNtoGANAllowsPuzzleDoors:true","zeldaCPPNtoGANAllowsRaft:true","makeZeldaLevelsPlayable:false","zeldaStudySavesParticipantData:false","showKLOptions:false","trials:1","mu:16","zeldaGANModel:ZeldaFixedDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask","cleanOldNetworks:false", "zeldaGANUsesOriginalEncoding:false","allowMultipleFunctions:true","ftype:0","watch:true","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
