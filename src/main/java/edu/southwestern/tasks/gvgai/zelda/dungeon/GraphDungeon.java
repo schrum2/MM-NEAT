@@ -29,6 +29,12 @@ public class GraphDungeon extends ZeldaDungeon<ArrayList<Double>>{
 		ZeldaHumanSubjectStudy2019GraphGrammar grammar = new ZeldaHumanSubjectStudy2019GraphGrammar();
 //		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar(new File("data/VGLC/Zelda/rules/1"));
 		try {
+			/*
+			 * ZeldaDungeonGraphBackBone ConstructGraph = (ZeldaDungeonGraphBackBone) ClassCreation.createObject("zeldaGraphBackBone");
+			graph = ConstructGraph.getInitialGraphBackBone();
+			@SuppressWarnings("unchecked")
+			GraphRuleManager<ZeldaGrammar> grammar = (GraphRuleManager<ZeldaGrammar>) ClassCreation.createObject("zeldaGrammarRules");
+			 */
 			grammar.applyRules(graph);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
