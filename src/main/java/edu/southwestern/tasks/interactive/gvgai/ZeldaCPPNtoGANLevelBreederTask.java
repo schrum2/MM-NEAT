@@ -578,9 +578,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				}
 			}
 		}
-		//place raft in random room between the start room and the end room 
-		int xRaft = winX-rand.nextInt(levelGrid[0].length);
-		int yRaft = winY-rand.nextInt(levelGrid.length);
+		//place raft in random room between the start room and the end room, or sets it to the midpoint if it exceeds the bounds
+		int xRaft = 1;
+		int yRaft = 1;
+		xRaft = (xRaft >= 0 && xRaft <= levelGrid[0].length) ? winX-rand.nextInt(levelGrid[0].length) : (winX-startX)/startX;
+		yRaft = (yRaft >= 0 && yRaft <= levelGrid.length) ? winY-rand.nextInt(levelGrid.length) : (winY-startY)/startY;
 		return new Point(xRaft,yRaft);
 	}
 
@@ -626,12 +628,6 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				if(auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] > presenceThreshold) { // Room presence threshold is 0: TODO: Make parameter?
 					levelAsListsGrid[y][x] = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVectorGrid[y][x]); //generates a single room 
 
-					//debug help 
-					System.out.println("first");
-					for(List<Integer> l : levelAsListsGrid[y][x]) {
-						System.out.println(l);
-					}
-
 					//removes doors that are placed automatically by the GAN 
 					//helps to fix invalid door problem 
 					int door = 3;
@@ -645,12 +641,6 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 						}
 					}
 
-					//debug help
-					System.out.println("second");
-					for(List<Integer> l : levelAsListsGrid[y][x]) {
-						System.out.println(l);
-					}
-//					MiscUtil.waitForReadStringAndEnterKeyPress();
 
 				} else {
 					levelAsListsGrid[y][x] = null;
