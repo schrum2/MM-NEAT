@@ -41,6 +41,7 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
 import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.RougelikeApp;
+import me.jakerg.rougelike.Tile;
 
 
 
@@ -630,7 +631,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 					//removes doors that are placed automatically by the GAN 
 					//helps to fix invalid door problem 
-					int door = 3;
+					int door = Tile.DOOR.getNum(); // Is 3 
 					for(List<Integer> l : levelAsListsGrid[y][x]) {
 						//removes all door tiles and replaces them with wall tiles to avoid invalid doors
 						while(l.contains(door)) {
