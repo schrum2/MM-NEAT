@@ -291,10 +291,13 @@ public class ZeldaLevelUtil {
 
 	private static void placeReachableEnemiesAndRaft(String direction, Dungeon.Node fromNode, int maxEnemies) {
 		// Get random floor tile: TODO: Restrict to reachable floor tiles
-		List<Point> points = fromNode.level.getFloorTiles();
+		if(Parameters.parameters.booleanParameter("firstSoftLockedRoomHasRaft")) {
+			List<Point> points = fromNode.level.getFloorTiles();
 		Point p = points.get(RandomNumbers.randomGenerator.nextInt(points.size()));
 		// Replace with raft
 		fromNode.level.intLevel.get(p.y).set(p.x, Ladder.INT_CODE); // -6 is the RAFT/Ladder
+		}
+		
 		// Place enemies
 		placeReachableEnemies(direction, fromNode.level.intLevel, maxEnemies);
 	}

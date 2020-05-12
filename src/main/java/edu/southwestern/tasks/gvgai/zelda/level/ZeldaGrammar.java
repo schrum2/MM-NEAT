@@ -22,7 +22,7 @@ public enum ZeldaGrammar implements Grammar{
 	BOMB_S("BOMB", "B", true),
 	PUZZLE("Puzzle", "p", false), 
 	PUZZLE_S("PUZZEL", "P", true);
-	
+
 	private final String labelName;
 	private final String levelType;
 	private final boolean isSymbol;

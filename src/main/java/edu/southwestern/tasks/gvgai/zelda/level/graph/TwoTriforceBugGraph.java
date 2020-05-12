@@ -26,7 +26,7 @@ public class TwoTriforceBugGraph implements ZeldaDungeonGraphBackBone {
 		initialList.add(ZeldaGrammar.PUZZLE_S);
 		initialList.add(ZeldaGrammar.LOCK_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
-		//initialList.add(ZeldaGrammar.ENEMY_S);
+		initialList.add(ZeldaGrammar.ENEMY_S);
 		initialList.add(ZeldaGrammar.TREASURE);
 		Graph<ZeldaGrammar> graph = new Graph<>(initialList);
 		return graph;

@@ -20,7 +20,7 @@ public class HumanSubjectStudy2019Graph implements ZeldaDungeonGraphBackBone {
 
 	@Override
 	/**
-	 * Sets the rules used in the HumanSubjectStudy2019
+	 * Sets the back bone used in the HumanSubjectStudy2019
 	 * @return graph the set of rules used in the study
 	 */
 	public Graph<ZeldaGrammar> getInitialGraphBackBone(){
