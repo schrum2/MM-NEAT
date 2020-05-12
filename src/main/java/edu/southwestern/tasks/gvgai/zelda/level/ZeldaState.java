@@ -110,6 +110,8 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		default:
 			assert false : "Illegal action! " + a;
 		}
+		assert newY >= 0;
+		assert newX >= 0;
 		
 		Pair<String, Point> newRoom = dungeon.getNextLevel(currentNode, new Point(newX, newY).toString());
 		if(newRoom != null) {

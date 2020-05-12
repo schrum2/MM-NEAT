@@ -240,8 +240,10 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 						msg += (action[i]) ? Scene.keysStr[i] : "      ";
 				}
 				else
-					msg = "NULL";                    
-				drawString(og, msg, 6, 78, 1);
+					msg = "NULL";    
+				
+				if(Parameters.parameters == null || Parameters.parameters.booleanParameter("drawMarioOverlayText"))
+					drawString(og, msg, 6, 78, 1);
 
 				if (!this.hasFocus() && tick / 4 % 2 == 0) {
 					String msgClick = "CLICK TO PLAY";
