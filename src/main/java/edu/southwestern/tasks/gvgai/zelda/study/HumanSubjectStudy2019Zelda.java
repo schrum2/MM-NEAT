@@ -14,6 +14,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.LevelLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGraphGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.grammars.HumanSubjectStudy2019Graph;
+import edu.southwestern.tasks.gvgai.zelda.level.grammars.ZeldaDungeonGraph;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
@@ -61,23 +62,14 @@ public class HumanSubjectStudy2019Zelda {
 			}
 		} else if(type.equals(Type.GENERATED_DUNGEON)) {
 			
-			HumanSubjectStudy2019Graph ConstructGraph = new HumanSubjectStudy2019Graph();
-			
-//			List<ZeldaGrammar> initialList = new LinkedList<>();
-//			initialList.add(ZeldaGrammar.START_S);
-//			initialList.add(ZeldaGrammar.ENEMY_S);
-//			initialList.add(ZeldaGrammar.KEY_S);
-//			initialList.add(ZeldaGrammar.LOCK_S);
-//			initialList.add(ZeldaGrammar.ENEMY_S);
-//			initialList.add(ZeldaGrammar.KEY_S);
-//			initialList.add(ZeldaGrammar.PUZZLE_S);
-//			initialList.add(ZeldaGrammar.LOCK_S);
-//			initialList.add(ZeldaGrammar.ENEMY_S);
-//			initialList.add(ZeldaGrammar.TREASURE);
-			Graph<ZeldaGrammar> graph = ConstructGraph.getGraph();
-			
-			ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
+//			HumanSubjectStudy2019Graph ConstructGraph = new HumanSubjectStudy2019Graph();
+//
+//			Graph<ZeldaGrammar> graph = ConstructGraph.getGraph();
+
 			try {
+				ZeldaDungeonGraph ConstructGraph = (ZeldaDungeonGraph) ClassCreation.createObject("zeldaGrammarStartGraph");
+				Graph<ZeldaGrammar> graph = ConstructGraph.getGraph();
+				ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
 				grammar.applyRules(graph);
 				LevelLoader loader = (LevelLoader) ClassCreation.createObject("zeldaLevelLoader");
 				dungeonType = loader.getClass().getSimpleName();

@@ -28,6 +28,7 @@ import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
 import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
 import edu.southwestern.tasks.gvgai.zelda.level.SimpleLoader;
+import edu.southwestern.tasks.gvgai.zelda.level.grammars.HumanSubjectStudy2019Graph;
 import edu.southwestern.tasks.interactive.breedesizer.Keyboard;
 import edu.southwestern.tasks.microrts.evaluation.NNComplexEvaluationFunction;
 import edu.southwestern.tasks.microrts.fitness.WinLossFitnessFunction;
@@ -892,6 +893,7 @@ public class Parameters {
 		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
 		// Class options
+		classOptions.add("zeldaGrammarStartGraph", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
 		classOptions.add("imageFitness", RandomImageFitness.class, "Fitness function for evaluating images");
