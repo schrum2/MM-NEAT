@@ -528,8 +528,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		}
 		//places a raft in the level if allowed
 		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
-			Random rand = new Random(levelGrid[0].length);
-			Point p = placeRandomRaft(levelGrid, auxiliaryInformation, rand);
+			Point p = pointForRandomRaft(levelGrid, auxiliaryInformation, RandomNumbers.randomGenerator);
 			Node raftNode = dungeonInstance.getNodeAt(p.x, p.y);
 			raftNode.level.intLevel.get(p.y).set(p.x, Ladder.INT_CODE); // -6 is the RAFT/Ladder
 		}
@@ -552,7 +551,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	 * @param rand Random object
 	 * @return THe point that the raft will be placed 
 	 */
-	private static Point placeRandomRaft(Level[][] levelGrid, double[][][] auxiliaryInformation, Random rand) {
+	private static Point pointForRandomRaft(Level[][] levelGrid, double[][][] auxiliaryInformation, Random rand) {
 		int winX = -1;
 		int winY = -1;
 		int startX = -1;
