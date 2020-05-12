@@ -206,6 +206,12 @@ public class ZeldaLevelUtil {
 		level.get(y).set(x, Tile.KEY.getNum()); 
 	}
 
+	/**
+	 * Places doors appropriately in each room 
+	 * @param direction Direction being moved out of the room
+	 * @param fromNode Allows you to get the level from the current node
+	 * @param tile Specifies the type of tile to be placed 
+	 */
 	public static void setDoors(String direction, Dungeon.Node fromNode, int tile) {
 		List<List<Integer>> level = fromNode.level.intLevel;
 		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
@@ -245,18 +251,23 @@ public class ZeldaLevelUtil {
 				}
 			}
 		}
-		
 		Tile t = Tile.findNum(tile);
 		if(t == null || fromNode.grammar == null) return;
 		// TODO: This is the method of raft placement that assumes it appears in the first soft-locked room. This is restrictive.
 		if(t.equals(Tile.SOFT_LOCK_DOOR) && fromNode.grammar.equals(ZeldaGrammar.ENEMY))
 			placeReachableEnemiesAndRaft(direction, fromNode, 3); // Place a raft and 1-3 enemies in the room
 		else if(!t.equals(Tile.PUZZLE_LOCKED) && fromNode.grammar.equals(ZeldaGrammar.PUZZLE))
-			placePuzzle(direction, level);
+			placePuzzle(direction, level, RandomNumbers.randomGenerator);
 		else if(fromNode.grammar.equals(ZeldaGrammar.KEY))
 			placeReachableEnemies(direction, level, 2); // Place 1 or 2 enemies in the room
 	}
 
+	/**
+	 * 
+	 * @param direction
+	 * @param fromNode
+	 * @param maxEnemies
+	 */
 	private static void placeReachableEnemiesAndRaft(String direction, Dungeon.Node fromNode, int maxEnemies) {
 		// Get random floor tile: TODO: Restrict to reachable floor tiles
 		List<Point> points = fromNode.level.getFloorTiles();
@@ -267,13 +278,19 @@ public class ZeldaLevelUtil {
 		placeReachableEnemies(direction, fromNode.level.intLevel, maxEnemies);
 	}
 
-	public static void placePuzzle(String direction, List<List<Integer>> level) {
+	/**
+	 * This method placed a puzzle block in a random location in the room if there is a puzzle door
+	 * @param direction Direction being moved out of the room
+	 * @param level The dungeon 
+	 * @param rand A random number generator 
+	 */
+	public static void placePuzzle(String direction, List<List<Integer>> level, Random rand) {
 		List<Point> points = getVisitedPoints(direction, level);
 		Move d = Move.getByString(direction).opposite();
 		Point rP = null;
 		System.out.println();
 		points.removeIf(p -> !withinBounds(p, d));
-		rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
+		rP = points.remove(rand.nextInt(points.size()));
 
 		
 		level.get(rP.y).set(rP.x, Tile.FLOOR.getNum());

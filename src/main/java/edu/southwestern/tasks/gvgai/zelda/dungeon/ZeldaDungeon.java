@@ -164,6 +164,7 @@ public abstract class ZeldaDungeon<T> {
 					if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level, RandomNumbers.randomGenerator); // If the door is now locked place a random key in the level
 				}
 			} else { // Assume CPPN provided coded interpretation of door type
+				Random rand = new Random(Double.doubleToLongBits(encodedDoorType)); //declares random variable to produce random placement of special doors
 				//if puzzle doors are not allowed do it the original way that disallows puzzle doors
 				if(!(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsPuzzleDoors"))) {
 					if(encodedDoorType > 0.66) {
@@ -188,10 +189,9 @@ public abstract class ZeldaDungeon<T> {
 					// else remain a plain door
 					//places a puzzle block if the door is a puzzle
 					//player must move the puzzle block to unlock the door
-					if(tile == Tile.PUZZLE_LOCKED.getNum()) ZeldaLevelUtil.placePuzzle(direction, level);
+					if(tile == Tile.PUZZLE_LOCKED.getNum()) ZeldaLevelUtil.placePuzzle(direction, level, rand);
 				}
 				// A random generator based on the CPPN output, so placement will be consistent, for both conditions
-				Random rand = new Random(Double.doubleToLongBits(encodedDoorType));
 				if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level, rand); // If the door is now locked place a random key in the level
 			}
 		}
