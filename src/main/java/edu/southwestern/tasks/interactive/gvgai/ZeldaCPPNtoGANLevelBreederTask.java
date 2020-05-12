@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -37,7 +38,11 @@ import edu.southwestern.tasks.zelda.ZeldaCPPNtoGANVectorMatrixBuilder;
 import edu.southwestern.tasks.zelda.ZeldaGANVectorMatrixBuilder;
 //import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.random.RandomNumbers;
+import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.RougelikeApp;
+
+
 
 /**
  * Uses a CPPN to map a latent vector for a GAN to each cell in a grid,
@@ -49,7 +54,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 	public static final String[] SENSOR_LABELS = new String[] {"x-coordinate", "y-coordinate", "radius", "bias"};
 	
-	//public static final int NUM_NON_LATENT_INPUTS = 6; //the first six values in the latent vector, they are the 6 directly below this line
+	public static final int NUM_NON_LATENT_INPUTS = 6; //the first six values in the latent vector
+	public static final int NUM_NON_LATENT_INPUTS_ALLOWS_RAFT = 7; //adds an extra value if the level allows rafts
 	public static final int INDEX_ROOM_PRESENCE = 0;	// Whether a room is present
 	public static final int INDEX_TRIFORCE_PREFERENCE = 1; // Determines both Triforce location AND starting location
 	public static final int INDEX_DOOR_DOWN = 2; // Determines if there is a door heading down (and thus a door up in the connecting room)
@@ -57,6 +63,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	public static final int INDEX_DOWN_DOOR_TYPE = 4; // Encodes the type of the down door
 	public static final int INDEX_RIGHT_DOOR_TYPE = 5; // Encodes the type of the right door
 	public static final int INDEX_RAFT_PREFERENCE = 6; //determines if there is a raft in placed in the level 
+	
+	
 
 	public static final int PLAY_BUTTON_INDEX = -20;
 	private static final int FILE_LOADER_BUTTON_INDEX = -21;
@@ -160,9 +168,9 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	
 	
 	public static int allowRaft() {
-		int numOfNonLatentVectors = 6;
+		int numOfNonLatentVectors = NUM_NON_LATENT_INPUTS;
 		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
-			numOfNonLatentVectors = 7;
+			numOfNonLatentVectors++;
 		}
 		return numOfNonLatentVectors;
 	}
@@ -428,6 +436,13 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	//		throw new IllegalStateException("There should have been a room that needed adding!");
 	//	}
 
+	/**
+	 * This method decides the room that will be the start, and a room that will hold the triforce
+	 * first is the start, last is the triforce
+	 * @param levelGrid The dungeon 
+	 * @param auxiliaryInformation Tile information
+	 * @return A pair of points with the first being the starting room, and the second being the triforce room 
+	 */
 	private static Pair<Point,Point> decideStartAndTriforceLocations(Level[][] levelGrid, double[][][] auxiliaryInformation) {
 		int triforceX = -1;
 		int triforceY = -1;
@@ -511,9 +526,12 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				}	
 			}
 		}
-		//places a raft in the level 
+		//places a raft in the level if allowed
 		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
-			
+			Random rand = new Random(levelGrid[0].length);
+			Point p = placeRandomRaft(levelGrid, auxiliaryInformation, rand);
+			Node raftNode = dungeonInstance.getNodeAt(p.x, p.y);
+			raftNode.level.intLevel.get(p.y).set(p.x, Ladder.INT_CODE); // -6 is the RAFT/Ladder
 		}
 		// name of start room
 		String name = uuidLabels[startRoom.y][startRoom.x].toString();
@@ -522,8 +540,52 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		dungeonInstance.setLevelThere(uuidLabels);
 
 		return dungeonInstance;
-
 	}
+	
+	
+
+
+	/**
+	 * This method places a raft in a random place in the level if allowed
+	 * @param levelGrid 2D array that represented the level 
+	 * @param auxiliaryInformation Information about tile 
+	 * @param rand Random object
+	 * @return THe point that the raft will be placed 
+	 */
+	private static Point placeRandomRaft(Level[][] levelGrid, double[][][] auxiliaryInformation, Random rand) {
+		int winX = -1;
+		int winY = -1;
+		int startX = -1;
+		int startY = -1;
+		double highestActivation = Double.NEGATIVE_INFINITY;
+		double lowestActivation = Double.POSITIVE_INFINITY;
+
+		//these loops find the starting room and the room with the triforce in it to win 
+		for(int y = 0; y < levelGrid.length; y++) {
+			for(int x = 0; x < levelGrid[y].length; x++) {
+				if(levelGrid[y][x] != null) {
+					if(auxiliaryInformation[y][x][INDEX_TRIFORCE_PREFERENCE] > highestActivation) {
+						highestActivation = auxiliaryInformation[y][x][INDEX_TRIFORCE_PREFERENCE];
+						//Coordinates of the room with the triforce 
+						winX = x;
+						winY = y;
+					}
+					if(auxiliaryInformation[y][x][INDEX_TRIFORCE_PREFERENCE] < lowestActivation) {
+						lowestActivation = auxiliaryInformation[y][x][INDEX_TRIFORCE_PREFERENCE];
+						//coordinates of the start room 
+						startX = x;
+						startY = y;
+					}
+				}
+			}
+		}
+		//place raft in random room between the start room and the end room 
+		int xRaft = winX-rand.nextInt(levelGrid[0].length);
+		int yRaft = winY-rand.nextInt(levelGrid.length);
+		return new Point(xRaft,yRaft);
+	}
+
+
 
 	/**
 	 * CPPN is queried at each point in a 2D grid and generates a latent vector for the GAN to store at that location in an array.

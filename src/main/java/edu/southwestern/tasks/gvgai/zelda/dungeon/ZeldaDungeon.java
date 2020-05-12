@@ -130,7 +130,7 @@ public abstract class ZeldaDungeon<T> {
 		}
 
 	}
-
+	
 	private static void findAndAddGoal(Dungeon dungeon, Node newNode) {
 		List<List<Integer>> ints = newNode.level.intLevel;
 		String name = newNode.name;

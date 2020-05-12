@@ -205,6 +205,7 @@ public class ZeldaLevelUtil {
 		//System.out.println("Put key at " + x + ", " + y);
 		level.get(y).set(x, Tile.KEY.getNum()); 
 	}
+	
 
 	/**
 	 * Places doors appropriately in each room 
