@@ -28,7 +28,7 @@ import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
 import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
 import edu.southwestern.tasks.gvgai.zelda.level.SimpleLoader;
-import edu.southwestern.tasks.gvgai.zelda.level.grammars.HumanSubjectStudy2019Graph;
+import edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph;
 import edu.southwestern.tasks.interactive.breedesizer.Keyboard;
 import edu.southwestern.tasks.microrts.evaluation.NNComplexEvaluationFunction;
 import edu.southwestern.tasks.microrts.fitness.WinLossFitnessFunction;

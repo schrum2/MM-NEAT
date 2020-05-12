@@ -13,8 +13,8 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
 import edu.southwestern.tasks.gvgai.zelda.level.LevelLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGraphGrammar;
-import edu.southwestern.tasks.gvgai.zelda.level.grammars.HumanSubjectStudy2019Graph;
-import edu.southwestern.tasks.gvgai.zelda.level.grammars.ZeldaDungeonGraph;
+import edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph;
+import edu.southwestern.tasks.gvgai.zelda.level.graph.ZeldaDungeonGraph;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
@@ -113,7 +113,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader zeldaGrammarStartGraph:edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph rogueLikeDebugMode:true".split(" "));
 		//MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 	}
 

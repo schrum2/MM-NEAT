@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.gvgai.zelda.level.grammars;
+package edu.southwestern.tasks.gvgai.zelda.level.graph;
 
 import java.util.LinkedList;
 import java.util.List;

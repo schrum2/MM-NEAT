@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.gvgai.zelda.level.grammars;
+package edu.southwestern.tasks.gvgai.zelda.level.graph;
 
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.util.datastructures.Graph;

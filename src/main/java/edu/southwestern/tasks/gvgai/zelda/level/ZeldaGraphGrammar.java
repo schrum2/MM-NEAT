@@ -195,6 +195,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S);
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
+	
 	}
 
 	public ZeldaGraphGrammar(File directory) {
