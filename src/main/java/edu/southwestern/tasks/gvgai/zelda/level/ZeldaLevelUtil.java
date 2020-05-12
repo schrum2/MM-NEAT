@@ -11,6 +11,8 @@ import java.util.Random;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.Heuristic;
@@ -278,6 +280,19 @@ public class ZeldaLevelUtil {
 		// Place enemies
 		placeReachableEnemies(direction, fromNode.level.intLevel, maxEnemies);
 	}
+	
+	
+	public static void placeRandomRaft(List<List<Integer>> level,  Random rand) {
+		int x, y;
+		
+		do {
+			x = rand.nextInt(level.get(0).size());
+			y = rand.nextInt(level.size());
+	    }
+	    while (!Tile.findNum(level.get(y).get(x)).equals(Tile.FLOOR));
+		//System.out.println("Put key at " + x + ", " + y);
+		level.get(y).set(x, Ladder.INT_CODE); 
+	}
 
 	/**
 	 * This method placed a puzzle block in a random location in the room if there is a puzzle door
@@ -289,7 +304,6 @@ public class ZeldaLevelUtil {
 		List<Point> points = getVisitedPoints(direction, level);
 		Move d = Move.getByString(direction).opposite();
 		Point rP = null;
-		System.out.println();
 		points.removeIf(p -> !withinBounds(p, d));
 		rP = points.remove(rand.nextInt(points.size()));
 

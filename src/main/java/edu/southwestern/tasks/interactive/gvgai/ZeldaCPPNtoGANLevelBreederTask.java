@@ -528,11 +528,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		}
 		//places a raft in the level if allowed
 		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
-//			Point p = pointForRandomRaft(levelGrid, auxiliaryInformation, RandomNumbers.randomGenerator);
+
 //			Node raftNode = dungeonInstance.getNodeAt(p.x, p.y);
 //			raftNode.level.intLevel.get(p.y).set(p.x, Ladder.INT_CODE); // -6 is the RAFT/Ladder
-			//System.out.println(pointForRandomRaft(levelGrid, auxiliaryInformation));
-			placeRandomRaft(levelGrid, dungeonInstance, pointForRandomRaft(levelGrid, auxiliaryInformation), RandomNumbers.randomGenerator);
+			//ZeldaLevelUtil.placeRandomRaft(levelGrid, RandomNumbers.randomGenerator);
+			
 		}
 		// name of start room
 		String name = uuidLabels[startRoom.y][startRoom.x].toString();
@@ -542,21 +542,9 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 		return dungeonInstance;
 	}
-	
-	
-	public static void placeRandomRaft(Level[][] levelGrid, Dungeon dungeon, Point raftRoom, Random rand) {
-//		int xRaft = rand.nextInt(raftRoom.x);
-//		int yRaft = rand.nextInt(raftRoom.y);
-		int xRaft = raftRoom.x;
-		int yRaft = raftRoom.y;
-		System.out.println("xRaft = " + xRaft);
-		System.out.println("yRaft = " + yRaft);
-		Node raftNode = dungeon.getNodeAt(xRaft,yRaft);
-		raftNode.level.intLevel.get(yRaft).set(xRaft, Ladder.INT_CODE); // -6 is the RAFT/Ladder
-	}
 
 	/**
-	 * This method places a raft in a random place in the level if allowed
+	 * This method chooses the room that the raft will go in 
 	 * @param levelGrid 2D array that represented the level 
 	 * @param auxiliaryInformation Information about tile 
 	 * @param rand Random object
@@ -570,7 +558,6 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		//these loops find the room to put the raft in 
 		for(int y = 0; y < levelGrid.length; y++) {
 			for(int x = 0; x < levelGrid[y].length; x++) {
-				System.out.println(auxiliaryInformation[y][x][INDEX_RAFT_PREFERENCE]);
 				if(levelGrid[y][x] != null) {
 					if(auxiliaryInformation[y][x][INDEX_RAFT_PREFERENCE] > highestActivation) {
 						highestActivation = auxiliaryInformation[y][x][INDEX_RAFT_PREFERENCE];
