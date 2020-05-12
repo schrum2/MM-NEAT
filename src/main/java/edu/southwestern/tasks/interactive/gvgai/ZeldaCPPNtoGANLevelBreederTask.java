@@ -35,7 +35,7 @@ import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.zelda.ZeldaCPPNtoGANVectorMatrixBuilder;
 import edu.southwestern.tasks.zelda.ZeldaGANVectorMatrixBuilder;
-import edu.southwestern.util.MiscUtil;
+//import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import me.jakerg.rougelike.RougelikeApp;
 
@@ -49,13 +49,14 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 	public static final String[] SENSOR_LABELS = new String[] {"x-coordinate", "y-coordinate", "radius", "bias"};
 	
-	public static final int NUM_NON_LATENT_INPUTS = 6; //the first six values in the latent vector, they are the 6 directly below this line
+	//public static final int NUM_NON_LATENT_INPUTS = 6; //the first six values in the latent vector, they are the 6 directly below this line
 	public static final int INDEX_ROOM_PRESENCE = 0;	// Whether a room is present
 	public static final int INDEX_TRIFORCE_PREFERENCE = 1; // Determines both Triforce location AND starting location
 	public static final int INDEX_DOOR_DOWN = 2; // Determines if there is a door heading down (and thus a door up in the connecting room)
 	public static final int INDEX_DOOR_RIGHT = 3; // Determines if there is a door heading right (and thus a door left in the connecting room)
 	public static final int INDEX_DOWN_DOOR_TYPE = 4; // Encodes the type of the down door
 	public static final int INDEX_RIGHT_DOOR_TYPE = 5; // Encodes the type of the right door
+	public static final int INDEX_RAFT_PREFERENCE = 6; //determines if there is a raft in placed in the level 
 
 	public static final int PLAY_BUTTON_INDEX = -20;
 	private static final int FILE_LOADER_BUTTON_INDEX = -21;
@@ -156,6 +157,15 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		resetLatentVectorAndOutputs();
 		initializationComplete = true;
 	}
+	
+	
+	public static int allowRaft() {
+		int numOfNonLatentVectors = 6;
+		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
+			numOfNonLatentVectors = 7;
+		}
+		return numOfNonLatentVectors;
+	}
 
 	/**
 	 * Set the GAN Process to type ZELDA
@@ -174,15 +184,18 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 	private void resetLatentVectorAndOutputs() {
 		int latentVectorLength = GANProcess.latentVectorLength();
-		outputLabels = new String[latentVectorLength + NUM_NON_LATENT_INPUTS];
+		outputLabels = new String[latentVectorLength + allowRaft()];
 		outputLabels[INDEX_ROOM_PRESENCE] = "Room Presence";
 		outputLabels[INDEX_TRIFORCE_PREFERENCE] = "Triforce Preference";
 		outputLabels[INDEX_DOOR_DOWN] = "Door Down";
 		outputLabels[INDEX_DOOR_RIGHT] = "Door Right";
 		outputLabels[INDEX_DOWN_DOOR_TYPE] = "Down Door Type";
 		outputLabels[INDEX_RIGHT_DOOR_TYPE] = "Right Door Type";
-		for(int i = NUM_NON_LATENT_INPUTS; i < outputLabels.length; i++) {
-			outputLabels[i] = "LV"+(i-NUM_NON_LATENT_INPUTS);
+		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
+			outputLabels[INDEX_RAFT_PREFERENCE] = "Raft in Level";
+		}
+		for(int i = allowRaft(); i < outputLabels.length; i++) {
+			outputLabels[i] = "LV"+(i-allowRaft());
 		}
 	}
 
@@ -473,9 +486,6 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			}
 		}
 
-		//clear all the doors 
-
-
 		for(int y = 0; y < levelGrid.length; y++) {
 			for(int x = 0; x < levelGrid[y].length; x++) {
 				if(levelGrid[y][x] != null) {
@@ -496,11 +506,15 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 						String nameRight = 	uuidLabels[y][x+1];
 						Node nodeRight = dungeonInstance.getNode(nameRight);
 						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, levelGrid, uuidLabels, nodeRight, x, y, "LEFT", auxiliaryInformation[y][x][INDEX_RIGHT_DOOR_TYPE]); // Coordinates of this room
-					}					
+					}	
+					
 				}	
 			}
 		}
-
+		//places a raft in the level 
+		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
+			
+		}
 		// name of start room
 		String name = uuidLabels[startRoom.y][startRoom.x].toString();
 
@@ -526,11 +540,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			for(int x = 0; x < width; x++) {
 				double[] vector = builder.latentVectorAndMiscDataForPosition(width, height, x, y);
 				double[] latentVector = new double[GANProcess.latentVectorLength()]; // Shorter
-				System.arraycopy(vector, NUM_NON_LATENT_INPUTS, latentVector, 0, latentVector.length);
+				System.arraycopy(vector, allowRaft(), latentVector, 0, latentVector.length);
 				latentVectorGrid[y][x] = latentVector;
 
-				double[] auxiliaryInformation = new double[NUM_NON_LATENT_INPUTS];
-				System.arraycopy(vector, 0, auxiliaryInformation, 0, NUM_NON_LATENT_INPUTS);
+				double[] auxiliaryInformation = new double[allowRaft()];
+				System.arraycopy(vector, 0, auxiliaryInformation, 0, allowRaft());
 				presenceAndTriforceGrid[y][x] = auxiliaryInformation;
 			}
 		}
