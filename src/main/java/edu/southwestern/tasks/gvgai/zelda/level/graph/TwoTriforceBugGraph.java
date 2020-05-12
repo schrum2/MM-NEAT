@@ -10,10 +10,10 @@ import edu.southwestern.util.datastructures.Graph;
  * @author Ben Capps
  *
  */
-public class TwoTriforceBugGraph implements ZeldaDungeonGraph {
+public class TwoTriforceBugGraph implements ZeldaDungeonGraphBackBone {
 
 	@Override
-	public Graph<ZeldaGrammar> getGraph() {
+	public Graph<ZeldaGrammar> getInitialGraphBackBone() {
 		List<ZeldaGrammar> initialList = new LinkedList<>();
 		initialList.add(ZeldaGrammar.START_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
@@ -31,5 +31,4 @@ public class TwoTriforceBugGraph implements ZeldaDungeonGraph {
 		Graph<ZeldaGrammar> graph = new Graph<>(initialList);
 		return graph;
 	}
-
 }

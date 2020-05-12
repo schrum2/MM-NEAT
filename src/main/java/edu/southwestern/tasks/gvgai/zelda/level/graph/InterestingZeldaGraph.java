@@ -6,41 +6,11 @@ import java.util.List;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.util.datastructures.Graph;
 
-public class InterestingZeldaGraph implements ZeldaDungeonGraph{
+public class InterestingZeldaGraph implements ZeldaDungeonGraphBackBone{
 
 	@Override
-	public Graph<ZeldaGrammar> getGraph() {
-//		List<ZeldaGrammar> initialList = new LinkedList<>();
-//		initialList.add(ZeldaGrammar.START_S);
-//		initialList.add(ZeldaGrammar.KEY_S);
-//		initialList.add(ZeldaGrammar.KEY_S);
-//
-//		initialList.add(ZeldaGrammar.ENEMY_S);
-//		initialList.add(ZeldaGrammar.ENEMY_S);
-//
-//		initialList.add(ZeldaGrammar.KEY_S);
-//		initialList.add(ZeldaGrammar.ENEMY_S);
-//
-//		initialList.add(ZeldaGrammar.LOCK_S);
-//		
-//		initialList.add(ZeldaGrammar.KEY_S);
-//		
-//		initialList.add(ZeldaGrammar.LOCK_S);
-//		
-//		initialList.add(ZeldaGrammar.ENEMY_S);
-//		
-//		initialList.add(ZeldaGrammar.KEY_S);
-//		
-//		initialList.add(ZeldaGrammar.PUZZLE_S);
-//		
-//		initialList.add(ZeldaGrammar.LOCK_S);
-//		
-//		initialList.add(ZeldaGrammar.ENEMY_S);
-//		
-//		initialList.add(ZeldaGrammar.ENEMY_S);
-//		initialList.add(ZeldaGrammar.TREASURE);
-//		Graph<ZeldaGrammar> graph = new Graph<>(initialList);
-//		return graph;
+	public Graph<ZeldaGrammar> getInitialGraphBackBone() {
+
 		
 		/**
 		 * THIS COMBINATION BREEDS THREE TRIFORCES
@@ -66,5 +36,6 @@ public class InterestingZeldaGraph implements ZeldaDungeonGraph{
 		Graph<ZeldaGrammar> graph = new Graph<>(initialList);
 		return graph;
 	}
+
 
 }

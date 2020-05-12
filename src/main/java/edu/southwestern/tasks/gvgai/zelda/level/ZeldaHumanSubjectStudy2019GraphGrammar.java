@@ -29,8 +29,8 @@ import me.jakerg.rougelike.RougelikeApp;
  * @author Jake Gutierrez
  *
  */
-public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
-	public ZeldaGraphGrammar() {
+public class ZeldaHumanSubjectStudy2019GraphGrammar extends GraphRuleManager<ZeldaGrammar> {
+	public ZeldaHumanSubjectStudy2019GraphGrammar() {
 		super();
 		
 		//if the start room and an enemy room are adjacent, 
@@ -198,7 +198,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 	
 	}
 
-	public ZeldaGraphGrammar(File directory) {
+	public ZeldaHumanSubjectStudy2019GraphGrammar(File directory) {
 		super(directory);
 	}
 
@@ -225,7 +225,7 @@ public class ZeldaGraphGrammar extends GraphRuleManager<ZeldaGrammar> {
 
 		System.out.println("\n-----------------------------\n");
 
-		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
+		ZeldaHumanSubjectStudy2019GraphGrammar grammar = new ZeldaHumanSubjectStudy2019GraphGrammar();
 //		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar(new File("data/VGLC/Zelda/rules/1"));
 		try {
 			grammar.applyRules(graph); //try applying the rules

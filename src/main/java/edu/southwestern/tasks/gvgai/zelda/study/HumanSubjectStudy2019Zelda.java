@@ -10,11 +10,10 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
+import edu.southwestern.tasks.gvgai.zelda.level.GraphRuleManager;
 import edu.southwestern.tasks.gvgai.zelda.level.LevelLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGraphGrammar;
-import edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph;
-import edu.southwestern.tasks.gvgai.zelda.level.graph.ZeldaDungeonGraph;
+import edu.southwestern.tasks.gvgai.zelda.level.graph.ZeldaDungeonGraphBackBone;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
@@ -61,15 +60,13 @@ public class HumanSubjectStudy2019Zelda {
 				System.exit(1);
 			}
 		} else if(type.equals(Type.GENERATED_DUNGEON)) {
-			
-//			HumanSubjectStudy2019Graph ConstructGraph = new HumanSubjectStudy2019Graph();
-//
-//			Graph<ZeldaGrammar> graph = ConstructGraph.getGraph();
 
 			try {
-				ZeldaDungeonGraph ConstructGraph = (ZeldaDungeonGraph) ClassCreation.createObject("zeldaGrammarStartGraph");
-				Graph<ZeldaGrammar> graph = ConstructGraph.getGraph();
-				ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
+				ZeldaDungeonGraphBackBone ConstructGraph = (ZeldaDungeonGraphBackBone) ClassCreation.createObject("zeldaGraphBackBone");
+				Graph<ZeldaGrammar> graph = ConstructGraph.getInitialGraphBackBone();
+				@SuppressWarnings("unchecked")
+				GraphRuleManager<ZeldaGrammar> grammar = (GraphRuleManager<ZeldaGrammar>) ClassCreation.createObject("zeldaGrammarRules");
+				//ZeldaHumanSubjectStudy2019GraphGrammar grammar = new ZeldaHumanSubjectStudy2019GraphGrammar();
 				grammar.applyRules(graph);
 				LevelLoader loader = (LevelLoader) ClassCreation.createObject("zeldaLevelLoader");
 				dungeonType = loader.getClass().getSimpleName();
@@ -113,7 +110,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader zeldaGrammarStartGraph:edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph rogueLikeDebugMode:true".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph rogueLikeDebugMode:true".split(" "));
 		//MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 	}
 

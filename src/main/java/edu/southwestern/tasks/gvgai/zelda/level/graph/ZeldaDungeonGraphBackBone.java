@@ -7,10 +7,12 @@ import edu.southwestern.util.datastructures.Graph;
  * @author Ben Capps
  *
  */
-public interface ZeldaDungeonGraph {
+public interface ZeldaDungeonGraphBackBone {
 	/**
 	 * returns a backbone for a dungeon
 	 * @return ZeldaGraphGrammar the backbone for the dungeon
 	 */
-	public Graph<ZeldaGrammar> getGraph();
+	public Graph<ZeldaGrammar> getInitialGraphBackBone();
+	
+
 }

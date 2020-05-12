@@ -13,17 +13,17 @@ import edu.southwestern.util.datastructures.Graph;
  * Network Rooms in Generative Graph Grammar Dungeons for The Legend of Zelda. 
  * In IEEE Congress on Evolutionary Computation. 2020
  * https://people.southwestern.edu/~schrum2/SCOPE/gutierrez.cec2020.pdf
- * @author Jake Gutierrez
+ * @author
  *
  */
-public class HumanSubjectStudy2019Graph implements ZeldaDungeonGraph {
+public class HumanSubjectStudy2019Graph implements ZeldaDungeonGraphBackBone {
 
 	@Override
 	/**
 	 * Sets the rules used in the HumanSubjectStudy2019
 	 * @return graph the set of rules used in the study
 	 */
-	public Graph<ZeldaGrammar> getGraph(){
+	public Graph<ZeldaGrammar> getInitialGraphBackBone(){
 		List<ZeldaGrammar> initialList = new LinkedList<>();
 		initialList.add(ZeldaGrammar.START_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
@@ -38,5 +38,7 @@ public class HumanSubjectStudy2019Graph implements ZeldaDungeonGraph {
 		Graph<ZeldaGrammar> graph = new Graph<>(initialList);
 		return graph;
 	}
+
+
 
 }

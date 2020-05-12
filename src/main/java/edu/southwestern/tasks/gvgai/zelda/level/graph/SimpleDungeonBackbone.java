@@ -11,14 +11,14 @@ import edu.southwestern.util.datastructures.Graph;
  * 
  *
  */
-public class SimpleDungeonBackbone implements ZeldaDungeonGraph {
+public class SimpleDungeonBackbone implements ZeldaDungeonGraphBackBone {
 
 	@Override
 	/**
 	 * Sets the rules used in the GraphDungeon
 	 * @return graph the set of rules used in GraphDungeon
 	 */
-	public Graph<ZeldaGrammar> getGraph() {
+	public Graph<ZeldaGrammar> getInitialGraphBackBone() {
 		List<ZeldaGrammar> initialList = new LinkedList<>();
 		initialList.add(ZeldaGrammar.START_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
@@ -31,5 +31,6 @@ public class SimpleDungeonBackbone implements ZeldaDungeonGraph {
 		
 		return graph;
 	}
+	
 
 }
