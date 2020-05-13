@@ -764,6 +764,7 @@ public class Parameters {
 		booleanOptions.add("zeldaCPPNtoGANAllowsPuzzleDoors", false, "Allows puzzle doors to be placed in the dungeon");
 		booleanOptions.add("zeldaCPPNtoGANAllowsRaft", false, "Allows a raft to be placed in the dungeon");
 		booleanOptions.add("firstSoftLockedRoomHasRaft", true, "Whether or not the raft is in the first soft-locked room");
+		booleanOptions.add("zeldaIntelligentKeys", false, "Whether or not the raft is in the first soft-locked room");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");

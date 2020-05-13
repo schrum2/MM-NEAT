@@ -318,22 +318,6 @@ public class ZeldaLevelUtil {
 	}
 	
 	/**
-	 * Counts the number of locked doors 
-	 * @param currentNode
-	 * @return
-	 */
-	public static int lockedDoorCountPerRoom(Dungeon.Node currentNode) {
-		int lockedDoors = 0;
-		
-		if(currentNode.reachable) {
-			if(currentNode.hasLock()) {
-				lockedDoors++;
-			}
-		}
-		return lockedDoors;
-	}
-	
-	/**
 	 * Places a raft in a random room in the dungeon when allowed
 	 * @param currentNode The room to place the raft
 	 * @param rand So the raft is placed in a random place in the room, and maintains consistency

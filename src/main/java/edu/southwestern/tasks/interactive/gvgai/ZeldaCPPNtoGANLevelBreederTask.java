@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
@@ -32,13 +33,18 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.zelda.ZeldaCPPNtoGANVectorMatrixBuilder;
 import edu.southwestern.tasks.zelda.ZeldaGANVectorMatrixBuilder;
 //import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.search.AStarSearch;
+import edu.southwestern.util.search.Search;
 import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
@@ -385,6 +391,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				if(Parameters.parameters.booleanParameter("makeZeldaLevelsPlayable")) 
 					DungeonUtil.makeDungeonPlayable(dungeon);
 				
+				
 			} catch(IllegalArgumentException e) {
 				// Make a new room appear in dungeon
 				//enableRoomActivation(auxiliaryInformation);
@@ -544,13 +551,57 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 		dungeonInstance.setCurrentLevel(name);
 		dungeonInstance.setLevelThere(uuidLabels);
+		
+		//places keys intelligently, the number of keys is the same as the number of locked doors. 
+		if(Parameters.parameters.booleanParameter("zeldaIntelligentDoors")) {
+			Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan); //creates AStar searach object
+			ZeldaState startState = new ZeldaState(5, 5, 0, dungeonInstance); 
+			((AStarSearch<GridAction, ZeldaState>) search).search(startState, true, Parameters.parameters.integerParameter("aStarSearchBudget")); //runs the search
+			HashSet<ZeldaState> mostRecentVisited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited(); //a Hashset of all the rooms visited 
+			HashSet<Pair<Integer,Integer>> visitedRoomCoordinates = new HashSet<>(); //gets coordinates of the rooms visited 
+			HashSet<Quad<Integer, Integer, Integer, Integer>> visitedLocations = new HashSet<>();
+			//sets a pair of coordinates for each room found 
+			for(ZeldaState zs: mostRecentVisited) {							
+				// Set does not allow duplicates: one Pair per room
+				visitedRoomCoordinates.add(new Pair<>(zs.dX,zs.dY)); 
+				visitedLocations.add(new Quad<>(zs.dX, zs.dY, zs.x, zs.y));
+			}
+			int numberOfLockedDoors = 0; //returns number of locked doors
+			for(Pair<Integer,Integer> room: visitedRoomCoordinates) {
+				List<List<Integer>> listRoom = levelGrid[room.t2][room.t1].intLevel;
+				if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
+					//checks all the doors in the room to see if they are locked doors, landscape 
+					if(listRoom.get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum()) 
+						numberOfLockedDoors++;
+					if(listRoom.get(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum()) 
+						numberOfLockedDoors++;
+					if(listRoom.get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START).get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum()) 
+						numberOfLockedDoors++;
+					if(listRoom.get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START).get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum()) 
+						numberOfLockedDoors++;
+					
+				}
+				else {
+					//checks all the doors in the room to see if they are locked doors, portrait
+					if(listRoom.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum()) 
+						numberOfLockedDoors++;
+					if(listRoom.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).get(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum()) 
+						numberOfLockedDoors++;
+					if(listRoom.get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum()) 
+						numberOfLockedDoors++;
+					if(listRoom.get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum()) 
+						numberOfLockedDoors++;	
+				}
+			}
+		}
+		//TODO add the keys 
 
 		return dungeonInstance;
 	}
 
 	/**
 	 * This method chooses the room that the raft will go in 
-	 * @param levelGrid 2D array that represented the level 
+	 * @param levelGrid 2D array that represents the level 
 	 * @param auxiliaryInformation Information about tile 
 	 * @param rand Random object
 	 * @return THe point that the raft will be placed 
@@ -642,7 +693,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","zeldaCPPNtoGANAllowsPuzzleDoors:true","zeldaCPPNtoGANAllowsRaft:true","makeZeldaLevelsPlayable:false","zeldaStudySavesParticipantData:false","showKLOptions:false","trials:1","mu:16","zeldaGANModel:ZeldaFixedDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask","cleanOldNetworks:false", "zeldaGANUsesOriginalEncoding:false","allowMultipleFunctions:true","ftype:0","watch:true","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","zeldaCPPNtoGANAllowsPuzzleDoors:true","zeldaCPPNtoGANAllowsRaft:true", "zeldaIntelligentKeys:true", "makeZeldaLevelsPlayable:false","zeldaStudySavesParticipantData:false","showKLOptions:false","trials:1","mu:16","zeldaGANModel:ZeldaFixedDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask","cleanOldNetworks:false", "zeldaGANUsesOriginalEncoding:false","allowMultipleFunctions:true","ftype:0","watch:true","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

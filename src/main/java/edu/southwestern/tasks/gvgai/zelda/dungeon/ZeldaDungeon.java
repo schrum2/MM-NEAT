@@ -131,6 +131,11 @@ public abstract class ZeldaDungeon<T> {
 
 	}
 	
+	/**
+	 * Finds where the triforce is and marks that room as the goal 
+	 * @param dungeon Dungeon instance
+	 * @param newNode Room in dungeon 
+	 */
 	private static void findAndAddGoal(Dungeon dungeon, Node newNode) {
 		List<List<Integer>> ints = newNode.level.intLevel;
 		String name = newNode.name;
