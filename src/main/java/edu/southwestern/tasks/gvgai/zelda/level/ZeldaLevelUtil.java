@@ -11,6 +11,8 @@ import java.util.Random;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.Heuristic;
@@ -233,11 +235,12 @@ public class ZeldaLevelUtil {
 		//System.out.println("Put key at " + x + ", " + y);
 		level.get(y).set(x, Tile.KEY.getNum()); 
 	}
+
 	/**
-	 * set the doors for a room in the dungeon
-	 * @param direction up, down, left, right, the direction the doors face based on the room
-	 * @param fromNode from the room
-	 * @param tile the tile
+	 * Places doors appropriately in each room 
+	 * @param direction Direction being moved out of the room
+	 * @param fromNode Allows you to get the level from the current node
+	 * @param tile Specifies the type of tile to be placed 
 	 */
 	public static void setDoors(String direction, Dungeon.Node fromNode, int tile) {
 		List<List<Integer>> level = fromNode.level.intLevel;
@@ -278,18 +281,23 @@ public class ZeldaLevelUtil {
 				}
 			}
 		}
-		
 		Tile t = Tile.findNum(tile);
 		if(t == null || fromNode.grammar == null) return;
 		// TODO: This is the method of raft placement that assumes it appears in the first soft-locked room. This is restrictive.
 		if(t.equals(Tile.SOFT_LOCK_DOOR) && fromNode.grammar.equals(ZeldaGrammar.ENEMY))
 			placeReachableEnemiesAndRaft(direction, fromNode, 3); // Place a raft and 1-3 enemies in the room
 		else if(!t.equals(Tile.PUZZLE_LOCKED) && fromNode.grammar.equals(ZeldaGrammar.PUZZLE))
-			placePuzzle(direction, level);
+			placePuzzle(direction, level, RandomNumbers.randomGenerator);
 		else if(fromNode.grammar.equals(ZeldaGrammar.KEY))
 			placeReachableEnemies(direction, level, 2); // Place 1 or 2 enemies in the room
 	}
 
+	/**
+	 * 
+	 * @param direction
+	 * @param fromNode
+	 * @param maxEnemies
+	 */
 	private static void placeReachableEnemiesAndRaft(String direction, Dungeon.Node fromNode, int maxEnemies) {
 		// Get random floor tile: TODO: Restrict to reachable floor tiles
 		if(Parameters.parameters.booleanParameter("firstSoftLockedRoomHasRaft")) {
@@ -302,18 +310,32 @@ public class ZeldaLevelUtil {
 		// Place enemies
 		placeReachableEnemies(direction, fromNode.level.intLevel, maxEnemies);
 	}
+	
+	
+	public static void placeRandomRaft(List<List<Integer>> level,  Random rand) {
+		int x, y;
+		
+		do {
+			x = rand.nextInt(level.get(0).size());
+			y = rand.nextInt(level.size());
+	    }
+	    while (!Tile.findNum(level.get(y).get(x)).equals(Tile.FLOOR));
+		//System.out.println("Put key at " + x + ", " + y);
+		level.get(y).set(x, Ladder.INT_CODE); 
+	}
+
 	/**
-	 * places the puzzle room
-	 * @param direction up down left right
-	 * @param level the level
+	 * This method placed a puzzle block in a random location in the room if there is a puzzle door
+	 * @param direction Direction being moved out of the room
+	 * @param level The dungeon 
+	 * @param rand A random number generator 
 	 */
-	public static void placePuzzle(String direction, List<List<Integer>> level) {
+	public static void placePuzzle(String direction, List<List<Integer>> level, Random rand) {
 		List<Point> points = getVisitedPoints(direction, level);
 		Move d = Move.getByString(direction).opposite(); //the move is the opposite to the direction
 		Point rP = null;
-		System.out.println();
 		points.removeIf(p -> !withinBounds(p, d));
-		rP = points.remove(RandomNumbers.randomGenerator.nextInt(points.size()));
+		rP = points.remove(rand.nextInt(points.size()));
 
 		
 		level.get(rP.y).set(rP.x, Tile.FLOOR.getNum());
