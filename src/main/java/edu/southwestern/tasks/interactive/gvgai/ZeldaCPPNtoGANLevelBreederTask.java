@@ -528,11 +528,10 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		}
 		//places a raft in the level if allowed
 		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
-
-//			Node raftNode = dungeonInstance.getNodeAt(p.x, p.y);
-//			raftNode.level.intLevel.get(p.y).set(p.x, Ladder.INT_CODE); // -6 is the RAFT/Ladder
-			//ZeldaLevelUtil.placeRandomRaft(levelGrid, RandomNumbers.randomGenerator);
-			
+			Point p = pointForRandomRaft(levelGrid, auxiliaryInformation); //gets the point for the room to place the raft
+			String name = uuidLabels[p.y][p.x]; //gets the label for the room to get the node
+ 			Node raftRoom = dungeonInstance.getNode(name); //gets the node for that room 
+			ZeldaLevelUtil.placeRandomRaft(raftRoom, RandomNumbers.randomGenerator); //places raft randomly in that room 
 		}
 		// name of start room
 		String name = uuidLabels[startRoom.y][startRoom.x].toString();

@@ -293,10 +293,10 @@ public class ZeldaLevelUtil {
 	}
 
 	/**
-	 * 
-	 * @param direction
-	 * @param fromNode
-	 * @param maxEnemies
+	 * Places enemies and a raft 
+	 * @param direction The way you are traveling as the player
+	 * @param fromNode Where you are coming from 
+	 * @param maxEnemies max number of enemies alloweed in that room 
 	 */
 	private static void placeReachableEnemiesAndRaft(String direction, Dungeon.Node fromNode, int maxEnemies) {
 		// Get random floor tile: TODO: Restrict to reachable floor tiles
@@ -311,17 +311,16 @@ public class ZeldaLevelUtil {
 		placeReachableEnemies(direction, fromNode.level.intLevel, maxEnemies);
 	}
 	
-	
-	public static void placeRandomRaft(List<List<Integer>> level,  Random rand) {
-		int x, y;
-		
-		do {
-			x = rand.nextInt(level.get(0).size());
-			y = rand.nextInt(level.size());
-	    }
-	    while (!Tile.findNum(level.get(y).get(x)).equals(Tile.FLOOR));
-		//System.out.println("Put key at " + x + ", " + y);
-		level.get(y).set(x, Ladder.INT_CODE); 
+	/**
+	 * Places a raft in a random room in the dungeon when allowed
+	 * @param currentNode The room to place the raft
+	 * @param rand So the raft is placed in a random place in the room, and maintains consistency
+	 */
+	public static void placeRandomRaft(Dungeon.Node currentNode,  Random rand) {
+		List<Point> points = currentNode.level.getFloorTiles();
+		Point p = points.get(rand.nextInt(points.size()));
+		// Replace with raft
+		currentNode.level.intLevel.get(p.y).set(p.x, Ladder.INT_CODE); // -6 is the RAFT/Ladder 
 	}
 
 	/**
