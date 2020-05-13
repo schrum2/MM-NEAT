@@ -219,7 +219,8 @@ public class ZeldaLevelUtil {
 
 	/**
 	 * Place a random key tile on the floor
-	 * @param level
+	 * @param level List representation of level
+	 * @param rand Generator determining where key is placed
 	 */
 	public static void placeRandomKey(List<List<Integer>> level, Random rand) {
 		int x, y;
