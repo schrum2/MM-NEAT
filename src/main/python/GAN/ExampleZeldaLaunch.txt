@@ -1,0 +1,1 @@
+python main.py --niter 5000 --nz 10 --json ZeldaDungeon02.json --experiment ZeldaDungeon02_5000_10 --tiles 4
