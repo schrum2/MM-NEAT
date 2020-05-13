@@ -8,7 +8,7 @@ import java.util.List;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.level.PhenotypeLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGraphGrammar;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
 
@@ -26,9 +26,15 @@ public class GraphDungeon extends ZeldaDungeon<ArrayList<Double>>{
 		
 		Graph<ZeldaGrammar> graph = new Graph<>(initialList);
 		
-		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
+		ZeldaHumanSubjectStudy2019GraphGrammar grammar = new ZeldaHumanSubjectStudy2019GraphGrammar();
 //		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar(new File("data/VGLC/Zelda/rules/1"));
 		try {
+			/*
+			 * ZeldaDungeonGraphBackBone ConstructGraph = (ZeldaDungeonGraphBackBone) ClassCreation.createObject("zeldaGraphBackBone");
+			graph = ConstructGraph.getInitialGraphBackBone();
+			@SuppressWarnings("unchecked")
+			GraphRuleManager<ZeldaGrammar> grammar = (GraphRuleManager<ZeldaGrammar>) ClassCreation.createObject("zeldaGrammarRules");
+			 */
 			grammar.applyRules(graph);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block

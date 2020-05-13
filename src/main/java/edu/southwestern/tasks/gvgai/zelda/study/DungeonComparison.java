@@ -11,8 +11,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.GANLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.LevelLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGraphGrammar;
-import edu.southwestern.util.MiscUtil;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.random.RandomNumbers;
 import me.jakerg.csv.SimpleCSV;
@@ -55,7 +54,7 @@ public class DungeonComparison {
 			initialList.add(ZeldaGrammar.TREASURE);
 			Graph<ZeldaGrammar> graph = new Graph<>(initialList);
 			
-			ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
+			ZeldaHumanSubjectStudy2019GraphGrammar grammar = new ZeldaHumanSubjectStudy2019GraphGrammar();
 			
 			cdData = new ChangedDungeonData();
 			

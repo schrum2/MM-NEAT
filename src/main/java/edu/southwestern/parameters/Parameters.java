@@ -28,6 +28,8 @@ import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
 import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
 import edu.southwestern.tasks.gvgai.zelda.level.SimpleLoader;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar;
+import edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph;
 import edu.southwestern.tasks.interactive.breedesizer.Keyboard;
 import edu.southwestern.tasks.microrts.evaluation.NNComplexEvaluationFunction;
 import edu.southwestern.tasks.microrts.fitness.WinLossFitnessFunction;
@@ -759,7 +761,9 @@ public class Parameters {
 		booleanOptions.add("zeldaDungeonRandomFitness", false, "Evolve levels with random fitness");
 		booleanOptions.add("zeldaStudySavesParticipantData", true, "Use with 2019 human subject study");
 		booleanOptions.add("rogueLikeDebugMode", false, "Show helpful information, like locations of secret bombable passages");
-		booleanOptions.add("zeldaCPPNtoGANAllowsPuzzleDoors", true, "Allows puzzle doors to be placed in the dungeon");
+		booleanOptions.add("zeldaCPPNtoGANAllowsPuzzleDoors", false, "Allows puzzle doors to be placed in the dungeon");
+		booleanOptions.add("zeldaCPPNtoGANAllowsRaft", false, "Allows a raft to be placed in the dungeon");
+		booleanOptions.add("firstSoftLockedRoomHasRaft", true, "Whether or not the raft is in the first soft-locked room");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -892,6 +896,8 @@ public class Parameters {
 		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
 		// Class options
+		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
+		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
 		classOptions.add("imageFitness", RandomImageFitness.class, "Fitness function for evaluating images");

@@ -19,7 +19,8 @@ public class GraphGrammar<T extends Grammar> {
 	private Graph<T>.Node end;
 	private Graph<T> graph;
 	
-	private boolean removeEdge = false;
+	// Never used?
+	//private boolean removeEdge = false;
 	
 	public GraphGrammar() {
 		this.graph = new Graph<>();

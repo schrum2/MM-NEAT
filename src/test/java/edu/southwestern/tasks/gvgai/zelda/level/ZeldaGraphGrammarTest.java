@@ -25,7 +25,7 @@ import edu.southwestern.util.random.RandomNumbers;
 public class ZeldaGraphGrammarTest {
 
 	List<ZeldaGrammar> initialList;
-	ZeldaGraphGrammar grammar;
+	ZeldaHumanSubjectStudy2019GraphGrammar grammar;
 	LevelLoader loader;
 	
 	@Before
@@ -47,7 +47,7 @@ public class ZeldaGraphGrammarTest {
 		initialList.add(ZeldaGrammar.ENEMY_S);
 		initialList.add(ZeldaGrammar.TREASURE);
 		
-		grammar = new ZeldaGraphGrammar();
+		grammar = new ZeldaHumanSubjectStudy2019GraphGrammar();
 		
 		loader = new GANLoader();
 		
