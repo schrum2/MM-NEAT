@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -553,7 +554,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		dungeonInstance.setLevelThere(uuidLabels);
 		
 		//places keys intelligently, the number of keys is the same as the number of locked doors. 
-		if(Parameters.parameters.booleanParameter("zeldaIntelligentDoors")) {
+		if(Parameters.parameters.booleanParameter("zeldaIntelligentKeys")) {
 			Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan); //creates AStar searach object
 			ZeldaState startState = new ZeldaState(5, 5, 0, dungeonInstance); 
 			((AStarSearch<GridAction, ZeldaState>) search).search(startState, true, Parameters.parameters.integerParameter("aStarSearchBudget")); //runs the search
@@ -579,7 +580,6 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 						numberOfLockedDoors++;
 					if(listRoom.get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START).get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum()) 
 						numberOfLockedDoors++;
-					
 				}
 				else {
 					//checks all the doors in the room to see if they are locked doors, portrait
@@ -593,8 +593,15 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 						numberOfLockedDoors++;	
 				}
 			}
+			//TODO add the keys to the level 
+			//TODO have to change Random number generator for reproducablity
+			ArrayList<Quad<Integer,Integer,Integer,Integer >> keyPlacements = RandomNumbers.randomChoose(visitedLocations, numberOfLockedDoors, RandomNumbers.randomGenerator);
+			//TODO think about how it affect rafts and triforce
+			for(Quad<Integer,Integer,Integer,Integer > location: keyPlacements) {
+				levelGrid[location.t2][location.t1].intLevel.get(location.t4).set(location.t3, Tile.KEY.getNum());
+			}
 		}
-		//TODO add the keys 
+		
 
 		return dungeonInstance;
 	}
