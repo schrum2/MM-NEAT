@@ -44,6 +44,8 @@ public class ZeldaHumanSubjectStudy2019GraphGrammar extends GraphRuleManager<Zel
 		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
 		graphRules.add(rule);
 		
+		
+		
 		//if the start room and an enemy room are adjacent, then add a soft lock
 		//START is adjacent to ENEMY which is adjacent to ENEMY. 
 		//START off-shoots a SOFT_LOCK_S (which leads to the ENEMY room at the end)

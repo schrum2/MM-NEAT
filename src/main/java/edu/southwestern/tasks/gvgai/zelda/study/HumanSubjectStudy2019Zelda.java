@@ -110,7 +110,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph rogueLikeDebugMode:true firstSoftLockedRoomHasRaft:true".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph zeldaGrammarRules:edu.southwestern.tasks.gvgai.zelda.level.MoreInterestingGraphGrammarRules rogueLikeDebugMode:true firstSoftLockedRoomHasRaft:false".split(" "));
 		//MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 	}
 

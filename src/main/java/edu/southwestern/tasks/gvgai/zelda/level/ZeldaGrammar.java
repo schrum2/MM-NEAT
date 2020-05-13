@@ -3,6 +3,7 @@ package edu.southwestern.tasks.gvgai.zelda.level;
 public enum ZeldaGrammar implements Grammar{
 	DUNGEON_S("Dungeon", "", true),
 	OBSTACLE_S("Obstacle", "", true),
+	
 	KEY("Key", "k", false),
 	KEY_S("KEY", "K", true),
 	LOCK("Lock", "l", false),

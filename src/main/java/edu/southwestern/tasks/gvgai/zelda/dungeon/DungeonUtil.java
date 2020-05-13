@@ -298,6 +298,12 @@ public class DungeonUtil {
 	 */
 	private static Level loadLevel(Graph<? extends Grammar>.Node n, Dungeon dungeon, LevelLoader loader, Tile tile) throws FileNotFoundException {
 		Level level = loadOneLevel(loader);
+		Dungeon.Node dn = dungeon.getNode(n.getID());
+		//System.out.println("NODE ID:" +n.getID());
+
+		//System.out.println("NODE:" +dn);
+		//System.out.println("INTLEVEL: " +level.intLevel);
+
 		switch(n.getData().getLevelType()) {
 		case "n":
 		case "l":
@@ -306,6 +312,13 @@ public class DungeonUtil {
 //			System.out.println("Putting key for: " + n.getID());
 			ZeldaLevelUtil.placeRandomKey(level.intLevel, RandomNumbers.randomGenerator);
 			break;
+		case "r":
+			System.out.println("IT HAS CALLED THE PLACE RANDOM RAFT");
+
+			//if(Parameters.parameters.booleanParameter("firstSoftLockedRoomHasRaft"))
+			ZeldaLevelUtil.placeRandomRaft(level.intLevel, RandomNumbers.randomGenerator);
+			break;
+		
 		case "e":
 			if(tile == null || (tile != null && !tile.equals(Tile.SOFT_LOCK_DOOR)))
 				ZeldaLevelUtil.addRandomEnemy(level.intLevel);
