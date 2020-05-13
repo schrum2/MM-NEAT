@@ -166,8 +166,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		initializationComplete = true;
 	}
 	
-	
-	public static int numberOfNonLatentVectors() {
+	/**
+	 * Returns the number of non latent variables 
+	 * @return
+	 */
+	public static int numberOfNonLatentVariables() {
 		int numOfNonLatentVectors = NUM_NON_LATENT_INPUTS;
 		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
 			numOfNonLatentVectors++;
@@ -192,7 +195,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 	private void resetLatentVectorAndOutputs() {
 		int latentVectorLength = GANProcess.latentVectorLength();
-		outputLabels = new String[latentVectorLength + numberOfNonLatentVectors()];
+		outputLabels = new String[latentVectorLength + numberOfNonLatentVariables()];
 		outputLabels[INDEX_ROOM_PRESENCE] = "Room Presence";
 		outputLabels[INDEX_TRIFORCE_PREFERENCE] = "Triforce Preference";
 		outputLabels[INDEX_DOOR_DOWN] = "Door Down";
@@ -202,8 +205,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
 			outputLabels[INDEX_RAFT_PREFERENCE] = "Raft in Level";
 		}
-		for(int i = numberOfNonLatentVectors(); i < outputLabels.length; i++) {
-			outputLabels[i] = "LV"+(i-numberOfNonLatentVectors());
+		for(int i = numberOfNonLatentVariables(); i < outputLabels.length; i++) {
+			outputLabels[i] = "LV"+(i-numberOfNonLatentVariables());
 		}
 	}
 
@@ -381,6 +384,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				// Use A* to modify the level to make sections passable
 				if(Parameters.parameters.booleanParameter("makeZeldaLevelsPlayable")) 
 					DungeonUtil.makeDungeonPlayable(dungeon);
+				
 			} catch(IllegalArgumentException e) {
 				// Make a new room appear in dungeon
 				//enableRoomActivation(auxiliaryInformation);
@@ -535,6 +539,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		}
 		// name of start room
 		String name = uuidLabels[startRoom.y][startRoom.x].toString();
+		
+		//add code to use place random key 
 
 		dungeonInstance.setCurrentLevel(name);
 		dungeonInstance.setLevelThere(uuidLabels);
@@ -586,11 +592,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			for(int x = 0; x < width; x++) {
 				double[] vector = builder.latentVectorAndMiscDataForPosition(width, height, x, y);
 				double[] latentVector = new double[GANProcess.latentVectorLength()]; // Shorter
-				System.arraycopy(vector, numberOfNonLatentVectors(), latentVector, 0, latentVector.length);
+				System.arraycopy(vector, numberOfNonLatentVariables(), latentVector, 0, latentVector.length);
 				latentVectorGrid[y][x] = latentVector;
 
-				double[] auxiliaryInformation = new double[numberOfNonLatentVectors()];
-				System.arraycopy(vector, 0, auxiliaryInformation, 0, numberOfNonLatentVectors());
+				double[] auxiliaryInformation = new double[numberOfNonLatentVariables()];
+				System.arraycopy(vector, 0, auxiliaryInformation, 0, numberOfNonLatentVariables());
 				presenceAndTriforceGrid[y][x] = auxiliaryInformation;
 			}
 		}

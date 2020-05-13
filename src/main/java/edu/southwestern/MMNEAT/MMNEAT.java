@@ -718,7 +718,7 @@ public class MMNEAT {
 				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
 				if(task instanceof ZeldaCPPNtoGANDungeonTask) {
 					// Evolving CPPNs that create latent vectors that are sent to a GAN
-					setNNInputParameters(ZeldaCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVectors());
+					setNNInputParameters(ZeldaCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
 				}
 			} else if (task instanceof ZeldaLevelTask){ // What is this? Feb 26 2020
 				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
