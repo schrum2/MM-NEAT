@@ -544,7 +544,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			Point p = pointForRandomRaft(levelGrid, auxiliaryInformation); //gets the point for the room to place the raft
 			String name = uuidLabels[p.y][p.x]; //gets the label for the room to get the node
  			Node raftRoom = dungeonInstance.getNode(name); //gets the node for that room 
-			ZeldaLevelUtil.placeRandomRaft(raftRoom, RandomNumbers.randomGenerator); //places raft randomly in that room 
+ 			Random rand = new Random(Double.doubleToLongBits(auxiliaryInformation[p.y][p.x][INDEX_RAFT_PREFERENCE])); //declares random variable to produce random placement of special doors
+			ZeldaLevelUtil.placeRandomRaft(raftRoom, rand); //places raft randomly in that room 
 		}
 		// name of start room
 		String name = uuidLabels[startRoom.y][startRoom.x].toString();
@@ -595,7 +596,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				}
 			}
 			//TODO add the keys to the level 
-			//TODO have to change Random number generator for reproducablity
+			//TODO have to change Random number generator for re-producablity
 			ArrayList<Quad<Integer,Integer,Integer,Integer >> keyPlacements = RandomNumbers.randomChoose(visitedLocations, numberOfLockedDoors, RandomNumbers.randomGenerator);
 			//TODO think about how it affect rafts and triforce
 			for(Quad<Integer,Integer,Integer,Integer > location: keyPlacements) {
