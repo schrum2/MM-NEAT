@@ -26,25 +26,15 @@ public class RaftTestingGraph implements ZeldaDungeonGraphBackBone {
 	public Graph<ZeldaGrammar> getInitialGraphBackBone(){
 		List<ZeldaGrammar> initialList = new LinkedList<>();
 		initialList.add(ZeldaGrammar.START_S);
-
 		initialList.add(ZeldaGrammar.ENEMY_S);
-		
 		initialList.add(ZeldaGrammar.KEY_S);
-		
 		initialList.add(ZeldaGrammar.LOCK_S);
-		
 		initialList.add(ZeldaGrammar.ENEMY_S);
-		
 		initialList.add(ZeldaGrammar.RAFT_S);
-
 		initialList.add(ZeldaGrammar.KEY_S);
-
 		initialList.add(ZeldaGrammar.PUZZLE_S);
-		
 		initialList.add(ZeldaGrammar.LOCK_S);
-		
 		initialList.add(ZeldaGrammar.ENEMY_S);
-		
 		initialList.add(ZeldaGrammar.TREASURE);
 		Graph<ZeldaGrammar> graph = new Graph<>(initialList);
 		return graph;

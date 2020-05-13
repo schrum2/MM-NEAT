@@ -313,9 +313,6 @@ public class DungeonUtil {
 			ZeldaLevelUtil.placeRandomKey(level.intLevel, RandomNumbers.randomGenerator);
 			break;
 		case "r":
-			//System.out.println("IT HAS CALLED THE PLACE RANDOM RAFT");
-
-			//if(Parameters.parameters.booleanParameter("firstSoftLockedRoomHasRaft"))
 			ZeldaLevelUtil.placeRandomRaft(level.intLevel, RandomNumbers.randomGenerator);
 			break;
 		
@@ -729,6 +726,7 @@ public class DungeonUtil {
 						DungeonUtil.setAdjacencies(parentDN, location, p, dNode.name, Tile.WALL.getNum());
 					}
 					levelThere[p.y][p.x] = null;
+
 				}
 			}
 		}
