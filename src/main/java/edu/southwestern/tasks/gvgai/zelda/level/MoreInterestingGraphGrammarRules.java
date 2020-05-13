@@ -43,11 +43,11 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		
-		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.KEY_S);
-		rule.grammar().setStart(ZeldaGrammar.RAFT);
-		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().setEnd(ZeldaGrammar.KEY);
-		graphRules.add(rule);
+//		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.KEY_S);
+//		rule.grammar().setStart(ZeldaGrammar.RAFT);
+//		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+//		rule.grammar().setEnd(ZeldaGrammar.KEY);
+//		graphRules.add(rule);
 	
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S);
 		rule.grammar().setStart(ZeldaGrammar.RAFT);
