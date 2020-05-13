@@ -197,7 +197,7 @@ public abstract class ZeldaDungeon<T> {
 					if(tile == Tile.PUZZLE_LOCKED.getNum()) ZeldaLevelUtil.placePuzzle(direction, level, rand);
 				}
 				// A random generator based on the CPPN output, so placement will be consistent, for both conditions
-				if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level, rand); // If the door is now locked place a random key in the level
+				if(!(Parameters.parameters.booleanParameter("zeldaIntelligentKeys")) && tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level, rand); // If the door is now locked place a random key in the level
 			}
 		}
 		ZeldaLevelUtil.setDoors(direction, node, tile);
