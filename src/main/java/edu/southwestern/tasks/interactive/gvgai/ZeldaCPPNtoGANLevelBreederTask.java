@@ -46,6 +46,7 @@ import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
+import edu.southwestern.util.search.UniformCostSearch;
 import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
@@ -555,10 +556,10 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		
 		//places keys intelligently, the number of keys is the same as the number of locked doors. 
 		if(Parameters.parameters.booleanParameter("zeldaIntelligentKeys")) {
-			Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan); //creates AStar searach object
+			Search<GridAction,ZeldaState> search = new UniformCostSearch<>();
 			ZeldaState startState = new ZeldaState(5, 5, 0, dungeonInstance); 
-			((AStarSearch<GridAction, ZeldaState>) search).search(startState, true, Parameters.parameters.integerParameter("aStarSearchBudget")); //runs the search
-			HashSet<ZeldaState> mostRecentVisited = ((AStarSearch<GridAction, ZeldaState>) search).getVisited(); //a Hashset of all the rooms visited 
+			((UniformCostSearch<GridAction, ZeldaState>) search).search(startState, true, Parameters.parameters.integerParameter("aStarSearchBudget")); //runs the search
+			HashSet<ZeldaState> mostRecentVisited = ((UniformCostSearch<GridAction, ZeldaState>) search).getVisited(); //a Hashset of all the rooms visited 
 			HashSet<Pair<Integer,Integer>> visitedRoomCoordinates = new HashSet<>(); //gets coordinates of the rooms visited 
 			HashSet<Quad<Integer, Integer, Integer, Integer>> visitedLocations = new HashSet<>();
 			//sets a pair of coordinates for each room found 
