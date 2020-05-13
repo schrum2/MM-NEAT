@@ -6,9 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.level.GraphRuleManager;
 import edu.southwestern.tasks.gvgai.zelda.level.PhenotypeLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar;
+import edu.southwestern.tasks.gvgai.zelda.level.graph.ZeldaDungeonGraphBackBone;
+import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
 
@@ -16,25 +19,15 @@ public class GraphDungeon extends ZeldaDungeon<ArrayList<Double>>{
 
 	@Override
 	public Dungeon makeDungeon(ArrayList<ArrayList<Double>> phenotypes, int numRooms) {
-		List<ZeldaGrammar> initialList = new LinkedList<>();
-		initialList.add(ZeldaGrammar.START_S);
-		initialList.add(ZeldaGrammar.ENEMY_S);
-		initialList.add(ZeldaGrammar.KEY_S);
-		initialList.add(ZeldaGrammar.LOCK_S);
-		initialList.add(ZeldaGrammar.ENEMY_S);
-		initialList.add(ZeldaGrammar.TREASURE);
-		
-		Graph<ZeldaGrammar> graph = new Graph<>(initialList);
-		
-		ZeldaHumanSubjectStudy2019GraphGrammar grammar = new ZeldaHumanSubjectStudy2019GraphGrammar();
-//		ZeldaGraphGrammar grammar = new ZeldaGraphGrammar(new File("data/VGLC/Zelda/rules/1"));
+
+		Graph<ZeldaGrammar> graph = null;
 		try {
-			/*
-			 * ZeldaDungeonGraphBackBone ConstructGraph = (ZeldaDungeonGraphBackBone) ClassCreation.createObject("zeldaGraphBackBone");
+			
+			ZeldaDungeonGraphBackBone ConstructGraph = (ZeldaDungeonGraphBackBone) ClassCreation.createObject("zeldaGraphBackBone");
 			graph = ConstructGraph.getInitialGraphBackBone();
 			@SuppressWarnings("unchecked")
 			GraphRuleManager<ZeldaGrammar> grammar = (GraphRuleManager<ZeldaGrammar>) ClassCreation.createObject("zeldaGrammarRules");
-			 */
+			
 			grammar.applyRules(graph);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
