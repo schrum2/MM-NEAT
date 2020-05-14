@@ -564,21 +564,37 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			HashSet<Pair<Integer,Integer>> visitedRoomCoordinates = new HashSet<>(); //gets coordinates of the rooms visited 
 			HashSet<Quad<Integer, Integer, Integer, Integer>> visitedLocations = new HashSet<>(); //gets coordinates of the locations visited in each room 
 			trackRoomsAndLocationsVisited(mostRecentVisited, visitedRoomCoordinates, visitedLocations); //fills hash sets based on the search 
-			int numberOfReachableRooms = numberOfReachableRooms(dungeonInstance);
-			while(visitedRoomCoordinates.size() <= numberOfReachableRooms) {
+//			System.out.println("first mostRecentVisited: " + mostRecentVisited);
+//			System.out.println("first visitedRoomCoordinates: " + visitedRoomCoordinates);
+//			System.out.println("first visitedLocations: " + visitedLocations);
+			int numberOfReachableRooms = numberOfReachableRooms(dungeonInstance); //gets the number of reachable rooms 
+			//System.out.println(" first numberOfReachableRooms: " + numberOfReachableRooms);
+			int numberOfLockedDoors = trackLockedDoors(levelGrid, visitedRoomCoordinates);; //Initializes variable to be updated in the loop
+			System.out.println(" first numberOfLockedDoors: " + numberOfLockedDoors);
+			Random rand = new Random(Double.doubleToLongBits(auxiliaryInformation[0][0][0])); //random instance 
+			placeIntelligentKey(levelGrid, visitedLocations, numberOfLockedDoors, rand); //places keys intelligently in random locations
+			//while(visitedRoomCoordinates.size() <= numberOfReachableRooms) {
+			int max = 0;
+			while(max <= 4) {
 				((UniformCostSearch<GridAction, ZeldaState>) search).search(startState, true, Parameters.parameters.integerParameter("aStarSearchBudget")); //runs the search again if a door is unlocked
 				HashSet<ZeldaState> newMostRecentVisited = ((UniformCostSearch<GridAction, ZeldaState>) search).getVisited(); //a Hash set of all the new rooms visited 
 				HashSet<Pair<Integer,Integer>> newVisitedRoomCoordinates = new HashSet<>(); //gets coordinates of new rooms that were visited on this iteration
-				HashSet<Quad<Integer, Integer, Integer, Integer>> newVisitedLocations = new HashSet<>(); //gets coordinates of the new locations visited in each room
+				HashSet<Quad<Integer, Integer, Integer, Integer>> newVisitedLocations = new HashSet<>(); //gets coordinates of the new locations visited in each room on this iteration 
 				trackRoomsAndLocationsVisited(newMostRecentVisited, newVisitedRoomCoordinates, newVisitedLocations); //fills hash sets based on the search 
-				int numberOfLockedDoors = trackLockedDoors(levelGrid, visitedRoomCoordinates); //gets the number of locked doors in the level that are reachable
-				Random rand = new Random(Double.doubleToLongBits(auxiliaryInformation[0][0][0])); //random instance 
+				numberOfLockedDoors += trackLockedDoors(levelGrid, newVisitedRoomCoordinates); //updates the number of locked doors in the level that are reachable
+				System.out.println(" updated numberOfLockedDoors: " + numberOfLockedDoors);
 				placeIntelligentKey(levelGrid, newVisitedLocations, numberOfLockedDoors, rand); //places keys intelligently in random locations 
 				//updates the sets to reset 
 				visitedRoomCoordinates.addAll(newVisitedRoomCoordinates); 
 				visitedLocations.addAll(newVisitedLocations); 
 				mostRecentVisited.addAll(newMostRecentVisited); 
 				numberOfReachableRooms = numberOfReachableRooms(dungeonInstance); //updates the number of reachable rooms after the search
+//				System.out.println("first mostRecentVisited: " + mostRecentVisited);
+//				System.out.println("first visitedRoomCoordinates: " + visitedRoomCoordinates);
+//				System.out.println("first visitedLocations: " + visitedLocations);
+				//System.out.println("updated numberOfReachableRooms: " + numberOfReachableRooms);
+//				System.out.println("first visitedLocations: " + visitedLocations);
+				max++;
 			} 
 		}
 		return dungeonInstance;
@@ -607,10 +623,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	 * @param rand Random instance 
 	 */
 	private static void placeIntelligentKey(Level[][] levelGrid, HashSet<Quad<Integer, Integer, Integer, Integer>> visitedLocations, int numberOfLockedDoors, Random rand) {
-		//TODO add the keys to the level 
 		ArrayList<Quad<Integer,Integer,Integer,Integer >> keyPlacements = RandomNumbers.randomChoose(visitedLocations, numberOfLockedDoors, rand);
 		//TODO think about how it affect rafts and triforce
 		for(Quad<Integer,Integer,Integer,Integer > location: keyPlacements) {
+//			System.out.println("printing locations for keys");
+//			System.out.println(location);
 			levelGrid[location.t2][location.t1].intLevel.get(location.t4).set(location.t3, Tile.KEY.getNum());
 		}
 	}
