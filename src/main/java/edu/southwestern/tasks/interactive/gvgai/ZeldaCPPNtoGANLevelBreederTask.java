@@ -563,49 +563,85 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			HashSet<ZeldaState> mostRecentVisited = ((UniformCostSearch<GridAction, ZeldaState>) search).getVisited(); //a Hashset of all the rooms visited 
 			HashSet<Pair<Integer,Integer>> visitedRoomCoordinates = new HashSet<>(); //gets coordinates of the rooms visited 
 			HashSet<Quad<Integer, Integer, Integer, Integer>> visitedLocations = new HashSet<>();
-			//sets a pair of coordinates for each room found 
-			for(ZeldaState zs: mostRecentVisited) {							
-				// Set does not allow duplicates: one Pair per room
-				visitedRoomCoordinates.add(new Pair<>(zs.dX,zs.dY)); 
-				visitedLocations.add(new Quad<>(zs.dX, zs.dY, zs.x, zs.y));
-			}
-			int numberOfLockedDoors = 0; //returns number of locked doors
-			for(Pair<Integer,Integer> room: visitedRoomCoordinates) {
-				List<List<Integer>> listRoom = levelGrid[room.t2][room.t1].intLevel;
-				if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
-					//checks all the doors in the room to see if they are locked doors, landscape 
-					if(listRoom.get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum()) 
-						numberOfLockedDoors++;
-					if(listRoom.get(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum()) 
-						numberOfLockedDoors++;
-					if(listRoom.get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START).get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum()) 
-						numberOfLockedDoors++;
-					if(listRoom.get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START).get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum()) 
-						numberOfLockedDoors++;
-				}
-				else {
-					//checks all the doors in the room to see if they are locked doors, portrait
-					if(listRoom.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum()) 
-						numberOfLockedDoors++;
-					if(listRoom.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).get(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum()) 
-						numberOfLockedDoors++;
-					if(listRoom.get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum()) 
-						numberOfLockedDoors++;
-					if(listRoom.get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum()) 
-						numberOfLockedDoors++;	
-				}
-			}
-			//TODO add the keys to the level 
-			//TODO have to change Random number generator for re-producablity
-			ArrayList<Quad<Integer,Integer,Integer,Integer >> keyPlacements = RandomNumbers.randomChoose(visitedLocations, numberOfLockedDoors, RandomNumbers.randomGenerator);
-			//TODO think about how it affect rafts and triforce
-			for(Quad<Integer,Integer,Integer,Integer > location: keyPlacements) {
-				levelGrid[location.t2][location.t1].intLevel.get(location.t4).set(location.t3, Tile.KEY.getNum());
-			}
+			trackRoomsAndLocationsVisited(mostRecentVisited, visitedRoomCoordinates, visitedLocations);
+			int numberOfLockedDoors = trackLockedDoors(levelGrid, visitedRoomCoordinates);
+			Random rand = new Random(Double.doubleToLongBits(auxiliaryInformation[0][0][0]));
+			placeIntelligentKey(levelGrid, visitedLocations, numberOfLockedDoors, rand);
 		}
 		
 
 		return dungeonInstance;
+	}
+
+	/**
+	 * Places a key intelligently in the dungeon based on how many locked doors there are in the dungeon
+	 * @param levelGrid Represents the dungeon
+	 * @param visitedLocations Sets of locations that were visited in A* search
+	 * @param numberOfLockedDoors The number of keys to drop 
+	 * @param rand Random instance 
+	 */
+	private static void placeIntelligentKey(Level[][] levelGrid, HashSet<Quad<Integer, Integer, Integer, Integer>> visitedLocations, int numberOfLockedDoors, Random rand) {
+		//TODO add the keys to the level 
+		ArrayList<Quad<Integer,Integer,Integer,Integer >> keyPlacements = RandomNumbers.randomChoose(visitedLocations, numberOfLockedDoors, rand);
+		//TODO think about how it affect rafts and triforce
+		for(Quad<Integer,Integer,Integer,Integer > location: keyPlacements) {
+			levelGrid[location.t2][location.t1].intLevel.get(location.t4).set(location.t3, Tile.KEY.getNum());
+		}
+	}
+
+	/**
+	 * Returns the number of locked doors that can be reached in a dungeon at this time 
+	 * to decide how many keys to place
+	 * @param levelGrid Represents the dungeon 
+	 * @param visitedRoomCoordinates HashSet of the rooms that were visited 
+	 * @return The number of reachable locked doors 
+	 */
+	private static int trackLockedDoors(Level[][] levelGrid, HashSet<Pair<Integer, Integer>> visitedRoomCoordinates) {
+		int numberOfLockedDoors = 0; //returns number of locked doors
+		for(Pair<Integer,Integer> room: visitedRoomCoordinates) {
+			List<List<Integer>> listRoom = levelGrid[room.t2][room.t1].intLevel;
+			if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
+				//checks all the doors in the room to see if they are locked doors, landscape 
+				if(listRoom.get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum()) 
+					numberOfLockedDoors++;
+				if(listRoom.get(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum()) 
+					numberOfLockedDoors++;
+				if(listRoom.get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START).get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum()) 
+					numberOfLockedDoors++;
+				if(listRoom.get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START).get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum()) 
+					numberOfLockedDoors++;
+			}
+			else {
+				//checks all the doors in the room to see if they are locked doors, portrait
+				if(listRoom.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum()) 
+					numberOfLockedDoors++;
+				if(listRoom.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).get(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum()) 
+					numberOfLockedDoors++;
+				if(listRoom.get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum()) 
+					numberOfLockedDoors++;
+				if(listRoom.get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum()) 
+					numberOfLockedDoors++;	
+			}
+		}
+		return numberOfLockedDoors;
+	}
+
+	/**
+	 * Fills two hash sets, one tracks rooms visited, one tracks the locations in the rooms visited
+	 * @param mostRecentVisited Visited places after search 
+	 * @param visitedRoomCoordinates Pair coordinates for every room visited
+	 * @param visitedLocations Quad coordinates, tells the room and the location within the room  
+	 */
+	private static void trackRoomsAndLocationsVisited(HashSet<ZeldaState> mostRecentVisited,
+			HashSet<Pair<Integer, Integer>> visitedRoomCoordinates,
+			HashSet<Quad<Integer, Integer, Integer, Integer>> visitedLocations) {
+		//sets a pair of coordinates for each room found 
+		for(ZeldaState zs: mostRecentVisited) {							
+			// Set does not allow duplicates: one Pair per room
+			//fills hash sets 
+			visitedRoomCoordinates.add(new Pair<>(zs.dX,zs.dY)); 
+			visitedLocations.add(new Quad<>(zs.dX, zs.dY, zs.x, zs.y));
+		}
 	}
 
 	/**
