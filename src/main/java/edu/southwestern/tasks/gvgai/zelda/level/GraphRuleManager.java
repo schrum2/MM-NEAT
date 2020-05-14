@@ -51,7 +51,9 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		
 		return rules;
 	}
-	
+	public List<GraphRule<T>> getGraphRules(){
+		return graphRules;
+	}
 	public Graph<T> applyRules(Graph<T> graph) throws Exception {
 		boolean symbols = true;
 		int i = 0;

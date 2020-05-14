@@ -73,8 +73,10 @@ public class HumanSubjectStudy2019Zelda {
 				//grammar.saveRules(rules);
 				GraphUtil k = new GraphUtil();
 				k.saveGrammarGraph(graph, "Try this on for size6");
-				//System.out.println("BASQUE IN THE GLORY");
-				//k.printGrammarGraph(graph);
+//				System.out.println("BASQUE IN THE GLORY");
+//				for(GraphRule<ZeldaGrammar> r : grammar.getGraphRules()) {
+//					k.printGrammarGraph(r);
+//				}
 //				GraphRule<ZeldaGrammar> grammr = new GraphRule<>(rules);
 //				System.out.println("Magic happens NOW");
 //				grammr.loadFromFile(rules);

@@ -202,7 +202,7 @@ public class ZeldaHumanSubjectStudy2019GraphGrammar extends GraphRuleManager<Zel
 			//System.out.println(r.getGraph().getNodes().toString());
 			//System.out.println(r.getGraph().getNodes());
 			for(Graph<ZeldaGrammar>.Node k : r.getGraph().getNodes()) {
-				System.out.println(k.adjacencies());
+				System.out.println(k.getData());
 			}
 			System.out.println();
 			//System.out.println("INBETEEEN"+r.getSymbolStart());

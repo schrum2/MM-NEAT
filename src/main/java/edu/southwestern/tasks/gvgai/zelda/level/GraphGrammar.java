@@ -16,6 +16,8 @@ import edu.southwestern.util.datastructures.Graph;
 
 public class GraphGrammar<T extends Grammar> {
 	private Graph<T>.Node start;
+	private Graph<T>.Node addNodeBetween;
+	private Graph<T>.Node addToStart;
 	private Graph<T>.Node end;
 	private Graph<T> graph;
 	
@@ -63,6 +65,7 @@ public class GraphGrammar<T extends Grammar> {
 	public void addNodeToStart(T data) {
 		Graph<T>.Node newNode = graph.addNode(data);
 		graph.addEdge(start, newNode);
+		this.addToStart = newNode;
 	}
 	
 	/**
@@ -74,6 +77,7 @@ public class GraphGrammar<T extends Grammar> {
 		graph.addEdge(start, newNode);
 		if(end != null)
 			graph.addEdge(newNode, end);
+		this.addNodeBetween = newNode;
 	}
 //	public void addEdge(T data) {
 //		Graph<T>.Node newNode = graph.addNode(data);
