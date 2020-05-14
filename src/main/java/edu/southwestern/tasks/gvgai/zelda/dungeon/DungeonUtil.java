@@ -298,7 +298,7 @@ public class DungeonUtil {
 	 */
 	private static Level loadLevel(Graph<? extends Grammar>.Node n, Dungeon dungeon, LevelLoader loader, Tile tile) throws FileNotFoundException {
 		Level level = loadOneLevel(loader);
-		Dungeon.Node dn = dungeon.getNode(n.getID());
+		//Dungeon.Node dn = dungeon.getNode(n.getID());
 		//System.out.println("NODE ID:" +n.getID());
 
 		//System.out.println("NODE:" +dn);

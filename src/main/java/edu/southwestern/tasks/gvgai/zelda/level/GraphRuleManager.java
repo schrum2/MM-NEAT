@@ -30,7 +30,7 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		List<GraphRule<T>> rules = new LinkedList<>();
 		
 		for(GraphRule<T> r : graphRules) {
-			if(r.getSymbolStart().equals(start))
+			if(r.getSymbolStart().equals(start)&&r.getSymbolEnd()==null)
 				rules.add(r);
 		}
 		
@@ -92,7 +92,7 @@ abstract public class GraphRuleManager<T extends Grammar> {
 	
 	public boolean applyRule(Graph<T> graph, Graph<T>.Node node, Graph<T>.Node nextNode, int i) {
 		boolean appliedRule = false;
-		List<GraphRule<T>> rules;
+		List<GraphRule<T>> rules = null;
 		if(nextNode != null)
 			rules = findRule(node.getData(), nextNode.getData());
 		else
