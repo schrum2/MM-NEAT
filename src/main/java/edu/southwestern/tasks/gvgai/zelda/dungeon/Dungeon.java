@@ -32,6 +32,7 @@ public class Dungeon {
 	private int levelWidth = -1;
 	private int levelHeight = -1;
 	private Set<String> levelsVisited;
+	private boolean markReachableRoomsEverCalled = false;
 
 	public Dungeon() {
 		levels = new HashMap<>();
@@ -295,6 +296,7 @@ public class Dungeon {
 	 * in terms of door connectivity (does not consider walls)
 	 */
 	public void markReachableRooms() {
+		markReachableRoomsEverCalled = true;
 		Node startNode = levels.get(currentLevel);
 		startNode.reachable = true; // Obviously reachable
 		Stack<Node> stack = new Stack<Node>();
@@ -315,6 +317,24 @@ public class Dungeon {
 				neighborNode.reachable = true;
 			}
 		}
+	}
+	
+	/**
+	 * Returns the number of rooms that are connected by doorways to the start,
+	 * but does NOT assure that keys exist to get through locked doors, or that
+	 * walls don't impede progress between doors.
+	 * 
+	 * @return Count of rooms that are "reachable" or at least possibly reachable
+	 */
+	public int numberOfPossiblyReachableRooms() {
+		if(!markReachableRoomsEverCalled) markReachableRooms();
+		int numRoomsReachable = 0;
+		for(Node room: getLevels().values()) {
+			if(room.reachable) { 
+				numRoomsReachable++;
+			}
+		}
+		return numRoomsReachable;
 	}
 
 }
