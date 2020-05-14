@@ -10,8 +10,8 @@ import gvgai.tools.IO;
 
 public class LodeRunnerVGLCUtil {
 	public static final String LODE_RUNNER_LEVEL_PATH = "data/VGLC/LodeRunner/Processed/";
-	public static final int LODE_RUNNER_COLUMNS = 31; // This is actually the room height from the original game, since VGLC rotates rooms
-	public static final int LODE_RUNNER_ROWS = 21; // Equivalent to width in original game
+	public static final int LODE_RUNNER_COLUMNS = 32; // This is actually the room height from the original game, since VGLC rotates rooms
+	public static final int LODE_RUNNER_ROWS = 22; // Equivalent to width in original game
 	
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
@@ -28,20 +28,24 @@ public class LodeRunnerVGLCUtil {
 
 	public static List<List<Integer>> convertLodeRunnerLevelFileVGLCtoListOfLevel(String fileName) {
 		String[] level = new IO().readFile(fileName);
-		List<List<Integer>> complete = new ArrayList<>();
+		List<List<Integer>> complete = new ArrayList<>(LODE_RUNNER_ROWS);
 		//loops through levels to get characters and convert them 
 		for(int i = 0; i < LODE_RUNNER_ROWS; i++) { 
-			List<Integer> rowList = new ArrayList<>(LODE_RUNNER_COLUMNS);
-			complete.add(rowList);
+			//List<Integer> rowList = new ArrayList<>();
+			complete.add(new ArrayList<Integer>(LODE_RUNNER_COLUMNS));
 			for(int j = 0; j < LODE_RUNNER_COLUMNS; j++) {
-				int code = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j));
-				System.out.println("i = " + i);
-				System.out.println("j = " + j);
-				System.out.println("code = " + code);
-				rowList.add(code);
-				System.out.println(rowList);
+				int tileCode = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j));
+//				System.out.println("i = " + i);
+//				System.out.println("j = " + j);
+//				System.out.println("code = " + code);
+//				System.out.println("level.length: " + level.length);
+//				rowList.add(code);
+//				System.out.println("rowList = " + rowList);
+				complete.get(i).add(tileCode);
 			}
+			//complete.add(rowList);
 			//complete.get(i).addAll(rowList);
+			
 		}
 		return complete;
 	}
