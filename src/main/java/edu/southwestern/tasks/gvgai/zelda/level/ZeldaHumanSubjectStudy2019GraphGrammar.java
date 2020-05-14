@@ -196,8 +196,12 @@ public class ZeldaHumanSubjectStudy2019GraphGrammar extends GraphRuleManager<Zel
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
 		
-		
-	
+		System.out.println("testing:");
+		for(GraphRule<ZeldaGrammar> r: graphRules) {
+			System.out.println("Start:"+r.getSymbolStart());
+			System.out.println("End:"+r.getSymbolEnd());
+
+		}
 	}
 
 	public ZeldaHumanSubjectStudy2019GraphGrammar(File directory) {

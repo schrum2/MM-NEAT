@@ -69,11 +69,11 @@ public class HumanSubjectStudy2019Zelda {
 				@SuppressWarnings("unchecked")
 				GraphRuleManager<ZeldaGrammar> grammar = (GraphRuleManager<ZeldaGrammar>) ClassCreation.createObject("zeldaGrammarRules");
 				grammar.applyRules(graph);
-				File rules = new File("rulesForGrammar.txt");
-				grammar.saveRules(rules);
-				GraphRule<ZeldaGrammar> grammr = new GraphRule<>(rules);
-				System.out.println("Magic happens NOW");
-				grammr.loadFromFile(rules);
+//				File rules = new File("rulesForGrammar.txt");
+//				grammar.saveRules(rules);
+//				GraphRule<ZeldaGrammar> grammr = new GraphRule<>(rules);
+//				System.out.println("Magic happens NOW");
+//				grammr.loadFromFile(rules);
 				
 				LevelLoader loader = (LevelLoader) ClassCreation.createObject("zeldaLevelLoader");
 				dungeonType = loader.getClass().getSimpleName();
@@ -117,7 +117,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.InterestingZeldaGraph zeldaGrammarRules:edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar firstSoftLockedRoomHasRaft:true".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph zeldaGrammarRules:edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar firstSoftLockedRoomHasRaft:true".split(" "));
 		//MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 	}
 
