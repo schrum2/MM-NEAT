@@ -581,6 +581,32 @@ public abstract class ZeldaDungeon<T> {
 
 		}
 
+		/**
+		 * Is there a locked door in the bottom wall if the given room
+		 * @return If bottom wall has a locked door
+		 */
+		public boolean bottomExitIsLockedDoor() {
+			if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
+				return intLevel.get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START).get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum();
+			} else {
+				return intLevel.get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum();	
+			}
+		}
+			
+		/**
+		 * Is there a locked door in the right wall if the given room
+		 * @return If right wall has a locked door
+		 */
+		public boolean rightExitIsLockedDoor() {
+			if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
+				//checks all the doors in the room to see if they are locked doors, landscape 
+				return intLevel.get(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum();
+			} else {
+				return intLevel.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).get(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum();
+			}
+		}
+
+		
 		public boolean hasTile(Tile t) {
 			int i = t.getNum();
 			for(int y = 0; y < intLevel.size(); y++) {

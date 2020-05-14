@@ -559,13 +559,18 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			while(totalLockedDoors > 0) { // Make sure all locked doors get one key
 				Collections.shuffle(rooms, rand); // Random room order
 				for(Node room: rooms) {
-					if(room.reachable) {
-						Point coords = dungeonInstance.getCoords(room);
+					Point coords = dungeonInstance.getCoords(room);
+					if(room.reachable) { // Put a key into this room
 						// Somewhat arbitrary to pick INDEX_DOWN_DOOR_TYPE, but at least the randomness will depend on CPPN output for that specific room
 						Random roomRand = new Random(Double.doubleToLongBits(auxiliaryInformation[coords.y][coords.x][INDEX_DOWN_DOOR_TYPE]));
 						ZeldaLevelUtil.placeRandomKey(levelGrid[coords.y][coords.x].intLevel, roomRand);
 						totalLockedDoors--;
 						if(totalLockedDoors == 0) break;
+					} else {
+						// See if unreachable room has locked doors. We do not need to place keys for these rooms
+						if(levelGrid[coords.y][coords.x].rightExitIsLockedDoor()) totalLockedDoors--;
+						if(levelGrid[coords.y][coords.x].bottomExitIsLockedDoor()) totalLockedDoors--;
+						if(totalLockedDoors <= 0) break;						
 					}
 				}
 			}
