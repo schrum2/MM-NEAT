@@ -198,8 +198,22 @@ public class ZeldaHumanSubjectStudy2019GraphGrammar extends GraphRuleManager<Zel
 		
 		System.out.println("testing:");
 		for(GraphRule<ZeldaGrammar> r: graphRules) {
-			System.out.println("Start:"+r.getSymbolStart());
-			System.out.println("End:"+r.getSymbolEnd());
+			System.out.println("Start: "+r.getSymbolStart()+", "+r.getSymbolEnd()+" maps to: ");
+			//System.out.println(r.getGraph().getNodes().toString());
+			//System.out.println(r.getGraph().getNodes());
+			for(Graph<ZeldaGrammar>.Node k : r.getGraph().getNodes()) {
+				System.out.println(k.adjacencies());
+			}
+			System.out.println();
+			//System.out.println("INBETEEEN"+r.getSymbolStart());
+//			for(GraphGrammar<ZeldaGrammar> k:) {
+//				System.out.println("Start:"+r.getSymbolStart());
+//				System.out.println("Between:"+r.getSymbolEnd());
+//				System.out.println("End:"+r.getSymbolEnd());
+//
+//			}
+		//	System.out.println("Between:"+r.getSymbolEnd());
+		//	System.out.println("End: "+r.getSymbolEnd());
 
 		}
 	}

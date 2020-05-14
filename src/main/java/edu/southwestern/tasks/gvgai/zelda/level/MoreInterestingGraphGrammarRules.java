@@ -313,6 +313,7 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		
 		//rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
 		graphRules.add(rule);

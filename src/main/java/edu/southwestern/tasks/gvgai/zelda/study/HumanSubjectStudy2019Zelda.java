@@ -73,6 +73,8 @@ public class HumanSubjectStudy2019Zelda {
 				//grammar.saveRules(rules);
 				GraphUtil k = new GraphUtil();
 				k.saveGrammarGraph(graph, "Try this on for size6");
+				//System.out.println("BASQUE IN THE GLORY");
+				//k.printGrammarGraph(graph);
 //				GraphRule<ZeldaGrammar> grammr = new GraphRule<>(rules);
 //				System.out.println("Magic happens NOW");
 //				grammr.loadFromFile(rules);
@@ -121,7 +123,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:6 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.RaftTestingGraph zeldaGrammarRules:edu.southwestern.tasks.gvgai.zelda.level.MoreInterestingGraphGrammarRules firstSoftLockedRoomHasRaft:false".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph zeldaGrammarRules:edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar firstSoftLockedRoomHasRaft:true".split(" "));
 		//MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 	}
 
