@@ -557,20 +557,46 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		
 		//places keys intelligently, the number of keys is the same as the number of locked doors. 
 		if(Parameters.parameters.booleanParameter("zeldaIntelligentKeys")) {
-			Search<GridAction,ZeldaState> search = new UniformCostSearch<>();
-			ZeldaState startState = new ZeldaState(5, 5, 0, dungeonInstance); 
+			Search<GridAction,ZeldaState> search = new UniformCostSearch<>(); //creates search instance
+			ZeldaState startState = new ZeldaState(5, 5, 0, dungeonInstance); //the starting Zelda state from the center of the dungeon
 			((UniformCostSearch<GridAction, ZeldaState>) search).search(startState, true, Parameters.parameters.integerParameter("aStarSearchBudget")); //runs the search
-			HashSet<ZeldaState> mostRecentVisited = ((UniformCostSearch<GridAction, ZeldaState>) search).getVisited(); //a Hashset of all the rooms visited 
+			HashSet<ZeldaState> mostRecentVisited = ((UniformCostSearch<GridAction, ZeldaState>) search).getVisited(); //a Hash set of all the rooms visited 
 			HashSet<Pair<Integer,Integer>> visitedRoomCoordinates = new HashSet<>(); //gets coordinates of the rooms visited 
-			HashSet<Quad<Integer, Integer, Integer, Integer>> visitedLocations = new HashSet<>();
-			trackRoomsAndLocationsVisited(mostRecentVisited, visitedRoomCoordinates, visitedLocations);
-			int numberOfLockedDoors = trackLockedDoors(levelGrid, visitedRoomCoordinates);
-			Random rand = new Random(Double.doubleToLongBits(auxiliaryInformation[0][0][0]));
-			placeIntelligentKey(levelGrid, visitedLocations, numberOfLockedDoors, rand);
+			HashSet<Quad<Integer, Integer, Integer, Integer>> visitedLocations = new HashSet<>(); //gets coordinates of the locations visited in each room 
+			trackRoomsAndLocationsVisited(mostRecentVisited, visitedRoomCoordinates, visitedLocations); //fills hash sets based on the search 
+			int numberOfReachableRooms = numberOfReachableRooms(dungeonInstance);
+			while(visitedRoomCoordinates.size() <= numberOfReachableRooms) {
+				((UniformCostSearch<GridAction, ZeldaState>) search).search(startState, true, Parameters.parameters.integerParameter("aStarSearchBudget")); //runs the search again if a door is unlocked
+				HashSet<ZeldaState> newMostRecentVisited = ((UniformCostSearch<GridAction, ZeldaState>) search).getVisited(); //a Hash set of all the new rooms visited 
+				HashSet<Pair<Integer,Integer>> newVisitedRoomCoordinates = new HashSet<>(); //gets coordinates of new rooms that were visited on this iteration
+				HashSet<Quad<Integer, Integer, Integer, Integer>> newVisitedLocations = new HashSet<>(); //gets coordinates of the new locations visited in each room
+				trackRoomsAndLocationsVisited(newMostRecentVisited, newVisitedRoomCoordinates, newVisitedLocations); //fills hash sets based on the search 
+				int numberOfLockedDoors = trackLockedDoors(levelGrid, visitedRoomCoordinates); //gets the number of locked doors in the level that are reachable
+				Random rand = new Random(Double.doubleToLongBits(auxiliaryInformation[0][0][0])); //random instance 
+				placeIntelligentKey(levelGrid, newVisitedLocations, numberOfLockedDoors, rand); //places keys intelligently in random locations 
+				//updates the sets to reset 
+				visitedRoomCoordinates.addAll(newVisitedRoomCoordinates); 
+				visitedLocations.addAll(newVisitedLocations); 
+				mostRecentVisited.addAll(newMostRecentVisited); 
+				numberOfReachableRooms = numberOfReachableRooms(dungeonInstance); //updates the number of reachable rooms after the search
+			} 
 		}
-		
-
 		return dungeonInstance;
+	}
+
+	/**
+	 * Finds the number of reachable rooms 
+	 * @param dungeonInstance a dungeon 
+	 * @return The number of rooms that are reachable
+	 */
+	private static int numberOfReachableRooms(Dungeon dungeon) {
+		int numberOfReachableRooms = 0;
+		dungeon.markReachableRooms();
+		for(Node room: dungeon.getLevels().values()) {
+			if(room.reachable)
+				numberOfReachableRooms++;
+		}
+		return numberOfReachableRooms;
 	}
 
 	/**
