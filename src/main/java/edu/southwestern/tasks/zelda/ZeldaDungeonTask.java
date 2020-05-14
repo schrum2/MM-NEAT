@@ -145,7 +145,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 									wallTileCount++;
 								} else if(tile.equals(Tile.WATER)) { //if it's a water tile, increase waterTileCount
 									waterTileCount++;
-								}
+								} 
 							}
 						}
 					}
