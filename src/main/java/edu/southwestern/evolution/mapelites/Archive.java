@@ -20,6 +20,10 @@ public class Archive<T> {
 	private boolean saveElites;
 	private String archiveDir;
 
+	public BinLabels getBinLabelsClass() {
+		return mapping;
+	}
+	
 	public Archive(boolean saveElites) {
 		this.saveElites = saveElites;
 		// Initialize mapping
