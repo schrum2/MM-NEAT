@@ -79,7 +79,11 @@ public class DungeonUtil {
 			}
 		}
 	}
-
+	/**
+	 * adds exit points for the agent
+	 * @param points points of the room
+	 * @param intLevel the level represented by a list of lists of integers
+	 */
 	public static void addExitPoints(List<Point> points, List<List<Integer>> intLevel) {
 		Point[] doors = new Point[] {new Point(8, 1), new Point(7, 9), new Point(1, 5), new Point(14, 5)};
 		Point[] dirs = new Point[] {new Point(0, 1), new Point(0, -1), new Point(1, 0), new Point(-1, 0)};
@@ -105,8 +109,8 @@ public class DungeonUtil {
 
 	/**
 	 * Get the items of interest in the level
-	 * @param points
-	 * @param intLevel
+	 * @param points points of the room
+	 * @param intLevel the level represented by a list of lists of integers
 	 */
 	public static void addInterestPoints(List<Point> points, List<List<Integer>> intLevel) {
 		for(int y = 0; y < intLevel.size(); y++) {
@@ -139,7 +143,12 @@ public class DungeonUtil {
 		return getTile(node.getData());
 		
 	}
-	
+	/**
+	 * Get the tile to place the door as represented as an int based on the Grammar label
+	 * includes types for doors (lock, soft-lock, bomb-able, puzzle)
+	 * @param grammar the node's data.
+	 * @return Number representing the tile
+	 */
 	private static <T extends Grammar> int getTile(T grammar) {
 		String type = grammar.getLevelType();
 		switch(type) {
@@ -347,7 +356,11 @@ public class DungeonUtil {
 	
 		return new Level(randomLevel);
 	}
-
+	/**
+	 * "removes" a level by copying it over to a separate list
+	 * @param randomLevel a random level
+	 * @return copy the copied list/removed list
+	 */
 	private static List<List<Integer>> remove(List<List<Integer>> randomLevel) {
 		return ZeldaLevelUtil.copyList(randomLevel);
 	}
@@ -447,7 +460,12 @@ public class DungeonUtil {
 		}
 		return resumePoint;
 	}
-
+	/**
+	 * the low approximation of a straight line between two points
+	 * @param a point a (first point)
+	 * @param b point b (second point)
+	 * @return pointsToFloor the points that represent a line between the points
+	 */
 	public static List<Point> bresenhamLow(Point a, Point b){
 		List<Point> pointsToFloor = new LinkedList<>();
 		int dx = b.x - a.x;
@@ -471,7 +489,12 @@ public class DungeonUtil {
 		}
 		return pointsToFloor;
 	}
-
+	/**
+	 * the high approximation of a straight line between two points
+	 * @param a point a (first point)
+	 * @param b point b (second point)
+	 * @return pointsToFloor the points that represent a line between the points
+	 */
 	private static List<Point> bresenhamHigh(Point a, Point b){
 		List<Point> pointsToFloor = new LinkedList<>();
 		int dx = b.x - a.x;
@@ -495,7 +518,12 @@ public class DungeonUtil {
 		}
 		return pointsToFloor;
 	}
-
+	/**
+	 * the approximation of a straight line between two points
+	 * @param a point a (first point)
+	 * @param b point b (second point)
+	 * @return pointsToFloor the points that represent a line between the points
+	 */
 	private static List<Point> bresenham(Point a, Point b){
 		if (Math.abs(b.y - a.y) < Math.abs(b.x - a.x)) {
 			if(a.x > b.x)
@@ -509,7 +537,11 @@ public class DungeonUtil {
 				return bresenhamHigh(a, b);
 		}
 	}
-
+	/**
+	 * if there is a grammar and the grammar is at the start, then return the start
+	 * @param n the dungeon node
+	 * @return points the points of interest
+	 */
 	private static List<Point> getPointsOfInterest(Dungeon.Node n) {
 		List<List<Integer>> intLevel = n.level.intLevel;
 		List<Point> points = new LinkedList<>();
@@ -613,7 +645,7 @@ public class DungeonUtil {
 				
 				if(!visited.contains(adjNode) && !queue.contains(adjNode)) {
 					Point legal = getNextLegalPoint(p, levelThere);
-					if(legal != null) {
+					if(legal != null) { //begin placing nodes
 						System.out.println("Placing " + adjNode.getID() + " at (" + legal.x + ", " + legal.y + ") " + adjNode.getData().getLabelName());
 						levelThere[legal.y][legal.x] = adjNode.getID();
 						int tile = getTile(node);
@@ -623,12 +655,12 @@ public class DungeonUtil {
 						DungeonUtil.setAdjacencies(dN, p, legal, newNode.name, tile);
 						DungeonUtil.setAdjacencies(newNode, legal, p, dN.name, tile);
 						queue.add(adjNode);
-					} else {
+					} else { //show that you could not legally add points for a node
 						print2DArray(ZeldaLevelUtil.trimLevelThere(levelThere));
 						throw new IllegalStateException("Didn't get a legal point for node: " + adjNode.getID() + " from node : " + node.getID());
 					}
 				} else if (visited.contains(adjNode) && node.getData().isCyclable()
-						&& adjNode.getData().isCyclable()) {
+						&& adjNode.getData().isCyclable()) { //sets adjacencies
 					Dungeon.Node newNode = dungeon.getNode(adjNode.getID());
 					int tile = Tile.DOOR.getNum();
 					Point to = getCoords(levelThere, adjNode.getID());
@@ -644,7 +676,13 @@ public class DungeonUtil {
 		addCycles(dungeon);
 		return dungeon;
 	}
-	
+	/**
+	 * recursively generates a dungeon given a Graph and a LevelLoader
+	 * @param graph the graph backbone
+	 * @param loader the loader you are using
+	 * @return dungeon the generated dungeon
+	 * @throws Exception
+	 */
 	public static <T extends Grammar> Dungeon recursiveGenerateDungeon(Graph<T> graph, LevelLoader loader) throws Exception {
 		try {
 			FileUtils.forceDelete(new File("data/VGLC/Zelda/Dungeons"));
@@ -669,7 +707,20 @@ public class DungeonUtil {
 		return dungeon;
 	}
 	
-	
+	/**
+	 * tries to add a room to a dungeon. returns true if successful
+	 * false otherwise
+	 * @param graph the graph being used
+	 * @param loader the LevelLoader being used
+	 * @param dungeon the dungeon being generated so far
+	 * @param pending a Deque of pairs of Graph Nodes pending to be placed
+	 * @param placed a Stack of Graph nodes that have been placed
+	 * @param levelThere the level there
+	 * @param locations the locations of possible rooms
+	 * @param times every time there is a successful addition
+	 * @return true if successful, false otherwise
+	 * @throws Exception
+	 */
 	private static <T extends Grammar> boolean recursiveGenerateDungeon(Graph<T> graph, LevelLoader loader, Dungeon dungeon,
 			Deque<Pair<Graph<T>.Node, Graph<T>.Node>> pending, Stack<Graph<T>.Node> placed, String[][] levelThere,
 			HashMap<String, Point> locations, int times) throws Exception {
@@ -736,7 +787,11 @@ public class DungeonUtil {
 		 return false;
 		
 	}
-
+	/**
+	 * gets all the nodes of a graph
+	 * @param graph the graph being searched
+	 * @return deque the deque of nodes
+	 */
 	private static <T extends Grammar> Deque<Pair<Graph<T>.Node, Graph<T>.Node>> getGraphNodes(Graph<T> graph) {
 		Deque<Pair<Graph<T>.Node, Graph<T>.Node>> deque = new LinkedList<>();
 		List<String> visited = new LinkedList<>();
@@ -757,7 +812,14 @@ public class DungeonUtil {
 		return deque;
 		
 	}
-
+	/**
+	 * checks a point to see if it has no adjacencies, is not locked, and is cyclable
+	 * @param dungeon the dungeon
+	 * @param x an x coordinate
+	 * @param y a y coordinate
+	 * @param options a stack of all possible points
+	 * @return Point a point that has no adjacencies, is not locked, and is cyclable, or null otherwise
+	 */
 	public static Point pointToCheck(Dungeon dungeon, int x, int y, Stack<Point> options) {
 		Dungeon.Node n = dungeon.getNodeAt(x, y);
 		if(n.hasLock()) return null;
@@ -873,7 +935,11 @@ public class DungeonUtil {
 		
 		return image;
 	}
-
+	/**
+	 * sets the unvisited tiles
+	 * @param visited the HashSet of visited tiles
+	 * @param tile the current tile
+	 */
 	private static void setUnvisited(HashSet<ZeldaState> visited, Tile tile) {
 		for(ZeldaState state : visited) {
 			Tile t = Tile.findNum(state.currentNode.level.intLevel.get(state.y).get(state.x));
@@ -1015,11 +1081,18 @@ public class DungeonUtil {
 
 		ZeldaLevelUtil.setDoors(direction, fromNode, tile);
 	}
-
+	/**
+	 * returns the image of a dungeon
+	 * @param dungeon the dungeon
+	 * @return the image of the dungeon
+	 */
 	public static BufferedImage imageOfDungeon(Dungeon dungeon) {
 		return imageOfDungeon(dungeon, null, null);
 	}
-
+	/**
+	 * views a dungeon
+	 * @param d the dungeon
+	 */
 	public static void viewDungeon(Dungeon d) {
 		DungeonUtil.viewDungeon(d, new HashSet<>(), null);
 	}
