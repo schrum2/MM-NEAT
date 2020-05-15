@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -196,26 +197,7 @@ public class ZeldaHumanSubjectStudy2019GraphGrammar extends GraphRuleManager<Zel
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
 		
-		System.out.println("testing:");
-		for(GraphRule<ZeldaGrammar> r: graphRules) {
-			System.out.println("Start: "+r.getSymbolStart()+", "+r.getSymbolEnd()+" maps to: ");
-			//System.out.println(r.getGraph().getNodes().toString());
-			//System.out.println(r.getGraph().getNodes());
-			for(Graph<ZeldaGrammar>.Node k : r.getGraph().getNodes()) {
-				System.out.println(k.getData());
-			}
-			System.out.println();
-			//System.out.println("INBETEEEN"+r.getSymbolStart());
-//			for(GraphGrammar<ZeldaGrammar> k:) {
-//				System.out.println("Start:"+r.getSymbolStart());
-//				System.out.println("Between:"+r.getSymbolEnd());
-//				System.out.println("End:"+r.getSymbolEnd());
-//
-//			}
-		//	System.out.println("Between:"+r.getSymbolEnd());
-		//	System.out.println("End: "+r.getSymbolEnd());
-
-		}
+		
 	}
 
 	public ZeldaHumanSubjectStudy2019GraphGrammar(File directory) {

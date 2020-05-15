@@ -1,5 +1,7 @@
 package edu.southwestern.tasks.gvgai.zelda.level;
 
+import edu.southwestern.util.datastructures.Graph;
+
 public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019GraphGrammar {
 	public MoreInterestingGraphGrammarRules() {
 		super();
@@ -373,7 +375,24 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
 		graphRules.add(rule);
 		
-		
+		System.out.println("testing:");
+		for(GraphRule<ZeldaGrammar> r: graphRules) {
+			System.out.println("Start: "+r.getSymbolStart()+", "+r.getSymbolEnd()+" maps to: ");
+			System.out.println("Starting");
+			System.out.println(r.getStart().getData());
+			System.out.println("Between Nodes: ");
+			for(Graph<ZeldaGrammar>.Node m : r.getNodesBetween()) {
+				System.out.println(m.getData());
+			}
+			System.out.println("Nodes Added To Start: ");
+			for(Graph<ZeldaGrammar>.Node i : r.getNodesToStart()) {
+				System.out.println(i.getData());
+			}
+			System.out.println("ending:");
+			System.out.println(r.getEnd());
+			System.out.println();
+
+		}
 //		System.out.println("testing:");
 //		for(GraphRule<ZeldaGrammar> r: graphRules) {
 //			System.out.println("Start:"+r.getSymbolStart());

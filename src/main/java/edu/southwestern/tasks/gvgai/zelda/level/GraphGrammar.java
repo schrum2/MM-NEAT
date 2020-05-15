@@ -16,8 +16,8 @@ import edu.southwestern.util.datastructures.Graph;
 
 public class GraphGrammar<T extends Grammar> {
 	private Graph<T>.Node start;
-	private Graph<T>.Node addNodeBetween;
-	private Graph<T>.Node addToStart;
+	private List<Graph<T>.Node> nodesBetween;
+	private List<Graph<T>.Node> nodesToStart;
 	private Graph<T>.Node end;
 	private Graph<T> graph;
 	
@@ -26,6 +26,9 @@ public class GraphGrammar<T extends Grammar> {
 	
 	public GraphGrammar() {
 		this.graph = new Graph<>();
+		this.nodesBetween = new ArrayList<Graph<T>.Node>();
+		this.nodesToStart = new ArrayList<Graph<T>.Node>();
+
 	}
 	
 	public GraphGrammar(T start) {
@@ -65,7 +68,8 @@ public class GraphGrammar<T extends Grammar> {
 	public void addNodeToStart(T data) {
 		Graph<T>.Node newNode = graph.addNode(data);
 		graph.addEdge(start, newNode);
-		this.addToStart = newNode;
+		nodesToStart.add(newNode);
+		//this.addToStart = newNode;
 	}
 	
 	/**
@@ -77,8 +81,19 @@ public class GraphGrammar<T extends Grammar> {
 		graph.addEdge(start, newNode);
 		if(end != null)
 			graph.addEdge(newNode, end);
-		this.addNodeBetween = newNode;
+		nodesBetween.add(newNode);
+		//this.addNodeBetween = newNode;
 	}
+	public List<Graph<T>.Node> getNodesBetween(){
+		return nodesBetween;
+	}
+	public List<Graph<T>.Node> getNodesToStart(){
+		return nodesToStart;
+	}
+//	public Graph<T>.Node getStartNode(){
+//		return start;
+//	}
+	
 //	public void addEdge(T data) {
 //		Graph<T>.Node newNode = graph.addNode(data);
 //		graph.addEdge(start, newNode);
@@ -120,6 +135,9 @@ public class GraphGrammar<T extends Grammar> {
 	
 	public Graph<T>.Node getGraphStart(){
 		return this.start;
+	}
+	public Graph<T>.Node getGraphEnd(){
+		return this.end;
 	}
 	
 	/**
