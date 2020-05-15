@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -195,7 +196,8 @@ public class ZeldaHumanSubjectStudy2019GraphGrammar extends GraphRuleManager<Zel
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S);
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
-	
+		
+		
 	}
 
 	public ZeldaHumanSubjectStudy2019GraphGrammar(File directory) {
