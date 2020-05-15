@@ -34,6 +34,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
+import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
 
@@ -150,13 +151,16 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					if(room.reachable) { // Only include reachable rooms in feature calculation
 						numRoomsReachable++;
 						for(int x = START.x; x < START.x+ROWS; x++) {
-							System.out.println("ROW:"+x);
+							//System.out.println("ROW:"+x);
 							ArrayList<Integer> a = new ArrayList<Integer>();
-							//compareRooms.add(x-START.x, new ArrayList<Integer>());
 							for(int y = START.y; y < START.y+COLUMNS; y++) {
 								Tile tile = room.level.rougeTiles[y][x];
-								//compareRooms.get(x-START.x).add(tile.getNum());
-								a.add(tile.getNum());
+								if(tile.getNum()==6||tile.getNum()==Ladder.INT_CODE||tile.getNum()==2) { //2 is the enemy code?
+									a.add(Tile.FLOOR.getNum());
+								}else {
+									a.add(tile.getNum());
+								}
+								
 								
 								
 								if(tile.equals(Tile.WALL)) { //if it's a wall tile, increase wallTileCount
