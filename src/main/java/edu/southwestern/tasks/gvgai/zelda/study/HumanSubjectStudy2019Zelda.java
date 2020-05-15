@@ -69,10 +69,10 @@ public class HumanSubjectStudy2019Zelda {
 				@SuppressWarnings("unchecked")
 				GraphRuleManager<ZeldaGrammar> grammar = (GraphRuleManager<ZeldaGrammar>) ClassCreation.createObject("zeldaGrammarRules");
 				grammar.applyRules(graph);
-				File rules = new File("rulesForGrammar for origin");
+				//File rules = new File("rulesForGrammar for origin");
 				//grammar.saveRules(rules);
-				GraphUtil k = new GraphUtil();
-				k.saveGrammarGraph(graph, "Try this on for size6");
+				//GraphUtil k = new GraphUtil();
+				//k.saveGrammarGraph(graph, "Try this on for size6");
 //				System.out.println("BASQUE IN THE GLORY");
 //				for(GraphRule<ZeldaGrammar> r : grammar.getGraphRules()) {
 //					k.printGrammarGraph(r);
