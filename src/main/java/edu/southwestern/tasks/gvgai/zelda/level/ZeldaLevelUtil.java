@@ -11,6 +11,7 @@ import java.util.Random;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.Heuristic;
@@ -25,7 +26,7 @@ import me.jakerg.rougelike.Tile;
  *
  */
 public class ZeldaLevelUtil {
-	
+
 	public static final int FAR_LONG_EDGE_DOOR_COORDINATE = 14;
 	public static final int FAR_SHORT_EDGE_DOOR_COORDINATE = 9;
 	public static final int CLOSE_EDGE_DOOR_COORDINATE = 1;
@@ -33,7 +34,7 @@ public class ZeldaLevelUtil {
 	public static final int BIG_DOOR_COORDINATE_END = 6;
 	public static final int SMALL_DOOR_COORDINATE_START = 7;
 	public static final int SMALL_DOOR_COORDINATE_END = 8;
-	
+
 	/**
 	 * Find the longest shortest path distance given a 2D array and start points
 	 * @param level 2D int array representing the level, passable = 0
@@ -60,25 +61,25 @@ public class ZeldaLevelUtil {
 	public static LinkedList<Node> uniformCostSearch(int[][] level, int startX, int startY) {
 		// List of all the points we have visited included distance
 		LinkedList<Node> visited = new LinkedList<>();
-	
+
 		Node source = new Node(startX, startY, 0); // use manhattan
 		source.fScore = 0;
 		//queue for the nodes
 		PriorityQueue<Node> queue = new PriorityQueue<Node>(new Comparator<Node>(){
-                         //override compare method
-			         public int compare(Node i, Node j){
-			        	 return (int) Math.signum(i.fScore - j.fScore);
-			         }
-                }
-		);	
-		
+			//override compare method
+			public int compare(Node i, Node j){
+				return (int) Math.signum(i.fScore - j.fScore);
+			}
+		}
+				);	
+
 		// Push the initial point, startX and startY with a distance of 0
 		queue.add(source);
 		//add the appropriate items to the queue
 		while((!queue.isEmpty())) {
 			Node current = queue.poll();
 			visited.add(current);
-			
+
 			checkPoint(level, queue, visited, current.point.x + 1, current.point.y, current); //x up 1
 			checkPoint(level, queue, visited, current.point.x, current.point.y + 1, current); //y up 1
 			checkPoint(level, queue, visited, current.point.x - 1, current.point.y, current); //x down 1
@@ -89,7 +90,7 @@ public class ZeldaLevelUtil {
 		for(Node n : visited) { //for each node in visited, print the node
 			System.out.println(n);
 		}
-		
+
 		return visited;
 	}
 	/**
@@ -111,32 +112,32 @@ public class ZeldaLevelUtil {
 		if(x < 0 || x >= level[0].length || y < 0 || y >= level.length) return;
 		//if the entry is zero, return
 		if(level[y][x] != 0) return;
-		
+
 		int newGScore = current.gScore + 1; 
 		int newFScore = newGScore;
-		
+
 		Node newNode = new Node(x, y, newGScore);
 		newNode.hScore = 0;
 		newNode.fScore = newFScore;
 		//if it's been visited, return
 		if(visited.contains(newNode)) return;
 		else if(!queue.contains(newNode) || newFScore < current.fScore) { //if the queue contains the node or the score is less
-																	//than the current score, then add to the queue
+			//than the current score, then add to the queue
 			if(queue.contains(newNode)) //if it is already in the queue, then remove it
 				queue.remove(newNode);
-			
+
 			queue.add(newNode); //add the new node to the queue
 		}
 	}
-	
+
 	// NOT USED?
-//	private static boolean hasPoint(ArrayList<Node> visited, Node node) {
-//		for(Node n : visited)
-//			if(node.point.x == n.point.x && node.point.y == n.point.y)
-//				return true;
-//		
-//		return false;
-//	}
+	//	private static boolean hasPoint(ArrayList<Node> visited, Node node) {
+	//		for(Node n : visited)
+	//			if(node.point.x == n.point.x && node.point.y == n.point.y)
+	//				return true;
+	//		
+	//		return false;
+	//	}
 
 	/**
 	 * Figure out if we need to add the given point or not if it's not out of bounds
@@ -149,26 +150,26 @@ public class ZeldaLevelUtil {
 	 * @param d distance to be added
 	 */
 	// NOT USED?
-//	private static void checkPointToAdd(int[][] level, int[][] dist,
-//			LinkedList<Triple<Integer, Integer, Integer>> visited, int x, int y, int d) {
-//		
-//		// Out of bounds check
-//		if(x < 0 || x >= level[0].length || y < 0 || y >= level.length) return;
-//
-//		// If haven't been visited check
-//		if(dist[y][x] != -1) return;
-//		
-//		// If the point is possible
-//		if(level[y][x] != 0) return;
-//		
-//		// loop through visited, and return early if the x,y coordinates are present
-//		for(Triple<Integer, Integer, Integer> point : visited)
-//			if(point.t1 == x && point.t2 == y) return;
-//		
-//		// Finally add point
-//		visited.add(new Triple<Integer, Integer, Integer>(x, y, d));
-//		
-//	}
+	//	private static void checkPointToAdd(int[][] level, int[][] dist,
+	//			LinkedList<Triple<Integer, Integer, Integer>> visited, int x, int y, int d) {
+	//		
+	//		// Out of bounds check
+	//		if(x < 0 || x >= level[0].length || y < 0 || y >= level.length) return;
+	//
+	//		// If haven't been visited check
+	//		if(dist[y][x] != -1) return;
+	//		
+	//		// If the point is possible
+	//		if(level[y][x] != 0) return;
+	//		
+	//		// loop through visited, and return early if the x,y coordinates are present
+	//		for(Triple<Integer, Integer, Integer> point : visited)
+	//			if(point.t1 == x && point.t2 == y) return;
+	//		
+	//		// Finally add point
+	//		visited.add(new Triple<Integer, Integer, Integer>(x, y, d));
+	//		
+	//	}
 
 	/**
 	 * Helper function to convert 2D list of ints to 2d array of ints
@@ -180,10 +181,10 @@ public class ZeldaLevelUtil {
 		for(int i = 0; i < lev.length; i++)
 			for(int j = 0; j < lev[i].length; j++)
 				lev[i][j] = level.get(i).get(j);
-		
+
 		return lev;
 	}
-	
+
 	private static class Node{
 		public Point point;
 		public int gScore;
@@ -194,7 +195,7 @@ public class ZeldaLevelUtil {
 			point = new Point(x, y);
 			gScore = dist;
 		}
-		
+
 		@Override
 		/**
 		 * determines if a node contains the same data as another node
@@ -209,14 +210,14 @@ public class ZeldaLevelUtil {
 			}
 			return r;
 		}
-		
+
 		// NOT USED?
-//		public void copy(Node other) {
-//			this.point = other.point;
-//			this.gScore = other.gScore;
-//			this.hScore = other.hScore;
-//			this.fScore = other.fScore;
-//		}
+		//		public void copy(Node other) {
+		//			this.point = other.point;
+		//			this.gScore = other.gScore;
+		//			this.hScore = other.hScore;
+		//			this.fScore = other.fScore;
+		//		}
 		/**
 		 * converts the node into a string
 		 */
@@ -232,12 +233,12 @@ public class ZeldaLevelUtil {
 	 */
 	public static void placeRandomKey(List<List<Integer>> level, Random rand) {
 		int x, y;
-		
+
 		do {
 			x = rand.nextInt(level.get(0).size());
 			y = rand.nextInt(level.size());
-	    }
-	    while (!Tile.findNum(level.get(y).get(x)).equals(Tile.FLOOR)); //while the given tile is not the floor tile
+		}
+		while (!Tile.findNum(level.get(y).get(x)).equals(Tile.FLOOR)); //while the given tile is not the floor tile
 		//System.out.println("Put key at " + x + ", " + y);
 		level.get(y).set(x, Tile.KEY.getNum()); 
 	}
@@ -308,15 +309,15 @@ public class ZeldaLevelUtil {
 		// Get random floor tile: TODO: Restrict to reachable floor tiles
 		if(Parameters.parameters.booleanParameter("firstSoftLockedRoomHasRaft")) {
 			List<Point> points = fromNode.level.getFloorTiles();
-		Point p = points.get(RandomNumbers.randomGenerator.nextInt(points.size()));
-		// Replace with raft
-		fromNode.level.intLevel.get(p.y).set(p.x, Ladder.INT_CODE); // -6 is the RAFT/Ladder
+			Point p = points.get(RandomNumbers.randomGenerator.nextInt(points.size()));
+			// Replace with raft
+			fromNode.level.intLevel.get(p.y).set(p.x, Ladder.INT_CODE); // -6 is the RAFT/Ladder
 		}
-		
+
 		// Place enemies
 		placeReachableEnemies(direction, fromNode.level.intLevel, maxEnemies);
 	}
-	
+
 	/**
 	 * Places a raft in a random room in the dungeon when allowed
 	 * @param currentNode The room to place the raft
@@ -353,13 +354,14 @@ public class ZeldaLevelUtil {
 	 * @param rand A random number generator 
 	 */
 	public static void placePuzzle(String direction, List<List<Integer>> level, Random rand) {
+		if(restictToOnePuzzleBlock(level)) {
+			return; 
+		}
 		List<Point> points = getVisitedPoints(direction, level);
 		Move d = Move.getByString(direction).opposite(); //the move is the opposite to the direction
 		Point rP = null;
 		points.removeIf(p -> !withinBounds(p, d));
 		rP = points.remove(rand.nextInt(points.size()));
-
-		
 		level.get(rP.y).set(rP.x, Tile.FLOOR.getNum());
 		rP.y += d.getPoint().y;
 		rP.x += d.getPoint().x;
@@ -367,7 +369,27 @@ public class ZeldaLevelUtil {
 		rP.y += d.getPoint().y;
 		rP.x += d.getPoint().x;
 		level.get(rP.y).set(rP.x, Tile.FLOOR.getNum());
-		placeAround(level, rP, Tile.WATER);
+		if(Parameters.parameters.booleanParameter("zeldaALlowPuzzleDoorUglyHack")) placeAround(level, rP, Tile.WATER);
+	}
+
+	/**
+	 * Loops to find puzzle blocks, if there is already a puzzle block in the room it returns true 
+	 * @param level A room 
+	 * @return True if there there is already a puzzle block in the room 
+	 */
+	private static boolean restictToOnePuzzleBlock(List<List<Integer>> level) {
+		//loop through the level and exit method if there is already a movable block
+		Level rooms = new Level(level); //convert dungeon to Level object
+		List<List<Integer>> dungeon = rooms.intLevel;
+		for(int i = 0; i < dungeon.size(); i++) {
+			for(int j = 0; j < dungeon.get(i).size(); j++) {
+				if(dungeon.get(i).get(j).equals(Tile.MOVABLE_BLOCK_DOWN.getNum()) || dungeon.get(i).get(j).equals(Tile.MOVABLE_BLOCK_UP.getNum()) ||
+						dungeon.get(i).get(j).equals(Tile.MOVABLE_BLOCK_RIGHT.getNum()) || dungeon.get(i).get(j).equals(Tile.MOVABLE_BLOCK_LEFT.getNum())) {
+					return true; 
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -413,10 +435,10 @@ public class ZeldaLevelUtil {
 		if(direction.equals(Move.RIGHT))
 			if(rP.x <= 11)
 				return true;
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Checks if the point is inside the play area
 	 * @param p Point to check
@@ -427,7 +449,7 @@ public class ZeldaLevelUtil {
 			return true;
 		return false;
 	}
-		
+
 	/**
 	 * places reachable enemies
 	 * 
@@ -498,7 +520,7 @@ public class ZeldaLevelUtil {
 		default:
 			return null;
 		}
-		
+
 		return getVisitedPoints(x, y, intLevel);
 	}
 
@@ -520,7 +542,7 @@ public class ZeldaLevelUtil {
 			maxX = 8;
 			startY = 8;			
 		}
-	
+
 		for(int x = minX; x <= maxX; x++) {
 			Point exitPoint = new Point(x, y);
 			Point startPoint = new Point(x, startY);
@@ -551,7 +573,7 @@ public class ZeldaLevelUtil {
 			Point startPoint = new Point(startX, y);
 			newNode.setAdjacency(exitPoint.toString(), whereTo, startPoint);
 		}
-	
+
 	}
 
 	/**
@@ -570,7 +592,7 @@ public class ZeldaLevelUtil {
 			minY = 4;
 			maxY = 6;
 		}
-		
+
 		for(int y = minY; y <= maxY; y++) {
 			Point exitPoint = new Point(x, y);
 			Point startPoint = new Point(2, y);
@@ -593,7 +615,7 @@ public class ZeldaLevelUtil {
 			y = 9;
 			minX = 7;
 			maxX = 8;
-	
+
 		}
 		for(int x = minX; x <= maxX; x++) {
 			Point exitPoint = new Point(x, y);
@@ -610,13 +632,13 @@ public class ZeldaLevelUtil {
 		int numEnemies = RandomNumbers.randomGenerator.nextInt(3) + 1;
 		for(int i = 0; i < numEnemies; i++) {
 			int x, y;
-			
+
 			do {
 				x = RandomNumbers.randomGenerator.nextInt(intLevel.get(0).size());
 				y = RandomNumbers.randomGenerator.nextInt(intLevel.size());
-		    }
-		    while (intLevel.get(y).get(x) != 0);
-			
+			}
+			while (intLevel.get(y).get(x) != 0);
+
 			intLevel.get(y).set(x, Creature.ENEMY_INT_CODE); // 2 is the code for enemies
 		}
 	}
@@ -628,7 +650,7 @@ public class ZeldaLevelUtil {
 	 */
 	public static String[][] trimLevelThere(String[][] levelThere) {
 		int minY = 0, maxY = 0, minX = 0, maxX = 0;
-		
+
 		// Get the min y value 
 		for(int y = 0; y < levelThere.length; y++)
 			for(int x = 0; x < levelThere[y].length; x++)
@@ -636,7 +658,7 @@ public class ZeldaLevelUtil {
 					minY = y + 1;
 					break;
 				}
-		
+
 		// Get the min x value
 		for(int x = 0; x < levelThere[0].length; x++)
 			for(int y = 0; y < levelThere.length; y++)
@@ -644,7 +666,7 @@ public class ZeldaLevelUtil {
 					minX = x + 1;
 					break;
 				}
-		
+
 		// Get the max Y value
 		for(int y = levelThere.length - 1; y >= 0; y--)
 			for(int x = levelThere[y].length - 1; x >= 0; x--)
@@ -652,7 +674,7 @@ public class ZeldaLevelUtil {
 					maxY = y;
 					break;
 				}
-		
+
 		// Get the max x value
 		for(int x = levelThere[0].length - 1; x >= 0; x--)
 			for(int y = levelThere.length - 1; y >= 0; y--)
@@ -660,22 +682,22 @@ public class ZeldaLevelUtil {
 					maxX = x;
 					break;
 				}
-		
+
 		// Calculate size of trimmed down array
 		int newY = minY - maxY;
 		int newX = minX - maxX;
-		
+
 		// Make new level array
 		String[][] newLevelThere = new String[newY][newX];
-		
+
 		// transfer contents from old to new
 		for(int i = 0; i < newLevelThere.length; i++)
 			for(int j = 0; j < newLevelThere[i].length; j++)
 				newLevelThere[i][j] = levelThere[maxY + i][maxX + j];
-			
+
 		return newLevelThere;
 	}
-	
+
 	// TODO: deep copy of linkedlist
 	@SuppressWarnings("unchecked")
 	/**
@@ -695,7 +717,7 @@ public class ZeldaLevelUtil {
 				copy.add(obj);
 			}
 		}
-		
+
 		return copy;
 	}
 	/**
@@ -713,10 +735,10 @@ public class ZeldaLevelUtil {
 				al.add(list.get(i).get(j));
 			}
 		}
-		
+
 		return copy;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	/**
 	 * copies an arrayList
@@ -735,10 +757,10 @@ public class ZeldaLevelUtil {
 				copy.add(obj);
 			}
 		}
-		
+
 		return copy;
 	}
-	
+
 	public static Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
 
 		@Override
@@ -754,18 +776,18 @@ public class ZeldaLevelUtil {
 			Point goalPoint = d.getCoords(d.getGoal());
 			int gDX = goalPoint.x; //x coordinate of the goal point
 			int gDY = goalPoint.y; //y coordinate of the goal point
-			
+
 			int w = s.getDungeon().getLevelWidth(); //level width
 			int h = s.getDungeon().getLevelHeight(); //level height
-			
+
 			Point g = d.getGoalPoint(); //goal point
 			int gX = g.x; //x coordinate of the goal point
 			int gY = g.y; //y coordinate of the goal point
 			int i = Math.abs(s.x - gX) + Math.abs(s.y - gY);
 			int j = Math.abs(gDX - s.dX) * w + Math.abs(gDY - s.dY) * h;
-			
-			
-			
+
+
+
 			return i + j; 
 		}
 	};
@@ -780,5 +802,5 @@ public class ZeldaLevelUtil {
 
 		return copy;
 	}
-	
+
 }
