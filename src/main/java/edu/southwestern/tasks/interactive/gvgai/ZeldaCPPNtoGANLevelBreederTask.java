@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
@@ -38,8 +40,6 @@ import edu.southwestern.tasks.zelda.ZeldaCPPNtoGANVectorMatrixBuilder;
 import edu.southwestern.tasks.zelda.ZeldaGANVectorMatrixBuilder;
 //import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.random.RandomNumbers;
-import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
 
@@ -166,8 +166,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		initializationComplete = true;
 	}
 	
-	
-	public static int numberOfNonLatentVectors() {
+	/**
+	 * Returns the number of non latent variables 
+	 * @return
+	 */
+	public static int numberOfNonLatentVariables() {
 		int numOfNonLatentVectors = NUM_NON_LATENT_INPUTS;
 		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
 			numOfNonLatentVectors++;
@@ -192,7 +195,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 
 	private void resetLatentVectorAndOutputs() {
 		int latentVectorLength = GANProcess.latentVectorLength();
-		outputLabels = new String[latentVectorLength + numberOfNonLatentVectors()];
+		outputLabels = new String[latentVectorLength + numberOfNonLatentVariables()];
 		outputLabels[INDEX_ROOM_PRESENCE] = "Room Presence";
 		outputLabels[INDEX_TRIFORCE_PREFERENCE] = "Triforce Preference";
 		outputLabels[INDEX_DOOR_DOWN] = "Door Down";
@@ -202,8 +205,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		if(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft")) {
 			outputLabels[INDEX_RAFT_PREFERENCE] = "Raft in Level";
 		}
-		for(int i = numberOfNonLatentVectors(); i < outputLabels.length; i++) {
-			outputLabels[i] = "LV"+(i-numberOfNonLatentVectors());
+		for(int i = numberOfNonLatentVariables(); i < outputLabels.length; i++) {
+			outputLabels[i] = "LV"+(i-numberOfNonLatentVariables());
 		}
 	}
 
@@ -381,6 +384,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				// Use A* to modify the level to make sections passable
 				if(Parameters.parameters.booleanParameter("makeZeldaLevelsPlayable")) 
 					DungeonUtil.makeDungeonPlayable(dungeon);
+				
+				
 			} catch(IllegalArgumentException e) {
 				// Make a new room appear in dungeon
 				//enableRoomActivation(auxiliaryInformation);
@@ -501,6 +506,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			}
 		}
 
+		int totalLockedDoors = 0;
 		for(int y = 0; y < levelGrid.length; y++) {
 			for(int x = 0; x < levelGrid[y].length; x++) {
 				if(levelGrid[y][x] != null) {
@@ -509,7 +515,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 					//adds door to adjacent room, sets up and down doors
 					if(auxiliaryInformation[y][x][INDEX_DOOR_DOWN] > presenceThreshold && y+1 < levelGrid.length && levelGrid[y+1][x] != null) {
 						// Create door down in this room, and door up in connecting room
-						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, levelGrid, uuidLabels, currentNode, x, y + 1, "DOWN", auxiliaryInformation[y][x][INDEX_DOWN_DOOR_TYPE]);
+						boolean lockedDoor = ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, levelGrid, uuidLabels, currentNode, x, y + 1, "DOWN", auxiliaryInformation[y][x][INDEX_DOWN_DOOR_TYPE]);
+						if(lockedDoor) totalLockedDoors++; // The two doors in connecting the two rooms count as one locked door
 						String nameBelow = 	uuidLabels[y+1][x];
 						Node nodeBelow = dungeonInstance.getNode(nameBelow);
 						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, levelGrid, uuidLabels, nodeBelow, x, y, "UP", auxiliaryInformation[y][x][INDEX_DOWN_DOOR_TYPE]); // Coordinates of this room
@@ -517,7 +524,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 					//adds door to adjacent room, sets up and down doors
 					if(auxiliaryInformation[y][x][INDEX_DOOR_RIGHT] > presenceThreshold && x+1 < levelGrid[y].length && levelGrid[y][x+1] != null) {
 						// Create door right in this room, and door left in connecting room
-						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, levelGrid, uuidLabels, currentNode, x + 1, y, "RIGHT", auxiliaryInformation[y][x][INDEX_RIGHT_DOOR_TYPE]);
+						boolean lockedDoor = ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, levelGrid, uuidLabels, currentNode, x + 1, y, "RIGHT", auxiliaryInformation[y][x][INDEX_RIGHT_DOOR_TYPE]);
+						if(lockedDoor) totalLockedDoors++; // The two doors in connecting the two rooms count as one locked door
 						String nameRight = 	uuidLabels[y][x+1];
 						Node nodeRight = dungeonInstance.getNode(nameRight);
 						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, levelGrid, uuidLabels, nodeRight, x, y, "LEFT", auxiliaryInformation[y][x][INDEX_RIGHT_DOOR_TYPE]); // Coordinates of this room
@@ -531,20 +539,48 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			Point p = pointForRandomRaft(levelGrid, auxiliaryInformation); //gets the point for the room to place the raft
 			String name = uuidLabels[p.y][p.x]; //gets the label for the room to get the node
  			Node raftRoom = dungeonInstance.getNode(name); //gets the node for that room 
-			ZeldaLevelUtil.placeRandomRaft(raftRoom, RandomNumbers.randomGenerator); //places raft randomly in that room 
+ 			Random rand = new Random(Double.doubleToLongBits(auxiliaryInformation[p.y][p.x][INDEX_RAFT_PREFERENCE])); //declares random variable to produce random placement of special doors
+			ZeldaLevelUtil.placeRandomRaft(raftRoom, rand); //places raft randomly in that room 
 		}
 		// name of start room
 		String name = uuidLabels[startRoom.y][startRoom.x].toString();
+		
+		//add code to use place random key 
 
 		dungeonInstance.setCurrentLevel(name);
-		dungeonInstance.setLevelThere(uuidLabels);
-
+		dungeonInstance.setLevelThere(uuidLabels);		
+		//places keys intelligently, the number of keys is the same as the number of locked doors. 
+		if(Parameters.parameters.booleanParameter("zeldaCPPN2GANSparseKeys")) {
+			dungeonInstance.markReachableRooms();
+			ArrayList<Node> rooms = new ArrayList<Node>();
+			rooms.addAll(dungeonInstance.getLevels().values());
+			// Initializing the random generator in this way makes it dependent on the CPPN output, but in a weird way
+			Random rand = new Random(Double.doubleToLongBits(auxiliaryInformation[0][0][0])); 
+			while(totalLockedDoors > 0) { // Make sure all locked doors get one key
+				Collections.shuffle(rooms, rand); // Random room order
+				for(Node room: rooms) {
+					Point coords = dungeonInstance.getCoords(room);
+					if(room.reachable) { // Put a key into this room
+						// Somewhat arbitrary to pick INDEX_DOWN_DOOR_TYPE, but at least the randomness will depend on CPPN output for that specific room
+						Random roomRand = new Random(Double.doubleToLongBits(auxiliaryInformation[coords.y][coords.x][INDEX_DOWN_DOOR_TYPE]));
+						ZeldaLevelUtil.placeRandomKey(levelGrid[coords.y][coords.x].intLevel, roomRand);
+						totalLockedDoors--;
+						if(totalLockedDoors == 0) break;
+					} else {
+						// See if unreachable room has locked doors. We do not need to place keys for these rooms
+						if(levelGrid[coords.y][coords.x].rightExitIsLockedDoor()) totalLockedDoors--;
+						if(levelGrid[coords.y][coords.x].bottomExitIsLockedDoor()) totalLockedDoors--;
+						if(totalLockedDoors <= 0) break;						
+					}
+				}
+			}
+		}
 		return dungeonInstance;
 	}
 
 	/**
 	 * This method chooses the room that the raft will go in 
-	 * @param levelGrid 2D array that represented the level 
+	 * @param levelGrid 2D array that represents the level 
 	 * @param auxiliaryInformation Information about tile 
 	 * @param rand Random object
 	 * @return THe point that the raft will be placed 
@@ -569,8 +605,6 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		return new Point(xRaft,yRaft);
 	}
 
-
-
 	/**
 	 * CPPN is queried at each point in a 2D grid and generates a latent vector for the GAN to store at that location in an array.
 	 * @param cppn Neural network that creates latent vectors
@@ -586,11 +620,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			for(int x = 0; x < width; x++) {
 				double[] vector = builder.latentVectorAndMiscDataForPosition(width, height, x, y);
 				double[] latentVector = new double[GANProcess.latentVectorLength()]; // Shorter
-				System.arraycopy(vector, numberOfNonLatentVectors(), latentVector, 0, latentVector.length);
+				System.arraycopy(vector, numberOfNonLatentVariables(), latentVector, 0, latentVector.length);
 				latentVectorGrid[y][x] = latentVector;
 
-				double[] auxiliaryInformation = new double[numberOfNonLatentVectors()];
-				System.arraycopy(vector, 0, auxiliaryInformation, 0, numberOfNonLatentVectors());
+				double[] auxiliaryInformation = new double[numberOfNonLatentVariables()];
+				System.arraycopy(vector, 0, auxiliaryInformation, 0, numberOfNonLatentVariables());
 				presenceAndTriforceGrid[y][x] = auxiliaryInformation;
 			}
 		}
@@ -633,10 +667,13 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		return levelAsListsGrid;
 	}
 
-
+	/**
+	 * For simple testing
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","zeldaCPPNtoGANAllowsPuzzleDoors:true","zeldaCPPNtoGANAllowsRaft:true","makeZeldaLevelsPlayable:false","zeldaStudySavesParticipantData:false","showKLOptions:false","trials:1","mu:16","zeldaGANModel:ZeldaFixedDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask","cleanOldNetworks:false", "zeldaGANUsesOriginalEncoding:false","allowMultipleFunctions:true","ftype:0","watch:true","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","zeldaCPPNtoGANAllowsPuzzleDoors:true","zeldaCPPNtoGANAllowsRaft:true", "zeldaCPPN2GANSparseKeys:true", "makeZeldaLevelsPlayable:false","zeldaStudySavesParticipantData:false","showKLOptions:false","trials:1","mu:16","zeldaGANModel:ZeldaFixedDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask","cleanOldNetworks:false", "zeldaGANUsesOriginalEncoding:false","allowMultipleFunctions:true","ftype:0","watch:true","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

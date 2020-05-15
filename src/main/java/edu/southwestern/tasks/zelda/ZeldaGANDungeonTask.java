@@ -22,7 +22,7 @@ public class ZeldaGANDungeonTask extends ZeldaDungeonTask<ArrayList<Double>>{
 	public ZeldaGANDungeonTask() {
 		super();
 		GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
-		segmentLength = GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVectors();
+		segmentLength = GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables();
 	}
 	/**
 	 * Calculates the length of the genome representing the dungeon.
@@ -30,7 +30,7 @@ public class ZeldaGANDungeonTask extends ZeldaDungeonTask<ArrayList<Double>>{
 	 * 			vector length and the number of non-latent inputs from the ZeldaCPPNtoGAN
 	 */
 	public static int genomeLength() {
-		return (GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVectors())*
+		return (GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables())*
 				Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks")*
 				Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
 	}

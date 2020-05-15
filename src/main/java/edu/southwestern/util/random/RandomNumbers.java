@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import edu.southwestern.parameters.Parameters;
 
@@ -18,7 +19,7 @@ public class RandomNumbers {
 
 	public static Random randomGenerator = new Random();
 
-	/*
+	/**
 	 * Reset random generator based on seed from parameter file
 	 */
 	public static void reset() {
@@ -209,7 +210,7 @@ public class RandomNumbers {
 
 	/**
 	 * Randomly pick x of the integers in the range [0,y) where no value can be
-	 * picked more than once.1
+	 * picked more than once.
 	 *
 	 * @param x
 	 *            number of random values to pick
@@ -294,6 +295,18 @@ public class RandomNumbers {
 	 * @return List of num random items from list
 	 */
 	public static <T> ArrayList<T> randomChoose(List<T> list, int num) {
+		return randomChoose(list,num,randomGenerator);
+	}
+	
+	/**
+	 * Same as above, but allows a Random generator other than the static one 
+	 * in this class to be used.
+	 * @param list List of values
+	 * @param num Number of items to select
+	 * @param rand Random generator
+	 * @return list of num distinct elements from list 
+	 */
+	public static <T> ArrayList<T> randomChoose(List<T> list, int num, Random rand) {
 		if(num > list.size()) throw new IllegalArgumentException("Number of items "+num+" greater than size "+list.size());
 		ArrayList<T> result = new ArrayList<T>(num);
 		ArrayList<Integer> indices = new ArrayList<>(num);
@@ -301,12 +314,25 @@ public class RandomNumbers {
 			indices.add(i); // All indices in the list
 		}
 		// Shuffle the list of indices, not the original list
-		Collections.shuffle(indices, randomGenerator);
+		Collections.shuffle(indices, rand);
 		for(int i = 0; i < num; i++) {
 			// Randomly shuffled indices leads to a random selection from the list
 			result.add(list.get(indices.get(i)));
 		}
 		return result;
+	}
+	
+	/**
+	 * Same as above, but allows a Set as input.
+	 * @param set Set of elements
+	 * @param num Number of elements to select
+	 * @param rand Random generator
+	 * @return List of num elements from set
+	 */
+	public static <T> ArrayList<T> randomChoose(Set<T> set, int num, Random rand) {
+		ArrayList<T> temp = new ArrayList<>(set.size());
+		temp.addAll(set);
+		return randomChoose(temp, num, rand);
 	}
 
 	/**

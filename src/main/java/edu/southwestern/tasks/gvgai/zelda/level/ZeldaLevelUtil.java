@@ -11,8 +11,6 @@ import java.util.Random;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.Heuristic;
@@ -27,6 +25,14 @@ import me.jakerg.rougelike.Tile;
  *
  */
 public class ZeldaLevelUtil {
+	
+	public static final int FAR_LONG_EDGE_DOOR_COORDINATE = 14;
+	public static final int FAR_SHORT_EDGE_DOOR_COORDINATE = 9;
+	public static final int CLOSE_EDGE_DOOR_COORDINATE = 1;
+	public static final int BIG_DOOR_COORDINATE_START = 4;
+	public static final int BIG_DOOR_COORDINATE_END = 6;
+	public static final int SMALL_DOOR_COORDINATE_START = 7;
+	public static final int SMALL_DOOR_COORDINATE_END = 8;
 	
 	/**
 	 * Find the longest shortest path distance given a 2D array and start points
@@ -246,17 +252,17 @@ public class ZeldaLevelUtil {
 		List<List<Integer>> level = fromNode.level.intLevel;
 		if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
 			if(direction.equals("UP") || direction.equals("DOWN")) { // Add doors at top or bottom
-				int y = (direction.equals("UP")) ? 1 : 14; // Set y based on side 1 if up 14 if bottom
+				int y = (direction.equals("UP")) ? CLOSE_EDGE_DOOR_COORDINATE : FAR_LONG_EDGE_DOOR_COORDINATE; // Set y based on side 1 if up 14 if bottom
 				int dy = (direction.equals("UP")) ? 1 : -1;
-				for(int x = 4; x <= 6; x++) {
+				for(int x = BIG_DOOR_COORDINATE_START; x <= BIG_DOOR_COORDINATE_END; x++) {
 					level.get(y).set(x, tile);
 					if(!Tile.findNum(level.get(y + dy).get(x)).playerPassable())
 						level.get(y + dy).set(x, Tile.FLOOR.getNum());
 				}
 			} else if (direction.equals("LEFT") || direction.equals("RIGHT")) { // Add doors at left or right
-				int x = (direction.equals("LEFT")) ? 1 : 9; // Set x based on side 1 if left 9 if right
+				int x = (direction.equals("LEFT")) ? CLOSE_EDGE_DOOR_COORDINATE : FAR_SHORT_EDGE_DOOR_COORDINATE; // Set x based on side 1 if left 9 if right
 				int dx = (direction.equals("LEFT")) ? 1 : -1;
-				for(int y = 7; y <=8; y++) {
+				for(int y = SMALL_DOOR_COORDINATE_START; y <=SMALL_DOOR_COORDINATE_END; y++) {
 					level.get(y).set(x, tile);
 					if(!Tile.findNum(level.get(y).get(x + dx)).playerPassable())
 						level.get(y).set(x + dx, Tile.FLOOR.getNum());
@@ -264,17 +270,17 @@ public class ZeldaLevelUtil {
 			}
 		} else {
 			if(direction.equals("UP")  || direction.equals("DOWN")) { // Add doors at top or bottom
-				int y = (direction.equals("UP")) ? 1 : 9; // Set x based on side 1 if left 9 if right
+				int y = (direction.equals("UP")) ? CLOSE_EDGE_DOOR_COORDINATE : FAR_SHORT_EDGE_DOOR_COORDINATE; // Set x based on side 1 if left 9 if right
 				int dy = (direction.equals("UP")) ? 1 : -1;
-				for(int x = 7; x <= 8; x++) {
+				for(int x = SMALL_DOOR_COORDINATE_START; x <= SMALL_DOOR_COORDINATE_END; x++) {
 					level.get(y).set(x, tile);
 					if(!Tile.findNum(level.get(y + dy).get(x)).playerPassable())
 						level.get(y + dy).set(x, Tile.FLOOR.getNum());
 				}
 			} else if (direction.equals("LEFT") || direction.equals("RIGHT") ) { // Add doors at left or right
-				int x = (direction.equals("LEFT")) ? 1 : 14; // Set y based on side 1 if up 14 if bottom
+				int x = (direction.equals("LEFT")) ? CLOSE_EDGE_DOOR_COORDINATE : FAR_LONG_EDGE_DOOR_COORDINATE; // Set y based on side 1 if up 14 if bottom
 				int dx = (direction.equals("LEFT")) ? 1 : -1;
-				for(int y = 4; y <= 6; y++) {
+				for(int y = BIG_DOOR_COORDINATE_START; y <= BIG_DOOR_COORDINATE_END; y++) {
 					level.get(y).set(x, tile);
 					if(!Tile.findNum(level.get(y).get(x + dx)).playerPassable())
 						level.get(y).set(x + dx, Tile.FLOOR.getNum());
