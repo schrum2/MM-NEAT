@@ -60,9 +60,9 @@ public class DungeonUtil {
 	public static boolean NO_GRAMMAR_AT_ALL = false;
 
 	/**
-	 * Unclear what this does. Seems to check each room and add a path/cycle/series of adjacencies
-	 * throughout some rooms, but it is unclear why the rooms did not already have the needed
-	 * adjacency relationships defined.
+	 * Seems to check each room and add a path/cycle/series of adjacencies
+	 * throughout some rooms, is not really used since it can allow locked doors
+	 * to be bypassed.
 	 * 
 	 * @param dungeon the dungeon
 	 * @throws Exception
