@@ -363,21 +363,13 @@ public class ZeldaLevelUtil {
 	 */
 	private static boolean restictToOnePuzzleBlock(List<List<Integer>> level) {
 		//loop through the level and exit method if there is already a movable block
-		Level rooms = new Level(level);
-		List<List<Integer>> room = rooms.intLevel;
-		for(int i = 0; i < room.size(); i++) {
-			for(int j = 0; j < room.get(i).size(); j++) {
-				if(room.get(j).get(i).equals(Tile.MOVABLE_BLOCK_DOWN.getNum())) {
+		Level rooms = new Level(level); //convert dungeon to Level object
+		List<List<Integer>> dungeon = rooms.intLevel;
+		for(int i = 0; i < dungeon.size(); i++) {
+			for(int j = 0; j < dungeon.get(i).size(); j++) {
+				if(dungeon.get(i).get(j).equals(Tile.MOVABLE_BLOCK_DOWN.getNum()) || dungeon.get(i).get(j).equals(Tile.MOVABLE_BLOCK_UP.getNum()) ||
+						dungeon.get(i).get(j).equals(Tile.MOVABLE_BLOCK_RIGHT.getNum()) || dungeon.get(i).get(j).equals(Tile.MOVABLE_BLOCK_LEFT.getNum())) {
 					return true; 
-				}
-				if(room.get(j).get(i).equals(Tile.MOVABLE_BLOCK_UP.getNum())) {
-					return true;
-				}
-				if(room.get(j).get(i).equals(Tile.MOVABLE_BLOCK_RIGHT.getNum())) {
-					return true;
-				}
-				if(room.get(j).get(i).equals(Tile.MOVABLE_BLOCK_LEFT.getNum())) {
-					return true;
 				}
 			}
 		}
