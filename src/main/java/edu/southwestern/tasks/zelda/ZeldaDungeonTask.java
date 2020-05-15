@@ -124,6 +124,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 	 */
 	public Score<T> evaluate(Genotype<T> individual) {
 		// Defines the floor space (excluding walls)
+		
+		// TODO: Move/rename to util class. Mention ZELDA_FLOOR_SPACE
 		final int ROWS = 7; // Number of rows to look through
 		final int COLUMNS = 12; // Number of columns to look through
 
@@ -148,6 +150,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				ArrayList<ArrayList<Integer>> compareRooms = new ArrayList<ArrayList<Integer>>();
 				HashSet<ArrayList<ArrayList<Integer>>> k = new HashSet<ArrayList<ArrayList<Integer>>>();
 				for(Node room: dungeon.getLevels().values()) {
+					// TODO: This only applies to water/wall percentage calculation, not distinct room count
 					if(room.reachable) { // Only include reachable rooms in feature calculation
 						numRoomsReachable++;
 						for(int x = START.x; x < START.x+ROWS; x++) {
@@ -155,6 +158,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 							ArrayList<Integer> a = new ArrayList<Integer>();
 							for(int y = START.y; y < START.y+COLUMNS; y++) {
 								Tile tile = room.level.rougeTiles[y][x];
+								// TODO: Avoid magic numbers
 								if(tile.getNum()==6||tile.getNum()==Ladder.INT_CODE||tile.getNum()==2) { //2 is the enemy code?
 									a.add(Tile.FLOOR.getNum());
 								}else {
@@ -174,6 +178,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						k.add(compareRooms);
 					}
 				}
+				// TODO: Reduce this calculation to a single method call
 				numDistinctRooms = k.size();
 				numRooms = dungeon.getLevels().size();
 				// A* should already have been run during creation to assure beat-ability, but it is run again here to get the action sequence.
