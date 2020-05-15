@@ -159,15 +159,12 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 							ArrayList<Integer> a = new ArrayList<Integer>();
 							for(int y = START.y; y < START.y+COLUMNS; y++) {
 								Tile tile = room.level.rougeTiles[y][x];
-<<<<<<< HEAD
+
 								if(tile.getNum()==Tile.KEY.getNum()||
 								   tile.getNum()==Ladder.INT_CODE||
 							  	   tile.getNum()==Creature.ENEMY_INT_CODE||
 								   tile.getNum()==Tile.TRIFORCE.getNum()) { 
-=======
-								// TODO: Avoid magic numbers
-								if(tile.getNum()==6||tile.getNum()==Ladder.INT_CODE||tile.getNum()==2) { //2 is the enemy code?
->>>>>>> b74913ec36cadaac2b5b79c4d3ccd901d990076f
+
 									a.add(Tile.FLOOR.getNum());
 								}else {
 									a.add(tile.getNum());
