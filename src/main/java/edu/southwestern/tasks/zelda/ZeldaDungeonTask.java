@@ -116,6 +116,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 
 	public abstract Dungeon getZeldaDungeonFromGenotype(Genotype<T> individual); //gets the dungeon from the genotype
 
+	@SuppressWarnings("unchecked")
 	@Override
 	/**
 	 * 
@@ -288,30 +289,26 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						System.out.println("["+wallTileIndex+"]["+waterTileIndex+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
 
 						behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
-					} else {
+					} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels) {
 						// TODO: Define a new scheme here that is similar but different.
 						
 						int maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
-						//double numDistinctRoomsMAPE = (numDistinctRooms*1.0)/(numRoomsReachable*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS);
-						//double numBackTrackRoomsMAPE = (numBackTrackRooms*1.0)/(numRoomsReachable*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS);
-
-						int numDistinctRoomsIndex = (int)(numDistinctRooms*ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
-						int numBackTrackRoomsIndex = (int)(numBackTrackRooms*ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
-
 						// Row-major order lookup in 3D archive
-						binIndex = (numDistinctRoomsIndex*ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels.TILE_GROUPS + numBackTrackRoomsIndex)*(maxNumRooms+1) + numRoomsReachable;
-						double[] archiveArray = new double[ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels.TILE_GROUPS*ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels.TILE_GROUPS*(maxNumRooms+1)];
+						binIndex = (numDistinctRooms*(maxNumRooms+1) + numBackTrackRooms)*(maxNumRooms+1) + numRoomsReachable;
+						double[] archiveArray = new double[(maxNumRooms+1)*(maxNumRooms+1)*(maxNumRooms+1)];
 						Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
 						binScore = (numRoomsTraversed*1.0)/numRoomsReachable;
 						archiveArray[binIndex] = binScore; // Percent rooms traversed
 
-						System.out.println("["+numDistinctRoomsIndex+"]["+numBackTrackRoomsIndex+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
+						System.out.println("["+numDistinctRooms+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
 
 						behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 						// Number of distinct rooms.
 						// Number of rooms backtracked through.
 						// Total number of rooms (same as before)
 						
+					}else {
+						throw new RuntimeException("A Valid Binning Scheme For Zelda Was Not Specified");
 					}
 
 					// Saving map elites bin images
