@@ -759,6 +759,7 @@ public class Parameters {
 		booleanOptions.add("zeldaDungeonTraversedRoomFitness", true, "Evolve levels where player has to traverse more rooms");
 		booleanOptions.add("zeldaDungeonBackTrackRoomFitness", false, "Evolve levels where player has to backtrack to more rooms"); //
 		booleanOptions.add("zeldaDungeonRandomFitness", false, "Evolve levels with random fitness");
+		booleanOptions.add("zeldaDungeonDistinctRoomFitness", false, "Evolve dungeons with more diverse room layouts within the dungeon");
 		booleanOptions.add("zeldaStudySavesParticipantData", true, "Use with 2019 human subject study");
 		booleanOptions.add("rogueLikeDebugMode", false, "Show helpful information, like locations of secret bombable passages");
 		booleanOptions.add("zeldaCPPNtoGANAllowsPuzzleDoors", false, "Allows puzzle doors to be placed in the dungeon");

@@ -22,6 +22,7 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
@@ -68,12 +69,19 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 			MMNEAT.registerFitnessFunction("NumBackTrackRooms"); //backtrack as many rooms as possible
 			numObjectives++;
 		}
+		if(Parameters.parameters.booleanParameter("zeldaDungeonDistinctRoomFitness")) {
+			MMNEAT.registerFitnessFunction("NumDistinctRooms"); //Make as many rooms as possible diverse
+			numObjectives++;
+		}
+		//zeldaDungeonDiverseRoomFitness
 		// Additional information tracked about each dungeon
 		MMNEAT.registerFitnessFunction("NumRooms",false);
 		MMNEAT.registerFitnessFunction("NumRoomsTraversed",false);
 		MMNEAT.registerFitnessFunction("NumRoomsReachable",false);
 		MMNEAT.registerFitnessFunction("NumSearchStatesVisited",false);
 		MMNEAT.registerFitnessFunction("NumBackTrackRooms",false);
+		MMNEAT.registerFitnessFunction("NumDistinctRooms",false);
+
 
 		// More?
 	}
@@ -125,6 +133,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		int searchStatesVisited = 0; //number of search states visited
 		int numRoomsTraversed = 0; //the number of rooms traversed
 		int numBackTrackRooms = 0; //the number of rooms traversed twice
+		int numDistinctRooms = 0;
 		int waterTileCount = 0; //the number of water tiles
 		int wallTileCount = 0; //the number of wall tiles
 		int numRoomsReachable = 0; //the number of reachable rooms
@@ -135,22 +144,33 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				// Upper left corner of floor area (ignore surrounding walls)
 				final Point START = new Point(2, 2);
 				// Count occurrence of water and wall tiles in the dungeons for MAP Elites binning
+				ArrayList<ArrayList<Integer>> compareRooms = new ArrayList<ArrayList<Integer>>();
+				HashSet<ArrayList<ArrayList<Integer>>> k = new HashSet<ArrayList<ArrayList<Integer>>>();
 				for(Node room: dungeon.getLevels().values()) {
 					if(room.reachable) { // Only include reachable rooms in feature calculation
 						numRoomsReachable++;
 						for(int x = START.x; x < START.x+ROWS; x++) {
+							System.out.println("ROW:"+x);
+							ArrayList<Integer> a = new ArrayList<Integer>();
+							//compareRooms.add(x-START.x, new ArrayList<Integer>());
 							for(int y = START.y; y < START.y+COLUMNS; y++) {
 								Tile tile = room.level.rougeTiles[y][x];
+								//compareRooms.get(x-START.x).add(tile.getNum());
+								a.add(tile.getNum());
+								
+								
 								if(tile.equals(Tile.WALL)) { //if it's a wall tile, increase wallTileCount
 									wallTileCount++;
 								} else if(tile.equals(Tile.WATER)) { //if it's a water tile, increase waterTileCount
 									waterTileCount++;
 								} 
 							}
+							compareRooms.add(a);
 						}
+						k.add(compareRooms);
 					}
 				}
-
+				numDistinctRooms = k.size();
 				numRooms = dungeon.getLevels().size();
 				// A* should already have been run during creation to assure beat-ability, but it is run again here to get the action sequence.
 				ArrayList<GridAction> actionSequence;
@@ -221,6 +241,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					System.out.println("Number of rooms traversed: "+numRoomsTraversed);
 					System.out.println("Number of states visited: "+searchStatesVisited);
 					System.out.println("Number of backtracked rooms: "+numBackTrackRooms);
+					System.out.println("Number of distinct rooms: "+numDistinctRooms);
+
 
 					// View whole dungeon layout
 					BufferedImage image = DungeonUtil.viewDungeon(dungeon, mostRecentVisited, solutionPath);
@@ -250,6 +272,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				// Could conceivably also be used for behavioral diversity instead of map elites, but this would be a weird behavior vector from a BD perspective
 				if(MMNEAT.ea instanceof MAPElites) {
 					// Assign to the behavior vector before using MAP-Elites
+					
 					int maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
 					double wallTilePercentage = (wallTileCount*1.0)/(numRoomsReachable*ROWS*COLUMNS);
 					double waterTilePercentage = (waterTileCount*1.0)/(numRoomsReachable*ROWS*COLUMNS);
@@ -267,6 +290,24 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					System.out.println("["+wallTileIndex+"]["+waterTileIndex+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
 
 					behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
+//					dungeon.getLevels()
+//					Level[][] level = dungeon.getLevelArrays();
+//					boolean identical = false;
+//					for(int y = 2;y<level.length-2;y++) {
+//						for(int x = 2; x<level[0].length-2;x++) {
+//							
+//						}
+//					}
+				//	ArrayList<ArrayList<Integer>> croppedWalls = new ArrayList<ArrayList<Integer>>();
+					
+					/*
+					 * for (int y = 0; y < levelThere.length; y++)
+			for (int x = 0; x < levelThere[y].length; x++)
+				if (levelThere[y][x] != null)
+					r[y][x] = levels.get(levelThere[y][x]).level;
+				else
+					r[y][x] = null;
+					 */
 
 					// Saving map elites bin images
 					if(CommonConstants.netio) {
@@ -316,7 +357,10 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 			fitness.add(new Double(RandomNumbers.fullSmallRand()));
 		if(Parameters.parameters.booleanParameter("zeldaDungeonBackTrackRoomFitness")) 
 			fitness.add(new Double(numBackTrackRooms));
-
+		if(Parameters.parameters.booleanParameter("zeldaDungeonDistinctRoomFitness")) 
+			fitness.add(new Double(numDistinctRooms));
+		
+		
 		double[] scores = new double[fitness.size()];
 		//stores the scores from the fitness at the index
 		for(int i = 0; i < scores.length; i++) {
