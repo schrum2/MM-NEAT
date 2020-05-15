@@ -355,7 +355,7 @@ public class ZeldaLevelUtil {
 		level.get(rP.y).set(rP.x, Tile.FLOOR.getNum());
 		placeAround(level, rP, Tile.WATER);
 	}
-	
+
 	/**
 	 * Loops to find puzzle blocks, if there is already a puzzle block in the room it returns true 
 	 * @param level A room 
