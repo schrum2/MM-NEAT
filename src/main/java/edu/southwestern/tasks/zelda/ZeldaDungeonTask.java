@@ -280,43 +280,36 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 
 				// Could conceivably also be used for behavioral diversity instead of map elites, but this would be a weird behavior vector from a BD perspective
 				if(MMNEAT.ea instanceof MAPElites) {
-					// Assign to the behavior vector before using MAP-Elites
+					int binIndex = -1;
+					double binScore = Double.NaN;
 					
-					int maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
-					double wallTilePercentage = (wallTileCount*1.0)/(numRoomsReachable*ROWS*COLUMNS);
-					double waterTilePercentage = (waterTileCount*1.0)/(numRoomsReachable*ROWS*COLUMNS);
+					if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesWallWaterRoomsBinLabels) {					
+						// Assign to the behavior vector before using MAP-Elites
+						int maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
+						double wallTilePercentage = (wallTileCount*1.0)/(numRoomsReachable*ROWS*COLUMNS);
+						double waterTilePercentage = (waterTileCount*1.0)/(numRoomsReachable*ROWS*COLUMNS);
 
-					int wallTileIndex = (int)(wallTilePercentage*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
-					int waterTileIndex = (int)(waterTilePercentage*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
+						int wallTileIndex = (int)(wallTilePercentage*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
+						int waterTileIndex = (int)(waterTilePercentage*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
 
-					// Row-major order lookup in 3D archive
-					int binIndex = (wallTileIndex*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS + waterTileIndex)*(maxNumRooms+1) + numRoomsReachable;
-					double[] archiveArray = new double[ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS*(maxNumRooms+1)];
-					Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
-					double binScore = (numRoomsTraversed*1.0)/numRoomsReachable;
-					archiveArray[binIndex] = binScore; // Percent rooms traversed
+						// Row-major order lookup in 3D archive
+						binIndex = (wallTileIndex*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS + waterTileIndex)*(maxNumRooms+1) + numRoomsReachable;
+						double[] archiveArray = new double[ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS*(maxNumRooms+1)];
+						Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
+						binScore = (numRoomsTraversed*1.0)/numRoomsReachable;
+						archiveArray[binIndex] = binScore; // Percent rooms traversed
 
-					System.out.println("["+wallTileIndex+"]["+waterTileIndex+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
+						System.out.println("["+wallTileIndex+"]["+waterTileIndex+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
 
-					behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
-//					dungeon.getLevels()
-//					Level[][] level = dungeon.getLevelArrays();
-//					boolean identical = false;
-//					for(int y = 2;y<level.length-2;y++) {
-//						for(int x = 2; x<level[0].length-2;x++) {
-//							
-//						}
-//					}
-				//	ArrayList<ArrayList<Integer>> croppedWalls = new ArrayList<ArrayList<Integer>>();
-					
-					/*
-					 * for (int y = 0; y < levelThere.length; y++)
-			for (int x = 0; x < levelThere[y].length; x++)
-				if (levelThere[y][x] != null)
-					r[y][x] = levels.get(levelThere[y][x]).level;
-				else
-					r[y][x] = null;
-					 */
+						behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
+					} else {
+						// TODO: Define a new scheme here that is similar but different.
+						
+						// Number of distinct rooms.
+						// Number of rooms backtracked through.
+						// Total number of rooms (same as before)
+						
+					}
 
 					// Saving map elites bin images
 					if(CommonConstants.netio) {
@@ -329,7 +322,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						Score<T> elite = archive.getElite(binIndex);
 						// If the bin is empty, or the candidate is better than the elite for that bin's score
 						if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
-
 							// CHANGE!
 							BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
 							BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);

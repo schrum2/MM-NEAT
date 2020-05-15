@@ -37,6 +37,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private int iterationsWithoutElite;
 	private int individualsPerGeneration;
 	
+	public BinLabels getBinLabelsClass() {
+		return archive.getBinLabelsClass();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public MAPElites() {
 		this.task = (LonerTask<T>) MMNEAT.task;
