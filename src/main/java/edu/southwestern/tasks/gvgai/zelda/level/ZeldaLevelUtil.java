@@ -253,7 +253,11 @@ public class ZeldaLevelUtil {
 					ArrayList<Integer> a = new ArrayList<Integer>();
 					for(int y = START.y; y < START.y+ZELDA_FLOOR_SPACE_COLUMNS; y++) {
 						Tile tile = room.level.rougeTiles[y][x];
-
+//						if(tile.equals(Tile.WALL)) {
+//							a.add(Tile.WALL.getNum());
+//						}else {
+//							a.add(Tile.FLOOR.getNum());
+//						}
 						if(tile.getNum()==Tile.KEY.getNum()||
 						   tile.getNum()==Ladder.INT_CODE||
 					  	   tile.getNum()==Creature.ENEMY_INT_CODE||

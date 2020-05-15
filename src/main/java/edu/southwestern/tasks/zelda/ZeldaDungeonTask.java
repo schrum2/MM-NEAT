@@ -22,7 +22,6 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
@@ -34,8 +33,6 @@ import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
-import me.jakerg.rougelike.Creature;
-import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
 
