@@ -58,20 +58,27 @@ public class DungeonUtil {
 	// The CPPN to GAN generation process does not make dungeons with a grammar, but using the A* check can cause problems because of this.
 	// Basically, the way it tells if a room has a start location as a point of interest is by looking at the grammar description for the room.
 	public static boolean NO_GRAMMAR_AT_ALL = false;
+
 	/**
-	 * Not sure what this does
-	 * STILL NEEDS COMMENTING!
+	 * Unclear what this does. Seems to check each room and add a path/cycle/series of adjacencies
+	 * throughout some rooms, but it is unclear why the rooms did not already have the needed
+	 * adjacency relationships defined.
+	 * 
 	 * @param dungeon the dungeon
 	 * @throws Exception
 	 */
 	public static void addCycles(Dungeon dungeon) throws Exception {
 		String[][] levels = dungeon.getLevelThere();
+		// For every room in dungeon
 		for(int y = 0; y < levels.length; y++) {
 			for(int x = 0; x < levels[y].length; x++) {
+				// If the room is present
 				if(levels[y][x] != null) {		
 					Stack<Point> options = new Stack<>();
+					// Adjacent coordinates
 					options.addAll(Arrays.asList(new Point(x - 1, y), new Point(x + 1, y), new Point(x, y - 1), new Point(x, y + 1)));
 					Point p = DungeonUtil.pointToCheck(dungeon, x, y, options);
+					// Creates a series of adjacency links through a sequence of rooms?
 					while(p != null) {
 						Dungeon.Node n = dungeon.getNodeAt(x, y);
 						Dungeon.Node adj = dungeon.getNodeAt(p.x, p.y);
@@ -84,6 +91,7 @@ public class DungeonUtil {
 			}
 		}
 	}
+	
 	/**
 	 * adds exit points for the agent
 	 * @param points points of the room
@@ -613,6 +621,7 @@ public class DungeonUtil {
 	 * @return Dungeon from the graph
 	 * @throws Exception
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Dungeon convertToDungeon(Graph<? extends Grammar> graph, LevelLoader loader) throws Exception {
 		Dungeon dungeon = new Dungeon();
 		String[][] levelThere = new String[100][100];
