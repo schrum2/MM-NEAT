@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.loderunner;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class LodeRunnerVGLCUtil {
 		HashSet<List<List<Integer>>> levelSet = new HashSet<>(); //creates set to represent the level 
 		for(int i = 1; i <= 150; i++) {
 			String file = "Level " + i + ".txt"; //format for the LodeRunner level files 
-			List<List<Integer>> levelList = convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + file);
+			List<List<Integer>> levelList = convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + file); //converts to JSON 
 			levelSet.add(levelList); //adds the converted list to the set for the level 
 		}
 		System.out.println(levelSet); //prints converted JSON files to the console 
