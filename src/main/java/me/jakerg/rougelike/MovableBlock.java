@@ -28,6 +28,14 @@ public class MovableBlock extends Item{
 		moved = false; //false until the player moves the box 
 		this.removable = false; //movable blocks are not removable 
 	}
+	
+	/**
+	 * If the block has not moved, then it is in the locked position
+	 * @return Whether block is locked
+	 */
+	public boolean stillLocked() {
+		return !moved;
+	}
 
 	/**
 	 * Allows player to move the block
