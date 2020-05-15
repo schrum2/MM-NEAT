@@ -58,7 +58,12 @@ public class DungeonUtil {
 	// The CPPN to GAN generation process does not make dungeons with a grammar, but using the A* check can cause problems because of this.
 	// Basically, the way it tells if a room has a start location as a point of interest is by looking at the grammar description for the room.
 	public static boolean NO_GRAMMAR_AT_ALL = false;
-	
+	/**
+	 * Not sure what this does
+	 * STILL NEEDS COMMENTING!
+	 * @param dungeon the dungeon
+	 * @throws Exception
+	 */
 	public static void addCycles(Dungeon dungeon) throws Exception {
 		String[][] levels = dungeon.getLevelThere();
 		for(int y = 0; y < levels.length; y++) {
