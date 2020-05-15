@@ -59,17 +59,21 @@ public class LodeRunnerVGLCUtil {
 	private static int convertLodeRunnerTileVGLCtoNumberCode(char tile) {
 		switch(tile) {
 		case '.': //empty
-		case 'G': //gold
-		case 'M': //spawn 
 			return 0;	// Passable
+		case 'G': //gold
+			return 1; 
+		case 'M': //spawn 
+			return 2;	// Passable
 		case 'B': //regular ground
+			return 3;
 		case 'b': //diggable ground 
-			return 1;	// Impassable, i.e. solid ground 
+			return 4;	// Impassable, i.e. solid ground 
 		case 'E': //enemy 
-			return 2; //TODO might remove this later 
+			return 5; //TODO might remove this later 
 		case '#': //ladder
+			return 6;
 		case '-': //rope
-			return 3; //climbable
+			return 7; //climbable
 		default:
 			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
 
