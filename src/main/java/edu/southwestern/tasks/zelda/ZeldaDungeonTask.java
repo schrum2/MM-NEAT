@@ -127,8 +127,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		// Defines the floor space (excluding walls)
 		
 		// TODO: Move/rename to util class. Mention ZELDA_FLOOR_SPACE
-		final int ROWS = 7; // Number of rows to look through
-		final int COLUMNS = 12; // Number of columns to look through
+		//final int ZELDA_FLOOR_SPACE_ROWS = 7; // Number of rows to look through
+		//final int ZELDA_FLOOR_SPACE_COLUMNS = 12; // Number of columns to look through
 
 		ArrayList<Double> behaviorVector = null; // Filled in later
 		Dungeon dungeon = getZeldaDungeonFromGenotype(individual);
@@ -151,40 +151,21 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				ArrayList<ArrayList<Integer>> compareRooms = new ArrayList<ArrayList<Integer>>();
 				HashSet<ArrayList<ArrayList<Integer>>> k = new HashSet<ArrayList<ArrayList<Integer>>>();
 				for(Node room: dungeon.getLevels().values()) {
-					// TODO: This only applies to water/wall percentage calculation, not distinct room count
 					if(room.reachable) { // Only include reachable rooms in feature calculation
 						numRoomsReachable++;
-						for(int x = START.x; x < START.x+ROWS; x++) {
-							//System.out.println("ROW:"+x);
-							ArrayList<Integer> a = new ArrayList<Integer>();
-							for(int y = START.y; y < START.y+COLUMNS; y++) {
+						for(int x = START.x; x < START.x+ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS; x++) {
+							for(int y = START.y; y < START.y+ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS; y++) {
 								Tile tile = room.level.rougeTiles[y][x];
-
-								if(tile.getNum()==Tile.KEY.getNum()||
-								   tile.getNum()==Ladder.INT_CODE||
-							  	   tile.getNum()==Creature.ENEMY_INT_CODE||
-								   tile.getNum()==Tile.TRIFORCE.getNum()) { 
-
-									a.add(Tile.FLOOR.getNum());
-								}else {
-									a.add(tile.getNum());
-								}
-								
-								
-								
 								if(tile.equals(Tile.WALL)) { //if it's a wall tile, increase wallTileCount
 									wallTileCount++;
 								} else if(tile.equals(Tile.WATER)) { //if it's a water tile, increase waterTileCount
 									waterTileCount++;
 								} 
 							}
-							compareRooms.add(a);
 						}
-						k.add(compareRooms);
 					}
 				}
-				// TODO: Reduce this calculation to a single method call
-				numDistinctRooms = k.size();
+				numDistinctRooms = ZeldaLevelUtil.countDiscreteRooms(dungeon, numRoomsReachable, START, compareRooms, k);
 				numRooms = dungeon.getLevels().size();
 				// A* should already have been run during creation to assure beat-ability, but it is run again here to get the action sequence.
 				ArrayList<GridAction> actionSequence;
@@ -291,8 +272,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesWallWaterRoomsBinLabels) {					
 						// Assign to the behavior vector before using MAP-Elites
 						int maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
-						double wallTilePercentage = (wallTileCount*1.0)/(numRoomsReachable*ROWS*COLUMNS);
-						double waterTilePercentage = (waterTileCount*1.0)/(numRoomsReachable*ROWS*COLUMNS);
+						double wallTilePercentage = (wallTileCount*1.0)/(numRoomsReachable*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS);
+						double waterTilePercentage = (waterTileCount*1.0)/(numRoomsReachable*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS);
 
 						int wallTileIndex = (int)(wallTilePercentage*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
 						int waterTileIndex = (int)(waterTilePercentage*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
@@ -310,6 +291,23 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					} else {
 						// TODO: Define a new scheme here that is similar but different.
 						
+						int maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
+						//double numDistinctRoomsMAPE = (numDistinctRooms*1.0)/(numRoomsReachable*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS);
+						//double numBackTrackRoomsMAPE = (numBackTrackRooms*1.0)/(numRoomsReachable*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS);
+
+						int numDistinctRoomsIndex = (int)(numDistinctRooms*ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
+						int numBackTrackRoomsIndex = (int)(numBackTrackRooms*ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
+
+						// Row-major order lookup in 3D archive
+						binIndex = (numDistinctRoomsIndex*ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels.TILE_GROUPS + numBackTrackRoomsIndex)*(maxNumRooms+1) + numRoomsReachable;
+						double[] archiveArray = new double[ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels.TILE_GROUPS*ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels.TILE_GROUPS*(maxNumRooms+1)];
+						Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
+						binScore = (numRoomsTraversed*1.0)/numRoomsReachable;
+						archiveArray[binIndex] = binScore; // Percent rooms traversed
+
+						System.out.println("["+numDistinctRoomsIndex+"]["+numBackTrackRoomsIndex+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
+
+						behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 						// Number of distinct rooms.
 						// Number of rooms backtracked through.
 						// Total number of rooms (same as before)

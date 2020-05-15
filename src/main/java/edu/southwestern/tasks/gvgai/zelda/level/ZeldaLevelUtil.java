@@ -3,6 +3,7 @@ package edu.southwestern.tasks.gvgai.zelda.level;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -11,6 +12,7 @@ import java.util.Random;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.Heuristic;
@@ -28,6 +30,8 @@ public class ZeldaLevelUtil {
 	
 	public static final int FAR_LONG_EDGE_DOOR_COORDINATE = 14;
 	public static final int FAR_SHORT_EDGE_DOOR_COORDINATE = 9;
+	public static final int ZELDA_FLOOR_SPACE_ROWS = 7;
+	public static final int ZELDA_FLOOR_SPACE_COLUMNS = 12;
 	public static final int CLOSE_EDGE_DOOR_COORDINATE = 1;
 	public static final int BIG_DOOR_COORDINATE_START = 4;
 	public static final int BIG_DOOR_COORDINATE_END = 6;
@@ -240,6 +244,32 @@ public class ZeldaLevelUtil {
 	    while (!Tile.findNum(level.get(y).get(x)).equals(Tile.FLOOR)); //while the given tile is not the floor tile
 		//System.out.println("Put key at " + x + ", " + y);
 		level.get(y).set(x, Tile.KEY.getNum()); 
+	}
+	public static int countDiscreteRooms(Dungeon dungeon, int numRoomsReachable, Point START, ArrayList<ArrayList<Integer>> compareRooms, HashSet<ArrayList<ArrayList<Integer>>> k) {
+		for(edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node room: dungeon.getLevels().values()) {
+			// TODO: This only applies to water/wall percentage calculation, not distinct room count
+				for(int x = START.x; x < START.x+ZELDA_FLOOR_SPACE_ROWS; x++) {
+					//System.out.println("ROW:"+x);
+					ArrayList<Integer> a = new ArrayList<Integer>();
+					for(int y = START.y; y < START.y+ZELDA_FLOOR_SPACE_COLUMNS; y++) {
+						Tile tile = room.level.rougeTiles[y][x];
+
+						if(tile.getNum()==Tile.KEY.getNum()||
+						   tile.getNum()==Ladder.INT_CODE||
+					  	   tile.getNum()==Creature.ENEMY_INT_CODE||
+						   tile.getNum()==Tile.TRIFORCE.getNum()) { 
+
+							a.add(Tile.FLOOR.getNum());
+						}else {
+							a.add(tile.getNum());
+						}
+					}
+					compareRooms.add(a);
+				}
+				k.add(compareRooms);
+			}
+		
+		return k.size();
 	}
 
 	/**
