@@ -286,12 +286,12 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					double wallTilePercentage = (wallTileCount*1.0)/(numRoomsReachable*ROWS*COLUMNS);
 					double waterTilePercentage = (waterTileCount*1.0)/(numRoomsReachable*ROWS*COLUMNS);
 
-					int wallTileIndex = (int)(wallTilePercentage*ZeldaMAPElitesBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
-					int waterTileIndex = (int)(waterTilePercentage*ZeldaMAPElitesBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
+					int wallTileIndex = (int)(wallTilePercentage*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
+					int waterTileIndex = (int)(waterTilePercentage*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
 
 					// Row-major order lookup in 3D archive
-					int binIndex = (wallTileIndex*ZeldaMAPElitesBinLabels.TILE_GROUPS + waterTileIndex)*(maxNumRooms+1) + numRoomsReachable;
-					double[] archiveArray = new double[ZeldaMAPElitesBinLabels.TILE_GROUPS*ZeldaMAPElitesBinLabels.TILE_GROUPS*(maxNumRooms+1)];
+					int binIndex = (wallTileIndex*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS + waterTileIndex)*(maxNumRooms+1) + numRoomsReachable;
+					double[] archiveArray = new double[ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS*(maxNumRooms+1)];
 					Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
 					double binScore = (numRoomsTraversed*1.0)/numRoomsReachable;
 					archiveArray[binIndex] = binScore; // Percent rooms traversed
