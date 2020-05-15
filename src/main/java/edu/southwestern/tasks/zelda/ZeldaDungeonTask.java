@@ -34,6 +34,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
+import me.jakerg.rougelike.Creature;
 import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.RougelikeApp;
 import me.jakerg.rougelike.Tile;
@@ -155,7 +156,10 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 							ArrayList<Integer> a = new ArrayList<Integer>();
 							for(int y = START.y; y < START.y+COLUMNS; y++) {
 								Tile tile = room.level.rougeTiles[y][x];
-								if(tile.getNum()==6||tile.getNum()==Ladder.INT_CODE||tile.getNum()==2) { //2 is the enemy code?
+								if(tile.getNum()==Tile.KEY.getNum()||
+								   tile.getNum()==Ladder.INT_CODE||
+							  	   tile.getNum()==Creature.ENEMY_INT_CODE||
+								   tile.getNum()==Tile.TRIFORCE.getNum()) { 
 									a.add(Tile.FLOOR.getNum());
 								}else {
 									a.add(tile.getNum());

@@ -155,6 +155,19 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.KEY);
 		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.START);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.START);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
+		rule.grammar().setEnd(ZeldaGrammar.SOFT_LOCK_S);
+		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.START);
 		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
@@ -305,7 +318,7 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		//NOW FOR PUZZLES!
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.ENEMY_S);
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
-		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		//rule.grammar().setEnd(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
