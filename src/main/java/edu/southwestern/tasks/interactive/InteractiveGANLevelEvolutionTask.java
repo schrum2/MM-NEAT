@@ -635,7 +635,7 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 					if(e.getKeyCode() == KeyEvent.VK_ENTER) {
 						String typed = vectorInput.getText();
 						vectorValue.setValue(0);
-						if(!typed.matches("\\d+(\\.\\d*)?")) {
+						if(!typed.matches("-*\\d+(\\.\\d*)?")) {
 							return;
 						}
 						double value = Double.parseDouble(typed) * SLIDER_RANGE;
