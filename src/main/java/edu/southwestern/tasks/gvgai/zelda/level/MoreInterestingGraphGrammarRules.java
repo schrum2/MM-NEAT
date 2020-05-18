@@ -11,13 +11,13 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 //		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
 //		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
 //		graphRules.add(rule);
-		
+		//graphRules.clear();
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.START);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		
-		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
 		graphRules.add(rule);
 		
 		
@@ -32,13 +32,13 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.KEY_S);
-		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		
@@ -52,13 +52,13 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
 		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
-		rule.grammar().addNodeToStart(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.PUZZLE_S);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
 		//rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
-		rule.grammar().addNodeToStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
 
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.RAFT_S);
@@ -89,7 +89,7 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.LOCK);
-		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		//rule.grammar().setEnd(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.ENEMY_S);
@@ -137,16 +137,16 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		//START TO ANYTHING!!
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.ENEMY_S);
 		rule.grammar().setStart(ZeldaGrammar.START);
-		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB_S);
-		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY_S);
-		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK);
 		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.ENEMY_S);
 		rule.grammar().setStart(ZeldaGrammar.START);
-		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
-		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY_S);
-		rule.grammar().addNodeBetween(ZeldaGrammar.KEY_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
 		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
@@ -160,28 +160,57 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		rule.grammar().setStart(ZeldaGrammar.START);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.START);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
-		rule.grammar().setEnd(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.START);
 		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		//rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		//rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		//rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeToStart(ZeldaGrammar.LOCK);
-		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
 		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.START);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.START);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		
+		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.PUZZLE_S);
 		rule.grammar().setStart(ZeldaGrammar.START);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.START);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.START);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		//rule.grammar().addNodeBetween(ZeldaGrammar.KEY_S);
 		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.RAFT_S);
@@ -192,7 +221,24 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
 		rule.grammar().setEnd(ZeldaGrammar.RAFT);
-		
+		graphRules.add(rule);
+
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.START);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
+		graphRules.add(rule);
+
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.START);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		//rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.TREASURE);
 		rule.grammar().setStart(ZeldaGrammar.START);
@@ -203,44 +249,179 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
 		graphRules.add(rule);
 		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.START);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.START);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.START_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.START);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		
 		
 		//EVERY POSSIBLE KEY COMBO
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.ENEMY_S);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
 		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
 		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK_S);
 		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
 		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
-		
 		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		
+		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.PUZZLE_S);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		
+		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.RAFT_S);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.PUZZLE);
-		
 		rule.grammar().setEnd(ZeldaGrammar.RAFT);
 		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.PUZZLE_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
+		graphRules.add(rule);
+		
+		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.TREASURE);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
 		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
 		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		
+		
+		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.LOCK);
 		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
 		graphRules.add(rule);
 		
 		//EVERY ENEMY COMBO!!
@@ -249,36 +430,154 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
 		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY_S);
+
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		
+		
+		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
 		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
 		//rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
 		
 		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.PUZZLE_S);
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY_S);
 		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		
+		
+		
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.RAFT_S);
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
 		rule.grammar().setEnd(ZeldaGrammar.RAFT);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
+		graphRules.add(rule);
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.TREASURE);
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB_S);
 		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.ENEMY_S);
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		
-		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
 		
 		
 		
@@ -286,31 +585,176 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		//NOW FOR LOCKS!
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY_S);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
-		graphRules.add(rule);
-		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.ENEMY_S);
-		rule.grammar().setStart(ZeldaGrammar.LOCK);
-		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
-		graphRules.add(rule);
-		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.KEY_S);
-		rule.grammar().setStart(ZeldaGrammar.LOCK);
-		rule.grammar().setEnd(ZeldaGrammar.KEY);
-		graphRules.add(rule);
-		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.PUZZLE_S);
-		rule.grammar().setStart(ZeldaGrammar.LOCK);
-		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
-		graphRules.add(rule);
-		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.RAFT_S);
-		rule.grammar().setStart(ZeldaGrammar.LOCK);
-		rule.grammar().setEnd(ZeldaGrammar.RAFT);
-		graphRules.add(rule);
-		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.TREASURE);
-		rule.grammar().setStart(ZeldaGrammar.LOCK);
-		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		
+		
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		
+		
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB_S);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
+		graphRules.add(rule);
+		
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		
+		
+//		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.LOCK_S);
+//		rule.grammar().setStart(ZeldaGrammar.LOCK);
+//		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+//		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+//		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+//		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+//		graphRules.add(rule);
+//		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.LOCK_S);
+//		rule.grammar().setStart(ZeldaGrammar.LOCK);
+//		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+//		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+//		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+//		graphRules.add(rule);
+//		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.LOCK_S);
+//		rule.grammar().setStart(ZeldaGrammar.LOCK);
+//		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB);
+//		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB_S);
+//		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+//		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.LOCK_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
 		graphRules.add(rule);
 		
 		
@@ -318,19 +762,49 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		//NOW FOR PUZZLES!
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.ENEMY_S);
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
-		//rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
 		rule.grammar().setEnd(ZeldaGrammar.KEY);
 		graphRules.add(rule);
 		
-		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.LOCK_S);
-		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
 		
-		//rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
-		rule.grammar().setEnd(ZeldaGrammar.LOCK);
-		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
 		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
@@ -345,19 +819,76 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
-		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
-		rule.grammar().addNodeToStart(ZeldaGrammar.KEY_S);
-
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY_S);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.RAFT_S);
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.RAFT);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.TREASURE);
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.LOCK);
 		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
 		graphRules.add(rule);
 		
 		
@@ -365,29 +896,446 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
 		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		
+		
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.ENEMY_S);
 		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
 		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.LOCK_S);
 		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
 		rule.grammar().setEnd(ZeldaGrammar.LOCK);
 		graphRules.add(rule);
 		
+		
+		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.PUZZLE_S);
 		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
 		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.TREASURE);
 		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().setEnd(ZeldaGrammar.SOFT_LOCK);
+		graphRules.add(rule);
+		
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.RAFT);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		
+		
+		
+		//EVERY BOMB COMBO!!!!
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY_S);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		
+		
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK_S);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.PUZZLE);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.BOMB_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeBetween(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
 		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
 		graphRules.add(rule);
 		
 		
+		//NOW FOR SOFT LOCKS!
+
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.LOCK_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.LOCK);
+		graphRules.add(rule);
+		
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		//rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.KEY_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		graphRules.add(rule);
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeToStart(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.PUZZLE_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.PUZZLE);
+		graphRules.add(rule);
+		
+		
+		
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.RAFT_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.RAFT);
+		graphRules.add(rule);
+		
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.TREASURE);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.TREASURE);
+		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.ENEMY_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.ENEMY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.ENEMY);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
+		graphRules.add(rule);
+		
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
+		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.SOFT_LOCK_S, ZeldaGrammar.BOMB_S);
+		rule.grammar().setStart(ZeldaGrammar.SOFT_LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
+		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+		rule.grammar().addNodeToStart(ZeldaGrammar.BOMB);
+		rule.grammar().setEnd(ZeldaGrammar.BOMB);
+		graphRules.add(rule);
 //		System.out.println("testing:");
 //		for(GraphRule<ZeldaGrammar> r: graphRules) {
 //			System.out.println("Start:"+r.getSymbolStart());

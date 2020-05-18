@@ -11,6 +11,7 @@ import java.util.Queue;
 import org.apache.commons.io.FileUtils;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.random.RandomNumbers;
 
@@ -100,6 +101,8 @@ abstract public class GraphRuleManager<T extends Grammar> {
 					}
 				}
 				if(!appliedRule) {
+//					System.out.println("waiting");
+//					MiscUtil.waitForReadStringAndEnterKeyPress();
 					applyRule(graph, current, null, i++);
 				}
 				

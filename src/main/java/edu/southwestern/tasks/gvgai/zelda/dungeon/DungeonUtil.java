@@ -41,6 +41,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.gvgai.zelda.study.DungeonComparison;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
@@ -786,6 +787,8 @@ public class DungeonUtil {
 				else {
 					locations.remove(next.getID());
 					dungeon.removeNode(next.getID());
+					System.out.println("wating");
+					MiscUtil.waitForReadStringAndEnterKeyPress();
 					if(parent != null) {
 						Dungeon.Node parentDN = dungeon.getNode(parent.getID());
 						DungeonUtil.setAdjacencies(parentDN, location, p, dNode.name, Tile.WALL.getNum());

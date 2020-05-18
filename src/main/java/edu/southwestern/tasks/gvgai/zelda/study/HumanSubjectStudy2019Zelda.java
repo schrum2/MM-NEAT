@@ -17,6 +17,7 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.graph.ZeldaDungeonGraphBackBone;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
 import edu.southwestern.util.random.RandomNumbers;
@@ -71,6 +72,7 @@ public class HumanSubjectStudy2019Zelda {
 				
 
 				grammar.applyRules(graph);
+				
 				//File rules = new File("rulesForGrammar for origin");
 				//grammar.saveRules(rules);
 				//GraphUtil k = new GraphUtil();
@@ -85,16 +87,22 @@ public class HumanSubjectStudy2019Zelda {
 				
 				LevelLoader loader = (LevelLoader) ClassCreation.createObject("zeldaLevelLoader");
 				dungeonType = loader.getClass().getSimpleName();
+				
 				if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
 					GraphUtil.saveGrammarGraph(graph, subjectDir + "DungeonGraph_" + dungeonType + ".dot");
+				
 				dungeonToPlay = DungeonUtil.recursiveGenerateDungeon(graph, loader);
+				
 				//System.out.println("IS THIS NULL??: "+dungeonToPlay);
+				
 				DungeonUtil.makeDungeonPlayable(dungeonToPlay);
 				dungeonToPlay.markReachableRooms();
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(1);
 			}
+			System.out.println("waiting");
+			MiscUtil.waitForReadStringAndEnterKeyPress();
 			
 		} else if(type.equals(Type.TUTORIAL)) {
 			System.out.println("\n\n\nTutorial not supported yet.");
@@ -127,7 +135,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:1 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph zeldaGrammarRules:edu.southwestern.tasks.gvgai.zelda.level.MoreInterestingGraphGrammarRules firstSoftLockedRoomHasRaft:false".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:4 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.InterestingZeldaGraph zeldaGrammarRules:edu.southwestern.tasks.gvgai.zelda.level.MoreInterestingGraphGrammarRules firstSoftLockedRoomHasRaft:true".split(" "));
 		//MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 	}
 
