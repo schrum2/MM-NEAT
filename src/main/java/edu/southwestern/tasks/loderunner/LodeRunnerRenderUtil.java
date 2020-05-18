@@ -92,15 +92,7 @@ public class LodeRunnerRenderUtil {
 	 * @return
 	 */
 	private static BufferedImage findTile(List<List<Integer>> list, BufferedImage[] images, int xTile, int yTile) {
-		BufferedImage tileImage = new BufferedImage(LODE_RUNNER_TILE_X, LODE_RUNNER_TILE_Y, BufferedImage.TYPE_INT_ARGB);
-		for(int i = 0; i < list.size(); i++) {
-			for(int j = 0; j < list.get(i).size(); j++) {
-				if(i == yTile && j == xTile && (list.get(i).get(j) != '[' || list.get(i).get(j) != ']')) {
-					tileImage = images[list.get(i).get(j)];
-				}
-			}
-		}
-		return tileImage;
+		return images[list.get(yTile).get(xTile)];
 	}
 
 
