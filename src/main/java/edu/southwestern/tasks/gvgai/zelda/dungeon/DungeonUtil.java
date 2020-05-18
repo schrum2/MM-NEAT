@@ -787,8 +787,8 @@ public class DungeonUtil {
 				else {
 					locations.remove(next.getID());
 					dungeon.removeNode(next.getID());
-					System.out.println("wating");
-					MiscUtil.waitForReadStringAndEnterKeyPress();
+//					System.out.println("wating");
+//					MiscUtil.waitForReadStringAndEnterKeyPress();
 					if(parent != null) {
 						Dungeon.Node parentDN = dungeon.getNode(parent.getID());
 						DungeonUtil.setAdjacencies(parentDN, location, p, dNode.name, Tile.WALL.getNum());
