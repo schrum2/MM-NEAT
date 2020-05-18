@@ -73,18 +73,6 @@ public class HumanSubjectStudy2019Zelda {
 
 				grammar.applyRules(graph);
 				
-				//File rules = new File("rulesForGrammar for origin");
-				//grammar.saveRules(rules);
-				//GraphUtil k = new GraphUtil();
-				//k.saveGrammarGraph(graph, "Try this on for size6");
-//				System.out.println("BASQUE IN THE GLORY");
-//				for(GraphRule<ZeldaGrammar> r : grammar.getGraphRules()) {
-//					k.printGrammarGraph(r);
-//				}
-//				GraphRule<ZeldaGrammar> grammr = new GraphRule<>(rules);
-//				System.out.println("Magic happens NOW");
-//				grammr.loadFromFile(rules);
-				
 				LevelLoader loader = (LevelLoader) ClassCreation.createObject("zeldaLevelLoader");
 				dungeonType = loader.getClass().getSimpleName();
 				
@@ -101,8 +89,8 @@ public class HumanSubjectStudy2019Zelda {
 				e.printStackTrace();
 				System.exit(1);
 			}
-			System.out.println("waiting");
-			MiscUtil.waitForReadStringAndEnterKeyPress();
+//			System.out.println("waiting");
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 			
 		} else if(type.equals(Type.TUTORIAL)) {
 			System.out.println("\n\n\nTutorial not supported yet.");
@@ -135,7 +123,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:4 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.InterestingZeldaGraph zeldaGrammarRules:edu.southwestern.tasks.gvgai.zelda.level.MoreInterestingGraphGrammarRules firstSoftLockedRoomHasRaft:true".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:4 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.InterestingZeldaGraph zeldaGrammarRules:edu.southwestern.tasks.gvgai.zelda.level.MoreInterestingGraphGrammarRules firstSoftLockedRoomHasRaft:false".split(" "));
 		//MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 	}
 

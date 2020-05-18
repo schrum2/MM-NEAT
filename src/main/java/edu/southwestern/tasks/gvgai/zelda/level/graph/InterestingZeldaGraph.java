@@ -19,7 +19,9 @@ public class InterestingZeldaGraph implements ZeldaDungeonGraphBackBone{
 		initialList.add(ZeldaGrammar.START_S);
 
 		initialList.add(ZeldaGrammar.ENEMY_S);
+		initialList.add(ZeldaGrammar.ENEMY_S);
 		
+
 		initialList.add(ZeldaGrammar.KEY_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);	
 		
@@ -32,7 +34,14 @@ public class InterestingZeldaGraph implements ZeldaDungeonGraphBackBone{
 		initialList.add(ZeldaGrammar.ENEMY_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
 		initialList.add(ZeldaGrammar.KEY_S);
+		initialList.add(ZeldaGrammar.ENEMY_S);
+
 		initialList.add(ZeldaGrammar.PUZZLE_S);
+		initialList.add(ZeldaGrammar.PUZZLE_S);
+		initialList.add(ZeldaGrammar.PUZZLE_S);
+		initialList.add(ZeldaGrammar.PUZZLE_S);
+		initialList.add(ZeldaGrammar.PUZZLE_S);
+
 		initialList.add(ZeldaGrammar.LOCK_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);
 		initialList.add(ZeldaGrammar.ENEMY_S);

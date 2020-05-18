@@ -716,7 +716,7 @@ public class DungeonUtil {
 		String[][] levelThere = new String[100][100]; // Are these magic numbers for an assumed maximum possible size? I guess it would crash if the level were too large ...
 		
 		// catch boolean for error check
-		recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, 0);
+		recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, 0, 0);
 		dungeon.setLevelThere(ZeldaLevelUtil.trimLevelThere(levelThere));
 //		addCycles(dungeon);
 		return dungeon;
@@ -738,7 +738,7 @@ public class DungeonUtil {
 	 */
 	private static <T extends Grammar> boolean recursiveGenerateDungeon(Graph<T> graph, LevelLoader loader, Dungeon dungeon,
 			Deque<Pair<Graph<T>.Node, Graph<T>.Node>> pending, Stack<Graph<T>.Node> placed, String[][] levelThere,
-			HashMap<String, Point> locations, int times) throws Exception {
+			HashMap<String, Point> locations, int times, int depth) throws Exception {
 		
 		if(pending.isEmpty()) return true;
 		
@@ -751,6 +751,7 @@ public class DungeonUtil {
 		Point location = null;
 		if(parent == null) // Arbitrarily start in the middle of the available 2D array of rooms
 			location = new Point(levelThere.length / 2, levelThere[0].length / 2);
+			//location = new Point(5,5);
 		else
 			location = locations.get(parent.getID());
 		
@@ -762,7 +763,7 @@ public class DungeonUtil {
 		for(Point p : options) {
 			if (levelThere[p.y][p.x] == null) {
 				levelThere[p.y][p.x] = next.getID();
-				
+				System.out.println("("+x+", "+y+")");
 				Level l = loadLevel(next, dungeon, loader, (parent != null) ? Tile.findNum(getTile(parent)) : null);
 				Dungeon.Node dNode = dungeon.newNode(next.getID(), l);
 				dNode.grammar = (ZeldaGrammar) next.getData();
@@ -781,12 +782,20 @@ public class DungeonUtil {
 //				File file = new File("data/VGLC/Zelda/Dungeons/dungeon_" + times + ".png");
 //				ImageIO.write(image, "png", file);
 				
-				boolean success = recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, ++times);
-				if(success)
+				boolean success = recursiveGenerateDungeon(graph, loader, dungeon, pending, placed, levelThere, locations, ++times, depth);
+				if(success) {
+					depth++;
+					//System.out.println("Successfully placed, depth: "+depth);
+
 					return true;
+
+				}
 				else {
 					locations.remove(next.getID());
 					dungeon.removeNode(next.getID());
+					depth--;
+				//	System.out.println("Unsuccessfully placed, depth: "+depth);
+
 //					System.out.println("wating");
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
 					if(parent != null) {
