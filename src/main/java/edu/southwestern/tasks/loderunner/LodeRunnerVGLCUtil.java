@@ -44,23 +44,13 @@ public class LodeRunnerVGLCUtil {
 		//loops through levels to get characters and convert them 
 		for(int i = 0; i < level.length; i++) { 
 			List<Integer> row = new ArrayList<>(LODE_RUNNER_COLUMNS);
-			//System.out.println(level[i]);
-			//complete.add(new ArrayList<>()); //adds a new array list to the list at index i 
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
-					//System.out.print(level[i].charAt(j));
 					int tileCode = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j));
-					//System.out.println(tileCode);
 					row.add(tileCode);
-					//System.out.println("row = " + row);
-					//complete.get(i).addAll(row); //adds the row that has been converted
 				}
 			}
-			//System.out.println(row);
-			//MiscUtil.waitForReadStringAndEnterKeyPress();
-			
 			complete.add(row); //adds a new array list to the list at index i 
-			//complete.get(i).addAll(row); //adds the tile code for conversion
 		}
 		return complete;
 	}
