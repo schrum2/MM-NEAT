@@ -245,11 +245,14 @@ public class ZeldaLevelUtil {
 		//System.out.println("Put key at " + x + ", " + y);
 		level.get(y).set(x, Tile.KEY.getNum()); 
 	}
-	public static int countDiscreteRooms(Dungeon dungeon, int numRoomsReachable, Point START, ArrayList<ArrayList<Integer>> compareRooms, HashSet<ArrayList<ArrayList<Integer>>> k) {
+	public static int countDiscreteRooms(Dungeon dungeon, int numRoomsReachable, Point START, /*ArrayList<ArrayList<Integer>> compareRooms,*/ HashSet<ArrayList<ArrayList<Integer>>> k) {
 		for(edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node room: dungeon.getLevels().values()) {
 			// TODO: This only applies to water/wall percentage calculation, not distinct room count
+			//System.out.println("ROOM:");
+			ArrayList<ArrayList<Integer>> compareRooms = new ArrayList<ArrayList<Integer>>();
+
 				for(int x = START.x; x < START.x+ZELDA_FLOOR_SPACE_ROWS; x++) {
-					//System.out.println("ROW:"+x);
+					
 					ArrayList<Integer> a = new ArrayList<Integer>();
 					for(int y = START.y; y < START.y+ZELDA_FLOOR_SPACE_COLUMNS; y++) {
 						Tile tile = room.level.rougeTiles[y][x];
@@ -267,11 +270,22 @@ public class ZeldaLevelUtil {
 						}else {
 							a.add(tile.getNum());
 						}
+						//System.out.print(a.get(y-START.y));
+
 					}
 					compareRooms.add(a);
+
+					//System.out.println();
 				}
+				
+				//System.out.print(compareRooms.toString());
+
+			
 				k.add(compareRooms);
-			}
+				//System.out.println("NUMBER OF DISTINCT ROOMS: "+k.size());
+			
+		}
+		
 		
 		return k.size();
 	}

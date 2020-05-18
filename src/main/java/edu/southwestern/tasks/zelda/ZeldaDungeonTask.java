@@ -146,7 +146,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				// Upper left corner of floor area (ignore surrounding walls)
 				final Point START = new Point(2, 2);
 				// Count occurrence of water and wall tiles in the dungeons for MAP Elites binning
-				ArrayList<ArrayList<Integer>> compareRooms = new ArrayList<ArrayList<Integer>>();
+				//ArrayList<ArrayList<Integer>> compareRooms = new ArrayList<ArrayList<Integer>>();
 				HashSet<ArrayList<ArrayList<Integer>>> k = new HashSet<ArrayList<ArrayList<Integer>>>();
 				for(Node room: dungeon.getLevels().values()) {
 					if(room.reachable) { // Only include reachable rooms in feature calculation
@@ -163,7 +163,9 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						}
 					}
 				}
-				numDistinctRooms = ZeldaLevelUtil.countDiscreteRooms(dungeon, numRoomsReachable, START, compareRooms, k);
+				numDistinctRooms = ZeldaLevelUtil.countDiscreteRooms(dungeon, numRoomsReachable, START, k);
+				//System.out.println("Waiting for ENTER: ");
+				//MiscUtil.waitForReadStringAndEnterKeyPress();
 				numRooms = dungeon.getLevels().size();
 				// A* should already have been run during creation to assure beat-ability, but it is run again here to get the action sequence.
 				ArrayList<GridAction> actionSequence;
