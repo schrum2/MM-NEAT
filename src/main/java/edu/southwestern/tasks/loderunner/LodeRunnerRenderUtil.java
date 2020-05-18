@@ -15,18 +15,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * 
+ * This class Renders a level of Lode Runner into an applet 
  * @author kdste
  *
  */
 public class LodeRunnerRenderUtil {
-	public static final String LODE_RUNNER_TILE_PATH = "data/VGLC/Lode Runner/Tiles/";
-	public static final String LODE_RUNNER_LEVEL_PATH = "data/VGLC/Lode Runner/Processed/";
+	public static final String LODE_RUNNER_TILE_PATH = "data/VGLC/Lode Runner/Tiles/"; //file path for tiles 
+	public static final String LODE_RUNNER_LEVEL_PATH = "data/VGLC/Lode Runner/Processed/"; //file path for levels 
 	public static final int LODE_RUNNER_TILE_X = 10; // x length of an individual tile 
 	public static final int LODE_RUNNER_TILE_Y = 10; // y length of an individual tile 
 	public static final int LODE_RUNNER_COLUMNS = 32; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int LODE_RUNNER_ROWS = 22; // Equivalent to width in original game
-	public static BufferedImage finalRender; 
+	public static BufferedImage finalRender; //gets the final rendered image 
 	
 	/**
 	 * 
@@ -35,17 +35,17 @@ public class LodeRunnerRenderUtil {
 	 */
 	public static void main(String[] args) throws IOException {
 		List<List<Integer>> list = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
-		BufferedImage[] images = loadImages(LODE_RUNNER_TILE_PATH);
-		finalRender = getBufferedImage(list, images);
+		BufferedImage[] images = loadImages(LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images 
+		finalRender = getBufferedImage(list, images); //puts the final rendered level into a buffered image 
 		//System.out.println(image);
 	}
 
 	/**
-	 * 
-	 * @param list
-	 * @param images
+	 * Displays the BufferedImage from the tiles 
+	 * @param list JSON of the level 
+	 * @param images Array of tile images 
 	 * @return
-	 * @throws IOException
+	 * @throws IOException In case the file can't be found 
 	 */
 	public static BufferedImage getBufferedImage(List<List<Integer>> list, BufferedImage[] images) throws IOException {
 		int width = LODE_RUNNER_TILE_X*LODE_RUNNER_COLUMNS;
@@ -86,9 +86,9 @@ public class LodeRunnerRenderUtil {
 	}
 	
 	/**
-	 * 
-	 * @param list
-	 * @param images
+	 * Finds the correct tile to be placed into the rendered level 
+	 * @param list JSON of level 
+	 * @param images Array of tile images 
 	 * @return
 	 */
 	private static BufferedImage findTile(List<List<Integer>> list, BufferedImage[] images, int xTile, int yTile) {
