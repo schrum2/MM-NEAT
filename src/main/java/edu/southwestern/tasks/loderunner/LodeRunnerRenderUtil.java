@@ -1,8 +1,8 @@
 package edu.southwestern.tasks.loderunner;
 
-import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -51,13 +51,26 @@ public class LodeRunnerRenderUtil {
 //			    RenderingHints.KEY_TEXT_ANTIALIASING,
 //			    RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 //		image =  load.getDeviceConfiguration().createCompatibleImage(width, height);
+		Color red = Color.RED;
+		Color blue = Color.BLUE;
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		for(int x = 0; x < LODE_RUNNER_TILE_X; x++) {
-			for(int y = 0; y < LODE_RUNNER_TILE_Y; y++) {
-				
+		Graphics g = image.getGraphics();
+		for(int y = 0; y < height; y += LODE_RUNNER_TILE_Y) {
+			for(int x = 0; x < width; x += 2*LODE_RUNNER_TILE_X) {
+				if(y%2==1) {
+					g.setColor(blue);
+					g.fillRect(x, y, LODE_RUNNER_TILE_X, LODE_RUNNER_TILE_Y);
+					g.setColor(red);
+					g.fillRect(x+LODE_RUNNER_TILE_X, y, LODE_RUNNER_TILE_X, LODE_RUNNER_TILE_Y);
+				}
+				else {
+					g.setColor(red);
+					g.fillRect(x, y, LODE_RUNNER_TILE_X, LODE_RUNNER_TILE_Y);
+					g.setColor(blue);
+					g.fillRect(x+LODE_RUNNER_TILE_X, y, LODE_RUNNER_TILE_X, LODE_RUNNER_TILE_Y);
+				}
 			}
 		}
-		
 		return image;
 	}
 	
