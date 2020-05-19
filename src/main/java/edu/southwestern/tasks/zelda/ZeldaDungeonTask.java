@@ -267,7 +267,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				// Could conceivably also be used for behavioral diversity instead of map elites, but this would be a weird behavior vector from a BD perspective
 				if(MMNEAT.ea instanceof MAPElites) {
 					int binIndex = -1;
-					double binScore = Double.NaN;
+					// Hard coding bin score to be the percentage of reachable rooms traversed. May want to change this later.
+					double binScore = (numRoomsTraversed*1.0)/numRoomsReachable;
 					
 					if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesWallWaterRoomsBinLabels) {					
 						// Assign to the behavior vector before using MAP-Elites
@@ -282,7 +283,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						binIndex = (wallTileIndex*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS + waterTileIndex)*(maxNumRooms+1) + numRoomsReachable;
 						double[] archiveArray = new double[ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS*(maxNumRooms+1)];
 						Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
-						binScore = (numRoomsTraversed*1.0)/numRoomsReachable;
 						archiveArray[binIndex] = binScore; // Percent rooms traversed
 
 						System.out.println("["+wallTileIndex+"]["+waterTileIndex+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
@@ -296,7 +296,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						binIndex = (numDistinctRooms*(maxNumRooms+1) + numBackTrackRooms)*(maxNumRooms+1) + numRoomsReachable;
 						double[] archiveArray = new double[(maxNumRooms+1)*(maxNumRooms+1)*(maxNumRooms+1)];
 						Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
-						binScore = (numRoomsTraversed*1.0)/numRoomsReachable;
 						archiveArray[binIndex] = binScore; // Percent rooms traversed
 
 						System.out.println("["+numDistinctRooms+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
