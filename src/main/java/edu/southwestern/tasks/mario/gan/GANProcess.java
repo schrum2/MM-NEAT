@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.loderunner.LodeRunnerGANUtil;
 import edu.southwestern.util.PythonUtil;
 // For the three possible tile counts in Zelda
 import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.*;
@@ -22,7 +23,7 @@ public class GANProcess extends Comm {
 	
 	private static GANProcess ganProcess = null;
 
-	public enum GAN_TYPE {MARIO, ZELDA};
+	public enum GAN_TYPE {MARIO, ZELDA, LODE_RUNNER};
 	
 	public static GAN_TYPE type = GAN_TYPE.MARIO;
 	
@@ -61,6 +62,10 @@ public class GANProcess extends Comm {
 											Parameters.parameters.integerParameter("GANInputSize"),
 											// This is an ugly mess meant to support backwards compatibility with previously trained models.
 											Parameters.parameters.stringParameter("zeldaGANModel").startsWith("ZeldaDungeonsAll3Tiles") ? ZELDA_GAN_REDUCED_TILE_NUMBER : Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? ZELDA_GAN_ORIGINAL_TILE_NUMBER : ZELDA_GAN_EXPANDED_TILE_NUMBER);
+				break;
+			case LODE_RUNNER:
+				ganProcess = new GANProcess(PYTHON_BASE_PATH+"LodeRunnerGAN"+ File.separator + Parameters.parameters.stringParameter("LodeRunnerGANModel"), 
+						Parameters.parameters.integerParameter("GANInputSize"), LodeRunnerGANUtil.LODE_RUNNER_TILE_NUMBER);
 				break;
 			}
 			ganProcess.start();
