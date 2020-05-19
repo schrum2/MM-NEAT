@@ -1,16 +1,21 @@
 package edu.southwestern.tasks.zelda;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.util.random.RandomNumbers;
+import me.jakerg.rougelike.Tile;
 
 public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<Integer>>[][]> {
 
@@ -59,6 +64,41 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 		return dungeonInstance;
 	}
 	
-
-
+	public static void main(String[] args) {
+		MMNEAT mmneat = new MMNEAT("runNumber:0 randomSeed:0 zeldaDungeonBackTrackRoomFitness:true zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false zeldaDungeonBackTrackRoomFitness:true watch:true trials:1 mu:10 io:false netio:false cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false".split(" "));
+		mmneat.loadClasses();
+		
+		ZeldaDungeonDirectEncodingTask task = new ZeldaDungeonDirectEncodingTask();
+		
+		@SuppressWarnings("unchecked")
+		List<List<Integer>>[][] levelAsListsGrid = new List[2][2];
+		
+		levelAsListsGrid[0][0] = new ArrayList<List<Integer>>();
+		// Make totally empty room
+		for(int y = 0; y < ZeldaVGLCUtil.ZELDA_ROOM_ROWS; y++) {
+			ArrayList<Integer> row = new ArrayList<>();
+			for(int x = 0; x < ZeldaVGLCUtil.ZELDA_ROOM_COLUMNS; x++) {
+				row.add(Tile.FLOOR.getNum());
+			}
+			levelAsListsGrid[0][0].add(row);
+		}
+		// Set left/right walls
+		for(int y = 0; y < ZeldaVGLCUtil.ZELDA_ROOM_ROWS; y++) {
+			for(int x = 0; x <= 1; x++) {
+				levelAsListsGrid[0][0].get(y).set(x,Tile.WALL.getNum());
+				levelAsListsGrid[0][0].get(y).set(levelAsListsGrid[0][0].get(y).size() - 1 - x,Tile.WALL.getNum());
+			}
+		}
+		// Set top/bottom walls
+		for(int y = 0; y <= 1; y++) {
+			for(int x = 0; x < ZeldaVGLCUtil.ZELDA_ROOM_COLUMNS; x++) {
+				levelAsListsGrid[0][0].get(y).set(x,Tile.WALL.getNum());
+				levelAsListsGrid[0][0].get(y).set(levelAsListsGrid[0][0].get(y).size() - 1 - x,Tile.WALL.getNum());
+			}
+		}
+		
+		Dungeon dungeon = task.makeDungeon(levelAsListsGrid);
+		
+		DungeonUtil.viewDungeon(dungeon);
+	}
 }
