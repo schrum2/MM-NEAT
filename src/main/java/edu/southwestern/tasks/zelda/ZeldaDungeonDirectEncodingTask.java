@@ -18,15 +18,15 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 
 	@Override
 	public Dungeon getZeldaDungeonFromGenotype(Genotype<List<List<Integer>>[][]> individual) {
-		return makeDungeon(individual);
+		List<List<Integer>>[][] levelAsListsGrid = individual.getPhenotype();
+		return makeDungeon(levelAsListsGrid);
 	}
 	/**
 	 * Almost identical to SimpleDungeon version, but takes in Genotype<List<List<Integer>>[][]> instead of ArrayList<ArrayList<Double>> (phenotype)
 	 * @param individual A List<List<Integer>>[][] representing a hard-coded dungeon
 	 * @return dungeon the conversion from List<List<Integer>>[][] to dungeon
 	 */
-	private Dungeon makeDungeon(Genotype<List<List<Integer>>[][]> individual) {
-		List<List<Integer>>[][] levelAsListsGrid = individual.getPhenotype();
+	private Dungeon makeDungeon(List<List<Integer>>[][] levelAsListsGrid) {
 		Level[][] dungeon = DungeonUtil.roomGridFromJsonGrid(levelAsListsGrid);
 		
 		Dungeon dungeonInstance = new Dungeon();
