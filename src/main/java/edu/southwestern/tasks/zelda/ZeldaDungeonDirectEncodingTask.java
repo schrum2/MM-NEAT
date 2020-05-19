@@ -45,8 +45,10 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 						uuidLabels[y][x] = UUID.nameUUIDFromBytes(RandomNumbers.randomByteArray(16)).toString();
 					}
 					String name = uuidLabels[y][x];
-//					Node newNode = dungeonInstance.newNode(name, dungeon[y][x]);
 					dungeonInstance.newNode(name, dungeon[y][x]);
+					
+					
+//					Node newNode = dungeonInstance.newNode(name, dungeon[y][x]);	
 //					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x + 1, y, "RIGHT");
 //					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x, y - 1, "UP");
 //					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x - 1, y, "LEFT");
