@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.zelda;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -61,7 +62,6 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 		
 		dungeonInstance.setCurrentLevel(name);
 		dungeonInstance.setLevelThere(uuidLabels);
-		
 		return dungeonInstance;
 	}
 	
@@ -114,9 +114,11 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 		levelAsListsGrid[0][1].get(5).set(3, Tile.KEY.getNum());
 		levelAsListsGrid[0][1].get(6).set(8, Tile.TRIFORCE.getNum());
 		
-
+		
 		// Look at dungeon structure
 		Dungeon dungeon = task.makeDungeon(levelAsListsGrid);
+		Point triforceRoom = new Point(0,1);
+		dungeon.setGoalPoint(triforceRoom);
 		DungeonUtil.viewDungeon(dungeon);
 		
 		// Verify that fitness calculations are correct
