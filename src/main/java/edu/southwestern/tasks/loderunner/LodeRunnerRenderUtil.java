@@ -29,7 +29,8 @@ public class LodeRunnerRenderUtil {
 	public static BufferedImage finalRender; //gets the final rendered image 
 	
 	/**
-	 * 
+	 * Sets up a level to be rendered by converting the VGLC data to JSON and then 
+	 * placing the correct tile in the right place to visualize the level 
 	 * @param args
 	 * @throws IOException
 	 */
@@ -53,7 +54,7 @@ public class LodeRunnerRenderUtil {
 		BufferedImage image = createBufferedImage(list, width, height, images);
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
-		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(width/2, height/2, Image.SCALE_FAST)));
+		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_FAST)));
 		panel.add(label);
 		frame.add(panel);
 		frame.pack();
@@ -71,7 +72,7 @@ public class LodeRunnerRenderUtil {
 	 * @throws IOException
 	 */
 	private static BufferedImage createBufferedImage(List<List<Integer>> list, int width, int height, BufferedImage[] images) throws IOException {
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = image.createGraphics();
 		//loops through the grid in the applet to place tiles in order to render levels 
 		for(int y = 0; y < height; y += LODE_RUNNER_TILE_Y) {
