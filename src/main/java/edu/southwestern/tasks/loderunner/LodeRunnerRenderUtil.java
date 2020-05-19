@@ -22,8 +22,8 @@ import javax.swing.JPanel;
 public class LodeRunnerRenderUtil {
 	public static final String LODE_RUNNER_TILE_PATH = "data/VGLC/Lode Runner/Tiles/"; //file path for tiles 
 	public static final String LODE_RUNNER_LEVEL_PATH = "data/VGLC/Lode Runner/Processed/"; //file path for levels 
-	public static final int LODE_RUNNER_TILE_X = 10; // x length of an individual tile 
-	public static final int LODE_RUNNER_TILE_Y = 10; // y length of an individual tile 
+	public static final int LODE_RUNNER_TILE_X = 8; // x length of an individual tile 
+	public static final int LODE_RUNNER_TILE_Y = 8; // y length of an individual tile 
 	public static final int LODE_RUNNER_COLUMNS = 32; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int LODE_RUNNER_ROWS = 22; // Equivalent to width in original game
 	public static BufferedImage finalRender; //gets the final rendered image 
