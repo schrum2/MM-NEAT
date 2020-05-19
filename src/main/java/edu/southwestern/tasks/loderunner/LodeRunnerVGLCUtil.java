@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.MiscUtil;
 import gvgai.tools.IO;
 
 /**
- * This class converts VGLC LodeRunner levels into JSON files 
+ * This class converts VGLC Lode Runner levels into JSON files 
  * @author kdste
  *
  */
@@ -43,7 +41,7 @@ public class LodeRunnerVGLCUtil {
 		List<List<Integer>> complete = new ArrayList<>(LODE_RUNNER_ROWS);
 		//loops through levels to get characters and convert them 
 		for(int i = 0; i < level.length; i++) { 
-			List<Integer> row = new ArrayList<>(LODE_RUNNER_COLUMNS);
+			List<Integer> row = new ArrayList<>(LODE_RUNNER_COLUMNS);//creates new List to be a new row of the JSON 
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
 					int tileCode = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j));

@@ -15,7 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * This class Renders a level of Lode Runner into an applet 
+ * This class Renders a level of Lode Runner into a window  
  * @author kdste
  *
  */
@@ -38,14 +38,13 @@ public class LodeRunnerRenderUtil {
 		List<List<Integer>> list = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
 		BufferedImage[] images = loadImages(LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images 
 		finalRender = getBufferedImage(list, images); //puts the final rendered level into a buffered image 
-		//System.out.println(image);
 	}
 
 	/**
-	 * Displays the BufferedImage from the tiles 
+	 * Displays the BufferedImage in a JPanel  
 	 * @param list JSON of the level 
 	 * @param images Array of tile images 
-	 * @return
+	 * @return Final BufferedImage of the whole level in a window 
 	 * @throws IOException In case the file can't be found 
 	 */
 	public static BufferedImage getBufferedImage(List<List<Integer>> list, BufferedImage[] images) throws IOException {
@@ -63,13 +62,13 @@ public class LodeRunnerRenderUtil {
 	}
 
 	/**
-	 * Puts tiles into BufferedImage
+	 * Puts tiles into BufferedImage to fully render the level 
 	 * @param list JSON of the level 
 	 * @param width Width of rendered image
 	 * @param height HEight of rendered image 
 	 * @param images Array of Buffered Images referring to the tiles 
-	 * @return
-	 * @throws IOException
+	 * @return A BufferedImage of the level 
+	 * @throws IOException In case the file can't be found
 	 */
 	private static BufferedImage createBufferedImage(List<List<Integer>> list, int width, int height, BufferedImage[] images) throws IOException {
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -87,10 +86,10 @@ public class LodeRunnerRenderUtil {
 	}
 	
 	/**
-	 * Finds the correct tile to be placed into the rendered level 
+	 * Finds the correct tile to be placed into the rendered level based off the number in the JSON representation of the level 
 	 * @param list JSON of level 
 	 * @param images Array of tile images 
-	 * @return
+	 * @return The tile needed as a BufferedImage 
 	 */
 	private static BufferedImage findTile(List<List<Integer>> list, BufferedImage[] images, int xTile, int yTile) {
 		return images[list.get(yTile).get(xTile)];
@@ -98,10 +97,10 @@ public class LodeRunnerRenderUtil {
 
 
 	/**
-	 * Loads in all of the tile images 
+	 * Loads in all of the tile images, the index corresponds to the number for that tile 
 	 * @param filePath Directory that hold the tile images 
-	 * @return An array of BufferedImages 
-	 * @throws IOException
+	 * @return An array of BufferedImages holding all the tiles for Lode Runner
+	 * @throws IOException In case the file can't be found
 	 */
 	private static BufferedImage[] loadImages(String filePath) throws IOException {
 		BufferedImage[] tileList = new BufferedImage[8];
