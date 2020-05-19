@@ -7,6 +7,7 @@ import java.util.UUID;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
@@ -97,8 +98,52 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 			}
 		}
 		
+		// Look at dungeon structure
 		Dungeon dungeon = task.makeDungeon(levelAsListsGrid);
-		
 		DungeonUtil.viewDungeon(dungeon);
+		
+		// Verify that fitness calculations are correct
+		Score<List<List<Integer>>[][]> s = task.evaluate(new Genotype<List<List<Integer>>[][]>() {
+
+			@Override
+			public void addParent(long id) {
+			}
+
+			@Override
+			public List getParentIDs() {
+				return null;
+			}
+
+			@Override
+			public Genotype copy() {
+				return null;
+			}
+
+			@Override
+			public void mutate() {
+			}
+
+			@Override
+			public Genotype<List<List<Integer>>[][]> crossover(Genotype<List<List<Integer>>[][]> g) {
+				return null;
+			}
+
+			@Override
+			public List<List<Integer>>[][] getPhenotype() {
+				return levelAsListsGrid;
+			}
+
+			@Override
+			public Genotype<List<List<Integer>>[][]> newInstance() {
+				return null;
+			}
+
+			@Override
+			public long getId() {
+				return 0;
+			}
+		});
+		
+		System.out.println(s);
 	}
 }
