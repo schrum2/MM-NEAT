@@ -313,10 +313,29 @@ public class World {
 		changeToDoor(x - 1, y, Tile.HIDDEN);
 		changeToDoor(x, y - 1, Tile.HIDDEN);
 		
-		changeToDoor(x + 1, y, Tile.PUZZLE_LOCKED);
-		changeToDoor(x, y + 1, Tile.PUZZLE_LOCKED);
-		changeToDoor(x - 1, y, Tile.PUZZLE_LOCKED);
-		changeToDoor(x, y - 1, Tile.PUZZLE_LOCKED);
+		// Only unlock puzzle doors if the room does not contain a locked puzzle block.
+		// For example, if the flow of the level assures a room with a puzzle block must
+		// be encountered before the following room, then that following room may not contain
+		// a puzzle block and thus should be unlocked upon entry. However, if there are
+		// puzzle blocks in both rooms on either side of a door, then it should only
+		// be unlocked moving in one direction, until the puzzle block on the other side
+		// is also pushed.
+		if(!containsLockedPuzzleBlock()) {
+			changeToDoor(x + 1, y, Tile.PUZZLE_LOCKED);
+			changeToDoor(x, y + 1, Tile.PUZZLE_LOCKED);
+			changeToDoor(x - 1, y, Tile.PUZZLE_LOCKED);
+			changeToDoor(x, y - 1, Tile.PUZZLE_LOCKED);
+		}
+	}
+	
+	public boolean containsLockedPuzzleBlock() {
+		for(Item i : items) {
+			if(i instanceof MovableBlock) {
+				MovableBlock mb = (MovableBlock) i;
+				if(mb.stillLocked()) return true;
+			}
+		}
+		return false;
 	}
 
 	/**

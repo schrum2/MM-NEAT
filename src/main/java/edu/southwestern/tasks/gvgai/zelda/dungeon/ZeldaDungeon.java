@@ -196,7 +196,8 @@ public abstract class ZeldaDungeon<T> {
 					// else remain a plain door
 					//places a puzzle block if the door is a puzzle
 					//player must move the puzzle block to unlock the door
-					if(tile == Tile.PUZZLE_LOCKED.getNum()) ZeldaLevelUtil.placePuzzle(direction, level, rand);
+					if(tile == Tile.PUZZLE_LOCKED.getNum()) 
+						ZeldaLevelUtil.placePuzzle(direction, level, rand);
 				}
 				// Places keys randomly, but based on CPPN, so it will be consistent. Places too many keys ... one per locked door in each room. A bit boring.
 				if(!(Parameters.parameters.booleanParameter("zeldaCPPN2GANSparseKeys")) && tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level, rand); // If the door is now locked place a random key in the level
