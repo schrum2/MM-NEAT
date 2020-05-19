@@ -47,7 +47,7 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 					}
 					String name = uuidLabels[y][x];
 					dungeonInstance.newNode(name, dungeon[y][x]);
-					
+					System.out.println(name);
 					
 //					Node newNode = dungeonInstance.newNode(name, dungeon[y][x]);	
 //					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x + 1, y, "RIGHT");
@@ -118,7 +118,12 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 		// Look at dungeon structure
 		Dungeon dungeon = task.makeDungeon(levelAsListsGrid);
 		Point triforceRoom = new Point(0,1);
-		dungeon.setGoalPoint(triforceRoom);
+		Node k = dungeon.getNodeAt(0, 1);
+		//dungeon.setGoal("triforce room");
+		
+		//dungeon.setGoalPoint(new Point(24, 6));
+		dungeon.setGoal(dungeon.getNodeAt(0, 1).toString());
+		System.out.println("the goal is: "+dungeon.getGoal());
 		DungeonUtil.viewDungeon(dungeon);
 		
 		// Verify that fitness calculations are correct
