@@ -37,6 +37,7 @@ import javax.swing.event.MouseInputAdapter;
  */
 public class LodeRunner {
 	
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	private String levelName = "CAMPAIGN-1";
 	public static final int INITIAL_LIVES = 3;
 	
@@ -282,7 +283,7 @@ public class LodeRunner {
 	private static String getInstructions() {
 		String instructionText = "";
 		try {
-			BufferedReader r = new BufferedReader(new FileReader("Instructions.txt"));
+			BufferedReader r = new BufferedReader(new FileReader(FILE_PATH+"Instructions.txt"));
 			if (r.ready()) {
 				String line = "";
 				while (line != null) {
@@ -341,7 +342,7 @@ public class LodeRunner {
 	 * Returns an array of levels that can be opened.
 	 */
 	static Object[] getLevels() {
-		final File[] files = new File(".").listFiles();
+		final File[] files = new File(FILE_PATH+".").listFiles();
 		Set<String> levels = new HashSet<String>();
 		for (File f : files) {
 			if (f != null) {

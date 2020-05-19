@@ -7,6 +7,7 @@ public class Treasure extends Gold {
 	public static final String TITLE = "Treasure";
 	public static final String NAME = "treasure";
 	public static final String DEFAULT_IMAGE_PATH = "treasure.png";
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	@Override
 	public String title() {
 		return TITLE;
@@ -17,7 +18,7 @@ public class Treasure extends Gold {
 	}
 	@Override
 	public String defaultImagePath() {
-		return DEFAULT_IMAGE_PATH;
+		return FILE_PATH+DEFAULT_IMAGE_PATH;
 	}
 
 	public Treasure(int x, int y) {

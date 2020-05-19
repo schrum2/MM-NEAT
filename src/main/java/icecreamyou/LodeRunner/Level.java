@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
  * The level environment.
  */
 public class Level {
-
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	/**
 	 * Pre-compiled regex patterns for parsing layout files.
 	 * These temporary classes are very ugly, but it moves the actual regex to
@@ -79,7 +79,7 @@ public class Level {
 	}
 	public Level(String name) {
 		this.name = name;
-		String[] lines = Layout.getLayoutAsArray(name +".txt");
+		String[] lines = Layout.getLayoutAsArray(FILE_PATH+name +".txt");
 		for (String line : lines) {
 			if (line == null || line.equals(""))
 				continue;
@@ -205,7 +205,7 @@ public class Level {
 	 * Save the current level to a layout file.
 	 */
 	public void save(String filename) {
-		Layout.save(this, filename);
+		Layout.save(this, FILE_PATH+filename);
 		name = filename;
 	}
 	

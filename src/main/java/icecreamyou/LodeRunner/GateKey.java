@@ -14,6 +14,7 @@ public class GateKey extends Key {
 	public static final String TITLE = "Gate key";
 	public static final String NAME = "gateKey";
 	public static final String DEFAULT_IMAGE_PATH = "key-red.png";
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	@Override
 	public String title() {
 		return TITLE;
@@ -24,7 +25,7 @@ public class GateKey extends Key {
 	}
 	@Override
 	public String defaultImagePath() {
-		return DEFAULT_IMAGE_PATH;
+		return FILE_PATH+DEFAULT_IMAGE_PATH;
 	}
 
 	/**
@@ -55,7 +56,7 @@ public class GateKey extends Key {
 	@Override
 	public void draw(Graphics g) {
 		if (!isPickedUp())
-			Picture.draw(g, "key-"+ colorToString(color).toLowerCase() +".png", getX(), getY());
+			Picture.draw(g, FILE_PATH+"key-"+ colorToString(color).toLowerCase() +".png", getX(), getY());
 	}
 	
 	@Override

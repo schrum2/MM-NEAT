@@ -11,6 +11,8 @@ public class Diggable extends Solid {
 	public static final String TITLE = "Ground";
 	public static final String NAME = "diggable";
 	public static final String DEFAULT_IMAGE_PATH = "diggable.gif";
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
+	
 	@Override
 	public String title() {
 		return TITLE;
@@ -21,7 +23,7 @@ public class Diggable extends Solid {
 	}
 	@Override
 	public String defaultImagePath() {
-		return DEFAULT_IMAGE_PATH;
+		return FILE_PATH+DEFAULT_IMAGE_PATH;
 	}
 	
 	/**

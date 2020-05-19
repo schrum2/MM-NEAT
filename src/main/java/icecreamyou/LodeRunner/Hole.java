@@ -10,6 +10,7 @@ public class Hole extends WorldNode {
 	public static final String TITLE = "Hole";
 	public static final String NAME = "hole";
 	public static final String DEFAULT_IMAGE_PATH = "hole.png";
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	@Override
 	public String title() {
 		return TITLE;
@@ -20,7 +21,7 @@ public class Hole extends WorldNode {
 	}
 	@Override
 	public String defaultImagePath() {
-		return DEFAULT_IMAGE_PATH;
+		return FILE_PATH+DEFAULT_IMAGE_PATH;
 	}
 	
 	public Hole() {

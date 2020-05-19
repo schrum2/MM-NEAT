@@ -9,6 +9,7 @@ public class Portal extends WorldNode implements Unlockable {
 	public static final String TITLE = "Portal";
 	public static final String NAME = "portal";
 	public static final String DEFAULT_IMAGE_PATH = "portal.png";
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	@Override
 	public String title() {
 		return TITLE;
@@ -19,7 +20,7 @@ public class Portal extends WorldNode implements Unlockable {
 	}
 	@Override
 	public String defaultImagePath() {
-		return DEFAULT_IMAGE_PATH;
+		return FILE_PATH+DEFAULT_IMAGE_PATH;
 	}
 	
 	private boolean locked = true;
@@ -31,7 +32,7 @@ public class Portal extends WorldNode implements Unlockable {
 	@Override
 	public void draw(Graphics g) {
 		if (locked)
-			Picture.draw(g, "portal-locked.png", getX(), getY());
+			Picture.draw(g,FILE_PATH+ "portal-locked.png", getX(), getY());
 		else
 			super.draw(g);
 	}

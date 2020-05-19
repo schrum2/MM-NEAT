@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.swing.*;
 
 public class GamePanel extends JPanel implements MouseMotionListener {
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	
 	/**
 	 * Automatically generated. Required for subclasses of JPanel.
@@ -204,9 +205,9 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 				&& !editorKey.equals("")) {
 			// Special case for WorldNodes where color is important.
 			if (editorKey.equals("gate"))
-				editorImgPath = "gate-"+ GateKey.colorToString(editorColor).toLowerCase() +".png";
+				editorImgPath = FILE_PATH+ "gate-"+ GateKey.colorToString(editorColor).toLowerCase() +".png";
 			else if (editorKey.equals("gateKey"))
-				editorImgPath = "key-"+ GateKey.colorToString(editorColor).toLowerCase() +".png";
+				editorImgPath = FILE_PATH+"key-"+ GateKey.colorToString(editorColor).toLowerCase() +".png";
 			Picture.draw(g, editorImgPath, mouseXPos, mouseYPos);
 		}
 	}
@@ -346,7 +347,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	 * Switch to the first campaign level.
 	 */
 	public void startCampaign() {
-		level = new Level("CAMPAIGN-1");
+		level = new Level(FILE_PATH+"CAMPAIGN-1");
 		mode = Mode.MODE_PAUSED;
 		timer.stop();
 		repaint();

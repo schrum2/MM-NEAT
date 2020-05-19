@@ -14,6 +14,7 @@ public class Gate extends WorldNode implements Unlockable, ActorCollision {
 	public static final String TITLE = "Gate";
 	public static final String NAME = "gate";
 	public static final String DEFAULT_IMAGE_PATH = "gate-red.png";
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	@Override
 	public String title() {
 		return TITLE;
@@ -24,7 +25,7 @@ public class Gate extends WorldNode implements Unlockable, ActorCollision {
 	}
 	@Override
 	public String defaultImagePath() {
-		return DEFAULT_IMAGE_PATH;
+		return FILE_PATH+DEFAULT_IMAGE_PATH;
 	}
 	
 	/**
@@ -60,9 +61,9 @@ public class Gate extends WorldNode implements Unlockable, ActorCollision {
 	@Override
 	public void draw(Graphics g) {
 		if (open)
-			Picture.draw(g, "gate-disabled.png", getX(), getY());
+			Picture.draw(g, FILE_PATH+"gate-disabled.png", getX(), getY());
 		else
-			Picture.draw(g, "gate-"+ GateKey.colorToString(color).toLowerCase() +".png", getX(), getY());
+			Picture.draw(g, FILE_PATH+"gate-"+ GateKey.colorToString(color).toLowerCase() +".png", getX(), getY());
 	}
 
 	@Override
