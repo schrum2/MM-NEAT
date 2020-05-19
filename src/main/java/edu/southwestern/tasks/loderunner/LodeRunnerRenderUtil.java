@@ -14,6 +14,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import edu.southwestern.util.random.RandomNumbers;
+
 /**
  * This class Renders a level of Lode Runner into a window  
  * @author kdste
@@ -26,7 +28,7 @@ public class LodeRunnerRenderUtil {
 	public static final int LODE_RUNNER_TILE_Y = 8; // y length of an individual tile 
 	public static final int LODE_RUNNER_COLUMNS = 32; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int LODE_RUNNER_ROWS = 22; // Equivalent to width in original game
-	public static BufferedImage finalRender; //gets the final rendered image 
+	public static BufferedImage FINAL_RENDER; //gets the final rendered image 
 	
 	/**
 	 * Sets up a level to be rendered by converting the VGLC data to JSON and then 
@@ -37,7 +39,7 @@ public class LodeRunnerRenderUtil {
 	public static void main(String[] args) throws IOException {
 		List<List<Integer>> list = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
 		BufferedImage[] images = loadImages(LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images 
-		finalRender = getBufferedImage(list, images); //puts the final rendered level into a buffered image 
+		FINAL_RENDER = getBufferedImage(list, images); //puts the final rendered level into a buffered image 
 	}
 
 	/**
@@ -102,7 +104,7 @@ public class LodeRunnerRenderUtil {
 	 * @return An array of BufferedImages holding all the tiles for Lode Runner
 	 * @throws IOException In case the file can't be found
 	 */
-	private static BufferedImage[] loadImages(String filePath) throws IOException {
+	public static BufferedImage[] loadImages(String filePath) throws IOException {
 		BufferedImage[] tileList = new BufferedImage[8];
 		File tile = new File(filePath+"empty.png");
 		BufferedImage emptyTile = ImageIO.read(tile);
