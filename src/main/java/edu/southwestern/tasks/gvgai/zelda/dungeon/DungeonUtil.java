@@ -41,7 +41,6 @@ import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.tasks.gvgai.zelda.study.DungeonComparison;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
@@ -763,7 +762,7 @@ public class DungeonUtil {
 		for(Point p : options) {
 			if (levelThere[p.y][p.x] == null) {
 				levelThere[p.y][p.x] = next.getID();
-				System.out.println("("+x+", "+y+")");
+				//System.out.println("("+x+", "+y+")");
 				Level l = loadLevel(next, dungeon, loader, (parent != null) ? Tile.findNum(getTile(parent)) : null);
 				Dungeon.Node dNode = dungeon.newNode(next.getID(), l);
 				dNode.grammar = (ZeldaGrammar) next.getData();

@@ -7,7 +7,6 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.MiscUtil;
 
 public class ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels implements BinLabels {
 	

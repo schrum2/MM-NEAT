@@ -22,7 +22,7 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		//then KEY room leads to a SOFT-LOCK room
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.KEY);
-		rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK_S);
+		//rule.grammar().addNodeToStart(ZeldaGrammar.SOFT_LOCK);
 		graphRules.add(rule);
 	
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S);
@@ -32,7 +32,7 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		graphRules.add(rule);
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S);
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
-		rule.grammar().setEnd(ZeldaGrammar.ENEMY_S);
+		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		
 		//if there is a bombable door by itself
@@ -43,7 +43,7 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S);
 		rule.grammar().setStart(ZeldaGrammar.RAFT);
-		rule.grammar().addNodeToStart(ZeldaGrammar.PUZZLE_S);
+		rule.grammar().addNodeToStart(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
 
 		//if there is a SOFT_LOCK room by itself
@@ -498,7 +498,7 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.KEY_S);
 		rule.grammar().setStart(ZeldaGrammar.ENEMY);
 		rule.grammar().addNodeToStart(ZeldaGrammar.KEY);
-		rule.grammar().setEnd(ZeldaGrammar.KEY);
+		rule.grammar().setEnd(ZeldaGrammar.KEY_S);
 		graphRules.add(rule);
 
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.ENEMY_S, ZeldaGrammar.KEY_S);
@@ -1000,7 +1000,7 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.RAFT_S, ZeldaGrammar.ENEMY_S);
 		rule.grammar().setStart(ZeldaGrammar.RAFT);
 		rule.grammar().addNodeBetween(ZeldaGrammar.KEY);
-		rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
+	//	rule.grammar().addNodeBetween(ZeldaGrammar.LOCK);
 		rule.grammar().setEnd(ZeldaGrammar.ENEMY);
 		graphRules.add(rule);
 		
@@ -1409,6 +1409,7 @@ public class MoreInterestingGraphGrammarRules extends ZeldaHumanSubjectStudy2019
 		//initialList.add(ZeldaGrammar.RAFT_S);
 		
 	}
+	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
 		MoreInterestingGraphGrammarRules k = new MoreInterestingGraphGrammarRules();
 		k.printRules(k.graphRules);

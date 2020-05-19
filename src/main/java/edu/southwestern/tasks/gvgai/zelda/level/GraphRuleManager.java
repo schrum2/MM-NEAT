@@ -11,7 +11,6 @@ import java.util.Queue;
 import org.apache.commons.io.FileUtils;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.random.RandomNumbers;
 

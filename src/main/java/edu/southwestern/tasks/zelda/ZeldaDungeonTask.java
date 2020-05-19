@@ -312,7 +312,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					// Saving map elites bin images
 					if(CommonConstants.netio) {
 						System.out.println("Save archive images");
-						@SuppressWarnings("unchecked")
 						Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
 						List<String> binLabels = archive.getBinMapping().binLabels();
 
