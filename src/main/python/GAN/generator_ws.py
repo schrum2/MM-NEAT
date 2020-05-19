@@ -63,8 +63,8 @@ if __name__ == '__main__':
         out_height = 11
         out_width = 16
     elif z_dims == 8: #Lode Runner
-	out_height = 22
-	out_width = 32 
+        out_height = 22
+        out_width = 32 
     else: # Assume this is Mario (10 or 13 tiles, depending)
         out_height = 14
         out_width = 28
