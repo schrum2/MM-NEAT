@@ -10,11 +10,9 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
-import edu.southwestern.tasks.gvgai.zelda.level.GraphRule;
 import edu.southwestern.tasks.gvgai.zelda.level.GraphRuleManager;
 import edu.southwestern.tasks.gvgai.zelda.level.LevelLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.graph.ZeldaDungeonGraphBackBone;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
@@ -68,31 +66,28 @@ public class HumanSubjectStudy2019Zelda {
 				Graph<ZeldaGrammar> graph = ConstructGraph.getInitialGraphBackBone();
 				@SuppressWarnings("unchecked")
 				GraphRuleManager<ZeldaGrammar> grammar = (GraphRuleManager<ZeldaGrammar>) ClassCreation.createObject("zeldaGrammarRules");
+				
+
 				grammar.applyRules(graph);
-				//File rules = new File("rulesForGrammar for origin");
-				//grammar.saveRules(rules);
-				//GraphUtil k = new GraphUtil();
-				//k.saveGrammarGraph(graph, "Try this on for size6");
-//				System.out.println("BASQUE IN THE GLORY");
-//				for(GraphRule<ZeldaGrammar> r : grammar.getGraphRules()) {
-//					k.printGrammarGraph(r);
-//				}
-//				GraphRule<ZeldaGrammar> grammr = new GraphRule<>(rules);
-//				System.out.println("Magic happens NOW");
-//				grammr.loadFromFile(rules);
 				
 				LevelLoader loader = (LevelLoader) ClassCreation.createObject("zeldaLevelLoader");
 				dungeonType = loader.getClass().getSimpleName();
+				
 				if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
 					GraphUtil.saveGrammarGraph(graph, subjectDir + "DungeonGraph_" + dungeonType + ".dot");
+				
 				dungeonToPlay = DungeonUtil.recursiveGenerateDungeon(graph, loader);
+				
 				//System.out.println("IS THIS NULL??: "+dungeonToPlay);
+				
 				DungeonUtil.makeDungeonPlayable(dungeonToPlay);
 				dungeonToPlay.markReachableRooms();
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(1);
 			}
+//			System.out.println("waiting");
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 			
 		} else if(type.equals(Type.TUTORIAL)) {
 			System.out.println("\n\n\nTutorial not supported yet.");
@@ -125,7 +120,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:6 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph zeldaGrammarRules:edu.southwestern.tasks.gvgai.zelda.level.MoreInterestingGraphGrammarRules firstSoftLockedRoomHasRaft:true".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.TwoTriforceBugGraph zeldaGrammarRules:edu.southwestern.tasks.gvgai.zelda.level.MoreInterestingGraphGrammarRules firstSoftLockedRoomHasRaft:false".split(" "));
 		//MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 	}
 

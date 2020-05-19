@@ -100,6 +100,8 @@ abstract public class GraphRuleManager<T extends Grammar> {
 					}
 				}
 				if(!appliedRule) {
+//					System.out.println("waiting");
+//					MiscUtil.waitForReadStringAndEnterKeyPress();
 					applyRule(graph, current, null, i++);
 				}
 				
