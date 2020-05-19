@@ -20,6 +20,10 @@ import wox.serial.Easy;
 
 public class ZeldaGANUtil {
 
+	public static final int ZELDA_GAN_ORIGINAL_TILE_NUMBER = 4;
+	public static final int ZELDA_GAN_EXPANDED_TILE_NUMBER = 6;
+	public static final int ZELDA_GAN_REDUCED_TILE_NUMBER = 3;
+	
 	/**
 	 * Generate a Zelda room with the GAN, and then convert it to a String representation
 	 * that GVG-AI can turn into a level to play.

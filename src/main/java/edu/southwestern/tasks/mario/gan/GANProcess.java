@@ -9,6 +9,8 @@ import java.lang.ProcessBuilder.Redirect;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.PythonUtil;
+// For the three possible tile counts in Zelda
+import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.*;
 
 public class GANProcess extends Comm {
 	
@@ -58,7 +60,7 @@ public class GANProcess extends Comm {
 				ganProcess = new GANProcess(PYTHON_BASE_PATH+"ZeldaGAN"+ File.separator +Parameters.parameters.stringParameter("zeldaGANModel"),
 											Parameters.parameters.integerParameter("GANInputSize"),
 											// This is an ugly mess meant to support backwards compatibility with previously trained models.
-											Parameters.parameters.stringParameter("zeldaGANModel").startsWith("ZeldaDungeonsAll3Tiles") ? 3 : Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? 4 : 6);
+											Parameters.parameters.stringParameter("zeldaGANModel").startsWith("ZeldaDungeonsAll3Tiles") ? ZELDA_GAN_REDUCED_TILE_NUMBER : Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? ZELDA_GAN_ORIGINAL_TILE_NUMBER : ZELDA_GAN_EXPANDED_TILE_NUMBER);
 				break;
 			}
 			ganProcess.start();
