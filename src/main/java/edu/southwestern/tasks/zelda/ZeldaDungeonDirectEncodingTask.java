@@ -68,10 +68,13 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 					if((k[14][5]==Tile.DOOR||
 							k[14][5]==Tile.LOCKED_DOOR)
 							&& x+1 < dungeon[y].length && dungeon[y][x+1] != null) {
-						ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, currentNode, x + 1, y, "RIGHT",levelAsListsGrid[x][y].get(5).get(14));
+						//ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, currentNode, x + 1, y, "RIGHT",levelAsListsGrid[x][y].get(5).get(14));
+						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, currentNode, x, y, "RIGHT", ZeldaDungeon.encodedValueForDoorType(levelAsListsGrid[y][x].get(5).get(14)));
+						
 						String nameRight = 	uuidLabels[y][x+1];
 						Node nodeRight = dungeonInstance.getNode(nameRight);
-						ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, nodeRight, x, y, "LEFT",levelAsListsGrid[x+1][y].get(5).get(1));
+						//ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, nodeRight, x, y, "LEFT",levelAsListsGrid[x+1][y].get(5).get(1));
+						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, nodeRight, x+1, y, "LEFT", ZeldaDungeon.encodedValueForDoorType(levelAsListsGrid[y][x+1].get(4).get(1)));
 
 					}
 					//k[ZeldaVGLCUtil.ZELDA_ROOM_ROWS-2][7]==Tile.DOOR
@@ -124,7 +127,7 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 	
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
-		MMNEAT mmneat = new MMNEAT("runNumber:0 randomSeed:0 watch:true zeldaDungeonBackTrackRoomFitness:true zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false zeldaDungeonBackTrackRoomFitness:true trials:1 mu:10 io:false netio:false cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false task:edu.southwestern.tasks.zelda.ZeldaDungeonDirectEncodingTask".split(" "));
+		MMNEAT mmneat = new MMNEAT("runNumber:0 randomSeed:0 watch:true zeldaCPPN2GANSparseKeys:true zeldaDungeonBackTrackRoomFitness:true zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false zeldaDungeonBackTrackRoomFitness:true trials:1 mu:10 io:false netio:false cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false task:edu.southwestern.tasks.zelda.ZeldaDungeonDirectEncodingTask".split(" "));
 		
 		mmneat.loadClasses();
 		ZeldaDungeonDirectEncodingTask task = new ZeldaDungeonDirectEncodingTask();

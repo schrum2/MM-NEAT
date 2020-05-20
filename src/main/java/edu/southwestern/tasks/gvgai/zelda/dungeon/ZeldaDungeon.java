@@ -244,6 +244,25 @@ public abstract class ZeldaDungeon<T> {
 		ZeldaLevelUtil.setDoors(direction, node, tile);
 		return tile == Tile.LOCKED_DOOR.getNum();
 	}
+	
+	public static double encodedValueForDoorType(int doorTile) {
+		if(!(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsPuzzleDoors"))) {
+			switch(doorTile) {
+			case -5: // Tile.LOCKED_DOOR.getNum()
+				return 0.8;
+			case 3: // Tile.DOOR.getNum()
+				return -0.5;
+			}
+		} else {
+			switch(doorTile) {
+			case -5: // Tile.LOCKED_DOOR.getNum()
+				return 0.8;
+			case 3: // Tile.DOOR.getNum()
+				return -0.5;
+			}
+		}
+		throw new IllegalArgumentException("Tile "+doorTile+" is not recognized as a valid door tile");
+	}
 
 	/**
 	 * Function specified by the dungeon to get a 2D list of ints from the latent vector
