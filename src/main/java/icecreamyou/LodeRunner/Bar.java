@@ -4,10 +4,9 @@ package icecreamyou.LodeRunner;
  */
 public class Bar extends WorldNode implements ActorCollision {
 	
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	public static final String TITLE = "Bar";
 	public static final String NAME = "bar";
-	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"bar.gif";
+	public static final String DEFAULT_IMAGE_PATH = "bar.gif";
 	
 	
 	@Override

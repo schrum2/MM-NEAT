@@ -30,11 +30,11 @@ public class Picture {
 	public static void draw(Graphics g, String filepath, int x, int y) {
 		try {
 			BufferedImage img;
-			if (cache.containsKey(FILE_PATH+filepath))
-				img = cache.get(FILE_PATH+filepath);
+			if (cache.containsKey(filepath))
+				img = cache.get(filepath);
 			else {
 				img = ImageIO.read(new File(FILE_PATH+filepath));
-				cache.put(FILE_PATH+filepath, img);
+				cache.put(filepath, img);
 			}
 			g.drawImage(img, x, y, null);
 		} catch (IOException e) {

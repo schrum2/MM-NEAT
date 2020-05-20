@@ -7,10 +7,9 @@ import java.awt.Graphics;
  * an enemy.
  */
 public class Diggable extends Solid {
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	public static final String TITLE = "Ground";
 	public static final String NAME = "diggable";
-	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"diggable.gif";
+	public static final String DEFAULT_IMAGE_PATH = "diggable.gif";
 	
 	@Override
 	public String title() {
