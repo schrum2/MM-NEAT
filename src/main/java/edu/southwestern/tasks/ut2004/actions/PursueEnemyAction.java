@@ -3,7 +3,6 @@ package edu.southwestern.tasks.ut2004.actions;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import mockcz.cuni.pogamut.Client.AgentBody;
-import mockcz.cuni.pogamut.MessageObjects.Triple;
 
 /**
  * Tells the bot to follow the nearest enemy and shoot at it until it dies, or the bot needs to get health

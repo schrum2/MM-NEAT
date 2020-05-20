@@ -1,11 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.sensors.directional.distance;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
-import edu.southwestern.util.MiscUtil;
 
 /**
  * handles PO conditions (TODO: implement PillModel and add support for tracking power pills)
