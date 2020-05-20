@@ -3,11 +3,11 @@ package icecreamyou.LodeRunner;
  * Solids collide with everything.
  */
 public class Solid extends WorldNode implements ActorCollision {
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
+	
 
 	public static final String TITLE = "Steel";
 	public static final String NAME = "solid";
-	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"solid.png";
+	public static final String DEFAULT_IMAGE_PATH = "solid.png";
 	@Override
 	public String title() {
 		return TITLE;

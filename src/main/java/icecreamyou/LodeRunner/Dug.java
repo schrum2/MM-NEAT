@@ -9,7 +9,6 @@ import java.util.Set;
  */
 public class Dug extends WorldNode {
 	
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	/**
 	 * The amount of time in milliseconds before the hole refills.
 	 */

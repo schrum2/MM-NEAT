@@ -11,10 +11,10 @@ public class Gate extends WorldNode implements Unlockable, ActorCollision {
 	public Pattern pattern() {
 		return Pattern.compile(name() +":(\\d+),(\\d+),(\\w+)");
 	}
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
+	
 	public static final String TITLE = "Gate";
 	public static final String NAME = "gate";
-	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"gate-red.png";
+	public static final String DEFAULT_IMAGE_PATH = "gate-red.png";
 	
 	@Override
 	public String title() {

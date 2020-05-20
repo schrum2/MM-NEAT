@@ -5,11 +5,11 @@ import java.awt.Graphics;
  * When a player touches an unlocked portal, it wins the level.
  */
 public class Portal extends WorldNode implements Unlockable {
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
+	
 
 	public static final String TITLE = "Portal";
 	public static final String NAME = "portal";
-	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"portal.png";
+	public static final String DEFAULT_IMAGE_PATH = "portal.png";
 	@Override
 	public String title() {
 		return TITLE;

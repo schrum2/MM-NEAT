@@ -3,11 +3,11 @@ package icecreamyou.LodeRunner;
  * Slippery ground makes the player decelerate gradually rather than stop suddenly.
  */
 public class Slippery extends Diggable {
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
+	
 
 	public static final String TITLE = "Slippery";
 	public static final String NAME = "slippery";
-	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"slippery.png";
+	public static final String DEFAULT_IMAGE_PATH = "slippery.png";
 	@Override
 	public String title() {
 		return TITLE;

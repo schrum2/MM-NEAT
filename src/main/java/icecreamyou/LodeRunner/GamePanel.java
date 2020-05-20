@@ -205,9 +205,9 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 				&& !editorKey.equals("")) {
 			// Special case for WorldNodes where color is important.
 			if (editorKey.equals("gate"))
-				editorImgPath = FILE_PATH+ "gate-"+ GateKey.colorToString(editorColor).toLowerCase() +".png";
+				editorImgPath = "gate-"+ GateKey.colorToString(editorColor).toLowerCase() +".png";
 			else if (editorKey.equals("gateKey"))
-				editorImgPath = FILE_PATH+"key-"+ GateKey.colorToString(editorColor).toLowerCase() +".png";
+				editorImgPath = "key-"+ GateKey.colorToString(editorColor).toLowerCase() +".png";
 			Picture.draw(g, editorImgPath, mouseXPos, mouseYPos);
 		}
 	}
@@ -291,7 +291,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	 */
 	public void setEditorKey(String key, String imgPath, KeyColor color) {
 		editorKey = key;
-		editorImgPath = FILE_PATH+imgPath;
+		editorImgPath = imgPath;
 		editorColor = color;
 	}
 	public String getEditorKey() {

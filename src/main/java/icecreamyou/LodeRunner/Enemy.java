@@ -5,10 +5,9 @@ import java.awt.Graphics;
  * Enemies try to hunt down and kill Players.
  */
 public class Enemy extends Actor implements ActorCollision {
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	public static final String TITLE = "Enemy";
 	public static final String NAME = "enemy";
-	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"enemy.png";
+	public static final String DEFAULT_IMAGE_PATH = "enemy.png";
 	
 	@Override
 	public String title() {
@@ -99,13 +98,13 @@ public class Enemy extends Actor implements ActorCollision {
 	@Override
 	public void draw(Graphics g) {
 		if (isInHole)
-			Picture.draw(g, FILE_PATH+"enemy.png", getX(), getY());
+			Picture.draw(g, "enemy.png", getX(), getY());
 		else if (xVel < 0)
-			Picture.draw(g, FILE_PATH+"enemy-left.png", getX(), getY());
+			Picture.draw(g, "enemy-left.png", getX(), getY());
 		else if (xVel > 0)
-			Picture.draw(g, FILE_PATH+"enemy-right.png", getX(), getY());
+			Picture.draw(g, "enemy-right.png", getX(), getY());
 		else
-			Picture.draw(g, FILE_PATH+"enemy.png", getX(), getY());
+			Picture.draw(g, "enemy.png", getX(), getY());
 	}
 	
 	@Override

@@ -12,11 +12,11 @@ public class Player extends Actor {
 	public Pattern pattern() {
 		return Pattern.compile(name() +":(\\d+),(\\d+),(\\d+)");
 	}
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
+	
 
 	public static final String TITLE = "Player";
 	public static final String NAME = "player";
-	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"player.png";
+	public static final String DEFAULT_IMAGE_PATH = "player.png";
 	@Override
 	public String title() {
 		return TITLE;

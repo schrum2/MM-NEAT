@@ -3,11 +3,11 @@ package icecreamyou.LodeRunner;
  * Treasure is Gold with value 3.
  */
 public class Treasure extends Gold {
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
+	
 
 	public static final String TITLE = "Treasure";
 	public static final String NAME = "treasure";
-	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"treasure.png";
+	public static final String DEFAULT_IMAGE_PATH = "treasure.png";
 	@Override
 	public String title() {
 		return TITLE;
