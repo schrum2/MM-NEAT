@@ -61,11 +61,12 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 
 					Node currentNode = dungeonInstance.getNode(name);
 					
-					
+					Tile[][] k = dungeon[y][x].getTiles();
+					//if(k[5][14]==Tile.DOOR)
 					// TODO: This is too much. These adjacent connections should be conditional on whether there is already a door.
 					// Search the code for uses of "addAdjacencyIfAvailable" because I think this approach is used somewhere else.
-					if((levelAsListsGrid[x][y].get(5).get(14)==Tile.DOOR.getNum()||
-						levelAsListsGrid[x][y].get(5).get(14)==Tile.LOCKED_DOOR.getNum())
+					if((k[14][5]==Tile.DOOR||
+							k[14][5]==Tile.LOCKED_DOOR)
 							&& x+1 < dungeon[y].length && dungeon[y][x+1] != null) {
 						ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, currentNode, x + 1, y, "RIGHT",levelAsListsGrid[x][y].get(5).get(14));
 						String nameRight = 	uuidLabels[y][x+1];
@@ -73,9 +74,9 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 						ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, nodeRight, x, y, "LEFT",levelAsListsGrid[x+1][y].get(5).get(1));
 
 					}
-
-					if((levelAsListsGrid[x][y].get(ZeldaVGLCUtil.ZELDA_ROOM_ROWS-2).get(7)==Tile.DOOR.getNum()||
-							levelAsListsGrid[x][y].get(ZeldaVGLCUtil.ZELDA_ROOM_ROWS-2).get(7)==Tile.LOCKED_DOOR.getNum())
+					//k[ZeldaVGLCUtil.ZELDA_ROOM_ROWS-2][7]==Tile.DOOR
+					if((k[7][ZeldaVGLCUtil.ZELDA_ROOM_ROWS-2]==Tile.DOOR||
+							k[7][ZeldaVGLCUtil.ZELDA_ROOM_ROWS-2]==Tile.LOCKED_DOOR)
 							&& y+1 < dungeon.length && dungeon[y+1][x] != null) {
 						ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, currentNode, x, y + 1, "DOWN",levelAsListsGrid[x][y].get(ZeldaVGLCUtil.ZELDA_ROOM_ROWS-2).get(7));
 						String nameBelow = 	uuidLabels[y+1][x];		
