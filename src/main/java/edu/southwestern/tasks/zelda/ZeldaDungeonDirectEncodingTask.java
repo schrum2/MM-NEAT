@@ -3,7 +3,6 @@ package edu.southwestern.tasks.zelda;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.ContainerGenotype;
@@ -11,12 +10,11 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
-import edu.southwestern.util.random.RandomNumbers;
 import me.jakerg.rougelike.Tile;
 
 public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<Integer>>[][]> {
@@ -163,6 +161,8 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 		System.out.println(s);
 		
 	}
+	
+	// TODO: Make public, move to ZeldaLevelUtil
 	private static void makeEmptyRoom(List<List<Integer>>[][] levelAsListsGrid, int x1, int y1) {
 		levelAsListsGrid[x1][y1] = new ArrayList<List<Integer>>();
 		// Make totally empty room
