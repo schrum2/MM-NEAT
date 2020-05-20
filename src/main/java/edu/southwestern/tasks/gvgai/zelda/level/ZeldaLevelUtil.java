@@ -11,6 +11,7 @@ import java.util.Queue;
 import java.util.Random;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
@@ -808,7 +809,37 @@ public class ZeldaLevelUtil {
 
 		return copy;
 	}
-
+	/**
+	 * makes an empty room
+	 * @param levelAsListsGrid the level as list grid
+	 * @param x1 x coord
+	 * @param y1 y coord
+	 */
+	public static void makeEmptyRoom(List<List<Integer>>[][] levelAsListsGrid, int x1, int y1) {
+		levelAsListsGrid[x1][y1] = new ArrayList<List<Integer>>();
+		// Make totally empty room
+		for(int y = 0; y < ZeldaVGLCUtil.ZELDA_ROOM_ROWS; y++) {
+			ArrayList<Integer> row = new ArrayList<>();
+			for(int x = 0; x < ZeldaVGLCUtil.ZELDA_ROOM_COLUMNS; x++) {
+				row.add(Tile.FLOOR.getNum());
+			}
+			levelAsListsGrid[x1][y1].add(row);
+		}
+		// Set left/right walls
+		for(int y = 0; y < ZeldaVGLCUtil.ZELDA_ROOM_ROWS; y++) {
+			for(int x = 0; x <= 1; x++) {
+				levelAsListsGrid[x1][y1].get(y).set(x,Tile.WALL.getNum());
+				levelAsListsGrid[x1][y1].get(y).set(levelAsListsGrid[x1][y1].get(y).size() - 1 - x,Tile.WALL.getNum());
+			}
+		}
+		// Set top/bottom walls
+		for(int y = 0; y <= 1; y++) {
+			for(int x = 0; x < ZeldaVGLCUtil.ZELDA_ROOM_COLUMNS; x++) {
+				levelAsListsGrid[x1][y1].get(y).set(x,Tile.WALL.getNum());
+				levelAsListsGrid[x1][y1].get(ZeldaVGLCUtil.ZELDA_ROOM_ROWS-y-1).set(levelAsListsGrid[x1][y1].get(y).size() - 1 - x,Tile.WALL.getNum());
+			}
+		}
+	}
 	public static Heuristic<GridAction,ZeldaState> manhattan = new Heuristic<GridAction,ZeldaState>() {
 
 		@Override

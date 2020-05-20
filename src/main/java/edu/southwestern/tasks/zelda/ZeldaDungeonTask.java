@@ -244,7 +244,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					String saveDir = FileUtilities.getSaveDirectory(); //save directory
 					int currentGen = ((GenerationalEA) MMNEAT.ea).currentGeneration();
 					//saves image
-					GraphicsUtil.saveImage(image, saveDir + File.separator + (currentGen == 0 ? "initial" : "gen"+ currentGen) + File.separator + "Dungeon"+individual.getId()+".png");
+					if(Parameters.parameters.booleanParameter("io")) GraphicsUtil.saveImage(image, saveDir + File.separator + (currentGen == 0 ? "initial" : "gen"+ currentGen) + File.separator + "Dungeon"+individual.getId()+".png");
 					//prompts user to play or continue
 					System.out.println("Enter 'P' to play, or just press Enter to continue");
 					String input = MiscUtil.waitForReadStringAndEnterKeyPress();

@@ -131,7 +131,6 @@ public abstract class ZeldaDungeon<T> {
 		}
 		return lockedDoor;
 	}
-	
 	/**
 	 * Finds where the triforce is and marks that room as the goal 
 	 * @param dungeon Dungeon instance
@@ -149,6 +148,7 @@ public abstract class ZeldaDungeon<T> {
 			}
 		}
 	}
+	
 
 	/**
 	 * Creates door connecting rooms. 
@@ -205,6 +205,40 @@ public abstract class ZeldaDungeon<T> {
 		}
 		ZeldaLevelUtil.setDoors(direction, node, tile);
 		return tile == Tile.LOCKED_DOOR.getNum();
+	}
+	/**
+	 * takes in a door tile and spits out the appropriate encodedDoorType
+	 * for setLevels
+	 * @param doorTile the int representing a door tile type
+	 * @return the appropriate encodedDoorType for setLevels
+	 */
+	public static double encodedValueForDoorType(int doorTile) {
+		if(!(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsPuzzleDoors"))) {
+			switch(doorTile) {
+			case -5: // Tile.LOCKED_DOOR.getNum()
+				return 0.8;
+			case 3: // Tile.DOOR.getNum()
+				return -0.5;
+			case -7: //Tile.HIDDEN.getNum()
+				return .4;
+			case -55: //Tile.SOFT_LOCK_DOOR.getNum()
+				return .1;
+			}
+		} else {
+			switch(doorTile) {
+			case -5: // Tile.LOCKED_DOOR.getNum()
+				return 0.8;
+			case 3: // Tile.DOOR.getNum()
+				return -0.5;
+			case -7: //Tile.HIDDEN.getNum()
+				return .6;
+			case -55: //Tile.SOFT_LOCK_DOOR.getNum()
+				return .3;
+			case -10: //Tile.PUZZLE_LOCKED.getNum()
+				return .1;
+			}
+		}
+		throw new IllegalArgumentException("Tile "+doorTile+" is not recognized as a valid door tile");
 	}
 
 	/**
