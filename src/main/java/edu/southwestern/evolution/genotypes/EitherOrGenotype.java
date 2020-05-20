@@ -22,8 +22,8 @@ public class EitherOrGenotype<X,Y> implements Genotype {
 	private static Genotype original = null;
 
 	private ArrayList<Long> parentIds;
-	private Genotype current; // Could be X or Y
-	private boolean firstForm;
+	protected Genotype current; // Could be X or Y
+	protected boolean firstForm;
 	
 	/**
 	 * New genotype that has one of two types.
