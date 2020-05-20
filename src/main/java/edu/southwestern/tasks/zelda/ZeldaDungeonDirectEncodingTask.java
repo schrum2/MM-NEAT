@@ -47,7 +47,15 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 						uuidLabels[y][x] = UUID.nameUUIDFromBytes(RandomNumbers.randomByteArray(16)).toString();
 					}
 					String name = uuidLabels[y][x];
-					dungeonInstance.newNode(name, dungeon[y][x]);
+					Node newNode = dungeonInstance.newNode(name, dungeon[y][x]);
+					
+					// TODO: This is too much. These adjacent connections should be conditional on whether there is already a door.
+					// Search the code for uses of "addAdjacencyIfAvailable" because I think this approach is used somewhere else.
+					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x + 1, y, "RIGHT");
+					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x, y - 1, "UP");
+					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x - 1, y, "LEFT");
+					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x, y + 1, "DOWN");
+					
 //					if(y==1&&x==0) {
 //						System.out.println();
 //						System.out.println("this is what I need: "+name);
@@ -68,7 +76,7 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 	
 	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
-		MMNEAT mmneat = new MMNEAT("runNumber:0 randomSeed:0 zeldaDungeonBackTrackRoomFitness:true zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false zeldaDungeonBackTrackRoomFitness:true watch:true trials:1 mu:10 io:false netio:false cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false task:edu.southwestern.tasks.zelda.ZeldaDungeonDirectEncodingTask".split(" "));
+		MMNEAT mmneat = new MMNEAT("runNumber:0 randomSeed:0 watch:true zeldaDungeonBackTrackRoomFitness:true zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false zeldaDungeonBackTrackRoomFitness:true trials:1 mu:10 io:false netio:false cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false task:edu.southwestern.tasks.zelda.ZeldaDungeonDirectEncodingTask".split(" "));
 		
 		mmneat.loadClasses();
 		ZeldaDungeonDirectEncodingTask task = new ZeldaDungeonDirectEncodingTask();
