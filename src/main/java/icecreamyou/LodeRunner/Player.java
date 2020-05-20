@@ -12,11 +12,11 @@ public class Player extends Actor {
 	public Pattern pattern() {
 		return Pattern.compile(name() +":(\\d+),(\\d+),(\\d+)");
 	}
-	
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
+
 	public static final String TITLE = "Player";
 	public static final String NAME = "player";
-	public static final String DEFAULT_IMAGE_PATH = "player.png";
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
+	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"player.png";
 	@Override
 	public String title() {
 		return TITLE;
@@ -27,7 +27,7 @@ public class Player extends Actor {
 	}
 	@Override
 	public String defaultImagePath() {
-		return FILE_PATH+DEFAULT_IMAGE_PATH;
+		return DEFAULT_IMAGE_PATH;
 	}
 	
 	/**
@@ -115,22 +115,22 @@ public class Player extends Actor {
 	@Override
 	public void draw(Graphics g) {
 		if (isOnBar) {
-			Picture.draw(g,FILE_PATH+ "player-bar.png", getX(), getY());
+			Picture.draw(g, "player-bar.png", getX(), getY());
 			return;
 		}
 		else if (isFalling && (animFrame % 4 == 0 || animFrame % 4 == 1)) {
-			Picture.draw(g, FILE_PATH+"player-falling.png", getX(), getY());
+			Picture.draw(g, "player-falling.png", getX(), getY());
 			return;
 		}
 		int frame = animFrame / 2 + 1;
 		if (Math.abs(lastXVel) != VELOCITY)
-			Picture.draw(g,FILE_PATH+ "player.png", getX(), getY());
+			Picture.draw(g, "player.png", getX(), getY());
 		else if (xVel < 0)
-			Picture.draw(g,FILE_PATH+ "player-left-"+ frame +".png", getX(), getY());
+			Picture.draw(g,"player-left-"+ frame +".png", getX(), getY());
 		else if (xVel > 0)
-			Picture.draw(g, FILE_PATH+"player-right-"+ frame +".png", getX(), getY());
+			Picture.draw(g, "player-right-"+ frame +".png", getX(), getY());
 		else
-			Picture.draw(g, FILE_PATH+"player.png", getX(), getY());
+			Picture.draw(g, "player.png", getX(), getY());
 	}
 	
 	@Override

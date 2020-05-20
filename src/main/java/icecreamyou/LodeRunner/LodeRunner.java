@@ -110,7 +110,7 @@ public class LodeRunner {
 		addEditorButton(Solid.TITLE, 	 Solid.NAME,	 Solid.DEFAULT_IMAGE_PATH,	   editor, gamePanel);
 		addEditorButton(Spikes.TITLE, 	 Spikes.NAME,	 Spikes.DEFAULT_IMAGE_PATH,	   editor, gamePanel);
 		addEditorButton(Treasure.TITLE,  Treasure.NAME,	 Treasure.DEFAULT_IMAGE_PATH,  editor, gamePanel);
-		addEditorButton("Erase",		 "erase",		 "eraser.png",				   editor, gamePanel);
+		addEditorButton("Erase",		 "erase",		 FILE_PATH+"eraser.png",				   editor, gamePanel);
 		editor.setEnabled(false);
 		for (Component c : editor.getComponents())
 			c.setEnabled(false);

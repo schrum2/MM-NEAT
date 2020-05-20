@@ -11,10 +11,11 @@ public class GateKey extends Key {
 	public Pattern pattern() {
 		return Pattern.compile(name() +":(\\d+),(\\d+),(\\w+)");
 	}
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	public static final String TITLE = "Gate key";
 	public static final String NAME = "gateKey";
-	public static final String DEFAULT_IMAGE_PATH = "key-red.png";
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
+	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"key-red.png";
+	
 	@Override
 	public String title() {
 		return TITLE;
@@ -56,7 +57,7 @@ public class GateKey extends Key {
 	@Override
 	public void draw(Graphics g) {
 		if (!isPickedUp())
-			Picture.draw(g, FILE_PATH+"key-"+ colorToString(color).toLowerCase() +".png", getX(), getY());
+			Picture.draw(g, "key-"+ colorToString(color).toLowerCase() +".png", getX(), getY());
 	}
 	
 	@Override

@@ -79,7 +79,7 @@ public class Level {
 	}
 	public Level(String name) {
 		this.name = name;
-		String[] lines = Layout.getLayoutAsArray(FILE_PATH+name +".txt");
+		String[] lines = Layout.getLayoutAsArray(name +".txt");
 		for (String line : lines) {
 			if (line == null || line.equals(""))
 				continue;

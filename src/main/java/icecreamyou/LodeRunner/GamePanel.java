@@ -291,7 +291,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	 */
 	public void setEditorKey(String key, String imgPath, KeyColor color) {
 		editorKey = key;
-		editorImgPath = imgPath;
+		editorImgPath = FILE_PATH+imgPath;
 		editorColor = color;
 	}
 	public String getEditorKey() {
@@ -347,7 +347,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	 * Switch to the first campaign level.
 	 */
 	public void startCampaign() {
-		level = new Level(FILE_PATH+"CAMPAIGN-1");
+		level = new Level("CAMPAIGN-1");
 		mode = Mode.MODE_PAUSED;
 		timer.stop();
 		repaint();

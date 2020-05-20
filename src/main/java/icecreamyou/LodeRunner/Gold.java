@@ -3,11 +3,11 @@ package icecreamyou.LodeRunner;
  * All Gold has a value and can be picked up to acquire that value.
  */
 public class Gold extends Pickup {
-	
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	public static final String TITLE = "Gold";
 	public static final String NAME = "gold";
-	public static final String DEFAULT_IMAGE_PATH = "coin.png";
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
+	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"coin.png";
+	
 	@Override
 	public String title() {
 		return TITLE;
@@ -18,7 +18,7 @@ public class Gold extends Pickup {
 	}
 	@Override
 	public String defaultImagePath() {
-		return FILE_PATH+DEFAULT_IMAGE_PATH;
+		return DEFAULT_IMAGE_PATH;
 	}
 	
 	private int value;

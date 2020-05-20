@@ -5,11 +5,11 @@ import java.awt.Graphics;
  * Enemies try to hunt down and kill Players.
  */
 public class Enemy extends Actor implements ActorCollision {
-	
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	public static final String TITLE = "Enemy";
 	public static final String NAME = "enemy";
-	public static final String DEFAULT_IMAGE_PATH = "enemy.png";
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
+	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"enemy.png";
+	
 	@Override
 	public String title() {
 		return TITLE;
@@ -20,7 +20,7 @@ public class Enemy extends Actor implements ActorCollision {
 	}
 	@Override
 	public String defaultImagePath() {
-		return FILE_PATH+DEFAULT_IMAGE_PATH;
+		return DEFAULT_IMAGE_PATH;
 	}
 	
 	/**

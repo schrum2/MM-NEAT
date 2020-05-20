@@ -14,7 +14,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * This class Renders a level of Lode Runner into a window  

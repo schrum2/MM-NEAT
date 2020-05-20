@@ -6,11 +6,11 @@ package icecreamyou.LodeRunner;
  * that kind of hole is called a Dug.
  */
 public class Hole extends WorldNode {
-	
+	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	public static final String TITLE = "Hole";
 	public static final String NAME = "hole";
-	public static final String DEFAULT_IMAGE_PATH = "hole.png";
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
+	public static final String DEFAULT_IMAGE_PATH = FILE_PATH+"hole.png";
+
 	@Override
 	public String title() {
 		return TITLE;
@@ -21,7 +21,7 @@ public class Hole extends WorldNode {
 	}
 	@Override
 	public String defaultImagePath() {
-		return FILE_PATH+DEFAULT_IMAGE_PATH;
+		return DEFAULT_IMAGE_PATH;
 	}
 	
 	public Hole() {
