@@ -1,10 +1,10 @@
 package fr.enib.mirrorbot4;
 
+import java.util.HashMap;
+
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
-import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.AgentInfo;
-import java.util.HashMap;
 
 public class TargetData{
 	@SuppressWarnings("rawtypes")

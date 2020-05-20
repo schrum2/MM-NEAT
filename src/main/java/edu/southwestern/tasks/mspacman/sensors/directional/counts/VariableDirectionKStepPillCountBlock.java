@@ -1,11 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.sensors.directional.counts;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
-import edu.southwestern.util.MiscUtil;
 
 /**
  * handles PO conditions. (TODO: implement PillModel in order to have this function correctly)
