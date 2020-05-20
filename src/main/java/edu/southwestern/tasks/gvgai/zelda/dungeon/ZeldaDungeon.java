@@ -132,6 +132,43 @@ public abstract class ZeldaDungeon<T> {
 		return lockedDoor;
 	}
 	
+	
+	
+	public static boolean addAdjacencyIfAvailableGivenDoorData(Dungeon dungeonInstance, Level[][] dungeon, String[][] uuidLabels, Node newNode, int x, int y, String direction, int tileToSetTo) {
+		//int tileToSetTo = Tile.DOOR.getNum(); // Door tile number
+		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length || 
+				dungeon[y][x] == null) // If theres no dungeon there set the tiles to wall
+			tileToSetTo = Tile.WALL.getNum();
+
+		//boolean lockedDoor = setLevels(direction, newNode, tileToSetTo, doorEncoding); // Set the doors in the levels
+		ZeldaLevelUtil.setDoors(direction, newNode, tileToSetTo);
+
+		findAndAddGoal(dungeonInstance, newNode);
+		boolean lockedDoor = tileToSetTo==Tile.LOCKED_DOOR.getNum();
+		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length) return false;
+		if(dungeon[y][x] == null) return false; // Finally get out if there's no adjacency
+
+		if(uuidLabels[y][x] == null) uuidLabels[y][x] = UUID.nameUUIDFromBytes(RandomNumbers.randomByteArray(16)).toString(); // Get the unique ID of the level
+		String whereTo = uuidLabels[y][x]; // This will be the where to in the edge
+
+		// Set the edges based on the direction
+		switch(direction) {
+		case("UP"):
+			ZeldaLevelUtil.addUpAdjacencies(newNode, whereTo);
+		break;
+		case("RIGHT"):
+			ZeldaLevelUtil.addRightAdjacencies(newNode, whereTo);
+		break;
+		case("DOWN"):
+			ZeldaLevelUtil.addDownAdjacencies(newNode, whereTo);
+		break;	
+		case("LEFT"):
+			ZeldaLevelUtil.addLeftAdjacencies(newNode, whereTo);
+		break;
+		default:
+		}
+		return lockedDoor;
+	}
 	/**
 	 * Finds where the triforce is and marks that room as the goal 
 	 * @param dungeon Dungeon instance
@@ -149,6 +186,7 @@ public abstract class ZeldaDungeon<T> {
 			}
 		}
 	}
+	
 
 	/**
 	 * Creates door connecting rooms. 

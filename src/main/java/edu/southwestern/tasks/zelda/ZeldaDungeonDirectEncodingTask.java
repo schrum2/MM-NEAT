@@ -15,6 +15,7 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import me.jakerg.rougelike.Tile;
 
@@ -34,27 +35,73 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 	 */
 	private Dungeon makeDungeon(List<List<Integer>>[][] levelAsListsGrid) {
 		Level[][] dungeon = DungeonUtil.roomGridFromJsonGrid(levelAsListsGrid);
-		
-		Dungeon dungeonInstance = new Dungeon();
-
 		String[][] uuidLabels = new String[dungeon.length][dungeon[0].length];
-		
+
+		Dungeon dungeonInstance = new Dungeon();
 		for(int y = 0; y < dungeon.length; y++) {
 			for(int x = 0; x < dungeon[y].length; x++) {
 				if(dungeon[y][x] != null) {
-					if(uuidLabels[y][x] == null) {
-						// Random ID generation inspired by https://stackoverflow.com/questions/17729753/generating-reproducible-ids-with-uuid
-						uuidLabels[y][x] = UUID.nameUUIDFromBytes(RandomNumbers.randomByteArray(16)).toString();
-					}
+					uuidLabels[y][x] = "("+x+","+y+")";
+				}	
+			}
+		}
+		for(int y = 0; y < dungeon.length; y++) {
+			for(int x = 0; x < dungeon[y].length; x++) {
+				if(dungeon[y][x] != null) {
 					String name = uuidLabels[y][x];
-					Node newNode = dungeonInstance.newNode(name, dungeon[y][x]);
+
+					dungeonInstance.newNode(name, dungeon[y][x]);
+				}	
+			}
+		}
+		for(int y = 0; y < dungeon.length; y++) {
+			for(int x = 0; x < dungeon[y].length; x++) {
+				if(dungeon[y][x] != null) {
+					String name = uuidLabels[y][x];
+
+					Node currentNode = dungeonInstance.getNode(name);
+					
 					
 					// TODO: This is too much. These adjacent connections should be conditional on whether there is already a door.
 					// Search the code for uses of "addAdjacencyIfAvailable" because I think this approach is used somewhere else.
-					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x + 1, y, "RIGHT");
-					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x, y - 1, "UP");
-					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x - 1, y, "LEFT");
-					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x, y + 1, "DOWN");
+					if((levelAsListsGrid[x][y].get(5).get(14)==Tile.DOOR.getNum()||
+						levelAsListsGrid[x][y].get(5).get(14)==Tile.LOCKED_DOOR.getNum())
+							&& x+1 < dungeon[y].length && dungeon[y][x+1] != null) {
+						ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, currentNode, x + 1, y, "RIGHT",levelAsListsGrid[x][y].get(5).get(14));
+						String nameRight = 	uuidLabels[y][x+1];
+						Node nodeRight = dungeonInstance.getNode(nameRight);
+						ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, nodeRight, x, y, "LEFT",levelAsListsGrid[x+1][y].get(5).get(1));
+
+					}
+
+					if((levelAsListsGrid[x][y].get(ZeldaVGLCUtil.ZELDA_ROOM_ROWS-2).get(7)==Tile.DOOR.getNum()||
+							levelAsListsGrid[x][y].get(ZeldaVGLCUtil.ZELDA_ROOM_ROWS-2).get(7)==Tile.LOCKED_DOOR.getNum())
+							&& y+1 < dungeon.length && dungeon[y+1][x] != null) {
+						ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, currentNode, x, y + 1, "DOWN",levelAsListsGrid[x][y].get(ZeldaVGLCUtil.ZELDA_ROOM_ROWS-2).get(7));
+						String nameBelow = 	uuidLabels[y+1][x];		
+						Node nodeBelow = dungeonInstance.getNode(nameBelow);
+						ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, nodeBelow, x, y, "UP",levelAsListsGrid[x][y+1].get(1).get(7));
+					
+					}
+					
+//					if(levelAsListsGrid[x][y].get(1).get(7)==Tile.DOOR.getNum()||
+//					levelAsListsGrid[x][y].get(1).get(7)==Tile.LOCKED_DOOR.getNum()) {
+//					//ZeldaLevelUtil.addUpAdjacencies(newNode, name);
+//					System.out.println("add an adjacency UP");
+//
+//				ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, newNode, x, y - 1, "UP",levelAsListsGrid[x][y].get(1).get(7));
+//				String nameBelow = 	uuidLabels[y+1][x];
+//				Node nodeBelow = dungeonInstance.getNode(nameBelow);
+//				ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, nodeBelow, x, y, "UP",levelAsListsGrid[x][y].get(1).get(7));
+//
+//				}
+//				if(levelAsListsGrid[x][y].get(5).get(1)==Tile.DOOR.getNum()||
+//						levelAsListsGrid[x][y].get(5).get(1)==Tile.LOCKED_DOOR.getNum()) {
+//					//ZeldaLevelUtil.addLeftAdjacencies(newNode, name);
+//					System.out.println("add an adjacency LEFT");
+//
+//				ZeldaDungeon.addAdjacencyIfAvailableGivenDoorData(dungeonInstance, dungeon, uuidLabels, newNode, x - 1, y, "LEFT", levelAsListsGrid[x][y].get(5).get(1));
+//				}
 					
 //					if(y==1&&x==0) {
 //						System.out.println();
@@ -121,6 +168,8 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 			y--;
 			}
 		}
+		levelAsListsGrid[0][1].get(2).set(6,Tile.WALL.getNum());
+
 		levelAsListsGrid[0][1].get(5).set(3, Tile.KEY.getNum());
 		//levelAsListsGrid[0][1].get(6).set(8, Tile.TRIFORCE.getNum());
 		
@@ -128,14 +177,9 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 		// Look at dungeon structure
 		Dungeon dungeon = task.makeDungeon(levelAsListsGrid);
 		Point triforceRoom = new Point(0,1);
-		//Node k = dungeon.getNodeAt(0, 1);
-		//dungeon.setGoal("triforce room");
-//		dungeon.setGoalPoint(new Point(24, 6));
-//		dungeon.setGoal(dungeon.getNodeAt(0, 1).toString());
 		Level[][] levelGrid = DungeonUtil.roomGridFromJsonGrid(levelAsListsGrid);
 		levelGrid[triforceRoom.x][triforceRoom.y].placeTriforce(dungeon);
 
-		//levelGrid[triforceRoom.y][triforceRoom.x] = levelGrid[triforceRoom.y][triforceRoom.x].placeTriforce(dungeon);
 		dungeon.setGoalPoint(new Point(triforceRoom.x, triforceRoom.y));
 		dungeon.setGoal("f7ecf085-4a8c-36f0-85ed-11fb6ef5a642");
 		//dungeon.newNode("85072496-2ea8-3064-9a82-0f614e38d9bd", levelGrid[0][1]);
@@ -148,13 +192,13 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 
 		//Point g = dungeon.getGoalPoint();
 		//System.out.println("maybe this? "+g);
-		dungeon = task.makeDungeon(levelAsListsGrid);
-		System.out.println();
-		System.out.println("the goal is: "+dungeon.getGoal());
-		Point goalPoin1t = dungeon.getCoords(dungeon.getGoal());
-		System.out.println(goalPoin1t+" is the goal point");
-		System.out.println();
-		DungeonUtil.viewDungeon(dungeon);
+//		dungeon = task.makeDungeon(levelAsListsGrid);
+//		System.out.println();
+//		System.out.println("the goal is: "+dungeon.getGoal());
+//		Point goalPoin1t = dungeon.getCoords(dungeon.getGoal());
+//		System.out.println(goalPoin1t+" is the goal point");
+//		System.out.println();
+//		DungeonUtil.viewDungeon(dungeon);
 		
 		// Verify that fitness calculations are correct
 		//ContainerGenotype
