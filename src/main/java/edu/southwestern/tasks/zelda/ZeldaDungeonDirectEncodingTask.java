@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.ContainerGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
@@ -47,13 +48,13 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 					}
 					String name = uuidLabels[y][x];
 					dungeonInstance.newNode(name, dungeon[y][x]);
-					System.out.println(name);
-					
-//					Node newNode = dungeonInstance.newNode(name, dungeon[y][x]);	
-//					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x + 1, y, "RIGHT");
-//					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x, y - 1, "UP");
-//					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x - 1, y, "LEFT");
-//					ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x, y + 1, "DOWN");
+//					if(y==1&&x==0) {
+//						System.out.println();
+//						System.out.println("this is what I need: "+name);
+//						System.out.println();
+//
+//					}
+					//System.out.println(name);
 				}	
 			}
 		}
@@ -65,10 +66,11 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 		return dungeonInstance;
 	}
 	
+	@SuppressWarnings("static-access")
 	public static void main(String[] args) {
-		MMNEAT mmneat = new MMNEAT("runNumber:0 randomSeed:0 zeldaDungeonBackTrackRoomFitness:true zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false zeldaDungeonBackTrackRoomFitness:true watch:true trials:1 mu:10 io:false netio:false cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false".split(" "));
-		mmneat.loadClasses();
+		MMNEAT mmneat = new MMNEAT("runNumber:0 randomSeed:0 zeldaDungeonBackTrackRoomFitness:true zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false zeldaDungeonBackTrackRoomFitness:true watch:true trials:1 mu:10 io:false netio:false cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false task:edu.southwestern.tasks.zelda.ZeldaDungeonDirectEncodingTask".split(" "));
 		
+		mmneat.loadClasses();
 		ZeldaDungeonDirectEncodingTask task = new ZeldaDungeonDirectEncodingTask();
 		
 		@SuppressWarnings("unchecked")
@@ -112,63 +114,48 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 			}
 		}
 		levelAsListsGrid[0][1].get(5).set(3, Tile.KEY.getNum());
-		levelAsListsGrid[0][1].get(6).set(8, Tile.TRIFORCE.getNum());
+		//levelAsListsGrid[0][1].get(6).set(8, Tile.TRIFORCE.getNum());
 		
 		
 		// Look at dungeon structure
 		Dungeon dungeon = task.makeDungeon(levelAsListsGrid);
 		Point triforceRoom = new Point(0,1);
-		Node k = dungeon.getNodeAt(0, 1);
+		//Node k = dungeon.getNodeAt(0, 1);
 		//dungeon.setGoal("triforce room");
-		
-		//dungeon.setGoalPoint(new Point(24, 6));
-		dungeon.setGoal(dungeon.getNodeAt(0, 1).toString());
+//		dungeon.setGoalPoint(new Point(24, 6));
+//		dungeon.setGoal(dungeon.getNodeAt(0, 1).toString());
+		Level[][] levelGrid = DungeonUtil.roomGridFromJsonGrid(levelAsListsGrid);
+		levelGrid[triforceRoom.x][triforceRoom.y].placeTriforce(dungeon);
+
+		//levelGrid[triforceRoom.y][triforceRoom.x] = levelGrid[triforceRoom.y][triforceRoom.x].placeTriforce(dungeon);
+		dungeon.setGoalPoint(new Point(triforceRoom.x, triforceRoom.y));
+		dungeon.setGoal("f7ecf085-4a8c-36f0-85ed-11fb6ef5a642");
+		//dungeon.newNode("85072496-2ea8-3064-9a82-0f614e38d9bd", levelGrid[0][1]);
+
+		System.out.println();
 		System.out.println("the goal is: "+dungeon.getGoal());
+		Point goalPoint = dungeon.getCoords(dungeon.getGoal());
+		System.out.println(goalPoint+" is the goal point");
+		System.out.println();
+
+		//Point g = dungeon.getGoalPoint();
+		//System.out.println("maybe this? "+g);
+		dungeon = task.makeDungeon(levelAsListsGrid);
+		System.out.println();
+		System.out.println("the goal is: "+dungeon.getGoal());
+		Point goalPoin1t = dungeon.getCoords(dungeon.getGoal());
+		System.out.println(goalPoin1t+" is the goal point");
+		System.out.println();
 		DungeonUtil.viewDungeon(dungeon);
 		
 		// Verify that fitness calculations are correct
-		Score<List<List<Integer>>[][]> s = task.evaluate(new Genotype<List<List<Integer>>[][]>() {
+		//ContainerGenotype
+		//Score<Dungeon> sm = task.evaluate(new ContainerGenotype<Dungeon>(dungeon));
 
-			@Override
-			public void addParent(long id) {
-			}
-
-			@Override
-			public List getParentIDs() {
-				return null;
-			}
-
-			@Override
-			public Genotype copy() {
-				return null;
-			}
-
-			@Override
-			public void mutate() {
-			}
-
-			@Override
-			public Genotype<List<List<Integer>>[][]> crossover(Genotype<List<List<Integer>>[][]> g) {
-				return null;
-			}
-
-			@Override
-			public List<List<Integer>>[][] getPhenotype() {
-				return levelAsListsGrid;
-			}
-
-			@Override
-			public Genotype<List<List<Integer>>[][]> newInstance() {
-				return null;
-			}
-
-			@Override
-			public long getId() {
-				return 0;
-			}
-		});
+		Score<List<List<Integer>>[][]> s = task.evaluate(new ContainerGenotype<List<List<Integer>>[][]>(levelAsListsGrid));
 		
 		System.out.println(s);
+		
 	}
 	private static void makeEmptyRoom(List<List<Integer>>[][] levelAsListsGrid, int x1, int y1) {
 		levelAsListsGrid[x1][y1] = new ArrayList<List<Integer>>();
