@@ -766,6 +766,7 @@ public class Parameters {
 		booleanOptions.add("zeldaCPPNtoGANAllowsRaft", false, "Allows a raft to be placed in the dungeon");
 		booleanOptions.add("firstSoftLockedRoomHasRaft", true, "Whether or not the raft is in the first soft-locked room");
 		booleanOptions.add("zeldaCPPN2GANSparseKeys", false, "For CPPN2GAN generation, place one key per locked door (may make dungeons unbeatable depending on placement)");
+		booleanOptions.add("zeldaALlowPuzzleDoorUglyHack", true, "Whether or not the raft is in the first soft-locked room");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -897,6 +898,7 @@ public class Parameters {
 		stringOptions.add("utStudyTeammate", "", "The type of teammate agent for the 2018 human subject study: jude, ethan, native");
 		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
+		stringOptions.add("LodeRunnerGANModel", "netG_epoch_5000_0_10.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
 		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");

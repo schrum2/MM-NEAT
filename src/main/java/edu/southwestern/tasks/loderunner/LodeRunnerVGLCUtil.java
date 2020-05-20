@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import edu.southwestern.parameters.Parameters;
 import gvgai.tools.IO;
 
 /**
- * This class converts VGLC LodeRunner levels into JSON files 
+ * This class converts VGLC Lode Runner levels into JSON files 
  * @author kdste
  *
  */
@@ -22,7 +21,7 @@ public class LodeRunnerVGLCUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] {});
+		//Parameters.initializeParameterCollections(new String[] {});
 		HashSet<List<List<Integer>>> levelSet = new HashSet<>(); //creates set to represent the level 
 		for(int i = 1; i <= 150; i++) {
 			String file = "Level " + i + ".txt"; //format for the LodeRunner level files 
@@ -41,12 +40,15 @@ public class LodeRunnerVGLCUtil {
 		String[] level = new IO().readFile(fileName);
 		List<List<Integer>> complete = new ArrayList<>(LODE_RUNNER_ROWS);
 		//loops through levels to get characters and convert them 
-		for(int i = 0; i < LODE_RUNNER_ROWS; i++) { 
-			complete.add(new ArrayList<Integer>(LODE_RUNNER_COLUMNS)); //adds a new array list to the list at index i 
-			for(int j = 0; j < LODE_RUNNER_COLUMNS; j++) { //fills that array list that got added to create the row 
-				int tileCode = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j));
-				complete.get(i).add(tileCode); //adds the tile code for conversion
+		for(int i = 0; i < level.length; i++) { 
+			List<Integer> row = new ArrayList<>(LODE_RUNNER_COLUMNS);//creates new List to be a new row of the JSON 
+			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
+				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
+					int tileCode = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j));
+					row.add(tileCode);
+				}
 			}
+			complete.add(row); //adds a new array list to the list at index i 
 		}
 		return complete;
 	}
@@ -58,18 +60,22 @@ public class LodeRunnerVGLCUtil {
 	 */
 	private static int convertLodeRunnerTileVGLCtoNumberCode(char tile) {
 		switch(tile) {
-		case '.': //empty
-		case 'G': //gold
-		case 'M': //spawn 
-			return 0;	// Passable
-		case 'B': //regular ground
-		case 'b': //diggable ground 
-			return 1;	// Impassable, i.e. solid ground 
-		case 'E': //enemy 
-			return 2; //TODO might remove this later 
-		case '#': //ladder
-		case '-': //rope
-			return 3; //climbable
+		case '.': //empty, passable
+			return 0;	
+		case 'G': //gold, passable, pickupable
+			return 1; 
+		case 'M': //spawn, passable 
+			return 2;	
+		case 'B': //regular ground, solid
+			return 3;
+		case 'b': //diggable ground, solid 
+			return 4;	 
+		case 'E': //enemy, damaging 
+			return 5; 
+		case '#': //ladder, passable, climbable
+			return 6;
+		case '-': //rope, passable, climbable 
+			return 7;
 		default:
 			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
 
