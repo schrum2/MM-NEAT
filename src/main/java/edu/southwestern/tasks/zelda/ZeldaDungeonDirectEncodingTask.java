@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.zelda;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -31,7 +30,7 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 	 * @param individual A List<List<Integer>>[][] representing a hard-coded dungeon
 	 * @return dungeon the conversion from List<List<Integer>>[][] to dungeon
 	 */
-	private Dungeon makeDungeon(List<List<Integer>>[][] levelAsListsGrid) {
+	public Dungeon makeDungeon(List<List<Integer>>[][] levelAsListsGrid) {
 		Level[][] dungeon = DungeonUtil.roomGridFromJsonGrid(levelAsListsGrid);
 		String[][] uuidLabels = new String[dungeon.length][dungeon[0].length];
 
@@ -68,18 +67,6 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 						Node nodeRight = dungeonInstance.getNode(nameRight);
 						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, nodeRight, x, y, "LEFT", ZeldaDungeon.encodedValueForDoorType(levelAsListsGrid[y][x+1].get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE)));
 					}
-					/*
-					 * public static final int FAR_LONG_EDGE_DOOR_COORDINATE = 14;
-	public static final int FAR_SHORT_EDGE_DOOR_COORDINATE = 9;
-	public static final int ZELDA_FLOOR_SPACE_ROWS = 7;
-	public static final int ZELDA_FLOOR_SPACE_COLUMNS = 12;
-	public static final int CLOSE_EDGE_DOOR_COORDINATE = 1;
-	public static final int BIG_DOOR_COORDINATE_START = 4;
-	public static final int BIG_DOOR_COORDINATE_END = 6;
-	public static final int SMALL_DOOR_COORDINATE_START = 7;
-	public static final int SMALL_DOOR_COORDINATE_END = 8;
-
-					 */
 					if((k[ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START][ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE]==Tile.DOOR||
 						k[ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START][ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE]==Tile.LOCKED_DOOR)
 						&& y+1 < dungeon.length && dungeon[y+1][x] != null) {
@@ -110,10 +97,10 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 		
 		@SuppressWarnings("unchecked")
 		List<List<Integer>>[][] levelAsListsGrid = new List[2][2];
-		makeEmptyRoom(levelAsListsGrid, 0, 0);
-		makeEmptyRoom(levelAsListsGrid, 1, 0);
-		makeEmptyRoom(levelAsListsGrid, 0, 1);
-		makeEmptyRoom(levelAsListsGrid, 1, 1);
+		ZeldaLevelUtil.makeEmptyRoom(levelAsListsGrid, 0, 0);
+		ZeldaLevelUtil.makeEmptyRoom(levelAsListsGrid, 1, 0);
+		ZeldaLevelUtil.makeEmptyRoom(levelAsListsGrid, 0, 1);
+		ZeldaLevelUtil.makeEmptyRoom(levelAsListsGrid, 1, 1);
 		int y=ZeldaVGLCUtil.ZELDA_ROOM_ROWS-1;
 		
 		levelAsListsGrid[0][0].get(4).set(14,Tile.DOOR.getNum());
@@ -160,32 +147,5 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 		
 		System.out.println(s);
 		
-	}
-	
-	// TODO: Make public, move to ZeldaLevelUtil
-	private static void makeEmptyRoom(List<List<Integer>>[][] levelAsListsGrid, int x1, int y1) {
-		levelAsListsGrid[x1][y1] = new ArrayList<List<Integer>>();
-		// Make totally empty room
-		for(int y = 0; y < ZeldaVGLCUtil.ZELDA_ROOM_ROWS; y++) {
-			ArrayList<Integer> row = new ArrayList<>();
-			for(int x = 0; x < ZeldaVGLCUtil.ZELDA_ROOM_COLUMNS; x++) {
-				row.add(Tile.FLOOR.getNum());
-			}
-			levelAsListsGrid[x1][y1].add(row);
-		}
-		// Set left/right walls
-		for(int y = 0; y < ZeldaVGLCUtil.ZELDA_ROOM_ROWS; y++) {
-			for(int x = 0; x <= 1; x++) {
-				levelAsListsGrid[x1][y1].get(y).set(x,Tile.WALL.getNum());
-				levelAsListsGrid[x1][y1].get(y).set(levelAsListsGrid[x1][y1].get(y).size() - 1 - x,Tile.WALL.getNum());
-			}
-		}
-		// Set top/bottom walls
-		for(int y = 0; y <= 1; y++) {
-			for(int x = 0; x < ZeldaVGLCUtil.ZELDA_ROOM_COLUMNS; x++) {
-				levelAsListsGrid[x1][y1].get(y).set(x,Tile.WALL.getNum());
-				levelAsListsGrid[x1][y1].get(ZeldaVGLCUtil.ZELDA_ROOM_ROWS-y-1).set(levelAsListsGrid[x1][y1].get(y).size() - 1 - x,Tile.WALL.getNum());
-			}
-		}
-	}
+	}	
 }
