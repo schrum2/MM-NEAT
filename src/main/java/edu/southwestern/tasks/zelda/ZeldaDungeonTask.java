@@ -288,7 +288,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						System.out.println("["+wallTileIndex+"]["+waterTileIndex+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
 
 						behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
-					} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels) {
+					} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels) { //alternate binning scheme
 						// TODO: Define a new scheme here that is similar but different.
 						
 						int maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
@@ -303,7 +303,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 						// Number of distinct rooms.
 						// Number of rooms backtracked through.
-						// Total number of rooms (same as before)
 						
 					}else {
 						throw new RuntimeException("A Valid Binning Scheme For Zelda Was Not Specified");

@@ -247,6 +247,14 @@ public class ZeldaLevelUtil {
 		//System.out.println("Put key at " + x + ", " + y);
 		level.get(y).set(x, Tile.KEY.getNum()); 
 	}
+	/**
+	 * counts the distinct rooms in a dungeon
+	 * @param dungeon the dungeon
+	 * @param numRoomsReachable the number of rooms reachable
+	 * @param START that Start point
+	 * @param k a hash set to contain distinct rooms
+	 * @return numDistinctRooms the number of distinct rooms
+	 */
 	public static int countDiscreteRooms(Dungeon dungeon, int numRoomsReachable, Point START, /*ArrayList<ArrayList<Integer>> compareRooms,*/ HashSet<ArrayList<ArrayList<Integer>>> k) {
 		for(edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node room: dungeon.getLevels().values()) {
 			// TODO: This only applies to water/wall percentage calculation, not distinct room count

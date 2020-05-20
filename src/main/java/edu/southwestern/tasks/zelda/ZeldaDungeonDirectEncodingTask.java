@@ -26,7 +26,8 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 		return makeDungeon(levelAsListsGrid);
 	}
 	/**
-	 * Almost identical to SimpleDungeon version, but takes in Genotype<List<List<Integer>>[][]> instead of ArrayList<ArrayList<Double>> (phenotype)
+	 * Almost identical to SimpleDungeon version, but takes in List<List<Integer>>[][] instead of ArrayList<ArrayList<Double>> (phenotypes)
+	 * Makes doors that should be adjacent passable both ways.
 	 * @param individual A List<List<Integer>>[][] representing a hard-coded dungeon
 	 * @return dungeon the conversion from List<List<Integer>>[][] to dungeon
 	 */
@@ -59,7 +60,7 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 					Node currentNode = dungeonInstance.getNode(name);
 					
 					Tile[][] k = dungeon[y][x].getTiles();
-					if((k[ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE][ZeldaLevelUtil.BIG_DOOR_COORDINATE_START]==Tile.DOOR||
+					if((k[ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE][ZeldaLevelUtil.BIG_DOOR_COORDINATE_START]==Tile.DOOR|| //if the tile is a door or locked door, then make the opposite adjacent
 						k[ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE][ZeldaLevelUtil.BIG_DOOR_COORDINATE_START]==Tile.LOCKED_DOOR)
 						&& x+1 < dungeon[y].length && dungeon[y][x+1] != null) {
 						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, currentNode, x+1, y, "RIGHT", ZeldaDungeon.encodedValueForDoorType(levelAsListsGrid[y][x].get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).get(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE)));			
@@ -67,7 +68,7 @@ public class ZeldaDungeonDirectEncodingTask extends ZeldaDungeonTask<List<List<I
 						Node nodeRight = dungeonInstance.getNode(nameRight);
 						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, nodeRight, x, y, "LEFT", ZeldaDungeon.encodedValueForDoorType(levelAsListsGrid[y][x+1].get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE)));
 					}
-					if((k[ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START][ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE]==Tile.DOOR||
+					if((k[ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START][ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE]==Tile.DOOR|| //if the tile is a door or locked door, then make the opposite adjacent
 						k[ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START][ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE]==Tile.LOCKED_DOOR)
 						&& y+1 < dungeon.length && dungeon[y+1][x] != null) {
 						ZeldaDungeon.addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, currentNode, x, y+1, "DOWN", ZeldaDungeon.encodedValueForDoorType(levelAsListsGrid[y][x].get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START)));

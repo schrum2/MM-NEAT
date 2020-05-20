@@ -7,7 +7,12 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.Parameters;
-
+/**
+ * New binning scheme for MAP-Elites
+ * makes fitness based off of number of distinct and backtracked rooms.
+ * @author Ben Capps
+ *
+ */
 public class ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels implements BinLabels {
 	
 	List<String> labels = null;
