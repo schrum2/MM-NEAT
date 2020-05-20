@@ -7,7 +7,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
-import edu.southwestern.networks.hyperneat.HyperNEATVisualizationUtil;
+//import edu.southwestern.networks.hyperneat.HyperNEATVisualizationUtil;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.PopulationUtil;

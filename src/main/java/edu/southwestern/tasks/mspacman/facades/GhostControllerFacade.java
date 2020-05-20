@@ -1,13 +1,12 @@
 package edu.southwestern.tasks.mspacman.facades;
 
+import java.util.EnumMap;
+import java.util.Map.Entry;
+
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.tasks.popacman.ghosts.controllers.OldToNewGhostIntermediaryController;
 import pacman.controllers.IndividualGhostController;
-import pacman.controllers.MASController;
 import pacman.game.Constants;
-
-import java.util.EnumMap;
-import java.util.Map.Entry;
 
 /**
  *Facade that allows ghosts to be

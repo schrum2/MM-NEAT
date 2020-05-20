@@ -18,7 +18,9 @@ import mockcz.cuni.pogamut.Client.AgentMemory;
  */
 public abstract class Controller implements Cloneable, Serializable {
 
-    public boolean wasStuck = false;
+	private static final long serialVersionUID = 1L;
+
+	public boolean wasStuck = false;
 
     protected SensorModel model;
     //protected ArrayList<StringTuple> arguments;
@@ -69,7 +71,6 @@ public abstract class Controller implements Cloneable, Serializable {
 
     public abstract void reset();
 
-    @SuppressWarnings({"CloneDoesntDeclareCloneNotSupportedException"})
     @Override
     public Controller clone() {
         try {

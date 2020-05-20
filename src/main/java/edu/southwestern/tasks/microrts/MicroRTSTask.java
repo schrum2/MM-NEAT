@@ -23,7 +23,6 @@ import edu.southwestern.tasks.microrts.iterativeevolution.EnemySequence;
 import edu.southwestern.tasks.microrts.iterativeevolution.MapSequence;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.datastructures.Triple;
 import micro.ai.HasEvaluationFunction;
 import micro.ai.core.AI;
 import micro.gui.PhysicalGameStateJFrame;

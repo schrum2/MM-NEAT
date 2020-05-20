@@ -21,7 +21,9 @@ import utopia.controllers.scripted.NeedyController;
  */
 public class HumanRetraceController extends NeedyController {
 
-    Future<SimpleNavPointIndex> theIndex = null;
+	private static final long serialVersionUID = 1L;
+	
+	Future<SimpleNavPointIndex> theIndex = null;
     PoseSequence sequence = null;
     double lastTime = 0;
 
@@ -275,7 +277,8 @@ public class HumanRetraceController extends NeedyController {
         sequence = null;
     }
 
-    public static void main(String args[]) throws PogamutException {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void main(String args[]) throws PogamutException {
         new UT2004BotRunner(HumanRetraceBot.class, "HumanRetraceBot").startAgent();
     }
 }

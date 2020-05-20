@@ -1,5 +1,24 @@
 package edu.utexas.cs.nn.retrace;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.Point;
@@ -7,12 +26,6 @@ import edu.utexas.cs.nn.db.DbLogger;
 import edu.wlu.cs.levy.CG.KDTree;
 import edu.wlu.cs.levy.CG.KeyDuplicateException;
 import edu.wlu.cs.levy.CG.KeySizeException;
-import java.io.*;
-import java.sql.*;
-import java.util.*;
-import java.util.logging.Level;
-
-import org.sqlite.*;
 
 /**
  * This index is a collection of PoseSequence and VoronoiRegion objects that

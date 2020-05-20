@@ -13,7 +13,9 @@ import utopia.agentmodel.sensormodel.SensorModel;
  */
 public abstract class TWEANNController extends EvolvableController {
 
-    transient protected boolean firePrimary = true;
+	private static final long serialVersionUID = 1L;
+	
+	transient protected boolean firePrimary = true;
     transient private static final double TURNING_THRESHOLD = 0.35;
     public TWEANN tweann;
     protected int numOutputs;
@@ -83,7 +85,6 @@ public abstract class TWEANNController extends EvolvableController {
         return model.getNumSensors() + this.numNonSensory;
     }
 
-    @SuppressWarnings({"CloneDoesntCallSuperClone"})
     @Override
     public final Controller clone() {
         return (Controller) this.copy();
