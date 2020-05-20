@@ -16,6 +16,7 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 
 public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionTask{
+	public static final int LATENT_VECTOR_SIZE = 20;//latent vector dimension, 20 improved the model a lot
 
 	public LodeRunnerGANLevelBreederTask() throws IllegalAccessException {
 		super();
@@ -64,9 +65,11 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 		List<List<Integer>> level = LodeRunnerGANUtil.generateOneLevelListRepresentationFromGAN(doubleArray);
 		BufferedImage[] images;
-		BufferedImage image = new BufferedImage(0, 0, 0);
+		int width1 = LodeRunnerRenderUtil.LODE_RUNNER_TILE_X*LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS;
+		int height1 = LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y*LodeRunnerRenderUtil.LODE_RUNNER_ROWS;
+		BufferedImage image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
 		try {
-			images = LodeRunnerRenderUtil.loadImages(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH);
+			images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH);
 			image = LodeRunnerRenderUtil.getBufferedImage(level, images);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -76,7 +79,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","bigInteractiveButtons:true","GANInputSize:"+LATENT_VECTOR_SIZE,"showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.loderunner.LodeRunnerGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

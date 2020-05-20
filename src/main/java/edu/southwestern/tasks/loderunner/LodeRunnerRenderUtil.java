@@ -102,43 +102,44 @@ public class LodeRunnerRenderUtil {
 	}
 
 
+	//this is for the old mapping that includes all tiles, commented out because we updated the mapping 
+//	/**
+//	 * Loads in all of the tile images, the index corresponds to the number for that tile 
+//	 * @param filePath Directory that hold the tile images 
+//	 * @return An array of BufferedImages holding all the tiles for Lode Runner
+//	 * @throws IOException In case the file can't be found
+//	 */
+//	public static BufferedImage[] loadImages(String filePath) throws IOException {
+//		BufferedImage[] tileList = new BufferedImage[8];
+//		File tile = new File(filePath+"empty.png");
+//		BufferedImage emptyTile = ImageIO.read(tile);
+//		tileList[0] = emptyTile;
+//		tile = new File(filePath+"gold.png");
+//		BufferedImage goldTile = ImageIO.read(tile);
+//		tileList[1] = goldTile;
+//		tile = new File(filePath+"spawn.png");
+//		BufferedImage spawnTile = ImageIO.read(tile);
+//		tileList[2] = spawnTile;
+//		tile = new File(filePath+"ground.png");
+//		BufferedImage groundTile = ImageIO.read(tile);
+//		tileList[3] = groundTile;
+//		tile = new File(filePath+"diggableGround.png");
+//		BufferedImage diggableGroundTile = ImageIO.read(tile);
+//		tileList[4] = diggableGroundTile;
+//		tile = new File(filePath+"enemy.png");
+//		BufferedImage enemyTile = ImageIO.read(tile);
+//		tileList[5] = enemyTile;
+//		tile = new File(filePath+"ladder.png");
+//		BufferedImage ladderTile = ImageIO.read(tile);
+//		tileList[6] = ladderTile;
+//		tile = new File(filePath+"rope.png");
+//		BufferedImage ropeTile = ImageIO.read(tile);
+//		tileList[7] = ropeTile;
+//		return tileList;
+//	}
+//	
 	/**
-	 * Loads in all of the tile images, the index corresponds to the number for that tile 
-	 * @param filePath Directory that hold the tile images 
-	 * @return An array of BufferedImages holding all the tiles for Lode Runner
-	 * @throws IOException In case the file can't be found
-	 */
-	public static BufferedImage[] loadImages(String filePath) throws IOException {
-		BufferedImage[] tileList = new BufferedImage[8];
-		File tile = new File(filePath+"empty.png");
-		BufferedImage emptyTile = ImageIO.read(tile);
-		tileList[0] = emptyTile;
-		tile = new File(filePath+"gold.png");
-		BufferedImage goldTile = ImageIO.read(tile);
-		tileList[1] = goldTile;
-		tile = new File(filePath+"spawn.png");
-		BufferedImage spawnTile = ImageIO.read(tile);
-		tileList[2] = spawnTile;
-		tile = new File(filePath+"ground.png");
-		BufferedImage groundTile = ImageIO.read(tile);
-		tileList[3] = groundTile;
-		tile = new File(filePath+"diggableGround.png");
-		BufferedImage diggableGroundTile = ImageIO.read(tile);
-		tileList[4] = diggableGroundTile;
-		tile = new File(filePath+"enemy.png");
-		BufferedImage enemyTile = ImageIO.read(tile);
-		tileList[5] = enemyTile;
-		tile = new File(filePath+"ladder.png");
-		BufferedImage ladderTile = ImageIO.read(tile);
-		tileList[6] = ladderTile;
-		tile = new File(filePath+"rope.png");
-		BufferedImage ropeTile = ImageIO.read(tile);
-		tileList[7] = ropeTile;
-		return tileList;
-	}
-	
-	/**
-	 * Loads in all of the tile images, the index corresponds to the number for that tile 
+	 * Loads in all of the tile images, the index corresponds to the number for that tile excluding spawn and multiple types of ground 
 	 * @param filePath Directory that hold the tile images 
 	 * @return An array of BufferedImages holding all the tiles for Lode Runner
 	 * @throws IOException In case the file can't be found

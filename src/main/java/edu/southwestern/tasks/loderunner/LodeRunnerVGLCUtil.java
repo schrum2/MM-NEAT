@@ -28,7 +28,7 @@ public class LodeRunnerVGLCUtil {
 			List<List<Integer>> levelList = convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + file); //converts to JSON 
 			levelSet.add(levelList); //adds the converted list to the set for the level 
 		}
-		System.out.println(levelSet); //prints converted JSON files to the console 
+		//System.out.println(levelSet); //prints converted JSON files to the console 
 	}
 
 	/**
