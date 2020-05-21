@@ -24,6 +24,10 @@ public class ZeldaCPPNtoGANVectorMatrixBuilder implements ZeldaGANVectorMatrixBu
 	public ZeldaCPPNtoGANVectorMatrixBuilder(Network cppn, double[] inputMultipliers) {
 		this.cppn = cppn;
 		this.inputMultipliers = inputMultipliers; // weights associated with different inputs to the CPPN
+		
+		// TODO: Assume  zeldaGANLevelWidthChunks and zeldaGANLevelHeightChunks were specified, but define cppn2ganWidth and cppn2ganHeight to take on their values here
+		// Parameters.parameters.setInteger(label, value);
+
 	}
 	
 	/**
