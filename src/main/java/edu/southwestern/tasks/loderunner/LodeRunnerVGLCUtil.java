@@ -1,5 +1,9 @@
 package edu.southwestern.tasks.loderunner;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,12 +26,12 @@ public class LodeRunnerVGLCUtil {
 	 */
 	public static void main(String[] args) {
 		HashSet<List<List<Integer>>> levelSet = new HashSet<>(); //creates set to represent the level 
-		for(int i = 1; i <= 150; i++) {
+		for(int i = 1; i <= 5; i++) {
 			String file = "Level " + i + ".txt"; //format for the LodeRunner level files 
 			List<List<Integer>> levelList = convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + file); //converts to JSON 
 			levelSet.add(levelList); //adds the converted list to the set for the level 
 		}
-		//System.out.println(levelSet); //prints converted JSON files to the console 
+		System.out.println(levelSet); //prints converted JSON files to the console 
 	}
 
 	/**
@@ -44,7 +48,8 @@ public class LodeRunnerVGLCUtil {
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
 					//int tileCode = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j)); //8 tile mapping 
-					int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawn(level[i].charAt(j)); //6 tile mapping 
+					//int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawn(level[i].charAt(j)); //6 tile mapping 
+					int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(level[i].charAt(j)); //7 tile mapping
 					row.add(tileCode);
 				}
 			}
@@ -53,7 +58,7 @@ public class LodeRunnerVGLCUtil {
 		return complete;
 	}
 
-	//original mapping with each individual tile 
+//	//original mapping with each individual tile 
 //	/**
 //	 * Converts tile codes to numbers for JSON conversion
 //	 * @param tile Character describing the tile 
@@ -85,6 +90,7 @@ public class LodeRunnerVGLCUtil {
 	
 	/**
 	 * Converts tile codes to numbers for JSON conversion removes the spawn tile to avoid placing multiple 
+	 * Also combines both ground tiles to be represented by only diggable ground tiles
 	 * @param tile Character describing the tile 
 	 * @return The number associated with that tile
 	 */
@@ -109,4 +115,70 @@ public class LodeRunnerVGLCUtil {
 
 		}
 	}
+	
+	/**
+	 * Converts tile codes to numbers for JSON conversion removes the spawn tile to avoid placing multiple 
+	 * Distinguishes between the two types of ground tiles 
+	 * @param tile Character describing the tile 
+	 * @return The number associated with that tile
+	 */
+	private static int convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(char tile) {
+		switch(tile) {
+		case '.': //empty, passable
+		case 'M': //spawn, passable
+			return 0;	
+		case 'G': //gold, passable, pickupable
+			return 1; 
+		case 'E': //enemy, damaging 
+			return 2; 
+		case 'b': //diggable ground, solid 
+			return 3; 
+		case '#': //ladder, passable, climbable
+			return 4;
+		case '-': //rope, passable, climbable 
+			return 5;
+		case 'B': //regular ground, solid
+			return 6; 
+		default:
+			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
+
+		}
+	}
+	
+	public static String convertLodeRunnerVGLCtoIceCreamYou(String fileName) {
+		String[] level = new IO().readFile(fileName);
+		String playFormat = "";
+		for(int i =0; i < level.length; i++) {
+			for(int j = 0; j < level[i].length();j++) {
+				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
+					String line = convertLodeRunnerTileVGLCtoIceCreamYou(level[i].charAt(j));
+					
+				}
+			}
+		}
+		return playFormat;
+	}
+	
+	private static String convertLodeRunnerTileVGLCtoIceCreamYou(char tile) {
+		switch(tile) {
+		case 'B':
+			return "";
+		case 'b': 
+			return "";
+		case '#': 
+			return "";
+		case '-': 
+			return ""; 
+		case 'M': //spawn, passable
+			return "";
+		case 'E': //enemy, damaging 
+			return "";
+		case 'G': //gold, passable, pickupable
+			return ""; 
+		default:
+			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
+
+		}
+	}
+	
 }
