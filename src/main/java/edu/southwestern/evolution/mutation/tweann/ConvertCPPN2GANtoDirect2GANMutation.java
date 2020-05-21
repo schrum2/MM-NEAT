@@ -1,7 +1,8 @@
-package edu.southwestern.evolution.genotypes;
+package edu.southwestern.evolution.mutation.tweann;
 
 import java.util.ArrayList;
 
+import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mutation.Mutation;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
@@ -9,24 +10,36 @@ import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.zelda.ZeldaCPPNtoGANVectorMatrixBuilder;
 import edu.southwestern.util.random.RandomNumbers;
-
-public class CPPNOrDirectToGANGenotypeMutation extends Mutation<ArrayList<Double>>{
+/**
+ * Converts CPPN to GAN to Direct to GAN
+ * Only has a small chance of mutating
+ *
+ */
+public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation<ArrayList<Double>>{
 	protected double rate;
-	
-	public CPPNOrDirectToGANGenotypeMutation(String rateName) {
-		this(Parameters.parameters.doubleParameter(rateName));
-
-	}
-	public CPPNOrDirectToGANGenotypeMutation(double rate) {
+	/**
+	 * Construct that defines the rate (0.1) and tells if it's out of bounds
+	 */
+	public ConvertCPPN2GANtoDirect2GANMutation() {
+		double rate = Parameters.parameters.doubleParameter("indirectToDirectTransitionRate");
 		assert 0 <= rate && rate <= 1 : "Mutation rate out of range: " + rate;
-		this.rate = rate;	
-		}
+		this.rate = rate;
+	}
 	@Override
+	/**
+	 * checks if it can perform the action 
+	 * (random number < rate (0.1))
+	 */
 	public boolean perform() {
 		return (RandomNumbers.randomGenerator.nextDouble() < rate);
 	}
 
 	@Override
+	/**
+	 * Uses a CPPN to create a long latent vector
+	 * 
+	 * @param genotype a genotype specified by the user
+	 */
 	public void mutate(Genotype<ArrayList<Double>> genotype) {
 		Network cppn = (Network) genotype.getPhenotype();
 		

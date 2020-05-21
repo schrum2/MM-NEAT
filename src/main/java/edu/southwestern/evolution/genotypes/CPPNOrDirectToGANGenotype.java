@@ -2,6 +2,7 @@ package edu.southwestern.evolution.genotypes;
 
 import java.util.ArrayList;
 
+import edu.southwestern.evolution.mutation.tweann.ConvertCPPN2GANtoDirect2GANMutation;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 
@@ -22,7 +23,6 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 		this(new TWEANNGenotype(), true);
 	}	
 	
-	// TODO: Javadoc
 	/**
 	 * constructor that allows for changing from the default
 	 * TWEANN
@@ -33,7 +33,6 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 		super(genotype, firstForm);
 	}
 	
-	// TODO: Javadoc
 	@Override
 	/**
 	 * Has a chance of mutating to change to CPPN
@@ -44,7 +43,7 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 		sb.append(this.getId());
 		sb.append(" ");
 		
-		new CPPNOrDirectToGANGenotypeMutation(Parameters.parameters.doubleParameter("indirectToDirectTransitionRate")).go(current, sb);
+		new ConvertCPPN2GANtoDirect2GANMutation().go(current, sb);
 		// new WhateverMutationOpIsCalled().go( params )
 		// TODO: Small chance of transitioning from CPPN to Direct
 		// Put into the mutation operation: super.firstForm = false;
