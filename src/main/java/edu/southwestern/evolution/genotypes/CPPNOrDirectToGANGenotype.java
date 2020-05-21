@@ -6,7 +6,6 @@ import edu.southwestern.evolution.mutation.tweann.ConvertCPPN2GANtoDirect2GANMut
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 
-// TODO: Javadoc
 /**
  * Allows to switch back and forth randomly between a CPPN to GAN 
  * or Direct to Gan genotype
@@ -15,7 +14,6 @@ import edu.southwestern.parameters.Parameters;
  */
 public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList<Double>> {
 
-	// TODO: Javadoc
 	/**
 	 * default is TWEANN
 	 */

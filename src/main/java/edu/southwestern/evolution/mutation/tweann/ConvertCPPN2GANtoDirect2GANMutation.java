@@ -2,6 +2,7 @@ package edu.southwestern.evolution.mutation.tweann;
 
 import java.util.ArrayList;
 
+import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mutation.Mutation;
 import edu.southwestern.networks.Network;
@@ -61,6 +62,7 @@ public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation<ArrayList<Doub
 				
 			}
 		}
+		//BoundedRealValuedGenotype k = new BoundedRealValuedGenotype();
 	}
 
 }
