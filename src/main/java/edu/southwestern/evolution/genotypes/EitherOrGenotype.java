@@ -93,7 +93,7 @@ public class EitherOrGenotype<X,Y> implements Genotype {
 	    current = g;
 	    firstForm = false;
 	}
-//	public static boolean getFirstForm() {
-//		return ff;
+//	public boolean getFirstForm() {
+//		return firstForm;
 //	}
 }
