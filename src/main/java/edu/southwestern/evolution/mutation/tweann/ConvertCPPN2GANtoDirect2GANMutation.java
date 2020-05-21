@@ -16,11 +16,13 @@ import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.zelda.ZeldaCPPNtoGANVectorMatrixBuilder;
 import edu.southwestern.util.random.RandomNumbers;
 /**
- * Converts CPPN to GAN to Direct to GAN
- * Only has a small chance of mutating
+ * Converts CPPN to GAN to Direct to GAN.
+ * 
+ * Cannot specific type of phenotype since it changes
  *
  */
-public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation<ArrayList<Double>>{
+@SuppressWarnings("rawtypes")
+public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation {
 	protected double rate;
 	/**
 	 * Construct that defines the rate (0.1) and tells if it's out of bounds
@@ -39,16 +41,17 @@ public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation<ArrayList<Doub
 		return (RandomNumbers.randomGenerator.nextDouble() < rate);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	/**
-	 * Uses a CPPN to create a long latent vector
+	 * Uses a CPPN to create a long latent vector.
+	 * Assumes transition from CPPN2GAN format to Direct2GAN.
+	 * Since phenotype changes, the type cannot be specified as a type parameter.
 	 * 
 	 * @param genotype a genotype specified by the user
 	 */
-	public void mutate(Genotype<ArrayList<Double>> genotype) {
+	public void mutate(Genotype genotype) {
 		Network cppn = (Network) genotype.getPhenotype();
-		@SuppressWarnings("rawtypes")
 		Genotype cppnOrDirect2ganGenotype = (CPPNOrDirectToGANGenotype) genotype;
 		//EitherOrGenotype.switchForms(cppnOrDirect2ganGenotype);
 		double[] inputMultipliers = new double[cppn.numInputs()];
@@ -60,7 +63,7 @@ public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation<ArrayList<Doub
 		int height = Parameters.parameters.integerParameter("cppn2ganHeight");
 		int width = Parameters.parameters.integerParameter("cppn2ganWidth");
 		int segmentLength = (GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
-		double[] longResult = new double[segmentLength];
+		double[] longResult = new double[segmentLength*height*width];
 		for(int y = 0; y < height; y++) {
 			for(int x = 0; x < width; x++) {
 				double[] vector = builder.latentVectorAndMiscDataForPosition(width, height, x, y);

@@ -39,7 +39,7 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 		sb.append(this.getId());
 		sb.append(" ");
 		
-		new ConvertCPPN2GANtoDirect2GANMutation().go(current, sb);
+		new ConvertCPPN2GANtoDirect2GANMutation().go(this, sb);
 		// new WhateverMutationOpIsCalled().go( params )
 		// TODO: Small chance of transitioning from CPPN to Direct
 		// Put into the mutation operation: super.firstForm = false;

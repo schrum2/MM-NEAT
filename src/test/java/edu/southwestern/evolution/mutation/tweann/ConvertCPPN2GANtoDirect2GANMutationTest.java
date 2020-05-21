@@ -23,7 +23,7 @@ public class ConvertCPPN2GANtoDirect2GANMutationTest {
 	@Before
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(
-				new String[] { "io:false", "netio:false", "recurrency:false", "indirectToDirectTransitionRate:1.0", "task:edu.southwestern.tasks.zelda.ZeldaGANDungeonTask", 
+				new String[] { "io:false", "netio:false", "recurrency:false", "indirectToDirectTransitionRate:1.0", "task:edu.southwestern.tasks.zelda.ZeldaCPPNtoGANDungeonTask", 
 						"zeldaGANUsesOriginalEncoding:false", /*"base:zeldagan", "log:ZeldaGAN-DistTraversed", "saveTo:DistTraversed",*/ 
 						"zeldaGANLevelWidthChunks:10", "zeldaGANLevelHeightChunks:10", "zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth",
 						"GANInputSize:10", "mating:true"/*, "maxGens:500"*/ });
