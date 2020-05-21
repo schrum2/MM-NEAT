@@ -29,45 +29,27 @@ def combine_images(generated_images):
     return image
 
 if __name__ == '__main__':
-    # Since the Java program is not launched from the pytorch directory,
-    # it cannot find this file when it is specified as being in the current
-    # working directory. This is why the network has to be a command line
-    # parameter. However, this model should load by default if no parameter
-    # is provided.
-    if len(sys.argv) ==1:
-        modelToLoad = "netG_epoch_5000.pth"
-    else:
-        modelToLoad = sys.argv[1]
-    if len(sys.argv) >=3:
-        nz = int(sys.argv[2])
-    else:
-        nz = 32
+    
+    modelToLoad = sys.argv[1]
+    nz = int(sys.argv[2])
+    z_dims = int(sys.argv[3])
+    out_width = int(sys.argv[4])
+    out_height = int(sys.argv[5])
+    
 
-    #Jacob: I added this to maintain backwards compatibility
-    if len(sys.argv) >=4:
-        # User can set this to 10 to recreate behavior of original Mario GAN in GECCO 2018
-        z_dims = int(sys.argv[3])
-    else:
-        z_dims = 13 # This is the new default
-
-    # This is an ugly hack that assumes we can figure out the output dimension based on 
-    # the number of different tile types. It is true for now, because Zelda and Mario 
-    # are the only options, and they have very different tile counts. But the count for Zelda
-    # may change, and we may add more domains, so a better solution is needed in the long term.
-
-    if z_dims == 4 : # Assume this is Zelda (4 tiles, currently)
-        out_height = 16
-        out_width = 11
-    elif z_dims == 6 or z_dims == 3: # Fixed Zelda (rotated)
-        # The fixed Zelda rotates the rooms to match the original game presentation
-        out_height = 11
-        out_width = 16
-    elif z_dims == 8: #Lode Runner
-        out_height = 22
-        out_width = 32 
-    else: # Assume this is Mario (10 or 13 tiles, depending)
-        out_height = 14
-        out_width = 28
+#    if z_dims == 4 : # Assume this is Zelda (4 tiles, currently)
+#        out_height = 16
+#        out_width = 11
+#    elif z_dims == 6 or z_dims == 3: # Fixed Zelda (rotated)
+#        # The fixed Zelda rotates the rooms to match the original game presentation
+#        out_height = 11
+#        out_width = 16
+#    elif z_dims == 8: #Lode Runner
+#        out_height = 22
+#        out_width = 32 
+#    else: # Assume this is Mario (10 or 13 tiles, depending)
+#       out_height = 14
+#       out_width = 28
 
     batchSize = 1
     #nz = 10 #Dimensionality of latent vector

@@ -214,7 +214,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	 */
 	@Override
 	public String getGANModelDirectory() {
-		return "python"+File.separator+"GAN"+File.separator+"ZeldaGAN";
+		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"ZeldaGAN";
 	}
 
 	/**

@@ -28,7 +28,7 @@ public class LodeRunnerVGLCUtil {
 			List<List<Integer>> levelList = convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + file); //converts to JSON 
 			levelSet.add(levelList); //adds the converted list to the set for the level 
 		}
-		System.out.println(levelSet); //prints converted JSON files to the console 
+		//System.out.println(levelSet); //prints converted JSON files to the console 
 	}
 
 	/**
@@ -44,7 +44,8 @@ public class LodeRunnerVGLCUtil {
 			List<Integer> row = new ArrayList<>(LODE_RUNNER_COLUMNS);//creates new List to be a new row of the JSON 
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
-					int tileCode = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j));
+					//int tileCode = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j));
+					int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawn(level[i].charAt(j));
 					row.add(tileCode);
 				}
 			}
@@ -53,29 +54,57 @@ public class LodeRunnerVGLCUtil {
 		return complete;
 	}
 
+	//original mapping with each individual tile 
+//	/**
+//	 * Converts tile codes to numbers for JSON conversion
+//	 * @param tile Character describing the tile 
+//	 * @return The number associated with that tile
+//	 */
+//	private static int convertLodeRunnerTileVGLCtoNumberCode(char tile) {
+//		switch(tile) {
+//		case '.': //empty, passable
+//			return 0;	
+//		case 'G': //gold, passable, pickupable
+//			return 1; 
+//		case 'M': //spawn, passable 
+//			return 2;	
+//		case 'B': //regular ground, solid
+//			return 3;
+//		case 'b': //diggable ground, solid 
+//			return 4;	 
+//		case 'E': //enemy, damaging 
+//			return 5; 
+//		case '#': //ladder, passable, climbable
+//			return 6;
+//		case '-': //rope, passable, climbable 
+//			return 7;
+//		default:
+//			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
+//
+//		}
+//	}
+	
 	/**
-	 * Converts tile codes to numbers for JSON conversion
+	 * Converts tile codes to numbers for JSON conversion removes the spawn tile to avoid placing multiple 
 	 * @param tile Character describing the tile 
 	 * @return The number associated with that tile
 	 */
-	private static int convertLodeRunnerTileVGLCtoNumberCode(char tile) {
+	private static int convertLodeRunnerTileVGLCtoNumberCodeNoSpawn(char tile) {
 		switch(tile) {
 		case '.': //empty, passable
+		case 'M': //spawn, passable
 			return 0;	
 		case 'G': //gold, passable, pickupable
 			return 1; 
-		case 'M': //spawn, passable 
-			return 2;	
-		case 'B': //regular ground, solid
-			return 3;
-		case 'b': //diggable ground, solid 
-			return 4;	 
 		case 'E': //enemy, damaging 
-			return 5; 
+			return 2; 
+		case 'B': //regular ground, solid
+		case 'b': //diggable ground, solid 
+			return 3; 
 		case '#': //ladder, passable, climbable
-			return 6;
+			return 4;
 		case '-': //rope, passable, climbable 
-			return 7;
+			return 5;
 		default:
 			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
 
