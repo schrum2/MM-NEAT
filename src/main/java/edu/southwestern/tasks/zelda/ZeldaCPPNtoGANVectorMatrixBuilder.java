@@ -33,6 +33,21 @@ public class ZeldaCPPNtoGANVectorMatrixBuilder implements ZeldaGANVectorMatrixBu
 	 */
 	@Override
 	public double[] latentVectorAndMiscDataForPosition(int width, int height, int x, int y) {
+		return latentVectorAndMiscDataForPosition(width,height,x,y,inputMultipliers,cppn);
+	}
+	
+	/**
+	 * TODO
+	 * 
+	 * @param width
+	 * @param height
+	 * @param x
+	 * @param y
+	 * @param inputMultipliers Can remove inputs with 0 values, or include them with values of 1
+	 * @param cppn
+	 * @return
+	 */
+	public static double[] latentVectorAndMiscDataForPosition(int width, int height, int x, int y, double[] inputMultipliers, Network cppn) {
 		ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), width, height); // sets a point in 2D space 
 		//sets input vector based on the point created and a bias
 		double[] remixedInputs = { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * GraphicsUtil.SQRT2, GraphicsUtil.BIAS };
