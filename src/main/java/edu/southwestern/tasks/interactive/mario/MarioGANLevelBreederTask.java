@@ -157,7 +157,7 @@ public class MarioGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 
 	@Override
 	public String getGANModelDirectory() {
-		return "python"+File.separator+"GAN"+File.separator+"MarioGAN";
+		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"MarioGAN";
 	}
 
 	@Override
