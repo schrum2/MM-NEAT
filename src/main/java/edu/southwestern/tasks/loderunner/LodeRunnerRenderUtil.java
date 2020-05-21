@@ -145,7 +145,7 @@ public class LodeRunnerRenderUtil {
 	 * @throws IOException In case the file can't be found
 	 */
 	public static BufferedImage[] loadImagesNoSpawn(String filePath) throws IOException {
-		BufferedImage[] tileList = new BufferedImage[8];
+		BufferedImage[] tileList = new BufferedImage[6];
 		File tile = new File(filePath+"empty.png");
 		BufferedImage emptyTile = ImageIO.read(tile);
 		tileList[0] = emptyTile;
