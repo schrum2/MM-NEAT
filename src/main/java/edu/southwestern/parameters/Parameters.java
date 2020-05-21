@@ -842,6 +842,7 @@ public class Parameters {
 		doubleOptions.add("weightBound", 50.0, "The bound for network weights used by SBX and polynomial mutation");
 		doubleOptions.add("healthDropRate", 20., "Health drop rate from enemies");
 		doubleOptions.add("bombDropRate", 40., "Bomb drop rate from enemies");
+		doubleOptions.add("indirectToDirectTransitionRate", 0.1, "chance of mutating from indirect to a direct genotype");
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
 		stringOptions.add("archetype", "", "Network that receives all mutations so as to keep other networks properly aligned");
