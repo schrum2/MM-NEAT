@@ -21,10 +21,9 @@ import edu.southwestern.util.datastructures.Pair;
  *
  */
 public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionTask{
-	public static final int LATENT_VECTOR_SIZE = 20;//latent vector dimension, 20 improved the model a lot
 
 	/**
-	 * Launches the Level Breeder for interactive evolving 
+	 * Constructor for the Level Breeder for interactive evolving 
 	 * @throws IllegalAccessException
 	 */
 	public LodeRunnerGANLevelBreederTask() throws IllegalAccessException {
@@ -63,21 +62,36 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		return null;
 	}
 
+	/**
+	 * Get the directory that holds the GAN models for Lode Runner 
+	 * @return File path as a string 
+	 */
 	@Override
 	public String getGANModelDirectory() {
 		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"LodeRunnerGAN";
 	}
 
+	/**
+	 * Allows users to play the levels in the level breeder with the IceCreamYou code to play lode runner  
+	 */
 	@Override
 	public void playLevel(ArrayList<Double> phenotype) {
 		//TODO
 	}
 
+	/**
+	 * Gets the title of the window 
+	 * @return Title of the window as a string
+	 */
 	@Override
 	protected String getWindowTitle() {
 		return "LodeRunnerGANLevelBreeder";
 	}
 
+	/**
+	 * Generates new levels to be put on the buttons in the level breeder 
+	 * @return BufferedImage of a generated level 
+	 */
 	@Override
 	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height,
 			double[] inputMultipliers) {
@@ -85,8 +99,8 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		List<List<Integer>> level = levelListRepresentation(doubleArray);
 		BufferedImage[] images;
 		//sets the height and width of the 
-		int width1 = LodeRunnerRenderUtil.LODE_RUNNER_TILE_X*LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS;
-		int height1 = LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y*LodeRunnerRenderUtil.LODE_RUNNER_ROWS;
+		int width1 = LodeRunnerRenderUtil.RENDERED_IMAGE_WIDTH;
+		int height1 = LodeRunnerRenderUtil.RENDERED_IMAGE_HEIGHT;
 		BufferedImage image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
 		try {
 			images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH);
@@ -97,9 +111,13 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		return image;
 	}
 	
+	/**
+	 * Launches the level breeder sets GAN input size to 20
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","bigInteractiveButtons:true","GANInputSize:"+LATENT_VECTOR_SIZE,"showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.loderunner.LodeRunnerGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","bigInteractiveButtons:true","GANInputSize:"+LodeRunnerGANUtil.LATENT_VECTOR_SIZE,"showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.loderunner.LodeRunnerGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

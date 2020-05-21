@@ -29,6 +29,9 @@ public class LodeRunnerRenderUtil {
 	public static final int LODE_RUNNER_ROWS = 22; // Equivalent to width in original game
 	public static BufferedImage FINAL_RENDER; //gets the final rendered image 
 	
+	public static final int RENDERED_IMAGE_WIDTH = LODE_RUNNER_TILE_X*LODE_RUNNER_COLUMNS;
+	public static final int RENDERED_IMAGE_HEIGHT = LODE_RUNNER_TILE_Y*LODE_RUNNER_ROWS;
+	
 	/**
 	 * Sets up a level to be rendered by converting the VGLC data to JSON and then 
 	 * placing the correct tile in the right place to visualize the level 
@@ -54,12 +57,10 @@ public class LodeRunnerRenderUtil {
 	 * @throws IOException In case the file can't be found 
 	 */
 	public static BufferedImage getBufferedImage(List<List<Integer>> list, BufferedImage[] images) throws IOException {
-		int width = LODE_RUNNER_TILE_X*LODE_RUNNER_COLUMNS;
-		int height = LODE_RUNNER_TILE_Y*LODE_RUNNER_ROWS;
-		BufferedImage image = createBufferedImage(list, width, height, images);
+		BufferedImage image = createBufferedImage(list, RENDERED_IMAGE_WIDTH, RENDERED_IMAGE_HEIGHT, images);
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
-		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_FAST)));
+		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(RENDERED_IMAGE_WIDTH, RENDERED_IMAGE_HEIGHT, Image.SCALE_FAST)));
 		panel.add(label);
 		frame.add(panel);
 		frame.pack();
