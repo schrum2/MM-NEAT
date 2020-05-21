@@ -25,7 +25,7 @@ public class ConvertCPPN2GANtoDirect2GANMutationTest {
 		Parameters.initializeParameterCollections(
 				new String[] { "io:false", "netio:false", "recurrency:false", "indirectToDirectTransitionRate:1.0", "task:edu.southwestern.tasks.zelda.ZeldaCPPNtoGANDungeonTask", 
 						"zeldaGANUsesOriginalEncoding:false", /*"base:zeldagan", "log:ZeldaGAN-DistTraversed", "saveTo:DistTraversed",*/ 
-						"zeldaGANLevelWidthChunks:10", "zeldaGANLevelHeightChunks:10", "zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth",
+						"zeldaGANLevelWidthChunks:4", "zeldaGANLevelHeightChunks:4", "zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth",
 						"GANInputSize:10", "mating:true"/*, "maxGens:500"*/ });
 		MMNEAT.loadClasses();
 	}
@@ -45,6 +45,12 @@ public class ConvertCPPN2GANtoDirect2GANMutationTest {
 		ZeldaCPPNtoGANVectorMatrixBuilder builder = new ZeldaCPPNtoGANVectorMatrixBuilder(cppn, inputMultipliers);
 		int height = Parameters.parameters.integerParameter("cppn2ganHeight");
 		int width = Parameters.parameters.integerParameter("cppn2ganWidth");
+		System.out.println();
+		System.out.println();
+
+		System.out.println();
+
+		System.out.println("Height and width!!!!!!!!!: "+height+","+width);
 		//ZeldaCPPNtoGANLevelBreederTask.latentVectorGridFromCPPN(builder, width, height);
 		Pair<double[][][],double[][][]> k = ZeldaCPPNtoGANLevelBreederTask.latentVectorGridFromCPPN(builder, width, height);
 		tg.mutate();

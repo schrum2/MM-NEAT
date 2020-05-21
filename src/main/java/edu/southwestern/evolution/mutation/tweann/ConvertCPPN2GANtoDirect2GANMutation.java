@@ -62,12 +62,29 @@ public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation {
 		ZeldaCPPNtoGANVectorMatrixBuilder builder = new ZeldaCPPNtoGANVectorMatrixBuilder(cppn, inputMultipliers);
 		int height = Parameters.parameters.integerParameter("cppn2ganHeight");
 		int width = Parameters.parameters.integerParameter("cppn2ganWidth");
+		
+		System.out.println();
+		System.out.println();
+
+		System.out.println();
+
+		System.out.println("Height and width: "+height+","+width);
+		
+
 		int segmentLength = (GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
 		double[] longResult = new double[segmentLength*height*width];
 		for(int y = 0; y < height; y++) {
 			for(int x = 0; x < width; x++) {
 				double[] vector = builder.latentVectorAndMiscDataForPosition(width, height, x, y);
-				int nextIndex = longResult.length*(y*height+x);
+				System.out.println("segment length "+segmentLength);
+				System.out.println("height: "+y);
+				System.out.println("width: "+x);
+
+				int nextIndex = vector.length*(y*height+x);
+				System.out.println("nextIndex: "+nextIndex);
+				System.out.println("vector length "+vector.length);
+				System.out.println("longResult length "+longResult.length);
+
 				System.arraycopy(vector, 0, longResult, nextIndex, vector.length);
 				
 			}

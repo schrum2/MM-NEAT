@@ -24,6 +24,7 @@ public class EitherOrGenotype<X,Y> implements Genotype {
 	private ArrayList<Long> parentIds;
 	protected Genotype current; // Could be X or Y
 	protected boolean firstForm;
+	//public boolean ff = firstForm;
 	
 	/**
 	 * New genotype that has one of two types.
@@ -92,4 +93,7 @@ public class EitherOrGenotype<X,Y> implements Genotype {
 	    current = g;
 	    firstForm = false;
 	}
+//	public static boolean getFirstForm() {
+//		return ff;
+//	}
 }
