@@ -4,11 +4,10 @@ import java.util.ArrayList;
 
 import edu.southwestern.evolution.mutation.tweann.ConvertCPPN2GANtoDirect2GANMutation;
 import edu.southwestern.networks.TWEANN;
-import edu.southwestern.parameters.Parameters;
 
 /**
  * Allows to switch back and forth randomly between a CPPN to GAN 
- * or Direct to Gan genotype
+ * or Direct to GAN genotype
  * 
  *
  */
@@ -36,7 +35,6 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 	 * Has a chance of mutating to change to CPPN
 	 */
 	public void mutate() {
-		super.firstForm=false;
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.getId());
 		sb.append(" ");

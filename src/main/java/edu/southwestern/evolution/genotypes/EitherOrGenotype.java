@@ -88,5 +88,8 @@ public class EitherOrGenotype<X,Y> implements Genotype {
 	public long getId() {
 		return current.getId();
 	}
-
+	public void switchForms(Genotype g) {
+	    current = g;
+	    firstForm = false;
+	}
 }

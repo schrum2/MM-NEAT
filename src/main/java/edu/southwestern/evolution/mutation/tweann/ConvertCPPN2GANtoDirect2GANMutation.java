@@ -2,10 +2,14 @@ package edu.southwestern.evolution.mutation.tweann;
 
 import java.util.ArrayList;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
+import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
+import edu.southwestern.evolution.genotypes.EitherOrGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mutation.Mutation;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
@@ -35,6 +39,7 @@ public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation<ArrayList<Doub
 		return (RandomNumbers.randomGenerator.nextDouble() < rate);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	/**
 	 * Uses a CPPN to create a long latent vector
@@ -43,7 +48,9 @@ public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation<ArrayList<Doub
 	 */
 	public void mutate(Genotype<ArrayList<Double>> genotype) {
 		Network cppn = (Network) genotype.getPhenotype();
-		
+		@SuppressWarnings("rawtypes")
+		Genotype cppnOrDirect2ganGenotype = (CPPNOrDirectToGANGenotype) genotype;
+		//EitherOrGenotype.switchForms(cppnOrDirect2ganGenotype);
 		double[] inputMultipliers = new double[cppn.numInputs()];
 		for(int i = 0;i<cppn.numInputs();i++) {
 			inputMultipliers[i] = 1.0;
@@ -62,7 +69,11 @@ public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation<ArrayList<Doub
 				
 			}
 		}
-		//BoundedRealValuedGenotype k = new BoundedRealValuedGenotype();
+		BoundedRealValuedGenotype k = new BoundedRealValuedGenotype(longResult, MMNEAT.getLowerBounds(), MMNEAT.getUpperBounds());
+		//k.newInstance();
+		((EitherOrGenotype<TWEANN, ArrayList<Double>>) cppnOrDirect2ganGenotype).switchForms(k);
+		
+	
 	}
 
 }
