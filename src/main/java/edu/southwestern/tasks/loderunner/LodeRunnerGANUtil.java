@@ -17,8 +17,8 @@ import edu.southwestern.util.random.RandomNumbers;
  */
 public class LodeRunnerGANUtil {
 	//public static final int LODE_RUNNER_TILE_NUMBER = 8; //number of tiles in LodeRunner 
-	//public static final int LATENT_VECTOR_SIZE = 10;//latent vector dimension
-	public static final int LATENT_VECTOR_SIZE = 20;//latent vector dimension, 20 improved the model a lot 
+	//public static final int LATENT_VECTOR_SIZE = 10;//latent vector dimension, original size 
+	public static final int LATENT_VECTOR_SIZE = 20;//latent vector dimension, 20 improved the model 
 	public static final int LODE_RUNNER_TILE_NUMBER = 6; //number of tiles in LodeRunner
 
 	/**
@@ -35,7 +35,7 @@ public class LodeRunnerGANUtil {
 //		LodeRunnerRenderUtil.getBufferedImage(oneLevel, images);//rendered level and displays it in a window 
 		BufferedImage[] images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images
 		LodeRunnerRenderUtil.getBufferedImage(oneLevel,images);//rendered level and displays it in a window 
-		GANProcess.terminateGANProcess();
+		GANProcess.terminateGANProcess(); //ends GAN process 
 	}
 
 	/**
@@ -45,7 +45,7 @@ public class LodeRunnerGANUtil {
 	 */
 	public static List<List<List<Integer>>> getLevelListRepresentationFromGAN(double[] latentVector){
 		latentVector = GANProcess.mapArrayToOne(latentVector); 
-		// Generate room from vector
+		// Generate level from vector
 		try {
 			GANProcess.getGANProcess().commSend("[" + Arrays.toString(latentVector) + "]");
 		} catch (IOException e) {

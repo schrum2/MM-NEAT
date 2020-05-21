@@ -98,7 +98,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 		List<List<Integer>> level = levelListRepresentation(doubleArray);
 		BufferedImage[] images;
-		//sets the height and width of the 
+		//sets the height and width for the rendered level to be placed on the button 
 		int width1 = LodeRunnerRenderUtil.RENDERED_IMAGE_WIDTH;
 		int height1 = LodeRunnerRenderUtil.RENDERED_IMAGE_HEIGHT;
 		BufferedImage image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
@@ -112,7 +112,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	}
 	
 	/**
-	 * Launches the level breeder sets GAN input size to 20
+	 * Launches the level breeder, sets GAN input size to 20
 	 * @param args
 	 */
 	public static void main(String[] args) {

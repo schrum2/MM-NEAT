@@ -21,7 +21,6 @@ public class LodeRunnerVGLCUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		//Parameters.initializeParameterCollections(new String[] {});
 		HashSet<List<List<Integer>>> levelSet = new HashSet<>(); //creates set to represent the level 
 		for(int i = 1; i <= 150; i++) {
 			String file = "Level " + i + ".txt"; //format for the LodeRunner level files 
@@ -44,8 +43,8 @@ public class LodeRunnerVGLCUtil {
 			List<Integer> row = new ArrayList<>(LODE_RUNNER_COLUMNS);//creates new List to be a new row of the JSON 
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
-					//int tileCode = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j));
-					int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawn(level[i].charAt(j));
+					//int tileCode = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j)); //8 tile mapping 
+					int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawn(level[i].charAt(j)); //6 tile mapping 
 					row.add(tileCode);
 				}
 			}
