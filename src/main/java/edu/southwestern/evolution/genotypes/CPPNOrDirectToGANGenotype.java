@@ -35,9 +35,17 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 	// TODO: Javadoc
 	@Override
 	public void mutate() {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.getId());
+		sb.append(" ");
+		
+		//new CPPNOrDirectToGANGenotypeMutation.go(this, sb);
 		// new WhateverMutationOpIsCalled().go( params )
 		// TODO: Small chance of transitioning from CPPN to Direct
 		// Put into the mutation operation: super.firstForm = false;
+		super.firstForm=false;
+
 		super.mutate();
 	}
 	
