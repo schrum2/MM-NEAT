@@ -65,12 +65,13 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 		List<List<Integer>> level = LodeRunnerGANUtil.generateOneLevelListRepresentationFromGAN(doubleArray);
 		BufferedImage[] images;
+		//sets the height and width of the 
 		int width1 = LodeRunnerRenderUtil.LODE_RUNNER_TILE_X*LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS;
 		int height1 = LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y*LodeRunnerRenderUtil.LODE_RUNNER_ROWS;
 		BufferedImage image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
 		try {
 			images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH);
-			image = LodeRunnerRenderUtil.getBufferedImage(level, images);
+			image = LodeRunnerRenderUtil.createBufferedImage(level,width1,height1, images);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

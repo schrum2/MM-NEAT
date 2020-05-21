@@ -76,7 +76,7 @@ public class LodeRunnerRenderUtil {
 	 * @return A BufferedImage of the level 
 	 * @throws IOException In case the file can't be found
 	 */
-	private static BufferedImage createBufferedImage(List<List<Integer>> list, int width, int height, BufferedImage[] images) throws IOException {
+	public static BufferedImage createBufferedImage(List<List<Integer>> list, int width, int height, BufferedImage[] images) throws IOException {
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = image.createGraphics();
 		//loops through the grid in the applet to place tiles in order to render levels 
