@@ -15,24 +15,43 @@ import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 
+/**
+ * Interactively evolve Lode Runner levels from the latent space of a GAN network.
+ * @author kdste
+ *
+ */
 public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionTask{
 	public static final int LATENT_VECTOR_SIZE = 20;//latent vector dimension, 20 improved the model a lot
 
+	/**
+	 * Launches the Level Breeder for interactive evolving 
+	 * @throws IllegalAccessException
+	 */
 	public LodeRunnerGANLevelBreederTask() throws IllegalAccessException {
 		super();
-		
 	}
 
+	/**
+	 * Sets the GAN to the Lode Runner type 
+	 */
 	@Override
 	public void configureGAN() {
 		GANProcess.type = GANProcess.GAN_TYPE.LODE_RUNNER;
 	}
 
+	/**
+	 * The label for the window to specify that they are levels from the Lode Runner GAN Model 
+	 * @return The label for the window 
+	 */
 	@Override
 	public String getGANModelParameterName() {
 		return "LodeRunnerGANModel";
 	}
 
+	/**
+	 * Gets a level from a the random latent vector 
+	 * @return A single level 
+	 */
 	@Override
 	public List<List<Integer>> levelListRepresentation(double[] latentVector) {
 		return LodeRunnerGANUtil.generateOneLevelListRepresentationFromGAN(latentVector);
@@ -63,7 +82,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height,
 			double[] inputMultipliers) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
-		List<List<Integer>> level = LodeRunnerGANUtil.generateOneLevelListRepresentationFromGAN(doubleArray);
+		List<List<Integer>> level = levelListRepresentation(doubleArray);
 		BufferedImage[] images;
 		//sets the height and width of the 
 		int width1 = LodeRunnerRenderUtil.LODE_RUNNER_TILE_X*LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS;
