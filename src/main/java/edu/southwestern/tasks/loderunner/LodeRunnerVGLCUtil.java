@@ -25,13 +25,15 @@ public class LodeRunnerVGLCUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		HashSet<List<List<Integer>>> levelSet = new HashSet<>(); //creates set to represent the level 
-		for(int i = 1; i <= 20; i++) {
-			String file = "Level " + i + ".txt"; //format for the LodeRunner level files 
-			List<List<Integer>> levelList = convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + file); //converts to JSON 
-			levelSet.add(levelList); //adds the converted list to the set for the level 
-		}
-		System.out.println(levelSet); //prints converted JSON files to the console 
+//		HashSet<List<List<Integer>>> levelSet = new HashSet<>(); //creates set to represent the level 
+//		for(int i = 1; i <= 20; i++) {
+//			String file = "Level " + i + ".txt"; //format for the LodeRunner level files 
+//			List<List<Integer>> levelList = convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + file); //converts to JSON 
+//			levelSet.add(levelList); //adds the converted list to the set for the level 
+//		}
+//		System.out.println(levelSet); //prints converted JSON files to the console 
+		String level = convertLodeRunnerVGLCtoIceCreamYou(LODE_RUNNER_LEVEL_PATH+ "Level 1.txt");
+		System.out.println(level);
 	}
 
 	/**
@@ -83,7 +85,7 @@ public class LodeRunnerVGLCUtil {
 //		case '-': //rope, passable, climbable 
 //			return 7;
 //		default:
-//			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
+//			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
 //
 //		}
 //	}
@@ -111,7 +113,7 @@ public class LodeRunnerVGLCUtil {
 		case '-': //rope, passable, climbable 
 			return 5;
 		default:
-			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
+			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
 
 		}
 	}
@@ -140,7 +142,7 @@ public class LodeRunnerVGLCUtil {
 		case 'B': //regular ground, solid
 			return 6; 
 		default:
-			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
+			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
 
 		}
 	}
@@ -148,35 +150,39 @@ public class LodeRunnerVGLCUtil {
 	public static String convertLodeRunnerVGLCtoIceCreamYou(String fileName) {
 		String[] level = new IO().readFile(fileName);
 		String playFormat = "";
+		String tile = "";
 		for(int i =0; i < level.length; i++) {
 			for(int j = 0; j < level[i].length();j++) {
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
-					String line = convertLodeRunnerTileVGLCtoIceCreamYou(level[i].charAt(j));
-					
+					int x = i; 
+					int y = j; 
+					tile = convertLodeRunnerTileVGLCtoIceCreamYou(level[i].charAt(j), x, y);
+					playFormat += tile;
 				}
 			}
 		}
 		return playFormat;
 	}
 	
-	private static String convertLodeRunnerTileVGLCtoIceCreamYou(char tile) {
+	private static String convertLodeRunnerTileVGLCtoIceCreamYou(char tile, int x, int y) {
 		switch(tile) {
-		case 'B':
+		case '.':
+		case 'M': 
 			return "";
-		case 'b': 
-			return "";
-		case '#': 
-			return "";
-		case '-': 
-			return ""; 
-		case 'M': //spawn, passable
-			return "";
+		case 'B'://regular ground, solid
+			return "solid:"+x+","+y+"\n";
+		case 'b': //diggable ground, solid 
+			return "diggable:"+x+","+y+"\n";
+		case '#': //ladder, passable, climbable
+			return "ladder:"+x+","+y+"\n";
+		case '-': //rope, passable, climbable
+			return "bar:"+x+","+y+"\n"; 
 		case 'E': //enemy, damaging 
-			return "";
+			return "enemy:"+x+","+y+"\n";
 		case 'G': //gold, passable, pickupable
-			return ""; 
+			return "coin:"+x+","+y+"\n"; 
 		default:
-			throw new IllegalArgumentException("Invalid Zelda tile from VGLV: " + tile);
+			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
 
 		}
 	}

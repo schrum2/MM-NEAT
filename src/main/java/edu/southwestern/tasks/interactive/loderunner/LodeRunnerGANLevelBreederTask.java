@@ -57,14 +57,24 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		return LodeRunnerGANUtil.generateOneLevelListRepresentationFromGAN(latentVector);
 	}
 
+	/**
+	 * This method is the kick-off method that calls the static method below 
+	 * @return
+	 */
 	@Override
 	public Pair<Integer, Integer> resetAndReLaunchGAN(String model) {
 		return staticResetAndReLaunchGAN(model);
 	}
 	
+	/**
+	 * This method allows users to pick which model that they want to use in the Level breeder 
+	 * @param model The name of the file holding the model 
+	 * @return 
+	 */
 	public static Pair<Integer, Integer> staticResetAndReLaunchGAN(String model) {
-		int standardSize = GANProcess.latentVectorLength();;
-		int updatedSize;
+		int standardSize = GANProcess.latentVectorLength(); //gets the length of the current GANProcess 
+		int updatedSize; //to hold the variable if the size of the latent vector changes
+		//if we are using the 6 tile mapping, it sets it to the default model, otherwise it updates the size of the latent vector of the new model 
 		if(!(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")) && model.equals("LodeRunnerEpochFirstFiveOneGround10000_20_6.pth")) {
 			Parameters.parameters.setInteger("GANInputSize", standardSize); // Default latent vector size
 			Parameters.parameters.setBoolean("lodeRunnerDistinguishesSolidAndDiggableGround", false);
@@ -76,7 +86,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 			Parameters.parameters.setBoolean("lodeRunnerDistinguishesSolidAndDiggableGround", true);
 		}
 		GANProcess.terminateGANProcess();
-		updatedSize = GANProcess.latentVectorLength(); // new model
+		updatedSize = GANProcess.latentVectorLength(); // new model latent vector length 
 		return new Pair<>(standardSize, updatedSize);
 	}
 
@@ -121,11 +131,12 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		int height1 = LodeRunnerRenderUtil.RENDERED_IMAGE_HEIGHT;
 		BufferedImage image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
 		try {
+			//if we are using the mapping with 7 tiles, other wise use 6 tiles 
 			if(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")){
-				images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH);
+				images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //7 different tiles to display 
 			}
 			else {
-				images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH);
+				images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //6 different tiles to display 
 			}
 			image = LodeRunnerRenderUtil.createBufferedImage(level,width1,height1, images);
 		} catch (IOException e) {
