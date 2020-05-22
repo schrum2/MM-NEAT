@@ -19,6 +19,7 @@ import edu.southwestern.evolution.EA;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.ScoreHistory;
 import edu.southwestern.evolution.crossover.Crossover;
+import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
@@ -120,7 +121,6 @@ import edu.southwestern.tasks.zelda.ZeldaDungeonTask;
 import edu.southwestern.tasks.zelda.ZeldaGANDungeonTask;
 import edu.southwestern.tasks.zentangle.ZentangleTask;
 import edu.southwestern.util.ClassCreation;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
@@ -265,6 +265,7 @@ public class MMNEAT {
 	private static void setupTWEANNGenotypeDataTracking(boolean coevolution) {
 		if (genotype instanceof TWEANNGenotype || 
 				genotype instanceof CombinedGenotype || // Assume first member of pair is TWEANNGenotype
+				genotype instanceof CPPNOrDirectToGANGenotype || // Assume first form is TWEANNGenotype
 				genotype instanceof HyperNEATCPPNforDL4JGenotype) { // Contains CPPN that is TWEANNGenotype
 			if (Parameters.parameters.booleanParameter("io")
 					&& Parameters.parameters.booleanParameter("logTWEANNData")) {
@@ -276,14 +277,17 @@ public class MMNEAT {
 			}
 
 			@SuppressWarnings("rawtypes")
-			long biggestInnovation = genotype instanceof CombinedGenotype ? 
-					((TWEANNGenotype) ((CombinedGenotype) genotype).t1).biggestInnovation() :
-						(genotype instanceof HyperNEATCPPNforDL4JGenotype ?
-								((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN().biggestInnovation()	:
-									((TWEANNGenotype) genotype).biggestInnovation());
-					if (biggestInnovation > EvolutionaryHistory.largestUnusedInnovationNumber) {
-						EvolutionaryHistory.setInnovation(biggestInnovation + 1);
-					}
+			long biggestInnovation = genotype instanceof CPPNOrDirectToGANGenotype ?
+					((TWEANNGenotype) ((CPPNOrDirectToGANGenotype) genotype).getCurrentGenotype()).biggestInnovation():
+						(genotype instanceof CombinedGenotype ? 
+								((TWEANNGenotype) ((CombinedGenotype) genotype).t1).biggestInnovation() :
+									(genotype instanceof HyperNEATCPPNforDL4JGenotype ?
+											((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN().biggestInnovation()	:
+												((TWEANNGenotype) genotype).biggestInnovation()));
+					
+			if (biggestInnovation > EvolutionaryHistory.largestUnusedInnovationNumber) {
+					EvolutionaryHistory.setInnovation(biggestInnovation + 1);
+			}
 		}
 	}
 
@@ -722,9 +726,6 @@ public class MMNEAT {
 			} else if (task instanceof ZeldaDungeonTask) {
 				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
 				if(task instanceof ZeldaCPPNtoGANDungeonTask || task instanceof ZeldaCPPNOrDirectToGANDungeonTask) {
-					System.out.println("genotype: "+genotype);
-					
-					MiscUtil.waitForReadStringAndEnterKeyPress();
 					// Evolving CPPNs that create latent vectors that are sent to a GAN
 					setNNInputParameters(ZeldaCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
 				}

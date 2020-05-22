@@ -26,10 +26,12 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 	 * @param genotype the genotype
 	 * @param firstForm whether or not it is a TWEANN
 	 */
+	@SuppressWarnings("rawtypes")
 	public CPPNOrDirectToGANGenotype(Genotype genotype, boolean firstForm) {
 		super(genotype, firstForm);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	/**
 	 * Has a chance of mutating to change to CPPN
@@ -38,13 +40,9 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.getId());
 		sb.append(" ");
-		
+		// Transition from CPPN to Direct, but keep identical expressed phenotype
 		new ConvertCPPN2GANtoDirect2GANMutation().go(this, sb);
-		// new WhateverMutationOpIsCalled().go( params )
-		// TODO: Small chance of transitioning from CPPN to Direct
-		// Put into the mutation operation: super.firstForm = false;
-		
-
+		// Now allow for slight changes
 		super.mutate();
 	}
 	
