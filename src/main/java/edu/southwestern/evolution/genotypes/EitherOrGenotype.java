@@ -18,9 +18,6 @@ import java.util.List;
  */
 @SuppressWarnings("rawtypes")
 public abstract class EitherOrGenotype<X,Y> implements Genotype {
-	// Have to store a copy of the first genotype used for newInstance method to work
-	private static Genotype original = null;
-
 	private ArrayList<Long> parentIds;
 	protected Genotype current; // Could be X or Y
 	protected boolean firstForm;
@@ -34,10 +31,6 @@ public abstract class EitherOrGenotype<X,Y> implements Genotype {
 	public EitherOrGenotype(Genotype genotype, boolean firstForm) {
 		current = genotype;
 		this.firstForm = firstForm;
-		if(original == null) {
-			if(!firstForm) throw new IllegalArgumentException("First EitherOrGenotype made must have first form");
-			original = current.copy();
-		}
 	}
 
 	@Override
