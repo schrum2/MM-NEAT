@@ -51,13 +51,15 @@ public class ZeldaGANDungeonTask extends ZeldaDungeonTask<ArrayList<Double>>{
 	}
 	
 	/**
-	 * TODO
+	 * Takes in a lengthy real-valued genome with latent variables for each room, then returns a dungeon.
+	 * The variables for each room also contain additional information about door connectivity/type and
+	 * where the start/end rooms of the dungeon are.
 	 * 
-	 * @param individual
-	 * @param segmentLength
-	 * @param width
-	 * @param height
-	 * @return
+	 * @param individual the genotype
+	 * @param segmentLength the latent vector length plus the number of non-latent variables
+	 * @param width width chunks
+	 * @param height height chunks
+	 * @return dungeon the dungeon given the genotype
 	 */
 	public static Dungeon getZeldaDungeonFromDirectArrayListGenotype(Genotype<ArrayList<Double>> individual, int segmentLength, int width, int height) {
 		ArrayList<Double> latentVector = individual.getPhenotype();

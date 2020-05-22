@@ -1,5 +1,7 @@
 package edu.southwestern.tasks.zelda;
 
+import java.util.ArrayList;
+
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
@@ -23,6 +25,7 @@ public class ZeldaCPPNOrDirectToGANDungeonTask extends ZeldaDungeonTask {
 		segmentLength = GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Dungeon getZeldaDungeonFromGenotype(Genotype individual) {
 		CPPNOrDirectToGANGenotype m = (CPPNOrDirectToGANGenotype) individual;
@@ -39,9 +42,9 @@ public class ZeldaCPPNOrDirectToGANDungeonTask extends ZeldaDungeonTask {
 			System.out.println("Second form");
 
 			System.out.println();
-
-			// TODO: Call ZeldaGANDungeonTask.getZeldaDungeonFromDirectArrayListGenotype
-			return null; // TODO: Change
+			//cppntogan batch file
+ 
+			return ZeldaGANDungeonTask.getZeldaDungeonFromDirectArrayListGenotype((Genotype<ArrayList<Double>>) individual.getPhenotype(), segmentLength, Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks"), Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks"));
 		}
 	}
 

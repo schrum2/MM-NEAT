@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Random;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -154,7 +155,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				}
 			}
 		});
-
+		JCheckBox k = new JCheckBox("zeldaCPPNtoGANAllowsPuzzleDoors", false);
 		JPanel size = new JPanel();
 		size.setLayout(new GridLayout(2,1));
 		size.add(widthSlider);
