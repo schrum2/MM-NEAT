@@ -1,11 +1,6 @@
 package edu.southwestern.tasks.loderunner;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import gvgai.tools.IO;
@@ -183,8 +178,6 @@ public class LodeRunnerVGLCUtil {
 			return "coin:"+x+","+y+"\n"; 
 		default:
 			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
-
 		}
 	}
-	
 }

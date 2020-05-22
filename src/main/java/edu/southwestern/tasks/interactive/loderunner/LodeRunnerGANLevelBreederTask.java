@@ -17,7 +17,7 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 
 /**
- * Interactively evolve Lode Runner levels from the latent space of a GAN network.
+ * Interactively evolves Lode Runner levels from the latent space of a GAN network.
  * @author kdste
  *
  */
@@ -82,7 +82,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		else{
 			String latentVectorSize = model.substring(model.indexOf("_")+1, model.lastIndexOf("_"));
 			updatedSize = Integer.parseInt(latentVectorSize);
-			Parameters.parameters.setInteger("GANInputSize", updatedSize); // Default latent vector size
+			Parameters.parameters.setInteger("GANInputSize", updatedSize); //updates latent vector size for the GANProcess if it has changed 
 			Parameters.parameters.setBoolean("lodeRunnerDistinguishesSolidAndDiggableGround", true);
 		}
 		GANProcess.terminateGANProcess();
@@ -104,7 +104,9 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	 */
 	@Override
 	public void playLevel(ArrayList<Double> phenotype) {
-		//TODO
+		//TODO: This should add a file to the game and allow the player to play it. 
+		//probably need a few helper methods, one to save to the right place, maybe we need to add a class/method that defaults to the level we pick from the 
+		//level breeder instead of the first level of the campaign that IceCreamYou has by default.  
 	}
 
 	/**
