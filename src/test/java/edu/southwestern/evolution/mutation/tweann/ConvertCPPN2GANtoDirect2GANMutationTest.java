@@ -56,7 +56,11 @@ public class ConvertCPPN2GANtoDirect2GANMutationTest {
 		System.out.println("Height and width: "+height+","+width);
 		//ZeldaCPPNtoGANLevelBreederTask.latentVectorGridFromCPPN(builder, width, height);
 		Pair<double[][][],double[][][]> k = ZeldaCPPNtoGANLevelBreederTask.latentVectorGridFromCPPN(builder, width, height);
-		tg.mutate();
+		//tg.mutate();
+		StringBuilder sb = new StringBuilder();
+		//sb.append(this.getId());
+		sb.append(" ");
+		new ConvertCPPN2GANtoDirect2GANMutation().go(tg, sb);
 		ArrayList<Double> m = (ArrayList<Double>) tg.getPhenotype();
 		double[] a = new double[m.size()];
 		for(int i = 0;i<m.size();i++) {
@@ -89,7 +93,9 @@ public class ConvertCPPN2GANtoDirect2GANMutationTest {
 		}
 		System.out.println();
 
-		assertEquals(k,k1);
+		assertArrayEquals(k.t1,k1.t1);
+		assertArrayEquals(k.t2,k1.t2);
+
 	}
 
 }

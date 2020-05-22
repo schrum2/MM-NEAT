@@ -394,6 +394,10 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 				effectsCheckboxes.add(inputEffect);
 			}		
 		}
+//		JCheckBox puzzleDoor = new JCheckBox("zeldaCPPNtoGANAllowsPuzzleDoors", true);
+//		puzzleDoor.setName("Allow Puzzle Doors?");
+//		puzzleDoor.setForeground(new Color(0,0,0));
+//		effectsCheckboxes.add(puzzleDoor);
 		top.add(effectsCheckboxes);
 	}
 

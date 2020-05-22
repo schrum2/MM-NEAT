@@ -1,6 +1,8 @@
 package edu.southwestern.tasks.interactive.gvgai;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -155,7 +157,17 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				}
 			}
 		});
-		JCheckBox k = new JCheckBox("zeldaCPPNtoGANAllowsPuzzleDoors", false);
+		//JCheckBox k = new JCheckBox("zeldaCPPNtoGANAllowsPuzzleDoors", false);
+		
+		JPanel effectsCheckboxes = new JPanel();
+		effectsCheckboxes.setPreferredSize(new Dimension(300, 90));
+		effectsCheckboxes.setLayout(new FlowLayout());
+		JCheckBox puzzleDoor = new JCheckBox("zeldaCPPNtoGANAllowsPuzzleDoors", Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsPuzzleDoors"));
+		puzzleDoor.setName("zeldaCPPNtoGANAllowsPuzzleDoors");
+		puzzleDoor.setForeground(new Color(0,0,0));
+		effectsCheckboxes.add(puzzleDoor);
+		top.add(effectsCheckboxes);
+		
 		JPanel size = new JPanel();
 		size.setLayout(new GridLayout(2,1));
 		size.add(widthSlider);
