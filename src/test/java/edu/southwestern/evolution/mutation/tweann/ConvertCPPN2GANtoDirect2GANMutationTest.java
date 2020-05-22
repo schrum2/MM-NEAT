@@ -35,6 +35,7 @@ public class ConvertCPPN2GANtoDirect2GANMutationTest {
 	public void tearDown() throws Exception {
 		MMNEAT.clearClasses();
 	}
+	@SuppressWarnings("unchecked")
 	@Test
 	public void test() {
 		tg = new CPPNOrDirectToGANGenotype();

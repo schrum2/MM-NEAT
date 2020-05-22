@@ -76,15 +76,8 @@ public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation {
 		for(int y = 0; y < height; y++) {
 			for(int x = 0; x < width; x++) {
 				double[] vector = builder.latentVectorAndMiscDataForPosition(width, height, x, y);
-				System.out.println("segment length "+segmentLength);
-				System.out.println("height: "+y);
-				System.out.println("width: "+x);
-
+				
 				int nextIndex = vector.length*(y*height+x);
-				System.out.println("nextIndex: "+nextIndex);
-				System.out.println("vector length "+vector.length);
-				System.out.println("longResult length "+longResult.length);
-
 				System.arraycopy(vector, 0, longResult, nextIndex, vector.length);
 				
 			}

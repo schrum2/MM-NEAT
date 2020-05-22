@@ -120,6 +120,7 @@ import edu.southwestern.tasks.zelda.ZeldaDungeonTask;
 import edu.southwestern.tasks.zelda.ZeldaGANDungeonTask;
 import edu.southwestern.tasks.zentangle.ZentangleTask;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
@@ -720,11 +721,10 @@ public class MMNEAT {
 				System.out.println("Set up Mario Level Task");
 			} else if (task instanceof ZeldaDungeonTask) {
 				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
-				if(task instanceof ZeldaCPPNtoGANDungeonTask) {
-					// Evolving CPPNs that create latent vectors that are sent to a GAN
-					setNNInputParameters(ZeldaCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
-				}
-				if(task instanceof ZeldaCPPNOrDirectToGANDungeonTask) {
+				if(task instanceof ZeldaCPPNtoGANDungeonTask || task instanceof ZeldaCPPNOrDirectToGANDungeonTask) {
+					System.out.println("genotype: "+genotype);
+					
+					MiscUtil.waitForReadStringAndEnterKeyPress();
 					// Evolving CPPNs that create latent vectors that are sent to a GAN
 					setNNInputParameters(ZeldaCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
 				}
