@@ -896,7 +896,7 @@ public class Parameters {
 		stringOptions.add("utStudyTeammate", "", "The type of teammate agent for the 2018 human subject study: jude, ethan, native");
 		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
-		stringOptions.add("LodeRunnerGANModel", "LodeRunnerEpoch_10000_20_6.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
+		stringOptions.add("LodeRunnerGANModel", "LodeRunnerEpochFirstFiveOneGround10000_20_6.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
 		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");

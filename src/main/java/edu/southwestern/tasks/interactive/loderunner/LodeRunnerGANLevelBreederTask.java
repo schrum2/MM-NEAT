@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANUtil;
 import edu.southwestern.tasks.loderunner.LodeRunnerRenderUtil;
@@ -59,6 +60,13 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	@Override
 	public Pair<Integer, Integer> resetAndReLaunchGAN(String model) {
 		//TODO
+		if(!(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")) &&model.equals("LodeRunnerEpochFirstFiveOneGround10000_20_6.pth")) {
+			Parameters.parameters.setInteger("GANInputSize", 20); // Default latent vector size
+			Parameters.parameters.setBoolean("lodeRunnerDistinguishesSolidAndDiggableGround", false);
+		}
+		else{
+			
+		}
 		return null;
 	}
 
