@@ -59,15 +59,25 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 
 	@Override
 	public Pair<Integer, Integer> resetAndReLaunchGAN(String model) {
-		//TODO
-		if(!(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")) &&model.equals("LodeRunnerEpochFirstFiveOneGround10000_20_6.pth")) {
-			Parameters.parameters.setInteger("GANInputSize", 20); // Default latent vector size
+		return staticResetAndReLaunchGAN(model);
+	}
+	
+	public static Pair<Integer, Integer> staticResetAndReLaunchGAN(String model) {
+		int standardSize = GANProcess.latentVectorLength();;
+		int updatedSize;
+		if(!(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")) && model.equals("LodeRunnerEpochFirstFiveOneGround10000_20_6.pth")) {
+			Parameters.parameters.setInteger("GANInputSize", standardSize); // Default latent vector size
 			Parameters.parameters.setBoolean("lodeRunnerDistinguishesSolidAndDiggableGround", false);
 		}
 		else{
-			
+			String latentVectorSize = model.substring(model.indexOf("_")+1, model.lastIndexOf("_"));
+			updatedSize = Integer.parseInt(latentVectorSize);
+			Parameters.parameters.setInteger("GANInputSize", updatedSize); // Default latent vector size
+			Parameters.parameters.setBoolean("lodeRunnerDistinguishesSolidAndDiggableGround", true);
 		}
-		return null;
+		GANProcess.terminateGANProcess();
+		updatedSize = GANProcess.latentVectorLength(); // new model
+		return new Pair<>(standardSize, updatedSize);
 	}
 
 	/**
@@ -111,7 +121,12 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		int height1 = LodeRunnerRenderUtil.RENDERED_IMAGE_HEIGHT;
 		BufferedImage image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
 		try {
-			images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH);
+			if(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")){
+				images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH);
+			}
+			else {
+				images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH);
+			}
 			image = LodeRunnerRenderUtil.createBufferedImage(level,width1,height1, images);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -125,7 +140,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","bigInteractiveButtons:true","GANInputSize:"+LodeRunnerGANUtil.LATENT_VECTOR_SIZE,"showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.loderunner.LodeRunnerGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","bigInteractiveButtons:true","lodeRunnerDistinguishesSolidAndDiggableGround:false","GANInputSize:"+LodeRunnerGANUtil.LATENT_VECTOR_SIZE,"showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.loderunner.LodeRunnerGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

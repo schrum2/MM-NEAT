@@ -26,7 +26,7 @@ public class LodeRunnerVGLCUtil {
 	 */
 	public static void main(String[] args) {
 		HashSet<List<List<Integer>>> levelSet = new HashSet<>(); //creates set to represent the level 
-		for(int i = 1; i <= 5; i++) {
+		for(int i = 1; i <= 20; i++) {
 			String file = "Level " + i + ".txt"; //format for the LodeRunner level files 
 			List<List<Integer>> levelList = convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + file); //converts to JSON 
 			levelSet.add(levelList); //adds the converted list to the set for the level 
