@@ -51,6 +51,9 @@ public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation {
 	 * @param genotype a genotype specified by the user
 	 */
 	public void mutate(Genotype genotype) {
+		// Cannot do a transition mutation on a genotype that has already transitioned!
+		if(!((CPPNOrDirectToGANGenotype) genotype).getFirstForm()) return;
+		// Save to assume phenotype is a network at this point
 		Network cppn = (Network) genotype.getPhenotype();
 		Genotype cppnOrDirect2ganGenotype = (CPPNOrDirectToGANGenotype) genotype;
 		//EitherOrGenotype.switchForms(cppnOrDirect2ganGenotype);
@@ -62,14 +65,6 @@ public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation {
 		ZeldaCPPNtoGANVectorMatrixBuilder builder = new ZeldaCPPNtoGANVectorMatrixBuilder(cppn, inputMultipliers);
 		int height = Parameters.parameters.integerParameter("cppn2ganHeight");
 		int width = Parameters.parameters.integerParameter("cppn2ganWidth");
-		
-		System.out.println();
-		System.out.println();
-
-		System.out.println();
-
-		System.out.println("Height and width: "+height+","+width);
-		
 
 		int segmentLength = (GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
 		double[] longResult = new double[segmentLength*height*width];
