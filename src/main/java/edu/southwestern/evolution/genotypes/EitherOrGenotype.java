@@ -17,7 +17,7 @@ import java.util.List;
  * @param <Y> Second Genotype form
  */
 @SuppressWarnings("rawtypes")
-public class EitherOrGenotype<X,Y> implements Genotype {
+public abstract class EitherOrGenotype<X,Y> implements Genotype {
 	// Have to store a copy of the first genotype used for newInstance method to work
 	private static Genotype original = null;
 
@@ -51,11 +51,6 @@ public class EitherOrGenotype<X,Y> implements Genotype {
 	}
 
 	@Override
-	public Genotype copy() {
-		return new EitherOrGenotype<X,Y>(current.copy(), this.firstForm);
-	}
-
-	@Override
 	public void mutate() {
 		current.mutate();
 	}
@@ -80,15 +75,15 @@ public class EitherOrGenotype<X,Y> implements Genotype {
 	}
 
 	@Override
-	public Genotype newInstance() {
-		return original.newInstance();
-	}
-
-	@Override
 	public long getId() {
 		return current.getId();
 	}
-	public void switchForms(Genotype g) {
+
+	/**
+	 * Causes a transition to the second form
+	 * @param g Genotype that should be of the second form
+	 */
+	public void switchForms(Genotype<Y> g) {
 	    current = g;
 	    firstForm = false;
 	}

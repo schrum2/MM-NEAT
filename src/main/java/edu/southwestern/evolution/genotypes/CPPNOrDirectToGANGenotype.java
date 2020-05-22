@@ -52,5 +52,11 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 		return new CPPNOrDirectToGANGenotype(current.copy(), this.firstForm);
 	}
 
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Genotype newInstance() {
+		return new CPPNOrDirectToGANGenotype();
+	}
+
 
 }
