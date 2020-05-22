@@ -2,7 +2,6 @@ package edu.southwestern.evolution.mutation.tweann;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 
 import org.junit.After;
 import org.junit.Before;
@@ -10,8 +9,6 @@ import org.junit.Test;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
-import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
@@ -23,7 +20,7 @@ public class ConvertCPPN2GANtoDirect2GANMutationTest {
 	@Before
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(
-				new String[] { "io:false", "netio:false", "recurrency:false", "indirectToDirectTransitionRate:1.0", "task:edu.southwestern.tasks.zelda.ZeldaCPPNtoGANDungeonTask", 
+				new String[] { "io:false", "netio:false", "recurrency:false", "indirectToDirectTransitionRate:1.0", "task:edu.southwestern.tasks.zelda.ZeldaCPPNOrDirectToGANDungeonTask", 
 						"zeldaGANUsesOriginalEncoding:false", /*"base:zeldagan", "log:ZeldaGAN-DistTraversed", "saveTo:DistTraversed",*/ 
 						"zeldaGANLevelWidthChunks:4", "zeldaGANLevelHeightChunks:4", "zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth",
 						"GANInputSize:10", "mating:true"/*, "maxGens:500"*/ });
@@ -50,7 +47,7 @@ public class ConvertCPPN2GANtoDirect2GANMutationTest {
 
 		System.out.println();
 
-		System.out.println("Height and width!!!!!!!!!: "+height+","+width);
+		System.out.println("Height and width: "+height+","+width);
 		//ZeldaCPPNtoGANLevelBreederTask.latentVectorGridFromCPPN(builder, width, height);
 		Pair<double[][][],double[][][]> k = ZeldaCPPNtoGANLevelBreederTask.latentVectorGridFromCPPN(builder, width, height);
 		tg.mutate();

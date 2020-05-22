@@ -34,6 +34,7 @@ import gvgai.core.vgdl.VGDLFactory;
 import gvgai.core.vgdl.VGDLParser;
 import gvgai.core.vgdl.VGDLRegistry;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
+import me.jakerg.rougelike.Tile;
 
 /**
  * Evolve Zelda rooms using a GAN
@@ -139,6 +140,17 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
 			Dungeon dummy = new Dungeon();
 			List<List<Integer>> ints = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(ArrayUtil.doubleArrayFromList(phenotype));
+			//Prevents doors from being displayed before Dungeonize is clicked
+			ints.get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE).set(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE).set(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_END, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE).set(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE).set(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_END, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).set(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START+1).set(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_END).set(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).set(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START+1).set(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_END).set(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE, Tile.WALL.getNum());
 			for(List<Integer> row : ints) {
 				for(Integer i : row) {
 					System.out.print(i + ", ");
