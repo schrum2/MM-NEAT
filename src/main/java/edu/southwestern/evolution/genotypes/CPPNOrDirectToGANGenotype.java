@@ -58,5 +58,17 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 		return new CPPNOrDirectToGANGenotype();
 	}
 
-
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public Genotype crossover(Genotype g) {
+		CPPNOrDirectToGANGenotype other = (CPPNOrDirectToGANGenotype) g;
+		// If both genotypes are at the same stage/are of the same type
+		if(firstForm == other.firstForm) {
+			// Do crossover
+			return new CPPNOrDirectToGANGenotype(current.crossover(other.current), firstForm);
+		} else {
+			// Otherwise, just return other genotype without performing crossover
+			return other;
+		}
+	}
 }

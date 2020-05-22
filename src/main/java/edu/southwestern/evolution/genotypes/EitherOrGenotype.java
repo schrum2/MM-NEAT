@@ -55,20 +55,6 @@ public abstract class EitherOrGenotype<X,Y> implements Genotype {
 		current.mutate();
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public Genotype crossover(Genotype g) {
-		EitherOrGenotype<X,Y> other = (EitherOrGenotype<X,Y>) g;
-		// If both genotypes are at the same stage/are of the same type
-		if(firstForm == other.firstForm) {
-			// Do crossover
-			return current.crossover(other.current);
-		} else {
-			// Otherwise, just return other genotype without performing crossover
-			return other;
-		}
-	}
-
 	@Override
 	public Object getPhenotype() {
 		return current.getPhenotype();
