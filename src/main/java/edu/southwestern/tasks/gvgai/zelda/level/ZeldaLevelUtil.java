@@ -530,6 +530,9 @@ public class ZeldaLevelUtil {
 	 * @return visited, the points visited
 	 */
 	public static List<Point> getVisitedPoints(int x, int y, List<List<Integer>> intLevel) {
+		assert y >=0 && y < intLevel.size() : "y = "+y+ " not in bounds of "+intLevel;
+		assert x >=0 && x < intLevel.get(0).size() : "x = "+x+ " not in bounds of "+intLevel;
+		
 		List<Point> visited = new LinkedList<>();
 		Queue<Point> queue = new LinkedList<>();
 		queue.add(new Point(x, y));
@@ -541,6 +544,8 @@ public class ZeldaLevelUtil {
 				int dx = p.x + d.x;
 				int dy = p.y + d.y;
 				Point c = new Point(dx, dy);
+				assert dy >=0 && dy < intLevel.size() : "Move:"+m+": dy = "+dy+ " not in bounds of "+intLevel;
+				assert dx >=0 && dx < intLevel.get(0).size() : "Move:"+m+": dx = "+dx+ " not in bounds of "+intLevel;
 				Tile t = Tile.findNum(intLevel.get(dy).get(dx));
 				if(t.playerPassable() && !visited.contains(c))
 					queue.add(c);
