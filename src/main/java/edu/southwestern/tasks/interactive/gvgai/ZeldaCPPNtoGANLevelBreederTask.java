@@ -431,6 +431,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				// Make a new room appear in dungeon
 				//enableRoomActivation(auxiliaryInformation);
 				presenceThreshold -= 0.01 * (numTries++); // Make rooms more likely to appear, each time more likelier
+				if(numTries == Parameters.parameters.integerParameter("dungeonGenerationFailChances")) {
+					System.out.println("Last chance for presenceThreshold");
+					presenceThreshold = Double.NEGATIVE_INFINITY; // All rooms present						
+				}
+				System.out.println("presenceThreshold = "+presenceThreshold);
 				// Force loop
 				unbeatable = true;
 			} catch(IllegalStateException e) {
@@ -450,7 +455,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				//MiscUtil.waitForReadStringAndEnterKeyPress();
 				//throw new IllegalStateException("Can't find a way to make this level beatable!");
 				System.out.println("Can't find a way to make this level beatable!");
-				return null;
+				assert dungeon != null : "No dungeon to return!"; 
+				return Parameters.parameters.booleanParameter("makeZeldaLevelsPlayable") ? null : dungeon;
 			}
 		} while(unbeatable);
 		return dungeon;
@@ -702,7 +708,13 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 						}
 					}
 
-
+					assert levelAsListsGrid[y][x].size() == GANProcess.ZELDA_OUT_HEIGHT : "Level is wrong height "+ levelAsListsGrid[y][x];
+					assert levelAsListsGrid[y][x].get(0).size() == GANProcess.ZELDA_OUT_WIDTH : "Level is wrong width "+ levelAsListsGrid[y][x];
+					// All properly trained GAN models successfully keep the outer wall of each room. Assert that this is true
+					assert levelAsListsGrid[y][x].get(0).stream().allMatch(t -> t == Tile.WALL.getNum()) : "Top wall has non-wall characters: "+levelAsListsGrid[y][x].get(0)+"\n"+levelAsListsGrid[y][x];
+					assert levelAsListsGrid[y][x].get(1).stream().allMatch(t -> t == Tile.WALL.getNum()) : "Top wall has non-wall characters: "+levelAsListsGrid[y][x].get(1)+"\n"+levelAsListsGrid[y][x];
+					assert levelAsListsGrid[y][x].get(GANProcess.ZELDA_OUT_HEIGHT-2).stream().allMatch(t -> t == Tile.WALL.getNum()) : "Bottom wall has non-wall characters: "+levelAsListsGrid[y][x].get(GANProcess.ZELDA_OUT_HEIGHT-2)+"\n"+levelAsListsGrid[y][x];
+					assert levelAsListsGrid[y][x].get(GANProcess.ZELDA_OUT_HEIGHT-1).stream().allMatch(t -> t == Tile.WALL.getNum()) : "Bottom wall has non-wall characters: "+levelAsListsGrid[y][x].get(GANProcess.ZELDA_OUT_HEIGHT-1)+"\n"+levelAsListsGrid[y][x];
 				} else {
 					levelAsListsGrid[y][x] = null;
 				}
