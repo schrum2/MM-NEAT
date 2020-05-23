@@ -164,19 +164,20 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		JPanel effectsCheckboxes = new JPanel();
 		effectsCheckboxes.setPreferredSize(new Dimension(300, 90));
 		effectsCheckboxes.setLayout(new FlowLayout());
-		JCheckBox puzzleDoor = new JCheckBox("zeldaCPPNtoGANAllowsPuzzleDoors", Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsPuzzleDoors"));
+		JCheckBox puzzleDoor = new JCheckBox("PuzzleDoors", Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsPuzzleDoors"));
 		puzzleDoor.setName("zeldaCPPNtoGANAllowsPuzzleDoors");
 		puzzleDoor.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Parameters.parameters.changeBoolean("zeldaCPPNtoGANAllowsPuzzleDoors");
+				resetButtons(true);
 			}
 			
 		});
 		puzzleDoor.setForeground(new Color(0,0,0));
 		//zeldaCPPN2GANSparseKeys 
-		JCheckBox sparseKeys = new JCheckBox("zeldaCPPN2GANSparseKeys", Parameters.parameters.booleanParameter("zeldaCPPN2GANSparseKeys"));
+		JCheckBox sparseKeys = new JCheckBox("SparseKeys", Parameters.parameters.booleanParameter("zeldaCPPN2GANSparseKeys"));
 		sparseKeys.setName("zeldaCPPN2GANSparseKeys");
 		sparseKeys.getAccessibleContext();
 		//sparseKeys.get
@@ -185,6 +186,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Parameters.parameters.changeBoolean("zeldaCPPN2GANSparseKeys");
+				resetButtons(true);
 			}
 			
 		});
