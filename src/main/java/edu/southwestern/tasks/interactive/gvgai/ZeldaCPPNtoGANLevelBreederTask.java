@@ -696,17 +696,33 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				if(auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] > presenceThreshold) { // Room presence threshold is 0: TODO: Make parameter?
 					levelAsListsGrid[y][x] = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVectorGrid[y][x]); //generates a single room 
 
-					//removes doors that are placed automatically by the GAN 
-					//helps to fix invalid door problem 
-					int door = Tile.DOOR.getNum(); // Is 3 
-					for(List<Integer> l : levelAsListsGrid[y][x]) {
-						//removes all door tiles and replaces them with wall tiles to avoid invalid doors
-						for(int i = 0; i < l.size(); i++) {
-							if(l.get(i) == door) {
-								l.set(i, Tile.WALL.getNum());
-							}
-						}
+					//removes doors that are placed automatically by the GAN. 
+					//helps to fix invalid door problem.
+					//Also forces all surrounding edges of the room to be walls.
+					// Typically, GAN models force these tiles to be walls anyway, but there are weird exceptions that
+					// are fixed manually here.
+					
+					int wall = Tile.WALL.getNum();
+					// Top and bottom walls
+					int bottom = levelAsListsGrid[y][x].size();
+					for(int i = 0; i < levelAsListsGrid[y][x].get(0).size(); i++) {
+						// Top wall
+						levelAsListsGrid[y][x].get(0).set(i, wall);
+						levelAsListsGrid[y][x].get(1).set(i, wall);
+						// Bottom wall
+						levelAsListsGrid[y][x].get(bottom-2).set(i, wall);
+						levelAsListsGrid[y][x].get(bottom-1).set(i, wall);
 					}
+					
+					int right = levelAsListsGrid[y][x].get(0).size();
+					for(int i = 0; i < levelAsListsGrid[y][x].size(); i++) {
+						// Left wall
+						levelAsListsGrid[y][x].get(i).set(0, wall);
+						levelAsListsGrid[y][x].get(i).set(1, wall);
+						// Right wall
+						levelAsListsGrid[y][x].get(i).set(right-2, wall);
+						levelAsListsGrid[y][x].get(i).set(right-1, wall);
+					}					
 
 					assert levelAsListsGrid[y][x].size() == GANProcess.ZELDA_OUT_HEIGHT : "Level is wrong height "+ levelAsListsGrid[y][x];
 					assert levelAsListsGrid[y][x].get(0).size() == GANProcess.ZELDA_OUT_WIDTH : "Level is wrong width "+ levelAsListsGrid[y][x];
