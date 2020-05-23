@@ -20,8 +20,12 @@ public class GANProcess extends Comm {
 	public static final String WASSERSTEIN_PATH = PYTHON_BASE_PATH + "generator_ws.py";
 	
 	//dimensions of output 
-	public static final int ZELDA_OUT_WIDTH = 11;
-	public static final int ZELDA_OUT_HEIGHT = 16;
+
+	// Zelda is weird, since some models rotate the rooms and flip width and height, but the final levels
+	// are always displayed with a height of 11 and width of 16, regardless of what the shape of the model 
+	// output is.
+	public static final int ZELDA_OUT_WIDTH = 16;
+	public static final int ZELDA_OUT_HEIGHT = 11;
 	public static final int MARIO_OUT_WIDTH = 28;
 	public static final int MARIO_OUT_HEIGHT = 14;
 	public static final int LODE_RUNNER_OUT_WIDTH = 32;
@@ -73,8 +77,8 @@ public class GANProcess extends Comm {
 											Parameters.parameters.integerParameter("GANInputSize"),
 											// This is an ugly mess meant to support backwards compatibility with previously trained models.
 											Parameters.parameters.stringParameter("zeldaGANModel").startsWith("ZeldaDungeonsAll3Tiles") ? ZELDA_GAN_REDUCED_TILE_NUMBER : Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? ZELDA_GAN_ORIGINAL_TILE_NUMBER : ZELDA_GAN_EXPANDED_TILE_NUMBER,
-													Parameters.parameters.stringParameter("zeldaGANModel").startsWith("ZeldaDungeonsAll3Tiles") ? ZELDA_OUT_HEIGHT : Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? ZELDA_OUT_WIDTH : ZELDA_OUT_HEIGHT,
-															Parameters.parameters.stringParameter("zeldaGANModel").startsWith("ZeldaDungeonsAll3Tiles") ? ZELDA_OUT_WIDTH :Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? ZELDA_OUT_HEIGHT : ZELDA_OUT_WIDTH);
+													Parameters.parameters.stringParameter("zeldaGANModel").startsWith("ZeldaDungeonsAll3Tiles") ? ZELDA_OUT_WIDTH : Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? ZELDA_OUT_HEIGHT : ZELDA_OUT_WIDTH,
+															Parameters.parameters.stringParameter("zeldaGANModel").startsWith("ZeldaDungeonsAll3Tiles") ? ZELDA_OUT_HEIGHT :Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? ZELDA_OUT_WIDTH : ZELDA_OUT_HEIGHT);
 				break;
 			case LODE_RUNNER:
 				ganProcess = new GANProcess(PYTHON_BASE_PATH+"LodeRunnerGAN"+ File.separator + Parameters.parameters.stringParameter("LodeRunnerGANModel"), 

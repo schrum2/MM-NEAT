@@ -551,6 +551,10 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		for(int y = 0; y < levelGrid.length; y++) {
 			for(int x = 0; x < levelGrid[y].length; x++) {
 				if(levelGrid[y][x] != null) {
+					
+					assert levelGrid[y][x].intLevel.size() == GANProcess.ZELDA_OUT_HEIGHT : "Level is wrong height "+ levelGrid[y][x].intLevel;
+					assert levelGrid[y][x].intLevel.get(0).size() == GANProcess.ZELDA_OUT_WIDTH : "Level is wrong width "+ levelGrid[y][x].intLevel;
+					
 					String name = uuidLabels[y][x];
 					Node currentNode = dungeonInstance.getNode(name);
 					//adds door to adjacent room, sets up and down doors
@@ -691,11 +695,10 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 					int door = Tile.DOOR.getNum(); // Is 3 
 					for(List<Integer> l : levelAsListsGrid[y][x]) {
 						//removes all door tiles and replaces them with wall tiles to avoid invalid doors
-						while(l.contains(door)) {
-							//System.out.println(l.indexOf(door));
-							int index = l.indexOf(door);
-							l.remove(l.indexOf(door));
-							l.add(index, 1);
+						for(int i = 0; i < l.size(); i++) {
+							if(l.get(i) == door) {
+								l.set(i, Tile.WALL.getNum());
+							}
 						}
 					}
 

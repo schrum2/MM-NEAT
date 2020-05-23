@@ -544,8 +544,8 @@ public class ZeldaLevelUtil {
 				int dx = p.x + d.x;
 				int dy = p.y + d.y;
 				Point c = new Point(dx, dy);
-				assert dy >=0 && dy < intLevel.size() : "Move:"+m+": dy = "+dy+ " not in bounds of "+intLevel;
-				assert dx >=0 && dx < intLevel.get(0).size() : "Move:"+m+": dx = "+dx+ " not in bounds of "+intLevel;
+				assert dy >=0 && dy < intLevel.size() : "Move:"+m+" from "+p+": dy = "+dy+ " not in bounds of "+intLevel;
+				assert dx >=0 && dx < intLevel.get(0).size() : "Move:"+m+" from "+p+": dx = "+dx+ " not in bounds of "+intLevel;
 				Tile t = Tile.findNum(intLevel.get(dy).get(dx));
 				if(t.playerPassable() && !visited.contains(c))
 					queue.add(c);
