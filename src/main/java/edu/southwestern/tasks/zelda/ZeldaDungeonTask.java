@@ -322,13 +322,13 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 							BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
 							BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
 							//sets the fileName, binPath, and fullName
-							String fileName = String.format("%7.5f", binScore) +"-"+ binLabels.get(binIndex) +"-"+ individual.getId() + ".png";
+							String fileName = String.format("%7.5f", binScore) +"-"+ individual.getId() + ".png";
 							String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
-							String fullName = binPath + File.separator + fileName;
+							String fullName = binPath + "-" + fileName;
 							System.out.println(fullName);
 							GraphicsUtil.saveImage(imagePlain, fullName);	
-							fileName = String.format("%7.5f", binScore) +"-"+ binLabels.get(binIndex) +"-"+ individual.getId() + "-solution.png";
-							fullName = binPath + File.separator + fileName;
+							fileName = String.format("%7.5f", binScore) +"-"+ individual.getId() + "-solution.png";
+							fullName = binPath + "-" + fileName;
 							System.out.println(fullName);
 							GraphicsUtil.saveImage(imagePath, fullName);	
 						}

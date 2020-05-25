@@ -154,6 +154,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 	}
 
+	/**
+	 * Write one line of data to each of the active log files, but only periodically,
+	 * when number of iterations divisible by individualsPerGeneration. 
+	 */
 	private void log() {
 		if(io && iterations % individualsPerGeneration == 0) {
 			// When all iterations were logged, the file got too large
@@ -213,6 +217,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		fileUpdates(child1WasElite); // Log for each individual produced
 	}
 	
+	/**
+	 * Log data and update other data tracking variables.
+	 * @param newEliteProduced Whether the latest individual was good enough to
+	 * 							fill/replace a bin.
+	 */
 	public void fileUpdates(boolean newEliteProduced) {
 		// Log to file
 		log();

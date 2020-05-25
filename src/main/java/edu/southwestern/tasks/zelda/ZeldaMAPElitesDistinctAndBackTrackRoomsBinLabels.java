@@ -25,7 +25,7 @@ public class ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels implements BinLabe
 			for(int i = 0; i <= maxNumRooms; i++) { 
 				for(int j = 0; j <= maxNumRooms; j++) { 
 					for(int r = 0; r <= maxNumRooms; r++) {
-						labels.add("DistinctRooms["+i+"]BackTrackedRooms["+j+"]Rooms"+r);
+						labels.add("DistinctRooms["+i+"]BackTrackedRooms["+j+"]Rooms["+r+"]");
 						
 					}
 				}
