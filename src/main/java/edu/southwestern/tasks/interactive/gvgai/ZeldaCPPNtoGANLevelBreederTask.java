@@ -7,6 +7,8 @@ import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,8 +19,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Random;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -44,7 +48,6 @@ import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.zelda.ZeldaCPPNtoGANVectorMatrixBuilder;
 import edu.southwestern.tasks.zelda.ZeldaGANVectorMatrixBuilder;
-import edu.southwestern.util.MiscUtil;
 //import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import me.jakerg.rougelike.RougelikeApp;
@@ -218,6 +221,80 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		effectsCheckboxes.add(allowRaft);
 		effectsCheckboxes.add(puzzleDoor);
 		top.add(effectsCheckboxes);
+		
+		
+		
+		String[] ruleChoices = { "Standard", "Complex" };
+		JComboBox<String> ruleChoice = new JComboBox<String>(ruleChoices);
+		ruleChoice.setSize(40, 40);
+		ruleChoice.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+				@SuppressWarnings("unchecked")
+				JComboBox<String> source = (JComboBox<String>)e.getSource();
+				//it it's horizontal, it's not vertical
+				if(source.getSelectedItem().toString() == "Standard") {
+					Parameters.parameters.setClass("zeldaGrammarRules", edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar.class);
+				} else if(source.getSelectedItem().toString() == "Complex"){ 
+					Parameters.parameters.setClass("zeldaGrammarRules", edu.southwestern.tasks.gvgai.zelda.level.MoreInterestingGraphGrammarRules.class);
+
+				}
+				//reset buttons
+				resetButtons(true);
+			}
+			});
+		JPanel rulePanel = new JPanel();
+		rulePanel.setLayout(new BoxLayout(rulePanel, BoxLayout.X_AXIS));
+		JLabel ruleLabel = new JLabel();
+		ruleLabel.setText("Grammar Rules: ");
+		rulePanel.add(ruleLabel);		
+		rulePanel.add(ruleChoice);
+		top.add(rulePanel);
+		
+		
+		String[] backboneChoices = { "Standard", "Simple", "Boring", "Interesting", "Raft Test" };
+		JComboBox<String> backboneChoice = new JComboBox<String>(backboneChoices);
+		backboneChoice.setSize(40, 40);
+		backboneChoice.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+				@SuppressWarnings("unchecked")
+				JComboBox<String> source = (JComboBox<String>)e.getSource();
+				//it it's horizontal, it's not vertical
+				if(source.getSelectedItem().toString() == "Standard") {
+					Parameters.parameters.setClass("zeldaGraphBackBone", edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph.class);
+				} else if(source.getSelectedItem().toString() == "Boring"){ 
+					Parameters.parameters.setClass("zeldaGraphBackBone", edu.southwestern.tasks.gvgai.zelda.level.graph.BoringDungeonBackbone.class);
+
+				} else if(source.getSelectedItem().toString() == "Simple"){ 
+					Parameters.parameters.setClass("zeldaGraphBackBone", edu.southwestern.tasks.gvgai.zelda.level.graph.SimpleDungeonBackbone.class);
+
+				} else if(source.getSelectedItem().toString() == "Interesting"){ 
+					Parameters.parameters.setClass("zeldaGraphBackBone", edu.southwestern.tasks.gvgai.zelda.level.graph.InterestingZeldaGraph.class);
+
+				} else if(source.getSelectedItem().toString() == "Raft Test"){ 
+					Parameters.parameters.setClass("zeldaGraphBackBone", edu.southwestern.tasks.gvgai.zelda.level.graph.RaftTestingGraph.class);
+
+				}
+				//reset buttons
+				resetButtons(true);
+			}
+			});
+		JPanel backbonePanel = new JPanel();
+		backbonePanel.setLayout(new BoxLayout(backbonePanel, BoxLayout.X_AXIS));
+		JLabel backboneLabel = new JLabel();
+		backboneLabel.setText("Grammar backbones: ");
+		backbonePanel.add(backboneLabel);		
+		backbonePanel.add(backboneChoice);
+		top.add(backbonePanel);
+		
+		
+		
+		
 		
 		JPanel size = new JPanel();
 		size.setLayout(new GridLayout(2,1));
