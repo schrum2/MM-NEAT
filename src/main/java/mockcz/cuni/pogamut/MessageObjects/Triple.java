@@ -18,7 +18,9 @@ import javax.vecmath.Vector3d;
  */
 public class Triple implements Cloneable, Serializable, ILocated {
 
-    public static final double EPSILON = 0.000000001;
+	private static final long serialVersionUID = 1L;
+
+	public static final double EPSILON = 0.000000001;
 
     public double x = 0;
     public double y = 0;

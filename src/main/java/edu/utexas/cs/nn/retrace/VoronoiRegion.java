@@ -1,10 +1,9 @@
 package edu.utexas.cs.nn.retrace;
 
-import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+
+import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 
 public class VoronoiRegion {
 

@@ -12,7 +12,7 @@ import edu.southwestern.parameters.Parameters;
  * @author schrum2
  *
  */
-public class ZeldaMAPElitesBinLabels implements BinLabels {
+public class ZeldaMAPElitesWallWaterRoomsBinLabels implements BinLabels {
 
 	public static final int TILE_GROUPS = 10;
 	

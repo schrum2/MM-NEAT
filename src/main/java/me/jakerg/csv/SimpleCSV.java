@@ -9,7 +9,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
-import java.util.Set;
 
 public class SimpleCSV<T> {
 	

@@ -45,10 +45,24 @@ public class ZeldaGANDungeonTask extends ZeldaDungeonTask<ArrayList<Double>>{
 	 * @return dungeon - the Zelda dungeon given the genotype.
 	 */
 	public Dungeon getZeldaDungeonFromGenotype(Genotype<ArrayList<Double>> individual) {
-		ArrayList<Double> latentVector = individual.getPhenotype();
-		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
 		int width = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks"); //the width of the dungeon
 		int height = Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks"); //the height of the dungeon
+		return getZeldaDungeonFromDirectArrayList(individual.getPhenotype(), segmentLength, width, height);
+	}
+	
+	/**
+	 * Takes in a lengthy real-valued genome with latent variables for each room, then returns a dungeon.
+	 * The variables for each room also contain additional information about door connectivity/type and
+	 * where the start/end rooms of the dungeon are.
+	 * 
+	 * @param latentVector the array of latent variables (and additional info) for all rooms in dungeon
+	 * @param segmentLength the latent vector length plus the number of non-latent variables
+	 * @param width width chunks
+	 * @param height height chunks
+	 * @return dungeon the dungeon given the genotype
+	 */
+	public static Dungeon getZeldaDungeonFromDirectArrayList(ArrayList<Double> latentVector, int segmentLength, int width, int height) {
+		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
 		Pair<double[][][],double[][][]> gridRepresentation = ZeldaCPPNtoGANLevelBreederTask.latentVectorGridFromCPPN(new ZeldaDirectGANVectorMatrixBuilder(doubleArray, segmentLength), width, height);
 		Dungeon dungeon = ZeldaCPPNtoGANLevelBreederTask.gridDataToDungeon(gridRepresentation.t1, gridRepresentation.t2); //transforms the grid data into a dungeon
 		return dungeon;

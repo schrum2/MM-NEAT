@@ -1,6 +1,7 @@
 package edu.southwestern.evolution;
 
 import edu.southwestern.evolution.crossover.network.CombiningTWEANNCrossover;
+import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
@@ -186,15 +187,17 @@ public class EvolutionaryHistory {
 	public static void initArchetype(int populationIndex, String loadedArchetype) {
 		@SuppressWarnings("rawtypes")
 		TWEANNGenotype tg = (TWEANNGenotype) (MMNEAT.genotypeExamples == null ? 
-				(MMNEAT.genotype instanceof CombinedGenotype ? 
-						((CombinedGenotype) MMNEAT.genotype).t1 : // Assume firsts of pair is TWEANNGenotype 
-							MMNEAT.genotype instanceof HyperNEATCPPNforDL4JGenotype ?
-							((HyperNEATCPPNforDL4JGenotype) MMNEAT.genotype).getCPPN() :
-						MMNEAT.genotype.copy()) : // Assume it is a TWEANNGenotype 
-				MMNEAT.genotypeExamples.get(populationIndex).copy()); // First population from coevolution
+				(MMNEAT.genotype instanceof CPPNOrDirectToGANGenotype) ?
+						((TWEANNGenotype) ((CPPNOrDirectToGANGenotype) MMNEAT.genotype).getCurrentGenotype()) :
+							(MMNEAT.genotype instanceof CombinedGenotype ? 
+									((CombinedGenotype) MMNEAT.genotype).t1 : // Assume firsts of pair is TWEANNGenotype 
+										MMNEAT.genotype instanceof HyperNEATCPPNforDL4JGenotype ?
+												((HyperNEATCPPNforDL4JGenotype) MMNEAT.genotype).getCPPN() :
+													MMNEAT.genotype.copy()) : // Assume it is a TWEANNGenotype 
+														MMNEAT.genotypeExamples.get(populationIndex).copy()); // First population from coevolution
 		initArchetype(populationIndex, loadedArchetype, tg);
 	}
-	
+
 	/**
 	 * A method that allows the current archetype to be saved if a resume is not
 	 * occuring
@@ -349,7 +352,7 @@ public class EvolutionaryHistory {
 		}
 		logLineageData(parent + " -> " + cloneChild.getId());
 	}
-	
+
 	/**
 	 * Track the two parent IDs of child offspring
 	 * @param parent1
@@ -363,7 +366,7 @@ public class EvolutionaryHistory {
 		}
 		logLineageData(parent1 + " X " + parent2 + " -> " + childOffspring.getId());
 	}
-	
+
 	/**
 	 * logs lineage data about a network to lineageLog
 	 * 
@@ -503,8 +506,8 @@ public class EvolutionaryHistory {
 			}
 		}
 		assert orderedArchetype(populationIndex) : "Archetype " + populationIndex + " added at pos " + pos
-				+ " " + node
-				+ " did not exhibit proper node order after node addition: " + archetypes[populationIndex];
+		+ " " + node
+		+ " did not exhibit proper node order after node addition: " + archetypes[populationIndex];
 	}
 
 	/**
@@ -523,13 +526,13 @@ public class EvolutionaryHistory {
 	 *            debugging purposes only
 	 */
 	public static void archetypeAddFromCombiningCrossover(int populationIndex, NodeGene node, int pos, String origin) {
-            // adds a clone of node to add so original node is not affected if add is unsuccessful
+		// adds a clone of node to add so original node is not affected if add is unsuccessful
 		NodeGene newNodeGene = node.clone();
 		long oldInnovation = newNodeGene.innovation;
-                // Change innovation to prevent weird overlaps
+		// Change innovation to prevent weird overlaps
 		newNodeGene.innovation = CombiningTWEANNCrossover.getAdjustedInnovationNumber(oldInnovation); 
 		// newNodeGene.origin = origin + " copied "+oldInnovation+" (" + (order++) + ")";
-                // indicates addition was successful
+		// indicates addition was successful
 		newNodeGene.setFromCombiningCrossover();
 		archetypes[populationIndex].add(pos, newNodeGene);
 	}

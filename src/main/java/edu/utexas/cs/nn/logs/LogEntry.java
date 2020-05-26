@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.logs;
 
 import cz.cuni.amis.pogamut.base.communication.messages.InfoMessage;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.GBEvent;
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.AddInventoryMsg;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotDamaged;

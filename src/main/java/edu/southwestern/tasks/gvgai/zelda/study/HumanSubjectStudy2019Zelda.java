@@ -66,18 +66,28 @@ public class HumanSubjectStudy2019Zelda {
 				Graph<ZeldaGrammar> graph = ConstructGraph.getInitialGraphBackBone();
 				@SuppressWarnings("unchecked")
 				GraphRuleManager<ZeldaGrammar> grammar = (GraphRuleManager<ZeldaGrammar>) ClassCreation.createObject("zeldaGrammarRules");
-				//ZeldaHumanSubjectStudy2019GraphGrammar grammar = new ZeldaHumanSubjectStudy2019GraphGrammar();
+				
+
 				grammar.applyRules(graph);
+				
 				LevelLoader loader = (LevelLoader) ClassCreation.createObject("zeldaLevelLoader");
 				dungeonType = loader.getClass().getSimpleName();
+				
 				if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
 					GraphUtil.saveGrammarGraph(graph, subjectDir + "DungeonGraph_" + dungeonType + ".dot");
+				
 				dungeonToPlay = DungeonUtil.recursiveGenerateDungeon(graph, loader);
+				
+				//System.out.println("IS THIS NULL??: "+dungeonToPlay);
+				
 				DungeonUtil.makeDungeonPlayable(dungeonToPlay);
+				dungeonToPlay.markReachableRooms();
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(1);
 			}
+//			System.out.println("waiting");
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 			
 		} else if(type.equals(Type.TUTORIAL)) {
 			System.out.println("\n\n\nTutorial not supported yet.");
@@ -110,7 +120,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph rogueLikeDebugMode:true firstSoftLockedRoomHasRaft:true".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.TwoTriforceBugGraph zeldaGrammarRules:edu.southwestern.tasks.gvgai.zelda.level.MoreInterestingGraphGrammarRules firstSoftLockedRoomHasRaft:false".split(" "));
 		//MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 	}
 

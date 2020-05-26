@@ -195,7 +195,8 @@ public class ZeldaHumanSubjectStudy2019GraphGrammar extends GraphRuleManager<Zel
 		rule = new GraphRule<ZeldaGrammar>(ZeldaGrammar.PUZZLE_S);
 		rule.grammar().setStart(ZeldaGrammar.PUZZLE);
 		graphRules.add(rule);
-	
+		
+		
 	}
 
 	public ZeldaHumanSubjectStudy2019GraphGrammar(File directory) {

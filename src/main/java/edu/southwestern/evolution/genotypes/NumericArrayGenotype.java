@@ -15,6 +15,9 @@ import java.util.ArrayList;
  */
 public abstract class NumericArrayGenotype<T> implements Genotype<ArrayList<T>> {
 
+	@SuppressWarnings("rawtypes")
+	private static final ArrayCrossover ARRAY_CROSSOVER = new ArrayCrossover();
+	
 	ArrayList<T> genes;
 	private long id = EvolutionaryHistory.nextGenotypeId();
 
@@ -34,8 +37,9 @@ public abstract class NumericArrayGenotype<T> implements Genotype<ArrayList<T>> 
 		genes.set(pos, value);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Genotype<ArrayList<T>> crossover(Genotype<ArrayList<T>> g) {
-		return new ArrayCrossover<T>().crossover(this, g);
+		return ARRAY_CROSSOVER.crossover(this, g);
 	}
 
 	public ArrayList<T> getPhenotype() {

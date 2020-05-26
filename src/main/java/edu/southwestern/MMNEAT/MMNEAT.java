@@ -19,6 +19,7 @@ import edu.southwestern.evolution.EA;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.ScoreHistory;
 import edu.southwestern.evolution.crossover.Crossover;
+import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
@@ -114,6 +115,7 @@ import edu.southwestern.tasks.ut2004.UT2004Task;
 import edu.southwestern.tasks.ut2004.UT2004Util;
 import edu.southwestern.tasks.ut2004.testing.HumanSubjectStudy2018TeammateServer;
 import edu.southwestern.tasks.vizdoom.VizDoomTask;
+import edu.southwestern.tasks.zelda.ZeldaCPPNOrDirectToGANDungeonTask;
 import edu.southwestern.tasks.zelda.ZeldaCPPNtoGANDungeonTask;
 import edu.southwestern.tasks.zelda.ZeldaDungeonTask;
 import edu.southwestern.tasks.zelda.ZeldaGANDungeonTask;
@@ -263,6 +265,7 @@ public class MMNEAT {
 	private static void setupTWEANNGenotypeDataTracking(boolean coevolution) {
 		if (genotype instanceof TWEANNGenotype || 
 				genotype instanceof CombinedGenotype || // Assume first member of pair is TWEANNGenotype
+				genotype instanceof CPPNOrDirectToGANGenotype || // Assume first form is TWEANNGenotype
 				genotype instanceof HyperNEATCPPNforDL4JGenotype) { // Contains CPPN that is TWEANNGenotype
 			if (Parameters.parameters.booleanParameter("io")
 					&& Parameters.parameters.booleanParameter("logTWEANNData")) {
@@ -274,14 +277,17 @@ public class MMNEAT {
 			}
 
 			@SuppressWarnings("rawtypes")
-			long biggestInnovation = genotype instanceof CombinedGenotype ? 
-					((TWEANNGenotype) ((CombinedGenotype) genotype).t1).biggestInnovation() :
-						(genotype instanceof HyperNEATCPPNforDL4JGenotype ?
-								((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN().biggestInnovation()	:
-									((TWEANNGenotype) genotype).biggestInnovation());
-					if (biggestInnovation > EvolutionaryHistory.largestUnusedInnovationNumber) {
-						EvolutionaryHistory.setInnovation(biggestInnovation + 1);
-					}
+			long biggestInnovation = genotype instanceof CPPNOrDirectToGANGenotype ?
+					((TWEANNGenotype) ((CPPNOrDirectToGANGenotype) genotype).getCurrentGenotype()).biggestInnovation():
+						(genotype instanceof CombinedGenotype ? 
+								((TWEANNGenotype) ((CombinedGenotype) genotype).t1).biggestInnovation() :
+									(genotype instanceof HyperNEATCPPNforDL4JGenotype ?
+											((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN().biggestInnovation()	:
+												((TWEANNGenotype) genotype).biggestInnovation()));
+					
+			if (biggestInnovation > EvolutionaryHistory.largestUnusedInnovationNumber) {
+					EvolutionaryHistory.setInnovation(biggestInnovation + 1);
+			}
 		}
 	}
 
@@ -719,7 +725,7 @@ public class MMNEAT {
 				System.out.println("Set up Mario Level Task");
 			} else if (task instanceof ZeldaDungeonTask) {
 				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
-				if(task instanceof ZeldaCPPNtoGANDungeonTask) {
+				if(task instanceof ZeldaCPPNtoGANDungeonTask || task instanceof ZeldaCPPNOrDirectToGANDungeonTask) {
 					// Evolving CPPNs that create latent vectors that are sent to a GAN
 					setNNInputParameters(ZeldaCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
 				}
@@ -1203,6 +1209,7 @@ public class MMNEAT {
 		// Similar for ZeldaGAN
 		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength()); // all -1
 		else if(task instanceof ZeldaGANDungeonTask) return ArrayUtil.doubleNegativeOnes(ZeldaGANDungeonTask.genomeLength()); // all -1
+		else if(task instanceof ZeldaCPPNOrDirectToGANDungeonTask) return ArrayUtil.doubleNegativeOnes(ZeldaGANDungeonTask.genomeLength()); // all -1
 		else if(task instanceof LodeRunnerGANLevelBreederTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength());
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda/LodeRuner GAN");
@@ -1219,6 +1226,7 @@ public class MMNEAT {
 		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
 		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength()); // all ones
 		else if(task instanceof ZeldaGANDungeonTask) return ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones
+		else if(task instanceof ZeldaCPPNOrDirectToGANDungeonTask) return ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones
 		else if(task instanceof LodeRunnerGANLevelBreederTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength());
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda/LodeRunner GAN");

@@ -40,11 +40,12 @@ public class ZeldaKLDivTest {
 		VGDLFactory.GetInstance().init();
 		VGDLRegistry.GetInstance().init();
 
-		String game = "zelda";
-		String gamesPath = "data/gvgai/examples/gridphysics/";
-		String game_file = gamesPath + game + ".txt";
-		int playerID = 0;
-		int seed = 0;
+// This is for the GVG-AI version of Zelda
+//		String game = "zelda";
+//		String gamesPath = "data/gvgai/examples/gridphysics/";
+//		String game_file = gamesPath + game + ".txt";
+//		int playerID = 0;
+//		int seed = 0;
 
 		GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
 		double[] latentVector1 = RandomNumbers.randomArray(size);
