@@ -1206,7 +1206,7 @@ public class MMNEAT {
 		// Function Optimization Tasks use these genotypes and know their lower bounds
 		if(fos != null) return fos.getLowerBounds();
 		// For Mario GAN, the latent vector length determines the size, but the lower bounds are all zero
-		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all -1
+		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask|| task instanceof MarioCPPNOrDirectToGANLevelTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all -1
 		// Similar for ZeldaGAN
 		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength()); // all -1
 		else if(task instanceof ZeldaGANDungeonTask) return ArrayUtil.doubleNegativeOnes(ZeldaGANDungeonTask.genomeLength()); // all -1
@@ -1224,7 +1224,7 @@ public class MMNEAT {
 	 */
 	public static double[] getUpperBounds() {
 		if(fos != null) return fos.getUpperBounds();
-		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
+		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask||task instanceof MarioCPPNOrDirectToGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
 		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength()); // all ones
 		else if(task instanceof ZeldaGANDungeonTask) return ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones
 		else if(task instanceof ZeldaCPPNOrDirectToGANDungeonTask) return ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones

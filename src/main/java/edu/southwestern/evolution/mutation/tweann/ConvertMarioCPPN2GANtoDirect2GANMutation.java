@@ -11,8 +11,8 @@ import edu.southwestern.evolution.mutation.Mutation;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.mario.MarioCPPNtoGANVectorMatrixBuilder;
-import edu.southwestern.tasks.mario.gan.GANProcess;
+import edu.southwestern.tasks.interactive.mario.MarioCPPNtoGANLevelBreederTask;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.random.RandomNumbers;
 /**
  * Converts CPPN to GAN to Direct to GAN.
@@ -23,7 +23,7 @@ import edu.southwestern.util.random.RandomNumbers;
 @SuppressWarnings("rawtypes")
 public class ConvertMarioCPPN2GANtoDirect2GANMutation extends Mutation {
 	protected double rate;
-	public static final int MARIO_CPPN_TO_GAN_HEIGHT = 1;
+	//public static final int MARIO_CPPN_TO_GAN_HEIGHT = 1;
 	/**
 	 * Construct that defines the rate (0.1) and tells if it's out of bounds
 	 */
@@ -56,30 +56,8 @@ public class ConvertMarioCPPN2GANtoDirect2GANMutation extends Mutation {
 		// Save to assume phenotype is a network at this point
 		Network cppn = (Network) genotype.getPhenotype();
 		Genotype cppnOrDirect2ganGenotype = (CPPNOrDirectToGANGenotype) genotype;
-		//EitherOrGenotype.switchForms(cppnOrDirect2ganGenotype);
-		double[] inputMultipliers = new double[cppn.numInputs()];
-		System.out.println("! "+cppn.numInputs());
-		for(int i = 0;i<cppn.numInputs();i++) {
-			inputMultipliers[i] = 1.0;
-		}
-		
-		MarioCPPNtoGANVectorMatrixBuilder builder = new MarioCPPNtoGANVectorMatrixBuilder(cppn, inputMultipliers);
-		int height = MARIO_CPPN_TO_GAN_HEIGHT;
-		int width = Parameters.parameters.integerParameter("cppn2ganWidth");
+		double[] longResult = MarioCPPNtoGANLevelBreederTask.createLatentVectorFromCPPN(cppn, ArrayUtil.doubleOnes(cppn.numInputs()), Parameters.parameters.integerParameter("marioGANLevelChunks"));
 
-		int segmentLength = (GANProcess.latentVectorLength());
-		double[] longResult = new double[segmentLength*height*width];
-		for(int y = 0; y < height; y++) {
-			for(int x = 0; x < width; x++) {
-				System.out.println(x+", "+y);
-				System.out.println(" " +width+", "+height);
-				double[] vector = builder.latentVectorAndMiscDataForPosition(width, height, x, y);
-				
-				int nextIndex = vector.length*(y*height+x);
-				System.arraycopy(vector, 0, longResult, nextIndex, vector.length);
-				
-			}
-		}
 		BoundedRealValuedGenotype k = new BoundedRealValuedGenotype(longResult, MMNEAT.getLowerBounds(), MMNEAT.getUpperBounds());
 		//k.newInstance();
 		((EitherOrGenotype<TWEANN, ArrayList<Double>>) cppnOrDirect2ganGenotype).switchForms(k);
