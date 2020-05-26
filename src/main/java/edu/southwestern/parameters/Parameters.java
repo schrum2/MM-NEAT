@@ -356,7 +356,10 @@ public class Parameters {
 		integerOptions.add("zeldaGANLevelHeightChunks", 4, "Number of rooms per column of CPPN-GAN generated dungeons.");
 		integerOptions.add("zentangleTileDim", 48 , "The width and height in pixels of tiles used in a Zentangle");
 		integerOptions.add("zentanglePatternDim", 30 , "The width and height in tiles of patterns used in a Zentangle");		
-		integerOptions.add("zeldaVGLCWaterPMapCode", 5 , "Int code for the character P in VGLC representation of Zelda");		
+		integerOptions.add("zeldaVGLCWaterPMapCode", 5 , "Int code for the character P in VGLC representation of Zelda");
+		integerOptions.add("cppn2ganWidth", null, "the CPPN to GAN width chunks");
+		integerOptions.add("cppn2ganHeight", null, "the CPPN to GAN height chunks");
+
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
@@ -842,6 +845,7 @@ public class Parameters {
 		doubleOptions.add("weightBound", 50.0, "The bound for network weights used by SBX and polynomial mutation");
 		doubleOptions.add("healthDropRate", 20., "Health drop rate from enemies");
 		doubleOptions.add("bombDropRate", 40., "Bomb drop rate from enemies");
+		doubleOptions.add("indirectToDirectTransitionRate", 0.1, "chance of mutating from indirect to a direct genotype");
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
 		stringOptions.add("archetype", "", "Network that receives all mutations so as to keep other networks properly aligned");
@@ -898,7 +902,7 @@ public class Parameters {
 		stringOptions.add("utStudyTeammate", "", "The type of teammate agent for the 2018 human subject study: jude, ethan, native");
 		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
-		stringOptions.add("LodeRunnerGANModel", "netG_epoch_5000_0_10.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
+		stringOptions.add("LodeRunnerGANModel", "netG_epoch_10000_0_20NoSpawnTEMP.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
 		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");

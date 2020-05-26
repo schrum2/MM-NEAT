@@ -13,7 +13,6 @@ import java.util.Random;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
 import edu.southwestern.util.random.RandomNumbers;
@@ -247,6 +246,14 @@ public class ZeldaLevelUtil {
 		//System.out.println("Put key at " + x + ", " + y);
 		level.get(y).set(x, Tile.KEY.getNum()); 
 	}
+	/**
+	 * counts the distinct rooms in a dungeon
+	 * @param dungeon the dungeon
+	 * @param numRoomsReachable the number of rooms reachable
+	 * @param START that Start point
+	 * @param k a hash set to contain distinct rooms
+	 * @return numDistinctRooms the number of distinct rooms
+	 */
 	public static int countDiscreteRooms(Dungeon dungeon, int numRoomsReachable, Point START, /*ArrayList<ArrayList<Integer>> compareRooms,*/ HashSet<ArrayList<ArrayList<Integer>>> k) {
 		for(edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node room: dungeon.getLevels().values()) {
 			// TODO: This only applies to water/wall percentage calculation, not distinct room count
@@ -523,6 +530,9 @@ public class ZeldaLevelUtil {
 	 * @return visited, the points visited
 	 */
 	public static List<Point> getVisitedPoints(int x, int y, List<List<Integer>> intLevel) {
+		assert y >=0 && y < intLevel.size() : "y = "+y+ " not in bounds of "+intLevel;
+		assert x >=0 && x < intLevel.get(0).size() : "x = "+x+ " not in bounds of "+intLevel;
+		
 		List<Point> visited = new LinkedList<>();
 		Queue<Point> queue = new LinkedList<>();
 		queue.add(new Point(x, y));
@@ -534,6 +544,8 @@ public class ZeldaLevelUtil {
 				int dx = p.x + d.x;
 				int dy = p.y + d.y;
 				Point c = new Point(dx, dy);
+				assert dy >=0 && dy < intLevel.size() : "Move:"+m+" from "+p+": dy = "+dy+ " not in bounds of "+intLevel;
+				assert dx >=0 && dx < intLevel.get(0).size() : "Move:"+m+" from "+p+": dx = "+dx+ " not in bounds of "+intLevel;
 				Tile t = Tile.findNum(intLevel.get(dy).get(dx));
 				if(t.playerPassable() && !visited.contains(c))
 					queue.add(c);

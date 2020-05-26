@@ -1,8 +1,12 @@
 package edu.southwestern.tasks.interactive.gvgai;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,8 +18,10 @@ import java.util.List;
 import java.util.Random;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -154,7 +160,70 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				}
 			}
 		});
+		//JCheckBox k = new JCheckBox("zeldaCPPNtoGANAllowsPuzzleDoors", false);
+		
+		JPanel effectsCheckboxes = new JPanel();
+		effectsCheckboxes.setPreferredSize(new Dimension(300, 90));
+		effectsCheckboxes.setLayout(new FlowLayout());
+		JCheckBox puzzleDoor = new JCheckBox("PuzzleDoors", Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsPuzzleDoors"));
+		puzzleDoor.setName("zeldaCPPNtoGANAllowsPuzzleDoors");
+		puzzleDoor.addActionListener(new ActionListener() {
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("zeldaCPPNtoGANAllowsPuzzleDoors");
+				resetButtons(true);
+			}
+			
+		});
+		puzzleDoor.setForeground(new Color(0,0,0));
+		//zeldaCPPN2GANSparseKeys 
+		JCheckBox sparseKeys = new JCheckBox("SparseKeys", Parameters.parameters.booleanParameter("zeldaCPPN2GANSparseKeys"));
+		sparseKeys.setName("zeldaCPPN2GANSparseKeys");
+		sparseKeys.getAccessibleContext();
+		//sparseKeys.get
+		sparseKeys.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("zeldaCPPN2GANSparseKeys");
+				resetButtons(true);
+			}
+			
+		});
+		sparseKeys.setForeground(new Color(0,0,0));
+		JCheckBox allowRaft = new JCheckBox("AllowsRaft", Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft"));
+		allowRaft.setName("zeldaCPPN2GANAllowsRaft");
+		allowRaft.getAccessibleContext();
+		allowRaft.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int continueOption = JOptionPane.showConfirmDialog(null,"Warning! Changing this setting will reset the evolved population. Continue anyway?");
+				if(continueOption == 0) { //0 means user pressed yes
+					Parameters.parameters.changeBoolean("zeldaCPPNtoGANAllowsRaft");
+					MMNEAT.setNNInputParameters(ZeldaCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
+					reset();
+					resetButtons(true);
+				}else { //user pressed something other than yes
+					boolean changeTo = true;
+					if(allowRaft.isSelected()) changeTo=false;
+					allowRaft.setSelected(changeTo);
+				}
+			}
+			
+		});
+		allowRaft.setForeground(new Color(0,0,0));
+		effectsCheckboxes.add(sparseKeys);
+		effectsCheckboxes.add(allowRaft);
+		effectsCheckboxes.add(puzzleDoor);
+		top.add(effectsCheckboxes);
+		
+		
+		
+		
+		
+		
 		JPanel size = new JPanel();
 		size.setLayout(new GridLayout(2,1));
 		size.add(widthSlider);
@@ -299,7 +368,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	 * @returns String path to GAN model
 	 */
 	public String getGANModelDirectory() {
-		return "python"+File.separator+"GAN"+File.separator+"ZeldaGAN";
+		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"ZeldaGAN";
 	}
 
 	/**
@@ -390,6 +459,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				// Make a new room appear in dungeon
 				//enableRoomActivation(auxiliaryInformation);
 				presenceThreshold -= 0.01 * (numTries++); // Make rooms more likely to appear, each time more likelier
+				if(numTries == Parameters.parameters.integerParameter("dungeonGenerationFailChances")) {
+					System.out.println("Last chance for presenceThreshold");
+					presenceThreshold = Double.NEGATIVE_INFINITY; // All rooms present						
+				}
+				System.out.println("presenceThreshold = "+presenceThreshold);
 				// Force loop
 				unbeatable = true;
 			} catch(IllegalStateException e) {
@@ -409,7 +483,8 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				//MiscUtil.waitForReadStringAndEnterKeyPress();
 				//throw new IllegalStateException("Can't find a way to make this level beatable!");
 				System.out.println("Can't find a way to make this level beatable!");
-				return null;
+				assert dungeon != null : "No dungeon to return!"; 
+				return Parameters.parameters.booleanParameter("makeZeldaLevelsPlayable") ? null : dungeon;
 			}
 		} while(unbeatable);
 		return dungeon;
@@ -510,6 +585,10 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		for(int y = 0; y < levelGrid.length; y++) {
 			for(int x = 0; x < levelGrid[y].length; x++) {
 				if(levelGrid[y][x] != null) {
+					
+					assert levelGrid[y][x].intLevel.size() == GANProcess.ZELDA_OUT_HEIGHT : "Level is wrong height "+ levelGrid[y][x].intLevel;
+					assert levelGrid[y][x].intLevel.get(0).size() == GANProcess.ZELDA_OUT_WIDTH : "Level is wrong width "+ levelGrid[y][x].intLevel;
+					
 					String name = uuidLabels[y][x];
 					Node currentNode = dungeonInstance.getNode(name);
 					//adds door to adjacent room, sets up and down doors
@@ -645,20 +724,41 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 				if(auxiliaryInformation[y][x][INDEX_ROOM_PRESENCE] > presenceThreshold) { // Room presence threshold is 0: TODO: Make parameter?
 					levelAsListsGrid[y][x] = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVectorGrid[y][x]); //generates a single room 
 
-					//removes doors that are placed automatically by the GAN 
-					//helps to fix invalid door problem 
-					int door = Tile.DOOR.getNum(); // Is 3 
-					for(List<Integer> l : levelAsListsGrid[y][x]) {
-						//removes all door tiles and replaces them with wall tiles to avoid invalid doors
-						while(l.contains(door)) {
-							//System.out.println(l.indexOf(door));
-							int index = l.indexOf(door);
-							l.remove(l.indexOf(door));
-							l.add(index, 1);
-						}
+					//removes doors that are placed automatically by the GAN. 
+					//helps to fix invalid door problem.
+					//Also forces all surrounding edges of the room to be walls.
+					// Typically, GAN models force these tiles to be walls anyway, but there are weird exceptions that
+					// are fixed manually here.
+					
+					int wall = Tile.WALL.getNum();
+					// Top and bottom walls
+					int bottom = levelAsListsGrid[y][x].size();
+					for(int i = 0; i < levelAsListsGrid[y][x].get(0).size(); i++) {
+						// Top wall
+						levelAsListsGrid[y][x].get(0).set(i, wall);
+						levelAsListsGrid[y][x].get(1).set(i, wall);
+						// Bottom wall
+						levelAsListsGrid[y][x].get(bottom-2).set(i, wall);
+						levelAsListsGrid[y][x].get(bottom-1).set(i, wall);
 					}
+					
+					int right = levelAsListsGrid[y][x].get(0).size();
+					for(int i = 0; i < levelAsListsGrid[y][x].size(); i++) {
+						// Left wall
+						levelAsListsGrid[y][x].get(i).set(0, wall);
+						levelAsListsGrid[y][x].get(i).set(1, wall);
+						// Right wall
+						levelAsListsGrid[y][x].get(i).set(right-2, wall);
+						levelAsListsGrid[y][x].get(i).set(right-1, wall);
+					}					
 
-
+					assert levelAsListsGrid[y][x].size() == GANProcess.ZELDA_OUT_HEIGHT : "Level is wrong height "+ levelAsListsGrid[y][x];
+					assert levelAsListsGrid[y][x].get(0).size() == GANProcess.ZELDA_OUT_WIDTH : "Level is wrong width "+ levelAsListsGrid[y][x];
+					// All properly trained GAN models successfully keep the outer wall of each room. Assert that this is true
+					assert levelAsListsGrid[y][x].get(0).stream().allMatch(t -> t == Tile.WALL.getNum()) : "Top wall has non-wall characters: "+levelAsListsGrid[y][x].get(0)+"\n"+levelAsListsGrid[y][x];
+					assert levelAsListsGrid[y][x].get(1).stream().allMatch(t -> t == Tile.WALL.getNum()) : "Top wall has non-wall characters: "+levelAsListsGrid[y][x].get(1)+"\n"+levelAsListsGrid[y][x];
+					assert levelAsListsGrid[y][x].get(GANProcess.ZELDA_OUT_HEIGHT-2).stream().allMatch(t -> t == Tile.WALL.getNum()) : "Bottom wall has non-wall characters: "+levelAsListsGrid[y][x].get(GANProcess.ZELDA_OUT_HEIGHT-2)+"\n"+levelAsListsGrid[y][x];
+					assert levelAsListsGrid[y][x].get(GANProcess.ZELDA_OUT_HEIGHT-1).stream().allMatch(t -> t == Tile.WALL.getNum()) : "Bottom wall has non-wall characters: "+levelAsListsGrid[y][x].get(GANProcess.ZELDA_OUT_HEIGHT-1)+"\n"+levelAsListsGrid[y][x];
 				} else {
 					levelAsListsGrid[y][x] = null;
 				}

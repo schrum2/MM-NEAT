@@ -451,7 +451,9 @@ public abstract class ZeldaDungeon<T> {
 			for(int i = 0; i < levelThere.length; i++) {
 				for(int j = 0; j < levelThere[i].length; j++) {
 					if(levelThere[i][j] != null) {
+						//System.out.println("GETLEVELS !"+dungeonInstance.getLevels().toString());
 						Node n = dungeonInstance.getNodeAt(j, i);
+						
 						BufferedImage level = getButtonImage(n, ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4); //creates image rep. of level)
 						ImageIcon img = new ImageIcon(level.getScaledInstance(level.getWidth(), level.getHeight(), Image.SCALE_FAST)); //creates image of level
 						JLabel imageLabel = new JLabel(img); // places level on label
@@ -578,6 +580,7 @@ public abstract class ZeldaDungeon<T> {
 		public Level(List<List<Integer>> intLevel) {
 			this.intLevel = intLevel;
 			this.rougeTiles = TileUtil.listToTile(intLevel);
+			//intLevel.get(0).set(0, Tile.TRIFORCE.getNum());
 		}
 
 		public List<List<Integer>> getLevel(){

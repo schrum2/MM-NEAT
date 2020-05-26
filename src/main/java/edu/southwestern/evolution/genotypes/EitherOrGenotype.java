@@ -17,10 +17,7 @@ import java.util.List;
  * @param <Y> Second Genotype form
  */
 @SuppressWarnings("rawtypes")
-public class EitherOrGenotype<X,Y> implements Genotype {
-	// Have to store a copy of the first genotype used for newInstance method to work
-	private static Genotype original = null;
-
+public abstract class EitherOrGenotype<X,Y> implements Genotype {
 	private ArrayList<Long> parentIds;
 	protected Genotype current; // Could be X or Y
 	protected boolean firstForm;
@@ -34,10 +31,6 @@ public class EitherOrGenotype<X,Y> implements Genotype {
 	public EitherOrGenotype(Genotype genotype, boolean firstForm) {
 		current = genotype;
 		this.firstForm = firstForm;
-		if(original == null) {
-			if(!firstForm) throw new IllegalArgumentException("First EitherOrGenotype made must have first form");
-			original = current.copy();
-		}
 	}
 
 	@Override
@@ -51,27 +44,8 @@ public class EitherOrGenotype<X,Y> implements Genotype {
 	}
 
 	@Override
-	public Genotype copy() {
-		return new EitherOrGenotype<X,Y>(current.copy(), this.firstForm);
-	}
-
-	@Override
 	public void mutate() {
 		current.mutate();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public Genotype crossover(Genotype g) {
-		EitherOrGenotype<X,Y> other = (EitherOrGenotype<X,Y>) g;
-		// If both genotypes are at the same stage/are of the same type
-		if(firstForm == other.firstForm) {
-			// Do crossover
-			return current.crossover(other.current);
-		} else {
-			// Otherwise, just return other genotype without performing crossover
-			return other;
-		}
 	}
 
 	@Override
@@ -80,13 +54,24 @@ public class EitherOrGenotype<X,Y> implements Genotype {
 	}
 
 	@Override
-	public Genotype newInstance() {
-		return original.newInstance();
-	}
-
-	@Override
 	public long getId() {
 		return current.getId();
 	}
 
+	/**
+	 * Causes a transition to the second form
+	 * @param g Genotype that should be of the second form
+	 */
+	public void switchForms(Genotype<Y> g) {
+	    current = g;
+	    firstForm = false;
+	}
+	
+	public boolean getFirstForm() {
+		return firstForm;
+	}
+	
+	public Genotype getCurrentGenotype() { 
+		return current;
+	}
 }

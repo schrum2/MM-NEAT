@@ -288,7 +288,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						System.out.println("["+wallTileIndex+"]["+waterTileIndex+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
 
 						behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
-					} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels) {
+					} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels) { //alternate binning scheme
 						// TODO: Define a new scheme here that is similar but different.
 						
 						int maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
@@ -303,7 +303,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 						// Number of distinct rooms.
 						// Number of rooms backtracked through.
-						// Total number of rooms (same as before)
 						
 					}else {
 						throw new RuntimeException("A Valid Binning Scheme For Zelda Was Not Specified");
@@ -323,13 +322,13 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 							BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
 							BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
 							//sets the fileName, binPath, and fullName
-							String fileName = String.format("%7.5f", binScore) +"-"+ binLabels.get(binIndex) +"-"+ individual.getId() + ".png";
+							String fileName = String.format("%7.5f", binScore) +"-"+ individual.getId() + ".png";
 							String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
-							String fullName = binPath + File.separator + fileName;
+							String fullName = binPath + "-" + fileName;
 							System.out.println(fullName);
 							GraphicsUtil.saveImage(imagePlain, fullName);	
-							fileName = String.format("%7.5f", binScore) +"-"+ binLabels.get(binIndex) +"-"+ individual.getId() + "-solution.png";
-							fullName = binPath + File.separator + fileName;
+							fileName = String.format("%7.5f", binScore) +"-"+ individual.getId() + "-solution.png";
+							fullName = binPath + "-" + fileName;
 							System.out.println(fullName);
 							GraphicsUtil.saveImage(imagePath, fullName);	
 						}
