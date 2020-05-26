@@ -80,6 +80,8 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		
 		JPanel rulesAndBackbones = new JPanel();
 		rulesAndBackbones.setLayout(new BoxLayout(rulesAndBackbones, BoxLayout.Y_AXIS));
+		
+		
 		String[] ruleChoices = { "Standard", "Complex" };
 		JComboBox<String> ruleChoice = new JComboBox<String>(ruleChoices);
 		ruleChoice.setSize(40, 40);
@@ -107,7 +109,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		ruleLabel.setText("Grammar Rules: ");
 		rulePanel.add(ruleLabel);		
 		rulePanel.add(ruleChoice);
-		top.add(rulePanel);
+		//top.add(rulePanel);
 		
 		
 		String[] backboneChoices = { "Standard", "Simple", "Boring", "Interesting", "Raft Test" };
@@ -146,10 +148,11 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		backboneLabel.setText("Grammar backbones: ");
 		backbonePanel.add(backboneLabel);		
 		backbonePanel.add(backboneChoice);
-		top.add(backbonePanel);
+		//top.add(backbonePanel);
 		
+		rulesAndBackbones.add(rulePanel);
 		rulesAndBackbones.add(backbonePanel);
-		
+		top.add(rulesAndBackbones);
 		VGDLFactory.GetInstance().init(); // Get an instant of VGDL Factor and initialize the characters cache
 		VGDLRegistry.GetInstance().init(); // Get an instance of VGDL Registry and initialize the sprite factory
 	}
