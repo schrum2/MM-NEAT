@@ -1,11 +1,15 @@
 package edu.southwestern.tasks.interactive.loderunner;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
@@ -107,6 +111,18 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		//TODO: This should add a file to the game and allow the player to play it. 
 		//probably need a few helper methods, one to save to the right place, maybe we need to add a class/method that defaults to the level we pick from the 
 		//level breeder instead of the first level of the campaign that IceCreamYou has by default.  
+		//mark the empty locations, pick a random point from that for the spawn point 
+		Set<Point> emptySpaces = new HashSet<>();
+		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
+		List<List<Integer>> level = levelListRepresentation(doubleArray);
+		for(int i = 0; i < level.size(); i++) {
+			for(int j = 0; j < level.get(i).size(); j++) {
+				//only add if the tile is empty because we don't want to replace a tile that is already there 
+				if(level.get(j).get(i) == 0) { 
+					emptySpaces.add(new Point(j, i));
+				}
+			}
+		}
 	}
 
 	/**
