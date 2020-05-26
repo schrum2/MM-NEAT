@@ -216,9 +216,8 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	
 	@Override
 	public Dimension getMinimumSize() {
-		//changed this from the original because we needed to be able to change the dimensions to load in our levels
-		//originally it was hard coded to be 600x600 
-		return new Dimension(WIDTH,HEIGHT); 
+		//changed from the original because the levels we are bringing dont fit in the window for IceCreamYou, original was 600x600 
+		return new Dimension(960,880); 
 	}
 	@Override
 	public Dimension getPreferredSize() {
