@@ -13,11 +13,16 @@ import org.apache.commons.lang.StringUtils;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
+import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
+import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
+import edu.southwestern.evolution.genotypes.EitherOrGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.log.MMNEATLog;
+import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.zelda.ZeldaCPPNOrDirectToGANDungeonTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
@@ -29,6 +34,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private boolean io;
 	private MMNEATLog archiveLog = null; // Archive elite scores
 	private MMNEATLog fillLog = null; // Archive fill amount
+	private MMNEATLog cppnThenDirectLog = null;
+	//private MMNEATLog directLog = null;
 	private LonerTask<T> task;
 	private Archive<T> archive;
 	private boolean mating;
@@ -36,6 +43,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private int iterations;
 	private int iterationsWithoutElite;
 	private int individualsPerGeneration;
+
 	
 	public BinLabels getBinLabelsClass() {
 		return archive.getBinLabelsClass();
@@ -51,6 +59,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Logging in RAW mode so that can append to log file on experiment resume
 			archiveLog = new MMNEATLog(infix, false, false, false, true); 
 			fillLog = new MMNEATLog("Fill", false, false, false, true);
+			
+			cppnThenDirectLog = new MMNEATLog("cppnToDirect", false, false, false, true);
+
 			// Create gnuplot file for archive log
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
@@ -160,6 +171,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 */
 	private void log() {
 		if(io && iterations % individualsPerGeneration == 0) {
+			int numCPPN = 0;
+			int numDirect = 0;
 			// When all iterations were logged, the file got too large
 			//log.log(iterations + "\t" + iterationsWithoutElite + "\t" + StringUtils.join(ArrayUtils.toObject(archive.getEliteScores()), "\t"));
 			// Just log every "generation" instead
@@ -167,6 +180,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			archiveLog.log((iterations/individualsPerGeneration) + "\t" + StringUtils.join(elite, "\t"));
 			// Exclude negative infinity to find out how many bins are filled
 			fillLog.log((iterations/individualsPerGeneration) + "\t" + (elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite)));
+			if(MMNEAT.genotype instanceof EitherOrGenotype) {
+				ArrayList<Genotype<T>> pop = getPopulation();
+				for(Genotype<T> k: pop) {
+					boolean tweann =((CPPNOrDirectToGANGenotype) k).getFirstForm();
+					if(tweann) numCPPN++;
+					else numDirect++;
+					
+				}
+								
+			}
+			cppnThenDirectLog.log((iterations/individualsPerGeneration)+"\t"+numCPPN+", "+numDirect);
 		}
 	}
 	
