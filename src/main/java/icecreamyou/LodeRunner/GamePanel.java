@@ -213,9 +213,12 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 		}
 	}
 	
+	
 	@Override
 	public Dimension getMinimumSize() {
-		return new Dimension(WIDTH,HEIGHT);
+		//changed this from the original because we needed to be able to change the dimensions to load in our levels
+		//originally it was hard coded to be 600x600 
+		return new Dimension(WIDTH,HEIGHT); 
 	}
 	@Override
 	public Dimension getPreferredSize() {
@@ -558,6 +561,12 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 				win();
 				return;
 			}
+		}
+		//added this to the original code because the levels we load in do not have portals so 
+		//we set it to the goal being to get all of the gold instead of getting to the portal to win 
+		if(level.portal == null && noCoinsLeft()) {
+			win();
+			return;
 		}
 		
 		// Process enemies.

@@ -88,15 +88,15 @@ public class Level {
 		}
 	}
 	
-	public Level(String name, List<List<Integer>> level) {
-		this.name = name;
-		String[] lines = null;
-		for (String line : lines) {
-			if (line == null || line.equals(""))
-				continue;
-			add(line);
-		}
-	}
+//	public Level(String name, List<List<Integer>> level) {
+//		this.name = name;
+//		String[] lines = null;
+//		for (String line : lines) {
+//			if (line == null || line.equals(""))
+//				continue;
+//			add(line);
+//		}
+//	}
 	
 	/**
 	 * Draw everything in a level.
