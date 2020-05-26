@@ -100,7 +100,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 
 				}
 				//reset buttons
-				resetButtons(true);
+				//resetButtons(true); // Not needed, since rooms are the same ... only dungeon generation changes.
 			}
 			});
 		JPanel rulePanel = new JPanel();
@@ -139,7 +139,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 
 				}
 				//reset buttons
-				resetButtons(true);
+				//resetButtons(true); // Not needed, since rooms are the same ... only dungeon generation changes.
 			}
 			});
 		JPanel backbonePanel = new JPanel();
