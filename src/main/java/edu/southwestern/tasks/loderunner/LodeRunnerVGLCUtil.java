@@ -14,6 +14,7 @@ public class LodeRunnerVGLCUtil {
 	public static final String LODE_RUNNER_LEVEL_PATH = "data/VGLC/Lode Runner/Processed/";
 	public static final int LODE_RUNNER_COLUMNS = 32; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int LODE_RUNNER_ROWS = 22; // Equivalent to width in original game
+	public static final int ICE_CREAM_YOU_SIZE = 600; // the width and height of the ice cream you levels 
 	
 	/**
 	 * Converts all the levels in the VGLC to JSON form 
@@ -142,6 +143,11 @@ public class LodeRunnerVGLCUtil {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param fileName
+	 * @return A string that holds the entire level in the correct format
+	 */
 	public static String convertLodeRunnerVGLCtoIceCreamYou(String fileName) {
 		String[] level = new IO().readFile(fileName);
 		String playFormat = "";
@@ -159,24 +165,32 @@ public class LodeRunnerVGLCUtil {
 		return playFormat;
 	}
 	
+	/**
+	 * Converts a tile from the VGLC to be playable in IceCreamYou
+	 * TODO: Fix the scaling!!!!!!!!!! this is an ugly hack. 
+	 * @param tile Tile from VGLC 
+	 * @param x X coordinate
+	 * @param y Y coordinate 
+	 * @return A string that represents the specified tile in IceCreamYou format 
+	 */
 	private static String convertLodeRunnerTileVGLCtoIceCreamYou(char tile, int x, int y) {
 		switch(tile) {
 		case '.':
 			return "";
 		case 'M': 
-			return "player:"+x+","+y+",1\n";
+			return "player:"+y*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_ROWS)+",1\n";
 		case 'B'://regular ground, solid
-			return "solid:"+x+","+y+"\n";
+			return "solid:"+y*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_ROWS)+"\n";
 		case 'b': //diggable ground, solid 
-			return "diggable:"+x+","+y+"\n";
+			return "diggable:"+y*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_ROWS)+"\n";
 		case '#': //ladder, passable, climbable
-			return "ladder:"+x+","+y+"\n";
+			return "ladder:"+y*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_ROWS)+"\n";
 		case '-': //rope, passable, climbable
-			return "bar:"+x+","+y+"\n"; 
+			return "bar:"+y*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_ROWS)+"\n"; 
 		case 'E': //enemy, damaging 
-			return "enemy:"+x+","+y+"\n";
+			return "enemy:"+y*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_ROWS)+"\n";
 		case 'G': //gold, passable, pickupable
-			return "coin:"+x+","+y+"\n"; 
+			return "coin:"+y*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_SIZE/LODE_RUNNER_ROWS)+"\n"; 
 		default:
 			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
 		}
