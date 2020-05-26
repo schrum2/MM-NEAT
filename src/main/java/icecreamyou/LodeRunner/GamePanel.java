@@ -15,9 +15,10 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	private static final long serialVersionUID = -6163550764769049810L;
 
 	/**
-	 * The width and height of the Panel.
+	 * The width and height of the Panel. 
+	 * We changed this from 600x600 to allow for us to load in our own levels 
 	 */
-	public static final int WIDTH = 600, HEIGHT = 600;
+	public static final int WIDTH = 960, HEIGHT = 880;
 	/**
 	 * The width and height of each unit in the Panel.
 	 * Units are basically squares on a grid. Every WorldNode is one square
@@ -212,9 +213,12 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 		}
 	}
 	
+	
 	@Override
 	public Dimension getMinimumSize() {
-		return new Dimension(600,600);
+		//changed this from the original because we needed to be able to change the dimensions to load in our levels
+		//originally it was hard coded to be 600x600 
+		return new Dimension(WIDTH,HEIGHT); 
 	}
 	@Override
 	public Dimension getPreferredSize() {
@@ -557,6 +561,12 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 				win();
 				return;
 			}
+		}
+		//added this to the original code because the levels we load in do not have portals so 
+		//we set it to the goal being to get all of the gold instead of getting to the portal to win 
+		if(level.portal == null && noCoinsLeft()) {
+			win();
+			return;
 		}
 		
 		// Process enemies.

@@ -2,6 +2,7 @@ package icecreamyou.LodeRunner;
 import java.awt.Graphics;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -86,6 +87,16 @@ public class Level {
 			add(line);
 		}
 	}
+	
+//	public Level(String name, List<List<Integer>> level) {
+//		this.name = name;
+//		String[] lines = null;
+//		for (String line : lines) {
+//			if (line == null || line.equals(""))
+//				continue;
+//			add(line);
+//		}
+//	}
 	
 	/**
 	 * Draw everything in a level.
