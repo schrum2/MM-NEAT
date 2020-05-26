@@ -21,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -43,6 +44,7 @@ import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.zelda.ZeldaCPPNtoGANVectorMatrixBuilder;
 import edu.southwestern.tasks.zelda.ZeldaGANVectorMatrixBuilder;
+import edu.southwestern.util.MiscUtil;
 //import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import me.jakerg.rougelike.RougelikeApp;
@@ -191,8 +193,29 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			
 		});
 		sparseKeys.setForeground(new Color(0,0,0));
-		effectsCheckboxes.add(sparseKeys);
+		JCheckBox allowRaft = new JCheckBox("AllowsRaft", Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsRaft"));
+		allowRaft.setName("zeldaCPPN2GANAllowsRaft");
+		allowRaft.getAccessibleContext();
+		allowRaft.addActionListener(new ActionListener(){
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int continueOption = JOptionPane.showConfirmDialog(null,"Warning! Changing this setting will reset the evolved population. Continue anyway?");
+				if(continueOption == 0) { //0 means user pressed yes
+					Parameters.parameters.changeBoolean("zeldaCPPNtoGANAllowsRaft");
+					resetButtons(true);
+
+				}else { //user pressed something other than yes
+					boolean changeTo = true;
+					if(allowRaft.isSelected()) changeTo=false;
+					allowRaft.setSelected(changeTo);
+				}
+			}
+			
+		});
+		allowRaft.setForeground(new Color(0,0,0));
+		effectsCheckboxes.add(sparseKeys);
+		effectsCheckboxes.add(allowRaft);
 		effectsCheckboxes.add(puzzleDoor);
 		top.add(effectsCheckboxes);
 		
