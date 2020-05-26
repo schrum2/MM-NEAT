@@ -13,16 +13,12 @@ import org.apache.commons.lang.StringUtils;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
-import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
-import edu.southwestern.evolution.genotypes.EitherOrGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.log.MMNEATLog;
-import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
-import edu.southwestern.tasks.zelda.ZeldaCPPNOrDirectToGANDungeonTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
@@ -180,7 +176,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			archiveLog.log((iterations/individualsPerGeneration) + "\t" + StringUtils.join(elite, "\t"));
 			// Exclude negative infinity to find out how many bins are filled
 			fillLog.log((iterations/individualsPerGeneration) + "\t" + (elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite)));
-			if(MMNEAT.genotype instanceof EitherOrGenotype) {
+			if(MMNEAT.genotype instanceof CPPNOrDirectToGANGenotype) {
 				ArrayList<Genotype<T>> pop = getPopulation();
 				for(Genotype<T> k: pop) {
 					boolean tweann =((CPPNOrDirectToGANGenotype) k).getFirstForm();
