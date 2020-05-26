@@ -15,16 +15,17 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	private static final long serialVersionUID = -6163550764769049810L;
 
 	/**
-	 * The width and height of the Panel.
+	 * The width and height of the Panel. 
+	 * We changed this from 600x600 to allow for us to load in our own levels 
 	 */
-	public static final int WIDTH = 960, HEIGHT = 660;
+	public static final int WIDTH = 960, HEIGHT = 880;
 	/**
 	 * The width and height of each unit in the Panel.
 	 * Units are basically squares on a grid. Every WorldNode is one square
 	 * unit. The level editor only allows placing WorldNodes at exact unit
 	 * locations.
 	 */
-	public static final int UNIT_HEIGHT = 30, UNIT_WIDTH = 30;
+	public static final int UNIT_HEIGHT = 40, UNIT_WIDTH = 30;
 
 	/**
 	 * The minimum amount of time between each run of the main game loop.

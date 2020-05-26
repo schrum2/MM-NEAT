@@ -16,7 +16,7 @@ public class LodeRunnerVGLCUtil {
 	public static final int LODE_RUNNER_COLUMNS = 32; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int LODE_RUNNER_ROWS = 22; // Equivalent to width in original game
 	public static final int ICE_CREAM_YOU_WIDTH = 960;
-	public static final int ICE_CREAM_YOU_HEIGHT = 660;
+	public static final int ICE_CREAM_YOU_HEIGHT = 880;
 	
 	/**
 	 * Converts all the levels in the VGLC to JSON form 
