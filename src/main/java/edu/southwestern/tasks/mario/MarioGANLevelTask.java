@@ -43,6 +43,10 @@ public class MarioGANLevelTask extends MarioLevelTask<ArrayList<Double>> {
 	@Override
 	public ArrayList<List<Integer>> getMarioLevelListRepresentationFromGenotype(Genotype<ArrayList<Double>> individual) {
 		ArrayList<Double> latentVector = individual.getPhenotype();
+		return getMarioLevelListRepresentationFromStaticGenotype(latentVector);
+	}
+
+	public static ArrayList<List<Integer>> getMarioLevelListRepresentationFromStaticGenotype(ArrayList<Double> latentVector) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
 		ArrayList<List<Integer>> level = MarioGANUtil.generateLevelListRepresentationFromGAN(doubleArray);
 		return level;

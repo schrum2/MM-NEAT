@@ -18,7 +18,7 @@ import edu.southwestern.tasks.zelda.ZeldaCPPNtoGANVectorMatrixBuilder;
 import edu.southwestern.tasks.zelda.ZeldaDirectGANVectorMatrixBuilder;
 import edu.southwestern.util.datastructures.Pair;
 
-public class ConvertCPPN2GANtoDirect2GANMutationTest {
+public class ConvertZeldaCPPN2GANtoDirect2GANMutationTest {
 	CPPNOrDirectToGANGenotype tg;
 	CPPNOrDirectToGANGenotype tg1;
 	@Before
@@ -61,7 +61,7 @@ public class ConvertCPPN2GANtoDirect2GANMutationTest {
 		StringBuilder sb = new StringBuilder();
 		//sb.append(this.getId());
 		sb.append(" ");
-		new ConvertCPPN2GANtoDirect2GANMutation().go(tg, sb);
+		new ConvertZeldaCPPN2GANtoDirect2GANMutation().go(tg, sb);
 		ArrayList<Double> m = (ArrayList<Double>) tg.getPhenotype();
 		double[] a = new double[m.size()];
 		for(int i = 0;i<m.size();i++) {

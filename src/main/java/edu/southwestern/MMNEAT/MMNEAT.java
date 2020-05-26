@@ -78,6 +78,7 @@ import edu.southwestern.tasks.interactive.loderunner.LodeRunnerGANLevelBreederTa
 import edu.southwestern.tasks.interactive.mario.MarioCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.mario.MarioGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.mario.MarioLevelBreederTask;
+import edu.southwestern.tasks.mario.MarioCPPNOrDirectToGANLevelTask;
 import edu.southwestern.tasks.mario.MarioCPPNtoGANLevelTask;
 import edu.southwestern.tasks.mario.MarioGANLevelTask;
 import edu.southwestern.tasks.mario.MarioLevelTask;
@@ -715,7 +716,7 @@ public class MMNEAT {
 				System.out.println("Set up Mario Task");
 			} else if (task instanceof MarioLevelTask) {
 				GANProcess.type = GANProcess.GAN_TYPE.MARIO;
-				if(task instanceof MarioCPPNtoGANLevelTask) {
+				if(task instanceof MarioCPPNtoGANLevelTask|| task instanceof MarioCPPNOrDirectToGANLevelTask) {
 					// Evolving CPPNs that create latent vectors that are sent to a GAN
 					setNNInputParameters(MarioCPPNtoGANLevelBreederTask.UPDATED_INPUTS.length, GANProcess.latentVectorLength());
 				} else {
