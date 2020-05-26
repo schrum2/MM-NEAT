@@ -27,7 +27,7 @@ public class LodeRunnerVGLCUtil {
 //			levelSet.add(levelList); //adds the converted list to the set for the level 
 //		}
 //		System.out.println(levelSet); //prints converted JSON files to the console 
-		String level = convertLodeRunnerVGLCtoIceCreamYou(LODE_RUNNER_LEVEL_PATH+ "Level 1.txt");
+		String level = convertLodeRunnerVGLCtoIceCreamYou(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
 		System.out.println(level);
 	}
 
@@ -162,8 +162,9 @@ public class LodeRunnerVGLCUtil {
 	private static String convertLodeRunnerTileVGLCtoIceCreamYou(char tile, int x, int y) {
 		switch(tile) {
 		case '.':
-		case 'M': 
 			return "";
+		case 'M': 
+			return "player:"+x+","+y+",1\n";
 		case 'B'://regular ground, solid
 			return "solid:"+x+","+y+"\n";
 		case 'b': //diggable ground, solid 
