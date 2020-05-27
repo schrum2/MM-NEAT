@@ -220,6 +220,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	 */
 	public abstract double totalPassableDistance(EvaluationInfo info);
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		EvaluationInfo info = null;
@@ -264,30 +265,17 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		double percentLevelPassed = info == null ? 0 : distancePassed / totalPassableDistance(info);
 		double time = info == null ? 0 : info.timeSpentOnLevel;
 		double jumps = info == null ? 0 : info.jumpActionsPerformed;
-		int numDisctinctSegments;
+		int numDistinctSegments;
+		//put each segment into a HashSet to see if it's  distinct
 		HashSet<ArrayList<List<Integer>>> k = new HashSet<ArrayList<List<Integer>>>();
-
-		ArrayList<List<Integer>> compareSegments = new ArrayList<List<Integer>>();
-
-		for(int x = 0; x < oneLevel.size() ; x++) {
-			ArrayList<Integer> a = new ArrayList<Integer>();
-
-			for(int y = 0; y < oneLevel.get(0).size() ; y++) {
-				Integer tile = oneLevel.get(y).get(x);
-				if(tile == MarioLevelUtil.SPIKY_INDEX||
-						tile == MarioLevelUtil.GOOMBA_INDEX||
-						tile==MarioLevelUtil.GREEN_KOOPA_INDEX||
-						tile==MarioLevelUtil.RED_KOOPA_INDEX||
-						tile==MarioLevelUtil.WINGED_INDEX) {
-					a.add(MarioLevelUtil.PRESENT_INDEX);
-				}else {
-					a.add(tile);
-				}
-			}
-			compareSegments.add(a);
-		}
-		k.add(compareSegments);
-		numDisctinctSegments = k.size();
+        ArrayList<ArrayList<List<Integer>>> levelWithParsedSegments = MarioLevelUtil.getSegmentsFromLevel(oneLevel, SEGMENT_WIDTH_IN_BLOCKS);
+        //int numSegments = 0;
+        for(ArrayList<List<Integer>> segment : levelWithParsedSegments) {
+        	k.add(segment);
+        	//numSegments++;
+        }
+//		int numSegments = levelWithParsedSegments.size();
+		numDistinctSegments = k.size();
 
 		
 		
@@ -453,10 +441,10 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			fitnesses.add(RandomNumbers.fullSmallRand());
 		}
 		if(Parameters.parameters.booleanParameter("marioDistinctSegmentFitness")) {
-			fitnesses.add(new Double(numDisctinctSegments));
+			fitnesses.add(new Double(numDistinctSegments));
 		}
 		// Could conceivably also be used for behavioral diversity instead of map elites, but this would be a weird behavior vector from a BD perspective
-		if(MMNEAT.ea instanceof MAPElites) {
+		if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDecorNSAndLeniencyBinLabels) {
 			// Assign to the behavior vector before using MAP-Elites
 			double leniencySum = sumStatScore(lastLevelStats, LENIENCY_STAT_INDEX);
 			double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
@@ -485,7 +473,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			// Saving map elites bin images
 			if(CommonConstants.netio) {
 				System.out.println("Save archive images");
-				@SuppressWarnings("unchecked")
+//				@SuppressWarnings("unchecked")
 				Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
 				List<String> binLabels = archive.getBinMapping().binLabels();
 
@@ -500,6 +488,51 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 					GraphicsUtil.saveImage(levelImage, fullName);	
 				}
 			}
+		}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistNSAndLeniencyBinLabels) {
+			double leniencySum = sumStatScore(lastLevelStats, LENIENCY_STAT_INDEX);
+			//double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
+			double negativeSpaceSum = sumStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
+			
+			final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("marioGANLevelChunks");
+			// Scale scores so that we are less likely to overstep the bounds of the bins
+			final double DISTINCT_SCALE = 3;
+			final double NEGATIVE_SPACE_SCALE = 3;
+			
+			int leniencyBinIndex = Math.min(Math.max((int)((leniencySum*(BINS_PER_DIMENSION/2)+0.5)*BINS_PER_DIMENSION),0), BINS_PER_DIMENSION-1);
+			int distinctSegmentsBinIndex = Math.min((int)(numDistinctSegments*DISTINCT_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
+			int negativeSpaceBinIndex = Math.min((int)(negativeSpaceSum*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
+			
+			// Row-major order lookup in 3D archive
+			int binIndex = (distinctSegmentsBinIndex*BINS_PER_DIMENSION + negativeSpaceBinIndex)*BINS_PER_DIMENSION + leniencyBinIndex;
+			double[] archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
+			Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
+			double binScore = simpleAStarDistance;
+			archiveArray[binIndex] = binScore; // Percent rooms traversed
+
+			System.out.println("["+distinctSegmentsBinIndex+"]["+negativeSpaceBinIndex+"]["+leniencyBinIndex+"] = "+binScore);
+
+			behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
+
+			// Saving map elites bin images
+			if(CommonConstants.netio) {
+				System.out.println("Save archive images");
+//				@SuppressWarnings("unchecked")
+				Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+				List<String> binLabels = archive.getBinMapping().binLabels();
+
+				// Index in flattened bin array
+				Score<T> elite = archive.getElite(binIndex);
+				// If the bin is empty, or the candidate is better than the elite for that bin's score
+				if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
+					String fileName = String.format("%7.5f", binScore) +"-"+ binLabels.get(binIndex) +"-("+numDistinctSegments+","+negativeSpaceSum+","+leniencySum+")-"+ individual.getId() + ".png";
+					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
+					String fullName = binPath + File.separator + fileName;
+					System.out.println(fullName);
+					GraphicsUtil.saveImage(levelImage, fullName);	
+				}
+			}
+		}else {
+			throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
 		}
 		
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);

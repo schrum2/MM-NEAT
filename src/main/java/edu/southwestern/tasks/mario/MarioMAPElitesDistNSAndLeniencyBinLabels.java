@@ -6,7 +6,7 @@ import java.util.List;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.Parameters;
 
-public class MarioMAPElitesBinLabels implements BinLabels {
+public class MarioMAPElitesDistNSAndLeniencyBinLabels implements BinLabels {
 	
 	List<String> labels = null;
 		
@@ -20,7 +20,7 @@ public class MarioMAPElitesBinLabels implements BinLabels {
 			for(int i = 0; i < BINS_PER_DIMENSION; i++) { // Decoration
 				for(int j = 0; j < BINS_PER_DIMENSION; j++) { // Negative Space
 					for(int r = -(BINS_PER_DIMENSION/2); r < BINS_PER_DIMENSION/2; r++) { // Leniency allows negative range
-						labels.add("Decoration["+i+"0-"+(i+1)+"0]NS["+j+"0-"+(j+1)+"0]Leniency["+r+"0-"+(r+1)+"0]");
+						labels.add("DistinctSegments["+i+"0-"+(i+1)+"0]NS["+j+"0-"+(j+1)+"0]Leniency["+r+"0-"+(r+1)+"0]");
 					}
 				}
 			}
