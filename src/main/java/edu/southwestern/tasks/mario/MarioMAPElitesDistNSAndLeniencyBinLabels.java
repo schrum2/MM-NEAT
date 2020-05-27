@@ -15,12 +15,12 @@ public class MarioMAPElitesDistNSAndLeniencyBinLabels implements BinLabels {
 		if(labels == null) { // Create once and re-use, but wait until after Parameters are loaded	
 			final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("marioGANLevelChunks");
 			
-			int size = BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION;
+			int size = (BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION;
 			labels = new ArrayList<String>(size);
-			for(int i = 0; i < BINS_PER_DIMENSION; i++) { // Decoration
+			for(int i = 0; i <= BINS_PER_DIMENSION; i++) { // Distinct Segments
 				for(int j = 0; j < BINS_PER_DIMENSION; j++) { // Negative Space
 					for(int r = -(BINS_PER_DIMENSION/2); r < BINS_PER_DIMENSION/2; r++) { // Leniency allows negative range
-						labels.add("DistinctSegments["+i+"0-"+(i+1)+"0]NS["+j+"0-"+(j+1)+"0]Leniency["+r+"0-"+(r+1)+"0]");
+						labels.add("DistinctSegments["+i+"]NS["+j+"0-"+(j+1)+"0]Leniency["+r+"0-"+(r+1)+"0]");
 					}
 				}
 			}
