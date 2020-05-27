@@ -82,7 +82,8 @@ public class GANProcess extends Comm {
 				break;
 			case LODE_RUNNER:
 				ganProcess = new GANProcess(PYTHON_BASE_PATH+"LodeRunnerGAN"+ File.separator + Parameters.parameters.stringParameter("LodeRunnerGANModel"), 
-						Parameters.parameters.integerParameter("GANInputSize"), LodeRunnerGANUtil.LODE_RUNNER_TILE_NUMBER,
+						Parameters.parameters.integerParameter("GANInputSize"), 
+						Parameters.parameters.stringParameter("LodeRunnerGANModel").startsWith("LodeRunnerEpochOneGround") ? LodeRunnerGANUtil.LODE_RUNNER_ONE_GROUND_TILE_NUMBER : LodeRunnerGANUtil.LODE_RUNNER_ALL_GROUND_TILE_NUMBER,
 						LODE_RUNNER_OUT_WIDTH, LODE_RUNNER_OUT_HEIGHT);
 				break;
 			}
