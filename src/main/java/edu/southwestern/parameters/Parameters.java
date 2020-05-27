@@ -378,6 +378,7 @@ public class Parameters {
 		booleanOptions.add("marioLevelMatchFitness", false, "Mario level evolves to match a specific input level");
 		booleanOptions.add("marioProgressPlusJumpsFitness", true, "Mario Progress Plus Jumps Fitness included");
 		booleanOptions.add("marioProgressPlusTimeFitness", false, "Mario Progress Plus Time Fitness included");
+		booleanOptions.add("marioDistinctSegmentFitness", false, "Mario level evolves to encourage distinct segments");
 		booleanOptions.add("marioRandomFitness", false, "Mario levels evolved with random fitness");
 		booleanOptions.add("makeZeldaLevelsPlayable", true, "Use A* to check that Zelda dungeons are beatable and modify if needed");
 		booleanOptions.add("saveAllInteractiveGANData", true, "Save latent vectors, generated levels, etc.");
