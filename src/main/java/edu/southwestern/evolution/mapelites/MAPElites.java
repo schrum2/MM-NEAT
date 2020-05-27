@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Vector;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,7 +28,6 @@ import edu.southwestern.util.random.RandomNumbers;
 import wox.serial.Easy;
 
 public class MAPElites<T> implements SteadyStateEA<T> {
-
 	private boolean io;
 	private MMNEATLog archiveLog = null; // Archive elite scores
 	private MMNEATLog fillLog = null; // Archive fill amount
@@ -175,35 +175,34 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Just log every "generation" instead
 			Float[] elite = ArrayUtils.toObject(archive.getEliteScores());
 			archiveLog.log((iterations/individualsPerGeneration) + "\t" + StringUtils.join(elite, "\t"));
-//			Float[] eliteProper = new Float[elite.length];
-//			for(float p : elite) {
-//				
-//			}
+
 			// Exclude negative infinity to find out how many bins are filled
 			fillLog.log((iterations/individualsPerGeneration) + "\t" + (elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite)));
-			Integer[] eliteProper = new Integer[elite.length];
-			Arrays.fill(eliteProper, -1);
-			int i = 0;
-			if(MMNEAT.genotype instanceof CPPNOrDirectToGANGenotype) {
-				ArrayList<Genotype<T>> pop = getPopulation();
-				for(Genotype<T> k: pop) {
-					boolean tweann =((CPPNOrDirectToGANGenotype) k).getFirstForm();
-					if(tweann) {
-						numCPPN++;
-						eliteProper[i] = 1; //number for CPPN
-					}
-					else {
-						numDirect++;
-						eliteProper[i] = 2; //number for Direct
-					}
-					
-					i++;
-				}
-								
-			}
-			
-			cppnThenDirectLog.log((iterations/individualsPerGeneration)+"\t"+numCPPN+", "+numDirect);
 			if(cppnThenDirectLog!=null) {
+				Integer[] eliteProper = new Integer[elite.length];
+				//Arrays.fill(eliteProper, -1);
+				int i = 0;
+				if(MMNEAT.genotype instanceof CPPNOrDirectToGANGenotype) {
+					Vector<Score<T>> population = archive.archive;
+					//ArrayList<Genotype<T>> pop = getPopulation(); //archive vector ArrayList<Score> pop = Archive.getArchive();
+					for(Score<T> p : population) {
+						boolean tweann = ((CPPNOrDirectToGANGenotype) p.individual).getFirstForm();		
+						if(p.individual==null) eliteProper[i]=-1; //if bin is empty
+						else if(tweann) {
+							numCPPN++;
+							eliteProper[i] = 1; //number for CPPN
+						}else {
+							numDirect++;
+							eliteProper[i] = 2; //number for Direct
+						}
+						i++;
+
+					}
+								
+				}
+				//in archive class, archive variable (vector)
+				cppnThenDirectLog.log((iterations/individualsPerGeneration)+"\t"+numCPPN+"\t"+numDirect);
+			
 				cppnVsDirectFitnessLog.log((iterations/individualsPerGeneration) +"\t"+ StringUtils.join(eliteProper, "\t"));
 			}
 		}
