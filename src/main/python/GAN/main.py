@@ -250,7 +250,7 @@ for epoch in range(opt.niter):
 
             im = combine_images( tiles2image( np.argmax( im, axis = 1) ) )
 
-            plt.imsave('{0}/mario_fake_samples_{1}.png'.format(opt.experiment, gen_iterations), im)
+            plt.imsave('{0}/fake_samples_{1}.png'.format(opt.experiment, gen_iterations), im)
             torch.save(netG.state_dict(), '{0}/netG_epoch_{1}_{2}_{3}.pth'.format(opt.experiment, gen_iterations, opt.problem, opt.nz))
 
     # do checkpointing

@@ -27,6 +27,16 @@ import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
 import wox.serial.Easy;
 
+/**
+ * My version of Multi-dimensional Archive of Phenotypic Elites (MAP-Elites), the quality diversity (QD)
+ * algorithms that illuminates a search space. This is an unusual implementation, but it gets the job done.
+ * 
+ * MAP Elites article: https://arxiv.org/abs/1504.04909
+ * 
+ * @author schrum2
+ *
+ * @param <T> phenotype
+ */
 public class MAPElites<T> implements SteadyStateEA<T> {
 	private boolean io;
 	private MMNEATLog archiveLog = null; // Archive elite scores
@@ -41,7 +51,6 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private int iterationsWithoutElite;
 	private int individualsPerGeneration;
 
-	
 	public BinLabels getBinLabelsClass() {
 		return archive.getBinLabelsClass();
 	}
@@ -56,9 +65,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Logging in RAW mode so that can append to log file on experiment resume
 			archiveLog = new MMNEATLog(infix, false, false, false, true); 
 			fillLog = new MMNEATLog("Fill", false, false, false, true);
-			
+			// Can't check MMNEAT.genotype since MMNEAT.ea is initialized before MMNEAT.genotype
+			if(Parameters.parameters.classParameter("genotype").equals(CPPNOrDirectToGANGenotype.class)) {
 			cppnThenDirectLog = new MMNEATLog("cppnToDirect", false, false, false, true);
 			cppnVsDirectFitnessLog = new MMNEATLog("cppnVsDirectFitness", false, false, false, true);
+			}
 			// Create gnuplot file for archive log
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
@@ -89,12 +100,18 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				// Fill percentage plot
 				ps = new PrintStream(fillPlot);
 				ps.println("set term pdf enhanced");
-				ps.println("unset key");
+				//ps.println("unset key");
+				ps.println("set key bottom right");
 				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 				ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration) +"]");
 				ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
 				ps.println("set output \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".pdf\"");
-				ps.println("plot \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".txt\" u 1:2 w linespoints");
+				String name = fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.'));
+				ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\"" + (cppnThenDirectLog != null ? ", \\" : ""));
+				if(cppnThenDirectLog != null) { // Print CPPN and direct counts on same plot
+					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
+					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
+				}
 				ps.close();
 				
 			} catch (FileNotFoundException e) {
@@ -180,11 +197,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			fillLog.log((iterations/individualsPerGeneration) + "\t" + (elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite)));
 			if(cppnThenDirectLog!=null) {
 				Integer[] eliteProper = new Integer[elite.length];
-				//Arrays.fill(eliteProper, -1);
 				int i = 0;
-				if(MMNEAT.genotype instanceof CPPNOrDirectToGANGenotype) {
 					Vector<Score<T>> population = archive.archive;
-					//ArrayList<Genotype<T>> pop = getPopulation(); //archive vector ArrayList<Score> pop = Archive.getArchive();
 					for(Score<T> p : population) {
 						boolean tweann = ((CPPNOrDirectToGANGenotype) p.individual).getFirstForm();		
 						if(p.individual==null) eliteProper[i]=-1; //if bin is empty
@@ -196,15 +210,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 							eliteProper[i] = 2; //number for Direct
 						}
 						i++;
-
 					}
-								
 				}
 				//in archive class, archive variable (vector)
 				cppnThenDirectLog.log((iterations/individualsPerGeneration)+"\t"+numCPPN+"\t"+numDirect);
 			
 				cppnVsDirectFitnessLog.log((iterations/individualsPerGeneration) +"\t"+ StringUtils.join(eliteProper, "\t"));
 			}
+			cppnThenDirectLog.log((iterations/individualsPerGeneration)+"\t"+numCPPN+", "+numDirect);
 		}
 	}
 	
