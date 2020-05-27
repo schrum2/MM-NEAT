@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -31,7 +32,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private MMNEATLog archiveLog = null; // Archive elite scores
 	private MMNEATLog fillLog = null; // Archive fill amount
 	private MMNEATLog cppnThenDirectLog = null;
-	//private MMNEATLog directLog = null;
+	private MMNEATLog cppnVsDirectFitnessLog = null;
 	private LonerTask<T> task;
 	private Archive<T> archive;
 	private boolean mating;
@@ -57,7 +58,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			fillLog = new MMNEATLog("Fill", false, false, false, true);
 			
 			cppnThenDirectLog = new MMNEATLog("cppnToDirect", false, false, false, true);
-
+			cppnVsDirectFitnessLog = new MMNEATLog("cppnVsDirectFitness", false, false, false, true);
 			// Create gnuplot file for archive log
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
@@ -174,19 +175,37 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Just log every "generation" instead
 			Float[] elite = ArrayUtils.toObject(archive.getEliteScores());
 			archiveLog.log((iterations/individualsPerGeneration) + "\t" + StringUtils.join(elite, "\t"));
+//			Float[] eliteProper = new Float[elite.length];
+//			for(float p : elite) {
+//				
+//			}
 			// Exclude negative infinity to find out how many bins are filled
 			fillLog.log((iterations/individualsPerGeneration) + "\t" + (elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite)));
+			Integer[] eliteProper = new Integer[elite.length];
+			Arrays.fill(eliteProper, -1);
+			int i = 0;
 			if(MMNEAT.genotype instanceof CPPNOrDirectToGANGenotype) {
 				ArrayList<Genotype<T>> pop = getPopulation();
 				for(Genotype<T> k: pop) {
 					boolean tweann =((CPPNOrDirectToGANGenotype) k).getFirstForm();
-					if(tweann) numCPPN++;
-					else numDirect++;
+					if(tweann) {
+						numCPPN++;
+						eliteProper[i] = 1; //number for CPPN
+					}
+					else {
+						numDirect++;
+						eliteProper[i] = 2; //number for Direct
+					}
 					
+					i++;
 				}
 								
 			}
+			
 			cppnThenDirectLog.log((iterations/individualsPerGeneration)+"\t"+numCPPN+", "+numDirect);
+			if(cppnThenDirectLog!=null) {
+				cppnVsDirectFitnessLog.log((iterations/individualsPerGeneration) +"\t"+ StringUtils.join(eliteProper, "\t"));
+			}
 		}
 	}
 	
