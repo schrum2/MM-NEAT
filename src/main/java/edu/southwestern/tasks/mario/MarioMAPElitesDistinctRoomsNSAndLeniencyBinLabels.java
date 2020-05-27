@@ -5,12 +5,20 @@ import java.util.List;
 
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.Parameters;
-
-public class MarioMAPElitesDistNSAndLeniencyBinLabels implements BinLabels {
+/**
+ * new binning scheme for Mario to include uniqueness of segments
+ * Also includes bins for negative space and leniency
+ *
+ *
+ */
+public class MarioMAPElitesDistinctRoomsNSAndLeniencyBinLabels implements BinLabels {
 	
 	List<String> labels = null;
 		
 	@Override
+	/**
+	 * sets the bin labels
+	 */
 	public List<String> binLabels() {
 		if(labels == null) { // Create once and re-use, but wait until after Parameters are loaded	
 			final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("marioGANLevelChunks");

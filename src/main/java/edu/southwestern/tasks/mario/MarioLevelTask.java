@@ -489,7 +489,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 						GraphicsUtil.saveImage(levelImage, fullName);	
 					}
 				}
-			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistNSAndLeniencyBinLabels) {
+			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctRoomsNSAndLeniencyBinLabels) {
 				double leniencySum = sumStatScore(lastLevelStats, LENIENCY_STAT_INDEX);
 				//double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
 				double negativeSpaceSum = sumStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
