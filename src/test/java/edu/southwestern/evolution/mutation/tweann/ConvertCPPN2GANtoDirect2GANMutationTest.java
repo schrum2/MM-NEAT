@@ -32,6 +32,7 @@ public class ConvertCPPN2GANtoDirect2GANMutationTest {
 	@After
 	public void tearDown() throws Exception {
 		MMNEAT.clearClasses();
+		GANProcess.terminateGANProcess();
 	}
 	@SuppressWarnings("unchecked")
 	@Test

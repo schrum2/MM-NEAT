@@ -14,9 +14,11 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.Graph;
@@ -30,6 +32,8 @@ public class ZeldaGraphGrammarTest {
 	
 	@Before
 	public void setUp() {
+		MMNEAT.clearClasses();
+		Parameters.parameters = null;
 		// Unreasonable to test the GAN if Python is unavailable.
 		if(!PythonUtil.pythonAvailable()) return;
 		
@@ -99,6 +103,7 @@ public class ZeldaGraphGrammarTest {
 		    System.out.flush();
 			RandomNumbers.reset();
 		}
+		GANProcess.terminateGANProcess();
 	}
 
 }
