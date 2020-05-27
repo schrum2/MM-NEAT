@@ -41,6 +41,7 @@ import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
 
+
 /**
  * 
  * Evolve Mario levels using an agent,
@@ -172,7 +173,10 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			MMNEAT.registerFitnessFunction("Random");
 			numFitnessFunctions++;
 		}
-
+		if(Parameters.parameters.booleanParameter("marioDistinctSegmentFitness")) {
+			MMNEAT.registerFitnessFunction("Random");
+			numFitnessFunctions++;
+		}
 		if(numFitnessFunctions == 0) throw new IllegalStateException("At least one fitness function required to evolve Mario levels");
 		// Other scores
 		MMNEAT.registerFitnessFunction("Distance", false);
@@ -260,7 +264,33 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		double percentLevelPassed = info == null ? 0 : distancePassed / totalPassableDistance(info);
 		double time = info == null ? 0 : info.timeSpentOnLevel;
 		double jumps = info == null ? 0 : info.jumpActionsPerformed;
+		int numDisctinctSegments;
+		HashSet<ArrayList<List<Integer>>> k = new HashSet<ArrayList<List<Integer>>>();
 
+		ArrayList<List<Integer>> compareSegments = new ArrayList<List<Integer>>();
+
+		for(int x = 0; x < oneLevel.size() ; x++) {
+			ArrayList<Integer> a = new ArrayList<Integer>();
+
+			for(int y = 0; y < oneLevel.get(0).size() ; y++) {
+				Integer tile = oneLevel.get(y).get(x);
+				if(tile == MarioLevelUtil.SPIKY_INDEX||
+						tile == MarioLevelUtil.GOOMBA_INDEX||
+						tile==MarioLevelUtil.GREEN_KOOPA_INDEX||
+						tile==MarioLevelUtil.RED_KOOPA_INDEX||
+						tile==MarioLevelUtil.WINGED_INDEX) {
+					a.add(MarioLevelUtil.PRESENT_INDEX);
+				}else {
+					a.add(tile);
+				}
+			}
+			compareSegments.add(a);
+		}
+		k.add(compareSegments);
+		numDisctinctSegments = k.size();
+
+		
+		
 		double[] otherScores = new double[] {distancePassed, percentLevelPassed, time, jumps};
 		// Adds Vanessa's Mario stats: Decoration Frequency, Leniency, Negative Space
 		ArrayList<double[]> lastLevelStats = LevelParser.getLevelStats(oneLevel, SEGMENT_WIDTH_IN_BLOCKS);
@@ -422,7 +452,9 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		if(Parameters.parameters.booleanParameter("marioRandomFitness")) {
 			fitnesses.add(RandomNumbers.fullSmallRand());
 		}
-
+		if(Parameters.parameters.booleanParameter("marioDistinctSegmentFitness")) {
+			fitnesses.add(new Double(numDisctinctSegments));
+		}
 		// Could conceivably also be used for behavioral diversity instead of map elites, but this would be a weird behavior vector from a BD perspective
 		if(MMNEAT.ea instanceof MAPElites) {
 			// Assign to the behavior vector before using MAP-Elites
