@@ -496,21 +496,19 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			
 				final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("marioGANLevelChunks");
 				// Scale scores so that we are less likely to overstep the bounds of the bins
-				final double DISTINCT_SCALE = 3;
 				final double NEGATIVE_SPACE_SCALE = 3;
 			
 				int leniencyBinIndex = Math.min(Math.max((int)((leniencySum*(BINS_PER_DIMENSION/2)+0.5)*BINS_PER_DIMENSION),0), BINS_PER_DIMENSION-1);
-				int distinctSegmentsBinIndex = Math.min((int)(numDistinctSegments*DISTINCT_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
 				int negativeSpaceBinIndex = Math.min((int)(negativeSpaceSum*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
 			
 				// Row-major order lookup in 3D archive
-				int binIndex = (distinctSegmentsBinIndex*BINS_PER_DIMENSION + negativeSpaceBinIndex)*BINS_PER_DIMENSION + leniencyBinIndex;
-				double[] archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
+				int binIndex = (numDistinctSegments*BINS_PER_DIMENSION + negativeSpaceBinIndex)*BINS_PER_DIMENSION + leniencyBinIndex;
+				double[] archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
 				Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
 				double binScore = simpleAStarDistance;
 				archiveArray[binIndex] = binScore; // Percent rooms traversed
 	
-				System.out.println("["+distinctSegmentsBinIndex+"]["+negativeSpaceBinIndex+"]["+leniencyBinIndex+"] = "+binScore);
+				System.out.println("["+numDistinctSegments+"]["+negativeSpaceBinIndex+"]["+leniencyBinIndex+"] = "+binScore);
 	
 				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 	
