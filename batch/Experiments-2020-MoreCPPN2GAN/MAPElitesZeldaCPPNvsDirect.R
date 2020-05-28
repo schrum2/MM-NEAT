@@ -72,7 +72,7 @@ result <- ggplot(dropRooms0, aes(x=backTrackBin, y=distinctBin, fill=factor(Type
   labs(fill = "") +
   # Puts room count in the plot for each bin
   geom_text(aes(label = ifelse(distinctBin == 20 & backTrackBin == 0, roomBin, NA)), 
-            nudge_x = 27.5,nudge_y = 3) +
+            nudge_x = 28,nudge_y = 3) +
   #annotation_custom(grob) +
   theme(strip.background = element_blank(),
         strip.text = element_blank(),
