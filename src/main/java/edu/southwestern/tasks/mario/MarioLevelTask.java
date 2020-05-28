@@ -482,9 +482,9 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 					Score<T> elite = archive.getElite(binIndex);
 					// If the bin is empty, or the candidate is better than the elite for that bin's score
 					if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
-						String fileName = String.format("%7.5f", binScore) +"-"+ binLabels.get(binIndex) +"-("+decorationSum+","+negativeSpaceSum+","+leniencySum+")-"+ individual.getId() + ".png";
+						String fileName = String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
 						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
-						String fullName = binPath + File.separator + fileName;
+						String fullName = binPath + "_" + fileName;
 						System.out.println(fullName);
 						GraphicsUtil.saveImage(levelImage, fullName);	
 					}
@@ -525,9 +525,9 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 					Score<T> elite = archive.getElite(binIndex);
 					// If the bin is empty, or the candidate is better than the elite for that bin's score
 					if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
-						String fileName = String.format("%7.5f", binScore) +"-"+ binLabels.get(binIndex) +"-("+numDistinctSegments+","+negativeSpaceSum+","+leniencySum+")-"+ individual.getId() + ".png";
+						String fileName = String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
 						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
-						String fullName = binPath + File.separator + fileName;
+						String fullName = binPath + "_" + fileName;
 						System.out.println(fullName);
 						GraphicsUtil.saveImage(levelImage, fullName);	
 					}
