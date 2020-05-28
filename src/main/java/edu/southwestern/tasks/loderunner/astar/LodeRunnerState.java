@@ -27,19 +27,19 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		HashSet<Point> gold = fillGold(level);
 		//System.out.println(gold);
 		LodeRunnerState start = new LodeRunnerState(level,gold,1,29);
+		int tile = level.get(1).get(29);
+		System.out.println(tile);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
 		try {
-		actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 100000);
-		if(actionSequence == null) System.out.println("double oof");
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start);
 		} catch(Exception e) {
-			System.out.println("oof");
-		}finally {
-			mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
+			System.out.println("no search");
 		}
-		System.out.println("actionSequence: " +actionSequence);
-		System.out.println("mostRecentVisited: "+ mostRecentVisited);
+		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
+		System.out.println(mostRecentVisited);
+		System.out.println("actionSequence: " + actionSequence);
 	}
 
 	private static HashSet<Point> fillGold(List<List<Integer>> level) {
@@ -138,48 +138,48 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
 			if(passable(newX+1, newY)) {
 				newX++;
-				if(tileAtPosition(newX, newY)==1) { //if the tile at the new position is gold, then it removes it from the set 
-					Point gold = new Point(newX, newY);
-					goldLeft.remove(gold);
-				}
-			} else return null;
+//				if(tileAtPosition(newX, newY)==1) { //if the tile at the new position is gold, then it removes it from the set 
+//					Point gold = new Point(newX, newY);
+//					goldLeft.remove(gold);
+//				}
+			} else if(currentY == newY) return null;
 		}
 		if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
 			if(passable(newX-1,newY)) {
 				newX--;
-				if(tileAtPosition(newX, newY)==1) {//if the tile at the new position is gold, then it removes it from the set 
-					Point gold = new Point(newX, newY);
-					goldLeft.remove(gold);
-				}
-			} else return null; 
+//				if(tileAtPosition(newX, newY)==1) {//if the tile at the new position is gold, then it removes it from the set 
+//					Point gold = new Point(newX, newY);
+//					goldLeft.remove(gold);
+//				}
+			} else if(currentY == newY) return null; 
 		}
 		if(a.getMove().equals(LodeRunnerAction.MOVE.NOTHING)) {
 			//if the tile at the new position is gold, then it removes it from the set
 			//you can still collect gold while in free fall 
-			if(tileAtPosition(newX, newY)==1) { 
-				Point gold = new Point(newX, newY);
-				goldLeft.remove(gold);
-			}
+//			if(tileAtPosition(newX, newY)==1) { 
+//				Point gold = new Point(newX, newY);
+//				goldLeft.remove(gold);
+//			}
 			//no new action, if the action is nothing you are most likely in a free fall and have to wait until you hit the ground to make a new action
 			return null;  
 		}
 		if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
 			if(passable(newX, newY+1)) {
 				newY++;
-				if(tileAtPosition(newX, newY)==1) {//if the tile at the new position is gold, then it removes it from the set 
-					Point gold = new Point(newX, newY);
-					goldLeft.remove(gold);
-				}
-			}else return null; 
+//				if(tileAtPosition(newX, newY)==1) {//if the tile at the new position is gold, then it removes it from the set 
+//					Point gold = new Point(newX, newY);
+//					goldLeft.remove(gold);
+//				}
+			}else if(currentX == newX) return null; 
 		}
 		if(a.getMove().equals(LodeRunnerAction.MOVE.DOWN)) {
 			if(passable(newX, newY-1)) {
 				newY--;
-				if(tileAtPosition(newX, newY)==1) {//if the tile at the new position is gold, then it removes it from the set
-					Point gold = new Point(newX, newY);
-					goldLeft.remove(gold);
-				}
-			}else return null;
+//				if(tileAtPosition(newX, newY)==1) {//if the tile at the new position is gold, then it removes it from the set
+//					Point gold = new Point(newX, newY);
+//					goldLeft.remove(gold);
+//				}
+			}else if(currentY == newY) return null;
 		}
 		if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
 			int tile = tileAtPosition(newX-1,newY-1); //tile down and to the left 
@@ -194,6 +194,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			if(tile == 3) {
 				tile = 0;
 			} else return null;
+		}
+		if(tileAtPosition(newX, newY)==1) { //if the tile at the new position is gold, then it removes it from the set 
+			Point gold = new Point(newX, newY);
+			goldLeft.remove(gold);
 		}
 		return new LodeRunnerState(level, goldLeft, newX, newY);
 	}
@@ -220,19 +224,17 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @return True if you can pass that tile, false otherwise 
 	 */
 	public boolean passable(int x, int y) {
-		if(!inBounds(x,y)){
-			return false;
-		}
 		int tile = tileAtPosition(x,y);
 		//0 is empty, 1 is gold, 2 is an enemy(simplified version that ignores enemies), 4 is a ladder, 5 is a rope 
-		if(tile == 0 || tile ==1 || tile == 2 || tile == 4 || tile==5)
+		if(inBounds(x,y) && (tile == 0 || tile == 1 || tile == 2 || tile == 4 || tile==5))
 			return true;
+		
 		return false; 
 	}
 	
 	private boolean inBounds(int x, int y) {
 		
-		return y>=0 && x>=0 && y<level.size() && x<level.get(y).size();
+		return y>=0 && x>=0 && y<level.size() && x<level.get(0).size();
 	}
 
 	/**
@@ -242,7 +244,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param y vertical position 
 	 * @return tile int at those coordinates
 	 */
-	private int tileAtPosition(int x, int y) {
+	public int tileAtPosition(int x, int y) {
 		return level.get(x).get(y);
 	}
 
@@ -263,6 +265,11 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	@Override
 	public double stepCost(State<LodeRunnerAction> s, LodeRunnerAction a) {
 		return 1;
+	}
+	
+	@Override
+	public String toString() {
+		return "(" + currentX + ", " + currentY + ")";
 	}
 	
 }
