@@ -13,8 +13,8 @@ import gvgai.tools.IO;
  */
 public class LodeRunnerVGLCUtil {
 	public static final String LODE_RUNNER_LEVEL_PATH = "data/VGLC/Lode Runner/Processed/";
-	public static final int LODE_RUNNER_COLUMNS = 32; // This is actually the room height from the original game, since VGLC rotates rooms
-	public static final int LODE_RUNNER_ROWS = 22; // Equivalent to width in original game
+	public static final int LODE_RUNNER_COLUMNS = 32; // This is actually the room width from the original game, since VGLC rotates rooms
+	public static final int LODE_RUNNER_ROWS = 22; // Equivalent to height in original game
 	public static final int ICE_CREAM_YOU_WIDTH = 960;
 	public static final int ICE_CREAM_YOU_HEIGHT = 880;
 	

@@ -5,8 +5,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.loderunner.LodeRunnerVGLCUtil;
+import edu.southwestern.tasks.mario.level.MarioState;
+import edu.southwestern.tasks.mario.level.MarioState.MarioAction;
+import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Action;
 import edu.southwestern.util.search.Heuristic;
+import edu.southwestern.util.search.Search;
 import edu.southwestern.util.search.State;
 
 public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
@@ -14,6 +20,43 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	private HashSet<Point> goldLeft; //set containing the points with gold 
 	public int currentX; 
 	public int currentY;
+	
+	public static void main(String args[]) {
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevel(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 1.txt"); //converts to JSON
+		//System.out.println(level);
+		HashSet<Point> gold = fillGold(level);
+		//System.out.println(gold);
+		LodeRunnerState start = new LodeRunnerState(level,gold,1,29);
+		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
+		HashSet<LodeRunnerState> mostRecentVisited = null;
+		ArrayList<LodeRunnerAction> actionSequence = null;
+		try {
+		actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 100000);
+		if(actionSequence == null) System.out.println("double oof");
+		} catch(Exception e) {
+			System.out.println("oof");
+		}finally {
+			mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
+		}
+		System.out.println("actionSequence: " +actionSequence);
+		System.out.println("mostRecentVisited: "+ mostRecentVisited);
+	}
+
+	private static HashSet<Point> fillGold(List<List<Integer>> level) {
+		HashSet<Point> gold = new HashSet<>();
+		int tile = -1; 
+		for(int i = 0; i < level.size(); i++) {
+			for(int j = 0; j < level.get(i).size(); j++) {
+				tile = level.get(i).get(j);
+				//System.out.println("The tile at " + j + "," + i + " = " +tile);
+				if(tile == 1) {
+					gold.add(new Point(j,i));
+				}
+				
+			}
+		}
+		return gold;
+	}
 	
 	//may add a way to track the enemies in the future, but we are using a simple version right now 
 	public LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, int currentX, int currentY) {
@@ -108,7 +151,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 					Point gold = new Point(newX, newY);
 					goldLeft.remove(gold);
 				}
-			}else return null; 
+			} else return null; 
 		}
 		if(a.getMove().equals(LodeRunnerAction.MOVE.NOTHING)) {
 			//if the tile at the new position is gold, then it removes it from the set
@@ -177,6 +220,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @return True if you can pass that tile, false otherwise 
 	 */
 	public boolean passable(int x, int y) {
+		if(!inBounds(x,y)){
+			return false;
+		}
 		int tile = tileAtPosition(x,y);
 		//0 is empty, 1 is gold, 2 is an enemy(simplified version that ignores enemies), 4 is a ladder, 5 is a rope 
 		if(tile == 0 || tile ==1 || tile == 2 || tile == 4 || tile==5)
@@ -184,6 +230,11 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		return false; 
 	}
 	
+	private boolean inBounds(int x, int y) {
+		
+		return y>=0 && x>=0 && y<level.size() && x<level.get(y).size();
+	}
+
 	/**
 	 * Easy access to the given tile integer at given (x,y) coordinates.
 	 * 
@@ -192,7 +243,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @return tile int at those coordinates
 	 */
 	private int tileAtPosition(int x, int y) {
-		return level.get(y).get(x);
+		return level.get(x).get(y);
 	}
 
 	/**
