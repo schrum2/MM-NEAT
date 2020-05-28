@@ -25,20 +25,21 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevel(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 1.txt"); //converts to JSON
 		//System.out.println(level);
 		HashSet<Point> gold = fillGold(level);
-		//System.out.println(gold);
-		LodeRunnerState start = new LodeRunnerState(level,gold,1,29);
-		int tile = level.get(1).get(29);
-		System.out.println(tile);
+//		System.out.println(gold);
+//		System.out.println(level);
+		LodeRunnerState start = new LodeRunnerState(level,gold,17,20);
+//		int tile = level.get(17).get(20);
+//		System.out.println(tile);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
 		try {
-			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start);
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 2);
 		} catch(Exception e) {
 			System.out.println("no search");
 		}
 		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
-		System.out.println(mostRecentVisited);
+		System.out.println(mostRecentVisited.toString());
 		System.out.println("actionSequence: " + actionSequence);
 	}
 
@@ -49,8 +50,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			for(int j = 0; j < level.get(i).size(); j++) {
 				tile = level.get(i).get(j);
 				//System.out.println("The tile at " + j + "," + i + " = " +tile);
-				if(tile == 1) {
-					gold.add(new Point(j,i));
+				if(tile == 1) { 
+					gold.add(new Point(j,i));//saves reference to that gold in the 
+					level.get(i).set(j, 0);//removes gold and places an empty tile 
 				}
 				
 			}
@@ -58,8 +60,16 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		return gold;
 	}
 	
+	public LodeRunnerState(List<List<Integer>> level) {
+		
+	}
+	
+	public LodeRunnerState(List<List<Integer>> level, Point start) {
+	
+	}
+	
 	//may add a way to track the enemies in the future, but we are using a simple version right now 
-	public LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, int currentX, int currentY) {
+	private LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, int currentX, int currentY) {
 		this.level = level;
 		this.goldLeft = goldLeft;
 		this.currentX = currentX;
@@ -72,7 +82,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 *
 	 */
 	public static class LodeRunnerAction implements Action{
-		public enum MOVE {RIGHT,LEFT,UP,DOWN,DIG_LEFT,DIG_RIGHT,NOTHING}
+		public enum MOVE {RIGHT,LEFT,UP,DOWN,DIG_LEFT,DIG_RIGHT}
 		private MOVE movement;
 		
 		public LodeRunnerAction(MOVE m) {
@@ -136,70 +146,75 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		int newY = currentY;
 		
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
-			if(passable(newX+1, newY)) {
+			
+			if(passableHorizontal(newX+1, newY)) {
+				System.out.println("right");
 				newX++;
-//				if(tileAtPosition(newX, newY)==1) { //if the tile at the new position is gold, then it removes it from the set 
-//					Point gold = new Point(newX, newY);
-//					goldLeft.remove(gold);
-//				}
 			} else if(currentY == newY) return null;
 		}
-		if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
-			if(passable(newX-1,newY)) {
+		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
+			
+			if(passableHorizontal(newX-1,newY)) {
+				System.out.println("left");
 				newX--;
-//				if(tileAtPosition(newX, newY)==1) {//if the tile at the new position is gold, then it removes it from the set 
-//					Point gold = new Point(newX, newY);
-//					goldLeft.remove(gold);
-//				}
 			} else if(currentY == newY) return null; 
 		}
-		if(a.getMove().equals(LodeRunnerAction.MOVE.NOTHING)) {
-			//if the tile at the new position is gold, then it removes it from the set
-			//you can still collect gold while in free fall 
-//			if(tileAtPosition(newX, newY)==1) { 
-//				Point gold = new Point(newX, newY);
-//				goldLeft.remove(gold);
-//			}
-			//no new action, if the action is nothing you are most likely in a free fall and have to wait until you hit the ground to make a new action
-			return null;  
-		}
-		if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
-			if(passable(newX, newY+1)) {
-				newY++;
-//				if(tileAtPosition(newX, newY)==1) {//if the tile at the new position is gold, then it removes it from the set 
-//					Point gold = new Point(newX, newY);
-//					goldLeft.remove(gold);
-//				}
+//		if(a.getMove().equals(LodeRunnerAction.MOVE.NOTHING)) {
+//			//if the tile at the new position is gold, then it removes it from the set
+//			//you can still collect gold while in free fall 
+//			//no new action, if the action is nothing you are most likely in a free fall and have to wait until you hit the ground to make a new action
+//			return null;  
+//		}
+		else if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
+			
+			if(passableVertical(newX, newY-1)) {
+				System.out.println("up");
+				newY--;
 			}else if(currentX == newX) return null; 
 		}
-		if(a.getMove().equals(LodeRunnerAction.MOVE.DOWN)) {
-			if(passable(newX, newY-1)) {
-				newY--;
-//				if(tileAtPosition(newX, newY)==1) {//if the tile at the new position is gold, then it removes it from the set
-//					Point gold = new Point(newX, newY);
-//					goldLeft.remove(gold);
-//				}
-			}else if(currentY == newY) return null;
+		else if(a.getMove().equals(LodeRunnerAction.MOVE.DOWN)) {
+			
+			if(passableVertical(newX, newY+1)) {
+				System.out.println("down");
+				newY++;
+			}else if(currentX == newX) return null;
 		}
-		if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
-			int tile = tileAtPosition(newX-1,newY-1); //tile down and to the left 
-			//if the tile is diggable ground than it becomes an empty space 
-			if(tile == 3) {
-				tile = 0;
-			} else return null; 
+		//have these two actions return null while testing on level one because it doesnt require digging to win 
+		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
+//			int tile = tileAtPosition(newX-1,newY-1); //tile down and to the left 
+//			//if the tile is diggable ground than it becomes an empty space 
+//			if(tile == 3) {
+//				tile = 0;
+//			} else
+			return null; 
 		}
-		if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_RIGHT)) {
-			int tile = tileAtPosition(newX+1,newY-1);//tile down and to the right
-			//if the tile is diggable ground than it becomes an empty space 
-			if(tile == 3) {
-				tile = 0;
-			} else return null;
+		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_RIGHT)) {
+//			int tile = tileAtPosition(newX+1,newY-1);//tile down and to the right
+//			//if the tile is diggable ground than it becomes an empty space 
+//			if(tile == 3) {
+//				tile = 0;
+//			} else 
+			return null;
 		}
-		if(tileAtPosition(newX, newY)==1) { //if the tile at the new position is gold, then it removes it from the set 
-			Point gold = new Point(newX, newY);
-			goldLeft.remove(gold);
+		//check if it is in teh set, then create a new set that contains all but that one
+		HashSet<Point> newGoldLeft = new HashSet<>();
+		Point possibleGold = new Point(newX, newY);
+		if(goldLeft.contains(possibleGold)){ //if the tile at the new position is gold, then it removes it from the set
+			for(Point p : goldLeft) {
+				if(p.equals(possibleGold)){
+					continue;
+				}
+				else {
+					newGoldLeft.add(p);
+				}
+			}
 		}
-		return new LodeRunnerState(level, goldLeft, newX, newY);
+		else {
+			newGoldLeft = goldLeft;
+		}
+		System.out.println(newGoldLeft);
+		System.out.println(goldLeft);
+		return new LodeRunnerState(level, newGoldLeft, newX, newY);
 	}
 
 	/**
@@ -223,10 +238,25 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param y Current Y coordinate
 	 * @return True if you can pass that tile, false otherwise 
 	 */
-	public boolean passable(int x, int y) {
+	public boolean passableVertical(int x, int y) {
 		int tile = tileAtPosition(x,y);
-		//0 is empty, 1 is gold, 2 is an enemy(simplified version that ignores enemies), 4 is a ladder, 5 is a rope 
-		if(inBounds(x,y) && (tile == 0 || tile == 1 || tile == 2 || tile == 4 || tile==5))
+		// 4 is a ladder
+		if(inBounds(x,y) && (tile == 4))
+			return true;
+		
+		return false; 
+	}
+	
+	/**
+	 * Determines if a tile is passable or not 
+	 * @param x Current X coordinate
+	 * @param y Current Y coordinate
+	 * @return True if you can pass that tile, false otherwise 
+	 */
+	public boolean passableHorizontal(int x, int y) {
+		int tile = tileAtPosition(x,y);
+		//0 is empty, 1 is gold, 2 is an enemy(simplified version that ignores enemies), 5 is a rope 
+		if(inBounds(x,y) && (tile == 0 || tile == 1 || tile == 2 || tile==5))
 			return true;
 		
 		return false; 
@@ -269,7 +299,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	
 	@Override
 	public String toString() {
-		return "(" + currentX + ", " + currentY + ")";
+		return "Size: " + goldLeft.size() + "(" + currentX + ", " + currentY + ")";
 	}
 	
 }
