@@ -952,7 +952,6 @@ public class Parameters {
 		classOptions.add("rlGlueEnvironment", null, "Environment/domain for an RL-Glue problem");
 		classOptions.add("rlGlueExtractor", StateVariableExtractor.class, "Feature extractor to get input features from RL-Glue observations");
 		classOptions.add("staticPacMan", StarterPacMan.class, "Pac-Man used to evolve ghosts against");
-		classOptions.add("lodeRunnerLevelAgent", AStarAgent.class, "Agent that plays evolved Lode Runner levels");
 		//popacman.examples.StarterPacMan.MyPacMan.class 
 		classOptions.add("staticPacManPO", popacman.examples.StarterPacMan.MyPacMan.class, "Pac-Man used to evolve PO ghosts against");
 		classOptions.add("staticPredatorController", AggressivePredatorController.class, "This parameter specifies the predator controller that prey evolve against");

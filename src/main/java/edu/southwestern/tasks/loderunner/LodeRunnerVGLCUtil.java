@@ -48,8 +48,8 @@ public class LodeRunnerVGLCUtil {
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
 					//int tileCode = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j)); //8 tile mapping 
-					//int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawn(level[i].charAt(j)); //6 tile mapping 
-					int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(level[i].charAt(j)); //7 tile mapping
+					int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawn(level[i].charAt(j)); //6 tile mapping 
+					//int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(level[i].charAt(j)); //7 tile mapping
 					row.add(tileCode);
 				}
 			}
