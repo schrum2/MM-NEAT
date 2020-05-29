@@ -5,10 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.LodeRunnerVGLCUtil;
-import edu.southwestern.tasks.mario.level.MarioState;
-import edu.southwestern.tasks.mario.level.MarioState.MarioAction;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Action;
 import edu.southwestern.util.search.Heuristic;
@@ -23,12 +20,12 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	
 	public static void main(String args[]) {
 		//6 tile mapping 
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevel(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 1.txt"); //converts to JSON
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 1.txt"); //converts to JSON
 		//System.out.println(level);
 		//HashSet<Point> gold = fillGold(level);
 //		System.out.println(gold);
 //		System.out.println(level);
-		LodeRunnerState start = new LodeRunnerState(level, new Point(17,20));
+		LodeRunnerState start = new LodeRunnerState(level);
 //		int tile = level.get(17).get(20);
 //		System.out.println(tile);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
@@ -66,8 +63,24 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		return gold;
 	}
 	
+	private static Point getSpawnFromVGLC(List<List<Integer>> level) {
+		Point start = new Point();
+		int tile = -1;
+		for(int i = 0; i < level.size(); i++) {
+			for(int j = 0; j < level.get(i).size(); j++){
+				tile = level.get(i).get(j);
+				//System.out.println("The tile at " + j + "," + i + " = " +tile);
+				if(tile == 7) {//7 maps to spawn point  
+					start = new Point(j, i);
+					level.get(i).set(j, 0);//removes gold and places an empty tile 
+				}
+			}
+		}
+		return start;
+	}
+	
 	public LodeRunnerState(List<List<Integer>> level) {
-		//this(level);
+		this(level, getSpawnFromVGLC(level));
 	}
 	
 	public LodeRunnerState(List<List<Integer>> level, Point start) {
@@ -155,10 +168,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public State<LodeRunnerAction> getSuccessor(LodeRunnerAction a) {
 		int newX = currentX;
 		int newY = currentY;
-		
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
 			if(tileAtPosition(newX,newY+1) == 3)//checks if there is ground under the player
-				newY++;
+				newY++;//fall down 
 			else if(passable(newX+1, newY)) {
 				//System.out.println("right");
 				newX++;
@@ -166,7 +178,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
 			if(tileAtPosition(newX,newY+1) == 3)//checks if there is ground under the player
-				newY++;
+				newY++;//fall down 
 			else if(passable(newX-1,newY)) {
 				//System.out.println("left");
 				newX--;
@@ -212,7 +224,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		//check if it is in teh set, then create a new set that contains all but that one
 		HashSet<Point> newGoldLeft = new HashSet<>();
 		Point possibleGold = new Point(newX, newY);
-		if(goldLeft.contains(possibleGold)){ //if the tile at the new position is gold, then it removes it from the set
+		if(goldLeft.contains(possibleGold)){ //if the tile at the new position is marked as gold, then it removes it from the set
 			for(Point p : goldLeft) {
 				if(!possibleGold.equals(p)){
 					newGoldLeft.add(p);

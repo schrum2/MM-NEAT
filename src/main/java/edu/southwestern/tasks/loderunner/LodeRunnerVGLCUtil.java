@@ -57,13 +57,35 @@ public class LodeRunnerVGLCUtil {
 		}
 		return complete;
 	}
+	
+	/**
+	 * Converts the VGLC level of LodeRunner to JSON form to be able to be passed into the GAN
+	 * @param fileName File that holds the VGLC of a lode runner level 
+	 * @return
+	 */
+	public static List<List<Integer>> convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(String fileName) {
+		String[] level = new IO().readFile(fileName);
+		List<List<Integer>> complete = new ArrayList<>(LODE_RUNNER_ROWS);
+		//loops through levels to get characters and convert them 
+		for(int i = 0; i < level.length; i++) { 
+			List<Integer> row = new ArrayList<>(LODE_RUNNER_COLUMNS);//creates new List to be a new row of the JSON 
+			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
+				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
+					int tileCode = convertLodeRunnerTileVGLCtoNumberCodeForLodeRunnerState(level[i].charAt(j)); //8 tile mapping 
+					row.add(tileCode);
+				}
+			}
+			complete.add(row); //adds a new array list to the list at index i 
+		}
+		return complete;
+	}
 
-//	//original mapping with each individual tile 
-//	/**
-//	 * Converts tile codes to numbers for JSON conversion
-//	 * @param tile Character describing the tile 
-//	 * @return The number associated with that tile
-//	 */
+	//original mapping with each individual tile 
+	/**
+	 * Converts tile codes to numbers for JSON conversion
+	 * @param tile Character describing the tile 
+	 * @return The number associated with that tile
+	 */
 //	private static int convertLodeRunnerTileVGLCtoNumberCode(char tile) {
 //		switch(tile) {
 //		case '.': //empty, passable
@@ -139,6 +161,37 @@ public class LodeRunnerVGLCUtil {
 			return 5;
 		case 'B': //regular ground, solid
 			return 6; 
+		default:
+			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
+
+		}
+	}
+	
+	/**
+	 * Converts tile codes to numbers for JSON conversion removes the spawn tile to avoid placing multiple 
+	 * used in the ldoe runner state because we need the spawn point 
+	 * Distinguishes between the two types of ground tiles 
+	 * @param tile Character describing the tile 
+	 * @return The number associated with that tile
+	 */
+	private static int convertLodeRunnerTileVGLCtoNumberCodeForLodeRunnerState(char tile) {
+		switch(tile) {
+		case '.': //empty, passable
+			return 0;	
+		case 'G': //gold, passable, pickupable
+			return 1; 
+		case 'E': //enemy, damaging 
+			return 2; 
+		case 'b': //diggable ground, solid 
+			return 3; 
+		case '#': //ladder, passable, climbable
+			return 4;
+		case '-': //rope, passable, climbable 
+			return 5;
+		case 'B': //regular ground, solid
+			return 6; 
+		case 'M': //spawn, passable
+			return 7; 
 		default:
 			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
 
