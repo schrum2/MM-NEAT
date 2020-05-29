@@ -1,11 +1,15 @@
 package edu.southwestern.tasks.loderunner.astar;
 
 import java.awt.Point;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import edu.southwestern.tasks.loderunner.LodeRunnerRenderUtil;
 import edu.southwestern.tasks.loderunner.LodeRunnerVGLCUtil;
+import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Action;
 import edu.southwestern.util.search.Heuristic;
@@ -281,6 +285,19 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		for(LodeRunnerAction.MOVE move: LodeRunnerAction.MOVE.values()) {
 			LodeRunnerAction a = new LodeRunnerAction(move);
 			System.out.println(s+"\t"+move+"\t"+s.getSuccessor(a));
+			try {
+				LodeRunnerState theState = ((LodeRunnerState) s);
+				List<List<Integer>> copy = ListUtil.deepCopyListOfLists( theState.level );
+				copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
+				for(Point t : theState.goldLeft) {
+					copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
+				}
+				LodeRunnerRenderUtil.getBufferedImage(copy);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			MiscUtil.waitForReadStringAndEnterKeyPress();
 			if(s.getSuccessor(new LodeRunnerAction(move)) != null) {
 				vaildActions.add(new LodeRunnerAction(move));
 			}
@@ -352,5 +369,36 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public String toString() {
 		return "Size: " + goldLeft.size() + " (" + currentX + ", " + currentY + ")";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + currentX;
+		result = prime * result + currentY;
+		result = prime * result + ((goldLeft == null) ? 0 : goldLeft.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof LodeRunnerState))
+			return false;
+		LodeRunnerState other = (LodeRunnerState) obj;
+		if (currentX != other.currentX)
+			return false;
+		if (currentY != other.currentY)
+			return false;
+		if (goldLeft == null) {
+			if (other.goldLeft != null)
+				return false;
+		} else if (!goldLeft.equals(other.goldLeft))
+			return false;
+		return true;
+	}
+	
+	
 
 }
