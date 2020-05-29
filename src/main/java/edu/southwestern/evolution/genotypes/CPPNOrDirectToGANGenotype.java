@@ -2,8 +2,11 @@ package edu.southwestern.evolution.genotypes;
 
 import java.util.ArrayList;
 
-import edu.southwestern.evolution.mutation.tweann.ConvertCPPN2GANtoDirect2GANMutation;
+import edu.southwestern.evolution.mutation.tweann.ConvertMarioCPPN2GANtoDirect2GANMutation;
+import edu.southwestern.evolution.mutation.tweann.ConvertZeldaCPPN2GANtoDirect2GANMutation;
 import edu.southwestern.networks.TWEANN;
+import edu.southwestern.tasks.mario.gan.GANProcess;
+import edu.southwestern.tasks.mario.gan.GANProcess.GAN_TYPE;
 
 /**
  * Allows to switch back and forth randomly between a CPPN to GAN 
@@ -41,7 +44,12 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 		sb.append(this.getId());
 		sb.append(" ");
 		// Transition from CPPN to Direct, but keep identical expressed phenotype
-		new ConvertCPPN2GANtoDirect2GANMutation().go(this, sb);
+		if(GANProcess.type.equals(GAN_TYPE.ZELDA))
+		new ConvertZeldaCPPN2GANtoDirect2GANMutation().go(this, sb);
+		else if(GANProcess.type.equals(GAN_TYPE.MARIO))
+			new ConvertMarioCPPN2GANtoDirect2GANMutation().go(this, sb);
+		else if (GANProcess.type.equals(GAN_TYPE.LODE_RUNNER))
+			throw new UnsupportedOperationException();
 		// Now allow for slight changes
 		super.mutate();
 	}

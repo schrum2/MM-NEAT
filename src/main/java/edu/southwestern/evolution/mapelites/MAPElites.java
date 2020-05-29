@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Vector;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,13 +26,25 @@ import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
 import wox.serial.Easy;
 
+/**
+ * My version of Multi-dimensional Archive of Phenotypic Elites (MAP-Elites), the quality diversity (QD)
+ * algorithms that illuminates a search space. This is an unusual implementation, but it gets the job done.
+ * 
+ * MAP Elites article: https://arxiv.org/abs/1504.04909
+ * 
+ * @author schrum2
+ *
+ * @param <T> phenotype
+ */
 public class MAPElites<T> implements SteadyStateEA<T> {
-
+	private static final int NUM_CODE_EMPTY = -1;
+	private static final int NUM_CODE_DIRECT = 2;
+	private static final int NUM_CODE_CPPN = 1;
 	private boolean io;
 	private MMNEATLog archiveLog = null; // Archive elite scores
 	private MMNEATLog fillLog = null; // Archive fill amount
 	private MMNEATLog cppnThenDirectLog = null;
-	//private MMNEATLog directLog = null;
+	private MMNEATLog cppnVsDirectFitnessLog = null;
 	private LonerTask<T> task;
 	private Archive<T> archive;
 	private boolean mating;
@@ -40,7 +53,6 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private int iterationsWithoutElite;
 	private int individualsPerGeneration;
 
-	
 	public BinLabels getBinLabelsClass() {
 		return archive.getBinLabelsClass();
 	}
@@ -55,9 +67,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Logging in RAW mode so that can append to log file on experiment resume
 			archiveLog = new MMNEATLog(infix, false, false, false, true); 
 			fillLog = new MMNEATLog("Fill", false, false, false, true);
-			
-			cppnThenDirectLog = new MMNEATLog("cppnToDirect", false, false, false, true);
-
+			// Can't check MMNEAT.genotype since MMNEAT.ea is initialized before MMNEAT.genotype
+			if(Parameters.parameters.classParameter("genotype").equals(CPPNOrDirectToGANGenotype.class)) {
+				cppnThenDirectLog = new MMNEATLog("cppnToDirect", false, false, false, true);
+				cppnVsDirectFitnessLog = new MMNEATLog("cppnVsDirectFitness", false, false, false, true);
+			}
 			// Create gnuplot file for archive log
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
@@ -88,12 +102,18 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				// Fill percentage plot
 				ps = new PrintStream(fillPlot);
 				ps.println("set term pdf enhanced");
-				ps.println("unset key");
+				//ps.println("unset key");
+				ps.println("set key bottom right");
 				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 				ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration) +"]");
 				ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
 				ps.println("set output \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".pdf\"");
-				ps.println("plot \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".txt\" u 1:2 w linespoints");
+				String name = fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.'));
+				ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\"" + (cppnThenDirectLog != null ? ", \\" : ""));
+				if(cppnThenDirectLog != null) { // Print CPPN and direct counts on same plot
+					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
+					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
+				}
 				ps.close();
 				
 			} catch (FileNotFoundException e) {
@@ -174,22 +194,32 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Just log every "generation" instead
 			Float[] elite = ArrayUtils.toObject(archive.getEliteScores());
 			archiveLog.log((iterations/individualsPerGeneration) + "\t" + StringUtils.join(elite, "\t"));
+
 			// Exclude negative infinity to find out how many bins are filled
 			fillLog.log((iterations/individualsPerGeneration) + "\t" + (elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite)));
-			if(MMNEAT.genotype instanceof CPPNOrDirectToGANGenotype) {
-				ArrayList<Genotype<T>> pop = getPopulation();
-				for(Genotype<T> k: pop) {
-					boolean tweann =((CPPNOrDirectToGANGenotype) k).getFirstForm();
-					if(tweann) numCPPN++;
-					else numDirect++;
-					
+			if(cppnThenDirectLog!=null) {
+				Integer[] eliteProper = new Integer[elite.length];
+				int i = 0;
+				Vector<Score<T>> population = archive.archive;
+				for(Score<T> p : population) {
+					if(p == null || p.individual == null) eliteProper[i] = NUM_CODE_EMPTY; //if bin is empty
+					else if(((CPPNOrDirectToGANGenotype) p.individual).getFirstForm()) {
+						numCPPN++;
+						eliteProper[i] = NUM_CODE_CPPN; //number for CPPN
+					} else { // Assume first form is false
+						assert !((CPPNOrDirectToGANGenotype) p.individual).getFirstForm();
+						numDirect++;
+						eliteProper[i] = NUM_CODE_DIRECT; //number for Direct
+					}
+					i++;
 				}
-								
+				//in archive class, archive variable (vector)
+				cppnThenDirectLog.log((iterations/individualsPerGeneration)+"\t"+numCPPN+"\t"+numDirect);
+				cppnVsDirectFitnessLog.log((iterations/individualsPerGeneration) +"\t"+ StringUtils.join(eliteProper, "\t"));
 			}
-			cppnThenDirectLog.log((iterations/individualsPerGeneration)+"\t"+numCPPN+", "+numDirect);
 		}
 	}
-	
+
 	/**
 	 * Create one (maybe two) new individuals by randomly
 	 * sampling from the elites in random bins. The reason
@@ -203,7 +233,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		int index = archive.randomOccupiedBinIndex();
 		Genotype<T> parent1 = archive.getElite(index).individual;
 		long parentId1 = parent1.getId(); // Parent Id comes from original genome
-		long parentId2 = -1;
+		long parentId2 = NUM_CODE_EMPTY;
 		Genotype<T> child1 = parent1.copy(); // Copy with different Id (will be further modified below)
 		
 		// Potentially mate with second individual
@@ -225,7 +255,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 		
 		child1.mutate(); // Was potentially modified by crossover
-		if (parentId2 == -1) {
+		if (parentId2 == NUM_CODE_EMPTY) {
 			EvolutionaryHistory.logLineageData(parentId1,child1);
 		} else {
 			EvolutionaryHistory.logLineageData(parentId1,parentId2,child1);

@@ -48,6 +48,10 @@ public class Archive<T> {
 		}
 	}
 
+	public Vector<Score<T>> getArchive(){
+		return archive;
+	}
+	
 	/**
 	 * Get the scores of all elites for each bin.
 	 * Also casts down to float

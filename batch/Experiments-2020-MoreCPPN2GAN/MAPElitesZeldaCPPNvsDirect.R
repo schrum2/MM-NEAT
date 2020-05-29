@@ -11,7 +11,7 @@ map <- read.table(args[1])
 # Only the final archive matters
 lastRow <- map[map$V1 == nrow(map) - 1, ]
 archive <- data.frame(matrix(unlist(lastRow[2:length(lastRow)]), nrow=(length(lastRow)-1), byrow=T))
-names(archive) <- "PercentTraversed"
+names(archive) <- "Type"
 
 # Add data indicating how the data is binned, based on convention of how
 # output data is organized
@@ -44,7 +44,7 @@ allData <- data.frame(archive, distinctBin, backTrackBin, roomBin)
 
 library(ggplot2)
 library(dplyr)
-library(viridis)
+#library(viridis)
 library(stringr)
 
 dropRooms0 <- filter(allData, roomBin > 0)
@@ -53,18 +53,23 @@ for (b in seq(1,maxNumRooms)) {
   dropRooms0 <- filter(dropRooms0, backTrackBin < roomBin)
 }
 
+dropRooms0$Type[dropRooms0$Type == -1] <- "Empty"
+dropRooms0$Type[dropRooms0$Type == 1] <- "CPPN"
+dropRooms0$Type[dropRooms0$Type == 2] <- "Direct"
+
 print("Create plot and save to file")
 
-outputFile <- str_replace(args[1],"txt","heat.pdf")
+outputFile <- str_replace(args[1],"txt","type.pdf")
 pdf(outputFile)  
-result <- ggplot(dropRooms0, aes(x=backTrackBin, y=distinctBin, fill=PercentTraversed)) +
+result <- ggplot(dropRooms0, aes(x=backTrackBin, y=distinctBin, fill=factor(Type))) +
   geom_tile() +
   facet_wrap(~roomBin) +
+  scale_fill_manual(values=c("#E69F00", "#56B4E9", "#999999")) +
   #scale_fill_gradient(low="white", high="orange") +
-  scale_fill_viridis(discrete=FALSE) +
+  #scale_fill_viridis(discrete=FALSE) +
   xlab("Backtracked Rooms") +
   ylab("Distinct Rooms") +
-  labs(fill = "Percent Rooms Traversed") +
+  labs(fill = "") +
   # Puts room count in the plot for each bin
   geom_text(aes(label = ifelse(distinctBin == 20 & backTrackBin == 0, roomBin, NA)), 
             nudge_x = 28,nudge_y = 3) +

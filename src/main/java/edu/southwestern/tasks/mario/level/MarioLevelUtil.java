@@ -268,7 +268,49 @@ public class MarioLevelUtil {
 		}
 		throw new IllegalStateException("Problem reading Mario level file: "+filename);
 	}
-	
+	/**
+	 * takes in a level and separates it into its smaller subsections allowing 
+	 * for comparison of chunks
+	 * @param oneLevel the level
+	 * @param segmentWidth the width of the segments/chunk
+	 * @return levelWithParsedSegments the level containing every segment
+	 */
+	public static ArrayList<ArrayList<List<Integer>>> getSegmentsFromLevel(ArrayList<List<Integer>> oneLevel, int segmentWidth){
+		if (oneLevel.get(0).size()%segmentWidth!=0){
+            System.out.println("getLevelStats: Level not multiple of segment width");
+            return null;
+        }      
+		int height = oneLevel.size();
+        ArrayList<ArrayList<List<Integer>>> levelWithParsedSegments = new ArrayList<ArrayList<List<Integer>>>();
+        // Loop through each segment
+        int numSegments = oneLevel.get(0).size()/segmentWidth;
+        for(int l=0; l<numSegments; l++){
+            ArrayList<List<Integer>> compareSegments = new ArrayList<List<Integer>>();
+
+        	
+            for(int i=0; i<height-1;i++){ // Loop from top to bottom
+    			ArrayList<Integer> a = new ArrayList<Integer>();
+
+            	// Loop from left to right through the tiles in this particular segment
+                for(int j=l*segmentWidth;j<(l+1)*segmentWidth;j++){
+                	Integer tile = oneLevel.get(i).get(j);
+    				if(tile == MarioLevelUtil.SPIKY_INDEX||
+    						tile == MarioLevelUtil.GOOMBA_INDEX||
+    						tile==MarioLevelUtil.GREEN_KOOPA_INDEX||
+    						tile==MarioLevelUtil.RED_KOOPA_INDEX||
+    						tile==MarioLevelUtil.WINGED_INDEX) {
+    					a.add(MarioLevelUtil.PRESENT_INDEX);
+    				}else {
+    					a.add(tile);
+    				}
+                }
+    			compareSegments.add(a);
+
+            }
+            levelWithParsedSegments.add(compareSegments);
+        }
+		return levelWithParsedSegments;
+	}
 	/**
 	 * Convert from String representation to list of lists
 	 * @param stringLevel

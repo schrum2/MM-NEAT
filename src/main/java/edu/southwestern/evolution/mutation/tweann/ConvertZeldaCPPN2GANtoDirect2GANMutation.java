@@ -22,12 +22,12 @@ import edu.southwestern.util.random.RandomNumbers;
  *
  */
 @SuppressWarnings("rawtypes")
-public class ConvertCPPN2GANtoDirect2GANMutation extends Mutation {
+public class ConvertZeldaCPPN2GANtoDirect2GANMutation extends Mutation {
 	protected double rate;
 	/**
 	 * Construct that defines the rate (0.1) and tells if it's out of bounds
 	 */
-	public ConvertCPPN2GANtoDirect2GANMutation() {
+	public ConvertZeldaCPPN2GANtoDirect2GANMutation() {
 		double rate = Parameters.parameters.doubleParameter("indirectToDirectTransitionRate");
 		assert 0 <= rate && rate <= 1 : "Mutation rate out of range: " + rate;
 		this.rate = rate;
