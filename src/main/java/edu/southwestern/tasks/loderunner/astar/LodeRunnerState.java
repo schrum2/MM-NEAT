@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.loderunner.astar;
 
 import java.awt.Point;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -102,9 +101,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
 		try {
-			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 100);
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 40);
 		} catch(Exception e) {
 			System.out.println("failed search");
+			e.printStackTrace();
 		}
 		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
 		System.out.println(mostRecentVisited.toString());
@@ -209,20 +209,20 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			if(tileAtPosition(newX,newY+1) == LODE_RUNNER_TILE_DIGGABLE ||
 					tileAtPosition(newX,newY+1) == LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
 				return null;//fall down 
-			else if(passable(newX+1, newY)) {
+			else if(tileAtPosition(newX, newY) == 20 || passable(newX+1, newY)) {
 				//System.out.println("right");
 				newX++;
 			} else return null; 
 		}
-		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
-			if(tileAtPosition(newX,newY+1) == LODE_RUNNER_TILE_DIGGABLE ||
-					tileAtPosition(newX,newY+1) == LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
-				return null;//fall down 
-			else if(passable(newX-1,newY)) {
-				//System.out.println("left");
-				newX--;
-			} else return null; 
-		}
+//		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
+//			if(tileAtPosition(newX,newY+1) == LODE_RUNNER_TILE_DIGGABLE ||
+//					tileAtPosition(newX,newY+1) == LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
+//				return null;//fall down 
+//			else if(tileAtPosition(newX, newY) == 15 || passable(newX-1,newY)) {
+//				//System.out.println("left");
+//				newX--;
+//			} else return null; 
+//		}
 		//		if(a.getMove().equals(LodeRunnerAction.MOVE.NOTHING)) {
 		//			//if the tile at the new position is gold, then it removes it from the set
 		//			//you can still collect gold while in free fall 
@@ -283,11 +283,12 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		ArrayList<LodeRunnerAction> vaildActions = new ArrayList<>();
 		//System.out.println(level);
 		for(LodeRunnerAction.MOVE move: LodeRunnerAction.MOVE.values()) {
+			//Everything besides the if statement is for debugging purposes, delete later 
 			LodeRunnerAction a = new LodeRunnerAction(move);
 			System.out.println(s+"\t"+move+"\t"+s.getSuccessor(a));
 			try {
 				LodeRunnerState theState = ((LodeRunnerState) s);
-				List<List<Integer>> copy = ListUtil.deepCopyListOfLists( theState.level );
+				List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
 				copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
 				for(Point t : theState.goldLeft) {
 					copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
@@ -329,7 +330,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @return
 	 */
 	private boolean inBounds(int x, int y) {
-		return y>=0 && x>=0 && y<LodeRunnerVGLCUtil.LODE_RUNNER_ROWS && x<LodeRunnerVGLCUtil.LODE_RUNNER_COLUMNS;
+		return y>=0 && x>=0 && y<level.size() && x<level.get(0).size();
 	}
 
 	/**
