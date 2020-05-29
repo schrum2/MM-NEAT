@@ -208,8 +208,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		int newX = currentX;
 		int newY = currentY;
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
-			if(tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE &&
-					tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
+			int beneath = tileAtPosition(newX,newY+1);
+			if(		tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
+					beneath != LODE_RUNNER_TILE_DIGGABLE &&
+					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
 				return null;//fall down 
 			else if(passable(newX+1, newY)) {
 				//System.out.println("right");
@@ -217,8 +219,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			} else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
-			if(tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE &&
-					tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
+			int beneath = tileAtPosition(newX,newY+1);
+			if(		tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
+					beneath != LODE_RUNNER_TILE_DIGGABLE &&
+					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
 				return null;//fall down 
 			else if(passable(newX-1,newY)) {
 				//System.out.println("left");
@@ -283,23 +287,23 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public ArrayList<LodeRunnerAction> getLegalActions(State<LodeRunnerAction> s) {
 		ArrayList<LodeRunnerAction> vaildActions = new ArrayList<>();
 		//System.out.println(level);
+		try {
+			LodeRunnerState theState = ((LodeRunnerState) s);
+			List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
+			copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
+			for(Point t : theState.goldLeft) {
+				copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
+			}
+			LodeRunnerRenderUtil.getBufferedImage(copy);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 		for(LodeRunnerAction.MOVE move: LodeRunnerAction.MOVE.values()) {
 			//Everything besides the if statement is for debugging purposes, delete later 
 			LodeRunnerAction a = new LodeRunnerAction(move);
 			System.out.println(s+"\t"+move+"\t"+s.getSuccessor(a));
-			try {
-				LodeRunnerState theState = ((LodeRunnerState) s);
-				List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
-				copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
-				for(Point t : theState.goldLeft) {
-					copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
-				}
-				LodeRunnerRenderUtil.getBufferedImage(copy);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			MiscUtil.waitForReadStringAndEnterKeyPress();
 			if(s.getSuccessor(new LodeRunnerAction(move)) != null) {
 				vaildActions.add(new LodeRunnerAction(move));
 			}
@@ -316,8 +320,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @return True if you can pass that tile, false otherwise 
 	 */
 	public boolean passable(int x, int y) {
+		if(!inBounds(x,y)) return false; // fail for bad bounds before tileAtPosition check
 		int tile = tileAtPosition(x,y);
-		if(inBounds(x,y) && (tile==LODE_RUNNER_TILE_EMPTY || tile==LODE_RUNNER_TILE_ENEMY || 
+		if((	tile==LODE_RUNNER_TILE_EMPTY  || tile==LODE_RUNNER_TILE_ENEMY || 
 				tile==LODE_RUNNER_TILE_LADDER || tile==LODE_RUNNER_TILE_ROPE)) {
 			return true;
 		}
