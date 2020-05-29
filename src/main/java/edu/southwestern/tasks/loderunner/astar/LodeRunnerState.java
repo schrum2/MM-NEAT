@@ -101,7 +101,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
 		try {
-			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 400);
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 100000);
 		} catch(Exception e) {
 			System.out.println("failed search");
 			e.printStackTrace();
@@ -210,6 +210,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
 			int beneath = tileAtPosition(newX,newY+1);
 			if(		tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
+					beneath != LODE_RUNNER_TILE_LADDER &&
 					beneath != LODE_RUNNER_TILE_DIGGABLE &&
 					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
 				return null;//fall down 
@@ -221,6 +222,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
 			int beneath = tileAtPosition(newX,newY+1);
 			if(		tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
+					beneath != LODE_RUNNER_TILE_LADDER &&
 					beneath != LODE_RUNNER_TILE_DIGGABLE &&
 					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
 				return null;//fall down 
@@ -287,19 +289,20 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public ArrayList<LodeRunnerAction> getLegalActions(State<LodeRunnerAction> s) {
 		ArrayList<LodeRunnerAction> vaildActions = new ArrayList<>();
 		//System.out.println(level);
-		try {
-			LodeRunnerState theState = ((LodeRunnerState) s);
-			List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
-			copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
-			for(Point t : theState.goldLeft) {
-				copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
-			}
-			LodeRunnerRenderUtil.getBufferedImage(copy);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+		// This code renders an image of the level with the agent in it
+//		try {
+//			LodeRunnerState theState = ((LodeRunnerState) s);
+//			List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
+//			copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
+//			for(Point t : theState.goldLeft) {
+//				copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
+//			}
+//			LodeRunnerRenderUtil.getBufferedImage(copy);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		for(LodeRunnerAction.MOVE move: LodeRunnerAction.MOVE.values()) {
 			//Everything besides the if statement is for debugging purposes, delete later 
 			LodeRunnerAction a = new LodeRunnerAction(move);
