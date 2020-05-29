@@ -6,7 +6,7 @@ import java.util.List;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.Parameters;
 
-public class MarioMAPElitesBinLabels implements BinLabels {
+public class MarioMAPElitesDecorNSAndLeniencyBinLabels implements BinLabels {
 	
 	List<String> labels = null;
 		
