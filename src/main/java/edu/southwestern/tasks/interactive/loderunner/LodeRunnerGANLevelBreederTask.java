@@ -150,12 +150,13 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		BufferedImage image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
 		try {
 			//if we are using the mapping with 7 tiles, other wise use 6 tiles 
-			if(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")){
+			// ACTUALLY: We can have extra unused tiles in the image array. Easier to have one method that keeps them all around
+//			if(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")){
 				images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //7 different tiles to display 
-			}
-			else {
-				images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //6 different tiles to display 
-			}
+//			}
+//			else {
+//				images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //6 different tiles to display 
+//			}
 			image = LodeRunnerRenderUtil.createBufferedImage(level,width1,height1, images);
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -45,10 +45,19 @@ public class LodeRunnerRenderUtil {
 //		FINAL_RENDER = getBufferedImage(list, images); //puts the final rendered level into a buffered image 
 		//no spawn mapping with 6 tiles 
 		List<List<Integer>> list = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
-		BufferedImage[] images = loadImagesNoSpawn(LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images 
+		BufferedImage[] images = loadImagesNoSpawnTwoGround(LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images 
 		FINAL_RENDER = getBufferedImage(list, images); //puts the final rendered level into a buffered image
 	}
 
+	/**
+	 * Displays the BufferedImage in a JPanel  
+	 * @param list JSON of the level 
+	 */
+	public static BufferedImage getBufferedImage(List<List<Integer>> list) throws IOException {
+		BufferedImage[] images = loadImagesNoSpawnTwoGround(LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images 
+		return getBufferedImage(list, images);
+	}
+	
 	/**
 	 * Displays the BufferedImage in a JPanel  
 	 * @param list JSON of the level 
@@ -57,7 +66,9 @@ public class LodeRunnerRenderUtil {
 	 * @throws IOException In case the file can't be found 
 	 */
 	public static BufferedImage getBufferedImage(List<List<Integer>> list, BufferedImage[] images) throws IOException {
+		System.out.println("About to create");
 		BufferedImage image = createBufferedImage(list, RENDERED_IMAGE_WIDTH, RENDERED_IMAGE_HEIGHT, images); //gets the image of the level 
+		System.out.println("created");
 		//this code displays the level in a window 
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
@@ -82,14 +93,17 @@ public class LodeRunnerRenderUtil {
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = image.createGraphics();
 		//loops through the grid in the applet to place tiles in order to render levels 
+		System.out.println("About to loop");
 		for(int y = 0; y < height; y += LODE_RUNNER_TILE_Y) {
 			for(int x = 0; x < width; x += LODE_RUNNER_TILE_X) {
 				int xTile = x/LODE_RUNNER_TILE_X;
 				int yTile = y/LODE_RUNNER_TILE_Y;
+				System.out.println("Find tile");
 				BufferedImage tileImage = findTile(list, images, xTile, yTile); //finds the correct tile 
 				g.drawImage(tileImage, x, y, null);	//draws the correct tile		
 			}
 		}
+		System.out.println("Done looping");
 		return image;
 	}
 	
@@ -140,34 +154,7 @@ public class LodeRunnerRenderUtil {
 //		return tileList;
 //	}
 //	
-	/**
-	 * Loads in all of the tile images, the index corresponds to the number for that tile excluding spawn and multiple types of ground 
-	 * @param filePath Directory that hold the tile images 
-	 * @return An array of BufferedImages holding all the tiles for Lode Runner
-	 * @throws IOException In case the file can't be found
-	 */
-	public static BufferedImage[] loadImagesNoSpawn(String filePath) throws IOException {
-		BufferedImage[] tileList = new BufferedImage[6];
-		File tile = new File(filePath+"empty.png");
-		BufferedImage emptyTile = ImageIO.read(tile);
-		tileList[0] = emptyTile;
-		tile = new File(filePath+"gold.png");
-		BufferedImage goldTile = ImageIO.read(tile);
-		tileList[1] = goldTile;
-		tile = new File(filePath+"enemy.png");
-		BufferedImage enemyTile = ImageIO.read(tile);
-		tileList[2] = enemyTile;
-		tile = new File(filePath+"diggableGround.png");
-		BufferedImage diggableGroundTile = ImageIO.read(tile);
-		tileList[3] = diggableGroundTile;
-		tile = new File(filePath+"ladder.png");
-		BufferedImage ladderTile = ImageIO.read(tile);
-		tileList[4] = ladderTile;
-		tile = new File(filePath+"rope.png");
-		BufferedImage ropeTile = ImageIO.read(tile);
-		tileList[5] = ropeTile;
-		return tileList;
-	}
+
 	/**
 	 * Loads in all of the tile images, the index corresponds to the number for that tile excluding spawn and multiple types of ground 
 	 * @param filePath Directory that hold the tile images 
