@@ -13,92 +13,38 @@ import edu.southwestern.util.search.Search;
 import edu.southwestern.util.search.State;
 
 public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
+	public static final int LODE_RUNNER_TILE_EMPTY = 0;
+	public static final int LODE_RUNNER_TILE_GOLD = 1;
+	public static final int LODE_RUNNER_TILE_ENEMY = 2;
+	public static final int LODE_RUNNER_TILE_DIGGABLE = 3;
+	public static final int LODE_RUNNER_TILE_LADDER = 4;
+	public static final int LODE_RUNNER_TILE_ROPE = 5;
+	public static final int LODE_RUNNER_TILE_GROUND = 6;
+	public static final int LODE_RUNNER_TILE_SPAWN = 7;
 	private List<List<Integer>> level;
 	private HashSet<Point> goldLeft; //set containing the points with gold 
 	public int currentX; 
 	public int currentY;
 	
-	public static void main(String args[]) {
-		//6 tile mapping 
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 1.txt"); //converts to JSON
-		//System.out.println(level);
-		//HashSet<Point> gold = fillGold(level);
-//		System.out.println(gold);
-//		System.out.println(level);
-		LodeRunnerState start = new LodeRunnerState(level);
-//		int tile = level.get(17).get(20);
-//		System.out.println(tile);
-		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
-		HashSet<LodeRunnerState> mostRecentVisited = null;
-		ArrayList<LodeRunnerAction> actionSequence = null;
-		try {
-			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 100000);
-		} catch(Exception e) {
-			System.out.println("no search");
-		}
-		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
-		System.out.println(mostRecentVisited.toString());
-		System.out.println("actionSequence: " + actionSequence);
-	}
+	public static Heuristic<LodeRunnerAction,LodeRunnerState> manhattanToFarthestGold = new Heuristic<LodeRunnerAction,LodeRunnerState>(){
 
-	/**
-	 * 
-	 * @param level
-	 * @return
-	 */
-	private static HashSet<Point> fillGold(List<List<Integer>> level) {
-		HashSet<Point> gold = new HashSet<>();
-		int tile = -1; 
-		for(int i = 0; i < level.size(); i++) {
-			for(int j = 0; j < level.get(i).size(); j++) {
-				tile = level.get(i).get(j);
-				//System.out.println("The tile at " + j + "," + i + " = " +tile);
-				if(tile == 1) { 
-					gold.add(new Point(j,i));//saves reference to that gold in the 
-					level.get(i).set(j, 0);//removes gold and places an empty tile 
-				}
-				
+		/**
+		 * Calculates the Manhattan distance from the player to the farthest gold coin
+		 * @return Manhattan distance from play to farthest coin 
+		 */
+		@Override
+		public double h(LodeRunnerState s) {
+			int maxDistance = 0;
+			HashSet<Point> goldLeft = s.goldLeft;
+			for(Point p: goldLeft) {
+				int xDistance = Math.abs(s.currentX - p.x);
+				int yDistance = Math.abs(s.currentY - p.y);
+				Math.max(maxDistance, (xDistance+yDistance));
 			}
+			return maxDistance;
 		}
-		return gold;
-	}
-	
-	private static Point getSpawnFromVGLC(List<List<Integer>> level) {
-		Point start = new Point();
-		int tile = -1;
-		for(int i = 0; i < level.size(); i++) {
-			for(int j = 0; j < level.get(i).size(); j++){
-				tile = level.get(i).get(j);
-				//System.out.println("The tile at " + j + "," + i + " = " +tile);
-				if(tile == 7) {//7 maps to spawn point  
-					start = new Point(j, i);
-					level.get(i).set(j, 0);//removes gold and places an empty tile 
-				}
-			}
-		}
-		return start;
-	}
-	
-	public LodeRunnerState(List<List<Integer>> level) {
-		this(level, getSpawnFromVGLC(level));
-	}
-	
-	public LodeRunnerState(List<List<Integer>> level, Point start) {
-		this(level, getGoldLeft(level), start.x, start.y);
-	}
-	
-	private static HashSet<Point> getGoldLeft(List<List<Integer>> level) {
-		HashSet<Point> gold = fillGold(level);
-		return gold;
-	}
-
-	//may add a way to track the enemies in the future, but we are using a simple version right now 
-	private LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, int currentX, int currentY) {
-		this.level = level;
-		this.goldLeft = goldLeft;
-		this.currentX = currentX;
-		this.currentY = currentY;
-	}
+		
+	};
 	
 	/**
 	 * Defines the Actions that can be used by a player for Lode Runner 
@@ -140,25 +86,114 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		}
 	}
 	
-	public static Heuristic<LodeRunnerAction,LodeRunnerState> manhattanToFarthestGold = new Heuristic<LodeRunnerAction,LodeRunnerState>(){
-
-		/**
-		 * Calculates the Manhattan distance from the player to the farthest gold coin
-		 * @return Manhattan distance from play to farthest coin 
-		 */
-		@Override
-		public double h(LodeRunnerState s) {
-			int maxDistance = 0;
-			HashSet<Point> goldLeft = s.goldLeft;
-			for(Point p: goldLeft) {
-				int xDistance = Math.abs(s.currentX - p.x);
-				int yDistance = Math.abs(s.currentY - p.y);
-				Math.max(maxDistance, (xDistance+yDistance));
-			}
-			return maxDistance;
+	public static void main(String args[]) {
+		//6 tile mapping 
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 1.txt"); //converts to JSON
+		//System.out.println(level);
+		//HashSet<Point> gold = fillGold(level);
+//		System.out.println(gold);
+//		System.out.println(level);
+		LodeRunnerState start = new LodeRunnerState(level);
+//		int tile = level.get(17).get(20);
+//		System.out.println(tile);
+		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
+		HashSet<LodeRunnerState> mostRecentVisited = null;
+		ArrayList<LodeRunnerAction> actionSequence = null;
+		try {
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 100000);
+		} catch(Exception e) {
+			System.out.println("failed search");
 		}
-		
-	};
+		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
+		System.out.println(mostRecentVisited.toString());
+		System.out.println("actionSequence: " + actionSequence);
+	}
+
+	/**
+	 * 
+	 * @param level
+	 * @return
+	 */
+	private static HashSet<Point> fillGold(List<List<Integer>> level) {
+		HashSet<Point> gold = new HashSet<>();
+		int tile = -1; 
+		for(int i = 0; i < level.size(); i++) {
+			for(int j = 0; j < level.get(i).size(); j++) {
+				tile = level.get(i).get(j);
+				//System.out.println("The tile at " + j + "," + i + " = " +tile);
+				if(tile == LODE_RUNNER_TILE_GOLD) { 
+					gold.add(new Point(j,i));//saves reference to that gold in the 
+					level.get(i).set(j, LODE_RUNNER_TILE_EMPTY);//removes gold and places an empty tile 
+				}
+				
+			}
+		}
+		return gold;
+	}
+	
+	/**
+	 * 
+	 * @param level
+	 * @return
+	 */
+	private static Point getSpawnFromVGLC(List<List<Integer>> level) {
+		Point start = new Point();
+		int tile = -1;
+		for(int i = 0; i < level.size(); i++) {
+			for(int j = 0; j < level.get(i).size(); j++){
+				tile = level.get(i).get(j);
+				//System.out.println("The tile at " + j + "," + i + " = " +tile);
+				if(tile == LODE_RUNNER_TILE_SPAWN) {//7 maps to spawn point  
+					start = new Point(j, i);
+					level.get(i).set(j, LODE_RUNNER_TILE_EMPTY);//removes gold and places an empty tile 
+				}
+			}
+		}
+		return start;
+	}
+	
+	/**
+	 * 
+	 * @param level
+	 */
+	public LodeRunnerState(List<List<Integer>> level) {
+		this(level, getSpawnFromVGLC(level));
+	}
+	
+	/**
+	 * 
+	 * @param level
+	 * @param start
+	 */
+	public LodeRunnerState(List<List<Integer>> level, Point start) {
+		this(level, getGoldLeft(level), start.x, start.y);
+	}
+	
+	/**
+	 * 
+	 * @param level
+	 * @return
+	 */
+	private static HashSet<Point> getGoldLeft(List<List<Integer>> level) {
+		HashSet<Point> gold = fillGold(level);
+		return gold;
+	}
+
+	
+	/**
+	 * 
+	 * may add a way to track the enemies in the future, but we are using a simple version right now 
+	 * @param level
+	 * @param goldLeft
+	 * @param currentX
+	 * @param currentY
+	 */
+	private LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, int currentX, int currentY) {
+		this.level = level;
+		this.goldLeft = goldLeft;
+		this.currentX = currentX;
+		this.currentY = currentY;
+	}
 
 	/**
 	 * Gets the next state from the current state
@@ -169,20 +204,22 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		int newX = currentX;
 		int newY = currentY;
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
-			if(tileAtPosition(newX,newY+1) == 3)//checks if there is ground under the player
+			if(tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE ||
+					tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
 				newY++;//fall down 
 			else if(passable(newX+1, newY)) {
 				//System.out.println("right");
 				newX++;
-			} else return null;
+			} else if(currentY == newY)return null; //if other direction doesn't change it does not effect the state
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
-			if(tileAtPosition(newX,newY+1) == 3)//checks if there is ground under the player
+			if(tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE ||
+					tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
 				newY++;//fall down 
 			else if(passable(newX-1,newY)) {
 				//System.out.println("left");
 				newX--;
-			} else return null; 
+			} else if(currentY == newY)return null; //if other direction doesn't change it does not effect the state
 		}
 //		if(a.getMove().equals(LodeRunnerAction.MOVE.NOTHING)) {
 //			//if the tile at the new position is gold, then it removes it from the set
@@ -192,17 +229,17 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 //		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
 			
-			if(tileAtPosition(newX, newY-1)==4) {
+			if(tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) {
 				//System.out.println("up");
 				newY--;
-			} else if(currentX == newX) return null; 
+			} else if(currentX == newX) return null; //if other direction doesn't change it does not effect the state
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.DOWN)) {
 			
-			if(passable(newX, newY+1)) {
+			if(passable(newX, newY)) {
 				//System.out.println("down");
 				newY++;
-			} else if(currentX == newX) return null;
+			} else if(currentX == newX) return null;//if other direction doesn't change it does not effect the state
 		}
 		//have these two actions return null while testing on level one because it doesn't require digging to win 
 //		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
@@ -236,6 +273,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		}
 		//System.out.println(newGoldLeft);
 		//System.out.println(goldLeft);
+//		System.out.println(newX);
+//		System.out.println(newY);
 		return new LodeRunnerState(level, newGoldLeft, newX, newY);
 	}
 
@@ -262,10 +301,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 */
 	public boolean passable(int x, int y) {
 		int tile = tileAtPosition(x,y);
-		//0 is empty, 2 is an enemy(simplified version that ignores enemies), 4 is a ladder, 5 is a rope 
-		if(inBounds(x,y) && (tile == 0 || tile == 2 || tile==4 ||tile==5))
+		if(inBounds(x,y) && (tile==LODE_RUNNER_TILE_EMPTY || tile==LODE_RUNNER_TILE_GOLD || tile==LODE_RUNNER_TILE_ENEMY || 
+				tile==LODE_RUNNER_TILE_LADDER || tile==LODE_RUNNER_TILE_ROPE))
 			return true;
-		
 		return false; 
 	}
 	
@@ -309,6 +347,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		return 1;
 	}
 	
+	/**
+	 * 
+	 */
 	@Override
 	public String toString() {
 		return "Size: " + goldLeft.size() + " (" + currentX + ", " + currentY + ")";
