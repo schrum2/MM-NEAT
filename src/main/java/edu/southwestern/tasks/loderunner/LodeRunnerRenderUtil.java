@@ -66,9 +66,7 @@ public class LodeRunnerRenderUtil {
 	 * @throws IOException In case the file can't be found 
 	 */
 	public static BufferedImage getBufferedImage(List<List<Integer>> list, BufferedImage[] images) throws IOException {
-		System.out.println("About to create");
 		BufferedImage image = createBufferedImage(list, RENDERED_IMAGE_WIDTH, RENDERED_IMAGE_HEIGHT, images); //gets the image of the level 
-		System.out.println("created");
 		//this code displays the level in a window 
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
@@ -93,17 +91,14 @@ public class LodeRunnerRenderUtil {
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = image.createGraphics();
 		//loops through the grid in the applet to place tiles in order to render levels 
-		System.out.println("About to loop");
 		for(int y = 0; y < height; y += LODE_RUNNER_TILE_Y) {
 			for(int x = 0; x < width; x += LODE_RUNNER_TILE_X) {
 				int xTile = x/LODE_RUNNER_TILE_X;
 				int yTile = y/LODE_RUNNER_TILE_Y;
-				System.out.println("Find tile");
 				BufferedImage tileImage = findTile(list, images, xTile, yTile); //finds the correct tile 
 				g.drawImage(tileImage, x, y, null);	//draws the correct tile		
 			}
 		}
-		System.out.println("Done looping");
 		return image;
 	}
 	
@@ -162,7 +157,8 @@ public class LodeRunnerRenderUtil {
 	 * @throws IOException In case the file can't be found
 	 */
 	public static BufferedImage[] loadImagesNoSpawnTwoGround(String filePath) throws IOException {
-		BufferedImage[] tileList = new BufferedImage[7];
+		// TODO! Fix magic numbers!
+		BufferedImage[] tileList = new BufferedImage[8];
 		File tile = new File(filePath+"empty.png");
 		BufferedImage emptyTile = ImageIO.read(tile);
 		tileList[0] = emptyTile;
@@ -184,6 +180,9 @@ public class LodeRunnerRenderUtil {
 		tile = new File(filePath+"ground.png");
 		BufferedImage groundTile = ImageIO.read(tile);
 		tileList[6] = groundTile;
+		tile = new File(filePath+"spawn.png");
+		BufferedImage spawnTile = ImageIO.read(tile);
+		tileList[7] = spawnTile;
 		return tileList;
 	}
 	
