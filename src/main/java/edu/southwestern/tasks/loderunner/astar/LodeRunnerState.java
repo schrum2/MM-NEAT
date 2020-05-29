@@ -232,7 +232,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		//			return null;  
 		//		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
-			if(tileAtPosition(newX, newY-1)==LODE_RUNNER_TILE_LADDER) {
+			if(tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) {
 				//System.out.println("up");
 				newY--;
 			} else return null; 
