@@ -25,6 +25,11 @@ import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
 import edu.southwestern.util.search.State;
 
+/**
+ * 
+ * @author kdste
+ *
+ */
 public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public static final int LODE_RUNNER_TILE_EMPTY = 0;
 	public static final int LODE_RUNNER_TILE_GOLD = 1;
@@ -39,6 +44,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public int currentX; 
 	public int currentY;
 
+	/**
+	 * Declares a heuristic for the search to depend on 
+	 */
 	public static Heuristic<LodeRunnerAction,LodeRunnerState> manhattanToFarthestGold = new Heuristic<LodeRunnerAction,LodeRunnerState>(){
 
 		/**
@@ -68,6 +76,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		public enum MOVE {RIGHT,LEFT,UP,DOWN}//removed dig up and dig down while testing on level 1
 		private MOVE movement;
 
+		/**
+		 * Constructor for a lode runnner action
+		 * @param m A move the player can make 
+		 */
 		public LodeRunnerAction(MOVE m) {
 			this.movement = m;
 		}
@@ -100,21 +112,26 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	}
 
 	public static void main(String args[]) {
+		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 3.txt"); //converts to JSON
 		LodeRunnerState start = new LodeRunnerState(level);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
 		try {
+			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+			//represented by red x's in the visualization 
 			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 100000);
 		} catch(Exception e) {
 			System.out.println("failed search");
 			e.printStackTrace();
 		}
+		//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
 		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
 		System.out.println(mostRecentVisited.toString());
 		System.out.println("actionSequence: " + actionSequence);
 		try {
+			//visualizes the points visited with red and whit x's
 			vizualizePath(level,mostRecentVisited,actionSequence,start);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -122,9 +139,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	}
 
 	/**
-	 * 
-	 * @param level
-	 * @return
+	 * Fills a set with points, to keep a reference of where the gold is in the level
+	 * then removes them and makes them emtpy spaces 
+	 * @param level A level 
+	 * @return Set of points 
 	 */
 	private static HashSet<Point> fillGold(List<List<Integer>> level) {
 		HashSet<Point> gold = new HashSet<>();
@@ -144,9 +162,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	}
 
 	/**
-	 * 
+	 * Loops through the level to find the spawn point from the original level 
 	 * @param level
-	 * @return
+	 * @return The spawn point 
 	 */
 	private static Point getSpawnFromVGLC(List<List<Integer>> level) {
 		Point start = new Point();
@@ -167,26 +185,29 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	}
 
 	/**
-	 * 
-	 * @param level
+	 * Constructor that only takes a level, 
+	 * this makes it so that it grabs the original spawn point and fills the gold set with
+	 * the locations of the gold for that level 
+	 * @param level A level in JSON form 
 	 */
 	public LodeRunnerState(List<List<Integer>> level) {
 		this(level, getSpawnFromVGLC(level));
 	}
 
 	/**
-	 * 
-	 * @param level
-	 * @param start
+	 * Constructor that takes a level and a start point. 
+	 * This construct is can be used to specify a starting point for easier testing 
+	 * @param level Level in JSON form 
+	 * @param start The spawn point 
 	 */
 	public LodeRunnerState(List<List<Integer>> level, Point start) {
 		this(level, getGoldLeft(level), start.x, start.y);
 	}
 
 	/**
-	 * 
-	 * @param level
-	 * @return
+	 * gets the gold left in the level by calling the fill gold method 
+	 * @param level A level in JSON form 
+	 * @return A set of point with the locations of the gold in the level 
 	 */
 	private static HashSet<Point> getGoldLeft(List<List<Integer>> level) {
 		HashSet<Point> gold = fillGold(level);
@@ -195,12 +216,13 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 
 
 	/**
-	 * 
+	 * The standard construct that takes all specifies all the parameters 
+	 * used in the getSuccessor method to get a the next state 
 	 * may add a way to track the enemies in the future, but we are using a simple version right now 
-	 * @param level
-	 * @param goldLeft
-	 * @param currentX
-	 * @param currentY
+	 * @param level Level in JSON form 
+	 * @param goldLeft Set with the locations of the gold 
+	 * @param currentX X coordinate of spawn 
+	 * @param currentY Y coordinate of spawn 
 	 */
 	private LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, int currentX, int currentY) {
 		this.level = level;
@@ -208,9 +230,18 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		this.currentX = currentX;
 		this.currentY = currentY;
 	}
-	
-	
-	public static BufferedImage vizualizePath(List<List<Integer>> level, HashSet<LodeRunnerState> mostRecentVisited, 
+
+	/**
+	 * Visualizes the solution path. 
+	 * Red X's are the solution path, white X's are the other states that were visited 
+	 * Displays in a window 
+	 * @param level A level 
+	 * @param mostRecentVisited Set of all visited locations 
+	 * @param actionSequence Solution set 
+	 * @param start Start state  
+	 * @throws IOException
+	 */
+	public static void vizualizePath(List<List<Integer>> level, HashSet<LodeRunnerState> mostRecentVisited, 
 			ArrayList<LodeRunnerAction> actionSequence, LodeRunnerState start) throws IOException {
 		List<List<Integer>> fullLevel = ListUtil.deepCopyListOfLists(level);
 		fullLevel.get(start.currentY).set(start.currentX, LODE_RUNNER_TILE_SPAWN);// puts the spawn back into the visualization
@@ -252,8 +283,6 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		return null;
 	}
 
 	/**
@@ -270,16 +299,16 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			if(passable(newX+1, newY) && tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) {
 				newX++;
 			} else
-			if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
-					beneath != LODE_RUNNER_TILE_LADDER &&
-					beneath != LODE_RUNNER_TILE_DIGGABLE &&
-					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
-				return null;//fall down 
-			else if(passable(newX+1, newY)) {
-				//System.out.println("right");
-				newX++;
-			}  
-			else return null; 
+				if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
+				beneath != LODE_RUNNER_TILE_LADDER &&
+				beneath != LODE_RUNNER_TILE_DIGGABLE &&
+				beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
+					return null;//fall down 
+				else if(passable(newX+1, newY)) {
+					//System.out.println("right");
+					newX++;
+				}  
+				else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
 			int beneath = tileAtPosition(newX,newY+1);
@@ -310,17 +339,12 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			} else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.DOWN)) { 
-			if(tileAtPosition(newX,newY) == LODE_RUNNER_TILE_ROPE && inBounds(newX,newY)) {
-				return null;
-			}
-			else if(tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE &&
+			if(tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE &&
 					tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_GROUND) {
 				//System.out.println("down");
 				newY++;
 			} else return null;
-		} else return null;
-
-
+		}
 		//have these two actions return null while testing on level one because it doesn't require digging to win 
 		//		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
 		////			int tile = tileAtPosition(newX-1,newY-1); //tile down and to the left 
@@ -359,19 +383,19 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		ArrayList<LodeRunnerAction> vaildActions = new ArrayList<>();
 		//System.out.println(level);
 		// This code renders an image of the level with the agent in it
-//		try {
-//			LodeRunnerState theState = ((LodeRunnerState) s);
-//			List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
-//			copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
-//			for(Point t : theState.goldLeft) {
-//				copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
-//			}
-//			LodeRunnerRenderUtil.getBufferedImage(copy);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		//		try {
+		//			LodeRunnerState theState = ((LodeRunnerState) s);
+		//			List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
+		//			copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
+		//			for(Point t : theState.goldLeft) {
+		//				copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
+		//			}
+		//			LodeRunnerRenderUtil.getBufferedImage(copy);
+		//		} catch (Exception e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
+		//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		for(LodeRunnerAction.MOVE move: LodeRunnerAction.MOVE.values()) {
 			//Everything besides the if statement is for debugging purposes, delete later 
 			LodeRunnerAction a = new LodeRunnerAction(move);
@@ -402,10 +426,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	}
 
 	/**
-	 * 
-	 * @param x
-	 * @param y
-	 * @return
+	 * Helps to ensure search does not exceed boundarys of the level 
+	 * @param x X coordinate 
+	 * @param y Y coordinate 
+	 * @return true if inside the level, false otherwise 
 	 */
 	private boolean inBounds(int x, int y) {
 		return y>=0 && x>=0 && y<level.size() && x<level.get(0).size();
@@ -442,7 +466,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	}
 
 	/**
-	 * 
+	 * Returns a string repesentation of a Lode Runner State 
 	 */
 	@Override
 	public String toString() {
