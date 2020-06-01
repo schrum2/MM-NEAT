@@ -96,7 +96,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		//HashSet<Point> gold = fillGold(level);
 		//		System.out.println(gold);
 		//		System.out.println(level);
-		LodeRunnerState start = new LodeRunnerState(level, new Point(16,17));
+		LodeRunnerState start = new LodeRunnerState(level);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
@@ -206,9 +206,12 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	@Override
 	public State<LodeRunnerAction> getSuccessor(LodeRunnerAction a) {
 		int newX = currentX;
-		int newY = currentY;
+		int newY = currentY; 
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
 			int beneath = tileAtPosition(newX,newY+1);
+			if(passable(newX+1, newY) &&tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) {
+				newX++;
+			} else
 			if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
 					beneath != LODE_RUNNER_TILE_LADDER &&
 					beneath != LODE_RUNNER_TILE_DIGGABLE &&
@@ -217,16 +220,14 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			else if(passable(newX+1, newY)) {
 				//System.out.println("right");
 				newX++;
-			} 
-			else if(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE &&
-					beneath != LODE_RUNNER_TILE_DIGGABLE &&
-					beneath != LODE_RUNNER_TILE_GROUND) {
-				newX++;
-			} 
+			}  
 			else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
 			int beneath = tileAtPosition(newX,newY+1);
+			if(passable(newX+1, newY) &&tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) {
+				newX--;
+			} else 
 			if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
 					beneath != LODE_RUNNER_TILE_LADDER &&
 					beneath != LODE_RUNNER_TILE_DIGGABLE &&
@@ -235,12 +236,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			else if(passable(newX-1,newY)) {
 				//System.out.println("left");
 				newX--;
-			} 
-			else if(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE &&
-					beneath != LODE_RUNNER_TILE_DIGGABLE &&
-					beneath != LODE_RUNNER_TILE_GROUND) {
-				newX--;
-			} 
+			}  
 			else return null; 
 		}
 		//		if(a.getMove().equals(LodeRunnerAction.MOVE.NOTHING)) {
