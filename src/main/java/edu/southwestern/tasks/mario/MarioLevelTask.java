@@ -469,7 +469,6 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				x3 = negativeSpaceSumIndex;
 
 				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-				setBinsAndSaveMAPElitesImages(individual, levelImage, archiveArray, x1, x2, x3, BINS_PER_DIMENSION, binScore);
 				
 			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels) {
 				//double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
@@ -479,7 +478,6 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			
 				// Row-major order lookup in 3D archive
 				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-				setBinsAndSaveMAPElitesImages(individual, levelImage, archiveArray, x1, x2, x3, BINS_PER_DIMENSION,	binScore);
 			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndDecorationBinLabels) {
 				double decorationAlternating = alternatingStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
 				double negativeSpaceAlternating = sumStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
@@ -490,16 +488,8 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				x1 = decorationBinIndex;
 				x2 = numDistinctSegments;
 				x3 = negativeSpaceSumIndex;
-				System.out.println();
-				System.out.println();
-				System.out.println("DecoreationAlternating: "+decorationAlternating);
-				System.out.println("negative Sapce Alternating: "+ negativeSpaceAlternating);
-				System.out.println();
-				System.out.println();
-//				MiscUtil.waitForReadStringAndEnterKeyPress();
 				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
 
-				setBinsAndSaveMAPElitesImages(individual, levelImage, archiveArray, x1, x2, x3, BINS_PER_DIMENSION, binScore);
 				
 			}
 			
@@ -507,13 +497,25 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
 			}
 			// Row-major order lookup in 3D archive
-			
+			setBinsAndSaveMAPElitesImages(individual, levelImage, archiveArray, x1, x2, x3, BINS_PER_DIMENSION, binScore);
+
 		}
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
 		
 	}
 
 	@SuppressWarnings("unchecked")
+	/**
+	 * sets the bins and saves MAPElites images to archive
+	 * @param individual the genotype
+	 * @param levelImage the buffered image of the level
+	 * @param archiveArray the archive array
+	 * @param x1 the first bin dimension
+	 * @param x2 the second bin dimension
+	 * @param x3 the third bin dimension
+	 * @param BINS_PER_DIMENSION the bins per dimension
+	 * @param binScore the bin score
+	 */
 	private void setBinsAndSaveMAPElitesImages(Genotype<T> individual, BufferedImage levelImage, double[] archiveArray,
 			int x1, int x2, int x3, final int BINS_PER_DIMENSION, double binScore) {
 		int binIndex;
