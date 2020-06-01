@@ -260,7 +260,7 @@ public class Level {
 		if (m.matches()) {
 			int x = Integer.parseInt(m.group(1));
 			int y = Integer.parseInt(m.group(2));
-			y = dropToSolid(x, y);
+			//y = dropToSolid(x, y);
 			Enemy e = new Enemy(x, y);
 			enemies.add(e);
 			return e;

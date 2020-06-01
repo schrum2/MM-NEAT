@@ -96,7 +96,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		//HashSet<Point> gold = fillGold(level);
 		//		System.out.println(gold);
 		//		System.out.println(level);
-		LodeRunnerState start = new LodeRunnerState(level);
+		LodeRunnerState start = new LodeRunnerState(level, new Point(16,17));
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
@@ -209,7 +209,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		int newY = currentY;
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
 			int beneath = tileAtPosition(newX,newY+1);
-			if(		tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
+			if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
 					beneath != LODE_RUNNER_TILE_LADDER &&
 					beneath != LODE_RUNNER_TILE_DIGGABLE &&
 					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
@@ -217,11 +217,17 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			else if(passable(newX+1, newY)) {
 				//System.out.println("right");
 				newX++;
-			} else return null; 
+			} 
+			else if(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE &&
+					beneath != LODE_RUNNER_TILE_DIGGABLE &&
+					beneath != LODE_RUNNER_TILE_GROUND) {
+				newX++;
+			} 
+			else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
 			int beneath = tileAtPosition(newX,newY+1);
-			if(		tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
+			if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
 					beneath != LODE_RUNNER_TILE_LADDER &&
 					beneath != LODE_RUNNER_TILE_DIGGABLE &&
 					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
@@ -229,7 +235,13 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			else if(passable(newX-1,newY)) {
 				//System.out.println("left");
 				newX--;
-			} else return null; 
+			} 
+			else if(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE &&
+					beneath != LODE_RUNNER_TILE_DIGGABLE &&
+					beneath != LODE_RUNNER_TILE_GROUND) {
+				newX--;
+			} 
+			else return null; 
 		}
 		//		if(a.getMove().equals(LodeRunnerAction.MOVE.NOTHING)) {
 		//			//if the tile at the new position is gold, then it removes it from the set
@@ -243,13 +255,15 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				newY--;
 			} else return null; 
 		}
-		else if(a.getMove().equals(LodeRunnerAction.MOVE.DOWN)) {
+		else if(a.getMove().equals(LodeRunnerAction.MOVE.DOWN)) { 
 			if(tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE &&
 					tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_GROUND) {
 				//System.out.println("down");
 				newY++;
 			} else return null;
-		}
+		} 
+
+
 		//have these two actions return null while testing on level one because it doesn't require digging to win 
 		//		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
 		////			int tile = tileAtPosition(newX-1,newY-1); //tile down and to the left 
@@ -274,8 +288,6 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				newGoldLeft.add(p);
 			}
 		}
-		//System.out.println(newGoldLeft);
-		//System.out.println(goldLeft);
 		//		System.out.println(newX);
 		//		System.out.println(newY);
 		return new LodeRunnerState(level, newGoldLeft, newX, newY);
@@ -290,19 +302,19 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		ArrayList<LodeRunnerAction> vaildActions = new ArrayList<>();
 		//System.out.println(level);
 		// This code renders an image of the level with the agent in it
-//		try {
-//			LodeRunnerState theState = ((LodeRunnerState) s);
-//			List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
-//			copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
-//			for(Point t : theState.goldLeft) {
-//				copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
-//			}
-//			LodeRunnerRenderUtil.getBufferedImage(copy);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		try {
+			LodeRunnerState theState = ((LodeRunnerState) s);
+			List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
+			copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
+			for(Point t : theState.goldLeft) {
+				copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
+			}
+			LodeRunnerRenderUtil.getBufferedImage(copy);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 		for(LodeRunnerAction.MOVE move: LodeRunnerAction.MOVE.values()) {
 			//Everything besides the if statement is for debugging purposes, delete later 
 			LodeRunnerAction a = new LodeRunnerAction(move);
@@ -312,7 +324,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			}
 		}
 		//System.out.println(vaildActions);
-		
+
 		return vaildActions;
 	}
 
@@ -408,7 +420,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			return false;
 		return true;
 	}
-	
-	
+
+
 
 }
