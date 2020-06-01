@@ -100,12 +100,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	}
 
 	public static void main(String args[]) {
-		//6 tile mapping 
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 1.txt"); //converts to JSON
-		//System.out.println(level);
-		//HashSet<Point> gold = fillGold(level);
-		//		System.out.println(gold);
-		//		System.out.println(level);
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 3.txt"); //converts to JSON
 		LodeRunnerState start = new LodeRunnerState(level);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
@@ -122,7 +117,6 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		try {
 			vizualizePath(level,mostRecentVisited,actionSequence,start);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -134,7 +128,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 */
 	private static HashSet<Point> fillGold(List<List<Integer>> level) {
 		HashSet<Point> gold = new HashSet<>();
-		int tile = -1; 
+		int tile; 
 		for(int i = 0; i < level.size(); i++) {
 			for(int j = 0; j < level.get(i).size(); j++) {
 				tile = level.get(i).get(j);
@@ -156,7 +150,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 */
 	private static Point getSpawnFromVGLC(List<List<Integer>> level) {
 		Point start = new Point();
-		int tile = -1;
+		int tile;
 		boolean done = false;
 		for(int i = 0; !done && i < level.size(); i++) {
 			for(int j = 0; !done && j < level.get(i).size(); j++){
@@ -218,10 +212,22 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	
 	public static BufferedImage vizualizePath(List<List<Integer>> level, HashSet<LodeRunnerState> mostRecentVisited, 
 			ArrayList<LodeRunnerAction> actionSequence, LodeRunnerState start) throws IOException {
-		BufferedImage visualPath = LodeRunnerRenderUtil.createBufferedImage(level, LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+		List<List<Integer>> fullLevel = ListUtil.deepCopyListOfLists(level);
+		fullLevel.get(start.currentY).set(start.currentX, LODE_RUNNER_TILE_SPAWN);// puts the spawn back into the visualization
+		for(Point p : start.goldLeft) { //puts all the gold back 
+			fullLevel.get(p.y).set(p.x, LODE_RUNNER_TILE_GOLD);
+		}
+		BufferedImage visualPath = LodeRunnerRenderUtil.createBufferedImage(fullLevel, LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
 				LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
 		if(mostRecentVisited != null) {
 			Graphics2D g = (Graphics2D) visualPath.getGraphics();
+			g.setColor(Color.WHITE);
+			for(LodeRunnerState s : mostRecentVisited) {
+				int x = s.currentX;
+				int y = s.currentY;
+				g.drawLine(x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y,(x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+				g.drawLine((x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+			}
 			if(actionSequence != null) {
 				g.setColor(Color.RED);
 				LodeRunnerState current = start;
@@ -258,9 +264,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public State<LodeRunnerAction> getSuccessor(LodeRunnerAction a) {
 		int newX = currentX;
 		int newY = currentY; 
+		//assert inBounds(newX,newY): "x is:" + newX + "\ty is:"+newY + "\t" + inBounds(newX,newY);
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
 			int beneath = tileAtPosition(newX,newY+1);
-			if(passable(newX+1, newY) &&tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) {
+			if(passable(newX+1, newY) && tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) {
 				newX++;
 			} else
 			if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
@@ -276,10 +283,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
 			int beneath = tileAtPosition(newX,newY+1);
-			if(passable(newX+1, newY) &&tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) {
+			if(passable(newX-1, newY) && tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) {
 				newX--;
-			} else 
-			if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
+			} 
+			else if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
 					beneath != LODE_RUNNER_TILE_LADDER &&
 					beneath != LODE_RUNNER_TILE_DIGGABLE &&
 					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
@@ -303,12 +310,15 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			} else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.DOWN)) { 
-			if(tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE &&
+			if(tileAtPosition(newX,newY) == LODE_RUNNER_TILE_ROPE && inBounds(newX,newY)) {
+				return null;
+			}
+			else if(tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE &&
 					tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_GROUND) {
 				//System.out.println("down");
 				newY++;
 			} else return null;
-		} 
+		} else return null;
 
 
 		//have these two actions return null while testing on level one because it doesn't require digging to win 
@@ -335,8 +345,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				newGoldLeft.add(p);
 			}
 		}
-		//		System.out.println(newX);
-		//		System.out.println(newY);
+		//System.out.println(inBounds(newX,newY));
+		//assert inBounds(newX,newY) : "x is:" + newX + "\ty is:"+newY + "\t"+ inBounds(newX,newY);
 		return new LodeRunnerState(level, newGoldLeft, newX, newY);
 	}
 
