@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.loderunner.astar;
+package edu.southwestern.tasks.loderunner;
 
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.tasks.NoisyLonerTask;

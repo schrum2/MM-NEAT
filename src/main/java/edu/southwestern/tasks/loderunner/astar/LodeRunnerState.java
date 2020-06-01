@@ -1,9 +1,19 @@
 package edu.southwestern.tasks.loderunner.astar;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import edu.southwestern.tasks.loderunner.LodeRunnerRenderUtil;
 import edu.southwestern.tasks.loderunner.LodeRunnerVGLCUtil;
@@ -109,6 +119,12 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
 		System.out.println(mostRecentVisited.toString());
 		System.out.println("actionSequence: " + actionSequence);
+		try {
+			vizualizePath(level,mostRecentVisited,actionSequence,start);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -197,6 +213,34 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		this.goldLeft = goldLeft;
 		this.currentX = currentX;
 		this.currentY = currentY;
+	}
+	
+	
+	public static BufferedImage vizualizePath(List<List<Integer>> level, HashSet<LodeRunnerState> mostRecentVisited, 
+			ArrayList<LodeRunnerAction> actionSequence, LodeRunnerState start) throws IOException {
+		BufferedImage visualPath = LodeRunnerRenderUtil.createBufferedImage(level, LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+				LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+		if(mostRecentVisited != null) {
+			Graphics2D g = (Graphics2D) visualPath.getGraphics();
+			if(actionSequence != null) {
+				g.setColor(Color.RED);
+				g.drawLine(5,5,10,10);
+			}
+		}
+		try {
+			JFrame frame = new JFrame();
+			JPanel panel = new JPanel();
+			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+					LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
+			panel.add(label);
+			frame.add(panel);
+			frame.pack();
+			frame.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 
 	/**
@@ -298,19 +342,19 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		ArrayList<LodeRunnerAction> vaildActions = new ArrayList<>();
 		//System.out.println(level);
 		// This code renders an image of the level with the agent in it
-		try {
-			LodeRunnerState theState = ((LodeRunnerState) s);
-			List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
-			copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
-			for(Point t : theState.goldLeft) {
-				copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
-			}
-			LodeRunnerRenderUtil.getBufferedImage(copy);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		try {
+//			LodeRunnerState theState = ((LodeRunnerState) s);
+//			List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
+//			copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
+//			for(Point t : theState.goldLeft) {
+//				copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
+//			}
+//			LodeRunnerRenderUtil.getBufferedImage(copy);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		for(LodeRunnerAction.MOVE move: LodeRunnerAction.MOVE.values()) {
 			//Everything besides the if statement is for debugging purposes, delete later 
 			LodeRunnerAction a = new LodeRunnerAction(move);

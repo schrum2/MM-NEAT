@@ -77,6 +77,11 @@ public class LodeRunnerRenderUtil {
 		frame.setVisible(true);
 		return image;
 	}
+	
+	public static BufferedImage createBufferedImage(List<List<Integer>> list, int width, int height) throws IOException {
+		BufferedImage[] images = loadImagesNoSpawnTwoGround(LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images
+		return createBufferedImage(list, width, height, images);
+	}
 
 	/**
 	 * Puts tiles into BufferedImage to fully render the level 
