@@ -224,7 +224,14 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			Graphics2D g = (Graphics2D) visualPath.getGraphics();
 			if(actionSequence != null) {
 				g.setColor(Color.RED);
-				g.drawLine(5,5,10,10);
+				LodeRunnerState current = start;
+				for(LodeRunnerAction a : actionSequence) {
+					int x = current.currentX;
+					int y = current.currentY;
+					g.drawLine(x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y,(x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+					g.drawLine((x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+					current = (LodeRunnerState) current.getSuccessor(a);
+				}
 			}
 		}
 		try {
