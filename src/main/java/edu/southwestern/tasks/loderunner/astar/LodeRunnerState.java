@@ -41,6 +41,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public static final int LODE_RUNNER_TILE_SPAWN = 7;
 	private List<List<Integer>> level;
 	private HashSet<Point> goldLeft; //set containing the points with gold 
+	private HashSet<Point> dugHoles;
 	public int currentX; 
 	public int currentY;
 
@@ -73,7 +74,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 *
 	 */
 	public static class LodeRunnerAction implements Action{
-		public enum MOVE {RIGHT,LEFT,UP,DOWN}//removed dig up and dig down while testing on level 1
+		public enum MOVE {RIGHT,LEFT,UP,DOWN, DIG_RIGHT, DIG_LEFT}//removed dig up and dig down while testing on level 1
 		private MOVE movement;
 
 		/**
@@ -201,7 +202,13 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param start The spawn point 
 	 */
 	public LodeRunnerState(List<List<Integer>> level, Point start) {
-		this(level, getGoldLeft(level), start.x, start.y);
+		this(level, getGoldLeft(level), getDugHoles(), start.x, start.y);
+	}
+
+
+	private static HashSet<Point> getDugHoles() {
+		HashSet<Point> dugHoles = new HashSet<>();
+		return dugHoles;
 	}
 
 	/**
@@ -224,9 +231,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param currentX X coordinate of spawn 
 	 * @param currentY Y coordinate of spawn 
 	 */
-	private LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, int currentX, int currentY) {
+	private LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, HashSet<Point> dugHoles, int currentX, int currentY) {
 		this.level = level;
 		this.goldLeft = goldLeft;
+		this.dugHoles = dugHoles;
 		this.currentX = currentX;
 		this.currentY = currentY;
 	}
@@ -293,6 +301,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public State<LodeRunnerAction> getSuccessor(LodeRunnerAction a) {
 		int newX = currentX;
 		int newY = currentY; 
+		HashSet<Point> newDugHoles = new HashSet<>();
 		//assert inBounds(newX,newY): "x is:" + newX + "\ty is:"+newY + "\t" + inBounds(newX,newY);
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
 			int beneath = tileAtPosition(newX,newY+1);
@@ -346,22 +355,24 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			} else return null;
 		}
 		//have these two actions return null while testing on level one because it doesn't require digging to win 
-		//		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
-		////			int tile = tileAtPosition(newX-1,newY-1); //tile down and to the left 
-		////			//if the tile is diggable ground than it becomes an empty space 
-		////			if(tile == 3) {
-		////				tile = 0;
-		////			} else
-		//			return null; 
-		//		}
-		//		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_RIGHT)) {
-		////			int tile = tileAtPosition(newX+1,newY-1);//tile down and to the right
-		////			//if the tile is diggable ground than it becomes an empty space 
-		////			if(tile == 3) {
-		////				tile = 0;
-		////			} else 
-		//			return null;
-		//		}
+		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
+//			if(inBounds(newX-1,newY-1) && tileAtPosition(newX-1,newY+1) == LODE_RUNNER_TILE_DIGGABLE) {
+//				for(Point p:dugHoles) {
+//					newDugHoles.add(p);
+//				}
+//				newDugHoles.add(new Point(newX-1, newY-1));
+//			}	
+			return null; 
+		}
+		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_RIGHT)) {
+//			if(inBounds(newX+1,newY+1) && tileAtPosition(newX+1,newY+1) == LODE_RUNNER_TILE_DIGGABLE) {
+//				for(Point p:dugHoles) {
+//					newDugHoles.add(p);
+//				}
+//				newDugHoles.add(new Point(newX+1, newY+1));
+//			}
+			return null;
+		}
 		//check if it is in teh set, then create a new set that contains all but that one
 		HashSet<Point> newGoldLeft = new HashSet<>();
 		for(Point p : goldLeft) {
@@ -369,9 +380,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				newGoldLeft.add(p);
 			}
 		}
+		//System.out.println(dugHoles.toString());
 		//System.out.println(inBounds(newX,newY));
 		//assert inBounds(newX,newY) : "x is:" + newX + "\ty is:"+newY + "\t"+ inBounds(newX,newY);
-		return new LodeRunnerState(level, newGoldLeft, newX, newY);
+		return new LodeRunnerState(level, newGoldLeft, newDugHoles, newX, newY);
 	}
 
 	/**
