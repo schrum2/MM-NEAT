@@ -260,7 +260,7 @@ public class Level {
 		if (m.matches()) {
 			int x = Integer.parseInt(m.group(1));
 			int y = Integer.parseInt(m.group(2));
-			y = dropToSolid(x, y);
+			//y = dropToSolid(x, y);
 			Enemy e = new Enemy(x, y);
 			enemies.add(e);
 			return e;
@@ -393,20 +393,32 @@ public class Level {
 	 * are added to the level.
 	 */
 	private int dropToSolid(int x, int y) {
-		int minY = GamePanel.HEIGHT;
+		//changed this to work with the new scaling
+		//there is extra white space at the bottom of the level, so this just moves them to the level so they are not stuck in limbo
+		int minY = GamePanel.HEIGHT-(4*GamePanel.UNIT_HEIGHT);
 		for (Solid s : solids) {
-			if (s.getX() == x && s.getY() == y - GamePanel.UNIT_HEIGHT)
-				return y; // Already standing.
-			else if (s.getX() == x)
-				if (s.getY() > y && s.getY() < minY)
-					minY = s.getY();
+//			if (s.getX() == x && s.getY() == y - GamePanel.UNIT_HEIGHT)
+//				return y; // Already standing.
+//			else if (s.getX() == x)
+//				if (s.getY() > y && s.getY() < minY)
+//					minY = s.getY();
+			if(s.getX()==x && (s.getY() > y && s.getY() < minY)) {
+				minY=s.getY();
+			}
+			else
+				return y;
 		}
 		for (Ladder s : ladders) {
-			if (s.getX() == x && s.getY() == y - GamePanel.UNIT_HEIGHT)
-				return y; // Already standing.
-			else if (s.getX() == x)
-				if (s.getY() > y && s.getY() < minY)
-					minY = s.getY();
+//			if (s.getX() == x && s.getY() == y - GamePanel.UNIT_HEIGHT)
+//				return y; // Already standing.
+//			else if (s.getX() == x)
+//				if (s.getY() > y && s.getY() < minY)
+//					minY = s.getY();
+			if(s.getX()==x && (s.getY() > y && s.getY() < minY)){
+				minY=s.getY();
+			}
+			else
+				return y;
 		}
 		return minY - GamePanel.UNIT_HEIGHT; // Drop until standing on the highest solid below original point.
 	}
