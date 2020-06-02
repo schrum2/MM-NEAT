@@ -1,7 +1,9 @@
 package megaManMaker;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.awt.Point;
 import java.io.File;
 //import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -13,7 +15,7 @@ public class MegaManVGLCUtil {
 
 	
 	public static void main(String[] args) {
-		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_1.txt");
+		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_2.txt");
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
 				System.out.print(m);
@@ -22,12 +24,22 @@ public class MegaManVGLCUtil {
 			System.out.println();
 		}
 		convertMegaManLevelToMMLV(level);
+		//convertMegaManLevelToJSON(level);
 	}
+//	private static void convertMegaManLevelToJSON(List<List<Integer>> level) {
+//		List<List<List<Integer>>> json = new ArrayList<>();
+//		//scroller for the screen
+//		for(int i = 0;i<level.size()-16;i++) {
+//			
+//		}
+//		List<List<Integer>> screen = new ArrayList<>();
+//	}
 	private static void convertMegaManLevelToMMLV(List<List<Integer>> level) {
 		// TODO Auto-generated method stub
 		int xcoord = 0;
 		int ycoord = 0;
-		int levelNumber = 0;
+		int levelNumber = 1;
+		HashSet<Point> o = new HashSet<Point>();
 		try {
 		File levelFile = new File("MegaManLevel"+levelNumber+".mmlv");
 		
@@ -37,9 +49,12 @@ public class MegaManVGLCUtil {
 		}
 		PrintWriter p = new PrintWriter(levelFile);
 		p.println("[Level]");
-		for(List<Integer> k : level) {
+		for(int y = 0;y<level.size();y++) {
+			List<Integer> k = level.get(y);
 			//int l=0;
-			for(Integer m : k) {
+			for(int x = 0;x<level.get(0).size();x++) { //TODO convert mmlv to json
+				Integer m = k.get(x);
+				//if play online, does it download to mmlv file???
 				if(m==1) { //solid ground
 					p.println("k"+xcoord+","+ycoord+"=\"71.000000\"");
 					p.println("j"+xcoord+","+ycoord+"=\"71.000000\"");
@@ -69,6 +84,21 @@ public class MegaManVGLCUtil {
 					p.println("d"+xcoord+","+ycoord+"=\"4.000000\"");
 					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 					//l=11;
+				}else if (m == 5) { //moving platform
+
+				}else if(m==4&&!o.contains(new Point(x,y))) { //breakable
+					//add surrounding points to the hashset so that you don't add multiple breakables in one spot!!
+					o.add(new Point(x, y));
+					o.add(new Point(x+1, y));
+					o.add(new Point(x, y+1));
+					o.add(new Point(x+1, y+1));
+					int newx = xcoord+16;
+					int newy = ycoord+16;
+					p.println("o"+newx+","+newy+"=\"9999.000000\"");
+					p.println("e"+newx+","+newy+"=\"45.000000\"");
+					p.println("d"+newx+","+newy+"=\"6.000000\"");
+					p.println("a"+newx+","+newy+"=\"1.000000\"");
+
 				}
 //				else if (m==17) {
 //					l=17;
@@ -89,7 +119,6 @@ public class MegaManVGLCUtil {
 				p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
 
 			}
-			
 		}
 		//NEED 2a for enabling squares
 		p.println("2b"+0+","+896+"=\"0.000000\"");
@@ -109,7 +138,7 @@ public class MegaManVGLCUtil {
 		p.println("2a"+0+","+0+"=\"1.000000\"");
 
 //				1s="240.000000"
-		p.println("1s=\"1335.000000\"");
+		p.println("1s=\"4000.000000\"");
 
 //				1r="0.000000"
 		p.println("1r=\"0.000000\"");
@@ -211,7 +240,7 @@ public class MegaManVGLCUtil {
 		case 'B': //breakable
 			return 4;
 		case 'L': //large health pack
-			return 5;
+			return 10;
 		case 'l': //small health pack
 			return 6; 
 		case 'W': //large ammo pack 
@@ -221,7 +250,7 @@ public class MegaManVGLCUtil {
 		case '+': //extra life
 			return 9;
 		case 'M': //Moving platform
-			return 10;
+			return 5;
 		case 'P': //Player
 			return 11;
 		case 'C': //Cannon/shooter
