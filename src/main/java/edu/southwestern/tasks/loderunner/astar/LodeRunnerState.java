@@ -303,6 +303,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		int newX = currentX;
 		int newY = currentY; 
 		HashSet<Point> newDugHoles = new HashSet<>(); 
+		for(Point p:dugHoles) {
+			newDugHoles.add(p);
+		}
 		//assert inBounds(newX,newY): "x is:" + newX + "\ty is:"+newY + "\t" + inBounds(newX,newY);
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
 			int beneath = tileAtPosition(newX,newY+1);
@@ -321,6 +324,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
+			System.out.println("BEFORE");
+			renderLevelAndPause((LodeRunnerState) this);
+
 			int beneath = tileAtPosition(newX,newY+1);
 			if(passable(newX-1, newY) && tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) {
 				newX--;
@@ -357,22 +363,13 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		}
 		//have these two actions return null while testing on level one because it doesn't require digging to win 
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
-			System.out.println("BEFORE");
-			renderLevelAndPause((LodeRunnerState) this);
-
 			if(inBounds(newX-1,newY+1) && diggable(newX-1,newY+1)) {
-				for(Point p:dugHoles) {
-					newDugHoles.add(p);
-				}
 				newDugHoles.add(new Point(newX-1, newY+1));
 				//level.get(newY+1).set(newX-1, LODE_RUNNER_TILE_EMPTY); //just for testing if it actually digging
 			}else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_RIGHT)) {
 			if(inBounds(newX+1,newY+1) && diggable(newX+1,newY+1)) {
-				for(Point p:dugHoles) {
-					newDugHoles.add(p);
-				}
 				newDugHoles.add(new Point(newX+1, newY+1));
 				//level.get(newY+1).set(newX+1, LODE_RUNNER_TILE_EMPTY);//just for testing if it actually digging
 			}else return null;
@@ -389,7 +386,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		//System.out.println(inBounds(newX,newY));
 		//assert inBounds(newX,newY) : "x is:" + newX + "\ty is:"+newY + "\t"+ inBounds(newX,newY);
 		LodeRunnerState result = new LodeRunnerState(level, newGoldLeft, newDugHoles, newX, newY);
-		if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
+		if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
 			System.out.println("AFTER");
 			renderLevelAndPause((LodeRunnerState) result);
 		}
