@@ -32,6 +32,7 @@ import edu.southwestern.util.search.State;
  *
  */
 public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
+	private static final int LODE_RUNNER_DIG_ACTION_COST = 20;
 	public static final int LODE_RUNNER_TILE_EMPTY = 0;
 	public static final int LODE_RUNNER_TILE_GOLD = 1;
 	public static final int LODE_RUNNER_TILE_ENEMY = 2;
@@ -123,7 +124,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		try {
 			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
 			//represented by red x's in the visualization 
-			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 100000);
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 10000000);
 		} catch(Exception e) {
 			System.out.println("failed search");
 			e.printStackTrace();
@@ -308,6 +309,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		}
 		//assert inBounds(newX,newY): "x is:" + newX + "\ty is:"+newY + "\t" + inBounds(newX,newY);
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
+			if(!inBounds(newX,newY+1)) {
+				return null;
+			}
 			int beneath = tileAtPosition(newX,newY+1);
 			if(passable(newX+1, newY) && tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) {
 				newX++;
@@ -324,6 +328,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
+			if(!inBounds(newX,newY+1)) {
+				return null;
+			}
 			int beneath = tileAtPosition(newX,newY+1);
 			if(passable(newX-1, newY) && tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) {
 				newX--;
@@ -352,7 +359,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			} else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.DOWN)) { 
-			if(tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE &&
+			if(inBounds(newX, newY+1) && tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE &&
 					tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_GROUND) {
 				//System.out.println("down");
 				newY++;
@@ -500,6 +507,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 */
 	@Override
 	public double stepCost(State<LodeRunnerAction> s, LodeRunnerAction a) {
+		if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT) ||
+				a.getMove().equals(LodeRunnerAction.MOVE.DIG_RIGHT))
+			return LODE_RUNNER_DIG_ACTION_COST;
 		return 1;
 	}
 
