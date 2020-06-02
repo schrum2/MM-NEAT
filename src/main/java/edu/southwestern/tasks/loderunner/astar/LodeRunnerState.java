@@ -32,7 +32,8 @@ import edu.southwestern.util.search.State;
  *
  */
 public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
-	private static final int LODE_RUNNER_DIG_ACTION_COST = 20;
+	//private static final int LODE_RUNNER_DIG_ACTION_COST = 20; // No dig action, and thus no extra cost
+	
 	public static final int LODE_RUNNER_TILE_EMPTY = 0;
 	public static final int LODE_RUNNER_TILE_GOLD = 1;
 	public static final int LODE_RUNNER_TILE_ENEMY = 2;
@@ -41,9 +42,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public static final int LODE_RUNNER_TILE_ROPE = 5;
 	public static final int LODE_RUNNER_TILE_GROUND = 6;
 	public static final int LODE_RUNNER_TILE_SPAWN = 7;
+	
 	private List<List<Integer>> level;
 	private HashSet<Point> goldLeft; //set containing the points with gold 
-	private HashSet<Point> dugHoles;
+	//private HashSet<Point> dugHoles; // Too expensive to track the dug up spaces in the state. Just allow the agent to move downward through diggable blocks
 	public int currentX; 
 	public int currentY;
 
@@ -76,7 +78,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 *
 	 */
 	public static class LodeRunnerAction implements Action{
-		public enum MOVE {RIGHT,LEFT,UP,DOWN, DIG_RIGHT, DIG_LEFT}//removed dig up and dig down while testing on level 1
+		public enum MOVE {RIGHT,LEFT,UP,DOWN}; //, DIG_RIGHT, DIG_LEFT} // Too computationally expensive to model digging as actions that change the state
 		private MOVE movement;
 
 		/**
@@ -124,7 +126,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		try {
 			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
 			//represented by red x's in the visualization 
-			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 10000000);
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 1000000);
 		} catch(Exception e) {
 			System.out.println("failed search");
 			e.printStackTrace();
@@ -204,7 +206,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param start The spawn point 
 	 */
 	public LodeRunnerState(List<List<Integer>> level, Point start) {
-		this(level, getGoldLeft(level), new HashSet<Point>(), start.x, start.y);
+		this(level, getGoldLeft(level), start.x, start.y);
 	}
 
 
@@ -233,10 +235,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param currentX X coordinate of spawn 
 	 * @param currentY Y coordinate of spawn 
 	 */
-	private LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, HashSet<Point> dugHoles, int currentX, int currentY) {
+	private LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, int currentX, int currentY) {
 		this.level = level;
 		this.goldLeft = goldLeft;
-		this.dugHoles = dugHoles;
 		this.currentX = currentX;
 		this.currentY = currentY;
 	}
@@ -303,81 +304,75 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public State<LodeRunnerAction> getSuccessor(LodeRunnerAction a) {
 		int newX = currentX;
 		int newY = currentY; 
-		HashSet<Point> newDugHoles = new HashSet<>(); 
-		for(Point p:dugHoles) {
-			newDugHoles.add(p);
-		}
-		//assert inBounds(newX,newY): "x is:" + newX + "\ty is:"+newY + "\t" + inBounds(newX,newY);
+		// Too expensive to track dug holes in the state
+//		HashSet<Point> newDugHoles = new HashSet<>(); 
+//		for(Point p:dugHoles) {
+//			newDugHoles.add(p);
+//		}
+		assert inBounds(newX,newY): "x is:" + newX + "\ty is:"+newY + "\t" + inBounds(newX,newY);
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
-			if(!inBounds(newX,newY+1)) {
+			if(!inBounds(newX,newY+1)) // Can't move if there is no ground beneath player
 				return null;
-			}
+			
 			int beneath = tileAtPosition(newX,newY+1);
-			if(passable(newX+1, newY) && tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) {
+			if(passable(newX+1, newY) && tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) 
 				newX++;
-			} else
-				if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
-				beneath != LODE_RUNNER_TILE_LADDER &&
-				beneath != LODE_RUNNER_TILE_DIGGABLE &&
-				beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
-					return null;//fall down 
-				else if(passable(newX+1, newY)) {
-					//System.out.println("right");
-					newX++;
-				}  
-				else return null; 
+			else if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
+					beneath != LODE_RUNNER_TILE_LADDER &&
+					beneath != LODE_RUNNER_TILE_DIGGABLE &&
+					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
+				return null;// cannot move right 
+			else if(passable(newX+1, newY)) 
+				newX++;
+			else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
-			if(!inBounds(newX,newY+1)) {
+			if(!inBounds(newX,newY+1)) // Can't move if there is no ground beneath player
 				return null;
-			}
+			
 			int beneath = tileAtPosition(newX,newY+1);
-			if(passable(newX-1, newY) && tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) {
+			if(passable(newX-1, newY) && tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) 
 				newX--;
-			} 
 			else if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
 					beneath != LODE_RUNNER_TILE_LADDER &&
 					beneath != LODE_RUNNER_TILE_DIGGABLE &&
 					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
 				return null;//fall down 
-			else if(passable(newX-1,newY)) {
-				//System.out.println("left");
+			else if(passable(newX-1,newY)) 
 				newX--;
-			}  
 			else return null; 
 		}
-		//		if(a.getMove().equals(LodeRunnerAction.MOVE.NOTHING)) {
-		//			//if the tile at the new position is gold, then it removes it from the set
-		//			//you can still collect gold while in free fall 
-		//			//no new action, if the action is nothing you are most likely in a free fall and have to wait until you hit the ground to make a new action
-		//			return null;  
-		//		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
-			if(inBounds(newX, newY-1) && tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) {
-				//System.out.println("up");
+			if(inBounds(newX, newY-1) && tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) 
 				newY--;
-			} else return null; 
+			else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.DOWN)) { 
-			if(inBounds(newX, newY+1) && tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE &&
-					tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_GROUND) {
-				//System.out.println("down");
-				newY++;
-			} else return null;
+			// Might be able to go down if resulting location is inbounds and tile beneath is not solid ground
+			if(		inBounds(newX, newY+1) && 
+					tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_GROUND) 
+				// But special case for diggable ground: verify it was possible to dig out the square
+				if(tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE || 
+					// Diggable, but tile to left was not empty, and provides platform for digging
+				   (inBounds(newX-1,newY+1) && tileAtPosition(newX-1,newY+1) != LODE_RUNNER_TILE_EMPTY && passable(newX-1,newY)) || 
+					// Diggable, but tile to right was not empty, and provides platform for digging
+				   (inBounds(newX+1,newY+1) && tileAtPosition(newX+1,newY+1) != LODE_RUNNER_TILE_EMPTY && passable(newX+1,newY)))
+					newY++;
+			else return null;
 		}
 		//have these two actions return null while testing on level one because it doesn't require digging to win 
-		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
-			if(inBounds(newX-1,newY+1) && diggable(newX-1,newY+1)) {
-				newDugHoles.add(new Point(newX-1, newY+1));
-				//level.get(newY+1).set(newX-1, LODE_RUNNER_TILE_EMPTY); //just for testing if it actually digging
-			}else return null; 
-		}
-		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_RIGHT)) {
-			if(inBounds(newX+1,newY+1) && diggable(newX+1,newY+1)) {
-				newDugHoles.add(new Point(newX+1, newY+1));
-				//level.get(newY+1).set(newX+1, LODE_RUNNER_TILE_EMPTY);//just for testing if it actually digging
-			}else return null;
-		}
+//		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
+//			if(inBounds(newX-1,newY+1) && diggable(newX-1,newY+1)) {
+//				newDugHoles.add(new Point(newX-1, newY+1));
+//				//level.get(newY+1).set(newX-1, LODE_RUNNER_TILE_EMPTY); //just for testing if it actually digging
+//			}else return null; 
+//		}
+//		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_RIGHT)) {
+//			if(inBounds(newX+1,newY+1) && diggable(newX+1,newY+1)) {
+//				newDugHoles.add(new Point(newX+1, newY+1));
+//				//level.get(newY+1).set(newX+1, LODE_RUNNER_TILE_EMPTY);//just for testing if it actually digging
+//			}else return null;
+//		}
 		//check if it is in teh set, then create a new set that contains all but that one
 		HashSet<Point> newGoldLeft = new HashSet<>();
 		for(Point p : goldLeft) {
@@ -385,11 +380,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				newGoldLeft.add(p);
 			}
 		}
-		//System.out.println(dugHoles.toString());
-		//System.out.println(newDugHoles.toString());
-		//System.out.println(inBounds(newX,newY));
-		//assert inBounds(newX,newY) : "x is:" + newX + "\ty is:"+newY + "\t"+ inBounds(newX,newY);
-		LodeRunnerState result = new LodeRunnerState(level, newGoldLeft, newDugHoles, newX, newY);
+
+		assert inBounds(newX,newY) : "x is:" + newX + "\ty is:"+newY + "\t"+ inBounds(newX,newY);
+		LodeRunnerState result = new LodeRunnerState(level, newGoldLeft, newX, newY);
 //		if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
 //			System.out.println("AFTER");
 //			renderLevelAndPause((LodeRunnerState) result);
@@ -397,13 +390,16 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		return result;
 	}
 	
-	private boolean diggable(int x, int y) {
-		int tile = tileAtPosition(x,y);
-		if(tile == LODE_RUNNER_TILE_DIGGABLE) {
-			return true;
-		}
-		return false;
-	}
+	/**
+	 * If the tile at the given location is diggable ground
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+//	private boolean diggable(int x, int y) {
+//		int tile = tileAtPosition(x,y);
+//		return tile == LODE_RUNNER_TILE_DIGGABLE;
+//	}
 
 	/**
 	 * Gets a list of all of the lode runner actions
@@ -432,6 +428,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * updated according to the contents of the state.
 	 * @param s
 	 */
+	@SuppressWarnings("unused")
 	private void renderLevelAndPause(LodeRunnerState theState) {
 		// This code renders an image of the level with the agent in it
 		try {
@@ -440,9 +437,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			for(Point t : theState.goldLeft) {
 				copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
 			}
-			for(Point dug : theState.dugHoles) {
-				copy.get(dug.y).set(dug.x, LODE_RUNNER_TILE_EMPTY); 
-			}
+//			for(Point dug : theState.dugHoles) {
+//				copy.get(dug.y).set(dug.x, LODE_RUNNER_TILE_EMPTY); 
+//			}
 			LodeRunnerRenderUtil.getBufferedImage(copy);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -485,9 +482,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @return tile int at those coordinates
 	 */
 	public int tileAtPosition(int x, int y) {
-		if(dugHoles.contains(new Point(x, y))) {
-			return LODE_RUNNER_TILE_EMPTY;
-		}
+//		if(dugHoles.contains(new Point(x, y))) {
+//			return LODE_RUNNER_TILE_EMPTY;
+//		}
 		return level.get(y).get(x);
 	}
 
@@ -507,9 +504,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 */
 	@Override
 	public double stepCost(State<LodeRunnerAction> s, LodeRunnerAction a) {
-		if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT) ||
-				a.getMove().equals(LodeRunnerAction.MOVE.DIG_RIGHT))
-			return LODE_RUNNER_DIG_ACTION_COST;
+//		if(		a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT) ||
+//				a.getMove().equals(LodeRunnerAction.MOVE.DIG_RIGHT))
+//			return LODE_RUNNER_DIG_ACTION_COST;
 		return 1;
 	}
 
@@ -518,7 +515,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 */
 	@Override
 	public String toString() {
-		return "Size:" + goldLeft.size() + " (" + currentX + ", " + currentY + ")" + " DugCount:" +dugHoles.size();
+		return "Size:" + goldLeft.size() + " (" + currentX + ", " + currentY + ")"; // + " DugCount:" +dugHoles.size();
 	}
 
 	@Override
@@ -527,7 +524,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		int result = 1;
 		result = prime * result + currentX;
 		result = prime * result + currentY;
-		result = prime * result + ((dugHoles == null) ? 0 : dugHoles.hashCode());
+		//result = prime * result + ((dugHoles == null) ? 0 : dugHoles.hashCode());
 		result = prime * result + ((goldLeft == null) ? 0 : goldLeft.hashCode());
 		return result;
 	}
@@ -545,11 +542,11 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			return false;
 		if (currentY != other.currentY)
 			return false;
-		if (dugHoles == null) {
-			if (other.dugHoles != null)
-				return false;
-		} else if (!dugHoles.equals(other.dugHoles))
-			return false;
+//		if (dugHoles == null) {
+//			if (other.dugHoles != null)
+//				return false;
+//		} else if (!dugHoles.equals(other.dugHoles))
+//			return false;
 		if (goldLeft == null) {
 			if (other.goldLeft != null)
 				return false;
