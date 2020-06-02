@@ -448,7 +448,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			// Assign to the behavior vector before using MAP-Elites
 			double[] archiveArray;
 			//int binIndex;
-			int x1,x2,x3;
+			int dim3,dim1,dim2;
 			double leniencySum = sumStatScore(lastLevelStats, LENIENCY_STAT_INDEX);
 			final double DECORATION_SCALE = 3;
 			final double NEGATIVE_SPACE_SCALE = 3;
@@ -463,17 +463,16 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			
 
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDecorNSAndLeniencyBinLabels) {
-				x1 = leniencySumIndex;
-				x2 = decorationBinIndex;
-				x3 = negativeSpaceSumIndex;
+				dim1 = decorationBinIndex;
+				dim2 = negativeSpaceSumIndex;
+				dim3 = leniencySumIndex;
 
 				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-				
 			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels) {
 				//double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
-				x1 = leniencySumIndex;
-				x2 = numDistinctSegments; //number of distinct segments
-				x3 = negativeSpaceSumIndex;
+				dim1 = numDistinctSegments; //number of distinct segments
+				dim2 = negativeSpaceSumIndex;
+				dim3 = leniencySumIndex;
 			
 				// Row-major order lookup in 3D archive
 				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
@@ -484,19 +483,18 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				decorationBinIndex = Math.min((int)(decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10), BINS_PER_DIMENSION-1);
 				negativeSpaceSumIndex = Math.min((int)(negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
 				
-				x1 = decorationBinIndex;
-				x2 = numDistinctSegments;
-				x3 = negativeSpaceSumIndex;
-				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
+				dim1 = numDistinctSegments;
+				dim2 = negativeSpaceSumIndex;
+				dim3 = decorationBinIndex;
 
-				
+				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];				
 			}
 			
 			else {
 				throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
 			}
 			// Row-major order lookup in 3D archive
-			setBinsAndSaveMAPElitesImages(individual, levelImage, archiveArray, x1, x2, x3, BINS_PER_DIMENSION, binScore);
+			setBinsAndSaveMAPElitesImages(individual, levelImage, archiveArray, dim1, dim2, dim3, BINS_PER_DIMENSION, binScore);
 
 		}
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
@@ -509,20 +507,20 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	 * @param individual the genotype
 	 * @param levelImage the buffered image of the level
 	 * @param archiveArray the archive array
-	 * @param x1 the first bin dimension
-	 * @param x2 the second bin dimension
-	 * @param x3 the third bin dimension
+	 * @param dim1 the first bin dimension
+	 * @param dim2 the second bin dimension
+	 * @param dim3 the third bin dimension
 	 * @param BINS_PER_DIMENSION the bins per dimension
 	 * @param binScore the bin score
 	 */
 	private void setBinsAndSaveMAPElitesImages(Genotype<T> individual, BufferedImage levelImage, double[] archiveArray,
-			int x1, int x2, int x3, final int BINS_PER_DIMENSION, double binScore) {
+			int dim1, int dim2, int dim3, final int BINS_PER_DIMENSION, double binScore) {
 		int binIndex;
-		binIndex = (x2*BINS_PER_DIMENSION + x3)*BINS_PER_DIMENSION + x1;
+		binIndex = (dim1*BINS_PER_DIMENSION + dim2)*BINS_PER_DIMENSION + dim3;
 		Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
 		archiveArray[binIndex] = binScore; // Percent rooms traversed
 
-		System.out.println("["+x2+"]["+x3+"]["+x1+"] = "+binScore);
+		System.out.println("["+dim1+"]["+dim2+"]["+dim3+"] = "+binScore);
 
 		behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 
