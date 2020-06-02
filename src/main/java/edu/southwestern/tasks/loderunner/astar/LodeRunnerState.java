@@ -324,9 +324,6 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
-			System.out.println("BEFORE");
-			renderLevelAndPause((LodeRunnerState) this);
-
 			int beneath = tileAtPosition(newX,newY+1);
 			if(passable(newX-1, newY) && tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) {
 				newX--;
@@ -386,10 +383,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		//System.out.println(inBounds(newX,newY));
 		//assert inBounds(newX,newY) : "x is:" + newX + "\ty is:"+newY + "\t"+ inBounds(newX,newY);
 		LodeRunnerState result = new LodeRunnerState(level, newGoldLeft, newDugHoles, newX, newY);
-		if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
-			System.out.println("AFTER");
-			renderLevelAndPause((LodeRunnerState) result);
-		}
+//		if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
+//			System.out.println("AFTER");
+//			renderLevelAndPause((LodeRunnerState) result);
+//		}
 		return result;
 	}
 	
