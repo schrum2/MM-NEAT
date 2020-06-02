@@ -271,7 +271,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				g.drawLine((x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
 			}
 			if(actionSequence != null) {
-				g.setColor(Color.RED);
+				g.setColor(Color.BLUE);
 				LodeRunnerState current = start;
 				for(LodeRunnerAction a : actionSequence) {
 					int x = current.currentX;
@@ -354,9 +354,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				// But special case for diggable ground: verify it was possible to dig out the square
 				if(tileAtPosition(newX,newY+1) != LODE_RUNNER_TILE_DIGGABLE || 
 					// Diggable, but tile to left was not empty, and provides platform for digging
-				   (inBounds(newX-1,newY+1) && tileAtPosition(newX-1,newY+1) != LODE_RUNNER_TILE_EMPTY && passable(newX-1,newY)) || 
+				   (inBounds(newX-1,newY+1) && tileAtPosition(newX-1,newY+1) != LODE_RUNNER_TILE_EMPTY) || // && passable(newX-1,newY)) || 
 					// Diggable, but tile to right was not empty, and provides platform for digging
-				   (inBounds(newX+1,newY+1) && tileAtPosition(newX+1,newY+1) != LODE_RUNNER_TILE_EMPTY && passable(newX+1,newY)))
+				   (inBounds(newX+1,newY+1) && tileAtPosition(newX+1,newY+1) != LODE_RUNNER_TILE_EMPTY)) // && passable(newX+1,newY)))
 					newY++;
 			else return null;
 		}
@@ -412,8 +412,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		//renderLevelAndPause((LodeRunnerState) s);
 		for(LodeRunnerAction.MOVE move: LodeRunnerAction.MOVE.values()) {
 			//Everything besides the if statement is for debugging purposes, delete later 
-			LodeRunnerAction a = new LodeRunnerAction(move);
-			System.out.println(s+"\t"+move+"\t"+s.getSuccessor(a));
+			//LodeRunnerAction a = new LodeRunnerAction(move);
+			//System.out.println(s+"\t"+move+"\t"+s.getSuccessor(a));
 			if(s.getSuccessor(new LodeRunnerAction(move)) != null) {
 				vaildActions.add(new LodeRunnerAction(move));
 			}
