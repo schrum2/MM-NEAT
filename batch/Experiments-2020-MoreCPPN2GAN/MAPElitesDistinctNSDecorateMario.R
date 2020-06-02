@@ -59,13 +59,15 @@ library(scales)
 
 print("Create plot and save to file")
 
+drop0 <- filter(allData, distinctBin > 0)
+
 leniencyLabals <- function(num) {
   paste("Leniency Bin:",num)
 }
 
 outputFile <- str_replace(args[1],"txt","heat.pdf")
 pdf(outputFile,height=3.5)  
-result <- ggplot(allData, aes(x=distinctBin, y=nsBin, fill=SolutionSteps)) +
+result <- ggplot(drop0, aes(x=distinctBin, y=nsBin, fill=SolutionSteps)) +
   geom_tile() +
   facet_wrap(~decorateBin, ncol=5, labeller = labeller(decorateBin = leniencyLabals)) +
   #scale_fill_gradient(low="white", high="orange") +
