@@ -114,7 +114,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 3.txt"); //converts to JSON
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 2.txt"); //converts to JSON
 		LodeRunnerState start = new LodeRunnerState(level);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
@@ -207,8 +207,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 
 
 	private static HashSet<Point> getDugHoles() {
-		HashSet<Point> dugHoles = new HashSet<>();
-		return dugHoles;
+		HashSet<Point> dug = new HashSet<>();
+		return dug;
 	}
 
 	/**
@@ -342,7 +342,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		//			return null;  
 		//		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
-			if(tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) {
+			if(inBounds(newX, newY-1) && tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) {
 				//System.out.println("up");
 				newY--;
 			} else return null; 
@@ -356,22 +356,22 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		}
 		//have these two actions return null while testing on level one because it doesn't require digging to win 
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
-//			if(inBounds(newX-1,newY-1) && tileAtPosition(newX-1,newY+1) == LODE_RUNNER_TILE_DIGGABLE) {
-//				for(Point p:dugHoles) {
-//					newDugHoles.add(p);
-//				}
-//				newDugHoles.add(new Point(newX-1, newY-1));
-//			}	
-			return null; 
+			if(inBounds(newX-1,newY+1) && diggable(newX-1,newY+1)) {
+				for(Point p:dugHoles) {
+					newDugHoles.add(p);
+				}
+				newDugHoles.add(new Point(newX-1, newY+1));
+				//level.get(newY+1).set(newX-1, LODE_RUNNER_TILE_EMPTY); //just for testing if it actually digging
+			}else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_RIGHT)) {
-//			if(inBounds(newX+1,newY+1) && tileAtPosition(newX+1,newY+1) == LODE_RUNNER_TILE_DIGGABLE) {
-//				for(Point p:dugHoles) {
-//					newDugHoles.add(p);
-//				}
-//				newDugHoles.add(new Point(newX+1, newY+1));
-//			}
-			return null;
+			if(inBounds(newX+1,newY+1) && diggable(newX+1,newY+1)) {
+				for(Point p:dugHoles) {
+					newDugHoles.add(p);
+				}
+				newDugHoles.add(new Point(newX+1, newY+1));
+				//level.get(newY+1).set(newX+1, LODE_RUNNER_TILE_EMPTY);//just for testing if it actually digging
+			}else return null;
 		}
 		//check if it is in teh set, then create a new set that contains all but that one
 		HashSet<Point> newGoldLeft = new HashSet<>();
@@ -381,9 +381,18 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			}
 		}
 		//System.out.println(dugHoles.toString());
+		//System.out.println(newDugHoles.toString());
 		//System.out.println(inBounds(newX,newY));
 		//assert inBounds(newX,newY) : "x is:" + newX + "\ty is:"+newY + "\t"+ inBounds(newX,newY);
 		return new LodeRunnerState(level, newGoldLeft, newDugHoles, newX, newY);
+	}
+	
+	private boolean diggable(int x, int y) {
+		int tile = tileAtPosition(x,y);
+		if(tile == LODE_RUNNER_TILE_DIGGABLE && !dugHoles.contains(new Point(x,y))) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -455,6 +464,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @return tile int at those coordinates
 	 */
 	public int tileAtPosition(int x, int y) {
+		if(dugHoles.contains(new Point(x, y))) {
+			return LODE_RUNNER_TILE_EMPTY;
+		}
 		return level.get(y).get(x);
 	}
 
@@ -482,7 +494,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 */
 	@Override
 	public String toString() {
-		return "Size: " + goldLeft.size() + " (" + currentX + ", " + currentY + ")";
+		return "Size:" + goldLeft.size() + " (" + currentX + ", " + currentY + ")";
 	}
 
 	@Override
