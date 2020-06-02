@@ -29,8 +29,10 @@ public class LodeRunnerVGLCUtil {
 //			levelSet.add(levelList); //adds the converted list to the set for the level 
 //		}
 //		System.out.println(levelSet); //prints converted JSON files to the console 
-		String level = convertLodeRunnerVGLCtoIceCreamYou(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
-		System.out.println(level);
+		//String level = convertLodeRunnerVGLCtoIceCreamYou(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
+		List<List<Integer>> level = convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
+		String levelIce = convertLodeRunnerJSONtoIceCreamYou(level);
+		System.out.println(levelIce);
 	}
 
 	/**
@@ -221,6 +223,57 @@ public class LodeRunnerVGLCUtil {
 		return playFormat;
 	}
 	
+	/**
+	 * 
+	 * @param fileName
+	 * @return A string that holds the entire level in the correct format
+	 */
+	public static String convertLodeRunnerJSONtoIceCreamYou(List<List<Integer>> level) {
+		String playFormat = "";
+		String tile = "";
+		for(int i =0; i < level.size(); i++) {
+			for(int j = 0; j < level.get(i).size();j++) {
+				if(level.get(i).get(j) != '[' || level.get(i).get(j) != ']') {
+					int x = i; 
+					int y = j; 
+					tile = convertLodeRunnerTileJSONtoIceCreamYou(level.get(i).get(j), x, y);
+					playFormat += tile;
+				}
+			}
+		}
+		return playFormat;
+	}
+	
+	/**
+	 * Converts a tile from the VGLC to be playable in IceCreamYou
+	 * TODO: Fix the scaling!!!!!!!!!! there are still a lot of issues  
+	 * @param tile Tile from VGLC 
+	 * @param x X coordinate
+	 * @param y Y coordinate 
+	 * @return A string that represents the specified tile in IceCreamYou format 
+	 */
+	private static String convertLodeRunnerTileJSONtoIceCreamYou(int tile, int x, int y) {
+		switch(tile) {
+		case 0:
+			return "";
+		case 1: //gold, passable, pickupable
+			return "coin:"+y*(ICE_CREAM_YOU_WIDTH/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_HEIGHT/LODE_RUNNER_ROWS)+"\n";
+		case 2: //enemy, damaging 
+			return "enemy:"+y*(ICE_CREAM_YOU_WIDTH/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_HEIGHT/LODE_RUNNER_ROWS)+"\n";
+		case 3: //diggable ground, solid 
+			return "diggable:"+y*(ICE_CREAM_YOU_WIDTH/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_HEIGHT/LODE_RUNNER_ROWS)+"\n";
+		case 4: //ladder, passable, climbable
+			return "ladder:"+y*(ICE_CREAM_YOU_WIDTH/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_HEIGHT/LODE_RUNNER_ROWS)+"\n";
+		case 5: //rope, passable, climbable
+			return "bar:"+y*(ICE_CREAM_YOU_WIDTH/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_HEIGHT/LODE_RUNNER_ROWS)+"\n"; 
+		case 6://regular ground, solid
+			return "solid:"+y*(ICE_CREAM_YOU_WIDTH/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_HEIGHT/LODE_RUNNER_ROWS)+"\n";
+		case 7: 
+			return "player:"+y*(ICE_CREAM_YOU_WIDTH/LODE_RUNNER_COLUMNS)+","+x*(ICE_CREAM_YOU_HEIGHT/LODE_RUNNER_ROWS)+",1\n";
+		default:
+			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
+		}
+	}
 	/**
 	 * Converts a tile from the VGLC to be playable in IceCreamYou
 	 * TODO: Fix the scaling!!!!!!!!!! there are still a lot of issues  

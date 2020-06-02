@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import javax.swing.SwingUtilities;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
@@ -19,6 +21,7 @@ import edu.southwestern.tasks.loderunner.LodeRunnerRenderUtil;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import icecreamyou.LodeRunner.LodeRunner;
 
 /**
  * Interactively evolves Lode Runner levels from the latent space of a GAN network.
@@ -69,7 +72,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	public Pair<Integer, Integer> resetAndReLaunchGAN(String model) {
 		return staticResetAndReLaunchGAN(model);
 	}
-	
+
 	/**
 	 * This method allows users to pick which model that they want to use in the Level breeder 
 	 * @param model The name of the file holding the model 
@@ -113,10 +116,11 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		//level breeder instead of the first level of the campaign that IceCreamYou has by default.  
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 		List<List<Integer>> level = levelListRepresentation(doubleArray);
-		//save file in correct directory
-		
-		//launch game
-		//delete file 
+		new Thread() {
+			public void run() {
+				new LodeRunner(level);
+			}
+		}.start();
 	}
 
 	/**
@@ -145,19 +149,19 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		try {
 			//if we are using the mapping with 7 tiles, other wise use 6 tiles 
 			// ACTUALLY: We can have extra unused tiles in the image array. Easier to have one method that keeps them all around
-//			if(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")){
-				images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //7 different tiles to display 
-//			}
-//			else {
-//				images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //6 different tiles to display 
-//			}
+			//			if(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")){
+			images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //7 different tiles to display 
+			//			}
+			//			else {
+			//				images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //6 different tiles to display 
+			//			}
 			image = LodeRunnerRenderUtil.createBufferedImage(level,width1,height1, images);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return image;
 	}
-	
+
 	/**
 	 * Launches the level breeder, sets GAN input size to 20
 	 * @param args

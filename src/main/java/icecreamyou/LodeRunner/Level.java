@@ -3,9 +3,12 @@ import java.awt.Graphics;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import edu.southwestern.tasks.loderunner.LodeRunnerVGLCUtil;
 
 /**
  * The level environment.
@@ -88,15 +91,14 @@ public class Level {
 		}
 	}
 	
-//	public Level(String name, List<List<Integer>> level) {
-//		this.name = name;
-//		String[] lines = null;
-//		for (String line : lines) {
-//			if (line == null || line.equals(""))
-//				continue;
-//			add(line);
-//		}
-//	}
+	public Level(List<List<Integer>> level) {
+		String newLevel = LodeRunnerVGLCUtil.convertLodeRunnerJSONtoIceCreamYou(level);
+		Scanner scan = new Scanner(newLevel);
+		while(scan.hasNextLine()) {
+			add(scan.nextLine());
+		}
+		scan.close();
+	}
 	
 	/**
 	 * Draw everything in a level.

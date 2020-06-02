@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
@@ -70,6 +71,213 @@ public class LodeRunner {
 
 		// Initialize level
 		Level level = new Level(levelName);
+		
+		// Main playing area
+		final GamePanel gamePanel = new GamePanel(level, this);
+		gamePanel.addMouseListener(new MouseInputAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (gamePanel.isEditing()) {
+					String key = gamePanel.getEditorKey();
+					if (key != null && !key.equals("")) {
+						gamePanel.addNode(
+								key,
+								GamePanel.getXUnitPosition(e.getX()),
+								GamePanel.getYUnitPosition(e.getY())
+						);
+						openNew.setEnabled(false);
+					}
+				}
+			}
+		});
+		frame.add(gamePanel, BorderLayout.CENTER);
+		
+		
+		//Editor options.
+		frame.add(editor, BorderLayout.EAST);
+		editor.setLayout(new GridLayout(0, 2));
+		addEditorButton(Bar.TITLE, 		 Bar.NAME,		 Bar.DEFAULT_IMAGE_PATH,	   editor, gamePanel);
+		addEditorButton(Coin.TITLE, 	 Coin.NAME,		 Coin.DEFAULT_IMAGE_PATH,	   editor, gamePanel);
+		addEditorButton(Gate.TITLE, 	 Gate.NAME,		 Gate.DEFAULT_IMAGE_PATH,	   editor, gamePanel);
+		addEditorButton(GateKey.TITLE,   GateKey.NAME,	 GateKey.DEFAULT_IMAGE_PATH,   editor, gamePanel);
+		addEditorButton(Diggable.TITLE,	 Diggable.NAME,	 Diggable.DEFAULT_IMAGE_PATH,  editor, gamePanel);
+		addEditorButton(Hole.TITLE, 	 Hole.NAME,		 Hole.DEFAULT_IMAGE_PATH,	   editor, gamePanel);
+		addEditorButton(Ladder.TITLE, 	 Ladder.NAME,	 Ladder.DEFAULT_IMAGE_PATH,	   editor, gamePanel);
+		addEditorButton(Enemy.TITLE, 	 Enemy.NAME,	 Enemy.DEFAULT_IMAGE_PATH,	   editor, gamePanel);
+		addEditorButton(Player.TITLE, 	 Player.NAME,	 Player.DEFAULT_IMAGE_PATH,	   editor, gamePanel);
+		addEditorButton(Portal.TITLE, 	 Portal.NAME,	 Portal.DEFAULT_IMAGE_PATH,	   editor, gamePanel);
+		addEditorButton(PortalKey.TITLE, PortalKey.NAME, PortalKey.DEFAULT_IMAGE_PATH, editor, gamePanel);
+		addEditorButton(Slippery.TITLE,	 Slippery.NAME,	 Slippery.DEFAULT_IMAGE_PATH,  editor, gamePanel);
+		addEditorButton(Solid.TITLE, 	 Solid.NAME,	 Solid.DEFAULT_IMAGE_PATH,	   editor, gamePanel);
+		addEditorButton(Spikes.TITLE, 	 Spikes.NAME,	 Spikes.DEFAULT_IMAGE_PATH,	   editor, gamePanel);
+		addEditorButton(Treasure.TITLE,  Treasure.NAME,	 Treasure.DEFAULT_IMAGE_PATH,  editor, gamePanel);
+		addEditorButton("Erase",		 "erase",		 "eraser.png",				   editor, gamePanel);
+		editor.setEnabled(false);
+		for (Component c : editor.getComponents())
+			c.setEnabled(false);
+
+		
+		// Menu
+		frame.add(menu, BorderLayout.NORTH);
+		menu.add(status);
+		final JButton instructions = new JButton("Instructions");
+		instructions.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(
+						frame,
+						instructionText,
+						"Instructions",
+						JOptionPane.PLAIN_MESSAGE
+				);
+			}
+		});
+		reset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gamePanel.reset();
+				String text = reset.getText();
+				if (text.equals("Play")) {
+					reset.setText("Reset");
+					edit.setEnabled(false);
+					createNew.setEnabled(false);
+					openNew.setEnabled(false);
+				}
+				else if (text.equals("Reset")) {
+					stopPlaying();
+					lives.subtractValue(1);
+					score.resetValue();
+				}
+			}
+		});
+		edit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String text = edit.getText();
+				if (text.equals("Edit")) {
+					gamePanel.useEditor();
+					editor.setEnabled(true);
+					for (Component c : editor.getComponents())
+						c.setEnabled(true);
+					reset.setText("Reset");
+					edit.setText("Save");
+					status.setText("Editing "+ levelName);
+					createNew.setText("Cancel");
+					createNew.setEnabled(true);
+					openNew.setEnabled(false);
+				}
+				else if (text.equals("Save")) {
+					if (!gamePanel.playerOneExists()) {
+						JOptionPane.showMessageDialog(frame, "You cannot save a level that has no player in it!");
+						return;
+					}
+					saveDialog.setLocationRelativeTo(frame);
+                    saveDialog.setVisible(true);
+					String result = saveDialog.getResult();
+					if (result != null) {
+						gamePanel.save(result);
+						gamePanel.stopUsingEditor();
+						editor.setEnabled(false);
+						for (Component c : editor.getComponents())
+							c.setEnabled(false);
+						reset.setText("Play");
+						reset.setEnabled(true);
+						edit.setText("Edit");
+						levelName = result;
+						status.setText(levelName);
+						createNew.setText("Create new level");
+						createNew.setEnabled(true);
+						openNew.setEnabled(true);
+					}
+				}
+			}
+		});
+		createNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String text = createNew.getText();
+				if (text.equals("Create new level")) {
+					gamePanel.switchLevel();
+					gamePanel.useEditor();
+					editor.setEnabled(true);
+					for (Component c : editor.getComponents())
+						c.setEnabled(true);
+					edit.setText("Save");
+					status.setText("New level");
+					reset.setText("Reset");
+					reset.setEnabled(false);
+					createNew.setText("Cancel");
+					createNew.setEnabled(false);
+					score.resetValue();
+					lives.resetValue();
+					openNew.setEnabled(false);
+				}
+				else if (text.equals("Cancel")) {
+					gamePanel.reset();
+					gamePanel.stopUsingEditor();
+					editor.setEnabled(false);
+					for (Component c : editor.getComponents())
+						c.setEnabled(false);
+					edit.setText("Edit");
+					status.setText(levelName);
+					createNew.setText("Create new level");
+					reset.setText("Play");
+					openNew.setEnabled(true);
+				}
+			}
+		});
+		openNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Object[] levels = getLevels();
+				String result = (String)JOptionPane.showInputDialog(
+						frame,
+						"Choose a level to open.",
+						"Open level",
+						JOptionPane.PLAIN_MESSAGE,
+						null,
+						levels,
+						levels[0]);
+				if (result != null && result.length() > 0) {
+					if (result.equals("CAMPAIGN")) {
+						gamePanel.startCampaign();
+						status.setText("CAMPAIGN");
+					}
+					else {
+						gamePanel.switchLevel(result);
+						levelName = result;
+						status.setText(levelName);
+					}
+				}
+			}
+		});
+		menu.add(instructions);
+		menu.add(reset);
+		menu.add(edit);
+		menu.add(createNew);
+		menu.add(openNew);
+		menu.add(score);
+		menu.add(lives);
+		
+
+		// Put the frame on the screen
+		frame.pack();
+        frame.setVisible(true);
+	}
+	
+	/**
+	 * Constructor for GAN levels that doesnt save file
+	 * @param level1
+	 */
+	public LodeRunner(List<List<Integer>> level1) {
+		// Retrieve instructions.
+		final String instructionText = getInstructions();
+		
+		// Top-level frame
+		frame.setLocation(200, 150);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		// Initialize the save dialog
+		final LevelSaveDialog saveDialog = new LevelSaveDialog(frame);
+		saveDialog.pack();
+
+		// Initialize level
+		Level level = new Level(level1);
 		
 		// Main playing area
 		final GamePanel gamePanel = new GamePanel(level, this);
