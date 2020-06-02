@@ -202,14 +202,14 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param start The spawn point 
 	 */
 	public LodeRunnerState(List<List<Integer>> level, Point start) {
-		this(level, getGoldLeft(level), getDugHoles(), start.x, start.y);
+		this(level, getGoldLeft(level), new HashSet<Point>(), start.x, start.y);
 	}
 
 
-	private static HashSet<Point> getDugHoles() {
-		HashSet<Point> dug = new HashSet<>();
-		return dug;
-	}
+//	private static HashSet<Point> getDugHoles() {
+//		HashSet<Point> dug = new HashSet<>();
+//		return dug;
+//	}
 
 	/**
 	 * gets the gold left in the level by calling the fill gold method 
@@ -301,7 +301,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public State<LodeRunnerAction> getSuccessor(LodeRunnerAction a) {
 		int newX = currentX;
 		int newY = currentY; 
-		HashSet<Point> newDugHoles = new HashSet<>();
+		HashSet<Point> newDugHoles = new HashSet<>(); 
 		//assert inBounds(newX,newY): "x is:" + newX + "\ty is:"+newY + "\t" + inBounds(newX,newY);
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
 			int beneath = tileAtPosition(newX,newY+1);
@@ -389,7 +389,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	
 	private boolean diggable(int x, int y) {
 		int tile = tileAtPosition(x,y);
-		if(tile == LODE_RUNNER_TILE_DIGGABLE && !dugHoles.contains(new Point(x,y))) {
+		if(tile == LODE_RUNNER_TILE_DIGGABLE) {
 			return true;
 		}
 		return false;
@@ -494,7 +494,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 */
 	@Override
 	public String toString() {
-		return "Size:" + goldLeft.size() + " (" + currentX + ", " + currentY + ")";
+		return "Size:" + goldLeft.size() + " (" + currentX + ", " + currentY + ")" + " DugCount:" +dugHoles.size();
 	}
 
 	@Override
