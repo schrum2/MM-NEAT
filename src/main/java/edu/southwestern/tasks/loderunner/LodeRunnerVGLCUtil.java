@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.loderunner;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import gvgai.tools.IO;
@@ -144,28 +143,30 @@ public class LodeRunnerVGLCUtil {
 	 * @param tile Character describing the tile 
 	 * @return The number associated with that tile
 	 */
-	private static int convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(char tile) {
-		switch(tile) {
-		case '.': //empty, passable
-		case 'M': //spawn, passable
-			return 0;	
-		case 'G': //gold, passable, pickupable
-			return 1; 
-		case 'E': //enemy, damaging 
-			return 2; 
-		case 'b': //diggable ground, solid 
-			return 3; 
-		case '#': //ladder, passable, climbable
-			return 4;
-		case '-': //rope, passable, climbable 
-			return 5;
-		case 'B': //regular ground, solid
-			return 6; 
-		default:
-			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
-
-		}
-	}
+	// Do not need separate but similar methods for each possible tile count. Just have a method for the higher tile count,
+	// and unused tiles will never crop up.
+//	private static int convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(char tile) {
+//		switch(tile) {
+//		case '.': //empty, passable
+//		case 'M': //spawn, passable
+//			return 0;	
+//		case 'G': //gold, passable, pickupable
+//			return 1; 
+//		case 'E': //enemy, damaging 
+//			return 2; 
+//		case 'b': //diggable ground, solid 
+//			return 3; 
+//		case '#': //ladder, passable, climbable
+//			return 4;
+//		case '-': //rope, passable, climbable 
+//			return 5;
+//		case 'B': //regular ground, solid
+//			return 6; 
+//		default:
+//			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
+//
+//		}
+//	}
 	
 	/**
 	 * Converts tile codes to numbers for JSON conversion removes the spawn tile to avoid placing multiple 
