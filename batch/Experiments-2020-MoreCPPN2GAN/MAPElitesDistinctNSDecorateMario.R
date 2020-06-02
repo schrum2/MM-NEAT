@@ -61,15 +61,15 @@ print("Create plot and save to file")
 
 drop0 <- filter(allData, distinctBin > 0)
 
-leniencyLabals <- function(num) {
-  paste("Leniency Bin:",num)
+decorateLabals <- function(num) {
+  paste("Alternating decoration Bin:",num)
 }
 
 outputFile <- str_replace(args[1],"txt","heat.pdf")
 pdf(outputFile,height=3.5)  
 result <- ggplot(drop0, aes(x=distinctBin, y=nsBin, fill=SolutionSteps)) +
   geom_tile() +
-  facet_wrap(~decorateBin, ncol=5, labeller = labeller(decorateBin = leniencyLabals)) +
+  facet_wrap(~decorateBin, ncol=5, labeller = labeller(decorateBin = decorateLabals)) +
   #scale_fill_gradient(low="white", high="orange") +
   scale_fill_viridis(discrete=FALSE, limits = c(250,500), oob = squish) +
   xlab("Decoration Frequency Bin") +
