@@ -357,6 +357,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		}
 		//have these two actions return null while testing on level one because it doesn't require digging to win 
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
+			System.out.println("BEFORE");
+			renderLevelAndPause((LodeRunnerState) this);
+
 			if(inBounds(newX-1,newY+1) && diggable(newX-1,newY+1)) {
 				for(Point p:dugHoles) {
 					newDugHoles.add(p);
@@ -385,7 +388,12 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		//System.out.println(newDugHoles.toString());
 		//System.out.println(inBounds(newX,newY));
 		//assert inBounds(newX,newY) : "x is:" + newX + "\ty is:"+newY + "\t"+ inBounds(newX,newY);
-		return new LodeRunnerState(level, newGoldLeft, newDugHoles, newX, newY);
+		LodeRunnerState result = new LodeRunnerState(level, newGoldLeft, newDugHoles, newX, newY);
+		if(a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT)) {
+			System.out.println("AFTER");
+			renderLevelAndPause((LodeRunnerState) result);
+		}
+		return result;
 	}
 	
 	private boolean diggable(int x, int y) {
@@ -404,20 +412,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public ArrayList<LodeRunnerAction> getLegalActions(State<LodeRunnerAction> s) {
 		ArrayList<LodeRunnerAction> vaildActions = new ArrayList<>();
 		//System.out.println(level);
-		// This code renders an image of the level with the agent in it
-//				try {
-//					LodeRunnerState theState = ((LodeRunnerState) s);
-//					List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
-//					copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
-//					for(Point t : theState.goldLeft) {
-//						copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
-//					}
-//					LodeRunnerRenderUtil.getBufferedImage(copy);
-//				} catch (Exception e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				MiscUtil.waitForReadStringAndEnterKeyPress();
+		//renderLevelAndPause((LodeRunnerState) s);
 		for(LodeRunnerAction.MOVE move: LodeRunnerAction.MOVE.values()) {
 			//Everything besides the if statement is for debugging purposes, delete later 
 			LodeRunnerAction a = new LodeRunnerAction(move);
@@ -429,6 +424,30 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		//System.out.println(vaildActions);
 
 		return vaildActions;
+	}
+
+	/**
+	 * For troubleshooting. Draw the level in a graphics window with the representation
+	 * updated according to the contents of the state.
+	 * @param s
+	 */
+	private void renderLevelAndPause(LodeRunnerState theState) {
+		// This code renders an image of the level with the agent in it
+		try {
+			List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
+			copy.get(theState.currentY).set(theState.currentX, LODE_RUNNER_TILE_SPAWN); 
+			for(Point t : theState.goldLeft) {
+				copy.get(t.y).set(t.x, LODE_RUNNER_TILE_GOLD); 
+			}
+			for(Point dug : theState.dugHoles) {
+				copy.get(dug.y).set(dug.x, LODE_RUNNER_TILE_EMPTY); 
+			}
+			LodeRunnerRenderUtil.getBufferedImage(copy);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 
 	/**
