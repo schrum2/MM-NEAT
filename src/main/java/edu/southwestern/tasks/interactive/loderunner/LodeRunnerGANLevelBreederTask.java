@@ -116,12 +116,13 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		//level breeder instead of the first level of the campaign that IceCreamYou has by default.  
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 		List<List<Integer>> level = levelListRepresentation(doubleArray);
-		
-		new Runnable() {
+		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
+		LodeRunnerGANUtil.setSpawn(level, emptySpaces);
+		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				new LodeRunner(level);
 			}
-		};
+		});
 	}
 	
 	private static List<List<Integer>> addSpawn(List<List<Integer>> level, Random rand) {
