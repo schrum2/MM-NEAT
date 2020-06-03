@@ -118,11 +118,15 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
 		Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
 		LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
-		SwingUtilities.invokeLater(new Runnable() {
+		new Thread() {
 			public void run() {
-				new LodeRunner(level);
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						new LodeRunner(level);
+					}
+				});
 			}
-		});
+		}.start();
 	}
 
 	/**

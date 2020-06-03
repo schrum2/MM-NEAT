@@ -270,7 +270,7 @@ public class LodeRunner {
 		
 		// Top-level frame
 		frame.setLocation(200, 150);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// Initialize the save dialog
 		final LevelSaveDialog saveDialog = new LevelSaveDialog(frame);
