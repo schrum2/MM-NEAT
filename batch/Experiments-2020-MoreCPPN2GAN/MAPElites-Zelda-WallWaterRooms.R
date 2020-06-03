@@ -18,32 +18,34 @@ names(archive) <- "PercentTraversed"
 
 print("Organize bins")
 
-wallBin <- append(rep(0, 10*101), rep(1, 10*101))
-wallBin <- append(wallBin, rep(2, 10*101))
-wallBin <- append(wallBin, rep(3, 10*101))
-wallBin <- append(wallBin, rep(4, 10*101))
-wallBin <- append(wallBin, rep(5, 10*101))
-wallBin <- append(wallBin, rep(6, 10*101))
-wallBin <- append(wallBin, rep(7, 10*101))
-wallBin <- append(wallBin, rep(8, 10*101))
-wallBin <- append(wallBin, rep(9, 10*101))
+maxNumRooms <- 25
+
+wallBin <- append(rep(0, 10*(maxNumRooms+1)), rep(1, 10*(maxNumRooms+1)))
+wallBin <- append(wallBin, rep(2, 10*(maxNumRooms+1)))
+wallBin <- append(wallBin, rep(3, 10*(maxNumRooms+1)))
+wallBin <- append(wallBin, rep(4, 10*(maxNumRooms+1)))
+wallBin <- append(wallBin, rep(5, 10*(maxNumRooms+1)))
+wallBin <- append(wallBin, rep(6, 10*(maxNumRooms+1)))
+wallBin <- append(wallBin, rep(7, 10*(maxNumRooms+1)))
+wallBin <- append(wallBin, rep(8, 10*(maxNumRooms+1)))
+wallBin <- append(wallBin, rep(9, 10*(maxNumRooms+1)))
 
 wallBin <- data.frame(wallBin)
 
-waterBin <- append(rep(0, 101), rep(1, 101))
-waterBin <- append(waterBin, rep(2, 101))
-waterBin <- append(waterBin, rep(3, 101))
-waterBin <- append(waterBin, rep(4, 101))
-waterBin <- append(waterBin, rep(5, 101))
-waterBin <- append(waterBin, rep(6, 101))
-waterBin <- append(waterBin, rep(7, 101))
-waterBin <- append(waterBin, rep(8, 101))
-waterBin <- append(waterBin, rep(9, 101))
+waterBin <- append(rep(0, (maxNumRooms+1)), rep(1, (maxNumRooms+1)))
+waterBin <- append(waterBin, rep(2, (maxNumRooms+1)))
+waterBin <- append(waterBin, rep(3, (maxNumRooms+1)))
+waterBin <- append(waterBin, rep(4, (maxNumRooms+1)))
+waterBin <- append(waterBin, rep(5, (maxNumRooms+1)))
+waterBin <- append(waterBin, rep(6, (maxNumRooms+1)))
+waterBin <- append(waterBin, rep(7, (maxNumRooms+1)))
+waterBin <- append(waterBin, rep(8, (maxNumRooms+1)))
+waterBin <- append(waterBin, rep(9, (maxNumRooms+1)))
 
 waterBin <- rep(waterBin, 10)
 waterBin <- data.frame(waterBin)
 
-roomBin <- rep(seq(0,100),10*10)
+roomBin <- rep(seq(0,maxNumRooms),10*10)
 roomBin <- data.frame(roomBin)
 
 allData <- data.frame(archive, wallBin, waterBin, roomBin)
