@@ -15,7 +15,7 @@ import java.io.IOException;
 import gvgai.tools.IO;
 
 public class MegaManVGLCUtil {
-	public static final String MEGAMAN_LEVEL_PATH = "data/VGLC/MegaMan/Processed/";
+	public static final String MEGAMAN_LEVEL_PATH = "data/VGLC/MegaMan/Enhanced/";
 
 	
 	public static void main(String[] args) {
