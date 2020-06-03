@@ -61,19 +61,19 @@ print("Create plot and save to file")
 
 drop0 <- filter(allData, distinctBin > 0)
 
-decorateLabals <- function(num) {
-  paste("Alternating decoration Bin:",num)
+distinctLabels <- function(num) {
+  paste("Distinct Segments:",num)
 }
 
 outputFile <- str_replace(args[1],"txt","heat.pdf")
 pdf(outputFile,height=3.5)  
-result <- ggplot(drop0, aes(x=distinctBin, y=nsBin, fill=SolutionSteps)) +
+result <- ggplot(drop0, aes(x=decorateBin, y=nsBin, fill=SolutionSteps)) +
   geom_tile() +
-  facet_wrap(~decorateBin, ncol=5, labeller = labeller(decorateBin = decorateLabals)) +
+  facet_wrap(~distinctBin, ncol=5, labeller = labeller(distinctBin = distinctLabels)) +
   #scale_fill_gradient(low="white", high="orange") +
   scale_fill_viridis(discrete=FALSE, limits = c(250,500), oob = squish) +
-  xlab("Decoration Frequency Bin") +
-  ylab("Space Coverage Bin") +
+  xlab("Alternating Decoration Bin") +
+  ylab("Alternating Space Coverage Bin") +
   labs(fill = "Solution Path Length") +
   # Puts room count in the plot for each bin
   #geom_text(aes(label = ifelse(wallBin == 5 & waterBin == 4, roomBin, NA)), 
