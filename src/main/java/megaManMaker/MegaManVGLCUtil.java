@@ -19,7 +19,7 @@ public class MegaManVGLCUtil {
 
 	
 	public static void main(String[] args) {
-		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_6.txt");
+		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_7.txt");
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
 				System.out.print(m);
@@ -30,7 +30,7 @@ public class MegaManVGLCUtil {
 		convertMegaManLevelToMMLV(level);
 		//convertMegaManLevelToJSON(level);
 	}
-//	private static void convertMegaManLevelToJSON(List<List<Integer>> level) {
+//	private static void convertMegaManLevelToJSON(List<List<Integer>> level) { take upper left x,y, take width height param returns screen
 //		List<List<List<Integer>>> json = new ArrayList<>();
 //		//scroller for the screen
 //		for(int i = 0;i<level.size()-16;i++) {
@@ -42,7 +42,7 @@ public class MegaManVGLCUtil {
 		// TODO Auto-generated method stub
 		int xcoord = 0;
 		int ycoord = 0;
-		int levelNumber = 6;
+		int levelNumber = 7;
 		HashSet<Point> o = new HashSet<Point>();
 		HashSet<Point> movingPlat = new HashSet<Point>();
 		try {
@@ -114,23 +114,6 @@ public class MegaManVGLCUtil {
 					p.println("e"+xcoord+","+ycoord+"=\"31.000000\"");
 					p.println("d"+xcoord+","+ycoord+"=\"6.000000\"");
 					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-					
-					
-					//print the platform track
-//					int newxcoord = xcoord+16;
-//					for(int i = 0;i<4;i++) {
-//						p.println("o"+newxcoord+","+ycoord+"=\"9999.000000\"");
-//						p.println("e"+newxcoord+","+ycoord+"=\"31.000000\"");
-//						p.println("d"+newxcoord+","+ycoord+"=\"6.000000\"");
-//						p.println("a"+newxcoord+","+ycoord+"=\"1.000000\"");
-//						newxcoord+=16;
-//					}
-
-//					o32,80="9999.000000"
-//							h32,80="2.000000"
-//							e32,80="31.000000"
-//							d32,80="6.000000"
-//							a32,80="1.000000"
 
 				}else if(m==4&&!o.contains(new Point(x,y))) { //breakable
 					//add surrounding points to the hashset so that you don't add multiple breakables in one spot!!
@@ -146,9 +129,6 @@ public class MegaManVGLCUtil {
 					p.println("a"+newx+","+newy+"=\"1.000000\"");
 
 				}else if (m==19) { //water
-//					o0,0="9999.000000"
-//							e0,0="177.000000"
-//							a0,0="1.000000"
 					p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 					p.println("e"+xcoord+","+ycoord+"=\"177.000000\"");
 					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
@@ -162,9 +142,7 @@ public class MegaManVGLCUtil {
 //					p.println("d"+xcoord+","+ycoord+"=\"6.000000\"");
 //					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 //				}
-//				else if (m==17) {
-//					l=17;
-//				}
+
 				if(xcoord%256==0/*&&m!=17*/) {
 					//add 2a clause
 					p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
@@ -185,76 +163,30 @@ public class MegaManVGLCUtil {
 		//NEED 2a for enabling squares
 		p.println("2b"+0+","+896+"=\"0.000000\"");
 		p.println("2b"+0+","+896+"=\"0.000000\"");
-
 		p.println("2b"+0+","+672+"=\"0.000000\"");
-//				2b0,448="0.000000"
 		p.println("2b"+0+","+448+"=\"0.000000\"");
-
-//				2b0,224="0.000000"
 		p.println("2b"+0+","+224+"=\"0.000000\"");
-
-//				2b0,0="0.000000"
 		p.println("2b"+0+","+0+"=\"0.000000\"");
-
-//				2a0,0="1.000000"
 		p.println("2a"+0+","+0+"=\"1.000000\"");
-
-//				1s="240.000000"
 		p.println("1s=\"3000.000000\"");
-
-//				1r="0.000000"
 		p.println("1r=\"0.000000\"");
-
-//				1q="272.000000"
 		p.println("1q=\""+12800+"\""); //CHANGE TO POS INFINITY
-
-//				1p="0.000000"
 		p.println("1p=\"0.000000\"");
-
-//				1m="9.000000"
 		p.println("1m=\"9.000000\"");
-
-//				1l="11.000000"
 		p.println("1l=\"11.000000\"");
-
-//				1k0="0.000000"
 		p.println("1k0=\"0.000000\"");
-
-//				1bc="0.000000"
 		p.println("1bc=\"0.000000\"");
-
-//				1f="-1.000000"
 		p.println("1f=\"-1.000000\"");
-
-//				1e="29.000000"
 		p.println("1e=\"29.000000\"");
-
-//				1d="6.000000"
 		p.println("1d=\"6.000000\"");
-
-//				1bb="0.000000"
 		p.println("1bb=\"0.000000\"");
-
-//				1ca="0.000000"
 		p.println("1ca=\"0.000000\"");
-
-//				1ba="0.000000"
 		p.println("1ba=\"0.000000\"");
-
-//				1c="1.000000"
 		p.println("1c=\"1.000000\"");
-
-//				1b="1.000000"
 		p.println("1b=\"1.000000\"");
-
-//				4b="64.000000"
 		p.println("4b=\"64.000000\"");
-
-//				4a="dakuchen"
 		p.println("4a=\"dakuchen\""); //your user name
 
-//				1a="Super Simple"
-		//"MegaManLevel"+levelNumber+".txt"
 		p.println("1a=\"MegaManLevel"+levelNumber+".mmlv\"");
 
 //				0v="1.6.3"
