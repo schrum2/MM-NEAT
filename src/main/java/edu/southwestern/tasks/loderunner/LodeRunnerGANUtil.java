@@ -1,13 +1,16 @@
 package edu.southwestern.tasks.loderunner;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 import edu.southwestern.util.random.RandomNumbers;
@@ -35,6 +38,8 @@ public class LodeRunnerGANUtil {
 		Parameters.initializeParameterCollections(new String[] {"GANInputSize:"+LATENT_VECTOR_SIZE});//input size is the size of the latent vector
 		double[] latentVector = RandomNumbers.randomArray(LATENT_VECTOR_SIZE); //fills array of input size randomly
 		List<List<Integer>> oneLevel = generateOneLevelListRepresentationFromGAN(latentVector); //one level to render
+		List<Point> emptySpaces = fillEmptyList(oneLevel);
+		setSpawn(oneLevel, emptySpaces);
 ////		BufferedImage[] images = LodeRunnerRenderUtil.loadImages(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images
 ////		LodeRunnerRenderUtil.getBufferedImage(oneLevel, images);//rendered level and displays it in a window 
 //		BufferedImage[] images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images
@@ -45,6 +50,23 @@ public class LodeRunnerGANUtil {
 			}
 		});
 		GANProcess.terminateGANProcess(); //ends GAN process 
+	}
+	
+	public static List<Point> fillEmptyList(List<List<Integer>> level){
+		List<Point> emptySpaces = new ArrayList<Point>();
+		for(int i = 0; i < level.size(); i++) {
+			for(int j = 0; j < level.get(i).size(); j++) {
+				if(level.get(i).get(j) == 0) {
+					emptySpaces.add(new Point(j, i));
+				}
+			}
+		}
+		return emptySpaces;
+	}
+	
+	public static void setSpawn(List<List<Integer>> level, List<Point> empty) {
+		Point spawn = RandomNumbers.randomChoose(empty, 1).get(0);
+		level.get(spawn.x).set(spawn.y, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);
 	}
 	
 	
