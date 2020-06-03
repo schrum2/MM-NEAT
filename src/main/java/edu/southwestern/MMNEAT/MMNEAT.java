@@ -78,6 +78,7 @@ import edu.southwestern.tasks.interactive.loderunner.LodeRunnerGANLevelBreederTa
 import edu.southwestern.tasks.interactive.mario.MarioCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.mario.MarioGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.mario.MarioLevelBreederTask;
+import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
 import edu.southwestern.tasks.mario.MarioCPPNOrDirectToGANLevelTask;
 import edu.southwestern.tasks.mario.MarioCPPNtoGANLevelTask;
 import edu.southwestern.tasks.mario.MarioGANLevelTask;
@@ -733,7 +734,12 @@ public class MMNEAT {
 			} else if (task instanceof ZeldaLevelTask){ // What is this? Feb 26 2020
 				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
 				System.out.println("Set up Zelda Level Task");
-			} else if(task instanceof HyperNEATDummyTask) {
+			} 
+			else if(task instanceof LodeRunnerLevelTask) {
+				GANProcess.type = GANProcess.GAN_TYPE.LODE_RUNNER;
+				System.out.println("Set up Lode Runner Task");
+			} 
+			else if(task instanceof HyperNEATDummyTask) {
 				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
 			} else if(task instanceof HyperNEATSpeedTask) {
 				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
