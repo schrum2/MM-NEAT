@@ -14,8 +14,10 @@ import gvgai.tools.IO;
 
 public class MegaManVGLCUtil {
 	public static final String MEGAMAN_LEVEL_PATH = "data/VGLC/MegaMan/Enhanced/";
-
-	
+	public static HashSet<Point> visited = new HashSet<>();
+	public static int lowerY;
+	public static int lowerX;
+	public static int upperY;
 	public static void main(String[] args) {
 		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_6.txt");
 		for(List<Integer> k : level) {
@@ -39,52 +41,96 @@ public class MegaManVGLCUtil {
 	 */
 	private static void convertMegaManLevelToJSON(List<List<Integer>> level) { //take upper left x,y, take width height param returns screen
 		List<List<List<Integer>>> json = new ArrayList<>();
-		List<List<Integer>> screen = new ArrayList<>();
 
 		//scroller for the screen
-		int intXint = 0;
-		int lowerY = 0;
-		for(int x = 0;x<level.get(0).size();x++) {
-			for(int y = 0;y<level.size();y++) {
-				if(level.get(y).get(x)!=17) {
-					intXint++;
-					lowerY = y;
+		//int intXint = 0;
+		lowerY = 0;
+		lowerX = 0;
+		
+		
+		
+		for(int y = 0; y<level.size();y++) {
+			for(int x = 0;x<level.get(0).size();x++) {
+				List<List<Integer>> screen = new ArrayList<>();
+//				System.out.println("x: "+x);
+//				System.out.println("y: "+y);
+				
+				int intXint = findScreenDimensions(level, y, x);
+//				System.out.println("intXint "+intXint);
+				
+
+				if(level.get(y).get(x)!=17&&!visited.contains(new Point(x+intXint+1,y))&&((x>0&&level.get(y).get(x-1)!=17)||level.get(y).get(x+intXint+1)!=17)) {
+					upperY = y;
+					lowerX = x;
+					//upperY = lowerY-intXint+1;
+//					System.out.println("LowerY "+lowerY);
+//					System.out.println("UpperY "+upperY);
+//					System.out.println("LowerX "+lowerX);
+					screen = copyScreen(level, intXint, lowerX, upperY);
+					System.out.println("this is a screen");
+					for(List<Integer> k : screen) {
+						for(Integer m: k) {
+							System.out.print(m);
+
+						}
+						System.out.println();
+					}
+					json.add(screen);
 				}
 			}
-			if(intXint!=0) {
+		}
+
+		
+		//System.out.println("this is it: "+intXint);
+				
+		//System.out.println("this is a screen");
+//		for(List<Integer> k : screen) {
+//			for(Integer m: k) {
+//				System.out.print(m);
+//
+//			}
+//			System.out.println();
+//		}
+	}
+	private static int findScreenDimensions(List<List<Integer>> level, int y, int x) {
+		int intXint = 0;
+		for(int i = x;i<level.get(0).size();i++) {
+			for(int j = y ;j<level.size();j++) {
+				//System.out.println("("+i+","+j+")");
+				//System.out.println(level.get(j).get(i));
+				if(level.get(j).get(i)!=17) {
+					intXint++;
+					//lowerY = j;
+				}
+			}
+			if(intXint!=0&&intXint<=16) {
+				//lowerX = i;
 				break;
 			}
+			intXint=0;
 		}
-		int upperY = lowerY-intXint+1;
-		//System.out.println("this is it: "+intXint);
+
+		return intXint;
+	}
+	private static List<List<Integer>> copyScreen(List<List<Integer>> level, int intXint, int lowerX,
+			int upperY) {
+		List<List<Integer>> screen = new ArrayList<>();
 		for(int y = 0;y<intXint;y++) {
 			List<Integer> okay = new ArrayList<>();
 			for (int x = 0;x<intXint;x++) {
-				//screen.get(y).add(okay.get(x));// = level.get(y).get(x);
-				okay.add(level.get(upperY).get(x));
+				if(lowerX+x<level.get(0).size()) {
+					//screen.get(y).add(okay.get(x));// = level.get(y).get(x);
+					okay.add(level.get(upperY).get(lowerX+x));
+				}
+				//lowerX++;
 			}
+			//visited.add(new Point(lowerX, upperY)); //add visited points to hashset
+
 			screen.add(okay);
 			upperY++;
+			
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		//System.out.println("this is a screen");
-		for(List<Integer> k : screen) {
-			for(Integer m: k) {
-				System.out.print(m);
-
-			}
-			System.out.println();
-		}
+		return screen;
 	}
 	private static void convertMegaManLevelToMMLV(List<List<Integer>> level) {
 		// TODO Auto-generated method stub
