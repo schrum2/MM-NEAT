@@ -450,8 +450,8 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			//int binIndex;
 			int dim3,dim1,dim2;
 			double leniencySum = sumStatScore(lastLevelStats, LENIENCY_STAT_INDEX);
-			final double DECORATION_SCALE = 3;
-			final double NEGATIVE_SPACE_SCALE = 3;
+			double DECORATION_SCALE = 3;
+			double NEGATIVE_SPACE_SCALE = 3;
 			// Scale scores so that we are less likely to overstep the bounds of the bins
 			final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("marioGANLevelChunks");
 			double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
@@ -480,8 +480,16 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				double decorationAlternating = alternatingStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
 				double negativeSpaceAlternating = alternatingStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
 				
+				// Lower the scale when using alternating score
+				DECORATION_SCALE = 0.2;
+				NEGATIVE_SPACE_SCALE = 0.8;
+				
 				decorationBinIndex = Math.min((int)(decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10), BINS_PER_DIMENSION-1);
 				negativeSpaceSumIndex = Math.min((int)(negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
+				
+				// Do not assert: we allow the range to be broken sometimes
+				//assert (decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10) <= BINS_PER_DIMENSION : "Decorate too big: " +(BINS_PER_DIMENSION)+" < " + (decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10);
+				//assert (negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION) <= BINS_PER_DIMENSION-1 : "NS too big: " +(BINS_PER_DIMENSION-1)+" < " + (negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION);
 				
 				dim1 = numDistinctSegments;
 				dim2 = negativeSpaceSumIndex;
