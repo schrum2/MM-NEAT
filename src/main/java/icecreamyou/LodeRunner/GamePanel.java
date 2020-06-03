@@ -21,7 +21,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	 * The width and height of the Panel. 
 	 * We changed this from 600x600 to allow for us to load in our own levels 
 	 */
-	public static final int WIDTH = 1000, HEIGHT = 900;
+	public static final int WIDTH = 960, HEIGHT = 880;
 	/**
 	 * The width and height of each unit in the Panel.
 	 * Units are basically squares on a grid. Every WorldNode is one square

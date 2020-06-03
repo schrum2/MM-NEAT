@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.SwingUtilities;
 
@@ -39,7 +40,8 @@ public class LodeRunnerGANUtil {
 		double[] latentVector = RandomNumbers.randomArray(LATENT_VECTOR_SIZE); //fills array of input size randomly
 		List<List<Integer>> oneLevel = generateOneLevelListRepresentationFromGAN(latentVector); //one level to render
 		List<Point> emptySpaces = fillEmptyList(oneLevel);
-		setSpawn(oneLevel, emptySpaces);
+		Random rand = new Random(Double.doubleToLongBits(latentVector[0]));
+		setSpawn(oneLevel, emptySpaces, rand);
 ////		BufferedImage[] images = LodeRunnerRenderUtil.loadImages(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images
 ////		LodeRunnerRenderUtil.getBufferedImage(oneLevel, images);//rendered level and displays it in a window 
 //		BufferedImage[] images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images
@@ -64,9 +66,9 @@ public class LodeRunnerGANUtil {
 		return emptySpaces;
 	}
 	
-	public static void setSpawn(List<List<Integer>> level, List<Point> empty) {
-		Point spawn = RandomNumbers.randomChoose(empty, 1).get(0);
-		level.get(spawn.x).set(spawn.y, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);
+	public static void setSpawn(List<List<Integer>> level, List<Point> empty, Random rand) {
+		Point spawn = empty.get(rand.nextInt(empty.size()));
+		level.get(spawn.y).set(spawn.x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);
 	}
 	
 	
