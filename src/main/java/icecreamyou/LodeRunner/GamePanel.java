@@ -3,8 +3,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 
 import javax.swing.*;
+
+import edu.southwestern.tasks.loderunner.LodeRunnerVGLCUtil;
 
 public class GamePanel extends JPanel implements MouseMotionListener {
 	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
@@ -18,7 +21,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	 * The width and height of the Panel. 
 	 * We changed this from 600x600 to allow for us to load in our own levels 
 	 */
-	public static final int WIDTH = 1000, HEIGHT = 1000;
+	public static final int WIDTH = 1000, HEIGHT = 900;
 	/**
 	 * The width and height of each unit in the Panel.
 	 * Units are basically squares on a grid. Every WorldNode is one square
@@ -36,7 +39,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	 * The current game mode.
 	 * @see Mode
 	 */
-	private Mode mode;
+	static Mode mode;
 	/**
 	 * The timer that executes the main game loop.
 	 * @see TIMER_INTERVAL
@@ -243,6 +246,12 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 			mode = Mode.MODE_PLAYING;
 			timer.start();
 			level = Level.cleanCopy(level);
+			repaint();
+		}
+		else if(mode==Mode.GAN) {
+			mode=Mode.MODE_PLAYING;
+			timer.start();
+			level = Level.cleanCopyGAN(Level.GANLevel);
 			repaint();
 		}
 		else if (mode == Mode.MODE_PLAYING) {

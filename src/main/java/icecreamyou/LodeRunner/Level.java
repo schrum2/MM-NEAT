@@ -57,6 +57,7 @@ public class Level {
 	public Player player1;
 	public Player player2;
 	public Portal portal;
+	public static List<List<Integer>> GANLevel;
 	
 	public boolean portalKeyExists = false;
 
@@ -92,10 +93,15 @@ public class Level {
 	}
 	
 	public Level(List<List<Integer>> level) {
-		String newLevel = LodeRunnerVGLCUtil.convertLodeRunnerJSONtoIceCreamYou(level);
+		GANLevel = level;
+		String newLevel = LodeRunnerVGLCUtil.convertLodeRunnerJSONtoIceCreamYou(GANLevel);
 		Scanner scan = new Scanner(newLevel);
 		while(scan.hasNextLine()) {
-			add(scan.nextLine());
+			String line = scan.nextLine();
+			if(line == null || line.equals("")) 
+				continue;
+			add(line);
+			//System.out.println(line);
 		}
 		scan.close();
 	}
@@ -205,6 +211,14 @@ public class Level {
 		if (other.name == null || other.name.equals(""))
 			return new Level();
 		return new Level(other.name);
+	}
+	
+	/**
+	 * Used for the GAN levels 
+	 */
+	public static Level cleanCopyGAN(List<List<Integer>> level) {
+		GANLevel = level;
+		return new Level(GANLevel);
 	}
 	
 	/**

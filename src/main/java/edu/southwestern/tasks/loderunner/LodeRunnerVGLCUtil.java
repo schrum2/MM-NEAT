@@ -3,7 +3,11 @@ package edu.southwestern.tasks.loderunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
+import edu.southwestern.util.datastructures.ArrayUtil;
 import gvgai.tools.IO;
+import icecreamyou.LodeRunner.LodeRunner;
 
 /**
  * This class converts VGLC Lode Runner levels into JSON files 
@@ -31,8 +35,14 @@ public class LodeRunnerVGLCUtil {
 //		System.out.println(levelSet); //prints converted JSON files to the console 
 		//String level = convertLodeRunnerVGLCtoIceCreamYou(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
 		List<List<Integer>> level = convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
-		String levelIce = convertLodeRunnerJSONtoIceCreamYou(level);
-		System.out.println(levelIce);
+		//String levelIce = convertLodeRunnerJSONtoIceCreamYou(level);
+		//System.out.println(levelIce);	
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				new LodeRunner(level);
+			}
+		});
 	}
 
 	/**

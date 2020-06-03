@@ -340,6 +340,7 @@ public class LodeRunner {
 		});
 		reset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				GamePanel.mode = Mode.GAN;
 				gamePanel.reset();
 				String text = reset.getText();
 				if (text.equals("Play")) {
