@@ -113,11 +113,13 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	public void playLevel(ArrayList<Double> phenotype) { 
 		//probably need a few helper methods, one to save to the right place, maybe we need to add a class/method that defaults to the level we pick from the 
 		//level breeder instead of the first level of the campaign that IceCreamYou has by default.  
-		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
-		List<List<Integer>> level = levelListRepresentation(doubleArray);
-		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
+		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype); 
+		List<List<Integer>> level = levelListRepresentation(doubleArray); 
+		//fills this list with all of the empty points in the level, one of these will become the spawn point
+		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level); 
 		Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
-		LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
+		LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand); //sets a consistent and random spawn point 
+		//opens play window to play a level from the LevelBreeder 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				new LodeRunner(level);

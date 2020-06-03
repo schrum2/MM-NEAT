@@ -152,6 +152,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	private static HashSet<Point> fillGold(List<List<Integer>> level) {
 		HashSet<Point> gold = new HashSet<>();
 		int tile; 
+		//loop through level adding points where it finds gold 
 		for(int i = 0; i < level.size(); i++) {
 			for(int j = 0; j < level.get(i).size(); j++) {
 				tile = level.get(i).get(j);
@@ -254,11 +255,12 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 */
 	public static void vizualizePath(List<List<Integer>> level, HashSet<LodeRunnerState> mostRecentVisited, 
 			ArrayList<LodeRunnerAction> actionSequence, LodeRunnerState start) throws IOException {
-		List<List<Integer>> fullLevel = ListUtil.deepCopyListOfLists(level);
+		List<List<Integer>> fullLevel = ListUtil.deepCopyListOfLists(level); //copies level to draw solution path over it 
 		fullLevel.get(start.currentY).set(start.currentX, LODE_RUNNER_TILE_SPAWN);// puts the spawn back into the visualization
 		for(Point p : start.goldLeft) { //puts all the gold back 
 			fullLevel.get(p.y).set(p.x, LODE_RUNNER_TILE_GOLD);
 		}
+		//creates a buffered image from the level to be displayed 
 		BufferedImage visualPath = LodeRunnerRenderUtil.createBufferedImage(fullLevel, LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
 				LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
 		if(mostRecentVisited != null) {
@@ -282,7 +284,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				}
 			}
 		}
-		try {
+		try { //displays window with the rendered level and the solution path/visited states
 			JFrame frame = new JFrame();
 			JPanel panel = new JPanel();
 			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
