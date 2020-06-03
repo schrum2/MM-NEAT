@@ -3,9 +3,7 @@ package megaManMaker;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 
-import org.jenetics.internal.math.random;
 
 import java.awt.Point;
 import java.io.File;
@@ -19,7 +17,7 @@ public class MegaManVGLCUtil {
 
 	
 	public static void main(String[] args) {
-		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_7.txt");
+		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_6.txt");
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
 				System.out.print(m);
@@ -28,21 +26,71 @@ public class MegaManVGLCUtil {
 			System.out.println();
 		}
 		convertMegaManLevelToMMLV(level);
-		//convertMegaManLevelToJSON(level);
+		convertMegaManLevelToJSON(level);
 	}
-//	private static void convertMegaManLevelToJSON(List<List<Integer>> level) { take upper left x,y, take width height param returns screen
-//		List<List<List<Integer>>> json = new ArrayList<>();
-//		//scroller for the screen
-//		for(int i = 0;i<level.size()-16;i++) {
-//			
-//		}
-//		List<List<Integer>> screen = new ArrayList<>();
-//	}
+	/**
+	 * start at 0,0
+	 * scan down (y++) until you find a number that is not 17 (null)
+	 * then count how many below it are not 17 (null)
+	 * (use the count to tell you 15x15 or 16x16)
+	 * then scan right until the rightmost number is 17 (null)
+	 * save each iteration into a List<List<List<Integer>>>
+	 * @param level the 2d array of ints
+	 */
+	private static void convertMegaManLevelToJSON(List<List<Integer>> level) { //take upper left x,y, take width height param returns screen
+		List<List<List<Integer>>> json = new ArrayList<>();
+		List<List<Integer>> screen = new ArrayList<>();
+
+		//scroller for the screen
+		int intXint = 0;
+		int lowerY = 0;
+		for(int x = 0;x<level.get(0).size();x++) {
+			for(int y = 0;y<level.size();y++) {
+				if(level.get(y).get(x)!=17) {
+					intXint++;
+					lowerY = y;
+				}
+			}
+			if(intXint!=0) {
+				break;
+			}
+		}
+		int upperY = lowerY-intXint+1;
+		//System.out.println("this is it: "+intXint);
+		for(int y = 0;y<intXint;y++) {
+			List<Integer> okay = new ArrayList<>();
+			for (int x = 0;x<intXint;x++) {
+				//screen.get(y).add(okay.get(x));// = level.get(y).get(x);
+				okay.add(level.get(upperY).get(x));
+			}
+			screen.add(okay);
+			upperY++;
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//System.out.println("this is a screen");
+		for(List<Integer> k : screen) {
+			for(Integer m: k) {
+				System.out.print(m);
+
+			}
+			System.out.println();
+		}
+	}
 	private static void convertMegaManLevelToMMLV(List<List<Integer>> level) {
 		// TODO Auto-generated method stub
 		int xcoord = 0;
 		int ycoord = 0;
-		int levelNumber = 7;
+		int levelNumber = 6;
 		HashSet<Point> o = new HashSet<Point>();
 		HashSet<Point> movingPlat = new HashSet<Point>();
 		try {
@@ -174,6 +222,11 @@ public class MegaManVGLCUtil {
 		p.println("1p=\"0.000000\"");
 		p.println("1m=\"9.000000\"");
 		p.println("1l=\"11.000000\"");
+//		1k2="11.000000"
+//				1k1="51.000000"
+		p.println("1k2=\"11.000000\"");
+		p.println("1k1=\"51.000000\"");
+
 		p.println("1k0=\"0.000000\"");
 		p.println("1bc=\"0.000000\"");
 		p.println("1f=\"-1.000000\"");
