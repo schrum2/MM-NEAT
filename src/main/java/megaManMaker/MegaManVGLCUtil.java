@@ -3,6 +3,10 @@ package megaManMaker;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+
+import org.jenetics.internal.math.random;
+
 import java.awt.Point;
 import java.io.File;
 //import java.io.FileWriter;
@@ -15,7 +19,7 @@ public class MegaManVGLCUtil {
 
 	
 	public static void main(String[] args) {
-		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_10.txt");
+		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_6.txt");
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
 				System.out.print(m);
@@ -38,7 +42,7 @@ public class MegaManVGLCUtil {
 		// TODO Auto-generated method stub
 		int xcoord = 0;
 		int ycoord = 0;
-		int levelNumber = 10;
+		int levelNumber = 6;
 		HashSet<Point> o = new HashSet<Point>();
 		HashSet<Point> movingPlat = new HashSet<Point>();
 		try {
@@ -56,7 +60,7 @@ public class MegaManVGLCUtil {
 			for(int x = 0;x<level.get(0).size();x++) { //TODO convert mmlv to json
 				Integer m = k.get(x);
 				//if play online, does it download to mmlv file???
-				if(m==1||m==12) { //solid ground TODO make case for cannon shooter (not just blocks)
+				if(m==1||m==12||m==6) { //solid ground TODO make case for cannon shooter (not just blocks) TODO make case for appear/dis blocks
 					p.println("k"+xcoord+","+ycoord+"=\"71.000000\"");
 					p.println("j"+xcoord+","+ycoord+"=\"71.000000\"");
 					p.println("i"+xcoord+","+ycoord+"=\"1.000000\"");
@@ -85,7 +89,7 @@ public class MegaManVGLCUtil {
 					p.println("d"+xcoord+","+ycoord+"=\"4.000000\"");
 					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 					//l=11;
-				}else if (m == 5) { //moving platform
+				}else if (m == 5||m==20) { //moving platform
 					if(x+2<=k.size()) {
 					if(k.get(x+1)==5) {
 						movingPlat.add(new Point(x+1,y));
@@ -141,7 +145,23 @@ public class MegaManVGLCUtil {
 					p.println("d"+newx+","+newy+"=\"6.000000\"");
 					p.println("a"+newx+","+newy+"=\"1.000000\"");
 
+				}else if (m==19) { //water
+//					o0,0="9999.000000"
+//							e0,0="177.000000"
+//							a0,0="1.000000"
+					p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+					p.println("e"+xcoord+","+ycoord+"=\"177.000000\"");
+					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+					
 				}
+//				else if (m==6) { //TODO make proper sequencing
+//					Random rand = new Random();
+//					p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+//					p.println("h"+xcoord+","+ycoord+"=\""+rand.nextInt(6)+"\"");
+//					p.println("e"+xcoord+","+ycoord+"=\"5.000000\"");
+//					p.println("d"+xcoord+","+ycoord+"=\"6.000000\"");
+//					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+//				}
 //				else if (m==17) {
 //					l=17;
 //				}
@@ -307,6 +327,10 @@ public class MegaManVGLCUtil {
 			return 15;
 		case '*': //Special item that falls and fills health and ammo
 			return 16;
+		case '~': //water
+			return 19;
+		case 'O': //hovering platform (shooter)
+			return 20;
 		default:
 			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
 
