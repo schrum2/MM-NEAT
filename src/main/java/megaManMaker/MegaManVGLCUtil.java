@@ -15,7 +15,7 @@ public class MegaManVGLCUtil {
 
 	
 	public static void main(String[] args) {
-		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_2.txt");
+		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_10.txt");
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
 				System.out.print(m);
@@ -38,8 +38,9 @@ public class MegaManVGLCUtil {
 		// TODO Auto-generated method stub
 		int xcoord = 0;
 		int ycoord = 0;
-		int levelNumber = 1;
+		int levelNumber = 10;
 		HashSet<Point> o = new HashSet<Point>();
+		HashSet<Point> movingPlat = new HashSet<Point>();
 		try {
 		File levelFile = new File("MegaManLevel"+levelNumber+".mmlv");
 		
@@ -55,7 +56,7 @@ public class MegaManVGLCUtil {
 			for(int x = 0;x<level.get(0).size();x++) { //TODO convert mmlv to json
 				Integer m = k.get(x);
 				//if play online, does it download to mmlv file???
-				if(m==1) { //solid ground
+				if(m==1||m==12) { //solid ground TODO make case for cannon shooter (not just blocks)
 					p.println("k"+xcoord+","+ycoord+"=\"71.000000\"");
 					p.println("j"+xcoord+","+ycoord+"=\"71.000000\"");
 					p.println("i"+xcoord+","+ycoord+"=\"1.000000\"");
@@ -85,6 +86,47 @@ public class MegaManVGLCUtil {
 					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 					//l=11;
 				}else if (m == 5) { //moving platform
+					if(x+2<=k.size()) {
+					if(k.get(x+1)==5) {
+						movingPlat.add(new Point(x+1,y));
+						
+					}else if(k.get(x+2)==5&&k.get(x+3)==5) {
+						movingPlat.add(new Point(x+2,y));
+
+					}
+					if(k.get(x+1)!=5&&k.get(x+2)==5) {
+						int nx = xcoord+16;
+						p.println("o"+nx+","+ycoord+"=\"9999.000000\"");
+						p.println("e"+nx+","+ycoord+"=\"31.000000\"");
+						p.println("d"+nx+","+ycoord+"=\"6.000000\"");
+						p.println("a"+nx+","+ycoord+"=\"1.000000\"");
+					}
+					}
+					//print the platform track with platform
+					p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+					if(!movingPlat.contains(new Point(x,y))) {
+						p.println("h"+xcoord+","+ycoord+"=\"2.000000\"");
+					}
+					p.println("e"+xcoord+","+ycoord+"=\"31.000000\"");
+					p.println("d"+xcoord+","+ycoord+"=\"6.000000\"");
+					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+					
+					
+					//print the platform track
+//					int newxcoord = xcoord+16;
+//					for(int i = 0;i<4;i++) {
+//						p.println("o"+newxcoord+","+ycoord+"=\"9999.000000\"");
+//						p.println("e"+newxcoord+","+ycoord+"=\"31.000000\"");
+//						p.println("d"+newxcoord+","+ycoord+"=\"6.000000\"");
+//						p.println("a"+newxcoord+","+ycoord+"=\"1.000000\"");
+//						newxcoord+=16;
+//					}
+
+//					o32,80="9999.000000"
+//							h32,80="2.000000"
+//							e32,80="31.000000"
+//							d32,80="6.000000"
+//							a32,80="1.000000"
 
 				}else if(m==4&&!o.contains(new Point(x,y))) { //breakable
 					//add surrounding points to the hashset so that you don't add multiple breakables in one spot!!
@@ -138,7 +180,7 @@ public class MegaManVGLCUtil {
 		p.println("2a"+0+","+0+"=\"1.000000\"");
 
 //				1s="240.000000"
-		p.println("1s=\"4000.000000\"");
+		p.println("1s=\"3000.000000\"");
 
 //				1r="0.000000"
 		p.println("1r=\"0.000000\"");
