@@ -281,10 +281,12 @@ public class MegaManVGLCUtil {
 			return 3; 
 		case 'B': //breakable
 			return 4;
+		case 'A': //appearing/disappearing block
+			return 6;
 		case 'L': //large health pack
 			return 10;
 		case 'l': //small health pack
-			return 6; 
+			return 18; 
 		case 'W': //large ammo pack 
 			return 7; 
 		case 'w': //small ammo pack
