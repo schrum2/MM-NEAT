@@ -445,96 +445,112 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		}
 		// Could conceivably also be used for behavioral diversity instead of map elites, but this would be a weird behavior vector from a BD perspective
 		if(MMNEAT.ea instanceof MAPElites) {
-			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDecorNSAndLeniencyBinLabels) {
 			// Assign to the behavior vector before using MAP-Elites
-				double leniencySum = sumStatScore(lastLevelStats, LENIENCY_STAT_INDEX);
-				double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
-				double negativeSpaceSum = sumStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
+			double[] archiveArray;
+			//int binIndex;
+			int dim3,dim1,dim2;
+			double leniencySum = sumStatScore(lastLevelStats, LENIENCY_STAT_INDEX);
+			double DECORATION_SCALE = 3;
+			double NEGATIVE_SPACE_SCALE = 3;
+			// Scale scores so that we are less likely to overstep the bounds of the bins
+			final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("marioGANLevelChunks");
+			double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
+			double negativeSpaceSum = sumStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
+			int leniencySumIndex = Math.min(Math.max((int)((leniencySum*(BINS_PER_DIMENSION/2)+0.5)*BINS_PER_DIMENSION),0), BINS_PER_DIMENSION-1); //LEANIENCY BIN INDEX
+			int decorationBinIndex =  Math.min((int)(decorationSum*DECORATION_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); //decorationBinIndex
+			int negativeSpaceSumIndex = Math.min((int)(negativeSpaceSum*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); //negative space index
+			double binScore = simpleAStarDistance;
 			
-				final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("marioGANLevelChunks");
-				// Scale scores so that we are less likely to overstep the bounds of the bins
-				final double DECORATION_SCALE = 3;
-				final double NEGATIVE_SPACE_SCALE = 3;
-			
-				int leniencyBinIndex = Math.min(Math.max((int)((leniencySum*(BINS_PER_DIMENSION/2)+0.5)*BINS_PER_DIMENSION),0), BINS_PER_DIMENSION-1);
-				int decorationBinIndex = Math.min((int)(decorationSum*DECORATION_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
-				int negativeSpaceBinIndex = Math.min((int)(negativeSpaceSum*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
-			
-				// Row-major order lookup in 3D archive
-				int binIndex = (decorationBinIndex*BINS_PER_DIMENSION + negativeSpaceBinIndex)*BINS_PER_DIMENSION + leniencyBinIndex;
-				double[] archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-				Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
-				double binScore = simpleAStarDistance;
-				archiveArray[binIndex] = binScore; // Percent rooms traversed
 
-				System.out.println("["+decorationBinIndex+"]["+negativeSpaceBinIndex+"]["+leniencyBinIndex+"] = "+binScore);
+			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDecorNSAndLeniencyBinLabels) {
+				dim1 = decorationBinIndex;
+				dim2 = negativeSpaceSumIndex;
+				dim3 = leniencySumIndex;
 
-				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
-
-				// Saving map elites bin images	
-				if(CommonConstants.netio) {
-					System.out.println("Save archive images");
-//					@SuppressWarnings("unchecked")
-					Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
-					List<String> binLabels = archive.getBinMapping().binLabels();
-
-					// Index in flattened bin array
-					Score<T> elite = archive.getElite(binIndex);
-					// If the bin is empty, or the candidate is better than the elite for that bin's score
-					if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
-						String fileName = String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
-						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
-						String fullName = binPath + "_" + fileName;
-						System.out.println(fullName);
-						GraphicsUtil.saveImage(levelImage, fullName);	
-					}
-				}
-			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctRoomsNSAndLeniencyBinLabels) {
-				double leniencySum = sumStatScore(lastLevelStats, LENIENCY_STAT_INDEX);
+				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
+			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels) {
 				//double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
-				double negativeSpaceSum = sumStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
-			
-				final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("marioGANLevelChunks");
-				// Scale scores so that we are less likely to overstep the bounds of the bins
-				final double NEGATIVE_SPACE_SCALE = 3;
-			
-				int leniencyBinIndex = Math.min(Math.max((int)((leniencySum*(BINS_PER_DIMENSION/2)+0.5)*BINS_PER_DIMENSION),0), BINS_PER_DIMENSION-1);
-				int negativeSpaceBinIndex = Math.min((int)(negativeSpaceSum*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
+				dim1 = numDistinctSegments; //number of distinct segments
+				dim2 = negativeSpaceSumIndex;
+				dim3 = leniencySumIndex;
 			
 				// Row-major order lookup in 3D archive
-				int binIndex = (numDistinctSegments*BINS_PER_DIMENSION + negativeSpaceBinIndex)*BINS_PER_DIMENSION + leniencyBinIndex;
-				double[] archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-				Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
-				double binScore = simpleAStarDistance;
-				archiveArray[binIndex] = binScore; // Percent rooms traversed
-	
-				System.out.println("["+numDistinctSegments+"]["+negativeSpaceBinIndex+"]["+leniencyBinIndex+"] = "+binScore);
-	
-				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
-	
-				// Saving map elites bin images
-				if(CommonConstants.netio) {
-					System.out.println("Save archive images");
-	//				@SuppressWarnings("unchecked")
-					Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
-					List<String> binLabels = archive.getBinMapping().binLabels();
-	
-					// Index in flattened bin array
-					Score<T> elite = archive.getElite(binIndex);
-					// If the bin is empty, or the candidate is better than the elite for that bin's score
-					if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
-						String fileName = String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
-						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
-						String fullName = binPath + "_" + fileName;
-						System.out.println(fullName);
-						GraphicsUtil.saveImage(levelImage, fullName);	
-					}
-				}
-			}else {
+				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
+			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndDecorationBinLabels) {
+				double decorationAlternating = alternatingStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
+				double negativeSpaceAlternating = alternatingStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
+				
+				// Lower the scale when using alternating score
+				DECORATION_SCALE = 0.2;
+				NEGATIVE_SPACE_SCALE = 0.8;
+				
+				decorationBinIndex = Math.min((int)(decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10), BINS_PER_DIMENSION-1);
+				negativeSpaceSumIndex = Math.min((int)(negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
+				
+				// Do not assert: we allow the range to be broken sometimes
+				//assert (decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10) <= BINS_PER_DIMENSION : "Decorate too big: " +(BINS_PER_DIMENSION)+" < " + (decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10);
+				//assert (negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION) <= BINS_PER_DIMENSION-1 : "NS too big: " +(BINS_PER_DIMENSION-1)+" < " + (negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION);
+				
+				dim1 = numDistinctSegments;
+				dim2 = negativeSpaceSumIndex;
+				dim3 = decorationBinIndex;
+
+				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];				
+			}
+			
+			else {
 				throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
 			}
+			// Row-major order lookup in 3D archive
+			setBinsAndSaveMAPElitesImages(individual, levelImage, archiveArray, dim1, dim2, dim3, BINS_PER_DIMENSION, binScore);
+
 		}
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	/**
+	 * sets the bins and saves MAPElites images to archive
+	 * @param individual the genotype
+	 * @param levelImage the buffered image of the level
+	 * @param archiveArray the archive array
+	 * @param dim1 the first bin dimension
+	 * @param dim2 the second bin dimension
+	 * @param dim3 the third bin dimension
+	 * @param BINS_PER_DIMENSION the bins per dimension
+	 * @param binScore the bin score
+	 */
+	private void setBinsAndSaveMAPElitesImages(Genotype<T> individual, BufferedImage levelImage, double[] archiveArray,
+			int dim1, int dim2, int dim3, final int BINS_PER_DIMENSION, double binScore) {
+		int binIndex;
+		binIndex = (dim1*BINS_PER_DIMENSION + dim2)*BINS_PER_DIMENSION + dim3;
+		Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
+		archiveArray[binIndex] = binScore; // Percent rooms traversed
+
+		System.out.println("["+dim1+"]["+dim2+"]["+dim3+"] = "+binScore);
+
+		behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
+
+		// Saving map elites bin images	
+		if(CommonConstants.netio) {
+			System.out.println("Save archive images");
+//				@SuppressWarnings("unchecked")
+			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+			List<String> binLabels = archive.getBinMapping().binLabels();
+
+			// Index in flattened bin array
+			Score<T> elite = archive.getElite(binIndex);
+			// If the bin is empty, or the candidate is better than the elite for that bin's score
+			if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
+				String fileName = String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
+				String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
+				String fullName = binPath + "_" + fileName;
+				System.out.println(fullName);
+				GraphicsUtil.saveImage(levelImage, fullName);
+				
+			}
+		}
 	}
 
 	private double sumStatScore(ArrayList<double[]> levelStats, int statIndex) {
