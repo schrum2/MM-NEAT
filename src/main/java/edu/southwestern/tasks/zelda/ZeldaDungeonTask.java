@@ -11,6 +11,7 @@ import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.GenerationalEA;
+import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.MAPElites;
@@ -323,6 +324,11 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 							BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
 							//sets the fileName, binPath, and fullName
 							String fileName = String.format("%7.5f", binScore) +"-"+ individual.getId() + ".png";
+							if(individual instanceof CPPNOrDirectToGANGenotype) {
+								CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
+								if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
+								else fileName = "Direct-" + fileName;
+							}
 							String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
 							String fullName = binPath + "-" + fileName;
 							System.out.println(fullName);

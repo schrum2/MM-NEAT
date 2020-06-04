@@ -20,6 +20,7 @@ import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.GenerationalEA;
+import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.MAPElites;
@@ -544,6 +545,11 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			// If the bin is empty, or the candidate is better than the elite for that bin's score
 			if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
 				String fileName = String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
+				if(individual instanceof CPPNOrDirectToGANGenotype) {
+					CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
+					if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
+					else fileName = "Direct-" + fileName;
+				}
 				String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
 				String fullName = binPath + "_" + fileName;
 				System.out.println(fullName);
