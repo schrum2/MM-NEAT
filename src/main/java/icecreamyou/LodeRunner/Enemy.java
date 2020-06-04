@@ -73,10 +73,6 @@ public class Enemy extends Actor implements ActorCollision {
 		xVel = -xVel;
 	}
 	
-	public void dropToSolidAtStart(Enemy e) {
-		
-	}
-	
 	/**
 	 * Reverse the Enemy's direction when it hits a Solid.
 	 * @param n The WorldNode to check for intersection.

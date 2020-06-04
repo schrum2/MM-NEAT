@@ -11,7 +11,7 @@ import edu.southwestern.tasks.loderunner.LodeRunnerVGLCUtil;
 
 public class GamePanel extends JPanel implements MouseMotionListener {
 	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
-	
+
 	/**
 	 * Automatically generated. Required for subclasses of JPanel.
 	 */
@@ -34,7 +34,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	 * The minimum amount of time between each run of the main game loop. 
 	 */
 	private static final int TIMER_INTERVAL = 35;
-	
+
 	/**
 	 * The current game mode.
 	 * @see Mode
@@ -77,9 +77,9 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	public GamePanel(Level lvl, LodeRunner parent) {
 		level = lvl;
 		this.parent = parent;
-		
+
 		mode = Mode.MODE_PAUSED;
-		
+
 		setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		setFocusable(true);
@@ -87,7 +87,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 		// Instantiate the game timer that will run the main action loop.
 		timer = new Timer(TIMER_INTERVAL, new ActionListener() {
 			public void actionPerformed(ActionEvent e) { tick(); }});
-		
+
 		// React when the player presses keys.
 		addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -105,7 +105,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 						break;
 					}
 				}
-				
+
 				// Set the player's direction.
 				if 		(e.getKeyCode() == KeyEvent.VK_A)
 					level.player1.setVelocity(-Player.VELOCITY, 0);
@@ -115,7 +115,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 					level.player1.setVelocity(0, Player.VELOCITY);
 				else if (e.getKeyCode() == KeyEvent.VK_W && playerOneIsOnLadder)
 					level.player1.setVelocity(0, -Player.VELOCITY);
-				
+
 				// Dig holes.
 				if (e.getKeyCode() == KeyEvent.VK_Q && mode == Mode.MODE_PLAYING) {
 					for (Diggable d : level.diggables) {
@@ -134,19 +134,19 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 							digHole(d);
 						}
 					}
-					
+
 				}
 			}
 			// Stop moving.
 			public void keyReleased(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_A ||
-					e.getKeyCode() == KeyEvent.VK_D ||
-					e.getKeyCode() == KeyEvent.VK_W ||
-					e.getKeyCode() == KeyEvent.VK_S)
+						e.getKeyCode() == KeyEvent.VK_D ||
+						e.getKeyCode() == KeyEvent.VK_W ||
+						e.getKeyCode() == KeyEvent.VK_S)
 					level.player1.setVelocity(0, 0);
 			}
 		});
-		
+
 		// Keep track of the mouse when editing.
 		addMouseMotionListener(this);
 
@@ -215,8 +215,8 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 			Picture.draw(g, editorImgPath, mouseXPos, mouseYPos);
 		}
 	}
-	
-	
+
+
 	@Override
 	public Dimension getMinimumSize() {
 		//changed from the original because the levels we are bringing don't fit in the window for IceCreamYou, original was 600x600 
@@ -262,7 +262,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 			repaint();
 		}
 	}
-	
+
 	/**
 	 * Helper functions to determine the game mode.
 	 */
@@ -278,7 +278,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	public Mode getMode() {
 		return mode;
 	}
-	
+
 	/**
 	 * Start editing.
 	 */
@@ -335,7 +335,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 		// All custom levels end in -level.
 		level.save(name +"-level");
 	}
-	
+
 	/**
 	 * Switch to a new level.
 	 * @param name The name of the level to which to switch.
@@ -364,7 +364,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 		timer.stop();
 		repaint();
 	}
-	
+
 	/**
 	 * Checks whether a player exists in the current level.
 	 * This is used to make sure a new level is not saved without a player.
@@ -386,7 +386,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	public static boolean sorta_equals(int a, int b, int tolerance) {
 		return a < b + tolerance && a > b - tolerance;
 	}
-	
+
 	/**
 	 * Choose a random win message.
 	 */
@@ -433,7 +433,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 		};
 		return options[(int) (Math.random() * options.length)];
 	}
-	
+
 	/**
 	 * Dig a hole at the location of Diggable d if one does not already exist.
 	 */
@@ -449,7 +449,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 			dugs.add(new Dug(level, d.getX(), d.getY()));
 		}
 	}
-	
+
 	/**
 	 * Get the x-coordinate (in pixels) of the upper-left corner of the unit in
 	 * which int x is found.
@@ -464,7 +464,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	public static int getYUnitPosition(int y) {
 		return (y / GamePanel.UNIT_HEIGHT) * GamePanel.UNIT_HEIGHT;
 	}
-	
+
 	/**
 	 * Determines whether the portal is available.
 	 */
@@ -478,7 +478,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Determines whether an actor is on any of the nodes in a set.
 	 */
@@ -500,7 +500,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 				return true;
 		return false;
 	}
-	
+
 	/**
 	 * Determines whether an enemy is falling.
 	 */
@@ -510,7 +510,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 				|| actorIsOnAnyLadder(e, level.ladders)
 				|| actorIsOnAnyEnemy(e, level.enemies));
 	}
-	
+
 	/**
 	 * Checks for collision between an Enemy and Player, and kills the player if appropriate.
 	 */
@@ -531,7 +531,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks whether an Enemy e can get trapped in a hole. If it can, trap it.
 	 */
@@ -576,11 +576,11 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 			win();
 			return;
 		}
-		if(mode==Mode.GAN && level.portal==null && noCoinsLeft()) {
-			win();
-			return;
-		}
-		
+		//		if(mode==Mode.GAN && level.portal==null && noCoinsLeft()) {
+		//			win();
+		//			return;
+		//		}
+
 		// Process enemies.
 		for (Enemy e : level.enemies) {
 			e.tryRespawn(level.player1);
@@ -589,10 +589,24 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 				continue;
 			if (checkEnemyFallInHole(e))
 				continue;
-			if (enemyIsFalling(e) || e.getX() < 0 || e.getX() > WIDTH - e.getWidth())
-				e.reverse();
-			e.accelerate();
-			e.move();
+			if (enemyIsFalling(e) || e.getX() < 0 || e.getX() > WIDTH - e.getWidth()) {
+				e.reverse(); //changes direction of enemy x movement 
+				e.accelerate();
+				e.move();
+				//after moving, if the enemy is still falling, then you move it back and 
+				//give it falling velocity to fall to solid ground
+				if(enemyIsFalling(e)) {
+					e.reverse();
+					e.accelerate();
+					e.move();
+					e.setVelocity(e.xVel, Enemy.VELOCITY);
+				}
+			}else {
+				if(!enemyIsFalling(e)) //this stops the enemy from falling down through the floor 
+					e.setVelocity(e.xVel, 0);
+				e.accelerate();
+				e.move();
+			}
 		}
 
 		// Process pickups.
@@ -617,7 +631,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 
 		// Fill holes.
 		Dug.removeOldDugs(dugs);
-		
+
 		// Check whether spikes will kill the player.
 		for (Spikes s : level.spikes) {
 			if (s.intersects(level.player1)) {
@@ -625,7 +639,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 				return; // We will reset on the next tick.
 			}
 		}
-		
+
 		// Check horizontal collision and clip as appropriate.
 		for (Solid s : level.solids) {
 			// Ignore Diggables if they have been dug.
@@ -647,7 +661,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 					e.adjustX(s);
 			}
 		}
-		
+
 		// Process gates.
 		for (Gate g : level.gates) {
 			if ((level.player1.intersects(g) || g.actorIsOn(level.player1)) && g.isLocked()) {
@@ -663,7 +677,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 				}
 			}
 		}
-		
+
 		// If the Player is scaling a Ladder, move it to the center of the Ladder.
 		for (Ladder l : level.ladders) {
 			if (l.actorIsOn(level.player1)) {
@@ -671,7 +685,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 				break;
 			}
 		}
-		
+
 		// Let the Player know if it can move along a Bar.
 		boolean playerOneIsOnBar = false;
 		for (Bar b : level.bars) {
@@ -681,7 +695,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 			}
 		}
 		level.player1.setOnBar(playerOneIsOnBar);
-		
+
 		/**
 		 * Ideally, this large chunk of difficult-to-read logic would be moved out into smaller functions.
 		 */
@@ -751,7 +765,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 		level.player1.tickAnimFrame();
 		level.player1.setIsFalling(playerOneIsFalling);
 		playerOneWasOnLadder = playerOneIsOnLadder;
-		
+
 		repaint(); // Repaint indirectly calls paintComponent().
 	}
 
@@ -765,7 +779,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 						key,
 						GamePanel.getXUnitPosition(e.getX()),
 						GamePanel.getYUnitPosition(e.getY())
-				);
+						);
 				// This is necessary for the eraser. In all other cases, we're placing a node under the cursor,
 				// so you can't tell that the cursor image isn't following the cursor.
 				mouseXPos = getXUnitPosition(e.getX());
