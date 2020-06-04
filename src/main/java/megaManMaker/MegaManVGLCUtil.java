@@ -18,17 +18,22 @@ public class MegaManVGLCUtil {
 	public static int lowerY;
 	public static int lowerX;
 	public static int upperY;
+	//public static int levelNumber;
 	public static void main(String[] args) {
-		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_6.txt");
-		for(List<Integer> k : level) {
-			for(Integer m: k) {
-				System.out.print(m);
+		for(int i = 1;i<=10;i++) {
+			List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
+			for(List<Integer> k : level) {
+				for(Integer m: k) {
+					System.out.print(m);
 
+				}
+				System.out.println();
 			}
-			System.out.println();
+			convertMegaManLevelToMMLV(level, i);
+			//convertMegaManLevelToJSON(level);
+
 		}
-		convertMegaManLevelToMMLV(level);
-		convertMegaManLevelToJSON(level);
+		
 	}
 	/**
 	 * start at 0,0
@@ -68,14 +73,14 @@ public class MegaManVGLCUtil {
 				//	System.out.println("point: "+level.get(y).get(x));
 					
 					screen = copyScreen(level, intXint, lowerX, upperY);
-					System.out.println("this is a screen");
-					for(List<Integer> k : screen) {
-						for(Integer m: k) {
-							System.out.print(m);
-
-						}
-						System.out.println();
-					}
+//					System.out.println("this is a screen");
+//					for(List<Integer> k : screen) {
+//						for(Integer m: k) {
+//							System.out.print(m);
+//
+//						}
+//						System.out.println();
+//					}
 					json.add(screen);
 				}
 			}
@@ -137,11 +142,10 @@ public class MegaManVGLCUtil {
 
 		return screen;
 	}
-	private static void convertMegaManLevelToMMLV(List<List<Integer>> level) {
+	private static void convertMegaManLevelToMMLV(List<List<Integer>> level, int levelNumber) {
 		// TODO Auto-generated method stub
 		int xcoord = 0;
 		int ycoord = 0;
-		int levelNumber = 6;
 		HashSet<Point> o = new HashSet<Point>();
 		HashSet<Point> movingPlat = new HashSet<Point>();
 		try {
@@ -155,9 +159,10 @@ public class MegaManVGLCUtil {
 		p.println("[Level]");
 		for(int y = 0;y<level.size();y++) {
 			List<Integer> k = level.get(y);
-			//int l=0;
+			int l=0;
 			for(int x = 0;x<level.get(0).size();x++) { //TODO convert mmlv to json
 				Integer m = k.get(x);
+				l=m;
 				//if play online, does it download to mmlv file???
 				if(m==1||m==12||m==6) { //solid ground TODO make case for cannon shooter (not just blocks) TODO make case for appear/dis blocks
 					p.println("k"+xcoord+","+ycoord+"=\"71.000000\"");
@@ -242,20 +247,20 @@ public class MegaManVGLCUtil {
 //					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 //				}
 
-				if(xcoord%256==0/*&&m!=17*/) {
+				if(xcoord%256==0&&m!=17) {
 					//add 2a clause
 					p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
-					p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
+					//p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
 
 				}
 				xcoord+=16;
 			}
 			xcoord = 0;
 			ycoord+=16;
-			if(ycoord%256==0/*&&l!=17*/) {
+			if(ycoord%256==0&&l!=17) {
 				//add 2a clause
 				p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
-				p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
+				//p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
 
 			}
 		}
@@ -267,7 +272,7 @@ public class MegaManVGLCUtil {
 		p.println("2b"+0+","+224+"=\"0.000000\"");
 		p.println("2b"+0+","+0+"=\"0.000000\"");
 		p.println("2a"+0+","+0+"=\"1.000000\"");
-		p.println("1s=\"3000.000000\"");
+		p.println("1s=\"4480.000000\"");
 		p.println("1r=\"0.000000\"");
 		p.println("1q=\""+12800+"\""); //CHANGE TO POS INFINITY
 		p.println("1p=\"0.000000\"");
