@@ -48,24 +48,25 @@ public class MegaManVGLCUtil {
 		lowerX = 0;
 		
 		
-		
+		int intXint = findScreenDimensions(level, 0, 0);
+
 		for(int y = 0; y<level.size();y++) {
 			for(int x = 0;x<level.get(0).size();x++) {
 				List<List<Integer>> screen = new ArrayList<>();
 //				System.out.println("x: "+x);
 //				System.out.println("y: "+y);
 				
-				int intXint = findScreenDimensions(level, y, x);
 //				System.out.println("intXint "+intXint);
 				
-
-				if(level.get(y).get(x)!=17&&!visited.contains(new Point(x+intXint+1,y))&&((x>0&&level.get(y).get(x-1)!=17)||level.get(y).get(x+intXint+1)!=17)) {
+				if(level.get(y).get(x)!=17&&x+intXint<level.get(0).size()&&level.get(y).get(x+intXint)!=17&&!visited.contains(new Point(x,y))&&((x>0&&level.get(y).get(x-1)!=17)||level.get(y).get(x+intXint+1)!=17)) {
 					upperY = y;
 					lowerX = x;
 					//upperY = lowerY-intXint+1;
 //					System.out.println("LowerY "+lowerY);
 //					System.out.println("UpperY "+upperY);
 //					System.out.println("LowerX "+lowerX);
+				//	System.out.println("point: "+level.get(y).get(x));
+					
 					screen = copyScreen(level, intXint, lowerX, upperY);
 					System.out.println("this is a screen");
 					for(List<Integer> k : screen) {
@@ -121,15 +122,19 @@ public class MegaManVGLCUtil {
 				if(lowerX+x<level.get(0).size()) {
 					//screen.get(y).add(okay.get(x));// = level.get(y).get(x);
 					okay.add(level.get(upperY).get(lowerX+x));
+					
 				}
 				//lowerX++;
 			}
-			//visited.add(new Point(lowerX, upperY)); //add visited points to hashset
+			visited.add(new Point(lowerX, upperY)); //add visited points to hashset
+			//System.out.print(new Point(lowerX, upperY)+" ");
 
 			screen.add(okay);
 			upperY++;
 			
 		}
+		//System.out.println();
+
 		return screen;
 	}
 	private static void convertMegaManLevelToMMLV(List<List<Integer>> level) {
