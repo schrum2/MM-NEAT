@@ -27,20 +27,20 @@ public class MegaManVGLCUtil {
 			System.out.println("Level "+i);
 			//convertMegaManLevelToMMLV(level, i);
 			//System.out.println("k");
-			convertMegaManLevelToJSON(level);
+			convertMegaManLevelToJSONHorizontalScroll(level);
 			//System.out.println("kl");
 			//System.out.println(executed);
 
 			//break;
 
 		}
-		int i = 10;
-		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-		//printLevel(level);
-		System.out.println("Level !!!"+i);
-		//convertMegaManLevelToMMLV(level, i);
-		//boolean executed = false;
-		convertMegaManLevelToJSON(level);
+//		int i = 10;
+//		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
+//		//printLevel(level);
+//		System.out.println("Level "+i);
+//		//convertMegaManLevelToMMLV(level, i);
+//		//boolean executed = false;
+//		convertMegaManLevelToJSON(level);
 		
 	}
 	private static void printLevel(List<List<Integer>> level) {
@@ -61,7 +61,7 @@ public class MegaManVGLCUtil {
 	 * save each iteration into a List<List<List<Integer>>>
 	 * @param level the 2d array of ints
 	 */
-	private static void convertMegaManLevelToJSON(List<List<Integer>> level) { //take upper left x,y, take width height param returns screen
+	private static void convertMegaManLevelToJSONHorizontalScroll(List<List<Integer>> level) { //take upper left x,y, take width height param returns screen
 		List<List<List<Integer>>> json = new ArrayList<>();
 
 		//scroller for the screen
