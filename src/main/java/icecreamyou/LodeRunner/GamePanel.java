@@ -576,6 +576,10 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 			win();
 			return;
 		}
+		if(mode==Mode.GAN && level.portal==null && noCoinsLeft()) {
+			win();
+			return;
+		}
 		
 		// Process enemies.
 		for (Enemy e : level.enemies) {
