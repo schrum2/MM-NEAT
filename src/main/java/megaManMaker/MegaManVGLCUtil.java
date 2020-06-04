@@ -18,31 +18,25 @@ public class MegaManVGLCUtil {
 	public static int lowerY;
 	public static int lowerX;
 	public static int upperY;
+	public static HashSet<Point> activatedScreens = new HashSet<Point>();
+
 	//public static boolean executed = false;
 	//public static int levelNumber;
 	public static void main(String[] args) {
-		for(int i = 1;i<=9;i++) {
+		int firstLevel = 1;
+		int lastLevel = 10;
+		for(int i = firstLevel;i<=lastLevel;i++) {
 			List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-			//printLevel(level);
-			System.out.println("Level "+i);
-			//convertMegaManLevelToMMLV(level, i);
-			//System.out.println("k");
+			convertMegaManLevelToMMLV(level, i);
 			convertMegaManLevelToJSONHorizontalScroll(level);
-			//System.out.println("kl");
-			//System.out.println(executed);
-
-			//break;
 
 		}
-//		int i = 10;
-//		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-//		//printLevel(level);
-//		System.out.println("Level "+i);
-//		//convertMegaManLevelToMMLV(level, i);
-//		//boolean executed = false;
-//		convertMegaManLevelToJSON(level);
 		
 	}
+	/**
+	 * prints the level to the console
+	 * @param level  
+	 */
 	private static void printLevel(List<List<Integer>> level) {
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
@@ -77,13 +71,7 @@ public class MegaManVGLCUtil {
 				List<List<Integer>> screen = new ArrayList<>();			
 				if(level.get(y).get(x)!=17&&y+intYint<level.size()&&x+intXint<level.get(0).size()&&level.get(y).get(x+intXint)!=17&&!visited.contains(new Point(x,y))&&((x>0&&level.get(y).get(x-1)!=17)||level.get(y).get(x+intXint+1)!=17)) {
 					upperY = y;
-					lowerX = x;
-					//upperY = lowerY-intXint+1;
-//					System.out.println("LowerY "+lowerY);
-//					System.out.println("UpperY "+upperY);
-//					System.out.println("LowerX "+lowerX);
-				//	System.out.println("point: "+level.get(y).get(x));
-					
+					lowerX = x;				
 					screen = copyScreen(level, intXint, intYint, lowerX, upperY);
 					System.out.println("this is a screen");
 					printLevel(screen);
@@ -91,21 +79,16 @@ public class MegaManVGLCUtil {
 				}
 			}
 		}
-		//executed = true;
 	}
 	private static int findScreenDimensions(List<List<Integer>> level, int y, int x) {
 		int intYint = 0;
 		for(int i = x;i<level.get(0).size();i++) {
 			for(int j = y ;j<level.size();j++) {
-				//System.out.println("("+i+","+j+")");
-				//System.out.println(level.get(j).get(i));
 				if(level.get(j).get(i)!=17) {
 					intYint++;
-					//lowerY = j;
 				}
 			}
 			if(intYint!=0&&intYint<=14) {
-				//lowerX = i;
 				break;
 			}
 			intYint=0;
@@ -120,21 +103,13 @@ public class MegaManVGLCUtil {
 			List<Integer> okay = new ArrayList<>();
 			for (int x = 0;x<intXint;x++) {
 				if(lowerX+x<level.get(0).size()) {
-					//screen.get(y).add(okay.get(x));// = level.get(y).get(x);
-					okay.add(level.get(upperY).get(lowerX+x));
-					
+					okay.add(level.get(upperY).get(lowerX+x));	
 				}
-				//lowerX++;
 			}
 			visited.add(new Point(lowerX, upperY)); //add visited points to hashset
-			//System.out.print(new Point(lowerX, upperY)+" ");
-
 			screen.add(okay);
 			upperY++;
-			
 		}
-		//System.out.println();
-
 		return screen;
 	}
 	private static void convertMegaManLevelToMMLV(List<List<Integer>> level, int levelNumber) {
@@ -154,10 +129,10 @@ public class MegaManVGLCUtil {
 		p.println("[Level]");
 		for(int y = 0;y<level.size();y++) {
 			List<Integer> k = level.get(y);
-			int l=0;
+			//int l=0;
 			for(int x = 0;x<level.get(0).size();x++) { //TODO convert mmlv to json
 				Integer m = k.get(x);
-				l=m;
+				//l=m;
 				//if play online, does it download to mmlv file???
 				if(m==1||m==12||m==6) { //solid ground TODO make case for cannon shooter (not just blocks) TODO make case for appear/dis blocks
 					p.println("k"+xcoord+","+ycoord+"=\"71.000000\"");
@@ -241,23 +216,28 @@ public class MegaManVGLCUtil {
 //					p.println("d"+xcoord+","+ycoord+"=\"6.000000\"");
 //					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 //				}
-
-				if(xcoord%256==0&&m!=17) {
-					//add 2a clause
+				
+				if(m!=17) {
+					placeActivatedScreen(xcoord,ycoord, p);
 					p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
-					//p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
-
 				}
+
+//				if((xcoord%256==0||ycoord%224==0)&&m!=17) {
+//					//add 2a clause
+//					p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
+//					//p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
+//
+//				}
 				xcoord+=16;
 			}
 			xcoord = 0;
 			ycoord+=16;
-			if(ycoord%256==0&&l!=17) {
-				//add 2a clause
-				p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
-				//p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
-
-			}
+//			if(ycoord%224==0&&l!=17) {
+//				//add 2a clause
+//				p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
+//				//p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
+//
+//			}
 		}
 		//NEED 2a for enabling squares
 		p.println("2b"+0+","+896+"=\"0.000000\"");
@@ -266,7 +246,7 @@ public class MegaManVGLCUtil {
 		p.println("2b"+0+","+448+"=\"0.000000\"");
 		p.println("2b"+0+","+224+"=\"0.000000\"");
 		p.println("2b"+0+","+0+"=\"0.000000\"");
-		p.println("2a"+0+","+0+"=\"1.000000\"");
+		//p.println("2a"+0+","+0+"=\"1.000000\"");
 		p.println("1s=\"4480.000000\"");
 		p.println("1r=\"0.000000\"");
 		p.println("1q=\""+12800+"\""); //CHANGE TO POS INFINITY
@@ -305,6 +285,19 @@ public class MegaManVGLCUtil {
 			e.printStackTrace();
 		}
 
+		
+	}
+	private static void placeActivatedScreen(int xcoord, int ycoord, PrintWriter p) {
+		// TODO Auto-generated method stub
+		int howManySquaresX = xcoord/256;
+		int howManySquaresY = ycoord/224;
+		int screenX = howManySquaresX*256;
+		int screenY = howManySquaresY*224;
+		if(!activatedScreens.contains(new Point(screenX, screenY))){
+			p.println("2a"+screenX+","+screenY+"=\"1.000000\"");
+			activatedScreens.add(new Point(screenX,screenY));
+
+		}
 		
 	}
 	private static List<List<Integer>> convertMegamanVGLCtoListOfLists(String fileName) {
