@@ -1,13 +1,20 @@
 package icecreamyou.LodeRunner;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.List;
 
-import javax.swing.*;
-
-import edu.southwestern.tasks.loderunner.LodeRunnerVGLCUtil;
+import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class GamePanel extends JPanel implements MouseMotionListener {
 	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
