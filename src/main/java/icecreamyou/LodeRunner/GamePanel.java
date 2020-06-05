@@ -710,6 +710,8 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 						continue;
 				}
 				if (s.actorIsOn(level.player1)) {
+//					System.out.println("G:"+s.getX()+","+s.getY()+":"+s.getBoundingBox());
+//					System.out.println("P:"+level.player1.getX()+","+level.player1.getY()+":"+level.player1.getBoundingBox());
 					playerOneIsFalling = false;
 					if (s instanceof Slippery)
 						playerOneIsStandingOnSlippery = true;
