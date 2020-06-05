@@ -571,6 +571,7 @@ diggable:840,760
 diggable:870,760
 diggable:900,760
 ladder:930,760
+player:0,800,1
 coin:30,800
 coin:60,800
 coin:90,800
