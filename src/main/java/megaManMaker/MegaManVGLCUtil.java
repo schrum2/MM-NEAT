@@ -61,7 +61,7 @@ public class MegaManVGLCUtil {
 	 * save each iteration into a List<List<List<Integer>>>
 	 * @param level the 2d array of ints
 	 */
-	private static void convertMegaManLevelToJSONHorizontalScroll(List<List<Integer>> level) { //take upper left x,y, take width height param returns screen
+	private static void convertMegaManLevelToJSONHorizontalScroll(List<List<Integer>> level) {
 		visited.clear();
 		List<List<List<Integer>>> json = new ArrayList<>();
 		boolean vertical = false;
@@ -88,13 +88,11 @@ public class MegaManVGLCUtil {
 		}
 	}
 	
-	private static void convertMegaManLevelToJSONVerticalScroll(List<List<Integer>> level) { //take upper left x,y, take width height param returns screen
+	private static void convertMegaManLevelToJSONVerticalScroll(List<List<Integer>> level) { 
 		visited.clear();
 		
 		List<List<List<Integer>>> json = new ArrayList<>();
 		boolean vertical = true;
-		//scroller for the screen
-		//int intXint = 0;
 		lowerY = 0;
 		lowerX = 0;
 		int intYint = 14;
