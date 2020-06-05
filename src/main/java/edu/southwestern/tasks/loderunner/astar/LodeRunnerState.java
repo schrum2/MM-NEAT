@@ -137,7 +137,19 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		System.out.println("actionSequence: " + actionSequence);
 		try {
 			//visualizes the points visited with red and whit x's
-			vizualizePath(level,mostRecentVisited,actionSequence,start);
+			BufferedImage visualPath = vizualizePath(level,mostRecentVisited,actionSequence,start);
+			try { //displays window with the rendered level and the solution path/visited states
+				JFrame frame = new JFrame();
+				JPanel panel = new JPanel();
+				JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+						LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
+				panel.add(label);
+				frame.add(panel);
+				frame.pack();
+				frame.setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -253,7 +265,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param start Start state  
 	 * @throws IOException
 	 */
-	public static void vizualizePath(List<List<Integer>> level, HashSet<LodeRunnerState> mostRecentVisited, 
+	public static BufferedImage vizualizePath(List<List<Integer>> level, HashSet<LodeRunnerState> mostRecentVisited, 
 			ArrayList<LodeRunnerAction> actionSequence, LodeRunnerState start) throws IOException {
 		List<List<Integer>> fullLevel = ListUtil.deepCopyListOfLists(level); //copies level to draw solution path over it 
 		fullLevel.get(start.currentY).set(start.currentX, LODE_RUNNER_TILE_SPAWN);// puts the spawn back into the visualization
@@ -284,18 +296,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				}
 			}
 		}
-		try { //displays window with the rendered level and the solution path/visited states
-			JFrame frame = new JFrame();
-			JPanel panel = new JPanel();
-			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
-					LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
-			panel.add(label);
-			frame.add(panel);
-			frame.pack();
-			frame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return visualPath;
 	}
 
 	/**

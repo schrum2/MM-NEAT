@@ -1,6 +1,8 @@
 package edu.southwestern.tasks.interactive.loderunner;
 
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,8 +11,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
+//import java.util.Set;
 
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -18,9 +22,13 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANUtil;
 import edu.southwestern.tasks.loderunner.LodeRunnerRenderUtil;
+import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
+import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.search.AStarSearch;
+import edu.southwestern.util.search.Search;
 import icecreamyou.LodeRunner.LodeRunner;
 
 /**
@@ -36,6 +44,20 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	 */
 	public LodeRunnerGANLevelBreederTask() throws IllegalAccessException {
 		super();
+		//adds a check box to show solution path or not, starts with them not showing 
+		JPanel effectsCheckboxes = new JPanel();
+		JCheckBox showSolutionPath = new JCheckBox("ShowSolutionPath", Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths"));
+		showSolutionPath.setName("interactiveLodeRunnerAStarPaths");
+		showSolutionPath.getAccessibleContext();
+		showSolutionPath.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("interactiveLodeRunnerAStarPaths");
+				resetButtons(true);
+			}
+		});
+		effectsCheckboxes.add(showSolutionPath);
+		top.add(effectsCheckboxes);
 	}
 
 	/**
@@ -154,12 +176,35 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 			//if we are using the mapping with 7 tiles, other wise use 6 tiles 
 			// ACTUALLY: We can have extra unused tiles in the image array. Easier to have one method that keeps them all around
 			//			if(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")){
-			images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //7 different tiles to display 
-			//			}
-			//			else {
-			//				images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //6 different tiles to display 
-			//			}
-			image = LodeRunnerRenderUtil.createBufferedImage(level,width1,height1, images);
+			if(Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths")) {
+				List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
+				Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
+				LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
+				LodeRunnerState start = new LodeRunnerState(level);
+				Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
+				HashSet<LodeRunnerState> mostRecentVisited = null;
+				ArrayList<LodeRunnerAction> actionSequence = null;
+				try {
+					//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+					//represented by red x's in the visualization 
+					actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 100000);
+				} catch(Exception e) {
+					System.out.println("failed search");
+					e.printStackTrace();
+				}
+				//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
+				mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
+				try {
+					//visualizes the points visited with red and whit x's
+					image = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			else {
+				images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //7 different tiles to display 
+				image = LodeRunnerRenderUtil.createBufferedImage(level,width1,height1, images);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
