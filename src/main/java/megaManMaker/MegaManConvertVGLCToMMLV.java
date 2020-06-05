@@ -2,7 +2,7 @@ package megaManMaker;
 
 import java.util.List;
 
-public class ConvertVGLCToMMLV {
+public class MegaManConvertVGLCToMMLV {
 	public static void main(String[] args) {
 		int firstLevel = 1;
 		int lastLevel = 10;
