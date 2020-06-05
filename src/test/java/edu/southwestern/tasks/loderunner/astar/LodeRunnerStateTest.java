@@ -36,6 +36,7 @@ public class LodeRunnerStateTest {
 		List<List<Integer>> level1 = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 1.txt"); //converts to JSON
 		LodeRunnerState start1 = new LodeRunnerState(level1);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
+		@SuppressWarnings("unused")
 		HashSet<LodeRunnerState> mostRecentVisited1 = null;
 		ArrayList<LodeRunnerAction> actionSequence1 = null;
 		try {
@@ -156,6 +157,7 @@ public class LodeRunnerStateTest {
 		List<List<Integer>> level2 = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 2.txt"); //converts to JSON
 		LodeRunnerState start2 = new LodeRunnerState(level2);
 		Search<LodeRunnerAction,LodeRunnerState> search2 = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
+		@SuppressWarnings("unused")
 		HashSet<LodeRunnerState> mostRecentVisited2 = null;
 		ArrayList<LodeRunnerAction> actionSequence2 = null;
 		try {
