@@ -187,10 +187,10 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				try {
 					//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
 					//represented by red x's in the visualization 
-					actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 100000);
-				} catch(Exception e) {
-					System.out.println("failed search");
-					e.printStackTrace();
+					actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter( "aStarSearchBudget"));
+				} catch(IllegalStateException e) {
+					System.out.println("A* exceeded computation budget");
+					//e.printStackTrace();
 				}
 				//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
 				mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
@@ -198,7 +198,8 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 					//visualizes the points visited with red and whit x's
 					image = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 				} catch (IOException e) {
-					e.printStackTrace();
+					System.out.println("Image could not be displayed");
+					//e.printStackTrace();
 				}
 			}
 			else {
@@ -206,7 +207,8 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				image = LodeRunnerRenderUtil.createBufferedImage(level,width1,height1, images);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Image could not be displayed");
+			//e.printStackTrace();
 		}
 		return image;
 	}

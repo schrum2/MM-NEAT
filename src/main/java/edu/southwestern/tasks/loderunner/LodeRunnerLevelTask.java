@@ -1,11 +1,14 @@
 package edu.southwestern.tasks.loderunner;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
@@ -39,19 +42,23 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		return 0; //not used 
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings({ "unused", "unchecked" })
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		// TODO Auto-generated method stub
+		List<Double> latentVector = (List<Double>) individual.getPhenotype(); //creates a double array for the spawn to be placed in GAN levels 
+		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions);
 		List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromGenotype(individual);
+		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
+		Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
+		LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
 		LodeRunnerState start = new LodeRunnerState(level);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
 		double simpleAStarDistance = -1;
 		try { 
-			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 100000);
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter( "aStarSearchBudget"));
 			if(actionSequence == null) {
 				fitnesses.add(-1.0);
 			} else {
