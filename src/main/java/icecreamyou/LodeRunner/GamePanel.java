@@ -18,7 +18,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	 * The width and height of the Panel. 
 	 * We changed this from 600x600 to allow for us to load in our own levels 
 	 */
-	public static final int WIDTH = 960, HEIGHT = 880;
+	public static final int WIDTH = 1000, HEIGHT = 1000;
 	/**
 	 * The width and height of each unit in the Panel.
 	 * Units are basically squares on a grid. Every WorldNode is one square
@@ -28,7 +28,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	public static final int UNIT_HEIGHT = 40, UNIT_WIDTH = 30;
 
 	/**
-	 * The minimum amount of time between each run of the main game loop.
+	 * The minimum amount of time between each run of the main game loop. 
 	 */
 	private static final int TIMER_INTERVAL = 35;
 	
@@ -216,8 +216,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	
 	@Override
 	public Dimension getMinimumSize() {
-		//changed this from the original because we needed to be able to change the dimensions to load in our levels
-		//originally it was hard coded to be 600x600 
+		//changed from the original because the levels we are bringing don't fit in the window for IceCreamYou, original was 600x600 
 		return new Dimension(WIDTH,HEIGHT); 
 	}
 	@Override

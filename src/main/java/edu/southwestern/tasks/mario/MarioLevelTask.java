@@ -20,6 +20,7 @@ import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.GenerationalEA;
+import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.MAPElites;
@@ -33,7 +34,6 @@ import edu.southwestern.tasks.mario.level.MarioState;
 import edu.southwestern.tasks.mario.level.MarioState.MarioAction;
 import edu.southwestern.tasks.mario.level.OldLevelParser;
 import edu.southwestern.util.ClassCreation;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
@@ -449,10 +449,10 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			// Assign to the behavior vector before using MAP-Elites
 			double[] archiveArray;
 			//int binIndex;
-			int x1,x2,x3;
+			int dim3,dim1,dim2;
 			double leniencySum = sumStatScore(lastLevelStats, LENIENCY_STAT_INDEX);
-			final double DECORATION_SCALE = 3;
-			final double NEGATIVE_SPACE_SCALE = 3;
+			double DECORATION_SCALE = 3;
+			double NEGATIVE_SPACE_SCALE = 3;
 			// Scale scores so that we are less likely to overstep the bounds of the bins
 			final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("marioGANLevelChunks");
 			double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
@@ -464,40 +464,46 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			
 
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDecorNSAndLeniencyBinLabels) {
-				x1 = leniencySumIndex;
-				x2 = decorationBinIndex;
-				x3 = negativeSpaceSumIndex;
+				dim1 = decorationBinIndex;
+				dim2 = negativeSpaceSumIndex;
+				dim3 = leniencySumIndex;
 
 				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-				
 			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels) {
 				//double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
-				x1 = leniencySumIndex;
-				x2 = numDistinctSegments; //number of distinct segments
-				x3 = negativeSpaceSumIndex;
+				dim1 = numDistinctSegments; //number of distinct segments
+				dim2 = negativeSpaceSumIndex;
+				dim3 = leniencySumIndex;
 			
 				// Row-major order lookup in 3D archive
 				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
 			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndDecorationBinLabels) {
 				double decorationAlternating = alternatingStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
-				double negativeSpaceAlternating = sumStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
+				double negativeSpaceAlternating = alternatingStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
+				
+				// Lower the scale when using alternating score
+				DECORATION_SCALE = 0.2;
+				NEGATIVE_SPACE_SCALE = 0.8;
 				
 				decorationBinIndex = Math.min((int)(decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10), BINS_PER_DIMENSION-1);
 				negativeSpaceSumIndex = Math.min((int)(negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
 				
-				x1 = decorationBinIndex;
-				x2 = numDistinctSegments;
-				x3 = negativeSpaceSumIndex;
-				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-
+				// Do not assert: we allow the range to be broken sometimes
+				//assert (decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10) <= BINS_PER_DIMENSION : "Decorate too big: " +(BINS_PER_DIMENSION)+" < " + (decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10);
+				//assert (negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION) <= BINS_PER_DIMENSION-1 : "NS too big: " +(BINS_PER_DIMENSION-1)+" < " + (negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION);
 				
+				dim1 = numDistinctSegments;
+				dim2 = negativeSpaceSumIndex;
+				dim3 = decorationBinIndex;
+
+				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];				
 			}
 			
 			else {
 				throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
 			}
 			// Row-major order lookup in 3D archive
-			setBinsAndSaveMAPElitesImages(individual, levelImage, archiveArray, x1, x2, x3, BINS_PER_DIMENSION, binScore);
+			setBinsAndSaveMAPElitesImages(individual, levelImage, archiveArray, dim1, dim2, dim3, BINS_PER_DIMENSION, binScore);
 
 		}
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
@@ -510,20 +516,20 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	 * @param individual the genotype
 	 * @param levelImage the buffered image of the level
 	 * @param archiveArray the archive array
-	 * @param x1 the first bin dimension
-	 * @param x2 the second bin dimension
-	 * @param x3 the third bin dimension
+	 * @param dim1 the first bin dimension
+	 * @param dim2 the second bin dimension
+	 * @param dim3 the third bin dimension
 	 * @param BINS_PER_DIMENSION the bins per dimension
 	 * @param binScore the bin score
 	 */
 	private void setBinsAndSaveMAPElitesImages(Genotype<T> individual, BufferedImage levelImage, double[] archiveArray,
-			int x1, int x2, int x3, final int BINS_PER_DIMENSION, double binScore) {
+			int dim1, int dim2, int dim3, final int BINS_PER_DIMENSION, double binScore) {
 		int binIndex;
-		binIndex = (x2*BINS_PER_DIMENSION + x3)*BINS_PER_DIMENSION + x1;
+		binIndex = (dim1*BINS_PER_DIMENSION + dim2)*BINS_PER_DIMENSION + dim3;
 		Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
 		archiveArray[binIndex] = binScore; // Percent rooms traversed
 
-		System.out.println("["+x2+"]["+x3+"]["+x1+"] = "+binScore);
+		System.out.println("["+dim1+"]["+dim2+"]["+dim3+"] = "+binScore);
 
 		behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 
@@ -539,6 +545,11 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			// If the bin is empty, or the candidate is better than the elite for that bin's score
 			if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
 				String fileName = String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
+				if(individual instanceof CPPNOrDirectToGANGenotype) {
+					CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
+					if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
+					else fileName = "Direct-" + fileName;
+				}
 				String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
 				String fullName = binPath + "_" + fileName;
 				System.out.println(fullName);

@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.loderunner;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import gvgai.tools.IO;
@@ -13,8 +12,8 @@ import gvgai.tools.IO;
  */
 public class LodeRunnerVGLCUtil {
 	public static final String LODE_RUNNER_LEVEL_PATH = "data/VGLC/Lode Runner/Processed/";
-	public static final int LODE_RUNNER_COLUMNS = 32; // This is actually the room height from the original game, since VGLC rotates rooms
-	public static final int LODE_RUNNER_ROWS = 22; // Equivalent to width in original game
+	public static final int LODE_RUNNER_COLUMNS = 32; // This is actually the room width from the original game, since VGLC rotates rooms
+	public static final int LODE_RUNNER_ROWS = 22; // Equivalent to height in original game
 	public static final int ICE_CREAM_YOU_WIDTH = 960;
 	public static final int ICE_CREAM_YOU_HEIGHT = 880;
 	
@@ -48,8 +47,30 @@ public class LodeRunnerVGLCUtil {
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
 					//int tileCode = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j)); //8 tile mapping 
-					//int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawn(level[i].charAt(j)); //6 tile mapping 
-					int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(level[i].charAt(j)); //7 tile mapping
+					int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawn(level[i].charAt(j)); //6 tile mapping 
+					//int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(level[i].charAt(j)); //7 tile mapping
+					row.add(tileCode);
+				}
+			}
+			complete.add(row); //adds a new array list to the list at index i 
+		}
+		return complete;
+	}
+	
+	/**
+	 * Converts the VGLC level of LodeRunner to JSON form to be able to be passed into the GAN
+	 * @param fileName File that holds the VGLC of a lode runner level 
+	 * @return
+	 */
+	public static List<List<Integer>> convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(String fileName) {
+		String[] level = new IO().readFile(fileName);
+		List<List<Integer>> complete = new ArrayList<>(LODE_RUNNER_ROWS);
+		//loops through levels to get characters and convert them 
+		for(int i = 0; i < level.length; i++) { 
+			List<Integer> row = new ArrayList<>(LODE_RUNNER_COLUMNS);//creates new List to be a new row of the JSON 
+			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
+				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
+					int tileCode = convertLodeRunnerTileVGLCtoNumberCodeForLodeRunnerState(level[i].charAt(j)); //8 tile mapping 
 					row.add(tileCode);
 				}
 			}
@@ -58,12 +79,12 @@ public class LodeRunnerVGLCUtil {
 		return complete;
 	}
 
-//	//original mapping with each individual tile 
-//	/**
-//	 * Converts tile codes to numbers for JSON conversion
-//	 * @param tile Character describing the tile 
-//	 * @return The number associated with that tile
-//	 */
+	//original mapping with each individual tile 
+	/**
+	 * Converts tile codes to numbers for JSON conversion
+	 * @param tile Character describing the tile 
+	 * @return The number associated with that tile
+	 */
 //	private static int convertLodeRunnerTileVGLCtoNumberCode(char tile) {
 //		switch(tile) {
 //		case '.': //empty, passable
@@ -122,10 +143,41 @@ public class LodeRunnerVGLCUtil {
 	 * @param tile Character describing the tile 
 	 * @return The number associated with that tile
 	 */
-	private static int convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(char tile) {
+	// Do not need separate but similar methods for each possible tile count. Just have a method for the higher tile count,
+	// and unused tiles will never crop up.
+//	private static int convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(char tile) {
+//		switch(tile) {
+//		case '.': //empty, passable
+//		case 'M': //spawn, passable
+//			return 0;	
+//		case 'G': //gold, passable, pickupable
+//			return 1; 
+//		case 'E': //enemy, damaging 
+//			return 2; 
+//		case 'b': //diggable ground, solid 
+//			return 3; 
+//		case '#': //ladder, passable, climbable
+//			return 4;
+//		case '-': //rope, passable, climbable 
+//			return 5;
+//		case 'B': //regular ground, solid
+//			return 6; 
+//		default:
+//			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
+//
+//		}
+//	}
+	
+	/**
+	 * Converts tile codes to numbers for JSON conversion removes the spawn tile to avoid placing multiple 
+	 * used in the ldoe runner state because we need the spawn point 
+	 * Distinguishes between the two types of ground tiles 
+	 * @param tile Character describing the tile 
+	 * @return The number associated with that tile
+	 */
+	private static int convertLodeRunnerTileVGLCtoNumberCodeForLodeRunnerState(char tile) {
 		switch(tile) {
 		case '.': //empty, passable
-		case 'M': //spawn, passable
 			return 0;	
 		case 'G': //gold, passable, pickupable
 			return 1; 
@@ -139,6 +191,8 @@ public class LodeRunnerVGLCUtil {
 			return 5;
 		case 'B': //regular ground, solid
 			return 6; 
+		case 'M': //spawn, passable
+			return 7; 
 		default:
 			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
 

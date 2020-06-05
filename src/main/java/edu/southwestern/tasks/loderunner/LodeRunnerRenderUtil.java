@@ -45,10 +45,19 @@ public class LodeRunnerRenderUtil {
 //		FINAL_RENDER = getBufferedImage(list, images); //puts the final rendered level into a buffered image 
 		//no spawn mapping with 6 tiles 
 		List<List<Integer>> list = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
-		BufferedImage[] images = loadImagesNoSpawn(LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images 
+		BufferedImage[] images = loadImagesNoSpawnTwoGround(LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images 
 		FINAL_RENDER = getBufferedImage(list, images); //puts the final rendered level into a buffered image
 	}
 
+	/**
+	 * Displays the BufferedImage in a JPanel  
+	 * @param list JSON of the level 
+	 */
+	public static BufferedImage getBufferedImage(List<List<Integer>> list) throws IOException {
+		BufferedImage[] images = loadImagesNoSpawnTwoGround(LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images 
+		return getBufferedImage(list, images);
+	}
+	
 	/**
 	 * Displays the BufferedImage in a JPanel  
 	 * @param list JSON of the level 
@@ -67,6 +76,11 @@ public class LodeRunnerRenderUtil {
 		frame.pack();
 		frame.setVisible(true);
 		return image;
+	}
+	
+	public static BufferedImage createBufferedImage(List<List<Integer>> list, int width, int height) throws IOException {
+		BufferedImage[] images = loadImagesNoSpawnTwoGround(LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images
+		return createBufferedImage(list, width, height, images);
 	}
 
 	/**
@@ -140,34 +154,7 @@ public class LodeRunnerRenderUtil {
 //		return tileList;
 //	}
 //	
-	/**
-	 * Loads in all of the tile images, the index corresponds to the number for that tile excluding spawn and multiple types of ground 
-	 * @param filePath Directory that hold the tile images 
-	 * @return An array of BufferedImages holding all the tiles for Lode Runner
-	 * @throws IOException In case the file can't be found
-	 */
-	public static BufferedImage[] loadImagesNoSpawn(String filePath) throws IOException {
-		BufferedImage[] tileList = new BufferedImage[6];
-		File tile = new File(filePath+"empty.png");
-		BufferedImage emptyTile = ImageIO.read(tile);
-		tileList[0] = emptyTile;
-		tile = new File(filePath+"gold.png");
-		BufferedImage goldTile = ImageIO.read(tile);
-		tileList[1] = goldTile;
-		tile = new File(filePath+"enemy.png");
-		BufferedImage enemyTile = ImageIO.read(tile);
-		tileList[2] = enemyTile;
-		tile = new File(filePath+"diggableGround.png");
-		BufferedImage diggableGroundTile = ImageIO.read(tile);
-		tileList[3] = diggableGroundTile;
-		tile = new File(filePath+"ladder.png");
-		BufferedImage ladderTile = ImageIO.read(tile);
-		tileList[4] = ladderTile;
-		tile = new File(filePath+"rope.png");
-		BufferedImage ropeTile = ImageIO.read(tile);
-		tileList[5] = ropeTile;
-		return tileList;
-	}
+
 	/**
 	 * Loads in all of the tile images, the index corresponds to the number for that tile excluding spawn and multiple types of ground 
 	 * @param filePath Directory that hold the tile images 
@@ -175,7 +162,8 @@ public class LodeRunnerRenderUtil {
 	 * @throws IOException In case the file can't be found
 	 */
 	public static BufferedImage[] loadImagesNoSpawnTwoGround(String filePath) throws IOException {
-		BufferedImage[] tileList = new BufferedImage[7];
+		// TODO! Fix magic numbers!
+		BufferedImage[] tileList = new BufferedImage[8];
 		File tile = new File(filePath+"empty.png");
 		BufferedImage emptyTile = ImageIO.read(tile);
 		tileList[0] = emptyTile;
@@ -197,6 +185,9 @@ public class LodeRunnerRenderUtil {
 		tile = new File(filePath+"ground.png");
 		BufferedImage groundTile = ImageIO.read(tile);
 		tileList[6] = groundTile;
+		tile = new File(filePath+"spawn.png");
+		BufferedImage spawnTile = ImageIO.read(tile);
+		tileList[7] = spawnTile;
 		return tileList;
 	}
 	

@@ -25,7 +25,7 @@ public class MarioMAPElitesDistinctChunksNSAndDecorationBinLabels implements Bin
 			labels = new ArrayList<String>(size);
 			for(int i = 0; i <= BINS_PER_DIMENSION; i++) { // Distinct Segments
 				for(int j = 0; j < BINS_PER_DIMENSION; j++) { // Negative Space
-					for(int r = 0; r < BINS_PER_DIMENSION; r++) { // Leniency allows negative range
+					for(int r = 0; r < BINS_PER_DIMENSION; r++) { // Decoration frequency
 						labels.add("DistinctSegments["+i+"]NS["+j+"0-"+(j+1)+"0]Decoration["+r+"0-"+(r+1)+"0]");
 					}
 				}
