@@ -217,6 +217,9 @@ public class MarioState extends State<MarioState.MarioAction> {
 		int newMarioX = marioX;
 		int newMarioY = marioY;
 
+		// Falling off bottom of screen (into a gap). No successor (death)
+		if(!inBounds(marioX,marioY+1)) return null;
+		
 		if(newJumpVelocity == 0) { // Not mid-Jump
 			if(passable(newMarioX,newMarioY+1)) { // Falling
 				newMarioY++; // Fall down

@@ -11,7 +11,7 @@ import edu.southwestern.parameters.Parameters;
  *
  *
  */
-public class MarioMAPElitesDistinctRoomsNSAndLeniencyBinLabels implements BinLabels {
+public class MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels implements BinLabels {
 	
 	List<String> labels = null;
 		
