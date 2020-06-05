@@ -34,7 +34,7 @@ public class LodeRunnerGANUtil {
 		List<List<Integer>> oneLevel = generateOneLevelListRepresentationFromGAN(latentVector); //one level to render
 //		BufferedImage[] images = LodeRunnerRenderUtil.loadImages(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images
 //		LodeRunnerRenderUtil.getBufferedImage(oneLevel, images);//rendered level and displays it in a window 
-		BufferedImage[] images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images
+		BufferedImage[] images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images
 		LodeRunnerRenderUtil.getBufferedImage(oneLevel,images);//rendered level and displays it in a window 
 		GANProcess.terminateGANProcess(); //ends GAN process 
 	}
