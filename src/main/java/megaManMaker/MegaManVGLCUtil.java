@@ -21,6 +21,7 @@ public class MegaManVGLCUtil {
 	public static int lowerX;
 	public static int upperY;
 	public static HashSet<Point> activatedScreens = new HashSet<Point>();
+	public static List<List<List<Integer>>> json = new ArrayList<>();
 
 	//public static boolean executed = false;
 	//public static int levelNumber;
@@ -33,11 +34,17 @@ public class MegaManVGLCUtil {
 //			convertMegaManLevelToJSONHorizontalScroll(level);
 //
 //		}
-		int i=1;
-		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-
-		convertMegaManLevelToJSONVerticalScroll(level);
-		
+		for(int i=1;i<=10;i++) {
+			if(i!=7) {
+				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
+				convertMegaManLevelToJSONHorizontalScroll(level);
+				
+						
+						
+						
+			}
+		}
+		System.out.println(json.toString());
 	}
 	/**
 	 * prints the level to the console
@@ -63,7 +70,7 @@ public class MegaManVGLCUtil {
 	 */
 	private static void convertMegaManLevelToJSONHorizontalScroll(List<List<Integer>> level) {
 		visited.clear();
-		List<List<List<Integer>>> json = new ArrayList<>();
+		//List<List<List<Integer>>> json = new ArrayList<>();
 		boolean vertical = false;
 		//scroller for the screen
 		//int intXint = 0;
@@ -71,7 +78,7 @@ public class MegaManVGLCUtil {
 		lowerX = 0;
 		int intYint = 14;
 		int intXint = intYint+2;
-		System.out.println(intXint+", "+intYint);
+//		System.out.println(intXint+", "+intYint);
 
 		for(int y = 0; y<level.size();y++) {
 			for(int x = 0;x<level.get(0).size();x++) {
@@ -86,6 +93,7 @@ public class MegaManVGLCUtil {
 				}
 			}
 		}
+		//return json;
 	}
 	
 	private static void convertMegaManLevelToJSONVerticalScroll(List<List<Integer>> level) { 
