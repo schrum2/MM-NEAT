@@ -50,7 +50,7 @@ public class MegaManVGLCUtil {
 	 * prints the level to the console
 	 * @param level  
 	 */
-	private static void printLevel(List<List<Integer>> level) {
+	public static void printLevel(List<List<Integer>> level) {
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
 				System.out.print(m);
