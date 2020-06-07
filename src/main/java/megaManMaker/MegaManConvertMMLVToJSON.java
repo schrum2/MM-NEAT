@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
-import gvgai.tools.IO;
 
 public class MegaManConvertMMLVToJSON {
 	public static int maxX = 0;
@@ -101,7 +100,7 @@ public class MegaManConvertMMLVToJSON {
 		List<Integer> xyID = new ArrayList<>();
 		Scanner kScan = new Scanner(k);
 
-		kScan.next();
+		kScan.next(); //get past letter
 		int xcoord = kScan.nextInt()/16;
 		xyID.add(xcoord);
 		int ycoord = kScan.nextInt()/16;
@@ -134,10 +133,10 @@ public class MegaManConvertMMLVToJSON {
 		blockxyIDList.add(xyID);
 	}
 
-	private static int convertMMLVTilesToInt(String string) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+//	private static int convertMMLVTilesToInt(String string) {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
 
 	
 }
