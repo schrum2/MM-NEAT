@@ -20,7 +20,6 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.util.MiscUtil;
@@ -29,7 +28,6 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
 import icecreamyou.LodeRunner.LodeRunner;
-import me.jakerg.rougelike.RougelikeApp;
 
 /**
  * 
@@ -46,7 +44,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 */
 	public LodeRunnerLevelTask() {
 		MMNEAT.registerFitnessFunction("DistanceToFarthestGold"); 
-		MMNEAT.registerFitnessFunction("amountOfLevelCovered"); //connectivity fitness function 
+		MMNEAT.registerFitnessFunction("amountOfLevelCovered"); //connectivity  
 	}
 
 	/**
@@ -102,7 +100,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		} catch(IllegalStateException e) {
 			fitnesses.add(-1.0);
 			System.out.println("failed search");
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
 		
@@ -115,38 +113,39 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		amountOfLevelCovered = 1.0*visitedPoints.size();
 		fitnesses.add(amountOfLevelCovered);
 		
-		
-//		if(CommonConstants.watch) {
-//			System.out.println("Distance to Farthest Gold" + simpleAStarDistance);
-//			//System.out.println("Amount of Level Covered" + );
-//			
-//			try {
-//				BufferedImage visualPath = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
-//				JFrame frame = new JFrame();
-//				JPanel panel = new JPanel();
-//				JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
-//						LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
-//				panel.add(label);
-//				frame.add(panel);
-//				frame.pack();
-//				frame.setVisible(true);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			System.out.println("Enter 'P' to play, or just press Enter to continue");
-//			String input = MiscUtil.waitForReadStringAndEnterKeyPress();
-//			System.out.println("Entered \""+input+"\"");
-//			//if the user entered P or p, then run
-//			if(input.toLowerCase().equals("p")) {
-//				SwingUtilities.invokeLater(new Runnable() {
-//					public void run() {
-//						new LodeRunner(level);
-//					}
-//				});
-//				System.out.println("Press enter");
-//				MiscUtil.waitForReadStringAndEnterKeyPress();
-//			}
-//		}
+		//System.out.println(CommonConstants.watch);
+		if(CommonConstants.watch) {
+			System.out.println("Distance to Farthest Gold " + simpleAStarDistance);
+			System.out.println("Amount of Level Covered " + amountOfLevelCovered);
+			
+			try {
+				BufferedImage visualPath = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+				JFrame frame = new JFrame();
+				JPanel panel = new JPanel();
+				JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+						LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
+				panel.add(label);
+				frame.add(panel);
+				frame.pack();
+				frame.setVisible(true);
+			} catch (IOException e) {
+				System.out.println("Could not display image");
+				//e.printStackTrace();
+			}
+			System.out.println("Enter 'P' to play, or just press Enter to continue");
+			String input = MiscUtil.waitForReadStringAndEnterKeyPress();
+			System.out.println("Entered \""+input+"\"");
+			//if the user entered P or p, then run
+			if(input.toLowerCase().equals("p")) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						new LodeRunner(level);
+					}
+				});
+				System.out.println("Press enter");
+				MiscUtil.waitForReadStringAndEnterKeyPress();
+			}
+		}
 		
  		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), new double[0]);
 	}
