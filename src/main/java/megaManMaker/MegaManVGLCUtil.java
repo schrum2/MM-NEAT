@@ -497,7 +497,7 @@ public class MegaManVGLCUtil {
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
 //					int tileCode = convertMegamanTilesToInt(level[i].charAt(j)); 
-					int tileCode = convertMegamanTilesToIntSimple(level[i].charAt(j)); 
+					int tileCode = convertMegaManTilesToIntForASTAR(level[i].charAt(j)); 
 
 					col.add(tileCode);
 				}
@@ -505,6 +505,42 @@ public class MegaManVGLCUtil {
 			complete.add(col); //adds a new array list to the list at index i 
 		}
 		return complete;
+	}
+	private static int convertMegaManTilesToIntForASTAR(char tile) {
+//		public static final int MEGA_MAN_TILE_GROUND = 1;
+//		public static final int MEGA_MAN_TILE_LADDER = 2;
+//		public static final int MEGA_MAN_TILE_HAZARD = 3;
+//		public static final int MEGA_MAN_TILE_BREAKABLE = 4;
+//		public static final int MEGA_MAN_TILE_MOVING_PLATFORM = 5;
+//		public static final int MEGA_MAN_TILE_CANNON = 6;
+//		public static final int MEGA_MAN_TILE_ORB = 7;
+//		public static final int MEGA_MAN_TILE_SPAWN = 8;
+		
+		switch(tile) {
+		case '-': //empty, passable
+			return 0;
+		case '@': //null
+			return 9;	
+		case '#': //solid
+			return 1; 
+		case '|': //ladder
+			return 2; 
+		case 'H': //Hazard 
+			return 3; 
+		case 'B': //breakable
+			return 4;
+		case 'M': //Moving platform
+			return 5;
+		case 'C': //Cannon/shooter
+			return 6;
+		case 'Z':
+			return 7;
+		case 'P':
+			return 8;
+		default:
+			return 0;
+		}
+		
 	}
 	private static int convertMegamanTilesToIntSimple(char tile) {
 		switch(tile) {

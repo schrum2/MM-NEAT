@@ -1,10 +1,22 @@
 package megaManMaker;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Action;
 import edu.southwestern.util.search.Heuristic;
@@ -20,8 +32,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public static final int MEGA_MAN_TILE_MOVING_PLATFORM = 5;
 	public static final int MEGA_MAN_TILE_CANNON = 6;
 	public static final int MEGA_MAN_TILE_ORB = 7;
-	public static final int MEGA_MAN_TILE_NULL = 17;
-	public static final int MEGA_MAN_TILE_SPAWN = 11;
+	public static final int MEGA_MAN_TILE_NULL = 9;
+	public static final int MEGA_MAN_TILE_SPAWN = 8;
 	
 	
 	private List<List<Integer>> level;
@@ -145,8 +157,10 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		int newJumpVelocity = jumpVelocity;
 		int newX = currentX;
 		int newY = currentY;
-
+		assert inBounds(newX,newY): "x is:" + newX + "\ty is:"+newY + "\t" + inBounds(newX,newY);
 		// Falling off bottom of screen (into a gap). No successor (death)
+		//System.out.print("("+newX+", "+newY+")");
+
 		if(!inBounds(currentX,currentY+1)) return null;
 		
 		if(newJumpVelocity == 0) { // Not mid-Jump
@@ -154,7 +168,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			if(passable(newX,newY+1)) { // Falling
 				newY++; // Fall down
 			} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)) { // Start jump
-				newJumpVelocity = 3; // Accelerate up
+				newJumpVelocity = 4; // Accelerate up
 			} 
 		} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)) {
 			return null; // Can't jump mid-jump. Reduces search space.
@@ -205,14 +219,16 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		if(!inBounds(newX, newY)){
 			return null;
 		}
-		return new MegaManState(level, newJumpVelocity, orb, newX, newY);
+		MegaManState result = new MegaManState(level, newJumpVelocity, orb, newX, newY);
+		//renderLevelAndPause((MegaManState) result);
+
+		return result;
 	}
 
 	private boolean passable(int x, int y) {
 		if(!inBounds(x,y)) return false; // fail for bad bounds before tileAtPosition check
 		int tile = tileAtPosition(x,y);
-		if((	tile==MEGA_MAN_TILE_EMPTY  || 
-				tile==MEGA_MAN_TILE_LADDER)) {
+		if((	tile==MEGA_MAN_TILE_EMPTY )) {
 			return true;
 		}
 		return false; 
@@ -220,7 +236,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 
 	private boolean inBounds(int currentX2, int i) {
 		// TODO Auto-generated method stub
-		return level.get(i).get(currentX2)!=7;
+		return currentX2>=0&&i>=0&&i<level.size()&&currentX2<level.get(i).size()&&level.get(i).get(currentX2)!=9;
 	}
 	
 	/**
@@ -243,6 +259,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				}
 			}
 		}
+		System.out.println(start.toString());
 		return start;
 	}
 	/**
@@ -262,8 +279,11 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			if(s.getSuccessor(new MegaManAction(move)) != null) {
 				vaildActions.add(new MegaManAction(move));
 			}
+			MegaManAction a = new MegaManAction(move);
+			System.out.println(s+"\t"+move+"\t"+s.getSuccessor(a));
 		}
 		return vaildActions;
+		
 	}
 
 	@Override
@@ -325,49 +345,49 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 * @param start Start state  
 	 * @throws IOException
 	 */
-//	public static void vizualizePath(List<List<Integer>> level, HashSet<MegaManState> mostRecentVisited, 
-//			ArrayList<MegaManAction> actionSequence, MegaManState start) throws IOException {
-//		List<List<Integer>> fullLevel = ListUtil.deepCopyListOfLists(level);
-//		fullLevel.get(start.currentY).set(start.currentX, MEGA_MAN_TILE_SPAWN);// puts the spawn back into the visualization
-//		//for(Point p : start.orb) { //puts all the gold back 
-//			fullLevel.get(getOrb(level).y).set(getOrb(level).x, MEGA_MAN_TILE_ORB);
-//		//!!
-//		BufferedImage visualPath = LodeRunnerRenderUtil.createBufferedImage(fullLevel, LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
-//				LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
-//		if(mostRecentVisited != null) {
-//			Graphics2D g = (Graphics2D) visualPath.getGraphics();
-//			g.setColor(Color.WHITE);
-//			for(LodeRunnerState s : mostRecentVisited) {
-//				int x = s.currentX;
-//				int y = s.currentY;
-//				g.drawLine(x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y,(x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
-//				g.drawLine((x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
-//			}
-//			if(actionSequence != null) {
-//				g.setColor(Color.BLUE);
-//				LodeRunnerState current = start;
-//				for(LodeRunnerAction a : actionSequence) {
-//					int x = current.currentX;
-//					int y = current.currentY;
-//					g.drawLine(x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y,(x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
-//					g.drawLine((x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
-//					current = (LodeRunnerState) current.getSuccessor(a);
-//				}
-//			}
-//		}
-//		try {
-//			JFrame frame = new JFrame();
-//			JPanel panel = new JPanel();
-//			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
-//					LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
-//			panel.add(label);
-//			frame.add(panel);
-//			frame.pack();
-//			frame.setVisible(true);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
+	public static void vizualizePath(List<List<Integer>> level, HashSet<MegaManState> mostRecentVisited, 
+			ArrayList<MegaManAction> actionSequence, MegaManState start) throws IOException {
+		List<List<Integer>> fullLevel = ListUtil.deepCopyListOfLists(level);
+		fullLevel.get(start.currentY).set(start.currentX, MEGA_MAN_TILE_SPAWN);// puts the spawn back into the visualization
+		//for(Point p : start.orb) { //puts all the gold back 
+			fullLevel.get(getOrb(level).y).set(getOrb(level).x, MEGA_MAN_TILE_ORB);
+		//!!
+		BufferedImage visualPath = MegaManRenderUtil.createBufferedImage(fullLevel, MegaManRenderUtil.MEGA_MAN_COLUMNS*MegaManRenderUtil.MEGA_MAN_TILE_X, 
+				MegaManRenderUtil.MEGA_MAN_ROWS*MegaManRenderUtil.MEGA_MAN_TILE_Y);
+		if(mostRecentVisited != null) {
+			Graphics2D g = (Graphics2D) visualPath.getGraphics();
+			g.setColor(Color.WHITE);
+			for(MegaManState s : mostRecentVisited) {
+				int x = s.currentX;
+				int y = s.currentY;
+				g.drawLine(x*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y,(x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
+				g.drawLine((x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y, x*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
+			}
+			if(actionSequence != null) {
+				g.setColor(Color.BLUE);
+				MegaManState current = start;
+				for(MegaManAction a : actionSequence) {
+					int x = current.currentX;
+					int y = current.currentY;
+					g.drawLine(x*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y,(x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
+					g.drawLine((x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y, x*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
+					current = (MegaManState) current.getSuccessor(a);
+				}
+			}
+		}
+		try {
+			JFrame frame = new JFrame();
+			JPanel panel = new JPanel();
+			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(MegaManRenderUtil.MEGA_MAN_COLUMNS*MegaManRenderUtil.MEGA_MAN_TILE_X, 
+					MegaManRenderUtil.MEGA_MAN_ROWS*MegaManRenderUtil.MEGA_MAN_TILE_Y, Image.SCALE_FAST)));
+			panel.add(label);
+			frame.add(panel);
+			frame.pack();
+			frame.setVisible(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
 		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt"); //converts to JSON
@@ -387,11 +407,31 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		mostRecentVisited = ((AStarSearch<MegaManAction, MegaManState>) search).getVisited();
 		System.out.println(mostRecentVisited.toString());
 		System.out.println("actionSequence: " + actionSequence);
-//		try {
-//			//visualizes the points visited with red and whit x's
-//			vizualizePath(level,mostRecentVisited,actionSequence,start);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+		try {
+			//visualizes the points visited with red and whit x's
+			vizualizePath(level,mostRecentVisited,actionSequence,start);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	private void renderLevelAndPause(MegaManState theState) {
+		// This code renders an image of the level with the agent in it
+		try {
+			List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
+			copy.get(theState.currentY).set(theState.currentX, MEGA_MAN_TILE_SPAWN); 
+			//for(Point t : theState.goldLeft) {
+			copy.get(orb.y).set(orb.x, MEGA_MAN_TILE_ORB); 
+			//}
+//			for(Point dug : theState.dugHoles) {
+//				copy.get(dug.y).set(dug.x, LODE_RUNNER_TILE_EMPTY); 
+//			}
+			MegaManRenderUtil.getBufferedImage(copy);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 }
