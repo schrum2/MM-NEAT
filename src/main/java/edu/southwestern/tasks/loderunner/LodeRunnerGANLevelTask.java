@@ -17,7 +17,7 @@ public class LodeRunnerGANLevelTask extends LodeRunnerLevelTask<List<Double>> {
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","bigInteractiveButtons:false","lodeRunnerDistinguishesSolidAndDiggableGround:false","GANInputSize:"+LodeRunnerGANUtil.LATENT_VECTOR_SIZE,"showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.loderunner.LodeRunnerGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0", "randomSeed:0", "base:loderunnerlevels", "log:LodeRunnerLevels-Direct", "saveTo:Direct", "LodeRunnerGANModel:LodeRunnerEpochAllGroundFirstHundred100000_20_7.pth", "GANInputSize:20", "trials:1", "mu:100", "maxGens:100000", "io:true", "netio:true", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "mating:true", "fs:false", "task:edu.southwestern.tasks.loderunner.LodeRunnerGANLevelTask", "cleanFrequency:-1", "saveAllChampions:true", "cleanOldNetworks:false", "logTWEANNData:false", "logMutationAndLineage:false watch:false", "steadyStateIndividualsPerGeneration:100", "aStarSearchBudget:100000"});
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {

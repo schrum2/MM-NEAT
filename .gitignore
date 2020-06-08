@@ -60,6 +60,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+/loderunnerlevels/
 ZeldaDungeon01_5000_10*
 ZeldaDungeon02_5000_10*
 ZeldaAllDungeons*
