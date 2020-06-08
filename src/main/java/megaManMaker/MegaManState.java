@@ -1,11 +1,14 @@
 package megaManMaker;
 
 import java.awt.Point;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
+import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Action;
 import edu.southwestern.util.search.Heuristic;
+import edu.southwestern.util.search.Search;
 import edu.southwestern.util.search.State;
 
 public class MegaManState extends State<MegaManState.MegaManAction>{
@@ -110,8 +113,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	}
 	/**
 	 * Constructor that only takes a level, 
-	 * this makes it so that it grabs the original spawn point and fills the gold set with
-	 * the locations of the gold for that level 
+	 * this makes it so that it grabs the original spawn point sets
+	 * the location of the orb for that level 
 	 * @param level A level in JSON form 
 	 */
 	public MegaManState(List<List<Integer>> level) {
@@ -310,5 +313,85 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public String toString(){
 		return "("+currentX + "," + currentY +")";		
 
+	}
+	
+	/**
+	 * Visualizes the solution path. 
+	 * Red X's are the solution path, white X's are the other states that were visited 
+	 * Displays in a window 
+	 * @param level A level 
+	 * @param mostRecentVisited Set of all visited locations 
+	 * @param actionSequence Solution set 
+	 * @param start Start state  
+	 * @throws IOException
+	 */
+//	public static void vizualizePath(List<List<Integer>> level, HashSet<MegaManState> mostRecentVisited, 
+//			ArrayList<MegaManAction> actionSequence, MegaManState start) throws IOException {
+//		List<List<Integer>> fullLevel = ListUtil.deepCopyListOfLists(level);
+//		fullLevel.get(start.currentY).set(start.currentX, MEGA_MAN_TILE_SPAWN);// puts the spawn back into the visualization
+//		//for(Point p : start.orb) { //puts all the gold back 
+//			fullLevel.get(getOrb(level).y).set(getOrb(level).x, MEGA_MAN_TILE_ORB);
+//		//!!
+//		BufferedImage visualPath = LodeRunnerRenderUtil.createBufferedImage(fullLevel, LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+//				LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+//		if(mostRecentVisited != null) {
+//			Graphics2D g = (Graphics2D) visualPath.getGraphics();
+//			g.setColor(Color.WHITE);
+//			for(LodeRunnerState s : mostRecentVisited) {
+//				int x = s.currentX;
+//				int y = s.currentY;
+//				g.drawLine(x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y,(x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+//				g.drawLine((x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+//			}
+//			if(actionSequence != null) {
+//				g.setColor(Color.BLUE);
+//				LodeRunnerState current = start;
+//				for(LodeRunnerAction a : actionSequence) {
+//					int x = current.currentX;
+//					int y = current.currentY;
+//					g.drawLine(x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y,(x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+//					g.drawLine((x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+//					current = (LodeRunnerState) current.getSuccessor(a);
+//				}
+//			}
+//		}
+//		try {
+//			JFrame frame = new JFrame();
+//			JPanel panel = new JPanel();
+//			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+//					LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
+//			panel.add(label);
+//			frame.add(panel);
+//			frame.pack();
+//			frame.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
+	public static void main(String args[]) {
+		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
+		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt"); //converts to JSON
+		MegaManState start = new MegaManState(level);
+		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
+		HashSet<MegaManState> mostRecentVisited = null;
+		ArrayList<MegaManAction> actionSequence = null;
+		try {
+			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+			//represented by red x's in the visualization 
+			actionSequence = ((AStarSearch<MegaManAction, MegaManState>) search).search(start, true, 1000000);
+		} catch(Exception e) {
+			System.out.println("failed search");
+			e.printStackTrace();
+		}
+		//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
+		mostRecentVisited = ((AStarSearch<MegaManAction, MegaManState>) search).getVisited();
+		System.out.println(mostRecentVisited.toString());
+		System.out.println("actionSequence: " + actionSequence);
+//		try {
+//			//visualizes the points visited with red and whit x's
+//			vizualizePath(level,mostRecentVisited,actionSequence,start);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 }
