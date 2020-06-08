@@ -420,7 +420,7 @@ public class MegaManVGLCUtil {
 		case 'O': //hovering platform (shooter)
 			return 20;
 		default:
-			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
+			throw new IllegalArgumentException("Invalid Mega Man tile from VGLV: " + tile);
 
 		}
 	}
