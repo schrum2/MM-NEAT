@@ -3,6 +3,8 @@ package edu.southwestern.tasks.interactive.loderunner;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,7 +16,9 @@ import java.util.Random;
 //import java.util.Set;
 
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -58,6 +62,32 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		});
 		effectsCheckboxes.add(showSolutionPath);
 		top.add(effectsCheckboxes);
+		
+		JPanel AStarBudget = new JPanel();
+		JLabel AStarLabel = new JLabel("UpdateAStarBudget");
+		JTextField updateAStarBudget = new JTextField(10);
+		updateAStarBudget.setText(String.valueOf(Parameters.parameters.integerParameter("aStarSearchBudget")));
+		updateAStarBudget.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+					String budget = updateAStarBudget.getText();
+					if(!budget.matches("\\d+")) {
+						return;
+					}
+					int value = Integer.parseInt(budget);
+					Parameters.parameters.setInteger("aStarSearchBudget", value);
+					resetButtons(true);
+				}
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {}
+			@Override
+			public void keyTyped(KeyEvent e) {}
+		});
+		AStarBudget.add(AStarLabel);
+		AStarBudget.add(updateAStarBudget);
+		top.add(AStarBudget);
 	}
 
 	/**
