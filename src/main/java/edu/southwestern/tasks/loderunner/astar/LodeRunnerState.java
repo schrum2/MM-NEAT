@@ -351,7 +351,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
-			if(inBounds(newX, newY-1) && tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) 
+			if(		passable(newX, newY-1) && // Do not allow moving up ladders into solid tiles
+					tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) // Be on a ladder to climb
 				newY--;
 			else return null; 
 		}
