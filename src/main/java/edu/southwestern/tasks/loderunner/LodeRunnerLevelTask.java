@@ -73,15 +73,14 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 * @param Integer 
 	 * @return
 	 */
-	@SuppressWarnings({ "unused", "unchecked" })
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		List<Double> latentVector = (List<Double>) individual.getPhenotype(); //creates a double array for the spawn to be placed in GAN levels 
-		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
+		double psuedoRandomSeed = getRandomSeedForSpawnPoint(individual);
+		
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions);
 		List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromGenotype(individual);
 		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
-		Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
+		Random rand = new Random(Double.doubleToLongBits(psuedoRandomSeed));
 		LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
 		LodeRunnerState start = new LodeRunnerState(level);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
@@ -149,5 +148,12 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		
  		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), new double[0]);
 	}
+
+	/**
+	 * Based on genotype, get a random seed that can be used to choose the level start point
+	 * @param individual Level genotype
+	 * @return Random seed
+	 */
+	public abstract double getRandomSeedForSpawnPoint(Genotype<T> individual);
 
 }

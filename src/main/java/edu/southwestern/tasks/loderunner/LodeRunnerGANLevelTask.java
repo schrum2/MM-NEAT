@@ -25,6 +25,16 @@ public class LodeRunnerGANLevelTask extends LodeRunnerLevelTask<List<Double>> {
 		}
 
 	}
+	
+	/**
+	 * Random seed is simply the first latent variable
+	 */
+	public double getRandomSeedForSpawnPoint(Genotype<List<Double>> individual) {
+		List<Double> latentVector = (List<Double>) individual.getPhenotype(); //creates a double array for the spawn to be placed in GAN levels 
+		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
+		double firstLatentVariable = doubleArray[0];
+		return firstLatentVariable;
+	}
 
 	/**
 	 * Gets the phenotype vector from the genotype and then returns a level by calling the static method below 
