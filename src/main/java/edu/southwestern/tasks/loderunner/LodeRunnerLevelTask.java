@@ -17,14 +17,26 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
 
+/**
+ * 
+ * @author kdste
+ *
+ * @param <T>
+ */
 public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	
-	private static final int numFitnessFunctions = 1;
+	private static final int numFitnessFunctions = 1; //we are only using a single fitness function right now 
 
+	/**
+	 * Registers all fitness functions that are used, rn only one is used for lode runner 
+	 */
 	public LodeRunnerLevelTask() {
 		MMNEAT.registerFitnessFunction("DistanceToFarthestGold");
 	}
 
+	/**
+	 * @return The number of fitness functions 
+	 */
 	@Override
 	public int numObjectives() {
 		return 1; //only one fitness function right now 
@@ -42,6 +54,12 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		return 0; //not used 
 	}
 
+	/**
+	 * Does one evaluation with the A* algorithm to see if the level is beatable 
+	 * @param Genotype<T> 
+	 * @param Integer 
+	 * @return
+	 */
 	@SuppressWarnings({ "unused", "unchecked" })
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {

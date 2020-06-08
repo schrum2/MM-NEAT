@@ -54,6 +54,11 @@ public class LodeRunnerGANUtil {
 		GANProcess.terminateGANProcess(); //ends GAN process 
 	}
 	
+	/**
+	 * Fills a List<Point> with the points of all the empty tiles, one of them to be replaced by a spawn point
+	 * @param level
+	 * @return
+	 */
 	public static List<Point> fillEmptyList(List<List<Integer>> level){
 		List<Point> emptySpaces = new ArrayList<Point>();
 		for(int i = 0; i < level.size(); i++) {
@@ -66,6 +71,12 @@ public class LodeRunnerGANUtil {
 		return emptySpaces;
 	}
 	
+	/**
+	 * Sets the spawn point at a random point from the set of empty points 
+	 * @param level The level 
+	 * @param empty Set of empty points in the level 
+	 * @param rand Random instance 
+	 */
 	public static void setSpawn(List<List<Integer>> level, List<Point> empty, Random rand) {
 		Point spawn = empty.get(rand.nextInt(empty.size()));
 		level.get(spawn.y).set(spawn.x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);

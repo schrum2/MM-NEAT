@@ -28,7 +28,7 @@ import edu.southwestern.util.search.Search;
 import edu.southwestern.util.search.State;
 
 /**
- * 
+ * Runs an A* algorithm on a lode runner level to see if it is beatable 
  * @author kdste
  *
  */
@@ -117,6 +117,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		}
 	}
 
+	/**
+	 * Runs an A* algorithm on the level specified and then displays a buffered image that shows the solution path if there is one 
+	 * @param args
+	 */
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 2.txt"); //converts to JSON
@@ -393,17 +397,6 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 //		}
 		return result;
 	}
-	
-	/**
-	 * If the tile at the given location is diggable ground
-	 * @param x
-	 * @param y
-	 * @return
-	 */
-//	private boolean diggable(int x, int y) {
-//		int tile = tileAtPosition(x,y);
-//		return tile == LODE_RUNNER_TILE_DIGGABLE;
-//	}
 
 	/**
 	 * Gets a list of all of the lode runner actions
@@ -522,6 +515,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		return "Size:" + goldLeft.size() + " (" + currentX + ", " + currentY + ")"; // + " DugCount:" +dugHoles.size();
 	}
 
+	/**
+	 * Helps to avoid excessive back tracking 
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -533,6 +529,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		return result;
 	}
 
+	/**
+	 * Helps to avoid excessive back tracking 
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
