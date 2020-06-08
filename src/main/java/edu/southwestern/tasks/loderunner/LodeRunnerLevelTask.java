@@ -24,6 +24,7 @@ import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
@@ -82,7 +83,8 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
 		Random rand = new Random(Double.doubleToLongBits(psuedoRandomSeed));
 		LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
-		LodeRunnerState start = new LodeRunnerState(level);
+		List<List<Integer>> levelCopy = ListUtil.deepCopyListOfLists(level); //copy level 
+		LodeRunnerState start = new LodeRunnerState(levelCopy);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
@@ -136,6 +138,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			System.out.println("Entered \""+input+"\"");
 			//if the user entered P or p, then run
 			if(input.toLowerCase().equals("p")) {
+//				level.get(start.currentX).set(start.currentY, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						new LodeRunner(level);
