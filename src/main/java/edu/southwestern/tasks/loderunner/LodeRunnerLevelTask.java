@@ -40,20 +40,24 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 
 	private static int numFitnessFunctions = 0; 
 	public static final int TOTAL_TILES = 704; //for percentages, 22x32 levels 
+	private static final int numOtherScores = 8;
 
 	/**
 	 * Registers all fitness functions that are used, rn only one is used for lode runner 
 	 */
 	public LodeRunnerLevelTask() {
 		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
-			MMNEAT.registerFitnessFunction("simpleAStarDistanceToFarthestGold");
+			MMNEAT.registerFitnessFunction("simpleAStarDistance");
 			numFitnessFunctions++;
 		}
 		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsConnectivity")) {
-			MMNEAT.registerFitnessFunction("connectivityOfLevel"); //connectivity
+			MMNEAT.registerFitnessFunction("numOfPositionsVisited"); //connectivity
 			numFitnessFunctions++;
 		}
-		
+
+		//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
+		MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
+		MMNEAT.registerFitnessFunction("numOfPositionsVisited",false); //connectivity
 		MMNEAT.registerFitnessFunction("percentLadders", false);
 		MMNEAT.registerFitnessFunction("percentGround", false);
 		MMNEAT.registerFitnessFunction("percentRope", false);
@@ -68,7 +72,15 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 */
 	@Override
 	public int numObjectives() {
-		return numFitnessFunctions; //only one fitness function right now 
+		return numFitnessFunctions; 
+	}
+
+	/**
+	 * @return The number of other scores 
+	 */
+	@Override
+	public int numOtherScores() {
+		return numOtherScores;
 	}
 
 	/**
@@ -91,37 +103,38 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 */
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		double psuedoRandomSeed = getRandomSeedForSpawnPoint(individual);
+		double psuedoRandomSeed = getRandomSeedForSpawnPoint(individual); //creates the seed to be passed into the Random instance 
 
-		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions);
-		List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromGenotype(individual);
-		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
+		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
+		List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromGenotype(individual); //gets a level 
+		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level); //fills a set with empty points fro the level to select a spawn point from 
 		Random rand = new Random(Double.doubleToLongBits(psuedoRandomSeed));
-		LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
-		List<List<Integer>> levelCopy = ListUtil.deepCopyListOfLists(level); //copy level 
-		LodeRunnerState start = new LodeRunnerState(levelCopy);
-		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
+		LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand); //sets a random spawn point 
+		List<List<Integer>> levelCopy = ListUtil.deepCopyListOfLists(level); //copy level so it is not effected by the search 
+		LodeRunnerState start = new LodeRunnerState(levelCopy); //gets start state for search 
+		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold); //initializes a search based on the heuristic 
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
-		double simpleAStarDistance = -1;
+		double simpleAStarDistance = -1; //intialized to hold distance of solution path, or -1 if search fails
 		//calculates the Distance to the farthest gold as a fitness fucntion 
 		try { 
 			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter( "aStarSearchBudget"));
-			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
-				if(actionSequence == null) {
-					fitnesses.add(-1.0);
-				} else {
-					simpleAStarDistance = 1.0*actionSequence.size();
-					fitnesses.add(simpleAStarDistance);
-				}
+			if(actionSequence == null) {
+				simpleAStarDistance = -1.0;
+			} else {
+				simpleAStarDistance = 1.0*actionSequence.size();
+
 			}
 		} catch(IllegalStateException e) {
-			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) 
-				fitnesses.add(-1.0);
+			simpleAStarDistance = -1.0;
 			System.out.println("failed search");
 			//e.printStackTrace();
 		}
+		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
+			fitnesses.add(simpleAStarDistance);
+		}
 		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
+
 
 		//calculates the amount of the level that was covered in the search, connectivity.
 		HashSet<Point> visitedPoints = new HashSet<>();
@@ -133,9 +146,9 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsConnectivity")) {
 			fitnesses.add(connectivityOfLevel);
 		}
-		
-		
-		//ccalculates other scores that are not fitness functions 
+
+
+		//calculates other scores that are not fitness functions 
 		double percentLadders = 0;
 		double percentGround = 0;
 		double percentRopes = 0;
@@ -143,16 +156,16 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		double numEnemies = 0;
 		for(int i = 0; i < level.size();i++) {
 			for(int j = 0; j < level.get(i).size(); j++) {
-				//calculates the percentage of ladders 
+				//counts ladders in level  
 				if(level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_LADDER) {
 					percentLadders++;
 				}
-				//calculates the percentage of ground 
+				//counts ground in level 
 				if(level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_GROUND || 
 						level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE) {
 					percentGround++;
 				}
-				//calculates the percentage of ropes
+				//counts ropes in level 
 				if(level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_ROPE) {
 					percentRopes++;
 				}
@@ -166,17 +179,16 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				}
 			}
 		}
-		percentLadders = percentLadders/TOTAL_TILES;
-		percentGround = percentGround/TOTAL_TILES;
-		percentRopes = percentRopes/TOTAL_TILES;
+		percentLadders = percentLadders/TOTAL_TILES;//calculates the percentage of ladders 
+		percentGround = percentGround/TOTAL_TILES;//calculates the percentage of ground 
+		percentRopes = percentRopes/TOTAL_TILES;//calculates the percentage of ropes
 		//calculates the percentage of the level that is connected
 		double percentConnected = connectivityOfLevel/TOTAL_TILES;
-				
-
 		double[] otherScores = new double[] {simpleAStarDistance, connectivityOfLevel, percentLadders, percentGround, percentRopes, percentConnected, numTreasure, numEnemies};
+
 		if(CommonConstants.watch) {
 			System.out.println("Simple A* Distance to Farthest Gold " + simpleAStarDistance);
-			System.out.println("Connectivity of Level " + connectivityOfLevel);
+			System.out.println("Number of Positions Visited " + connectivityOfLevel);
 			System.out.println("Percent of Ladders " + percentLadders);
 			System.out.println("Percent of Ground " + percentGround);
 			System.out.println("Percent of Ropes " + percentRopes);
@@ -198,6 +210,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				System.out.println("Could not display image");
 				//e.printStackTrace();
 			}
+			//Gives you the option to play the level by pressing p, or skipping by pressing enter, after the visualization is displayed 
 			System.out.println("Enter 'P' to play, or just press Enter to continue");
 			String input = MiscUtil.waitForReadStringAndEnterKeyPress();
 			System.out.println("Entered \""+input+"\"");
