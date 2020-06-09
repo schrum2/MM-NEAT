@@ -42,6 +42,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public int currentX; 
 	public int currentY;
 	private int jumpVelocity;
+	//private boolean climbing;
 
 	public static Heuristic<MegaManAction,MegaManState> manhattanToOrb = new Heuristic<MegaManAction,MegaManState>(){
 
@@ -166,9 +167,9 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		
 		if(newJumpVelocity == 0) { // Not mid-Jump
 			//int beneath = tileAtPosition(newX,newY+1);
-			if(passable(newX,newY+1)) { // Falling
+			if(passable(newX,newY+1)&& tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER) { // Falling
 				newY++; // Fall down
-			} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)) { // Start jump
+			} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)&& tileAtPosition(newX, newY)!=MEGA_MAN_TILE_LADDER) { // Start jump
 				newJumpVelocity = 4; // Accelerate up
 			} 
 		} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)) {
@@ -176,7 +177,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		}
 
 		if(newJumpVelocity > 0) { // Jumping up
-			if(passable(newX,newY-1)||tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_MOVING_PLATFORM) {
+			if(passable(newX,newY-1)||(inBounds(newX,newY-1)&&tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_MOVING_PLATFORM)) {
 				newY--; // Jump up
 				newJumpVelocity--; // decelerate
 			} else {
@@ -228,7 +229,10 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	private boolean passable(int x, int y) {
 		if(!inBounds(x,y)) return false; // fail for bad bounds before tileAtPosition check
 		int tile = tileAtPosition(x,y);
-		if((	tile==MEGA_MAN_TILE_EMPTY )) {
+//		int beneath;
+//		if(inBounds(x,y+1)) beneath = tileAtPosition(x,y+1);
+//		else beneath = tile;
+		if((	tile==MEGA_MAN_TILE_EMPTY ||tile==MEGA_MAN_TILE_LADDER||tile==MEGA_MAN_TILE_ORB||tile==MEGA_MAN_TILE_BREAKABLE)) {
 			return true;
 		}
 		return false; 
@@ -236,7 +240,16 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 
 	private boolean inBounds(int x, int y) {
 		// TODO Auto-generated method stub
-		return x>=0&&y>=0&&y<level.size()&&x<level.get(y).size()&&level.get(y).get(x)!=9;
+		return x>=0&&y>=0&&y<level.size()&&x<level.get(y).size()&&level.get(y).get(x)!=9&&noHazardBeneath(x, y);
+	}
+	private boolean noHazardBeneath(int x, int y) {
+		if(!inBounds(x, y+1)) {
+			return true;
+		}else if(tileAtPosition(x,y+1)!=MEGA_MAN_TILE_HAZARD) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 	
 	/**
@@ -352,8 +365,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		//for(Point p : start.orb) { //puts all the gold back 
 			fullLevel.get(getOrb(level).y).set(getOrb(level).x, MEGA_MAN_TILE_ORB);
 		//!!
-		BufferedImage visualPath = MegaManRenderUtil.createBufferedImage(fullLevel, MegaManRenderUtil.level.get(0).size()*MegaManRenderUtil.MEGA_MAN_TILE_X, 
-				MegaManRenderUtil.level.size()*MegaManRenderUtil.MEGA_MAN_TILE_Y);
+		BufferedImage visualPath = MegaManRenderUtil.createBufferedImage(fullLevel, level.get(0).size()*MegaManRenderUtil.MEGA_MAN_TILE_X, 
+				level.size()*MegaManRenderUtil.MEGA_MAN_TILE_Y);
 		if(mostRecentVisited != null) {
 			Graphics2D g = (Graphics2D) visualPath.getGraphics();
 			g.setColor(Color.WHITE);
@@ -378,8 +391,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		try {
 			JFrame frame = new JFrame();
 			JPanel panel = new JPanel();
-			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(MegaManRenderUtil.level.get(0).size()*MegaManRenderUtil.MEGA_MAN_TILE_X, 
-					MegaManRenderUtil.level.size()*MegaManRenderUtil.MEGA_MAN_TILE_Y, Image.SCALE_FAST)));
+			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(level.get(0).size()*MegaManRenderUtil.MEGA_MAN_TILE_X, 
+					level.size()*MegaManRenderUtil.MEGA_MAN_TILE_Y, Image.SCALE_FAST)));
 			panel.add(label);
 			frame.add(panel);
 			frame.pack();
@@ -390,7 +403,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	}
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
-		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt"); //converts to JSON
+		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+7+".txt"); //converts to JSON
 		MegaManVGLCUtil.printLevel(level);
 		MegaManState start = new MegaManState(level);
 		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
@@ -399,7 +412,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		try {
 			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
 			//represented by red x's in the visualization 
-			actionSequence = ((AStarSearch<MegaManAction, MegaManState>) search).search(start, true, 1000000);
+			actionSequence = ((AStarSearch<MegaManAction, MegaManState>) search).search(start, true, 10000000);
 		} catch(Exception e) {
 			System.out.println("failed search");
 			e.printStackTrace();

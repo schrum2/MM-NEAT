@@ -20,7 +20,7 @@ public class MegaManRenderUtil {
 	public static final String MEGA_MAN_LEVEL_PATH = "data/VGLC/MegaMan/Processed/"; //file path for levels 
 	public static final int MEGA_MAN_TILE_X = 8; // x length of an individual tile 
 	public static final int MEGA_MAN_TILE_Y = 8; // y length of an individual tile
-	public static List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MEGA_MAN_LEVEL_PATH +"megaman_1_"+1+".txt");
+	public static List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MEGA_MAN_LEVEL_PATH +"megaman_1_"+2+".txt");
 
 //	public static final int MEGA_MAN_COLUMNS = level.get(0).size(); 
 //	public static final int MEGA_MAN_ROWS = level.size();
@@ -136,7 +136,7 @@ public class MegaManRenderUtil {
 		tile = new File(filePath+"Ladder.PNG");
 		BufferedImage ladderTile = ImageIO.read(tile);
 		tileList[2] = ladderTile;
-		tile = new File(filePath+"Hazard.PNG");
+		tile = new File(filePath+"Null.PNG");
 		BufferedImage HazardTile = ImageIO.read(tile);
 		tileList[3] = HazardTile;
 		tile = new File(filePath+"Empty.PNG");

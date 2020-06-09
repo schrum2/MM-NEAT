@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.IOException;
 import gvgai.tools.IO;
-
+@SuppressWarnings("unused")
 public class MegaManVGLCUtil {
 	public static final String MEGAMAN_ENEMY_LEVEL_PATH = "data/VGLC/MegaMan/EnhancedWithBossesAndEnemies/";
 	public static final String MEGAMAN_LEVEL_PATH = "data/VGLC/MegaMan/Enhanced/";
@@ -537,11 +537,18 @@ public class MegaManVGLCUtil {
 			return 7;
 		case 'P':
 			return 8;
+		case 'A': //appearing/disappearing block
+			return 1;
+		case 'O': //hovering platform (shooter)
+			return 5;
 		default:
 			return 0;
 		}
 		
 	}
+	
+	
+	
 	private static int convertMegamanTilesToIntSimple(char tile) {
 		switch(tile) {
 		case '-': //empty, passable
