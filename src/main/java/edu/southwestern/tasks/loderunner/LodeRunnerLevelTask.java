@@ -39,6 +39,7 @@ import icecreamyou.LodeRunner.LodeRunner;
 public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 
 	private static int numFitnessFunctions = 0; 
+	public static final int TOTAL_TILES = 704; //for percentages, 22x32 levels 
 
 	/**
 	 * Registers all fitness functions that are used, rn only one is used for lode runner 
@@ -52,6 +53,13 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			MMNEAT.registerFitnessFunction("connectivityOfLevel"); //connectivity
 			numFitnessFunctions++;
 		}
+		
+		MMNEAT.registerFitnessFunction("percentLadders", false);
+		MMNEAT.registerFitnessFunction("percentGround", false);
+		MMNEAT.registerFitnessFunction("percentRope", false);
+		MMNEAT.registerFitnessFunction("percentConnected", false);
+		MMNEAT.registerFitnessFunction("numTreasures", false);
+		MMNEAT.registerFitnessFunction("numEnemies", false);
 
 	}
 
@@ -125,13 +133,56 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsConnectivity")) {
 			fitnesses.add(connectivityOfLevel);
 		}
+		
+		
+		//ccalculates other scores that are not fitness functions 
+		double percentLadders = 0;
+		double percentGround = 0;
+		double percentRopes = 0;
+		double numTreasure = 0; 
+		double numEnemies = 0;
+		for(int i = 0; i < level.size();i++) {
+			for(int j = 0; j < level.get(i).size(); j++) {
+				//calculates the percentage of ladders 
+				if(level.get(j).get(i) == LodeRunnerState.LODE_RUNNER_TILE_LADDER) {
+					percentLadders++;
+				}
+				//calculates the percentage of ground 
+				if(level.get(j).get(i) == LodeRunnerState.LODE_RUNNER_TILE_GROUND || 
+						level.get(j).get(i) == LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE) {
+					percentGround++;
+				}
+				//calculates the percentage of ropes
+				if(level.get(j).get(i) == LodeRunnerState.LODE_RUNNER_TILE_ROPE) {
+					percentRopes++;
+				}
+				//calculates number of treasures
+				if(level.get(j).get(i) == LodeRunnerState.LODE_RUNNER_TILE_GOLD) {
+					numTreasure++;
+				}
+				//calcualtes the number of enemies
+				if(level.get(j).get(i) == LodeRunnerState.LODE_RUNNER_TILE_ENEMY) {
+					numEnemies++;
+				}
+			}
+		}
+		percentLadders = percentLadders/TOTAL_TILES;
+		percentGround = percentGround/TOTAL_TILES;
+		percentRopes = percentRopes/TOTAL_TILES;
+		//calculates the percentage of the level that is connected
+		double percentConnected = connectivityOfLevel/TOTAL_TILES;
+				
 
-		double[] otherScores = new double[] {simpleAStarDistance, connectivityOfLevel};
-
-		//System.out.println(CommonConstants.watch);
+		double[] otherScores = new double[] {simpleAStarDistance, connectivityOfLevel, percentLadders, percentGround, percentRopes, percentConnected, numTreasure, numEnemies};
 		if(CommonConstants.watch) {
 			System.out.println("Simple A* Distance to Farthest Gold " + simpleAStarDistance);
 			System.out.println("Connectivity of Level " + connectivityOfLevel);
+			System.out.println("Percent of Ladders " + percentLadders);
+			System.out.println("Percent of Ground " + percentGround);
+			System.out.println("Percent of Ropes " + percentRopes);
+			System.out.println("Percent of Connectivity in Level " + percentConnected);
+			System.out.println("Number of Treasures " + numTreasure);
+			System.out.println("Number of Enemies " + numEnemies);
 
 			try {
 				BufferedImage visualPath = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
