@@ -144,24 +144,24 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		for(int i = 0; i < level.size();i++) {
 			for(int j = 0; j < level.get(i).size(); j++) {
 				//calculates the percentage of ladders 
-				if(level.get(j).get(i) == LodeRunnerState.LODE_RUNNER_TILE_LADDER) {
+				if(level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_LADDER) {
 					percentLadders++;
 				}
 				//calculates the percentage of ground 
-				if(level.get(j).get(i) == LodeRunnerState.LODE_RUNNER_TILE_GROUND || 
-						level.get(j).get(i) == LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE) {
+				if(level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_GROUND || 
+						level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE) {
 					percentGround++;
 				}
 				//calculates the percentage of ropes
-				if(level.get(j).get(i) == LodeRunnerState.LODE_RUNNER_TILE_ROPE) {
+				if(level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_ROPE) {
 					percentRopes++;
 				}
 				//calculates number of treasures
-				if(level.get(j).get(i) == LodeRunnerState.LODE_RUNNER_TILE_GOLD) {
+				if(level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_GOLD) {
 					numTreasure++;
 				}
 				//calcualtes the number of enemies
-				if(level.get(j).get(i) == LodeRunnerState.LODE_RUNNER_TILE_ENEMY) {
+				if(level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_ENEMY) {
 					numEnemies++;
 				}
 			}
