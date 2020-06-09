@@ -165,6 +165,19 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 
 		if(!inBounds(currentX,currentY+1)) return null;
 		
+		// Affects of jumping based on previous velocity setting happen before JUMP action processed.
+		// Executing in this order is important to allow MegaMan to jump directly to a diagonal without
+		// bumping his head on a ceiling above him first.
+		if(newJumpVelocity > 0) { // Jumping up
+			if(passable(newX,newY-1)||(inBounds(newX,newY-1)&&tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_MOVING_PLATFORM)) {
+				newY--; // Jump up
+				newJumpVelocity--; // decelerate
+			} else {
+				newJumpVelocity = 0; // Can't jump if blocked above
+			}
+		}
+
+		// Potentially deal with JUMP action
 		if(newJumpVelocity == 0) { // Not mid-Jump
 			//int beneath = tileAtPosition(newX,newY+1);
 			if(passable(newX,newY+1)&& tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER) { // Falling
@@ -174,15 +187,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			} 
 		} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)) {
 			return null; // Can't jump mid-jump. Reduces search space.
-		}
-
-		if(newJumpVelocity > 0) { // Jumping up
-			if(passable(newX,newY-1)||(inBounds(newX,newY-1)&&tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_MOVING_PLATFORM)) {
-				newY--; // Jump up
-				newJumpVelocity--; // decelerate
-			} else {
-				newJumpVelocity = 0; // Can't jump if blocked above
-			}
 		}
 
 		// Right movement
