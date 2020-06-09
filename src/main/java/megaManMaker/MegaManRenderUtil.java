@@ -22,15 +22,22 @@ public class MegaManRenderUtil {
 	public static final int MEGA_MAN_TILE_Y = 8; // y length of an individual tile
 	public static List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MEGA_MAN_LEVEL_PATH +"megaman_1_"+1+".txt");
 
-	public static final int MEGA_MAN_COLUMNS = level.get(0).size(); 
-	public static final int MEGA_MAN_ROWS = level.size();
+//	public static final int MEGA_MAN_COLUMNS = level.get(0).size(); 
+//	public static final int MEGA_MAN_ROWS = level.size();
 	public static final int MEGA_MAN_SCREEN_COLUMNS = 16;
 	public static final int MEGA_MAN_SCREEN_ROWS = 14;
 	public static BufferedImage FINAL_RENDER; //gets the final rendered image 
+	//method not constant
+//	public static final int RENDERED_IMAGE_WIDTH = MEGA_MAN_TILE_X*MEGA_MAN_COLUMNS; //width of the final rendered level 
+//	public static final int RENDERED_IMAGE_HEIGHT = MEGA_MAN_TILE_Y*MEGA_MAN_ROWS; //height of the final rendered level 
 	
-	public static final int RENDERED_IMAGE_WIDTH = MEGA_MAN_TILE_X*MEGA_MAN_COLUMNS; //width of the final rendered level 
-	public static final int RENDERED_IMAGE_HEIGHT = MEGA_MAN_TILE_Y*MEGA_MAN_ROWS; //height of the final rendered level 
 	
+	public static int renderedImageWidth(int col) {
+		return MEGA_MAN_TILE_X*col;
+	}
+	public static int renderedImageHeight(int row) {
+		return MEGA_MAN_TILE_X*row;
+	}
 	/**
 	 * Sets up a level to be rendered by converting the VGLC data to JSON and then 
 	 * placing the correct tile in the right place to visualize the level 
@@ -60,11 +67,11 @@ public class MegaManRenderUtil {
 	 * @throws IOException In case the file can't be found 
 	 */
 	public static BufferedImage getBufferedImage(List<List<Integer>> list, BufferedImage[] images) throws IOException {
-		BufferedImage image = createBufferedImage(list, RENDERED_IMAGE_WIDTH, RENDERED_IMAGE_HEIGHT, images); //gets the image of the level 
+		BufferedImage image = createBufferedImage(list, renderedImageWidth(level.get(0).size()), renderedImageHeight(level.size()), images); //gets the image of the level 
 		//this code displays the level in a window 
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
-		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(RENDERED_IMAGE_WIDTH, RENDERED_IMAGE_HEIGHT, Image.SCALE_FAST)));
+		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(renderedImageWidth(level.get(0).size()), renderedImageHeight(level.size()), Image.SCALE_FAST)));
 		panel.add(label);
 		frame.add(panel);
 		frame.pack();

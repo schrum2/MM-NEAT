@@ -182,7 +182,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			} else {
 				newJumpVelocity = 0; // Can't jump if blocked above
 			}
-			// TODO: Add breakable case
 		}
 
 		// Right movement
@@ -353,8 +352,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		//for(Point p : start.orb) { //puts all the gold back 
 			fullLevel.get(getOrb(level).y).set(getOrb(level).x, MEGA_MAN_TILE_ORB);
 		//!!
-		BufferedImage visualPath = MegaManRenderUtil.createBufferedImage(fullLevel, MegaManRenderUtil.MEGA_MAN_COLUMNS*MegaManRenderUtil.MEGA_MAN_TILE_X, 
-				MegaManRenderUtil.MEGA_MAN_ROWS*MegaManRenderUtil.MEGA_MAN_TILE_Y);
+		BufferedImage visualPath = MegaManRenderUtil.createBufferedImage(fullLevel, MegaManRenderUtil.level.get(0).size()*MegaManRenderUtil.MEGA_MAN_TILE_X, 
+				MegaManRenderUtil.level.size()*MegaManRenderUtil.MEGA_MAN_TILE_Y);
 		if(mostRecentVisited != null) {
 			Graphics2D g = (Graphics2D) visualPath.getGraphics();
 			g.setColor(Color.WHITE);
@@ -379,8 +378,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		try {
 			JFrame frame = new JFrame();
 			JPanel panel = new JPanel();
-			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(MegaManRenderUtil.MEGA_MAN_COLUMNS*MegaManRenderUtil.MEGA_MAN_TILE_X, 
-					MegaManRenderUtil.MEGA_MAN_ROWS*MegaManRenderUtil.MEGA_MAN_TILE_Y, Image.SCALE_FAST)));
+			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(MegaManRenderUtil.level.get(0).size()*MegaManRenderUtil.MEGA_MAN_TILE_X, 
+					MegaManRenderUtil.level.size()*MegaManRenderUtil.MEGA_MAN_TILE_Y, Image.SCALE_FAST)));
 			panel.add(label);
 			frame.add(panel);
 			frame.pack();
