@@ -18,8 +18,8 @@ import javax.swing.JPanel;
 public class MegaManRenderUtil {
 	public static final String MEGA_MAN_TILE_PATH = "data/VGLC/MegaMan/Tiles/"; //file path for tiles 
 	public static final String MEGA_MAN_LEVEL_PATH = "data/VGLC/MegaMan/Processed/"; //file path for levels 
-	public static final int MEGA_MAN_TILE_X = 8; // x length of an individual tile 
-	public static final int MEGA_MAN_TILE_Y = 8; // y length of an individual tile
+	public static final int MEGA_MAN_TILE_X = 4; // x length of an individual tile 
+	public static final int MEGA_MAN_TILE_Y = 3; // y length of an individual tile
 	public static List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MEGA_MAN_LEVEL_PATH +"megaman_1_"+2+".txt");
 
 //	public static final int MEGA_MAN_COLUMNS = level.get(0).size(); 
