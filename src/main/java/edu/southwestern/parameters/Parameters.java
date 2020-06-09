@@ -773,6 +773,8 @@ public class Parameters {
 		booleanOptions.add("zeldaCPPN2GANSparseKeys", false, "For CPPN2GAN generation, place one key per locked door (may make dungeons unbeatable depending on placement)");
 		booleanOptions.add("zeldaALlowPuzzleDoorUglyHack", true, "Whether or not the raft is in the first soft-locked room");
 		booleanOptions.add("interactiveLodeRunnerAStarPaths", false, "Shows the solution path for the levels in the level breeder when true");
+		booleanOptions.add("lodeRunnerAllowsSimpleAStarPath", true, "Shows the solution path for the levels in the level breeder when true");
+		booleanOptions.add("lodeRunnerAllowsConnectivity", true, "Shows the solution path for the levels in the level breeder when true");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");

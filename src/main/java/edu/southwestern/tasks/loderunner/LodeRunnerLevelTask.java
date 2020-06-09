@@ -37,15 +37,22 @@ import icecreamyou.LodeRunner.LodeRunner;
  * @param <T>
  */
 public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
-	
-	private static final int numFitnessFunctions = 2; 
+
+	private static int numFitnessFunctions = 0; 
 
 	/**
 	 * Registers all fitness functions that are used, rn only one is used for lode runner 
 	 */
 	public LodeRunnerLevelTask() {
-		MMNEAT.registerFitnessFunction("DistanceToFarthestGold"); 
-		MMNEAT.registerFitnessFunction("amountOfLevelCovered"); //connectivity  
+		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
+			MMNEAT.registerFitnessFunction("simpleAStarDistanceToFarthestGold");
+			numFitnessFunctions++;
+		}
+		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsConnectivity")) {
+			MMNEAT.registerFitnessFunction("connectivityOfLevel"); //connectivity
+			numFitnessFunctions++;
+		}
+
 	}
 
 	/**
@@ -55,7 +62,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	public int numObjectives() {
 		return numFitnessFunctions; //only one fitness function right now 
 	}
-	
+
 	/**
 	 * Different level generators use the genotype to generate a level in different ways
 	 * @param individual Genotype 
@@ -77,7 +84,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		double psuedoRandomSeed = getRandomSeedForSpawnPoint(individual);
-		
+
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions);
 		List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromGenotype(individual);
 		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
@@ -92,33 +99,40 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		//calculates the Distance to the farthest gold as a fitness fucntion 
 		try { 
 			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter( "aStarSearchBudget"));
-			if(actionSequence == null) {
-				fitnesses.add(-1.0);
-			} else {
-				simpleAStarDistance = 1.0*actionSequence.size();
-				fitnesses.add(simpleAStarDistance);
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
+				if(actionSequence == null) {
+					fitnesses.add(-1.0);
+				} else {
+					simpleAStarDistance = 1.0*actionSequence.size();
+					fitnesses.add(simpleAStarDistance);
+				}
 			}
 		} catch(IllegalStateException e) {
-			fitnesses.add(-1.0);
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) 
+				fitnesses.add(-1.0);
 			System.out.println("failed search");
 			//e.printStackTrace();
 		}
 		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
-		
+
 		//calculates the amount of the level that was covered in the search, connectivity.
 		HashSet<Point> visitedPoints = new HashSet<>();
-		double amountOfLevelCovered = -1;
+		double connectivityOfLevel = -1;
 		for(LodeRunnerState s : mostRecentVisited) {
 			visitedPoints.add(new Point(s.currentX,s.currentY));
 		}
-		amountOfLevelCovered = 1.0*visitedPoints.size();
-		fitnesses.add(amountOfLevelCovered);
-		
+		connectivityOfLevel = 1.0*visitedPoints.size();
+		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsConnectivity")) {
+			fitnesses.add(connectivityOfLevel);
+		}
+
+		double[] otherScores = new double[] {simpleAStarDistance, connectivityOfLevel};
+
 		//System.out.println(CommonConstants.watch);
 		if(CommonConstants.watch) {
-			System.out.println("Distance to Farthest Gold " + simpleAStarDistance);
-			System.out.println("Amount of Level Covered " + amountOfLevelCovered);
-			
+			System.out.println("Simple A* Distance to Farthest Gold " + simpleAStarDistance);
+			System.out.println("Connectivity of Level " + connectivityOfLevel);
+
 			try {
 				BufferedImage visualPath = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 				JFrame frame = new JFrame();
@@ -138,7 +152,6 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			System.out.println("Entered \""+input+"\"");
 			//if the user entered P or p, then run
 			if(input.toLowerCase().equals("p")) {
-//				level.get(start.currentX).set(start.currentY, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						new LodeRunner(level);
@@ -148,8 +161,8 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				MiscUtil.waitForReadStringAndEnterKeyPress();
 			}
 		}
-		
- 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), new double[0]);
+
+		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
 	}
 
 	/**
