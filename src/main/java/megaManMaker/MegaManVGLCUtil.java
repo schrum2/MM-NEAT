@@ -541,6 +541,8 @@ public class MegaManVGLCUtil {
 			return 1;
 		case 'O': //hovering platform (shooter)
 			return 5;
+		case '~':
+			return 10;
 		default:
 			return 0;
 		}

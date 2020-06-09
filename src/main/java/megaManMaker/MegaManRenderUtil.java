@@ -17,10 +17,10 @@ import javax.swing.JPanel;
 
 public class MegaManRenderUtil {
 	public static final String MEGA_MAN_TILE_PATH = "data/VGLC/MegaMan/Tiles/"; //file path for tiles 
-	public static final String MEGA_MAN_LEVEL_PATH = "data/VGLC/MegaMan/Processed/"; //file path for levels 
-	public static final int MEGA_MAN_TILE_X = 4; // x length of an individual tile 
-	public static final int MEGA_MAN_TILE_Y = 3; // y length of an individual tile
-	public static List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MEGA_MAN_LEVEL_PATH +"megaman_1_"+2+".txt");
+	public static final String MEGA_MAN_LEVEL_PATH = "data/VGLC/MegaMan/Enhanced/"; //file path for levels 
+	public static final int MEGA_MAN_TILE_X = 10; // x length of an individual tile 
+	public static final int MEGA_MAN_TILE_Y = 10; // y length of an individual tile
+	public static List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MEGA_MAN_LEVEL_PATH +"megaman_1_"+5+".txt");
 
 //	public static final int MEGA_MAN_COLUMNS = level.get(0).size(); 
 //	public static final int MEGA_MAN_ROWS = level.size();
@@ -126,7 +126,7 @@ public class MegaManRenderUtil {
 	 */
 	public static BufferedImage[] loadImagesForASTAR(String filePath) throws IOException {
 		// TODO! Fix magic numbers!
-		BufferedImage[] tileList = new BufferedImage[10];
+		BufferedImage[] tileList = new BufferedImage[11];
 		File tile = new File(filePath+"Empty.PNG");
 		BufferedImage emptyTile = ImageIO.read(tile);
 		tileList[0] = emptyTile;
@@ -136,19 +136,19 @@ public class MegaManRenderUtil {
 		tile = new File(filePath+"Ladder.PNG");
 		BufferedImage ladderTile = ImageIO.read(tile);
 		tileList[2] = ladderTile;
-		tile = new File(filePath+"Null.PNG");
+		tile = new File(filePath+"Hazard.PNG");
 		BufferedImage HazardTile = ImageIO.read(tile);
 		tileList[3] = HazardTile;
 		tile = new File(filePath+"Empty.PNG");
 		BufferedImage Breakable = ImageIO.read(tile);
 		tileList[4] = Breakable;
-		tile = new File(filePath+"Solid.PNG");
+		tile = new File(filePath+"MovingPlatform.PNG");
 		BufferedImage movingPlatform = ImageIO.read(tile);
 		tileList[5] = movingPlatform;
 		tile = new File(filePath+"Solid.png");
 		BufferedImage Cannon = ImageIO.read(tile);
 		tileList[6] = Cannon;
-		tile = new File(filePath+"Orb.png");
+		tile = new File(filePath+"Orb1.png");
 		BufferedImage Orb = ImageIO.read(tile);
 		tileList[7] = Orb;
 		tile = new File(filePath+"Spawn.png");
@@ -157,6 +157,9 @@ public class MegaManRenderUtil {
 		tile = new File(filePath+"Null.png");
 		BufferedImage Null = ImageIO.read(tile);
 		tileList[9] = Null;
+		tile = new File(filePath+"Water.png");
+		BufferedImage water = ImageIO.read(tile);
+		tileList[10] = water;
 		return tileList;
 	}
 }
