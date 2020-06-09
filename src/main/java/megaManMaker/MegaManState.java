@@ -116,6 +116,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				tile = level.get(i).get(j);
 				if(tile == MEGA_MAN_TILE_ORB) { 
 					orb.setLocation(j,i);
+					System.out.println(orb);
 					break;
 				}
 
@@ -221,7 +222,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		}
 		MegaManState result = new MegaManState(level, newJumpVelocity, orb, newX, newY);
 		//renderLevelAndPause((MegaManState) result);
-
+		//System.out.println(newX+", "+newY);
 		return result;
 	}
 
@@ -279,8 +280,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			if(s.getSuccessor(new MegaManAction(move)) != null) {
 				vaildActions.add(new MegaManAction(move));
 			}
-			MegaManAction a = new MegaManAction(move);
-			System.out.println(s+"\t"+move+"\t"+s.getSuccessor(a));
+//			MegaManAction a = new MegaManAction(move);
+//			System.out.println(s+"\t"+move+"\t"+s.getSuccessor(a));
 		}
 		return vaildActions;
 		
@@ -391,6 +392,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
 		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt"); //converts to JSON
+		MegaManVGLCUtil.printLevel(level);
 		MegaManState start = new MegaManState(level);
 		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
 		HashSet<MegaManState> mostRecentVisited = null;
