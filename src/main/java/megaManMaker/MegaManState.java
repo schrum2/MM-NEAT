@@ -60,7 +60,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	
 	
 	public  static class MegaManAction implements Action{
-		public enum MOVE {RIGHT,LEFT,UP,DOWN, JUMP}; //, DIG_RIGHT, DIG_LEFT} // Too computationally expensive to model digging as actions that change the state
+		public enum MOVE {RIGHT,LEFT,UP,DOWN, JUMP};
 		private MOVE movement;
 		/**
 		 * Constructor for a Mega Man action
@@ -116,7 +116,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				tile = level.get(i).get(j);
 				if(tile == MEGA_MAN_TILE_ORB) { 
 					orb.setLocation(j,i);
-					System.out.println(orb);
+					//System.out.println(orb);
 					break;
 				}
 
@@ -176,7 +176,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		}
 
 		if(newJumpVelocity > 0) { // Jumping up
-			if(passable(newX,newY-1)||tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_MOVING_PLATFORM) {
+			if(passable(newX,newY-1)||tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_MOVING_PLATFORM) {
 				newY--; // Jump up
 				newJumpVelocity--; // decelerate
 			} else {
@@ -212,7 +212,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		}
 		//down movement(on ladder)
 		if(a.getMove().equals(MegaManAction.MOVE.DOWN)) {
-			if(inBounds(newX, newY+1) && tileAtPosition(newX,newY+1) != MEGA_MAN_TILE_GROUND) 
+			if(inBounds(newX, newY+1) && tileAtPosition(newX,newY+1) != MEGA_MAN_TILE_GROUND&&tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_LADDER) 
 					newY++;
 			else return null;
 		}
@@ -235,9 +235,9 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		return false; 
 	}
 
-	private boolean inBounds(int currentX2, int i) {
+	private boolean inBounds(int x, int y) {
 		// TODO Auto-generated method stub
-		return currentX2>=0&&i>=0&&i<level.size()&&currentX2<level.get(i).size()&&level.get(i).get(currentX2)!=9;
+		return x>=0&&y>=0&&y<level.size()&&x<level.get(y).size()&&level.get(y).get(x)!=9;
 	}
 	
 	/**

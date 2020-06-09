@@ -38,9 +38,9 @@ public class MegaManRenderUtil {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		List<List<Integer>> list = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MEGA_MAN_LEVEL_PATH + "megaman_1_"+1+".txt");
+//		List<List<Integer>> list = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MEGA_MAN_LEVEL_PATH + "megaman_1_"+1+".txt");
 		BufferedImage[] images = loadImagesForASTAR(MEGA_MAN_TILE_PATH); //Initializes the array that hold the tile images 
-		FINAL_RENDER = getBufferedImage(list, images); //puts the final rendered level into a buffered image
+		FINAL_RENDER = getBufferedImage(level, images); //puts the final rendered level into a buffered image
 	}
 
 	/**
