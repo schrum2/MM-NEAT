@@ -34,7 +34,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public static final int MEGA_MAN_TILE_ORB = 7;
 	public static final int MEGA_MAN_TILE_NULL = 9;
 	public static final int MEGA_MAN_TILE_SPAWN = 8;
-	
+	public static final int MEGA_MAN_TILE_WATER = 10;
 	
 	private List<List<Integer>> level;
 	private Point orb; 
@@ -236,7 +236,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 //		int beneath;
 //		if(inBounds(x,y+1)) beneath = tileAtPosition(x,y+1);
 //		else beneath = tile;
-		if((	tile==MEGA_MAN_TILE_EMPTY ||tile==MEGA_MAN_TILE_LADDER||tile==MEGA_MAN_TILE_ORB||tile==MEGA_MAN_TILE_BREAKABLE)) {
+		if((	tile==MEGA_MAN_TILE_EMPTY ||tile==MEGA_MAN_TILE_LADDER||tile==MEGA_MAN_TILE_ORB||tile==MEGA_MAN_TILE_BREAKABLE||tile==MEGA_MAN_TILE_WATER)) {
 			return true;
 		}
 		return false; 
@@ -407,7 +407,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	}
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
-		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+3+".txt"); //converts to JSON
+		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+6+".txt"); //converts to JSON
 		MegaManVGLCUtil.printLevel(level);
 		MegaManState start = new MegaManState(level);
 		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
