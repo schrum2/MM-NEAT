@@ -26,7 +26,7 @@ public class LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels implem
 			for(int i = 0; i < BINS_PER_DIMENSION; i++) {//Connected
 				for(int j = 0; j < BINS_PER_DIMENSION; j++) { //ground
 					for(int k = 0; k < BINS_PER_DIMENSION; k++) { //ladders
-						labels.add("Connected["+i+"-"+(i+1)+"0]Ground["+j+"-"+(j+1)+"0]Ladders["+k+"-"+(k+1)+"0]");
+						labels.add("Connected["+i+"0-"+(i+1)+"0]Ground["+j+"0-"+(j+1)+"0]Ladders["+k+"0-"+(k+1)+"0]");
 					}
 				}
 			}

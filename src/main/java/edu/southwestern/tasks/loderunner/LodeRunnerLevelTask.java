@@ -263,9 +263,10 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				levelImage = LodeRunnerRenderUtil.createBufferedImage(level, LodeRunnerRenderUtil.RENDERED_IMAGE_WIDTH, LodeRunnerRenderUtil.RENDERED_IMAGE_HEIGHT);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				System.out.println("Could not get image");
 			} 
-			setBinsAndSaveLevelImages(individual, levelImage, levelSolution, archiveArray, dimConnected, dimConnected, dimLadders, BINS_PER_DIMENSION, binScore);
+			setBinsAndSaveLevelImages(individual, levelImage, levelSolution, archiveArray, dimConnected, dimGround, dimLadders, BINS_PER_DIMENSION, binScore);
 		}
 
 
@@ -276,9 +277,12 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	private void setBinsAndSaveLevelImages(Genotype<T> individual, BufferedImage levelImage,
 			BufferedImage levelSolution, double[] archiveArray, int dimConnected, int dimGround, int dimLadders,
 			final int BINS_PER_DIMENSION, double binScore) {
-		int binIndex = (dimConnected*BINS_PER_DIMENSION + dimConnected)*BINS_PER_DIMENSION + dimLadders;
+		int binIndex = (dimConnected*BINS_PER_DIMENSION + dimGround)*BINS_PER_DIMENSION + dimLadders;
 		Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
 		archiveArray[binIndex] = binScore; 
+		
+		System.out.println("["+dimConnected+"]["+dimGround+"]["+dimLadders+"] = "+binScore);
+		
 		behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 		//saving images in bins 
 		if(CommonConstants.netio) {
