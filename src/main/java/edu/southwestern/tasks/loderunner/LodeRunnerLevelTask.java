@@ -260,7 +260,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			BufferedImage levelImage = null;
 			try {
 				levelSolution = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
-				levelImage = LodeRunnerRenderUtil.getBufferedImage(level);
+				levelImage = LodeRunnerRenderUtil.createBufferedImage(level, LodeRunnerRenderUtil.RENDERED_IMAGE_WIDTH, LodeRunnerRenderUtil.RENDERED_IMAGE_HEIGHT);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -299,7 +299,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				String fileNameSolution = "Direct-SolutionRender-" + String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
 				String fullNameSolution = binPath + "_" +fileNameSolution;
 				System.out.println(fullNameSolution);
-				GraphicsUtil.saveImage(levelImage, fullNameSolution);// saves the rendered level without the solution path
+				GraphicsUtil.saveImage(levelSolution, fullNameSolution);// saves the rendered level without the solution path
 			}
 		}
 	}
