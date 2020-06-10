@@ -14,6 +14,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
+
 
 /**
  * This class Renders a level of Lode Runner into a window  
@@ -28,6 +30,9 @@ public class LodeRunnerRenderUtil {
 	public static final int LODE_RUNNER_COLUMNS = 32; // This is actually the room height from the original game, since VGLC rotates rooms
 	public static final int LODE_RUNNER_ROWS = 22; // Equivalent to width in original game
 	public static BufferedImage FINAL_RENDER; //gets the final rendered image 
+	
+	// These are images of the individual tiles that make up Lode Runner levels. Only need to load once.
+	private static BufferedImage[] tileList = null;
 	
 	public static final int RENDERED_IMAGE_WIDTH = LODE_RUNNER_TILE_X*LODE_RUNNER_COLUMNS; //width of the final rendered level 
 	public static final int RENDERED_IMAGE_HEIGHT = LODE_RUNNER_TILE_Y*LODE_RUNNER_ROWS; //height of the final rendered level 
@@ -162,32 +167,33 @@ public class LodeRunnerRenderUtil {
 	 * @throws IOException In case the file can't be found
 	 */
 	public static BufferedImage[] loadImagesNoSpawnTwoGround(String filePath) throws IOException {
-		// TODO! Fix magic numbers!
-		BufferedImage[] tileList = new BufferedImage[8];
-		File tile = new File(filePath+"empty.png");
-		BufferedImage emptyTile = ImageIO.read(tile);
-		tileList[0] = emptyTile;
-		tile = new File(filePath+"gold.png");
-		BufferedImage goldTile = ImageIO.read(tile);
-		tileList[1] = goldTile;
-		tile = new File(filePath+"enemy.png");
-		BufferedImage enemyTile = ImageIO.read(tile);
-		tileList[2] = enemyTile;
-		tile = new File(filePath+"diggableGround.png");
-		BufferedImage diggableGroundTile = ImageIO.read(tile);
-		tileList[3] = diggableGroundTile;
-		tile = new File(filePath+"ladder.png");
-		BufferedImage ladderTile = ImageIO.read(tile);
-		tileList[4] = ladderTile;
-		tile = new File(filePath+"rope.png");
-		BufferedImage ropeTile = ImageIO.read(tile);
-		tileList[5] = ropeTile;
-		tile = new File(filePath+"ground.png");
-		BufferedImage groundTile = ImageIO.read(tile);
-		tileList[6] = groundTile;
-		tile = new File(filePath+"spawn.png");
-		BufferedImage spawnTile = ImageIO.read(tile);
-		tileList[7] = spawnTile;
+		if(tileList == null) {
+			tileList = new BufferedImage[8];
+			File tile = new File(filePath+"empty.png");
+			BufferedImage emptyTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_EMPTY] = emptyTile;
+			tile = new File(filePath+"gold.png");
+			BufferedImage goldTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_GOLD] = goldTile;
+			tile = new File(filePath+"enemy.png");
+			BufferedImage enemyTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_ENEMY] = enemyTile;
+			tile = new File(filePath+"diggableGround.png");
+			BufferedImage diggableGroundTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE] = diggableGroundTile;
+			tile = new File(filePath+"ladder.png");
+			BufferedImage ladderTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_LADDER] = ladderTile;
+			tile = new File(filePath+"rope.png");
+			BufferedImage ropeTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_ROPE] = ropeTile;
+			tile = new File(filePath+"ground.png");
+			BufferedImage groundTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_GROUND] = groundTile;
+			tile = new File(filePath+"spawn.png");
+			BufferedImage spawnTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_SPAWN] = spawnTile;
+		}
 		return tileList;
 	}
 	
