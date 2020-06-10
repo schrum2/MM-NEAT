@@ -242,9 +242,9 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			double[] archiveArray = null;
 			final int BINS_PER_DIMENSION = LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels.BINS_PER_DIMENSION;
 			int dimConnected, dimGround, dimLadders;
-			int connectedIndex = Math.min((int)percentConnected*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1);
-			int groundIndex = Math.min((int)percentGround*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1);
-			int laddersIndex = Math.min((int)percentLadders*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1);
+			int connectedIndex = (int)Math.min(percentConnected*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1);
+			int groundIndex = (int)Math.min(percentGround*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1);
+			int laddersIndex = (int)Math.min(percentLadders*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1);
 			double binScore = simpleAStarDistance;
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels) {
 				dimConnected = connectedIndex;
@@ -280,7 +280,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
 		archiveArray[binIndex] = binScore; 
 		
-		System.out.println("["+dimConnected+"]["+dimGround+"]["+dimLadders+"] = "+binScore);
+		//System.out.println("["+dimConnected+"]["+dimGround+"]["+dimLadders+"] = "+binScore);
 		
 		behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 		//saving images in bins 
@@ -293,13 +293,13 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			//if that index is empty or the binScores is greater than what was there before
 			if(elite==null || binScore > elite.behaviorVector.get(binIndex)) {
 				//formats to be 7 digits before the decimal, and 5 digits after, %7.5f
-				//only doing direct right now, but will need to add CPPN label in addtion, like in MarioLevelTask, if we start to use a CPPN
-				String fileNameImage = "Direct-LevelRender-" + String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
+				//only doing direct right now, but will need to add CPPN label in addition, like in MarioLevelTask, if we start to use a CPPN
+				String fileNameImage =  "_Direct-"+String.format("%7.5f", binScore) +  individual.getId() + "-LevelRender" +".png";
 				String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
 				String fullNameImage = binPath + "_" + fileNameImage;
 				System.out.println(fullNameImage);
 				GraphicsUtil.saveImage(levelImage, fullNameImage);// saves the rendered level without the solution path
-				String fileNameSolution = "Direct-SolutionRender-" + String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
+				String fileNameSolution = "_Direct-"+String.format("%7.5f", binScore) + individual.getId() + "-SolutionRender" +".png";
 				String fullNameSolution = binPath + "_" +fileNameSolution;
 				System.out.println(fullNameSolution);
 				GraphicsUtil.saveImage(levelSolution, fullNameSolution);// saves the rendered level without the solution path
