@@ -439,12 +439,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		try {
 			List<List<Integer>> copy = ListUtil.deepCopyListOfLists(theState.level );
 			copy.get(theState.currentY).set(theState.currentX, MEGA_MAN_TILE_SPAWN); 
-			//for(Point t : theState.goldLeft) {
 			copy.get(orb.y).set(orb.x, MEGA_MAN_TILE_ORB); 
-			//}
-//			for(Point dug : theState.dugHoles) {
-//				copy.get(dug.y).set(dug.x, LODE_RUNNER_TILE_EMPTY); 
-//			}
+
 			MegaManRenderUtil.getBufferedImage(copy);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

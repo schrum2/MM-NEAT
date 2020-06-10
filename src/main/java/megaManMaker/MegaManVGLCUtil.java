@@ -539,7 +539,7 @@ public class MegaManVGLCUtil {
 			return 8;
 		case 'A': //appearing/disappearing block
 			return 1;
-		case 'O': //hovering platform (shooter)
+		case 'p': //hovering platform (shooter)
 			return 5;
 		case '~':
 			return 10;

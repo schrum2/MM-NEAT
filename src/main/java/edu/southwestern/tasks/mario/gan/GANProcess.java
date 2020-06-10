@@ -10,6 +10,8 @@ import java.lang.ProcessBuilder.Redirect;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANUtil;
 import edu.southwestern.util.PythonUtil;
+import megaManMaker.MegaManGANUtil;
+
 // For the three possible tile counts in Zelda
 import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.*;
 
@@ -30,12 +32,13 @@ public class GANProcess extends Comm {
 	public static final int MARIO_OUT_HEIGHT = 14;
 	public static final int LODE_RUNNER_OUT_WIDTH = 32;
 	public static final int LODE_RUNNER_OUT_HEIGHT = 22;
-	
+	public static final int MEGA_MAN_OUT_WIDTH = 16;
+	public static final int MEGA_MAN_OUT_HEIGHT = 14;
 	////////// These are static variables representing the active GAN process (only one) ////////////////
 	
 	private static GANProcess ganProcess = null;
 
-	public enum GAN_TYPE {MARIO, ZELDA, LODE_RUNNER};
+	public enum GAN_TYPE {MARIO, ZELDA, LODE_RUNNER, MEGA_MAN};
 	
 	public static GAN_TYPE type = null;
 	
@@ -86,7 +89,15 @@ public class GANProcess extends Comm {
 						Parameters.parameters.stringParameter("LodeRunnerGANModel").startsWith("LodeRunnerEpochOneGround") ? LodeRunnerGANUtil.LODE_RUNNER_ONE_GROUND_TILE_NUMBER : LodeRunnerGANUtil.LODE_RUNNER_ALL_GROUND_TILE_NUMBER,
 						LODE_RUNNER_OUT_WIDTH, LODE_RUNNER_OUT_HEIGHT);
 				break;
+			case MEGA_MAN:
+				ganProcess = new GANProcess(PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANModel"), 
+						Parameters.parameters.integerParameter("GANInputSize"), 
+						Parameters.parameters.stringParameter("MegaManGANModel").startsWith("MegaManAllLevel") ? MegaManGANUtil.MEGA_MAN_ALL_TERRAIN : MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES,
+						MEGA_MAN_OUT_WIDTH, MEGA_MAN_OUT_HEIGHT);
+				break;
 			}
+		
+		
 			ganProcess.start();
 			// consume all start-up messages that are not data responses
 			String response = "";
