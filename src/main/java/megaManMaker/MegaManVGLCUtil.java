@@ -615,8 +615,8 @@ public class MegaManVGLCUtil {
 			return 16;
 		case '~': //water
 			return 19;
-		case 'p': //hovering platform (shooter)
-			return 20;
+//		case 'p': //hovering platform (shooter)
+//			return 20;
 		case 'a': //met enemy
 			return 50; 
 		case 'b': //fly boy enemy
