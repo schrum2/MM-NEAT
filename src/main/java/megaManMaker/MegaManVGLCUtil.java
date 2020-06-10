@@ -118,13 +118,13 @@ public class MegaManVGLCUtil {
 			for(int y = level.size()-1;y>=0;y--) {
 				List<List<Integer>> screen = new ArrayList<>();			
 
-				if((y-intYint>=0&&(x==0&&level.get(y).get(x)!=17||(x!=0&&level.get(y).get(x-1)==17&&level.get(y-intYint+1).get(x-1)==17))&&
+				if((y-intYint>=0&&(x==0&&level.get(y).get(x)!=7||(x!=0&&level.get(y).get(x-1)==7&&level.get(y-intYint+1).get(x-1)==7))&&
 						(x+intXint==level.get(0).size()||
-						(x+intXint<level.get(0).size()&&level.get(y).get(x+intXint)==17&& level.get(y-intYint+1).get(x+intXint)==17))&& //could be x+intXint+1
+						(x+intXint<level.get(0).size()&&level.get(y).get(x+intXint)==7&& level.get(y-intYint+1).get(x+intXint)==7))&& //could be x+intXint+1
 						!visited.contains(new Point(x,y))&&
-						level.get(y).get(x)!=17&&
-						level.get(y).get(x+intXint-1)!=17&&level.get(y-intYint).get(x)!=17&&
-						level.get(y-intYint+1).get(x+intXint-1)!=17)) { //check four corners (with xcoord+1 on each) if
+						level.get(y).get(x)!=7&&
+						level.get(y).get(x+intXint-1)!=7&&level.get(y-intYint).get(x)!=7&&
+						level.get(y-intYint+1).get(x+intXint-1)!=7)) { //check four corners (with xcoord+1 on each) if
 							//either left point is null AND either right point is null, then save the screen
 					System.out.println("  1 ");
 					
@@ -629,9 +629,7 @@ public class MegaManVGLCUtil {
 		}
 		
 	}
-	
-	
-	
+
 	private static int convertMegamanTilesToIntSimple(char tile) {
 		switch(tile) {
 		case '-': //empty, passable
