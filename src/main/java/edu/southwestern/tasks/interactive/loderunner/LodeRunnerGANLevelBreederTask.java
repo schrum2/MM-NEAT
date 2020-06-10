@@ -1,6 +1,10 @@
 package edu.southwestern.tasks.interactive.loderunner;
 
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,16 +13,27 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
+//import java.util.Set;
+
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANUtil;
 import edu.southwestern.tasks.loderunner.LodeRunnerRenderUtil;
+import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
+import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.search.AStarSearch;
+import edu.southwestern.util.search.Search;
+import icecreamyou.LodeRunner.LodeRunner;
 
 /**
  * Interactively evolves Lode Runner levels from the latent space of a GAN network.
@@ -33,6 +48,46 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	 */
 	public LodeRunnerGANLevelBreederTask() throws IllegalAccessException {
 		super();
+		//adds a check box to show solution path or not, starts with them not showing 
+		JPanel effectsCheckboxes = new JPanel();
+		JCheckBox showSolutionPath = new JCheckBox("ShowSolutionPath", Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths"));
+		showSolutionPath.setName("interactiveLodeRunnerAStarPaths");
+		showSolutionPath.getAccessibleContext();
+		showSolutionPath.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("interactiveLodeRunnerAStarPaths");
+				resetButtons(true);
+			}
+		});
+		effectsCheckboxes.add(showSolutionPath);
+		top.add(effectsCheckboxes);
+		
+		JPanel AStarBudget = new JPanel();
+		JLabel AStarLabel = new JLabel("UpdateAStarBudget");
+		JTextField updateAStarBudget = new JTextField(10);
+		updateAStarBudget.setText(String.valueOf(Parameters.parameters.integerParameter("aStarSearchBudget")));
+		updateAStarBudget.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+					String budget = updateAStarBudget.getText();
+					if(!budget.matches("\\d+")) {
+						return;
+					}
+					int value = Integer.parseInt(budget);
+					Parameters.parameters.setInteger("aStarSearchBudget", value);
+					resetButtons(true);
+				}
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {}
+			@Override
+			public void keyTyped(KeyEvent e) {}
+		});
+		AStarBudget.add(AStarLabel);
+		AStarBudget.add(updateAStarBudget);
+		top.add(AStarBudget);
 	}
 
 	/**
@@ -69,7 +124,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	public Pair<Integer, Integer> resetAndReLaunchGAN(String model) {
 		return staticResetAndReLaunchGAN(model);
 	}
-	
+
 	/**
 	 * This method allows users to pick which model that they want to use in the Level breeder 
 	 * @param model The name of the file holding the model 
@@ -107,16 +162,21 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	 * Allows users to play the levels in the level breeder with the IceCreamYou code to play lode runner  
 	 */
 	@Override
-	public void playLevel(ArrayList<Double> phenotype) {
-		//TODO: This should add a file to the game and allow the player to play it. 
+	public void playLevel(ArrayList<Double> phenotype) { 
 		//probably need a few helper methods, one to save to the right place, maybe we need to add a class/method that defaults to the level we pick from the 
 		//level breeder instead of the first level of the campaign that IceCreamYou has by default.  
-		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
-		List<List<Integer>> level = levelListRepresentation(doubleArray);
-		//save file in correct directory
-		
-		//launch game
-		//delete file 
+		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype); 
+		List<List<Integer>> level = levelListRepresentation(doubleArray); 
+		//fills this list with all of the empty points in the level, one of these will become the spawn point
+		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level); 
+		Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
+		LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand); //sets a consistent and random spawn point 
+		//opens play window to play a level from the LevelBreeder 
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				new LodeRunner(level);
+			}
+		});
 	}
 
 	/**
@@ -145,19 +205,44 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		try {
 			//if we are using the mapping with 7 tiles, other wise use 6 tiles 
 			// ACTUALLY: We can have extra unused tiles in the image array. Easier to have one method that keeps them all around
-//			if(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")){
+			//			if(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")){
+			if(Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths")) {
+				List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
+				Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
+				LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
+				LodeRunnerState start = new LodeRunnerState(level);
+				Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
+				HashSet<LodeRunnerState> mostRecentVisited = null;
+				ArrayList<LodeRunnerAction> actionSequence = null;
+				try {
+					//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+					//represented by red x's in the visualization 
+					actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter( "aStarSearchBudget"));
+				} catch(IllegalStateException e) {
+					System.out.println("A* exceeded computation budget");
+					//e.printStackTrace();
+				}
+				//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
+				mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
+				try {
+					//visualizes the points visited with red and whit x's
+					image = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+				} catch (IOException e) {
+					System.out.println("Image could not be displayed");
+					//e.printStackTrace();
+				}
+			}
+			else {
 				images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //7 different tiles to display 
-//			}
-//			else {
-//				images = LodeRunnerRenderUtil.loadImagesNoSpawn(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //6 different tiles to display 
-//			}
-			image = LodeRunnerRenderUtil.createBufferedImage(level,width1,height1, images);
+				image = LodeRunnerRenderUtil.createBufferedImage(level,width1,height1, images);
+			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("Image could not be displayed");
+			//e.printStackTrace();
 		}
 		return image;
 	}
-	
+
 	/**
 	 * Launches the level breeder, sets GAN input size to 20
 	 * @param args

@@ -58,10 +58,12 @@ public class Player extends Actor {
 	private boolean alive = true;
 	
 	public Player(int x, int y) {
-		super(x, y, GamePanel.UNIT_WIDTH, GamePanel.UNIT_HEIGHT);
+		// Schrum: Subtract 2 to make the player slightly smaller, and enable him to slip through all dug holes
+		super(x, y, GamePanel.UNIT_WIDTH-2, GamePanel.UNIT_HEIGHT);
 	}
 	public Player(int x, int y, int player) {
-		super(x, y, GamePanel.UNIT_WIDTH, GamePanel.UNIT_HEIGHT);
+		// Schrum: Subtract 2 to make the player slightly smaller, and enable him to slip through all dug holes
+		super(x, y, GamePanel.UNIT_WIDTH-2, GamePanel.UNIT_HEIGHT);
 		this.player = player;
 	}
 	

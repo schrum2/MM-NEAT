@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.LodeRunnerRenderUtil;
 import edu.southwestern.tasks.loderunner.LodeRunnerVGLCUtil;
 import edu.southwestern.util.MiscUtil;
@@ -27,7 +28,7 @@ import edu.southwestern.util.search.Search;
 import edu.southwestern.util.search.State;
 
 /**
- * 
+ * Runs an A* algorithm on a lode runner level to see if it is beatable 
  * @author kdste
  *
  */
@@ -116,6 +117,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		}
 	}
 
+	/**
+	 * Runs an A* algorithm on the level specified and then displays a buffered image that shows the solution path if there is one 
+	 * @param args
+	 */
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 2.txt"); //converts to JSON
@@ -126,7 +131,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		try {
 			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
 			//represented by red x's in the visualization 
-			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 1000000);
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter( "aStarSearchBudget"));
 		} catch(Exception e) {
 			System.out.println("failed search");
 			e.printStackTrace();
@@ -137,7 +142,19 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		System.out.println("actionSequence: " + actionSequence);
 		try {
 			//visualizes the points visited with red and whit x's
-			vizualizePath(level,mostRecentVisited,actionSequence,start);
+			BufferedImage visualPath = vizualizePath(level,mostRecentVisited,actionSequence,start);
+			try { //displays window with the rendered level and the solution path/visited states
+				JFrame frame = new JFrame();
+				JPanel panel = new JPanel();
+				JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+						LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
+				panel.add(label);
+				frame.add(panel);
+				frame.pack();
+				frame.setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -152,6 +169,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	private static HashSet<Point> fillGold(List<List<Integer>> level) {
 		HashSet<Point> gold = new HashSet<>();
 		int tile; 
+		//loop through level adding points where it finds gold 
 		for(int i = 0; i < level.size(); i++) {
 			for(int j = 0; j < level.get(i).size(); j++) {
 				tile = level.get(i).get(j);
@@ -252,13 +270,14 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param start Start state  
 	 * @throws IOException
 	 */
-	public static void vizualizePath(List<List<Integer>> level, HashSet<LodeRunnerState> mostRecentVisited, 
+	public static BufferedImage vizualizePath(List<List<Integer>> level, HashSet<LodeRunnerState> mostRecentVisited, 
 			ArrayList<LodeRunnerAction> actionSequence, LodeRunnerState start) throws IOException {
-		List<List<Integer>> fullLevel = ListUtil.deepCopyListOfLists(level);
+		List<List<Integer>> fullLevel = ListUtil.deepCopyListOfLists(level); //copies level to draw solution path over it 
 		fullLevel.get(start.currentY).set(start.currentX, LODE_RUNNER_TILE_SPAWN);// puts the spawn back into the visualization
 		for(Point p : start.goldLeft) { //puts all the gold back 
 			fullLevel.get(p.y).set(p.x, LODE_RUNNER_TILE_GOLD);
 		}
+		//creates a buffered image from the level to be displayed 
 		BufferedImage visualPath = LodeRunnerRenderUtil.createBufferedImage(fullLevel, LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
 				LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
 		if(mostRecentVisited != null) {
@@ -282,18 +301,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				}
 			}
 		}
-		try {
-			JFrame frame = new JFrame();
-			JPanel panel = new JPanel();
-			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
-					LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
-			panel.add(label);
-			frame.add(panel);
-			frame.pack();
-			frame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		return visualPath;
 	}
 
 	/**
@@ -343,7 +351,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
-			if(inBounds(newX, newY-1) && tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) 
+			if(		passable(newX, newY-1) && // Do not allow moving up ladders into solid tiles
+					tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) // Be on a ladder to climb
 				newY--;
 			else return null; 
 		}
@@ -389,17 +398,6 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 //		}
 		return result;
 	}
-	
-	/**
-	 * If the tile at the given location is diggable ground
-	 * @param x
-	 * @param y
-	 * @return
-	 */
-//	private boolean diggable(int x, int y) {
-//		int tile = tileAtPosition(x,y);
-//		return tile == LODE_RUNNER_TILE_DIGGABLE;
-//	}
 
 	/**
 	 * Gets a list of all of the lode runner actions
@@ -518,6 +516,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		return "Size:" + goldLeft.size() + " (" + currentX + ", " + currentY + ")"; // + " DugCount:" +dugHoles.size();
 	}
 
+	/**
+	 * Helps to avoid excessive back tracking 
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -529,6 +530,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		return result;
 	}
 
+	/**
+	 * Helps to avoid excessive back tracking 
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
