@@ -4,12 +4,23 @@ import java.util.List;
 
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 
 
 public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask<T> {
 
 	public LodeRunnerLevelSequenceTask() {
 		super();
+	}
+	
+	@Override
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num){
+		List<List<Integer>>[] levelSequence = getLevelSequence(individual);
+		for(int i = 0; i < levelSequence.length; i++) {
+			super.oneEval(individual, num);
+		}
+		
+		return null;	
 	}
 
 
@@ -19,7 +30,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 		return getLodeRunnerLevelListRepresentationFromStaticGenotype((List<Double>) individual.getPhenotype());
 	}
 
-	private List<List<Integer>> getLodeRunnerLevelListRepresentationFromStaticGenotype(List<Double> phenotype) {
+	private static List<List<Integer>> getLodeRunnerLevelListRepresentationFromStaticGenotype(List<Double> phenotype) {
 		return LodeRunnerGANLevelTask.getLodeRunnerLevelListRepresentationFromGenotypeStatic(phenotype);
 	}
 
