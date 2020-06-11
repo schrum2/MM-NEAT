@@ -241,15 +241,18 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			// Assign to the behavior vector before using MAP-Elites
 			double[] archiveArray = null;
 			final int BINS_PER_DIMENSION = LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels.BINS_PER_DIMENSION;
-			int dimConnected, dimGround, dimLadders;
-			int connectedIndex = (int)Math.min(percentConnected*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1);
+			int dimConnected, dimGround, dimLadders; //declares bin dimensions 
+			//gets correct index for all dimensions based on percent and multiplied by 10 to be a non decimal 
+			int connectedIndex = (int)Math.min(percentConnected*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1); 
 			int groundIndex = (int)Math.min(percentGround*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1);
 			int laddersIndex = (int)Math.min(percentLadders*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1);
 			double binScore = simpleAStarDistance;
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels) {
+				//Initializes bin dimensions 
 				dimConnected = connectedIndex;
 				dimGround = groundIndex;
 				dimLadders = laddersIndex;
+				//becomes the behavior vector 
 				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
 			}
 			else {
@@ -258,6 +261,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			BufferedImage levelSolution = null;
 			BufferedImage levelImage = null;
 			try {
+				//gets images of the level, both a standard render and the solution path 
 				levelSolution = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 				levelImage = LodeRunnerRenderUtil.createBufferedImage(level, LodeRunnerRenderUtil.RENDERED_IMAGE_WIDTH, LodeRunnerRenderUtil.RENDERED_IMAGE_HEIGHT);
 			} catch (IOException e) {
@@ -265,6 +269,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				//e.printStackTrace();
 				System.out.println("Could not get image");
 			} 
+			//this method makes the bins and saves the level images in the archive directory 
 			setBinsAndSaveLevelImages(individual, levelImage, levelSolution, archiveArray, dimConnected, dimGround, dimLadders, BINS_PER_DIMENSION, binScore);
 		}
 
@@ -272,13 +277,27 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
 	}
 
+	/**
+	 * This method makes the bins for levels to be placed in and then saves 
+	 * the images of the level, both a standard render and a render with the solution path
+	 * @param individual Genotype
+	 * @param levelImage Standard render level
+	 * @param levelSolution Solution path of rendered level
+	 * @param archiveArray Behavior vector 
+	 * @param dimConnected Dimension of connectivity
+	 * @param dimGround Dimension of ground 
+	 * @param dimLadders Dimension of ladders 
+	 * @param BINS_PER_DIMENSION Bin Dimension = 10 right now 
+	 * @param binScore AStarPath length 
+	 */
 	@SuppressWarnings("unchecked")
 	private void setBinsAndSaveLevelImages(Genotype<T> individual, BufferedImage levelImage,
 			BufferedImage levelSolution, double[] archiveArray, int dimConnected, int dimGround, int dimLadders,
 			final int BINS_PER_DIMENSION, double binScore) {
+		//gets the index in the one dimensional array 
 		int binIndex = (dimConnected*BINS_PER_DIMENSION + dimGround)*BINS_PER_DIMENSION + dimLadders;
 		Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
-		archiveArray[binIndex] = binScore; 
+		archiveArray[binIndex] = binScore; //adds binScore at binIndex 
 		
 		//System.out.println("["+dimConnected+"]["+dimGround+"]["+dimLadders+"] = "+binScore);
 		
@@ -302,7 +321,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				String fileNameSolution = "_Direct-"+String.format("%7.5f", binScore) + individual.getId() + "-SolutionRender" +".png";
 				String fullNameSolution = binPath + "_" +fileNameSolution;
 				System.out.println(fullNameSolution);
-				GraphicsUtil.saveImage(levelSolution, fullNameSolution);// saves the rendered level without the solution path
+				GraphicsUtil.saveImage(levelSolution, fullNameSolution);// saves the rendered level with the solution path
 			}
 		}
 	}
