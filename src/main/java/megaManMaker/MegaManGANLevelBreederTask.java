@@ -66,7 +66,6 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 					if(oldValue != newValue) {
 						int oldLength = oldValue * GANProcess.latentVectorLength();
 						int newLength = newValue * GANProcess.latentVectorLength();
-						System.out.println(oldLength+", "+newLength);
 
 						resizeGenotypeVectors(oldLength, newLength);
 						resetButtons(true);
