@@ -53,7 +53,7 @@ public class MegaManConvertMMLVToJSON {
 					k=k.replace("=", " ");
 					k=k.replace(".000000", "");
 					documentxyAndAddToList(activatedScreen, blockxyIDList, k);
-				}else if(l.startsWith("d")) { //TODO add else/if for MegaMan, bosses, enemies, doors, etc
+				}else if(l.startsWith("d")) { //TODO add else/if for MegaMan, bosses, enemies, doors, etc d - 6 = breakable
 					String k = l;
 					k=k.replace("d", "d ");
 					k=k.replace(",", " ");
@@ -63,7 +63,7 @@ public class MegaManConvertMMLVToJSON {
 					documentxyAndAddToList(activatedScreen, blockxyIDList, k);
 
 					
-				}
+				} //ex,y=177 water, e 45 breakable
 			}
 			
 		}
