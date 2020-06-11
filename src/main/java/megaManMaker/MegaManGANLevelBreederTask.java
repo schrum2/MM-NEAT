@@ -154,11 +154,12 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			double[] inputMultipliers) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 		List<List<Integer>> level = levelListRepresentation(doubleArray);
+		//MegaManVGLCUtil.printLevel(level);
 		BufferedImage[] images;
 		//sets the height and width for the rendered level to be placed on the button 
 		int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
 		int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
-		BufferedImage image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		try {
 
 			images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH); //7 different tiles to display 

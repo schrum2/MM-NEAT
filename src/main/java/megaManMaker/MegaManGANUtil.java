@@ -57,6 +57,7 @@ public class MegaManGANUtil {
 //		level = "["+level+"]"; // Wrap level in another json array
 //		List<List<List<Integer>>> levels = JsonReader.JsonToInt(level);
 //		return levels;
+		
 		latentVector = GANProcess.mapArrayToOne(latentVector); // Range restrict the values
 		int chunk_length = Integer.valueOf(GANProcess.getGANProcess().GANDim);
 		String levelString = "";
@@ -103,7 +104,18 @@ public class MegaManGANUtil {
 	 */
 	public static List<List<Integer>> generateOneLevelListRepresentationFromGAN(double[] latentVector) {
 		List<List<List<Integer>>> levelInList = getLevelListRepresentationFromGAN(latentVector);
-		List<List<Integer>> oneLevel = levelInList.get(0); // gets first level in the set  
+		List<List<Integer>> oneLevel = levelInList.get(0); // gets first level in the set 
+		//List<List<Integer>> fullLevel = new ArrayList<List<Integer>>();
+		for(int level = 1;level<levelInList.size();level++) {
+			for(int i = 0;i<oneLevel.size();i++) {
+				//for(int integer = 0; integer<oneLevel.get(0).size();integer++) {
+				oneLevel.get(i).addAll(levelInList.get(level).get(i));
+
+				
+			}
+		}
+		
+		
 		return oneLevel;
 	}
 
