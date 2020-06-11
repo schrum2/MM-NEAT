@@ -118,5 +118,21 @@ public class MegaManGANUtil {
 		
 		return oneLevel;
 	}
+	public static List<List<Integer>> generateOneLevelListRepresentationFromGANVertical(double[] latentVector) {
+		List<List<List<Integer>>> levelInList = getLevelListRepresentationFromGAN(latentVector);
+		List<List<Integer>> oneLevel = levelInList.get(0); // gets first level in the set 
+		//List<List<Integer>> fullLevel = new ArrayList<List<Integer>>();
+		for(int level = 1;level<levelInList.size();level++) {
+			for(int i = 0;i<oneLevel.size();i++) {
+				//for(int integer = 0; integer<oneLevel.get(0).size();integer++) {
+				oneLevel.add(levelInList.get(level).get(i));
+
+				
+			}
+		}
+		
+		
+		return oneLevel;
+	}
 
 }

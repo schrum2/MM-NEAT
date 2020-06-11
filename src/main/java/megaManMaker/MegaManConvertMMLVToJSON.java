@@ -8,14 +8,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
+import edu.southwestern.util.MiscUtil;
+
 
 public class MegaManConvertMMLVToJSON {
 	public static int maxX = 0;
 	public static int maxY = 0;
+	public static HashSet<Point> visited = new HashSet<Point>();
+	public static int enemyNumber = -1;
+	public static String enemyString = null;
 	public static void main(String[] args) {
 		int i = 1;
 		
-		List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
+		List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+3+".mmlv");
 		MegaManVGLCUtil.printLevel(level);
 	}
 	
@@ -39,11 +44,13 @@ public class MegaManConvertMMLVToJSON {
 			//IntStream intStr = l.chars();
 			
 			if(!l.startsWith("2")&&!l.startsWith("1")&&!l.startsWith("4")&&!l.startsWith("0")
-					&&!l.startsWith("o")&&!l.startsWith("b")&&!l.startsWith("a")
-					&&!l.startsWith("e")&&!l.startsWith("f")&&!l.startsWith("g")&&!l.startsWith("h")&&
+					&&!l.startsWith("o")&&!l.startsWith("b")
+					&&!l.startsWith("f")&&!l.startsWith("g")&&!l.startsWith("h")&&
 					!l.startsWith("j")&&!l.startsWith("k")&&!l.startsWith("l")&&!l.startsWith("m")&&
 					!l.startsWith("n")&&!l.startsWith("[")
 					) { //shows us all blocks (solid, spike, ladder), enemies, player
+				boolean isEnemy = false;
+
 				if(l.startsWith("i")) {
 					
 					String k = l;
@@ -52,18 +59,44 @@ public class MegaManConvertMMLVToJSON {
 					k=k.replace("\"", "");
 					k=k.replace("=", " ");
 					k=k.replace(".000000", "");
-					documentxyAndAddToList(activatedScreen, blockxyIDList, k);
-				}else if(l.startsWith("d")) { //TODO add else/if for MegaMan, bosses, enemies, doors, etc d - 6 = breakable
+					documentxyAndAddToListi(activatedScreen, blockxyIDList, k);
+				}else if(l.startsWith("e")) { //ex,y=177 water, e 45 breakable
+					String k = l;
+					k=k.replace("e", "e ");
+					k=k.replace(",", " ");
+					k=k.replace("\"", "");
+					k=k.replace("=", " ");
+					k=k.replace(".000000", "");
+					enemyString = k;
+					System.out.println(k);
+					documentxyAndAddToListe(activatedScreen, blockxyIDList, k);
+
+					
+				} //ex,y=177 water, e 45 breakable
+				else if(l.startsWith("d")) { //TODO add else/if for MegaMan, bosses, enemies, doors, etc d - 6 = breakable
 					String k = l;
 					k=k.replace("d", "d ");
 					k=k.replace(",", " ");
 					k=k.replace("\"", "");
 					k=k.replace("=", " ");
 					k=k.replace(".000000", "");
-					documentxyAndAddToList(activatedScreen, blockxyIDList, k);
+					//System.out.println(k);
+					if(k.endsWith("5")) isEnemy=true;
+					if(!k.endsWith("6"))
+					documentxyAndAddToListi(activatedScreen, blockxyIDList, k);
 
 					
-				} //ex,y=177 water, e 45 breakable
+				}
+				if (l.startsWith("a")) {
+					enemyString = null;
+				}
+				if(isEnemy&&enemyString!=null) {
+//					System.out.println("not a failure case");
+//					MiscUtil.waitForReadStringAndEnterKeyPress();
+					documentxyAndAddToListenemy(activatedScreen, blockxyIDList, enemyString);
+
+				}
+				
 			}
 			
 		}
@@ -84,7 +117,7 @@ public class MegaManConvertMMLVToJSON {
 			System.out.println("("+p.getX()+", "+p.getY()+")");
 			for(int x = 0;x<16;x++) {
 				for(int y = 0;y<14;y++) {
-					if(complete.get((int) (p.getY()+y)).get((int) (p.getX()+x))==7) {
+					if(p.getY()+y<complete.size()&&p.getX()+x<complete.get(0).size()&&complete.get((int) (p.getY()+y)).get((int) (p.getX()+x))==7) {
 						complete.get((int) (p.getY()+y)).set((int) (p.getX()+x), 0);
 					}
 				}
@@ -96,7 +129,43 @@ public class MegaManConvertMMLVToJSON {
 		
 	}
 
-	private static void documentxyAndAddToList(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList, String k) {
+	private static void documentxyAndAddToListenemy(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList,
+			String enemyString) {
+		List<Integer> xyID = new ArrayList<>();
+		Scanner kScan = new Scanner(enemyString);
+
+		kScan.next(); //get past letter
+		int xcoord = kScan.nextInt()/16;
+		xyID.add(xcoord);
+		int ycoord = kScan.nextInt()/16;
+		xyID.add(ycoord);
+		//if(!visited.contains(new Point(xcoord, ycoord))) {
+			visited.add(new Point(xcoord, ycoord));
+	
+			int e = kScan.nextInt();
+			//make all enemies map 11-15
+			int enemyOneThruFive = 11+e%5;
+			xyID.add(enemyOneThruFive);
+			int howManySquaresX = xcoord/16;
+			int howManySquaresY = ycoord/14;
+			int screenX = howManySquaresX*16;
+			int screenY = howManySquaresY*14;
+			activatedScreen.add(new Point(screenX, screenY));
+			if(xcoord>maxX) {
+				maxX = xcoord+1;
+			}
+			if(ycoord>maxY) {
+				maxY = ycoord+1;
+			}
+			//System.out.println(k);
+			//System.out.println(l);
+			kScan.close();
+			blockxyIDList.add(xyID);
+		
+	}
+
+	private static void documentxyAndAddToListe(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList,
+			String k) {
 		List<Integer> xyID = new ArrayList<>();
 		Scanner kScan = new Scanner(k);
 
@@ -105,32 +174,84 @@ public class MegaManConvertMMLVToJSON {
 		xyID.add(xcoord);
 		int ycoord = kScan.nextInt()/16;
 		xyID.add(ycoord);
-		int itemID = kScan.nextInt();
-		if(itemID==3) { //if ladder
-			xyID.add(2); //map to ladder
-		}else if(itemID==2) { //if hazard
-			xyID.add(3); //map to hazard
-		}else if(itemID==4) { //player
-			xyID.add(11);
+		if(!visited.contains(new Point(xcoord, ycoord))) {
+			visited.add(new Point(xcoord, ycoord));
+	
+			int e = kScan.nextInt();
+			
+			if(e==29||e==4||e==3||e==50||e==52||e==51||e==68) { //cannon/shooter
+				xyID.add(6);
+			}else if (e==5||e==56) { //appearing/disappearing
+				xyID.add(1);
+			}else if (e==45) { //breakable
+				xyID.add(4);
+				//System.out.println("does this even happen?");
+				
+			}else {
+				xyID.add(0);
+			}
+			int howManySquaresX = xcoord/16;
+			int howManySquaresY = ycoord/14;
+			int screenX = howManySquaresX*16;
+			int screenY = howManySquaresY*14;
+			activatedScreen.add(new Point(screenX, screenY));
+			if(xcoord>maxX) {
+				maxX = xcoord+1;
+			}
+			if(ycoord>maxY) {
+				maxY = ycoord+1;
+			}
+			//System.out.println(k);
+			//System.out.println(l);
+			kScan.close();
+			blockxyIDList.add(xyID);
+		
+		}		
+	}
+
+	private static void documentxyAndAddToListi(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList, String k) {
+		List<Integer> xyID = new ArrayList<>();
+		Scanner kScan = new Scanner(k);
+		kScan.next(); //get past letter
+		int xcoord = kScan.nextInt()/16;
+		xyID.add(xcoord);
+		int ycoord = kScan.nextInt()/16;
+		xyID.add(ycoord);
+		if(!visited.contains(new Point(xcoord, ycoord))&&kScan.hasNextInt()) {
+			
+			int itemID = kScan.nextInt();
+			visited.add(new Point(xcoord, ycoord));
+	
+			
+			if(itemID==3) { //if ladder
+				xyID.add(2); //map to ladder
+			}else if(itemID==2) { //if hazard
+				xyID.add(3); //map to hazard
+			}
+			
+			else if(itemID==4) { //player
+				xyID.add(8); //json player
+			}
+			else { //solid block still 1
+				xyID.add(itemID);
+			}
+			int howManySquaresX = xcoord/16;
+			int howManySquaresY = ycoord/14;
+			int screenX = howManySquaresX*16;
+			int screenY = howManySquaresY*14;
+			activatedScreen.add(new Point(screenX, screenY));
+			if(xcoord>maxX) {
+				maxX = xcoord+1;
+			}
+			if(ycoord>maxY) {
+				maxY = ycoord+1;
+			}
+			//System.out.println(k);
+			//System.out.println(l);
+			kScan.close();
+			blockxyIDList.add(xyID);
+		
 		}
-		else { //solid block still 1
-			xyID.add(itemID);
-		}
-		int howManySquaresX = xcoord/16;
-		int howManySquaresY = ycoord/14;
-		int screenX = howManySquaresX*16;
-		int screenY = howManySquaresY*14;
-		activatedScreen.add(new Point(screenX, screenY));
-		if(xcoord>maxX) {
-			maxX = xcoord+1;
-		}
-		if(ycoord>maxY) {
-			maxY = ycoord+1;
-		}
-		//System.out.println(k);
-		//System.out.println(l);
-		kScan.close();
-		blockxyIDList.add(xyID);
 	}
 
 //	private static int convertMMLVTilesToInt(String string) {

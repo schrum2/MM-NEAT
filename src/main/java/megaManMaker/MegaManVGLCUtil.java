@@ -36,22 +36,22 @@ public class MegaManVGLCUtil {
 //			convertMegaManLevelToJSONHorizontalScroll(level);
 //
 //		}
-//		for(int i=1;i<=10;i++) {
-//			if(i!=7&&i!=3) {
-//				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-//				convertMegaManLevelToJSONHorizontalScroll(level);
-//				
-//						
-//						
-//						
-//			}
-//		}
-		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+2+".txt");
-		printLevel(level);
-		convertMegaManLevelToMMLV(level, 2);
-		//convertMegaManLevelToJSONHorizontalScroll(level);
+		for(int i=1;i<=10;i++) {
+			if(i!=7&&i!=3) {
+				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
+				convertMegaManLevelToJSONVerticalScroll(level);
+				
+						
+						
+						
+			}
+		}
+		//List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+2+".txt");
+		//printLevel(level);
+		//convertMegaManLevelToMMLV(level, 2);
+		//convertMegaManLevelToJSONVerticalScroll(level);
 		//convertMegaManLevelToMMLV(level,5);
-		//System.out.println(json.toString());
+		System.out.println(json.toString());
 	}
 	/**
 	 * prints the level to the console
@@ -106,7 +106,7 @@ public class MegaManVGLCUtil {
 	private static void convertMegaManLevelToJSONVerticalScroll(List<List<Integer>> level) { 
 		visited.clear();
 		
-		List<List<List<Integer>>> json = new ArrayList<>();
+		//List<List<List<Integer>>> json = new ArrayList<>();
 		boolean vertical = true;
 		lowerY = 0;
 		lowerX = 0;
@@ -532,7 +532,7 @@ public class MegaManVGLCUtil {
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
 //					int tileCode = convertMegamanTilesToInt(level[i].charAt(j)); 
-					int tileCode = convertMegamanTilesToIntEnemies(level[i].charAt(j)); 
+					int tileCode = convertMegamanTilesToIntSimple(level[i].charAt(j)); 
 					String enemyTypeString = getStringForTypeEnemy(level[i].charAt(j));
 					if(enemyTypeString!=null) levelEnemies.put(new Point(j,i), enemyTypeString);
 					col.add(tileCode);
