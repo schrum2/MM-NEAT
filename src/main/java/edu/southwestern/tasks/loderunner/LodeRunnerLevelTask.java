@@ -111,13 +111,25 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 * @return
 	 * @throws IOException 
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num){
-		double psuedoRandomSeed = getRandomSeedForSpawnPoint(individual); //creates the seed to be passed into the Random instance 
-
-		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
 		List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromGenotype(individual); //gets a level 
+		double psuedoRandomSeed = getRandomSeedForSpawnPoint(individual); //creates the seed to be passed into the Random instance 
+		long genotypeId = individual.getId();
+		
+		return evaluateOneLevel(level, psuedoRandomSeed, genotypeId);
+	}
+
+	/**
+	 * TODO
+	 * 
+	 * @param level
+	 * @param psuedoRandomSeed
+	 * @param genotypeId
+	 * @return
+	 */
+	protected Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, long genotypeId) {
+		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
 		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level); //fills a set with empty points fro the level to select a spawn point from 
 		Random rand = new Random(Double.doubleToLongBits(psuedoRandomSeed));
 		LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand); //sets a random spawn point 
@@ -239,7 +251,8 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			}
 		}
 
-		if(MMNEAT.ea instanceof MAPElites) {
+		// LodeRunnerLevelSequenceTask has it's own MAP Elites binning rules defined in LodeRunnerLevelSequenceTask
+		if(MMNEAT.ea instanceof MAPElites && !(MMNEAT.task instanceof LodeRunnerLevelSequenceTask)) {
 			// Assign to the behavior vector before using MAP-Elites
 			double[] archiveArray = null;
 			final int BINS_PER_DIMENSION = LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels.BINS_PER_DIMENSION;
@@ -272,7 +285,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				System.out.println("Could not get image");
 			} 
 			//this method makes the bins and saves the level images in the archive directory 
-			setBinsAndSaveLevelImages(individual, levelImage, levelSolution, archiveArray, dimConnected, dimGround, dimLadders, BINS_PER_DIMENSION, binScore);
+			setBinsAndSaveLevelImages(genotypeId, levelImage, levelSolution, archiveArray, dimConnected, dimGround, dimLadders, BINS_PER_DIMENSION, binScore);
 		}
 
 
@@ -282,7 +295,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	/**
 	 * This method makes the bins for levels to be placed in and then saves 
 	 * the images of the level, both a standard render and a render with the solution path
-	 * @param individual Genotype
+	 * @param genotypeId Genotype ID
 	 * @param levelImage Standard render level
 	 * @param levelSolution Solution path of rendered level
 	 * @param archiveArray Behavior vector 
@@ -293,7 +306,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 * @param binScore AStarPath length 
 	 */
 	@SuppressWarnings("unchecked")
-	private void setBinsAndSaveLevelImages(Genotype<T> individual, BufferedImage levelImage,
+	private void setBinsAndSaveLevelImages(long genotypeId, BufferedImage levelImage,
 			BufferedImage levelSolution, double[] archiveArray, int dimConnected, int dimGround, int dimLadders,
 			final int BINS_PER_DIMENSION, double binScore) {
 		//gets the index in the one dimensional array 
@@ -315,12 +328,12 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			if(elite==null || binScore > elite.behaviorVector.get(binIndex)) {
 				//formats to be 7 digits before the decimal, and 5 digits after, %7.5f
 				//only doing direct right now, but will need to add CPPN label in addition, like in MarioLevelTask, if we start to use a CPPN
-				String fileNameImage =  "_Direct-"+String.format("%7.5f", binScore) +  individual.getId() + "-LevelRender" +".png";
+				String fileNameImage =  "_Direct-"+String.format("%7.5f", binScore) +  genotypeId + "-LevelRender" +".png";
 				String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
 				String fullNameImage = binPath + "_" + fileNameImage;
 				System.out.println(fullNameImage);
 				GraphicsUtil.saveImage(levelImage, fullNameImage);// saves the rendered level without the solution path
-				String fileNameSolution = "_Direct-"+String.format("%7.5f", binScore) + individual.getId() + "-SolutionRender" +".png";
+				String fileNameSolution = "_Direct-"+String.format("%7.5f", binScore) + genotypeId + "-SolutionRender" +".png";
 				String fullNameSolution = binPath + "_" +fileNameSolution;
 				System.out.println(fullNameSolution);
 				GraphicsUtil.saveImage(levelSolution, fullNameSolution);// saves the rendered level with the solution path

@@ -18,9 +18,11 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num){
 		List<List<Integer>>[] levelSequence = getLevelSequence(individual);
+		long genotypeId = individual.getId();
 		Pair<double[], double[]>[] scoreSequence = new Pair[levelSequence.length];
 		for(int i = 0; i < levelSequence.length; i++) {
-			scoreSequence[i] = super.oneEval(individual, num);
+			double psuedoRandomSeed = -1; // TODO: Different seed for each level in the sequnce ... needs abstract method
+			scoreSequence[i] = evaluateOneLevel(levelSequence[i], psuedoRandomSeed, genotypeId);
 		}
 		if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceAverages")) {
 			
