@@ -56,7 +56,7 @@ public class LodeRunnerGANLevelTask extends LodeRunnerLevelTask<List<Double>> {
 	 * @param latentVector 
 	 * @return A single level, List<List<Integer>>
 	 */
-	private List<List<Integer>> getLodeRunnerLevelListRepresentationFromGenotypeStatic(List<Double> latentVector) {
+	public static List<List<Integer>> getLodeRunnerLevelListRepresentationFromGenotypeStatic(List<Double> latentVector) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
 		List<List<Integer>> level = LodeRunnerGANUtil.generateOneLevelListRepresentationFromGAN(doubleArray);
  		return level;
