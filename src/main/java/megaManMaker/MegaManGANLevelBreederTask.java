@@ -1,23 +1,90 @@
 package megaManMaker;
 
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.JLabel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 
 public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask{
-
+	public static final int LEVEL_MIN_CHUNKS = 1;
+	public static final int LEVEL_MAX_CHUNKS = 10;
+	private boolean initializationComplete = false;
+	protected JSlider levelChunksSlider;
 	public MegaManGANLevelBreederTask() throws IllegalAccessException {
 		super();
-		// TODO Auto-generated constructor stub
+
+		levelChunksSlider = new JSlider(JSlider.HORIZONTAL, LEVEL_MIN_CHUNKS, LEVEL_MAX_CHUNKS, Parameters.parameters.integerParameter("megaManGANLevelChunks"));
+		levelChunksSlider.setToolTipText("Determines the number of distinct latent vectors that are sent to the GAN to create level chunks which are patched together into a single level.");
+		levelChunksSlider.setMinorTickSpacing(1);
+		levelChunksSlider.setPaintTicks(true);
+		Hashtable<Integer,JLabel> labels = new Hashtable<>();
+		JLabel shorter = new JLabel("Shorter Level");
+		JLabel longer = new JLabel("Longer Level");
+		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
+			shorter.setFont(new Font("Arial", Font.PLAIN, 23));
+			longer.setFont(new Font("Arial", Font.PLAIN, 23));
+		}
+		labels.put(LEVEL_MIN_CHUNKS, shorter);
+		labels.put(LEVEL_MAX_CHUNKS, longer);
+		levelChunksSlider.setLabelTable(labels);
+		levelChunksSlider.setPaintLabels(true);
+		levelChunksSlider.setPreferredSize(new Dimension((int)(200 * (Parameters.parameters.booleanParameter("bigInteractiveButtons") ? 1.4 : 1)), 40 * (Parameters.parameters.booleanParameter("bigInteractiveButtons") ? 2 : 1)));
+
+		/**
+		 * Changed level width picture previews
+		 */
+		levelChunksSlider.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if(!initializationComplete) return;
+				// get value
+				JSlider source = (JSlider)e.getSource();
+				if(!source.getValueIsAdjusting()) {
+
+					int oldValue = Parameters.parameters.integerParameter("megaManGANLevelChunks");
+					int newValue = (int) source.getValue();
+					Parameters.parameters.setInteger("megaManGANLevelChunks", newValue);
+					//Parameters.parameters.setInteger("GANInputSize", 5*newValue); // Default latent vector size
+
+					if(oldValue != newValue) {
+						int oldLength = oldValue * GANProcess.latentVectorLength();
+						int newLength = newValue * GANProcess.latentVectorLength();
+						System.out.println(oldLength+", "+newLength);
+
+						resizeGenotypeVectors(oldLength, newLength);
+						resetButtons(true);
+
+						// reset buttons
+					}
+				}
+			}
+		});
+
+		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
+			top.add(levelChunksSlider);	
+		}
+
+		initializationComplete = true;
+	
+	
+	
 	}
 
 	@Override
@@ -40,10 +107,18 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 
 	@Override
 	public Pair<Integer, Integer> resetAndReLaunchGAN(String model) {
-		// TODO Auto-generated method stub
-		return null;
+		return staticResetAndReLaunchGAN(model);
 	}
-
+	public static Pair<Integer, Integer> staticResetAndReLaunchGAN(String model) {
+		int megaManGANLevelChunks = Parameters.parameters.integerParameter("megaManGANLevelChunks");
+		int oldLength = megaManGANLevelChunks * GANProcess.latentVectorLength();
+		Parameters.parameters.setInteger("GANInputSize", 5); // Default latent vector size
+		
+		GANProcess.terminateGANProcess();
+		// Because Python process was terminated, latentVectorLength will reinitialize with the new params
+		int newLength = megaManGANLevelChunks * GANProcess.latentVectorLength(); // new model
+		return new Pair<>(oldLength,newLength);
+	}
 	@Override
 	public String getGANModelDirectory() {
 		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"MegaManGAN";
