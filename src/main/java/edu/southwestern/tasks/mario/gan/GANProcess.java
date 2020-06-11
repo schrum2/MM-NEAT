@@ -147,7 +147,7 @@ public class GANProcess extends Comm {
 	//////////Code below here is associated with the GAN instance ////////////////
 	
 	String GANPath = null;
-	int GANDim = -1; 
+	public int GANDim = -1; 
 	int GANTileTypes = -1;
 	int width = -1;
 	int height = -1;

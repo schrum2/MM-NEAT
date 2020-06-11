@@ -15,10 +15,13 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import ch.idsia.mario.engine.level.Level;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
+import edu.southwestern.tasks.mario.gan.MarioGANUtil;
+import edu.southwestern.tasks.mario.level.MarioLevelUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 
@@ -86,6 +89,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	
 	}
 
+	
+//	@Override
+//	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height, double[] inputMultipliers) {
+//		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
+//		Level level = MegaManGANUtil.generateLevelFromGAN(doubleArray);
+//		BufferedImage image = MarioLevelUtil.getLevelImage(level);
+//		return image;
+//	}
 	@Override
 	public void configureGAN() {
 		GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
