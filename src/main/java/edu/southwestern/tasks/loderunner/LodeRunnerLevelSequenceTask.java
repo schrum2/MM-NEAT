@@ -3,6 +3,7 @@ package edu.southwestern.tasks.loderunner;
 import java.util.List;
 
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 
@@ -13,13 +14,20 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 		super();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num){
 		List<List<Integer>>[] levelSequence = getLevelSequence(individual);
+		Pair<double[], double[]>[] scoreSequence = new Pair[levelSequence.length];
 		for(int i = 0; i < levelSequence.length; i++) {
-			super.oneEval(individual, num);
+			scoreSequence[i] = super.oneEval(individual, num);
 		}
-		
+		if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceAverages")) {
+			
+		}
+		else if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceIndividual")) {
+			
+		}
 		return null;	
 	}
 
