@@ -24,9 +24,9 @@ public class LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels implem
 			int size = BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION; //10x10x10=1000
 			labels = new ArrayList<String>(size);
 			for(int i = 0; i < BINS_PER_DIMENSION; i++) {//Connected
-				for(int j = 0; j < BINS_PER_DIMENSION; j++) { //ground
-					for(int k = 0; k < BINS_PER_DIMENSION; k++) { //ladders
-						labels.add("Connected["+i+"0-"+(i+1)+"0]Ground["+j+"0-"+(j+1)+"0]Ladders["+k+"0-"+(k+1)+"0]");
+				for(int j = 0; j < BINS_PER_DIMENSION*4; j+=4) { //ground [0-4][4-8]...
+					for(int k = 0; k < BINS_PER_DIMENSION*4; k+=4) { //ladders [0-4][4-8]...
+						labels.add("Connected["+i+"0-"+(i+1)+"0]Ground["+j+"-"+(j+4)+"]Ladders["+k+"-"+(k+4)+"]");
 					}
 				}
 			}

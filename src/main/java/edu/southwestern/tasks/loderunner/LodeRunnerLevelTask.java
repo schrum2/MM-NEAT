@@ -198,6 +198,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		double[] otherScores = new double[] {simpleAStarDistance, connectivityOfLevel, percentLadders, percentGround, percentRopes, percentConnected, numTreasure, numEnemies};
 
 		if(CommonConstants.watch) {
+			//prints values that are calculated above for debugging 
 			System.out.println("Simple A* Distance to Farthest Gold " + simpleAStarDistance);
 			System.out.println("Number of Positions Visited " + connectivityOfLevel);
 			System.out.println("Percent of Ladders " + percentLadders);
@@ -208,6 +209,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			System.out.println("Number of Enemies " + numEnemies);
 
 			try {
+				//displays the rendered solution path in a window 
 				BufferedImage visualPath = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 				JFrame frame = new JFrame();
 				JPanel panel = new JPanel();
