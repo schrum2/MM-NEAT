@@ -128,6 +128,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 * @param genotypeId
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	protected Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, long genotypeId) {
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
 		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level); //fills a set with empty points fro the level to select a spawn point from 
