@@ -55,9 +55,23 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 		}
 		else if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceIndividual")) {
 			//individual scores, this means it is the amount of scores times the amount of levels
-
+			//new double array that is the length to fit all the fitnesses from every level in the sequence
+			double[] allFitnesses = new double[scoreSequence[0].t1.length*scoreSequence[0].t1.length]; 
+			//new double array that is the length to fit all the fitnesses from every level in the sequence
+			double[] allOtherScores = new double[scoreSequence[0].t2.length*scoreSequence[0].t2.length];
+			//adds all the scores from the level sequence to the new arrays 
+			for(int i = 0; i < scoreSequence.length; i++) {
+				for(int j = 0; j < allFitnesses.length; j++) {
+					for(int k = 0; k < allOtherScores.length; k++) {
+						allFitnesses[j] = scoreSequence[i].t1[j];
+						allOtherScores[k] = scoreSequence[i].t2[k];
+					}
+				}
+			}
+			return new Pair<double[], double[]>(allFitnesses, allOtherScores);
 		}
-		return null;	
+		else 
+			return null;	
 	}
 
 
