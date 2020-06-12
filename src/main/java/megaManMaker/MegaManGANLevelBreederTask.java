@@ -188,6 +188,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, levelNumber);
 			try {
 				Files.copy(mmlvFile, mmlvFileFromEvolution);
+				JOptionPane.showMessageDialog(frame, "Level saved");
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
