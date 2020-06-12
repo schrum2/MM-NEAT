@@ -38,7 +38,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	protected JSlider levelChunksSlider;
 	public MegaManGANLevelBreederTask() throws IllegalAccessException {
 		super();
-
+		//save button
 		JButton save = new JButton("SaveMMLV");
 		// Name is first available numeric label after the input disablers
 		save.setName("" + SAVE_BUTTON_INDEX);
@@ -114,28 +114,20 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	
 	}
 
-	
-//	@Override
-//	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height, double[] inputMultipliers) {
-//		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
-//		Level level = MegaManGANUtil.generateLevelFromGAN(doubleArray);
-//		BufferedImage image = MarioLevelUtil.getLevelImage(level);
-//		return image;
-//	}
 	@Override
-	public void configureGAN() {
+	public void configureGAN() { //sets GAN to megaman
 		GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
 		
 	}
 
 	@Override
-	public String getGANModelParameterName() {
+	public String getGANModelParameterName() { 
 		// TODO Auto-generated method stub
 		return "MegaManGANModel";
 	}
 
 	@Override
-	public List<List<Integer>> levelListRepresentation(double[] latentVector) {
+	public List<List<Integer>> levelListRepresentation(double[] latentVector) { //gets the horizontal stretch list<list<integer>> representation
 		// TODO Auto-generated method stub
 		return MegaManGANUtil.generateOneLevelListRepresentationFromGAN(latentVector);
 	}
@@ -144,6 +136,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	public Pair<Integer, Integer> resetAndReLaunchGAN(String model) {
 		return staticResetAndReLaunchGAN(model);
 	}
+	
 	public static Pair<Integer, Integer> staticResetAndReLaunchGAN(String model) {
 		int megaManGANLevelChunks = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 		int oldLength = megaManGANLevelChunks * GANProcess.latentVectorLength();
@@ -159,15 +152,18 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"MegaManGAN";
 	}
 
-	
+	/**
+	 * saves the level in the directory of MegaManMaker levels
+	 */
 	public void saveLevel() {
-		File mmlvFilePath = new File("MegaManMakerLevelPath.txt");
+		File mmlvFilePath = new File("MegaManMakerLevelPath.txt"); //file containing the path
 		//System.out.println(mmlvFile);
 //		if(!mmlvFile.exists()) {
 //			throw new FileNotFoundException();
 //		}
 		
 		Scanner scan;
+		//When the button is pushed, ask for the name input
 		try {
 			scan = new Scanner(mmlvFilePath);
 			//scan.next();
@@ -207,6 +203,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		
 	}
 	@Override
+	//Will eventually launch megamanmaker
 	public void playLevel(ArrayList<Double> phenotype) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 		List<List<Integer>> level = levelListRepresentation(doubleArray);
@@ -223,19 +220,16 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	}
 
 	@Override
+	/**
+	 * Determines whether or not to allow vertical or horizontal stretching based on the GAN model
+	 */
 	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height,
 			double[] inputMultipliers) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 		List<List<Integer>> level;
-		if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) {
+		if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) { //if horiontal GAN model
 			level = levelListRepresentation(doubleArray);
-			//level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
-
-//			System.out.println(Parameters.parameters.stringParameter("MegaManGANModel"));
-//			MiscUtil.waitForReadStringAndEnterKeyPress();
-		}else {
-//			System.out.println(Parameters.parameters.stringParameter("MegaManGANModel"));
-//			MiscUtil.waitForReadStringAndEnterKeyPress();
+		}else { //if vertical GAN model
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
 		}
 		//MegaManVGLCUtil.printLevel(level);
