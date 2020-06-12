@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
-import edu.southwestern.util.MiscUtil;
-
 
 public class MegaManConvertMMLVToJSON {
 	public static int maxX = 0;
@@ -18,10 +16,11 @@ public class MegaManConvertMMLVToJSON {
 	public static int enemyNumber = -1;
 	public static String enemyString = null;
 	public static void main(String[] args) {
-		int i = 1;
+	
 		
-		List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+3+".mmlv");
+		List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"proto man level 1"+".mmlv");
 		MegaManVGLCUtil.printLevel(level);
+		MegaManVGLCUtil.convertMegaManLevelToMMLV(level, 1010101010);
 	}
 	
 	public static List<List<Integer>> convertMMLVtoInt(String mmlvFile) {
@@ -81,7 +80,12 @@ public class MegaManConvertMMLVToJSON {
 					k=k.replace("=", " ");
 					k=k.replace(".000000", "");
 					//System.out.println(k);
-					if(k.endsWith("5")) isEnemy=true;
+					if(k.endsWith("5")) {
+						isEnemy=true;
+						if(enemyString==null) {
+							enemyString = k;
+						}
+					}
 					if(!k.endsWith("6"))
 					documentxyAndAddToListi(activatedScreen, blockxyIDList, k);
 
@@ -109,7 +113,14 @@ public class MegaManConvertMMLVToJSON {
 			complete.add(row);
 		}
 		for(int i = 0;i<blockxyIDList.size();i++) {
+			if(blockxyIDList.get(i).get(2)!=4) //if not breakable
 			complete.get(blockxyIDList.get(i).get(1)).set(blockxyIDList.get(i).get(0), blockxyIDList.get(i).get(2));
+			else { //breakable needs 4 blocks to be considered
+				complete.get(blockxyIDList.get(i).get(1)).set(blockxyIDList.get(i).get(0), blockxyIDList.get(i).get(2));
+				complete.get(blockxyIDList.get(i).get(1)-1).set(blockxyIDList.get(i).get(0), blockxyIDList.get(i).get(2));
+				complete.get(blockxyIDList.get(i).get(1)).set(blockxyIDList.get(i).get(0)-1, blockxyIDList.get(i).get(2));
+				complete.get(blockxyIDList.get(i).get(1)-1).set(blockxyIDList.get(i).get(0)-1, blockxyIDList.get(i).get(2));
+			}
 		}
 		
 		System.out.println(activatedScreen.size());
@@ -132,6 +143,7 @@ public class MegaManConvertMMLVToJSON {
 	private static void documentxyAndAddToListenemy(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList,
 			String enemyString) {
 		List<Integer> xyID = new ArrayList<>();
+		if(enemyString!=null) {
 		Scanner kScan = new Scanner(enemyString);
 
 		kScan.next(); //get past letter
@@ -146,6 +158,7 @@ public class MegaManConvertMMLVToJSON {
 			//make all enemies map 11-15
 			int enemyOneThruFive = 11+e%5;
 			xyID.add(enemyOneThruFive);
+		
 			int howManySquaresX = xcoord/16;
 			int howManySquaresY = ycoord/14;
 			int screenX = howManySquaresX*16;
@@ -161,6 +174,7 @@ public class MegaManConvertMMLVToJSON {
 			//System.out.println(l);
 			kScan.close();
 			blockxyIDList.add(xyID);
+		}
 		
 	}
 
@@ -184,10 +198,12 @@ public class MegaManConvertMMLVToJSON {
 			}else if (e==5||e==56) { //appearing/disappearing
 				xyID.add(1);
 			}else if (e==45) { //breakable
-				xyID.add(4);
-				//System.out.println("does this even happen?");
-				
-			}else {
+				xyID.add(4);				
+			}else if (e==31||e==40||e==36||e==67||e==10||e==47) { //moving plat
+				xyID.add(5);
+			}else if ((e>=177&&e<=194)||(e>=621&&e<=626)) xyID.add(10); //water //177-194 or 621-626
+			
+			else {
 				xyID.add(0);
 			}
 			int howManySquaresX = xcoord/16;

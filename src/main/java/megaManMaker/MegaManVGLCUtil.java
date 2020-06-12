@@ -267,9 +267,15 @@ public class MegaManVGLCUtil {
 					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 
 				}else if(m>10) { //is an enemy
-					if(levelEnemies==null)
-					printEnemiesToMMLV(p, m, xcoord, ycoord, level, x, y);
-					else printEnemiesToMMLVFromHashMap(p, xcoord, ycoord, level, x, y);
+					if(levelEnemies.isEmpty()) {
+
+						printEnemiesToMMLV(p, m, xcoord, ycoord, level, x, y);
+					}
+					else {
+						System.out.println(levelEnemies);
+
+						printEnemiesToMMLVFromHashMap(p, xcoord, ycoord, level, x, y);
+					}
 				}
 				
 				if(m!=7) {
@@ -284,6 +290,7 @@ public class MegaManVGLCUtil {
 			ycoord+=16;
 
 		}
+		//System.out.println("not actually happening");
 		//NEED 2a for enabling squares
 		p.println("2b"+0+","+896+"=\"0.000000\"");
 		p.println("2b"+0+","+896+"=\"0.000000\"");

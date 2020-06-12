@@ -15,6 +15,8 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.fossgalaxy.object.annotations.Parameter;
+
 import ch.idsia.mario.engine.level.Level;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
@@ -22,6 +24,7 @@ import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.MarioGANUtil;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 
@@ -153,7 +156,15 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height,
 			double[] inputMultipliers) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
-		List<List<Integer>> level = levelListRepresentation(doubleArray);
+		List<List<Integer>> level;
+		if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) {
+			level = levelListRepresentation(doubleArray);
+
+//			System.out.println(Parameters.parameters.stringParameter("MegaManGANModel"));
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
+		}else {
+			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
+		}
 		//MegaManVGLCUtil.printLevel(level);
 		BufferedImage[] images;
 		//sets the height and width for the rendered level to be placed on the button 
@@ -177,7 +188,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","bigInteractiveButtons:false","GANInputSize:"+MegaManGANUtil.LATENT_VECTOR_SIZE,"showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:megaManMaker.MegaManGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","bigInteractiveButtons:false","MegaManGANModel:VERTICALONLYMegaManAllLevelsWith7Tiles_5_Epoch5000.pth","GANInputSize:"+MegaManGANUtil.LATENT_VECTOR_SIZE,"showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:megaManMaker.MegaManGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
