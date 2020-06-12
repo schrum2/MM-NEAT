@@ -271,8 +271,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				dim3 = laddersIndex; //percent ladders scaled
 				//becomes the behavior vector 
 				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-			}
-			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels) {
+			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels) {
 				double treasureScale = 5.0; //scales bins to be in groups of 5, [0-5][5-10]...
 				double enemyScale = 2.0; //scales bins to be in groups of 2, [0-2][2-4]...
 				//gets correct indices for treasure and enemies
