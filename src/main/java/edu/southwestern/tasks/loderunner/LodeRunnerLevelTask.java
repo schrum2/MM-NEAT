@@ -52,28 +52,41 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	private ArrayList<Double> behaviorVector;
 
 	/**
-	 * Registers all fitness functions that are used, rn only one is used for lode runner 
+	 * Registers all fitness functions that are used, and other scores 
 	 */
 	public LodeRunnerLevelTask() {
-		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
-			MMNEAT.registerFitnessFunction("simpleAStarDistance");
-			numFitnessFunctions++;
-		}
-		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsConnectivity")) {
-			MMNEAT.registerFitnessFunction("numOfPositionsVisited"); //connectivity
-			numFitnessFunctions++;
-		}
+		this(true); // registers the fitness functions and other scores
+	}
+	
+	/**
+	 * Only registers fitness functions and other scores if boolean value is true.
+	 * If not, then fitness/scores will need to be registered somewhere else. The
+	 * purpose of this constructor is to be called by child classes, like the
+	 * LodeRunnerLevelSequenceTask
+	 * 
+	 * @param register whether to register fitness functions and other scores
+	 */
+	protected LodeRunnerLevelTask(boolean register) {
+		if(register) {
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
+				MMNEAT.registerFitnessFunction("simpleAStarDistance");
+				numFitnessFunctions++;
+			}
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsConnectivity")) {
+				MMNEAT.registerFitnessFunction("numOfPositionsVisited"); //connectivity
+				numFitnessFunctions++;
+			}
 
-		//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
-		MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
-		MMNEAT.registerFitnessFunction("numOfPositionsVisited",false); //connectivity
-		MMNEAT.registerFitnessFunction("percentLadders", false);
-		MMNEAT.registerFitnessFunction("percentGround", false);
-		MMNEAT.registerFitnessFunction("percentRope", false);
-		MMNEAT.registerFitnessFunction("percentConnected", false);
-		MMNEAT.registerFitnessFunction("numTreasures", false);
-		MMNEAT.registerFitnessFunction("numEnemies", false);
-
+			//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
+			MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
+			MMNEAT.registerFitnessFunction("numOfPositionsVisited",false); //connectivity
+			MMNEAT.registerFitnessFunction("percentLadders", false);
+			MMNEAT.registerFitnessFunction("percentGround", false);
+			MMNEAT.registerFitnessFunction("percentRope", false);
+			MMNEAT.registerFitnessFunction("percentConnected", false);
+			MMNEAT.registerFitnessFunction("numTreasures", false);
+			MMNEAT.registerFitnessFunction("numEnemies", false);
+		}
 	}
 
 	/**

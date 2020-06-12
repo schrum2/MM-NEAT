@@ -12,7 +12,12 @@ import edu.southwestern.util.datastructures.Pair;
 public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask<T> {
 
 	public LodeRunnerLevelSequenceTask() {
-		super();
+		super(false); // Do not register the fitness functions in the LodeRunnerLevelTask
+		
+		// Register fitness functions specific to the level sequence task here instead.
+		// TODO! (consider which command line parameters are active: average vs each individual)
+		
+		throw new UnsupportedOperationException("Don't test LodeRunnerLevelSequenceTask again without first registering fitness functions");
 	}
 
 	/**
