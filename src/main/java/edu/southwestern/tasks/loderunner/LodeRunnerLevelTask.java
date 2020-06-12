@@ -260,7 +260,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			int dim1, dim2, dim3; //declares bin dimensions 
 			double SCALE_GROUND_LADDERS = BINS_PER_DIMENSION/4.0; //scales by 1/4 of the dimension to go in steps of 4
 			//gets correct indices for all dimensions based on percent and multiplied by 10 to be a non decimal 
-			int connectedIndex = Math.min((int)percentConnected*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1); 
+			int connectedIndex = Math.min((int)(percentConnected*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); 
 			int groundIndex = Math.min((int)(percentGround*SCALE_GROUND_LADDERS*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
 			int laddersIndex = Math.min((int)(percentLadders*SCALE_GROUND_LADDERS*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
 			double binScore = simpleAStarDistance;
