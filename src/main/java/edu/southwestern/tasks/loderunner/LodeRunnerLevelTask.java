@@ -176,8 +176,8 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		double percentLadders = 0;
 		double percentGround = 0;
 		double percentRopes = 0;
-		double numTreasure = 0; 
-		double numEnemies = 0;
+		int numTreasure = 0; 
+		int numEnemies = 0;
 		for(int i = 0; i < level.size();i++) {
 			for(int j = 0; j < level.get(i).size(); j++) {
 				//counts ladders in level  
@@ -257,24 +257,30 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			// Assign to the behavior vector before using MAP-Elites
 			double[] archiveArray = null;
 			final int BINS_PER_DIMENSION = LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels.BINS_PER_DIMENSION;
-			int dimConnected, dimGround, dimLadders; //declares bin dimensions 
-			double SCALE = BINS_PER_DIMENSION/4.0; //scales by 1/4 of the dimension to go oin steps of 4
-			//gets correct index for all dimensions based on percent and multiplied by 10 to be a non decimal 
+			int dim1, dim2, dim3; //declares bin dimensions 
+			double SCALE_GROUND_LADDERS = BINS_PER_DIMENSION/4.0; //scales by 1/4 of the dimension to go in steps of 4
+			//gets correct indices for all dimensions based on percent and multiplied by 10 to be a non decimal 
 			int connectedIndex = Math.min((int)percentConnected*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1); 
-			int groundIndex = Math.min((int)(percentGround*SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
-			int laddersIndex = Math.min((int)(percentLadders*SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
-//			System.out.println("percentGround: " +  percentGround);
-//			System.out.println("groundIndex: " +  groundIndex);
-//			System.out.println("percentLadders: " +  percentLadders);
-//			System.out.println("laddersIndex: " +  laddersIndex);
-//			
-//			MiscUtil.waitForReadStringAndEnterKeyPress("");
+			int groundIndex = Math.min((int)(percentGround*SCALE_GROUND_LADDERS*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
+			int laddersIndex = Math.min((int)(percentLadders*SCALE_GROUND_LADDERS*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
 			double binScore = simpleAStarDistance;
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels) {
 				//Initializes bin dimensions 
-				dimConnected = connectedIndex;
-				dimGround = groundIndex;
-				dimLadders = laddersIndex;
+				dim1 = connectedIndex; //connectivity
+				dim2 = groundIndex; //percent ground scaled
+				dim3 = laddersIndex; //percent ladders scaled
+				//becomes the behavior vector 
+				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
+			}
+			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels) {
+				double treasureScale = 5.0; //scales bins to be in groups of 5, [0-5][5-10]...
+				double enemyScale = 2.0; //scales bins to be in groups of 2, [0-2][2-4]...
+				//gets correct indices for treasure and enemies
+				int treasureIndex = (int) Math.min(numTreasure/treasureScale, BINS_PER_DIMENSION-1);
+				int enemyIndex = (int) Math.min(numEnemies/enemyScale, BINS_PER_DIMENSION-1);
+				dim1 = connectedIndex; //connectivity
+				dim2 = treasureIndex;//number of treasures scaled 
+				dim3 = enemyIndex; //number of enemies scaled
 				//becomes the behavior vector 
 				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
 			}
@@ -293,7 +299,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				System.out.println("Could not get image");
 			} 
 			//this method makes the bins and saves the level images in the archive directory 
-			setBinsAndSaveLevelImages(genotypeId, levelImage, levelSolution, archiveArray, dimConnected, dimGround, dimLadders, BINS_PER_DIMENSION, binScore);
+			setBinsAndSaveLevelImages(genotypeId, levelImage, levelSolution, archiveArray, dim1, dim2, dim3, BINS_PER_DIMENSION, binScore);
 		}
 
 
