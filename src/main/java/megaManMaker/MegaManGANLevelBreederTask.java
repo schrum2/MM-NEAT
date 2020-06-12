@@ -15,16 +15,10 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.fossgalaxy.object.annotations.Parameter;
-
-import ch.idsia.mario.engine.level.Level;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
-import edu.southwestern.tasks.mario.gan.MarioGANUtil;
-import edu.southwestern.tasks.mario.level.MarioLevelUtil;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 
