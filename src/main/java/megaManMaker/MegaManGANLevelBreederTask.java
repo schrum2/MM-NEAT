@@ -159,10 +159,13 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		List<List<Integer>> level;
 		if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) {
 			level = levelListRepresentation(doubleArray);
+			//level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
 
 //			System.out.println(Parameters.parameters.stringParameter("MegaManGANModel"));
 //			MiscUtil.waitForReadStringAndEnterKeyPress();
 		}else {
+//			System.out.println(Parameters.parameters.stringParameter("MegaManGANModel"));
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
 		}
 		//MegaManVGLCUtil.printLevel(level);
