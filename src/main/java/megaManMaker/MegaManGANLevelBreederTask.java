@@ -2,6 +2,8 @@ package megaManMaker;
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,11 +11,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Scanner;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import com.google.common.io.Files;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
@@ -25,11 +32,30 @@ import edu.southwestern.util.datastructures.Pair;
 public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask{
 	public static final int LEVEL_MIN_CHUNKS = 1;
 	public static final int LEVEL_MAX_CHUNKS = 10;
+	public static final int SAVE_BUTTON_INDEX = -19; 
+
 	private boolean initializationComplete = false;
 	protected JSlider levelChunksSlider;
 	public MegaManGANLevelBreederTask() throws IllegalAccessException {
 		super();
 
+		JButton save = new JButton("SaveMMLV");
+		// Name is first available numeric label after the input disablers
+		save.setName("" + SAVE_BUTTON_INDEX);
+		save.setToolTipText("Save a selected level.");
+		save.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveLevel();
+			}
+		});
+		
+		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
+			save.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
+		}
+		
+		top.add(save);
+		
 		levelChunksSlider = new JSlider(JSlider.HORIZONTAL, LEVEL_MIN_CHUNKS, LEVEL_MAX_CHUNKS, Parameters.parameters.integerParameter("megaManGANLevelChunks"));
 		levelChunksSlider.setToolTipText("Determines the number of distinct latent vectors that are sent to the GAN to create level chunks which are patched together into a single level.");
 		levelChunksSlider.setMinorTickSpacing(1);
@@ -81,7 +107,9 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		}
 
 		initializationComplete = true;
-	
+		
+		
+		
 	
 	
 	}
@@ -131,12 +159,58 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"MegaManGAN";
 	}
 
+	
+	public void saveLevel() {
+		File mmlvFilePath = new File("MegaManMakerLevelPath.txt");
+		//System.out.println(mmlvFile);
+//		if(!mmlvFile.exists()) {
+//			throw new FileNotFoundException();
+//		}
+		
+		Scanner scan;
+		try {
+			scan = new Scanner(mmlvFilePath);
+			//scan.next();
+			String mmlvPath = scan.nextLine();
+			String mmlvFileName = JOptionPane.showInputDialog(null, "What do you want to name your level?");
+			File mmlvFileFromEvolution = new File(mmlvPath+mmlvFileName+".mmlv");
+			File mmlvFile;
+			scan.close();
+			if(selectedItems.size() != 1) {
+				JOptionPane.showMessageDialog(null, "Select exactly one level to save.");
+				return; // Nothing to explore
+			}
+
+			ArrayList<Double> phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
+			double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
+			List<List<Integer>> level = levelListRepresentation(doubleArray);
+			int levelNumber = 2020;
+			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, levelNumber);
+			try {
+				Files.copy(mmlvFile, mmlvFileFromEvolution);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//System.out.println(mmlvPath);
+			
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			String errorMessage = "You need to create a local text file in the MMNEAT directory called \n MegaManMakerLevelPath.txt which contains the path to where MegaManMaker stores levels on your device. \n It will likely look like this: C:\\Users\\[Insert User Name]\\AppData\\Local\\MegaMaker\\Levels\\";
+			JOptionPane.showMessageDialog(frame, errorMessage);
+		}
+		
+		
+	}
 	@Override
 	public void playLevel(ArrayList<Double> phenotype) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 		List<List<Integer>> level = levelListRepresentation(doubleArray);
 		int levelNumber = 2020;
 		MegaManVGLCUtil.convertMegaManLevelToMMLV(level, levelNumber);
+		
 		//save level and play
 	}
 

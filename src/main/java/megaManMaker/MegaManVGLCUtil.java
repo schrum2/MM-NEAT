@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-
-
+import java.util.Scanner;
 import java.awt.Point;
 import java.io.File;
+import java.io.FileNotFoundException;
 //import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
@@ -36,21 +36,21 @@ public class MegaManVGLCUtil {
 //			convertMegaManLevelToJSONHorizontalScroll(level);
 //
 //		}
-		for(int i=1;i<=10;i++) {
-			if(i!=7&&i!=3) {
-				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-				convertMegaManLevelToJSONVerticalScroll(level);
-				
-						
-						
-						
-			}
-		}
-		//List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+2+".txt");
-		//printLevel(level);
-		//convertMegaManLevelToMMLV(level, 2);
-		//convertMegaManLevelToJSONVerticalScroll(level);
-		//convertMegaManLevelToMMLV(level,5);
+//		for(int i=1;i<=10;i++) {
+//			if(i!=7&&i!=3) {
+//				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
+//				convertMegaManLevelToJSONVerticalScroll(level);
+//				
+//						
+//						
+//						
+//			}
+//		}
+		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+2+".txt");
+		printLevel(level);
+		convertMegaManLevelToMMLV(level, 2);
+		convertMegaManLevelToJSONVerticalScroll(level);
+		convertMegaManLevelToMMLV(level,5);
 		System.out.println(json.toString());
 	}
 	/**
@@ -163,7 +163,7 @@ public class MegaManVGLCUtil {
 
 		return screen;
 	}
-	public static void convertMegaManLevelToMMLV(List<List<Integer>> level, int levelNumber) {
+	public static File convertMegaManLevelToMMLV(List<List<Integer>> level, int levelNumber) {
 		//int enemyCount = 0;
 
 		// TODO Auto-generated method stub
@@ -171,8 +171,10 @@ public class MegaManVGLCUtil {
 		int ycoord = 0;
 		HashSet<Point> o = new HashSet<Point>();
 		HashSet<Point> movingPlat = new HashSet<Point>();
+		File levelFile = null;
 		try {
-		File levelFile = new File(MEGAMAN_MMLV_PATH+"MegaManLevel"+levelNumber+".mmlv");
+
+		levelFile = new File(MEGAMAN_MMLV_PATH+"MegaManLevel"+levelNumber+".mmlv");
 		
 		if(!levelFile.exists()) {
 			levelFile.createNewFile();
@@ -337,7 +339,7 @@ public class MegaManVGLCUtil {
 			e.printStackTrace();
 		}
 
-		
+		return levelFile;
 	}
 	private static void printEnemiesToMMLVFromHashMap(PrintWriter p, int xcoord, int ycoord,
 			List<List<Integer>> level, int x, int y) {
