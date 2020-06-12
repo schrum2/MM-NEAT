@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.loderunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -22,13 +23,13 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	@SuppressWarnings("unchecked")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num){
-		List<List<Integer>>[] levelSequence = getLevelSequence(individual, 5);//right now I set it to have 5 levels in the sequence
+		ArrayList<List<List<Integer>>> levelSequence = getLevelSequence(individual, 3);//right now I set it to have 3 levels in the sequence
 		long genotypeId = individual.getId();
-		Pair<double[], double[]>[] scoreSequence = new Pair[levelSequence.length];
-		for(int i = 0; i < levelSequence.length; i++) {
+		Pair<double[], double[]>[] scoreSequence = new Pair[levelSequence.size()];
+		for(int i = 0; i < levelSequence.size(); i++) {
 			//takes in the level it is on, i, and the length of the levelSequence
-			double psuedoRandomSeed = differentRandomSeedForEveryLevel(i, levelSequence.length); // TODO: Different seed for each level in the sequnce ... needs abstract method
-			scoreSequence[i] = evaluateOneLevel(levelSequence[i], psuedoRandomSeed, genotypeId);
+			double psuedoRandomSeed = differentRandomSeedForEveryLevel(i, levelSequence.size()); // TODO: Different seed for each level in the sequnce ... needs abstract method
+			scoreSequence[i] = evaluateOneLevel(levelSequence.get(i), psuedoRandomSeed, genotypeId);
 		}
 		if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceAverages")) {
 			//average all the scores together so that there are as many scores as levels
@@ -122,7 +123,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	 * @param numOfLevels Number of levels in the sequence
 	 * @return An array holding the number of levels specified
 	 */
-	public abstract List<List<Integer>>[] getLevelSequence(Genotype<T> individual, int numOfLevels);
+	public abstract ArrayList<List<List<Integer>>> getLevelSequence(Genotype<T> individual, int numOfLevels);
 
 	/**
 	 * Gets a different random seed for all of the levels in the sequence

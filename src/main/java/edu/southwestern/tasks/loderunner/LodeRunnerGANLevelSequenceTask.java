@@ -1,11 +1,23 @@
 package edu.southwestern.tasks.loderunner;
 
+import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.ArrayList;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class LodeRunnerGANLevelSequenceTask<T> extends LodeRunnerLevelSequenceTask<T> {
+
+	public static void main(String[] args) {
+		try {
+			MMNEAT.main(new String[] {"runNumber:0", "randomSeed:0", "lodeRunnerLevelSequenceAverages:false","lodeRunnerLevelSequenceIndividual:true", "base:loderunnerlevelsequence", "log:LodeRunnerLevels-Direct", "saveTo:Direct", "LodeRunnerGANModel:LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "watch:false", "GANInputSize:10", "trials:1", "mu:100", "maxGens:100000", "io:true", "netio:true", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "mating:true", "fs:false", "task:edu.southwestern.tasks.loderunner.LodeRunnerGANLevelSequenceTask", "cleanFrequency:-1", "saveAllChampions:true", "cleanOldNetworks:false", "logTWEANNData:false", "logMutationAndLineage:false", "steadyStateIndividualsPerGeneration:100", "aStarSearchBudget:100000"});
+		} catch (FileNotFoundException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public LodeRunnerGANLevelSequenceTask() {
 		super();
@@ -18,11 +30,13 @@ public class LodeRunnerGANLevelSequenceTask<T> extends LodeRunnerLevelSequenceTa
 	 * Gets the sequence of levels to be evolved 
 	 * @return An array of levels 
 	 */
-	public List<List<Integer>>[] getLevelSequence(Genotype<T> individual, int numOfLevels) {
-		List<List<Integer>>[] levelSequence = null;
+	public ArrayList<List<List<Integer>>> getLevelSequence(Genotype<T> individual, int numOfLevels) {
+		ArrayList<List<List<Integer>>> levelSequence = new ArrayList<>(numOfLevels);
 		for(int i = 0; i < numOfLevels; i++) {
-			List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromGenotype(individual);
-			levelSequence[i] = level;
+				List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromGenotype(individual);
+//				System.out.println("level: "+level);
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
+				levelSequence.add(level);
 		}
 		return levelSequence;
 	}
@@ -38,6 +52,6 @@ public class LodeRunnerGANLevelSequenceTask<T> extends LodeRunnerLevelSequenceTa
 		//returns the first of each set, for the first level it would return 0, then 10, then 20...etc
 		return levelSeeds[levelInSequence*10];
 	}
-	
+
 
 }
