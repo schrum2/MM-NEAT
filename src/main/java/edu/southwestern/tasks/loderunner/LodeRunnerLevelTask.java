@@ -258,10 +258,17 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			double[] archiveArray = null;
 			final int BINS_PER_DIMENSION = LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels.BINS_PER_DIMENSION;
 			int dimConnected, dimGround, dimLadders; //declares bin dimensions 
+			double SCALE = BINS_PER_DIMENSION/4.0; //scales by 1/4 of the dimension to go oin steps of 4
 			//gets correct index for all dimensions based on percent and multiplied by 10 to be a non decimal 
-			int connectedIndex = (int)Math.min(percentConnected*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1); 
-			int groundIndex = (int)Math.min(percentGround*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1);
-			int laddersIndex = (int)Math.min(percentLadders*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1);
+			int connectedIndex = Math.min((int)percentConnected*BINS_PER_DIMENSION, BINS_PER_DIMENSION-1); 
+			int groundIndex = Math.min((int)(percentGround*SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
+			int laddersIndex = Math.min((int)(percentLadders*SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
+//			System.out.println("percentGround: " +  percentGround);
+//			System.out.println("groundIndex: " +  groundIndex);
+//			System.out.println("percentLadders: " +  percentLadders);
+//			System.out.println("laddersIndex: " +  laddersIndex);
+//			
+//			MiscUtil.waitForReadStringAndEnterKeyPress("");
 			double binScore = simpleAStarDistance;
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels) {
 				//Initializes bin dimensions 
@@ -315,7 +322,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
 		archiveArray[binIndex] = binScore; //adds binScore at binIndex 
 		
-		//System.out.println("["+dimConnected+"]["+dimGround+"]["+dimLadders+"] = "+binScore);
+		System.out.println("["+dimConnected+"]["+dimGround+"]["+dimLadders+"] = "+binScore);
 		
 		behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 		//saving images in bins 
