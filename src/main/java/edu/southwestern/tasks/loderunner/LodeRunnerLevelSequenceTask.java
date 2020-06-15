@@ -3,6 +3,7 @@ package edu.southwestern.tasks.loderunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -10,14 +11,74 @@ import edu.southwestern.util.datastructures.Pair;
 
 
 public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask<T> {
+	private static final int numOtherScores = 8;
+	private static int numFitnessFunctions = 0;
 
 	public LodeRunnerLevelSequenceTask() {
 		super(false); // Do not register the fitness functions in the LodeRunnerLevelTask
 		
 		// Register fitness functions specific to the level sequence task here instead.
 		// TODO! (consider which command line parameters are active: average vs each individual)
-		
-		throw new UnsupportedOperationException("Don't test LodeRunnerLevelSequenceTask again without first registering fitness functions");
+		if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceAverages")) {
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
+				MMNEAT.registerFitnessFunction("simpleAStarDistance");
+				numFitnessFunctions++;
+			}
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsConnectivity")) {
+				MMNEAT.registerFitnessFunction("numOfPositionsVisited"); //connectivity
+				numFitnessFunctions++;
+			}
+
+			//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
+			MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
+			MMNEAT.registerFitnessFunction("numOfPositionsVisited",false); //connectivity
+			MMNEAT.registerFitnessFunction("percentLadders", false);
+			MMNEAT.registerFitnessFunction("percentGround", false);
+			MMNEAT.registerFitnessFunction("percentRope", false);
+			MMNEAT.registerFitnessFunction("percentConnected", false);
+			MMNEAT.registerFitnessFunction("numTreasures", false);
+			MMNEAT.registerFitnessFunction("numEnemies", false);
+		}
+		else if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceIndividual")) {
+			for(int i = 0; i < Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"); i++) {
+				if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
+					MMNEAT.registerFitnessFunction("simpleAStarDistance");
+					numFitnessFunctions++;
+				}
+				if(Parameters.parameters.booleanParameter("lodeRunnerAllowsConnectivity")) {
+					MMNEAT.registerFitnessFunction("numOfPositionsVisited"); //connectivity
+					numFitnessFunctions++;
+				}
+
+				//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
+				MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
+				MMNEAT.registerFitnessFunction("numOfPositionsVisited",false); //connectivity
+				MMNEAT.registerFitnessFunction("percentLadders", false);
+				MMNEAT.registerFitnessFunction("percentGround", false);
+				MMNEAT.registerFitnessFunction("percentRope", false);
+				MMNEAT.registerFitnessFunction("percentConnected", false);
+				MMNEAT.registerFitnessFunction("numTreasures", false);
+				MMNEAT.registerFitnessFunction("numEnemies", false);
+			}
+		}else throw new UnsupportedOperationException("Don't test LodeRunnerLevelSequenceTask again without first registering fitness functions");
+	}
+	
+	/**
+	 * @return The number of fitness functions 
+	 */
+	@Override
+	public int numObjectives() {
+		return numFitnessFunctions; 
+	}
+
+	/**
+	 * @return The number of other scores 
+	 */
+	@Override
+	public int numOtherScores() {
+		//returns 8 if we are taking the averages of the scores and 8* number of levels if we are taking all scores from each individual
+		return Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceIndividual") ? 
+				numOtherScores*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence") : numOtherScores;
 	}
 
 	/**
@@ -28,7 +89,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	@SuppressWarnings("unchecked")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num){
-		ArrayList<List<List<Integer>>> levelSequence = getLevelSequence(individual, 3);//right now I set it to have 3 levels in the sequence
+		ArrayList<List<List<Integer>>> levelSequence = getLevelSequence(individual, Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"));//right now I set it to have 3 levels in the sequence
 		long genotypeId = individual.getId();
 		Pair<double[], double[]>[] scoreSequence = new Pair[levelSequence.size()];
 		for(int i = 0; i < levelSequence.size(); i++) {
