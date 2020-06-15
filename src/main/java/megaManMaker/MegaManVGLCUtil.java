@@ -52,7 +52,7 @@ public class MegaManVGLCUtil {
 //		convertMegaManLevelToMMLV(level, 2);
 //		convertMegaManLevelToJSONVerticalScroll(level);
 //		convertMegaManLevelToMMLV(level,5);
-		System.out.println(json.toString());
+		//System.out.println(json.toString());
 	}
 	/**
 	 * prints the level to the console
@@ -263,7 +263,7 @@ public class MegaManVGLCUtil {
 					p.println("e"+xcoord+","+ycoord+"=\"177.000000\"");
 					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 					
-				}else if(m==9) { //z orb
+				}else if(m==7) { //z orb
 					p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 					p.println("e"+xcoord+","+ycoord+"=\"15.000000\"");
 					p.println("d"+xcoord+","+ycoord+"=\"8.000000\"");

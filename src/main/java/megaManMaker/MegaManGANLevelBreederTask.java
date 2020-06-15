@@ -183,7 +183,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 
 			ArrayList<Double> phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
 			double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
-			List<List<Integer>> level = levelListRepresentation(doubleArray);
+			List<List<Integer>> level;
+			if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) { //if horiontal GAN model
+				level = levelListRepresentation(doubleArray);
+				placeSpawnAndLevelOrbHorizontal(level);
+			}else { //if vertical GAN model
+				level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
+				placeSpawnAndLevelOrbVertical(level);
+			}
 			int levelNumber = 2020;
 			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, levelNumber);
 			try {
@@ -244,23 +251,23 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
 		int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		MegaManState start = new MegaManState(level);
-		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
-		HashSet<MegaManState> mostRecentVisited = null;
-		ArrayList<MegaManAction> actionSequence = null;
-		try {
-			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
-			//represented by red x's in the visualization 
-			actionSequence = ((AStarSearch<MegaManAction, MegaManState>) search).search(start, true, 10000000);
-		} catch(Exception e) {
-			System.out.println("failed search");
-			e.printStackTrace();
-		}
-		//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
-		mostRecentVisited = ((AStarSearch<MegaManAction, MegaManState>) search).getVisited();
+//		MegaManState start = new MegaManState(level);
+//		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
+//		HashSet<MegaManState> mostRecentVisited = null;
+//		ArrayList<MegaManAction> actionSequence = null;
+//		try {
+//			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+//			//represented by red x's in the visualization 
+//			actionSequence = ((AStarSearch<MegaManAction, MegaManState>) search).search(start, true, 10000000);
+//		} catch(Exception e) {
+//			System.out.println("failed search");
+//			e.printStackTrace();
+//		}
+//		//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
+//		mostRecentVisited = ((AStarSearch<MegaManAction, MegaManState>) search).getVisited();
 		
 		try {
-			MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+			//MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 
 			images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH); //7 different tiles to display 
 			image = MegaManRenderUtil.createBufferedImage(level,width1,height1, images);
