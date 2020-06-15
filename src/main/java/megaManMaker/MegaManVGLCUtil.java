@@ -281,7 +281,7 @@ public class MegaManVGLCUtil {
 					}
 				}
 				
-				if(m!=7) {
+				if(m!=9) {
 					placeActivatedScreen(xcoord,ycoord, p);
 					p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
 				}

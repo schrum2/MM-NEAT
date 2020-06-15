@@ -15,12 +15,15 @@ public class MegaManConvertMMLVToJSON {
 	public static HashSet<Point> visited = new HashSet<Point>();
 	public static int enemyNumber = -1;
 	public static String enemyString = null;
+	public static String bossString = null;
+
 	public static void main(String[] args) {
 	
-		
-		List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"proto man level 1"+".mmlv");
-		MegaManVGLCUtil.printLevel(level);
-		MegaManVGLCUtil.convertMegaManLevelToMMLV(level, 1010101010);
+		for(int i = 13;i<=13;i++) {
+			List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
+			MegaManVGLCUtil.printLevel(level);
+			MegaManVGLCUtil.convertMegaManLevelToMMLV(level, i+90);
+		}
 	}
 	
 	public static List<List<Integer>> convertMMLVtoInt(String mmlvFile) {
@@ -49,7 +52,7 @@ public class MegaManConvertMMLVToJSON {
 					!l.startsWith("n")&&!l.startsWith("[")
 					) { //shows us all blocks (solid, spike, ladder), enemies, player
 				boolean isEnemy = false;
-
+				boolean isBoss = false;
 				if(l.startsWith("i")) {
 					
 					String k = l;
@@ -67,7 +70,8 @@ public class MegaManConvertMMLVToJSON {
 					k=k.replace("=", " ");
 					k=k.replace(".000000", "");
 					enemyString = k;
-					System.out.println(k);
+					bossString = k;
+					//System.out.println(k);
 					documentxyAndAddToListe(activatedScreen, blockxyIDList, k);
 
 					
@@ -85,7 +89,15 @@ public class MegaManConvertMMLVToJSON {
 						if(enemyString==null) {
 							enemyString = k;
 						}
+					}else if(k.endsWith("8")) {
+						isBoss=true;
+					//	if(bossString==null) {
+							//bossString = k;
+							addBoss(activatedScreen, blockxyIDList, bossString);
+							
+						//}
 					}
+					
 					if(!k.endsWith("6"))
 					documentxyAndAddToListi(activatedScreen, blockxyIDList, k);
 
@@ -108,7 +120,7 @@ public class MegaManConvertMMLVToJSON {
 		for(int y = 0;y<=maxY;y++) {
 			List<Integer> row = new ArrayList<>();
 			for(int x = 0;x<=maxX;x++) {
-				row.add(7);
+				row.add(9);
 			}
 			complete.add(row);
 		}
@@ -123,12 +135,12 @@ public class MegaManConvertMMLVToJSON {
 			}
 		}
 		
-		System.out.println(activatedScreen.size());
+		//System.out.println(activatedScreen.size());
 		for(Point p : activatedScreen) {
-			System.out.println("("+p.getX()+", "+p.getY()+")");
+			//System.out.println("("+p.getX()+", "+p.getY()+")");
 			for(int x = 0;x<16;x++) {
 				for(int y = 0;y<14;y++) {
-					if(p.getY()+y<complete.size()&&p.getX()+x<complete.get(0).size()&&complete.get((int) (p.getY()+y)).get((int) (p.getX()+x))==7) {
+					if(p.getY()+y<complete.size()&&p.getX()+x<complete.get(0).size()&&complete.get((int) (p.getY()+y)).get((int) (p.getX()+x))==9) {
 						complete.get((int) (p.getY()+y)).set((int) (p.getX()+x), 0);
 					}
 				}
@@ -138,6 +150,39 @@ public class MegaManConvertMMLVToJSON {
 		
 		
 		
+	}
+
+	private static void addBoss(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList, String k) {
+		List<Integer> xyID = new ArrayList<>();
+		Scanner kScan = new Scanner(k);
+		kScan.next(); //get past letter
+		int xcoord = kScan.nextInt()/16;
+		xyID.add(xcoord);
+		int ycoord = kScan.nextInt()/16;
+		xyID.add(ycoord);
+		//make all enemies map 11-15
+		int e = kScan.nextInt();
+		if(e!=33&&e!=34&&e!=130&&e!=53&&e!=129) {
+			xyID.add(7);
+			System.out.println(k);
+		}
+		else xyID.add(1);
+		visited.add(new Point(xcoord,ycoord));
+		int howManySquaresX = xcoord/16;
+		int howManySquaresY = ycoord/14;
+		int screenX = howManySquaresX*16;
+		int screenY = howManySquaresY*14;
+		activatedScreen.add(new Point(screenX, screenY));
+		if(xcoord>maxX) {
+			maxX = xcoord+1;
+		}
+		if(ycoord>maxY) {
+			maxY = ycoord+1;
+		}
+		//System.out.println(k);
+		//System.out.println(l);
+		kScan.close();
+		blockxyIDList.add(xyID);
 	}
 
 	private static void documentxyAndAddToListenemy(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList,
@@ -188,6 +233,7 @@ public class MegaManConvertMMLVToJSON {
 		xyID.add(xcoord);
 		int ycoord = kScan.nextInt()/16;
 		xyID.add(ycoord);
+		//System.out.println(k);
 		if(!visited.contains(new Point(xcoord, ycoord))) {
 			visited.add(new Point(xcoord, ycoord));
 	
@@ -199,10 +245,15 @@ public class MegaManConvertMMLVToJSON {
 				xyID.add(1);
 			}else if (e==45) { //breakable
 				xyID.add(4);				
-			}else if (e==31||e==40||e==36||e==67||e==10||e==47) { //moving plat
+			}else if (e==31||e==40||e==36||e==67||e==10||e==47||e==11) { //moving plat
 				xyID.add(5);
-			}else if ((e>=177&&e<=194)||(e>=621&&e<=626)) xyID.add(10); //water //177-194 or 621-626
-			
+			}else if ((e>=177&&e<=194)||(e>=621&&e<=626)||e==16) {
+				//System.out.println(k);
+				xyID.add(10); //water //177-194 or 621-626
+			}else if (e==9||e==33||e==34) {
+				xyID.add(0);
+			}
+				
 			else {
 				xyID.add(0);
 			}
@@ -248,8 +299,11 @@ public class MegaManConvertMMLVToJSON {
 			else if(itemID==4) { //player
 				xyID.add(8); //json player
 			}
+//			else if (itemID==8) {
+//				xyID.add(7);
+//			}
 			else { //solid block still 1
-				xyID.add(itemID);
+				xyID.add(1);
 			}
 			int howManySquaresX = xcoord/16;
 			int howManySquaresY = ycoord/14;

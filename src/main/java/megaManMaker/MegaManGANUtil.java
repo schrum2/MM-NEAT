@@ -1,10 +1,12 @@
 package megaManMaker;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
@@ -125,6 +127,40 @@ public class MegaManGANUtil {
 		for(int level = 1;level<levelInList.size();level++) {
 			//for(int i = 0;i<oneLevel.size();i++) {
 				//for(int integer = 0; integer<oneLevel.get(0).size();integer++) {
+				oneLevel.addAll(levelInList.get(level));
+
+				
+			//}
+		}
+		
+		
+		return oneLevel;
+	}
+	
+	public static List<List<Integer>> generateOneLevelListRepresentationFromGANVerticalAndHorizontal(double[] latentVector) {
+		List<List<List<Integer>>> levelInList = getLevelListRepresentationFromGAN(latentVector);
+		int screensWide = 1;
+		int screensTall = 1;
+		int screenWidth = 16;
+		int screenHeight = 14;
+		List<Point> allPreviousMoves = new ArrayList<Point>();
+		int numberOfChunks = levelInList.size();
+		boolean right;
+		List<List<Integer>> oneLevel = levelInList.get(0); // gets first level in the set 
+		allPreviousMoves.add(new Point(0,0));
+		Random rand = new Random(Double.doubleToLongBits(latentVector[0]));
+		//List<List<Integer>> fullLevel = new ArrayList<List<Integer>>();
+		for(int level = 1;level<numberOfChunks;level++) {
+			right = rand.nextBoolean();
+
+			//for(int i = 0;i<oneLevel.size();i++) {
+				//for(int integer = 0; integer<oneLevel.get(0).size();integer++) {.
+				
+			if(right) {
+				
+			}else {
+				
+			}
 				oneLevel.addAll(levelInList.get(level));
 
 				

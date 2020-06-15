@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
-
+import java.util.Random;
 import java.util.Scanner;
 
 import javax.swing.JButton;
@@ -285,9 +285,23 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) { //if horiontal GAN model
 			level = levelListRepresentation(doubleArray);
 			placeSpawnAndLevelOrbHorizontal(level);
-		}else { //if vertical GAN model
+		}else if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("VERTICALONLY")){ //if vertical GAN model
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
 			placeSpawnAndLevelOrbVertical(level);
+		}else {
+			
+			
+			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(doubleArray);
+//			if(!right) {
+//				level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
+//				placeSpawnAndLevelOrbVertical(level);
+//
+//			}else {
+//				level = levelListRepresentation(doubleArray);
+//				placeSpawnAndLevelOrbHorizontal(level);
+//
+//			}
+			
 		}
 		//MegaManVGLCUtil.printLevel(level);
 		BufferedImage[] images;
@@ -407,7 +421,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","bigInteractiveButtons:false","MegaManGANModel:VERTICALONLYMegaManAllLevelsWith7Tiles_5_Epoch5000.pth","GANInputSize:"+MegaManGANUtil.LATENT_VECTOR_SIZE,"showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:megaManMaker.MegaManGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","bigInteractiveButtons:false","MegaManGANModel:BOTHVERTICALANDHORIZONTALMegaManAllLevelsBut7With7Tiles_5_Epoch4091.pth","GANInputSize:"+MegaManGANUtil.LATENT_VECTOR_SIZE,"showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:megaManMaker.MegaManGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
