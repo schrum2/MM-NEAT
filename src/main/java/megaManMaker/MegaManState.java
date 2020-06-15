@@ -1,8 +1,8 @@
 package megaManMaker;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -10,10 +10,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ListUtil;
@@ -362,7 +358,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 * @param start Start state  
 	 * @throws IOException
 	 */
-	public static void vizualizePath(List<List<Integer>> level, HashSet<MegaManState> mostRecentVisited, 
+	public static BufferedImage vizualizePath(List<List<Integer>> level, HashSet<MegaManState> mostRecentVisited, 
 			ArrayList<MegaManAction> actionSequence, MegaManState start) throws IOException {
 		List<List<Integer>> fullLevel = ListUtil.deepCopyListOfLists(level);
 		fullLevel.get(start.currentY).set(start.currentX, MEGA_MAN_TILE_SPAWN);// puts the spawn back into the visualization
@@ -377,6 +373,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			for(MegaManState s : mostRecentVisited) {
 				int x = s.currentX;
 				int y = s.currentY;
+				g.setStroke(new BasicStroke(3));
 				g.drawLine(x*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y,(x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
 				g.drawLine((x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y, x*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
 			}
@@ -386,24 +383,26 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				for(MegaManAction a : actionSequence) {
 					int x = current.currentX;
 					int y = current.currentY;
+					g.setStroke(new BasicStroke(3));
 					g.drawLine(x*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y,(x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
 					g.drawLine((x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y, x*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
 					current = (MegaManState) current.getSuccessor(a);
 				}
 			}
 		}
-		try {
-			JFrame frame = new JFrame();
-			JPanel panel = new JPanel();
-			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(level.get(0).size()*MegaManRenderUtil.MEGA_MAN_TILE_X, 
-					level.size()*MegaManRenderUtil.MEGA_MAN_TILE_Y, Image.SCALE_FAST)));
-			panel.add(label);
-			frame.add(panel);
-			frame.pack();
-			frame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		try {
+//			JFrame frame = new JFrame();
+//			JPanel panel = new JPanel();
+//			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(level.get(0).size()*MegaManRenderUtil.MEGA_MAN_TILE_X, 
+//					level.size()*MegaManRenderUtil.MEGA_MAN_TILE_Y, Image.SCALE_FAST)));
+//			panel.add(label);
+//			frame.add(panel);
+//			frame.pack();
+//			frame.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		return visualPath;
 	}
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 

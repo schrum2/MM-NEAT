@@ -2,8 +2,11 @@ package megaManMaker;
 
 import java.awt.Dimension;
 import java.awt.Font;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,15 +15,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+
 import java.util.Scanner;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
 import com.google.common.io.Files;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -112,8 +118,45 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 
 		initializationComplete = true;
 		
+		JPanel effectsCheckboxes = new JPanel();
+		JCheckBox showSolutionPath = new JCheckBox("ShowSolutionPath", Parameters.parameters.booleanParameter("interactiveMegaManAStarPaths"));
+		showSolutionPath.setName("interactiveMegaManAStarPaths");
+		showSolutionPath.getAccessibleContext();
+		showSolutionPath.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("interactiveMegaManAStarPaths");
+				resetButtons(true);
+			}
+		});
+		effectsCheckboxes.add(showSolutionPath);
+		top.add(effectsCheckboxes);
 		
-		
+		JPanel AStarBudget = new JPanel();
+		JLabel AStarLabel = new JLabel("UpdateAStarBudget");
+		JTextField updateAStarBudget = new JTextField(10);
+		updateAStarBudget.setText(String.valueOf(Parameters.parameters.integerParameter("aStarSearchBudget")));
+		updateAStarBudget.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+					String budget = updateAStarBudget.getText();
+					if(!budget.matches("\\d+")) {
+						return;
+					}
+					int value = Integer.parseInt(budget);
+					Parameters.parameters.setInteger("aStarSearchBudget", value);
+					resetButtons(true);
+				}
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {}
+			@Override
+			public void keyTyped(KeyEvent e) {}
+		});
+		AStarBudget.add(AStarLabel);
+		AStarBudget.add(updateAStarBudget);
+		top.add(AStarBudget);
 	
 	
 	}
@@ -195,6 +238,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, levelNumber);
 			try {
 				Files.copy(mmlvFile, mmlvFileFromEvolution);
+				mmlvFile.delete();
 				JOptionPane.showMessageDialog(frame, "Level saved");
 
 			} catch (IOException e) {
@@ -251,63 +295,79 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
 		int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-//		MegaManState start = new MegaManState(level);
-//		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
-//		HashSet<MegaManState> mostRecentVisited = null;
-//		ArrayList<MegaManAction> actionSequence = null;
-//		try {
-//			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
-//			//represented by red x's in the visualization 
-//			actionSequence = ((AStarSearch<MegaManAction, MegaManState>) search).search(start, true, 10000000);
-//		} catch(Exception e) {
-//			System.out.println("failed search");
-//			e.printStackTrace();
-//		}
-//		//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
-//		mostRecentVisited = ((AStarSearch<MegaManAction, MegaManState>) search).getVisited();
-		
+		if(Parameters.parameters.booleanParameter("interactiveMegaManAStarPaths")) {
+			MegaManState start = new MegaManState(level);
+			Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
+			HashSet<MegaManState> mostRecentVisited = null;
+			ArrayList<MegaManAction> actionSequence = null;
+			try {
+				//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+				//represented by red x's in the visualization 
+				actionSequence = ((AStarSearch<MegaManAction, MegaManState>) search).search(start, true, Parameters.parameters.integerParameter("aStarSearchBudget"));
+			} catch(Exception e) {
+				System.out.println("failed search");
+				e.printStackTrace();
+			}
+			//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
+			mostRecentVisited = ((AStarSearch<MegaManAction, MegaManState>) search).getVisited();
+			try {
+				image = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+			}catch(IOException e) {
+				e.printStackTrace();
+	
+			}
+		}else {
 		try {
-			//MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+			//
 
 			images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH); //7 different tiles to display 
 			image = MegaManRenderUtil.createBufferedImage(level,width1,height1, images);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		}
 		return image;
 	}
-	
+
 	
 	private void placeSpawnAndLevelOrbVertical(List<List<Integer>> level) {
-		boolean rtrn = false;
+		boolean placed = false;
 		for(int x = 0;x<level.get(0).size();x++) {
 			for(int y = level.size()-1;y>=0;y--) {
 				if(y-2>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0&&level.get(y-2).get(x)==0) {
 					level.get(y-1).set(x, 8);
-					rtrn  = true;
+					placed = true;
 					break;
 				}
 			}
-			if(rtrn) {
-				rtrn = false;
+			if(placed) {
 				break;
 			}
+			
+		
 		}
-		
-		
+		for(int i = 0; i<level.get(0).size();i++) {
+			if(!placed) {
+				level.get(level.size()-1).set(0, 1);
+				level.get(level.size()-2).set(0, 8);
+				placed = true;
+			}
+		}
+		placed = false;
 		for(int y = 0; y<level.size();y++) {
 			for(int x = level.get(0).size()-1;x>=0; x--) {
 				if(y-1>=0&&level.get(y).get(x)==2&&level.get(y-1).get(x)==0) {
 					level.get(y-1).set(x, 7);
-					rtrn = true;
+					placed=true;
 					break;
+					
 				}else if(y-1>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0) {
 					level.get(y-1).set(x, 7);
-					rtrn = true;
+					placed=true;
 					break;
 				}
 			}
-			if(rtrn) break;
+			if(placed) break;
 		}
 	}
 

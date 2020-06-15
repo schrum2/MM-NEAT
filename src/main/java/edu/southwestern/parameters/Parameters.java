@@ -773,6 +773,8 @@ public class Parameters {
 		booleanOptions.add("lodeRunnerDistinguishesSolidAndDiggableGround", false, "Whether or not there are both solid and diggable ground");
 		booleanOptions.add("zeldaCPPN2GANSparseKeys", false, "For CPPN2GAN generation, place one key per locked door (may make dungeons unbeatable depending on placement)");
 		booleanOptions.add("zeldaALlowPuzzleDoorUglyHack", true, "Whether or not the raft is in the first soft-locked room");
+		booleanOptions.add("interactiveMegaManAStarPaths", false, "whether or not the A* path is shown in the level breeder");
+
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
