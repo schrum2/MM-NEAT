@@ -370,7 +370,7 @@ public class LodeRunner {
 					status.setText("Editing "+ levelName);
 					createNew.setText("Cancel");
 					createNew.setEnabled(true);
-					//openNew.setText("Play Level Now");
+					playGAN.setEnabled(true);
 					openNew.setEnabled(false);
 				}
 				else if (text.equals("Save")) {
@@ -394,7 +394,7 @@ public class LodeRunner {
 						status.setText(levelName);
 						createNew.setText("Create new level");
 						createNew.setEnabled(true);
-						//openNew.setText("Play Level Now");
+						playGAN.setEnabled(false);
 						openNew.setEnabled(true);
 					}
 				}
@@ -461,6 +461,7 @@ public class LodeRunner {
 		playGAN.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				playGAN.setEnabled(false);
 				//hard save current level and then reset. 
 				GamePanel.mode = Mode.GAN;
 				gamePanel.reset();
@@ -479,6 +480,7 @@ public class LodeRunner {
 			}
 
 		});
+		playGAN.setEnabled(false);
 		menu.add(instructions);
 		menu.add(reset);
 		menu.add(edit);
