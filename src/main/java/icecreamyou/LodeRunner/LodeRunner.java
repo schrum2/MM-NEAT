@@ -460,12 +460,13 @@ public class LodeRunner {
 		});
 		playGAN.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				playGAN.setEnabled(false);
-				//hard save current level and then reset. 
-				GamePanel.mode = Mode.GAN;
-				gamePanel.reset();
-				gamePanel.stopUsingEditor();
+			public void actionPerformed(ActionEvent e) {				
+				
+				gamePanel.updateUI(); //updates the layout of the level to be the edited version
+//				GamePanel.mode = Mode.GAN;
+//				gamePanel.reset(); //calling reset always resets it to the original, so this is probably not a good way to do it 
+				GamePanel.mode = Mode.MODE_PLAYING;
+				status.setText(levelName); //updates name at top left to not be editing anymore 
 				editor.setEnabled(false);
 				for (Component c : editor.getComponents())
 					c.setEnabled(false);

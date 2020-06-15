@@ -111,7 +111,8 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 			for(int i = 0; i < scoreSequence.length; i++) {
 				for(int j = 0; j < averageFitnesses.length; j++) {
 					for(int k = 0; k < otherScores.length; k++) {
-						averageFitnesses[j] += scoreSequence[i].t1[j]; //averages are found for the fitness functions
+						for(int g = 0; g < scoreSequence[i].t1.length; g++)
+							averageFitnesses[j] += scoreSequence[i].t1[g]; //averages are found for the fitness functions
 						for(int d = 0; d < scoreSequence[i].t2.length; d++)
 							otherScores[k] = scoreSequence[i].t2[d]; //calculates the all of the other scores for every level 
 					}
