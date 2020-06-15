@@ -19,6 +19,8 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 		
 		// Register fitness functions specific to the level sequence task here instead.
 		// TODO! (consider which command line parameters are active: average vs each individual)
+		
+		//If we are averaging scores then we add all of the scores from the LodeRunnerLevelTask because it will take the averages from each level in the sequence
 		if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceAverages")) {
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
 				MMNEAT.registerFitnessFunction("simpleAStarDistance");
@@ -39,6 +41,8 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 			MMNEAT.registerFitnessFunction("numTreasures", false);
 			MMNEAT.registerFitnessFunction("numEnemies", false);
 		}
+		//if we are taking individual scores it takes all the scores as for the first level, then adds all the scores for the second level, and so on for all levels
+		//it maintains order by looping for the amount of levels in the sequence
 		else if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceIndividual")) {
 			for(int i = 0; i < Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"); i++) {
 				if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
@@ -72,6 +76,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	}
 
 	/**
+	 * 8 if average, 8*number of levels if individual 
 	 * @return The number of other scores 
 	 */
 	@Override
