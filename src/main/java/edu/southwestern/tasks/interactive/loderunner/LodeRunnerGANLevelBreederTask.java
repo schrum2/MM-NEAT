@@ -73,10 +73,12 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
 					String budget = updateAStarBudget.getText();
 					if(!budget.matches("\\d+")) {
+						System.out.println("Match failure! \"" + budget + "\"");
 						return;
 					}
 					int value = Integer.parseInt(budget);
 					Parameters.parameters.setInteger("aStarSearchBudget", value);
+					System.out.println("Reset budget: "+value);
 					resetButtons(true);
 				}
 			}
