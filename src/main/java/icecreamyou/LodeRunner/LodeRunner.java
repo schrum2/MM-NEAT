@@ -461,6 +461,7 @@ public class LodeRunner {
 		playGAN.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//hard save current level and then reset. 
 				GamePanel.mode = Mode.GAN;
 				gamePanel.reset();
 				gamePanel.stopUsingEditor();
@@ -471,6 +472,9 @@ public class LodeRunner {
 				reset.setEnabled(true);
 				createNew.setText("Create new level");
 				createNew.setEnabled(true);
+				edit.setText("Edit");
+				edit.setEnabled(true);
+				openNew.setText("Open level");
 				openNew.setEnabled(true);
 			}
 

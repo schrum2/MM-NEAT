@@ -16,10 +16,10 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 
 	public LodeRunnerLevelSequenceTask() {
 		super(false); // Do not register the fitness functions in the LodeRunnerLevelTask
-		
+
 		// Register fitness functions specific to the level sequence task here instead.
 		// TODO! (consider which command line parameters are active: average vs each individual)
-		
+
 		//If we are averaging scores then we add all of the scores from the LodeRunnerLevelTask because it will take the averages from each level in the sequence
 		if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceAverages")) {
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
@@ -32,14 +32,16 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 			}
 
 			//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
-			MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
-			MMNEAT.registerFitnessFunction("numOfPositionsVisited",false); //connectivity
-			MMNEAT.registerFitnessFunction("percentLadders", false);
-			MMNEAT.registerFitnessFunction("percentGround", false);
-			MMNEAT.registerFitnessFunction("percentRope", false);
-			MMNEAT.registerFitnessFunction("percentConnected", false);
-			MMNEAT.registerFitnessFunction("numTreasures", false);
-			MMNEAT.registerFitnessFunction("numEnemies", false);
+			for(int i = 1; i <= Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"); i++) {
+				MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
+				MMNEAT.registerFitnessFunction("numOfPositionsVisited",false); //connectivity
+				MMNEAT.registerFitnessFunction("percentLadders", false);
+				MMNEAT.registerFitnessFunction("percentGround", false);
+				MMNEAT.registerFitnessFunction("percentRope", false);
+				MMNEAT.registerFitnessFunction("percentConnected", false);
+				MMNEAT.registerFitnessFunction("numTreasures", false);
+				MMNEAT.registerFitnessFunction("numEnemies", false);
+			}
 		}
 		//if we are taking individual scores it takes all the scores as for the first level, then adds all the scores for the second level, and so on for all levels
 		//it maintains order by looping for the amount of levels in the sequence
@@ -66,7 +68,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 			}
 		}else throw new UnsupportedOperationException("Don't test LodeRunnerLevelSequenceTask again without first registering fitness functions");
 	}
-	
+
 	/**
 	 * @return The number of fitness functions 
 	 */
@@ -81,9 +83,8 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	 */
 	@Override
 	public int numOtherScores() {
-		//returns 8 if we are taking the averages of the scores and 8* number of levels if we are taking all scores from each individual
-		return Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceIndividual") ? 
-				numOtherScores*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence") : numOtherScores;
+		//8* number of levels because we always take every otherScore 
+		return numOtherScores*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence");
 	}
 
 	/**
@@ -99,44 +100,43 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 		Pair<double[], double[]>[] scoreSequence = new Pair[levelSequence.size()];
 		for(int i = 0; i < levelSequence.size(); i++) {
 			//takes in the level it is on, i, and the length of the levelSequence
-			double psuedoRandomSeed = differentRandomSeedForEveryLevel(i, levelSequence.size()); // TODO: Different seed for each level in the sequnce ... needs abstract method
+			double psuedoRandomSeed = differentRandomSeedForEveryLevel(i, levelSequence.size()); // TODO: Different seed for each level in the sequence ... needs abstract method
 			scoreSequence[i] = evaluateOneLevel(levelSequence.get(i), psuedoRandomSeed, genotypeId);
 		}
 		if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceAverages")) {
 			//average all the scores together so that there are as many scores as levels
 			double[] averageFitnesses = new double[scoreSequence[0].t1.length]; //new double array that is the size of the fitness functions array
-			double[] averageOtherScores = new double[scoreSequence[0].t2.length]; //new double array that is the size of the other sores array
+			double[] otherScores = new double[scoreSequence[0].t2.length*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")]; //new double array that is the size of the other sores array
 			//calculates the total scores from all levels 
 			for(int i = 0; i < scoreSequence.length; i++) {
 				for(int j = 0; j < averageFitnesses.length; j++) {
-					for(int k = 0; k < averageOtherScores.length; k++) {
-						averageFitnesses[j] += scoreSequence[i].t1[j];
-						averageOtherScores[k] += scoreSequence[i].t2[k];
+					for(int k = 0; k < otherScores.length; k++) {
+						averageFitnesses[j] += scoreSequence[i].t1[j]; //averages are found for the fitness functions
+						for(int d = 0; d < scoreSequence[i].t2.length; d++)
+							otherScores[k] = scoreSequence[i].t2[d]; //calculates the all of the other scores for every level 
 					}
 				}
 			}
 			//averages the values in the fitness array
 			for(int i = 0; i < averageFitnesses.length; i++) {
-				averageFitnesses[i] /= scoreSequence.length;
+				averageFitnesses[i] = averageFitnesses[i]/Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence");
 			}
-			//finds the averages of the other scores array
-			for(int i = 0; i < averageOtherScores.length; i++) {
-				averageOtherScores[i] /= scoreSequence.length;
-			}
-			return new Pair<double[], double[]>(averageFitnesses, averageOtherScores);
+			return new Pair<double[], double[]>(averageFitnesses, otherScores);
 		}
 		else if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceIndividual")) {
 			//individual scores, this means it is the amount of scores times the amount of levels
 			//new double array that is the length to fit all the fitnesses from every level in the sequence
-			double[] allFitnesses = new double[scoreSequence[0].t1.length*scoreSequence[0].t1.length]; 
+			double[] allFitnesses = new double[scoreSequence[0].t1.length*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")]; 
 			//new double array that is the length to fit all the fitnesses from every level in the sequence
-			double[] allOtherScores = new double[scoreSequence[0].t2.length*scoreSequence[0].t2.length];
+			double[] allOtherScores = new double[scoreSequence[0].t2.length*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")];
 			//adds all the scores from the level sequence to the new arrays 
 			for(int i = 0; i < scoreSequence.length; i++) {
 				for(int j = 0; j < allFitnesses.length; j++) {
 					for(int k = 0; k < allOtherScores.length; k++) {
-						allFitnesses[j] = scoreSequence[i].t1[j];
-						allOtherScores[k] = scoreSequence[i].t2[k];
+						for(int g= 0; g < scoreSequence[i].t1.length; g++)
+							allFitnesses[j] = scoreSequence[i].t1[g];
+						for(int d = 0; d < scoreSequence[i].t2.length; d++)
+							allOtherScores[k] = scoreSequence[i].t2[d];
 					}
 				}
 			}
