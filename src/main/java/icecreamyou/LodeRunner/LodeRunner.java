@@ -37,11 +37,11 @@ import javax.swing.event.MouseInputAdapter;
  * The controlling class for a new Lode Runner game.
  */
 public class LodeRunner {
-	
+
 	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	private String levelName = "CAMPAIGN-1";
 	public static final int INITIAL_LIVES = 3;
-	
+
 	// Score counters
 	final ScoreLabel score = new ScoreLabel("Gold: 0", "Gold", 0);
 	final ScoreLabel lives = new ScoreLabel("Lives: "+ INITIAL_LIVES, "Lives", INITIAL_LIVES);
@@ -54,13 +54,14 @@ public class LodeRunner {
 	final JButton createNew = new JButton("Create new level");
 	final JButton edit = new JButton("Edit");
 	final JButton openNew = new JButton("Open level");
+	final JButton playGAN = new JButton("Play Level Now"); //added when editing a GAN Level and then removed when now editing
 	// Top-level frame
 	final JFrame frame = new JFrame("Lode Runner");
 
 	public LodeRunner() {
 		// Retrieve instructions.
 		final String instructionText = getInstructions();
-		
+
 		// Top-level frame
 		frame.setLocation(200, 150);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -71,7 +72,7 @@ public class LodeRunner {
 
 		// Initialize level
 		Level level = new Level(levelName);
-		
+
 		// Main playing area
 		final GamePanel gamePanel = new GamePanel(level, this);
 		gamePanel.addMouseListener(new MouseInputAdapter() {
@@ -84,15 +85,15 @@ public class LodeRunner {
 								key,
 								GamePanel.getXUnitPosition(e.getX()),
 								GamePanel.getYUnitPosition(e.getY())
-						);
+								);
 						openNew.setEnabled(false);
 					}
 				}
 			}
 		});
 		frame.add(gamePanel, BorderLayout.CENTER);
-		
-		
+
+
 		//Editor options.
 		frame.add(editor, BorderLayout.EAST);
 		editor.setLayout(new GridLayout(0, 2));
@@ -116,7 +117,7 @@ public class LodeRunner {
 		for (Component c : editor.getComponents())
 			c.setEnabled(false);
 
-		
+
 		// Menu
 		frame.add(menu, BorderLayout.NORTH);
 		menu.add(status);
@@ -128,7 +129,7 @@ public class LodeRunner {
 						instructionText,
 						"Instructions",
 						JOptionPane.PLAIN_MESSAGE
-				);
+						);
 			}
 		});
 		reset.addActionListener(new ActionListener() {
@@ -169,7 +170,7 @@ public class LodeRunner {
 						return;
 					}
 					saveDialog.setLocationRelativeTo(frame);
-                    saveDialog.setVisible(true);
+					saveDialog.setVisible(true);
 					String result = saveDialog.getResult();
 					if (result != null) {
 						gamePanel.save(result);
@@ -253,13 +254,13 @@ public class LodeRunner {
 		menu.add(openNew);
 		menu.add(score);
 		menu.add(lives);
-		
+
 
 		// Put the frame on the screen
 		frame.pack();
-        frame.setVisible(true);
+		frame.setVisible(true);
 	}
-	
+
 	/**
 	 * Constructor for GAN levels that doesnt save file
 	 * @param level1
@@ -267,7 +268,7 @@ public class LodeRunner {
 	public LodeRunner(List<List<Integer>> level1) {
 		// Retrieve instructions.
 		final String instructionText = getInstructions();
-		
+
 		// Top-level frame
 		frame.setLocation(200, 150);
 		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -278,7 +279,7 @@ public class LodeRunner {
 
 		// Initialize level
 		Level level = new Level(level1);
-		
+
 		// Main playing area
 		final GamePanel gamePanel = new GamePanel(level, this);
 		gamePanel.addMouseListener(new MouseInputAdapter() {
@@ -291,15 +292,15 @@ public class LodeRunner {
 								key,
 								GamePanel.getXUnitPosition(e.getX()),
 								GamePanel.getYUnitPosition(e.getY())
-						);
+								);
 						openNew.setEnabled(false);
 					}
 				}
 			}
 		});
 		frame.add(gamePanel, BorderLayout.CENTER);
-		
-		
+
+
 		//Editor options.
 		frame.add(editor, BorderLayout.EAST);
 		editor.setLayout(new GridLayout(0, 2));
@@ -323,7 +324,7 @@ public class LodeRunner {
 		for (Component c : editor.getComponents())
 			c.setEnabled(false);
 
-		
+
 		// Menu
 		frame.add(menu, BorderLayout.NORTH);
 		menu.add(status);
@@ -335,7 +336,7 @@ public class LodeRunner {
 						instructionText,
 						"Instructions",
 						JOptionPane.PLAIN_MESSAGE
-				);
+						);
 			}
 		});
 		reset.addActionListener(new ActionListener() {
@@ -369,6 +370,7 @@ public class LodeRunner {
 					status.setText("Editing "+ levelName);
 					createNew.setText("Cancel");
 					createNew.setEnabled(true);
+					playGAN.setEnabled(true);
 					openNew.setEnabled(false);
 				}
 				else if (text.equals("Save")) {
@@ -377,7 +379,7 @@ public class LodeRunner {
 						return;
 					}
 					saveDialog.setLocationRelativeTo(frame);
-                    saveDialog.setVisible(true);
+					saveDialog.setVisible(true);
 					String result = saveDialog.getResult();
 					if (result != null) {
 						gamePanel.save(result);
@@ -392,6 +394,7 @@ public class LodeRunner {
 						status.setText(levelName);
 						createNew.setText("Create new level");
 						createNew.setEnabled(true);
+						playGAN.setEnabled(false);
 						openNew.setEnabled(true);
 					}
 				}
@@ -441,7 +444,7 @@ public class LodeRunner {
 						null,
 						levels,
 						levels[0]);
-				if (result != null && result.length() > 0) {
+				if (result != null && result.length() > 0 && openNew.getText()=="Open level") {
 					if (result.equals("CAMPAIGN")) {
 						gamePanel.startCampaign();
 						status.setText("CAMPAIGN");
@@ -453,21 +456,46 @@ public class LodeRunner {
 					}
 				}
 			}
+
 		});
+		playGAN.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				playGAN.setEnabled(false);
+				//hard save current level and then reset. 
+				GamePanel.mode = Mode.GAN;
+				gamePanel.reset();
+				gamePanel.stopUsingEditor();
+				editor.setEnabled(false);
+				for (Component c : editor.getComponents())
+					c.setEnabled(false);
+				reset.setText("Play");
+				reset.setEnabled(true);
+				createNew.setText("Create new level");
+				createNew.setEnabled(true);
+				edit.setText("Edit");
+				edit.setEnabled(true);
+				openNew.setText("Open level");
+				openNew.setEnabled(true);
+			}
+
+		});
+		playGAN.setEnabled(false);
 		menu.add(instructions);
 		menu.add(reset);
 		menu.add(edit);
 		menu.add(createNew);
 		menu.add(openNew);
+		menu.add(playGAN);
 		menu.add(score);
 		menu.add(lives);
-		
+
 
 		// Put the frame on the screen
 		frame.pack();
-        frame.setVisible(true);
+		frame.setVisible(true);
 	}
-	
+
 	/**
 	 * Switch the current level.
 	 * Only used in GamePanel.win() if there is a nextLevel.
@@ -475,7 +503,7 @@ public class LodeRunner {
 	void setLevelName(String name) {
 		levelName = name;
 	}
-	
+
 	/**
 	 * React when the game stops, e.g. in GamePanel.lose().
 	 */
@@ -485,7 +513,7 @@ public class LodeRunner {
 		createNew.setEnabled(true);
 		openNew.setEnabled(true);
 	}
-	
+
 	/**
 	 * Read in the instructions file and return it as a String.
 	 */
@@ -536,7 +564,7 @@ public class LodeRunner {
 							null,
 							KeyColor.values(),
 							color
-					);
+							);
 					if (color == null)
 						color = KeyColor.RED;
 				}
@@ -546,7 +574,7 @@ public class LodeRunner {
 		});
 		panel.add(button);
 	}
-	
+
 	/**
 	 * Returns an array of levels that can be opened.
 	 */
