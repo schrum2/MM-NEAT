@@ -381,7 +381,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				g.drawLine((x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y, x*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
 			}
 			if(actionSequence != null) {
-				g.setColor(Color.BLUE);
+				g.setColor(Color.RED);
 				MegaManState current = start;
 				for(MegaManAction a : actionSequence) {
 					int x = current.currentX;

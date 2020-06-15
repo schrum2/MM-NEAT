@@ -37,20 +37,21 @@ public class MegaManVGLCUtil {
 //
 //		}
 //		for(int i=1;i<=10;i++) {
-//			if(i!=7&&i!=3) {
+//			if(i!=7) {
 //				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
 //				convertMegaManLevelToJSONVerticalScroll(level);
+//				if(i!=3) convertMegaManLevelToJSONHorizontalScroll(level);
 //				
 //						
 //						
 //						
 //			}
 //		}
-		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+2+".txt");
-		printLevel(level);
-		convertMegaManLevelToMMLV(level, 2);
-		convertMegaManLevelToJSONVerticalScroll(level);
-		convertMegaManLevelToMMLV(level,5);
+//		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+2+".txt");
+//		printLevel(level);
+//		convertMegaManLevelToMMLV(level, 2);
+//		convertMegaManLevelToJSONVerticalScroll(level);
+//		convertMegaManLevelToMMLV(level,5);
 		System.out.println(json.toString());
 	}
 	/**
