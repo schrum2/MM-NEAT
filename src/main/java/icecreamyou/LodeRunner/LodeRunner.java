@@ -59,6 +59,8 @@ public class LodeRunner {
 	final JButton playGAN = new JButton("Play Level Now"); //added when editing a GAN Level and then removed when now editing
 	// Top-level frame
 	final JFrame frame = new JFrame("Lode Runner");
+	
+	public static Level levelCopy;
 
 	public LodeRunner() {
 		// Retrieve instructions.
@@ -281,6 +283,7 @@ public class LodeRunner {
 
 		// Initialize level
 		Level level = new Level(level1);
+		levelCopy = new Level(level); //deep copy of the level
 		levelName = "Level From GAN";
 		status.setText(levelName);
 
@@ -349,6 +352,7 @@ public class LodeRunner {
 				gamePanel.reset();
 				String text = reset.getText();
 				if (text.equals("Play")) {
+					levelCopy = new Level(level);
 					reset.setText("Reset");
 					edit.setEnabled(false);
 					createNew.setEnabled(false);
@@ -366,6 +370,8 @@ public class LodeRunner {
 			public void actionPerformed(ActionEvent e) {
 				String text = edit.getText();
 				if (text.equals("Edit")) {
+					GamePanel.mode = Mode.GAN;
+					gamePanel.reset();
 					gamePanel.useEditor();
 					editor.setEnabled(true);
 					for (Component c : editor.getComponents())
@@ -468,7 +474,7 @@ public class LodeRunner {
 			@Override
 			public void actionPerformed(ActionEvent e) {	
 				GamePanel.mode = Mode.GAN;
-				gamePanel.reset(); //calling reset always resets it to the original, so this is probably not a good way to do it 
+				gamePanel.reset(); 
 				status.setText(levelName); //updates name at top left to not be editing anymore 
 				editor.setEnabled(false);
 				for (Component c : editor.getComponents())
@@ -483,7 +489,6 @@ public class LodeRunner {
 				openNew.setEnabled(true);
 				playGAN.setEnabled(false);
 			}
-
 		});
 		playGAN.setEnabled(false);
 		menu.add(instructions);
@@ -514,7 +519,6 @@ public class LodeRunner {
 	 */
 	public void stopPlaying() {
 		reset.setText("Play");
-		edit.setText("Edit");
 		edit.setEnabled(true);
 		createNew.setEnabled(true);
 		openNew.setEnabled(true);
