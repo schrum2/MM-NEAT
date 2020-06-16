@@ -258,7 +258,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 		else if(mode==Mode.GAN) {
 			mode=Mode.MODE_PLAYING;
 			timer.start();
-			level = Level.cleanCopyGAN(Level.GANLevel);
+			//level = Level.cleanCopyGAN(Level.GANLevel);
 			repaint();
 		}
 		else if (mode == Mode.MODE_PLAYING) {

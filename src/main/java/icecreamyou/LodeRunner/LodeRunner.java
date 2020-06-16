@@ -356,6 +356,7 @@ public class LodeRunner {
 				}
 				else if (text.equals("Reset")) {
 					stopPlaying();
+					playGAN.setEnabled(false);
 					lives.subtractValue(1);
 					score.resetValue();
 				}
@@ -370,6 +371,7 @@ public class LodeRunner {
 					for (Component c : editor.getComponents())
 						c.setEnabled(true);
 					reset.setText("Reset");
+					reset.setEnabled(false);
 					edit.setText("Save");
 					status.setText("Editing "+ levelName);
 					createNew.setText("Cancel");
@@ -465,10 +467,8 @@ public class LodeRunner {
 		playGAN.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {	
-				gamePanel.updateUI(); //updates the layout of the level to be the edited version
-//				GamePanel.mode = Mode.GAN;
-//				gamePanel.reset(); //calling reset always resets it to the original, so this is probably not a good way to do it 
-				GamePanel.mode = Mode.MODE_PLAYING;
+				GamePanel.mode = Mode.GAN;
+				gamePanel.reset(); //calling reset always resets it to the original, so this is probably not a good way to do it 
 				status.setText(levelName); //updates name at top left to not be editing anymore 
 				editor.setEnabled(false);
 				for (Component c : editor.getComponents())
@@ -514,6 +514,7 @@ public class LodeRunner {
 	 */
 	public void stopPlaying() {
 		reset.setText("Play");
+		edit.setText("Edit");
 		edit.setEnabled(true);
 		createNew.setEnabled(true);
 		openNew.setEnabled(true);
