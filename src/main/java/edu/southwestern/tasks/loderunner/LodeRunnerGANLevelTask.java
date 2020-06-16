@@ -17,7 +17,10 @@ public class LodeRunnerGANLevelTask extends LodeRunnerLevelTask<List<Double>> {
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:10", "randomSeed:0", "base:loderunnerlevels", "log:LodeRunnerLevels-Direct", "saveTo:Direct", "LodeRunnerGANModel:LodeRunnerEpochAllGroundFirstHundred100000_20_7.pth", "watch:true", "GANInputSize:20", "trials:1", "mu:100", "maxGens:100000", "io:true", "netio:true", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "mating:true", "fs:false", "task:edu.southwestern.tasks.loderunner.LodeRunnerGANLevelTask", "cleanFrequency:-1", "saveAllChampions:true", "cleanOldNetworks:false", "logTWEANNData:false", "logMutationAndLineage:false watch:false", "steadyStateIndividualsPerGeneration:100", "aStarSearchBudget:100000"});
+			//without MAPElites
+			//MMNEAT.main(new String[]{"runNumber:10", "randomSeed:0", "base:loderunnerlevels", "log:LodeRunnerLevels-Direct", "saveTo:Direct", "LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "watch:true", "GANInputSize:10", "trials:1", "mu:100", "maxGens:100000", "io:true", "netio:true", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "mating:true", "fs:false", "task:edu.southwestern.tasks.loderunner.LodeRunnerGANLevelTask", "cleanFrequency:-1", "saveAllChampions:true", "cleanOldNetworks:false", "logTWEANNData:false", "logMutationAndLineage:false watch:false", "steadyStateIndividualsPerGeneration:100", "aStarSearchBudget:100000"});
+			//with MAPElites
+			MMNEAT.main(new String[] {"runNumber:12", "randomSeed:1", "base:loderunnerlevelsMAPElites", "mapElitesBinLabels:edu.southwestern.tasks.loderunner.LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels", "log:LodeRunnerLevels-Direct", "saveTo:Direct", "LodeRunnerGANModel:LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "ea:edu.southwestern.evolution.mapelites.MAPElites", "experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment","watch:false", "GANInputSize:10", "trials:1", "mu:100", "maxGens:100000", "io:true", "netio:true", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "mating:true", "fs:false", "task:edu.southwestern.tasks.loderunner.LodeRunnerGANLevelTask", "cleanFrequency:-1", "saveAllChampions:true", "cleanOldNetworks:false", "logTWEANNData:false", "logMutationAndLineage:false", "steadyStateIndividualsPerGeneration:100", "aStarSearchBudget:100000"});
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (NoSuchMethodException e) {
@@ -53,7 +56,7 @@ public class LodeRunnerGANLevelTask extends LodeRunnerLevelTask<List<Double>> {
 	 * @param latentVector 
 	 * @return A single level, List<List<Integer>>
 	 */
-	private List<List<Integer>> getLodeRunnerLevelListRepresentationFromGenotypeStatic(List<Double> latentVector) {
+	public static List<List<Integer>> getLodeRunnerLevelListRepresentationFromGenotypeStatic(List<Double> latentVector) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
 		List<List<Integer>> level = LodeRunnerGANUtil.generateOneLevelListRepresentationFromGAN(doubleArray);
  		return level;

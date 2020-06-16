@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.loderunner;
 
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,7 +24,6 @@ import icecreamyou.LodeRunner.LodeRunner;
 public class LodeRunnerGANUtil {
 	//public static final int LODE_RUNNER_ORIGINAL_TILE_NUMBER = 8; //number of tiles in LodeRunner 
 	//public static final int LATENT_VECTOR_SIZE = 10;//latent vector dimension, original size 
-	public static final int LATENT_VECTOR_SIZE = 20;//latent vector dimension, 20 improved the model 
 	public static final int LODE_RUNNER_ONE_GROUND_TILE_NUMBER = 6; //number of tiles in LodeRunner
 	public static final int LODE_RUNNER_ALL_GROUND_TILE_NUMBER = 7; //number of tiles in LodeRunner
 
@@ -35,6 +33,8 @@ public class LodeRunnerGANUtil {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
+		final int LATENT_VECTOR_SIZE = 10;//latent vector dimension, 20 improved the model 
+		
 		GANProcess.type = GANProcess.GAN_TYPE.LODE_RUNNER; //sets GAN type to LodeRunner
 		Parameters.initializeParameterCollections(new String[] {"GANInputSize:"+LATENT_VECTOR_SIZE});//input size is the size of the latent vector
 		double[] latentVector = RandomNumbers.randomArray(LATENT_VECTOR_SIZE); //fills array of input size randomly
