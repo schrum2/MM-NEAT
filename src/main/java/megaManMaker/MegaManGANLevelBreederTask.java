@@ -32,6 +32,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
+import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.search.AStarSearch;
@@ -42,7 +43,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	public static final int LEVEL_MIN_CHUNKS = 1;
 	public static final int LEVEL_MAX_CHUNKS = 10;
 	public static final int SAVE_BUTTON_INDEX = -19; 
-
+	public static GANProcess ganProcessVertical = null;
+	public static GANProcess ganProcessHorizontal = null;
 	private boolean initializationComplete = false;
 	protected JSlider levelChunksSlider;
 	public MegaManGANLevelBreederTask() throws IllegalAccessException {
@@ -129,7 +131,33 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			}
 		});
 		effectsCheckboxes.add(showSolutionPath);
+		//top.add(effectsCheckboxes);
+		
+		//JPanel useBothGANs = new JPanel();
+		JCheckBox useBothGANs = new JCheckBox("UseBothGANs", Parameters.parameters.booleanParameter("useBothGANsMegaMan"));
+		useBothGANs.setName("useBothGANsMegaMan");
+		useBothGANs.getAccessibleContext();
+		useBothGANs.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("useBothGANsMegaMan");
+				GANProcess.terminateGANProcess();
+				PythonUtil.setPythonProgram();
+				ganProcessHorizontal = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANHorizontalModel"), 
+						Parameters.parameters.integerParameter("GANInputSize"), 
+						/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
+						GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
+				ganProcessVertical = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANVerticalModel"), 
+						Parameters.parameters.integerParameter("GANInputSize"), 
+						/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
+						GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
+				
+				resetButtons(true);
+			}
+		});
+		effectsCheckboxes.add(useBothGANs);
 		top.add(effectsCheckboxes);
+		
 		
 		JPanel AStarBudget = new JPanel();
 		JLabel AStarLabel = new JLabel("UpdateAStarBudget");
@@ -233,7 +261,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
 				placeSpawnAndLevelOrbVertical(level);
 			}else {
-				level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(doubleArray);
+				level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess.getGANProcess(),GANProcess.getGANProcess(),doubleArray);
 				placeSpawnAndLevelOrbHorizontal(level);			
 			}
 			int levelNumber = 2020;
@@ -290,8 +318,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		}else if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("VERTICALONLY")){ //if vertical GAN model
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
 			placeSpawnAndLevelOrbVertical(level);
-		}else {
-			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(doubleArray);
+		}else if (Parameters.parameters.booleanParameter("useBothGANsMegaMan")){
+			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(ganProcessHorizontal,ganProcessVertical,doubleArray);
+			placeSpawnAndLevelOrbHorizontal(level);
+		}
+		
+		
+		else {
+			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess.getGANProcess(), GANProcess.getGANProcess(), doubleArray);
 			placeSpawnAndLevelOrbHorizontal(level);			
 		}
 		//MegaManVGLCUtil.printLevel(level);

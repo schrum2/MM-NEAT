@@ -130,7 +130,7 @@ public class MegaManGANUtil {
 	}
 	public enum Direction {UP, RIGHT, DOWN};
 
-	public static List<List<Integer>> generateOneLevelListRepresentationFromGANVerticalAndHorizontal(double[] latentVector) {
+	public static List<List<Integer>> generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess horizontalGAN, GANProcess verticalGAN, double[] latentVector) {
 		// Just grabbing the static GANProcess for now, but you will need to make this method accept two separate GAN models eventually.
 		List<List<List<Integer>>> levelInList = getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), latentVector);
 		Direction d = Direction.RIGHT;
@@ -144,8 +144,8 @@ public class MegaManGANUtil {
 		List<List<Integer>> oneLevel = levelInList.get(0); // gets first level in the set 
 		Random rand = new Random(Double.doubleToLongBits(latentVector[0]));
 		List<Integer> nullLine = new ArrayList<Integer>(16);
-		for(int i=0;i<MEGA_MAN_LEVEL_WIDTH;i++) { // <--- TODO from Schrum: Don't like these magic numbers!
-			nullLine.add(MegaManState.MEGA_MAN_TILE_NULL); 	// <--- TODO from Schrum: Don't like these magic numbers!
+		for(int i=0;i<MEGA_MAN_LEVEL_WIDTH;i++) {
+			nullLine.add(MegaManState.MEGA_MAN_TILE_NULL);
 		}
 		for(int level = 1;level<numberOfChunks;level++) {
 			right = rand.nextBoolean();
