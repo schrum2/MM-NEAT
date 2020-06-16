@@ -3,8 +3,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -279,6 +281,8 @@ public class LodeRunner {
 
 		// Initialize level
 		Level level = new Level(level1);
+		levelName = "Level From GAN";
+		status.setText(levelName);
 
 		// Main playing area
 		final GamePanel gamePanel = new GamePanel(level, this);
@@ -460,8 +464,7 @@ public class LodeRunner {
 		});
 		playGAN.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {				
-				
+			public void actionPerformed(ActionEvent e) {	
 				gamePanel.updateUI(); //updates the layout of the level to be the edited version
 //				GamePanel.mode = Mode.GAN;
 //				gamePanel.reset(); //calling reset always resets it to the original, so this is probably not a good way to do it 
@@ -478,6 +481,7 @@ public class LodeRunner {
 				edit.setEnabled(true);
 				openNew.setText("Open level");
 				openNew.setEnabled(true);
+				playGAN.setEnabled(false);
 			}
 
 		});
