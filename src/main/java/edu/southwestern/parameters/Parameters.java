@@ -775,6 +775,8 @@ public class Parameters {
 		booleanOptions.add("zeldaALlowPuzzleDoorUglyHack", true, "Whether or not the raft is in the first soft-locked room");
 		booleanOptions.add("interactiveMegaManAStarPaths", false, "whether or not the A* path is shown in the level breeder");
 		booleanOptions.add("useBothGANsMegaMan", false, "whether or not we're using both GANs");
+		booleanOptions.add("megaManAllowsSimpleAStarPath", false, "whether or not we're allowing simlpe a* path");
+		booleanOptions.add("megaManAllowsConnectivity", false, "whether or not we're allowing connectivity");
 
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
