@@ -45,6 +45,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	public static GANProcess ganProcessVertical = null;
 	public static GANProcess ganProcessHorizontal = null;
 	private boolean initializationComplete = false;
+	public static List<List<Integer>> level;
 	protected JSlider levelChunksSlider;
 	public MegaManGANLevelBreederTask() throws IllegalAccessException {
 		super();
@@ -273,17 +274,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 
 			ArrayList<Double> phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
 			double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
-			List<List<Integer>> level;
-			if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) { //if horiontal GAN model
-				level = levelListRepresentation(doubleArray);
-				placeSpawnAndLevelOrbHorizontal(level);
-			}else if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("VERTICALONLY")){ //if vertical GAN model
-				level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
-				placeSpawnAndLevelOrbVertical(level);
-			}else {
-				level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess.getGANProcess(),GANProcess.getGANProcess(),doubleArray);
-				placeSpawnAndLevelOrbHorizontal(level);			
-			}
+			//List<List<Integer>> level;
+			generateLevelFromGAN(doubleArray);
 			int levelNumber = 2020;
 			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, levelNumber);
 			try {
@@ -331,26 +323,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height,
 			double[] inputMultipliers) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
-		List<List<Integer>> level;
-		if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) { //if horiontal GAN model
-			level = levelListRepresentation(doubleArray);
-			placeSpawnAndLevelOrbHorizontal(level);
-		}else if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("VERTICALONLY")){ //if vertical GAN model
-			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
-			placeSpawnAndLevelOrbVertical(level);
-		}else if (Parameters.parameters.booleanParameter("useBothGANsMegaMan")){
-			//System.out.println(ganProcessHorizontal);
-			//System.out.println(ganProcessVertical);
-			//for(double i : doubleArray)System.out.println(i+", ");
-			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(ganProcessHorizontal,ganProcessVertical,doubleArray);
-			placeSpawnAndLevelOrbHorizontal(level);
-		}
-		
-		
-		else {
-			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess.getGANProcess(), GANProcess.getGANProcess(), doubleArray);
-			placeSpawnAndLevelOrbHorizontal(level);			
-		}
+		//List<List<Integer>> level;
+		generateLevelFromGAN(doubleArray);
 		//MegaManVGLCUtil.printLevel(level);
 		BufferedImage[] images;
 		//sets the height and width for the rendered level to be placed on the button 
@@ -389,6 +363,25 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		}
 		}
 		return image;
+	}
+
+	private void generateLevelFromGAN(double[] doubleArray) {
+		if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) { //if horiontal GAN model
+			level = levelListRepresentation(doubleArray);
+			placeSpawnAndLevelOrbHorizontal(level);
+		}else if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("VERTICALONLY")){ //if vertical GAN model
+			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
+			placeSpawnAndLevelOrbVertical(level);
+		}else if (Parameters.parameters.booleanParameter("useBothGANsMegaMan")){
+			//System.out.println(ganProcessHorizontal);
+			//System.out.println(ganProcessVertical);
+			//for(double i : doubleArray)System.out.println(i+", ");
+			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(ganProcessHorizontal,ganProcessVertical,doubleArray);
+			placeSpawnAndLevelOrbHorizontal(level);
+		}else {
+			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess.getGANProcess(), GANProcess.getGANProcess(), doubleArray);
+			placeSpawnAndLevelOrbHorizontal(level);			
+		}
 	}
 
 	
