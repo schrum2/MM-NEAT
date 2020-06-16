@@ -36,23 +36,23 @@ public class MegaManVGLCUtil {
 //			convertMegaManLevelToJSONHorizontalScroll(level);
 //
 //		}
-//		for(int i=1;i<=10;i++) {
-//			if(i!=7) {
-//				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-//				convertMegaManLevelToJSONVerticalScroll(level);
-//				if(i!=3) convertMegaManLevelToJSONHorizontalScroll(level);
-//				
-//						
-//						
-//						
-//			}
-//		}
+		for(int i=1;i<=10;i++) {
+			if(i!=7) {
+				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
+				convertMegaManLevelToJSONVerticalScroll(level);
+				//if(i!=3) convertMegaManLevelToJSONHorizontalScroll(level);
+				
+						
+						
+						
+			}
+		}
 //		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+2+".txt");
 //		printLevel(level);
 //		convertMegaManLevelToMMLV(level, 2);
 //		convertMegaManLevelToJSONVerticalScroll(level);
 //		convertMegaManLevelToMMLV(level,5);
-		//System.out.println(json.toString());
+		System.out.println(json.toString());
 	}
 	/**
 	 * prints the level to the console
@@ -91,7 +91,7 @@ public class MegaManVGLCUtil {
 		for(int y = 0; y<level.size();y++) {
 			for(int x = 0;x<level.get(0).size();x++) {
 				List<List<Integer>> screen = new ArrayList<>();			
-				if(level.get(y).get(x)!=7&&y+intYint<level.size()&&x+intXint<level.get(0).size()&&level.get(y).get(x+intXint)!=7&&!visited.contains(new Point(x,y))&&((x==0||level.get(y).get(x-1)!=7)&&level.get(y).get(x+intXint-1)!=7)) {//NORMALLY USE 17 FOR NULL!!! IS NOW 7!!!
+				if(level.get(y).get(x)!=9&&y+intYint<level.size()&&x+intXint<level.get(0).size()&&level.get(y).get(x+intXint)!=9&&!visited.contains(new Point(x,y))&&((x==0||level.get(y).get(x-1)!=9)&&level.get(y).get(x+intXint-1)!=9)) {//NORMALLY USE 17 FOR NULL!!! IS NOW 9!!!
 					upperY = y;
 					lowerX = x;				
 					screen = copyScreen(level, intXint, intYint, lowerX, upperY, vertical);
@@ -119,15 +119,15 @@ public class MegaManVGLCUtil {
 			for(int y = level.size()-1;y>=0;y--) {
 				List<List<Integer>> screen = new ArrayList<>();			
 
-				if((y-intYint>=0&&(x==0&&level.get(y).get(x)!=7||(x!=0&&level.get(y).get(x-1)==7&&level.get(y-intYint+1).get(x-1)==7))&&
+				if((y-intYint>=0&&(x==0&&level.get(y).get(x)!=9||(x!=0&&level.get(y).get(x-1)==9&&level.get(y-intYint+1).get(x-1)==9))&&
 						(x+intXint==level.get(0).size()||
-						(x+intXint<level.get(0).size()&&level.get(y).get(x+intXint)==7&& level.get(y-intYint+1).get(x+intXint)==7))&& //could be x+intXint+1
+						(x+intXint<level.get(0).size()&&level.get(y).get(x+intXint)==9&& level.get(y-intYint+1).get(x+intXint)==9))&& //could be x+intXint+1
 						!visited.contains(new Point(x,y))&&
-						level.get(y).get(x)!=7&&
-						level.get(y).get(x+intXint-1)!=7&&level.get(y-intYint).get(x)!=7&&
-						level.get(y-intYint+1).get(x+intXint-1)!=7)) { //check four corners (with xcoord+1 on each) if
+						level.get(y).get(x)!=9&&
+						level.get(y).get(x+intXint-1)!=9&&level.get(y-intYint).get(x)!=9&&
+						level.get(y-intYint+1).get(x+intXint-1)!=9)) { //check four corners (with xcoord+1 on each) if
 							//either left point is null AND either right point is null, then save the screen
-					System.out.println("  1 ");
+					//System.out.println("  1 ");
 					
 					upperY = y-intYint+1;
 					lowerX = x;	
@@ -542,7 +542,7 @@ public class MegaManVGLCUtil {
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
 //					int tileCode = convertMegamanTilesToInt(level[i].charAt(j)); 
-					int tileCode = convertMegamanTilesToIntSimple(level[i].charAt(j)); 
+					int tileCode = convertMegamanTilesToIntEnemies(level[i].charAt(j)); 
 					String enemyTypeString = getStringForTypeEnemy(level[i].charAt(j));
 					if(enemyTypeString!=null) levelEnemies.put(new Point(j,i), enemyTypeString);
 					col.add(tileCode);
@@ -765,11 +765,11 @@ public class MegaManVGLCUtil {
 		case 'C': //Cannon/shooter
 			return 6; 
 		case '@': //null
-			return 7;
+			return 9;
 		case 'P': //Player
 			return 8;
 		case 'Z':
-			return 9;
+			return 7;
 		case '~': //water
 			return 10;
 		case 'a': //met enemy
