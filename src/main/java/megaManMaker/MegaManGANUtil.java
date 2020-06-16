@@ -37,25 +37,26 @@ public class MegaManGANUtil {
 
 	/**
 	 * Gets a set of all of the levels from the latent vector 
+	 * @param gan Specific GAN model to use as a generator
 	 * @param latentVector
 	 * @return Set of all the levels
 	 */
-	public static List<List<List<Integer>>> getLevelListRepresentationFromGAN(double[] latentVector){
+	public static List<List<List<Integer>>> getLevelListRepresentationFromGAN(GANProcess gan, double[] latentVector){
 		
 		latentVector = GANProcess.mapArrayToOne(latentVector); // Range restrict the values
-		int chunk_length = Integer.valueOf(GANProcess.getGANProcess().GANDim);
+		int chunk_length = Integer.valueOf(gan.GANDim);
 		String levelString = "";
 		for(int i = 0; i < latentVector.length; i+=chunk_length){
 			double[] chunk = Arrays.copyOfRange(latentVector, i, i+chunk_length);
 			// Generate a level from the vector
 			// Brackets required since generator.py expects of list of multiple levels, though only one is being sent here
 			try {
-				GANProcess.getGANProcess().commSend("[" + Arrays.toString(chunk) + "]");
+				gan.commSend("[" + Arrays.toString(chunk) + "]");
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.exit(1); // Cannot continue without the GAN process
 			}
-			String oneLevelChunk = GANProcess.getGANProcess().commRecv(); // Response to command just sent
+			String oneLevelChunk = gan.commRecv(); // Response to command just sent
 			levelString = levelString + ", " + oneLevelChunk;  
 		}
 		// These two lines remove the , from the first append to an empty string
@@ -87,7 +88,8 @@ public class MegaManGANUtil {
 	 * @return A single level 
 	 */
 	public static List<List<Integer>> generateOneLevelListRepresentationFromGAN(double[] latentVector) {
-		List<List<List<Integer>>> levelInList = getLevelListRepresentationFromGAN(latentVector);
+		// Since only one model is needed, using the standard getGANProcess
+		List<List<List<Integer>>> levelInList = getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), latentVector);
 		List<List<Integer>> oneLevel = levelInList.get(0); // gets first level in the set 
 		//List<List<Integer>> fullLevel = new ArrayList<List<Integer>>();
 		for(int level = 1;level<levelInList.size();level++) {
@@ -102,8 +104,15 @@ public class MegaManGANUtil {
 		
 		return oneLevel;
 	}
+	
+	/**
+	 * Generates level segments from GAN, but stitches them together vertically rather than horizontally
+	 * @param latentVector
+	 * @return
+	 */
 	public static List<List<Integer>> generateOneLevelListRepresentationFromGANVertical(double[] latentVector) {
-		List<List<List<Integer>>> levelInList = getLevelListRepresentationFromGAN(latentVector);
+		// Since only one model is needed, using the standard getGANProcess
+		List<List<List<Integer>>> levelInList = getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), latentVector);
 		List<List<Integer>> oneLevel = levelInList.get(0); // gets first level in the set 
 		//List<List<Integer>> fullLevel = new ArrayList<List<Integer>>();
 		for(int level = 1;level<levelInList.size();level++) {
@@ -121,7 +130,8 @@ public class MegaManGANUtil {
 	public enum Direction {UP, RIGHT, DOWN};
 
 	public static List<List<Integer>> generateOneLevelListRepresentationFromGANVerticalAndHorizontal(double[] latentVector) {
-		List<List<List<Integer>>> levelInList = getLevelListRepresentationFromGAN(latentVector);
+		// Just grabbing the static GANProcess for now, but you will need to make this method accept two separate GAN models eventually.
+		List<List<List<Integer>>> levelInList = getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), latentVector);
 		Direction d = Direction.RIGHT;
 		//List<Point> allPreviousMoves = new ArrayList<Point>();
 		Point previousMove = new Point(0,0);
@@ -133,8 +143,8 @@ public class MegaManGANUtil {
 		List<List<Integer>> oneLevel = levelInList.get(0); // gets first level in the set 
 		Random rand = new Random(Double.doubleToLongBits(latentVector[0]));
 		List<Integer> nullLine = new ArrayList<Integer>(16);
-		for(int i=0;i<16;i++) {
-			nullLine.add(9);
+		for(int i=0;i<16;i++) { // <--- TODO from Schrum: Don't like these magic numbers!
+			nullLine.add(9); 	// <--- TODO from Schrum: Don't like these magic numbers!
 		}
 		for(int level = 1;level<numberOfChunks;level++) {
 			right = rand.nextBoolean();
