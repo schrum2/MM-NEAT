@@ -324,8 +324,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			
 			int beneath = tileAtPosition(newX,newY+1);
 			if(passable(newX+1, newY) && 
-					(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
-					(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) )
+					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
+					  (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
 				newX++;
 			else if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
 					beneath != LODE_RUNNER_TILE_LADDER &&
@@ -342,8 +342,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			
 			int beneath = tileAtPosition(newX,newY+1);
 			if(passable(newX-1, newY) && 
-					(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
-					(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) )
+					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
+					  (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
 				newX--;
 			else if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
 					beneath != LODE_RUNNER_TILE_LADDER &&
