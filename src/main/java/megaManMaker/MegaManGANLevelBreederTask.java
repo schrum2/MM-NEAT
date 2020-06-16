@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
 
 import javax.swing.JButton;
@@ -289,19 +288,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
 			placeSpawnAndLevelOrbVertical(level);
 		}else {
-			
-			
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(doubleArray);
-//			if(!right) {
-//				level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
-//				placeSpawnAndLevelOrbVertical(level);
-//
-//			}else {
-//				level = levelListRepresentation(doubleArray);
-//				placeSpawnAndLevelOrbHorizontal(level);
-//
-//			}
-			
+			placeSpawnAndLevelOrbHorizontal(level);			
 		}
 		//MegaManVGLCUtil.printLevel(level);
 		BufferedImage[] images;
