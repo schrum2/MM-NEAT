@@ -1,12 +1,13 @@
 package megaManMaker;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-
-
+import java.util.Scanner;
 import java.awt.Point;
 import java.io.File;
+import java.io.FileNotFoundException;
 //import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
@@ -16,11 +17,11 @@ public class MegaManVGLCUtil {
 	public static final String MEGAMAN_ENEMY_LEVEL_PATH = "data/VGLC/MegaMan/EnhancedWithBossesAndEnemies/";
 	public static final String MEGAMAN_LEVEL_PATH = "data/VGLC/MegaMan/Enhanced/";
 	public static final String MEGAMAN_MMLV_PATH = "data/MegaManLevels_mmlv/";
-
 	public static HashSet<Point> visited = new HashSet<>();
 	public static int lowerY;
 	public static int lowerX;
 	public static int upperY;
+	public static HashMap<Point, String> levelEnemies = new HashMap<Point, String>();
 	public static HashSet<Point> activatedScreens = new HashSet<Point>();
 	public static List<List<List<Integer>>> json = new ArrayList<>();
 
@@ -36,20 +37,22 @@ public class MegaManVGLCUtil {
 //
 //		}
 //		for(int i=1;i<=10;i++) {
-//			if(i!=7&&i!=3) {
+//			if(i!=7) {
 //				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-//				convertMegaManLevelToJSONHorizontalScroll(level);
+//				convertMegaManLevelToJSONVerticalScroll(level);
+//				if(i!=3) convertMegaManLevelToJSONHorizontalScroll(level);
 //				
 //						
 //						
 //						
 //			}
 //		}
-		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+3+".txt");
-		printLevel(level);
-		convertMegaManLevelToJSONHorizontalScroll(level);
-		//convertMegaManLevelToMMLV(level,5);
-		System.out.println(json.toString());
+//		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+2+".txt");
+//		printLevel(level);
+//		convertMegaManLevelToMMLV(level, 2);
+//		convertMegaManLevelToJSONVerticalScroll(level);
+//		convertMegaManLevelToMMLV(level,5);
+		//System.out.println(json.toString());
 	}
 	/**
 	 * prints the level to the console
@@ -104,7 +107,7 @@ public class MegaManVGLCUtil {
 	private static void convertMegaManLevelToJSONVerticalScroll(List<List<Integer>> level) { 
 		visited.clear();
 		
-		List<List<List<Integer>>> json = new ArrayList<>();
+		//List<List<List<Integer>>> json = new ArrayList<>();
 		boolean vertical = true;
 		lowerY = 0;
 		lowerX = 0;
@@ -116,13 +119,13 @@ public class MegaManVGLCUtil {
 			for(int y = level.size()-1;y>=0;y--) {
 				List<List<Integer>> screen = new ArrayList<>();			
 
-				if((y-intYint>=0&&(x==0&&level.get(y).get(x)!=17||(x!=0&&level.get(y).get(x-1)==17&&level.get(y-intYint+1).get(x-1)==17))&&
+				if((y-intYint>=0&&(x==0&&level.get(y).get(x)!=7||(x!=0&&level.get(y).get(x-1)==7&&level.get(y-intYint+1).get(x-1)==7))&&
 						(x+intXint==level.get(0).size()||
-						(x+intXint<level.get(0).size()&&level.get(y).get(x+intXint)==17&& level.get(y-intYint+1).get(x+intXint)==17))&& //could be x+intXint+1
+						(x+intXint<level.get(0).size()&&level.get(y).get(x+intXint)==7&& level.get(y-intYint+1).get(x+intXint)==7))&& //could be x+intXint+1
 						!visited.contains(new Point(x,y))&&
-						level.get(y).get(x)!=17&&
-						level.get(y).get(x+intXint-1)!=17&&level.get(y-intYint).get(x)!=17&&
-						level.get(y-intYint+1).get(x+intXint-1)!=17)) { //check four corners (with xcoord+1 on each) if
+						level.get(y).get(x)!=7&&
+						level.get(y).get(x+intXint-1)!=7&&level.get(y-intYint).get(x)!=7&&
+						level.get(y-intYint+1).get(x+intXint-1)!=7)) { //check four corners (with xcoord+1 on each) if
 							//either left point is null AND either right point is null, then save the screen
 					System.out.println("  1 ");
 					
@@ -143,22 +146,7 @@ public class MegaManVGLCUtil {
 			visited.add(new Point(x, y1)); //add visited points to hashset
 		}
 	}
-//	private static int findScreenDimensions(List<List<Integer>> level, int y, int x) { //DOES NOT WORK FOR 3, USING HARD CODING FOR NOW
-//		int intYint = 0;
-//		for(int i = x;i<level.get(0).size();i++) {
-//			for(int j = y ;j<level.size();j++) {
-//				if(level.get(j).get(i)!=17) {
-//					intYint++;
-//				}
-//			}
-//			if(intYint!=0&&intYint<=14) {
-//				break;
-//			}
-//			intYint=0;
-//		}
-//
-//		return intYint;
-//	}
+
 	private static List<List<Integer>> copyScreen(List<List<Integer>> level, int intXint, int intYint, int lowerX,
 			int upperY, boolean vertical) {
 		List<List<Integer>> screen = new ArrayList<>();
@@ -176,14 +164,18 @@ public class MegaManVGLCUtil {
 
 		return screen;
 	}
-	public static void convertMegaManLevelToMMLV(List<List<Integer>> level, int levelNumber) {
+	public static File convertMegaManLevelToMMLV(List<List<Integer>> level, int levelNumber) {
+		//int enemyCount = 0;
+
 		// TODO Auto-generated method stub
 		int xcoord = 0;
 		int ycoord = 0;
 		HashSet<Point> o = new HashSet<Point>();
 		HashSet<Point> movingPlat = new HashSet<Point>();
+		File levelFile = null;
 		try {
-		File levelFile = new File(MEGAMAN_MMLV_PATH+"MegaManLevel!!"+levelNumber+".mmlv");
+
+		levelFile = new File(MEGAMAN_MMLV_PATH+"MegaManLevel"+levelNumber+".mmlv");
 		
 		if(!levelFile.exists()) {
 			levelFile.createNewFile();
@@ -198,7 +190,7 @@ public class MegaManVGLCUtil {
 				Integer m = k.get(x);
 				//l=m;
 				//if play online, does it download to mmlv file???
-				if(m==1||m==12||m==6) { //solid ground TODO make case for cannon shooter (not just blocks) TODO make case for appear/dis blocks
+				if(m==1||m==6/*||m==12||m==6*/) { //solid ground TODO make case for cannon shooter (not just blocks) TODO make case for appear/dis blocks
 					p.println("k"+xcoord+","+ycoord+"=\"71.000000\"");
 					p.println("j"+xcoord+","+ycoord+"=\"71.000000\"");
 					p.println("i"+xcoord+","+ycoord+"=\"1.000000\"");
@@ -221,7 +213,7 @@ public class MegaManVGLCUtil {
 					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 				//	l=3;
 				}
-				else if (m==11) {
+				else if (m==8) { //player
 					p.println("1t=\"0.000000\"");
 					p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 					p.println("d"+xcoord+","+ycoord+"=\"4.000000\"");
@@ -232,7 +224,7 @@ public class MegaManVGLCUtil {
 					if(k.get(x+1)==5) {
 						movingPlat.add(new Point(x+1,y));
 						
-					}else if(k.get(x+2)==5&&k.get(x+3)==5) {
+					}else if(x+3<k.size()&&k.get(x+2)==5&&k.get(x+3)==5) {
 						movingPlat.add(new Point(x+2,y));
 
 					}
@@ -266,51 +258,42 @@ public class MegaManVGLCUtil {
 					p.println("d"+newx+","+newy+"=\"6.000000\"");
 					p.println("a"+newx+","+newy+"=\"1.000000\"");
 
-				}else if (m==19) { //water
+				}else if (m==10) { //water
 					p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 					p.println("e"+xcoord+","+ycoord+"=\"177.000000\"");
 					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 					
-				}else if(m==21) {
+				}else if(m==7) { //z orb
 					p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 					p.println("e"+xcoord+","+ycoord+"=\"15.000000\"");
 					p.println("d"+xcoord+","+ycoord+"=\"8.000000\"");
 					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 
-				}else if(m>=50) { //is an enemy
-					printEnemiesToMMLV(p, m, xcoord, ycoord);
+				}else if(m>10) { //is an enemy
+					if(levelEnemies.isEmpty()) {
+
+						printEnemiesToMMLV(p, m, xcoord, ycoord, level, x, y);
+					}
+					else {
+						System.out.println(levelEnemies);
+
+						printEnemiesToMMLVFromHashMap(p, xcoord, ycoord, level, x, y);
+					}
 				}
-//				else if (m==6) { //TODO make proper sequencing
-//					Random rand = new Random();
-//					p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
-//					p.println("h"+xcoord+","+ycoord+"=\""+rand.nextInt(6)+"\"");
-//					p.println("e"+xcoord+","+ycoord+"=\"5.000000\"");
-//					p.println("d"+xcoord+","+ycoord+"=\"6.000000\"");
-//					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-//				}
 				
-				if(m!=17) {
+				if(m!=9) {
 					placeActivatedScreen(xcoord,ycoord, p);
 					p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
 				}
 
-//				if((xcoord%256==0||ycoord%224==0)&&m!=17) {
-//					//add 2a clause
-//					p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
-//					//p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
-//
-//				}
+
 				xcoord+=16;
 			}
 			xcoord = 0;
 			ycoord+=16;
-//			if(ycoord%224==0&&l!=17) {
-//				//add 2a clause
-//				p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
-//				//p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
-//
-//			}
+
 		}
+		//System.out.println("not actually happening");
 		//NEED 2a for enabling squares
 		p.println("2b"+0+","+896+"=\"0.000000\"");
 		p.println("2b"+0+","+896+"=\"0.000000\"");
@@ -357,123 +340,185 @@ public class MegaManVGLCUtil {
 			e.printStackTrace();
 		}
 
-		
+		return levelFile;
 	}
-	private static void printEnemiesToMMLV(PrintWriter p, int m, int xcoord,  int  ycoord) {
-		if(m==50) {
+	private static void printEnemiesToMMLVFromHashMap(PrintWriter p, int xcoord, int ycoord,
+			List<List<Integer>> level, int x, int y) {
+		String enemyString = levelEnemies.get(new Point(x,y));
+		if(enemyString.equals("a")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"0.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-
-		}else if(m==51) {
+		} 
+		else if(enemyString.equals("b")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"63.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-
-		}else if(m==52) {
+		}
+		else if(enemyString.equals("<")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"1.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-
-		}else if(m==53) {
+		}
+		else if(enemyString.equals("^")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("g"+xcoord+","+ycoord+"=\"270.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"1.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-
-		}else if(m==54) {
+		}
+		
+		else if(enemyString.equals("c")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"2.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
-			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
+			if(x>0&&level.get(y).get(x-1)!=1) p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-
-		}else if(m==55) {
+		}
+		else if(enemyString.equals("d")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"3.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-
-		}else if(m==56) {
+		}
+		else if(enemyString.equals("e")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"4.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
-			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
+			if(y>0&&level.get(y-1).get(x)==1)p.println("c"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-
-		}else if(m==57) {
+		}
+		else if(enemyString.equals("f")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-
-		}else if(m==58) {
+		}
+		else if(enemyString.equals("g")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"48.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-
-		}else if(m==59) {
+		}
+		else if(enemyString.equals("h")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"49.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-		}else if(m==60) {
+		}
+		else if(enemyString.equals("i")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"52.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-		}else if(m==61) {
-			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
-			p.println("e"+xcoord+","+ycoord+"=\"57.000000\"");
-			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
-			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
-			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-		}else if(m==62) {
+		}
+		else if(enemyString.equals("j")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"56.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-		}else if(m==63) {
+		}
+		else if(enemyString.equals("k")) {
+			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+			p.println("e"+xcoord+","+ycoord+"=\"57.000000\"");
+			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
+			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+		}
+		else if(enemyString.equals("m")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("h"+xcoord+","+ycoord+"=\"3.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"58.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-		}else if(m==64) {
+		}
+		else if(enemyString.equals("n")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"59.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-		}else if(m==65) {
+		}
+		else if(enemyString.equals("o")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"60.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-		}else if(m==66) {
-			int newX= xcoord+5*16;
+		}
+		else if(enemyString.equals("p")) {
+			int toX = xcoord+4*16;
+			int toY = ycoord+16;
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
-			p.println("n"+xcoord+","+ycoord+"=\""+ycoord+".000000\"");
-			p.println("n"+xcoord+","+ycoord+"=\""+newX+".000000\"");
+			p.println("n"+xcoord+","+ycoord+"=\""+toY+"\"");
+			p.println("m"+xcoord+","+ycoord+"=\""+toX+"\"");
 			p.println("e"+xcoord+","+ycoord+"=\"45.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 		}
+		else if(enemyString.equals("q")) {
+			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+			p.println("e"+xcoord+","+ycoord+"=\"159.000000\"");
+			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
+			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+		}
+		else if(enemyString.equals("r")) {
+			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+			p.println("e"+xcoord+","+ycoord+"=\"7.000000\"");
+			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
+			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+		}
+		
+	}
+	private static void printEnemiesToMMLV(PrintWriter p, int m, int xcoord,  int  ycoord, List<List<Integer>> level, int x, int y) {
+		if(m==11) {
+			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+			p.println("e"+xcoord+","+ycoord+"=\"0.000000\"");
+			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
+			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+		}else if (m==12) {
+			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+			p.println("e"+xcoord+","+ycoord+"=\"4.000000\"");
+			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+			if(y>0&&level.get(y-1).get(x)==1)p.println("c"+xcoord+","+ycoord+"=\"-1.000000\"");
+			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+		}else if (m==13) {
+			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+			p.println("e"+xcoord+","+ycoord+"=\"48.000000\"");
+			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
+			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+		} else if(m==14) {
+			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+			p.println("e"+xcoord+","+ycoord+"=\"56.000000\"");
+			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
+			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+		}else {
+			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+			p.println("e"+xcoord+","+ycoord+"=\"159.000000\"");
+			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
+			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+		}
+		
+		
+		//return enemyCount;
 	}
 	private static void placeActivatedScreen(int xcoord, int ycoord, PrintWriter p) {
 		// TODO Auto-generated method stub
@@ -497,14 +542,60 @@ public class MegaManVGLCUtil {
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
 //					int tileCode = convertMegamanTilesToInt(level[i].charAt(j)); 
-					int tileCode = convertMegaManTilesToIntForASTAR(level[i].charAt(j)); 
-
+					int tileCode = convertMegamanTilesToIntSimple(level[i].charAt(j)); 
+					String enemyTypeString = getStringForTypeEnemy(level[i].charAt(j));
+					if(enemyTypeString!=null) levelEnemies.put(new Point(j,i), enemyTypeString);
 					col.add(tileCode);
 				}
 			}
 			complete.add(col); //adds a new array list to the list at index i 
 		}
 		return complete;
+	}
+	private static String getStringForTypeEnemy(char charAt) {
+		switch(charAt) {
+		case 'a':
+			return "a"; 
+		case 'b': //fly boy enemy
+			return "b";
+		case '<': //octopus battery going left/right
+			return "<";
+		case '^': //octopus battery going up/down
+			return "^";
+		case 'c': //beak
+			return "c";
+		case 'd': //picket man
+			return "d";
+		case 'e': //screw bomber
+			return "e";
+		case 'f': //big eye
+			return "f";
+		case 'g': //spine
+			return "g";
+		case 'h': //crazy razy
+			return "h";
+		case 'i': //watcher
+			return "i";
+		case 'j': //killer bullet
+			return "j";
+		case 'k': //killer bullet spawner
+			return "k";
+		case 'm': //tackle fire
+			return "m";
+		case 'n': //flying shell
+			return "n";
+		case 'o': //flying shell spawner
+			return "o";
+		case 'p': //footholder
+			return "p";
+		case 'q': //jumper
+			return "q";
+		case 'r': //gunner
+			return "r";
+		default:
+			return null;
+		}
+		//return null;
 	}
 	private static int convertMegaManTilesToIntForASTAR(char tile) {
 //		public static final int MEGA_MAN_TILE_GROUND = 1;
@@ -548,9 +639,7 @@ public class MegaManVGLCUtil {
 		}
 		
 	}
-	
-	
-	
+
 	private static int convertMegamanTilesToIntSimple(char tile) {
 		switch(tile) {
 		case '-': //empty, passable
@@ -659,4 +748,96 @@ public class MegaManVGLCUtil {
 
 		}
 	}
+	private static int convertMegamanTilesToIntEnemies(char tile) {
+		switch(tile) {
+		case '-': //empty, passable
+			return 0;
+		case '#': //solid
+			return 1; 
+		case '|': //ladder
+			return 2; 
+		case 'H': //Hazard 
+			return 3; 
+		case 'B': //breakable
+			return 4;
+		case 'M': //Moving platform
+			return 5;
+		case 'C': //Cannon/shooter
+			return 6; 
+		case '@': //null
+			return 7;
+		case 'P': //Player
+			return 8;
+		case 'Z':
+			return 9;
+		case '~': //water
+			return 10;
+		case 'a': //met enemy
+			return 11; 
+		case 'b': //fly boy enemy
+			return 11;
+		case '<': //octopus battery going left/right
+			return 11;
+		case '^': //octopus battery going up/down
+			return 11;
+		case 'c': //beak
+			return 12;
+		case 'd': //picket man
+			return 12;
+		case 'e': //screw bomber
+			return 12;
+		case 'f': //big eye
+			return 12;
+		case 'g': //spine
+			return 13;
+		case 'h': //crazy razy
+			return 13;
+		case 'i': //watcher
+			return 13;
+		case 'j': //killer bullet
+			return 14;
+		case 'k': //killer bullet spawner
+			return 14;
+		case 'm': //tackle fire
+			return 14;
+		case 'n': //flying shell
+			return 14;
+		case 'o': //flying shell spawner
+			return 15;
+		case 'p': //footholder
+			return 15;
+		case 'q': //jumper
+			return 15;
+		case 'r': //gunner
+			return 15;
+		case 'A': //appearing/disappearing block
+			return 1;
+		case 'L': //large health pack
+			return 0;
+		case 'l': //small health pack
+			return 0; 
+		case 'W': //large ammo pack 
+			return 0; 
+		case 'w': //small ammo pack
+			return 0;
+		case '+': //extra life
+			return 0;
+		case 'D': //Door 
+			return 0; 
+		case 'U': //Transport beam upgrade
+			return 0;
+		case 't': //"solids" that you can pass through
+			return 0;
+		case '*': //Special item that falls and fills health and ammo
+			return 0;
+		
+//		case 'p': //hovering platform (shooter)
+//			return 20;
+					
+		default:
+			throw new IllegalArgumentException("Invalid Mega Man tile from VGLV: " + tile);
+
+		}
+	}
+
 }
