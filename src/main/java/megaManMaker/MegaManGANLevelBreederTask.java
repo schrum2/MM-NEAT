@@ -229,9 +229,12 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) { //if horiontal GAN model
 				level = levelListRepresentation(doubleArray);
 				placeSpawnAndLevelOrbHorizontal(level);
-			}else { //if vertical GAN model
+			}else if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("VERTICALONLY")){ //if vertical GAN model
 				level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
 				placeSpawnAndLevelOrbVertical(level);
+			}else {
+				level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(doubleArray);
+				placeSpawnAndLevelOrbHorizontal(level);			
 			}
 			int levelNumber = 2020;
 			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, levelNumber);

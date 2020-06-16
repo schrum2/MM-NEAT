@@ -224,7 +224,7 @@ public class MegaManVGLCUtil {
 					if(k.get(x+1)==5) {
 						movingPlat.add(new Point(x+1,y));
 						
-					}else if(k.get(x+2)==5&&k.get(x+3)==5) {
+					}else if(x+3<k.size()&&k.get(x+2)==5&&k.get(x+3)==5) {
 						movingPlat.add(new Point(x+2,y));
 
 					}
