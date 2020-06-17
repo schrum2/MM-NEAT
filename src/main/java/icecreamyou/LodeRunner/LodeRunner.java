@@ -67,7 +67,7 @@ public class LodeRunner {
 	// Top-level frame
 	final JFrame frame = new JFrame("Lode Runner");
 	
-	//public static Level levelCopy;
+	public static Level levelCopy;
 
 	public LodeRunner() {
 		// Retrieve instructions.
@@ -323,7 +323,7 @@ public class LodeRunner {
 
 		// Initialize level
 		Level level = new Level(level1);
-		//levelCopy = new Level(level); //deep copy of the level
+		levelCopy = new Level(level); //deep copy of the level
 		levelName = "Level From GAN";
 		status.setText(levelName);
 
@@ -391,7 +391,7 @@ public class LodeRunner {
 				gamePanel.reset();
 				String text = reset.getText();
 				if (text.equals("Play")) {
-					//level = levelCopy;
+					levelCopy = new Level(level);
 					reset.setText("Reset");
 					edit.setEnabled(false);
 				}
@@ -446,6 +446,8 @@ public class LodeRunner {
 		playGAN.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {	
+				// Copy the edits that were made
+				levelCopy = new Level(gamePanel.level);
 				GamePanel.mode = Mode.GAN;
 				gamePanel.reset(); 
 				status.setText(levelName); //updates name at top left to not be editing anymore 

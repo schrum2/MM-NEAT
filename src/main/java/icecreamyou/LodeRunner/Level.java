@@ -90,8 +90,29 @@ public class Level {
 		}
 	}
 	
+	/**
+	 * Level from list of lists format from a GAN or json
+	 * @param level
+	 */
 	public Level(List<List<Integer>> level) {
 		String newLevel = LodeRunnerVGLCUtil.convertLodeRunnerJSONtoIceCreamYou(level);
+		constructLevelFromString(newLevel);
+	}
+	
+	/**
+	 * Copy level from an existing level
+	 * @param copy
+	 */
+	public Level(Level copy) {
+		String stringLevel = Layout.levelToString(copy);
+		constructLevelFromString(stringLevel);
+	}
+
+	/**
+	 * Take String read from level file and create the level from it
+	 * @param newLevel
+	 */
+	public void constructLevelFromString(String newLevel) {
 		Scanner scan = new Scanner(newLevel);
 		while(scan.hasNextLine()) {
 			String line = scan.nextLine();
@@ -101,39 +122,6 @@ public class Level {
 			//System.out.println(line);
 		}
 		scan.close();
-	}
-	
-	public Level(Level copy) {
-		this();
-		for(Bar b: copy.bars) {
-			this.bars.add(new Bar(b.x, b.y));
-		}
-		for(Diggable d: copy.diggables) {
-			this.diggables.add(new Diggable(d.x, d.y));
-		}
-//		this.diggables = copy.diggables;
-		for(Enemy e: copy.enemies) {
-			this.enemies.add(new Enemy(e.x, e.y));
-		}
-		for(Hole h: copy.holes) {
-			this.holes.add(new Hole(h.x, h.y));
-		}
-		for(Ladder l: copy.ladders) {
-			this.ladders.add(new Ladder(l.x, l.y));
-		}
-		for(Pickup p: copy.pickups) {
-			this.pickups.add(new Pickup(p.x, p.y));
-		}
-		for(Solid s: copy.solids) {
-			this.solids.add(new Solid(s.x, s.y));
-		}
-		for(Solid s: copy.solidsOnly) {
-			this.solidsOnly.add(new Solid(s.x, s.y));
-		}
-//		this.solids = copy.solids;
-//		this.solidsOnly = copy.solidsOnly;
-		this.player1 = new Player(copy.player1.x, copy.player1.y);
-		this.name = "Level From GAN";
 	}
 	
 	/**
