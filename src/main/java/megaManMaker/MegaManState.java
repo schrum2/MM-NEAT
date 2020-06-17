@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.search.AStarSearch;
@@ -179,7 +179,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			if(passable(newX,newY+1)&& tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER) { // Falling
 				newY++; // Fall down
 			} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)&& tileAtPosition(newX, newY)!=MEGA_MAN_TILE_LADDER) { // Start jump
-				newJumpVelocity = 4; // Accelerate up
+				newJumpVelocity = Parameters.parameters.integerParameter("megaManAStarJumpHeight"); // Accelerate up
 			} 
 		} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)) {
 			return null; // Can't jump mid-jump. Reduces search space.

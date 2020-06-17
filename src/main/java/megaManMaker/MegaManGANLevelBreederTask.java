@@ -42,13 +42,32 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	public static final int LEVEL_MIN_CHUNKS = 1;
 	public static final int LEVEL_MAX_CHUNKS = 10;
 	public static final int SAVE_BUTTON_INDEX = -19; 
+	//public static final int MEGAMAKER_BUTTON_INDEX = -19; 
+
 	public static GANProcess ganProcessVertical = null;
 	public static GANProcess ganProcessHorizontal = null;
 	private boolean initializationComplete = false;
 	protected JSlider levelChunksSlider;
 	public MegaManGANLevelBreederTask() throws IllegalAccessException {
-		super();
+		super(false);
 		//save button
+		
+		JButton launchMegaManMaker = new JButton("MegaManMaker");
+		// Name is first available numeric label after the input disablers
+		launchMegaManMaker.setName("MegaManMaker" + PLAY_BUTTON_INDEX);
+		launchMegaManMaker.setToolTipText("Launch MegaManMaker");
+		launchMegaManMaker.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				playLevel(null);
+			}
+		});
+		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
+			launchMegaManMaker.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
+		}
+		
+		top.add(launchMegaManMaker);
+		
 		JButton save = new JButton("SaveMMLV");
 		// Name is first available numeric label after the input disablers
 		save.setName("" + SAVE_BUTTON_INDEX);
@@ -132,6 +151,29 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			}
 		});
 		effectsCheckboxes.add(showSolutionPath);
+		JCheckBox allowPlatformGun = new JCheckBox("AllowPlatformGun", Parameters.parameters.booleanParameter("megaManAllowsPlatformGun"));
+		allowPlatformGun.setName("allowPlatformGun");
+		allowPlatformGun.getAccessibleContext();
+		allowPlatformGun.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("megaManAllowsPlatformGun");
+				resetButtons(true);
+			}
+		});
+		effectsCheckboxes.add(allowPlatformGun);
+		
+		JCheckBox allowBlockBreaker = new JCheckBox("AllowBlockBreaker", Parameters.parameters.booleanParameter("megaManAllowsBlockBreaker"));
+		allowBlockBreaker.setName("allowBlockBreaker");
+		allowBlockBreaker.getAccessibleContext();
+		allowBlockBreaker.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("megaManAllowsBlockBreaker");
+				resetButtons(true);
+			}
+		});
+		effectsCheckboxes.add(allowBlockBreaker);
 		
 		//whether or not to use both GANs **NOTE** need to change initialization for when there are more tile types
 		JCheckBox useBothGANs = new JCheckBox("UseBothGANs", Parameters.parameters.booleanParameter("useBothGANsMegaMan"));
@@ -308,7 +350,34 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	@Override
 	//Will eventually launch megamanmaker
 	public void playLevel(ArrayList<Double> phenotype) {
+		File mmlvFilePath = new File("MegaManMakerPath.txt"); //file containing the path
+//		if(selectedItems.size() != 1) {
+//			JOptionPane.showMessageDialog(null, "Save exactly one level to play.");
+//			return; // Nothing to explore
+//		}
 		
+		Scanner scan;
+		//When the button is pushed, ask for the name input
+		try {
+			scan = new Scanner(mmlvFilePath);
+			
+			
+			String mmlvPath = scan.nextLine();
+			scan.close();
+			
+			Runtime runTime = Runtime.getRuntime();
+			Process process = runTime.exec(mmlvPath);
+			
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			String errorMessage = "You need to create a local text file in the MMNEAT directory called \n MegaManMakerLevelPath.txt which contains the path to where MegaManMaker stores levels on your device. \n It will likely look like this: C:\\Users\\[Insert User Name]\\AppData\\Local\\MegaMaker\\Levels\\";
+			JOptionPane.showMessageDialog(frame, errorMessage);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

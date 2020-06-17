@@ -525,7 +525,9 @@ public class MegaManVGLCUtil {
 		p.println("1l=\"11.000000\"");
 //		1k2="11.000000"
 //				1k1="51.000000"
+		if(Parameters.parameters.booleanParameter("megaManAllowsPlatformGun"))
 		p.println("1k2=\"11.000000\"");
+		if(Parameters.parameters.booleanParameter("megaManAllowsBlockBreaker"))
 		p.println("1k1=\"51.000000\"");
 
 		p.println("1k0=\"0.000000\"");

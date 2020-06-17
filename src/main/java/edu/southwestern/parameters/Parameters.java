@@ -360,6 +360,7 @@ public class Parameters {
 		integerOptions.add("zeldaVGLCWaterPMapCode", 5 , "Int code for the character P in VGLC representation of Zelda");
 		integerOptions.add("cppn2ganWidth", null, "the CPPN to GAN width chunks");
 		integerOptions.add("cppn2ganHeight", null, "the CPPN to GAN height chunks");
+		integerOptions.add("megaManAStarJumpHeight", 4, "Height of the A* agent's jump");
 
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -777,6 +778,8 @@ public class Parameters {
 		booleanOptions.add("useBothGANsMegaMan", false, "whether or not we're using both GANs");
 		booleanOptions.add("megaManAllowsSimpleAStarPath", false, "whether or not we're allowing simlpe a* path");
 		booleanOptions.add("megaManAllowsConnectivity", false, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManAllowsPlatformGun", true, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManAllowsBlockBreaker", true, "whether or not we're allowing connectivity");
 
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
