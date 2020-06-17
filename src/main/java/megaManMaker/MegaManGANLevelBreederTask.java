@@ -339,15 +339,20 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 		List<List<Integer>> level = levelListRepresentation(doubleArray);
 		 //Initializes the array that hold the tile images 
+		if(selectedItems.size() != 1) {
+			JOptionPane.showMessageDialog(null, "Select exactly one level to view.");
+			return; // Nothing to explore
+		}
 		try {
 			if(selectedItems.size() != 1) {
 				JOptionPane.showMessageDialog(null, "Select exactly one level to save.");
 				return; // Nothing to explore
 			}
+			//List<List<List<Integer>>> levelInList = MegaManGANUtil.getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), doubleArray);
 			int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
 			int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
 			BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
-			BufferedImage finalRender = MegaManRenderUtil.getBufferedImage(level, images);
+			BufferedImage finalRender = MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

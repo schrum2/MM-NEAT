@@ -36,7 +36,7 @@ public class MegaManRenderUtil {
 		return MEGA_MAN_TILE_X*col;
 	}
 	public static int renderedImageHeight(int row) {
-		return MEGA_MAN_TILE_X*row;
+		return MEGA_MAN_TILE_Y*row;
 	}
 	/**
 	 * Sets up a level to be rendered by converting the VGLC data to JSON and then 
@@ -79,6 +79,32 @@ public class MegaManRenderUtil {
 		return image;
 	}
 	
+	
+	public static BufferedImage getBufferedImageWithRelativeRendering(List<List<Integer>> list, BufferedImage[] images) throws IOException {
+		BufferedImage image = createBufferedImage(list, renderedImageWidth(list.get(0).size()), renderedImageHeight(list.size()), images); //gets the image of the level 
+		//this code displays the level in a window 
+		JFrame frame = new JFrame();
+		JPanel panel = new JPanel();
+		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(renderedImageWidth(list.get(0).size()), renderedImageHeight(list.size()), Image.SCALE_DEFAULT)));
+		panel.add(label);
+		frame.add(panel);
+		frame.pack();
+		frame.setVisible(true);
+		return image;
+	}
+	
+	private static int renderedImageHeightRelative(int size) {
+		// TODO Auto-generated method stub
+		int divisor = size/10;
+		int num = 50;
+		return num/divisor;
+	}
+	private static int renderedImageWidthRelative(int size) {
+		// TODO Auto-generated method stub
+		int divisor = size/10;
+		int num = 50;
+		return num/divisor;
+	}
 	public static BufferedImage createBufferedImage(List<List<Integer>> list, int width, int height) throws IOException {
 		BufferedImage[] images = loadImagesForASTAR(MEGA_MAN_TILE_PATH); //Initializes the array that hold the tile images
 		return createBufferedImage(list, width, height, images);
