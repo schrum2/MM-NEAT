@@ -37,7 +37,8 @@ public class LodeRunnerLevelAnalysisUtil {
 	public static final int TOTAL_TILES = 704; //for percentages, 22x32 levels 
 
 	/**
-	 * 
+	 * This main method creates a CSV file in the Lode Runner directory of the VGLC data, 
+	 * it has the scores that we will use for analysis of the levels to try to create better training sets 
 	 * @param args
 	 * @throws FileNotFoundException 
 	 */
@@ -52,37 +53,7 @@ public class LodeRunnerLevelAnalysisUtil {
 		}
 		ps.close();
 		
-//		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
-
-//		HashSet<LodeRunnerState> mostRecentVisited = performAStarSearchAndCalculateAStarDistance(level,Double.NaN).t1;
-//		ArrayList<LodeRunnerAction> actionSequence = performAStarSearchAndCalculateAStarDistance(level,Double.NaN).t2;
-//		LodeRunnerState start = performAStarSearchAndCalculateAStarDistance(level,Double.NaN).t3;
-//
-//		System.out.println("actionSequence length = " + actionSequence.size());
-//
-//		double simpleAStarDistance = performAStarSearchAndCalculateAStarDistance(level, Double.NaN).t4;
-//		double connectivity = caluclateConnectivity(mostRecentVisited);
-//
-//		System.out.println(level);
-//		System.out.println("simpleAStarDistance = " + simpleAStarDistance);
-//		System.out.println("connectivity = " + connectivity);
-//
-//		double percentBackTrack = calculatePercentAStarBacktracking(actionSequence, start);
-//		double percentEmpty = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_EMPTY}, level);
-//		double percentLadders = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_LADDER}, level);
-//		double percentGround = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE, LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
-//		double percentSolid = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
-//		double percentDiggable = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE}, level);
-		
-		
-
-//		System.out.println("percentBackTrack = " + percentBackTrack);
-//		System.out.println("percentEmpty = " + percentEmpty);
-//		System.out.println("percentLadders = " + percentLadders);
-//		System.out.println("percentGround = " + percentGround);
-//		System.out.println("percentSolid = " + percentSolid);
-//		System.out.println("percentDiggable = " + percentDiggable);
-//		System.out.println(start);
+		//displays a visualization of the A* path, helpful for debugging
 //		try {
 //			//visualizes the points visited with red and whit x's
 //			BufferedImage visualPath = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
@@ -104,7 +75,11 @@ public class LodeRunnerLevelAnalysisUtil {
 //
 	}
 	
-	
+	/**
+	 * Processes one level and gets the values for analysis 
+	 * @param num The level from VGLC
+	 * @return A string that holds a line of the CSV file
+	 */
 	public static String processOneLevel(int num) {
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level "+num+".txt");
 		HashSet<LodeRunnerState> mostRecentVisited = performAStarSearchAndCalculateAStarDistance(level,Double.NaN).t1;

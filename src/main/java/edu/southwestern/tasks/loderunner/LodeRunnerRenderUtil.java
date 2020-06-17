@@ -4,6 +4,7 @@ package edu.southwestern.tasks.loderunner;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -37,6 +38,13 @@ public class LodeRunnerRenderUtil {
 	public static final int RENDERED_IMAGE_WIDTH = LODE_RUNNER_TILE_X*LODE_RUNNER_COLUMNS; //width of the final rendered level 
 	public static final int RENDERED_IMAGE_HEIGHT = LODE_RUNNER_TILE_Y*LODE_RUNNER_ROWS; //height of the final rendered level 
 	
+	//constants for rendering iceCreamYou levels 
+	public static final String ICE_CREAM_YOU_TILE_PATH = "src/main/java/icecreamyou/LodeRunner/"; //file path for tiles 
+	public static final int ICE_CREAM_YOU_TILE_X = 30; // x length of an individual tile 
+	public static final int ICE_CREAM_YOU_TILE_Y = 40; // y length of an individual tile 
+	public static final int ICE_CREAM_YOU_IMAGE_WIDTH = ICE_CREAM_YOU_TILE_X*LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS;
+	public static final int ICE_CREAM_YOU_IMAGE_HEIGHT = ICE_CREAM_YOU_TILE_Y*LodeRunnerRenderUtil.LODE_RUNNER_ROWS;
+	
 	/**
 	 * Sets up a level to be rendered by converting the VGLC data to JSON and then 
 	 * placing the correct tile in the right place to visualize the level 
@@ -50,8 +58,74 @@ public class LodeRunnerRenderUtil {
 //		FINAL_RENDER = getBufferedImage(list, images); //puts the final rendered level into a buffered image 
 		//no spawn mapping with 6 tiles 
 		List<List<Integer>> list = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
-		BufferedImage[] images = loadImagesNoSpawnTwoGround(LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images 
-		FINAL_RENDER = getBufferedImage(list, images); //puts the final rendered level into a buffered image
+//		BufferedImage[] images = loadImagesNoSpawnTwoGround(LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images 
+//		FINAL_RENDER = getBufferedImage(list, images); //puts the final rendered level into a buffered image
+		BufferedImage[] images = loadIceCreamYouTiles(ICE_CREAM_YOU_TILE_PATH);
+		BufferedImage image = createIceCreamYouImage(list, ICE_CREAM_YOU_IMAGE_WIDTH, ICE_CREAM_YOU_IMAGE_HEIGHT, images);
+		JFrame frame = new JFrame();
+		JPanel panel = new JPanel();
+		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(ICE_CREAM_YOU_IMAGE_WIDTH, ICE_CREAM_YOU_IMAGE_HEIGHT, Image.SCALE_FAST)));
+		panel.add(label);
+		frame.add(panel);
+		frame.pack();
+		frame.setVisible(true);
+		
+	}
+	
+	public static BufferedImage createIceCreamYouImage(List<List<Integer>> list, int width, int height) throws IOException {
+		BufferedImage[] images = loadIceCreamYouTiles(ICE_CREAM_YOU_TILE_PATH); //Initializes the array that hold the tile images
+		return createBufferedImage(list, width, height, images);
+	}
+	
+	public static BufferedImage createIceCreamYouImage(List<List<Integer>> list, int width, int height, BufferedImage[] images) {
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = image.createGraphics();
+		for(int y = 0; y < height; y += ICE_CREAM_YOU_TILE_Y) {
+			for(int x = 0; x < width; x += ICE_CREAM_YOU_TILE_X) {
+				int xTile = x/ICE_CREAM_YOU_TILE_X;
+				int yTile = y/ICE_CREAM_YOU_TILE_Y;
+				BufferedImage tileImage = findTile(list, images, xTile, yTile); //finds the correct tile 
+				g.drawImage(tileImage, x, y, null);	//draws the correct tile		
+			}
+		}
+		return image;
+	}
+	
+	/**
+	 * Loads in all of the tile images for the IceCreamYou levels 
+	 * @param filePath Directory that hold the tile images 
+	 * @return An array of BufferedImages holding all the tiles for IceCreamYou
+	 * @throws IOException In case the file can't be found
+	 */
+	public static BufferedImage[] loadIceCreamYouTiles(String filePath) throws IOException {
+		if(tileList == null) {
+			tileList = new BufferedImage[8];
+			//just makes a blank buffered image of the same size
+			BufferedImage emptyTile = new BufferedImage(ICE_CREAM_YOU_TILE_X, ICE_CREAM_YOU_TILE_Y, BufferedImage.TYPE_BYTE_BINARY);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_EMPTY] = emptyTile;
+			File tile = new File(filePath+"coin.png");
+			BufferedImage goldTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_GOLD] = goldTile;
+			tile = new File(filePath+"enemy.png");
+			BufferedImage enemyTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_ENEMY] = enemyTile;
+			tile = new File(filePath+"diggable.gif");
+			BufferedImage diggableGroundTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE] = diggableGroundTile;
+			tile = new File(filePath+"ladder.png");
+			BufferedImage ladderTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_LADDER] = ladderTile;
+			tile = new File(filePath+"bar.gif");
+			BufferedImage ropeTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_ROPE] = ropeTile;
+			tile = new File(filePath+"solid.png");
+			BufferedImage groundTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_GROUND] = groundTile;
+			tile = new File(filePath+"player.png");
+			BufferedImage spawnTile = ImageIO.read(tile);
+			tileList[LodeRunnerState.LODE_RUNNER_TILE_SPAWN] = spawnTile;
+		}
+		return tileList;
 	}
 
 	/**

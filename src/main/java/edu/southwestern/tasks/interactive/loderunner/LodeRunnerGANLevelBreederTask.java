@@ -60,7 +60,20 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				resetButtons(true);
 			}
 		});
+		JCheckBox iceCreamYou = new JCheckBox("PlayFormat", Parameters.parameters.booleanParameter("interactiveLodeRunnerIceCreamYouVisualization"));
+		iceCreamYou.setName("interactiveLodeRunnerIceCreamYouVisualization");
+		iceCreamYou.getAccessibleContext();
+		iceCreamYou.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("interactiveLodeRunnerIceCreamYouVisualization");
+				resetButtons(true);
+			}
+			
+		});
 		effectsCheckboxes.add(showSolutionPath);
+		effectsCheckboxes.add(iceCreamYou);
 		top.add(effectsCheckboxes);
 		
 		JPanel AStarBudget = new JPanel();
@@ -233,6 +246,9 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 					System.out.println("Image could not be displayed");
 					//e.printStackTrace();
 				}
+			}
+			else if(Parameters.parameters.booleanParameter("interactiveLodeRunnerIceCreamYouVisualization")) {
+				
 			}
 			else {
 				images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //7 different tiles to display 

@@ -778,6 +778,7 @@ public class Parameters {
 		booleanOptions.add("lodeRunnerAllowsConnectivity", true, "Adds connectivity as a fitness function when true");
 		booleanOptions.add("lodeRunnerLevelSequenceAverages", true, "Averages scores from all levels of the sequence");
 		booleanOptions.add("lodeRunnerLevelSequenceIndividual", true, "Takes each score from the sequence individually");
+		booleanOptions.add("interactiveLodeRunnerIceCreamYouVisualization", false, "Shows the ice cream you visualization for the levels in the level breeder when true");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
