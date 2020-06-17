@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.MiscUtil;
 
 import java.awt.Point;
 import java.io.File;
@@ -24,9 +25,13 @@ public class MegaManVGLCUtil {
 	public static int lowerY;
 	public static int lowerX;
 	public static int upperY;
+	public static Direction start;
 	public static HashMap<Point, String> levelEnemies = new HashMap<Point, String>();
 	public static HashSet<Point> activatedScreens = new HashSet<Point>();
 	public static List<List<List<Integer>>> json = new ArrayList<>();
+	public static List<List<List<Integer>>> jsonUp = new ArrayList<>();
+	public static List<List<List<Integer>>> jsonDown = new ArrayList<>();
+	
 
 	//public static boolean executed = false;
 	//public static int levelNumber;
@@ -40,9 +45,12 @@ public class MegaManVGLCUtil {
 //
 //		}
 		for(int i=1;i<=10;i++) {
-			if(i!=7) {
+			if(i!=7&&(i==3)) {
 				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-				convertMegaManLevelToJSONVerticalScroll(level);
+				upAndDownTrainingData(level);
+//				System.out.println("level" +i);
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
+
 				//if(i!=3) convertMegaManLevelToJSONHorizontalScroll(level);
 				
 						
@@ -50,13 +58,214 @@ public class MegaManVGLCUtil {
 						
 			}
 		}
-//		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+2+".txt");
+		System.out.println(jsonUp);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		System.out.println(jsonDown);
+//		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+3+".txt");
 //		printLevel(level);
+//		upAndDownTrainingData(level);
 //		convertMegaManLevelToMMLV(level, 2);
 //		convertMegaManLevelToJSONVerticalScroll(level);
 //		convertMegaManLevelToMMLV(level,5);
-		System.out.println(json.toString());
+//		System.out.println(json.toString());
+		
 	}
+	
+	public enum Direction {UP, RIGHT, DOWN};
+	public static void upAndDownTrainingData(List<List<Integer>> level) {
+		List<Point> corners = new ArrayList<Point>();
+		corners = findSpawnScreen(level);
+		List<List<Integer>> screen = new ArrayList<List<Integer>>();
+		for(int i = 0;i<14;i++) {
+			List<Integer> k = new ArrayList<Integer>();
+			for(int j = 0;j<16;j++) {
+				k.add(9);
+			}
+			screen.add(k);
+		}
+		for(int y = (int) corners.get(0).getY();y< corners.get(2).getY();y++) {
+			for(int x = (int) corners.get(0).getX();x< (int) corners.get(1).getX();x++) {
+				screen.get(y-(int) corners.get(0).getY()).set(x-(int) corners.get(0).getX(), level.get(y).get(x));
+			}
+		}
+		int x1 = (int) corners.get(0).getX();
+		int x2 = (int) corners.get(1).getX();
+		int y1 = (int) corners.get(0).getY();
+		int y2 = (int) corners.get(2).getY();
+//		int both = x1+x2;
+//		System.out.println(both);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		printLevel(screen);
+//		System.out.println(start);
+		Direction d = start;
+		start = null;
+		boolean done = false;
+		while(!done) {
+			if(d==null) { //d==null
+				done = true;
+				System.out.println("DONE");
+			}else if(d.equals(Direction.RIGHT)) {
+				if(x2+x1+1<level.get(0).size()&&level.get(y1).get(x2+x1+1)!=9) {
+					x1++;	
+					screen = copyScreen(level, 16, 14, x1, y1, false);
+				
+					System.out.println("Horizontal");
+					printLevel(screen);
+//					MiscUtil.waitForReadStringAndEnterKeyPress();
+
+				}else { //find new direction
+//					x1--;
+					Direction previous = Direction.RIGHT;
+					d = findNewDirection(level, x1+x2, y1, previous); //using upper right corner
+
+				}
+				
+			}
+			else if (d.equals(Direction.UP)){
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
+//				System.out.println(level.get(y1-1).get(x2+x1-1));
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
+				if(y1-1>=0&&level.get(y1-1).get(x2+x1-1)!=9) {
+					y1--;
+					screen = copyScreen(level, 16, 14, x1, y1, false);
+					jsonUp.add(screen);
+					System.out.println("UP");
+					printLevel(screen);
+//					MiscUtil.waitForReadStringAndEnterKeyPress();
+
+				}else { //find new direction
+					Direction previous = Direction.UP;
+
+					d = findNewDirection(level, x1+x2, y1, previous); //using upper right corner
+
+				}
+			}
+			else if(d.equals(Direction.DOWN)){
+				if(y1+14<level.size()&&level.get(y1+14).get(x2+x1-1)!=9) {
+					y1++;
+					screen = copyScreen(level, 16, 14, x1, y1, false);
+					jsonDown.add(screen);
+					System.out.println("DOWN");
+					printLevel(screen);
+//					MiscUtil.waitForReadStringAndEnterKeyPress();
+				}else { //find new direction
+					Direction previous = Direction.DOWN;
+					d = findNewDirection(level, x1+x2, y1, previous); //using upper right corner
+
+				}
+			}
+			
+			
+		}
+	}
+	
+	private static Direction findNewDirection(List<List<Integer>> level, int xcoord, int ycoord, Direction previous) { //UPPER RIGHT PART OF SCREEN BRUH
+		Direction d = null;
+//		System.out.println(level.get(ycoord-1).get(xcoord-1));
+//		System.out.println(previous);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		if(xcoord+1<level.get(0).size()&&level.get(ycoord).get(xcoord+1)!=9) {
+			d = Direction.RIGHT;
+		}
+		
+		else if(ycoord-1>=0&&level.get(ycoord-1).get(xcoord-1)!=9&&!previous.equals(Direction.DOWN)) { //prioritize going up (for level 7)
+			d = Direction.UP;
+//			System.out.println("UP");
+		}
+		
+		else if(ycoord+15<level.size()&&level.get(ycoord+15).get(xcoord-1)!=9&&!previous.equals(Direction.UP)) {
+//			System.out.println("previous:"+previous);
+			d = Direction.DOWN;
+//			System.out.println("DOWN");
+
+		}
+		return d;
+		
+	}
+
+	private static List<Point> findSpawnScreen(List<List<Integer>> level) {
+		Point spawn = new Point();
+		for(int y = 0;y<level.size();y++) {
+			for(int x = 0;x<level.get(0).size();x++) {
+				if(level.get(y).get(x)==8) {
+					spawn = new Point(x,y);
+				}
+			}
+		}
+		int spawnX = (int) spawn.getX();
+		int spawnY = (int) spawn.getY();
+		int distanceFromLeft = 0;
+		for(int x = spawnX-1;x>=0;x--) {
+			if(x<0||level.get(spawnY).get(x)!=9) {
+				distanceFromLeft++;
+			}else {
+				break;
+			}
+		}
+		int distanceFromRight = 0;
+		for(int x = spawnX+1;x<level.get(0).size();x++) {
+			if(level.get(spawnY).get(x)!=9) {
+				distanceFromRight++;
+				if(distanceFromRight>16) {
+					
+					start = Direction.RIGHT;
+				}
+			}else{
+				break;
+			}
+		}
+		
+		int distanceFromTop = 0;
+		for(int y = spawnY-1;y>=0;y--) {
+			if(level.get(y).get(spawnX)!=9) {
+				distanceFromTop++;
+				if(distanceFromTop>14) {
+					start = Direction.UP;
+				}
+			}else{
+				break;
+			}
+		}
+		int distanceFromBottom = 0;
+		for(int y = spawnY;y<level.size();y++) {
+			if(level.get(y).get(spawnX)!=9) {
+				distanceFromBottom++;
+				if(distanceFromBottom>14) {
+					start = Direction.DOWN;
+				}
+			}else{
+				break;
+			}
+		}
+		
+		if(distanceFromBottom>14) {
+			distanceFromBottom = 14-distanceFromTop;
+		}else if(distanceFromTop>14) {
+			distanceFromTop = 14- distanceFromBottom;
+		}else if(distanceFromRight>14) {
+			distanceFromRight = 16 - distanceFromLeft;
+		}
+		
+		
+		//System.out.println()
+		int x1 = spawnX - distanceFromLeft;
+		int y1 = spawnY - distanceFromTop;
+		int x2 = spawnX + distanceFromRight;
+		int y2 = spawnY + distanceFromBottom;
+		Point x1y1 = new Point (x1,y1);
+		Point x2y1 = new Point (x2,y1);
+		Point x1y2 = new Point (x1,y2);
+		Point x2y2 = new Point (x2,y2);
+		
+		List<Point> k = new ArrayList<Point>();
+		k.add(x1y1);
+		k.add(x2y1);
+		k.add(x1y2);
+		k.add(x2y2);
+		return k;
+	}
+
+
 	/**
 	 * prints the level to the console
 	 * @param level  
