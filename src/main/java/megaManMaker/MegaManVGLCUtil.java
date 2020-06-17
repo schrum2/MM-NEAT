@@ -45,7 +45,7 @@ public class MegaManVGLCUtil {
 //
 //		}
 		for(int i=1;i<=10;i++) {
-			if(i!=7&&(i==3)) {
+			if(i!=7&&i!=3&&i!=1) {
 				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
 				upAndDownTrainingData(level);
 //				System.out.println("level" +i);
@@ -79,7 +79,7 @@ public class MegaManVGLCUtil {
 		for(int i = 0;i<14;i++) {
 			List<Integer> k = new ArrayList<Integer>();
 			for(int j = 0;j<16;j++) {
-				k.add(9);
+				k.add(7);
 			}
 			screen.add(k);
 		}
@@ -105,7 +105,7 @@ public class MegaManVGLCUtil {
 				done = true;
 				System.out.println("DONE");
 			}else if(d.equals(Direction.RIGHT)) {
-				if(x2+x1+1<level.get(0).size()&&level.get(y1).get(x2+x1+1)!=9) {
+				if(x2+x1<level.get(0).size()&&level.get(y1).get(x2+x1)!=7) {
 					x1++;	
 					screen = copyScreen(level, 16, 14, x1, y1, false);
 				
@@ -116,7 +116,7 @@ public class MegaManVGLCUtil {
 				}else { //find new direction
 //					x1--;
 					Direction previous = Direction.RIGHT;
-					d = findNewDirection(level, x1+x2, y1, previous); //using upper right corner
+					d = findNewDirection(level, x1+x2-1, y1, previous); //using upper right corner
 
 				}
 				
@@ -125,7 +125,7 @@ public class MegaManVGLCUtil {
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
 //				System.out.println(level.get(y1-1).get(x2+x1-1));
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
-				if(y1-1>=0&&level.get(y1-1).get(x2+x1-1)!=9) {
+				if(y1-1>=0&&level.get(y1-1).get(x2+x1-1)!=7) {
 					y1--;
 					screen = copyScreen(level, 16, 14, x1, y1, false);
 					jsonUp.add(screen);
@@ -141,7 +141,7 @@ public class MegaManVGLCUtil {
 				}
 			}
 			else if(d.equals(Direction.DOWN)){
-				if(y1+14<level.size()&&level.get(y1+14).get(x2+x1-1)!=9) {
+				if(y1+14<level.size()&&level.get(y1+14).get(x2+x1-1)!=7) {
 					y1++;
 					screen = copyScreen(level, 16, 14, x1, y1, false);
 					jsonDown.add(screen);
@@ -164,16 +164,16 @@ public class MegaManVGLCUtil {
 //		System.out.println(level.get(ycoord-1).get(xcoord-1));
 //		System.out.println(previous);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
-		if(xcoord+1<level.get(0).size()&&level.get(ycoord).get(xcoord+1)!=9) {
+		if(xcoord+1<level.get(0).size()&&level.get(ycoord).get(xcoord+1)!=7) {
 			d = Direction.RIGHT;
 		}
 		
-		else if(ycoord-1>=0&&level.get(ycoord-1).get(xcoord-1)!=9&&!previous.equals(Direction.DOWN)) { //prioritize going up (for level 7)
+		else if(ycoord-1>=0&&level.get(ycoord-1).get(xcoord-1)!=7&&!previous.equals(Direction.DOWN)) { //prioritize going up (for level 7)
 			d = Direction.UP;
 //			System.out.println("UP");
 		}
 		
-		else if(ycoord+15<level.size()&&level.get(ycoord+15).get(xcoord-1)!=9&&!previous.equals(Direction.UP)) {
+		else if(ycoord+15<level.size()&&level.get(ycoord+15).get(xcoord-1)!=7&&!previous.equals(Direction.UP)) {
 //			System.out.println("previous:"+previous);
 			d = Direction.DOWN;
 //			System.out.println("DOWN");
@@ -196,7 +196,7 @@ public class MegaManVGLCUtil {
 		int spawnY = (int) spawn.getY();
 		int distanceFromLeft = 0;
 		for(int x = spawnX-1;x>=0;x--) {
-			if(x<0||level.get(spawnY).get(x)!=9) {
+			if(x<0||level.get(spawnY).get(x)!=7) {
 				distanceFromLeft++;
 			}else {
 				break;
@@ -204,7 +204,7 @@ public class MegaManVGLCUtil {
 		}
 		int distanceFromRight = 0;
 		for(int x = spawnX+1;x<level.get(0).size();x++) {
-			if(level.get(spawnY).get(x)!=9) {
+			if(level.get(spawnY).get(x)!=7) {
 				distanceFromRight++;
 				if(distanceFromRight>16) {
 					
@@ -217,7 +217,7 @@ public class MegaManVGLCUtil {
 		
 		int distanceFromTop = 0;
 		for(int y = spawnY-1;y>=0;y--) {
-			if(level.get(y).get(spawnX)!=9) {
+			if(level.get(y).get(spawnX)!=7) {
 				distanceFromTop++;
 				if(distanceFromTop>14) {
 					start = Direction.UP;
@@ -228,7 +228,7 @@ public class MegaManVGLCUtil {
 		}
 		int distanceFromBottom = 0;
 		for(int y = spawnY;y<level.size();y++) {
-			if(level.get(y).get(spawnX)!=9) {
+			if(level.get(y).get(spawnX)!=7) {
 				distanceFromBottom++;
 				if(distanceFromBottom>14) {
 					start = Direction.DOWN;
@@ -757,7 +757,7 @@ public class MegaManVGLCUtil {
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
 //					int tileCode = convertMegamanTilesToInt(level[i].charAt(j)); 
-					int tileCode = convertMegamanTilesToIntEnemies(level[i].charAt(j)); 
+					int tileCode = convertMegamanTilesToIntSimple(level[i].charAt(j)); 
 					String enemyTypeString = getStringForTypeEnemy(level[i].charAt(j));
 					if(enemyTypeString!=null) levelEnemies.put(new Point(j,i), enemyTypeString);
 					col.add(tileCode);
@@ -873,6 +873,8 @@ public class MegaManVGLCUtil {
 			return 5;
 		case 'C': //Cannon/shooter
 			return 6;
+		case 'P':
+			return 8;
 		default:
 			return 0;
 		}
