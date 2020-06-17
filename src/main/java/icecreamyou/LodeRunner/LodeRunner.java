@@ -271,7 +271,40 @@ public class LodeRunner {
 	 */
 	public LodeRunner(List<List<Integer>> level1) {
 		// Retrieve instructions.
-		final String instructionText = getInstructions();
+		final String instructionText = 
+				"Welcome to Lode Runner by Isaac Sukin. This code was further modified by\r\n" +
+				"Kirby Steckel and Dr. Jacob Schrum to load levels evolved using a GAN.\r\n"+
+				"\r\n" + 
+				"Lode Runner is a platform game. Your job is to collect all the gold in each\r\n" + 
+				"level. You automatically pick up gold when you walk over it. If you succeed in\r\n" + 
+				"collecting all the gold, you beat the level.\r\n" +  
+				"\r\n" + 
+				"Use the A key to move left and the D key to move right. If you are in front of\r\n" + 
+				"a ladder, you can use the W key to climb up it or the S key to climb down it.\r\n" + 
+				"You can also step off of ladders to the left or right with A or D,\r\n" + 
+				"respectively. Additionally, you can climb across bars to the left or right\r\n" + 
+				"using A or D, or drop from them using S. You will not get hurt if you fall off\r\n" + 
+				"platforms. \r\n" + 
+				"\r\n" + 
+				"Phantoms are devoted to stopping you in your quest to collect gold. They will\r\n" + 
+				"kill you if they touch you. You can temporarily disable Phantoms by tricking\r\n" + 
+				"them into falling into holes. Phantoms are incapacitated while they are in\r\n" + 
+				"holes, and you can walk over them safely. You can dig a hole to your left or\r\n" + 
+				"right by pressing Q or E, respectively. (Note that you cannot dig a hole\r\n" + 
+				"directly under yourself, but you can trap yourself in holes.) Holes will\r\n" + 
+				"eventually fill back in. If you are in a hole when it fills, you will die. If a\r\n" + 
+				"Phantom is in a hole when it fills, it will respawn. (If you are in the way of\r\n" + 
+				"where the Phantom wants to respawn, it will wait until you move.) Phantoms can\r\n" + 
+				"also pick up gold coins, keeping you from finishing the level. However, they\r\n" + 
+				"will drop their coins if they fall into a hole. Note that you cannot dig through steel.\r\n" + 
+				"\r\n" + 
+				"Additionally, you can edit levels the evolved level by clicking the\r\n" + 
+				"\"Edit\" button on the menu at the top of the game window.\r\n" + 
+				"Click an object in the panel on the right and then click in the game area to\r\n" + 
+				"place it. (You can also click-and-drag to add many of the same object at once.)\r\n" + 
+				"Click the Save button when you're done, give your level a name, and you will\r\n" + 
+				"then be able to play your new level. You can open saved levels (or restart the\r\n" + 
+				"campaign) by clicking the \"Open level\" button.";
 
 		// Top-level frame
 		frame.setLocation(200, 150);
@@ -300,7 +333,6 @@ public class LodeRunner {
 								GamePanel.getXUnitPosition(e.getX()),
 								GamePanel.getYUnitPosition(e.getY())
 								);
-						openNew.setEnabled(false);
 					}
 				}
 			}
@@ -355,8 +387,6 @@ public class LodeRunner {
 					levelCopy = new Level(level);
 					reset.setText("Reset");
 					edit.setEnabled(false);
-					createNew.setEnabled(false);
-					openNew.setEnabled(false);
 				}
 				else if (text.equals("Reset")) {
 					stopPlaying();
@@ -380,10 +410,7 @@ public class LodeRunner {
 					reset.setEnabled(false);
 					edit.setText("Save");
 					status.setText("Editing "+ levelName);
-					createNew.setText("Cancel");
-					createNew.setEnabled(true);
 					playGAN.setEnabled(true);
-					openNew.setEnabled(false);
 				}
 				else if (text.equals("Save")) {
 					if (!gamePanel.playerOneExists()) {
@@ -404,71 +431,10 @@ public class LodeRunner {
 						edit.setText("Edit");
 						levelName = result;
 						status.setText(levelName);
-						createNew.setText("Create new level");
-						createNew.setEnabled(true);
 						playGAN.setEnabled(false);
-						openNew.setEnabled(true);
 					}
 				}
 			}
-		});
-		createNew.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String text = createNew.getText();
-				if (text.equals("Create new level")) {
-					gamePanel.switchLevel();
-					gamePanel.useEditor();
-					editor.setEnabled(true);
-					for (Component c : editor.getComponents())
-						c.setEnabled(true);
-					edit.setText("Save");
-					status.setText("New level");
-					reset.setText("Reset");
-					reset.setEnabled(false);
-					createNew.setText("Cancel");
-					createNew.setEnabled(false);
-					score.resetValue();
-					lives.resetValue();
-					openNew.setEnabled(false);
-				}
-				else if (text.equals("Cancel")) {
-					gamePanel.reset();
-					gamePanel.stopUsingEditor();
-					editor.setEnabled(false);
-					for (Component c : editor.getComponents())
-						c.setEnabled(false);
-					edit.setText("Edit");
-					status.setText(levelName);
-					createNew.setText("Create new level");
-					reset.setText("Play");
-					openNew.setEnabled(true);
-				}
-			}
-		});
-		openNew.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Object[] levels = getLevels();
-				String result = (String)JOptionPane.showInputDialog(
-						frame,
-						"Choose a level to open.",
-						"Open level",
-						JOptionPane.PLAIN_MESSAGE,
-						null,
-						levels,
-						levels[0]);
-				if (result != null && result.length() > 0 && openNew.getText()=="Open level") {
-					if (result.equals("CAMPAIGN")) {
-						gamePanel.startCampaign();
-						status.setText("CAMPAIGN");
-					}
-					else {
-						gamePanel.switchLevel(result);
-						levelName = result;
-						status.setText(levelName);
-					}
-				}
-			}
-
 		});
 		playGAN.addActionListener(new ActionListener() {
 			@Override
@@ -494,8 +460,6 @@ public class LodeRunner {
 		menu.add(instructions);
 		menu.add(reset);
 		menu.add(edit);
-		menu.add(createNew);
-		menu.add(openNew);
 		menu.add(playGAN);
 		menu.add(score);
 		menu.add(lives);
