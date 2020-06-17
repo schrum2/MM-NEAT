@@ -1,18 +1,25 @@
 package icecreamyou.LodeRunner;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.event.MouseInputAdapter;
 
 /**
@@ -298,13 +305,13 @@ public class LodeRunner {
 				"also pick up gold coins, keeping you from finishing the level. However, they\r\n" + 
 				"will drop their coins if they fall into a hole. Note that you cannot dig through steel.\r\n" + 
 				"\r\n" + 
-				"Additionally, you can edit levels the evolved level by clicking the\r\n" + 
+				"Additionally, you can edit the evolved level by clicking the\r\n" + 
 				"\"Edit\" button on the menu at the top of the game window.\r\n" + 
 				"Click an object in the panel on the right and then click in the game area to\r\n" + 
 				"place it. (You can also click-and-drag to add many of the same object at once.)\r\n" + 
-				"Click the Save button when you're done, give your level a name, and you will\r\n" + 
-				"then be able to play your new level. You can open saved levels (or restart the\r\n" + 
-				"campaign) by clicking the \"Open level\" button.";
+				"Click the Save button when you're done to save to file. If you simply want to play\r\n" + 
+				"the resulting level, click \"Play Level Now\" which will let you play your modified\r\n" + 
+				"level without saving.";
 
 		// Top-level frame
 		frame.setLocation(200, 150);
