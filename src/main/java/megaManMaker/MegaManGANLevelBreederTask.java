@@ -435,7 +435,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
-			String errorMessage = "You need to create a local text file in the MMNEAT directory called \n MegaManMakerLevelPath.txt which contains the path to where MegaManMaker stores levels on your device. \n It will likely look like this: C:\\Users\\[Insert User Name]\\AppData\\Local\\MegaMaker\\Levels\\";
+			String errorMessage = "You need to create a local text file in the MMNEAT directory called \n MegaManMakePath.txt which contains the path to where MegaManMaker.exe is stored on your device";
 			JOptionPane.showMessageDialog(frame, errorMessage);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
