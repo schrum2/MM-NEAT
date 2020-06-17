@@ -11,12 +11,17 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.util.datastructures.ListUtil;
-import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
 
+/**
+ * This class is to help analyze the original levels of Lode Runner to try to get better training sets
+ * many of the methods are used in the LodeRunnerLevelTask to calculate fitness functions and other scores
+ * @author kdste
+ *
+ */
 public class LodeRunnerLevelAnalysisUtil {
 	
 	public static final int TOTAL_TILES = 704; //for percentages, 22x32 levels 
@@ -27,7 +32,7 @@ public class LodeRunnerLevelAnalysisUtil {
 		double[] doubleArray = RandomNumbers.randomArray(1);
 
 		HashSet<LodeRunnerState> mostRecentVisited = performAStarSearchAndCalculateAStarDistance(level,doubleArray[0]).t1;
-//		ArrayList<LodeRunnerAction> actionSequence = null;
+		ArrayList<LodeRunnerAction> actionSequence = performAStarSearchAndCalculateAStarDistance(level,doubleArray[0]).t2;
 		
 		double simpleAStarDistance = performAStarSearchAndCalculateAStarDistance(level, doubleArray[0]).t4;
 		double connectivity = caluclateConnectivity(mostRecentVisited);
@@ -36,12 +41,14 @@ public class LodeRunnerLevelAnalysisUtil {
 		System.out.println("simpleAStarDistance = " + simpleAStarDistance);
 		System.out.println("connectivity = " + connectivity);
 
-		double percentEmpty = calculatePercentage(new double[] {LodeRunnerState.LODE_RUNNER_TILE_EMPTY}, level);
-		double percentLadders = calculatePercentage(new double[] {LodeRunnerState.LODE_RUNNER_TILE_LADDER}, level);
-		double percentGround = calculatePercentage(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE, LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
-		double percentSolid = calculatePercentage(new double[] {LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
-		double percentDiggable = calculatePercentage(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE}, level);
+		double percentBackTrack = calculatePercentAStarBacktracking(actionSequence);
+		double percentEmpty = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_EMPTY}, level);
+		double percentLadders = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_LADDER}, level);
+		double percentGround = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE, LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
+		double percentSolid = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
+		double percentDiggable = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE}, level);
 
+		System.out.println("percentBackTrack = " + percentBackTrack);
 		System.out.println("percentEmpty = " + percentEmpty);
 		System.out.println("percentLadders = " + percentLadders);
 		System.out.println("percentGround = " + percentGround);
@@ -52,7 +59,13 @@ public class LodeRunnerLevelAnalysisUtil {
 
 	}
 
-	public static double calculatePercentage(double[] tiles , List<List<Integer>> level) {
+	/**
+	 * Calculates the percentage of the tiles specified in the array for the level
+	 * @param tiles An array of the tiles to look for 
+	 * @param level One level
+	 * @return The percentage of the level that is that tile
+	 */
+	public static double calculatePercentageTile(double[] tiles , List<List<Integer>> level) {
 		double percent = 0;
 		for(int i = 0; i < level.size();i++) {
 			for(int j = 0; j < level.get(i).size(); j++) {
@@ -67,8 +80,14 @@ public class LodeRunnerLevelAnalysisUtil {
 
 	}
 
-
-	public static Quad<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState, Double> performAStarSearchAndCalculateAStarDistance(List<List<Integer>> level, double psuedoRandomSeed) {
+	/**
+	 * Performs the AStar search and calculates the simpleAStarDistance
+	 * @param level A single level
+	 * @param psuedoRandomSeed Random seed
+	 * @return Relevant information from the search in a Quad; mostRecentVistied, actionSeqeunce, starting state, simpleAStarDistance
+	 */
+	public static Quad<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState, Double> 
+				performAStarSearchAndCalculateAStarDistance(List<List<Integer>> level, double psuedoRandomSeed) {
 		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level); //fills a set with empty points fro the level to select a spawn point from 
 		Random rand = new Random(Double.doubleToLongBits(psuedoRandomSeed));
 		LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand); //sets a random spawn point 
@@ -97,6 +116,11 @@ public class LodeRunnerLevelAnalysisUtil {
 
 	}
 
+	/**
+	 * Calculates the connectivity of the level, can find percentage by dividing by total tiles 
+	 * @param mostRecentVisited The vistied states in the A* search
+	 * @return Connectivity of level
+	 */
 	public static double caluclateConnectivity(HashSet<LodeRunnerState> mostRecentVisited) {
 		//calculates the amount of the level that was covered in the search, connectivity.
 		HashSet<Point> visitedPoints = new HashSet<>();
@@ -106,6 +130,20 @@ public class LodeRunnerLevelAnalysisUtil {
 		}
 		connectivityOfLevel = 1.0*visitedPoints.size();
 		return connectivityOfLevel;
+	}
+	
+	/**
+	 * Calculates the percent of backtracking in for the A* search
+	 * @param actionSequence A* path
+	 * @return Percent backtracking
+	 */
+	public static double calculatePercentAStarBacktracking(ArrayList<LodeRunnerAction> actionSequence) {
+		double percentBacktrack = 0; 
+		for(LodeRunnerAction a: actionSequence) {
+			
+		}
+		percentBacktrack/=TOTAL_TILES;
+		return percentBacktrack;
 	}
 
 

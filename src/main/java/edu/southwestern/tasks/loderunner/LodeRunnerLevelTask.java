@@ -159,9 +159,9 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 
 		//calculates other scores that are not fitness functions 
 		double percentConnected = connectivityOfLevel/LodeRunnerLevelAnalysisUtil.TOTAL_TILES;		//calculates the percentage of the level that is connected
-		double percentLadders = LodeRunnerLevelAnalysisUtil.calculatePercentage(new double[] {LodeRunnerState.LODE_RUNNER_TILE_LADDER}, level);
-		double percentGround = LodeRunnerLevelAnalysisUtil.calculatePercentage(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE, LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
-		double percentRopes = LodeRunnerLevelAnalysisUtil.calculatePercentage(new double[] {LodeRunnerState.LODE_RUNNER_TILE_ROPE}, level);
+		double percentLadders = LodeRunnerLevelAnalysisUtil.calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_LADDER}, level);
+		double percentGround = LodeRunnerLevelAnalysisUtil.calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE, LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
+		double percentRopes = LodeRunnerLevelAnalysisUtil.calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_ROPE}, level);
 		int numTreasure = 0; 
 		int numEnemies = 0;
 		for(int i = 0; i < level.size();i++) {
