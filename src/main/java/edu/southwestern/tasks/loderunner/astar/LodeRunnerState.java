@@ -122,8 +122,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param args
 	 */
 	public static void main(String args[]) {
+		Parameters.initializeParameterCollections(args);
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 2.txt"); //converts to JSON
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 1.txt"); //converts to JSON
 		LodeRunnerState start = new LodeRunnerState(level);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
@@ -140,6 +141,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
 		System.out.println(mostRecentVisited.toString());
 		System.out.println("actionSequence: " + actionSequence);
+		System.out.println("actionSequence length: " + actionSequence.size());
 		try {
 			//visualizes the points visited with red and whit x's
 			BufferedImage visualPath = vizualizePath(level,mostRecentVisited,actionSequence,start);

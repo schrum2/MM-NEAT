@@ -8,9 +8,11 @@ import java.util.Random;
 
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.util.datastructures.ListUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
@@ -33,15 +35,18 @@ public class LodeRunnerLevelAnalysisUtil {
 
 		HashSet<LodeRunnerState> mostRecentVisited = performAStarSearchAndCalculateAStarDistance(level,doubleArray[0]).t1;
 		ArrayList<LodeRunnerAction> actionSequence = performAStarSearchAndCalculateAStarDistance(level,doubleArray[0]).t2;
+		LodeRunnerState start = performAStarSearchAndCalculateAStarDistance(level,doubleArray[0]).t3;
+		
+//		System.out.println("actionSequence length = " + actionSequence.size());
 		
 		double simpleAStarDistance = performAStarSearchAndCalculateAStarDistance(level, doubleArray[0]).t4;
 		double connectivity = caluclateConnectivity(mostRecentVisited);
 	
-		System.out.println(level);
+//		System.out.println(level);
 		System.out.println("simpleAStarDistance = " + simpleAStarDistance);
 		System.out.println("connectivity = " + connectivity);
 
-		double percentBackTrack = calculatePercentAStarBacktracking(actionSequence);
+		double percentBackTrack = calculatePercentAStarBacktracking(actionSequence, start);
 		double percentEmpty = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_EMPTY}, level);
 		double percentLadders = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_LADDER}, level);
 		double percentGround = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE, LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
@@ -81,14 +86,14 @@ public class LodeRunnerLevelAnalysisUtil {
 	}
 
 	/**
-	 * Performs the AStar search and calculates the simpleAStarDistance
+	 * Performs the AStar search and calculates the simpleAStarDistance, used in LodeRunnerLevelTask
 	 * @param level A single level
 	 * @param psuedoRandomSeed Random seed
 	 * @return Relevant information from the search in a Quad; mostRecentVistied, actionSeqeunce, starting state, simpleAStarDistance
 	 */
 	public static Quad<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState, Double> 
 				performAStarSearchAndCalculateAStarDistance(List<List<Integer>> level, double psuedoRandomSeed) {
-		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level); //fills a set with empty points fro the level to select a spawn point from 
+		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level); //fills a set with empty points from the level to select a spawn point from 
 		Random rand = new Random(Double.doubleToLongBits(psuedoRandomSeed));
 		LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand); //sets a random spawn point 
 		List<List<Integer>> levelCopy = ListUtil.deepCopyListOfLists(level); //copy level so it is not effected by the search 
@@ -113,7 +118,6 @@ public class LodeRunnerLevelAnalysisUtil {
 		}
 		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
 		return new Quad<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState, Double>(mostRecentVisited,actionSequence,start, simpleAStarDistance);
-
 	}
 
 	/**
@@ -135,14 +139,25 @@ public class LodeRunnerLevelAnalysisUtil {
 	/**
 	 * Calculates the percent of backtracking in for the A* search
 	 * @param actionSequence A* path
+	 * @param start 
 	 * @return Percent backtracking
 	 */
-	public static double calculatePercentAStarBacktracking(ArrayList<LodeRunnerAction> actionSequence) {
+	public static double calculatePercentAStarBacktracking(ArrayList<LodeRunnerAction> actionSequence, LodeRunnerState start) {
 		double percentBacktrack = 0; 
+		HashSet<Pair<Integer,Integer>> visited = new HashSet<>();
+		LodeRunnerState currentState = start;
+		Pair<Integer, Integer> current = null;
 		for(LodeRunnerAction a: actionSequence) {
-			
+			currentState = (LodeRunnerState) currentState.getSuccessor(a);	
+			Pair<Integer,Integer> next = new Pair<>(currentState.currentX, currentState.currentY);
+			if(current!=null && !current.equals(next)) {
+				visited.add(current);
+				if(visited.contains(next))
+					percentBacktrack++;
+			}
+			current = next;
 		}
-		percentBacktrack/=TOTAL_TILES;
+		percentBacktrack = percentBacktrack/(double)actionSequence.size();
 		return percentBacktrack;
 	}
 
