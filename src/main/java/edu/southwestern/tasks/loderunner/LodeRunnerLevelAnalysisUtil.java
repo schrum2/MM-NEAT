@@ -12,19 +12,26 @@ import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
 
 public class LodeRunnerLevelAnalysisUtil {
+	
+	public static final int TOTAL_TILES = 704; //for percentages, 22x32 levels 
 
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(args);
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
 		double[] doubleArray = RandomNumbers.randomArray(1);
-		double simpleAStarDistance = calculateAStarDistanceAndConnectivity(level, doubleArray[0]).t1;
-		double connectivity = calculateAStarDistanceAndConnectivity(level, doubleArray[0]).t2;
 
+		HashSet<LodeRunnerState> mostRecentVisited = performAStarSearchAndCalculateAStarDistance(level,doubleArray[0]).t1;
+//		ArrayList<LodeRunnerAction> actionSequence = null;
+		
+		double simpleAStarDistance = performAStarSearchAndCalculateAStarDistance(level, doubleArray[0]).t4;
+		double connectivity = caluclateConnectivity(mostRecentVisited);
+	
 		System.out.println(level);
 		System.out.println("simpleAStarDistance = " + simpleAStarDistance);
 		System.out.println("connectivity = " + connectivity);
@@ -56,12 +63,12 @@ public class LodeRunnerLevelAnalysisUtil {
 				}
 			}
 		}
-		return percent/LodeRunnerLevelTask.TOTAL_TILES;
+		return percent/TOTAL_TILES;
 
 	}
 
 
-	public static Pair<Double, Double> calculateAStarDistanceAndConnectivity(List<List<Integer>> level, double psuedoRandomSeed) {
+	public static Quad<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState, Double> performAStarSearchAndCalculateAStarDistance(List<List<Integer>> level, double psuedoRandomSeed) {
 		List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level); //fills a set with empty points fro the level to select a spawn point from 
 		Random rand = new Random(Double.doubleToLongBits(psuedoRandomSeed));
 		LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand); //sets a random spawn point 
@@ -86,6 +93,11 @@ public class LodeRunnerLevelAnalysisUtil {
 			//e.printStackTrace();
 		}
 		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
+		return new Quad<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState, Double>(mostRecentVisited,actionSequence,start, simpleAStarDistance);
+
+	}
+
+	public static double caluclateConnectivity(HashSet<LodeRunnerState> mostRecentVisited) {
 		//calculates the amount of the level that was covered in the search, connectivity.
 		HashSet<Point> visitedPoints = new HashSet<>();
 		double connectivityOfLevel = -1;
@@ -93,8 +105,7 @@ public class LodeRunnerLevelAnalysisUtil {
 			visitedPoints.add(new Point(s.currentX,s.currentY));
 		}
 		connectivityOfLevel = 1.0*visitedPoints.size();
-		return new Pair<Double, Double>(simpleAStarDistance, connectivityOfLevel);
-
+		return connectivityOfLevel;
 	}
 
 
