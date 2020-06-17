@@ -67,7 +67,7 @@ public class LodeRunner {
 	// Top-level frame
 	final JFrame frame = new JFrame("Lode Runner");
 	
-	public static Level levelCopy;
+	//public static Level levelCopy;
 
 	public LodeRunner() {
 		// Retrieve instructions.
@@ -323,7 +323,7 @@ public class LodeRunner {
 
 		// Initialize level
 		Level level = new Level(level1);
-		levelCopy = new Level(level); //deep copy of the level
+		//levelCopy = new Level(level); //deep copy of the level
 		levelName = "Level From GAN";
 		status.setText(levelName);
 
@@ -391,7 +391,7 @@ public class LodeRunner {
 				gamePanel.reset();
 				String text = reset.getText();
 				if (text.equals("Play")) {
-					levelCopy = new Level(level);
+					//level = levelCopy;
 					reset.setText("Reset");
 					edit.setEnabled(false);
 				}
