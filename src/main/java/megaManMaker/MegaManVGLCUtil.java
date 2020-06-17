@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
+
+import edu.southwestern.parameters.Parameters;
+
 import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -220,7 +223,7 @@ public class MegaManVGLCUtil {
 					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 					//l=11;
 				}else if (m == 5||m==20) { //moving platform
-					if(x+2<=k.size()) {
+					if(x+2<k.size()) {
 					if(k.get(x+1)==5) {
 						movingPlat.add(new Point(x+1,y));
 						
@@ -284,6 +287,9 @@ public class MegaManVGLCUtil {
 				if(m!=9) {
 					placeActivatedScreen(xcoord,ycoord, p);
 					p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
+					if(Parameters.parameters.booleanParameter("useBothGANsMegaMan")) {
+						p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
+					}
 				}
 
 
