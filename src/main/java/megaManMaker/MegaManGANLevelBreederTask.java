@@ -45,7 +45,6 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	public static GANProcess ganProcessVertical = null;
 	public static GANProcess ganProcessHorizontal = null;
 	private boolean initializationComplete = false;
-	public static List<List<Integer>> level;
 	protected JSlider levelChunksSlider;
 	public MegaManGANLevelBreederTask() throws IllegalAccessException {
 		super();
@@ -66,7 +65,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		}
 		
 		top.add(save);
-		
+		//horizontal slider for level chunks
 		levelChunksSlider = new JSlider(JSlider.HORIZONTAL, LEVEL_MIN_CHUNKS, LEVEL_MAX_CHUNKS, Parameters.parameters.integerParameter("megaManGANLevelChunks"));
 		levelChunksSlider.setToolTipText("Determines the number of distinct latent vectors that are sent to the GAN to create level chunks which are patched together into a single level.");
 		levelChunksSlider.setMinorTickSpacing(1);
@@ -119,6 +118,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 
 		initializationComplete = true;
 		
+		
+		//adds the ability to show the solution path
 		JPanel effectsCheckboxes = new JPanel();
 		JCheckBox showSolutionPath = new JCheckBox("ShowSolutionPath", Parameters.parameters.booleanParameter("interactiveMegaManAStarPaths"));
 		showSolutionPath.setName("interactiveMegaManAStarPaths");
@@ -131,9 +132,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			}
 		});
 		effectsCheckboxes.add(showSolutionPath);
-		//top.add(effectsCheckboxes);
 		
-		//JPanel useBothGANs = new JPanel();
+		//whether or not to use both GANs **NOTE** need to change initialization for when there are more tile types
 		JCheckBox useBothGANs = new JCheckBox("UseBothGANs", Parameters.parameters.booleanParameter("useBothGANsMegaMan"));
 		useBothGANs.setName("useBothGANsMegaMan");
 		useBothGANs.getAccessibleContext();
@@ -155,20 +155,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 						GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
 				ganProcessVertical.start();
 				ganProcessHorizontal.start();
+				//necessary for initialization
 				String response = "";
 				while(!response.equals("READY")) {
 					response = ganProcessVertical.commRecv();
 					response = ganProcessHorizontal.commRecv();
 				}
-//				while(!response.equals("READY")) {
-//					
-//				}
-//				ganProcessVertical.initBuffers();
-//				ganProcessHorizontal.initBuffers();
 				}else {
-//					System.out.println("wait");
-//					System.out.println(ganProcessHorizontal);
-//					MiscUtil.waitForReadStringAndEnterKeyPress();
+
 					ganProcessHorizontal.terminate();
 					ganProcessVertical.terminate();
 					GANProcess.getGANProcess();
@@ -180,6 +174,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		top.add(effectsCheckboxes);
 		
 		
+		
+		//Ability to change A* budget
 		JPanel AStarBudget = new JPanel();
 		JLabel AStarLabel = new JLabel("UpdateAStarBudget");
 		JTextField updateAStarBudget = new JTextField(10);
@@ -210,28 +206,35 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	}
 
 	@Override
+	/**
+	 * configures the GAN to MegaMan type
+	 */
 	public void configureGAN() { //sets GAN to megaman
 		GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
 		
 	}
 
 	@Override
+	/**
+	 * returns the command line parameter associated with the MegaMan GAN model
+	 */
 	public String getGANModelParameterName() { 
 		// TODO Auto-generated method stub
 		return "MegaManGANModel";
 	}
 
 	@Override
-	public List<List<Integer>> levelListRepresentation(double[] latentVector) { //gets the horizontal stretch list<list<integer>> representation
-		// TODO Auto-generated method stub
-		return MegaManGANUtil.generateOneLevelListRepresentationFromGAN(latentVector);
-	}
-
-	@Override
+	/**
+	 * resets and relaunches GAN
+	 * @param model the GAN model used
+	 */
 	public Pair<Integer, Integer> resetAndReLaunchGAN(String model) {
 		return staticResetAndReLaunchGAN(model);
 	}
-	
+	/**
+	 * resets and relaunches GAN
+	 * @param model the GAN model used
+	 */
 	public static Pair<Integer, Integer> staticResetAndReLaunchGAN(String model) {
 		int megaManGANLevelChunks = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 		int oldLength = megaManGANLevelChunks * GANProcess.latentVectorLength();
@@ -242,20 +245,24 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		int newLength = megaManGANLevelChunks * GANProcess.latentVectorLength(); // new model
 		return new Pair<>(oldLength,newLength);
 	}
+	
+	
 	@Override
+	/**
+	 * gets the GAN model directory
+	 */
 	public String getGANModelDirectory() {
 		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"MegaManGAN";
 	}
 
 	/**
-	 * saves the level in the directory of MegaManMaker levels
+	 * saves the level in the directory of MegaManMaker levels.
+	 * Basically it reads the MegaManMakerLevelPath and saves the
+	 * selected level into an mmlv file named by the user
 	 */
 	public void saveLevel() {
 		File mmlvFilePath = new File("MegaManMakerLevelPath.txt"); //file containing the path
-		//System.out.println(mmlvFile);
-//		if(!mmlvFile.exists()) {
-//			throw new FileNotFoundException();
-//		}
+
 		
 		Scanner scan;
 		//When the button is pushed, ask for the name input
@@ -264,8 +271,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			//scan.next();
 			String mmlvPath = scan.nextLine();
 			String mmlvFileName = JOptionPane.showInputDialog(null, "What do you want to name your level?");
-			File mmlvFileFromEvolution = new File(mmlvPath+mmlvFileName+".mmlv");
-			File mmlvFile;
+			File mmlvFileFromEvolution = new File(mmlvPath+mmlvFileName+".mmlv"); //creates file inside user's MegaManLevelPath
+			File mmlvFile; //creates file inside MMNEAT
 			scan.close();
 			if(selectedItems.size() != 1) {
 				JOptionPane.showMessageDialog(null, "Select exactly one level to save.");
@@ -274,13 +281,12 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 
 			ArrayList<Double> phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
 			double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
-			//List<List<Integer>> level;
-			generateLevelFromGAN(doubleArray);
-			int levelNumber = 2020;
-			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, levelNumber);
+			List<List<Integer>> level = levelListRepresentation(doubleArray);
+			//int levelNumber = 2020;
+			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, mmlvFileName);
 			try {
-				Files.copy(mmlvFile, mmlvFileFromEvolution);
-				mmlvFile.delete();
+				Files.copy(mmlvFile, mmlvFileFromEvolution); //copies over
+				mmlvFile.delete(); //deletes MMNEAT file
 				JOptionPane.showMessageDialog(frame, "Level saved");
 
 			} catch (IOException e) {
@@ -302,12 +308,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	@Override
 	//Will eventually launch megamanmaker
 	public void playLevel(ArrayList<Double> phenotype) {
-		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
-		List<List<Integer>> level = levelListRepresentation(doubleArray);
-		int levelNumber = 2020;
-		MegaManVGLCUtil.convertMegaManLevelToMMLV(level, levelNumber);
 		
-		//save level and play
 	}
 
 	@Override
@@ -323,8 +324,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height,
 			double[] inputMultipliers) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
-		//List<List<Integer>> level;
-		generateLevelFromGAN(doubleArray);
+		List<List<Integer>> level = levelListRepresentation(doubleArray);
 		//MegaManVGLCUtil.printLevel(level);
 		BufferedImage[] images;
 		//sets the height and width for the rendered level to be placed on the button 
@@ -364,10 +364,18 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		}
 		return image;
 	}
-
-	private void generateLevelFromGAN(double[] doubleArray) {
+	
+	
+	@Override
+	/**
+	 * takes in a double array from the GAN and uses it to generate a level based on which GAN model is being used
+	 * @param doubleArray the vector from the GAN
+	 * @return level the level generated from the GAN
+	 */
+	public List<List<Integer>> levelListRepresentation(double[] doubleArray) {
+		List<List<Integer>> level;
 		if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) { //if horiontal GAN model
-			level = levelListRepresentation(doubleArray);
+			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANHorizontal(doubleArray);
 			placeSpawnAndLevelOrbHorizontal(level);
 		}else if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("VERTICALONLY")){ //if vertical GAN model
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
@@ -382,9 +390,13 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess.getGANProcess(), GANProcess.getGANProcess(), doubleArray);
 			placeSpawnAndLevelOrbHorizontal(level);			
 		}
+		return level;
 	}
 
-	
+	/**
+	 * places the spawn point and the orb based on a vertical level
+	 * @param level the level
+	 */
 	private void placeSpawnAndLevelOrbVertical(List<List<Integer>> level) {
 		boolean placed = false;
 		for(int x = 0;x<level.get(0).size();x++) {
@@ -425,7 +437,10 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			if(placed) break;
 		}
 	}
-
+	/**
+	 * places the spawn point and the orb based on a horizontal level
+	 * @param level the level
+	 */
 	private void placeSpawnAndLevelOrbHorizontal(List<List<Integer>> level) { //7 orb 8 spawn
 		//int prevY = 0;
 		boolean rtrn = false;

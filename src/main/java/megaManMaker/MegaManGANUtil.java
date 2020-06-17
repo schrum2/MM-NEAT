@@ -30,7 +30,7 @@ public class MegaManGANUtil {
 		GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN; //sets GAN type to LodeRunner
 		Parameters.initializeParameterCollections(new String[] {"GANInputSize:"+LATENT_VECTOR_SIZE});//input size is the size of the latent vector
 		double[] latentVector = RandomNumbers.randomArray(LATENT_VECTOR_SIZE); //fills array of input size randomly
-		List<List<Integer>> oneLevel = generateOneLevelListRepresentationFromGAN(latentVector); //one level to render
+		List<List<Integer>> oneLevel = generateOneLevelListRepresentationFromGANHorizontal(latentVector); //one level to render
 		BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH); //Initializes the array that hold the tile images
 		MegaManRenderUtil.getBufferedImage(oneLevel,images);//rendered level and displays it in a window 
 		GANProcess.terminateGANProcess(); //ends GAN process 
@@ -88,7 +88,7 @@ public class MegaManGANUtil {
 	 * @param latentVector
 	 * @return A single level 
 	 */
-	public static List<List<Integer>> generateOneLevelListRepresentationFromGAN(double[] latentVector) {
+	public static List<List<Integer>> generateOneLevelListRepresentationFromGANHorizontal(double[] latentVector) {
 		// Since only one model is needed, using the standard getGANProcess
 		List<List<List<Integer>>> levelInList = getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), latentVector);
 		List<List<Integer>> oneLevel = levelInList.get(0); // gets first level in the set 
