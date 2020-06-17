@@ -3,7 +3,10 @@ package edu.southwestern.tasks.loderunner;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,56 +36,90 @@ public class LodeRunnerLevelAnalysisUtil {
 
 	public static final int TOTAL_TILES = 704; //for percentages, 22x32 levels 
 
-	public static void main(String[] args) {
+	/**
+	 * 
+	 * @param args
+	 * @throws FileNotFoundException 
+	 */
+	public static void main(String[] args) throws FileNotFoundException {
 		Parameters.initializeParameterCollections(args);
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
+		PrintStream ps = new PrintStream(new File("data/VGLC/Lode Runner/LevelAnalysis.csv"));
+		ps.println("Level, A* Length, Connectivity, percentBackTrack, percentEmpty, percentLadders, percentGround, percentSolid, percentDiggable");
+		for(int i = 1; i <= 150; i++) {
+			String line = processOneLevel(i);
+			System.out.println(line);
+			ps.println(line);
+		}
+		ps.close();
+		
+//		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
 
+//		HashSet<LodeRunnerState> mostRecentVisited = performAStarSearchAndCalculateAStarDistance(level,Double.NaN).t1;
+//		ArrayList<LodeRunnerAction> actionSequence = performAStarSearchAndCalculateAStarDistance(level,Double.NaN).t2;
+//		LodeRunnerState start = performAStarSearchAndCalculateAStarDistance(level,Double.NaN).t3;
+//
+//		System.out.println("actionSequence length = " + actionSequence.size());
+//
+//		double simpleAStarDistance = performAStarSearchAndCalculateAStarDistance(level, Double.NaN).t4;
+//		double connectivity = caluclateConnectivity(mostRecentVisited);
+//
+//		System.out.println(level);
+//		System.out.println("simpleAStarDistance = " + simpleAStarDistance);
+//		System.out.println("connectivity = " + connectivity);
+//
+//		double percentBackTrack = calculatePercentAStarBacktracking(actionSequence, start);
+//		double percentEmpty = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_EMPTY}, level);
+//		double percentLadders = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_LADDER}, level);
+//		double percentGround = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE, LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
+//		double percentSolid = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
+//		double percentDiggable = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE}, level);
+		
+		
+
+//		System.out.println("percentBackTrack = " + percentBackTrack);
+//		System.out.println("percentEmpty = " + percentEmpty);
+//		System.out.println("percentLadders = " + percentLadders);
+//		System.out.println("percentGround = " + percentGround);
+//		System.out.println("percentSolid = " + percentSolid);
+//		System.out.println("percentDiggable = " + percentDiggable);
+//		System.out.println(start);
+//		try {
+//			//visualizes the points visited with red and whit x's
+//			BufferedImage visualPath = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+//			try { //displays window with the rendered level and the solution path/visited states
+//				JFrame frame = new JFrame();
+//				JPanel panel = new JPanel();
+//				JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+//						LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
+//				panel.add(label);
+//				frame.add(panel);
+//				frame.pack();
+//				frame.setVisible(true);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//
+	}
+	
+	
+	public static String processOneLevel(int num) {
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level "+num+".txt");
 		HashSet<LodeRunnerState> mostRecentVisited = performAStarSearchAndCalculateAStarDistance(level,Double.NaN).t1;
 		ArrayList<LodeRunnerAction> actionSequence = performAStarSearchAndCalculateAStarDistance(level,Double.NaN).t2;
 		LodeRunnerState start = performAStarSearchAndCalculateAStarDistance(level,Double.NaN).t3;
-
-		System.out.println("actionSequence length = " + actionSequence.size());
-
 		double simpleAStarDistance = performAStarSearchAndCalculateAStarDistance(level, Double.NaN).t4;
 		double connectivity = caluclateConnectivity(mostRecentVisited);
-
-		//		System.out.println(level);
-		System.out.println("simpleAStarDistance = " + simpleAStarDistance);
-		System.out.println("connectivity = " + connectivity);
-
 		double percentBackTrack = calculatePercentAStarBacktracking(actionSequence, start);
 		double percentEmpty = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_EMPTY}, level);
 		double percentLadders = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_LADDER}, level);
 		double percentGround = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE, LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
 		double percentSolid = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
 		double percentDiggable = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE}, level);
-
-		System.out.println("percentBackTrack = " + percentBackTrack);
-		System.out.println("percentEmpty = " + percentEmpty);
-		System.out.println("percentLadders = " + percentLadders);
-		System.out.println("percentGround = " + percentGround);
-		System.out.println("percentSolid = " + percentSolid);
-		System.out.println("percentDiggable = " + percentDiggable);
-		System.out.println(start);
-		try {
-			//visualizes the points visited with red and whit x's
-			BufferedImage visualPath = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
-			try { //displays window with the rendered level and the solution path/visited states
-				JFrame frame = new JFrame();
-				JPanel panel = new JPanel();
-				JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
-						LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
-				panel.add(label);
-				frame.add(panel);
-				frame.pack();
-				frame.setVisible(true);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		String line = "Level"+num+","+simpleAStarDistance+","+connectivity+","+percentBackTrack+","+percentEmpty+","+percentLadders+","+percentGround+","+percentSolid+","+percentDiggable;
+		return line;
 	}
 
 	/**
@@ -118,7 +155,7 @@ public class LodeRunnerLevelAnalysisUtil {
 		LodeRunnerState start;
 		List<List<Integer>> levelCopy;
 		//if a random seed is not given then get the spawn point from the VGLC
-		if(psuedoRandomSeed != Double.NaN) { 
+		if(Double.isNaN(psuedoRandomSeed)) { 
 			levelCopy = ListUtil.deepCopyListOfLists(level);
 			start = new LodeRunnerState(levelCopy);
 			//System.out.println(start);
@@ -137,7 +174,7 @@ public class LodeRunnerLevelAnalysisUtil {
 		double simpleAStarDistance = -1; //intialized to hold distance of solution path, or -1 if search fails
 		//calculates the Distance to the farthest gold as a fitness fucntion 
 		try { 
-			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter( "aStarSearchBudget"));
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter("aStarSearchBudget"));
 			if(actionSequence == null) {
 				simpleAStarDistance = -1.0;
 			} else {
@@ -176,6 +213,9 @@ public class LodeRunnerLevelAnalysisUtil {
 	 * @return Percent backtracking
 	 */
 	public static double calculatePercentAStarBacktracking(ArrayList<LodeRunnerAction> actionSequence, LodeRunnerState start) {
+		if(actionSequence == null) {
+			return -1.0;
+		}
 		double percentBacktrack = 0; 
 		HashSet<Pair<Integer,Integer>> visited = new HashSet<>();
 		LodeRunnerState currentState = start;
