@@ -1,5 +1,7 @@
 package megaManMaker;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -58,6 +60,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		bottom.setLayout(new BoxLayout(bottom, BoxLayout.Y_AXIS));
 
 		JButton launchMegaManMaker = new JButton("MegaManMaker");
+		launchMegaManMaker.setAlignmentX(Component.CENTER_ALIGNMENT);
 		// Name is first available numeric label after the input disablers
 		launchMegaManMaker.setName("MegaManMaker" + PLAY_BUTTON_INDEX);
 		launchMegaManMaker.setToolTipText("Launch MegaManMaker");
@@ -74,6 +77,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		bottom.add(launchMegaManMaker);
 		
 		JButton save = new JButton("SaveMMLV");
+		save.setAlignmentX(Component.CENTER_ALIGNMENT);
 		// Name is first available numeric label after the input disablers
 		save.setName("" + SAVE_BUTTON_INDEX);
 		save.setToolTipText("Save a selected level.");
@@ -89,12 +93,12 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		}
 		
 		bottom.add(save);
-		top.add(bottom);
 		
 		
 		//frame.add(bottom);
 		//topper.add(bottom);
 		JButton view = new JButton("View");
+		view.setAlignmentX(Component.CENTER_ALIGNMENT);
 		// Name is first available numeric label after the input disablers
 		view.setName("view" + VIEW_BUTTON_INDEX);
 		view.setToolTipText("Launch MegaManMaker");
@@ -108,8 +112,9 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			view.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
 		}
 		
-		top.add(view);
-		
+		bottom.add(view);
+		top.add(bottom);
+
 		//horizontal slider for level chunks
 		levelChunksSlider = new JSlider(JSlider.HORIZONTAL, LEVEL_MIN_CHUNKS, LEVEL_MAX_CHUNKS, Parameters.parameters.integerParameter("megaManGANLevelChunks"));
 		levelChunksSlider.setToolTipText("Determines the number of distinct latent vectors that are sent to the GAN to create level chunks which are patched together into a single level.");
@@ -167,9 +172,11 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		//adds the ability to show the solution path
 		
 		JPanel effectsCheckboxes = new JPanel();
+		
 		JPanel aSTAR = new JPanel();
 		aSTAR.setLayout(new BoxLayout(aSTAR, BoxLayout.Y_AXIS));
 		JCheckBox showSolutionPath = new JCheckBox("ShowSolutionPath", Parameters.parameters.booleanParameter("interactiveMegaManAStarPaths"));
+		showSolutionPath.setAlignmentX(Component.CENTER_ALIGNMENT);
 		showSolutionPath.setName("interactiveMegaManAStarPaths");
 		showSolutionPath.getAccessibleContext();
 		showSolutionPath.addActionListener(new ActionListener() {
@@ -181,9 +188,13 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		});
 		aSTAR.add(showSolutionPath);
 		
+		//JTextField aStLb = new JTextField();
 		
 		JPanel AStarBudget = new JPanel();
+		AStarBudget.setLayout(new BoxLayout(AStarBudget, BoxLayout.Y_AXIS));
+
 		JLabel AStarLabel = new JLabel("UpdateAStarBudget");
+		AStarLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		JTextField updateAStarBudget = new JTextField(10);
 		updateAStarBudget.setText(String.valueOf(Parameters.parameters.integerParameter("aStarSearchBudget")));
 		updateAStarBudget.addKeyListener(new KeyListener() {
