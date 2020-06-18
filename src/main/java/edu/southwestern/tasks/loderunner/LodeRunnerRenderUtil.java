@@ -80,11 +80,11 @@ public class LodeRunnerRenderUtil {
 	
 	public static BufferedImage createIceCreamYouImage(List<List<Integer>> list, int width, int height, BufferedImage[] images) {
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-//		for(int i = 0; i < height; i++) {
-//			for(int j = 0; j < width; j++) {
-//				image.setRGB(j, i, 0);
-//			}
-//		}
+		for(int i = 0; i < height; i++) {
+			for(int j = 0; j < width; j++) {
+				image.setRGB(j, i, 0);
+			}
+		}
 		Graphics2D g = image.createGraphics();
 		for(int y = 0; y < height; y += ICE_CREAM_YOU_TILE_Y) {
 			for(int x = 0; x < width; x += ICE_CREAM_YOU_TILE_X) {
