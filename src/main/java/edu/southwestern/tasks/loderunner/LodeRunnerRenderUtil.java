@@ -45,6 +45,7 @@ public class LodeRunnerRenderUtil {
 	public static final int ICE_CREAM_YOU_TILE_Y = 40; // y length of an individual tile 
 	public static final int ICE_CREAM_YOU_IMAGE_WIDTH = ICE_CREAM_YOU_TILE_X*LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS;
 	public static final int ICE_CREAM_YOU_IMAGE_HEIGHT = ICE_CREAM_YOU_TILE_Y*LodeRunnerRenderUtil.LODE_RUNNER_ROWS;
+	private static BufferedImage[] iceCreamYouTiles = null;
 	
 	/**
 	 * Sets up a level to be rendered by converting the VGLC data to JSON and then 
@@ -104,34 +105,34 @@ public class LodeRunnerRenderUtil {
 	 * @throws IOException In case the file can't be found
 	 */
 	public static BufferedImage[] loadIceCreamYouTiles(String filePath) throws IOException {
-		if(tileList == null) {
-			tileList = new BufferedImage[8];
+		if(iceCreamYouTiles == null) {
+			iceCreamYouTiles = new BufferedImage[8];
 			//just makes a blank buffered image of the same size
 //			BufferedImage emptyTile = new BufferedImage(ICE_CREAM_YOU_TILE_X, ICE_CREAM_YOU_TILE_Y, BufferedImage.TYPE_BYTE_BINARY);
 //			tileList[LodeRunnerState.LODE_RUNNER_TILE_EMPTY] = emptyTile;
 			File tile = new File(filePath+"coin.png");
 			BufferedImage goldTile = ImageIO.read(tile);
-			tileList[LodeRunnerState.LODE_RUNNER_TILE_GOLD] = goldTile;
+			iceCreamYouTiles[LodeRunnerState.LODE_RUNNER_TILE_GOLD] = goldTile;
 			tile = new File(filePath+"enemy.png");
 			BufferedImage enemyTile = ImageIO.read(tile);
-			tileList[LodeRunnerState.LODE_RUNNER_TILE_ENEMY] = enemyTile;
+			iceCreamYouTiles[LodeRunnerState.LODE_RUNNER_TILE_ENEMY] = enemyTile;
 			tile = new File(filePath+"diggable.gif");
 			BufferedImage diggableGroundTile = ImageIO.read(tile);
-			tileList[LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE] = diggableGroundTile;
+			iceCreamYouTiles[LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE] = diggableGroundTile;
 			tile = new File(filePath+"ladder.png");
 			BufferedImage ladderTile = ImageIO.read(tile);
-			tileList[LodeRunnerState.LODE_RUNNER_TILE_LADDER] = ladderTile;
+			iceCreamYouTiles[LodeRunnerState.LODE_RUNNER_TILE_LADDER] = ladderTile;
 			tile = new File(filePath+"bar.gif");
 			BufferedImage ropeTile = ImageIO.read(tile);
-			tileList[LodeRunnerState.LODE_RUNNER_TILE_ROPE] = ropeTile;
+			iceCreamYouTiles[LodeRunnerState.LODE_RUNNER_TILE_ROPE] = ropeTile;
 			tile = new File(filePath+"solid.png");
 			BufferedImage groundTile = ImageIO.read(tile);
-			tileList[LodeRunnerState.LODE_RUNNER_TILE_GROUND] = groundTile;
+			iceCreamYouTiles[LodeRunnerState.LODE_RUNNER_TILE_GROUND] = groundTile;
 			tile = new File(filePath+"player.png");
 			BufferedImage spawnTile = ImageIO.read(tile);
-			tileList[LodeRunnerState.LODE_RUNNER_TILE_SPAWN] = spawnTile;
+			iceCreamYouTiles[LodeRunnerState.LODE_RUNNER_TILE_SPAWN] = spawnTile;
 		}
-		return tileList;
+		return iceCreamYouTiles;
 	}
 
 	/**
