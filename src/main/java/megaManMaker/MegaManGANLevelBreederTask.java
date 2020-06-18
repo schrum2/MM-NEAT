@@ -21,6 +21,7 @@ import java.util.Scanner;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,6 +29,8 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import com.google.common.io.Files;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -45,6 +48,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	public static final int LEVEL_MAX_CHUNKS = 10;
 	public static final int SAVE_BUTTON_INDEX = -19; 
 	public static final int VIEW_BUTTON_INDEX = -19; 
+	public static final int GANS_BUTTON_INDEX = -18; 
 
 	public static GANProcess ganProcessVertical = null;
 	public static GANProcess ganProcessHorizontal = null;
@@ -248,15 +252,115 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		});
 		platformAndBreak.add(allowBlockBreaker);
 		top.add(platformAndBreak);
-		//whether or not to use both GANs **NOTE** need to change initialization for when there are more tile types
-		JCheckBox useBothGANs = new JCheckBox("UseBothGANs", Parameters.parameters.booleanParameter("useBothGANsMegaMan"));
-		useBothGANs.setName("useBothGANsMegaMan");
-		useBothGANs.getAccessibleContext();
-		useBothGANs.addActionListener(new ActionListener() {
+		
+		
+		
+		JPanel threeGANs = new JPanel();
+		threeGANs.setLayout(new BoxLayout(threeGANs, BoxLayout.Y_AXIS));
+		JButton fileLoadButton = new JButton();
+		fileLoadButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		fileLoadButton.setText("SetGANModelHorizontal");
+		fileLoadButton.setName("GANModelHorizontal"+GANS_BUTTON_INDEX);
+		fileLoadButton.addActionListener(new ActionListener(){
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Parameters.parameters.changeBoolean("useBothGANsMegaMan");
-				if(Parameters.parameters.booleanParameter("useBothGANsMegaMan")) {
+				// TODO Auto-generated method stub
+				JFileChooser chooser = new JFileChooser();//used to get new file
+				chooser.setApproveButtonText("Open");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("GAN Model", "pth");
+				chooser.setFileFilter(filter);
+				// This is where all the GANs are stored (only allowable spot)
+				chooser.setCurrentDirectory(new File(getGANModelDirectory()));
+				int returnVal = chooser.showOpenDialog(frame);
+				if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
+					String model = chooser.getSelectedFile().getName();
+					Parameters.parameters.setString(getGANModelParameterName(), model);
+					Pair<Integer, Integer> lengths = resetAndReLaunchGAN(model);
+					resizeGenotypeVectors(lengths.t1, lengths.t2);
+				}
+				resetButtons(true);
+			}
+			
+		});
+		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
+			fileLoadButton.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
+		}
+		threeGANs.add(fileLoadButton);
+		
+		JButton fileLoadButton1 = new JButton();
+		fileLoadButton1.setAlignmentX(Component.CENTER_ALIGNMENT);
+		fileLoadButton1.setText("SetGANModelUp");
+		fileLoadButton1.setName("GANModelUp");
+		fileLoadButton1.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				JFileChooser chooser = new JFileChooser();//used to get new file
+				chooser.setApproveButtonText("Open");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("GAN Model", "pth");
+				chooser.setFileFilter(filter);
+				// This is where all the GANs are stored (only allowable spot)
+				chooser.setCurrentDirectory(new File(getGANModelDirectory()));
+				int returnVal = chooser.showOpenDialog(frame);
+				if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
+					String model = chooser.getSelectedFile().getName();
+					Parameters.parameters.setString(getGANModelParameterName(), model);
+					Pair<Integer, Integer> lengths = resetAndReLaunchGAN(model);
+					resizeGenotypeVectors(lengths.t1, lengths.t2);
+				}
+				resetButtons(true);
+			}
+			
+		});
+		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
+			fileLoadButton1.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
+		}
+		threeGANs.add(fileLoadButton1);
+		JButton fileLoadButton2 = new JButton();
+		fileLoadButton2.setAlignmentX(Component.CENTER_ALIGNMENT);
+		fileLoadButton2.setText("SetGANModelDown");
+		fileLoadButton2.setName("GANModelDown");
+		fileLoadButton2.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				JFileChooser chooser = new JFileChooser();//used to get new file
+				chooser.setApproveButtonText("Open");
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("GAN Model", "pth");
+				chooser.setFileFilter(filter);
+				// This is where all the GANs are stored (only allowable spot)
+				chooser.setCurrentDirectory(new File(getGANModelDirectory()));
+				int returnVal = chooser.showOpenDialog(frame);
+				if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
+					String model = chooser.getSelectedFile().getName();
+					Parameters.parameters.setString(getGANModelParameterName(), model);
+					Pair<Integer, Integer> lengths = resetAndReLaunchGAN(model);
+					resizeGenotypeVectors(lengths.t1, lengths.t2);
+				}
+				resetButtons(true);
+			}
+			
+		});
+		
+		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
+			fileLoadButton2.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
+		}
+		threeGANs.add(fileLoadButton2);
+		threeGANs.setVisible(false);
+
+		top.add(threeGANs);
+		//whether or not to use both GANs **NOTE** need to change initialization for when there are more tile types
+		JCheckBox useThreeGANs = new JCheckBox("UseThreeGANs", Parameters.parameters.booleanParameter("useThreeGANsMegaMan"));
+		useThreeGANs.setName("useThreeGANsMegaMan");
+		useThreeGANs.getAccessibleContext();
+		useThreeGANs.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("useThreeGANsMegaMan");
+				if(Parameters.parameters.booleanParameter("useThreeGANsMegaMan")) {
 					
 				GANProcess.terminateGANProcess();
 				//PythonUtil.setPythonProgram();
@@ -288,26 +392,37 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 //					response = ganProcessUp.commRecv();
 //					response = ganProcessDown.commRecv();
 				}
+				threeGANs.setVisible(true);
+
 				}else {
 //					ganProcessUp.terminate();
 //					ganProcessDown.terminate();
 					ganProcessHorizontal.terminate();
 					ganProcessVertical.terminate();
 					GANProcess.getGANProcess();
+					threeGANs.setVisible(false);
+
 				}
+				
+				
 				resetButtons(true);
 			}
 		});
-		effectsCheckboxes.add(useBothGANs);
+		effectsCheckboxes.add(useThreeGANs);
 		top.add(effectsCheckboxes);
 		
 		
+		//if(!Parameters.parameters.booleanParameter("useThreeGANsMegaMan")){
+			
+			
+			
+		}
 		
 		//Ability to change A* budget
 		
 	
 	
-	}
+	//}
 
 	@Override
 	/**
@@ -537,17 +652,17 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		}else if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("VERTICALONLY")){ //if vertical GAN model
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
 			placeSpawnAndLevelOrbVertical(level);
-		}else if (Parameters.parameters.booleanParameter("useBothGANsMegaMan")){
+		}else if (Parameters.parameters.booleanParameter("useThreeGANsMegaMan")){
 			//System.out.println(ganProcessHorizontal);
 			//System.out.println(ganProcessVertical);
 			//for(double i : doubleArray)System.out.println(i+", ");
 		//	level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(ganProcessHorizontal,ganProcessUp, ganProcessDown, doubleArray);
 
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(ganProcessHorizontal,ganProcessVertical,ganProcessVertical,doubleArray);
-			placeSpawnAndLevelOrbHorizontal(level);
+//			placeSpawnAndLevelOrbHorizontal(level);
 		}else {
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess.getGANProcess(), GANProcess.getGANProcess(), GANProcess.getGANProcess(), doubleArray);
-			placeSpawnAndLevelOrbHorizontal(level);			
+			//placeSpawnAndLevelOrbHorizontal(level);			
 		}
 		return level;
 	}

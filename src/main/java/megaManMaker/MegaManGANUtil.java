@@ -157,15 +157,26 @@ public class MegaManGANUtil {
 //		boolean wasRight = true;
 //		boolean wasUp = false;
 		List<List<Integer>> oneLevel;
+		
 		if(startRight) oneLevel= levelInListHorizontal.get(0); // gets first level in the set 
 		else oneLevel = levelInListUp.get(0);
 		List<Integer> nullLine = new ArrayList<Integer>(16);
+		placeSpawn(oneLevel);
+		if(numberOfChunks==1) {
+			placeOrb(oneLevel);
+		}
 		for(int i=0;i<MEGA_MAN_LEVEL_WIDTH;i++) {
 			nullLine.add(MegaManState.MEGA_MAN_TILE_NULL);
 		}
 		for(int level = 1;level<numberOfChunks;level++) {
 			right = rand.nextBoolean();
-				
+				if(level==numberOfChunks-1&&right) {
+					placeOrb(levelInListHorizontal.get(level));
+				}else if(level==numberOfChunks-1&&!right) {
+					placeOrb(levelInListUp.get(level));
+					placeOrb(levelInListDown.get(level));
+				}
+
 			if(right) {
 				for(int i = 0;i<oneLevel.size();i++) { //add null to all spaces to the right TODO possibly change
 					oneLevel.get(i).addAll(nullLine);
@@ -245,5 +256,93 @@ public class MegaManGANUtil {
 		
 		return oneLevel;
 	}
+	
+	
+	private static void placeSpawn(List<List<Integer>> level) {
+		boolean placed = false;
+		for(int x = 0;x<level.get(0).size();x++) {
+			for(int y = 0;y<level.size();y++) {
+				if(y-2>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0&&level.get(y-2).get(x)==0) {
+					level.get(y-1).set(x, 8);
+					placed = true;
+					break;
+				}
+			}
+			if(placed) {
+				break;
+			}
+			
+		
+		}
+		for(int i = 0; i<level.get(0).size();i++) {
+			if(!placed) {
+				level.get(level.size()-1).set(0, 1);
+				level.get(level.size()-2).set(0, 8);
+				placed = true;
+			}
+		}
+//		placed = false;
+//		for(int y = 0; y<level.size();y++) {
+//			for(int x = level.get(0).size()-1;x>=0; x--) {
+//				if(y-1>=0&&level.get(y).get(x)==2&&level.get(y-1).get(x)==0) {
+//					level.get(y-1).set(x, 7);
+//					placed=true;
+//					break;
+//					
+//				}else if(y-1>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0) {
+//					level.get(y-1).set(x, 7);
+//					placed=true;
+//					break;
+//				}
+//			}
+//			if(placed) break;
+//		}
+	}
+	private static void placeOrb(List<List<Integer>> level) {
+		boolean placed = false;
+//		for(int x = 0;x<level.get(0).size();x++) {
+//			for(int y = 0;y<level.size();y++) {
+//				if(y-2>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0&&level.get(y-2).get(x)==0) {
+//					level.get(y-1).set(x, 8);
+//					placed = true;
+//					break;
+//				}
+//			}
+//			if(placed) {
+//				break;
+//			}
+//			
+//		
+//		}
+//		for(int i = 0; i<level.get(0).size();i++) {
+//			if(!placed) {
+//				level.get(level.size()-1).set(0, 1);
+//				level.get(level.size()-2).set(0, 8);
+//				placed = true;
+//			}
+//		}
+//		placed = false;
+		
+			for(int x = level.get(0).size()-1;x>=0; x--) {
+				for(int y = level.size()-1; y>=0;y--) {
+				if(y-1>=0&&level.get(y).get(x)==2&&level.get(y-1).get(x)==0) {
+					level.get(y-1).set(x, 7);
+					placed=true;
+					break;
+					
+				}else if(y-1>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0) {
+					level.get(y-1).set(x, 7);
+					placed=true;
+					break;
+				}else if(y-1>=0&&level.get(y).get(x)==5&&level.get(y-1).get(x)==0) {
+					level.get(y-1).set(x, 7);
+					placed=true;
+					break;
+				}
+			}
+			if(placed) break;
+		}
+	}
+	
 
 }
