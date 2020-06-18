@@ -266,21 +266,11 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				JFileChooser chooser = new JFileChooser();//used to get new file
-				chooser.setApproveButtonText("Open");
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("GAN Model", "pth");
-				chooser.setFileFilter(filter);
-				// This is where all the GANs are stored (only allowable spot)
-				chooser.setCurrentDirectory(new File(getGANModelDirectory()));
-				int returnVal = chooser.showOpenDialog(frame);
-				if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-					String model = chooser.getSelectedFile().getName();
-					Parameters.parameters.setString(getGANModelParameterName(), model);
-					Pair<Integer, Integer> lengths = resetAndReLaunchGAN(model);
-					resizeGenotypeVectors(lengths.t1, lengths.t2);
-				}
-				resetButtons(true);
+				String modelName = "MegaManGANHorizontalModel";
+				openGANModelPanel(modelName);
 			}
+
+			
 			
 		});
 		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
@@ -297,20 +287,9 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				JFileChooser chooser = new JFileChooser();//used to get new file
-				chooser.setApproveButtonText("Open");
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("GAN Model", "pth");
-				chooser.setFileFilter(filter);
-				// This is where all the GANs are stored (only allowable spot)
-				chooser.setCurrentDirectory(new File(getGANModelDirectory()));
-				int returnVal = chooser.showOpenDialog(frame);
-				if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-					String model = chooser.getSelectedFile().getName();
-					Parameters.parameters.setString(getGANModelParameterName(), model);
-					Pair<Integer, Integer> lengths = resetAndReLaunchGAN(model);
-					resizeGenotypeVectors(lengths.t1, lengths.t2);
-				}
-				resetButtons(true);
+				String modelName = "MegaManGANUpModel";
+				openGANModelPanel(modelName);
+
 			}
 			
 		});
@@ -327,20 +306,9 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				JFileChooser chooser = new JFileChooser();//used to get new file
-				chooser.setApproveButtonText("Open");
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("GAN Model", "pth");
-				chooser.setFileFilter(filter);
-				// This is where all the GANs are stored (only allowable spot)
-				chooser.setCurrentDirectory(new File(getGANModelDirectory()));
-				int returnVal = chooser.showOpenDialog(frame);
-				if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-					String model = chooser.getSelectedFile().getName();
-					Parameters.parameters.setString(getGANModelParameterName(), model);
-					Pair<Integer, Integer> lengths = resetAndReLaunchGAN(model);
-					resizeGenotypeVectors(lengths.t1, lengths.t2);
-				}
-				resetButtons(true);
+				String modelName = "MegaManGANDownModel";
+				openGANModelPanel(modelName);
+
 			}
 			
 		});
@@ -432,7 +400,22 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
 		
 	}
-
+	private void openGANModelPanel(String modelName) {
+		JFileChooser chooser = new JFileChooser();//used to get new file
+		chooser.setApproveButtonText("Open");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("GAN Model", "pth");
+		chooser.setFileFilter(filter);
+		// This is where all the GANs are stored (only allowable spot)
+		chooser.setCurrentDirectory(new File(getGANModelDirectory()));
+		int returnVal = chooser.showOpenDialog(frame);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
+			String model = chooser.getSelectedFile().getName();
+			Parameters.parameters.setString(modelName, model);
+			Pair<Integer, Integer> lengths = resetAndReLaunchGAN(model);
+			resizeGenotypeVectors(lengths.t1, lengths.t2);
+		}
+		resetButtons(true);
+	}
 	@Override
 	/**
 	 * returns the command line parameter associated with the MegaMan GAN model
