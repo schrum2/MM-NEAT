@@ -1,7 +1,6 @@
 package megaManMaker;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -63,13 +62,14 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			response = ganProcessVertical.commRecv();
 			response = ganProcessHorizontal.commRecv();
 		}
-		List<List<Integer>> level = getMegaManLevelListRepresentationFromGenotype(ganProcessHorizontal, ganProcessVertical, (Genotype<List<Double>>) individual); //gets a level 
+		//List<List<Integer>> level = getMegaManLevelListRepresentationFromGenotype(ganProcessHorizontal, ganProcessVertical, (Genotype<List<Double>>) individual); //gets a level 
 		return null;
 	}
 
 	/**
 	 * Extract real-valued latent vector from genotype and then send to GAN to get a MegaMan level
 	 */
-	public abstract List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(GANProcess ganProcessHorizontal, GANProcess ganProcessVertical, Genotype<List<Double>> individual);
+	public abstract List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(GANProcess ganProcessHorizontal, GANProcess ganProcessUp, GANProcess ganProcessDown, Genotype<List<Double>> individual);
+
 
 }

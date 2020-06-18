@@ -1,9 +1,7 @@
 package megaManMaker;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 
 import java.awt.event.ActionEvent;
@@ -50,6 +48,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 
 	public static GANProcess ganProcessVertical = null;
 	public static GANProcess ganProcessHorizontal = null;
+	public static GANProcess ganProcessUp = null;
+	public static GANProcess ganProcessDown = null;
 	private boolean initializationComplete = false;
 	protected JSlider levelChunksSlider;
 	public MegaManGANLevelBreederTask() throws IllegalAccessException {
@@ -268,6 +268,16 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 						Parameters.parameters.integerParameter("GANInputSize"), 
 						/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
 						GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
+//				ganProcessUp = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANUpModel"), 
+//						Parameters.parameters.integerParameter("GANInputSize"), 
+//						/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
+//						GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
+//				ganProcessDown = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANDownModel"), 
+//						Parameters.parameters.integerParameter("GANInputSize"), 
+//						/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
+//						GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
+//				ganProcessUp.start();
+//				ganProcessDown.start();
 				ganProcessVertical.start();
 				ganProcessHorizontal.start();
 				//necessary for initialization
@@ -275,9 +285,12 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				while(!response.equals("READY")) {
 					response = ganProcessVertical.commRecv();
 					response = ganProcessHorizontal.commRecv();
+//					response = ganProcessUp.commRecv();
+//					response = ganProcessDown.commRecv();
 				}
 				}else {
-
+//					ganProcessUp.terminate();
+//					ganProcessDown.terminate();
 					ganProcessHorizontal.terminate();
 					ganProcessVertical.terminate();
 					GANProcess.getGANProcess();
@@ -360,10 +373,10 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				return; // Nothing to explore
 			}
 			//List<List<List<Integer>>> levelInList = MegaManGANUtil.getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), doubleArray);
-			int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
-			int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
+//			int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
+//			int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
 			BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
-			BufferedImage finalRender = MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
+			MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -440,6 +453,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			scan.close();
 			
 			Runtime runTime = Runtime.getRuntime();
+			@SuppressWarnings("unused")
 			Process process = runTime.exec(mmlvPath);
 			
 			
@@ -527,10 +541,12 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			//System.out.println(ganProcessHorizontal);
 			//System.out.println(ganProcessVertical);
 			//for(double i : doubleArray)System.out.println(i+", ");
-			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(ganProcessHorizontal,ganProcessVertical,doubleArray);
+		//	level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(ganProcessHorizontal,ganProcessUp, ganProcessDown, doubleArray);
+
+			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(ganProcessHorizontal,ganProcessVertical,ganProcessVertical,doubleArray);
 			placeSpawnAndLevelOrbHorizontal(level);
 		}else {
-			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess.getGANProcess(), GANProcess.getGANProcess(), doubleArray);
+			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess.getGANProcess(), GANProcess.getGANProcess(), GANProcess.getGANProcess(), doubleArray);
 			placeSpawnAndLevelOrbHorizontal(level);			
 		}
 		return level;

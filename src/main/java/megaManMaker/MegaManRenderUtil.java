@@ -1,9 +1,7 @@
 package megaManMaker;
 
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -87,36 +85,13 @@ public class MegaManRenderUtil {
 		//this code displays the level in a window 
 		
 		JFrame frame = new JFrame();
-		frame.setSize(500,500);
-		frame.setResizable(false);
-		Rectangle rc = frame.getBounds();
-		rc.width = 500; //set max width
-		rc.height = Integer.MAX_VALUE; // set max height
-		frame.setMaximizedBounds(rc);
 		JPanel panel = new JPanel();
-		Dimension d = new Dimension();
-		d.setSize(500,500);
-		panel.setMaximumSize(d);
 		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(1600, 900, Image.SCALE_AREA_AVERAGING)));
-		label.setMaximumSize(d);
 		panel.add(label);
 		frame.add(panel);
 		frame.pack();
 		frame.setVisible(true);
 		return image;
-	}
-	
-	private static int renderedImageHeightRelative(int size) {
-		// TODO Auto-generated method stub
-		int divisor = size/10;
-		int num = 50;
-		return num/divisor;
-	}
-	private static int renderedImageWidthRelative(int size) {
-		// TODO Auto-generated method stub
-		int divisor = size/10;
-		int num = 50;
-		return num/divisor;
 	}
 	public static BufferedImage createBufferedImage(List<List<Integer>> list, int width, int height) throws IOException {
 		BufferedImage[] images = loadImagesForASTAR(MEGA_MAN_TILE_PATH); //Initializes the array that hold the tile images

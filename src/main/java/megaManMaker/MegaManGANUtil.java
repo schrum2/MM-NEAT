@@ -130,18 +130,22 @@ public class MegaManGANUtil {
 	}
 	public enum Direction {UP, RIGHT, DOWN};
 
-	public static List<List<Integer>> generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess horizontalGAN, GANProcess verticalGAN, double[] latentVector) {
+	public static List<List<Integer>> generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess horizontalGAN, GANProcess upGAN, GANProcess downGAN, double[] latentVector) {
 		// Just grabbing the static GANProcess for now, but you will need to make this method accept two separate GAN models eventually.
 		Random rand = new Random(Double.doubleToLongBits(latentVector[0]));
 		List<List<List<Integer>>> levelInListHorizontal;
-		List<List<List<Integer>>> levelInListVertical;
+		List<List<List<Integer>>> levelInListUp;
+		List<List<List<Integer>>> levelInListDown;
+
 		boolean startRight = rand.nextBoolean();
 		//if(startRight) {
 //		System.out.println(horizontalGAN);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 			levelInListHorizontal = getLevelListRepresentationFromGAN(horizontalGAN, latentVector);
 	//	}else {
-			levelInListVertical = getLevelListRepresentationFromGAN(verticalGAN, latentVector);
+			levelInListUp = getLevelListRepresentationFromGAN(upGAN, latentVector);
+			levelInListDown = getLevelListRepresentationFromGAN(downGAN, latentVector);
+
 		//}
 		
 		Direction d = Direction.RIGHT;
@@ -154,7 +158,7 @@ public class MegaManGANUtil {
 //		boolean wasUp = false;
 		List<List<Integer>> oneLevel;
 		if(startRight) oneLevel= levelInListHorizontal.get(0); // gets first level in the set 
-		else oneLevel = levelInListVertical.get(0);
+		else oneLevel = levelInListUp.get(0);
 		List<Integer> nullLine = new ArrayList<Integer>(16);
 		for(int i=0;i<MEGA_MAN_LEVEL_WIDTH;i++) {
 			nullLine.add(MegaManState.MEGA_MAN_TILE_NULL);
@@ -206,7 +210,7 @@ public class MegaManGANUtil {
 					//now at the previous point, add in a new version of levelInList.get(level)
 					for(int y = (int) previousMove.getY();y<previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
 						for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
-							oneLevel.get(y).set(x, levelInListVertical.get(level).get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX())));
+							oneLevel.get(y).set(x, levelInListUp.get(level).get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX())));
 						}
 					}
 				}else {
@@ -226,7 +230,7 @@ public class MegaManGANUtil {
 					
 					for(int y = (int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y<previousMove.getY()+2*MEGA_MAN_LEVEL_HEIGHT;y++) {
 						for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
-							oneLevel.get(y).set(x, levelInListVertical.get(level).get((int) (y -MEGA_MAN_LEVEL_HEIGHT- previousMove.getY())).get((int) (x-previousMove.getX())));
+							oneLevel.get(y).set(x, levelInListDown.get(level).get((int) (y -MEGA_MAN_LEVEL_HEIGHT- previousMove.getY())).get((int) (x-previousMove.getX())));
 						}
 					}
 					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT);
