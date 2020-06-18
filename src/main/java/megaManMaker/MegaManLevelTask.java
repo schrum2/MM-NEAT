@@ -17,6 +17,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import com.google.common.io.Files;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.CommonConstants;
@@ -102,8 +104,8 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		
 		if(CommonConstants.watch) {
 			//prints values that are calculated above for debugging 
-			System.out.println("Simple A* Distance to Farthest Gold " + simpleAStarDistance);
-			System.out.println("Number of Positions Visited " + precentConnected);
+			System.out.println("Simple A* Distance Orb " + simpleAStarDistance);
+			System.out.println("Percent of Positions Visited " + precentConnected);
 			try {
 				//displays the rendered solution path in a window 
 				BufferedImage visualPath = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
@@ -126,20 +128,65 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			if(input.toLowerCase().equals("p")) {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
-						File mmlvFilePath = new File("MegaManMakerPath.txt"); //file containing the path
-//						if(selectedItems.size() != 1) {
-//							JOptionPane.showMessageDialog(null, "Save exactly one level to play.");
-//							return; // Nothing to explore
-//						}
+						File mmlvFilePath = new File("MegaManMakerLevelPath.txt"); //file containing the path
+
 						
 						Scanner scan;
 						//When the button is pushed, ask for the name input
 						try {
 							scan = new Scanner(mmlvFilePath);
-							
-							
+							//scan.next();
 							String mmlvPath = scan.nextLine();
+							String mmlvFileName = JOptionPane.showInputDialog(null, "What do you want to name your level?");
+							File mmlvFileFromEvolution = new File(mmlvPath+mmlvFileName+".mmlv"); //creates file inside user's MegaManLevelPath
+							File mmlvFile; //creates file inside MMNEAT
 							scan.close();
+							//ArrayList<Double> phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
+							//double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
+							//List<List<Integer>> level = levelListRepresentation(doubleArray);
+							//int levelNumber = 2020;
+							mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, mmlvFileName);
+							try {
+								Files.copy(mmlvFile, mmlvFileFromEvolution); //copies over
+								mmlvFile.delete(); //deletes MMNEAT file
+								JFrame frame = new JFrame("");
+								frame.setLocationRelativeTo(null);
+								frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+								frame.setVisible(true);
+								JOptionPane.showMessageDialog(frame, "Level saved");
+
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							//System.out.println(mmlvPath);
+							
+							
+						} catch (FileNotFoundException e) {
+							// TODO Auto-generated catch block
+							//e.printStackTrace();
+							JFrame frame = new JFrame("");
+							frame.setLocationRelativeTo(null);
+							frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+							frame.setVisible(true);
+							String errorMessage = "You need to create a local text file in the MMNEAT directory called \n MegaManMakerLevelPath.txt which contains the path to where MegaManMaker stores levels on your device. \n It will likely look like this: C:\\Users\\[Insert User Name]\\AppData\\Local\\MegaMaker\\Levels\\";
+							JOptionPane.showMessageDialog(frame, errorMessage);
+						}
+//						MegaManGANLevelBreederTask.saveLevel();
+						File mmlvFilePath1 = new File("MegaManMakerPath.txt"); //file containing the path
+//						if(selectedItems.size() != 1) {
+//							JOptionPane.showMessageDialog(null, "Save exactly one level to play.");
+//							return; // Nothing to explore
+//						}
+						
+						Scanner scan1;
+						//When the button is pushed, ask for the name input
+						try {
+							scan1 = new Scanner(mmlvFilePath1);
+							
+							
+							String mmlvPath = scan1.nextLine();
+							scan1.close();
 							
 							Runtime runTime = Runtime.getRuntime();
 							@SuppressWarnings("unused")
@@ -159,6 +206,9 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						
+						
+						
 					}
 				});
 				System.out.println("Press enter");

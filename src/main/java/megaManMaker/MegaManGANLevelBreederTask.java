@@ -328,6 +328,9 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Parameters.parameters.changeBoolean("useThreeGANsMegaMan");
+				Parameters.parameters.changeBoolean("showInteractiveGANModelLoader");
+//				super(false);
+				top.getComponent(3).setVisible(false);
 				if(Parameters.parameters.booleanParameter("useThreeGANsMegaMan")) {
 					
 				GANProcess.terminateGANProcess();
@@ -340,15 +343,15 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 						Parameters.parameters.integerParameter("GANInputSize"), 
 						/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
 						GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
-//				ganProcessUp = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANUpModel"), 
-//						Parameters.parameters.integerParameter("GANInputSize"), 
-//						/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
-//						GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
+				ganProcessUp = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANUpModel"), 
+						Parameters.parameters.integerParameter("GANInputSize"), 
+						/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
+						GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
 //				ganProcessDown = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANDownModel"), 
 //						Parameters.parameters.integerParameter("GANInputSize"), 
 //						/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
 //						GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
-//				ganProcessUp.start();
+				ganProcessUp.start();
 //				ganProcessDown.start();
 				ganProcessVertical.start();
 				ganProcessHorizontal.start();
@@ -357,13 +360,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				while(!response.equals("READY")) {
 					response = ganProcessVertical.commRecv();
 					response = ganProcessHorizontal.commRecv();
-//					response = ganProcessUp.commRecv();
+					response = ganProcessUp.commRecv();
 //					response = ganProcessDown.commRecv();
 				}
 				threeGANs.setVisible(true);
-
+//				System.out.println(top.getComponentAt(0, -21));
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
 				}else {
-//					ganProcessUp.terminate();
+					ganProcessUp.terminate();
 //					ganProcessDown.terminate();
 					ganProcessHorizontal.terminate();
 					ganProcessVertical.terminate();
@@ -629,20 +633,21 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	 */
 	public List<List<Integer>> levelListRepresentation(double[] doubleArray) {
 		List<List<Integer>> level;
-		if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) { //if horiontal GAN model
-			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANHorizontal(doubleArray);
-			placeSpawnAndLevelOrbHorizontal(level);
-		}else if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("VERTICALONLY")){ //if vertical GAN model
-			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
-			placeSpawnAndLevelOrbVertical(level);
-		}else if (Parameters.parameters.booleanParameter("useThreeGANsMegaMan")){
+		if (Parameters.parameters.booleanParameter("useThreeGANsMegaMan")){
 			//System.out.println(ganProcessHorizontal);
 			//System.out.println(ganProcessVertical);
 			//for(double i : doubleArray)System.out.println(i+", ");
 		//	level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(ganProcessHorizontal,ganProcessUp, ganProcessDown, doubleArray);
 
-			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(ganProcessHorizontal,ganProcessVertical,ganProcessVertical,doubleArray);
+			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(ganProcessHorizontal,ganProcessUp,ganProcessVertical,doubleArray);
 //			placeSpawnAndLevelOrbHorizontal(level);
+		}
+		else if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) { //if horiontal GAN model
+			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANHorizontal(doubleArray);
+			placeSpawnAndLevelOrbHorizontal(level);
+		}else if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("VERTICALONLY")){ //if vertical GAN model
+			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
+			placeSpawnAndLevelOrbVertical(level);
 		}else {
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess.getGANProcess(), GANProcess.getGANProcess(), GANProcess.getGANProcess(), doubleArray);
 			//placeSpawnAndLevelOrbHorizontal(level);			
