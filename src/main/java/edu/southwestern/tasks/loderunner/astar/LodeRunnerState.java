@@ -133,7 +133,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
 			//represented by red x's in the visualization 
 //			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter( "aStarSearchBudget"));
-			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 13000);
+			//actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 145000); // Fails on Level 4 with only 9 treasures
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 150000); // Succeeds on Level 4 with only 9 treasures
 		} catch(Exception e) {
 			System.out.println("failed search");
 			e.printStackTrace();
@@ -178,7 +179,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				tile = level.get(i).get(j);
 				//System.out.println("The tile at " + j + "," + i + " = " +tile);
 				if(tile == LODE_RUNNER_TILE_GOLD) { 
-					gold.add(new Point(j,i));//saves reference to that gold in the 
+					// FOR DEBUGGING!
+					//if(gold.size() < 9)
+						gold.add(new Point(j,i));//saves reference to that gold in the 
 					level.get(i).set(j, LODE_RUNNER_TILE_EMPTY);//removes gold and places an empty tile 
 				}
 
