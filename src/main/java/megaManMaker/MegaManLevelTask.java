@@ -55,12 +55,24 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				Parameters.parameters.integerParameter("GANInputSize"), 
 				/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
 				GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
+//		GANProcess ganProcessUp = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANUpModel"), 
+//		Parameters.parameters.integerParameter("GANInputSize"), 
+//		/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
+//		GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
+//		GANProcess ganProcessDown = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANDownModel"), 
+//		Parameters.parameters.integerParameter("GANInputSize"), 
+//		/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
+//		GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
+//		ganProcessUp.start();
+//		ganProcessDown.start();
 		ganProcessVertical.start();
 		ganProcessHorizontal.start();
 		String response = "";
 		while(!response.equals("READY")) {
 			response = ganProcessVertical.commRecv();
 			response = ganProcessHorizontal.commRecv();
+//			response = ganProcessVertical.commRecv();
+//			response = ganProcessHorizontal.commRecv();
 		}
 		//List<List<Integer>> level = getMegaManLevelListRepresentationFromGenotype(ganProcessHorizontal, ganProcessVertical, (Genotype<List<Double>>) individual); //gets a level 
 		return null;
