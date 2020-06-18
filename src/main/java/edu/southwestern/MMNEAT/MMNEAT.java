@@ -736,6 +736,8 @@ public class MMNEAT {
 			} else if (task instanceof ZeldaLevelTask){ // What is this? Feb 26 2020
 				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
 				System.out.println("Set up Zelda Level Task");
+			}else if (task instanceof MegaManLevelTask){
+				GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
 			} else if(task instanceof HyperNEATDummyTask) {
 				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
 			} else if(task instanceof HyperNEATSpeedTask) {
