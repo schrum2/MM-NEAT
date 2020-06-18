@@ -248,7 +248,8 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				}
 			}
 			else if(Parameters.parameters.booleanParameter("interactiveLodeRunnerIceCreamYouVisualization")) {
-				
+				images = LodeRunnerRenderUtil.loadIceCreamYouTiles(LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_PATH);
+				image = LodeRunnerRenderUtil.createIceCreamYouImage(level, LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_WIDTH, LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_HEIGHT, images);
 			}
 			else {
 				images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //7 different tiles to display 

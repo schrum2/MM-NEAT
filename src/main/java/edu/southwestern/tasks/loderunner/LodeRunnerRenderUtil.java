@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.loderunner;
 
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -78,7 +79,12 @@ public class LodeRunnerRenderUtil {
 	}
 	
 	public static BufferedImage createIceCreamYouImage(List<List<Integer>> list, int width, int height, BufferedImage[] images) {
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+//		for(int i = 0; i < height; i++) {
+//			for(int j = 0; j < width; j++) {
+//				image.setRGB(j, i, 0);
+//			}
+//		}
 		Graphics2D g = image.createGraphics();
 		for(int y = 0; y < height; y += ICE_CREAM_YOU_TILE_Y) {
 			for(int x = 0; x < width; x += ICE_CREAM_YOU_TILE_X) {
@@ -101,8 +107,8 @@ public class LodeRunnerRenderUtil {
 		if(tileList == null) {
 			tileList = new BufferedImage[8];
 			//just makes a blank buffered image of the same size
-			BufferedImage emptyTile = new BufferedImage(ICE_CREAM_YOU_TILE_X, ICE_CREAM_YOU_TILE_Y, BufferedImage.TYPE_BYTE_BINARY);
-			tileList[LodeRunnerState.LODE_RUNNER_TILE_EMPTY] = emptyTile;
+//			BufferedImage emptyTile = new BufferedImage(ICE_CREAM_YOU_TILE_X, ICE_CREAM_YOU_TILE_Y, BufferedImage.TYPE_BYTE_BINARY);
+//			tileList[LodeRunnerState.LODE_RUNNER_TILE_EMPTY] = emptyTile;
 			File tile = new File(filePath+"coin.png");
 			BufferedImage goldTile = ImageIO.read(tile);
 			tileList[LodeRunnerState.LODE_RUNNER_TILE_GOLD] = goldTile;
