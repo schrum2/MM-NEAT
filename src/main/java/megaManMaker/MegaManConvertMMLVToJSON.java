@@ -52,7 +52,7 @@ public class MegaManConvertMMLVToJSON {
 					!l.startsWith("n")&&!l.startsWith("[")
 					) { //shows us all blocks (solid, spike, ladder), enemies, player
 				boolean isEnemy = false;
-				boolean isBoss = false;
+				//boolean isBoss = false;
 				if(l.startsWith("i")) {
 					
 					String k = l;
@@ -90,7 +90,7 @@ public class MegaManConvertMMLVToJSON {
 							enemyString = k;
 						}
 					}else if(k.endsWith("8")) {
-						isBoss=true;
+						//isBoss=true;
 					//	if(bossString==null) {
 							//bossString = k;
 							addBoss(activatedScreen, blockxyIDList, bossString);
