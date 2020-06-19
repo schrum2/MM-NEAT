@@ -1,0 +1,3 @@
+python main.py --niter 5000 --nz 5 --json HORIZONTALONLYMegaManAllLevelsBut7With15TileTypes.json --experiment HORIZONTALONLYMegaManAllLevelsBut7With15TileTypes_5_Epoch5000 --tiles 16 --cuda
+python main.py --niter 5000 --nz 5 --json VERTICALONLYUPMegaManAllLevelsBut7With15TileTypes.json --experiment VERTICALONLYUPMegaManAllLevelsBut7With15TileTypes_5_Epoch5000 --tiles 16 --cuda
+python main.py --niter 5000 --nz 5 --json VERTICALONLYDOWNMegaManAllLevelsBut7With15TileTypes.json --experiment VERTICALONLYDOWNMegaManAllLevelsBut7With15TileTypes_5_Epoch5000 --tiles 16 --cuda
