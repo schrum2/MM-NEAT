@@ -1,4 +1,4 @@
-package megaManMaker;
+package edu.southwestern.tasks.megaman;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -407,6 +407,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
 		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+6+".txt"); //converts to JSON
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"
+				, "megaManAStarJumpHeight:3" });
 		MegaManVGLCUtil.printLevel(level);
 		MegaManState start = new MegaManState(level);
 		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);

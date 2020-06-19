@@ -360,7 +360,7 @@ public class Parameters {
 		integerOptions.add("zeldaVGLCWaterPMapCode", 5 , "Int code for the character P in VGLC representation of Zelda");
 		integerOptions.add("cppn2ganWidth", null, "the CPPN to GAN width chunks");
 		integerOptions.add("cppn2ganHeight", null, "the CPPN to GAN height chunks");
-		integerOptions.add("megaManAStarJumpHeight", 4, "Height of the A* agent's jump");
+		integerOptions.add("megaManAStarJumpHeight", 4 , "Height of the A* agent's jump");
 
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");

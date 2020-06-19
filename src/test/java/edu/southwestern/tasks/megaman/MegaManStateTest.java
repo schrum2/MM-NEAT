@@ -1,4 +1,4 @@
-package megaManMaker;
+package edu.southwestern.tasks.megaman;
 
 import static org.junit.Assert.*;
 
@@ -8,14 +8,19 @@ import java.util.List;
 
 import org.junit.Test;
 
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.megaman.MegaManState;
+import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
+import edu.southwestern.tasks.megaman.MegaManState.MegaManAction;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
-import megaManMaker.MegaManState.MegaManAction;
 
 public class MegaManStateTest {
 
 	@Test
 	public void test() {
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"
+				, "megaManAStarJumpHeight:4" });
 		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt"); //converts to JSON
 		//MegaManVGLCUtil.printLevel(level);
 		MegaManState start = new MegaManState(level);
@@ -25,6 +30,7 @@ public class MegaManStateTest {
 		try {
 			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
 			//represented by red x's in the visualization 
+			//System.out.println(Parameters.parameters.integerParameter("megaManAStarJumpHeight"));
 			actionSequence = ((AStarSearch<MegaManAction, MegaManState>) search).search(start, true, 10000000);
 		} catch(Exception e) {
 			System.out.println("failed search");
@@ -37,7 +43,7 @@ public class MegaManStateTest {
 		if(actionSequence != null)
 			for(MegaManAction a : actionSequence)
 				System.out.println(a.getMove().toString());
-		
+		//System.out.println(actionSequence);
 		Iterator<MegaManAction> itr = actionSequence.iterator();
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());

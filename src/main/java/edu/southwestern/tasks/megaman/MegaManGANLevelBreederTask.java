@@ -1,4 +1,4 @@
-package megaManMaker;
+package edu.southwestern.tasks.megaman;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -37,11 +37,11 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
+import edu.southwestern.tasks.megaman.MegaManState.MegaManAction;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
-import megaManMaker.MegaManState.MegaManAction;
 
 public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask{
 	public static final int LEVEL_MIN_CHUNKS = 1;

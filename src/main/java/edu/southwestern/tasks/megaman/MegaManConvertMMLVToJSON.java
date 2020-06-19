@@ -1,4 +1,4 @@
-package megaManMaker;
+package edu.southwestern.tasks.megaman;
 
 import java.awt.Point;
 import java.io.File;

@@ -1,4 +1,4 @@
-package megaManMaker;
+package edu.southwestern.tasks.megaman;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -24,10 +24,10 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.megaman.MegaManState.MegaManAction;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
-import megaManMaker.MegaManState.MegaManAction;
 
 public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	private static int numFitnessFunctions = 0; 

@@ -1,4 +1,4 @@
-package megaManMaker;
+package edu.southwestern.tasks.megaman;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -6,11 +6,11 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.megaman.MegaManState.MegaManAction;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
-import megaManMaker.MegaManState.MegaManAction;
 
 public class MegaManLevelAnalysisUtil {
 
