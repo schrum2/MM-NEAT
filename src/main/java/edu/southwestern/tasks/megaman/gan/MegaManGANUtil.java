@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.megaman;
+package edu.southwestern.tasks.megaman.gan;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -12,6 +12,8 @@ import java.util.Random;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
+import edu.southwestern.tasks.megaman.MegaManRenderUtil;
+import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class MegaManGANUtil {

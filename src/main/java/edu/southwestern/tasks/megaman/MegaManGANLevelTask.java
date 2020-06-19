@@ -6,6 +6,7 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.tasks.mario.gan.GANProcess;
+import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 

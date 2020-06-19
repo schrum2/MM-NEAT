@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.megaman;
+package edu.southwestern.tasks.megaman.astar;
 
 import static org.junit.Assert.*;
 
@@ -9,9 +9,8 @@ import java.util.List;
 import org.junit.Test;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.megaman.MegaManState;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
-import edu.southwestern.tasks.megaman.MegaManState.MegaManAction;
+import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
 

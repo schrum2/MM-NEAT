@@ -9,7 +9,7 @@ import java.lang.ProcessBuilder.Redirect;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANUtil;
-import edu.southwestern.tasks.megaman.MegaManGANUtil;
+import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.util.PythonUtil;
 
 // For the three possible tile counts in Zelda

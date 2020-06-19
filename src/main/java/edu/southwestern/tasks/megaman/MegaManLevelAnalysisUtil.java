@@ -6,7 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.megaman.MegaManState.MegaManAction;
+import edu.southwestern.tasks.megaman.astar.MegaManState;
+import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.search.AStarSearch;

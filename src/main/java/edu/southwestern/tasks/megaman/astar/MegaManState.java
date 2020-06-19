@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.megaman;
+package edu.southwestern.tasks.megaman.astar;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.megaman.MegaManRenderUtil;
+import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.search.AStarSearch;
