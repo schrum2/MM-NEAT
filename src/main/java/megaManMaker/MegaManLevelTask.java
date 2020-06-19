@@ -91,10 +91,10 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		//calculates the amount of the level that was covered in the search, connectivity.
 		double precentConnected = MegaManLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited)/MegaManLevelAnalysisUtil.findTotalTiles(level);
 		//adds the fitness functions being used to the fitness array list
-		if(Parameters.parameters.booleanParameter("MegaManAllowsSimpleAStarPath")) {
+		if(Parameters.parameters.booleanParameter("megaManAllowsSimpleAStarPath")) {
 			fitnesses.add(simpleAStarDistance);
 		}
-		if(Parameters.parameters.booleanParameter("MegaManAllowsConnectivity")) {
+		if(Parameters.parameters.booleanParameter("megaManAllowsConnectivity")) {
 			fitnesses.add(precentConnected);
 		}
 		

@@ -45,9 +45,9 @@ public class MegaManVGLCUtil {
 //
 //		}
 		for(int i=1;i<=10;i++) {
-			if(i!=7&&i!=3&&i!=1) {
+			if(i!=7&&i!=3) {
 				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-				upAndDownTrainingData(level);
+				convertMegaManLevelToJSONHorizontalScroll(level);
 //				System.out.println("level" +i);
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
 
@@ -58,9 +58,9 @@ public class MegaManVGLCUtil {
 						
 			}
 		}
-		System.out.println(jsonUp);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		System.out.println(jsonDown);
+		System.out.println(json);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		System.out.println(jsonDown);
 //		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+3+".txt");
 //		printLevel(level);
 //		upAndDownTrainingData(level);
@@ -759,7 +759,7 @@ public class MegaManVGLCUtil {
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
 //					int tileCode = convertMegamanTilesToInt(level[i].charAt(j)); 
-					int tileCode = convertMegamanTilesToIntSimple(level[i].charAt(j)); 
+					int tileCode = convertMegamanTilesToIntEnemies(level[i].charAt(j)); 
 					String enemyTypeString = getStringForTypeEnemy(level[i].charAt(j));
 					if(enemyTypeString!=null) levelEnemies.put(new Point(j,i), enemyTypeString);
 					col.add(tileCode);
