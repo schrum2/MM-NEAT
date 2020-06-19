@@ -30,7 +30,7 @@ public class ExploreMAPElitesExperiment<T> implements Experiment{
 	@Override
 	public boolean shouldStop() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }
