@@ -912,7 +912,7 @@ public class Parameters {
 		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
 		stringOptions.add("LodeRunnerGANModel", "LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
-		stringOptions.add("mapElitesArchiveFile", "Connected[00-10]Ground[0-4]Ladders[0-4]-elite.xml", "File name of MAPElites level we want to look at from an experiment");
+		stringOptions.add("mapElitesArchiveFile", "Connected[00-10]Ground[8-12]Ladders[8-12]-elite.xml", "File name of MAPElites level we want to look at from an experiment");
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
 		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");
