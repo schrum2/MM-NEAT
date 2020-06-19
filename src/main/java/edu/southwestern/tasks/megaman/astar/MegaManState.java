@@ -234,7 +234,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 //		int beneath;
 //		if(inBounds(x,y+1)) beneath = tileAtPosition(x,y+1);
 //		else beneath = tile;
-		if((	tile==MEGA_MAN_TILE_EMPTY ||tile==MEGA_MAN_TILE_LADDER||tile==MEGA_MAN_TILE_ORB||tile==MEGA_MAN_TILE_BREAKABLE||tile==MEGA_MAN_TILE_WATER)) {
+		if((	tile==MEGA_MAN_TILE_EMPTY ||tile==MEGA_MAN_TILE_LADDER||tile==MEGA_MAN_TILE_ORB||tile==MEGA_MAN_TILE_BREAKABLE||tile==MEGA_MAN_TILE_WATER||tile>10)) {
 			return true;
 		}
 		return false; 

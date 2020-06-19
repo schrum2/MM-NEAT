@@ -925,7 +925,7 @@ public class MegaManVGLCUtil {
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
 //					int tileCode = convertMegamanTilesToInt(level[i].charAt(j)); 
-					int tileCode = convertMegaManTilesToIntForASTAR(level[i].charAt(j)); 
+					int tileCode = convertMegamanTilesToIntUniqueEnemies(level[i].charAt(j)); 
 					String enemyTypeString = getStringForTypeEnemy(level[i].charAt(j));
 					if(enemyTypeString!=null) levelEnemies.put(new Point(j,i), enemyTypeString);
 					col.add(tileCode);
