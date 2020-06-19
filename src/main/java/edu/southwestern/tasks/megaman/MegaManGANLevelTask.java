@@ -9,7 +9,11 @@ import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
-
+/**
+ * Allows for objective evolution using GANs
+ * @author Benjamin Capps
+ *
+ */
 public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	public static GANProcess ganProcessHorizontal = null;
 	public static GANProcess ganProcessVertical = null;
@@ -45,7 +49,14 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 		List<Double> latentVector = individual.getPhenotype();
 		return getMegaManLevelListRepresentationFromStaticGenotype(ganProcessHorizontal, ganProcessUp, ganProcessVertical, latentVector);
 	}
-
+	/**
+	 * static version of method above
+	 * @param ganProcessHorizontal
+	 * @param ganProcessUp
+	 * @param ganProcessDown
+	 * @param latentVector
+	 * @return
+	 */
 	public static List<List<Integer>> getMegaManLevelListRepresentationFromStaticGenotype(GANProcess ganProcessHorizontal, GANProcess ganProcessUp, GANProcess ganProcessDown,List<Double> latentVector) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
 		List<List<Integer>> level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVerticalAndHorizontal(ganProcessHorizontal, ganProcessUp,ganProcessDown,doubleArray);

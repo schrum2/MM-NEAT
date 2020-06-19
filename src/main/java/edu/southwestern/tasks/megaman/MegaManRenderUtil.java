@@ -14,7 +14,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 //import edu.southwestern.tasks.loderunner.LodeRunnerVGLCUtil;
-
+/**
+ * This class renders a level given a List<List<Integer>>
+ * @author Benjamin Capps
+ *
+ */
 public class MegaManRenderUtil {
 	public static final String MEGA_MAN_TILE_PATH = "data/VGLC/MegaMan/Tiles/"; //file path for tiles 
 	public static final String MEGA_MAN_LEVEL_PATH = "data/VGLC/MegaMan/Enhanced/"; //file path for levels 
@@ -79,7 +83,13 @@ public class MegaManRenderUtil {
 		return image;
 	}
 	
-	
+	/**
+	 * this fixes the window and renders the level according to its size
+	 * @param list JSON of the level 
+	 * @param images Array of tile images 
+	 * @return Final BufferedImage of the whole level in a window 
+	 * @throws IOException In case the file can't be found 
+	 */
 	public static BufferedImage getBufferedImageWithRelativeRendering(List<List<Integer>> list, BufferedImage[] images) throws IOException {
 		BufferedImage image = createBufferedImage(list, renderedImageWidth(list.get(0).size()), renderedImageHeight(list.size()), images); //gets the image of the level 
 		//this code displays the level in a window 
@@ -93,6 +103,15 @@ public class MegaManRenderUtil {
 		frame.setVisible(true);
 		return image;
 	}
+	
+	/**
+	 * Puts tiles into BufferedImage to fully render the level 
+	 * @param list JSON of the level 
+	 * @param width Width of rendered image
+	 * @param height Height of rendered image 
+	 * @return A BufferedImage of the level 
+	 * @throws IOException In case the file can't be found
+	 */
 	public static BufferedImage createBufferedImage(List<List<Integer>> list, int width, int height) throws IOException {
 		BufferedImage[] images = loadImagesForASTAR(MEGA_MAN_TILE_PATH); //Initializes the array that hold the tile images
 		return createBufferedImage(list, width, height, images);
@@ -102,7 +121,7 @@ public class MegaManRenderUtil {
 	 * Puts tiles into BufferedImage to fully render the level 
 	 * @param list JSON of the level 
 	 * @param width Width of rendered image
-	 * @param height HEight of rendered image 
+	 * @param height Height of rendered image 
 	 * @param images Array of Buffered Images referring to the tiles 
 	 * @return A BufferedImage of the level 
 	 * @throws IOException In case the file can't be found

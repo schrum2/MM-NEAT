@@ -17,6 +17,11 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import gvgai.tools.IO;
 @SuppressWarnings("unused")
+/**
+ * This class is a utility class to deal with most things relating to VGLC data converting to json and mmlv formats
+ * @author Benjamin Capps
+ *
+ */
 public class MegaManVGLCUtil {
 	public static final String MEGAMAN_ENEMY_LEVEL_PATH = "data/VGLC/MegaMan/EnhancedWithBossesAndEnemies/";
 	public static final String MEGAMAN_LEVEL_PATH = "data/VGLC/MegaMan/Enhanced/";
@@ -35,6 +40,7 @@ public class MegaManVGLCUtil {
 
 	//public static boolean executed = false;
 	//public static int levelNumber;
+	
 	public static void main(String[] args) {
 //		int firstLevel = 1;
 //		int lastLevel = 10;

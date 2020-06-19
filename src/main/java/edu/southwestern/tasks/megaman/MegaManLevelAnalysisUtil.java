@@ -12,9 +12,17 @@ import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
-
+/**
+ * This is a utility class that is primarily used in MegaManLevelTask
+ * @author Benjamin Capps
+ *
+ */
 public class MegaManLevelAnalysisUtil {
-
+	/**
+	 * finds the total number of tiles in a level
+	 * @param level the level as a List<List<Integer>>
+	 * @return totalTiles the total number of tiles in a level excluding null 
+	 */
 	public static int findTotalTiles(List<List<Integer>> level) {
 		int totalTiles = 0;
 		for(int y=0;y<level.size();y++) {
@@ -28,7 +36,11 @@ public class MegaManLevelAnalysisUtil {
 	}
 	
 	
-	
+	/**
+	 * Takes in a level and returns all information regarding the A* search
+	 * @param level List<List<Integer>> representing the level
+	 * @return
+	 */
 	public static Quad<HashSet<MegaManState>, ArrayList<MegaManAction>, MegaManState, Double> 
 	performAStarSearchAndCalculateAStarDistance(List<List<Integer>> level) {
 		//declares variable to be initizalized in the if statements below 
@@ -57,7 +69,11 @@ public class MegaManLevelAnalysisUtil {
 		return new Quad<HashSet<MegaManState>, ArrayList<MegaManAction>, MegaManState, Double>(mostRecentVisited,actionSequence,start,simpleAStarDistance);
 	}
 
-	
+	/**
+	 * Calculates the connectivity in the level
+	 * @param mostRecentVisited
+	 * @return
+	 */
 	public static double caluclateConnectivity(HashSet<MegaManState> mostRecentVisited) {
 		//calculates the amount of the level that was covered in the search, connectivity.
 		HashSet<Point> visitedPoints = new HashSet<>();

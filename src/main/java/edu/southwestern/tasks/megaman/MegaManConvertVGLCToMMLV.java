@@ -1,7 +1,11 @@
 package edu.southwestern.tasks.megaman;
 
 import java.util.List;
-
+/**
+ * This class converts the original VGLC data to a List<List<Integer>> format
+ * @author Benjamin Capps
+ *
+ */
 public class MegaManConvertVGLCToMMLV {
 	public static void main(String[] args) {
 		int firstLevel = 1;

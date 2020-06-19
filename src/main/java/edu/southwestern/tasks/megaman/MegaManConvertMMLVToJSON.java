@@ -8,7 +8,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
-
+/**
+ * This class converts mmlv files to trainable JSON format
+ * @author Benjamin Capps
+ *
+ */
 public class MegaManConvertMMLVToJSON {
 	public static int maxX = 0;
 	public static int maxY = 0;
@@ -16,7 +20,10 @@ public class MegaManConvertMMLVToJSON {
 	public static int enemyNumber = -1;
 	public static String enemyString = null;
 	public static String bossString = null;
-
+	/**
+	 * useful for testing
+	 * @param args
+	 */
 	public static void main(String[] args) {
 	
 		for(int i = 13;i<=13;i++) {
@@ -25,7 +32,11 @@ public class MegaManConvertMMLVToJSON {
 			MegaManVGLCUtil.convertMegaManLevelToMMLV(level, i+"000");
 		}
 	}
-	
+	/**
+	 * converts the mmlv to a level (List<List<Integer>>)
+	 * @param mmlvFile the mmlv file in question
+	 * @return level the level representation (similar to VGLC)
+	 */
 	public static List<List<Integer>> convertMMLVtoInt(String mmlvFile) {
 		File mmlv = new File(mmlvFile);
 //		String oldString = "Hello my name is kec";
@@ -151,7 +162,12 @@ public class MegaManConvertMMLVToJSON {
 		
 		
 	}
-
+	/**
+	 * reads what a boss is and adds a level orb in its place for the List<List<Integer>>
+	 * @param activatedScreen the list of activated screens from mmlv
+	 * @param blockxyIDList the  xcoord, ycoord, block ID
+	 * @param k the parsed mmlv line (example e16,16="41.00000")
+	 */
 	private static void addBoss(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList, String k) {
 		List<Integer> xyID = new ArrayList<>();
 		Scanner kScan = new Scanner(k);
@@ -184,7 +200,12 @@ public class MegaManConvertMMLVToJSON {
 		kScan.close();
 		blockxyIDList.add(xyID);
 	}
-
+	/**
+	 * Documents the xy position and then adds the enemies to the list
+	 * @param activatedScreen the activated screens from mmlv
+	 * @param blockxyIDList the  xcoord, ycoord, block ID
+	 * @param enemyStringthe parsed mmlv line (example e16,16="41.00000")
+	 */
 	private static void documentxyAndAddToListenemy(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList,
 			String enemyString) {
 		List<Integer> xyID = new ArrayList<>();
@@ -222,7 +243,12 @@ public class MegaManConvertMMLVToJSON {
 		}
 		
 	}
-
+	/**
+	 * Documents the xy position and then adds the e-type block to the list
+	 * @param activatedScreen the activated screens from mmlv
+	 * @param blockxyIDList the  xcoord, ycoord, block ID
+	 * @param enemyStringthe parsed mmlv line (example e16,16="41.00000")
+	 */
 	private static void documentxyAndAddToListe(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList,
 			String k) {
 		List<Integer> xyID = new ArrayList<>();
@@ -275,7 +301,12 @@ public class MegaManConvertMMLVToJSON {
 		
 		}		
 	}
-
+	/**
+	 * Documents the xy position and then adds the i-type blocks to the list
+	 * @param activatedScreen the activated screens from mmlv
+	 * @param blockxyIDList the  xcoord, ycoord, block ID
+	 * @param enemyStringthe parsed mmlv line (example e16,16="41.00000")
+	 */
 	private static void documentxyAndAddToListi(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList, String k) {
 		List<Integer> xyID = new ArrayList<>();
 		Scanner kScan = new Scanner(k);
@@ -323,11 +354,6 @@ public class MegaManConvertMMLVToJSON {
 		
 		}
 	}
-
-//	private static int convertMMLVTilesToInt(String string) {
-//		// TODO Auto-generated method stub
-//		return 0;
-//	}
 
 	
 }
