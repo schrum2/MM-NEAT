@@ -243,7 +243,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					// View whole dungeon layout
 					BufferedImage image = DungeonUtil.viewDungeon(dungeon, mostRecentVisited, solutionPath);
 					String saveDir = FileUtilities.getSaveDirectory(); //save directory
-					int currentGen = ((GenerationalEA) MMNEAT.ea).currentGeneration();
+					int currentGen = MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : -1;
 					//saves image
 					if(Parameters.parameters.booleanParameter("io")) GraphicsUtil.saveImage(image, saveDir + File.separator + (currentGen == 0 ? "initial" : "gen"+ currentGen) + File.separator + "Dungeon"+individual.getId()+".png");
 					//prompts user to play or continue
