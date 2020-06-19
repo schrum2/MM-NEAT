@@ -5,7 +5,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
-import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
+import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.file.FileUtilities;
 import wox.serial.Easy;
 
@@ -23,7 +23,7 @@ public class ExploreMAPElitesExperiment<T> implements Experiment{
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void run() {
-		Score score = ((LodeRunnerLevelTask) MMNEAT.task).evaluateOne(genotype);
+		Score score = ((LonerTask) MMNEAT.task).evaluateOne(genotype);
 		System.out.println(score);
 	}
 
