@@ -44,21 +44,21 @@ public class MegaManVGLCUtil {
 //			convertMegaManLevelToJSONHorizontalScroll(level);
 //
 //		}
-		for(int i=9;i<=10;i++) {
-			if(i!=7) {
-				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-				upAndDownTrainingData(level);
-//				System.out.println("level" +i);
-//				MiscUtil.waitForReadStringAndEnterKeyPress();
-
-				//if(i!=3) convertMegaManLevelToJSONHorizontalScroll(level);
-				
-						
-						
-						
-			}
-		}
-		System.out.println(json);
+//		for(int i=9;i<=10;i++) {
+//			if(i!=7) {
+//				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
+//				upAndDownTrainingData(level);
+////				System.out.println("level" +i);
+////				MiscUtil.waitForReadStringAndEnterKeyPress();
+//
+//				//if(i!=3) convertMegaManLevelToJSONHorizontalScroll(level);
+//				
+//						
+//						
+//						
+//			}
+//		}
+//		System.out.println(json);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 //		System.out.println(jsonDown);
 //		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+3+".txt");
@@ -499,7 +499,7 @@ public class MegaManVGLCUtil {
 					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 
 				}else if(m>10) { //is an enemy
-					if(levelEnemies.isEmpty()) {
+					if(levelEnemies.isEmpty()||levelEnemies!=null||levelEnemies.get(new Point(x,y)).contentEquals(null)) {
 
 						printEnemiesToMMLV(p, m, xcoord, ycoord, level, x, y);
 					}
@@ -513,7 +513,7 @@ public class MegaManVGLCUtil {
 				if(m!=9) {
 					placeActivatedScreen(xcoord,ycoord, p);
 					p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
-					if(Parameters.parameters.booleanParameter("useBothGANsMegaMan")) {
+					if(Parameters.parameters.booleanParameter("useThreeGANsMegaMan")) {
 						p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
 					}
 				}
@@ -579,6 +579,8 @@ public class MegaManVGLCUtil {
 	private static void printEnemiesToMMLVFromHashMap(PrintWriter p, int xcoord, int ycoord,
 			List<List<Integer>> level, int x, int y) {
 		String enemyString = levelEnemies.get(new Point(x,y));
+		System.out.println(enemyString);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 		if(enemyString.equals("a")) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"0.000000\"");
