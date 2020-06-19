@@ -2,6 +2,7 @@ package megaManMaker;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +36,24 @@ public class MegaManGANUtil {
 		MegaManRenderUtil.getBufferedImage(oneLevel,images);//rendered level and displays it in a window 
 		GANProcess.terminateGANProcess(); //ends GAN process 
 	}
+	
+public static GANProcess initializeGAN(String modelType) {
+		
+		GANProcess newGAN = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter(modelType), 
+				Parameters.parameters.integerParameter("GANInputSize"), 
+				/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
+				GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
+		return newGAN;
+	}
 
+	public static void startGAN(GANProcess gan) {
+		gan.start();
+		String response = "";
+		while(!response.equals("READY")) {
+
+			response = gan.commRecv();
+		}
+	}
 	/**
 	 * Gets a set of all of the levels from the latent vector 
 	 * @param gan Specific GAN model to use as a generator

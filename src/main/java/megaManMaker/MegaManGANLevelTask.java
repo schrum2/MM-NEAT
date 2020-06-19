@@ -23,44 +23,21 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 		//super();
 		//if(Parameters.parameters.booleanParameter("useThreeGANsMegaMan")) {
 			//GANProcess.terminateGANProcess();
-			ganProcessHorizontal = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANHorizontalModel"), 
-					Parameters.parameters.integerParameter("GANInputSize"), 
-					/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
-					GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
-			ganProcessVertical = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANVerticalModel"), 
-					Parameters.parameters.integerParameter("GANInputSize"), 
-					/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
-					GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
-			ganProcessUp = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANUpModel"), 
-			Parameters.parameters.integerParameter("GANInputSize"), 
-			/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
-			GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
+			ganProcessHorizontal = MegaManGANUtil.initializeGAN("MegaManGANHorizontalModel");
+			ganProcessVertical = MegaManGANUtil.initializeGAN("MegaManGANVerticalModel");
+			ganProcessUp = MegaManGANUtil.initializeGAN("MegaManGANUpModel");
 	//		ganProcessDown = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANDownModel"), 
 	//		Parameters.parameters.integerParameter("GANInputSize"), 
 	//		/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
 	//		GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
-			ganProcessUp.start();
-			String response = "";
-			while(!response.equals("READY")) {
-
-				response = ganProcessUp.commRecv();
-			}
-			ganProcessVertical.start();
-			String response1 = "";
-			while(!response1.equals("READY")) {
-				response1 = ganProcessVertical.commRecv();
-
-			}
-			ganProcessHorizontal.start();
-			String response2 = "";
-			while(!response2.equals("READY")) {
-				response2 = ganProcessHorizontal.commRecv();
-
-			}
+			MegaManGANUtil.startGAN(ganProcessUp);
+			MegaManGANUtil.startGAN(ganProcessVertical);
+			MegaManGANUtil.startGAN(ganProcessHorizontal);
 //		}else {
 //			GANProcess.getGANProcess();
 //		}
 	}
+	
 	/**
 	 * Extract real-valued latent vector from genotype and then send to GAN to get a MegaMan level
 	 */
