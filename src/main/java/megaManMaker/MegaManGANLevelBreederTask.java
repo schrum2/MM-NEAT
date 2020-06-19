@@ -342,28 +342,10 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 //						Parameters.parameters.integerParameter("GANInputSize"), 
 //						/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
 //						GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
-//				ganProcessUp.start();
-//				String response = "";
-//				while(!response.equals("READY")) {
-//
-//					response = ganProcessUp.commRecv();
-//				}
+
 				MegaManGANUtil.startGAN(ganProcessUp);
 				MegaManGANUtil.startGAN(ganProcessVertical);
 				MegaManGANUtil.startGAN(ganProcessHorizontal);
-
-//				ganProcessVertical.start();
-//				String response1 = "";
-//				while(!response1.equals("READY")) {
-//					response1 = ganProcessVertical.commRecv();
-//
-//				}
-//				ganProcessHorizontal.start();
-//				String response2 = "";
-//				while(!response2.equals("READY")) {
-//					response2 = ganProcessHorizontal.commRecv();
-//
-//				}
 				threeGANs.setVisible(true);
 //				System.out.println(top.getComponentAt(0, -21));
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
