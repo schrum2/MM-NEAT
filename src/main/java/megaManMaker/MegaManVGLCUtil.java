@@ -44,10 +44,10 @@ public class MegaManVGLCUtil {
 //			convertMegaManLevelToJSONHorizontalScroll(level);
 //
 //		}
-		for(int i=1;i<=10;i++) {
-			if(i!=7&&i!=3) {
+		for(int i=9;i<=10;i++) {
+			if(i!=7) {
 				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-				convertMegaManLevelToJSONHorizontalScroll(level);
+				upAndDownTrainingData(level);
 //				System.out.println("level" +i);
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
 
@@ -75,11 +75,14 @@ public class MegaManVGLCUtil {
 	public static void upAndDownTrainingData(List<List<Integer>> level) {
 		List<Point> corners = new ArrayList<Point>();
 		corners = findSpawnScreen(level);
+		for(Point p:corners) {
+			System.out.println(p);
+		}
 		List<List<Integer>> screen = new ArrayList<List<Integer>>();
 		for(int i = 0;i<14;i++) {
 			List<Integer> k = new ArrayList<Integer>();
 			for(int j = 0;j<16;j++) {
-				k.add(7);
+				k.add(9);
 			}
 			screen.add(k);
 		}
@@ -87,11 +90,15 @@ public class MegaManVGLCUtil {
 			for(int x = (int) corners.get(0).getX();x< (int) corners.get(1).getX();x++) {
 				screen.get(y-(int) corners.get(0).getY()).set(x-(int) corners.get(0).getX(), level.get(y).get(x));
 			}
+//			printLevel(screen);
+//			System.out.println();
 		}
+		
 		int x1 = (int) corners.get(0).getX();
 		int x2 = (int) corners.get(1).getX();
 		int y1 = (int) corners.get(0).getY();
 		int y2 = (int) corners.get(2).getY();
+		int rightScreenSide = x1+x2-1;
 //		int both = x1+x2;
 //		System.out.println(both);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -105,52 +112,59 @@ public class MegaManVGLCUtil {
 				done = true;
 				System.out.println("DONE");
 			}else if(d.equals(Direction.RIGHT)) {
-				if(x2+x1<level.get(0).size()&&level.get(y1).get(x2+x1)!=7) {
-					x1++;	
-					screen = copyScreen(level, 16, 14, x1, y1, false);
-				
-					System.out.println("Horizontal");
-					printLevel(screen);
+				if(rightScreenSide+1<level.get(0).size()&&level.get(y1).get(rightScreenSide+1)!=9) {
+						
+					screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
+					//if(rightScreenSide+1<level.get(0).size()&&level.get(y1).get(rightScreenSide+1)!=9)
+						rightScreenSide++;
+//					System.out.println("Horizontal");
+//					printLevel(screen);
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
 
 				}else { //find new direction
 //					x1--;
 					Direction previous = Direction.RIGHT;
-					d = findNewDirection(level, x1+x2-1, y1, previous); //using upper right corner
+					d = findNewDirection(level, rightScreenSide, y1, previous); //using upper right corner
 
 				}
 				
 			}
 			else if (d.equals(Direction.UP)){
+
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
 //				System.out.println(level.get(y1-1).get(x2+x1-1));
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
-				if(y1-1>=0&&level.get(y1-1).get(x2+x1-1)!=7) {
+				if(y1-1>=0&&level.get(y1-1).get(rightScreenSide)!=9) {
 					y1--;
-					screen = copyScreen(level, 16, 14, x1, y1, false);
+					if(rightScreenSide-x2>=0)
+					screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
+					else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
 					jsonUp.add(screen);
-					System.out.println("UP");
-					printLevel(screen);
+//					System.out.println("UP");
+
+//					printLevel(screen);
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
 
 				}else { //find new direction
 					Direction previous = Direction.UP;
 
-					d = findNewDirection(level, x1+x2, y1, previous); //using upper right corner
+					d = findNewDirection(level, rightScreenSide, y1, previous); //using upper right corner
 
 				}
 			}
 			else if(d.equals(Direction.DOWN)){
-				if(y1+14<level.size()&&level.get(y1+14).get(x2+x1-1)!=7) {
+				if(y1+14<level.size()&&level.get(y1+14).get(rightScreenSide)!=9) {
 					y1++;
-					screen = copyScreen(level, 16, 14, x1, y1, false);
+					if(rightScreenSide-x2>=0)
+						screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
+					else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
 					jsonDown.add(screen);
-					System.out.println("DOWN");
-					printLevel(screen);
+//					System.out.println("DOWN");
+//					printLevel(screen);
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
 				}else { //find new direction
 					Direction previous = Direction.DOWN;
-					d = findNewDirection(level, x1+x2, y1, previous); //using upper right corner
+					d = findNewDirection(level, rightScreenSide, y1, previous); //using upper right corner
 
 				}
 			}
@@ -164,16 +178,16 @@ public class MegaManVGLCUtil {
 //		System.out.println(level.get(ycoord-1).get(xcoord-1));
 //		System.out.println(previous);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
-		if(xcoord+1<level.get(0).size()&&level.get(ycoord).get(xcoord+1)!=7) {
+		if(xcoord+1<level.get(0).size()&&level.get(ycoord).get(xcoord+1)!=9) {
 			d = Direction.RIGHT;
 		}
 		
-		else if(ycoord-1>=0&&level.get(ycoord-1).get(xcoord-1)!=7&&!previous.equals(Direction.DOWN)) { //prioritize going up (for level 7)
+		else if(ycoord-1>=0&&level.get(ycoord-1).get(xcoord)!=9&&!previous.equals(Direction.DOWN)) { //prioritize going up (for level 9)
 			d = Direction.UP;
 //			System.out.println("UP");
 		}
 		
-		else if(ycoord+15<level.size()&&level.get(ycoord+15).get(xcoord-1)!=7&&!previous.equals(Direction.UP)) {
+		else if(ycoord+14<level.size()&&level.get(ycoord+14).get(xcoord)!=9&&!previous.equals(Direction.UP)) {
 //			System.out.println("previous:"+previous);
 			d = Direction.DOWN;
 //			System.out.println("DOWN");
@@ -196,15 +210,16 @@ public class MegaManVGLCUtil {
 		int spawnY = (int) spawn.getY();
 		int distanceFromLeft = 0;
 		for(int x = spawnX-1;x>=0;x--) {
-			if(x<0||level.get(spawnY).get(x)!=7) {
+			if(x<0||level.get(spawnY).get(x)!=9) {
 				distanceFromLeft++;
 			}else {
 				break;
 			}
 		}
+		System.out.println(distanceFromLeft);
 		int distanceFromRight = 0;
 		for(int x = spawnX+1;x<level.get(0).size();x++) {
-			if(level.get(spawnY).get(x)!=7) {
+			if(level.get(spawnY).get(x)!=9) {
 				distanceFromRight++;
 				if(distanceFromRight>16) {
 					
@@ -215,9 +230,10 @@ public class MegaManVGLCUtil {
 			}
 		}
 		
+
 		int distanceFromTop = 0;
 		for(int y = spawnY-1;y>=0;y--) {
-			if(level.get(y).get(spawnX)!=7) {
+			if(level.get(y).get(spawnX)!=9) {
 				distanceFromTop++;
 				if(distanceFromTop>14) {
 					start = Direction.UP;
@@ -228,7 +244,7 @@ public class MegaManVGLCUtil {
 		}
 		int distanceFromBottom = 0;
 		for(int y = spawnY;y<level.size();y++) {
-			if(level.get(y).get(spawnX)!=7) {
+			if(level.get(y).get(spawnX)!=9) {
 				distanceFromBottom++;
 				if(distanceFromBottom>14) {
 					start = Direction.DOWN;
@@ -242,11 +258,12 @@ public class MegaManVGLCUtil {
 			distanceFromBottom = 14-distanceFromTop;
 		}else if(distanceFromTop>14) {
 			distanceFromTop = 14- distanceFromBottom;
-		}else if(distanceFromRight>14) {
-			distanceFromRight = 16 - distanceFromLeft;
+		}else if(distanceFromRight>16) {
+			distanceFromRight = 16 - distanceFromLeft-1;
 		}
 		
-		
+//		System.out.println(distanceFromRight);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		//System.out.println()
 		int x1 = spawnX - distanceFromLeft;
 		int y1 = spawnY - distanceFromTop;

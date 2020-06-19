@@ -916,10 +916,10 @@ public class Parameters {
 		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
 		stringOptions.add("LodeRunnerGANModel", "LodeRunnerEpochOneGroundFirstFive10000_20_6.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
 		stringOptions.add("MegaManGANModel", "HORIZONTALONLYMegaManAllLevelsBut7With7TileTypes_5_Epoch5000.pth", "File name of GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANHorizontalModel", "HORIZONTALONLYMegaManAllLevelsBut7With7TileTypes_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANHorizontalModel", "HORIZONTALONLYMegaManAllLevelsBut7With15TileTypes_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("MegaManGANVerticalModel", "VERTICALONLYMegaManAllLevelsWith7Tiles_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANUpModel", "VERTICALONLYUPMegaManAllLevelsBut7With7TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANDownModel", "VERTICALONLYDOWNMegaManAllLevelsBut7With7TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpModel", "VERTICALONLYUPMegaManAllLevelsBut7With15TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANDownModel", "VERTICALONLYDOWNMegaManAllLevelsBut7With15TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
 
 		//MegaManGANHorizontalModel
 		// Class options

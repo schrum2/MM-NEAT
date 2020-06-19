@@ -141,7 +141,7 @@ public class MegaManRenderUtil {
 	public static BufferedImage[] loadImagesForASTAR(String filePath) throws IOException {
 		
 		if(tileList==null) {
-			tileList = new BufferedImage[11];
+			tileList = new BufferedImage[16];
 			File tile = new File(filePath+"Empty.PNG");
 			BufferedImage emptyTile = ImageIO.read(tile);
 			tileList[0] = emptyTile;
@@ -175,6 +175,21 @@ public class MegaManRenderUtil {
 			tile = new File(filePath+"Water.png");
 			BufferedImage water = ImageIO.read(tile);
 			tileList[10] = water;
+			tile = new File(filePath+"Enemy11.png");
+			BufferedImage enemy = ImageIO.read(tile);
+			tileList[11] = enemy;
+			tile = new File(filePath+"Enemy12.png");
+			BufferedImage enemy2 = ImageIO.read(tile);
+			tileList[12] = enemy2;
+			tile = new File(filePath+"Enemy13.png");
+			BufferedImage enemy3 = ImageIO.read(tile);
+			tileList[13] = enemy3;
+			tile = new File(filePath+"Enemy14.png");
+			BufferedImage enemy4 = ImageIO.read(tile);
+			tileList[14] = enemy4;
+			tile = new File(filePath+"Enemy15.png");
+			BufferedImage enemy5 = ImageIO.read(tile);
+			tileList[15] = enemy5;
 		}
 		return tileList;
 	}

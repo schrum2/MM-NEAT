@@ -17,6 +17,7 @@ import edu.southwestern.util.random.RandomNumbers;
 public class MegaManGANUtil {
 	public static final int LATENT_VECTOR_SIZE = 5;//latent vector dimension, 20 improved the model 
 	public static final int MEGA_MAN_ALL_TERRAIN = 7; //number of tiles in MegaMan
+	public static final int MEGA_MAN_TILES_WITH_ENEMIES = 16; //number of tiles in MegaMan
 	public static final int MEGA_MAN_FIRST_LEVEL_ALL_TILES = 21; //number of tiles in MegaMan
 	public static final int MEGA_MAN_LEVEL_WIDTH = 16;
 	public static final int MEGA_MAN_LEVEL_HEIGHT = 14;
@@ -40,7 +41,7 @@ public class MegaManGANUtil {
 	public static GANProcess initializeGAN(String modelType) {
 		GANProcess newGAN = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter(modelType), 
 				Parameters.parameters.integerParameter("GANInputSize"), 
-				/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
+				Parameters.parameters.stringParameter(modelType).contains("With7Tile") ? MegaManGANUtil.MEGA_MAN_ALL_TERRAIN : MegaManGANUtil.MEGA_MAN_TILES_WITH_ENEMIES,
 				GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
 		return newGAN;
 	}
