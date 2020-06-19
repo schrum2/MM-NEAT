@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.loderunner;
 
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -29,11 +27,9 @@ import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.graphics.GraphicsUtil;
-import edu.southwestern.util.search.AStarSearch;
-import edu.southwestern.util.search.Search;
 import icecreamyou.LodeRunner.LodeRunner;
 
 /**
@@ -143,10 +139,14 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	@SuppressWarnings("unchecked")
 	protected Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, long genotypeId) {
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
-		HashSet<LodeRunnerState> mostRecentVisited = LodeRunnerLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level, psuedoRandomSeed).t1;
-		ArrayList<LodeRunnerAction> actionSequence = LodeRunnerLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level, psuedoRandomSeed).t2;
-		LodeRunnerState start = LodeRunnerLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level, psuedoRandomSeed).t3; //gets start state for search 
-		double simpleAStarDistance = LodeRunnerLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level, psuedoRandomSeed).t4;
+//		HashSet<LodeRunnerState> mostRecentVisited = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed).t1;
+//		ArrayList<LodeRunnerAction> actionSequence = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed).t2;
+//		LodeRunnerState start = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed).t3; //gets start state for search 
+		Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed);
+		HashSet<LodeRunnerState> mostRecentVisited = aStarInfo.t1;
+		ArrayList<LodeRunnerAction> actionSequence = aStarInfo.t2;
+		LodeRunnerState start = aStarInfo.t3;
+		double simpleAStarDistance = LodeRunnerLevelAnalysisUtil.calculateSimpleAStarLength(actionSequence);
 		//calculates the amount of the level that was covered in the search, connectivity.
 		double connectivityOfLevel = LodeRunnerLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited);
 		//adds the fitness functions being used to the fitness array list
