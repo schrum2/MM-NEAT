@@ -124,28 +124,26 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromGenotype(individual); //gets a level 
 		double psuedoRandomSeed = getRandomSeedForSpawnPoint(individual); //creates the seed to be passed into the Random instance 
 		long genotypeId = individual.getId();
-		
 		return evaluateOneLevel(level, psuedoRandomSeed, genotypeId);
 	}
 
 	/**
-	 * TODO
+	 * Calculates fitness scores and other scores for a single level
+	 * using methods from the LodeRunnerLevelAnalysisUtil class
 	 * 
-	 * @param level
+	 * @param level 
 	 * @param psuedoRandomSeed
 	 * @param genotypeId
-	 * @return
+	 * @return Pair holding the scores 
 	 */
 	@SuppressWarnings("unchecked")
 	protected Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, long genotypeId) {
-		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
-//		HashSet<LodeRunnerState> mostRecentVisited = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed).t1;
-//		ArrayList<LodeRunnerAction> actionSequence = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed).t2;
-//		LodeRunnerState start = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed).t3; //gets start state for search 
+		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array  
 		Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed);
 		HashSet<LodeRunnerState> mostRecentVisited = aStarInfo.t1;
 		ArrayList<LodeRunnerAction> actionSequence = aStarInfo.t2;
 		LodeRunnerState start = aStarInfo.t3;
+		//calculates aStarPath length
 		double simpleAStarDistance = LodeRunnerLevelAnalysisUtil.calculateSimpleAStarLength(actionSequence);
 		//calculates the amount of the level that was covered in the search, connectivity.
 		double connectivityOfLevel = LodeRunnerLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited);

@@ -76,6 +76,8 @@ public class Layout {
 			contents += n.toString() +"\n";
 		for (WorldNode n : level.solids)
 			contents += n.toString() +"\n";
+		for(WorldNode n : level.enemies) 
+			contents += n.toString() + "\n";
 		if (level.portal != null)
 			contents += level.portal.toString() +"\n";
 		if (level.player1 != null)

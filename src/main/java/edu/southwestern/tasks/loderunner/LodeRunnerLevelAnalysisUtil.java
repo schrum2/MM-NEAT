@@ -74,9 +74,10 @@ public class LodeRunnerLevelAnalysisUtil {
 	 */
 	public static String processOneLevel(int num) {
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level "+num+".txt");
-		HashSet<LodeRunnerState> mostRecentVisited = performAStarSearch(level,Double.NaN).t1;
-		ArrayList<LodeRunnerAction> actionSequence = performAStarSearch(level,Double.NaN).t2;
-		LodeRunnerState start = performAStarSearch(level,Double.NaN).t3;
+		Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = performAStarSearch(level,Double.NaN);
+		HashSet<LodeRunnerState> mostRecentVisited = aStarInfo.t1;
+		ArrayList<LodeRunnerAction> actionSequence = aStarInfo.t2;
+		LodeRunnerState start = aStarInfo.t3;
 		double simpleAStarDistance = calculateSimpleAStarLength(actionSequence);
 		double connectivity = caluclateConnectivity(mostRecentVisited);
 		double percentBackTrack = calculatePercentAStarBacktracking(actionSequence, start);
@@ -138,8 +139,8 @@ public class LodeRunnerLevelAnalysisUtil {
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold); //initializes a search based on the heuristic 
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
-		//double simpleAStarDistance = -1; //intialized to hold distance of solution path, or -1 if search fails
-		//calculates the Distance to the farthest gold as a fitness fucntion 
+		//double simpleAStarDistance = -1; //initialized to hold distance of solution path, or -1 if search fails
+		//calculates the Distance to the farthest gold as a fitness function 
 		try { 
 			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter("aStarSearchBudget"));
 		} catch(IllegalStateException e) {
@@ -151,6 +152,11 @@ public class LodeRunnerLevelAnalysisUtil {
 		return new Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState>(mostRecentVisited,actionSequence,start);
 	}
 
+	/**
+	 * Calculates the length of the A* path
+	 * @param actionSequence Solution path
+	 * @return Length of solution Path
+	 */
 	public static double calculateSimpleAStarLength(ArrayList<LodeRunnerAction> actionSequence) {
 		double simpleAStarDistance;
 		if(actionSequence == null) {
