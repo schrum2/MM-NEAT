@@ -176,3 +176,4 @@ batch/Experiments-2020-CEC-ZeldaGAN/Subject-*
 .idea/
 
 *.iml
+src/main/python/GAN/MegaManGAN/Thumbs.db
