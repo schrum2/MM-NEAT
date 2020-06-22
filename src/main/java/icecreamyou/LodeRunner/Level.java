@@ -3,15 +3,17 @@ import java.awt.Graphics;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import edu.southwestern.tasks.loderunner.LodeRunnerVGLCUtil;
 
 /**
  * The level environment.
  */
 public class Level {
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 	/**
 	 * Pre-compiled regex patterns for parsing layout files.
 	 * These temporary classes are very ugly, but it moves the actual regex to
@@ -88,15 +90,39 @@ public class Level {
 		}
 	}
 	
-//	public Level(String name, List<List<Integer>> level) {
-//		this.name = name;
-//		String[] lines = null;
-//		for (String line : lines) {
-//			if (line == null || line.equals(""))
-//				continue;
-//			add(line);
-//		}
-//	}
+	/**
+	 * Level from list of lists format from a GAN or json
+	 * @param level
+	 */
+	public Level(List<List<Integer>> level) {
+		String newLevel = LodeRunnerVGLCUtil.convertLodeRunnerJSONtoIceCreamYou(level);
+		constructLevelFromString(newLevel);
+	}
+	
+	/**
+	 * Copy level from an existing level
+	 * @param copy
+	 */
+	public Level(Level copy) {
+		String stringLevel = Layout.levelToString(copy);
+		constructLevelFromString(stringLevel);
+	}
+
+	/**
+	 * Take String read from level file and create the level from it
+	 * @param newLevel
+	 */
+	public void constructLevelFromString(String newLevel) {
+		Scanner scan = new Scanner(newLevel);
+		while(scan.hasNextLine()) {
+			String line = scan.nextLine();
+			if(line == null || line.equals("")) 
+				continue;
+			add(line);
+			//System.out.println(line);
+		}
+		scan.close();
+	}
 	
 	/**
 	 * Draw everything in a level.
@@ -216,7 +242,7 @@ public class Level {
 	 * Save the current level to a layout file.
 	 */
 	public void save(String filename) {
-		Layout.save(this, FILE_PATH+filename);
+		Layout.save(this, filename);
 		name = filename;
 	}
 	
@@ -387,40 +413,4 @@ public class Level {
 		
 		return null;
 	}
-	
-	/**
-	 * Enemies don't fall, so just drop them to the closest surface when they
-	 * are added to the level.
-	 */
-	private int dropToSolid(int x, int y) {
-		//changed this to work with the new scaling
-		//there is extra white space at the bottom of the level, so this just moves them to the level so they are not stuck in limbo
-		int minY = GamePanel.HEIGHT-(4*GamePanel.UNIT_HEIGHT);
-		for (Solid s : solids) {
-//			if (s.getX() == x && s.getY() == y - GamePanel.UNIT_HEIGHT)
-//				return y; // Already standing.
-//			else if (s.getX() == x)
-//				if (s.getY() > y && s.getY() < minY)
-//					minY = s.getY();
-			if(s.getX()==x && (s.getY() > y && s.getY() < minY)) {
-				minY=s.getY();
-			}
-			else
-				return y;
-		}
-		for (Ladder s : ladders) {
-//			if (s.getX() == x && s.getY() == y - GamePanel.UNIT_HEIGHT)
-//				return y; // Already standing.
-//			else if (s.getX() == x)
-//				if (s.getY() > y && s.getY() < minY)
-//					minY = s.getY();
-			if(s.getX()==x && (s.getY() > y && s.getY() < minY)){
-				minY=s.getY();
-			}
-			else
-				return y;
-		}
-		return minY - GamePanel.UNIT_HEIGHT; // Drop until standing on the highest solid below original point.
-	}
-	
 }
