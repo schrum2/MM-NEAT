@@ -361,6 +361,7 @@ public class Parameters {
 		integerOptions.add("cppn2ganWidth", null, "the CPPN to GAN width chunks");
 		integerOptions.add("cppn2ganHeight", null, "the CPPN to GAN height chunks");
 		integerOptions.add("megaManAStarJumpHeight", 4 , "Height of the A* agent's jump");
+		integerOptions.add("lodeRunnerNumOfLevelsInSequence", 3, "Specifies the numbr of levels in the sequence of levels being eveolved for lode runner");
 
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -781,7 +782,12 @@ public class Parameters {
 		booleanOptions.add("megaManAllowsPlatformGun", true, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManAllowsBlockBreaker", true, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManDistinctScreenFitness", false, "whether or not we're allowing connectivity");
-
+		booleanOptions.add("interactiveLodeRunnerAStarPaths", false, "Shows the solution path for the levels in the level breeder when true");
+		booleanOptions.add("lodeRunnerAllowsSimpleAStarPath", true, "Adds the AStarPath as a fitness function when true");
+		booleanOptions.add("lodeRunnerAllowsConnectivity", true, "Adds connectivity as a fitness function when true");
+		booleanOptions.add("lodeRunnerLevelSequenceAverages", true, "Averages scores from all levels of the sequence");
+		booleanOptions.add("lodeRunnerLevelSequenceIndividual", true, "Takes each score from the sequence individually");
+		booleanOptions.add("interactiveLodeRunnerIceCreamYouVisualization", false, "Shows the ice cream you visualization for the levels in the level breeder when true");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -914,14 +920,13 @@ public class Parameters {
 		stringOptions.add("utStudyTeammate", "", "The type of teammate agent for the 2018 human subject study: jude, ethan, native");
 		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
-		stringOptions.add("LodeRunnerGANModel", "LodeRunnerEpochOneGroundFirstFive10000_20_6.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
+		stringOptions.add("LodeRunnerGANModel", "LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
 		stringOptions.add("MegaManGANModel", "HORIZONTALONLYMegaManAllLevelsBut7With7TileTypes_5_Epoch5000.pth", "File name of GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANHorizontalModel", "HORIZONTALONLYUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANHorizontalModel", "HORIZONTALONLYMegaManAllLevelsBut7With15TileTypes_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("MegaManGANVerticalModel", "VERTICALONLYMegaManAllLevelsWith7Tiles_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANUpModel", "VERTICALONLYUPUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANDownModel", "VERTICALONLYDOWNUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
-
-		//MegaManGANHorizontalModel
+		stringOptions.add("MegaManGANUpModel", "VERTICALONLYUPMegaManAllLevelsBut7With15TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANDownModel", "VERTICALONLYDOWNMegaManAllLevelsBut7With15TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("mapElitesArchiveFile", "", "File name of MAPElites level we want to look at from an experiment");
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
 		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");

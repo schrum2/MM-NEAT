@@ -195,7 +195,7 @@ public class DungeonUtil {
 			Queue<Graph<? extends Grammar>.Node> backlog, List<Graph<? extends Grammar>.Node> visited, LevelLoader loader) throws Exception {
 		while(!backlog.isEmpty()) {
 			Graph<? extends Grammar>.Node node = backlog.poll();
-			for(Graph<? extends Grammar>.Node adjNode : node.adjacencies()) {
+			for(Graph<? extends Grammar>.Node adjNode : node.adjacentNodes()) {
 				Point p = getCoords(levelThere, adjNode.getID());
 				if(p != null) {
 					Point legal = getNextLegalPoint(p, levelThere);
@@ -652,7 +652,7 @@ public class DungeonUtil {
 			if(p == null)
 				throw new Exception("Node : " + node.getID() + " not found in level there");
 			
-			List<Graph<? extends Grammar>.Node> adjs = new LinkedList<>(node.adjacencies());
+			List<Graph<? extends Grammar>.Node> adjs = new LinkedList<>(node.adjacentNodes());
 			
 			while(!adjs.isEmpty()) {
 				Graph<? extends Grammar>.Node adjNode = adjs.remove(RandomNumbers.randomGenerator.nextInt(adjs.size()));
@@ -826,7 +826,7 @@ public class DungeonUtil {
 		deque.add(new Pair<Graph<T>.Node, Graph<T>.Node>(graph.root(), null));
 		while(!queue.isEmpty()) {
 			Graph<T>.Node node = queue.poll();
-			for(Graph<T>.Node v : node.adjacencies()) {
+			for(Graph<T>.Node v : node.adjacentNodes()) {
 				if(!visited.contains(v.getID())) {
 					visited.add(v.getID());
 					queue.add(v);

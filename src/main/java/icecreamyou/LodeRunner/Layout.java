@@ -43,6 +43,24 @@ public class Layout {
 	 * Saves the Level level as the layout file filename.
 	 */
 	public static void save(Level level, String filename) {
+		String contents = levelToString(level);
+		
+		// Enforce an invariant that enemies must be the last lines in the file.
+		// This is necessary to drop enemies from their original position so that they never fall.
+		for (WorldNode n : level.enemies)
+			contents += n.toString() +"\n";
+		
+		// Actually write the file.
+		try {
+			BufferedWriter file = new BufferedWriter(new FileWriter(FILE_PATH + filename +".txt"));
+			file.write(contents);
+			file.close();
+		} catch (IOException e) {
+			System.out.println("Error: " + e.getMessage());
+		}
+	}
+
+	public static String levelToString(Level level) {
 		String contents = "";
 		if (level.getNextLevel() != null)
 			contents += "nextLevel:"+ level.getNextLevel();
@@ -58,26 +76,15 @@ public class Layout {
 			contents += n.toString() +"\n";
 		for (WorldNode n : level.solids)
 			contents += n.toString() +"\n";
+		for(WorldNode n : level.enemies) 
+			contents += n.toString() + "\n";
 		if (level.portal != null)
 			contents += level.portal.toString() +"\n";
 		if (level.player1 != null)
 			contents += level.player1.toString() +"\n";
 		if (level.player2 != null)
 			contents += level.player1.toString() +"\n";
-		
-		// Enforce an invariant that enemies must be the last lines in the file.
-		// This is necessary to drop enemies from their original position so that they never fall.
-		for (WorldNode n : level.enemies)
-			contents += n.toString() +"\n";
-		
-		// Actually write the file.
-		try {
-			BufferedWriter file = new BufferedWriter(new FileWriter(FILE_PATH + filename +".txt"));
-			file.write(contents);
-			file.close();
-		} catch (IOException e) {
-			System.out.println("Error: " + e.getMessage());
-		}
+		return contents;
 	}
 
 }
