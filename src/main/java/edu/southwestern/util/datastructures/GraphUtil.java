@@ -35,7 +35,7 @@ public class GraphUtil {
 			System.out.println(node.id + ":" + node.adjacencies());
 //			MiscUtil.waitForReadStringAndEnterKeyPress();
 			w.write(node.getID() + "[label=\"" + node.getData().getLevelType() + "\"]\n");
-			for(Graph<? extends Grammar>.Node v : node.adjacencies()) {
+			for(Graph<? extends Grammar>.Node v : node.adjacentNodes()) {
 				if(!visited.contains(v) && !queue.contains(v)) {
 					//visited.add(v);
 					queue.add(v);
@@ -52,7 +52,7 @@ public class GraphUtil {
 			Graph<? extends Grammar>.Node node = queue.poll();
 	
 			visited.add(node);
-			for(Graph<? extends Grammar>.Node v : node.adjacencies()) {
+			for(Graph<? extends Grammar>.Node v : node.adjacentNodes()) {
 				if(!visited.contains(v)) {
 					w.write(node.getID() + " -- " + v.getID() +"\n");
 					queue.add(v);				

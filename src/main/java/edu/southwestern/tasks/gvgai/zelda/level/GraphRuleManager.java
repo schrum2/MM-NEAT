@@ -91,7 +91,7 @@ abstract public class GraphRuleManager<T extends Grammar> {
 				Graph<T>.Node current = queue.poll();
 				visited.add(current);
 				symbols = symbols || current.getData().isSymbol();
-				List<Graph<T>.Node> adj = new LinkedList<>(current.adjacencies());
+				List<Graph<T>.Node> adj = new LinkedList<>(current.adjacentNodes());
 				boolean appliedRule = false;
 				for(Graph<T>.Node n : adj) {
 					if(!visited.contains(n) && !queue.contains(n)) {

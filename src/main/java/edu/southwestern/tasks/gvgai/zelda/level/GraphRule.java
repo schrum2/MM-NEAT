@@ -11,8 +11,9 @@ import edu.southwestern.util.datastructures.Graph;
 
 public class GraphRule<T extends Grammar> {
 	private T symbolStart;
-	private T inBetween;
-	private T toStart;
+	// Dr. Schrum: Why are these not used?
+	//private T inBetween;
+	//private T toStart;
 	private T symbolEnd;
 	private GraphGrammar<T> grammar;
 	

@@ -2,6 +2,7 @@ package edu.southwestern.util.datastructures;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -31,7 +32,7 @@ public class Graph<T>{
 			}
 			else {
 				Node newNode = addNode(item);
-				addEdge(previousNode, newNode);
+				addUndirectedEdge(previousNode, newNode);
 				previousNode = newNode;
 			}
 		}
@@ -57,30 +58,86 @@ public class Graph<T>{
 		return n;
 	}
 	
+	/**
+	 * Remove all links to n from any node in the graph
+	 * @param n A node to remove
+	 */
 	public void removeNode(Node n) {
 		for(Node v : nodes) {
-			v.adjacencies().remove(n);
+			removeEdge(v,n);
 		}
 		nodes.remove(n);
 	}
-	
-	public void addEdge(Node n1, Node n2) {
-		n1.adjacencies.add(n2);
-		n2.adjacencies.add(n1);
+
+	/**
+	 * Adds directed edge from n1 to n2 with specified cost
+	 * @param n1 Source node
+	 * @param n2 Target node
+	 * @param cost Edge cost
+	 */
+	public void addDirectedEdge(Node n1, Node n2, double cost) {
+		n1.adjacencies.add(new Pair<>(n2,cost));
 	}
 	
+	/**
+	 * Add edges in both directions (undirected) with default cost of 1.0
+	 * @param n1 One node
+	 * @param n2 Other node
+	 */
+	public void addUndirectedEdge(Node n1, Node n2) {
+		addUndirectedEdge(n1, n2, 1.0);
+	}
+	
+	/**
+	 * Add edges in both directions with designated cost
+	 * @param n1 One node
+	 * @param n2 Other node
+	 * @param cost Cost from n1 to n2, AND from n2 to n1
+	 */
+	public void addUndirectedEdge(Node n1, Node n2, double cost) {
+		n1.adjacencies.add(new Pair<>(n2,cost));
+		n2.adjacencies.add(new Pair<>(n1,cost));
+	}
+	
+	/**
+	 * Remove edges in both directions between two nodes, without regard for cost
+	 * @param n1
+	 * @param n2
+	 */
 	public void removeEdge(Node n1, Node n2) {
-		Set<Node> l1 = n1.adjacencies;
-		Set<Node> l2 = n2.adjacencies;
-		System.out.println(l1);
-		System.out.println(l2);
-		if(l1 != null)
-			l1.remove(n2);
-		if(l2 != null)
-			l2.remove(n1);
-		System.out.println(l1);
-		System.out.println(l2);
+		removeDirectedEdge(n1, n2);
+		removeDirectedEdge(n2, n1);
+		
+//		Set<Pair<Node,Double>> l1 = n1.adjacencies;
+//		Set<Pair<Node,Double>> l2 = n2.adjacencies;
+//		System.out.println(l1);
+//		System.out.println(l2);
+//		if(l1 != null)
+//			l1.remove(n2); // <-- This is wrong now ... Pair not Node
+//		if(l2 != null)
+//			l2.remove(n1); // <-- This is wrong now ... Pair not Node
+//		System.out.println(l1);
+//		System.out.println(l2);
 
+	}
+	
+	/**
+	 * Remove edge in one direction from n1 to n2 without regard for cost on edge
+	 * @param n1 Source edge
+	 * @param n2 Target edge
+	 */
+	public void removeDirectedEdge(Node n1, Node n2) {
+		Set<Pair<Node,Double>> l1 = n1.adjacencies;
+		if(l1 != null) {
+			Iterator<Pair<Node,Double>> itr = l1.iterator();
+			while(itr.hasNext()) { // Loop through edges from n1
+				Pair<Node,Double> p = itr.next();
+				if(p.t1.equals(n2)) { // Edge from n1 to n2 found
+					itr.remove();
+					break;
+				}
+			}
+		}
 	}
 	
 	public List<Node> breadthFirstTraversal(){
@@ -94,7 +151,8 @@ public class Graph<T>{
 		visited.add(n);
 		while(!queue.isEmpty()) {
 			Node node = queue.poll();
-			for(Node v : node.adjacencies) {
+			for(Pair<Node,Double> p : node.adjacencies) {
+				Node v = p.t1;
 				if(!visited.contains(v)) {
 					visited.add(v);
 					queue.add(v);
@@ -107,7 +165,7 @@ public class Graph<T>{
 
 	public class Node{
 		private T data;
-		Set<Node> adjacencies;
+		Set<Pair<Node, Double>> adjacencies;
 		public String id;
 		public Node(T d){
 			setData(d);
@@ -116,11 +174,19 @@ public class Graph<T>{
 			// method is the only one that allows a random generator to be supplied, allowing reproducibility.
 			id = RandomStringUtils.random(4,'A','Z',true,false,null,RandomNumbers.randomGenerator);
 		}
-		public Set<Graph<T>.Node> adjacencies() {
+		public Set<Pair<Graph<T>.Node,Double>> adjacencies() {
 			return adjacencies;
 		}
 		
-		public void setAdjacencies(Set<Node> a) {
+		public Set<Graph<T>.Node> adjacentNodes() {
+			Set<Graph<T>.Node> set = new HashSet<>();
+			for(Pair<Graph<T>.Node,Double> p : adjacencies) {
+				set.add(p.t1);
+			}
+			return set;
+		}
+		
+		public void setAdjacencies(Set<Pair<Graph<T>.Node,Double>> a) {
 			adjacencies = a;
 		}
 		public void setData(T data) {
@@ -138,12 +204,15 @@ public class Graph<T>{
 		
 		public void copy(Node other) {
 			this.data = other.data;
-			for(Node n : other.adjacencies) {
-				adjacencies.add(n);
+			for(Pair<Node,Double> n : other.adjacencies) {
+				adjacencies.add(new Pair<>(n.t1,n.t2));
 			}
 			this.id = other.id;
 		}
 		
+		/**
+		 * Only checks id and nothing else
+		 */
 		@Override
 		public boolean equals(Object other) {
 			if(!(other instanceof Graph.Node)) return false;
@@ -156,6 +225,9 @@ public class Graph<T>{
 			return false;
 		}
 		
+		/**
+		 * Based only on id
+		 */
 		@Override
 		public int hashCode() {
 			return id.hashCode();
