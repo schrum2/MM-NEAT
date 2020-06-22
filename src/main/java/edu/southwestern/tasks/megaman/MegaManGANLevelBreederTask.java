@@ -573,7 +573,13 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height,
 			double[] inputMultipliers) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
+
 		List<List<Integer>> level = levelListRepresentation(doubleArray);
+
+		return getStaticButtonImage(phenotype, width, height, level);
+	}
+
+	public static BufferedImage getStaticButtonImage(ArrayList<Double> phenotype, int width, int height, List<List<Integer>> level) {
 		//MegaManVGLCUtil.printLevel(level);
 		BufferedImage[] images;
 		//sets the height and width for the rendered level to be placed on the button 

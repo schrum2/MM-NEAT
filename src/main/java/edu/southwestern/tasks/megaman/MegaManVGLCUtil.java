@@ -509,7 +509,7 @@ public class MegaManVGLCUtil {
 
 				}else if(m>10) { //is an enemy
 					if(levelEnemies.isEmpty()||levelEnemies!=null||levelEnemies.get(new Point(x,y)).contentEquals(null)) {
-
+						System.out.println("pringint improper enemy types helas");
 						printEnemiesToMMLVFromUniqueEnemy(p, xcoord, ycoord, level, x, y, m);
 					}
 					else {
@@ -589,7 +589,7 @@ public class MegaManVGLCUtil {
 			int m) {
 		//String enemyString = levelEnemies.get(new Point(x,y));
 		//System.out.println(enemyString);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
 		if(m==11) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"0.000000\"");

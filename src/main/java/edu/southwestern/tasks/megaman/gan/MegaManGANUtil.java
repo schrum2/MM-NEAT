@@ -19,7 +19,7 @@ import edu.southwestern.util.random.RandomNumbers;
 public class MegaManGANUtil {
 	public static final int LATENT_VECTOR_SIZE = 5;//latent vector dimension, 20 improved the model 
 	public static final int MEGA_MAN_ALL_TERRAIN = 7; //number of tiles in MegaMan
-	public static final int MEGA_MAN_TILES_WITH_ENEMIES = 16; //number of tiles in MegaMan
+	public static final int MEGA_MAN_TILES_WITH_ENEMIES = 30; //number of tiles in MegaMan
 	public static final int MEGA_MAN_FIRST_LEVEL_ALL_TILES = 21; //number of tiles in MegaMan
 	public static final int MEGA_MAN_LEVEL_WIDTH = 16;
 	public static final int MEGA_MAN_LEVEL_HEIGHT = 14;
@@ -242,7 +242,7 @@ public class MegaManGANUtil {
 		return oneLevel;
 	}
 
-	private static void placeDown(List<List<List<Integer>>> levelInListDown, Point previousMove,
+	public static void placeDown(List<List<List<Integer>>> levelInListDown, Point previousMove,
 			List<List<Integer>> oneLevel, int level) {
 		int y1 = (int) previousMove.getY();
 		if(y1+15>=oneLevel.size()) {
@@ -265,7 +265,7 @@ public class MegaManGANUtil {
 		}
 	}
 
-	private static void placeUp(List<List<List<Integer>>> levelInListUp, Point previousMove,
+	public static void placeUp(List<List<List<Integer>>> levelInListUp, Point previousMove,
 			List<List<Integer>> oneLevel, int level) {
 		List<List<Integer>> nullScreen = new ArrayList<List<Integer>>();
 		for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
@@ -284,7 +284,7 @@ public class MegaManGANUtil {
 		}
 	}
 
-	private static void placeRight(List<List<List<Integer>>> levelInListHorizontal, Point previousMove,
+	public static void placeRight(List<List<List<Integer>>> levelInListHorizontal, Point previousMove,
 			List<List<Integer>> oneLevel, List<Integer> nullLine, int level) {
 		for(int i = 0;i<oneLevel.size();i++) { //add null to all spaces to the right TODO possibly change
 			oneLevel.get(i).addAll(nullLine);
@@ -301,11 +301,11 @@ public class MegaManGANUtil {
 	}
 	
 	
-	private static void placeSpawn(List<List<Integer>> level) {
+	public static void placeSpawn(List<List<Integer>> level) {
 		boolean placed = false;
 		for(int x = 0;x<level.get(0).size();x++) {
 			for(int y = 0;y<level.size();y++) {
-				if(y-2>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0&&level.get(y-2).get(x)==0) {
+				if(y-2>=0&&(level.get(y).get(x)==1||level.get(y).get(x)==2)&&level.get(y-1).get(x)==0&&level.get(y-2).get(x)==0) {
 					level.get(y-1).set(x, 8);
 					placed = true;
 					break;
@@ -321,6 +321,7 @@ public class MegaManGANUtil {
 			if(!placed) {
 				level.get(level.size()-1).set(0, 1);
 				level.get(level.size()-2).set(0, 8);
+				level.get(level.size()-3).set(0, 0);
 				placed = true;
 			}
 		}
@@ -341,7 +342,7 @@ public class MegaManGANUtil {
 //			if(placed) break;
 //		}
 	}
-	private static void placeOrb(List<List<Integer>> level) {
+	public static void placeOrb(List<List<Integer>> level) {
 		boolean placed = false;
 //		for(int x = 0;x<level.get(0).size();x++) {
 //			for(int y = 0;y<level.size();y++) {

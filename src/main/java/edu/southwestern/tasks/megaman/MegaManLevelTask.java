@@ -130,7 +130,6 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						File mmlvFilePath = new File("MegaManMakerLevelPath.txt"); //file containing the path
-
 						
 						Scanner scan;
 						//When the button is pushed, ask for the name input
@@ -138,8 +137,11 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 							scan = new Scanner(mmlvFilePath);
 							//scan.next();
 							String mmlvPath = scan.nextLine();
+							System.out.println(mmlvPath);
 							String mmlvFileName = JOptionPane.showInputDialog(null, "What do you want to name your level?");
+							System.out.println("pane showed up");
 							File mmlvFileFromEvolution = new File(mmlvPath+mmlvFileName+".mmlv"); //creates file inside user's MegaManLevelPath
+							System.out.println(mmlvPath+mmlvFileName+".mmlv");
 							File mmlvFile; //creates file inside MMNEAT
 							scan.close();
 							//ArrayList<Double> phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
@@ -149,6 +151,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 							mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, mmlvFileName);
 							try {
 								Files.copy(mmlvFile, mmlvFileFromEvolution); //copies over
+								System.out.println("File vopied");
 								mmlvFile.delete(); //deletes MMNEAT file
 								JFrame frame = new JFrame("");
 								frame.setLocationRelativeTo(null);
@@ -187,6 +190,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 							
 							
 							String mmlvPath = scan1.nextLine();
+							System.out.println(mmlvPath);
 							scan1.close();
 							
 							Runtime runTime = Runtime.getRuntime();
@@ -208,7 +212,8 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 							e.printStackTrace();
 						}
 						
-						
+						MiscUtil.waitForReadStringAndEnterKeyPress();
+
 						
 					}
 				});
