@@ -170,7 +170,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param level A level 
 	 * @return Set of points 
 	 */
-	private static HashSet<Point> fillGold(List<List<Integer>> level) {
+	public static HashSet<Point> fillGold(List<List<Integer>> level) {
 		HashSet<Point> gold = new HashSet<>();
 		int tile; 
 		//loop through level adding points where it finds gold 

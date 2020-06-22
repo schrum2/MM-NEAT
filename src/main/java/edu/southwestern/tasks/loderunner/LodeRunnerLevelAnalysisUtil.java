@@ -134,7 +134,7 @@ public class LodeRunnerLevelAnalysisUtil {
 			LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand); //sets a random spawn point 
 			levelCopy = ListUtil.deepCopyListOfLists(level); //copy level so it is not effected by the search 
 			start = new LodeRunnerState(levelCopy); //gets start state for search 
-			System.out.println(start);
+			//System.out.println(start);
 		}
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold); //initializes a search based on the heuristic 
 		HashSet<LodeRunnerState> mostRecentVisited = null;
