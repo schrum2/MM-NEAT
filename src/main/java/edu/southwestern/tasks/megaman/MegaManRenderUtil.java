@@ -1,4 +1,4 @@
-package megaManMaker;
+package edu.southwestern.tasks.megaman;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -14,7 +14,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 //import edu.southwestern.tasks.loderunner.LodeRunnerVGLCUtil;
-
+/**
+ * This class renders a level given a List<List<Integer>>
+ * @author Benjamin Capps
+ *
+ */
 public class MegaManRenderUtil {
 	public static final String MEGA_MAN_TILE_PATH = "data/VGLC/MegaMan/Tiles/"; //file path for tiles 
 	public static final String MEGA_MAN_LEVEL_PATH = "data/VGLC/MegaMan/Enhanced/"; //file path for levels 
@@ -36,7 +40,7 @@ public class MegaManRenderUtil {
 		return MEGA_MAN_TILE_X*col;
 	}
 	public static int renderedImageHeight(int row) {
-		return MEGA_MAN_TILE_X*row;
+		return MEGA_MAN_TILE_Y*row;
 	}
 	/**
 	 * Sets up a level to be rendered by converting the VGLC data to JSON and then 
@@ -79,6 +83,35 @@ public class MegaManRenderUtil {
 		return image;
 	}
 	
+	/**
+	 * this fixes the window and renders the level according to its size
+	 * @param list JSON of the level 
+	 * @param images Array of tile images 
+	 * @return Final BufferedImage of the whole level in a window 
+	 * @throws IOException In case the file can't be found 
+	 */
+	public static BufferedImage getBufferedImageWithRelativeRendering(List<List<Integer>> list, BufferedImage[] images) throws IOException {
+		BufferedImage image = createBufferedImage(list, renderedImageWidth(list.get(0).size()), renderedImageHeight(list.size()), images); //gets the image of the level 
+		//this code displays the level in a window 
+		
+		JFrame frame = new JFrame();
+		JPanel panel = new JPanel();
+		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(1600, 900, Image.SCALE_AREA_AVERAGING)));
+		panel.add(label);
+		frame.add(panel);
+		frame.pack();
+		frame.setVisible(true);
+		return image;
+	}
+	
+	/**
+	 * Puts tiles into BufferedImage to fully render the level 
+	 * @param list JSON of the level 
+	 * @param width Width of rendered image
+	 * @param height Height of rendered image 
+	 * @return A BufferedImage of the level 
+	 * @throws IOException In case the file can't be found
+	 */
 	public static BufferedImage createBufferedImage(List<List<Integer>> list, int width, int height) throws IOException {
 		BufferedImage[] images = loadImagesForASTAR(MEGA_MAN_TILE_PATH); //Initializes the array that hold the tile images
 		return createBufferedImage(list, width, height, images);
@@ -88,7 +121,7 @@ public class MegaManRenderUtil {
 	 * Puts tiles into BufferedImage to fully render the level 
 	 * @param list JSON of the level 
 	 * @param width Width of rendered image
-	 * @param height HEight of rendered image 
+	 * @param height Height of rendered image 
 	 * @param images Array of Buffered Images referring to the tiles 
 	 * @return A BufferedImage of the level 
 	 * @throws IOException In case the file can't be found
@@ -127,7 +160,7 @@ public class MegaManRenderUtil {
 	public static BufferedImage[] loadImagesForASTAR(String filePath) throws IOException {
 		
 		if(tileList==null) {
-			tileList = new BufferedImage[11];
+			tileList = new BufferedImage[16];
 			File tile = new File(filePath+"Empty.PNG");
 			BufferedImage emptyTile = ImageIO.read(tile);
 			tileList[0] = emptyTile;
@@ -161,6 +194,21 @@ public class MegaManRenderUtil {
 			tile = new File(filePath+"Water.png");
 			BufferedImage water = ImageIO.read(tile);
 			tileList[10] = water;
+			tile = new File(filePath+"Enemy11.png");
+			BufferedImage enemy = ImageIO.read(tile);
+			tileList[11] = enemy;
+			tile = new File(filePath+"Enemy12.png");
+			BufferedImage enemy2 = ImageIO.read(tile);
+			tileList[12] = enemy2;
+			tile = new File(filePath+"Enemy13.png");
+			BufferedImage enemy3 = ImageIO.read(tile);
+			tileList[13] = enemy3;
+			tile = new File(filePath+"Enemy14.png");
+			BufferedImage enemy4 = ImageIO.read(tile);
+			tileList[14] = enemy4;
+			tile = new File(filePath+"Enemy15.png");
+			BufferedImage enemy5 = ImageIO.read(tile);
+			tileList[15] = enemy5;
 		}
 		return tileList;
 	}

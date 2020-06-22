@@ -1,4 +1,4 @@
-package megaManMaker;
+package edu.southwestern.tasks.megaman.astar;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.megaman.MegaManRenderUtil;
+import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.search.AStarSearch;
@@ -18,7 +20,11 @@ import edu.southwestern.util.search.Action;
 import edu.southwestern.util.search.Heuristic;
 import edu.southwestern.util.search.Search;
 import edu.southwestern.util.search.State;
-
+/**
+ * This class defines an A* agent to traverse MegaMan levels
+ * @author Benjamin Capps
+ *
+ */
 public class MegaManState extends State<MegaManState.MegaManAction>{
 	public static final int MEGA_MAN_TILE_EMPTY = 0;
 	public static final int MEGA_MAN_TILE_GROUND = 1;
@@ -39,7 +45,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public int currentY;
 	private int jumpVelocity;
 	//private boolean climbing;
-
+	//the distance to the level orb
 	public static Heuristic<MegaManAction,MegaManState> manhattanToOrb = new Heuristic<MegaManAction,MegaManState>(){
 
 		@Override
@@ -54,7 +60,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	
 	};
 
-	
 	
 	public  static class MegaManAction implements Action{
 		public enum MOVE {RIGHT,LEFT,UP,DOWN, JUMP};
@@ -179,7 +184,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			if(passable(newX,newY+1)&& tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER) { // Falling
 				newY++; // Fall down
 			} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)&& tileAtPosition(newX, newY)!=MEGA_MAN_TILE_LADDER) { // Start jump
-				newJumpVelocity = 4; // Accelerate up
+				newJumpVelocity = Parameters.parameters.integerParameter("megaManAStarJumpHeight"); // Accelerate up
 			} 
 		} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)) {
 			return null; // Can't jump mid-jump. Reduces search space.
@@ -232,16 +237,28 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 //		int beneath;
 //		if(inBounds(x,y+1)) beneath = tileAtPosition(x,y+1);
 //		else beneath = tile;
-		if((	tile==MEGA_MAN_TILE_EMPTY ||tile==MEGA_MAN_TILE_LADDER||tile==MEGA_MAN_TILE_ORB||tile==MEGA_MAN_TILE_BREAKABLE||tile==MEGA_MAN_TILE_WATER)) {
+		if((	tile==MEGA_MAN_TILE_EMPTY ||tile==MEGA_MAN_TILE_LADDER||tile==MEGA_MAN_TILE_ORB||tile==MEGA_MAN_TILE_BREAKABLE||tile==MEGA_MAN_TILE_WATER||tile>10)) {
 			return true;
 		}
 		return false; 
 	}
-
+	/**
+	 * checks if a point in the level is in bounds
+	 * @param x x coordinate of the tile
+	 * @param y y coordinate of the tile
+	 * @return true if in bounds, false otherwise
+	 */
 	private boolean inBounds(int x, int y) {
 		// TODO Auto-generated method stub
 		return x>=0&&y>=0&&y<level.size()&&x<level.get(y).size()&&level.get(y).get(x)!=9&&noHazardBeneath(x, y);
 	}
+	/**
+	 * checks to make sure that there are no deadly hazards beneath
+	 * 
+	 * @param x x coordinate of the tile
+	 * @param y y coordinate of the tile
+	 * @return
+	 */
 	private boolean noHazardBeneath(int x, int y) {
 		if(!inBounds(x, y+1)) {
 			return true;
@@ -286,6 +303,9 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		return level.get(y).get(x);
 	}
 	@Override
+	/**
+	 * gets the set of legal actions for the megaman state
+	 */
 	public ArrayList<MegaManAction> getLegalActions(State<MegaManAction> s) {
 		ArrayList<MegaManAction> vaildActions = new ArrayList<>();
 		for(MegaManAction.MOVE move: MegaManAction.MOVE.values()) {
@@ -300,11 +320,17 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	}
 
 	@Override
+	/**
+	 * checks if the current position is the level orb
+	 */
 	public boolean isGoal() {
 		// TODO Auto-generated method stub
 		return currentX==orb.x&&currentY==orb.y;
 	}
 	@Override
+	/**
+	 * returns the hashcode based on current position and jump velocity
+	 */
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -314,12 +340,18 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		return result;
 	}
 	@Override
+	/**
+	 * returns 1, the cost of traversing one space
+	 */
 	public double stepCost(State<MegaManAction> s, MegaManAction a) {
 		return 1;
 	}
 	
 	
 	@Override
+	/**
+	 * checks if a state is equal to another
+	 */
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -343,6 +375,9 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	}
 	
 	@Override
+	/**
+	 * returns the (x,y) position
+	 */
 	public String toString(){
 		return "("+currentX + "," + currentY +")";		
 
@@ -404,9 +439,15 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 //		}
 		return visualPath;
 	}
+	/**
+	 * useful for testing
+	 * @param args
+	 */
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
 		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+6+".txt"); //converts to JSON
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"
+				, "megaManAStarJumpHeight:3" });
 		MegaManVGLCUtil.printLevel(level);
 		MegaManState start = new MegaManState(level);
 		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
@@ -433,6 +474,10 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	}
 	
 	@SuppressWarnings("unused")
+	/**
+	 * used for troubleshooting
+	 * @param theState
+	 */
 	private void renderLevelAndPause(MegaManState theState) {
 		// This code renders an image of the level with the agent in it
 		try {
