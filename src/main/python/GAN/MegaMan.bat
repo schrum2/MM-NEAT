@@ -1,0 +1,3 @@
+python main.py --niter 5000 --nz 5 --json HORIZONTALONLYUniqueEnemiesMegaManAllLevelsBut7With30TileTypes.json --experiment HORIZONTALONLYUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth --tiles 30 --cuda
+python main.py --niter 5000 --nz 5 --json VERTICALONLYUPUniqueEnemiesMegaManAllLevelsBut7With30TileTypes.json --experiment VERTICALONLYUPUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth --tiles 30 --cuda
+python main.py --niter 5000 --nz 5 --json VERTICALONLYDOWNUniqueEnemiesMegaManAllLevelsBut7With30TileTypes.json --experiment VERTICALONLYDOWNUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth --tiles 30 --cuda

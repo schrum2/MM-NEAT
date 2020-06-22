@@ -259,6 +259,7 @@ public class Parameters {
 		integerOptions.add("litterSize", 10, "Number of offspring from a single source to evaluate for culling methods");
 		integerOptions.add("GANInputSize", 32, "Latent vector input size for GAN level evolution");
 		integerOptions.add("marioGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MarioGAN");
+		integerOptions.add("megaManGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MegaManGAN");
 		integerOptions.add("marioInputHeight", 3, "The height for a Mario input section");
 		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputStartY", -1, "The y coordinate offset for Mario inputs grid");
@@ -359,6 +360,7 @@ public class Parameters {
 		integerOptions.add("zeldaVGLCWaterPMapCode", 5 , "Int code for the character P in VGLC representation of Zelda");
 		integerOptions.add("cppn2ganWidth", null, "the CPPN to GAN width chunks");
 		integerOptions.add("cppn2ganHeight", null, "the CPPN to GAN height chunks");
+		integerOptions.add("megaManAStarJumpHeight", 4 , "Height of the A* agent's jump");
 		integerOptions.add("lodeRunnerNumOfLevelsInSequence", 3, "Specifies the numbr of levels in the sequence of levels being eveolved for lode runner");
 
 		// Long parameters
@@ -773,6 +775,13 @@ public class Parameters {
 		booleanOptions.add("lodeRunnerDistinguishesSolidAndDiggableGround", false, "Whether or not there are both solid and diggable ground");
 		booleanOptions.add("zeldaCPPN2GANSparseKeys", false, "For CPPN2GAN generation, place one key per locked door (may make dungeons unbeatable depending on placement)");
 		booleanOptions.add("zeldaALlowPuzzleDoorUglyHack", true, "Whether or not the raft is in the first soft-locked room");
+		booleanOptions.add("interactiveMegaManAStarPaths", false, "whether or not the A* path is shown in the level breeder");
+		booleanOptions.add("useThreeGANsMegaMan", false, "whether or not we're using both GANs");
+		booleanOptions.add("megaManAllowsSimpleAStarPath", false, "whether or not we're allowing simlpe a* path");
+		booleanOptions.add("megaManAllowsConnectivity", false, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManAllowsPlatformGun", true, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManAllowsBlockBreaker", true, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManDistinctScreenFitness", false, "whether or not we're allowing connectivity");
 		booleanOptions.add("interactiveLodeRunnerAStarPaths", false, "Shows the solution path for the levels in the level breeder when true");
 		booleanOptions.add("lodeRunnerAllowsSimpleAStarPath", true, "Adds the AStarPath as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsConnectivity", true, "Adds connectivity as a fitness function when true");
@@ -912,7 +921,12 @@ public class Parameters {
 		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
 		stringOptions.add("LodeRunnerGANModel", "LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
-		stringOptions.add("mapElitesArchiveFile", "Connected[00-10]Ground[8-12]Ladders[8-12]-elite.xml", "File name of MAPElites level we want to look at from an experiment");
+		stringOptions.add("MegaManGANModel", "HORIZONTALONLYMegaManAllLevelsBut7With7TileTypes_5_Epoch5000.pth", "File name of GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANHorizontalModel", "HORIZONTALONLYMegaManAllLevelsBut7With15TileTypes_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANVerticalModel", "VERTICALONLYMegaManAllLevelsWith7Tiles_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpModel", "VERTICALONLYUPMegaManAllLevelsBut7With15TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANDownModel", "VERTICALONLYDOWNMegaManAllLevelsBut7With15TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("mapElitesArchiveFile", "", "File name of MAPElites level we want to look at from an experiment");
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
 		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");

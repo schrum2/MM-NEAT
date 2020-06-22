@@ -65,6 +65,7 @@ $RECYCLE.BIN/
 ZeldaDungeon01_5000_10*
 ZeldaDungeon02_5000_10*
 ZeldaAllDungeons*
+/megamanlevels/
 /mariolevelsdecoratensleniency/
 /mariolevelsdistinctnsdecorate/
 /zeldadungeonswallwaterrooms/
@@ -177,3 +178,4 @@ batch/Experiments-2020-CEC-ZeldaGAN/Subject-*
 .idea/
 
 *.iml
+src/main/python/GAN/MegaManGAN/Thumbs.db
