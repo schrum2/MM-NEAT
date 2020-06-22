@@ -23,33 +23,27 @@ public class LodeRunnerTSPTest {
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 4.txt");
 		//clears level of gold and spawn but maintains a reference in this set 
 		HashSet<Point> gold = LodeRunnerState.fillGold(level);
-		System.out.println(gold.toString());
+		//System.out.println(gold.toString());
 		Point spawn = findSpawnAndRemove(level);
-		List<Point> graphList = new ArrayList<Point>();
-		graphList.add(spawn);
-//		Graph tsp = new Graph();
-//		tsp.addNode(spawn);
-		//System.out.println(tsp.root());
-
-		//List<Double> weights = new ArrayList<Double>();
+//		List<Point> graphList = new ArrayList<Point>();
+//		graphList.add(spawn);
+		Graph<Point> tsp = new Graph<Point>();
+		tsp.addNode(spawn);
 		for(Point p : gold) {
-			//tsp.addNode(p);
+			tsp.addNode(p);
 			//graphList.add(p);
 			for(Point i : gold) {
 				List<List<Integer>> levelCopy = ListUtil.deepCopyListOfLists(level);
 				if(!p.equals(i)) {
 					//tsp.addNode(p);
-					graphList.add(p);
+					//graphList.add(p);
 					levelCopy.get(p.y).set(p.x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);
 					levelCopy.get(i.y).set(i.x, LodeRunnerState.LODE_RUNNER_TILE_GOLD);
 					Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo =LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
 					visitedSize+=aStarInfo.t1.size(); //keeps track of how many visited states for every run of A*
 					double simpleAStarDistance = LodeRunnerLevelAnalysisUtil.calculateSimpleAStarLength(aStarInfo.t2);
-					
+					//tsp.addDirectedEdge(p,i, simpleAStarDistance);
 				}
-//				System.out.println(p);
-//				System.out.println(i);
-				//weights.add(simpleAStarDistance);//adds length of the A* path to the set of weights
 			}
 		}
 		//calculates number of states visited from the spawn to every other gold
@@ -60,11 +54,17 @@ public class LodeRunnerTSPTest {
 			Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo =LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
 			visitedSize+=aStarInfo.t1.size();//keeps track of how many visited states for every run of A*
 		}
-		Graph<Point> tsp = new Graph(graphList);
-		System.out.println(tsp.breadthFirstTraversal());
+		//Graph<Point> tsp = new Graph(graphList);
+		System.out.println(tsp.root());
+		//System.out.println(tsp.breadthFirstTraversal());
 		System.out.println("Number of states visited: "+visitedSize);
 	}
 
+	/**
+	 * This method finds the spawn point in the level, marks it, and removes it for artificial placement
+	 * @param level A level
+	 * @return Location of the spawn point
+	 */
 	public static Point findSpawnAndRemove(List<List<Integer>> level) {
 		Point spawn = null;
 		for(int i = 0; i < level.size(); i++) {
