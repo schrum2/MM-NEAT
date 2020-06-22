@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.interactive.loderunner;
 
+import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 //import java.util.Set;
 
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -49,8 +51,10 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	public LodeRunnerGANLevelBreederTask() throws IllegalAccessException {
 		super();
 		//adds a check box to show solution path or not, starts with them not showing 
-		JPanel effectsCheckboxes = new JPanel();
+		JPanel AStarBudget = new JPanel();
+		AStarBudget.setLayout(new BoxLayout(AStarBudget, BoxLayout.Y_AXIS));
 		JCheckBox showSolutionPath = new JCheckBox("ShowSolutionPath", Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths"));
+		showSolutionPath.setAlignmentX(Component.CENTER_ALIGNMENT);
 		showSolutionPath.setName("interactiveLodeRunnerAStarPaths");
 		showSolutionPath.getAccessibleContext();
 		showSolutionPath.addActionListener(new ActionListener() {
@@ -60,11 +64,8 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				resetButtons(true);
 			}
 		});
-		effectsCheckboxes.add(showSolutionPath);
-		top.add(effectsCheckboxes);
-		
-		JPanel AStarBudget = new JPanel();
 		JLabel AStarLabel = new JLabel("UpdateAStarBudget");
+		AStarLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		JTextField updateAStarBudget = new JTextField(10);
 		updateAStarBudget.setText(String.valueOf(Parameters.parameters.integerParameter("aStarSearchBudget")));
 		updateAStarBudget.addKeyListener(new KeyListener() {
@@ -87,9 +88,26 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 			@Override
 			public void keyTyped(KeyEvent e) {}
 		});
+		AStarBudget.add(showSolutionPath);
 		AStarBudget.add(AStarLabel);
 		AStarBudget.add(updateAStarBudget);
 		top.add(AStarBudget);
+		//adds a checkbox to display the level in IceCreamYou format
+		JPanel effectsCheckboxes = new JPanel();
+		JCheckBox iceCreamYou = new JCheckBox("PlayFormat", Parameters.parameters.booleanParameter("interactiveLodeRunnerIceCreamYouVisualization"));
+		iceCreamYou.setName("interactiveLodeRunnerIceCreamYouVisualization");
+		iceCreamYou.getAccessibleContext();
+		iceCreamYou.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("interactiveLodeRunnerIceCreamYouVisualization");
+				resetButtons(true);
+			}
+
+		});
+		effectsCheckboxes.add(iceCreamYou);
+		top.add(effectsCheckboxes);
 	}
 
 	/**
@@ -199,11 +217,10 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 			double[] inputMultipliers) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 		List<List<Integer>> level = levelListRepresentation(doubleArray);
-		BufferedImage[] images;
 		//sets the height and width for the rendered level to be placed on the button 
 		int width1 = LodeRunnerRenderUtil.RENDERED_IMAGE_WIDTH;
 		int height1 = LodeRunnerRenderUtil.RENDERED_IMAGE_HEIGHT;
-		BufferedImage image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
+		BufferedImage image = null;
 		try {
 			//if we are using the mapping with 7 tiles, other wise use 6 tiles 
 			// ACTUALLY: We can have extra unused tiles in the image array. Easier to have one method that keeps them all around
@@ -219,7 +236,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				try {
 					//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
 					//represented by red x's in the visualization 
-					actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter( "aStarSearchBudget"));
+					actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter("aStarSearchBudget"));
 				} catch(IllegalStateException e) {
 					System.out.println("A* exceeded computation budget");
 					//e.printStackTrace();
@@ -227,6 +244,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
 				mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
 				try {
+					image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
 					//visualizes the points visited with red and whit x's
 					image = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 				} catch (IOException e) {
@@ -234,8 +252,14 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 					//e.printStackTrace();
 				}
 			}
+			else if(Parameters.parameters.booleanParameter("interactiveLodeRunnerIceCreamYouVisualization")) {
+				//image = new BufferedImage(LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_WIDTH, LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_HEIGHT, BufferedImage.TYPE_INT_RGB);
+				BufferedImage[] iceCreamYouImages = LodeRunnerRenderUtil.loadIceCreamYouTiles(LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_PATH);
+				image = LodeRunnerRenderUtil.createIceCreamYouImage(level, LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_WIDTH, LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_HEIGHT, iceCreamYouImages);
+			}
 			else {
-				images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //7 different tiles to display 
+				//image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
+				BufferedImage[] images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //all tiles 
 				image = LodeRunnerRenderUtil.createBufferedImage(level,width1,height1, images);
 			}
 		} catch (IOException e) {

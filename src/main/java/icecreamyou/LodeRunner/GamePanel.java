@@ -55,7 +55,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 	/**
 	 * The level currently being played, viewed, or edited in this Panel.
 	 */
-	private Level level;
+	public Level level;
 	/**
 	 * Properties describing the next WorldNode to place in the editor.
 	 */
@@ -258,7 +258,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 		else if(mode==Mode.GAN) {
 			mode=Mode.MODE_PLAYING;
 			timer.start();
-			level = Level.cleanCopyGAN(Level.GANLevel);
+			level = new Level(LodeRunner.levelCopy);
 			repaint();
 		}
 		else if (mode == Mode.MODE_PLAYING) {
@@ -353,6 +353,19 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 		timer.stop();
 		repaint();
 	}
+	
+	/**
+	 * Reset level from instance of Level class
+	 * @param lvl
+	 */
+	public void switchLevel(Level lvl) {
+		level = new Level(lvl);
+		mode = Mode.MODE_PAUSED;
+		timer.stop();
+		repaint();
+	}
+
+	
 	/**
 	 * Create a new, blank level.
 	 */

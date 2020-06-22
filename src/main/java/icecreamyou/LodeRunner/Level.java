@@ -56,7 +56,6 @@ public class Level {
 	public Player player1;
 	public Player player2;
 	public Portal portal;
-	public static List<List<Integer>> GANLevel;
 	
 	public boolean portalKeyExists = false;
 
@@ -91,9 +90,29 @@ public class Level {
 		}
 	}
 	
+	/**
+	 * Level from list of lists format from a GAN or json
+	 * @param level
+	 */
 	public Level(List<List<Integer>> level) {
-		GANLevel = level;
-		String newLevel = LodeRunnerVGLCUtil.convertLodeRunnerJSONtoIceCreamYou(GANLevel);
+		String newLevel = LodeRunnerVGLCUtil.convertLodeRunnerJSONtoIceCreamYou(level);
+		constructLevelFromString(newLevel);
+	}
+	
+	/**
+	 * Copy level from an existing level
+	 * @param copy
+	 */
+	public Level(Level copy) {
+		String stringLevel = Layout.levelToString(copy);
+		constructLevelFromString(stringLevel);
+	}
+
+	/**
+	 * Take String read from level file and create the level from it
+	 * @param newLevel
+	 */
+	public void constructLevelFromString(String newLevel) {
 		Scanner scan = new Scanner(newLevel);
 		while(scan.hasNextLine()) {
 			String line = scan.nextLine();
@@ -210,14 +229,6 @@ public class Level {
 		if (other.name == null || other.name.equals(""))
 			return new Level();
 		return new Level(other.name);
-	}
-	
-	/**
-	 * Used for the GAN levels 
-	 */
-	public static Level cleanCopyGAN(List<List<Integer>> level) {
-		GANLevel = level;
-		return new Level(GANLevel);
 	}
 	
 	/**
@@ -402,40 +413,4 @@ public class Level {
 		
 		return null;
 	}
-	
-	/**
-	 * Enemies don't fall, so just drop them to the closest surface when they
-	 * are added to the level.
-	 */
-	private int dropToSolid(int x, int y) {
-		//changed this to work with the new scaling
-		//there is extra white space at the bottom of the level, so this just moves them to the level so they are not stuck in limbo
-		int minY = GamePanel.HEIGHT-(4*GamePanel.UNIT_HEIGHT);
-		for (Solid s : solids) {
-//			if (s.getX() == x && s.getY() == y - GamePanel.UNIT_HEIGHT)
-//				return y; // Already standing.
-//			else if (s.getX() == x)
-//				if (s.getY() > y && s.getY() < minY)
-//					minY = s.getY();
-			if(s.getX()==x && (s.getY() > y && s.getY() < minY)) {
-				minY=s.getY();
-			}
-			else
-				return y;
-		}
-		for (Ladder s : ladders) {
-//			if (s.getX() == x && s.getY() == y - GamePanel.UNIT_HEIGHT)
-//				return y; // Already standing.
-//			else if (s.getX() == x)
-//				if (s.getY() > y && s.getY() < minY)
-//					minY = s.getY();
-			if(s.getX()==x && (s.getY() > y && s.getY() < minY)){
-				minY=s.getY();
-			}
-			else
-				return y;
-		}
-		return minY - GamePanel.UNIT_HEIGHT; // Drop until standing on the highest solid below original point.
-	}
-	
 }

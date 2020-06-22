@@ -1,12 +1,11 @@
 package edu.southwestern.tasks.loderunner;
 
 import java.io.FileNotFoundException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class LodeRunnerGANLevelSequenceTask<T> extends LodeRunnerLevelSequenceTask<T> {

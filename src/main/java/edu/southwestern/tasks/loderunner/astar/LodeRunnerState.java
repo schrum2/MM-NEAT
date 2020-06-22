@@ -122,8 +122,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param args
 	 */
 	public static void main(String args[]) {
+		Parameters.initializeParameterCollections(args);
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 2.txt"); //converts to JSON
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 4.txt"); //converts to JSON
 		LodeRunnerState start = new LodeRunnerState(level);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
@@ -131,7 +132,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		try {
 			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
 			//represented by red x's in the visualization 
-			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter( "aStarSearchBudget"));
+//			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter( "aStarSearchBudget"));
+			//actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 145000); // Fails on Level 4 with only 9 treasures
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 150000); // Succeeds on Level 4 with only 9 treasures
 		} catch(Exception e) {
 			System.out.println("failed search");
 			e.printStackTrace();
@@ -140,6 +143,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
 		System.out.println(mostRecentVisited.toString());
 		System.out.println("actionSequence: " + actionSequence);
+		//System.out.println("actionSequence length: " + actionSequence.size());
 		try {
 			//visualizes the points visited with red and whit x's
 			BufferedImage visualPath = vizualizePath(level,mostRecentVisited,actionSequence,start);
@@ -166,7 +170,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param level A level 
 	 * @return Set of points 
 	 */
-	private static HashSet<Point> fillGold(List<List<Integer>> level) {
+	public static HashSet<Point> fillGold(List<List<Integer>> level) {
 		HashSet<Point> gold = new HashSet<>();
 		int tile; 
 		//loop through level adding points where it finds gold 
@@ -175,7 +179,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				tile = level.get(i).get(j);
 				//System.out.println("The tile at " + j + "," + i + " = " +tile);
 				if(tile == LODE_RUNNER_TILE_GOLD) { 
-					gold.add(new Point(j,i));//saves reference to that gold in the 
+					// FOR DEBUGGING!
+					//if(gold.size() < 9)
+						gold.add(new Point(j,i));//saves reference to that gold in the 
 					level.get(i).set(j, LODE_RUNNER_TILE_EMPTY);//removes gold and places an empty tile 
 				}
 
@@ -324,8 +330,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			
 			int beneath = tileAtPosition(newX,newY+1);
 			if(passable(newX+1, newY) && 
-					(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
-					(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) )
+					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
+					  (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
 				newX++;
 			else if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
 					beneath != LODE_RUNNER_TILE_LADDER &&
@@ -342,8 +348,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			
 			int beneath = tileAtPosition(newX,newY+1);
 			if(passable(newX-1, newY) && 
-					(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
-					(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) )
+					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
+					  (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
 				newX--;
 			else if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
 					beneath != LODE_RUNNER_TILE_LADDER &&

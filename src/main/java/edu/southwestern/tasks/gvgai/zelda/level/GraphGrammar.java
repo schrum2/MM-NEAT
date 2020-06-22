@@ -67,7 +67,7 @@ public class GraphGrammar<T extends Grammar> {
 	 */
 	public void addNodeToStart(T data) {
 		Graph<T>.Node newNode = graph.addNode(data);
-		graph.addEdge(start, newNode);
+		graph.addUndirectedEdge(start, newNode);
 		nodesToStart.add(newNode);
 		//this.addToStart = newNode;
 	}
@@ -78,9 +78,9 @@ public class GraphGrammar<T extends Grammar> {
 	 */
 	public void addNodeBetween(T data) {
 		Graph<T>.Node newNode = graph.addNode(data);
-		graph.addEdge(start, newNode);
+		graph.addUndirectedEdge(start, newNode);
 		if(end != null)
-			graph.addEdge(newNode, end);
+			graph.addUndirectedEdge(newNode, end);
 		nodesBetween.add(newNode);
 		//this.addNodeBetween = newNode;
 	}
@@ -164,7 +164,7 @@ public class GraphGrammar<T extends Grammar> {
 			Graph<T>.Node n = queue.poll();
 			if(!visited.contains(n))
 				r += n.getID() + " [label=\"" + n.getData().getLevelType() + "\"]\n";
-			queue.addAll(n.adjacencies().stream().filter(a -> !visited.contains(a)).collect(Collectors.toList()));
+			queue.addAll(n.adjacentNodes().stream().filter(a -> !visited.contains(a)).collect(Collectors.toList()));
 			visited.add(n);
 			
 		}
@@ -175,7 +175,7 @@ public class GraphGrammar<T extends Grammar> {
 		while(!queue.isEmpty()) {
 			Graph<T>.Node node = queue.poll();
 			v.add(node);
-			for(Graph<T>.Node a : node.adjacencies()) {
+			for(Graph<T>.Node a : node.adjacentNodes()) {
 				if(!v.contains(a)) {
 					r += node.getID() + " -- " + a.getID() +"\n";
 					queue.add(a);				
@@ -230,7 +230,7 @@ public class GraphGrammar<T extends Grammar> {
 		
 		Graph<T>.Node from = nodes.get(fromName);
 		Graph<T>.Node to = nodes.get(toName);
-		graph.addEdge(from, to);
+		graph.addUndirectedEdge(from, to);
 	}
 
 	/**

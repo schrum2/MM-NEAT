@@ -2,14 +2,12 @@ package edu.southwestern.tasks.gvgai.zelda.dungeon;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.level.GraphRuleManager;
 import edu.southwestern.tasks.gvgai.zelda.level.PhenotypeLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar;
 import edu.southwestern.tasks.gvgai.zelda.level.graph.ZeldaDungeonGraphBackBone;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
