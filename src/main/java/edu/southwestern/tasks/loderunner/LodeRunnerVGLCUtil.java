@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
-import edu.southwestern.util.datastructures.ArrayUtil;
 import gvgai.tools.IO;
 import icecreamyou.LodeRunner.LodeRunner;
 
