@@ -475,11 +475,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 		return null;
 	}
 
-	@Override
-	public int numCPPNInputs() {
-		// TODO Auto-generated method stub
-		return this.sensorLabels().length;
-	}
+	
 	private void resetLatentVectorAndOutputs() {
 		int latentVectorLength = ganProcessHorizontal.getLatentVectorSize();
 		outputLabels = new String[latentVectorLength + numberOfNonLatentVariables()];
@@ -490,15 +486,27 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 			outputLabels[i] = "LV"+(i-numberOfNonLatentVariables());
 		}
 	}
-	private int numberOfNonLatentVariables() {
+	public static int numberOfNonLatentVariables() {
 		return NUM_NON_LATENT_INPUTS;
+	}
+	@Override
+	public int numCPPNInputs() {
+		// TODO Auto-generated method stub
+		return this.sensorLabels().length;
+	}
+	
+	public static int staticNumCPPNInputs() {
+		return SENSOR_LABELS.length;
 	}
 	@Override
 	public int numCPPNOutputs() {
 		// TODO Auto-generated method stub
 		return this.outputLabels().length;
 	}
-	
+	public static int staticNumCPPNOutputs() {
+		// TODO Auto-generated method stub
+		return NUM_NON_LATENT_INPUTS+GANProcess.latentVectorLength();
+	}
 	
 	
 	public String getGANModelDirectory() {

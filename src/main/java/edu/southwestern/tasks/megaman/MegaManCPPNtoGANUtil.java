@@ -11,6 +11,9 @@ import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class MegaManCPPNtoGANUtil {
+	public static final int XPREF  = 0;
+	public static final int YPREF = 1;
+	public static final int BIASPREF = 2;
 //	public static GANProcess ganProcessHorizontal = null;
 //	public static GANProcess ganProcessUp = null;
 //	public static GANProcess ganProcessDown = null;
@@ -26,9 +29,9 @@ public class MegaManCPPNtoGANUtil {
 	public static List<List<Integer>> cppnToMegaManLevel(GANProcess ganProcessHorizontal, GANProcess ganProcessDown, GANProcess ganProcessUp, Network cppn, int chunks, double[] inputMultipliers){
 		int x = 0;
 		int y = 0;
-		int xpref  = 0;
-		int ypref = 1;
-		int biaspref = 2;
+//		for(double k :inputMultipliers) {
+//			System.out.println(k);
+//		}
 		List<List<List<Integer>>> levelInListHorizontal;
 		List<List<List<Integer>>> levelInListUp;
 		List<List<List<Integer>>> levelInListDown;
@@ -37,11 +40,13 @@ public class MegaManCPPNtoGANUtil {
 //		levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVector);
 //		levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVector);
 		Direction d;
-		System.out.println(inputMultipliers.length);
+		//System.out.println(MegaManCPPNtoGANLevelBreederTask.staticNumCPPNOutputs());
 		double[] startfull = cppn.process(new double[] {
-				inputMultipliers[xpref] * x/chunks,
-				inputMultipliers[ypref]*y/chunks,
-				inputMultipliers[biaspref] * 1.0});
+				inputMultipliers[XPREF] * x/chunks,
+				inputMultipliers[YPREF]*y/chunks,
+				inputMultipliers[BIASPREF] * 1.0});
+		//System.out.println(startfull.length);
+
 		double[] startlatentVector = new double[startfull.length-3];
 		for(int i = 3;i<startfull.length;i++) {
 			startlatentVector[i-3]=startfull[i];
@@ -80,7 +85,7 @@ public class MegaManCPPNtoGANUtil {
 		Point previousMove = new Point(0,0);
 		for(int level = 1; level < chunks; level++) {
 			
-			double[] full = cppn.process(new double[] {inputMultipliers[xpref] * x/chunks, inputMultipliers[ypref]*y/chunks,  inputMultipliers[biaspref] * 1.0});
+			double[] full = cppn.process(new double[] {inputMultipliers[XPREF] * x/chunks, inputMultipliers[YPREF]*y/chunks,  inputMultipliers[BIASPREF] * 1.0});
 			double[] latentVector = new double[full.length-3];
 			for(int i = 3;i<full.length;i++) {
 				latentVector[i-3]=full[i];
