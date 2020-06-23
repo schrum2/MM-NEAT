@@ -29,7 +29,7 @@ public class MegaManConvertMMLVToJSON {
 		for(int i = 13;i<=13;i++) {
 			List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
 			MegaManVGLCUtil.printLevel(level);
-			MegaManVGLCUtil.convertMegaManLevelToMMLV(level, i+"000");
+			MegaManVGLCUtil.convertMegaManLevelToMMLV(level, i+"000", MegaManVGLCUtil.MEGAMAN_MMLV_PATH);
 		}
 	}
 	/**

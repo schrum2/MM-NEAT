@@ -17,7 +17,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import com.google.common.io.Files;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -139,31 +138,25 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 							String mmlvPath = scan.nextLine();
 							System.out.println(mmlvPath);
 							String mmlvFileName = JOptionPane.showInputDialog(null, "What do you want to name your level?");
-							System.out.println("pane showed up");
-							File mmlvFileFromEvolution = new File(mmlvPath+mmlvFileName+".mmlv"); //creates file inside user's MegaManLevelPath
+							//System.out.println("pane showed up");
+							//File mmlvFileFromEvolution = new File(mmlvPath+mmlvFileName+".mmlv"); //creates file inside user's MegaManLevelPath
 							System.out.println(mmlvPath+mmlvFileName+".mmlv");
+							@SuppressWarnings("unused")
 							File mmlvFile; //creates file inside MMNEAT
 							scan.close();
 							//ArrayList<Double> phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
 							//double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 							//List<List<Integer>> level = levelListRepresentation(doubleArray);
 							//int levelNumber = 2020;
-							mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, mmlvFileName);
-							try {
-								Files.copy(mmlvFile, mmlvFileFromEvolution); //copies over
-								System.out.println("File vopied");
-								mmlvFile.delete(); //deletes MMNEAT file
-								JFrame frame = new JFrame("");
-								frame.setLocationRelativeTo(null);
-								frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-								frame.setVisible(true);
-								JOptionPane.showMessageDialog(frame, "Level saved");
-
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							//System.out.println(mmlvPath);
+							mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, mmlvFileName, mmlvPath);
+							//Files.copy(mmlvFile, mmlvFileFromEvolution); //copies over
+							//System.out.println("File vopied");
+							//mmlvFile.delete(); //deletes MMNEAT file
+							JFrame frame = new JFrame("");
+							frame.setLocationRelativeTo(null);
+							frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+							frame.setVisible(true);
+							JOptionPane.showMessageDialog(frame, "Level saved to: "+mmlvPath);
 							
 							
 						} catch (FileNotFoundException e) {

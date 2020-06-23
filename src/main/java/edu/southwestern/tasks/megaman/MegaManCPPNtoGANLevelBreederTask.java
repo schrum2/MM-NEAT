@@ -9,14 +9,17 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Hashtable;
-
+import java.util.List;
+import java.util.Scanner;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -24,14 +27,17 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
+import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
+import edu.southwestern.util.PythonUtil;
 
 public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWEANN>{
-	public static final String[] SENSOR_LABELS = new String[] {"x-coordinate", "y-coordinate", "radius", "bias"};
+	public static final String[] SENSOR_LABELS = new String[] {"x-coordinate", "y-coordinate", "bias"};
 
 	
 	
@@ -39,7 +45,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	public static final int VIEW_BUTTON_INDEX = -19; 
 	public static final int GANS_BUTTON_INDEX = -18; 
 	public static final int PLAY_BUTTON_INDEX = -20; 
-
+	public static final int SAVE_BUTTON_INDEX = -21; 
 	
 	public static final int UP_PREFERENCE = 0; 
 	public static final int DOWN_PREFERENCE = 1; 
@@ -59,7 +65,19 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 
 	public MegaManCPPNtoGANLevelBreederTask() throws IllegalAccessException {
 		super();
+		GANProcess.terminateGANProcess();
+		//GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
+		PythonUtil.setPythonProgram();
+
 		// TODO Auto-generated constructor stub
+		ganProcessHorizontal = MegaManGANUtil.initializeGAN("MegaManGANHorizontalModel");
+		ganProcessDown= MegaManGANUtil.initializeGAN("MegaManGANDownModel");
+		ganProcessUp = MegaManGANUtil.initializeGAN("MegaManGANUpModel");
+		//System.out.println(ganProcessHorizontal);
+//		ganProcessHorizontal.start();
+		MegaManGANUtil.startGAN(ganProcessHorizontal);
+		MegaManGANUtil.startGAN(ganProcessDown);
+		MegaManGANUtil.startGAN(ganProcessUp);
 		JPanel bottom = new JPanel();
 		bottom.setLayout(new BoxLayout(bottom, BoxLayout.Y_AXIS));
 
@@ -82,7 +100,23 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 		
 		bottom.add(launchMegaManMaker);
 	
+		JButton save = new JButton("SaveMMLV");
+		save.setAlignmentX(Component.CENTER_ALIGNMENT);
+		// Name is first available numeric label after the input disablers
+		save.setName("" + SAVE_BUTTON_INDEX);
+		save.setToolTipText("Save a selected level.");
+		save.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				save(null, 0);
+			}
+		});
 		
+		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
+			save.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
+		}
+		
+		bottom.add(save);
 		
 		//frame.add(bottom);
 		//topper.add(bottom);
@@ -94,7 +128,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 		view.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				viewLevel();
+				viewLevel(scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype());
 			}
 
 			
@@ -145,7 +179,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 //						int oldLength = oldValue * GANProcess.latentVectorLength();
 //						int newLength = newValue * GANProcess.latentVectorLength();
 
-						resizeGenotypeVectors();
+						resetLatentVectorAndOutputs();
 						reset();
 
 						// reset buttons
@@ -309,74 +343,88 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 			fileLoadButton2.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
 		}
 		threeGANs.add(fileLoadButton2);
-		
+		top.add(threeGANs);
 		top.add(effectsCheckboxes);
-		
+		resetLatentVectorAndOutputs();
+
 		initializationComplete = true;
 	}
 	private void openGANModelPanel(String modelName) {
 		// TODO Auto-generated method stub
 		
 	}
+
 	
-	private void resizeGenotypeVectors() {
+	
+	private void viewLevel(TWEANN phenotype) {
 		// TODO Auto-generated method stub
-		
-	}
-	
-	
-	private void viewLevel() {
-		// TODO Auto-generated method stub
+		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
+
+		if(selectedItems.size() != 1) {
+			JOptionPane.showMessageDialog(null, "Select exactly one level to view.");
+			return; // Nothing to explore
+		}
+		try {
+			if(selectedItems.size() != 1) {
+				JOptionPane.showMessageDialog(null, "Select exactly one level to save.");
+				return; // Nothing to explore
+			}
+			//List<List<List<Integer>>> levelInList = MegaManGANUtil.getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), doubleArray);
+//			int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
+//			int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
+			BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
+			MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} //puts the final rendered level into a buffered image
+		//int levelNumber = 2020;
+		//mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, mmlvFileName);
 		
 	}
 	
 	private void saveLevel() {
-//		File mmlvFilePath = new File("MegaManMakerLevelPath.txt"); //file containing the path
+		File mmlvFilePath = new File("MegaManMakerLevelPath.txt"); //file containing the path
 
-//		
-//		Scanner scan;
-//		//When the button is pushed, ask for the name input
-//		try {
-//			scan = new Scanner(mmlvFilePath);
-//			//scan.next();
-//			String mmlvPath = scan.nextLine();
-//			String mmlvFileName = JOptionPane.showInputDialog(null, "What do you want to name your level?");
-//			File mmlvFileFromEvolution = new File(mmlvPath+mmlvFileName+".mmlv"); //creates file inside user's MegaManLevelPath
-//			File mmlvFile; //creates file inside MMNEAT
-//			scan.close();
-//			if(selectedItems.size() != 1) {
-//				JOptionPane.showMessageDialog(null, "Select exactly one level to save.");
-//				return; // Nothing to explore
-//			}
-//
-//			ArrayList<Double> phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
+		
+		Scanner scan;
+		//When the button is pushed, ask for the name input
+		try {
+			scan = new Scanner(mmlvFilePath);
+			//scan.next();
+			String mmlvPath = scan.nextLine();
+			String mmlvFileName = JOptionPane.showInputDialog(null, "What do you want to name your level?");
+			//File mmlvFileFromEvolution = new File(mmlvPath+mmlvFileName+".mmlv"); //creates file inside user's MegaManLevelPath
+			@SuppressWarnings("unused")
+			File mmlvFile; //creates file inside MMNEAT
+			scan.close();
+			if(selectedItems.size() != 1) {
+				JOptionPane.showMessageDialog(null, "Select exactly one level to save.");
+				return; // Nothing to explore
+			}
+
+			TWEANN phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
+			List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
+
 //			double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 //			List<List<Integer>> level = levelListRepresentation(doubleArray);
-//			//int levelNumber = 2020;
-//			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, mmlvFileName);
-//			try {
-//				Files.copy(mmlvFile, mmlvFileFromEvolution); //copies over
-//				mmlvFile.delete(); //deletes MMNEAT file
-//				JOptionPane.showMessageDialog(frame, "Level saved");
-//
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			//System.out.println(mmlvPath);
-//			
-//			
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			//e.printStackTrace();
-//			String errorMessage = "You need to create a local text file in the MMNEAT directory called \n MegaManMakerLevelPath.txt which contains the path to where MegaManMaker stores levels on your device. \n It will likely look like this: C:\\Users\\[Insert User Name]\\AppData\\Local\\MegaMaker\\Levels\\";
-//			JOptionPane.showMessageDialog(frame, errorMessage);
-//		}		
+			//int levelNumber = 2020;
+			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, mmlvFileName, mmlvPath);
+			//Files.copy(mmlvFile, mmlvFileFromEvolution); //copies over
+			//mmlvFile.delete(); //deletes MMNEAT file
+			JOptionPane.showMessageDialog(frame, "Level saved to: "+mmlvPath);
+			
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			String errorMessage = "You need to create a local text file in the MMNEAT directory called \n MegaManMakerLevelPath.txt which contains the path to where MegaManMaker stores levels on your device. \n It will likely look like this: C:\\Users\\[Insert User Name]\\AppData\\Local\\MegaMaker\\Levels\\";
+			JOptionPane.showMessageDialog(frame, errorMessage);
+		}		
 	}
 	
 	private void playLevel() {
-		// TODO Auto-generated method stub
-		
+		MegaManGANLevelBreederTask.launchMegaManStatic(frame);
 	}
 	@Override
 	public String[] sensorLabels() {
@@ -404,8 +452,9 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	@Override
 	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		// TODO Auto-generated method stub
-//		List<List<Integer>> level = cppnToMegaManLevel(phenotype, width, height, inputMultipliers);
-		return null;
+		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
+		return MegaManGANLevelBreederTask.getStaticButtonImage(null, width, height, level);
+
 	}
 
 	@Override
@@ -432,7 +481,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 		return this.sensorLabels().length;
 	}
 	private void resetLatentVectorAndOutputs() {
-		int latentVectorLength = GANProcess.latentVectorLength();
+		int latentVectorLength = ganProcessHorizontal.getLatentVectorSize();
 		outputLabels = new String[latentVectorLength + numberOfNonLatentVariables()];
 		outputLabels[UP_PREFERENCE] = "Up Presence";
 		outputLabels[DOWN_PREFERENCE] = "Down Preference";
@@ -455,5 +504,29 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	public String getGANModelDirectory() {
 		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"MegaManGAN";
 	}
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		try {
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","useThreeGANsMegaMan:true","showKLOptions:false","trials:1","mu:16", "base:megaManGAN",
+					"MegaManGANUpModel:VERTICALONLYUPUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", 
+					"MegaManGANDownModel:VERTICALONLYDOWNUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", 
+					"MegaManGANHorizontalModel:HORIZONTALONLYUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth",
+					"maxGens:500","io:false","netio:false","GANInputSize:5","mating:true","fs:false",
+					"task:edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelBreederTask","cleanOldNetworks:false", 
+					"allowMultipleFunctions:true","ftype:0","watch:true","netChangeActivationRate:0.3","cleanFrequency:-1",
+					"simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false",
+					"ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000",
+					"imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true",
+					"includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true",
+					"includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+		} catch (FileNotFoundException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		
+		
+//		stringOptions.add("MegaManGANHorizontalModel", "HORIZONTALONLYUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
+//		stringOptions.add("MegaManGANVerticalModel", "VERTICALONLYMegaManAllLevelsWith7Tiles_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+//		stringOptions.add("MegaManGANUpModel", "VERTICALONLYUPUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+//		stringOptions.add("MegaManGANDownModel", "VERTICALONLYDOWNUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
 
+	}
 }

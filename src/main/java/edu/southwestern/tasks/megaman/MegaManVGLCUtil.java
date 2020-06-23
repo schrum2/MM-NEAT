@@ -402,7 +402,7 @@ public class MegaManVGLCUtil {
 
 		return screen;
 	}
-	public static File convertMegaManLevelToMMLV(List<List<Integer>> level, String levelName) {
+	public static File convertMegaManLevelToMMLV(List<List<Integer>> level, String levelName, String path) {
 		//int enemyCount = 0;
 
 		// TODO Auto-generated method stub
@@ -413,7 +413,7 @@ public class MegaManVGLCUtil {
 		File levelFile = null;
 		try {
 
-		levelFile = new File(MEGAMAN_MMLV_PATH+levelName+".mmlv");
+		levelFile = new File(path+levelName+".mmlv");
 		
 		if(!levelFile.exists()) {
 			levelFile.createNewFile();

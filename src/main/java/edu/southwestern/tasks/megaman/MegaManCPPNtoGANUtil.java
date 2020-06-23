@@ -11,24 +11,19 @@ import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class MegaManCPPNtoGANUtil {
-	public static GANProcess ganProcessHorizontal = null;
-	public static GANProcess ganProcessVertical = null;
-	public static GANProcess ganProcessUp = null;
-	public static GANProcess ganProcessDown = null;
-	MegaManCPPNtoGANUtil(){
-		ganProcessHorizontal = MegaManGANUtil.initializeGAN("MegaManGANHorizontalModel");
-		ganProcessDown= MegaManGANUtil.initializeGAN("MegaManGANDownModel");
-		ganProcessUp = MegaManGANUtil.initializeGAN("MegaManGANUpModel");
-//		ganProcessDown = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANDownModel"), 
-//		Parameters.parameters.integerParameter("GANInputSize"), 
-//		/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
-//		GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
-		MegaManGANUtil.startGAN(ganProcessUp);
-		MegaManGANUtil.startGAN(ganProcessVertical);
-		MegaManGANUtil.startGAN(ganProcessHorizontal);
-	}
+//	public static GANProcess ganProcessHorizontal = null;
+//	public static GANProcess ganProcessUp = null;
+//	public static GANProcess ganProcessDown = null;
+//	MegaManCPPNtoGANUtil(){
+//		ganProcessHorizontal = MegaManGANUtil.initializeGAN("MegaManGANHorizontalModel");
+//		ganProcessDown= MegaManGANUtil.initializeGAN("MegaManGANDownModel");
+//		ganProcessUp = MegaManGANUtil.initializeGAN("MegaManGANUpModel");
+//		MegaManGANUtil.startGAN(ganProcessUp);
+//		MegaManGANUtil.startGAN(ganProcessDown);
+//		MegaManGANUtil.startGAN(ganProcessHorizontal);
+	//}
 	public enum Direction {UP, DOWN, HORIZONTAL};
-	public static List<List<Integer>> cppnToMegaManLevel(Network cppn, int chunks, double[] inputMultipliers){
+	public static List<List<Integer>> cppnToMegaManLevel(GANProcess ganProcessHorizontal, GANProcess ganProcessDown, GANProcess ganProcessUp, Network cppn, int chunks, double[] inputMultipliers){
 		int x = 0;
 		int y = 0;
 		int xpref  = 0;
@@ -42,7 +37,11 @@ public class MegaManCPPNtoGANUtil {
 //		levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVector);
 //		levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVector);
 		Direction d;
-		double[] startfull = cppn.process(new double[] {inputMultipliers[xpref] * x/chunks, inputMultipliers[ypref]*y/chunks,  inputMultipliers[biaspref] * 1.0});
+		System.out.println(inputMultipliers.length);
+		double[] startfull = cppn.process(new double[] {
+				inputMultipliers[xpref] * x/chunks,
+				inputMultipliers[ypref]*y/chunks,
+				inputMultipliers[biaspref] * 1.0});
 		double[] startlatentVector = new double[startfull.length-3];
 		for(int i = 3;i<startfull.length;i++) {
 			startlatentVector[i-3]=startfull[i];
@@ -79,7 +78,7 @@ public class MegaManCPPNtoGANUtil {
 			nullLine.add(MegaManState.MEGA_MAN_TILE_NULL);
 		}
 		Point previousMove = new Point(0,0);
-		for(int level = 1; level <= chunks; level++) {
+		for(int level = 1; level < chunks; level++) {
 			
 			double[] full = cppn.process(new double[] {inputMultipliers[xpref] * x/chunks, inputMultipliers[ypref]*y/chunks,  inputMultipliers[biaspref] * 1.0});
 			double[] latentVector = new double[full.length-3];
@@ -106,7 +105,7 @@ public class MegaManCPPNtoGANUtil {
 				y++;
 				levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVector);
 				if(level==chunks-1) {
-					MegaManGANUtil.placeOrb(levelInListUp.get(level));
+					MegaManGANUtil.placeOrb(levelInListUp.get(0));
 				}
 				needBackup=false;
 				MegaManGANUtil.placeUp(levelInListUp, previousMove, oneLevel, level);
@@ -119,7 +118,7 @@ public class MegaManCPPNtoGANUtil {
 				y--;
 				levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVector);
 				if(level==chunks-1) {
-					MegaManGANUtil.placeOrb(levelInListDown.get(level));
+					MegaManGANUtil.placeOrb(levelInListDown.get(0));
 				}
 				needBackup=false;
 				MegaManGANUtil.placeDown(levelInListDown, previousMove, oneLevel, level);
@@ -131,7 +130,7 @@ public class MegaManCPPNtoGANUtil {
 				x++;
 				levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, latentVector);
 				if(level==chunks-1) {
-					MegaManGANUtil.placeOrb(levelInListHorizontal.get(level));
+					MegaManGANUtil.placeOrb(levelInListHorizontal.get(0));
 				}
 				needBackup=false;
 				
@@ -148,7 +147,7 @@ public class MegaManCPPNtoGANUtil {
 					y++;
 					levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, startlatentVector);
 					if(level==chunks-1) {
-						MegaManGANUtil.placeOrb(levelInListUp.get(level));
+						MegaManGANUtil.placeOrb(levelInListUp.get(0));
 					}
 					MegaManGANUtil.placeUp(levelInListUp, previousMove, oneLevel, level);
 
@@ -159,7 +158,7 @@ public class MegaManCPPNtoGANUtil {
 					y--;
 					levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector);
 					if(level==chunks-1) {
-						MegaManGANUtil.placeOrb(levelInListDown.get(level));
+						MegaManGANUtil.placeOrb(levelInListDown.get(0));
 					}
 					MegaManGANUtil.placeDown(levelInListDown, previousMove, oneLevel, level);
 					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
@@ -169,7 +168,7 @@ public class MegaManCPPNtoGANUtil {
 					x++;
 					levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector);
 					if(level==chunks-1) {
-						MegaManGANUtil.placeOrb(levelInListHorizontal.get(level));
+						MegaManGANUtil.placeOrb(levelInListHorizontal.get(0));
 					}
 					MegaManGANUtil.placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, level);
 					previousMove=new Point((int) previousMove.getX()+MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
@@ -177,6 +176,11 @@ public class MegaManCPPNtoGANUtil {
 
 			}
 		}
+		
+		
+//		ganProcessUp.terminate();
+//		ganProcessDown.terminate();
+//		ganProcessHorizontal.terminate();
 		return oneLevel;
 	}
 }
