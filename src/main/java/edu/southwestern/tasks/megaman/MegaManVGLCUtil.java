@@ -37,7 +37,10 @@ public class MegaManVGLCUtil {
 	public static List<List<List<Integer>>> json = new ArrayList<>();
 	public static List<List<List<Integer>>> jsonUp = new ArrayList<>();
 	public static List<List<List<Integer>>> jsonDown = new ArrayList<>();
-	public static List<List<Object>> conditionalJson = new ArrayList<>();
+	public static List<List<List<Integer>>> conditionalJson = new ArrayList<>();
+	public static List<List<Integer>> conditionalJsonID = new ArrayList<>();
+	public static HashSet<Point> placed = new HashSet<>();
+
 //	public static List<List<List<List<Integer>>>> jsonsetU = new ArrayList<>();
 //	public static List<List<List<List<Integer>>>> jsonsetD = new ArrayList<>();
 //	public static List<List<List<List<Integer>>>> jsonsetUR = new ArrayList<>();
@@ -147,13 +150,11 @@ public class MegaManVGLCUtil {
 //					printLevel(screen);
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
 						json.add(screen);
-						List<Object> temp = new ArrayList<>();
-						temp.add(HORIZONTALID);
-						temp.add(screen);
-						conditionalJson.add(temp);
+						conditionalJsonID.add(HORIZONTALID);
+						conditionalJson.add(screen);
 						
-						System.out.println(conditionalJson);
-						MiscUtil.waitForReadStringAndEnterKeyPress();
+//						System.out.println(conditionalJson);
+//						MiscUtil.waitForReadStringAndEnterKeyPress();
 
 				}else { //find new direction
 //					x1--;
@@ -174,7 +175,8 @@ public class MegaManVGLCUtil {
 					screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
 					else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
 					jsonUp.add(screen);
-					
+					conditionalJsonID.add(UPID);
+					conditionalJson.add(screen);
 //					System.out.println("UP");
 //					printLevel(screen);
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -193,6 +195,8 @@ public class MegaManVGLCUtil {
 						screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
 					else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
 					jsonDown.add(screen);
+					conditionalJsonID.add(DOWNID);
+					conditionalJson.add(screen);
 //					System.out.println("DOWN");
 //					printLevel(screen);
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -202,11 +206,109 @@ public class MegaManVGLCUtil {
 
 				}
 			}
+			findCorners(level, rightScreenSide, y1, x2);
 			
 			
 		}
 	}
-	
+	/**
+	 *  if can go up or left then lower left corner, etc.
+	 * @param level
+	 * @param rightScreenSide
+	 * @param y1
+	 */
+	private static void findCorners(List<List<Integer>> level, int rightScreenSide, int y1, int x2) {
+		boolean left = canGoLeft(level,rightScreenSide,y1, x2);
+		boolean right = canGoRight(level,rightScreenSide,y1);
+		boolean down = canGoDown(level,rightScreenSide,y1);
+		boolean up = canGoUp(level,rightScreenSide,y1);
+		
+		List<List<Integer>> screen;
+		
+		if(up&&left&&!right&&!down&&!placed.contains(new Point(rightScreenSide-x2,y1))) { //lower right
+//			if(rightScreenSide-x2>=0)
+				screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
+			placed.add(new Point(rightScreenSide-x2, y1));
+//			else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
+//			jsonDown.add(screen);
+			conditionalJsonID.add(BOTTOMRIGHTID);
+			System.out.println("lower right: ");
+			printLevel(screen);
+			MiscUtil.waitForReadStringAndEnterKeyPress();
+			conditionalJson.add(screen);
+		}else if(up&&right&&!left&&!down&&!placed.contains(new Point(rightScreenSide-x2,y1))) { //lower left
+			if(rightScreenSide-x2>=0) {
+				screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
+				placed.add(new Point(rightScreenSide-x2, y1));
+
+			}
+			else {
+				screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
+				//placed.add(new Point(rightScreenSide-x2+1, y1));
+
+			}
+			conditionalJsonID.add(BOTTOMLEFTID);
+			System.out.println("lower left: ");
+			printLevel(screen);
+
+
+			MiscUtil.waitForReadStringAndEnterKeyPress();
+
+			conditionalJson.add(screen);
+		}else if(down&&right&&!up&&!left&&!placed.contains(new Point(rightScreenSide-x2,y1))) { //upper left
+			if(rightScreenSide-x2>=0) {
+				screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
+				placed.add(new Point(rightScreenSide-x2, y1));
+
+			}
+			else {
+				screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
+				//placed.add(new Point(rightScreenSide-x2+1, y1));
+
+			}
+			conditionalJsonID.add(UPPERLEFTID);
+			System.out.println("upper left: ");
+			printLevel(screen);
+
+			MiscUtil.waitForReadStringAndEnterKeyPress();
+
+			conditionalJson.add(screen);
+		}else if(down&&left&&!right&&!up&&!placed.contains(new Point(rightScreenSide-x2,y1))) { //upper right
+			screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
+			placed.add(new Point(rightScreenSide-x2, y1));
+
+			conditionalJsonID.add(UPPERRIGHTID);
+			System.out.println("upper right: ");
+			printLevel(screen);
+
+			MiscUtil.waitForReadStringAndEnterKeyPress();
+
+			conditionalJson.add(screen);
+		}
+		
+		
+	}
+
+	private static boolean canGoLeft(List<List<Integer>> level, int rightScreenSide, int y1, int x2) {
+		if(rightScreenSide-x2-1>0&&level.get(y1).get(rightScreenSide-x2-1)!=9) return true;
+		
+		return false;
+	}
+	private static boolean canGoRight(List<List<Integer>> level, int rightScreenSide, int y1) {
+		if(rightScreenSide+1<level.get(0).size()&&level.get(y1).get(rightScreenSide+1)!=9) return true;
+		
+		return false;
+	}
+	private static boolean canGoDown(List<List<Integer>> level, int rightScreenSide, int y1) {
+		if(y1+14<level.size()&&level.get(y1+14).get(rightScreenSide)!=9) return true;
+		
+		return false;
+	}
+	private static boolean canGoUp(List<List<Integer>> level, int rightScreenSide, int y1) {
+		 if(y1-1>=0&&level.get(y1-1).get(rightScreenSide)!=9) return true;
+		
+		return false;
+	}
 	private static Direction findNewDirection(List<List<Integer>> level, int xcoord, int ycoord, Direction previous) { //UPPER RIGHT PART OF SCREEN BRUH
 		Direction d = null;
 //		System.out.println(level.get(ycoord-1).get(xcoord-1));
