@@ -11,6 +11,7 @@ import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.Graph.Node;
 import edu.southwestern.util.datastructures.ListUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
 public class LodeRunnerTSPUtil {
@@ -34,7 +35,7 @@ public class LodeRunnerTSPUtil {
 		for(Graph<Point>.Node p : tsp.getNodes()) {
 			for(Graph<Point>.Node i : tsp.getNodes()) {
 				List<List<Integer>> levelCopy = ListUtil.deepCopyListOfLists(level);
-				//if the nodes arent equal and makes the spawn point not be a destination, only a source
+				//if the nodes aren't equal and makes the spawn point not be a destination, only a source
 				if(!p.equals(i) && !i.getData().equals(spawn)) {
 					levelCopy.get(p.getData().y).set(p.getData().x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);
 					levelCopy.get(i.getData().y).set(i.getData().x, LodeRunnerState.LODE_RUNNER_TILE_GOLD);
@@ -59,7 +60,14 @@ public class LodeRunnerTSPUtil {
 //		System.out.println("Number of states visited: "+visitedSize);
 		
 		//solving the TSP problem from the graph 
-		
+		System.out.println(tsp.root().adjacencies());
+		List<Pair<Graph<Point>.Node, Double>> solutionPath = new ArrayList<>(); //set of points
+		//loops through all adjacent nodes, adds the node with the lowest weight 
+		for(Pair<Graph<Point>.Node, Double> n: tsp.root().adjacencies()) {
+			for(Pair<Graph<Point>.Node, Double> p: tsp.root().adjacencies()) {
+				
+			}
+		}
 	}
 
 	/**
