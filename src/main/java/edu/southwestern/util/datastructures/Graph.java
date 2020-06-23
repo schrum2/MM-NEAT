@@ -55,6 +55,8 @@ public class Graph<T>{
 	public Node addNode(T data) {
 		Node n = new Node(data);
 		nodes.add(n);
+		if(root == null)
+			root = n;
 		return n;
 	}
 	

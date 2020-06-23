@@ -9,55 +9,57 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.util.datastructures.Graph;
+import edu.southwestern.util.datastructures.Graph.Node;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Triple;
 
-public class LodeRunnerTSPTest {
+public class LodeRunnerTSPUtil {
 
 	//we need to accumulate the size of the visited states 
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(args);
-		int visitedSize = 0;
+		//int visitedSize = 0;
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 4.txt");
 		//clears level of gold and spawn but maintains a reference in this set 
 		HashSet<Point> gold = LodeRunnerState.fillGold(level);
 		//System.out.println(gold.toString());
 		Point spawn = findSpawnAndRemove(level);
-//		List<Point> graphList = new ArrayList<Point>();
-//		graphList.add(spawn);
 		Graph<Point> tsp = new Graph<Point>();
 		tsp.addNode(spawn);
 		for(Point p : gold) {
 			tsp.addNode(p);
-			//graphList.add(p);
-			for(Point i : gold) {
+		}
+		for(Graph<Point>.Node p : tsp.getNodes()) {
+			for(Graph<Point>.Node i : tsp.getNodes()) {
 				List<List<Integer>> levelCopy = ListUtil.deepCopyListOfLists(level);
-				if(!p.equals(i)) {
-					//tsp.addNode(p);
-					//graphList.add(p);
-					levelCopy.get(p.y).set(p.x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);
-					levelCopy.get(i.y).set(i.x, LodeRunnerState.LODE_RUNNER_TILE_GOLD);
+				//if the nodes arent equal and makes the spawn point not be a destination, only a source
+				if(!p.equals(i) && !i.getData().equals(spawn)) {
+					levelCopy.get(p.getData().y).set(p.getData().x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);
+					levelCopy.get(i.getData().y).set(i.getData().x, LodeRunnerState.LODE_RUNNER_TILE_GOLD);
 					Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo =LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
-					visitedSize+=aStarInfo.t1.size(); //keeps track of how many visited states for every run of A*
+					//visitedSize+=aStarInfo.t1.size(); //keeps track of how many visited states for every run of A*
 					double simpleAStarDistance = LodeRunnerLevelAnalysisUtil.calculateSimpleAStarLength(aStarInfo.t2);
-					//tsp.addDirectedEdge(p,i, simpleAStarDistance);
+					tsp.addDirectedEdge(p, i, simpleAStarDistance);
 				}
 			}
 		}
-		//calculates number of states visited from the spawn to every other gold
-		for(Point p : gold) {
-			List<List<Integer>> levelCopy = ListUtil.deepCopyListOfLists(level);
-			levelCopy.get(spawn.y).set(spawn.x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);
-			levelCopy.get(p.y).set(p.x, LodeRunnerState.LODE_RUNNER_TILE_GOLD);
-			Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo =LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
-			visitedSize+=aStarInfo.t1.size();//keeps track of how many visited states for every run of A*
-		}
-		//Graph<Point> tsp = new Graph(graphList);
-		System.out.println(tsp.root());
-		//System.out.println(tsp.breadthFirstTraversal());
-		System.out.println("Number of states visited: "+visitedSize);
+//		//calculates number of states visited from the spawn to every other gold
+//		for(Point p : gold) {
+//			List<List<Integer>> levelCopy = ListUtil.deepCopyListOfLists(level);
+//			levelCopy.get(spawn.y).set(spawn.x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);
+//			levelCopy.get(p.y).set(p.x, LodeRunnerState.LODE_RUNNER_TILE_GOLD);
+//			Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo =LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
+//			visitedSize+=aStarInfo.t1.size();//keeps track of how many visited states for every run of A*
+//		}
+//		System.out.println(tsp.root());
+//		System.out.println(tsp.root().adjacencies());
+//		System.out.println(tsp.getNodes());
+//		System.out.println("Number of states visited: "+visitedSize);
+		
+		//solving the TSP problem from the graph 
+		
 	}
 
 	/**
