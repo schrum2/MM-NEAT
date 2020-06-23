@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.megaman;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -36,8 +37,24 @@ public class MegaManVGLCUtil {
 	public static List<List<List<Integer>>> json = new ArrayList<>();
 	public static List<List<List<Integer>>> jsonUp = new ArrayList<>();
 	public static List<List<List<Integer>>> jsonDown = new ArrayList<>();
+	public static List<List<Object>> conditionalJson = new ArrayList<>();
+//	public static List<List<List<List<Integer>>>> jsonsetU = new ArrayList<>();
+//	public static List<List<List<List<Integer>>>> jsonsetD = new ArrayList<>();
+//	public static List<List<List<List<Integer>>>> jsonsetUR = new ArrayList<>();
+//	public static List<List<List<List<Integer>>>> jsonsetUL = new ArrayList<>();
+//	public static List<List<List<List<Integer>>>> jsonsetLR = new ArrayList<>();
+//	public static List<List<List<List<Integer>>>> jsonsetLL = new ArrayList<>();
 	
-
+	
+	
+	
+	public static final List<Integer> UPID = new ArrayList<>(Arrays.asList(1,0,0,0,0,0,0));
+	public static final List<Integer> DOWNID = new ArrayList<>(Arrays.asList(0,1,0,0,0,0,0));
+	public static final List<Integer> HORIZONTALID = new ArrayList<>(Arrays.asList(0,0,1,0,0,0,0));
+	public static final List<Integer> BOTTOMRIGHTID = new ArrayList<>(Arrays.asList(0,0,0,1,0,0,0));
+	public static final List<Integer> BOTTOMLEFTID = new ArrayList<>(Arrays.asList(0,0,0,0,1,0,0));
+	public static final List<Integer> UPPERRIGHTID = new ArrayList<>(Arrays.asList(0,0,0,0,0,1,0));
+	public static final List<Integer> UPPERLEFTID = new ArrayList<>(Arrays.asList(0,0,0,0,0,0,1));
 	//public static boolean executed = false;
 	//public static int levelNumber;
 	
@@ -130,6 +147,13 @@ public class MegaManVGLCUtil {
 //					printLevel(screen);
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
 						json.add(screen);
+						List<Object> temp = new ArrayList<>();
+						temp.add(HORIZONTALID);
+						temp.add(screen);
+						conditionalJson.add(temp);
+						
+						System.out.println(conditionalJson);
+						MiscUtil.waitForReadStringAndEnterKeyPress();
 
 				}else { //find new direction
 //					x1--;
@@ -150,6 +174,7 @@ public class MegaManVGLCUtil {
 					screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
 					else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
 					jsonUp.add(screen);
+					
 //					System.out.println("UP");
 //					printLevel(screen);
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
