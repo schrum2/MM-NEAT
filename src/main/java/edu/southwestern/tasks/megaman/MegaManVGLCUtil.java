@@ -290,7 +290,7 @@ public class MegaManVGLCUtil {
 	}
 
 	private static boolean canGoLeft(List<List<Integer>> level, int rightScreenSide, int y1, int x2) {
-		if(rightScreenSide-x2-1>0&&level.get(y1).get(rightScreenSide-x2-1)!=9) return true;
+		if(rightScreenSide-x2>0&&level.get(y1).get(rightScreenSide-x2-1)!=9) return true;
 		
 		return false;
 	}

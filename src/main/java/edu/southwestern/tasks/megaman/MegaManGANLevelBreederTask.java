@@ -726,7 +726,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			if(rtrn) break;
 		}
 	}
-
+	@Override
+	public void finalCleanup() {
+		ganProcessUp.terminate();
+//		ganProcessDown.terminate();
+		ganProcessHorizontal.terminate();
+		ganProcessDown.terminate();
+		GANProcess.terminateGANProcess();
+	}
 	/**
 	 * Launches the level breeder, sets GAN input size to 5
 	 * @param args
