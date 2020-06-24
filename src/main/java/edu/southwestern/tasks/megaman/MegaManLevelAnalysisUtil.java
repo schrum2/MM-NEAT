@@ -2,6 +2,7 @@ package edu.southwestern.tasks.megaman;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -46,7 +47,61 @@ public class MegaManLevelAnalysisUtil {
 		}
 		return totalAirTiles;
 	}
+	public static HashMap<String, Integer> findMiscEnemies(List<List<Integer>> level) {
+		HashMap<String, Integer> miscData = new HashMap<>();
+		
+		
+		int totalEnemies = 0;
+		int totalWallEnemies = 0;
+		int totalGroundEnemies = 0;
+		int totalFlyingEnemies = 0;
+		for(int y=0;y<level.size();y++) {
+			for(int x=0;x<level.get(0).size();x++) {
+				if(level.get(y).get(x)>10) {
+					totalEnemies++;
+				}
+				if(level.get(y).get(x)>10) {
+					if(level.get(y).get(x)==13||
+							level.get(y).get(x)==14||
+							level.get(y).get(x)==15) {
+						totalWallEnemies++;
+					}else if(level.get(y).get(x)==11||
+							level.get(y).get(x)==16||
+							level.get(y).get(x)==18||
+							level.get(y).get(x)==19||
+							level.get(y).get(x)==20||
+							level.get(y).get(x)==28||
+							level.get(y).get(x)==29||
+							level.get(y).get(x)==17) {
+						totalGroundEnemies++;
+					}else{
+						totalFlyingEnemies++;
+					}
+				}
+				
+					
+			}
+		}
+		miscData.put("numEnemies", totalEnemies);
+		miscData.put("numWallEnemies", totalWallEnemies);
+		miscData.put("numGroundEnemies", totalGroundEnemies);
+		miscData.put("numFlyingEnemies", totalFlyingEnemies);
+		return miscData;
+	}
+	public static HashMap<String, Integer> findMiscSegments(List<List<Integer>> level) {
+		HashMap<String, Integer> miscData = new HashMap<>();
+		
 	
+		for(int y=0;y<level.size();y++) {
+			for(int x=0;x<level.get(0).size();x++) {
+				
+				
+					
+			}
+		}
+		
+		return miscData;
+	}
 	
 	/**
 	 * Takes in a level and returns all information regarding the A* search

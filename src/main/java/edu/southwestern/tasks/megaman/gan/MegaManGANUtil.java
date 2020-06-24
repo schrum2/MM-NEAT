@@ -150,6 +150,7 @@ public class MegaManGANUtil {
 	}
 	public enum Direction {UP, RIGHT, DOWN};
 
+//	public static int 
 	public static List<List<Integer>> generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess horizontalGAN, GANProcess upGAN, GANProcess downGAN, double[] latentVector) {
 		// Just grabbing the static GANProcess for now, but you will need to make this method accept two separate GAN models eventually.
 		Random rand = new Random(Double.doubleToLongBits(latentVector[0]));
@@ -373,16 +374,17 @@ public class MegaManGANUtil {
 		
 			for(int x = level.get(0).size()-1;x>=0; x--) {
 				for(int y = level.size()-1; y>=0;y--) {
+					System.out.println(x+", "+y);
 				if(y-1>=0&&level.get(y).get(x)==2&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
 					level.get(y-1).set(x, 7);
 					placed=true;
 					break;
 					
-				}else if(y-1>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0||level.get(y-1).get(x)==10) {
+				}else if(y-1>=0&&level.get(y).get(x)==1&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
 					level.get(y-1).set(x, 7);
 					placed=true;
 					break;
-				}else if(y-1>=0&&level.get(y).get(x)==5&&level.get(y-1).get(x)==0||level.get(y-1).get(x)==10) {
+				}else if(y-1>=0&&level.get(y).get(x)==5&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
 					level.get(y-1).set(x, 7);
 					placed=true;
 					break;

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
@@ -31,7 +32,7 @@ import edu.southwestern.util.datastructures.Pair;
 
 public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	private static int numFitnessFunctions = 0; 
-	private static final int numOtherScores = 2;
+	private static final int numOtherScores = 10;
 
 	MegaManLevelTask(){
 		this(true);
@@ -53,6 +54,14 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
 			MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
 			MMNEAT.registerFitnessFunction("percentConnected", false);
+			MMNEAT.registerFitnessFunction("numEnemies",false);
+			MMNEAT.registerFitnessFunction("numFlyingEnemies", false);
+			MMNEAT.registerFitnessFunction("numGroundEnemies",false);
+			MMNEAT.registerFitnessFunction("numWallEnemies", false);
+			MMNEAT.registerFitnessFunction("numHorizontalSegments",false);
+			MMNEAT.registerFitnessFunction("numUpSegments", false);
+			MMNEAT.registerFitnessFunction("numDownSegments",false);
+			MMNEAT.registerFitnessFunction("numCornerSegments", false);
 		}
 	}
 	@Override
@@ -90,6 +99,12 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		double simpleAStarDistance = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t4;
 		//calculates the amount of the level that was covered in the search, connectivity.
 		double precentConnected = MegaManLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited)/MegaManLevelAnalysisUtil.findTotalAirTiles(level);
+		HashMap<String, Integer> k = MegaManLevelAnalysisUtil.findMiscEnemies(level);
+		double numEnemies = k.get("numEnemies");
+		double numWallEnemies = k.get("numWallEnemies");
+		double numGroundEnemies = k.get("numGroundEnemies");
+		double numFlyingEnemies = k.get("numFlyingEnemies");
+		
 		//adds the fitness functions being used to the fitness array list
 		if(Parameters.parameters.booleanParameter("megaManAllowsSimpleAStarPath")) {
 			fitnesses.add(simpleAStarDistance);
@@ -98,7 +113,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			fitnesses.add(precentConnected);
 		}
 		
-		double[] otherScores = new double[] {simpleAStarDistance,precentConnected};
+		double[] otherScores = new double[] {simpleAStarDistance,precentConnected, numEnemies, numWallEnemies, numGroundEnemies, numFlyingEnemies};
 		
 		
 		
@@ -106,6 +121,11 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			//prints values that are calculated above for debugging 
 			System.out.println("Simple A* Distance Orb " + simpleAStarDistance);
 			System.out.println("Percent of Positions Visited " + precentConnected);
+			System.out.println("Number of Enemies " + numEnemies);
+			System.out.println("Number of Wall Enemies " + numWallEnemies);
+			System.out.println("Number of Ground Enemies " + numGroundEnemies);
+			System.out.println("Number of Flying Enemies " + numFlyingEnemies);
+	
 			try {
 				//displays the rendered solution path in a window 
 				BufferedImage visualPath = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
