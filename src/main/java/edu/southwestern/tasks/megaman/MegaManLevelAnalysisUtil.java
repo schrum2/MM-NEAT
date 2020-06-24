@@ -90,16 +90,68 @@ public class MegaManLevelAnalysisUtil {
 	}
 	public static HashMap<String, Integer> findMiscSegments(List<List<Integer>> level) {
 		HashMap<String, Integer> miscData = new HashMap<>();
+		HashSet<Point> segmentPoints = new HashSet<>();
+		int numCorners = 0;
+		int numHorizontal = 0;
+		int numUp = 0;
+		int numDown = 0;
 		
-	
 		for(int y=0;y<level.size();y++) {
 			for(int x=0;x<level.get(0).size();x++) {
-				
+				int chunksx = x/16;
+				int chunksy = y/14;
+				boolean ex = x%16==0;
+				boolean wy = y%14==0;
+				if(ex&&wy&&!segmentPoints.contains(new Point(chunksx, chunksy))) {
+					int rightScreenSide = chunksx+16;
+					int y1 = chunksy;
+					int x2 = rightScreenSide-16;
+					boolean left = MegaManVGLCUtil.canGoLeft(level,rightScreenSide,y1);
+					boolean right =  MegaManVGLCUtil.canGoRight(level,rightScreenSide,y1);
+					boolean down =  MegaManVGLCUtil.canGoDown(level,rightScreenSide,y1);
+					boolean up =  MegaManVGLCUtil.canGoUp(level,rightScreenSide,y1);
+//					if(left) System.out.println("left");
+//					if(right) System.out.println("right");
+//					if(up) System.out.println("up");
+//					if(down) System.out.println("down");
+					System.out.println(new Point(rightScreenSide-x2,y1));
+					Point point = new Point(rightScreenSide-x2,y1);
+					if((up&&left&&!right&&!down&&!segmentPoints.contains(point))||
+							(up&&right&&!left&&!down&&!segmentPoints.contains(point))||
+							(down&&right&&!up&&!left&&!segmentPoints.contains(point))||
+							(down&&left&&!right&&!up&&!segmentPoints.contains(point))) { //lower right
+
+						segmentPoints.add(point);
+						
+						numCorners++;
+					}
+					if(!up&&!down&&(right||left)&&!segmentPoints.contains(point)) {
+						numHorizontal++;
+						segmentPoints.add(point);
+
+					}
+					if(down&&!up&&!segmentPoints.contains(point)) {
+						segmentPoints.add(point);
+						numDown++;
+					}
+					if(!down&&up&&!segmentPoints.contains(point)) {
+						segmentPoints.add(point);
+						numUp++;
+					}
+				}
 				
 					
 			}
 		}
 		
+//		int numCorners = 0;
+//		int numHorizontal = 0;
+//		int numUp = 0;
+//		int numDown = 0;
+		miscData.put("numCorners", numCorners);
+		miscData.put("numHorizontal", numHorizontal);
+		miscData.put("numUp", numUp);
+		miscData.put("numDown", numDown);
 		return miscData;
 	}
 	

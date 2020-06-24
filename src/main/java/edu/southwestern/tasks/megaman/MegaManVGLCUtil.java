@@ -229,14 +229,14 @@ public class MegaManVGLCUtil {
 	 * @param y1
 	 */
 	private static void findCorners(List<List<Integer>> level, int rightScreenSide, int y1, int x2) {
-		boolean left = canGoLeft(level,rightScreenSide,y1, x2);
+		boolean left = canGoLeft(level,rightScreenSide,y1);
 		boolean right = canGoRight(level,rightScreenSide,y1);
 		boolean down = canGoDown(level,rightScreenSide,y1);
 		boolean up = canGoUp(level,rightScreenSide,y1);
-		if(left) System.out.println("left");
-		if(right) System.out.println("right");
-		if(up) System.out.println("up");
-		if(down) System.out.println("down");
+//		if(left) System.out.println("left");
+//		if(right) System.out.println("right");
+//		if(up) System.out.println("up");
+//		if(down) System.out.println("down");
 		System.out.println(new Point(rightScreenSide-x2,y1));
 		Point point = new Point(rightScreenSide-x2,y1);
 		List<List<Integer>> screen;
@@ -314,22 +314,22 @@ public class MegaManVGLCUtil {
 		
 	}
 
-	private static boolean canGoLeft(List<List<Integer>> level, int rightScreenSide, int y1, int x2) {
+	public static boolean canGoLeft(List<List<Integer>> level, int rightScreenSide, int y1) {
 		if(rightScreenSide-16>0&&level.get(y1).get(rightScreenSide-16)!=9) return true;
 		
 		return false;
 	}
-	private static boolean canGoRight(List<List<Integer>> level, int rightScreenSide, int y1) {
+	public static boolean canGoRight(List<List<Integer>> level, int rightScreenSide, int y1) {
 		if(rightScreenSide+1<level.get(0).size()&&level.get(y1).get(rightScreenSide+1)!=9) return true;
 		
 		return false;
 	}
-	private static boolean canGoDown(List<List<Integer>> level, int rightScreenSide, int y1) {
+	public static boolean canGoDown(List<List<Integer>> level, int rightScreenSide, int y1) {
 		if(y1+14<level.size()&&level.get(y1+14).get(rightScreenSide)!=9) return true;
 		
 		return false;
 	}
-	private static boolean canGoUp(List<List<Integer>> level, int rightScreenSide, int y1) {
+	public static boolean canGoUp(List<List<Integer>> level, int rightScreenSide, int y1) {
 		 if(y1-1>=0&&level.get(y1-1).get(rightScreenSide-14)!=9&&level.get(y1-1).get(rightScreenSide)!=9) return true;
 		
 		return false;
@@ -358,7 +358,7 @@ public class MegaManVGLCUtil {
 		
 	}
 
-	private static List<Point> findSpawnScreen(List<List<Integer>> level) {
+	public static List<Point> findSpawnScreen(List<List<Integer>> level) {
 		Point spawn = new Point();
 		for(int y = 0;y<level.size();y++) {
 			for(int x = 0;x<level.get(0).size();x++) {

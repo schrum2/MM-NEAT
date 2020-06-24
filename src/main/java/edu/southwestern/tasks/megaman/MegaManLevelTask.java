@@ -105,6 +105,14 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		double numGroundEnemies = k.get("numGroundEnemies");
 		double numFlyingEnemies = k.get("numFlyingEnemies");
 		
+		
+		HashMap<String,Integer> l = MegaManLevelAnalysisUtil.findMiscSegments(level);
+		double numHorizontalSegments = l.get("numHorizontal");
+		double numUpSegments = l.get("numUp");
+		double numDownSegments = l.get("numDown");
+		double numCornerSegments = l.get("numCorners");
+
+
 		//adds the fitness functions being used to the fitness array list
 		if(Parameters.parameters.booleanParameter("megaManAllowsSimpleAStarPath")) {
 			fitnesses.add(simpleAStarDistance);
@@ -113,7 +121,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			fitnesses.add(precentConnected);
 		}
 		
-		double[] otherScores = new double[] {simpleAStarDistance,precentConnected, numEnemies, numWallEnemies, numGroundEnemies, numFlyingEnemies};
+		double[] otherScores = new double[] {simpleAStarDistance,precentConnected, numEnemies, numWallEnemies, numGroundEnemies, numFlyingEnemies, numHorizontalSegments, numUpSegments, numDownSegments, numCornerSegments};
 		
 		
 		
@@ -125,6 +133,10 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			System.out.println("Number of Wall Enemies " + numWallEnemies);
 			System.out.println("Number of Ground Enemies " + numGroundEnemies);
 			System.out.println("Number of Flying Enemies " + numFlyingEnemies);
+			System.out.println("Number of Horizontal Segments " + numHorizontalSegments);
+			System.out.println("Number of Up Segments " + numUpSegments);
+			System.out.println("Number of Down Segments " + numDownSegments);
+			System.out.println("Number of Corner Segments " + numCornerSegments);
 	
 			try {
 				//displays the rendered solution path in a window 
