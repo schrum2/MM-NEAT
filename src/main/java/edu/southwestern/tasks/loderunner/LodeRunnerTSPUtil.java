@@ -32,8 +32,11 @@ public class LodeRunnerTSPUtil {
 		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 		ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
+		System.out.println(level);
 		try {
 			LodeRunnerState start = new LodeRunnerState(level);
+			System.out.println(start);
+			System.out.println(level);
 			BufferedImage visualPath = LodeRunnerState.vizualizePath(level, mostRecentVisited, actionSequence, start);
 			JFrame frame = new JFrame();
 			JPanel panel = new JPanel();
@@ -90,6 +93,7 @@ public class LodeRunnerTSPUtil {
 		for(int i = 0; i < solutionPath.size()-1; i++) {
 			Pair<Point, Point> key = new Pair<Point, Point>(solutionPath.get(i).t1.getData(), solutionPath.get(i+1).t1.getData());
 			//System.out.println(key);
+			// We may get a null result here if the movement model was unable to find a path between any edges
 			fullActionSequence.addAll(tspActions.get(key));
 		}
 		return fullActionSequence;
