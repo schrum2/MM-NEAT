@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -29,12 +28,15 @@ public class LodeRunnerTSPUtil {
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(args);
 		//int visitedSize = 0;
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 5.txt");
-		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 9.txt");
+		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getFullActionSequenceAndVisitedStatesTSPGreedySolution(ListUtil.deepCopyListOfLists(level));
 		ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
+		System.out.println(level);
 		try {
 			LodeRunnerState start = new LodeRunnerState(level);
+			System.out.println(start);
+			System.out.println(level);
 			BufferedImage visualPath = LodeRunnerState.vizualizePath(level, mostRecentVisited, actionSequence, start);
 			JFrame frame = new JFrame();
 			JPanel panel = new JPanel();
@@ -90,7 +92,8 @@ public class LodeRunnerTSPUtil {
 		ArrayList<LodeRunnerAction> fullActionSequence = new ArrayList<>();
 		for(int i = 0; i < solutionPath.size()-1; i++) {
 			Pair<Point, Point> key = new Pair<Point, Point>(solutionPath.get(i).t1.getData(), solutionPath.get(i+1).t1.getData());
-			fullActionSequence.addAll(tspActions.get(key));
+			if(tspActions.get(key) != null)
+				fullActionSequence.addAll(tspActions.get(key));
 		}
 		return fullActionSequence;
 	}
