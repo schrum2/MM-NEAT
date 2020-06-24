@@ -373,16 +373,16 @@ public class MegaManGANUtil {
 		
 			for(int x = level.get(0).size()-1;x>=0; x--) {
 				for(int y = level.size()-1; y>=0;y--) {
-				if(y-1>=0&&level.get(y).get(x)==2&&level.get(y-1).get(x)==0) {
+				if(y-1>=0&&level.get(y).get(x)==2&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
 					level.get(y-1).set(x, 7);
 					placed=true;
 					break;
 					
-				}else if(y-1>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0) {
+				}else if(y-1>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0||level.get(y-1).get(x)==10) {
 					level.get(y-1).set(x, 7);
 					placed=true;
 					break;
-				}else if(y-1>=0&&level.get(y).get(x)==5&&level.get(y-1).get(x)==0) {
+				}else if(y-1>=0&&level.get(y).get(x)==5&&level.get(y-1).get(x)==0||level.get(y-1).get(x)==10) {
 					level.get(y-1).set(x, 7);
 					placed=true;
 					break;

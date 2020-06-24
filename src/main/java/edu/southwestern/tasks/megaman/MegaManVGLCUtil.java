@@ -71,6 +71,7 @@ public class MegaManVGLCUtil {
 //
 //		}
 		for(int i=1;i<=10;i++) {
+			placed.clear();
 			if(i!=7) {
 				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
 				upAndDownTrainingData(level);
@@ -135,6 +136,7 @@ public class MegaManVGLCUtil {
 //		System.out.println(start);
 		Direction d = start;
 		start = null;
+	//	int iteratio= 0;
 		boolean done = false;
 		while(!done) {
 			if(d==null) { //d==null
@@ -206,8 +208,11 @@ public class MegaManVGLCUtil {
 
 				}
 			}
+			//System.out.println(iteratio);
 			findCorners(level, rightScreenSide, y1, x2);
 			
+
+//			iteratio++;
 			
 		}
 	}
@@ -222,13 +227,27 @@ public class MegaManVGLCUtil {
 		boolean right = canGoRight(level,rightScreenSide,y1);
 		boolean down = canGoDown(level,rightScreenSide,y1);
 		boolean up = canGoUp(level,rightScreenSide,y1);
-		
+		if(left) System.out.println("left");
+		if(right) System.out.println("right");
+		if(up) System.out.println("up");
+		if(down) System.out.println("down");
+		System.out.println(new Point(rightScreenSide-x2,y1));
+		Point point = new Point(rightScreenSide-x2,y1);
 		List<List<Integer>> screen;
-		
-		if(up&&left&&!right&&!down&&!placed.contains(new Point(rightScreenSide-x2,y1))) { //lower right
-//			if(rightScreenSide-x2>=0)
-				screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
-			placed.add(new Point(rightScreenSide-x2, y1));
+		if(rightScreenSide-x2>=0) {
+			screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
+			//placed.add(new Point(rightScreenSide-x2, y1));
+
+		}
+		else {
+			screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
+			placed.add(new Point(rightScreenSide-x2+1, y1));
+
+		}
+		if(up&&left&&!right&&!down&&!placed.contains(point)) { //lower right
+			//			if(rightScreenSide-x2>=0)
+//				screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
+			placed.add(point);
 //			else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
 //			jsonDown.add(screen);
 			conditionalJsonID.add(BOTTOMRIGHTID);
@@ -236,17 +255,9 @@ public class MegaManVGLCUtil {
 			printLevel(screen);
 			MiscUtil.waitForReadStringAndEnterKeyPress();
 			conditionalJson.add(screen);
-		}else if(up&&right&&!left&&!down&&!placed.contains(new Point(rightScreenSide-x2,y1))) { //lower left
-			if(rightScreenSide-x2>=0) {
-				screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
-				placed.add(new Point(rightScreenSide-x2, y1));
+		}else if(up&&right&&!left&&!down&&!placed.contains(point)) { //lower left
+			placed.add(point);
 
-			}
-			else {
-				screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
-				//placed.add(new Point(rightScreenSide-x2+1, y1));
-
-			}
 			conditionalJsonID.add(BOTTOMLEFTID);
 			System.out.println("lower left: ");
 			printLevel(screen);
@@ -255,17 +266,17 @@ public class MegaManVGLCUtil {
 			MiscUtil.waitForReadStringAndEnterKeyPress();
 
 			conditionalJson.add(screen);
-		}else if(down&&right&&!up&&!left&&!placed.contains(new Point(rightScreenSide-x2,y1))) { //upper left
-			if(rightScreenSide-x2>=0) {
-				screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
-				placed.add(new Point(rightScreenSide-x2, y1));
+		}else if(down&&right&&!up&&!left&&!placed.contains(point)) { //upper left
+	//		if(rightScreenSide-x2>=0) {
+//				screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
+				placed.add(point);
 
-			}
-			else {
-				screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
-				//placed.add(new Point(rightScreenSide-x2+1, y1));
-
-			}
+//			}
+//			else {
+//				screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
+//				//placed.add(new Point(rightScreenSide-x2+1, y1));
+//
+//			}
 			conditionalJsonID.add(UPPERLEFTID);
 			System.out.println("upper left: ");
 			printLevel(screen);
@@ -273,9 +284,8 @@ public class MegaManVGLCUtil {
 			MiscUtil.waitForReadStringAndEnterKeyPress();
 
 			conditionalJson.add(screen);
-		}else if(down&&left&&!right&&!up&&!placed.contains(new Point(rightScreenSide-x2,y1))) { //upper right
-			screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
-			placed.add(new Point(rightScreenSide-x2, y1));
+		}else if(down&&left&&!right&&!up&&!placed.contains(point)) { //upper right
+			placed.add(point);
 
 			conditionalJsonID.add(UPPERRIGHTID);
 			System.out.println("upper right: ");
@@ -285,12 +295,13 @@ public class MegaManVGLCUtil {
 
 			conditionalJson.add(screen);
 		}
-		
+		System.out.println();
+
 		
 	}
 
 	private static boolean canGoLeft(List<List<Integer>> level, int rightScreenSide, int y1, int x2) {
-		if(rightScreenSide-x2>0&&level.get(y1).get(rightScreenSide-x2-1)!=9) return true;
+		if(rightScreenSide-16>0&&level.get(y1).get(rightScreenSide-16)!=9) return true;
 		
 		return false;
 	}
@@ -305,7 +316,7 @@ public class MegaManVGLCUtil {
 		return false;
 	}
 	private static boolean canGoUp(List<List<Integer>> level, int rightScreenSide, int y1) {
-		 if(y1-1>=0&&level.get(y1-1).get(rightScreenSide)!=9) return true;
+		 if(y1-1>=0&&level.get(y1-1).get(rightScreenSide-14)!=9&&level.get(y1-1).get(rightScreenSide)!=9) return true;
 		
 		return false;
 	}
