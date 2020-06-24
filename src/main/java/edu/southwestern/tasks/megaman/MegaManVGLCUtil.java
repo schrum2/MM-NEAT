@@ -85,11 +85,17 @@ public class MegaManVGLCUtil {
 						
 			}
 		}
-		System.out.println(json);
+		System.out.println(conditionalJson.size());
+		System.out.println(conditionalJson.size());
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		System.out.println(jsonDown);
+		System.out.println(conditionalJson);
+
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		System.out.println(jsonUp);
+		System.out.println(conditionalJsonID);
+		
+
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		System.out.println(jsonUp);
 
 //		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt");
 //		printLevel(level);
@@ -251,19 +257,23 @@ public class MegaManVGLCUtil {
 //			else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
 //			jsonDown.add(screen);
 			conditionalJsonID.add(BOTTOMRIGHTID);
-			System.out.println("lower right: ");
+//			System.out.println("lower right: ");
+//			System.out.println(BOTTOMRIGHTID);
+
 			printLevel(screen);
-			MiscUtil.waitForReadStringAndEnterKeyPress();
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 			conditionalJson.add(screen);
 		}else if(up&&right&&!left&&!down&&!placed.contains(point)) { //lower left
 			placed.add(point);
 
 			conditionalJsonID.add(BOTTOMLEFTID);
-			System.out.println("lower left: ");
+//			System.out.println("lower left: ");
+//			System.out.println(BOTTOMLEFTID);
+
 			printLevel(screen);
 
 
-			MiscUtil.waitForReadStringAndEnterKeyPress();
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 
 			conditionalJson.add(screen);
 		}else if(down&&right&&!up&&!left&&!placed.contains(point)) { //upper left
@@ -278,20 +288,24 @@ public class MegaManVGLCUtil {
 //
 //			}
 			conditionalJsonID.add(UPPERLEFTID);
-			System.out.println("upper left: ");
+//			System.out.println("upper left: ");
+//			System.out.println(UPPERLEFTID);
+
 			printLevel(screen);
 
-			MiscUtil.waitForReadStringAndEnterKeyPress();
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 
 			conditionalJson.add(screen);
 		}else if(down&&left&&!right&&!up&&!placed.contains(point)) { //upper right
 			placed.add(point);
 
 			conditionalJsonID.add(UPPERRIGHTID);
-			System.out.println("upper right: ");
+//			System.out.println("upper right: ");
+//			System.out.println(UPPERRIGHTID);
+
 			printLevel(screen);
 
-			MiscUtil.waitForReadStringAndEnterKeyPress();
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 
 			conditionalJson.add(screen);
 		}
