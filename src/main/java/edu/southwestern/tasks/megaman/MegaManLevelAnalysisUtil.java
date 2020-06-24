@@ -35,6 +35,18 @@ public class MegaManLevelAnalysisUtil {
 		return totalTiles;
 	}
 	
+	public static int findTotalAirTiles(List<List<Integer>> level) {
+		int totalAirTiles = 0;
+		for(int y=0;y<level.size();y++) {
+			for(int x=0;x<level.get(0).size();x++) {
+				if(level.get(y).get(x)==0) {
+					totalAirTiles++;
+				}
+			}
+		}
+		return totalAirTiles;
+	}
+	
 	
 	/**
 	 * Takes in a level and returns all information regarding the A* search

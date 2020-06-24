@@ -89,7 +89,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		MegaManState start = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t3; //gets start state for search 
 		double simpleAStarDistance = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t4;
 		//calculates the amount of the level that was covered in the search, connectivity.
-		double precentConnected = MegaManLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited)/MegaManLevelAnalysisUtil.findTotalTiles(level);
+		double precentConnected = MegaManLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited)/MegaManLevelAnalysisUtil.findTotalAirTiles(level);
 		//adds the fitness functions being used to the fitness array list
 		if(Parameters.parameters.booleanParameter("megaManAllowsSimpleAStarPath")) {
 			fitnesses.add(simpleAStarDistance);
