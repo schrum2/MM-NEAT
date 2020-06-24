@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn
 import torch.nn.parallel
 
-class DCGAN_D(nn.Module):
+class CDCGAN_D(nn.Module):
     def __init__(self, isize, nz, nc, ndf, ngpu, n_extra_layers=0):
-        super(DCGAN_D, self).__init__()
+        super(CDCGAN_D, self).__init__()
         self.ngpu = ngpu
         assert isize % 16 == 0, "isize has to be a multiple of 16"
 
@@ -44,6 +44,7 @@ class DCGAN_D(nn.Module):
 
 
     def forward(self, input):
+        x = input
         for m in self.main:
             x = m.forward(x)
         
@@ -52,9 +53,9 @@ class DCGAN_D(nn.Module):
         output = x.mean(0)
         return output.view(1)
 
-class DCGAN_G(nn.Module):
+class CDCGAN_G(nn.Module):
     def __init__(self, isize, nz, nc, ngf, ngpu, n_extra_layers=0):
-        super(DCGAN_G, self).__init__()
+        super(CDCGAN_G, self).__init__()
         self.ngpu = ngpu
         assert isize % 16 == 0, "isize has to be a multiple of 16"
 
@@ -99,6 +100,7 @@ class DCGAN_G(nn.Module):
         self.main = main
 
     def forward(self, input):
+        x = input
         for m in self.main:
             x = m.forward(x)
         
