@@ -206,6 +206,7 @@ public class MegaManGANUtil {
 				}
 
 			if(right) {
+				
 				placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, level);
 				//wasRight = true;
 				d = Direction.RIGHT;
@@ -226,8 +227,11 @@ public class MegaManGANUtil {
 					}
 				}
 				if(d.equals(Direction.UP)) { //add null lines all on top
+					
 					placeUp(levelInListUp, previousMove, oneLevel, level);
+					
 				}else {
+					
 					placeDown(levelInListDown, previousMove, oneLevel, level);
 					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT);
 
@@ -260,7 +264,7 @@ public class MegaManGANUtil {
 		
 		for(int y = (int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y<previousMove.getY()+2*MEGA_MAN_LEVEL_HEIGHT;y++) {
 			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
-				oneLevel.get(y).set(x, levelInListDown.get(0).get((int) (y -MEGA_MAN_LEVEL_HEIGHT- previousMove.getY())).get((int) (x-previousMove.getX())));
+				oneLevel.get(y).set(x, levelInListDown.get(level).get((int) (y -MEGA_MAN_LEVEL_HEIGHT- previousMove.getY())).get((int) (x-previousMove.getX())));
 			}
 		}
 	}
@@ -279,7 +283,7 @@ public class MegaManGANUtil {
 		//now at the previous point, add in a new version of levelInList.get(level)
 		for(int y = (int) previousMove.getY();y<previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
 			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
-				oneLevel.get(y).set(x, levelInListUp.get(0).get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX())));
+				oneLevel.get(y).set(x, levelInListUp.get(level).get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX())));
 			}
 		}
 	}
@@ -295,7 +299,7 @@ public class MegaManGANUtil {
 //						System.out.println(x+", "+y);
 //						System.out.println(previousMove.getX()+", "+previousMove.getY());
 
-				oneLevel.get(y).set(x, levelInListHorizontal.get(0).get((int) (y - previousMove.getY())).get((int) (x-MEGA_MAN_LEVEL_WIDTH-previousMove.getX())));
+				oneLevel.get(y).set(x, levelInListHorizontal.get(level).get((int) (y - previousMove.getY())).get((int) (x-MEGA_MAN_LEVEL_WIDTH-previousMove.getX())));
 			}
 		}
 	}

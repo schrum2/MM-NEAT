@@ -113,7 +113,7 @@ public class MegaManCPPNtoGANUtil {
 					MegaManGANUtil.placeOrb(levelInListUp.get(0));
 				}
 				needBackup=false;
-				MegaManGANUtil.placeUp(levelInListUp, previousMove, oneLevel, level);
+				MegaManGANUtil.placeUp(levelInListUp, previousMove, oneLevel, 0);
 				//wasRight = true;
 				//previousMove=new Point((int) previousMove.getX()+MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
 
@@ -126,7 +126,7 @@ public class MegaManCPPNtoGANUtil {
 					MegaManGANUtil.placeOrb(levelInListDown.get(0));
 				}
 				needBackup=false;
-				MegaManGANUtil.placeDown(levelInListDown, previousMove, oneLevel, level);
+				MegaManGANUtil.placeDown(levelInListDown, previousMove, oneLevel, 0);
 				previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
 
 			}
@@ -140,7 +140,7 @@ public class MegaManCPPNtoGANUtil {
 				needBackup=false;
 				
 				
-				MegaManGANUtil.placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, level);
+				MegaManGANUtil.placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, 0);
 				//wasRight = true;
 				previousMove=new Point((int) previousMove.getX()+MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
 			}
@@ -154,7 +154,7 @@ public class MegaManCPPNtoGANUtil {
 					if(level==chunks-1) {
 						MegaManGANUtil.placeOrb(levelInListUp.get(0));
 					}
-					MegaManGANUtil.placeUp(levelInListUp, previousMove, oneLevel, level);
+					MegaManGANUtil.placeUp(levelInListUp, previousMove, oneLevel, 0);
 
 
 				}
@@ -165,7 +165,7 @@ public class MegaManCPPNtoGANUtil {
 					if(level==chunks-1) {
 						MegaManGANUtil.placeOrb(levelInListDown.get(0));
 					}
-					MegaManGANUtil.placeDown(levelInListDown, previousMove, oneLevel, level);
+					MegaManGANUtil.placeDown(levelInListDown, previousMove, oneLevel, 0);
 					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
 				}
 				else {
@@ -175,7 +175,7 @@ public class MegaManCPPNtoGANUtil {
 					if(level==chunks-1) {
 						MegaManGANUtil.placeOrb(levelInListHorizontal.get(0));
 					}
-					MegaManGANUtil.placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, level);
+					MegaManGANUtil.placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, 0);
 					previousMove=new Point((int) previousMove.getX()+MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
 				}
 

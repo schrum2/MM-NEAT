@@ -173,7 +173,7 @@ public class MegaManRenderUtil {
 			tile = new File(filePath+"Hazard.PNG");
 			BufferedImage HazardTile = ImageIO.read(tile);
 			tileList[3] = HazardTile;
-			tile = new File(filePath+"Empty.PNG");
+			tile = new File(filePath+"Breakable.PNG");
 			BufferedImage Breakable = ImageIO.read(tile);
 			tileList[4] = Breakable;
 			tile = new File(filePath+"MovingPlatform.PNG");
