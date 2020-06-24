@@ -18,7 +18,6 @@ import javax.swing.JPanel;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -29,7 +28,7 @@ public class LodeRunnerTSPUtil {
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(args);
 		//int visitedSize = 0;
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 5.txt");
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 6.txt");
 		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 		ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
@@ -90,6 +89,7 @@ public class LodeRunnerTSPUtil {
 		ArrayList<LodeRunnerAction> fullActionSequence = new ArrayList<>();
 		for(int i = 0; i < solutionPath.size()-1; i++) {
 			Pair<Point, Point> key = new Pair<Point, Point>(solutionPath.get(i).t1.getData(), solutionPath.get(i+1).t1.getData());
+			//System.out.println(key);
 			fullActionSequence.addAll(tspActions.get(key));
 		}
 		return fullActionSequence;
