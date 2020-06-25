@@ -69,21 +69,21 @@ public class MegaManCPPNtoGANUtil {
 		if(startdirection == MegaManCPPNtoGANLevelBreederTask.UP_PREFERENCE) {
 			numUp++;
 			d = Direction.UP;
-			y++;
+			//y++;
 			levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, startlatentVector);
 			oneLevel = levelInListUp.get(0);
 		}
 		else if (startdirection == MegaManCPPNtoGANLevelBreederTask.DOWN_PREFERENCE) {
 			numDown++;
 			d = Direction.DOWN;
-			y--;
+			//y--;
 			levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector);
 			oneLevel = levelInListDown.get(0);
 		}
 		else {
 			numHorizontal++;
 			d = Direction.HORIZONTAL;
-			x++;
+			//x++;
 			levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector);
 			oneLevel = levelInListHorizontal.get(0);
 		}
@@ -120,6 +120,13 @@ public class MegaManCPPNtoGANUtil {
 			
 			if(direction == MegaManCPPNtoGANLevelBreederTask.UP_PREFERENCE&&!d.equals(Direction.DOWN)) {
 				numUp++;
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("going: "+d+" with: "+direction);
+				System.out.println();
+				System.out.println();
+				System.out.println();
 				d = Direction.UP;
 				y++;
 				
@@ -135,6 +142,13 @@ public class MegaManCPPNtoGANUtil {
 			}
 			else if (direction == MegaManCPPNtoGANLevelBreederTask.DOWN_PREFERENCE&&!d.equals(Direction.UP)) {
 				numDown++;
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("going: "+d+" with: "+direction);
+				System.out.println();
+				System.out.println();
+				System.out.println();
 				d = Direction.DOWN;
 				y--;
 				levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVector);
@@ -148,6 +162,13 @@ public class MegaManCPPNtoGANUtil {
 			}
 			else if(direction==MegaManCPPNtoGANLevelBreederTask.HORIZONTAL_PREFERENCE){
 				numHorizontal++;
+				System.out.println();
+				System.out.println();
+				System.out.println();
+				System.out.println("going: "+d+" with: "+direction);
+				System.out.println();
+				System.out.println();
+				System.out.println();
 				d = Direction.HORIZONTAL;
 				x++;
 				levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, latentVector);
@@ -166,6 +187,13 @@ public class MegaManCPPNtoGANUtil {
 			if(needBackup) {
 				if(bkp == MegaManCPPNtoGANLevelBreederTask.UP_PREFERENCE) {
 					numUp++;
+					System.out.println();
+					System.out.println();
+					System.out.println();
+					System.out.println("going: "+d+" with: "+direction);
+					System.out.println();
+					System.out.println();
+					System.out.println();
 					d = Direction.UP;
 					y++;
 					levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, startlatentVector);
@@ -178,6 +206,13 @@ public class MegaManCPPNtoGANUtil {
 				}
 				else if (bkp == MegaManCPPNtoGANLevelBreederTask.DOWN_PREFERENCE) {
 					numDown++;
+					System.out.println();
+					System.out.println();
+					System.out.println();
+					System.out.println("going: "+d+" with: "+direction);
+					System.out.println();
+					System.out.println();
+					System.out.println();
 					d = Direction.DOWN;
 					y--;
 					levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector);
@@ -189,6 +224,13 @@ public class MegaManCPPNtoGANUtil {
 				}
 				else {
 					numHorizontal++;
+					System.out.println();
+					System.out.println();
+					System.out.println();
+					System.out.println("going: "+d+" with: "+direction);
+					System.out.println();
+					System.out.println();
+					System.out.println();
 					d = Direction.HORIZONTAL;
 					x++;
 					levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector);
