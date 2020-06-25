@@ -33,22 +33,7 @@ public class LodeRunnerTSPUtil {
 		ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
 //		System.out.println(level);
-		try {
-			LodeRunnerState start = new LodeRunnerState(level);
-//			System.out.println(start);
-//			System.out.println(level);
-			BufferedImage visualPath = LodeRunnerState.vizualizePath(level, mostRecentVisited, actionSequence, start);
-			JFrame frame = new JFrame();
-			JPanel panel = new JPanel();
-			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
-					LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
-			panel.add(label);
-			frame.add(panel);
-			frame.pack();
-			frame.setVisible(true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		visualizeLodeRunnerLevel(level, actionSequence, mostRecentVisited);
 		
 		//System.out.println(fullActionSequence);
 		//		//calculates number of states visited from the spawn to every other gold
@@ -63,6 +48,29 @@ public class LodeRunnerTSPUtil {
 		//		System.out.println(tsp.root().adjacencies());
 		//		System.out.println(tsp.getNodes());
 		//		System.out.println("Number of states visited: "+visitedSize);
+	}
+
+	// TODO: Kirby! Put this in the render util and use wherever a visualization is needed!
+	protected static BufferedImage visualizeLodeRunnerLevel(List<List<Integer>> level,
+			ArrayList<LodeRunnerAction> actionSequence, HashSet<LodeRunnerState> mostRecentVisited) {
+		try {
+			LodeRunnerState start = new LodeRunnerState(level);
+//			System.out.println(start);
+//			System.out.println(level);
+			BufferedImage visualPath = LodeRunnerState.vizualizePath(level, mostRecentVisited, actionSequence, start);
+			JFrame frame = new JFrame();
+			JPanel panel = new JPanel();
+			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+					LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
+			panel.add(label);
+			frame.add(panel);
+			frame.pack();
+			frame.setVisible(true);
+			return visualPath;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null; // render fail
 	}
 
 	/**
@@ -154,6 +162,16 @@ public class LodeRunnerTSPUtil {
 					levelCopy.get(p.getData().y).set(p.getData().x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);//sets spawn as one of the gold to get distance between the gold
 					levelCopy.get(i.getData().y).set(i.getData().x, LodeRunnerState.LODE_RUNNER_TILE_GOLD); //destination gold 
 					Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
+
+
+					// TODO: Here Kirby: if path is null, then turn on cheat movement through diggable and try again
+					
+					
+//					System.out.println(p + " to " + i +":" + aStarInfo.t2);
+//					if(aStarInfo.t2 == null) {
+//						visualizeLodeRunnerLevel(level, aStarInfo.t2, aStarInfo.t1);
+//						MiscUtil.waitForReadStringAndEnterKeyPress();
+//					}
 					//visitedSize+=aStarInfo.t1.size(); //keeps track of how many visited states for every run of A*
 					double simpleAStarDistance = LodeRunnerLevelAnalysisUtil.calculateSimpleAStarLength(aStarInfo.t2);
 					tsp.addDirectedEdge(p, i, simpleAStarDistance); //adds the directed edge to the graph

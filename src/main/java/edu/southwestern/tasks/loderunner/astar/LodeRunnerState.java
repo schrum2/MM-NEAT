@@ -329,10 +329,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 //		}
 		assert inBounds(newX,newY): "x is:" + newX + "\ty is:"+newY + "\t" + inBounds(newX,newY);
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
-			if(!inBounds(newX,newY+1)) // Can't move if there is no ground beneath player
-				return null;
-			
-			int beneath = tileAtPosition(newX,newY+1);
+			int beneath = !inBounds(newX,newY+1) ? -1 : tileAtPosition(newX,newY+1);
 			if(passable(newX+1, newY) && 
 					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
 					  (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
@@ -342,6 +339,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				// the player could hypothetically have dug the ground above to make this possible. 
 				newX++;
 			else if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
+					beneath != -1 && // Means out of bounds
 					beneath != LODE_RUNNER_TILE_LADDER &&
 					beneath != LODE_RUNNER_TILE_DIGGABLE &&
 					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
@@ -351,10 +349,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
-			if(!inBounds(newX,newY+1)) // Can't move if there is no ground beneath player
-				return null;
-
-			int beneath = tileAtPosition(newX,newY+1);
+			// Turns out you can walk on the bottom of the screen with nothing beneath you
+			int beneath = !inBounds(newX,newY+1) ? -1 : tileAtPosition(newX,newY+1);
 			if(passable(newX-1, newY) && 
 					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
 							(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
@@ -364,6 +360,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 				// the player could hypothetically have dug the ground above to make this possible. 
 				newX--;
 			else if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
+					beneath != -1 && // Bottom of screen, nothing beneath player
 					beneath != LODE_RUNNER_TILE_LADDER &&
 					beneath != LODE_RUNNER_TILE_DIGGABLE &&
 					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
@@ -539,7 +536,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public double stepCost(State<LodeRunnerAction> s, LodeRunnerAction a) {
 		LodeRunnerState state = (LodeRunnerState) s;
 		// The model allows for moving sideways through diggable ground, with the assumption that the ground above would have been previously dug out
-		if(	a.getMove().equals(LodeRunnerAction.MOVE.LEFT) && inBounds(state.currentX - 1, state.currentY) &&
+		if(		a.getMove().equals(LodeRunnerAction.MOVE.LEFT) && 
+				state.inBounds(state.currentX - 1, state.currentY) &&
 				state.tileAtPosition(state.currentX - 1, state.currentY) == LODE_RUNNER_TILE_DIGGABLE) {
 			double cost = 1; // Base cost of 1 for the movement
 			int y = state.currentY;
@@ -552,8 +550,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			if(!state.inBounds(x,y)) cost = Double.POSITIVE_INFINITY; // Impossible action
 			//System.out.println("High cost left: " + cost);
 			return cost*cost*SIDEWAYS_DIG_COST_MULTIPLIER; // Arbitrarily double cost to discourage
-		} else if(	a.getMove().equals(LodeRunnerAction.MOVE.RIGHT) &&inBounds(state.currentX + 1, state.currentY) &&
-				state.tileAtPosition(state.currentX + 1, state.currentY) == LODE_RUNNER_TILE_DIGGABLE) {
+		} else if(	a.getMove().equals(LodeRunnerAction.MOVE.RIGHT) &&
+					state.inBounds(state.currentX + 1, state.currentY) &&
+					state.tileAtPosition(state.currentX + 1, state.currentY) == LODE_RUNNER_TILE_DIGGABLE) {
 			double cost = 1; // Base cost of 1 for the movement
 			int y = state.currentY;
 			int x = state.currentX + 1;
@@ -565,9 +564,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			if(!state.inBounds(x,y)) cost = Double.POSITIVE_INFINITY; // Impossible action
 			//System.out.println("High cost right: " + cost);
 			return cost*cost*SIDEWAYS_DIG_COST_MULTIPLIER; // Arbitrarily double cost to discourage
+		} else {
+			return 1;
 		}
-
-		return 1;
 	}
 
 	/**
