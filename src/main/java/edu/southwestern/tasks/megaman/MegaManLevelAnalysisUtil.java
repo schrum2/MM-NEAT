@@ -36,8 +36,8 @@ public class MegaManLevelAnalysisUtil {
 		return totalTiles;
 	}
 	
-	public static int findTotalPassableTiles(List<List<Integer>> level) {
-		int totalAirTiles = 0;
+	public static double findTotalPassableTiles(List<List<Integer>> level) {
+		double totalAirTiles = 0.0;
 		for(int y=0;y<level.size();y++) {
 			for(int x=0;x<level.get(0).size();x++) {
 				if(level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_AIR||
