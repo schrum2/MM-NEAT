@@ -18,6 +18,7 @@ public class MegaManCPPNtoGANUtil {
 	public static int numHorizontal = 0;
 	public static int numUp = 0;
 	public static int numDown = 0;
+	public static int numCorner = 0;
 
 //	public static GANProcess ganProcessHorizontal = null;
 //	public static GANProcess ganProcessUp = null;
@@ -35,6 +36,7 @@ public class MegaManCPPNtoGANUtil {
 		 numHorizontal = 0;
 		 numUp = 0;
 		 numDown = 0;
+		 numCorner = 0;
 		int x = 0;
 		int y = 0;
 //		for(double k :inputMultipliers) {
@@ -95,7 +97,7 @@ public class MegaManCPPNtoGANUtil {
 		}
 		Point previousMove = new Point(0,0);
 		for(int level = 1; level < chunks; level++) {
-			
+			Direction previous = d;
 			double[] full = cppn.process(new double[] {inputMultipliers[XPREF] * x/chunks, inputMultipliers[YPREF]*y/chunks,  inputMultipliers[BIASPREF] * 1.0});
 			double[] latentVector = new double[full.length-3];
 			for(int i = 3;i<full.length;i++) {
@@ -120,6 +122,7 @@ public class MegaManCPPNtoGANUtil {
 				numUp++;
 				d = Direction.UP;
 				y++;
+				
 				levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVector);
 				if(level==chunks-1) {
 					MegaManGANUtil.placeOrb(levelInListUp.get(0));
@@ -197,6 +200,10 @@ public class MegaManCPPNtoGANUtil {
 				}
 
 			}
+			if(!d.equals(previous)) {
+				numCorner++;
+			}
+			previous = d;
 		}
 		
 		
@@ -210,6 +217,7 @@ public class MegaManCPPNtoGANUtil {
 		j.put("numUp", numUp);
 		j.put("numDown", numDown);
 		j.put("numHorizontal", numHorizontal);
+		j.put("numCorner", numCorner);
 		return j;
 	}
 	

@@ -110,7 +110,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		double numHorizontalSegments = l.get("numHorizontal");
 		double numUpSegments = l.get("numUp");
 		double numDownSegments = l.get("numDown");
-		double numCornerSegments = 0;
+		double numCornerSegments = l.get("numCorner");
 //				l.get("numCorners");
 
 

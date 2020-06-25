@@ -69,16 +69,19 @@ class CDCGAN_G(nn.Module):
             cngf = cngf * 2
             tisize = tisize * 2
 
-        main = nn.ModuleList()
+        initial = nn.ModuleList()
         # input is Z, going into a convolution
-        main.add_module('initial:{0}-{1}:convt'.format(nz, cngf),
+        initial.add_module('initial:{0}-{1}:convt'.format(nz, cngf),
                         nn.ConvTranspose2d(nz, cngf, 4, 1, 0, bias=False))
-        main.add_module('initial:{0}:batchnorm'.format(cngf),
+        initial.add_module('initial:{0}:batchnorm'.format(cngf),
                         nn.BatchNorm2d(cngf))
-        main.add_module('initial:{0}:relu'.format(cngf),
+        initial.add_module('initial:{0}:relu'.format(cngf),
                         nn.ReLU(True))
 
         csize, cndf = 4, cngf
+        main = nn.ModuleList()
+
+
         while csize < isize//2:
             main.add_module('pyramid:{0}-{1}:convt'.format(cngf, cngf//2),
                             nn.ConvTranspose2d(cngf, cngf//2, 4, 2, 1, bias=False))
@@ -102,10 +105,15 @@ class CDCGAN_G(nn.Module):
                         nn.ConvTranspose2d(cngf, nc, 4, 2, 1, bias=False))
         main.add_module('final:{0}:tanh'.format(nc),
                         nn.ReLU())#nn.Softmax(1))    #Was TANH nn.Tanh())#
+        self.initial = initial
         self.main = main
 
     def forward(self, input):
         x = input
+        for m in self.initial:
+            x = m.forward(x)
+
+
         for m in self.main:
             x = m.forward(x)
         

@@ -73,9 +73,6 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	@Override
 	public HashMap<String, Integer> findMiscSegments(List<List<Integer>> level) {
 		// TODO Auto-generated method stub
-		MegaManGANUtil.numDown = 0;
-		MegaManGANUtil.numUp = 0;
-		MegaManGANUtil.numHorizontal = 0;
 		return MegaManGANUtil.findMiscSegments(level);
 	}
 }
