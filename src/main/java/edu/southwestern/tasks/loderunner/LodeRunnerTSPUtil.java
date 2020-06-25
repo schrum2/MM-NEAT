@@ -21,7 +21,7 @@ public class LodeRunnerTSPUtil {
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(args);
 		//int visitedSize = 0;
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 46.txt");
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 41.txt");
 		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 		ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
@@ -70,9 +70,13 @@ public class LodeRunnerTSPUtil {
 		ArrayList<LodeRunnerAction> fullActionSequence = new ArrayList<>();
 		for(int i = 0; i < solutionPath.size()-1; i++) {
 			Pair<Point, Point> key = new Pair<Point, Point>(solutionPath.get(i).t1.getData(), solutionPath.get(i+1).t1.getData());
-			//System.out.println(key);
-			// We may get a null result here if the movement model was unable to find a path between any edges
-			fullActionSequence.addAll(tspActions.get(key));
+			// We may get a null result here if the movement model was unable to find a path between any edges.
+			// Some few transitions are legitimately one-directional.
+			ArrayList<LodeRunnerAction> result = tspActions.get(key);
+			if(result != null)
+				fullActionSequence.addAll(result);
+//			else
+//				System.out.println(key);
 		}
 		return fullActionSequence;
 	}
@@ -132,15 +136,16 @@ public class LodeRunnerTSPUtil {
 					levelCopy.get(p.getData().y).set(p.getData().x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);//sets spawn as one of the gold to get distance between the gold
 					levelCopy.get(i.getData().y).set(i.getData().x, LodeRunnerState.LODE_RUNNER_TILE_GOLD); //destination gold 
 					Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
-
-
-					// TODO: Here Kirby: if path is null, then turn on cheat movement through diggable and try again
 					
-					
-//					System.out.println(p + " to " + i +":" + aStarInfo.t2);
+					//System.out.println(p + " to " + i +":" + aStarInfo.t2);
 					if(aStarInfo.t2 == null) {
-						LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, aStarInfo.t2, aStarInfo.t1);
-						MiscUtil.waitForReadStringAndEnterKeyPress();
+						// TODO: Here Kirby: if path is null, then turn on cheat movement through diggable and try again
+						// 		 However, if the result is STILL null after that, then we assume the path is one-directional,
+						//		 and simply do not add an edge to the TSP
+						
+						continue; // Cannot reach i from p, so do not add edge to TSP graph
+						//LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, aStarInfo.t2, aStarInfo.t1);
+						//MiscUtil.waitForReadStringAndEnterKeyPress();
 					}
 					//visitedSize+=aStarInfo.t1.size(); //keeps track of how many visited states for every run of A*
 					double simpleAStarDistance = LodeRunnerLevelAnalysisUtil.calculateSimpleAStarLength(aStarInfo.t2);
