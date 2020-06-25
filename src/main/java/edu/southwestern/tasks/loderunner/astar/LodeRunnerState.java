@@ -128,7 +128,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public static void main(String args[]) {
 		Parameters.initializeParameterCollections(args);
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 4.txt"); //converts to JSON
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 1.txt"); //converts to JSON
 		LodeRunnerState start = new LodeRunnerState(level);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
@@ -149,7 +149,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		System.out.println("actionSequence: " + actionSequence);
 		//System.out.println("actionSequence length: " + actionSequence.size());
 		try {
-			//visualizes the points visited with red and whit x's
+			//visualizes the points visited with blue and whit x's
 			BufferedImage visualPath = vizualizePath(level,mostRecentVisited,actionSequence,start);
 			try { //displays window with the rendered level and the solution path/visited states
 				JFrame frame = new JFrame();
@@ -370,7 +370,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
-			if(		passable(newX, newY-1) && // Do not allow moving up ladders into solid tiles
+			if(	(passable(newX, newY-1) || (ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && tileAtPosition(newX, newY-1)==LODE_RUNNER_TILE_DIGGABLE)) && // Do not allow moving up ladders into solid tiles
 					tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) // Be on a ladder to climb
 				newY--;
 			else return null; 

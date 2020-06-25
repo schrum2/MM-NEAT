@@ -1,23 +1,16 @@
 package edu.southwestern.tasks.loderunner;
 
-import java.awt.Image;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -28,12 +21,12 @@ public class LodeRunnerTSPUtil {
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(args);
 		//int visitedSize = 0;
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 9.txt");
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 46.txt");
 		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 		ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
 //		System.out.println(level);
-		visualizeLodeRunnerLevel(level, actionSequence, mostRecentVisited);
+		LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, actionSequence, mostRecentVisited);
 		
 		//System.out.println(fullActionSequence);
 		//		//calculates number of states visited from the spawn to every other gold
@@ -48,29 +41,6 @@ public class LodeRunnerTSPUtil {
 		//		System.out.println(tsp.root().adjacencies());
 		//		System.out.println(tsp.getNodes());
 		//		System.out.println("Number of states visited: "+visitedSize);
-	}
-
-	// TODO: Kirby! Put this in the render util and use wherever a visualization is needed!
-	protected static BufferedImage visualizeLodeRunnerLevel(List<List<Integer>> level,
-			ArrayList<LodeRunnerAction> actionSequence, HashSet<LodeRunnerState> mostRecentVisited) {
-		try {
-			LodeRunnerState start = new LodeRunnerState(level);
-//			System.out.println(start);
-//			System.out.println(level);
-			BufferedImage visualPath = LodeRunnerState.vizualizePath(level, mostRecentVisited, actionSequence, start);
-			JFrame frame = new JFrame();
-			JPanel panel = new JPanel();
-			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
-					LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
-			panel.add(label);
-			frame.add(panel);
-			frame.pack();
-			frame.setVisible(true);
-			return visualPath;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null; // render fail
 	}
 
 	/**
@@ -168,10 +138,10 @@ public class LodeRunnerTSPUtil {
 					
 					
 //					System.out.println(p + " to " + i +":" + aStarInfo.t2);
-//					if(aStarInfo.t2 == null) {
-//						visualizeLodeRunnerLevel(level, aStarInfo.t2, aStarInfo.t1);
-//						MiscUtil.waitForReadStringAndEnterKeyPress();
-//					}
+					if(aStarInfo.t2 == null) {
+						LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, aStarInfo.t2, aStarInfo.t1);
+						MiscUtil.waitForReadStringAndEnterKeyPress();
+					}
 					//visitedSize+=aStarInfo.t1.size(); //keeps track of how many visited states for every run of A*
 					double simpleAStarDistance = LodeRunnerLevelAnalysisUtil.calculateSimpleAStarLength(aStarInfo.t2);
 					tsp.addDirectedEdge(p, i, simpleAStarDistance); //adds the directed edge to the graph
