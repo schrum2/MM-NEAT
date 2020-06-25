@@ -2,6 +2,7 @@ package edu.southwestern.tasks.megaman;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.networks.Network;
@@ -14,6 +15,10 @@ public class MegaManCPPNtoGANUtil {
 	public static final int XPREF  = 0;
 	public static final int YPREF = 1;
 	public static final int BIASPREF = 2;
+	public static int numHorizontal = 0;
+	public static int numUp = 0;
+	public static int numDown = 0;
+
 //	public static GANProcess ganProcessHorizontal = null;
 //	public static GANProcess ganProcessUp = null;
 //	public static GANProcess ganProcessDown = null;
@@ -27,6 +32,9 @@ public class MegaManCPPNtoGANUtil {
 	//}
 	public enum Direction {UP, DOWN, HORIZONTAL};
 	public static List<List<Integer>> cppnToMegaManLevel(GANProcess ganProcessHorizontal, GANProcess ganProcessDown, GANProcess ganProcessUp, Network cppn, int chunks, double[] inputMultipliers){
+		 numHorizontal = 0;
+		 numUp = 0;
+		 numDown = 0;
 		int x = 0;
 		int y = 0;
 //		for(double k :inputMultipliers) {
@@ -57,18 +65,21 @@ public class MegaManCPPNtoGANUtil {
 		}
 		int startdirection = StatisticsUtilities.argmax(startoutput);
 		if(startdirection == MegaManCPPNtoGANLevelBreederTask.UP_PREFERENCE) {
+			numUp++;
 			d = Direction.UP;
 			y++;
 			levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, startlatentVector);
 			oneLevel = levelInListUp.get(0);
 		}
 		else if (startdirection == MegaManCPPNtoGANLevelBreederTask.DOWN_PREFERENCE) {
+			numDown++;
 			d = Direction.DOWN;
 			y--;
 			levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector);
 			oneLevel = levelInListDown.get(0);
 		}
 		else {
+			numHorizontal++;
 			d = Direction.HORIZONTAL;
 			x++;
 			levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector);
@@ -106,6 +117,7 @@ public class MegaManCPPNtoGANUtil {
 			
 			
 			if(direction == MegaManCPPNtoGANLevelBreederTask.UP_PREFERENCE&&!d.equals(Direction.DOWN)) {
+				numUp++;
 				d = Direction.UP;
 				y++;
 				levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVector);
@@ -119,6 +131,7 @@ public class MegaManCPPNtoGANUtil {
 
 			}
 			else if (direction == MegaManCPPNtoGANLevelBreederTask.DOWN_PREFERENCE&&!d.equals(Direction.UP)) {
+				numDown++;
 				d = Direction.DOWN;
 				y--;
 				levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVector);
@@ -131,6 +144,7 @@ public class MegaManCPPNtoGANUtil {
 
 			}
 			else if(direction==MegaManCPPNtoGANLevelBreederTask.HORIZONTAL_PREFERENCE){
+				numHorizontal++;
 				d = Direction.HORIZONTAL;
 				x++;
 				levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, latentVector);
@@ -148,6 +162,7 @@ public class MegaManCPPNtoGANUtil {
 			
 			if(needBackup) {
 				if(bkp == MegaManCPPNtoGANLevelBreederTask.UP_PREFERENCE) {
+					numUp++;
 					d = Direction.UP;
 					y++;
 					levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, startlatentVector);
@@ -159,6 +174,7 @@ public class MegaManCPPNtoGANUtil {
 
 				}
 				else if (bkp == MegaManCPPNtoGANLevelBreederTask.DOWN_PREFERENCE) {
+					numDown++;
 					d = Direction.DOWN;
 					y--;
 					levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector);
@@ -169,6 +185,7 @@ public class MegaManCPPNtoGANUtil {
 					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
 				}
 				else {
+					numHorizontal++;
 					d = Direction.HORIZONTAL;
 					x++;
 					levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector);
@@ -188,4 +205,12 @@ public class MegaManCPPNtoGANUtil {
 //		ganProcessHorizontal.terminate();
 		return oneLevel;
 	}
+	public static HashMap<String, Integer> findMiscSegments(List<List<Integer>> level){
+		HashMap<String, Integer> j = new HashMap<>();
+		j.put("numUp", numUp);
+		j.put("numDown", numDown);
+		j.put("numHorizontal", numHorizontal);
+		return j;
+	}
+	
 }

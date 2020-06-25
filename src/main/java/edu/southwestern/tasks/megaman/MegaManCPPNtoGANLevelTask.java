@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.megaman;
 
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -16,7 +17,7 @@ public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTa
 	public static GANProcess ganProcessHorizontal = null;
 	public static GANProcess ganProcessUp = null;
 	public static GANProcess ganProcessDown = null;
-
+	
 	public MegaManCPPNtoGANLevelTask(){
 		super();
 		
@@ -62,6 +63,13 @@ public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTa
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
+	}
+	@Override
+	public HashMap<String, Integer> findMiscSegments(List<List<Integer>> level) {
+		// TODO Auto-generated method stub
+		
+
+		return MegaManCPPNtoGANUtil.findMiscSegments(level);
 	}
 
 }

@@ -106,11 +106,12 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		double numFlyingEnemies = k.get("numFlyingEnemies");
 		
 		
-		HashMap<String,Integer> l = MegaManLevelAnalysisUtil.findMiscSegments(level);
+		HashMap<String,Integer> l = findMiscSegments(level);
 		double numHorizontalSegments = l.get("numHorizontal");
 		double numUpSegments = l.get("numUp");
 		double numDownSegments = l.get("numDown");
-		double numCornerSegments = l.get("numCorners");
+		double numCornerSegments = 0;
+//				l.get("numCorners");
 
 
 		//adds the fitness functions being used to the fitness array list
@@ -252,6 +253,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	 * Extract real-valued latent vector from genotype and then send to GAN to get a MegaMan level
 	 */
 	public abstract List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual);
+	public abstract HashMap<String, Integer> findMiscSegments(List<List<Integer>> level);
 
 
 }
