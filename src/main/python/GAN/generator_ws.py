@@ -10,6 +10,7 @@ import sys
 import json
 import numpy
 import models.dcgan as dcgan
+import models.cdcgan as cdcgan
 #import matplotlib.pyplot as plt
 import math
 
@@ -35,6 +36,12 @@ if __name__ == '__main__':
     z_dims = int(sys.argv[3])
     out_width = int(sys.argv[4])
     out_height = int(sys.argv[5])
+    if len(sys.argv)<=6:
+        isConditional = False
+    else:
+        isConditional = sys.argv[6] == 'conditional'
+
+   
     
 
 #    if z_dims == 4 : # Assume this is Zelda (4 tiles, currently)
@@ -60,7 +67,10 @@ if __name__ == '__main__':
     n_extra_layers = 0
 
     # This is a new DCGAN model that has the proper state dict labels/keys for the latest version of PyTorch (no periods '.')
-    generator = dcgan.DCGAN_G(imageSize, nz, z_dims, ngf, ngpu, n_extra_layers)
+    if isConditional:
+        generator = cdcgan.CDCGAN_G(imageSize, nz, z_dims, ngf, ngpu, n_extra_layers)
+    else:
+        generator = dcgan.DCGAN_G(imageSize, nz, z_dims, ngf, ngpu, n_extra_layers)
     #print(generator.state_dict()) 
     # This is a state dictionary that might have deprecated key labels/names
     deprecatedModel = torch.load(modelToLoad, map_location=lambda storage, loc: storage)
