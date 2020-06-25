@@ -75,7 +75,7 @@ public class LodeRunnerRenderUtil {
 		
 	}
 	
-	// TODO: Kirby! Put this in the render util and use wherever a visualization is needed!
+
 	public static BufferedImage visualizeLodeRunnerLevelSolutionPath(List<List<Integer>> level,
 			ArrayList<LodeRunnerAction> actionSequence, HashSet<LodeRunnerState> mostRecentVisited) {
 		try {

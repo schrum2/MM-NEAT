@@ -80,6 +80,30 @@ public class LodeRunnerTSPUtil {
 		}
 		return fullActionSequence;
 	}
+	
+	public static List<Pair<Graph<Point>.Node, Double>> getTSPGreedyWithBackTrackingSolution(Graph<Point> tsp) {
+		List<Pair<Graph<Point>.Node, Double>> solution = new ArrayList<>();
+		return greedyTSPStep(tsp, solution);
+	}
+
+	private static List<Pair<Graph<Point>.Node, Double>> greedyTSPStep(Graph<Point> tsp, List<Pair<Graph<Point>.Node, Double>> solution) {
+		if(solution.size() == tsp.size()) {
+			return solution;
+		}
+		else {
+			List<Pair<Graph<Point>.Node, Double>> sortedList = sortListByCost(solution);
+			return greedyTSPStep(tsp, sortedList);
+		}
+		
+	}
+
+	private static List<Pair<Graph<Point>.Node, Double>> sortListByCost(
+			List<Pair<Graph<Point>.Node, Double>> solution) {
+		for(int i = 0; i < solution.size(); i++) {
+			
+		}
+		return solution;
+	}
 
 	/**
 	 * Creates a sequence to collect the gold for in the level 
