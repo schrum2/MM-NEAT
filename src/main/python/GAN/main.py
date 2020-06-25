@@ -47,6 +47,9 @@ parser.add_argument('--n_extra_layers', type=int, default=0, help='Number of ext
 parser.add_argument('--experiment', default=None, help='Where to store samples and models')
 parser.add_argument('--adam', action='store_true', help='Whether to use adam (default is rmsprop)')
 parser.add_argument('--json', default=None, help='Json file')
+
+parser.add_argument('--jsonID', default=None, help='The ID json associated with the actual training data')
+
 parser.add_argument('--problem', type=int, default=0, help='Level examples')
 parser.add_argument('--tiles', type=int, default=13, help='Number of tile types')
 opt = parser.parse_args()
@@ -75,6 +78,14 @@ if opt.json is None:
         examplesJson = "sepEx/examplemario{}.json".format(opt.problem)
 else:
     examplesJson = opt.json
+
+if opt.jsonID is not None:
+    examplesJsonID = opt.jsonID
+    #f = open(examplesJsonID, 'r')
+    #file_contents = f.read()
+    #print(file_contents)
+    #print('above was the file contents')
+    #f.close()
 X = np.array ( json.load(open(examplesJson)) )
 z_dims = opt.tiles
 
