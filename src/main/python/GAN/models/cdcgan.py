@@ -21,7 +21,7 @@ class CDCGAN_D(nn.Module):
                            nn.Conv2d(nc, ndf, 4, 2, 1, bias=False))
         classList.add_module('initial:relu:{0}'.format(ndf),
                            nn.LeakyReLU(0.2, inplace=True))
-        classList, cndf = isize / 2, ndf
+        csize, cndf = isize / 2, ndf
 
 
         main = nn.ModuleList()
