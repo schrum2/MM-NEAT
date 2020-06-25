@@ -14,7 +14,15 @@ class CDCGAN_D(nn.Module):
                            nn.Conv2d(nc, ndf, 4, 2, 1, bias=False))
         initial.add_module('initial:relu:{0}'.format(ndf),
                            nn.LeakyReLU(0.2, inplace=True))
-        csize, cndf = isize / 2, ndf
+
+        classList = nn.ModuleList()
+        # input is nc x isize x isize
+        classList.add_module('initial:conv:{0}-{1}'.format(nc, ndf),
+                           nn.Conv2d(nc, ndf, 4, 2, 1, bias=False))
+        classList.add_module('initial:relu:{0}'.format(ndf),
+                           nn.LeakyReLU(0.2, inplace=True))
+        classList, cndf = isize / 2, ndf
+
 
         main = nn.ModuleList()
         # Extra layers
@@ -42,14 +50,19 @@ class CDCGAN_D(nn.Module):
         main.add_module('final:{0}-{1}:conv'.format(cndf, 1),
                         nn.Conv2d(cndf, 1, 4, 1, 0, bias=False))
 
+        self.classList = classList
         self.initial = initial
         self.main = main
 
-    def forward(self, input):
+    def forward(self, input, labels):
         x = input
         for m in self.initial:
             x = m.forward(x)
+        y = labels
+        for m in self.classList:
+            y = m.forward(y)
 
+        x = torch.cat([x,y], 1)
         for m in self.main:
             x = m.forward(x)
         
@@ -78,6 +91,15 @@ class CDCGAN_G(nn.Module):
         initial.add_module('initial:{0}:relu'.format(cngf),
                         nn.ReLU(True))
 
+        classList = nn.ModuleList()
+        classList.add_module('initial:{0}-{1}:convt'.format(nz, cngf),
+                        nn.ConvTranspose2d(nz, cngf, 4, 1, 0, bias=False))
+        classList.add_module('initial:{0}:batchnorm'.format(cngf),
+                        nn.BatchNorm2d(cngf))
+        classList.add_module('initial:{0}:relu'.format(cngf),
+                        nn.ReLU(True))
+
+
         csize, cndf = 4, cngf
         main = nn.ModuleList()
 
@@ -105,14 +127,19 @@ class CDCGAN_G(nn.Module):
                         nn.ConvTranspose2d(cngf, nc, 4, 2, 1, bias=False))
         main.add_module('final:{0}:tanh'.format(nc),
                         nn.ReLU())#nn.Softmax(1))    #Was TANH nn.Tanh())#
+        self.classList = classList
         self.initial = initial
         self.main = main
 
-    def forward(self, input):
+    def forward(self, input, labels):
         x = input
         for m in self.initial:
             x = m.forward(x)
-
+        y = labels
+        for m in self.classList:
+            y = m.forward(y)
+       
+        x = torch.cat([x,y], 1)
 
         for m in self.main:
             x = m.forward(x)
