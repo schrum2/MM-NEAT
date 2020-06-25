@@ -28,7 +28,7 @@ public class MegaManLevelAnalysisUtil {
 		int totalTiles = 0;
 		for(int y=0;y<level.size();y++) {
 			for(int x=0;x<level.get(0).size();x++) {
-				if(level.get(y).get(x)!=9) {
+				if(level.get(y).get(x)!=MegaManVGLCUtil.UNIQUE_NULL) {
 					totalTiles++;
 				}
 			}
@@ -40,7 +40,7 @@ public class MegaManLevelAnalysisUtil {
 		int totalAirTiles = 0;
 		for(int y=0;y<level.size();y++) {
 			for(int x=0;x<level.get(0).size();x++) {
-				if(level.get(y).get(x)==0) {
+				if(level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_AIR) {
 					totalAirTiles++;
 				}
 			}
@@ -57,22 +57,22 @@ public class MegaManLevelAnalysisUtil {
 		int totalFlyingEnemies = 0;
 		for(int y=0;y<level.size();y++) {
 			for(int x=0;x<level.get(0).size();x++) {
-				if(level.get(y).get(x)>10) {
+				if(level.get(y).get(x)>MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD) {
 					totalEnemies++;
 				}
-				if(level.get(y).get(x)>10) {
-					if(level.get(y).get(x)==13||
-							level.get(y).get(x)==14||
-							level.get(y).get(x)==15) {
+				if(level.get(y).get(x)>MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD) {
+					if(level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_OCTOPUS_BATTERY_LEFTRIGHT_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_OCTUPUS_BATTERY_UPDOWN_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_BEAK_ENEMY) {
 						totalWallEnemies++;
-					}else if(level.get(y).get(x)==11||
-							level.get(y).get(x)==16||
-							level.get(y).get(x)==18||
-							level.get(y).get(x)==19||
-							level.get(y).get(x)==20||
-							level.get(y).get(x)==28||
-							level.get(y).get(x)==29||
-							level.get(y).get(x)==17) {
+					}else if(level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_MET_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_PICKET_MAN_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_BIG_EYE_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_SPINE_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_CRAZY_RAZY_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_JUMPER_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_GUNNER_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_SCREW_BOMBER_ENEMY) {
 						totalGroundEnemies++;
 					}else{
 						totalFlyingEnemies++;

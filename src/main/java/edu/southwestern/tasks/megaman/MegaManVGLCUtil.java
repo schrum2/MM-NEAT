@@ -1384,6 +1384,37 @@ public class MegaManVGLCUtil {
 		
 		
 	}
+	public static final int UNIQUE_AIR = 0;
+	public static final int UNIQUE_SOLID = 1;
+	public static final int UNIQUE_LADDER = 2;
+	public static final int UNIQUE_HAZARD = 3;
+	public static final int UNIQUE_BREAKABLE = 4;
+	public static final int UNIQUE_MOVING_PLATFORM = 5;
+	public static final int UNIQUE_CANNON = 6;
+	public static final int UNIQUE_ORB = 7;
+	public static final int UNIQUE_PLAYER = 8;
+	public static final int UNIQUE_NULL = 9;
+	public static final int UNIQUE_WATER = 10;
+	public static final int UNIQUE_MET_ENEMY = 11;
+	public static final int UNIQUE_FLY_BOY_ENEMY = 12;
+	public static final int UNIQUE_OCTOPUS_BATTERY_LEFTRIGHT_ENEMY = 13;
+	public static final int UNIQUE_OCTUPUS_BATTERY_UPDOWN_ENEMY = 14;
+	public static final int UNIQUE_BEAK_ENEMY = 15;
+	public static final int UNIQUE_PICKET_MAN_ENEMY = 16;
+	public static final int UNIQUE_SCREW_BOMBER_ENEMY = 17;
+	public static final int UNIQUE_BIG_EYE_ENEMY = 18;
+	public static final int UNIQUE_SPINE_ENEMY = 19;
+	public static final int UNIQUE_CRAZY_RAZY_ENEMY = 20;
+	public static final int UNIQUE_WATCHER_ENEMY = 21;
+	public static final int UNIQUE_KILLER_BULLET_ENEMY = 22;
+	public static final int UNIQUE_KILLER_BULLET_SPAWNER_ENEMY = 23;
+	public static final int UNIQUE_TACKLE_FIRE_ENEMY = 24;
+	public static final int UNIQUE_FLYING_SHELL_ENEMY = 25;
+	public static final int UNIQUE_FLYING_SHELL_SPAWNER = 26;
+	public static final int UNIQUE_FOOTHOLDER_ENEMY = 27;
+	public static final int UNIQUE_JUMPER_ENEMY = 28;
+	public static final int UNIQUE_GUNNER_ENEMY = 29;
+	public static final int UNIQUE_ENEMY_THRESH_HOLD = 10;
 	private static int convertMegamanTilesToIntUniqueEnemies(char tile) {
 		switch(tile) {
 		case '-': //empty, passable
