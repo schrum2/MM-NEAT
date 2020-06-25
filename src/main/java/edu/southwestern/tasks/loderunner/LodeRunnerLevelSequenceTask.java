@@ -23,24 +23,12 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 		//If we are averaging scores then we add all of the scores from the LodeRunnerLevelTask because it will take the averages from each level in the sequence
 		if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceAverages")) {
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
-				MMNEAT.registerFitnessFunction("simpleAStarDistance");
+				MMNEAT.registerFitnessFunction("averageSimpleAStarDistance");
 				numFitnessFunctions++;
 			}
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsConnectivity")) {
-				MMNEAT.registerFitnessFunction("numOfPositionsVisited"); //connectivity
+				MMNEAT.registerFitnessFunction("averageNumOfPositionsVisited"); //connectivity
 				numFitnessFunctions++;
-			}
-
-			//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
-			for(int i = 1; i <= Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"); i++) {
-				MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
-				MMNEAT.registerFitnessFunction("numOfPositionsVisited",false); //connectivity
-				MMNEAT.registerFitnessFunction("percentLadders", false);
-				MMNEAT.registerFitnessFunction("percentGround", false);
-				MMNEAT.registerFitnessFunction("percentRope", false);
-				MMNEAT.registerFitnessFunction("percentConnected", false);
-				MMNEAT.registerFitnessFunction("numTreasures", false);
-				MMNEAT.registerFitnessFunction("numEnemies", false);
 			}
 		}
 		//if we are taking individual scores it takes all the scores as for the first level, then adds all the scores for the second level, and so on for all levels
@@ -48,25 +36,27 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 		else if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceIndividual")) {
 			for(int i = 0; i < Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"); i++) {
 				if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
-					MMNEAT.registerFitnessFunction("simpleAStarDistance");
+					MMNEAT.registerFitnessFunction("Level"+i+"simpleAStarDistance");
 					numFitnessFunctions++;
 				}
 				if(Parameters.parameters.booleanParameter("lodeRunnerAllowsConnectivity")) {
-					MMNEAT.registerFitnessFunction("numOfPositionsVisited"); //connectivity
+					MMNEAT.registerFitnessFunction("Level"+i+"numOfPositionsVisited"); //connectivity
 					numFitnessFunctions++;
 				}
-
-				//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
-				MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
-				MMNEAT.registerFitnessFunction("numOfPositionsVisited",false); //connectivity
-				MMNEAT.registerFitnessFunction("percentLadders", false);
-				MMNEAT.registerFitnessFunction("percentGround", false);
-				MMNEAT.registerFitnessFunction("percentRope", false);
-				MMNEAT.registerFitnessFunction("percentConnected", false);
-				MMNEAT.registerFitnessFunction("numTreasures", false);
-				MMNEAT.registerFitnessFunction("numEnemies", false);
 			}
 		}else throw new UnsupportedOperationException("Don't test LodeRunnerLevelSequenceTask again without first registering fitness functions");
+		
+		//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
+		for(int i = 1; i <= Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"); i++) {
+			MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
+			MMNEAT.registerFitnessFunction("numOfPositionsVisited",false); //connectivity
+			MMNEAT.registerFitnessFunction("percentLadders", false);
+			MMNEAT.registerFitnessFunction("percentGround", false);
+			MMNEAT.registerFitnessFunction("percentRope", false);
+			MMNEAT.registerFitnessFunction("percentConnected", false);
+			MMNEAT.registerFitnessFunction("numTreasures", false);
+			MMNEAT.registerFitnessFunction("numEnemies", false);
+		}
 	}
 
 	/**
@@ -163,7 +153,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	 * @param phenotype
 	 * @return
 	 */
-	private static List<List<Integer>> getLodeRunnerLevelListRepresentationFromStaticGenotype(List<Double> phenotype) {
+	public static List<List<Integer>> getLodeRunnerLevelListRepresentationFromStaticGenotype(List<Double> phenotype) {
 		return LodeRunnerGANLevelTask.getLodeRunnerLevelListRepresentationFromGenotypeStatic(phenotype);
 	}
 

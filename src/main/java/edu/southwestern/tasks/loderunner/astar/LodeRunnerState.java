@@ -370,8 +370,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
-			if(	(passable(newX, newY-1) || (ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && tileAtPosition(newX, newY-1)==LODE_RUNNER_TILE_DIGGABLE)) && // Do not allow moving up ladders into solid tiles
-					tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) // Be on a ladder to climb
+			if(	(passable(newX, newY-1) || (ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && inBounds(newX, newY-1) &&tileAtPosition(newX, newY-1)==LODE_RUNNER_TILE_DIGGABLE)) && // Do not allow moving up ladders into solid tiles
+					inBounds(newX, newY-1) &&tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) // Be on a ladder to climb
 				newY--;
 			else return null; 
 		}
