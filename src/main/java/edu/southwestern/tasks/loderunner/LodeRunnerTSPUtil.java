@@ -28,15 +28,15 @@ public class LodeRunnerTSPUtil {
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(args);
 		//int visitedSize = 0;
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 6.txt");
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 9.txt");
 		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 		ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
-		System.out.println(level);
+//		System.out.println(level);
 		try {
 			LodeRunnerState start = new LodeRunnerState(level);
-			System.out.println(start);
-			System.out.println(level);
+//			System.out.println(start);
+//			System.out.println(level);
 			BufferedImage visualPath = LodeRunnerState.vizualizePath(level, mostRecentVisited, actionSequence, start);
 			JFrame frame = new JFrame();
 			JPanel panel = new JPanel();
