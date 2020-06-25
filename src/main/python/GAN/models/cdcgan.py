@@ -8,14 +8,15 @@ class CDCGAN_D(nn.Module):
         self.ngpu = ngpu
         assert isize % 16 == 0, "isize has to be a multiple of 16"
 
-        main = nn.ModuleList()
+        initial = nn.ModuleList()
         # input is nc x isize x isize
-        main.add_module('initial:conv:{0}-{1}'.format(nc, ndf),
-                        nn.Conv2d(nc, ndf, 4, 2, 1, bias=False))
-        main.add_module('initial:relu:{0}'.format(ndf),
-                        nn.LeakyReLU(0.2, inplace=True))
+        initial.add_module('initial:conv:{0}-{1}'.format(nc, ndf),
+                           nn.Conv2d(nc, ndf, 4, 2, 1, bias=False))
+        initial.add_module('initial:relu:{0}'.format(ndf),
+                           nn.LeakyReLU(0.2, inplace=True))
         csize, cndf = isize / 2, ndf
 
+        main = nn.ModuleList()
         # Extra layers
         for t in range(n_extra_layers):
             main.add_module('extra-layers-{0}:{1}:conv'.format(t, cndf),
@@ -40,11 +41,15 @@ class CDCGAN_D(nn.Module):
         # state size. K x 4 x 4
         main.add_module('final:{0}-{1}:conv'.format(cndf, 1),
                         nn.Conv2d(cndf, 1, 4, 1, 0, bias=False))
-        self.main = main
 
+        self.initial = initial
+        self.main = main
 
     def forward(self, input):
         x = input
+        for m in self.initial:
+            x = m.forward(x)
+
         for m in self.main:
             x = m.forward(x)
         
