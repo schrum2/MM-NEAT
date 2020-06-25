@@ -98,7 +98,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		MegaManState start = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t3; //gets start state for search 
 		double simpleAStarDistance = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t4;
 		//calculates the amount of the level that was covered in the search, connectivity.
-		double precentConnected = MegaManLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited)/MegaManLevelAnalysisUtil.findTotalAirTiles(level);
+		double precentConnected = MegaManLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited)/MegaManLevelAnalysisUtil.findTotalPassableTiles(level);
 		HashMap<String, Integer> k = MegaManLevelAnalysisUtil.findMiscEnemies(level);
 		double numEnemies = k.get("numEnemies");
 		double numWallEnemies = k.get("numWallEnemies");
