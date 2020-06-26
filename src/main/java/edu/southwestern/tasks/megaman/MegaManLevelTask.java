@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,15 +21,22 @@ import javax.swing.SwingUtilities;
 
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.Archive;
+import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
+import edu.southwestern.tasks.zelda.ZeldaMAPElitesWallWaterRoomsBinLabels;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.graphics.GraphicsUtil;
 
 public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	private static int numFitnessFunctions = 0; 
@@ -47,7 +55,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				MMNEAT.registerFitnessFunction("numOfPositionsVisited"); //connectivity
 				numFitnessFunctions++;
 			}
-//			if(Parameters.parameters.booleanParameter("megaManDistinctScreenFitness")){
+//			if(Parameters.parameters.booleanParameter("megaManAllowsNumDistinctSegments")){
 //				MMNEAT.registerFitnessFunction("numDistinctScreens"); //distinct screens
 //				numFitnessFunctions++;
 //			}
@@ -62,7 +70,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			MMNEAT.registerFitnessFunction("numUpSegments", false);
 			MMNEAT.registerFitnessFunction("numDownSegments",false);
 			MMNEAT.registerFitnessFunction("numCornerSegments", false);
-		}
+			MMNEAT.registerFitnessFunction("numDistinctSegments", false);		}
 	}
 	@Override
 	public int numObjectives() {
@@ -89,9 +97,10 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		return evaluateOneLevel(level, genotypeId);
 	}
 
+	@SuppressWarnings("unchecked")
 	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, long genotypeId) {
 		// TODO Auto-generated method stub
-		
+		ArrayList<Double> behaviorVector = null; // Filled in later
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
 		HashSet<MegaManState> mostRecentVisited = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t1;
 		ArrayList<MegaManAction> actionSequence = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t2;
@@ -111,6 +120,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		double numUpSegments = l.get("numUp");
 		double numDownSegments = l.get("numDown");
 		double numCornerSegments = l.get("numCorner");
+		double numDistinctSegments = l.get("numDistinctSegments");
 //				l.get("numCorners");
 
 
@@ -122,7 +132,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			fitnesses.add(precentConnected);
 		}
 		
-		double[] otherScores = new double[] {simpleAStarDistance,precentConnected, numEnemies, numWallEnemies, numGroundEnemies, numFlyingEnemies, numHorizontalSegments, numUpSegments, numDownSegments, numCornerSegments};
+		double[] otherScores = new double[] {simpleAStarDistance,precentConnected, numEnemies, numWallEnemies, numGroundEnemies, numFlyingEnemies, numHorizontalSegments, numUpSegments, numDownSegments, numCornerSegments, numDistinctSegments};
 		
 		
 		
@@ -138,7 +148,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			System.out.println("Number of Up Segments " + numUpSegments);
 			System.out.println("Number of Down Segments " + numDownSegments);
 			System.out.println("Number of Corner Segments " + numCornerSegments);
-	
+			System.out.println("Number of Distinct Segments " + numDistinctSegments);	
 			try {
 				//displays the rendered solution path in a window 
 				BufferedImage visualPath = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
@@ -254,6 +264,68 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				});
 				System.out.println("Press enter");
 				MiscUtil.waitForReadStringAndEnterKeyPress();
+			}
+			if(MMNEAT.ea instanceof MAPElites) {
+				final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("megaManGANLevelChunks");
+				double binScore = simpleAStarDistance;
+				int binIndex = 0;
+				if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels) {
+					int maxNumSegments = BINS_PER_DIMENSION * BINS_PER_DIMENSION;
+					
+					
+					int indexConnected = (int) precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS;
+					int numVertical = (int) (numUpSegments+numDownSegments);
+//					int numDistinctSegments;
+					double[] archiveArray = new double[(maxNumSegments+1)*(maxNumSegments+1)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)];
+					Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
+//					binIndex = (dim1*BINS_PER_DIMENSION + dim2)*BINS_PER_DIMENSION + dim3;
+					binIndex =(numVertical*BINS_PER_DIMENSION+ (int) numDistinctSegments)*BINS_PER_DIMENSION+indexConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS;
+					archiveArray[binIndex] = binScore; // Percent rooms traversed
+
+					System.out.println("["+numDistinctSegments+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
+
+					behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
+				}
+				
+				if(CommonConstants.netio) {
+					System.out.println("Save archive images");
+					Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+					List<String> binLabels = archive.getBinMapping().binLabels();
+
+					// Index in flattened bin array
+					Score<T> elite = archive.getElite(binIndex);
+					// If the bin is empty, or the candidate is better than the elite for that bin's score
+					if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
+						// CHANGE!
+//						BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
+//						BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
+						BufferedImage levelImage = null;
+						try {
+							BufferedImage levelSolution = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+							BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
+							levelImage = MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						//sets the fileName, binPath, and fullName
+						String fileName = String.format("%7.5f", binScore) +"-"+ genotypeId + ".png";
+//						if(individual instanceof CPPNOrDirectToGANGenotype) {
+//							CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
+//							if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
+//							else fileName = "Direct-" + fileName;
+//						}
+						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
+						String fullName = binPath + "-" + fileName;
+						System.out.println(fullName);
+						GraphicsUtil.saveImage(levelImage, fullName);	
+						fileName = String.format("%7.5f", binScore) +"-"+ genotypeId + "-solution.png";
+						fullName = binPath + "-" + fileName;
+						System.out.println(fullName);
+						GraphicsUtil.saveImage(levelImage, fullName);	
+					}
+				}
 			}
 		}
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
