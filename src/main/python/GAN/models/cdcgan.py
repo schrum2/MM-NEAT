@@ -17,9 +17,9 @@ class CDCGAN_D(nn.Module):
 
         classList = nn.ModuleList()
         # input is nc x isize x isize
-        classList.add_module('initial:conv:{0}-{1}'.format(nc, ndf),
+        classList.add_module('embedclass:conv:{0}-{1}'.format(nc, ndf),
                            nn.Conv2d(nc, ndf, 4, 2, 1, bias=False))
-        classList.add_module('initial:relu:{0}'.format(ndf),
+        classList.add_module('embedclass:relu:{0}'.format(ndf),
                            nn.LeakyReLU(0.2, inplace=True))
         csize, cndf = isize / 2, ndf
 
@@ -92,11 +92,11 @@ class CDCGAN_G(nn.Module):
                         nn.ReLU(True))
 
         classList = nn.ModuleList()
-        classList.add_module('initial:{0}-{1}:convt'.format(nz, cngf),
+        classList.add_module('embedclass:{0}-{1}:convt'.format(nz, cngf),
                         nn.ConvTranspose2d(nz, cngf, 4, 1, 0, bias=False))
-        classList.add_module('initial:{0}:batchnorm'.format(cngf),
+        classList.add_module('embedclass:{0}:batchnorm'.format(cngf),
                         nn.BatchNorm2d(cngf))
-        classList.add_module('initial:{0}:relu'.format(cngf),
+        classList.add_module('embedclass:{0}:relu'.format(cngf),
                         nn.ReLU(True))
 
 
