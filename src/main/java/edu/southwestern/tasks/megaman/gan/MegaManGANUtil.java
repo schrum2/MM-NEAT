@@ -14,6 +14,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 import edu.southwestern.tasks.megaman.MegaManRenderUtil;
+import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.util.random.RandomNumbers;
 
@@ -312,12 +313,13 @@ public class MegaManGANUtil {
 		for(int i = 0;i<oneLevel.size();i++) { //add null to all spaces to the right TODO possibly change
 			oneLevel.get(i).addAll(nullLine);
 		}
+		MegaManVGLCUtil.printLevel(oneLevel);
 		//take the information from the previous run to replace null with a level in the appropriate spots
 		for(int x = (int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x<(int) previousMove.getX()+2*MEGA_MAN_LEVEL_WIDTH;x++) {
 			for(int y = (int) previousMove.getY();y<(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
 //						System.out.println(x+", "+y);
 //						System.out.println(previousMove.getX()+", "+previousMove.getY());
-
+				//System.out.println(x+", "+y);
 				oneLevel.get(y).set(x, levelInListHorizontal.get(level).get((int) (y - previousMove.getY())).get((int) (x-MEGA_MAN_LEVEL_WIDTH-previousMove.getX())));
 			}
 		}
@@ -392,7 +394,7 @@ public class MegaManGANUtil {
 		
 			for(int x = level.get(0).size()-1;x>=0; x--) {
 				for(int y = level.size()-1; y>=0;y--) {
-					System.out.println(x+", "+y);
+					//System.out.println(x+", "+y);
 				if(y-1>=0&&level.get(y).get(x)==2&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
 					level.get(y-1).set(x, 7);
 					placed=true;

@@ -106,8 +106,13 @@ public class MegaManCPPNtoGANUtil {
 			double[] outputs = new double[3];
 			for(int i =0;i<3;i++) {
 				outputs[i]=full[i];
+				//System.out.println(outputs[i]);
 			}
 			int direction = StatisticsUtilities.argmax(outputs);
+			//System.out.println(direction);
+			//System.out.println("\n"+x+"\n"+y);
+			
+			//System.out.println("just finished");
 			double[] backup = new double[3];
 			for(int i = 0;i<3;i++) {
 				if(i!=direction) {
@@ -120,125 +125,179 @@ public class MegaManCPPNtoGANUtil {
 			
 			if(direction == MegaManCPPNtoGANLevelBreederTask.UP_PREFERENCE&&!d.equals(Direction.DOWN)) {
 				numUp++;
-				System.out.println();
-				System.out.println();
-				System.out.println();
-				System.out.println("going: "+d+" with: "+direction);
-				System.out.println();
-				System.out.println();
-				System.out.println();
 				d = Direction.UP;
-				y++;
-				
+//				if(previous.equals(Direction.UP)) y++;
+//				if(previous.equals(Direction.DOWN)) y--;
+//				if(previous.equals(Direction.HORIZONTAL)) x++;
+
+
 				levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVector);
 				if(level==chunks-1) {
 					MegaManGANUtil.placeOrb(levelInListUp.get(0));
 				}
 				needBackup=false;
-				MegaManGANUtil.placeUp(levelInListUp, previousMove, oneLevel, 0);
+				if(previous.equals(Direction.UP)) {
+					MegaManGANUtil.placeUp(levelInListUp, previousMove, oneLevel, 0);
+					y++;
+				}
+//				if(previous.equals(Direction.DOWN)) { //should never happen
+//					MegaManGANUtil.placeDown(levelInListUp, previousMove, oneLevel, 0);
+//					y--;
+//					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
+//
+//				}
+				if(previous.equals(Direction.HORIZONTAL)) {
+					MegaManGANUtil.placeRight(levelInListUp, previousMove, oneLevel, nullLine, 0);
+					x++;
+					previousMove=new Point((int) previousMove.getX()+MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
+
+				}
 				//wasRight = true;
 				//previousMove=new Point((int) previousMove.getX()+MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
 
 			}
 			else if (direction == MegaManCPPNtoGANLevelBreederTask.DOWN_PREFERENCE&&!d.equals(Direction.UP)) {
 				numDown++;
-				System.out.println();
-				System.out.println();
-				System.out.println();
-				System.out.println("going: "+d+" with: "+direction);
-				System.out.println();
-				System.out.println();
-				System.out.println();
+
 				d = Direction.DOWN;
-				y--;
+				
 				levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVector);
 				if(level==chunks-1) {
 					MegaManGANUtil.placeOrb(levelInListDown.get(0));
 				}
 				needBackup=false;
-				MegaManGANUtil.placeDown(levelInListDown, previousMove, oneLevel, 0);
-				previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
+//				if(previous.equals(Direction.UP)) {
+//					y++;
+//					MegaManGANUtil.placeUp(levelInListDown, previousMove, oneLevel, 0);
+//				}
+				if(previous.equals(Direction.DOWN)) {
+					y--;
+					MegaManGANUtil.placeDown(levelInListDown, previousMove, oneLevel, 0);
+					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
+				}
+				if(previous.equals(Direction.HORIZONTAL)) {
+					x++;
+					MegaManGANUtil.placeRight(levelInListDown, previousMove, oneLevel, nullLine, 0);
+					previousMove=new Point((int) previousMove.getX()+MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
+
+				}
+				//previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
 
 			}
 			else if(direction==MegaManCPPNtoGANLevelBreederTask.HORIZONTAL_PREFERENCE){
 				numHorizontal++;
-				System.out.println();
-				System.out.println();
-				System.out.println();
-				System.out.println("going: "+d+" with: "+direction);
-				System.out.println();
-				System.out.println();
-				System.out.println();
+
 				d = Direction.HORIZONTAL;
-				x++;
+//				if(previous.equals(Direction.UP)) y++;
+//				if(previous.equals(Direction.DOWN)) y--;
+//				if(previous.equals(Direction.HORIZONTAL)) x++;
 				levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, latentVector);
 				if(level==chunks-1) {
 					MegaManGANUtil.placeOrb(levelInListHorizontal.get(0));
 				}
 				needBackup=false;
 				
+				if(previous.equals(Direction.UP)) {
+					y++;
+					MegaManGANUtil.placeUp(levelInListHorizontal, previousMove, oneLevel, 0);
+				}
+				if(previous.equals(Direction.DOWN)) {
+					y--;
+					MegaManGANUtil.placeDown(levelInListHorizontal, previousMove, oneLevel, 0);
+					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
+
+				}
+				if(previous.equals(Direction.HORIZONTAL)) {
+					x++;
+					MegaManGANUtil.placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, 0);
+					previousMove=new Point((int) previousMove.getX()+MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
+
+				}
 				
-				MegaManGANUtil.placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, 0);
 				//wasRight = true;
-				previousMove=new Point((int) previousMove.getX()+MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
 			}
 			
 			
 			if(needBackup) {
 				if(bkp == MegaManCPPNtoGANLevelBreederTask.UP_PREFERENCE) {
 					numUp++;
-					System.out.println();
-					System.out.println();
-					System.out.println();
-					System.out.println("going: "+d+" with: "+direction);
-					System.out.println();
-					System.out.println();
-					System.out.println();
 					d = Direction.UP;
-					y++;
+//					if(previous.equals(Direction.UP)) y++;
+//					if(previous.equals(Direction.DOWN)) y--;
+//					if(previous.equals(Direction.HORIZONTAL)) x++;
 					levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, startlatentVector);
 					if(level==chunks-1) {
 						MegaManGANUtil.placeOrb(levelInListUp.get(0));
 					}
-					MegaManGANUtil.placeUp(levelInListUp, previousMove, oneLevel, 0);
+					if(previous.equals(Direction.UP)) {
+						y++;
+						MegaManGANUtil.placeUp(levelInListUp, previousMove, oneLevel, 0);
+					}
+					if(previous.equals(Direction.DOWN)) {
+						 y--;
+						MegaManGANUtil.placeDown(levelInListUp, previousMove, oneLevel, 0);
+						previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
 
+					}
+					if(previous.equals(Direction.HORIZONTAL)) {
+						x++;
+						MegaManGANUtil.placeRight(levelInListUp, previousMove, oneLevel, nullLine, 0);
+						previousMove=new Point((int) previousMove.getX()+MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
+
+					}
 
 				}
 				else if (bkp == MegaManCPPNtoGANLevelBreederTask.DOWN_PREFERENCE) {
 					numDown++;
-					System.out.println();
-					System.out.println();
-					System.out.println();
-					System.out.println("going: "+d+" with: "+direction);
-					System.out.println();
-					System.out.println();
-					System.out.println();
 					d = Direction.DOWN;
-					y--;
+//					if(previous.equals(Direction.UP)) y++;
+//					if(previous.equals(Direction.DOWN)) y--;
+//					if(previous.equals(Direction.HORIZONTAL)) x++;
 					levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector);
 					if(level==chunks-1) {
 						MegaManGANUtil.placeOrb(levelInListDown.get(0));
 					}
-					MegaManGANUtil.placeDown(levelInListDown, previousMove, oneLevel, 0);
-					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
+					if(previous.equals(Direction.UP)) {
+						y++;
+						MegaManGANUtil.placeUp(levelInListDown, previousMove, oneLevel, 0);
+					}
+					if(previous.equals(Direction.DOWN)) {
+						y--;
+						MegaManGANUtil.placeDown(levelInListDown, previousMove, oneLevel, 0);
+						previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
+
+					}
+					if(previous.equals(Direction.HORIZONTAL)) {
+						x++;
+						MegaManGANUtil.placeRight(levelInListDown, previousMove, oneLevel, nullLine, 0);
+					}
 				}
 				else {
 					numHorizontal++;
-					System.out.println();
-					System.out.println();
-					System.out.println();
-					System.out.println("going: "+d+" with: "+direction);
-					System.out.println();
-					System.out.println();
-					System.out.println();
 					d = Direction.HORIZONTAL;
-					x++;
+//					if(previous.equals(Direction.UP)) y++;
+//					if(previous.equals(Direction.DOWN)) y--;
+//					if(previous.equals(Direction.HORIZONTAL)) x++;
 					levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector);
 					if(level==chunks-1) {
 						MegaManGANUtil.placeOrb(levelInListHorizontal.get(0));
 					}
-					MegaManGANUtil.placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, 0);
-					previousMove=new Point((int) previousMove.getX()+MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
+					if(previous.equals(Direction.UP)) {
+						y++;
+						MegaManGANUtil.placeUp(levelInListHorizontal, previousMove, oneLevel, 0);
+					}
+					if(previous.equals(Direction.DOWN)) {
+						y--;
+						MegaManGANUtil.placeDown(levelInListHorizontal, previousMove, oneLevel, 0);
+						previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
+
+					}
+					if(previous.equals(Direction.HORIZONTAL)) {
+						x++;
+						MegaManGANUtil.placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, 0);
+						previousMove=new Point((int) previousMove.getX()+MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
+
+					}
 				}
 
 			}
