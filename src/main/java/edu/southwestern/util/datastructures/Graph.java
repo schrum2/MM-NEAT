@@ -41,23 +41,14 @@ public class Graph<T>{
 		}
 	}
 	
-	public Graph<T> deepCopy(Graph<T> graph){
+	public Graph<T> deepCopy(){
+		Graph<T> graph = new Graph<T>();
+		
 		return graph;
 		
 	}
 	
-	public List<Pair<Graph<Point>.Node, Double>> sortListByCost(List<Pair<Graph<Point>.Node, Double>> list){
-//		Collections.sort(list, new Comparator<Pair<Graph<T>.Node, Double>>(){
-//
-//			@Override
-//			public int compare(Pair<Graph<T>.Node, Double> o1, Pair<Graph<T>.Node, Double> o2) {
-//				// TODO Auto-generated method stub
-//				return (int) (o1.t2-o2.t2);
-//			}
-//			
-//		});
-		return list;
-	}
+	
 
 	public Set<Graph<T>.Node> getNodes() {
 		return nodes;
@@ -207,6 +198,18 @@ public class Graph<T>{
 				set.add(p.t1);
 			}
 			return set;
+		}
+		
+		public List<Pair<Graph<T>.Node, Double>> adjacenciesSortedByEdgeCost(){
+			List<Pair<Graph<T>.Node, Double>> list = new ArrayList<>();
+			list.addAll(adjacencies());
+			Collections.sort(list, new Comparator<Pair<Graph<T>.Node, Double>>(){
+				@Override
+				public int compare(Pair<Graph<T>.Node, Double> o1, Pair<Graph<T>.Node, Double> o2) {
+					return (int) Math.signum(o1.t2-o2.t2);
+				}
+			});
+			return list;
 		}
 		
 		public void setAdjacencies(Set<Pair<Graph<T>.Node,Double>> a) {

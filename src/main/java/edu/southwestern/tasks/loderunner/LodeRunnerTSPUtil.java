@@ -87,26 +87,25 @@ public class LodeRunnerTSPUtil {
 	}
 
 	private static List<Pair<Graph<Point>.Node, Double>> greedyTSPStep(Graph<Point> tsp, List<Pair<Graph<Point>.Node, Double>> solution) {
-		if(solution.size() == tsp.size()) {
-			return solution;
-		}
-		else {
-			List<Pair<Graph<Point>.Node, Double>> sortedList = tsp.sortListByCost(solution);
-			for(int i = 0; i < sortedList.size(); i++) {
-				if(solution.size() == tsp.size()) {
-					Graph<Point> tspCopy = tsp.deepCopy(tsp);
-					solution.add(sortedList.get(i));
-					tsp.removeNode(sortedList.get(i).t1);
-					if(greedyTSPStep(tsp, solution) != null) return solution;
-					tsp = tspCopy;
-				} 
-				else 
-					return null;
-			}
-			return solution;
-		}
 
+		List<Pair<Graph<Point>.Node, Double>> sortedList = solution.get(solution.size()-1).t1.adjacenciesSortedByEdgeCost();
+		for(int i = 0; i < sortedList.size(); i++) {
+			Pair<Graph<Point>.Node, Double> candidate = sortedList.get(i);
+			solution.add(candidate);
+			if(solution.size() == tsp.size()) {
+				return solution;
+			} else {
+				Graph<Point> tspCopy = tsp.deepCopy();
+				tsp.removeNode(candidate.t1);
+				List<Pair<Graph<Point>.Node, Double>> result = greedyTSPStep(tsp, solution);
+				if(result != null) return result;
+				tsp = tspCopy;
+			}
+			solution.remove(solution.size()-1);
+		}
+		return null;
 	}
+
 
 
 	/**
