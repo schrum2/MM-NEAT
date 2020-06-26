@@ -300,8 +300,9 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 //						BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
 //						BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
 						BufferedImage levelImage = null;
+						BufferedImage levelSolution = null;
 						try {
-							BufferedImage levelSolution = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+							levelSolution = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 							BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
 							levelImage = MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
 						} catch (IOException e) {
@@ -323,7 +324,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 						fileName = String.format("%7.5f", binScore) +"-"+ genotypeId + "-solution.png";
 						fullName = binPath + "-" + fileName;
 						System.out.println(fullName);
-						GraphicsUtil.saveImage(levelImage, fullName);	
+						GraphicsUtil.saveImage(levelSolution, fullName);	
 					}
 				}
 			}
