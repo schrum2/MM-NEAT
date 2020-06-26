@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.parallel
 
 class CDCGAN_D(nn.Module):
-    def __init__(self, isize, nz, nc, ndf, ngpu, n_extra_layers=0):
+    def __init__(self, isize, nz, nc, ndf, ngpu, num_classes, n_extra_layers=0):
         super(CDCGAN_D, self).__init__()
         self.ngpu = ngpu
         assert isize % 16 == 0, "isize has to be a multiple of 16"
@@ -15,6 +15,7 @@ class CDCGAN_D(nn.Module):
         initial.add_module('initial:relu:{0}'.format(ndf),
                            nn.LeakyReLU(0.2, inplace=True))
 
+        # TODO: Use num_classes here
         classList = nn.ModuleList()
         # input is nc x isize x isize
         classList.add_module('embedclass:conv:{0}-{1}'.format(nc, ndf),
@@ -72,7 +73,7 @@ class CDCGAN_D(nn.Module):
         return output.view(1)
 
 class CDCGAN_G(nn.Module):
-    def __init__(self, isize, nz, nc, ngf, ngpu, n_extra_layers=0):
+    def __init__(self, isize, nz, nc, ngf, ngpu, num_classes, n_extra_layers=0):
         super(CDCGAN_G, self).__init__()
         self.ngpu = ngpu
         assert isize % 16 == 0, "isize has to be a multiple of 16"
@@ -91,6 +92,7 @@ class CDCGAN_G(nn.Module):
         initial.add_module('initial:{0}:relu'.format(cngf),
                         nn.ReLU(True))
 
+        # TODO: Use num_classes here
         classList = nn.ModuleList()
         classList.add_module('embedclass:{0}-{1}:convt'.format(nz, cngf),
                         nn.ConvTranspose2d(nz, cngf, 4, 1, 0, bias=False))

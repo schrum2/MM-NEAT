@@ -41,7 +41,7 @@ parser.add_argument('--clamp_lower', type=float, default=-0.01)
 parser.add_argument('--clamp_upper', type=float, default=0.01)
 parser.add_argument('--Diters', type=int, default=5, help='number of D iters per each G iter')
 
-parser.add_argument('--conditional', action='store_true',  help='Whether conditional GAN is used')
+parser.add_argument('--num_classes', type=int, default=0,  help='Number of conditional GAN classes. Default of 0 means cGAN is not used.')
 
 parser.add_argument('--n_extra_layers', type=int, default=0, help='Number of extra layers on gen and disc')
 parser.add_argument('--experiment', default=None, help='Where to store samples and models')
@@ -120,8 +120,8 @@ def weights_init(m):
         m.weight.data.normal_(1.0, 0.02)
         m.bias.data.fill_(0)
 
-if opt.conditional:
-    netG = cdcgan.CDCGAN_G(map_size, nz, z_dims, ngf, ngpu, n_extra_layers)
+if opt.num_classes > 0:
+    netG = cdcgan.CDCGAN_G(map_size, nz, z_dims, ngf, ngpu, opt.num_classes, n_extra_layers)
 else:
     netG = dcgan.DCGAN_G(map_size, nz, z_dims, ngf, ngpu, n_extra_layers)
 
@@ -130,8 +130,8 @@ if opt.netG != '': # load checkpoint if needed
     netG.load_state_dict(torch.load(opt.netG))
 print(netG)
 
-if opt.conditional:
-    netD = cdcgan.CDCGAN_D(map_size, nz, z_dims, ndf, ngpu, n_extra_layers)
+if opt.num_classes > 0:
+    netD = cdcgan.CDCGAN_D(map_size, nz, z_dims, ndf, ngpu, opt.num_classes, n_extra_layers)
 else:
     netD = dcgan.DCGAN_D(map_size, nz, z_dims, ndf, ngpu, n_extra_layers)
 
