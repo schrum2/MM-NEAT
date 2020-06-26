@@ -93,10 +93,18 @@ public class MegaManRenderUtil {
 	public static BufferedImage getBufferedImageWithRelativeRendering(List<List<Integer>> list, BufferedImage[] images) throws IOException {
 		BufferedImage image = createBufferedImage(list, renderedImageWidth(list.get(0).size()), renderedImageHeight(list.size()), images); //gets the image of the level 
 		//this code displays the level in a window 
-		
+		int screenx;
+		int screeny;
+		if(list.get(0).size()>list.size()) {
+			screenx = 1800;
+			screeny = 950*list.size()/list.get(0).size();
+		}else {
+			screeny = 950;
+			screenx = 1800*list.get(0).size()/list.size();
+		}
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
-		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(1600, 900, Image.SCALE_AREA_AVERAGING)));
+		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(screenx, screeny, Image.SCALE_AREA_AVERAGING)));
 		panel.add(label);
 		frame.add(panel);
 		frame.pack();

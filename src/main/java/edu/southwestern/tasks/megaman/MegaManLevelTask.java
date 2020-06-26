@@ -144,7 +144,16 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				BufferedImage visualPath = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 				JFrame frame = new JFrame();
 				JPanel panel = new JPanel();
-				JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(1600,900, Image.SCALE_FAST)));
+				int screenx;
+				int screeny;
+				if(level.get(0).size()>level.size()) {
+					screenx = 1800;
+					screeny = 950*level.size()/level.get(0).size();
+				}else {
+					screeny = 950;
+					screenx = 1800*level.get(0).size()/level.size();
+				}
+				JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(screenx,screeny, Image.SCALE_FAST)));
 				panel.add(label);
 				frame.add(panel);
 				frame.pack();
