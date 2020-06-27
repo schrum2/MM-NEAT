@@ -80,12 +80,23 @@ public class LodeRunnerTSPUtil {
 		return fullActionSequence;
 	}
 
+	/**
+	 * Kick off method for the recursive backtracking method of getting the solution path 
+	 * @param tsp Graph
+	 * @return Solution Path
+	 */
 	public static List<Pair<Graph<Point>.Node, Double>> getTSPGreedyWithBackTrackingSolution(Graph<Point> tsp) {
 		List<Pair<Graph<Point>.Node, Double>> solution = new ArrayList<>();
 		solution.add(new Pair<Graph<Point>.Node, Double>(tsp.root(), 0.0)); //adds the spawn as the first point 
 		return greedyTSPStep(tsp, solution);
 	}
 
+	/**
+	 * Recursive backtracking algorithm to get the right solution path that cna always beat a level
+	 * @param tsp Graph 
+	 * @param solution Partial solution, always guaranteed to have the root
+	 * @return Full final solution path
+	 */
 	private static List<Pair<Graph<Point>.Node, Double>> greedyTSPStep(Graph<Point> tsp, List<Pair<Graph<Point>.Node, Double>> solution) {
 
 		List<Pair<Graph<Point>.Node, Double>> sortedList = solution.get(solution.size()-1).t1.adjacenciesSortedByEdgeCost();

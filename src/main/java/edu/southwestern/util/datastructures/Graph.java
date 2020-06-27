@@ -1,6 +1,5 @@
 package edu.southwestern.util.datastructures;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -41,11 +40,20 @@ public class Graph<T>{
 		}
 	}
 	
+	/**
+	 * Returns a deep copy of the graph
+	 * @return Deep copy of graph 
+	 */
 	public Graph<T> deepCopy(){
 		Graph<T> graph = new Graph<T>();
-		
+		Set<Graph<T>.Node> nodes = getNodes();
+		Node node;
+		for(Node n : nodes) {
+			node = new Node(null);
+			node.copy(n);
+			graph.addNode(node);
+		}
 		return graph;
-		
 	}
 	
 	
@@ -200,6 +208,10 @@ public class Graph<T>{
 			return set;
 		}
 		
+		/**
+		 * Sorts the adjacencies for a node 
+		 * @return Sorted list of adjacencies
+		 */
 		public List<Pair<Graph<T>.Node, Double>> adjacenciesSortedByEdgeCost(){
 			List<Pair<Graph<T>.Node, Double>> list = new ArrayList<>();
 			list.addAll(adjacencies());
