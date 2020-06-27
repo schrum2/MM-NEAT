@@ -19,9 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.MAPElites;
@@ -29,10 +27,8 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
-import edu.southwestern.tasks.zelda.ZeldaMAPElitesWallWaterRoomsBinLabels;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -42,9 +38,20 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	private static int numFitnessFunctions = 0; 
 	private static final int numOtherScores = 10;
 
+	// Calculated in oneEval, so it can be passed on the getBehaviorVector
+	private ArrayList<Double> behaviorVector;
+	
+	// It is assumed that the data needed to fill this is computed in oneEval, saved globally, and then returned here.
+	// This is primarily meant to be used with MAP Elites, so it is an unusual behavior vector. It is really a vector of bins, where
+	// the agent's score in each bin is set ... but a given MegaMan level should really only be in one of the bins.
+	public ArrayList<Double> getBehaviorVector() {
+		return behaviorVector;
+	}
+	
 	MegaManLevelTask(){
 		this(true);
 	}
+	
 	protected MegaManLevelTask(boolean register) {
 		if(register) {
 			if(Parameters.parameters.booleanParameter("megaManAllowsSimpleAStarPath")) {
@@ -97,10 +104,9 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		return evaluateOneLevel(level, genotypeId);
 	}
 
-	@SuppressWarnings("unchecked")
 	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, long genotypeId) {
 		// TODO Auto-generated method stub
-		ArrayList<Double> behaviorVector = null; // Filled in later
+		//ArrayList<Double> behaviorVector = null; // Filled in later
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
 		HashSet<MegaManState> mostRecentVisited = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t1;
 		ArrayList<MegaManAction> actionSequence = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t2;
