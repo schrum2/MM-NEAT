@@ -10,7 +10,6 @@ import java.util.List;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -56,8 +55,6 @@ public class LodeRunnerTSPUtil {
 		HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>> tspActions = tspInfo.t2;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t3;
 		//List<Pair<Graph<Point>.Node, Double>> solutionPath = getTSPGreedySolution(tsp);
-//		System.out.println(tsp);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		List<Pair<Graph<Point>.Node, Double>> solutionPath = getTSPGreedyWithBackTrackingSolution(tsp.deepCopy());
 		ArrayList<LodeRunnerAction> actionSequence = getFullTSPActionSequence(tspActions, solutionPath);
 		return new Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>>(actionSequence, mostRecentVisited);
@@ -104,73 +101,34 @@ public class LodeRunnerTSPUtil {
 	 * @return Full final solution path
 	 */
 	private static List<Pair<Graph<Point>.Node, Double>> greedyTSPStep(Graph<Point> tsp, List<Pair<Graph<Point>.Node, Double>> solution) {
-		//System.out.println(solution);
+		// Grab the Node from the solution path. May not possess all of the edges it possessed in the original graph
 		Graph<Point>.Node sourceNode = solution.get(solution.size()-1).t1;
+		// Therefore, important to get the Node's ID, but use it to look up the Node from the original TSP
 		List<Pair<Graph<Point>.Node, Double>> sortedList = tsp.getNode(sourceNode.getID()).adjacenciesSortedByEdgeCost();
-		
-//		for(Pair p : solution) {
-//			System.out.print(" ");
-//		}
-//		System.out.println(sourceNode + ":" + sortedList);
-		
 		
 		for(int i = 0; i < sortedList.size(); i++) {
 			Pair<Graph<Point>.Node, Double> candidate = sortedList.get(i);
-			
-//			for(Pair p : solution) {
-//				System.out.print(" ");
-//			}
-//			System.out.println("Candidate: "+candidate);
-			
-			
-//			for(Pair p : solution) {
-//				System.out.print(" ");
-//			}
-//			System.out.println(candidate.t1);
 			solution.add(candidate);
-						
-//			if(tsp.size() == 5) { 
-//				System.out.println(i + " of " + sortedList.size());
+			// Once enough Nodes have been removed from the Graph, we know the solution path is complete.
+			// When there are only two Nodes left, we are done. One of the remaining Nodes is sourceNode.
+			// The other remaining Node is candidate.
+			if(tsp.size() == 2) { 
 //				System.out.println(solution);
+//				System.out.println(solution.size());
 //				System.out.println(tsp);
-//				MiscUtil.waitForReadStringAndEnterKeyPress();
-//			}
-			
-			if(tsp.size() == 2) { // All but final node successfully removed from completed solution 
-				//System.out.println("Success: " + solution);
 				return solution;
-			} else {
-//				for(Pair p : solution) {
-//					System.out.print(" ");
-//				}
-//				System.out.println("Edges Before:"+tsp.totalEdges());
-				
+			} else {				
+				// Copy before modification
 				Graph<Point> tspCopy = tsp.deepCopy();
 				boolean nodeRemoved = tsp.removeNode(sourceNode);
 				assert nodeRemoved : "How could "+candidate.t1+" not be remove from \n"+tsp;
 				List<Pair<Graph<Point>.Node, Double>> result = greedyTSPStep(tsp, solution);
 				if(result != null) return result;
 				tsp = tspCopy; // Undoes the removal of sourceNode
-//				for(Pair p : solution) {
-//					System.out.print("X");
-//				}
-//				System.out.println("Edges Restored:"+tsp.totalEdges());
-
 			}
+			// No viable paths from this Node, remove it and back up
 			solution.remove(solution.size()-1);
-//			for(Pair p : solution) {
-//				System.out.print("X");
-//			}
-//			System.out.println(candidate.t1);
-
-		}
-		
-		
-//		for(Pair p : solution) {
-//			System.out.print("X");
-//		}
-//		System.out.println(sourceNode + ":" + sortedList);
-		
+		}		
 		return null;
 	}
 

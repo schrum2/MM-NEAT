@@ -20,11 +20,20 @@ public class Graph<T>{
 	private Set<Node> nodes;
 	private Node root;
 	
+	/**
+	 * New empty graph
+	 */
 	public Graph() {
 		setNodes(new HashSet<>());
 		root = null;
 	}
 	
+	/**
+	 * Create a linear graph with undirected edges based off of a list.
+	 * Each value in the list is inserted into a Graph Node, and is connected
+	 * to the adjacent list elements.
+	 * @param list List of items for graph backbone
+	 */
 	public Graph(List<T> list) {
 		this();
 		Node previousNode = null;
@@ -90,6 +99,11 @@ public class Graph<T>{
 		return nodes;
 	}
 	
+	/**
+	 * Get Node with a particular String ID
+	 * @param id ID to look for
+	 * @return Node that has that ID
+	 */
 	public Node getNode(String id) {
 		for(Node n : nodes) {
 			if(n.getID().equals(id)) return n;
@@ -101,12 +115,21 @@ public class Graph<T>{
 		this.nodes = nodes;
 	}
 	
+	/**
+	 * Add predefined Node to Graph. May already have adjacencies defined
+	 * @param n a Node
+	 */
 	public void addNode(Node n) {
 		nodes.add(n);
 		if(root == null)
 			root = n;
 	}
 	
+	/**
+	 * Add new Node with the designated data
+	 * @param data Data to place in a new Node
+	 * @return Reference to the Node that is added
+	 */
 	public Node addNode(T data) {
 		Node n = new Node(data);
 		nodes.add(n);
@@ -118,6 +141,7 @@ public class Graph<T>{
 	/**
 	 * Remove all links to n from any node in the graph
 	 * @param n A node to remove
+	 * @return If there actually was a Node removed
 	 */
 	public boolean removeNode(Node n) {
 		for(Node v : nodes) {
@@ -188,6 +212,7 @@ public class Graph<T>{
 	 * Remove edge in one direction from n1 to n2 without regard for cost on edge
 	 * @param n1 Source edge
 	 * @param n2 Target edge
+	 * @return Whether an edge was actually removed
 	 */
 	public boolean removeDirectedEdge(Node n1, Node n2) {
 		Set<Pair<Node,Double>> l1 = n1.adjacencies;
@@ -204,6 +229,11 @@ public class Graph<T>{
 		return false;
 	}
 	
+	/**
+	 * Count the total number of edges in the graph.
+	 * An "undirected" edge counts as 2: one in each direction.
+	 * @return Total edge count
+	 */
 	public int totalEdges() {
 		int total = 0;
 		for(Node n : nodes) {
@@ -214,10 +244,12 @@ public class Graph<T>{
 		return total;
 	}
 	
+	// Somehow used for Zelda graph grammar
 	public List<Node> breadthFirstTraversal(){
 		return breadthFirstTraversal(root);
 	}
 	
+	// Somehow used for Zelda graph grammar
 	public List<Node> breadthFirstTraversal(Node n){
 		List<Node> visited = new ArrayList<>();
 		Queue<Node> queue = new LinkedList<>();
@@ -237,10 +269,24 @@ public class Graph<T>{
 		return visited;
 	}
 
+	/**
+	 * Internal Node class of the Graph
+	 * @author Jake G.
+	 */
 	public class Node{
 		private T data;
+		// Set of (Node,Cost) pairs for the adjacent edges
 		Set<Pair<Node, Double>> adjacencies;
+		// A unique ID that is used for equality and hashing
 		public String id;
+		
+		/**
+		 * New Node containing the data, but with
+		 * no adjacencies. Assigns a new random String
+		 * ID based on RandomNumbers.randomGenerator.
+		 * 
+		 * @param d Data to place in Node
+		 */
 		public Node(T d){
 			setData(d);
 			adjacencies = new HashSet<>();
@@ -252,6 +298,10 @@ public class Graph<T>{
 			return adjacencies;
 		}
 		
+		/**
+		 * Return just the adjacent Nodes without their costs
+		 * @return Set of neighboring Nodes
+		 */
 		public Set<Graph<T>.Node> adjacentNodes() {
 			Set<Graph<T>.Node> set = new HashSet<>();
 			for(Pair<Graph<T>.Node,Double> p : adjacencies) {
@@ -261,7 +311,9 @@ public class Graph<T>{
 		}
 		
 		/**
-		 * Sorts the adjacencies for a node 
+		 * Sorts the adjacencies for a node by their edge costs from
+		 * cheapest neighbor to most expensive neighbor.
+		 *  
 		 * @return Sorted list of adjacencies
 		 */
 		public List<Pair<Graph<T>.Node, Double>> adjacenciesSortedByEdgeCost(){
@@ -270,6 +322,7 @@ public class Graph<T>{
 			Collections.sort(list, new Comparator<Pair<Graph<T>.Node, Double>>(){
 				@Override
 				public int compare(Pair<Graph<T>.Node, Double> o1, Pair<Graph<T>.Node, Double> o2) {
+					// Compares the costs to determine sort order
 					return (int) Math.signum(o1.t2-o2.t2);
 				}
 			});
@@ -289,10 +342,18 @@ public class Graph<T>{
 			return id;
 		}
 		
-		// If the id is changed after insertion of the item in the HashSet of nodes, it becomes 
-		// impossible to remove it from the HashSet. This is because the hashCode depends on the ID, 
-		// and the item will not be found in the HashSet if its hash code changes. Therefore, we must
-		// remove and reinsert the item into the HashSet
+		/**
+		 * Change the ID of the Node. 
+		 * 
+		 * IMPORTANT!
+		 * 
+		 * If the id is changed after insertion of the item in the HashSet of nodes, it becomes 
+		 * impossible to remove it from the HashSet. This is because the hashCode depends on the ID, 
+		 * and the item will not be found in the HashSet if its hash code changes. Therefore, we must
+		 * remove and reinsert the item into the HashSet
+		 * 
+		 * @param id New ID (should not be possessed by any other Node)
+		 */
 		public void setID(String id) {
 			nodes.remove(this);
 			this.id = id;
