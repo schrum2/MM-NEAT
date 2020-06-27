@@ -92,10 +92,9 @@ class CDCGAN_G(nn.Module):
         initial.add_module('initial:{0}:relu'.format(cngf),
                         nn.ReLU(True))
 
-        # TODO: Use num_classes here
         classList = nn.ModuleList()
-        classList.add_module('embedclass:{0}-{1}:convt'.format(nz, cngf),
-                        nn.ConvTranspose2d(nz, cngf, 4, 1, 0, bias=False))
+        classList.add_module('embedclass:{0}-{1}:convt'.format(num_classes, cngf),
+                        nn.ConvTranspose2d(num_classes, cngf, 4, 1, 0, bias=False))
         classList.add_module('embedclass:{0}:batchnorm'.format(cngf),
                         nn.BatchNorm2d(cngf))
         classList.add_module('embedclass:{0}:relu'.format(cngf),
@@ -105,6 +104,8 @@ class CDCGAN_G(nn.Module):
         csize, cndf = 4, cngf
         main = nn.ModuleList()
 
+        # This size had to double because the combination of inputs AND class labels increased input size
+        cngf = cngf*2
 
         while csize < isize//2:
             main.add_module('pyramid:{0}-{1}:convt'.format(cngf, cngf//2),
@@ -129,18 +130,29 @@ class CDCGAN_G(nn.Module):
                         nn.ConvTranspose2d(cngf, nc, 4, 2, 1, bias=False))
         main.add_module('final:{0}:tanh'.format(nc),
                         nn.ReLU())#nn.Softmax(1))    #Was TANH nn.Tanh())#
+
+        # Useful for troubleshooting layer sizes
+        #print(initial)
+        #print(classList)
+        #print(main)
+
         self.classList = classList
         self.initial = initial
         self.main = main
 
     def forward(self, input, labels):
         x = input
+        #print(x.shape)
         for m in self.initial:
             x = m.forward(x)
         y = labels
+        #print(y.shape)
         for m in self.classList:
             y = m.forward(y)
        
+        #print(x.shape)
+        #print(y.shape)
+
         x = torch.cat([x,y], 1)
 
         for m in self.main:
