@@ -1,6 +1,9 @@
 package edu.southwestern.util.datastructures;
 
+import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -36,6 +39,24 @@ public class Graph<T>{
 				previousNode = newNode;
 			}
 		}
+	}
+	
+	public Graph<T> deepCopy(Graph<T> graph){
+		return graph;
+		
+	}
+	
+	public List<Pair<Graph<Point>.Node, Double>> sortListByCost(List<Pair<Graph<Point>.Node, Double>> list){
+//		Collections.sort(list, new Comparator<Pair<Graph<T>.Node, Double>>(){
+//
+//			@Override
+//			public int compare(Pair<Graph<T>.Node, Double> o1, Pair<Graph<T>.Node, Double> o2) {
+//				// TODO Auto-generated method stub
+//				return (int) (o1.t2-o2.t2);
+//			}
+//			
+//		});
+		return list;
 	}
 
 	public Set<Graph<T>.Node> getNodes() {

@@ -10,7 +10,6 @@ import java.util.List;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -25,9 +24,9 @@ public class LodeRunnerTSPUtil {
 		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 		ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
-//		System.out.println(level);
+		//		System.out.println(level);
 		LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, actionSequence, mostRecentVisited);
-		
+
 		//System.out.println(fullActionSequence);
 		//		//calculates number of states visited from the spawn to every other gold
 		//		for(Point p : gold) {
@@ -75,14 +74,15 @@ public class LodeRunnerTSPUtil {
 			ArrayList<LodeRunnerAction> result = tspActions.get(key);
 			if(result != null)
 				fullActionSequence.addAll(result);
-//			else
-//				System.out.println(key);
+			//			else
+			//				System.out.println(key);
 		}
 		return fullActionSequence;
 	}
-	
+
 	public static List<Pair<Graph<Point>.Node, Double>> getTSPGreedyWithBackTrackingSolution(Graph<Point> tsp) {
 		List<Pair<Graph<Point>.Node, Double>> solution = new ArrayList<>();
+		solution.add(new Pair<Graph<Point>.Node, Double>(tsp.root(), 0.0)); //adds the spawn as the first point 
 		return greedyTSPStep(tsp, solution);
 	}
 
@@ -91,19 +91,23 @@ public class LodeRunnerTSPUtil {
 			return solution;
 		}
 		else {
-			List<Pair<Graph<Point>.Node, Double>> sortedList = sortListByCost(solution);
-			return greedyTSPStep(tsp, sortedList);
+			List<Pair<Graph<Point>.Node, Double>> sortedList = tsp.sortListByCost(solution);
+			for(int i = 0; i < sortedList.size(); i++) {
+				if(solution.size() == tsp.size()) {
+					Graph<Point> tspCopy = tsp.deepCopy(tsp);
+					solution.add(sortedList.get(i));
+					tsp.removeNode(sortedList.get(i).t1);
+					if(greedyTSPStep(tsp, solution) != null) return solution;
+					tsp = tspCopy;
+				} 
+				else 
+					return null;
+			}
+			return solution;
 		}
-		
+
 	}
 
-	private static List<Pair<Graph<Point>.Node, Double>> sortListByCost(
-			List<Pair<Graph<Point>.Node, Double>> solution) {
-		for(int i = 0; i < solution.size(); i++) {
-			
-		}
-		return solution;
-	}
 
 	/**
 	 * Creates a sequence to collect the gold for in the level 
@@ -160,13 +164,13 @@ public class LodeRunnerTSPUtil {
 					levelCopy.get(p.getData().y).set(p.getData().x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);//sets spawn as one of the gold to get distance between the gold
 					levelCopy.get(i.getData().y).set(i.getData().x, LodeRunnerState.LODE_RUNNER_TILE_GOLD); //destination gold 
 					Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
-					
+
 					//System.out.println(p + " to " + i +":" + aStarInfo.t2);
 					if(aStarInfo.t2 == null) {
 						// TODO: Here Kirby: if path is null, then turn on cheat movement through diggable and try again
 						// 		 However, if the result is STILL null after that, then we assume the path is one-directional,
 						//		 and simply do not add an edge to the TSP
-						
+
 						continue; // Cannot reach i from p, so do not add edge to TSP graph
 						//LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, aStarInfo.t2, aStarInfo.t1);
 						//MiscUtil.waitForReadStringAndEnterKeyPress();

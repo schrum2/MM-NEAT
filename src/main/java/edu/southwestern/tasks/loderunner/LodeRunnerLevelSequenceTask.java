@@ -48,14 +48,14 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 		
 		//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
 		for(int i = 1; i <= Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"); i++) {
-			MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
-			MMNEAT.registerFitnessFunction("numOfPositionsVisited",false); //connectivity
-			MMNEAT.registerFitnessFunction("percentLadders", false);
-			MMNEAT.registerFitnessFunction("percentGround", false);
-			MMNEAT.registerFitnessFunction("percentRope", false);
-			MMNEAT.registerFitnessFunction("percentConnected", false);
-			MMNEAT.registerFitnessFunction("numTreasures", false);
-			MMNEAT.registerFitnessFunction("numEnemies", false);
+			MMNEAT.registerFitnessFunction("Level" + i + "simpleAStarDistance",false);
+			MMNEAT.registerFitnessFunction("Level" + i + "numOfPositionsVisited",false); //connectivity
+			MMNEAT.registerFitnessFunction("Level" + i + "percentLadders", false);
+			MMNEAT.registerFitnessFunction("Level" + i + "percentGround", false);
+			MMNEAT.registerFitnessFunction("Level" + i + "percentRope", false);
+			MMNEAT.registerFitnessFunction("Level" + i + "percentConnected", false);
+			MMNEAT.registerFitnessFunction("Level" + i + "numTreasures", false);
+			MMNEAT.registerFitnessFunction("Level" + i + "numEnemies", false);
 		}
 	}
 
