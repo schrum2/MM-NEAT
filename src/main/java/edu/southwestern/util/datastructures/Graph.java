@@ -3,6 +3,7 @@ package edu.southwestern.util.datastructures;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -47,19 +48,53 @@ public class Graph<T>{
 	public Graph<T> deepCopy(){
 		Graph<T> graph = new Graph<T>();
 		Set<Graph<T>.Node> nodes = getNodes();
-		Node node;
+		HashMap<Node, Node> oldToNew = new HashMap<>();
+		// Add all of the nodes
 		for(Node n : nodes) {
-			node = new Node(null);
-			node.copy(n);
-			graph.addNode(node);
+			Node newNode = graph.addNode(n.getData());
+			newNode.setID(n.getID()); // Required for equality to work
+			oldToNew.put(n, newNode);
 		}
+		// Add all of the edges
+		for(Node n : nodes) {
+			Node sourceInNew = oldToNew.get(n);
+			for(Pair<Node, Double> p : n.adjacencies()) {
+				Node targetInNew = oldToNew.get(p.t1);
+				graph.addDirectedEdge(sourceInNew, targetInNew, p.t2);
+			}
+		}
+		graph.root = oldToNew.get(this.root);
 		return graph;
 	}
 	
-	
+	public String toString() {
+		String result = "Size = " + size() + "\n";
+		List<Node> orderedNodes = new LinkedList<>();
+		orderedNodes.addAll(nodes);
+		Collections.sort(orderedNodes, new Comparator<Node>() {
+			@Override
+			public int compare(Graph<T>.Node o1, Graph<T>.Node o2) {
+				return o1.getID().compareTo(o2.getID());
+			}			
+		});
+		for(Node n : orderedNodes) {
+			result += "From "+n+"\n";
+			for(Pair<Node,Double> p : n.adjacenciesSortedByEdgeCost()) {
+				result += "\tto "+p.t1+" for "+p.t2+"\n";
+			}
+		}
+		return result;
+	}
 
 	public Set<Graph<T>.Node> getNodes() {
 		return nodes;
+	}
+	
+	public Node getNode(String id) {
+		for(Node n : nodes) {
+			if(n.getID().equals(id)) return n;
+		}
+		return null;
 	}
 
 	public void setNodes(Set<Graph<T>.Node> nodes) {
@@ -84,11 +119,17 @@ public class Graph<T>{
 	 * Remove all links to n from any node in the graph
 	 * @param n A node to remove
 	 */
-	public void removeNode(Node n) {
+	public boolean removeNode(Node n) {
 		for(Node v : nodes) {
 			removeEdge(v,n);
 		}
-		nodes.remove(n);
+//		System.out.println(this);
+//		System.out.println("Remove: "+n);
+//		System.out.println(nodes);
+		boolean result = nodes.remove(n);
+//		System.out.println("AFTER:\n" + nodes);
+//		System.out.println(result);
+		return result;
 	}
 
 	/**
@@ -148,7 +189,7 @@ public class Graph<T>{
 	 * @param n1 Source edge
 	 * @param n2 Target edge
 	 */
-	public void removeDirectedEdge(Node n1, Node n2) {
+	public boolean removeDirectedEdge(Node n1, Node n2) {
 		Set<Pair<Node,Double>> l1 = n1.adjacencies;
 		if(l1 != null) {
 			Iterator<Pair<Node,Double>> itr = l1.iterator();
@@ -156,10 +197,21 @@ public class Graph<T>{
 				Pair<Node,Double> p = itr.next();
 				if(p.t1.equals(n2)) { // Edge from n1 to n2 found
 					itr.remove();
-					break;
+					return true;
 				}
 			}
 		}
+		return false;
+	}
+	
+	public int totalEdges() {
+		int total = 0;
+		for(Node n : nodes) {
+			for(@SuppressWarnings("unused") Pair<Node,Double> p : n.adjacencies) {
+				total++;
+			}
+		}
+		return total;
 	}
 	
 	public List<Node> breadthFirstTraversal(){
@@ -214,7 +266,7 @@ public class Graph<T>{
 		 */
 		public List<Pair<Graph<T>.Node, Double>> adjacenciesSortedByEdgeCost(){
 			List<Pair<Graph<T>.Node, Double>> list = new ArrayList<>();
-			list.addAll(adjacencies());
+			list.addAll(this.adjacencies);
 			Collections.sort(list, new Comparator<Pair<Graph<T>.Node, Double>>(){
 				@Override
 				public int compare(Pair<Graph<T>.Node, Double> o1, Pair<Graph<T>.Node, Double> o2) {
@@ -236,10 +288,19 @@ public class Graph<T>{
 		public String getID() {
 			return id;
 		}
+		
+		// If the id is changed after insertion of the item in the HashSet of nodes, it becomes 
+		// impossible to remove it from the HashSet. This is because the hashCode depends on the ID, 
+		// and the item will not be found in the HashSet if its hash code changes. Therefore, we must
+		// remove and reinsert the item into the HashSet
 		public void setID(String id) {
+			nodes.remove(this);
 			this.id = id;
+			nodes.add(this);
 		}
 		
+		// Schrum: I don't like the way this method is named and used.
+		//         It is confusing for the parameter to overwrite the contents of this Node.
 		public void copy(Node other) {
 			this.data = other.data;
 			for(Pair<Node,Double> n : other.adjacencies) {
@@ -272,7 +333,7 @@ public class Graph<T>{
 		}
 		
 		public String toString() {
-			return data.toString() + ": " + id;
+			return data.toString() + ": \"" + id + "\"";
 		}
 	}
 

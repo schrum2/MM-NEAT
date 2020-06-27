@@ -10,15 +10,18 @@ import java.util.List;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class LodeRunnerTSPUtil {
 
 	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(args);
+		Parameters.initializeParameterCollections(new String[] {});
+		RandomNumbers.randomGenerator.setSeed(0L); // Same random String Node labels every time
 		//int visitedSize = 0;
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 41.txt");
 		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
@@ -52,7 +55,10 @@ public class LodeRunnerTSPUtil {
 		Graph<Point> tsp = tspInfo.t1;
 		HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>> tspActions = tspInfo.t2;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t3;
-		List<Pair<Graph<Point>.Node, Double>> solutionPath = getTSPGreedySolution(tsp);
+		//List<Pair<Graph<Point>.Node, Double>> solutionPath = getTSPGreedySolution(tsp);
+//		System.out.println(tsp);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		List<Pair<Graph<Point>.Node, Double>> solutionPath = getTSPGreedyWithBackTrackingSolution(tsp.deepCopy());
 		ArrayList<LodeRunnerAction> actionSequence = getFullTSPActionSequence(tspActions, solutionPath);
 		return new Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>>(actionSequence, mostRecentVisited);
 	}
@@ -98,22 +104,73 @@ public class LodeRunnerTSPUtil {
 	 * @return Full final solution path
 	 */
 	private static List<Pair<Graph<Point>.Node, Double>> greedyTSPStep(Graph<Point> tsp, List<Pair<Graph<Point>.Node, Double>> solution) {
-
-		List<Pair<Graph<Point>.Node, Double>> sortedList = solution.get(solution.size()-1).t1.adjacenciesSortedByEdgeCost();
+		//System.out.println(solution);
+		Graph<Point>.Node sourceNode = solution.get(solution.size()-1).t1;
+		List<Pair<Graph<Point>.Node, Double>> sortedList = tsp.getNode(sourceNode.getID()).adjacenciesSortedByEdgeCost();
+		
+//		for(Pair p : solution) {
+//			System.out.print(" ");
+//		}
+//		System.out.println(sourceNode + ":" + sortedList);
+		
+		
 		for(int i = 0; i < sortedList.size(); i++) {
 			Pair<Graph<Point>.Node, Double> candidate = sortedList.get(i);
+			
+//			for(Pair p : solution) {
+//				System.out.print(" ");
+//			}
+//			System.out.println("Candidate: "+candidate);
+			
+			
+//			for(Pair p : solution) {
+//				System.out.print(" ");
+//			}
+//			System.out.println(candidate.t1);
 			solution.add(candidate);
-			if(solution.size() == tsp.size()) {
+						
+//			if(tsp.size() == 5) { 
+//				System.out.println(i + " of " + sortedList.size());
+//				System.out.println(solution);
+//				System.out.println(tsp);
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
+//			}
+			
+			if(tsp.size() == 2) { // All but final node successfully removed from completed solution 
+				//System.out.println("Success: " + solution);
 				return solution;
 			} else {
+//				for(Pair p : solution) {
+//					System.out.print(" ");
+//				}
+//				System.out.println("Edges Before:"+tsp.totalEdges());
+				
 				Graph<Point> tspCopy = tsp.deepCopy();
-				tsp.removeNode(candidate.t1);
+				boolean nodeRemoved = tsp.removeNode(sourceNode);
+				assert nodeRemoved : "How could "+candidate.t1+" not be remove from \n"+tsp;
 				List<Pair<Graph<Point>.Node, Double>> result = greedyTSPStep(tsp, solution);
 				if(result != null) return result;
-				tsp = tspCopy;
+				tsp = tspCopy; // Undoes the removal of sourceNode
+//				for(Pair p : solution) {
+//					System.out.print("X");
+//				}
+//				System.out.println("Edges Restored:"+tsp.totalEdges());
+
 			}
 			solution.remove(solution.size()-1);
+//			for(Pair p : solution) {
+//				System.out.print("X");
+//			}
+//			System.out.println(candidate.t1);
+
 		}
+		
+		
+//		for(Pair p : solution) {
+//			System.out.print("X");
+//		}
+//		System.out.println(sourceNode + ":" + sortedList);
+		
 		return null;
 	}
 
@@ -127,17 +184,16 @@ public class LodeRunnerTSPUtil {
 	 * @param tsp A digraph holding points of gold and weights
 	 * @return The order to collect gold
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static List<Pair<Graph<Point>.Node, Double>> getTSPGreedySolution(Graph<Point> tsp) {
 		//solving the TSP problem from the graph 
 		List<Pair<Graph<Point>.Node, Double>> solutionPath = new ArrayList<>(); //set of points
 		solutionPath.add(new Pair<Graph<Point>.Node, Double>(tsp.root(), 0.0)); //adds the spawn as the first point 
 		//loops through all adjacent nodes, adds the node with the lowest weight 
 		while(!tsp.root().adjacencies().isEmpty()) {
-			Iterator itr = tsp.root().adjacencies().iterator();
+			Iterator<Pair<Graph<Point>.Node, Double>> itr = tsp.root().adjacencies().iterator();
 			Pair<Graph<Point>.Node, Double> min = new Pair<Graph<Point>.Node, Double>(tsp.root(), Double.MAX_VALUE);
 			while(itr.hasNext()) {
-				Pair<Graph<Point>.Node, Double> node = (Pair<Graph<Point>.Node, Double>) itr.next();
+				Pair<Graph<Point>.Node, Double> node = itr.next();
 				if(node.t2 < min.t2) {
 					min = node;
 				}
