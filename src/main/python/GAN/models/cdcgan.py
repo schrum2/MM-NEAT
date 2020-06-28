@@ -15,15 +15,19 @@ class CDCGAN_D(nn.Module):
         initial.add_module('initial:relu:{0}'.format(ndf),
                            nn.LeakyReLU(0.2, inplace=True))
 
-        # TODO: Use num_classes here
         classList = nn.ModuleList()
-        # input is nc x isize x isize
-        classList.add_module('embedclass:conv:{0}-{1}'.format(nc, ndf),
-                           nn.Conv2d(nc, ndf, 4, 2, 1, bias=False))
-        classList.add_module('embedclass:relu:{0}'.format(ndf),
-                           nn.LeakyReLU(0.2, inplace=True))
+        classList.add_module('embedclass:{0}-{1}:convt'.format(num_classes, ndf),
+                        nn.ConvTranspose2d(num_classes, ndf, 16, 1, 0, bias=False))
+        classList.add_module('embedclass:{0}:batchnorm'.format(ndf),
+                        nn.BatchNorm2d(ndf))
+        classList.add_module('embedclass:{0}:relu'.format(ndf),
+                        nn.LeakyReLU(0.2, inplace=True))
+
         csize, cndf = isize / 2, ndf
 
+        # Added this size doubling for the conditional GAN because the combination of
+        # Input and class label embedding makes input at this layer twice as big
+        cndf = cndf * 2
 
         main = nn.ModuleList()
         # Extra layers
@@ -51,17 +55,26 @@ class CDCGAN_D(nn.Module):
         main.add_module('final:{0}-{1}:conv'.format(cndf, 1),
                         nn.Conv2d(cndf, 1, 4, 1, 0, bias=False))
 
+        #print(initial)
+        #print(classList)
+        #print(main)
+
         self.classList = classList
         self.initial = initial
         self.main = main
 
     def forward(self, input, labels):
         x = input
+        #print(x.shape)
         for m in self.initial:
             x = m.forward(x)
         y = labels
+        #print(y.shape)
         for m in self.classList:
             y = m.forward(y)
+
+        #print(x.shape)
+        #print(y.shape)
 
         x = torch.cat([x,y], 1)
         for m in self.main:
