@@ -361,7 +361,7 @@ public class Parameters {
 		integerOptions.add("cppn2ganWidth", null, "the CPPN to GAN width chunks");
 		integerOptions.add("cppn2ganHeight", null, "the CPPN to GAN height chunks");
 		integerOptions.add("megaManAStarJumpHeight", 4 , "Height of the A* agent's jump");
-		integerOptions.add("lodeRunnerNumOfLevelsInSequence", 3, "Specifies the numbr of levels in the sequence of levels being eveolved for lode runner");
+		integerOptions.add("lodeRunnerNumOfLevelsInSequence", 5, "Specifies the numbr of levels in the sequence of levels being eveolved for lode runner");
 
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
