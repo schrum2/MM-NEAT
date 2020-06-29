@@ -783,11 +783,14 @@ public class Parameters {
 		booleanOptions.add("megaManAllowsBlockBreaker", true, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManDistinctScreenFitness", false, "whether or not we're allowing connectivity");
 		booleanOptions.add("interactiveLodeRunnerAStarPaths", false, "Shows the solution path for the levels in the level breeder when true");
-		booleanOptions.add("lodeRunnerAllowsSimpleAStarPath", true, "Adds the AStarPath as a fitness function when true");
-		booleanOptions.add("lodeRunnerAllowsConnectivity", true, "Adds connectivity as a fitness function when true");
-		booleanOptions.add("lodeRunnerLevelSequenceAverages", true, "Averages scores from all levels of the sequence");
-		booleanOptions.add("lodeRunnerLevelSequenceIndividual", true, "Takes each score from the sequence individually");
+		booleanOptions.add("lodeRunnerAllowsSimpleAStarPath", false, "Adds the AStarPath as a fitness function when true");
+		booleanOptions.add("lodeRunnerAllowsConnectivity", false, "Adds connectivity as a fitness function when true");
+		booleanOptions.add("lodeRunnerLevelSequenceAverages", false, "Averages scores from all levels of the sequence");
+		booleanOptions.add("lodeRunnerLevelSequenceIndividual", false, "Takes each score from the sequence individually");
 		booleanOptions.add("interactiveLodeRunnerIceCreamYouVisualization", false, "Shows the ice cream you visualization for the levels in the level breeder when true");
+		booleanOptions.add("lodeRunnerAllowsLinearIncreasingSolutionLength", false, "Adds linear increasing solution length as a fitness function when true");
+		booleanOptions.add("lodeRunnerAllowsLinearIncreasingEnemyCount", false, "Adds linear increasing enemy count as a fitness function when true");
+		booleanOptions.add("lodeRunnerAllowsLinearIncreasingTreasureCount", false, "Adds linear increasing treasure count as a fitness function when true");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
