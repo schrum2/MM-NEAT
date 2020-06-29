@@ -183,6 +183,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			}
 			
 			BufferedImage levelImage = null;
+			@SuppressWarnings("unused")
 			BufferedImage levelSolution = null;
 			try {
 				levelSolution = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
