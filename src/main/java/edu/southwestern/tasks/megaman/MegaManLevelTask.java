@@ -188,7 +188,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			try {
 				levelSolution = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 				BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
-				levelImage = MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
+				levelImage = MegaManRenderUtil.createBufferedImage(level, MegaManRenderUtil.renderedImageWidth(level.get(0).size()), MegaManRenderUtil.renderedImageHeight(level.size()), images);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
