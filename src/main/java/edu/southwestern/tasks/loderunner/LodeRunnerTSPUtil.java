@@ -91,7 +91,7 @@ public class LodeRunnerTSPUtil {
 	public static List<Pair<Graph<Point>.Node, Double>> getTSPGreedyWithBackTrackingSolution(Graph<Point> tsp) {
 		List<Pair<Graph<Point>.Node, Double>> solution = new ArrayList<>();
 		solution.add(new Pair<Graph<Point>.Node, Double>(tsp.root(), 0.0)); //adds the spawn as the first point 
-		return greedyTSPStep(tsp.deepCopy(), tsp, solution);
+		return greedyTSPStep(tsp, solution);
 	}
 
 	/**
@@ -100,13 +100,18 @@ public class LodeRunnerTSPUtil {
 	 * @param solution Partial solution, always guaranteed to have the root
 	 * @return Full final solution path
 	 */
-	private static List<Pair<Graph<Point>.Node, Double>> greedyTSPStep(Graph<Point> originalTSP, Graph<Point> tsp, List<Pair<Graph<Point>.Node, Double>> solution) {
+	private static List<Pair<Graph<Point>.Node, Double>> greedyTSPStep(Graph<Point> tsp, List<Pair<Graph<Point>.Node, Double>> solution) {
 		// Grab the Node from the solution path. May not possess all of the edges it possessed in the original graph
 		Graph<Point>.Node sourceNode = solution.get(solution.size()-1).t1;
+		for(Object o : solution) System.out.print(" ");
+		System.out.println(sourceNode);
+		if(sourceNode.getID().equals("FFAK")) System.out.println(tsp);
 		assert sourceNode != null : "Source node is null";
-		assert originalTSP.getNode(sourceNode.getID()) != null : "Node with ID not in original TSP:" + sourceNode.getID() + "\n" + originalTSP;
+		assert tsp.getNode(sourceNode.getID()) != null : "Node with ID not in original TSP:" + sourceNode.getID() + "\n" + tsp;
 		// Therefore, important to get the Node's ID, but use it to look up the Node from the original TSP
-		List<Pair<Graph<Point>.Node, Double>> sortedList = originalTSP.getNode(sourceNode.getID()).adjacenciesSortedByEdgeCost();
+		List<Pair<Graph<Point>.Node, Double>> sortedList = tsp.getNode(sourceNode.getID()).adjacenciesSortedByEdgeCost();
+		System.out.println("sortedList:" +sortedList);
+		System.out.println("solution  :" + solution);
 		
 		for(int i = 0; i < sortedList.size(); i++) {
 			Pair<Graph<Point>.Node, Double> candidate = sortedList.get(i);
@@ -123,9 +128,8 @@ public class LodeRunnerTSPUtil {
 				// Copy before modification
 				Graph<Point> tspCopy = tsp.deepCopy();
 				boolean nodeRemoved = tsp.removeNode(sourceNode);
-				System.out.println(nodeRemoved);
 				assert nodeRemoved : "How could "+candidate.t1+" not be removed from \n"+tsp + "\nSolution so far: "+solution;
-				List<Pair<Graph<Point>.Node, Double>> result = greedyTSPStep(originalTSP, tsp, solution);
+				List<Pair<Graph<Point>.Node, Double>> result = greedyTSPStep(tsp, solution);
 				if(result != null) return result;
 				tsp = tspCopy; // Undoes the removal of sourceNode
 			}
