@@ -16,12 +16,12 @@ public class MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels implements
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) { // Create once and re-use, but wait until after Parameters are loaded
-			int maxNumSegments = Parameters.parameters.integerParameter("megaManGANLevelChunks") * Parameters.parameters.integerParameter("megaManGANLevelChunks");
+			int maxNumSegments = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 			labels = new ArrayList<String>((maxNumSegments+1)*(maxNumSegments+1)*(TILE_GROUPS));
 			for(int i = 0; i <= maxNumSegments; i++) { 
 				for(int j = 0; j <= maxNumSegments; j++) { 
-					for(int r = 0; r <= TILE_GROUPS; r++) {
-						labels.add("DistinctSegments["+i+"]VerticalSegmens["+j+"]Connectivity["+r+"0-"+(r+1)+"0]");
+					for(int r = 0; r < TILE_GROUPS; r++) {
+						labels.add("DistinctSegments["+i+"]VerticalSegments["+j+"]Connectivity["+r+"0-"+(r+1)+"0]");
 						
 					}
 				}

@@ -106,6 +106,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		return evaluateOneLevel(level, genotypeId);
 	}
 
+	@SuppressWarnings("unchecked")
 	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, long genotypeId) {
 		// TODO Auto-generated method stub
 		//ArrayList<Double> behaviorVector = null; // Filled in later
@@ -292,24 +293,23 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			
 		}
 		if(MMNEAT.ea instanceof MAPElites) {
-			final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("megaManGANLevelChunks");
+			//final int BINS_PER_DIMENSION = ;
 			double binScore = simpleAStarDistance;
 			int binIndex = 0;
 //			System.out.println("it is mapE");
 //			MiscUtil.waitForReadStringAndEnterKeyPress();
 
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels) {
-				int maxNumSegments = BINS_PER_DIMENSION * BINS_PER_DIMENSION;
+				int maxNumSegments = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 //				System.out.println("it is mapE binning");
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
 
 
 				
-				int indexConnected = (int) precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS;
+				int indexConnected = (int) (precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS);
 				int numVertical = (int) (numUpSegments+numDownSegments);
-				System.out.println(numVertical);
 //				int numDistinctSegments;
-				binIndex =(numVertical*BINS_PER_DIMENSION+ (int) numDistinctSegments)*BINS_PER_DIMENSION+indexConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS;
+				binIndex =(((int) numDistinctSegments)*(maxNumSegments+1) + numVertical)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)+indexConnected;
 //				System.out.println(binIndex);
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
 				double[] archiveArray = new double[(maxNumSegments+1)*(maxNumSegments+1)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)];
@@ -342,7 +342,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 					try {
 						levelSolution = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 						BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
-						levelImage = MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
+						levelImage = MegaManRenderUtil.createBufferedImage(level, MegaManRenderUtil.renderedImageWidth(level.get(0).size()), MegaManRenderUtil.renderedImageHeight(level.size()), images);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
