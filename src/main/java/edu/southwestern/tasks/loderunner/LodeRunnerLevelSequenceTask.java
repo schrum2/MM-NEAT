@@ -8,6 +8,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 
 public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask<T> {
@@ -18,7 +19,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 		super(false); // Do not register the fitness functions in the LodeRunnerLevelTask
 
 		// Register fitness functions specific to the level sequence task here instead.
-		
+
 
 		//If we are averaging scores then we add all of the scores from the LodeRunnerLevelTask because it will take the averages from each level in the sequence
 		if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceAverages")) {
@@ -45,7 +46,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 				}
 			}
 		}else throw new UnsupportedOperationException("Don't test LodeRunnerLevelSequenceTask again without first registering fitness functions");
-		
+
 		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingSolutionLength")) {
 			MMNEAT.registerFitnessFunction("linearIncreasingSolutionLength");
 			MMNEAT.registerFitnessFunction("linearIncreasingSolutionLengthRange");
@@ -61,8 +62,8 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 			MMNEAT.registerFitnessFunction("linearIncreasingTreasureCountRange");
 			numFitnessFunctions+=2;
 		}
-		
-		
+
+
 		//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
 		for(int i = 1; i <= Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"); i++) {
 			MMNEAT.registerFitnessFunction("Level" + i + "simpleAStarDistance",false);
@@ -151,10 +152,28 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 			return new Pair<double[], double[]>(allFitnesses, otherScores);
 		}
 		else if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingSolutionLength")) {
-			double[] linearIncreasingFitness = new double[scoreSequence[0].t1.length];
 			double[] otherScores = new double[scoreSequence[0].t2.length*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")];
+			//fills the fitnesses and otherScores arrays from the evaluation of each level in the sequence
+			for(int i = 0; i < scoreSequence.length; i++) {
+					for(int k = 0; k < otherScores.length; k++) { 
+						for(int d = 0; d < scoreSequence[i].t2.length; d++)
+							otherScores[k] = scoreSequence[i].t2[d];
+					}
+			}
+			//fills the expected array and the fitnesses array
+			double[] fitnesses = new double[scoreSequence[0].t1.length-2];
+			double[] squaredErrors = new double[fitnesses.length]; 
+			double[] expected = new double[fitnesses.length];
+			for(int j = 0; j < fitnesses.length; j++) {
+				double slope = scoreSequence[j].t1[scoreSequence[j].t1.length-1]-scoreSequence[j].t1[0]/Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")-1; //calculates slope found by dividing the difference of the y values by the difference of the x values
+				for(int i = 0; i < expected.length; i++) {
+					expected[i] = slope*i + scoreSequence[j].t1[0]; //mx + b, where the and b is the min y value
+				}
+				squaredErrors = StatisticsUtilities.calculateSquaredErrors(scoreSequence[j].t1, expected);
+				fitnesses[j] = StatisticsUtilities.average(squaredErrors);
+			}
 			
-			return null;
+			return new Pair<double[], double[]>(fitnesses, otherScores);
 		}
 		else if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingEnemyCount")) {
 			return null;
@@ -164,7 +183,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 		}
 		else 
 			return null;
-			
+
 	}
 
 
