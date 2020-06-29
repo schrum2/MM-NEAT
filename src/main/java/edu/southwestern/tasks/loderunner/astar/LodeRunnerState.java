@@ -334,7 +334,11 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
 					  (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
 				newX++;
-			else if(ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && inBounds(newX+1,newY) && tileAtPosition(newX+1,newY) == LODE_RUNNER_TILE_DIGGABLE && diggablePath(newX+1,newY)) 
+			else if(ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && 
+					inBounds(newX+1,newY) &&
+					(beneath == -1 || beneath == LODE_RUNNER_TILE_LADDER || beneath == LODE_RUNNER_TILE_DIGGABLE || beneath == LODE_RUNNER_TILE_GROUND) &&
+					tileAtPosition(newX+1,newY) == LODE_RUNNER_TILE_DIGGABLE 
+					&& diggablePath(newX+1,newY)) 
 				// This is a weird case that allows moving sideways through diggable ground, which is only allowed because
 				// the player could hypothetically have dug the ground above to make this possible. 
 				newX++;
@@ -355,7 +359,11 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
 							(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
 				newX--;
-			else if(ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && inBounds(newX-1,newY) && tileAtPosition(newX-1,newY) == LODE_RUNNER_TILE_DIGGABLE && diggablePath(newX-1,newY)) 
+			else if(ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && 
+					inBounds(newX-1,newY) && 
+					(beneath == -1 || beneath == LODE_RUNNER_TILE_LADDER || beneath == LODE_RUNNER_TILE_DIGGABLE || beneath == LODE_RUNNER_TILE_GROUND) &&
+					tileAtPosition(newX-1,newY) == LODE_RUNNER_TILE_DIGGABLE && 
+					diggablePath(newX-1,newY)) 
 				// This is a weird case that allows moving sideways through diggable ground, which is only allowed because
 				// the player could hypothetically have dug the ground above to make this possible. 
 				newX--;
@@ -535,6 +543,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	@Override
 	public double stepCost(State<LodeRunnerAction> s, LodeRunnerAction a) {
 		LodeRunnerState state = (LodeRunnerState) s;
+		int beneath = !inBounds(state.currentX,state.currentY+1) ? -1 : tileAtPosition(state.currentX,state.currentY+1);
 		// The model allows for moving sideways through diggable ground, with the assumption that the ground above would have been previously dug out
 		if(		a.getMove().equals(LodeRunnerAction.MOVE.LEFT) && 
 				state.inBounds(state.currentX - 1, state.currentY) &&
@@ -564,6 +573,9 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			if(!state.inBounds(x,y)) cost = Double.POSITIVE_INFINITY; // Impossible action
 			//System.out.println("High cost right: " + cost);
 			return cost*cost*SIDEWAYS_DIG_COST_MULTIPLIER; // Arbitrarily double cost to discourage
+		} else if(a.getMove().equals(LodeRunnerAction.MOVE.DOWN) && beneath == LODE_RUNNER_TILE_DIGGABLE) {
+			// Digging down is expensive. Must move to side, dig, move back, then fall ... maybe more to make space.
+			return 4;
 		} else {
 			return 1;
 		}
