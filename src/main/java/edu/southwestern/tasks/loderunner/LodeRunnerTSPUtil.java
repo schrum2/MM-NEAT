@@ -124,7 +124,7 @@ public class LodeRunnerTSPUtil {
 				Graph<Point> tspCopy = tsp.deepCopy();
 				boolean nodeRemoved = tsp.removeNode(sourceNode);
 				System.out.println(nodeRemoved);
-				assert nodeRemoved : "How could "+candidate.t1+" not be removed from \n"+tsp;
+				assert nodeRemoved : "How could "+candidate.t1+" not be removed from \n"+tsp + "\nSolution so far: "+solution;
 				List<Pair<Graph<Point>.Node, Double>> result = greedyTSPStep(originalTSP, tsp, solution);
 				if(result != null) return result;
 				tsp = tspCopy; // Undoes the removal of sourceNode
