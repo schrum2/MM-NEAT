@@ -10,6 +10,8 @@ import java.util.List;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
+import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -108,29 +110,33 @@ public class LodeRunnerTSPUtil {
 		// Therefore, important to get the Node's ID, but use it to look up the Node from the original TSP
 		List<Pair<Graph<Point>.Node, Double>> sortedList = originalTSP.getNode(sourceNode.getID()).adjacenciesSortedByEdgeCost();
 		
+		// For some reason, nodes that should not be present in list of sorted edges sometimes show up.
+		// Specifically, edges that have already been visited in the solution path sometimes show up.
+		// This step explicitly removes them.
+		sortedList = ArrayUtil.setDifference(sortedList, solution);
+		
 		for(int i = 0; i < sortedList.size(); i++) {
 			Pair<Graph<Point>.Node, Double> candidate = sortedList.get(i);
-			solution.add(candidate);
-			// Once enough Nodes have been removed from the Graph, we know the solution path is complete.
-			// When there are only two Nodes left, we are done. One of the remaining Nodes is sourceNode.
-			// The other remaining Node is candidate.
-			if(tsp.size() == 2) { 
-//				System.out.println(solution);
-//				System.out.println(solution.size());
-//				System.out.println(tsp);
-				return solution;
-			} else {				
-				// Copy before modification
-				Graph<Point> tspCopy = tsp.deepCopy();
-				boolean nodeRemoved = tsp.removeNode(sourceNode);
-				System.out.println(nodeRemoved);
-				assert nodeRemoved : "How could "+candidate.t1+" not be removed from \n"+tsp + "\nSolution so far: "+solution;
-				List<Pair<Graph<Point>.Node, Double>> result = greedyTSPStep(originalTSP, tsp, solution);
-				if(result != null) return result;
-				tsp = tspCopy; // Undoes the removal of sourceNode
+			// Only evaluate the candidate if it is still present in the graph
+			if(tsp.getNode(candidate.t1.getID()) != null) {
+				solution.add(candidate);
+				// Once enough Nodes have been removed from the Graph, we know the solution path is complete.
+				// When there are only two Nodes left, we are done. One of the remaining Nodes is sourceNode.
+				// The other remaining Node is candidate.
+				if(tsp.size() == 2) { 
+					return solution;
+				} else {				
+					// Copy before modification
+					Graph<Point> tspCopy = tsp.deepCopy();
+					boolean nodeRemoved = tsp.removeNode(sourceNode);
+					assert nodeRemoved : "How could "+candidate.t1+" not be removed from \n"+tsp + "\nSolution so far: "+solution;
+					List<Pair<Graph<Point>.Node, Double>> result = greedyTSPStep(originalTSP, tsp, solution);
+					if(result != null) return result;
+					tsp = tspCopy; // Undoes the removal of sourceNode
+				}
+				// No viable paths from this Node, remove it and back up
+				solution.remove(solution.size()-1);
 			}
-			// No viable paths from this Node, remove it and back up
-			solution.remove(solution.size()-1);
 		}		
 		return null;
 	}
@@ -192,6 +198,12 @@ public class LodeRunnerTSPUtil {
 					levelCopy.get(i.getData().y).set(i.getData().x, LodeRunnerState.LODE_RUNNER_TILE_GOLD); //destination gold 
 					Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
 
+					System.out.println(p + " to " + i);
+					for(Object o : levelCopy) System.out.println(o);
+					LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(levelCopy, aStarInfo.t2, aStarInfo.t1);
+					MiscUtil.waitForReadStringAndEnterKeyPress();
+
+					
 					//System.out.println(p + " to " + i +":" + aStarInfo.t2);
 					if(aStarInfo.t2 == null) {
 						// TODO: Here Kirby: if path is null, then turn on cheat movement through diggable and try again

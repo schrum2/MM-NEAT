@@ -146,25 +146,11 @@ public class Graph<T>{
 	public boolean removeNode(Node n) {		
 		for(Node v : nodes) {
 			removeEdge(v,n);
-		}
-		
-		if(n.getID().equals("UQAJ")) {
-			System.out.println("BEFORE REMOVE:" + this);
-			System.out.println(nodes);
-		}
-		
-
-		
+		}		
 //		System.out.println(this);
 //		System.out.println("Remove: "+n);
 //		System.out.println(nodes);
 		boolean result = nodes.remove(n);
-		
-		if(n.getID().equals("UQAJ")) {
-			System.out.println(result);
-			System.out.println(nodes);
-		}		
-		
 //		System.out.println("AFTER:\n" + nodes);
 //		System.out.println(result);
 		return result;
