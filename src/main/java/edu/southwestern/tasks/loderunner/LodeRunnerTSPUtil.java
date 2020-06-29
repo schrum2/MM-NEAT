@@ -198,10 +198,10 @@ public class LodeRunnerTSPUtil {
 					levelCopy.get(i.getData().y).set(i.getData().x, LodeRunnerState.LODE_RUNNER_TILE_GOLD); //destination gold 
 					Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
 
-					System.out.println(p + " to " + i);
-					for(Object o : levelCopy) System.out.println(o);
-					LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(levelCopy, aStarInfo.t2, aStarInfo.t1);
-					MiscUtil.waitForReadStringAndEnterKeyPress();
+//					System.out.println(p + " to " + i);
+//					for(Object o : levelCopy) System.out.println(o);
+//					LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(levelCopy, aStarInfo.t2, aStarInfo.t1);
+//					MiscUtil.waitForReadStringAndEnterKeyPress();
 
 					
 					//System.out.println(p + " to " + i +":" + aStarInfo.t2);
