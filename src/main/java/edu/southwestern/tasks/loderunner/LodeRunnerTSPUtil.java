@@ -22,7 +22,7 @@ public class LodeRunnerTSPUtil {
 		Parameters.initializeParameterCollections(new String[] {});
 		RandomNumbers.randomGenerator.setSeed(0L); // Same random String Node labels every time
 		//int visitedSize = 0;
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 41.txt");
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 136.txt");
 		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 		ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
@@ -103,6 +103,8 @@ public class LodeRunnerTSPUtil {
 	private static List<Pair<Graph<Point>.Node, Double>> greedyTSPStep(Graph<Point> tsp, List<Pair<Graph<Point>.Node, Double>> solution) {
 		// Grab the Node from the solution path. May not possess all of the edges it possessed in the original graph
 		Graph<Point>.Node sourceNode = solution.get(solution.size()-1).t1;
+		assert sourceNode != null : "Source node is null";
+		assert tsp.getNode(sourceNode.getID()) != null : "Node with ID not in original TSP:" + sourceNode.getID() + "\n" + tsp;
 		// Therefore, important to get the Node's ID, but use it to look up the Node from the original TSP
 		List<Pair<Graph<Point>.Node, Double>> sortedList = tsp.getNode(sourceNode.getID()).adjacenciesSortedByEdgeCost();
 		
