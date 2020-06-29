@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.MAPElites;
@@ -32,6 +33,7 @@ import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
@@ -178,6 +180,22 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				System.out.println("Could not display image");
 				//e.printStackTrace();
 			}
+			
+			BufferedImage levelImage = null;
+			BufferedImage levelSolution = null;
+			try {
+				levelSolution = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+				BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
+				levelImage = MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			String saveDir = FileUtilities.getSaveDirectory(); //save directory
+			int currentGen = MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : -1;
+			//saves image
+			if(Parameters.parameters.booleanParameter("io")) GraphicsUtil.saveImage(levelImage, saveDir + File.separator + (currentGen == 0 ? "initial" : "gen"+ currentGen) + File.separator + "Room"+genotypeId+".png");
+
 			//Gives you the option to play the level by pressing p, or skipping by pressing enter, after the visualization is displayed 
 			System.out.println("Enter 'P' to play, or just press Enter to continue");
 			String input = MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -271,67 +289,80 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				System.out.println("Press enter");
 				MiscUtil.waitForReadStringAndEnterKeyPress();
 			}
-			if(MMNEAT.ea instanceof MAPElites) {
-				final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("megaManGANLevelChunks");
-				double binScore = simpleAStarDistance;
-				int binIndex = 0;
-				if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels) {
-					int maxNumSegments = BINS_PER_DIMENSION * BINS_PER_DIMENSION;
-					
-					
-					int indexConnected = (int) precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS;
-					int numVertical = (int) (numUpSegments+numDownSegments);
-//					int numDistinctSegments;
-					double[] archiveArray = new double[(maxNumSegments+1)*(maxNumSegments+1)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)];
-					Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
-//					binIndex = (dim1*BINS_PER_DIMENSION + dim2)*BINS_PER_DIMENSION + dim3;
-					binIndex =(numVertical*BINS_PER_DIMENSION+ (int) numDistinctSegments)*BINS_PER_DIMENSION+indexConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS;
-					archiveArray[binIndex] = binScore; // Percent rooms traversed
+			
+		}
+		if(MMNEAT.ea instanceof MAPElites) {
+			final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("megaManGANLevelChunks");
+			double binScore = simpleAStarDistance;
+			int binIndex = 0;
+//			System.out.println("it is mapE");
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 
-					System.out.println("["+numDistinctSegments+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
+			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels) {
+				int maxNumSegments = BINS_PER_DIMENSION * BINS_PER_DIMENSION;
+//				System.out.println("it is mapE binning");
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
 
-					behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
-				}
+
 				
-				if(CommonConstants.netio) {
-					System.out.println("Save archive images");
-					Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
-					List<String> binLabels = archive.getBinMapping().binLabels();
+				int indexConnected = (int) precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS;
+				int numVertical = (int) (numUpSegments+numDownSegments);
+				System.out.println(numVertical);
+//				int numDistinctSegments;
+				binIndex =(numVertical*BINS_PER_DIMENSION+ (int) numDistinctSegments)*BINS_PER_DIMENSION+indexConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS;
+//				System.out.println(binIndex);
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
+				double[] archiveArray = new double[(maxNumSegments+1)*(maxNumSegments+1)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)];
+				Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
+//				binIndex = (dim1*BINS_PER_DIMENSION + dim2)*BINS_PER_DIMENSION + dim3;
+				
+				archiveArray[binIndex] = binScore; // Percent rooms traversed
 
-					// Index in flattened bin array
-					Score<T> elite = archive.getElite(binIndex);
-					// If the bin is empty, or the candidate is better than the elite for that bin's score
-					if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
-						// CHANGE!
-//						BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
-//						BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
-						BufferedImage levelImage = null;
-						BufferedImage levelSolution = null;
-						try {
-							levelSolution = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
-							BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
-							levelImage = MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						
-						//sets the fileName, binPath, and fullName
-						String fileName = String.format("%7.5f", binScore) +"-"+ genotypeId + ".png";
-//						if(individual instanceof CPPNOrDirectToGANGenotype) {
-//							CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
-//							if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
-//							else fileName = "Direct-" + fileName;
-//						}
-						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
-						String fullName = binPath + "-" + fileName;
-						System.out.println(fullName);
-						GraphicsUtil.saveImage(levelImage, fullName);	
-						fileName = String.format("%7.5f", binScore) +"-"+ genotypeId + "-solution.png";
-						fullName = binPath + "-" + fileName;
-						System.out.println(fullName);
-						GraphicsUtil.saveImage(levelSolution, fullName);	
+				System.out.println("["+numDistinctSegments+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
+
+				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
+			}
+			
+			if(CommonConstants.netio) {
+				System.out.println("Save archive images");
+				Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+				List<String> binLabels = archive.getBinMapping().binLabels();
+
+				// Index in flattened bin array
+				Score<T> elite = archive.getElite(binIndex);
+				// If the bin is empty, or the candidate is better than the elite for that bin's score
+				if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
+					// CHANGE!
+//					BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
+//					BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
+//					BufferedImage levelImage = null;
+//					BufferedImage levelSolution = null;
+					BufferedImage levelImage = null;
+					BufferedImage levelSolution = null;
+					try {
+						levelSolution = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+						BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
+						levelImage = MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
+					
+					//sets the fileName, binPath, and fullName
+					String fileName = String.format("%7.5f", binScore) +"-"+ genotypeId + ".png";
+//					if(individual instanceof CPPNOrDirectToGANGenotype) {
+//						CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
+//						if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
+//						else fileName = "Direct-" + fileName;
+//					}
+					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
+					String fullName = binPath + "-" + fileName;
+					System.out.println(fullName);
+					GraphicsUtil.saveImage(levelImage, fullName);	
+					fileName = String.format("%7.5f", binScore) +"-"+ genotypeId + "-solution.png";
+					fullName = binPath + "-" + fileName;
+					System.out.println(fullName);
+					GraphicsUtil.saveImage(levelSolution, fullName);	
 				}
 			}
 		}
