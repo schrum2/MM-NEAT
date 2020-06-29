@@ -850,7 +850,7 @@ public class ArrayUtil {
 	 *            Another ArrayList of type T
 	 * @return Set difference of two arrays
 	 */
-	public static <T> ArrayList<T> setDifference(ArrayList<T> lhs, ArrayList<T> rhs) {
+	public static <T> ArrayList<T> setDifference(List<T> lhs, List<T> rhs) {
 		ArrayList<T> result = new ArrayList<T>();
 		for (T x : lhs) {
 			if (!rhs.contains(x)) {
