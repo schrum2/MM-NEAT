@@ -43,11 +43,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public static final int LODE_RUNNER_TILE_ROPE = 5;
 	public static final int LODE_RUNNER_TILE_GROUND = 6;
 	public static final int LODE_RUNNER_TILE_SPAWN = 7;
-	// Big cost to discourage moveing sideways through diggable ground in a way that is sometimes illegal
+	// Big cost to discourage moving sideways through diggable ground in a way that is sometimes illegal
 	private static final double SIDEWAYS_DIG_COST_MULTIPLIER = 100;
 	
-	private static final boolean ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE = true;
-	
+	private boolean ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE;
 	private List<List<Integer>> level;
 	private HashSet<Point> goldLeft; //set containing the points with gold 
 	//private HashSet<Point> dugHoles; // Too expensive to track the dug up spaces in the state. Just allow the agent to move downward through diggable blocks
@@ -129,7 +128,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		Parameters.initializeParameterCollections(args);
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 1.txt"); //converts to JSON
-		LodeRunnerState start = new LodeRunnerState(level);
+		LodeRunnerState start = new LodeRunnerState(level, true);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
@@ -223,8 +222,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * the locations of the gold for that level 
 	 * @param level A level in JSON form 
 	 */
-	public LodeRunnerState(List<List<Integer>> level) {
-		this(level, getSpawnFromVGLC(level));
+	public LodeRunnerState(List<List<Integer>> level, boolean cheat) {
+		this(level, getSpawnFromVGLC(level), cheat);
 	}
 
 	/**
@@ -233,8 +232,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param level Level in JSON form 
 	 * @param start The spawn point 
 	 */
-	public LodeRunnerState(List<List<Integer>> level, Point start) {
-		this(level, getGoldLeft(level), start.x, start.y);
+	public LodeRunnerState(List<List<Integer>> level, Point start, boolean cheat) {
+		this(level, getGoldLeft(level), start.x, start.y, cheat);
 	}
 
 
@@ -263,11 +262,12 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param currentX X coordinate of spawn 
 	 * @param currentY Y coordinate of spawn 
 	 */
-	private LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, int currentX, int currentY) {
+	private LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, int currentX, int currentY, boolean cheat) {
 		this.level = level;
 		this.goldLeft = goldLeft;
 		this.currentX = currentX;
 		this.currentY = currentY;
+		this.ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE = cheat;
 	}
 
 	/**
@@ -418,7 +418,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		}
 
 		assert inBounds(newX,newY) : "x is:" + newX + "\ty is:"+newY + "\t"+ inBounds(newX,newY);
-		LodeRunnerState result = new LodeRunnerState(level, newGoldLeft, newX, newY);
+		LodeRunnerState result = new LodeRunnerState(level, newGoldLeft, newX, newY, true);
 //		if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
 //			System.out.println("AFTER");
 //			renderLevelAndPause((LodeRunnerState) result);
@@ -480,7 +480,6 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 //			}
 			LodeRunnerRenderUtil.getBufferedImage(copy);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		MiscUtil.waitForReadStringAndEnterKeyPress();

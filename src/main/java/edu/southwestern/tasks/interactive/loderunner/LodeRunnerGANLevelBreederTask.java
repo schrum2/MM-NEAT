@@ -229,7 +229,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
 				Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
 				LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
-				LodeRunnerState start = new LodeRunnerState(level);
+				LodeRunnerState start = new LodeRunnerState(level, true);
 				Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 				HashSet<LodeRunnerState> mostRecentVisited = null;
 				ArrayList<LodeRunnerAction> actionSequence = null;

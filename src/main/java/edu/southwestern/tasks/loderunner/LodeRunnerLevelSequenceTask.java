@@ -45,23 +45,22 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 					numFitnessFunctions++;
 				}
 			}
-		}else throw new UnsupportedOperationException("Don't test LodeRunnerLevelSequenceTask again without first registering fitness functions");
-
-		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingSolutionLength")) {
+		}
+		else if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingSolutionLength")) {
 			MMNEAT.registerFitnessFunction("linearIncreasingSolutionLength");
 			MMNEAT.registerFitnessFunction("linearIncreasingSolutionLengthRange");
 			numFitnessFunctions+=2;
 		}
-		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingEnemyCount")) {
+		else if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingEnemyCount")) {
 			MMNEAT.registerFitnessFunction("linearIncreasingEnemyCount");
 			MMNEAT.registerFitnessFunction("linearIncreasingEnemyCountRange");
 			numFitnessFunctions+=2;
 		}
-		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingTreasureCount")) {
+		else if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingTreasureCount")) {
 			MMNEAT.registerFitnessFunction("linearIncreasingTreasureCount");
 			MMNEAT.registerFitnessFunction("linearIncreasingTreasureCountRange");
 			numFitnessFunctions+=2;
-		}
+		}else throw new UnsupportedOperationException("Don't test LodeRunnerLevelSequenceTask again without first registering fitness functions");
 
 
 		//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 

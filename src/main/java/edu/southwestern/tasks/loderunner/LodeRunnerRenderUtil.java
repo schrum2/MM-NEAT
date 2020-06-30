@@ -79,7 +79,7 @@ public class LodeRunnerRenderUtil {
 	public static BufferedImage visualizeLodeRunnerLevelSolutionPath(List<List<Integer>> level,
 			ArrayList<LodeRunnerAction> actionSequence, HashSet<LodeRunnerState> mostRecentVisited) {
 		try {
-			LodeRunnerState start = new LodeRunnerState(level);
+			LodeRunnerState start = new LodeRunnerState(level, true);
 //			System.out.println(start);
 //			System.out.println(level);
 			BufferedImage visualPath = LodeRunnerState.vizualizePath(level, mostRecentVisited, actionSequence, start);

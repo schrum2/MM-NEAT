@@ -222,7 +222,7 @@ public class LodeRunnerTSPUtil {
 				if(!p.equals(i) && !i.getData().equals(spawn)) {
 					levelCopy.get(p.getData().y).set(p.getData().x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);//sets spawn as one of the gold to get distance between the gold
 					levelCopy.get(i.getData().y).set(i.getData().x, LodeRunnerState.LODE_RUNNER_TILE_GOLD); //destination gold 
-					Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
+					Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN, false);
 
 //					System.out.println(p + " to " + i);
 //					for(Object o : levelCopy) System.out.println(o);
@@ -235,7 +235,7 @@ public class LodeRunnerTSPUtil {
 						// TODO: Here Kirby: if path is null, then turn on cheat movement through diggable and try again
 						// 		 However, if the result is STILL null after that, then we assume the path is one-directional,
 						//		 and simply do not add an edge to the TSP
-
+						aStarInfo =  LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN, true);
 						continue; // Cannot reach i from p, so do not add edge to TSP graph
 						//LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, aStarInfo.t2, aStarInfo.t1);
 						//MiscUtil.waitForReadStringAndEnterKeyPress();

@@ -74,7 +74,7 @@ public class LodeRunnerLevelAnalysisUtil {
 	 */
 	public static String processOneLevel(int num) {
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level "+num+".txt");
-		Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = performAStarSearch(level,Double.NaN);
+		Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = performAStarSearch(level,Double.NaN, true);
 		HashSet<LodeRunnerState> mostRecentVisited = aStarInfo.t1;
 		ArrayList<LodeRunnerAction> actionSequence = aStarInfo.t2;
 		LodeRunnerState start = aStarInfo.t3;
@@ -118,14 +118,14 @@ public class LodeRunnerLevelAnalysisUtil {
 	 * @return Relevant information from the search in a Quad; mostRecentVistied, actionSeqeunce, starting state, simpleAStarDistance
 	 */
 	public static Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> 
-	performAStarSearch(List<List<Integer>> level, double psuedoRandomSeed) {
+	performAStarSearch(List<List<Integer>> level, double psuedoRandomSeed, boolean cheat) {
 		//declares variable to be initizalized in the if statements below 
 		LodeRunnerState start;
 		List<List<Integer>> levelCopy;
 		//if a random seed is not given then get the spawn point from the VGLC
 		if(Double.isNaN(psuedoRandomSeed)) { 
 			levelCopy = ListUtil.deepCopyListOfLists(level);
-			start = new LodeRunnerState(levelCopy);
+			start = new LodeRunnerState(levelCopy, cheat);
 			//System.out.println(start);
 		} 
 		else{//other wise assign a random spawn point bsaed on of the random seed 
@@ -133,7 +133,7 @@ public class LodeRunnerLevelAnalysisUtil {
 			Random rand = new Random(Double.doubleToLongBits(psuedoRandomSeed));
 			LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand); //sets a random spawn point 
 			levelCopy = ListUtil.deepCopyListOfLists(level); //copy level so it is not effected by the search 
-			start = new LodeRunnerState(levelCopy); //gets start state for search 
+			start = new LodeRunnerState(levelCopy, true); //gets start state for search 
 			//System.out.println(start);
 		}
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold); //initializes a search based on the heuristic 
