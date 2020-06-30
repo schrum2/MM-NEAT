@@ -3,7 +3,6 @@ package edu.southwestern.util.datastructures;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -55,24 +54,60 @@ public class Graph<T>{
 	 * @return Deep copy of graph 
 	 */
 	public Graph<T> deepCopy(){
-		Graph<T> graph = new Graph<T>();
+		
+		// Something wrong with dealing with references.
+		// Instead, reduce everything to String IDs,
+		// and then reconstruct based on that.
+		
+//		Graph<T> graph = new Graph<T>();
+//		Set<Graph<T>.Node> nodes = getNodes();
+//		HashMap<Node, Node> oldToNew = new HashMap<>();
+//		// Add all of the nodes
+//		for(Node n : nodes) {
+//			Node newNode = graph.addNode(n.getData());
+//			newNode.setID(n.getID()); // Required for equality to work
+//			oldToNew.put(n, newNode);
+//		}
+//		// Add all of the edges
+//		for(Node n : nodes) {
+//			Node sourceInNew = oldToNew.get(n);
+//			for(Pair<Node, Double> p : n.adjacencies()) {
+//				Node targetInNew = oldToNew.get(p.t1);
+//				graph.addDirectedEdge(sourceInNew, targetInNew, p.t2);
+//			}
+//		}
+//		graph.root = oldToNew.get(this.root);
+//		return graph;
+
+		// Extract graph data
 		Set<Graph<T>.Node> nodes = getNodes();
-		HashMap<Node, Node> oldToNew = new HashMap<>();
-		// Add all of the nodes
+		ArrayList<Pair<T,String>> nodeData = new ArrayList<>(nodes.size());
 		for(Node n : nodes) {
-			Node newNode = graph.addNode(n.getData());
-			newNode.setID(n.getID()); // Required for equality to work
-			oldToNew.put(n, newNode);
+			nodeData.add(new Pair<T,String>(n.getData(),n.getID()));
 		}
-		// Add all of the edges
+		ArrayList<Triple<String,String,Double>> adjacencyData = new ArrayList<>();
 		for(Node n : nodes) {
-			Node sourceInNew = oldToNew.get(n);
 			for(Pair<Node, Double> p : n.adjacencies()) {
-				Node targetInNew = oldToNew.get(p.t1);
-				graph.addDirectedEdge(sourceInNew, targetInNew, p.t2);
+				adjacencyData.add(new Triple<>(n.getID(),p.t1.getID(),p.t2));
 			}
 		}
-		graph.root = oldToNew.get(this.root);
+
+		// Create new Graph
+		Graph<T> graph = new Graph<T>();
+		for(Pair<T,String> p : nodeData) {
+			graph.addNode(new Node(p.t1,p.t2));
+		}
+		for(Triple<String,String,Double> t : adjacencyData) {
+			graph.addDirectedEdge(t.t1, t.t2, t.t3);
+		}
+
+		if(root != null) {
+			String rootID = root.getID();
+			graph.root = graph.getNode(rootID);
+		} else {
+			graph.root = null;
+		}
+		
 		return graph;
 	}
 	
@@ -185,6 +220,19 @@ public class Graph<T>{
 	public void addDirectedEdge(Node n1, Node n2, double cost) {
 		n1.adjacencies.add(new Pair<>(n2,cost));
 	}
+
+	/**
+	 * Add directed edge between nodes with given String IDs
+	 * and use the indicated edge cost 
+	 * @param sourceID ID of source Node
+	 * @param targetID ID of target Node
+	 * @param cost Edge cost
+	 */
+	public void addDirectedEdge(String sourceID, String targetID, Double cost) {
+		Node source = getNode(sourceID);
+		Node target = getNode(targetID);
+		addDirectedEdge(source,target,cost);
+	}
 	
 	/**
 	 * Add edges in both directions (undirected) with default cost of 1.0
@@ -258,6 +306,29 @@ public class Graph<T>{
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Verify that any Node referenced in an adjacency list is actually
+	 * in the nodes list.
+	 * @return If graph is valid
+	 */
+	public boolean checkIntegrity() {
+		ArrayList<String> ids = new ArrayList<>(nodes.size());
+		// All valid IDs
+		for(Node n : nodes) {
+			ids.add(n.getID());
+		}
+		// Check all adjacencies
+		for(Node n : nodes) {
+			for(Pair<Node,Double> p : n.adjacencies) {
+				// Edge to a Node that is not in the Node list
+				if(!ids.contains(p.t1.getID())) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -346,6 +417,15 @@ public class Graph<T>{
 			// method is the only one that allows a random generator to be supplied, allowing reproducibility.
 			id = RandomStringUtils.random(4,'A','Z',true,false,null,RandomNumbers.randomGenerator);
 		}
+		
+		
+		private Node(T d, String id){
+			setData(d);
+			adjacencies = new HashSet<>();
+			this.id = id;
+		}
+
+		
 		public Set<Pair<Graph<T>.Node,Double>> adjacencies() {
 			return adjacencies;
 		}

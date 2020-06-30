@@ -11,8 +11,6 @@ import java.util.stream.Collectors;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
-import edu.southwestern.util.MiscUtil;
-import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -105,6 +103,8 @@ public class LodeRunnerTSPUtil {
 	 */
 	private static List<Pair<Graph<Point>.Node, Double>> greedyTSPStep(Graph<Point> originalTSP, Graph<Point> tsp, List<Pair<Graph<Point>.Node, Double>> solution) {
 		
+		assert tsp.checkIntegrity() : "TSP is invalid:\n" + tsp;
+		
 //		System.out.println("Add "+solution.get(solution.size() - 1));
 //		for(Object o: solution) System.out.print(" ");
 //		System.out.println(solution);
@@ -145,6 +145,8 @@ public class LodeRunnerTSPUtil {
 				} else {				
 					// Copy before modification
 					Graph<Point> tspCopy = tsp.deepCopy();
+					assert tsp.checkIntegrity() : "TSP is invalid:\n" + tsp;
+					assert tspCopy.checkIntegrity() : "TSP copy is invalid:\n" + tspCopy;
 					boolean nodeRemoved = tsp.removeNode(sourceNode.getID());
 					assert nodeRemoved : "How could "+candidate.t1+" not be removed from \n"+tsp + "\nSolution so far: "+solution;
 					List<Pair<Graph<Point>.Node, Double>> result = greedyTSPStep(originalTSP, tsp, solution);
