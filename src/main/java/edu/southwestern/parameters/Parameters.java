@@ -785,6 +785,7 @@ public class Parameters {
 		booleanOptions.add("interactiveLodeRunnerAStarPaths", false, "Shows the solution path for the levels in the level breeder when true");
 		booleanOptions.add("lodeRunnerAllowsSimpleAStarPath", false, "Adds the AStarPath as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsConnectivity", false, "Adds connectivity as a fitness function when true");
+		booleanOptions.add("lodeRunnerAllowsTSPSolutionPath", false, "Adds the TSP solution path as a fitness function when true");
 		booleanOptions.add("lodeRunnerLevelSequenceAverages", false, "Averages scores from all levels of the sequence");
 		booleanOptions.add("lodeRunnerLevelSequenceIndividual", false, "Takes each score from the sequence individually");
 		booleanOptions.add("interactiveLodeRunnerIceCreamYouVisualization", false, "Shows the ice cream you visualization for the levels in the level breeder when true");

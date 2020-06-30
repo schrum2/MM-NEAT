@@ -71,6 +71,10 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				MMNEAT.registerFitnessFunction("numOfPositionsVisited"); //connectivity
 				numFitnessFunctions++;
 			}
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsTSPSolutionPath")) {
+				MMNEAT.registerFitnessFunction("TSPSolutionPathLength");
+				numFitnessFunctions++;
+			}
 
 			//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
 			MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
@@ -153,6 +157,13 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		}
 		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsConnectivity")) {
 			fitnesses.add(connectivityOfLevel);
+		}
+		
+		//Calculate length of tsp path
+		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsTSPSolutionPath")) {
+			Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
+			double tspSolutionLength = 1.0*tspInfo.t1.size();
+			fitnesses.add(tspSolutionLength);
 		}
 
 		//calculates other scores that are not fitness functions 
