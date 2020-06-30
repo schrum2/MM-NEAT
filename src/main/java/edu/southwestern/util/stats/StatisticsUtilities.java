@@ -661,4 +661,20 @@ public class StatisticsUtilities {
                 else if(runs == 30) return 2.045;// df=29, p=0.05, two-tailed
                 else throw new UnsupportedOperationException("Still need to expand tValue method to support different values of N: " + runs);
     }
+    
+    /**
+     * Given scores and expected ... computed squared errors between them
+     * @param scores Original scores
+     * @param expected Expected scores
+     * @return Array of the squared errors
+     */
+    public static double[] calculateSquaredErrors(double[] scores, double[] expected) {
+    	assert scores.length == expected.length;
+    	double[] squaredErrors = new double[scores.length];
+    	for(int i = 0; i < scores.length; i++) {
+    		double diff = scores[i] - expected[i];
+    		squaredErrors[i] = diff*diff;
+    	}
+    	return squaredErrors;
+    }
 }

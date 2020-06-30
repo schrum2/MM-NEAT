@@ -6,13 +6,17 @@ import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
-public class LodeRunnerGANLevelSequenceTask<T> extends LodeRunnerLevelSequenceTask<T> {
+public class LodeRunnerGANLevelSequenceTask extends LodeRunnerLevelSequenceTask<List<Double>> {
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[] {"runNumber:2", "randomSeed:2", "lodeRunnerLevelSequenceAverages:true","lodeRunnerLevelSequenceIndividual:false", "lodeRunnerAllowsSimpleAStarPath:true", "lodeRunnerAllowsConnectivity:true", "base:loderunnerlevels", "log:LodeRunnerLevels-LevelSequence", "saveTo:LevelSequence", "LodeRunnerGANModel:LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "watch:false", "GANInputSize:10", "trials:1", "mu:100", "maxGens:100000", "io:true", "netio:true", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "mating:true", "fs:false", "task:edu.southwestern.tasks.loderunner.LodeRunnerGANLevelSequenceTask", "cleanFrequency:-1", "saveAllChampions:true", "cleanOldNetworks:false", "logTWEANNData:false", "logMutationAndLineage:false", "steadyStateIndividualsPerGeneration:100", "aStarSearchBudget:100000"});
+//			MMNEAT.main(new String[] {"runNumber:0", "randomSeed:2", "lodeRunnerLevelSequenceAverages:true","lodeRunnerLevelSequenceIndividual:false", "lodeRunnerAllowsSimpleAStarPath:true", "lodeRunnerAllowsConnectivity:true", "base:loderunnerlevels", "log:LodeRunnerLevels-LevelSequence", "saveTo:LevelSequence", "LodeRunnerGANModel:LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "watch:false", "GANInputSize:10", "trials:1", "mu:100", "maxGens:100000", "io:true", "netio:true", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "mating:true", "fs:false", "task:edu.southwestern.tasks.loderunner.LodeRunnerGANLevelSequenceTask", "cleanFrequency:-1", "saveAllChampions:true", "cleanOldNetworks:false", "logTWEANNData:false", "logMutationAndLineage:false", "steadyStateIndividualsPerGeneration:100", "aStarSearchBudget:100000"});
+			MMNEAT.main(new String[] {"runNumber:0", "randomSeed:2", "lodeRunnerLevelSequenceAverages:false","lodeRunnerLevelSequenceIndividual:false", "lodeRunnerAllowsSimpleAStarPath:false", "lodeRunnerAllowsConnectivity:false", "base:loderunnerlevels", "log:LodeRunnerLevels-LevelSequence", "saveTo:LevelSequence", "LodeRunnerGANModel:LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "watch:false", "GANInputSize:10", "trials:1", "mu:100", "maxGens:100000", "io:true", "netio:true", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "mating:true", "fs:false", "task:edu.southwestern.tasks.loderunner.LodeRunnerGANLevelSequenceTask", "cleanFrequency:-1", "saveAllChampions:true", "cleanOldNetworks:false", "logTWEANNData:false", "logMutationAndLineage:false", "steadyStateIndividualsPerGeneration:100", "aStarSearchBudget:100000"});
+
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
@@ -23,19 +27,20 @@ public class LodeRunnerGANLevelSequenceTask<T> extends LodeRunnerLevelSequenceTa
 	}
 
 
-	@SuppressWarnings("null")
 	@Override
 	/**
 	 * Gets the sequence of levels to be evolved 
 	 * @return An array of levels 
 	 */
-	public ArrayList<List<List<Integer>>> getLevelSequence(Genotype<T> individual, int numOfLevels) {
+	public ArrayList<List<List<Integer>>> getLevelSequence(Genotype<List<Double>> individual, int numOfLevels) {
 		ArrayList<List<List<Integer>>> levelSequence = new ArrayList<>(numOfLevels);
-		for(int i = 0; i < numOfLevels; i++) {
-				List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromGenotype(individual);
-//				System.out.println("level: "+level);
-//				MiscUtil.waitForReadStringAndEnterKeyPress();
-				levelSequence.add(level);
+		List<Double> phenotype = individual.getPhenotype();
+		for(int j = 0; j < phenotype.size(); j+=Parameters.parameters.integerParameter("GANInputSize")) {
+			List<Double> oneLevelPhenotype = phenotype.subList(j, j+Parameters.parameters.integerParameter("GANInputSize"));
+			List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromStaticGenotype(oneLevelPhenotype);
+			//				System.out.println("level: "+level);
+			//				MiscUtil.waitForReadStringAndEnterKeyPress();
+			levelSequence.add(level);
 		}
 		return levelSequence;
 	}

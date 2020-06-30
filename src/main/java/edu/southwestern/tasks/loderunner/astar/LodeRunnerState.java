@@ -43,6 +43,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public static final int LODE_RUNNER_TILE_ROPE = 5;
 	public static final int LODE_RUNNER_TILE_GROUND = 6;
 	public static final int LODE_RUNNER_TILE_SPAWN = 7;
+	// Big cost to discourage moveing sideways through diggable ground in a way that is sometimes illegal
+	private static final double SIDEWAYS_DIG_COST_MULTIPLIER = 100;
+	
+	private static final boolean ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE = true;
 	
 	private List<List<Integer>> level;
 	private HashSet<Point> goldLeft; //set containing the points with gold 
@@ -124,7 +128,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public static void main(String args[]) {
 		Parameters.initializeParameterCollections(args);
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 4.txt"); //converts to JSON
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 1.txt"); //converts to JSON
 		LodeRunnerState start = new LodeRunnerState(level);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
@@ -145,7 +149,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		System.out.println("actionSequence: " + actionSequence);
 		//System.out.println("actionSequence length: " + actionSequence.size());
 		try {
-			//visualizes the points visited with red and whit x's
+			//visualizes the points visited with blue and whit x's
 			BufferedImage visualPath = vizualizePath(level,mostRecentVisited,actionSequence,start);
 			try { //displays window with the rendered level and the solution path/visited states
 				JFrame frame = new JFrame();
@@ -325,15 +329,21 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 //		}
 		assert inBounds(newX,newY): "x is:" + newX + "\ty is:"+newY + "\t" + inBounds(newX,newY);
 		if(a.getMove().equals(LodeRunnerAction.MOVE.RIGHT)) {
-			if(!inBounds(newX,newY+1)) // Can't move if there is no ground beneath player
-				return null;
-			
-			int beneath = tileAtPosition(newX,newY+1);
+			int beneath = !inBounds(newX,newY+1) ? -1 : tileAtPosition(newX,newY+1);
 			if(passable(newX+1, newY) && 
 					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
 					  (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
 				newX++;
+			else if(ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && 
+					inBounds(newX+1,newY) &&
+					(beneath == -1 || beneath == LODE_RUNNER_TILE_LADDER || beneath == LODE_RUNNER_TILE_DIGGABLE || beneath == LODE_RUNNER_TILE_GROUND) &&
+					tileAtPosition(newX+1,newY) == LODE_RUNNER_TILE_DIGGABLE 
+					&& diggablePath(newX+1,newY)) 
+				// This is a weird case that allows moving sideways through diggable ground, which is only allowed because
+				// the player could hypothetically have dug the ground above to make this possible. 
+				newX++;
 			else if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
+					beneath != -1 && // Means out of bounds
 					beneath != LODE_RUNNER_TILE_LADDER &&
 					beneath != LODE_RUNNER_TILE_DIGGABLE &&
 					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
@@ -343,15 +353,22 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
-			if(!inBounds(newX,newY+1)) // Can't move if there is no ground beneath player
-				return null;
-			
-			int beneath = tileAtPosition(newX,newY+1);
+			// Turns out you can walk on the bottom of the screen with nothing beneath you
+			int beneath = !inBounds(newX,newY+1) ? -1 : tileAtPosition(newX,newY+1);
 			if(passable(newX-1, newY) && 
 					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
-					  (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
+							(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
+				newX--;
+			else if(ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && 
+					inBounds(newX-1,newY) && 
+					(beneath == -1 || beneath == LODE_RUNNER_TILE_LADDER || beneath == LODE_RUNNER_TILE_DIGGABLE || beneath == LODE_RUNNER_TILE_GROUND) &&
+					tileAtPosition(newX-1,newY) == LODE_RUNNER_TILE_DIGGABLE && 
+					diggablePath(newX-1,newY)) 
+				// This is a weird case that allows moving sideways through diggable ground, which is only allowed because
+				// the player could hypothetically have dug the ground above to make this possible. 
 				newX--;
 			else if(tileAtPosition(newX,newY) != LODE_RUNNER_TILE_LADDER &&// Could run on/across ladders too
+					beneath != -1 && // Bottom of screen, nothing beneath player
 					beneath != LODE_RUNNER_TILE_LADDER &&
 					beneath != LODE_RUNNER_TILE_DIGGABLE &&
 					beneath != LODE_RUNNER_TILE_GROUND)//checks if there is ground under the player
@@ -361,8 +378,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
-			if(		passable(newX, newY-1) && // Do not allow moving up ladders into solid tiles
-					tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) // Be on a ladder to climb
+			if(	(passable(newX, newY-1) || (ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && inBounds(newX, newY-1) &&tileAtPosition(newX, newY-1)==LODE_RUNNER_TILE_DIGGABLE)) && // Do not allow moving up ladders into solid tiles
+					inBounds(newX, newY-1) &&tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) // Be on a ladder to climb
 				newY--;
 			else return null; 
 		}
@@ -407,6 +424,19 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 //			renderLevelAndPause((LodeRunnerState) result);
 //		}
 		return result;
+	}
+
+	/**
+	 * If there might be a way to reach this spot by digging from above
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	private boolean diggablePath(int x, int y) {
+		while(inBounds(x,y) && tileAtPosition(x,y) == LODE_RUNNER_TILE_DIGGABLE) {
+			y--; // Move up
+		}
+		return passable(x,y);
 	}
 
 	/**
@@ -512,10 +542,43 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 */
 	@Override
 	public double stepCost(State<LodeRunnerAction> s, LodeRunnerAction a) {
-//		if(		a.getMove().equals(LodeRunnerAction.MOVE.DIG_LEFT) ||
-//				a.getMove().equals(LodeRunnerAction.MOVE.DIG_RIGHT))
-//			return LODE_RUNNER_DIG_ACTION_COST;
-		return 1;
+		LodeRunnerState state = (LodeRunnerState) s;
+		int beneath = !inBounds(state.currentX,state.currentY+1) ? -1 : tileAtPosition(state.currentX,state.currentY+1);
+		// The model allows for moving sideways through diggable ground, with the assumption that the ground above would have been previously dug out
+		if(		a.getMove().equals(LodeRunnerAction.MOVE.LEFT) && 
+				state.inBounds(state.currentX - 1, state.currentY) &&
+				state.tileAtPosition(state.currentX - 1, state.currentY) == LODE_RUNNER_TILE_DIGGABLE) {
+			double cost = 1; // Base cost of 1 for the movement
+			int y = state.currentY;
+			int x = state.currentX - 1;
+			while(state.inBounds(x,y) && state.tileAtPosition(x,y) == LODE_RUNNER_TILE_DIGGABLE) {
+				cost++; // Increase cost
+				y--; // Move up
+				// It is assumed that getSuccessor will assure that only valid moves are considered, so we must reach an empty tile eventually
+			}
+			if(!state.inBounds(x,y)) cost = Double.POSITIVE_INFINITY; // Impossible action
+			//System.out.println("High cost left: " + cost);
+			return cost*cost*SIDEWAYS_DIG_COST_MULTIPLIER; // Arbitrarily double cost to discourage
+		} else if(	a.getMove().equals(LodeRunnerAction.MOVE.RIGHT) &&
+					state.inBounds(state.currentX + 1, state.currentY) &&
+					state.tileAtPosition(state.currentX + 1, state.currentY) == LODE_RUNNER_TILE_DIGGABLE) {
+			double cost = 1; // Base cost of 1 for the movement
+			int y = state.currentY;
+			int x = state.currentX + 1;
+			while(state.inBounds(x,y) && state.tileAtPosition(x,y) == LODE_RUNNER_TILE_DIGGABLE) {
+				cost++; // Increase cost
+				y--; // Move up
+				// It is assumed that getSuccessor will assure that only valid moves are considered, so we must reach an empty tile eventually
+			}
+			if(!state.inBounds(x,y)) cost = Double.POSITIVE_INFINITY; // Impossible action
+			//System.out.println("High cost right: " + cost);
+			return cost*cost*SIDEWAYS_DIG_COST_MULTIPLIER; // Arbitrarily double cost to discourage
+		} else if(a.getMove().equals(LodeRunnerAction.MOVE.DOWN) && beneath == LODE_RUNNER_TILE_DIGGABLE) {
+			// Digging down is expensive. Must move to side, dig, move back, then fall ... maybe more to make space.
+			return 4;
+		} else {
+			return 1;
+		}
 	}
 
 	/**
