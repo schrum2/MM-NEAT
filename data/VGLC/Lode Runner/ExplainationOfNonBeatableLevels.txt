@@ -1,0 +1,8 @@
+Level 7: Digging is only allowed when there is a place to stand on either the right or the left based on our model. So it is unable to collect one of the gold pieces that, in the actual game, you can get by falling through a block to collect that treasure. 
+Level 64: Cannot be beaten by our model because it requires the enemies bring the gold down to you to collect all of the gold.
+Level 75: The ladder in the bottom right cannot be reached to collect all the gold on the right because the player needs to stand on an enemy to reach the ladder since it does not go all the way down to the ground.
+Level 86: The same issue as Level 7. There is no way to distiguish blocks that the player can fall through in out model. 
+Level 98: Cannot be beaten by our model because it requires the enemies bring the gold down to you to collect all of the gold.
+Level 136: Cannot be beaten by our model because it requires the enemies bring the gold down to you to collect all of the gold. 
+Level 137: Cannot be beaten by our model because it requires the enemies bring the gold down to you to collect all of the gold. 
+Level 148: Cannot be beaten by our model because it requires the enemies bring the gold down to you to collect all of the gold.

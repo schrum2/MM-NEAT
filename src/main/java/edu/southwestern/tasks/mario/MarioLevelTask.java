@@ -483,7 +483,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				
 				// Lower the scale when using alternating score
 				DECORATION_SCALE = 0.2;
-				NEGATIVE_SPACE_SCALE = 0.8;
+				NEGATIVE_SPACE_SCALE = 0.85;
 				
 				decorationBinIndex = Math.min((int)(decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10), BINS_PER_DIMENSION-1);
 				negativeSpaceSumIndex = Math.min((int)(negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);

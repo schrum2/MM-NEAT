@@ -6,6 +6,8 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -15,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
+import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 
 
 /**
@@ -70,6 +73,29 @@ public class LodeRunnerRenderUtil {
 		frame.pack();
 		frame.setVisible(true);
 		
+	}
+	
+
+	public static BufferedImage visualizeLodeRunnerLevelSolutionPath(List<List<Integer>> level,
+			ArrayList<LodeRunnerAction> actionSequence, HashSet<LodeRunnerState> mostRecentVisited) {
+		try {
+			LodeRunnerState start = new LodeRunnerState(level);
+//			System.out.println(start);
+//			System.out.println(level);
+			BufferedImage visualPath = LodeRunnerState.vizualizePath(level, mostRecentVisited, actionSequence, start);
+			JFrame frame = new JFrame();
+			JPanel panel = new JPanel();
+			JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+					LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
+			panel.add(label);
+			frame.add(panel);
+			frame.pack();
+			frame.setVisible(true);
+			return visualPath;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null; // render fail
 	}
 	
 	public static BufferedImage createIceCreamYouImage(List<List<Integer>> list, int width, int height) throws IOException {
