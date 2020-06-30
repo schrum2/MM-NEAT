@@ -2,6 +2,7 @@ package edu.southwestern.tasks.megaman;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class MegaManLevelAnalysisUtil {
 		int totalTiles = 0;
 		for(int y=0;y<level.size();y++) {
 			for(int x=0;x<level.get(0).size();x++) {
-				if(level.get(y).get(x)!=9) {
+				if(level.get(y).get(x)!=MegaManVGLCUtil.UNIQUE_NULL) {
 					totalTiles++;
 				}
 			}
@@ -35,6 +36,130 @@ public class MegaManLevelAnalysisUtil {
 		return totalTiles;
 	}
 	
+	public static double findTotalPassableTiles(List<List<Integer>> level) {
+		double totalAirTiles = 0.0;
+		for(int y=0;y<level.size();y++) {
+			for(int x=0;x<level.get(0).size();x++) {
+				if(level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_AIR||
+						level.get(y).get(x)>MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD||
+						level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_WATER||
+						level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_BREAKABLE||
+						level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_PLAYER||
+//						level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_ORB||
+						level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_LADDER) {
+					totalAirTiles++;
+				}
+			}
+		}
+		return totalAirTiles;
+	}
+	public static HashMap<String, Integer> findMiscEnemies(List<List<Integer>> level) {
+		HashMap<String, Integer> miscData = new HashMap<>();
+		
+		
+		int totalEnemies = 0;
+		int totalWallEnemies = 0;
+		int totalGroundEnemies = 0;
+		int totalFlyingEnemies = 0;
+		for(int y=0;y<level.size();y++) {
+			for(int x=0;x<level.get(0).size();x++) {
+				if(level.get(y).get(x)>MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD) {
+					totalEnemies++;
+				}
+				if(level.get(y).get(x)>MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD) {
+					if(level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_OCTOPUS_BATTERY_LEFTRIGHT_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_OCTUPUS_BATTERY_UPDOWN_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_BEAK_ENEMY) {
+						totalWallEnemies++;
+					}else if(level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_MET_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_PICKET_MAN_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_BIG_EYE_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_SPINE_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_CRAZY_RAZY_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_JUMPER_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_GUNNER_ENEMY||
+							level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_SCREW_BOMBER_ENEMY) {
+						totalGroundEnemies++;
+					}else{
+						totalFlyingEnemies++;
+					}
+				}
+				
+					
+			}
+		}
+		miscData.put("numEnemies", totalEnemies);
+		miscData.put("numWallEnemies", totalWallEnemies);
+		miscData.put("numGroundEnemies", totalGroundEnemies);
+		miscData.put("numFlyingEnemies", totalFlyingEnemies);
+		return miscData;
+	}
+	public static HashMap<String, Integer> findMiscSegments(List<List<Integer>> level) {
+		HashMap<String, Integer> miscData = new HashMap<>();
+		HashSet<Point> segmentPoints = new HashSet<>();
+		int numCorners = 0;
+		int numHorizontal = 0;
+		int numUp = 0;
+		int numDown = 0;
+		
+		for(int y=0;y<level.size();y++) {
+			for(int x=0;x<level.get(0).size();x++) {
+				int chunksx = x/16;
+				int chunksy = y/14;
+				boolean ex = x%16==0;
+				boolean wy = y%14==0;
+				if(ex&&wy&&!segmentPoints.contains(new Point(chunksx, chunksy))) {
+					int rightScreenSide = chunksx+16;
+					int y1 = chunksy;
+					int x2 = rightScreenSide-16;
+					boolean left = MegaManVGLCUtil.canGoLeft(level,rightScreenSide,y1);
+					boolean right =  MegaManVGLCUtil.canGoRight(level,rightScreenSide,y1);
+					boolean down =  MegaManVGLCUtil.canGoDown(level,rightScreenSide,y1);
+					boolean up =  MegaManVGLCUtil.canGoUp(level,rightScreenSide,y1);
+//					if(left) System.out.println("left");
+//					if(right) System.out.println("right");
+//					if(up) System.out.println("up");
+//					if(down) System.out.println("down");
+					System.out.println(new Point(rightScreenSide-x2,y1));
+					Point point = new Point(rightScreenSide-x2,y1);
+					if((up&&left&&!right&&!down&&!segmentPoints.contains(point))||
+							(up&&right&&!left&&!down&&!segmentPoints.contains(point))||
+							(down&&right&&!up&&!left&&!segmentPoints.contains(point))||
+							(down&&left&&!right&&!up&&!segmentPoints.contains(point))) { //lower right
+
+						segmentPoints.add(point);
+						
+						numCorners++;
+					}
+					if(!up&&!down&&(right||left)&&!segmentPoints.contains(point)) {
+						numHorizontal++;
+						segmentPoints.add(point);
+
+					}
+					if(down&&!up&&!segmentPoints.contains(point)) {
+						segmentPoints.add(point);
+						numDown++;
+					}
+					if(!down&&up&&!segmentPoints.contains(point)) {
+						segmentPoints.add(point);
+						numUp++;
+					}
+				}
+				
+					
+			}
+		}
+		
+//		int numCorners = 0;
+//		int numHorizontal = 0;
+//		int numUp = 0;
+//		int numDown = 0;
+		miscData.put("numCorners", numCorners);
+		miscData.put("numHorizontal", numHorizontal);
+		miscData.put("numUp", numUp);
+		miscData.put("numDown", numDown);
+		return miscData;
+	}
 	
 	/**
 	 * Takes in a level and returns all information regarding the A* search

@@ -87,6 +87,8 @@ import edu.southwestern.tasks.mario.MarioGANLevelTask;
 import edu.southwestern.tasks.mario.MarioLevelTask;
 import edu.southwestern.tasks.mario.MarioTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
+import edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelBreederTask;
+import edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelTask;
 import edu.southwestern.tasks.megaman.MegaManGANLevelBreederTask;
 import edu.southwestern.tasks.megaman.MegaManGANLevelTask;
 import edu.southwestern.tasks.megaman.MegaManLevelTask;
@@ -741,8 +743,14 @@ public class MMNEAT {
 				System.out.println("Set up Zelda Level Task");
 			}else if (task instanceof MegaManLevelTask){
 				GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
+				if(task instanceof MegaManCPPNtoGANLevelTask) {
+					setNNInputParameters(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, MegaManCPPNtoGANLevelBreederTask.staticNumCPPNOutputs());
+				}
+				
 				System.out.println("Set up Mega Man Task");
-			} else if(task instanceof LodeRunnerLevelTask) {
+			} 
+			
+			else if(task instanceof LodeRunnerLevelTask) {
 				GANProcess.type = GANProcess.GAN_TYPE.LODE_RUNNER;
 				System.out.println("Set up Lode Runner Task");
 			} else if(task instanceof HyperNEATDummyTask) {
@@ -1225,7 +1233,7 @@ public class MMNEAT {
 		else if(task instanceof ZeldaCPPNOrDirectToGANDungeonTask) return ArrayUtil.doubleNegativeOnes(ZeldaGANDungeonTask.genomeLength()); // all -1
 		else if(task instanceof LodeRunnerGANLevelBreederTask || task instanceof LodeRunnerGANLevelTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength());
 		else if(task instanceof LodeRunnerGANLevelSequenceTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")); 
-		else if(task instanceof MegaManGANLevelBreederTask || task instanceof MegaManGANLevelTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("megaManGANLevelChunks"));
+		else if(task instanceof MegaManGANLevelBreederTask || task instanceof MegaManGANLevelTask || task instanceof MegaManCPPNtoGANLevelBreederTask|| task instanceof MegaManCPPNtoGANLevelTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("megaManGANLevelChunks"));
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda/LodeRuner/MegaMan GAN");
 		}
@@ -1244,7 +1252,7 @@ public class MMNEAT {
 		else if(task instanceof ZeldaCPPNOrDirectToGANDungeonTask) return ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones
 		else if(task instanceof LodeRunnerGANLevelBreederTask || task instanceof LodeRunnerGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength());
 		else if(task instanceof LodeRunnerGANLevelSequenceTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")); 
-		else if(task instanceof MegaManGANLevelBreederTask || task instanceof MegaManGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("megaManGANLevelChunks"));
+		else if(task instanceof MegaManGANLevelBreederTask || task instanceof MegaManGANLevelTask || task instanceof MegaManCPPNtoGANLevelBreederTask|| task instanceof MegaManCPPNtoGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("megaManGANLevelChunks"));
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda/LodeRunner/MegaMan GAN");
 		}

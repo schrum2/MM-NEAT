@@ -1,36 +1,23 @@
 package edu.southwestern.tasks.popacman.ghosts.controllers;
 
-import static pacman.game.Constants.MAG;
-
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.agentcontroller.ghosts.SharedNNGhostsController;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import oldpacman.controllers.NewGhostController;
 import pacman.controllers.Controller;
 import pacman.controllers.IndividualGhostController;
 import pacman.controllers.MASController;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
-//TODO: this could be useful
-import pacman.game.info.GameInfo;
-import pacman.game.internal.Maze;
 import pacman.game.Drawable;
 import pacman.game.Game;
-import popacman.entrants.ghosts.spooky.George;
-import popacman.entrants.ghosts.spooky.John;
-import popacman.entrants.ghosts.spooky.Paul;
-import popacman.entrants.ghosts.spooky.Ringo;
-import popacman.examples.StarterGhostComm.POCommGhost;
-import popacman.prediction.GhostLocation;
+import pacman.game.internal.Maze;
 import popacman.prediction.PillModel;
 import popacman.prediction.fast.GhostPredictionsFast;
-import oldpacman.controllers.NewGhostController;
 
 /**
  * a class that converts oldpacman controller information into popacman controller information

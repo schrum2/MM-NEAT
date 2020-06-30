@@ -359,13 +359,13 @@ public class World {
 	/**
 	 * Go through and replaced unlocked doors and hidden doors with locked doors
 	 */
-	private void lockRoom() {
-		for(int y = 0; y < tiles.length; y++)
-			for(int x = 0; x < tiles[y].length; x++)
-				if(tiles[y][x].equals(Tile.DOOR) || tiles[y][x].equals(Tile.HIDDEN))
-					tiles[y][x] = Tile.LOCKED_DOOR;
-			
-	}
+//	private void lockRoom() {
+//		for(int y = 0; y < tiles.length; y++)
+//			for(int x = 0; x < tiles[y].length; x++)
+//				if(tiles[y][x].equals(Tile.DOOR) || tiles[y][x].equals(Tile.HIDDEN))
+//					tiles[y][x] = Tile.LOCKED_DOOR;
+//			
+//	}
 
 	/**
 	 * Check if there are enemy creatures in the room

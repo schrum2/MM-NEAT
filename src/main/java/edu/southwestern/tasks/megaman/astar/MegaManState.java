@@ -3,12 +3,18 @@ package edu.southwestern.tasks.megaman.astar;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.megaman.MegaManRenderUtil;
@@ -37,6 +43,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public static final int MEGA_MAN_TILE_NULL = 9;
 	public static final int MEGA_MAN_TILE_SPAWN = 8;
 	public static final int MEGA_MAN_TILE_WATER = 10;
+	public static final int FOOTHOLDER_ENEMY = 27;
+
 	
 	private List<List<Integer>> level;
 	private Point orb; 
@@ -44,6 +52,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public int currentX; 
 	public int currentY;
 	private int jumpVelocity;
+	private int fallHorizontalModInt;
 	//private boolean climbing;
 	//the distance to the level orb
 	public static Heuristic<MegaManAction,MegaManState> manhattanToOrb = new Heuristic<MegaManAction,MegaManState>(){
@@ -142,17 +151,22 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 * @param start The spawn point 
 	 */
 	public MegaManState(List<List<Integer>> level, Point start) {
-		this(level, getJumpVelocity(), getOrb(level), start.x, start.y);
+		this(level, getJumpVelocity(), getOrb(level), start.x, start.y, getFallHorizontalModInt());
+	}
+	private static int getFallHorizontalModInt() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	private static int getJumpVelocity() {
 		return 0;
 	}
-	public MegaManState(List<List<Integer>> level, int jumpVelocity, Point orb, int currentX, int currentY) {
+	public MegaManState(List<List<Integer>> level, int jumpVelocity, Point orb, int currentX, int currentY, int fallHorizontalModInt) {
 		this.level = level;
 		this.orb = orb;
 		this.jumpVelocity =jumpVelocity;
 		this.currentX = currentX;
 		this.currentY = currentY;
+		this.fallHorizontalModInt = fallHorizontalModInt;
 	}
 
 	@Override
@@ -160,6 +174,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		int newJumpVelocity = jumpVelocity;
 		int newX = currentX;
 		int newY = currentY;
+		int newFallHorizontalModInt = fallHorizontalModInt;
+		boolean falling = false;
 		assert inBounds(newX,newY): "x is:" + newX + "\ty is:"+newY + "\t" + inBounds(newX,newY);
 		// Falling off bottom of screen (into a gap). No successor (death)
 		//System.out.print("("+newX+", "+newY+")");
@@ -177,24 +193,26 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				newJumpVelocity = 0; // Can't jump if blocked above
 			}
 		}
-
+		
 		// Potentially deal with JUMP action
 		if(newJumpVelocity == 0) { // Not mid-Jump
 			//int beneath = tileAtPosition(newX,newY+1);
 			if(passable(newX,newY+1)&& tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER) { // Falling
 				newY++; // Fall down
+				newFallHorizontalModInt++;
+				newFallHorizontalModInt=newFallHorizontalModInt%2;
+				falling = true;
 			} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)&& tileAtPosition(newX, newY)!=MEGA_MAN_TILE_LADDER) { // Start jump
 				newJumpVelocity = Parameters.parameters.integerParameter("megaManAStarJumpHeight"); // Accelerate up
-			} 
+			}
 		} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)) {
 			return null; // Can't jump mid-jump. Reduces search space.
 		}
 
 		// Right movement
 		if(a.getMove().equals(MegaManAction.MOVE.RIGHT)) {
-			if(passable(newX+1,newY)) {
-				newX++;
-			} else if(currentY == newY) { // vertical position did not change
+			if((falling&&passable(newX+1,newY)&&newFallHorizontalModInt%2==0)||(!falling&&passable(newX+1,newY))) newX++;
+			else if(currentY == newY) { // vertical position did not change
 				// This action does not change the state. Neither jumping up nor falling down, and could not move right, so there is no NEW state to go to
 				return null;
 			}
@@ -202,9 +220,10 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 
 		// Left movement
 		if(a.getMove().equals(MegaManAction.MOVE.LEFT)) {
-			if(passable(newX-1,newY)) {
+			if((falling&&passable(newX-1,newY)&&newFallHorizontalModInt%2==0)||(!falling&&passable(newX-1, newY))) {
 				newX--;
-			} else if(currentY == newY) { // vertical position did not change
+			}
+			else if(currentY == newY) { // vertical position did not change
 				// This action does not change the state. Neither jumping up nor falling down, and could not move left, so there is no NEW state to go to
 				return null;
 			}
@@ -225,7 +244,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		if(!inBounds(newX, newY)){
 			return null;
 		}
-		MegaManState result = new MegaManState(level, newJumpVelocity, orb, newX, newY);
+		MegaManState result = new MegaManState(level, newJumpVelocity, orb, newX, newY, newFallHorizontalModInt);
 		//renderLevelAndPause((MegaManState) result);
 		//System.out.println(newX+", "+newY);
 		return result;
@@ -237,7 +256,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 //		int beneath;
 //		if(inBounds(x,y+1)) beneath = tileAtPosition(x,y+1);
 //		else beneath = tile;
-		if((	tile==MEGA_MAN_TILE_EMPTY ||tile==MEGA_MAN_TILE_LADDER||tile==MEGA_MAN_TILE_ORB||tile==MEGA_MAN_TILE_BREAKABLE||tile==MEGA_MAN_TILE_WATER||tile>10)) {
+		if((	tile==MEGA_MAN_TILE_EMPTY ||tile==MEGA_MAN_TILE_LADDER||tile==MEGA_MAN_TILE_ORB||tile==MEGA_MAN_TILE_BREAKABLE||tile==MEGA_MAN_TILE_WATER||tile>10&&tile!=FOOTHOLDER_ENEMY)) {
 			return true;
 		}
 		return false; 
@@ -337,6 +356,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		result = prime * result + jumpVelocity;
 		result = prime * result + currentX;
 		result = prime * result + currentX;
+		result = prime * result + fallHorizontalModInt;
 		return result;
 	}
 	@Override
@@ -365,6 +385,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		if (currentY != other.currentY)
 			return false;
 		if (jumpVelocity != other.jumpVelocity)
+			return false;
+		if(fallHorizontalModInt != other.fallHorizontalModInt)
 			return false;
 		if (orb == null) {
 			if (other.orb != null)
@@ -445,9 +467,9 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 */
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
-		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+6+".txt"); //converts to JSON
+		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+10+".txt"); //converts to JSON
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"
-				, "megaManAStarJumpHeight:3" });
+				, "megaManAStarJumpHeight:4" });
 		MegaManVGLCUtil.printLevel(level);
 		MegaManState start = new MegaManState(level);
 		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
@@ -465,12 +487,35 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		mostRecentVisited = ((AStarSearch<MegaManAction, MegaManState>) search).getVisited();
 		System.out.println(mostRecentVisited.toString());
 		System.out.println("actionSequence: " + actionSequence);
+		BufferedImage visualPath = null;
+		//BufferedImage m;
+		
 		try {
 			//visualizes the points visited with red and whit x's
-			vizualizePath(level,mostRecentVisited,actionSequence,start);
+			visualPath=vizualizePath(level,mostRecentVisited,actionSequence,start);
+			
+			//BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
+			//m=MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		JFrame frame = new JFrame();
+		JPanel panel = new JPanel();
+		int screenx;
+		int screeny;
+		if(level.get(0).size()>level.size()) {
+			screenx = 1800;
+			screeny = 950*level.size()/level.get(0).size();
+		}else {
+			screeny = 950;
+			screenx = 1800*level.get(0).size()/level.size();
+		}
+		JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(screenx,screeny, Image.SCALE_FAST)));
+		panel.add(label);
+		frame.add(panel);
+		frame.pack();
+		frame.setVisible(true);
+
 	}
 	
 	@SuppressWarnings("unused")
