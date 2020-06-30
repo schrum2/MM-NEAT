@@ -114,7 +114,8 @@ public class LodeRunnerTSPUtil {
 		assert sourceNode != null : "Source node is null";
 		assert originalTSP.getNode(sourceNode.getID()) != null : "Node with ID not in original TSP:" + sourceNode.getID() + "\n" + originalTSP;
 		// Therefore, important to get the Node's ID, but use it to look up the Node from the original TSP
-		List<Pair<Graph<Point>.Node, Double>> sortedList = originalTSP.getNode(sourceNode.getID()).adjacenciesSortedByEdgeCost();
+		List<Pair<Graph<Point>.Node, Double>> sortedList = originalTSP.getNode(sourceNode.getID()).adjacenciesSortedByDecreasingOutCount();
+		//List<Pair<Graph<Point>.Node, Double>> sortedList = originalTSP.getNode(sourceNode.getID()).adjacenciesSortedByEdgeCost();
 		
 //		System.out.println("Adjacent : "+sortedList);
 		// For some reason, nodes that should not be present in list of sorted edges sometimes show up.

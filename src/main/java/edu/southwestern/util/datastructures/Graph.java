@@ -461,6 +461,30 @@ public class Graph<T>{
 			return list;
 		}
 		
+		/**
+		 * Sorts adjacencies first by decreasing number of
+		 * outgoing links, and breaks ties favoring cheapest
+		 * links.
+		 *  
+		 * @return Sorted list of adjacencies
+		 */
+		public List<Pair<Graph<T>.Node, Double>> adjacenciesSortedByDecreasingOutCount(){
+			List<Pair<Graph<T>.Node, Double>> list = new ArrayList<>();
+			list.addAll(this.adjacencies);
+			Collections.sort(list, new Comparator<Pair<Graph<T>.Node, Double>>(){
+				@Override
+				public int compare(Pair<Graph<T>.Node, Double> o1, Pair<Graph<T>.Node, Double> o2) {
+					// o2 comes first because we want decreasing order of out-count
+					int compareOutCount = o2.t1.adjacencies.size() - o1.t1.adjacencies.size();
+					if(compareOutCount == 0) // Break the tie with increasing order of cost
+						return (int) Math.signum(o1.t2-o2.t2);
+					else // sort based on out-count
+						return compareOutCount;
+				}
+			});
+			return list;
+		}
+		
 		public void setAdjacencies(Set<Pair<Graph<T>.Node,Double>> a) {
 			adjacencies = a;
 		}
