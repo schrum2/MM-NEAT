@@ -93,10 +93,18 @@ public class MegaManRenderUtil {
 	public static BufferedImage getBufferedImageWithRelativeRendering(List<List<Integer>> list, BufferedImage[] images) throws IOException {
 		BufferedImage image = createBufferedImage(list, renderedImageWidth(list.get(0).size()), renderedImageHeight(list.size()), images); //gets the image of the level 
 		//this code displays the level in a window 
-		
+		int screenx;
+		int screeny;
+		if(list.get(0).size()>list.size()) {
+			screenx = 1800;
+			screeny = 950*list.size()/list.get(0).size();
+		}else {
+			screeny = 950;
+			screenx = 1800*list.get(0).size()/list.size();
+		}
 		JFrame frame = new JFrame();
 		JPanel panel = new JPanel();
-		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(1600, 900, Image.SCALE_AREA_AVERAGING)));
+		JLabel label = new JLabel(new ImageIcon(image.getScaledInstance(screenx, screeny, Image.SCALE_AREA_AVERAGING)));
 		panel.add(label);
 		frame.add(panel);
 		frame.pack();
@@ -160,7 +168,7 @@ public class MegaManRenderUtil {
 	public static BufferedImage[] loadImagesForASTAR(String filePath) throws IOException {
 		
 		if(tileList==null) {
-			tileList = new BufferedImage[16];
+			tileList = new BufferedImage[30];
 			File tile = new File(filePath+"Empty.PNG");
 			BufferedImage emptyTile = ImageIO.read(tile);
 			tileList[0] = emptyTile;
@@ -173,7 +181,7 @@ public class MegaManRenderUtil {
 			tile = new File(filePath+"Hazard.PNG");
 			BufferedImage HazardTile = ImageIO.read(tile);
 			tileList[3] = HazardTile;
-			tile = new File(filePath+"Empty.PNG");
+			tile = new File(filePath+"Breakable.PNG");
 			BufferedImage Breakable = ImageIO.read(tile);
 			tileList[4] = Breakable;
 			tile = new File(filePath+"MovingPlatform.PNG");
@@ -195,20 +203,63 @@ public class MegaManRenderUtil {
 			BufferedImage water = ImageIO.read(tile);
 			tileList[10] = water;
 			tile = new File(filePath+"Enemy11.png");
-			BufferedImage enemy = ImageIO.read(tile);
-			tileList[11] = enemy;
+			BufferedImage enemy11 = ImageIO.read(tile);
+			tileList[11] = enemy11;
 			tile = new File(filePath+"Enemy12.png");
-			BufferedImage enemy2 = ImageIO.read(tile);
-			tileList[12] = enemy2;
+			BufferedImage enemy12 = ImageIO.read(tile);
+			tileList[12] = enemy12;
 			tile = new File(filePath+"Enemy13.png");
-			BufferedImage enemy3 = ImageIO.read(tile);
-			tileList[13] = enemy3;
+			BufferedImage enemy13 = ImageIO.read(tile);
+			tileList[13] = enemy13;
 			tile = new File(filePath+"Enemy14.png");
-			BufferedImage enemy4 = ImageIO.read(tile);
-			tileList[14] = enemy4;
+			BufferedImage enemy14 = ImageIO.read(tile);
+			tileList[14] = enemy14;
 			tile = new File(filePath+"Enemy15.png");
-			BufferedImage enemy5 = ImageIO.read(tile);
-			tileList[15] = enemy5;
+			BufferedImage enemy15 = ImageIO.read(tile);
+			tileList[15] = enemy15;
+			tile = new File(filePath+"Enemy16.png");
+			BufferedImage enemy16 = ImageIO.read(tile);
+			tileList[16] = enemy16;
+			tile = new File(filePath+"Enemy17.png");
+			BufferedImage enemy17 = ImageIO.read(tile);
+			tileList[17] = enemy17;
+			tile = new File(filePath+"Enemy18.png");
+			BufferedImage enemy18 = ImageIO.read(tile);
+			tileList[18] = enemy18;
+			tile = new File(filePath+"Enemy19.png");
+			BufferedImage enemy19 = ImageIO.read(tile);
+			tileList[19] = enemy19;
+			tile = new File(filePath+"Enemy20.png");
+			BufferedImage enemy20 = ImageIO.read(tile);
+			tileList[20] = enemy20;
+			tile = new File(filePath+"Enemy21.png");
+			BufferedImage enemy21 = ImageIO.read(tile);
+			tileList[21] = enemy21;
+			tile = new File(filePath+"Enemy22.png");
+			BufferedImage enemy22 = ImageIO.read(tile);
+			tileList[22] = enemy22;
+			tile = new File(filePath+"Enemy23.png");
+			BufferedImage enemy23 = ImageIO.read(tile);
+			tileList[23] = enemy23;
+			tile = new File(filePath+"Enemy24.png");
+			BufferedImage enemy24 = ImageIO.read(tile);
+			tileList[24] = enemy24;
+			tile = new File(filePath+"Enemy25.png");
+			BufferedImage enemy25 = ImageIO.read(tile);
+			tileList[25] = enemy25;
+			tile = new File(filePath+"Enemy26.png");
+			BufferedImage enemy26 = ImageIO.read(tile);
+			tileList[26] = enemy26;
+			tile = new File(filePath+"Enemy27.png");
+			BufferedImage enemy27 = ImageIO.read(tile);
+			tileList[27] = enemy27;
+			tile = new File(filePath+"Enemy28.png");
+			BufferedImage enemy28 = ImageIO.read(tile);
+			tileList[28] = enemy28;
+			tile = new File(filePath+"Enemy29.png");
+			BufferedImage enemy29 = ImageIO.read(tile);
+			tileList[29] = enemy29;
+			
 		}
 		return tileList;
 	}

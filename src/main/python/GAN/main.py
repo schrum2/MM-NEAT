@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 import math
 
 import models.dcgan as dcgan
+import models.cdcgan as cdcgan
 import models.mlp as mlp
 import json
 
@@ -40,10 +41,15 @@ parser.add_argument('--clamp_lower', type=float, default=-0.01)
 parser.add_argument('--clamp_upper', type=float, default=0.01)
 parser.add_argument('--Diters', type=int, default=5, help='number of D iters per each G iter')
 
+parser.add_argument('--num_classes', type=int, default=0,  help='Number of conditional GAN classes. Default of 0 means cGAN is not used.')
+
 parser.add_argument('--n_extra_layers', type=int, default=0, help='Number of extra layers on gen and disc')
 parser.add_argument('--experiment', default=None, help='Where to store samples and models')
 parser.add_argument('--adam', action='store_true', help='Whether to use adam (default is rmsprop)')
 parser.add_argument('--json', default=None, help='Json file')
+
+parser.add_argument('--jsonID', default=None, help='The ID json associated with the actual training data')
+
 parser.add_argument('--problem', type=int, default=0, help='Level examples')
 parser.add_argument('--tiles', type=int, default=13, help='Number of tile types')
 opt = parser.parse_args()
@@ -72,6 +78,14 @@ if opt.json is None:
         examplesJson = "sepEx/examplemario{}.json".format(opt.problem)
 else:
     examplesJson = opt.json
+
+if opt.jsonID is not None:
+    examplesJsonID = opt.jsonID
+    #f = open(examplesJsonID, 'r')
+    #file_contents = f.read()
+    #print(file_contents)
+    #print('above was the file contents')
+    #f.close()
 X = np.array ( json.load(open(examplesJson)) )
 z_dims = opt.tiles
 
@@ -106,14 +120,21 @@ def weights_init(m):
         m.weight.data.normal_(1.0, 0.02)
         m.bias.data.fill_(0)
 
-netG = dcgan.DCGAN_G(map_size, nz, z_dims, ngf, ngpu, n_extra_layers)
+if opt.num_classes > 0:
+    netG = cdcgan.CDCGAN_G(map_size, nz, z_dims, ngf, ngpu, opt.num_classes, n_extra_layers)
+else:
+    netG = dcgan.DCGAN_G(map_size, nz, z_dims, ngf, ngpu, n_extra_layers)
 
 netG.apply(weights_init)
 if opt.netG != '': # load checkpoint if needed
     netG.load_state_dict(torch.load(opt.netG))
 print(netG)
 
-netD = dcgan.DCGAN_D(map_size, nz, z_dims, ndf, ngpu, n_extra_layers)
+if opt.num_classes > 0:
+    netD = cdcgan.CDCGAN_D(map_size, nz, z_dims, ndf, ngpu, opt.num_classes, n_extra_layers)
+else:
+    netD = dcgan.DCGAN_D(map_size, nz, z_dims, ndf, ngpu, n_extra_layers)
+
 netD.apply(weights_init)
 
 if opt.netD != '':

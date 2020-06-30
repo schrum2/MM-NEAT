@@ -3,6 +3,8 @@ package edu.southwestern.tasks.megaman;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,11 +28,53 @@ public class MegaManConvertMMLVToJSON {
 	 */
 	public static void main(String[] args) {
 	
-		for(int i = 13;i<=13;i++) {
+		for(int i = 11;i<=45;i++) {
 			List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
 			MegaManVGLCUtil.printLevel(level);
-			MegaManVGLCUtil.convertMegaManLevelToMMLV(level, i+"000");
+			saveListToEditableFile(level, i+"000");
+			//MegaManVGLCUtil.convertMegaManLevelToMMLV(level, i+"000", MegaManVGLCUtil.MEGAMAN_MMLV_PATH);
 		}
+	}
+	public static File saveListToEditableFile(List<List<Integer>> level, String levelName) {
+		File mmlvFilePath = new File("MegaManMakerLevelPath.txt"); //file containing the path
+
+		
+		Scanner scan;
+		//When the button is pushed, ask for the name input
+			
+		File levelFile = null;
+		
+		try {
+			scan = new Scanner(mmlvFilePath);
+			
+			
+			String mmlvPath = scan.nextLine();
+			levelFile = new File(mmlvPath+levelName+".txt");
+			
+			if(!levelFile.exists()) {
+				levelFile.createNewFile();
+				
+			}
+			PrintWriter p = new PrintWriter(levelFile);
+			for(List<Integer> k : level) {
+				for(Integer m: k) {
+					p.print(m);
+
+				}
+				p.println();
+			}
+			p.close();
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//scan.next();
+		
+		
+		
+		return levelFile;
 	}
 	/**
 	 * converts the mmlv to a level (List<List<Integer>>)

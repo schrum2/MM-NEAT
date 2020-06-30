@@ -22,6 +22,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,7 +32,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.google.common.io.Files;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
@@ -492,7 +492,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			//scan.next();
 			String mmlvPath = scan.nextLine();
 			String mmlvFileName = JOptionPane.showInputDialog(null, "What do you want to name your level?");
-			File mmlvFileFromEvolution = new File(mmlvPath+mmlvFileName+".mmlv"); //creates file inside user's MegaManLevelPath
+			//File mmlvFileFromEvolution = new File(mmlvPath+mmlvFileName+".mmlv"); //creates file inside user's MegaManLevelPath
+			@SuppressWarnings("unused")
 			File mmlvFile; //creates file inside MMNEAT
 			scan.close();
 			if(selectedItems.size() != 1) {
@@ -504,17 +505,10 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 			List<List<Integer>> level = levelListRepresentation(doubleArray);
 			//int levelNumber = 2020;
-			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, mmlvFileName);
-			try {
-				Files.copy(mmlvFile, mmlvFileFromEvolution); //copies over
-				mmlvFile.delete(); //deletes MMNEAT file
-				JOptionPane.showMessageDialog(frame, "Level saved");
-
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//System.out.println(mmlvPath);
+			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, mmlvFileName, mmlvPath);
+			//Files.copy(mmlvFile, mmlvFileFromEvolution); //copies over
+			//mmlvFile.delete(); //deletes MMNEAT file
+			JOptionPane.showMessageDialog(frame, "Level saved to: "+mmlvPath);
 			
 			
 		} catch (FileNotFoundException e) {
@@ -529,6 +523,10 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	@Override
 	//Will eventually launch megamanmaker
 	public void playLevel(ArrayList<Double> phenotype) {
+		launchMegaManStatic(frame);
+	}
+
+	public static void launchMegaManStatic(JFrame frame) {
 		File mmlvFilePath = new File("MegaManMakerPath.txt"); //file containing the path
 //		if(selectedItems.size() != 1) {
 //			JOptionPane.showMessageDialog(null, "Save exactly one level to play.");
@@ -573,7 +571,13 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	protected BufferedImage getButtonImage(ArrayList<Double> phenotype, int width, int height,
 			double[] inputMultipliers) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
+
 		List<List<Integer>> level = levelListRepresentation(doubleArray);
+
+		return getStaticButtonImage(phenotype, width, height, level);
+	}
+
+	public static BufferedImage getStaticButtonImage(ArrayList<Double> phenotype, int width, int height, List<List<Integer>> level) {
 		//MegaManVGLCUtil.printLevel(level);
 		BufferedImage[] images;
 		//sets the height and width for the rendered level to be placed on the button 
@@ -722,7 +726,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			if(rtrn) break;
 		}
 	}
-
+	@Override
+	public void finalCleanup() {
+		ganProcessUp.terminate();
+//		ganProcessDown.terminate();
+		ganProcessHorizontal.terminate();
+		ganProcessDown.terminate();
+		GANProcess.terminateGANProcess();
+	}
 	/**
 	 * Launches the level breeder, sets GAN input size to 5
 	 * @param args

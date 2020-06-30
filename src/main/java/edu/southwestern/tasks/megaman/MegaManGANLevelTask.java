@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.megaman;
 
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -16,9 +17,9 @@ import edu.southwestern.util.datastructures.ArrayUtil;
  */
 public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	public static GANProcess ganProcessHorizontal = null;
-	public static GANProcess ganProcessVertical = null;
-	public static GANProcess ganProcessUp = null;
 	public static GANProcess ganProcessDown = null;
+	public static GANProcess ganProcessUp = null;
+	//public static GANProcess ganProcessDown = null;
 
 	public MegaManGANLevelTask(){
 		super();
@@ -27,14 +28,14 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 		//if(Parameters.parameters.booleanParameter("useThreeGANsMegaMan")) {
 			//GANProcess.terminateGANProcess();
 			ganProcessHorizontal = MegaManGANUtil.initializeGAN("MegaManGANHorizontalModel");
-			ganProcessVertical = MegaManGANUtil.initializeGAN("MegaManGANVerticalModel");
+			ganProcessDown = MegaManGANUtil.initializeGAN("MegaManGANDownModel");
 			ganProcessUp = MegaManGANUtil.initializeGAN("MegaManGANUpModel");
 	//		ganProcessDown = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANDownModel"), 
 	//		Parameters.parameters.integerParameter("GANInputSize"), 
 	//		/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
 	//		GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
 			MegaManGANUtil.startGAN(ganProcessUp);
-			MegaManGANUtil.startGAN(ganProcessVertical);
+			MegaManGANUtil.startGAN(ganProcessDown);
 			MegaManGANUtil.startGAN(ganProcessHorizontal);
 //		}else {
 //			GANProcess.getGANProcess();
@@ -47,7 +48,7 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	@Override
 	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<List<Double>> individual) {
 		List<Double> latentVector = individual.getPhenotype();
-		return getMegaManLevelListRepresentationFromStaticGenotype(ganProcessHorizontal, ganProcessUp, ganProcessVertical, latentVector);
+		return getMegaManLevelListRepresentationFromStaticGenotype(ganProcessHorizontal, ganProcessUp, ganProcessDown, latentVector);
 	}
 	/**
 	 * static version of method above
@@ -66,6 +67,12 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Uses original GECCO 2018 Mario GAN
-		MMNEAT.main("runNumber:0 randomSeed:0 base:megaManGAN log:MegaManGAN-Test saveTo:Test trials:1 GANInputSize:5 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:megaManMaker.MegaManGANLevelTask useThreeGANsMegaMan:true megaManGANLevelChunks:10 megaManAllowsSimpleAStarPath:true megaManAllowsConnectivity:true saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:true".split(" "));
+		MMNEAT.main("runNumber:0 randomSeed:0 base:megaManGAN log:MegaManGAN-Test saveTo:Test trials:1 GANInputSize:5 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask useThreeGANsMegaMan:true MegaManGANUpModel:VERTICALONLYUPUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth MegaManGANDownModel:VERTICALONLYDOWNUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth MegaManGANHorizontalModel:HORIZONTALONLYUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth megaManGANLevelChunks:10 megaManAllowsSimpleAStarPath:true megaManAllowsConnectivity:true saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false watch:true".split(" "));
+	}
+
+	@Override
+	public HashMap<String, Integer> findMiscSegments(List<List<Integer>> level) {
+		// TODO Auto-generated method stub
+		return MegaManGANUtil.findMiscSegments(level);
 	}
 }
