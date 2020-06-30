@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -18,6 +20,7 @@ import java.util.Random;
 
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -28,6 +31,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANUtil;
 import edu.southwestern.tasks.loderunner.LodeRunnerRenderUtil;
+import edu.southwestern.tasks.loderunner.LodeRunnerTSPUtil;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.tasks.mario.gan.GANProcess;
@@ -53,16 +57,38 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		//adds a check box to show solution path or not, starts with them not showing 
 		JPanel AStarBudget = new JPanel();
 		AStarBudget.setLayout(new BoxLayout(AStarBudget, BoxLayout.Y_AXIS));
-		JCheckBox showSolutionPath = new JCheckBox("ShowSolutionPath", Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths"));
-		showSolutionPath.setAlignmentX(Component.CENTER_ALIGNMENT);
-		showSolutionPath.setName("interactiveLodeRunnerAStarPaths");
-		showSolutionPath.getAccessibleContext();
-		showSolutionPath.addActionListener(new ActionListener() {
+		
+//		JCheckBox showSolutionPath = new JCheckBox("ShowSolutionPath", Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths"));
+//		showSolutionPath.setAlignmentX(Component.CENTER_ALIGNMENT);
+//		showSolutionPath.setName("interactiveLodeRunnerAStarPaths");
+//		showSolutionPath.getAccessibleContext();
+//		showSolutionPath.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				Parameters.parameters.changeBoolean("interactiveLodeRunnerAStarPaths");
+//				resetButtons(true);
+//			}
+//		});
+		String[] options = {"Choose Visualzation","Pure A*", "TSP + A*"};
+		JComboBox<String> showSolutionPath = new JComboBox<String>(options);
+		showSolutionPath.setSelectedIndex(0);
+		showSolutionPath.setSize(40, 40);
+		showSolutionPath.addItemListener(new ItemListener() {
+
+			@SuppressWarnings("unchecked")
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				Parameters.parameters.changeBoolean("interactiveLodeRunnerAStarPaths");
+			public void itemStateChanged(ItemEvent e) {
+				JComboBox<String> source = (JComboBox<String>)e.getSource();
+				int index = source.getSelectedIndex();
+				if(index == 1) {//pure A*
+					Parameters.parameters.setBoolean("interactiveLodeRunnerAStarPaths", true);
+				}
+				else if(index == 2) { //tsp + A*
+					Parameters.parameters.setBoolean("interactiveLodeRunnerAStarPaths", false);
+				}
 				resetButtons(true);
 			}
+			
 		});
 		JLabel AStarLabel = new JLabel("UpdateAStarBudget");
 		AStarLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -225,6 +251,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 			//if we are using the mapping with 7 tiles, other wise use 6 tiles 
 			// ACTUALLY: We can have extra unused tiles in the image array. Easier to have one method that keeps them all around
 			//			if(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")){
+			
 			if(Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths")) {
 				List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
 				Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
@@ -252,19 +279,25 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 					//e.printStackTrace();
 				}
 			}
+//			else if(!Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths")) {
+//				List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
+//				Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
+//				LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
+//				Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
+//				ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
+//				HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
+//				image = LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, actionSequence, mostRecentVisited);
+//			}
 			else if(Parameters.parameters.booleanParameter("interactiveLodeRunnerIceCreamYouVisualization")) {
-				//image = new BufferedImage(LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_WIDTH, LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_HEIGHT, BufferedImage.TYPE_INT_RGB);
 				BufferedImage[] iceCreamYouImages = LodeRunnerRenderUtil.loadIceCreamYouTiles(LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_PATH);
 				image = LodeRunnerRenderUtil.createIceCreamYouImage(level, LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_WIDTH, LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_HEIGHT, iceCreamYouImages);
 			}
 			else {
-				//image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
 				BufferedImage[] images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //all tiles 
 				image = LodeRunnerRenderUtil.createBufferedImage(level,width1,height1, images);
 			}
 		} catch (IOException e) {
 			System.out.println("Image could not be displayed");
-			//e.printStackTrace();
 		}
 		return image;
 	}
