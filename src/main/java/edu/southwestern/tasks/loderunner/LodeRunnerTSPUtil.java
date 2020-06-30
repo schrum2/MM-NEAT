@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
@@ -103,6 +104,11 @@ public class LodeRunnerTSPUtil {
 	 * @return Full final solution path
 	 */
 	private static List<Pair<Graph<Point>.Node, Double>> greedyTSPStep(Graph<Point> originalTSP, Graph<Point> tsp, List<Pair<Graph<Point>.Node, Double>> solution) {
+		
+//		System.out.println("Add "+solution.get(solution.size() - 1));
+//		for(Object o: solution) System.out.print(" ");
+//		System.out.println(solution);
+		
 		// Grab the Node from the solution path. May not possess all of the edges it possessed in the original graph
 		Graph<Point>.Node sourceNode = solution.get(solution.size()-1).t1;
 		assert sourceNode != null : "Source node is null";
@@ -110,10 +116,21 @@ public class LodeRunnerTSPUtil {
 		// Therefore, important to get the Node's ID, but use it to look up the Node from the original TSP
 		List<Pair<Graph<Point>.Node, Double>> sortedList = originalTSP.getNode(sourceNode.getID()).adjacenciesSortedByEdgeCost();
 		
+//		System.out.println("Adjacent : "+sortedList);
 		// For some reason, nodes that should not be present in list of sorted edges sometimes show up.
 		// Specifically, edges that have already been visited in the solution path sometimes show up.
 		// This step explicitly removes them.
-		sortedList = ArrayUtil.setDifference(sortedList, solution);
+		Iterator<Pair<Graph<Point>.Node, Double>> itr = sortedList.iterator();
+		while(itr.hasNext()) {
+			Pair<Graph<Point>.Node, Double> next = itr.next();
+			// If the stream of Nodes from the Pairs (as a list) contains the Node from the adjacency list, remove adjacency
+			if(solution.stream().map(p -> p.t1).collect(Collectors.toList()).contains(next.t1)) {
+				itr.remove();
+			}
+		}
+		
+//		System.out.println("Adjacent : "+sortedList);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
 		for(int i = 0; i < sortedList.size(); i++) {
 			Pair<Graph<Point>.Node, Double> candidate = sortedList.get(i);
@@ -128,7 +145,7 @@ public class LodeRunnerTSPUtil {
 				} else {				
 					// Copy before modification
 					Graph<Point> tspCopy = tsp.deepCopy();
-					boolean nodeRemoved = tsp.removeNode(sourceNode);
+					boolean nodeRemoved = tsp.removeNode(sourceNode.getID());
 					assert nodeRemoved : "How could "+candidate.t1+" not be removed from \n"+tsp + "\nSolution so far: "+solution;
 					List<Pair<Graph<Point>.Node, Double>> result = greedyTSPStep(originalTSP, tsp, solution);
 					if(result != null) return result;
@@ -138,6 +155,12 @@ public class LodeRunnerTSPUtil {
 				solution.remove(solution.size()-1);
 			}
 		}		
+		
+//		for(Object o: solution) System.out.print("X");
+//		System.out.println(solution);
+//		System.out.println("Remove "+solution.get(solution.size() - 1));
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+
 		return null;
 	}
 

@@ -157,6 +157,26 @@ public class Graph<T>{
 	}
 
 	/**
+	 * Remove all links to Node with given String ID, and
+	 * also remove the Node.
+	 * @param id Unique String ID of Node
+	 * @return IF Node was actually removed
+	 */
+	public boolean removeNode(String id) {
+		for(Node v : nodes) {
+			removeEdge(v.getID(),id);
+		}
+		Iterator<Node> itr = nodes.iterator();
+		while(itr.hasNext()) {
+			if(itr.next().getID().equals(id)) {
+				itr.remove();
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Adds directed edge from n1 to n2 with specified cost
 	 * @param n1 Source node
 	 * @param n2 Target node
@@ -207,7 +227,39 @@ public class Graph<T>{
 //		System.out.println(l2);
 
 	}
+
+	/**
+	 * Remove edges in both directions between Nodes that have the given String IDs
+	 * @param id String ID of one Node
+	 * @param id2 String ID of another Node
+	 */
+	public void removeEdge(String id, String id2) {
+		removeDirectedEdge(id, id2);
+		removeDirectedEdge(id2, id);
+	}
 	
+	/**
+	 * Remove edge in one direction from Node with given String id to 
+ 	 * Node with String id2 without regard for cost on edge
+	 * @param id ID of source Node
+	 * @param id2 ID of target Node
+	 * @return If removal occurred
+	 */
+	public boolean removeDirectedEdge(String id, String id2) {
+		Set<Pair<Node,Double>> l1 = getNode(id).adjacencies;
+		if(l1 != null) {
+			Iterator<Pair<Node,Double>> itr = l1.iterator();
+			while(itr.hasNext()) { // Loop through edges from n1
+				Pair<Node,Double> p = itr.next();
+				if(p.t1.getID().equals(id2)) { // Edge from n1 to n2 found
+					itr.remove();
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Remove edge in one direction from n1 to n2 without regard for cost on edge
 	 * @param n1 Source edge
@@ -405,6 +457,4 @@ public class Graph<T>{
 	public int size() {
 		return nodes.size();
 	}
-
-
 }
