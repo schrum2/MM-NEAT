@@ -299,7 +299,7 @@ public class ZeldaVGLCUtil {
 		for(int i = 1; i <= 9; i++) {
 			for(int j = 1; j <= 2; j++) {
 				String file = "tloz"+i+"_"+j+"_flip.txt";
-				String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+file, new Point(2,2));
+				//String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+file, new Point(2,2));
 
 //				for(String line : level) {
 //					System.out.println(line);

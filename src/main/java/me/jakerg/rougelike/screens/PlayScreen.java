@@ -78,15 +78,15 @@ public class PlayScreen implements Screen {
         return Math.max(0, Math.min(player.y - screenHeight / 2, world.getHeight() - screenHeight));
     }
     
-    private void displayTiles(AsciiPanel terminal, int left, int top) {
-        for (int x = 0; x < screenWidth; x++){
-            for (int y = 0; y < screenHeight; y++){
-                int wx = x + left;
-                int wy = y + top;
-
-                terminal.write(world.glyph(wx, wy), x, y, world.color(wx, wy));
-            }
-        }
-    }
+//    private void displayTiles(AsciiPanel terminal, int left, int top) {
+//        for (int x = 0; x < screenWidth; x++){
+//            for (int y = 0; y < screenHeight; y++){
+//                int wx = x + left;
+//                int wy = y + top;
+//
+//                terminal.write(world.glyph(wx, wy), x, y, world.color(wx, wy));
+//            }
+//        }
+//    }
 
 }
