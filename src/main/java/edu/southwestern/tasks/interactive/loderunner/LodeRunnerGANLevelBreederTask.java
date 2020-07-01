@@ -48,6 +48,9 @@ import icecreamyou.LodeRunner.LodeRunner;
  */
 public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionTask{
 
+	private static final int PATH_TYPE_ASTAR = 0;
+	private static final int PATH_TYPE_TSP = 1;
+
 	/**
 	 * Constructor for the Level Breeder for interactive evolving 
 	 * @throws IllegalAccessException
@@ -57,19 +60,19 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		//adds a check box to show solution path or not, starts with them not showing 
 		JPanel AStarBudget = new JPanel();
 		AStarBudget.setLayout(new BoxLayout(AStarBudget, BoxLayout.Y_AXIS));
-		
-//		JCheckBox showSolutionPath = new JCheckBox("ShowSolutionPath", Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths"));
-//		showSolutionPath.setAlignmentX(Component.CENTER_ALIGNMENT);
-//		showSolutionPath.setName("interactiveLodeRunnerAStarPaths");
-//		showSolutionPath.getAccessibleContext();
-//		showSolutionPath.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				Parameters.parameters.changeBoolean("interactiveLodeRunnerAStarPaths");
-//				resetButtons(true);
-//			}
-//		});
-		String[] options = {"Choose Visualzation","Pure A*", "TSP + A*"};
+
+		//		JCheckBox showSolutionPath = new JCheckBox("ShowSolutionPath", Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths"));
+		//		showSolutionPath.setAlignmentX(Component.CENTER_ALIGNMENT);
+		//		showSolutionPath.setName("interactiveLodeRunnerAStarPaths");
+		//		showSolutionPath.getAccessibleContext();
+		//		showSolutionPath.addActionListener(new ActionListener() {
+		//			@Override
+		//			public void actionPerformed(ActionEvent e) {
+		//				Parameters.parameters.changeBoolean("interactiveLodeRunnerAStarPaths");
+		//				resetButtons(true);
+		//			}
+		//		});
+		String[] options = {"Choose Path Type","Pure A*", "TSP + A*"};
 		JComboBox<String> showSolutionPath = new JComboBox<String>(options);
 		showSolutionPath.setSelectedIndex(0);
 		showSolutionPath.setSize(40, 40);
@@ -78,17 +81,21 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 			@SuppressWarnings("unchecked")
 			@Override
 			public void itemStateChanged(ItemEvent e) {
+				Parameters.parameters.setBoolean("showInteractiveLodeRunnerSolutionPaths", true);
 				JComboBox<String> source = (JComboBox<String>)e.getSource();
 				int index = source.getSelectedIndex();
 				if(index == 1) {//pure A*
-					Parameters.parameters.setBoolean("interactiveLodeRunnerAStarPaths", true);
+					Parameters.parameters.setInteger("interactiveLodeRunnerPathType", PATH_TYPE_ASTAR);
 				}
 				else if(index == 2) { //tsp + A*
-					Parameters.parameters.setBoolean("interactiveLodeRunnerAStarPaths", false);
+					Parameters.parameters.setInteger("interactiveLodeRunnerPathType", PATH_TYPE_TSP);
+				}
+				else {
+					Parameters.parameters.setBoolean("showInteractiveLodeRunnerSolutionPaths", false);//if neither path is selected it displays the default render
 				}
 				resetButtons(true);
 			}
-			
+
 		});
 		JLabel AStarLabel = new JLabel("UpdateAStarBudget");
 		AStarLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -120,14 +127,14 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		top.add(AStarBudget);
 		//adds a checkbox to display the level in IceCreamYou format
 		JPanel effectsCheckboxes = new JPanel();
-		JCheckBox iceCreamYou = new JCheckBox("PlayFormat", Parameters.parameters.booleanParameter("interactiveLodeRunnerIceCreamYouVisualization"));
-		iceCreamYou.setName("interactiveLodeRunnerIceCreamYouVisualization");
+		JCheckBox iceCreamYou = new JCheckBox("PlayFormat", Parameters.parameters.booleanParameter("showInteractiveLodeRunnerIceCreamYouVisualization"));
+		iceCreamYou.setName("showInteractiveLodeRunnerIceCreamYouVisualization");
 		iceCreamYou.getAccessibleContext();
 		iceCreamYou.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Parameters.parameters.changeBoolean("interactiveLodeRunnerIceCreamYouVisualization");
+				Parameters.parameters.changeBoolean("showInteractiveLodeRunnerIceCreamYouVisualization");
 				resetButtons(true);
 			}
 
@@ -251,8 +258,8 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 			//if we are using the mapping with 7 tiles, other wise use 6 tiles 
 			// ACTUALLY: We can have extra unused tiles in the image array. Easier to have one method that keeps them all around
 			//			if(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")){
-			
-			if(Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths")) {
+
+			if(Parameters.parameters.booleanParameter("showInteractiveLodeRunnerSolutionPaths")) {
 				List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
 				Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
 				LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
@@ -263,13 +270,21 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				try {
 					//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
 					//represented by red x's in the visualization 
-					actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter("aStarSearchBudget"));
+					if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_ASTAR) {
+						actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter("aStarSearchBudget"));
+						//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
+						mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
+					}
+					else if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_TSP){
+						Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
+						actionSequence = tspInfo.t1;
+						mostRecentVisited = tspInfo.t2;
+					} 
+					else throw new IllegalArgumentException("Parameter is not either 1 or 0");
 				} catch(IllegalStateException e) {
-					System.out.println("A* exceeded computation budget");
+					System.out.println("search exceeded computation budget");
 					//e.printStackTrace();
 				}
-				//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
-				mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
 				try {
 					image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
 					//visualizes the points visited with red and whit x's
@@ -279,16 +294,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 					//e.printStackTrace();
 				}
 			}
-//			else if(!Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths")) {
-//				List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
-//				Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
-//				LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
-//				Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
-//				ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
-//				HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
-//				image = LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, actionSequence, mostRecentVisited);
-//			}
-			else if(Parameters.parameters.booleanParameter("interactiveLodeRunnerIceCreamYouVisualization")) {
+			else if(Parameters.parameters.booleanParameter("showInteractiveLodeRunnerIceCreamYouVisualization")) {
 				BufferedImage[] iceCreamYouImages = LodeRunnerRenderUtil.loadIceCreamYouTiles(LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_PATH);
 				image = LodeRunnerRenderUtil.createIceCreamYouImage(level, LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_WIDTH, LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_HEIGHT, iceCreamYouImages);
 			}

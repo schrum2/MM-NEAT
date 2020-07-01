@@ -37,7 +37,7 @@ public class LodeRunnerLevelAnalysisUtil {
 	public static void main(String[] args) throws FileNotFoundException {
 		Parameters.initializeParameterCollections(args);
 		PrintStream ps = new PrintStream(new File("data/VGLC/Lode Runner/LevelAnalysis.csv"));
-		ps.println("Level, A* Length, Connectivity, percentBackTrack, percentEmpty, percentLadders, percentGround, percentSolid, percentDiggable");
+		ps.println("Level, A* Length, TSP Solution Length, Connectivity, percentBackTrack, percentEmpty, percentLadders, percentGround, percentSolid, percentDiggable");
 		for(int i = 1; i <= 150; i++) {
 			String line = processOneLevel(i);
 			System.out.println(line);
@@ -80,14 +80,31 @@ public class LodeRunnerLevelAnalysisUtil {
 		LodeRunnerState start = aStarInfo.t3;
 		double simpleAStarDistance = calculateSimpleAStarLength(actionSequence);
 		double connectivity = caluclateConnectivity(mostRecentVisited);
+		double tspSolutionPathLength;
+		if(num!=7 && num!=64 && num!=71 && num!=75 && num!=81 && num!=86 && num!=98 && num!=136 && num!=137 && num!=148) //excludes the levels that we know that our tsp solver cannot solve
+			tspSolutionPathLength = calculateTSPSolutionPathLength(level);
+		else 
+			tspSolutionPathLength = -1.0;
 		double percentBackTrack = calculatePercentAStarBacktracking(actionSequence, start);
 		double percentEmpty = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_EMPTY}, level);
 		double percentLadders = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_LADDER}, level);
 		double percentGround = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE, LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
 		double percentSolid = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
 		double percentDiggable = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE}, level);
-		String line = "Level"+num+","+simpleAStarDistance+","+connectivity+","+percentBackTrack+","+percentEmpty+","+percentLadders+","+percentGround+","+percentSolid+","+percentDiggable;
+		String line = "Level"+num+","+simpleAStarDistance+","+tspSolutionPathLength+","+connectivity+","+percentBackTrack+","+percentEmpty+","+percentLadders+","+percentGround+","+percentSolid+","+percentDiggable;
 		return line;
+	}
+
+	public static double calculateTSPSolutionPathLength(List<List<Integer>> level) {
+		double tspSolutionPathLength;
+		ArrayList<LodeRunnerAction> tspActions = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level).t1;
+		if(tspActions != null) {
+			tspSolutionPathLength = 1.0*tspActions.size();
+		}
+		else {
+			tspSolutionPathLength = -1.0;
+		}
+		return tspSolutionPathLength;
 	}
 
 	/**
@@ -139,14 +156,11 @@ public class LodeRunnerLevelAnalysisUtil {
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold); //initializes a search based on the heuristic 
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
-		//double simpleAStarDistance = -1; //initialized to hold distance of solution path, or -1 if search fails
 		//calculates the Distance to the farthest gold as a fitness function 
 		try { 
-			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter("aStarSearchBudget"));
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 1000000);
 		} catch(IllegalStateException e) {
-			//simpleAStarDistance = -1.0;
 			System.out.println("failed search");
-			//e.printStackTrace();
 		}
 		mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
 		return new Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState>(mostRecentVisited,actionSequence,start);

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -19,15 +20,18 @@ import edu.southwestern.util.random.RandomNumbers;
 
 public class LodeRunnerTSPUtil {
 
+	public static int tspBudget;
+
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] {});
 		RandomNumbers.randomGenerator.setSeed(0L); // Same random String Node labels every time
 		//int visitedSize = 0;
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 47.txt");
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 81.txt");
 		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 		ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
 		//		System.out.println(level);
+		System.out.println(tspBudget);
 		LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, actionSequence, mostRecentVisited);
 
 		//System.out.println(fullActionSequence);
@@ -71,16 +75,16 @@ public class LodeRunnerTSPUtil {
 			HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>> tspActions,
 			List<Pair<Graph<Point>.Node, Double>> solutionPath) {
 		ArrayList<LodeRunnerAction> fullActionSequence = new ArrayList<>();
-		for(int i = 0; i < solutionPath.size()-1; i++) {
-			Pair<Point, Point> key = new Pair<Point, Point>(solutionPath.get(i).t1.getData(), solutionPath.get(i+1).t1.getData());
-			// We may get a null result here if the movement model was unable to find a path between any edges.
-			// Some few transitions are legitimately one-directional.
-			ArrayList<LodeRunnerAction> result = tspActions.get(key);
-			if(result != null)
-				fullActionSequence.addAll(result);
-			//			else
-			//				System.out.println(key);
-		}
+			for(int i = 0; i < solutionPath.size()-1; i++) {
+				Pair<Point, Point> key = new Pair<Point, Point>(solutionPath.get(i).t1.getData(), solutionPath.get(i+1).t1.getData());
+				// We may get a null result here if the movement model was unable to find a path between any edges.
+				// Some few transitions are legitimately one-directional.
+				ArrayList<LodeRunnerAction> result = tspActions.get(key);
+				if(result != null)
+					fullActionSequence.addAll(result);
+				//			else
+				//				System.out.println(key);
+			}
 		return fullActionSequence;
 	}
 
@@ -92,6 +96,7 @@ public class LodeRunnerTSPUtil {
 	public static List<Pair<Graph<Point>.Node, Double>> getTSPGreedyWithBackTrackingSolution(Graph<Point> tsp) {
 		List<Pair<Graph<Point>.Node, Double>> solution = new ArrayList<>();
 		solution.add(new Pair<Graph<Point>.Node, Double>(tsp.root(), 0.0)); //adds the spawn as the first point 
+		tspBudget = 0;
 		return greedyTSPStep(tsp.deepCopy(), tsp, solution);
 	}
 
@@ -102,13 +107,16 @@ public class LodeRunnerTSPUtil {
 	 * @return Full final solution path
 	 */
 	private static List<Pair<Graph<Point>.Node, Double>> greedyTSPStep(Graph<Point> originalTSP, Graph<Point> tsp, List<Pair<Graph<Point>.Node, Double>> solution) {
-		
+		tspBudget++;
+		if(tspBudget == Parameters.parameters.integerParameter("lodeRunnerTSPBudget")) {
+			return null;
+		}
 		assert tsp.checkIntegrity() : "TSP is invalid:\n" + tsp;
-		
-//		System.out.println("Add "+solution.get(solution.size() - 1));
-//		for(Object o: solution) System.out.print(" ");
-//		System.out.println(solution);
-		
+
+		//		System.out.println("Add "+solution.get(solution.size() - 1));
+		//		for(Object o: solution) System.out.print(" ");
+		//		System.out.println(solution);
+
 		// Grab the Node from the solution path. May not possess all of the edges it possessed in the original graph
 		Graph<Point>.Node sourceNode = solution.get(solution.size()-1).t1;
 		assert sourceNode != null : "Source node is null";
@@ -116,8 +124,8 @@ public class LodeRunnerTSPUtil {
 		// Therefore, important to get the Node's ID, but use it to look up the Node from the original TSP
 		List<Pair<Graph<Point>.Node, Double>> sortedList = originalTSP.getNode(sourceNode.getID()).adjacenciesSortedByDecreasingOutCount();
 		//List<Pair<Graph<Point>.Node, Double>> sortedList = originalTSP.getNode(sourceNode.getID()).adjacenciesSortedByEdgeCost();
-		
-//		System.out.println("Adjacent : "+sortedList);
+
+		//		System.out.println("Adjacent : "+sortedList);
 		// For some reason, nodes that should not be present in list of sorted edges sometimes show up.
 		// Specifically, edges that have already been visited in the solution path sometimes show up.
 		// This step explicitly removes them.
@@ -129,10 +137,10 @@ public class LodeRunnerTSPUtil {
 				itr.remove();
 			}
 		}
-		
-//		System.out.println("Adjacent : "+sortedList);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-		
+
+		//		System.out.println("Adjacent : "+sortedList);
+		//		MiscUtil.waitForReadStringAndEnterKeyPress();
+
 		for(int i = 0; i < sortedList.size(); i++) {
 			Pair<Graph<Point>.Node, Double> candidate = sortedList.get(i);
 			// Only evaluate the candidate if it is still present in the graph
@@ -158,12 +166,11 @@ public class LodeRunnerTSPUtil {
 				solution.remove(solution.size()-1);
 			}
 		}		
-		
-//		for(Object o: solution) System.out.print("X");
-//		System.out.println(solution);
-//		System.out.println("Remove "+solution.get(solution.size() - 1));
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
 
+		//		for(Object o: solution) System.out.print("X");
+		//		System.out.println(solution);
+		//		System.out.println("Remove "+solution.get(solution.size() - 1));
+		//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		return null;
 	}
 
@@ -224,12 +231,12 @@ public class LodeRunnerTSPUtil {
 					levelCopy.get(i.getData().y).set(i.getData().x, LodeRunnerState.LODE_RUNNER_TILE_GOLD); //destination gold 
 					Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN, false);
 
-//					System.out.println(p + " to " + i);
-//					for(Object o : levelCopy) System.out.println(o);
-//					LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(levelCopy, aStarInfo.t2, aStarInfo.t1);
-//					MiscUtil.waitForReadStringAndEnterKeyPress();
+					//					System.out.println(p + " to " + i);
+					//					for(Object o : levelCopy) System.out.println(o);
+					//					LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(levelCopy, aStarInfo.t2, aStarInfo.t1);
+					//					MiscUtil.waitForReadStringAndEnterKeyPress();
 
-					
+
 					//System.out.println(p + " to " + i +":" + aStarInfo.t2);
 					if(aStarInfo.t2 == null) {
 						// TODO: Here Kirby: if path is null, then turn on cheat movement through diggable and try again
