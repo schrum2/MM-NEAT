@@ -266,7 +266,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 			if(Parameters.parameters.booleanParameter("showInteractiveLodeRunnerSolutionPaths")) {
 				List<List<Integer>> originalLevel = ListUtil.deepCopyListOfLists(level);
 				LodeRunnerState start = new LodeRunnerState(level, true);
-//				System.out.println(level);
+				//				System.out.println(level);
 				Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 				HashSet<LodeRunnerState> mostRecentVisited = null;
 				ArrayList<LodeRunnerAction> actionSequence = null;
@@ -274,7 +274,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 					//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
 					//represented by red x's in the visualization 
 					if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_ASTAR) {
-//						System.out.println(level);
+						//						System.out.println(level);
 						actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter("aStarSearchBudget"));
 						//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
 						mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
@@ -296,11 +296,8 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				try {
 					image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
 					//visualizes the points visited with red and whit x's
-					if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_ASTAR)
-						image = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
-					else if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_TSP)
-						image = LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, actionSequence, mostRecentVisited);
-						
+					image = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+
 				} catch (IOException e) {
 					System.out.println("Image could not be displayed");
 					//e.printStackTrace();
