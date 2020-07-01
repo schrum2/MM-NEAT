@@ -36,6 +36,7 @@ import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
@@ -263,6 +264,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 			Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
 			LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
 			if(Parameters.parameters.booleanParameter("showInteractiveLodeRunnerSolutionPaths")) {
+				List<List<Integer>> originalLevel = ListUtil.deepCopyListOfLists(level);
 				LodeRunnerState start = new LodeRunnerState(level, true);
 //				System.out.println(level);
 				Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
@@ -280,7 +282,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 					else if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_TSP){
 						System.out.println("TSP VIZUALIZATION");
 						System.out.println(level);
-						Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
+						Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(originalLevel);
 						actionSequence = tspInfo.t1;
 						mostRecentVisited = tspInfo.t2;
 						System.out.println("actionSequence: "+ actionSequence);

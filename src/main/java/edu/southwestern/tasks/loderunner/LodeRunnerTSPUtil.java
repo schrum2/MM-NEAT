@@ -223,6 +223,7 @@ public class LodeRunnerTSPUtil {
 		System.out.println("gold: " + gold);
 		Point spawn = findSpawnAndRemove(level);
 		System.out.println("spawn: " + spawn);
+		assert spawn != null;
 		HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>> actionSequences = new HashMap<>();
 		HashSet<LodeRunnerState> mostRecentVisited = new HashSet<>();
 		Graph<Point> tsp = new Graph<Point>();
