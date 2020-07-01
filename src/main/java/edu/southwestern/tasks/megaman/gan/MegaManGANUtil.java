@@ -15,6 +15,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 import edu.southwestern.tasks.megaman.MegaManRenderUtil;
+import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.util.random.RandomNumbers;
 
@@ -23,6 +24,8 @@ public class MegaManGANUtil {
 	public static final int MEGA_MAN_ALL_TERRAIN = 7; //number of tiles in MegaMan
 	public static final int MEGA_MAN_TILES_WITH_ENEMIES = 30; //number of tiles in MegaMan
 	public static final int MEGA_MAN_FIRST_LEVEL_ALL_TILES = 21; //number of tiles in MegaMan
+	public static final int MEGA_MAN_ONE_ENEMY = 12; //number of tiles in MegaMan
+
 	public static final int MEGA_MAN_LEVEL_WIDTH = 16;
 	public static final int MEGA_MAN_LEVEL_HEIGHT = 14;
 	public static int numUp;
@@ -49,11 +52,25 @@ public class MegaManGANUtil {
 	public static GANProcess initializeGAN(String modelType) {
 		GANProcess newGAN = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter(modelType), 
 				Parameters.parameters.integerParameter("GANInputSize"), 
-				Parameters.parameters.stringParameter(modelType).contains("With7Tile") ? MegaManGANUtil.MEGA_MAN_ALL_TERRAIN : MegaManGANUtil.MEGA_MAN_TILES_WITH_ENEMIES,
+				Parameters.parameters.stringParameter(modelType).contains("With7Tile") ? MegaManGANUtil.MEGA_MAN_ALL_TERRAIN : MegaManGANUtil.MEGA_MAN_ONE_ENEMY,
 				GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
 		return newGAN;
 	}
-
+	public static void postProcessingPlaceProperEnemies(List<List<Integer>> level) {
+		for(int y=0;y<level.size();y++) {
+			for(int x=0;x<level.get(0).size();x++) {
+				if(level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_GROUND_ENEMY) {
+					if((x>0&&level.get(y).get(x-1)==MegaManVGLCUtil.ONE_ENEMY_SOLID)||(x+1<level.get(0).size()&&level.get(y).get(x+1)==MegaManVGLCUtil.ONE_ENEMY_SOLID)) {
+						level.get(y).set(x, MegaManVGLCUtil.ONE_ENEMY_WALL_ENEMY);
+					}else if((y>0&&level.get(y-1).get(x)==MegaManVGLCUtil.ONE_ENEMY_SOLID)||(y+1<level.size()&&level.get(y+1).get(x)==MegaManVGLCUtil.ONE_ENEMY_SOLID)) {
+						level.get(y).set(x, MegaManVGLCUtil.ONE_ENEMY_GROUND_ENEMY);
+					}else {
+						level.get(y).set(x, MegaManVGLCUtil.ONE_ENEMY_FLYING_ENEMY);
+					}
+					}
+			}
+		}
+	}
 	public static void startGAN(GANProcess gan) {
 		gan.start();
 		String response = "";
@@ -272,7 +289,9 @@ public class MegaManGANUtil {
 			numDistinctSegments = distinct.size();
 		}
 		
-		
+		if(!Parameters.parameters.booleanParameter("megaManUsesUniqueEnemies")) {
+			MegaManGANUtil.postProcessingPlaceProperEnemies(oneLevel);
+		}
 		return oneLevel;
 	}
 

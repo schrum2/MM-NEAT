@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
@@ -324,6 +325,9 @@ public class MegaManCPPNtoGANUtil {
 //		ganProcessUp.terminate();
 //		ganProcessDown.terminate();
 //		ganProcessHorizontal.terminate();
+		if(!Parameters.parameters.booleanParameter("megaManUsesUniqueEnemies")) {
+			MegaManGANUtil.postProcessingPlaceProperEnemies(oneLevel);
+		}
 		return oneLevel;
 	}
 	public static HashMap<String, Integer> findMiscSegments(List<List<Integer>> level){

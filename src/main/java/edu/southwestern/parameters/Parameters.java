@@ -780,6 +780,7 @@ public class Parameters {
 		booleanOptions.add("megaManAllowsSimpleAStarPath", false, "whether or not we're allowing simlpe a* path");
 		booleanOptions.add("megaManAllowsConnectivity", false, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManAllowsPlatformGun", true, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManUsesUniqueEnemies", false, "whether or not we're using unique enemies");
 		booleanOptions.add("megaManAllowsBlockBreaker", true, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManDistinctScreenFitness", false, "whether or not we're allowing connectivity");
 		booleanOptions.add("interactiveLodeRunnerAStarPaths", false, "Shows the solution path for the levels in the level breeder when true");
