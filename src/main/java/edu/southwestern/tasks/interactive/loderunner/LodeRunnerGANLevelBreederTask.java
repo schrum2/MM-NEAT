@@ -92,6 +92,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				}
 				else {
 					Parameters.parameters.setBoolean("showInteractiveLodeRunnerSolutionPaths", false);//if neither path is selected it displays the default render
+					showSolutionPath.setSelectedIndex(0);
 				}
 				resetButtons(true);
 			}
@@ -258,12 +259,12 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 			//if we are using the mapping with 7 tiles, other wise use 6 tiles 
 			// ACTUALLY: We can have extra unused tiles in the image array. Easier to have one method that keeps them all around
 			//			if(Parameters.parameters.booleanParameter("lodeRunnerDistinguishesSolidAndDiggableGround")){
-
+			List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
+			Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
+			LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
 			if(Parameters.parameters.booleanParameter("showInteractiveLodeRunnerSolutionPaths")) {
-				List<Point> emptySpaces = LodeRunnerGANUtil.fillEmptyList(level);
-				Random rand = new Random(Double.doubleToLongBits(doubleArray[0]));
-				LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
 				LodeRunnerState start = new LodeRunnerState(level, true);
+//				System.out.println(level);
 				Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 				HashSet<LodeRunnerState> mostRecentVisited = null;
 				ArrayList<LodeRunnerAction> actionSequence = null;
@@ -271,14 +272,19 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 					//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
 					//represented by red x's in the visualization 
 					if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_ASTAR) {
+//						System.out.println(level);
 						actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter("aStarSearchBudget"));
 						//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
 						mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
 					}
 					else if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_TSP){
+						System.out.println("TSP VIZUALIZATION");
+						System.out.println(level);
 						Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 						actionSequence = tspInfo.t1;
 						mostRecentVisited = tspInfo.t2;
+						System.out.println("actionSequence: "+ actionSequence);
+						System.out.println("mostRecentVisited: "+mostRecentVisited);
 					} 
 					else throw new IllegalArgumentException("Parameter is not either 1 or 0");
 				} catch(IllegalStateException e) {
@@ -288,7 +294,11 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				try {
 					image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
 					//visualizes the points visited with red and whit x's
-					image = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+					if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_ASTAR)
+						image = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+					else if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_TSP)
+						image = LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, actionSequence, mostRecentVisited);
+						
 				} catch (IOException e) {
 					System.out.println("Image could not be displayed");
 					//e.printStackTrace();

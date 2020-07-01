@@ -26,7 +26,7 @@ public class LodeRunnerTSPUtil {
 		Parameters.initializeParameterCollections(new String[] {});
 		RandomNumbers.randomGenerator.setSeed(0L); // Same random String Node labels every time
 		//int visitedSize = 0;
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 81.txt");
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 75.txt");
 		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 		ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
@@ -55,12 +55,17 @@ public class LodeRunnerTSPUtil {
 	 * @return ArrayList; actionSeqeunce for the whole level
 	 */
 	public static Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> getFullActionSequenceAndVisitedStatesTSPGreedySolution(List<List<Integer>> level) {
+		System.out.println("Making the graph");
 		Triple<Graph<Point>, HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>>, HashSet<LodeRunnerState>> tspInfo = getTSPGraph(ListUtil.deepCopyListOfLists(level));
 		Graph<Point> tsp = tspInfo.t1;
 		HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>> tspActions = tspInfo.t2;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t3;
+		System.out.println("graph: " + tsp);
+		System.out.println("tspActions: " + tspActions);
+		System.out.println("mostRecentVisited: " + mostRecentVisited);
 		//List<Pair<Graph<Point>.Node, Double>> solutionPath = getTSPGreedySolution(tsp);
 		List<Pair<Graph<Point>.Node, Double>> solutionPath = getTSPGreedyWithBackTrackingSolution(tsp.deepCopy());
+		System.out.println("solutionPath: " + solutionPath);
 		ArrayList<LodeRunnerAction> actionSequence = getFullTSPActionSequence(tspActions, solutionPath);
 		return new Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>>(actionSequence, mostRecentVisited);
 	}
@@ -212,9 +217,12 @@ public class LodeRunnerTSPUtil {
 	 */
 	public static Triple<Graph<Point>, HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>>, 
 	HashSet<LodeRunnerState>> getTSPGraph(List<List<Integer>> level) {
+		System.out.println("level: " + level);
 		//clears level of gold and spawn but maintains a reference in this set 
 		HashSet<Point> gold = LodeRunnerState.fillGold(level);
+		System.out.println("gold: " + gold);
 		Point spawn = findSpawnAndRemove(level);
+		System.out.println("spawn: " + spawn);
 		HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>> actionSequences = new HashMap<>();
 		HashSet<LodeRunnerState> mostRecentVisited = new HashSet<>();
 		Graph<Point> tsp = new Graph<Point>();
@@ -244,8 +252,8 @@ public class LodeRunnerTSPUtil {
 						//		 and simply do not add an edge to the TSP
 						aStarInfo =  LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN, true);
 						continue; // Cannot reach i from p, so do not add edge to TSP graph
-						//LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, aStarInfo.t2, aStarInfo.t1);
-						//MiscUtil.waitForReadStringAndEnterKeyPress();
+//						LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, aStarInfo.t2, aStarInfo.t1);
+//						MiscUtil.waitForReadStringAndEnterKeyPress();
 					}
 					//visitedSize+=aStarInfo.t1.size(); //keeps track of how many visited states for every run of A*
 					double simpleAStarDistance = LodeRunnerLevelAnalysisUtil.calculateSimpleAStarLength(aStarInfo.t2);

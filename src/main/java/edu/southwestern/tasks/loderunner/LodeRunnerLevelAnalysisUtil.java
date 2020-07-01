@@ -44,29 +44,29 @@ public class LodeRunnerLevelAnalysisUtil {
 			ps.println(line);
 		}
 		ps.close();
-		
+
 		//displays a visualization of the A* path, helpful for debugging
-//		try {
-//			//visualizes the points visited with red and whit x's
-//			BufferedImage visualPath = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
-//			try { //displays window with the rendered level and the solution path/visited states
-//				JFrame frame = new JFrame();
-//				JPanel panel = new JPanel();
-//				JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
-//						LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
-//				panel.add(label);
-//				frame.add(panel);
-//				frame.pack();
-//				frame.setVisible(true);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//
+		//		try {
+		//			//visualizes the points visited with red and whit x's
+		//			BufferedImage visualPath = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+		//			try { //displays window with the rendered level and the solution path/visited states
+		//				JFrame frame = new JFrame();
+		//				JPanel panel = new JPanel();
+		//				JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+		//						LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, Image.SCALE_FAST)));
+		//				panel.add(label);
+		//				frame.add(panel);
+		//				frame.pack();
+		//				frame.setVisible(true);
+		//			} catch (Exception e) {
+		//				e.printStackTrace();
+		//			}
+		//		} catch (IOException e) {
+		//			e.printStackTrace();
+		//		}
+		//
 	}
-	
+
 	/**
 	 * Processes one level and gets the values for analysis 
 	 * @param num The level from VGLC
@@ -74,18 +74,26 @@ public class LodeRunnerLevelAnalysisUtil {
 	 */
 	public static String processOneLevel(int num) {
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level "+num+".txt");
-		Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = performAStarSearch(level,Double.NaN, true);
-		HashSet<LodeRunnerState> mostRecentVisited = aStarInfo.t1;
-		ArrayList<LodeRunnerAction> actionSequence = aStarInfo.t2;
-		LodeRunnerState start = aStarInfo.t3;
-		double simpleAStarDistance = calculateSimpleAStarLength(actionSequence);
-		double connectivity = caluclateConnectivity(mostRecentVisited);
+		double simpleAStarDistance;
+		double connectivity;
 		double tspSolutionPathLength;
-		if(num!=7 && num!=64 && num!=71 && num!=75 && num!=81 && num!=86 && num!=98 && num!=136 && num!=137 && num!=148) //excludes the levels that we know that our tsp solver cannot solve
-			tspSolutionPathLength = calculateTSPSolutionPathLength(level);
-		else 
-			tspSolutionPathLength = -1.0;
-		double percentBackTrack = calculatePercentAStarBacktracking(actionSequence, start);
+		double percentBackTrack;
+		if(num!=7 && num!=64 && num!=71 && num!=75 && num!=81 && num!=86 && num!=98 && num!=136 && num!=137 && num!=148) { //excludes the levels that we know that our tsp solver cannot solve
+			Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = performAStarSearch(level,Double.NaN, true);
+			HashSet<LodeRunnerState> mostRecentVisited = aStarInfo.t1;
+			ArrayList<LodeRunnerAction> actionSequence = aStarInfo.t2;
+			LodeRunnerState start = aStarInfo.t3;
+			simpleAStarDistance = calculateSimpleAStarLength(actionSequence);
+			connectivity = caluclateConnectivity(mostRecentVisited);
+			tspSolutionPathLength= calculateTSPSolutionPathLength(level);
+			percentBackTrack = calculatePercentAStarBacktracking(actionSequence, start);
+		}
+		else {
+			simpleAStarDistance = -1.0;
+			connectivity = -1.0;
+			tspSolutionPathLength= -1.0;
+			percentBackTrack = -1.0;
+		}
 		double percentEmpty = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_EMPTY}, level);
 		double percentLadders = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_LADDER}, level);
 		double percentGround = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE, LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
@@ -158,7 +166,7 @@ public class LodeRunnerLevelAnalysisUtil {
 		ArrayList<LodeRunnerAction> actionSequence = null;
 		//calculates the Distance to the farthest gold as a fitness function 
 		try { 
-			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 1000000);
+			actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, 150000);
 		} catch(IllegalStateException e) {
 			System.out.println("failed search");
 		}
