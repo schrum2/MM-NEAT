@@ -55,18 +55,19 @@ public class LodeRunnerTSPUtil {
 	 * @return ArrayList; actionSeqeunce for the whole level
 	 */
 	public static Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> getFullActionSequenceAndVisitedStatesTSPGreedySolution(List<List<Integer>> level) {
-		System.out.println("Making the graph");
+//		System.out.println("Making the graph");
 		Triple<Graph<Point>, HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>>, HashSet<LodeRunnerState>> tspInfo = getTSPGraph(ListUtil.deepCopyListOfLists(level));
 		Graph<Point> tsp = tspInfo.t1;
 		HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>> tspActions = tspInfo.t2;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t3;
-		System.out.println("graph: " + tsp);
-		System.out.println("tspActions: " + tspActions);
-		System.out.println("mostRecentVisited: " + mostRecentVisited);
+//		System.out.println("graph: " + tsp);
+//		System.out.println("tspActions: " + tspActions);
+//		System.out.println("mostRecentVisited: " + mostRecentVisited);
 		//List<Pair<Graph<Point>.Node, Double>> solutionPath = getTSPGreedySolution(tsp);
 		List<Pair<Graph<Point>.Node, Double>> solutionPath = getTSPGreedyWithBackTrackingSolution(tsp.deepCopy());
-		System.out.println("solutionPath: " + solutionPath);
-		if(solutionPath == null) throw new IllegalStateException("Level could not be solved");
+		//System.out.println("solutionPath: " + solutionPath);
+		// Could not find solution, but still searched several locations
+		if(solutionPath == null) return new Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>>(null, mostRecentVisited);
 		ArrayList<LodeRunnerAction> actionSequence = getFullTSPActionSequence(tspActions, solutionPath);
 		return new Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>>(actionSequence, mostRecentVisited);
 	}

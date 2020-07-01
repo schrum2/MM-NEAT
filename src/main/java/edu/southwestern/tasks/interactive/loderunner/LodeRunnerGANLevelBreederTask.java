@@ -276,12 +276,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 					if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_ASTAR) {
 						//						System.out.println(level);
 						actionSequence = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).search(start, true, Parameters.parameters.integerParameter("aStarSearchBudget"));
-						//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
-						mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
-					}
-					else if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_TSP){
-						System.out.println("TSP VIZUALIZATION");
-						System.out.println(level);
+					} else if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_TSP){
 						Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(originalLevel);
 						actionSequence = tspInfo.t1;
 						mostRecentVisited = tspInfo.t2;
@@ -292,6 +287,14 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 				} catch(IllegalStateException e) {
 					System.out.println("search exceeded computation budget");
 					//e.printStackTrace();
+				} finally {
+					// Even if search files, still try to get visited states
+					if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_ASTAR) {
+						//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
+						mostRecentVisited = ((AStarSearch<LodeRunnerAction, LodeRunnerState>) search).getVisited();
+					} else if(Parameters.parameters.integerParameter("interactiveLodeRunnerPathType") == PATH_TYPE_TSP){
+						
+					}
 				}
 				try {
 					image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
