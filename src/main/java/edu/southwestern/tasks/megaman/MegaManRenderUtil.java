@@ -14,7 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 
 //import edu.southwestern.tasks.loderunner.LodeRunnerVGLCUtil;
 /**

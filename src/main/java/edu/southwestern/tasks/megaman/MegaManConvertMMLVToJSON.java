@@ -39,10 +39,10 @@ public class MegaManConvertMMLVToJSON {
 			enemyString = null;
 			bossString = null;
 			List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
-			//MegaManVGLCUtil.printLevel(level);
-			System.out.println("\n\n"+i+"\n\n");
-			saveListToEditableFile(level, i+"000");
-			MegaManVGLCUtil.convertMegaManLevelToMMLV(level, i+"000", MegaManVGLCUtil.MEGAMAN_MMLV_PATH);
+			MegaManVGLCUtil.printLevel(level);
+			//System.out.println("\n\n"+i+"\n\n");
+			//saveListToEditableFile(level, i+"000");
+			//MegaManVGLCUtil.convertMegaManLevelToMMLV(level, i+"000", MegaManVGLCUtil.MEGAMAN_MMLV_PATH);
 		}
 	}
 	public static File saveListToEditableFile(List<List<Integer>> level, String levelName) {
@@ -279,7 +279,7 @@ public class MegaManConvertMMLVToJSON {
 	
 			int e = kScan.nextInt();
 			//make all enemies map 11-15
-			int enemyOneThruFive = 11+e%5;
+			int enemyOneThruFive = 11;
 			xyID.add(enemyOneThruFive);
 		
 			int howManySquaresX = xcoord/16;

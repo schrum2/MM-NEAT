@@ -117,11 +117,24 @@ public class MegaManVGLCUtil {
 //			convertMegaManLevelToJSONHorizontalScroll(level);
 //
 //		}
-		for(int i=1;i<=10;i++) {
+		for(int i=11;i<=29;i++) {
 			placed.clear();
-			if(i!=7) {
-				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
+			activatedScreens.clear();
+			visited.clear();
+			levelEnemies.clear();
+			
+			MegaManConvertMMLVToJSON.maxX=0;
+			MegaManConvertMMLVToJSON.maxY=0;
+			MegaManConvertMMLVToJSON.visited.clear();
+			MegaManConvertMMLVToJSON.enemyNumber=-1;
+			MegaManConvertMMLVToJSON.enemyString = null;
+			MegaManConvertMMLVToJSON.bossString = null;
+			//if(i!=7) {
+				List<List<Integer>> level = MegaManConvertMMLVToJSON.convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
+				printLevel(level);
 				upAndDownTrainingData(level);
+				//System.out.println(i);
+				//MiscUtil.waitForReadStringAndEnterKeyPress();
 //				System.out.println("level" +i);
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
 
@@ -130,13 +143,27 @@ public class MegaManVGLCUtil {
 						
 						
 						
-			}
+			//}
 		}
-		
-		System.out.println(conditionalJson);
+		//System.out.println(conditionalJson.size()+" "+conditionalJsonID.size());
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
+
+		System.out.println(json);
 
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		System.out.println(conditionalJsonID);
+		System.out.println(jsonUp);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		System.out.println(jsonDown);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		System.out.println(jsonLL);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		System.out.println(jsonUL);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		System.out.println(jsonLR);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		System.out.println(jsonUR);
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
+		//System.out.println(jsonUp);
 		
 		
 		MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -153,7 +180,7 @@ public class MegaManVGLCUtil {
 		
 	}
 	
-	public enum Direction {UP, RIGHT, DOWN};
+	public enum Direction {UP, RIGHT, DOWN, LEFT};
 	public static void upAndDownTrainingData(List<List<Integer>> level) {
 		List<Point> corners = new ArrayList<Point>();
 		corners = findSpawnScreen(level);
@@ -180,7 +207,10 @@ public class MegaManVGLCUtil {
 		int x2 = (int) corners.get(1).getX();
 		int y1 = (int) corners.get(0).getY();
 		int y2 = (int) corners.get(2).getY();
-		int rightScreenSide = x1+x2-1;
+		System.out.println(x1+" "+x2);
+		int rightScreenSide = x2;
+		x2=15;
+		System.out.println(rightScreenSide);
 //		int both = x1+x2;
 //		System.out.println(both);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -191,6 +221,7 @@ public class MegaManVGLCUtil {
 	//	int iteratio= 0;
 		boolean done = false;
 		while(!done) {
+			System.out.println(d);
 			if(d==null) { //d==null
 				done = true;
 				System.out.println("DONE");
@@ -260,6 +291,30 @@ public class MegaManVGLCUtil {
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
 				}else { //find new direction
 					Direction previous = Direction.DOWN;
+					d = findNewDirection(level, rightScreenSide, y1, previous); //using upper right corner
+
+				}
+			}else if(d.equals(Direction.LEFT)) {
+				if(rightScreenSide-x2-1>=0&&level.get(y1).get(rightScreenSide-x2-1)!=9) {
+						
+					screen = copyScreen(level, 16, 14, rightScreenSide-x2-1, y1, false);
+					//if(rightScreenSide+1<level.get(0).size()&&level.get(y1).get(rightScreenSide+1)!=9)
+						rightScreenSide--;
+//					System.out.println("Horizontal");
+//					printLevel(screen);
+//					MiscUtil.waitForReadStringAndEnterKeyPress();
+						json.add(screen);
+						conditionalJsonID.add(HORIZONTALID);
+						conditionalJson.add(screen);
+//						System.out.println("LEFT");
+//						printLevel(screen);
+//						MiscUtil.waitForReadStringAndEnterKeyPress();
+//						System.out.println(conditionalJson);
+//						MiscUtil.waitForReadStringAndEnterKeyPress();
+
+				}else { //find new direction
+//					x1--;
+					Direction previous = Direction.LEFT;
 					d = findNewDirection(level, rightScreenSide, y1, previous); //using upper right corner
 
 				}
@@ -386,12 +441,12 @@ public class MegaManVGLCUtil {
 		
 		return false;
 	}
-	private static Direction findNewDirection(List<List<Integer>> level, int xcoord, int ycoord, Direction previous) { //UPPER RIGHT PART OF SCREEN BRUH
+	private static Direction findNewDirection(List<List<Integer>> level, int xcoord, int ycoord, Direction previous) { 
 		Direction d = null;
 //		System.out.println(level.get(ycoord-1).get(xcoord-1));
 //		System.out.println(previous);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
-		if(xcoord+1<level.get(0).size()&&level.get(ycoord).get(xcoord+1)!=9) {
+		if(xcoord+1<level.get(0).size()&&level.get(ycoord).get(xcoord+1)!=9&&!previous.equals(Direction.LEFT)) {
 			d = Direction.RIGHT;
 		}
 		
@@ -405,6 +460,8 @@ public class MegaManVGLCUtil {
 			d = Direction.DOWN;
 //			System.out.println("DOWN");
 
+		}else if(xcoord-15>0&&level.get(ycoord).get(xcoord-16)!=9&&!previous.equals(Direction.RIGHT)) {
+			d = Direction.LEFT;
 		}
 		return d;
 		
@@ -425,11 +482,15 @@ public class MegaManVGLCUtil {
 		for(int x = spawnX-1;x>=0;x--) {
 			if(x<0||level.get(spawnY).get(x)!=9) {
 				distanceFromLeft++;
+				if(distanceFromLeft>16) {
+					
+					start = Direction.LEFT;
+				}
 			}else {
 				break;
 			}
 		}
-		System.out.println(distanceFromLeft);
+		
 		int distanceFromRight = 0;
 		for(int x = spawnX+1;x<level.get(0).size();x++) {
 			if(level.get(spawnY).get(x)!=9) {
@@ -442,7 +503,6 @@ public class MegaManVGLCUtil {
 				break;
 			}
 		}
-		
 
 		int distanceFromTop = 0;
 		for(int y = spawnY-1;y>=0;y--) {
@@ -466,14 +526,17 @@ public class MegaManVGLCUtil {
 				break;
 			}
 		}
-		
 		if(distanceFromBottom>14) {
 			distanceFromBottom = 14-distanceFromTop;
 		}else if(distanceFromTop>14) {
 			distanceFromTop = 14- distanceFromBottom;
 		}else if(distanceFromRight>16) {
 			distanceFromRight = 16 - distanceFromLeft-1;
+		}else if(distanceFromLeft>16) {
+			distanceFromLeft = 16 - distanceFromRight-1;
 		}
+		System.out.println(distanceFromRight);
+
 		
 //		System.out.println(distanceFromRight);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -487,6 +550,7 @@ public class MegaManVGLCUtil {
 		Point x1y2 = new Point (x1,y2);
 		Point x2y2 = new Point (x2,y2);
 		
+
 		List<Point> k = new ArrayList<Point>();
 		k.add(x1y1);
 		k.add(x2y1);
