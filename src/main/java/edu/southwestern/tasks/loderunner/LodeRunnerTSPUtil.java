@@ -115,7 +115,7 @@ public class LodeRunnerTSPUtil {
 	 */
 	private static List<Pair<Graph<Point>.Node, Double>> greedyTSPStep(Graph<Point> originalTSP, Graph<Point> tsp, List<Pair<Graph<Point>.Node, Double>> solution) {
 		tspBudget++;
-		if(tspBudget == Parameters.parameters.integerParameter("lodeRunnerTSPBudget")) {
+		if(tspBudget >= Parameters.parameters.integerParameter("lodeRunnerTSPBudget")) {
 			return null;
 		}
 		assert tsp.checkIntegrity() : "TSP is invalid:\n" + tsp;
@@ -167,6 +167,10 @@ public class LodeRunnerTSPUtil {
 					assert nodeRemoved : "How could "+candidate.t1+" not be removed from \n"+tsp + "\nSolution so far: "+solution;
 					List<Pair<Graph<Point>.Node, Double>> result = greedyTSPStep(originalTSP, tsp, solution);
 					if(result != null) return result;
+					if(tspBudget >= Parameters.parameters.integerParameter("lodeRunnerTSPBudget")) {
+						// Propagate the previous exceeding of budget
+						return null;
+					}
 					tsp = tspCopy; // Undoes the removal of sourceNode
 				}
 				// No viable paths from this Node, remove it and back up
