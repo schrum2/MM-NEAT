@@ -66,6 +66,7 @@ public class LodeRunnerTSPUtil {
 		//List<Pair<Graph<Point>.Node, Double>> solutionPath = getTSPGreedySolution(tsp);
 		List<Pair<Graph<Point>.Node, Double>> solutionPath = getTSPGreedyWithBackTrackingSolution(tsp.deepCopy());
 		System.out.println("solutionPath: " + solutionPath);
+		if(solutionPath == null) throw new IllegalStateException("Level could not be solved");
 		ArrayList<LodeRunnerAction> actionSequence = getFullTSPActionSequence(tspActions, solutionPath);
 		return new Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>>(actionSequence, mostRecentVisited);
 	}
