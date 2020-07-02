@@ -217,6 +217,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		return start;
 	}
 
+	public LodeRunnerState(List<List<Integer>> level, boolean weird) {
+		this(level, getSpawnFromVGLC(level), weird);
+	}
+	
 	/**
 	 * Constructor that only takes a level, 
 	 * this makes it so that it grabs the original spawn point and fills the gold set with
