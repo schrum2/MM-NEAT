@@ -145,7 +145,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		
 		
 		
-		if(CommonConstants.watch) {
+		if(CommonConstants.watch&&actionSequence!=null) {
 			//prints values that are calculated above for debugging 
 			System.out.println("Simple A* Distance Orb " + simpleAStarDistance);
 			System.out.println("Percent of Positions Visited " + precentConnected);
