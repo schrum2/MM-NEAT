@@ -307,7 +307,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			Graphics2D g = (Graphics2D) visualPath.getGraphics();
 			if(Parameters.parameters.booleanParameter("showInteractiveLodeRunnerIceCreamYouVisualization")) {
 				g.setColor(Color.BLACK);
-				g.setStroke(new BasicStroke((float)3.0));
+				g.setStroke(new BasicStroke((float)3.5));
 			}
 			else
 				g.setColor(Color.WHITE);
@@ -326,7 +326,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			if(actionSequence != null) {
 				if(Parameters.parameters.booleanParameter("showInteractiveLodeRunnerIceCreamYouVisualization")) {
 					g.setColor(Color.RED);
-					g.setStroke(new BasicStroke((float)3.0));
+					g.setStroke(new BasicStroke((float)3.5));
 				}
 				else
 					g.setColor(Color.BLUE);
