@@ -129,12 +129,14 @@ if __name__ == '__main__':
     #for line in sys.stdin:
     while True:
         line = sys.stdin.readline()
-        if len(line)==2 and int(line)==0:
-            break
+        # "0\n" secret exit command
+        # This breaks the conditional GAN when class 0 is used
+        #if len(line)==2 and int(line)==0:
+        #    break
 
         if num_classes > 1: # Conditional GAN. Input is class number AND latent vector
             classNum = int(line) ## Assume number on line by itself
-            classOneHot = onehot[classNum]
+            classOneHot = onehot[classNum].view(batchSize, num_classes, 1, 1)
             line = sys.stdin.readline() # This NEXT line should be the latent vector
             lv = numpy.array(json.loads(line))
             latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) 
