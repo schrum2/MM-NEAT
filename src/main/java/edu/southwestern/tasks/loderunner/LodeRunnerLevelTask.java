@@ -143,7 +143,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	@SuppressWarnings("unchecked")
 	protected Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, long genotypeId) {
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array  
-		Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed, true);
+		Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed);
 		HashSet<LodeRunnerState> mostRecentVisited = aStarInfo.t1;
 		ArrayList<LodeRunnerAction> actionSequence = aStarInfo.t2;
 		LodeRunnerState start = aStarInfo.t3;

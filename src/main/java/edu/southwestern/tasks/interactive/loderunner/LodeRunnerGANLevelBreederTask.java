@@ -294,7 +294,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 			LodeRunnerGANUtil.setSpawn(level, emptySpaces, rand);
 			if(Parameters.parameters.booleanParameter("showInteractiveLodeRunnerSolutionPaths")) {
 				List<List<Integer>> originalLevel = ListUtil.deepCopyListOfLists(level);
-				LodeRunnerState start = new LodeRunnerState(level, true);
+				LodeRunnerState start = new LodeRunnerState(level);
 				//				System.out.println(level);
 				Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 				HashSet<LodeRunnerState> mostRecentVisited = null;

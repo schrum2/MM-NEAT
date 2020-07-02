@@ -129,7 +129,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		Parameters.initializeParameterCollections(args);
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
 		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH+"Level 1.txt"); //converts to JSON
-		LodeRunnerState start = new LodeRunnerState(level, true);
+		LodeRunnerState start = new LodeRunnerState(level);
 		Search<LodeRunnerAction,LodeRunnerState> search = new AStarSearch<>(LodeRunnerState.manhattanToFarthestGold);
 		HashSet<LodeRunnerState> mostRecentVisited = null;
 		ArrayList<LodeRunnerAction> actionSequence = null;
@@ -223,8 +223,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * the locations of the gold for that level 
 	 * @param level A level in JSON form 
 	 */
-	public LodeRunnerState(List<List<Integer>> level, boolean cheat) {
-		this(level, getSpawnFromVGLC(level), cheat);
+	public LodeRunnerState(List<List<Integer>> level) {
+		this(level, getSpawnFromVGLC(level), Parameters.parameters.booleanParameter("allowWeirdLodeRunnerActions"));
 	}
 
 	/**
