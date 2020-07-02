@@ -142,8 +142,7 @@ public class LodeRunnerLevelAnalysisUtil {
 	 * @param psuedoRandomSeed Random seed
 	 * @return Relevant information from the search in a Quad; mostRecentVistied, actionSeqeunce, starting state, simpleAStarDistance
 	 */
-	public static Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> 
-	performAStarSearch(List<List<Integer>> level, double psuedoRandomSeed) {
+	public static Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> performAStarSearch(List<List<Integer>> level, double psuedoRandomSeed) {
 		//declares variable to be initizalized in the if statements below 
 		LodeRunnerState start;
 		List<List<Integer>> levelCopy;

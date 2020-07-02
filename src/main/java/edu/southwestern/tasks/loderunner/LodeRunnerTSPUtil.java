@@ -242,23 +242,26 @@ public class LodeRunnerTSPUtil {
 				if(!p.equals(i) && !i.getData().equals(spawn)) {
 					levelCopy.get(p.getData().y).set(p.getData().x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);//sets spawn as one of the gold to get distance between the gold
 					levelCopy.get(i.getData().y).set(i.getData().x, LodeRunnerState.LODE_RUNNER_TILE_GOLD); //destination gold 
+					// Remember whether weird actions were allowed
+					boolean weirdAllowed = Parameters.parameters.booleanParameter("allowWeirdLodeRunnerActions");
+					// But don't allow weird actions on first pass ... prefer not to use them
 					Parameters.parameters.setBoolean("allowWeirdLodeRunnerActions", false);
 					Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
-
+					if(weirdAllowed) {
+						// Re-enable weird actions
+						Parameters.parameters.setBoolean("allowWeirdLodeRunnerActions", true);
+						if(aStarInfo.t2 == null) {
+							// Solution might be possible with the weird actions
+							aStarInfo =  LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
+						}
+					}
 					//					System.out.println(p + " to " + i);
 					//					for(Object o : levelCopy) System.out.println(o);
 					//					LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(levelCopy, aStarInfo.t2, aStarInfo.t1);
 					//					MiscUtil.waitForReadStringAndEnterKeyPress();
 
-
 					//System.out.println(p + " to " + i +":" + aStarInfo.t2);
 					if(aStarInfo.t2 == null) {
-						// Reminder about this TODO Note below
-						// TODO: Here Kirby: if path is null, then turn on cheat movement through diggable and try again
-						// 		 However, if the result is STILL null after that, then we assume the path is one-directional,
-						//		 and simply do not add an edge to the TSP
-						Parameters.parameters.setBoolean("allowWeirdLodeRunnerActions", true);
-						aStarInfo =  LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
 						continue; // Cannot reach i from p, so do not add edge to TSP graph
 //						LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, aStarInfo.t2, aStarInfo.t1);
 //						MiscUtil.waitForReadStringAndEnterKeyPress();
