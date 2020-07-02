@@ -930,6 +930,11 @@ public class Parameters {
 		stringOptions.add("MegaManGANVerticalModel", "MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("MegaManGANUpModel", "MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("MegaManGANDownModel", "MegaManSevenGANDownWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpperLeftModel", "MegaManSevenGANUpperLeftCornerWith12TileTypes_5_Epoch5000.pth", "File name of Upper Left GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpperRightModel", "MegaManSevenGANUpperRightCornerWith12TileTypes_5_Epoch5000.pth", "File name of Upper Right GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANLowerLeftModel", "MegaManSevenGANLowerLeftCornerWith12TileTypes_5_Epoch5000.pth", "File name of Lower Left GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANLowerRightModel", "MegaManSevenGANLowerRightCornerWith12TileTypes_5_Epoch5000.pth", "File name of Lower Right GAN model to use for MegaMan GAN level evolution");
+
 		stringOptions.add("mapElitesArchiveFile", "", "File name of MAPElites level we want to look at from an experiment");
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
