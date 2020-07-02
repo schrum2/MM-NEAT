@@ -47,7 +47,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	// Big cost to discourage moving sideways through diggable ground in a way that is sometimes illegal
 	private static final double SIDEWAYS_DIG_COST_MULTIPLIER = 100;
 	
-	private boolean ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE;
+	private boolean allowWeirdMoves;
 	private List<List<Integer>> level;
 	private HashSet<Point> goldLeft; //set containing the points with gold 
 	//private HashSet<Point> dugHoles; // Too expensive to track the dug up spaces in the state. Just allow the agent to move downward through diggable blocks
@@ -268,7 +268,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		this.goldLeft = goldLeft;
 		this.currentX = currentX;
 		this.currentY = currentY;
-		this.ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE = cheat;
+		this.allowWeirdMoves = cheat;
 	}
 
 	/**
@@ -369,7 +369,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
 					  (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
 				newX++;
-			else if(ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && 
+			else if(allowWeirdMoves && 
 					inBounds(newX+1,newY) &&
 					(beneath == -1 || beneath == LODE_RUNNER_TILE_LADDER || beneath == LODE_RUNNER_TILE_DIGGABLE || beneath == LODE_RUNNER_TILE_GROUND) &&
 					tileAtPosition(newX+1,newY) == LODE_RUNNER_TILE_DIGGABLE 
@@ -394,7 +394,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
 							(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
 				newX--;
-			else if(ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && 
+			else if(allowWeirdMoves && 
 					inBounds(newX-1,newY) && 
 					(beneath == -1 || beneath == LODE_RUNNER_TILE_LADDER || beneath == LODE_RUNNER_TILE_DIGGABLE || beneath == LODE_RUNNER_TILE_GROUND) &&
 					tileAtPosition(newX-1,newY) == LODE_RUNNER_TILE_DIGGABLE && 
@@ -413,8 +413,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
-			if(	(passable(newX, newY-1) || (ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && inBounds(newX, newY-1) &&tileAtPosition(newX, newY-1)==LODE_RUNNER_TILE_DIGGABLE)) && // Do not allow moving up ladders into solid tiles
-					inBounds(newX, newY-1) &&tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) // Be on a ladder to climb
+			if(	(passable(newX, newY-1) || // Do not allow moving up ladders into solid tiles
+				(allowWeirdMoves && inBounds(newX, newY-1) && tileAtPosition(newX, newY-1)==LODE_RUNNER_TILE_DIGGABLE)) && // Except diggable of weird moves allowed 
+				inBounds(newX, newY-1) &&
+				tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) // Be on a ladder to climb
 				newY--;
 			else return null; 
 		}
@@ -453,7 +455,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		}
 
 		assert inBounds(newX,newY) : "x is:" + newX + "\ty is:"+newY + "\t"+ inBounds(newX,newY);
-		LodeRunnerState result = new LodeRunnerState(level, newGoldLeft, newX, newY, true);
+		LodeRunnerState result = new LodeRunnerState(level, newGoldLeft, newX, newY, allowWeirdMoves);
 //		if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
 //			System.out.println("AFTER");
 //			renderLevelAndPause((LodeRunnerState) result);

@@ -75,6 +75,10 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				MMNEAT.registerFitnessFunction("TSPSolutionPathLength");
 				numFitnessFunctions++;
 			}
+			if(Parameters.parameters.booleanParameter("lodeRunnerMaximizeEnemies")) {
+				MMNEAT.registerFitnessFunction("NumEnemies");
+				numFitnessFunctions++;
+			}
 
 			//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
 			MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
@@ -187,6 +191,11 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				}
 			}
 		}
+				
+		if(Parameters.parameters.booleanParameter("lodeRunnerMaximizeEnemies")) {
+			fitnesses.add(1.0*numEnemies);
+		}
+		
 		double[] otherScores = new double[] {simpleAStarDistance, connectivityOfLevel, percentLadders, percentGround, percentRopes, percentConnected, numTreasure, numEnemies};
 
 		if(CommonConstants.watch) {
