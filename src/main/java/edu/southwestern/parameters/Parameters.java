@@ -781,6 +781,7 @@ public class Parameters {
 		booleanOptions.add("megaManAllowsSimpleAStarPath", false, "whether or not we're allowing simlpe a* path");
 		booleanOptions.add("megaManAllowsConnectivity", false, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManAllowsPlatformGun", true, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManUsesUniqueEnemies", false, "whether or not we're using unique enemies");
 		booleanOptions.add("megaManAllowsBlockBreaker", true, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManDistinctScreenFitness", false, "whether or not we're allowing connectivity");
 		booleanOptions.add("showInteractiveLodeRunnerSolutionPaths", false, "Shows the solution path for the levels in the level breeder when true");
@@ -927,11 +928,16 @@ public class Parameters {
 		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
 		stringOptions.add("LodeRunnerGANModel", "LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
-		stringOptions.add("MegaManGANModel", "HORIZONTALONLYMegaManAllLevelsBut7With7TileTypes_5_Epoch5000.pth", "File name of GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANHorizontalModel", "HORIZONTALONLYUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANVerticalModel", "VERTICALONLYMegaManAllLevelsWith7Tiles_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANUpModel", "VERTICALONLYUPUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANDownModel", "VERTICALONLYDOWNUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANModel", "MegaManOneGANWith12Tiles_5_Epoch5000.pth", "File name of GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANHorizontalModel", "MegaManSevenGANHorizontalWith12TileTypes_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANVerticalModel", "MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpModel", "MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANDownModel", "MegaManSevenGANDownWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpperLeftModel", "MegaManSevenGANUpperLeftCornerWith12TileTypes_5_Epoch5000.pth", "File name of Upper Left GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpperRightModel", "MegaManSevenGANUpperRightCornerWith12TileTypes_5_Epoch5000.pth", "File name of Upper Right GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANLowerLeftModel", "MegaManSevenGANLowerLeftCornerWith12TileTypes_5_Epoch5000.pth", "File name of Lower Left GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANLowerRightModel", "MegaManSevenGANLowerRightCornerWith12TileTypes_5_Epoch5000.pth", "File name of Lower Right GAN model to use for MegaMan GAN level evolution");
+
 		stringOptions.add("mapElitesArchiveFile", "", "File name of MAPElites level we want to look at from an experiment");
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");

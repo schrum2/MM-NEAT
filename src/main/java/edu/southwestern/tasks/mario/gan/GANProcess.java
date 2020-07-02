@@ -92,7 +92,7 @@ public class GANProcess extends Comm {
 			case MEGA_MAN:
 				ganProcess = new GANProcess(PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANModel"), 
 						Parameters.parameters.integerParameter("GANInputSize"), 
-						/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
+						Parameters.parameters.stringParameter("MegaManGANModel").contains("With7Tile") ? MegaManGANUtil.MEGA_MAN_ALL_TERRAIN : MegaManGANUtil.MEGA_MAN_ONE_ENEMY,
 						MEGA_MAN_OUT_WIDTH, MEGA_MAN_OUT_HEIGHT);
 				break;
 			}

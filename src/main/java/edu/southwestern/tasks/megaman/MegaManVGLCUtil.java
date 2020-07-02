@@ -58,6 +58,23 @@ public class MegaManVGLCUtil {
 	public static final int UNIQUE_JUMPER_ENEMY = 28;
 	public static final int UNIQUE_GUNNER_ENEMY = 29;
 	public static final int UNIQUE_ENEMY_THRESH_HOLD = 10;
+	
+	
+	
+	public static final int ONE_ENEMY_AIR = 0;
+	public static final int ONE_ENEMY_SOLID = 1;
+	public static final int ONE_ENEMY_LADDER = 2;
+	public static final int ONE_ENEMY_HAZARD = 3;
+	public static final int ONE_ENEMY_BREAKABLE = 4;
+	public static final int ONE_ENEMY_MOVING_PLATFORM = 5;
+	public static final int ONE_ENEMY_CANNON = 6;
+	public static final int ONE_ENEMY_ORB = 7;
+	public static final int ONE_ENEMY_PLAYER = 8;
+	public static final int ONE_ENEMY_NULL = 9;
+	public static final int ONE_ENEMY_WATER = 10;
+	public static final int ONE_ENEMY_GROUND_ENEMY = 11;
+	public static final int ONE_ENEMY_WALL_ENEMY = 12;
+	public static final int ONE_ENEMY_FLYING_ENEMY = 13;
 	public static HashSet<Point> visited = new HashSet<>();
 	public static int lowerY;
 	public static int lowerX;
@@ -68,16 +85,15 @@ public class MegaManVGLCUtil {
 	public static List<List<List<Integer>>> json = new ArrayList<>();
 	public static List<List<List<Integer>>> jsonUp = new ArrayList<>();
 	public static List<List<List<Integer>>> jsonDown = new ArrayList<>();
+	public static List<List<List<Integer>>> jsonLL = new ArrayList<>();
+	public static List<List<List<Integer>>> jsonUL = new ArrayList<>();
+	public static List<List<List<Integer>>> jsonLR = new ArrayList<>();
+	public static List<List<List<Integer>>> jsonUR = new ArrayList<>();
+
 	public static List<List<List<Integer>>> conditionalJson = new ArrayList<>();
 	public static List<List<Integer>> conditionalJsonID = new ArrayList<>();
 	public static HashSet<Point> placed = new HashSet<>();
 
-//	public static List<List<List<List<Integer>>>> jsonsetU = new ArrayList<>();
-//	public static List<List<List<List<Integer>>>> jsonsetD = new ArrayList<>();
-//	public static List<List<List<List<Integer>>>> jsonsetUR = new ArrayList<>();
-//	public static List<List<List<List<Integer>>>> jsonsetUL = new ArrayList<>();
-//	public static List<List<List<List<Integer>>>> jsonsetLR = new ArrayList<>();
-//	public static List<List<List<List<Integer>>>> jsonsetLL = new ArrayList<>();
 	
 	
 	
@@ -101,11 +117,24 @@ public class MegaManVGLCUtil {
 //			convertMegaManLevelToJSONHorizontalScroll(level);
 //
 //		}
-		for(int i=1;i<=10;i++) {
+		for(int i=11;i<=29;i++) {
 			placed.clear();
-			if(i!=7) {
-				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
+			activatedScreens.clear();
+			visited.clear();
+			levelEnemies.clear();
+			
+			MegaManConvertMMLVToJSON.maxX=0;
+			MegaManConvertMMLVToJSON.maxY=0;
+			MegaManConvertMMLVToJSON.visited.clear();
+			MegaManConvertMMLVToJSON.enemyNumber=-1;
+			MegaManConvertMMLVToJSON.enemyString = null;
+			MegaManConvertMMLVToJSON.bossString = null;
+			//if(i!=7) {
+				List<List<Integer>> level = MegaManConvertMMLVToJSON.convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
+				printLevel(level);
 				upAndDownTrainingData(level);
+				//System.out.println(i);
+				//MiscUtil.waitForReadStringAndEnterKeyPress();
 //				System.out.println("level" +i);
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
 
@@ -114,17 +143,30 @@ public class MegaManVGLCUtil {
 						
 						
 						
-			}
+			//}
 		}
-		System.out.println(conditionalJson.size());
-		System.out.println(conditionalJson.size());
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		System.out.println(conditionalJson);
+		//System.out.println(conditionalJson.size()+" "+conditionalJsonID.size());
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
+
+		System.out.println(json);
 
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		System.out.println(conditionalJsonID);
+		System.out.println(jsonUp);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		System.out.println(jsonDown);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		System.out.println(jsonLL);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		System.out.println(jsonUL);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		System.out.println(jsonLR);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		System.out.println(jsonUR);
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
+		//System.out.println(jsonUp);
 		
-
+		
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 //		System.out.println(jsonUp);
 
@@ -138,7 +180,7 @@ public class MegaManVGLCUtil {
 		
 	}
 	
-	public enum Direction {UP, RIGHT, DOWN};
+	public enum Direction {UP, RIGHT, DOWN, LEFT};
 	public static void upAndDownTrainingData(List<List<Integer>> level) {
 		List<Point> corners = new ArrayList<Point>();
 		corners = findSpawnScreen(level);
@@ -165,7 +207,10 @@ public class MegaManVGLCUtil {
 		int x2 = (int) corners.get(1).getX();
 		int y1 = (int) corners.get(0).getY();
 		int y2 = (int) corners.get(2).getY();
-		int rightScreenSide = x1+x2-1;
+		System.out.println(x1+" "+x2);
+		int rightScreenSide = x2;
+		x2=15;
+		System.out.println(rightScreenSide);
 //		int both = x1+x2;
 //		System.out.println(both);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -176,6 +221,7 @@ public class MegaManVGLCUtil {
 	//	int iteratio= 0;
 		boolean done = false;
 		while(!done) {
+			System.out.println(d);
 			if(d==null) { //d==null
 				done = true;
 				System.out.println("DONE");
@@ -213,6 +259,8 @@ public class MegaManVGLCUtil {
 					if(rightScreenSide-x2>=0)
 					screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
 					else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
+					//json.add(screen);
+
 					jsonUp.add(screen);
 					conditionalJsonID.add(UPID);
 					conditionalJson.add(screen);
@@ -233,6 +281,8 @@ public class MegaManVGLCUtil {
 					if(rightScreenSide-x2>=0)
 						screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
 					else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
+					//json.add(screen);
+
 					jsonDown.add(screen);
 					conditionalJsonID.add(DOWNID);
 					conditionalJson.add(screen);
@@ -241,6 +291,30 @@ public class MegaManVGLCUtil {
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
 				}else { //find new direction
 					Direction previous = Direction.DOWN;
+					d = findNewDirection(level, rightScreenSide, y1, previous); //using upper right corner
+
+				}
+			}else if(d.equals(Direction.LEFT)) {
+				if(rightScreenSide-x2-1>=0&&level.get(y1).get(rightScreenSide-x2-1)!=9) {
+						
+					screen = copyScreen(level, 16, 14, rightScreenSide-x2-1, y1, false);
+					//if(rightScreenSide+1<level.get(0).size()&&level.get(y1).get(rightScreenSide+1)!=9)
+						rightScreenSide--;
+//					System.out.println("Horizontal");
+//					printLevel(screen);
+//					MiscUtil.waitForReadStringAndEnterKeyPress();
+						json.add(screen);
+						conditionalJsonID.add(HORIZONTALID);
+						conditionalJson.add(screen);
+//						System.out.println("LEFT");
+//						printLevel(screen);
+//						MiscUtil.waitForReadStringAndEnterKeyPress();
+//						System.out.println(conditionalJson);
+//						MiscUtil.waitForReadStringAndEnterKeyPress();
+
+				}else { //find new direction
+//					x1--;
+					Direction previous = Direction.LEFT;
 					d = findNewDirection(level, rightScreenSide, y1, previous); //using upper right corner
 
 				}
@@ -285,6 +359,7 @@ public class MegaManVGLCUtil {
 			//			if(rightScreenSide-x2>=0)
 //				screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
 			placed.add(point);
+			jsonLR.add(screen);
 //			else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
 //			jsonDown.add(screen);
 			conditionalJsonID.add(BOTTOMRIGHTID);
@@ -296,7 +371,7 @@ public class MegaManVGLCUtil {
 			conditionalJson.add(screen);
 		}else if(up&&right&&!left&&!down&&!placed.contains(point)) { //lower left
 			placed.add(point);
-
+			jsonLL.add(screen);
 			conditionalJsonID.add(BOTTOMLEFTID);
 //			System.out.println("lower left: ");
 //			System.out.println(BOTTOMLEFTID);
@@ -311,6 +386,7 @@ public class MegaManVGLCUtil {
 	//		if(rightScreenSide-x2>=0) {
 //				screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
 				placed.add(point);
+				jsonUL.add(screen);
 
 //			}
 //			else {
@@ -329,7 +405,7 @@ public class MegaManVGLCUtil {
 			conditionalJson.add(screen);
 		}else if(down&&left&&!right&&!up&&!placed.contains(point)) { //upper right
 			placed.add(point);
-
+			jsonUR.add(screen);
 			conditionalJsonID.add(UPPERRIGHTID);
 //			System.out.println("upper right: ");
 //			System.out.println(UPPERRIGHTID);
@@ -365,12 +441,12 @@ public class MegaManVGLCUtil {
 		
 		return false;
 	}
-	private static Direction findNewDirection(List<List<Integer>> level, int xcoord, int ycoord, Direction previous) { //UPPER RIGHT PART OF SCREEN BRUH
+	private static Direction findNewDirection(List<List<Integer>> level, int xcoord, int ycoord, Direction previous) { 
 		Direction d = null;
 //		System.out.println(level.get(ycoord-1).get(xcoord-1));
 //		System.out.println(previous);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
-		if(xcoord+1<level.get(0).size()&&level.get(ycoord).get(xcoord+1)!=9) {
+		if(xcoord+1<level.get(0).size()&&level.get(ycoord).get(xcoord+1)!=9&&!previous.equals(Direction.LEFT)) {
 			d = Direction.RIGHT;
 		}
 		
@@ -384,6 +460,8 @@ public class MegaManVGLCUtil {
 			d = Direction.DOWN;
 //			System.out.println("DOWN");
 
+		}else if(xcoord-15>0&&level.get(ycoord).get(xcoord-16)!=9&&!previous.equals(Direction.RIGHT)) {
+			d = Direction.LEFT;
 		}
 		return d;
 		
@@ -404,11 +482,15 @@ public class MegaManVGLCUtil {
 		for(int x = spawnX-1;x>=0;x--) {
 			if(x<0||level.get(spawnY).get(x)!=9) {
 				distanceFromLeft++;
+				if(distanceFromLeft>16) {
+					
+					start = Direction.LEFT;
+				}
 			}else {
 				break;
 			}
 		}
-		System.out.println(distanceFromLeft);
+		
 		int distanceFromRight = 0;
 		for(int x = spawnX+1;x<level.get(0).size();x++) {
 			if(level.get(spawnY).get(x)!=9) {
@@ -421,7 +503,6 @@ public class MegaManVGLCUtil {
 				break;
 			}
 		}
-		
 
 		int distanceFromTop = 0;
 		for(int y = spawnY-1;y>=0;y--) {
@@ -445,14 +526,17 @@ public class MegaManVGLCUtil {
 				break;
 			}
 		}
-		
 		if(distanceFromBottom>14) {
 			distanceFromBottom = 14-distanceFromTop;
 		}else if(distanceFromTop>14) {
 			distanceFromTop = 14- distanceFromBottom;
 		}else if(distanceFromRight>16) {
 			distanceFromRight = 16 - distanceFromLeft-1;
+		}else if(distanceFromLeft>16) {
+			distanceFromLeft = 16 - distanceFromRight-1;
 		}
+		System.out.println(distanceFromRight);
+
 		
 //		System.out.println(distanceFromRight);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -466,6 +550,7 @@ public class MegaManVGLCUtil {
 		Point x1y2 = new Point (x1,y2);
 		Point x2y2 = new Point (x2,y2);
 		
+
 		List<Point> k = new ArrayList<Point>();
 		k.add(x1y1);
 		k.add(x2y1);
@@ -692,8 +777,9 @@ public class MegaManVGLCUtil {
 
 				}else if(m>10) { //is an enemy
 					if(levelEnemies.isEmpty()||levelEnemies!=null||levelEnemies.get(new Point(x,y)).contentEquals(null)) {
-						System.out.println("pringint improper enemy types helas");
-						printEnemiesToMMLVFromUniqueEnemy(p, xcoord, ycoord, level, x, y, m);
+						//System.out.println("pringint improper enemy types helas");
+						if(Parameters.parameters.booleanParameter("megaManUsesUniqueEnemies")) printEnemiesToMMLVFromUniqueEnemy(p, xcoord, ycoord, level, x, y, m);
+						else printEnemiesToMMLVFromOneEnemyType(p, xcoord, ycoord, level, x, y, m);
 					}
 					else {
 						System.out.println(levelEnemies);
@@ -767,6 +853,41 @@ public class MegaManVGLCUtil {
 		}
 
 		return levelFile;
+	}
+	/**
+	 * Prints three enemy types from one (wall, floor, flying)
+	 * @param p
+	 * @param xcoord
+	 * @param ycoord
+	 * @param level
+	 * @param x
+	 * @param y
+	 * @param m
+	 */
+	private static void printEnemiesToMMLVFromOneEnemyType(PrintWriter p, int xcoord, int ycoord, List<List<Integer>> level, int x, int y,
+			int m) {
+		//if(level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_GROUND_ENEMY) {
+
+		if(m==ONE_ENEMY_WALL_ENEMY) {
+			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+			p.println("e"+xcoord+","+ycoord+"=\"2.000000\"");
+			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+			if(x>0&&level.get(y).get(x-1)!=1) p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
+			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+		}else if(m==ONE_ENEMY_GROUND_ENEMY) {
+			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+			p.println("e"+xcoord+","+ycoord+"=\"4.000000\"");
+			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+			if(y>0&&level.get(y-1).get(x)==ONE_ENEMY_SOLID)p.println("c"+xcoord+","+ycoord+"=\"-1.000000\"");
+			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+		}else if(m==ONE_ENEMY_FLYING_ENEMY){
+			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+			p.println("e"+xcoord+","+ycoord+"=\"56.000000\"");
+			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
+			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+		}
+	//	}
 	}
 	private static void printEnemiesToMMLVFromUniqueEnemy(PrintWriter p, int xcoord, int ycoord, List<List<Integer>> level, int x, int y,
 			int m) {
@@ -1114,7 +1235,7 @@ public class MegaManVGLCUtil {
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
 //					int tileCode = convertMegamanTilesToInt(level[i].charAt(j)); 
-					int tileCode = convertMegamanTilesToIntUniqueEnemies(level[i].charAt(j)); 
+					int tileCode = convertMegamanTilesToIntEnemies(level[i].charAt(j)); 
 					String enemyTypeString = getStringForTypeEnemy(level[i].charAt(j));
 					if(enemyTypeString!=null) levelEnemies.put(new Point(j,i), enemyTypeString);
 					col.add(tileCode);
@@ -1355,35 +1476,35 @@ public class MegaManVGLCUtil {
 		case '^': //octopus battery going up/down
 			return 11;
 		case 'c': //beak
-			return 12;
+			return 11;
 		case 'd': //picket man
-			return 12;
+			return 11;
 		case 'e': //screw bomber
-			return 12;
+			return 11;
 		case 'f': //big eye
-			return 12;
+			return 11;
 		case 'g': //spine
-			return 13;
+			return 11;
 		case 'h': //crazy razy
-			return 13;
+			return 11;
 		case 'i': //watcher
-			return 13;
+			return 11;
 		case 'j': //killer bullet
-			return 14;
+			return 11;
 		case 'k': //killer bullet spawner
-			return 14;
+			return 11;
 		case 'm': //tackle fire
-			return 14;
+			return 11;
 		case 'n': //flying shell
-			return 14;
+			return 11;
 		case 'o': //flying shell spawner
-			return 15;
+			return 11;
 		case 'p': //footholder
-			return 15;
+			return 11;
 		case 'q': //jumper
-			return 15;
+			return 11;
 		case 'r': //gunner
-			return 15;
+			return 11;
 		case 'A': //appearing/disappearing block
 			return 1;
 		case 'L': //large health pack

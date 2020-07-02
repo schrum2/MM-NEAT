@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
+import edu.southwestern.parameters.Parameters;
+
 /**
  * This class converts mmlv files to trainable JSON format
  * @author Benjamin Capps
@@ -27,11 +29,19 @@ public class MegaManConvertMMLVToJSON {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-	
-		for(int i = 11;i<=45;i++) {
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"
+				, "useThreeGANsMegaMan:true" });
+		for(int i = 11;i<=29;i++) {
+			maxX=0;
+			maxY=0;
+			visited.clear();
+			enemyNumber=-1;
+			enemyString = null;
+			bossString = null;
 			List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
 			MegaManVGLCUtil.printLevel(level);
-			saveListToEditableFile(level, i+"000");
+			//System.out.println("\n\n"+i+"\n\n");
+			//saveListToEditableFile(level, i+"000");
 			//MegaManVGLCUtil.convertMegaManLevelToMMLV(level, i+"000", MegaManVGLCUtil.MEGAMAN_MMLV_PATH);
 		}
 	}
@@ -99,14 +109,15 @@ public class MegaManConvertMMLVToJSON {
 		while(scan.hasNext()) {
 			String l = scan.next();
 			//IntStream intStr = l.chars();
-			
+		//	System.out.println(l);
 			if(!l.startsWith("2")&&!l.startsWith("1")&&!l.startsWith("4")&&!l.startsWith("0")
 					&&!l.startsWith("o")&&!l.startsWith("b")
 					&&!l.startsWith("f")&&!l.startsWith("g")&&!l.startsWith("h")&&
 					!l.startsWith("j")&&!l.startsWith("k")&&!l.startsWith("l")&&!l.startsWith("m")&&
-					!l.startsWith("n")&&!l.startsWith("[")
+					!l.startsWith("n")&&!l.startsWith("[")&&!l.startsWith("1t")&&!l.startsWith("1a")
 					) { //shows us all blocks (solid, spike, ladder), enemies, player
 				boolean isEnemy = false;
+				
 				//boolean isBoss = false;
 				if(l.startsWith("i")) {
 					
@@ -144,11 +155,11 @@ public class MegaManConvertMMLVToJSON {
 						if(enemyString==null) {
 							enemyString = k;
 						}
-					}else if(k.endsWith("8")) {
+					}else if(k.endsWith(" 8")) {
 						//isBoss=true;
 					//	if(bossString==null) {
 							//bossString = k;
-							addBoss(activatedScreen, blockxyIDList, bossString);
+							//addBoss(activatedScreen, blockxyIDList, bossString);
 							
 						//}
 					}
@@ -215,7 +226,9 @@ public class MegaManConvertMMLVToJSON {
 	private static void addBoss(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList, String k) {
 		List<Integer> xyID = new ArrayList<>();
 		Scanner kScan = new Scanner(k);
+		
 		kScan.next(); //get past letter
+		
 		int xcoord = kScan.nextInt()/16;
 		xyID.add(xcoord);
 		int ycoord = kScan.nextInt()/16;
@@ -266,7 +279,7 @@ public class MegaManConvertMMLVToJSON {
 	
 			int e = kScan.nextInt();
 			//make all enemies map 11-15
-			int enemyOneThruFive = 11+e%5;
+			int enemyOneThruFive = 11;
 			xyID.add(enemyOneThruFive);
 		
 			int howManySquaresX = xcoord/16;
@@ -313,9 +326,9 @@ public class MegaManConvertMMLVToJSON {
 				xyID.add(6);
 			}else if (e==5||e==56) { //appearing/disappearing
 				xyID.add(1);
-			}else if (e==45) { //breakable
+			}else if (e==45||e==27) { //breakable
 				xyID.add(4);				
-			}else if (e==31||e==40||e==36||e==67||e==10||e==47||e==11) { //moving plat
+			}else if (e==31||e==40||e==36||e==67||e==10||e==47||e==11||e==17) { //moving plat
 				xyID.add(5);
 			}else if ((e>=177&&e<=194)||(e>=621&&e<=626)||e==16) {
 				//System.out.println(k);
@@ -374,9 +387,9 @@ public class MegaManConvertMMLVToJSON {
 			else if(itemID==4) { //player
 				xyID.add(8); //json player
 			}
-//			else if (itemID==8) {
-//				xyID.add(7);
-//			}
+			else if (itemID==8) {
+				xyID.add(0);
+			}
 			else { //solid block still 1
 				xyID.add(1);
 			}
