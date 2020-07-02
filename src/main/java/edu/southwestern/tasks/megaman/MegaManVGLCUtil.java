@@ -866,28 +866,28 @@ public class MegaManVGLCUtil {
 	 */
 	private static void printEnemiesToMMLVFromOneEnemyType(PrintWriter p, int xcoord, int ycoord, List<List<Integer>> level, int x, int y,
 			int m) {
-		if(level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_GROUND_ENEMY) {
+		//if(level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_GROUND_ENEMY) {
 
-		if((x>0&&level.get(y).get(x-1)==ONE_ENEMY_SOLID)||(x+1<level.get(0).size()&&level.get(y).get(x+1)==ONE_ENEMY_SOLID)) {
+		if(m==ONE_ENEMY_WALL_ENEMY) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"2.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			if(x>0&&level.get(y).get(x-1)!=1) p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-		}else if((y>0&&level.get(y-1).get(x)==ONE_ENEMY_SOLID)||(y+1<level.size()&&level.get(y+1).get(x)==ONE_ENEMY_SOLID)) {
+		}else if(m==ONE_ENEMY_GROUND_ENEMY) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"4.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			if(y>0&&level.get(y-1).get(x)==ONE_ENEMY_SOLID)p.println("c"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
-		}else {
+		}else if(m==ONE_ENEMY_FLYING_ENEMY){
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
 			p.println("e"+xcoord+","+ycoord+"=\"56.000000\"");
 			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
 			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 		}
-		}
+	//	}
 	}
 	private static void printEnemiesToMMLVFromUniqueEnemy(PrintWriter p, int xcoord, int ycoord, List<List<Integer>> level, int x, int y,
 			int m) {
