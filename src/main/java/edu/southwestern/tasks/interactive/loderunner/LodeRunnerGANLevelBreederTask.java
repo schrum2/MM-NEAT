@@ -328,7 +328,6 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 					}
 				}
 				try {
-					image = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_RGB);
 					//visualizes the points visited with red and whit x's
 					image = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 
