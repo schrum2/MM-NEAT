@@ -26,6 +26,7 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
+import edu.southwestern.tasks.gvgai.zelda.study.DungeonNovelty;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -305,7 +306,30 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						// Number of distinct rooms.
 						// Number of rooms backtracked through.
 						
-					}else {
+					}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels) { //alternate binning scheme
+						// TODO: Define a new scheme here that is similar but different.
+						
+						int maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
+						// Row-major order lookup in 3D archive
+						int novelty =(int)(DungeonNovelty.averageDungeonNovelty(dungeon)*ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.NUM_NOVELTY_BINS/0.7); //.7 is the guessed max novelty, magic number
+						binIndex = (novelty*(maxNumRooms+1) + numBackTrackRooms)*(maxNumRooms+1) + numRoomsReachable;
+						binIndex = Math.min(binIndex, ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.NUM_NOVELTY_BINS - 1);
+						double[] archiveArray = new double[(ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.NUM_NOVELTY_BINS)*(maxNumRooms+1)*(maxNumRooms+1)];
+						Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
+						archiveArray[binIndex] = binScore; // Percent rooms traversed
+
+						System.out.println("["+novelty+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
+
+						behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
+						// Number of distinct rooms.
+						// Number of rooms backtracked through.
+						
+					}
+					//
+					
+					
+					
+					else {
 						throw new RuntimeException("A Valid Binning Scheme For Zelda Was Not Specified");
 					}
 

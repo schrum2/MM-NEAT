@@ -59,6 +59,10 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	public static GANProcess ganProcessDown = null;
 	public static GANProcess ganProcessHorizontal = null;
 	public static GANProcess ganProcessUp = null;
+	public static GANProcess ganProcessUpperLeft = null;
+	public static GANProcess ganProcessUpperRight = null;
+	public static GANProcess ganProcessLowerLeft = null;
+	public static GANProcess ganProcessLowerRight = null;
 	private boolean initializationComplete = false;
 	
 	
@@ -73,11 +77,18 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 		ganProcessHorizontal = MegaManGANUtil.initializeGAN("MegaManGANHorizontalModel");
 		ganProcessDown= MegaManGANUtil.initializeGAN("MegaManGANDownModel");
 		ganProcessUp = MegaManGANUtil.initializeGAN("MegaManGANUpModel");
-		//System.out.println(ganProcessHorizontal);
-//		ganProcessHorizontal.start();
-		MegaManGANUtil.startGAN(ganProcessHorizontal);
-		MegaManGANUtil.startGAN(ganProcessDown);
+		ganProcessUpperLeft = MegaManGANUtil.initializeGAN("MegaManGANUpperLeftModel");
+		ganProcessUpperRight = MegaManGANUtil.initializeGAN("MegaManGANUpperRightModel");
+		ganProcessLowerLeft = MegaManGANUtil.initializeGAN("MegaManGANLowerLeftModel");
+		ganProcessLowerRight = MegaManGANUtil.initializeGAN("MegaManGANLowerRightModel");
+
 		MegaManGANUtil.startGAN(ganProcessUp);
+		MegaManGANUtil.startGAN(ganProcessDown);
+		MegaManGANUtil.startGAN(ganProcessHorizontal);
+		MegaManGANUtil.startGAN(ganProcessUpperLeft);
+		MegaManGANUtil.startGAN(ganProcessUpperRight);
+		MegaManGANUtil.startGAN(ganProcessLowerLeft);
+		MegaManGANUtil.startGAN(ganProcessLowerRight);
 		JPanel bottom = new JPanel();
 		bottom.setLayout(new BoxLayout(bottom, BoxLayout.Y_AXIS));
 
@@ -358,7 +369,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	
 	private void viewLevel(TWEANN phenotype) {
 		// TODO Auto-generated method stub
-		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
+		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp,ganProcessLowerLeft,ganProcessLowerRight,ganProcessUpperLeft,ganProcessUpperRight, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
 
 		if(selectedItems.size() != 1) {
 			JOptionPane.showMessageDialog(null, "Select exactly one level to view.");
@@ -404,7 +415,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 			}
 
 			TWEANN phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
-			List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
+			List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp,ganProcessLowerLeft,ganProcessLowerRight,ganProcessUpperLeft,ganProcessUpperRight, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
 
 //			double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 //			List<List<Integer>> level = levelListRepresentation(doubleArray);
@@ -452,7 +463,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	@Override
 	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		// TODO Auto-generated method stub
-		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
+		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp,ganProcessLowerLeft,ganProcessLowerRight,ganProcessUpperLeft,ganProcessUpperRight, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
 		return MegaManGANLevelBreederTask.getStaticButtonImage(null, width, height, level);
 
 	}
@@ -515,9 +526,6 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		try {
 			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","useThreeGANsMegaMan:true","showKLOptions:false","trials:1","mu:16", "base:megaManGAN",
-					"MegaManGANUpModel:VERTICALONLYUPUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", 
-					"MegaManGANDownModel:VERTICALONLYDOWNUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", 
-					"MegaManGANHorizontalModel:HORIZONTALONLYUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth",
 					"maxGens:500","io:false","netio:false","GANInputSize:5","mating:true","fs:false",
 					"task:edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelBreederTask","cleanOldNetworks:false", 
 					"allowMultipleFunctions:true","ftype:0","watch:true","netChangeActivationRate:0.3","cleanFrequency:-1",
