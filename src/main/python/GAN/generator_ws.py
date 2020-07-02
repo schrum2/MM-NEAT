@@ -37,12 +37,9 @@ if __name__ == '__main__':
     out_width = int(sys.argv[4])
     out_height = int(sys.argv[5])
     if len(sys.argv)<=6:
-        isConditional = False
-    else:
-        isConditional = sys.argv[6] == 'conditional'
-
-   
-    
+        num_classes = -1
+    else: 
+        num_classes = int(sys.argv[6])
 
 #    if z_dims == 4 : # Assume this is Zelda (4 tiles, currently)
 #        out_height = 16
@@ -66,10 +63,14 @@ if __name__ == '__main__':
     ngpu = 1
     n_extra_layers = 0
 
-    # This is a new DCGAN model that has the proper state dict labels/keys for the latest version of PyTorch (no periods '.')
-    if isConditional:
-        generator = cdcgan.CDCGAN_G(imageSize, nz, z_dims, ngf, ngpu, n_extra_layers)
+    if num_classes > 1:
+        # Load conditional GAN instead: Needs at least 2 classes
+        generator = cdcgan.CDCGAN_G(imageSize, nz, z_dims, ngf, ngpu, num_classes, n_extra_layers)
+        # label preprocess
+        onehot = torch.zeros(num_classes, num_classes)
+        onehot = onehot.scatter_(1, torch.LongTensor([x for x in range(num_classes)]).view(num_classes,1), 1).view(num_classes, num_classes, 1, 1)
     else:
+        # This is a new DCGAN model that has the proper state dict labels/keys for the latest version of PyTorch (no periods '.')
         generator = dcgan.DCGAN_G(imageSize, nz, z_dims, ngf, ngpu, n_extra_layers)
     #print(generator.state_dict()) 
     # This is a state dictionary that might have deprecated key labels/names
@@ -126,14 +127,22 @@ if __name__ == '__main__':
     #for line in sys.stdin.readlines(): # Jacob: I changed this to make this work on Windows ... did this break on Mac?
 
     #for line in sys.stdin:
-    while 1:
+    while True:
         line = sys.stdin.readline()
         if len(line)==2 and int(line)==0:
             break
-        lv = numpy.array(json.loads(line))
-        latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) 
 
-        levels = generator(Variable(latent_vector, volatile=True))
+        if num_classes > 1: # Conditional GAN. Input is class number AND latent vector
+            classNum = int(line) ## Assume number on line by itself
+            classOneHot = onehot[classNum]
+            line = sys.stdin.readline() # This NEXT line should be the latent vector
+            lv = numpy.array(json.loads(line))
+            latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) 
+            levels = generator(Variable(latent_vector, volatile=True),Variable(classOneHot, volatile=True))
+        else: # Standard GAN. Input is just latent vector
+            lv = numpy.array(json.loads(line))
+            latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) 
+            levels = generator(Variable(latent_vector, volatile=True))
 
         #levels.data = levels.data[:,:,:14,:28] #Cut of rest to fit the 14x28 tile dimensions
 
