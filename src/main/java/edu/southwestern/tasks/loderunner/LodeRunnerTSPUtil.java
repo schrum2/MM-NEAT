@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -221,14 +220,13 @@ public class LodeRunnerTSPUtil {
 	 * @param level A level
 	 * @return A graph with gold as nodes and the spawn point as the root
 	 */
-	public static Triple<Graph<Point>, HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>>, 
-	HashSet<LodeRunnerState>> getTSPGraph(List<List<Integer>> level) {
-		System.out.println("level: " + level);
+	public static Triple<Graph<Point>, HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>>, HashSet<LodeRunnerState>> getTSPGraph(List<List<Integer>> level) {
+		//System.out.println("level: " + level);
 		//clears level of gold and spawn but maintains a reference in this set 
 		HashSet<Point> gold = LodeRunnerState.fillGold(level);
-		System.out.println("gold: " + gold);
+		//System.out.println("gold: " + gold);
 		Point spawn = findSpawnAndRemove(level);
-		System.out.println("spawn: " + spawn);
+		//System.out.println("spawn: " + spawn);
 		assert spawn != null;
 		HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>> actionSequences = new HashMap<>();
 		HashSet<LodeRunnerState> mostRecentVisited = new HashSet<>();
@@ -254,6 +252,7 @@ public class LodeRunnerTSPUtil {
 
 					//System.out.println(p + " to " + i +":" + aStarInfo.t2);
 					if(aStarInfo.t2 == null) {
+						// Reminder about this TODO Note below
 						// TODO: Here Kirby: if path is null, then turn on cheat movement through diggable and try again
 						// 		 However, if the result is STILL null after that, then we assume the path is one-directional,
 						//		 and simply do not add an edge to the TSP
