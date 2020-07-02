@@ -793,6 +793,7 @@ public class Parameters {
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingSolutionLength", false, "Adds linear increasing solution length as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingEnemyCount", false, "Adds linear increasing enemy count as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingTreasureCount", false, "Adds linear increasing treasure count as a fitness function when true");
+		booleanOptions.add("allowWeirdLodeRunnerActions", true, "Allows the A* model to use weird side ways digging to be able to beat more levels");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");

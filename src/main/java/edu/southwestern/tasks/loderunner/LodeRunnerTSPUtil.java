@@ -26,7 +26,7 @@ public class LodeRunnerTSPUtil {
 		Parameters.initializeParameterCollections(new String[] {});
 		RandomNumbers.randomGenerator.setSeed(0L); // Same random String Node labels every time
 		//int visitedSize = 0;
-		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 75.txt");
+		List<List<Integer>> level = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LodeRunnerVGLCUtil.LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
 		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 		ArrayList<LodeRunnerAction> actionSequence = tspInfo.t1;
 		HashSet<LodeRunnerState> mostRecentVisited = tspInfo.t2;
@@ -226,9 +226,9 @@ public class LodeRunnerTSPUtil {
 		System.out.println("level: " + level);
 		//clears level of gold and spawn but maintains a reference in this set 
 		HashSet<Point> gold = LodeRunnerState.fillGold(level);
-		System.out.println("gold: " + gold);
+		//System.out.println("gold: " + gold);
 		Point spawn = findSpawnAndRemove(level);
-		System.out.println("spawn: " + spawn);
+		//System.out.println("spawn: " + spawn);
 		assert spawn != null;
 		HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>> actionSequences = new HashMap<>();
 		HashSet<LodeRunnerState> mostRecentVisited = new HashSet<>();
@@ -244,7 +244,8 @@ public class LodeRunnerTSPUtil {
 				if(!p.equals(i) && !i.getData().equals(spawn)) {
 					levelCopy.get(p.getData().y).set(p.getData().x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);//sets spawn as one of the gold to get distance between the gold
 					levelCopy.get(i.getData().y).set(i.getData().x, LodeRunnerState.LODE_RUNNER_TILE_GOLD); //destination gold 
-					Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN, false);
+					Parameters.parameters.setBoolean("allowWeirdLodeRunnerActions", false);
+					Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
 
 					//					System.out.println(p + " to " + i);
 					//					for(Object o : levelCopy) System.out.println(o);
@@ -257,7 +258,8 @@ public class LodeRunnerTSPUtil {
 						// TODO: Here Kirby: if path is null, then turn on cheat movement through diggable and try again
 						// 		 However, if the result is STILL null after that, then we assume the path is one-directional,
 						//		 and simply do not add an edge to the TSP
-						aStarInfo =  LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN, true);
+						Parameters.parameters.setBoolean("allowWeirdLodeRunnerActions", true);
+						aStarInfo =  LodeRunnerLevelAnalysisUtil.performAStarSearch(levelCopy, Double.NaN);
 						continue; // Cannot reach i from p, so do not add edge to TSP graph
 //						LodeRunnerRenderUtil.visualizeLodeRunnerLevelSolutionPath(level, aStarInfo.t2, aStarInfo.t1);
 //						MiscUtil.waitForReadStringAndEnterKeyPress();
