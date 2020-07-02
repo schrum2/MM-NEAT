@@ -171,7 +171,7 @@ public class MegaManGANUtil {
 		
 		return oneLevel;
 	}
-	public enum Direction {UP, RIGHT, DOWN, LEFT};
+	public enum Direction {UP, RIGHT, DOWN};
 
 //	public static int 
 	public static List<List<Integer>> generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess horizontalGAN, GANProcess upGAN, GANProcess downGAN, GANProcess lowerLeftGAN, GANProcess lowerRightGAN,  GANProcess upperLeftGAN, GANProcess upperRightGAN, double[] latentVector) {
@@ -253,31 +253,27 @@ public class MegaManGANUtil {
 //				}
 				Direction previous = d;
 			if(right) {
-				
-				boolean r = rand.nextBoolean();
-				if(r&&!previous.equals(Direction.LEFT)) {
-					if(previous.equals(Direction.UP)) {
-						if(level==numberOfChunks-1) placeOrb(levelInListUpperLeft.get(itr));
-						placeUp(levelInListUpperLeft, previousMove, oneLevel, itr);
-						level++;
+				if(previous.equals(Direction.UP)) {
+					if(level==numberOfChunks-1) placeOrb(levelInListUpperLeft.get(itr));
+					placeUp(levelInListUpperLeft, previousMove, oneLevel, itr);
+					level++;
 					
 
-					}else if(previous.equals(Direction.DOWN)) {
-						if(level==numberOfChunks-1) placeOrb(levelInListLowerLeft.get(itr));
-						placeDown(levelInListLowerLeft, previousMove, oneLevel, itr);
-						level++;
-						previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT);
-					
-					}
-					numHorizontal++;
-					if(level==numberOfChunks-1) placeOrb(levelInListHorizontal.get(itr));
-					placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, itr);
-					distinct.add(levelInListHorizontal.get(1));
+				}else if(previous.equals(Direction.DOWN)) {
+					if(level==numberOfChunks-1) placeOrb(levelInListLowerLeft.get(itr));
+					placeDown(levelInListLowerLeft, previousMove, oneLevel, itr);
+					level++;
+					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT);
+
+				}
+				numHorizontal++;
+				if(level==numberOfChunks-1) placeOrb(levelInListHorizontal.get(itr));
+				placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, itr);
+				distinct.add(levelInListHorizontal.get(1));
 
 				//wasRight = true;
-					d = Direction.RIGHT;
-					previousMove=new Point((int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
-				}
+				d = Direction.RIGHT;
+				previousMove=new Point((int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
 
 			}else {
 				up = rand.nextBoolean();
