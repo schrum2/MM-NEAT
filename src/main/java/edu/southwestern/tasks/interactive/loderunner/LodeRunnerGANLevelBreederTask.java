@@ -59,46 +59,8 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	public LodeRunnerGANLevelBreederTask() throws IllegalAccessException {
 		super();
 		//adds a check box to show solution path or not, starts with them not showing 
-		JPanel AStarBudget = new JPanel();
-		AStarBudget.setLayout(new BoxLayout(AStarBudget, BoxLayout.Y_AXIS));
-
-		//		JCheckBox showSolutionPath = new JCheckBox("ShowSolutionPath", Parameters.parameters.booleanParameter("interactiveLodeRunnerAStarPaths"));
-		//		showSolutionPath.setAlignmentX(Component.CENTER_ALIGNMENT);
-		//		showSolutionPath.setName("interactiveLodeRunnerAStarPaths");
-		//		showSolutionPath.getAccessibleContext();
-		//		showSolutionPath.addActionListener(new ActionListener() {
-		//			@Override
-		//			public void actionPerformed(ActionEvent e) {
-		//				Parameters.parameters.changeBoolean("interactiveLodeRunnerAStarPaths");
-		//				resetButtons(true);
-		//			}
-		//		});
-		String[] options = {"Choose Path Type","Pure A*", "TSP + A*"};
-		JComboBox<String> showSolutionPath = new JComboBox<String>(options);
-		showSolutionPath.setSelectedIndex(0);
-		showSolutionPath.setSize(40, 40);
-		showSolutionPath.addItemListener(new ItemListener() {
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				Parameters.parameters.setBoolean("showInteractiveLodeRunnerSolutionPaths", true);
-				JComboBox<String> source = (JComboBox<String>)e.getSource();
-				int index = source.getSelectedIndex();
-				if(index == 1) {//pure A*
-					Parameters.parameters.setInteger("interactiveLodeRunnerPathType", PATH_TYPE_ASTAR);
-				}
-				else if(index == 2) { //tsp + A*
-					Parameters.parameters.setInteger("interactiveLodeRunnerPathType", PATH_TYPE_TSP);
-				}
-				else {
-					Parameters.parameters.setBoolean("showInteractiveLodeRunnerSolutionPaths", false);//if neither path is selected it displays the default render
-					showSolutionPath.setSelectedIndex(0);
-				}
-				resetButtons(true);
-			}
-
-		});
+		JPanel solutionPathPanel = new JPanel();
+		solutionPathPanel.setLayout(new BoxLayout(solutionPathPanel, BoxLayout.Y_AXIS));
 		JLabel AStarLabel = new JLabel("UpdateAStarBudget");
 		AStarLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		JTextField updateAStarBudget = new JTextField(10);
@@ -123,10 +85,77 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 			@Override
 			public void keyTyped(KeyEvent e) {}
 		});
-		AStarBudget.add(showSolutionPath);
-		AStarBudget.add(AStarLabel);
-		AStarBudget.add(updateAStarBudget);
-		top.add(AStarBudget);
+		JLabel TSPBudget = new JLabel("UpdateTSPBudget");
+		TSPBudget.setAlignmentX(Component.CENTER_ALIGNMENT);
+		TSPBudget.setVisible(false);
+		JTextField updateTSPBudget = new JTextField(10);
+		updateTSPBudget.setText(String.valueOf(Parameters.parameters.integerParameter("lodeRunnerTSPBudget")));
+		updateTSPBudget.addKeyListener(new KeyListener() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode()==KeyEvent.VK_ENTER) {
+					String budget = updateTSPBudget.getText();
+					if(!budget.matches("\\d+")) {
+						System.out.println("Match failure! \"" + budget + "\"");
+						return;
+					}
+					int value = Integer.parseInt(budget);
+					Parameters.parameters.setInteger("lodeRunnerTSPBudget", value);
+					System.out.println("Reset budget: "+value);
+					resetButtons(true);
+				}
+			}
+			@Override
+			public void keyReleased(KeyEvent arg0) {	
+			}
+			@Override
+			public void keyTyped(KeyEvent arg0) {
+			}
+		});
+		updateTSPBudget.setVisible(false);
+		JLabel choosePath = new JLabel("Choose Path Type");
+		choosePath.setAlignmentX(Component.CENTER_ALIGNMENT);
+		String[] options = {"None","Pure A*", "TSP + A*"};
+		JComboBox<String> showSolutionPath = new JComboBox<String>(options);
+		showSolutionPath.setSelectedIndex(0);
+		showSolutionPath.setSize(40, 40);
+		showSolutionPath.addItemListener(new ItemListener() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				Parameters.parameters.setBoolean("showInteractiveLodeRunnerSolutionPaths", true);
+				JComboBox<String> source = (JComboBox<String>)e.getSource();
+				int index = source.getSelectedIndex();
+				if(index == 1) {//pure A*
+					Parameters.parameters.setInteger("interactiveLodeRunnerPathType", PATH_TYPE_ASTAR);
+					updateTSPBudget.setVisible(false);
+					updateTSPBudget.setVisible(false);
+					AStarLabel.setVisible(true);
+					updateAStarBudget.setVisible(true);
+				}
+				else if(index == 2) { //tsp + A*
+					Parameters.parameters.setInteger("interactiveLodeRunnerPathType", PATH_TYPE_TSP);
+					TSPBudget.setVisible(true);
+					updateTSPBudget.setVisible(true);
+					AStarLabel.setVisible(false);
+					updateAStarBudget.setVisible(false);
+				}
+				else {
+					Parameters.parameters.setBoolean("showInteractiveLodeRunnerSolutionPaths", false);//if neither path is selected it displays the default render
+				}
+				resetButtons(true);
+			}
+
+		});
+		solutionPathPanel.add(choosePath);
+		solutionPathPanel.add(showSolutionPath);
+		solutionPathPanel.add(AStarLabel);
+		solutionPathPanel.add(updateAStarBudget);
+		solutionPathPanel.add(TSPBudget);
+		solutionPathPanel.add(updateTSPBudget);
+		top.add(solutionPathPanel);
 		//adds a checkbox to display the level in IceCreamYou format
 		JPanel effectsCheckboxes = new JPanel();
 		JCheckBox iceCreamYou = new JCheckBox("PlayFormat", Parameters.parameters.booleanParameter("showInteractiveLodeRunnerIceCreamYouVisualization"));
