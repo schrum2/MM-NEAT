@@ -160,8 +160,9 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		}
 		
 		//Calculate length of tsp path
+		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = null;
 		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsTSPSolutionPath")) {
-			Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
+			tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 			// Unsolvable levels received TSP fitness score of -1
 			double tspSolutionLength = tspInfo.t1 == null ? -1 : tspInfo.t1.size();
 			fitnesses.add(tspSolutionLength);
@@ -180,7 +181,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				if(level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_GOLD) {
 					numTreasure++;
 				}
-				//calcualtes the number of enemies
+				//calculates the number of enemies
 				if(level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_ENEMY) {
 					numEnemies++;
 				}
@@ -190,7 +191,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 
 		if(CommonConstants.watch) {
 			//prints values that are calculated above for debugging 
-			System.out.println("Simple A* Distance to Farthest Gold " + simpleAStarDistance);
+			System.out.println("Simple A* Distance " + simpleAStarDistance);
 			System.out.println("Number of Positions Visited " + connectivityOfLevel);
 			System.out.println("Percent of Ladders " + percentLadders);
 			System.out.println("Percent of Ground " + percentGround);
@@ -199,6 +200,11 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			System.out.println("Number of Treasures " + numTreasure);
 			System.out.println("Number of Enemies " + numEnemies);
 
+			// Prefer TSP solutions over A* if available
+			if(tspInfo != null) {
+				actionSequence = tspInfo.t1;
+			}
+			
 			try {
 				//displays the rendered solution path in a window 
 				BufferedImage visualPath = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
