@@ -259,9 +259,9 @@ for epoch in range(opt.niter):
             inputv = Variable(input)
 
             # Training with real data
-            if opt.num_classes > 0:
+            if opt.num_classes > 0: # Conditional GAN
                 errD_real = netD(inputv, labels)
-            else:
+            else: # Regular GAN
                 errD_real = netD(inputv)
             
             errD_real.backward(one)
@@ -269,9 +269,20 @@ for epoch in range(opt.niter):
             # train with fake
             noise.resize_(opt.batchSize, nz, 1, 1).normal_(0, 1)
             noisev = Variable(noise, volatile = True) # totally freeze netG
-            fake = Variable(netG(noisev).data)
+            
+            if opt.num_classes > 0: # Conditional GAN
+                genOutput = netG(noisev, labels)
+            else: # Regular GAN
+                genOutput = netG(noisev)
+            
+            fake = Variable(genOutput.data)
             inputv = fake
-            errD_fake = netD(inputv)
+
+            if opt.num_classes > 0: # Conditional GAN
+                errD_fake = netD(inputv, labels)
+            else: # Regular GAN
+                errD_fake = netD(inputv)
+
             errD_fake.backward(mone)
             errD = errD_real - errD_fake
             optimizerD.step()
