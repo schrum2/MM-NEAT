@@ -647,8 +647,9 @@ public class MegaManGANUtil {
 		HashSet<Point> placedPoints = new HashSet<>();
 		Direction previousDirection = null;
 		List<List<Integer>> level = new ArrayList<>();
+		Point currentPoint = new Point();
 		for(int i = 0;i<chunks;i++) {
-			GANProcess gan = GANToUse(level,placedPoints,wholeVector, i, previousDirection, ganProcessHorizontal,ganProcessUp,ganProcessDown,lowerLeftGAN,lowerRightGAN,upperLeftGAN,upperRightGAN);
+			GANProcess gan = GANToUse(currentPoint, level,placedPoints,wholeVector, i, previousDirection, ganProcessHorizontal,ganProcessUp,ganProcessDown,lowerLeftGAN,lowerRightGAN,upperLeftGAN,upperRightGAN);
 		}
 		
 		
@@ -673,19 +674,53 @@ public class MegaManGANUtil {
  * @param upperRightGAN
  * @return
  */
-private static GANProcess GANToUse(List<List<Integer>> level, HashSet<Point> placedPoints, double[] wholeVector, int segmentNum, Direction previousDirection,
+private static GANProcess GANToUse(Point currentPoint, List<List<Integer>> level, HashSet<Point> placedPoints, double[] wholeVector, int segmentNum, Direction previousDirection,
 		GANProcess ganProcessHorizontal, GANProcess ganProcessUp, GANProcess ganProcessDown, GANProcess lowerLeftGAN,
 		GANProcess lowerRightGAN, GANProcess upperLeftGAN, GANProcess upperRightGAN) {
 	// TODO Auto-generated method stub
+	
 	double[] oneSegmentData = latentVectorAndMiscDataForPosition(segmentNum, TOTAL_VARIABLES, wholeVector);
-	Direction current = useLongVectorToFindDirection(oneSegmentData, segmentNum, previousDirection);
+	Direction current = useLongVectorToFindDirection(currentPoint, placedPoints,oneSegmentData, segmentNum, previousDirection);
 	if(previousDirection==null) {
-		placeFirstSegment(oneSegmentData, level, current, segmentNum, ganProcessHorizontal,ganProcessUp,ganProcessDown,lowerLeftGAN,lowerRightGAN,upperLeftGAN,upperRightGAN);
-		placedPoints.add(new Point(0,0));
+		placeFirstSegment(oneSegmentData, level, current, segmentNum, ganProcessHorizontal,ganProcessUp,ganProcessDown);
+		currentPoint = new Point(0,0);
+		placedPoints.add(currentPoint);
 	}
-	else if(previousDirection.equals(current)) /*placecurrentdirection*/;
+	else if(previousDirection.equals(current)) placeNoCorners(oneSegmentData, current, currentPoint, level, ganProcessHorizontal,ganProcessUp,ganProcessDown);
 	return null;
 }
+/**
+ * Places a segment without a corner
+ * @param current
+ * @param currentPoint
+ */
+private static void placeNoCorners(double[] oneSegmentData, Direction current, Point currentPoint, List<List<Integer>> level, GANProcess ganProcessHorizontal, GANProcess ganProcessUp,
+		GANProcess ganProcessDown) {
+	List<Integer> nullLine = new ArrayList<Integer>(16);
+	for(int i=0;i<MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH;i++) {
+		nullLine.add(MegaManState.MEGA_MAN_TILE_NULL);
+	}
+	double[] startlatentVector = new double[oneSegmentData.length-NUM_AUX];
+	for(int i = NUM_AUX;i<TOTAL_VARIABLES;i++) {
+		startlatentVector[i-NUM_AUX]=oneSegmentData[i];
+	}
+	if(current.equals(Direction.RIGHT)) {
+		numHorizontal++;
+		x++;
+		placeRightCPPN(getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector), currentPoint, level, nullLine, 0);
+		currentPoint=new Point((int) currentPoint.getX()+MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH,(int) currentPoint.getY());
+	}else if(current.equals(Direction.UP)) {
+		placeUpCPPN(getLevelListRepresentationFromGAN(ganProcessUp, startlatentVector), currentPoint, level, 0);
+		y++;
+		numUp++;
+	}else if(current.equals(Direction.DOWN)) {
+		y--;
+		numDown++;
+		placeDownCPPN(getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector), currentPoint, level, 0);
+		currentPoint=new Point((int) currentPoint.getX(),(int) currentPoint.getY()+MegaManGANUtil.MEGA_MAN_LEVEL_HEIGHT);
+	}
+}
+
 /**
  * places the first segment in the data set.
  * @param oneSegmentData
@@ -701,8 +736,7 @@ private static GANProcess GANToUse(List<List<Integer>> level, HashSet<Point> pla
  * @param upperRightGAN
  */
 private static void placeFirstSegment(double[] oneSegmentData, List<List<Integer>> oneLevel,Direction current,int segmentNum, GANProcess ganProcessHorizontal, GANProcess ganProcessUp,
-		GANProcess ganProcessDown, GANProcess lowerLeftGAN, GANProcess lowerRightGAN, GANProcess upperLeftGAN,
-		GANProcess upperRightGAN) {
+		GANProcess ganProcessDown) {
 	double[] startlatentVector = new double[oneSegmentData.length-NUM_AUX];
 	for(int i = NUM_AUX;i<TOTAL_VARIABLES;i++) {
 		startlatentVector[i-NUM_AUX]=oneSegmentData[i];
@@ -715,7 +749,7 @@ private static void placeFirstSegment(double[] oneSegmentData, List<List<Integer
 		numDown++;
 		oneLevel = getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector).get(0);
 	}
-	else {
+	else if(current.equals(Direction.RIGHT)) {
 		numHorizontal++;
 		
 		oneLevel = getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector).get(0);
@@ -733,12 +767,65 @@ private static void placeFirstSegment(double[] oneSegmentData, List<List<Integer
  * @param previous
  * @return
  */
-private static Direction useLongVectorToFindDirection(double[] oneSegmentData, int segmentNum, Direction previous) {
+private static Direction useLongVectorToFindDirection(Point currentPoint, HashSet<Point> placedPoints, double[] oneSegmentData, int segmentNum, Direction previous) {
 	// TODO Auto-generated method stub
 	if(previous==null) return findFirstDirection(oneSegmentData, segmentNum);
-	
-	return null;
+	else {
+		double[] outputs = new double[NUM_AUX];
+		for(int i =0;i<NUM_AUX;i++) {
+			outputs[i]=oneSegmentData[i];
+		}
+		int direction = StatisticsUtilities.argmax(outputs);
+		double[] backup = new double[NUM_AUX];
+		for(int i = 0;i<NUM_AUX;i++) {
+			if(i!=direction) {
+				backup[i]=outputs[i];
+			}
+		}
+		int bkp = StatisticsUtilities.argmax(backup);
+		double[] backup1 = new double[NUM_AUX];
+		for(int i = 0;i<NUM_AUX;i++) {
+			if(i!=direction&&i!=bkp) {
+				backup1[i]=outputs[i];
+			}
+		}
+		int bkp1 = StatisticsUtilities.argmax(backup1);
+		boolean needBackup = true;
+		int x = (int) currentPoint.getX();
+		int y = (int) currentPoint.getY();
+		Direction current=null;
+		needBackup = useBackupOrSetCurrentDirection(current, placedPoints, direction, x, y);
+		if(needBackup) needBackup = useBackupOrSetCurrentDirection(current, placedPoints, bkp, x, y);
+		if(needBackup) needBackup = useBackupOrSetCurrentDirection(current, placedPoints, bkp1, x, y);
+		return current;
+	}
 }
+
+/**
+ * finds the direction needed when taking into account corner cases.
+ * @param placedPoints
+ * @param oneSegmentData
+ * @param segmentNum
+ * @return
+ */
+private static boolean useBackupOrSetCurrentDirection(Direction current, HashSet<Point> placedPoints, int direction, int x, int y) {
+	boolean needBackup = true;
+	
+	if(direction == MegaManCPPNtoGANLevelBreederTask.UP_PREFERENCE&&!placedPoints.contains(new Point(x, y))) {
+		current = Direction.UP;
+		needBackup=false;
+	}
+	else if (direction == MegaManCPPNtoGANLevelBreederTask.DOWN_PREFERENCE&&!placedPoints.contains(new Point(x, y+MEGA_MAN_LEVEL_HEIGHT))) { //level height
+		current = Direction.DOWN;
+		needBackup=false;
+	}
+	else if(direction==MegaManCPPNtoGANLevelBreederTask.HORIZONTAL_PREFERENCE&&!placedPoints.contains(new Point(x+MEGA_MAN_LEVEL_WIDTH, y))){ //level width
+		current=Direction.RIGHT;
+		needBackup=false;
+	}
+	return needBackup;
+}
+
 /**
  * Finds the initial direction to go in.
  * @param wholeVector
