@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.loderunner.astar;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -43,11 +44,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	public static final int LODE_RUNNER_TILE_ROPE = 5;
 	public static final int LODE_RUNNER_TILE_GROUND = 6;
 	public static final int LODE_RUNNER_TILE_SPAWN = 7;
-	// Big cost to discourage moveing sideways through diggable ground in a way that is sometimes illegal
+	// Big cost to discourage moving sideways through diggable ground in a way that is sometimes illegal
 	private static final double SIDEWAYS_DIG_COST_MULTIPLIER = 100;
 	
-	private static final boolean ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE = true;
-	
+	private boolean allowWeirdMoves;
 	private List<List<Integer>> level;
 	private HashSet<Point> goldLeft; //set containing the points with gold 
 	//private HashSet<Point> dugHoles; // Too expensive to track the dug up spaces in the state. Just allow the agent to move downward through diggable blocks
@@ -217,6 +217,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		return start;
 	}
 
+	public LodeRunnerState(List<List<Integer>> level, boolean weird) {
+		this(level, getSpawnFromVGLC(level), weird);
+	}
+	
 	/**
 	 * Constructor that only takes a level, 
 	 * this makes it so that it grabs the original spawn point and fills the gold set with
@@ -224,7 +228,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param level A level in JSON form 
 	 */
 	public LodeRunnerState(List<List<Integer>> level) {
-		this(level, getSpawnFromVGLC(level));
+		this(level, getSpawnFromVGLC(level), Parameters.parameters.booleanParameter("allowWeirdLodeRunnerActions"));
 	}
 
 	/**
@@ -233,8 +237,8 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param level Level in JSON form 
 	 * @param start The spawn point 
 	 */
-	public LodeRunnerState(List<List<Integer>> level, Point start) {
-		this(level, getGoldLeft(level), start.x, start.y);
+	public LodeRunnerState(List<List<Integer>> level, Point start, boolean cheat) {
+		this(level, getGoldLeft(level), start.x, start.y, cheat);
 	}
 
 
@@ -263,11 +267,12 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 	 * @param currentX X coordinate of spawn 
 	 * @param currentY Y coordinate of spawn 
 	 */
-	private LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, int currentX, int currentY) {
+	private LodeRunnerState(List<List<Integer>> level, HashSet<Point> goldLeft, int currentX, int currentY, boolean cheat) {
 		this.level = level;
 		this.goldLeft = goldLeft;
 		this.currentX = currentX;
 		this.currentY = currentY;
+		this.allowWeirdMoves = cheat;
 	}
 
 	/**
@@ -287,26 +292,60 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		for(Point p : start.goldLeft) { //puts all the gold back 
 			fullLevel.get(p.y).set(p.x, LODE_RUNNER_TILE_GOLD);
 		}
-		//creates a buffered image from the level to be displayed 
-		BufferedImage visualPath = LodeRunnerRenderUtil.createBufferedImage(fullLevel, LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
-				LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+		BufferedImage[] images;
+		BufferedImage visualPath;
+		if(Parameters.parameters.booleanParameter("showInteractiveLodeRunnerIceCreamYouVisualization")) {
+			images = LodeRunnerRenderUtil.loadIceCreamYouTiles(LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_PATH); //Initializes the array that hold the tile images
+			visualPath = LodeRunnerRenderUtil.createIceCreamYouImage(fullLevel, LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_WIDTH, LodeRunnerRenderUtil.ICE_CREAM_YOU_IMAGE_HEIGHT, images);	
+		}
+		else {
+			images = LodeRunnerRenderUtil.loadImagesNoSpawnTwoGround(LodeRunnerRenderUtil.LODE_RUNNER_TILE_PATH); //Initializes the array that hold the tile images
+			//creates a buffered image from the level to be displayed 
+			visualPath = LodeRunnerRenderUtil.createBufferedImage(fullLevel, LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+					LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, images);
+		}
+//		//creates a buffered image from the level to be displayed 
+//		BufferedImage visualPath = LodeRunnerRenderUtil.createBufferedImage(fullLevel, LodeRunnerRenderUtil.LODE_RUNNER_COLUMNS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X, 
+//				LodeRunnerRenderUtil.LODE_RUNNER_ROWS*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, images);
 		if(mostRecentVisited != null) {
 			Graphics2D g = (Graphics2D) visualPath.getGraphics();
-			g.setColor(Color.WHITE);
+			if(Parameters.parameters.booleanParameter("showInteractiveLodeRunnerIceCreamYouVisualization")) {
+				g.setColor(Color.BLACK);
+				g.setStroke(new BasicStroke((float)3.5));
+			}
+			else
+				g.setColor(Color.WHITE);
 			for(LodeRunnerState s : mostRecentVisited) {
 				int x = s.currentX;
 				int y = s.currentY;
-				g.drawLine(x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y,(x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
-				g.drawLine((x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+				if(Parameters.parameters.booleanParameter("showInteractiveLodeRunnerIceCreamYouVisualization")) {
+					g.drawLine(x*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_X,y*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_Y,(x+1)*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_X,(y+1)*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_Y);
+					g.drawLine((x+1)*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_X,y*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_Y, x*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_X,(y+1)*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_Y);
+				}
+				else {
+					g.drawLine(x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y,(x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+					g.drawLine((x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+				}
 			}
 			if(actionSequence != null) {
-				g.setColor(Color.BLUE);
+				if(Parameters.parameters.booleanParameter("showInteractiveLodeRunnerIceCreamYouVisualization")) {
+					g.setColor(Color.RED);
+					g.setStroke(new BasicStroke((float)3.5));
+				}
+				else
+					g.setColor(Color.BLUE);
 				LodeRunnerState current = start;
 				for(LodeRunnerAction a : actionSequence) {
 					int x = current.currentX;
 					int y = current.currentY;
-					g.drawLine(x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y,(x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
-					g.drawLine((x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+					if(Parameters.parameters.booleanParameter("showInteractiveLodeRunnerIceCreamYouVisualization")) {
+						g.drawLine(x*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_X,y*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_Y,(x+1)*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_X,(y+1)*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_Y);
+						g.drawLine((x+1)*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_X,y*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_Y, x*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_X,(y+1)*LodeRunnerRenderUtil.ICE_CREAM_YOU_TILE_Y);
+					}
+					else {
+						g.drawLine(x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y,(x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+						g.drawLine((x+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,y*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y, x*LodeRunnerRenderUtil.LODE_RUNNER_TILE_X,(y+1)*LodeRunnerRenderUtil.LODE_RUNNER_TILE_Y);
+					}
 					current = (LodeRunnerState) current.getSuccessor(a);
 				}
 			}
@@ -334,7 +373,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
 					  (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
 				newX++;
-			else if(ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && 
+			else if(allowWeirdMoves && 
 					inBounds(newX+1,newY) &&
 					(beneath == -1 || beneath == LODE_RUNNER_TILE_LADDER || beneath == LODE_RUNNER_TILE_DIGGABLE || beneath == LODE_RUNNER_TILE_GROUND) &&
 					tileAtPosition(newX+1,newY) == LODE_RUNNER_TILE_DIGGABLE 
@@ -359,7 +398,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 					( (tileAtPosition(newX, newY) == LODE_RUNNER_TILE_ROPE) || 
 							(tileAtPosition(newX, newY) == LODE_RUNNER_TILE_LADDER) ) )
 				newX--;
-			else if(ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && 
+			else if(allowWeirdMoves && 
 					inBounds(newX-1,newY) && 
 					(beneath == -1 || beneath == LODE_RUNNER_TILE_LADDER || beneath == LODE_RUNNER_TILE_DIGGABLE || beneath == LODE_RUNNER_TILE_GROUND) &&
 					tileAtPosition(newX-1,newY) == LODE_RUNNER_TILE_DIGGABLE && 
@@ -378,8 +417,10 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 			else return null; 
 		}
 		else if(a.getMove().equals(LodeRunnerAction.MOVE.UP)) {
-			if(	(passable(newX, newY-1) || (ALLOW_WEIRD_SIDE_WAYS_MOVE_THROUGH_DIGGABLE && inBounds(newX, newY-1) &&tileAtPosition(newX, newY-1)==LODE_RUNNER_TILE_DIGGABLE)) && // Do not allow moving up ladders into solid tiles
-					inBounds(newX, newY-1) &&tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) // Be on a ladder to climb
+			if(	(passable(newX, newY-1) || // Do not allow moving up ladders into solid tiles
+				(allowWeirdMoves && inBounds(newX, newY-1) && tileAtPosition(newX, newY-1)==LODE_RUNNER_TILE_DIGGABLE)) && // Except diggable of weird moves allowed 
+				inBounds(newX, newY-1) &&
+				tileAtPosition(newX, newY)==LODE_RUNNER_TILE_LADDER) // Be on a ladder to climb
 				newY--;
 			else return null; 
 		}
@@ -418,7 +459,7 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		}
 
 		assert inBounds(newX,newY) : "x is:" + newX + "\ty is:"+newY + "\t"+ inBounds(newX,newY);
-		LodeRunnerState result = new LodeRunnerState(level, newGoldLeft, newX, newY);
+		LodeRunnerState result = new LodeRunnerState(level, newGoldLeft, newX, newY, allowWeirdMoves);
 //		if(a.getMove().equals(LodeRunnerAction.MOVE.LEFT)) {
 //			System.out.println("AFTER");
 //			renderLevelAndPause((LodeRunnerState) result);
@@ -480,7 +521,6 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 //			}
 			LodeRunnerRenderUtil.getBufferedImage(copy);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		MiscUtil.waitForReadStringAndEnterKeyPress();

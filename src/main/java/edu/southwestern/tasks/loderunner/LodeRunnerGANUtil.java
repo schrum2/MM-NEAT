@@ -80,6 +80,7 @@ public class LodeRunnerGANUtil {
 	public static void setSpawn(List<List<Integer>> level, List<Point> empty, Random rand) {
 		Point spawn = empty.get(rand.nextInt(empty.size()));
 		level.get(spawn.y).set(spawn.x, LodeRunnerState.LODE_RUNNER_TILE_SPAWN);
+		assert level.stream().anyMatch(list -> list.contains(new Integer(7))) : "No spawn!\n" + level;
 	}
 	
 	
