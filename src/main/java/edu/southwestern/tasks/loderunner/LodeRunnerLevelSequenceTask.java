@@ -146,36 +146,30 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 		}
 		else {
 			ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array
-			double simpleAStarDistance;
-			double meanSquaredErrorAStar;
-			double numEnemies;
-			double meanSquaredErrorEnemies;
-			double treasureCount;
-			double meanSquaredErrorTreasures;
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingSolutionLength")) {
 				int offset = 0; //simpleAStarDistance is index 0 of the each level in otherScores
 				double[] simpleAStarDistancePerLevel =  calculateIncreasingFitnesses(otherScores, offset); //collects the values for fitness from the other scores
-				double[] meanSquaredErrorsAStar = calculateMeanSquaredErrors(simpleAStarDistancePerLevel, scoreSequence);
-				simpleAStarDistance = StatisticsUtilities.average(simpleAStarDistancePerLevel);
-				meanSquaredErrorAStar = StatisticsUtilities.average(meanSquaredErrorsAStar);
+				double[] squaredErrorsAStar = calculateSquaredErrors(simpleAStarDistancePerLevel, scoreSequence);
+				double simpleAStarDistance = StatisticsUtilities.average(simpleAStarDistancePerLevel);
+				double meanSquaredErrorAStar = StatisticsUtilities.average(squaredErrorsAStar);
 				fitnesses.add(simpleAStarDistance);
 				fitnesses.add(meanSquaredErrorAStar);
 			}
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingEnemyCount")) {
 				int offset = 7; //numOfEnemies is index 7 of the each level in otherScores
 				double[] numEnemiesPerLevel = calculateIncreasingFitnesses(otherScores, offset);//collects the values for fitness from the other scores
-				double[] meanSquaredErrorsEnemies = calculateMeanSquaredErrors(numEnemiesPerLevel, scoreSequence);
-				numEnemies =  StatisticsUtilities.average(numEnemiesPerLevel);
-				meanSquaredErrorEnemies =  StatisticsUtilities.average(meanSquaredErrorsEnemies);
+				double[] squaredErrorsEnemies = calculateSquaredErrors(numEnemiesPerLevel, scoreSequence);
+				double numEnemies =  StatisticsUtilities.average(numEnemiesPerLevel);
+				double meanSquaredErrorEnemies =  StatisticsUtilities.average(squaredErrorsEnemies);
 				fitnesses.add(numEnemies);
 				fitnesses.add(meanSquaredErrorEnemies);
 			}
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingTreasureCount")) {
 				int offset = 6; //treasureCount is index 6 of the each level in otherScores
 				double[] treasureCountPerLevel = calculateIncreasingFitnesses(otherScores, offset);//collects the values for fitness from the other scores
-				double[] meanSquaredErrorsTreasures = calculateMeanSquaredErrors(treasureCountPerLevel, scoreSequence);
-				treasureCount = StatisticsUtilities.average(treasureCountPerLevel);
-				meanSquaredErrorTreasures = StatisticsUtilities.average(meanSquaredErrorsTreasures);
+				double[] squaredErrorsTreasures = calculateSquaredErrors(treasureCountPerLevel, scoreSequence);
+				double treasureCount = StatisticsUtilities.average(treasureCountPerLevel);
+				double meanSquaredErrorTreasures = StatisticsUtilities.average(squaredErrorsTreasures);
 				fitnesses.add(treasureCount);
 				fitnesses.add(meanSquaredErrorTreasures);
 			}
@@ -191,9 +185,9 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	 * @param scoreSequence
 	 * @return
 	 */
-	public double[] calculateMeanSquaredErrors(double[] fitnesses,
+	public double[] calculateSquaredErrors(double[] fitnesses,
 			Pair<double[], double[]>[] scoreSequence) {
-		double[] meanSquaredErrors = new double[fitnesses.length];
+		double[] finalSquaredErrors = new double[fitnesses.length];
 		//fills the expected array and the fitness array
 		double[] squaredErrors = new double[fitnesses.length]; 
 		double[] expected = new double[fitnesses.length];
@@ -203,9 +197,9 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 				expected[i] = slope*i + scoreSequence[j].t1[i]; //mx + b, where the and b is the min y value
 			}
 			squaredErrors = StatisticsUtilities.calculateSquaredErrors(scoreSequence[j].t1, expected);
-			meanSquaredErrors[j] = StatisticsUtilities.average(squaredErrors);
+			finalSquaredErrors[j] = StatisticsUtilities.average(squaredErrors);
 		}
-		return meanSquaredErrors;
+		return finalSquaredErrors;
 	}
 
 	/**
