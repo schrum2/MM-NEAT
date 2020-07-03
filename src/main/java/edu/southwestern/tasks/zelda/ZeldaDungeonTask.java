@@ -320,7 +320,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						double dungeonNovelty = DungeonNovelty.averageDungeonNovelty(dungeon);
 						System.out.println("Dungeon Novelty: "+dungeonNovelty);
 						System.out.println("Novelty Post-Calc: "+novelty);
-						System.out.println("Bin Index: "+binIndex);
+//						System.out.println("Bin Index: "+binIndex);
 						
 						
 						System.out.println("["+novelty+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
