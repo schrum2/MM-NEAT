@@ -104,9 +104,8 @@ X_train[:, 2, :, :] = 1.0  #Fill with empty space
 #Pad part of level so its a square
 X_train[:X.shape[0], :, :X.shape[1], :X.shape[2]] = X_onehot
 
-print(type(X_train))
-
-
+# Schrum: I added this since Datasets and Dataloaders should be faster,
+#         and make working with conditional GAN easier.
 class LevelDataSet(torch.utils.data.Dataset):
     def __init__(self, levels, types):
         self.levels = levels
@@ -238,7 +237,7 @@ for epoch in range(opt.niter):
             
             i += 1
 
-            real_cpu = torch.FloatTensor(data)
+            real_cpu = torch.FloatTensor(data.float())
 
             if (False):
                 #im = data.cpu().numpy()
