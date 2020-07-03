@@ -361,8 +361,9 @@ public class Parameters {
 		integerOptions.add("cppn2ganWidth", null, "the CPPN to GAN width chunks");
 		integerOptions.add("cppn2ganHeight", null, "the CPPN to GAN height chunks");
 		integerOptions.add("megaManAStarJumpHeight", 4 , "Height of the A* agent's jump");
-		integerOptions.add("lodeRunnerNumOfLevelsInSequence", 5, "Specifies the numbr of levels in the sequence of levels being eveolved for lode runner");
-
+		integerOptions.add("lodeRunnerNumOfLevelsInSequence", 5, "Specifies the number of levels in the sequence of levels being eveolved for lode runner");
+		integerOptions.add("interactiveLodeRunnerPathType", 0, "Specifies the type of path to visualize in the level breeder");
+		integerOptions.add("lodeRunnerTSPBudget", 200, "Specifies the numbr of levels in the sequence of levels being eveolved for lode runner");
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
@@ -783,15 +784,18 @@ public class Parameters {
 		booleanOptions.add("megaManUsesUniqueEnemies", false, "whether or not we're using unique enemies");
 		booleanOptions.add("megaManAllowsBlockBreaker", true, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManDistinctScreenFitness", false, "whether or not we're allowing connectivity");
-		booleanOptions.add("interactiveLodeRunnerAStarPaths", false, "Shows the solution path for the levels in the level breeder when true");
+		booleanOptions.add("showInteractiveLodeRunnerSolutionPaths", false, "Shows the solution path for the levels in the level breeder when true");
 		booleanOptions.add("lodeRunnerAllowsSimpleAStarPath", false, "Adds the AStarPath as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsConnectivity", false, "Adds connectivity as a fitness function when true");
+		booleanOptions.add("lodeRunnerAllowsTSPSolutionPath", false, "Adds the TSP solution path as a fitness function when true");
+		booleanOptions.add("lodeRunnerMaximizeEnemies", false, "Adds the enemy maximization as a fitness function when true");
 		booleanOptions.add("lodeRunnerLevelSequenceAverages", false, "Averages scores from all levels of the sequence");
 		booleanOptions.add("lodeRunnerLevelSequenceIndividual", false, "Takes each score from the sequence individually");
-		booleanOptions.add("interactiveLodeRunnerIceCreamYouVisualization", false, "Shows the ice cream you visualization for the levels in the level breeder when true");
+		booleanOptions.add("showInteractiveLodeRunnerIceCreamYouVisualization", false, "Shows the ice cream you visualization for the levels in the level breeder when true");
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingSolutionLength", false, "Adds linear increasing solution length as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingEnemyCount", false, "Adds linear increasing enemy count as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingTreasureCount", false, "Adds linear increasing treasure count as a fitness function when true");
+		booleanOptions.add("allowWeirdLodeRunnerActions", false, "Allows the A* model to use weird side ways digging to be able to beat more levels");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");

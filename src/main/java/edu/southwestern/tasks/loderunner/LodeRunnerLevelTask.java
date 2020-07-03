@@ -71,6 +71,14 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				MMNEAT.registerFitnessFunction("numOfPositionsVisited"); //connectivity
 				numFitnessFunctions++;
 			}
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsTSPSolutionPath")) {
+				MMNEAT.registerFitnessFunction("TSPSolutionPathLength");
+				numFitnessFunctions++;
+			}
+			if(Parameters.parameters.booleanParameter("lodeRunnerMaximizeEnemies")) {
+				MMNEAT.registerFitnessFunction("NumEnemies");
+				numFitnessFunctions++;
+			}
 
 			//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
 			MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
@@ -154,6 +162,15 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsConnectivity")) {
 			fitnesses.add(connectivityOfLevel);
 		}
+		
+		//Calculate length of tsp path
+		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = null;
+		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsTSPSolutionPath")) {
+			tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
+			// Unsolvable levels received TSP fitness score of -1
+			double tspSolutionLength = tspInfo.t1 == null ? -1 : tspInfo.t1.size();
+			fitnesses.add(tspSolutionLength);
+		}
 
 		//calculates other scores that are not fitness functions 
 		double percentConnected = connectivityOfLevel/LodeRunnerLevelAnalysisUtil.TOTAL_TILES;		//calculates the percentage of the level that is connected
@@ -168,17 +185,22 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				if(level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_GOLD) {
 					numTreasure++;
 				}
-				//calcualtes the number of enemies
+				//calculates the number of enemies
 				if(level.get(i).get(j) == LodeRunnerState.LODE_RUNNER_TILE_ENEMY) {
 					numEnemies++;
 				}
 			}
 		}
+				
+		if(Parameters.parameters.booleanParameter("lodeRunnerMaximizeEnemies")) {
+			fitnesses.add(1.0*numEnemies);
+		}
+		
 		double[] otherScores = new double[] {simpleAStarDistance, connectivityOfLevel, percentLadders, percentGround, percentRopes, percentConnected, numTreasure, numEnemies};
 
 		if(CommonConstants.watch) {
 			//prints values that are calculated above for debugging 
-			System.out.println("Simple A* Distance to Farthest Gold " + simpleAStarDistance);
+			System.out.println("Simple A* Distance " + simpleAStarDistance);
 			System.out.println("Number of Positions Visited " + connectivityOfLevel);
 			System.out.println("Percent of Ladders " + percentLadders);
 			System.out.println("Percent of Ground " + percentGround);
@@ -187,6 +209,11 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			System.out.println("Number of Treasures " + numTreasure);
 			System.out.println("Number of Enemies " + numEnemies);
 
+			// Prefer TSP solutions over A* if available
+			if(tspInfo != null) {
+				actionSequence = tspInfo.t1;
+			}
+			
 			try {
 				//displays the rendered solution path in a window 
 				BufferedImage visualPath = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
