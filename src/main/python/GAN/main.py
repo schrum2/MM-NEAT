@@ -118,16 +118,16 @@ class LevelDataSet(torch.utils.data.Dataset):
     def __getitem__(self, index):
         target = self.types[index]
         data_val = self.levels[index]
-        return data_val,target
+        return data_val, target
 
 # augment training set with class labels
 if opt.num_classes > 0:
     ds = LevelDataSet(X_train, Y)
-    train_loader = torch.utils.data.DataLoader(X_train, shuffle=True,batch_size=opt.batchSize)
+    train_loader = torch.utils.data.DataLoader(ds, shuffle=True,batch_size=opt.batchSize)
 else:
     # The class labels are completely ignored in the regular case ... all zero
     ds = LevelDataSet(X_train, np.zeros(len(X_train)) )
-    train_loader = torch.utils.data.DataLoader(X_train, shuffle=True,batch_size=opt.batchSize)
+    train_loader = torch.utils.data.DataLoader(ds, shuffle=True,batch_size=opt.batchSize)
 
 ngpu = int(opt.ngpu)
 nz = int(opt.nz)
@@ -193,8 +193,6 @@ if opt.cuda:
     input = input.cuda()
     one, mone = one.cuda(), mone.cuda()
     noise, fixed_noise = noise.cuda(), fixed_noise.cuda()
-    if opt.num_classes > 0:
-        onehot.cuda()
 
 # setup optimizer
 if opt.adam:
@@ -206,14 +204,14 @@ else:
     optimizerG = optim.RMSprop(netG.parameters(), lr = opt.lrG)
 
 gen_iterations = 0
-for epoch in range(opt.niter):
+for epoch in range(opt.niter):    
+    #X_train = X_train[torch.randperm( len(X_train) )]
+    #ds = ds[torch.randperm( len(ds) )]
     
-    #! data_iter = iter(dataloader)
-
-    X_train = X_train[torch.randperm( len(X_train) )]
-
     i = 0
-    while i < num_batches:#len(dataloader):
+    #while i < num_batches:#len(dataloader):
+    #for i in range(len(levels)):
+    for local_X, local_Y in train_loader:
         ############################
         # (1) Update D network
         ###########################
@@ -233,8 +231,11 @@ for epoch in range(opt.niter):
             for p in netD.parameters():
                 p.data.clamp_(opt.clamp_lower, opt.clamp_upper)
 
-            data = X_train[i*opt.batchSize:(i+1)*opt.batchSize]
-
+            #data = X_train[i*opt.batchSize:(i+1)*opt.batchSize]
+            #print(data.shape)
+            data = local_X
+            #print(data.shape)
+            
             i += 1
 
             real_cpu = torch.FloatTensor(data)
@@ -252,11 +253,18 @@ for epoch in range(opt.niter):
 
             if opt.cuda:
                 real_cpu = real_cpu.cuda()
+                local_Y = local_Y.cuda()
+                labels = Variable(local_Y)
 
             input.resize_as_(real_cpu).copy_(real_cpu)
             inputv = Variable(input)
 
-            errD_real = netD(inputv)
+            # Training with real data
+            if opt.num_classes > 0:
+                errD_real = netD(inputv, labels)
+            else:
+                errD_real = netD(inputv)
+            
             errD_real.backward(one)
 
             # train with fake
