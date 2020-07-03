@@ -46,8 +46,8 @@ public class MegaManCPPNtoGANUtil {
 		 numCorner = 0;
 		 numDistinctSegments = 0;
 		 distinct = new HashSet<>();
-		x = 0;
-		y = 0;
+		 x = 0;
+		 y = 0;
 //		for(double k :inputMultipliers) {
 //			System.out.println(k);
 //		}
@@ -164,7 +164,7 @@ public class MegaManCPPNtoGANUtil {
 		}
 		return oneLevel;
 	}
-	private static boolean addLevelSegment(int chunks, List<List<Integer>> oneLevel,
+	public static boolean addLevelSegment(int chunks, List<List<Integer>> oneLevel,
 			List<List<List<Integer>>> levelInListHorizontal, List<List<List<Integer>>> levelInListUp,
 			List<List<List<Integer>>> levelInListDown, List<List<List<Integer>>> levelInListUpperRight,
 			List<List<List<Integer>>> levelInListUpperLeft, List<List<List<Integer>>> levelInListLowerRight,
@@ -251,7 +251,7 @@ public class MegaManCPPNtoGANUtil {
 		}
 		return needBackup;
 	}
-	private static List<List<Integer>> placeInitialDirection(GANProcess ganProcessHorizontal,
+	public static List<List<Integer>> placeInitialDirection(GANProcess ganProcessHorizontal,
 			double[] startlatentVector, List<List<List<Integer>>> levelInListUp,
 			List<List<List<Integer>>> levelInListDown, int startdirection) {
 		List<List<Integer>> oneLevel;
