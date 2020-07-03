@@ -395,22 +395,16 @@ public class MegaManGANUtil {
 			}
 			if(!placeLine.isEmpty())
 			placingScreen.add(placeLine);
-//			System.out.println(placeLine);
 			
 		}
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		MegaManVGLCUtil.printLevel(placingScreen);
-//		System.out.println(placingScreen.size()+", "+placingScreen.get(0).size());
+
 		
 		for(int y = (int) previousMove.getY();y<previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
 			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
 
 				oneLevel.get(y).set(x, placingScreen.get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX())));
-//				System.out.print(placingScreen.get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX()))+"     ");
-//				System.out.print((int) (y - (int)previousMove.getY())+", "+(int) (x-(int)previousMove.getX())+"   ");
 			}
-//			System.out.println();
-//			MiscUtil.waitForReadStringAndEnterKeyPress();
+
 		}
 		
 		
@@ -432,6 +426,7 @@ public class MegaManGANUtil {
 			}
 		}
 	}
+
 	
 	
 	public static void placeSpawn(List<List<Integer>> level) {
@@ -530,5 +525,79 @@ public class MegaManGANUtil {
 		j.put("numCorner", numCorner);
 		j.put("numDistinctSegments", numDistinctSegments);
 		return j;
+	}
+	
+	
+	
+
+	public static void placeDownCPPN(List<List<List<Integer>>> levelInListDown, Point previousMove,
+			List<List<Integer>> oneLevel, int level) {
+			List<List<Integer>> nullScreen = new ArrayList<List<Integer>>();
+			for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
+				List<Integer> nullLines = new ArrayList<Integer>();
+				for(int j = 0;j<oneLevel.get(0).size();j++) {
+					nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+				}
+				nullScreen.add(nullLines);
+			}
+			oneLevel.addAll(oneLevel.size(), nullScreen);
+
+		for(int y = (int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y<previousMove.getY()+2*MEGA_MAN_LEVEL_HEIGHT;y++) {
+			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
+				oneLevel.get(y).set(x, levelInListDown.get(level).get((int) (y -MEGA_MAN_LEVEL_HEIGHT- previousMove.getY())).get((int) (x-previousMove.getX())));
+			}
+		}
+	}
+
+	public static void placeUpCPPN(List<List<List<Integer>>> levelInListUp, Point previousMove,
+			List<List<Integer>> oneLevel, int level) {
+
+		List<List<Integer>> nullScreen = new ArrayList<List<Integer>>();
+		for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
+			List<Integer> nullLines = new ArrayList<Integer>();
+			for(int j = 0;j<oneLevel.get(0).size();j++) {
+				nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+			}
+			nullScreen.add(nullLines);
+		}
+		oneLevel.addAll(0, nullScreen);
+		
+		//now at the previous point, add in a new version of levelInList.get(level)
+		List<List<Integer>> placingScreen = new ArrayList<List<Integer>>();
+		
+		for(int i = 0;i<levelInListUp.get(level).size();i++) {
+			List<Integer> placeLine = new ArrayList<>();
+
+			for(int j = 0;j<levelInListUp.get(level).get(0).size();j++) {
+				if(levelInListUp.get(level).get(i).get(j)!=MegaManVGLCUtil.ONE_ENEMY_NULL)
+				placeLine.add(levelInListUp.get(level).get(i).get(j));
+			}
+			if(!placeLine.isEmpty())
+			placingScreen.add(placeLine);
+			
+		}
+
+		
+		for(int y = (int) previousMove.getY();y<previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
+			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
+
+				oneLevel.get(y).set(x, placingScreen.get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX())));
+			}
+
+		}
+		
+		
+	}
+
+	public static void placeRightCPPN(List<List<List<Integer>>> levelInListHorizontal, Point previousMove,
+			List<List<Integer>> oneLevel, List<Integer> nullLine, int level) {
+		for(int i = 0;i<oneLevel.size();i++) { //add null to all spaces to the right TODO possibly change
+			oneLevel.get(i).addAll(nullLine);
+		}
+		for(int x = (int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x<(int) previousMove.getX()+2*MEGA_MAN_LEVEL_WIDTH;x++) {
+			for(int y = (int) previousMove.getY();y<(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
+				oneLevel.get(y).set(x, levelInListHorizontal.get(level).get((int) (y - previousMove.getY())).get((int) (x-MEGA_MAN_LEVEL_WIDTH-previousMove.getX())));
+			}
+		}
 	}
 }
