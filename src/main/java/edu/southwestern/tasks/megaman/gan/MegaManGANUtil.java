@@ -17,6 +17,8 @@ import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 import edu.southwestern.tasks.megaman.MegaManRenderUtil;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
+import edu.southwestern.tasks.megaman.MegaManCPPNtoGANUtil.Direction;
+import edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.megaman.MegaManCPPNtoGANUtil;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.util.random.RandomNumbers;
@@ -635,11 +637,139 @@ public class MegaManGANUtil {
 	public static int y = 0;
 	public static Point previousMove;
 	
-	public static MegaManCPPNtoGANUtil.Direction d;
+//	public static Direction d;
 	
 	
 	
+	public static List<List<Integer>> wholeVectorToMegaManLevel(GANProcess ganProcessHorizontal,
+			GANProcess ganProcessDown, GANProcess ganProcessUp, GANProcess lowerLeftGAN, 
+			GANProcess lowerRightGAN,  GANProcess upperLeftGAN, GANProcess upperRightGAN, int chunks, double[] wholeVector){
+		HashSet<Point> placedPoints = new HashSet<>();
+		Direction previousDirection = null;
+		List<List<Integer>> level = new ArrayList<>();
+		for(int i = 0;i<chunks;i++) {
+			GANProcess gan = GANToUse(level,placedPoints,wholeVector, i, previousDirection, ganProcessHorizontal,ganProcessUp,ganProcessDown,lowerLeftGAN,lowerRightGAN,upperLeftGAN,upperRightGAN);
+		}
+		
+		
+		
+		return null;
+	}
+	public final static int NUM_AUX = 3;
+	public final static int NUM_LATENT = 5;
+	public final static int TOTAL_VARIABLES = 8;
+/**
+ * Takes in all GANs and the entire vector representing the auxillary values and then the latent inputs
+ * 
+ * @param wholeVector
+ * @param segmentNum
+ * @param previousDirection
+ * @param ganProcessHorizontal
+ * @param ganProcessUp
+ * @param ganProcessDown
+ * @param lowerLeftGAN
+ * @param lowerRightGAN
+ * @param upperLeftGAN
+ * @param upperRightGAN
+ * @return
+ */
+private static GANProcess GANToUse(List<List<Integer>> level, HashSet<Point> placedPoints, double[] wholeVector, int segmentNum, Direction previousDirection,
+		GANProcess ganProcessHorizontal, GANProcess ganProcessUp, GANProcess ganProcessDown, GANProcess lowerLeftGAN,
+		GANProcess lowerRightGAN, GANProcess upperLeftGAN, GANProcess upperRightGAN) {
+	// TODO Auto-generated method stub
+	double[] oneSegmentData = latentVectorAndMiscDataForPosition(segmentNum, TOTAL_VARIABLES, wholeVector);
+	Direction current = useLongVectorToFindDirection(oneSegmentData, segmentNum, previousDirection);
+	if(previousDirection==null) {
+		placeFirstSegment(oneSegmentData, level, current, segmentNum, ganProcessHorizontal,ganProcessUp,ganProcessDown,lowerLeftGAN,lowerRightGAN,upperLeftGAN,upperRightGAN);
+		placedPoints.add(new Point(0,0));
+	}
+	else if(previousDirection.equals(current)) /*placecurrentdirection*/;
+	return null;
+}
+/**
+ * places the first segment in the data set.
+ * @param oneSegmentData
+ * @param oneLevel
+ * @param current
+ * @param segmentNum
+ * @param ganProcessHorizontal
+ * @param ganProcessUp
+ * @param ganProcessDown
+ * @param lowerLeftGAN
+ * @param lowerRightGAN
+ * @param upperLeftGAN
+ * @param upperRightGAN
+ */
+private static void placeFirstSegment(double[] oneSegmentData, List<List<Integer>> oneLevel,Direction current,int segmentNum, GANProcess ganProcessHorizontal, GANProcess ganProcessUp,
+		GANProcess ganProcessDown, GANProcess lowerLeftGAN, GANProcess lowerRightGAN, GANProcess upperLeftGAN,
+		GANProcess upperRightGAN) {
+	double[] startlatentVector = new double[oneSegmentData.length-NUM_AUX];
+	for(int i = NUM_AUX;i<TOTAL_VARIABLES;i++) {
+		startlatentVector[i-NUM_AUX]=oneSegmentData[i];
+	}
+	if(current.equals(Direction.UP)) {
+		numUp++;
+		oneLevel = getLevelListRepresentationFromGAN(ganProcessUp, startlatentVector).get(0);
+	}
+	else if (current.equals(Direction.DOWN)) {
+		numDown++;
+		oneLevel = getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector).get(0);
+	}
+	else {
+		numHorizontal++;
+		
+		oneLevel = getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector).get(0);
+	}
 
+	
+}
+
+/**
+ * Uses the long vector to determine which direction to place
+ * If placing the first segment, simply use the highest preference
+ * Otherwise, determine which appropriate backup to use.
+ * @param wholeVector
+ * @param segmentNum
+ * @param previous
+ * @return
+ */
+private static Direction useLongVectorToFindDirection(double[] oneSegmentData, int segmentNum, Direction previous) {
+	// TODO Auto-generated method stub
+	if(previous==null) return findFirstDirection(oneSegmentData, segmentNum);
+	
+	return null;
+}
+/**
+ * Finds the initial direction to go in.
+ * @param wholeVector
+ * @param segmentNum
+ * @return
+ */
+private static Direction findFirstDirection(double[] oneSegmentData, int segmentNum) {
+	double[] startlatentVector = new double[oneSegmentData.length-NUM_AUX];
+	for(int i = NUM_AUX;i<TOTAL_VARIABLES;i++) {
+		startlatentVector[i-NUM_AUX]=oneSegmentData[i];
+	}
+	double[] startoutput = new double[3];
+	for(int i =0;i<NUM_AUX;i++) {
+		startoutput[i]=oneSegmentData[i];
+	}
+	
+	int startdirection = StatisticsUtilities.argmax(startoutput);
+	Direction startDirection = null;
+	if(startdirection == MegaManCPPNtoGANLevelBreederTask.UP_PREFERENCE) {
+		startDirection = Direction.UP;
+	}
+	else if (startdirection == MegaManCPPNtoGANLevelBreederTask.DOWN_PREFERENCE) {
+		startDirection = Direction.DOWN;
+
+	}
+	else if(startdirection == MegaManCPPNtoGANLevelBreederTask.HORIZONTAL_PREFERENCE) {
+		startDirection = Direction.RIGHT;
+
+	}
+	return startDirection;
+}
 	
 //	public static List<List<Integer>> wholeVectorToMegaManLevel(GANProcess ganProcessHorizontal,
 //			GANProcess ganProcessDown, GANProcess ganProcessUp, GANProcess lowerLeftGAN, 
