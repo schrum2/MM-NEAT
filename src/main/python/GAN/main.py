@@ -123,6 +123,9 @@ class LevelDataSet(torch.utils.data.Dataset):
 if opt.num_classes > 0:
     ds = LevelDataSet(X_train, Y)
     train_loader = torch.utils.data.DataLoader(ds, shuffle=True,batch_size=opt.batchSize)
+    # label preprocess
+    onehot = torch.zeros(num_classes, num_classes)
+    onehot = onehot.scatter_(1, torch.LongTensor([x for x in range(num_classes)]).view(num_classes,1), 1).view(num_classes, num_classes, 1, 1)
 else:
     # The class labels are completely ignored in the regular case ... all zero
     ds = LevelDataSet(X_train, np.zeros(len(X_train)) )
@@ -192,6 +195,8 @@ if opt.cuda:
     input = input.cuda()
     one, mone = one.cuda(), mone.cuda()
     noise, fixed_noise = noise.cuda(), fixed_noise.cuda()
+    if opt.num_classes > 0: # For conditional GAN 
+        onehot = onehot.cuda()
 
 # setup optimizer
 if opt.adam:
@@ -297,8 +302,17 @@ for epoch in range(opt.niter):
         # make sure we feed a full batch of noise
         noise.resize_(opt.batchSize, nz, 1, 1).normal_(0, 1)
         noisev = Variable(noise)
-        fake = netG(noisev)
-        errG = netD(fake)
+
+        if opt.num_classes > 0: # Conditional GAN
+            randLabelNums = (torch.rand(opt.batchSize, 1) * opt.num_classes).type(torch.LongTensor).squeeze()
+            randLabel = Variable(onehot[randLabelNums])
+
+            fake = netG(noisev, randLabel)
+            errG = netD(fake, randLabel)
+        else:
+            fake = netG(noisev)
+            errG = netD(fake)
+
         errG.backward(one)
         optimizerG.step()
         gen_iterations += 1
@@ -308,7 +322,13 @@ for epoch in range(opt.niter):
             errD.data[0], errG.data[0], errD_real.data[0], errD_fake.data[0]))
         if gen_iterations % 50 == 0:   #was 500
 
-            fake = netG(Variable(fixed_noise, volatile=True))
+            if opt.num_classes > 0: # Conditional GAN
+                randLabelNums = (torch.rand(opt.batchSize, 1) * opt.num_classes).type(torch.LongTensor).squeeze()
+                randLabel = onehot[randLabelNums]
+                # TODO: The labels here should be fixed to demonstrate coverage of different class types    
+                fake = netG(Variable(fixed_noise, randLabel, volatile=True))
+            else:
+                fake = netG(Variable(fixed_noise, volatile=True))
             
             im = fake.data.cpu().numpy()
             #print('SHAPE fake',type(im), im.shape)
