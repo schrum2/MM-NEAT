@@ -46,9 +46,9 @@ parser.add_argument('--num_classes', type=int, default=0,  help='Number of condi
 parser.add_argument('--n_extra_layers', type=int, default=0, help='Number of extra layers on gen and disc')
 parser.add_argument('--experiment', default=None, help='Where to store samples and models')
 parser.add_argument('--adam', action='store_true', help='Whether to use adam (default is rmsprop)')
-parser.add_argument('--json', default=None, help='Json file')
+parser.add_argument('--json', default=None, help='Json file with example levels')
 
-parser.add_argument('--jsonID', default=None, help='The ID json associated with the actual training data')
+parser.add_argument('--jsonID', default=None, help='json file with class labels for the conditional GAN. Each entry must correspond to entry (same order) from training set.')
 
 parser.add_argument('--problem', type=int, default=0, help='Level examples')
 parser.add_argument('--tiles', type=int, default=13, help='Number of tile types')
@@ -79,14 +79,14 @@ if opt.json is None:
 else:
     examplesJson = opt.json
 
-if opt.jsonID is not None:
-    examplesJsonID = opt.jsonID
-    #f = open(examplesJsonID, 'r')
-    #file_contents = f.read()
-    #print(file_contents)
-    #print('above was the file contents')
-    #f.close()
+# Training data
 X = np.array ( json.load(open(examplesJson)) )
+
+# Class labels for conditional GAN
+if opt.jsonID is not None:
+    classJson = opt.jsonID
+    Y = np.array ( json.load(open(classJson)) )
+
 z_dims = opt.tiles
 
 num_batches = X.shape[0] / opt.batchSize
@@ -103,6 +103,31 @@ X_train[:, 2, :, :] = 1.0  #Fill with empty space
 
 #Pad part of level so its a square
 X_train[:X.shape[0], :, :X.shape[1], :X.shape[2]] = X_onehot
+
+print(type(X_train))
+
+
+class LevelDataSet(torch.utils.data.Dataset):
+    def __init__(self, levels, types):
+        self.levels = levels
+        self.types = types
+
+    def __len__(self):
+        return len(self.levels)
+
+    def __getitem__(self, index):
+        target = self.types[index]
+        data_val = self.levels[index]
+        return data_val,target
+
+# augment training set with class labels
+if opt.num_classes > 0:
+    ds = LevelDataSet(X_train, Y)
+    train_loader = torch.utils.data.DataLoader(X_train, shuffle=True,batch_size=opt.batchSize)
+else:
+    # The class labels are completely ignored in the regular case ... all zero
+    ds = LevelDataSet(X_train, np.zeros(len(X_train)) )
+    train_loader = torch.utils.data.DataLoader(X_train, shuffle=True,batch_size=opt.batchSize)
 
 ngpu = int(opt.ngpu)
 nz = int(opt.nz)
@@ -168,6 +193,8 @@ if opt.cuda:
     input = input.cuda()
     one, mone = one.cuda(), mone.cuda()
     noise, fixed_noise = noise.cuda(), fixed_noise.cuda()
+    if opt.num_classes > 0:
+        onehot.cuda()
 
 # setup optimizer
 if opt.adam:
