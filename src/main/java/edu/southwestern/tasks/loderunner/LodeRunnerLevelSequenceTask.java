@@ -141,7 +141,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 			double[] allFitnesses = new double[scoreSequence[0].t1.length*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")]; 
 			//adds all the scores from the level sequence to the new arrays 
 			for(int i = 0; i < scoreSequence.length; i++) {
-				for(int j = 0; j < scoreSequence[0].t1.length; j++) {
+				for(int j = 0; j < scoreSequence[i].t1.length; j++) {
 					allFitnesses[j] = scoreSequence[i].t1[j];
 				}
 			}
@@ -150,13 +150,13 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 		else {
 			ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingSolutionLength")) {
-				addLineFitAndRangeToFitness(otherScores, fitnesses, ASTAR_OFFSET);
+				addLineFitAndRangeToFitness(otherScores, fitnesses, ASTAR_OFFSET); //adds the meanSquaredError and range of vlaues as fitness functions
 			}
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingEnemyCount")) {
-				addLineFitAndRangeToFitness(otherScores, fitnesses, NUM_ENEMIES_OFFSET);
+				addLineFitAndRangeToFitness(otherScores, fitnesses, NUM_ENEMIES_OFFSET);//adds the meanSquaredError and range of vlaues as fitness functions
 			}
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingTreasureCount")) {
-				addLineFitAndRangeToFitness(otherScores, fitnesses, NUM_TREASURES_OFFSET);
+				addLineFitAndRangeToFitness(otherScores, fitnesses, NUM_TREASURES_OFFSET);//adds the meanSquaredError and range of vlaues as fitness functions
 			}
 			finalScores = new Pair<double[], double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
 		}
@@ -170,10 +170,10 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	 * @param offset Where to find the fitness scores in other scores
 	 */
 	private void addLineFitAndRangeToFitness(double[] otherScores, ArrayList<Double> fitnesses, int offset) {
-		double[] simpleAStarDistancePerLevel =  calculateIncreasingFitnesses(otherScores, offset); //collects the values for fitness from the other scores
-		double meanSquaredErrorAStar = calculateMeanSquaredLineError(simpleAStarDistancePerLevel);
-		fitnesses.add(meanSquaredErrorAStar); //mean squared error from fit 
-		fitnesses.add(simpleAStarDistancePerLevel[simpleAStarDistancePerLevel.length-1] - simpleAStarDistancePerLevel[0]); //adds the range of values
+		double[] fitnessesFromOtherScores =  calculateIncreasingFitnesses(otherScores, offset); //collects the values for fitness from the other scores
+		double meanSquaredErrorAStar = calculateMeanSquaredLineError(fitnessesFromOtherScores); //calculates the meanSquared error for the fitnesses 
+		fitnesses.add(meanSquaredErrorAStar); //mean squared error from fit of line
+		fitnesses.add(fitnessesFromOtherScores[fitnessesFromOtherScores.length-1] - fitnessesFromOtherScores[0]); //adds the range of values (max-min)
 	}
 
 	/** 
@@ -184,15 +184,14 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	 */
 	public double calculateMeanSquaredLineError(double[] fitnesses) {
 		//fills the expected array and the fitness array
-		double[] squaredErrors = new double[fitnesses.length]; 
-		double[] expected = new double[fitnesses.length];
+		double[] squaredErrors = new double[fitnesses.length];  //will hold the squared errors between the expected values and the actual values
+		double[] expected = new double[fitnesses.length]; //will hold the expected values, line of best fit, which is built in the loop below 
 		double slope = (fitnesses[fitnesses.length-1]-fitnesses[0])/fitnesses.length; //calculates slope found by dividing the difference of the y values by the difference of the x values
 		for(int j = 0; j < fitnesses.length; j++) {
-			expected[j] = slope*j + fitnesses[0]; //mx + b, where the and b is the min y value
-			squaredErrors = StatisticsUtilities.calculateSquaredErrors(fitnesses, expected);
+			expected[j] = slope*j + fitnesses[0]; //mx + b, where the and b is the min y value, m is the slope from the from the first point to the last point, and x is the level
 		}
-		squaredErrors = StatisticsUtilities.calculateSquaredErrors(fitnesses, expected);
-		return StatisticsUtilities.average(squaredErrors);
+		squaredErrors = StatisticsUtilities.calculateSquaredErrors(fitnesses, expected);// squaredErrors between the actual fitness and the expected line
+		return StatisticsUtilities.average(squaredErrors); //returns the meanSquaredError
 	}
 
 	/**
@@ -204,11 +203,11 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	public double[] calculateIncreasingFitnesses(double[] otherScores, int offset) {
 		double[] fitnesses = new double[otherScores.length/Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")];
 		for(int j = 0; j < fitnesses.length; j++) {
-			for(int i = offset; i < otherScores.length; i+=8) {
-				fitnesses[j] = otherScores[i];
+			for(int i = offset; i <= otherScores.length; i+=numOtherScores) {
+				fitnesses[j] = otherScores[i];//adds all the fitnesses of that type to the fitnesses array to be returned
 			}
 		}
-		return fitnesses;
+		return fitnesses; //returns an array that holds all of the specified fitness scores
 	}
 
 	/**
