@@ -86,6 +86,7 @@ X = np.array ( json.load(open(examplesJson)) )
 if opt.jsonID is not None:
     classJson = opt.jsonID
     Y = np.array ( json.load(open(classJson)) )
+    Y = torch.FloatTensor(Y).view(len(Y),opt.num_classes,1,1)
 
 z_dims = opt.tiles
 
@@ -124,8 +125,8 @@ if opt.num_classes > 0:
     ds = LevelDataSet(X_train, Y)
     train_loader = torch.utils.data.DataLoader(ds, shuffle=True,batch_size=opt.batchSize)
     # label preprocess
-    onehot = torch.zeros(num_classes, num_classes)
-    onehot = onehot.scatter_(1, torch.LongTensor([x for x in range(num_classes)]).view(num_classes,1), 1).view(num_classes, num_classes, 1, 1)
+    onehot = torch.zeros(opt.num_classes, opt.num_classes)
+    onehot = onehot.scatter_(1, torch.LongTensor([x for x in range(opt.num_classes)]).view(opt.num_classes,1), 1).view(opt.num_classes, opt.num_classes, 1, 1)
 else:
     # The class labels are completely ignored in the regular case ... all zero
     ds = LevelDataSet(X_train, np.zeros(len(X_train)) )
@@ -243,6 +244,7 @@ for epoch in range(opt.niter):
             i += 1
 
             real_cpu = torch.FloatTensor(data.float())
+            labels = Variable(local_Y)
 
             if (False):
                 #im = data.cpu().numpy()
@@ -258,7 +260,7 @@ for epoch in range(opt.niter):
             if opt.cuda:
                 real_cpu = real_cpu.cuda()
                 local_Y = local_Y.cuda()
-                labels = Variable(local_Y)
+                labels = labels.cuda()
 
             input.resize_as_(real_cpu).copy_(real_cpu)
             inputv = Variable(input)
