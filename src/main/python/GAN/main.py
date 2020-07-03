@@ -328,7 +328,7 @@ for epoch in range(opt.niter):
                 randLabelNums = (torch.rand(opt.batchSize, 1) * opt.num_classes).type(torch.LongTensor).squeeze()
                 randLabel = onehot[randLabelNums]
                 # TODO: The labels here should be fixed to demonstrate coverage of different class types    
-                fake = netG(Variable(fixed_noise, randLabel, volatile=True))
+                fake = netG(Variable(fixed_noise, volatile=True), Variable(randLabel, volatile=True))
             else:
                 fake = netG(Variable(fixed_noise, volatile=True))
             
