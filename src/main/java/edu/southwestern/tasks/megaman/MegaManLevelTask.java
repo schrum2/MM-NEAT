@@ -145,7 +145,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		
 		
 		
-		if(CommonConstants.watch) {
+		if(CommonConstants.watch&&actionSequence!=null) {
 			//prints values that are calculated above for debugging 
 			System.out.println("Simple A* Distance Orb " + simpleAStarDistance);
 			System.out.println("Percent of Positions Visited " + precentConnected);
@@ -304,10 +304,9 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				int maxNumSegments = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 //				System.out.println("it is mapE binning");
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
-
-
-				
-				int indexConnected = (int) (precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS);
+				assert precentConnected <= 1;
+				// 100% connectivity is possible, which leads to an index of 10 (out of bounds) if not adjusted using Math.min
+				int indexConnected = (int) Math.min(precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS,9);
 				int numVertical = (int) (numUpSegments+numDownSegments);
 //				int numDistinctSegments;
 				binIndex =(((int) numDistinctSegments)*(maxNumSegments+1) + numVertical)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)+indexConnected;
@@ -317,10 +316,8 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
 //				binIndex = (dim1*BINS_PER_DIMENSION + dim2)*BINS_PER_DIMENSION + dim3;
 				
-				archiveArray[binIndex] = binScore; // Percent rooms traversed
-
 				System.out.println("["+numDistinctSegments+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
-
+				archiveArray[binIndex] = binScore; // Percent rooms traversed
 				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 			}
 			
