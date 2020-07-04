@@ -171,9 +171,11 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				int screenx;
 				int screeny;
 				if(level.get(0).size()>level.size()) {
-					screenx = 1800;
+					// TODO: Use public static final constants (in ALL_CAPS) instead of these magic numbers
+					screenx = 1800; 
 					screeny = 950*level.size()/level.get(0).size();
 				}else {
+					// TODO: Use public static final constants (in ALL_CAPS) instead of these magic numbers
 					screeny = 950;
 					screenx = 1800*level.get(0).size()/level.size();
 				}
