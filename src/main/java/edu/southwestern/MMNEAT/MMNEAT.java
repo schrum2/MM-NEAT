@@ -732,27 +732,21 @@ public class MMNEAT {
 					setNNInputParameters(MarioLevelBreederTask.INPUTS.length, MarioLevelBreederTask.OUTPUTS.length);
 				}
 				System.out.println("Set up Mario Level Task");
-			} else if (task instanceof ZeldaDungeonTask) {
+			} else if (task instanceof ZeldaDungeonTask) { // Full dungeons using the Rogue-like engine
 				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
 				if(task instanceof ZeldaCPPNtoGANDungeonTask || task instanceof ZeldaCPPNOrDirectToGANDungeonTask) {
 					// Evolving CPPNs that create latent vectors that are sent to a GAN
 					setNNInputParameters(ZeldaCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
 				}
-			} else if (task instanceof ZeldaLevelTask){ // What is this? Feb 26 2020
+			} else if (task instanceof ZeldaLevelTask){ // For evolving Zelda levels in GVG-AI ... not well developed
 				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
 				System.out.println("Set up Zelda Level Task");
-			}else if (task instanceof MegaManLevelTask){
+			} else if (task instanceof MegaManLevelTask){
 				GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
-				if(task instanceof MegaManCPPNtoGANLevelTask) {
-					setNNInputParameters(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, MegaManCPPNtoGANLevelBreederTask.staticNumCPPNOutputs());
-				}else {
-					setNNInputParameters(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, MegaManCPPNtoGANLevelBreederTask.staticNumCPPNOutputs());
-				}
-				
+				// Ok to set the CPPN input parameters even if they are not used
+				setNNInputParameters(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, MegaManCPPNtoGANLevelBreederTask.staticNumCPPNOutputs());
 				System.out.println("Set up Mega Man Task");
-			} 
-			
-			else if(task instanceof LodeRunnerLevelTask) {
+			} else if(task instanceof LodeRunnerLevelTask) {
 				GANProcess.type = GANProcess.GAN_TYPE.LODE_RUNNER;
 				System.out.println("Set up Lode Runner Task");
 			} else if(task instanceof HyperNEATDummyTask) {
