@@ -70,8 +70,9 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 		GANProcess.terminateGANProcess();
 		//GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
 		PythonUtil.setPythonProgram();
-
-		// TODO Auto-generated constructor stub
+		// TODO: Add support for OneGAN here too.
+		// Additionally! I think the code would be easier to maintain if you can make the SevenGAN initailization process be part of
+		// some other class and/or util method. Repeating this initialization process in both this class and MegaManCPPNtoGANLevelTask is bad design.
 		ganProcessHorizontal = MegaManGANUtil.initializeGAN("MegaManGANHorizontalModel");
 		ganProcessDown= MegaManGANUtil.initializeGAN("MegaManGANDownModel");
 		ganProcessUp = MegaManGANUtil.initializeGAN("MegaManGANUpModel");
