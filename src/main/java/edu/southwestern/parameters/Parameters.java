@@ -793,6 +793,7 @@ public class Parameters {
 		booleanOptions.add("lodeRunnerLevelSequenceIndividual", false, "Takes each score from the sequence individually");
 		booleanOptions.add("showInteractiveLodeRunnerIceCreamYouVisualization", false, "Shows the ice cream you visualization for the levels in the level breeder when true");
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingSolutionLength", false, "Adds linear increasing solution length as a fitness function when true");
+		booleanOptions.add("lodeRunnerAllowsLinearIncreasingTSPLength", false, "Adds linear increasing TSP solution length as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingEnemyCount", false, "Adds linear increasing enemy count as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingTreasureCount", false, "Adds linear increasing treasure count as a fitness function when true");
 		booleanOptions.add("allowWeirdLodeRunnerActions", false, "Allows the A* model to use weird side ways digging to be able to beat more levels");

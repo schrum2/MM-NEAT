@@ -7,8 +7,6 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.MiscUtil;
-import edu.southwestern.util.random.RandomNumbers;
 
 public class LodeRunnerGANLevelSequenceTask extends LodeRunnerLevelSequenceTask<List<Double>> {
 
@@ -54,12 +52,26 @@ public class LodeRunnerGANLevelSequenceTask extends LodeRunnerLevelSequenceTask<
 	 * @return The random seed
 	 */
 	@Override
-	public double differentRandomSeedForEveryLevel(int levelInSequence, int lengthOfSequence) {
-		//creates random array that is the size of the number of levels in the sequence times the size of the latent vector
-		double[] levelSeeds = RandomNumbers.randomArray(lengthOfSequence*10); //10 is the latent vector size 
-		//returns the first of each set, for the first level it would return 0, then 10, then 20...etc
-		return levelSeeds[levelInSequence*10];
+	public double differentRandomSeedForEveryLevel(int levelInSequence, List<Double> phenotype) {
+		// The first latent variable of each level is treated as a random seed for determining spawn point
+		return phenotype.get(levelInSequence*Parameters.parameters.integerParameter("GANInputSize"));
 	}
 
+	/**
+	 * Gets a level from the genotype
+	 * @return A level 
+	 */
+	@Override
+	public List<List<Integer>> getLodeRunnerLevelListRepresentationFromGenotype(Genotype<List<Double>> individual) {
+		return getLodeRunnerLevelListRepresentationFromStaticGenotype(individual.getPhenotype());
+	}
 
+	/**
+	 * Calls the method written in LodeRunnerGANLevelTask to return a level from a phenotype
+	 * @param phenotype
+	 * @return
+	 */
+	public static List<List<Integer>> getLodeRunnerLevelListRepresentationFromStaticGenotype(List<Double> phenotype) {
+		return LodeRunnerGANLevelTask.getLodeRunnerLevelListRepresentationFromGenotypeStatic(phenotype);
+	}
 }

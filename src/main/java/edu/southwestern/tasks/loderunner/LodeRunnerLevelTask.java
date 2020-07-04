@@ -41,7 +41,7 @@ import icecreamyou.LodeRunner.LodeRunner;
 public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 
 	private int numFitnessFunctions = 0; 
-	private static final int NUM_OTHER_SCORES = 8;
+	protected static final int NUM_OTHER_SCORES = 9;
 
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
 	private ArrayList<Double> behaviorVector;
@@ -89,6 +89,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			MMNEAT.registerFitnessFunction("percentConnected", false);
 			MMNEAT.registerFitnessFunction("numTreasures", false);
 			MMNEAT.registerFitnessFunction("numEnemies", false);
+			MMNEAT.registerFitnessFunction("TSPDistance",false); // if available ... -1 otherwise
 		}
 	}
 
@@ -197,7 +198,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			fitnesses.add(1.0*numEnemies);
 		}
 		
-		double[] otherScores = new double[] {simpleAStarDistance, connectivityOfLevel, percentLadders, percentGround, percentRopes, percentConnected, numTreasure, numEnemies};
+		double[] otherScores = new double[] {simpleAStarDistance, connectivityOfLevel, percentLadders, percentGround, percentRopes, percentConnected, numTreasure, numEnemies, tspSolutionLength};
 
 		if(CommonConstants.watch) {
 			//prints values that are calculated above for debugging 
