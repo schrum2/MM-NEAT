@@ -40,8 +40,8 @@ import icecreamyou.LodeRunner.LodeRunner;
  */
 public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 
-	private static int numFitnessFunctions = 0; 
-	private static final int numOtherScores = 8;
+	private int numFitnessFunctions = 0; 
+	protected static final int NUM_OTHER_SCORES = 9;
 
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
 	private ArrayList<Double> behaviorVector;
@@ -89,6 +89,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			MMNEAT.registerFitnessFunction("percentConnected", false);
 			MMNEAT.registerFitnessFunction("numTreasures", false);
 			MMNEAT.registerFitnessFunction("numEnemies", false);
+			MMNEAT.registerFitnessFunction("TSPDistance",false); // if available ... -1 otherwise
 		}
 	}
 
@@ -105,7 +106,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 */
 	@Override
 	public int numOtherScores() {
-		return numOtherScores;
+		return NUM_OTHER_SCORES;
 	}
 
 	/**
@@ -165,10 +166,11 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		
 		//Calculate length of tsp path
 		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = null;
-		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsTSPSolutionPath")) {
+		double tspSolutionLength = -1;
+		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsTSPSolutionPath") || Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingTSPLength")) {
 			tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 			// Unsolvable levels received TSP fitness score of -1
-			double tspSolutionLength = tspInfo.t1 == null ? -1 : tspInfo.t1.size();
+			if(tspInfo.t1 != null) tspSolutionLength = tspInfo.t1.size();
 			fitnesses.add(tspSolutionLength);
 		}
 
@@ -196,11 +198,12 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			fitnesses.add(1.0*numEnemies);
 		}
 		
-		double[] otherScores = new double[] {simpleAStarDistance, connectivityOfLevel, percentLadders, percentGround, percentRopes, percentConnected, numTreasure, numEnemies};
+		double[] otherScores = new double[] {simpleAStarDistance, connectivityOfLevel, percentLadders, percentGround, percentRopes, percentConnected, numTreasure, numEnemies, tspSolutionLength};
 
 		if(CommonConstants.watch) {
 			//prints values that are calculated above for debugging 
 			System.out.println("Simple A* Distance " + simpleAStarDistance);
+			System.out.println("TSP solution length "+ tspSolutionLength);
 			System.out.println("Number of Positions Visited " + connectivityOfLevel);
 			System.out.println("Percent of Ladders " + percentLadders);
 			System.out.println("Percent of Ground " + percentGround);
