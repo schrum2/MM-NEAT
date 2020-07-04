@@ -121,6 +121,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		double simpleAStarDistance = aStarResults.t4;
 		//calculates the amount of the level that was covered in the search, connectivity.
 		double precentConnected = MegaManLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited)/MegaManLevelAnalysisUtil.findTotalPassableTiles(level);
+		// TODO: Clarify what this is and change the name (why k?)
 		HashMap<String, Integer> k = MegaManLevelAnalysisUtil.findMiscEnemies(level);
 		double numEnemies = k.get("numEnemies");
 		double numWallEnemies = k.get("numWallEnemies");
