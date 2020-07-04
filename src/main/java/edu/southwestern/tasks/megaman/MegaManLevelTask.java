@@ -33,12 +33,13 @@ import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
-	private static int numFitnessFunctions = 0; 
-	private static final int numOtherScores = 10;
+	private int numFitnessFunctions = 0; 
+	private static final int NUM_OTHER_SCORES = 10;
 
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
 	private ArrayList<Double> behaviorVector;
@@ -56,6 +57,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	
 	protected MegaManLevelTask(boolean register) {
 		if(register) {
+			numFitnessFunctions = 0;
 			if(Parameters.parameters.booleanParameter("megaManAllowsSimpleAStarPath")) {
 				MMNEAT.registerFitnessFunction("simpleAStarDistance");
 				numFitnessFunctions++;
@@ -83,13 +85,11 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	}
 	@Override
 	public int numObjectives() {
-		// TODO Auto-generated method stub
 		return numFitnessFunctions;
 	}
 	@Override
 	public int numOtherScores() {
-		// TODO Auto-generated method stub
-		return numOtherScores;
+		return NUM_OTHER_SCORES;
 	}
 	@Override
 	public double getTimeStamp() {
@@ -106,15 +106,19 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		return evaluateOneLevel(level, genotypeId);
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * Evaluate the given List of Lists of Integers representation of the level
+	 * @param level List of lists of integers (each represents a tile)
+	 * @param genotypeId ID of genotype that generated the level
+	 * @return Pair of fitness and other scores
+	 */
 	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, long genotypeId) {
-		// TODO Auto-generated method stub
-		//ArrayList<Double> behaviorVector = null; // Filled in later
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
-		HashSet<MegaManState> mostRecentVisited = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t1;
-		ArrayList<MegaManAction> actionSequence = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t2;
-		MegaManState start = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t3; //gets start state for search 
-		double simpleAStarDistance = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t4;
+		Quad<HashSet<MegaManState>, ArrayList<MegaManAction>, MegaManState, Double> aStarResults = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level);
+		HashSet<MegaManState> mostRecentVisited = aStarResults.t1;
+		ArrayList<MegaManAction> actionSequence = aStarResults.t2;
+		MegaManState start = aStarResults.t3; //gets start state for search 
+		double simpleAStarDistance = aStarResults.t4;
 		//calculates the amount of the level that was covered in the search, connectivity.
 		double precentConnected = MegaManLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited)/MegaManLevelAnalysisUtil.findTotalPassableTiles(level);
 		HashMap<String, Integer> k = MegaManLevelAnalysisUtil.findMiscEnemies(level);
@@ -323,6 +327,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			
 			if(CommonConstants.netio) {
 				System.out.println("Save archive images");
+				@SuppressWarnings("unchecked")
 				Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
 				List<String> binLabels = archive.getBinMapping().binLabels();
 
