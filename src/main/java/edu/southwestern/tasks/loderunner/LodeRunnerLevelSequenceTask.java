@@ -192,7 +192,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	private void addLineFitAndRangeToFitness(double[] otherScores, ArrayList<Double> fitnesses, int offset) {
 		double[] fitnessesFromOtherScores =  calculateIncreasingFitnesses(otherScores, offset); //collects the values for fitness from the other scores
 		double meanSquaredErrorAStar = calculateMeanSquaredLineError(fitnessesFromOtherScores); //calculates the meanSquared error for the fitnesses 
-		fitnesses.add(meanSquaredErrorAStar); //mean squared error from fit of line
+		fitnesses.add(-meanSquaredErrorAStar); //mean squared error from fit of line. Make NEGATIVE because we want to minimize error (0 is best score)
 		fitnesses.add(fitnessesFromOtherScores[fitnessesFromOtherScores.length-1] - fitnessesFromOtherScores[0]); //adds the range of values (max-min)
 	}
 
