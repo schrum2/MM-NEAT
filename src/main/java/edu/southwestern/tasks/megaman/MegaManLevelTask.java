@@ -128,7 +128,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		double numGroundEnemies = k.get("numGroundEnemies");
 		double numFlyingEnemies = k.get("numFlyingEnemies");
 		
-		
+		// TODO: Clarify what this is and change the name (why l?). Favor long descriptive names ... code will be read more than it is written
 		HashMap<String,Integer> l = findMiscSegments(level);
 		double numHorizontalSegments = l.get("numHorizontal");
 		double numUpSegments = l.get("numUp");
