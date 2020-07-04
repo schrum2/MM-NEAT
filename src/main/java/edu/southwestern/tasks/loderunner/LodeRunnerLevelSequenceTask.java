@@ -3,9 +3,12 @@ package edu.southwestern.tasks.loderunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.StatisticsUtilities;
@@ -205,9 +208,15 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	public double calculateMeanSquaredLineError(double[] fitnesses) {
 		//fills the expected array and the fitness array
 		double[] expected = new double[fitnesses.length]; //will hold the expected values, line of best fit, which is built in the loop below 
-		double slope = (fitnesses[fitnesses.length-1]-fitnesses[0])/fitnesses.length; //calculates slope found by dividing the difference of the y values by the difference of the x values
+		double slope = (fitnesses[fitnesses.length-1]-fitnesses[0])/(fitnesses.length-1); //calculates slope found by dividing the difference of the y values by the difference of the x values
 		for(int j = 0; j < fitnesses.length; j++) {
 			expected[j] = slope*j + fitnesses[0]; //mx + b, where the and b is the min y value, m is the slope from the from the first point to the last point, and x is the level
+		}
+		if(CommonConstants.watch) {
+			System.out.println("Fitness : " + Arrays.toString(fitnesses));
+			System.out.println("Expected: " + Arrays.toString(expected));
+			System.out.println("Press enter");
+			MiscUtil.waitForReadStringAndEnterKeyPress();
 		}
 		//will hold the squared errors between the expected values and the actual values
 		double[] squaredErrors = StatisticsUtilities.calculateSquaredErrors(fitnesses, expected);// squaredErrors between the actual fitness and the expected line
@@ -221,7 +230,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	 * @return
 	 */
 	public double[] calculateIncreasingFitnesses(double[] otherScores, int offset) {
-		double[] fitnesses = new double[otherScores.length/Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")];
+		double[] fitnesses = new double[Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")];
 		int index = 0;
 		for(int i = offset; i < otherScores.length; i+=LodeRunnerLevelTask.NUM_OTHER_SCORES) {
 			fitnesses[index++] = otherScores[i];//adds all the fitnesses of that type to the fitnesses array to be returned
