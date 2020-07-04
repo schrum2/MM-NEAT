@@ -208,9 +208,11 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	public double calculateMeanSquaredLineError(double[] fitnesses) {
 		//fills the expected array and the fitness array
 		double[] expected = new double[fitnesses.length]; //will hold the expected values, line of best fit, which is built in the loop below 
-		double slope = (fitnesses[fitnesses.length-1]-fitnesses[0])/(fitnesses.length-1); //calculates slope found by dividing the difference of the y values by the difference of the x values
+		double min = StatisticsUtilities.minimum(fitnesses);
+		double max = StatisticsUtilities.maximum(fitnesses);
+		double slope = (max - min)/(fitnesses.length-1); //calculates slope found by dividing the difference of the y values by the difference of the x values
 		for(int j = 0; j < fitnesses.length; j++) {
-			expected[j] = slope*j + fitnesses[0]; //mx + b, where the and b is the min y value, m is the slope from the from the first point to the last point, and x is the level
+			expected[j] = slope*j + min; //mx + b, where the and b is the min y value, m is the slope from the from the first point to the last point, and x is the level
 		}
 		if(CommonConstants.watch) {
 			System.out.println("Fitness : " + Arrays.toString(fitnesses));
