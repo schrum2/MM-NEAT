@@ -112,6 +112,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	 * @param genotypeId ID of genotype that generated the level
 	 * @return Pair of fitness and other scores
 	 */
+	@SuppressWarnings("unchecked")
 	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, long genotypeId) {
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
 		Quad<HashSet<MegaManState>, ArrayList<MegaManAction>, MegaManState, Double> aStarResults = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level);
@@ -330,7 +331,6 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			
 			if(CommonConstants.netio) {
 				System.out.println("Save archive images");
-				@SuppressWarnings("unchecked")
 				Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
 				List<String> binLabels = archive.getBinMapping().binLabels();
 

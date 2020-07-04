@@ -27,6 +27,9 @@ public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTa
 		
 		PythonUtil.setPythonProgram();
 		//super();
+		
+		// TODO: Currently, the code is focused on the 7 GAN approach, but add support for a OneGAN approach
+		
 		//if(Parameters.parameters.booleanParameter("useThreeGANsMegaMan")) {
 			//GANProcess.terminateGANProcess();
 			ganProcessHorizontal = MegaManGANUtil.initializeGAN("MegaManGANHorizontalModel");
@@ -45,10 +48,10 @@ public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTa
 			MegaManGANUtil.startGAN(ganProcessLowerLeft);
 			MegaManGANUtil.startGAN(ganProcessLowerRight);
 	}
+	
 	@Override
 	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual) {
 		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp,ganProcessLowerLeft,ganProcessLowerRight,ganProcessUpperLeft,ganProcessUpperRight, individual.getPhenotype(), Parameters.parameters.integerParameter("megaManGANLevelChunks"), ArrayUtil.doubleOnes(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length));
-
 		return level;
 	}
 	
@@ -73,11 +76,9 @@ public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTa
 			e.printStackTrace();
 		}
 	}
+	
 	@Override
 	public HashMap<String, Integer> findMiscSegments(List<List<Integer>> level) {
-		// TODO Auto-generated method stub
-		
-
 		return MegaManCPPNtoGANUtil.findMiscSegments(level);
 	}
 
