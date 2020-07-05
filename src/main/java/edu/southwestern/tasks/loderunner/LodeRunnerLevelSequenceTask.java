@@ -3,27 +3,34 @@ package edu.southwestern.tasks.loderunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 
 public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask<T> {
-	private static final int numOtherScores = 8;
-	private static int numFitnessFunctions = 0;
+	private int numFitnessFunctions = 0;
+	private static final int ASTAR_OFFSET = 0;
+	private static final int NUM_TREASURES_OFFSET = 6;
+	private static final int NUM_ENEMIES_OFFSET = 7;
+	private static final int TSP_OFFSET = 8;
 
 	public LodeRunnerLevelSequenceTask() {
 		super(false); // Do not register the fitness functions in the LodeRunnerLevelTask
 
-		// Register fitness functions specific to the level sequence task here instead.
-
-
+		assert !(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceAverages") && Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceIndividual")) :
+				"Do not evolve level sequences with both average across levels and individual fitnesses of levels";
+		
 		//If we are averaging scores then we add all of the scores from the LodeRunnerLevelTask because it will take the averages from each level in the sequence
 		if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceAverages")) {
-			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
+			//one fitness function of each type to average across all the levels in the sequence
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) { 
 				MMNEAT.registerFitnessFunction("averageSimpleAStarDistance");
 				numFitnessFunctions++;
 			}
@@ -31,11 +38,15 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 				MMNEAT.registerFitnessFunction("averageNumOfPositionsVisited"); //connectivity
 				numFitnessFunctions++;
 			}
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsTSPSolutionPath")) {
+				MMNEAT.registerFitnessFunction("averageTSPSolutionLength"); //connectivity
+				numFitnessFunctions++;
+			}
 		}
 		//if we are taking individual scores it takes all the scores as for the first level, then adds all the scores for the second level, and so on for all levels
 		//it maintains order by looping for the amount of levels in the sequence
 		else if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceIndividual")) {
-			for(int i = 0; i < Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"); i++) {
+			for(int i = 1; i <= Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"); i++) { //one fitness function of each type for each level in the sequence 
 				if(Parameters.parameters.booleanParameter("lodeRunnerAllowsSimpleAStarPath")) {
 					MMNEAT.registerFitnessFunction("Level"+i+"simpleAStarDistance");
 					numFitnessFunctions++;
@@ -44,24 +55,34 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 					MMNEAT.registerFitnessFunction("Level"+i+"numOfPositionsVisited"); //connectivity
 					numFitnessFunctions++;
 				}
+				if(Parameters.parameters.booleanParameter("lodeRunnerAllowsTSPSolutionPath")) {
+					MMNEAT.registerFitnessFunction("Level"+i+"TSPSolutionLength"); 
+					numFitnessFunctions++;
+				}
 			}
 		}
-		else if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingSolutionLength")) {
-			MMNEAT.registerFitnessFunction("linearIncreasingSolutionLength");
-			MMNEAT.registerFitnessFunction("linearIncreasingSolutionLengthRange");
-			numFitnessFunctions+=2;
+		else { //use the increasing difficulty fitness functions
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingSolutionLength")) { 
+				MMNEAT.registerFitnessFunction("linearIncreasingSolutionLengthFit");
+				MMNEAT.registerFitnessFunction("linearIncreasingSolutionLengthRange");
+				numFitnessFunctions+=2;
+			}
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingTSPLength")) { 
+				MMNEAT.registerFitnessFunction("linearIncreasingTSPSolutionLengthFit");
+				MMNEAT.registerFitnessFunction("linearIncreasingTSPSolutionLengthRange");
+				numFitnessFunctions+=2;
+			}
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingEnemyCount")) {
+				MMNEAT.registerFitnessFunction("linearIncreasingEnemyCountFit");
+				MMNEAT.registerFitnessFunction("linearIncreasingEnemyCountRange");
+				numFitnessFunctions+=2;
+			}
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingTreasureCount")) {
+				MMNEAT.registerFitnessFunction("linearIncreasingTreasureCountFit");
+				MMNEAT.registerFitnessFunction("linearIncreasingTreasureCountRange");
+				numFitnessFunctions+=2;
+			}
 		}
-		else if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingEnemyCount")) {
-			MMNEAT.registerFitnessFunction("linearIncreasingEnemyCount");
-			MMNEAT.registerFitnessFunction("linearIncreasingEnemyCountRange");
-			numFitnessFunctions+=2;
-		}
-		else if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingTreasureCount")) {
-			MMNEAT.registerFitnessFunction("linearIncreasingTreasureCount");
-			MMNEAT.registerFitnessFunction("linearIncreasingTreasureCountRange");
-			numFitnessFunctions+=2;
-		}else throw new UnsupportedOperationException("Don't test LodeRunnerLevelSequenceTask again without first registering fitness functions");
-
 
 		//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
 		for(int i = 1; i <= Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"); i++) {
@@ -73,6 +94,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 			MMNEAT.registerFitnessFunction("Level" + i + "percentConnected", false);
 			MMNEAT.registerFitnessFunction("Level" + i + "numTreasures", false);
 			MMNEAT.registerFitnessFunction("Level" + i + "numEnemies", false);
+			MMNEAT.registerFitnessFunction("Level" + i + "TSPDistance", false);
 		}
 	}
 
@@ -90,8 +112,8 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	 */
 	@Override
 	public int numOtherScores() {
-		//8* number of levels because we always take every otherScore 
-		return numOtherScores*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence");
+		//8* number of levels because we always take every otherScore from each level
+		return LodeRunnerLevelTask.NUM_OTHER_SCORES*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence");
 	}
 
 	/**
@@ -99,153 +121,143 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	 * evaluate all of the levels of the sequence instead of just a single level
 	 * @return The scores 
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num){
 		ArrayList<List<List<Integer>>> levelSequence = getLevelSequence(individual, Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"));//right now I set it to have 3 levels in the sequence
 		long genotypeId = individual.getId();
+		@SuppressWarnings("unchecked")
 		Pair<double[], double[]>[] scoreSequence = new Pair[levelSequence.size()];
 		for(int i = 0; i < levelSequence.size(); i++) {
 			//takes in the level it is on, i, and the length of the levelSequence
-			double psuedoRandomSeed = differentRandomSeedForEveryLevel(i, levelSequence.size()); //different random seed for every level in the sequence
+			double psuedoRandomSeed = differentRandomSeedForEveryLevel(i, individual.getPhenotype()); //different random seed for every level in the sequence
 			scoreSequence[i] = evaluateOneLevel(levelSequence.get(i), psuedoRandomSeed, genotypeId);
+		}
+		Pair<double[], double[]> finalScores; //declares variable to hold the final scores to be calculated
+		//calculate the otherScores
+		double[] otherScores = new double[scoreSequence[0].t2.length*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")]; //new double array that is the size of the other sores array
+		for(int i = 0; i < scoreSequence.length; i++) {
+			for(int k = 0; k < scoreSequence[i].t2.length; k++) {
+				otherScores[i*scoreSequence[i].t2.length+k] = scoreSequence[i].t2[k]; //calculates the all of the other scores for every level 
+			}
 		}
 		if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceAverages")) {
 			//average all the scores together so that there are as many scores as levels
 			double[] averageFitnesses = new double[scoreSequence[0].t1.length]; //new double array that is the size of the fitness functions array
-			double[] otherScores = new double[scoreSequence[0].t2.length*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")]; //new double array that is the size of the other sores array
 			//calculates the total scores from all levels 
 			for(int i = 0; i < scoreSequence.length; i++) {
 				for(int j = 0; j < averageFitnesses.length; j++) {
-					for(int k = 0; k < otherScores.length; k++) {
-						for(int g = 0; g < scoreSequence[i].t1.length; g++)
-							averageFitnesses[j] += scoreSequence[i].t1[g]; //sums all of the scores from all the levels to be averaged
-						for(int d = 0; d < scoreSequence[i].t2.length; d++)
-							otherScores[k] = scoreSequence[i].t2[d]; //calculates the all of the other scores for every level 
-					}
+					averageFitnesses[j] += scoreSequence[i].t1[j]; //sums all of the scores from all the levels to be averaged
 				}
 			}
 			//averages the values in the fitness array by dividing the sum of those values by the amount of levels
 			for(int i = 0; i < averageFitnesses.length; i++) {
 				averageFitnesses[i] = averageFitnesses[i]/Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence");
 			}
-			return new Pair<double[], double[]>(averageFitnesses, otherScores);
+			finalScores = new Pair<double[], double[]>(averageFitnesses, otherScores);
 		}
 		else if(Parameters.parameters.booleanParameter("lodeRunnerLevelSequenceIndividual")) {
 			//individual scores, this means it is the amount of scores times the amount of levels
 			//new double array that is the length to fit all the fitnesses from every level in the sequence
 			double[] allFitnesses = new double[scoreSequence[0].t1.length*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")]; 
-			//new double array that is the length to fit all the fitnesses from every level in the sequence
-			double[] otherScores = new double[scoreSequence[0].t2.length*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")];
 			//adds all the scores from the level sequence to the new arrays 
 			for(int i = 0; i < scoreSequence.length; i++) {
-				for(int j = 0; j < allFitnesses.length; j++) {
-					for(int k = 0; k < otherScores.length; k++) {
-						for(int g= 0; g < scoreSequence[i].t1.length; g++)
-							allFitnesses[j] = scoreSequence[i].t1[g];
-						for(int d = 0; d < scoreSequence[i].t2.length; d++)
-							otherScores[k] = scoreSequence[i].t2[d];
-					}
+				for(int j = 0; j < scoreSequence[i].t1.length; j++) {
+					allFitnesses[(i*scoreSequence[i].t1.length) +j] = scoreSequence[i].t1[j];
 				}
 			}
-			return new Pair<double[], double[]>(allFitnesses, otherScores);
+			finalScores = new Pair<double[], double[]>(allFitnesses, otherScores);
 		}
-		else if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingSolutionLength")) {
-			double[] otherScores = new double[scoreSequence[0].t2.length*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")];
-			//fills the fitnesses and otherScores arrays from the evaluation of each level in the sequence
-			for(int i = 0; i < scoreSequence.length; i++) {
-					for(int k = 0; k < otherScores.length; k++) { 
-						for(int d = 0; d < scoreSequence[i].t2.length; d++)
-							otherScores[k] = scoreSequence[i].t2[d];
-					}
+		else {
+			ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingSolutionLength")) {
+				addLineFitAndRangeToFitness(otherScores, fitnesses, ASTAR_OFFSET); //adds the meanSquaredError and range of values as fitness functions
 			}
-			//fills the expected array and the fitnesses array
-			double[] fitnesses = new double[scoreSequence[0].t1.length-2]; //excludes the first one and the last one because those are the end points of the line 
-			double[] squaredErrors = new double[fitnesses.length]; 
-			double[] expected = new double[fitnesses.length];
-			for(int j = 0; j < fitnesses.length; j++) {
-				double slope = scoreSequence[j].t1[scoreSequence[j].t1.length-1]-scoreSequence[j].t1[0]/Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")-1; //calculates slope found by dividing the difference of the y values by the difference of the x values
-				for(int i = 1; i < expected.length; i++) { //takes the middle values, excluding the first and last 
-					expected[i] = slope*i + scoreSequence[j].t1[i]; //mx + b, where the and b is the min y value
-				}
-				squaredErrors = StatisticsUtilities.calculateSquaredErrors(scoreSequence[j].t1, expected);// calculates the errors between the expected value(line of best fit) and the actual value
-				fitnesses[j] = StatisticsUtilities.average(squaredErrors);
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingTSPLength")) { 
+				addLineFitAndRangeToFitness(otherScores, fitnesses, TSP_OFFSET); //adds the meanSquaredError and range of values as fitness functions
 			}
-			
-			return new Pair<double[], double[]>(fitnesses, otherScores);
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingEnemyCount")) {
+				addLineFitAndRangeToFitness(otherScores, fitnesses, NUM_ENEMIES_OFFSET);//adds the meanSquaredError and range of values as fitness functions
+			}
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingTreasureCount")) {
+				addLineFitAndRangeToFitness(otherScores, fitnesses, NUM_TREASURES_OFFSET);//adds the meanSquaredError and range of values as fitness functions
+			}
+			finalScores = new Pair<double[], double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
 		}
-		else if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingEnemyCount")) {
-			double[] otherScores = new double[scoreSequence[0].t2.length*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")];
-			//fills the fitnesses and otherScores arrays from the evaluation of each level in the sequence
-			for(int i = 0; i < scoreSequence.length; i++) {
-					for(int k = 0; k < otherScores.length; k++) { 
-						for(int d = 0; d < scoreSequence[i].t2.length; d++)
-							otherScores[k] = scoreSequence[i].t2[d];
-					}
-			}
-			//fills the expected array and the fitnesses array
-			double[] fitnesses = new double[scoreSequence[0].t1.length-2]; //excludes the first one and the last one because those are the end points of the line 
-			double[] squaredErrors = new double[fitnesses.length]; 
-			double[] expected = new double[fitnesses.length];
-			for(int j = 0; j < fitnesses.length; j++) {
-				double slope = scoreSequence[j].t1[scoreSequence[j].t1.length-1]-scoreSequence[j].t1[0]/Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")-1; //calculates slope found by dividing the difference of the y values by the difference of the x values
-				for(int i = 1; i < expected.length; i++) { //takes the middle values, excluding the first and last 
-					expected[i] = slope*i + scoreSequence[j].t1[i]; //mx + b, where the and b is the min y value
-				}
-				squaredErrors = StatisticsUtilities.calculateSquaredErrors(scoreSequence[j].t1, expected);
-				fitnesses[j] = StatisticsUtilities.average(squaredErrors);
-			}
-			
-			return new Pair<double[], double[]>(fitnesses, otherScores);
-		}
-		else if(Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingTreasureCount")) {
-			double[] otherScores = new double[scoreSequence[0].t2.length*Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")];
-			//fills the fitnesses and otherScores arrays from the evaluation of each level in the sequence
-			for(int i = 0; i < scoreSequence.length; i++) {
-					for(int k = 0; k < otherScores.length; k++) { 
-						for(int d = 0; d < scoreSequence[i].t2.length; d++)
-							otherScores[k] = scoreSequence[i].t2[d];
-					}
-			}
-			//fills the expected array and the fitnesses array
-			double[] fitnesses = new double[scoreSequence[0].t1.length-2]; //excludes the first one and the last one because those are the end points of the line 
-			double[] squaredErrors = new double[fitnesses.length]; 
-			double[] expected = new double[fitnesses.length];
-			for(int j = 0; j < fitnesses.length; j++) {
-				double slope = scoreSequence[j].t1[scoreSequence[j].t1.length-1]-scoreSequence[j].t1[0]/Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")-1; //calculates slope found by dividing the difference of the y values by the difference of the x values
-				for(int i = 1; i < expected.length; i++) { //takes the middle values, excluding the first and last 
-					expected[i] = slope*i + scoreSequence[j].t1[i]; //mx + b, where the and b is the min y value
-				}
-				squaredErrors = StatisticsUtilities.calculateSquaredErrors(scoreSequence[j].t1, expected);
-				fitnesses[j] = StatisticsUtilities.average(squaredErrors);
-			}
-			
-			return new Pair<double[], double[]>(fitnesses, otherScores);
-		}
-		else 
-			return null;
-
+		return finalScores;
 	}
 
-
 	/**
-	 * Gets a level from the genotype
-	 * @return A level 
+	 * Adds the fitness functions for error of line fit and the range of the y values 
+	 * @param otherScores Source of data for calculations
+	 * @param fitnesses Where you add the final fitness scores too
+	 * @param offset Where to find the fitness scores in other scores
 	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<List<Integer>> getLodeRunnerLevelListRepresentationFromGenotype(Genotype<T> individual) {
-		return getLodeRunnerLevelListRepresentationFromStaticGenotype((List<Double>) individual.getPhenotype());
+	private void addLineFitAndRangeToFitness(double[] otherScores, ArrayList<Double> fitnesses, int offset) {
+		double[] fitnessesFromOtherScores =  calculateIncreasingFitnesses(otherScores, offset); //collects the values for fitness from the other scores
+		double meanSquaredErrorAStar = calculateMeanSquaredLineError(fitnessesFromOtherScores); //calculates the meanSquared error for the fitnesses 
+		fitnesses.add(-meanSquaredErrorAStar); //mean squared error from fit of line. Make NEGATIVE because we want to minimize error (0 is best score)
+		fitnesses.add(fitnessesFromOtherScores[fitnessesFromOtherScores.length-1] - fitnessesFromOtherScores[0]); //adds the range of values (max-min)
 	}
 
-	/**
-	 * Calls the method written in LodeRunnerGANLevelTask to return a level from a phenotype
-	 * @param phenotype
+	/** 
+	 * Calculates the mean Squared differences between the fitness and the expected
+	 * @param fitnesses
+	 * @param scoreSequence
 	 * @return
 	 */
-	public static List<List<Integer>> getLodeRunnerLevelListRepresentationFromStaticGenotype(List<Double> phenotype) {
-		return LodeRunnerGANLevelTask.getLodeRunnerLevelListRepresentationFromGenotypeStatic(phenotype);
+	public double calculateMeanSquaredLineError(double[] fitnesses) {
+		//fills the expected array and the fitness array
+		double[] expected = new double[fitnesses.length]; //will hold the expected values, line of best fit, which is built in the loop below 
+		double min = StatisticsUtilities.minimum(fitnesses);
+		double max = StatisticsUtilities.maximum(fitnesses);
+		double slope = (max - min)/(fitnesses.length-1); //calculates slope found by dividing the difference of the y values by the difference of the x values
+		for(int j = 0; j < fitnesses.length; j++) {
+			expected[j] = slope*j + min; //mx + b, where the and b is the min y value, m is the slope from the from the first point to the last point, and x is the level
+		}
+		if(CommonConstants.watch) {
+			System.out.println("Fitness : " + Arrays.toString(fitnesses));
+			System.out.println("Expected: " + Arrays.toString(expected));
+			System.out.println("Press enter");
+			MiscUtil.waitForReadStringAndEnterKeyPress();
+		}
+		//will hold the squared errors between the expected values and the actual values
+		double[] squaredErrors = StatisticsUtilities.calculateSquaredErrors(fitnesses, expected);// squaredErrors between the actual fitness and the expected line
+		return StatisticsUtilities.average(squaredErrors); //returns the meanSquaredError
 	}
+
+	/**
+	 * Collects the correct values for fitness from the otherScores array
+	 * @param otherScores
+	 * @param offset
+	 * @return
+	 */
+	public double[] calculateIncreasingFitnesses(double[] otherScores, int offset) {
+		double[] fitnesses = new double[Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")];
+		int index = 0;
+		for(int i = offset; i < otherScores.length; i+=LodeRunnerLevelTask.NUM_OTHER_SCORES) {
+			fitnesses[index++] = otherScores[i];//adds all the fitnesses of that type to the fitnesses array to be returned
+		}
+		return fitnesses; //returns an array that holds all of the specified fitness scores
+	}
+
+	// Moved this code up into the LevelSequenceGANTask, since it was assuming the phenotype was a List<Double>
+//	/**
+//	 * Gets a level from the genotype
+//	 * @return A level 
+//	 */
+//	@Override
+//	public List<List<Integer>> getLodeRunnerLevelListRepresentationFromGenotype(Genotype<T> individual) {
+//		return getLodeRunnerLevelListRepresentationFromStaticGenotype((List<Double>) individual.getPhenotype());
+//	}
+
+//	/**
+//	 * Calls the method written in LodeRunnerGANLevelTask to return a level from a phenotype
+//	 * @param phenotype
+//	 * @return
+//	 */
+//	public static List<List<Integer>> getLodeRunnerLevelListRepresentationFromStaticGenotype(List<Double> phenotype) {
+//		return LodeRunnerGANLevelTask.getLodeRunnerLevelListRepresentationFromGenotypeStatic(phenotype);
+//	}
 
 
 	/**
@@ -253,20 +265,7 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	 */
 	@Override
 	public double getRandomSeedForSpawnPoint(Genotype<T> individual) {
-		return getRandomSeedForSpawnPointStatic(individual);
-	}
-
-	/**
-	 * Called from non-static to return a random seed double 
-	 * @param individual
-	 * @return Random seed 
-	 */
-	@SuppressWarnings("unchecked")
-	private double getRandomSeedForSpawnPointStatic(Genotype<T> individual) {
-		List<Double> latentVector = (List<Double>) individual.getPhenotype(); //creates a double array for the spawn to be placed in GAN levels 
-		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
-		double firstLatentVariable = doubleArray[0];
-		return firstLatentVariable;
+		throw new UnsupportedOperationException("Not actually used for level sequences. Rather, each level in the sequence needs its own random seed");
 	}
 
 	/**
@@ -280,10 +279,10 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	/**
 	 * Gets a different random seed for all of the levels in the sequence
 	 * @param levelInSequence The level that needs a random seed
-	 * @param lengthOfSequence Amount of levels in the sequence
+	 * @param individual the phenotype of the individual
 	 * @return Random seed for the level specified 
 	 */
-	public abstract double differentRandomSeedForEveryLevel(int levelInSequence, int lengthOfSequence);
+	public abstract double differentRandomSeedForEveryLevel(int levelInSequence, T individual);
 
 
 }

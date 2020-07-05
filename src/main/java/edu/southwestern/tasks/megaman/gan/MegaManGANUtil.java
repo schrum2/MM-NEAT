@@ -11,13 +11,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
+import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 import edu.southwestern.tasks.megaman.MegaManRenderUtil;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
+import edu.southwestern.tasks.megaman.MegaManCPPNtoGANUtil.Direction;
+import edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelBreederTask;
+import edu.southwestern.tasks.megaman.MegaManCPPNtoGANUtil;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class MegaManGANUtil {
 	public static final int LATENT_VECTOR_SIZE = 5;//latent vector dimension, 20 improved the model 
@@ -395,22 +400,16 @@ public class MegaManGANUtil {
 			}
 			if(!placeLine.isEmpty())
 			placingScreen.add(placeLine);
-//			System.out.println(placeLine);
 			
 		}
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		MegaManVGLCUtil.printLevel(placingScreen);
-//		System.out.println(placingScreen.size()+", "+placingScreen.get(0).size());
+
 		
 		for(int y = (int) previousMove.getY();y<previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
 			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
 
 				oneLevel.get(y).set(x, placingScreen.get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX())));
-//				System.out.print(placingScreen.get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX()))+"     ");
-//				System.out.print((int) (y - (int)previousMove.getY())+", "+(int) (x-(int)previousMove.getX())+"   ");
 			}
-//			System.out.println();
-//			MiscUtil.waitForReadStringAndEnterKeyPress();
+
 		}
 		
 		
@@ -432,6 +431,7 @@ public class MegaManGANUtil {
 			}
 		}
 	}
+
 	
 	
 	public static void placeSpawn(List<List<Integer>> level) {
@@ -531,4 +531,514 @@ public class MegaManGANUtil {
 		j.put("numDistinctSegments", numDistinctSegments);
 		return j;
 	}
+	
+	
+	
+
+	public static void placeDownCPPN(List<List<List<Integer>>> levelInListDown, Point previousMove,
+			List<List<Integer>> oneLevel, int level) {
+			List<List<Integer>> nullScreen = new ArrayList<List<Integer>>();
+			for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
+				List<Integer> nullLines = new ArrayList<Integer>();
+				for(int j = 0;j<oneLevel.get(0).size();j++) {
+					nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+				}
+				nullScreen.add(nullLines);
+			}
+			oneLevel.addAll(oneLevel.size(), nullScreen);
+
+		for(int y = (int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y<previousMove.getY()+2*MEGA_MAN_LEVEL_HEIGHT;y++) {
+			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
+				oneLevel.get(y).set(x, levelInListDown.get(level).get((int) (y -MEGA_MAN_LEVEL_HEIGHT- previousMove.getY())).get((int) (x-previousMove.getX())));
+			}
+		}
+	}
+
+	public static void placeUpCPPN(List<List<List<Integer>>> levelInListUp, Point previousMove,
+			List<List<Integer>> oneLevel, int level) {
+
+		List<List<Integer>> nullScreen = new ArrayList<List<Integer>>();
+		for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
+			List<Integer> nullLines = new ArrayList<Integer>();
+			for(int j = 0;j<oneLevel.get(0).size();j++) {
+				nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+			}
+			nullScreen.add(nullLines);
+		}
+		oneLevel.addAll(0, nullScreen);
+		
+		//now at the previous point, add in a new version of levelInList.get(level)
+		List<List<Integer>> placingScreen = new ArrayList<List<Integer>>();
+		
+		for(int i = 0;i<levelInListUp.get(level).size();i++) {
+			List<Integer> placeLine = new ArrayList<>();
+
+			for(int j = 0;j<levelInListUp.get(level).get(0).size();j++) {
+				if(levelInListUp.get(level).get(i).get(j)!=MegaManVGLCUtil.ONE_ENEMY_NULL)
+				placeLine.add(levelInListUp.get(level).get(i).get(j));
+			}
+			if(!placeLine.isEmpty())
+			placingScreen.add(placeLine);
+			
+		}
+
+		
+		for(int y = (int) previousMove.getY();y<previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
+			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
+
+				oneLevel.get(y).set(x, placingScreen.get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX())));
+			}
+
+		}
+		
+		
+	}
+
+	public static void placeRightCPPN(List<List<List<Integer>>> levelInListHorizontal, Point previousMove,
+			List<List<Integer>> oneLevel, List<Integer> nullLine, int level) {
+		for(int i = 0;i<oneLevel.size();i++) { //add null to all spaces to the right TODO possibly change
+			oneLevel.get(i).addAll(nullLine);
+		}
+		for(int x = (int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x<(int) previousMove.getX()+2*MEGA_MAN_LEVEL_WIDTH;x++) {
+			for(int y = (int) previousMove.getY();y<(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
+				oneLevel.get(y).set(x, levelInListHorizontal.get(level).get((int) (y - previousMove.getY())).get((int) (x-MEGA_MAN_LEVEL_WIDTH-previousMove.getX())));
+			}
+		}
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @param width how many segments
+	 * @param segmentLength - the length of one segment
+	 * @param wholeVector - the entire vector from realvaluedgenotype
+	 * @return portion of vector corresponding to one segment
+	 */
+	public static double[] latentVectorAndMiscDataForPosition(int width,int segmentLength, double[] wholeVector) { 
+		int startIndex = segmentLength*(width);
+		double[] result = new double[segmentLength]; //resets size of result to be the same length
+		System.arraycopy(wholeVector, startIndex, result, 0, segmentLength);
+		return result;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static HashSet<List<List<Integer>>> distinct;
+	public static int x = 0;
+	public static int y = 0;
+	public static Point previousMove;
+	
+//	public static Direction d;
+	
+	
+	
+	public static List<List<Integer>> wholeVectorToMegaManLevel(GANProcess ganProcessHorizontal,
+			GANProcess ganProcessDown, GANProcess ganProcessUp, GANProcess lowerLeftGAN, 
+			GANProcess lowerRightGAN,  GANProcess upperLeftGAN, GANProcess upperRightGAN, int chunks, double[] wholeVector){
+		HashSet<Point> placedPoints = new HashSet<>();
+		Direction previousDirection = null;
+		List<List<Integer>> level = new ArrayList<>();
+		Point currentPoint = new Point();
+		for(int i = 0;i<chunks;i++) {
+			placeSegmentWithAppropriateGAN(currentPoint, level,placedPoints,wholeVector, i, previousDirection, ganProcessHorizontal,ganProcessUp,ganProcessDown,lowerLeftGAN,lowerRightGAN,upperLeftGAN,upperRightGAN);
+		}
+		
+		
+		
+		return level;
+	}
+	public final static int NUM_AUX = 3;
+	public final static int NUM_LATENT = 5;
+	public final static int TOTAL_VARIABLES = 8;
+/**
+ * Takes in all GANs and the entire vector representing the auxillary values and then the latent inputs
+ * 
+ * @param wholeVector
+ * @param segmentNum
+ * @param previousDirection
+ * @param ganProcessHorizontal
+ * @param ganProcessUp
+ * @param ganProcessDown
+ * @param lowerLeftGAN
+ * @param lowerRightGAN
+ * @param upperLeftGAN
+ * @param upperRightGAN
+ * @return
+ */
+private static void placeSegmentWithAppropriateGAN(Point currentPoint, List<List<Integer>> level, HashSet<Point> placedPoints, double[] wholeVector, int segmentNum, Direction previousDirection,
+		GANProcess ganProcessHorizontal, GANProcess ganProcessUp, GANProcess ganProcessDown, GANProcess lowerLeftGAN,
+		GANProcess lowerRightGAN, GANProcess upperLeftGAN, GANProcess upperRightGAN) {
+	// TODO Auto-generated method stub
+	System.out.println(segmentNum+", "+wholeVector.length);
+	double[] oneSegmentData = latentVectorAndMiscDataForPosition(segmentNum, TOTAL_VARIABLES, wholeVector);
+	Direction current = useLongVectorToFindDirection(currentPoint, placedPoints,oneSegmentData, segmentNum, previousDirection);
+	if(previousDirection==null) {
+		placeFirstSegment(oneSegmentData, level, current, segmentNum, ganProcessHorizontal,ganProcessUp,ganProcessDown);
+		currentPoint = new Point(0,0);
+		placedPoints.add(currentPoint);
+	}
+	else if(previousDirection.equals(current)) {
+		placeNoCorners(oneSegmentData, current, currentPoint, level, ganProcessHorizontal,ganProcessUp,ganProcessDown, placedPoints);
+	}
+	else {
+		placeCornerSegments(previousDirection, oneSegmentData, current, currentPoint, level,lowerLeftGAN,lowerRightGAN,upperLeftGAN,upperRightGAN, placedPoints);
+	}
+}
+/**
+ * places the corner segments
+ * @param oneSegmentData
+ * @param current
+ * @param currentPoint
+ * @param level
+ * @param lowerLeftGAN
+ * @param lowerRightGAN
+ * @param upperLeftGAN
+ * @param upperRightGAN
+ */
+private static void placeCornerSegments(Direction previous, double[] oneSegmentData, Direction current, Point currentPoint,
+		List<List<Integer>> level, GANProcess lowerLeftGAN, GANProcess lowerRightGAN, GANProcess upperLeftGAN,
+		GANProcess upperRightGAN, HashSet<Point> placedPoints) {
+	List<Integer> nullLine = new ArrayList<Integer>(16);
+	for(int i=0;i<MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH;i++) {
+		nullLine.add(MegaManState.MEGA_MAN_TILE_NULL);
+	}
+	double[] latentVector = new double[oneSegmentData.length-NUM_AUX];
+	for(int i = NUM_AUX;i<TOTAL_VARIABLES;i++) {
+		latentVector[i-NUM_AUX]=oneSegmentData[i];
+	}
+	
+	
+	
+	if(previous.equals(Direction.UP)&&current.equals(Direction.RIGHT)) {//place upper left
+		placeUpCPPN(getLevelListRepresentationFromGAN(upperLeftGAN, latentVector), currentPoint, level, 0);
+		y++;
+		numUp++;
+	}
+	else if(previous.equals(Direction.DOWN)&&current.equals(Direction.RIGHT)) { //place lower left
+		y--;
+		numDown++;
+		placeDownCPPN(getLevelListRepresentationFromGAN(lowerLeftGAN, latentVector), currentPoint, level, 0);
+		currentPoint=new Point((int) currentPoint.getX(),(int) currentPoint.getY()+MEGA_MAN_LEVEL_HEIGHT);
+	}
+	else if(previous.equals(Direction.RIGHT)&&current.equals(Direction.UP)) { //place lower right
+		MegaManGANUtil.placeRightCPPN(MegaManGANUtil.getLevelListRepresentationFromGAN(lowerRightGAN, latentVector), currentPoint, level, nullLine, 0);
+		x++;
+		distinct.add(MegaManGANUtil.getLevelListRepresentationFromGAN(lowerRightGAN, latentVector).get(0));
+		currentPoint=new Point((int) currentPoint.getX()+MEGA_MAN_LEVEL_WIDTH,(int) currentPoint.getY());
+
+	}
+	else if(previous.equals(Direction.RIGHT)&&current.equals(Direction.DOWN)) { //place upper right
+		MegaManGANUtil.placeRightCPPN(MegaManGANUtil.getLevelListRepresentationFromGAN(upperRightGAN, latentVector), currentPoint, level, nullLine, 0);
+		x++;
+		distinct.add(MegaManGANUtil.getLevelListRepresentationFromGAN(upperRightGAN, latentVector).get(0));
+		currentPoint=new Point((int) currentPoint.getX()+MEGA_MAN_LEVEL_WIDTH,(int) currentPoint.getY());
+	}
+	placedPoints.add(currentPoint);
+	
+}
+
+/**
+ * Places a segment without a corner
+ * @param current
+ * @param currentPoint
+ */
+private static void placeNoCorners(double[] oneSegmentData, Direction current, Point currentPoint, List<List<Integer>> level, GANProcess ganProcessHorizontal, GANProcess ganProcessUp,
+		GANProcess ganProcessDown, HashSet<Point> placedPoints) {
+	List<Integer> nullLine = new ArrayList<Integer>(16);
+	for(int i=0;i<MEGA_MAN_LEVEL_WIDTH;i++) {
+		nullLine.add(MegaManState.MEGA_MAN_TILE_NULL);
+	}
+	double[] startlatentVector = new double[oneSegmentData.length-NUM_AUX];
+	for(int i = NUM_AUX;i<TOTAL_VARIABLES;i++) {
+		startlatentVector[i-NUM_AUX]=oneSegmentData[i];
+	}
+	if(current.equals(Direction.RIGHT)) {
+		numHorizontal++;
+		x++;
+		placeRightCPPN(getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector), currentPoint, level, nullLine, 0);
+		currentPoint=new Point((int) currentPoint.getX()+MEGA_MAN_LEVEL_WIDTH,(int) currentPoint.getY());
+		
+	}else if(current.equals(Direction.UP)) {
+		placeUpCPPN(getLevelListRepresentationFromGAN(ganProcessUp, startlatentVector), currentPoint, level, 0);
+		y++;
+		numUp++;
+	}else if(current.equals(Direction.DOWN)) {
+		y--;
+		numDown++;
+		placeDownCPPN(getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector), currentPoint, level, 0);
+		currentPoint=new Point((int) currentPoint.getX(),(int) currentPoint.getY()+MEGA_MAN_LEVEL_HEIGHT);
+	}
+	placedPoints.add(currentPoint);
+}
+
+/**
+ * places the first segment in the data set.
+ * @param oneSegmentData
+ * @param oneLevel
+ * @param current
+ * @param segmentNum
+ * @param ganProcessHorizontal
+ * @param ganProcessUp
+ * @param ganProcessDown
+ * @param lowerLeftGAN
+ * @param lowerRightGAN
+ * @param upperLeftGAN
+ * @param upperRightGAN
+ */
+private static void placeFirstSegment(double[] oneSegmentData, List<List<Integer>> oneLevel,Direction current,int segmentNum, GANProcess ganProcessHorizontal, GANProcess ganProcessUp,
+		GANProcess ganProcessDown) {
+	double[] startlatentVector = new double[oneSegmentData.length-NUM_AUX];
+	for(int i = NUM_AUX;i<TOTAL_VARIABLES;i++) {
+		startlatentVector[i-NUM_AUX]=oneSegmentData[i];
+	}
+	if(current.equals(Direction.UP)) {
+		numUp++;
+		oneLevel = getLevelListRepresentationFromGAN(ganProcessUp, startlatentVector).get(0);
+	}
+	else if (current.equals(Direction.DOWN)) {
+		numDown++;
+		oneLevel = getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector).get(0);
+	}
+	else if(current.equals(Direction.RIGHT)) {
+		numHorizontal++;
+		
+		oneLevel = getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector).get(0);
+	}
+
+	
+}
+
+/**
+ * Uses the long vector to determine which direction to place
+ * If placing the first segment, simply use the highest preference
+ * Otherwise, determine which appropriate backup to use.
+ * @param wholeVector
+ * @param segmentNum
+ * @param previous
+ * @return
+ */
+private static Direction useLongVectorToFindDirection(Point currentPoint, HashSet<Point> placedPoints, double[] oneSegmentData, int segmentNum, Direction previous) {
+	// TODO Auto-generated method stub
+	if(previous==null) return findFirstDirection(oneSegmentData, segmentNum);
+	else {
+		double[] outputs = new double[NUM_AUX];
+		for(int i =0;i<NUM_AUX;i++) {
+			outputs[i]=oneSegmentData[i];
+		}
+		int direction = StatisticsUtilities.argmax(outputs);
+		double[] backup = new double[NUM_AUX];
+		for(int i = 0;i<NUM_AUX;i++) {
+			if(i!=direction) {
+				backup[i]=outputs[i];
+			}
+		}
+		int bkp = StatisticsUtilities.argmax(backup);
+		double[] backup1 = new double[NUM_AUX];
+		for(int i = 0;i<NUM_AUX;i++) {
+			if(i!=direction&&i!=bkp) {
+				backup1[i]=outputs[i];
+			}
+		}
+		int bkp1 = StatisticsUtilities.argmax(backup1);
+		boolean needBackup = true;
+		int x = (int) currentPoint.getX();
+		int y = (int) currentPoint.getY();
+		Direction current=null;
+		needBackup = useBackupOrSetCurrentDirection(current, placedPoints, direction, x, y);
+		if(needBackup) needBackup = useBackupOrSetCurrentDirection(current, placedPoints, bkp, x, y);
+		if(needBackup) needBackup = useBackupOrSetCurrentDirection(current, placedPoints, bkp1, x, y);
+		return current;
+	}
+}
+
+/**
+ * finds the direction needed when taking into account corner cases.
+ * @param placedPoints
+ * @param oneSegmentData
+ * @param segmentNum
+ * @return
+ */
+private static boolean useBackupOrSetCurrentDirection(Direction current, HashSet<Point> placedPoints, int direction, int x, int y) {
+	boolean needBackup = true;
+	
+	if(direction == MegaManCPPNtoGANLevelBreederTask.UP_PREFERENCE&&!placedPoints.contains(new Point(x, y))) {
+		current = Direction.UP;
+		needBackup=false;
+	}
+	else if (direction == MegaManCPPNtoGANLevelBreederTask.DOWN_PREFERENCE&&!placedPoints.contains(new Point(x, y+MEGA_MAN_LEVEL_HEIGHT))) { //level height
+		current = Direction.DOWN;
+		needBackup=false;
+	}
+	else if(direction==MegaManCPPNtoGANLevelBreederTask.HORIZONTAL_PREFERENCE&&!placedPoints.contains(new Point(x+MEGA_MAN_LEVEL_WIDTH, y))){ //level width
+		current=Direction.RIGHT;
+		needBackup=false;
+	}
+	return needBackup;
+}
+
+/**
+ * Finds the initial direction to go in.
+ * @param wholeVector
+ * @param segmentNum
+ * @return
+ */
+private static Direction findFirstDirection(double[] oneSegmentData, int segmentNum) {
+	double[] startlatentVector = new double[oneSegmentData.length-NUM_AUX];
+	for(int i = NUM_AUX;i<TOTAL_VARIABLES;i++) {
+		startlatentVector[i-NUM_AUX]=oneSegmentData[i];
+	}
+	double[] startoutput = new double[3];
+	for(int i =0;i<NUM_AUX;i++) {
+		startoutput[i]=oneSegmentData[i];
+	}
+	
+	int startdirection = StatisticsUtilities.argmax(startoutput);
+	Direction startDirection = null;
+	if(startdirection == MegaManCPPNtoGANLevelBreederTask.UP_PREFERENCE) {
+		startDirection = Direction.UP;
+	}
+	else if (startdirection == MegaManCPPNtoGANLevelBreederTask.DOWN_PREFERENCE) {
+		startDirection = Direction.DOWN;
+
+	}
+	else if(startdirection == MegaManCPPNtoGANLevelBreederTask.HORIZONTAL_PREFERENCE) {
+		startDirection = Direction.RIGHT;
+
+	}
+	return startDirection;
+}
+	
+//	public static List<List<Integer>> wholeVectorToMegaManLevel(GANProcess ganProcessHorizontal,
+//			GANProcess ganProcessDown, GANProcess ganProcessUp, GANProcess lowerLeftGAN, 
+//			GANProcess lowerRightGAN,  GANProcess upperLeftGAN, GANProcess upperRightGAN, int chunks, double[] wholeVector){
+//		 numHorizontal = 0;
+//		 numUp = 0;
+//		 numDown = 0;
+//		 numCorner = 0;
+//		 numDistinctSegments = 0;
+//		 distinct = new HashSet<>();
+//		 x = 0;
+//		 y = 0;
+////		for(double k :inputMultipliers) {
+////			System.out.println(k);
+////		}
+//		
+//
+//		List<List<Integer>> oneLevel;
+////		levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, latentVector);
+////		levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVector);
+////		levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVector);
+//		d = null;
+//		//System.out.println(MegaManCPPNtoGANLevelBreederTask.staticNumCPPNOutputs());
+//		double[] startfull = latentVectorAndMiscDataForPosition(0,8,wholeVector);
+//		//System.out.println(startfull.length);
+//
+//		double[] startlatentVector = new double[startfull.length-3];
+//		for(int i = 3;i<startfull.length;i++) {
+//			startlatentVector[i-3]=startfull[i];
+//		}
+//		
+//		List<List<List<Integer>>> levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector);
+//		List<List<List<Integer>>> levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, startlatentVector);
+//		List<List<List<Integer>>> levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector);
+//		List<List<List<Integer>>> levelInListUpperRight; /*= getLevelListRepresentationFromGAN(upperRightGAN, latentVector);*/
+//		List<List<List<Integer>>> levelInListUpperLeft;/*= getLevelListRepresentationFromGAN(upperLeftGAN, latentVector);*/
+//		List<List<List<Integer>>> levelInListLowerRight; /*= getLevelListRepresentationFromGAN(lowerRightGAN, latentVector);*/
+//		List<List<List<Integer>>> levelInListLowerLeft; /*= getLevelListRepresentationFromGAN(lowerLeftGAN, latentVector);*/
+//		
+//		double[] startoutput = new double[3];
+//		for(int i =0;i<3;i++) {
+//			startoutput[i]=startfull[i];
+//		}
+//		
+//		int startdirection = StatisticsUtilities.argmax(startoutput);
+//		oneLevel = MegaManCPPNtoGANUtil.placeInitialDirection(ganProcessHorizontal, startlatentVector, levelInListUp, levelInListDown,
+//				startdirection);
+//		distinct.add(oneLevel);
+//		MegaManGANUtil.placeSpawn(oneLevel);
+//		if(chunks==1) {
+//			MegaManGANUtil.placeOrb(oneLevel);
+//		}
+//		List<Integer> nullLine = new ArrayList<Integer>(16);
+//		for(int i=0;i<MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH;i++) {
+//			nullLine.add(MegaManState.MEGA_MAN_TILE_NULL);
+//		}
+//		previousMove = new Point(0,0);
+//		for(int segment = 1; segment < chunks; segment++) {
+//			MegaManCPPNtoGANUtil.Direction previous = d;
+//			double[] full =  latentVectorAndMiscDataForPosition(segment,8,wholeVector);
+//			double[] latentVector = new double[full.length-3];
+//			for(int i = 3;i<full.length;i++) {
+//				latentVector[i-3]=full[i];
+//			}
+//			double[] outputs = new double[3];
+//			for(int i =0;i<3;i++) {
+//				outputs[i]=full[i];
+//			}
+//			int direction = StatisticsUtilities.argmax(outputs);
+//			double[] backup = new double[3];
+//			for(int i = 0;i<3;i++) {
+//				if(i!=direction) {
+//					backup[i]=outputs[i];
+//				}
+//			}
+//			int bkp = StatisticsUtilities.argmax(backup);
+//			double[] backup1 = new double[3];
+//			for(int i = 0;i<3;i++) {
+//				if(i!=direction&&i!=bkp) {
+//					backup1[i]=outputs[i];
+//				}
+//			}
+//			int bkp1 = StatisticsUtilities.argmax(backup1);
+//			boolean needBackup = true;
+//			levelInListLowerRight = MegaManGANUtil.getLevelListRepresentationFromGAN(lowerRightGAN, latentVector);
+//			levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVector);
+//			levelInListUpperRight = MegaManGANUtil.getLevelListRepresentationFromGAN(upperRightGAN, latentVector);
+//			levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVector);
+//			levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, latentVector);
+//			levelInListUpperLeft = MegaManGANUtil.getLevelListRepresentationFromGAN(upperLeftGAN, latentVector);
+//			levelInListLowerLeft = MegaManGANUtil.getLevelListRepresentationFromGAN(lowerLeftGAN, latentVector);
+//			
+//			needBackup = MegaManCPPNtoGANUtil.addLevelSegment(chunks, oneLevel, levelInListHorizontal, levelInListUp, levelInListDown,
+//					levelInListUpperRight, levelInListUpperLeft, levelInListLowerRight, levelInListLowerLeft, nullLine,
+//					segment, previous, direction, needBackup);
+//			
+//			
+//			if(needBackup) {
+//				needBackup = MegaManCPPNtoGANUtil.addLevelSegment(chunks, oneLevel, levelInListHorizontal, levelInListUp, levelInListDown,
+//						levelInListUpperRight, levelInListUpperLeft, levelInListLowerRight, levelInListLowerLeft, nullLine,
+//						segment, previous, bkp, needBackup);
+//				
+//			}
+//			if(needBackup) {
+//				needBackup = MegaManCPPNtoGANUtil.addLevelSegment(chunks, oneLevel, levelInListHorizontal, levelInListUp, levelInListDown,
+//						levelInListUpperRight, levelInListUpperLeft, levelInListLowerRight, levelInListLowerLeft, nullLine,
+//						segment, previous, bkp1, needBackup);
+//				
+//			}
+//			if(!d.equals(previous)) {
+//				numCorner++;
+//			}
+//			previous = d;
+//			numDistinctSegments = distinct.size();
+//		}
+//		
+//		
+////		ganProcessUp.terminate();
+////		ganProcessDown.terminate();
+////		ganProcessHorizontal.terminate();
+//		if(!Parameters.parameters.booleanParameter("megaManUsesUniqueEnemies")) {
+//			MegaManGANUtil.postProcessingPlaceProperEnemies(oneLevel);
+//		}
+//		return oneLevel;
+//	}
 }

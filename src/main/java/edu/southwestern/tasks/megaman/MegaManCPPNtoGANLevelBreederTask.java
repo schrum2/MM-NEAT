@@ -39,9 +39,6 @@ import edu.southwestern.util.PythonUtil;
 public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWEANN>{
 	public static final String[] SENSOR_LABELS = new String[] {"x-coordinate", "y-coordinate", "bias"};
 
-	
-	
-	
 	public static final int VIEW_BUTTON_INDEX = -19; 
 	public static final int GANS_BUTTON_INDEX = -18; 
 	public static final int PLAY_BUTTON_INDEX = -20; 
@@ -50,11 +47,12 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	public static final int UP_PREFERENCE = 0; 
 	public static final int DOWN_PREFERENCE = 1; 
 	public static final int HORIZONTAL_PREFERENCE = 2; 
-	public static final int NUM_NON_LATENT_INPUTS = 3; //the first six values in the latent vector
+	// TODO: In order to support LEFT, this will need to be a method rather than a constant
+	public static final int NUM_NON_LATENT_INPUTS = 3; //the first three values in the latent vector
 
-	
 	private static final int LEVEL_MIN_CHUNKS = 1;
 	private static final int LEVEL_MAX_CHUNKS = 10; 
+	
 	private String[] outputLabels;
 	public static GANProcess ganProcessDown = null;
 	public static GANProcess ganProcessHorizontal = null;
@@ -72,8 +70,9 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 		GANProcess.terminateGANProcess();
 		//GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
 		PythonUtil.setPythonProgram();
-
-		// TODO Auto-generated constructor stub
+		// TODO: Add support for OneGAN here too.
+		// Additionally! I think the code would be easier to maintain if you can make the SevenGAN initailization process be part of
+		// some other class and/or util method. Repeating this initialization process in both this class and MegaManCPPNtoGANLevelTask is bad design.
 		ganProcessHorizontal = MegaManGANUtil.initializeGAN("MegaManGANHorizontalModel");
 		ganProcessDown= MegaManGANUtil.initializeGAN("MegaManGANDownModel");
 		ganProcessUp = MegaManGANUtil.initializeGAN("MegaManGANUpModel");

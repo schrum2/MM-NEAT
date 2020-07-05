@@ -311,20 +311,21 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						
 						int maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
 						// Row-major order lookup in 3D archive
-						int novelty =(int)(DungeonNovelty.averageDungeonNovelty(dungeon)*ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.NUM_NOVELTY_BINS/ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.MAX_EXPECTED_NOVELTY); //.7 is the guessed max novelty, magic number
-						binIndex = (novelty*(maxNumRooms+1) + numBackTrackRooms)*(maxNumRooms+1) + numRoomsReachable;
-						binIndex = Math.min(binIndex, ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.NUM_NOVELTY_BINS - 1);
+						double dungeonNovelty = DungeonNovelty.averageDungeonNovelty(dungeon);
+						int noveltyIndex =(int)((dungeonNovelty*ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.NUM_NOVELTY_BINS)/ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.MAX_EXPECTED_NOVELTY); //.7 is the guessed max novelty, magic number
+						noveltyIndex = Math.min(noveltyIndex, ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.NUM_NOVELTY_BINS - 1);
+						binIndex = (noveltyIndex*(maxNumRooms+1) + numBackTrackRooms)*(maxNumRooms+1) + numRoomsReachable;
 						double[] archiveArray = new double[(ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.NUM_NOVELTY_BINS)*(maxNumRooms+1)*(maxNumRooms+1)];
 						Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
 						archiveArray[binIndex] = binScore; // Percent rooms traversed
-						double dungeonNovelty = DungeonNovelty.averageDungeonNovelty(dungeon);
-						System.out.println("Dungeon Novelty: "+dungeonNovelty);
-						System.out.println("Novelty Post-Calc: "+novelty);
-						System.out.println("Bin Index: "+binIndex);
+						
+//						System.out.println("Dungeon Novelty: "+dungeonNovelty);
+//						System.out.println("Novelty Post-Calc: "+noveltyIndex);
+//						System.out.println("Bin Index: "+binIndex);
 						
 						
-						System.out.println("["+novelty+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
-						MiscUtil.waitForReadStringAndEnterKeyPress();
+						System.out.println("["+noveltyIndex+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+binScore+" ("+numRoomsTraversed+" rooms)");
+//						MiscUtil.waitForReadStringAndEnterKeyPress();
 						behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 						// Number of distinct rooms.
 						// Number of rooms backtracked through.

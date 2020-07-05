@@ -60,6 +60,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+/loderunnerlevelsequences/
 /megamandistinctverticalandconnectivity/
 /loderunnerlevels/
 /loderunnerlevelsMAPElites/
