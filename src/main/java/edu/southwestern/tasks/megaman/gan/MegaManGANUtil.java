@@ -11,15 +11,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
-import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
+import edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.megaman.MegaManRenderUtil;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
-import edu.southwestern.tasks.megaman.MegaManCPPNtoGANUtil.Direction;
-import edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelBreederTask;
-import edu.southwestern.tasks.megaman.MegaManCPPNtoGANUtil;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;

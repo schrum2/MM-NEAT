@@ -88,6 +88,22 @@ public abstract class MegaManGANGenerator {
 					if(!previous.equals(proposed)) {
 						// Change to appropriate corner
 						// TODO: assign result and set done to true
+						if((previous.equals(SEGMENT_TYPE.UP)&&proposed.equals(SEGMENT_TYPE.RIGHT))||(previous.equals(SEGMENT_TYPE.LEFT)&&proposed.equals(SEGMENT_TYPE.DOWN))) {//place upper left
+							proposed = SEGMENT_TYPE.TOP_LEFT;
+							done = true;
+						}
+						else if((previous.equals(SEGMENT_TYPE.DOWN)&&proposed.equals(SEGMENT_TYPE.RIGHT))||(previous.equals(SEGMENT_TYPE.LEFT)&&proposed.equals(SEGMENT_TYPE.UP))) { //place lower left
+							proposed = SEGMENT_TYPE.BOTTOM_LEFT;
+							done = true;
+						}
+						else if((previous.equals(SEGMENT_TYPE.RIGHT)&&proposed.equals(SEGMENT_TYPE.UP))||(previous.equals(SEGMENT_TYPE.DOWN)&&proposed.equals(SEGMENT_TYPE.LEFT))) { //place lower right
+							proposed = SEGMENT_TYPE.BOTTOM_RIGHT;
+							done = true;
+						}
+						else if((previous.equals(SEGMENT_TYPE.RIGHT)&&proposed.equals(SEGMENT_TYPE.DOWN))||(previous.equals(SEGMENT_TYPE.UP)&&proposed.equals(SEGMENT_TYPE.LEFT))) { //place upper right
+							proposed = SEGMENT_TYPE.TOP_RIGHT;
+							done = true;
+						}
 						
 					} else {
 						// Proposed result is fine ... done!
@@ -120,11 +136,23 @@ public abstract class MegaManGANGenerator {
 					return new Point(current.x, current.y+1); // Move down
 				}
 			case TOP_RIGHT:
-					// TODO
+				if(previousType.equals(SEGMENT_TYPE.UP)) return new Point(current.x-1, current.y); // Move left
+				else {
+					assert previousType.equals(SEGMENT_TYPE.RIGHT);
+					return new Point(current.x, current.y+1); // Move down
+				}
 			case BOTTOM_RIGHT:
-				// TODO
+				if(previousType.equals(SEGMENT_TYPE.DOWN)) return new Point(current.x-1, current.y); // Move left
+				else {
+					assert previousType.equals(SEGMENT_TYPE.RIGHT);
+					return new Point(current.x, current.y-1); // Move up
+				}
 			case BOTTOM_LEFT:
-				// TODO
+				if(previousType.equals(SEGMENT_TYPE.DOWN)) return new Point(current.x+1, current.y); // Move right
+				else {
+					assert previousType.equals(SEGMENT_TYPE.LEFT);
+					return new Point(current.x, current.y-1); // Move up
+				}
 			default: throw new IllegalArgumentException("Valid SEGMENT_TYPE not specified");
 		}
 	}
