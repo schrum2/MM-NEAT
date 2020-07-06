@@ -106,6 +106,24 @@ public class LodeRunnerLevelAnalysisUtil {
 		String line = "Level"+num+","+simpleAStarDistance+","+connectivity+","+tspSolutionPathLength+","+tspConnectivity+","+percentBackTrack+","+percentEmpty+","+percentLadders+","+percentGround+","+percentSolid+","+percentDiggable;
 		return line;
 	}
+	
+	public static double getPercentOfDugSteps(ArrayList<LodeRunnerAction> solution, LodeRunnerState start) {
+		if(solution ==null)
+			return -1.0;
+		double percentDug = 0;
+		HashSet<Pair<Integer,Integer>> visited = new HashSet<>();
+		LodeRunnerState currentState = start;
+		Pair<Integer, Integer> current = null;
+		for(LodeRunnerAction a: solution) {
+			currentState = (LodeRunnerState) currentState.getSuccessor(a);	
+			Pair<Integer,Integer> next = new Pair<>(currentState.currentX, currentState.currentY);
+			if(current!=null && !current.equals(next)) {
+				
+			}
+			current = next;
+		}
+		return percentDug/solution.size();
+	}
 
 	/**
 	 * Calculates the number of visited states from a tsp search
