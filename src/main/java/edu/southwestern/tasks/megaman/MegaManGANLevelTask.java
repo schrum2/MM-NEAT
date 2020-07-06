@@ -19,14 +19,14 @@ import edu.southwestern.util.datastructures.ArrayUtil;
  */
 public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 
-	private MegaManGANGenerator MegaManGenerator;
+	private MegaManGANGenerator megaManGenerator;
 
 	public MegaManGANLevelTask(){
 		super();
 		
 		
-		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) MegaManGenerator = new MegaManSevenGANGenerator();
-		else  MegaManGenerator = new MegaManOneGANGenerator();
+		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) megaManGenerator = new MegaManSevenGANGenerator();
+		else  megaManGenerator = new MegaManOneGANGenerator();
 	}
 	
 	/**
@@ -35,7 +35,7 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	@Override
 	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<List<Double>> individual) {
 		List<Double> latentVector = individual.getPhenotype();
-		return getMegaManLevelListRepresentationFromStaticGenotype(MegaManGenerator, latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"));
+		return getMegaManLevelListRepresentationFromStaticGenotype(megaManGenerator, latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"));
 	}
 	private List<List<Integer>> getMegaManLevelListRepresentationFromStaticGenotype(
 			MegaManGANGenerator megaManGenerator, List<Double> latentVector, int chunks) {
