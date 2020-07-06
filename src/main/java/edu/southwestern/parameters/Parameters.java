@@ -784,6 +784,7 @@ public class Parameters {
 		booleanOptions.add("megaManUsesUniqueEnemies", false, "whether or not we're using unique enemies");
 		booleanOptions.add("megaManAllowsBlockBreaker", true, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManDistinctScreenFitness", false, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManMaximizeEnemies", false, "whether or not we're maximizing enemies");
 		booleanOptions.add("showInteractiveLodeRunnerSolutionPaths", false, "Shows the solution path for the levels in the level breeder when true");
 		booleanOptions.add("lodeRunnerAllowsSimpleAStarPath", false, "Adds the AStarPath as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsConnectivity", false, "Adds connectivity as a fitness function when true");
