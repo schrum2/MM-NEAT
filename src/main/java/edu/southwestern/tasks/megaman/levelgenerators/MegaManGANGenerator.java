@@ -22,7 +22,9 @@ public abstract class MegaManGANGenerator {
 	 */
 	public static int numberOfAuxiliaryVariables() {
 		// TODO: Add optional support for 4 directions
-		return 3; // Currently only supporting Right, Up, Down, but will add Left (return 4) soon
+//		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) return 4;
+//		else 
+			return 3; // Currently only supporting Right, Up, Down, but will add Left (return 4) soon
 	}
 	
 	public enum SEGMENT_TYPE {UP, DOWN, RIGHT, LEFT, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT};
@@ -46,9 +48,9 @@ public abstract class MegaManGANGenerator {
 		double[] auxiliaryVariables = new double[numberOfAuxiliaryVariables()];
 		System.arraycopy(segmentVariables, 0, auxiliaryVariables, 0, auxiliaryVariables.length);
 		
-		SEGMENT_TYPE type = determineType(previous, auxiliaryVariables, previousPoints, currentPoint);
+		Pair<SEGMENT_TYPE, Point> type = determineType(previous, auxiliaryVariables, previousPoints, currentPoint);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Pair<List<List<Integer>>, Point> segmentAndCurrentPoint = new Pair(generateSegmentFromLatentVariables(latentVector, type), currentPoint);
+		Pair<List<List<Integer>>, Point> segmentAndCurrentPoint = new Pair(generateSegmentFromLatentVariables(latentVector, type.t1), type.t2);
 		return segmentAndCurrentPoint;
 	}
 	
@@ -62,21 +64,25 @@ public abstract class MegaManGANGenerator {
 	 * @param currentPoint Where the current segment will be placed
 	 * @return Segment type of new segment
 	 */
-	protected static SEGMENT_TYPE determineType(SEGMENT_TYPE previous, double[] auxiliaryVariables, HashSet<Point> previousPoints, Point currentPoint) {
+	protected static Pair<SEGMENT_TYPE, Point> determineType(SEGMENT_TYPE previous, double[] auxiliaryVariables, HashSet<Point> previousPoints, Point currentPoint) {
 				
 		int maxIndex = StatisticsUtilities.argmax(auxiliaryVariables);
 		
 		if(previous == null) {
 			// This is the first segment in the level
-			return SEGMENT_TYPE.values()[maxIndex];
+			SEGMENT_TYPE proposed = SEGMENT_TYPE.values()[maxIndex];
+			Point next = nextPoint(previous, currentPoint, proposed);
+
+			return new Pair<SEGMENT_TYPE, Point>(proposed, next);
 		} else {	
 			// TODO: Requires more work
 			boolean done = false;
 			SEGMENT_TYPE result = null;
+			Point next = null;
 			while(!done) {
 				// This can only be UP, DOWN, RIGHT, LEFT
 				SEGMENT_TYPE proposed = SEGMENT_TYPE.values()[maxIndex];
-				Point next = nextPoint(previous, currentPoint, proposed); // Where would new segment go?
+				next = nextPoint(previous, currentPoint, proposed); // Where would new segment go?
 				if(previousPoints.contains(next)) { // This placement is illegal. Location occupied
 					auxiliaryVariables[maxIndex] = Double.NEGATIVE_INFINITY; // Disable illegal option
 					maxIndex = StatisticsUtilities.argmax(auxiliaryVariables); // Reset
@@ -114,7 +120,8 @@ public abstract class MegaManGANGenerator {
 					}
 				}
 			}
-			return result;
+			
+			return new Pair<SEGMENT_TYPE, Point>(result, next);
 		}
 	}
 	

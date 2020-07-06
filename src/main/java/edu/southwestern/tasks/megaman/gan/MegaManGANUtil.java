@@ -14,14 +14,13 @@ import java.util.Random;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
-import edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.megaman.MegaManRenderUtil;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
-import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class MegaManGANUtil {
 	// TODO: Do not define latent length anywhere
@@ -639,7 +638,7 @@ public class MegaManGANUtil {
 	
 //	public static Direction d;
 	
-	public static List<List<Integer>> longVectorToMegaManLevel(MegaManGANGenerator MegaManGANGenerator, double[] wholeVector, int chunks){
+	public static List<List<Integer>> longVectorToMegaManLevel(MegaManGANGenerator megaManGANGenerator, double[] wholeVector, int chunks){
 		HashSet<Point> previousPoints = new HashSet<>();
 		MegaManGANGenerator.SEGMENT_TYPE previousType = null;
 		Point currentPoint  = new Point(0,0);
@@ -648,11 +647,21 @@ public class MegaManGANUtil {
 		List<List<Integer>> level = new ArrayList<>();
 		List<List<Integer>> segment = new ArrayList<>();
 		for(int i = 0;i<chunks;i++) {
-			double[] oneSegmentData = latentVectorAndMiscDataForPosition(i, Parameters.parameters.integerParameter("GANInputSize"), wholeVector);
-			Pair<List<List<Integer>>, Point> segmentAndPoint = MegaManGANGenerator.generateSegmentFromVariables(oneSegmentData, previousType, previousPoints, currentPoint);
+			System.out.println(previousPoints.size());
+			System.out.println(previousType);
+			double[] oneSegmentData = latentVectorAndMiscDataForPosition(i, Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables(), wholeVector);
+			Pair<List<List<Integer>>, Point> segmentAndPoint = megaManGANGenerator.generateSegmentFromVariables(oneSegmentData, previousType, previousPoints, currentPoint);
 			segment = segmentAndPoint.t1;
 			currentPoint = segmentAndPoint.t2;
-			placeMegaManSegment(level, segment,  currentPoint, previousPoint, placementPoint);
+			if(i==chunks-1) placeOrb(segment);
+			//placementPoint = currentPoint;
+			placementPoint = placeMegaManSegment(level, segment,  currentPoint, previousPoint, placementPoint);
+			System.out.println(placementPoint);
+			MegaManVGLCUtil.printLevel(level);
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
+			
+			
+			if(i==0) placeSpawn(level);
 			previousPoint = currentPoint;
 		}
 		
@@ -661,24 +670,40 @@ public class MegaManGANUtil {
 		
 	}
 	
-	private static void placeMegaManSegment(List<List<Integer>> level,List<List<Integer>> segment, Point current, Point prev, Point placementPoint) {
+	private static Point placeMegaManSegment(List<List<Integer>> level,List<List<Integer>> segment, Point current, Point prev, Point placementPoint) {
+		
 		if(current.equals(new Point(prev.x, prev.y+1))) {
-			placementPoint = new Point(placementPoint.x, placementPoint.y+MEGA_MAN_LEVEL_HEIGHT);
+			System.out.println("DOWN");
+
 			placeDownSegment(level, segment, placementPoint);
+			placementPoint = new Point(placementPoint.x, placementPoint.y+MEGA_MAN_LEVEL_HEIGHT);
+
 		}
 		if(current.equals(new Point(prev.x, prev.y-1))) {
-			placementPoint = new Point(placementPoint.x, placementPoint.y-MEGA_MAN_LEVEL_HEIGHT);
+			System.out.println("UP");
+
 			placeUpSegment(level, segment, placementPoint);
+			placementPoint = new Point(placementPoint.x, placementPoint.y-MEGA_MAN_LEVEL_HEIGHT);
+
+
 		}
 		if(current.equals(new Point(prev.x+1, prev.y))) {
-			placementPoint = new Point(placementPoint.x+MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
+			System.out.println("RIGHT");
+
 			placeRightSegment(level, segment, placementPoint);
+			placementPoint = new Point(placementPoint.x+MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
+
+
 		}
 		if(current.equals(new Point(prev.x-1, prev.y))) {
-			placementPoint = new Point(placementPoint.x-MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
-			placeLeftSegment(level, segment, placementPoint);
-		}
+			System.out.println("LEFT");
 
+			placeLeftSegment(level, segment, placementPoint);
+			placementPoint = new Point(placementPoint.x-MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
+
+
+		}
+		return placementPoint;
 	}
 
 	
@@ -690,14 +715,20 @@ public class MegaManGANUtil {
 			for(int i = 0;i<segment.get(0).size();i++) {
 				nullLine.add(MegaManVGLCUtil.ONE_ENEMY_NULL);
 			}
-			for(int i = 0; i < level.size();i++) {
-				level.add(0, nullLine);
+			if(level.size()==0) {
+				for(int i = 0; i < segment.size();i++) {
+					level.add(level.size(), nullLine);
+				}
+			}else {
+				for(int i = 0;i<level.size();i++) { //add null to all spaces to the right TODO possibly change
+					level.get(i).addAll(nullLine);
+				}
 			}
 			placementPoint.x += MEGA_MAN_LEVEL_WIDTH;
 		}
 		for(int x = placementPoint.x; x < placementPoint.x+MEGA_MAN_LEVEL_WIDTH;x++) {
 			for(int y = placementPoint.y;y<placementPoint.y+MEGA_MAN_LEVEL_HEIGHT;y++) {
-				level.get(y).add(x, segment.get(y-placementPoint.y).get(x - placementPoint.x));
+				level.get(y).set(x, segment.get(y-placementPoint.y).get(x - placementPoint.x));
 			}
 		}
 		
@@ -705,22 +736,55 @@ public class MegaManGANUtil {
 
 	private static void placeRightSegment(List<List<Integer>> level, List<List<Integer>> segment, Point placementPoint) {
 		// TODO Auto-generated method stub
-		if(placementPoint.x>level.size()) {
+		if(placementPoint.x+MEGA_MAN_LEVEL_WIDTH>level.get(0).size()) {
 			List<Integer> nullLine = new ArrayList<>();
 			for(int i = 0;i<segment.get(0).size();i++) {
 				nullLine.add(MegaManVGLCUtil.ONE_ENEMY_NULL);
 			}
-			for(int i = 0; i < level.size();i++) {
-				level.add(level.size()-1, nullLine);
+			if(level.size()==0) {
+				System.out.println("\n\n\n nnnn \n\n\n");
+
+				for(int i = 0; i < segment.size();i++) {
+					level.add(0, nullLine);
+				}
+			}else {
+//				System.out.println(level.size());
+//				System.out.println(nullLine.toString());
+
+				for(int i = 0;i<level.size();i++) { //add null to all spaces to the right TODO possibly change
+					level.get(i).addAll(nullLine);
+				}
 			}
+			
 		
 		}
-		
+		if(placementPoint.y>=level.size()) {
+			List<List<Integer>> nullScreen = new ArrayList<>();
+			for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
+				List<Integer> nullLines = new ArrayList<Integer>();
+				if(level.size()==0||level.get(0).size()==0) {
+					for(int j = 0;j<segment.get(0).size();j++) {
+						nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+					}
+				}else {
+					for(int j = 0;j<level.get(0).size();j++) {
+						nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+					}
+				}
+				
+				nullScreen.add(nullLines);
+			}
+			if(level.size()==0) {
+				
+			}
+			level.addAll(level.size(), nullScreen);
+		}
 		for(int x = placementPoint.x; x < placementPoint.x+MEGA_MAN_LEVEL_WIDTH;x++) {
 			for(int y = placementPoint.y;y<placementPoint.y+MEGA_MAN_LEVEL_HEIGHT;y++) {
-				level.get(y).add(x, segment.get(y-placementPoint.y).get(x - placementPoint.x));
+				level.get(y).set(x, segment.get(y-placementPoint.y).get(x - placementPoint.x));
 			}
 		}
+
 		
 	}
 
@@ -730,17 +794,46 @@ public class MegaManGANUtil {
 			List<List<Integer>> nullScreen = new ArrayList<>();
 			for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
 				List<Integer> nullLines = new ArrayList<Integer>();
-				for(int j = 0;j<level.get(0).size();j++) {
-					nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+				if(level.size()==0||level.get(0).size()==0) {
+					for(int j = 0;j<segment.get(0).size();j++) {
+						nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+					}
+				}else {
+					for(int j = 0;j<level.get(0).size();j++) {
+						nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+					}
 				}
 				nullScreen.add(nullLines);
 			}
 			level.addAll(0, nullScreen);
 			placementPoint.y+=MEGA_MAN_LEVEL_HEIGHT;
 		}
+		
+		if(placementPoint.x>=level.get(0).size()) {
+			List<Integer> nullLine = new ArrayList<>();
+			for(int i = 0;i<segment.get(0).size();i++) {
+				nullLine.add(MegaManVGLCUtil.ONE_ENEMY_NULL);
+			}
+			if(level.size()==0) {
+//				System.out.println("\n\n\n nnnn \n\n\n");
+
+				for(int i = 0; i < segment.size();i++) {
+					level.add(0, nullLine);
+				}
+			}else {
+//				System.out.println(level.size());
+//				System.out.println(nullLine.toString());
+
+				for(int i = 0;i<level.size();i++) { //add null to all spaces to the right TODO possibly change
+					level.get(i).addAll(nullLine);
+				}
+			}
+			
+		
+		}
 		for(int x = placementPoint.x; x < placementPoint.x+MEGA_MAN_LEVEL_WIDTH;x++) {
 			for(int y = placementPoint.y;y<placementPoint.y+MEGA_MAN_LEVEL_HEIGHT;y++) {
-				level.get(y).add(x, segment.get(y-placementPoint.y).get(x - placementPoint.x));
+				level.get(y).set(x, segment.get(y-placementPoint.y).get(x - placementPoint.x));
 			}
 		}
 		
@@ -748,21 +841,52 @@ public class MegaManGANUtil {
 	}
 
 	private static void placeDownSegment(List<List<Integer>> level, List<List<Integer>> segment, Point placementPoint) {
-		if(placementPoint.y>level.size()) {
+		if(placementPoint.y+MEGA_MAN_LEVEL_HEIGHT>level.size()) {
 			List<List<Integer>> nullScreen = new ArrayList<>();
 			for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
 				List<Integer> nullLines = new ArrayList<Integer>();
-				for(int j = 0;j<level.get(0).size();j++) {
-					nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+				if(level.size()==0||level.get(0).size()==0) {
+					for(int j = 0;j<segment.get(0).size();j++) {
+						nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+					}
+				}else {
+					for(int j = 0;j<level.get(0).size();j++) {
+						nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+					}
+				}
+				
+				nullScreen.add(nullLines);
+			}
+			if(level.size()==0) {
+				
+			}
+			level.addAll(level.size(), nullScreen);
+		}
+		
+		if(placementPoint.y<0) {
+			List<List<Integer>> nullScreen = new ArrayList<>();
+			for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
+				List<Integer> nullLines = new ArrayList<Integer>();
+				if(level.size()==0||level.get(0).size()==0) {
+					for(int j = 0;j<segment.get(0).size();j++) {
+						nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+					}
+				}else {
+					for(int j = 0;j<level.get(0).size();j++) {
+						nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+					}
 				}
 				nullScreen.add(nullLines);
 			}
-			level.addAll(level.size()-1, nullScreen);
+			level.addAll(0, nullScreen);
+			placementPoint.y+=MEGA_MAN_LEVEL_HEIGHT;
 		}
 		
 		for(int x = placementPoint.x; x < placementPoint.x+MEGA_MAN_LEVEL_WIDTH;x++) {
-			for(int y = placementPoint.y;y<placementPoint.y+MEGA_MAN_LEVEL_HEIGHT;y++) {
-				level.get(y).add(x, segment.get(y-placementPoint.y).get(x - placementPoint.x));
+			for(int y = placementPoint.y; y < placementPoint.y+MEGA_MAN_LEVEL_HEIGHT;y++) {
+//				System.out.println(x+", "+y);
+//				MegaManVGLCUtil.printLevel(level);
+				level.get(y).set(x, segment.get(y-placementPoint.y).get(x - placementPoint.x));
 			}
 		}
 		
