@@ -44,6 +44,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	public static final int PLAY_BUTTON_INDEX = -20; 
 	public static final int SAVE_BUTTON_INDEX = -21; 
 	
+	// TODO: Will eliminate these to move into MegaManGANGenerator
 	public static final int UP_PREFERENCE = 0; 
 	public static final int DOWN_PREFERENCE = 1; 
 	public static final int HORIZONTAL_PREFERENCE = 2; 

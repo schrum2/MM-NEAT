@@ -25,6 +25,7 @@ import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class MegaManGANUtil {
+	// TODO: Do not define latent length anywhere
 	public static final int LATENT_VECTOR_SIZE = 5;//latent vector dimension, 20 improved the model 
 	public static final int MEGA_MAN_ALL_TERRAIN = 7; //number of tiles in MegaMan
 	public static final int MEGA_MAN_TILES_WITH_ENEMIES = 30; //number of tiles in MegaMan
@@ -656,6 +657,8 @@ public class MegaManGANUtil {
 		
 		return level;
 	}
+	
+	// These variables also inappropriate
 	public final static int NUM_AUX = 3;
 	public final static int NUM_LATENT = 5;
 	public final static int TOTAL_VARIABLES = 8;

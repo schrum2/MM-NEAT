@@ -24,10 +24,14 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	public static GANProcess ganProcessUpperRight = null;
 	public static GANProcess ganProcessLowerLeft = null;
 	public static GANProcess ganProcessLowerRight = null;
-	//public static GANProcess ganProcessDown = null;
 
 	public MegaManGANLevelTask(){
 		super();
+		
+		
+		// TODO: Remove code below. Instead, init a class parameter of type MegaManGANGenerator
+		
+		
 		PythonUtil.setPythonProgram();
 		//super();
 		//if(Parameters.parameters.booleanParameter("useThreeGANsMegaMan")) {
