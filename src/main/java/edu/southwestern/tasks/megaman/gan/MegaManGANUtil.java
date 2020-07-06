@@ -19,9 +19,7 @@ import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator.SEGMENT_TYPE;
-import edu.southwestern.util.MiscUtil;
-import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.datastructures.Quad;
+import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class MegaManGANUtil {
@@ -652,11 +650,10 @@ public class MegaManGANUtil {
 			System.out.println(previousPoints.size());
 			System.out.println(previousType);
 			double[] oneSegmentData = latentVectorAndMiscDataForPosition(i, Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables(), wholeVector);
-			Quad<List<List<Integer>>, Point, HashSet<Point>, SEGMENT_TYPE> segmentAndPoint = megaManGANGenerator.generateSegmentFromVariables(oneSegmentData, previousType, previousPoints, currentPoint);
+			Triple<List<List<Integer>>, Point, SEGMENT_TYPE> segmentAndPoint = megaManGANGenerator.generateSegmentFromVariables(oneSegmentData, previousType, previousPoints, currentPoint);
 			segment = segmentAndPoint.t1;
 			currentPoint = segmentAndPoint.t2;
-			previousPoints = segmentAndPoint.t3;
-			previousType = segmentAndPoint.t4;
+			previousType = segmentAndPoint.t3;
 			if(i==chunks-1) placeOrb(segment);
 			//placementPoint = currentPoint;
 			placementPoint = placeMegaManSegment(level, segment,  currentPoint, previousPoint, placementPoint);
