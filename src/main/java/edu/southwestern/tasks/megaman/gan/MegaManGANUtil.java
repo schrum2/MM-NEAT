@@ -23,8 +23,6 @@ import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class MegaManGANUtil {
-	// TODO: Do not define latent length anywhere
-	public static final int LATENT_VECTOR_SIZE = 5;//latent vector dimension, 20 improved the model 
 	public static final int MEGA_MAN_ALL_TERRAIN = 7; //number of tiles in MegaMan
 	public static final int MEGA_MAN_TILES_WITH_ENEMIES = 30; //number of tiles in MegaMan
 	public static final int MEGA_MAN_FIRST_LEVEL_ALL_TILES = 21; //number of tiles in MegaMan
@@ -44,6 +42,7 @@ public class MegaManGANUtil {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
+		final int LATENT_VECTOR_SIZE = 5; // Just for this test
 		GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN; //sets GAN type to LodeRunner
 		Parameters.initializeParameterCollections(new String[] {"GANInputSize:"+LATENT_VECTOR_SIZE});//input size is the size of the latent vector
 		double[] latentVector = RandomNumbers.randomArray(LATENT_VECTOR_SIZE); //fills array of input size randomly
