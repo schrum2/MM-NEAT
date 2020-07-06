@@ -6,6 +6,7 @@ import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
@@ -40,7 +41,7 @@ public abstract class MegaManGANGenerator {
 	 * @param currentPoint Where the current segment will be placed
 	 * @return List of Lists representation of the generated segment.
 	 */
-	public Pair<List<List<Integer>>, Point> generateSegmentFromVariables(double[] segmentVariables, SEGMENT_TYPE previous, HashSet<Point> previousPoints, Point currentPoint){
+	public Quad<List<List<Integer>>, Point, HashSet<Point>, SEGMENT_TYPE> generateSegmentFromVariables(double[] segmentVariables, SEGMENT_TYPE previous, HashSet<Point> previousPoints, Point currentPoint){
 		// Save latent vector
 		double[] latentVector = new double[Parameters.parameters.integerParameter("GANInputSize")];
 		System.arraycopy(segmentVariables, numberOfAuxiliaryVariables(), latentVector, 0, latentVector.length);
@@ -48,9 +49,9 @@ public abstract class MegaManGANGenerator {
 		double[] auxiliaryVariables = new double[numberOfAuxiliaryVariables()];
 		System.arraycopy(segmentVariables, 0, auxiliaryVariables, 0, auxiliaryVariables.length);
 		
-		Pair<SEGMENT_TYPE, Point> type = determineType(previous, auxiliaryVariables, previousPoints, currentPoint);
+		Quad<SEGMENT_TYPE, Point, HashSet<Point>, SEGMENT_TYPE> type = determineType(previous, auxiliaryVariables, previousPoints, currentPoint);
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		Pair<List<List<Integer>>, Point> segmentAndCurrentPoint = new Pair(generateSegmentFromLatentVariables(latentVector, type.t1), type.t2);
+		Quad<List<List<Integer>>, Point, HashSet<Point>, SEGMENT_TYPE> segmentAndCurrentPoint = new Quad(generateSegmentFromLatentVariables(latentVector, type.t1), type.t2, type.t3, type.t4);
 		return segmentAndCurrentPoint;
 	}
 	
@@ -64,7 +65,7 @@ public abstract class MegaManGANGenerator {
 	 * @param currentPoint Where the current segment will be placed
 	 * @return Segment type of new segment
 	 */
-	protected static Pair<SEGMENT_TYPE, Point> determineType(SEGMENT_TYPE previous, double[] auxiliaryVariables, HashSet<Point> previousPoints, Point currentPoint) {
+	protected static Quad<SEGMENT_TYPE, Point, HashSet<Point>, SEGMENT_TYPE> determineType(SEGMENT_TYPE previous, double[] auxiliaryVariables, HashSet<Point> previousPoints, Point currentPoint) {
 				
 		int maxIndex = StatisticsUtilities.argmax(auxiliaryVariables);
 		
@@ -72,8 +73,8 @@ public abstract class MegaManGANGenerator {
 			// This is the first segment in the level
 			SEGMENT_TYPE proposed = SEGMENT_TYPE.values()[maxIndex];
 			Point next = nextPoint(previous, currentPoint, proposed);
-
-			return new Pair<SEGMENT_TYPE, Point>(proposed, next);
+			previousPoints.add(next);
+			return new Quad<SEGMENT_TYPE, Point, HashSet<Point>, SEGMENT_TYPE>(proposed, next, previousPoints, previous);
 		} else {	
 			// TODO: Requires more work
 			boolean done = false;
@@ -121,7 +122,7 @@ public abstract class MegaManGANGenerator {
 				}
 			}
 			
-			return new Pair<SEGMENT_TYPE, Point>(result, next);
+			return new Quad<SEGMENT_TYPE, Point, HashSet<Point>, SEGMENT_TYPE>(result, next, previousPoints, previous);
 		}
 	}
 	
