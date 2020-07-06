@@ -7,9 +7,10 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
-import edu.southwestern.util.PythonUtil;
+import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
+import edu.southwestern.tasks.megaman.levelgenerators.MegaManOneGANGenerator;
+import edu.southwestern.tasks.megaman.levelgenerators.MegaManSevenGANGenerator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 /**
  * Allows for objective evolution using GANs
@@ -17,43 +18,15 @@ import edu.southwestern.util.datastructures.ArrayUtil;
  *
  */
 public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
-	public static GANProcess ganProcessHorizontal = null;
-	public static GANProcess ganProcessDown = null;
-	public static GANProcess ganProcessUp = null;
-	public static GANProcess ganProcessUpperLeft = null;
-	public static GANProcess ganProcessUpperRight = null;
-	public static GANProcess ganProcessLowerLeft = null;
-	public static GANProcess ganProcessLowerRight = null;
+
+	private MegaManGANGenerator MegaManGenerator;
 
 	public MegaManGANLevelTask(){
 		super();
 		
 		
-		// TODO: Remove code below. Instead, init a class parameter of type MegaManGANGenerator
-		
-		
-		PythonUtil.setPythonProgram();
-		//super();
-		//if(Parameters.parameters.booleanParameter("useThreeGANsMegaMan")) {
-			//GANProcess.terminateGANProcess();
-			ganProcessHorizontal = MegaManGANUtil.initializeGAN("MegaManGANHorizontalModel");
-			ganProcessDown = MegaManGANUtil.initializeGAN("MegaManGANDownModel");
-			ganProcessUp = MegaManGANUtil.initializeGAN("MegaManGANUpModel");
-			ganProcessUpperLeft = MegaManGANUtil.initializeGAN("MegaManGANUpperLeftModel");
-			ganProcessUpperRight = MegaManGANUtil.initializeGAN("MegaManGANUpperRightModel");
-			ganProcessLowerLeft = MegaManGANUtil.initializeGAN("MegaManGANLowerLeftModel");
-			ganProcessLowerRight = MegaManGANUtil.initializeGAN("MegaManGANLowerRightModel");
-	//		ganProcessDown = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANDownModel"), 
-	//		Parameters.parameters.integerParameter("GANInputSize"), 
-	//		/*Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLYMegaManAllLevel") ? */MegaManGANUtil.MEGA_MAN_ALL_TERRAIN /*: MegaManGANUtil.MEGA_MAN_FIRST_LEVEL_ALL_TILES*/,
-	//		GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
-			MegaManGANUtil.startGAN(ganProcessUp);
-			MegaManGANUtil.startGAN(ganProcessDown);
-			MegaManGANUtil.startGAN(ganProcessHorizontal);
-			MegaManGANUtil.startGAN(ganProcessUpperLeft);
-			MegaManGANUtil.startGAN(ganProcessUpperRight);
-			MegaManGANUtil.startGAN(ganProcessLowerLeft);
-			MegaManGANUtil.startGAN(ganProcessLowerRight);
+		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) MegaManGenerator = new MegaManSevenGANGenerator();
+		else  MegaManGenerator = new MegaManOneGANGenerator();
 	}
 	
 	/**
@@ -62,8 +35,16 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	@Override
 	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<List<Double>> individual) {
 		List<Double> latentVector = individual.getPhenotype();
-		return getMegaManLevelListRepresentationFromStaticGenotype(ganProcessHorizontal, ganProcessUp, ganProcessDown,ganProcessLowerLeft, ganProcessLowerRight, ganProcessUpperLeft, ganProcessUpperRight, Parameters.parameters.integerParameter("megaManGANLevelChunks"), latentVector);
+		return getMegaManLevelListRepresentationFromStaticGenotype(MegaManGenerator, latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"));
 	}
+	private List<List<Integer>> getMegaManLevelListRepresentationFromStaticGenotype(
+			MegaManGANGenerator megaManGenerator, List<Double> latentVector, int chunks) {
+		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
+		
+		List<List<Integer>> level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, chunks);
+		return level;
+	}
+
 	/**
 	 * static version of method above
 	 * @param ganProcessHorizontal
@@ -72,16 +53,16 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	 * @param latentVector
 	 * @return
 	 */
-	public static List<List<Integer>> getMegaManLevelListRepresentationFromStaticGenotype(GANProcess ganProcessHorizontal, GANProcess ganProcessUp, GANProcess ganProcessDown,GANProcess ganProcessLowerLeft,GANProcess ganProcessLowerRight,GANProcess ganProcessUpperLeft ,GANProcess ganProcessUpperRight, int chunks, List<Double> latentVector) {
-		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
-		List<List<Integer>> level = MegaManGANUtil.wholeVectorToMegaManLevel(ganProcessHorizontal,ganProcessUp,ganProcessDown,ganProcessLowerLeft,ganProcessLowerRight,ganProcessUpperLeft,ganProcessUpperRight, chunks, doubleArray);
-		return level;
-	}
+//	public static List<List<Integer>> getMegaManLevelListRepresentationFromStaticGenotype(GANProcess ganProcessHorizontal, GANProcess ganProcessUp, GANProcess ganProcessDown,GANProcess ganProcessLowerLeft,GANProcess ganProcessLowerRight,GANProcess ganProcessUpperLeft ,GANProcess ganProcessUpperRight, int chunks, List<Double> latentVector) {
+//		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
+//		List<List<Integer>> level = MegaManGANUtil.wholeVectorToMegaManLevel(ganProcessHorizontal,ganProcessUp,ganProcessDown,ganProcessLowerLeft,ganProcessLowerRight,ganProcessUpperLeft,ganProcessUpperRight, chunks, doubleArray);
+//		return level;
+//	}
 
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Uses original GECCO 2018 Mario GAN
-		MMNEAT.main("runNumber:0 randomSeed:0 base:megaManGAN log:MegaManGAN-Test saveTo:Test trials:1 GANInputSize:5 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask useThreeGANsMegaMan:true megaManGANLevelChunks:10 megaManAllowsSimpleAStarPath:true megaManAllowsConnectivity:true saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false watch:true".split(" "));
+		MMNEAT.main("runNumber:0 randomSeed:0 base:megaManGAN useMultipleGANsMegaMan:true log:MegaManGAN-Test saveTo:Test trials:1 GANInputSize:5 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask useMultipleGANsMegaMan:true megaManGANLevelChunks:10 megaManAllowsSimpleAStarPath:true megaManAllowsConnectivity:true saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false watch:true".split(" "));
 	}
 
 	@Override

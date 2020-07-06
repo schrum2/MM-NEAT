@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
@@ -37,7 +38,7 @@ public abstract class MegaManGANGenerator {
 	 * @param currentPoint Where the current segment will be placed
 	 * @return List of Lists representation of the generated segment.
 	 */
-	public List<List<Integer>> generateSegmentFromVariables(double[] segmentVariables, SEGMENT_TYPE previous, HashSet<Point> previousPoints, Point currentPoint){
+	public Pair<List<List<Integer>>, Point> generateSegmentFromVariables(double[] segmentVariables, SEGMENT_TYPE previous, HashSet<Point> previousPoints, Point currentPoint){
 		// Save latent vector
 		double[] latentVector = new double[Parameters.parameters.integerParameter("GANInputSize")];
 		System.arraycopy(segmentVariables, numberOfAuxiliaryVariables(), latentVector, 0, latentVector.length);
@@ -46,8 +47,9 @@ public abstract class MegaManGANGenerator {
 		System.arraycopy(segmentVariables, 0, auxiliaryVariables, 0, auxiliaryVariables.length);
 		
 		SEGMENT_TYPE type = determineType(previous, auxiliaryVariables, previousPoints, currentPoint);
-		
-		return generateSegmentFromLatentVariables(latentVector, type);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		Pair<List<List<Integer>>, Point> segmentAndCurrentPoint = new Pair(generateSegmentFromLatentVariables(latentVector, type), currentPoint);
+		return segmentAndCurrentPoint;
 	}
 	
 	/**

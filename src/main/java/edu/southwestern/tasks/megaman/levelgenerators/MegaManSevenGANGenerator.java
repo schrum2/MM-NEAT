@@ -45,23 +45,23 @@ public class MegaManSevenGANGenerator extends MegaManGANGenerator {
 	public List<List<Integer>> generateSegmentFromLatentVariables(double[] latentVariables, SEGMENT_TYPE type) {
 		// TODO Use the appropriate GAN to generate the segment.
 		switch(type) {
-		case UP:
-			return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVariables).get(0);
-		case DOWN:
-			return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVariables).get(0);
-		case RIGHT:
-			return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessRight, latentVariables).get(0);
-		case LEFT:
-			return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessLeft, latentVariables).get(0);
-		case TOP_RIGHT:
-			return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUpperRight, latentVariables).get(0);
-		case TOP_LEFT:
-			return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUpperLeft, latentVariables).get(0);
-		case BOTTOM_RIGHT:
-			return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessLowerRight, latentVariables).get(0);
-		case BOTTOM_LEFT:
-			return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessLowerLeft, latentVariables).get(0);
-		default: throw new IllegalArgumentException("Valid SEGMENT_TYPE not specified");
+			case UP:
+				return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVariables).get(0);
+			case DOWN:
+				return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVariables).get(0);
+			case RIGHT:
+				return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessRight, latentVariables).get(0);
+			case LEFT:
+				return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessLeft, latentVariables).get(0);
+			case TOP_RIGHT:
+				return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUpperRight, latentVariables).get(0);
+			case TOP_LEFT:
+				return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUpperLeft, latentVariables).get(0);
+			case BOTTOM_RIGHT:
+				return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessLowerRight, latentVariables).get(0);
+			case BOTTOM_LEFT:
+				return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessLowerLeft, latentVariables).get(0);
+			default: throw new IllegalArgumentException("Valid SEGMENT_TYPE not specified");
 		}
 	}
 

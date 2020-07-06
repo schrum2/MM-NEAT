@@ -261,8 +261,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		
 		
 		
-		JPanel threeGANs = new JPanel();
-		threeGANs.setLayout(new BoxLayout(threeGANs, BoxLayout.Y_AXIS));
+		JPanel MultipleGANs = new JPanel();
+		MultipleGANs.setLayout(new BoxLayout(MultipleGANs, BoxLayout.Y_AXIS));
 		JButton fileLoadButton = new JButton();
 		fileLoadButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		fileLoadButton.setText("SetGANModelHorizontal");
@@ -282,7 +282,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
 			fileLoadButton.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
 		}
-		threeGANs.add(fileLoadButton);
+		MultipleGANs.add(fileLoadButton);
 		
 		JButton fileLoadButton1 = new JButton();
 		fileLoadButton1.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -302,7 +302,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
 			fileLoadButton1.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
 		}
-		threeGANs.add(fileLoadButton1);
+		MultipleGANs.add(fileLoadButton1);
 		JButton fileLoadButton2 = new JButton();
 		fileLoadButton2.setAlignmentX(Component.CENTER_ALIGNMENT);
 		fileLoadButton2.setText("SetGANModelDown");
@@ -322,22 +322,22 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
 			fileLoadButton2.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
 		}
-		threeGANs.add(fileLoadButton2);
-		threeGANs.setVisible(false);
+		MultipleGANs.add(fileLoadButton2);
+		MultipleGANs.setVisible(false);
 
-		top.add(threeGANs);
+		top.add(MultipleGANs);
 		//whether or not to use both GANs **NOTE** need to change initialization for when there are more tile types
-		JCheckBox useThreeGANs = new JCheckBox("UseMultipleGANs", Parameters.parameters.booleanParameter("useThreeGANsMegaMan"));
-		useThreeGANs.setName("useThreeGANsMegaMan");
-		useThreeGANs.getAccessibleContext();
-		useThreeGANs.addActionListener(new ActionListener() {
+		JCheckBox useMultipleGANs = new JCheckBox("UseMultipleGANs", Parameters.parameters.booleanParameter("useMultipleGANsMegaMan"));
+		useMultipleGANs.setName("useMultipleGANsMegaMan");
+		useMultipleGANs.getAccessibleContext();
+		useMultipleGANs.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Parameters.parameters.changeBoolean("useThreeGANsMegaMan");
+				Parameters.parameters.changeBoolean("useMultipleGANsMegaMan");
 				Parameters.parameters.changeBoolean("showInteractiveGANModelLoader");
 //				super(false);
 				top.getComponent(3).setVisible(false);
-				if(Parameters.parameters.booleanParameter("useThreeGANsMegaMan")) {
+				if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) {
 					
 				GANProcess.terminateGANProcess();
 				//PythonUtil.setPythonProgram();
@@ -369,7 +369,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				MegaManGANUtil.startGAN(ganProcessUpperRight);
 				MegaManGANUtil.startGAN(ganProcessLowerLeft);
 				MegaManGANUtil.startGAN(ganProcessLowerRight);
-				threeGANs.setVisible(true);
+				MultipleGANs.setVisible(true);
 //				System.out.println(top.getComponentAt(0, -21));
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
 				}else {
@@ -382,7 +382,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 					ganProcessHorizontal.terminate();
 					ganProcessDown.terminate();
 					GANProcess.getGANProcess();
-					threeGANs.setVisible(false);
+					MultipleGANs.setVisible(false);
 
 				}
 				
@@ -390,11 +390,11 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				resetButtons(true);
 			}
 		});
-		effectsCheckboxes.add(useThreeGANs);
+		effectsCheckboxes.add(useMultipleGANs);
 		top.add(effectsCheckboxes);
 		
 		
-		//if(!Parameters.parameters.booleanParameter("useThreeGANsMegaMan")){
+		//if(!Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")){
 			
 			
 			
@@ -647,7 +647,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	 */
 	public List<List<Integer>> levelListRepresentation(double[] doubleArray) {
 		List<List<Integer>> level;
-		if (Parameters.parameters.booleanParameter("useThreeGANsMegaMan")){
+		if (Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")){
 			//System.out.println(ganProcessHorizontal);
 			//System.out.println(ganProcessVertical);
 			//for(double i : doubleArray)System.out.println(i+", ");
