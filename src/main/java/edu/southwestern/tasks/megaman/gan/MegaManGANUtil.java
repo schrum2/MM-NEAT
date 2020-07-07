@@ -681,7 +681,7 @@ public class MegaManGANUtil {
 			// Schrum:  I'm  really not sure what belongs here, of it this deserves its own case
 			
 			//placementPoint = new Point(current.x, current.y);
-			placementPoint = new Point(placementPoint.x+MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
+			placementPoint = findInitialPlacementPoint(prev, current, placementPoint);
 		} else if(current.equals(new Point(prev.x+1, prev.y))) {
 			//System.out.println("RIGHT");
 			placeRightSegment(level, segment, placementPoint);
@@ -704,6 +704,19 @@ public class MegaManGANUtil {
 
 	
 
+	private static Point findInitialPlacementPoint(Point prev, Point current, Point placementPoint) {
+		prev = new Point(0,0);
+		if(current.equals(new Point(prev.x+1, prev.y))) {
+			placementPoint = new Point(placementPoint.x+MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
+		} else if(current.equals(new Point(prev.x, prev.y+1))) {
+			placementPoint = new Point(placementPoint.x, placementPoint.y+MEGA_MAN_LEVEL_HEIGHT);
+		} else if(current.equals(new Point(prev.x, prev.y-1))) {
+			placementPoint = new Point(placementPoint.x, placementPoint.y-MEGA_MAN_LEVEL_HEIGHT);
+		} else if(current.equals(new Point(prev.x-1, prev.y))) {
+			placementPoint = new Point(placementPoint.x-MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
+		}
+		return placementPoint;
+	}
 	private static void placeLeftSegment(List<List<Integer>> level, List<List<Integer>> segment, Point placementPoint) {
 		// TODO Auto-generated method stub
 		if(placementPoint.x<0) { //add null lines to left
