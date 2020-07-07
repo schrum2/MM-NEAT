@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.megaman;
 
 import java.awt.Point;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,9 +8,8 @@ import java.util.List;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
-import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
-import edu.southwestern.util.stats.StatisticsUtilities;
+import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
 
 public class MegaManCPPNtoGANUtil {
 	public static final int XPREF  = 0;
@@ -39,130 +37,153 @@ public class MegaManCPPNtoGANUtil {
 	//}
 	public enum Direction {UP, DOWN, HORIZONTAL};
 	public static Direction d;
-	public static List<List<Integer>> cppnToMegaManLevel(GANProcess ganProcessHorizontal, GANProcess ganProcessDown, GANProcess ganProcessUp, GANProcess lowerLeftGAN, GANProcess lowerRightGAN,  GANProcess upperLeftGAN, GANProcess upperRightGAN, Network cppn, int chunks, double[] inputMultipliers){
-		 numHorizontal = 0;
-		 numUp = 0;
-		 numDown = 0;
-		 numCorner = 0;
-		 numDistinctSegments = 0;
-		 distinct = new HashSet<>();
-		 x = 0;
-		 y = 0;
-//		for(double k :inputMultipliers) {
-//			System.out.println(k);
+	public static List<List<Integer>> cppnToMegaManLevel(MegaManGANGenerator megaManGenerator, Network cppn, int chunks, double[] inputMultipliers){
+
+		x = 0;
+		y = 0;
+		
+		double[] fullVector = new double[(Parameters.parameters.integerParameter("GANInputSize") + MegaManGANGenerator.numberOfAuxiliaryVariables()) * chunks];
+		
+		for(int i = 0; i < chunks; i++) {
+			double[] oneSegment = cppn.process(new double[] {
+					inputMultipliers[XPREF] * x/chunks,
+					inputMultipliers[YPREF]*y/chunks,
+					inputMultipliers[BIASPREF] * 1.0});
+			
+			// TODO: Ben, you need to figure out how to track and update x and y accordingly based on the CPPN outputs
+			
+			System.arraycopy(oneSegment, 0, fullVector, i*oneSegment.length, oneSegment.length);	
+		}
+		
+		
+		List<List<Integer>> level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, fullVector, chunks);
+		return level;
+//		
+//		
+//		
+//		numHorizontal = 0;
+//		 numUp = 0;
+//		 numDown = 0;
+//		 numCorner = 0;
+//		 numDistinctSegments = 0;
+//		 distinct = new HashSet<>();
+//		 x = 0;
+//		 y = 0;
+////		for(double k :inputMultipliers) {
+////			System.out.println(k);
+////		}
+//		
+//
+//		List<List<Integer>> oneLevel;
+////		levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, latentVector);
+////		levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVector);
+////		levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVector);
+//		d = null;
+//		//System.out.println(MegaManCPPNtoGANLevelBreederTask.staticNumCPPNOutputs());
+//		double[] startfull = cppn.process(new double[] {
+//				inputMultipliers[XPREF] * x/chunks,
+//				inputMultipliers[YPREF]*y/chunks,
+//				inputMultipliers[BIASPREF] * 1.0});
+//		//System.out.println(startfull.length);
+//
+//		double[] startlatentVector = new double[startfull.length-3];
+//		for(int i = 3;i<startfull.length;i++) {
+//			startlatentVector[i-3]=startfull[i];
 //		}
-		
-
-		List<List<Integer>> oneLevel;
-//		levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, latentVector);
-//		levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVector);
-//		levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVector);
-		d = null;
-		//System.out.println(MegaManCPPNtoGANLevelBreederTask.staticNumCPPNOutputs());
-		double[] startfull = cppn.process(new double[] {
-				inputMultipliers[XPREF] * x/chunks,
-				inputMultipliers[YPREF]*y/chunks,
-				inputMultipliers[BIASPREF] * 1.0});
-		//System.out.println(startfull.length);
-
-		double[] startlatentVector = new double[startfull.length-3];
-		for(int i = 3;i<startfull.length;i++) {
-			startlatentVector[i-3]=startfull[i];
-		}
-		
-		List<List<List<Integer>>> levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector);
-		List<List<List<Integer>>> levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, startlatentVector);
-		List<List<List<Integer>>> levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector);
-		List<List<List<Integer>>> levelInListUpperRight; /*= getLevelListRepresentationFromGAN(upperRightGAN, latentVector);*/
-		List<List<List<Integer>>> levelInListUpperLeft;/*= getLevelListRepresentationFromGAN(upperLeftGAN, latentVector);*/
-		List<List<List<Integer>>> levelInListLowerRight; /*= getLevelListRepresentationFromGAN(lowerRightGAN, latentVector);*/
-		List<List<List<Integer>>> levelInListLowerLeft; /*= getLevelListRepresentationFromGAN(lowerLeftGAN, latentVector);*/
-		
-		double[] startoutput = new double[3];
-		for(int i =0;i<3;i++) {
-			startoutput[i]=startfull[i];
-		}
-		
-		int startdirection = StatisticsUtilities.argmax(startoutput);
-		oneLevel = placeInitialDirection(ganProcessHorizontal, startlatentVector, levelInListUp, levelInListDown,
-				startdirection);
-		distinct.add(oneLevel);
-		MegaManGANUtil.placeSpawn(oneLevel);
-		if(chunks==1) {
-			MegaManGANUtil.placeOrb(oneLevel);
-		}
-		List<Integer> nullLine = new ArrayList<Integer>(16);
-		for(int i=0;i<MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH;i++) {
-			nullLine.add(MegaManState.MEGA_MAN_TILE_NULL);
-		}
-		previousMove = new Point(0,0);
-		for(int level = 1; level < chunks; level++) {
-			Direction previous = d;
-			double[] full = cppn.process(new double[] {inputMultipliers[XPREF] * x/chunks, inputMultipliers[YPREF]*y/chunks,  inputMultipliers[BIASPREF] * 1.0});
-			double[] latentVector = new double[full.length-3];
-			for(int i = 3;i<full.length;i++) {
-				latentVector[i-3]=full[i];
-			}
-			double[] outputs = new double[3];
-			for(int i =0;i<3;i++) {
-				outputs[i]=full[i];
-			}
-			int direction = StatisticsUtilities.argmax(outputs);
-			double[] backup = new double[3];
-			for(int i = 0;i<3;i++) {
-				if(i!=direction) {
-					backup[i]=outputs[i];
-				}
-			}
-			int bkp = StatisticsUtilities.argmax(backup);
-			double[] backup1 = new double[3];
-			for(int i = 0;i<3;i++) {
-				if(i!=direction&&i!=bkp) {
-					backup1[i]=outputs[i];
-				}
-			}
-			int bkp1 = StatisticsUtilities.argmax(backup1);
-			boolean needBackup = true;
-			levelInListLowerRight = MegaManGANUtil.getLevelListRepresentationFromGAN(lowerRightGAN, latentVector);
-			levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVector);
-			levelInListUpperRight = MegaManGANUtil.getLevelListRepresentationFromGAN(upperRightGAN, latentVector);
-			levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVector);
-			levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, latentVector);
-			levelInListUpperLeft = MegaManGANUtil.getLevelListRepresentationFromGAN(upperLeftGAN, latentVector);
-			levelInListLowerLeft = MegaManGANUtil.getLevelListRepresentationFromGAN(lowerLeftGAN, latentVector);
-			
-			needBackup = addLevelSegment(chunks, oneLevel, levelInListHorizontal, levelInListUp, levelInListDown,
-					levelInListUpperRight, levelInListUpperLeft, levelInListLowerRight, levelInListLowerLeft, nullLine,
-					level, previous, direction, needBackup);
-			
-			
-			if(needBackup) {
-				needBackup = addLevelSegment(chunks, oneLevel, levelInListHorizontal, levelInListUp, levelInListDown,
-						levelInListUpperRight, levelInListUpperLeft, levelInListLowerRight, levelInListLowerLeft, nullLine,
-						level, previous, bkp, needBackup);
-				
-			}
-			if(needBackup) {
-				needBackup = addLevelSegment(chunks, oneLevel, levelInListHorizontal, levelInListUp, levelInListDown,
-						levelInListUpperRight, levelInListUpperLeft, levelInListLowerRight, levelInListLowerLeft, nullLine,
-						level, previous, bkp1, needBackup);
-				
-			}
-			if(!d.equals(previous)) {
-				numCorner++;
-			}
-			previous = d;
-			numDistinctSegments = distinct.size();
-		}
-		
-		
-//		ganProcessUp.terminate();
-//		ganProcessDown.terminate();
-//		ganProcessHorizontal.terminate();
-		if(!Parameters.parameters.booleanParameter("megaManUsesUniqueEnemies")) {
-			MegaManGANUtil.postProcessingPlaceProperEnemies(oneLevel);
-		}
-		return oneLevel;
+//		
+//		List<List<List<Integer>>> levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, startlatentVector);
+//		List<List<List<Integer>>> levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, startlatentVector);
+//		List<List<List<Integer>>> levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, startlatentVector);
+//		List<List<List<Integer>>> levelInListUpperRight; /*= getLevelListRepresentationFromGAN(upperRightGAN, latentVector);*/
+//		List<List<List<Integer>>> levelInListUpperLeft;/*= getLevelListRepresentationFromGAN(upperLeftGAN, latentVector);*/
+//		List<List<List<Integer>>> levelInListLowerRight; /*= getLevelListRepresentationFromGAN(lowerRightGAN, latentVector);*/
+//		List<List<List<Integer>>> levelInListLowerLeft; /*= getLevelListRepresentationFromGAN(lowerLeftGAN, latentVector);*/
+//		
+//		double[] startoutput = new double[3];
+//		for(int i =0;i<3;i++) {
+//			startoutput[i]=startfull[i];
+//		}
+//		
+//		int startdirection = StatisticsUtilities.argmax(startoutput);
+//		oneLevel = placeInitialDirection(ganProcessHorizontal, startlatentVector, levelInListUp, levelInListDown,
+//				startdirection);
+//		distinct.add(oneLevel);
+//		MegaManGANUtil.placeSpawn(oneLevel);
+//		if(chunks==1) {
+//			MegaManGANUtil.placeOrb(oneLevel);
+//		}
+//		List<Integer> nullLine = new ArrayList<Integer>(16);
+//		for(int i=0;i<MegaManGANUtil.MEGA_MAN_LEVEL_WIDTH;i++) {
+//			nullLine.add(MegaManState.MEGA_MAN_TILE_NULL);
+//		}
+//		previousMove = new Point(0,0);
+//		for(int level = 1; level < chunks; level++) {
+//			Direction previous = d;
+//			double[] full = cppn.process(new double[] {inputMultipliers[XPREF] * x/chunks, inputMultipliers[YPREF]*y/chunks,  inputMultipliers[BIASPREF] * 1.0});
+//			double[] latentVector = new double[full.length-3];
+//			for(int i = 3;i<full.length;i++) {
+//				latentVector[i-3]=full[i];
+//			}
+//			double[] outputs = new double[3];
+//			for(int i =0;i<3;i++) {
+//				outputs[i]=full[i];
+//			}
+//			int direction = StatisticsUtilities.argmax(outputs);
+//			double[] backup = new double[3];
+//			for(int i = 0;i<3;i++) {
+//				if(i!=direction) {
+//					backup[i]=outputs[i];
+//				}
+//			}
+//			int bkp = StatisticsUtilities.argmax(backup);
+//			double[] backup1 = new double[3];
+//			for(int i = 0;i<3;i++) {
+//				if(i!=direction&&i!=bkp) {
+//					backup1[i]=outputs[i];
+//				}
+//			}
+//			int bkp1 = StatisticsUtilities.argmax(backup1);
+//			boolean needBackup = true;
+//			levelInListLowerRight = MegaManGANUtil.getLevelListRepresentationFromGAN(lowerRightGAN, latentVector);
+//			levelInListUp = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVector);
+//			levelInListUpperRight = MegaManGANUtil.getLevelListRepresentationFromGAN(upperRightGAN, latentVector);
+//			levelInListDown = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessDown, latentVector);
+//			levelInListHorizontal = MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessHorizontal, latentVector);
+//			levelInListUpperLeft = MegaManGANUtil.getLevelListRepresentationFromGAN(upperLeftGAN, latentVector);
+//			levelInListLowerLeft = MegaManGANUtil.getLevelListRepresentationFromGAN(lowerLeftGAN, latentVector);
+//			
+//			needBackup = addLevelSegment(chunks, oneLevel, levelInListHorizontal, levelInListUp, levelInListDown,
+//					levelInListUpperRight, levelInListUpperLeft, levelInListLowerRight, levelInListLowerLeft, nullLine,
+//					level, previous, direction, needBackup);
+//			
+//			
+//			if(needBackup) {
+//				needBackup = addLevelSegment(chunks, oneLevel, levelInListHorizontal, levelInListUp, levelInListDown,
+//						levelInListUpperRight, levelInListUpperLeft, levelInListLowerRight, levelInListLowerLeft, nullLine,
+//						level, previous, bkp, needBackup);
+//				
+//			}
+//			if(needBackup) {
+//				needBackup = addLevelSegment(chunks, oneLevel, levelInListHorizontal, levelInListUp, levelInListDown,
+//						levelInListUpperRight, levelInListUpperLeft, levelInListLowerRight, levelInListLowerLeft, nullLine,
+//						level, previous, bkp1, needBackup);
+//				
+//			}
+//			if(!d.equals(previous)) {
+//				numCorner++;
+//			}
+//			previous = d;
+//			numDistinctSegments = distinct.size();
+//		}
+//		
+//		
+////		ganProcessUp.terminate();
+////		ganProcessDown.terminate();
+////		ganProcessHorizontal.terminate();
+//		if(!Parameters.parameters.booleanParameter("megaManUsesUniqueEnemies")) {
+//			MegaManGANUtil.postProcessingPlaceProperEnemies(oneLevel);
+//		}
+//		return oneLevel;
 	}
 	public static boolean addLevelSegment(int chunks, List<List<Integer>> oneLevel,
 			List<List<List<Integer>>> levelInListHorizontal, List<List<List<Integer>>> levelInListUp,

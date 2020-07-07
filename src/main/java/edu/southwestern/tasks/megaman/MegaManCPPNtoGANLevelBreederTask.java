@@ -26,15 +26,14 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
-import edu.southwestern.tasks.mario.gan.GANProcess;
-import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
-import edu.southwestern.util.PythonUtil;
+import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
+import edu.southwestern.tasks.megaman.levelgenerators.MegaManOneGANGenerator;
+import edu.southwestern.tasks.megaman.levelgenerators.MegaManSevenGANGenerator;
 
 public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWEANN>{
 	public static final String[] SENSOR_LABELS = new String[] {"x-coordinate", "y-coordinate", "bias"};
@@ -49,46 +48,33 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	public static final int DOWN_PREFERENCE = 1; 
 	public static final int HORIZONTAL_PREFERENCE = 2; 
 	// TODO: In order to support LEFT, this will need to be a method rather than a constant
-	public static final int NUM_NON_LATENT_INPUTS = 3; //the first three values in the latent vector
+	//public static final int NUM_NON_LATENT_INPUTS = 3; //the first three values in the latent vector
 
 	private static final int LEVEL_MIN_CHUNKS = 1;
 	private static final int LEVEL_MAX_CHUNKS = 10; 
 	
 	private String[] outputLabels;
-	public static GANProcess ganProcessDown = null;
-	public static GANProcess ganProcessHorizontal = null;
-	public static GANProcess ganProcessUp = null;
-	public static GANProcess ganProcessUpperLeft = null;
-	public static GANProcess ganProcessUpperRight = null;
-	public static GANProcess ganProcessLowerLeft = null;
-	public static GANProcess ganProcessLowerRight = null;
+//	public static GANProcess ganProcessDown = null;
+//	public static GANProcess ganProcessHorizontal = null;
+//	public static GANProcess ganProcessUp = null;
+//	public static GANProcess ganProcessUpperLeft = null;
+//	public static GANProcess ganProcessUpperRight = null;
+//	public static GANProcess ganProcessLowerLeft = null;
+//	public static GANProcess ganProcessLowerRight = null;
+
+	MegaManGANGenerator megaManGenerator;
+	
 	private boolean initializationComplete = false;
 	
 	
 
 	public MegaManCPPNtoGANLevelBreederTask() throws IllegalAccessException {
 		super();
-		GANProcess.terminateGANProcess();
-		//GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
-		PythonUtil.setPythonProgram();
-		// TODO: Add support for OneGAN here too.
-		// Additionally! I think the code would be easier to maintain if you can make the SevenGAN initailization process be part of
-		// some other class and/or util method. Repeating this initialization process in both this class and MegaManCPPNtoGANLevelTask is bad design.
-		ganProcessHorizontal = MegaManGANUtil.initializeGAN("MegaManGANHorizontalModel");
-		ganProcessDown= MegaManGANUtil.initializeGAN("MegaManGANDownModel");
-		ganProcessUp = MegaManGANUtil.initializeGAN("MegaManGANUpModel");
-		ganProcessUpperLeft = MegaManGANUtil.initializeGAN("MegaManGANUpperLeftModel");
-		ganProcessUpperRight = MegaManGANUtil.initializeGAN("MegaManGANUpperRightModel");
-		ganProcessLowerLeft = MegaManGANUtil.initializeGAN("MegaManGANLowerLeftModel");
-		ganProcessLowerRight = MegaManGANUtil.initializeGAN("MegaManGANLowerRightModel");
 
-		MegaManGANUtil.startGAN(ganProcessUp);
-		MegaManGANUtil.startGAN(ganProcessDown);
-		MegaManGANUtil.startGAN(ganProcessHorizontal);
-		MegaManGANUtil.startGAN(ganProcessUpperLeft);
-		MegaManGANUtil.startGAN(ganProcessUpperRight);
-		MegaManGANUtil.startGAN(ganProcessLowerLeft);
-		MegaManGANUtil.startGAN(ganProcessLowerRight);
+		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) megaManGenerator = new MegaManSevenGANGenerator();
+		else  megaManGenerator = new MegaManOneGANGenerator();
+
+		
 		JPanel bottom = new JPanel();
 		bottom.setLayout(new BoxLayout(bottom, BoxLayout.Y_AXIS));
 
@@ -369,7 +355,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	
 	private void viewLevel(TWEANN phenotype) {
 		// TODO Auto-generated method stub
-		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp,ganProcessLowerLeft,ganProcessLowerRight,ganProcessUpperLeft,ganProcessUpperRight, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
+		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(megaManGenerator, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
 
 		if(selectedItems.size() != 1) {
 			JOptionPane.showMessageDialog(null, "Select exactly one level to view.");
@@ -415,7 +401,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 			}
 
 			TWEANN phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
-			List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp,ganProcessLowerLeft,ganProcessLowerRight,ganProcessUpperLeft,ganProcessUpperRight, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
+			List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(megaManGenerator, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
 
 //			double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 //			List<List<Integer>> level = levelListRepresentation(doubleArray);
@@ -463,7 +449,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	@Override
 	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		// TODO Auto-generated method stub
-		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp,ganProcessLowerLeft,ganProcessLowerRight,ganProcessUpperLeft,ganProcessUpperRight, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
+		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(megaManGenerator, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers);
 		return MegaManGANLevelBreederTask.getStaticButtonImage(null, width, height, level);
 
 	}
@@ -488,18 +474,16 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 
 	
 	private void resetLatentVectorAndOutputs() {
-		int latentVectorLength = ganProcessHorizontal.getLatentVectorSize();
-		outputLabels = new String[latentVectorLength + numberOfNonLatentVariables()];
+		int latentVectorLength = Parameters.parameters.integerParameter("GANInputSize");
+		outputLabels = new String[latentVectorLength + MegaManGANGenerator.numberOfAuxiliaryVariables()];
 		outputLabels[UP_PREFERENCE] = "Up Presence";
 		outputLabels[DOWN_PREFERENCE] = "Down Preference";
 		outputLabels[HORIZONTAL_PREFERENCE] = "Horizontal Preference";
-		for(int i = numberOfNonLatentVariables(); i < outputLabels.length; i++) {
-			outputLabels[i] = "LV"+(i-numberOfNonLatentVariables());
+		for(int i = MegaManGANGenerator.numberOfAuxiliaryVariables(); i < outputLabels.length; i++) {
+			outputLabels[i] = "LV"+(i-MegaManGANGenerator.numberOfAuxiliaryVariables());
 		}
 	}
-	public static int numberOfNonLatentVariables() {
-		return NUM_NON_LATENT_INPUTS;
-	}
+
 	@Override
 	public int numCPPNInputs() {
 		// TODO Auto-generated method stub
@@ -511,12 +495,10 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	}
 	@Override
 	public int numCPPNOutputs() {
-		// TODO Auto-generated method stub
 		return this.outputLabels().length;
 	}
 	public static int staticNumCPPNOutputs() {
-		// TODO Auto-generated method stub
-		return NUM_NON_LATENT_INPUTS+GANProcess.latentVectorLength();
+		return MegaManGANGenerator.numberOfAuxiliaryVariables()+Parameters.parameters.integerParameter("GANInputSize");
 	}
 	
 	
