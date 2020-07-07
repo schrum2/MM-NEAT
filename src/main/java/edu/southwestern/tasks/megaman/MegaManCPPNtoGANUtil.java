@@ -44,6 +44,9 @@ public class MegaManCPPNtoGANUtil {
 					inputMultipliers[BIASPREF] * 1.0});
 						
 			Pair<List<List<Integer>>, Point> segmentAndPoint = megaManGenerator.generateSegmentFromVariables(oneSegmentData, previousPoint, previousPoints, currentPoint);
+			if(segmentAndPoint==null) {
+				break; //NEEDS TO BE FIXED!! ORB WILL NOT BE PLACED
+			}
 			segment = segmentAndPoint.t1;
 			previousPoint = currentPoint; // backup previous
 			currentPoint = segmentAndPoint.t2;

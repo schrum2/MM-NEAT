@@ -48,6 +48,9 @@ public abstract class MegaManGANGenerator {
 		System.arraycopy(segmentVariables, 0, auxiliaryVariables, 0, auxiliaryVariables.length);
 		
 		Pair<SEGMENT_TYPE, Point> type = determineType(previousPoint, auxiliaryVariables, previousPoints, currentPoint);
+		if(type.t1 ==null) {
+			return null;
+		}
 		assert type.t1 != null;
 //		System.out.println(type.t1);
 		Pair<List<List<Integer>>, Point> segmentAndCurrentPoint = new Pair<>(generateSegmentFromLatentVariables(latentVector, type.t1), type.t2);

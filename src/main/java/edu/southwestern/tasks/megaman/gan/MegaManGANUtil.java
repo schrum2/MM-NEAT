@@ -614,6 +614,9 @@ public class MegaManGANUtil {
 			//System.out.println("previousPoints.size():"+previousPoints.size());
 			double[] oneSegmentData = latentVectorAndMiscDataForPosition(i, Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables(), wholeVector);
 			Pair<List<List<Integer>>, Point> segmentAndPoint = megaManGANGenerator.generateSegmentFromVariables(oneSegmentData, previousPoint, previousPoints, currentPoint);
+			if(segmentAndPoint==null) {
+				break; //NEEDS TO BE FIXED!! ORB WILL NOT BE PLACED
+			}
 			segment = segmentAndPoint.t1;
 			previousPoint = currentPoint; // backup previous
 			currentPoint = segmentAndPoint.t2;
