@@ -31,6 +31,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManOneGANGenerator;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManSevenGANGenerator;
@@ -369,7 +370,39 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 			fileLoadButton2.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
 		}
 		threeGANs.add(fileLoadButton2);
-		top.add(threeGANs);
+//		top.add(threeGANs);
+		
+		
+		JCheckBox useMultipleGANs = new JCheckBox("UseMultipleGANs", Parameters.parameters.booleanParameter("useMultipleGANsMegaMan"));
+		useMultipleGANs.setName("useMultipleGANsMegaMan");
+		useMultipleGANs.getAccessibleContext();
+		useMultipleGANs.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("useMultipleGANsMegaMan");
+				Parameters.parameters.changeBoolean("showInteractiveGANModelLoader");
+				top.getComponent(3).setVisible(false);
+				if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) {
+					
+					GANProcess.terminateGANProcess();
+				
+					megaManGenerator = new MegaManSevenGANGenerator();
+				
+//					MultipleGANs.setVisible(true);
+
+				}else {
+					megaManGenerator = new MegaManOneGANGenerator();
+
+//					MultipleGANs.setVisible(false);
+
+				}
+				
+				
+				resetButtons(true);
+			}
+		});
+		
+		effectsCheckboxes.add(useMultipleGANs);
 		top.add(effectsCheckboxes);
 		resetLatentVectorAndOutputs();
 
@@ -542,7 +575,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	}
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","useMultipleGANsMegaMan:true","showKLOptions:false","trials:1","mu:16", "base:megaManGAN",
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","useMultipleGANsMegaMan:false","showKLOptions:false","trials:1","mu:16", "base:megaManGAN",
 					"maxGens:500","io:false","netio:false","GANInputSize:5","mating:true","fs:false",
 					"task:edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelBreederTask","cleanOldNetworks:false", 
 					"allowMultipleFunctions:true","ftype:0","watch:true","netChangeActivationRate:0.3","cleanFrequency:-1",

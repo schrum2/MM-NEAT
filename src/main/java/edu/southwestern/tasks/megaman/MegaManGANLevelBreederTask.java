@@ -354,8 +354,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		}
 		MultipleGANs.add(fileLoadButton2);
 		MultipleGANs.setVisible(false);
-
-		top.add(MultipleGANs);
+//		top.add(MultipleGANs);
 		//whether or not to use both GANs **NOTE** need to change initialization for when there are more tile types
 		JCheckBox useMultipleGANs = new JCheckBox("UseMultipleGANs", Parameters.parameters.booleanParameter("useMultipleGANsMegaMan"));
 		useMultipleGANs.setName("useMultipleGANsMegaMan");
@@ -365,7 +364,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			public void actionPerformed(ActionEvent e) {
 				Parameters.parameters.changeBoolean("useMultipleGANsMegaMan");
 				Parameters.parameters.changeBoolean("showInteractiveGANModelLoader");
-				top.getComponent(3).setVisible(false);
+				top.getComponent(3).setVisible(Parameters.parameters.booleanParameter("showInteractiveGANModelLoader"));
 				if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) {
 					
 					GANProcess.terminateGANProcess();
@@ -385,6 +384,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				resetButtons(true);
 			}
 		});
+		
 		effectsCheckboxes.add(useMultipleGANs);
 		top.add(effectsCheckboxes);
 		
