@@ -11,7 +11,6 @@ import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManOneGANGenerator;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManSevenGANGenerator;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 /**
  * Allows for objective evolution using GANs
