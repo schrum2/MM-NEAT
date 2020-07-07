@@ -646,8 +646,8 @@ public class MegaManGANUtil {
 		List<List<Integer>> level = new ArrayList<>();
 		List<List<Integer>> segment = new ArrayList<>();
 		for(int i = 0;i<chunks;i++) {
-			System.out.println(previousPoints.size());
-			System.out.println(previousType);
+			System.out.println("previousPoints.size():"+previousPoints.size());
+			System.out.println("previousType:"+previousType);
 			double[] oneSegmentData = latentVectorAndMiscDataForPosition(i, Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables(), wholeVector);
 			Triple<List<List<Integer>>, Point, SEGMENT_TYPE> segmentAndPoint = megaManGANGenerator.generateSegmentFromVariables(oneSegmentData, previousType, previousPoints, currentPoint);
 			segment = segmentAndPoint.t1;
@@ -655,6 +655,7 @@ public class MegaManGANUtil {
 			previousType = segmentAndPoint.t3;
 			if(i==chunks-1) placeOrb(segment);
 			//placementPoint = currentPoint;
+			System.out.println("previousPoint:"+previousPoint+",current:"+currentPoint+",placementPoint:"+placementPoint);
 			placementPoint = placeMegaManSegment(level, segment,  currentPoint, previousPoint, placementPoint);
 			System.out.println(placementPoint);
 			MegaManVGLCUtil.printLevel(level);

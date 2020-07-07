@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.megaman.levelgenerators;
 
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -49,7 +50,8 @@ public abstract class MegaManGANGenerator {
 		System.arraycopy(segmentVariables, 0, auxiliaryVariables, 0, auxiliaryVariables.length);
 		
 		Triple<SEGMENT_TYPE, Point, SEGMENT_TYPE> type = determineType(previous, auxiliaryVariables, previousPoints, currentPoint);
-		Triple<List<List<Integer>>, Point, SEGMENT_TYPE> segmentAndCurrentPoint = new Triple<>(generateSegmentFromLatentVariables(latentVector, type.t1), type.t2, type.t3);
+		assert type.t1 != null;
+		Triple<List<List<Integer>>, Point, SEGMENT_TYPE> segmentAndCurrentPoint = new Triple<>(generateSegmentFromLatentVariables(latentVector, type.t1), type.t2, type.t1);
 		return segmentAndCurrentPoint;
 	}
 	
@@ -70,6 +72,7 @@ public abstract class MegaManGANGenerator {
 		if(previous == null) {
 			// This is the first segment in the level
 			SEGMENT_TYPE proposed = SEGMENT_TYPE.values()[maxIndex];
+			assert proposed != null;
 			Point next = nextPoint(previous, currentPoint, proposed);
 			previousPoints.add(next);
 			return new Triple<SEGMENT_TYPE, Point, SEGMENT_TYPE>(proposed, next, previous);
@@ -79,39 +82,46 @@ public abstract class MegaManGANGenerator {
 			SEGMENT_TYPE result = null;
 			Point next = null;
 			while(!done) {
+				System.out.println(maxIndex + ":" + Arrays.toString(auxiliaryVariables));
 				// This can only be UP, DOWN, RIGHT, LEFT
 				SEGMENT_TYPE proposed = SEGMENT_TYPE.values()[maxIndex];
 				next = nextPoint(previous, currentPoint, proposed); // Where would new segment go?
 				if(previousPoints.contains(next)) { // This placement is illegal. Location occupied
+					System.out.println(previousPoints + " contains " + next);
 					auxiliaryVariables[maxIndex] = Double.NEGATIVE_INFINITY; // Disable illegal option
 					maxIndex = StatisticsUtilities.argmax(auxiliaryVariables); // Reset
 					if(Double.isInfinite(auxiliaryVariables[maxIndex])) {
 						result = null; // There is NO legal placement possible!
+						System.out.println("NO LEGAL PLACEMENT!");
 						done = true;
 					}
 				} else {
-					previousPoints.add(next); // This point will be occupied now
 					// Figure out if proposed should be changed to corner
 					if(!previous.equals(proposed)) {
 						// Change to appropriate corner
 						// TODO: assign result and set done to true
-						if((previous.equals(SEGMENT_TYPE.UP)&&proposed.equals(SEGMENT_TYPE.RIGHT))||(previous.equals(SEGMENT_TYPE.LEFT)&&proposed.equals(SEGMENT_TYPE.DOWN))) {//place upper left
-							proposed = SEGMENT_TYPE.TOP_LEFT;
+						if(		(previous.equals(SEGMENT_TYPE.UP)   && proposed.equals(SEGMENT_TYPE.RIGHT)) ||
+								(previous.equals(SEGMENT_TYPE.LEFT) && proposed.equals(SEGMENT_TYPE.DOWN))) {//place upper left
+							result = SEGMENT_TYPE.TOP_LEFT;
 							done = true;
-						}
-						else if((previous.equals(SEGMENT_TYPE.DOWN)&&proposed.equals(SEGMENT_TYPE.RIGHT))||(previous.equals(SEGMENT_TYPE.LEFT)&&proposed.equals(SEGMENT_TYPE.UP))) { //place lower left
-							proposed = SEGMENT_TYPE.BOTTOM_LEFT;
+						} else if(  (previous.equals(SEGMENT_TYPE.DOWN)  && proposed.equals(SEGMENT_TYPE.RIGHT)) ||
+								    (previous.equals(SEGMENT_TYPE.LEFT)  && proposed.equals(SEGMENT_TYPE.UP))) { //place lower left
+							result = SEGMENT_TYPE.BOTTOM_LEFT;
 							done = true;
-						}
-						else if((previous.equals(SEGMENT_TYPE.RIGHT)&&proposed.equals(SEGMENT_TYPE.UP))||(previous.equals(SEGMENT_TYPE.DOWN)&&proposed.equals(SEGMENT_TYPE.LEFT))) { //place lower right
-							proposed = SEGMENT_TYPE.BOTTOM_RIGHT;
+						} else if(  (previous.equals(SEGMENT_TYPE.RIGHT) && proposed.equals(SEGMENT_TYPE.UP)) ||
+									(previous.equals(SEGMENT_TYPE.DOWN)  && proposed.equals(SEGMENT_TYPE.LEFT))) { //place lower right
+							result = SEGMENT_TYPE.BOTTOM_RIGHT;
 							done = true;
-						}
-						else if((previous.equals(SEGMENT_TYPE.RIGHT)&&proposed.equals(SEGMENT_TYPE.DOWN))||(previous.equals(SEGMENT_TYPE.UP)&&proposed.equals(SEGMENT_TYPE.LEFT))) { //place upper right
-							proposed = SEGMENT_TYPE.TOP_RIGHT;
+						} else if(  (previous.equals(SEGMENT_TYPE.RIGHT) && proposed.equals(SEGMENT_TYPE.DOWN)) ||
+								    (previous.equals(SEGMENT_TYPE.UP)    && proposed.equals(SEGMENT_TYPE.LEFT))) { //place upper right
+							result = SEGMENT_TYPE.TOP_RIGHT;
 							done = true;
+						} else {
+							System.out.println("previous:"+previous);
+							System.out.println("proposed:"+proposed);
+							System.out.println("currentPoint:"+currentPoint);
+							System.exit(1);
 						}
-						
 					} else {
 						// Proposed result is fine ... done!
 						done = true;
@@ -119,7 +129,7 @@ public abstract class MegaManGANGenerator {
 					}
 				}
 			}
-			
+			previousPoints.add(next); // This point will be occupied now
 			return new Triple<SEGMENT_TYPE, Point, SEGMENT_TYPE>(result, next, previous);
 		}
 	}
