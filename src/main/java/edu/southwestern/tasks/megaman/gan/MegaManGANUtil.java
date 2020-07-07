@@ -649,6 +649,7 @@ public class MegaManGANUtil {
 			previousPoint = currentPoint; // backup previous
 			currentPoint = segmentAndPoint.t2;
 			if(i==chunks-1) placeOrb(segment);
+			
 			//placementPoint = currentPoint;
 			//System.out.println("previousPoint:"+previousPoint+",current:"+currentPoint+",placementPoint:"+placementPoint);
 			placementPoint = placeMegaManSegment(level, segment,  currentPoint, previousPoint, placementPoint);
@@ -657,7 +658,7 @@ public class MegaManGANUtil {
 //			MiscUtil.waitForReadStringAndEnterKeyPress();
 			
 			
-			if(i==0) placeSpawn(level);
+//			if(i==0) placeSpawn(level);
 		}
 		
 		
@@ -673,6 +674,12 @@ public class MegaManGANUtil {
 				newRow.addAll(row);
 				level.add(newRow);
 			}
+		
+//			System.out.println("Placing Spawn");
+			placeSpawn(level);
+//			MegaManVGLCUtil.printLevel(level);
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
+			
 			
 			// Schrum:  I'm  really not sure what belongs here, of it this deserves its own case
 			
@@ -728,7 +735,7 @@ public class MegaManGANUtil {
 				}
 			}else {
 				for(int i = 0;i<level.size();i++) { //add null to all spaces to the right TODO possibly change
-					level.get(i).addAll(nullLine);
+					level.get(i).addAll(0,nullLine);
 				}
 			}
 			
@@ -802,8 +809,8 @@ public class MegaManGANUtil {
 				level.get(y).set(x, segment.get(y-placementPoint.y).get(x - placementPoint.x));
 			}
 		}
-		MegaManVGLCUtil.printLevel(level);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		MegaManVGLCUtil.printLevel(level);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
 	}
 
@@ -840,12 +847,14 @@ public class MegaManGANUtil {
 			if(level.size()==0) {
 				for(int i = 0; i < segment.size();i++) {
 					level.add(level.size(), nullLine);
+					
 				}
 			}else {
 				for(int i = 0;i<level.size();i++) { //add null to all spaces to the right TODO possibly change
-					level.get(i).addAll(nullLine);
+					level.get(i).addAll(0,nullLine);
 				}
 			}
+			
 			placementPoint.x += MEGA_MAN_LEVEL_WIDTH;
 		}
 		if(placementPoint.y>=level.size()) {
@@ -925,12 +934,14 @@ public class MegaManGANUtil {
 			if(level.size()==0) {
 				for(int i = 0; i < segment.size();i++) {
 					level.add(level.size(), nullLine);
+					
 				}
 			}else {
 				for(int i = 0;i<level.size();i++) { //add null to all spaces to the right TODO possibly change
-					level.get(i).addAll(nullLine);
+					level.get(i).addAll(0,nullLine);
 				}
 			}
+			
 			placementPoint.x += MEGA_MAN_LEVEL_WIDTH;
 		}
 		
@@ -1016,12 +1027,14 @@ public class MegaManGANUtil {
 			if(level.size()==0) {
 				for(int i = 0; i < segment.size();i++) {
 					level.add(level.size(), nullLine);
+					
 				}
 			}else {
 				for(int i = 0;i<level.size();i++) { //add null to all spaces to the right TODO possibly change
-					level.get(i).addAll(nullLine);
+					level.get(i).addAll(0,nullLine);
 				}
 			}
+			
 			placementPoint.x += MEGA_MAN_LEVEL_WIDTH;
 		}
 		if(placementPoint.x>=level.get(0).size()) {
