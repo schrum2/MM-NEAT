@@ -699,7 +699,6 @@ public class MegaManGANUtil {
 	}
 
 	
-	// Never used?
 	private static Point findInitialPlacementPoint(Point prev, Point current, Point placementPoint) {
 		prev = new Point(0,0);
 		if(current.equals(new Point(prev.x+1, prev.y))) {
@@ -725,14 +724,14 @@ public class MegaManGANUtil {
 			if(level.size()==0) {
 				for(int i = 0; i < segment.size();i++) {
 					level.add(level.size(), nullLine);
-					MegaManVGLCUtil.printLevel(level);
-					MiscUtil.waitForReadStringAndEnterKeyPress();
+					
 				}
 			}else {
 				for(int i = 0;i<level.size();i++) { //add null to all spaces to the right TODO possibly change
 					level.get(i).addAll(nullLine);
 				}
 			}
+			
 			placementPoint.x += MEGA_MAN_LEVEL_WIDTH;
 		}
 		if(placementPoint.x+MEGA_MAN_LEVEL_WIDTH>level.get(0).size()) {
@@ -797,11 +796,14 @@ public class MegaManGANUtil {
 			level.addAll(0, nullScreen);
 			placementPoint.y+=MEGA_MAN_LEVEL_HEIGHT;
 		}
+		
 		for(int x = placementPoint.x; x < placementPoint.x+MEGA_MAN_LEVEL_WIDTH;x++) {
 			for(int y = placementPoint.y;y<placementPoint.y+MEGA_MAN_LEVEL_HEIGHT;y++) {
 				level.get(y).set(x, segment.get(y-placementPoint.y).get(x - placementPoint.x));
 			}
 		}
+		MegaManVGLCUtil.printLevel(level);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
 	}
 
