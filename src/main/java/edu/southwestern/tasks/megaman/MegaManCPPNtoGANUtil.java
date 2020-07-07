@@ -54,7 +54,7 @@ public class MegaManCPPNtoGANUtil {
 			placementPoint = MegaManGANUtil.placeMegaManSegment(level, segment,  currentPoint, previousPoint, placementPoint);
 		}
 		
-		
+		MegaManGANUtil.postProcessingPlaceProperEnemies(level);
 		return level;
 	}
 
