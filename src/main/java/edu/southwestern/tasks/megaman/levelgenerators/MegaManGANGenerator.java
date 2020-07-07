@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.megaman.levelgenerators;
 
 import java.awt.Point;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
