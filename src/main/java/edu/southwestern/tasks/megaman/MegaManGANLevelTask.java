@@ -65,7 +65,7 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Uses original GECCO 2018 Mario GAN
-		MMNEAT.main("runNumber:0 randomSeed:0 base:megaManGAN log:MegaManGAN-Test saveTo:Test trials:1 GANInputSize:5 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask megaManGANLevelChunks:10 megaManAllowsSimpleAStarPath:true megaManAllowsConnectivity:true useMultipleGANsMegaMan:true saveAllChampions:false megaManAllowsLeftSegments:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false watch:true".split(" "));
+		MMNEAT.main("runNumber:0 randomSeed:0 base:megaManGAN log:MegaManGAN-Test saveTo:Test trials:1 GANInputSize:5 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask megaManGANLevelChunks:10 megaManAllowsSimpleAStarPath:true megaManAllowsConnectivity:true useMultipleGANsMegaMan:true saveAllChampions:false megaManAllowsLeftSegments:true cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false watch:true".split(" "));
 	}
 
 	@Override

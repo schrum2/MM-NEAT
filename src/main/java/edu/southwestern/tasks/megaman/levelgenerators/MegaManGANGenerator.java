@@ -73,7 +73,10 @@ public abstract class MegaManGANGenerator {
 			SEGMENT_TYPE proposed = SEGMENT_TYPE.values()[maxIndex];
 			assert proposed != null;
 			Point next = nextPoint(previousPoint, currentPoint, proposed);
-			previousPoints.add(next);
+//			System.out.println(next);
+			previousPoints.add(next);			
+			previousPoints.add(currentPoint);
+
 			return new Pair<SEGMENT_TYPE, Point>(proposed, next);
 		} else {	
 			// TODO: Requires more work
@@ -85,6 +88,8 @@ public abstract class MegaManGANGenerator {
 				// This can only be UP, DOWN, RIGHT, LEFT
 				SEGMENT_TYPE proposed = SEGMENT_TYPE.values()[maxIndex];
 				next = nextPoint(previousPoint, currentPoint, proposed); // Where would new segment go?
+//				System.out.println(next);
+
 				if(previousPoints.contains(next)) { // This placement is illegal. Location occupied
 					//System.out.println(previousPoints + " contains " + next);
 					auxiliaryVariables[maxIndex] = Double.NEGATIVE_INFINITY; // Disable illegal option
