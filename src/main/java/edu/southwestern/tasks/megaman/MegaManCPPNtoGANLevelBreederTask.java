@@ -54,16 +54,11 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	//public static final int NUM_NON_LATENT_INPUTS = 3; //the first three values in the latent vector
 
 	private static final int LEVEL_MIN_CHUNKS = 1;
-	private static final int LEVEL_MAX_CHUNKS = 10; 
+	private static final int LEVEL_MAX_CHUNKS = 10;
+
+//	private static final int FILE_LOADER_BUTTON_INDEX = -21; 
 	
 	private String[] outputLabels;
-//	public static GANProcess ganProcessDown = null;
-//	public static GANProcess ganProcessHorizontal = null;
-//	public static GANProcess ganProcessUp = null;
-//	public static GANProcess ganProcessUpperLeft = null;
-//	public static GANProcess ganProcessUpperRight = null;
-//	public static GANProcess ganProcessLowerLeft = null;
-//	public static GANProcess ganProcessLowerRight = null;
 
 	MegaManGANGenerator megaManGenerator;
 	
@@ -73,7 +68,11 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 
 	public MegaManCPPNtoGANLevelBreederTask() throws IllegalAccessException {
 		super();
-
+//		JButton fileLoadButton5 = new JButton();
+//		fileLoadButton5.setText("SelectGANModel");
+//		fileLoadButton5.setName("" + FILE_LOADER_BUTTON_INDEX);
+//		fileLoadButton5.addActionListener(this);
+//		top.add(fileLoadButton5);
 		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) megaManGenerator = new MegaManSevenGANGenerator();
 		else  megaManGenerator = new MegaManOneGANGenerator();
 
