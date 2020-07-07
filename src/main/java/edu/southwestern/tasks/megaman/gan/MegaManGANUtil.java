@@ -643,26 +643,23 @@ public class MegaManGANUtil {
 		Point placementPoint = currentPoint;
 		List<List<Integer>> level = new ArrayList<>();
 		List<List<Integer>> segment = new ArrayList<>();
-		Point temp = currentPoint;
 		for(int i = 0;i<chunks;i++) {
 			//System.out.println("previousPoints.size():"+previousPoints.size());
 			double[] oneSegmentData = latentVectorAndMiscDataForPosition(i, Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables(), wholeVector);
 			Pair<List<List<Integer>>, Point> segmentAndPoint = megaManGANGenerator.generateSegmentFromVariables(oneSegmentData, previousPoint, previousPoints, currentPoint);
 			segment = segmentAndPoint.t1;
-			temp = currentPoint;
 			currentPoint = segmentAndPoint.t2;
-			System.out.println(currentPoint+"\t"+ previousPoint+"\t "+temp);
 			if(i==chunks-1) placeOrb(segment);
 			//placementPoint = currentPoint;
 			//System.out.println("previousPoint:"+previousPoint+",current:"+currentPoint+",placementPoint:"+placementPoint);
-			placementPoint = placeMegaManSegment(level, segment,  currentPoint, temp, placementPoint);
+			placementPoint = placeMegaManSegment(level, segment,  currentPoint, previousPoint, placementPoint);
 			//System.out.println(placementPoint);
 			//MegaManVGLCUtil.printLevel(level);
 //			MiscUtil.waitForReadStringAndEnterKeyPress();
 			
 			
 			if(i==0) placeSpawn(level);
-			previousPoint = temp;
+			previousPoint = currentPoint;
 		}
 		
 		
@@ -671,7 +668,7 @@ public class MegaManGANUtil {
 	}
 	
 	private static Point placeMegaManSegment(List<List<Integer>> level,List<List<Integer>> segment, Point current, Point prev, Point placementPoint) {
-		if(prev == null||prev==new Point(0,0)) { // First segment
+		if(prev == null) { // First segment
 			//System.out.println("FIRST");
 			for(List<Integer> row : segment) {
 				ArrayList<Integer> newRow = new ArrayList<>(row.size());
@@ -682,21 +679,21 @@ public class MegaManGANUtil {
 			// Schrum:  I'm  really not sure what belongs here, of it this deserves its own case
 			
 			//placementPoint = new Point(current.x, current.y);
-			placementPoint = findPlacementPointDirectionItital(current, prev, placementPoint);
+			placementPoint = new Point(placementPoint.x+MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
 		} else if(current.equals(new Point(prev.x+1, prev.y))) {
-			System.out.println("RIGHT");
+			//System.out.println("RIGHT");
 			placeRightSegment(level, segment, placementPoint);
 			placementPoint = new Point(placementPoint.x+MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
 		} else if(current.equals(new Point(prev.x, prev.y+1))) {
-			System.out.println("DOWN");
+			//System.out.println("DOWN");
 			placeDownSegment(level, segment, placementPoint);
 			placementPoint = new Point(placementPoint.x, placementPoint.y+MEGA_MAN_LEVEL_HEIGHT);
 		} else if(current.equals(new Point(prev.x, prev.y-1))) {
-			System.out.println("UP");
+			//System.out.println("UP");
 			placeUpSegment(level, segment, placementPoint);
 			placementPoint = new Point(placementPoint.x, placementPoint.y-MEGA_MAN_LEVEL_HEIGHT);
 		} else if(current.equals(new Point(prev.x-1, prev.y))) {
-			System.out.println("LEFT");
+			//System.out.println("LEFT");
 			placeLeftSegment(level, segment, placementPoint);
 			placementPoint = new Point(placementPoint.x-MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
 		}
@@ -705,19 +702,6 @@ public class MegaManGANUtil {
 
 	
 
-	private static Point findPlacementPointDirectionItital(Point current, Point prev, Point placementPoint) {
-		prev = new Point(0,0);
-		if(current.equals(new Point(prev.x+1, prev.y))) {
-			placementPoint = new Point(placementPoint.x+MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
-		} else if(current.equals(new Point(prev.x, prev.y+1))) {
-			placementPoint = new Point(placementPoint.x, placementPoint.y+MEGA_MAN_LEVEL_HEIGHT);
-		} else if(current.equals(new Point(prev.x, prev.y-1))) {
-			placementPoint = new Point(placementPoint.x, placementPoint.y-MEGA_MAN_LEVEL_HEIGHT);
-		} else if(current.equals(new Point(prev.x-1, prev.y))) {
-			placementPoint = new Point(placementPoint.x-MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
-		}
-		return placementPoint;
-	}
 	private static void placeLeftSegment(List<List<Integer>> level, List<List<Integer>> segment, Point placementPoint) {
 		// TODO Auto-generated method stub
 		if(placementPoint.x<0) { //add null lines to left
