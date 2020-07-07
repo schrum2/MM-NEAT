@@ -791,7 +791,7 @@ public class MegaManVGLCUtil {
 				if(m!=9) {
 					placeActivatedScreen(xcoord,ycoord, p);
 					p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
-					if(Parameters.parameters.booleanParameter("useThreeGANsMegaMan")) {
+					if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) {
 						p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
 					}
 				}

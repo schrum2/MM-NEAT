@@ -633,7 +633,7 @@ public class MegaManGANUtil {
 //			if(i==0) placeSpawn(level);
 		}
 		
-		
+		postProcessingPlaceProperEnemies(level);
 		return level;
 		
 	}
