@@ -33,16 +33,32 @@ public class LodeRunnerVGLCUtil {
 //		}
 //		System.out.println(levelSet); //prints converted JSON files to the console 
 		//String level = convertLodeRunnerVGLCtoIceCreamYou(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
-		List<List<Integer>> level = convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
+		//List<List<Integer>> level = convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LODE_RUNNER_LEVEL_PATH + "Level 1.txt");
 		//String levelIce = convertLodeRunnerJSONtoIceCreamYou(level);
 		//System.out.println(levelIce);	
 		
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				new LodeRunner(level);
-			}
-		});
-//				convertLodeRunnerLevelFileVGLCtoListOfLevelForLodeRunnerState(LODE_RUNNER_LEVEL_PATH + "Level 129.txt")+","+
+//		SwingUtilities.invokeLater(new Runnable() {
+//			public void run() {
+//				new LodeRunner(level);
+//			}
+//		});
+		
+//		String levelList = "["+convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 133.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 98.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 132.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 35.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 119.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 64.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 85.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 138.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 142.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 125.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 56.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 103.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 54.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 136.txt")+", "+
+//							convertLodeRunnerLevelFileVGLCtoListOfLevel(LODE_RUNNER_LEVEL_PATH + "Level 148.txt")+"]";
+//		System.out.println(levelList);
 	}
 
 	/**
@@ -59,8 +75,8 @@ public class LodeRunnerVGLCUtil {
 			for(int j = 0; j < level[i].length(); j++) { //fills that array list that got added to create the row
 				if(level[i].charAt(j) != '[' || level[i].charAt(j) != ']') {
 					//int tileCode = convertLodeRunnerTileVGLCtoNumberCode(level[i].charAt(j)); //8 tile mapping 
-					int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawn(level[i].charAt(j)); //6 tile mapping 
-					//int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(level[i].charAt(j)); //7 tile mapping
+					//int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawn(level[i].charAt(j)); //6 tile mapping 
+					int tileCode = convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(level[i].charAt(j)); //7 tile mapping
 					row.add(tileCode);
 				}
 			}
@@ -157,28 +173,28 @@ public class LodeRunnerVGLCUtil {
 	 */
 	// Do not need separate but similar methods for each possible tile count. Just have a method for the higher tile count,
 	// and unused tiles will never crop up.
-//	private static int convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(char tile) {
-//		switch(tile) {
-//		case '.': //empty, passable
-//		case 'M': //spawn, passable
-//			return 0;	
-//		case 'G': //gold, passable, pickupable
-//			return 1; 
-//		case 'E': //enemy, damaging 
-//			return 2; 
-//		case 'b': //diggable ground, solid 
-//			return 3; 
-//		case '#': //ladder, passable, climbable
-//			return 4;
-//		case '-': //rope, passable, climbable 
-//			return 5;
-//		case 'B': //regular ground, solid
-//			return 6; 
-//		default:
-//			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
-//
-//		}
-//	}
+	private static int convertLodeRunnerTileVGLCtoNumberCodeNoSpawnBothGroundTiles(char tile) {
+		switch(tile) {
+		case '.': //empty, passable
+		case 'M': //spawn, passable
+			return 0;	
+		case 'G': //gold, passable, pickupable
+			return 1; 
+		case 'E': //enemy, damaging 
+			return 2; 
+		case 'b': //diggable ground, solid 
+			return 3; 
+		case '#': //ladder, passable, climbable
+			return 4;
+		case '-': //rope, passable, climbable 
+			return 5;
+		case 'B': //regular ground, solid
+			return 6; 
+		default:
+			throw new IllegalArgumentException("Invalid Lode Runner tile from VGLV: " + tile);
+
+		}
+	}
 	
 	/**
 	 * Converts tile codes to numbers for JSON conversion removes the spawn tile to avoid placing multiple 

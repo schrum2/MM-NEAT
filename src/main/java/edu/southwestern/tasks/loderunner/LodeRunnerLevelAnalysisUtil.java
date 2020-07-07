@@ -37,7 +37,7 @@ public class LodeRunnerLevelAnalysisUtil {
 	public static void main(String[] args) throws FileNotFoundException {
 		Parameters.initializeParameterCollections(args);
 		PrintStream ps = new PrintStream(new File("data/VGLC/Lode Runner/LevelAnalysis.csv"));
-		ps.println("Level, A* Length, TSP Solution Length, Connectivity, percentBackTrack, percentEmpty, percentLadders, percentGround, percentSolid, percentDiggable");
+		ps.println("Level, A* Length, Connectivity, TSP Solution Length, TSP Connectivity, Percent Dug, percentBackTrack, percentEmpty, percentLadders, percentGround, percentSolid, percentDiggable");
 		for(int i = 1; i <= 150; i++) {
 			String line = processOneLevel(i);
 			System.out.println(line);
@@ -77,6 +77,8 @@ public class LodeRunnerLevelAnalysisUtil {
 		double simpleAStarDistance;
 		double connectivity;
 		double tspSolutionPathLength;
+		double tspConnectivity;
+		double dugPercent;
 		double percentBackTrack;
 		if(num!=7 && num!=64 && num!=71 && num!=75 && num!=81 && num!=86 && num!=98 && num!=136 && num!=137 && num!=148) { //excludes the levels that we know that our tsp solver cannot solve
 			Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = performAStarSearch(level,Double.NaN);
@@ -85,13 +87,18 @@ public class LodeRunnerLevelAnalysisUtil {
 			LodeRunnerState start = aStarInfo.t3;
 			simpleAStarDistance = calculateSimpleAStarLength(actionSequence);
 			connectivity = caluclateConnectivity(mostRecentVisited);
-			tspSolutionPathLength= calculateTSPSolutionPathLength(level);
+			Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = getTSPResults(level);
+			tspSolutionPathLength= calculateTSPSolutionPathLength(tspInfo.t1);
+			tspConnectivity = calculateTSPConnectivity(tspInfo.t2);
+			dugPercent = getPercentOfDugSteps(actionSequence, tspInfo.t1, start, level);
 			percentBackTrack = calculatePercentAStarBacktracking(actionSequence, start);
 		}
 		else {
 			simpleAStarDistance = -1.0;
 			connectivity = -1.0;
 			tspSolutionPathLength= -1.0;
+			tspConnectivity= -1.0;
+			dugPercent = -1.0;
 			percentBackTrack = -1.0;
 		}
 		double percentEmpty = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_EMPTY}, level);
@@ -99,20 +106,79 @@ public class LodeRunnerLevelAnalysisUtil {
 		double percentGround = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE, LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
 		double percentSolid = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_GROUND}, level);
 		double percentDiggable = calculatePercentageTile(new double[] {LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE}, level);
-		String line = "Level"+num+","+simpleAStarDistance+","+tspSolutionPathLength+","+connectivity+","+percentBackTrack+","+percentEmpty+","+percentLadders+","+percentGround+","+percentSolid+","+percentDiggable;
+		String line = "Level"+num+","+simpleAStarDistance+","+connectivity+","+tspSolutionPathLength+","+tspConnectivity+","+dugPercent+","+percentBackTrack+","+percentEmpty+","+percentLadders+","+percentGround+","+percentSolid+","+percentDiggable;
 		return line;
 	}
+	
+	public static double getPercentOfDugSteps(ArrayList<LodeRunnerAction> solutionAStar, ArrayList<LodeRunnerAction> solutionTSP, LodeRunnerState start, List<List<Integer>> level) {
+		ArrayList<LodeRunnerAction> solution = findMinLengthSolutionPath(solutionAStar, solutionTSP);
+		if(solution == null)
+			return -1.0;
+		double percentDug = 0;
+		LodeRunnerState currentState = start;
+		Pair<Integer, Integer> current = null;
+		for(LodeRunnerAction a: solution) {
+			currentState = (LodeRunnerState) currentState.getSuccessor(a);	
+			current = new Pair<Integer, Integer>(currentState.currentX, currentState.currentY);
+			if(tileAtPosition(current.t1,current.t2, level) == LodeRunnerState.LODE_RUNNER_TILE_DIGGABLE)
+				percentDug++;
+		}
+		return percentDug/solution.size();
+	}
 
-	public static double calculateTSPSolutionPathLength(List<List<Integer>> level) {
+	private static ArrayList<LodeRunnerAction> findMinLengthSolutionPath(ArrayList<LodeRunnerAction> solutionAStar,
+			ArrayList<LodeRunnerAction> solutionTSP) {
+		if(solutionAStar==null && solutionTSP==null)
+			return null;
+		if(solutionAStar!=null && solutionAStar.size() < solutionTSP.size())
+			return solutionAStar;
+		else
+			return solutionTSP;
+	}
+
+	private static int tileAtPosition(int x, int y, List<List<Integer>> level) {
+		return level.get(y).get(x);
+	}
+
+	/**
+	 * Calculates the number of visited states from a tsp search
+	 * @param mostRecentVisitedTSP Visited States from tsp search
+	 * @return Length of the set holding the visited states for the TSP search
+	 */
+	private static double calculateTSPConnectivity(HashSet<LodeRunnerState> mostRecentVisitedTSP) {
+		//calculates the amount of the level that was covered in the search, connectivity.
+		HashSet<Point> visitedPoints = new HashSet<>();
+		double connectivity = -1;
+		for(LodeRunnerState s : mostRecentVisitedTSP) {
+			visitedPoints.add(new Point(s.currentX,s.currentY));
+		}
+		connectivity = 1.0*visitedPoints.size();
+		return connectivity;
+	}
+
+	/**
+	 * Calculates the Solution path length for a tsp search
+	 * @param tspSolution The solution path 
+	 * @return The legnth of the solution path
+	 */
+	public static double calculateTSPSolutionPathLength(ArrayList<LodeRunnerAction> tspSolution) {
 		double tspSolutionPathLength;
-		ArrayList<LodeRunnerAction> tspActions = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level).t1;
-		if(tspActions != null) {
-			tspSolutionPathLength = 1.0*tspActions.size();
+		if(tspSolution != null) {
+			tspSolutionPathLength = 1.0*tspSolution.size();
 		}
 		else {
 			tspSolutionPathLength = -1.0;
 		}
 		return tspSolutionPathLength;
+	}
+
+	/**
+	 * Runs a TSP search 
+	 * @param level
+	 * @return
+	 */
+	public static Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> getTSPResults(List<List<Integer>> level){
+		return LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
 	}
 
 	/**
