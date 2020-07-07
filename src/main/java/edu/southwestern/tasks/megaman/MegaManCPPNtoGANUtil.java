@@ -1,15 +1,16 @@
 package edu.southwestern.tasks.megaman;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.networks.Network;
-import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
+import edu.southwestern.util.datastructures.Pair;
 
 public class MegaManCPPNtoGANUtil {
 	public static final int XPREF  = 0;
@@ -39,25 +40,42 @@ public class MegaManCPPNtoGANUtil {
 	public static Direction d;
 	public static List<List<Integer>> cppnToMegaManLevel(MegaManGANGenerator megaManGenerator, Network cppn, int chunks, double[] inputMultipliers){
 
-		x = 0;
-		y = 0;
+		// TODO: This method unnecessarily repeats code from MegaManGANUtil.longVectorToMegaManLevel
+		//       We should refactor to avoid the repeated code
 		
-		double[] fullVector = new double[(Parameters.parameters.integerParameter("GANInputSize") + MegaManGANGenerator.numberOfAuxiliaryVariables()) * chunks];
-		
-		for(int i = 0; i < chunks; i++) {
-			double[] oneSegment = cppn.process(new double[] {
-					inputMultipliers[XPREF] * x/chunks,
-					inputMultipliers[YPREF]*y/chunks,
+		HashSet<Point> previousPoints = new HashSet<>();
+		Point currentPoint  = new Point(0,0);
+		Point previousPoint = null;
+		Point placementPoint = currentPoint;
+		List<List<Integer>> level = new ArrayList<>();
+		List<List<Integer>> segment = new ArrayList<>();
+		for(int i = 0;i<chunks;i++) {
+			
+			// This line is the only differece from MegaManGANUtil.longVectorToMegaManLevel
+			double[] oneSegmentData = cppn.process(new double[] {
+					inputMultipliers[XPREF] * currentPoint.x/(1.0*chunks),
+					inputMultipliers[YPREF] * currentPoint.y/(1.0*chunks),
 					inputMultipliers[BIASPREF] * 1.0});
+						
+			Pair<List<List<Integer>>, Point> segmentAndPoint = megaManGenerator.generateSegmentFromVariables(oneSegmentData, previousPoint, previousPoints, currentPoint);
+			segment = segmentAndPoint.t1;
+			previousPoint = currentPoint; // backup previous
+			currentPoint = segmentAndPoint.t2;
+			if(i==chunks-1) MegaManGANUtil.placeOrb(segment);
+			//placementPoint = currentPoint;
+			//System.out.println("previousPoint:"+previousPoint+",current:"+currentPoint+",placementPoint:"+placementPoint);
+			placementPoint = MegaManGANUtil.placeMegaManSegment(level, segment,  currentPoint, previousPoint, placementPoint);
+			//System.out.println(placementPoint);
+			//MegaManVGLCUtil.printLevel(level);
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 			
-			// TODO: Ben, you need to figure out how to track and update x and y accordingly based on the CPPN outputs
 			
-			System.arraycopy(oneSegment, 0, fullVector, i*oneSegment.length, oneSegment.length);	
+			if(i==0) MegaManGANUtil.placeSpawn(level);
 		}
 		
 		
-		List<List<Integer>> level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, fullVector, chunks);
 		return level;
+		
 //		
 //		
 //		

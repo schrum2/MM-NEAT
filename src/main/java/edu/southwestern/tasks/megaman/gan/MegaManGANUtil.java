@@ -665,7 +665,7 @@ public class MegaManGANUtil {
 		
 	}
 	
-	private static Point placeMegaManSegment(List<List<Integer>> level,List<List<Integer>> segment, Point current, Point prev, Point placementPoint) {
+	public static Point placeMegaManSegment(List<List<Integer>> level,List<List<Integer>> segment, Point current, Point prev, Point placementPoint) {
 		if(level.isEmpty()) { // First segment
 			//System.out.println("FIRST");
 			for(List<Integer> row : segment) {
