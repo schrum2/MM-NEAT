@@ -675,6 +675,9 @@ public class MegaManGANUtil {
 				newRow.addAll(row);
 				level.add(newRow);
 			}
+			
+			// Schrum:  I'm  really not sure what belongs here, of it this deserves its own case
+			
 			//placementPoint = new Point(current.x, current.y);
 			placementPoint = new Point(placementPoint.x+MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
 		} else if(current.equals(new Point(prev.x+1, prev.y))) {
