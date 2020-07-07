@@ -515,6 +515,14 @@ public class MegaManGANUtil {
 			}
 			if(placed) break;
 		}
+			for(int i = 0; i<level.get(0).size();i++) {
+				if(!placed) {
+					level.get(level.size()-1).set(0, MegaManVGLCUtil.ONE_ENEMY_SOLID);
+					level.get(level.size()-2).set(0, MegaManVGLCUtil.ONE_ENEMY_ORB);
+					level.get(level.size()-3).set(0, MegaManVGLCUtil.ONE_ENEMY_AIR);
+					placed = true;
+				}
+			}
 	}
 	
 	public static HashMap<String, Integer> findMiscSegments(List<List<Integer>> level){
@@ -698,7 +706,7 @@ public class MegaManGANUtil {
 			placeUpSegment(level, segment, placementPoint);
 			placementPoint = new Point(placementPoint.x, placementPoint.y-MEGA_MAN_LEVEL_HEIGHT);
 		} else if(current.equals(new Point(prev.x-1, prev.y))) {
-			System.out.println("LEFT");
+//			System.out.println("LEFT");
 			placeLeftSegment(level, segment, placementPoint);
 			placementPoint = new Point(placementPoint.x-MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
 		}

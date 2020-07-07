@@ -70,7 +70,7 @@ public class MegaManCPPNtoGANUtil {
 //			MiscUtil.waitForReadStringAndEnterKeyPress();
 			
 			
-			if(i==0) MegaManGANUtil.placeSpawn(level);
+//			if(i==0) MegaManGANUtil.placeSpawn(level);
 		}
 		
 		

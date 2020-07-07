@@ -33,12 +33,9 @@ public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTa
 	public static void main(String[] args) {
 		try {
 
-			MMNEAT.main(new String[]{"runNumber:8","randomSeed:8","watch:true","trials:1","mu:10","base:megamancppntogan",
-					"MegaManGANUpModel:MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth",
-					"MegaManGANDownModel:MegaManSevenGANDownWith12TileTypes_5_Epoch5000.pth",
-					"MegaManGANHorizontalModel:MegaManSevenGANHorizontalWith12TileTypes_5_Epoch5000.pth",
+			MMNEAT.main(new String[]{"runNumber:8","randomSeed:8","watch:true","trials:1","mu:10","base:megamancppntogan", "useMultipleGANsMegaMan:true",
 					"log:MegaManCPPNtoGAN-DistPercent","saveTo:DistPercent","megaManGANLevelChunks:10",
-					"megaManAllowsSimpleAStarPath:true", "megaManAllowsConnectivity:true",
+					"megaManAllowsSimpleAStarPath:true", "megaManAllowsConnectivity:true", "megaManAllowsLeftSegments:true",
 					"maxGens:500","io:true","netio:true","GANInputSize:5","mating:true","fs:false",
 					"task:edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelTask","cleanOldNetworks:false",
 					"allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1",
