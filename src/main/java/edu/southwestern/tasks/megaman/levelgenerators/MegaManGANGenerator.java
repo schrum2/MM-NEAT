@@ -82,17 +82,17 @@ public abstract class MegaManGANGenerator {
 			SEGMENT_TYPE result = null;
 			Point next = null;
 			while(!done) {
-				System.out.println(maxIndex + ":" + Arrays.toString(auxiliaryVariables));
+				//System.out.println(maxIndex + ":" + Arrays.toString(auxiliaryVariables));
 				// This can only be UP, DOWN, RIGHT, LEFT
 				SEGMENT_TYPE proposed = SEGMENT_TYPE.values()[maxIndex];
 				next = nextPoint(previousPoint, currentPoint, proposed); // Where would new segment go?
 				if(previousPoints.contains(next)) { // This placement is illegal. Location occupied
-					System.out.println(previousPoints + " contains " + next);
+					//System.out.println(previousPoints + " contains " + next);
 					auxiliaryVariables[maxIndex] = Double.NEGATIVE_INFINITY; // Disable illegal option
 					maxIndex = StatisticsUtilities.argmax(auxiliaryVariables); // Reset
 					if(Double.isInfinite(auxiliaryVariables[maxIndex])) {
 						result = null; // There is NO legal placement possible!
-						System.out.println("NO LEGAL PLACEMENT!");
+						//System.out.println("NO LEGAL PLACEMENT!");
 						//assert false : ""+previousPoints + ":" + next; // TEMP
 						done = true;
 					}
