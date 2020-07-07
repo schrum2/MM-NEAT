@@ -675,7 +675,8 @@ public class MegaManGANUtil {
 				newRow.addAll(row);
 				level.add(newRow);
 			}
-			placementPoint = new Point(current.x, current.y);
+			//placementPoint = new Point(current.x, current.y);
+			placementPoint = new Point(placementPoint.x+MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
 		} else if(current.equals(new Point(prev.x+1, prev.y))) {
 			System.out.println("RIGHT");
 			placeRightSegment(level, segment, placementPoint);

@@ -567,7 +567,7 @@ public class MegaManVGLCUtil {
 	public static void printLevel(List<List<Integer>> level) {
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
-				System.out.print(m);
+				System.out.printf("%3d",m);
 
 			}
 			System.out.println();
