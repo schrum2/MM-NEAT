@@ -51,6 +51,7 @@ public abstract class MegaManGANGenerator {
 		
 		Pair<SEGMENT_TYPE, Point> type = determineType(previousPoint, auxiliaryVariables, previousPoints, currentPoint);
 		assert type.t1 != null;
+//		System.out.println(type.t1);
 		Pair<List<List<Integer>>, Point> segmentAndCurrentPoint = new Pair<>(generateSegmentFromLatentVariables(latentVector, type.t1), type.t2);
 		return segmentAndCurrentPoint;
 	}
@@ -99,6 +100,7 @@ public abstract class MegaManGANGenerator {
 				} else {
 					switch(proposed) {
 					case RIGHT:
+						System.out.println(previousPoint+", "+currentPoint);
 						if(previousPoint.y == currentPoint.y) // Keep moving right. Do nothing
 							result = proposed;
 						else if(previousPoint.y + 1 == currentPoint.y) // Moved down
@@ -109,6 +111,7 @@ public abstract class MegaManGANGenerator {
 							throw new IllegalStateException();
 						break;
 					case LEFT:
+						System.out.println(previousPoint+", "+currentPoint);
 						if(previousPoint.y == currentPoint.y) // Keep moving left. Do nothing
 							result = proposed;
 						else if(previousPoint.y + 1 == currentPoint.y) // Moved down
@@ -119,6 +122,7 @@ public abstract class MegaManGANGenerator {
 							throw new IllegalStateException();
 						break;
 					case UP:
+						System.out.println(previousPoint+", "+currentPoint);
 						if(previousPoint.x == currentPoint.x) // Keep moving up. Do nothing
 							result = proposed;
 						else if(previousPoint.x + 1 == currentPoint.x) // Moved right
@@ -129,6 +133,7 @@ public abstract class MegaManGANGenerator {
 							throw new IllegalStateException();
 						break;
 					case DOWN:
+						System.out.println(previousPoint+", "+currentPoint);
 						if(previousPoint.x == currentPoint.x) // Keep moving down. Do nothing
 							result = proposed;
 						else if(previousPoint.x + 1 == currentPoint.x) // Moved right
@@ -144,6 +149,7 @@ public abstract class MegaManGANGenerator {
 					done = true;					
 				}
 			}
+//			System.out.println(result);
 			previousPoints.add(next); // This point will be occupied now
 			return new Pair<SEGMENT_TYPE, Point>(result, next);
 		}
