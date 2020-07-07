@@ -700,19 +700,19 @@ public class MegaManGANUtil {
 
 	
 	// Never used?
-//	private static Point findInitialPlacementPoint(Point prev, Point current, Point placementPoint) {
-//		prev = new Point(0,0);
-//		if(current.equals(new Point(prev.x+1, prev.y))) {
-//			placementPoint = new Point(placementPoint.x+MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
-//		} else if(current.equals(new Point(prev.x, prev.y+1))) {
-//			placementPoint = new Point(placementPoint.x, placementPoint.y+MEGA_MAN_LEVEL_HEIGHT);
-//		} else if(current.equals(new Point(prev.x, prev.y-1))) {
-//			placementPoint = new Point(placementPoint.x, placementPoint.y-MEGA_MAN_LEVEL_HEIGHT);
-//		} else if(current.equals(new Point(prev.x-1, prev.y))) {
-//			placementPoint = new Point(placementPoint.x-MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
-//		}
-//		return placementPoint;
-//	}
+	private static Point findInitialPlacementPoint(Point prev, Point current, Point placementPoint) {
+		prev = new Point(0,0);
+		if(current.equals(new Point(prev.x+1, prev.y))) {
+			placementPoint = new Point(placementPoint.x+MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
+		} else if(current.equals(new Point(prev.x, prev.y+1))) {
+			placementPoint = new Point(placementPoint.x, placementPoint.y+MEGA_MAN_LEVEL_HEIGHT);
+		} else if(current.equals(new Point(prev.x, prev.y-1))) {
+			placementPoint = new Point(placementPoint.x, placementPoint.y-MEGA_MAN_LEVEL_HEIGHT);
+		} else if(current.equals(new Point(prev.x-1, prev.y))) {
+			placementPoint = new Point(placementPoint.x-MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
+		}
+		return placementPoint;
+	}
 	
 	
 	private static void placeLeftSegment(List<List<Integer>> level, List<List<Integer>> segment, Point placementPoint) {
