@@ -641,14 +641,14 @@ public class MegaManGANUtil {
 		Point currentPoint  = new Point(0,0);
 		Point previousPoint = null;
 		Point placementPoint = currentPoint;
-		Point temp = null;
 		List<List<Integer>> level = new ArrayList<>();
 		List<List<Integer>> segment = new ArrayList<>();
 		for(int i = 0;i<chunks;i++) {
 			//System.out.println("previousPoints.size():"+previousPoints.size());
 			double[] oneSegmentData = latentVectorAndMiscDataForPosition(i, Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables(), wholeVector);
-			Pair<List<List<Integer>>, Point> segmentAndPoint = megaManGANGenerator.generateSegmentFromVariables(oneSegmentData, temp, previousPoints, currentPoint);
+			Pair<List<List<Integer>>, Point> segmentAndPoint = megaManGANGenerator.generateSegmentFromVariables(oneSegmentData, previousPoint, previousPoints, currentPoint);
 			segment = segmentAndPoint.t1;
+			previousPoint = currentPoint; // backup previous
 			currentPoint = segmentAndPoint.t2;
 			if(i==chunks-1) placeOrb(segment);
 			//placementPoint = currentPoint;
@@ -660,8 +660,6 @@ public class MegaManGANUtil {
 			
 			
 			if(i==0) placeSpawn(level);
-			temp = previousPoint;
-			previousPoint = currentPoint;
 		}
 		
 		
