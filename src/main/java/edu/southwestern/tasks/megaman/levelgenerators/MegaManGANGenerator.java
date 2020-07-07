@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.datastructures.Triple;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
@@ -41,7 +41,7 @@ public abstract class MegaManGANGenerator {
 	 * @param currentPoint Where the current segment will be placed
 	 * @return List of Lists representation of the generated segment.
 	 */
-	public Triple<List<List<Integer>>, Point, SEGMENT_TYPE> generateSegmentFromVariables(double[] segmentVariables, SEGMENT_TYPE previous, HashSet<Point> previousPoints, Point currentPoint){
+	public Pair<List<List<Integer>>, Point> generateSegmentFromVariables(double[] segmentVariables, Point previousPoint, HashSet<Point> previousPoints, Point currentPoint){
 		// Save latent vector
 		double[] latentVector = new double[Parameters.parameters.integerParameter("GANInputSize")];
 		System.arraycopy(segmentVariables, numberOfAuxiliaryVariables(), latentVector, 0, latentVector.length);
@@ -49,9 +49,9 @@ public abstract class MegaManGANGenerator {
 		double[] auxiliaryVariables = new double[numberOfAuxiliaryVariables()];
 		System.arraycopy(segmentVariables, 0, auxiliaryVariables, 0, auxiliaryVariables.length);
 		
-		Triple<SEGMENT_TYPE, Point, SEGMENT_TYPE> type = determineType(previous, auxiliaryVariables, previousPoints, currentPoint);
+		Pair<SEGMENT_TYPE, Point> type = determineType(previousPoint, auxiliaryVariables, previousPoints, currentPoint);
 		assert type.t1 != null;
-		Triple<List<List<Integer>>, Point, SEGMENT_TYPE> segmentAndCurrentPoint = new Triple<>(generateSegmentFromLatentVariables(latentVector, type.t1), type.t2, type.t1);
+		Pair<List<List<Integer>>, Point> segmentAndCurrentPoint = new Pair<>(generateSegmentFromLatentVariables(latentVector, type.t1), type.t2);
 		return segmentAndCurrentPoint;
 	}
 	
@@ -65,17 +65,17 @@ public abstract class MegaManGANGenerator {
 	 * @param currentPoint Where the current segment will be placed
 	 * @return Segment type of new segment
 	 */
-	protected static Triple<SEGMENT_TYPE, Point, SEGMENT_TYPE> determineType(SEGMENT_TYPE previous, double[] auxiliaryVariables, HashSet<Point> previousPoints, Point currentPoint) {
+	protected static Pair<SEGMENT_TYPE, Point> determineType(Point previousPoint, double[] auxiliaryVariables, HashSet<Point> previousPoints, Point currentPoint) {
 				
 		int maxIndex = StatisticsUtilities.argmax(auxiliaryVariables);
 		
-		if(previous == null) {
+		if(previousPoint == null) {
 			// This is the first segment in the level
 			SEGMENT_TYPE proposed = SEGMENT_TYPE.values()[maxIndex];
 			assert proposed != null;
-			Point next = nextPoint(previous, currentPoint, proposed);
+			Point next = nextPoint(previousPoint, currentPoint, proposed);
 			previousPoints.add(next);
-			return new Triple<SEGMENT_TYPE, Point, SEGMENT_TYPE>(proposed, next, previous);
+			return new Pair<SEGMENT_TYPE, Point>(proposed, next);
 		} else {	
 			// TODO: Requires more work
 			boolean done = false;
@@ -85,7 +85,7 @@ public abstract class MegaManGANGenerator {
 				System.out.println(maxIndex + ":" + Arrays.toString(auxiliaryVariables));
 				// This can only be UP, DOWN, RIGHT, LEFT
 				SEGMENT_TYPE proposed = SEGMENT_TYPE.values()[maxIndex];
-				next = nextPoint(previous, currentPoint, proposed); // Where would new segment go?
+				next = nextPoint(previousPoint, currentPoint, proposed); // Where would new segment go?
 				if(previousPoints.contains(next)) { // This placement is illegal. Location occupied
 					System.out.println(previousPoints + " contains " + next);
 					auxiliaryVariables[maxIndex] = Double.NEGATIVE_INFINITY; // Disable illegal option
@@ -96,41 +96,51 @@ public abstract class MegaManGANGenerator {
 						done = true;
 					}
 				} else {
-					// Figure out if proposed should be changed to corner
-					if(!previous.equals(proposed)) {
-						// Change to appropriate corner
-						// TODO: assign result and set done to true
-						if(		(previous.equals(SEGMENT_TYPE.UP)   && proposed.equals(SEGMENT_TYPE.RIGHT)) ||
-								(previous.equals(SEGMENT_TYPE.LEFT) && proposed.equals(SEGMENT_TYPE.DOWN))) {//place upper left
-							result = SEGMENT_TYPE.TOP_LEFT;
-							done = true;
-						} else if(  (previous.equals(SEGMENT_TYPE.DOWN)  && proposed.equals(SEGMENT_TYPE.RIGHT)) ||
-								    (previous.equals(SEGMENT_TYPE.LEFT)  && proposed.equals(SEGMENT_TYPE.UP))) { //place lower left
+					switch(proposed) {
+					case RIGHT:
+						if(previousPoint.y == currentPoint.y) ; // Keep moving right. Do nothing
+						else if(previousPoint.y + 1 == currentPoint.y) // Moved down
 							result = SEGMENT_TYPE.BOTTOM_LEFT;
-							done = true;
-						} else if(  (previous.equals(SEGMENT_TYPE.RIGHT) && proposed.equals(SEGMENT_TYPE.UP)) ||
-									(previous.equals(SEGMENT_TYPE.DOWN)  && proposed.equals(SEGMENT_TYPE.LEFT))) { //place lower right
+						else if(previousPoint.y - 1 == currentPoint.y) // Moved up
+							result = SEGMENT_TYPE.TOP_LEFT;
+						else
+							throw new IllegalStateException();
+						break;
+					case LEFT:
+						if(previousPoint.y == currentPoint.y) ; // Keep moving left. Do nothing
+						else if(previousPoint.y + 1 == currentPoint.y) // Moved down
 							result = SEGMENT_TYPE.BOTTOM_RIGHT;
-							done = true;
-						} else if(  (previous.equals(SEGMENT_TYPE.RIGHT) && proposed.equals(SEGMENT_TYPE.DOWN)) ||
-								    (previous.equals(SEGMENT_TYPE.UP)    && proposed.equals(SEGMENT_TYPE.LEFT))) { //place upper right
+						else if(previousPoint.y - 1 == currentPoint.y) // Moved up
 							result = SEGMENT_TYPE.TOP_RIGHT;
-							done = true;
-						} else {
-							System.out.println("previous:"+previous);
-							System.out.println("proposed:"+proposed);
-							System.out.println("currentPoint:"+currentPoint);
-							System.exit(1);
-						}
-					} else {
-						// Proposed result is fine ... done!
-						done = true;
-						result = proposed;
+						else
+							throw new IllegalStateException();
+						break;
+					case UP:
+						if(previousPoint.x == currentPoint.x) ; // Keep moving up. Do nothing
+						else if(previousPoint.x + 1 == currentPoint.x) // Moved right
+							result = SEGMENT_TYPE.BOTTOM_RIGHT;
+						else if(previousPoint.x - 1 == currentPoint.x) // Moved left
+							result = SEGMENT_TYPE.BOTTOM_LEFT;
+						else
+							throw new IllegalStateException();
+						break;
+					case DOWN:
+						if(previousPoint.x == currentPoint.x) ; // Keep moving down. Do nothing
+						else if(previousPoint.x + 1 == currentPoint.x) // Moved right
+							result = SEGMENT_TYPE.TOP_RIGHT;
+						else if(previousPoint.x - 1 == currentPoint.x) // Moved left
+							result = SEGMENT_TYPE.TOP_LEFT;
+						else
+							throw new IllegalStateException();
+						break;
+					default:
+						throw new IllegalStateException();
 					}
+					done = true;					
 				}
 			}
 			previousPoints.add(next); // This point will be occupied now
-			return new Triple<SEGMENT_TYPE, Point, SEGMENT_TYPE>(result, next, previous);
+			return new Pair<SEGMENT_TYPE, Point>(result, next);
 		}
 	}
 	
@@ -141,34 +151,34 @@ public abstract class MegaManGANGenerator {
 	 * @param currentType Type of the current segment 
 	 * @return Where next Point would be
 	 */
-	private static Point nextPoint(SEGMENT_TYPE previousType, Point current, SEGMENT_TYPE currentType) {
+	private static Point nextPoint(Point previousPoint, Point current, SEGMENT_TYPE currentType) {
 		switch(currentType) {
 			case UP: return new Point(current.x, current.y - 1);
 			case DOWN: return new Point(current.x, current.y + 1);
 			case RIGHT: return new Point(current.x+1, current.y);
 			case LEFT: return new Point(current.x-1, current.y);
 			case TOP_LEFT:
-				if(previousType.equals(SEGMENT_TYPE.UP)) return new Point(current.x+1, current.y); // Move right
+				if(previousPoint.y - 1 == current.y) return new Point(current.x+1, current.y); // Move right
 				else {
-					assert previousType.equals(SEGMENT_TYPE.LEFT);
+					assert previousPoint.x - 1 == current.x;
 					return new Point(current.x, current.y+1); // Move down
 				}
 			case TOP_RIGHT:
-				if(previousType.equals(SEGMENT_TYPE.UP)) return new Point(current.x-1, current.y); // Move left
+				if(previousPoint.y - 1 == current.y) return new Point(current.x-1, current.y); // Move left
 				else {
-					assert previousType.equals(SEGMENT_TYPE.RIGHT);
+					assert previousPoint.x + 1 == current.x;
 					return new Point(current.x, current.y+1); // Move down
 				}
 			case BOTTOM_RIGHT:
-				if(previousType.equals(SEGMENT_TYPE.DOWN)) return new Point(current.x-1, current.y); // Move left
+				if(previousPoint.y + 1 == current.y) return new Point(current.x-1, current.y); // Move left
 				else {
-					assert previousType.equals(SEGMENT_TYPE.RIGHT);
+					assert previousPoint.x + 1 == current.x;
 					return new Point(current.x, current.y-1); // Move up
 				}
 			case BOTTOM_LEFT:
-				if(previousType.equals(SEGMENT_TYPE.DOWN)) return new Point(current.x+1, current.y); // Move right
+				if(previousPoint.y + 1 == current.y) return new Point(current.x+1, current.y); // Move right
 				else {
-					assert previousType.equals(SEGMENT_TYPE.LEFT);
+					assert previousPoint.x - 1 == current.x;
 					return new Point(current.x, current.y-1); // Move up
 				}
 			default: throw new IllegalArgumentException("Valid SEGMENT_TYPE not specified");
