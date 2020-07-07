@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.megaman.levelgenerators;
 
 import java.awt.Point;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -23,9 +22,8 @@ public abstract class MegaManGANGenerator {
 	 */
 	public static int numberOfAuxiliaryVariables() {
 		// TODO: Add optional support for 4 directions
-//		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) return 4;
-//		else 
-			return 3; // Currently only supporting Right, Up, Down, but will add Left (return 4) soon
+		if(Parameters.parameters.booleanParameter("megaManAllowsLeftSegments")) return 4;
+		else return 3; // Currently only supporting Right, Up, Down, but will add Left (return 4) soon
 	}
 	
 	public enum SEGMENT_TYPE {UP, DOWN, RIGHT, LEFT, TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT};
@@ -51,6 +49,7 @@ public abstract class MegaManGANGenerator {
 		
 		Pair<SEGMENT_TYPE, Point> type = determineType(previousPoint, auxiliaryVariables, previousPoints, currentPoint);
 		assert type.t1 != null;
+//		System.out.println(type.t1);
 		Pair<List<List<Integer>>, Point> segmentAndCurrentPoint = new Pair<>(generateSegmentFromLatentVariables(latentVector, type.t1), type.t2);
 		return segmentAndCurrentPoint;
 	}
@@ -97,6 +96,7 @@ public abstract class MegaManGANGenerator {
 						done = true;
 					}
 				} else {
+//					System.out.println(proposed);
 					switch(proposed) {
 					case RIGHT:
 						if(previousPoint.y == currentPoint.y) // Keep moving right. Do nothing
@@ -144,6 +144,7 @@ public abstract class MegaManGANGenerator {
 					done = true;					
 				}
 			}
+//			System.out.println();
 			previousPoints.add(next); // This point will be occupied now
 			return new Pair<SEGMENT_TYPE, Point>(result, next);
 		}
