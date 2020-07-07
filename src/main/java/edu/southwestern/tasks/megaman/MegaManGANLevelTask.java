@@ -41,13 +41,6 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 		List<Double> latentVector = individual.getPhenotype();
 		return getMegaManLevelListRepresentationFromStaticGenotype(megaManGenerator, latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"));
 	}
-	private List<List<Integer>> getMegaManLevelListRepresentationFromStaticGenotype(
-			MegaManGANGenerator megaManGenerator, List<Double> latentVector, int chunks) {
-		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
-		List<List<Integer>> level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, chunks);
-		return level;
-	}
-
 	/**
 	 * static version of method above
 	 * @param ganProcessHorizontal
@@ -56,11 +49,14 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	 * @param latentVector
 	 * @return
 	 */
-//	public static List<List<Integer>> getMegaManLevelListRepresentationFromStaticGenotype(GANProcess ganProcessHorizontal, GANProcess ganProcessUp, GANProcess ganProcessDown,GANProcess ganProcessLowerLeft,GANProcess ganProcessLowerRight,GANProcess ganProcessUpperLeft ,GANProcess ganProcessUpperRight, int chunks, List<Double> latentVector) {
-//		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
-//		List<List<Integer>> level = MegaManGANUtil.wholeVectorToMegaManLevel(ganProcessHorizontal,ganProcessUp,ganProcessDown,ganProcessLowerLeft,ganProcessLowerRight,ganProcessUpperLeft,ganProcessUpperRight, chunks, doubleArray);
-//		return level;
-//	}
+	private List<List<Integer>> getMegaManLevelListRepresentationFromStaticGenotype(
+			MegaManGANGenerator megaManGenerator, List<Double> latentVector, int chunks) {
+		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
+		List<List<Integer>> level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, chunks);
+		return level;
+	}
+
+
 
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
