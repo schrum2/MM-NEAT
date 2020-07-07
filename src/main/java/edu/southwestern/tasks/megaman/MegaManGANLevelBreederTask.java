@@ -251,8 +251,6 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 					resizeGenotypeVectors(oldLength, newLength);
 					resetButtons(true);
 
-					// reset buttons
-					resetButtons(true);
 				}else { //user pressed something other than yes
 					boolean changeTo = true;
 					if(allowLeftGeneration.isSelected()) changeTo=false;

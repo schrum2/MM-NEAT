@@ -46,7 +46,9 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	// TODO: Will eliminate these to move into MegaManGANGenerator
 	public static final int UP_PREFERENCE = 0; 
 	public static final int DOWN_PREFERENCE = 1; 
-	public static final int HORIZONTAL_PREFERENCE = 2; 
+	public static final int RIGHT_PREFERENCE = 2; 
+	public static final int LEFT_PREFERENCE = 3; 
+
 	// TODO: In order to support LEFT, this will need to be a method rather than a constant
 	//public static final int NUM_NON_LATENT_INPUTS = 3; //the first three values in the latent vector
 
@@ -249,6 +251,36 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 		
 		JPanel platformAndBreak = new JPanel();
 		platformAndBreak.setLayout(new BoxLayout(platformAndBreak, BoxLayout.Y_AXIS));
+		
+		JCheckBox allowLeftGeneration = new JCheckBox("AllowLeftGeneration", Parameters.parameters.booleanParameter("megaManAllowsLeftSegments"));
+		allowLeftGeneration.setName("allowLeftGeneration");
+		allowLeftGeneration.getAccessibleContext();
+		allowLeftGeneration.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int continueOption = JOptionPane.showConfirmDialog(null,"Warning! Changing this setting will reset the evolved population. Continue anyway?");
+				if(continueOption == 0) { //0 means user pressed yes
+//					int oldLength = Parameters.parameters.integerParameter("megaManGANLevelChunks") * (GANProcess.latentVectorLength()+MegaManGANGenerator.numberOfAuxiliaryVariables());
+
+					Parameters.parameters.changeBoolean("megaManAllowsLeftSegments");
+					
+//					int newLength = Parameters.parameters.integerParameter("megaManGANLevelChunks") * (GANProcess.latentVectorLength()+MegaManGANGenerator.numberOfAuxiliaryVariables());
+				
+					resetLatentVectorAndOutputs();
+					reset();
+					resetButtons(true);
+
+				}else { //user pressed something other than yes
+					boolean changeTo = true;
+					if(allowLeftGeneration.isSelected()) changeTo=false;
+					allowLeftGeneration.setSelected(changeTo);
+				}
+				
+			}
+		});
+		platformAndBreak.add(allowLeftGeneration);
+
+		
 		JCheckBox allowPlatformGun = new JCheckBox("AllowPlatformGun", Parameters.parameters.booleanParameter("megaManAllowsPlatformGun"));
 		allowPlatformGun.setName("allowPlatformGun");
 		allowPlatformGun.getAccessibleContext();
@@ -478,7 +510,14 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 		outputLabels = new String[latentVectorLength + MegaManGANGenerator.numberOfAuxiliaryVariables()];
 		outputLabels[UP_PREFERENCE] = "Up Presence";
 		outputLabels[DOWN_PREFERENCE] = "Down Preference";
-		outputLabels[HORIZONTAL_PREFERENCE] = "Horizontal Preference";
+		outputLabels[RIGHT_PREFERENCE] = "Right Preference";
+		if(Parameters.parameters.booleanParameter("megaManAllowsLeftSegments"))	{
+			System.out.println("Left is active");
+			
+			outputLabels[LEFT_PREFERENCE] = "Left Preference";
+			System.out.println(outputLabels.length);
+		}
+
 		for(int i = MegaManGANGenerator.numberOfAuxiliaryVariables(); i < outputLabels.length; i++) {
 			outputLabels[i] = "LV"+(i-MegaManGANGenerator.numberOfAuxiliaryVariables());
 		}
@@ -507,7 +546,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	}
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","useThreeGANsMegaMan:true","showKLOptions:false","trials:1","mu:16", "base:megaManGAN",
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","useMultipleGANsMegaMan:true","showKLOptions:false","trials:1","mu:16", "base:megaManGAN",
 					"maxGens:500","io:false","netio:false","GANInputSize:5","mating:true","fs:false",
 					"task:edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelBreederTask","cleanOldNetworks:false", 
 					"allowMultipleFunctions:true","ftype:0","watch:true","netChangeActivationRate:0.3","cleanFrequency:-1",
