@@ -641,7 +641,7 @@ public class MegaManGANUtil {
 		Point currentPoint  = new Point(0,0);
 		Point previousPoint = null;
 		Point placementPoint = currentPoint;
-		Point temp = currentPoint;
+		Point temp = null;
 		List<List<Integer>> level = new ArrayList<>();
 		List<List<Integer>> segment = new ArrayList<>();
 		for(int i = 0;i<chunks;i++) {
