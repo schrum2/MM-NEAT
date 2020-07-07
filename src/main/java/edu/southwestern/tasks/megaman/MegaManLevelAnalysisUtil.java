@@ -35,7 +35,11 @@ public class MegaManLevelAnalysisUtil {
 		}
 		return totalTiles;
 	}
-	
+	/**
+	 * gets total passable tiles from the level to determine connectivity.
+	 * @param level list of integer representation of a level
+	 * @return total number of passable tiles
+	 */
 	public static double findTotalPassableTiles(List<List<Integer>> level) {
 		double totalAirTiles = 0.0;
 		for(int y=0;y<level.size();y++) {
@@ -53,6 +57,12 @@ public class MegaManLevelAnalysisUtil {
 		}
 		return totalAirTiles;
 	}
+	/**
+	 * finds miscellaneous information about enemies in the level
+	 * (what type, total, etc)
+	 * @param level
+	 * @return miscData - the HashMap that contains info about what type of enemy
+	 */
 	public static HashMap<String, Integer> findMiscEnemies(List<List<Integer>> level) {
 		HashMap<String, Integer> miscData = new HashMap<>();
 		
@@ -94,6 +104,15 @@ public class MegaManLevelAnalysisUtil {
 		miscData.put("numFlyingEnemies", totalFlyingEnemies);
 		return miscData;
 	}
+	/**
+	 * 
+	 * 
+	 * **NOT USED**
+	 * Find information regarding what type of segment
+	 * Irrelevant!!! Information is gathered inside classes that extend MegaManLevelTask
+	 * @param level list of list of integer level
+	 * @return
+	 */
 	public static HashMap<String, Integer> findMiscSegments(List<List<Integer>> level) {
 		HashMap<String, Integer> miscData = new HashMap<>();
 		HashSet<Point> segmentPoints = new HashSet<>();
@@ -116,10 +135,6 @@ public class MegaManLevelAnalysisUtil {
 					boolean right =  MegaManVGLCUtil.canGoRight(level,rightScreenSide,y1);
 					boolean down =  MegaManVGLCUtil.canGoDown(level,rightScreenSide,y1);
 					boolean up =  MegaManVGLCUtil.canGoUp(level,rightScreenSide,y1);
-//					if(left) System.out.println("left");
-//					if(right) System.out.println("right");
-//					if(up) System.out.println("up");
-//					if(down) System.out.println("down");
 					System.out.println(new Point(rightScreenSide-x2,y1));
 					Point point = new Point(rightScreenSide-x2,y1);
 					if((up&&left&&!right&&!down&&!segmentPoints.contains(point))||
@@ -150,10 +165,6 @@ public class MegaManLevelAnalysisUtil {
 			}
 		}
 		
-//		int numCorners = 0;
-//		int numHorizontal = 0;
-//		int numUp = 0;
-//		int numDown = 0;
 		miscData.put("numCorners", numCorners);
 		miscData.put("numHorizontal", numHorizontal);
 		miscData.put("numUp", numUp);
@@ -164,7 +175,7 @@ public class MegaManLevelAnalysisUtil {
 	/**
 	 * Takes in a level and returns all information regarding the A* search
 	 * @param level List<List<Integer>> representing the level
-	 * @return
+	 * @return Quad  containing misc data about A*
 	 */
 	public static Quad<HashSet<MegaManState>, ArrayList<MegaManAction>, MegaManState, Double> 
 	performAStarSearchAndCalculateAStarDistance(List<List<Integer>> level) {
@@ -196,8 +207,8 @@ public class MegaManLevelAnalysisUtil {
 
 	/**
 	 * Calculates the connectivity in the level
-	 * @param mostRecentVisited
-	 * @return
+	 * @param mostRecentVisited The set of states traversed by A*
+	 * @return connectivityOfLevel - the connectivity of the level
 	 */
 	public static double caluclateConnectivity(HashSet<MegaManState> mostRecentVisited) {
 		//calculates the amount of the level that was covered in the search, connectivity.

@@ -152,7 +152,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		
 		rulesAndBackbones.add(rulePanel);
 		rulesAndBackbones.add(backbonePanel);
-		top.add(rulesAndBackbones);
+//		top.add(rulesAndBackbones);
 		VGDLFactory.GetInstance().init(); // Get an instant of VGDL Factor and initialize the characters cache
 		VGDLRegistry.GetInstance().init(); // Get an instance of VGDL Registry and initialize the sprite factory
 	}

@@ -567,7 +567,7 @@ public class MegaManVGLCUtil {
 	public static void printLevel(List<List<Integer>> level) {
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
-				System.out.print(m);
+				System.out.printf("%3d",m);
 
 			}
 			System.out.println();
@@ -791,7 +791,7 @@ public class MegaManVGLCUtil {
 				if(m!=9) {
 					placeActivatedScreen(xcoord,ycoord, p);
 					p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
-					if(Parameters.parameters.booleanParameter("useThreeGANsMegaMan")) {
+					if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) {
 						p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
 					}
 				}

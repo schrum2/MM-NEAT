@@ -8,62 +8,34 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.mario.gan.GANProcess;
-import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
-import edu.southwestern.util.PythonUtil;
+import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
+import edu.southwestern.tasks.megaman.levelgenerators.MegaManOneGANGenerator;
+import edu.southwestern.tasks.megaman.levelgenerators.MegaManSevenGANGenerator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
 public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTask<T>{
-	public static GANProcess ganProcessHorizontal = null;
-	public static GANProcess ganProcessUp = null;
-	public static GANProcess ganProcessDown = null;
-	public static GANProcess ganProcessUpperLeft = null;
-	public static GANProcess ganProcessUpperRight = null;
-	public static GANProcess ganProcessLowerLeft = null;
-	public static GANProcess ganProcessLowerRight = null;
+
+	private MegaManGANGenerator megaManGenerator;
 	
 	public MegaManCPPNtoGANLevelTask(){
 		super();
 		
-		PythonUtil.setPythonProgram();
-		//super();
-		
-		// TODO: Currently, the code is focused on the 7 GAN approach, but add support for a OneGAN approach
-		
-		//if(Parameters.parameters.booleanParameter("useThreeGANsMegaMan")) {
-			//GANProcess.terminateGANProcess();
-			ganProcessHorizontal = MegaManGANUtil.initializeGAN("MegaManGANHorizontalModel");
-			ganProcessDown = MegaManGANUtil.initializeGAN("MegaManGANDownModel");
-			ganProcessUp = MegaManGANUtil.initializeGAN("MegaManGANUpModel");
-			ganProcessUpperLeft = MegaManGANUtil.initializeGAN("MegaManGANUpperLeftModel");
-			ganProcessUpperRight = MegaManGANUtil.initializeGAN("MegaManGANUpperRightModel");
-			ganProcessLowerLeft = MegaManGANUtil.initializeGAN("MegaManGANLowerLeftModel");
-			ganProcessLowerRight = MegaManGANUtil.initializeGAN("MegaManGANLowerRightModel");
-
-			MegaManGANUtil.startGAN(ganProcessUp);
-			MegaManGANUtil.startGAN(ganProcessDown);
-			MegaManGANUtil.startGAN(ganProcessHorizontal);
-			MegaManGANUtil.startGAN(ganProcessUpperLeft);
-			MegaManGANUtil.startGAN(ganProcessUpperRight);
-			MegaManGANUtil.startGAN(ganProcessLowerLeft);
-			MegaManGANUtil.startGAN(ganProcessLowerRight);
+		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) megaManGenerator = new MegaManSevenGANGenerator();
+		else  megaManGenerator = new MegaManOneGANGenerator();
 	}
 	
 	@Override
 	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual) {
-		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(ganProcessHorizontal, ganProcessDown, ganProcessUp,ganProcessLowerLeft,ganProcessLowerRight,ganProcessUpperLeft,ganProcessUpperRight, individual.getPhenotype(), Parameters.parameters.integerParameter("megaManGANLevelChunks"), ArrayUtil.doubleOnes(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length));
+		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(megaManGenerator, individual.getPhenotype(), Parameters.parameters.integerParameter("megaManGANLevelChunks"), ArrayUtil.doubleOnes(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length));
 		return level;
 	}
 	
 	public static void main(String[] args) {
 		try {
 
-			MMNEAT.main(new String[]{"runNumber:8","randomSeed:8","watch:true","trials:1","mu:10","base:megamancppntogan",
-					"MegaManGANUpModel:MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth",
-					"MegaManGANDownModel:MegaManSevenGANDownWith12TileTypes_5_Epoch5000.pth",
-					"MegaManGANHorizontalModel:MegaManSevenGANHorizontalWith12TileTypes_5_Epoch5000.pth",
+			MMNEAT.main(new String[]{"runNumber:8","randomSeed:8","watch:true","trials:1","mu:10","base:megamancppntogan", "useMultipleGANsMegaMan:true",
 					"log:MegaManCPPNtoGAN-DistPercent","saveTo:DistPercent","megaManGANLevelChunks:10",
-					"megaManAllowsSimpleAStarPath:true", "megaManAllowsConnectivity:true",
+					"megaManAllowsSimpleAStarPath:true", "megaManAllowsConnectivity:true", "megaManAllowsLeftSegments:true",
 					"maxGens:500","io:true","netio:true","GANInputSize:5","mating:true","fs:false",
 					"task:edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelTask","cleanOldNetworks:false",
 					"allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1",

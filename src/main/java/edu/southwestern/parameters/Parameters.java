@@ -777,13 +777,15 @@ public class Parameters {
 		booleanOptions.add("zeldaCPPN2GANSparseKeys", false, "For CPPN2GAN generation, place one key per locked door (may make dungeons unbeatable depending on placement)");
 		booleanOptions.add("zeldaALlowPuzzleDoorUglyHack", true, "Whether or not the raft is in the first soft-locked room");
 		booleanOptions.add("interactiveMegaManAStarPaths", false, "whether or not the A* path is shown in the level breeder");
-		booleanOptions.add("useThreeGANsMegaMan", false, "whether or not we're using both GANs");
+		booleanOptions.add("useMultipleGANsMegaMan", false, "whether or not we're using both GANs");
 		booleanOptions.add("megaManAllowsSimpleAStarPath", false, "whether or not we're allowing simlpe a* path");
 		booleanOptions.add("megaManAllowsConnectivity", false, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManAllowsPlatformGun", true, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManUsesUniqueEnemies", false, "whether or not we're using unique enemies");
+		booleanOptions.add("megaManAllowsLeftSegments", false, "whether or not we're allowing left placement");
 		booleanOptions.add("megaManAllowsBlockBreaker", true, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManDistinctScreenFitness", false, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManMaximizeEnemies", false, "whether or not we're maximizing enemies");
 		booleanOptions.add("showInteractiveLodeRunnerSolutionPaths", false, "Shows the solution path for the levels in the level breeder when true");
 		booleanOptions.add("lodeRunnerAllowsSimpleAStarPath", false, "Adds the AStarPath as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsConnectivity", false, "Adds connectivity as a fitness function when true");
