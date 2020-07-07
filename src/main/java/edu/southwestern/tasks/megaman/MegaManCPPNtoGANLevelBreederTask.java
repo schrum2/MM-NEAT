@@ -260,12 +260,9 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 			public void actionPerformed(ActionEvent e) {
 				int continueOption = JOptionPane.showConfirmDialog(null,"Warning! Changing this setting will reset the evolved population. Continue anyway?");
 				if(continueOption == 0) { //0 means user pressed yes
-//					int oldLength = Parameters.parameters.integerParameter("megaManGANLevelChunks") * (GANProcess.latentVectorLength()+MegaManGANGenerator.numberOfAuxiliaryVariables());
-
 					Parameters.parameters.changeBoolean("megaManAllowsLeftSegments");
-					
-//					int newLength = Parameters.parameters.integerParameter("megaManGANLevelChunks") * (GANProcess.latentVectorLength()+MegaManGANGenerator.numberOfAuxiliaryVariables());
-				
+					MMNEAT.setNNInputParameters(SENSOR_LABELS.length, Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables());
+
 					resetLatentVectorAndOutputs();
 					reset();
 					resetButtons(true);
@@ -379,7 +376,6 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 		initializationComplete = true;
 	}
 	private void openGANModelPanel(String modelName) {
-		// TODO Auto-generated method stub
 		
 	}
 

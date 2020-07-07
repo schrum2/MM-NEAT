@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
@@ -16,7 +15,6 @@ import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 
 public class MegaManGANUtil {
@@ -171,261 +169,261 @@ public class MegaManGANUtil {
 		
 		return oneLevel;
 	}
-	public enum Direction {UP, RIGHT, DOWN};
+//	public enum Direction {UP, RIGHT, DOWN};
 
 //	public static int 
-	public static List<List<Integer>> generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess horizontalGAN, GANProcess upGAN, GANProcess downGAN, GANProcess lowerLeftGAN, GANProcess lowerRightGAN,  GANProcess upperLeftGAN, GANProcess upperRightGAN, double[] latentVector) {
-		// Just grabbing the static GANProcess for now, but you will need to make this method accept two separate GAN models eventually.
-		 numHorizontal = 0;
-		 numUp = 0;
-		 numDown = 0;
-		 numCorner = 0;
-		 numDistinctSegments = 0;
-		Random rand = new Random(Double.doubleToLongBits(latentVector[0]));
-		List<List<List<Integer>>> levelInListHorizontal;
-		List<List<List<Integer>>> levelInListUp;
-		List<List<List<Integer>>> levelInListDown;
-		List<List<List<Integer>>> levelInListUpperRight = getLevelListRepresentationFromGAN(upperRightGAN, latentVector);
-		List<List<List<Integer>>> levelInListUpperLeft= getLevelListRepresentationFromGAN(upperLeftGAN, latentVector);
-		List<List<List<Integer>>> levelInListLowerRight = getLevelListRepresentationFromGAN(lowerRightGAN, latentVector);
-		List<List<List<Integer>>> levelInListLowerLeft = getLevelListRepresentationFromGAN(lowerLeftGAN, latentVector);
-
-
-
-
-		HashSet<List<List<Integer>>> distinct = new HashSet<>();
-		boolean startRight = rand.nextBoolean();
-		//if(startRight) {
-//		System.out.println(horizontalGAN);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-			levelInListHorizontal = getLevelListRepresentationFromGAN(horizontalGAN, latentVector);
-	//	}else {
-			levelInListUp = getLevelListRepresentationFromGAN(upGAN, latentVector);
-			levelInListDown = getLevelListRepresentationFromGAN(downGAN, latentVector);
-
-		//}
-			//boolean startUp = rand.nextBoolean();
-
-			Direction d;
-	//	if(startRight)
-		
-//		else if(startUp) {
-//			d = Direction.UP;
-//		}else {
-//			d = Direction.DOWN;
-		//}
-		//List<Point> allPreviousMoves = new ArrayList<Point>();
-		Point previousMove = new Point(0,0);
-		int numberOfChunks = levelInListHorizontal.size();
-		boolean right;
-		boolean up;
-//		boolean wasRight = true;
-//		boolean wasUp = false;
-		List<List<Integer>> oneLevel;
-		
-		if(startRight) {
-			oneLevel= levelInListHorizontal.get(0); // gets first level in the set 
-			numHorizontal++;
-			d = Direction.RIGHT;
-		}
-		else {
-			oneLevel = levelInListUp.get(0);
-			numUp++;
-			d = Direction.UP;
-		}
-		distinct.add(oneLevel);
-		List<Integer> nullLine = new ArrayList<Integer>(16);
-		placeSpawn(oneLevel);
-		if(numberOfChunks==1) {
-			placeOrb(oneLevel);
-		}
-		for(int i=0;i<MEGA_MAN_LEVEL_WIDTH;i++) {
-			nullLine.add(MegaManState.MEGA_MAN_TILE_NULL);
-		}
-		int itr = 1;
-		for(int level = 1;level<numberOfChunks;level++) {
-			right = rand.nextBoolean();
-//				if(level==numberOfChunks-1&&right) {
-//					placeOrb(levelInListHorizontal.get(0));
-//				}else if(level==numberOfChunks-1&&!right) {
-//					placeOrb(levelInListUp.get(0));
-//					placeOrb(levelInListDown.get(0));
-//				}
-				Direction previous = d;
-			if(right) {
-				if(previous.equals(Direction.UP)) {
-					if(level==numberOfChunks-1) placeOrb(levelInListUpperLeft.get(itr));
-					placeUp(levelInListUpperLeft, previousMove, oneLevel, itr);
-					level++;
-					
-
-				}else if(previous.equals(Direction.DOWN)) {
-					if(level==numberOfChunks-1) placeOrb(levelInListLowerLeft.get(itr));
-					placeDown(levelInListLowerLeft, previousMove, oneLevel, itr);
-					level++;
-					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT);
-
-				}
-				numHorizontal++;
-				if(level==numberOfChunks-1) placeOrb(levelInListHorizontal.get(itr));
-				placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, itr);
-				distinct.add(levelInListHorizontal.get(1));
-
-				//wasRight = true;
-				d = Direction.RIGHT;
-				previousMove=new Point((int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
-
-			}else {
-				up = rand.nextBoolean();
-				
-				if(d.equals(Direction.UP)) {
-					d = Direction.UP;
-				}else if(d.equals(Direction.DOWN)) { //can't add up then down then up
-					d = Direction.DOWN;
-				}else {
-					if(up) {
-						d = Direction.UP;
-					}else {
-						d = Direction.DOWN;
-					}
-				}
-				if(d.equals(Direction.UP)) { //add null lines all on top
-					if(previous.equals(Direction.RIGHT)) {
-						if(level==numberOfChunks-1) placeOrb(levelInListLowerRight.get(itr));
-						placeRight(levelInListLowerRight, previousMove, oneLevel, nullLine, itr);
-						level++;
-						previousMove=new Point((int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
-
-					}
-					numUp++;
-					if(level==numberOfChunks-1) placeOrb(levelInListUp.get(itr));
-					placeUp(levelInListUp, previousMove, oneLevel, itr);
-					distinct.add(levelInListUp.get(itr));
-					
-
-					
-				}else {
-					if(previous.equals(Direction.RIGHT)) {
-						if(level==numberOfChunks-1) placeOrb(levelInListUpperRight.get(itr));
-						placeRight(levelInListUpperRight, previousMove, oneLevel, nullLine, itr);
-						level++;
-						previousMove=new Point((int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
-
-					}
-					numDown++;
-					if(level==numberOfChunks-1) placeOrb(levelInListDown.get(itr));
-					placeDown(levelInListDown, previousMove, oneLevel, itr);
-					distinct.add(levelInListDown.get(itr));
-					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT);
-					
-					
-
-					
-					
-				}
-				//wasRight=false;
-			}
-			if(!d.equals(previous)) {
-				numCorner++;
-			}
-			previous = d;
-			numDistinctSegments = distinct.size();
-			itr++;
-		}
-		
-		if(!Parameters.parameters.booleanParameter("megaManUsesUniqueEnemies")) {
-			MegaManGANUtil.postProcessingPlaceProperEnemies(oneLevel);
-		}
-		return oneLevel;
-	}
-
-	public static void placeDown(List<List<List<Integer>>> levelInListDown, Point previousMove,
-			List<List<Integer>> oneLevel, int level) {
-		int y1 = (int) previousMove.getY();
-		if(y1+15>=oneLevel.size()) {
-			List<List<Integer>> nullScreen = new ArrayList<List<Integer>>();
-			for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
-				List<Integer> nullLines = new ArrayList<Integer>();
-				for(int j = 0;j<oneLevel.get(0).size();j++) {
-					nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
-				}
-				nullScreen.add(nullLines);
-			}
-			oneLevel.addAll(oneLevel.size(), nullScreen);
-		}
-		
-		
-		for(int y = (int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y<previousMove.getY()+2*MEGA_MAN_LEVEL_HEIGHT;y++) {
-			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
-				oneLevel.get(y).set(x, levelInListDown.get(level).get((int) (y -MEGA_MAN_LEVEL_HEIGHT- previousMove.getY())).get((int) (x-previousMove.getX())));
-			}
-		}
-	}
-
-	public static void placeUp(List<List<List<Integer>>> levelInListUp, Point previousMove,
-			List<List<Integer>> oneLevel, int level) {
-		if((int) previousMove.getY()==0) {
-		List<List<Integer>> nullScreen = new ArrayList<List<Integer>>();
-		for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
-			List<Integer> nullLines = new ArrayList<Integer>();
-			for(int j = 0;j<oneLevel.get(0).size();j++) {
-				nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
-			}
-			nullScreen.add(nullLines);
-		}
-		oneLevel.addAll(0, nullScreen);
-//		int x0 = 0;
-//		for(int y = (int) 0;y<MEGA_MAN_LEVEL_HEIGHT;y++) {
-//			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
-//				oneLevel.get(y).set(x, levelInListUp.get(level).get(y).get(x0));
-//				x0++;
-//			}
-//			x0=0;
+//	public static List<List<Integer>> generateOneLevelListRepresentationFromGANVerticalAndHorizontal(GANProcess horizontalGAN, GANProcess upGAN, GANProcess downGAN, GANProcess lowerLeftGAN, GANProcess lowerRightGAN,  GANProcess upperLeftGAN, GANProcess upperRightGAN, double[] latentVector) {
+//		// Just grabbing the static GANProcess for now, but you will need to make this method accept two separate GAN models eventually.
+//		 numHorizontal = 0;
+//		 numUp = 0;
+//		 numDown = 0;
+//		 numCorner = 0;
+//		 numDistinctSegments = 0;
+//		Random rand = new Random(Double.doubleToLongBits(latentVector[0]));
+//		List<List<List<Integer>>> levelInListHorizontal;
+//		List<List<List<Integer>>> levelInListUp;
+//		List<List<List<Integer>>> levelInListDown;
+//		List<List<List<Integer>>> levelInListUpperRight = getLevelListRepresentationFromGAN(upperRightGAN, latentVector);
+//		List<List<List<Integer>>> levelInListUpperLeft= getLevelListRepresentationFromGAN(upperLeftGAN, latentVector);
+//		List<List<List<Integer>>> levelInListLowerRight = getLevelListRepresentationFromGAN(lowerRightGAN, latentVector);
+//		List<List<List<Integer>>> levelInListLowerLeft = getLevelListRepresentationFromGAN(lowerLeftGAN, latentVector);
+//
+//
+//
+//
+//		HashSet<List<List<Integer>>> distinct = new HashSet<>();
+//		boolean startRight = rand.nextBoolean();
+//		//if(startRight) {
+////		System.out.println(horizontalGAN);
+////		MiscUtil.waitForReadStringAndEnterKeyPress();
+//			levelInListHorizontal = getLevelListRepresentationFromGAN(horizontalGAN, latentVector);
+//	//	}else {
+//			levelInListUp = getLevelListRepresentationFromGAN(upGAN, latentVector);
+//			levelInListDown = getLevelListRepresentationFromGAN(downGAN, latentVector);
+//
+//		//}
+//			//boolean startUp = rand.nextBoolean();
+//
+//			Direction d;
+//	//	if(startRight)
+//		
+////		else if(startUp) {
+////			d = Direction.UP;
+////		}else {
+////			d = Direction.DOWN;
+//		//}
+//		//List<Point> allPreviousMoves = new ArrayList<Point>();
+//		Point previousMove = new Point(0,0);
+//		int numberOfChunks = levelInListHorizontal.size();
+//		boolean right;
+//		boolean up;
+////		boolean wasRight = true;
+////		boolean wasUp = false;
+//		List<List<Integer>> oneLevel;
+//		
+//		if(startRight) {
+//			oneLevel= levelInListHorizontal.get(0); // gets first level in the set 
+//			numHorizontal++;
+//			d = Direction.RIGHT;
 //		}
-		}
-		//now at the previous point, add in a new version of levelInList.get(level)
-		List<List<Integer>> placingScreen = new ArrayList<List<Integer>>();
-		
-		for(int i = 0;i<levelInListUp.get(level).size();i++) {
-			List<Integer> placeLine = new ArrayList<>();
-
-			for(int j = 0;j<levelInListUp.get(level).get(0).size();j++) {
-				if(levelInListUp.get(level).get(i).get(j)!=9)
-				placeLine.add(levelInListUp.get(level).get(i).get(j));
-			}
-			if(!placeLine.isEmpty())
-			placingScreen.add(placeLine);
-			
-		}
-
-		
-		for(int y = (int) previousMove.getY();y<previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
-			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
-
-				oneLevel.get(y).set(x, placingScreen.get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX())));
-			}
-
-		}
-		
-		
-	}
-
-	public static void placeRight(List<List<List<Integer>>> levelInListHorizontal, Point previousMove,
-			List<List<Integer>> oneLevel, List<Integer> nullLine, int level) {
-		for(int i = 0;i<oneLevel.size();i++) { //add null to all spaces to the right TODO possibly change
-			oneLevel.get(i).addAll(nullLine);
-		}
-		//MegaManVGLCUtil.printLevel(oneLevel);
-		//take the information from the previous run to replace null with a level in the appropriate spots
-		for(int x = (int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x<(int) previousMove.getX()+2*MEGA_MAN_LEVEL_WIDTH;x++) {
-			for(int y = (int) previousMove.getY();y<(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
-//						System.out.println(x+", "+y);
-//						System.out.println(previousMove.getX()+", "+previousMove.getY());
-				//System.out.println(x+", "+y);
-				oneLevel.get(y).set(x, levelInListHorizontal.get(level).get((int) (y - previousMove.getY())).get((int) (x-MEGA_MAN_LEVEL_WIDTH-previousMove.getX())));
-			}
-		}
-	}
+//		else {
+//			oneLevel = levelInListUp.get(0);
+//			numUp++;
+//			d = Direction.UP;
+//		}
+//		distinct.add(oneLevel);
+//		List<Integer> nullLine = new ArrayList<Integer>(16);
+//		placeSpawn(oneLevel);
+//		if(numberOfChunks==1) {
+//			placeOrb(oneLevel);
+//		}
+//		for(int i=0;i<MEGA_MAN_LEVEL_WIDTH;i++) {
+//			nullLine.add(MegaManState.MEGA_MAN_TILE_NULL);
+//		}
+//		int itr = 1;
+//		for(int level = 1;level<numberOfChunks;level++) {
+//			right = rand.nextBoolean();
+////				if(level==numberOfChunks-1&&right) {
+////					placeOrb(levelInListHorizontal.get(0));
+////				}else if(level==numberOfChunks-1&&!right) {
+////					placeOrb(levelInListUp.get(0));
+////					placeOrb(levelInListDown.get(0));
+////				}
+//				Direction previous = d;
+//			if(right) {
+//				if(previous.equals(Direction.UP)) {
+//					if(level==numberOfChunks-1) placeOrb(levelInListUpperLeft.get(itr));
+//					placeUp(levelInListUpperLeft, previousMove, oneLevel, itr);
+//					level++;
+//					
+//
+//				}else if(previous.equals(Direction.DOWN)) {
+//					if(level==numberOfChunks-1) placeOrb(levelInListLowerLeft.get(itr));
+//					placeDown(levelInListLowerLeft, previousMove, oneLevel, itr);
+//					level++;
+//					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT);
+//
+//				}
+//				numHorizontal++;
+//				if(level==numberOfChunks-1) placeOrb(levelInListHorizontal.get(itr));
+//				placeRight(levelInListHorizontal, previousMove, oneLevel, nullLine, itr);
+//				distinct.add(levelInListHorizontal.get(1));
+//
+//				//wasRight = true;
+//				d = Direction.RIGHT;
+//				previousMove=new Point((int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
+//
+//			}else {
+//				up = rand.nextBoolean();
+//				
+//				if(d.equals(Direction.UP)) {
+//					d = Direction.UP;
+//				}else if(d.equals(Direction.DOWN)) { //can't add up then down then up
+//					d = Direction.DOWN;
+//				}else {
+//					if(up) {
+//						d = Direction.UP;
+//					}else {
+//						d = Direction.DOWN;
+//					}
+//				}
+//				if(d.equals(Direction.UP)) { //add null lines all on top
+//					if(previous.equals(Direction.RIGHT)) {
+//						if(level==numberOfChunks-1) placeOrb(levelInListLowerRight.get(itr));
+//						placeRight(levelInListLowerRight, previousMove, oneLevel, nullLine, itr);
+//						level++;
+//						previousMove=new Point((int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
+//
+//					}
+//					numUp++;
+//					if(level==numberOfChunks-1) placeOrb(levelInListUp.get(itr));
+//					placeUp(levelInListUp, previousMove, oneLevel, itr);
+//					distinct.add(levelInListUp.get(itr));
+//					
+//
+//					
+//				}else {
+//					if(previous.equals(Direction.RIGHT)) {
+//						if(level==numberOfChunks-1) placeOrb(levelInListUpperRight.get(itr));
+//						placeRight(levelInListUpperRight, previousMove, oneLevel, nullLine, itr);
+//						level++;
+//						previousMove=new Point((int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH,(int) previousMove.getY());
+//
+//					}
+//					numDown++;
+//					if(level==numberOfChunks-1) placeOrb(levelInListDown.get(itr));
+//					placeDown(levelInListDown, previousMove, oneLevel, itr);
+//					distinct.add(levelInListDown.get(itr));
+//					previousMove=new Point((int) previousMove.getX(),(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT);
+//					
+//					
+//
+//					
+//					
+//				}
+//				//wasRight=false;
+//			}
+//			if(!d.equals(previous)) {
+//				numCorner++;
+//			}
+//			previous = d;
+//			numDistinctSegments = distinct.size();
+//			itr++;
+//		}
+//		
+//		if(!Parameters.parameters.booleanParameter("megaManUsesUniqueEnemies")) {
+//			MegaManGANUtil.postProcessingPlaceProperEnemies(oneLevel);
+//		}
+//		return oneLevel;
+//	}
+//
+//	public static void placeDown(List<List<List<Integer>>> levelInListDown, Point previousMove,
+//			List<List<Integer>> oneLevel, int level) {
+//		int y1 = (int) previousMove.getY();
+//		if(y1+15>=oneLevel.size()) {
+//			List<List<Integer>> nullScreen = new ArrayList<List<Integer>>();
+//			for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
+//				List<Integer> nullLines = new ArrayList<Integer>();
+//				for(int j = 0;j<oneLevel.get(0).size();j++) {
+//					nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+//				}
+//				nullScreen.add(nullLines);
+//			}
+//			oneLevel.addAll(oneLevel.size(), nullScreen);
+//		}
+//		
+//		
+//		for(int y = (int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y<previousMove.getY()+2*MEGA_MAN_LEVEL_HEIGHT;y++) {
+//			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
+//				oneLevel.get(y).set(x, levelInListDown.get(level).get((int) (y -MEGA_MAN_LEVEL_HEIGHT- previousMove.getY())).get((int) (x-previousMove.getX())));
+//			}
+//		}
+//	}
+//
+//	public static void placeUp(List<List<List<Integer>>> levelInListUp, Point previousMove,
+//			List<List<Integer>> oneLevel, int level) {
+//		if((int) previousMove.getY()==0) {
+//		List<List<Integer>> nullScreen = new ArrayList<List<Integer>>();
+//		for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
+//			List<Integer> nullLines = new ArrayList<Integer>();
+//			for(int j = 0;j<oneLevel.get(0).size();j++) {
+//				nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+//			}
+//			nullScreen.add(nullLines);
+//		}
+//		oneLevel.addAll(0, nullScreen);
+////		int x0 = 0;
+////		for(int y = (int) 0;y<MEGA_MAN_LEVEL_HEIGHT;y++) {
+////			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
+////				oneLevel.get(y).set(x, levelInListUp.get(level).get(y).get(x0));
+////				x0++;
+////			}
+////			x0=0;
+////		}
+//		}
+//		//now at the previous point, add in a new version of levelInList.get(level)
+//		List<List<Integer>> placingScreen = new ArrayList<List<Integer>>();
+//		
+//		for(int i = 0;i<levelInListUp.get(level).size();i++) {
+//			List<Integer> placeLine = new ArrayList<>();
+//
+//			for(int j = 0;j<levelInListUp.get(level).get(0).size();j++) {
+//				if(levelInListUp.get(level).get(i).get(j)!=9)
+//				placeLine.add(levelInListUp.get(level).get(i).get(j));
+//			}
+//			if(!placeLine.isEmpty())
+//			placingScreen.add(placeLine);
+//			
+//		}
+//
+//		
+//		for(int y = (int) previousMove.getY();y<previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
+//			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
+//
+//				oneLevel.get(y).set(x, placingScreen.get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX())));
+//			}
+//
+//		}
+//		
+//		
+//	}
+//
+//	public static void placeRight(List<List<List<Integer>>> levelInListHorizontal, Point previousMove,
+//			List<List<Integer>> oneLevel, List<Integer> nullLine, int level) {
+//		for(int i = 0;i<oneLevel.size();i++) { //add null to all spaces to the right TODO possibly change
+//			oneLevel.get(i).addAll(nullLine);
+//		}
+//		//MegaManVGLCUtil.printLevel(oneLevel);
+//		//take the information from the previous run to replace null with a level in the appropriate spots
+//		for(int x = (int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x<(int) previousMove.getX()+2*MEGA_MAN_LEVEL_WIDTH;x++) {
+//			for(int y = (int) previousMove.getY();y<(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
+////						System.out.println(x+", "+y);
+////						System.out.println(previousMove.getX()+", "+previousMove.getY());
+//				//System.out.println(x+", "+y);
+//				oneLevel.get(y).set(x, levelInListHorizontal.get(level).get((int) (y - previousMove.getY())).get((int) (x-MEGA_MAN_LEVEL_WIDTH-previousMove.getX())));
+//			}
+//		}
+//	}
 
 	
 	
@@ -453,47 +451,10 @@ public class MegaManGANUtil {
 				placed = true;
 			}
 		}
-//		placed = false;
-//		for(int y = 0; y<level.size();y++) {
-//			for(int x = level.get(0).size()-1;x>=0; x--) {
-//				if(y-1>=0&&level.get(y).get(x)==2&&level.get(y-1).get(x)==0) {
-//					level.get(y-1).set(x, 7);
-//					placed=true;
-//					break;
-//					
-//				}else if(y-1>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0) {
-//					level.get(y-1).set(x, 7);
-//					placed=true;
-//					break;
-//				}
-//			}
-//			if(placed) break;
-//		}
+
 	}
 	public static void placeOrb(List<List<Integer>> level) {
 		boolean placed = false;
-//		for(int x = 0;x<level.get(0).size();x++) {
-//			for(int y = 0;y<level.size();y++) {
-//				if(y-2>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0&&level.get(y-2).get(x)==0) {
-//					level.get(y-1).set(x, 8);
-//					placed = true;
-//					break;
-//				}
-//			}
-//			if(placed) {
-//				break;
-//			}
-//			
-//		
-//		}
-//		for(int i = 0; i<level.get(0).size();i++) {
-//			if(!placed) {
-//				level.get(level.size()-1).set(0, 1);
-//				level.get(level.size()-2).set(0, 8);
-//				placed = true;
-//			}
-//		}
-//		placed = false;
 		
 			for(int x = level.get(0).size()-1;x>=0; x--) {
 				for(int y = level.size()-1; y>=0;y--) {
@@ -538,76 +499,76 @@ public class MegaManGANUtil {
 	
 	
 
-	public static void placeDownCPPN(List<List<List<Integer>>> levelInListDown, Point previousMove,
-			List<List<Integer>> oneLevel, int level) {
-			List<List<Integer>> nullScreen = new ArrayList<List<Integer>>();
-			for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
-				List<Integer> nullLines = new ArrayList<Integer>();
-				for(int j = 0;j<oneLevel.get(0).size();j++) {
-					nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
-				}
-				nullScreen.add(nullLines);
-			}
-			oneLevel.addAll(oneLevel.size(), nullScreen);
-
-		for(int y = (int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y<previousMove.getY()+2*MEGA_MAN_LEVEL_HEIGHT;y++) {
-			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
-				oneLevel.get(y).set(x, levelInListDown.get(level).get((int) (y -MEGA_MAN_LEVEL_HEIGHT- previousMove.getY())).get((int) (x-previousMove.getX())));
-			}
-		}
-	}
-
-	public static void placeUpCPPN(List<List<List<Integer>>> levelInListUp, Point previousMove,
-			List<List<Integer>> oneLevel, int level) {
-
-		List<List<Integer>> nullScreen = new ArrayList<List<Integer>>();
-		for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
-			List<Integer> nullLines = new ArrayList<Integer>();
-			for(int j = 0;j<oneLevel.get(0).size();j++) {
-				nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
-			}
-			nullScreen.add(nullLines);
-		}
-		oneLevel.addAll(0, nullScreen);
-		
-		//now at the previous point, add in a new version of levelInList.get(level)
-		List<List<Integer>> placingScreen = new ArrayList<List<Integer>>();
-		
-		for(int i = 0;i<levelInListUp.get(level).size();i++) {
-			List<Integer> placeLine = new ArrayList<>();
-
-			for(int j = 0;j<levelInListUp.get(level).get(0).size();j++) {
-				if(levelInListUp.get(level).get(i).get(j)!=MegaManVGLCUtil.ONE_ENEMY_NULL)
-				placeLine.add(levelInListUp.get(level).get(i).get(j));
-			}
-			if(!placeLine.isEmpty())
-			placingScreen.add(placeLine);
-			
-		}
-
-		
-		for(int y = (int) previousMove.getY();y<previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
-			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
-
-				oneLevel.get(y).set(x, placingScreen.get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX())));
-			}
-
-		}
-		
-		
-	}
-
-	public static void placeRightCPPN(List<List<List<Integer>>> levelInListHorizontal, Point previousMove,
-			List<List<Integer>> oneLevel, List<Integer> nullLine, int level) {
-		for(int i = 0;i<oneLevel.size();i++) { //add null to all spaces to the right TODO possibly change
-			oneLevel.get(i).addAll(nullLine);
-		}
-		for(int x = (int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x<(int) previousMove.getX()+2*MEGA_MAN_LEVEL_WIDTH;x++) {
-			for(int y = (int) previousMove.getY();y<(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
-				oneLevel.get(y).set(x, levelInListHorizontal.get(level).get((int) (y - previousMove.getY())).get((int) (x-MEGA_MAN_LEVEL_WIDTH-previousMove.getX())));
-			}
-		}
-	}
+//	public static void placeDownCPPN(List<List<List<Integer>>> levelInListDown, Point previousMove,
+//			List<List<Integer>> oneLevel, int level) {
+//			List<List<Integer>> nullScreen = new ArrayList<List<Integer>>();
+//			for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
+//				List<Integer> nullLines = new ArrayList<Integer>();
+//				for(int j = 0;j<oneLevel.get(0).size();j++) {
+//					nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+//				}
+//				nullScreen.add(nullLines);
+//			}
+//			oneLevel.addAll(oneLevel.size(), nullScreen);
+//
+//		for(int y = (int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y<previousMove.getY()+2*MEGA_MAN_LEVEL_HEIGHT;y++) {
+//			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
+//				oneLevel.get(y).set(x, levelInListDown.get(level).get((int) (y -MEGA_MAN_LEVEL_HEIGHT- previousMove.getY())).get((int) (x-previousMove.getX())));
+//			}
+//		}
+//	}
+//
+//	public static void placeUpCPPN(List<List<List<Integer>>> levelInListUp, Point previousMove,
+//			List<List<Integer>> oneLevel, int level) {
+//
+//		List<List<Integer>> nullScreen = new ArrayList<List<Integer>>();
+//		for(int i = 0;i<MEGA_MAN_LEVEL_HEIGHT;i++) {
+//			List<Integer> nullLines = new ArrayList<Integer>();
+//			for(int j = 0;j<oneLevel.get(0).size();j++) {
+//				nullLines.add(MegaManState.MEGA_MAN_TILE_NULL);
+//			}
+//			nullScreen.add(nullLines);
+//		}
+//		oneLevel.addAll(0, nullScreen);
+//		
+//		//now at the previous point, add in a new version of levelInList.get(level)
+//		List<List<Integer>> placingScreen = new ArrayList<List<Integer>>();
+//		
+//		for(int i = 0;i<levelInListUp.get(level).size();i++) {
+//			List<Integer> placeLine = new ArrayList<>();
+//
+//			for(int j = 0;j<levelInListUp.get(level).get(0).size();j++) {
+//				if(levelInListUp.get(level).get(i).get(j)!=MegaManVGLCUtil.ONE_ENEMY_NULL)
+//				placeLine.add(levelInListUp.get(level).get(i).get(j));
+//			}
+//			if(!placeLine.isEmpty())
+//			placingScreen.add(placeLine);
+//			
+//		}
+//
+//		
+//		for(int y = (int) previousMove.getY();y<previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
+//			for(int x = (int) previousMove.getX();x<previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x++) {
+//
+//				oneLevel.get(y).set(x, placingScreen.get((int) (y - (int)previousMove.getY())).get((int) (x-(int)previousMove.getX())));
+//			}
+//
+//		}
+//		
+//		
+//	}
+//
+//	public static void placeRightCPPN(List<List<List<Integer>>> levelInListHorizontal, Point previousMove,
+//			List<List<Integer>> oneLevel, List<Integer> nullLine, int level) {
+//		for(int i = 0;i<oneLevel.size();i++) { //add null to all spaces to the right TODO possibly change
+//			oneLevel.get(i).addAll(nullLine);
+//		}
+//		for(int x = (int) previousMove.getX()+MEGA_MAN_LEVEL_WIDTH;x<(int) previousMove.getX()+2*MEGA_MAN_LEVEL_WIDTH;x++) {
+//			for(int y = (int) previousMove.getY();y<(int) previousMove.getY()+MEGA_MAN_LEVEL_HEIGHT;y++) {
+//				oneLevel.get(y).set(x, levelInListHorizontal.get(level).get((int) (y - previousMove.getY())).get((int) (x-MEGA_MAN_LEVEL_WIDTH-previousMove.getX())));
+//			}
+//		}
+//	}
 	
 	
 	
