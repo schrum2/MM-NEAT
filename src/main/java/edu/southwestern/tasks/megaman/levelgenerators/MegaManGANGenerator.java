@@ -93,12 +93,14 @@ public abstract class MegaManGANGenerator {
 					if(Double.isInfinite(auxiliaryVariables[maxIndex])) {
 						result = null; // There is NO legal placement possible!
 						System.out.println("NO LEGAL PLACEMENT!");
+						//assert false : ""+previousPoints + ":" + next; // TEMP
 						done = true;
 					}
 				} else {
 					switch(proposed) {
 					case RIGHT:
-						if(previousPoint.y == currentPoint.y) ; // Keep moving right. Do nothing
+						if(previousPoint.y == currentPoint.y) // Keep moving right. Do nothing
+							result = proposed;
 						else if(previousPoint.y + 1 == currentPoint.y) // Moved down
 							result = SEGMENT_TYPE.BOTTOM_LEFT;
 						else if(previousPoint.y - 1 == currentPoint.y) // Moved up
@@ -107,7 +109,8 @@ public abstract class MegaManGANGenerator {
 							throw new IllegalStateException();
 						break;
 					case LEFT:
-						if(previousPoint.y == currentPoint.y) ; // Keep moving left. Do nothing
+						if(previousPoint.y == currentPoint.y) // Keep moving left. Do nothing
+							result = proposed;
 						else if(previousPoint.y + 1 == currentPoint.y) // Moved down
 							result = SEGMENT_TYPE.BOTTOM_RIGHT;
 						else if(previousPoint.y - 1 == currentPoint.y) // Moved up
@@ -116,7 +119,8 @@ public abstract class MegaManGANGenerator {
 							throw new IllegalStateException();
 						break;
 					case UP:
-						if(previousPoint.x == currentPoint.x) ; // Keep moving up. Do nothing
+						if(previousPoint.x == currentPoint.x) // Keep moving up. Do nothing
+							result = proposed;
 						else if(previousPoint.x + 1 == currentPoint.x) // Moved right
 							result = SEGMENT_TYPE.BOTTOM_RIGHT;
 						else if(previousPoint.x - 1 == currentPoint.x) // Moved left
@@ -125,7 +129,8 @@ public abstract class MegaManGANGenerator {
 							throw new IllegalStateException();
 						break;
 					case DOWN:
-						if(previousPoint.x == currentPoint.x) ; // Keep moving down. Do nothing
+						if(previousPoint.x == currentPoint.x) // Keep moving down. Do nothing
+							result = proposed;
 						else if(previousPoint.x + 1 == currentPoint.x) // Moved right
 							result = SEGMENT_TYPE.TOP_RIGHT;
 						else if(previousPoint.x - 1 == currentPoint.x) // Moved left

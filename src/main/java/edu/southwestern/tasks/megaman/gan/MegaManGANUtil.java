@@ -668,37 +668,30 @@ public class MegaManGANUtil {
 	}
 	
 	private static Point placeMegaManSegment(List<List<Integer>> level,List<List<Integer>> segment, Point current, Point prev, Point placementPoint) {
-		
-		if(current.equals(new Point(prev.x, prev.y+1))) {
-			System.out.println("DOWN");
-
-			placeDownSegment(level, segment, placementPoint);
-			placementPoint = new Point(placementPoint.x, placementPoint.y+MEGA_MAN_LEVEL_HEIGHT);
-
-		}
-		if(current.equals(new Point(prev.x, prev.y-1))) {
-			System.out.println("UP");
-
-			placeUpSegment(level, segment, placementPoint);
-			placementPoint = new Point(placementPoint.x, placementPoint.y-MEGA_MAN_LEVEL_HEIGHT);
-
-
-		}
-		if(current.equals(new Point(prev.x+1, prev.y))) {
+		if(prev == null) { // First segment
+			System.out.println("FIRST");
+			for(List<Integer> row : segment) {
+				ArrayList<Integer> newRow = new ArrayList<>(row.size());
+				newRow.addAll(row);
+				level.add(newRow);
+			}
+			placementPoint = new Point(current.x, current.y);
+		} else if(current.equals(new Point(prev.x+1, prev.y))) {
 			System.out.println("RIGHT");
-
 			placeRightSegment(level, segment, placementPoint);
 			placementPoint = new Point(placementPoint.x+MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
-
-
-		}
-		if(current.equals(new Point(prev.x-1, prev.y))) {
+		} else if(current.equals(new Point(prev.x, prev.y+1))) {
+			System.out.println("DOWN");
+			placeDownSegment(level, segment, placementPoint);
+			placementPoint = new Point(placementPoint.x, placementPoint.y+MEGA_MAN_LEVEL_HEIGHT);
+		} else if(current.equals(new Point(prev.x, prev.y-1))) {
+			System.out.println("UP");
+			placeUpSegment(level, segment, placementPoint);
+			placementPoint = new Point(placementPoint.x, placementPoint.y-MEGA_MAN_LEVEL_HEIGHT);
+		} else if(current.equals(new Point(prev.x-1, prev.y))) {
 			System.out.println("LEFT");
-
 			placeLeftSegment(level, segment, placementPoint);
 			placementPoint = new Point(placementPoint.x-MEGA_MAN_LEVEL_WIDTH, placementPoint.y);
-
-
 		}
 		return placementPoint;
 	}
