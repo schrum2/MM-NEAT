@@ -16,6 +16,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.loderunner.astar.LodeRunnerEnhancedEnemiesUtil;
+import edu.southwestern.util.datastructures.Pair;
+
 public class GamePanel extends JPanel implements MouseMotionListener {
 	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
 
@@ -353,7 +357,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 		timer.stop();
 		repaint();
 	}
-	
+
 	/**
 	 * Reset level from instance of Level class
 	 * @param lvl
@@ -365,7 +369,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 		repaint();
 	}
 
-	
+
 	/**
 	 * Create a new, blank level.
 	 */
@@ -609,7 +613,52 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 				continue;
 			if (checkEnemyFallInHole(e))
 				continue;
-			if (enemyIsFalling(e) || e.getX() < 0 || e.getX() > WIDTH - e.getWidth()) {
+			Parameters.initializeParameterCollections(new String[] {});
+			if(Parameters.parameters.booleanParameter("smartLodeRunnerEnemies")) {
+				Pair<Integer, Integer> enemyPosition = new Pair<Integer, Integer>(e.x, e.y);
+				Pair<Integer, Integer> playerPosition = new Pair<Integer,Integer>(level.player1.x, level.player1.y);
+				//set variables to be max value, to make sure that it can be replaced with the lower value, or does not get selected as the lowest value
+				double left = Double.MAX_VALUE;
+				double right= Double.MAX_VALUE;
+				double up= Double.MAX_VALUE;
+				double down= Double.MAX_VALUE;
+				if(e.getX()-e.getWidth() > 0) { //checks in bounds to the left 
+					enemyPosition.t1 = enemyPosition.t1 - e.getWidth(); //moves enemy to the left 
+					left = LodeRunnerEnhancedEnemiesUtil.getManhattanDistance(enemyPosition, playerPosition);
+					enemyPosition.t1 = enemyPosition.t1 + e.getWidth(); //moves enemy back to where it was 
+				}
+				if(e.getX()+e.getWidth() < WIDTH - e.getWidth()) { //checks in bounds to the right 
+					enemyPosition.t1 = enemyPosition.t1 + e.getWidth(); //moves enemy to the left
+					right = LodeRunnerEnhancedEnemiesUtil.getManhattanDistance(enemyPosition, playerPosition);
+					enemyPosition.t1 = enemyPosition.t1 - e.getWidth(); //moves enemy back to where it was  
+				}
+				if(e.getY()+e.getHeight() > 0 && actorIsOnAnyLadder(e, level.ladders)){ //checks upward boundry and if the enemy is on a ladder to be able to go up 
+					enemyPosition.t2 = enemyPosition.t2 + e.getHeight(); //moves enemy to the left
+					up = LodeRunnerEnhancedEnemiesUtil.getManhattanDistance(enemyPosition, playerPosition);
+					enemyPosition.t2 = enemyPosition.t2 - e.getHeight(); //moves enemy back to where it was
+				}
+				if(e.getY()-e.getHeight() < HEIGHT - e.getHeight() && actorIsOnAnyLadder(e,level.ladders)) {
+					enemyPosition.t2 = enemyPosition.t2 - e.getHeight(); //moves enemy to the left
+					down = LodeRunnerEnhancedEnemiesUtil.getManhattanDistance(enemyPosition, playerPosition);
+					enemyPosition.t2 = enemyPosition.t2 + e.getHeight(); //moves enemy back to where it was
+				}
+				double min = LodeRunnerEnhancedEnemiesUtil.findMin(left, right, up, down);
+				if(min == left) {
+					e.setVelocity(-e.getMaxVelocity(), 0);
+				}
+				else if(min == right) {
+					e.setVelocity(e.getMaxVelocity(), 0);
+				}
+				else if(min == up) {
+					e.setVelocity(0, -e.getMaxVelocity());
+				}
+				else {// down
+					e.setVelocity(0, e.getMaxVelocity());
+				}
+				e.accelerate();
+				e.move();
+			}
+			else if (enemyIsFalling(e) || e.getX() < 0 || e.getX() > WIDTH - e.getWidth()) {
 				e.reverse(); //changes direction of enemy x movement 
 				e.accelerate();
 				e.move();
@@ -621,7 +670,8 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 					e.move();
 					e.setVelocity(e.xVel, Enemy.VELOCITY);
 				}
-			}else {
+			}
+			else {
 				if(!enemyIsFalling(e)) //this stops the enemy from falling down through the floor 
 					e.setVelocity(e.xVel, 0);
 				e.accelerate();
@@ -730,8 +780,8 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 						continue;
 				}
 				if (s.actorIsOn(level.player1)) {
-//					System.out.println("G:"+s.getX()+","+s.getY()+":"+s.getBoundingBox());
-//					System.out.println("P:"+level.player1.getX()+","+level.player1.getY()+":"+level.player1.getBoundingBox());
+					//					System.out.println("G:"+s.getX()+","+s.getY()+":"+s.getBoundingBox());
+					//					System.out.println("P:"+level.player1.getX()+","+level.player1.getY()+":"+level.player1.getBoundingBox());
 					playerOneIsFalling = false;
 					if (s instanceof Slippery)
 						playerOneIsStandingOnSlippery = true;
