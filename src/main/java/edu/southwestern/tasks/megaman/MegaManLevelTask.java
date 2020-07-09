@@ -331,6 +331,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 					
 					//sets the fileName, binPath, and fullName
 					String fileName = String.format("%7.5f", binScore) +"-"+ genotypeId + ".png";
+					//FOR CPPNThenDirect2GAN
 //					if(individual instanceof CPPNOrDirectToGANGenotype) {
 //						CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
 //						if(temp.getFirstForm()) fileName = "CPPN-" + fileName;

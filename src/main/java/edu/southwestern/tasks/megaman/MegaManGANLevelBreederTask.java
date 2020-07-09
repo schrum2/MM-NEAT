@@ -156,7 +156,6 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 					int newValue = (int) source.getValue();
 					Parameters.parameters.setInteger("megaManGANLevelChunks", newValue);
 					
-					//Parameters.parameters.setInteger("GANInputSize", 5*newValue); // Default latent vector size
 
 					if(oldValue != newValue) {
 						int oldLength = oldValue * (GANProcess.latentVectorLength()+MegaManGANGenerator.numberOfAuxiliaryVariables());

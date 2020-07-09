@@ -173,8 +173,6 @@ public class MegaManRenderUtil {
 		
 		if(tileList==null) {
 			if(Parameters.parameters.booleanParameter("megaManUsesUniqueEnemies")) {
-				
-			
 				tileList = new BufferedImage[30];
 				File tile = new File(filePath+"Empty.PNG");
 				BufferedImage emptyTile = ImageIO.read(tile);
@@ -289,7 +287,7 @@ public class MegaManRenderUtil {
 				tile = new File(filePath+"Solid.png");
 				BufferedImage Cannon = ImageIO.read(tile);
 				tileList[6] = Cannon;
-				tile = new File(filePath+"Orb1.png");
+				tile = new File(filePath+"Orb.png");
 				BufferedImage Orb = ImageIO.read(tile);
 				tileList[7] = Orb;
 				tile = new File(filePath+"Spawn.png");

@@ -225,40 +225,40 @@ public class MegaManConvertMMLVToJSON {
 	 * @param blockxyIDList the  xcoord, ycoord, block ID
 	 * @param k the parsed mmlv line (example e16,16="41.00000")
 	 */
-	private static void addBoss(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList, String k) {
-		List<Integer> xyID = new ArrayList<>();
-		Scanner kScan = new Scanner(k);
-		
-		kScan.next(); //get past letter
-		
-		int xcoord = kScan.nextInt()/16;
-		xyID.add(xcoord);
-		int ycoord = kScan.nextInt()/16;
-		xyID.add(ycoord);
-		//make all enemies map 11-15
-		int e = kScan.nextInt();
-		if(e!=33&&e!=34&&e!=130&&e!=53&&e!=129) {
-			xyID.add(7);
-			System.out.println(k);
-		}
-		else xyID.add(1);
-		visited.add(new Point(xcoord,ycoord));
-		int howManySquaresX = xcoord/16;
-		int howManySquaresY = ycoord/14;
-		int screenX = howManySquaresX*16;
-		int screenY = howManySquaresY*14;
-		activatedScreen.add(new Point(screenX, screenY));
-		if(xcoord>maxX) {
-			maxX = xcoord+1;
-		}
-		if(ycoord>maxY) {
-			maxY = ycoord+1;
-		}
-		//System.out.println(k);
-		//System.out.println(l);
-		kScan.close();
-		blockxyIDList.add(xyID);
-	}
+//	private static void addBoss(HashSet<Point> activatedScreen, List<List<Integer>> blockxyIDList, String k) {
+//		List<Integer> xyID = new ArrayList<>();
+//		Scanner kScan = new Scanner(k);
+//		
+//		kScan.next(); //get past letter
+//		
+//		int xcoord = kScan.nextInt()/16;
+//		xyID.add(xcoord);
+//		int ycoord = kScan.nextInt()/16;
+//		xyID.add(ycoord);
+//		//make all enemies map 11-15
+//		int e = kScan.nextInt();
+//		if(e!=33&&e!=34&&e!=130&&e!=53&&e!=129) {
+//			xyID.add(7);
+//			System.out.println(k);
+//		}
+//		else xyID.add(1);
+//		visited.add(new Point(xcoord,ycoord));
+//		int howManySquaresX = xcoord/16;
+//		int howManySquaresY = ycoord/14;
+//		int screenX = howManySquaresX*16;
+//		int screenY = howManySquaresY*14;
+//		activatedScreen.add(new Point(screenX, screenY));
+//		if(xcoord>maxX) {
+//			maxX = xcoord+1;
+//		}
+//		if(ycoord>maxY) {
+//			maxY = ycoord+1;
+//		}
+//		//System.out.println(k);
+//		//System.out.println(l);
+//		kScan.close();
+//		blockxyIDList.add(xyID);
+//	}
 	/**
 	 * Documents the xy position and then adds the enemies to the list
 	 * @param activatedScreen the activated screens from mmlv
@@ -279,7 +279,7 @@ public class MegaManConvertMMLVToJSON {
 		//if(!visited.contains(new Point(xcoord, ycoord))) {
 			visited.add(new Point(xcoord, ycoord));
 	
-			int e = kScan.nextInt();
+//			int e = kScan.nextInt();
 			//make all enemies map 11-15
 			int enemyOneThruFive = 11;
 			xyID.add(enemyOneThruFive);
