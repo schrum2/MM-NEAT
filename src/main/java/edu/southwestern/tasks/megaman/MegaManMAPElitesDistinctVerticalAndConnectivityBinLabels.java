@@ -7,7 +7,11 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.Parameters;
-
+/**
+ * Binning scheme for MAPelites
+ * @author Benjamin Capps
+ *
+ */
 public class MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels implements BinLabels {
 	public static final int TILE_GROUPS = 10;
 

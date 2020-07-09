@@ -27,6 +27,9 @@ public class MegaManVGLCUtil {
 	public static final String MEGAMAN_ENEMY_LEVEL_PATH = "data/VGLC/MegaMan/EnhancedWithBossesAndEnemies/";
 	public static final String MEGAMAN_LEVEL_PATH = "data/VGLC/MegaMan/Enhanced/";
 	public static final String MEGAMAN_MMLV_PATH = "data/MegaManLevels_mmlv/";
+	/**
+	 * THE BELOW FINAL CONSTANTS (UNIQUE_) ARE FOR AN OLD NUMBERING SCHEME!!!
+	 */
 	public static final int UNIQUE_AIR = 0;
 	public static final int UNIQUE_SOLID = 1;
 	public static final int UNIQUE_LADDER = 2;
@@ -181,6 +184,11 @@ public class MegaManVGLCUtil {
 	}
 	
 	public enum Direction {UP, RIGHT, DOWN, LEFT};
+	/**
+	 * Scans through the level gathering information on up, down, right, left
+	 * 
+	 * @param level <List<List<Integer>> level representation
+	 */
 	public static void upAndDownTrainingData(List<List<Integer>> level) {
 		List<Point> corners = new ArrayList<Point>();
 		corners = findSpawnScreen(level);
@@ -420,27 +428,62 @@ public class MegaManVGLCUtil {
 
 		
 	}
-
+/**
+ * determines if a screen can go left or not
+ * @param level the level	
+ * @param rightScreenSide the right side of the screen
+ * @param y1 the y-coordinate (upper)
+ * @return true if the screen can move to the left, false otherwise
+ */
 	public static boolean canGoLeft(List<List<Integer>> level, int rightScreenSide, int y1) {
 		if(rightScreenSide-16>0&&level.get(y1).get(rightScreenSide-16)!=9) return true;
 		
 		return false;
 	}
+	/**
+	 * determines if a screen can go right or not
+	 * @param level the level	
+	 * @param rightScreenSide the right side of the screen
+	 * @param y1 the y-coordinate (upper)
+	 * @return true if the screen can move to the right, false otherwise
+	 */
 	public static boolean canGoRight(List<List<Integer>> level, int rightScreenSide, int y1) {
 		if(rightScreenSide+1<level.get(0).size()&&level.get(y1).get(rightScreenSide+1)!=9) return true;
 		
 		return false;
 	}
+	/**
+	 * determines if a screen can go down or not
+	 * @param level the level	
+	 * @param rightScreenSide the right side of the screen
+	 * @param y1 the y-coordinate (upper)
+	 * @return true if the screen can move down, false otherwise
+	 */
 	public static boolean canGoDown(List<List<Integer>> level, int rightScreenSide, int y1) {
 		if(y1+14<level.size()&&level.get(y1+14).get(rightScreenSide)!=9) return true;
 		
 		return false;
 	}
+	/**
+	 * determines if a screen can go up or not
+	 * @param level the level	
+	 * @param rightScreenSide the right side of the screen
+	 * @param y1 the y-coordinate (upper)
+	 * @return true if the screen can move up, false otherwise
+	 */
 	public static boolean canGoUp(List<List<Integer>> level, int rightScreenSide, int y1) {
 		 if(y1-1>=0&&level.get(y1-1).get(rightScreenSide-14)!=9&&level.get(y1-1).get(rightScreenSide)!=9) return true;
 		
 		return false;
 	}
+	/**
+	 * Finds the new direction for the screen to go given the upper right-hand point
+	 * @param level the level
+	 * @param xcoord x coordinate of the upper right hand point
+	 * @param ycoord y coordinate of the upper right hand point
+	 * @param previous the previous direction
+	 * @return Direction d the new direction to go
+	 */
 	private static Direction findNewDirection(List<List<Integer>> level, int xcoord, int ycoord, Direction previous) { 
 		Direction d = null;
 //		System.out.println(level.get(ycoord-1).get(xcoord-1));
@@ -466,7 +509,11 @@ public class MegaManVGLCUtil {
 		return d;
 		
 	}
-
+/**
+ * takes in a level and finds its spawn screen
+ * @param level level
+ * @return a 16x14 screen containing MegaMan
+ */
 	public static List<Point> findSpawnScreen(List<List<Integer>> level) {
 		Point spawn = new Point();
 		for(int y = 0;y<level.size();y++) {
@@ -567,13 +614,15 @@ public class MegaManVGLCUtil {
 	public static void printLevel(List<List<Integer>> level) {
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
-				System.out.print(m);
+				System.out.printf("%3d",m);
 
 			}
 			System.out.println();
 		}
 	}
 	/**
+	 * 
+	 * NOT USED, REPLACED BY upAndDownTrainingData
 	 * start at 0,0
 	 * scan down (y++) until you find a number that is not 17 (null)
 	 * then count how many below it are not 17 (null)
@@ -609,7 +658,10 @@ public class MegaManVGLCUtil {
 		}
 		//return json;
 	}
-	
+	/**
+	 *  NOT USED, REPLACED BY upAndDownTrainingData
+	 * @param level
+	 */
 	private static void convertMegaManLevelToJSONVerticalScroll(List<List<Integer>> level) { 
 		visited.clear();
 		
@@ -646,13 +698,30 @@ public class MegaManVGLCUtil {
 			}
 		}
 	}
+	/**
+	 * puts visited points in a hashset
+	 * @param level
+	 * @param intXint
+	 * @param intYint
+	 * @param lowerX2
+	 * @param y1
+	 */
 	private static void putPointsInHashSet(List<List<Integer>> level, int intXint, int intYint, int lowerX2, int y1) {
 		// TODO Auto-generated method stub
 		for(int x = lowerX2;x<=lowerX2+intXint;x++) {
 			visited.add(new Point(x, y1)); //add visited points to hashset
 		}
 	}
-
+ /**
+  * copies a screen from a whole level
+  * @param level level
+  * @param intXint width
+  * @param intYint height
+  * @param lowerX lower x coord
+  * @param upperY upper y coord
+  * @param vertical whether or not this is vertical
+  * @return
+  */
 	private static List<List<Integer>> copyScreen(List<List<Integer>> level, int intXint, int intYint, int lowerX,
 			int upperY, boolean vertical) {
 		List<List<Integer>> screen = new ArrayList<>();
@@ -670,6 +739,14 @@ public class MegaManVGLCUtil {
 
 		return screen;
 	}
+	
+	/**
+	 * converts the MegaMan List<List<Integer>> into mmlv format
+	 * @param level the level
+	 * @param levelName the name desired
+	 * @param path where to store
+	 * @return File mmlvFile
+	 */
 	public static File convertMegaManLevelToMMLV(List<List<Integer>> level, String levelName, String path) {
 		//int enemyCount = 0;
 
@@ -791,7 +868,7 @@ public class MegaManVGLCUtil {
 				if(m!=9) {
 					placeActivatedScreen(xcoord,ycoord, p);
 					p.println("2a"+xcoord+","+ycoord+"=\"1.000000\"");
-					if(Parameters.parameters.booleanParameter("useThreeGANsMegaMan")) {
+					if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) {
 						p.println("2c"+xcoord+","+ycoord+"=\"1.000000\"");
 					}
 				}
@@ -856,13 +933,13 @@ public class MegaManVGLCUtil {
 	}
 	/**
 	 * Prints three enemy types from one (wall, floor, flying)
-	 * @param p
-	 * @param xcoord
-	 * @param ycoord
-	 * @param level
-	 * @param x
-	 * @param y
-	 * @param m
+	 * @param p printWriter for the file
+	 * @param xcoord xcoord (mmlv)
+	 * @param ycoord ycoord (mmlv)
+	 * @param level List<List<Integer>> level
+	 * @param x xcoord (List<List<Integer>>)
+	 * @param y ycoord (List<List<Integer>>)
+	 * @param m mmlv ID
 	 */
 	private static void printEnemiesToMMLVFromOneEnemyType(PrintWriter p, int xcoord, int ycoord, List<List<Integer>> level, int x, int y,
 			int m) {
@@ -889,6 +966,18 @@ public class MegaManVGLCUtil {
 		}
 	//	}
 	}
+	/**
+	 * 
+	 * NOT USED ?
+	 * Prints for all unique MegaMan enemy types (from Mega Man 1)
+	 * @param p
+	 * @param xcoord
+	 * @param ycoord
+	 * @param level
+	 * @param x
+	 * @param y
+	 * @param m
+	 */
 	private static void printEnemiesToMMLVFromUniqueEnemy(PrintWriter p, int xcoord, int ycoord, List<List<Integer>> level, int x, int y,
 			int m) {
 		//String enemyString = levelEnemies.get(new Point(x,y));
@@ -1033,6 +1122,16 @@ public class MegaManVGLCUtil {
 		}
 		
 	}
+	
+	/**
+	 * Prints the mlmv files from the original VLGC
+	 * @param p printWriter for the file
+	 * @param xcoord xcoord (mmlv)
+	 * @param ycoord ycoord (mmlv)
+	 * @param level List<List<Integer>> level
+	 * @param x xcoord (List<List<Integer>>)
+	 * @param y ycoord (List<List<Integer>>)
+	 */
 	private static void printEnemiesToMMLVFromHashMap(PrintWriter p, int xcoord, int ycoord,
 			List<List<Integer>> level, int x, int y) {
 		String enemyString = levelEnemies.get(new Point(x,y));
@@ -1177,6 +1276,17 @@ public class MegaManVGLCUtil {
 		}
 		
 	}
+	/**
+	 * 
+	 * NOT USED
+	 * Prints 5 types of enemies
+	 * @param p printWriter for the file
+	 * @param xcoord xcoord (mmlv)
+	 * @param ycoord ycoord (mmlv)
+	 * @param level List<List<Integer>> level
+	 * @param x xcoord (List<List<Integer>>)
+	 * @param y ycoord (List<List<Integer>>)
+	 */
 	private static void printEnemiesToMMLV(PrintWriter p, int m, int xcoord,  int  ycoord, List<List<Integer>> level, int x, int y) {
 		if(m==11) {
 			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
@@ -1213,6 +1323,12 @@ public class MegaManVGLCUtil {
 		
 		//return enemyCount;
 	}
+	/**
+	 * Activates a screen at the coordinates (for mmlv)
+	 * @param xcoord of the mmlv level
+	 * @param ycoord of the mmlv level
+	 * @param p printwriter to the mmlv file
+	 */
 	private static void placeActivatedScreen(int xcoord, int ycoord, PrintWriter p) {
 		// TODO Auto-generated method stub
 		int howManySquaresX = xcoord/256;
@@ -1226,6 +1342,13 @@ public class MegaManVGLCUtil {
 		}
 		
 	}
+	
+	
+	/**
+	 * Converts the VGLC data to List<List<Integer>> format
+	 * @param fileName of the VGLC data
+	 * @return List<List<Integer>> level - the level
+	 */
 	public static List<List<Integer>> convertMegamanVGLCtoListOfLists(String fileName) {
 		String[] level = new IO().readFile(fileName);
 		List<List<Integer>> complete = new ArrayList<>();
@@ -1244,7 +1367,12 @@ public class MegaManVGLCUtil {
 			complete.add(col); //adds a new array list to the list at index i 
 		}
 		return complete;
-	}
+	} 
+	/**
+	 * Converts enemy chars into Strings (probably unnecessary)
+	 * @param charAt
+	 * @return
+	 */
 	private static String getStringForTypeEnemy(char charAt) {
 		switch(charAt) {
 		case 'a':
@@ -1290,6 +1418,12 @@ public class MegaManVGLCUtil {
 		}
 		//return null;
 	}
+	
+	/**
+	 * Simple A* Model NOT USED
+	 * @param tile
+	 * @return
+	 */
 	private static int convertMegaManTilesToIntForASTAR(char tile) {
 //		public static final int MEGA_MAN_TILE_GROUND = 1;
 //		public static final int MEGA_MAN_TILE_LADDER = 2;
@@ -1332,7 +1466,11 @@ public class MegaManVGLCUtil {
 		}
 		
 	}
-
+/**
+ * used for simple version (no enemies, no water, etc)
+ * @param tile
+ * @return
+ */
 	private static int convertMegamanTilesToIntSimple(char tile) {
 		switch(tile) {
 		case '-': //empty, passable
@@ -1357,6 +1495,11 @@ public class MegaManVGLCUtil {
 			return 0;
 		}
 	}
+	/**
+	 * NOT USED
+	 * @param tile
+	 * @return
+	 */
 	private static int convertMegamanTilesToInt(char tile) {
 		switch(tile) {
 		case '-': //empty, passable
@@ -1443,6 +1586,11 @@ public class MegaManVGLCUtil {
 
 		}
 	}
+	/**
+	 * Used for one enemy type for any data trained on 12 tile types
+	 * @param tile the char tile from VGLC
+	 * @return int corresponding to the type
+	 */
 	private static int convertMegamanTilesToIntEnemies(char tile) {
 		switch(tile) {
 		case '-': //empty, passable
@@ -1536,7 +1684,12 @@ public class MegaManVGLCUtil {
 		
 		
 	}
-	
+	/**
+	 * NOT USED
+	 * for each unique enemy in VGLC/MegaMan 1
+	 * @param tile
+	 * @return
+	 */
 	private static int convertMegamanTilesToIntUniqueEnemies(char tile) {
 		switch(tile) {
 		case '-': //empty, passable

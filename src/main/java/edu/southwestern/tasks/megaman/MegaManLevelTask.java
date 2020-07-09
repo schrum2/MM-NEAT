@@ -33,12 +33,22 @@ import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Quad;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
+/**
+ * This class is responsible for being the backbone behind Direct2GAN and CPPN2GAN
+ * Registers fitness functions and determines the score of each level generated
+ * 
+ * @author Benjamin Capps	
+ *
+ *
+ */
 public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
-	private static int numFitnessFunctions = 0; 
-	private static final int numOtherScores = 10;
+	private int numFitnessFunctions = 0; 
+	private static final int NUM_OTHER_SCORES = 10;
+
 
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
 	private ArrayList<Double> behaviorVector;
@@ -56,6 +66,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	
 	protected MegaManLevelTask(boolean register) {
 		if(register) {
+			numFitnessFunctions = 0;
 			if(Parameters.parameters.booleanParameter("megaManAllowsSimpleAStarPath")) {
 				MMNEAT.registerFitnessFunction("simpleAStarDistance");
 				numFitnessFunctions++;
@@ -64,10 +75,11 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				MMNEAT.registerFitnessFunction("numOfPositionsVisited"); //connectivity
 				numFitnessFunctions++;
 			}
-//			if(Parameters.parameters.booleanParameter("megaManAllowsNumDistinctSegments")){
-//				MMNEAT.registerFitnessFunction("numDistinctScreens"); //distinct screens
-//				numFitnessFunctions++;
-//			}
+			if(Parameters.parameters.booleanParameter("megaManMaximizeEnemies")) {
+				MMNEAT.registerFitnessFunction("numEnemies"); //connectivity
+				numFitnessFunctions++;
+			}
+			//megaManMaximizeEnemies
 			//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
 			MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
 			MMNEAT.registerFitnessFunction("percentConnected", false);
@@ -82,14 +94,18 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			MMNEAT.registerFitnessFunction("numDistinctSegments", false);		}
 	}
 	@Override
+	/**
+	 * gets the number of objective fitness functions
+	 */
 	public int numObjectives() {
-		// TODO Auto-generated method stub
 		return numFitnessFunctions;
 	}
 	@Override
+	/**
+	 * gets the number of other scores (scores that do not affect the levels' fitness)
+	 */
 	public int numOtherScores() {
-		// TODO Auto-generated method stub
-		return numOtherScores;
+		return NUM_OTHER_SCORES;
 	}
 	@Override
 	public double getTimeStamp() {
@@ -100,37 +116,40 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		
 		List<List<Integer>> level = getMegaManLevelListRepresentationFromGenotype(individual); //gets a level 
-		//double psuedoRandomSeed = getRandomSeedForSpawnPoint(individual); //creates the seed to be passed into the Random instance 
 		long genotypeId = individual.getId();
 		
 		return evaluateOneLevel(level, genotypeId);
 	}
 
+	/**
+	 * Evaluate the given List of Lists of Integers representation of the level
+	 * @param level List of lists of integers (each represents a tile)
+	 * @param genotypeId ID of genotype that generated the level
+	 * @return Pair of fitness and other scores
+	 */
 	@SuppressWarnings("unchecked")
 	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, long genotypeId) {
-		// TODO Auto-generated method stub
-		//ArrayList<Double> behaviorVector = null; // Filled in later
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
-		HashSet<MegaManState> mostRecentVisited = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t1;
-		ArrayList<MegaManAction> actionSequence = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t2;
-		MegaManState start = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t3; //gets start state for search 
-		double simpleAStarDistance = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level).t4;
+		Quad<HashSet<MegaManState>, ArrayList<MegaManAction>, MegaManState, Double> aStarResults = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level);
+		HashSet<MegaManState> mostRecentVisited = aStarResults.t1;
+		ArrayList<MegaManAction> actionSequence = aStarResults.t2;
+		MegaManState start = aStarResults.t3; //gets start state for search 
+		double simpleAStarDistance = aStarResults.t4;
 		//calculates the amount of the level that was covered in the search, connectivity.
 		double precentConnected = MegaManLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited)/MegaManLevelAnalysisUtil.findTotalPassableTiles(level);
-		HashMap<String, Integer> k = MegaManLevelAnalysisUtil.findMiscEnemies(level);
-		double numEnemies = k.get("numEnemies");
-		double numWallEnemies = k.get("numWallEnemies");
-		double numGroundEnemies = k.get("numGroundEnemies");
-		double numFlyingEnemies = k.get("numFlyingEnemies");
+
+		HashMap<String, Integer> miscEnemyInfo = MegaManLevelAnalysisUtil.findMiscEnemies(level);
+		double numEnemies = miscEnemyInfo.get("numEnemies");
+		double numWallEnemies = miscEnemyInfo.get("numWallEnemies");
+		double numGroundEnemies = miscEnemyInfo.get("numGroundEnemies");
+		double numFlyingEnemies = miscEnemyInfo.get("numFlyingEnemies");
 		
-		
-		HashMap<String,Integer> l = findMiscSegments(level);
-		double numHorizontalSegments = l.get("numHorizontal");
-		double numUpSegments = l.get("numUp");
-		double numDownSegments = l.get("numDown");
-		double numCornerSegments = l.get("numCorner");
-		double numDistinctSegments = l.get("numDistinctSegments");
-//				l.get("numCorners");
+		HashMap<String,Integer> miscChunkInfo = findMiscSegments(level);
+		double numHorizontalSegments = miscChunkInfo.get("numHorizontal");
+		double numUpSegments = miscChunkInfo.get("numUp");
+		double numDownSegments = miscChunkInfo.get("numDown");
+		double numCornerSegments = miscChunkInfo.get("numCorner");
+		double numDistinctSegments = miscChunkInfo.get("numDistinctSegments");
 
 
 		//adds the fitness functions being used to the fitness array list
@@ -140,12 +159,15 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		if(Parameters.parameters.booleanParameter("megaManAllowsConnectivity")) {
 			fitnesses.add(precentConnected);
 		}
+		if(Parameters.parameters.booleanParameter("megaManMaximizeEnemies")) {
+			fitnesses.add(numEnemies);
+		}
 		
 		double[] otherScores = new double[] {simpleAStarDistance,precentConnected, numEnemies, numWallEnemies, numGroundEnemies, numFlyingEnemies, numHorizontalSegments, numUpSegments, numDownSegments, numCornerSegments, numDistinctSegments};
 		
 		
 		
-		if(CommonConstants.watch&&actionSequence!=null) {
+		if(CommonConstants.watch) {
 			//prints values that are calculated above for debugging 
 			System.out.println("Simple A* Distance Orb " + simpleAStarDistance);
 			System.out.println("Percent of Positions Visited " + precentConnected);
@@ -166,11 +188,11 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				int screenx;
 				int screeny;
 				if(level.get(0).size()>level.size()) {
-					screenx = 1800;
-					screeny = 950*level.size()/level.get(0).size();
+					screenx = MegaManRenderUtil.MEGA_MAN_RENDER_X; 
+					screeny = MegaManRenderUtil.MEGA_MAN_RENDER_Y*level.size()/level.get(0).size();
 				}else {
-					screeny = 950;
-					screenx = 1800*level.get(0).size()/level.size();
+					screeny = MegaManRenderUtil.MEGA_MAN_RENDER_Y;
+					screenx = MegaManRenderUtil.MEGA_MAN_RENDER_X*level.get(0).size()/level.size();
 				}
 				JLabel label = new JLabel(new ImageIcon(visualPath.getScaledInstance(screenx,screeny, Image.SCALE_FAST)));
 				panel.add(label);
@@ -179,18 +201,13 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				frame.setVisible(true);
 			} catch (IOException e) {
 				System.out.println("Could not display image");
-				//e.printStackTrace();
 			}
 			
 			BufferedImage levelImage = null;
-			@SuppressWarnings("unused")
-			BufferedImage levelSolution = null;
 			try {
-				levelSolution = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 				BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
 				levelImage = MegaManRenderUtil.createBufferedImage(level, MegaManRenderUtil.renderedImageWidth(level.get(0).size()), MegaManRenderUtil.renderedImageHeight(level.size()), images);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			String saveDir = FileUtilities.getSaveDirectory(); //save directory
@@ -216,20 +233,11 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 							String mmlvPath = scan.nextLine();
 							System.out.println(mmlvPath);
 							String mmlvFileName = JOptionPane.showInputDialog(null, "What do you want to name your level?");
-							//System.out.println("pane showed up");
-							//File mmlvFileFromEvolution = new File(mmlvPath+mmlvFileName+".mmlv"); //creates file inside user's MegaManLevelPath
 							System.out.println(mmlvPath+mmlvFileName+".mmlv");
 							@SuppressWarnings("unused")
 							File mmlvFile; //creates file inside MMNEAT
 							scan.close();
-							//ArrayList<Double> phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
-							//double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
-							//List<List<Integer>> level = levelListRepresentation(doubleArray);
-							//int levelNumber = 2020;
 							mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, mmlvFileName, mmlvPath);
-							//Files.copy(mmlvFile, mmlvFileFromEvolution); //copies over
-							//System.out.println("File vopied");
-							//mmlvFile.delete(); //deletes MMNEAT file
 							JFrame frame = new JFrame("");
 							frame.setLocationRelativeTo(null);
 							frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -238,8 +246,6 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 							
 							
 						} catch (FileNotFoundException e) {
-							// TODO Auto-generated catch block
-							//e.printStackTrace();
 							JFrame frame = new JFrame("");
 							frame.setLocationRelativeTo(null);
 							frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -247,13 +253,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 							String errorMessage = "You need to create a local text file in the MMNEAT directory called \n MegaManMakerLevelPath.txt which contains the path to where MegaManMaker stores levels on your device. \n It will likely look like this: C:\\Users\\[Insert User Name]\\AppData\\Local\\MegaMaker\\Levels\\";
 							JOptionPane.showMessageDialog(frame, errorMessage);
 						}
-//						MegaManGANLevelBreederTask.saveLevel();
 						File mmlvFilePath1 = new File("MegaManMakerPath.txt"); //file containing the path
-//						if(selectedItems.size() != 1) {
-//							JOptionPane.showMessageDialog(null, "Save exactly one level to play.");
-//							return; // Nothing to explore
-//						}
-						
 						Scanner scan1;
 						//When the button is pushed, ask for the name input
 						try {
@@ -270,8 +270,6 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 							
 							
 						} catch (FileNotFoundException e) {
-							// TODO Auto-generated catch block
-							//e.printStackTrace();
 							JFrame frame = new JFrame("");
 							frame.setLocationRelativeTo(null);
 							frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -279,7 +277,6 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 							String errorMessage = "You need to create a local text file in the MMNEAT directory called \n MegaManMakePath.txt which contains the path to where MegaManMaker.exe is stored on your device";
 							JOptionPane.showMessageDialog(frame, errorMessage);
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						
@@ -294,27 +291,19 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			
 		}
 		if(MMNEAT.ea instanceof MAPElites) {
-			//final int BINS_PER_DIMENSION = ;
 			double binScore = simpleAStarDistance;
 			int binIndex = 0;
-//			System.out.println("it is mapE");
-//			MiscUtil.waitForReadStringAndEnterKeyPress();
 
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels) {
 				int maxNumSegments = Parameters.parameters.integerParameter("megaManGANLevelChunks");
-//				System.out.println("it is mapE binning");
-//				MiscUtil.waitForReadStringAndEnterKeyPress();
+
 				assert precentConnected <= 1;
 				// 100% connectivity is possible, which leads to an index of 10 (out of bounds) if not adjusted using Math.min
 				int indexConnected = (int) Math.min(precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS,9);
 				int numVertical = (int) (numUpSegments+numDownSegments);
-//				int numDistinctSegments;
 				binIndex =(((int) numDistinctSegments)*(maxNumSegments+1) + numVertical)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)+indexConnected;
-//				System.out.println(binIndex);
-//				MiscUtil.waitForReadStringAndEnterKeyPress();
 				double[] archiveArray = new double[(maxNumSegments+1)*(maxNumSegments+1)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)];
 				Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
-//				binIndex = (dim1*BINS_PER_DIMENSION + dim2)*BINS_PER_DIMENSION + dim3;
 				
 				System.out.println("["+numDistinctSegments+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
 				archiveArray[binIndex] = binScore; // Percent rooms traversed
@@ -330,11 +319,6 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				Score<T> elite = archive.getElite(binIndex);
 				// If the bin is empty, or the candidate is better than the elite for that bin's score
 				if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
-					// CHANGE!
-//					BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
-//					BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
-//					BufferedImage levelImage = null;
-//					BufferedImage levelSolution = null;
 					BufferedImage levelImage = null;
 					BufferedImage levelSolution = null;
 					try {
@@ -342,12 +326,12 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 						BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
 						levelImage = MegaManRenderUtil.createBufferedImage(level, MegaManRenderUtil.renderedImageWidth(level.get(0).size()), MegaManRenderUtil.renderedImageHeight(level.size()), images);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
 					//sets the fileName, binPath, and fullName
 					String fileName = String.format("%7.5f", binScore) +"-"+ genotypeId + ".png";
+					//FOR CPPNThenDirect2GAN
 //					if(individual instanceof CPPNOrDirectToGANGenotype) {
 //						CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
 //						if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
@@ -370,6 +354,11 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	 * Extract real-valued latent vector from genotype and then send to GAN to get a MegaMan level
 	 */
 	public abstract List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual);
+	/**
+	 * Finds miscellaneous information about the segments (up, down, horizontal, corner cases)
+	 * @param level - the level
+	 * @return HashMap<String,Integer> representing information about segments
+	 */
 	public abstract HashMap<String, Integer> findMiscSegments(List<List<Integer>> level);
 
 

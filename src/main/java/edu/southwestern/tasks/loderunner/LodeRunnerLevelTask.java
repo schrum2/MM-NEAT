@@ -164,13 +164,13 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			fitnesses.add(connectivityOfLevel);
 		}
 		
-		//Calculate length of tsp path
-		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = null;
+		//Calculate length of tsp path whether used for fitness or not
 		double tspSolutionLength = -1;
+		Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
+		// Unsolvable levels received TSP fitness score of -1
+		if(tspInfo.t1 != null) tspSolutionLength = tspInfo.t1.size();
+		
 		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsTSPSolutionPath") || Parameters.parameters.booleanParameter("lodeRunnerAllowsLinearIncreasingTSPLength")) {
-			tspInfo = LodeRunnerTSPUtil.getFullActionSequenceAndVisitedStatesTSPGreedySolution(level);
-			// Unsolvable levels received TSP fitness score of -1
-			if(tspInfo.t1 != null) tspSolutionLength = tspInfo.t1.size();
 			fitnesses.add(tspSolutionLength);
 		}
 
