@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.loderunner;
+package edu.southwestern.tasks.loderunner.mapelites;
 
 import java.util.ArrayList;
 import java.util.List;
