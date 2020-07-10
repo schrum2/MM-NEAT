@@ -30,6 +30,7 @@ import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.tasks.loderunner.mapelites.LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels;
 import edu.southwestern.tasks.loderunner.mapelites.LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels;
+import edu.southwestern.tasks.loderunner.mapelites.LodeRunnerMAPElitesPercentGroundNumGoldAndEnemiesBinLabels;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -339,6 +340,20 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				int treasureIndex = (int) Math.min(numTreasure/treasureScale, BINS_PER_DIMENSION-1);
 				int enemyIndex = (int) Math.min(numEnemies/enemyScale, BINS_PER_DIMENSION-1);
 				dim1 = connectedIndex; //connectivity
+				dim2 = treasureIndex;//number of treasures scaled 
+				dim3 = enemyIndex; //number of enemies scaled
+				//becomes the behavior vector 
+				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
+			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentGroundNumGoldAndEnemiesBinLabels) {
+				// Used this calculation instead of groundIndex, since there is some unusual scaling there I do not understand
+				int groundPercentageIndex = Math.min((int)(percentGround*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
+				
+				double treasureScale = 5.0; //scales bins to be in groups of 5, [0-5][5-10]...
+				double enemyScale = 2.0; //scales bins to be in groups of 2, [0-2][2-4]...
+				//gets correct indices for treasure and enemies
+				int treasureIndex = (int) Math.min(numTreasure/treasureScale, BINS_PER_DIMENSION-1);
+				int enemyIndex = (int) Math.min(numEnemies/enemyScale, BINS_PER_DIMENSION-1);
+				dim1 = groundPercentageIndex; //ground percentage
 				dim2 = treasureIndex;//number of treasures scaled 
 				dim3 = enemyIndex; //number of enemies scaled
 				//becomes the behavior vector 
