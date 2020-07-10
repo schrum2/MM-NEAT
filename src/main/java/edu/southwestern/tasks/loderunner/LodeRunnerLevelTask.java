@@ -3,7 +3,9 @@ package edu.southwestern.tasks.loderunner;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,6 +21,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.MAPElites;
+import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -29,6 +32,7 @@ import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import icecreamyou.LodeRunner.LodeRunner;
 
@@ -42,6 +46,8 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 
 	private int numFitnessFunctions = 0; 
 	protected static final int NUM_OTHER_SCORES = 9;
+	// Is actually logged to in the MAPElites class
+	public MMNEATLog beatable;
 
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
 	private ArrayList<Double> behaviorVector;
@@ -90,6 +96,49 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			MMNEAT.registerFitnessFunction("numTreasures", false);
 			MMNEAT.registerFitnessFunction("numEnemies", false);
 			MMNEAT.registerFitnessFunction("TSPDistance",false); // if available ... -1 otherwise
+			
+			// THIS ONLY WORKS WITH MAP Elites!
+			if(Parameters.parameters.booleanParameter("io") && !(MMNEAT.task instanceof LodeRunnerLevelSequenceTask)) {
+				// Is actually logged to in the MAPElites class
+				beatable = new MMNEATLog("Beatable", false, false, false, true);
+				
+				// Create gnuplot file for percent beatable levels
+				String experimentPrefix = Parameters.parameters.stringParameter("log")
+						+ Parameters.parameters.integerParameter("runNumber");
+				String beatablePrefix = experimentPrefix + "_" + "Beatable";
+				String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+				directory += (directory.equals("") ? "" : "/");
+				String fullFillName = directory + beatablePrefix + "_log.plot";
+				File beatablePlot = new File(fullFillName);
+				// Write to file
+				try {
+					// Archive plot
+					int individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
+
+					// Fill percentage plot
+					PrintStream ps = new PrintStream(beatablePlot);
+					ps.println("set term pdf enhanced");
+					ps.println("set key bottom right");
+					// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+					ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration) +"]");
+					ps.println("set title \"" + experimentPrefix + " Beatable Levels\"");
+					ps.println("set output \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".pdf\"");
+					String name = fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.'));
+					ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\"");
+					
+					ps.println("set yrange [0:1]");
+					ps.println("set title \"" + experimentPrefix + " Beatable Percentage\"");
+					ps.println("set output \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + "_Percent.pdf\"");
+					ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"Percent\"");
+					ps.close();
+					
+				} catch (FileNotFoundException e) {
+					System.out.println("Could not create plot file: " + beatablePlot.getName());
+					e.printStackTrace();
+					System.exit(1);
+				}
+				
+			}
 		}
 	}
 
