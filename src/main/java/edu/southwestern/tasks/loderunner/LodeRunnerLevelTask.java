@@ -85,6 +85,10 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				MMNEAT.registerFitnessFunction("NumEnemies");
 				numFitnessFunctions++;
 			}
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsAStarConnectivityCombo")) {
+				MMNEAT.registerFitnessFunction("ConnectivityOrAStar");
+				numFitnessFunctions++;
+			}
 
 			//registers the other things to be tracked that are not fitness functions, to be put in the otherScores array 
 			MMNEAT.registerFitnessFunction("simpleAStarDistance",false);
@@ -247,6 +251,11 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			fitnesses.add(1.0*numEnemies);
 		}
 		
+		double comboFitness = Math.max(percentConnected, simpleAStarDistance);
+		if(Parameters.parameters.booleanParameter("lodeRunnerAllowsAStarConnectivityCombo")) {
+			fitnesses.add(comboFitness);
+		}
+		
 		double[] otherScores = new double[] {simpleAStarDistance, connectivityOfLevel, percentLadders, percentGround, percentRopes, percentConnected, numTreasure, numEnemies, tspSolutionLength};
 
 		if(CommonConstants.watch) {
@@ -309,6 +318,11 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			int groundIndex = Math.min((int)(percentGround*SCALE_GROUND_LADDERS*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
 			int laddersIndex = Math.min((int)(percentLadders*SCALE_GROUND_LADDERS*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
 			double binScore = simpleAStarDistance;
+			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsAStarConnectivityCombo")) {
+				// Combo of connectivity and A* overwhelms regular A*
+				binScore = comboFitness;
+			}
+
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels) {
 				//Initializes bin dimensions 
 				dim1 = connectedIndex; //connectivity
