@@ -318,7 +318,10 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			double SCALE_GROUND_LADDERS = BINS_PER_DIMENSION/4.0; //scales by 1/4 of the dimension to go in steps of 4
 			//gets correct indices for all dimensions based on percent and multiplied by 10 to be a non decimal 
 			int connectedIndex = Math.min((int)(percentConnected*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); 
-			int groundIndex = Math.min((int)(percentGround*SCALE_GROUND_LADDERS*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
+			
+			// ground scaling is frustrating. percentGroundseems to land between 0.1 and 0.5. So, subtract 0.1 to get to
+			// 0.0 to 0.4, then multiply by 2.5 (SCALE_GROUND_LADDERS) to get 0.0 to 1.0
+			int groundIndex = Math.max(0, Math.min((int)((percentGround-0.1)*SCALE_GROUND_LADDERS*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1));
 			int laddersIndex = Math.min((int)(percentLadders*SCALE_GROUND_LADDERS*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
 			double binScore = simpleAStarDistance;
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsAStarConnectivityCombo")) {
