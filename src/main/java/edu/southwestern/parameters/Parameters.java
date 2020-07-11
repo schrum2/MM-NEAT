@@ -787,6 +787,7 @@ public class Parameters {
 		booleanOptions.add("megaManDistinctScreenFitness", false, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManMaximizeEnemies", false, "whether or not we're maximizing enemies");
 		booleanOptions.add("showInteractiveLodeRunnerSolutionPaths", false, "Shows the solution path for the levels in the level breeder when true");
+		booleanOptions.add("lodeRunnerAllowsAStarConnectivityCombo", false, "A Lode Runner fitness of connectivity percent, but is overridden by A* if level is beatable");
 		booleanOptions.add("lodeRunnerAllowsSimpleAStarPath", false, "Adds the AStarPath as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsConnectivity", false, "Adds connectivity as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsTSPSolutionPath", false, "Adds the TSP solution path as a fitness function when true");
