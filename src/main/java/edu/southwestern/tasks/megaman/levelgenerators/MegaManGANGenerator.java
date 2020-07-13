@@ -15,13 +15,12 @@ import edu.southwestern.util.stats.StatisticsUtilities;
  *
  */
 public abstract class MegaManGANGenerator {
-	
+	private static SEGMENT_TYPE segmentType = null;
 	/**
 	 * Number of auxiliary variables at the start of each set of segmentVariables
 	 * @return Num variables
 	 */
 	public static int numberOfAuxiliaryVariables() {
-		// TODO: Add optional support for 4 directions
 		if(Parameters.parameters.booleanParameter("megaManAllowsLeftSegments")) return 4;
 		else return 3; // Currently only supporting Right, Up, Down, but will add Left (return 4) soon
 	}
@@ -52,7 +51,6 @@ public abstract class MegaManGANGenerator {
 			return null;
 		}
 		assert type.t1 != null;
-//		System.out.println(type.t1);
 		Pair<List<List<Integer>>, Point> segmentAndCurrentPoint = new Pair<>(generateSegmentFromLatentVariables(latentVector, type.t1), type.t2);
 		return segmentAndCurrentPoint;
 	}
@@ -76,10 +74,9 @@ public abstract class MegaManGANGenerator {
 			SEGMENT_TYPE proposed = SEGMENT_TYPE.values()[maxIndex];
 			assert proposed != null;
 			Point next = nextPoint(previousPoint, currentPoint, proposed);
-//			System.out.println(next);
 			previousPoints.add(next);			
 			previousPoints.add(currentPoint);
-
+			segmentType = proposed;
 			return new Pair<SEGMENT_TYPE, Point>(proposed, next);
 		} else {	
 			// TODO: Requires more work
@@ -91,15 +88,12 @@ public abstract class MegaManGANGenerator {
 				// This can only be UP, DOWN, RIGHT, LEFT
 				SEGMENT_TYPE proposed = SEGMENT_TYPE.values()[maxIndex];
 				next = nextPoint(previousPoint, currentPoint, proposed); // Where would new segment go?
-//				System.out.println(next);
 
 				if(previousPoints.contains(next)) { // This placement is illegal. Location occupied
-					//System.out.println(previousPoints + " contains " + next);
 					auxiliaryVariables[maxIndex] = Double.NEGATIVE_INFINITY; // Disable illegal option
 					maxIndex = StatisticsUtilities.argmax(auxiliaryVariables); // Reset
 					if(Double.isInfinite(auxiliaryVariables[maxIndex])) {
 						result = null; // There is NO legal placement possible!
-						//System.out.println("NO LEGAL PLACEMENT!");
 						//assert false : ""+previousPoints + ":" + next; // TEMP
 						done = true;
 					}
@@ -152,8 +146,8 @@ public abstract class MegaManGANGenerator {
 					done = true;					
 				}
 			}
-//			System.out.println();
 			previousPoints.add(next); // This point will be occupied now
+			segmentType = result;
 			return new Pair<SEGMENT_TYPE, Point>(result, next);
 		}
 	}
@@ -166,6 +160,7 @@ public abstract class MegaManGANGenerator {
 	 * @return Where next Point would be
 	 */
 	private static Point nextPoint(Point previousPoint, Point current, SEGMENT_TYPE currentType) {
+		
 		switch(currentType) {
 			case UP: return new Point(current.x, current.y - 1);
 			case DOWN: return new Point(current.x, current.y + 1);
@@ -198,6 +193,8 @@ public abstract class MegaManGANGenerator {
 			default: throw new IllegalArgumentException("Valid SEGMENT_TYPE not specified");
 		}
 	}
-
+	public SEGMENT_TYPE getSegmentType() {
+		return segmentType;
+	}
 	protected abstract List<List<Integer>> generateSegmentFromLatentVariables(double[] latentVariables, SEGMENT_TYPE type);
 }
