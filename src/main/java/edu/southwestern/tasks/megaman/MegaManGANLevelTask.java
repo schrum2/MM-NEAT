@@ -35,6 +35,10 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 		}
 	}
 	
+	public void finalCleanup() {
+		megaManGenerator.finalCleanup();
+	}
+	
 	/**
 	 * Extract real-valued latent vector from genotype and then send to GAN to get a MegaMan level
 	 */

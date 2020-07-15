@@ -20,6 +20,7 @@ import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
@@ -193,10 +194,12 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			//log.log(iterations + "\t" + iterationsWithoutElite + "\t" + StringUtils.join(ArrayUtils.toObject(archive.getEliteScores()), "\t"));
 			// Just log every "generation" instead
 			Float[] elite = ArrayUtils.toObject(archive.getEliteScores());
-			archiveLog.log((iterations/individualsPerGeneration) + "\t" + StringUtils.join(elite, "\t"));
+			final int pseudoGeneration = iterations/individualsPerGeneration;
+			archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t"));
 
 			// Exclude negative infinity to find out how many bins are filled
-			fillLog.log((iterations/individualsPerGeneration) + "\t" + (elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite)));
+			final int numFilledBins = elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite);
+			fillLog.log(pseudoGeneration + "\t" + numFilledBins);
 			if(cppnThenDirectLog!=null) {
 				Integer[] eliteProper = new Integer[elite.length];
 				int i = 0;
@@ -214,8 +217,22 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					i++;
 				}
 				//in archive class, archive variable (vector)
-				cppnThenDirectLog.log((iterations/individualsPerGeneration)+"\t"+numCPPN+"\t"+numDirect);
-				cppnVsDirectFitnessLog.log((iterations/individualsPerGeneration) +"\t"+ StringUtils.join(eliteProper, "\t"));
+				cppnThenDirectLog.log(pseudoGeneration+"\t"+numCPPN+"\t"+numDirect);
+				cppnVsDirectFitnessLog.log(pseudoGeneration +"\t"+ StringUtils.join(eliteProper, "\t"));
+			}
+			
+			// Special code for Lode Runner
+			if(MMNEAT.task instanceof LodeRunnerLevelTask) {
+				int numBeatenLevels = 0;
+				for(Float x : elite) {
+					// If A* fitness is used, then unbeatable levels have a score of -1 and thus won't be counted here.
+					// If A*/Connectivity combo is used, then a connectivity percentage in (0,1) means the level is not beatable.
+					// Score will only be greater than 1 if there is an actual A* path.
+					if(x >= 1.0) {
+						numBeatenLevels++;
+					}
+				}
+				((LodeRunnerLevelTask<?>)MMNEAT.task).beatable.log(pseudoGeneration + "\t" + numBeatenLevels + "\t" + ((1.0*numBeatenLevels)/(1.0*numFilledBins)));
 			}
 		}
 	}

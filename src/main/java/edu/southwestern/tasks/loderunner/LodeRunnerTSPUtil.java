@@ -54,7 +54,10 @@ public class LodeRunnerTSPUtil {
 	 * @return ArrayList; actionSeqeunce for the whole level
 	 */
 	public static Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>> getFullActionSequenceAndVisitedStatesTSPGreedySolution(List<List<Integer>> level) {
-//		System.out.println("Making the graph");
+		if(0 == Parameters.parameters.integerParameter("lodeRunnerTSPBudget")) {
+			return new Pair<ArrayList<LodeRunnerAction>, HashSet<LodeRunnerState>>(null, new HashSet<LodeRunnerState>());
+		}
+		
 		Triple<Graph<Point>, HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>>, HashSet<LodeRunnerState>> tspInfo = getTSPGraph(ListUtil.deepCopyListOfLists(level));
 		Graph<Point> tsp = tspInfo.t1;
 		HashMap<Pair<Point, Point>, ArrayList<LodeRunnerAction>> tspActions = tspInfo.t2;

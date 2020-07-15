@@ -197,4 +197,9 @@ public abstract class MegaManGANGenerator {
 		return segmentType;
 	}
 	protected abstract List<List<Integer>> generateSegmentFromLatentVariables(double[] latentVariables, SEGMENT_TYPE type);
+
+	public void finalCleanup() {
+		// Called at very end of evolution.
+		// Does nothing unless overridden.
+	}
 }
