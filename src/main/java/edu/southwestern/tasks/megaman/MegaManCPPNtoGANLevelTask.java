@@ -16,17 +16,18 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTask<T>{
 
 	private MegaManGANGenerator megaManGenerator;
+	private MegaManTrackSegmentType segmentCount;
 	
 	public MegaManCPPNtoGANLevelTask(){
 		super();
-		
+		segmentCount = new MegaManTrackSegmentType();
 		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) megaManGenerator = new MegaManSevenGANGenerator();
 		else  megaManGenerator = new MegaManOneGANGenerator();
 	}
 	
 	@Override
 	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual) {
-		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(megaManGenerator, individual.getPhenotype(), Parameters.parameters.integerParameter("megaManGANLevelChunks"), ArrayUtil.doubleOnes(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length));
+		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(megaManGenerator, individual.getPhenotype(), Parameters.parameters.integerParameter("megaManGANLevelChunks"), ArrayUtil.doubleOnes(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length), segmentCount);
 		return level;
 	}
 	
@@ -50,8 +51,8 @@ public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTa
 	}
 	
 	@Override
-	public HashMap<String, Integer> findMiscSegments(List<List<Integer>> level) {
-		return MegaManCPPNtoGANUtil.findMiscSegments(level);
+	public HashMap<String, Integer> findMiscSegments() {
+		return segmentCount.findMiscSegments();
 	}
 
 }

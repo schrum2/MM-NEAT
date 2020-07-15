@@ -144,8 +144,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		double numWallEnemies = miscEnemyInfo.get("numWallEnemies");
 		double numGroundEnemies = miscEnemyInfo.get("numGroundEnemies");
 		double numFlyingEnemies = miscEnemyInfo.get("numFlyingEnemies");
-		
-		HashMap<String,Integer> miscChunkInfo = findMiscSegments(level);
+		HashMap<String,Integer> miscChunkInfo = findMiscSegments();
 		double numRightSegments = miscChunkInfo.get("numRight");
 		double numLeftSegments = miscChunkInfo.get("numLeft");
 		double numUpSegments = miscChunkInfo.get("numUp");
@@ -362,7 +361,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	 * @param level - the level
 	 * @return HashMap<String,Integer> representing information about segments
 	 */
-	public abstract HashMap<String, Integer> findMiscSegments(List<List<Integer>> level);
+	public abstract HashMap<String, Integer> findMiscSegments();
 
 
 }
