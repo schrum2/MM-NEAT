@@ -43,7 +43,6 @@ public class MegaManSevenGANGenerator extends MegaManGANGenerator {
 	
 	@Override
 	public List<List<Integer>> generateSegmentFromLatentVariables(double[] latentVariables, SEGMENT_TYPE type) {
-		// TODO Use the appropriate GAN to generate the segment.
 		switch(type) {
 			case UP:
 				return MegaManGANUtil.getLevelListRepresentationFromGAN(ganProcessUp, latentVariables).get(0);
@@ -65,4 +64,15 @@ public class MegaManSevenGANGenerator extends MegaManGANGenerator {
 		}
 	}
 
+	@Override
+	public void finalCleanup() {
+		ganProcessRight.terminate();
+		ganProcessLeft.terminate();
+		ganProcessDown.terminate();
+		ganProcessUp.terminate();
+		ganProcessUpperLeft.terminate();
+		ganProcessUpperRight.terminate();
+		ganProcessLowerLeft.terminate();
+		ganProcessLowerRight.terminate();
+	}
 }
