@@ -12,10 +12,10 @@ import java.util.List;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
+import edu.southwestern.tasks.megaman.MegaManTrackSegmentType;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
-import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator.SEGMENT_TYPE;
 import edu.southwestern.util.datastructures.Pair;
 
 public class MegaManGANUtil {
@@ -607,13 +607,8 @@ public class MegaManGANUtil {
 	
 //	public static Direction d;
 	
-	public static List<List<Integer>> longVectorToMegaManLevel(MegaManGANGenerator megaManGANGenerator, double[] wholeVector, int chunks){
-		numDistinctSegments = 0;
-		numUp = 0;
-		numDown = 0;
-		numRight = 0;
-		numLeft = 0;
-		numCorner = 0;
+	public static List<List<Integer>> longVectorToMegaManLevel(MegaManGANGenerator megaManGANGenerator, double[] wholeVector, int chunks, MegaManTrackSegmentType segmentCount){
+		
 		HashSet<Point> previousPoints = new HashSet<>();
 		Point currentPoint  = new Point(0,0);
 		Point previousPoint = null;
@@ -624,12 +619,12 @@ public class MegaManGANUtil {
 		for(int i = 0;i<chunks;i++) {
 			double[] oneSegmentData = latentVectorAndMiscDataForPosition(i, Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables(), wholeVector);
 			Pair<List<List<Integer>>, Point> segmentAndPoint = megaManGANGenerator.generateSegmentFromVariables(oneSegmentData, previousPoint, previousPoints, currentPoint);
-			findSegmentData(megaManGANGenerator.getSegmentType());
 			if(segmentAndPoint==null) {
 				break; //NEEDS TO BE FIXED!! ORB WILL NOT BE PLACED
 			}
 			segment = segmentAndPoint.t1;
-			distinct.add(segment);
+			segmentCount.findSegmentData(megaManGANGenerator.getSegmentType(), segment, distinct);
+
 			previousPoint = currentPoint; // backup previous
 			currentPoint = segmentAndPoint.t2;
 			if(i==chunks-1) placeOrb(segment);
@@ -639,45 +634,10 @@ public class MegaManGANUtil {
 		}
 		
 		postProcessingPlaceProperEnemies(level);
-		numDistinctSegments = distinct.size();
 		return level;
 		
 	}
-	/**
-	 * takes in a single segment type and adds to the total of that type
-	 * @param segmentType the type of segment used in the placement of one segment
-	 */
-	public static void findSegmentData(SEGMENT_TYPE segmentType) {
 
-		switch(segmentType) {
-		case UP: 
-			numUp++;
-			break;
-		case DOWN: 
-			numDown++;
-			break;
-		case RIGHT:
-			numRight++;
-			break;
-		case LEFT: 
-			numLeft++;
-			break;
-		case TOP_LEFT: 
-			numCorner++;
-			break;
-		case TOP_RIGHT:	
-			numCorner++;
-			break;
-		case BOTTOM_RIGHT: 
-			numCorner++;
-			break;
-		case BOTTOM_LEFT: 
-			numCorner++;
-			break;
-		default: throw new IllegalArgumentException("Valid SEGMENT_TYPE not specified");
-		}
-		
-	}
 	public static Point placeMegaManSegment(List<List<Integer>> level,List<List<Integer>> segment, Point current, Point prev, Point placementPoint) {
 		if(level.isEmpty()) { // First segment
 			//System.out.println("FIRST");

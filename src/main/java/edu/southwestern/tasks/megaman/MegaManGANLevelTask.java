@@ -20,11 +20,13 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 
 	private MegaManGANGenerator megaManGenerator;
+	private MegaManTrackSegmentType segmentCount;
 
 	public MegaManGANLevelTask(){
 		super();
 		
-		
+		segmentCount = new MegaManTrackSegmentType();
+
 		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) {
 			megaManGenerator = new MegaManSevenGANGenerator();
 		}
@@ -39,7 +41,7 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	@Override
 	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<List<Double>> individual) {
 		List<Double> latentVector = individual.getPhenotype();
-		return getMegaManLevelListRepresentationFromStaticGenotype(megaManGenerator, latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"));
+		return getMegaManLevelListRepresentationFromStaticGenotype(megaManGenerator, latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
 	}
 	/**
 	 * static version of method above
@@ -50,9 +52,9 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	 * @return
 	 */
 	private List<List<Integer>> getMegaManLevelListRepresentationFromStaticGenotype(
-			MegaManGANGenerator megaManGenerator, List<Double> latentVector, int chunks) {
+			MegaManGANGenerator megaManGenerator, List<Double> latentVector, int chunks, MegaManTrackSegmentType segmentCount) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
-		List<List<Integer>> level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, chunks);
+		List<List<Integer>> level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, chunks, segmentCount);
 		return level;
 	}
 
@@ -65,8 +67,8 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	}
 
 	@Override
-	public HashMap<String, Integer> findMiscSegments(List<List<Integer>> level) {
+	public HashMap<String, Integer> findMiscSegments() {
 		// TODO Auto-generated method stub
-		return MegaManGANUtil.findMiscSegments(level);
+		return segmentCount.findMiscSegments();
 	}
 }
