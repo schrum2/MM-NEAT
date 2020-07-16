@@ -1,24 +1,16 @@
 package edu.southwestern.tasks.megaman.astar;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import org.junit.Test;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.megaman.MegaManConvertMMLVToJSON;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
 import edu.southwestern.util.search.AStarSearch;
