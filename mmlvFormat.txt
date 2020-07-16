@@ -57,11 +57,11 @@ o(x,y) = (somehow related to option) - 9999 = agent/entity (MegaMan, enemies, et
 															
 	Blocks: MegaMan 1														
 Letter Codes	Cut Block	Guts Tile	Ice Tile	Bomb Tile	Fire Tile	Elec Tile	Elec Tile 2	Time Tile	Time Tile (Alt)	Oil Tile	Willly 1 Tile	Willy 1 Tile 2	Willy 2 Tile	Willy 3 Tile	Willy 4 Tile
-k	71	71	71	71	71	71	71	106	71	71	71	71	71	71	71
-j	141	141	141	141	141	141	141	71	141	141	141	141	141	141	141
-i	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
-e	3	4	21	23	22	5	477	129	478	130	198	131	167	168	169
-a	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+k		71		71		71		71		71		71		71		106		71		71		71		71		71		71		71
+j		141		141		141		141		141		141		141		71		141		141		141		141		141		141		141
+i		1		1		1		1		1		1		1		1		1		1		1		1		1		1		1
+e		3		4		21		23		22		5		477		129		478		130		198		131		167		168		169
+a		1		1		1		1		1		1		1		1		1		1		1		1		1		1		1
 															
 															
 															
@@ -73,11 +73,11 @@ a	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
 															
 	Player														
 	Mega Man	Proto Man	Bass												
-1t	0	1	2												
-o	9999	9999	9999												
-e	0	1	2												
-d	4	4	4												
-a	1	1	1												
+1t	0		1		2												
+o	9999		9999		9999												
+e	0		1		2												
+d	4		4		4												
+a	1		1		1												
 															
 															
 															
@@ -90,11 +90,11 @@ a	1	1	1
 															
 	Enemies	d = 5 == enemy	e = enemy code												
 	Met	Octopus Battery	Beak	Picketman	Screw Bomber	Big Eye	Spine	Crazy Razy	Watcher	Killer Bullet	Killer Bullet Spawner	Tackle Fire	Flying Shell	Flying Shell Spawner	Footholder
-o	9999	9999	9999	9999	9999	9999	9999	9999	9999	9999	9999	9999	9999	9999	9999
-e	0	1	2	3	4	5	48	49	52	56	57	0	59	60	45
-d	5	5	5	5	5	5	5	5	5	5	5	5	5	5	5
-b	-1	-1	-1	-1	-1	-1	-1	-1	-1	-1	-1	-1	-1	-1	-1
-a	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1
+o	9999	9999	9999	9999	9999		9999		9999		9999		9999	9999		9999			9999		9999		9999			9999
+e	0	1	2	3	4		5		48		49		52	56		57			0		59		60			45
+d	5	5	5	5	5		5		5		5		5	5		5			5		5		5			5
+b	-1	-1	-1	-1	-1		-1		-1		-1		-1	-1		-1			-1		-1		-1			-1
+a	1	1	1	1	1		1		1		1		1	1		1			1		1		1			1
 g *Octopus Battery Only		270 up/down, 0 otherwise													
 h *Tackle Fire Only												3			
 m *Footholder Only															to X
@@ -111,10 +111,10 @@ n *Footholder Only															to Y
 															
 	Breakable Blocks	 d = 6 ==> breakable		 e = item code											
 	1x1 breakable	2x2 breakable													
-o	9999	9999													
-e	9	45													
-d	6	6													
-a	1	1													
+o	9999		9999													
+e	9		45													
+d	6		6													
+a	1		1													
 															
 															
 	Boss Example														
@@ -126,7 +126,7 @@ a	1	1
 															
 	Bosses	d = 8 ==> Boss 	e = type of boss												
 	Level Orb	Cut Man	Ice Man	Bomb Man	Time Man										
-o	9999	9999	9999	9999	9999										
-e	15	5	17	13	18										
-d	8	8	8	8	8										
-a	1	1	1	1	1										
+o	9999		9999	9999	9999		9999										
+e	15		5	17	13		18										
+d	8		8	8	8		8										
+a	1		1	1	1		1										
