@@ -176,6 +176,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		int newY = currentY;
 		int newFallHorizontalModInt = fallHorizontalModInt;
 		boolean falling = false;
+		boolean jumping = false;
 		assert inBounds(newX,newY): "x is:" + newX + "\ty is:"+newY + "\t" + inBounds(newX,newY);
 		// Falling off bottom of screen (into a gap). No successor (death)
 		//System.out.print("("+newX+", "+newY+")");
@@ -187,6 +188,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		// bumping his head on a ceiling above him first.
 		if(newJumpVelocity > 0) { // Jumping up
 			if(passable(newX,newY-1)||(inBounds(newX,newY-1)&&tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_MOVING_PLATFORM)) {
+				jumping=true;
 				newY--; // Jump up
 				newJumpVelocity--; // decelerate
 			} else {
@@ -196,6 +198,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		
 		// Potentially deal with JUMP action
 		if(newJumpVelocity == 0) { // Not mid-Jump
+			jumping = false;
 			//int beneath = tileAtPosition(newX,newY+1);
 			if(passable(newX,newY+1)&& tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER) { // Falling
 				newY++; // Fall down
@@ -203,6 +206,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				newFallHorizontalModInt=newFallHorizontalModInt%2;
 				falling = true;
 			} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)&& tileAtPosition(newX, newY)!=MEGA_MAN_TILE_LADDER) { // Start jump
+				jumping = true;
 				newJumpVelocity = Parameters.parameters.integerParameter("megaManAStarJumpHeight"); // Accelerate up
 			}
 		} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)) {
@@ -211,7 +215,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 
 		// Right movement
 		if(a.getMove().equals(MegaManAction.MOVE.RIGHT)) {
-			if((falling&&passable(newX+1,newY)&&newFallHorizontalModInt%2==0)||(!falling&&passable(newX+1,newY))) newX++;
+			if(!jumping&&((falling&&passable(newX+1,newY)&&passable(newX+1, newY-1)&&newFallHorizontalModInt%2==0)||(!falling&&passable(newX+1,newY)))||(jumping&&passable(newX+1, newY)&&passable(newX+1, newY-1))) newX++;
 			else if(currentY == newY) { // vertical position did not change
 				// This action does not change the state. Neither jumping up nor falling down, and could not move right, so there is no NEW state to go to
 				return null;
@@ -220,7 +224,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 
 		// Left movement
 		if(a.getMove().equals(MegaManAction.MOVE.LEFT)) {
-			if((falling&&passable(newX-1,newY)&&newFallHorizontalModInt%2==0)||(!falling&&passable(newX-1, newY))) {
+			if(!jumping&&(falling&&passable(newX-1,newY)&&passable(newX-1, newY-1)&&newFallHorizontalModInt%2==0)||(!falling&&passable(newX-1, newY))||(jumping&&passable(newX-1, newY)&&passable(newX-1, newY-1))) {
 				newX--;
 			}
 			else if(currentY == newY) { // vertical position did not change
@@ -467,7 +471,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 */
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
-		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+10+".txt"); //converts to JSON
+		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt"); //converts to JSON
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"
 				, "megaManAStarJumpHeight:4" });
 		MegaManVGLCUtil.printLevel(level);
