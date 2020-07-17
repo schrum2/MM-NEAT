@@ -125,606 +125,689 @@ public class MegaManStateTest {
 		assertFalse(itr2.hasNext());
 
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt"); //converts to JSON
-		//MegaManVGLCUtil.printLevel(level);
-		MegaManState start = new MegaManState(level);
-		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
-//		HashSet<MegaManState> mostRecentVisited = null;
-		ArrayList<MegaManAction> actionSequence = null;
+		//Level format, should fail
+//		----------------
+//		----------------
+//		------#---------
+//		------#---------
+//		------#---------
+//		------#---------
+//		------#---------
+//		------########--
+//		-P-----------#--
+//		############-#--
+//		-----------#-#
+//		-----------#Z#--
+//		-----------###--
+//		----------------
+		List<List<Integer>> level3 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestFalling.txt"); 
+		MegaManState start3 = new MegaManState(level3);
+		Search<MegaManAction,MegaManState> search3 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		//HashSet<MegaManState> mostRecentVisited = null;
+		ArrayList<MegaManAction> actionSequence3 = null;
 		try {
 			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
 			//represented by red x's in the visualization 
 			//System.out.println(Parameters.parameters.integerParameter("megaManAStarJumpHeight"));
-			actionSequence = ((AStarSearch<MegaManAction, MegaManState>) search).search(start, true, 10000000);
+			actionSequence3 = ((AStarSearch<MegaManAction, MegaManState>) search3).search(start3, true, 10000000);
 		} catch(Exception e) {
 			System.out.println("failed search");
 			e.printStackTrace();
 		}
-		//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
-			for(MegaManAction a : actionSequence)
+		if(actionSequence3 != null)
+			for(MegaManAction a : actionSequence3) {
 				System.out.println(a.getMove().toString());
+			}
+		assertTrue(actionSequence3==null);
+		
+		
+		//Level format, should pass
+//		----------------
+//		----------------
+//		------#---------
+//		------#---------
+//		------#---------
+//		------#---------
+//		------#---------
+//		------########--
+//		-P-----------#--
+//		###########--#--
+//		-----------#-#
+//		-----------#Z#--
+//		-----------###--
+//		----------------
+		
+		
+		List<List<Integer>> level4 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestFallingTrue.txt"); 
+		MegaManVGLCUtil.printLevel(level4);
+		MegaManState start4 = new MegaManState(level4);
+		Search<MegaManAction,MegaManState> search4 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		//HashSet<MegaManState> mostRecentVisited = null;
+		ArrayList<MegaManAction> actionSequence4 = null;
+		try {
+			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+			//represented by red x's in the visualization 
+			//System.out.println(Parameters.parameters.integerParameter("megaManAStarJumpHeight"));
+			actionSequence4 = ((AStarSearch<MegaManAction, MegaManState>) search4).search(start4, true, 10000000);
+		} catch(Exception e) {
+			System.out.println("failed search");
+			e.printStackTrace();
+		}
+//		assertTrue(actionSequence2 != null);
+		if(actionSequence4 != null)
+			for(MegaManAction a : actionSequence4) {
+				System.out.println(a.getMove().toString());
+			}
 		//System.out.println(actionSequence);
-		Iterator<MegaManAction> itr = actionSequence.iterator();
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+		Iterator<MegaManAction> itr3 = actionSequence4.iterator();
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
+		assertFalse(itr3.hasNext());
 		
 		
 		
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-	
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		
-		
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
-
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
-
-		assertFalse(itr.hasNext());
+//		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt"); //converts to JSON
+//		//MegaManVGLCUtil.printLevel(level);
+//		MegaManState start = new MegaManState(level);
+//		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
+////		HashSet<MegaManState> mostRecentVisited = null;
+//		ArrayList<MegaManAction> actionSequence = null;
+//		try {
+//			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+//			//represented by red x's in the visualization 
+//			//System.out.println(Parameters.parameters.integerParameter("megaManAStarJumpHeight"));
+//			actionSequence = ((AStarSearch<MegaManAction, MegaManState>) search).search(start, true, 10000000);
+//		} catch(Exception e) {
+//			System.out.println("failed search");
+//			e.printStackTrace();
+//		}
+//		//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
+//			for(MegaManAction a : actionSequence)
+//				System.out.println(a.getMove().toString());
+//		//System.out.println(actionSequence);
+//		Iterator<MegaManAction> itr = actionSequence.iterator();
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		
+//		
+//		
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//	
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.UP), itr.next());
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr.next());
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		
+//		
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		
+//
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr.next());
+//
+//
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//		
+//
+//
+//		assertFalse(itr.hasNext());
 	
 	}
 

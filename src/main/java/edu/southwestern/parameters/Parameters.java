@@ -783,7 +783,7 @@ public class Parameters {
 		booleanOptions.add("megaManAllowsPlatformGun", true, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManUsesUniqueEnemies", false, "whether or not we're using unique enemies");
 		booleanOptions.add("megaManAllowsLeftSegments", false, "whether or not we're allowing left placement");
-		booleanOptions.add("megaManAllowsBlockBreaker", true, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManAllowsBlockBreaker", false, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManDistinctScreenFitness", false, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManMaximizeEnemies", false, "whether or not we're maximizing enemies");
 		booleanOptions.add("showInteractiveLodeRunnerSolutionPaths", false, "Shows the solution path for the levels in the level breeder when true");

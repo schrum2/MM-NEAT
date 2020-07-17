@@ -177,12 +177,13 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		int newFallHorizontalModInt = fallHorizontalModInt;
 		boolean falling = false;
 		boolean jumping = false;
+		boolean sliding = false;
 		assert inBounds(newX,newY): "x is:" + newX + "\ty is:"+newY + "\t" + inBounds(newX,newY);
 		// Falling off bottom of screen (into a gap). No successor (death)
 		//System.out.print("("+newX+", "+newY+")");
 
 		if(!inBounds(currentX,currentY+1)) return null;
-		
+		if(inBounds(newX, newY-1)&&inBounds(newX, newY+1)&&(!passable(newX-1, newY+1)||!passable(newX+1, newY+1))&&!passable(newX, newY-1)) sliding=true;
 		// Affects of jumping based on previous velocity setting happen before JUMP action processed.
 		// Executing in this order is important to allow MegaMan to jump directly to a diagonal without
 		// bumping his head on a ceiling above him first.
@@ -200,7 +201,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		if(newJumpVelocity == 0) { // Not mid-Jump
 			jumping = false;
 			//int beneath = tileAtPosition(newX,newY+1);
-			if(passable(newX,newY+1)&& tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER) { // Falling
+			if(((!sliding&&passable(newX,newY+1))||(sliding&&passable(newX,newY+1)&&(passable(newX-1,newY+1)||passable(newX+1,newY+1))))&&tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER) { // Falling
 				newY++; // Fall down
 				newFallHorizontalModInt++;
 				newFallHorizontalModInt=newFallHorizontalModInt%2;
@@ -240,7 +241,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		}
 		//down movement(on ladder)
 		if(a.getMove().equals(MegaManAction.MOVE.DOWN)) {
-			if(inBounds(newX, newY+1) && tileAtPosition(newX,newY+1) != MEGA_MAN_TILE_GROUND&&tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_LADDER) 
+			if(inBounds(newX, newY+1) && tileAtPosition(newX,newY+1) != MEGA_MAN_TILE_GROUND&&tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_LADDER&&passable(newX, newY-1)) 
 					newY++;
 			else return null;
 		}

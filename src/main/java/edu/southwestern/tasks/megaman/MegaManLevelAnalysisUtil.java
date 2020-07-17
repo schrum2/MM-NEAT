@@ -44,13 +44,14 @@ public class MegaManLevelAnalysisUtil {
 		double totalAirTiles = 0.0;
 		for(int y=0;y<level.size();y++) {
 			for(int x=0;x<level.get(0).size();x++) {
-				if(level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_AIR||
+				if(level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_AIR||
 						level.get(y).get(x)>MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD||
-						level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_WATER||
-						level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_BREAKABLE||
-						level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_PLAYER||
+						level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_WATER||
+						level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_BREAKABLE||
+						level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_PLAYER||
 //						level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_ORB||
-						level.get(y).get(x)==MegaManVGLCUtil.UNIQUE_LADDER) {
+						level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_LADDER||
+						level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_MOVING_PLATFORM) {
 					totalAirTiles++;
 				}
 			}

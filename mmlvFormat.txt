@@ -1,0 +1,132 @@
+0a = user ID															
+1a = level name															
+4a = user name															
+4b = user icon															
+1b = sliding															
+1c = charge shot (enable/disable)															
+1ba = double damage															
+1ca = proto strike															
+1bb = double jump															
+1d = charge shot type (valid values: 4,5,6)															
+1e = default background color															
+1f = boss portrait?															
+1ga = boss weakness 1 enabled?															
+1g = boss weakness 1 item															
+1ha = boss weakness 2 enabled?															
+1h = boss weakness 2 item															
+1i = boss immunity enable/disable?															
+1j = boss immunity item															
+1k(number) = weapon slots. 11 is final slot.															
+1l = level music (music)															
+1m = level music (game number; 0-5)															
+1n = boss music															
+1o = boss music type (0=normal, 1=wily)															
+1p = must be zero															
+1q = relates to number of blocks to load (vertical)															
+1r = must be zero															
+1s = Relates to number of blocks to load (horizontal)															
+															
+															
+															
+a(x,y) = enabled (1)/disabled (0)															
+b(x,y) = facing direction? (-1 = face left)															
+d(x,y) = item main type															
+e(x,y) = item sub-type															
+f(x,y) = color variant															
+g(x,y) = degrees (unit circle) for enemies that can go up/down/left/right like Octopus Battery															
+h(x,y) = item timer															
+i(x,y) = block type (1=normal 2=spike 3=ladder)															
+j(x,y) = horizontal texture															
+k(x,y) = vertical texture															
+l(x,y) = spike direction															
+m(x,y) = DirectionTO (x) - for endpoint for teleporters and moving platform enemies															
+n(x,y) = DirectionTO(y) - for endpoint for teleporters and moving platform enemies															
+o(x,y) = (somehow related to option) - 9999 = agent/entity (MegaMan, enemies, etc)															
+															
+2a(x,y) = is square enabled?															
+2b(x,y) = horizontal screen transition type															
+2c(x,y) = vertical screen transition type															
+2d(x,y) = background															
+															
+	Block Example:														
+		k0,0="71.000000"													
+		j0,0="71.000000"													
+		i0,0="1.000000"													
+		e0,0="3.000000"													
+		a0,0="1.000000"													
+															
+	Blocks: MegaMan 1														
+Letter Codes	Cut Block	Guts Tile	Ice Tile	Bomb Tile	Fire Tile	Elec Tile	Elec Tile 2	Time Tile	Time Tile (Alt)	Oil Tile	Willly 1 Tile	Willy 1 Tile 2	Willy 2 Tile	Willy 3 Tile	Willy 4 Tile
+k		71		71		71		71		71		71		71		106		71		71		71		71		71		71		71
+j		141		141		141		141		141		141		141		71		141		141		141		141		141		141		141
+i		1		1		1		1		1		1		1		1		1		1		1		1		1		1		1
+e		3		4		21		23		22		5		477		129		478		130		198		131		167		168		169
+a		1		1		1		1		1		1		1		1		1		1		1		1		1		1		1
+															
+															
+															
+		Player Example:													
+		1t="0.000000"													
+		o3088,2992="9999.000000"													
+		d3088,2992="4.000000"													
+		a3088,2992="1.000000"													
+															
+	Player														
+	Mega Man	Proto Man	Bass												
+1t	0		1		2												
+o	9999		9999		9999												
+e	0		1		2												
+d	4		4		4												
+a	1		1		1												
+															
+															
+															
+		Enemy Example:													
+		ox,y="9999.000000"													
+		ex,y="0.000000"													
+		dx,y="5.000000"													
+		bx,y="-1.000000"													
+		ax,y="1.000000"													
+															
+	Enemies	d = 5 == enemy	e = enemy code												
+	Met	Octopus Battery	Beak	Picketman	Screw Bomber	Big Eye	Spine	Crazy Razy	Watcher	Killer Bullet	Killer Bullet Spawner	Tackle Fire	Flying Shell	Flying Shell Spawner	Footholder
+o	9999	9999	9999	9999	9999		9999		9999		9999		9999	9999		9999			9999		9999		9999			9999
+e	0	1	2	3	4		5		48		49		52	56		57			0		59		60			45
+d	5	5	5	5	5		5		5		5		5	5		5			5		5		5			5
+b	-1	-1	-1	-1	-1		-1		-1		-1		-1	-1		-1			-1		-1		-1			-1
+a	1	1	1	1	1		1		1		1		1	1		1			1		1		1			1
+g *Octopus Battery Only		270 up/down, 0 otherwise													
+h *Tackle Fire Only												3			
+m *Footholder Only															to X
+n *Footholder Only															to Y
+															
+															
+	Breakable Block Example														
+	o0,0="9999"														
+	e0,0="9"														
+	d0,0="6"														
+	a0,0="1"														
+															
+															
+															
+	Breakable Blocks	 d = 6 ==> breakable		 e = item code											
+	1x1 breakable	2x2 breakable													
+o	9999		9999													
+e	9		45													
+d	6		6													
+a	1		1													
+															
+															
+	Boss Example														
+	o0,0="9999.000000"														
+	e0,0="5.000000"														
+	d0,0="8.000000"														
+	b0,0="-1.000000"														
+	a0,0="1.000000"														
+															
+	Bosses	d = 8 ==> Boss 	e = type of boss												
+	Level Orb	Cut Man	Ice Man	Bomb Man	Time Man										
+o	9999		9999	9999	9999		9999										
+e	15		5	17	13		18										
+d	8		8	8	8		8										
+a	1		1	1	1		1										
