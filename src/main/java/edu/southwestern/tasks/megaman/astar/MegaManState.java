@@ -201,7 +201,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		if(newJumpVelocity == 0) { // Not mid-Jump
 			jumping = false;
 			//int beneath = tileAtPosition(newX,newY+1);
-			if(((!sliding&&passable(newX,newY+1))||(sliding&&passable(newX,newY+1)&&(passable(newX-1,newY+1)||passable(newX+1,newY+1))))&&tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER) { // Falling
+			if(((!sliding&&passable(newX,newY+1))||(sliding&&passable(newX,newY+1)&&(passable(newX-1,newY+1)&&tileAtPosition(newX-1, newY+1)!=MEGA_MAN_TILE_LADDER||passable(newX+1,newY+1)&&tileAtPosition(newX+1, newY+1)!=MEGA_MAN_TILE_LADDER)))&&tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER) { // Falling
 				newY++; // Fall down
 				newFallHorizontalModInt++;
 				newFallHorizontalModInt=newFallHorizontalModInt%2;
