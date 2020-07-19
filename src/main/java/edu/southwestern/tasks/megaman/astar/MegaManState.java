@@ -216,7 +216,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 
 		// Right movement
 		if(a.getMove().equals(MegaManAction.MOVE.RIGHT)) {
-			if(!jumping&&((falling&&passable(newX+1,newY)&&passable(newX+1, newY-1)&&newFallHorizontalModInt%2==0)||(!falling&&passable(newX+1,newY)))||(jumping&&passable(newX+1, newY)&&passable(newX+1, newY-1))) newX++;
+			if(!jumping&&((falling&&passable(newX+1,newY)&&passable(newX+1, newY-1)&&newFallHorizontalModInt%3==0)||(!falling&&passable(newX+1,newY)))||(jumping&&passable(newX+1, newY)&&passable(newX+1, newY-1))) newX++;
 			else if(currentY == newY) { // vertical position did not change
 				// This action does not change the state. Neither jumping up nor falling down, and could not move right, so there is no NEW state to go to
 				return null;
@@ -225,7 +225,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 
 		// Left movement
 		if(a.getMove().equals(MegaManAction.MOVE.LEFT)) {
-			if(!jumping&&(falling&&passable(newX-1,newY)&&passable(newX-1, newY-1)&&newFallHorizontalModInt%2==0)||(!falling&&passable(newX-1, newY))||(jumping&&passable(newX-1, newY)&&passable(newX-1, newY-1))) {
+			if(!jumping&&(falling&&passable(newX-1,newY)&&passable(newX-1, newY-1)&&newFallHorizontalModInt%3==0)||(!falling&&passable(newX-1, newY))||(jumping&&passable(newX-1, newY)&&passable(newX-1, newY-1))) {
 				newX--;
 			}
 			else if(currentY == newY) { // vertical position did not change
