@@ -20,11 +20,13 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 
 	private MegaManGANGenerator megaManGenerator;
+	private MegaManTrackSegmentType segmentCount;
 
 	public MegaManGANLevelTask(){
 		super();
 		
-		
+		segmentCount = new MegaManTrackSegmentType();
+
 		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) {
 			megaManGenerator = new MegaManSevenGANGenerator();
 		}
@@ -33,13 +35,17 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 		}
 	}
 	
+	public void finalCleanup() {
+		megaManGenerator.finalCleanup();
+	}
+	
 	/**
 	 * Extract real-valued latent vector from genotype and then send to GAN to get a MegaMan level
 	 */
 	@Override
 	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<List<Double>> individual) {
 		List<Double> latentVector = individual.getPhenotype();
-		return getMegaManLevelListRepresentationFromStaticGenotype(megaManGenerator, latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"));
+		return getMegaManLevelListRepresentationFromStaticGenotype(megaManGenerator, latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
 	}
 	/**
 	 * static version of method above
@@ -50,9 +56,9 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	 * @return
 	 */
 	private List<List<Integer>> getMegaManLevelListRepresentationFromStaticGenotype(
-			MegaManGANGenerator megaManGenerator, List<Double> latentVector, int chunks) {
+			MegaManGANGenerator megaManGenerator, List<Double> latentVector, int chunks, MegaManTrackSegmentType segmentCount) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
-		List<List<Integer>> level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, chunks);
+		List<List<Integer>> level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, chunks, segmentCount);
 		return level;
 	}
 
@@ -61,12 +67,12 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Uses original GECCO 2018 Mario GAN
-		MMNEAT.main("runNumber:0 randomSeed:0 base:megaManGAN log:MegaManGAN-Test saveTo:Test trials:1 GANInputSize:5 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask megaManGANLevelChunks:10 megaManAllowsSimpleAStarPath:true megaManAllowsConnectivity:true useMultipleGANsMegaMan:true saveAllChampions:false megaManAllowsLeftSegments:false megaManMaximizeEnemies:true cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false watch:false".split(" "));
+		MMNEAT.main("runNumber:0 randomSeed:0 base:megaManGAN log:MegaManGAN-Test saveTo:Test trials:1 GANInputSize:5 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask megaManGANLevelChunks:10 megaManAllowsSimpleAStarPath:true megaManAllowsConnectivity:true useMultipleGANsMegaMan:false saveAllChampions:false megaManAllowsLeftSegments:false megaManMaximizeEnemies:true cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false watch:true".split(" "));
 	}
 
 	@Override
-	public HashMap<String, Integer> findMiscSegments(List<List<Integer>> level) {
+	public HashMap<String, Integer> findMiscSegments() {
 		// TODO Auto-generated method stub
-		return MegaManGANUtil.findMiscSegments(level);
+		return segmentCount.findMiscSegments();
 	}
 }

@@ -614,7 +614,10 @@ public class MegaManVGLCUtil {
 	public static void printLevel(List<List<Integer>> level) {
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
-				System.out.printf("%3d",m);
+				if(m!=9) {
+					System.out.print(/*f("%3d",*/m);
+
+				}
 
 			}
 			System.out.println();
@@ -828,18 +831,11 @@ public class MegaManVGLCUtil {
 					p.println("d"+xcoord+","+ycoord+"=\"6.000000\"");
 					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 
-				}else if(m==4&&!o.contains(new Point(x,y))) { //breakable
-					//add surrounding points to the hashset so that you don't add multiple breakables in one spot!!
-					o.add(new Point(x, y));
-					o.add(new Point(x+1, y));
-					o.add(new Point(x, y+1));
-					o.add(new Point(x+1, y+1));
-					int newx = xcoord+16;
-					int newy = ycoord+16;
-					p.println("o"+newx+","+newy+"=\"9999.000000\"");
-					p.println("e"+newx+","+newy+"=\"45.000000\"");
-					p.println("d"+newx+","+newy+"=\"6.000000\"");
-					p.println("a"+newx+","+newy+"=\"1.000000\"");
+				}else if(m==4) { //breakable				
+					p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+					p.println("e"+xcoord+","+ycoord+"=\"9.000000\"");
+					p.println("d"+xcoord+","+ycoord+"=\"6.000000\"");
+					p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 
 				}else if (m==10) { //water
 					p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");

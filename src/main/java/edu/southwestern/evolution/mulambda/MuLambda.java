@@ -432,6 +432,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 				modeLog.close();
 			}
 		}
+		task.finalCleanup();
 	}
 
 	/**

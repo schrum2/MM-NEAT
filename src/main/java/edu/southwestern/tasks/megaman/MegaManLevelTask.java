@@ -47,7 +47,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  */
 public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	private int numFitnessFunctions = 0; 
-	private static final int NUM_OTHER_SCORES = 10;
+	private static final int NUM_OTHER_SCORES = 12;
 
 
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
@@ -87,7 +87,8 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			MMNEAT.registerFitnessFunction("numFlyingEnemies", false);
 			MMNEAT.registerFitnessFunction("numGroundEnemies",false);
 			MMNEAT.registerFitnessFunction("numWallEnemies", false);
-			MMNEAT.registerFitnessFunction("numHorizontalSegments",false);
+			MMNEAT.registerFitnessFunction("numRightSegments",false);
+			MMNEAT.registerFitnessFunction("numLeftSegments",false);
 			MMNEAT.registerFitnessFunction("numUpSegments", false);
 			MMNEAT.registerFitnessFunction("numDownSegments",false);
 			MMNEAT.registerFitnessFunction("numCornerSegments", false);
@@ -143,9 +144,9 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		double numWallEnemies = miscEnemyInfo.get("numWallEnemies");
 		double numGroundEnemies = miscEnemyInfo.get("numGroundEnemies");
 		double numFlyingEnemies = miscEnemyInfo.get("numFlyingEnemies");
-		
-		HashMap<String,Integer> miscChunkInfo = findMiscSegments(level);
-		double numHorizontalSegments = miscChunkInfo.get("numHorizontal");
+		HashMap<String,Integer> miscChunkInfo = findMiscSegments();
+		double numRightSegments = miscChunkInfo.get("numRight");
+		double numLeftSegments = miscChunkInfo.get("numLeft");
 		double numUpSegments = miscChunkInfo.get("numUp");
 		double numDownSegments = miscChunkInfo.get("numDown");
 		double numCornerSegments = miscChunkInfo.get("numCorner");
@@ -163,7 +164,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			fitnesses.add(numEnemies);
 		}
 		
-		double[] otherScores = new double[] {simpleAStarDistance,precentConnected, numEnemies, numWallEnemies, numGroundEnemies, numFlyingEnemies, numHorizontalSegments, numUpSegments, numDownSegments, numCornerSegments, numDistinctSegments};
+		double[] otherScores = new double[] {simpleAStarDistance,precentConnected, numEnemies, numWallEnemies, numGroundEnemies, numFlyingEnemies, numRightSegments, numLeftSegments, numUpSegments, numDownSegments, numCornerSegments, numDistinctSegments};
 		
 		
 		
@@ -175,7 +176,8 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			System.out.println("Number of Wall Enemies " + numWallEnemies);
 			System.out.println("Number of Ground Enemies " + numGroundEnemies);
 			System.out.println("Number of Flying Enemies " + numFlyingEnemies);
-			System.out.println("Number of Horizontal Segments " + numHorizontalSegments);
+			System.out.println("Number of Right Segments " + numRightSegments);
+			System.out.println("Number of Left Segments " + numLeftSegments);
 			System.out.println("Number of Up Segments " + numUpSegments);
 			System.out.println("Number of Down Segments " + numDownSegments);
 			System.out.println("Number of Corner Segments " + numCornerSegments);
@@ -359,7 +361,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	 * @param level - the level
 	 * @return HashMap<String,Integer> representing information about segments
 	 */
-	public abstract HashMap<String, Integer> findMiscSegments(List<List<Integer>> level);
+	public abstract HashMap<String, Integer> findMiscSegments();
 
 
 }

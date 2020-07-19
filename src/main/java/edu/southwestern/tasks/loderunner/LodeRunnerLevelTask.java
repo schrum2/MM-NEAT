@@ -318,7 +318,10 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			double SCALE_GROUND_LADDERS = BINS_PER_DIMENSION/4.0; //scales by 1/4 of the dimension to go in steps of 4
 			//gets correct indices for all dimensions based on percent and multiplied by 10 to be a non decimal 
 			int connectedIndex = Math.min((int)(percentConnected*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); 
-			int groundIndex = Math.min((int)(percentGround*SCALE_GROUND_LADDERS*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
+			
+			// ground scaling is frustrating. percentGroundseems to land between 0.1 and 0.43. So, subtract 0.1 to get to
+			// 0.0 to 0.33, then multiply by 3 to get 0.0 to 0.99
+			int groundIndex = Math.max(0, Math.min((int)((percentGround-0.1)*3*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1));
 			int laddersIndex = Math.min((int)(percentLadders*SCALE_GROUND_LADDERS*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
 			double binScore = simpleAStarDistance;
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsAStarConnectivityCombo")) {
@@ -345,15 +348,12 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				//becomes the behavior vector 
 				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentGroundNumGoldAndEnemiesBinLabels) {
-				// Used this calculation instead of groundIndex, since there is some unusual scaling there I do not understand
-				int groundPercentageIndex = Math.min((int)(percentGround*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
-				
 				double treasureScale = 5.0; //scales bins to be in groups of 5, [0-5][5-10]...
 				double enemyScale = 2.0; //scales bins to be in groups of 2, [0-2][2-4]...
 				//gets correct indices for treasure and enemies
 				int treasureIndex = (int) Math.min(numTreasure/treasureScale, BINS_PER_DIMENSION-1);
 				int enemyIndex = (int) Math.min(numEnemies/enemyScale, BINS_PER_DIMENSION-1);
-				dim1 = groundPercentageIndex; //ground percentage
+				dim1 = groundIndex; //ground percentage
 				dim2 = treasureIndex;//number of treasures scaled 
 				dim3 = enemyIndex; //number of enemies scaled
 				//becomes the behavior vector 

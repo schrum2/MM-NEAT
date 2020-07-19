@@ -12,6 +12,7 @@ import java.util.List;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
+import edu.southwestern.tasks.megaman.MegaManTrackSegmentType;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
@@ -27,7 +28,9 @@ public class MegaManGANUtil {
 	public static final int MEGA_MAN_LEVEL_HEIGHT = 14;
 	public static int numUp;
 	public static int numDown;
-	public static int numHorizontal;
+	public static int numRight;
+	public static int numLeft;
+
 	public static int numCorner;
 	public static int numDistinctSegments;
 
@@ -490,7 +493,8 @@ public class MegaManGANUtil {
 		HashMap<String, Integer> j = new HashMap<>();
 		j.put("numUp", numUp);
 		j.put("numDown", numDown);
-		j.put("numHorizontal", numHorizontal);
+		j.put("numRight", numRight);
+		j.put("numLeft", numLeft);
 		j.put("numCorner", numCorner);
 		j.put("numDistinctSegments", numDistinctSegments);
 		return j;
@@ -603,41 +607,37 @@ public class MegaManGANUtil {
 	
 //	public static Direction d;
 	
-	public static List<List<Integer>> longVectorToMegaManLevel(MegaManGANGenerator megaManGANGenerator, double[] wholeVector, int chunks){
+	public static List<List<Integer>> longVectorToMegaManLevel(MegaManGANGenerator megaManGANGenerator, double[] wholeVector, int chunks, MegaManTrackSegmentType segmentCount){
+		
 		HashSet<Point> previousPoints = new HashSet<>();
 		Point currentPoint  = new Point(0,0);
 		Point previousPoint = null;
 		Point placementPoint = currentPoint;
 		List<List<Integer>> level = new ArrayList<>();
 		List<List<Integer>> segment = new ArrayList<>();
+		HashSet<List<List<Integer>>> distinct = new HashSet<>();
 		for(int i = 0;i<chunks;i++) {
-			//System.out.println("previousPoints.size():"+previousPoints.size());
 			double[] oneSegmentData = latentVectorAndMiscDataForPosition(i, Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables(), wholeVector);
 			Pair<List<List<Integer>>, Point> segmentAndPoint = megaManGANGenerator.generateSegmentFromVariables(oneSegmentData, previousPoint, previousPoints, currentPoint);
 			if(segmentAndPoint==null) {
 				break; //NEEDS TO BE FIXED!! ORB WILL NOT BE PLACED
 			}
 			segment = segmentAndPoint.t1;
+			segmentCount.findSegmentData(megaManGANGenerator.getSegmentType(), segment, distinct);
+
 			previousPoint = currentPoint; // backup previous
 			currentPoint = segmentAndPoint.t2;
 			if(i==chunks-1) placeOrb(segment);
 			
-			//placementPoint = currentPoint;
-			//System.out.println("previousPoint:"+previousPoint+",current:"+currentPoint+",placementPoint:"+placementPoint);
 			placementPoint = placeMegaManSegment(level, segment,  currentPoint, previousPoint, placementPoint);
-			//System.out.println(placementPoint);
-			//MegaManVGLCUtil.printLevel(level);
-//			MiscUtil.waitForReadStringAndEnterKeyPress();
-			
-			
-//			if(i==0) placeSpawn(level);
+
 		}
 		
 		postProcessingPlaceProperEnemies(level);
 		return level;
 		
 	}
-	
+
 	public static Point placeMegaManSegment(List<List<Integer>> level,List<List<Integer>> segment, Point current, Point prev, Point placementPoint) {
 		if(level.isEmpty()) { // First segment
 			//System.out.println("FIRST");
