@@ -464,14 +464,19 @@ public class MegaManGANUtil {
 					//System.out.println(x+", "+y);
 				if(y-1>=0&&level.get(y).get(x)==2&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
 					level.get(y-1).set(x, 7);
+					level.get(y-2).set(x,  MegaManVGLCUtil.ONE_ENEMY_AIR);
 					placed=true;
 					break;
 					
 				}else if(y-1>=0&&level.get(y).get(x)==1&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
+					level.get(y-2).set(x,  MegaManVGLCUtil.ONE_ENEMY_AIR);
+
 					level.get(y-1).set(x, 7);
 					placed=true;
 					break;
 				}else if(y-1>=0&&level.get(y).get(x)==5&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
+					level.get(y-2).set(x,  MegaManVGLCUtil.ONE_ENEMY_AIR);
+
 					level.get(y-1).set(x, 7);
 					placed=true;
 					break;
