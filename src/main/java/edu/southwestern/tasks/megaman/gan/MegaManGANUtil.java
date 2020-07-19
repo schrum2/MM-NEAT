@@ -462,7 +462,7 @@ public class MegaManGANUtil {
 			for(int x = level.get(0).size()-1;x>=0; x--) {
 				for(int y = level.size()-1; y>=0;y--) {
 					//System.out.println(x+", "+y);
-				if(y-1>=0&&(level.get(y).get(x)==2||level.get(y).get(x)==1||level.get(y).get(x)==5)&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
+				if(y-2>=0&&(level.get(y).get(x)==2||level.get(y).get(x)==1||level.get(y).get(x)==5)&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
 					level.get(y-1).set(x, 7);
 					level.get(y-2).set(x,  MegaManVGLCUtil.ONE_ENEMY_AIR);
 					placed=true;
