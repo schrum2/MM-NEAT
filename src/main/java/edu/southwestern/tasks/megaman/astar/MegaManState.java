@@ -44,6 +44,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public static final int MEGA_MAN_TILE_SPAWN = 8;
 	public static final int MEGA_MAN_TILE_WATER = 10;
 	public static final int FOOTHOLDER_ENEMY = 27;
+	public static final int FALL_STEPS_PER_SIDEWAYS_MOVE = 3;
 
 	
 	private List<List<Integer>> level;
@@ -194,6 +195,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				newJumpVelocity--; // decelerate
 			} else {
 				newJumpVelocity = 0; // Can't jump if blocked above
+				
 			}
 		}
 		
@@ -216,7 +218,10 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 
 		// Right movement
 		if(a.getMove().equals(MegaManAction.MOVE.RIGHT)) {
-			if(!jumping&&((falling&&passable(newX+1,newY)&&passable(newX+1, newY-1)&&newFallHorizontalModInt%3==0)||(!falling&&passable(newX+1,newY)))||(jumping&&passable(newX+1, newY)&&passable(newX+1, newY-1))) newX++;
+			if((!jumping&& //If you're not jumping, then you're either falling or on solid ground
+					((falling&&passable(newX+1,newY)&&passable(newX+1, newY-1)&&newFallHorizontalModInt%FALL_STEPS_PER_SIDEWAYS_MOVE==0)|| //If you're falling, then make sure that there is headspace for MegaMan and make falling happen faster
+					(!falling&&passable(newX+1,newY)&&!passable(newX, newY+1))))|| //otherwise, you're on the ground, so you can slide
+					(jumping&&passable(newX+1, newY)&&passable(newX+1, newY-1))) newX++; //If you're jumping, then make sure that there is headspace for MegaMan
 			else if(currentY == newY) { // vertical position did not change
 				// This action does not change the state. Neither jumping up nor falling down, and could not move right, so there is no NEW state to go to
 				return null;
@@ -225,7 +230,10 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 
 		// Left movement
 		if(a.getMove().equals(MegaManAction.MOVE.LEFT)) {
-			if(!jumping&&(falling&&passable(newX-1,newY)&&passable(newX-1, newY-1)&&newFallHorizontalModInt%3==0)||(!falling&&passable(newX-1, newY))||(jumping&&passable(newX-1, newY)&&passable(newX-1, newY-1))) {
+			if((!jumping&& //If you're not jumping, then you're either falling or on solid ground
+					(falling&&passable(newX-1,newY)&&passable(newX-1, newY-1)&&newFallHorizontalModInt%FALL_STEPS_PER_SIDEWAYS_MOVE==0)|| //If you're falling, then make sure that there is head space for MegaMan and make falling happen faster
+					(!falling&&passable(newX-1, newY)&&!passable(newX, newY+1)))|| //otherwise, you're on the ground, so you can slide
+					(jumping&&passable(newX-1, newY)&&passable(newX-1, newY-1))) {  //If you're jumping, then make sure that there is head space for MegaMan
 				newX--;
 			}
 			else if(currentY == newY) { // vertical position did not change
@@ -261,7 +269,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 //		int beneath;
 //		if(inBounds(x,y+1)) beneath = tileAtPosition(x,y+1);
 //		else beneath = tile;
-		if((	tile==MEGA_MAN_TILE_EMPTY ||tile==MEGA_MAN_TILE_LADDER||tile==MEGA_MAN_TILE_ORB||tile==MEGA_MAN_TILE_BREAKABLE||tile==MEGA_MAN_TILE_WATER||tile>10&&tile!=FOOTHOLDER_ENEMY)) {
+		if((	tile==MEGA_MAN_TILE_EMPTY ||tile==MEGA_MAN_TILE_LADDER||tile==MEGA_MAN_TILE_ORB||tile==MEGA_MAN_TILE_BREAKABLE||tile==MEGA_MAN_TILE_WATER)) {
 			return true;
 		}
 		return false; 
@@ -274,7 +282,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 */
 	private boolean inBounds(int x, int y) {
 		// TODO Auto-generated method stub
-		return x>=0&&y>=0&&y<level.size()&&x<level.get(y).size()&&level.get(y).get(x)!=9&&noHazardBeneath(x, y);
+		return x>=0&&y>=0&&y<level.size()&&x<level.get(y).size()&&level.get(y).get(x)!=MegaManVGLCUtil.ONE_ENEMY_NULL&&noHazardBeneath(x, y);
 	}
 	/**
 	 * checks to make sure that there are no deadly hazards beneath
@@ -286,7 +294,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	private boolean noHazardBeneath(int x, int y) {
 		if(!inBounds(x, y+1)) {
 			return true;
-		}else if(tileAtPosition(x,y+1)!=MEGA_MAN_TILE_HAZARD) {
+		}else if(tileAtPosition(x,y+1)!=MEGA_MAN_TILE_HAZARD||tileAtPosition(x,y)>MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD) {
 			return true;
 		}else {
 			return false;
