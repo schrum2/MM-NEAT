@@ -25,6 +25,46 @@ public class MegaManStateTest {
 		
 		
 		
+		
+		/**
+		 * Below is a level that has the following layout:
+		 * 						----------------
+		 * 						----------------
+		 * 						------#---------
+		 * 						------#---------
+		 * 						------#---------
+		 * 						------#---------
+		 * 						-----##---------
+		 * 						----------------
+		 * 						-P----#---------
+		 * 						############--Z-
+		 * 						-----------#####
+		 * 						----------------
+		 * 						----------------
+		 * 						----------------
+		 * 
+		 * Make sure MegaMan can not slide here
+		 */
+		List<List<Integer>> level0 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestHitsHead.txt"); 
+		MegaManState start0 = new MegaManState(level0);
+		Search<MegaManAction,MegaManState> search0 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		//HashSet<MegaManState> mostRecentVisited = null;
+		ArrayList<MegaManAction> actionSequence0 = null;
+		try {
+			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+			//represented by red x's in the visualization 
+			//System.out.println(Parameters.parameters.integerParameter("megaManAStarJumpHeight"));
+			actionSequence0 = ((AStarSearch<MegaManAction, MegaManState>) search0).search(start0, true, 10000000);
+		} catch(Exception e) {
+			System.out.println("failed search");
+			e.printStackTrace();
+		}
+		if(actionSequence0 != null)
+			for(MegaManAction a : actionSequence0) {
+				System.out.println(a.getMove().toString());
+			}
+		assertTrue(actionSequence0==null);
+		
 		/**
 		 * Below is a level that has the following layout:
 		 * 						----------------
@@ -213,7 +253,7 @@ public class MegaManStateTest {
 		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
 		assertFalse(itr3.hasNext());
 		
 		
