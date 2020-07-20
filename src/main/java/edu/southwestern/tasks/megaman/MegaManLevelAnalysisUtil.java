@@ -45,7 +45,7 @@ public class MegaManLevelAnalysisUtil {
 		for(int y=0;y<level.size();y++) {
 			for(int x=0;x<level.get(0).size();x++) {
 				if(level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_AIR||
-						level.get(y).get(x)>MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD||
+						//level.get(y).get(x)>MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD||
 						level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_WATER||
 						level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_BREAKABLE||
 						level.get(y).get(x)==MegaManVGLCUtil.ONE_ENEMY_PLAYER||
