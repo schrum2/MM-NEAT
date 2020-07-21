@@ -249,7 +249,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		}
 		//down movement(on ladder)
 		if(a.getMove().equals(MegaManAction.MOVE.DOWN)) {
-			if(inBounds(newX, newY+1) && tileAtPosition(newX,newY+1) != MEGA_MAN_TILE_GROUND&&tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_LADDER&&passable(newX, newY-1)) 
+			if(inBounds(newX, newY+1) && tileAtPosition(newX,newY+1) != MEGA_MAN_TILE_GROUND&&(tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_LADDER||tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_MOVING_PLATFORM)&&passable(newX, newY-1)) 
 					newY++;
 			else return null;
 		}
