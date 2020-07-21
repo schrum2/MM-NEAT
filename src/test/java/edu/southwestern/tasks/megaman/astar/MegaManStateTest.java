@@ -159,7 +159,7 @@ public class MegaManStateTest {
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr2.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr2.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr2.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr2.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr2.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr2.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr2.next());
 		assertFalse(itr2.hasNext());
@@ -253,7 +253,7 @@ public class MegaManStateTest {
 		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
 		assertFalse(itr3.hasNext());
 		
 		
