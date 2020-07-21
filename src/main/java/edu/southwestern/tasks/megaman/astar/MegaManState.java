@@ -215,7 +215,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)) {
 			return null; // Can't jump mid-jump. Reduces search space.
 		}
-		if(tileAtPosition(newX, newY)==MEGA_MAN_TILE_LADDER||tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_MOVING_PLATFORM) {
+		if(tileAtPosition(newX, newY)==MEGA_MAN_TILE_LADDER||(newY+1<level.size()&&tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_MOVING_PLATFORM)) {
 				falling = false;
 				jumping = false;
 				newFallHorizontalModInt = 0;
