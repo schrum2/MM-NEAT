@@ -206,7 +206,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			if(((!sliding&&passable(newX,newY+1))||(sliding&&passable(newX,newY+1)&&(passable(newX-1,newY+1)&&tileAtPosition(newX-1, newY+1)!=MEGA_MAN_TILE_LADDER||passable(newX+1,newY+1)&&tileAtPosition(newX+1, newY+1)!=MEGA_MAN_TILE_LADDER)))&&tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER) { // Falling
 				newY++; // Fall down
 				newFallHorizontalModInt++;
-				newFallHorizontalModInt=newFallHorizontalModInt%2;
+				newFallHorizontalModInt=newFallHorizontalModInt%FALL_STEPS_PER_SIDEWAYS_MOVE;
 				falling = true;
 			} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)&& tileAtPosition(newX, newY)!=MEGA_MAN_TILE_LADDER) { // Start jump
 				jumping = true;
@@ -215,7 +215,12 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)) {
 			return null; // Can't jump mid-jump. Reduces search space.
 		}
-
+		if(tileAtPosition(newX, newY)==MEGA_MAN_TILE_LADDER||tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_MOVING_PLATFORM) {
+				falling = false;
+				jumping = false;
+				newFallHorizontalModInt = 0;
+				newJumpVelocity = 0;
+			}
 		// Right movement
 		if(a.getMove().equals(MegaManAction.MOVE.RIGHT)) {
 			if((!jumping&& //If you're not jumping, then you're either falling or on solid ground
@@ -250,7 +255,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		//down movement(on ladder)
 		if(a.getMove().equals(MegaManAction.MOVE.DOWN)) {
 			if(inBounds(newX, newY+1) && tileAtPosition(newX,newY+1) != MEGA_MAN_TILE_GROUND&&(tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_LADDER||tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_MOVING_PLATFORM)&&passable(newX, newY-1)) 
-					newY++;
+				newY++;
 			else return null;
 		}
 		
