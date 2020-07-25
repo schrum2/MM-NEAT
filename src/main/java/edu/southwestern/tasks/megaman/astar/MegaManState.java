@@ -226,7 +226,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			if((!jumping&& //If you're not jumping, then you're either falling or on solid ground
 					((falling&&passable(newX+1,newY)&&passable(newX+1, newY-1)&&newFallHorizontalModInt%FALL_STEPS_PER_SIDEWAYS_MOVE==0)|| //If you're falling, then make sure that there is headspace for MegaMan and make falling happen faster
 					(!falling&&passable(newX+1,newY)&&!passable(newX, newY+1))))|| //otherwise, you're on the ground, so you can slide
-					(jumping&&passable(newX+1, newY)&&passable(newX+1, newY-1))) newX++; //If you're jumping, then make sure that there is headspace for MegaMan
+					(jumping&&passable(newX+1, newY)&&passable(newX+1, newY-1)&&passable(newX, newY-1))) newX++; //If you're jumping, then make sure that there is headspace for MegaMan
 			else if(currentY == newY) { // vertical position did not change
 				// This action does not change the state. Neither jumping up nor falling down, and could not move right, so there is no NEW state to go to
 				return null;
@@ -238,7 +238,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			if((!jumping&& //If you're not jumping, then you're either falling or on solid ground
 					(falling&&passable(newX-1,newY)&&passable(newX-1, newY-1)&&newFallHorizontalModInt%FALL_STEPS_PER_SIDEWAYS_MOVE==0)|| //If you're falling, then make sure that there is head space for MegaMan and make falling happen faster
 					(!falling&&passable(newX-1, newY)&&!passable(newX, newY+1)))|| //otherwise, you're on the ground, so you can slide
-					(jumping&&passable(newX-1, newY)&&passable(newX-1, newY-1))) {  //If you're jumping, then make sure that there is head space for MegaMan
+					(jumping&&passable(newX-1, newY)&&passable(newX-1, newY-1)&&passable(newX, newY-1))) {  //If you're jumping, then make sure that there is head space for MegaMan
 				newX--;
 			}
 			else if(currentY == newY) { // vertical position did not change
