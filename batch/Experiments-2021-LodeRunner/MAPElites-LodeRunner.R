@@ -68,7 +68,7 @@ result <- ggplot(allData, aes(x=enemyBin, y=treasureBin, fill=SolutionSteps)) +
   geom_tile() +
   facet_wrap(~groundBin, ncol=5, labeller = labeller(groundBin = groundLabels)) +
   #scale_fill_gradient(low="white", high="orange") +
-  scale_fill_viridis(discrete=FALSE, limits = c(250,500), oob = squish) +
+  scale_fill_viridis(discrete=FALSE, limits = c(1,600), oob = squish) +
   xlab("Enemies") +
   ylab("Treasures") +
   labs(fill = "Solution Path Length") +
