@@ -184,3 +184,4 @@ batch/Experiments-2020-CEC-ZeldaGAN/Subject-*
 src/main/python/GAN/MegaManGAN/Thumbs.db
 /megamancppntogan/
 /MegaManGAN/
+src/main/python/GAN/CGANTwoClassTests/FINAL.pth
