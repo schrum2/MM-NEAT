@@ -296,6 +296,30 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence5==null);
+		
+		
+		
+		
+		
+		List<List<Integer>> level6 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestJumpOnEnemies.txt"); 
+		MegaManState start6 = new MegaManState(level6);
+		Search<MegaManAction,MegaManState> search6 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		//HashSet<MegaManState> mostRecentVisited = null;
+		ArrayList<MegaManAction> actionSequence6 = null;
+		try {
+			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+			//represented by red x's in the visualization 
+			//System.out.println(Parameters.parameters.integerParameter("megaManAStarJumpHeight"));
+			actionSequence6 = ((AStarSearch<MegaManAction, MegaManState>) search6).search(start6, true, 10000000);
+		} catch(Exception e) {
+			System.out.println("failed search");
+			e.printStackTrace();
+		}
+		if(actionSequence6 != null)
+			for(MegaManAction a : actionSequence6) {
+				System.out.println(a.getMove().toString());
+			}
+		assertTrue(actionSequence6==null);
 //		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt"); //converts to JSON
 //		//MegaManVGLCUtil.printLevel(level);
 //		MegaManState start = new MegaManState(level);
