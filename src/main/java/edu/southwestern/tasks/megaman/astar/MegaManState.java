@@ -299,7 +299,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	private boolean noHazardBeneath(int x, int y) {
 		if(!inBounds(x, y+1)) {
 			return true;
-		}else if(tileAtPosition(x,y+1)!=MEGA_MAN_TILE_HAZARD&&tileAtPosition(x,y+1)<=MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD) {
+		}else if(tileAtPosition(x,y+1)!=MEGA_MAN_TILE_HAZARD&&tileAtPosition(x,y)<=MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD) {
 			return true;
 		}else {
 			return false;
