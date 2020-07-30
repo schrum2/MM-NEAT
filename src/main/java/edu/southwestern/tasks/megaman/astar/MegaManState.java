@@ -19,7 +19,6 @@ import javax.swing.JPanel;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.megaman.MegaManRenderUtil;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
-import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.search.AStarSearch;
@@ -313,9 +312,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 * @return
 	 */
 	private boolean noHazardBeneath(int x, int y) {
-		if(!inBounds(x, y+1)) {
-			return true;
-		}else if(tileAtPosition(x,y+1)!=MEGA_MAN_TILE_HAZARD&&tileAtPosition(x,y)<=MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD) {
+		if(tileAtPosition(x,y)!=MEGA_MAN_TILE_HAZARD&&tileAtPosition(x,y)<=MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD) {
 			return true;
 		}else {
 			return false;
@@ -502,7 +499,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 */
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
-		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManOddLadderUpBug.txt");
+		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestJumpOnEnemies.txt");
 				//MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt"); //converts to JSON
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"
 				, "megaManAStarJumpHeight:4" });
