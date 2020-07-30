@@ -251,7 +251,7 @@ public class MegaManStateTest {
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
 		assertFalse(itr3.hasNext());
 		
 		
@@ -427,6 +427,67 @@ public class MegaManStateTest {
 		assertFalse(itr8.hasNext());
 		
 		
+		
+		
+		
+		
+//		----------------
+//		----------------
+//		----------------
+//		----------------
+//		----------------
+//		########--------
+//		-----|#---------
+//		-----|#---------
+//		-P----#---------
+//		############--Z-
+//		-----------#####
+//		----------------
+//		----------------
+//		----------------
+		
+		
+		List<List<Integer>> level9 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManOddLadderUpBug.txt"); 
+		MegaManState start9 = new MegaManState(level9);
+		Search<MegaManAction,MegaManState> search9 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		//HashSet<MegaManState> mostRecentVisited = null;
+		ArrayList<MegaManAction> actionSequence9 = null;
+		try {
+			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+			//represented by red x's in the visualization 
+			//System.out.println(Parameters.parameters.integerParameter("megaManAStarJumpHeight"));
+			actionSequence9 = ((AStarSearch<MegaManAction, MegaManState>) search9).search(start9, true, 10000000);
+		} catch(Exception e) {
+			System.out.println("failed search");
+			e.printStackTrace();
+		}
+		if(actionSequence9 != null)
+			for(MegaManAction a : actionSequence9) {
+				System.out.println(a.getMove().toString());
+			}
+		assertTrue(actionSequence9==null);
+		
+		List<List<Integer>> level10 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestNoSlideAndCatchLadder.txt"); 
+		MegaManState start10 = new MegaManState(level10);
+		Search<MegaManAction,MegaManState> search10 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		//HashSet<MegaManState> mostRecentVisited = null;
+		ArrayList<MegaManAction> actionSequence10 = null;
+		try {
+			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+			//represented by red x's in the visualization 
+			//System.out.println(Parameters.parameters.integerParameter("megaManAStarJumpHeight"));
+			actionSequence10 = ((AStarSearch<MegaManAction, MegaManState>) search10).search(start10, true, 10000000);
+		} catch(Exception e) {
+			System.out.println("failed search");
+			e.printStackTrace();
+		}
+		if(actionSequence10 != null)
+			for(MegaManAction a : actionSequence10) {
+				System.out.println(a.getMove().toString());
+			}
+		assertTrue(actionSequence10==null);
+		
+		//MegaManStateTestNoSlideAndCatchLadder.txt
 //		RIGHT
 //		RIGHT
 //		JUMP

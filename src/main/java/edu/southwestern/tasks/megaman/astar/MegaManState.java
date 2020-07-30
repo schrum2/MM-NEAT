@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.megaman.MegaManRenderUtil;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
+import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.search.AStarSearch;
@@ -185,7 +186,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 //		System.out.println(a);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		if(!inBounds(currentX,currentY+1)) return null;
-		if(inBounds(newX, newY-1)&&inBounds(newX, newY+1)&&(!passable(newX-1, newY+1)||!passable(newX+1, newY+1))&&!passable(newX, newY-1)) sliding=true;
+		if(inBounds(newX, newY-1)&&inBounds(newX, newY+1)&&(!passable(newX-1, newY+1)||!passable(newX+1, newY+1))&&(!passable(newX, newY-1)||tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_LADDER)) sliding=true;
 		// Affects of jumping based on previous velocity setting happen before JUMP action processed.
 		// Executing in this order is important to allow MegaMan to jump directly to a diagonal without
 		// bumping his head on a ceiling above him first.
@@ -213,7 +214,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				newFallHorizontalModInt++;
 				newFallHorizontalModInt=newFallHorizontalModInt%FALL_STEPS_PER_SIDEWAYS_MOVE;
 				falling = true;
-			} else if(a.getMove().equals(MegaManAction.MOVE.JUMP)&& tileAtPosition(newX, newY)!=MEGA_MAN_TILE_LADDER) { // Start jump
+			} else if(!sliding&&a.getMove().equals(MegaManAction.MOVE.JUMP)&& tileAtPosition(newX, newY)!=MEGA_MAN_TILE_LADDER) { // Start jump
 //				jumping = true;
 				newJumpVelocity = Parameters.parameters.integerParameter("megaManAStarJumpHeight"); // Accelerate up
 			}
@@ -261,7 +262,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		}
 		//up movement (on ladder)
 		if(a.getMove().equals(MegaManAction.MOVE.UP)) {
-			if(inBounds(newX, newY-1) && tileAtPosition(newX, newY)==MEGA_MAN_TILE_LADDER) 
+			if(!sliding&&inBounds(newX, newY-1)&&(passable(newX, newY-1)||tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_MOVING_PLATFORM) && tileAtPosition(newX, newY)==MEGA_MAN_TILE_LADDER) 
 				newY--;
 			else return null; 
 		}
@@ -501,7 +502,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 */
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
-		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestOddLadderPlacementWhy.txt");
+		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestNoSlideAndCatchLadder.txt");
 				//MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt"); //converts to JSON
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"
 				, "megaManAStarJumpHeight:4" });
@@ -521,6 +522,10 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
 		mostRecentVisited = ((AStarSearch<MegaManAction, MegaManState>) search).getVisited();
 		System.out.println(mostRecentVisited.toString());
+		if(actionSequence != null)
+			for(MegaManAction a : actionSequence) {
+				System.out.println(a.getMove().toString());
+			}
 		System.out.println("actionSequence: " + actionSequence);
 		BufferedImage visualPath = null;
 		//BufferedImage m;
