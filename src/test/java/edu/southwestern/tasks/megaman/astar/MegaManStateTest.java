@@ -467,7 +467,24 @@ public class MegaManStateTest {
 			}
 		assertTrue(actionSequence9==null);
 		
-		List<List<Integer>> level10 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestNoSlideAndCatchLadder.txt"); 
+		
+		
+//		----------------
+//		----------------
+//		----------------
+//		----------------
+//		----------------
+//		#####-##--------
+//		-----|#---------
+//		---##|#---------
+//		-P----#---------
+//		############--Z-
+//		-----------#####
+//		----------------
+//		----------------
+//		----------------
+//		
+		List<List<Integer>> level10 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestNoClimbAndSlide.txt"); 
 		MegaManState start10 = new MegaManState(level10);
 		Search<MegaManAction,MegaManState> search10 = new AStarSearch<>(MegaManState.manhattanToOrb);
 		//HashSet<MegaManState> mostRecentVisited = null;
@@ -486,6 +503,29 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence10==null);
+		
+		
+		
+		
+		List<List<Integer>> level11 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestNoSlideAndCatchLadder.txt"); 
+		MegaManState start11 = new MegaManState(level11);
+		Search<MegaManAction,MegaManState> search11 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		//HashSet<MegaManState> mostRecentVisited = null;
+		ArrayList<MegaManAction> actionSequence11 = null;
+		try {
+			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+			//represented by red x's in the visualization 
+			//System.out.println(Parameters.parameters.integerParameter("megaManAStarJumpHeight"));
+			actionSequence11 = ((AStarSearch<MegaManAction, MegaManState>) search11).search(start11, true, 11000000);
+		} catch(Exception e) {
+			System.out.println("failed search");
+			e.printStackTrace();
+		}
+		if(actionSequence11 != null)
+			for(MegaManAction a : actionSequence11) {
+				System.out.println(a.getMove().toString());
+			}
+		assertTrue(actionSequence11==null);
 		
 		//MegaManStateTestNoSlideAndCatchLadder.txt
 //		RIGHT
