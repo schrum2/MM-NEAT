@@ -185,12 +185,22 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 //		System.out.println(a);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		if(!inBounds(currentX,currentY+1)) return null;
-		if(inBounds(newX, newY-1)&&inBounds(newX, newY+1)&&(!passable(newX-1, newY+1)||!passable(newX+1, newY+1))&&(!passable(newX, newY-1)||tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_LADDER)) sliding=true;
+		if(inBounds(newX, newY-1)&&inBounds(newX, newY+1)&&(!passable(newX-1, newY+1)||!passable(newX+1, newY+1))&&(!passable(newX, newY-1)||tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_LADDER)&&tileAtPosition(newX, newY)!=MEGA_MAN_TILE_LADDER) sliding=true;
 		// Affects of jumping based on previous velocity setting happen before JUMP action processed.
 		// Executing in this order is important to allow MegaMan to jump directly to a diagonal without
 		// bumping his head on a ceiling above him first.
+		
+		if(tileAtPosition(newX, newY)==MEGA_MAN_TILE_LADDER
+//				||(newY<level.size()&&tileAtPosition(newX, newY)==MEGA_MAN_TILE_MOVING_PLATFORM)
+				
+				) {
+				falling = false;
+				jumping = false;
+				newFallHorizontalModInt = 0;
+				newJumpVelocity = 0;
+			}
 		if(newJumpVelocity > 0) { // Jumping up
-			if(passable(newX,newY-1)||(inBounds(newX,newY-1)&&tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_MOVING_PLATFORM)) {
+			if(passable(newX,newY-1)&&tileAtPosition(newX, newY-1)!=MEGA_MAN_TILE_BREAKABLE||(inBounds(newX,newY-1)&&tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_MOVING_PLATFORM)) {
 				jumping=true;
 				newY--; // Jump up
 				newJumpVelocity--; // decelerate
@@ -208,7 +218,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			//int beneath = tileAtPosition(newX,newY+1);
 			if(((!sliding&&passable(newX,newY+1))||
 					(sliding&&passable(newX,newY+1)&&(passable(newX-1,newY+1)&&tileAtPosition(newX-1, newY+1)!=MEGA_MAN_TILE_LADDER||passable(newX+1,newY+1)&&tileAtPosition(newX+1, newY+1)!=MEGA_MAN_TILE_LADDER)))
-					&&tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER) { // Falling
+					&&tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER&&tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_BREAKABLE) { // Falling
 				newY++; // Fall down
 				newFallHorizontalModInt++;
 				newFallHorizontalModInt=newFallHorizontalModInt%FALL_STEPS_PER_SIDEWAYS_MOVE;
@@ -225,21 +235,15 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			falling = false;
 			newFallHorizontalModInt=0;
 		}
-		if(tileAtPosition(newX, newY)==MEGA_MAN_TILE_LADDER
-//				||(newY<level.size()&&tileAtPosition(newX, newY)==MEGA_MAN_TILE_MOVING_PLATFORM)
-				
-				) {
-				falling = false;
-				jumping = false;
-				newFallHorizontalModInt = 0;
-				newJumpVelocity = 0;
-			}
+		
 		// Right movement
 		if(a.getMove().equals(MegaManAction.MOVE.RIGHT)) {
 			if((!jumping&& //If you're not jumping, then you're either falling or on solid ground
-					((falling&&passable(newX+1,newY)&&passable(newX+1, newY-1)&&newFallHorizontalModInt%FALL_STEPS_PER_SIDEWAYS_MOVE==0)|| //If you're falling, then make sure that there is headspace for MegaMan and make falling happen faster
-					(!falling&&passable(newX+1,newY)&&(!passable(newX, newY+1)||tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_LADDER||tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_MOVING_PLATFORM))))|| //otherwise, you're on the ground, so you can slide
-					(jumping&&passable(newX+1, newY)&&((passable(newX+1, newY-1)&&passable(newX, newY-1))||passable(newX+1, newY+1)&&passable(newX, newY+1)))) newX++; //If you're jumping, then make sure that there is headspace for MegaMan
+					(((falling||tileAtPosition(newX, newY)==MEGA_MAN_TILE_LADDER)&&passable(newX+1,newY)&&passable(newX+1, newY-1)&&newFallHorizontalModInt%FALL_STEPS_PER_SIDEWAYS_MOVE==0)|| //If you're falling, then make sure that there is headspace for MegaMan and make falling happen faster
+					(tileAtPosition(newX, newY)!=MEGA_MAN_TILE_LADDER&&!falling&&passable(newX+1,newY)&&(!passable(newX, newY+1)||tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_LADDER||tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_MOVING_PLATFORM))))|| //otherwise, you're on the ground, so you can slide
+					(jumping&&passable(newX+1, newY)&&((passable(newX+1, newY-1)&&passable(newX, newY-1))||passable(newX+1, newY+1)&&passable(newX, newY+1)))
+					
+					) newX++; //If you're jumping, then make sure that there is headspace for MegaMan
 			else if(currentY == newY) { // vertical position did not change
 				// This action does not change the state. Neither jumping up nor falling down, and could not move right, so there is no NEW state to go to
 				return null;
@@ -249,8 +253,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		// Left movement
 		if(a.getMove().equals(MegaManAction.MOVE.LEFT)) {
 			if((!jumping&& //If you're not jumping, then you're either falling or on solid ground
-					(falling&&passable(newX-1,newY)&&passable(newX-1, newY-1)&&newFallHorizontalModInt%FALL_STEPS_PER_SIDEWAYS_MOVE==0)|| //If you're falling, then make sure that there is head space for MegaMan and make falling happen faster
-					(!falling&&passable(newX-1, newY)&&(!passable(newX, newY+1)||tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_LADDER||tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_MOVING_PLATFORM)))|| //otherwise, you're on the ground, so you can slide
+					((falling||tileAtPosition(newX, newY)==MEGA_MAN_TILE_LADDER)&&passable(newX-1,newY)&&passable(newX-1, newY-1)&&newFallHorizontalModInt%FALL_STEPS_PER_SIDEWAYS_MOVE==0)|| //If you're falling, then make sure that there is head space for MegaMan and make falling happen faster
+					(tileAtPosition(newX, newY)!=MEGA_MAN_TILE_LADDER&&!falling&&passable(newX-1, newY)&&(!passable(newX, newY+1)||tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_LADDER||tileAtPosition(newX, newY+1)==MEGA_MAN_TILE_MOVING_PLATFORM)))|| //otherwise, you're on the ground, so you can slide
 					(jumping&&passable(newX-1, newY)&&((passable(newX-1, newY-1)&&passable(newX, newY-1))||passable(newX-1, newY+1)&&passable(newX, newY+1)))) {  //If you're jumping, then make sure that there is head space for MegaMan
 				newX--;
 			}
@@ -499,7 +503,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 */
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
-		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestJumpOnEnemies.txt");
+		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManCannotJumpThroughBreakableBlocks.txt");
 				//MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt"); //converts to JSON
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"
 				, "megaManAStarJumpHeight:4" });
