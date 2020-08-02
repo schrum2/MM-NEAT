@@ -16,12 +16,12 @@ for /D %%f in (../../zeldadungeonsdistinctbtrooms/*) do (
 	Rscript.exe MAPElites-Zelda-DistinctBTRooms.R "../../zeldadungeonsdistinctbtrooms/%%f/ZeldaDungeonsDistinctBTRooms-%%f_MAPElites_log.txt"
 )
 for /D %%f in (../../zeldadungeonsdistinctbtrooms/*Then*) do (
-	Rscript.exe MAPElites-Mario-DistinctBTRooms-CPPNvsDirect.R "../../zeldadungeonsdistinctbtrooms/%%f/ZeldaDungeonsDistinctBTRooms-%%f_cppnVsDirectFitness_log.txt"
+	Rscript.exe MAPElites-Zelda-DistinctBTRooms-CPPNvsDirect.R "../../zeldadungeonsdistinctbtrooms/%%f/ZeldaDungeonsDistinctBTRooms-%%f_cppnVsDirectFitness_log.txt"
 )
 
 for /D %%f in (../../zeldadungeonswallwaterrooms/*) do (
 	Rscript.exe MAPElites-Zelda-WallWaterRooms.R "../../zeldadungeonswallwaterrooms/%%f/ZeldaDungeonsWallWaterRooms-%%f_MAPElites_log.txt"
 )
 for /D %%f in (../../zeldadungeonswallwaterrooms/*Then*) do (
-	Rscript.exe MAPElites-Mario-WallWaterRooms-CPPNvsDirect.R "../../zeldadungeonswallwaterrooms/%%f/ZeldaDungeonsWallWaterRooms-%%f_cppnVsDirectFitness_log.txt"
+	Rscript.exe MAPElites-Zelda-WallWaterRooms-CPPNvsDirect.R "../../zeldadungeonswallwaterrooms/%%f/ZeldaDungeonsWallWaterRooms-%%f_cppnVsDirectFitness_log.txt"
 )
