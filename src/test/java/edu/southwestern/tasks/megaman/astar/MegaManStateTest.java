@@ -617,6 +617,29 @@ public class MegaManStateTest {
 			}
 		assertTrue(actionSequence13==null);
 		
+		
+		
+		List<List<Integer>> level14 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestNoHazardSlidingBug.txt"); 
+		MegaManState start14 = new MegaManState(level14);
+		Search<MegaManAction,MegaManState> search14 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		//HashSet<MegaManState> mostRecentVisited = null;
+		ArrayList<MegaManAction> actionSequence14 = null;
+		try {
+			//tries to find a solution path to solve the level, tries as many time as specified by the last int parameter 
+			//represented by red x's in the visualization 
+			//System.out.println(Parameters.parameters.integerParameter("megaManAStarJumpHeight"));
+			actionSequence14 = ((AStarSearch<MegaManAction, MegaManState>) search14).search(start14, true, 14000000);
+		} catch(Exception e) {
+			System.out.println("failed search");
+			e.printStackTrace();
+		}
+		if(actionSequence14 != null)
+			for(MegaManAction a : actionSequence14) {
+				System.out.println(a.getMove().toString());
+			}
+		assertTrue(actionSequence14==null);
+		
+		//MegaManStateTestNoHazardSlidingBug.txt
 //		MegaManCannotSlideFromLadder
 		//MegaManStateTestNoSlideAndCatchLadder.txt
 //		RIGHT
