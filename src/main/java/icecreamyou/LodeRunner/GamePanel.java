@@ -614,6 +614,7 @@ public class GamePanel extends JPanel implements MouseMotionListener {
 			if (checkEnemyFallInHole(e))
 				continue;
 			Parameters.initializeParameterCollections(new String[] {});
+			//this function does not work yet, it is set to false to maintain the old enemy AI 
 			if(Parameters.parameters.booleanParameter("smartLodeRunnerEnemies")) {
 				Pair<Integer, Integer> enemyPosition = new Pair<Integer, Integer>(e.x, e.y);
 				Pair<Integer, Integer> playerPosition = new Pair<Integer,Integer>(level.player1.x, level.player1.y);
