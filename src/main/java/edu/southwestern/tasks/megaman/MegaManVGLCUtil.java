@@ -902,7 +902,7 @@ public class MegaManVGLCUtil {
 //				0v="1.6.3"
 		p.println("0v=\"1.6.3\"");
 
-//				0a="408382.000000"
+//				0a="408500.000000"
 		p.println("0a=\"408382.000000\"");
 		p.close();
 
@@ -934,17 +934,32 @@ public class MegaManVGLCUtil {
 			if(x>0&&level.get(y).get(x-1)!=1) p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
 			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
 		}else if(m==ONE_ENEMY_GROUND_ENEMY) {
-			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
-			p.println("e"+xcoord+","+ycoord+"=\"4.000000\"");
-			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
-			if(y>0&&level.get(y-1).get(x)==ONE_ENEMY_SOLID)p.println("c"+xcoord+","+ycoord+"=\"-1.000000\"");
-			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+			if(x%2==0&&y>0&&level.get(y-1).get(x)!=ONE_ENEMY_SOLID){
+				p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+				p.println("e"+xcoord+","+ycoord+"=\"0.000000\"");
+				p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+				p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
+				p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+			}else{
+				p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+				p.println("e"+xcoord+","+ycoord+"=\"4.000000\"");
+				p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+				if(y>0&&level.get(y-1).get(x)==ONE_ENEMY_SOLID)p.println("c"+xcoord+","+ycoord+"=\"-1.000000\"");
+				p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+			}
 		}else if(m==ONE_ENEMY_FLYING_ENEMY){
-			p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
-			p.println("e"+xcoord+","+ycoord+"=\"56.000000\"");
-			p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
-			p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
-			p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+			if(x%2==0){
+				p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+				p.println("e"+xcoord+","+ycoord+"=\"20.000000\"");
+				p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+				p.println("b"+xcoord+","+ycoord+"=\"-1.000000\"");
+				p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+			}else{
+				p.println("o"+xcoord+","+ycoord+"=\"9999.000000\"");
+				p.println("e"+xcoord+","+ycoord+"=\"117.000000\"");
+				p.println("d"+xcoord+","+ycoord+"=\"5.000000\"");
+				p.println("a"+xcoord+","+ycoord+"=\"1.000000\"");
+			}
 		}
 	//	}
 	}

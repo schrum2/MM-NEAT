@@ -185,6 +185,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 //		System.out.println(a);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		if(!inBounds(currentX,currentY+1)) return null;
+//		if(tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_HAZARD) sliding = true;
 		if(inBounds(newX, newY-1)&&inBounds(newX, newY+1)&&(!passable(newX-1, newY+1)||!passable(newX+1, newY+1))&&(!passable(newX, newY-1)||tileAtPosition(newX, newY-1)==MEGA_MAN_TILE_LADDER)&&tileAtPosition(newX, newY)!=MEGA_MAN_TILE_LADDER) sliding=true;
 		// Affects of jumping based on previous velocity setting happen before JUMP action processed.
 		// Executing in this order is important to allow MegaMan to jump directly to a diagonal without
@@ -216,7 +217,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		if(newJumpVelocity == 0) { // Not mid-Jump
 			jumping = false;
 			//int beneath = tileAtPosition(newX,newY+1);
-			if(((!sliding&&passable(newX,newY+1))||
+			if(((!sliding&&passable(newX,newY+1)&&(newY-1<=0||tileAtPosition(newX, newY-1)!=MEGA_MAN_TILE_HAZARD))||
 					(sliding&&passable(newX,newY+1)&&(passable(newX-1,newY+1)&&tileAtPosition(newX-1, newY+1)!=MEGA_MAN_TILE_LADDER||passable(newX+1,newY+1)&&tileAtPosition(newX+1, newY+1)!=MEGA_MAN_TILE_LADDER)))
 					&&tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_LADDER&&tileAtPosition(newX, newY+1)!=MEGA_MAN_TILE_BREAKABLE) { // Falling
 				newY++; // Fall down
@@ -503,7 +504,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 */
 	public static void main(String args[]) {
 		//converts Level in VGLC to hold all 8 tiles so we can get the real spawn point from the level 
-		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManCannotJumpThroughBreakableBlocks.txt");
+		List<List<Integer>> level = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestNoHazardSlidingBug.txt");
 				//MegaManVGLCUtil.MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt"); //converts to JSON
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"
 				, "megaManAStarJumpHeight:4" });
