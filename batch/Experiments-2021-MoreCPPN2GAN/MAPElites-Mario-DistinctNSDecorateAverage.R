@@ -3,7 +3,7 @@ setwd("../../mariolevelsdistinctnsdecorate")
 #setwd("E:\\Users\\he_de\\workspace\\GameGAN")
 
 print("Load data")
-types <- list("CPPN2GAN","CPPNThenDirect2GAN","Direct2GAN")
+types <- list("CPPN2GAN","CPPNThenDirect2GAN","Direct2GAN","Combined")
 
 for(typePrefix in types) {
   #typePrefix <- "CPPN2GAN"
