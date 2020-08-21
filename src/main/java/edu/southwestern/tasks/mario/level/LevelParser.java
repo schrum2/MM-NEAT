@@ -141,12 +141,15 @@ public class LevelParser {
         ArrayList<double[]> statList = new ArrayList<>();
         int height = oneLevel.size();
         
-        for(int l=0; l<oneLevel.get(0).size()/segmentWidth; l++){
+        // Loop through each segment
+        int numSegments = oneLevel.get(0).size()/segmentWidth;
+        for(int l=0; l<numSegments; l++){
             double[] vals = {0,0,0};
             int gapCount = 0;
-            for(int i=0; i<height-1;i++){
+            for(int i=0; i<height-1;i++){ // Loop from top to bottom
+            	// Loop from left to right through the tiles in this particular segment
                 for(int j=l*segmentWidth;j<(l+1)*segmentWidth;j++){
-                    int code = oneLevel.get(i).get(j);
+                    int code = oneLevel.get(i).get(j); // Get number code for tile
                     vals[0] +=prettyTiles.get(code);
                     vals[1] +=leniencyTiles.get(code);
                     vals[2] +=negativeSpaceTiles.get(code);

@@ -17,6 +17,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.data.SaveThread;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.GenerationalEA;
+import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype;
@@ -253,6 +254,11 @@ public class PopulationUtil {
 					// TWEANNGenotype is standard network genotype
 					for (int i = 0; i < size; i++) {
 						afrr.mutate((Genotype<TWEANN>) parents.get(i));
+					}	
+				} else if(parents.get(0) instanceof CPPNOrDirectToGANGenotype) {
+					// TWEANNGenotype is the first form of this genotype
+					for (int i = 0; i < size; i++) {
+						afrr.mutate((Genotype<TWEANN>) ((CPPNOrDirectToGANGenotype) parents.get(i)).getCurrentGenotype());
 					}	
 				} else if(parents.get(0) instanceof HyperNEATCPPNforDL4JGenotype) {
 					// Mutate the CPPN within the HyperNEATCPPNforDL4JGenotype

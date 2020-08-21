@@ -1,0 +1,42 @@
+Welcome to Lode Runner by Isaac Sukin.
+
+Lode Runner is a platform game. Your job is to collect all the gold in each
+level. You automatically pick up gold when you walk over it. There are two
+types of gold: coins and treasure, worth 1 and 3 points, respectively. If you
+succeed in collecting all the gold, you will be able to enter a portal to win
+the level. Some portals also require keys to open. Like gold, you can collect
+keys by walking over them. Portal keys are black.
+
+Use the A key to move left and the D key to move right. If you are in front of
+a ladder, you can use the W key to climb up it or the S key to climb down it.
+You can also step off of ladders to the left or right with A or D,
+respectively. Additionally, you can climb across bars to the left or right
+using A or D, or drop from them using S. You will not get hurt if you fall off
+platforms. However, you will die if you run into spikes. You start with 3
+lives; if you die, you will lose a life and have to restart the level, and if
+you lose all your lives you will lose all your gold.
+
+Phantoms are devoted to stopping you in your quest to collect gold. They will
+kill you if they touch you. You can temporarily disable Phantoms by tricking
+them into falling into holes. Phantoms are incapacitated while they are in
+holes, and you can walk over them safely. You can dig a hole to your left or
+right by pressing Q or E, respectively. (Note that you cannot dig a hole
+directly under yourself, but you can trap yourself in holes.) Holes will
+eventually fill back in. If you are in a hole when it fills, you will die. If a
+Phantom is in a hole when it fills, it will respawn. (If you are in the way of
+where the Phantom wants to respawn, it will wait until you move.) Phantoms can
+also pick up gold coins, keeping you from finishing the level. However, they
+will drop their coins if they fall into a hole.
+
+You may also encounter gates, which will block your way until you open them
+with keys of the same color. Additionally, be aware of different types of
+environment geometry; for example, you cannot dig through steel, and you cannot
+stop quickly on slippery surfaces.
+
+Additionally, you can edit levels and create your own new ones by clicking the
+"Edit" or "Create new level" buttons on the menu at the top of the game window.
+Click an object in the panel on the right and then click in the game area to
+place it. (You can also click-and-drag to add many of the same object at once.)
+Click the Save button when you're done, give your level a name, and you will
+then be able to play your new level. You can open saved levels (or restart the
+campaign) by clicking the "Open level" button.

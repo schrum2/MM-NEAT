@@ -13,7 +13,9 @@ import java.io.Serializable;
  * @author Igor Karpov (ikarpov@cs.utexas.edu)
  */
 public class Point implements Serializable, ILocated {
-    private double t; // time
+
+	private static final long serialVersionUID = 1L;
+	private double t; // time
     private double x; // x-coord
     private double y; // y-coord
     private double z; // z-coord

@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 import math
 
 import models.dcgan as dcgan
+import models.cdcgan as cdcgan
 import models.mlp as mlp
 import json
 
@@ -40,10 +41,15 @@ parser.add_argument('--clamp_lower', type=float, default=-0.01)
 parser.add_argument('--clamp_upper', type=float, default=0.01)
 parser.add_argument('--Diters', type=int, default=5, help='number of D iters per each G iter')
 
+parser.add_argument('--num_classes', type=int, default=0,  help='Number of conditional GAN classes. Default of 0 means cGAN is not used.')
+
 parser.add_argument('--n_extra_layers', type=int, default=0, help='Number of extra layers on gen and disc')
 parser.add_argument('--experiment', default=None, help='Where to store samples and models')
 parser.add_argument('--adam', action='store_true', help='Whether to use adam (default is rmsprop)')
-parser.add_argument('--json', default=None, help='Json file')
+parser.add_argument('--json', default=None, help='Json file with example levels')
+
+parser.add_argument('--jsonID', default=None, help='json file with class labels for the conditional GAN. Each entry must correspond to entry (same order) from training set.')
+
 parser.add_argument('--problem', type=int, default=0, help='Level examples')
 parser.add_argument('--tiles', type=int, default=13, help='Number of tile types')
 opt = parser.parse_args()
@@ -72,7 +78,16 @@ if opt.json is None:
         examplesJson = "sepEx/examplemario{}.json".format(opt.problem)
 else:
     examplesJson = opt.json
+
+# Training data
 X = np.array ( json.load(open(examplesJson)) )
+
+# Class labels for conditional GAN
+if opt.jsonID is not None:
+    classJson = opt.jsonID
+    Y = np.array ( json.load(open(classJson)) )
+    Y = torch.FloatTensor(Y).view(len(Y),opt.num_classes,1,1)
+
 z_dims = opt.tiles
 
 num_batches = X.shape[0] / opt.batchSize
@@ -90,6 +105,33 @@ X_train[:, 2, :, :] = 1.0  #Fill with empty space
 #Pad part of level so its a square
 X_train[:X.shape[0], :, :X.shape[1], :X.shape[2]] = X_onehot
 
+# Schrum: I added this since Datasets and Dataloaders should be faster,
+#         and make working with conditional GAN easier.
+class LevelDataSet(torch.utils.data.Dataset):
+    def __init__(self, levels, types):
+        self.levels = levels
+        self.types = types
+
+    def __len__(self):
+        return len(self.levels)
+
+    def __getitem__(self, index):
+        target = self.types[index]
+        data_val = self.levels[index]
+        return data_val, target
+
+# augment training set with class labels
+if opt.num_classes > 0:
+    ds = LevelDataSet(X_train, Y)
+    train_loader = torch.utils.data.DataLoader(ds, shuffle=True,batch_size=opt.batchSize)
+    # label preprocess
+    onehot = torch.zeros(opt.num_classes, opt.num_classes)
+    onehot = onehot.scatter_(1, torch.LongTensor([x for x in range(opt.num_classes)]).view(opt.num_classes,1), 1).view(opt.num_classes, opt.num_classes, 1, 1)
+else:
+    # The class labels are completely ignored in the regular case ... all zero
+    ds = LevelDataSet(X_train, np.zeros(len(X_train)) )
+    train_loader = torch.utils.data.DataLoader(ds, shuffle=True,batch_size=opt.batchSize)
+
 ngpu = int(opt.ngpu)
 nz = int(opt.nz)
 ngf = int(opt.ngf)
@@ -106,14 +148,21 @@ def weights_init(m):
         m.weight.data.normal_(1.0, 0.02)
         m.bias.data.fill_(0)
 
-netG = dcgan.DCGAN_G(map_size, nz, z_dims, ngf, ngpu, n_extra_layers)
+if opt.num_classes > 0:
+    netG = cdcgan.CDCGAN_G(map_size, nz, z_dims, ngf, ngpu, opt.num_classes, n_extra_layers)
+else:
+    netG = dcgan.DCGAN_G(map_size, nz, z_dims, ngf, ngpu, n_extra_layers)
 
 netG.apply(weights_init)
 if opt.netG != '': # load checkpoint if needed
     netG.load_state_dict(torch.load(opt.netG))
 print(netG)
 
-netD = dcgan.DCGAN_D(map_size, nz, z_dims, ndf, ngpu, n_extra_layers)
+if opt.num_classes > 0:
+    netD = cdcgan.CDCGAN_D(map_size, nz, z_dims, ndf, ngpu, opt.num_classes, n_extra_layers)
+else:
+    netD = dcgan.DCGAN_D(map_size, nz, z_dims, ndf, ngpu, n_extra_layers)
+
 netD.apply(weights_init)
 
 if opt.netD != '':
@@ -147,6 +196,8 @@ if opt.cuda:
     input = input.cuda()
     one, mone = one.cuda(), mone.cuda()
     noise, fixed_noise = noise.cuda(), fixed_noise.cuda()
+    if opt.num_classes > 0: # For conditional GAN 
+        onehot = onehot.cuda()
 
 # setup optimizer
 if opt.adam:
@@ -158,14 +209,14 @@ else:
     optimizerG = optim.RMSprop(netG.parameters(), lr = opt.lrG)
 
 gen_iterations = 0
-for epoch in range(opt.niter):
+for epoch in range(opt.niter):    
+    #X_train = X_train[torch.randperm( len(X_train) )]
+    #ds = ds[torch.randperm( len(ds) )]
     
-    #! data_iter = iter(dataloader)
-
-    X_train = X_train[torch.randperm( len(X_train) )]
-
     i = 0
-    while i < num_batches:#len(dataloader):
+    #while i < num_batches:#len(dataloader):
+    #for i in range(len(levels)):
+    for local_X, local_Y in train_loader:
         ############################
         # (1) Update D network
         ###########################
@@ -185,11 +236,15 @@ for epoch in range(opt.niter):
             for p in netD.parameters():
                 p.data.clamp_(opt.clamp_lower, opt.clamp_upper)
 
-            data = X_train[i*opt.batchSize:(i+1)*opt.batchSize]
-
+            #data = X_train[i*opt.batchSize:(i+1)*opt.batchSize]
+            #print(data.shape)
+            data = local_X
+            #print(data.shape)
+            
             i += 1
 
-            real_cpu = torch.FloatTensor(data)
+            real_cpu = torch.FloatTensor(data.float())
+            labels = Variable(local_Y)
 
             if (False):
                 #im = data.cpu().numpy()
@@ -204,19 +259,37 @@ for epoch in range(opt.niter):
 
             if opt.cuda:
                 real_cpu = real_cpu.cuda()
+                local_Y = local_Y.cuda()
+                labels = labels.cuda()
 
             input.resize_as_(real_cpu).copy_(real_cpu)
             inputv = Variable(input)
 
-            errD_real = netD(inputv)
+            # Training with real data
+            if opt.num_classes > 0: # Conditional GAN
+                errD_real = netD(inputv, labels)
+            else: # Regular GAN
+                errD_real = netD(inputv)
+            
             errD_real.backward(one)
 
             # train with fake
             noise.resize_(opt.batchSize, nz, 1, 1).normal_(0, 1)
             noisev = Variable(noise, volatile = True) # totally freeze netG
-            fake = Variable(netG(noisev).data)
+            
+            if opt.num_classes > 0: # Conditional GAN
+                genOutput = netG(noisev, labels)
+            else: # Regular GAN
+                genOutput = netG(noisev)
+            
+            fake = Variable(genOutput.data)
             inputv = fake
-            errD_fake = netD(inputv)
+
+            if opt.num_classes > 0: # Conditional GAN
+                errD_fake = netD(inputv, labels)
+            else: # Regular GAN
+                errD_fake = netD(inputv)
+
             errD_fake.backward(mone)
             errD = errD_real - errD_fake
             optimizerD.step()
@@ -231,8 +304,17 @@ for epoch in range(opt.niter):
         # make sure we feed a full batch of noise
         noise.resize_(opt.batchSize, nz, 1, 1).normal_(0, 1)
         noisev = Variable(noise)
-        fake = netG(noisev)
-        errG = netD(fake)
+
+        if opt.num_classes > 0: # Conditional GAN
+            randLabelNums = (torch.rand(opt.batchSize, 1) * opt.num_classes).type(torch.LongTensor).squeeze()
+            randLabel = Variable(onehot[randLabelNums])
+
+            fake = netG(noisev, randLabel)
+            errG = netD(fake, randLabel)
+        else:
+            fake = netG(noisev)
+            errG = netD(fake)
+
         errG.backward(one)
         optimizerG.step()
         gen_iterations += 1
@@ -242,7 +324,13 @@ for epoch in range(opt.niter):
             errD.data[0], errG.data[0], errD_real.data[0], errD_fake.data[0]))
         if gen_iterations % 50 == 0:   #was 500
 
-            fake = netG(Variable(fixed_noise, volatile=True))
+            if opt.num_classes > 0: # Conditional GAN
+                randLabelNums = (torch.rand(opt.batchSize, 1) * opt.num_classes).type(torch.LongTensor).squeeze()
+                randLabel = onehot[randLabelNums]
+                # TODO: The labels here should be fixed to demonstrate coverage of different class types    
+                fake = netG(Variable(fixed_noise, volatile=True), Variable(randLabel, volatile=True))
+            else:
+                fake = netG(Variable(fixed_noise, volatile=True))
             
             im = fake.data.cpu().numpy()
             #print('SHAPE fake',type(im), im.shape)
@@ -250,7 +338,7 @@ for epoch in range(opt.niter):
 
             im = combine_images( tiles2image( np.argmax( im, axis = 1) ) )
 
-            plt.imsave('{0}/mario_fake_samples_{1}.png'.format(opt.experiment, gen_iterations), im)
+            plt.imsave('{0}/fake_samples_{1}.png'.format(opt.experiment, gen_iterations), im)
             torch.save(netG.state_dict(), '{0}/netG_epoch_{1}_{2}_{3}.pth'.format(opt.experiment, gen_iterations, opt.problem, opt.nz))
 
     # do checkpointing

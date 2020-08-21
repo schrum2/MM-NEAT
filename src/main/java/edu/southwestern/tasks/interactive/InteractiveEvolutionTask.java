@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -393,6 +394,10 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 				effectsCheckboxes.add(inputEffect);
 			}		
 		}
+//		JCheckBox puzzleDoor = new JCheckBox("zeldaCPPNtoGANAllowsPuzzleDoors", true);
+//		puzzleDoor.setName("Allow Puzzle Doors?");
+//		puzzleDoor.setForeground(new Color(0,0,0));
+//		effectsCheckboxes.add(puzzleDoor);
 		top.add(effectsCheckboxes);
 	}
 
@@ -586,6 +591,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 * @param height height of input
 	 * @param inputMultipliers determines whether CPPN inputs are turned on or off
 	 * @return BufferedImage representation of created item
+	 * @throws IOException 
 	 */
 	protected abstract BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers);
 

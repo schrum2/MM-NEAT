@@ -8,7 +8,12 @@ import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.loderunner.LodeRunnerGANUtil;
+import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.util.PythonUtil;
+
+// For the three possible tile counts in Zelda
+import static edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil.*;
 
 public class GANProcess extends Comm {
 	
@@ -16,13 +21,26 @@ public class GANProcess extends Comm {
 	// Program for converting a latent vector to a level via a GAN
 	public static final String WASSERSTEIN_PATH = PYTHON_BASE_PATH + "generator_ws.py";
 	
+	//dimensions of output 
+
+	// Zelda is weird, since some models rotate the rooms and flip width and height, but the final levels
+	// are always displayed with a height of 11 and width of 16, regardless of what the shape of the model 
+	// output is.
+	public static final int ZELDA_OUT_WIDTH = 16;
+	public static final int ZELDA_OUT_HEIGHT = 11;
+	public static final int MARIO_OUT_WIDTH = 28;
+	public static final int MARIO_OUT_HEIGHT = 14;
+	public static final int LODE_RUNNER_OUT_WIDTH = 32;
+	public static final int LODE_RUNNER_OUT_HEIGHT = 22;
+	public static final int MEGA_MAN_OUT_WIDTH = 16;
+	public static final int MEGA_MAN_OUT_HEIGHT = 14;
 	////////// These are static variables representing the active GAN process (only one) ////////////////
 	
 	private static GANProcess ganProcess = null;
 
-	public enum GAN_TYPE {MARIO, ZELDA};
+	public enum GAN_TYPE {MARIO, ZELDA, LODE_RUNNER, MEGA_MAN};
 	
-	public static GAN_TYPE type = GAN_TYPE.MARIO;
+	public static GAN_TYPE type = null;
 	
 	public static int latentVectorLength() {
 		return getGANProcess().getLatentVectorSize();
@@ -51,16 +69,35 @@ public class GANProcess extends Comm {
 			switch(type) {
 			// Default constructor is for Mario
 			case MARIO: 
-				ganProcess = new GANProcess(); 
+				ganProcess = new GANProcess(PYTHON_BASE_PATH + "MarioGAN" + File.separator + Parameters.parameters.stringParameter("marioGANModel"), 
+						 Parameters.parameters.integerParameter("GANInputSize"), 
+						 Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding") ? 10 : 13,
+								 MARIO_OUT_WIDTH,MARIO_OUT_HEIGHT); 
 				break;
 			// Details for Zelda will change as code develops
 			case ZELDA: 
 				ganProcess = new GANProcess(PYTHON_BASE_PATH+"ZeldaGAN"+ File.separator +Parameters.parameters.stringParameter("zeldaGANModel"),
 											Parameters.parameters.integerParameter("GANInputSize"),
 											// This is an ugly mess meant to support backwards compatibility with previously trained models.
-											Parameters.parameters.stringParameter("zeldaGANModel").startsWith("ZeldaDungeonsAll3Tiles") ? 3 : Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? 4 : 6);
+											Parameters.parameters.stringParameter("zeldaGANModel").startsWith("ZeldaDungeonsAll3Tiles") ? ZELDA_GAN_REDUCED_TILE_NUMBER : Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? ZELDA_GAN_ORIGINAL_TILE_NUMBER : ZELDA_GAN_EXPANDED_TILE_NUMBER,
+													Parameters.parameters.stringParameter("zeldaGANModel").startsWith("ZeldaDungeonsAll3Tiles") ? ZELDA_OUT_WIDTH : Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? ZELDA_OUT_HEIGHT : ZELDA_OUT_WIDTH,
+															Parameters.parameters.stringParameter("zeldaGANModel").startsWith("ZeldaDungeonsAll3Tiles") ? ZELDA_OUT_HEIGHT :Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding") ? ZELDA_OUT_WIDTH : ZELDA_OUT_HEIGHT);
+				break;
+			case LODE_RUNNER:
+				ganProcess = new GANProcess(PYTHON_BASE_PATH+"LodeRunnerGAN"+ File.separator + Parameters.parameters.stringParameter("LodeRunnerGANModel"), 
+						Parameters.parameters.integerParameter("GANInputSize"), 
+						Parameters.parameters.stringParameter("LodeRunnerGANModel").startsWith("LodeRunnerEpochOneGround") ? LodeRunnerGANUtil.LODE_RUNNER_ONE_GROUND_TILE_NUMBER : LodeRunnerGANUtil.LODE_RUNNER_ALL_GROUND_TILE_NUMBER,
+						LODE_RUNNER_OUT_WIDTH, LODE_RUNNER_OUT_HEIGHT);
+				break;
+			case MEGA_MAN:
+				ganProcess = new GANProcess(PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter("MegaManGANModel"), 
+						Parameters.parameters.integerParameter("GANInputSize"), 
+						Parameters.parameters.stringParameter("MegaManGANModel").contains("With7Tile") ? MegaManGANUtil.MEGA_MAN_ALL_TERRAIN : MegaManGANUtil.MEGA_MAN_ONE_ENEMY,
+						MEGA_MAN_OUT_WIDTH, MEGA_MAN_OUT_HEIGHT);
 				break;
 			}
+		
+		
 			ganProcess.start();
 			// consume all start-up messages that are not data responses
 			String response = "";
@@ -110,17 +147,19 @@ public class GANProcess extends Comm {
 	//////////Code below here is associated with the GAN instance ////////////////
 	
 	String GANPath = null;
-	int GANDim = -1; 
+	public int GANDim = -1; 
 	int GANTileTypes = -1;
-
-	/**
-	 * Loads the Mario GAN trained on the specified model with the specified latent vector size
-	 */
-	public GANProcess() {
-		this(PYTHON_BASE_PATH + "MarioGAN" + File.separator + Parameters.parameters.stringParameter("marioGANModel"), 
-			 Parameters.parameters.integerParameter("GANInputSize"), 
-			 Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding") ? 10 : 13);
-	}
+	int width = -1;
+	int height = -1;
+//
+//	/**
+//	 * Loads the Mario GAN trained on the specified model with the specified latent vector size
+//	 */
+//	public GANProcess() {
+//		this(PYTHON_BASE_PATH + "MarioGAN" + File.separator + Parameters.parameters.stringParameter("marioGANModel"), 
+//			 Parameters.parameters.integerParameter("GANInputSize"), 
+//			 Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding") ? 10 : 13);
+//	}
 
 	/**
 	 * This option allows for different GAN models than the default one.
@@ -129,12 +168,14 @@ public class GANProcess extends Comm {
 	 * @param GANPath Path to GAN pth file
 	 * @param GANDim Input size
 	 */
-	public GANProcess(String GANPath, int GANDim, int numTiles) {
+	public GANProcess(String GANPath, int GANDim, int numTiles, int width, int height) {
 		super();
 		this.threadName = "GANThread";
 		this.GANPath = GANPath;
 		this.GANDim = GANDim;
 		this.GANTileTypes = numTiles;
+		this.width = width;
+		this.height = height;
 	}
 
 	/**
@@ -155,7 +196,7 @@ public class GANProcess extends Comm {
 		}
 
 		// Run program with model architecture and weights specified as parameters
-		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, WASSERSTEIN_PATH, this.GANPath, ""+this.GANDim, ""+GANTileTypes);
+		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, WASSERSTEIN_PATH, this.GANPath, ""+this.GANDim, ""+GANTileTypes, ""+this.width, ""+this.height);
 		builder.redirectError(Redirect.INHERIT); // Standard error will print to console
 		try {
 			System.out.println(builder.command());

@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 
 /**
  * Tells the bot to navigate to the given teammate

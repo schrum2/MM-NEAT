@@ -85,18 +85,30 @@ public abstract class ZeldaDungeon<T> {
 	public static void addAdjacencyIfAvailable(Dungeon dungeonInstance, Level[][] dungeon, String[][] uuidLabels, Node newNode, int x, int y, String direction) {
 		addAdjacencyIfAvailable(dungeonInstance, dungeon, uuidLabels, newNode, x, y, direction, Double.NaN);
 	}
-	
-	public static void addAdjacencyIfAvailable(Dungeon dungeonInstance, Level[][] dungeon, String[][] uuidLabels, Node newNode, int x, int y, String direction, double doorEncoding) {
+
+	/**
+	 * For each node, if there's a level next to it (based on the direction and coordinates) add the necessary edges
+	 * @param dungeonInstance Instance of the dungeon
+	 * @param dungeon 
+	 * @param uuidLabels Unique IDs for each level
+	 * @param newNode The node to add the edges to
+	 * @param x X coordinate to check
+	 * @param y Y coordinate to check
+	 * @param direction String direction (UP, DOWN, LEFT, RIGHT)
+	 * @param doorEncoding Special encoding of door type. If NaN, then just decide type randomly.
+	 * @return whether or not a locked door was created
+	 */
+	public static boolean addAdjacencyIfAvailable(Dungeon dungeonInstance, Level[][] dungeon, String[][] uuidLabels, Node newNode, int x, int y, String direction, double doorEncoding) {
 		int tileToSetTo = Tile.DOOR.getNum(); // Door tile number
 		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length || 
 				dungeon[y][x] == null) // If theres no dungeon there set the tiles to wall
 			tileToSetTo = Tile.WALL.getNum();
 
-		setLevels(direction, newNode, tileToSetTo, doorEncoding); // Set the doors in the levels
+		boolean lockedDoor = setLevels(direction, newNode, tileToSetTo, doorEncoding); // Set the doors in the levels
 		findAndAddGoal(dungeonInstance, newNode);
 
-		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length) return;
-		if(dungeon[y][x] == null) return; // Finally get out if there's no adjacency
+		if(x < 0 || x >= dungeon[0].length || y < 0 || y >= dungeon.length) return false;
+		if(dungeon[y][x] == null) return false; // Finally get out if there's no adjacency
 
 		if(uuidLabels[y][x] == null) uuidLabels[y][x] = UUID.nameUUIDFromBytes(RandomNumbers.randomByteArray(16)).toString(); // Get the unique ID of the level
 		String whereTo = uuidLabels[y][x]; // This will be the where to in the edge
@@ -115,11 +127,15 @@ public abstract class ZeldaDungeon<T> {
 		case("LEFT"):
 			ZeldaLevelUtil.addLeftAdjacencies(newNode, whereTo);
 		break;
-		default: return;
+		default:
 		}
-
+		return lockedDoor;
 	}
-
+	/**
+	 * Finds where the triforce is and marks that room as the goal 
+	 * @param dungeon Dungeon instance
+	 * @param newNode Room in dungeon 
+	 */
 	private static void findAndAddGoal(Dungeon dungeon, Node newNode) {
 		List<List<Integer>> ints = newNode.level.intLevel;
 		String name = newNode.name;
@@ -132,6 +148,7 @@ public abstract class ZeldaDungeon<T> {
 			}
 		}
 	}
+	
 
 	/**
 	 * Creates door connecting rooms. 
@@ -140,31 +157,88 @@ public abstract class ZeldaDungeon<T> {
 	 * @param node Room being modified
 	 * @param tile New tile for door location: Will simply be a door or wall, but this method changes some doors to "special" doors
 	 * @param encodedDoorType Special encoding of door type. If NaN, then just decide type randomly.
+	 * @return whether or not a locked door was created
 	 */
-	private static void setLevels(String direction, Node node, int tile, double encodedDoorType) {
+	private static boolean setLevels(String direction, Node node, int tile, double encodedDoorType) {
 		List<List<Integer>> level = node.level.intLevel;
 		// Randomize tile only if the door being placed actually leads to another room
 		if(tile == Tile.DOOR.getNum()) {
 			// NaN means use chance to create door type
-			if(Double.isNaN(encodedDoorType) && RandomNumbers.randomCoin(0.7)) {
-				tile = (RandomNumbers.coinFlip()) ? Tile.LOCKED_DOOR.getNum() : Tile.HIDDEN.getNum(); // Randomize 5 (locked door) or 7 (bombable wall)
-				if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level, RandomNumbers.randomGenerator); // If the door is now locked place a random key in the level
-			} else { // Assume CPPN provided coded interpretation of door type
-				if(encodedDoorType > 0.66) {
-					tile = Tile.LOCKED_DOOR.getNum();
-				} else if(encodedDoorType > 0.33) {
-					tile = Tile.HIDDEN.getNum();
-				} else if(encodedDoorType > 0.00) {
-					tile = Tile.SOFT_LOCK_DOOR.getNum();
+			//if there is no door type specified then it is randomized
+			if(Double.isNaN(encodedDoorType)) {
+				if(RandomNumbers.randomCoin(0.7)) {
+					tile = (RandomNumbers.coinFlip()) ? Tile.LOCKED_DOOR.getNum() : Tile.HIDDEN.getNum(); // Randomize 5 (locked door) or 7 (bombable wall)
+					if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level, RandomNumbers.randomGenerator); // If the door is now locked place a random key in the level
 				}
-				// else remain a plain door
-				
-				// A random generator based on the CPPN output, so placement will be consistent
-				Random rand = new Random(Double.doubleToLongBits(encodedDoorType));
-				if(tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level, rand); // If the door is now locked place a random key in the level
+			} else { // Assume CPPN provided coded interpretation of door type
+				Random rand = new Random(Double.doubleToLongBits(encodedDoorType)); //declares random variable to produce random placement of special doors
+				//if puzzle doors are not allowed do it the original way that disallows puzzle doors
+				if(!(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsPuzzleDoors"))) {
+					if(encodedDoorType > 0.66) {
+						tile = Tile.LOCKED_DOOR.getNum();
+					} else if(encodedDoorType > 0.33) {
+						tile = Tile.HIDDEN.getNum();
+					} else if(encodedDoorType > 0.00) {
+						tile = Tile.SOFT_LOCK_DOOR.getNum();
+					}
+					// else remain a plain door
+
+				}else { //allows Puzzle doors to be added with a 25% likelihood of getting any of the four types of doors
+					if(encodedDoorType > 0.75) {
+						tile = Tile.LOCKED_DOOR.getNum();
+					} else if(encodedDoorType > 0.5) {
+						tile = Tile.HIDDEN.getNum();
+					} else if(encodedDoorType > 0.25) {
+						tile = Tile.SOFT_LOCK_DOOR.getNum();
+					} else if(encodedDoorType > 0.00) {
+						tile = Tile.PUZZLE_LOCKED.getNum();
+					}
+					// else remain a plain door
+					//places a puzzle block if the door is a puzzle
+					//player must move the puzzle block to unlock the door
+					if(tile == Tile.PUZZLE_LOCKED.getNum()) 
+						ZeldaLevelUtil.placePuzzle(direction, level, rand);
+				}
+				// Places keys randomly, but based on CPPN, so it will be consistent. Places too many keys ... one per locked door in each room. A bit boring.
+				if(!(Parameters.parameters.booleanParameter("zeldaCPPN2GANSparseKeys")) && tile == Tile.LOCKED_DOOR.getNum()) ZeldaLevelUtil.placeRandomKey(level, rand); // If the door is now locked place a random key in the level
 			}
 		}
 		ZeldaLevelUtil.setDoors(direction, node, tile);
+		return tile == Tile.LOCKED_DOOR.getNum();
+	}
+	/**
+	 * takes in a door tile and spits out the appropriate encodedDoorType
+	 * for setLevels
+	 * @param doorTile the int representing a door tile type
+	 * @return the appropriate encodedDoorType for setLevels
+	 */
+	public static double encodedValueForDoorType(int doorTile) {
+		if(!(Parameters.parameters.booleanParameter("zeldaCPPNtoGANAllowsPuzzleDoors"))) {
+			switch(doorTile) {
+			case -5: // Tile.LOCKED_DOOR.getNum()
+				return 0.8;
+			case 3: // Tile.DOOR.getNum()
+				return -0.5;
+			case -7: //Tile.HIDDEN.getNum()
+				return .4;
+			case -55: //Tile.SOFT_LOCK_DOOR.getNum()
+				return .1;
+			}
+		} else {
+			switch(doorTile) {
+			case -5: // Tile.LOCKED_DOOR.getNum()
+				return 0.8;
+			case 3: // Tile.DOOR.getNum()
+				return -0.5;
+			case -7: //Tile.HIDDEN.getNum()
+				return .6;
+			case -55: //Tile.SOFT_LOCK_DOOR.getNum()
+				return .3;
+			case -10: //Tile.PUZZLE_LOCKED.getNum()
+				return .1;
+			}
+		}
+		throw new IllegalArgumentException("Tile "+doorTile+" is not recognized as a valid door tile");
 	}
 
 	/**
@@ -229,7 +303,7 @@ public abstract class ZeldaDungeon<T> {
 
 		});
 		buttons.add(playDungeon);
-		
+
 		JButton newDungeon = new JButton("Remake Dungeon");
 		newDungeon.setToolTipText("Regenerate the dungeon using the same rooms originally selected.");
 		newDungeon.addActionListener(new ActionListener() {
@@ -377,7 +451,9 @@ public abstract class ZeldaDungeon<T> {
 			for(int i = 0; i < levelThere.length; i++) {
 				for(int j = 0; j < levelThere[i].length; j++) {
 					if(levelThere[i][j] != null) {
+						//System.out.println("GETLEVELS !"+dungeonInstance.getLevels().toString());
 						Node n = dungeonInstance.getNodeAt(j, i);
+						
 						BufferedImage level = getButtonImage(n, ZELDA_WIDTH * 3 / 4, ZELDA_HEIGHT * 3 / 4); //creates image rep. of level)
 						ImageIcon img = new ImageIcon(level.getScaledInstance(level.getWidth(), level.getHeight(), Image.SCALE_FAST)); //creates image of level
 						JLabel imageLabel = new JLabel(img); // places level on label
@@ -504,6 +580,7 @@ public abstract class ZeldaDungeon<T> {
 		public Level(List<List<Integer>> intLevel) {
 			this.intLevel = intLevel;
 			this.rougeTiles = TileUtil.listToTile(intLevel);
+			//intLevel.get(0).set(0, Tile.TRIFORCE.getNum());
 		}
 
 		public List<List<Integer>> getLevel(){
@@ -542,6 +619,32 @@ public abstract class ZeldaDungeon<T> {
 
 		}
 
+		/**
+		 * Is there a locked door in the bottom wall if the given room
+		 * @return If bottom wall has a locked door
+		 */
+		public boolean bottomExitIsLockedDoor() {
+			if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
+				return intLevel.get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START).get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum();
+			} else {
+				return intLevel.get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum();	
+			}
+		}
+			
+		/**
+		 * Is there a locked door in the right wall if the given room
+		 * @return If right wall has a locked door
+		 */
+		public boolean rightExitIsLockedDoor() {
+			if(Parameters.parameters.booleanParameter("zeldaGANUsesOriginalEncoding")) {
+				//checks all the doors in the room to see if they are locked doors, landscape 
+				return intLevel.get(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE).get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START) == Tile.LOCKED_DOOR.getNum();
+			} else {
+				return intLevel.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).get(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE) == Tile.LOCKED_DOOR.getNum();
+			}
+		}
+
+		
 		public boolean hasTile(Tile t) {
 			int i = t.getNum();
 			for(int y = 0; y < intLevel.size(); y++) {
@@ -578,9 +681,9 @@ public abstract class ZeldaDungeon<T> {
 					}
 					if(found) break;
 				}
-				
+
 			}
-			
+
 			ints.get(y).set(x, Tile.TRIFORCE.getNum());
 			intLevel = ints;
 			if(dungeon != null)

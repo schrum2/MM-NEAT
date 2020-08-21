@@ -16,13 +16,19 @@ import edu.southwestern.util.datastructures.Graph;
 
 public class GraphGrammar<T extends Grammar> {
 	private Graph<T>.Node start;
+	private List<Graph<T>.Node> nodesBetween;
+	private List<Graph<T>.Node> nodesToStart;
 	private Graph<T>.Node end;
 	private Graph<T> graph;
 	
-	private boolean removeEdge = false;
+	// Never used?
+	//private boolean removeEdge = false;
 	
 	public GraphGrammar() {
 		this.graph = new Graph<>();
+		this.nodesBetween = new ArrayList<Graph<T>.Node>();
+		this.nodesToStart = new ArrayList<Graph<T>.Node>();
+
 	}
 	
 	public GraphGrammar(T start) {
@@ -61,7 +67,9 @@ public class GraphGrammar<T extends Grammar> {
 	 */
 	public void addNodeToStart(T data) {
 		Graph<T>.Node newNode = graph.addNode(data);
-		graph.addEdge(start, newNode);
+		graph.addUndirectedEdge(start, newNode);
+		nodesToStart.add(newNode);
+		//this.addToStart = newNode;
 	}
 	
 	/**
@@ -70,11 +78,31 @@ public class GraphGrammar<T extends Grammar> {
 	 */
 	public void addNodeBetween(T data) {
 		Graph<T>.Node newNode = graph.addNode(data);
-		graph.addEdge(start, newNode);
+		graph.addUndirectedEdge(start, newNode);
 		if(end != null)
-			graph.addEdge(newNode, end);
+			graph.addUndirectedEdge(newNode, end);
+		nodesBetween.add(newNode);
+		//this.addNodeBetween = newNode;
 	}
+	public List<Graph<T>.Node> getNodesBetween(){
+		return nodesBetween;
+	}
+	public List<Graph<T>.Node> getNodesToStart(){
+		return nodesToStart;
+	}
+//	public Graph<T>.Node getStartNode(){
+//		return start;
+//	}
 	
+//	public void addEdge(T data) {
+//		Graph<T>.Node newNode = graph.addNode(data);
+//		graph.addEdge(start, newNode);
+//		end=null;
+//		//end = newNode;
+//		//graph.addEdge(newNode, end);
+////		if(end != null)
+////			graph.addEdge(newNode, end);
+//	}
 	// setNodeBetween complicates things when copying the nodes from the mini-graph to the backbone. Nodes in the mini-graph wouldn't have the adjs from the other graph.
 	// Using this method, nodes from the mini-graph would have to have nodes from the other graph and vice versa. This caused problems such as each edge having duplicates
 	// causing the dungeon generation to go in an infinite loop
@@ -108,6 +136,9 @@ public class GraphGrammar<T extends Grammar> {
 	public Graph<T>.Node getGraphStart(){
 		return this.start;
 	}
+	public Graph<T>.Node getGraphEnd(){
+		return this.end;
+	}
 	
 	/**
 	 * Generates a string based on the graph that could be read in the DOT format
@@ -133,7 +164,7 @@ public class GraphGrammar<T extends Grammar> {
 			Graph<T>.Node n = queue.poll();
 			if(!visited.contains(n))
 				r += n.getID() + " [label=\"" + n.getData().getLevelType() + "\"]\n";
-			queue.addAll(n.adjacencies().stream().filter(a -> !visited.contains(a)).collect(Collectors.toList()));
+			queue.addAll(n.adjacentNodes().stream().filter(a -> !visited.contains(a)).collect(Collectors.toList()));
 			visited.add(n);
 			
 		}
@@ -144,7 +175,7 @@ public class GraphGrammar<T extends Grammar> {
 		while(!queue.isEmpty()) {
 			Graph<T>.Node node = queue.poll();
 			v.add(node);
-			for(Graph<T>.Node a : node.adjacencies()) {
+			for(Graph<T>.Node a : node.adjacentNodes()) {
 				if(!v.contains(a)) {
 					r += node.getID() + " -- " + a.getID() +"\n";
 					queue.add(a);				
@@ -199,7 +230,7 @@ public class GraphGrammar<T extends Grammar> {
 		
 		Graph<T>.Node from = nodes.get(fromName);
 		Graph<T>.Node to = nodes.get(toName);
-		graph.addEdge(from, to);
+		graph.addUndirectedEdge(from, to);
 	}
 
 	/**

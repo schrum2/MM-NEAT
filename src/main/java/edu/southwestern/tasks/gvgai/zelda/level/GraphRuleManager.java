@@ -30,7 +30,7 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		List<GraphRule<T>> rules = new LinkedList<>();
 		
 		for(GraphRule<T> r : graphRules) {
-			if(r.getSymbolStart().equals(start))
+			if(r.getSymbolStart().equals(start)&&r.getSymbolEnd()==null)
 				rules.add(r);
 		}
 		
@@ -51,7 +51,30 @@ abstract public class GraphRuleManager<T extends Grammar> {
 		
 		return rules;
 	}
-	
+	public static void printRules(List<GraphRule<ZeldaGrammar>> graphGrammarRules) {
+		System.out.println("testing:");
+		for(GraphRule<ZeldaGrammar> r: graphGrammarRules) {
+			System.out.println("Start: "+r.getSymbolStart()+", "+r.getSymbolEnd()+" maps to: ");
+			System.out.println("Starting");
+			System.out.println(r.getStart().getData());
+			System.out.println("Between Nodes: ");
+			for(Graph<ZeldaGrammar>.Node m : r.getNodesBetween()) {
+				System.out.println(m.getData());
+			}
+			System.out.println("Nodes Added To Start: ");
+			for(Graph<ZeldaGrammar>.Node i : r.getNodesToStart()) {
+				System.out.println(i.getData());
+			}
+			System.out.println("ending:");
+			System.out.println(r.getEnd());
+			System.out.println();
+
+		}
+		System.out.println("Total number of rules: "+graphGrammarRules.size());
+	}
+	public List<GraphRule<T>> getGraphRules(){
+		return graphRules;
+	}
 	public Graph<T> applyRules(Graph<T> graph) throws Exception {
 		boolean symbols = true;
 		int i = 0;
@@ -68,7 +91,7 @@ abstract public class GraphRuleManager<T extends Grammar> {
 				Graph<T>.Node current = queue.poll();
 				visited.add(current);
 				symbols = symbols || current.getData().isSymbol();
-				List<Graph<T>.Node> adj = new LinkedList<>(current.adjacencies());
+				List<Graph<T>.Node> adj = new LinkedList<>(current.adjacentNodes());
 				boolean appliedRule = false;
 				for(Graph<T>.Node n : adj) {
 					if(!visited.contains(n) && !queue.contains(n)) {
@@ -77,6 +100,8 @@ abstract public class GraphRuleManager<T extends Grammar> {
 					}
 				}
 				if(!appliedRule) {
+//					System.out.println("waiting");
+//					MiscUtil.waitForReadStringAndEnterKeyPress();
 					applyRule(graph, current, null, i++);
 				}
 				
@@ -92,7 +117,7 @@ abstract public class GraphRuleManager<T extends Grammar> {
 	
 	public boolean applyRule(Graph<T> graph, Graph<T>.Node node, Graph<T>.Node nextNode, int i) {
 		boolean appliedRule = false;
-		List<GraphRule<T>> rules;
+		List<GraphRule<T>> rules = null;
 		if(nextNode != null)
 			rules = findRule(node.getData(), nextNode.getData());
 		else
@@ -151,4 +176,5 @@ abstract public class GraphRuleManager<T extends Grammar> {
 			graphRules.add(new GraphRule<>(f));
 		}
 	}
+	
 }

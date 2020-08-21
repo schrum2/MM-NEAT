@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.veryclose;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
-import edu.southwestern.util.MiscUtil;
 
 /**
  * should support popacman (TODO: test)

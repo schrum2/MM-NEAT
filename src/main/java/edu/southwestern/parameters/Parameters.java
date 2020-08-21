@@ -28,6 +28,8 @@ import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
 import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
 import edu.southwestern.tasks.gvgai.zelda.level.SimpleLoader;
+import edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar;
+import edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph;
 import edu.southwestern.tasks.interactive.breedesizer.Keyboard;
 import edu.southwestern.tasks.microrts.evaluation.NNComplexEvaluationFunction;
 import edu.southwestern.tasks.microrts.fitness.WinLossFitnessFunction;
@@ -257,6 +259,7 @@ public class Parameters {
 		integerOptions.add("litterSize", 10, "Number of offspring from a single source to evaluate for culling methods");
 		integerOptions.add("GANInputSize", 32, "Latent vector input size for GAN level evolution");
 		integerOptions.add("marioGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MarioGAN");
+		integerOptions.add("megaManGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MegaManGAN");
 		integerOptions.add("marioInputHeight", 3, "The height for a Mario input section");
 		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputStartY", -1, "The y coordinate offset for Mario inputs grid");
@@ -354,10 +357,18 @@ public class Parameters {
 		integerOptions.add("zeldaGANLevelHeightChunks", 4, "Number of rooms per column of CPPN-GAN generated dungeons.");
 		integerOptions.add("zentangleTileDim", 48 , "The width and height in pixels of tiles used in a Zentangle");
 		integerOptions.add("zentanglePatternDim", 30 , "The width and height in tiles of patterns used in a Zentangle");		
+		integerOptions.add("zeldaVGLCWaterPMapCode", 5 , "Int code for the character P in VGLC representation of Zelda");
+		integerOptions.add("cppn2ganWidth", null, "the CPPN to GAN width chunks");
+		integerOptions.add("cppn2ganHeight", null, "the CPPN to GAN height chunks");
+		integerOptions.add("megaManAStarJumpHeight", 4 , "Height of the A* agent's jump");
+		integerOptions.add("lodeRunnerNumOfLevelsInSequence", 5, "Specifies the number of levels in the sequence of levels being eveolved for lode runner");
+		integerOptions.add("interactiveLodeRunnerPathType", 0, "Specifies the type of path to visualize in the level breeder");
+		integerOptions.add("lodeRunnerTSPBudget", 200, "Specifies the numbr of levels in the sequence of levels being eveolved for lode runner");
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		// Boolean parameters 
+		booleanOptions.add("drawMarioOverlayText", true, "When playing Mario, lots of useful debugging text is displayed");
 		booleanOptions.add("marioSimpleAStarDistance", false, "Length of a simple A* path through level (not actual simulation)");
 		booleanOptions.add("marioLevelAlternatingLeniency", false, "Mario level evolves to encourage alternating amounts of leniency in segments");
 		booleanOptions.add("marioLevelAlternatingNegativeSpace", false, "Mario level evolves to encourage alternating amounts of negative space in segments");
@@ -371,6 +382,7 @@ public class Parameters {
 		booleanOptions.add("marioLevelMatchFitness", false, "Mario level evolves to match a specific input level");
 		booleanOptions.add("marioProgressPlusJumpsFitness", true, "Mario Progress Plus Jumps Fitness included");
 		booleanOptions.add("marioProgressPlusTimeFitness", false, "Mario Progress Plus Time Fitness included");
+		booleanOptions.add("marioDistinctSegmentFitness", false, "Mario level evolves to encourage distinct segments");
 		booleanOptions.add("marioRandomFitness", false, "Mario levels evolved with random fitness");
 		booleanOptions.add("makeZeldaLevelsPlayable", true, "Use A* to check that Zelda dungeons are beatable and modify if needed");
 		booleanOptions.add("saveAllInteractiveGANData", true, "Save latent vectors, generated levels, etc.");
@@ -753,9 +765,42 @@ public class Parameters {
 		booleanOptions.add("zeldaDungeonFewRoomFitness", true, "Evolve levels with as few rooms as possible");
 		booleanOptions.add("zeldaPercentDungeonTraversedRoomFitness", true, "Evolve levels where player has to traverse most of the rooms");
 		booleanOptions.add("zeldaDungeonTraversedRoomFitness", true, "Evolve levels where player has to traverse more rooms");
+		booleanOptions.add("zeldaDungeonBackTrackRoomFitness", false, "Evolve levels where player has to backtrack to more rooms"); //
 		booleanOptions.add("zeldaDungeonRandomFitness", false, "Evolve levels with random fitness");
+		booleanOptions.add("zeldaDungeonDistinctRoomFitness", false, "Evolve dungeons with more diverse room layouts within the dungeon");
 		booleanOptions.add("zeldaStudySavesParticipantData", true, "Use with 2019 human subject study");
 		booleanOptions.add("rogueLikeDebugMode", false, "Show helpful information, like locations of secret bombable passages");
+		booleanOptions.add("zeldaCPPNtoGANAllowsPuzzleDoors", false, "Allows puzzle doors to be placed in the dungeon");
+		booleanOptions.add("zeldaCPPNtoGANAllowsRaft", false, "Allows a raft to be placed in the dungeon");
+		booleanOptions.add("firstSoftLockedRoomHasRaft", true, "Whether or not the raft is in the first soft-locked room");
+		booleanOptions.add("lodeRunnerDistinguishesSolidAndDiggableGround", false, "Whether or not there are both solid and diggable ground");
+		booleanOptions.add("zeldaCPPN2GANSparseKeys", false, "For CPPN2GAN generation, place one key per locked door (may make dungeons unbeatable depending on placement)");
+		booleanOptions.add("zeldaALlowPuzzleDoorUglyHack", true, "Whether or not the raft is in the first soft-locked room");
+		booleanOptions.add("interactiveMegaManAStarPaths", false, "whether or not the A* path is shown in the level breeder");
+		booleanOptions.add("useMultipleGANsMegaMan", false, "whether or not we're using both GANs");
+		booleanOptions.add("megaManAllowsSimpleAStarPath", false, "whether or not we're allowing simlpe a* path");
+		booleanOptions.add("megaManAllowsConnectivity", false, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManAllowsPlatformGun", true, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManUsesUniqueEnemies", false, "whether or not we're using unique enemies");
+		booleanOptions.add("megaManAllowsLeftSegments", false, "whether or not we're allowing left placement");
+		booleanOptions.add("megaManAllowsBlockBreaker", false, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManDistinctScreenFitness", false, "whether or not we're allowing connectivity");
+		booleanOptions.add("megaManMaximizeEnemies", false, "whether or not we're maximizing enemies");
+		booleanOptions.add("showInteractiveLodeRunnerSolutionPaths", false, "Shows the solution path for the levels in the level breeder when true");
+		booleanOptions.add("lodeRunnerAllowsAStarConnectivityCombo", false, "A Lode Runner fitness of connectivity percent, but is overridden by A* if level is beatable");
+		booleanOptions.add("lodeRunnerAllowsSimpleAStarPath", false, "Adds the AStarPath as a fitness function when true");
+		booleanOptions.add("lodeRunnerAllowsConnectivity", false, "Adds connectivity as a fitness function when true");
+		booleanOptions.add("lodeRunnerAllowsTSPSolutionPath", false, "Adds the TSP solution path as a fitness function when true");
+		booleanOptions.add("lodeRunnerMaximizeEnemies", false, "Adds the enemy maximization as a fitness function when true");
+		booleanOptions.add("lodeRunnerLevelSequenceAverages", false, "Averages scores from all levels of the sequence");
+		booleanOptions.add("lodeRunnerLevelSequenceIndividual", false, "Takes each score from the sequence individually");
+		booleanOptions.add("showInteractiveLodeRunnerIceCreamYouVisualization", false, "Shows the ice cream you visualization for the levels in the level breeder when true");
+		booleanOptions.add("lodeRunnerAllowsLinearIncreasingSolutionLength", false, "Adds linear increasing solution length as a fitness function when true");
+		booleanOptions.add("lodeRunnerAllowsLinearIncreasingTSPLength", false, "Adds linear increasing TSP solution length as a fitness function when true");
+		booleanOptions.add("lodeRunnerAllowsLinearIncreasingEnemyCount", false, "Adds linear increasing enemy count as a fitness function when true");
+		booleanOptions.add("lodeRunnerAllowsLinearIncreasingTreasureCount", false, "Adds linear increasing treasure count as a fitness function when true");
+		booleanOptions.add("allowWeirdLodeRunnerActions", false, "Allows the A* model to use weird side ways digging to be able to beat more levels");
+		booleanOptions.add("smartLodeRunnerEnemies", false, "Sets enhanced enemy AI for enemies in lode runner.");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -831,6 +876,7 @@ public class Parameters {
 		doubleOptions.add("weightBound", 50.0, "The bound for network weights used by SBX and polynomial mutation");
 		doubleOptions.add("healthDropRate", 20., "Health drop rate from enemies");
 		doubleOptions.add("bombDropRate", 40., "Bomb drop rate from enemies");
+		doubleOptions.add("indirectToDirectTransitionRate", 0.1, "chance of mutating from indirect to a direct genotype");
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
 		stringOptions.add("archetype", "", "Network that receives all mutations so as to keep other networks properly aligned");
@@ -887,7 +933,21 @@ public class Parameters {
 		stringOptions.add("utStudyTeammate", "", "The type of teammate agent for the 2018 human subject study: jude, ethan, native");
 		stringOptions.add("zeldaGANModel", "ZeldaDungeon01_5000_10.pth", "File name of GAN model to use for Zelda GAN level evolution");
 		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
+		stringOptions.add("LodeRunnerGANModel", "LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
+		stringOptions.add("MegaManGANModel", "MegaManOneGANWith12Tiles_5_Epoch5000.pth", "File name of GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANHorizontalModel", "MegaManSevenGANHorizontalWith12TileTypes_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANVerticalModel", "MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpModel", "MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANDownModel", "MegaManSevenGANDownWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpperLeftModel", "MegaManSevenGANUpperLeftCornerWith12TileTypes_5_Epoch5000.pth", "File name of Upper Left GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpperRightModel", "MegaManSevenGANUpperRightCornerWith12TileTypes_5_Epoch5000.pth", "File name of Upper Right GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANLowerLeftModel", "MegaManSevenGANLowerLeftCornerWith12TileTypes_5_Epoch5000.pth", "File name of Lower Left GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANLowerRightModel", "MegaManSevenGANLowerRightCornerWith12TileTypes_5_Epoch5000.pth", "File name of Lower Right GAN model to use for MegaMan GAN level evolution");
+
+		stringOptions.add("mapElitesArchiveFile", "", "File name of MAPElites level we want to look at from an experiment");
 		// Class options
+		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
+		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
 		classOptions.add("imageFitness", RandomImageFitness.class, "Fitness function for evaluating images");

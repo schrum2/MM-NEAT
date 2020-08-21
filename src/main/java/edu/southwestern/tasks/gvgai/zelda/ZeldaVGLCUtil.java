@@ -6,13 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
-//import edu.southwestern.tasks.gvgai.GVGAIUtil;
-//import gvgai.core.game.Game;
-//import gvgai.tracks.singlePlayer.tools.human.Agent;
-import gvgai.core.vgdl.*;
 import gvgai.tools.IO;
+import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.Tile;
 
 public class ZeldaVGLCUtil {
@@ -258,9 +254,13 @@ public class ZeldaVGLCUtil {
 		case 'S':	// Stairs: remove and replace with block
 			return 1;
 		case 'P':	// Water tile that enemies and raft can go over
-			return 2;
+			// This value used to be 2, but that is now used for enemies. So, if
+			// any weird compatibility issues pop up with enemies/water, it can
+			// probably be traced back to this change. 5 should be the right value moving
+			// forward, but the zeldaVGLCWaterPMapCode parameter can set it to an arbitrary value.
+			return Parameters.parameters == null ? 5 : Parameters.parameters.integerParameter("zeldaVGLCWaterPMapCode");
 		case '#':
-			return -6; // Ladder block
+			return Ladder.INT_CODE; // Ladder block
 		case 'U':
 			return Tile.MOVABLE_BLOCK_UP.getNum();
 		case 'L':
@@ -299,7 +299,7 @@ public class ZeldaVGLCUtil {
 		for(int i = 1; i <= 9; i++) {
 			for(int j = 1; j <= 2; j++) {
 				String file = "tloz"+i+"_"+j+"_flip.txt";
-				String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+file, new Point(2,2));
+				//String[] level = convertZeldaLevelFileVGLCtoGVGAI(ZELDA_LEVEL_PATH+file, new Point(2,2));
 
 //				for(String line : level) {
 //					System.out.println(line);

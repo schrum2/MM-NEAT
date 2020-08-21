@@ -60,11 +60,24 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+/loderunnerlevelsequences/
+/loderunnermapelites/
+/megamandistinctverticalandconnectivity/
+/loderunnerlevels/
+/loderunnerlevelsMAPElites/
 ZeldaDungeon01_5000_10*
 ZeldaDungeon02_5000_10*
 ZeldaAllDungeons*
+/megamanlevels/
+/mariolevelsdecoratensleniency/
+/mariolevelsdistinctnsdecorate/
+/zeldadungeonswallwaterrooms/
+/zeldadungeonsdistinctbtrooms/
+/zeldadungeons/
+/mariolevels/
 /mariocppntogan/
 /zeldacppntogan/
+/zeldacppnthendirect/
 /interactivezeldagan/
 /interactivemariogan/
 /animationbreeder/
@@ -163,7 +176,12 @@ data/rouge/tmp/dungeon\.json
 *.csv
 
 batch/Experiments-2019-ZeldaGAN/Subject-*
+batch/Experiments-2020-CEC-ZeldaGAN/Subject-*
 
 .idea/
 
-MM-NEAT.iml
+*.iml
+src/main/python/GAN/MegaManGAN/Thumbs.db
+/megamancppntogan/
+/MegaManGAN/
+src/main/python/GAN/CGANTwoClassTests/FINAL.pth

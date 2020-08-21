@@ -17,6 +17,7 @@ public class CommonConstants {
 	public static boolean substrateBiasLocationInputs;
 	public static boolean substrateLocationInputs;
 	public static boolean convolution;
+	public static boolean drawMarioOverlayText;
 	public static boolean averageScoreHistory;
 	public static boolean monitorSubstrates;
 	public static boolean inheritFitness;
@@ -127,6 +128,7 @@ public class CommonConstants {
 		inputsUseID = Parameters.parameters.booleanParameter("inputsUseID");
 		averageScoreHistory = Parameters.parameters.booleanParameter("averageScoreHistory");
 		convolution = Parameters.parameters.booleanParameter("convolution");
+		drawMarioOverlayText = Parameters.parameters.booleanParameter("drawMarioOverlayText");
 		substrateBiasLocationInputs = Parameters.parameters.booleanParameter("substrateBiasLocationInputs");
 		substrateLocationInputs = Parameters.parameters.booleanParameter("substrateLocationInputs");
 		monitorSubstrates = Parameters.parameters.booleanParameter("monitorSubstrates");

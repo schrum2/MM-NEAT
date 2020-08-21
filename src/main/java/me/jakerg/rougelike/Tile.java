@@ -31,10 +31,14 @@ public enum Tile {
 	MOVABLE_BLOCK_RIGHT((char)219, AsciiPanel.yellow, 10000),
 	PUZZLE_LOCKED((char)239, Color.ORANGE, -10);
 	
-	private char glyph;
-	private Color color;
-	private int number;
+	private char glyph; //char representation of the tile 
+	private Color color; //color of tile 
+	private int number; //number that identifies tile 
 	
+	/**
+	 * Gets the glyph that describes the type of tile 
+	 * @return
+	 */
 	public char getGlyph() {
 		if(this == HIDDEN) {
 			if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
@@ -45,14 +49,28 @@ public enum Tile {
 		return glyph;
 	}
 	
+	/**
+	 * Gets the color of the tile
+	 * @return Color
+	 */
 	public Color getColor() {
 		return color;
 	}
 	
+	/**
+	 * Gets the number associated with the tile 
+	 * @return
+	 */
 	public int getNum() {
 		return number;
 	}
 	
+	/**
+	 * Constructor for a tile
+	 * @param glyph Glyph describing what type of tile 
+	 * @param color COlor of the tile 
+	 * @param number Integer number associated with the tile 
+	 */
 	Tile(char glyph, Color color, int number){
 		this.glyph = glyph;
 		this.color = color;
@@ -75,22 +93,42 @@ public enum Tile {
 		return this != WALL && this != BOUNDS && !this.isDoor();
 	}
 	
+	/**
+	 * tells if you are unable to pass through a block 
+	 * @return True if it is water or it is a movable block 
+	 */
 	public boolean isBlock() {
 		return this == WATER || this.isMovable();
 	}
 	
+	/**
+	 * Tells if the player can pass this tile
+	 * @return True if the tile is ground and not blocked, or it is a key or triforce
+	 */
 	public boolean playerPassable() {
 		return this.isGround() && !this.isBlock() || this.isInterest();
 	}
 	
+	/**
+	 * Tell if you can pass this tile, or if it is of interest
+	 * @return True if floor, a key, or the triforce
+	 */
 	public boolean isStatePassable() {
 		return this == FLOOR || this.isInterest();
 	}
 	
+	/**
+	 * Tells whether the tile is a door or not 
+	 * @return True if the tile is a door
+	 */
 	public boolean isDoor() {
 		return this == DOOR || this == HIDDEN || this == SOFT_LOCK_DOOR || this == LOCKED_DOOR || this == Tile.PUZZLE_LOCKED;
 	}
 	
+	/**
+	 * tells if the item is an item of interest
+	 * @return True if the item is a key or triforce 
+	 */
 	public boolean isInterest() {
 		return this == KEY || this == TRIFORCE;
 	}
@@ -103,18 +141,34 @@ public enum Tile {
 		return this == EXIT;
 	}
 	
+	/**
+	 * Tells if a block is bombable or not 
+	 * @return True if the tile is FLOOR, HIDDEN, or WALL
+	 */
 	public boolean isBombable() {
 		return this == FLOOR || this == HIDDEN || this == WALL;
 	}
 	
+	/**
+	 * Tells if the tile is a key
+	 * @return True if the tile is a key 
+	 */
 	public boolean isKey() {
 		return this == KEY;
 	}
 	
+	/**
+	 * Tells whether a block is movable or not 
+	 * @return True if you can move the block 
+	 */
 	public boolean isMovable() {
 		return this == MOVABLE_BLOCK_UP || this == MOVABLE_BLOCK_DOWN || this == MOVABLE_BLOCK_LEFT || this == MOVABLE_BLOCK_RIGHT;
 	}
 	
+	/**
+	 * Gets the direction that you are traveling 
+	 * @return The direction you are moving 
+	 */
 	public Move getDirection() {
 		if(this == MOVABLE_BLOCK_UP)
 			return Move.UP;
@@ -128,6 +182,11 @@ public enum Tile {
 			return Move.NONE;
 	}
 	
+	/**
+	 * Gets the number that represent a specific tile 
+	 * @param num Integer representing the tile wanted
+	 * @return The type of tile, floor tile if not found
+	 */
 	public static Tile findNum(int num) {
 		for(Tile tile : Tile.values()) {
 			if(num == tile.getNum())
@@ -136,6 +195,11 @@ public enum Tile {
 		return Tile.FLOOR;
 	}
 
+	/**
+	 * Gets the type of movable block 
+	 * @param d A direction
+	 * @return Movable block type, null if not found
+	 */
 	public static Tile findByMove(Move d) {
 		switch(d) {
 		case UP:

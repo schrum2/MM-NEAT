@@ -2,6 +2,8 @@ package edu.southwestern.tasks.interactive.gvgai;
 
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,8 +11,12 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
@@ -34,6 +40,7 @@ import gvgai.core.vgdl.VGDLFactory;
 import gvgai.core.vgdl.VGDLParser;
 import gvgai.core.vgdl.VGDLRegistry;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
+import me.jakerg.rougelike.Tile;
 
 /**
  * Evolve Zelda rooms using a GAN
@@ -71,6 +78,81 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		
 		top.add(dungeonize);
 		
+		JPanel rulesAndBackbones = new JPanel();
+		rulesAndBackbones.setLayout(new BoxLayout(rulesAndBackbones, BoxLayout.Y_AXIS));
+		
+		
+		String[] ruleChoices = { "Standard", "Complex" };
+		JComboBox<String> ruleChoice = new JComboBox<String>(ruleChoices);
+		ruleChoice.setSize(40, 40);
+		ruleChoice.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+				@SuppressWarnings("unchecked")
+				JComboBox<String> source = (JComboBox<String>)e.getSource();
+				//it it's horizontal, it's not vertical
+				if(source.getSelectedItem().toString() == "Standard") {
+					Parameters.parameters.setClass("zeldaGrammarRules", edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar.class);
+				} else if(source.getSelectedItem().toString() == "Complex"){ 
+					Parameters.parameters.setClass("zeldaGrammarRules", edu.southwestern.tasks.gvgai.zelda.level.MoreInterestingGraphGrammarRules.class);
+
+				}
+				//reset buttons
+				//resetButtons(true); // Not needed, since rooms are the same ... only dungeon generation changes.
+			}
+			});
+		JPanel rulePanel = new JPanel();
+		rulePanel.setLayout(new BoxLayout(rulePanel, BoxLayout.X_AXIS));
+		JLabel ruleLabel = new JLabel();
+		ruleLabel.setText("Grammar Rules: ");
+		rulePanel.add(ruleLabel);		
+		rulePanel.add(ruleChoice);
+		//top.add(rulePanel);
+		
+		
+		String[] backboneChoices = { "Standard", "Simple", "Boring", "Interesting", "Raft Test" };
+		JComboBox<String> backboneChoice = new JComboBox<String>(backboneChoices);
+		backboneChoice.setSize(40, 40);
+		backboneChoice.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+				@SuppressWarnings("unchecked")
+				JComboBox<String> source = (JComboBox<String>)e.getSource();
+				//it it's horizontal, it's not vertical
+				if(source.getSelectedItem().toString() == "Standard") {
+					Parameters.parameters.setClass("zeldaGraphBackBone", edu.southwestern.tasks.gvgai.zelda.level.graph.HumanSubjectStudy2019Graph.class);
+				} else if(source.getSelectedItem().toString() == "Boring"){ 
+					Parameters.parameters.setClass("zeldaGraphBackBone", edu.southwestern.tasks.gvgai.zelda.level.graph.BoringDungeonBackbone.class);
+
+				} else if(source.getSelectedItem().toString() == "Simple"){ 
+					Parameters.parameters.setClass("zeldaGraphBackBone", edu.southwestern.tasks.gvgai.zelda.level.graph.SimpleDungeonBackbone.class);
+
+				} else if(source.getSelectedItem().toString() == "Interesting"){ 
+					Parameters.parameters.setClass("zeldaGraphBackBone", edu.southwestern.tasks.gvgai.zelda.level.graph.InterestingZeldaGraph.class);
+
+				} else if(source.getSelectedItem().toString() == "Raft Test"){ 
+					Parameters.parameters.setClass("zeldaGraphBackBone", edu.southwestern.tasks.gvgai.zelda.level.graph.RaftTestingGraph.class);
+
+				}
+				//reset buttons
+				//resetButtons(true); // Not needed, since rooms are the same ... only dungeon generation changes.
+			}
+			});
+		JPanel backbonePanel = new JPanel();
+		backbonePanel.setLayout(new BoxLayout(backbonePanel, BoxLayout.X_AXIS));
+		JLabel backboneLabel = new JLabel();
+		backboneLabel.setText("Grammar backbones: ");
+		backbonePanel.add(backboneLabel);		
+		backbonePanel.add(backboneChoice);
+		//top.add(backbonePanel);
+		
+		rulesAndBackbones.add(rulePanel);
+		rulesAndBackbones.add(backbonePanel);
+//		top.add(rulesAndBackbones);
 		VGDLFactory.GetInstance().init(); // Get an instant of VGDL Factor and initialize the characters cache
 		VGDLRegistry.GetInstance().init(); // Get an instance of VGDL Registry and initialize the sprite factory
 	}
@@ -139,6 +221,17 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 		if(!Parameters.parameters.booleanParameter("gvgAIForZeldaGAN")) {
 			Dungeon dummy = new Dungeon();
 			List<List<Integer>> ints = ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(ArrayUtil.doubleArrayFromList(phenotype));
+			//Prevents doors from being displayed before Dungeonize is clicked
+			ints.get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE).set(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE).set(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_END, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE).set(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_START, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.FAR_SHORT_EDGE_DOOR_COORDINATE).set(ZeldaLevelUtil.SMALL_DOOR_COORDINATE_END, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).set(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START+1).set(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_END).set(ZeldaLevelUtil.CLOSE_EDGE_DOOR_COORDINATE, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START).set(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_START+1).set(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE, Tile.WALL.getNum());
+			ints.get(ZeldaLevelUtil.BIG_DOOR_COORDINATE_END).set(ZeldaLevelUtil.FAR_LONG_EDGE_DOOR_COORDINATE, Tile.WALL.getNum());
 			for(List<Integer> row : ints) {
 				for(Integer i : row) {
 					System.out.print(i + ", ");
@@ -214,7 +307,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	 */
 	@Override
 	public String getGANModelDirectory() {
-		return "python"+File.separator+"GAN"+File.separator+"ZeldaGAN";
+		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"ZeldaGAN";
 	}
 
 	/**
@@ -302,7 +395,7 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 			// Run the MMNeat Main method with parameters specifying that we want to run the Zedla GAN 
 			//MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","showKLOptions:false","allowInteractiveEvolution:false","trials:1","mu:16","zeldaGANModel:ZeldaFixedDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","watch:false","cleanFrequency:-1","simplifiedInteractiveInterface:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200", "zeldaGANUsesOriginalEncoding:false"});
 			//MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","showKLOptions:false","showLatentSpaceOptions:false","trials:1","mu:16","zeldaGANModel:ZeldaFixedDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","watch:false","cleanFrequency:-1","simplifiedInteractiveInterface:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200", "zeldaGANUsesOriginalEncoding:false"});
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","bigInteractiveButtons:true","showKLOptions:false","trials:1","mu:16","zeldaGANModel:ZeldaFixedDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","watch:false","cleanFrequency:-1","simplifiedInteractiveInterface:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200", "zeldaGANUsesOriginalEncoding:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","bigInteractiveButtons:false","showKLOptions:false","trials:1","mu:16","zeldaGANModel:ZeldaFixedDungeonsAll_5000_10.pth","maxGens:500","io:false","netio:false","GANInputSize:10","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","watch:false","cleanFrequency:-1","simplifiedInteractiveInterface:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200", "zeldaGANUsesOriginalEncoding:false", "zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.SimpleDungeonBackbone"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

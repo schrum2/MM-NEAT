@@ -43,6 +43,10 @@ public class MarioGANLevelTask extends MarioLevelTask<ArrayList<Double>> {
 	@Override
 	public ArrayList<List<Integer>> getMarioLevelListRepresentationFromGenotype(Genotype<ArrayList<Double>> individual) {
 		ArrayList<Double> latentVector = individual.getPhenotype();
+		return getMarioLevelListRepresentationFromStaticGenotype(latentVector);
+	}
+
+	public static ArrayList<List<Integer>> getMarioLevelListRepresentationFromStaticGenotype(ArrayList<Double> latentVector) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
 		ArrayList<List<Integer>> level = MarioGANUtil.generateLevelListRepresentationFromGAN(doubleArray);
 		return level;
@@ -65,6 +69,6 @@ public class MarioGANLevelTask extends MarioLevelTask<ArrayList<Double>> {
 		//MMNEAT.main("runNumber:0 randomSeed:0 base:mariogan log:MarioGAN-OverWorld4Segments saveTo:OverWorld4Segments marioGANLevelChunks:4 trials:1 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_30_Epoch5000.pth GANInputSize:30 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:true".split(" "));
 
 		// Trying to evolve to match a level target
-		MMNEAT.main("runNumber:0 randomSeed:0 marioGANLevelChunks:6 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_30_Epoch5000.pth GANInputSize:30 printFitness:true trials:1 mu:10 maxGens:500 io:false netio:false genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:false cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioLevelMatchFitness:true".split(" "));
+		MMNEAT.main("runNumber:0 randomSeed:0 marioGANLevelChunks:6 mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_30_Epoch5000.pth GANInputSize:30 printFitness:true trials:1 mu:10 maxGens:500 io:false netio:false genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:false cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioLevelMatchFitness:true".split(" "));
 	}
 }

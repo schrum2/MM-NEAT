@@ -1,28 +1,29 @@
 package edu.southwestern.tasks.gvgai.zelda;
 
 import java.awt.Point;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
-import java.io.*;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
-import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.random.RandomNumbers;
-import gvgai.core.game.Game;
-import gvgai.core.vgdl.VGDLFactory;
-import gvgai.core.vgdl.VGDLParser;
-import gvgai.core.vgdl.VGDLRegistry;
-import gvgai.tracks.singlePlayer.tools.human.Agent;
 import wox.serial.Easy;
 
 public class ZeldaGANUtil {
 
+	public static final int ZELDA_GAN_ORIGINAL_TILE_NUMBER = 4;
+	public static final int ZELDA_GAN_EXPANDED_TILE_NUMBER = 6;
+	public static final int ZELDA_GAN_REDUCED_TILE_NUMBER = 3;
+	
 	/**
 	 * Generate a Zelda room with the GAN, and then convert it to a String representation
 	 * that GVG-AI can turn into a level to play.

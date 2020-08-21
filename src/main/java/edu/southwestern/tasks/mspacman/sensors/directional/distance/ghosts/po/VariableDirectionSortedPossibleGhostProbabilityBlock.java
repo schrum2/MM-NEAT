@@ -8,7 +8,6 @@ import java.util.ListIterator;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 import edu.southwestern.util.datastructures.Quad;
-import edu.southwestern.util.datastructures.Triple;
 import pacman.game.Constants.MOVE;
 
 

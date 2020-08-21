@@ -76,7 +76,6 @@ import oldpacman.game.Constants;
 import oldpacman.game.Game;
 import pacman.controllers.IndividualGhostController;
 import pacman.controllers.MASController;
-import pacman.game.Constants.GHOST;
 import popacman.CustomExecutor;
 
 

@@ -1,11 +1,14 @@
 package utilities;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+
+import javax.swing.JFrame;
 
 public class JEasyFrame extends JFrame {
-    public Component comp;
+
+	private static final long serialVersionUID = 1L;
+	public Component comp;
     public JEasyFrame(Component comp, String title) {
         super(title);
         this.comp = comp;

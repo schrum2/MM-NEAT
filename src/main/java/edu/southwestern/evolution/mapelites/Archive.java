@@ -20,6 +20,10 @@ public class Archive<T> {
 	private boolean saveElites;
 	private String archiveDir;
 
+	public BinLabels getBinLabelsClass() {
+		return mapping;
+	}
+	
 	public Archive(boolean saveElites) {
 		this.saveElites = saveElites;
 		// Initialize mapping
@@ -36,17 +40,18 @@ public class Archive<T> {
 		// Archive directory
 		String experimentDir = FileUtilities.getSaveDirectory();
 		archiveDir = experimentDir + File.separator + "archive";
-		// Subdirectories for each bin
+		if(saveElites) {
+			new File(archiveDir).mkdirs(); // make directory
+		}
 		for(int i = 0; i < numBins; i++) {
-			if(saveElites) {
-				String binPath = archiveDir + File.separator + mapping.binLabels().get(i);
-				// Create all of the bin directories
-				new File(binPath).mkdirs(); // make directory
-			}
 			archive.add(null); // Place holder for first individual and future elites
 		}
 	}
 
+	public Vector<Score<T>> getArchive(){
+		return archive;
+	}
+	
 	/**
 	 * Get the scores of all elites for each bin.
 	 * Also casts down to float
@@ -105,10 +110,10 @@ public class Archive<T> {
 				if(saveElites) {
 					// Easier to reload on resume if file name is uniform. Will also save space by overwriting
 					String binPath = archiveDir + File.separator + mapping.binLabels().get(i);
-					Easy.save(candidate.individual, binPath + File.separator + "elite.xml");
+					Easy.save(candidate.individual, binPath + "-elite.xml");
 					// Write scores as simple text file (less to write than xml)
 					try {
-						PrintStream ps = new PrintStream(new File(binPath + File.separator + "scores.txt"));
+						PrintStream ps = new PrintStream(new File(binPath + "-scores.txt"));
 						for(Double score : candidate.behaviorVector) {
 							ps.println(score);
 						}

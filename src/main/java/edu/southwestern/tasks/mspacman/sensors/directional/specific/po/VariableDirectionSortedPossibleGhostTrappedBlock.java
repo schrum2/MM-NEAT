@@ -1,15 +1,11 @@
 package edu.southwestern.tasks.mspacman.sensors.directional.specific.po;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.ListIterator;
 
-import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
-import edu.southwestern.tasks.mspacman.ghosts.DirectionalGhostComparator;
-import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Quad;

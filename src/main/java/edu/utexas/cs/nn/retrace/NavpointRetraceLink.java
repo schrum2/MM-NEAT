@@ -1,6 +1,5 @@
 package edu.utexas.cs.nn.retrace;
 
-import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.Point;
 
 /**

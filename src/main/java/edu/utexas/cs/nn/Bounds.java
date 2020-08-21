@@ -7,7 +7,9 @@ import java.io.Serializable;
  * @author Igor Karpov (ikarpov@cs.utexas.edu)
  */
 public class Bounds implements Serializable {
-    private Point center;
+
+	private static final long serialVersionUID = 1L;
+	private Point center;
     private double radius;
 
     public Bounds() {

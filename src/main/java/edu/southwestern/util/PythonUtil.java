@@ -1,5 +1,6 @@
 package edu.southwestern.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -26,4 +27,13 @@ public class PythonUtil {
         }
     }
     
+    
+    /**
+     * Tells whether the user has created a file that contains a Python path.
+     * Does not verify that the path is valid, simply that it has been specified.
+     * @return Did the user specify a Python path in the appropriate file?
+     */
+    public static boolean pythonAvailable() {
+    	return new File("my_python_path.txt").exists();
+    }
 }

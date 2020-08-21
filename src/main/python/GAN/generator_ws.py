@@ -10,6 +10,7 @@ import sys
 import json
 import numpy
 import models.dcgan as dcgan
+import models.cdcgan as cdcgan
 #import matplotlib.pyplot as plt
 import math
 
@@ -29,42 +30,30 @@ def combine_images(generated_images):
     return image
 
 if __name__ == '__main__':
-    # Since the Java program is not launched from the pytorch directory,
-    # it cannot find this file when it is specified as being in the current
-    # working directory. This is why the network has to be a command line
-    # parameter. However, this model should load by default if no parameter
-    # is provided.
-    if len(sys.argv) ==1:
-        modelToLoad = "netG_epoch_5000.pth"
-    else:
-        modelToLoad = sys.argv[1]
-    if len(sys.argv) >=3:
-        nz = int(sys.argv[2])
-    else:
-        nz = 32
+    
+    modelToLoad = sys.argv[1]
+    nz = int(sys.argv[2])
+    z_dims = int(sys.argv[3])
+    out_width = int(sys.argv[4])
+    out_height = int(sys.argv[5])
+    if len(sys.argv)<=6:
+        num_classes = -1
+    else: 
+        num_classes = int(sys.argv[6])
 
-    #Jacob: I added this to maintain backwards compatibility
-    if len(sys.argv) >=4:
-        # User can set this to 10 to recreate behavior of original Mario GAN in GECCO 2018
-        z_dims = int(sys.argv[3])
-    else:
-        z_dims = 13 # This is the new default
-
-    # This is an ugly hack that assumes we can figure out the output dimension based on 
-    # the number of different tile types. It is true for now, because Zelda and Mario 
-    # are the only options, and they have very different tile counts. But the count for Zelda
-    # may change, and we may add more domains, so a better solution is needed in the long term.
-
-    if z_dims == 4 : # Assume this is Zelda (4 tiles, currently)
-        out_height = 16
-        out_width = 11
-    elif z_dims == 6 or z_dims == 3: # Fixed Zelda (rotated)
-        # The fixed Zelda rotates the rooms to match the original game presentation
-        out_height = 11
-        out_width = 16
-    else: # Assume this is Mario (10 or 13 tiles, depending)
-        out_height = 14
-        out_width = 28
+#    if z_dims == 4 : # Assume this is Zelda (4 tiles, currently)
+#        out_height = 16
+#        out_width = 11
+#    elif z_dims == 6 or z_dims == 3: # Fixed Zelda (rotated)
+#        # The fixed Zelda rotates the rooms to match the original game presentation
+#        out_height = 11
+#        out_width = 16
+#    elif z_dims == 8: #Lode Runner
+#        out_height = 22
+#        out_width = 32 
+#    else: # Assume this is Mario (10 or 13 tiles, depending)
+#       out_height = 14
+#       out_width = 28
 
     batchSize = 1
     #nz = 10 #Dimensionality of latent vector
@@ -74,8 +63,15 @@ if __name__ == '__main__':
     ngpu = 1
     n_extra_layers = 0
 
-    # This is a new DCGAN model that has the proper state dict labels/keys for the latest version of PyTorch (no periods '.')
-    generator = dcgan.DCGAN_G(imageSize, nz, z_dims, ngf, ngpu, n_extra_layers)
+    if num_classes > 1:
+        # Load conditional GAN instead: Needs at least 2 classes
+        generator = cdcgan.CDCGAN_G(imageSize, nz, z_dims, ngf, ngpu, num_classes, n_extra_layers)
+        # label preprocess
+        onehot = torch.zeros(num_classes, num_classes)
+        onehot = onehot.scatter_(1, torch.LongTensor([x for x in range(num_classes)]).view(num_classes,1), 1).view(num_classes, num_classes, 1, 1)
+    else:
+        # This is a new DCGAN model that has the proper state dict labels/keys for the latest version of PyTorch (no periods '.')
+        generator = dcgan.DCGAN_G(imageSize, nz, z_dims, ngf, ngpu, n_extra_layers)
     #print(generator.state_dict()) 
     # This is a state dictionary that might have deprecated key labels/names
     deprecatedModel = torch.load(modelToLoad, map_location=lambda storage, loc: storage)
@@ -131,14 +127,24 @@ if __name__ == '__main__':
     #for line in sys.stdin.readlines(): # Jacob: I changed this to make this work on Windows ... did this break on Mac?
 
     #for line in sys.stdin:
-    while 1:
+    while True:
         line = sys.stdin.readline()
-        if len(line)==2 and int(line)==0:
-            break
-        lv = numpy.array(json.loads(line))
-        latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) 
+        # "0\n" secret exit command
+        # This breaks the conditional GAN when class 0 is used
+        #if len(line)==2 and int(line)==0:
+        #    break
 
-        levels = generator(Variable(latent_vector, volatile=True))
+        if num_classes > 1: # Conditional GAN. Input is class number AND latent vector
+            classNum = int(line) ## Assume number on line by itself
+            classOneHot = onehot[classNum].view(batchSize, num_classes, 1, 1)
+            line = sys.stdin.readline() # This NEXT line should be the latent vector
+            lv = numpy.array(json.loads(line))
+            latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) 
+            levels = generator(Variable(latent_vector, volatile=True),Variable(classOneHot, volatile=True))
+        else: # Standard GAN. Input is just latent vector
+            lv = numpy.array(json.loads(line))
+            latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) 
+            levels = generator(Variable(latent_vector, volatile=True))
 
         #levels.data = levels.data[:,:,:14,:28] #Cut of rest to fit the 14x28 tile dimensions
 

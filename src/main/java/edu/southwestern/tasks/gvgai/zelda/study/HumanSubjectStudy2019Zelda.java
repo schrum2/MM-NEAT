@@ -2,17 +2,18 @@ package edu.southwestern.tasks.gvgai.zelda.study;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.LinkedList;
-import java.util.List;
+//import java.util.LinkedList;
+//import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.LoadOriginalDungeon;
+import edu.southwestern.tasks.gvgai.zelda.level.GraphRuleManager;
 import edu.southwestern.tasks.gvgai.zelda.level.LevelLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGrammar;
-import edu.southwestern.tasks.gvgai.zelda.level.ZeldaGraphGrammar;
+import edu.southwestern.tasks.gvgai.zelda.level.graph.ZeldaDungeonGraphBackBone;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Graph;
 import edu.southwestern.util.datastructures.GraphUtil;
@@ -35,18 +36,12 @@ public class HumanSubjectStudy2019Zelda {
 	public static void runTrial(Type type) {
 		Dungeon dungeonToPlay = null;
 		// Save in the experiment's subject directory
-		subjectDir = "batch/Experiments-2019-ZeldaGAN/Subject-" + 
+		subjectDir = "batch/Experiments-2020-CEC-ZeldaGAN/Subject-" + 
 	            String.valueOf(Parameters.parameters.integerParameter("randomSeed")) + 
 	            "/";
 
 		Parameters.parameters.setBoolean("zeldaHelpScreenEnabled", true);
-		int seed = Parameters.parameters.integerParameter("randomSeed");
-		// There is an unbeatable level when using seed 7 with the graph grammar and original rooms.
-		// Rather than fix it properly, this hack just switches the random seed so the level is different.
-		if(seed == 7 && type.equals(Type.GENERATED_DUNGEON) && 
-		   Parameters.parameters.classParameter("zeldaLevelLoader").getSimpleName().equals("OriginalLoader")) {
-			seed = 30; // Not used as an ID for anyone else in the study
-		}	
+		int seed = Parameters.parameters.integerParameter("randomSeed");	
 		RandomNumbers.reset(seed);
 		
 		if(type.equals(Type.ORIGINAL)) {
@@ -65,32 +60,34 @@ public class HumanSubjectStudy2019Zelda {
 				System.exit(1);
 			}
 		} else if(type.equals(Type.GENERATED_DUNGEON)) {
-			List<ZeldaGrammar> initialList = new LinkedList<>();
-			initialList.add(ZeldaGrammar.START_S);
-			initialList.add(ZeldaGrammar.ENEMY_S);
-			initialList.add(ZeldaGrammar.KEY_S);
-			initialList.add(ZeldaGrammar.LOCK_S);
-			initialList.add(ZeldaGrammar.ENEMY_S);
-			initialList.add(ZeldaGrammar.KEY_S);
-			initialList.add(ZeldaGrammar.PUZZLE_S);
-			initialList.add(ZeldaGrammar.LOCK_S);
-			initialList.add(ZeldaGrammar.ENEMY_S);
-			initialList.add(ZeldaGrammar.TREASURE);
-			Graph<ZeldaGrammar> graph = new Graph<>(initialList);
-			
-			ZeldaGraphGrammar grammar = new ZeldaGraphGrammar();
+
 			try {
+				ZeldaDungeonGraphBackBone ConstructGraph = (ZeldaDungeonGraphBackBone) ClassCreation.createObject("zeldaGraphBackBone");
+				Graph<ZeldaGrammar> graph = ConstructGraph.getInitialGraphBackBone();
+				@SuppressWarnings("unchecked")
+				GraphRuleManager<ZeldaGrammar> grammar = (GraphRuleManager<ZeldaGrammar>) ClassCreation.createObject("zeldaGrammarRules");
+				
+
 				grammar.applyRules(graph);
+				
 				LevelLoader loader = (LevelLoader) ClassCreation.createObject("zeldaLevelLoader");
 				dungeonType = loader.getClass().getSimpleName();
+				
 				if(Parameters.parameters != null && Parameters.parameters.booleanParameter("rogueLikeDebugMode"))
 					GraphUtil.saveGrammarGraph(graph, subjectDir + "DungeonGraph_" + dungeonType + ".dot");
+				
 				dungeonToPlay = DungeonUtil.recursiveGenerateDungeon(graph, loader);
+				
+				//System.out.println("IS THIS NULL??: "+dungeonToPlay);
+				
 				DungeonUtil.makeDungeonPlayable(dungeonToPlay);
+				dungeonToPlay.markReachableRooms();
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(1);
 			}
+//			System.out.println("waiting");
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 			
 		} else if(type.equals(Type.TUTORIAL)) {
 			System.out.println("\n\n\nTutorial not supported yet.");
@@ -123,7 +120,7 @@ public class HumanSubjectStudy2019Zelda {
 		//                   edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader
 		
 		
-		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.WebLoader".split(" "));
+		MMNEAT.main("zeldaType:generated randomSeed:7 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.OriginalLoader rogueLikeDebugMode:true zeldaGraphBackBone:edu.southwestern.tasks.gvgai.zelda.level.graph.TwoTriforceBugGraph zeldaGrammarRules:edu.southwestern.tasks.gvgai.zelda.level.MoreInterestingGraphGrammarRules firstSoftLockedRoomHasRaft:false".split(" "));
 		//MMNEAT.main("zeldaType:generated randomSeed:0 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" "));
 	}
 

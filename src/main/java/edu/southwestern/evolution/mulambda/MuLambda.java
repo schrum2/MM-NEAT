@@ -1,25 +1,19 @@
 package edu.southwestern.evolution.mulambda;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.HybrIDUtil.*;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SinglePopulationGenerationalEA;
+import edu.southwestern.evolution.HybrIDUtil.HybrIDUtil;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectureGenotype;
 import edu.southwestern.evolution.genotypes.OffsetHybrIDGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.log.FitnessLog;
 import edu.southwestern.log.PlotLog;
 import edu.southwestern.networks.TWEANN;
-import edu.southwestern.networks.hyperneat.HyperNEATTask;
-import edu.southwestern.networks.hyperneat.HyperNEATUtil;
-import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.networks.hyperneat.architecture.CascadeNetworks;
-import edu.southwestern.networks.hyperneat.architecture.FlexibleSubstrateArchitecture;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -32,7 +26,6 @@ import edu.southwestern.tasks.mspacman.multitask.DangerousAreaModeSelector;
 import edu.southwestern.tasks.mspacman.sensors.directional.scent.VariableDirectionKStepDeathScentBlock;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
@@ -439,6 +432,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 				modeLog.close();
 			}
 		}
+		task.finalCleanup();
 	}
 
 	/**

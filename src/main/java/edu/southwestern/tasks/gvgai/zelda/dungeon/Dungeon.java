@@ -32,6 +32,7 @@ public class Dungeon {
 	private int levelWidth = -1;
 	private int levelHeight = -1;
 	private Set<String> levelsVisited;
+	private boolean markReachableRoomsEverCalled = false;
 
 	public Dungeon() {
 		levels = new HashMap<>();
@@ -225,15 +226,6 @@ public class Dungeon {
 		public transient boolean reachable = false;
 		
 		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result + ((name == null) ? 0 : name.hashCode());
-			return result;
-		}
-
-		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
 				return true;
@@ -242,8 +234,6 @@ public class Dungeon {
 			if (getClass() != obj.getClass())
 				return false;
 			Node other = (Node) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
 			if (name == null) {
 				if (other.name != null)
 					return false;
@@ -281,9 +271,13 @@ public class Dungeon {
 
 			return false;
 		}
-
-		private Dungeon getOuterType() {
-			return Dungeon.this;
+		
+		
+		
+		@Override
+		public int hashCode() {
+			return name.hashCode();
+			
 		}
 	}
 
@@ -302,6 +296,7 @@ public class Dungeon {
 	 * in terms of door connectivity (does not consider walls)
 	 */
 	public void markReachableRooms() {
+		markReachableRoomsEverCalled = true;
 		Node startNode = levels.get(currentLevel);
 		startNode.reachable = true; // Obviously reachable
 		Stack<Node> stack = new Stack<Node>();
@@ -322,6 +317,24 @@ public class Dungeon {
 				neighborNode.reachable = true;
 			}
 		}
+	}
+	
+	/**
+	 * Returns the number of rooms that are connected by doorways to the start,
+	 * but does NOT assure that keys exist to get through locked doors, or that
+	 * walls don't impede progress between doors.
+	 * 
+	 * @return Count of rooms that are "reachable" or at least possibly reachable
+	 */
+	public int numberOfPossiblyReachableRooms() {
+		if(!markReachableRoomsEverCalled) markReachableRooms();
+		int numRoomsReachable = 0;
+		for(Node room: getLevels().values()) {
+			if(room.reachable) { 
+				numRoomsReachable++;
+			}
+		}
+		return numRoomsReachable;
 	}
 
 }

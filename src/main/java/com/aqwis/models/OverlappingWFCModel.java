@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static javafx.application.Platform.exit;
+//import static javafx.application.Platform.exit;
 
 public class OverlappingWFCModel extends WFCModel {
     int[][][][] propagator;

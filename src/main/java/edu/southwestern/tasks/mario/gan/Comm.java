@@ -50,7 +50,9 @@ public abstract class Comm extends Thread {
     	String msg = processCommRecv();
     	return msg;
     }
-
+    public void terminate() {
+    	process.destroy();
+    }
     private String processCommRecv(){
     	String msg = null;
     	try {

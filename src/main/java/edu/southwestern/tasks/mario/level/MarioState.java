@@ -18,25 +18,40 @@ public class MarioState extends State<MarioState.MarioAction> {
 			return s.level.get(0).size() - s.marioX;
 		}
 	};
-	
+
+	/**
+	 * Defines the actions that can be used in Mario by a player
+	 *
+	 */
 	public static class MarioAction implements Action {
 		public enum DIRECTION {JUMP, LEFT, RIGHT};
 		private DIRECTION direction;
 		public MarioAction(DIRECTION d) {
 			this.direction = d;
 		}
-		
+
+		/**
+		 * Gets current action
+		 * @return Current action
+		 */
 		public DIRECTION getD() {
 			return direction;
 		}
-		
+
+		/**
+		 * determines if two actions are equal 
+		 * @return True if the current action is equal to the parameter 
+		 */
 		public boolean equals(Object other) {
 			if(other instanceof MarioAction) {
 				return ((MarioAction) other).direction.equals(this.direction);
 			}
 			return false;
 		}
-		
+
+		/**
+		 * @return String representation of the action
+		 */
 		public String toString() {
 			return direction.toString();
 		}
@@ -46,11 +61,18 @@ public class MarioState extends State<MarioState.MarioAction> {
 	private int jumpVelocity;
 	public int marioX; // Should use getters for these instead
 	public int marioY;
-	
+
+	/**
+	 * Constructor for a Mario State 
+	 * @param level A Mario Level 
+	 * @param jumpVelocity Current jump velocity
+	 * @param marioX Current X coordinate
+	 * @param marioY Current Y coordinate 
+	 */
 	public MarioState(ArrayList<List<Integer>> level, int jumpVelocity, int marioX, int marioY) {
 		this.level = level;
-//		int height = level.size();
-//		int width = level.get(0).size();
+		//		int height = level.size();
+		//		int width = level.get(0).size();
 		/*for(int y=0; y<height; y++){
 			for(int x=0; x<width; x++){
 				System.out.print(this.tileAtPosition(x, y));
@@ -62,7 +84,11 @@ public class MarioState extends State<MarioState.MarioAction> {
 		this.marioX = marioX;
 		this.marioY = marioY;
 	}
-	
+
+	/**
+	 * Default constructor for a Mario State
+	 * @param level A Mario level 
+	 */
 	public MarioState(ArrayList<List<Integer>> level) {
 		this(level, 0, 0, level.size() - 2);
 	}
@@ -121,7 +147,7 @@ public class MarioState extends State<MarioState.MarioAction> {
 		return tmpLevel;
 	}
 
-        
+
 	/**
 	 * Easy access to the given tile integer at given (x,y) coordinates.
 	 * 
@@ -132,14 +158,21 @@ public class MarioState extends State<MarioState.MarioAction> {
 	private int tileAtPosition(int x, int y) {
 		return level.get(y).get(x);
 	}
-        
-        private static void setTileAtPosition(ArrayList<List<Integer>> level, int x, int y, int tile){
-            List<Integer> newRow = level.get(y);
-            newRow.set(x, tile);
-            level.set(y, newRow);
-        }
-        
-	
+
+	/***
+	 * Sets a tile at a specified position
+	 * @param level A Mario level
+	 * @param x X coordinate to set the tile 
+	 * @param y Y coordinate to set the tile
+	 * @param tile The tile to set as an integer 
+	 */
+	private static void setTileAtPosition(ArrayList<List<Integer>> level, int x, int y, int tile){
+		List<Integer> newRow = level.get(y);
+		newRow.set(x, tile);
+		level.set(y, newRow);
+	}
+
+
 	/**
 	 * If the coordinates are inside of the level bounds.
 	 *
@@ -150,7 +183,7 @@ public class MarioState extends State<MarioState.MarioAction> {
 	private boolean inBounds(int x, int y) {
 		return 0 <= y && y < level.size() && 0 <= x && x < level.get(0).size();
 	}
-	
+
 	/**
 	 * If the x coordinate is at right edge
 	 * @param x horizontal position from left
@@ -159,7 +192,7 @@ public class MarioState extends State<MarioState.MarioAction> {
 	private boolean isGoal(int x) {
 		return x == level.get(0).size()-1;
 	}
-	
+
 	/**
 	 * A position is passable if it is not a blockage, and does not contain an enemy
 	 * @param x horizontal position from left
@@ -173,12 +206,19 @@ public class MarioState extends State<MarioState.MarioAction> {
 		int tile = tileAtPosition(x,y);
 		return LevelParser.negativeSpaceTiles.get(tile) == 0 && LevelParser.leniencyTiles.get(tile) == 0;
 	}
-	
+
+	/**
+	 * This method gets the next state in the search 
+	 * @return The next state, null means that it is not a legal state at the moment 
+	 */
 	@Override
 	public State<MarioAction> getSuccessor(MarioAction a) {
 		int newJumpVelocity = jumpVelocity;
 		int newMarioX = marioX;
 		int newMarioY = marioY;
+
+		// Falling off bottom of screen (into a gap). No successor (death)
+		if(!inBounds(marioX,marioY+1)) return null;
 		
 		if(newJumpVelocity == 0) { // Not mid-Jump
 			if(passable(newMarioX,newMarioY+1)) { // Falling
@@ -189,7 +229,7 @@ public class MarioState extends State<MarioState.MarioAction> {
 		} else if(a.getD().equals(MarioAction.DIRECTION.JUMP)) {
 			return null; // Can't jump mid-jump. Reduces search space.
 		}
-		
+
 		if(newJumpVelocity > 0) { // Jumping up
 			if(passable(newMarioX,newMarioY-1)) {
 				newMarioY--; // Jump up
@@ -199,7 +239,7 @@ public class MarioState extends State<MarioState.MarioAction> {
 			}
 			// TODO: Add breakable case
 		}
-		
+
 		// Right movement
 		if(a.getD().equals(MarioAction.DIRECTION.RIGHT)) {
 			if(passable(newMarioX+1,newMarioY)) {
@@ -209,7 +249,7 @@ public class MarioState extends State<MarioState.MarioAction> {
 				return null;
 			}
 		}
-		
+
 		// Left movement
 		if(a.getD().equals(MarioAction.DIRECTION.LEFT)) {
 			if(passable(newMarioX-1,newMarioY)) {
@@ -225,6 +265,10 @@ public class MarioState extends State<MarioState.MarioAction> {
 		return new MarioState(level, newJumpVelocity, newMarioX, newMarioY);
 	}
 
+	/**
+	 * Gets a list of the valid actions for playing Mario levels 
+	 * @return A list of valid actions
+	 */
 	@Override
 	public ArrayList<MarioAction> getLegalActions(State<MarioAction> s) {
 		ArrayList<MarioAction> possible = new ArrayList<MarioAction>();
@@ -241,12 +285,16 @@ public class MarioState extends State<MarioState.MarioAction> {
 		if(inBounds(marioX-1,marioY) &&  passable(marioX-1,marioY)) possible.add(new MarioAction(MarioAction.DIRECTION.RIGHT));
 		// Can jump if on ground
 		if(inBounds(marioX,marioY-1) && passable(marioX,marioY-1) && !passable(marioX,marioY+1)) possible.add(new MarioAction(MarioAction.DIRECTION.JUMP));*/
-		
+
 		// Add death from enemies?
-		
+
 		return possible;
 	}
 
+	/**
+	 * determines if you have won the level 
+	 * @return True if you have reach the last x coordinate in the level 
+	 */
 	@Override
 	public boolean isGoal() {
 		return isGoal(marioX);
@@ -295,10 +343,13 @@ public class MarioState extends State<MarioState.MarioAction> {
 		return true;
 	}
 
+	/**
+	 * @return String representation of current player coordinates 
+	 */
 	@Override
 	public String toString(){
 		return "("+marioX + "," + marioY +")";		
 
 	}
-        
+
 }

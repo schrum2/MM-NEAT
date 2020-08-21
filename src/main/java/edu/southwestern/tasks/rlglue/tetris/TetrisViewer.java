@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.rlcommunity.environments.tetris.Tetris;
 import org.rlcommunity.environments.tetris.TetrisState;
 
 import edu.southwestern.networks.TWEANN;

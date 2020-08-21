@@ -43,7 +43,11 @@ public class MarioCPPNtoGANLevelTask<T extends Network> extends MarioLevelTask<T
 	 */
 	@Override
 	public ArrayList<List<Integer>> getMarioLevelListRepresentationFromGenotype(Genotype<T> individual) {
-		Network cppn = individual.getPhenotype();
+		return getMarioLevelListRepresentationFromStaticGenotype(individual.getPhenotype());
+	}
+
+	public static ArrayList<List<Integer>> getMarioLevelListRepresentationFromStaticGenotype(Network cppn) {
+		//Network cppn = individual.getPhenotype();
 		double[] doubleArray = MarioCPPNtoGANLevelBreederTask.createLatentVectorFromCPPN(cppn, ArrayUtil.doubleOnes(cppn.numInputs()), Parameters.parameters.integerParameter("marioGANLevelChunks"));
 		ArrayList<List<Integer>> level = MarioGANUtil.generateLevelListRepresentationFromGAN(doubleArray);
 		return level;

@@ -71,6 +71,8 @@ public class Creature {
 	
 	private DungeonBuilder dungeonBuilder;	
 	public DungeonBuilder getDungeonBuilder() { return this.dungeonBuilder; }
+	
+	public static final int ENEMY_INT_CODE = 2; //fixes magic number issue 
     
     /**
      * If a creature is told to display, let the ai control take care of it
@@ -265,7 +267,8 @@ public class Creature {
             	EnemyDrops drops = new EnemyDrops(this);
         		Item itemToDrop = drops.getItem();
         		if(itemToDrop != null) {
-        			if(itemToDrop instanceof Health && this.world.getPlayer().isMaxed())
+        			Creature player = this.world.getPlayer();
+        			if(itemToDrop instanceof Health && player != null && player.isMaxed())
         				itemToDrop = new Bomb(getWorld(), 'b', AsciiPanel.white, x, y, 4, 5, true);
         				
         			this.world.addItem(itemToDrop);

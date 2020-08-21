@@ -11,11 +11,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
+import edu.southwestern.util.datastructures.ListUtil;
 import edu.southwestern.util.file.NullPrintStream;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import me.jakerg.rougelike.Tile;
@@ -140,6 +142,13 @@ public class DungeonNovelty {
 	 * @return double array where each index is the novelty of the same index in the rooms list.
 	 */
 	public static double[] roomNovelties(List<List<List<Integer>>> rooms) {
+		// Repalce all rooms with deep copies of the room since the novelty calculation
+		// modifies the rooms
+		ListIterator<List<List<Integer>>> itr = rooms.listIterator();
+		while(itr.hasNext()) {
+			List<List<Integer>> level = itr.next();
+			itr.set(ListUtil.deepCopyListOfLists(level));
+		}
 		//System.out.println("roomNovelties!");
 		// Clean all rooms
 		for(List<List<Integer>> room : rooms) {
@@ -183,7 +192,7 @@ public class DungeonNovelty {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws FileNotFoundException {
-		final String basePath = "G:\\My Drive\\Research\\SCOPE Artifacts\\Zelda Human Subject Data\\Experiments-2019-ZeldaGAN\\Subject-";
+		final String basePath = "G:\\My Drive\\Research\\SCOPE Artifacts\\Zelda Human Subject Data\\Experiments-2020-CEC-ZeldaGAN\\Subject-";
 		
 		// To suppress output from file loading
 		PrintStream original = System.out;

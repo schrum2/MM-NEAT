@@ -12,6 +12,7 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.search.Action;
 import edu.southwestern.util.search.State;
+import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.Tile;
 
 public class ZeldaState extends State<ZeldaState.GridAction>{
@@ -81,7 +82,7 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		int tileNum = currentNode.level.intLevel.get(y).get(x);
 		if(tileNum == Tile.KEY.getNum()) {
 			pickUpKey(currentNode.name, new Point(x, y));
-		} else if (tileNum == -6) { // Ladder number
+		} else if (tileNum == Ladder.INT_CODE) { // Ladder number
 			hasLadder = true; // "pickup" ladder
 		}
 	}
@@ -110,6 +111,8 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 		default:
 			assert false : "Illegal action! " + a;
 		}
+		assert newY >= 0;
+		assert newX >= 0;
 		
 		Pair<String, Point> newRoom = dungeon.getNextLevel(currentNode, new Point(newX, newY).toString());
 		if(newRoom != null) {

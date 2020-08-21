@@ -1,0 +1,15 @@
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel1to10.json --experiment LodeRunnerAllTilesLevel1to10-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel11to20.json --experiment LodeRunnerAllTilesLevel11to20-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel21to30.json --experiment LodeRunnerAllTilesLevel21to30-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel31to40.json --experiment LodeRunnerAllTilesLevel31to40-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel41to50.json --experiment LodeRunnerAllTilesLevel41to50-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel51to60.json --experiment LodeRunnerAllTilesLevel51to60-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel61to70.json --experiment LodeRunnerAllTilesLevel61to70-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel71to80.json --experiment LodeRunnerAllTilesLevel71to80-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel81to90.json --experiment LodeRunnerAllTilesLevel81to90-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel91to100.json --experiment LodeRunnerAllTilesLevel91to100-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel101to110.json --experiment LodeRunnerAllTilesLevel101to110-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel111to120.json --experiment LodeRunnerAllTilesLevel111to120-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel121to130.json --experiment LodeRunnerAllTilesLevel121to130-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel131to140.json --experiment LodeRunnerAllTilesLevel131to140-5000_10_7 --tiles 7
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel141to150.json --experiment LodeRunnerAllTilesLevel141to150-5000_10_7 --tiles 7

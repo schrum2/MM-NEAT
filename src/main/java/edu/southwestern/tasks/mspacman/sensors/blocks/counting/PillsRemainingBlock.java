@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.mspacman.sensors.blocks.counting;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
-import edu.southwestern.util.MiscUtil;
 
 /**
  * Support PO pacman

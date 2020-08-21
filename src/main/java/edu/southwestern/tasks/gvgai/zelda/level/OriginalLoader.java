@@ -11,6 +11,7 @@ import java.util.Set;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
+import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.Tile;
 
 public class OriginalLoader implements LevelLoader {
@@ -57,6 +58,8 @@ public class OriginalLoader implements LevelLoader {
 		
 	}
 
+	// This switch case purposefully does nothing for certain tile types
+	@SuppressWarnings("incomplete-switch")
 	private void removeJunk(List<List<Integer>> levelInt) {
 		for(int y = 0; y < levelInt.size(); y++) {
 			for(int x = 0; x < levelInt.get(y).size(); x++) {
@@ -73,7 +76,7 @@ public class OriginalLoader implements LevelLoader {
 				}
 				if(tile.isMovable())
 					num = Tile.WALL.getNum();
-				if(num == -6) // Ladder item
+				if(num == Ladder.INT_CODE) // Ladder item
 					num = Tile.FLOOR.getNum();
 				levelInt.get(y).set(x, num);
 					

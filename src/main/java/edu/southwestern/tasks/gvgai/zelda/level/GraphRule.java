@@ -5,11 +5,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 import edu.southwestern.util.datastructures.Graph;
 
 public class GraphRule<T extends Grammar> {
 	private T symbolStart;
+	// Dr. Schrum: Why are these not used?
+	//private T inBetween;
+	//private T toStart;
 	private T symbolEnd;
 	private GraphGrammar<T> grammar;
 	
@@ -59,6 +63,15 @@ public class GraphRule<T extends Grammar> {
 
 	public Graph<T>.Node getStart() {
 		return grammar.getGraphStart();
+	}
+	public List<Graph<T>.Node> getNodesToStart(){
+		return grammar.getNodesToStart();
+	}
+	public List<Graph<T>.Node> getNodesBetween(){
+		return grammar.getNodesBetween();
+	}
+	public Graph<T>.Node getEnd(){
+		return grammar.getGraphEnd();
 	}
 	
 	/**

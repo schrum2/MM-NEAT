@@ -21,6 +21,7 @@ import ch.idsia.mario.environments.Environment;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.GameViewer;
 import ch.idsia.tools.tcp.ServerAgent;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 
 
@@ -225,10 +226,12 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 			if (GlobalOptions.VisualizationOn) {
 
 				String msg = "Agent: " + agent.getName();
-				LevelScene.drawStringDropShadow(og, msg, 0, 7, 5);
+				if(CommonConstants.drawMarioOverlayText)
+					LevelScene.drawStringDropShadow(og, msg, 0, 7, 5);
 
 				msg = "Selected Actions: ";
-				LevelScene.drawStringDropShadow(og, msg, 0, 8, 6);
+				if(CommonConstants.drawMarioOverlayText)
+					LevelScene.drawStringDropShadow(og, msg, 0, 8, 6);
 
 				msg = "";
 				if (action != null)
@@ -237,8 +240,10 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 						msg += (action[i]) ? Scene.keysStr[i] : "      ";
 				}
 				else
-					msg = "NULL";                    
-				drawString(og, msg, 6, 78, 1);
+					msg = "NULL";    
+				
+				if(Parameters.parameters == null || Parameters.parameters.booleanParameter("drawMarioOverlayText"))
+					drawString(og, msg, 6, 78, 1);
 
 				if (!this.hasFocus() && tick / 4 % 2 == 0) {
 					String msgClick = "CLICK TO PLAY";
@@ -248,14 +253,15 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 					drawString(og, msgClick, 160 - msgClick.length() * 4, 110, 7);
 				}
 				og.setColor(Color.DARK_GRAY);
-				LevelScene.drawStringDropShadow(og, "FPS: ", 33, 2, 7);
-				LevelScene.drawStringDropShadow(og, ((GlobalOptions.FPS > 99) ? "\\infty" : GlobalOptions.FPS.toString()), 33, 3, 7);
+				if(CommonConstants.drawMarioOverlayText) {
+					LevelScene.drawStringDropShadow(og, "FPS: ", 33, 2, 7);
+					LevelScene.drawStringDropShadow(og, ((GlobalOptions.FPS > 99) ? "\\infty" : GlobalOptions.FPS.toString()), 33, 3, 7);
 
-				msg = totalNumberOfTrials == -2 ? "" : currentTrial + "(" + ((totalNumberOfTrials == -1) ? "\\infty" : totalNumberOfTrials) + ")";
+					msg = totalNumberOfTrials == -2 ? "" : currentTrial + "(" + ((totalNumberOfTrials == -1) ? "\\infty" : totalNumberOfTrials) + ")";
 
-				LevelScene.drawStringDropShadow(og, "Trial:", 33, 4, 7);
-				LevelScene.drawStringDropShadow(og, msg, 33, 5, 7);
-
+					LevelScene.drawStringDropShadow(og, "Trial:", 33, 4, 7);
+					LevelScene.drawStringDropShadow(og, msg, 33, 5, 7);
+				}
 
 				if (width != 320 || height != 240) {
 					g.drawImage(image, 0, 0, 640 * 2, 480 * 2, null);

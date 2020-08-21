@@ -32,7 +32,7 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 		this(RandomNumbers.randomBoundedArray(lower, upper), lower, upper);
 	}
 
-	private BoundedRealValuedGenotype(double[] genes, double[] lower, double[] upper) {
+	public BoundedRealValuedGenotype(double[] genes, double[] lower, double[] upper) {
 		super(genes);
 		// Specialized mutation operator slightly more complicated than simple
 		// perturbation

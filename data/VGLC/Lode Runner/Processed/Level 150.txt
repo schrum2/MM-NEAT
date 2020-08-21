@@ -18,5 +18,5 @@ bbbbbbbb#bb##bb#bbbb#...B#B#B#BG
 ########.##..##.####....B#B#B#BG
 .b.GGGGGGGGGGGGGGGGGGGGGG#B#.#.G
 .bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb#
-.GGGGGGGGGGGGGGGGGGGGGGGGGGGGGG#
+MGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG#
 bbbbbbbbbbbbbbb#bbbbbbbbbbbbbbbb

@@ -11,7 +11,8 @@ import machinelearning.networks.FunctionApproximator;
  * Time: 12:19:22 PM
  */
 public abstract class EvolvableController extends Controller implements Evolvable, Serializable {
-    //transient public MyAgentStats stats = null;
+	private static final long serialVersionUID = 1L;
+	//transient public MyAgentStats stats = null;
     transient public double evalTime = 0;
 //    public MyAgentStats getStats(){
 //        MyAgentStats result = stats;

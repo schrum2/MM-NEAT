@@ -3,6 +3,7 @@ package edu.southwestern.tasks.boardGame;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.boardGame.BoardGame;
 import edu.southwestern.boardGame.BoardGameState;
 import edu.southwestern.boardGame.agents.BoardGamePlayer;
@@ -13,7 +14,6 @@ import edu.southwestern.boardGame.fitnessFunction.OthelloPieceFitness;
 import edu.southwestern.boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import edu.southwestern.boardGame.fitnessFunction.WinPercentageBoardGameFitness;
 import edu.southwestern.boardGame.heuristics.NNBoardGameHeuristic;
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
@@ -25,7 +25,6 @@ import edu.southwestern.tasks.GroupTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
-import edu.southwestern.util.datastructures.Triple;
 
 public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardGameState> extends GroupTask implements NetworkTask, HyperNEATTask  {
 
