@@ -1,17 +1,13 @@
 #!/usr/bin/env Rscript
-args = commandArgs(trailingOnly=TRUE)
-if (length(args)==0) {
-  stop("Supply file name of MAP Elites log for Lode Runner", call.=FALSE)
-}
 
-#setwd("E:\\Users\\he_de\\workspace\\GameGAN")
-print("Load data")
-#map <- read.table("mariogan/MAPElites0/MarioGAN-MAPElites0_MAPElites_log.txt")
-map <- read.table(args[1])
-# Only the final archive matters
-lastRow <- map[map$V1 == nrow(map) - 1, ]
-archive <- data.frame(matrix(unlist(lastRow[2:length(lastRow)]), nrow=(length(lastRow)-1), byrow=T))
-names(archive) <- "SolutionSteps"
+library(ggplot2)
+library(dplyr)
+library(viridis)
+library(stringr)
+library(scales)
+
+setwd("../../loderunnermapelites")
+
 
 # Add data indicating how the data is binned, based on convention of how
 # output data is organized
@@ -46,29 +42,55 @@ treasureBin <- data.frame(treasureBin)
 enemyBin <- rep(seq(-5,4),10*10)
 enemyBin <- data.frame(enemyBin)
 
+
+print("Load data")
+types <- list("On5Levels","On20Levels","On50Levels","On100Levels","On150Levels","WordsPresent")
+
+for(typePrefix in types) {
+
+  # Change this from 9 to 29 later, after more experiments are run
+  for(i in 0:9) {
+    dataFile <- paste(typePrefix,i,"/LodeRunnerMAPElites-",typePrefix,i,"_MAPElites_log.txt",sep="")
+    map <- read.table(dataFile)
+    # Only the final archive matters
+    lastRow <- map[map$V1 == nrow(map) - 1, ]
+    archive <- data.frame(matrix(unlist(lastRow[2:length(lastRow)]), nrow=(length(lastRow)-1), byrow=T))
+    names(archive) <- "SolutionSteps"
+
+    # Change -Infinity to 0
+    archive[archive<0] <- 0
+
+    if(i > 0) {
+      print("Add")
+      averageArchive <- averageArchive + archive
+    } else {
+      print("Start")
+      averageArchive <- archive
+    }
+  }
+  
+  archive <- averageArchive / 10 # Change the 10 later
+
 allData <- data.frame(archive, groundBin, treasureBin, enemyBin)
+
+allData$SolutionSteps[allData$SolutionSteps == 0] <- NA
 
 ###############################################
 
-library(ggplot2)
-library(dplyr)
-library(viridis)
-library(stringr)
-library(scales)
 
 print("Create plot and save to file")
 
 groundLabels <- function(num) {
-  paste("Ground Dimension:",num)
+  paste((as.numeric(num)*10),"-",(as.numeric(num)*10+10),"% Ground")
 }
 
-outputFile <- str_replace(args[1],"txt","heat.pdf")
+outputFile <- paste(typePrefix,"-AVG.heat.pdf",sep="")
 pdf(outputFile,height=3.5)  
 result <- ggplot(allData, aes(x=enemyBin, y=treasureBin, fill=SolutionSteps)) +
   geom_tile() +
   facet_wrap(~groundBin, ncol=5, labeller = labeller(groundBin = groundLabels)) +
   #scale_fill_gradient(low="white", high="orange") +
-  scale_fill_viridis(discrete=FALSE, limits = c(1,600), oob = squish) +
+  scale_fill_viridis(discrete=FALSE, limits = c(1,600), oob = squish, na.value = "white") +
   xlab("Enemies") +
   ylab("Treasures") +
   labs(fill = "Solution Path Length") +
@@ -90,3 +112,5 @@ dev.off()
 
 print(paste("Saved:",outputFile))
 print("Finished")
+
+}
