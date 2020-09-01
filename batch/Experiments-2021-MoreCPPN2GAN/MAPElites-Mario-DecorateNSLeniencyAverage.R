@@ -1,5 +1,8 @@
 #!/usr/bin/env Rscript
 
+# Possible to set "generation"
+args = commandArgs(trailingOnly=TRUE)
+
 setwd("../../mariolevelsdecoratensleniency")
 #setwd("G:\\My Drive\\Research\\2021-IEEE-ToG-CPPNThenDirectToGAN\\MM-NEAT\\mariolevelsdecoratensleniency")
 print("Load data")
@@ -12,9 +15,14 @@ for(i in 0:9) {
   dataFile <- paste(typePrefix,i,"/MarioLevelsDecorateNSLeniency-",typePrefix,i,"_MAPElites_log.txt",sep="")
   map <- read.table(dataFile)
   print(dataFile)
-  #map <- read.table(args[1])
-  # Only the final archive matters
-  lastRow <- map[map$V1 == nrow(map) - 1, ]
+  if (length(args)==0) {
+    # Only the final archive matters
+    lastRow <- map[map$V1 == nrow(map) - 1, ]
+    nameEnd <- "LAST"
+  } else {
+    lastRow <- map[map$V1 == strtoi(args[1], base = 0L) - 1, ]
+    nameEnd <- paste("Gen",args[1],sep="")
+  }
   archive <- data.frame(matrix(unlist(lastRow[2:length(lastRow)]), nrow=(length(lastRow)-1), byrow=T))
   names(archive) <- "SolutionSteps"
   
@@ -81,7 +89,7 @@ leniencyLabals <- function(num) {
   paste("Leniency Bin:",num)
 }
 
-outputFile <- paste("MarioLevelsDecorateNSLeniency-",typePrefix,"-AVG.heat.pdf",sep="")
+outputFile <- paste("MarioLevelsDecorateNSLeniency-",typePrefix,"-AVG.",nameEnd,".heat.pdf",sep="")
 pdf(outputFile,height=3.5)  
 result <- ggplot(allData, aes(x=decorationBin, y=nsBin, fill=SolutionSteps)) +
   geom_tile() +
