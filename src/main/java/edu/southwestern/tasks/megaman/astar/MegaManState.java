@@ -327,14 +327,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			return false;
 		}
 	}
-	private boolean noHazardAbove(int x, int y) {
-		if(!inBounds(x,y-1)) return false; // fail for bad bounds before tileAtPosition check
-		if(tileAtPosition(x,y-1)!=MEGA_MAN_TILE_HAZARD&&tileAtPosition(x,y)<=MegaManVGLCUtil.UNIQUE_ENEMY_THRESH_HOLD) {
-			return true;
-		}else {
-			return false;
-		}
-	}
 	/**
 	 * Loops through the level to find the spawn point from the original level 
 	 * @param level
