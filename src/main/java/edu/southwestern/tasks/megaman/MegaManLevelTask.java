@@ -320,7 +320,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				// Index in flattened bin array
 				Score<T> elite = archive.getElite(binIndex);
 				// If the bin is empty, or the candidate is better than the elite for that bin's score
-				if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
+				if(elite == null || binScore > elite.behaviorIndexScore(binIndex)) {
 					BufferedImage levelImage = null;
 					BufferedImage levelSolution = null;
 					try {

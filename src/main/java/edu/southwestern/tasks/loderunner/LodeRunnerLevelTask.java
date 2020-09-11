@@ -414,7 +414,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			// Index in flattened bin array
 			Score<T> elite = archive.getElite(binIndex);
 			//if that index is empty or the binScores is greater than what was there before
-			if(elite==null || binScore > elite.behaviorVector.get(binIndex)) {
+			if(elite==null || binScore > elite.behaviorIndexScore(binIndex)) {
 				//formats to be 7 digits before the decimal, and 5 digits after, %7.5f
 				//only doing direct right now, but will need to add CPPN label in addition, like in MarioLevelTask, if we start to use a CPPN
 				String fileNameImage =  "_Direct-"+String.format("%7.5f", binScore) +"_"+ genotypeId + "-LevelRender" +".png";

@@ -24,7 +24,7 @@ public class NSGA2Score<T> extends MultiObjectiveScore<T> {
 	}
 
 	public NSGA2Score(Score<T> s) {
-		this(s.individual, s.scores, s.behaviorVector, s.otherStats);
+		this(s.individual, s.scores, s.getTraditionalDomainSpecificBehaviorVector(), s.otherStats);
 	}
 
 	@Override

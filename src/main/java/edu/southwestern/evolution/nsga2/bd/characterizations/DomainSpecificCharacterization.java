@@ -21,7 +21,7 @@ public class DomainSpecificCharacterization<T> implements BehaviorCharacterizati
 	 * @return the stored behavior vector
 	 */
 	public BehaviorVector getBehaviorVector(Score<T> score) {
-		return new RealBehaviorVector(score.behaviorVector);
+		return new RealBehaviorVector(score.getTraditionalDomainSpecificBehaviorVector());
 	}
 
 	/**

@@ -9,6 +9,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.Statistic;
 
 /**
@@ -46,8 +47,23 @@ public class Score<T> {
 	// the genotype of the individual in question
 	public Genotype<T> individual;
 	// A behavior characterization optionally used with Behavioral Diversity
-	public ArrayList<Double> behaviorVector;
+	private ArrayList<Double> behaviorVector;
+	// If assigned, then can be used instead of the wasteful behavior vector
+	private Pair<Integer, Double> oneMAPEliteBinIndexScorePair;
 
+	/**
+	 * Allows for more efficient MAP Elites implementation, because a large behavior
+	 * vector of mostly empty values is not needed.
+	 * @param individual Genotype of individual
+	 * @param scores Fitness scores
+	 * @param indexMAPEliteBin index in MAP Elites archive corresponding to behavior 
+	 * @param score for the behavior slot in the MAP Elites bin
+	 */
+	public Score(Genotype<T> individual, double[] scores, int indexMAPEliteBin, double score) {
+		this(individual, scores, null, new double[0]);
+		oneMAPEliteBinIndexScorePair = new Pair<Integer,Double>(indexMAPEliteBin, score);
+	}
+	
 	/**
 	 * Default constructor for Score object.
 	 * 
@@ -149,6 +165,27 @@ public class Score<T> {
 		}
 	}
 
+	/**
+	 * Get behavior characterization score associated with particular index.
+	 * Mainly intended for use with MAP Elites, where the behavior vector is
+	 * weirdly used to define the bin index. However, the oneMAPEliteBinIndexScorePair
+	 * provides a more efficient alternative, and also provides error checking
+	 * on index checks.
+	 * 
+	 * @param index Should be the one MAP Elites archive index corresponding to the behavior of the genotype
+	 * @return Fitness/behavior score associated with that bin
+	 */
+	public double behaviorIndexScore(int index) {
+		if(oneMAPEliteBinIndexScorePair != null) {
+			if(oneMAPEliteBinIndexScorePair.t1 != index)
+				throw new IllegalArgumentException("Should not ask for score associated with MAP Elites bin index that does not match: " + index + " != " + oneMAPEliteBinIndexScorePair.t1);
+			return oneMAPEliteBinIndexScorePair.t2;
+		} else {
+			// Requires storing large, mostly empty ArrayLists
+			return behaviorVector.get(index);
+		}
+	}
+	
 	/**
 	 * Given two Score instances from the same task, add the scores and other
 	 * stats of other to the scores and other stats of this score instance to
@@ -273,6 +310,16 @@ public class Score<T> {
 		}
 		this.behaviorVector = behaviorVector;
 	}
+	
+	/**
+	 * This is either a domain-specific behavior characterization, or the
+	 * vector for the inefficient MAP Elites approach (though this approach is
+	 * also required by MAP Elites when using an Innovation Engine).
+	 * @return behavior vector.
+	 */
+	public ArrayList<Double> getTraditionalDomainSpecificBehaviorVector() {
+		return this.behaviorVector;
+	}
 
 	/**
 	 * maxScores finds the largest score and other stats of both agents. If one
@@ -303,5 +350,13 @@ public class Score<T> {
 	 */
 	public void replaceScores(double[] newScores){
 		scores = newScores;
+	}
+
+	/**
+	 * Individual was not successfully assigned a behavior vector and/or MAP Elites bin index
+	 * @return
+	 */
+	public boolean undefinedBehaviorBin() {
+		return behaviorVector == null && oneMAPEliteBinIndexScorePair == null;
 	}
 }

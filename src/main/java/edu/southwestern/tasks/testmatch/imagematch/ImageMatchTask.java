@@ -96,7 +96,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		Score<T> result = super.evaluate(individual);// if watch=false
 		CommonConstants.watch = temp;
 		this.individual = individual.getPhenotype();
-		result.behaviorVector = getBehaviorVector();
+		result.giveBehaviorVector(getBehaviorVector());
 		return result;
 	}
 

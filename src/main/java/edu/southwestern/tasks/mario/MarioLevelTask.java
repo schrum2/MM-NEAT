@@ -543,7 +543,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			// Index in flattened bin array
 			Score<T> elite = archive.getElite(binIndex);
 			// If the bin is empty, or the candidate is better than the elite for that bin's score
-			if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
+			if(elite == null || binScore > elite.behaviorIndexScore(binIndex)) {
 				String fileName = String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
 				if(individual instanceof CPPNOrDirectToGANGenotype) {
 					CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;

@@ -348,7 +348,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						// Index in flattened bin array
 						Score<T> elite = archive.getElite(binIndex);
 						// If the bin is empty, or the candidate is better than the elite for that bin's score
-						if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
+						if(elite == null || binScore > elite.behaviorIndexScore(binIndex)) {
 							// CHANGE!
 							BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
 							BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);

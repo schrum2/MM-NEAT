@@ -61,7 +61,7 @@ public class Archive<T> {
 		float[] result = new float[archive.size()];
 		for(int i = 0; i < result.length; i++) {
 			Score<T> score = archive.get(i);
-			result[i] = score == null ? Float.NEGATIVE_INFINITY : score.behaviorVector.get(i).floatValue();
+			result[i] = score == null ? Float.NEGATIVE_INFINITY : new Double(score.behaviorIndexScore(i)).floatValue();
 		}
 		return result;
 	}
@@ -91,15 +91,15 @@ public class Archive<T> {
 	 */
 	public boolean add(Score<T> candidate) {
 		// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
-		if(candidate.behaviorVector == null)
+		if(candidate.undefinedBehaviorBin())
 			return false;
 		// Java's new stream features allow for easy parallelism
 		IntStream stream = IntStream.range(0, archive.size());
 		long newElites = stream.parallel().filter((i) -> {
 			Score<T> elite = archive.get(i);
-			double candidateScore = candidate.behaviorVector.get(i);
+			double candidateScore = candidate.behaviorIndexScore(i);
 			// Score cannot be negative infinity. Next, check if the bin is empty, or the candidate is better than the elite for that bin's score
-			if(candidateScore > Double.NEGATIVE_INFINITY && (elite == null || candidateScore > elite.behaviorVector.get(i))) {
+			if(candidateScore > Double.NEGATIVE_INFINITY && (elite == null || candidateScore > elite.behaviorIndexScore(i))) {
 				archive.set(i, candidate.copy()); // Replace elite
 				if(elite == null) { // Size is actually increasing
 					synchronized(this) {
@@ -114,11 +114,11 @@ public class Archive<T> {
 					// Write scores as simple text file (less to write than xml)
 					try {
 						PrintStream ps = new PrintStream(new File(binPath + "-scores.txt"));
-						for(Double score : candidate.behaviorVector) {
+						for(Double score : candidate.getTraditionalDomainSpecificBehaviorVector()) {
 							ps.println(score);
 						}
 					} catch (FileNotFoundException e) {
-						System.out.println("Could not write scores for " + candidate.individual.getId() + ":" + candidate.behaviorVector);
+						System.out.println("Could not write scores for " + candidate.individual.getId() + ":" + candidate.getTraditionalDomainSpecificBehaviorVector());
 						e.printStackTrace();
 						System.exit(1);
 					}
@@ -150,7 +150,7 @@ public class Archive<T> {
 	 */
 	public double getBinScore(int binIndex) {
 		Score<T> elite = getElite(binIndex);
-		return elite == null ? Double.NEGATIVE_INFINITY : elite.behaviorVector.get(binIndex);
+		return elite == null ? Double.NEGATIVE_INFINITY : elite.behaviorIndexScore(binIndex);
 	}
 	
 	/**
