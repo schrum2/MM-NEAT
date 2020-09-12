@@ -49,8 +49,7 @@ types <- list("On5Levels","On20Levels","On50Levels","On100Levels","On150Levels",
 for(t in 1:length(types)) {
   typePrefix <- types[t]
 
-  # Change this from 9 to 29 later, after more experiments are run
-  for(i in 0:9) {
+  for(i in 0:29) {
     dataFile <- paste(typePrefix,i,"/LodeRunnerMAPElites-",typePrefix,i,"_MAPElites_log.txt",sep="")
     map <- read.table(dataFile)
     # Only the final archive matters
@@ -70,7 +69,7 @@ for(t in 1:length(types)) {
     }
   }
   
-  archive <- averageArchive / 10 # Change the 10 later
+  archive <- averageArchive / 30 
 
   typeColumn <- rep(typePrefix, 10*10*10)
   typeColumn <- as.data.frame(c(unlist(typeColumn)))

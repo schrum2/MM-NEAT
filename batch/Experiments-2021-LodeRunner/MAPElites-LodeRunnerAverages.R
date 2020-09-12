@@ -48,8 +48,7 @@ types <- list("On5Levels","On20Levels","On50Levels","On100Levels","On150Levels",
 
 for(typePrefix in types) {
 
-  # Change this from 9 to 29 later, after more experiments are run
-  for(i in 0:9) {
+  for(i in 0:29) {
     dataFile <- paste(typePrefix,i,"/LodeRunnerMAPElites-",typePrefix,i,"_MAPElites_log.txt",sep="")
     map <- read.table(dataFile)
     # Only the final archive matters
@@ -69,7 +68,7 @@ for(typePrefix in types) {
     }
   }
   
-  archive <- averageArchive / 10 # Change the 10 later
+  archive <- averageArchive / 30
 
 allData <- data.frame(archive, groundBin, treasureBin, enemyBin)
 
