@@ -20,7 +20,7 @@ public class TUGNSGA2Score<T> extends NSGA2Score<T> {
 	 * @param active, a boolean array of whether or not the Scores for each objective are active
 	 */
 	public TUGNSGA2Score(Score<T> s, boolean[] active) {
-		super(s.individual, s.scores, s.getTraditionalDomainSpecificBehaviorVector(), s.otherStats);
+		super(s.individual, s.scores, s.usesTraditionalBehaviorVector() ? s.getTraditionalDomainSpecificBehaviorVector() : null, s.otherStats);
 		this.active = active;
 	}
 
@@ -62,9 +62,8 @@ public class TUGNSGA2Score<T> extends NSGA2Score<T> {
 	 * @return true if this Score is better than the other Score, false if not
 	 */
 	public boolean isBetter(Score<T> other) {
-		NSGA2Score<T> lhs = new NSGA2Score<T>(individual, filterByGoals(scores, active), this.getTraditionalDomainSpecificBehaviorVector(), otherStats);
-		NSGA2Score<T> rhs = new NSGA2Score<T>(other.individual, filterByGoals(other.scores, active),
-				other.getTraditionalDomainSpecificBehaviorVector(), other.otherStats);
+		NSGA2Score<T> lhs = new NSGA2Score<T>(individual, filterByGoals(scores, active), null, otherStats);
+		NSGA2Score<T> rhs = new NSGA2Score<T>(other.individual, filterByGoals(other.scores, active), null, other.otherStats);
 		return lhs.isBetter(rhs);
 	}
 
@@ -75,9 +74,8 @@ public class TUGNSGA2Score<T> extends NSGA2Score<T> {
 	 * @return true if this Score is worse than the other Score, false if not
 	 */
 	public boolean isWorse(Score<T> other) {
-		NSGA2Score<T> lhs = new NSGA2Score<T>(individual, filterByGoals(scores, active), this.getTraditionalDomainSpecificBehaviorVector(), otherStats);
-		NSGA2Score<T> rhs = new NSGA2Score<T>(other.individual, filterByGoals(other.scores, active),
-				other.getTraditionalDomainSpecificBehaviorVector(), other.otherStats);
+		NSGA2Score<T> lhs = new NSGA2Score<T>(individual, filterByGoals(scores, active), null, otherStats);
+		NSGA2Score<T> rhs = new NSGA2Score<T>(other.individual, filterByGoals(other.scores, active), null, other.otherStats);
 		return lhs.isWorse(rhs);
 	}
 
