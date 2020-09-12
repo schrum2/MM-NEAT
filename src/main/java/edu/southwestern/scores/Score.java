@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.ScoreHistory;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -283,7 +285,10 @@ public class Score<T> {
 	// Copies the score.
 	@SuppressWarnings("unchecked")
 	public Score<T> copy() {
-		return new Score<T>(individual, Arrays.copyOf(scores, scores.length), (ArrayList<Double>) behaviorVector.clone(), Arrays.copyOf(otherStats, otherStats.length));
+		Score<T> result =  new Score<T>(individual, Arrays.copyOf(scores, scores.length), (ArrayList<Double>) behaviorVector.clone(), Arrays.copyOf(otherStats, otherStats.length));
+		if(oneMAPEliteBinIndexScorePair != null) 
+			result.oneMAPEliteBinIndexScorePair = new Pair<Integer,Double>(oneMAPEliteBinIndexScorePair.t1,oneMAPEliteBinIndexScorePair.t2);
+		return result;
 	}
 
 	// Getter method for number of previous scores calculated for agent.
@@ -344,7 +349,22 @@ public class Score<T> {
 	 * @return behavior vector.
 	 */
 	public ArrayList<Double> getTraditionalDomainSpecificBehaviorVector() {
-		return this.behaviorVector;
+		if(this.behaviorVector == null) {
+			// Have to construct the behavior vector based on knowledge of bin index and score
+			@SuppressWarnings("unchecked")
+			int vectorLength = ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass().binLabels().size();
+			ArrayList<Double> vector = new ArrayList<>(vectorLength);
+			for(int i = 0; i < oneMAPEliteBinIndexScorePair.t1; i++) {
+				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins
+			}
+			vector.add(oneMAPEliteBinIndexScorePair.t2); // The one occupied bin
+			for(int i = oneMAPEliteBinIndexScorePair.t1+1; i < vectorLength; i++) {
+				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins
+			}
+			return vector;
+		} else {
+			return this.behaviorVector;
+		}
 	}
 
 	/**
