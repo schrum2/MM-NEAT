@@ -187,6 +187,32 @@ public class Score<T> {
 	}
 	
 	/**
+	 * Get behavior characterization score for bin without specifying bin index.
+	 * It is assumed the individual only exists in one MAP Elites bin.
+	 * @return Bin fitness score
+	 */
+	public double behaviorIndexScore() {
+		if(oneMAPEliteBinIndexScorePair != null) {
+			return oneMAPEliteBinIndexScorePair.t2;
+		} else {
+			throw new IllegalArgumentException("Need to specify bin index if using traditional behavior vector");
+		}
+	}
+	
+	/**
+	 * Bin index of the agent in the MAP Elites archive.
+	 * @return bin index (in 1D)
+	 */
+	public int MAPElitesBinIndex() {
+		if(oneMAPEliteBinIndexScorePair != null) {
+			return oneMAPEliteBinIndexScorePair.t1;
+		} else {
+			// Technically, I could scan the whole vector for a value that is not negative infinity, but this approach should not be used in that case
+			throw new IllegalArgumentException("Cannot simply ask for bin index when using traditional behavior vector");
+		}
+	}
+	
+	/**
 	 * Given two Score instances from the same task, add the scores and other
 	 * stats of other to the scores and other stats of this score instance to
 	 * create a new Score instance (with this Genotype) which is returned.
@@ -351,12 +377,12 @@ public class Score<T> {
 	public void replaceScores(double[] newScores){
 		scores = newScores;
 	}
-
-	/**
-	 * Individual was not successfully assigned a behavior vector and/or MAP Elites bin index
-	 * @return
-	 */
-	public boolean undefinedBehaviorBin() {
-		return behaviorVector == null && oneMAPEliteBinIndexScorePair == null;
+	
+	public boolean usesTraditionalBehaviorVector() { 
+		return behaviorVector != null;
+	}
+	
+	public boolean usesMAPElitesBinSpecification() {
+		return oneMAPEliteBinIndexScorePair != null;
 	}
 }
