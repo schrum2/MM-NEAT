@@ -285,7 +285,7 @@ public class Score<T> {
 	// Copies the score.
 	@SuppressWarnings("unchecked")
 	public Score<T> copy() {
-		Score<T> result =  new Score<T>(individual, Arrays.copyOf(scores, scores.length), (ArrayList<Double>) behaviorVector.clone(), Arrays.copyOf(otherStats, otherStats.length));
+		Score<T> result =  new Score<T>(individual, Arrays.copyOf(scores, scores.length), behaviorVector == null ? null : (ArrayList<Double>) behaviorVector.clone(), Arrays.copyOf(otherStats, otherStats.length));
 		if(oneMAPEliteBinIndexScorePair != null) 
 			result.oneMAPEliteBinIndexScorePair = new Pair<Integer,Double>(oneMAPEliteBinIndexScorePair.t1,oneMAPEliteBinIndexScorePair.t2);
 		return result;

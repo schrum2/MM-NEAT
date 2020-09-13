@@ -90,7 +90,6 @@ public class Archive<T> {
 	 * @return Whether organism was a new elite
 	 */
 	public boolean add(Score<T> candidate) {
-		// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
 		if(candidate.usesTraditionalBehaviorVector()) {
 			// Java's new stream features allow for easy parallelism
 			// When using the whole behavior vector, have to wastefully check every index
@@ -107,7 +106,8 @@ public class Archive<T> {
 			Score<T> currentBinOccupant = archive.get(candidateBinIndex);
 			return replaceIfBetter(candidate, candidateBinIndex, currentBinOccupant);
 		} else {
-			throw new IllegalArgumentException("The candidate had neither a behavior vector nor a bin index specification: " + candidate);
+			// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
+			return false; // nothing added
 		}
 	}
 
