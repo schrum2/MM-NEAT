@@ -18,11 +18,12 @@ public class ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels implements BinLabels
 	public static final int NUM_NOVELTY_BINS = 10;
 	public static final double MAX_EXPECTED_NOVELTY = .6;
 	List<String> labels = null;
+	private int maxNumRooms;
 		
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) { // Create once and re-use, but wait until after Parameters are loaded
-			int maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
+			maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
 			labels = new ArrayList<String>((NUM_NOVELTY_BINS)*(maxNumRooms+1)*(maxNumRooms+1));
 			for(int i = 0; i < NUM_NOVELTY_BINS; i++) { 
 				for(int j = 0; j <= maxNumRooms; j++) { 
@@ -35,6 +36,16 @@ public class ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels implements BinLabels
 		}
 		return labels;
 	}
+
+	@Override
+	public int oneDimensionalIndex(int[] multi) {
+		int noveltyIndex = multi[0];
+		int numBackTrackRooms = multi[1];
+		int numRoomsReachable = multi[2];
+		int mapElitesBinIndex = (noveltyIndex*(maxNumRooms+1) + numBackTrackRooms)*(maxNumRooms+1) + numRoomsReachable;
+		return mapElitesBinIndex;
+	}
+
 	//"mapElitesBinLabels:edu.southwestern.tasks.zelda.ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels"
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException{
 

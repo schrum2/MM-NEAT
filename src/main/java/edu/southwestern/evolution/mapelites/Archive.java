@@ -102,9 +102,9 @@ public class Archive<T> {
 			// Whether any elites were replaced
 			return newElites > 0;
 		} else if(candidate.usesMAPElitesBinSpecification()) {
-			int candidateBinIndex = candidate.MAPElitesBinIndex();
-			Score<T> currentBinOccupant = archive.get(candidateBinIndex);
-			return replaceIfBetter(candidate, candidateBinIndex, currentBinOccupant);
+			int[] candidateBinIndices = candidate.MAPElitesBinIndex();
+			Score<T> currentBinOccupant = getElite(candidateBinIndices);
+			return replaceIfBetter(candidate, this.getBinMapping().oneDimensionalIndex(candidateBinIndices), currentBinOccupant);
 		} else {
 			// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
 			return false; // nothing added
@@ -161,9 +161,22 @@ public class Archive<T> {
 	}
 
 	/**
+	 * Given the multiple dimensions corresponding to this particular archive,
+	 * use a one dimensional index for if the multiple dimensions are reduced
+	 * to get the corresponding archive elite from its bin.
+	 * 
+	 * to a single array in row-major order
+	 * @param binIndices array of individual indices
+	 * @return elite individual score instance 
+	 */
+	public Score<T> getElite(int[] binIndices) {
+		return archive.get(mapping.oneDimensionalIndex(binIndices));
+	}
+
+	/**
 	 * Elite individual from specified bin, or null if empty
-	 * @param binIndex
-	 * @return
+	 * @param binIndex 1D archive index
+	 * @return elite individual score instance
 	 */
 	public Score<T> getElite(int binIndex) {
 		return archive.get(binIndex);

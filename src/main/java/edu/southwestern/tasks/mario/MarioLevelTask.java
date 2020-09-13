@@ -524,8 +524,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	 */
 	private void setBinsAndSaveMAPElitesImages(Genotype<T> individual, BufferedImage levelImage, double[] archiveArray,
 			int dim1, int dim2, int dim3, final int BINS_PER_DIMENSION, double binScore) {
-		int binIndex;
-		binIndex = (dim1*BINS_PER_DIMENSION + dim2)*BINS_PER_DIMENSION + dim3;
+		int binIndex = (dim1*BINS_PER_DIMENSION + dim2)*BINS_PER_DIMENSION + dim3;
 		Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
 		archiveArray[binIndex] = binScore; // Percent rooms traversed
 
