@@ -408,4 +408,8 @@ public class Score<T> {
 	public boolean usesMAPElitesBinSpecification() {
 		return oneMAPEliteBinIndexScorePair != null;
 	}
+	
+	public void assignMAPElitesBinAndScore(int[] binIndices, double score) {
+		oneMAPEliteBinIndexScorePair = new Pair<>(binIndices, score);
+	}
 }
