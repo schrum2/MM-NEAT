@@ -1,3 +1,5 @@
+# Possible to set "generation"
+args = commandArgs(trailingOnly=TRUE)
 
 setwd("../../zeldadungeonswallwaterrooms")
 print("Load data")
@@ -11,8 +13,14 @@ for(typePrefix in types) {
     map <- read.table(dataFile)
     print(dataFile)
     #map <- read.table(args[1])
-    # Only the final archive matters
-    lastRow <- map[map$V1 == nrow(map) - 1, ]
+    if (length(args)==0) {
+      # Only the final archive matters
+      lastRow <- map[map$V1 == nrow(map) - 1, ]
+      nameEnd <- "LAST"
+    } else {
+      lastRow <- map[map$V1 == strtoi(args[1], base = 0L) - 1, ]
+      nameEnd <- paste("Gen",args[1],sep="")
+    }
     archive <- data.frame(matrix(unlist(lastRow[2:length(lastRow)]), nrow=(length(lastRow)-1), byrow=T))
     names(archive) <- "PercentTraversed"
 
@@ -83,7 +91,7 @@ dropRooms0 <- filter(dropUpperRightCorners, roomBin > 0)
 
 print("Create plot and save to file")
 
-outputFile <- paste("ZeldaDungeonsWallWaterRooms-",typePrefix,"-AVG.heat.pdf",sep="")
+outputFile <- paste("ZeldaDungeonsWallWaterRooms-",typePrefix,"-AVG.",nameEnd,".heat.pdf",sep="")
 #outputFile <- str_replace(args[1],"txt","heat.pdf")
 pdf(outputFile)  
 result <- ggplot(dropRooms0, aes(x=waterBin, y=wallBin, fill=PercentTraversed)) +

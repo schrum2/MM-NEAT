@@ -27,4 +27,10 @@ public class LodeRunnerMAPElitesPercentGroundNumGoldAndEnemiesBinLabels implemen
 		return labels;
 	}
 
+	@Override
+	public int oneDimensionalIndex(int[] multi) {
+		int binIndex = (multi[0]*BINS_PER_DIMENSION + multi[1])*BINS_PER_DIMENSION + multi[2];
+		return binIndex;
+	}
+
 }

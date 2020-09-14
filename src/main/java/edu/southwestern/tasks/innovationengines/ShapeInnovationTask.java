@@ -104,8 +104,8 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 			for(int i = 0; i < binLabels.size(); i++) {
 				Score<Pair<TWEANN, ArrayList<Double>>> elite = archive.getElite(i);
 				// If the bin is empty, or the candidate is better than the elite for that bin's score
-				double binScore = result.behaviorVector.get(i);
-				if(elite == null || binScore > elite.behaviorVector.get(i)) {
+				double binScore = result.behaviorIndexScore(i);
+				if(elite == null || binScore > elite.behaviorIndexScore(i)) {
 					if(binScore > pictureInnovationSaveThreshold) {
 						String fileName = String.format("%7.5f", binScore) + binLabels.get(i) + individual.getId() + ".gif";
 						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(i);
@@ -155,7 +155,7 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 				double heading = pair.t2.get(INDEX_HEADING) * 2 * Math.PI;
 				BufferedImage[] images = ThreeDimensionalUtil.imagesFromTriangles(tris, saveWidth, saveHeight, 0, (int) (AnimationUtil.FRAMES_PER_SEC * 3), heading, pitch, evolvedColor, vertical);
 				
-				double binScore = score.behaviorVector.get(i);
+				double binScore = score.behaviorIndexScore(i);
 				String fileName = String.format("%7.5f", binScore) + label + ".gif";
 				String fullName = finalArchive + File.separator + fileName;
 				// Save gif to fullName

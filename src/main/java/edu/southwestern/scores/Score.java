@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.ScoreHistory;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.Statistic;
 
 /**
@@ -46,8 +49,23 @@ public class Score<T> {
 	// the genotype of the individual in question
 	public Genotype<T> individual;
 	// A behavior characterization optionally used with Behavioral Diversity
-	public ArrayList<Double> behaviorVector;
+	private ArrayList<Double> behaviorVector;
+	// If assigned, then can be used instead of the wasteful behavior vector
+	private Pair<int[], Double> oneMAPEliteBinIndexScorePair;
 
+	/**
+	 * Allows for more efficient MAP Elites implementation, because a large behavior
+	 * vector of mostly empty values is not needed.
+	 * @param individual Genotype of individual
+	 * @param scores Fitness scores
+	 * @param indicesMAPEliteBin Multidimensional index in MAP Elites archive corresponding to behavior 
+	 * @param score for the behavior slot in the MAP Elites bin
+	 */
+	public Score(Genotype<T> individual, double[] scores, int[] indicesMAPEliteBin, double score) {
+		this(individual, scores, null, new double[0]);
+		oneMAPEliteBinIndexScorePair = new Pair<int[],Double>(indicesMAPEliteBin, score);
+	}
+	
 	/**
 	 * Default constructor for Score object.
 	 * 
@@ -150,6 +168,54 @@ public class Score<T> {
 	}
 
 	/**
+	 * Get behavior characterization score associated with particular index.
+	 * Mainly intended for use with MAP Elites, where the behavior vector is
+	 * weirdly used to define the bin index. However, the oneMAPEliteBinIndexScorePair
+	 * provides a more efficient alternative, and also provides error checking
+	 * on index checks.
+	 * 
+	 * @param index Should be the one MAP Elites archive index corresponding to the behavior of the genotype
+	 * @return Fitness/behavior score associated with that bin
+	 */
+	@SuppressWarnings("unchecked")
+	public double behaviorIndexScore(int index) {
+		if(oneMAPEliteBinIndexScorePair != null) {
+			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1) != index)
+				throw new IllegalArgumentException("Should not ask for score associated with MAP Elites bin index that does not match: " + index + " != " + oneMAPEliteBinIndexScorePair.t1);
+			return oneMAPEliteBinIndexScorePair.t2;
+		} else {
+			// Requires storing large, mostly empty ArrayLists
+			return behaviorVector.get(index);
+		}
+	}
+	
+	/**
+	 * Get behavior characterization score for bin without specifying bin index.
+	 * It is assumed the individual only exists in one MAP Elites bin.
+	 * @return Bin fitness score
+	 */
+	public double behaviorIndexScore() {
+		if(oneMAPEliteBinIndexScorePair != null) {
+			return oneMAPEliteBinIndexScorePair.t2;
+		} else {
+			throw new IllegalArgumentException("Need to specify bin index if using traditional behavior vector");
+		}
+	}
+	
+	/**
+	 * Bin index of the agent in the MAP Elites archive.
+	 * @return array containing each index for the multidimensional archive
+	 */
+	public int[] MAPElitesBinIndex() {
+		if(oneMAPEliteBinIndexScorePair != null) {
+			return oneMAPEliteBinIndexScorePair.t1;
+		} else {
+			// Technically, I could scan the whole vector for a value that is not negative infinity, but this approach should not be used in that case
+			throw new IllegalArgumentException("Cannot simply ask for bin index when using traditional behavior vector");
+		}
+	}
+	
+	/**
 	 * Given two Score instances from the same task, add the scores and other
 	 * stats of other to the scores and other stats of this score instance to
 	 * create a new Score instance (with this Genotype) which is returned.
@@ -220,7 +286,10 @@ public class Score<T> {
 	// Copies the score.
 	@SuppressWarnings("unchecked")
 	public Score<T> copy() {
-		return new Score<T>(individual, Arrays.copyOf(scores, scores.length), (ArrayList<Double>) behaviorVector.clone(), Arrays.copyOf(otherStats, otherStats.length));
+		Score<T> result =  new Score<T>(individual, Arrays.copyOf(scores, scores.length), behaviorVector == null ? null : (ArrayList<Double>) behaviorVector.clone(), Arrays.copyOf(otherStats, otherStats.length));
+		if(oneMAPEliteBinIndexScorePair != null) 
+			result.oneMAPEliteBinIndexScorePair = new Pair<int[],Double>(oneMAPEliteBinIndexScorePair.t1,oneMAPEliteBinIndexScorePair.t2);
+		return result;
 	}
 
 	// Getter method for number of previous scores calculated for agent.
@@ -273,6 +342,33 @@ public class Score<T> {
 		}
 		this.behaviorVector = behaviorVector;
 	}
+	
+	/**
+	 * This is either a domain-specific behavior characterization, or the
+	 * vector for the inefficient MAP Elites approach (though this approach is
+	 * also required by MAP Elites when using an Innovation Engine).
+	 * @return behavior vector.
+	 */
+	public ArrayList<Double> getTraditionalDomainSpecificBehaviorVector() {
+		if(this.behaviorVector == null) {
+			// Have to construct the behavior vector based on knowledge of bin index and score
+			@SuppressWarnings("unchecked")
+			MAPElites<T> ea = ((MAPElites<T>) MMNEAT.ea);
+			int vectorLength = ea.getBinLabelsClass().binLabels().size();
+			int oneDimensionalIndex = ea.getBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1);
+			ArrayList<Double> vector = new ArrayList<>(vectorLength);
+			for(int i = 0; i < oneDimensionalIndex; i++) {
+				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins
+			}
+			vector.add(oneMAPEliteBinIndexScorePair.t2); // The one occupied bin
+			for(int i = oneDimensionalIndex+1; i < vectorLength; i++) {
+				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins
+			}
+			return vector;
+		} else {
+			return this.behaviorVector;
+		}
+	}
 
 	/**
 	 * maxScores finds the largest score and other stats of both agents. If one
@@ -303,5 +399,17 @@ public class Score<T> {
 	 */
 	public void replaceScores(double[] newScores){
 		scores = newScores;
+	}
+	
+	public boolean usesTraditionalBehaviorVector() { 
+		return behaviorVector != null;
+	}
+	
+	public boolean usesMAPElitesBinSpecification() {
+		return oneMAPEliteBinIndexScorePair != null;
+	}
+	
+	public void assignMAPElitesBinAndScore(int[] binIndices, double score) {
+		oneMAPEliteBinIndexScorePair = new Pair<>(binIndices, score);
 	}
 }

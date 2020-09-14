@@ -66,8 +66,8 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 			for(int i = 0; i < binLabels.size(); i++) {
 				Score<T> elite = archive.getElite(i);
 				// If the bin is empty, or the candidate is better than the elite for that bin's score
-				double binScore = result.behaviorVector.get(i);
-				if(elite == null || binScore > elite.behaviorVector.get(i)) {
+				double binScore = result.getTraditionalDomainSpecificBehaviorVector().get(i);
+				if(elite == null || binScore > elite.getTraditionalDomainSpecificBehaviorVector().get(i)) {
 					if(binScore > pictureInnovationSaveThreshold) {
 						String fileName = String.format("%7.5f", binScore) + binLabels.get(i) + individual.getId() + ".jpg";
 						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(i);
@@ -100,7 +100,7 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				Score<T> score = archive.getElite(i);
 				Network cppn = score.individual.getPhenotype();
 				BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, saveWidth, saveHeight);
-				double binScore = score.behaviorVector.get(i);
+				double binScore = score.behaviorIndexScore(i);
 				String fileName = String.format("%7.5f", binScore) + label + ".jpg";
 				String fullName = finalArchive + File.separator + fileName;
 				GraphicsUtil.saveImage(image, fullName);

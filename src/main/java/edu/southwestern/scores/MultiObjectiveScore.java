@@ -45,6 +45,21 @@ public class MultiObjectiveScore<T> extends Score<T> {
 		super(individual, scores, behaviorVector, otherStats);
 	}
 
+	/**
+	 * Constructor for MAP Elites that efficiently specifies the bin indices and bin score separately.
+	 * Importantly, no space is wasted on a large behavior vector mostly filled with ignored values.
+	 * 
+	 * @param individual Genotype for evolved individual
+	 * @param scores Normal fitness scores
+	 * @param indicesMAPEliteBin Multidimensional index for bin in MAP Elites archive
+	 * @param behaviorScore score within the MAP Elites bin (singular fitness)
+	 * @param otherStats Other stats being tracked
+	 */
+	public MultiObjectiveScore(Genotype<T> individual, double[] scores, int[] indicesMAPEliteBin, double behaviorScore, double[] otherStats) {
+		super(individual, scores, indicesMAPEliteBin, behaviorScore);
+		this.otherStats = otherStats;
+	}
+	
 	// returns the score at the given index
 	public double objectiveScore(int index) {
 		return scores[index];

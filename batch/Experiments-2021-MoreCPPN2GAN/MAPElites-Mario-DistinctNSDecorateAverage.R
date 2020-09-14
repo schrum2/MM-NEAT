@@ -1,3 +1,5 @@
+# Possible to set "generation"
+args = commandArgs(trailingOnly=TRUE)
 
 setwd("../../mariolevelsdistinctnsdecorate")
 #setwd("E:\\Users\\he_de\\workspace\\GameGAN")
@@ -13,8 +15,14 @@ for(typePrefix in types) {
     map <- read.table(dataFile)
     print(dataFile)
     #map <- read.table(args[1])
-    # Only the final archive matters
-    lastRow <- map[map$V1 == nrow(map) - 1, ]
+    if (length(args)==0) {
+      # Only the final archive matters
+      lastRow <- map[map$V1 == nrow(map) - 1, ]
+      nameEnd <- "LAST"
+    } else {
+      lastRow <- map[map$V1 == strtoi(args[1], base = 0L) - 1, ]
+      nameEnd <- paste("Gen",args[1],sep="")
+    }
     archive <- data.frame(matrix(unlist(lastRow[2:length(lastRow)]), nrow=(length(lastRow)-1), byrow=T))
     names(archive) <- "SolutionSteps"
 
@@ -85,7 +93,7 @@ distinctLabels <- function(num) {
   paste("Distinct Segments:",num)
 }
 
-outputFile <- paste("MarioLevelsDistinctNSDecorate-",typePrefix,"-AVG.heat.pdf",sep="")
+outputFile <- paste("MarioLevelsDistinctNSDecorate-",typePrefix,"-AVG.",nameEnd,".heat.pdf",sep="")
 pdf(outputFile,height=3.5)  
 result <- ggplot(drop0, aes(x=decorateBin, y=nsBin, fill=SolutionSteps)) +
   geom_tile() +
