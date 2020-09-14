@@ -257,25 +257,7 @@
     	<artifactId>jlayer</artifactId>
     	<version>1.0.1</version>
 	</dependency>
-	
-    <!--  local files -->
-    <!--  write xml files of classes -->
-    <!--  added source directly to project -->
-    <!-- 
-    <dependency>
-		<groupId>woxser</groupId>
-		<artifactId>woxser</artifactId>
-		<version>1.0</version>
-	</dependency>
-	 -->
-	
-	<!--  vizdoom -->
-    <dependency>
-		<groupId>vizdoom</groupId>
-		<artifactId>vizdoom</artifactId>
-		<version>1.1.0</version>
-	</dependency>
-	
+		
     <!--  pogamut libraries -->
     <!--  These are all local now: should fix this eventually -->
 	<dependency>
