@@ -19,4 +19,9 @@ public class ImageNetBinMapping<T extends Network> implements BinLabels {
 		return ImageNetClassification.getImageNetLabels();
 	}
 
+	@Override
+	public int oneDimensionalIndex(int[] multi) {
+		return multi[0]; // archive is 1D
+	}
+
 }

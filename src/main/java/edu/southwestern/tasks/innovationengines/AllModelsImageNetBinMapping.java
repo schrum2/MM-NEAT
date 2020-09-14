@@ -41,4 +41,9 @@ public class AllModelsImageNetBinMapping<T extends Network> implements BinLabels
 		return cachedLabels;
 	}
 
+	@Override
+	public int oneDimensionalIndex(int[] multi) {
+		return multi[0]; // 1D archive
+	}
+
 }

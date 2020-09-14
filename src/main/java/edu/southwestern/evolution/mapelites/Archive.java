@@ -61,7 +61,7 @@ public class Archive<T> {
 		float[] result = new float[archive.size()];
 		for(int i = 0; i < result.length; i++) {
 			Score<T> score = archive.get(i);
-			result[i] = score == null ? Float.NEGATIVE_INFINITY : score.behaviorVector.get(i).floatValue();
+			result[i] = score == null ? Float.NEGATIVE_INFINITY : new Double(score.behaviorIndexScore(i)).floatValue();
 		}
 		return result;
 	}
@@ -90,53 +90,93 @@ public class Archive<T> {
 	 * @return Whether organism was a new elite
 	 */
 	public boolean add(Score<T> candidate) {
-		// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
-		if(candidate.behaviorVector == null)
-			return false;
-		// Java's new stream features allow for easy parallelism
-		IntStream stream = IntStream.range(0, archive.size());
-		long newElites = stream.parallel().filter((i) -> {
-			Score<T> elite = archive.get(i);
-			double candidateScore = candidate.behaviorVector.get(i);
-			// Score cannot be negative infinity. Next, check if the bin is empty, or the candidate is better than the elite for that bin's score
-			if(candidateScore > Double.NEGATIVE_INFINITY && (elite == null || candidateScore > elite.behaviorVector.get(i))) {
-				archive.set(i, candidate.copy()); // Replace elite
-				if(elite == null) { // Size is actually increasing
-					synchronized(this) {
-						occupiedBins++; // Shared variable
-					}
+		if(candidate.usesTraditionalBehaviorVector()) {
+			// Java's new stream features allow for easy parallelism
+			// When using the whole behavior vector, have to wastefully check every index
+			IntStream stream = IntStream.range(0, archive.size());
+			long newElites = stream.parallel().filter((i) -> {
+				Score<T> elite = archive.get(i);
+				return replaceIfBetter(candidate, i, elite);
+			}).count(); // Number of bins whose elite was replaced
+			//System.out.println(newElites + " elites were replaced");
+			// Whether any elites were replaced
+			return newElites > 0;
+		} else if(candidate.usesMAPElitesBinSpecification()) {
+			int[] candidateBinIndices = candidate.MAPElitesBinIndex();
+			Score<T> currentBinOccupant = getElite(candidateBinIndices);
+			return replaceIfBetter(candidate, this.getBinMapping().oneDimensionalIndex(candidateBinIndices), currentBinOccupant);
+		} else {
+			// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
+			return false; // nothing added
+		}
+	}
+
+	/**
+	 * Candidate replaces currentOccupant of bin with binIndex if its score is better.
+	 * @param candidate Score instance for new candidate
+	 * @param binIndex Bin index
+	 * @param currentOccupant Score instance of current bin occupant (a former elite)
+	 * @return true if current occupant was repalced
+	 */
+	private boolean replaceIfBetter(Score<T> candidate, int binIndex, Score<T> currentOccupant) {
+		double candidateScore = candidate.behaviorIndexScore(binIndex);
+		// Score cannot be negative infinity. Next, check if the bin is empty, or the candidate is better than the elite for that bin's score
+		if(candidateScore > Double.NEGATIVE_INFINITY && (currentOccupant == null || candidateScore > currentOccupant.behaviorIndexScore(binIndex))) {
+			archive.set(binIndex, candidate.copy()); // Replace elite
+			if(currentOccupant == null) { // Size is actually increasing
+				synchronized(this) {
+					occupiedBins++; // Shared variable
 				}
-				// Need to save all elites so that re-load on resume works
-				if(saveElites) {
-					// Easier to reload on resume if file name is uniform. Will also save space by overwriting
-					String binPath = archiveDir + File.separator + mapping.binLabels().get(i);
-					Easy.save(candidate.individual, binPath + "-elite.xml");
-					// Write scores as simple text file (less to write than xml)
-					try {
-						PrintStream ps = new PrintStream(new File(binPath + "-scores.txt"));
-						for(Double score : candidate.behaviorVector) {
-							ps.println(score);
-						}
-					} catch (FileNotFoundException e) {
-						System.out.println("Could not write scores for " + candidate.individual.getId() + ":" + candidate.behaviorVector);
-						e.printStackTrace();
-						System.exit(1);
-					}
-				}
-				return true;
-			} else {
-				return false;
 			}
-		}).count(); // Number of bins whose elite was replaced
-		//System.out.println(newElites + " elites were replaced");
-		// Whether any elites were replaced
-		return newElites > 0;
+			conditionalEliteSave(candidate, binIndex);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Save the candidate to disk since since it replaced the former bin occupant (or was first)
+	 * @param candidate Score with information to save
+	 * @param binIndex Index in bin
+	 */
+	private void conditionalEliteSave(Score<T> candidate, int binIndex) {
+		// Need to save all elites so that re-load on resume works
+		if(saveElites) {
+			// Easier to reload on resume if file name is uniform. Will also save space by overwriting
+			String binPath = archiveDir + File.separator + mapping.binLabels().get(binIndex);
+			Easy.save(candidate.individual, binPath + "-elite.xml");
+			// Write scores as simple text file (less to write than xml)
+			try {
+				PrintStream ps = new PrintStream(new File(binPath + "-scores.txt"));
+				for(Double score : candidate.getTraditionalDomainSpecificBehaviorVector()) {
+					ps.println(score);
+				}
+			} catch (FileNotFoundException e) {
+				System.out.println("Could not write scores for " + candidate.individual.getId() + ":" + candidate.getTraditionalDomainSpecificBehaviorVector());
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+	}
+
+	/**
+	 * Given the multiple dimensions corresponding to this particular archive,
+	 * use a one dimensional index for if the multiple dimensions are reduced
+	 * to get the corresponding archive elite from its bin.
+	 * 
+	 * to a single array in row-major order
+	 * @param binIndices array of individual indices
+	 * @return elite individual score instance 
+	 */
+	public Score<T> getElite(int[] binIndices) {
+		return archive.get(mapping.oneDimensionalIndex(binIndices));
 	}
 
 	/**
 	 * Elite individual from specified bin, or null if empty
-	 * @param binIndex
-	 * @return
+	 * @param binIndex 1D archive index
+	 * @return elite individual score instance
 	 */
 	public Score<T> getElite(int binIndex) {
 		return archive.get(binIndex);
@@ -150,7 +190,7 @@ public class Archive<T> {
 	 */
 	public double getBinScore(int binIndex) {
 		Score<T> elite = getElite(binIndex);
-		return elite == null ? Double.NEGATIVE_INFINITY : elite.behaviorVector.get(binIndex);
+		return elite == null ? Double.NEGATIVE_INFINITY : elite.behaviorIndexScore(binIndex);
 	}
 	
 	/**

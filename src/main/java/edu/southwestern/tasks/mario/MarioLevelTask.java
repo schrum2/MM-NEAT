@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -72,6 +71,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
 	private ArrayList<Double> behaviorVector;
+	private Pair<int[],Double> oneMAPEliteBinIndexScorePair;
 
 	public MarioLevelTask() {
 		// Replace this with a command line parameter
@@ -221,6 +221,16 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	 */
 	public abstract double totalPassableDistance(EvaluationInfo info);
 
+	
+	@Override
+	public Score<T> evaluate(Genotype<T> individual) {
+		Score<T> result = super.evaluate(individual);
+		if(MMNEAT.ea instanceof MAPElites)
+			result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
+		return result;
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
@@ -447,7 +457,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		// Could conceivably also be used for behavioral diversity instead of map elites, but this would be a weird behavior vector from a BD perspective
 		if(MMNEAT.ea instanceof MAPElites) {
 			// Assign to the behavior vector before using MAP-Elites
-			double[] archiveArray;
+			//double[] archiveArray;
 			//int binIndex;
 			int dim3,dim1,dim2;
 			double leniencySum = sumStatScore(lastLevelStats, LENIENCY_STAT_INDEX);
@@ -468,7 +478,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				dim2 = negativeSpaceSumIndex;
 				dim3 = leniencySumIndex;
 
-				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
+//				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
 			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels) {
 				//double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
 				dim1 = numDistinctSegments; //number of distinct segments
@@ -476,7 +486,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				dim3 = leniencySumIndex;
 			
 				// Row-major order lookup in 3D archive
-				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
+//				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
 			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndDecorationBinLabels) {
 				double decorationAlternating = alternatingStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
 				double negativeSpaceAlternating = alternatingStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
@@ -496,21 +506,19 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				dim2 = negativeSpaceSumIndex;
 				dim3 = decorationBinIndex;
 
-				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];				
-			}
-			
-			else {
+//				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];				
+			} else {
 				throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
 			}
 			// Row-major order lookup in 3D archive
-			setBinsAndSaveMAPElitesImages(individual, levelImage, archiveArray, dim1, dim2, dim3, BINS_PER_DIMENSION, binScore);
+			//setBinsAndSaveMAPElitesImages(individual, levelImage, archiveArray, dim1, dim2, dim3, BINS_PER_DIMENSION, binScore);
+			setBinsAndSaveMAPElitesImages(individual, levelImage, dim1, dim2, dim3, binScore);
 
 		}
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
 		
 	}
 
-	@SuppressWarnings("unchecked")
 	/**
 	 * sets the bins and saves MAPElites images to archive
 	 * @param individual the genotype
@@ -522,39 +530,40 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	 * @param BINS_PER_DIMENSION the bins per dimension
 	 * @param binScore the bin score
 	 */
-	private void setBinsAndSaveMAPElitesImages(Genotype<T> individual, BufferedImage levelImage, double[] archiveArray,
-			int dim1, int dim2, int dim3, final int BINS_PER_DIMENSION, double binScore) {
-		int binIndex;
-		binIndex = (dim1*BINS_PER_DIMENSION + dim2)*BINS_PER_DIMENSION + dim3;
-		Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
-		archiveArray[binIndex] = binScore; // Percent rooms traversed
+	private void setBinsAndSaveMAPElitesImages(Genotype<T> individual, BufferedImage levelImage,
+			int dim1, int dim2, int dim3, double binScore) {
+		
+		oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {dim1, dim2, dim3}, binScore);
+		
+//		int binIndex = (dim1*BINS_PER_DIMENSION + dim2)*BINS_PER_DIMENSION + dim3;
+//		Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
+//		archiveArray[binIndex] = binScore; // Percent rooms traversed
 
 		System.out.println("["+dim1+"]["+dim2+"]["+dim3+"] = "+binScore);
 
-		behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
+//		behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 
 		// Saving map elites bin images	
 		if(CommonConstants.netio) {
 			System.out.println("Save archive images");
-//				@SuppressWarnings("unchecked")
+			@SuppressWarnings("unchecked")
 			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
 			List<String> binLabels = archive.getBinMapping().binLabels();
 
 			// Index in flattened bin array
-			Score<T> elite = archive.getElite(binIndex);
+			Score<T> elite = archive.getElite(oneMAPEliteBinIndexScorePair.t1);
 			// If the bin is empty, or the candidate is better than the elite for that bin's score
-			if(elite == null || binScore > elite.behaviorVector.get(binIndex)) {
+			if(elite == null || binScore > elite.behaviorIndexScore()) {
 				String fileName = String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
 				if(individual instanceof CPPNOrDirectToGANGenotype) {
 					CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
 					if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
 					else fileName = "Direct-" + fileName;
 				}
-				String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
+				String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1));
 				String fullName = binPath + "_" + fileName;
 				System.out.println(fullName);
 				GraphicsUtil.saveImage(levelImage, fullName);
-				
 			}
 		}
 	}

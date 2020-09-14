@@ -17,11 +17,13 @@ public class ZeldaMAPElitesWallWaterRoomsBinLabels implements BinLabels {
 	public static final int TILE_GROUPS = 10;
 	
 	List<String> labels = null;
+
+	private int maxNumRooms;
 		
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) { // Create once and re-use, but wait until after Parameters are loaded
-			int maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
+			maxNumRooms = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks") * Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
 			labels = new ArrayList<String>(TILE_GROUPS*TILE_GROUPS*(maxNumRooms+1));
 			for(int i = 0; i < TILE_GROUPS; i++) { // Wall tile percent
 				for(int j = 0; j < TILE_GROUPS; j++) { // Water tile percent
@@ -32,6 +34,17 @@ public class ZeldaMAPElitesWallWaterRoomsBinLabels implements BinLabels {
 			}
 		}
 		return labels;
+	}
+
+	@Override
+	public int oneDimensionalIndex(int[] multi) {
+		int wallTileIndex = multi[0];
+		int waterTileIndex = multi[1];
+		int numRoomsReachable = multi[2];
+		
+		int mapElitesBinIndex = (wallTileIndex*TILE_GROUPS + waterTileIndex)*(maxNumRooms+1) + numRoomsReachable;
+
+		return mapElitesBinIndex;
 	}
 
 }
