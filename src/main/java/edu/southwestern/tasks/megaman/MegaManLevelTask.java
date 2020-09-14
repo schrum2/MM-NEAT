@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -52,10 +51,9 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
 	private ArrayList<Double> behaviorVector;
+	private Pair<int[],Double> oneMAPEliteBinIndexScorePair;
 	
-	// It is assumed that the data needed to fill this is computed in oneEval, saved globally, and then returned here.
-	// This is primarily meant to be used with MAP Elites, so it is an unusual behavior vector. It is really a vector of bins, where
-	// the agent's score in each bin is set ... but a given MegaMan level should really only be in one of the bins.
+	// Use of oneMAPEliteBinIndexScorePair is now favored for MAP Elites instead
 	public ArrayList<Double> getBehaviorVector() {
 		return behaviorVector;
 	}
@@ -114,11 +112,18 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	}
 
 	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		
+	public Score<T> evaluate(Genotype<T> individual) {
+		Score<T> result = super.evaluate(individual);
+		if(MMNEAT.ea instanceof MAPElites)
+			result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
+		return result;
+	}
+
+	
+	@Override
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {		
 		List<List<Integer>> level = getMegaManLevelListRepresentationFromGenotype(individual); //gets a level 
 		long genotypeId = individual.getId();
-		
 		return evaluateOneLevel(level, genotypeId);
 	}
 
@@ -165,8 +170,6 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		}
 		
 		double[] otherScores = new double[] {simpleAStarDistance,precentConnected, numEnemies, numWallEnemies, numGroundEnemies, numFlyingEnemies, numRightSegments, numLeftSegments, numUpSegments, numDownSegments, numCornerSegments, numDistinctSegments};
-		
-		
 		
 		if(CommonConstants.watch) {
 			//prints values that are calculated above for debugging 
@@ -294,22 +297,25 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		}
 		if(MMNEAT.ea instanceof MAPElites) {
 			double binScore = simpleAStarDistance;
-			int binIndex = 0;
+			//int binIndex = 0;
 
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels) {
-				int maxNumSegments = Parameters.parameters.integerParameter("megaManGANLevelChunks");
+				//int maxNumSegments = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 
 				assert precentConnected <= 1;
 				// 100% connectivity is possible, which leads to an index of 10 (out of bounds) if not adjusted using Math.min
 				int indexConnected = (int) Math.min(precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS,9);
 				int numVertical = (int) (numUpSegments+numDownSegments);
-				binIndex =(((int) numDistinctSegments)*(maxNumSegments+1) + numVertical)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)+indexConnected;
-				double[] archiveArray = new double[(maxNumSegments+1)*(maxNumSegments+1)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)];
-				Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
+				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {(int) numDistinctSegments, numVertical, indexConnected}, binScore);
 				
+//				binIndex =(((int) numDistinctSegments)*(maxNumSegments+1) + numVertical)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)+indexConnected;
+//				double[] archiveArray = new double[(maxNumSegments+1)*(maxNumSegments+1)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)];
+//				Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
 				System.out.println("["+numDistinctSegments+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
-				archiveArray[binIndex] = binScore; // Percent rooms traversed
-				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
+//				archiveArray[binIndex] = binScore; // Percent rooms traversed
+//				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
+			} else {
+				throw new RuntimeException("A Valid Binning Scheme For Mega Man Was Not Specified");
 			}
 			
 			if(CommonConstants.netio) {
@@ -318,9 +324,9 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				List<String> binLabels = archive.getBinMapping().binLabels();
 
 				// Index in flattened bin array
-				Score<T> elite = archive.getElite(binIndex);
+				Score<T> elite = archive.getElite(oneMAPEliteBinIndexScorePair.t1);
 				// If the bin is empty, or the candidate is better than the elite for that bin's score
-				if(elite == null || binScore > elite.behaviorIndexScore(binIndex)) {
+				if(elite == null || binScore > elite.behaviorIndexScore()) {
 					BufferedImage levelImage = null;
 					BufferedImage levelSolution = null;
 					try {
@@ -339,7 +345,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 //						if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
 //						else fileName = "Direct-" + fileName;
 //					}
-					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(binIndex);
+					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1));
 					String fullName = binPath + "-" + fileName;
 					System.out.println(fullName);
 					GraphicsUtil.saveImage(levelImage, fullName);	
