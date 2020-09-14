@@ -688,10 +688,6 @@ public class MMNEAT {
 				System.out.println("Setup Match Data Task");
 				MatchDataTask t = (MatchDataTask) task;
 				setNNInputParameters(t.numInputs(), t.numOutputs());
-			} else if (task instanceof VizDoomTask) {
-				System.out.println("Set up VizDoom Task");
-				VizDoomTask t = (VizDoomTask) task;
-				setNNInputParameters(t.numInputs(), t.numActions());
 			} else if(task instanceof InteractiveEvolutionTask) {
 				System.out.println("set up Interactive Evolution Task");
 				InteractiveEvolutionTask temp = (InteractiveEvolutionTask) task;

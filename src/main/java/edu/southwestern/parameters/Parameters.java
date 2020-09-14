@@ -216,13 +216,6 @@ public class Parameters {
 		integerOptions.add("defaultPitch", 36, "Default pitch value for 3DObjectbreeder vertical rotation");
 		integerOptions.add("deltaCodingFrequency", 20, "How often to generate a delta coded population");
 		integerOptions.add("disabledMode", -1, "If non-negative, then the designated mode can never be used");
-		integerOptions.add("doomEpisodeLength", 200, "The length of the current game's episodes");
-		integerOptions.add("doomInputColorVal", 2, "The number value for the color we want to use for inputs, default is red (2)");
-		integerOptions.add("doomInputHeight", 150, "The height for a VizDoom input section");
-		integerOptions.add("doomInputPixelSmudge", 1, "Determines the amount of pixels to 'smudge' together for inputs");
-		integerOptions.add("doomInputStartX", 0, "The starting x coordinate for a VizDoom input section");
-		integerOptions.add("doomInputStartY", 0, "The starting y coordinate for a VizDoom input section");
-		integerOptions.add("doomInputWidth", 200, "The width for a VizDoom input section");
 		integerOptions.add("edibleTaskTimeLimit", 2000, "Time steps per level for edible ghost only subtask");
 		integerOptions.add("edibleTime", Constants.EDIBLE_TIME, "Initial edible ghost time in Ms. Pac-Man");
 		integerOptions.add("endTUGGeneration", Integer.MAX_VALUE, "Generation at which TUG will stop being used");
@@ -405,7 +398,6 @@ public class Parameters {
 		booleanOptions.add("cooperativeIndividualAndAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught per population and as a team");
 		booleanOptions.add("cooperativeIndividualSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught per population");
 		booleanOptions.add("cooperativeTeamSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught for all populations at once");
-		booleanOptions.add("doomFullScreenInput", false, "Detemines if we should use all of the screen inputs or just the given row");
 		booleanOptions.add("evolveHyperNEATBias", true, "adds an output to evolved cppn that outputs bias of node");
 		booleanOptions.add("extraHNLinks", false, "adds connections between the input and output substrate layers of hyperNEAT substrates");
 		booleanOptions.add("GBHUDMutator", false, "Determines whether the HUD options are displayed");
@@ -457,7 +449,6 @@ public class Parameters {
 		booleanOptions.add("showCPPN", false, "shows evolved CPPN during post evals");
 		booleanOptions.add("showHighestActivatedOutput", false, "highlights most activated output neuron as green in visualizations");
 		booleanOptions.add("showMarioInputs", false, "Shows the Mario input frame to the user as the agent would see them");
-		booleanOptions.add("showVizDoomInputs", false, "Shows the VizDoom inputs to the user as the agent would see them");
 		booleanOptions.add("showWeights", false, "visualizes weights of all links in network. Compatible for HyperNEAT only currently");
 		booleanOptions.add("sortOutputActivations", false, "shows activations as sorted from most activated to least activated");
 		booleanOptions.add("splitRawTetrisInputs", false, "splits holes and blocks into two separate input substrates");
@@ -620,7 +611,6 @@ public class Parameters {
 		booleanOptions.add("mmpActivationId", false, "Lateral MMP links use id function as activation function");
 		booleanOptions.add("moPinball", false, "Subtracts the distance to the target from the Fitness; getting closer means a higher score overall");
 		booleanOptions.add("moPuddleWorld", true, "Puddle World is multiobjective, and separates step score from puddle score");
-		booleanOptions.add("moVizDoom", false, "VizDoom is multiobjective");
 		booleanOptions.add("modePheremone", false, "Drop pheremone according to mode used");
 		booleanOptions.add("monitorInputs", false, "Show panel tracking input values");
 		booleanOptions.add("multitaskCombiningCrossover", true, "If combining crossover is used, then network mode is chosen using a multitask scheme");
@@ -884,7 +874,6 @@ public class Parameters {
 		stringOptions.add("csvInputFile", "data/csv/poly.csv", "CSV file used for supervised model learning");
 		stringOptions.add("fixedMultitaskPolicy", "", "Path to xml file with multitask network, whose outputs control agent based on evolved preference selectors");
 		stringOptions.add("fixedPreferenceNetwork", "", "Path to xml file with preference network, used on top of evolved multitask networks");
-		stringOptions.add("gameWad", "freedoom2.wad", "The wad file name for the current VizDoom game");
 		stringOptions.add("ghostArchetype", "", "Path to xml file for archetype of ghost eating subnetwork population");
 		stringOptions.add("ghostEatingSubnetwork", "", "Path to xml file with pacman's ghost eating subnetwork for subsumption architecture");
 		stringOptions.add("ghostEatingSubnetworkDir", "", "Path to dir with xml files for pacman's ghost eating subnetwork for subsumption architecture");
@@ -951,7 +940,6 @@ public class Parameters {
 		classOptions.add("breveEnemy", RushingPlayer.class, "Class defining behavior of static enemy in breve domains");
 		classOptions.add("crossover", TWEANNCrossover.class, "Crossover operator to use if mating is used");
 		classOptions.add("directionalSafetyFunction", null, "Function that decides if CheckEach agent bothers to consider a direction");
-		classOptions.add("doomSmudgeStat", Average.class, "Class for the smudge factor in VizDoom");
 		classOptions.add("ea", NSGA2.class, "A subclass for the evolutionary algorithm to run");
 		classOptions.add("ensembleArbitrator", null, "How to arbitrate between agents when using an ensemble");
 		classOptions.add("experiment", LimitedSinglePopulationGenerationalEAExperiment.class, "A subclass of Experiment to execute");
