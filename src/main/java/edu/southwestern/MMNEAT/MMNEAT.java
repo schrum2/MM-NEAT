@@ -122,7 +122,6 @@ import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.tasks.ut2004.UT2004Task;
 import edu.southwestern.tasks.ut2004.UT2004Util;
 import edu.southwestern.tasks.ut2004.testing.HumanSubjectStudy2018TeammateServer;
-import edu.southwestern.tasks.vizdoom.VizDoomTask;
 import edu.southwestern.tasks.zelda.ZeldaCPPNOrDirectToGANDungeonTask;
 import edu.southwestern.tasks.zelda.ZeldaCPPNtoGANDungeonTask;
 import edu.southwestern.tasks.zelda.ZeldaDungeonTask;
