@@ -93,8 +93,6 @@ import edu.southwestern.tasks.megaman.MegaManGANLevelBreederTask;
 import edu.southwestern.tasks.megaman.MegaManGANLevelTask;
 import edu.southwestern.tasks.megaman.MegaManLevelTask;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
-import edu.southwestern.tasks.microrts.MicroRTSTask;
-import edu.southwestern.tasks.microrts.SinglePopulationCompetativeCoevolutionMicroRTSTask;
 import edu.southwestern.tasks.motests.FunctionOptimization;
 import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
 import edu.southwestern.tasks.mspacman.CooperativeCheckEachMultitaskSelectorMsPacManTask;
@@ -555,13 +553,6 @@ public class MMNEAT {
 				} else if (task instanceof CooperativeCheckEachMultitaskSelectorMsPacManTask) {
 					MsPacManInitialization.setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman();
 				}
-			} else if (task instanceof MicroRTSTask) {
-				MicroRTSTask temp = (MicroRTSTask) task;
-				setNNInputParameters(temp.sensorLabels().length, 1); //only one output because it is utility value for state being evaluated
-			} else if (task instanceof SinglePopulationCompetativeCoevolutionMicroRTSTask){
-				SinglePopulationCompetativeCoevolutionMicroRTSTask temp = (SinglePopulationCompetativeCoevolutionMicroRTSTask) task;
-				setNNInputParameters(temp.sensorLabels().length, 1); //only one output because it is utility value for state being evaluated
-
 			} else if (task instanceof RLGlueTask) {
 				setNNInputParameters(rlGlueExtractor.numFeatures(), RLGlueTask.agent.getNumberOutputs());
 			} else if (task instanceof PinballTask) {
