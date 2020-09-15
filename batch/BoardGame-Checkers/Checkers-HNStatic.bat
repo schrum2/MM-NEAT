@@ -1,3 +1,0 @@
-cd ..
-cd ..
-java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:%1 randomSeed:%1 base:checkers trials:10 maxGens:500 mu:100 io:true netio:true mating:true task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask cleanOldNetworks:true fs:false log:Checkers-HNStatic saveTo:HNStatic boardGame:edu.southwestern.boardGame.checkers.Checkers boardGameOpponent:edu.southwestern.boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning boardGameOpponentHeuristic:edu.southwestern.boardGame.heuristics.PieceDifferentialBoardGameHeuristic boardGamePlayer:edu.southwestern.boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype hyperNEAT:true
