@@ -346,7 +346,6 @@ public class TWEANN implements Network {
 	
 	private int neuronsPerModule;
 	private boolean standardMultitask;
-	private boolean hierarchicalMultitask;
 	private int presetMode;
 	// Only used with Hierarchical Multitask Networks
 	private boolean[] viableModes;
@@ -367,9 +366,6 @@ public class TWEANN implements Network {
 	 * @return true if preference neurons should be included
 	 */
 	public static boolean preferenceNeuron() {
-		if (CommonConstants.ensembleModeMutation) {
-			return false;
-		}
 		double mmpRate = Parameters.parameters.doubleParameter("mmpRate");
 		double mmrRate = Parameters.parameters.doubleParameter("mmrRate");
 		double mmdRate = Parameters.parameters.doubleParameter("mmdRate");
@@ -377,7 +373,7 @@ public class TWEANN implements Network {
 		int startingModes = Parameters.parameters.integerParameter("startingModes");
 		boolean multitaskCombiningCrossover = Parameters.parameters.booleanParameter("multitaskCombiningCrossover");
 		return (!multitaskCombiningCrossover || startingModes > 1 || mmpRate > 0 || mmrRate > 0 || mmdRate > 0
-				|| fullMMRate > 0 || CommonConstants.hierarchicalMultitask);
+				|| fullMMRate > 0);
 	}
 
 	/**
@@ -415,17 +411,11 @@ public class TWEANN implements Network {
 		this.numIn = numIn;
 		this.moduleUsage = new int[numModes];
 		this.preferenceFatigue = new double[numModes];
-		this.hierarchicalMultitask = CommonConstants.hierarchicalMultitask;
 
 		int startingPrefModes = Parameters.parameters.integerParameter("startingModes");
 		// numModes only applies for Multitask
-		if (numModes == 1 || hierarchicalMultitask) {
+		if (numModes == 1) {
 			int startingModes = startingPrefModes;
-			if (hierarchicalMultitask) {
-				// Can start with multiple preference neuron modules per
-				// multitask mode
-				startingModes *= numModes;
-			}
 			// Either a new mode-mutation network or a unimodal network
 			this.neuronsPerModule = numOut;
 			this.standardMultitask = false;
@@ -554,25 +544,12 @@ public class TWEANN implements Network {
 		this.numModes = g.numModules;
 		this.neuronsPerModule = g.neuronsPerModule;
 		this.standardMultitask = g.standardMultitask;
-		this.hierarchicalMultitask = g.hierarchicalMultitask;
-		if (g.moduleAssociations != null) { // This is a backwards compatibility
-			// issue:
-                        // This array was added for the Hierarchical Multitask networks
-			this.moduleAssociations = Arrays.copyOf(g.moduleAssociations, numModes);
-		} else { // In older networks, simply associate each module with its own mode
-			moduleAssociations = new int[this.numModes];
-			for (int i = 0; i < this.numModes; i++) {
-				moduleAssociations[i] = i;
-			}
+		moduleAssociations = new int[this.numModes];
+		for (int i = 0; i < this.numModes; i++) {
+			moduleAssociations[i] = i;
 		}
-		// Is true if net has one mode
-//		assert(numModes != 1 || numOut <= neuronsPerModule + 1) : "Too many outputs for one mode" + "\n" + "g.getId():"
-//		+ g.getId() + "\n" + "g.archetypeIndex:" + g.archetypeIndex + "\n" + "g.numIn:" + g.numIn + "\n"
-//		+ "g.numOut:" + g.numOut + "\n" + "g.nodes.size():" + g.nodes.size() + "\n"
-//		+ "EvolutionaryHistory.archetypeOut:" + Arrays.toString(EvolutionaryHistory.archetypeOut);
-		// Is true if net has more than one mode
 		assert(numModes == 1
-				|| numOut == (neuronsPerModule + (standardMultitask || CommonConstants.ensembleModeMutation ? 0 : 1))
+				|| numOut == (neuronsPerModule + (standardMultitask ? 0 : 1))
 				* numModes) : "multitask:" + standardMultitask + "\n" + "Wrong number of outputs (" + numOut
 		+ ") for the number of modes (" + numModes + ")";
 
@@ -624,34 +601,21 @@ public class TWEANN implements Network {
 
 	@Override
 	public boolean isMultitask() {
-		return standardMultitask || hierarchicalMultitask;
+		return standardMultitask;
 	}
 
+	// Can this be removed? It was only included to contrast with heirarchical multitask, which is no longer a thing
 	public boolean isStandardMultitask() {
 		return standardMultitask;
 	}
 
-	public boolean isHierarchicalMultitask() {
-		return hierarchicalMultitask;
-	}
-
 	/**
-	 * Tell network to use the designated mode on the next process. With
-	 * hierarchical multitask networks, multiple modules can become viable.
-	 *
-	 * @param mode
-	 *            to use
+	 * Tell network to use the designated mode on the next process. 
+	 * @param mode to use
 	 */
 	@Override
 	public void chooseMode(int mode) {
 		presetMode = mode;
-		if (hierarchicalMultitask) {
-			for (int i = 0; i < moduleAssociations.length; i++) {
-				// Set each mode as viable or not, if it is associated with the
-				// mode choice
-				viableModes[i] = moduleAssociations[i] == mode;
-			}
-		}
 	}
 
 	@Override
@@ -702,58 +666,53 @@ public class TWEANN implements Network {
 		// All outputs
 
 		double[] preferences = new double[numModes];
-		if (CommonConstants.ensembleModeMutation) {
-			// Give all equal preference and then take average across modes
-			Arrays.fill(preferences, 1.0);
+		if (numModes == 1) {
+			preferences[0] = 1.0;
+		} else if (standardMultitask) { // But NOT Hierarchical Multitask
+			preferences[presetMode] = 1.0;
 		} else {
-			if (numModes == 1) {
-				preferences[0] = 1.0;
-			} else if (standardMultitask) { // But NOT Hierarchical Multitask
-				preferences[presetMode] = 1.0;
-			} else {
-				for (int m = 0; m < numModes; m++) {
-					Node out = nodes.get(outputStart + (m * (neuronsPerModule + 1)) + neuronsPerModule);
-					// Inviable modes have minimal preference
-					preferences[m] = viableModes[m] ? out.output() : -Double.MAX_VALUE;
-				}
-			}
-			// subtract fatigue
-			for (int i = 0; i < preferenceFatigue.length; i++) {
-				preferences[i] -= preferenceFatigue[i];
-			}
-
-			if (CommonConstants.disabledMode >= 0) {
-				// Can never be selected
-				preferences[CommonConstants.disabledMode] = -2; 
-			}
-
-			if (canDraw && preferenceNeuronPanel != null && numModes > 1 && !standardMultitask) {
-				refreshPreferencePlot(preferenceNeuronPanel, preferences);
-			}
-
-			// determine winner
-			chosenModule = CommonConstants.softmaxModeSelection 
-					? StatisticsUtilities.softmax(preferences, CommonConstants.softmaxTemperature)
-					: StatisticsUtilities.argmax(preferences);
-					
-			this.moduleUsage[chosenModule]++;
-
-			// add new fatigue
-			preferenceFatigue[chosenModule] += CommonConstants.preferenceNeuronFatigueUnit;
-			// decay fatigue
-			for (int i = 0; i < preferenceFatigue.length; i++) {
-				if (i != chosenModule) { // don't decay chosen mode
-					preferenceFatigue[i] *= CommonConstants.preferenceNeuronDecay;
-				}
+			for (int m = 0; m < numModes; m++) {
+				Node out = nodes.get(outputStart + (m * (neuronsPerModule + 1)) + neuronsPerModule);
+				// Inviable modes have minimal preference
+				preferences[m] = viableModes[m] ? out.output() : -Double.MAX_VALUE;
 			}
 		}
+		// subtract fatigue
+		for (int i = 0; i < preferenceFatigue.length; i++) {
+			preferences[i] -= preferenceFatigue[i];
+		}
+
+		if (CommonConstants.disabledMode >= 0) {
+			// Can never be selected
+			preferences[CommonConstants.disabledMode] = -2; 
+		}
+
+		if (canDraw && preferenceNeuronPanel != null && numModes > 1 && !standardMultitask) {
+			refreshPreferencePlot(preferenceNeuronPanel, preferences);
+		}
+
+		// determine winner
+		chosenModule = CommonConstants.softmaxModeSelection 
+				? StatisticsUtilities.softmax(preferences, CommonConstants.softmaxTemperature)
+						: StatisticsUtilities.argmax(preferences);
+
+				this.moduleUsage[chosenModule]++;
+
+				// add new fatigue
+				preferenceFatigue[chosenModule] += CommonConstants.preferenceNeuronFatigueUnit;
+				// decay fatigue
+				for (int i = 0; i < preferenceFatigue.length; i++) {
+					if (i != chosenModule) { // don't decay chosen mode
+						preferenceFatigue[i] *= CommonConstants.preferenceNeuronDecay;
+					}
+				}
 
 		double[] outputs = new double[neuronsPerModule];
-		if (CommonConstants.ensembleModeMutation || CommonConstants.weightedAverageModeAggregation) {
+		if (CommonConstants.weightedAverageModeAggregation) {
 			// Calculate weighted average across all modes
 			for (int i = 0; i < outputs.length; i++) {
 				for (int j = 0; j < numModes; j++) {
-					int modeStart = outputStart + (j * (neuronsPerModule + (CommonConstants.ensembleModeMutation ? 0 : 1)));
+					int modeStart = outputStart + (j * (neuronsPerModule + 1));
 					outputs[i] += preferences[j] * nodes.get(modeStart + i).output();
 				}
 				outputs[i] /= numModes;
@@ -908,14 +867,6 @@ public class TWEANN implements Network {
 		i++;
 
 		labels = task.outputLabels();
-		if (MMNEAT.sharedMultitaskNetwork != null && !multitask) {
-			// This network determines preferences for the mode of a shared
-			// multitask network
-			labels = new String[outputs.length];
-			for (int j = 0; j < labels.length; j++) {
-				labels[j] = "Pref Mode " + j;
-			}
-		}
 		for (int j = 0; j < outputs.length; j++, i++) {
 			int y = (int) ((Offspring.inputOffset + (i * 0.5)) * Plot.OFFSET);
 			int x = inputPanel.getFrame().getWidth() / 2;
@@ -1367,8 +1318,7 @@ public class TWEANN implements Network {
 			// In other words, don't actually show a mode indicator if there is only one mode.
 			eraseModeIndicator(g, x, 0, numModes == 1 ? Color.white : CombinatoricUtilities.colorFromInt(chosenModule));
 		}
-		if (standardMultitask || CommonConstants.ensembleModeMutation
-				|| n % (neuronsPerModule + 1) == neuronsPerModule) {
+		if (standardMultitask || n % (neuronsPerModule + 1) == neuronsPerModule) {
 			g.setColor(Color.GRAY);//gray means multitask and multimodule is on
 		} else {
 			g.setColor(Color.ORANGE);//orange means standard single module and task

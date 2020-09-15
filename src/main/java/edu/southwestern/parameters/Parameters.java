@@ -773,7 +773,6 @@ public class Parameters {
 		doubleOptions.add("deleteModeRate", 0.0, "Mutation rate for deleting network modes");
 		doubleOptions.add("distanceForNewMode", -1.0,"If not -1, then behavioral distance between last two modes must be at least this much for mode mutation to occur");
 		doubleOptions.add("easyCampThreshold", 0.5, "Percent victories in camp that render it too easy");
-		doubleOptions.add("eligibilityLambda", 0.9, "Time decay on eligibility of rewards");
 		doubleOptions.add("explorePreference", 0.5, "High for more exploration vs. low for more exploitation when using UCB1");
 		doubleOptions.add("freezeAlternateRate", 0.0, "Mutation rate for melting all then freezing policy or preference neurons (alternating)");
 		doubleOptions.add("freezePolicyRate", 0.0, "Mutation rate for melting all then freezing policy neurons");

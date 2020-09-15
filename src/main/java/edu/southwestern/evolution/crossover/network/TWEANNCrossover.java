@@ -86,9 +86,6 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 		tm.nodes = crossedNodes.get(0);
 		tm.links = crossedLinks.get(0);
 		tm.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
-		if (CommonConstants.hierarchicalMultitask) {
-			tm.crossModuleAssociations(originalAssociations, tr.moduleAssociations);
-		}
 
 		// Rather than actually create a new network, I can simply move 
 		// the node and link genes into the existing network genotype.
@@ -96,9 +93,6 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 		tr.nodes = crossedNodes.get(1);
 		tr.links = crossedLinks.get(1);              
 		tr.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
-		if (CommonConstants.hierarchicalMultitask) {
-			tr.crossModuleAssociations(tr.moduleAssociations, originalAssociations);
-		}
 		// These checks/modifications only matter if genes can be frozen,
 		// but smaller genotypes cannot be frozen.
 		if(!TWEANNGenotype.smallerGenotypes) {

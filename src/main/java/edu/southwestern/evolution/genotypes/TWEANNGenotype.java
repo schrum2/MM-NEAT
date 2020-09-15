@@ -453,9 +453,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	public int neuronsPerModule;
 	public boolean standardMultitask;
 	public boolean hierarchicalMultitask;
-	// For Hierarchical Multitask Networks, each module is associated with one
-	// multitask mode
-	public int[] moduleAssociations;
 	protected int[] moduleUsage;
 	private long id = EvolutionaryHistory.nextGenotypeId();
 	public int archetypeIndex;
@@ -522,18 +519,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		}
 		this.numModules = numModules();
 		this.moduleUsage = new int[numModules];
-		// System.out.println("fresh modeUsage from constructor");
-
-		/**
-		 * In a new network, each Multitask module has one network module. This
-		 * is really only needed if hierarchicalMultitask is true. This
-		 * information will be incorrect if the network was created by
-		 * crossover.
-		 */
-		moduleAssociations = new int[numModules];
-		for (int i = 0; i < numModules; i++) {
-			moduleAssociations[i] = i;
-		}
 	}
 
 	/**
