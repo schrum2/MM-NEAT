@@ -10,9 +10,6 @@ import java.util.logging.Logger;
 
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 
-import edu.southwestern.boardGame.BoardGame;
-import edu.southwestern.boardGame.TwoDimensionalBoardGame;
-import edu.southwestern.boardGame.TwoDimensionalBoardGameViewer;
 import edu.southwestern.data.ResultSummaryUtilities;
 import edu.southwestern.evolution.EA;
 import edu.southwestern.evolution.EvolutionaryHistory;
@@ -51,9 +48,6 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.MultiplePopulationTask;
 import edu.southwestern.tasks.Task;
-import edu.southwestern.tasks.boardGame.MultiPopulationCompetativeCoevolutionBoardGameTask;
-import edu.southwestern.tasks.boardGame.SinglePopulationCompetativeCoevolutionBoardGameTask;
-import edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask;
 import edu.southwestern.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.southwestern.tasks.gridTorus.NNTorusPredPreyController;
 import edu.southwestern.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
@@ -188,10 +182,6 @@ public class MMNEAT {
 	public static SubstrateCoordinateMapping substrateMapping = null;
 	@SuppressWarnings("rawtypes")
 	public static HallOfFame hallOfFame;
-	@SuppressWarnings("rawtypes")
-	public static BoardGame boardGame;
-	@SuppressWarnings("rawtypes")
-	public static TwoDimensionalBoardGameViewer boardGameViewer;
 	public static SubstrateArchitectureDefinition substrateArchitectureDefinition;
 
 	public static MMNEAT mmneat;
@@ -412,7 +402,7 @@ public class MMNEAT {
 	 * variables of this class so they are easily accessible
 	 * from all parts of the code.
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	public static void loadClasses() {
 		try {
 			ActivationFunctions.resetFunctionSet();
@@ -440,19 +430,6 @@ public class MMNEAT {
 				int multitaskModes = CommonConstants.multitaskModules;
 				if (!CommonConstants.hierarchicalMultitask && multitaskModes > 1) {
 					modesToTrack = multitaskModes;
-				}
-			}
-
-			if(Parameters.parameters.classParameter("boardGame") != null){
-				boardGame = (BoardGame) ClassCreation.createObject("boardGame");
-				if(boardGame instanceof TwoDimensionalBoardGame){
-					if(CommonConstants.watch){
-						boardGameViewer = new TwoDimensionalBoardGameViewer((TwoDimensionalBoardGame) boardGame);
-					}else{
-						boardGameViewer = null;
-					}
-				}else{
-					boardGameViewer = null;
 				}
 			}
 
@@ -554,31 +531,6 @@ public class MMNEAT {
 			} else if (task instanceof PinballTask) {
 				PinballTask temp = (PinballTask) task;
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
-			} else if (task instanceof StaticOpponentBoardGameTask) {
-				StaticOpponentBoardGameTask temp = (StaticOpponentBoardGameTask) task;
-				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
-			} else if (task instanceof SinglePopulationCompetativeCoevolutionBoardGameTask) {
-				SinglePopulationCompetativeCoevolutionBoardGameTask temp = (SinglePopulationCompetativeCoevolutionBoardGameTask) task;
-				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
-			} else if (task instanceof MultiPopulationCompetativeCoevolutionBoardGameTask) {
-				System.out.println("Setup Multi-Population Board Game Coevolution Task");
-				multiPopulationCoevolution = true;
-
-				MultiPopulationCompetativeCoevolutionBoardGameTask temp = (MultiPopulationCompetativeCoevolutionBoardGameTask) task;
-				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);	
-
-				genotype = (Genotype) ClassCreation.createObject("genotype");
-				genotypeExamples = new ArrayList<Genotype>(boardGame.getNumPlayers());
-				for(int i = 0; i < boardGame.getNumPlayers(); i++){
-					Genotype gene = genotype.newInstance();
-					if(genotype instanceof TWEANNGenotype) {
-						((TWEANNGenotype) gene).archetypeIndex = i;
-					}
-
-					genotypeExamples.add(gene);
-				}
-				prepareCoevolutionArchetypes();
-
 			} else if (task instanceof GVGAISinglePlayerTask) {
 				GVGAISinglePlayerTask temp = (GVGAISinglePlayerTask) task;
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);

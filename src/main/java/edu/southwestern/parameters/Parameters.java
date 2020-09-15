@@ -9,10 +9,6 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import competition.cig.robinbaumgarten.AStarAgent;
-import edu.southwestern.boardGame.agents.BoardGamePlayerOneStepEval;
-import edu.southwestern.boardGame.agents.BoardGamePlayerRandom;
-import edu.southwestern.boardGame.featureExtractor.TwoDimensionalRawBoardGameFeatureExtractor;
-import edu.southwestern.boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
 import edu.southwestern.evolution.crossover.network.TWEANNCrossover;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.nsga2.NSGA2;
@@ -195,8 +191,6 @@ public class Parameters {
 		integerOptions.add("HNProcessDepth", 1, "The number of processing layers in a HN substrate");
 		integerOptions.add("HNProcessWidth", 1, "The number of adjacent processing substrates per layer in a HN substrate");
 		integerOptions.add("bdArchiveSize", 0, "Maximum allowable size of archive for BD");
-		integerOptions.add("boardGameOpeningRandomMoves", 0, "In board games, making the first few moves random makes evals noisy in a useful way");
-		integerOptions.add("boardGameStaticOpponentRuns", 1, "Number of Board Game matches to play against the Static Opponent Fitness Function");
 		integerOptions.add("cascadeExpansionGenerationInterval", 50, "HyperNEAT will expand at each generation interval if the parameter cascadeExpansion is true");
 		integerOptions.add("cleanFrequency", 10, "How frequently the archetype needs to be cleaned out");
 		integerOptions.add("clipLength", Keyboard.NOTE_LENGTH_DEFAULT, "Length of clip played in Breedesizer");
@@ -269,7 +263,6 @@ public class Parameters {
 		integerOptions.add("minLairTime", Constants.COMMON_LAIR_TIME, "What lair time is reduced to across generations");
 		integerOptions.add("minPause", 10, "Minimum pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("minRemixImageWindow", 2, "Minimum size of window being remixed by CPPN in Picture Remixer");
-		integerOptions.add("minimaxSearchDepth", 2, "Tree-Search Depth of the Minimax BoardGamePlayer");
 		integerOptions.add("mu", 50, "Size of parent population in mu +/, lambda scheme");
 		integerOptions.add("multinetworkComboReached", 0, "Tracks highest multinetwork combo reached so far to allow resuming after failure");
 		integerOptions.add("multitaskModes", 1, "Number of multitask modes (1 if not multitask at all)");
@@ -378,8 +371,6 @@ public class Parameters {
 		booleanOptions.add("starkPicbreeder", false, "Picbreeder only uses two extreme brightness levels");
 		booleanOptions.add("blackAndWhitePicbreeder", false, "Picbreeder only uses black and white (possible gray)");
 		booleanOptions.add("averageScoreHistory", false, "Surviving parent fitness averaged across generations");
-		booleanOptions.add("boardGameIncreasingRandomOpens", false, "Number of random moves at the start of each game increases as evolved agents improve");
-		booleanOptions.add("boardGameWinPercentFitness", false, "Is percentage of games won a fitness function for board games?");
 		booleanOptions.add("botprizeMod", false, "Whether or not to use the 2012 BotPrize mod in UT2004 games");
 		booleanOptions.add("cascadeExpansion", false, "allows for cascade expansion in HyperNEAT, adding layers during evaluation");
 		booleanOptions.add("convolution", false, "HyperNEAT phenotypes allow convolutional structure");
@@ -476,8 +467,6 @@ public class Parameters {
 		booleanOptions.add("avgGhostsPerPowerPill", false, "Ghost score used is the average eaten per power pill eaten");
 		booleanOptions.add("awardProperPowerPillEating", false, "Fitness for eating power pills when all ghosts are threats");
 		booleanOptions.add("bestTeamScore", true, "Coevolution assigns subcomponent the score of the best team it is in instead of AVG");
-		booleanOptions.add("boardGameOthelloFitness", false, "Enables the OthelloPiece BoardGame Fitness Function to be used as a Selection Function");
-		booleanOptions.add("boardGameSimpleFitness", true, "Enables the SimpleWinLoseDraw BoardGame Fitness Function to be used as a Selection Function");
 		booleanOptions.add("checkEachAbsoluteDistanceGhostSort", false, "Sort ghost sensors by their shortest path distance rather than directional path distance");
 		booleanOptions.add("checkEachFlushWalls", true, "Check each direction mediators flush network for wall directions");
 		booleanOptions.add("cleanOldNetworks", true, "Delete old network xml files once new networks are saved");
@@ -528,7 +517,6 @@ public class Parameters {
 		booleanOptions.add("hallOfFameSingleRandomChamp", true, "Only selects a single Random Champion from the Hall Of Fame");
 		booleanOptions.add("hallOfFameXRandomChamps", false, "Selects a specified number of Random Champs from the Hall Of Fame; uses the hallOfFameNumChamps Parameter");
 		booleanOptions.add("hallOfFameYPastGens", false, "Selects Hall Of Fame Champions from a specified number of Generations in the past; uses the hallOfFamePastGens Parameter");
-		booleanOptions.add("heuristicOverrideTerminalStates", false, "Overrides the Network's evaluation of a terminal BoardGameState");
 		booleanOptions.add("hierarchicalMultitask", false, "Each multitask mode can consist of multiple preference neuron modules");
 		booleanOptions.add("highLevel", true, "Use high-level sensors in mediators");
 		booleanOptions.add("hybrID", false, "Indicates whether HybrID is running or not");
@@ -920,12 +908,7 @@ public class Parameters {
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
 		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
-		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
 		classOptions.add("imageFitness", RandomImageFitness.class, "Fitness function for evaluating images");
-		classOptions.add("boardGameFeatureExtractor", TwoDimensionalRawBoardGameFeatureExtractor.class, "Feature Extractor used by the NNBoardGamePlayer");
-		classOptions.add("boardGameOpponent", BoardGamePlayerRandom.class, "Board game Opponent being played against");
-		classOptions.add("boardGameOpponentHeuristic", PieceDifferentialBoardGameHeuristic.class, "Board game heuristic used by the Opponent");
-		classOptions.add("boardGamePlayer", BoardGamePlayerOneStepEval.class, "Board game Player being evolved");
 		classOptions.add("crossover", TWEANNCrossover.class, "Crossover operator to use if mating is used");
 		classOptions.add("directionalSafetyFunction", null, "Function that decides if CheckEach agent bothers to consider a direction");
 		classOptions.add("ea", NSGA2.class, "A subclass for the evolutionary algorithm to run");
