@@ -90,7 +90,6 @@ import edu.southwestern.tasks.mspacman.facades.ExecutorFacade;
 import edu.southwestern.tasks.mspacman.init.MsPacManInitialization;
 import edu.southwestern.tasks.mspacman.multitask.MsPacManModeSelector;
 import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
-import edu.southwestern.tasks.mspacman.sensors.MultipleInputOutputMediator;
 import edu.southwestern.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
 import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 import edu.southwestern.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
@@ -643,29 +642,7 @@ public class MMNEAT {
 			// A Genotype to evolve with is always needed
 			System.out.println("Example genotype");
 			String seedGenotype = Parameters.parameters.stringParameter("seedGenotype");
-			if (task instanceof MsPacManTask && Parameters.parameters.booleanParameter("pacmanMultitaskSeed")
-					&& CommonConstants.multitaskModules == 2) {
-				System.out.println("Seed genotype is combo of networks");
-
-				String ghostDir = Parameters.parameters.stringParameter("ghostEatingSubnetworkDir");
-				String pillDir = Parameters.parameters.stringParameter("pillEatingSubnetworkDir");
-				String lastSavedDirectory = Parameters.parameters.stringParameter("lastSavedDirectory");
-				if (lastSavedDirectory.isEmpty()) {
-					if (!ghostDir.isEmpty() && !pillDir.isEmpty()) {
-						MsPacManInitialization.setupMultitaskSeedPopulationForMsPacman(ghostDir, pillDir);
-					} else {
-						MsPacManInitialization.setupSingleMultitaskSeedForMsPacman();
-					}
-				}
-
-				// Revise settings to accommodate multitask seed
-				System.out.println("Revising network info based on multitask seed");
-				MsPacManControllerInputOutputMediator ghostMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass1");
-				MsPacManControllerInputOutputMediator pillMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass2");
-				pacmanInputOutputMediator = new MultipleInputOutputMediator(new MsPacManControllerInputOutputMediator[] { ghostMediator, pillMediator });
-				setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
-
-			} else if(HNTSeedTask != null && Parameters.parameters.integerParameter("lastSavedGeneration") == 0) { // hyperNEATseed is not null
+			if(HNTSeedTask != null && Parameters.parameters.integerParameter("lastSavedGeneration") == 0) { // hyperNEATseed is not null
 				Parameters.parameters.setBoolean("randomizeSeedWeights", true); // Makes sure PopulationUtil randomized all weights
 
 				// Since this approach required many large TWEANNs to be saved in memory, alternative gene representations are used with optional fields removed

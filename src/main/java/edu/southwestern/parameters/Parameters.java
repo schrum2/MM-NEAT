@@ -663,7 +663,6 @@ public class Parameters {
 		booleanOptions.add("seedCoevolutionPops", false, "Coevolution pops start from pre-evolved pops");
 		booleanOptions.add("setInitialTUGGoals", false, "Initial TUG goals for each objective are set by hand");
 		booleanOptions.add("showNetworks", false, "Show current TWEANN during evolution");
-		booleanOptions.add("showSubnetAnalysis", false, "Show extra info about subnets in cooperative coevolution");
 		booleanOptions.add("sim", true, "Use Pacman forward simulation sensors");
 		booleanOptions.add("simIncludesExtraInfo", false, "Forward simulation also tells how many pills/power pills/ghosts are eaten");
 		booleanOptions.add("simultaneousLairExit", false, "Ghosts all exit lair at same time");
@@ -845,9 +844,6 @@ public class Parameters {
 		stringOptions.add("coevolvedNet5", "", "Source of fifth network to combine into a coevolved team");
 		stringOptions.add("combiningCrossoverMapping", "", "File with HashMap from innovations in single mode nets to corresponding duplicate in multitask nets");
 		stringOptions.add("csvInputFile", "data/csv/poly.csv", "CSV file used for supervised model learning");
-		stringOptions.add("ghostArchetype", "", "Path to xml file for archetype of ghost eating subnetwork population");
-		stringOptions.add("ghostEatingSubnetwork", "", "Path to xml file with pacman's ghost eating subnetwork for subsumption architecture");
-		stringOptions.add("ghostEatingSubnetworkDir", "", "Path to dir with xml files for pacman's ghost eating subnetwork for subsumption architecture");
 		stringOptions.add("gvgaiGame", "zelda", "GVGAI Game to be played");
 		stringOptions.add("lastSavedDirectory", "", "Name of last directory where networks were saved");
 		stringOptions.add("loadFrom", "", "Where ReplayEA loads networks from");
@@ -864,19 +860,12 @@ public class Parameters {
 		stringOptions.add("multinetworkScores3", "", "Source of file containing scores for third multinetwork population");
 		stringOptions.add("multinetworkScores4", "", "Source of file containing scores for fourth multinetwork population");
 		stringOptions.add("pacmanSaveFile", "", "Filename to save a pacman game recording to");
-		stringOptions.add("pillArchetype", "", "Path to xml file for archetype of pill eating subnetwork population");
-		stringOptions.add("pillEatingSubnetwork", "", "Path to xml file with pacman's pill eating subnetwork for subsumption architecture");
-		stringOptions.add("pillEatingSubnetworkDir", "", "Path to dir with xml files for pacman's pill eating subnetwork for subsumption architecture");
 		stringOptions.add("pinballConfig", "pinball_simple_single.cfg", "Configuration file for the PinballTask");
 		stringOptions.add("regressionTargetColumn", "poly", "Name of column in CSV file to match for regression problems");
 		stringOptions.add("remixMIDIFile", SoundUtilExamples.FUR_ELISE_MID, "Input MIDI file to be played with CPPN in Breedesizer");
 		stringOptions.add("remixWAVFile", SoundUtilExamples.PORTAL2_WAV, "Input WAV file to be remixed in Remixbreeder");
 		stringOptions.add("replayNetwork", "", "Network displayed while replaying pacman eval");
 		stringOptions.add("saveTo", "", "Prefix for subdirectory where output from one run will be saved");
-		stringOptions.add("seedArchetype1", "", "Archetype for seed sub-population 1");
-		stringOptions.add("seedArchetype2", "", "Archetype for seed sub-population 2");
-		stringOptions.add("seedArchetype3", "", "Archetype for seed sub-population 3");
-		stringOptions.add("seedArchetype4", "", "Archetype for seed sub-population 4");
 		stringOptions.add("seedGenotype", "", "Path to xml file with seed genotype for population");
 		stringOptions.add("utDrive", "C", "Drive where UT2004 resides");
 		stringOptions.add("utMap", "DM-TrainingDay", "Map to play in Unreal Tournament 2004");
