@@ -1,26 +1,21 @@
 package edu.southwestern.tasks.mspacman.init;
 
+import static edu.southwestern.MMNEAT.MMNEAT.pacmanInputOutputMediator;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import static edu.southwestern.MMNEAT.MMNEAT.pacmanInputOutputMediator;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.crossover.network.CombiningTWEANNCrossover;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.genotypes.HierarchicalTWEANNGenotype;
-import edu.southwestern.evolution.genotypes.SimpleBlueprintGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
-import edu.southwestern.evolution.genotypes.pool.GenotypePool;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
 import edu.southwestern.experiment.evolution.SinglePopulationGenerationalEAExperiment;
 import edu.southwestern.log.MMNEATLog;
-import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.mspacman.CooperativeBlueprintSubtaskMsPacManTask;
-import edu.southwestern.tasks.mspacman.CooperativeNonHierarchicalMultiNetMsPacManTask;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
 import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
@@ -111,25 +106,6 @@ public class MsPacManInitialization {
 	}
 	
 	/**
-	 * Sets up directory that stores genotypes for both pill and ghost eating agent subnetworks
-	 */
-	public static void setupGenotypePoolsForMsPacman() {
-		// Use genotype pools
-		//below check should be true unless new network utilized
-		if (Parameters.parameters.classParameter("genotype").equals(HierarchicalTWEANNGenotype.class)) {
-			System.out.println("Ghost eating pool");
-			GenotypePool.addPool(Parameters.parameters.stringParameter("ghostEatingSubnetworkDir"));
-			System.out.println("Pill eating pool");
-			GenotypePool.addPool(Parameters.parameters.stringParameter("pillEatingSubnetworkDir"));
-			//sets ceilings of genotype size based on initial pool size 
-			MMNEAT.discreteCeilings = new int[2];
-			MMNEAT.discreteCeilings[0] = GenotypePool.poolSize(0);
-			MMNEAT.discreteCeilings[1] = GenotypePool.poolSize(1);
-		}
-	}
-
-
-	/**
 	 * Assumes the subnets are always in SubNetworkBlocks at the end of a
 	 * BlockLoadedInputOutputMediator, so the nets to replace are found based on
 	 * the length of the input subnets.
@@ -175,95 +151,7 @@ public class MsPacManInitialization {
 					.add(new GhostMonitorNetworkBlock((TWEANNGenotype) ghostMonitorExamples.get(i), includeInputs, i));
 		}
 	}
-	
-	@SuppressWarnings("rawtypes")
-	public static void setupCooperativeCoevolutionSelectorForMsPacman() throws NoSuchMethodException {
-		MMNEAT.pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
-		MMNEAT.setNNInputParameters(MMNEAT.pacmanInputOutputMediator.numIn(), MMNEAT.pacmanInputOutputMediator.numOut());
-		// subcontrollers and selector and possibly blueprints
-		MMNEAT.genotypeExamples = new ArrayList<Genotype>(MMNEAT.modesToTrack + 2); 
-		MMNEAT.genotypeExamples.add(new TWEANNGenotype(MMNEAT.pacmanInputOutputMediator.numIn(), MMNEAT.modesToTrack, 0));
-		MMNEAT.coevolutionMediators = new MsPacManControllerInputOutputMediator[MMNEAT.modesToTrack];
-		for (int i = 1; i <= MMNEAT.modesToTrack; i++) {
-			MMNEAT.coevolutionMediators[i - 1] = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass" + i);
-			MMNEAT.genotypeExamples.add(new TWEANNGenotype(MMNEAT.coevolutionMediators[i - 1].numIn(), GameFacade.NUM_DIRS, i));
-		}
-
-		MMNEAT.prepareCoevolutionArchetypes();
-		// Now the blueprints come in
-		if (MMNEAT.task instanceof CooperativeBlueprintSubtaskMsPacManTask) {
-			MMNEAT.blueprints = true;
-			// subcontrollers and selector
-			MMNEAT.genotypeExamples.add(new SimpleBlueprintGenotype(MMNEAT.modesToTrack + 1)); 
-		}
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public static void setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman() throws NoSuchMethodException {
-		MMNEAT.pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
-		MMNEAT.modesToTrack = CommonConstants.multitaskModules;
-		// Setup the preference net settings
-		CommonConstants.multitaskModules = 1; // Needed before set NN params
-		MMNEAT.setNNInputParameters(MMNEAT.pacmanInputOutputMediator.numIn(), MMNEAT.modesToTrack);
-		CommonConstants.multitaskModules = MMNEAT.modesToTrack; // Restore value
-
-		MMNEAT.genotypeExamples = new ArrayList<Genotype>(2);
-		// Multitask
-		MMNEAT.genotypeExamples.add(new TWEANNGenotype(MMNEAT.pacmanInputOutputMediator.numIn(), MMNEAT.modesToTrack, CommonConstants.fs, ActivationFunctions.newNodeFunction(), MMNEAT.modesToTrack, 0));
-		// Pref Net
-		MMNEAT.genotypeExamples.add(new TWEANNGenotype(MMNEAT.pacmanInputOutputMediator.numIn(), MMNEAT.modesToTrack, CommonConstants.fs, ActivationFunctions.newNodeFunction(), 1, 1));
-
-		MMNEAT.prepareCoevolutionArchetypes();
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public static void setupCooperativeCoevolutionCombinerForMsPacman() throws NoSuchMethodException {
-		boolean includeInputs = Parameters.parameters.booleanParameter("subsumptionIncludesInputs");
-		int outputsPerSubnet = GameFacade.NUM_DIRS;
-		// Use the specified mesiator, but add required subnet blocks to it later
-		MMNEAT.pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
-		MMNEAT.coevolutionMediators = new MsPacManControllerInputOutputMediator[MMNEAT.modesToTrack];
-		int numInputs = MMNEAT.pacmanInputOutputMediator.numIn();
-		for (int i = 1; i <= MMNEAT.modesToTrack; i++) {
-			MMNEAT.coevolutionMediators[i - 1] = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass" + i);
-			numInputs += outputsPerSubnet + (includeInputs ? MMNEAT.coevolutionMediators[i - 1].numIn() : 0);
-		}
-		MMNEAT.setNNInputParameters(numInputs, GameFacade.NUM_DIRS);
-
-		MMNEAT.genotypeExamples = new ArrayList<Genotype>(MMNEAT.modesToTrack + 1);
-		MMNEAT.genotypeExamples.add(new TWEANNGenotype(numInputs, GameFacade.NUM_DIRS, 0));
-		for (int i = 0; i < MMNEAT.modesToTrack; i++) {
-			TWEANNGenotype tg = new TWEANNGenotype(MMNEAT.coevolutionMediators[i].numIn(), outputsPerSubnet, (i + 1));
-			MMNEAT.genotypeExamples.add(tg);
-		}
-		MMNEAT.prepareCoevolutionArchetypes();
-		// Needed so that sensor and output labels can be retrieved
-		for (int i = 0; i < MMNEAT.coevolutionMediators.length; i++) {
-			TWEANNGenotype tg = (TWEANNGenotype) MMNEAT.genotypeExamples.get(i + 1); // skip combiner
-			((BlockLoadedInputOutputMediator) MMNEAT.pacmanInputOutputMediator).blocks
-					.add(new SubNetworkBlock(tg.getPhenotype(), MMNEAT.coevolutionMediators[i],
-							MMNEAT.coevolutionMediators[i].getClass().getSimpleName() + "[" + i + "]", includeInputs));
-		}
-	}
-	
-	@SuppressWarnings({ "rawtypes" })
-	public static void setupCooperativeCoevolutionNonHierarchicalForMsPacman() throws NoSuchMethodException {
-		MMNEAT.pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
-		MMNEAT.setNNInputParameters(MMNEAT.pacmanInputOutputMediator.numIn(), MMNEAT.pacmanInputOutputMediator.numOut());
-
-		CooperativeNonHierarchicalMultiNetMsPacManTask theTask = (CooperativeNonHierarchicalMultiNetMsPacManTask) MMNEAT.task;
-		int pops = theTask.numberOfPopulations();
-		MMNEAT.genotypeExamples = new ArrayList<Genotype>(pops);
-		boolean specializeMediators = !Parameters.parameters.booleanParameter("defaultMediator");
-		for (int i = 1; i <= pops; i++) {
-			if (specializeMediators) {
-				theTask.inputMediators[i - 1] = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass" + i);
-			}
-			MMNEAT.genotypeExamples.add(new TWEANNGenotype(theTask.inputMediators[i - 1].numIn(), GameFacade.NUM_DIRS, i - 1));
-		}
-		MMNEAT.prepareCoevolutionArchetypes();
-	}
-	
+				
 	@SuppressWarnings("unchecked")
 	public static void setupMultitaskSeedPopulationForMsPacman(String ghostDir, String pillDir) {
 		// A combined archetype is needed

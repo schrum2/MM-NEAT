@@ -10,7 +10,6 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.Organism;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.genotypes.NetworkGenotype;
 import edu.southwestern.evolution.nsga2.tug.TUGTask;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.NetworkTask;
@@ -23,7 +22,6 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.mspacman.agentcontroller.ghosts.SharedNNGhosts;
-import edu.southwestern.tasks.mspacman.agentcontroller.pacman.MultinetworkMsPacManController;
 import edu.southwestern.tasks.mspacman.agentcontroller.pacman.NNMsPacMan;
 import edu.southwestern.tasks.mspacman.data.TrainingCampManager;
 import edu.southwestern.tasks.mspacman.facades.ExecutorFacade;
@@ -35,8 +33,6 @@ import edu.southwestern.tasks.mspacman.objectives.AvoidDeadSpaceScore;
 import edu.southwestern.tasks.mspacman.objectives.ClearTimeScore;
 import edu.southwestern.tasks.mspacman.objectives.EatenGhostScore;
 import edu.southwestern.tasks.mspacman.objectives.EdibleTimeParameter;
-import edu.southwestern.tasks.mspacman.objectives.EligibilityTimeFramesGhostScore;
-import edu.southwestern.tasks.mspacman.objectives.EligibilityTimeFramesPillScore;
 import edu.southwestern.tasks.mspacman.objectives.FastGhostEatingScore;
 import edu.southwestern.tasks.mspacman.objectives.FastPillEatingScore;
 import edu.southwestern.tasks.mspacman.objectives.GameScore;
@@ -56,8 +52,6 @@ import edu.southwestern.tasks.mspacman.objectives.RandomScore;
 import edu.southwestern.tasks.mspacman.objectives.RawTimeScore;
 import edu.southwestern.tasks.mspacman.objectives.RemainingLivesScore;
 import edu.southwestern.tasks.mspacman.objectives.SurvivalAndSpeedTimeScore;
-import edu.southwestern.tasks.mspacman.objectives.TimeFramesGhostScore;
-import edu.southwestern.tasks.mspacman.objectives.TimeFramesPillScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeToEatAllGhostsScore;
 import edu.southwestern.tasks.popacman.controllers.OldToNewPacManIntermediaryController;
 import edu.southwestern.tasks.popacman.ghosts.controllers.OldToNewGhostIntermediaryController;
@@ -329,20 +323,6 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		addObjective(new SurvivalAndSpeedTimeScore<T>(), otherScores, new Average(), false);
 		addObjective(new SurvivalAndSpeedTimeScore<T>(), otherScores, new Max(), false);
 
-		if (MMNEAT.taskHasSubnetworks()) {
-			boolean eligibilityOnEarnedFitness = Parameters.parameters.booleanParameter("eligibilityOnEarnedFitness");
-			pillTimeFrameIndices = new int[MMNEAT.modesToTrack];
-			ghostTimeFrameIndices = new int[MMNEAT.modesToTrack];
-			for (int i = 0; i < MMNEAT.modesToTrack; i++) {
-				pillTimeFrameIndices[i] = otherScores.size();
-				addObjective(eligibilityOnEarnedFitness ? new EligibilityTimeFramesPillScore<T>(i)
-						: new TimeFramesPillScore<T>(i), otherScores, false);
-				ghostTimeFrameIndices[i] = otherScores.size();
-				addObjective(eligibilityOnEarnedFitness ? new EligibilityTimeFramesGhostScore<T>(i)
-						: new TimeFramesGhostScore<T>(i), otherScores, false);
-			}
-		}
-
 		specificLevelScoreFirstIndexInOtherScores = otherScores.size();
 		for (int i = 0; i < Constants.NUM_MAZES; i++) {
 			addObjective(new LevelGameScore<T>(i), otherScores, new Average(), false);
@@ -530,7 +510,6 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		return super.evaluate(individual);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		Organism<T> organism = evolveGhosts ? new SharedNNGhosts<T>(individual) : new NNMsPacMan<T>(individual);
@@ -556,11 +535,6 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 
 		// Side-effects to "game"
 		agentEval(mspacman, ghosts, num);
-		
-		if (mspacman.oldP instanceof MultinetworkMsPacManController && individual instanceof NetworkGenotype) {
-			// Track subnet selections as if they were modes
-			((NetworkGenotype<T>) individual).setModuleUsage(((MultinetworkMsPacManController) mspacman.oldP).fullUsage);
-		}
 		
 		double[] fitnesses = new double[this.numObjectives()];
 		double[] scores = new double[this.numOtherScores()];

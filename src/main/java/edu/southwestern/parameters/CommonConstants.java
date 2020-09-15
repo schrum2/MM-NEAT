@@ -32,12 +32,10 @@ public class CommonConstants {
 	public static boolean cullModeMutations;
 	public static boolean deleteLeastUsed;
 	public static boolean eliminateImpossibleDirections;
-	public static boolean ensembleModeMutation;
 	public static boolean evalReport;
 	public static boolean exploreWeightsOfNewStructure;
 	public static boolean freezeBeforeModeMutation;
 	public static boolean fs;
-	public static boolean hierarchicalMultitask;
 	public static boolean hyperNEAT;
 	public static boolean hybrID;
 	public static boolean imprisonedWhileEdible;
@@ -144,12 +142,10 @@ public class CommonConstants {
 		cullModeMutations = Parameters.parameters.booleanParameter("cullModeMutations");
 		deleteLeastUsed = Parameters.parameters.booleanParameter("deleteLeastUsed");
 		eliminateImpossibleDirections = Parameters.parameters.booleanParameter("eliminateImpossibleDirections");
-		ensembleModeMutation = Parameters.parameters.booleanParameter("ensembleModeMutation");
 		evalReport = Parameters.parameters.booleanParameter("evalReport");
 		exploreWeightsOfNewStructure = Parameters.parameters.booleanParameter("exploreWeightsOfNewStructure");
 		freezeBeforeModeMutation = Parameters.parameters.booleanParameter("freezeBeforeModeMutation");
 		fs = Parameters.parameters.booleanParameter("fs");
-		hierarchicalMultitask = Parameters.parameters.booleanParameter("hierarchicalMultitask");
 		hyperNEAT = Parameters.parameters.booleanParameter("hyperNEAT");
 		hybrID = Parameters.parameters.booleanParameter("hybrID");
 		imprisonedWhileEdible = Parameters.parameters.booleanParameter("imprisonedWhileEdible");

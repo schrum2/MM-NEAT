@@ -1,23 +1,21 @@
 package edu.southwestern.experiment.evolution;
 
+import java.io.File;
+import java.util.ArrayList;
+
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.MultiplePopulationGenerationalEA;
 import edu.southwestern.evolution.ScoreHistory;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.genotypes.SimpleBlueprintGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
-import edu.southwestern.evolution.mulambda.CoevolutionMuLambda;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.log.PlotLog;
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.BlueprintTask;
 import edu.southwestern.tasks.MultiplePopulationTask;
-import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
-import java.io.File;
-import java.util.ArrayList;
 
 /**
  *
@@ -66,29 +64,11 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 		parallel = Parameters.parameters.booleanParameter("parallelSave");
 		writeOutput = Parameters.parameters.booleanParameter("netio");
 		deleteOld = Parameters.parameters.booleanParameter("cleanOldNetworks");
-		if (MMNEAT.blueprints) {
-			ArrayList<String> labels = new ArrayList<String>();
-			labels.add("Missing Reference Replacements");
-			labels.add("Ratio Missing Reference Replacements");
-			labels.add("Child Blueprint Parent References");
-			labels.add("Ratio Child Blueprint Parent References");
-			labels.add("Unevaluated Parent Genotypes");
-			labels.add("Ratio Unevaluated Parent Genotypes");
-			labels.add("Unevaluated Child Genotypes");
-			labels.add("Ratio Unevaluated Child Genotypes");
-			labels.add("Successful Mutation Swaps From Parent To Child Genotype");
-			labels.add("Ratio Successful Mutation Swaps From Parent To Child Genotype");
-			labels.add("Full Parent Blueprints");
-			labels.add("Ratio Full Parent Blueprints");
-			labels.add("Full Child Blueprints");
-			labels.add("Ratio Full Child Blueprints");
-			blueprintLog = new PlotLog("Blueprints", labels);
-		}
 
 		this.ea = ea;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" }) // Raw types needed to allow more flexibility
+	@SuppressWarnings({ "rawtypes"}) // Raw types needed to allow more flexibility
 	@Override
 	public void init() {
 		String lastSavedDir = Parameters.parameters.stringParameter("lastSavedDirectory");
@@ -101,26 +81,7 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 			if (popSeed != -1) {
 				RandomNumbers.reset(popSeed);
 			}
-			/**
-			 * Initializing the blueprints is tricky because they need access to
-			 * the other populations. So, do the others first, then do the
-			 * blueprints
-			 *
-			 */
-			if (MMNEAT.blueprints) {
-				// Remove the blueprint example
-				Genotype last = examples.remove(examples.size() - 1);
-				// Initialize the other populations
-				this.populations = ea.initialPopulations(examples);
-				int mu = ((CoevolutionMuLambda) ea).mu[examples.size()];
-				// Initialize blueprint population, using other populations
-				this.populations.add(PopulationUtil.removeListGenotypeType(PopulationUtil.initialPopulation(last, mu)));
-				// Put blueprint example back
-				examples.add(last);
-				assert(examples.size() == populations.size());
-			} else {
-				this.populations = ea.initialPopulations(examples);
-			}
+			this.populations = ea.initialPopulations(examples);
 			RandomNumbers.reset();
 		} else {
 			int numPops = ((MultiplePopulationTask) ea.getTask()).numberOfPopulations();
@@ -147,58 +108,6 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 			System.out.println("Starting generation: " + ea.currentGeneration());
 			populations = ea.getNextGeneration(populations);
 			int gen = ea.currentGeneration();
-			// May need to fix blueprints whose member networks are no longer in
-			// population
-			if (MMNEAT.blueprints) {
-				// The last population must have the blueprints, check each one
-				int replacements = 0;
-				int potentialReplacements = 0;
-				for (Genotype g : populations.get(populations.size() - 1)) {
-					SimpleBlueprintGenotype bp = (SimpleBlueprintGenotype) g;
-					ArrayList<Long> ids = bp.getPhenotype();
-					// Check the genotype ids pointed to by each blueprint
-					for (int i = 0; i < ids.size(); i++) {
-						// -1 for not found
-						long oldId = ids.get(i);
-						potentialReplacements++;
-						if (PopulationUtil.indexOfGenotypeWithId(populations.get(i), oldId) == -1) {
-							long newId = randomIdFromSubpop(i);
-							bp.setValue(i, newId);
-							replacements++;
-							// Wrong type of logging
-							// blueprintLog.log("Subpop:" + i + ":" + oldId + "
-							// -> " + newId + ": in blueprint:" + bp.getId());
-						}
-					}
-				}
-				BlueprintTask bpt = (BlueprintTask) MMNEAT.task;
-				CoevolutionMuLambda coopEA = (CoevolutionMuLambda) ea;
-				/**
-				 * Log: generation, number of post-gen blueprint fixes,
-				 * percentage of such fixes, number of children blueprints that
-				 * referenced a parent population, percentage of such
-				 * references, number unevaluated child references, percentage
-				 * of such references, number parent-to-child mutations that
-				 * succeed, percent of such successes out of all attempts
-				 *
-				 */
-				ArrayList<Double> logValues = new ArrayList<Double>(8);
-				logValues.add((double) replacements);
-				logValues.add((replacements * 1.0) / potentialReplacements);
-				logValues.add((double) bpt.getNumberBlueprintParentReferences());
-				logValues.add((bpt.getNumberBlueprintParentReferences() * 1.0) / bpt.getTotalBlueprintReferences());
-				logValues.add((double) bpt.getPreviousNumberUnevaluatedReferences());
-				logValues.add((bpt.getPreviousNumberUnevaluatedReferences() * 1.0) / bpt.getPreviousTotalBlueprintReferences());
-				logValues.add((double) bpt.getNumberUnevaluatedReferences());
-				logValues.add((bpt.getNumberUnevaluatedReferences() * 1.0) / bpt.getTotalBlueprintReferences());
-				logValues.add((double) coopEA.successfulOffspringSearches);
-				logValues.add((coopEA.successfulOffspringSearches * 1.0) / coopEA.totalOffspringSearches);
-				logValues.add((double) bpt.getNumberFullParentBlueprints());
-				logValues.add((bpt.getNumberFullParentBlueprints() * 1.0) / coopEA.lambda[coopEA.lambda.length - 1]);
-				logValues.add((double) bpt.getNumberFullChildBlueprints());
-				logValues.add((bpt.getNumberFullChildBlueprints() * 1.0) / coopEA.lambda[coopEA.lambda.length - 1]);
-				blueprintLog.log(gen, logValues);
-			}
 			// Each TWEANN sub-pop has its own archetype
 			for (int i = 0; i < populations.size(); i++) {
 				ArrayList<Genotype> pop = populations.get(i);

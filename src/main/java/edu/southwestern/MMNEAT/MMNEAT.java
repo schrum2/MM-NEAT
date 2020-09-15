@@ -35,7 +35,6 @@ import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.log.PerformanceLog;
 import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.NetworkTask;
-import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.Bottom1DSubstrateMapping;
 import edu.southwestern.networks.hyperneat.HyperNEATDummyTask;
 import edu.southwestern.networks.hyperneat.HyperNEATSpeedTask;
@@ -86,14 +85,7 @@ import edu.southwestern.tasks.megaman.MegaManLevelTask;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
 import edu.southwestern.tasks.motests.FunctionOptimization;
 import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
-import edu.southwestern.tasks.mspacman.CooperativeCheckEachMultitaskSelectorMsPacManTask;
-import edu.southwestern.tasks.mspacman.CooperativeGhostMonitorNetworksMsPacManTask;
-import edu.southwestern.tasks.mspacman.CooperativeMsPacManTask;
-import edu.southwestern.tasks.mspacman.CooperativeNonHierarchicalMultiNetMsPacManTask;
-import edu.southwestern.tasks.mspacman.CooperativeSubtaskCombinerMsPacManTask;
-import edu.southwestern.tasks.mspacman.CooperativeSubtaskSelectorMsPacManTask;
 import edu.southwestern.tasks.mspacman.MsPacManTask;
-import edu.southwestern.tasks.mspacman.ensemble.MsPacManEnsembleArbitrator;
 import edu.southwestern.tasks.mspacman.facades.ExecutorFacade;
 import edu.southwestern.tasks.mspacman.init.MsPacManInitialization;
 import edu.southwestern.tasks.mspacman.multitask.MsPacManModeSelector;
@@ -121,7 +113,6 @@ import edu.southwestern.tasks.zentangle.ZentangleTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
-import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.Statistic;
@@ -163,18 +154,13 @@ public class MMNEAT {
 	public static ArrayList<Statistic> aggregationOverrides;
 	public static TaskSpec tso;
 	public static FeatureExtractor rlGlueExtractor;
-	public static boolean blueprints = false;
 	@SuppressWarnings("rawtypes") // applies to any population type
 	public static PerformanceLog performanceLog;
 	public static MsPacManControllerInputOutputMediator pacmanInputOutputMediator;
 	public static GhostControllerInputOutputMediator ghostsInputOutputMediator;
-	public static MsPacManControllerInputOutputMediator[] coevolutionMediators = null;
-	public static MsPacManEnsembleArbitrator ensembleArbitrator = null;
 	private static ArrayList<Integer> actualFitnessFunctions;
 	public static MsPacManModeSelector pacmanMultitaskScheme = null;
 	public static VariableDirectionBlock directionalSafetyFunction;
-	public static TWEANNGenotype sharedMultitaskNetwork = null;
-	public static TWEANNGenotype sharedPreferenceNetwork = null;
 	public static EvalLog evalReport = null;
 	public static RandomGenerator weightPerturber = null;
 	public static MMNEATLog ghostLocationsOnPowerPillEaten = null;
@@ -300,16 +286,6 @@ public class MMNEAT {
 	}
 
 	/**
-	 * Currently, this check only applies to Ms Pac-Man tasks, but could
-	 * be used for other coevolution experiments in the future.
-	 * @return Whether task involves agents cooperating with subnetworks
-	 */
-	public static boolean taskHasSubnetworks() {
-		return CooperativeSubtaskSelectorMsPacManTask.class.equals(Parameters.parameters.classParameter("task"))
-				|| CooperativeSubtaskCombinerMsPacManTask.class.equals(Parameters.parameters.classParameter("task"));
-	}
-
-	/**
 	 * Constructor takes the command line parameters
 	 * to initialize the systems parameter values.
 	 * @param args directly from command line
@@ -424,15 +400,11 @@ public class MMNEAT {
 			// A task is always required
 			System.out.println("Set Task");
 			// modesToTrack has to be set before task initialization
-			if (taskHasSubnetworks()) {
-				modesToTrack = Parameters.parameters.integerParameter("numCoevolutionSubpops");
-			} else {
-				int multitaskModes = CommonConstants.multitaskModules;
-				if (!CommonConstants.hierarchicalMultitask && multitaskModes > 1) {
-					modesToTrack = multitaskModes;
-				}
+			int multitaskModes = CommonConstants.multitaskModules;
+			if (multitaskModes > 1) {
+				modesToTrack = multitaskModes;
 			}
-
+			
 			task = (Task) ClassCreation.createObject("task");
 			System.out.println("Load task: " + task);
 			boolean multiPopulationCoevolution = false;
@@ -471,60 +443,17 @@ public class MMNEAT {
 					ghostsInputOutputMediator = new GhostsCheckEachDirectionMediator();
 					setNNInputParameters(ghostsInputOutputMediator.numIn(), ghostsInputOutputMediator.numOut());
 				} else {
-					MsPacManInitialization.setupGenotypePoolsForMsPacman();
 					System.out.println("Setup Ms. Pac-Man Task");
 					pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
 					if (MMNEAT.pacmanInputOutputMediator instanceof VariableDirectionBlockLoadedInputOutputMediator) {
 						directionalSafetyFunction = (VariableDirectionBlock) ClassCreation.createObject("directionalSafetyFunction");
-						ensembleArbitrator = (MsPacManEnsembleArbitrator) ClassCreation.createObject("ensembleArbitrator");
 					}
-					String preferenceNet = Parameters.parameters.stringParameter("fixedPreferenceNetwork");
-					String multitaskNet = Parameters.parameters.stringParameter("fixedMultitaskPolicy");
-					if (multitaskNet != null && !multitaskNet.isEmpty()) {
-						// Preference networks are being evolved to pick outputs of
-						// fixed multitask network
-						MMNEAT.sharedMultitaskNetwork = (TWEANNGenotype) Easy.load(multitaskNet);
-						if (CommonConstants.showNetworks) {
-							DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Fixed Multitask Network");
-							MMNEAT.sharedMultitaskNetwork.getPhenotype().draw(panel);
-						}
-						// One preference neuron per multitask mode
-						setNNInputParameters(pacmanInputOutputMediator.numIn(), MMNEAT.sharedMultitaskNetwork.numModules);
-					} else if (preferenceNet != null && !preferenceNet.isEmpty()) {
-						MMNEAT.sharedPreferenceNetwork = (TWEANNGenotype) Easy.load(preferenceNet);
-						if (CommonConstants.showNetworks) {
-							DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Fixed Preference Network");
-							MMNEAT.sharedPreferenceNetwork.getPhenotype().draw(panel);
-						}
-						// One preference neuron per multitask mode
-						setNNInputParameters(pacmanInputOutputMediator.numIn(), MMNEAT.sharedPreferenceNetwork.numOut);
-					} else if (Parameters.parameters.booleanParameter("evolveGhosts")) {
-						System.out.println("Evolving the Ghosts!");
-					} else {
-						// Regular Check-Each-Direction networks
-						setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
-					}
+					// Regular Check-Each-Direction networks
+					setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
 					MsPacManInitialization.setupMsPacmanParameters();
 					if (CommonConstants.multitaskModules > 1) {
 						pacmanMultitaskScheme = (MsPacManModeSelector) ClassCreation.createObject("pacmanMultitaskScheme");
 					}
-				}
-			} else if (task instanceof CooperativeMsPacManTask) {
-				System.out.println("Setup Coevolution Ms. Pac-Man Task");
-				multiPopulationCoevolution = true;
-				// Is this next line redundant
-				EvolutionaryHistory.initInnovationHistory();
-				MsPacManInitialization.setupMsPacmanParameters();
-				if (task instanceof CooperativeGhostMonitorNetworksMsPacManTask) {
-					MsPacManInitialization.setupCooperativeCoevolutionGhostMonitorsForMsPacman();
-				} else if (task instanceof CooperativeSubtaskSelectorMsPacManTask) {
-					MsPacManInitialization.setupCooperativeCoevolutionSelectorForMsPacman();
-				} else if (task instanceof CooperativeSubtaskCombinerMsPacManTask) {
-					MsPacManInitialization.setupCooperativeCoevolutionCombinerForMsPacman();
-				} else if (task instanceof CooperativeNonHierarchicalMultiNetMsPacManTask) {
-					MsPacManInitialization.setupCooperativeCoevolutionNonHierarchicalForMsPacman();
-				} else if (task instanceof CooperativeCheckEachMultitaskSelectorMsPacManTask) {
-					MsPacManInitialization.setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman();
 				}
 			} else if (task instanceof RLGlueTask) {
 				setNNInputParameters(rlGlueExtractor.numFeatures(), RLGlueTask.agent.getNumberOutputs());
@@ -1115,10 +1044,6 @@ public class MMNEAT {
 		networkInputs = numIn;
 		networkOutputs = numOut;
 		int multitaskModes = CommonConstants.multitaskModules;
-		if (CommonConstants.hierarchicalMultitask) {
-			multitaskModes = 1; // Initialize the network like a preference
-			// neuron net instead
-		}
 		networkOutputs *= multitaskModes;
 		System.out.println("Networks will have " + networkInputs + " inputs and " + networkOutputs + " outputs.");
 

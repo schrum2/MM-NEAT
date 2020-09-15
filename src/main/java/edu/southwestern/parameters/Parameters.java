@@ -495,12 +495,10 @@ public class Parameters {
 		booleanOptions.add("eliminateImpossibleDirections", true, "Pac-man only chooses from available directions to move");
 		booleanOptions.add("endAfterGhostEatingChances", false, "Advance to next level once eating more ghosts is impossible");
 		booleanOptions.add("endOnlyOnTimeLimit", false, "Only thing that ends a pacman level is time running out");
-		booleanOptions.add("ensembleModeMutation", false, "Different modes from mode mutation create ensemble");
 		booleanOptions.add("erasePWTrails", true, "Puddle World trails are erased after each eval");
 		booleanOptions.add("escapeToPowerPills", false, "Power pills are considered escape nodes");
 		booleanOptions.add("evalReport", false, "Write file of details for each eval");
 		booleanOptions.add("evolveGhosts", false, "Evolve ghosts instead of pacman");
-		booleanOptions.add("evolveNetworkSelector", false, "The evolved controller simply selects between the actions of other controllers");
 		booleanOptions.add("exitLairEdible", false, "Ghosts are edible when exiting lair");
 		booleanOptions.add("exploreWeightsOfNewStructure", false, "Evaluate multiple weight possibilities immediately after structural mutation");
 		booleanOptions.add("externalPreferenceNeurons", false, "Preference neuron outputs explicitly modelled as pacman output (not hidden in TWEANN)");
@@ -517,7 +515,6 @@ public class Parameters {
 		booleanOptions.add("hallOfFameSingleRandomChamp", true, "Only selects a single Random Champion from the Hall Of Fame");
 		booleanOptions.add("hallOfFameXRandomChamps", false, "Selects a specified number of Random Champs from the Hall Of Fame; uses the hallOfFameNumChamps Parameter");
 		booleanOptions.add("hallOfFameYPastGens", false, "Selects Hall Of Fame Champions from a specified number of Generations in the past; uses the hallOfFamePastGens Parameter");
-		booleanOptions.add("hierarchicalMultitask", false, "Each multitask mode can consist of multiple preference neuron modules");
 		booleanOptions.add("highLevel", true, "Use high-level sensors in mediators");
 		booleanOptions.add("hybrID", false, "Indicates whether HybrID is running or not");
 		booleanOptions.add("ignoreGhostScores", false, "No fitness from edible ghosts in Ms Pac-Man, even though there are present");
@@ -850,8 +847,6 @@ public class Parameters {
 		stringOptions.add("coevolvedNet5", "", "Source of fifth network to combine into a coevolved team");
 		stringOptions.add("combiningCrossoverMapping", "", "File with HashMap from innovations in single mode nets to corresponding duplicate in multitask nets");
 		stringOptions.add("csvInputFile", "data/csv/poly.csv", "CSV file used for supervised model learning");
-		stringOptions.add("fixedMultitaskPolicy", "", "Path to xml file with multitask network, whose outputs control agent based on evolved preference selectors");
-		stringOptions.add("fixedPreferenceNetwork", "", "Path to xml file with preference network, used on top of evolved multitask networks");
 		stringOptions.add("ghostArchetype", "", "Path to xml file for archetype of ghost eating subnetwork population");
 		stringOptions.add("ghostEatingSubnetwork", "", "Path to xml file with pacman's ghost eating subnetwork for subsumption architecture");
 		stringOptions.add("ghostEatingSubnetworkDir", "", "Path to dir with xml files for pacman's ghost eating subnetwork for subsumption architecture");
@@ -912,7 +907,6 @@ public class Parameters {
 		classOptions.add("crossover", TWEANNCrossover.class, "Crossover operator to use if mating is used");
 		classOptions.add("directionalSafetyFunction", null, "Function that decides if CheckEach agent bothers to consider a direction");
 		classOptions.add("ea", NSGA2.class, "A subclass for the evolutionary algorithm to run");
-		classOptions.add("ensembleArbitrator", null, "How to arbitrate between agents when using an ensemble");
 		classOptions.add("experiment", LimitedSinglePopulationGenerationalEAExperiment.class, "A subclass of Experiment to execute");
 		classOptions.add("fos", null, "Function Optimization Set to use for simple tests");
 		classOptions.add("genotype", TWEANNGenotype.class, "A subclass defining the genotype to evolve with");
