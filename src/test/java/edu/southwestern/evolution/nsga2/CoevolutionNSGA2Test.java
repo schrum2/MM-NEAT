@@ -19,7 +19,7 @@ import edu.southwestern.util.random.RandomNumbers;
 
 public class CoevolutionNSGA2Test {
 
-	@Before
+	//@Before
 	public void setUp() throws Exception {
 		Parameters.parameters = null;
 		MMNEAT.clearClasses();
@@ -36,13 +36,13 @@ public class CoevolutionNSGA2Test {
 		MMNEAT.loadClasses();
 	}	
 	
-	@After
+	//@After
 	public void tearDown() throws Exception {
 		MMNEAT.clearClasses();
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Test
+	//@Test
 	public void test() {
 		CoevolutionNSGA2 ea = new CoevolutionNSGA2();
 		
