@@ -452,7 +452,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	public int numModules;
 	public int neuronsPerModule;
 	public boolean standardMultitask;
-	public boolean hierarchicalMultitask;
 	protected int[] moduleUsage;
 	private long id = EvolutionaryHistory.nextGenotypeId();
 	public int archetypeIndex;
@@ -476,7 +475,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @param copy
 	 */
 	public TWEANNGenotype(TWEANNGenotype copy) {
-		this(copy.nodes, copy.links, copy.neuronsPerModule, copy.standardMultitask, copy.hierarchicalMultitask, copy.archetypeIndex);
+		this(copy.nodes, copy.links, copy.neuronsPerModule, copy.standardMultitask, copy.archetypeIndex);
 	}
 
 	/**
@@ -487,13 +486,11 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @param links List of link genes in genotype
 	 * @param neuronsPerModule Number of policy neurons per output module
 	 * @param standardMultitask Whether this is a multitask network
-	 * @param hierarchicalMultitask Whether this is a hierarchical multitask
-	 * network
 	 * @param archetypeIndex Index of archetype to compare against for
 	 * mutation/crossover alignments
 	 */
 	public TWEANNGenotype(ArrayList<NodeGene> nodes, ArrayList<LinkGene> links, int neuronsPerModule,
-			boolean standardMultitask, boolean hierarchicalMultitask, int archetypeIndex) {
+			boolean standardMultitask, int archetypeIndex) {
 
 		assert neuronsPerModule > 0 : "Cannot have 0 neurons in a module!";
 
@@ -502,7 +499,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		this.links = links;
 		this.neuronsPerModule = neuronsPerModule;
 		this.standardMultitask = standardMultitask;
-		this.hierarchicalMultitask = hierarchicalMultitask;
 
 		numIn = 0;
 		numOut = 0;
@@ -529,7 +525,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	@Override
 	public final int numModules() {
 		return (int) Math.max(1,
-				numOut / (neuronsPerModule + (standardMultitask || CommonConstants.ensembleModeMutation ? 0 : 1)));
+				numOut / (neuronsPerModule + (standardMultitask ? 0 : 1)));
 	}
 
 	/**
@@ -561,8 +557,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		numModules = tweann.numModules();
 		neuronsPerModule = tweann.neuronsPerModule();
 		standardMultitask = tweann.isStandardMultitask();
-		hierarchicalMultitask = tweann.isHierarchicalMultitask();
-		moduleAssociations = Arrays.copyOf(tweann.moduleAssociations, numModules);
 		moduleUsage = tweann.moduleUsage;
 		nodes = new ArrayList<NodeGene>(tweann.nodes.size());
 		links = new ArrayList<LinkGene>(tweann.nodes.size());
@@ -692,12 +686,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		}
 		// Forms of mode mutation
 		if (this.numModules < CommonConstants.maxModes
-				// Make sure modes are somewhat evenly used
-				&& (CommonConstants.ensembleModeMutation
-						|| // possible if mode usage is actually selector's subnet usage
-						moduleUsage.length != numModules
-						|| CommonConstants.minimalSubnetExecution
-						|| minModuleUsage() >= (1.0 / (CommonConstants.usageForNewMode * numModules)))
 				// Only allow mode mutation when number of modes is same for all
 				&& (!CommonConstants.onlyModeMutationWhenModesSame
 						|| EvolutionaryHistory.minModes == EvolutionaryHistory.maxModes)
@@ -1444,25 +1432,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	}
 
 	/**
-	 * I have serious reservations about this method. I'm not sure it will
-	 * really work properly, but it should serve as a good starting point.
-	 *
-	 * @param first module associations of the network this one is replacing.
-	 * @param second module associations of the network this one was crossed
-	 * with.
-	 */
-	public void crossModuleAssociations(int[] first, int[] second) {
-		moduleAssociations = new int[numModules];
-		for (int i = 0; i < moduleAssociations.length; i++) {
-			if (i < first.length) {
-				moduleAssociations[i] = first[i];
-			} else {
-				moduleAssociations[i] = second[i]; // Will this ever be used?
-			}
-		}
-	}
-
-	/**
 	 * Generate and return phenotype TWEANN from genotype
 	 *
 	 * @return executable TWEANN
@@ -1903,9 +1872,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @return
 	 */
 	public double maxModuleUsage() {
-		if (CommonConstants.ensembleModeMutation) {
-			return 0;
-		}
 		double[] dist = StatisticsUtilities.distribution(moduleUsage);
 		if (dist.length == 0) {
 			return 0;
@@ -1920,9 +1886,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @return
 	 */
 	public double minModuleUsage() {
-		if (CommonConstants.ensembleModeMutation) {
-			return 0;
-		}
 		double[] dist = StatisticsUtilities.distribution(moduleUsage);
 		if (dist.length == 0) {
 			return 0;

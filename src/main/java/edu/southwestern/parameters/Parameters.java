@@ -583,7 +583,6 @@ public class Parameters {
 		booleanOptions.add("maximizeModes", false, "Meta-fitness to maximize number of modes");
 		booleanOptions.add("mazeTime", false, "Use Pacman maze time sensors");
 		booleanOptions.add("meltAfterCrossover", false, "Melt frozen genes after crossover");
-		booleanOptions.add("minimalSubnetExecution", false, "Don't execute subnets whose results are not needed");
 		booleanOptions.add("minimizeSpliceImpact", false, "New splices have very small connection weights, and don't remove pre-existing link");
 		booleanOptions.add("mmpActivationId", false, "Lateral MMP links use id function as activation function");
 		booleanOptions.add("moPinball", false, "Subtracts the distance to the target from the Fitness; getting closer means a higher score overall");

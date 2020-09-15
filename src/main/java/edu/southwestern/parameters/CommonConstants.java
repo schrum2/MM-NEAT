@@ -44,7 +44,6 @@ public class CommonConstants {
 	public static boolean evolveHyperNEATBias;
 	public static boolean logChildScores;
 	public static boolean meltAfterCrossover;
-	public static boolean minimalSubnetExecution;
 	public static boolean minimizeSpliceImpact;
 	public static boolean mmpActivationId;
 	public static boolean monitorInputs;
