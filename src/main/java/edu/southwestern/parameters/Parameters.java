@@ -13,9 +13,6 @@ import edu.southwestern.boardGame.agents.BoardGamePlayerOneStepEval;
 import edu.southwestern.boardGame.agents.BoardGamePlayerRandom;
 import edu.southwestern.boardGame.featureExtractor.TwoDimensionalRawBoardGameFeatureExtractor;
 import edu.southwestern.boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
-import edu.southwestern.breve2D.Breve2DGame;
-import edu.southwestern.breve2D.agent.RushingPlayer;
-import edu.southwestern.breve2D.dynamics.PlayerPredatorMonsterPrey;
 import edu.southwestern.evolution.crossover.network.TWEANNCrossover;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.nsga2.NSGA2;
@@ -200,8 +197,6 @@ public class Parameters {
 		integerOptions.add("bdArchiveSize", 0, "Maximum allowable size of archive for BD");
 		integerOptions.add("boardGameOpeningRandomMoves", 0, "In board games, making the first few moves random makes evals noisy in a useful way");
 		integerOptions.add("boardGameStaticOpponentRuns", 1, "Number of Board Game matches to play against the Static Opponent Fitness Function");
-		integerOptions.add("breve2DAgentHealth", 50, "Hitpoints of agents in breve 2D domains");
-		integerOptions.add("breve2DTimeLimit", 1000, "Number of time steps allowed in breve 2D domains");
 		integerOptions.add("cascadeExpansionGenerationInterval", 50, "HyperNEAT will expand at each generation interval if the parameter cascadeExpansion is true");
 		integerOptions.add("cleanFrequency", 10, "How frequently the archetype needs to be cleaned out");
 		integerOptions.add("clipLength", Keyboard.NOTE_LENGTH_DEFAULT, "Length of clip played in Breedesizer");
@@ -280,11 +275,9 @@ public class Parameters {
 		integerOptions.add("multitaskModes", 1, "Number of multitask modes (1 if not multitask at all)");
 		integerOptions.add("neuralStyleIterations", 50, "Number of iterations to run the Neural Style Transfer algorithm using CPPN style images");
 		integerOptions.add("numActiveGhosts", 4, "Number of moving ghosts in pacman");
-		integerOptions.add("numBreve2DMonsters", 4, "Number of evolving breve 2D monsters");
 		integerOptions.add("numCoevolutionSubpops", 0, "When evolving a selector, number of populations of subcontrollers to choose from");
 		integerOptions.add("numIncomingLinksForCascadeExpansion", 0, "When using MSS with cascade, this is the number of links connected to the cppn outputs of new substrate layers");
 		integerOptions.add("numModesToPrefer", -1, "If non-negative, then a fitness function rewards even usage of this many modes");
-		integerOptions.add("numMonsterRays", 5, "Number of ray trace sensors on each monster");
 		integerOptions.add("numShapeInnovationSamples", 3, "Number of angles to take 2D image of 3D shape from for shape innovation task");
 		integerOptions.add("numHunterBots", 0, "dictates how many hunter bots will be loaded into the server");
 		integerOptions.add("numMirrorBots", 0, "dictates how many mirror bots will be loaded into the server");
@@ -485,7 +478,6 @@ public class Parameters {
 		booleanOptions.add("bestTeamScore", true, "Coevolution assigns subcomponent the score of the best team it is in instead of AVG");
 		booleanOptions.add("boardGameOthelloFitness", false, "Enables the OthelloPiece BoardGame Fitness Function to be used as a Selection Function");
 		booleanOptions.add("boardGameSimpleFitness", true, "Enables the SimpleWinLoseDraw BoardGame Fitness Function to be used as a Selection Function");
-		booleanOptions.add("breveDamageOnly", false, "Breve domains only care about damage objectives");
 		booleanOptions.add("checkEachAbsoluteDistanceGhostSort", false, "Sort ghost sensors by their shortest path distance rather than directional path distance");
 		booleanOptions.add("checkEachFlushWalls", true, "Check each direction mediators flush network for wall directions");
 		booleanOptions.add("cleanOldNetworks", true, "Delete old network xml files once new networks are saved");
@@ -818,8 +810,6 @@ public class Parameters {
 		doubleOptions.add("mmdRate", 0.0, "Mutation rate for adding a new network mode (MM(D) for duplication)");
 		doubleOptions.add("mmpRate", 0.0, "Mutation rate for adding a new network mode (MM(P) for previous)");
 		doubleOptions.add("mmrRate", 0.0, "Mutation rate for adding a new network mode (MM(R) for random)");
-		doubleOptions.add("monsterRayLength", 5.0 * Breve2DGame.AGENT_MAGNITUDE, "Length of monster ray traces");
-		doubleOptions.add("monsterRaySpacing", Math.PI / 8.0, "Angle, in radians, between monster ray traces");
 		doubleOptions.add("netChangeActivationRate", 0.0, "Mutation rate for changing a neuron's activation function");
 		doubleOptions.add("netLinkRate", 0.4, "Mutation rate for creation of new network synapses");
 		doubleOptions.add("netPerturbRate", 0.8, "Mutation rate for network weight perturbation");
@@ -936,8 +926,6 @@ public class Parameters {
 		classOptions.add("boardGameOpponent", BoardGamePlayerRandom.class, "Board game Opponent being played against");
 		classOptions.add("boardGameOpponentHeuristic", PieceDifferentialBoardGameHeuristic.class, "Board game heuristic used by the Opponent");
 		classOptions.add("boardGamePlayer", BoardGamePlayerOneStepEval.class, "Board game Player being evolved");
-		classOptions.add("breveDynamics", PlayerPredatorMonsterPrey.class, "Class defining domain dynamics for breve domains");
-		classOptions.add("breveEnemy", RushingPlayer.class, "Class defining behavior of static enemy in breve domains");
 		classOptions.add("crossover", TWEANNCrossover.class, "Crossover operator to use if mating is used");
 		classOptions.add("directionalSafetyFunction", null, "Function that decides if CheckEach agent bothers to consider a direction");
 		classOptions.add("ea", NSGA2.class, "A subclass for the evolutionary algorithm to run");

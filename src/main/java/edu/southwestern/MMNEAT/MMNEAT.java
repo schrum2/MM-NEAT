@@ -13,7 +13,6 @@ import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import edu.southwestern.boardGame.BoardGame;
 import edu.southwestern.boardGame.TwoDimensionalBoardGame;
 import edu.southwestern.boardGame.TwoDimensionalBoardGameViewer;
-import edu.southwestern.breve2D.dynamics.Breve2DDynamics;
 import edu.southwestern.data.ResultSummaryUtilities;
 import edu.southwestern.evolution.EA;
 import edu.southwestern.evolution.EvolutionaryHistory;
@@ -55,8 +54,6 @@ import edu.southwestern.tasks.Task;
 import edu.southwestern.tasks.boardGame.MultiPopulationCompetativeCoevolutionBoardGameTask;
 import edu.southwestern.tasks.boardGame.SinglePopulationCompetativeCoevolutionBoardGameTask;
 import edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask;
-import edu.southwestern.tasks.breve2D.Breve2DTask;
-import edu.southwestern.tasks.breve2D.NNBreve2DMonster;
 import edu.southwestern.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.southwestern.tasks.gridTorus.NNTorusPredPreyController;
 import edu.southwestern.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
@@ -585,10 +582,6 @@ public class MMNEAT {
 			} else if (task instanceof GVGAISinglePlayerTask) {
 				GVGAISinglePlayerTask temp = (GVGAISinglePlayerTask) task;
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
-			} else if (task instanceof Breve2DTask) {
-				System.out.println("Setup Breve 2D Task");
-				Breve2DDynamics dynamics = (Breve2DDynamics) ClassCreation.createObject("breveDynamics");
-				setNNInputParameters(dynamics.numInputSensors(), NNBreve2DMonster.NUM_OUTPUTS);
 			} else if (task instanceof TorusPredPreyTask) {
 				System.out.println("Setup Torus Predator/Prey Task");
 				int numInputs = determineNumPredPreyInputs();
