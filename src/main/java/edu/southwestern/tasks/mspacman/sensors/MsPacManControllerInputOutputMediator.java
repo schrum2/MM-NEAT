@@ -1,6 +1,5 @@
 package edu.southwestern.tasks.mspacman.sensors;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.data.NodeCollection;
