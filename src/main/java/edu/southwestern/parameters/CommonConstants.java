@@ -63,7 +63,6 @@ public class CommonConstants {
 	public static boolean replayPacman;
 	public static boolean requireFitnessDifferenceForChange;
 	public static boolean showNetworks;
-	public static boolean showSubnetAnalysis;
 	public static boolean softmaxModeSelection;
 	public static boolean softmaxSelection;
 	public static boolean timedPacman;
@@ -172,7 +171,6 @@ public class CommonConstants {
 		replayPacman = Parameters.parameters.booleanParameter("replayPacman");
 		requireFitnessDifferenceForChange = Parameters.parameters.booleanParameter("requireFitnessDifferenceForChange");
 		showNetworks = Parameters.parameters.booleanParameter("showNetworks");
-		showSubnetAnalysis = Parameters.parameters.booleanParameter("showSubnetAnalysis");
 		softmaxModeSelection = Parameters.parameters.booleanParameter("softmaxModeSelection");
 		softmaxSelection = Parameters.parameters.booleanParameter("softmaxSelection");
 		timedPacman = Parameters.parameters.booleanParameter("timedPacman");
