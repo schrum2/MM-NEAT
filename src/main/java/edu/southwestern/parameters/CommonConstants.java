@@ -153,7 +153,6 @@ public class CommonConstants {
 		evolveHyperNEATBias = Parameters.parameters.booleanParameter("evolveHyperNEATBias");
 		logChildScores = Parameters.parameters.booleanParameter("logChildScores");
 		meltAfterCrossover = Parameters.parameters.booleanParameter("meltAfterCrossover");
-		minimalSubnetExecution = Parameters.parameters.booleanParameter("minimalSubnetExecution");
 		minimizeSpliceImpact = Parameters.parameters.booleanParameter("minimizeSpliceImpact");
 		mmpActivationId = Parameters.parameters.booleanParameter("mmpActivationId");
 		monitorInputs = Parameters.parameters.booleanParameter("monitorInputs");

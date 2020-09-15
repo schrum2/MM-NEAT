@@ -1,7 +1,6 @@
 package edu.southwestern.evolution.crossover.network;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.crossover.Crossover;
@@ -82,7 +81,6 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 		ArrayList<ArrayList<LinkGene>> alignedLinks = alignLinkGenes(((TWEANNGenotype) toModify).links, tr.links);
 		ArrayList<ArrayList<LinkGene>> crossedLinks = cross(alignedLinks.get(0), alignedLinks.get(1));// crosses links
 		// Assign new lists
-		int[] originalAssociations = Arrays.copyOf(tm.moduleAssociations, tm.moduleAssociations.length);
 		tm.nodes = crossedNodes.get(0);
 		tm.links = crossedLinks.get(0);
 		tm.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes

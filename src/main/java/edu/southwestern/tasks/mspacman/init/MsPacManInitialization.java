@@ -2,7 +2,6 @@ package edu.southwestern.tasks.mspacman.init;
 
 import static edu.southwestern.MMNEAT.MMNEAT.pacmanInputOutputMediator;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -10,8 +9,6 @@ import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.crossover.network.CombiningTWEANNCrossover;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
-import edu.southwestern.evolution.nsga2.NSGA2Score;
-import edu.southwestern.experiment.evolution.SinglePopulationGenerationalEAExperiment;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
@@ -24,10 +21,7 @@ import edu.southwestern.tasks.mspacman.sensors.OneGhostMonitorInputOutputMediato
 import edu.southwestern.tasks.mspacman.sensors.blocks.combining.GhostMonitorNetworkBlock;
 import edu.southwestern.tasks.mspacman.sensors.blocks.combining.SubNetworkBlock;
 import edu.southwestern.util.ClassCreation;
-import edu.southwestern.util.PopulationUtil;
-import edu.southwestern.util.file.FileUtilities;
 import oldpacman.game.Constants;
-import wox.serial.Easy;
 /**
  * Initializes ms Pac Man
  * 
@@ -151,71 +145,7 @@ public class MsPacManInitialization {
 					.add(new GhostMonitorNetworkBlock((TWEANNGenotype) ghostMonitorExamples.get(i), includeInputs, i));
 		}
 	}
-				
-	@SuppressWarnings("unchecked")
-	public static void setupMultitaskSeedPopulationForMsPacman(String ghostDir, String pillDir) {
-		// A combined archetype is needed
-		CombiningTWEANNCrossover cross = new CombiningTWEANNCrossover(true, true);
-		ArrayList<TWEANNGenotype.NodeGene> ghostArchetype = (ArrayList<TWEANNGenotype.NodeGene>) Easy
-				.load(Parameters.parameters.stringParameter("ghostArchetype"));
-		ArrayList<TWEANNGenotype.NodeGene> pillArchetype = (ArrayList<TWEANNGenotype.NodeGene>) Easy
-				.load(Parameters.parameters.stringParameter("pillArchetype"));
-		TWEANNGenotype ghostArchetypeNet = new TWEANNGenotype(ghostArchetype, new ArrayList<TWEANNGenotype.LinkGene>(),
-				GameFacade.NUM_DIRS, false, false, -1);
-		TWEANNGenotype pillArchetypeNet = new TWEANNGenotype(pillArchetype, new ArrayList<TWEANNGenotype.LinkGene>(),
-				GameFacade.NUM_DIRS, false, false, -1);
-		EvolutionaryHistory.archetypes[0] = ((TWEANNGenotype) cross.crossover(ghostArchetypeNet,
-				pillArchetypeNet)).nodes;
-
-		// Load component populations, create multitask network combinations,
-		// and save them all to an initial population dir
-		int mu = Parameters.parameters.integerParameter("mu");
-		int layers = 1;
-		while (layers * layers < mu) {
-			layers++;
-		}
-		ArrayList<Genotype<TWEANN>> ghostPop = PopulationUtil.load(ghostDir);
-		ArrayList<Genotype<TWEANN>> pillPop = PopulationUtil.load(pillDir);
-
-		String ghostScoreFile = Parameters.parameters.stringParameter("multinetworkScores1");
-		String pillScoreFile = Parameters.parameters.stringParameter("multinetworkScores2");
-
-
-                NSGA2Score<TWEANN>[] ghostScores = null;
-                NSGA2Score<TWEANN>[] pillScores = null;
-		try {
-			ghostScores = PopulationUtil.loadScores(ghostScoreFile);
-			pillScores = PopulationUtil.loadScores(pillScoreFile);
-		} catch (FileNotFoundException ex) {
-			ex.printStackTrace();
-			System.exit(1);
-		}
-		// Reduce to the top performers of each population
-		PopulationUtil.pruneDownToTopParetoLayers(ghostPop, ghostScores, layers);
-		PopulationUtil.pruneDownToTopParetoLayers(pillPop, pillScores, layers);
-
-		// Now create a population of combined multitask networks
-		ArrayList<Genotype<TWEANN>> combinedPopulation = new ArrayList<Genotype<TWEANN>>(mu);
-		int ghostPos = 0;
-		int pillPos = 0;
-		for (int i = 0; i < mu; i++) {
-			Genotype<TWEANN> ghostEating = ghostPop.get(ghostPos).copy();
-			Genotype<TWEANN> pillEating = pillPop.get(pillPos).copy();
-			Genotype<TWEANN> combination = cross.crossover(ghostEating, pillEating);
-			combinedPopulation.add(combination);
-			// Pick next pair of networks to combine
-			pillPos++;
-			if (pillPos >= pillPop.size()) {
-				pillPos = 0;
-				ghostPos++;
-			}
-		}
-		// Save the population so it will be loaded naturally, as if a resume is
-		// being performed
-		String saveDirectory = FileUtilities.getSaveDirectory();
-		SinglePopulationGenerationalEAExperiment.save("initial", saveDirectory, combinedPopulation, false);
-	}
-	
+					
 	public static void setupSingleMultitaskSeedForMsPacman() {
 		Genotype<TWEANN> ghostEating = EvolutionaryHistory
 				.getSubnetwork(Parameters.parameters.stringParameter("ghostEatingSubnetwork"));

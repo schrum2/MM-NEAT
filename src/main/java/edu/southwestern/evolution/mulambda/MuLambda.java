@@ -19,7 +19,6 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.Task;
-import edu.southwestern.tasks.mspacman.CooperativeMsPacManTask;
 import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.tasks.mspacman.init.MsPacManInitialization;
 import edu.southwestern.tasks.mspacman.multitask.DangerousAreaModeSelector;
@@ -77,7 +76,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		this.lambda = lambda;
 		this.generation = Parameters.parameters.integerParameter("lastSavedGeneration");
 		writeOutput = Parameters.parameters.booleanParameter("io");
-		msPacMan = task instanceof MsPacManTask || task instanceof CooperativeMsPacManTask;
+		msPacMan = task instanceof MsPacManTask;
 
 		if (writeOutput && io) {
 			parentLog = new FitnessLog<T>("parents");
