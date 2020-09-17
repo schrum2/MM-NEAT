@@ -564,21 +564,6 @@ public class Parameters {
 		booleanOptions.add("logPacManEvals", false, "Log score from every pacman game");
 		booleanOptions.add("luringTask", false, "Pac-Man rewarded for luring ghosts to power pills before eating pill");
 		booleanOptions.add("marioGANUsesOriginalEncoding", true, "True if the GECCO 2018 encoding is used, false if updated encoding is used");
-		booleanOptions.add("mRTSAll", true, "whether there is a substrate with everything in it");
-		booleanOptions.add("mRTSAllSqrt3MobileUnits", false, "whether there is a substrate with mobile units scored using the simple sqrt 3 evaluation function scoring");
-		booleanOptions.add("mRTSBuildings", false, "whether there is a substrate dedicated to (both players') NON-movable units");
-		booleanOptions.add("mRTSMobileUnits", false, "whether there is a substrate dedicated to (both players') movable units");
-		booleanOptions.add("mRTSMyAll", false, "whether there is a substrate dedicated to all of the blue agents' units");
-		booleanOptions.add("mRTSMyBuildingGradientMobileUnits", false, "whether there is a substrate with my mobile units scored using the gradient to the enemy buildings");
-		booleanOptions.add("mRTSMyBuildings", false, "whether there is a substrate dedicated to blue agent's NON-movable units");
-		booleanOptions.add("mRTSMyMobileUnits", false, "whether there is a substrate dedicated to blue agent's movable units");
-		booleanOptions.add("mRTSObjectivePath", false, "whether there is a substrate with enemy bases and a gradient leading to them");
-		booleanOptions.add("mRTSOpponentsAll", false, "whether there is a substrate dedicated to all of the red agents' units");
-		booleanOptions.add("mRTSOpponentsBuildings", false, "whether there is a substrate dedicated to red agent's NON-movable units");
-		booleanOptions.add("mRTSOpponentsMobileUnits", false, "whether there is a substrate dedicated to red agent's movable units");
-		booleanOptions.add("mRTSResourceProportion", false, "whether there is a substrate with a single input for the resource count");
-		booleanOptions.add("mRTSResources", false, "whether there is a substrate with all resources in it");
-		booleanOptions.add("mRTSTerrain", false, "whether there is a substrate with just un-crossable terrain in it");
 		booleanOptions.add("mating", false, "Use crossover to mate parents and get offspring");
 		booleanOptions.add("maximizeModes", false, "Meta-fitness to maximize number of modes");
 		booleanOptions.add("mazeTime", false, "Use Pacman maze time sensors");
@@ -762,8 +747,6 @@ public class Parameters {
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
-		doubleOptions.add("blueprintParentToChildRate", 0.9, "Mutation that swaps a pointer from a network to one of its children");
-		doubleOptions.add("blueprintRandomRate", 0.5, "Mutation that swaps a pointer from a network to another random network in the appropriate subpopulation");
 		doubleOptions.add("campPercentOfTrials", 1.0, "What percentage trials should be based on camps");
 		doubleOptions.add("crossExcessRate", 0.0, "Portion of TWEANN crossovers that include excess/disjoint genes");
 		doubleOptions.add("crossoverRate", 0.5, "Rate of crossover if mating is used");
