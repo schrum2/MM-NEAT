@@ -209,7 +209,6 @@ public class Parameters {
 		integerOptions.add("edibleTime", Constants.EDIBLE_TIME, "Initial edible ghost time in Ms. Pac-Man");
 		integerOptions.add("endTUGGeneration", Integer.MAX_VALUE, "Generation at which TUG will stop being used");
 		integerOptions.add("escapeNodeDepth", 0, "How deep to forward simulate with escape nodes");
-		integerOptions.add("evaluationBudget", 0, "Number of extra evals that UCB1 has to work with");
 		integerOptions.add("freezeMeltAlternateFrequency", 25, "Generations between freezing/melting pref/policy neurons");
 		integerOptions.add("fsLinksPerOut", 1, "Initial links per output with feature selective nets");
 		integerOptions.add("ftype", ActivationFunctions.FTYPE_TANH, "Integer designation of default activation function for networks");
@@ -256,7 +255,7 @@ public class Parameters {
 		integerOptions.add("maxModes", 1000, "Mode mutation cannot add more than this many modes");
 		integerOptions.add("maxPause", 500, "Maximum pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("maxRemixImageWindow", 100, "Maximum size of window being remixed by CPPN in Picture Remixer");
-		integerOptions.add("maxTrials", Integer.MAX_VALUE, "Max trials allowed by individual when using UCB1 or increasing trials");
+		integerOptions.add("maxTrials", Integer.MAX_VALUE, "Max trials allowed by individual when using increasing trials");
 		integerOptions.add("minAnimationLength", 10, "Minimum length of animation in AnimationBreeder");
 		integerOptions.add("minAnimationLength", 10, "Minimum length of animation in AnimationBreeder");
 		integerOptions.add("minEdibleTime", Constants.EDIBLE_TIME, "What edible time is reduced to across generations");
@@ -752,7 +751,6 @@ public class Parameters {
 		doubleOptions.add("deleteModeRate", 0.0, "Mutation rate for deleting network modes");
 		doubleOptions.add("distanceForNewMode", -1.0,"If not -1, then behavioral distance between last two modes must be at least this much for mode mutation to occur");
 		doubleOptions.add("easyCampThreshold", 0.5, "Percent victories in camp that render it too easy");
-		doubleOptions.add("explorePreference", 0.5, "High for more exploration vs. low for more exploitation when using UCB1");
 		doubleOptions.add("freezeAlternateRate", 0.0, "Mutation rate for melting all then freezing policy or preference neurons (alternating)");
 		doubleOptions.add("freezePolicyRate", 0.0, "Mutation rate for melting all then freezing policy neurons");
 		doubleOptions.add("freezePreferenceRate", 0.0, "Mutation rate for melting all then freezing preference neurons");
