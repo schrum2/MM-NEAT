@@ -481,7 +481,6 @@ public class Parameters {
 		booleanOptions.add("cooperativeTeamAndAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught as a team and for all populations at once");
 		booleanOptions.add("cullCrossovers", false, "Cull a litter of different crossover possibilities");
 		booleanOptions.add("cullModeMutations", false, "Cull different weightings of mode mutation synapses");
-		booleanOptions.add("defaultMediator", true, "For certain pacman coevolution experiments, all subnets use the same default mediator");
 		booleanOptions.add("deleteLeastUsed", false, "Delete least-used mode when doing mode deletion");
 		booleanOptions.add("deterministic", false, "Make evaluations deterministic, if supported");
 		booleanOptions.add("dieOnImproperPowerPillEating", false, "Pacman dies if power pill is eaten when less than 4 threat ghosts are present");
