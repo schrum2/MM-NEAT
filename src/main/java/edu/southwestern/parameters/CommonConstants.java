@@ -72,7 +72,6 @@ public class CommonConstants {
 	public static boolean tugObjectiveModeLinkage;
 	public static boolean tugObjectiveUsageLinkage;
 	public static boolean tugResetsToPreviousGoals;
-	public static boolean ucb1Evaluation;
 	public static boolean viewModePreference;
 	public static boolean watch;
 	public static boolean weakenBeforeModeMutation;
@@ -180,7 +179,6 @@ public class CommonConstants {
 		tugObjectiveModeLinkage = Parameters.parameters.booleanParameter("tugObjectiveModeLinkage");
 		tugObjectiveUsageLinkage = Parameters.parameters.booleanParameter("tugObjectiveUsageLinkage");
 		tugResetsToPreviousGoals = Parameters.parameters.booleanParameter("tugResetsToPreviousGoals");
-		ucb1Evaluation = Parameters.parameters.booleanParameter("ucb1Evaluation");
 		viewModePreference = Parameters.parameters.booleanParameter("viewModePreference");
 		watch = Parameters.parameters.booleanParameter("watch");
 		weakenBeforeModeMutation = Parameters.parameters.booleanParameter("weakenBeforeModeMutation");
@@ -226,10 +224,6 @@ public class CommonConstants {
 			trials++;
 			trials = Math.min(trials, maxTrials);
 			Parameters.parameters.setInteger("trials", trials);
-			if (CommonConstants.ucb1Evaluation) {
-				Parameters.parameters.setInteger("evaluationBudget",
-						Parameters.parameters.integerParameter("evaluationBudget") + 1);
-			}
 			Parameters.parameters.saveParameters();
 		}
 	}

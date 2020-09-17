@@ -1,3 +1,3 @@
 REM Usage:   postAllCoOpTeamsWatch.bat <experiment directory> <log prefix> <run type> <run number> 
 REM Example: postAllCoOpTeamsWatch.bat onelifeconflict OneLifeConflict OneModule 0 
-java -jar "target/MM-NEAT-0.0.1-SNAPSHOT.jar" runNumber:%4 parallelEvaluations:false base:%1 log:%2-%3 saveTo:%3  watch:true showNetworks:true io:false netio:false onlyWatchPareto:true printFitness:true animateNetwork:false ucb1Evaluation:false showSubnetAnalysis:true monitorInputs:true experiment:edu.southwestern.experiment.post.AllCooperativeCoevolutionTeamsExperiment logLock:true watchLastBest:true 
+java -jar "target/MM-NEAT-0.0.1-SNAPSHOT.jar" runNumber:%4 parallelEvaluations:false base:%1 log:%2-%3 saveTo:%3  watch:true showNetworks:true io:false netio:false onlyWatchPareto:true printFitness:true animateNetwork:false showSubnetAnalysis:true monitorInputs:true experiment:edu.southwestern.experiment.post.AllCooperativeCoevolutionTeamsExperiment logLock:true watchLastBest:true 

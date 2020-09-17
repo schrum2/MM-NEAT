@@ -257,43 +257,6 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 			poolExecutor.shutdown();
 		}
 
-		/**
-		 * If using UCB to decide who to give extra evals to, then by this point
-		 * every member of the population will have been evaluated (preferably
-		 * once). From here on, intelligent decisions need to be made about who
-		 * to evaluate again.
-		 */
-		if (CommonConstants.ucb1Evaluation) {
-			int evaluationBudget = Parameters.parameters.integerParameter("evaluationBudget");
-			// Do an initial sort so the individual to evaluate will always
-			// be at the end of the list
-			int index = 0;
-			double max = 0;
-			for (Score<T> s : scores) {
-				max = Math.max(max, s.scores[index]);
-			}
-			UCB1Comparator<T> ucb1 = new UCB1Comparator<T>(index, scores.size(), max);
-			Collections.sort(scores, ucb1);
-			int last = scores.size() - 1;
-			// Perform the budgeted number of evals
-			for (int i = 0; i < evaluationBudget; i++) {
-				// Highest UCB is always at end, so evaluate it
-				Score<T> oldScore = scores.get(last);
-				// System.out.print(ucb1.ucb1(oldScore) + "::" + oldScore +
-				// "->");
-				EvaluationThread callable = new EvaluationThread(this, oldScore.individual);
-				Score<T> newScore = oldScore.incrementalAverage(callable.call());
-				// After eval, insert the individual into the correct slot in
-				// sorted list
-				ucb1.increaseTotal();
-				// System.out.println(ucb1.ucb1(newScore) + "::" + newScore);
-				ucb1.setMax(newScore.scores[index]);
-
-				scores.set(last, newScore);
-				Collections.sort(scores, ucb1);
-			}
-		}
-
 		return scores;
 	}
 
