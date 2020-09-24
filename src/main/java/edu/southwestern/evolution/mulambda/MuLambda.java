@@ -83,8 +83,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 			if (CommonConstants.logChildScores) {
 				childLog = new FitnessLog<T>("child");
 			}
-			if (task instanceof MsPacManTask && (MMNEAT.modesToTrack > 1 || TWEANN.preferenceNeuron()
-					|| Parameters.parameters.booleanParameter("ensembleModeMutation"))) {
+			if (task instanceof MsPacManTask && (MMNEAT.modesToTrack > 1 || TWEANN.preferenceNeuron())) {
 				ArrayList<String> labels = new ArrayList<String>();
 				labels.add("Max Modes of Best");
 				labels.add("Min Modes of Best");
