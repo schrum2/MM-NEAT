@@ -1,3 +1,3 @@
 REM Usage:   postBestObjectiveWatchCooperative.bat <experiment directory> <log prefix> <run type> <run number> <number of trials per team>
 REM Example: postBestObjectiveWatchCooperative.bat toruspred TorusPred CoOpMultiCCQ 0 5
-java -jar "target/MM-NEAT-0.0.1-SNAPSHOT.jar" runNumber:%4 parallelEvaluations:false base:%1 log:%2-%3 saveTo:%3 trials:%5 watch:true showNetworks:true io:false netio:false onlyWatchPareto:true printFitness:true animateNetwork:false monitorInputs:true experiment:edu.southwestern.experiment.post.ObjectiveBestTeamsExperiment logLock:true watchLastBestOfTeams:true 
+java -jar "target/MM-NEAT-0.0.1-SNAPSHOT.jar" runNumber:%4 parallelEvaluations:false base:%1 log:%2-%3 saveTo:%3 trials:%5 watch:true showNetworks:true io:false netio:false onlyWatchPareto:true printFitness:true animateNetwork:false monitorInputs:true experiment:edu.southwestern.experiment.post.ObjectiveBestTeamsExperiment logLock:true watchLastBestOfTeams:true modePheremone:true
