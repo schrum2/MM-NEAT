@@ -61,7 +61,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	private String[] outputLabels;
 
 	MegaManGANGenerator megaManGenerator;
-	MegaManTrackSegmentType segmentCount;
+	MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
 	
 	private boolean initializationComplete = false;
 	
