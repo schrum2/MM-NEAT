@@ -68,6 +68,8 @@ import edu.southwestern.tasks.interactive.loderunner.LodeRunnerGANLevelBreederTa
 import edu.southwestern.tasks.interactive.mario.MarioCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.mario.MarioGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.mario.MarioLevelBreederTask;
+import edu.southwestern.tasks.interactive.megaman.MegaManCPPNtoGANLevelBreederTask;
+import edu.southwestern.tasks.interactive.megaman.MegaManGANLevelBreederTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANLevelSequenceTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANLevelTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
@@ -77,9 +79,7 @@ import edu.southwestern.tasks.mario.MarioGANLevelTask;
 import edu.southwestern.tasks.mario.MarioLevelTask;
 import edu.southwestern.tasks.mario.MarioTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
-import edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelTask;
-import edu.southwestern.tasks.megaman.MegaManGANLevelBreederTask;
 import edu.southwestern.tasks.megaman.MegaManGANLevelTask;
 import edu.southwestern.tasks.megaman.MegaManLevelTask;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
