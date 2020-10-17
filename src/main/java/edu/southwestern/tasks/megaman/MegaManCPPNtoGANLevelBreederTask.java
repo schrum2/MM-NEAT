@@ -61,7 +61,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	private String[] outputLabels;
 
 	MegaManGANGenerator megaManGenerator;
-	MegaManTrackSegmentType segmentCount;
+	MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
 	
 	private boolean initializationComplete = false;
 	
@@ -578,7 +578,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		try {
 			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","useMultipleGANsMegaMan:false","showKLOptions:false","trials:1","mu:16", "base:megaManGAN",
-					"maxGens:500","io:false","netio:false","GANInputSize:5","mating:true","fs:false",
+					"maxGens:500","io:false","netio:false","GANInputSize:5","mating:true","fs:false","megaManGANLevelChunks:10",
 					"task:edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelBreederTask","cleanOldNetworks:false", 
 					"allowMultipleFunctions:true","ftype:0","watch:true","netChangeActivationRate:0.3","cleanFrequency:-1",
 					"simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false",
