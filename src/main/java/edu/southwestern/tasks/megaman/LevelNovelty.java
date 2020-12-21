@@ -131,14 +131,14 @@ public class LevelNovelty {
 	/**
 	 * Cleans room for novelty comparison by removing enemies, keys, and triforce.
 	 * Also turns walls and movable blocks into plain blocks.
-	 * @param room Represented at list of list of Integers
+	 * @param segment Represented at list of list of Integers
 	 */
-	public static void cleanRoom(List<List<Integer>> room) {
+	public static void cleanSegment(List<List<Integer>> segment) {
 		
-		for(int x = 0; x < room.size(); x++) {
-			for(int y = 0; y < room.get(x).size(); y++) {
+		for(int x = 0; x < segment.size(); x++) {
+			for(int y = 0; y < segment.get(x).size(); y++) {
 				
-				int compare1 = room.get(x).get(y); 
+				int compare1 = segment.get(x).get(y); 
 				
 				switch(game) {
 				case MARIO:
@@ -149,17 +149,17 @@ public class LevelNovelty {
 					compare1 == Tile.KEY.getNum()||
 					compare1 == -6 || // I think this is the raft/ladder item
 					compare1 == 2) // I think this represents an enemy
-				room.get(x).set(y,Tile.FLOOR.getNum());
+				segment.get(x).set(y,Tile.FLOOR.getNum());
 			else if(compare1 == Tile.WALL.getNum()|| // These all look like a block 
 					compare1 == Tile.MOVABLE_BLOCK_UP.getNum()||
 					compare1 == Tile.MOVABLE_BLOCK_DOWN.getNum()||
 					compare1 == Tile.MOVABLE_BLOCK_LEFT.getNum()||
 					compare1 == Tile.MOVABLE_BLOCK_RIGHT.getNum()) 
-				room.get(x).set(y,Tile.WATER.getNum());
+				segment.get(x).set(y,Tile.WATER.getNum());
 			else if(compare1 < 0 || // Many door types seem to be negative
 					compare1 == Tile.DOOR.getNum()||
 					compare1 == Tile.SOFT_LOCK_DOOR.getNum()) 
-				room.get(x).set(y,Tile.WATER.getNum());
+				segment.get(x).set(y,Tile.WATER.getNum());
 					break;
 				
 				case LODE_RUNNER:
@@ -167,7 +167,9 @@ public class LevelNovelty {
 					break;
 					
 				case MEGA_MAN:
-					
+					if(compare1 >= MegaManVGLCUtil.ONE_ENEMY_WATER) {
+						segment.get(x).set(y, MegaManVGLCUtil.ONE_ENEMY_AIR);
+					}
 					break;
 				}
 				
@@ -200,31 +202,31 @@ public class LevelNovelty {
 	 * @return Real number between 0 and 1, 0 being non-novel and 1 being completely novel
 	 */
 	public static double averageSegmentNovelty(List<List<List<Integer>>> rooms) {
-		return StatisticsUtilities.average(roomNovelties(rooms));
+		return StatisticsUtilities.average(segmentNovelties(rooms));
 	}
 
 	/**
 	 * Get array of novelties of all rooms with respect to each other.
 	 * 
-	 * @param rooms List of rooms
+	 * @param segments List of rooms
 	 * @return double array where each index is the novelty of the same index in the rooms list.
 	 */
-	public static double[] roomNovelties(List<List<List<Integer>>> rooms) {
+	public static double[] segmentNovelties(List<List<List<Integer>>> segments) {
 		// Repalce all rooms with deep copies of the room since the novelty calculation
 		// modifies the rooms
-		ListIterator<List<List<Integer>>> itr = rooms.listIterator();
+		ListIterator<List<List<Integer>>> itr = segments.listIterator();
 		while(itr.hasNext()) {
 			List<List<Integer>> level = itr.next();
 			itr.set(ListUtil.deepCopyListOfLists(level));
 		}
 		//System.out.println("roomNovelties!");
 		// Clean all rooms
-		for(List<List<Integer>> room : rooms) {
-			cleanRoom(room);
+		for(List<List<Integer>> segment : segments) {
+			cleanSegment(segment);
 		}
 		
 		// The order of the rooms can be different each time the rooms are loaded. Put into a consistent order.
-		Collections.sort(rooms, new Comparator<List<List<Integer>>>() {
+		Collections.sort(segments, new Comparator<List<List<Integer>>>() {
 			@Override
 			public int compare(List<List<Integer>> o1, List<List<Integer>> o2) {
 				String level1 = o1.toString();
@@ -240,9 +242,9 @@ public class LevelNovelty {
 //			MiscUtil.waitForReadStringAndEnterKeyPress();
 //		}
 		
-		double[] novelties = new double[rooms.size()];
-		for(int i = 0; i < rooms.size(); i++) { // For each room in the list
-			novelties[i] = segmentNovelty(rooms, i); // Calculate novelty of room 
+		double[] novelties = new double[segments.size()];
+		for(int i = 0; i < segments.size(); i++) { // For each room in the list
+			novelties[i] = segmentNovelty(segments, i); // Calculate novelty of room 
 			//System.out.println(i+":" + novelties[i]);
 		}
 		return novelties;

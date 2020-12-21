@@ -136,14 +136,14 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		List<List<List<Integer>>> noDuplicatesList = new LinkedList<>();
 		noDuplicatesList.addAll(noDuplicatesSet);
 		
-		double[] originalRoomsNoveltySet = roomNovelties(noDuplicatesList);
+		double[] originalRoomsNoveltySet = segmentNovelties(noDuplicatesList);
 		PrintStream originalPS = new PrintStream(new File("VGLCSegmentsSet.csv"));
 		for(Double d : originalRoomsNoveltySet) {
 			originalPS.println(d);
 		}
 		originalPS.close();
 
-		double[] originalRoomsNoveltyAll = roomNovelties(allVGLCSegments);
+		double[] originalRoomsNoveltyAll = segmentNovelties(allVGLCSegments);
 		originalPS = new PrintStream(new File("VGLCSegmentsAll.csv"));
 		for(Double d : originalRoomsNoveltyAll) {
 			originalPS.println(d);
@@ -160,14 +160,14 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		noDuplicatesList = new LinkedList<>();
 		noDuplicatesList.addAll(noDuplicatesSet);
 
-		double[] oneGANSegmentNoveltySet = roomNovelties(noDuplicatesList);
+		double[] oneGANSegmentNoveltySet = segmentNovelties(noDuplicatesList);
 		PrintStream graphPS = new PrintStream(new File("OneGANSegmentsSet.csv"));
 		for(Double d : oneGANSegmentNoveltySet) {
 			graphPS.println(d);
 		}
 		graphPS.close();
 
-		double[] oneGANsegmentsNoveltyAll = roomNovelties(allOneGANSegments);
+		double[] oneGANsegmentsNoveltyAll = segmentNovelties(allOneGANSegments);
 		graphPS = new PrintStream(new File("OneGANSegmentsAll.csv"));
 		for(Double d : oneGANsegmentsNoveltyAll) {
 			graphPS.println(d);
@@ -184,14 +184,14 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		noDuplicatesList = new LinkedList<>();
 		noDuplicatesList.addAll(noDuplicatesSet);
 
-		double[] sevenGANSegmentsNoveltySet = roomNovelties(noDuplicatesList);
+		double[] sevenGANSegmentsNoveltySet = segmentNovelties(noDuplicatesList);
 		PrintStream ganPS = new PrintStream(new File("SevenGANSegmentsSet.csv"));
 		for(Double d : sevenGANSegmentsNoveltySet) {
 			ganPS.println(d);
 		}
 		ganPS.close();
 
-		double[] sevenGANSegmentsNoveltyAll = roomNovelties(allSevenGANSegments);
+		double[] sevenGANSegmentsNoveltyAll = segmentNovelties(allSevenGANSegments);
 		ganPS = new PrintStream(new File("SevenGANRoomsAll.csv"));
 		for(Double d : sevenGANSegmentsNoveltyAll) {
 			ganPS.println(d);
