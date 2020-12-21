@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.file.NullPrintStream;
 
 
@@ -75,12 +74,7 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		for(int i = 0; i < 30; i++) {
 			String path = basePath + "OneGAN" + i + ".txt";
 			File file = new File(path);
-//			System.out.println(path);
 			List<List<Integer>> oneGANlevel = MegaManVGLCUtil.convertLevelFromIntText(file);
-//			MegaManVGLCUtil.printLevel(oneGANlevel);
-//			System.out.println(oneGANlevel.size() + " rows");
-//			System.out.println(oneGANlevel.get(0).size() + " Columns");
-
 			List<List<List<Integer>>> segmentList = partitionSegments(oneGANlevel, rows, columns);
 			allOneGANSegments.addAll(segmentList); // Collect all rooms for final comparison at the end
 			oneGANNovelties.put(name+i, averageSegmentNovelty(segmentList));			
