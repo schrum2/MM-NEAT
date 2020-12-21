@@ -197,7 +197,36 @@ public class MegaManVGLCUtil {
 //		System.out.println(json.toString());
 		
 	}
-	
+	public static List<List<Integer>> convertLevelFromIntText(File intText){
+		List<List<Integer>> level;
+		try {
+			Scanner s = new Scanner(intText);
+			ArrayList<String> lines = new ArrayList<String>();
+
+			while(s.hasNextLine()) {
+				lines.add(s.nextLine());
+			}
+			int count = lines.size();
+			level = new ArrayList<List<Integer>>(count);
+			s.close();
+			
+			for(int i = 0; i<lines.size();i++) {
+				Scanner s1 = new Scanner(lines.get(i));
+				List<Integer> line = new ArrayList<Integer>();
+				while(s1.hasNextInt()) {
+					int intToAdd = s1.nextInt();
+					line.add(intToAdd);
+				}
+				level.add(line);
+				s1.close();
+			}
+			return level;
+		}catch(Exception e) {
+			System.out.println("Exception!!");
+			return null;
+		}		
+		
+	}
 	public enum Direction {UP, RIGHT, DOWN, LEFT};
 	/**
 	 * Scans through the level gathering information on up, down, right, left
@@ -600,10 +629,10 @@ public class MegaManVGLCUtil {
 	public static void printLevel(List<List<Integer>> level) {
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
-				if(m!=9) {
+				//if(m!=9) {
 					System.out.print(/*f("%3d",*/m);
 
-				}
+				//}
 
 			}
 			System.out.println();

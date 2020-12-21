@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -209,8 +210,22 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				//saves image
 				File tempFile = new File(saveDir+".png");
 				boolean exists = tempFile.exists();
+				File textFile = new File(saveDir+".txt");
+				boolean exists1 = textFile.exists();
 				if(Parameters.parameters.booleanParameter("io")&&!exists) GraphicsUtil.saveImage(visualPath, saveDir + ".png");
-
+				if(Parameters.parameters.booleanParameter("io")&&!exists1) {
+					FileWriter writer = new FileWriter(saveDir+".txt"); //text file containing the List<List<Integer>> level
+					for(int i = 0 ; i < level.size();i++) {
+						for(int j = 0;j<level.get(0).size(); j++) {
+							writer.write(level.get(i).get(j).toString());
+							writer.write(" ");
+						}
+						writer.write("\n");
+					}
+					writer.close();
+					
+				}
+				
 			} catch (IOException e) {
 				System.out.println("Could not display image");
 			}
