@@ -25,14 +25,11 @@ public class LevelNovelty {
 		// If Mario, return Mario dimension, if Mega Man, get Mega Man dimension, etc.
 		switch(game) {
 		case MARIO:
-			
-			break;
+			throw new UnsupportedOperationException("Still need to provide details for Mario");
 		case ZELDA:
 			return 7;		
 		case LODE_RUNNER:
-			
-			break;
-			
+			throw new UnsupportedOperationException("Still need to provide details for Lode Runner");
 		case MEGA_MAN:
 			return 14; //default Mega Man
 		}
@@ -42,14 +39,11 @@ public class LevelNovelty {
 		// If Mario, return Mario dimension, if Mega Man, get Mega Man dimension, etc.
 		switch(game) {
 		case MARIO:
-			
-			break;
+			throw new UnsupportedOperationException("Still need to provide details for Mario");
 		case ZELDA:
 			return 12;		
 		case LODE_RUNNER:
-			
-			break;
-			
+			throw new UnsupportedOperationException("Still need to provide details for Lode Runner");
 		case MEGA_MAN:
 			return 16; //default Mega Man
 		}
@@ -58,23 +52,17 @@ public class LevelNovelty {
 	protected static Point getStart() {
 		Point start = new Point(0,0);
 		switch(game) {
-		case MARIO:
-			
+		case MARIO:			
 			break;
 		case ZELDA:
 			start = new Point(2,2);
 			break;
-		
 		case LODE_RUNNER:
-			
 			break;
-			
 		case MEGA_MAN:
-			
 			break;
 		}
-		
-		 //no need for starting at point other than 0,0 for Mega Man
+		//no need for starting at point other than 0,0 for Mega Man
 		return start;
 	}
 	/**
