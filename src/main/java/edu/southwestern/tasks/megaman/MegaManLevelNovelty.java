@@ -31,7 +31,7 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		PrintStream original = System.out;
 		int rows = getRows();
 		int columns = getColumns();
-		int numLevels = 10;
+		int numLevels = 10; // Num original VGLC levels (levels in Mega Man 1)
 		List<List<List<Integer>>> allVGLCSegments = new ArrayList<>();
 		List<List<List<Integer>>> allOneGANSegments = new ArrayList<>();
 		List<List<List<Integer>>> allSevenGANSegments = new ArrayList<>();
