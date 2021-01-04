@@ -60,11 +60,10 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 
 		@Override
 		public double h(MegaManState s) {
-			int maxDistance = 0;
 			Point orb = s.orb;
 			int xDistance = Math.abs(s.currentX - orb.x);
 			int yDistance = Math.abs(s.currentY - orb.y);
-			Math.max(maxDistance, (xDistance+yDistance));
+			double maxDistance = xDistance+yDistance;
 			return maxDistance;
 		}
 	
