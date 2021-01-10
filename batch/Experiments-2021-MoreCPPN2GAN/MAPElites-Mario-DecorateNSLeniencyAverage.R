@@ -11,7 +11,7 @@ types <- list("CPPN2GAN","CPPNThenDirect2GAN","Direct2GAN","Combined")
 for(typePrefix in types) {
 #typePrefix <- "CPPN2GAN"
 
-for(i in 0:9) {
+for(i in 0:29) {
   dataFile <- paste(typePrefix,i,"/MarioLevelsDecorateNSLeniency-",typePrefix,i,"_MAPElites_log.txt",sep="")
   map <- read.table(dataFile)
   print(dataFile)
@@ -38,7 +38,7 @@ for(i in 0:9) {
   }
 }
 
-archive <- averageArchive / 10
+archive <- averageArchive / 30
 
 # Add data indicating how the data is binned, based on convention of how
 # output data is organized

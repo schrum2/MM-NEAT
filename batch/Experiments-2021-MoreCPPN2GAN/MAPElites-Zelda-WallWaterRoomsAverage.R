@@ -8,7 +8,7 @@ types <- list("CPPN2GAN","CPPNThenDirect2GAN","Direct2GAN","Combined")
 for(typePrefix in types) {
   #typePrefix <- "CPPN2GAN"
   
-  for(i in 0:9) {
+  for(i in 0:29) {
     dataFile <- paste(typePrefix,i,"/ZeldaDungeonsWallWaterRooms-",typePrefix,i,"_MAPElites_log.txt",sep="")
     map <- read.table(dataFile)
     print(dataFile)
@@ -37,7 +37,7 @@ for(typePrefix in types) {
     }
   }
   
-  archive <- averageArchive / 10
+  archive <- averageArchive / 30
   
 
 
