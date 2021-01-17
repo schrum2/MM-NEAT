@@ -17,6 +17,14 @@ for this code, which is why a new GitHub repository was created to store MM-NEAT
 MM-NEAT version 2.0 does not use Maven, and will remain at https://github.com/schrum2/MM-NEATv2, 
 but has not been updated since September 2017.
 
+Also, if you want to use Generative Adversarial Networks to produce video game levels, you will need:
+
+* Python 3.7.3
+* PyTorch 1.1.0
+* NumPy 1.16.2
+
+More recent versions may also work, but these are what was used to develop the code.
+
 ## INSTALLATION
 
 1. Start by downloading and installing the latest version of Maven: https://maven.apache.org/
