@@ -148,7 +148,16 @@ Python code associated with training GANs is in a special [GAN](https://github.c
 subdirectory. Within this directory, the file [main.py](https://github.com/schrum2/MM-NEAT/blob/master/src/main/python/GAN/main.py)
 is used to train GANs and the file [generator_ws.py](https://github.com/schrum2/MM-NEAT/blob/master/src/main/python/GAN/generator_ws.py)
 can be used to send latent vectors to a pretrained GAN and retrieve the resulting
-output.
+output. Here is an example command for training a GAN using data from the game Lode Runner:
+
+```
+python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel1to10.json --experiment LodeRunnerAllTilesLevel1to10-5000_10_7 --tiles 7 --cuda
+```
+
+The meaning of the command line parameters is explained within main.py. However, the thing that is needed most
+is a json file containing training samples representing 2D game levels. The existing json training sets can be
+viewed to understand the format of the data. There are several evolution tasks defined using Java code that
+send latent vectors to generator_ws.py and take the output to produce game levels.
 
 ## OTHER DOMAINS
 
