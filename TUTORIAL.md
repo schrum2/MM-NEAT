@@ -142,6 +142,14 @@ simply have no readings). If the network has preference neurons, then the compar
 output of each preference neuron will also be displayed. Additionally, Ms. Pac-Man 
 will leave trails of a difference color for each module she uses.
 
+## TRAINING GENERATIVE ADVERSARIAL NETWORKS
+
+Python code associated with training GANs is in a special [GAN](https://github.com/schrum2/MM-NEAT/tree/master/src/main/python/GAN)
+subdirectory. Within this directory, the file [main.py](https://github.com/schrum2/MM-NEAT/blob/master/src/main/python/GAN/main.py)
+is used to train GANs and the file [generator_ws.py](https://github.com/schrum2/MM-NEAT/blob/master/src/main/python/GAN/generator_ws.py)
+can be used to send latent vectors to a pretrained GAN and retrieve the resulting
+output.
+
 ## OTHER DOMAINS
 
 This code was initially developed to evolve Ms. Pac-Man agents, but other domains
