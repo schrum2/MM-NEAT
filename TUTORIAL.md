@@ -157,7 +157,7 @@ python main.py --niter 5000 --nz 10 --json LodeRunnerAllTilesLevel1to10.json --e
 The meaning of the command line parameters is explained within main.py. However, the thing that is needed most
 is a json file containing training samples representing 2D game levels. The existing json training sets can be
 viewed to understand the format of the data. There are several evolution tasks defined using Java code that
-send latent vectors to generator_ws.py and take the output to produce game levels.
+send latent vectors to generator_ws.py and take the output to produce game levels. One example is [MarioGANLevelTask](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/mario/MarioGANLevelTask.java).
 
 ## OTHER DOMAINS
 
