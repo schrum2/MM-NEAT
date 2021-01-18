@@ -114,27 +114,45 @@ public class MegaManVGLCUtil {
 	public static void main(String[] args) {
 		int firstLevel = 1;
 		int lastLevel = 10;
+		int prevSize = 0;
+		int max = 0;
+		int min = 0;
 		for(int i = firstLevel;i<=lastLevel;i++) {
 			if(i!=7) {
-			List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-			//convertMegaManLevelToMMLV(level, i);
-			upAndDownTrainingData(level);
+				prevSize = json.size();
+				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
+				//convertMegaManLevelToMMLV(level, i);
+				upAndDownTrainingData(level);
+				int newSize = json.size()-prevSize;
+				if(newSize>max) max = newSize;
+				if(newSize<min||min==0)min = newSize;
+				System.out.println("Level "+i+" number of segements: "+newSize);
+			
 			}
 		}
-		System.out.println(conditionalJson.size());
+		System.out.println("Max number of segments: "+max);
+		System.out.println("Min number of segments: "+min);
+
+//		System.out.println(conditionalJson.size());
+//		
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		System.out.println(conditionalJson.toString());
+//		
+//		
+//		
+//		
+//		
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		System.out.println(conditionalJsonID.size());
+//		
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		System.out.println(conditionalJsonID.toString());
 		
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		System.out.println(conditionalJson.toString());
 		
 		
 		
 		
 		
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		System.out.println(conditionalJsonID.size());
-		
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		System.out.println(conditionalJsonID.toString());
 //		for(int i=11;i<=29;i++) {
 //			placed.clear();
 //			activatedScreens.clear();
@@ -197,7 +215,36 @@ public class MegaManVGLCUtil {
 //		System.out.println(json.toString());
 		
 	}
-	
+	public static List<List<Integer>> convertLevelFromIntText(File intText){
+		List<List<Integer>> level;
+		try {
+			Scanner s = new Scanner(intText);
+			ArrayList<String> lines = new ArrayList<String>();
+
+			while(s.hasNextLine()) {
+				lines.add(s.nextLine());
+			}
+			int count = lines.size();
+			level = new ArrayList<List<Integer>>(count);
+			s.close();
+			
+			for(int i = 0; i<lines.size();i++) {
+				Scanner s1 = new Scanner(lines.get(i));
+				List<Integer> line = new ArrayList<Integer>();
+				while(s1.hasNextInt()) {
+					int intToAdd = s1.nextInt();
+					line.add(intToAdd);
+				}
+				level.add(line);
+				s1.close();
+			}
+			return level;
+		}catch(Exception e) {
+			System.out.println("Exception!!");
+			return null;
+		}		
+		
+	}
 	public enum Direction {UP, RIGHT, DOWN, LEFT};
 	/**
 	 * Scans through the level gathering information on up, down, right, left
@@ -251,7 +298,7 @@ public class MegaManVGLCUtil {
 //					printLevel(screen);
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
 						
-//						json.add(screen);
+						json.add(screen);
 //						conditionalJsonID.add(HORIZONTALID);
 //						conditionalJson.add(screen);
 						
@@ -276,7 +323,7 @@ public class MegaManVGLCUtil {
 					if(rightScreenSide-x2>=0)
 					screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
 					else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
-					//json.add(screen);
+					json.add(screen);
 
 //					jsonUp.add(screen);
 //					conditionalJsonID.add(UPID);
@@ -298,7 +345,7 @@ public class MegaManVGLCUtil {
 					if(rightScreenSide-x2>=0)
 						screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
 					else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
-					//json.add(screen);
+					json.add(screen);
 
 //					jsonDown.add(screen);
 //					conditionalJsonID.add(DOWNID);
@@ -322,7 +369,7 @@ public class MegaManVGLCUtil {
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
 						
 
-//						json.add(screen);
+						json.add(screen);
 //						conditionalJsonID.add(HORIZONTALID);
 //						conditionalJson.add(screen);
 						
@@ -377,7 +424,7 @@ public class MegaManVGLCUtil {
 			placed.add(point);
 			jsonLR.add(screen);
 			conditionalJsonID.add(BOTTOMRIGHTID);
-			printLevel(screen);
+			//printLevel(screen);
 			conditionalJson.add(screen);
 			}
 			
@@ -388,7 +435,7 @@ public class MegaManVGLCUtil {
 			placed.add(point);
 			jsonLL.add(screen);
 			conditionalJsonID.add(BOTTOMLEFTID);
-			printLevel(screen);
+			//printLevel(screen);
 			conditionalJson.add(screen);
 			
 			}
@@ -398,7 +445,7 @@ public class MegaManVGLCUtil {
 			placed.add(point);
 			jsonUL.add(screen);
 			conditionalJsonID.add(UPPERLEFTID);
-			printLevel(screen);
+			//printLevel(screen);
 			conditionalJson.add(screen);
 			}
 		}else if(down&&left&&!right&&!up&&!placed.contains(point)) { //upper right
@@ -407,7 +454,7 @@ public class MegaManVGLCUtil {
 			placed.add(point);
 			jsonUR.add(screen);
 			conditionalJsonID.add(UPPERRIGHTID);
-			printLevel(screen);
+			//printLevel(screen);
 			conditionalJson.add(screen);
 			}
 		}
@@ -568,7 +615,7 @@ public class MegaManVGLCUtil {
 		}else if(distanceFromLeft>16) {
 			distanceFromLeft = 16 - distanceFromRight-1;
 		}
-		System.out.println(distanceFromRight);
+//		System.out.println(distanceFromRight);
 
 		
 //		System.out.println(distanceFromRight);
@@ -600,10 +647,10 @@ public class MegaManVGLCUtil {
 	public static void printLevel(List<List<Integer>> level) {
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
-				if(m!=9) {
+				//if(m!=9) {
 					System.out.print(/*f("%3d",*/m);
 
-				}
+				//}
 
 			}
 			System.out.println();
