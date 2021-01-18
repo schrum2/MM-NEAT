@@ -1,7 +1,7 @@
-CALL AllCombinedDirectAndCPPN.bat 9 mariolevelsdecoratensleniency MarioLevelsDecorateNSLeniency
-CALL AllCombinedDirectAndCPPN.bat 9 mariolevelsdistinctnsdecorate MarioLevelsDistinctNSDecorate
-CALL AllCombinedDirectAndCPPN.bat 9 zeldadungeonsdistinctbtrooms ZeldaDungeonsDistinctBTRooms
-CALL AllCombinedDirectAndCPPN.bat 9 zeldadungeonswallwaterrooms ZeldaDungeonsWallWaterRooms
+CALL AllCombinedDirectAndCPPN.bat 29 mariolevelsdecoratensleniency MarioLevelsDecorateNSLeniency
+CALL AllCombinedDirectAndCPPN.bat 29 mariolevelsdistinctnsdecorate MarioLevelsDistinctNSDecorate
+CALL AllCombinedDirectAndCPPN.bat 29 zeldadungeonsdistinctbtrooms ZeldaDungeonsDistinctBTRooms
+CALL AllCombinedDirectAndCPPN.bat 29 zeldadungeonswallwaterrooms ZeldaDungeonsWallWaterRooms
 
 for /D %%f in (../../mariolevelsdecoratensleniency/Combine*) do (
 	Rscript.exe MAPElites-Mario-DecorateNSLeniency.R "../../mariolevelsdecoratensleniency/%%f/MarioLevelsDecorateNSLeniency-%%f_MAPElites_log.txt"

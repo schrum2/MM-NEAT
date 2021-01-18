@@ -6,8 +6,11 @@ args = commandArgs(trailingOnly=TRUE)
 setwd("../../mariolevelsdecoratensleniency")
 #setwd("G:\\My Drive\\Research\\2021-IEEE-ToG-CPPNThenDirectToGAN\\MM-NEAT\\mariolevelsdecoratensleniency")
 print("Load data")
-types <- list("CPPN2GAN","CPPNThenDirect2GAN","Direct2GAN","Combined")
+types <- list("CPPN2GAN","CPPNThenDirect2GAN","Direct2GAN")
 
+allData = array()
+
+type <- 0
 for(typePrefix in types) {
 #typePrefix <- "CPPN2GAN"
 
@@ -73,7 +76,23 @@ nsBin <- data.frame(nsBin)
 leniencyBin <- rep(seq(-5,4),10*10)
 leniencyBin <- data.frame(leniencyBin)
 
-allData <- data.frame(archive, decorationBin, nsBin, leniencyBin)
+typeBin <- rep(type, 1000)
+typeBin <- data.frame(typeBin)
+
+temp <- data.frame(archive, typeBin, decorationBin, nsBin, leniencyBin)
+if(exists("allData")) {
+  allData <- rbind(allData,temp)
+} else {
+  allData <- temp
+}
+
+type <- type + 1
+
+}
+
+### Remove the NA row
+
+allData <- allData[complete.cases(allData), ]
 
 ###############################################
 
@@ -89,16 +108,49 @@ leniencyLabals <- function(num) {
   paste("Leniency Bin:",num)
 }
 
-outputFile <- paste("MarioLevelsDecorateNSLeniency-",typePrefix,"-AVG.",nameEnd,".heat.pdf",sep="")
+# Fill with data on overlaping bins
+overlapData = NULL
+numBins <- 1000
+for(i in 1:numBins) { # 1000 bins
+  newRow <- allData[i, ] # CPPN2GAN
+  ThenRow <- allData[i+numBins, ] #CPPNThenDirect2GAN
+  DRow <- allData[i+2*numBins, ] #Direct2GAN
+  
+  if(newRow$SolutionSteps > 0.0 & ThenRow$SolutionSteps > 0.0 & DRow$SolutionSteps > 0.0) {
+    newRow$SolutionSteps <- "All"
+  } else if(newRow$SolutionSteps > 0.0 & ThenRow$SolutionSteps > 0.0 & DRow$SolutionSteps == 0.0) {
+    newRow$SolutionSteps <- "No Direct2GAN"
+  } else if(newRow$SolutionSteps > 0.0 & ThenRow$SolutionSteps == 0.0 & DRow$SolutionSteps > 0.0) {
+    newRow$SolutionSteps <- "No CPPNThenDirect2GAN"
+  } else if(newRow$SolutionSteps == 0.0 & ThenRow$SolutionSteps > 0.0 & DRow$SolutionSteps > 0.0) {
+    newRow$SolutionSteps <- "No CPPN2GAN"
+  } else if(newRow$SolutionSteps > 0.0 & ThenRow$SolutionSteps == 0.0 & DRow$SolutionSteps == 0.0) {
+    newRow$SolutionSteps <- "Only CPPN2GAN"
+  } else if(newRow$SolutionSteps == 0.0 & ThenRow$SolutionSteps > 0.0 & DRow$SolutionSteps == 0.0) {
+    newRow$SolutionSteps <- "Only CPPNThenDirect2GAN"
+  } else if(newRow$SolutionSteps == 0.0 & ThenRow$SolutionSteps == 0.0 & DRow$SolutionSteps > 0.0) {
+    newRow$SolutionSteps <- "Only Direct2GAN"
+  } else {
+    newRow$SolutionSteps <- "None"
+  }
+
+  overlapData <- rbind(overlapData, newRow)
+}  
+
+# Re-order the factors
+overlapData$SolutionSteps <- factor(overlapData$SolutionSteps, levels=c("All","No CPPNThenDirect2GAN","No CPPN2GAN","No Direct2GAN","Only CPPNThenDirect2GAN","Only CPPN2GAN","Only Direct2GAN","None"))
+
+outputFile <- paste("MarioLevelsDecorateNSLeniency-DIFF.",nameEnd,".heat.pdf",sep="")
 pdf(outputFile,height=3.5)  
-result <- ggplot(allData, aes(x=decorationBin, y=nsBin, fill=SolutionSteps)) +
+result <- ggplot(overlapData, aes(x=decorationBin, y=nsBin, fill=factor(SolutionSteps))) +
   geom_tile() +
   facet_wrap(~leniencyBin, ncol=5, labeller = labeller(leniencyBin = leniencyLabals)) +
   #scale_fill_gradient(low="white", high="orange") +
-  scale_fill_viridis(discrete=FALSE, limits = c(0,500), oob = squish) +
+  #scale_fill_viridis(discrete=FALSE, limits = c(0,500), oob = squish) +
+  scale_fill_manual(values=c("#E69F00", "#56B4E9", "#000EEE", "#B4E956", "#999999")) +
   xlab("Decoration Frequency Bin") +
   ylab("Space Coverage Bin") +
-  labs(fill = "Solution Path Length") +
+  labs(fill = "Occupied by: ") +
   # Puts room count in the plot for each bin
   #geom_text(aes(label = ifelse(wallBin == 5 & waterBin == 4, roomBin, NA)), 
   #          nudge_x = 2.5,nudge_y = 3) +
@@ -107,7 +159,9 @@ result <- ggplot(allData, aes(x=decorationBin, y=nsBin, fill=SolutionSteps)) +
         #strip.text = element_blank(),
         legend.position="top",
         legend.direction = "horizontal",
-        legend.key.width = unit(70,"points"),
+        legend.key.width = unit(10,"points"),
+        legend.key.height = unit(10,"points"),
+        legend.text = element_text(size=10),
         panel.spacing.x=unit(0.001, "points"),
         panel.spacing.y=unit(0.001, "points"),
         axis.ticks = element_blank(),
@@ -118,4 +172,4 @@ dev.off()
 print(paste("Saved:",outputFile))
 print("Finished")
 
-}
+

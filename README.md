@@ -22,6 +22,8 @@ via NSGA-II, and supports several forms of modular neural networks. Support for
 the fitness shaping technique Targeting Unachieved Goals (TUG) is also included.
 Indirect encoding via HyperNEAT is also supported, as is interactive evolution of
 several types of interesting artifacts (pictures, sounds, animations) using CPPNs. 
+Furthermore, the code can be used to train GANs to emulate tile-based video game
+levels, and then evolve latent vectors that find levels with desireable properties.
 The code was originally developed by Jacob Schrum (schrum2@southwestern.edu) while 
 at the University of Texas at Austin, but has since been improved upon by several
 undergraduate students at Southwestern University in Georgetown, TX, where

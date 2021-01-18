@@ -4,6 +4,14 @@ if (length(args)==0) {
   stop("Supply experiment name: MarioLevelsDecorateNSLeniency, MarioLevelsDistinctNSDecorate, ZeldaDungeonsDistinctBTRooms, ZeldaDungeonsWallWaterRooms", call.=FALSE)
 }
 
+legendX = 0.8
+legendY = 0.3
+
+if(length(args)==3) {
+    legendX = as.double(args[2])
+    legendY = as.double(args[3])
+}
+
 setwd("..\\..\\")
 
 game <- args[1]
@@ -115,7 +123,7 @@ v <- ggplot(evolutionStats, aes(x = generation, y = avgScore, color = type)) +
     axis.text.y = element_text(size=7, face="bold"),
     legend.title = element_blank(),
     legend.text = element_text(size=7, face="bold"),
-    legend.position = c(0.8, 0.3)
+    legend.position = c(legendX, legendY)
   )
 print(v)
 dev.off()
