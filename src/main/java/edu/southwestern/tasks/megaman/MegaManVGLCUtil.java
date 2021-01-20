@@ -118,8 +118,9 @@ public class MegaManVGLCUtil {
 		int max = 0;
 		int min = 0;
 		String basePath = "megamanlevels/textLevels/AStarDistAndConnectivity";;
-		for(int i = 0; i < 30; i++) {
+		for(int i = 0; i < 30; i++) { //test 1-3
 			String path = basePath + "SevenGAN" + i + ".txt";
+			System.out.println(path);
 			File file = new File(path);
 			List<List<Integer>> sevenGANlevel = convertLevelFromIntText(file);
 			printLevel(sevenGANlevel);
@@ -262,7 +263,7 @@ public class MegaManVGLCUtil {
 	public static void upAndDownTrainingData(List<List<Integer>> level) {
 		List<Point> corners = new ArrayList<Point>();
 		corners = findSpawnScreen(level);
-
+		
 		List<List<Integer>> screen = new ArrayList<List<Integer>>();
 		for(int i = 0;i<14;i++) {
 			List<Integer> k = new ArrayList<Integer>();
@@ -273,11 +274,18 @@ public class MegaManVGLCUtil {
 		}
 		for(int y = (int) corners.get(0).getY();y< corners.get(2).getY();y++) {
 			for(int x = (int) corners.get(0).getX();x< (int) corners.get(1).getX();x++) {
+//				System.out.print(y+": ");
+//				int a = (y-(int) corners.get(0).getY());
+//				System.out.println(a);
+//				System.out.print(x+": ");
+//				a = x-(int) corners.get(0).getX();
+//				System.out.println(a);
+				//printLevel(screen);
 				screen.get(y-(int) corners.get(0).getY()).set(x-(int) corners.get(0).getX(), level.get(y).get(x));
 			}
-
+			
 		}
-		
+		//printLevel(screen);
 		int x1 = (int) corners.get(0).getX();
 		int x2 = (int) corners.get(1).getX();
 		int y1 = (int) corners.get(0).getY();
@@ -289,7 +297,9 @@ public class MegaManVGLCUtil {
 		start = null;
 	//	int iteratio= 0;
 		boolean done = false;
-		
+		int upDownTimer = -1;
+		int rightLeftTimer = -1;
+		if(d == Direction.DOWN)upDownTimer=-1; 
 		while(!done) {
 			
 //			System.out.println(d);
@@ -297,8 +307,13 @@ public class MegaManVGLCUtil {
 				done = true;
 //				System.out.println("DONE");
 			}else if(d.equals(Direction.RIGHT)) {
-				if(canGoRight(level,rightScreenSide,y1)) {
-						
+				System.out.println(rightLeftTimer);
+				rightLeftTimer--;
+				
+				if(canGoRight(level,rightScreenSide,y1)||rightLeftTimer>=0) {
+					
+					if(rightLeftTimer<0)rightLeftTimer = 15;
+					
 					screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
 					//if(rightScreenSide+1<level.get(0).size()&&level.get(y1).get(rightScreenSide+1)!=9)
 						rightScreenSide++;
@@ -317,6 +332,7 @@ public class MegaManVGLCUtil {
 //					x1--;
 					Direction previous = Direction.RIGHT;
 					d = findNewDirection(level, rightScreenSide, y1, previous); //using upper right corner
+					if(previous!=d) rightLeftTimer = 16;
 
 				}
 				
@@ -326,7 +342,7 @@ public class MegaManVGLCUtil {
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
 //				System.out.println(level.get(y1-1).get(x2+x1-1));
 //				MiscUtil.waitForReadStringAndEnterKeyPress();
-				if(y1-1>=0&&level.get(y1-1).get(rightScreenSide)!=9) {
+				if(y1-1>=0&&level.get(y1-1).get(rightScreenSide)!=9&&canGoUp(level,rightScreenSide,y1)) {
 					y1--;
 					if(rightScreenSide-x2>=0)
 					screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
@@ -344,12 +360,16 @@ public class MegaManVGLCUtil {
 					Direction previous = Direction.UP;
 
 					d = findNewDirection(level, rightScreenSide, y1, previous); //using upper right corner
+					if(previous!=d) upDownTimer = 14;
 
 				}
 			}
 			else if(d.equals(Direction.DOWN)){
-				if(y1+14<level.size()&&level.get(y1+14).get(rightScreenSide)!=9/*&&canGoDown(level,rightScreenSide,y1)*/) {
+				System.out.println(upDownTimer);
+				upDownTimer--;
+				if(y1+14<level.size()&&level.get(y1+14).get(rightScreenSide)!=9&&canGoDown(level,rightScreenSide,y1)||upDownTimer>=0) {
 					y1++;
+					if(upDownTimer<0)upDownTimer = 13;
 					if(rightScreenSide-x2>=0)
 						screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
 					else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
@@ -364,6 +384,7 @@ public class MegaManVGLCUtil {
 				}else { //find new direction
 					Direction previous = Direction.DOWN;
 					d = findNewDirection(level, rightScreenSide, y1, previous); //using upper right corner
+					if(previous!=d) upDownTimer = 14;
 
 				}
 			}else if(d.equals(Direction.LEFT)) {
@@ -391,7 +412,7 @@ public class MegaManVGLCUtil {
 //					x1--;
 					Direction previous = Direction.LEFT;
 					d = findNewDirection(level, rightScreenSide, y1, previous); //using upper right corner
-
+					if(previous!=d) rightLeftTimer = 16;
 				}
 			}
 			//System.out.println(iteratio);
@@ -478,16 +499,16 @@ public class MegaManVGLCUtil {
  */
 	public static boolean canGoLeft(List<List<Integer>> level, int rightScreenSide, int y1) {
 		//check all of the tiles from the leftmost side of this segment and the rightmost side of the left segment and see if it's compatible.
-		
-		if(rightScreenSide-16>0&&level.get(y1).get(rightScreenSide-16)!=9) {
+		//System.out.println(rightScreenSide-16+" "+level.get(0).size());
+		if(rightScreenSide-16>=0&&level.get(y1).get(rightScreenSide-16)!=9) {
+			if(rightScreenSide-20>0&&level.get(y1).get(rightScreenSide-20)==9||rightScreenSide-18<0) return true; //if there's left space and null space behind that, go ahead and move
 			boolean canMove = false;
 			for(int i = y1;i<y1+14;i++) {
 				int j = rightScreenSide-16;
 				//level.get(i).get(j) is passable
 				int tile1 = level.get(i).get(j);
 				int tile2 = level.get(i).get(j+1);
-				int tile3 = level.get(i).get(j+2);
-				if(passable(tile1)&&passable(tile2)&&passable(tile3)) {
+				if(passable(tile1)&&passable(tile2)) {
 					canMove = true;
 				}
 				
@@ -531,15 +552,15 @@ public class MegaManVGLCUtil {
 	 */
 	public static boolean canGoRight(List<List<Integer>> level, int rightScreenSide, int y1) {
 		if(rightScreenSide+1<level.get(0).size()&&level.get(y1).get(rightScreenSide+1)!=9) {
-			
+			if(rightScreenSide+2<level.get(0).size()&&level.get(y1).get(rightScreenSide+2)==9||(rightScreenSide+10<level.get(0).size()&&level.get(y1).get(rightScreenSide+10)==9)) return true;
 			boolean canMove = false;
 			for(int i = y1;i<y1+14;i++) {
 				int j = rightScreenSide;
 				//level.get(i).get(j) is passable
 				int tile1 = level.get(i).get(j);
-				int tile2 = level.get(i).get(j-1);
+				int tile2 = level.get(i).get(j+1);
 				//System.out.print(tile1+""+tile2+" ");
-				if(passable(tile1)||passable(tile2)) {
+				if(passable(tile1)&&passable(tile2)) {
 					canMove = true;
 					//System.out.print(canMove);
 				}
@@ -560,7 +581,9 @@ public class MegaManVGLCUtil {
 	 * @return true if the screen can move down, false otherwise
 	 */
 	public static boolean canGoDown(List<List<Integer>> level, int rightScreenSide, int y1) {
+		//System.out.println(level.size()+" "+y1);
 		if(y1+14<level.size()&&level.get(y1+14).get(rightScreenSide)!=9) {
+			if(y1+20<level.size()&&level.get(y1+20).get(rightScreenSide)==9||y1+16>=level.size()||y1+25>=level.size()) return true;
 			boolean canMove = false;
 			for(int i = rightScreenSide-15;i<=rightScreenSide;i++) {
 				int j = y1+14;
@@ -586,6 +609,7 @@ public class MegaManVGLCUtil {
 	 */
 	public static boolean canGoUp(List<List<Integer>> level, int rightScreenSide, int y1) {
 		 if(y1-1>=0&&level.get(y1-1).get(rightScreenSide-14)!=9&&level.get(y1-1).get(rightScreenSide)!=9) {
+			 if(y1-2>=0&&level.get(y1-2).get(rightScreenSide-14)==9) return true;
 			 boolean canMove = false;
 				for(int i = rightScreenSide-14;i<=rightScreenSide;i++) {
 					int j = y1;
@@ -617,16 +641,18 @@ public class MegaManVGLCUtil {
 //		System.out.println(level.get(ycoord-1).get(xcoord-1));
 //		System.out.println(previous);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
+		System.out.println("previous is "+previous);
 		if(canGoRight(level,xcoord,ycoord)&&!previous.equals(Direction.LEFT)) {
 			d = Direction.RIGHT;
+			//System.out.println("oopsie");
 		}
 		
-		else if(ycoord-1>=0&&level.get(ycoord-1).get(xcoord)!=9&&!previous.equals(Direction.DOWN)) { //prioritize going up (for level 9)
+		else if(canGoUp(level,xcoord,ycoord)&&!previous.equals(Direction.DOWN)) { //prioritize going up (for level 9)
 			d = Direction.UP;
 			//System.out.println("UP");
 		}
 		
-		else if(ycoord+14<level.size()&&level.get(ycoord+14).get(xcoord)!=9&&!previous.equals(Direction.UP)) {
+		else if(canGoDown(level,xcoord,ycoord)&&!previous.equals(Direction.UP)) {
 //			System.out.println("previous:"+previous);
 			d = Direction.DOWN;
 //			System.out.println("DOWN");
@@ -704,11 +730,11 @@ public class MegaManVGLCUtil {
 		}
 		if(distanceFromBottom>14) {
 			distanceFromBottom = 14-distanceFromTop;
-		}else if(distanceFromTop>14) {
+		}if(distanceFromTop>14) {
 			distanceFromTop = 14- distanceFromBottom;
-		}else if(distanceFromRight>16) {
+		}if(distanceFromRight>16) {
 			distanceFromRight = 16 - distanceFromLeft-1;
-		}else if(distanceFromLeft>16) {
+		}if(distanceFromLeft>16) {
 			distanceFromLeft = 16 - distanceFromRight-1;
 		}
 //		System.out.println(distanceFromRight);
@@ -717,6 +743,7 @@ public class MegaManVGLCUtil {
 //		System.out.println(distanceFromRight);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		//System.out.println()
+		
 		int x1 = spawnX - distanceFromLeft;
 		int y1 = spawnY - distanceFromTop;
 		int x2 = spawnX + distanceFromRight;
