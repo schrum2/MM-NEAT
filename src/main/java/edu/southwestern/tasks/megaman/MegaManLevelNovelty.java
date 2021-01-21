@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.file.NullPrintStream;
 
 
@@ -59,11 +58,15 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		System.out.println("Novelty of VGLC Levels");
 		PrintStream vglcStream = new PrintStream(new File("MegaMan-VGLC.csv"));
 		double vglcLevelAverage = 0;
+		double vglcMin = 0;
+		double vglcMax = 0;
 		for(int i = 1;i<=10;i++) {
 			double novelty = originalNovelties.get(name+i);
 			System.out.println(novelty);
 			vglcStream.println(novelty);
 			vglcLevelAverage += novelty;
+			if(vglcMin==0||novelty<vglcMin) vglcMin = novelty;
+			if(novelty>vglcMax) vglcMax = novelty;
 		}
 		vglcStream.close();
 		// Average novelty of dungeons from original game
@@ -75,6 +78,7 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		//For OneGAN
 		
 		name = "OneGAN";
+		
 		HashMap<String,Double> oneGANNovelties = new HashMap<String,Double>();
 		for(int i = 0; i < 30; i++) {
 			String path = basePath + "OneGAN" + i + ".txt";
@@ -89,17 +93,21 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		System.setOut(original);
 		
 		System.out.println("Novelty of OneGAN levels");
+		double oneGANMin = 0;
+		double oneGANMax = 0;
 		PrintStream graphGrammarStream = new PrintStream(new File("MegaMan-OneGAN.csv"));
-		double oneGANGrammarAverage = 0;
+		double oneGANAverage = 0;
 		for(int i = 0; i < 30; i++) {
 			double novelty = oneGANNovelties.get(name+i);
 			System.out.println(novelty);
 			graphGrammarStream.println(novelty);
-			oneGANGrammarAverage += novelty;
+			oneGANAverage += novelty;
+			if(oneGANMin==0||novelty<oneGANMin) oneGANMin = novelty;
+			if(novelty>oneGANMax) oneGANMax = novelty;
 		}
 		graphGrammarStream.close();
 		// Average novelty of Graph Grammar dungeons from study
-		oneGANGrammarAverage /= 30;
+		oneGANAverage /= 30;
 		
 		// Mute output again
 		System.setOut(new NullPrintStream());
@@ -135,6 +143,8 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		
 
 		System.out.println("Novelty of SevenGAN Levels");
+		double sevenGANMin = 0;
+		double sevenGANMax = 0;
 		PrintStream sevenGANStream = new PrintStream(new File("MegaMan-SevenGAN.csv"));
 		double sevenGANAverage = 0;
 		for(int i = 0; i < 30; i++) {
@@ -142,6 +152,8 @@ public class MegaManLevelNovelty extends LevelNovelty{
 			System.out.println(novelty);
 			sevenGANStream.println(novelty);
 			sevenGANAverage += novelty;
+			if(sevenGANMin==0||novelty<sevenGANMin) sevenGANMin = novelty;
+			if(novelty>sevenGANMax) sevenGANMax = novelty;
 		}
 		sevenGANStream.close();
 		// Average novelty of Graph GAN dungeons from study
@@ -149,9 +161,14 @@ public class MegaManLevelNovelty extends LevelNovelty{
 	
 		System.out.println();
 		System.out.println("VGLC Average: "+vglcLevelAverage);
-		System.out.println("OneGAN Average: "+oneGANGrammarAverage);
+		System.out.println("OneGAN Average: "+oneGANAverage);
 		System.out.println("SevenGAN Average: "+sevenGANAverage);
-		
+		System.out.println("VGLC Min: "+vglcMin);
+		System.out.println("OneGAN Min: "+oneGANMin);
+		System.out.println("SevenGAN Min: "+sevenGANMin);
+		System.out.println("VGLC Max: "+vglcMax);
+		System.out.println("OneGAN Max: "+oneGANMax);
+		System.out.println("SevenGAN Max: "+sevenGANMax);
 		
 		HashSet<List<List<Integer>>> noDuplicatesSet = new HashSet<>(allVGLCSegments);
 		List<List<List<Integer>>> noDuplicatesList = new LinkedList<>();
@@ -257,9 +274,9 @@ public class MegaManLevelNovelty extends LevelNovelty{
 
 		System.out.println("Num Segments LL: "+allSevenGANLLSegments.size());
 		System.out.println("Num Distinct Segments LL: "+noDuplicatesList.size());
-		System.out.println("Average Set of SevenGANLL Segments: " + LevelNovelty.averageSegmentNovelty(noDuplicatesList));
-		System.out.println("Average All SevenGANLL Segments: " + LevelNovelty.averageSegmentNovelty(allSevenGANLLSegments));
 		
+		System.out.println("Average All SevenGANLL Segments: " + LevelNovelty.averageSegmentNovelty(allSevenGANLLSegments));
+		System.out.println("Average Set of SevenGANLL Segments: " + LevelNovelty.averageSegmentNovelty(noDuplicatesList));
 		
 		
 		System.out.println();
@@ -293,8 +310,10 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		System.out.println("Num Segments LR: "+allSevenGANLRSegments.size());
 		System.out.println("Num Distinct Segments LR: "+noDuplicatesList.size());
 		
-		System.out.println("Average Set of SevenGANLR Segments: " + LevelNovelty.averageSegmentNovelty(noDuplicatesList));
+		
 		System.out.println("Average All SevenGANLR Segments: " + LevelNovelty.averageSegmentNovelty(allSevenGANLRSegments));
+		System.out.println("Average Set of SevenGANLR Segments: " + LevelNovelty.averageSegmentNovelty(noDuplicatesList));
+		
 		System.out.println();
 		
 		
@@ -326,8 +345,9 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		System.out.println("Num Segments UR: "+allSevenGANURSegments.size());
 		System.out.println("Num Distinct Segments UR: "+noDuplicatesList.size());
 		
-		System.out.println("Average Set of SevenGANUR Segments: " + LevelNovelty.averageSegmentNovelty(noDuplicatesList));
+		
 		System.out.println("Average All SevenGANUR Segments: " + LevelNovelty.averageSegmentNovelty(allSevenGANURSegments));
+		System.out.println("Average Set of SevenGANUR Segments: " + LevelNovelty.averageSegmentNovelty(noDuplicatesList));
 		System.out.println();
 		
 		
@@ -354,9 +374,9 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		System.out.println("Num Segments UL: "+allSevenGANULSegments.size());
 		System.out.println("Num Distinct Segments UL: "+noDuplicatesList.size());
 		
-		System.out.println("Average Set of SevenGANUL Segments: " + LevelNovelty.averageSegmentNovelty(noDuplicatesList));
-		System.out.println("Average All SevenGANUL Segments: " + LevelNovelty.averageSegmentNovelty(allSevenGANULSegments));
 		
+		System.out.println("Average All SevenGANUL Segments: " + LevelNovelty.averageSegmentNovelty(allSevenGANULSegments));
+		System.out.println("Average Set of SevenGANUL Segments: " + LevelNovelty.averageSegmentNovelty(noDuplicatesList));
 		
 		System.out.println();
 		noDuplicatesSet = new HashSet<>(allSevenGANCornerSegments);
@@ -380,9 +400,9 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		System.out.println("Num Corner Segments: "+allSevenGANCornerSegments.size());
 		System.out.println("Num Distinct Corner Segments: "+noDuplicatesList.size());
 		
-		System.out.println("Average Set of SevenGANCorner Segments: " + LevelNovelty.averageSegmentNovelty(noDuplicatesList));
-		System.out.println("Average All SevenGANCorner Segments: " + LevelNovelty.averageSegmentNovelty(allSevenGANCornerSegments));
 		
+		System.out.println("Average All SevenGANCorner Segments: " + LevelNovelty.averageSegmentNovelty(allSevenGANCornerSegments));
+		System.out.println("Average Set of SevenGANCorner Segments: " + LevelNovelty.averageSegmentNovelty(noDuplicatesList));
 		
 	}
 }
