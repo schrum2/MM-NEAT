@@ -862,7 +862,7 @@ public class MegaManVGLCUtil {
 		for(List<Integer> k : level) {
 			for(Integer m: k) {
 				//if(m!=9) {
-					System.out.print(/*f("%3d",*/m);
+					System.out.print(/*f("%3d",*/m+" ");
 
 				//}
 

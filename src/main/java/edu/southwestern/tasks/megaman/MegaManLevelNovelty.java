@@ -404,5 +404,39 @@ public class MegaManLevelNovelty extends LevelNovelty{
 		System.out.println("Average All SevenGANCorner Segments: " + LevelNovelty.averageSegmentNovelty(allSevenGANCornerSegments));
 		System.out.println("Average Set of SevenGANCorner Segments: " + LevelNovelty.averageSegmentNovelty(noDuplicatesList));
 		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		String path = basePath + "SevenGAN" + 1 + "SolutionPath.txt";
+		File file = new File(path);
+		List<List<Integer>> ganLevel = MegaManVGLCUtil.convertLevelFromIntText(file);
+		List<List<List<Integer>>> segmentList = partitionSegments(ganLevel, rows, columns);
+		System.out.println(getAverageSolutionPathPercent(segmentList));
+		
+		path = basePath + "OneGAN" + 8 + "SolutionPath.txt";
+		file = new File(path);
+		ganLevel = MegaManVGLCUtil.convertLevelFromIntText(file);
+		segmentList = partitionSegments(ganLevel, rows, columns);
+		System.out.println(getAverageSolutionPathPercent(segmentList));
+		
+		
+		path = basePath + "OneGAN" + 15 + "SolutionPath.txt";
+		file = new File(path);
+		ganLevel = MegaManVGLCUtil.convertLevelFromIntText(file);
+		segmentList = partitionSegments(ganLevel, rows, columns);
+		System.out.println(getAverageSolutionPathPercent(segmentList));
+		
+		
+		
 	}
 }

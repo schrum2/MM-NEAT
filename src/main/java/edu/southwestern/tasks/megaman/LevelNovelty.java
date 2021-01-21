@@ -65,6 +65,18 @@ public class LevelNovelty {
 		//no need for starting at point other than 0,0 for Mega Man
 		return start;
 	}
+	public static double getAverageSolutionPathPercent(List<List<List<Integer>>> listOfSegments) {
+		double result = 0.00;
+		for(List<List<Integer>> segment:listOfSegments) {
+			for(int i = 0;i<segment.size();i++) {
+				for(int j = 0;j<segment.get(0).size();j++) {
+					if(segment.get(i).get(j)==-1) result+=1;
+				}
+			}
+		}
+		result/=listOfSegments.size()*listOfSegments.get(0).size()*listOfSegments.get(0).get(0).size();
+		return result;
+	}
 	/**
 	 * Find the novelty of a segment (given by focus) with respect to all the other segments of the list.
 	 * This is essentially the average distance of the segment from all other segments.
