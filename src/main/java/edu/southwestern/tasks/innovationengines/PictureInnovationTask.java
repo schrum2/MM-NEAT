@@ -132,13 +132,13 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 		// For test runs
 		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureInnovationTask",
-				"log:InnovationPictures-VGG16","saveTo:VGG16","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
+				"log:InnovationPictures-VGG19","saveTo:VGG19","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:true",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true",
-				//"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper",
-				"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper",
+				"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper",
+				//"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper",
 				//"imageNetModel:edu.southwestern.networks.dl4j.AverageAllZooModelImageNetModels",
 				"pictureInnovationSaveThreshold:0.3",
 				"imageWidth:500","imageHeight:500", // Final save size
