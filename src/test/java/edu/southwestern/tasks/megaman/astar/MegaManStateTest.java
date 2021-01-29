@@ -250,8 +250,9 @@ public class MegaManStateTest {
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
+
 		assertFalse(itr3.hasNext());
 		
 		
@@ -376,7 +377,8 @@ public class MegaManStateTest {
 //		---------------Z
 //		--------########
 		
-		List<List<Integer>> level8 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestProperJumpingWithSomethingAboveMegaMan.txt"); 
+		List<List<Integer>> level8 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestProperJumpingWithSomethingAboveMegaMan.txt");
+		//MegaManVGLCUtil.printLevel(level8);
 		MegaManState start8 = new MegaManState(level8);
 		Search<MegaManAction,MegaManState> search8 = new AStarSearch<>(MegaManState.manhattanToOrb);
 		//HashSet<MegaManState> mostRecentVisited = null;
@@ -405,17 +407,17 @@ public class MegaManStateTest {
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr8.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr8.next());
-
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr8.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr8.next());
 
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr8.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
+
+		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr8.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
@@ -425,8 +427,6 @@ public class MegaManStateTest {
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 		assertFalse(itr8.hasNext());
-		
-		
 		
 		
 		
