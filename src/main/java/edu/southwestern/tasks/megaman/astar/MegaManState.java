@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import edu.southwestern.tasks.megaman.MegaManRenderUtil;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ListUtil;
+
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Action;
 import edu.southwestern.util.search.Heuristic;
@@ -60,11 +62,10 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 
 		@Override
 		public double h(MegaManState s) {
-			int maxDistance = 0;
 			Point orb = s.orb;
 			int xDistance = Math.abs(s.currentX - orb.x);
 			int yDistance = Math.abs(s.currentY - orb.y);
-			Math.max(maxDistance, (xDistance+yDistance));
+			double maxDistance = xDistance+yDistance;
 			return maxDistance;
 		}
 	
@@ -457,6 +458,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public static BufferedImage vizualizePath(List<List<Integer>> level, HashSet<MegaManState> mostRecentVisited, 
 			ArrayList<MegaManAction> actionSequence, MegaManState start) throws IOException {
 		List<List<Integer>> fullLevel = ListUtil.deepCopyListOfLists(level);
+		List<List<Integer>> testLevel = ListUtil.deepCopyListOfLists(level);
 		fullLevel.get(start.currentY).set(start.currentX, MEGA_MAN_TILE_SPAWN);// puts the spawn back into the visualization
 		//for(Point p : start.orb) { //puts all the gold back 
 			fullLevel.get(getOrb(level).y).set(getOrb(level).x, MEGA_MAN_TILE_ORB);
@@ -465,20 +467,21 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				level.size()*MegaManRenderUtil.MEGA_MAN_TILE_Y);
 		if(mostRecentVisited != null) {
 			Graphics2D g = (Graphics2D) visualPath.getGraphics();
-			g.setColor(Color.WHITE);
-			for(MegaManState s : mostRecentVisited) {
-				int x = s.currentX;
-				int y = s.currentY;
-				g.setStroke(new BasicStroke(3));
-				g.drawLine(x*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y,(x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
-				g.drawLine((x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y, x*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
-			}
+//			g.setColor(Color.WHITE);
+//			for(MegaManState s : mostRecentVisited) {
+//				int x = s.currentX;
+//				int y = s.currentY;
+//				g.setStroke(new BasicStroke(3));
+//				g.drawLine(x*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y,(x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
+//				g.drawLine((x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y, x*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
+//			}
 			if(actionSequence != null) {
 				g.setColor(Color.RED);
 				MegaManState current = start;
 				for(MegaManAction a : actionSequence) {
 					int x = current.currentX;
 					int y = current.currentY;
+					testLevel.get(y).set(x, -1);
 					g.setStroke(new BasicStroke(3));
 					g.drawLine(x*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y,(x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
 					g.drawLine((x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y, x*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
@@ -486,6 +489,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 					
 				}
 			}
+			
 		}
 //		try {
 //			JFrame frame = new JFrame();
@@ -499,6 +503,23 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 //		} catch (Exception e) {
 //			e.printStackTrace();
 //		}
+//		String saveDir = "C:\\GitHub\\MM-NEAT\\megamanlevels\\textLevels\\";
+//		//System.out.println(saveDir);
+//		File textFile = new File(saveDir+"SolutionPath.txt");
+//		boolean exists1 = textFile.exists();
+//		if(!exists1) {
+//			FileWriter writer = new FileWriter(saveDir+"SolutionPath.txt"); //text file containing the List<List<Integer>> level
+//			for(int i = 0 ; i < testLevel.size();i++) {
+//				for(int j = 0;j<testLevel.get(0).size(); j++) {
+//					writer.write(testLevel.get(i).get(j).toString());
+//					writer.write(" ");
+//				}
+//				writer.write("\n");
+//			}
+//			writer.close();
+//			
+//		}
+		//MegaManVGLCUtil.printLevel(testLevel);
 		return visualPath;
 	}
 	/**

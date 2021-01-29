@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.GenerationalEA;
+//import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.MAPElites;
@@ -204,22 +205,39 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				frame.add(panel);
 				frame.pack();
 				frame.setVisible(true);
+				String saveDir = FileUtilities.getSaveDirectory(); //save directory
+				//int currentGen = MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : -1;
+				//saves image
+				File tempFile = new File(saveDir+".png");
+				boolean exists = tempFile.exists();
+				File textFile = new File(saveDir+".txt");
+				boolean exists1 = textFile.exists();
+				if(Parameters.parameters.booleanParameter("io")&&!exists) GraphicsUtil.saveImage(visualPath, saveDir + ".png");
+				if(Parameters.parameters.booleanParameter("io")&&!exists1) {
+					FileWriter writer = new FileWriter(saveDir+".txt"); //text file containing the List<List<Integer>> level
+					for(int i = 0 ; i < level.size();i++) {
+						for(int j = 0;j<level.get(0).size(); j++) {
+							writer.write(level.get(i).get(j).toString());
+							writer.write(" ");
+						}
+						writer.write("\n");
+					}
+					writer.close();
+					
+				}
+				
 			} catch (IOException e) {
 				System.out.println("Could not display image");
 			}
 			
-			BufferedImage levelImage = null;
-			try {
-				BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
-				levelImage = MegaManRenderUtil.createBufferedImage(level, MegaManRenderUtil.renderedImageWidth(level.get(0).size()), MegaManRenderUtil.renderedImageHeight(level.size()), images);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			String saveDir = FileUtilities.getSaveDirectory(); //save directory
-			int currentGen = MMNEAT.ea instanceof GenerationalEA ? ((GenerationalEA) MMNEAT.ea).currentGeneration() : -1;
-			//saves image
-			if(Parameters.parameters.booleanParameter("io")) GraphicsUtil.saveImage(levelImage, saveDir + File.separator + (currentGen == 0 ? "initial" : "gen"+ currentGen) + File.separator + "Room"+genotypeId+".png");
-
+//			BufferedImage levelImage = null;
+//			try {
+//				BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
+//				levelImage = MegaManRenderUtil.createBufferedImage(level, MegaManRenderUtil.renderedImageWidth(level.get(0).size()), MegaManRenderUtil.renderedImageHeight(level.size()), images);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+			
 			//Gives you the option to play the level by pressing p, or skipping by pressing enter, after the visualization is displayed 
 			System.out.println("Enter 'P' to play, or just press Enter to continue");
 			String input = MiscUtil.waitForReadStringAndEnterKeyPress();
