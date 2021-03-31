@@ -15,7 +15,6 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
 import org.datavec.image.transform.ColorConversionTransform;
-import org.bytedeco.javacpp.opencv_imgproc.*;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;

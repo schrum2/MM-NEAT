@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deeplearning4j.rl4j.space.Encodable;
-import org.nd4j.linalg.util.ArrayUtil;
+import org.nd4j.common.util.ArrayUtil;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 /**
@@ -18,7 +19,8 @@ public class EncodableObservation implements Encodable {
 	private Observation o;
 
 	public EncodableObservation(Observation o) {
-		this.o = o;
+		throw new UnsupportedOperationException("Not yet compatible since upgrading the DL4J version");
+		//this.o = o;
 	}
 	
 	@Override
@@ -28,6 +30,24 @@ public class EncodableObservation implements Encodable {
 		arrays.add(intValues);
 		arrays.add(o.doubleArray);
 		return ArrayUtil.combineDouble(arrays);
+	}
+
+	@Override
+	public Encodable dup() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public INDArray getData() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isSkipped() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

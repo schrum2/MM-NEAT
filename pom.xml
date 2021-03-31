@@ -13,30 +13,32 @@
   <properties>
     <java.version>1.8</java.version>
   
-  		<unirest.version>1.4.9</unirest.version>
+        <unirest.version>1.4.9</unirest.version>
         <jackson.version>2.5.1</jackson.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <nd4j.version>1.0.0-beta</nd4j.version>
-        <dl4j.version>1.0.0-beta</dl4j.version>
+        <nd4j.version>1.0.0-beta7</nd4j.version>
+        <dl4j.version>1.0.0-beta7</dl4j.version>
         <javacv.version>1.4.1</javacv.version>
         <javacpp.version>1.4.1</javacpp.version>
         <javacpp-presets.version>1.4.1</javacpp-presets.version>
         <opencv.version>3.4.1</opencv.version>
         <ffmpeg.version>3.4.2</ffmpeg.version>
         <ale.version>0.6.0</ale.version>
-        <slf4j.version>1.7.12</slf4j.version>
-        <logback.version>1.1.2</logback.version>
+        <!-- Does some other DL4J dependency import the correct version of this? -->
+        <!-- <slf4j.version>1.7.12</slf4j.version> -->
+        <logback.version>1.1.7</logback.version>
         <lombok.version>1.16.16</lombok.version>
-  
+  		<jcommon.version>1.0.23</jcommon.version>
     
         <!-- Change the nd4j.backend property to nd4j-cuda-7.5-platform or nd4j-cuda-8.0-platform to use CUDA GPUs -->
-        <nd4j.backend>nd4j-native-platform</nd4j.backend>
+        <!-- <nd4j.backend>nd4j-cuda-10.2-platform</nd4j.backend> -->
+        <nd4j.backend>nd4j-native</nd4j.backend>
         <!-- <nd4j.backend>nd4j-cuda-8.0-platform</nd4j.backend> -->
 
 		<!-- Change these below? -->
-        <datavec.version>1.0.0-beta</datavec.version>
-        <arbiter.version>1.0.0-beta</arbiter.version>
-        <rl4j.version>1.0.0-beta</rl4j.version>
+        <datavec.version>1.0.0-beta7</datavec.version>
+        <arbiter.version>1.0.0-beta7</arbiter.version>
+        <rl4j.version>1.0.0-beta7</rl4j.version>
 
   </properties>
 
@@ -126,23 +128,45 @@
         <dependencies>
             <dependency>
                 <groupId>org.nd4j</groupId>
-                <artifactId>nd4j-native</artifactId>
+                <artifactId>${nd4j.backend}</artifactId>
                 <version>${nd4j.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.nd4j</groupId>
-                <artifactId>nd4j-cuda-7.5</artifactId>
-                <version>${nd4j.version}</version>
-            </dependency>
+
+        <!-- Does some other DL4J dependency import the correct version of this? -->
+        <!--
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
+         -->
         </dependencies>
     </dependencyManagement>
 
   <dependencies>
+  
+<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+<!-- Needed for DL4J? Why is it not brought in as dependency? -->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-lang3</artifactId>
+    <version>3.12.0</version>
+</dependency>
+
+<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+<!-- Needed for DL4J? Why is it not brought in as dependency? -->
+<dependency>
+    <groupId>commons-codec</groupId>
+    <artifactId>commons-codec</artifactId>
+    <version>1.9</version>
+</dependency>
+
+
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jcommon</artifactId>
+            <version>${jcommon.version}</version>
+        </dependency>
   
     <dependency>
 	  <groupId>com.github.trystan</groupId>
@@ -162,8 +186,8 @@
   	<!-- DL4J and RL4J -->
         <dependency>
             <groupId>org.nd4j</groupId>
-            <!--TODO reference main pom when next rl4j and gym on Maven Central -->
-            <artifactId>nd4j-native</artifactId>
+            <artifactId>${nd4j.backend}</artifactId>
+            <version>${nd4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.deeplearning4j</groupId>
@@ -180,11 +204,36 @@
     		<artifactId>deeplearning4j-zoo</artifactId>
     		<version>${dl4j.version}</version>
 		</dependency>
+<!--  Not in the latest version? Or do I just not need it?
 		<dependency>
     		<groupId>org.deeplearning4j</groupId>
     		<artifactId>deeplearning4j-modelimport</artifactId>
     		<version>${dl4j.version}</version>
 		</dependency>
+-->
+
+
+        <!-- CUDA: to use GPU for training (CUDA) instead of CPU, uncomment this, and remove nd4j-native-platform -->
+        <!-- Requires CUDA to be installed to use. Change the version (8.0, 9.0, 9.1) to change the CUDA version -->
+        <!--
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-cuda-9.2-platform</artifactId>
+            <version>${dl4j-master.version}</version>
+        </dependency>
+        -->
+
+        <!-- Optional, but recommended: if you use CUDA, also use CuDNN. To use this, CuDNN must also be installed -->
+        <!-- See: https://deeplearning4j.konduit.ai/config/backends/config-cudnn#using-deeplearning-4-j-with-cudnn -->
+        <!--
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>deeplearning4j-cuda-9.2</artifactId>
+            <version>${dl4j-master.version}</version>
+        </dependency>
+        -->
+
+
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>

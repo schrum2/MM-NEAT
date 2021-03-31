@@ -482,7 +482,7 @@ public class GraphicsUtil {
 	 * @return BufferedImage 
 	 */
 	public static BufferedImage imageFromINDArray(INDArray array) {
-		int[] shape = array.shape();
+		long[] shape = array.shape();
 		// Should the order of these be switched?
 		int width = (int) shape[2];
 		int height = (int) shape[3];

@@ -1,7 +1,14 @@
 package edu.southwestern.util.graphics;
 
-import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.random.RandomNumbers;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
+
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
@@ -15,18 +22,12 @@ import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.BooleanIndexing;
 import org.nd4j.linalg.indexing.conditions.Conditions;
-import org.nd4j.linalg.indexing.functions.Value;
 import org.nd4j.linalg.learning.AdamUpdater;
 import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.ops.transforms.Transforms;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Neural Style Transfer Algorithm in DL4J:
@@ -250,7 +251,7 @@ public class NeuralStyleTransfer {
     private static AdamUpdater createADAMUpdater() {
         AdamUpdater adamUpdater = new AdamUpdater(new Adam(LEARNING_RATE, BETA_MOMENTUM, BETA2_MOMENTUM, EPSILON));
         adamUpdater.setStateViewArray(Nd4j.zeros(1, 2 * CHANNELS * WIDTH * HEIGHT),
-                new int[]{1, CHANNELS, WIDTH, HEIGHT}, 'c',
+                new long[]{1, CHANNELS, HEIGHT, WIDTH}, 'c',
                 true);
         return adamUpdater;
     }
@@ -438,7 +439,7 @@ public class NeuralStyleTransfer {
     }
 
     private static INDArray flatten(INDArray x) {
-        int[] shape = x.shape();
+        long[] shape = x.shape();
         return x.reshape(shape[0] * shape[1], shape[2] * shape[3]);
     }
 
@@ -473,8 +474,8 @@ public class NeuralStyleTransfer {
     }
 
     private static INDArray ensurePositive(INDArray comboFeatures) {
-        BooleanIndexing.applyWhere(comboFeatures, Conditions.lessThan(0.0f), new Value(0.0f));
-        BooleanIndexing.applyWhere(comboFeatures, Conditions.greaterThan(0.0f), new Value(1.0f));
+        BooleanIndexing.replaceWhere(comboFeatures, 0.0, Conditions.lessThan(0.0f));
+        BooleanIndexing.replaceWhere(comboFeatures, 1.0f, Conditions.greaterThan(0.0f));
         return comboFeatures;
     }
 
