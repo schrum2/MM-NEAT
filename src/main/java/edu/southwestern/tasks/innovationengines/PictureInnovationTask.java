@@ -137,8 +137,8 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true",
-				"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper",
-				//"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper",
+				//"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper",
+				"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper",
 				//"imageNetModel:edu.southwestern.networks.dl4j.AverageAllZooModelImageNetModels",
 				"pictureInnovationSaveThreshold:0.3",
 				"imageWidth:500","imageHeight:500", // Final save size

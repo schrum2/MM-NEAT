@@ -26,7 +26,7 @@
         <ale.version>0.6.0</ale.version>
         <!-- Does some other DL4J dependency import the correct version of this? -->
         <!-- <slf4j.version>1.7.12</slf4j.version> -->
-        <logback.version>1.1.7</logback.version>
+        <logback.version>1.1.2</logback.version>
         <lombok.version>1.16.16</lombok.version>
   		<jcommon.version>1.0.23</jcommon.version>
     
