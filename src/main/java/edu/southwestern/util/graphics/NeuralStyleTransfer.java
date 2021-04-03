@@ -97,6 +97,8 @@ public class NeuralStyleTransfer {
     private static final int ITERATIONS = 1000;
     private static final String CONTENT_FILE = "data/imagematch/content2.jpg";
     private static final String STYLE_FILE = "data/imagematch/style2.jpg";
+    private static final int SAVE_IMAGE_CHECKPOINT = 5;
+    private static boolean saveCheckPoints = false;
 
     private static ComputationGraph vgg16FineTune;
     private static NativeImageLoader loader;
@@ -212,6 +214,11 @@ public class NeuralStyleTransfer {
             //         I just set it to 0. Don't know if this will cause problems.
             adamUpdater.applyUpdater(backPropAllValues, itr, 0);
             combination.subi(backPropAllValues);
+            
+            if (itr % SAVE_IMAGE_CHECKPOINT == 0) {
+            	BufferedImage bi = getBufferedImageVersion(imagePreProcessor, combination);
+            	GraphicsUtil.saveImage(bi, "NST"+itr+".jpg");
+            }
         }
         System.out.println("done");
         BufferedImage bi = getBufferedImageVersion(imagePreProcessor, combination);
@@ -226,6 +233,7 @@ public class NeuralStyleTransfer {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
+    	saveCheckPoints = true; // So intermediate images will be saved
         init();
         provideContentImage(ImageIO.read(new File(CONTENT_FILE))); 
         provideStyleImage(ImageIO.read(new File(STYLE_FILE)));
