@@ -53,7 +53,7 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 	
 	public PictureStyleBreederTask() throws IllegalAccessException {
 		String contentImagePath = Parameters.parameters.stringParameter("matchImageFile");	
-		
+		System.out.println("Load content file: "+contentImagePath);
 		if(USE_PYTHON) {
 			// Boot up the Python program for Neural Style transfer
 			PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);

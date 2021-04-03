@@ -146,6 +146,7 @@ public class NeuralStyleTransfer {
     
 	public void setContentImage(BufferedImage contentImage) {
 		try {
+    		System.out.println("Content image: "+contentImage);
 			content = loadImage(contentImage);
 		} catch (IOException e) {
 			System.out.println("Could not convert content image");
@@ -157,6 +158,7 @@ public class NeuralStyleTransfer {
 	
     public void setContentImage(String contentPath) {
     	try {
+    		System.out.println("Content image: "+contentPath);
 			content = loadImage(contentPath);
 		} catch (IOException e) {
 			System.out.println("Could not load content image: " + contentPath);
@@ -278,7 +280,7 @@ public class NeuralStyleTransfer {
     }
 
     private INDArray createCombinationImage() throws IOException {
-        INDArray content = LOADER.asMatrix(new File(CONTENT_FILE));
+        INDArray content = this.content.dup(); //LOADER.asMatrix(new File(CONTENT_FILE));
         IMAGE_PRE_PROCESSOR.transform(content);
         INDArray combination = createCombineImageWithRandomPixels();
         combination.muli(NOISE_RATION).addi(content.muli(1 - NOISE_RATION));
