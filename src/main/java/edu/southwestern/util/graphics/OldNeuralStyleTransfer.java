@@ -1,21 +1,14 @@
 package edu.southwestern.util.graphics;
 
-/*******************************************************************************
- * Copyright (c) 2020 Konduit K.K.
- * Copyright (c) 2015-2019 Skymind, Inc.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Apache License, Version 2.0 which is available at
- * https://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * SPDX-License-Identifier: Apache-2.0
- ******************************************************************************/
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+
+import javax.imageio.ImageIO;
 
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.api.Layer;
@@ -33,30 +26,27 @@ import org.nd4j.linalg.indexing.conditions.Conditions;
 import org.nd4j.linalg.learning.AdamUpdater;
 import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.ops.transforms.Transforms;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
- * Neural Style Transfer Algorithm
- * References
+ * Neural Style Transfer Algorithm in DL4J:
  * https://arxiv.org/pdf/1508.06576.pdf
  * https://arxiv.org/pdf/1603.08155.pdf
  * https://harishnarayanan.org/writing/artistic-style-transfer/
  *
  * @author Jacob Schrum & Klevis Ramo
  */
-public class NeuralStyleTransfer {
+public class OldNeuralStyleTransfer {
 
-    protected static final Logger log = LoggerFactory.getLogger(NeuralStyleTransfer.class);
+
+    public static final int HEIGHT = 224;
+    public static final int WIDTH = 224;
+    public static final int CHANNELS = 3;
+    public static final int IMAGE_SIZE = HEIGHT * WIDTH;
+
+
     private static final String[] ALL_LAYERS = new String[]{
         "input_1",
         "block1_conv1",
@@ -105,95 +95,156 @@ public class NeuralStyleTransfer {
     private static final double LEARNING_RATE = 2;
     private static final double NOISE_RATION = 0.1;
     private static final int ITERATIONS = 1000;
-
-    private static final String CONTENT_FILE = "content2.jpg";
-    private static final String STYLE_FILE = "style2.jpg";
+    private static final String CONTENT_FILE = "data/imagematch/content2.jpg";
+    private static final String STYLE_FILE = "data/imagematch/style2.jpg";
     private static final int SAVE_IMAGE_CHECKPOINT = 5;
-    private static final String OUTPUT_PATH = "style-transfer-output";
+    private static boolean saveCheckPoints = false;
 
-    private static final int HEIGHT = 224;
-    private static final int WIDTH = 224;
-    private static final int CHANNELS = 3;
-    private static final DataNormalization IMAGE_PRE_PROCESSOR = new VGG16ImagePreProcessor();
-    private static final NativeImageLoader LOADER = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
-
-    public static String dataLocalPath = "data/imagematch/";
-
-    public static void main(String[] args) throws Exception {
-    	NeuralStyleTransfer nst = new NeuralStyleTransfer();
-    	nst.setContentImage(CONTENT_FILE);
-    	nst.setStyleImage(STYLE_FILE);
-    	nst.transferStyle();
-    }
-
-	private ComputationGraph vgg16FineTune;
-	private AdamUpdater adamUpdater;
-
-    public NeuralStyleTransfer() {
-        try {
+    private static ComputationGraph vgg16FineTune;
+    private static NativeImageLoader loader;
+    private static DataNormalization imagePreProcessor;
+    
+    private static INDArray currentContentImage;
+    
+    private static Map<String, INDArray> activationsContentMap;
+    private static HashMap<String, INDArray> activationsStyleGramMap;
+    private static Map<String, INDArray> activationsStyleMap;
+    
+    private static AdamUpdater adamUpdater;
+    
+    /**
+     * Initialize important classes shared throughout the neural style transfer process
+     */
+    public static void init() {
+    	try {
 			vgg16FineTune = loadModel();
 		} catch (IOException e) {
-			System.out.println("Could not load VGG16");
+			System.out.println("Could not load VGG16 model");
 			e.printStackTrace();
 			System.exit(1);
 		}
+        loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
+        imagePreProcessor = new VGG16ImagePreProcessor();
         adamUpdater = createADAMUpdater();
     }
-    
-    private INDArray content;
-    private INDArray style;
-	private Map<String, INDArray> activationsContentMap;
-	private Map<String, INDArray> activationsStyleMap;
-	private HashMap<String, INDArray> activationsStyleGramMap;
-    
-    public void setContentImage(String contentPath) {
-    	try {
-			content = loadImage(contentPath);
+
+    public static void provideContentImage(String path) {
+        try {
+			provideContentImage(ImageIO.read(new File(path)));
 		} catch (IOException e) {
-			System.out.println("Could not load content image: " + contentPath);
+			System.out.println("Count not load content image: " + path);
 			e.printStackTrace();
 			System.exit(1);
-		}
-        activationsContentMap = vgg16FineTune.feedForward(content, true);
+		} 
     }
     
-    public void setStyleImage(String stylePath) {
-    	try {
-			style = loadImage(stylePath);
+    /**
+     * Convert image to INDArray and activate network
+     * to access intermediate activations.
+     * @param image content image for transfer
+     */
+    public static void provideContentImage(BufferedImage image) {
+		try {
+			currentContentImage = loadImage(loader, imagePreProcessor, image);
 		} catch (IOException e) {
-			System.out.println("Could not load style image: " + stylePath);
+			System.out.println("Could not load image");
 			e.printStackTrace();
 			System.exit(1);
 		}
-        activationsStyleMap = vgg16FineTune.feedForward(style, true);
+    	activationsContentMap = vgg16FineTune.feedForward(currentContentImage, true);
+    }
+    
+    /**
+     * Convert image to INDArray and activate network
+     * to access intermediate activations and calculate
+     * Gram matrix
+     * @param image style image for transfer
+     */
+    public static void provideStyleImage(BufferedImage image) {
+        INDArray style = null;
+		try {
+			style = loadImage(loader, imagePreProcessor, image);
+		} catch (IOException e) {
+			System.out.println("Could not load image");
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		activationsStyleMap = vgg16FineTune.feedForward(style, true);
         activationsStyleGramMap = buildStyleGramValues(activationsStyleMap);
     }
     
-    // Load content and style image first
-    public void transferStyle() throws IOException {
+    /**
+     * Assuing the content image is already loaded, send in a new style image and process it
+     * for a given number of iterations.
+     * @param style
+     * @param iterations
+     * @return
+     */
+    public static BufferedImage getTransferredResultForStyleImage(BufferedImage style, int iterations) {
+    	provideStyleImage(style);
+    	return runNeuralStyleTransfer(iterations);
+    }
+    
+    /**
+     * Run neural style transfer for given number of iterations and return result.
+     * Assumes content and style images have been previously loaded into static variables.
+     * @param iterations
+     * @return Final combined image
+     */
+    public static BufferedImage runNeuralStyleTransfer(int iterations) {
+    	INDArray combination = null;
+		try {
+			combination = createCombinationImage(imagePreProcessor);
+		} catch (IOException e) {
+			System.out.println("Could not create combo image for neural style transfer");
+			e.printStackTrace();
+			System.exit(1);
+		}
 
-        INDArray combination = createCombinationImage();
-        for (int iteration = 0; iteration < ITERATIONS; iteration++) {
-            log.info("iteration  " + iteration);
-
+        for (int itr = 0; itr < iterations; itr++) {
+            System.out.println("itr = " + itr);
             INDArray[] input = new INDArray[] { combination };
             Map<String, INDArray> activationsCombMap = vgg16FineTune.feedForward(input, true, false);
             INDArray styleBackProb = backPropagateStyles(vgg16FineTune, activationsStyleGramMap, activationsCombMap);
             INDArray backPropContent = backPropagateContent(vgg16FineTune, activationsContentMap, activationsCombMap);
             INDArray backPropAllValues = backPropContent.muli(ALPHA).addi(styleBackProb.muli(BETA));
-            adamUpdater.applyUpdater(backPropAllValues, iteration, 0);
-            combination.subi(backPropAllValues);
 
-            log.info("Total Loss: " + totalLoss(activationsStyleMap, activationsCombMap, activationsContentMap));
-            if (iteration % SAVE_IMAGE_CHECKPOINT == 0) {
-                saveImage(combination.dup(), iteration);
+            // Schrum: The update to the new version of DL4J required an additional parameter for the epoch here.
+            //         I just set it to 0. Don't know if this will cause problems.
+            adamUpdater.applyUpdater(backPropAllValues, itr, 0);
+            combination.subi(backPropAllValues);
+            
+            if (itr % SAVE_IMAGE_CHECKPOINT == 0) {
+            	BufferedImage bi = getBufferedImageVersion(imagePreProcessor, combination);
+            	GraphicsUtil.saveImage(bi, "NST"+itr+".jpg");
             }
         }
-
+        System.out.println("done");
+        BufferedImage bi = getBufferedImageVersion(imagePreProcessor, combination);
+        return bi;
+    }
+    
+    /**
+     * Runs the neural style transfer.
+     * TODO: Move this code bit by bit into separate methods so that it is easy to launch
+     * 		 the transfer process with specific image parameters.
+     * @param args
+     * @throws IOException
+     */
+    public static void main(String[] args) throws IOException {
+    	saveCheckPoints = true; // So intermediate images will be saved
+        init();
+        provideContentImage(ImageIO.read(new File(CONTENT_FILE))); 
+        provideStyleImage(ImageIO.read(new File(STYLE_FILE)));
+        runNeuralStyleTransfer(ITERATIONS);
     }
 
-    private INDArray backPropagateStyles(ComputationGraph vgg16FineTune, HashMap<String, INDArray> activationsStyleGramMap, Map<String, INDArray> activationsCombMap) {
-        INDArray styleBackProb = Nd4j.zeros(1, CHANNELS, HEIGHT, WIDTH);
+    private static INDArray backPropagateStyles(ComputationGraph vgg16FineTune, HashMap<String, INDArray> activationsStyleGramMap, Map<String, INDArray> activationsCombMap) {
+        // My old version
+    	//INDArray styleBackProb = Nd4j.zeros(new int[]{1, CHANNELS, WIDTH, HEIGHT});
+    	// From DL4J beta7
+    	INDArray styleBackProb = Nd4j.zeros(1, CHANNELS, HEIGHT, WIDTH);
         for (String styleLayer : STYLE_LAYERS) {
             String[] split = styleLayer.split(",");
             String styleLayerName = split[0];
@@ -207,14 +258,14 @@ public class NeuralStyleTransfer {
         return styleBackProb;
     }
 
-    private INDArray backPropagateContent(ComputationGraph vgg16FineTune, Map<String, INDArray> activationsContentMap, Map<String, INDArray> activationsCombMap) {
+    private static INDArray backPropagateContent(ComputationGraph vgg16FineTune, Map<String, INDArray> activationsContentMap, Map<String, INDArray> activationsCombMap) {
         INDArray activationsContent = activationsContentMap.get(CONTENT_LAYER_NAME);
         INDArray activationsComb = activationsCombMap.get(CONTENT_LAYER_NAME);
         INDArray dContentLayer = derivativeLossContentInLayer(activationsContent, activationsComb);
         return backPropagate(vgg16FineTune, dContentLayer.reshape(activationsComb.shape()), findLayerIndex(CONTENT_LAYER_NAME));
     }
 
-    private AdamUpdater createADAMUpdater() {
+    private static AdamUpdater createADAMUpdater() {
         AdamUpdater adamUpdater = new AdamUpdater(new Adam(LEARNING_RATE, BETA_MOMENTUM, BETA2_MOMENTUM, EPSILON));
         adamUpdater.setStateViewArray(Nd4j.zeros(1, 2 * CHANNELS * WIDTH * HEIGHT),
             new long[]{1, CHANNELS, HEIGHT, WIDTH}, 'c',
@@ -222,33 +273,65 @@ public class NeuralStyleTransfer {
         return adamUpdater;
     }
 
-    private INDArray createCombinationImage() throws IOException {
-        INDArray content = LOADER.asMatrix(new File(dataLocalPath,CONTENT_FILE));
-        IMAGE_PRE_PROCESSOR.transform(content);
+    private static INDArray createCombinationImage(DataNormalization scaler) throws IOException {
+    	// My old version
+//    	int totalEntries = CHANNELS * HEIGHT * WIDTH;
+//        int[] upper = new int[totalEntries];
+//        Arrays.fill(upper, 256);
+//        INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[]{1, CHANNELS, HEIGHT, WIDTH});
+        // From DL4J beta7
         INDArray combination = createCombineImageWithRandomPixels();
-        combination.muli(NOISE_RATION).addi(content.muli(1 - NOISE_RATION));
+        combination.muli(NOISE_RATION).addi(currentContentImage.dup().muli(1 - NOISE_RATION)); // Should dup be used here? Might be faster to remove, if that is ok
+        // Remove this transform since it is not present in DL4J beta7
+        //scaler.transform(combination);
         return combination;
     }
 
-    private INDArray createCombineImageWithRandomPixels() {
+    private static INDArray createCombineImageWithRandomPixels() {
         int totalEntries = CHANNELS * HEIGHT * WIDTH;
         double[] result = new double[totalEntries];
         for (int i = 0; i < result.length; i++) {
             result[i] = ThreadLocalRandom.current().nextDouble(-20, 20);
         }
         return Nd4j.create(result, new int[]{1, CHANNELS, HEIGHT, WIDTH});
-    }
-
-    private INDArray loadImage(String contentFile) throws IOException {
-        INDArray content = LOADER.asMatrix(new File(dataLocalPath,contentFile));
-        IMAGE_PRE_PROCESSOR.transform(content);
-        return content;
-    }
-
-    /*
-     * Since style activation are not changing we are saving some computation by calculating style grams only once
+    }    
+    
+    /**
+     * Load image from disk
+     * @param loader Image loader
+     * @param scaler Subtracts mean of ImageNet data
+     * @param filePath File path
+     * @return Image within INDArray
+     * @throws IOException
      */
-    private HashMap<String, INDArray> buildStyleGramValues(Map<String, INDArray> activationsStyle) {
+    @SuppressWarnings("unused")
+	private static INDArray loadImage(NativeImageLoader loader, DataNormalization scaler, String filePath) throws IOException {
+        INDArray image = loader.asMatrix(new File(filePath));
+        scaler.transform(image);
+        return image;
+    }
+
+    /**
+     * Take BufferedImage and convert to INDArray
+     * @param loader Image loader
+     * @param scaler Subtracts mean of ImageNet data
+     * @param bufferedImage Image as buffered image
+     * @return Image in INDArray
+     * @throws IOException
+     */
+    private static INDArray loadImage(NativeImageLoader loader, DataNormalization scaler, BufferedImage bufferedImage) throws IOException {
+        INDArray image = loader.asMatrix(bufferedImage);
+        scaler.transform(image);
+        return image;
+    }
+        
+    /**
+     * Since style activation are not changing we are saving some computation by calculating style grams only once
+     *
+     * @param activationsStyle
+     * @return
+     */
+    private static HashMap<String, INDArray> buildStyleGramValues(Map<String, INDArray> activationsStyle) {
         HashMap<String, INDArray> styleGramValuesMap = new HashMap<>();
         for (String styleLayer : STYLE_LAYERS) {
             String[] split = styleLayer.split(",");
@@ -259,7 +342,7 @@ public class NeuralStyleTransfer {
         return styleGramValuesMap;
     }
 
-    private int findLayerIndex(String styleLayerName) {
+    private static int findLayerIndex(String styleLayerName) {
         int index = 0;
         for (int i = 0; i < ALL_LAYERS.length; i++) {
             if (styleLayerName.equalsIgnoreCase(ALL_LAYERS[i])) {
@@ -270,12 +353,12 @@ public class NeuralStyleTransfer {
         return index;
     }
 
-    private double totalLoss(Map<String, INDArray> activationsStyleMap, Map<String, INDArray> activationsCombMap, Map<String, INDArray> activationsContentMap) {
+    public static double totalLoss(Map<String, INDArray> activationsStyleMap, Map<String, INDArray> activationsCombMap, Map<String, INDArray> activationsContentMap) {
         Double stylesLoss = allStyleLayersLoss(activationsStyleMap, activationsCombMap);
         return ALPHA * contentLoss(activationsCombMap.get(CONTENT_LAYER_NAME).dup(), activationsContentMap.get(CONTENT_LAYER_NAME).dup()) + BETA * stylesLoss;
     }
 
-    private Double allStyleLayersLoss(Map<String, INDArray> activationsStyleMap, Map<String, INDArray> activationsCombMap) {
+    private static Double allStyleLayersLoss(Map<String, INDArray> activationsStyleMap, Map<String, INDArray> activationsCombMap) {
         Double styles = 0.0;
         for (String styleLayers : STYLE_LAYERS) {
             String[] split = styleLayers.split(",");
@@ -291,12 +374,12 @@ public class NeuralStyleTransfer {
      * compute the loss with respect to the content. Based off of:
      * https://harishnarayanan.org/writing/artistic-style-transfer/
      *
-     * @param combActivations    Intermediate layer activations from the three inputs
+     * @param combActivations Intermediate layer activations from the three inputs
      * @param contentActivations Intermediate layer activations from the three inputs
      * @return Weighted content loss component
      */
 
-    private double contentLoss(INDArray combActivations, INDArray contentActivations) {
+    public static double contentLoss(INDArray combActivations, INDArray contentActivations) {
         return sumOfSquaredErrors(contentActivations, combActivations) / (4.0 * (CHANNELS) * (WIDTH) * (HEIGHT));
     }
 
@@ -311,20 +394,18 @@ public class NeuralStyleTransfer {
      * @param combination Activations from intermediate layer of CNN for combination image input
      * @return Loss contribution from this comparison
      */
-    private double styleLoss(INDArray style, INDArray combination) {
+    public static double styleLoss(INDArray style, INDArray combination) {
         INDArray s = gramMatrix(style);
         INDArray c = gramMatrix(combination);
-        long[] shape = style.shape();
-        long N = shape[0];
-        long M = shape[1] * shape[2];
-        return sumOfSquaredErrors(s, c) / (4.0 * (N * N) * (M * M));
+        return sumOfSquaredErrors(s, c) / (4.0 * (CHANNELS * CHANNELS) * (IMAGE_SIZE * IMAGE_SIZE));
     }
 
-    private INDArray backPropagate(ComputationGraph vgg16FineTune, INDArray dLdANext, int startFrom) {
+    private static INDArray backPropagate(ComputationGraph vgg16FineTune, INDArray dLdANext, int startFrom) {
 
         for (int i = startFrom; i > 0; i--) {
             Layer layer = vgg16FineTune.getLayer(ALL_LAYERS[i]);
             layer.conf().getLayer().setIDropout(null);
+            // Added LayerWorkspaceMgr.noWorkspaces() in the upgrade to DL4J 1.0.0-beta7 
             dLdANext = layer.backpropGradient(dLdANext, LayerWorkspaceMgr.noWorkspaces()).getSecond();
         }
         return dLdANext;
@@ -340,7 +421,7 @@ public class NeuralStyleTransfer {
      * @param b Another tensor
      * @return Sum of squared errors: scalar
      */
-    private double sumOfSquaredErrors(INDArray a, INDArray b) {
+    public static double sumOfSquaredErrors(INDArray a, INDArray b) {
         INDArray diff = a.sub(b); // difference
         INDArray squares = Transforms.pow(diff, 2); // element-wise squaring
         return squares.sumNumber().doubleValue();
@@ -355,7 +436,7 @@ public class NeuralStyleTransfer {
      * @param combActivations    Features at same layer from current combo image
      * @return Derivatives of content loss w.r.t. combo features
      */
-    private INDArray derivativeLossContentInLayer(INDArray contentActivations, INDArray combActivations) {
+    public static INDArray derivativeLossContentInLayer(INDArray contentActivations, INDArray combActivations) {
 
         combActivations = combActivations.dup();
         contentActivations = contentActivations.dup();
@@ -382,12 +463,13 @@ public class NeuralStyleTransfer {
      * @param x Tensor to get Gram matrix of
      * @return Resulting Gram matrix
      */
-    private INDArray gramMatrix(INDArray x) {
+    public static INDArray gramMatrix(INDArray x) {
         INDArray flattened = flatten(x);
-        return flattened.mmul(flattened.transpose());
+        INDArray gram = flattened.mmul(flattened.transpose());
+        return gram;
     }
 
-    private INDArray flatten(INDArray x) {
+    private static INDArray flatten(INDArray x) {
         long[] shape = x.shape();
         return x.reshape(shape[0] * shape[1], shape[2] * shape[3]);
     }
@@ -402,7 +484,7 @@ public class NeuralStyleTransfer {
      * @param comboFeatures     Intermediate activations of one layer for combo image input
      * @return Derivative of style error matrix for the layer w.r.t. combo image
      */
-    private INDArray derivativeLossStyleInLayer(INDArray styleGramFeatures, INDArray comboFeatures) {
+    public static INDArray derivativeLossStyleInLayer(INDArray styleGramFeatures, INDArray comboFeatures) {
 
         comboFeatures = comboFeatures.dup();
         double N = comboFeatures.shape()[0];
@@ -422,62 +504,26 @@ public class NeuralStyleTransfer {
         return posResult.muli(ensurePositive(trans));
     }
 
-    private INDArray ensurePositive(INDArray comboFeatures) {
+    private static INDArray ensurePositive(INDArray comboFeatures) {
         BooleanIndexing.replaceWhere(comboFeatures, 0.0, Conditions.lessThan(0.0f));
         BooleanIndexing.replaceWhere(comboFeatures, 1.0f, Conditions.greaterThan(0.0f));
         return comboFeatures;
     }
 
-    private ComputationGraph loadModel() throws IOException {
+    private static ComputationGraph loadModel() throws IOException {
+        @SuppressWarnings("rawtypes")
         ZooModel zooModel = VGG16.builder().build();
         ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
         vgg16.initGradientsView();
-        log.info(vgg16.summary());
+        System.out.println(vgg16.summary());
         return vgg16;
     }
 
-    private void saveImage(INDArray combination, int iteration) throws IOException {
-        IMAGE_PRE_PROCESSOR.revertFeatures(combination);
-
-        BufferedImage output = imageFromINDArray(combination);
-        File outputDir = new File(System.getProperty("user.home") + "/" + OUTPUT_PATH + "/iteration");
-        if (! outputDir.exists()) outputDir.mkdirs();
-        File file = new File(outputDir, iteration + ".jpg");
-        ImageIO.write(output, "jpg", file);
-    }
-
-    /**
-     * Takes an INDArray containing an image loaded using the native image loader
-     * libraries associated with DL4J, and converts it into a BufferedImage.
-     * The INDArray contains the color values split up across three channels (RGB)
-     * and in the integer range 0-255.
-     *
-     * @param array INDArray containing an image
-     * @return BufferedImage
-     */
-    private BufferedImage imageFromINDArray(INDArray array) {
-        long[] shape = array.shape();
-
-        long height = shape[2];
-        long width = shape[3];
-        BufferedImage image = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_RGB);
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                int red = array.getInt(0, 2, y, x);
-                int green = array.getInt(0, 1, y, x);
-                int blue = array.getInt(0, 0, y, x);
-
-                //handle out of bounds pixel values
-                red = Math.min(red, 255);
-                green = Math.min(green, 255);
-                blue = Math.min(blue, 255);
-
-                red = Math.max(red, 0);
-                green = Math.max(green, 0);
-                blue = Math.max(blue, 0);
-                image.setRGB(x, y, new Color(red, green, blue).getRGB());
-            }
-        }
-        return image;
+    private static BufferedImage getBufferedImageVersion(DataNormalization scaler, INDArray combination) {
+        scaler.revertFeatures(combination);
+        // Show final image afterward
+        BufferedImage output = GraphicsUtil.imageFromINDArray(combination);
+        //ImageIO.write(output, "jpg", new File("data/iteration" + iterations + ".jpg"));
+        return output;
     }
 }
