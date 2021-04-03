@@ -106,8 +106,8 @@ public class NeuralStyleTransfer {
     private static final double NOISE_RATION = 0.1;
     private static final int ITERATIONS = 1000;
 
-    private static final String CONTENT_FILE = "content2.jpg";
-    private static final String STYLE_FILE = "style2.jpg";
+    private static final String CONTENT_FILE = "data/imagematch/content2.jpg";
+    private static final String STYLE_FILE = "data/imagematch/style2.jpg";
     private static final int SAVE_IMAGE_CHECKPOINT = 5;
     private static final String OUTPUT_PATH = "style-transfer-output";
 
@@ -116,8 +116,6 @@ public class NeuralStyleTransfer {
     private static final int CHANNELS = 3;
     private static final DataNormalization IMAGE_PRE_PROCESSOR = new VGG16ImagePreProcessor();
     private static final NativeImageLoader LOADER = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
-
-    public static String dataLocalPath = "data/imagematch/";
 
     public static void main(String[] args) throws Exception {
     	NeuralStyleTransfer nst = new NeuralStyleTransfer();
@@ -192,12 +190,28 @@ public class NeuralStyleTransfer {
         activationsStyleGramMap = buildStyleGramValues(activationsStyleMap);
     }
 
+    /**
+     * Runs neural style transfer, but changes the style image first (not the content).
+     * Useful for the PictureStyleBreederTask.
+     * 
+     * @param styleImage New style image to use
+     * @param iterations Number of iterations for NST
+     * @param save Whether to periodically save images to disk
+     * @return Final combined image
+     */
     public BufferedImage getTransferredResultForStyleImage(BufferedImage styleImage, int iterations, boolean save) {
     	setStyleImage(styleImage);
     	return transferStyle(iterations,save);
     }
     
-    // Load content and style image first
+    /**
+     * Run neural style transfer for a given number of iterations, possibly
+     * saving images periodically. Need to set the content and style images
+     * first.
+     * @param iterations Number of iterations
+     * @param save Whether to save periodically
+     * @return produced combo image
+     */
     public BufferedImage transferStyle(int iterations, boolean save) {
 
         INDArray combination = null;
@@ -264,7 +278,7 @@ public class NeuralStyleTransfer {
     }
 
     private INDArray createCombinationImage() throws IOException {
-        INDArray content = LOADER.asMatrix(new File(dataLocalPath,CONTENT_FILE));
+        INDArray content = LOADER.asMatrix(new File(CONTENT_FILE));
         IMAGE_PRE_PROCESSOR.transform(content);
         INDArray combination = createCombineImageWithRandomPixels();
         combination.muli(NOISE_RATION).addi(content.muli(1 - NOISE_RATION));
@@ -281,7 +295,7 @@ public class NeuralStyleTransfer {
     }
 
     private INDArray loadImage(String contentFile) throws IOException {
-        INDArray content = LOADER.asMatrix(new File(dataLocalPath,contentFile));
+        INDArray content = LOADER.asMatrix(new File(contentFile));
         IMAGE_PRE_PROCESSOR.transform(content);
         return content;
     }
@@ -476,7 +490,8 @@ public class NeuralStyleTransfer {
     }
 
     private ComputationGraph loadModel() throws IOException {
-        ZooModel zooModel = VGG16.builder().build();
+        @SuppressWarnings("rawtypes")
+		ZooModel zooModel = VGG16.builder().build();
         ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
         vgg16.initGradientsView();
         log.info(vgg16.summary());
