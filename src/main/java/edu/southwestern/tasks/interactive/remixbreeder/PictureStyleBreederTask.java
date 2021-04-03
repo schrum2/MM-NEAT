@@ -37,7 +37,7 @@ import edu.southwestern.util.graphics.PythonNeuralStyleTransfer;
 public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T> {
 
 	// Whether to run the Python version of Neural Style Transfer (instead of the Java version)
-	private static final boolean USE_PYTHON = false;
+	private static final boolean USE_PYTHON = true;
 	
 	private static final int FILE_LOADER_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS;
 
