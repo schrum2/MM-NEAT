@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.imageio.ImageIO;
 
@@ -187,7 +188,7 @@ public class NeuralStyleTransfer {
     public static BufferedImage runNeuralStyleTransfer(int iterations) {
     	INDArray combination = null;
 		try {
-			combination = createCombinationImage(imagePreProcessor, loader);
+			combination = createCombinationImage(imagePreProcessor);
 		} catch (IOException e) {
 			System.out.println("Could not create combo image for neural style transfer");
 			e.printStackTrace();
@@ -227,7 +228,10 @@ public class NeuralStyleTransfer {
     }
 
     private static INDArray backPropagateStyles(ComputationGraph vgg16FineTune, HashMap<String, INDArray> activationsStyleGramMap, Map<String, INDArray> activationsCombMap) {
-        INDArray styleBackProb = Nd4j.zeros(new int[]{1, CHANNELS, WIDTH, HEIGHT});
+        // My old version
+    	//INDArray styleBackProb = Nd4j.zeros(new int[]{1, CHANNELS, WIDTH, HEIGHT});
+    	// From DL4J beta7
+    	INDArray styleBackProb = Nd4j.zeros(1, CHANNELS, HEIGHT, WIDTH);
         for (String styleLayer : STYLE_LAYERS) {
             String[] split = styleLayer.split(",");
             String styleLayerName = split[0];
@@ -256,16 +260,28 @@ public class NeuralStyleTransfer {
         return adamUpdater;
     }
 
-    private static INDArray createCombinationImage(DataNormalization scaler, NativeImageLoader loader) throws IOException {
-        int totalEntries = CHANNELS * HEIGHT * WIDTH;
-        int[] upper = new int[totalEntries];
-        Arrays.fill(upper, 256);
-        INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[]{1, CHANNELS, HEIGHT, WIDTH});
+    private static INDArray createCombinationImage(DataNormalization scaler) throws IOException {
+    	// My old version
+//    	int totalEntries = CHANNELS * HEIGHT * WIDTH;
+//        int[] upper = new int[totalEntries];
+//        Arrays.fill(upper, 256);
+//        INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[]{1, CHANNELS, HEIGHT, WIDTH});
+        // From DL4J beta7
+        INDArray combination = createCombineImageWithRandomPixels();
         combination.muli(NOISE_RATION).addi(currentContentImage.dup().muli(1 - NOISE_RATION)); // Should dup be used here? Might be faster to remove, if that is ok
         scaler.transform(combination);
         return combination;
     }
 
+    private static INDArray createCombineImageWithRandomPixels() {
+        int totalEntries = CHANNELS * HEIGHT * WIDTH;
+        double[] result = new double[totalEntries];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = ThreadLocalRandom.current().nextDouble(-20, 20);
+        }
+        return Nd4j.create(result, new int[]{1, CHANNELS, HEIGHT, WIDTH});
+    }    
+    
     /**
      * Load image from disk
      * @param loader Image loader
@@ -374,7 +390,8 @@ public class NeuralStyleTransfer {
 
         for (int i = startFrom; i > 0; i--) {
             Layer layer = vgg16FineTune.getLayer(ALL_LAYERS[i]);
-            // Added LayerWorkspaceMgr.noWorkspaces() in the upgrade to DL4J 1.0.0-beta 
+            layer.conf().getLayer().setIDropout(null);
+            // Added LayerWorkspaceMgr.noWorkspaces() in the upgrade to DL4J 1.0.0-beta7 
             dLdANext = layer.backpropGradient(dLdANext, LayerWorkspaceMgr.noWorkspaces()).getSecond();
         }
         return dLdANext;
@@ -481,7 +498,7 @@ public class NeuralStyleTransfer {
 
     private static ComputationGraph loadModel() throws IOException {
         @SuppressWarnings("rawtypes")
-		ZooModel zooModel = VGG16.builder().numClasses(ImageNetClassification.NUM_IMAGE_NET_CLASSES).build();
+		ZooModel zooModel = VGG16.builder().build();
         ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
         vgg16.initGradientsView();
         System.out.println(vgg16.summary());
