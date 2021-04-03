@@ -45,49 +45,54 @@ public class NeuralStyleTransfer {
     public static final int WIDTH = 224;
     public static final int CHANNELS = 3;
     public static final int IMAGE_SIZE = HEIGHT * WIDTH;
-    /**
-     * Values suggested by
-     * https://harishnarayanan.org/writing/artistic-style-transfer/
-     */
-    public static final double ALPHA = 0.025;
-    public static final double BETA = 5.0;
-    private static final String[] STYLE_LAYERS = new String[]{
-            "block1_conv1,0.2",
-            "block2_conv1,0.2",
-            "block3_conv1,0.2",
-            "block4_conv2,0.2",
-            "block5_conv1,0.2"
-    };
+
+
     private static final String[] ALL_LAYERS = new String[]{
-            "input_1",
-            "block1_conv1",
-            "block1_conv2",
-            "block1_pool",
-            "block2_conv1",
-            "block2_conv2",
-            "block2_pool",
-            "block3_conv1",
-            "block3_conv2",
-            "block3_conv3",
-            "block3_pool",
-            "block4_conv1",
-            "block4_conv2",
-            "block4_conv3",
-            "block4_pool",
-            "block5_conv1",
-            "block5_conv2",
-            "block5_conv3",
-            "block5_pool",
-            "flatten",
-            "fc1",
-            "fc2"
+        "input_1",
+        "block1_conv1",
+        "block1_conv2",
+        "block1_pool",
+        "block2_conv1",
+        "block2_conv2",
+        "block2_pool",
+        "block3_conv1",
+        "block3_conv2",
+        "block3_conv3",
+        "block3_pool",
+        "block4_conv1",
+        "block4_conv2",
+        "block4_conv3",
+        "block4_pool",
+        "block5_conv1",
+        "block5_conv2",
+        "block5_conv3",
+        "block5_pool",
+        "flatten",
+        "fc1",
+        "fc2"
+    };
+    private static final String[] STYLE_LAYERS = new String[]{
+        "block1_conv1,0.5",
+        "block2_conv1,1.0",
+        "block3_conv1,1.5",
+        "block4_conv2,3.0",
+        "block5_conv1,4.0"
     };
     private static final String CONTENT_LAYER_NAME = "block4_conv2";
+
     private static final double BETA_MOMENTUM = 0.8;
     private static final double BETA2_MOMENTUM = 0.999;
     private static final double EPSILON = 0.00000008;
-    private static final double LEARNING_RATE = 2;
 
+    /**
+     * Values suggested by
+     * https://harishnarayanan.org/writing/artistic-style-transfer/
+     * Other Values(5,100): http://www.chioka.in/tensorflow-implementation-neural-algorithm-of-artistic-style
+     */
+    private static final double ALPHA = 0.025;
+    private static final double BETA = 5.0;
+
+    private static final double LEARNING_RATE = 2;
     private static final double NOISE_RATION = 0.1;
     private static final int ITERATIONS = 1000;
     private static final String CONTENT_FILE = "data/imagematch/content2.jpg";
@@ -255,8 +260,8 @@ public class NeuralStyleTransfer {
     private static AdamUpdater createADAMUpdater() {
         AdamUpdater adamUpdater = new AdamUpdater(new Adam(LEARNING_RATE, BETA_MOMENTUM, BETA2_MOMENTUM, EPSILON));
         adamUpdater.setStateViewArray(Nd4j.zeros(1, 2 * CHANNELS * WIDTH * HEIGHT),
-                new long[]{1, CHANNELS, HEIGHT, WIDTH}, 'c',
-                true);
+            new long[]{1, CHANNELS, HEIGHT, WIDTH}, 'c',
+            true);
         return adamUpdater;
     }
 
@@ -269,7 +274,8 @@ public class NeuralStyleTransfer {
         // From DL4J beta7
         INDArray combination = createCombineImageWithRandomPixels();
         combination.muli(NOISE_RATION).addi(currentContentImage.dup().muli(1 - NOISE_RATION)); // Should dup be used here? Might be faster to remove, if that is ok
-        scaler.transform(combination);
+        // Remove this transform since it is not present in DL4J beta7
+        //scaler.transform(combination);
         return combination;
     }
 
@@ -498,7 +504,7 @@ public class NeuralStyleTransfer {
 
     private static ComputationGraph loadModel() throws IOException {
         @SuppressWarnings("rawtypes")
-		ZooModel zooModel = VGG16.builder().build();
+        ZooModel zooModel = VGG16.builder().build();
         ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
         vgg16.initGradientsView();
         System.out.println(vgg16.summary());
