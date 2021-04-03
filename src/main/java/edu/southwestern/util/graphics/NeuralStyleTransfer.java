@@ -202,8 +202,8 @@ public class NeuralStyleTransfer {
 
         for (int itr = 0; itr < iterations; itr++) {
             System.out.println("itr = " + itr);
-            Map<String, INDArray> activationsCombMap = vgg16FineTune.feedForward(combination, true);
-
+            INDArray[] input = new INDArray[] { combination };
+            Map<String, INDArray> activationsCombMap = vgg16FineTune.feedForward(input, true, false);
             INDArray styleBackProb = backPropagateStyles(vgg16FineTune, activationsStyleGramMap, activationsCombMap);
             INDArray backPropContent = backPropagateContent(vgg16FineTune, activationsContentMap, activationsCombMap);
             INDArray backPropAllValues = backPropContent.muli(ALPHA).addi(styleBackProb.muli(BETA));
