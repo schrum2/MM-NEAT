@@ -123,7 +123,7 @@ public class NeuralStyleTransfer {
     	NeuralStyleTransfer nst = new NeuralStyleTransfer();
     	nst.setContentImage(CONTENT_FILE);
     	nst.setStyleImage(STYLE_FILE);
-    	nst.transferStyle();
+    	nst.transferStyle(ITERATIONS,true);
     }
 
 	private ComputationGraph vgg16FineTune;
@@ -146,6 +146,17 @@ public class NeuralStyleTransfer {
 	private Map<String, INDArray> activationsStyleMap;
 	private HashMap<String, INDArray> activationsStyleGramMap;
     
+	public void setContentImage(BufferedImage contentImage) {
+		try {
+			content = loadImage(contentImage);
+		} catch (IOException e) {
+			System.out.println("Could not convert content image");
+			e.printStackTrace();
+			System.exit(1);
+		}
+        activationsContentMap = vgg16FineTune.feedForward(content, true);
+    }
+	
     public void setContentImage(String contentPath) {
     	try {
 			content = loadImage(contentPath);
@@ -155,6 +166,18 @@ public class NeuralStyleTransfer {
 			System.exit(1);
 		}
         activationsContentMap = vgg16FineTune.feedForward(content, true);
+    }
+    
+    public void setStyleImage(BufferedImage styleImage) {
+    	try {
+			style = loadImage(styleImage);
+		} catch (IOException e) {
+			System.out.println("Could not convert style image");
+			e.printStackTrace();
+			System.exit(1);
+		}
+        activationsStyleMap = vgg16FineTune.feedForward(style, true);
+        activationsStyleGramMap = buildStyleGramValues(activationsStyleMap);
     }
     
     public void setStyleImage(String stylePath) {
@@ -168,12 +191,24 @@ public class NeuralStyleTransfer {
         activationsStyleMap = vgg16FineTune.feedForward(style, true);
         activationsStyleGramMap = buildStyleGramValues(activationsStyleMap);
     }
+
+    public BufferedImage getTransferredResultForStyleImage(BufferedImage styleImage, int iterations, boolean save) {
+    	setStyleImage(styleImage);
+    	return transferStyle(iterations,save);
+    }
     
     // Load content and style image first
-    public void transferStyle() throws IOException {
+    public BufferedImage transferStyle(int iterations, boolean save) {
 
-        INDArray combination = createCombinationImage();
-        for (int iteration = 0; iteration < ITERATIONS; iteration++) {
+        INDArray combination = null;
+		try {
+			combination = createCombinationImage();
+		} catch (IOException e) {
+			System.out.println("Could not create content image.");
+			e.printStackTrace();
+			System.exit(1);
+		}
+        for (int iteration = 0; iteration < iterations; iteration++) {
             log.info("iteration  " + iteration);
 
             INDArray[] input = new INDArray[] { combination };
@@ -185,11 +220,17 @@ public class NeuralStyleTransfer {
             combination.subi(backPropAllValues);
 
             log.info("Total Loss: " + totalLoss(activationsStyleMap, activationsCombMap, activationsContentMap));
-            if (iteration % SAVE_IMAGE_CHECKPOINT == 0) {
-                saveImage(combination.dup(), iteration);
+            if (save && iteration % SAVE_IMAGE_CHECKPOINT == 0) {
+                try {
+					saveImage(combination.dup(), iteration);
+				} catch (IOException e) {
+					System.out.println("Failed so save on iteration "+iteration);
+					e.printStackTrace();
+				}
             }
         }
-
+        
+        return GraphicsUtil.imageFromINDArray(combination);
     }
 
     private INDArray backPropagateStyles(ComputationGraph vgg16FineTune, HashMap<String, INDArray> activationsStyleGramMap, Map<String, INDArray> activationsCombMap) {
@@ -241,6 +282,12 @@ public class NeuralStyleTransfer {
 
     private INDArray loadImage(String contentFile) throws IOException {
         INDArray content = LOADER.asMatrix(new File(dataLocalPath,contentFile));
+        IMAGE_PRE_PROCESSOR.transform(content);
+        return content;
+    }
+
+    private INDArray loadImage(BufferedImage contentImage) throws IOException {
+        INDArray content = LOADER.asMatrix(contentImage);
         IMAGE_PRE_PROCESSOR.transform(content);
         return content;
     }

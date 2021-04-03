@@ -49,6 +49,8 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 	protected JSlider styleIterations;	
 	protected JSlider styleWeight;	
 	
+	private NeuralStyleTransfer nst;
+	
 	public PictureStyleBreederTask() throws IllegalAccessException {
 		String contentImagePath = Parameters.parameters.stringParameter("matchImageFile");	
 		
@@ -57,8 +59,8 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 			PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
 		} else {
 			// Java/DL4J version of Neural Style Transfer
-			NeuralStyleTransfer.init();
-			NeuralStyleTransfer.provideContentImage(contentImagePath);
+			nst = new NeuralStyleTransfer();
+			nst.setContentImage(contentImagePath);
 		}
 		
 		styleIterations = new JSlider(JSlider.HORIZONTAL, MIN_STYLE_ITERATIONS, MAX_STYLE_ITERATIONS, Parameters.parameters.integerParameter("neuralStyleIterations"));
@@ -135,7 +137,7 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 				PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
 			} else {
 				// Change Java/DL4J neural style content image
-				NeuralStyleTransfer.provideContentImage(contentImagePath);
+				nst.setContentImage(contentImagePath);
 			}
 		}
 		super.resetButtons(hardReset);
@@ -153,7 +155,7 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 		// Content image with new style from CPPN image
 		BufferedImage comboImage = USE_PYTHON ? 
 				PythonNeuralStyleTransfer.sendStyleImage(styleImage) : // Python version
-				NeuralStyleTransfer.getTransferredResultForStyleImage(styleImage, Parameters.parameters.integerParameter("neuralStyleIterations")); // DL4J
+				nst.getTransferredResultForStyleImage(styleImage, Parameters.parameters.integerParameter("neuralStyleIterations"), false); // DL4J
 		return comboImage;
 	}
 
