@@ -280,8 +280,8 @@ public class NeuralStyleTransfer {
     }
 
     private INDArray createCombinationImage() throws IOException {
-        INDArray content = this.content.dup(); //LOADER.asMatrix(new File(CONTENT_FILE));
-        IMAGE_PRE_PROCESSOR.transform(content);
+        //INDArray content = this.content.dup(); //LOADER.asMatrix(new File(CONTENT_FILE));
+        //IMAGE_PRE_PROCESSOR.transform(content);
         INDArray combination = createCombineImageWithRandomPixels();
         combination.muli(NOISE_RATION).addi(content.muli(1 - NOISE_RATION));
         return combination;
