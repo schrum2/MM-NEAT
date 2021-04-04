@@ -32,6 +32,7 @@ public class TetrisAfterStateGeneratorTests {
 				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
 				"task:edu.southwestern.tasks.rlglue.tetris.TetrisTask", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent",
 				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.BertsekasTsitsiklisTetrisExtractor" });
+		TetrisState.forceResetBlocks();
 		MMNEAT.loadClasses();
 	}
 	

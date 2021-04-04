@@ -13,7 +13,6 @@ import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATVisualizationUtil;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.breve2D.Breve2DTask;
 import edu.southwestern.tasks.gridTorus.TorusPredPreyTask;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.Plot;
@@ -79,7 +78,7 @@ public class CommonTaskUtil {
 			// "Individual Info" panel is unnecessary, as panels for each
 			// evolved agents are already shown with monitorInputs with all
 			// of their sensors and information
-			if (CommonConstants.monitorInputs && !(MMNEAT.task instanceof TorusPredPreyTask) && !(MMNEAT.task instanceof Breve2DTask)) {
+			if (CommonConstants.monitorInputs && !(MMNEAT.task instanceof TorusPredPreyTask)) {
 				Offspring.fillInputs((TWEANNGenotype) genotype);
 			}
 		}

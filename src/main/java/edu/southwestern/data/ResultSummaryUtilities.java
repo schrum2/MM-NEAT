@@ -8,7 +8,6 @@ import edu.southwestern.tasks.GroupTask;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.MultiplePopulationTask;
 import edu.southwestern.tasks.Task;
-import edu.southwestern.tasks.mspacman.CooperativeMsPacManTask;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.Statistic;
 import edu.southwestern.util.stats.StatisticsUtilities;
@@ -305,7 +304,7 @@ public class ResultSummaryUtilities {
 		solutions = dropColumn(step1, 0);
 		Task task = MMNEAT.task;
 		int numObjectives = -1;
-		if(task instanceof LonerTask || task instanceof CooperativeMsPacManTask) {
+		if(task instanceof LonerTask) {
 			numObjectives = task.numObjectives();
 		} else if(task instanceof GroupTask) {
 			//TODO: eventually should be generalized across all populations
@@ -318,7 +317,7 @@ public class ResultSummaryUtilities {
 
 		// Adjust for possibly negative min scores
 		double[] mins = null;
-		if(task instanceof LonerTask || task instanceof CooperativeMsPacManTask) {
+		if(task instanceof LonerTask) {
 			mins = MMNEAT.task.minScores();
 		} else if(task instanceof GroupTask){
 			//TODO: this is unclean and potentially problematic because minScores does not really make sense

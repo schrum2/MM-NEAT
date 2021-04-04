@@ -82,6 +82,11 @@ public class TetrisState {
 		initPossibleBlocks();
 	}
 	
+	public static void forceResetBlocks() {
+		POSSIBLE_BLOCKS.clear();
+		initPossibleBlocks();
+	}
+	
 	public static void initPossibleBlocks() {
 		if(Parameters.parameters.booleanParameter("tetrisAllowLine")){
 			POSSIBLE_BLOCKS.add(TetrisPiece.makeLine());

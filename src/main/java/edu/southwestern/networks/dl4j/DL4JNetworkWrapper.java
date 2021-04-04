@@ -75,7 +75,7 @@ public class DL4JNetworkWrapper implements Network {
 	 */
 	@Override
 	public int numInputs() {
-		return org.nd4j.linalg.util.ArrayUtil.prod(inputShape);
+		return org.nd4j.common.util.ArrayUtil.prod(inputShape);
 	}
 
 	/**

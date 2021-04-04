@@ -3,8 +3,11 @@ args = commandArgs(trailingOnly=TRUE)
 
 setwd("../../zeldadungeonswallwaterrooms")
 print("Load data")
-types <- list("CPPN2GAN","CPPNThenDirect2GAN","Direct2GAN","Combined")
+types <- list("CPPN2GAN","CPPNThenDirect2GAN","Direct2GAN")
 
+allData = array()
+
+type <- 0
 for(typePrefix in types) {
   #typePrefix <- "CPPN2GAN"
   
@@ -76,7 +79,23 @@ waterBin <- data.frame(waterBin)
 roomBin <- rep(seq(0,maxNumRooms),10*10)
 roomBin <- data.frame(roomBin)
 
-allData <- data.frame(archive, wallBin, waterBin, roomBin)
+typeBin <- rep(type, 100*(maxNumRooms+1))
+typeBin <- data.frame(typeBin)
+
+temp <- data.frame(archive, typeBin, wallBin, waterBin, roomBin)
+if(exists("allData")) {
+  allData <- rbind(allData,temp)
+} else {
+  allData <- temp
+}
+
+type <- type + 1
+
+}
+
+### Remove the NA row
+
+allData <- allData[complete.cases(allData), ]
 
 ###############################################
 
@@ -88,20 +107,54 @@ library(stringr)
 dropUpperRightCorners <- filter(allData, wallBin + waterBin <= 9)
 # Bin for dungeons with 0 rooms doesn't actually have anything
 dropRooms0 <- filter(dropUpperRightCorners, roomBin > 0)
+allData <- dropRooms0
 
 print("Create plot and save to file")
 
-outputFile <- paste("ZeldaDungeonsWallWaterRooms-",typePrefix,"-AVG.",nameEnd,".heat.pdf",sep="")
+# Fill with data on overlaping bins
+overlapData = NULL
+numBins <- 1375
+for(i in 1:numBins) { # 1000 bins
+  newRow <- allData[i, ] # CPPN2GAN
+  ThenRow <- allData[i+numBins, ] #CPPNThenDirect2GAN
+  DRow <- allData[i+2*numBins, ] #Direct2GAN
+  
+  if(newRow$PercentTraversed > 0.0 & ThenRow$PercentTraversed > 0.0 & DRow$PercentTraversed > 0.0) {
+    newRow$PercentTraversed <- "All"
+  } else if(newRow$PercentTraversed > 0.0 & ThenRow$PercentTraversed > 0.0 & DRow$PercentTraversed == 0.0) {
+    newRow$PercentTraversed <- "No Direct2GAN"
+  } else if(newRow$PercentTraversed > 0.0 & ThenRow$PercentTraversed == 0.0 & DRow$PercentTraversed > 0.0) {
+    newRow$PercentTraversed <- "No CPPNThenDirect2GAN"
+  } else if(newRow$PercentTraversed == 0.0 & ThenRow$PercentTraversed > 0.0 & DRow$PercentTraversed > 0.0) {
+    newRow$PercentTraversed <- "No CPPN2GAN"
+  } else if(newRow$PercentTraversed > 0.0 & ThenRow$PercentTraversed == 0.0 & DRow$PercentTraversed == 0.0) {
+    newRow$PercentTraversed <- "Only CPPN2GAN"
+  } else if(newRow$PercentTraversed == 0.0 & ThenRow$PercentTraversed > 0.0 & DRow$PercentTraversed == 0.0) {
+    newRow$PercentTraversed <- "Only CPPNThenDirect2GAN"
+  } else if(newRow$PercentTraversed == 0.0 & ThenRow$PercentTraversed == 0.0 & DRow$PercentTraversed > 0.0) {
+    newRow$PercentTraversed <- "Only Direct2GAN"
+  } else {
+    newRow$PercentTraversed <- "None"
+  }
+  
+  overlapData <- rbind(overlapData, newRow)
+}  
+
+# Re-order the factors
+overlapData$PercentTraversed <- factor(overlapData$PercentTraversed, levels=c("All","No CPPNThenDirect2GAN","No CPPN2GAN","No Direct2GAN","Only CPPNThenDirect2GAN","Only CPPN2GAN","Only Direct2GAN","None"))
+
+outputFile <- paste("ZeldaDungeonsWallWaterRooms-DIFF.",nameEnd,".heat.pdf",sep="")
 #outputFile <- str_replace(args[1],"txt","heat.pdf")
 pdf(outputFile)  
-result <- ggplot(dropRooms0, aes(x=waterBin, y=wallBin, fill=PercentTraversed)) +
+result <- ggplot(overlapData, aes(x=waterBin, y=wallBin, fill=factor(PercentTraversed))) +
   geom_tile() +
   facet_wrap(~roomBin) +
   #scale_fill_gradient(low="white", high="orange") +
   scale_fill_viridis(discrete=FALSE) +
+  scale_fill_manual(values=c("#E69F00", "#EEE000","#56B4E9", "#B4E956", "#F040AA", "#999999")) +
   xlab("Water Percentage Bin") +
   ylab("Wall Percentage Bin") +
-  labs(fill = "Percent Rooms Traversed") +
+  labs(fill = "Occupied by: ") +
   # Puts room count in the plot for each bin
   geom_text(aes(label = ifelse(wallBin == 5 & waterBin == 4, roomBin, NA)), 
             nudge_x = 2.5,nudge_y = 3) +
@@ -110,7 +163,9 @@ result <- ggplot(dropRooms0, aes(x=waterBin, y=wallBin, fill=PercentTraversed)) 
         strip.text = element_blank(),
         legend.position="top",
         legend.direction = "horizontal",
-        legend.key.width = unit(70,"points"),
+        legend.key.width = unit(10,"points"),
+        legend.key.height = unit(10,"points"),
+        legend.text = element_text(size=10),
         panel.spacing.x=unit(0.001, "points"),
         panel.spacing.y=unit(0.001, "points"),
         axis.ticks = element_blank(),
@@ -121,4 +176,3 @@ dev.off()
 print(paste("Saved:",outputFile))
 print("Finished")
 
-}

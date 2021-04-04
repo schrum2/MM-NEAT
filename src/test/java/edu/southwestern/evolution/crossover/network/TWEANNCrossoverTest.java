@@ -45,7 +45,7 @@ public class TWEANNCrossoverTest {
 	public void test_Upper_Boundary() {
 		// crossExcessRate is maximized to 100%
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "connectToInputs:false",
-				"crossExcessRate:1.0", "mating:true" });
+				"crossExcessRate:1.0", "mating:true", "randomSeed:0" });
 		MMNEAT.loadClasses();
 		TWEANNGenotype m = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, true, 1, 1, 0);
 		for (int i = 0; i < NUM_MUTATION_ITERATIONS; i++) {// performs some

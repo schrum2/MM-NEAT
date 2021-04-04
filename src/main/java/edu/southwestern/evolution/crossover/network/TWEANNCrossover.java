@@ -1,7 +1,6 @@
 package edu.southwestern.evolution.crossover.network;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.crossover.Crossover;
@@ -82,13 +81,9 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 		ArrayList<ArrayList<LinkGene>> alignedLinks = alignLinkGenes(((TWEANNGenotype) toModify).links, tr.links);
 		ArrayList<ArrayList<LinkGene>> crossedLinks = cross(alignedLinks.get(0), alignedLinks.get(1));// crosses links
 		// Assign new lists
-		int[] originalAssociations = Arrays.copyOf(tm.moduleAssociations, tm.moduleAssociations.length);
 		tm.nodes = crossedNodes.get(0);
 		tm.links = crossedLinks.get(0);
 		tm.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
-		if (CommonConstants.hierarchicalMultitask) {
-			tm.crossModuleAssociations(originalAssociations, tr.moduleAssociations);
-		}
 
 		// Rather than actually create a new network, I can simply move 
 		// the node and link genes into the existing network genotype.
@@ -96,9 +91,6 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 		tr.nodes = crossedNodes.get(1);
 		tr.links = crossedLinks.get(1);              
 		tr.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
-		if (CommonConstants.hierarchicalMultitask) {
-			tr.crossModuleAssociations(tr.moduleAssociations, originalAssociations);
-		}
 		// These checks/modifications only matter if genes can be frozen,
 		// but smaller genotypes cannot be frozen.
 		if(!TWEANNGenotype.smallerGenotypes) {

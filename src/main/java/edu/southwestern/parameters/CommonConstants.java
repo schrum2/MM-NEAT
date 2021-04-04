@@ -32,12 +32,10 @@ public class CommonConstants {
 	public static boolean cullModeMutations;
 	public static boolean deleteLeastUsed;
 	public static boolean eliminateImpossibleDirections;
-	public static boolean ensembleModeMutation;
 	public static boolean evalReport;
 	public static boolean exploreWeightsOfNewStructure;
 	public static boolean freezeBeforeModeMutation;
 	public static boolean fs;
-	public static boolean hierarchicalMultitask;
 	public static boolean hyperNEAT;
 	public static boolean hybrID;
 	public static boolean imprisonedWhileEdible;
@@ -46,7 +44,6 @@ public class CommonConstants {
 	public static boolean evolveHyperNEATBias;
 	public static boolean logChildScores;
 	public static boolean meltAfterCrossover;
-	public static boolean minimalSubnetExecution;
 	public static boolean minimizeSpliceImpact;
 	public static boolean mmpActivationId;
 	public static boolean monitorInputs;
@@ -66,7 +63,6 @@ public class CommonConstants {
 	public static boolean replayPacman;
 	public static boolean requireFitnessDifferenceForChange;
 	public static boolean showNetworks;
-	public static boolean showSubnetAnalysis;
 	public static boolean softmaxModeSelection;
 	public static boolean softmaxSelection;
 	public static boolean timedPacman;
@@ -76,7 +72,6 @@ public class CommonConstants {
 	public static boolean tugObjectiveModeLinkage;
 	public static boolean tugObjectiveUsageLinkage;
 	public static boolean tugResetsToPreviousGoals;
-	public static boolean ucb1Evaluation;
 	public static boolean viewModePreference;
 	public static boolean watch;
 	public static boolean weakenBeforeModeMutation;
@@ -144,12 +139,10 @@ public class CommonConstants {
 		cullModeMutations = Parameters.parameters.booleanParameter("cullModeMutations");
 		deleteLeastUsed = Parameters.parameters.booleanParameter("deleteLeastUsed");
 		eliminateImpossibleDirections = Parameters.parameters.booleanParameter("eliminateImpossibleDirections");
-		ensembleModeMutation = Parameters.parameters.booleanParameter("ensembleModeMutation");
 		evalReport = Parameters.parameters.booleanParameter("evalReport");
 		exploreWeightsOfNewStructure = Parameters.parameters.booleanParameter("exploreWeightsOfNewStructure");
 		freezeBeforeModeMutation = Parameters.parameters.booleanParameter("freezeBeforeModeMutation");
 		fs = Parameters.parameters.booleanParameter("fs");
-		hierarchicalMultitask = Parameters.parameters.booleanParameter("hierarchicalMultitask");
 		hyperNEAT = Parameters.parameters.booleanParameter("hyperNEAT");
 		hybrID = Parameters.parameters.booleanParameter("hybrID");
 		imprisonedWhileEdible = Parameters.parameters.booleanParameter("imprisonedWhileEdible");
@@ -158,7 +151,6 @@ public class CommonConstants {
 		evolveHyperNEATBias = Parameters.parameters.booleanParameter("evolveHyperNEATBias");
 		logChildScores = Parameters.parameters.booleanParameter("logChildScores");
 		meltAfterCrossover = Parameters.parameters.booleanParameter("meltAfterCrossover");
-		minimalSubnetExecution = Parameters.parameters.booleanParameter("minimalSubnetExecution");
 		minimizeSpliceImpact = Parameters.parameters.booleanParameter("minimizeSpliceImpact");
 		mmpActivationId = Parameters.parameters.booleanParameter("mmpActivationId");
 		monitorInputs = Parameters.parameters.booleanParameter("monitorInputs");
@@ -178,7 +170,6 @@ public class CommonConstants {
 		replayPacman = Parameters.parameters.booleanParameter("replayPacman");
 		requireFitnessDifferenceForChange = Parameters.parameters.booleanParameter("requireFitnessDifferenceForChange");
 		showNetworks = Parameters.parameters.booleanParameter("showNetworks");
-		showSubnetAnalysis = Parameters.parameters.booleanParameter("showSubnetAnalysis");
 		softmaxModeSelection = Parameters.parameters.booleanParameter("softmaxModeSelection");
 		softmaxSelection = Parameters.parameters.booleanParameter("softmaxSelection");
 		timedPacman = Parameters.parameters.booleanParameter("timedPacman");
@@ -188,7 +179,6 @@ public class CommonConstants {
 		tugObjectiveModeLinkage = Parameters.parameters.booleanParameter("tugObjectiveModeLinkage");
 		tugObjectiveUsageLinkage = Parameters.parameters.booleanParameter("tugObjectiveUsageLinkage");
 		tugResetsToPreviousGoals = Parameters.parameters.booleanParameter("tugResetsToPreviousGoals");
-		ucb1Evaluation = Parameters.parameters.booleanParameter("ucb1Evaluation");
 		viewModePreference = Parameters.parameters.booleanParameter("viewModePreference");
 		watch = Parameters.parameters.booleanParameter("watch");
 		weakenBeforeModeMutation = Parameters.parameters.booleanParameter("weakenBeforeModeMutation");
@@ -234,10 +224,6 @@ public class CommonConstants {
 			trials++;
 			trials = Math.min(trials, maxTrials);
 			Parameters.parameters.setInteger("trials", trials);
-			if (CommonConstants.ucb1Evaluation) {
-				Parameters.parameters.setInteger("evaluationBudget",
-						Parameters.parameters.integerParameter("evaluationBudget") + 1);
-			}
 			Parameters.parameters.saveParameters();
 		}
 	}

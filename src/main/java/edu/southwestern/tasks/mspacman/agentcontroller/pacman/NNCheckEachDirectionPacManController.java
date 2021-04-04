@@ -60,7 +60,6 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
 	private final int[] chosenDirectionJunctionThreatModeUsageCounts;
 	private int totalUsage = 0;
 	private final boolean multitask;
-	private final boolean ensemble;
 	private static DrawingPanel[] panels = null;
 	private final VariableDirectionBlock safe;
 	private int scentMode = -1;
@@ -94,13 +93,8 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
 		chosenDirectionJunctionEdibleModeUsageCounts = new int[directionalNetworks[0].numModules()];
 		chosenDirectionThreatModeUsageCounts = new int[directionalNetworks[0].numModules()];
 		chosenDirectionJunctionThreatModeUsageCounts = new int[directionalNetworks[0].numModules()];
-		if (MMNEAT.ensembleArbitrator == null) {
-			multitask = directionalNetworks[0].isMultitask();
-			ensemble = false;
-		} else {
-			multitask = false;
-			ensemble = true;
-		}
+		multitask = directionalNetworks[0].isMultitask();
+		
 		if (CommonConstants.monitorInputs) {
 			TWEANN.inputPanel.dispose();
 			// Dispose of existing panels
@@ -153,8 +147,6 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
 			ms.giveGame(gf);
 			mode = ms.mode();
 		}
-		// Used by ensemble arbitrators: Assume one output per mode
-		double[][] fullPreferences = new double[this.directionalNetworks[0].numOutputs()][neighbors.length];
 		for (int i = 0; i < neighbors.length; i++) {
 			if (neighbors[i] != -1) {
 				((VariableDirectionBlockLoadedInputOutputMediator) this.inputMediator).setDirection(i);
@@ -185,20 +177,7 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
 				// End eval tracking
 				assert outputs.length == 1 : "Network should have a lone output for the utility of the move in the given direction";
 				preferences[i] = outputs[0];
-				if (ensemble) {
-					for (int j = 0; j < fullPreferences.length; j++) {
-						// Get preference from each mode (each consists of only
-						// one index: 0)
-						fullPreferences[j][i] = this.directionalNetworks[i].moduleOutput(j)[0];
-					}
-				}
 			} else {
-				if (ensemble) {
-					for (int j = 0; j < fullPreferences.length; j++) {
-						fullPreferences[j][i] = -1; // Direction is not viable
-													// in any mode
-					}
-				}
 				if (panels != null) {
 					TWEANN.inputPanel = panels[i];
 				}
@@ -226,26 +205,9 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
 				for (int i = 0; i < safeDirections.length; i++) {
 					if (!safeDirections[i]) {
 						preferences[i] = -1;
-						if (ensemble) {
-							for (int j = 0; j < fullPreferences.length; j++) {
-								fullPreferences[j][i] = -1; // Direction is not
-															// viable in any
-															// mode
-							}
-						}
 					}
 				}
-				// IDEA: Save camps based on this?
-				// } else if(CommonConstants.watch) {
-				// System.out.println("None are safe");
-				// Executor.hold = true;
 			}
-		}
-
-		if (ensemble) {
-			// System.out.println("Change: " + Arrays.toString(preferences));
-			preferences = MMNEAT.ensembleArbitrator.newDirectionalPreferences(gf, fullPreferences);
-			// System.out.println("to " + Arrays.toString(preferences));
 		}
 
 		int chosenMode = directionalNetworks[directionFromPreferences(preferences)].lastModule();

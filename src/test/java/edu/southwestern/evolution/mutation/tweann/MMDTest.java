@@ -3,12 +3,12 @@
  */
 package edu.southwestern.evolution.mutation.tweann;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assert;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
@@ -46,7 +46,11 @@ public class MMDTest {
 		tg2 = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, 0);
 		MMNEAT.genotype = tg1.copy();
 		EvolutionaryHistory.initArchetype(0);
+		
+		// These mutations change the structure, but should not add modules
+		Parameters.parameters.setDouble("mmdRate", 0);
 		mutate(tg1, tg2);
+		Parameters.parameters.setDouble("mmdRate", 1.0); // Back to 1.0 for the following tests
 	}
 
 	@After
@@ -72,6 +76,7 @@ public class MMDTest {
 		// test 1
 		tg1.moduleDuplication();
 		TWEANN t1 = tg1.getPhenotype();
+		
 		// This loop confirms that the new mode is a duplicate of the previous
 		for (int i = 0; i < SIZE; i++) {
 			double[] in = RandomNumbers.randomArray(t1.numInputs());

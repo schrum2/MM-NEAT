@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
-import org.junit.Test;
-
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
@@ -23,7 +21,7 @@ public class NormalizedMemoryNodeTest {
 		nodes.add(TWEANNGenotype.newNodeGene(ActivationFunctions.FTYPE_ID, TWEANN.Node.NTYPE_OUTPUT, -2, false, 0, true));
 		ArrayList<LinkGene> links = new ArrayList<LinkGene>();
 		links.add(TWEANNGenotype.newLinkGene(-1, -2, 1, 3, false));
-		TWEANNGenotype tweanng = new TWEANNGenotype(nodes, links, 1, false, false, 0);
+		TWEANNGenotype tweanng = new TWEANNGenotype(nodes, links, 1, false, 0);
 		TWEANN tweann = new TWEANN(tweanng);
 		ArrayList<Double> inputsSoFar = new ArrayList<Double>();
 		ArrayList<Double> inputActivationsSoFar = new ArrayList<Double>();

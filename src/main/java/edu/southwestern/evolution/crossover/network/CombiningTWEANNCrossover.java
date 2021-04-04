@@ -423,7 +423,7 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 		}
 		// The TWEANN returned is the same as the one modified
 		TWEANNGenotype combinedCopy = new TWEANNGenotype(combinedNodesCopy, combinedLinksCopy, neuronsPerMode,
-				multitask, false, 0);
+				multitask, 0);
 		combinedCopy.calculateNumModules();
 		// System.out.println("Combining Crossover done: mod " +
 		// tToModify.getId() + " and copy " + combinedCopy.getId());

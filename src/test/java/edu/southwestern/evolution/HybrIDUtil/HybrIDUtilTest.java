@@ -19,7 +19,7 @@ public class HybrIDUtilTest {
 		MMNEAT.clearClasses();
 		Parameters.parameters = null;
 		final int PARENT_POPULATION = 10;
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", "mu:"+PARENT_POPULATION,
+		Parameters.initializeParameterCollections(new String[] { "io:false", "randomSeed:0" , "netio:false", "recurrency:false", "hyperNEAT:true", "mu:"+PARENT_POPULATION,
 				"task:edu.southwestern.networks.hyperneat.HyperNEATDummyTask","linkExpressionThreshold:-1","hybrID:true","genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype","evolveHyperNEATBias:true"});
 		TWEANNGenotype.smallerGenotypes = false;
 		MMNEAT.loadClasses();
