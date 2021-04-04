@@ -107,10 +107,15 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 				double binScore = result.behaviorIndexScore(i);
 				if(elite == null || binScore > elite.behaviorIndexScore(i)) {
 					if(binScore > pictureInnovationSaveThreshold) {
-						String fileName = String.format("%7.5f", binScore) + binLabels.get(i) + individual.getId() + ".gif";
+						String fileName = String.format("%7.5f", binScore) + binLabels.get(i) + individual.getId() + ".gif";						
+						String archivePath = archive.getArchiveDirectory();
+						File archiveDir = new File(archivePath);
+						if(!archiveDir.exists()) archiveDir.mkdir();
 						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(i);
+						File bin = new File(binPath);
+						if(!bin.exists()) bin.mkdir();
 						String fullName = binPath + File.separator + fileName;
-						System.out.println(fullName);
+						System.out.println(fullName);						
 						// Have to get the full animation sequence, not just three selected frames
 						BufferedImage[] allImages = ThreeDimensionalUtil.imagesFromTriangles(tris, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, 0, (int) (AnimationUtil.FRAMES_PER_SEC * 3), heading, pitch, evolvedColor, vertical);
 						try {
