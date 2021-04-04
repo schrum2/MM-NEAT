@@ -11,6 +11,9 @@
   <url>http://maven.apache.org</url>
 
   <properties>
+  
+        <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
+  
     <java.version>1.8</java.version>
   
         <unirest.version>1.4.9</unirest.version>
@@ -26,7 +29,7 @@
         <ale.version>0.6.0</ale.version>
         <!-- Does some other DL4J dependency import the correct version of this? -->
         <!-- <slf4j.version>1.7.12</slf4j.version> -->
-        <logback.version>1.1.2</logback.version>
+        <logback.version>1.2.3</logback.version>
         <lombok.version>1.16.16</lombok.version>
   		<jcommon.version>1.0.23</jcommon.version>
     
@@ -155,6 +158,7 @@
 
 <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
 <!-- Needed for DL4J? Why is it not brought in as dependency? -->
+<!--  
 <dependency>
     <groupId>commons-codec</groupId>
     <artifactId>commons-codec</artifactId>
@@ -167,6 +171,7 @@
             <artifactId>jcommon</artifactId>
             <version>${jcommon.version}</version>
         </dependency>
+-->
   
     <dependency>
 	  <groupId>com.github.trystan</groupId>
@@ -294,12 +299,13 @@
 	
 	<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
 	<!-- Also for RL Glue -->
+	<!--  
 	<dependency>
     	<groupId>commons-codec</groupId>
     	<artifactId>commons-codec</artifactId>
     	<version>1.3</version>
 	</dependency>
-	
+	-->
 	<!--  sound processing library -->
 	<dependency>
     	<groupId>javazoom</groupId>
