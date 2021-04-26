@@ -38,6 +38,8 @@
         <nd4j.backend>nd4j-native</nd4j.backend>
         <!-- <nd4j.backend>nd4j-cuda-8.0-platform</nd4j.backend> -->
 
+		<jackson.version>2.11.1</jackson.version>
+
 		<!-- Change these below? -->
         <datavec.version>1.0.0-beta7</datavec.version>
         <arbiter.version>1.0.0-beta7</arbiter.version>
@@ -147,6 +149,19 @@
     </dependencyManagement>
 
   <dependencies>
+ 
+<!-- To replace wox -->
+<dependency>
+    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    <artifactId>jackson-dataformat-xml</artifactId>
+    <version>${jackson.version}</version>
+</dependency>
+
+<dependency>
+    <groupId>com.fasterxml.jackson.module</groupId>
+    <artifactId>jackson-module-paranamer</artifactId>
+    <version>${jackson.version}</version>
+</dependency>
   
 <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 <!-- Needed for DL4J? Why is it not brought in as dependency? -->
