@@ -41,7 +41,7 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.XMLFilter;
 import edu.southwestern.util.random.RandomNumbers;
-import wox.serial.Easy;
+import jackson.serial.Easy;
 
 /**
  * Several utility classes dealing with the creation
@@ -181,7 +181,7 @@ public class PopulationUtil {
 		}
 		// save all of the best objectives
 		for (int j = 0; j < bestScores.size(); j++) {
-			Easy.save(bestScores.get(j), bestDir + "/" + filePrefix + "keptGenotypesIn" + j + ".xml");
+			Easy.save(bestScores.get(j), bestDir + "/" + filePrefix + "keptGenotypesIn" + j + ".json");
 			FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "genotypes" + j + ".txt", bestScores.get(j).individual.toString());
 		}
 	}
@@ -209,7 +209,7 @@ public class PopulationUtil {
 		}
 		// save all of the best objectives
 		for (int j = 0; j < bestObjectives.length; j++) {
-			Easy.save(bestGenotypes[j], bestDir + "/" + filePrefix + "bestIn" + j + ".xml");
+			Easy.save(bestGenotypes[j], bestDir + "/" + filePrefix + "bestIn" + j + ".json");
 			FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "score" + j + ".txt", bestScores[j].toString());
 		}
 	}
@@ -461,13 +461,9 @@ public class PopulationUtil {
 	@SuppressWarnings("unchecked")
 	public static <T> Genotype<T> extractGenotype(String file) {
 		System.out.print("Load File: \"" + file + "\"");
-		Object loaded = Easy.load(file);
-		Genotype<T> individual = null;
-		if (loaded instanceof Genotype) {
-			individual = (Genotype<T>) loaded;
-			System.out.println(", ID = " + individual.getId());
-			assert !(loaded instanceof HyperNEATCPPNAndSubstrateArchitectureGenotype) || ((HyperNEATCPPNAndSubstrateArchitectureGenotype) individual).allSubstrateConnectivity.get(0).sourceSubstrateName != null;
-		}
+		Genotype<T> individual = Easy.load(file, Genotype.class);
+		System.out.println(", ID = " + individual.getId());
+		assert !(individual instanceof HyperNEATCPPNAndSubstrateArchitectureGenotype) || ((HyperNEATCPPNAndSubstrateArchitectureGenotype) individual).allSubstrateConnectivity.get(0).sourceSubstrateName != null;
 		return individual;
 	}
 

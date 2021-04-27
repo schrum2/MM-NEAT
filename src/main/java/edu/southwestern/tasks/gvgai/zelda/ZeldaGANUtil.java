@@ -16,7 +16,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import wox.serial.Easy;
+import jackson.serial.Easy;
 
 public class ZeldaGANUtil {
 
@@ -111,7 +111,7 @@ public class ZeldaGANUtil {
 		
 		for(File f: xmlGenotypes) {
 			@SuppressWarnings("unchecked")
-			Score<ArrayList<Double>> s = (Score<ArrayList<Double>>) Easy.load(f.getAbsolutePath());
+			Score<ArrayList<Double>> s = Easy.load(f.getAbsolutePath(), Score.class);
 			ArrayList<Double> list = s.individual.getPhenotype();
 			double[] latent = ArrayUtil.doubleArrayFromList(list);
 			List<List<List<Integer>>> listLevel = getRoomListRepresentationFromGAN(latent);

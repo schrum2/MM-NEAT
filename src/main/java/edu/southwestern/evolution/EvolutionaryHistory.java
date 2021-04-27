@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import wox.serial.Easy;
+import jackson.serial.Easy;
 
 /**
  * Stores and tracks information about a population of networks. Uses an
@@ -76,7 +76,7 @@ public class EvolutionaryHistory {
 		// loadedNetworks hashmap
 		if (!loadedNetworks.containsKey(xml)) {
 			System.out.println("Added to subnetworks: " + xml);
-			loadedNetworks.put(xml, (Genotype<T>) Easy.load(xml));
+			loadedNetworks.put(xml, Easy.load(xml,Genotype.class));
 		}
 		return loadedNetworks.get(xml).copy();
 	}
@@ -232,7 +232,7 @@ public class EvolutionaryHistory {
 			// The loaded archetype might not simply be from a resume, the seed
 			// could be from elsewhere
 			System.out.println("Loading archetype: " + loadedArchetype);
-			archetypes[populationIndex] = (ArrayList<NodeGene>) Easy.load(loadedArchetype);
+			archetypes[populationIndex] = Easy.load(loadedArchetype,ArrayList.class);
 			String combiningCrossoverFile = Parameters.parameters.stringParameter("combiningCrossoverMapping");
 			// implement for multimodal behavior. Allows for combining of two separate subpopulations to create a multimodal network
 			if (!combiningCrossoverFile.isEmpty()) {

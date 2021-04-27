@@ -116,7 +116,7 @@ import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.Statistic;
 import oldpacman.Executor;
-import wox.serial.Easy;
+import jackson.serial.Easy;
 
 /**
  * Modular Multiobjective Neuro-Evolution of Augmenting Topologies.
@@ -663,7 +663,7 @@ public class MMNEAT {
 			} else {
 				// Copy assures a fresh genotype id
 				System.out.println("Loading seed genotype: " + seedGenotype);
-				genotype = ((Genotype) Easy.load(seedGenotype)).copy();
+				genotype = (Easy.load(seedGenotype, Genotype.class)).copy();
 				// System.out.println(genotype);
 				seedExample = true;
 			}
