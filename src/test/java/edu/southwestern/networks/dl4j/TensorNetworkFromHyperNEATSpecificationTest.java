@@ -21,9 +21,9 @@ import edu.southwestern.util.random.RandomNumbers;
 
 public class TensorNetworkFromHyperNEATSpecificationTest {
 
-	// Disabled this test because it sometimes fails, but isn't really worth the effort to fix
-	//@Test
+	@Test
 	public void testFillWeightsFromHyperNEATNetworkAllReLU() {
+		RandomNumbers.reset(5); // Just some fixed seed
 		HyperNEATTetrisTask.hardSubstrateReset();
 		EvolutionaryHistory.archetypes = null; // Force reset
 		MMNEAT.clearClasses();
