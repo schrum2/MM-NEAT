@@ -9,8 +9,8 @@ import java.io.InputStreamReader;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.module.paranamer.ParanamerModule;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
 /**
  * This used to use the wox serialization library, but that library
@@ -20,10 +20,10 @@ import com.fasterxml.jackson.module.paranamer.ParanamerModule;
 public class Easy {
     public static void save(Object ob, String filename) {
         try {
-        	XmlMapper xmlMapper = new XmlMapper();
-        	xmlMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
-        	xmlMapper.registerModule(new ParanamerModule());
-            xmlMapper.writeValue(new File(filename), ob);
+        	ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JaxbAnnotationModule());
+            objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+            objectMapper.writeValue(new File(filename), ob);
             System.out.println("Saved object to " + filename);
         } catch (Exception e) {
             e.printStackTrace();
@@ -33,12 +33,12 @@ public class Easy {
     public static <T> T load(String filename, Class<T> c) {
         try {
             File file = new File(filename);
-            XmlMapper xmlMapper = new XmlMapper();
-            xmlMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
-            xmlMapper.registerModule(new ParanamerModule());
-            String xml = inputStreamToString(new FileInputStream(file));
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
+            objectMapper.registerModule(new JaxbAnnotationModule());
+            String json = inputStreamToString(new FileInputStream(file));
             //System.out.println(xml);
-            T value = xmlMapper.readValue(xml, c);
+            T value = objectMapper.readValue(json, c);
             return value;
         } catch (Exception e) {
             e.printStackTrace();

@@ -12,7 +12,10 @@ public class TestObject  {
 
     public static class Inner {
         int inx;
-
+        
+        // Jackson needs empty constructor
+        private Inner() { }
+        
         public Inner(int inx) {
             this.inx = inx;
         }
@@ -37,12 +40,12 @@ public class TestObject  {
 
     public TestObject(int x) {
         this.x = x;
-        objects = new Object[]{ this };
+        //objects = new Object[]{ this }; // Jackson cannot handle this self reference loop
         alist = new ArrayList();
-        alist.add(this);
+        //alist.add(this);
         alist.add("Hello");
         alist.add(new Integer(23));
-        // alist.set(12, "Twelve");
+        // alist.set(12, "Twelve"); // Jackson cannot handle this self reference loop
         inner = new Inner(99);
     }
 
