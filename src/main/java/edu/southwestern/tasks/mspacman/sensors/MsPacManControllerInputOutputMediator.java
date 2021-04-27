@@ -1,6 +1,5 @@
 package edu.southwestern.tasks.mspacman.sensors;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.data.NodeCollection;
@@ -17,7 +16,6 @@ public abstract class MsPacManControllerInputOutputMediator {
 
 	protected final int absence;
 	public static NodeCollection escapeNodes = null;
-	private final boolean evolveNetworkSelector;
 	private final boolean externalPreferenceNeurons;
 
 	/**
@@ -34,7 +32,6 @@ public abstract class MsPacManControllerInputOutputMediator {
 		}
 		externalPreferenceNeurons = Parameters.parameters.booleanParameter("externalPreferenceNeurons");
 		absence = Parameters.parameters.booleanParameter("absenceNegative") ? -1 : 0;
-		evolveNetworkSelector = Parameters.parameters.booleanParameter("evolveNetworkSelector");
 	}
 
 	/**
@@ -78,9 +75,7 @@ public abstract class MsPacManControllerInputOutputMediator {
 	 * @return output labels
 	 */
 	public String[] outputLabels() {
-		if (evolveNetworkSelector) {
-			return new String[] { "Ghost Network", "Pill Network" };
-		} else if (CommonConstants.relativePacmanDirections) {
+		if (CommonConstants.relativePacmanDirections) {
 			return new String[] { "Forward", "Turn Right", "Reverse", "Turn Left" };
 		} else {
 			return new String[] { "Up", "Right", "Down", "Left" };
@@ -94,7 +89,7 @@ public abstract class MsPacManControllerInputOutputMediator {
 	 */
 	public int numOut() {
 		// 2 is for turn/thrust
-		return evolveNetworkSelector ? MMNEAT.modesToTrack : GameFacade.NUM_DIRS + (externalPreferenceNeurons ? 1 : 0);
+		return GameFacade.NUM_DIRS + (externalPreferenceNeurons ? 1 : 0);
 	}
 
 	/**

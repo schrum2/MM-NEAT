@@ -65,12 +65,12 @@ public class LodeRunnerState extends State<LodeRunnerState.LodeRunnerAction>{
 		 */
 		@Override
 		public double h(LodeRunnerState s) {
-			int maxDistance = 0;
+			double maxDistance = 0;
 			HashSet<Point> goldLeft = s.goldLeft;
 			for(Point p: goldLeft) {
 				int xDistance = Math.abs(s.currentX - p.x);
 				int yDistance = Math.abs(s.currentY - p.y);
-				Math.max(maxDistance, (xDistance+yDistance));
+				maxDistance = Math.max(maxDistance, (xDistance+yDistance));
 			}
 			return maxDistance;
 		}

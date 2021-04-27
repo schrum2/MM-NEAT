@@ -19,7 +19,6 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.Task;
-import edu.southwestern.tasks.mspacman.CooperativeMsPacManTask;
 import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.tasks.mspacman.init.MsPacManInitialization;
 import edu.southwestern.tasks.mspacman.multitask.DangerousAreaModeSelector;
@@ -77,15 +76,14 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		this.lambda = lambda;
 		this.generation = Parameters.parameters.integerParameter("lastSavedGeneration");
 		writeOutput = Parameters.parameters.booleanParameter("io");
-		msPacMan = task instanceof MsPacManTask || task instanceof CooperativeMsPacManTask;
+		msPacMan = task instanceof MsPacManTask;
 
 		if (writeOutput && io) {
 			parentLog = new FitnessLog<T>("parents");
 			if (CommonConstants.logChildScores) {
 				childLog = new FitnessLog<T>("child");
 			}
-			if (task instanceof MsPacManTask && (MMNEAT.modesToTrack > 1 || TWEANN.preferenceNeuron()
-					|| Parameters.parameters.booleanParameter("ensembleModeMutation"))) {
+			if (task instanceof MsPacManTask && (MMNEAT.modesToTrack > 1 || TWEANN.preferenceNeuron())) {
 				ArrayList<String> labels = new ArrayList<String>();
 				labels.add("Max Modes of Best");
 				labels.add("Min Modes of Best");

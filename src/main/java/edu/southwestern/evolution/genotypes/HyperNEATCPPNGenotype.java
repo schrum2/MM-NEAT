@@ -62,7 +62,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @param archetypeIndex archetype to use
 	 */
 	public HyperNEATCPPNGenotype(ArrayList<NodeGene> nodes, ArrayList<LinkGene> links, int neuronsPerModule, int archetypeIndex) {
-		super(nodes, links, neuronsPerModule, false, false, archetypeIndex);
+		super(nodes, links, neuronsPerModule, false, archetypeIndex);
 	}	
 
 	/**
@@ -79,7 +79,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *            number of output neurons
 	 */
 	public HyperNEATCPPNGenotype(int archetypeIndex, ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons) {
-		super(genes, links, outputNeurons, false, false, archetypeIndex);
+		super(genes, links, outputNeurons, false, archetypeIndex);
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		// May need to fix this down the line.
 		// An archetype index of -1 is used. Hopefully this won't cause
 		// problems, since the archetype is only needed for mutations and crossover.
-		TWEANNGenotype tg = new TWEANNGenotype(newNodes,newLinks, phenotypeOutputs, false, false, -1);
+		TWEANNGenotype tg = new TWEANNGenotype(newNodes,newLinks, phenotypeOutputs, false, -1);
 		return tg;
 	}
 	

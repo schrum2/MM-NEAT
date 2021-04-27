@@ -154,8 +154,9 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 						.build());
 
 		MultiLayerConfiguration conf = listBuilder
-				.backprop(true)
-				.pretrain(false)
+				// Removed in the upgrade to DL4J beta7. Do we not need this anymore?
+				//.backprop(true)
+				//.pretrain(false)
 				.setInputType(InputType.convolutional(
 						inputShape[DL4JNetworkWrapper.INDEX_INPUT_HEIGHT], 
 						inputShape[DL4JNetworkWrapper.INDEX_INPUT_WIDTH], 
@@ -445,8 +446,9 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 						.build());
 
 		MultiLayerConfiguration conf = listBuilder
-				.backprop(true)
-				.pretrain(false)
+				// Removed in the upgrade to DL4J beta7. Do we not need this anymore?
+				//.backprop(true)
+				//.pretrain(false)
 				.setInputType(InputType.convolutional(20, 10, 2))
 				.build();
 

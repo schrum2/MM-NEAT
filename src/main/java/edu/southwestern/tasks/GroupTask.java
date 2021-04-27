@@ -6,23 +6,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import wox.serial.Easy;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.lineage.Offspring;
-import edu.southwestern.evolution.mulambda.CoevolutionMuLambda;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.gridTorus.GroupTorusPredPreyTask;
-import edu.southwestern.tasks.mspacman.CooperativeMsPacManTask;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.random.RandomNumbers;
+import wox.serial.Easy;
 
 /**
  * Task involving multiple individuals taken from separate populations.
@@ -133,13 +131,6 @@ public abstract class GroupTask implements MultiplePopulationTask {
 		Score[][] rawScores = new Score[pops][popSize];
 		// Evaluate all
 		int totalEvals = teamOrder.get(0).size();
-		Score bestScoreSet = null;
-		// Ignore these variables if not evolving Ms Pac-Man
-		int maxPacManScore = 0; 
-		Genotype[] bestPacManTeam = null; 
-		boolean trackBestPacManScore = this instanceof CooperativeMsPacManTask
-				&& MMNEAT.ea instanceof CoevolutionMuLambda
-				&& ((CoevolutionMuLambda) MMNEAT.ea).evaluatingParents;
 
 		// General tracking of best in each objective in each population
 		double[][] bestObjectives =  new double[pops][];
@@ -160,17 +151,6 @@ public abstract class GroupTask implements MultiplePopulationTask {
 			DrawingPanel[] panels = drawNetworks(team);
 			// Evaluate
 			ArrayList<Score> scores = evaluate(team);
-			// Track the best ms pacman team in each generation
-			if (trackBestPacManScore) {
-				Score firstScoreSet = scores.get(0);
-				// Game Score is always first: 0 is the Game Score index (fix magic number?)
-				int gameScore = (int) firstScoreSet.otherStats[0]; 
-				if (gameScore >= maxPacManScore) {
-					bestPacManTeam = team;
-					maxPacManScore = gameScore;
-					bestScoreSet = firstScoreSet;
-				}
-			}
 			// Show/track performance (conditional)
 			trackingAndLogging(team, scores);
 			disposePanels(panels);
@@ -217,24 +197,6 @@ public abstract class GroupTask implements MultiplePopulationTask {
 					FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "score" + j + ".txt", bestScores[i][j].toString());
 				}
 			}
-		}
-
-		if (bestPacManTeam != null) {
-			// Save best pacman team
-			String teamDir = FileUtilities.getSaveDirectory() + "/bestTeam";
-			File bestDir = new File(teamDir);
-			// Delete old contents/team 
-			// TODO: Modify this so that the best team from each generation is saved if desired
-			if (bestDir.exists()) {
-				FileUtilities.deleteDirectoryContents(bestDir);
-			} else {
-				bestDir.mkdir();
-			}
-			for (int i = 0; i < bestPacManTeam.length; i++) {
-				Easy.save(bestPacManTeam[i], teamDir + "/teamMember" + i + ".xml");
-			}
-			System.out.println("Saved best team with score of " + maxPacManScore);
-			FileUtilities.simpleFileWrite(teamDir + "/score.txt", bestScoreSet.toString());
 		}
 		// re-package scores properly
 		return wrapUpScores(rawScores, populations, teamOrder);

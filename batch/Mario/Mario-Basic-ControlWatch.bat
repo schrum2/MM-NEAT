@@ -1,3 +1,3 @@
 cd ..
 cd ..
-java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:%1 randomSeed:%1 base:mario trials:1 maxGens:500 mu:100 io:true netio:true mating:true task:edu.southwestern.tasks.mario.MarioTask cleanOldNetworks:true fs:false log:Mario-Control saveTo:Control marioInputStartX:-3 marioInputStartY:-2 marioInputWidth:12 marioInputHeight:5 showMarioInputs:false monitorSubstrates:true showVizDoomInputs:true showCPPN:true substrateGridSize:10 showWeights:true watch:true showNetworks:true monitorInputs:true
+java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:%1 randomSeed:%1 base:mario trials:1 maxGens:500 mu:100 io:true netio:true mating:true task:edu.southwestern.tasks.mario.MarioTask cleanOldNetworks:true fs:false log:Mario-Control saveTo:Control marioInputStartX:-3 marioInputStartY:-2 marioInputWidth:12 marioInputHeight:5 showMarioInputs:false monitorSubstrates:true showCPPN:true substrateGridSize:10 showWeights:true watch:true showNetworks:true monitorInputs:true

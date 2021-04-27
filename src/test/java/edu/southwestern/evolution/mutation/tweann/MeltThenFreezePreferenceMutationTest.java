@@ -19,7 +19,8 @@ public class MeltThenFreezePreferenceMutationTest {//TODO
 	
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "freezePreferenceRate:1.0", "mmrRate:1.0"});
+		TWEANNGenotype.smallerGenotypes = false;
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "freezePreferenceRate:1.0", "mmrRate:1.0", "randomSeed:0"});
 		MMNEAT.loadClasses();
 		tg1 = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, 0);
 		mtfpm = new MeltThenFreezePreferenceMutation();

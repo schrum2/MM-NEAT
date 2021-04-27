@@ -113,7 +113,7 @@ public class RandomNumbersTests {
 		assertTrue(result[4] < 12);
 		assertEquals(result.length, ceilings.length);
 
-		Integer[] result2 = RandomNumbers.randomIntArray(ceilings);
+		Integer[] result2 = RandomNumbers.randomIntArray(new int[] {1});
 		assertEquals(result2[0], (Integer)0);
 		assertEquals(result2.length, 1);
 	}
