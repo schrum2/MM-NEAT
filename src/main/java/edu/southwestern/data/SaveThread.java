@@ -1,7 +1,7 @@
 package edu.southwestern.data;
 
 import java.util.concurrent.Callable;
-import jackson.serial.Easy;
+import wox.serial.Easy;
 
 /**
  * Save file in a thread, so that the file system operations can be distributed.

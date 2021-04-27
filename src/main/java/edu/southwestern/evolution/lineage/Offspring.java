@@ -35,7 +35,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jackson.serial.Easy;
+import wox.serial.Easy;
 
 /**
  * This complicated, clunky file is used to browse the lineage of an evolved
@@ -1263,7 +1263,7 @@ public class Offspring {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Genotype<? extends Network> getGenotype(String xml) {
-		return Easy.load(xml, Genotype.class);
+		return (Genotype<? extends Network>) Easy.load(xml);
 	}
 
 	/**

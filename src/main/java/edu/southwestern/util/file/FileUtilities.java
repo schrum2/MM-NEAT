@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
-import jackson.serial.Easy;
+import wox.serial.Easy;
 
 /**
  * Various static methods associated with files.
@@ -90,7 +90,7 @@ public class FileUtilities {
 	 *            xml file containing TWEANN
 	 */
 	public static void drawTWEANN(String filename) {
-		TWEANNGenotype genotype = Easy.load(filename, TWEANNGenotype.class);
+		TWEANNGenotype genotype = (TWEANNGenotype) Easy.load(filename);
 		DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Evolving Network");
 		panel.setLocation(CommonTaskUtil.NETWORK_WINDOW_OFFSET, 0);
 		genotype.getPhenotype().draw(panel);

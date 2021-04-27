@@ -10,7 +10,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
-import jackson.serial.Easy;
+import wox.serial.Easy;
 
 public class Archive<T> {
 	
@@ -145,7 +145,7 @@ public class Archive<T> {
 		if(saveElites) {
 			// Easier to reload on resume if file name is uniform. Will also save space by overwriting
 			String binPath = archiveDir + File.separator + mapping.binLabels().get(binIndex);
-			Easy.save(candidate.individual, binPath + "-elite.json");
+			Easy.save(candidate.individual, binPath + "-elite.xml");
 			// Write scores as simple text file (less to write than xml)
 			try {
 				PrintStream ps = new PrintStream(new File(binPath + "-scores.txt"));

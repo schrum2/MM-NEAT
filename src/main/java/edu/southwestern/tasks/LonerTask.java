@@ -29,7 +29,7 @@ import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
-import jackson.serial.Easy;
+import wox.serial.Easy;
 
 /**
  * A task for which an individual's fitness depends only on itself. In other
@@ -242,7 +242,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 			} else {
 				bestDir.mkdir();
 			}
-			Easy.save(bestPacMan, bestPacManDir + "/bestPacMan.json");
+			Easy.save(bestPacMan, bestPacManDir + "/bestPacMan.xml");
 			// System.out.println("Saved best Ms. Pac-Man agent with score of "+maxPacManScore);
 			FileUtilities.simpleFileWrite(bestPacManDir + "/score.txt", bestScoreSet.toString());
 		}

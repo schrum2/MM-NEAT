@@ -7,7 +7,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
-import jackson.serial.Easy;
+import wox.serial.Easy;
 
 /**
  * This really only works for Ms. Pac-Man (rename it?).
@@ -25,10 +25,11 @@ public class BestNetworkExperiment implements Experiment {
 	@SuppressWarnings("rawtypes")
 	private Genotype net;
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void init() {
 		String dir = FileUtilities.getSaveDirectory() + "/bestPacMan";
-		net = Easy.load(dir + "/bestPacMan.json",Genotype.class);
+		net = (Genotype) Easy.load(dir + "/bestPacMan.xml");
 	}
 
 	// Will always be running the Ms. Pac-Man experiment
