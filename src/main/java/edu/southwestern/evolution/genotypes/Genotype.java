@@ -6,8 +6,7 @@ import java.util.List;
  * Basic interface for all genotypes.
  * 
  * @author Jacob Schrum
- * @param <T>
- *            Phenotype produced by the genotype
+ * @param <T> Phenotype produced by the genotype
  */
 public interface Genotype<T> {
 
@@ -47,8 +46,7 @@ public interface Genotype<T> {
 	 * would only be appropriate if crossover is performed on a copy of the
 	 * original genotype.
 	 * 
-	 * @param g
-	 *            genotype to crossover with
+	 * @param g genotype to crossover with
 	 * @return one offspring
 	 */
 	public Genotype<T> crossover(Genotype<T> g);
