@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * A basic genotype containing an array of integers.
  *
  * @author Jacob Schrum
  */
