@@ -37,24 +37,17 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 	public static void saveCombiningCrossoverInformation() {
 		// Could check CommonConstants.trackCombiningCrossover, but knowing that
 		// oldToNew is not empty should be enough
-		if (!oldToNew.isEmpty()) {// means crossover has occurred before, and
-									// information was tracked
+		if (!oldToNew.isEmpty()) { // means crossover has occurred before, and information was tracked
 			System.out.println("Saving Combining Crossover Mapping");
-			String file = FileUtilities.getSaveDirectory() + "/" + "combiningCrossoverMapping";// adds
-																								// new
-																								// crossover
-																								// to
-																								// crossover
-																								// file
+			// adds new crossover to crossover file
+			String file = FileUtilities.getSaveDirectory() + "/" + "combiningCrossoverMapping";
 			Parameters.parameters.setString("combiningCrossoverMapping", file);
 			file += ".txt";
-			CombiningTWEANNCrossover.saveOldToNew(file);// saves new crossover
-														// information
+			CombiningTWEANNCrossover.saveOldToNew(file);// saves new crossover information
 		}
 	}
 
-	public static void addToArchetypeForCombiningCrossover(int populationIndex, int pos, NodeGene node,
-			boolean combineCopy, String origin) {
+	public static void addToArchetypeForCombiningCrossover(int populationIndex, int pos, NodeGene node, boolean combineCopy, String origin) {
 		NodeGene previous = EvolutionaryHistory.archetypes[populationIndex].get(pos - 1);
 		switch (previous.ntype) {
 		case TWEANN.Node.NTYPE_INPUT:// checks if input node
@@ -81,12 +74,10 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 				EvolutionaryHistory.archetypeAddFromCombiningCrossover(populationIndex, node, indexNewPrevious + 1,
 						"combine splice (hidden)");
 			}
-			// otherwise do nothing, since node is only being spliced in
-			// multitask networks
+			// otherwise do nothing, since node is only being spliced in multitask networks
 			break;
 		default:
-			System.out
-					.println("Error! " + previous + "," + pos + "," + EvolutionaryHistory.archetypes[populationIndex]);
+			System.out.println("Error! " + previous + "," + pos + "," + EvolutionaryHistory.archetypes[populationIndex]);
 			System.exit(1);
 		}
 	}
@@ -132,9 +123,7 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 
 	/**
 	 * Save contents of oldToNew to file
-	 *
-	 * @param filename
-	 *            filename to save to
+	 * @param filename filename to save to
 	 */
 	public static void saveOldToNew(String filename) {
 		assert!oldToNew.isEmpty();
@@ -154,9 +143,7 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 
 	/**
 	 * Load contents of file into oldToNew
-	 *
-	 * @param filename
-	 *            file containing pairs
+	 * @param filename file containing pairs
 	 */
 	public static void loadOldToNew(String filename) {
 		try {
@@ -182,10 +169,8 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 			return oldToNew.get(oldInnovation);
 		} else {
 			long newInnovation = EvolutionaryHistory.nextInnovation();
-			// System.out.print("Map("+oldInnovation +" to "+
-			// newInnovation+"):");
-			oldToNew.put(oldInnovation, newInnovation); // Remember the changes
-														// to match up the links
+			// System.out.print("Map("+oldInnovation +" to "+ newInnovation+"):");
+			oldToNew.put(oldInnovation, newInnovation); // Remember the changes to match up the links
 			return newInnovation; // Change innovation to prevent weird overlaps
 		}
 	}
@@ -209,9 +194,7 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 		TWEANNGenotype tToReturn = (TWEANNGenotype) toReturn;
 
 		// System.out.println("---------------------------------------------------------");
-		// System.out.println("Crossover between " + tToModify.getId() + " (out
-		// "+ tToModify.numOut+") and " + tToReturn.getId() + " (out " +
-		// tToReturn.numOut + ")");
+		// System.out.println("Crossover between " + tToModify.getId() + " (out "+ tToModify.numOut+") and " + tToReturn.getId() + " (out " + tToReturn.numOut + ")");
 
 		if (tToModify.numModules > 1 || tToReturn.numModules > 1) {
 			// Can only combine single mode networks. Else, do regular crossover
@@ -262,10 +245,8 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 
 		assert(tToModify.numOut == tToReturn.numOut) : "Networks to combine have different number of outputs";
 		int neuronsPerMode = tToModify.neuronsPerModule;
-		assert(tToModify.numIn == tToReturn.numIn
-				|| splitInputs) : "Networks to combine have different number of inputs";
-		ArrayList<TWEANNGenotype.NodeGene> combinedNodes = new ArrayList<TWEANNGenotype.NodeGene>(
-				tToModify.nodes.size() + tToReturn.nodes.size());
+		assert(tToModify.numIn == tToReturn.numIn || splitInputs) : "Networks to combine have different number of inputs";
+		ArrayList<TWEANNGenotype.NodeGene> combinedNodes = new ArrayList<TWEANNGenotype.NodeGene>(tToModify.nodes.size() + tToReturn.nodes.size());
 
 		int modifyNumIn = tToModify.numIn;
 		int returnNumIn = tToReturn.numIn;
@@ -278,7 +259,7 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 			combinedNodes.add(nodeGene);
 			if (!splitInputs) {
 				long innovation = nodeGene.innovation;
-                                // Input mapping remains same
+                // Input mapping remains same
 				oldToNew.put(innovation, innovation); 
 			}
 		}
@@ -312,12 +293,8 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 		for (int i = returnNumIn; i < returnFirstOutput; i++) {
 			NodeGene nodeGene = tToReturn.nodes.get(i).clone();
 			long oldInnovation = nodeGene.innovation;
-			nodeGene.innovation = getAdjustedInnovationNumber(oldInnovation); // Change
-																				// innovation
-																				// to
-																				// prevent
-																				// weird
-																				// overlaps
+			// Change innovation to prevent weird overlaps
+			nodeGene.innovation = getAdjustedInnovationNumber(oldInnovation); 
 			assert(oldToNew.containsKey(oldInnovation)) : "Archetype should contain two copies of all spliced nodes!\n"
 					+ "No mapping for innovation: " + oldInnovation + "\n" + "Archetype: "
 					+ EvolutionaryHistory.archetypes[tToModify.archetypeIndex] + "\n" + "tToReturn:" + tToReturn;
@@ -373,7 +350,7 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 			// System.out.println("\t\tnewInnovation:"+newInnovation+"\t\t");
 			oldToNew.put(oldInnovation, newInnovation);
 			// The newly inserted innovation number will be used
-                        // Change innovation to prevent weird overlaps
+            // Change innovation to prevent weird overlaps
 			nodeGene.innovation = getAdjustedInnovationNumber(oldInnovation); 
 			nodeGene.setFromCombiningCrossover();
 			int index = EvolutionaryHistory.indexOfArchetypeInnovation(tToModify.archetypeIndex, nodeGene.innovation);
@@ -461,10 +438,8 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 	 * Checks to see if the list of node genes contains a gene with the searched
 	 * for innovation number.
 	 *
-	 * @param nodes
-	 *            list of NodeGene objects
-	 * @param targetInnovation
-	 *            innovation to search for
+	 * @param nodes list of NodeGene objects
+	 * @param targetInnovation innovation to search for
 	 * @return true if found
 	 */
 	private boolean containsNodeWithInnovation(ArrayList<NodeGene> nodes, long targetInnovation) {
