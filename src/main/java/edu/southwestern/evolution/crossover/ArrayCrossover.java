@@ -6,11 +6,10 @@ import edu.southwestern.util.random.RandomNumbers;
 import java.util.ArrayList;
 
 /**
- *
+ * This class accomplishes the task of crossing over two different
+ * genotypes and a helper method that performs the actual swapping.
+ * 
  * @author Jacob Schrum
- *
- *         This class accomplishes the task of crossing over two different
- *         genotypes and a helper method that performs the actual swapping.
  */
 public class ArrayCrossover<T> extends Crossover<ArrayList<T>> {
 
@@ -22,11 +21,9 @@ public class ArrayCrossover<T> extends Crossover<ArrayList<T>> {
 	 * after the i value using a for loop and the helper method
 	 * newIndexContents.
 	 *
-	 * @param toModify:
-	 *            Reference to genotype that is modified by crossover.
-	 * @param toReturn:Reference
-	 *            to genotype that is returned unmodified.
-	 * @return: Returns the second genotype produced by the crossover.
+	 * @param toModify Reference to genotype that is modified by crossover.
+	 * @param toReturn Reference to genotype that is returned unmodified.
+	 * @return Returns the second genotype produced by the crossover.
 	 */
 	@Override
 	public Genotype<ArrayList<T>> crossover(Genotype<ArrayList<T>> toModify, Genotype<ArrayList<T>> toReturn) {
@@ -46,14 +43,11 @@ public class ArrayCrossover<T> extends Crossover<ArrayList<T>> {
 	 * The method newIndexContents works as a helper function that uses the swap
 	 * method from the abstract class Crossover.
 	 *
-	 * @param par1:
-	 *            the object to swap from array 1.
-	 * @param par2:
-	 *            the object to swap from toModify.
-	 * @param index:
-	 *            the index of each array where the par objects are located,
-	 *            used to facilitate the swap.
-	 * @return: returns a pair containing both values swapped.
+	 * @param par1 the object to swap from array 1.
+	 * @param par2 the object to swap from toModify.
+	 * @param index the index of each array where the par objects are located,
+	 *            	used to facilitate the swap.
+	 * @return returns a pair containing both values swapped.
 	 */
 	public Pair<T, T> newIndexContents(T par1, T par2, int index) {
 		return swap(par1, par2);
