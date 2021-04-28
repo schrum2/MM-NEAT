@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.evolution.crossover.real;
 
 import edu.southwestern.evolution.crossover.ArrayCrossover;
@@ -10,13 +6,13 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.util.datastructures.Pair;
 
 /**
- *
+ * Simulated Binary Crossover of an array of doubles. Based
+ * on a research paper by Kalyanmoy Deb.
  * @author Jacob Schrum
  */
 public class SBX extends ArrayCrossover<Double> {
 
-	public static final double DEB_DI = 20; // 0.5; // mysterious variable from
-											// Deb's code
+	public static final double DEB_DI = 20; // 0.5; // mysterious variable from Deb's code
 	private final double[] upperBounds;
 	private final double[] lowerBounds;
 

@@ -19,12 +19,10 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 
 	double[] lower; // Lowest allowable value for each gene position
 	double[] upper; // Highest allowable value for each gene position
-	boolean polynomialMutation; // Whether or not polynomial mutation should be
-								// used
+	boolean polynomialMutation; // Whether or not polynomial mutation should be used
 
 	public BoundedRealValuedGenotype() {
-		// May need to change this if other tasks start using the real-coded
-		// genotype
+		// May need to change this if other tasks start using the real-coded genotype
 		this(MMNEAT.getLowerBounds(), MMNEAT.getUpperBounds());
 	}
 
@@ -34,8 +32,7 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 
 	public BoundedRealValuedGenotype(double[] genes, double[] lower, double[] upper) {
 		super(genes);
-		// Specialized mutation operator slightly more complicated than simple
-		// perturbation
+		// Specialized mutation operator slightly more complicated than simple perturbation
 		polynomialMutation = Parameters.parameters.booleanParameter("polynomialMutation");
 
 		this.lower = lower;
@@ -71,19 +68,17 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 
 	@Override
 	public void mutate() {
-		if (polynomialMutation) { // Specialized mutation operator slightly more
-									// complicated than simple perturbation
+		if (polynomialMutation) { // Specialized mutation operator slightly more complicated than simple perturbation
 			new PolynomialMutation().mutate(this);
 		} else { // Default
 			new PerturbMutation(getRange()).mutate(this);
 		}
-
 		bound();
 	}
 
 	/**
-	 * Push gene values that are out of bounds back to the particular bound they
-	 * crossed.
+	 * Push gene values that are out of bounds back 
+	 * to the particular bound they crossed.
 	 */
 	public final void bound() {
 		for (int i = 0; i < genes.size(); i++) {
