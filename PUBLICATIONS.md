@@ -6,20 +6,20 @@ This file contains full citations for all known publications that make use of MM
 
 * Jacob Schrum, and Risto Miikkulainen (2014). Evolving Multimodal Behavior With Modular Neural Networks in Ms. Pac-Man, Proceedings of the Genetic and Evolutionary Computation Conference (GECCO 2014).  
   Best Paper Award in Digital Entertainment and Arts.  
-  https://suscholar.southwestern.edu/handle/11214/152  
+  https://collections.southwestern.edu/s/suscholar/item/230  
   Batch files for experiments in: [batch/Experiments-2014-GECCO-MsPacMan](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2014-GECCO-MsPacMan)
 
 * Jacob Schrum, and Risto Miikkulainen (2015). Solving Interleaved and Blended Sequential Decision-Making Problems through Modular Neuroevolution, Proceedings of the Genetic and Evolutionary Computation Conference (GECCO 2015).  
   Best Paper Award in Digital Entertainment and Arts.  
-  https://suscholar.southwestern.edu/handle/11214/155  
+  https://collections.southwestern.edu/s/suscholar/item/227  
   Batch files for experiments in: [batch/Experiments-2015-GECCO-MsPacMan](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2015-GECCO-MsPacMan)
 
 * Jacob Schrum, and Risto Miikkulainen (2016). Discovering Multimodal Behavior in Ms. Pac-Man through Evolution of Modular Neural Networks, IEEE Transactions on Computational Intelligence and AI in Games (TCIAIG 2016). March. Volume 8, Issue 1, pages 67 - 81. IEEE.  
-  https://suscholar.southwestern.edu/handle/11214/149    
+  https://collections.southwestern.edu/s/suscholar/item/233    
   Batch files for experiments in: [batch/Experiments-2016-TCIAIG-MsPacMan](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2016-TCIAIG-MsPacMan)
 
 * Jacob Schrum, and Risto Miikkulainen (2016). Solving Multiple Isolated, Interleaved, and Blended Tasks through Modular Neuroevolution, Evolutionary Computation Journal (ECJ 2016). September. Volume 24, No. 3, pages 459 - 490. MIT Press.  
-  https://suscholar.southwestern.edu/handle/11214/156   
+  https://collections.southwestern.edu/s/suscholar/item/226   
   Batch files for experiments in: [batch/Experiments-2016-ECJ-MsPacMan](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2016-ECJ-MsPacMan)
 
 * Alex Rollins, and Jacob Schrum (2017). Balancing Selection Pressures, Multiple Objectives, and Neural Modularity to Coevolve Cooperative Agent Behavior, Companion to the Proceedings of the Conference on Genetic and Evolutionary Computation (GECCO Companion 2017).  
@@ -64,3 +64,11 @@ This file contains full citations for all known publications that make use of MM
   https://people.southwestern.edu/~schrum2/re/papers/schrum.gecco2020cppn2gan.pdf  
   Simplified version of code at: https://github.com/schrum2/GameGAN   
   Batch files for experiments in: [batch/Experiments-2020-GECCO-CPPN2GAN](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2020-GECCO-CPPN2GAN)
+  
+* Kirby Steckel, and Jacob Schrum (2021). Illuminating the Space of Beatable Lode Runner Levels Produced By Various Generative Adversarial Networks, Companion to the Proceedings of the Conference on Genetic and Evolutionary Computation (GECCO Companion 2021).  
+  http://people.southwestern.edu/~schrum2/SCOPE/steckel.gecco2021.pdf   
+  Batch files for experiments in: [batch/Experiments-2021-GECCO-LodeRunner](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2021-GECCO-LodeRunner)
+  
+* Benjamin Capps, and Jacob Schrum (2021). Using Multiple Generative Adversarial Networks to Build Better-Connected Levels for Mega Man, Proceedings of the Genetic and Evolutionary Computation Conference (GECCO 2021).   
+  https://arxiv.org/abs/2102.00337  
+  Batch files for experiments in: [batch/Experiments-2021-GECCO-MegaMan](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2021-GECCO-MegaMan)  
