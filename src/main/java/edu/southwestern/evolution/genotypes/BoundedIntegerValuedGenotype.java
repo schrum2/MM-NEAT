@@ -18,6 +18,10 @@ public class BoundedIntegerValuedGenotype extends NumericArrayGenotype<Integer> 
 		super(RandomNumbers.randomIntArray(MMNEAT.discreteCeilings));
 	}
 
+	/**
+	 * Creates evolvable genotype that is a list of Integers.
+	 * @param genes ArrayList of Integers to initialize genotype.
+	 */
 	public BoundedIntegerValuedGenotype(ArrayList<Integer> genes) {
 		super(genes);
 	}
