@@ -20,12 +20,20 @@ public abstract class NumericArrayGenotype<T> implements Genotype<ArrayList<T>> 
 	
 	ArrayList<T> genes;
 	private long id = EvolutionaryHistory.nextGenotypeId();
-
+	
+	/**
+	 * Create evolvable genotype that is an arraylist of numbers
+	 * @param genes An arraylist of numbers to initialize the genotype
+	 */
 	@SuppressWarnings("unchecked")
 	public NumericArrayGenotype(ArrayList<T> genes) {
 		this.genes = (ArrayList<T>) genes.clone();
 	}
 
+	/**
+	 * Create evolvable genotype that is an arraylist of numbers
+	 * @param genes A list of numbers to initialize the genotype, which will be converted to an arraylist
+	 */
 	public NumericArrayGenotype(T[] genes) {
 		this.genes = new ArrayList<T>(genes.length);
 		for (int i = 0; i < genes.length; i++) {
@@ -33,10 +41,18 @@ public abstract class NumericArrayGenotype<T> implements Genotype<ArrayList<T>> 
 		}
 	}
 
+	/**
+	 * Sets the value of a specific gene in the genotype
+	 * @param pos An integer specifying the gene's location
+	 * @param value A number to set the gene's value to
+	 */
 	public void setValue(int pos, T value) {
 		genes.set(pos, value);
 	}
 
+	/**
+	 * 
+	 */
 	@SuppressWarnings("unchecked")
 	public Genotype<ArrayList<T>> crossover(Genotype<ArrayList<T>> g) {
 		return ARRAY_CROSSOVER.crossover(this, g);
