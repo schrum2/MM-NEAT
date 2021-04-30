@@ -22,7 +22,7 @@ public abstract class NumericArrayGenotype<T> implements Genotype<ArrayList<T>> 
 	private long id = EvolutionaryHistory.nextGenotypeId();
 	
 	/**
-	 * Create evolvable genotype that is an arraylist of numbers
+	 * Creates an evolvable genotype that is an arraylist of numbers
 	 * @param genes An arraylist of numbers to initialize the genotype
 	 */
 	@SuppressWarnings("unchecked")
@@ -31,8 +31,8 @@ public abstract class NumericArrayGenotype<T> implements Genotype<ArrayList<T>> 
 	}
 
 	/**
-	 * Create evolvable genotype that is an arraylist of numbers
-	 * @param genes A list of numbers to initialize the genotype, which will be converted to an arraylist
+	 * Creates an evolvable genotype that is an arraylist of numbers
+	 * @param genes A list of numbers to initialize the genotype
 	 */
 	public NumericArrayGenotype(T[] genes) {
 		this.genes = new ArrayList<T>(genes.length);
@@ -51,26 +51,40 @@ public abstract class NumericArrayGenotype<T> implements Genotype<ArrayList<T>> 
 	}
 
 	/**
-	 * 
+	 * Crossover this genotype with another
+	 * @param g Another genotype to crossover with
+	 * @return The resulting genotype post-crossover
 	 */
 	@SuppressWarnings("unchecked")
 	public Genotype<ArrayList<T>> crossover(Genotype<ArrayList<T>> g) {
 		return ARRAY_CROSSOVER.crossover(this, g);
 	}
 
+	/**
+	 * Returns an arraylist of the gene values
+	 */
 	public ArrayList<T> getPhenotype() {
 		return genes;
 	}
-
+	
+	/**
+	 * Returns the genotype id and genes as a string
+	 */
 	@Override
 	public String toString() {
 		return getId() + ":" + genes.toString();
 	}
 
+	/**
+	 * Returns the genotype id
+	 */
 	public long getId() {
 		return id;
 	}
 	
+	/**
+	 * Returns an arraylist of the genes
+	 */
 	public ArrayList<T> getGenes() {
 		return genes;
 	}
