@@ -26,7 +26,7 @@ public class MegaManLevelNovelty extends LevelNovelty{
 	 */
 	public static void main(String[] args) throws FileNotFoundException {
 		game = GAME.MEGA_MAN;
-		final String basePath = "megamanlevels/textLevels/AStarDistAndConnectivity";
+		final String basePath = "data/EvolvedMegaManLevels2020/AStarDistAndConnectivity";
 		// To suppress output from file loading
 		PrintStream original = System.out;
 		int rows = getRows();
