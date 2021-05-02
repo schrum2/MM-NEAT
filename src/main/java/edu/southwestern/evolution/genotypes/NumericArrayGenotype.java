@@ -32,7 +32,7 @@ public abstract class NumericArrayGenotype<T> implements Genotype<ArrayList<T>> 
 
 	/**
 	 * Creates an evolvable genotype that is an arraylist of numbers
-	 * @param genes A list of numbers to initialize the genotype
+	 * @param genes An array of numbers to initialize the genotype
 	 */
 	public NumericArrayGenotype(T[] genes) {
 		this.genes = new ArrayList<T>(genes.length);

@@ -33,8 +33,8 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	/**
 	 * Creates evolvable genotype where genes are restricted to certain bounds
 	 * Populates the genotype with values between certain bounds
-	 * @param lower List of lower bounds for each gene position
-	 * @param upper List of upper bounds for each gene position
+	 * @param lower Array of lower bounds for each gene position
+	 * @param upper Array of upper bounds for each gene position
 	 */
 	public BoundedRealValuedGenotype(double[] lower, double[] upper) {
 		this(RandomNumbers.randomBoundedArray(lower, upper), lower, upper);
@@ -42,9 +42,9 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 
 	/**
 	 * Creates evolvable genotype where genes are restricted to certain bounds
-	 * @param genes List of doubles corresponding to starting gene values
-	 * @param lower List of lower bounds for each gene position
-	 * @param upper List of upper bounds for each gene position
+	 * @param genes Array of doubles corresponding to starting gene values
+	 * @param lower Array of lower bounds for each gene position
+	 * @param upper Array of upper bounds for each gene position
 	 */
 	public BoundedRealValuedGenotype(double[] genes, double[] lower, double[] upper) {
 		super(genes);
@@ -59,8 +59,8 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	/**
 	 * Creates evolvable genotype where genes are restricted to certain bounds
 	 * @param genes ArrayList of doubles corresponding to starting gene values
-	 * @param lower List of lower bounds for each gene position
-	 * @param upper List of upper bounds for each gene position
+	 * @param lower Array of lower bounds for each gene position
+	 * @param upper Array of upper bounds for each gene position
 	 */
 	public BoundedRealValuedGenotype(ArrayList<Double> genes, double[] lower, double[] upper) {
 		this(ArrayUtil.doubleArrayFromList(genes), lower, upper);
@@ -69,8 +69,8 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	/**
 	 * Creates evolvable genotype where genes are restricted to certain bounds
 	 * @param genotype RealValuedGenotype to provide starting the genotype
-	 * @param lower List of lower bounds for each gene position
-	 * @param upper List of upper bounds for each gene position
+	 * @param lower Array of lower bounds for each gene position
+	 * @param upper Array of upper bounds for each gene position
 	 */
 	@SuppressWarnings("unused")
 	private BoundedRealValuedGenotype(RealValuedGenotype genotype, double[] lower, double[] upper) {
@@ -91,7 +91,7 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 
 	/**
 	 * Finds and returns the range between the upper and lower bounds of each gene
-	 * @return A list of doubles corresponding to the range of each gene
+	 * @return An array of doubles corresponding to the range of each gene
 	 */
 	public final double[] getRange() {
 		double[] magnitudes = new double[lower.length];
@@ -140,14 +140,14 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	}
 
 	/**
-	 * Returns a list of doubles corresponding to the lower bounds of each gene
+	 * Returns an array of doubles corresponding to the lower bounds of each gene
 	 */
 	public double[] lowerBounds() {
 		return lower;
 	}
 
 	/**
-	 * Returns a list of doubles corresponding to the upper bounds of each gene
+	 * Returns an array of doubles corresponding to the upper bounds of each gene
 	 */
 	public double[] upperBounds() {
 		return upper;
