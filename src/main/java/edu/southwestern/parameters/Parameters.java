@@ -717,7 +717,7 @@ public class Parameters {
 		booleanOptions.add("zeldaCPPN2GANSparseKeys", false, "For CPPN2GAN generation, place one key per locked door (may make dungeons unbeatable depending on placement)");
 		booleanOptions.add("zeldaALlowPuzzleDoorUglyHack", true, "Whether or not the raft is in the first soft-locked room");
 		booleanOptions.add("interactiveMegaManAStarPaths", false, "whether or not the A* path is shown in the level breeder");
-		booleanOptions.add("useMultipleGANsMegaMan", false, "whether or not we're using both GANs");
+		booleanOptions.add("useMultipleGANsMegaMan", false, "whether or not we're using multiple GANs");
 		booleanOptions.add("megaManAllowsSimpleAStarPath", false, "whether or not we're allowing simlpe a* path");
 		booleanOptions.add("megaManAllowsConnectivity", false, "whether or not we're allowing connectivity");
 		booleanOptions.add("megaManAllowsPlatformGun", true, "whether or not we're allowing connectivity");
