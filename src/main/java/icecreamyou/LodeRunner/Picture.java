@@ -12,8 +12,6 @@ import javax.imageio.ImageIO;
  */
 public class Picture {
 	
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
-	
 	/**
 	 * Keep track of pictures that have already been drawn so that we don't have to load them every time.
 	 */
@@ -33,7 +31,7 @@ public class Picture {
 			if (cache.containsKey(filepath))
 				img = cache.get(filepath);
 			else {
-				img = ImageIO.read(new File(FILE_PATH+filepath));
+				img = ImageIO.read(new File(LodeRunner.FILE_PATH+filepath));
 				cache.put(filepath, img);
 			}
 			g.drawImage(img, x, y, null);
