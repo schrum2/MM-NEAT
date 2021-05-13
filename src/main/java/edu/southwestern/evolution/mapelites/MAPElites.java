@@ -199,7 +199,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 
 			// Exclude negative infinity to find out how many bins are filled
 			final int numFilledBins = elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite);
-			fillLog.log(pseudoGeneration + "\t" + numFilledBins);
+			// Get the QD Score for this elite
+			final double qdScore = calculateQDScore(elite);
+			fillLog.log(pseudoGeneration + "\t" + numFilledBins + "\t" + qdScore);
 			if(cppnThenDirectLog!=null) {
 				Integer[] eliteProper = new Integer[elite.length];
 				int i = 0;
@@ -235,6 +237,24 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				((LodeRunnerLevelTask<?>)MMNEAT.task).beatable.log(pseudoGeneration + "\t" + numBeatenLevels + "\t" + ((1.0*numBeatenLevels)/(1.0*numFilledBins)));
 			}
 		}
+	}
+
+	/**
+	 * Calculates a QD score for an elite by summing the valid values (non negative
+	 * infinity). Each value is offset by the parameter "mapElitesQDBaseOffset" 
+	 * before being added to the sum.
+	 * @param elite An elite represented by an Array of floats representing each value
+	 * @return returns a double representing the QD score with offset values
+	 */
+	public static double calculateQDScore(Float[] elite) {
+		double base = Parameters.parameters.doubleParameter("mapElitesQDBaseOffset");
+		double sum = 0.0;
+		for (float x : elite) {
+			if (x != Float.NEGATIVE_INFINITY) {
+				sum += base + x;
+			}
+		}
+		return sum;
 	}
 
 	/**
