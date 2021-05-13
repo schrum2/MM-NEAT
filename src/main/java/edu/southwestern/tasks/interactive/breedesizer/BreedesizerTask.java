@@ -73,10 +73,25 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 	private JSlider speedOfMIDI;
 
+	/**
+	 * Is running Breezesizer and not a child class of Breedesizer.
+	 * 
+	 * @throws IllegalAccessException 
+	 */
 	public BreedesizerTask() throws IllegalAccessException {
 		this(true);
 	}
 
+	/**
+	 * Creates the console for the user to interact with.
+	 * Sliders indicate the number of mutations and the speed
+	 * of the song output, and different sounds are represented
+	 * on individual graphs.
+	 * 
+	 * @param justBreedesizer a boolean variable that is true if the 
+	 *                        if the keyboard is created and false otherwise
+	 * @throws IllegalAccessException
+	 */
 	public BreedesizerTask(boolean justBreedesizer) throws IllegalAccessException {
 		super();
 		midiPlay = new AmplitudeArrayPlayer(); // no sequence to play
@@ -227,16 +242,34 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		return false; // no undo: every thing is fine
 	}
 
+	/**
+	 * Labels for each network input. Length 
+	 * needs to match the number of inputneurons
+	 * in networks, and the number of inputs agents 
+	 * receive.
+	 * 
+	 * @return returns a string array of input labels
+	 */
 	@Override
 	public String[] sensorLabels() {
 		return new String[] { "Time", "Sine of time", "bias" };
 	}
 
+	/**
+	 * Accesses title of window
+	 * 
+	 * @return returns a string representing title of window
+	 */
 	@Override
 	public String[] outputLabels() {
 		return new String[] { "amplitude" };
 	}
 
+	/**
+	 * Accesses title of window
+	 * 
+	 * @return returns a string representing title of window
+	 */
 	@Override
 	protected String getWindowTitle() {
 		return "Breedesizer";
@@ -269,6 +302,12 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		} 
 	}
 
+	/**
+	 * Saves the generated files.
+	 * 
+	 * @param file the name of the file
+	 * @param i location of the current phenotype
+	 */
 	@Override
 	protected void save(String file, int i) {	
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
@@ -297,12 +336,17 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		}
 	}
 
+	/**
+	 * @return returns the number of CPPN inputs
+	 */
 	@Override
 	public int numCPPNInputs() {
 		return CPPN_NUM_INPUTS;
 	}
 
-
+	/**
+	 * @return returns the number of CPPN outputs
+	 */
 	@Override
 	public int numCPPNOutputs() {
 		return CPPN_NUM_OUTPUTS;
@@ -310,6 +354,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 	/**
 	 * Allows for quick and easy launching of breedesizer without saving any files
+	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -320,11 +365,21 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		}
 	}
 	
+	/**
+	 * Gets the type of file.
+	 * 
+	 * @return returns the type of file being saved
+	 */
 	@Override
 	protected String getFileType() {
 		return "WAV audio file";
 	}
 
+	/**
+	 * Gets the file extension.
+	 * 
+	 * @return returns extension of file being saved 
+	 */
 	@Override
 	protected String getFileExtension() {
 		return "wav";
