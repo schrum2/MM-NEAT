@@ -51,7 +51,7 @@ public class BoundedIntegerValuedGenotype extends NumericArrayGenotype<Integer> 
 	}
 
 	/**
-	 * Creates a new genotype from an instance.
+	 * Creates a new genotype instance.
 	 * 
 	 * @return returns the new genotype
 	 */
