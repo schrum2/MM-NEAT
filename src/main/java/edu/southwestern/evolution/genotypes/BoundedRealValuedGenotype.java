@@ -55,6 +55,15 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 		this.upper = upper;
 		bound();
 	}
+	
+	/**
+	 * Creates evolvable genotype where genes are restricted to default bounds
+	 * @param genes Array of doubles corresponding to starting gene values
+	 */
+	public BoundedRealValuedGenotype(double[] genes) {
+		this(genes, MMNEAT.getLowerBounds(), MMNEAT.getUpperBounds());
+	}
+
 
 	/**
 	 * Creates evolvable genotype where genes are restricted to certain bounds
