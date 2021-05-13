@@ -81,9 +81,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			String qdPrefix = experimentPrefix + "_" + "QD";
 			String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 			directory += (directory.equals("") ? "" : "/");
-			String fullName = directory + prefix + "_log.plot";
-			String fullFillName = directory + fillPrefix + "_log.plot";
-			String fullQDName = directory + qdPrefix + "_log.plot";
+			String fullName = directory + prefix + "_log.plt";
+			String fullFillName = directory + fillPrefix + "_log.plt";
+			String fullQDName = directory + qdPrefix + "_log.plt";
 			File plot = new File(fullName); // for archive log plot file
 			File fillPlot = new File(fullFillName);
 			// Write to file

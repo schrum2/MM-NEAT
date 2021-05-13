@@ -28,7 +28,7 @@ public class FitnessBasedIncrementalEvolutionProcessLog extends StatisticsLog<Do
 		}
 		// Cannot use the default plot file setup because there are extra things
 		// to plot
-		File plotFile = new File(directory + prefix + "_log.plot");
+		File plotFile = new File(directory + prefix + "_log.plt");
 		if (!plotFile.exists()) {
 			try {
 				PrintStream plotStream = new PrintStream(new FileOutputStream(plotFile));

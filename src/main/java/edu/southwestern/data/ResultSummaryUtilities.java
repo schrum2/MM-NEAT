@@ -125,9 +125,9 @@ public class ResultSummaryUtilities {
 			ArrayList<String> labels, boolean makePDF) throws FileNotFoundException, NoSuchMethodException {
 		String plotFile = "";
 		if(makePDF){
-			plotFile = outputDir + "/" + filePrefix + "AVG" + middle + "PDF.plot";
+			plotFile = outputDir + "/" + filePrefix + "AVG" + middle + "PDF.plt";
 		}else{
-			plotFile = outputDir + "/" + filePrefix + "AVG" + middle + ".plot";
+			plotFile = outputDir + "/" + filePrefix + "AVG" + middle + ".plt";
 		}
 		PrintStream out = new PrintStream(new FileOutputStream(plotFile));
 		String condition = Parameters.parameters.stringParameter("saveTo");
@@ -386,9 +386,9 @@ public class ResultSummaryUtilities {
 			throws FileNotFoundException {
 		String plotFile = "";
 		if(!makePDF){
-			plotFile = outputDir + "/" + filePrefix + "All" + fileSuffix + ".plot";
+			plotFile = outputDir + "/" + filePrefix + "All" + fileSuffix + ".plt";
 		}else{
-			plotFile = outputDir + "/" + filePrefix + "All" + fileSuffix + "PDF.plot";
+			plotFile = outputDir + "/" + filePrefix + "All" + fileSuffix + "PDF.plt";
 		}
 		PrintStream out = new PrintStream(new FileOutputStream(plotFile));
 		String condition = Parameters.parameters.stringParameter("saveTo");
@@ -427,9 +427,9 @@ public class ResultSummaryUtilities {
 		out.close();
 
 		if (makePDF) {
-			plotFile = outputDir + "/" + filePrefix + "AVG" + fileSuffix + "PDF.plot";
+			plotFile = outputDir + "/" + filePrefix + "AVG" + fileSuffix + "PDF.plt";
 		}else{
-			plotFile = outputDir + "/" + filePrefix + "AVG" + fileSuffix + ".plot";
+			plotFile = outputDir + "/" + filePrefix + "AVG" + fileSuffix + ".plt";
 		}
 		out = new PrintStream(new FileOutputStream(plotFile));
 		String file = filePrefix + "AVG" + fileSuffix + ".txt";
@@ -499,9 +499,9 @@ public class ResultSummaryUtilities {
 			int runs, String outputDir, double t, boolean makePDF, int popNum) throws FileNotFoundException {
 		String plotFile = "";
 		if(!makePDF){
-			plotFile = outputDir + "/" + filePrefix + "AVG" + middle + ".plot";
+			plotFile = outputDir + "/" + filePrefix + "AVG" + middle + ".plt";
 		}else{
-			plotFile = outputDir + "/" + filePrefix + "AVG" + middle + "PDF.plot";
+			plotFile = outputDir + "/" + filePrefix + "AVG" + middle + "PDF.plt";
 		}
 		PrintStream out = new PrintStream(new FileOutputStream(plotFile));
 		String condition = Parameters.parameters.stringParameter("saveTo");
