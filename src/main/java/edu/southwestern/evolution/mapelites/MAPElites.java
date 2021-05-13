@@ -78,10 +78,12 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					+ Parameters.parameters.integerParameter("runNumber");
 			String prefix = experimentPrefix + "_" + infix;
 			String fillPrefix = experimentPrefix + "_" + "Fill";
+			String qdPrefix = experimentPrefix + "_" + "QD";
 			String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 			directory += (directory.equals("") ? "" : "/");
 			String fullName = directory + prefix + "_log.plot";
 			String fullFillName = directory + fillPrefix + "_log.plot";
+			String fullQDName = directory + qdPrefix + "_log.plot";
 			File plot = new File(fullName); // for archive log plot file
 			File fillPlot = new File(fullFillName);
 			// Write to file
@@ -115,6 +117,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
 					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
 				}
+				ps.println("set title \"" + experimentPrefix + " Archive QD Scores\"");
+				ps.println("set output \"" + fullQDName.substring(fullQDName.lastIndexOf('/')+1, fullQDName.lastIndexOf('.')) + ".pdf\"");
+				ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\"" + (cppnThenDirectLog != null ? ", \\" : ""));
+				
 				ps.close();
 				
 			} catch (FileNotFoundException e) {
