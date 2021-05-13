@@ -6,6 +6,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mulambda.MuLambda;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.SinglePopulationTask;
+import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 
 public class CMAEvolutionStrategyEA extends MuLambda<ArrayList<Double>> {
 
