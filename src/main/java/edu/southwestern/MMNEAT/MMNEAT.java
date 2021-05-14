@@ -83,7 +83,7 @@ import edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelTask;
 import edu.southwestern.tasks.megaman.MegaManGANLevelTask;
 import edu.southwestern.tasks.megaman.MegaManLevelTask;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
-import edu.southwestern.tasks.motests.FunctionOptimization;
+import edu.southwestern.tasks.motests.MultipleFunctionOptimization;
 import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
 import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.tasks.mspacman.facades.ExecutorFacade;
@@ -432,7 +432,7 @@ public class MMNEAT {
 			if(Parameters.parameters.booleanParameter("hallOfFame")){
 				hallOfFame = new HallOfFame();
 			}
-			if(task instanceof FunctionOptimization) {
+			if(task instanceof MultipleFunctionOptimization) {
 				System.out.println("Setup Function Optimization");
 				// Already setup in setupFunctionOptimization();
 			} else if (task instanceof MsPacManTask) {
@@ -946,7 +946,7 @@ public class MMNEAT {
 			evolutionaryRun(args);
 		}
 		System.out.println("done: " + (((System.currentTimeMillis() - start) / 1000.0) / 60.0) + " minutes");
-		if (!(task instanceof FunctionOptimization)) {
+		if (!(task instanceof MultipleFunctionOptimization)) {
 			System.exit(1);
 		}
 	}
