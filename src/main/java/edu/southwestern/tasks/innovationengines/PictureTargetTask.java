@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.mapelites.Archive;
@@ -32,14 +33,14 @@ import edu.southwestern.util.graphics.ImageNetClassification;
 public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	
 	public static final String IMAGE_MATCH_PATH = "data" + File.separator + "imagematch";
-	private static final int IMAGE_PLACEMENT = 200;
-	private static final int HUE_INDEX = 0;
-	private static final int SATURATION_INDEX = 1;
-	private static final int BRIGHTNESS_INDEX = 2;
-	private Network individual;
+//	private static final int IMAGE_PLACEMENT = 200;
+//	private static final int HUE_INDEX = 0;
+//	private static final int SATURATION_INDEX = 1;
+//	private static final int BRIGHTNESS_INDEX = 2;
+//	private Network individual;
 	private BufferedImage img = null;
 	public int imageHeight, imageWidth;
-	private double fitnessSaveThreshold = 0;
+	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold"); // TODO: Use parameter eventually
 
 	
 	public PictureTargetTask(){
@@ -89,29 +90,51 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 			picture.dispose();
 		}
 		if(CommonConstants.netio) {
-			// Lot of duplication of computation from Archive. Can that be fixed?
+			System.out.println("Save archive images");
 			@SuppressWarnings("unchecked")
 			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
 			List<String> binLabels = archive.getBinMapping().binLabels();
-			for(int i = 0; i < binLabels.size(); i++) {
-				Score<T> elite = archive.getElite(i);
-				// If the bin is empty, or the candidate is better than the elite for that bin's score
-				binScore = result.getTraditionalDomainSpecificBehaviorVector().get(i);
-				if(elite == null || binScore > elite.getTraditionalDomainSpecificBehaviorVector().get(i)) {  // Duplicate variable error, does this need to be different from the binScore in the evaluate method?
-					if(binScore > fitnessSaveThreshold) {
-						String fileName = String.format("%7.5f", binScore) + binLabels.get(i) + individual.getId() + ".jpg";						
-						String archivePath = archive.getArchiveDirectory();
-						File archiveDir = new File(archivePath);
-						if(!archiveDir.exists()) archiveDir.mkdir();
-						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(i);
-						File bin = new File(binPath);
-						if(!bin.exists()) bin.mkdir();
-						String fullName = binPath + File.separator + fileName;
-						System.out.println(fullName);
-						GraphicsUtil.saveImage(image, fullName);
-					}
+			// Index in flattened bin array
+			Score<T> elite = archive.getElite(indicesMAPEliteBin);
+			// If the bin is empty, or the candidate is better than the elite for that bin's score
+			if(elite == null || binScore > elite.behaviorIndexScore()) {
+				if(binScore > fitnessSaveThreshold) {
+					String fileName = String.format("%7.5f", binScore) + binLabels.get(archive.getBinMapping().oneDimensionalIndex(indicesMAPEliteBin)) + individual.getId() + ".jpg";
+					String archivePath = archive.getArchiveDirectory();
+					File archiveDir = new File(archivePath);
+					if(!archiveDir.exists()) archiveDir.mkdir();
+					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(indicesMAPEliteBin));
+					File bin = new File(binPath);
+					if(!bin.exists()) bin.mkdir();
+					String fullName = binPath + File.separator + fileName;
+					System.out.println(fullName);
+					GraphicsUtil.saveImage(image, fullName);
 				}
 			}
+			
+			
+			
+//			// Lot of duplication of computation from Archive. Can that be fixed?
+//			@SuppressWarnings("unchecked")
+//			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+//				Score<T> elite = archive.getElite(i);
+//				// If the bin is empty, or the candidate is better than the elite for that bin's score
+//				binScore = result.getTraditionalDomainSpecificBehaviorVector().get(i);
+//				if(elite == null || binScore > elite.getTraditionalDomainSpecificBehaviorVector().get(i)) {  // Duplicate variable error, does this need to be different from the binScore in the evaluate method?
+//					if(binScore > fitnessSaveThreshold) {
+//						String fileName = String.format("%7.5f", binScore) + binLabels.get(i) + individual.getId() + ".jpg";						
+//						String archivePath = archive.getArchiveDirectory();
+//						File archiveDir = new File(archivePath);
+//						if(!archiveDir.exists()) archiveDir.mkdir();
+//						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(i);
+//						File bin = new File(binPath);
+//						if(!bin.exists()) bin.mkdir();
+//						String fullName = binPath + File.separator + fileName;
+//						System.out.println(fullName);
+//						GraphicsUtil.saveImage(image, fullName);
+//					}
+//				}
+			
 		}
 		return result;
 	}

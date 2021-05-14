@@ -811,7 +811,7 @@ public class Parameters {
 		doubleOptions.add("healthDropRate", 20., "Health drop rate from enemies");
 		doubleOptions.add("bombDropRate", 40., "Bomb drop rate from enemies");
 		doubleOptions.add("indirectToDirectTransitionRate", 0.1, "chance of mutating from indirect to a direct genotype");
-		doubleOptions.add("fitnessSaveThreshold", 0.0, "Threshold for whether or not to save an image");
+//TODO		doubleOptions.add("fitnessSaveThreshold", 0.0, "Threshold for whether or not to save an image");
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
 		stringOptions.add("archetype", "", "Network that receives all mutations so as to keep other networks properly aligned");
