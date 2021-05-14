@@ -5,10 +5,12 @@ import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.mario.MarioGANLevelTask;
+import edu.southwestern.tasks.mario.gan.MarioGANUtil;
 import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 import fr.inria.optimization.cmaes.fitness.IObjectiveFunction;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class MarioFunction implements IObjectiveFunction { // meaning implements methods valueOf and isFeasible
 	
@@ -21,12 +23,10 @@ class MarioFunction implements IObjectiveFunction { // meaning implements method
 	}
 	
 	public double valueOf (double[] x) {
-		
 		BoundedRealValuedGenotype g = new BoundedRealValuedGenotype(x);
 		Score<ArrayList<Double>> s = task.evaluate(g);
 		double res = s.scores[0];
-		
-		return res;
+		return -res;
 	}
 	public boolean isFeasible(double[] x) {return true; } // entire R^n is feasible
 }
@@ -41,7 +41,8 @@ public class CMAESMarioGan {
 		cma.setDimension(10); // overwrite some loaded properties
 		cma.setInitialX(0.05); // in each dimension, also setTypicalX can be used
 		cma.setInitialStandardDeviation(0.2); // also a mandatory setting 
-		cma.options.stopFitness = 1e-14;       // optional setting
+		cma.options.stopFitness = -9999; //1e-14;       // optional setting
+		cma.options.writeDisplayToFile = 0;
 
 		// initialize cma and get fitness array to fill in later
 		double[] fitness = cma.init();  // new double[cma.parameters.getPopulationSize()];
@@ -86,9 +87,9 @@ public class CMAESMarioGan {
 			cma.println("  " + s);
 		cma.println("best function value " + cma.getBestFunctionValue() 
 				+ " at evaluation " + cma.getBestEvaluationNumber());
-			
-		// we might return cma.getBestSolution() or cma.getBestX()
-
+		double[] best = cma.getBestX();
+		
+		
 	} // main  
 } // class
 
