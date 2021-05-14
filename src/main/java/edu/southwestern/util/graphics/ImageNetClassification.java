@@ -22,6 +22,8 @@ public class ImageNetClassification {
 	public static final int NUM_IMAGE_NET_CLASSES = 1000;
 	public static final int IMAGE_NET_INPUT_HEIGHT = 224;
 	public static final int IMAGE_NET_INPUT_WIDTH = 224;
+	public static final int TARGET_INPUT_HEIGHT = 30;
+	public static final int TARGET_INPUT_WIDTH = 30;
 	public static final int IMAGE_NET_INPUT_CHANNELS = 3;
 
 	// Do not take the time to initialize this if not needed

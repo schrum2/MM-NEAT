@@ -13,6 +13,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.Network;
@@ -38,6 +39,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	private Network individual;
 	private BufferedImage img = null;
 	public int imageHeight, imageWidth;
+	private double fitnessSaveThreshold = 0;
+
 	
 	public PictureTargetTask(){
 		this(Parameters.parameters.stringParameter("matchImageFile"));
@@ -68,16 +71,18 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
 		Network cppn = individual.getPhenotype();
-		BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
-//		INDArray imageArray = ImageNetClassification.bufferedImageToINDArray(image);
-//		INDArray scores = ImageNetClassification.getImageNetPredictions(imageArray, PREPROCESS);
-		ArrayList<Double> behaviorVector = ArrayUtil.doubleVectorFromINDArray(scores);
-		Score<T> result = new Score<>(individual, new double[]{}, behaviorVector);
+		BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, ImageNetClassification.TARGET_INPUT_WIDTH, ImageNetClassification.TARGET_INPUT_HEIGHT);
+		TWEANNGenotype tweannIndividual = (TWEANNGenotype) individual;
+		// TODO: What if number of nodes or links exceeds 35? Need to cap the index
+		int[] indicesMAPEliteBin = new int[] {tweannIndividual.nodes.size(), tweannIndividual.links.size()}; // Array of two values corresponding to bin label dimensions
+		double binScore = 0.0; // A match score fitness calculated similarly to ImageMatchTask/MatchDataTask
+		
+		Score<T> result = new Score<>(individual, new double[]{}, indicesMAPEliteBin, binScore);
 		if(CommonConstants.watch) {
-//			DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
+			DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", ImageNetClassification.TARGET_INPUT_WIDTH, ImageNetClassification.TARGET_INPUT_HEIGHT);
 			// Prints top 4 labels
 //			String decodedLabels = ImageNetClassification.getImageNetLabelsInstance().decodePredictions(scores);
-			System.out.println(decodedLabels);
+//			System.out.println(decodedLabels);
 			// Wait for user
 			MiscUtil.waitForReadStringAndEnterKeyPress();
 			picture.dispose();
@@ -90,9 +95,9 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 			for(int i = 0; i < binLabels.size(); i++) {
 				Score<T> elite = archive.getElite(i);
 				// If the bin is empty, or the candidate is better than the elite for that bin's score
-				double binScore = result.getTraditionalDomainSpecificBehaviorVector().get(i);
-				if(elite == null || binScore > elite.getTraditionalDomainSpecificBehaviorVector().get(i)) {
-					if(binScore > pictureInnovationSaveThreshold) {
+				binScore = result.getTraditionalDomainSpecificBehaviorVector().get(i);
+				if(elite == null || binScore > elite.getTraditionalDomainSpecificBehaviorVector().get(i)) {  // Duplicate variable error, does this need to be different from the binScore in the evaluate method?
+					if(binScore > fitnessSaveThreshold) {
 						String fileName = String.format("%7.5f", binScore) + binLabels.get(i) + individual.getId() + ".jpg";						
 						String archivePath = archive.getArchiveDirectory();
 						File archiveDir = new File(archivePath);
@@ -128,7 +133,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				String label = binLabels.get(i);
 				Score<T> score = archive.getElite(i);
 				Network cppn = score.individual.getPhenotype();
-//				BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, saveWidth, saveHeight);	// not sure if this one should be deleted, (imageFromCPPN vs ImageNetClassification)
+				BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, saveWidth, saveHeight);	// not sure if this one should be deleted, (imageFromCPPN vs ImageNetClassification)
 				double binScore = score.behaviorIndexScore(i);
 				String fileName = String.format("%7.5f", binScore) + label + ".jpg";
 				String fullName = finalArchive + File.separator + fileName;
