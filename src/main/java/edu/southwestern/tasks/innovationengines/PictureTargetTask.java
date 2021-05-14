@@ -40,7 +40,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 //	private Network individual;
 	private BufferedImage img = null;
 	public int imageHeight, imageWidth;
-	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold"); // TODO: Use parameter eventually
+	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold"); 
 
 	
 	public PictureTargetTask(){
@@ -61,7 +61,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	
 	@Override
 	public int numObjectives() {
-		return 0; // None: only behavior characterization
+		return 1; // Just comparison score to target image
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		// TODO
 		double binScore = 0.0; // A match score fitness calculated similarly to ImageMatchTask/MatchDataTask
 		
-		Score<T> result = new Score<>(individual, new double[]{}, indicesMAPEliteBin, binScore);
+		Score<T> result = new Score<>(individual, new double[]{binScore}, indicesMAPEliteBin, binScore);
 		if(CommonConstants.watch) {
 			DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", imageWidth, imageHeight);
 			// Prints top 4 labels
