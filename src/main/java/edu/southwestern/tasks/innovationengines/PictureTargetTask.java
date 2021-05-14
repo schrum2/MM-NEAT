@@ -71,15 +71,16 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
 		Network cppn = individual.getPhenotype();
-		BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, ImageNetClassification.TARGET_INPUT_WIDTH, ImageNetClassification.TARGET_INPUT_HEIGHT);
+		BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, imageWidth, imageHeight);
 		TWEANNGenotype tweannIndividual = (TWEANNGenotype) individual;
 		// TODO: What if number of nodes or links exceeds 35? Need to cap the index
 		int[] indicesMAPEliteBin = new int[] {tweannIndividual.nodes.size(), tweannIndividual.links.size()}; // Array of two values corresponding to bin label dimensions
+		// TODO
 		double binScore = 0.0; // A match score fitness calculated similarly to ImageMatchTask/MatchDataTask
 		
 		Score<T> result = new Score<>(individual, new double[]{}, indicesMAPEliteBin, binScore);
 		if(CommonConstants.watch) {
-			DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", ImageNetClassification.TARGET_INPUT_WIDTH, ImageNetClassification.TARGET_INPUT_HEIGHT);
+			DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", imageWidth, imageHeight);
 			// Prints top 4 labels
 //			String decodedLabels = ImageNetClassification.getImageNetLabelsInstance().decodePredictions(scores);
 //			System.out.println(decodedLabels);
@@ -160,16 +161,13 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		
 		// For test runs
 		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:400","maxGens:2000000",
-				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureInnovationTask",
+				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
 				"log:InnovationPictures-VGG19","saveTo:VGG19","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:true",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true",
-				//"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper",
-				"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper",
-				//"imageNetModel:edu.southwestern.networks.dl4j.AverageAllZooModelImageNetModels",
-				"pictureInnovationSaveThreshold:0.3",
+				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping","fs:true",
+// TODO: create parameter "fitnessSaveThreshold:0.0",
 				"imageWidth:500","imageHeight:500", // Final save size
 				"includeSigmoidFunction:true", // In original Innovation Engine
 				"includeTanhFunction:false",
