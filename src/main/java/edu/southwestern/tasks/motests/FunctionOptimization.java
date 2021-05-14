@@ -12,6 +12,10 @@ import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
 import java.util.ArrayList;
 
 /**
+ * Multiple Function Optimization, specifically intended for benchmarking
+ * NSGA-II. Evolves real-valued vectors, that are used as inputs to multiple functions.
+ * NSGA-II is used to get the Pareto front of the combined objective scores from
+ * all of the fitness functions.
  *
  * @author Jacob Schrum
  */
