@@ -41,44 +41,62 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 		return 0; // Not used
 	}
 
+	/**
+	 * 
+	 * @return returns the 
+	 */
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
-		Network cppn = individual.getPhenotype();
+		Network cppn = individual.getPhenotype();	// Saves the phenotype of the genotype individual inside a CPPN
+		// Saving the image
 		BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
-		INDArray imageArray = ImageNetClassification.bufferedImageToINDArray(image);
-		INDArray scores = ImageNetClassification.getImageNetPredictions(imageArray, PREPROCESS);
-		ArrayList<Double> behaviorVector = ArrayUtil.doubleVectorFromINDArray(scores);
-		Score<T> result = new Score<>(individual, new double[]{}, behaviorVector);
+		INDArray imageArray = ImageNetClassification.bufferedImageToINDArray(image);	// Changing the image to be an INDArray
+		INDArray scores = ImageNetClassification.getImageNetPredictions(imageArray, PREPROCESS);	// Getting the image fitness score (for each bin?)
+		ArrayList<Double> behaviorVector = ArrayUtil.doubleVectorFromINDArray(scores);	// Converts the INDArray scores into an ArrayList of Doubles
+		Score<T> result = new Score<>(individual, new double[]{}, behaviorVector);	// Saving the fitness score in result (an object of type Score with data type T)
 		if(CommonConstants.watch) {
+			// Creates the panel to watch the image evolve
 			DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
-			// Prints top 4 labels
+			// Prints top 5 labels
 			String decodedLabels = ImageNetClassification.getImageNetLabelsInstance().decodePredictions(scores);
-			System.out.println(decodedLabels);
+			System.out.println(decodedLabels);	// Shows the bins with the highest scores
 			// Wait for user
-			MiscUtil.waitForReadStringAndEnterKeyPress();
-			picture.dispose();
+			MiscUtil.waitForReadStringAndEnterKeyPress();	// User must press enter key for program to progress
+			picture.dispose();	// Disposes of the image after the user presses the enter key
 		}
 		if(CommonConstants.netio) {
 			// Lot of duplication of computation from Archive. Can that be fixed?
 			@SuppressWarnings("unchecked")
 			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
-			List<String> binLabels = archive.getBinMapping().binLabels();
-			for(int i = 0; i < binLabels.size(); i++) {
-				Score<T> elite = archive.getElite(i);
+			List<String> binLabels = archive.getBinMapping().binLabels();	// Lists all the bin names in the archive
+			for(int i = 0; i < binLabels.size(); i++) {	// Look at all the bins
+				Score<T> elite = archive.getElite(i);	// Save the elite individual from the bin in elite (a score object with data type T)
 				// If the bin is empty, or the candidate is better than the elite for that bin's score
 				double binScore = result.getTraditionalDomainSpecificBehaviorVector().get(i);
 				if(elite == null || binScore > elite.getTraditionalDomainSpecificBehaviorVector().get(i)) {
+					// If the bin score is greater than the threshold
 					if(binScore > pictureInnovationSaveThreshold) {
+						// Save the image in a file
 						String fileName = String.format("%7.5f", binScore) + binLabels.get(i) + individual.getId() + ".jpg";						
+						// Save the image in the archive 
 						String archivePath = archive.getArchiveDirectory();
+						// Create a new file in the archive for the specific image based on which bin it most fit into?
 						File archiveDir = new File(archivePath);
+						// If the archive doesn't exist
 						if(!archiveDir.exists()) archiveDir.mkdir();
+						// Save the name of the archive in a String
 						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(i);
+						// Create a new file for the image
 						File bin = new File(binPath);
+						// If the bin doesn't exist
 						if(!bin.exists()) bin.mkdir();
+						// Save the name of the file in a String
 						String fullName = binPath + File.separator + fileName;
+						// Print out the name of the newly created bin
 						System.out.println(fullName);
+						// Save the image in the archive
 						GraphicsUtil.saveImage(image, fullName);
+						
 					}
 				}
 			}
@@ -130,7 +148,8 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 		
 		
 		// For test runs
-		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:400","maxGens:2000000",
+		MMNEAT.main(new String[]{"runNumber:1","randomSeed:0","base:innovation","mu:400","maxGens:2000000",
+				"watch:true",	// allows us to view the image
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureInnovationTask",
 				"log:InnovationPictures-VGG19","saveTo:VGG19","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:true",
