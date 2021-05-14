@@ -14,6 +14,7 @@ import edu.southwestern.data.ResultSummaryUtilities;
 import edu.southwestern.evolution.EA;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.ScoreHistory;
+import edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA;
 import edu.southwestern.evolution.crossover.Crossover;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
@@ -47,6 +48,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.MultiplePopulationTask;
 import edu.southwestern.tasks.Task;
+import edu.southwestern.tasks.functionoptimization.FunctionOptimization;
 import edu.southwestern.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.southwestern.tasks.gridTorus.NNTorusPredPreyController;
 import edu.southwestern.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
@@ -433,8 +435,11 @@ public class MMNEAT {
 				hallOfFame = new HallOfFame();
 			}
 			if(task instanceof MultipleFunctionOptimization) {
-				System.out.println("Setup Function Optimization");
+				System.out.println("Setup Multiple Function Optimization");
 				// Already setup in setupFunctionOptimization();
+			} else if(task instanceof FunctionOptimization) {
+					System.out.println("Setup Function Optimization");
+					// Anything to do?
 			} else if (task instanceof MsPacManTask) {
 				//TODO: Allow for evolution of ghost teams
 				if(Parameters.parameters.booleanParameter("evolveGhosts")){
@@ -1055,6 +1060,7 @@ public class MMNEAT {
 	public static double[] getLowerBounds() {
 		// Function Optimization Tasks use these genotypes and know their lower bounds
 		if(fos != null) return fos.getLowerBounds();
+		else if (task instanceof FunctionOptimization) return ((CMAEvolutionStrategyEA) MMNEAT.ea).cma.LBound;
 		// For Mario GAN, the latent vector length determines the size, but the lower bounds are all zero
 		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask|| task instanceof MarioCPPNOrDirectToGANLevelTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all -1
 		// Similar for ZeldaGAN
@@ -1076,6 +1082,7 @@ public class MMNEAT {
 	 */
 	public static double[] getUpperBounds() {
 		if(fos != null) return fos.getUpperBounds();
+		else if (task instanceof FunctionOptimization) return ((CMAEvolutionStrategyEA) MMNEAT.ea).cma.UBound;
 		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask||task instanceof MarioCPPNOrDirectToGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
 		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength()); // all ones
 		else if(task instanceof ZeldaGANDungeonTask) return ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones

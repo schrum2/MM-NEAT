@@ -14,7 +14,7 @@ import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 
 public class CMAEvolutionStrategyEA extends MuLambda<ArrayList<Double>> {
 
-	CMAEvolutionStrategy cma = new CMAEvolutionStrategy();
+	public CMAEvolutionStrategy cma = new CMAEvolutionStrategy();
 	
 	@SuppressWarnings("unchecked")
 	public CMAEvolutionStrategyEA() {
