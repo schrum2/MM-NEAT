@@ -59,6 +59,7 @@ import edu.southwestern.tasks.gvgai.zelda.ZeldaGANLevelTask;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaLevelTask;
 import edu.southwestern.tasks.gvgai.zelda.study.HumanSubjectStudy2019Zelda;
 import edu.southwestern.tasks.innovationengines.PictureInnovationTask;
+import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.innovationengines.ShapeInnovationTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
@@ -578,6 +579,10 @@ public class MMNEAT {
 			} else if(task instanceof ShapeInnovationTask) {
 				System.out.println("set up Innovation Engine Task");
 				ShapeInnovationTask temp = (ShapeInnovationTask) task;
+				setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
+			} else if(task instanceof PictureTargetTask) {
+				System.out.println("set up Picture Target Task");
+				PictureTargetTask temp = (PictureTargetTask) task;
 				setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
 			} else if (task instanceof MarioTask) {
 				setNNInputParameters(((Parameters.parameters.integerParameter("marioInputWidth") * Parameters.parameters.integerParameter("marioInputHeight")) * 2) + 1, MarioTask.MARIO_OUTPUTS); //hard coded for now, 5 button outputs

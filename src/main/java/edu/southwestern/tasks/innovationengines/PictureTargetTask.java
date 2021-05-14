@@ -9,10 +9,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import org.nd4j.linalg.api.ndarray.INDArray;
-
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.mapelites.Archive;
@@ -24,11 +21,11 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
+import edu.southwestern.tasks.testmatch.imagematch.ImageMatchTask;
 import edu.southwestern.util.MiscUtil;
-import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
-import edu.southwestern.util.graphics.ImageNetClassification;
 
 public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	
@@ -42,6 +39,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	public int imageHeight, imageWidth;
 	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold"); 
 
+	private ArrayList<Pair<double[], double[]>> trainingPairs;
 	
 	public PictureTargetTask(){
 		this(Parameters.parameters.stringParameter("matchImageFile"));
@@ -57,6 +55,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		}
 		imageHeight = img.getHeight();
 		imageWidth = img.getWidth();
+		
+		trainingPairs = ImageMatchTask.getImageMatchTrainingPairs(img);
 	}
 	
 	@Override
@@ -76,15 +76,13 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		TWEANNGenotype tweannIndividual = (TWEANNGenotype) individual;
 		// TODO: What if number of nodes or links exceeds 35? Need to cap the index
 		int[] indicesMAPEliteBin = new int[] {tweannIndividual.nodes.size(), tweannIndividual.links.size()}; // Array of two values corresponding to bin label dimensions
-		// TODO
-		double binScore = 0.0; // A match score fitness calculated similarly to ImageMatchTask/MatchDataTask
+		// A match score fitness calculated similarly to ImageMatchTask/MatchDataTask
+		double binScore = 1 - MatchDataTask.calculateMatchLoss(individual, trainingPairs); 
 		
 		Score<T> result = new Score<>(individual, new double[]{binScore}, indicesMAPEliteBin, binScore);
 		if(CommonConstants.watch) {
 			DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", imageWidth, imageHeight);
-			// Prints top 4 labels
-//			String decodedLabels = ImageNetClassification.getImageNetLabelsInstance().decodePredictions(scores);
-//			System.out.println(decodedLabels);
+			System.out.println("Score: "+binScore);
 			// Wait for user
 			MiscUtil.waitForReadStringAndEnterKeyPress();
 			picture.dispose();
@@ -183,15 +181,16 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		
 		
 		// For test runs
-		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:400","maxGens:2000000",
+		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
-				"log:InnovationPictures-VGG19","saveTo:VGG19","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
-				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:true",
+				"log:TargetImage-Test","saveTo:Test","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
+				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping","fs:true",
-// TODO: create parameter "fitnessSaveThreshold:0.0",
-				"imageWidth:500","imageHeight:500", // Final save size
+				//"matchImageFile:TexasFlag.png",
+				"matchImageFile:cat.jpg",
+				"fitnessSaveThreshold:0.0",
 				"includeSigmoidFunction:true", // In original Innovation Engine
 				"includeTanhFunction:false",
 				"includeIdFunction:false",

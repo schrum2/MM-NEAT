@@ -47,6 +47,19 @@ public abstract class MatchDataTask<T extends Network> extends LonerTask<T> impl
 		// RandomNumbers.randomGenerator = new Random(0);
 		ArrayList<Pair<double[], double[]>> trainingSet = getTrainingPairs();
 		pauseForEachCase = trainingSet.size() <= 10; // Pausing for more than this would be tedious
+		double averageError = calculateMatchLoss(individual, trainingSet);
+		// Fitness is 1 - the loss, which should be positive and bounded by 1.
+		return new Score<T>(individual, new double[] { 1 - averageError }, null); 
+	}
+
+	/**
+	 * 
+	 * @param <T>
+	 * @param individual
+	 * @param trainingSet
+	 * @return
+	 */
+	public static <T extends Network> double calculateMatchLoss(Genotype<T> individual, ArrayList<Pair<double[], double[]>> trainingSet) {
 		ArrayList<ArrayList<Pair<Double, Double>>> samples = new ArrayList<ArrayList<Pair<Double, Double>>>(trainingSet.size());
 		Network n = individual.getPhenotype();
 		
@@ -94,8 +107,7 @@ public abstract class MatchDataTask<T extends Network> extends LonerTask<T> impl
 		// actual output pairs put into the samples
 		double averageError = StatisticsUtilities.averageSquaredErrorEnergy(samples);
 		assert!Double.isNaN(averageError) : "averageError is NaN!";
-		// Fitness is 1 - the loss, which should be positive and bounded by 1.
-		return new Score<T>(individual, new double[] { 1 - averageError }, null); 
+		return averageError;
 	}
 
 	/**

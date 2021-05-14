@@ -35,6 +35,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	private static final int HUE_INDEX = 0;
 	private static final int SATURATION_INDEX = 1;
 	private static final int BRIGHTNESS_INDEX = 2;
+	private static final int NUM_CPPN_OUTPUTS = 3;
 	private Network individual;
 	private BufferedImage img = null;
 	public int imageHeight, imageWidth;
@@ -154,7 +155,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	 */
 	@Override
 	public int numOutputs() {
-		return 3;
+		return NUM_CPPN_OUTPUTS;
 	}
 
 	/**
@@ -165,14 +166,18 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	 */
 	@Override
 	public ArrayList<Pair<double[], double[]>> getTrainingPairs() {
+		return getImageMatchTrainingPairs(img);
+	}
+
+	public static ArrayList<Pair<double[], double[]>> getImageMatchTrainingPairs(BufferedImage img) {
 		ArrayList<Pair<double[], double[]>> pairs = new ArrayList<Pair<double[], double[]>>();
-		for (int x = 0; x < imageWidth; x++) {
-			for (int y = 0; y < imageHeight; y++) {
+		for (int x = 0; x < img.getWidth(); x++) {
+			for (int y = 0; y < img.getHeight(); y++) {
 				Color color = new Color(img.getRGB(x, y));
-				float[] hsb = new float[numOutputs()];
+				float[] hsb = new float[NUM_CPPN_OUTPUTS];
 				Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
 				// -1 input is used as default so that time is not taken into account
-				pairs.add(new Pair<double[], double[]>(GraphicsUtil.get2DObjectCPPNInputs(x, y, imageWidth, imageHeight, -1),
+				pairs.add(new Pair<double[], double[]>(GraphicsUtil.get2DObjectCPPNInputs(x, y, img.getWidth(), img.getHeight(), -1),
 						new double[] { hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX] }));
 			}
 		}
