@@ -42,8 +42,13 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 	}
 
 	/**
+	 * Evaluates a genotype in the form of an image (creates
+	 * an image from the phenotype of the genotype).
+	 * If the image fitness for a certain bin is greater
+	 * than the threshold, then the image will be saved
+	 * in the archive.
 	 * 
-	 * @return returns the 
+	 * @return returns the image fitness score 
 	 */
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
@@ -76,7 +81,7 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				if(elite == null || binScore > elite.getTraditionalDomainSpecificBehaviorVector().get(i)) {
 					// If the bin score is greater than the threshold
 					if(binScore > pictureInnovationSaveThreshold) {
-						// Save the image in a file
+						// Save the image as a .jpg
 						String fileName = String.format("%7.5f", binScore) + binLabels.get(i) + individual.getId() + ".jpg";						
 						// Save the image in the archive 
 						String archivePath = archive.getArchiveDirectory();
