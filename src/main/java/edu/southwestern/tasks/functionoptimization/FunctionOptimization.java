@@ -40,13 +40,14 @@ public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
 	public Score<ArrayList<Double>> evaluate(Genotype<ArrayList<Double>> individual) {
 		ArrayList<Double> pheno = individual.getPhenotype();
 		double[] vector = ArrayUtil.doubleArrayFromList(pheno); // Convert ArrayList into double array to give to function
-		double score = -function.valueOf(vector); // Needs to be negated since CMA-ES is a minimizer
-		double[] scores = new double[] {score};
+		double score = -function.valueOf(vector); // Must be negated to work since CMA-ES is a minimizer
+		double[] scores = new double[] {score}; 
 		return new Score<>(individual, scores, null);
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main(new String[] {"runNumber:0", "io:false", "netio:false", "ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA", "watch:true", "task:edu.southwestern.tasks.functionoptimization.FunctionOptimization",
+		// Test with Rosenbrock, comparable to CMExample1
+		MMNEAT.main(new String[] {"runNumber:1", "randomSeed:1", "io:true", "base:functionoptimization", "log:fo-FunctionOptimization", "saveTo:FunctionOptimization", "netio:false", "ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA", "watch:true", "task:edu.southwestern.tasks.functionoptimization.FunctionOptimization",
 				"foFunction:fr.inria.optimization.cmaes.fitness.RosenFunction", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype"});
 	}
 
