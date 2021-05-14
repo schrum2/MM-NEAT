@@ -143,6 +143,7 @@ vizdoom.ini
 *.png
 *.gif
 *.wav
+*.dat
 _vizdoom.ini
 
 .svn
