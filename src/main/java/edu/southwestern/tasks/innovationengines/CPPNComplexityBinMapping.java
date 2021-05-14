@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.innovationengines;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import edu.southwestern.evolution.mapelites.BinLabels;
@@ -13,20 +14,24 @@ public class CPPNComplexityBinMapping<T extends Network> implements BinLabels {
 	public static final int BIN_INDEX_LINKS = 1;
 	
 	public static final int MAX_NUM_NEURONS = 35;
-	public static final int MAX_NUM_LINKS = 35;
+	public static final int MAX_NUM_LINKS = 40;
 	public static final int MIN_NUM_NEURONS = 5;
-	public static final int MIN_NUM_LINKS = 5;
+	public static final int MIN_NUM_LINKS = 3;
 
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {
 			int size = (MAX_NUM_NEURONS - MIN_NUM_NEURONS + 1)*(MAX_NUM_LINKS - MIN_NUM_LINKS + 1);
+			System.out.println("Archive Size: "+size);
 			labels = new ArrayList<String>(size);
-			for(int i = MIN_NUM_LINKS; i < MAX_NUM_LINKS; i++) {
-				for(int j = MIN_NUM_NEURONS; j < MAX_NUM_NEURONS; j++) {
+			int count = 0;
+			for(int i = MIN_NUM_LINKS; i <= MAX_NUM_LINKS; i++) {
+				for(int j = MIN_NUM_NEURONS; j <= MAX_NUM_NEURONS; j++) {
 					labels.add("Neurons[" + j + "]links[" + i + "]");
+					count++;
 				}
 			}
+			assert count == size : "Incorrect number of bins created in archive: " + count;
 		}
 		return labels;
 	}
@@ -34,8 +39,8 @@ public class CPPNComplexityBinMapping<T extends Network> implements BinLabels {
 
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		//int binIndex = (multi[0]*BINS_PER_DIMENSION + multi[1])*BINS_PER_DIMENSION + multi[2];
-		int binIndex = (multi[BIN_INDEX_NODES] + (MAX_NUM_NEURONS - MIN_NUM_NEURONS + 1) * multi[BIN_INDEX_LINKS]);
+		int binIndex = ( (multi[BIN_INDEX_NODES] - MIN_NUM_NEURONS) + (MAX_NUM_NEURONS - MIN_NUM_NEURONS + 1) * (multi[BIN_INDEX_LINKS] - MIN_NUM_LINKS));
+		assert binIndex >= 0 : "Negative index "+Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
 	}
 }

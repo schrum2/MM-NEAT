@@ -69,13 +69,24 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		return 0; // Not used
 	}
 
+	public static double degreeOfDifference() {
+		return -1; // Function d from Woolley paper
+	}
+	
+	public static double candidateVsTargetError() {
+		return -1; // This is the err function from the Woolley paper
+	}
+	
+	
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
 		Network cppn = individual.getPhenotype();
 		BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, imageWidth, imageHeight);
 		TWEANNGenotype tweannIndividual = (TWEANNGenotype) individual;
-		// TODO: What if number of nodes or links exceeds 35? Need to cap the index
-		int[] indicesMAPEliteBin = new int[] {tweannIndividual.nodes.size(), tweannIndividual.links.size()}; // Array of two values corresponding to bin label dimensions
+		// What if number of nodes or links exceeds 35? Need to cap the index
+		int nodes = Math.min(tweannIndividual.nodes.size(), CPPNComplexityBinMapping.MAX_NUM_NEURONS);
+		int links = Math.min(tweannIndividual.links.size(), CPPNComplexityBinMapping.MAX_NUM_LINKS);
+		int[] indicesMAPEliteBin = new int[] {nodes, links}; // Array of two values corresponding to bin label dimensions
 		// A match score fitness calculated similarly to ImageMatchTask/MatchDataTask
 		double binScore = 1 - MatchDataTask.calculateMatchLoss(individual, trainingPairs); 
 		
@@ -178,6 +189,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 //		MMNEAT.main(new String[]{"runNumber:1","randomSeed:0","base:innovation","mu:400","maxGens:1", // Terminate after writing final archive 
 //				"io:false","netio:true",
 //				"log:InnovationPictures-VGG19Model","saveTo:VGG19Model"}); 
+
 		
 		
 		// For test runs
@@ -207,6 +219,6 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"includeLeakyReLUFunction:false",
 				"includeFullSawtoothFunction:false",
 				"includeTriangleWaveFunction:false", 
-				"includeSquareWaveFunction:false"}); 
+				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:true"}); 
 	}
 }
