@@ -53,15 +53,19 @@ public abstract class MatchDataTask<T extends Network> extends LonerTask<T> impl
 	}
 
 	/**
+	 * Calculating the fitness of the produced image to the target image by 
+	 * comparing the desired outputs with the actual outputs.
 	 * 
-	 * @param <T>
-	 * @param individual
-	 * @param trainingSet
-	 * @return
+	 * @param individual The genotype of the image
+	 * @param trainingSet A 2D ArrayList of pairs (type double) holding 
+	 * 					  the coordinates of each pixel and the corresponding 
+	 * 					  color
+	 * @return Returns an array with the average squared energy error of the samples
 	 */
 	public static <T extends Network> double calculateMatchLoss(Genotype<T> individual, ArrayList<Pair<double[], double[]>> trainingSet) {
+		// Creating an ArrayList out of pairs of doubles
 		ArrayList<ArrayList<Pair<Double, Double>>> samples = new ArrayList<ArrayList<Pair<Double, Double>>>(trainingSet.size());
-		Network n = individual.getPhenotype();
+		Network n = individual.getPhenotype();	// Get the phenotype of individual and store it in a network
 		
 		OptimizationDisplay display = null;
 		if(CommonConstants.watch) {
@@ -71,8 +75,8 @@ public abstract class MatchDataTask<T extends Network> extends LonerTask<T> impl
 		// loop that runs for each "pattern" in the trainingSet, which is a pair
 		// of double arrays of inputs/outputs
 		for (Pair<double[], double[]> pattern : trainingSet) {
-			double[] inputs = pattern.t1;
-			double[] desiredOutputs = pattern.t2;
+			double[] inputs = pattern.t1;	// an array of doubles of the inputs
+			double[] desiredOutputs = pattern.t2;	// an array of doubles of the desired outputs
 			// find the actual outputs based on the given inputs
 			double[] actualOutputs = n.process(inputs);
 			if (CommonConstants.watch) {
@@ -83,11 +87,14 @@ public abstract class MatchDataTask<T extends Network> extends LonerTask<T> impl
 					display.addPoint(desiredOutputs[0], actualOutputs[0], false);
 				}
 			}
+			
+			// An ArrayList of the pairs of doubles
 			ArrayList<Pair<Double, Double>> neuronResults = new ArrayList<Pair<Double, Double>>(n.numOutputs());
 			for (int i = 0; i < desiredOutputs.length; i++) {
-				// add all of the pairs of desired and actual outputs to compare
+				// Add all of the pairs of desired and actual outputs to compare
 				assert!Double.isNaN(desiredOutputs[i]) : "desiredOutputs[" + i + "] is NaN!";
 				assert!Double.isNaN(actualOutputs[i]) : "actualOutputs[" + i + "] is NaN!";
+				// Add the desired outputs and actual outputs of the pixel as a pair 
 				neuronResults.add(new Pair<Double, Double>(desiredOutputs[i], actualOutputs[i]));
 			}
 			// add all of the pairs of desired and actual outputs to compare

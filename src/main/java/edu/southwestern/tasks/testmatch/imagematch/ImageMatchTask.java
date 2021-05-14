@@ -169,19 +169,32 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		return getImageMatchTrainingPairs(img);
 	}
 
+	/**
+	 * Gets the expected input and output from picture for network to compare
+	 * against.  Specifically gathering training data about that image.  The
+	 * inputs correspond to the coordinates and the outputs correspond to 
+	 * a specific color (determined by hue, saturation and brightness).
+	 * 
+	 * @param img the image being evaluated
+	 * @return returns the 2D array of pairs (inputs and outputs)
+	 */
 	public static ArrayList<Pair<double[], double[]>> getImageMatchTrainingPairs(BufferedImage img) {
-		ArrayList<Pair<double[], double[]>> pairs = new ArrayList<Pair<double[], double[]>>();
+		ArrayList<Pair<double[], double[]>> pairs = new ArrayList<Pair<double[], double[]>>();	// creating a new 2D ArrayList of doubles
+		// looks at each pixel in the image
 		for (int x = 0; x < img.getWidth(); x++) {
 			for (int y = 0; y < img.getHeight(); y++) {
-				Color color = new Color(img.getRGB(x, y));
+				Color color = new Color(img.getRGB(x, y));	// Find the rgb color at the coordinates x and y and store them in a new color
+				// 
 				float[] hsb = new float[NUM_CPPN_OUTPUTS];
+				// Converting the color to the corresponding hue, saturation, and brightness indeces
 				Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
 				// -1 input is used as default so that time is not taken into account
+				// Add the coordinates and the corresponding color into the 2D array
 				pairs.add(new Pair<double[], double[]>(GraphicsUtil.get2DObjectCPPNInputs(x, y, img.getWidth(), img.getHeight(), -1),
 						new double[] { hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX] }));
 			}
 		}
-		return pairs;
+		return pairs;	// return the 2D ArrayList containing all of the pairs
 	}
 
 	/**
