@@ -3,8 +3,11 @@ package edu.southwestern.tasks.innovationengines;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -18,6 +21,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
+import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
@@ -25,11 +29,31 @@ import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.graphics.ImageNetClassification;
 
 public class PictureTargetTask<T extends Network> extends LonerTask<T> {
-	// Setting determines whether the mean of the ImageNet training set is subtracted from the image
-	// before classification, since this is how VGG16 was trained for ImageNet. However, it is not clear
-	// if such pre-processing is appropriate for the other ImageNet models.
-	private static final boolean PREPROCESS = true;
-//	private double pictureInnovationSaveThreshold = Parameters.parameters.doubleParameter("pictureInnovationSaveThreshold");
+	
+	public static final String IMAGE_MATCH_PATH = "data" + File.separator + "imagematch";
+	private static final int IMAGE_PLACEMENT = 200;
+	private static final int HUE_INDEX = 0;
+	private static final int SATURATION_INDEX = 1;
+	private static final int BRIGHTNESS_INDEX = 2;
+	private Network individual;
+	private BufferedImage img = null;
+	public int imageHeight, imageWidth;
+	
+	public PictureTargetTask(){
+		this(Parameters.parameters.stringParameter("matchImageFile"));
+		MatchDataTask.pauseForEachCase = false;
+	}
+	
+	public PictureTargetTask(String filename) {
+		try {// throws and exception if filename is not valid
+			img = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + filename));
+		} catch (IOException e) {
+			System.out.println("Could not load image: " + filename);
+			System.exit(1);
+		}
+		imageHeight = img.getHeight();
+		imageWidth = img.getWidth();
+	}
 	
 	@Override
 	public int numObjectives() {
@@ -44,7 +68,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
 		Network cppn = individual.getPhenotype();
-//		BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
+		BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
 //		INDArray imageArray = ImageNetClassification.bufferedImageToINDArray(image);
 //		INDArray scores = ImageNetClassification.getImageNetPredictions(imageArray, PREPROCESS);
 		ArrayList<Double> behaviorVector = ArrayUtil.doubleVectorFromINDArray(scores);
