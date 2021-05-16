@@ -35,7 +35,7 @@ public class OriginalPicBreederGenomeLoader {
 	public static final int SIZE = 256;
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {		
 		Parameters.initializeParameterCollections(new String[] {"io:false","netio:false","allowMultipleFunctions:true","finalPassOnOutputActivation:true"});
-		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, 0);
+		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, -1);
 		//System.out.println(tg);
 		// Now, load TWEANN structure from file
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\5736_ShinyRedApple.xml"); // Crash from loop?
