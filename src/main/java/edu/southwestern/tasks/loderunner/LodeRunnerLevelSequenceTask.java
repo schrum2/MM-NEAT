@@ -3,7 +3,7 @@ package edu.southwestern.tasks.loderunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import cern.colt.Arrays;
+import java.util.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.CommonConstants;

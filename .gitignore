@@ -69,6 +69,8 @@ ZeldaDungeon01_5000_10*
 ZeldaDungeon02_5000_10*
 ZeldaAllDungeons*
 /megamanlevels/
+/megamanmultigan/
+/megamansinglegan/
 /mariolevelsdecoratensleniency/
 /mariolevelsdistinctnsdecorate/
 /zeldadungeonswallwaterrooms/
@@ -120,10 +122,14 @@ ZeldaAllDungeons*
 /mariogan/
 /zentangle/
 /mariocppn/
+/loderunnermapelites10batches/
+/loderunnermapelitestenpercentbatches/
+/loderunnermapelitestwentypercentbatches/
 /coghosts/
 /poghosts/
 /popacman/
 /zeldagan/
+/functionoptimization/
 /src/main/python/MarioGAN/Zelda-30-5000
 # Some of UT^2's log files end up with this naming convention
 *-null
@@ -141,6 +147,7 @@ vizdoom.ini
 *.png
 *.gif
 *.wav
+*.dat
 _vizdoom.ini
 
 .svn

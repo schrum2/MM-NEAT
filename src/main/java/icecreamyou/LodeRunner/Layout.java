@@ -10,8 +10,6 @@ import java.io.IOException;
  */
 public class Layout {
 	
-	public static final String FILE_PATH = "src/main/java/icecreamyou/LodeRunner/";
-	
 	/**
 	 * Reads in a layout file and returns an array of lines representing it.
 	 * @param filename The name of the layout file to parse.
@@ -20,7 +18,7 @@ public class Layout {
 	public static String[] getLayoutAsArray(String filename) {
 		String fileContents = "";
 		try {
-			BufferedReader r = new BufferedReader(new FileReader(FILE_PATH +filename));
+			BufferedReader r = new BufferedReader(new FileReader(LodeRunner.FILE_PATH +filename));
 			if (r.ready()) {
 				String line = "";
 				while (line != null) {
@@ -52,7 +50,7 @@ public class Layout {
 		
 		// Actually write the file.
 		try {
-			BufferedWriter file = new BufferedWriter(new FileWriter(FILE_PATH + filename +".txt"));
+			BufferedWriter file = new BufferedWriter(new FileWriter(LodeRunner.FILE_PATH + filename +".txt"));
 			file.write(contents);
 			file.close();
 		} catch (IOException e) {

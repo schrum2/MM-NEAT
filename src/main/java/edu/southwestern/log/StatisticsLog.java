@@ -53,9 +53,9 @@ public abstract class StatisticsLog<T> extends MMNEATLog {
 	public void makePlotFile(ArrayList<String> labels, boolean makePDF) {
 		File plotFile = null;
 		if (!makePDF) {
-			plotFile = new File(directory + prefix + "_log.plot");
+			plotFile = new File(directory + prefix + "_log.plt");
 		} else {
-			plotFile = new File(directory + prefix + "_logPDF.plot");
+			plotFile = new File(directory + prefix + "_logPDF.plt");
 		}
 		if (!plotFile.exists()) {
 			try {

@@ -37,7 +37,9 @@ import edu.southwestern.util.graphics.PythonNeuralStyleTransfer;
 public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T> {
 
 	// Whether to run the Python version of Neural Style Transfer (instead of the Java version)
-	private static final boolean USE_PYTHON = true;
+	// Note: The Python version of NST only works if obsolete versions of tensor-flow and other libraries
+	//       are used. Therefore, the default is to use the Java version, despite it being slower.
+	private static final boolean USE_PYTHON = false;
 	
 	private static final int FILE_LOADER_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS;
 

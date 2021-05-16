@@ -117,7 +117,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				String beatablePrefix = experimentPrefix + "_" + "Beatable";
 				String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 				directory += (directory.equals("") ? "" : "/");
-				String fullFillName = directory + beatablePrefix + "_log.plot";
+				String fullFillName = directory + beatablePrefix + "_log.plt";
 				File beatablePlot = new File(fullFillName);
 				// Write to file
 				try {

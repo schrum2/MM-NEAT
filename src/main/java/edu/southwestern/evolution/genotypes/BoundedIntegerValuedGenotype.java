@@ -22,9 +22,8 @@ public class BoundedIntegerValuedGenotype extends NumericArrayGenotype<Integer> 
 	}
 
 	/**
-	 * Wraps the arrayList genes in a genotype.
-	 * 
-	 * @param genes an arrayList of integers
+	 * Creates evolvable genotype that is a list of Integers.
+	 * @param genes ArrayList of Integers to initialize genotype.
 	 */
 	public BoundedIntegerValuedGenotype(ArrayList<Integer> genes) {
 		super(genes);
