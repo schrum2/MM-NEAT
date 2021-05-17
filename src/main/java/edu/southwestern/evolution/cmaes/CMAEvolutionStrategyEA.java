@@ -46,7 +46,9 @@ public class CMAEvolutionStrategyEA extends MuLambda<ArrayList<Double>> {
 	public ArrayList<Genotype<ArrayList<Double>>> generateChildren(int numChildren, ArrayList<Score<ArrayList<Double>>> parentScores) {
 		double[][] pop = cma.samplePopulation(); // get a new population of solutions, this is equivalent to getting children
 		assert pop.length == numChildren : "Length of population is not equal to the number of children specified!"; // ensure population is correct size
-		return PopulationUtil.genotypeArrayListFromDoubles(pop); // convert population to be usable like normal
+		ArrayList<Genotype<ArrayList<Double>>> newPopulation = PopulationUtil.genotypeArrayListFromDoubles(pop); // convert population to be usable like normal
+		assert newPopulation.get(0).getPhenotype().size() == parentScores.get(0).individual.getPhenotype().size() : "Parent and child lengths did not match!";
+		return newPopulation;
 	}
 
 	@Override
