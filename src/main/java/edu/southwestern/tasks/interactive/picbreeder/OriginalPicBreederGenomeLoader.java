@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -122,7 +123,11 @@ public class OriginalPicBreederGenomeLoader {
 		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE);
 		DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", SIZE, SIZE);
 		// Wait for user
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+		String result = MiscUtil.waitForReadStringAndEnterKeyPress();
+		if(!result.trim().equals("")) {
+			// Save the image
+			GraphicsUtil.saveImage(image, result.trim());
+		}
 		picture.dispose();
 	}
 	
