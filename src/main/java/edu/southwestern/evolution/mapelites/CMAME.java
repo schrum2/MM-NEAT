@@ -48,6 +48,6 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		}
 		optEmitter.updateDistribution(deltaI); // perhaps 
 		
-		
+		// TODO log fitness stuff otherwise it might or might not be working
 	}
 }
