@@ -46,8 +46,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private MMNEATLog fillLog = null; // Archive fill amount
 	private MMNEATLog cppnThenDirectLog = null;
 	private MMNEATLog cppnVsDirectFitnessLog = null;
-	private LonerTask<T> task;
-	private Archive<T> archive;
+	protected LonerTask<T> task;
+	protected Archive<T> archive;
 	private boolean mating;
 	private double crossoverRate;
 	private int iterations;
