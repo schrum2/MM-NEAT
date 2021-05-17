@@ -78,10 +78,12 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					+ Parameters.parameters.integerParameter("runNumber");
 			String prefix = experimentPrefix + "_" + infix;
 			String fillPrefix = experimentPrefix + "_" + "Fill";
+			String qdPrefix = experimentPrefix + "_" + "QD";
 			String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 			directory += (directory.equals("") ? "" : "/");
-			String fullName = directory + prefix + "_log.plot";
-			String fullFillName = directory + fillPrefix + "_log.plot";
+			String fullName = directory + prefix + "_log.plt";
+			String fullFillName = directory + fillPrefix + "_log.plt";
+			String fullQDName = directory + qdPrefix + "_log.plt";
 			File plot = new File(fullName); // for archive log plot file
 			File fillPlot = new File(fullFillName);
 			// Write to file
@@ -115,6 +117,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
 					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
 				}
+				ps.println("set title \"" + experimentPrefix + " Archive QD Scores\"");
+				ps.println("set output \"" + fullQDName.substring(fullQDName.lastIndexOf('/')+1, fullQDName.lastIndexOf('.')) + ".pdf\"");
+				ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\"" + (cppnThenDirectLog != null ? ", \\" : ""));
+				
 				ps.close();
 				
 			} catch (FileNotFoundException e) {
@@ -199,7 +205,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 
 			// Exclude negative infinity to find out how many bins are filled
 			final int numFilledBins = elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite);
-			fillLog.log(pseudoGeneration + "\t" + numFilledBins);
+			// Get the QD Score for this elite
+			final double qdScore = calculateQDScore(elite);
+			fillLog.log(pseudoGeneration + "\t" + numFilledBins + "\t" + qdScore);
 			if(cppnThenDirectLog!=null) {
 				Integer[] eliteProper = new Integer[elite.length];
 				int i = 0;
@@ -235,6 +243,24 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				((LodeRunnerLevelTask<?>)MMNEAT.task).beatable.log(pseudoGeneration + "\t" + numBeatenLevels + "\t" + ((1.0*numBeatenLevels)/(1.0*numFilledBins)));
 			}
 		}
+	}
+
+	/**
+	 * Calculates a QD score for an elite by summing the valid values (non negative
+	 * infinity). Each value is offset by the parameter "mapElitesQDBaseOffset" 
+	 * before being added to the sum.
+	 * @param elite An elite represented by an Array of floats representing each value
+	 * @return returns a double representing the QD score with offset values
+	 */
+	public static double calculateQDScore(Float[] elite) {
+		double base = Parameters.parameters.doubleParameter("mapElitesQDBaseOffset");
+		double sum = 0.0;
+		for (float x : elite) {
+			if (x != Float.NEGATIVE_INFINITY) {
+				sum += base + x;
+			}
+		}
+		return sum;
 	}
 
 	/**

@@ -7,13 +7,13 @@ import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
  *
  * @author Jacob Schrum
  */
-public class FunctionMinimization extends FunctionOptimization {
+public class MultipleFunctionMinimization extends MultipleFunctionOptimization {
 
-	public FunctionMinimization() {
+	public MultipleFunctionMinimization() {
 		this(MMNEAT.fos);
 	}
 
-	public FunctionMinimization(FunctionOptimizationSet fos) {
+	public MultipleFunctionMinimization(FunctionOptimizationSet fos) {
 		super(fos, -1);
 	}
 }

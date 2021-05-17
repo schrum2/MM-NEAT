@@ -12,10 +12,14 @@ import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
 import java.util.ArrayList;
 
 /**
+ * Multiple Function Optimization, specifically intended for benchmarking
+ * NSGA-II. Evolves real-valued vectors, that are used as inputs to multiple functions.
+ * NSGA-II is used to get the Pareto front of the combined objective scores from
+ * all of the fitness functions.
  *
  * @author Jacob Schrum
  */
-public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
+public class MultipleFunctionOptimization extends LonerTask<ArrayList<Double>> {
 
 	@SuppressWarnings("rawtypes")
 	FitnessFunction[] functions;
@@ -29,7 +33,7 @@ public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
 	int frontSamples = 300;
 
 	@SuppressWarnings("rawtypes")
-	public FunctionOptimization(FitnessFunction[] functions, double sign) {
+	public MultipleFunctionOptimization(FitnessFunction[] functions, double sign) {
 		this.functions = functions;
 		for (FitnessFunction f : functions) {
 			MMNEAT.registerFitnessFunction(f.getClass().getSimpleName());
@@ -38,7 +42,7 @@ public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
 		this.display = new OptimizationDisplay();
 	}
 
-	public FunctionOptimization(FunctionOptimizationSet fos, double sign) {
+	public MultipleFunctionOptimization(FunctionOptimizationSet fos, double sign) {
 		this(fos.getFitnessFunctions(), sign);
 
 		// Generate the true Pareto front using expert knowledge

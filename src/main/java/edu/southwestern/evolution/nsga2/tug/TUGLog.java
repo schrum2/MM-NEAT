@@ -51,7 +51,7 @@ public class TUGLog extends StatisticsLog<double[]> {
 			s.close();
 		}
 		// Cannot use the default plot file setup because there are extra things to plot
-		File plotFile = new File(directory + prefix + "_log.plot");
+		File plotFile = new File(directory + prefix + "_log.plt");
 		if (!plotFile.exists()) {
 			ArrayList<String> labels = MMNEAT.fitnessPlusMetaheuristics(0); // population 0: loner task only!
 			try {

@@ -343,7 +343,10 @@ public class CMAParameters implements java.io.Serializable {
 
 	/** normalizes recombination weights vector and sets mueff **/
 	protected void setWeights(double[] weights) {
-		assert locked == 0;
+		// Maxx: I looked around in this file and in CMAEvolutionStrategy, this line always seems to fail, since this code is run through  
+		// supplementRemainders() which sets 'locked' equal to 1 before running this method. In CMAEvolutionStrategy locked is set to 1 after 
+		// running the parameter supplementing code, so I suspect that the place in supplementRemainders() is an error.
+		//assert locked == 0;
 		double sum = 0;
 		for (int i = 0; i < weights.length; ++i)
 			sum += weights[i];

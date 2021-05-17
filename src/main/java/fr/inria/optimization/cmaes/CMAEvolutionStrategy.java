@@ -416,7 +416,7 @@ public class CMAEvolutionStrategy implements java.io.Serializable {
     double sigma = 0.0;
     double[] typicalX; // eventually used to set initialX
     double[] initialX; // set in the end of init()
-    double[] LBound, UBound;    // bounds
+    public double[] LBound, UBound;    // bounds // Made public to allow it to work with MM-NEAT
     double[] xmean;
     double xmean_fit = Double.NaN;
     double[] pc;

@@ -38,6 +38,7 @@ import edu.southwestern.util.random.GaussianGenerator;
 import edu.southwestern.util.sound.SoundUtilExamples;
 import edu.southwestern.util.stats.Average;
 import edu.southwestern.util.stats.Max;
+import fr.inria.optimization.cmaes.fitness.FunctionCollector;
 import oldpacman.controllers.examples.Legacy;
 import oldpacman.controllers.examples.StarterPacMan;
 import oldpacman.game.Constants;
@@ -811,6 +812,8 @@ public class Parameters {
 		doubleOptions.add("healthDropRate", 20., "Health drop rate from enemies");
 		doubleOptions.add("bombDropRate", 40., "Bomb drop rate from enemies");
 		doubleOptions.add("indirectToDirectTransitionRate", 0.1, "chance of mutating from indirect to a direct genotype");
+		doubleOptions.add("mapElitesQDBaseOffset", 0.0, "Small amount added to each MAP Elites bin score when calculating QD");
+		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
 		stringOptions.add("archetype", "", "Network that receives all mutations so as to keep other networks properly aligned");
@@ -875,6 +878,7 @@ public class Parameters {
 		classOptions.add("ea", NSGA2.class, "A subclass for the evolutionary algorithm to run");
 		classOptions.add("experiment", LimitedSinglePopulationGenerationalEAExperiment.class, "A subclass of Experiment to execute");
 		classOptions.add("fos", null, "Function Optimization Set to use for simple tests");
+		classOptions.add("foFunction", null, "Specific function to be used with function optimization");
 		classOptions.add("genotype", TWEANNGenotype.class, "A subclass defining the genotype to evolve with");
 		classOptions.add("ghostTeam", Legacy.class, "Ghost team in new version of Ms. Pac-Man code");
 		classOptions.add("gvgaiPlayer", GVGAIOneStepNNPlayer.class, "GVGAI Player to be used");
