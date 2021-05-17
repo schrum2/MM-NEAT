@@ -11,10 +11,22 @@ import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import fr.inria.optimization.cmaes.fitness.AbstractObjectiveFunction;
 
+/**
+ * Function Optimization, primarily meant as a test class
+ * for testing the functionality of CMA-ES, and to be 
+ * compared with the default CMA-ES examples.
+ *
+ * @author Maxx Batterton
+ */
 public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
 
 	AbstractObjectiveFunction function;
 	
+	/**
+	 * Initializes with the function specified by the 
+	 * command line parameter "foFunction", and registers
+	 * the function.
+	 */
 	public FunctionOptimization() {
 		try {
 			this.function = (AbstractObjectiveFunction) ClassCreation.createObject("foFunction");
@@ -27,15 +39,22 @@ public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
 	}
 	
 	@Override
-	public int numObjectives() {
-		return 1;
+	public int numObjectives() { // only one function
+		return 1; 
 	}
 
 	@Override
 	public double getTimeStamp() {
 		return 0;
 	}
-
+	
+	/**
+	 * Evaluates an individual with the provided function.
+	 * Must negate the result due to the fact that
+	 * CMA-ES is a minimizer.
+	 * 
+	 * @return A Score that contains only one score, evaluated by the single function
+	 */
 	@Override
 	public Score<ArrayList<Double>> evaluate(Genotype<ArrayList<Double>> individual) {
 		ArrayList<Double> pheno = individual.getPhenotype();
@@ -46,7 +65,7 @@ public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		// Test with Rosenbrock, comparable to CMExample1
+		// Test with Rosenbrock, comparable to results from CMExample1
 		MMNEAT.main(new String[] {"runNumber:1", "randomSeed:1", "io:true", "base:functionoptimization", "log:fo-FunctionOptimization", "saveTo:FunctionOptimization", "netio:false", "ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA", "watch:true", "task:edu.southwestern.tasks.functionoptimization.FunctionOptimization",
 				"foFunction:fr.inria.optimization.cmaes.fitness.RosenFunction", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype"});
 	}
