@@ -37,9 +37,12 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 //	private Network individual;
 	private BufferedImage img = null;
 	public int imageHeight, imageWidth;
-	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold"); 
+	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
+	private double[] targetImageFeatures; 
+	
+	private static final double MODULATION_PARAMETER_ALPHA = 5;
 
-	private ArrayList<Pair<double[], double[]>> trainingPairs;
+	//private ArrayList<Pair<double[], double[]>> trainingPairs;
 	
 	public PictureTargetTask(){
 		this(Parameters.parameters.stringParameter("matchImageFile"));
@@ -56,7 +59,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		imageHeight = img.getHeight();
 		imageWidth = img.getWidth();
 		
-		trainingPairs = ImageMatchTask.getImageMatchTrainingPairs(img);
+		targetImageFeatures = GraphicsUtil.flatFeatureArrayFromBufferedImage(img);
+		//trainingPairs = ImageMatchTask.getImageMatchTrainingPairs(img);
 	}
 	
 	@Override
@@ -69,12 +73,44 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		return 0; // Not used
 	}
 
-	public static double degreeOfDifference() {
-		return -1; // Function d from Woolley paper
+	/**
+	 * Calculating equation 1 in the Woolley paper.
+	 * 
+	 * @param candidateFeature represented by the letter c in Woolley paper
+	 * @param targetFeature represented by the letter t in Woolley paper
+	 * @return returns the difference between two features c and t
+	 */
+	public static double degreeOfDifference(double candidateFeature, double targetFeature) {
+		return 1 - (Math.exp(-MODULATION_PARAMETER_ALPHA * Math.abs(candidateFeature - targetFeature))); // Function d from Woolley paper
 	}
 	
-	public static double candidateVsTargetError() {
-		return -1; // This is the err function from the Woolley paper
+	/**
+	 * Calculates the error between candidate and target feature sets (equation 2
+	 * from the Woolley paper, err(C,T)).
+	 * 
+	 * @param candidateFeatures an array of candidate features represented by C in the Woolley paper
+	 * @param targetFeatures an array of target features represented by T in the Woolley paper
+	 * @return returns the error between candidate and target feature sets
+	 */
+	public static double candidateVsTargetError(double[] candidateFeatures, double[] targetFeatures) {
+		assert candidateFeatures.length == targetFeatures.length: "Number of candidate and target features needs to match";
+		double sum = 0;
+		for (int i = 0; i < candidateFeatures.length; i++) {
+			sum += degreeOfDifference(candidateFeatures[i], targetFeatures[i]);
+		}
+		return sum / candidateFeatures.length; // This is the err function from the Woolley paper
+	}
+	
+	/**
+	 * Fitness is defined as 1 - the squared error between the candidate and 
+	 * the target.  This is equation 3 from the Woolley paper (f(C)).
+	 * 
+	 * @param candidateImage the candidate image produced by the CPPN
+	 * @return returns the fitness of the candidate image
+	 */
+	public double fitness(BufferedImage candidateImage) {
+		double error = candidateVsTargetError(GraphicsUtil.flatFeatureArrayFromBufferedImage(candidateImage), targetImageFeatures);
+		return 1 - error * error;
 	}
 	
 	
@@ -87,8 +123,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		int nodes = Math.min(tweannIndividual.nodes.size(), CPPNComplexityBinMapping.MAX_NUM_NEURONS);
 		int links = Math.min(tweannIndividual.links.size(), CPPNComplexityBinMapping.MAX_NUM_LINKS);
 		int[] indicesMAPEliteBin = new int[] {nodes, links}; // Array of two values corresponding to bin label dimensions
-		// A match score fitness calculated similarly to ImageMatchTask/MatchDataTask
-		double binScore = 1 - MatchDataTask.calculateMatchLoss(individual, trainingPairs); 
+		// Using the fitness calculation from the Woolley paper
+		double binScore = fitness(image);
 		
 		Score<T> result = new Score<>(individual, new double[]{binScore}, indicesMAPEliteBin, binScore);
 		if(CommonConstants.watch) {

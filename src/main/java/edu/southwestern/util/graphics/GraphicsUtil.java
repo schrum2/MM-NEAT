@@ -474,6 +474,33 @@ public class GraphicsUtil {
 	}
 	
 	/**
+	 * Converts an image into a flat double array of features, where the features
+	 * are the HSB values of each pixel.
+	 * NOTE: Consider RGB instead?
+	 * 
+	 * @param image A BufferedImage
+	 * @return double array of all HSB values of each pixel.
+	 */
+	public static double[] flatFeatureArrayFromBufferedImage(BufferedImage image) {
+		double[] result = new double[image.getHeight() * image.getWidth() * NUM_HSB];
+		int resultIndex = 0;
+		for(int x = 0; x < image.getWidth(); x++) {
+			for(int y = 0; y < image.getHeight();  y++) {
+				int pixelRGB = image.getRGB(x, y);
+				Color original = new Color(pixelRGB);
+				// Get HSB values (null means a new array is created)
+				float[] hsb = Color.RGBtoHSB(original.getRed(), original.getGreen(), original.getBlue(), null);
+				// Copy HSB values over as features
+				// NOTE: Consider replacing this with RGB at some point
+				for(int i = 0; i < hsb.length; i++) {
+					result[resultIndex++] = hsb[i];
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
 	 * Takes an INDArray containing an image loaded using the native image loader
 	 * libraries associated with DL4J, and converts it into a BufferedImage.
 	 * The INDArray contains the color values split up across three channels (RGB)
