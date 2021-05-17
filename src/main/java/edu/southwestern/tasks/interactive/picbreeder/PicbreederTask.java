@@ -132,10 +132,15 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 * @param inputMultipliers
 	 */
 
-	public static <T> void saveSingle(String filename, int dim, T phenotype, double[] inputMultipliers) {
+	public static <T> void saveSingle(String filename, int dim, T phenotype, double[] inputMultipliers, boolean isBackground) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than
 		// is on the button
+		// Set starkPicbreeder to true
+		boolean originalValue = Parameters.parameters.booleanParameter("starkPicbreeder");
+		if(isBackground == true) Parameters.parameters.setBoolean("starkPicbreeder", true);
 		BufferedImage toSave1 = GraphicsUtil.imageFromCPPN((Network) phenotype, dim, dim, inputMultipliers);
+		// Set starkPicbreeder back to false
+		Parameters.parameters.setBoolean("starkPicbreeder", originalValue);
 		String filename1 = filename + "1.bmp";
 		GraphicsUtil.saveImage(toSave1, filename1);
 
@@ -219,27 +224,27 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				if (i == bgIndex1) {
 					// Represents a template pattern
 					saveSingle(waveFunctionSaveLocation + "background", backgroundSize, chosenTiles.get(i),
-							inputMultipliers);
+							inputMultipliers, true);
 					if (numSelected < 3) { // If there are only two images, one serves as a background pattern AND a
 											// tile pattern
 						String fullName = "tile" + numSaved + "_";
 						tileNames[numStored++] = fullName + "1";
-						saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers);
+						saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers, false);
 						numSaved++;
 					}
 				} else if (i == bgIndex2) {
 					// A possible second template pattern
 					saveSingle(waveFunctionSaveLocation + "background2", backgroundSize, chosenTiles.get(i),
-							inputMultipliers);
+							inputMultipliers, true);
 					String fullName = "tile" + numSaved + "_";
 					tileNames[numStored++] = fullName + "1";
-					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers);
+					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers, false);
 					numSaved++;
 				} else {
 					// All other images used to create background tiles with WFC
 					String fullName = "tile" + numSaved + "_";
 					tileNames[numStored++] = fullName + "1";
-					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers);
+					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers, false);
 					numSaved++;
 				}
 			}
