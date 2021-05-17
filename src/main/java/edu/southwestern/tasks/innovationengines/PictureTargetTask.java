@@ -229,7 +229,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		
 		
 		// For test runs
-		MMNEAT.main(new String[]{"runNumber:2","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
+		MMNEAT.main(new String[]{"runNumber:4","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
 				"log:TargetImage-WoolleySkull","saveTo:WoolleySkull","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
@@ -239,17 +239,18 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
 				"matchImageFile:skull.jpg",
-				"fitnessSaveThreshold:0.0",
-				"includeSigmoidFunction:true", // In original Innovation Engine
+				"fitnessSaveThreshold:0.5",
+				"includeSigmoidFunction:true", 	// In Brian Woolley paper
 				"includeTanhFunction:false",
-				"includeIdFunction:false",
+				"includeIdFunction:true",		// In Brian Woolley paper
 				"includeFullApproxFunction:false",
 				"includeApproxFunction:false",
-				"includeGaussFunction:true", // In original Innovation Engine
-				"includeSineFunction:true", // In original Innovation Engine
-				"includeSawtoothFunction:true", // Added 
-				"includeAbsValFunction:true", // Added
-				"includeHalfLinearPiecewiseFunction:true", // In original Innovation Engine
+				"includeGaussFunction:true", 	// In Brian Woolley paper
+				"includeSineFunction:true", 	// In Brian Woolley paper
+				"includeCosineFunction:true", 	// In Brian Woolley paper
+				"includeSawtoothFunction:false", 
+				"includeAbsValFunction:false", 
+				"includeHalfLinearPiecewiseFunction:false", 
 				"includeStretchedTanhFunction:false",
 				"includeReLUFunction:false",
 				"includeSoftplusFunction:false",
