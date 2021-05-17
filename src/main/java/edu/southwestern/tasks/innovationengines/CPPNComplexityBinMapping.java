@@ -14,7 +14,7 @@ public class CPPNComplexityBinMapping<T extends Network> implements BinLabels {
 	public static final int BIN_INDEX_LINKS = 1;
 	
 	public static final int MAX_NUM_NEURONS = 35;
-	public static final int MAX_NUM_LINKS = 40;
+	public static final int MAX_NUM_LINKS = 70;
 	public static final int MIN_NUM_NEURONS = 5;
 	public static final int MIN_NUM_LINKS = 3;
 
