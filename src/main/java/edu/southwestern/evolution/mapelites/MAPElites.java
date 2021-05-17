@@ -119,7 +119,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				}
 				ps.println("set title \"" + experimentPrefix + " Archive QD Scores\"");
 				ps.println("set output \"" + fullQDName.substring(fullQDName.lastIndexOf('/')+1, fullQDName.lastIndexOf('.')) + ".pdf\"");
-				ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\"" + (cppnThenDirectLog != null ? ", \\" : ""));
+				ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\"");
 				
 				ps.close();
 				
