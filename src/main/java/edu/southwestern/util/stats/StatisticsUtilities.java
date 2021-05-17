@@ -392,6 +392,15 @@ public class StatisticsUtilities {
 		}
 		return max; // Returns the maximum value in the given Array
 	}
+	
+	
+	public static Float maximum(Float[] xs) {
+		Float max = xs[0];
+		for(int i = 1; i < xs.length; i++) {
+			max = Math.max(max, xs[i]);
+		}
+		return max;
+	}
 
 
 	/**

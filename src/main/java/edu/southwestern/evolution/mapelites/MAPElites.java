@@ -25,6 +25,7 @@ import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import wox.serial.Easy;
 
 /**
@@ -202,12 +203,12 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Float[] elite = ArrayUtils.toObject(archive.getEliteScores());
 			final int pseudoGeneration = iterations/individualsPerGeneration;
 			archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t"));
-
+			Float maximumFitness = StatisticsUtilities.maximum(elite);
 			// Exclude negative infinity to find out how many bins are filled
 			final int numFilledBins = elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite);
 			// Get the QD Score for this elite
 			final double qdScore = calculateQDScore(elite);
-			fillLog.log(pseudoGeneration + "\t" + numFilledBins + "\t" + qdScore);
+			fillLog.log(pseudoGeneration + "\t" + numFilledBins + "\t" + qdScore + "\t" + maximumFitness);
 			if(cppnThenDirectLog!=null) {
 				Integer[] eliteProper = new Integer[elite.length];
 				int i = 0;
