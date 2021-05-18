@@ -130,6 +130,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		if(phenotype instanceof NetworkPlusParameters) { // CPPN with extra scale and rotation parameters
 			NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype;
 			ArrayList<Double> scaleAndRotation = npp.t2;
+			System.out.println("scaleAndRotation: " + scaleAndRotation);
 			return GraphicsUtil.imageFromCPPN(phenotype, imageWidth, imageHeight, inputMultiples, 0, scaleAndRotation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE), scaleAndRotation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION));
 		} else { // Plain CPPN/TWEANGenotype
 			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageHeight, imageWidth, inputMultiples);
@@ -153,7 +154,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		// Set starkPicbreeder to true
 		boolean originalValue = Parameters.parameters.booleanParameter("starkPicbreeder");
 		if(isBackground == true) Parameters.parameters.setBoolean("starkPicbreeder", true);
-		BufferedImage toSave1 = GraphicsUtil.imageFromCPPN((Network) phenotype, dim, dim, inputMultipliers);
+		BufferedImage toSave1 = imageFromCPPN((Network) phenotype, dim, dim, inputMultipliers);
 		// Set starkPicbreeder back to false
 		Parameters.parameters.setBoolean("starkPicbreeder", originalValue);
 		String filename1 = filename + "1.bmp";
@@ -389,7 +390,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 */
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
-		return GraphicsUtil.imageFromCPPN(phenotype, width, height, inputMultipliers);
+		return imageFromCPPN(phenotype, width, height, inputMultipliers);
 	}
 
 	/**
@@ -407,7 +408,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	protected void save(String filename, int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than
 		// is on the button
-		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network) scores.get(i).individual.getPhenotype(),
+		BufferedImage toSave = imageFromCPPN((Network) scores.get(i).individual.getPhenotype(),
 				Parameters.parameters.integerParameter("imageWidth"),
 				Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
 		filename += ".bmp";
@@ -454,7 +455,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					"includeFullGaussFunction:true", "includeCosineFunction:true", "includeGaussFunction:false",
 					"includeIdFunction:true", "includeTriangleWaveFunction:false", "includeSquareWaveFunction:false",
 					"includeFullSawtoothFunction:false", "includeSigmoidFunction:false", "includeAbsValFunction:false",
-					"includeSawtoothFunction:false" });
+					"includeSawtoothFunction:false", "allowInteractiveSave:true" });
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

@@ -7,6 +7,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
+import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.log.TWEANNLog;
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -187,6 +188,8 @@ public class EvolutionaryHistory {
 	public static void initArchetype(int populationIndex, String loadedArchetype) {
 		@SuppressWarnings("rawtypes")
 		TWEANNGenotype tg = (TWEANNGenotype) (MMNEAT.genotypeExamples == null ? 
+				MMNEAT.genotype instanceof TWEANNPlusParametersGenotype ?
+					 ((TWEANNPlusParametersGenotype) MMNEAT.genotype).getTWEANNGenotype() :
 				(MMNEAT.genotype instanceof CPPNOrDirectToGANGenotype) ?
 						((TWEANNGenotype) ((CPPNOrDirectToGANGenotype) MMNEAT.genotype).getCurrentGenotype()) :
 							(MMNEAT.genotype instanceof CombinedGenotype ? 
