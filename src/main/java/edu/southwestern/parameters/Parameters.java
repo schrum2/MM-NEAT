@@ -213,6 +213,7 @@ public class Parameters {
 		integerOptions.add("freezeMeltAlternateFrequency", 25, "Generations between freezing/melting pref/policy neurons");
 		integerOptions.add("fsLinksPerOut", 1, "Initial links per output with feature selective nets");
 		integerOptions.add("ftype", ActivationFunctions.FTYPE_TANH, "Integer designation of default activation function for networks");
+		integerOptions.add("functionOptimizationVectorLength", -1, "Dimension of the vector for a function optimization problem.");
 		integerOptions.add("genOfLastTUGGoalIncrease", 0, "Generation when last TUG goal increase occurred");
 		integerOptions.add("ghostsForBonus", 17, "Ghosts that need to be eaten per level to get bonus evals");
 		integerOptions.add("gvgaiLevel", 0, "GVGAI level to be played; must be 0 - 4");
