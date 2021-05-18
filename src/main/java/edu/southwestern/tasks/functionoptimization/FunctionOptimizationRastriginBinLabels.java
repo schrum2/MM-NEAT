@@ -1,8 +1,10 @@
 package edu.southwestern.tasks.functionoptimization;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BinLabels;
 
 /**
@@ -96,4 +98,7 @@ public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 		return sums;
 	}
 	
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		MMNEAT.main("runNumber:0 randomSeed:0 io:true base:cmamefunctionoptimization log:cmamefunctionoptimization-CMAMEFunctionOptimization saveTo:CMAMEFunctionOptimization netio:false ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimization foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels".split(" "));
+	}
 }
