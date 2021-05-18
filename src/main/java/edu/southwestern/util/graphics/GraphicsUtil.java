@@ -52,6 +52,7 @@ public class GraphicsUtil {
 
 	/**
 	 * Save an image to the specified filename (which includes path and file extension)
+	 * 
 	 * @param image Buffered image
 	 * @param filename Path and file name plus extension
 	 */
@@ -96,12 +97,11 @@ public class GraphicsUtil {
 	/**
 	 * Draws the image created by the CPPN to a BufferedImage
 	 *
-	 * @param n
-	 *            the network used to process the image
-	 * @param imageWidth
-	 *            width of image
-	 * @param imageHeight
-	 *            height of image
+	 * @param n the network used to process the image
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
+	 * @param inputMultiples array of multiples indicating whether to turn activation functions on or off
+	 * @param time For animated images, the frame number (just use 0 for still images)
 	 * @return buffered image containing image drawn by network
 	 */
 	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time) {
@@ -109,15 +109,19 @@ public class GraphicsUtil {
 	}
 	
 	/**
+	 * Draws the image created by the CPPN to a BufferedImage.
+	 * Same as the BufferedImage method containing the time parameter
+	 * above, but has two new parameters, scale and rotation to
+	 * be used for scaling and rotating the image.
 	 * 
-	 * @param n
-	 * @param imageWidth
-	 * @param imageHeight
-	 * @param inputMultiples
-	 * @param time
-	 * @param scale
-	 * @param rotation
-	 * @return
+	 * @param n the network used to process teh image
+	 * @param imageWidth width of the image
+	 * @param imageHeight height of the image
+	 * @param inputMultiples array of multiples indicating whether to turn activation functions on or off
+	 * @param time For animated images, the frame number (just use 0 for still images)
+	 * @param scale scale factor by which to scale the image
+	 * @param rotation the degree in radians by which to rotate the image
+	 * @return buffered image containing image drawn by network
 	 */
 	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time, double scale, double rotation) {
 		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
@@ -191,12 +195,14 @@ public class GraphicsUtil {
 	}
 	
 	/**
+	 * Creates a zentangled image by overlaying two patterns into the black and white areas of the
+	 * background image.  Contains an extra zentangle pattern as a parameter. 
 	 * 
-	 * @param backgroundImage
-	 * @param pattern1
-	 * @param pattern2
-	 * @param pattern3
-	 * @return
+	 * @param backgroundImage Image into which zentangle will be applied
+	 * @param pattern1 First zentangle pattern
+	 * @param pattern2 Second zentangle pattern
+	 * @param pattern3 Third zentangle pattern
+	 * @return The resulting image
 	 */
 	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3) {
 		int imageWidth = backgroundImage.getWidth();
@@ -215,13 +221,15 @@ public class GraphicsUtil {
 	}
 	
 	/**
+	 * Creates a zentangled iamge by overlaying two patterns into the black and white areas of the 
+	 * background image.  Contains two extra zentangle patterns as parameters.
 	 * 
-	 * @param backgroundImage
-	 * @param pattern1
-	 * @param pattern2
-	 * @param pattern3
-	 * @param pattern4
-	 * @return
+	 * @param backgroundImage Image into which zentangle will be applied
+	 * @param pattern1 First zentangle pattern
+	 * @param pattern2 Second zentangle pattern
+	 * @param pattern3 Third zentangle pattern
+	 * @param pattern4 Fourth zentangle pattern
+	 * @return The resulting image
 	 */
 	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3, BufferedImage pattern4) {
 		int imageWidth = backgroundImage.getWidth();
@@ -395,18 +403,11 @@ public class GraphicsUtil {
 	}
 
 	/**
-	 * Gets HSB outputs from the CPPN in question
-	 *
-	 *            the CPPN
-	 * @param x
-	 *            x-coordinate of pixel
-	 * @param y
-	 *            y-coordinate of pixel
-	 * @param imageWidth
-	 *            width of image
-	 * @param imageHeight
-	 *            height of image
-	 *
+	 * Gets HSB outputs from the CPPN in question from the CPPN
+	 * @param x x-coordinate of pixel
+	 * @param y y-coordinate of pixel
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
 	 * @return double containing the HSB values
 	 */
 	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples, double time, double scale, double rotation) {
@@ -432,8 +433,7 @@ public class GraphicsUtil {
 	 * (though not the original code), but 2 in 13 randomly mutated networks
 	 * still produce boring black screens. Is there a way to fix this?
 	 * 
-	 * @param hsb
-	 *            array of HSB color information from CPPN
+	 * @param hsb array of HSB color information from CPPN
 	 * @return scaled HSB information in float array
 	 */
 	public static float[] rangeRestrictHSB(double[] hsb) {
@@ -458,15 +458,20 @@ public class GraphicsUtil {
 	}
 	
 	/**
+	 * Gets scaled inputs to send to CPPN, using default scale of 1.0 
+	 * and default rotation of 0.0 (no rotation and no scaling).  Same 
+	 * as the get2DObjectCPPNInputs method above but contains two new 
+	 * parameters, scale and rotation, used for rotating and scaling
+	 * the image.
 	 * 
-	 * @param x
-	 * @param y
-	 * @param imageWidth
-	 * @param imageHeight
-	 * @param time
-	 * @param scale
-	 * @param rotation
-	 * @return
+	 * @param x x-coordinate of pixel
+	 * @param y y-coordinate of pixel
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
+	 * @param time For animated images, the frame number (just use 0 for still images)
+	 * @param scale scale factor by which to scale the image
+	 * @param rotation the degree in radians by which to rotate the image
+	 * @return array containing inputs for CPPN
 	 */
 	public static double[] get2DObjectCPPNInputs(int x, int y, int imageWidth, int imageHeight, double time, double scale, double rotation) {
 		Tuple2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), imageWidth, imageHeight);
@@ -483,15 +488,10 @@ public class GraphicsUtil {
 	/**
 	 * method for drawing an image onto a drawing panel
 	 *
-	 * @param image
-	 *            image to draw
-	 * @param label
-	 *            name of image
-	 * @param imageWidth
-	 *            width of image
-	 * @param imageHeight
-	 *            height of image
-	 *
+	 * @param image image to draw
+	 * @param label name of image
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
 	 * @return the drawing panel with the image
 	 */
 	public static DrawingPanel drawImage(BufferedImage image, String label, int imageWidth, int imageHeight) {
@@ -677,7 +677,7 @@ public class GraphicsUtil {
 	}
 
 	/**
-	 *  Creates a graphed visualization of an audio file by taking in the list of doubles that represents the file and 
+	 * Creates a graphed visualization of an audio file by taking in the list of doubles that represents the file and 
 	 * plotting it using a DrawingPanel.
 	 * 
 	 * @param inputArray
