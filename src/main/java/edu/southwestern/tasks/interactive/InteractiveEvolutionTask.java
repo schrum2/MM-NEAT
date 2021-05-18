@@ -38,12 +38,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.SinglePopulationGenerationalEA;
+import edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.lineage.Offspring;
 import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
 import edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA;
 import edu.southwestern.networks.ActivationFunctions;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkPlusParameters;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
@@ -610,7 +613,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		// See if image is already in hash map to be retrieved
 		if(checkCache) {
 			// Will this interface ever be used with items that are not TWEANNs?
-			long id = ((TWEANN) phenotype).getId();
+			long id = getTWEANNComponent(phenotype).getId();
 			//System.out.println("Cache image for: " + id);
 			if(cachedButtonImages.containsKey(id)) {
 				// Return pre-computed image instead of watsing time
@@ -621,7 +624,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		BufferedImage image = getButtonImage(phenotype, width, height, inputMultipliers);
 		if(checkCache) {
 			// Use of checkCache avoids the cast to TWEANN for non-TWEANN phenotypes
-			long id = ((TWEANN) phenotype).getId();
+			long id = getTWEANNComponent(phenotype).getId();
 			cachedButtonImages.put(id, image);
 		}
 		return image;
@@ -634,7 +637,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 */
 	private BufferedImage getNetwork(Genotype<T> tg) {
 		T pheno = tg.getPhenotype();
-		return ((TWEANN) pheno).getNetworkImage(buttonWidth, buttonHeight, false, false);
+		return getTWEANNComponent(pheno).getNetworkImage(buttonWidth, buttonHeight, false, false);
 	}
 
 	/**
@@ -1066,4 +1069,13 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 * @return number of CPPN outputs
 	 */
 	public abstract int numCPPNOutputs();
+	
+	@SuppressWarnings("unchecked")
+	public <E> TWEANN getTWEANNComponent(T phenotype) {
+		if(phenotype instanceof NetworkPlusParameters) {
+			return ((NetworkPlusParameters<TWEANN,E>) phenotype).t1;
+		} else {
+			return (TWEANN) phenotype;
+		}
+	}
 }

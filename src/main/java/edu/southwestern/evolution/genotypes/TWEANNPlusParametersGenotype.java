@@ -20,10 +20,14 @@ public class TWEANNPlusParametersGenotype<E> implements Genotype<NetworkPlusPara
 	
 	private CombinedGenotype<TWEANN,E> combined;
 	
+	public Genotype<TWEANN> getTWEANNGenotype() {
+		return combined.t1;
+	}
+	
 	public TWEANNPlusParametersGenotype(TWEANNGenotype tg, Genotype<E> otherGenotype) {
 		combined = new CombinedGenotype<TWEANN,E>(tg, otherGenotype);
 	}
-
+	
 	@Override
 	public void addParent(long id) {
 		combined.addParent(id);

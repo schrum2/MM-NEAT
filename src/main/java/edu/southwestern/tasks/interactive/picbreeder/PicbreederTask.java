@@ -130,7 +130,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		if(phenotype instanceof NetworkPlusParameters) { // CPPN with extra scale and rotation parameters
 			NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype;
 			ArrayList<Double> scaleAndRotation = npp.t2;
-			return GraphicsUtil.imageFromCPPN(phenotype, imageWidth, imageHeight, inputMultiples, 0, EnhancedCPPNPictureGenotype.INDEX_SCALE, EnhancedCPPNPictureGenotype.INDEX_ROTATION);
+			return GraphicsUtil.imageFromCPPN(phenotype, imageWidth, imageHeight, inputMultiples, 0, scaleAndRotation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE), scaleAndRotation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION));
 		} else { // Plain CPPN/TWEANGenotype
 			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageHeight, imageWidth, inputMultiples);
 		}
