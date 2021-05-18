@@ -21,16 +21,22 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	public void initialize(Genotype<ArrayList<Double>> example) {
 		super.initialize(example);
 		optEmitter.setDimension(example.getPhenotype().size());
-		optEmitter.setInitialX(0.05);
-		optEmitter.setInitialStandardDeviation(0.2); // unsure hardcoded/not
-		optEmitter.options.stopFitness = 1e-14;
+		optEmitter.setInitialX(0.05); //TODO test 0.0
+		optEmitter.setInitialStandardDeviation(0.2); // unsure if should be hardcoded or not
+		optEmitter.options.stopFitness = 1e-14; // unsure about value here
 		int mu = Parameters.parameters.integerParameter("mu");
 		optEmitter.parameters.setMu(mu);
-		optEmitter.parameters.setPopulationSize(mu); // lambda?
+		optEmitter.parameters.setPopulationSize(mu); 
 		optEmitter.init();
-		optEmitter.writeToDefaultFilesHeaders(0);
+		optEmitter.writeToDefaultFilesHeaders(0); // Overwrite existing CMA-ES files
 	}
 	
+	/**
+	 * Create new individuals based on set
+	 * population size of Emitters, and update
+	 * distribution of Emitters with fitnesses 
+	 * afterwards
+	 */
 	public void newIndividual() {
 		double[][] pop = optEmitter.samplePopulation(); // need to check feasibility?
 		double[] deltaI = new double[pop.length]; // create delta array
@@ -44,7 +50,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 			double individualBinScore = individualScore.behaviorIndexScore(archive.getBinMapping().oneDimensionalIndex(individualScore.MAPElitesBinIndex()));
 			double currentBinScore = archive.getElite(individualScore.MAPElitesBinIndex()) == null ? Double.NEGATIVE_INFINITY : archive.getElite(individualScore.MAPElitesBinIndex()).behaviorIndexScore(archive.getBinMapping().oneDimensionalIndex(individualScore.MAPElitesBinIndex()));
 			
-			if (!replacedBool) {
+			if (currentBinScore >= individualBinScore) { // if bin was better or equal
 				System.out.println("Current bin ("+currentBinScore+") was already better than or equal to new bin ("+individualBinScore+").");
 			} else if (currentBinScore == Double.NEGATIVE_INFINITY) { // if bin was empty
 				System.out.println("Added new bin ("+individualBinScore+").");
@@ -61,8 +67,8 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		System.out.println("Testing CMA-ME");
-		int runNum = 2;
-		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" marioGANLevelChunks:5 marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME base:mariogan marioGANModel:GECCO2018GAN_World1-1_32_Epoch5000.pth GANInputSize:32 log:MarioGAN-CMAMETest saveTo:CMAMETest trials:1 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment").split(" "));
+		int runNum = 1;
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" marioGANLevelChunks:10 marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME base:mariogan marioGANModel:GECCO2018GAN_World1-1_32_Epoch5000.pth GANInputSize:32 log:MarioGAN-CMAMETest saveTo:CMAMETest trials:1 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment").split(" "));
 		//MMNEAT.main("runNumber:0 randomSeed:0 marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME base:mariogan marioGANModel:GECCO2018GAN_World1-1_32_Epoch5000.pth GANInputSize:32 log:MarioGAN-CMAMETest saveTo:CMAMETest trials:1 printFitness:true mu:50 maxGens:500 io:false netio:false genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment".split(" "));
 		
 	}
