@@ -105,6 +105,21 @@ public class GraphicsUtil {
 	 * @return buffered image containing image drawn by network
 	 */
 	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time) {
+		return imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, time, 1.0, 0.0);
+	}
+	
+	/**
+	 * 
+	 * @param n
+	 * @param imageWidth
+	 * @param imageHeight
+	 * @param inputMultiples
+	 * @param time
+	 * @param scale
+	 * @param rotation
+	 * @return
+	 */
+	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time, double scale, double rotation) {
 		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
 		// Min and max brightness levels used for stark coloring
 		float maxB = 0;
@@ -112,7 +127,7 @@ public class GraphicsUtil {
 		for (int x = 0; x < imageWidth; x++) {// scans across whole image
 			for (int y = 0; y < imageHeight; y++) {				
 				// network outputs computed on hsb, not rgb scale because
-				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples, time);
+				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples, time, scale, rotation);
 				maxB = Math.max(maxB, hsb[BRIGHTNESS_INDEX]);
 				minB = Math.min(minB, hsb[BRIGHTNESS_INDEX]);
 				if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) { // black and white
@@ -175,6 +190,14 @@ public class GraphicsUtil {
 		return image;
 	}
 	
+	/**
+	 * 
+	 * @param backgroundImage
+	 * @param pattern1
+	 * @param pattern2
+	 * @param pattern3
+	 * @return
+	 */
 	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3) {
 		int imageWidth = backgroundImage.getWidth();
 		int imageHeight = backgroundImage.getHeight();
@@ -191,6 +214,15 @@ public class GraphicsUtil {
 		return image;
 	}
 	
+	/**
+	 * 
+	 * @param backgroundImage
+	 * @param pattern1
+	 * @param pattern2
+	 * @param pattern3
+	 * @param pattern4
+	 * @return
+	 */
 	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3, BufferedImage pattern4) {
 		int imageWidth = backgroundImage.getWidth();
 		int imageHeight = backgroundImage.getHeight();
@@ -377,9 +409,9 @@ public class GraphicsUtil {
 	 *
 	 * @return double containing the HSB values
 	 */
-	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples, double time) {
+	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples, double time, double scale, double rotation) {
 
-		double[] input = get2DObjectCPPNInputs(x, y, imageWidth, imageHeight, time);
+		double[] input = get2DObjectCPPNInputs(x, y, imageWidth, imageHeight, time, scale, rotation);
 
 		// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
 		for(int i = 0; i < inputMultiples.length; i++) {
@@ -411,25 +443,40 @@ public class GraphicsUtil {
 	}
 
 	/**
-	 * Gets scaled inputs to send to CPPN
+	 * Gets scaled inputs to send to CPPN, using default scale of 1.0 
+	 * and default rotation of 0.0 (no rotation and no scaling).
 	 *
-	 * @param x
-	 *            x-coordinate of pixel
-	 * @param y
-	 *            y-coordinate of pixel
-	 * @param imageWidth
-	 *            width of image
-	 * @param imageHeight
-	 *            height of image
-	 *
+	 * @param x x-coordinate of pixel
+	 * @param y y-coordinate of pixel
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
+	 * @param time For animated images, the frame number (just use 0 for still images)
 	 * @return array containing inputs for CPPN
 	 */
 	public static double[] get2DObjectCPPNInputs(int x, int y, int imageWidth, int imageHeight, double time) {
-		ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), imageWidth, imageHeight);
+		return get2DObjectCPPNInputs(x,y,imageWidth,imageHeight,time,1.0, 0.0);
+	}
+	
+	/**
+	 * 
+	 * @param x
+	 * @param y
+	 * @param imageWidth
+	 * @param imageHeight
+	 * @param time
+	 * @param scale
+	 * @param rotation
+	 * @return
+	 */
+	public static double[] get2DObjectCPPNInputs(int x, int y, int imageWidth, int imageHeight, double time, double scale, double rotation) {
+		Tuple2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), imageWidth, imageHeight);
+		scaled = scaled.mult(scale);
+		scaled = scaled.rotate(rotation);
+		ILocated2D finalPoint = scaled;
 		if(time == -1) { // default, single image. Do not care about time
-			return new double[] { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, BIAS };
+			return new double[] { finalPoint.getX(), finalPoint.getY(), finalPoint.distance(new Tuple2D(0, 0)) * SQRT2, BIAS };
 		} else { // TODO: May need to divide time by frame rate later
-			return new double[] { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, time, BIAS };
+			return new double[] { finalPoint.getX(), finalPoint.getY(), finalPoint.distance(new Tuple2D(0, 0)) * SQRT2, time, BIAS };
 		}
 	}
 
