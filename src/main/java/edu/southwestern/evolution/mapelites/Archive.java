@@ -15,7 +15,7 @@ import wox.serial.Easy;
 public class Archive<T> {
 	
 	Vector<Score<T>> archive; // Vector is used because it is thread-safe
-	protected int occupiedBins; // TODO make private again
+	private int occupiedBins; 
 	private BinLabels mapping;
 	private boolean saveElites;
 	private String archiveDir;
@@ -140,7 +140,7 @@ public class Archive<T> {
 	 * @param candidate Score with information to save
 	 * @param binIndex Index in bin
 	 */
-	protected void conditionalEliteSave(Score<T> candidate, int binIndex) { // TODO make private again
+	private void conditionalEliteSave(Score<T> candidate, int binIndex) {
 		// Need to save all elites so that re-load on resume works
 		if(saveElites) {
 			// Easier to reload on resume if file name is uniform. Will also save space by overwriting
