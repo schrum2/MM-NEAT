@@ -470,6 +470,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			int leniencySumIndex = Math.min(Math.max((int)((leniencySum*(BINS_PER_DIMENSION/2)+0.5)*BINS_PER_DIMENSION),0), BINS_PER_DIMENSION-1); //LEANIENCY BIN INDEX
 			int decorationBinIndex =  Math.min((int)(decorationSum*DECORATION_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); //decorationBinIndex
 			int negativeSpaceSumIndex = Math.min((int)(negativeSpaceSum*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); //negative space index
+			assert Parameters.parameters.booleanParameter("marioSimpleAStarDistance") : "Bin score will be -1 everywhere if you don't calculate the A* distance. Set marioSimpleAStarDistance:true";
 			double binScore = simpleAStarDistance;
 			
 
@@ -488,6 +489,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				// Row-major order lookup in 3D archive
 //				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
 			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndDecorationBinLabels) {
+				assert Parameters.parameters.integerParameter("marioGANLevelChunks") > 1 : "Can't have variation with MarioMAPElitesDistinctChunksNSAndDecorationBinLabels bin scheme if marioGANLevelChunks:1 is set!";
 				double decorationAlternating = alternatingStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
 				double negativeSpaceAlternating = alternatingStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
 				
