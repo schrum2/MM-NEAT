@@ -45,7 +45,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 			double currentBinScore = archive.getElite(individualScore.MAPElitesBinIndex()) == null ? Double.NEGATIVE_INFINITY : archive.getElite(individualScore.MAPElitesBinIndex()).behaviorIndexScore(archive.getBinMapping().oneDimensionalIndex(individualScore.MAPElitesBinIndex()));
 			
 			if (!replacedBool) {
-				System.out.println("Current bin was already better than or equal.");
+				System.out.println("Current bin ("+currentBinScore+") was already better than or equal to new bin ("+individualBinScore+").");
 			} else if (currentBinScore == Double.NEGATIVE_INFINITY) { // if bin was empty
 				System.out.println("Added new bin ("+individualBinScore+").");
 				deltaI[i] = -individualBinScore;
