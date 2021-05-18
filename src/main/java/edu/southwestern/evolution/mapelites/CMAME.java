@@ -32,10 +32,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	}
 	
 	public void newIndividual() {
-		double[][] pop = optEmitter.samplePopulation(); // 2D array, but only generating one solution vector
-		for(int i = 0; i < pop.length; ++i) {    
-			// TODO need to check feasibility?
-		}
+		double[][] pop = optEmitter.samplePopulation(); // need to check feasibility?
 		double[] deltaI = new double[pop.length]; // create delta array
 		ArrayList<Genotype<ArrayList<Double>>> popGenotypes = PopulationUtil.genotypeArrayListFromDoubles(pop); // convert population to genotypes
 		assert task.evaluate(popGenotypes.get(0)).usesMAPElitesBinSpecification() : "Cannot use a traditional behavior vector with CMA-ME";
@@ -49,7 +46,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 			double currentBinScore = currentBinOccupant == null ? Double.NEGATIVE_INFINITY : currentBinOccupant.behaviorIndexScore(binIndex);
 			if (currentBinOccupant == null) { // empty bin
 				System.out.println("Added bin"+individualBinScore);
-				deltaI[i] = individualBinScore; // TODO negate these?
+				deltaI[i] = -individualBinScore; // TODO negate these?
 				fileUpdates(true);
 				archive.archive.set(binIndex, individualScore.copy());
 				synchronized(this) {
@@ -59,7 +56,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 				EvolutionaryHistory.logLineageData(individual.getId(), individual);
 			} else if (individualBinScore > currentBinScore) { // existing, but worse bin
 				System.out.println("Improved bin "+currentBinScore+", replaced with "+individualBinScore);
-				deltaI[i] = (individualBinScore - currentBinScore);
+				deltaI[i] = -(individualBinScore - currentBinScore);
 				fileUpdates(true);
 				archive.archive.set(binIndex, individualScore.copy());
 				archive.conditionalEliteSave(individualScore, binIndex);
@@ -69,13 +66,13 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 			}
 			
 		}
-		System.out.println(Arrays.toString(deltaI));
 		optEmitter.updateDistribution(deltaI); // perhaps 
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		System.out.println("Testing CMA-ME");
-		MMNEAT.main("runNumber:0 randomSeed:0 marioGANLevelChunks:10 marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME base:mariogan marioGANModel:GECCO2018GAN_World1-1_32_Epoch5000.pth GANInputSize:32 log:MarioGAN-CMAMETest saveTo:CMAMETest trials:1 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment".split(" "));
+		int runNum = 1;
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" marioGANLevelChunks:10 marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME base:mariogan marioGANModel:GECCO2018GAN_World1-1_32_Epoch5000.pth GANInputSize:32 log:MarioGAN-CMAMETest saveTo:CMAMETest trials:1 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment").split(" "));
 		//MMNEAT.main("runNumber:0 randomSeed:0 marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME base:mariogan marioGANModel:GECCO2018GAN_World1-1_32_Epoch5000.pth GANInputSize:32 log:MarioGAN-CMAMETest saveTo:CMAMETest trials:1 printFitness:true mu:50 maxGens:500 io:false netio:false genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment".split(" "));
 		
 	}
