@@ -23,8 +23,11 @@ import com.aqwis.SimpleTiledZentangle;
 import com.aqwis.models.SimpleTiledZentangleWFCModel;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkPlusParameters;
+import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -121,6 +124,18 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T extends Network> BufferedImage imageFromCPPN(T phenotype, int imageWidth, int imageHeight, double[] inputMultiples) {
+		
+		if(phenotype instanceof NetworkPlusParameters) { // CPPN with extra scale and rotation parameters
+			NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype;
+			ArrayList<Double> scaleAndRotation = npp.t2;
+			return GraphicsUtil.imageFromCPPN(phenotype, imageWidth, imageHeight, inputMultiples, 0, EnhancedCPPNPictureGenotype.INDEX_SCALE, EnhancedCPPNPictureGenotype.INDEX_ROTATION);
+		} else { // Plain CPPN/TWEANGenotype
+			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageHeight, imageWidth, inputMultiples);
+		}
+	}
+	
 	/**
 	 * Save a single hi-res version of a particular image. This is used by the
 	 * zentangle method below, though I'm not sure it belongs in this class, or even
@@ -429,7 +444,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		}
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:16", "maxGens:500",
-					"zentangleTileDim:100",
+					"zentangleTileDim:100", "genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
 					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:true",
 					"task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:true", "netChangeActivationRate:0.3", "cleanFrequency:-1",
