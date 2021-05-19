@@ -455,7 +455,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					"includeFullGaussFunction:true", "includeCosineFunction:true", "includeGaussFunction:false",
 					"includeIdFunction:true", "includeTriangleWaveFunction:false", "includeSquareWaveFunction:false",
 					"includeFullSawtoothFunction:false", "includeSigmoidFunction:false", "includeAbsValFunction:false",
-					"includeSawtoothFunction:false", "allowInteractiveSave:true" });
+					"includeSawtoothFunction:false", "allowInteractiveSave:true", "picbreederImageScale:1.0"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

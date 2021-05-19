@@ -235,8 +235,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping","fs:true",
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
-				"matchImageFile:skull.jpg",
-				"fitnessSaveThreshold:0.5",
+				"matchImageFile:skull64.jpg",
+				"fitnessSaveThreshold:0.7",
 				"includeSigmoidFunction:true", 	// In Brian Woolley paper
 				"includeTanhFunction:false",
 				"includeIdFunction:true",		// In Brian Woolley paper
