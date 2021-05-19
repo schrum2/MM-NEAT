@@ -18,7 +18,7 @@ import fr.inria.optimization.cmaes.fitness.AbstractObjectiveFunction;
  *
  * @author Maxx Batterton
  */
-public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
+public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 
 	AbstractObjectiveFunction function;
 	
@@ -27,7 +27,7 @@ public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
 	 * command line parameter "foFunction", and registers
 	 * the function.
 	 */
-	public FunctionOptimization() {
+	public FunctionOptimizationTask() {
 		try {
 			this.function = (AbstractObjectiveFunction) ClassCreation.createObject("foFunction");
 		} catch (NoSuchMethodException e) {
@@ -61,12 +61,14 @@ public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
 		double[] vector = ArrayUtil.doubleArrayFromList(pheno); // Convert ArrayList into double array to give to function
 		double score = -function.valueOf(vector); // Must be negated to work since CMA-ES is a minimizer
 		double[] scores = new double[] {score}; 
-		return new Score<>(individual, scores, null);
+		Score<ArrayList<Double>> finalScore =  new Score<>(individual, scores, null);
+		
+		return finalScore;
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Test with Rosenbrock, comparable to results from CMExample1
-		MMNEAT.main(new String[] {"runNumber:1", "randomSeed:1", "io:true", "base:functionoptimization", "log:fo-FunctionOptimization", "saveTo:FunctionOptimization", "netio:false", "ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA", "watch:true", "task:edu.southwestern.tasks.functionoptimization.FunctionOptimization",
+		MMNEAT.main(new String[] {"runNumber:1", "randomSeed:1", "io:true", "base:functionoptimization", "log:fo-FunctionOptimization", "saveTo:FunctionOptimization", "netio:false", "ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA", "watch:true", "task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask",
 				"foFunction:fr.inria.optimization.cmaes.fitness.RosenFunction", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "foVectorLength:10"});
 	}
 
