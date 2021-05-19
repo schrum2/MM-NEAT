@@ -3,16 +3,11 @@ package edu.southwestern.tasks.functionoptimization;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.MAPElites;
-import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
-import edu.southwestern.tasks.mario.MarioMAPElitesDecorNSAndLeniencyBinLabels;
-import edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels;
-import edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -75,7 +70,6 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 		
 		if(MMNEAT.ea instanceof MAPElites) {
 			int dim1, dim2;
-			final int BINS_PER_DIMENSION; // TODO get from function/parameter
 			if(((MAPElites<ArrayList<Double>>) MMNEAT.ea).getBinLabelsClass() instanceof FunctionOptimizationRastriginBinLabels) {
 				FunctionOptimizationRastriginBinLabels labels = (FunctionOptimizationRastriginBinLabels) ((MAPElites<ArrayList<Double>>) MMNEAT.ea).getBinLabelsClass();
 				double[] characteristic = labels.behaviorCharacterization(vector);

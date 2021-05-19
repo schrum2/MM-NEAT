@@ -33,9 +33,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		
 		// TODO Needs to be able to shuffle through emitters, currently 
 		// only uses a single emitter set to thisEmitter, which should 
-		// change when multiple emitters are used. I'm unsure if 
-		// solutionCount is actually being tracked correctly, only
-		// 0 appears to ever be printed, but progress is made so ???
+		// change when multiple emitters are used.
 		
 		double[][] pop = thisEmitter.samplePopulation(); // need to check feasibility?
 		double[] deltaI = new double[pop.length]; // create array for deltas
@@ -73,19 +71,23 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		String emitterTag;
 		CMAEvolutionStrategy CMAESInstance;
 		
+		// Create the emitter with a CMAEvolutionStrategy instance and "tag" name
 		public Emitter(CMAEvolutionStrategy CMAESInstance, String tag) {
 			this.CMAESInstance = CMAESInstance;
 			this.emitterTag = tag;
 		}
 		
+		// get the population from the internal CMA-ES instance
 		public double[][] samplePopulation() {
 			return CMAESInstance.samplePopulation();
 		}
 		
+		// update the distribution of the internal CMA-ES instance
 		public void updateDistribution(double[] functionValues) {
 			CMAESInstance.updateDistribution(functionValues);
 		}
-
+		
+		// comparable through solution count
 		@Override
 		public int compareTo(Emitter other) {
 			return this.solutionCount - other.solutionCount;

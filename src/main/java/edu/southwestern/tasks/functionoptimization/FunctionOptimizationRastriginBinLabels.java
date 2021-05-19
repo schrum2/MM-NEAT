@@ -4,8 +4,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nd4j.common.util.ArrayUtil;
-
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BinLabels;
 
@@ -20,9 +18,9 @@ import edu.southwestern.evolution.mapelites.BinLabels;
 public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 	
 	List<String> labels = null;
-	private static final int BINS_PER_DIMENSION = 500;
+	private static final int BINS_PER_DIMENSION = 500; // parameter also? foBinDimension
 	private static final double RASTRIGIN_RANGE = 5.12;
-	private int n = 20; // should be based off of the genome length instead of hardcoded
+	private int n = 20; // TODO should be based off parameter?
 	
 	/**
 	 * Creates bin labels on the first run 
@@ -39,9 +37,9 @@ public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 			for (int y = (BINS_PER_DIMENSION/2)-1; y >= -(BINS_PER_DIMENSION/2); y--) {
 				for (int x = -(BINS_PER_DIMENSION/2); x < (BINS_PER_DIMENSION/2); x++) {
 					labels.add("bin("+x+", "+y+")["+x*b+" to "+(x+1)*b+"]["+y*b+" to "+(y+1)*b+"]");
-					// bin(-250, 249)[-51.2 to -50.9952][50.9952 to 51.2] first element
-					// bin(0, 0)[0 to 0.2048][0 to 0.2048]				  middle element
-					// bin(249, -250)[50.9952 to 51.2][-51.2 to -50.9952] last element
+					// bin(-250, 249)[-51.2 to -50.9952][50.9952 to 51.2] first element    <--
+					// bin(0, 0)[0 to 0.2048][0 to 0.2048]				  middle element   <-- For a dimension of 500
+					// bin(249, -250)[50.9952 to 51.2][-51.2 to -50.9952] last element     <--
 				}
 			}
 		}
@@ -78,11 +76,11 @@ public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 		} else {
 			return RASTRIGIN_RANGE/x; // otherwise divide range by x and return
 		}
-//		if (x > RASTRIGIN_RANGE) {
-//			return RASTRIGIN_RANGE;
-//		} else if (x < -RASTRIGIN_RANGE) {
-//			return -RASTRIGIN_RANGE;
-//		} else {
+//		if (x > RASTRIGIN_RANGE) {			// This is a normal clamp, however since
+//			return RASTRIGIN_RANGE;			// the reference paper:
+//		} else if (x < -RASTRIGIN_RANGE) {	// (https://arxiv.org/pdf/1912.02400.pdf) 
+//			return -RASTRIGIN_RANGE;		// did it the other way, that's how we're
+//		} else {							// going to do it too.
 //			return x;
 //		}
 	}
@@ -99,11 +97,9 @@ public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 	public double[] behaviorCharacterization(double[] solution) {
 		double[] sums = new double[] {0, 0}; // create array for sums
 		for (int i = 0; i < n/2; i++) { 
-			//System.out.println("adding to sums[0]:"+sums[0]+" --> "+solution[i]+"\t\tclipped:"+clip(solution[i]));
 			sums[0] += clip(solution[i]); // sum first half
 		}
 		for (int i = n/2; i < n; i++) {
-			//System.out.println("adding to sums[1]:"+sums[1]+" --> "+solution[i]+"\t\tclipped:"+clip(solution[i]));
 			sums[1] += clip(solution[i]); // sum second half
 		}
 		return sums;
