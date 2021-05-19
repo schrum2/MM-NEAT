@@ -133,7 +133,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			System.out.println("scaleAndRotation: " + scaleAndRotation);
 			return GraphicsUtil.imageFromCPPN(phenotype, imageWidth, imageHeight, inputMultiples, 0, scaleAndRotation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE), scaleAndRotation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION));
 		} else { // Plain CPPN/TWEANGenotype
-			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageHeight, imageWidth, inputMultiples);
+			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageHeight, imageWidth, inputMultiples, 0, Parameters.parameters.doubleParameter("picbreederImageScale"), Parameters.parameters.doubleParameter("picBreederImageRotation"));
 		}
 	}
 	
