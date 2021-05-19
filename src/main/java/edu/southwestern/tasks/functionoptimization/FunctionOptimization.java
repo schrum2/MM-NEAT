@@ -67,7 +67,7 @@ public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Test with Rosenbrock, comparable to results from CMExample1
 		MMNEAT.main(new String[] {"runNumber:1", "randomSeed:1", "io:true", "base:functionoptimization", "log:fo-FunctionOptimization", "saveTo:FunctionOptimization", "netio:false", "ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA", "watch:true", "task:edu.southwestern.tasks.functionoptimization.FunctionOptimization",
-				"foFunction:fr.inria.optimization.cmaes.fitness.RosenFunction", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype"});
+				"foFunction:fr.inria.optimization.cmaes.fitness.RosenFunction", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "foVectorLength:10", "foLowerBounds:-1"});
 	}
 
 }

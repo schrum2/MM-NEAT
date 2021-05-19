@@ -213,7 +213,7 @@ public class Parameters {
 		integerOptions.add("freezeMeltAlternateFrequency", 25, "Generations between freezing/melting pref/policy neurons");
 		integerOptions.add("fsLinksPerOut", 1, "Initial links per output with feature selective nets");
 		integerOptions.add("ftype", ActivationFunctions.FTYPE_TANH, "Integer designation of default activation function for networks");
-		integerOptions.add("functionOptimizationVectorLength", -1, "Dimension of the vector for a function optimization problem.");
+		integerOptions.add("foVectorLength", -1, "Dimension of the vector for a function optimization problem.");
 		integerOptions.add("genOfLastTUGGoalIncrease", 0, "Generation when last TUG goal increase occurred");
 		integerOptions.add("ghostsForBonus", 17, "Ghosts that need to be eaten per level to get bonus evals");
 		integerOptions.add("gvgaiLevel", 0, "GVGAI level to be played; must be 0 - 4");
@@ -796,6 +796,9 @@ public class Parameters {
 		doubleOptions.add("rlGamma", 0.99, "Discount factor used for Reinforcement Learning");
 		doubleOptions.add("scentDecay", 0.99, "Portion of scent remaining after each time step");
 		doubleOptions.add("syllabusChangeProbability", .01, "The probability that a vector will be swapped out for another in the syllabus for intelligent vectors with Behavioral Diversity");
+		doubleOptions.add("foUpperBounds", Double.POSITIVE_INFINITY, "The upper bounds for the genotype of a functin optimization problem");
+		doubleOptions.add("foLowerBounds", Double.NEGATIVE_INFINITY, "The lower bounds for the genotype of a functin optimization problem");
+		
 		//TODO
 		doubleOptions.add("scaleFactor", 1.0, "Used in customExecutor. Scales the size of the image?");
 		doubleOptions.add("softmaxTemperature", 0.25, "Temperature parameter for softmax selection");
