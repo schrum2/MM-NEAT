@@ -33,7 +33,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  * @author Jacob Schrum
  */
 public class OriginalPicBreederGenomeLoader {
-	public static final int SIZE = 256;
+	public static final int SIZE = 64;
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {		
 		Parameters.initializeParameterCollections(new String[] {"io:false","netio:false","allowMultipleFunctions:true","finalPassOnOutputActivation:true"});
 		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, -1);
