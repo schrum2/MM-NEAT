@@ -65,7 +65,23 @@ public class CMAEvolutionStrategyEA extends MuLambda<ArrayList<Double>> {
 		assert genotypes.size() == numParents : "Length of genotypes is not equal to the number of parents specified!";
 		return genotypes; // Just returns the input score genotypes to keep MM-NEAT happy, actual data is internal to CMA-ES
 	}
+	
+	/**
+	 * Before overriding the inital population, it was far too large and 
+	 * the graphs appeared blank because of the scaling. This replaces that
+	 * and samples the population through CMA-ES instead, giving a correctly
+	 * scaled initial population.
+	 */
+	@Override
+	public ArrayList<Genotype<ArrayList<Double>>> initialPopulation(Genotype<ArrayList<Double>> example) {
+		double[][] pop = cma.samplePopulation(); // get a new population of solutions
 
+		ArrayList<Genotype<ArrayList<Double>>> newPopulation = PopulationUtil.genotypeArrayListFromDoubles(pop);
+		while (newPopulation.size() > mu) { // trim down to size mu
+			newPopulation.remove(newPopulation.size()-1);
+		}
+		return newPopulation; // return
+	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		System.out.println("Testing CMA-ES");
