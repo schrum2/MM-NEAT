@@ -2,6 +2,9 @@ package edu.southwestern.tasks.interactive.animationbreeder;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -13,6 +16,7 @@ import java.util.Scanner;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -26,6 +30,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.util.graphics.AnimationUtil;
+import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
  * Interface that interactively evolves originally generated animations
@@ -245,9 +250,24 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			JLabel pauseLabel = new JLabel();
 			pauseLabel.setText("Pause between animations");
 			pause.add(pauseLabel);
-			pause.add(pauseLength);
-
-
+			pause.add(pauseLength);			
+			
+			JCheckBox stark = new JCheckBox("stark", Parameters.parameters.booleanParameter("starkPicbreeder"));
+			stark.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Flip Stark Brightness");
+					// Switch to opposite of current setting
+					Parameters.parameters.changeBoolean("starkPicbreeder");
+					// Need to change all images and re-load
+					resetButtons(true);
+				}
+			});
+			
+			JPanel imageTweaks = new JPanel();
+			imageTweaks.add(stark);
+			top.add(imageTweaks);
+			
 			//Add all panels to interface
 			top.add(animation);
 			if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
@@ -376,6 +396,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 		System.out.println("image " + filename + " was saved successfully");
 	}
+
 
 	/**
 	 * Create BufferedImage from CPPN
@@ -552,7 +573,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true", "picbreederImageScale:1.0"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true", "picbreederImageScale:1.0", "starkPicbreeder:true"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
