@@ -92,7 +92,7 @@ public class PictureTargetTaskAutoEncoder {
 
         ////////////////////////////////////// ADD
         RecordReader rr = new ImageRecordReader(28,28,3); //28x28 RGB images
-        rr.initialize(new FileSplit(new File("/path/to/directory")));
+        rr.initialize(new FileSplit(new File("dl4j-examples-data/dl4j-examples/DataExamples/parentDir/")));
 
         DataSetIterator iter = new RecordReaderDataSetIterator.Builder(rr, 32)
              //Label index (first arg): Always value 1 when using ImageRecordReader. For CSV etc: use index of the column
