@@ -3,12 +3,19 @@ package edu.southwestern.tasks.functionoptimization;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.MAPElites;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.mario.MarioMAPElitesDecorNSAndLeniencyBinLabels;
+import edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels;
+import edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 import fr.inria.optimization.cmaes.fitness.AbstractObjectiveFunction;
 
 /**
@@ -21,6 +28,7 @@ import fr.inria.optimization.cmaes.fitness.AbstractObjectiveFunction;
 public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 
 	AbstractObjectiveFunction function;
+	private Pair<int[],Double> oneMAPEliteBinIndexScorePair;
 	
 	/**
 	 * Initializes with the function specified by the 
@@ -55,21 +63,43 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 	 * 
 	 * @return A Score that contains only one score, evaluated by the single function
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Score<ArrayList<Double>> evaluate(Genotype<ArrayList<Double>> individual) {
 		ArrayList<Double> pheno = individual.getPhenotype();
+		//System.out.println(pheno);
 		double[] vector = ArrayUtil.doubleArrayFromList(pheno); // Convert ArrayList into double array to give to function
 		double score = -function.valueOf(vector); // Must be negated to work since CMA-ES is a minimizer
 		double[] scores = new double[] {score}; 
-		Score<ArrayList<Double>> finalScore =  new Score<>(individual, scores, null);
+		Score<ArrayList<Double>> result =  new Score<>(individual, scores, null);
 		
-		return finalScore;
+		if(MMNEAT.ea instanceof MAPElites) {
+			int dim1, dim2;
+			final int BINS_PER_DIMENSION; // TODO get from function/parameter
+			if(((MAPElites<ArrayList<Double>>) MMNEAT.ea).getBinLabelsClass() instanceof FunctionOptimizationRastriginBinLabels) {
+				FunctionOptimizationRastriginBinLabels labels = (FunctionOptimizationRastriginBinLabels) ((MAPElites<ArrayList<Double>>) MMNEAT.ea).getBinLabelsClass();
+				double[] characteristic = labels.behaviorCharacterization(vector);
+				int[] dimensions = labels.discretize(characteristic);
+				dim1 = dimensions[0];
+				dim2 = dimensions[1];			
+			} else {
+				throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
+			}
+			// Row-major order lookup in 2D archive
+			oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {dim1, dim2}, -score);
+		}		
+		
+		if(MMNEAT.ea instanceof MAPElites)
+			result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
+		
+		return result;
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Test with Rosenbrock, comparable to results from CMExample1
-		MMNEAT.main(new String[] {"runNumber:1", "randomSeed:1", "io:true", "base:functionoptimization", "log:fo-FunctionOptimization", "saveTo:FunctionOptimization", "netio:false", "ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA", "watch:true", "task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask",
-				"foFunction:fr.inria.optimization.cmaes.fitness.RosenFunction", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "foVectorLength:10"});
+		int runNum = 6;
+		MMNEAT.main(new String[] {"runNumber:"+runNum, "randomSeed:"+runNum, "io:true", "base:functionoptimization", "log:fo-FunctionOptimization", "saveTo:FunctionOptimization", "netio:false", "ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA", "watch:true", "task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask",
+				"foFunction:fr.inria.optimization.cmaes.fitness.RosenFunction", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "foVectorLength:10", "foUpperBounds:5", "foLowerBounds:-5"});
 	}
 
 }

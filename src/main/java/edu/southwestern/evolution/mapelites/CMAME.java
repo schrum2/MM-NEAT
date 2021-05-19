@@ -16,7 +16,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	
 	public void initialize(Genotype<ArrayList<Double>> example) {
 		super.initialize(example);
-		int dimension = example.getPhenotype().size();
+		int dimension = MMNEAT.getLowerBounds().length;
 		emitters = new Emitter[] {newEmitter(dimension, "Emitter 1")};
 	}
 	
@@ -48,7 +48,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 				thisEmitter.solutionCount++;
 				deltaI[i] = -individualBinScore;
 			} else { // if bin existed, but was worse than the new one
-				System.out.println("Improved current bin ("+currentBinScore+"), replaced with new bin ("+individualBinScore+").");
+				System.out.println("Improved current bin ("+currentBinScore+")");
 				deltaI[i] = -(individualBinScore - currentBinScore);
 				thisEmitter.solutionCount++;
 			}

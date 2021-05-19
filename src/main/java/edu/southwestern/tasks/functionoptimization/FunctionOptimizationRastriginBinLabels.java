@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nd4j.common.util.ArrayUtil;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BinLabels;
 
@@ -18,9 +20,10 @@ import edu.southwestern.evolution.mapelites.BinLabels;
 public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 	
 	List<String> labels = null;
-	private static final int BINS_PER_DIMENSION = 500;
+	private static final int BINS_PER_DIMENSION = 50;
 	private static final double RASTRIGIN_RANGE = 5.12;
 	private int n = 20; // should be based off of the genome length instead of hardcoded
+	private double b = RASTRIGIN_RANGE*n/BINS_PER_DIMENSION; // bin size
 	
 	/**
 	 * Creates bin labels on the first run 
@@ -31,7 +34,6 @@ public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) {
-			double b = RASTRIGIN_RANGE*n/BINS_PER_DIMENSION; // Calculate bin size
 			int size = BINS_PER_DIMENSION*BINS_PER_DIMENSION;
 			labels = new ArrayList<String>(size);
 			for (int y = (BINS_PER_DIMENSION/2)-1; y >= -(BINS_PER_DIMENSION/2); y--) {
@@ -76,6 +78,13 @@ public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 		} else {
 			return RASTRIGIN_RANGE/x; // otherwise divide range by x and return
 		}
+//		if (x > RASTRIGIN_RANGE) {
+//			return RASTRIGIN_RANGE;
+//		} else if (x < -RASTRIGIN_RANGE) {
+//			return -RASTRIGIN_RANGE;
+//		} else {
+//			return x;
+//		}
 	}
 	
 	/**
@@ -88,17 +97,30 @@ public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 	 * @return
 	 */
 	public double[] behaviorCharacterization(double[] solution) {
-		double[] sums = new double[1]; // create array for sums
+		double[] sums = new double[] {0, 0}; // create array for sums
 		for (int i = 0; i < n/2; i++) { 
+			//System.out.println("adding to sums[0]:"+sums[0]+" --> "+solution[i]+"\t\tclipped:"+clip(solution[i]));
 			sums[0] += clip(solution[i]); // sum first half
 		}
 		for (int i = n/2; i < n; i++) {
+			//System.out.println("adding to sums[1]:"+sums[1]+" --> "+solution[i]+"\t\tclipped:"+clip(solution[i]));
 			sums[1] += clip(solution[i]); // sum second half
 		}
 		return sums;
 	}
 	
+	
+	public int[] discretize(double[] behaviorCharacterization) {
+		double x_dim = behaviorCharacterization[0];
+		double y_dim = behaviorCharacterization[1];
+		double scalar = BINS_PER_DIMENSION/(RASTRIGIN_RANGE*n);
+//		System.out.println("x:"+x_dim+" --> "+Math.floor(x_dim*scalar));
+//		System.out.println("y:"+y_dim+" --> "+Math.floor(y_dim*scalar));
+		return new int[] {(int)Math.floor(x_dim*scalar), (int)Math.floor(y_dim*scalar)};
+	}
+	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main("runNumber:0 randomSeed:0 io:true base:cmamefunctionoptimization log:cmamefunctionoptimization-CMAMEFunctionOptimization saveTo:CMAMEFunctionOptimization netio:false ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foVectorLength:10".split(" "));
+		int runNum = 41;
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true base:cmamefunctionoptimization log:cmamefunctionoptimization-CMAMEFunctionOptimization saveTo:CMAMEFunctionOptimization netio:false maxGens:25000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 	}
 }
