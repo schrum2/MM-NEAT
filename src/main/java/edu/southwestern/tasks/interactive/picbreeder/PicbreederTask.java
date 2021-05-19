@@ -133,7 +133,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			System.out.println("scaleAndRotation: " + scaleAndRotation);
 			return GraphicsUtil.imageFromCPPN(phenotype, imageWidth, imageHeight, inputMultiples, 0, scaleAndRotation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE), scaleAndRotation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION));
 		} else { // Plain CPPN/TWEANGenotype
-			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageHeight, imageWidth, inputMultiples, 0, Parameters.parameters.doubleParameter("picbreederImageScale"), Parameters.parameters.doubleParameter("picBreederImageRotation"));
+			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageHeight, imageWidth, inputMultiples, 0, Parameters.parameters.doubleParameter("picbreederImageScale"), Parameters.parameters.doubleParameter("picbreederImageRotation"));
 		}
 	}
 	
@@ -456,7 +456,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					"includeFullGaussFunction:true", "includeCosineFunction:true", "includeGaussFunction:false",
 					"includeIdFunction:true", "includeTriangleWaveFunction:false", "includeSquareWaveFunction:false",
 					"includeFullSawtoothFunction:false", "includeSigmoidFunction:false", "includeAbsValFunction:false",
-					"includeSawtoothFunction:false", "allowInteractiveSave:true", "picbreederImageScale:10.0"});
+					"includeSawtoothFunction:false", "allowInteractiveSave:true", "picbreederImageScale:1.0", "picbreederImageRotation:0.0"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
