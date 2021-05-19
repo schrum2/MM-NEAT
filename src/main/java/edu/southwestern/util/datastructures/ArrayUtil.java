@@ -121,6 +121,22 @@ public class ArrayUtil {
 		}
 		return ones;
 	}
+	
+	/**
+	 * Return primitve double array of given size containing only
+	 * copies of the specified value.
+	 * 
+	 * @param size Desired size of array
+	 * @param num Specified number to fill array
+	 * @return Array of doubles of size 'size', all of which are 'num'
+	 */
+	public static double[] doubleSpecified(int size, double num) {
+		double[] spec = new double[size];
+		for (int i = 0; i < spec.length; i++) {
+			spec[i] = num;
+		}
+		return spec;
+	}
 
 	/**
 	 * Return primitive int array of given size containing all ones

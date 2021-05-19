@@ -796,8 +796,8 @@ public class Parameters {
 		doubleOptions.add("rlGamma", 0.99, "Discount factor used for Reinforcement Learning");
 		doubleOptions.add("scentDecay", 0.99, "Portion of scent remaining after each time step");
 		doubleOptions.add("syllabusChangeProbability", .01, "The probability that a vector will be swapped out for another in the syllabus for intelligent vectors with Behavioral Diversity");
-		doubleOptions.add("foUpperBounds", Double.POSITIVE_INFINITY, "The upper bounds for the genotype of a functin optimization problem");
-		doubleOptions.add("foLowerBounds", Double.NEGATIVE_INFINITY, "The lower bounds for the genotype of a functin optimization problem");
+		doubleOptions.add("foUpperBounds", Double.MAX_VALUE, "The upper bounds for the genotype of a functin optimization problem");
+		doubleOptions.add("foLowerBounds", Double.MIN_VALUE, "The lower bounds for the genotype of a functin optimization problem");
 		
 		//TODO
 		doubleOptions.add("scaleFactor", 1.0, "Used in customExecutor. Scales the size of the image?");
