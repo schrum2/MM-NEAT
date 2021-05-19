@@ -6,6 +6,7 @@ import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.parameters.Parameters;
 
 /**
  * Binning scheme for Rastrigin function,
@@ -18,9 +19,14 @@ import edu.southwestern.evolution.mapelites.BinLabels;
 public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 	
 	List<String> labels = null;
-	private static final int BINS_PER_DIMENSION = 500; // parameter also? foBinDimension
+	private static int BINS_PER_DIMENSION;
+	private int solutionVectorLength;
 	private static final double RASTRIGIN_RANGE = 5.12;
-	private int n = 20; // TODO should be based off parameter?
+	
+	public FunctionOptimizationRastriginBinLabels() {
+		BINS_PER_DIMENSION = Parameters.parameters.integerParameter("foBinDimension"); 
+		solutionVectorLength = Parameters.parameters.integerParameter("foVectorLength");
+	}
 	
 	/**
 	 * Creates bin labels on the first run 
@@ -31,7 +37,7 @@ public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) {
-			double b = RASTRIGIN_RANGE*n/BINS_PER_DIMENSION; // calculate bin size
+			double b = RASTRIGIN_RANGE*solutionVectorLength/BINS_PER_DIMENSION; // calculate bin size
 			int size = BINS_PER_DIMENSION*BINS_PER_DIMENSION;
 			labels = new ArrayList<String>(size);
 			for (int y = (BINS_PER_DIMENSION/2)-1; y >= -(BINS_PER_DIMENSION/2); y--) {
@@ -96,10 +102,10 @@ public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 	 */
 	public double[] behaviorCharacterization(double[] solution) {
 		double[] sums = new double[] {0, 0}; // create array for sums
-		for (int i = 0; i < n/2; i++) { 
+		for (int i = 0; i < solutionVectorLength/2; i++) { 
 			sums[0] += clip(solution[i]); // sum first half
 		}
-		for (int i = n/2; i < n; i++) {
+		for (int i = solutionVectorLength/2; i < solutionVectorLength; i++) {
 			sums[1] += clip(solution[i]); // sum second half
 		}
 		return sums;
@@ -114,12 +120,12 @@ public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 	public int[] discretize(double[] behaviorCharacterization) {
 		double x_dim = behaviorCharacterization[0];
 		double y_dim = behaviorCharacterization[1];
-		double scalar = BINS_PER_DIMENSION/(RASTRIGIN_RANGE*n); // get scalar to multiply values by to get coordinates
+		double scalar = BINS_PER_DIMENSION/(RASTRIGIN_RANGE*solutionVectorLength); // get scalar to multiply values by to get coordinates
 		return new int[] {(int)Math.floor(x_dim*scalar), (int)Math.floor(y_dim*scalar)};
 	}
 	
 	// Test CMA-ME with Rastrigin function
-	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException { // TODO Presently fails due around 34500 generations due to CMA-ES exception
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException { 
 		int runNum = 100;
 		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true base:cmamefunctionoptimization log:cmamefunctionoptimization-CMAMEFunctionOptimization saveTo:CMAMEFunctionOptimization netio:false maxGens:50000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 	}
