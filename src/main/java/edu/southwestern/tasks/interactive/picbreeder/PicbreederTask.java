@@ -445,7 +445,8 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		}
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:16", "maxGens:500",
-					"zentangleTileDim:100", "genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
+					"zentangleTileDim:100", 
+					//"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
 					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:true",
 					"task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:true", "netChangeActivationRate:0.3", "cleanFrequency:-1",
@@ -455,7 +456,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					"includeFullGaussFunction:true", "includeCosineFunction:true", "includeGaussFunction:false",
 					"includeIdFunction:true", "includeTriangleWaveFunction:false", "includeSquareWaveFunction:false",
 					"includeFullSawtoothFunction:false", "includeSigmoidFunction:false", "includeAbsValFunction:false",
-					"includeSawtoothFunction:false", "allowInteractiveSave:true", "picbreederImageScale:1.0"});
+					"includeSawtoothFunction:false", "allowInteractiveSave:true", "picbreederImageScale:10.0"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
