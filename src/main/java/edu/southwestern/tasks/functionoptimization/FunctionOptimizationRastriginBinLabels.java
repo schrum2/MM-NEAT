@@ -20,10 +20,9 @@ import edu.southwestern.evolution.mapelites.BinLabels;
 public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 	
 	List<String> labels = null;
-	private static final int BINS_PER_DIMENSION = 50;
+	private static final int BINS_PER_DIMENSION = 500;
 	private static final double RASTRIGIN_RANGE = 5.12;
 	private int n = 20; // should be based off of the genome length instead of hardcoded
-	private double b = RASTRIGIN_RANGE*n/BINS_PER_DIMENSION; // bin size
 	
 	/**
 	 * Creates bin labels on the first run 
@@ -34,6 +33,7 @@ public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) {
+			double b = RASTRIGIN_RANGE*n/BINS_PER_DIMENSION; // calculate bin size
 			int size = BINS_PER_DIMENSION*BINS_PER_DIMENSION;
 			labels = new ArrayList<String>(size);
 			for (int y = (BINS_PER_DIMENSION/2)-1; y >= -(BINS_PER_DIMENSION/2); y--) {
@@ -109,18 +109,22 @@ public class FunctionOptimizationRastriginBinLabels implements BinLabels {
 		return sums;
 	}
 	
-	
+	/**
+	 * Discretizes given values into coordinates of where
+	 * a bin is located.
+	 * @param behaviorCharacterization Two double values (x and y) to be discretized 
+	 * @return 
+	 */
 	public int[] discretize(double[] behaviorCharacterization) {
 		double x_dim = behaviorCharacterization[0];
 		double y_dim = behaviorCharacterization[1];
-		double scalar = BINS_PER_DIMENSION/(RASTRIGIN_RANGE*n);
-//		System.out.println("x:"+x_dim+" --> "+Math.floor(x_dim*scalar));
-//		System.out.println("y:"+y_dim+" --> "+Math.floor(y_dim*scalar));
+		double scalar = BINS_PER_DIMENSION/(RASTRIGIN_RANGE*n); // get scalar to multiply values by to get coordinates
 		return new int[] {(int)Math.floor(x_dim*scalar), (int)Math.floor(y_dim*scalar)};
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		int runNum = 41;
-		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true base:cmamefunctionoptimization log:cmamefunctionoptimization-CMAMEFunctionOptimization saveTo:CMAMEFunctionOptimization netio:false maxGens:25000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
+	// Test CMA-ME with Rastrigin function
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException { // TODO Presently fails due around 34500 generations due to CMA-ES exception
+		int runNum = 100;
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true base:cmamefunctionoptimization log:cmamefunctionoptimization-CMAMEFunctionOptimization saveTo:CMAMEFunctionOptimization netio:false maxGens:50000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 	}
 }

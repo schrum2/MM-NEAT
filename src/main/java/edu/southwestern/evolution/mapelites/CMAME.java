@@ -12,12 +12,14 @@ import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 
 public class CMAME extends MAPElites<ArrayList<Double>> {
 	
-	private Emitter[] emitters;
+	private Emitter[] emitters = null;
 	
 	public void initialize(Genotype<ArrayList<Double>> example) {
 		super.initialize(example);
 		int dimension = MMNEAT.getLowerBounds().length;
-		emitters = new Emitter[] {newEmitter(dimension, "Emitter 1")};
+		if (emitters == null) {
+			emitters = new Emitter[] {newEmitter(dimension, "Emitter 1")};
+		}
 	}
 	
 	/**
@@ -27,8 +29,14 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	 * afterwards
 	 */
 	public void newIndividual() {
-		//Arrays.sort(emitters); // will need for multiple emitters
-		Emitter thisEmitter = emitters[0];
+		Emitter thisEmitter = emitters[0]; 
+		
+		// TODO Needs to be able to shuffle through emitters, currently 
+		// only uses a single emitter set to thisEmitter, which should 
+		// change when multiple emitters are used. I'm unsure if 
+		// solutionCount is actually being tracked correctly, only
+		// 0 appears to ever be printed, but progress is made so ???
+		
 		double[][] pop = thisEmitter.samplePopulation(); // need to check feasibility?
 		double[] deltaI = new double[pop.length]; // create array for deltas
 		ArrayList<Genotype<ArrayList<Double>>> popGenotypes = PopulationUtil.genotypeArrayListFromDoubles(pop); // convert population to genotypes
@@ -36,7 +44,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		for (int i = 0; i < popGenotypes.size(); i++) { // for each individual
 			Genotype<ArrayList<Double>> individual = popGenotypes.get(i);
 			Score<ArrayList<Double>> individualScore = task.evaluate(individual); // evaluate score for individual
-			boolean replacedBool = archive.add(individualScore); // attempt to add individual to archive
+			//boolean replacedBool = archive.add(individualScore); // attempt to add individual to archive
 			
 			double individualBinScore = individualScore.behaviorIndexScore(archive.getBinMapping().oneDimensionalIndex(individualScore.MAPElitesBinIndex()));
 			double currentBinScore = archive.getElite(individualScore.MAPElitesBinIndex()) == null ? Double.NEGATIVE_INFINITY : archive.getElite(individualScore.MAPElitesBinIndex()).behaviorIndexScore(archive.getBinMapping().oneDimensionalIndex(individualScore.MAPElitesBinIndex()));
@@ -52,6 +60,8 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 				deltaI[i] = -(individualBinScore - currentBinScore);
 				thisEmitter.solutionCount++;
 			}
+			boolean replacedBool = archive.add(individualScore); // attempt to add individual to archive
+			
 			System.out.println("Emitter: \""+thisEmitter.emitterTag+"\"\tSolutions: "+thisEmitter.solutionCount);
 			fileUpdates(replacedBool); // log failure or success
 		}
@@ -82,22 +92,31 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		}
 	}
 	
+	/**
+	 * Create a new emitter with the default parameters, 
+	 * and a provided name
+	 * 
+	 * @param dimension Dimension of the emitter
+	 * @param tag Name corresponding to this emitter
+	 * @return An initalized Emitter with the provided name
+	 */
 	private Emitter newEmitter(int dimension, String tag) {
 		CMAEvolutionStrategy optEmitter = new CMAEvolutionStrategy();
 		optEmitter.setDimension(dimension);
-		optEmitter.setInitialX(0.0); //TODO test 0.0
-		optEmitter.setInitialStandardDeviation(0.2); // unsure if should be hardcoded or not
+		optEmitter.setInitialX(0.0);
+		optEmitter.setInitialStandardDeviation(0.2); // TODO unsure if should be hardcoded or not
 		int mu = Parameters.parameters.integerParameter("mu");
 		optEmitter.parameters.setMu(mu);
-		optEmitter.parameters.setPopulationSize(mu); 
+		optEmitter.parameters.setPopulationSize(mu); // set Mu and Lambda to mu
 		optEmitter.init();
 		optEmitter.writeToDefaultFilesHeaders(0); // Overwrite existing CMA-ES files
 		return new Emitter(optEmitter, tag);
 	}
 	
+	// Test CMA-ME with the MarioGAN
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		System.out.println("Testing CMA-ME");
-		int runNum = 13;
+		int runNum = 0;
 		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" marioGANLevelChunks:10 marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME base:mariogan marioGANModel:GECCO2018GAN_World1-1_32_Epoch5000.pth GANInputSize:32 log:MarioGAN-CMAMETest saveTo:CMAMETest trials:1 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment").split(" "));
 	}
 }
