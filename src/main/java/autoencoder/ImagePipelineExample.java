@@ -37,7 +37,7 @@ import java.util.Random;
  * Load images and augment them to build an image pipeline
  * @author susaneraly
  */
-public class PrototypePictureTargetTaskAutoEncoder {
+public class ImagePipelineExample {
 
     //Images are of format given by allowedExtension -
     private static final String [] allowedExtensions = BaseImageLoader.ALLOWED_FORMATS;
