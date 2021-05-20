@@ -206,6 +206,8 @@ public class Parameters {
 		integerOptions.add("defaultPitch", 36, "Default pitch value for 3DObjectbreeder vertical rotation");
 		integerOptions.add("deltaCodingFrequency", 20, "How often to generate a delta coded population");
 		integerOptions.add("disabledMode", -1, "If non-negative, then the designated mode can never be used");
+		integerOptions.add("klDivBinDimension", -1, "Amount of bins in a dimension when using a KL Divergence binning scheme");
+		integerOptions.add("klDivMaxValue", -1, "Maximum possible value of a bin when using a KL Divergence binning scheme");
 		integerOptions.add("edibleTaskTimeLimit", 2000, "Time steps per level for edible ghost only subtask");
 		integerOptions.add("edibleTime", Constants.EDIBLE_TIME, "Initial edible ghost time in Ms. Pac-Man");
 		integerOptions.add("endTUGGeneration", Integer.MAX_VALUE, "Generation at which TUG will stop being used");
