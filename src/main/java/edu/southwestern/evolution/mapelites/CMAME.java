@@ -43,23 +43,25 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		double[] rawIndividual = thisEmitter.sampleSingle();
 
 		Genotype<ArrayList<Double>> individual = new BoundedRealValuedGenotype(rawIndividual);
-		assert task.evaluate(individual).usesMAPElitesBinSpecification() : "Cannot use a traditional behavior vector with CMA-ME";
 		
 		Score<ArrayList<Double>> individualScore = task.evaluate(individual); // evaluate score for individual
-		double individualBinScore = individualScore.behaviorIndexScore(archive.getBinMapping().oneDimensionalIndex(individualScore.MAPElitesBinIndex()));
-		double currentBinScore = archive.getElite(individualScore.MAPElitesBinIndex()) == null ? Double.NEGATIVE_INFINITY : archive.getElite(individualScore.MAPElitesBinIndex()).behaviorIndexScore(archive.getBinMapping().oneDimensionalIndex(individualScore.MAPElitesBinIndex()));
+		assert individualScore.usesMAPElitesBinSpecification() : "Cannot use a traditional behavior vector with CMA-ME";
+		
+		double individualBinScore = individualScore.behaviorIndexScore();
+		Score<ArrayList<Double>> currentOccupant = archive.getElite(individualScore.MAPElitesBinIndex());
+		double currentBinScore = currentOccupant == null ? Double.NEGATIVE_INFINITY : currentOccupant.behaviorIndexScore();
 
 		if (currentBinScore >= individualBinScore) { // if bin was better or equal
 			if (printDebug) {System.out.println("Current bin ("+currentBinScore+") was already better than or equal to new bin ("+individualBinScore+").");}
 			deltaI[additionCounter] = 0;
-		} else if (currentBinScore == Double.NEGATIVE_INFINITY) { // if bin was empty
+		} else if (Double.isInfinite(currentBinScore)) { // if bin was empty (infinite magnitude must be negative infinity)
 			if (printDebug) {System.out.println("Added new bin ("+individualBinScore+").");}
 			thisEmitter.solutionCount++;
-			deltaI[additionCounter] = -individualBinScore;
+			deltaI[additionCounter] = -individualBinScore; // Negate score because CMA-ES is a minimizer
 		} else { // if bin existed, but was worse than the new one
 			if (printDebug) {System.out.println("Improved current bin ("+currentBinScore+") with new bin ("+individualBinScore+")");}
 			thisEmitter.solutionCount++;
-			deltaI[additionCounter] = -(individualBinScore - currentBinScore);		
+			deltaI[additionCounter] = -(individualBinScore - currentBinScore);	// Negate difference score because CMA-ES is a minimizer	
 		}
 		parentPopulation[additionCounter] = rawIndividual;
 		additionCounter++;
