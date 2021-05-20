@@ -57,8 +57,8 @@ public class AnimationUtil {
 				// Eliminate recurrent activation for consistent images at all resolutions
 				n.flush();
 				double[] scaleAndRotationOutputs = n.process(input);
-				scale = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_SCALE];
-				rotation = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_ROTATION];
+				scale = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_SCALE] * Parameters.parameters.doubleParameter("maxScale"); // TODO: Multiply by "maxScale"
+				rotation = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_ROTATION] * Math.PI; // Mult by Math.PI
 			}			
 			images[i-startTime] = GraphicsUtil.imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, i/FRAMES_PER_SEC, scale, rotation);
 		}
