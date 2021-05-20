@@ -373,7 +373,11 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	@Override
 	public String[] outputLabels() {
 		// if animate scale and rotation, then return array with "scale" and "rotation" at the end
-		return new String[] { "hue-value", "saturation-value", "brightness-value" };
+		if(Parameters.parameters.booleanParameter("animateWithScaleAndRotation")) {
+			return new String[] { "hue-value", "saturation-value", "brightness-value", "scale", "rotation"};
+		}else {
+			return new String[] { "hue-value", "saturation-value", "brightness-value" };
+		}
 	}
 
 	/** 
@@ -572,7 +576,11 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	@Override
 	public int numCPPNOutputs() {
 		// if animate rotation and scale, then add 2, otherwise just return BASE_CPPN_NUM_OUTPUTS
-		return BASE_CPPN_NUM_OUTPUTS;
+		if(Parameters.parameters.booleanParameter("animateWithScaleAndRotation")) {
+			return BASE_CPPN_NUM_OUTPUTS + 2;
+		} else {
+			return BASE_CPPN_NUM_OUTPUTS;
+		}
 	}
 
 	/**
@@ -581,7 +589,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true", "picbreederImageScale:1.0", "picbreederImageRotation:0.0", "starkPicbreeder:true"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true", "picbreederImageScale:10.0", "picbreederImageRotation:0.0", "starkPicbreeder:true", "animateWithScaleAndRotation:true"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

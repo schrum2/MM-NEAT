@@ -9,6 +9,7 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 
 import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask;
 
 /**
@@ -44,11 +45,21 @@ public class AnimationUtil {
 	public static BufferedImage[] imagesFromCPPN(Network n, int imageWidth, int imageHeight, int startTime, int endTime, double[] inputMultiples, double scale, double rotation) {
 		BufferedImage[] images = new BufferedImage[endTime-startTime];
 		for(int i = startTime; i < endTime; i++) {
-			
 			// if animate scale and rotation (command line parameter)
 			// then query CPPN here with time i (other inputs are 0)
 			// check the scale and rotation outputs and change the scale and rotation values
-			
+			if(Parameters.parameters.booleanParameter("animateWithScaleAndRotation")) {
+				double[] input = GraphicsUtil.get2DObjectCPPNInputs(0, 0, imageWidth, imageHeight, i/FRAMES_PER_SEC, 1, 0);
+				// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
+				for(int j = 0; j < inputMultiples.length; j++) {
+					input[j] = input[j] * inputMultiples[j];
+				}
+				// Eliminate recurrent activation for consistent images at all resolutions
+				n.flush();
+				double[] scaleAndRotationOutputs = n.process(input);
+				scale = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_SCALE];
+				rotation = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_ROTATION];
+			}			
 			images[i-startTime] = GraphicsUtil.imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, i/FRAMES_PER_SEC, scale, rotation);
 		}
 		return images;
