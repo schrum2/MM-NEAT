@@ -519,11 +519,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	 * sets the bins and saves MAPElites images to archive
 	 * @param individual the genotype
 	 * @param levelImage the buffered image of the level
-	 * @param archiveArray the archive array
-	 * @param dim1 the first bin dimension
-	 * @param dim2 the second bin dimension
-	 * @param dim3 the third bin dimension
-	 * @param BINS_PER_DIMENSION the bins per dimension
+	 * @param dims Array of dimensions corresponding to each bin
 	 * @param binScore the bin score
 	 */
 	private void setBinsAndSaveMAPElitesImages(Genotype<T> individual, BufferedImage levelImage,
