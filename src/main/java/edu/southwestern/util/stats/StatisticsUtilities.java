@@ -583,8 +583,10 @@ public class StatisticsUtilities {
 	 */
 	public static double rootMeanSquareError(double[] xs, double[] xs2) {
 		double result = 0;
+		double observedMinusExpected = 0;
 		for(int i = 0; i < Math.max(xs.length, xs2.length); i++){
-			result = Math.sqrt((xs[i] - xs2[i]) * (xs[i] - xs2[i]));
+			observedMinusExpected = (xs[i] - xs2[i]) * (xs[i] - xs2[i]);
+			result = Math.sqrt(Math.pow((observedMinusExpected / xs.length), .5));
 		}
 		return result;
 	}
