@@ -23,6 +23,7 @@ import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	
@@ -108,6 +109,18 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	public double fitness(BufferedImage candidateImage) {
 		double error = candidateVsTargetError(GraphicsUtil.flatFeatureArrayFromBufferedImage(candidateImage), targetImageFeatures);
 		return 1 - error * error;
+	}
+	
+	/**
+	 * Calculates fitness of the candidate features to the target features
+	 * using root mean square error.
+	 * 
+	 * @param candidateFeatures an array of candidate features represented by C in the Woolley paper
+	 * @param targetFeatures an array of target features represented by T in the Woolley paper
+	 * @return the fitness of the candidateFeatures using root mean square error 
+	 */
+	public double rootMeanSquareErrorFitness(double[] candidateFeatures, double[] targetFeatures) {
+		return StatisticsUtilities.rootMeanSquareError(targetFeatures, candidateFeatures);
 	}
 	
 	

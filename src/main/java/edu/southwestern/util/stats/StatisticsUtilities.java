@@ -572,6 +572,22 @@ public class StatisticsUtilities {
 		}
 		return sum(squares); // Returns the sum of the newly created Array
 	}
+	
+	/**
+	 * Computes the root mean square error between two different
+	 * arrays of doubles.
+	 * 
+	 * @param xs first array 
+	 * @param xs2 second array
+	 * @return root mean square error of first and second array
+	 */
+	public static double rootMeanSquareError(double[] xs, double[] xs2) {
+		double result = 0;
+		for(int i = 0; i < Math.max(xs.length, xs2.length); i++){
+			result = Math.sqrt((xs[i] - xs2[i]) * (xs[i] - xs2[i]));
+		}
+		return result;
+	}
 
 	/**
 	 * Compute "instantaneous error energy" as described on page 161 of Neural
