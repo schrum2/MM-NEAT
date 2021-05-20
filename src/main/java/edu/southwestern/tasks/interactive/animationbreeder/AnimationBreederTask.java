@@ -58,8 +58,16 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 * @return Array of the images created by the CPPN in sequence
 	 */
 	protected BufferedImage[] getAnimationImages(T cppn, int startFrame, int endFrame, boolean beingSaved) {
-		return AnimationUtil.imagesFromCPPN(cppn, buttonWidth, buttonHeight, startFrame, endFrame, getInputMultipliers());
+		return imagesFromCPPN(cppn, buttonWidth, buttonHeight, startFrame, endFrame, getInputMultipliers());
 	}
+
+	private BufferedImage[] imagesFromCPPN(T cppn, int width, int height, int startFrame, int endFrame, double[] inputMultipliers) {
+		double scale = Parameters.parameters.doubleParameter("picbreederImageScale");
+		double rotation = Parameters.parameters.doubleParameter("picbreederImageRotation");
+		return AnimationUtil.imagesFromCPPN(cppn, width, height, startFrame, endFrame, inputMultipliers, scale, rotation);
+	}
+
+
 
 	/**
 	 * Private inner class to run animations in a loop
@@ -144,7 +152,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	}
 
 	public static final int CPPN_NUM_INPUTS	= 5;
-	public static final int CPPN_NUM_OUTPUTS = 3;
+	public static final int BASE_CPPN_NUM_OUTPUTS = 3;
 
 	// stores all animations in an array with a different button's animation at each index
 	public ArrayList<BufferedImage>[] animations;
@@ -364,6 +372,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	@Override
 	public String[] outputLabels() {
+		// if animate scale and rotation, then return array with "scale" and "rotation" at the end
 		return new String[] { "hue-value", "saturation-value", "brightness-value" };
 	}
 
@@ -402,7 +411,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
-		return AnimationUtil.imagesFromCPPN(phenotype, buttonWidth, buttonHeight, 0, 1, getInputMultipliers())[0];
+		return imagesFromCPPN(phenotype, buttonWidth, buttonHeight, 0, 1, getInputMultipliers())[0];
 	}
 
 	/**
@@ -562,7 +571,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	@Override
 	public int numCPPNOutputs() {
-		return CPPN_NUM_OUTPUTS;
+		// if animate rotation and scale, then add 2, otherwise just return BASE_CPPN_NUM_OUTPUTS
+		return BASE_CPPN_NUM_OUTPUTS;
 	}
 
 	/**
