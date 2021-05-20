@@ -53,7 +53,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 
 		if (currentBinScore >= individualBinScore) { // if bin was better or equal
 			if (printDebug) {System.out.println("Current bin ("+currentBinScore+") was already better than or equal to new bin ("+individualBinScore+").");}
-			deltaI[additionCounter] = 0;
+			deltaI[additionCounter] = 0; // Schrum: I don't like this, but we may have to do it
 		} else if (Double.isInfinite(currentBinScore)) { // if bin was empty (infinite magnitude must be negative infinity)
 			if (printDebug) {System.out.println("Added new bin ("+individualBinScore+").");}
 			thisEmitter.solutionCount++;
