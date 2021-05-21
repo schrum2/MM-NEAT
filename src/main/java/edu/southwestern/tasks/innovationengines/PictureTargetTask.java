@@ -139,8 +139,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	 * @return the fitness of the candidateFeatures using root mean square error 
 	 */
 	public double rootMeanSquareErrorFitness(double[] candidateFeatures, double[] targetFeatures) {
-		// Negate the error because we want to minimize the error
-		return -StatisticsUtilities.rootMeanSquareError(targetFeatures, candidateFeatures);
+		// 1 minus the error because we want to minimize the error
+		return 1 - StatisticsUtilities.rootMeanSquareError(targetFeatures, candidateFeatures);
 	}
 	
 	
@@ -165,7 +165,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 			picture.dispose();
 		}
 		if(CommonConstants.netio) {
-			System.out.println("Save archive images");
+			//System.out.println("Save archive images");
 			@SuppressWarnings("unchecked")
 			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
 			List<String> binLabels = archive.getBinMapping().binLabels();
@@ -259,17 +259,18 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		
 		
 		// For test runs
-		MMNEAT.main(new String[]{"runNumber:7","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
+		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
-				"log:TargetImage-WoolleySkull","saveTo:WoolleySkull","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
+				"log:TargetImage-RMSESkull","saveTo:RMSESkull","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping","fs:true",
+				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
 				"matchImageFile:skull64.jpg",
-				"fitnessSaveThreshold:0.7",
+				"fitnessSaveThreshold:0.8",		// Higher threshold for RMSE 
 				"includeSigmoidFunction:true", 	// In Brian Woolley paper
 				"includeTanhFunction:false",
 				"includeIdFunction:true",		// In Brian Woolley paper
