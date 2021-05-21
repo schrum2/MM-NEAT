@@ -275,9 +275,9 @@ public class GraphicsUtil {
 				} else if((backgroundImage1.getRGB(x,  y) == Color.BLACK.getRGB() && backgroundImage2.getRGB(x,  y) != Color.BLACK.getRGB())){
 					image.setRGB(x, y, pattern2.getRGB(x, y));
 				} else if((backgroundImage1.getRGB(x,  y) != Color.BLACK.getRGB() && backgroundImage2.getRGB(x,  y) == Color.BLACK.getRGB())) {
-					image.setRGB(x, y, pattern4.getRGB(x, y));
-				} else {
 					image.setRGB(x, y, pattern3.getRGB(x, y));
+				} else {
+					image.setRGB(x, y, pattern4.getRGB(x, y));
 				}
 			}
 		}
