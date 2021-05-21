@@ -78,8 +78,21 @@ public abstract class Emitter implements Comparable<Emitter> {
 	 * @param fitness The fitness of the parent to be added
 	 * @param archive The current archive
 	 */
-	public abstract void addFitness(double[] parent, double fitness, Archive<ArrayList<Double>> archive);
+	public void addFitness(double[] parent, double newScore, double currentScore, Archive<ArrayList<Double>> archive) {
+		deltaIFitnesses[additionCounter] = calculateFitness(newScore, currentScore);
+		parentPopulation[additionCounter] = parent;
+		additionCounter++;
+		if (additionCounter == populationSize) {
+			if (allInvalid()) {
+				this.CMAESInstance = newCMAESInstance(archive);
+			} else {
+				updateDistribution(parentPopulation, deltaIFitnesses);
+			}
+			additionCounter = 0;
+		}
+	}
 	
+	public abstract double calculateFitness(double newScore, double currentScore);
 	
 	/**
 	 * Check if the current fitnesses are invalid, and restart the 
