@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,6 +24,7 @@ import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.MAPElites;
+import edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -63,6 +65,9 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	private boolean fitnessRequiresSimulation;
 	private boolean segmentFitness;
 	private ArrayList<List<Integer>> targetLevel = null;
+	private int[][][] klDivLevels;
+	
+	private boolean initialized = false; // become true on first evaluation
 
 	public static final int DECORATION_FREQUENCY_STAT_INDEX = 0;
 	public static final int LENIENCY_STAT_INDEX = 1;
@@ -72,7 +77,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
 	private ArrayList<Double> behaviorVector;
 	private Pair<int[],Double> oneMAPEliteBinIndexScorePair;
-
+	
 	public MarioLevelTask() {
 		// Replace this with a command line parameter
 		try {
@@ -189,7 +194,21 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			MMNEAT.registerFitnessFunction("Leniency-"+i,false);
 			MMNEAT.registerFitnessFunction("NegativeSpace-"+i,false);
 		}
+		setupKLDivLevelsForComparison();
+	}
 
+	@SuppressWarnings("unchecked")
+	private void setupKLDivLevelsForComparison() {
+		if (MMNEAT.ea instanceof MAPElites && ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof KLDivergenceBinLabels) { // TODO
+			System.out.println("Instance of MAP Elites using KL Divergence Bin Labels");
+			String level1FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel1"); 
+			String level2FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel2"); 
+			ArrayList<List<Integer>> level1List = MarioLevelUtil.listLevelFromVGLCFile(level1FileName);
+			ArrayList<List<Integer>> level2List = MarioLevelUtil.listLevelFromVGLCFile(level2FileName);
+			int[][] level1Array = ArrayUtil.int2DArrayFromListOfLists(level1List);
+			int[][] level2Array = ArrayUtil.int2DArrayFromListOfLists(level2List);
+			klDivLevels = new int[][][] {level1Array, level2Array};
+		}
 	}
 
 	@Override
@@ -234,6 +253,8 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+		if(!initialized) setupKLDivLevelsForComparison();
+		initialized = true;
 		EvaluationInfo info = null;
 		BufferedImage levelImage = null;
 		ArrayList<List<Integer>> oneLevel = getMarioLevelListRepresentationFromGenotype(individual);
@@ -503,6 +524,12 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				dims = new int[] {numDistinctSegments, negativeSpaceSumIndex, decorationBinIndex};
 				
 //				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];				
+			} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof KLDivergenceBinLabels) { // TODO
+				KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass();
+				
+				int[][] oneLevelAs2DArray = ArrayUtil.int2DArrayFromListOfLists(oneLevel);
+				dims = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
+				
 			} else {
 				throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
 			}
@@ -612,6 +639,11 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	// the agent's score in each bin is set ... but a given Mario level should really only be in one of the bins.
 	public ArrayList<Double> getBehaviorVector() {
 		return behaviorVector;
+	}
+	
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		int runNum = 999;
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:mariolevelskldiv log:MarioLevelsKLDiv-test saveTo:test marioGANLevelChunks:10 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 mu:100 maxGens:100000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesKLDivLevel1:data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-8-1.txt mapElitesKLDivLevel2:data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-3-1.txt klDivBinDimension:40 klDivMaxValue:100").split(" "));
 	}
 
 }
