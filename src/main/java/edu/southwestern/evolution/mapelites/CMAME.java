@@ -17,7 +17,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	
 	private int emitterCount = 2; // TODO make number of emitters not hard coded
 	private Emitter[] emitters = new Emitter[emitterCount]; // array of emitters
-	private boolean printDebug = true; // prints out debug text if true
+	public static final boolean PRINT_DEBUG = true; // prints out debug text if true
 	public static final double FAILURE_VALUE = Double.MAX_VALUE;
 	
 	public void initialize(Genotype<ArrayList<Double>> example) {
@@ -47,28 +47,18 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		Score<ArrayList<Double>> currentOccupant = archive.getElite(individualScore.MAPElitesBinIndex());
 		double currentBinScore = currentOccupant == null ? Double.NEGATIVE_INFINITY : currentOccupant.behaviorIndexScore();
 
-		if (currentBinScore >= individualBinScore) { // if bin was better or equal
-			if (printDebug) {System.out.println("Current bin ("+currentBinScore+") was already better than or equal to new bin ("+individualBinScore+").");}
-			thisEmitter.addFitness(rawIndividual, FAILURE_VALUE, archive);
-		} else if (Double.isInfinite(currentBinScore)) { // if bin was empty (infinite magnitude must be negative infinity)
-			if (printDebug) {System.out.println("Added new bin ("+individualBinScore+").");}
-			thisEmitter.solutionCount++; // TODO should change how these if statements are laid out so this doesn't have to be written twice
-			thisEmitter.addFitness(rawIndividual, -individualBinScore, archive); // Negate score because CMA-ES is a minimizer	
-		} else { // if bin existed, but was worse than the new one
-			if (printDebug) {System.out.println("Improved current bin ("+currentBinScore+") with new bin ("+individualBinScore+")");}
-			thisEmitter.solutionCount++;
-			thisEmitter.addFitness(rawIndividual, -(individualBinScore - currentBinScore), archive); // Negate difference score because CMA-ES is a minimizer	
-		}
+		thisEmitter.addFitness(rawIndividual, individualBinScore, currentBinScore, archive); // potentially add new fitness
+		
 		boolean replacedBool = archive.add(individualScore); // attempt to add individual to archive
 		
-		if (printDebug) {System.out.println("Emitter: \""+thisEmitter.emitterName+"\"\tSolutions: "+thisEmitter.solutionCount+"\t\tAmount of Parents: "+thisEmitter.additionCounter);}
+		if (PRINT_DEBUG) {System.out.println("Emitter: \""+thisEmitter.emitterName+"\"\tSolutions: "+thisEmitter.solutionCount+"\t\tAmount of Parents: "+thisEmitter.additionCounter);}
 		fileUpdates(replacedBool); // log failure or success
 	}	
 	
 	// Test CMA-ME
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		System.out.println("Testing CMA-ME");
-		int runNum = 402;
+		int runNum = 202;
 		// MarioGAN test
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" marioGANLevelChunks:10 marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME base:mariogan marioGANModel:GECCO2018GAN_World1-1_32_Epoch5000.pth GANInputSize:32 log:MarioGAN-CMAMETest saveTo:CMAMETest trials:1 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment").split(" "));
 		// Rastrigin test: 500 bin 		20 solution vector 

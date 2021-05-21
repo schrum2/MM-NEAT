@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
+import edu.southwestern.evolution.mapelites.CMAME;
 import edu.southwestern.parameters.Parameters;
 import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 
@@ -31,23 +32,27 @@ public class ImprovementEmitter extends Emitter {
 		optEmitter.writeToDefaultFilesHeaders(0); // Overwrite existing CMA-ES files
 		return optEmitter;
 	}
-	
-	public void addFitness(double[] parent, double fitness, Archive<ArrayList<Double>> archive) {
-		deltaIFitnesses[additionCounter] = fitness;
-		parentPopulation[additionCounter] = parent;
-		additionCounter++;
-		if (additionCounter == populationSize) {
-			if (allInvalid()) {
-				this.CMAESInstance = newCMAESInstance(archive);
-			} else {
-				updateDistribution(parentPopulation, deltaIFitnesses);
-			}
-			additionCounter = 0;
-		}
-	}
 
 	@Override
 	protected String getEmitterSuffix() {
 		return "Improvement";
+	}
+
+	@Override
+	public double calculateFitness(double newScore, double currentScore) {
+		if (currentScore >= newScore) { // if bin was better or equal
+			if (CMAME.PRINT_DEBUG) {System.out.println("Current bin ("+currentScore+") was already better than or equal to new bin ("+newScore+").");}
+			return CMAME.FAILURE_VALUE;
+		} else {
+			solutionCount++;
+			if (Double.isInfinite(currentScore)) { // if bin was empty (infinite magnitude must be negative infinity)
+				if (CMAME.PRINT_DEBUG) {System.out.println("Added new bin ("+newScore+").");}
+				return -newScore; // Negate score because CMA-ES is a minimizer	
+			} else { // if bin existed, but was worse than the new one
+				if (CMAME.PRINT_DEBUG) {System.out.println("Improved current bin ("+currentScore+") with new bin ("+newScore+")");}
+				return -(newScore - currentScore); // Negate difference score because CMA-ES is a minimizer	
+			}
+		}
+			
 	}
 }
