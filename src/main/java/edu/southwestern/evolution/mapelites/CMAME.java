@@ -2,7 +2,6 @@ package edu.southwestern.evolution.mapelites;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
@@ -14,15 +13,18 @@ import edu.southwestern.scores.Score;
 public class CMAME extends MAPElites<ArrayList<Double>> {
 	
 	private Emitter[] emitters; // array holding all emitters
-	public static final boolean PRINT_DEBUG = true; // prints out debug text if true (applies to both this class and emitter classes)
+	public static final boolean PRINT_DEBUG = false; // prints out debug text if true (applies to both this class and emitter classes)
 	public static final double FAILURE_VALUE = Double.MAX_VALUE;
+	private int totalEmitters;
+	private int emitterCounter = 0;
 	
 	public void initialize(Genotype<ArrayList<Double>> example) {
 		super.initialize(example);
 		int dimension = MMNEAT.getLowerBounds().length;
 		int numImprovementEmitters = Parameters.parameters.integerParameter("numImprovementEmitters");
 		int numOptimizingEmitters = Parameters.parameters.integerParameter("numOptimizingEmitters");
-		emitters = new Emitter[numImprovementEmitters+numOptimizingEmitters];
+		totalEmitters = numImprovementEmitters+numOptimizingEmitters;
+		emitters = new Emitter[totalEmitters];
 		int place = 0; // remember position in emitter array
 		for (int i = 0; i < numImprovementEmitters; i++) {
 			emitters[i] = new ImprovementEmitter(dimension, archive, i+1); // create improvement emitters
@@ -40,17 +42,17 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	 * afterwards
 	 */
 	public void newIndividual() {
-		Arrays.sort(emitters); // sort emitters by their solution counts
-		Emitter thisEmitter = emitters[0]; // pick the lowest one
+		incrementEmitterCounter();
+		Emitter thisEmitter = emitters[emitterCounter]; // pick the lowest one
 		double[] rawIndividual = thisEmitter.sampleSingle();
 		Genotype<ArrayList<Double>> individual = new BoundedRealValuedGenotype(rawIndividual);
 		
 		Score<ArrayList<Double>> individualScore = task.evaluate(individual); // evaluate score for individual
 		assert individualScore.usesMAPElitesBinSpecification() : "Cannot use a traditional behavior vector with CMA-ME";
 		
-		double individualBinScore = individualScore.behaviorIndexScore(); // TODO make new variable names that are better and don't all sound the same
+		double individualBinScore = individualScore.behaviorIndexScore(); // extract new bin score
 		Score<ArrayList<Double>> currentOccupant = archive.getElite(individualScore.MAPElitesBinIndex());
-		double currentBinScore = currentOccupant == null ? Double.NEGATIVE_INFINITY : currentOccupant.behaviorIndexScore();
+		double currentBinScore = currentOccupant == null ? Double.NEGATIVE_INFINITY : currentOccupant.behaviorIndexScore(); // extract current bin score
 
 		thisEmitter.addFitness(rawIndividual, individualBinScore, currentBinScore, archive); // potentially add new fitness
 		
@@ -59,6 +61,14 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		if (PRINT_DEBUG) {System.out.println("Emitter: \""+thisEmitter.emitterName+"\"\tSolutions: "+thisEmitter.solutionCount+"\t\tAmount of Parents: "+thisEmitter.additionCounter);}
 		fileUpdates(replacedBool); // log failure or success
 	}	
+	
+	private void incrementEmitterCounter() {
+		if (emitterCounter == totalEmitters-1) {
+			emitterCounter = 0;
+		} else {
+			emitterCounter++;
+		}
+	}
 	
 	// Test CMA-ME
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
@@ -69,7 +79,8 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		// Rastrigin test: 500 bin 		20 solution vector 
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true mu:50 lambda:50 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-CMAMEFunctionOptimization saveTo:CMAMEFunctionOptimization netio:false maxGens:50000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 		// Rastrigin test: 50 bin 		20 solution vector 		10000 gens
-		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true numImprovementEmitters:2 numOptimizingEmitters:0 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-CMAMEFunctionOptimization saveTo:CMAMEFunctionOptimization netio:false maxGens:20000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:50 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
-		
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true numImprovementEmitters:2 numOptimizingEmitters:2 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-CMAMEFunctionOptimization saveTo:CMAMEFunctionOptimization netio:false maxGens:20000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:50 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 	}
+	
+	
 }
