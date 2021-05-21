@@ -106,14 +106,24 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	 * @param candidateImage the candidate image produced by the CPPN
 	 * @return returns the fitness of the candidate image
 	 */
+	
 	public double fitness(BufferedImage candidateImage) {
+		
+		double[] candidateFeatures = GraphicsUtil.flatFeatureArrayFromBufferedImage(candidateImage);
 		
 		// To Anna: Have an if/else if/else statement here.
 		// if useWoolleyImageMatchFitness then use the code you already have (need new command line parameter)
 		
 		// Using the fitness calculation from the Woolley paper
-		double error = candidateVsTargetError(GraphicsUtil.flatFeatureArrayFromBufferedImage(candidateImage), targetImageFeatures);
-		return 1 - error * error;
+		
+		if(Parameters.parameters.booleanParameter("useWoolleyImageMatchFitness")) {
+			double error = candidateVsTargetError(candidateFeatures, targetImageFeatures);
+			return 1 - error * error;
+		} else if (Parameters.parameters.booleanParameter("useRMSEImageMatchFitness")) {
+			return rootMeanSquareErrorFitness(candidateFeatures, targetImageFeatures);
+		} else {
+			throw new IllegalStateException("Proper fitness function for PictureTargetTask not specified");
+		}
 		
 		// else if useRMSEImageMatchFitness then return rootMeanSquareErrorFitness (need new command line parameter)
 		
