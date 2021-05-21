@@ -90,6 +90,9 @@ public class PictureTargetTaskAutoEncoder {
         MultiLayerNetwork net = new MultiLayerNetwork(conf);
         net.setListeners(Collections.singletonList(new ScoreIterationListener(10)));
 
+        
+        // Replace the whole portion in this comment surrounded section with
+        // something similar to lines 58 through 115 of ImagePipelineExample
         ////////////////////////////////////// ADD
         ImageRecordReader rr = new ImageRecordReader(28,28,3); //28x28 RGB images
         rr.initialize(new FileSplit(new File("parentDir/")));
