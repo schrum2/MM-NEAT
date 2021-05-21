@@ -21,8 +21,8 @@ public class KLDivergenceBinLabels implements BinLabels {
 	
 	
 	public KLDivergenceBinLabels() {
-		binsPerDimension = 12; //Parameters.parameters.integerParameter("klDivBinDimension");
-		maxPossibleValue = 60; //Parameters.parameters.integerParameter("klDivMaxValue");
+		binsPerDimension = Parameters.parameters.integerParameter("klDivBinDimension");
+		maxPossibleValue = Parameters.parameters.integerParameter("klDivMaxValue");
 		segmentSize = (double) maxPossibleValue / (double) binsPerDimension;
 	}
 	
@@ -71,13 +71,18 @@ public class KLDivergenceBinLabels implements BinLabels {
 	}
 	
 	/**
-	 * Gets the behavior characterization of a solution 
+	 * Get the behaviorCharacterization of a provided level
+	 * with the task specified  
 	 * 
-	 * @param solution
-	 * @return behavior characterization
+	 * @param levels
+	 * @return
 	 */
-	public double[] behaviorCharacterization(double[] solution) {
-		return null;
+	public static double[] behaviorCharacterization(int[][] solutionLevel, int[][][] dimensionLevels) {
+		double[] bc = new double[dimensionLevels.length];
+		for (int i = 0; i < dimensionLevels.length; i++) {
+			bc[i] = getKLDivergence(solutionLevel, dimensionLevels[i]);
+		}
+		return bc;
 	}
 
 	/**
@@ -112,13 +117,7 @@ public class KLDivergenceBinLabels implements BinLabels {
 	
 	// test something here
 	public static void main(String[] args) {
-		KLDivergenceBinLabels test = new KLDivergenceBinLabels();
-		List<String> labeles = test.binLabels();
-		System.out.println(labeles);
-		int[] dcoord = test.discretize(new double[] {43.0, 12.0});
-		System.out.println(Arrays.toString(dcoord));
-		System.out.println(labeles.get(test.oneDimensionalIndex(dcoord)));
-		System.out.println();
+		
 	}
 	
 }

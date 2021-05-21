@@ -875,7 +875,8 @@ public class Parameters {
 		stringOptions.add("MegaManGANUpperRightModel", "MegaManSevenGANUpperRightCornerWith12TileTypes_5_Epoch5000.pth", "File name of Upper Right GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("MegaManGANLowerLeftModel", "MegaManSevenGANLowerLeftCornerWith12TileTypes_5_Epoch5000.pth", "File name of Lower Left GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("MegaManGANLowerRightModel", "MegaManSevenGANLowerRightCornerWith12TileTypes_5_Epoch5000.pth", "File name of Lower Right GAN model to use for MegaMan GAN level evolution");
-
+		stringOptions.add("mapElitesKLDivLevel1", "", "File name of the first level to compare to when using KL Divergence and MAPElites");
+		stringOptions.add("mapElitesKLDivLevel2", "", "File name of the second level to compare to when using KL Divergence and MAPElites");
 		stringOptions.add("mapElitesArchiveFile", "", "File name of MAPElites level we want to look at from an experiment");
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
