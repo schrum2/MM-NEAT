@@ -8,15 +8,15 @@ import edu.southwestern.evolution.mapelites.CMAME;
 import edu.southwestern.parameters.Parameters;
 import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 
-public class ImprovementEmitter extends Emitter {
+public class OptimizingEmitter extends Emitter {
 
-	public ImprovementEmitter(int dimension, Archive<ArrayList<Double>> archive, int id) {
+	public OptimizingEmitter(int dimension, Archive<ArrayList<Double>> archive, int id) {
 		super(dimension, archive, id);
 	}
-	
+
 	@Override
 	protected String getEmitterSuffix() {
-		return "Improvement";
+		return "Optimizing";
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class ImprovementEmitter extends Emitter {
 		optEmitter.writeToDefaultFilesHeaders(0); // Overwrite existing CMA-ES files
 		return optEmitter;
 	}
-	
+
 	@Override
 	public double calculateFitness(double newScore, double currentScore) {
 		if (currentScore >= newScore) { // if bin was better or equal
@@ -48,11 +48,11 @@ public class ImprovementEmitter extends Emitter {
 			solutionCount++;
 			if (Double.isInfinite(currentScore)) { // if bin was empty (infinite magnitude must be negative infinity)
 				if (CMAME.PRINT_DEBUG) {System.out.println("Added new bin ("+newScore+").");}
-				return -newScore; // Negate score because CMA-ES is a minimizer	
 			} else { // if bin existed, but was worse than the new one
 				if (CMAME.PRINT_DEBUG) {System.out.println("Improved current bin ("+currentScore+") with new bin ("+newScore+")");}
-				return -(newScore - currentScore); // Negate difference score because CMA-ES is a minimizer	
 			}
+			return -newScore; // Negate score because CMA-ES is a minimizer, optimizing emitters always return the new value
 		}		
 	}	
+
 }
