@@ -329,8 +329,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			} else if (numSaved == 4) {
 				try {
 					thirdImage = ImageIO.read(new File(waveFunctionSaveLocation + "/picbreederZentangle" + 3 + ".jpg"));
-					fourthImage = ImageIO
-							.read(new File(waveFunctionSaveLocation + "/picbreederZentangle" + 4 + ".jpg"));
+					fourthImage = ImageIO.read(new File(waveFunctionSaveLocation + "/picbreederZentangle" + 4 + ".jpg"));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
