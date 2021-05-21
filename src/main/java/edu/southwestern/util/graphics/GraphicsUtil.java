@@ -252,6 +252,39 @@ public class GraphicsUtil {
 	}
 	
 	/**
+	 * Creates a zentangled image. Overlays two images to create four pattern regions:
+	 * black in both, black in one and non-black in the other, and non-black in both.
+	 * Different pattern images are applied to each region.
+	 * 
+	 * @param backgroundImage1 First background template
+	 * @param backgroundImage2 Second background template
+	 * @param pattern1 First zentangle pattern (for black+black regions)
+	 * @param pattern2 Second zentangle pattern (for black+non-black regions)
+	 * @param pattern3 Third zentangle pattern (for non-black+non-black regions)
+	 * @param pattern4 Fourth zentangle pattern (
+	 * @return The resulting image
+	 */
+	public static BufferedImage zentangleImages(BufferedImage backgroundImage1, BufferedImage backgroundImage2, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3, BufferedImage pattern4) {
+		int imageWidth = backgroundImage1.getWidth();
+		int imageHeight = backgroundImage1.getHeight();
+		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+		for (int x = 0; x < imageWidth; x++) {// scans across whole image
+			for (int y = 0; y < imageHeight; y++) {
+				if((backgroundImage1.getRGB(x, y) == Color.BLACK.getRGB() && backgroundImage2.getRGB(x, y) == Color.BLACK.getRGB())) {
+					image.setRGB(x, y, pattern1.getRGB(x, y));
+				} else if((backgroundImage1.getRGB(x,  y) == Color.BLACK.getRGB() && backgroundImage2.getRGB(x,  y) != Color.BLACK.getRGB())){
+					image.setRGB(x, y, pattern2.getRGB(x, y));
+				} else if((backgroundImage1.getRGB(x,  y) != Color.BLACK.getRGB() && backgroundImage2.getRGB(x,  y) == Color.BLACK.getRGB())) {
+					image.setRGB(x, y, pattern4.getRGB(x, y));
+				} else {
+					image.setRGB(x, y, pattern3.getRGB(x, y));
+				}
+			}
+		}
+		return image;
+	}
+	
+	/**
 	 * Returns adjusted image based on manipulation of an input image with a CPPN. To add
 	 * more variation, each pixel is manipulated based on the average HSB of its surrounding pixels.
 	 * 
