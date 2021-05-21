@@ -107,8 +107,17 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	 * @return returns the fitness of the candidate image
 	 */
 	public double fitness(BufferedImage candidateImage) {
+		
+		// To Anna: Have an if/else if/else statement here.
+		// if useWoolleyImageMatchFitness then use the code you already have (need new command line parameter)
+		
+		// Using the fitness calculation from the Woolley paper
 		double error = candidateVsTargetError(GraphicsUtil.flatFeatureArrayFromBufferedImage(candidateImage), targetImageFeatures);
 		return 1 - error * error;
+		
+		// else if useRMSEImageMatchFitness then return rootMeanSquareErrorFitness (need new command line parameter)
+		
+		// else throw new IllegalStateException("Proper fitness function for PictureTargetTask not specified");
 	}
 	
 	/**
@@ -120,7 +129,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	 * @return the fitness of the candidateFeatures using root mean square error 
 	 */
 	public double rootMeanSquareErrorFitness(double[] candidateFeatures, double[] targetFeatures) {
-		return StatisticsUtilities.rootMeanSquareError(targetFeatures, candidateFeatures);
+		// Negate the error because we want to minimize the error
+		return -StatisticsUtilities.rootMeanSquareError(targetFeatures, candidateFeatures);
 	}
 	
 	
@@ -133,7 +143,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		int nodes = Math.min(tweannIndividual.nodes.size(), CPPNComplexityBinMapping.MAX_NUM_NEURONS);
 		int links = Math.min(tweannIndividual.links.size(), CPPNComplexityBinMapping.MAX_NUM_LINKS);
 		int[] indicesMAPEliteBin = new int[] {nodes, links}; // Array of two values corresponding to bin label dimensions
-		// Using the fitness calculation from the Woolley paper
+		
 		double binScore = fitness(image);
 		
 		Score<T> result = new Score<>(individual, new double[]{binScore}, indicesMAPEliteBin, binScore);
