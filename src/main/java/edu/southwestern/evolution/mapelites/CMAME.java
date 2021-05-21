@@ -24,7 +24,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		super.initialize(example);
 		int dimension = MMNEAT.getLowerBounds().length;
 		for (int i = 0; i < emitterCount; i++) {
-			emitters[i] = new ImprovementEmitter(dimension, archive, "Emitter "+(i+1));
+			emitters[i] = new ImprovementEmitter(dimension, archive, i+1);
 		}
 	}
 	
@@ -68,7 +68,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	// Test CMA-ME
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		System.out.println("Testing CMA-ME");
-		int runNum = 502;
+		int runNum = 402;
 		// MarioGAN test
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" marioGANLevelChunks:10 marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME base:mariogan marioGANModel:GECCO2018GAN_World1-1_32_Epoch5000.pth GANInputSize:32 log:MarioGAN-CMAMETest saveTo:CMAMETest trials:1 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment").split(" "));
 		// Rastrigin test: 500 bin 		20 solution vector 
