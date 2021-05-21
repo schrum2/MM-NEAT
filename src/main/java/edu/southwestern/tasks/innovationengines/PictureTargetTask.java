@@ -270,7 +270,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
 				"matchImageFile:skull64.jpg",
-				"fitnessSaveThreshold:0.8",		// Higher threshold for RMSE 
+				"fitnessSaveThreshold:0.75",		// Higher threshold for RMSE 
 				"includeSigmoidFunction:true", 	// In Brian Woolley paper
 				"includeTanhFunction:false",
 				"includeIdFunction:true",		// In Brian Woolley paper
