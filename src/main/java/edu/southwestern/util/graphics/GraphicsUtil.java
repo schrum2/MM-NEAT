@@ -204,45 +204,47 @@ public class GraphicsUtil {
 	 * @param pattern3 Third zentangle pattern
 	 * @return The resulting image
 	 */
-	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3) {
-		int imageWidth = backgroundImage.getWidth();
-		int imageHeight = backgroundImage.getHeight();
-		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
-		for (int x = 0; x < imageWidth; x++) {// scans across whole image
-			for (int y = 0; y < imageHeight; y++) {
-				if((backgroundImage.getRGB(x, y) == Color.BLACK.getRGB() && pattern1.getRGB(x, y) == Color.BLACK.getRGB()) || (backgroundImage.getRGB(x, y) == Color.WHITE.getRGB() && pattern1.getRGB(x, y) == Color.WHITE.getRGB())) {
-					image.setRGB(x, y, pattern2.getRGB(x, y));
-				} else /*if((backgroundImage.getRGB(x,  y) == Color.BLACK.getRGB() && pattern1.getRGB(x,  y) == Color.WHITE.getRGB()) || (backgroundImage.getRGB(x,  y) == Color.WHITE.getRGB() && pattern1.getRGB(x,  y) == Color.BLACK.getRGB()))*/{
-					image.setRGB(x, y, pattern3.getRGB(x, y));
-				}
-			}
-		}
-		return image;
-	}
+	// Apparently this is never used!?
+//	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3) {
+//		int imageWidth = backgroundImage.getWidth();
+//		int imageHeight = backgroundImage.getHeight();
+//		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+//		for (int x = 0; x < imageWidth; x++) {// scans across whole image
+//			for (int y = 0; y < imageHeight; y++) {
+//				if((backgroundImage.getRGB(x, y) == Color.BLACK.getRGB() && pattern1.getRGB(x, y) == Color.BLACK.getRGB()) || (backgroundImage.getRGB(x, y) == Color.WHITE.getRGB() && pattern1.getRGB(x, y) == Color.WHITE.getRGB())) {
+//					image.setRGB(x, y, pattern2.getRGB(x, y));
+//				} else /*if((backgroundImage.getRGB(x,  y) == Color.BLACK.getRGB() && pattern1.getRGB(x,  y) == Color.WHITE.getRGB()) || (backgroundImage.getRGB(x,  y) == Color.WHITE.getRGB() && pattern1.getRGB(x,  y) == Color.BLACK.getRGB()))*/{
+//					image.setRGB(x, y, pattern3.getRGB(x, y));
+//				}
+//			}
+//		}
+//		return image;
+//	}
 	
 	/**
-	 * Creates a zentangled iamge by overlaying two patterns into the black and white areas of the 
-	 * background image.  Contains two extra zentangle patterns as parameters.
+	 * Creates a zentangled image. Overlays two images to create three pattern regions:
+	 * black in both, black in one and non-black in the other, and non-black in both.
+	 * Different pattern images are applied to each region.
 	 * 
-	 * @param backgroundImage Image into which zentangle will be applied
-	 * @param pattern1 First zentangle pattern
-	 * @param pattern2 Second zentangle pattern
-	 * @param pattern3 Third zentangle pattern
-	 * @param pattern4 Fourth zentangle pattern
+	 * @param backgroundImage1 First background template
+	 * @param backgroundImage2 Second background template
+	 * @param pattern1 First zentangle pattern (for black+black regions)
+	 * @param pattern2 Second zentangle pattern (for black+non-black regions)
+	 * @param pattern3 Third zentangle pattern (for non-black+non-black regions)
 	 * @return The resulting image
 	 */
-	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3, BufferedImage pattern4) {
-		int imageWidth = backgroundImage.getWidth();
-		int imageHeight = backgroundImage.getHeight();
+	public static BufferedImage zentangleImages(BufferedImage backgroundImage1, BufferedImage backgroundImage2, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3) {
+		int imageWidth = backgroundImage1.getWidth();
+		int imageHeight = backgroundImage1.getHeight();
 		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < imageWidth; x++) {// scans across whole image
 			for (int y = 0; y < imageHeight; y++) {
-				if((backgroundImage.getRGB(x, y) == Color.BLACK.getRGB() && pattern1.getRGB(x, y) == Color.BLACK.getRGB())) {
+				if((backgroundImage1.getRGB(x, y) == Color.BLACK.getRGB() && backgroundImage2.getRGB(x, y) == Color.BLACK.getRGB())) {
+					image.setRGB(x, y, pattern1.getRGB(x, y));
+				} else if((backgroundImage1.getRGB(x,  y) == Color.BLACK.getRGB() && backgroundImage2.getRGB(x,  y) != Color.BLACK.getRGB()) || (backgroundImage1.getRGB(x,  y) != Color.BLACK.getRGB() && backgroundImage2.getRGB(x,  y) == Color.BLACK.getRGB())){
 					image.setRGB(x, y, pattern2.getRGB(x, y));
-				} else if((backgroundImage.getRGB(x,  y) == Color.BLACK.getRGB() && pattern1.getRGB(x,  y) != Color.BLACK.getRGB()) || (backgroundImage.getRGB(x,  y) != Color.BLACK.getRGB() && pattern1.getRGB(x,  y) == Color.BLACK.getRGB())){
-					image.setRGB(x, y, pattern3.getRGB(x, y));
 				} else {
-					image.setRGB(x,  y, pattern4.getRGB(x, y));
+					image.setRGB(x,  y, pattern3.getRGB(x, y));
 				}
 			}
 		}
