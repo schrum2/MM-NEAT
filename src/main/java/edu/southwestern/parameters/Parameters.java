@@ -273,6 +273,8 @@ public class Parameters {
 		integerOptions.add("neuralStyleIterations", 50, "Number of iterations to run the Neural Style Transfer algorithm using CPPN style images");
 		integerOptions.add("numActiveGhosts", 4, "Number of moving ghosts in pacman");
 		integerOptions.add("numCoevolutionSubpops", 0, "When evolving a selector, number of populations of subcontrollers to choose from");
+		integerOptions.add("numImprovementEmitters", 1, "Amount of improvement emitters for a CMA-ME run");
+		integerOptions.add("numOptimizingEmitters", 0, "Amount of optimizing emitters for a CMA-ME run");
 		integerOptions.add("numIncomingLinksForCascadeExpansion", 0, "When using MSS with cascade, this is the number of links connected to the cppn outputs of new substrate layers");
 		integerOptions.add("numModesToPrefer", -1, "If non-negative, then a fitness function rewards even usage of this many modes");
 		integerOptions.add("numShapeInnovationSamples", 3, "Number of angles to take 2D image of 3D shape from for shape innovation task");

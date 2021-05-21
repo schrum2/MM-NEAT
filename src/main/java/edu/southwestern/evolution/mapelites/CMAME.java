@@ -7,24 +7,29 @@ import java.util.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.mapelites.emitters.Emitter;
-import edu.southwestern.evolution.mapelites.emitters.ImprovementEmitter;
+import edu.southwestern.evolution.mapelites.emitters.*;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
-import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 
 public class CMAME extends MAPElites<ArrayList<Double>> {
 	
-	private int emitterCount = 2; // TODO make number of emitters not hard coded
-	private Emitter[] emitters = new Emitter[emitterCount]; // array of emitters
-	public static final boolean PRINT_DEBUG = true; // prints out debug text if true
+	private Emitter[] emitters; // array holding all emitters
+	public static final boolean PRINT_DEBUG = true; // prints out debug text if true (applies to both this class and emitter classes)
 	public static final double FAILURE_VALUE = Double.MAX_VALUE;
 	
 	public void initialize(Genotype<ArrayList<Double>> example) {
 		super.initialize(example);
 		int dimension = MMNEAT.getLowerBounds().length;
-		for (int i = 0; i < emitterCount; i++) {
-			emitters[i] = new ImprovementEmitter(dimension, archive, i+1);
+		int numImprovementEmitters = Parameters.parameters.integerParameter("numImprovementEmitters");
+		int numOptimizingEmitters = Parameters.parameters.integerParameter("numOptimizingEmitters");
+		emitters = new Emitter[numImprovementEmitters+numOptimizingEmitters];
+		int place = 0; // remember position in emitter array
+		for (int i = 0; i < numImprovementEmitters; i++) {
+			emitters[i] = new ImprovementEmitter(dimension, archive, i+1); // create improvement emitters
+			place++;
+		}
+		for (int i = 0; i < numOptimizingEmitters; i++) {
+			emitters[place+i] = new OptimizingEmitter(dimension, archive, i+1); // create optimizing emitters
 		}
 	}
 	
@@ -64,7 +69,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		// Rastrigin test: 500 bin 		20 solution vector 
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true mu:50 lambda:50 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-CMAMEFunctionOptimization saveTo:CMAMEFunctionOptimization netio:false maxGens:50000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 		// Rastrigin test: 50 bin 		20 solution vector 		10000 gens
-		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-CMAMEFunctionOptimization saveTo:CMAMEFunctionOptimization netio:false maxGens:20000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:50 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true numImprovementEmitters:2 numOptimizingEmitters:0 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-CMAMEFunctionOptimization saveTo:CMAMEFunctionOptimization netio:false maxGens:20000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:50 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 		
 	}
 }
