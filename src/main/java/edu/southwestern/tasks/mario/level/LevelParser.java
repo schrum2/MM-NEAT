@@ -327,35 +327,34 @@ public class LevelParser {
     }
     
     
-       
-    public static void main(String[] args) throws FileNotFoundException {
-//    	String dir = System.getProperty("user.dir");
-//        System.out.println("Working Directory = " +
-//                dir);
-//        dir += "/marioaiDagstuhl/";
-        // String inputFile = "data/mario/example.txt";
-
+    /**
+     * Modified from https://github.com/TheHedgeify/DagstuhlGAN/blob/master/marioaiDagstuhl/src/reader/MarioReader.java
+     * in order to generate to convert Mario levels into a json file.
+     */
+    public static void main(String[] args) throws FileNotFoundException { // generate new json files
+    	
+    	// All directories to pull from
         String[] inputDirectories = new String[] {"data/VGLC/SuperMarioBrosNewEncoding/overworlds", "data/VGLC/SuperMarioBrosNewEncoding/underground", "data/VGLC/SuperMarioBrosNewEncoding/athletic2"};
 
+        // output file
         String outputFile = "data/VGLC/SuperMarioBrosNewEncoding/all_levels.json";
-        String outputdir = "data/VGLC/SuperMarioBrosNewEncoding/";
 
+        
         ArrayList<int[][]> examples = new ArrayList<>();
-
+        
         File[] files = new File[inputDirectories.length];
         ArrayList<String> fileList = new ArrayList<String>();
         
-        for (int i = 0; i < inputDirectories.length; i++) {
+        for (int i = 0; i < inputDirectories.length; i++) { // get directories as files
         	files[i] = new File(inputDirectories[i]);
         }
 
         for (File dir : files) {
         	for (String file : dir.list()) {
-        		if (file.endsWith("txt")) fileList.add(dir.getPath() + "/" + file);
+        		if (file.endsWith("txt")) fileList.add(dir.getPath() + "/" + file); // add file path string for each level
         	}
         }
         
-        //System.out.println(fileList);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
         for (String inputFile : fileList) {
@@ -363,7 +362,6 @@ public class LevelParser {
                 System.out.println("Reading: " + inputFile);
                 int[][] level = readLevel(new Scanner(new FileInputStream(inputFile)));
                 addData(examples, level);
-                System.out.println(level);
                 System.out.println("Read: " + inputFile);
                 
                 ArrayList<int[][]> examplesTmp = new ArrayList<>();
@@ -396,7 +394,7 @@ public class LevelParser {
     }
     
     static int targetWidth = 28;
-    static void addData(ArrayList<int[][]> examples, int[][] level) {
+    static void addData(ArrayList<int[][]> examples, int[][] level) { // add data to given list (from: https://github.com/TheHedgeify/DagstuhlGAN/blob/master/marioaiDagstuhl/src/reader/MarioReader.java)
         int h = level.length;
 
         for (int offset = 0; offset < level[0].length - 1 - targetWidth; offset++) {
@@ -410,7 +408,7 @@ public class LevelParser {
         }
     }
     
-    static int[][] readLevel(Scanner scanner) throws Exception {
+    static int[][] readLevel(Scanner scanner) throws Exception { // read level into 2D int array (from: https://github.com/TheHedgeify/DagstuhlGAN/blob/master/marioaiDagstuhl/src/reader/MarioReader.java)
         String line;
         ArrayList<String> lines = new ArrayList<>();
         int width = 0;
