@@ -15,6 +15,7 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
@@ -92,8 +93,11 @@ public class PicbreederConstructor {
 		TWEANN network = tg.getPhenotype();
 		network.draw(panel, true, false);
 
+		final double SCALE = 10.0;
+		final double ROTATION = 0.5;
+		
 		// Now show the image
-		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE);
+		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE, ArrayUtil.doubleOnes(network.numInputs()), 0, SCALE, ROTATION);
 		DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", SIZE, SIZE);
 
 		picture.save("ComplexHSV.jpg");

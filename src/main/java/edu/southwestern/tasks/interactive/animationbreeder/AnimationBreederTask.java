@@ -2,6 +2,8 @@ package edu.southwestern.tasks.interactive.animationbreeder;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -13,6 +15,7 @@ import java.util.Scanner;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -55,8 +58,16 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 * @return Array of the images created by the CPPN in sequence
 	 */
 	protected BufferedImage[] getAnimationImages(T cppn, int startFrame, int endFrame, boolean beingSaved) {
-		return AnimationUtil.imagesFromCPPN(cppn, buttonWidth, buttonHeight, startFrame, endFrame, getInputMultipliers());
+		return imagesFromCPPN(cppn, buttonWidth, buttonHeight, startFrame, endFrame, getInputMultipliers());
 	}
+
+	private BufferedImage[] imagesFromCPPN(T cppn, int width, int height, int startFrame, int endFrame, double[] inputMultipliers) {
+		double scale = Parameters.parameters.doubleParameter("picbreederImageScale");
+		double rotation = Parameters.parameters.doubleParameter("picbreederImageRotation");
+		return AnimationUtil.imagesFromCPPN(cppn, width, height, startFrame, endFrame, inputMultipliers, scale, rotation);
+	}
+
+
 
 	/**
 	 * Private inner class to run animations in a loop
@@ -141,7 +152,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	}
 
 	public static final int CPPN_NUM_INPUTS	= 5;
-	public static final int CPPN_NUM_OUTPUTS = 3;
+	public static final int BASE_CPPN_NUM_OUTPUTS = 3;
 
 	// stores all animations in an array with a different button's animation at each index
 	public ArrayList<BufferedImage>[] animations;
@@ -245,9 +256,24 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			JLabel pauseLabel = new JLabel();
 			pauseLabel.setText("Pause between animations");
 			pause.add(pauseLabel);
-			pause.add(pauseLength);
-
-
+			pause.add(pauseLength);			
+			
+			JCheckBox stark = new JCheckBox("stark", Parameters.parameters.booleanParameter("starkPicbreeder"));
+			stark.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Flip Stark Brightness");
+					// Switch to opposite of current setting
+					Parameters.parameters.changeBoolean("starkPicbreeder");
+					// Need to change all images and re-load
+					resetButtons(true);
+				}
+			});
+			
+			JPanel imageTweaks = new JPanel();
+			imageTweaks.add(stark);
+			top.add(imageTweaks);
+			
 			//Add all panels to interface
 			top.add(animation);
 			if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
@@ -346,7 +372,12 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	@Override
 	public String[] outputLabels() {
-		return new String[] { "hue-value", "saturation-value", "brightness-value" };
+		// if animate scale and rotation, then return array with "scale" and "rotation" at the end
+		if(Parameters.parameters.booleanParameter("animateWithScaleAndRotation")) {
+			return new String[] { "hue-value", "saturation-value", "brightness-value", "scale", "rotation"};
+		}else {
+			return new String[] { "hue-value", "saturation-value", "brightness-value" };
+		}
 	}
 
 	/** 
@@ -377,13 +408,14 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		System.out.println("image " + filename + " was saved successfully");
 	}
 
+
 	/**
 	 * Create BufferedImage from CPPN
 	 */
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
-		return AnimationUtil.imagesFromCPPN(phenotype, buttonWidth, buttonHeight, 0, 1, getInputMultipliers())[0];
+		return imagesFromCPPN(phenotype, buttonWidth, buttonHeight, 0, 1, getInputMultipliers())[0];
 	}
 
 	/**
@@ -543,7 +575,12 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	@Override
 	public int numCPPNOutputs() {
-		return CPPN_NUM_OUTPUTS;
+		// if animate rotation and scale, then add 2, otherwise just return BASE_CPPN_NUM_OUTPUTS
+		if(Parameters.parameters.booleanParameter("animateWithScaleAndRotation")) {
+			return BASE_CPPN_NUM_OUTPUTS + 2;
+		} else {
+			return BASE_CPPN_NUM_OUTPUTS;
+		}
 	}
 
 	/**
@@ -552,7 +589,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","allowInteractiveSave:true","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true", "picbreederImageScale:1.0", "picbreederImageRotation:0.0", "starkPicbreeder:true", "animateWithScaleAndRotation:true"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
