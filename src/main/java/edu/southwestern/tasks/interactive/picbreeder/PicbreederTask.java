@@ -311,19 +311,32 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				}
 			}
 
+			// Different cases for how many images are selected:
+			// 1, 2, 3, 4, 5, 6, 7+ images are individual cases
 			BufferedImage zentangle = null;
 			switch(numSelected) {
+			// 2 or 3 images selected: one will be a background image,
+			// if 2 images, the background image will also be a pattern image
+			// if 3 images, one background image and the other two will be pattern images.
 			case 2:
 			case 3:
 				zentangle = GraphicsUtil.zentangleImages(bgImage1, patterns[0], patterns[1]);				
-				break;				
+				break;	
+			// 4 or 5 images selected: two will be background images
+			// if 4 images, two background images, one background image will double as one of three pattern images
+			// if 5 images, two background images, three completely different pattern images
 			case 4:
 			case 5:
 				zentangle = GraphicsUtil.zentangleImages(bgImage1, bgImage2, patterns[0], patterns[1], patterns[2]);								
 				break;
+			// if 6 images, two background images, four completely different pattern images
 			case 6:
 				zentangle = GraphicsUtil.zentangleImages(bgImage1, bgImage2, patterns[0], patterns[1], patterns[2], patterns[3]);												
 				break;
+			// if 7+ images, one background image, two pattern images with tiles from the excess images.
+			// essentially, half of the chosen images (not including the background image) will be used by 
+			// WFC to create the first pattern and the other half of the selected images will be used to create
+			// the second pattern.
 			default:
 				zentangle = GraphicsUtil.zentangleImages(bgImage1, patterns[0], patterns[1]);								
 				break;
