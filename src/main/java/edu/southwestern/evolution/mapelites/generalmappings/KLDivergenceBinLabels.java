@@ -14,7 +14,7 @@ public class KLDivergenceBinLabels implements BinLabels {
 	
 	List<String> labels = null;
 	private int binsPerDimension; // number of bins in a dimension
-	private int maxPossibleValue; // max possible value of a bin
+	private double maxPossibleValue; // max possible value of a bin
 	private double segmentSize; // difference between two adjacent coordinates
 	private static final int AMOUNT_OF_DIMENSIONS = 2;
 	
@@ -22,7 +22,7 @@ public class KLDivergenceBinLabels implements BinLabels {
 	
 	public KLDivergenceBinLabels() {
 		binsPerDimension = Parameters.parameters.integerParameter("klDivBinDimension");
-		maxPossibleValue = Parameters.parameters.integerParameter("klDivMaxValue");
+		maxPossibleValue = Parameters.parameters.doubleParameter("klDivMaxValue");
 		segmentSize = (double) maxPossibleValue / (double) binsPerDimension;
 	}
 	
@@ -54,7 +54,7 @@ public class KLDivergenceBinLabels implements BinLabels {
 				if (step != 0) {
 					newInput = ", " + newInput;
 				}
-				newInput = ("(" + i*segmentSize + " to " + (i+1)*segmentSize +")") + newInput;
+				newInput = ("[" + i*segmentSize + " to " + (i+1)*segmentSize +"]") + newInput;
 				generateLabel(newInput, step+1);
 			}
 		}
@@ -94,8 +94,11 @@ public class KLDivergenceBinLabels implements BinLabels {
 	public int[] discretize(double[] behaviorCharacterization) {
 		int[] dbc = new int[AMOUNT_OF_DIMENSIONS];
 		for (int i = 0; i < AMOUNT_OF_DIMENSIONS; i++) {
+			if (behaviorCharacterization[i] > maxPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " exceeds KL Divergence maximum value specified ("+maxPossibleValue+")"); 
 			dbc[i] = (int) Math.floor(behaviorCharacterization[i] / segmentSize);
 		}
+		System.out.println("Discritizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
+		
 		return dbc;
 	}
 	

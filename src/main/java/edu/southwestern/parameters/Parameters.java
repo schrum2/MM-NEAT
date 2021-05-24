@@ -207,7 +207,6 @@ public class Parameters {
 		integerOptions.add("deltaCodingFrequency", 20, "How often to generate a delta coded population");
 		integerOptions.add("disabledMode", -1, "If non-negative, then the designated mode can never be used");
 		integerOptions.add("klDivBinDimension", -1, "Amount of bins in a dimension when using a KL Divergence binning scheme");
-		integerOptions.add("klDivMaxValue", -1, "Maximum possible value of a bin when using a KL Divergence binning scheme");
 		integerOptions.add("edibleTaskTimeLimit", 2000, "Time steps per level for edible ghost only subtask");
 		integerOptions.add("edibleTime", Constants.EDIBLE_TIME, "Initial edible ghost time in Ms. Pac-Man");
 		integerOptions.add("endTUGGeneration", Integer.MAX_VALUE, "Generation at which TUG will stop being used");
@@ -824,6 +823,7 @@ public class Parameters {
 		doubleOptions.add("indirectToDirectTransitionRate", 0.1, "chance of mutating from indirect to a direct genotype");
 		doubleOptions.add("fitnessSaveThreshold", 0.0, "Threshold for whether or not to save an image");
 		doubleOptions.add("mapElitesQDBaseOffset", 0.0, "Small amount added to each MAP Elites bin score when calculating QD");
+		doubleOptions.add("klDivMaxValue", -1.0, "Maximum possible value of a bin when using a KL Divergence binning scheme");
 		doubleOptions.add("maxScale", 5.0, "The maximumm scale value for Picbreeder images to be scaled to.");
 		doubleOptions.add("picbreederImageScale", 1.0, "The scale factorfor Picbreeder to use when it is not using EnhnacedCPPNPictureGenotype.");
 		doubleOptions.add("picbreederImageRotation", 0.0, "The rotation factor for Picbreeder to use when it is not using EnhancedCPPNPictureGenotype.");
