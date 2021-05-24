@@ -337,7 +337,7 @@ public class LevelParser {
         String[] inputDirectories = new String[] {"data/VGLC/SuperMarioBrosNewEncoding/overworlds", "data/VGLC/SuperMarioBrosNewEncoding/underground", "data/VGLC/SuperMarioBrosNewEncoding/athletic2"};
 
         // output file
-        String outputFile = "data/VGLC/SuperMarioBrosNewEncoding/all_levels.json";
+        String outputFile = "data/VGLC/SuperMarioBrosNewEncoding/all.json";
 
         
         ArrayList<int[][]> examples = new ArrayList<>();
