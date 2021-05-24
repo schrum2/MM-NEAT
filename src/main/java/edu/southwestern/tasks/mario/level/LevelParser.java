@@ -2,10 +2,19 @@ package edu.southwestern.tasks.mario.level;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.level.SpriteTemplate;
 import ch.idsia.mario.engine.sprites.Enemy;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -270,7 +279,7 @@ public class LevelParser {
   
     /**
      * Get type of enemy based on code and whether they're flying or not
-     * @param code Int code of enemey
+     * @param code Int code of enemy
      * @param flying Boolean whether they're flying or not
      * @return SpriteTemplate representing the enemy
      */
@@ -295,7 +304,7 @@ public class LevelParser {
     }
     
     
-       public Level test(){
+    public Level test(){
         Level level = new Level(202,14);
         level.setBlock(1, 13, (byte) 9);
         level.setBlock(2, 13, (byte) 9);
@@ -315,5 +324,120 @@ public class LevelParser {
         level.setBlock(5, 10, (byte) 23);
         
         return level;
+    }
+    
+    
+       
+    public static void main(String[] args) throws FileNotFoundException {
+//    	String dir = System.getProperty("user.dir");
+//        System.out.println("Working Directory = " +
+//                dir);
+//        dir += "/marioaiDagstuhl/";
+        // String inputFile = "data/mario/example.txt";
+
+        String[] inputDirectories = new String[] {"data/VGLC/SuperMarioBrosNewEncoding/overworlds", "data/VGLC/SuperMarioBrosNewEncoding/underground", "data/VGLC/SuperMarioBrosNewEncoding/athletic2"};
+
+        String outputFile = "data/VGLC/SuperMarioBrosNewEncoding/all_levels.json";
+        String outputdir = "data/VGLC/SuperMarioBrosNewEncoding/";
+
+        ArrayList<int[][]> examples = new ArrayList<>();
+
+        File[] files = new File[inputDirectories.length];
+        ArrayList<String> fileList = new ArrayList<String>();
+        
+        for (int i = 0; i < inputDirectories.length; i++) {
+        	files[i] = new File(inputDirectories[i]);
+        }
+
+        for (File dir : files) {
+        	for (String file : dir.list()) {
+        		if (file.endsWith("txt")) fileList.add(dir.getPath() + "/" + file);
+        	}
+        }
+        
+        //System.out.println(fileList);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        for (String inputFile : fileList) {
+            try {
+                System.out.println("Reading: " + inputFile);
+                int[][] level = readLevel(new Scanner(new FileInputStream(inputFile)));
+                addData(examples, level);
+                System.out.println(level);
+                System.out.println("Read: " + inputFile);
+                
+                ArrayList<int[][]> examplesTmp = new ArrayList<>();
+                addData(examplesTmp, level);
+                String outTmp = gson.toJson(examplesTmp);
+                System.out.println("Created JSON String");
+                
+                PrintWriter writerTmp = new PrintWriter(inputFile + ".json");
+                writerTmp.print(outTmp);
+                writerTmp.close();
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        System.out.println("Processed examples");
+
+        String out = gson.toJson(examples);
+        System.out.println("Created JSON String");
+
+        // System.out.println(out);
+
+        PrintWriter writer = new PrintWriter(outputFile);
+
+        writer.print(out);
+        writer.close();
+
+        System.out.println("Wrote file with " + examples.size() + " examples");
+    }
+    
+    static int targetWidth = 28;
+    static void addData(ArrayList<int[][]> examples, int[][] level) {
+        int h = level.length;
+
+        for (int offset = 0; offset < level[0].length - 1 - targetWidth; offset++) {
+            int[][] example = new int[h][28];
+            for (int y = 0; y < h; y++) {
+                for (int x = 0; x < targetWidth; x++) {
+                    example[y][x] = level[y][x + offset];
+                }
+            }
+            examples.add(example);
+        }
+    }
+    
+    static int[][] readLevel(Scanner scanner) throws Exception {
+        String line;
+        ArrayList<String> lines = new ArrayList<>();
+        int width = 0;
+        while (scanner.hasNext()) {
+            line = scanner.nextLine();
+            width = line.length();
+            lines.add(line);
+            // System.out.println(line);
+        }
+
+        int[][] a = new int[lines.size()][width];
+        System.out.println("Arrays length: " + a.length);
+        for (int y = 0; y < lines.size(); y++) {
+            System.out.println("Processing line: " + lines.get(y));
+            for (int x = 0; x < width; x++) {
+            	try { // Added error checking to deal with unrecognized tile types
+                a[y][x] = tiles.get(lines.get(y).charAt(x));
+            	} catch(Exception e) {
+            		System.out.println("Problem on ");
+            		System.out.println("\ty = " + y);
+            		System.out.println("\tx = " + x);
+            		System.out.println("\tlines.get(y).charAt(x) = " + lines.get(y).charAt(x));
+            		System.exit(1);
+            	}
+            }
+        }
+
+        return a;
     }
 }
