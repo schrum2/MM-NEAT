@@ -337,7 +337,7 @@ public class LevelParser {
         String[] inputDirectories = new String[] {"data/VGLC/SuperMarioBrosNewEncoding/overworlds", "data/VGLC/SuperMarioBrosNewEncoding/underground", "data/VGLC/SuperMarioBrosNewEncoding/athletic2"};
 
         // output file
-        String outputFile = "data/VGLC/SuperMarioBrosNewEncoding/all.json";
+        String outputFile = "data/VGLC/SuperMarioBrosNewEncoding/Mario-all.json";
 
         
         ArrayList<int[][]> examples = new ArrayList<>();
@@ -368,6 +368,7 @@ public class LevelParser {
                 addData(examplesTmp, level);
                 String outTmp = gson.toJson(examplesTmp);
                 System.out.println("Created JSON String");
+                outTmp = outTmp.replace("\n", "").replace(" ", "");
                 
                 PrintWriter writerTmp = new PrintWriter(inputFile + ".json");
                 writerTmp.print(outTmp);
@@ -382,6 +383,7 @@ public class LevelParser {
 
         String out = gson.toJson(examples);
         System.out.println("Created JSON String");
+        out = out.replace("\n", "").replace("      ", " ").replace(",  ", ", ").replace(",    ",", ").replace("    ","").replace("  ", "").replace("[ ", "[");
 
         // System.out.println(out);
 
