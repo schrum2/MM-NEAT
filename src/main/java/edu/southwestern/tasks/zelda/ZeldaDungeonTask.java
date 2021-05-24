@@ -141,6 +141,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		int numRoomsReachable = 0; //the number of reachable rooms
 		int[] mapElitesBinIndices = null;
 		double mapElitesBinScore = Double.NEGATIVE_INFINITY;
+		HashSet<ZeldaState> solutionPath = null; 
+		HashSet<ZeldaState> mostRecentVisited = null;
 		
 		if(dungeon != null) {
 			try {
@@ -171,9 +173,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				//MiscUtil.waitForReadStringAndEnterKeyPress();
 				numRooms = dungeon.getLevels().size();
 				// A* should already have been run during creation to assure beat-ability, but it is run again here to get the action sequence.
-				ArrayList<GridAction> actionSequence;
-				HashSet<ZeldaState> solutionPath = null; 
-				HashSet<ZeldaState> mostRecentVisited; // the last room visited
+				ArrayList<GridAction> actionSequence; 
 				//actionSequence = DungeonUtil.makeDungeonPlayable(dungeon);
 				Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
 				ZeldaState startState = new ZeldaState(5, 5, 0, dungeon);
@@ -267,6 +267,13 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					}
 				}
 
+			} catch(IllegalStateException e) {
+				// Sometimes this exception occurs from A*. Not sure why, but we can take this to mean the level has a problem and deserves bad fitness.
+				System.out.println("A* failure");
+			} finally {
+
+				// Need to assign MAP Elites bins no matter what
+				
 				// Could conceivably also be used for behavioral diversity instead of map elites, but this would be a weird behavior vector from a BD perspective
 				if(MMNEAT.ea instanceof MAPElites) {
 					// Hard coding bin score to be the percentage of reachable rooms traversed. May want to change this later.
@@ -325,9 +332,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						}
 					}
 				}
-
-			} catch(IllegalStateException e) {
-				// Sometimes this exception occurs from A*. Not sure why, but we can take this to mean the level has a problem and deserves bad fitness.
 			}
 		}
 
