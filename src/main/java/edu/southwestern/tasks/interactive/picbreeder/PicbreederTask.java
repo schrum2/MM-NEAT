@@ -243,7 +243,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			BufferedImage bgImage1 = null;
 			BufferedImage bgImage2 = null;
 			
+			int[] oldPowTwo = new int[] {};
+			
 			for (int i = 0; i < numSelected; i++) {
+				int tempTileSize = (int) Math.pow(2, RandomNumbers.randomGenerator.nextInt(4));
 				if (i == bgIndex1) {
 					// Represents a template pattern
 					bgImage1 = saveSingle(waveFunctionSaveLocation + "background", backgroundSize, chosenTiles.get(i),inputMultipliers, true);
@@ -251,8 +254,9 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					if (numSelected < 3) { // If there are only two images, one serves as a background pattern AND a
 											// tile pattern
 						String fullName = "tile" + numTileImagesSaved + "_";
+						
 						tileNames[numStored++] = fullName + "1";
-						saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers, false);
+						saveSingle(waveFunctionSaveLocation + fullName, tempTileSize, chosenTiles.get(i), inputMultipliers, false);
 						numTileImagesSaved++;
 						System.out.println("fewer than 3 selected");
 					}
@@ -264,7 +268,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					if(numSelected != 5 && numSelected != 6) {
 						String fullName = "tile" + numTileImagesSaved + "_";
 						tileNames[numStored++] = fullName + "1";
-						saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers, false);
+						saveSingle(waveFunctionSaveLocation + fullName, tempTileSize, chosenTiles.get(i), inputMultipliers, false);
 						numTileImagesSaved++;
 					}
 //				} else if (i == bgIndex3) {
@@ -278,7 +282,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					// All other images used to create background tiles with WFC
 					String fullName = "tile" + numTileImagesSaved + "_";
 					tileNames[numStored++] = fullName + "1";
-					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers, false);
+					saveSingle(waveFunctionSaveLocation + fullName, tempTileSize, chosenTiles.get(i), inputMultipliers, false);
 					numTileImagesSaved++;
 					System.out.println("All other tiles selected are background tiles made with WFC");
 				}
@@ -302,7 +306,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					SimpleTiledZentangleWFCModel.writeAdjacencyRules(directory, tilesToProcess.toArray(new String[tilesToProcess.size()]));
 					// data.xml gets read in this next method
 					try {
-						patterns[zentangleNumber] = SimpleTiledZentangle.simpleTiledZentangle(directory, zentangleNumber);
+						patterns[zentangleNumber] = SimpleTiledZentangle.simpleTiledZentangle(directory, zentangleNumber, tempTileSize);
 						zentangleNumber++;
 					} catch (Exception e) {
 						e.printStackTrace();

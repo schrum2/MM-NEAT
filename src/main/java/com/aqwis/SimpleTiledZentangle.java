@@ -27,7 +27,7 @@ public class SimpleTiledZentangle {
 		return FileUtilities.getSaveDirectory() + "/run" + PicbreederTask.runNumber;
 	}
 	
-	public static BufferedImage simpleTiledZentangle(String directory, int index) throws Exception {
+	public static BufferedImage simpleTiledZentangle(String directory, int index, int patternDim) throws Exception {
 
 		Random random = new Random(index);
 		
@@ -49,8 +49,8 @@ public class SimpleTiledZentangle {
 					directory,
 					"picbreeder", // name (the save directory?)
 					null, // subset
-					30,   // width
-					30,   // height
+					patternDim,   // width
+					patternDim,   // height
 					false,// periodic?
 					false // black?
 					);
