@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,10 +33,10 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  * @author Jacob Schrum
  */
 public class OriginalPicBreederGenomeLoader {
-	public static final int SIZE = 256;
+	public static final int SIZE = 64;
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {		
 		Parameters.initializeParameterCollections(new String[] {"io:false","netio:false","allowMultipleFunctions:true","finalPassOnOutputActivation:true"});
-		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, 0);
+		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, -1);
 		//System.out.println(tg);
 		// Now, load TWEANN structure from file
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\5736_ShinyRedApple.xml"); // Crash from loop?
@@ -122,7 +123,11 @@ public class OriginalPicBreederGenomeLoader {
 		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE);
 		DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", SIZE, SIZE);
 		// Wait for user
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+		String result = MiscUtil.waitForReadStringAndEnterKeyPress();
+		if(!result.trim().equals("")) {
+			// Save the image
+			GraphicsUtil.saveImage(image, result.trim());
+		}
 		picture.dispose();
 	}
 	

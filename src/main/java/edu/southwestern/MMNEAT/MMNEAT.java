@@ -22,6 +22,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
 import edu.southwestern.evolution.halloffame.HallOfFame;
 import edu.southwestern.evolution.lineage.Offspring;
 import edu.southwestern.evolution.mapelites.CMAME;
@@ -62,6 +63,7 @@ import edu.southwestern.tasks.gvgai.zelda.ZeldaGANLevelTask;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaLevelTask;
 import edu.southwestern.tasks.gvgai.zelda.study.HumanSubjectStudy2019Zelda;
 import edu.southwestern.tasks.innovationengines.PictureInnovationTask;
+import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.innovationengines.ShapeInnovationTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
@@ -246,6 +248,7 @@ public class MMNEAT {
 
 	private static void setupTWEANNGenotypeDataTracking(boolean coevolution) {
 		if (genotype instanceof TWEANNGenotype || 
+				genotype instanceof TWEANNPlusParametersGenotype ||
 				genotype instanceof CombinedGenotype || // Assume first member of pair is TWEANNGenotype
 				genotype instanceof CPPNOrDirectToGANGenotype || // Assume first form is TWEANNGenotype
 				genotype instanceof HyperNEATCPPNforDL4JGenotype) { // Contains CPPN that is TWEANNGenotype
@@ -259,13 +262,15 @@ public class MMNEAT {
 			}
 
 			@SuppressWarnings("rawtypes")
-			long biggestInnovation = genotype instanceof CPPNOrDirectToGANGenotype ?
-					((TWEANNGenotype) ((CPPNOrDirectToGANGenotype) genotype).getCurrentGenotype()).biggestInnovation():
-						(genotype instanceof CombinedGenotype ? 
-								((TWEANNGenotype) ((CombinedGenotype) genotype).t1).biggestInnovation() :
-									(genotype instanceof HyperNEATCPPNforDL4JGenotype ?
-											((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN().biggestInnovation()	:
-												((TWEANNGenotype) genotype).biggestInnovation()));
+			long biggestInnovation = genotype instanceof TWEANNPlusParametersGenotype ?
+					((TWEANNPlusParametersGenotype) genotype).getTWEANNGenotype().biggestInnovation() :
+						genotype instanceof CPPNOrDirectToGANGenotype ?
+								((TWEANNGenotype) ((CPPNOrDirectToGANGenotype) genotype).getCurrentGenotype()).biggestInnovation():
+									(genotype instanceof CombinedGenotype ? 
+											((TWEANNGenotype) ((CombinedGenotype) genotype).t1).biggestInnovation() :
+												(genotype instanceof HyperNEATCPPNforDL4JGenotype ?
+														((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN().biggestInnovation()	:
+															((TWEANNGenotype) genotype).biggestInnovation()));
 					
 			if (biggestInnovation > EvolutionaryHistory.largestUnusedInnovationNumber) {
 					EvolutionaryHistory.setInnovation(biggestInnovation + 1);
@@ -584,6 +589,10 @@ public class MMNEAT {
 			} else if(task instanceof ShapeInnovationTask) {
 				System.out.println("set up Innovation Engine Task");
 				ShapeInnovationTask temp = (ShapeInnovationTask) task;
+				setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
+			} else if(task instanceof PictureTargetTask) {
+				System.out.println("set up Picture Target Task");
+				PictureTargetTask temp = (PictureTargetTask) task;
 				setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
 			} else if (task instanceof MarioTask) {
 				setNNInputParameters(((Parameters.parameters.integerParameter("marioInputWidth") * Parameters.parameters.integerParameter("marioInputHeight")) * 2) + 1, MarioTask.MARIO_OUTPUTS); //hard coded for now, 5 button outputs

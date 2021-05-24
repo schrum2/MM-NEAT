@@ -25,6 +25,7 @@ import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import wox.serial.Easy;
 
 /**
@@ -79,11 +80,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			String prefix = experimentPrefix + "_" + infix;
 			String fillPrefix = experimentPrefix + "_" + "Fill";
 			String qdPrefix = experimentPrefix + "_" + "QD";
+			String maxPrefix = experimentPrefix + "_" + "Maximum";
 			String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 			directory += (directory.equals("") ? "" : "/");
 			String fullName = directory + prefix + "_log.plt";
 			String fullFillName = directory + fillPrefix + "_log.plt";
 			String fullQDName = directory + qdPrefix + "_log.plt";
+			String maxFitnessName = directory + maxPrefix + "_log.plt";
 			File plot = new File(fullName); // for archive log plot file
 			File fillPlot = new File(fullFillName);
 			// Write to file
@@ -119,7 +122,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				}
 				ps.println("set title \"" + experimentPrefix + " Archive QD Scores\"");
 				ps.println("set output \"" + fullQDName.substring(fullQDName.lastIndexOf('/')+1, fullQDName.lastIndexOf('.')) + ".pdf\"");
-				ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\"" + (cppnThenDirectLog != null ? ", \\" : ""));
+				ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\"");
+				
+				ps.println("set title \"" + experimentPrefix + " Maximum individual fitness score");
+				ps.println("set output \"" + maxFitnessName.substring(maxFitnessName.lastIndexOf('/')+1, maxFitnessName.lastIndexOf('.')) + ".pdf\"");
+				ps.println("plot \"" + name + ".txt\" u 1:4 w linespoints t \"Maximum fitness Score\"");
 				
 				ps.close();
 				
@@ -202,12 +209,12 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Float[] elite = ArrayUtils.toObject(archive.getEliteScores());
 			final int pseudoGeneration = iterations/individualsPerGeneration;
 			archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t"));
-
+			Float maximumFitness = StatisticsUtilities.maximum(elite);
 			// Exclude negative infinity to find out how many bins are filled
 			final int numFilledBins = elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite);
 			// Get the QD Score for this elite
 			final double qdScore = calculateQDScore(elite);
-			fillLog.log(pseudoGeneration + "\t" + numFilledBins + "\t" + qdScore);
+			fillLog.log(pseudoGeneration + "\t" + numFilledBins + "\t" + qdScore + "\t" + maximumFitness);
 			if(cppnThenDirectLog!=null) {
 				Integer[] eliteProper = new Integer[elite.length];
 				int i = 0;

@@ -23,8 +23,11 @@ import com.aqwis.SimpleTiledZentangle;
 import com.aqwis.models.SimpleTiledZentangleWFCModel;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkPlusParameters;
+import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -121,6 +124,19 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T extends Network> BufferedImage imageFromCPPN(T phenotype, int imageWidth, int imageHeight, double[] inputMultiples) {
+		
+		if(phenotype instanceof NetworkPlusParameters) { // CPPN with extra scale and rotation parameters
+			NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype;
+			ArrayList<Double> scaleAndRotation = npp.t2;
+			System.out.println("scaleAndRotation: " + scaleAndRotation);
+			return GraphicsUtil.imageFromCPPN(phenotype, imageWidth, imageHeight, inputMultiples, 0, scaleAndRotation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE), scaleAndRotation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION));
+		} else { // Plain CPPN/TWEANGenotype
+			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageHeight, imageWidth, inputMultiples, 0, Parameters.parameters.doubleParameter("picbreederImageScale"), Parameters.parameters.doubleParameter("picbreederImageRotation"));
+		}
+	}
+	
 	/**
 	 * Save a single hi-res version of a particular image. This is used by the
 	 * zentangle method below, though I'm not sure it belongs in this class, or even
@@ -132,10 +148,15 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 * @param inputMultipliers
 	 */
 
-	public static <T> void saveSingle(String filename, int dim, T phenotype, double[] inputMultipliers) {
+	public static <T> void saveSingle(String filename, int dim, T phenotype, double[] inputMultipliers, boolean isBackground) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than
 		// is on the button
-		BufferedImage toSave1 = GraphicsUtil.imageFromCPPN((Network) phenotype, dim, dim, inputMultipliers);
+		// Set starkPicbreeder to true
+		boolean originalValue = Parameters.parameters.booleanParameter("starkPicbreeder");
+		if(isBackground == true) Parameters.parameters.setBoolean("starkPicbreeder", true);
+		BufferedImage toSave1 = imageFromCPPN((Network) phenotype, dim, dim, inputMultipliers);
+		// Set starkPicbreeder back to false
+		Parameters.parameters.setBoolean("starkPicbreeder", originalValue);
 		String filename1 = filename + "1.bmp";
 		GraphicsUtil.saveImage(toSave1, filename1);
 
@@ -219,27 +240,27 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				if (i == bgIndex1) {
 					// Represents a template pattern
 					saveSingle(waveFunctionSaveLocation + "background", backgroundSize, chosenTiles.get(i),
-							inputMultipliers);
+							inputMultipliers, true);
 					if (numSelected < 3) { // If there are only two images, one serves as a background pattern AND a
 											// tile pattern
 						String fullName = "tile" + numSaved + "_";
 						tileNames[numStored++] = fullName + "1";
-						saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers);
+						saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers, false);
 						numSaved++;
 					}
 				} else if (i == bgIndex2) {
 					// A possible second template pattern
 					saveSingle(waveFunctionSaveLocation + "background2", backgroundSize, chosenTiles.get(i),
-							inputMultipliers);
+							inputMultipliers, true);
 					String fullName = "tile" + numSaved + "_";
 					tileNames[numStored++] = fullName + "1";
-					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers);
+					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers, false);
 					numSaved++;
 				} else {
 					// All other images used to create background tiles with WFC
 					String fullName = "tile" + numSaved + "_";
 					tileNames[numStored++] = fullName + "1";
-					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers);
+					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers, false);
 					numSaved++;
 				}
 			}
@@ -308,8 +329,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			} else if (numSaved == 4) {
 				try {
 					thirdImage = ImageIO.read(new File(waveFunctionSaveLocation + "/picbreederZentangle" + 3 + ".jpg"));
-					fourthImage = ImageIO
-							.read(new File(waveFunctionSaveLocation + "/picbreederZentangle" + 4 + ".jpg"));
+					fourthImage = ImageIO.read(new File(waveFunctionSaveLocation + "/picbreederZentangle" + 4 + ".jpg"));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -369,7 +389,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 */
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
-		return GraphicsUtil.imageFromCPPN(phenotype, width, height, inputMultipliers);
+		return imageFromCPPN(phenotype, width, height, inputMultipliers);
 	}
 
 	/**
@@ -387,7 +407,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	protected void save(String filename, int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than
 		// is on the button
-		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network) scores.get(i).individual.getPhenotype(),
+		BufferedImage toSave = imageFromCPPN((Network) scores.get(i).individual.getPhenotype(),
 				Parameters.parameters.integerParameter("imageWidth"),
 				Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
 		filename += ".bmp";
@@ -424,7 +444,8 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		}
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:16", "maxGens:500",
-					"zentangleTileDim:100",
+					"zentangleTileDim:100", 
+					"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
 					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:true",
 					"task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:true", "netChangeActivationRate:0.3", "cleanFrequency:-1",
@@ -434,7 +455,8 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					"includeFullGaussFunction:true", "includeCosineFunction:true", "includeGaussFunction:false",
 					"includeIdFunction:true", "includeTriangleWaveFunction:false", "includeSquareWaveFunction:false",
 					"includeFullSawtoothFunction:false", "includeSigmoidFunction:false", "includeAbsValFunction:false",
-					"includeSawtoothFunction:false" });
+					"includeSawtoothFunction:false", "allowInteractiveSave:true", 
+					"picbreederImageScale:1.0", "picbreederImageRotation:0.0"}); // <- Not relevant when EnhancedCPPNPictureGenotype is used
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

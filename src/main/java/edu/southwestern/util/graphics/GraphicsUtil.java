@@ -52,6 +52,7 @@ public class GraphicsUtil {
 
 	/**
 	 * Save an image to the specified filename (which includes path and file extension)
+	 * 
 	 * @param image Buffered image
 	 * @param filename Path and file name plus extension
 	 */
@@ -96,15 +97,33 @@ public class GraphicsUtil {
 	/**
 	 * Draws the image created by the CPPN to a BufferedImage
 	 *
-	 * @param n
-	 *            the network used to process the image
-	 * @param imageWidth
-	 *            width of image
-	 * @param imageHeight
-	 *            height of image
+	 * @param n the network used to process the image
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
+	 * @param inputMultiples array of multiples indicating whether to turn activation functions on or off
+	 * @param time For animated images, the frame number (just use 0 for still images)
 	 * @return buffered image containing image drawn by network
 	 */
 	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time) {
+		return imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, time, 1.0, 0.0);
+	}
+	
+	/**
+	 * Draws the image created by the CPPN to a BufferedImage.
+	 * Same as the BufferedImage method containing the time parameter
+	 * above, but has two new parameters, scale and rotation to
+	 * be used for scaling and rotating the image.
+	 * 
+	 * @param n the network used to process teh image
+	 * @param imageWidth width of the image
+	 * @param imageHeight height of the image
+	 * @param inputMultiples array of multiples indicating whether to turn activation functions on or off
+	 * @param time For animated images, the frame number (just use 0 for still images)
+	 * @param scale scale factor by which to scale the image
+	 * @param rotation the degree in radians by which to rotate the image
+	 * @return buffered image containing image drawn by network
+	 */
+	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time, double scale, double rotation) {
 		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
 		// Min and max brightness levels used for stark coloring
 		float maxB = 0;
@@ -112,7 +131,7 @@ public class GraphicsUtil {
 		for (int x = 0; x < imageWidth; x++) {// scans across whole image
 			for (int y = 0; y < imageHeight; y++) {				
 				// network outputs computed on hsb, not rgb scale because
-				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples, time);
+				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples, time, scale, rotation);
 				maxB = Math.max(maxB, hsb[BRIGHTNESS_INDEX]);
 				minB = Math.min(minB, hsb[BRIGHTNESS_INDEX]);
 				if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) { // black and white
@@ -175,34 +194,90 @@ public class GraphicsUtil {
 		return image;
 	}
 	
-	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3) {
-		int imageWidth = backgroundImage.getWidth();
-		int imageHeight = backgroundImage.getHeight();
+	/**
+	 * Creates a zentangled image by overlaying two patterns into the black and white areas of the
+	 * background image.  Contains an extra zentangle pattern as a parameter. 
+	 * 
+	 * @param backgroundImage Image into which zentangle will be applied
+	 * @param pattern1 First zentangle pattern
+	 * @param pattern2 Second zentangle pattern
+	 * @param pattern3 Third zentangle pattern
+	 * @return The resulting image
+	 */
+	// Apparently this is never used!?
+//	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3) {
+//		int imageWidth = backgroundImage.getWidth();
+//		int imageHeight = backgroundImage.getHeight();
+//		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+//		for (int x = 0; x < imageWidth; x++) {// scans across whole image
+//			for (int y = 0; y < imageHeight; y++) {
+//				if((backgroundImage.getRGB(x, y) == Color.BLACK.getRGB() && pattern1.getRGB(x, y) == Color.BLACK.getRGB()) || (backgroundImage.getRGB(x, y) == Color.WHITE.getRGB() && pattern1.getRGB(x, y) == Color.WHITE.getRGB())) {
+//					image.setRGB(x, y, pattern2.getRGB(x, y));
+//				} else /*if((backgroundImage.getRGB(x,  y) == Color.BLACK.getRGB() && pattern1.getRGB(x,  y) == Color.WHITE.getRGB()) || (backgroundImage.getRGB(x,  y) == Color.WHITE.getRGB() && pattern1.getRGB(x,  y) == Color.BLACK.getRGB()))*/{
+//					image.setRGB(x, y, pattern3.getRGB(x, y));
+//				}
+//			}
+//		}
+//		return image;
+//	}
+	
+	/**
+	 * Creates a zentangled image. Overlays two images to create three pattern regions:
+	 * black in both, black in one and non-black in the other, and non-black in both.
+	 * Different pattern images are applied to each region.
+	 * 
+	 * @param backgroundImage1 First background template
+	 * @param backgroundImage2 Second background template
+	 * @param pattern1 First zentangle pattern (for black+black regions)
+	 * @param pattern2 Second zentangle pattern (for black+non-black regions)
+	 * @param pattern3 Third zentangle pattern (for non-black+non-black regions)
+	 * @return The resulting image
+	 */
+	public static BufferedImage zentangleImages(BufferedImage backgroundImage1, BufferedImage backgroundImage2, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3) {
+		int imageWidth = backgroundImage1.getWidth();
+		int imageHeight = backgroundImage1.getHeight();
 		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < imageWidth; x++) {// scans across whole image
 			for (int y = 0; y < imageHeight; y++) {
-				if((backgroundImage.getRGB(x, y) == Color.BLACK.getRGB() && pattern1.getRGB(x, y) == Color.BLACK.getRGB()) || (backgroundImage.getRGB(x, y) == Color.WHITE.getRGB() && pattern1.getRGB(x, y) == Color.WHITE.getRGB())) {
+				if((backgroundImage1.getRGB(x, y) == Color.BLACK.getRGB() && backgroundImage2.getRGB(x, y) == Color.BLACK.getRGB())) {
+					image.setRGB(x, y, pattern1.getRGB(x, y));
+				} else if((backgroundImage1.getRGB(x,  y) == Color.BLACK.getRGB() && backgroundImage2.getRGB(x,  y) != Color.BLACK.getRGB()) || (backgroundImage1.getRGB(x,  y) != Color.BLACK.getRGB() && backgroundImage2.getRGB(x,  y) == Color.BLACK.getRGB())){
 					image.setRGB(x, y, pattern2.getRGB(x, y));
-				} else /*if((backgroundImage.getRGB(x,  y) == Color.BLACK.getRGB() && pattern1.getRGB(x,  y) == Color.WHITE.getRGB()) || (backgroundImage.getRGB(x,  y) == Color.WHITE.getRGB() && pattern1.getRGB(x,  y) == Color.BLACK.getRGB()))*/{
-					image.setRGB(x, y, pattern3.getRGB(x, y));
+				} else {
+					image.setRGB(x,  y, pattern3.getRGB(x, y));
 				}
 			}
 		}
 		return image;
 	}
 	
-	public static BufferedImage zentangleImages(BufferedImage backgroundImage, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3, BufferedImage pattern4) {
-		int imageWidth = backgroundImage.getWidth();
-		int imageHeight = backgroundImage.getHeight();
+	/**
+	 * Creates a zentangled image. Overlays two images to create four pattern regions:
+	 * black in both, black in one and non-black in the other, and non-black in both.
+	 * Different pattern images are applied to each region.
+	 * 
+	 * @param backgroundImage1 First background template
+	 * @param backgroundImage2 Second background template
+	 * @param pattern1 First zentangle pattern (for black+black regions)
+	 * @param pattern2 Second zentangle pattern (for black+non-black regions)
+	 * @param pattern3 Third zentangle pattern (for non-black+non-black regions)
+	 * @param pattern4 Fourth zentangle pattern (
+	 * @return The resulting image
+	 */
+	public static BufferedImage zentangleImages(BufferedImage backgroundImage1, BufferedImage backgroundImage2, BufferedImage pattern1, BufferedImage pattern2, BufferedImage pattern3, BufferedImage pattern4) {
+		int imageWidth = backgroundImage1.getWidth();
+		int imageHeight = backgroundImage1.getHeight();
 		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < imageWidth; x++) {// scans across whole image
 			for (int y = 0; y < imageHeight; y++) {
-				if((backgroundImage.getRGB(x, y) == Color.BLACK.getRGB() && pattern1.getRGB(x, y) == Color.BLACK.getRGB())) {
+				if((backgroundImage1.getRGB(x, y) == Color.BLACK.getRGB() && backgroundImage2.getRGB(x, y) == Color.BLACK.getRGB())) {
+					image.setRGB(x, y, pattern1.getRGB(x, y));
+				} else if((backgroundImage1.getRGB(x,  y) == Color.BLACK.getRGB() && backgroundImage2.getRGB(x,  y) != Color.BLACK.getRGB())){
 					image.setRGB(x, y, pattern2.getRGB(x, y));
-				} else if((backgroundImage.getRGB(x,  y) == Color.BLACK.getRGB() && pattern1.getRGB(x,  y) != Color.BLACK.getRGB()) || (backgroundImage.getRGB(x,  y) != Color.BLACK.getRGB() && pattern1.getRGB(x,  y) == Color.BLACK.getRGB())){
+				} else if((backgroundImage1.getRGB(x,  y) != Color.BLACK.getRGB() && backgroundImage2.getRGB(x,  y) == Color.BLACK.getRGB())) {
 					image.setRGB(x, y, pattern3.getRGB(x, y));
 				} else {
-					image.setRGB(x,  y, pattern4.getRGB(x, y));
+					image.setRGB(x, y, pattern4.getRGB(x, y));
 				}
 			}
 		}
@@ -363,23 +438,16 @@ public class GraphicsUtil {
 	}
 
 	/**
-	 * Gets HSB outputs from the CPPN in question
-	 *
-	 *            the CPPN
-	 * @param x
-	 *            x-coordinate of pixel
-	 * @param y
-	 *            y-coordinate of pixel
-	 * @param imageWidth
-	 *            width of image
-	 * @param imageHeight
-	 *            height of image
-	 *
+	 * Gets HSB outputs from the CPPN in question from the CPPN
+	 * @param x x-coordinate of pixel
+	 * @param y y-coordinate of pixel
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
 	 * @return double containing the HSB values
 	 */
-	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples, double time) {
+	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples, double time, double scale, double rotation) {
 
-		double[] input = get2DObjectCPPNInputs(x, y, imageWidth, imageHeight, time);
+		double[] input = get2DObjectCPPNInputs(x, y, imageWidth, imageHeight, time, scale, rotation);
 
 		// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
 		for(int i = 0; i < inputMultiples.length; i++) {
@@ -400,8 +468,7 @@ public class GraphicsUtil {
 	 * (though not the original code), but 2 in 13 randomly mutated networks
 	 * still produce boring black screens. Is there a way to fix this?
 	 * 
-	 * @param hsb
-	 *            array of HSB color information from CPPN
+	 * @param hsb array of HSB color information from CPPN
 	 * @return scaled HSB information in float array
 	 */
 	public static float[] rangeRestrictHSB(double[] hsb) {
@@ -411,40 +478,55 @@ public class GraphicsUtil {
 	}
 
 	/**
-	 * Gets scaled inputs to send to CPPN
+	 * Gets scaled inputs to send to CPPN, using default scale of 1.0 
+	 * and default rotation of 0.0 (no rotation and no scaling).
 	 *
-	 * @param x
-	 *            x-coordinate of pixel
-	 * @param y
-	 *            y-coordinate of pixel
-	 * @param imageWidth
-	 *            width of image
-	 * @param imageHeight
-	 *            height of image
-	 *
+	 * @param x x-coordinate of pixel
+	 * @param y y-coordinate of pixel
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
+	 * @param time For animated images, the frame number (just use 0 for still images)
 	 * @return array containing inputs for CPPN
 	 */
 	public static double[] get2DObjectCPPNInputs(int x, int y, int imageWidth, int imageHeight, double time) {
-		ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), imageWidth, imageHeight);
+		return get2DObjectCPPNInputs(x,y,imageWidth,imageHeight,time,1.0, 0.0);
+	}
+	
+	/**
+	 * Gets scaled inputs to send to CPPN, using default scale of 1.0 
+	 * and default rotation of 0.0 (no rotation and no scaling).  Same 
+	 * as the get2DObjectCPPNInputs method above but contains two new 
+	 * parameters, scale and rotation, used for rotating and scaling
+	 * the image.
+	 * 
+	 * @param x x-coordinate of pixel
+	 * @param y y-coordinate of pixel
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
+	 * @param time For animated images, the frame number (just use 0 for still images)
+	 * @param scale scale factor by which to scale the image
+	 * @param rotation the degree in radians by which to rotate the image
+	 * @return array containing inputs for CPPN
+	 */
+	public static double[] get2DObjectCPPNInputs(int x, int y, int imageWidth, int imageHeight, double time, double scale, double rotation) {
+		Tuple2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), imageWidth, imageHeight);
+		scaled = scaled.mult(scale);
+		scaled = scaled.rotate(rotation);
+		ILocated2D finalPoint = scaled;
 		if(time == -1) { // default, single image. Do not care about time
-			return new double[] { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, BIAS };
+			return new double[] { finalPoint.getX(), finalPoint.getY(), finalPoint.distance(new Tuple2D(0, 0)) * SQRT2, BIAS };
 		} else { // TODO: May need to divide time by frame rate later
-			return new double[] { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, time, BIAS };
+			return new double[] { finalPoint.getX(), finalPoint.getY(), finalPoint.distance(new Tuple2D(0, 0)) * SQRT2, time, BIAS };
 		}
 	}
 
 	/**
 	 * method for drawing an image onto a drawing panel
 	 *
-	 * @param image
-	 *            image to draw
-	 * @param label
-	 *            name of image
-	 * @param imageWidth
-	 *            width of image
-	 * @param imageHeight
-	 *            height of image
-	 *
+	 * @param image image to draw
+	 * @param label name of image
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
 	 * @return the drawing panel with the image
 	 */
 	public static DrawingPanel drawImage(BufferedImage image, String label, int imageWidth, int imageHeight) {
@@ -471,6 +553,40 @@ public class GraphicsUtil {
 			}
 		}
 		return image;
+	}
+	
+	/**
+	 * Converts an image into a flat double array of features, where the features
+	 * are the HSB values of each pixel.
+	 * NOTE: Consider RGB instead?
+	 * 
+	 * @param image A BufferedImage
+	 * @return double array of all HSB values of each pixel.
+	 */
+	public static double[] flatFeatureArrayFromBufferedImage(BufferedImage image) {
+		int numberOfChannels = Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")? 1: NUM_HSB;
+		double[] result = new double[image.getHeight() * image.getWidth() * numberOfChannels];
+		int resultIndex = 0;
+		for(int x = 0; x < image.getWidth(); x++) {
+			for(int y = 0; y < image.getHeight();  y++) {
+				int pixelRGB = image.getRGB(x, y);
+				Color original = new Color(pixelRGB);
+				// Get HSB values (null means a new array is created)
+				float[] hsb = Color.RGBtoHSB(original.getRed(), original.getGreen(), original.getBlue(), null);
+				// If the image is black and white use brightness
+				if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) {
+					result[resultIndex++] = hsb[BRIGHTNESS_INDEX];
+				} else {
+					// Copy HSB values over as features
+					// NOTE: Consider replacing this with RGB at some point
+					for(int i = 0; i < hsb.length; i++) {
+						result[resultIndex++] = hsb[i];
+					}
+				
+				}
+			}
+		}
+		return result;
 	}
 	
 	/**
@@ -596,7 +712,7 @@ public class GraphicsUtil {
 	}
 
 	/**
-	 *  Creates a graphed visualization of an audio file by taking in the list of doubles that represents the file and 
+	 * Creates a graphed visualization of an audio file by taking in the list of doubles that represents the file and 
 	 * plotting it using a DrawingPanel.
 	 * 
 	 * @param inputArray

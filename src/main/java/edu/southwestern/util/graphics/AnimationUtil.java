@@ -9,6 +9,7 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 
 import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask;
 
 /**
@@ -22,6 +23,9 @@ public class AnimationUtil {
 
 	//default frame rate to smooth out animation
 	public static final double FRAMES_PER_SEC = 24.0;
+	
+	public static final int CPPN_OUTPUT_INDEX_SCALE = 3;
+	public static final int CPPN_OUTPUT_INDEX_ROTATION = 4;
 
 	/**
 	 * Utility method that generates an array of images based on an input CPPN.
@@ -35,9 +39,28 @@ public class AnimationUtil {
 	 * @return Array of images that can be animated in a JApplet
 	 */
 	public static BufferedImage[] imagesFromCPPN(Network n, int imageWidth, int imageHeight, int startTime, int endTime, double[] inputMultiples) {
+		return imagesFromCPPN(n, imageWidth, imageHeight, startTime, endTime, inputMultiples, 1.0, 0.0);
+	}
+
+	public static BufferedImage[] imagesFromCPPN(Network n, int imageWidth, int imageHeight, int startTime, int endTime, double[] inputMultiples, double scale, double rotation) {
 		BufferedImage[] images = new BufferedImage[endTime-startTime];
 		for(int i = startTime; i < endTime; i++) {
-			images[i-startTime] = GraphicsUtil.imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, i/FRAMES_PER_SEC);
+			// if animate scale and rotation (command line parameter)
+			// then query CPPN here with time i (other inputs are 0)
+			// check the scale and rotation outputs and change the scale and rotation values
+			if(Parameters.parameters.booleanParameter("animateWithScaleAndRotation")) {
+				double[] input = GraphicsUtil.get2DObjectCPPNInputs(0, 0, imageWidth, imageHeight, i/FRAMES_PER_SEC, 1, 0);
+				// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
+				for(int j = 0; j < inputMultiples.length; j++) {
+					input[j] = input[j] * inputMultiples[j];
+				}
+				// Eliminate recurrent activation for consistent images at all resolutions
+				n.flush();
+				double[] scaleAndRotationOutputs = n.process(input);
+				scale = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_SCALE] * Parameters.parameters.doubleParameter("maxScale"); // TODO: Multiply by "maxScale"
+				rotation = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_ROTATION] * Math.PI; // Mult by Math.PI
+			}			
+			images[i-startTime] = GraphicsUtil.imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, i/FRAMES_PER_SEC, scale, rotation);
 		}
 		return images;
 	}		

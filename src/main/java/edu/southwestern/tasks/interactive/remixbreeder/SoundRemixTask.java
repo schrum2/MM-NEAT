@@ -25,6 +25,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.sound.PlayDoubleArray;
 import edu.southwestern.util.sound.SoundFromCPPNUtil;
 import edu.southwestern.util.sound.SoundToArray;
+import edu.southwestern.util.sound.SoundUtilExamples;
 import edu.southwestern.util.sound.WAVUtil;
 
 /**
@@ -46,6 +47,12 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 	public int playBackRate;
 	public AudioFormat format;
 
+	/**
+	 * Initializes the keyboard and the original audio file.
+	 * Note: the audio file must be 16 bit.
+	 * 
+	 * @throws IllegalAccessException
+	 */
 	public SoundRemixTask() throws IllegalAccessException {
 		super(false); // do not use keyboard		
 		initializationComplete = false;
@@ -97,6 +104,12 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 		initializationComplete = true;
 	}
 
+	/**
+	 * Calls action associated with clicking a certain button.
+	 * 
+	 * @param itemID the button clicked
+	 * @return whether to undo the click
+	 */
 	protected boolean respondToClick(int itemID) {
 		boolean undo = super.respondToClick(itemID);
 		if(undo) return true; // Click must have been a bad activation checkbox choice. Skip rest
@@ -114,6 +127,7 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 				e.printStackTrace();
 			}
 		}
+		
 		if(itemID == FILE_LOADER_BUTTON_INDEX) {
 			JFileChooser chooser = new JFileChooser();//used to get new file
 			chooser.setApproveButtonText("Open");
@@ -141,16 +155,33 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 		return false; // no problems
 	}
 
+	/**
+	 * Labels for each network input. Length needs to match 
+	 * the number of inputneuronsin networks, and the number 
+	 * of inputs agentsreceive.
+	 * 
+	 * @return returns a string array of input labels
+	 */
 	@Override
 	public String[] sensorLabels() {
 		return new String[] { "Time", "Sine of time", "Wav file input", "bias" };
 	}
 
+	/**
+	 * Accesses title of window
+	 * 
+	 * @return returns a string representing title of window
+	 */
 	@Override
 	protected String getWindowTitle() {
 		return "SoundRemix";
 	}
 
+	/**
+	 * Retrieves the graph corresponding to the sound produced.
+	 * 
+	 * @return returns wavePlotImage associated with the sound
+	 */
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"),FREQUENCY_DEFAULT, inputMultipliers);
@@ -158,6 +189,12 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 		return wavePlotImage;
 	}
 	
+	/**
+	 * Plays sound associated with an image when the image is clicked
+	 * 
+	 * @param scoreIndex index of the button
+	 * @param individual genotype input
+	 */
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
 		if(arrayPlayer != null) { // Always stop any currently playing sound
@@ -173,11 +210,20 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 		} 
 	}
 	
+	/**
+	 * Saves the generated files
+	 * 
+	 * @param i the location of the current phenotype
+	 * @param filename the name of the file
+	 */
 	@Override
 	protected void saveSound(int i, String filename) {
 		SoundFromCPPNUtil.saveRemixedFileFromCPPN(scores.get(i).individual.getPhenotype(), WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers, filename, format);
 	}
 	
+	/**
+	 * @return returns the number of CPPN inputs.
+	 */
 	@Override
 	public int numCPPNInputs() {
 		return CPPN_NUM_INPUTS;
@@ -189,7 +235,7 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.remixbreeder.SoundRemixTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","simplifiedInteractiveInterface:false","remixWAVFile:"+SoundUtilExamples.PORTAL2_WAV,"trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.remixbreeder.SoundRemixTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
