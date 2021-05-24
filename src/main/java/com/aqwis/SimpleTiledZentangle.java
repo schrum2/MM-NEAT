@@ -27,7 +27,7 @@ public class SimpleTiledZentangle {
 		return FileUtilities.getSaveDirectory() + "/run" + PicbreederTask.runNumber;
 	}
 	
-	public static void simpleTiledZentangle(String directory, int index) throws Exception {
+	public static BufferedImage simpleTiledZentangle(String directory, int index) throws Exception {
 
 		Random random = new Random(index);
 		
@@ -74,12 +74,15 @@ public class SimpleTiledZentangle {
 					e.printStackTrace();
 					System.exit(1);
 				}
-				break;
+				return graphics;
 			} else {
 				System.out.println("CONTRADICTION");
 			}
 		}
 
-
+		System.out.println("No WFC output produced?");
+		new NullPointerException().printStackTrace();
+		System.exit(1);
+		return null; // This should not happen
 	}
 }
