@@ -134,7 +134,8 @@ public class PictureTargetTaskAutoEncoder {
         
         //String parentDirExamples = DownloaderUtility.DATAEXAMPLES.Download();
   
-        File parentDir=new File("parentDir/");
+        File parentDir=new File("MNIST/");
+        //File parentDir=new File("MNIST/");
         //Files in directories under the parent dir that have "allowed extensions" split needs a random number generator for reproducibility when splitting the files into train and test
         FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, randNumGen);
 
@@ -145,7 +146,9 @@ public class PictureTargetTaskAutoEncoder {
         //Below is a bare bones version. Refer to javadoc for details
         BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
 
-        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 20, 0); // Get ALL 20 images
+        // for both MNIST and PictureTargetTrainingSet, neither works currently
+        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 80, 20); // Get ALL 20 images
+        //InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 20, 0); // Get ALL 20 images
         InputSplit trainData = filesInDirSplit[0];
         //InputSplit testData = filesInDirSplit[1];  //The testData is never used in the example, commenting out.
 
@@ -185,7 +188,7 @@ public class PictureTargetTaskAutoEncoder {
         }
 
         //Train model:
-        int nEpochs = 100;
+        int nEpochs = 3;
         for( int epoch=0; epoch<nEpochs; epoch++ ){
             for(INDArray data : featuresTrain){
             	long[] originalShape = data.shape();
