@@ -21,9 +21,15 @@ package autoencoder;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.datavec.api.io.filters.BalancedPathFilter;
+import org.datavec.api.io.labels.ParentPathLabelGenerator;
 import org.datavec.api.records.reader.RecordReader;
 import org.datavec.api.split.FileSplit;
+import org.datavec.api.split.InputSplit;
 import org.datavec.image.recordreader.ImageRecordReader;
+import org.datavec.image.transform.ImageTransform;
+import org.datavec.image.transform.MultiImageTransform;
+import org.datavec.image.transform.ShowImageTransform;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
@@ -91,31 +97,68 @@ public class PictureTargetTaskAutoEncoder {
         net.setListeners(Collections.singletonList(new ScoreIterationListener(10)));
 
         
-        // Replace the whole portion in this comment surrounded section with
-        // something similar to lines 58 through 115 of ImagePipelineExample
-        ////////////////////////////////////// ADD
-        ImageRecordReader rr = new ImageRecordReader(28,28,3); //28x28 RGB images
-        rr.initialize(new FileSplit(new File("parentDir/")));
-
-        DataSetIterator iter = new RecordReaderDataSetIterator.Builder(rr, 32)
-             //Label index (first arg): Always value 1 when using ImageRecordReader. For CSV etc: use index of the column
-             //  that contains the label (should contain an integer value, 0 to nClasses-1 inclusive). Column indexes start
-             // at 0. Number of classes (second arg): number of label classes (i.e., 10 for MNIST - 10 digits)
-             // ??? .classification(1, nClasses)
-             .preProcessor(new ImagePreProcessingScaler())      //For normalization of image values 0-255 to 0-1
-             .build();
-        //////////////////////////////////////////// END ADD
+//        // Replace the whole portion in this comment surrounded section with
+//        // something similar to lines 58 through 115 of ImagePipelineExample
+//        ////////////////////////////////////// ADD
+//        ImageRecordReader rr = new ImageRecordReader(28,28,3); //28x28 RGB images
+//        rr.initialize(new FileSplit(new File("parentDir/")));
+//
+//        DataSetIterator iter = new RecordReaderDataSetIterator.Builder(rr, 32)
+//             //Label index (first arg): Always value 1 when using ImageRecordReader. For CSV etc: use index of the column
+//             //  that contains the label (should contain an integer value, 0 to nClasses-1 inclusive). Column indexes start
+//             // at 0. Number of classes (second arg): number of label classes (i.e., 10 for MNIST - 10 digits)
+//             // ??? .classification(1, nClasses)
+//             .preProcessor(new ImagePreProcessingScaler())      //For normalization of image values 0-255 to 0-1
+//             .build();
+//        //////////////////////////////////////////// END ADD
+//        
+//        //Load data and split into training and testing sets. 40000 train, 10000 test
+//        //DataSetIterator iter = new MnistDataSetIterator(100,50000,false);
         
-        //Load data and split into training and testing sets. 40000 train, 10000 test
-        //DataSetIterator iter = new MnistDataSetIterator(100,50000,false);
+        dataLocalPath = DownloaderUtility.DATAEXAMPLES.Download();
+  
+        File parentDir=new File(dataLocalPath,"parentDir/");
+        //Files in directories under the parent dir that have "allowed extensions" split needs a random number generator for reproducibility when splitting the files into train and test
+        FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, randNumGen);
+
+        //You do not have to manually specify labels. This class (instantiated as below) will
+        //parse the parent dir and use the name of the subdirectories as label/class names
+        ParentPathLabelGenerator labelMaker = new ParentPathLabelGenerator();
+        //The balanced path filter gives you fine tune control of the min/max cases to load for each class
+        //Below is a bare bones version. Refer to javadoc for details
+        BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
+
+        //Split the image files into train and test. Specify the train test split as 80%,20%
+        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 80, 20);
+        InputSplit trainData = filesInDirSplit[0];
+        //InputSplit testData = filesInDirSplit[1];  //The testData is never used in the example, commenting out.
+
+        //Specifying a new record reader with the height and width you want the images to be resized to.
+        //Note that the images in this example are all of different size
+        //They will all be resized to the height and width specified below
+        ImageRecordReader recordReader = new ImageRecordReader(height,width,channels,labelMaker);
+        
+        ImageTransform transform = new MultiImageTransform(randNumGen,new ShowImageTransform("Display - before "));
+
+        //Initialize the record reader with the train data and the transform chain
+        recordReader.initialize(trainData,transform);
+        int outputNum = recordReader.numLabels();
+        //convert the record reader to an iterator for training - Refer to other examples for how to use an iterator
+        int batchSize = 10; // Minibatch size. Here: The number of images to fetch for each call to dataIter.next().
+        int labelIndex = 1; // Index of the label Writable (usually an IntWritable), as obtained by recordReader.next()
+        // List<Writable> lw = recordReader.next();
+        // then lw[0] =  NDArray shaped [1,3,50,50] (1, channels, height, width)
+        //      lw[0] =  label as integer.
+
+        DataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, batchSize, labelIndex, outputNum);
 
         List<INDArray> featuresTrain = new ArrayList<>();
         List<INDArray> featuresTest = new ArrayList<>();
         List<INDArray> labelsTest = new ArrayList<>();
 
         Random r = new Random(12345);
-        while(iter.hasNext()){
-            DataSet ds = iter.next();
+        while(dataIter.hasNext()){
+            DataSet ds = dataIter.next();
             SplitTestAndTrain split = ds.splitTestAndTrain(80, r);  //80/20 split (from miniBatch = 100)
             featuresTrain.add(split.getTrain().getFeatures());
             DataSet dsTest = split.getTest();
