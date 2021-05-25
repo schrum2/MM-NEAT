@@ -75,14 +75,15 @@ public abstract class Emitter implements Comparable<Emitter> {
 	 * if enough parents have been generated
 	 * 
 	 * @param parent The parent to be added
-	 * @param fitness The fitness of the parent to be added
+	 * @param newScore The fitness of the parent to be added (higher is better)
+	 * @param currentScore The fitness of current bin occupant (higher is better)
 	 * @param archive The current archive
 	 */
 	public void addFitness(double[] parent, double newScore, double currentScore, Archive<ArrayList<Double>> archive) {
 		deltaIFitnesses[additionCounter] = calculateFitness(newScore, currentScore);
 		parentPopulation[additionCounter] = parent;
 		additionCounter++;
-		if (additionCounter == populationSize) {
+		if (additionCounter == populationSize) { // Add logging here
 			if (allInvalid()) {
 				this.CMAESInstance = newCMAESInstance(archive);
 			} else {
