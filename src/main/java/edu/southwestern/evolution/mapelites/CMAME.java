@@ -61,13 +61,13 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		if (PRINT_DEBUG) {System.out.println("Emitter: \""+thisEmitter.emitterName+"\"\tSolutions: "+thisEmitter.solutionCount+"\t\tAmount of Parents: "+thisEmitter.additionCounter);}
 		fileUpdates(replacedBool); // log failure or success
 	}	
-	
+
+	/**
+	 * Switches to the next emitter until all are processed, then
+	 * loops back to the first emitter.
+	 */
 	private void incrementEmitterCounter() {
-		if (emitterCounter == totalEmitters-1) {
-			emitterCounter = 0;
-		} else {
-			emitterCounter++;
-		}
+		emitterCounter = (emitterCounter + 1) % totalEmitters;
 	}
 	
 	// Test CMA-ME
