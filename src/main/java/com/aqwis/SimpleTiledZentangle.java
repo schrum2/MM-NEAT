@@ -28,7 +28,7 @@ public class SimpleTiledZentangle {
 	}
 	
 	public static BufferedImage simpleTiledZentangle(String directory, int index, int patternDim) throws Exception {
-
+		System.out.println("WFC pattern "+index+" with "+patternDim+" by "+patternDim+" tiles");
 		Random random = new Random(index);
 		
 		// Only support simpletiled for now

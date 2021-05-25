@@ -53,6 +53,10 @@ import edu.southwestern.util.random.RandomNumbers;
  */
 public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
 
+	private static final int MAX_SELECTABLE_BEFORE_MIXING = 6;
+
+	private static final int MAX_TILE_SIZE_POWER = 5;
+
 	public static int runNumber = 0;
 
 	public static final int CPPN_NUM_INPUTS = 4;
@@ -162,7 +166,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		String filename1 = filename + "1.bmp";
 		GraphicsUtil.saveImage(toSave1, filename1);
 
-		System.out.println("image " + filename1 + " was saved successfully");
+		System.out.println("image " + filename1 + " was saved successfully. Size: "+toSave1.getWidth()+" by "+toSave1.getHeight());
 		return toSave1; // return the image that was saved
 	}
 
@@ -243,10 +247,12 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			BufferedImage bgImage1 = null;
 			BufferedImage bgImage2 = null;
 			
-			int[] tempTileSizeList = new int[] {};
+			int[] tempTileSizeList = new int[numSelected];
 			
 			for (int i = 0; i < numSelected; i++) {
-				int tempTileSize = (int) Math.pow(2, RandomNumbers.randomGenerator.nextInt(4));
+				// If too many images are selected, then they will be combined into mixed tile sets, but this requires all tiles to be the same size (multiplier of 1)
+				int tileSizeMultiplier = numSelected > MAX_SELECTABLE_BEFORE_MIXING ? 1 : (int) Math.pow(2, RandomNumbers.randomGenerator.nextInt(MAX_TILE_SIZE_POWER));
+				
 				if (i == bgIndex1) {
 					// Represents a template pattern
 					bgImage1 = saveSingle(waveFunctionSaveLocation + "background", backgroundSize, chosenTiles.get(i),inputMultipliers, true);
@@ -254,9 +260,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					if (numSelected < 3) { // If there are only two images, one serves as a background pattern AND a
 											// tile pattern
 						String fullName = "tile" + numTileImagesSaved + "_";
-						tempTileSizeList[i] = numStored;
+						tempTileSizeList[numStored] = tileSizeMultiplier;
+						System.out.println("tileSizeMultiplier = "+tileSizeMultiplier+" -> pixels = "+tileSizeMultiplier*tileSize);
 						tileNames[numStored++] = fullName + "1";
-						saveSingle(waveFunctionSaveLocation + fullName, tempTileSize, chosenTiles.get(i), inputMultipliers, false);
+						saveSingle(waveFunctionSaveLocation + fullName, tileSizeMultiplier*tileSize, chosenTiles.get(i), inputMultipliers, false);
 						numTileImagesSaved++;
 						System.out.println("fewer than 3 selected");
 					}
@@ -267,9 +274,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					
 					if(numSelected != 5 && numSelected != 6) {
 						String fullName = "tile" + numTileImagesSaved + "_";
-						tempTileSizeList[i] = numStored;
+						tempTileSizeList[numStored] = tileSizeMultiplier;
+						System.out.println("tileSizeMultiplier = "+tileSizeMultiplier+" -> pixels = "+tileSizeMultiplier*tileSize);
 						tileNames[numStored++] = fullName + "1";
-						saveSingle(waveFunctionSaveLocation + fullName, tempTileSize, chosenTiles.get(i), inputMultipliers, false);
+						saveSingle(waveFunctionSaveLocation + fullName, tileSizeMultiplier*tileSize, chosenTiles.get(i), inputMultipliers, false);
 						numTileImagesSaved++;
 					}
 //				} else if (i == bgIndex3) {
@@ -282,9 +290,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				} else {
 					// All other images used to create background tiles with WFC
 					String fullName = "tile" + numTileImagesSaved + "_";
-					tempTileSizeList[i] = numStored;
+					tempTileSizeList[numStored] = tileSizeMultiplier;
+					System.out.println("tileSizeMultiplier = "+tileSizeMultiplier+" -> pixels = "+tileSizeMultiplier*tileSize);
 					tileNames[numStored++] = fullName + "1";
-					saveSingle(waveFunctionSaveLocation + fullName, tempTileSize, chosenTiles.get(i), inputMultipliers, false);
+					saveSingle(waveFunctionSaveLocation + fullName, tileSizeMultiplier*tileSize, chosenTiles.get(i), inputMultipliers, false);
 					numTileImagesSaved++;
 					System.out.println("All other tiles selected are background tiles made with WFC");
 				}
@@ -303,12 +312,12 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			for (int i = 0; i < numStored; i++) {
 				tilesToProcess.add(tileNames[i]);
 				// The partition is full, create a zentangle with WFC
-				if (chosenTiles.size() <= 6 || (i + 1) % standardSize == 0) {
+				if (chosenTiles.size() <= MAX_SELECTABLE_BEFORE_MIXING || (i + 1) % standardSize == 0) {
 					// Writes data.xml
-					SimpleTiledZentangleWFCModel.writeAdjacencyRules(directory, tilesToProcess.toArray(new String[tilesToProcess.size()]));
+					SimpleTiledZentangleWFCModel.writeAdjacencyRules(directory, tilesToProcess.toArray(new String[tilesToProcess.size()]), tempTileSizeList[zentangleNumber]*tileSize);
 					// data.xml gets read in this next method
 					try {
-						patterns[zentangleNumber] = SimpleTiledZentangle.simpleTiledZentangle(directory, zentangleNumber, tempTileSizeList[zentangleNumber]);
+						patterns[zentangleNumber] = SimpleTiledZentangle.simpleTiledZentangle(directory, zentangleNumber, Parameters.parameters.integerParameter("zentanglePatternDim") / tempTileSizeList[zentangleNumber]);
 						zentangleNumber++;
 					} catch (Exception e) {
 						e.printStackTrace();
