@@ -6,6 +6,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.CMAME;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 
 public class ImprovementEmitter extends Emitter {
@@ -24,17 +25,12 @@ public class ImprovementEmitter extends Emitter {
 		CMAEvolutionStrategy optEmitter = new CMAEvolutionStrategy();
 		optEmitter.setDimension(dimension);
 		Genotype<ArrayList<Double>> elite = archive.getElite(archive.randomOccupiedBinIndex()).individual;
-		// to Maxx: Use ArrayUtil.doubleArrayFromList here instead
-		Double[] phenoD = elite.getPhenotype().toArray(new Double[0]);
-		double[] phenod = new double[phenoD.length];
-		for (int i = 0; i < phenoD.length; i++) {
-			phenod[i] = phenoD[i];
-		}
+		double[] phenod = ArrayUtil.doubleArrayFromList(elite.getPhenotype());
 		optEmitter.setInitialX(phenod); // start at random bin
 		optEmitter.setInitialStandardDeviation(0.5); // unsure if should be hardcoded or not
-		int mu = Parameters.parameters.integerParameter("mu"); 
+		int mu = 1; // Initialize based on single solution from the archive. Gets changed in response to lambda
 		int lambda = Parameters.parameters.integerParameter("lambda"); 
-		optEmitter.parameters.setMu(mu);
+		optEmitter.parameters.setMu(lambda);
 		optEmitter.parameters.setPopulationSize(lambda);
 		optEmitter.init();
 		optEmitter.writeToDefaultFilesHeaders(0); // Overwrite existing CMA-ES files
@@ -48,6 +44,7 @@ public class ImprovementEmitter extends Emitter {
 			return CMAME.FAILURE_VALUE;
 		} else {
 			solutionCount++;
+			validParents++;
 			if (Double.isInfinite(currentScore)) { // if bin was empty (infinite magnitude must be negative infinity)
 				if (CMAME.PRINT_DEBUG) {System.out.println("Added new bin ("+newScore+").");}
 				return -newScore; // Negate score because CMA-ES is a minimizer	

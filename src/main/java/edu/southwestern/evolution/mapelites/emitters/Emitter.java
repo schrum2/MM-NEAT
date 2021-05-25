@@ -11,6 +11,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 	public int solutionCount = 0; // amount of solutions found by this emitter
 	int populationCounter; // counter for getting the next solution from the population
 	public int additionCounter; // amount of parents currently stored, to be used in distribution update
+	int validParents = 0; // amount of non-failure valued parents, for calculating new mu and weights
 	double[][] parentPopulation = null; // stored parents
 	double[][] sampledPopulation = null; // current population to pull individuals from
 	double[] deltaIFitnesses = null;
@@ -65,6 +66,15 @@ public abstract class Emitter implements Comparable<Emitter> {
 	 * @param deltaI Fitness values corresponding to the parents
 	 */
 	protected void updateDistribution(double[][] parentPopulation2, double[] deltaI) {
+		CMAESInstance.parameters.unsafeUnlock(); // unlock parameters
+		
+		CMAESInstance.parameters.setMu(validParents);
+		System.out.println("Changed mu to "+validParents+" with an unsafe unlock/lock");
+		CMAESInstance.parameters.setWeights(validParents, CMAESInstance.parameters.getRecombinationType());
+		System.out.println("Set weights with mu:"+validParents+" and Recombination type \""+CMAESInstance.parameters.getRecombinationType()+"\" with an unsafe unlock/lock");
+		
+		CMAESInstance.parameters.unsafeLock(); // relock parameters
+		validParents = 0; // reset valid parents
 		CMAESInstance.updateDistribution(parentPopulation2, deltaI);	
 	}
 

@@ -6,6 +6,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.CMAME;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 
 public class OptimizingEmitter extends Emitter {
@@ -24,11 +25,7 @@ public class OptimizingEmitter extends Emitter {
 		CMAEvolutionStrategy optEmitter = new CMAEvolutionStrategy();
 		optEmitter.setDimension(dimension);
 		Genotype<ArrayList<Double>> elite = archive.getElite(archive.randomOccupiedBinIndex()).individual;
-		Double[] phenoD = elite.getPhenotype().toArray(new Double[0]);
-		double[] phenod = new double[phenoD.length];
-		for (int i = 0; i < phenoD.length; i++) {
-			phenod[i] = phenoD[i];
-		}
+		double[] phenod = ArrayUtil.doubleArrayFromList(elite.getPhenotype());
 		optEmitter.setInitialX(phenod); // start at random bin
 		optEmitter.setInitialStandardDeviation(0.5); // unsure if should be hardcoded or not
 		int lambda = Parameters.parameters.integerParameter("lambda"); 
@@ -46,6 +43,7 @@ public class OptimizingEmitter extends Emitter {
 			return CMAME.FAILURE_VALUE;
 		} else {
 			solutionCount++;
+			validParents++;
 			if (Double.isInfinite(currentScore)) { // if bin was empty (infinite magnitude must be negative infinity)
 				if (CMAME.PRINT_DEBUG) {System.out.println("Added new bin ("+newScore+").");}
 			} else { // if bin existed, but was worse than the new one
