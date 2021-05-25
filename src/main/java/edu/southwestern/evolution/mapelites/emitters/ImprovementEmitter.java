@@ -32,8 +32,9 @@ public class ImprovementEmitter extends Emitter {
 		}
 		optEmitter.setInitialX(phenod); // start at random bin
 		optEmitter.setInitialStandardDeviation(0.5); // unsure if should be hardcoded or not
+		int mu = Parameters.parameters.integerParameter("mu"); 
 		int lambda = Parameters.parameters.integerParameter("lambda"); 
-		optEmitter.parameters.setMu(lambda);
+		optEmitter.parameters.setMu(mu);
 		optEmitter.parameters.setPopulationSize(lambda);
 		optEmitter.init();
 		optEmitter.writeToDefaultFilesHeaders(0); // Overwrite existing CMA-ES files
