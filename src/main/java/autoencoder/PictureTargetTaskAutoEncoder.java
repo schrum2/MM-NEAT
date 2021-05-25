@@ -60,6 +60,8 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.learning.config.AdaGrad;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
+import edu.southwestern.util.MiscUtil;
+
 /**Example: Anomaly Detection on MNIST using simple autoencoder without pretraining
  * The goal is to identify outliers digits, i.e., those digits that are unusual or
  * not like the typical digits.
@@ -74,15 +76,16 @@ public class PictureTargetTaskAutoEncoder {
 
     public static boolean visualize = true;
     
+    //Images are of format given by allowedExtension
     private static final String [] allowedExtensions = BaseImageLoader.ALLOWED_FORMATS;
     
     private static final long seed = 12345;
     
     private static final Random randNumGen = new Random(seed);
     
-    private static final int height = 28; //50;
-    private static final int width = 28; //50;
-    private static final int channels = 1; //3;
+    private static final int height = 28; //50;		// height of image
+    private static final int width = 28; //50;		// width of image
+    private static final int channels = 1; //3;		// 3 channels because using RGB
 
     public static void main(String[] args) throws Exception {
 
@@ -165,20 +168,24 @@ public class PictureTargetTaskAutoEncoder {
 
         DataSetIterator dataIter = new RecordReaderDataSetIterator(recordReader, batchSize, labelIndex, outputNum);
 
-        List<INDArray> featuresTrain = new ArrayList<>();
-        List<INDArray> featuresTest = new ArrayList<>();
+        List<INDArray> featuresTrain = new ArrayList<>();	// Images to train the autoencoder with
+        List<INDArray> featuresTest = new ArrayList<>();	// Images the autoencoder has never seen (test images to make sure the autoencoder properly runs)
         
         Random r = new Random(12345);
         while(dataIter.hasNext()){
             DataSet ds = dataIter.next();
-            SplitTestAndTrain split = ds.splitTestAndTrain(8, r);  //8/2 split (from miniBatch = 10)
-            featuresTrain.add(split.getTrain().getFeatures());
-            DataSet dsTest = split.getTest();
-            featuresTest.add(dsTest.getFeatures());
+            
+            featuresTrain.add(ds.getFeatures());
+            
+            // For splitting up test and train sets
+//            SplitTestAndTrain split = ds.splitTestAndTrain(8, r);  //8/2 split (from miniBatch = 10)
+//            featuresTrain.add(split.getTrain().getFeatures());	// Adding the training images to featuresTrain
+//            DataSet dsTest = split.getTest();
+//            featuresTest.add(dsTest.getFeatures());				// Adding images to featuresTest
         }
 
         //Train model:
-        int nEpochs = 30;
+        int nEpochs = 100;
         for( int epoch=0; epoch<nEpochs; epoch++ ){
             for(INDArray data : featuresTrain){
             	long[] originalShape = data.shape();
@@ -193,8 +200,9 @@ public class PictureTargetTaskAutoEncoder {
         List<Pair<INDArray,INDArray>> inputOutput = new ArrayList<>();
         
         // Images not in training set
-        for(INDArray data : featuresTest){
-        	long[] originalShape = data.shape();
+        //for(INDArray data : featuresTest){
+        for(INDArray data : featuresTrain){
+           	long[] originalShape = data.shape();
         	INDArray reshapedArray = data.reshape(new int[] {(int) originalShape[0], 28*28});
             int nRows = reshapedArray.rows();
             for( int j=0; j<nRows; j++){
@@ -204,19 +212,17 @@ public class PictureTargetTaskAutoEncoder {
                 // Add (score, example) pair to the appropriate list
                 testResults.add(new ImmutablePair<>(score, example));
                 inputOutput.add(new ImmutablePair<>(example, output));
+                System.out.println("Score " + j + ": " + score + " example: " + example + "output: " + output);
+                ArrayList<INDArray> last = new ArrayList<>();
+                last.add(example);
+                last.add(output);
+                MNISTVisualizer inputVisualizer = new MNISTVisualizer(2.0, last, "Last Pair");
+                inputVisualizer.visualize();
+                MiscUtil.waitForReadStringAndEnterKeyPress();
             }
+            
         }
 
-//        //Sort each list in the map by score
-//        Comparator<Pair<Double, INDArray>> c = new Comparator<Pair<Double, INDArray>>() {
-//            @Override
-//            public int compare(Pair<Double, INDArray> o1, Pair<Double, INDArray> o2) {
-//                return Double.compare(o1.getLeft(),o2.getLeft());
-//            }
-//        };
-//
-//        Collections.sort(testResults, c);
-        
         //After sorting, select N best and N worst scores (by reconstruction error) for each digit, where N=5
         List<INDArray> input = new ArrayList<>(50);
         List<INDArray> output = new ArrayList<>(50);
