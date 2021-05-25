@@ -41,7 +41,7 @@ public class ImprovementEmitter extends Emitter {
 	
 	@Override
 	public double calculateFitness(double newScore, double currentScore) {
-		if (currentScore >= newScore) { // if bin was better or equal
+		if (currentScore >= newScore) { // if bin was better or equal: Remember that CMA-ES is a minimizer
 			if (CMAME.PRINT_DEBUG) {System.out.println("Current bin ("+currentScore+") was already better than or equal to new bin ("+newScore+").");}
 			return CMAME.FAILURE_VALUE;
 		} else {
