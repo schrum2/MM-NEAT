@@ -97,8 +97,7 @@ public class KLDivergenceBinLabels implements BinLabels {
 			if (behaviorCharacterization[i] > maxPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " exceeds KL Divergence maximum value specified ("+maxPossibleValue+")"); 
 			dbc[i] = (int) Math.floor(behaviorCharacterization[i] / segmentSize);
 		}
-		System.out.println("Discritizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
-		
+		//System.out.println("Discritizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
 		return dbc;
 	}
 	
