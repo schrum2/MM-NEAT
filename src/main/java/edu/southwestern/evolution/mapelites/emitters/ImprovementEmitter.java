@@ -24,6 +24,7 @@ public class ImprovementEmitter extends Emitter {
 		CMAEvolutionStrategy optEmitter = new CMAEvolutionStrategy();
 		optEmitter.setDimension(dimension);
 		Genotype<ArrayList<Double>> elite = archive.getElite(archive.randomOccupiedBinIndex()).individual;
+		// to Maxx: Use ArrayUtil.doubleArrayFromList here instead
 		Double[] phenoD = elite.getPhenotype().toArray(new Double[0]);
 		double[] phenod = new double[phenoD.length];
 		for (int i = 0; i < phenoD.length; i++) {
