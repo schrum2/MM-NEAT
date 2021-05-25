@@ -19,19 +19,32 @@
 
 package autoencoder;
 
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.datavec.api.io.filters.BalancedPathFilter;
 import org.datavec.api.io.labels.ParentPathLabelGenerator;
-import org.datavec.api.records.reader.RecordReader;
 import org.datavec.api.split.FileSplit;
 import org.datavec.api.split.InputSplit;
+import org.datavec.image.loader.BaseImageLoader;
 import org.datavec.image.recordreader.ImageRecordReader;
 import org.datavec.image.transform.ImageTransform;
 import org.datavec.image.transform.MultiImageTransform;
 import org.datavec.image.transform.ShowImageTransform;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
@@ -44,17 +57,8 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.SplitTestAndTrain;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
-import org.nd4j.linalg.dataset.api.preprocessor.ImagePreProcessingScaler;
-import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.AdaGrad;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.*;
-import java.util.List;
 
 /**Example: Anomaly Detection on MNIST using simple autoencoder without pretraining
  * The goal is to identify outliers digits, i.e., those digits that are unusual or
@@ -69,6 +73,16 @@ import java.util.List;
 public class PictureTargetTaskAutoEncoder {
 
     public static boolean visualize = true;
+    
+    private static final String [] allowedExtensions = BaseImageLoader.ALLOWED_FORMATS;
+    
+    private static final long seed = 12345;
+    
+    private static final Random randNumGen = new Random(seed);
+    
+    private static final int height = 28; //50;
+    private static final int width = 28; //50;
+    private static final int channels = 1; //3;
 
     public static void main(String[] args) throws Exception {
 
@@ -115,9 +129,9 @@ public class PictureTargetTaskAutoEncoder {
 //        //Load data and split into training and testing sets. 40000 train, 10000 test
 //        //DataSetIterator iter = new MnistDataSetIterator(100,50000,false);
         
-        dataLocalPath = DownloaderUtility.DATAEXAMPLES.Download();
+        //String parentDirExamples = DownloaderUtility.DATAEXAMPLES.Download();
   
-        File parentDir=new File(dataLocalPath,"parentDir/");
+        File parentDir=new File("parentDir/");
         //Files in directories under the parent dir that have "allowed extensions" split needs a random number generator for reproducibility when splitting the files into train and test
         FileSplit filesInDir = new FileSplit(parentDir, allowedExtensions, randNumGen);
 
@@ -128,8 +142,7 @@ public class PictureTargetTaskAutoEncoder {
         //Below is a bare bones version. Refer to javadoc for details
         BalancedPathFilter pathFilter = new BalancedPathFilter(randNumGen, allowedExtensions, labelMaker);
 
-        //Split the image files into train and test. Specify the train test split as 80%,20%
-        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 80, 20);
+        InputSplit[] filesInDirSplit = filesInDir.sample(pathFilter, 20, 0); // Get ALL 20 images
         InputSplit trainData = filesInDirSplit[0];
         //InputSplit testData = filesInDirSplit[1];  //The testData is never used in the example, commenting out.
 
@@ -154,80 +167,71 @@ public class PictureTargetTaskAutoEncoder {
 
         List<INDArray> featuresTrain = new ArrayList<>();
         List<INDArray> featuresTest = new ArrayList<>();
-        List<INDArray> labelsTest = new ArrayList<>();
-
+        
         Random r = new Random(12345);
         while(dataIter.hasNext()){
             DataSet ds = dataIter.next();
-            SplitTestAndTrain split = ds.splitTestAndTrain(80, r);  //80/20 split (from miniBatch = 100)
+            SplitTestAndTrain split = ds.splitTestAndTrain(8, r);  //8/2 split (from miniBatch = 10)
             featuresTrain.add(split.getTrain().getFeatures());
             DataSet dsTest = split.getTest();
             featuresTest.add(dsTest.getFeatures());
-            INDArray indexes = Nd4j.argMax(dsTest.getLabels(),1); //Convert from one-hot representation -> index
-            labelsTest.add(indexes);
         }
 
         //Train model:
-        int nEpochs = 3;
+        int nEpochs = 30;
         for( int epoch=0; epoch<nEpochs; epoch++ ){
             for(INDArray data : featuresTrain){
-                net.fit(data,data);
+            	long[] originalShape = data.shape();
+            	INDArray reshapedArray = data.reshape(new int[] {(int) originalShape[0], 28*28});
+                net.fit(reshapedArray,reshapedArray);
             }
             System.out.println("Epoch " + epoch + " complete");
         }
-
-        //Evaluate the model on the test data
-        //Score each example in the test set separately
-        //Compose a map that relates each digit to a list of (score, example) pairs
-        //Then find N best and N worst scores per digit
-        Map<Integer,List<Pair<Double,INDArray>>> listsByDigit = new HashMap<>();
-        for( int i=0; i<10; i++ ) listsByDigit.put(i,new ArrayList<>());
-
-        for( int i=0; i<featuresTest.size(); i++ ){
-            INDArray testData = featuresTest.get(i);
-            INDArray labels = labelsTest.get(i);
-            int nRows = testData.rows();
+        
+        
+        List<Pair<Double,INDArray>> testResults = new ArrayList<>();
+        List<Pair<INDArray,INDArray>> inputOutput = new ArrayList<>();
+        
+        // Images not in training set
+        for(INDArray data : featuresTest){
+        	long[] originalShape = data.shape();
+        	INDArray reshapedArray = data.reshape(new int[] {(int) originalShape[0], 28*28});
+            int nRows = reshapedArray.rows();
             for( int j=0; j<nRows; j++){
-                INDArray example = testData.getRow(j, true);
-                int digit = (int)labels.getDouble(j);
+                INDArray example = reshapedArray.getRow(j, true);
                 double score = net.score(new DataSet(example,example));
+                INDArray output = net.output(example);
                 // Add (score, example) pair to the appropriate list
-                List digitAllPairs = listsByDigit.get(digit);
-                digitAllPairs.add(new ImmutablePair<>(score, example));
+                testResults.add(new ImmutablePair<>(score, example));
+                inputOutput.add(new ImmutablePair<>(example, output));
             }
         }
 
-        //Sort each list in the map by score
-        Comparator<Pair<Double, INDArray>> c = new Comparator<Pair<Double, INDArray>>() {
-            @Override
-            public int compare(Pair<Double, INDArray> o1, Pair<Double, INDArray> o2) {
-                return Double.compare(o1.getLeft(),o2.getLeft());
-            }
-        };
-
-        for(List<Pair<Double, INDArray>> digitAllPairs : listsByDigit.values()){
-            Collections.sort(digitAllPairs, c);
-        }
-
+//        //Sort each list in the map by score
+//        Comparator<Pair<Double, INDArray>> c = new Comparator<Pair<Double, INDArray>>() {
+//            @Override
+//            public int compare(Pair<Double, INDArray> o1, Pair<Double, INDArray> o2) {
+//                return Double.compare(o1.getLeft(),o2.getLeft());
+//            }
+//        };
+//
+//        Collections.sort(testResults, c);
+        
         //After sorting, select N best and N worst scores (by reconstruction error) for each digit, where N=5
-        List<INDArray> best = new ArrayList<>(50);
-        List<INDArray> worst = new ArrayList<>(50);
-        for( int i=0; i<10; i++ ){
-            List<Pair<Double,INDArray>> list = listsByDigit.get(i);
-            for( int j=0; j<5; j++ ){
-                best.add(list.get(j).getRight());
-                worst.add(list.get(list.size()-j-1).getRight());
-            }
+        List<INDArray> input = new ArrayList<>(50);
+        List<INDArray> output = new ArrayList<>(50);
+        for(Pair<INDArray, INDArray> p : inputOutput) {
+        	input.add(p.getLeft());
+        	output.add(p.getRight());
         }
-
+        
         //Visualize by default
         if (visualize) {
+            MNISTVisualizer inputVisualizer = new MNISTVisualizer(2.0, input, "Input");
+            inputVisualizer.visualize();
             //Visualize the best and worst digits
-            MNISTVisualizer bestVisualizer = new MNISTVisualizer(2.0, best, "Best (Low Rec. Error)");
-            bestVisualizer.visualize();
-
-            MNISTVisualizer worstVisualizer = new MNISTVisualizer(2.0, worst, "Worst (High Rec. Error)");
-            worstVisualizer.visualize();
+            MNISTVisualizer outputVisualizer = new MNISTVisualizer(2.0, output, "Output");
+            outputVisualizer.visualize();
         }
     }
 
