@@ -335,8 +335,8 @@ public class CMAParameters implements java.io.Serializable {
 			for (int i = 0; i < mu; ++i) 
 				w[i] = mu - i;
 		else // default, seems as enums can be null
-		for (int i = 0; i < mu; ++i) 	
-			w[i] = (Math.log(mu + 1) - Math.log(i + 1));
+			for (int i = 0; i < mu; ++i) 	
+				w[i] = (Math.log(mu + 1) - Math.log(i + 1));
 
 		setWeights(w);
 	}
