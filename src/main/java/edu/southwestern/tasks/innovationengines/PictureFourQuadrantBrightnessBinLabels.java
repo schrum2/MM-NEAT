@@ -4,8 +4,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.clearspring.analytics.util.Pair;
-
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
@@ -18,9 +16,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
 public class PictureFourQuadrantBrightnessBinLabels {
 	List<String> binLabels = null;
 	private static int BINS_PER_DIMENSION;
-	private static final int MAX_IMAGE_HEIGHT = 256;
-	private static final int MAX_IMAGE_WIDTH = 256;
-	
+
 	
 //	private static final Pair<MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT> MAX_PIXEL;
 	
@@ -55,14 +51,12 @@ public class PictureFourQuadrantBrightnessBinLabels {
 	}
 	
 	/**
-	 * Creates an array of doubles corresponding to the current bin.
-	 * This is done using the sum of the brightness of each pixel 
-	 * in one of four quadrants in the image.s
+	 * Creates an array of doubles corresponding to the brightness
+	 * of each pixel in one of four quadrants in the image.
 	 * 
 	 * @param image Image being analyzed
 	 * @return An array of doubles containing the sum of the brightness
-	 * 		   of each pixel.  This double array is unique to each bin, 
-	 * 		   the array itself is essentially coordinates for each bin
+	 * 		   of each pixel.
 	 */
 	public static double[] getQuadrantBehaviorCharacterization(BufferedImage image) {
 		int quadWidth = image.getWidth() / 2;
@@ -97,5 +91,25 @@ public class PictureFourQuadrantBrightnessBinLabels {
 		}
 		
 		return sumBrightness;
+	}
+	
+	/**
+	 * Takes the double array produced by getQuadrantBehaviorCharacterization
+	 * and converts it into coordinates for a corresponding bin.
+	 * 
+	 * @param image The image being analyzed
+	 * @return An int array containing 4 values corresponding to the current bin
+	 */
+	public static int[] binCoordinates(BufferedImage image) {
+		double[] behaviorCharacterization = getQuadrantBehaviorCharacterization(image);
+		int[] binCoordinates = new int[behaviorCharacterization.length];
+		
+		double quadPixelCount = (image.getWidth() / 2) * (image.getHeight() / 2);
+		
+		for(int i = 0; i < binCoordinates.length; i++) {
+			double original = behaviorCharacterization[i];
+			binCoordinates[i] = (int) ((original / quadPixelCount) * BINS_PER_DIMENSION);
+		}
+		return binCoordinates;
 	}
 }
