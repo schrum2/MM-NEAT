@@ -28,9 +28,9 @@ public class ImprovementEmitter extends Emitter {
 		double[] phenod = ArrayUtil.doubleArrayFromList(elite.getPhenotype());
 		optEmitter.setInitialX(phenod); // start at random bin
 		optEmitter.setInitialStandardDeviation(0.5); // unsure if should be hardcoded or not
-		int mu = 1; // Initialize based on single solution from the archive. Gets changed in response to lambda
+		int mu = Parameters.parameters.integerParameter("lambda"); // Initialize based on single solution from the archive. Gets changed in response to lambda
 		int lambda = Parameters.parameters.integerParameter("lambda"); 
-		optEmitter.parameters.setMu(lambda);
+		optEmitter.parameters.setMu(mu);
 		optEmitter.parameters.setPopulationSize(lambda);
 		optEmitter.init();
 		optEmitter.writeToDefaultFilesHeaders(0); // Overwrite existing CMA-ES files

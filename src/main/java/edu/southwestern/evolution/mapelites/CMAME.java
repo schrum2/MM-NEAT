@@ -15,14 +15,16 @@ import edu.southwestern.evolution.mapelites.emitters.*;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.util.file.FileUtilities;
 
 public class CMAME extends MAPElites<ArrayList<Double>> {
 	
 	private Emitter[] emitters; // array holding all emitters
-	public static final boolean PRINT_DEBUG = true; // prints out debug text if true (applies to both this class and emitter classes)
+	public static final boolean PRINT_DEBUG = false; // prints out debug text if true (applies to both this class and emitter classes)
 	public static final double FAILURE_VALUE = Double.MAX_VALUE; // For rastrigin, MAX_VALUE greatly outperforms 0.0, both of which were tested. It is possible this may be better as 0 for another task
-	private int totalEmitters;
+	public int totalEmitters;
 	private int emitterCounter = 0;
+	private String[] logFiles;
 	
 	public void initialize(Genotype<ArrayList<Double>> example) {
 		super.initialize(example);
@@ -31,14 +33,53 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		int numOptimizingEmitters = Parameters.parameters.integerParameter("numOptimizingEmitters");
 		totalEmitters = numImprovementEmitters+numOptimizingEmitters;
 		emitters = new Emitter[totalEmitters];
+		if (((CMAME) MMNEAT.ea).io) logFiles = new String[totalEmitters];
 		int place = 0; // remember position in emitter array
 		for (int i = 0; i < numImprovementEmitters; i++) {
-			emitters[i] = new ImprovementEmitter(dimension, archive, i+1); // create improvement emitters
+			Emitter e = new ImprovementEmitter(dimension, archive, i+1); // create improvement emitters
+			emitters[i] = e;
+			if (logFiles != null) logFiles[i] = e.individualLog.getFile().getName();
 			place++;
 		}
 		for (int i = 0; i < numOptimizingEmitters; i++) {
-			emitters[place+i] = new OptimizingEmitter(dimension, archive, i+1); // create optimizing emitters
+			Emitter e = new OptimizingEmitter(dimension, archive, i+1); // create optimizing emitters
+			emitters[place+i] = e;
+			if (logFiles != null) logFiles[place+i] = e.individualLog.getFile().getName();
 		}
+		
+		if (logFiles != null) {
+			String experimentPrefix = Parameters.parameters.stringParameter("log")
+					+ Parameters.parameters.integerParameter("runNumber");
+			String udPrefix = experimentPrefix + "_" + "UpdateDistribution";
+			String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+			directory += (directory.equals("") ? "" : "/");
+			String udName = directory + udPrefix + "_log.plt";
+			
+			File plot = new File(udName);
+			try {
+				PrintStream ps = new PrintStream(plot);
+				ps.println("set term pdf enhanced");
+				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+				ps.println("set yrange [0:"+ (Parameters.parameters.integerParameter("lambda")) +"]");
+				ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")) + "]");
+				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
+				ps.println("set output \"" + udName.substring(udName.lastIndexOf('/')+1, udName.lastIndexOf('.')) + ".pdf\"");
+				// The :1 is for skipping the "generation" number logged in the file
+				for (int i = 0; i < totalEmitters; i++) {
+					String shortName = logFiles[i].replace(experimentPrefix+"_", "").replace("_log.txt", "");
+					ps.println((i == 0 ? "plot \"" : "     \"") + logFiles[i] + "\" u 1:2 w linespoints t \""+shortName+"\"" + (i < totalEmitters-1 ? ", \\" : ""));
+					
+				}
+				
+				ps.close();
+			} catch (FileNotFoundException e) {
+				System.out.println("Could not create plot file: " + plot.getName());
+				e.printStackTrace();
+				System.exit(1);
+			}
+			
+		}
+		
 	}
 	
 	/**
@@ -77,10 +118,17 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		emitterCounter = (emitterCounter + 1) % totalEmitters;
 	}
 	
+	public void updateEmitterLog(MMNEATLog mLog, int validParents) {
+		mLog.log(iterations + "\t" + validParents);
+	}
+	
+	
+	
+	
 	// Test CMA-ME
 	public static void main(String[] args) throws NoSuchMethodException, IOException {
 		System.out.println("Testing CMA-ME");
-		int runNum = 0;
+		//int runNum = 9999;
 		// Rastrigin test: 50 bin 		20 solution vector 		50000 gens
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true numImprovementEmitters:1 numOptimizingEmitters:0 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-CMAMERastrigin1ImprovementFunctionOptimization saveTo:CMAMERastrigin1ImprovementFunctionOptimization netio:false maxGens:50000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:50 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 		
@@ -92,10 +140,12 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		runSeveralCMAME();
 	}
 	
-	private static File severalLog = new File("mapelitesfunctionoptimizationSeveral/Several_Log.txt");
-	private static File severalLogPlot = new File("mapelitesfunctionoptimizationSeveral/Several_Log.txt.plt");
+	private static final String FOLDER = "mapelitesfunctionoptimizationseveral";
+	private static File severalLog = new File(FOLDER+"/Several_Log.txt");
+	private static File severalLogPlot = new File(FOLDER+"/Several_Log.txt.plt");
 	
 	private static void runSeveralCMAME() throws NoSuchMethodException, IOException {
+		new File(FOLDER+"/").mkdir();
 		severalLog.createNewFile();
 		PrintStream printStream = new PrintStream(severalLogPlot);
 		
@@ -116,7 +166,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		
 		for (int run = 10; run <= 200; run+=10) {
 			runSingleCMAME(run);
-			Scanner currentFile = new Scanner(new File("mapelitesfunctionoptimizationSeveral/CMAMELambda"+run+"/mapelitesfunctionoptimizationSeveral-CMAMELambda"+run+"_Fill_log.txt"));
+			Scanner currentFile = new Scanner(new File(FOLDER+"/CMAMELambda"+run+"/mapelitesfunctionoptimizationSeveral-CMAMELambda"+run+"_Fill_log.txt"));
 			String line = "";
 			while (currentFile.hasNextLine()) line = currentFile.nextLine();
 			printStream.println(run + "\t" + line.split("\t")[1] + "\t" + line.split("\t")[2]);
@@ -125,7 +175,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	}
 	
 	private static void runSingleCMAME(int lambda) throws FileNotFoundException, NoSuchMethodException {
-		int emitterCount = 1;
+		int emitterCount = 2;
 		int gens = 50000;
 		MMNEAT.main(("runNumber:"+lambda+" randomSeed:"+lambda+" io:true numImprovementEmitters:"+emitterCount+" numOptimizingEmitters:0 lambda:"+lambda+" base:mapelitesfunctionoptimizationseveral log:mapelitesfunctionoptimizationSeveral-CMAMELambda saveTo:CMAMELambda netio:false maxGens:"+gens+" ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 	}

@@ -1,9 +1,12 @@
 package edu.southwestern.evolution.mapelites.emitters;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.CMAME;
+import edu.southwestern.log.MMNEATLog;
 import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 
 public abstract class Emitter implements Comparable<Emitter> {
@@ -19,6 +22,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 	CMAEvolutionStrategy CMAESInstance; // internal instance of CMA-ES 
 	final int populationSize;
 	final int dimension;
+	public MMNEATLog individualLog;
 	
 	
 	/**
@@ -32,6 +36,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 		this.dimension = dimension;
 		this.CMAESInstance = newCMAESInstance(archive);
 		this.emitterName = getEmitterSuffix() + " Emitter " + id; 
+		this.individualLog = new MMNEATLog(emitterName.replace(" ", ""), false, false, false, true);
 		this.populationSize = CMAESInstance.parameters.getPopulationSize();
 		parentPopulation = new double[populationSize][CMAESInstance.getDimension()];
 		deltaIFitnesses = new double[populationSize];
@@ -67,11 +72,14 @@ public abstract class Emitter implements Comparable<Emitter> {
 	 */
 	protected void updateDistribution(double[][] parentPopulation2, double[] deltaI) {
 		CMAESInstance.parameters.unsafeUnlock(); // unlock parameters
+		if ( ((CMAME) MMNEAT.ea).io ) {
+			((CMAME) MMNEAT.ea).updateEmitterLog(individualLog, validParents);
+		}
 		
 		CMAESInstance.parameters.setMu(validParents);
-		System.out.println("Changed mu to "+validParents+" with an unsafe unlock/lock");
+		if (CMAME.PRINT_DEBUG) System.out.println("Changed mu to "+validParents+" with an unsafe unlock/lock");
 		CMAESInstance.parameters.setWeights(validParents, CMAESInstance.parameters.getRecombinationType());
-		System.out.println("Set weights with mu:"+validParents+" and Recombination type \""+CMAESInstance.parameters.getRecombinationType()+"\" with an unsafe unlock/lock");
+		if (CMAME.PRINT_DEBUG) System.out.println("Set weights with mu:"+validParents+" and Recombination type \""+CMAESInstance.parameters.getRecombinationType()+"\" with an unsafe unlock/lock");
 		
 		CMAESInstance.parameters.unsafeLock(); // relock parameters
 		validParents = 0; // reset valid parents
@@ -95,6 +103,9 @@ public abstract class Emitter implements Comparable<Emitter> {
 		additionCounter++;
 		if (additionCounter == populationSize) { // Add logging here
 			if (allInvalid()) {
+				if ( ((CMAME) MMNEAT.ea).io ) {
+					((CMAME) MMNEAT.ea).updateEmitterLog(individualLog, 0);
+				}
 				this.CMAESInstance = newCMAESInstance(archive);
 			} else {
 				updateDistribution(parentPopulation, deltaIFitnesses);
