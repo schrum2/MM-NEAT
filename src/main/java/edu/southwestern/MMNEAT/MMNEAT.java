@@ -961,7 +961,7 @@ public class MMNEAT {
 			evolutionaryRun(args);
 		}
 		System.out.println("done: " + (((System.currentTimeMillis() - start) / 1000.0) / 60.0) + " minutes");
-		if (!(task instanceof MultipleFunctionOptimization)) {
+		if (!(task instanceof MultipleFunctionOptimization) && !(task instanceof FunctionOptimizationTask)) {
 			System.exit(1);
 		}
 	}
