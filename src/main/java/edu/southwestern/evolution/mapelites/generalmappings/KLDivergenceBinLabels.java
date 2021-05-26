@@ -44,7 +44,6 @@ public class KLDivergenceBinLabels extends MultiDimensionalRealValuedBinLabels {
 	
 	// test something here
 	public static void main(String[] args) {
-		
 	}
 	
 }
