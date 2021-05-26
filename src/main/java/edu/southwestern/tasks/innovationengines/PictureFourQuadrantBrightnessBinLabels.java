@@ -115,7 +115,7 @@ public class PictureFourQuadrantBrightnessBinLabels implements BinLabels {
 		
 		for(int i = 0; i < binCoordinates.length; i++) {
 			double original = behaviorCharacterization[i];
-			binCoordinates[i] = (int) ((original / quadPixelCount) * BINS_PER_DIMENSION);
+			binCoordinates[i] = (int) Math.min((original / quadPixelCount) * BINS_PER_DIMENSION, BINS_PER_DIMENSION - 1);
 		}
 		return binCoordinates;
 	}
