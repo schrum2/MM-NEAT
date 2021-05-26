@@ -436,6 +436,11 @@ public class GraphicsUtil {
 		float[] HSB = Color.RGBtoHSB(r, g, b, null);
 		return HSB;
 	}
+	
+	public static float getBrightnessFromImage(BufferedImage image, int x, int y) {
+		float[] tempResult = getHSBFromImage(image, x, y);
+		return tempResult[BRIGHTNESS_INDEX];
+	}
 
 	/**
 	 * Gets HSB outputs from the CPPN in question from the CPPN
