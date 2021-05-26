@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
@@ -13,20 +14,25 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  *
  */
 
-public class PictureFourQuadrantBrightnessBinLabels {
+public class PictureFourQuadrantBrightnessBinLabels implements BinLabels {
 	List<String> binLabels = null;
-	private static int BINS_PER_DIMENSION;
+	private final int BINS_PER_DIMENSION;
 
 	
 //	private static final Pair<MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT> MAX_PIXEL;
 	
 	public PictureFourQuadrantBrightnessBinLabels() {
-		BINS_PER_DIMENSION = 10;
+		this(10); // replace with command line parameter
+	}
+
+	public PictureFourQuadrantBrightnessBinLabels(int binsPerDimension) {
+		BINS_PER_DIMENSION = binsPerDimension;
 	}
 	
 	/**
 	 * Creates the bin labels (coordinates corresponding
 	 * to the correct bin).
+	 * 
 	 * @return List of bin labels as strings
 	 */
 	public List<String> binLabels() {
@@ -37,9 +43,9 @@ public class PictureFourQuadrantBrightnessBinLabels {
 				for(int j = 0; j < BINS_PER_DIMENSION; j++) {
 					for(int k = 0; k < BINS_PER_DIMENSION; k++) {
 						for(int m = 0; m < BINS_PER_DIMENSION; m++) {
-							// bin(i,j,k,m) <-- the coordinate of the current bin
-							// bin(0,0,0,0) <-- should be the first bin
-							// bin(BINS_PER_DIMENSION - 1,BINS_PER_DIMENSION - 1,BINS_PER_DIMENSION - 1,BINS_PER_DIMENSION - 1) <-- should be the last bin
+							// (i,j,k,m) <-- the coordinate of the current bin
+							// (0,0,0,0) <-- should be the first bin
+							// (BINS_PER_DIMENSION - 1,BINS_PER_DIMENSION - 1,BINS_PER_DIMENSION - 1,BINS_PER_DIMENSION - 1) <-- should be the last bin
 							binLabels.add("(" + i + "," + j + "," + k + "," + m + ")");
 						}
 					}
@@ -100,8 +106,9 @@ public class PictureFourQuadrantBrightnessBinLabels {
 	 * @param image The image being analyzed
 	 * @return An int array containing 4 values corresponding to the current bin
 	 */
-	public static int[] binCoordinates(BufferedImage image) {
+	public int[] binCoordinates(BufferedImage image) {
 		double[] behaviorCharacterization = getQuadrantBehaviorCharacterization(image);
+		
 		int[] binCoordinates = new int[behaviorCharacterization.length];
 		
 		double quadPixelCount = (image.getWidth() / 2) * (image.getHeight() / 2);
@@ -111,5 +118,11 @@ public class PictureFourQuadrantBrightnessBinLabels {
 			binCoordinates[i] = (int) ((original / quadPixelCount) * BINS_PER_DIMENSION);
 		}
 		return binCoordinates;
+	}
+
+	@Override
+	public int oneDimensionalIndex(int[] multi) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
