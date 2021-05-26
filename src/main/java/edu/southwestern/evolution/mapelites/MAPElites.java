@@ -42,16 +42,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private static final int NUM_CODE_EMPTY = -1;
 	private static final int NUM_CODE_DIRECT = 2;
 	private static final int NUM_CODE_CPPN = 1;
-	private boolean io;
+	public boolean io;
 	private MMNEATLog archiveLog = null; // Archive elite scores
 	private MMNEATLog fillLog = null; // Archive fill amount
 	private MMNEATLog cppnThenDirectLog = null;
 	private MMNEATLog cppnVsDirectFitnessLog = null;
+	protected MMNEATLog[] emitterIndividualsLogs = null;
 	protected LonerTask<T> task;
 	protected Archive<T> archive;
 	private boolean mating;
 	private double crossoverRate;
-	private int iterations;
+	protected int iterations;
 	private int iterationsWintoutEliteCounter;
 	private int iterationsWithoutElite;
 	private int individualsPerGeneration;
@@ -237,8 +238,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				//in archive class, archive variable (vector)
 				cppnThenDirectLog.log(pseudoGeneration+"\t"+numCPPN+"\t"+numDirect);
 				cppnVsDirectFitnessLog.log(pseudoGeneration +"\t"+ StringUtils.join(eliteProper, "\t"));
-			}
-			
+			}			
 			// Special code for Lode Runner
 			if(MMNEAT.task instanceof LodeRunnerLevelTask) {
 				int numBeatenLevels = 0;
