@@ -38,20 +38,20 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		for (int i = 0; i < numImprovementEmitters; i++) {
 			Emitter e = new ImprovementEmitter(dimension, archive, i+1); // create improvement emitters
 			emitters[i] = e;
-			if (logFiles != null) logFiles[i] = e.individualLog.getFile().getName();
+			if (logFiles != null) logFiles[i] = e.individualLog.getFile().getName(); // add emitter log for later
 			place++;
 		}
 		for (int i = 0; i < numOptimizingEmitters; i++) {
 			Emitter e = new OptimizingEmitter(dimension, archive, i+1); // create optimizing emitters
 			emitters[place+i] = e;
-			if (logFiles != null) logFiles[place+i] = e.individualLog.getFile().getName();
+			if (logFiles != null) logFiles[place+i] = e.individualLog.getFile().getName(); // add emitter log for later
 		}
 		
 		if (logFiles != null) {
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
 			String udPrefix = experimentPrefix + "_" + "UpdateDistribution";
-			String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+			String directory = FileUtilities.getSaveDirectory(); // retrieves file directory
 			directory += (directory.equals("") ? "" : "/");
 			String udName = directory + udPrefix + "_log.plt";
 			
@@ -59,18 +59,14 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 			try {
 				PrintStream ps = new PrintStream(plot);
 				ps.println("set term pdf enhanced");
-				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-				ps.println("set yrange [0:"+ (Parameters.parameters.integerParameter("lambda")) +"]");
-				ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")) + "]");
-				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
+				ps.println("set yrange [0:"+ (Parameters.parameters.integerParameter("lambda")) +"]"); // lambda will be maximum possible value, a perfect update
+				ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")) + "]"); // 
+				ps.println("set title \"" + experimentPrefix + " Number of Valid Parents when Distribution is Updated\"");
 				ps.println("set output \"" + udName.substring(udName.lastIndexOf('/')+1, udName.lastIndexOf('.')) + ".pdf\"");
-				// The :1 is for skipping the "generation" number logged in the file
-				for (int i = 0; i < totalEmitters; i++) {
+				for (int i = 0; i < totalEmitters; i++) { // add line to plot each emitter
 					String shortName = logFiles[i].replace(experimentPrefix+"_", "").replace("_log.txt", "");
 					ps.println((i == 0 ? "plot \"" : "     \"") + logFiles[i] + "\" u 1:2 w linespoints t \""+shortName+"\"" + (i < totalEmitters-1 ? ", \\" : ""));
-					
 				}
-				
 				ps.close();
 			} catch (FileNotFoundException e) {
 				System.out.println("Could not create plot file: " + plot.getName());
@@ -121,6 +117,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	public void updateEmitterLog(MMNEATLog mLog, int validParents) {
 		mLog.log(iterations + "\t" + validParents);
 	}
+	
 	
 	
 	

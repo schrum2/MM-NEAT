@@ -73,7 +73,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 	protected void updateDistribution(double[][] parentPopulation2, double[] deltaI) {
 		CMAESInstance.parameters.unsafeUnlock(); // unlock parameters
 		if ( ((CMAME) MMNEAT.ea).io ) {
-			((CMAME) MMNEAT.ea).updateEmitterLog(individualLog, validParents);
+			((CMAME) MMNEAT.ea).updateEmitterLog(individualLog, validParents); // log valid parents
 		}
 		
 		CMAESInstance.parameters.setMu(validParents);
@@ -101,14 +101,14 @@ public abstract class Emitter implements Comparable<Emitter> {
 		deltaIFitnesses[additionCounter] = calculateFitness(newScore, currentScore);
 		parentPopulation[additionCounter] = parent;
 		additionCounter++;
-		if (additionCounter == populationSize) { // Add logging here
+		if (additionCounter == populationSize) {
 			if (allInvalid()) {
 				if ( ((CMAME) MMNEAT.ea).io ) {
-					((CMAME) MMNEAT.ea).updateEmitterLog(individualLog, 0);
+					((CMAME) MMNEAT.ea).updateEmitterLog(individualLog, 0); // log a zero
 				}
 				this.CMAESInstance = newCMAESInstance(archive);
 			} else {
-				updateDistribution(parentPopulation, deltaIFitnesses);
+				updateDistribution(parentPopulation, deltaIFitnesses); // logging happens inside this function
 			}
 			additionCounter = 0;
 		}
