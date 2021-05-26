@@ -188,37 +188,37 @@ public class PictureTargetTaskAutoEncoder {
         }
 
         //Train model:
-        int nEpochs = 3;
-        for( int epoch=0; epoch<nEpochs; epoch++ ){
-            for(INDArray data : featuresTrain){
-            	long[] originalShape = data.shape();
-            	INDArray reshapedArray = data.reshape(new int[] {(int) originalShape[0], 28*28});
-                net.fit(reshapedArray,reshapedArray);
+        int nEpochs = 3;	// number of runs
+        for( int epoch=0; epoch<nEpochs; epoch++ ){		// for each epoch 
+            for(INDArray data : featuresTrain){		// for each item in featuresTrain
+            	long[] originalShape = data.shape();	// stores the shape of the INDArray data 
+            	INDArray reshapedArray = data.reshape(new int[] {(int) originalShape[0], 28*28});	// reshapes the images to be 28x28 pixels and stores them in a new array
+                net.fit(reshapedArray,reshapedArray);	// Fit the model for one iteration on the provided data using the reshapedArray
             }
             System.out.println("Epoch " + epoch + " complete");
         }
         
         
-        List<Pair<Double,INDArray>> testResults = new ArrayList<>();
-        List<Pair<INDArray,INDArray>> inputOutput = new ArrayList<>();
+        List<Pair<Double,INDArray>> testResults = new ArrayList<>();	// 
+        List<Pair<INDArray,INDArray>> inputOutput = new ArrayList<>();	// 
         
         // Images not in training set
         //for(INDArray data : featuresTest){
-        for(INDArray data : featuresTrain){
-           	long[] originalShape = data.shape();
-        	INDArray reshapedArray = data.reshape(new int[] {(int) originalShape[0], 28*28});
-            int nRows = reshapedArray.rows();
-            for( int j=0; j<nRows; j++){
-                INDArray example = reshapedArray.getRow(j, true);
-                double score = net.score(new DataSet(example,example));
-                INDArray output = net.output(example);
+        for(INDArray data : featuresTrain){		// for each item in featuresTrain
+           	long[] originalShape = data.shape();	// stores the shape of the INDArray data
+        	INDArray reshapedArray = data.reshape(new int[] {(int) originalShape[0], 28*28});	// reshapes the images to be 28x28 pixels and stores them in a new array
+            int nRows = reshapedArray.rows();	// the number of rows in the reshapedArray
+            for( int j=0; j<nRows; j++){	// for each row in the reshapedArray
+                INDArray example = reshapedArray.getRow(j, true);	// saves the row from the 2D reshapedArray in an INDArray example
+                double score = net.score(new DataSet(example,example));	// saves the score from a DataSet with the input matrix and labels set to example
+                INDArray output = net.output(example);	// Stores the outputs from 'example' in an INDArray output
                 // Add (score, example) pair to the appropriate list
                 testResults.add(new ImmutablePair<>(score, example));
                 inputOutput.add(new ImmutablePair<>(example, output));
                 System.out.println("Score " + j + ": " + score + " example: " + example + "output: " + output);
-                ArrayList<INDArray> last = new ArrayList<>();
-                last.add(example);
-                last.add(output);
+                ArrayList<INDArray> last = new ArrayList<>();	// 
+                last.add(example);	// adding example to the ArrayList last
+                last.add(output);	// adding output to the ArrayList last
                 MNISTVisualizer inputVisualizer = new MNISTVisualizer(2.0, last, "Last Pair");
                 inputVisualizer.visualize();
                 MiscUtil.waitForReadStringAndEnterKeyPress();
