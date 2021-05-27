@@ -43,7 +43,7 @@ public class KLDivergenceBinLabels extends MultiDimensionalRealValuedBinLabels {
 		ConvNTuple c1 = KLDivTest.getConvNTuple(level1, Parameters.parameters.integerParameter("receptiveFieldWidth"), Parameters.parameters.integerParameter("receptiveFieldHeight"), Parameters.parameters.integerParameter("stride"));
 		ConvNTuple c2 = KLDivTest.getConvNTuple(level2, Parameters.parameters.integerParameter("receptiveFieldWidth"), Parameters.parameters.integerParameter("receptiveFieldHeight"), Parameters.parameters.integerParameter("stride"));
 
-		double klDiv = KLDiv.klDiv(c1.sampleDis, c2.sampleDis);
+		double klDiv = KLDiv.klDivSymmetric(c1.sampleDis, c2.sampleDis);
 		
 		return klDiv;
 	}

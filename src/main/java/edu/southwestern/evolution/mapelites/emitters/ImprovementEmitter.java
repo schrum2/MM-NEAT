@@ -28,8 +28,11 @@ public class ImprovementEmitter extends Emitter {
 		double[] phenod = ArrayUtil.doubleArrayFromList(elite.getPhenotype());
 		optEmitter.setInitialX(phenod); // start at random bin
 		optEmitter.setInitialStandardDeviation(0.5); // unsure if should be hardcoded or not
-		int mu = Parameters.parameters.integerParameter("lambda"); // Initialize based on single solution from the archive. Gets changed in response to lambda
 		int lambda = Parameters.parameters.integerParameter("lambda"); 
+		// Realized that mu = lambda / 2 after extensively reviewing the pyribs code and walking through with Amy Hoover.
+		// Even if pyribs, there is apparently an option for mu to be set differently, but it is definitely fixed, and
+		// the default is for it to be half of lambda.
+		int mu = lambda/2; 
 		optEmitter.parameters.setMu(mu);
 		optEmitter.parameters.setPopulationSize(lambda);
 		optEmitter.init();
@@ -41,7 +44,6 @@ public class ImprovementEmitter extends Emitter {
 	public double calculateFitness(double newScore, double currentScore) {
 		if (currentScore >= newScore) { // if bin was better or equal: Remember that CMA-ES is a minimizer
 			if (CMAME.PRINT_DEBUG) {System.out.println("Current bin ("+currentScore+") was already better than or equal to new bin ("+newScore+").");}
-			return CMAME.FAILURE_VALUE;
 		} else {
 			solutionCount++;
 			validParents++;
@@ -50,8 +52,8 @@ public class ImprovementEmitter extends Emitter {
 				return -newScore; // Negate score because CMA-ES is a minimizer	
 			} else { // if bin existed, but was worse than the new one
 				if (CMAME.PRINT_DEBUG) {System.out.println("Improved current bin ("+currentScore+") with new bin ("+newScore+")");}
-				return -(newScore - currentScore); // Negate difference score because CMA-ES is a minimizer	
 			}
-		}		
+		}	
+		return -(newScore - currentScore); // Negate difference score because CMA-ES is a minimizer	
 	}	
 }

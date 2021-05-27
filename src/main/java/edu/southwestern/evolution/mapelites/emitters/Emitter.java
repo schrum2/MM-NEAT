@@ -71,17 +71,16 @@ public abstract class Emitter implements Comparable<Emitter> {
 	 * @param deltaI Fitness values corresponding to the parents
 	 */
 	protected void updateDistribution(double[][] parentPopulation2, double[] deltaI) {
-		CMAESInstance.parameters.unsafeUnlock(); // unlock parameters
+//		CMAESInstance.parameters.unsafeUnlock(); // unlock parameters
 		if ( ((CMAME) MMNEAT.ea).io ) {
 			((CMAME) MMNEAT.ea).updateEmitterLog(individualLog, validParents); // log valid parents
 		}
-		
-		CMAESInstance.parameters.setMu(validParents);
-		if (CMAME.PRINT_DEBUG) System.out.println("Changed mu to "+validParents+" with an unsafe unlock/lock");
-		CMAESInstance.parameters.setWeights(validParents, CMAESInstance.parameters.getRecombinationType());
-		if (CMAME.PRINT_DEBUG) System.out.println("Set weights with mu:"+validParents+" and Recombination type \""+CMAESInstance.parameters.getRecombinationType()+"\" with an unsafe unlock/lock");
-		
-		CMAESInstance.parameters.unsafeLock(); // relock parameters
+//		CMAESInstance.parameters.setMu(validParents);
+//		if (CMAME.PRINT_DEBUG) System.out.println("Changed mu to "+validParents+" with an unsafe unlock/lock");
+//		CMAESInstance.parameters.setWeights(validParents, CMAESInstance.parameters.getRecombinationType());
+//		if (CMAME.PRINT_DEBUG) System.out.println("Set weights with mu:"+validParents+" and Recombination type \""+CMAESInstance.parameters.getRecombinationType()+"\" with an unsafe unlock/lock");
+//		
+//		CMAESInstance.parameters.unsafeLock(); // relock parameters
 		validParents = 0; // reset valid parents
 		CMAESInstance.updateDistribution(parentPopulation2, deltaI);	
 	}
@@ -123,12 +122,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 	 * @return True if all fitnesses are the CMA-ME failure value, false otherwise
 	 */
 	protected boolean allInvalid() {
-		for (double fit : deltaIFitnesses) {
-			if (fit != CMAME.FAILURE_VALUE) {
-				return false;
-			}
-		}
-		return true;
+		return validParents == 0;
 	}
 	
 

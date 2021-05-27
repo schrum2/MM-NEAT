@@ -29,7 +29,11 @@ public class OptimizingEmitter extends Emitter {
 		optEmitter.setInitialX(phenod); // start at random bin
 		optEmitter.setInitialStandardDeviation(0.5); // unsure if should be hardcoded or not
 		int lambda = Parameters.parameters.integerParameter("lambda"); 
-		optEmitter.parameters.setMu(lambda);
+		// Realized that mu = lambda / 2 after extensively reviewing the pyribs code and walking through with Amy Hoover.
+		// Even if pyribs, there is apparently an option for mu to be set differently, but it is definitely fixed, and
+		// the default is for it to be half of lambda.
+		int mu = lambda/2; 
+		optEmitter.parameters.setMu(mu);
 		optEmitter.parameters.setPopulationSize(lambda);
 		optEmitter.init();
 		optEmitter.writeToDefaultFilesHeaders(0); // Overwrite existing CMA-ES files
@@ -40,7 +44,6 @@ public class OptimizingEmitter extends Emitter {
 	public double calculateFitness(double newScore, double currentScore) {
 		if (currentScore >= newScore) { // if bin was better or equal
 			if (CMAME.PRINT_DEBUG) {System.out.println("Current bin ("+currentScore+") was already better than or equal to new bin ("+newScore+").");}
-			return CMAME.FAILURE_VALUE;
 		} else {
 			solutionCount++;
 			validParents++;
@@ -49,8 +52,8 @@ public class OptimizingEmitter extends Emitter {
 			} else { // if bin existed, but was worse than the new one
 				if (CMAME.PRINT_DEBUG) {System.out.println("Improved current bin ("+currentScore+") with new bin ("+newScore+")");}
 			}
-			return -newScore; // Negate score because CMA-ES is a minimizer, optimizing emitters always return the new value
-		}		
+		}	
+		return -newScore; // Negate score because CMA-ES is a minimizer, optimizing emitters always return the new value
 	}	
 
 }

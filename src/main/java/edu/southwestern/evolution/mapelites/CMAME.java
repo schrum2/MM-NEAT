@@ -21,7 +21,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	
 	private Emitter[] emitters; // array holding all emitters
 	public static final boolean PRINT_DEBUG = false; // prints out debug text if true (applies to both this class and emitter classes)
-	public static final double FAILURE_VALUE = Double.MAX_VALUE; // For rastrigin, MAX_VALUE greatly outperforms 0.0, both of which were tested. It is possible this may be better as 0 for another task
+	//public static final double FAILURE_VALUE = Double.MAX_VALUE;
 	public int totalEmitters;
 	private int emitterCounter = 0;
 	private String[] logFiles;
@@ -131,11 +131,11 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		
 		// Rastrigin 500 bin 20 vector 50000 gens
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true numImprovementEmitters:3 numOptimizingEmitters:0 lambda:100 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-CMAMETesting saveTo:CMAMETesting netio:false maxGens:10000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
-		MMNEAT.main(("runNumber:"+100+" randomSeed:"+100+" io:true lambda:"+100+" base:mapelitesfunctionoptimizationseveral log:mapelitesfunctionoptimizationSeveral-MELambda saveTo:MELambda netio:false maxGens:"+50000+" ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
+		//MMNEAT.main(("runNumber:"+100+" randomSeed:"+100+" io:true lambda:"+100+" base:mapelitesfunctionoptimizationseveral log:mapelitesfunctionoptimizationSeveral-MELambda saveTo:MELambda netio:false maxGens:"+50000+" ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 		
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true mu:50 lambda:50 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-METesting saveTo:METesting netio:false maxGens:10000 ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 		
-		//runSeveralCMAME();
+		runSeveralCMAME();
 	}
 	
 	private static final String FOLDER = "mapelitesfunctionoptimizationseveral";
