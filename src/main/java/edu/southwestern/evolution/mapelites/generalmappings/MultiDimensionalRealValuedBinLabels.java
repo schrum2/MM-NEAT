@@ -15,7 +15,7 @@ import edu.southwestern.evolution.mapelites.BinLabels;
  * @author Maxx Batterton
  *
  */
-public class MultiDimensionalRealValuedBinLabels implements BinLabels {
+public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 
 	List<String> labels = null;
 	private int binsPerDimension; // number of bins in each dimension
