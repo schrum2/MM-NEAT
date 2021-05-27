@@ -3,6 +3,7 @@ package edu.southwestern.evolution.mapelites.generalmappings;
 import java.util.ArrayList;
 import java.util.List;
 
+import cern.colt.Arrays;
 import edu.southwestern.evolution.mapelites.BinLabels;
 
 /**
@@ -80,10 +81,12 @@ public class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
+		//System.out.println("Multi-dimensional array: "+Arrays.toString(multi));
 		int index = 0;
 		for (int i = 0; i < numDimensions; i++) {
 			index += multi[i] * Math.pow(binsPerDimension, i); // get the 1D index of a bin
 		}
+		//System.out.println("One dimensional index: "+index);
 		return index;
 	}
 	
@@ -101,10 +104,9 @@ public class MultiDimensionalRealValuedBinLabels implements BinLabels {
 			if (behaviorCharacterization[i] > maxPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " exceeds maximum value specified ("+maxPossibleValue+")"); 
 			if (behaviorCharacterization[i] < minPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " is below minimum value specified ("+minPossibleValue+")"); 
 			double scaledValue = (behaviorCharacterization[i]-minPossibleValue) / (maxPossibleValue-minPossibleValue);
-			if (behaviorCharacterization[i] == maxPossibleValue) {
-				dbc[i] = ((int) Math.floor(scaledValue * binsPerDimension)) - 1;
-			} else {
-				dbc[i] = (int) Math.floor(scaledValue * binsPerDimension);
+			dbc[i] = (int) Math.floor(scaledValue * binsPerDimension);
+			if (dbc[i] == binsPerDimension) {
+				dbc[i]--;
 			}
 		}
 		//System.out.println("Discritizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
