@@ -17,6 +17,7 @@ public class PictureFourQuadrantBrightnessBinLabelsTest {
 	BufferedImage allWhite;
 	BufferedImage checkeredBlackAndWhite;
 	BufferedImage largeCheckeredBlackAndWhite;
+	BufferedImage randomBlackAndWhite;
 	
 	public static final int SIDE_LENGTH = 16;
 	public static final int SMALL_BIN_DIMENSION = 2;
@@ -31,59 +32,119 @@ public class PictureFourQuadrantBrightnessBinLabelsTest {
 		smallLabels = new PictureFourQuadrantBrightnessBinLabels(SMALL_BIN_DIMENSION);
 		mediumLabels = new PictureFourQuadrantBrightnessBinLabels(MEDIUM_BIN_DIMENSION);
 		
+		// An image with only black pixels
 		allBlack = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
+		// An image with only white pixels
 		allWhite = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
+		// An image with black and white checkered pixels
+		checkeredBlackAndWhite = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
+		// An image with black and white checkered quadrants
+		largeCheckeredBlackAndWhite = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
+		// An image with 'random' black and white pixels
+		randomBlackAndWhite = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
 		
-		// Setting all pixels in the image to black
+		// Image colors
 		int blackRGB = Color.BLACK.getRGB();
+		int whiteRGB = Color.WHITE.getRGB();
+				
+		// Setting all pixels in the image to black
 		for(int x = 0; x < allBlack.getWidth(); x++) {
 			for(int y = 0; y < allBlack.getHeight(); y++) {
 				allBlack.setRGB(x, y, blackRGB);
 			}
 		}
 		
+		
 		// Setting all pixels in the image to white
-		int whiteRGB = Color.WHITE.getRGB();
 		for(int x = 0; x < allWhite.getWidth(); x++) {
 			for(int y = 0; y < allWhite.getHeight(); y++) {
 				allWhite.setRGB(x, y, whiteRGB);
 			}
 		}
+	
 		
-		// Setting the pixels in the image to be black and white checkered
-		checkeredBlackAndWhite = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
+		// Set every other pixel to black starting on the first row, first pixel
 		for(int x = 0; x < checkeredBlackAndWhite.getWidth(); x += 2) {
 			for(int y = 0; y < checkeredBlackAndWhite.getHeight(); y += 2) {
 				checkeredBlackAndWhite.setRGB(x, y, blackRGB);
 			}
 		}
 		
-		for(int x = 1; x < checkeredBlackAndWhite.getWidth(); x += 2) {
-			for(int y = 1; y < checkeredBlackAndWhite.getHeight(); y += 2) {
-				checkeredBlackAndWhite.setRGB(x, y, blackRGB);
-			}
-		}
-		
+		// Set every other pixel to be white starting on the first row, second pixel
 		for(int x = 1; x < checkeredBlackAndWhite.getWidth(); x += 2) {
 			for(int y = 0; y < checkeredBlackAndWhite.getHeight(); y += 2) {
 				checkeredBlackAndWhite.setRGB(x, y, whiteRGB);
 			}
 		}
 		
+		// Set every other pixel to black starting on the second row, second pixel
+		for(int x = 1; x < checkeredBlackAndWhite.getWidth(); x += 2) {
+			for(int y = 1; y < checkeredBlackAndWhite.getHeight(); y += 2) {
+				checkeredBlackAndWhite.setRGB(x, y, blackRGB);
+			}
+		}
+		
+		// Set every other pixel to white starting on the second row, first pixel
 		for(int x = 0; x < checkeredBlackAndWhite.getWidth(); x += 2) {
 			for(int y = 1; y < checkeredBlackAndWhite.getHeight(); y += 2) {
 				checkeredBlackAndWhite.setRGB(x, y, whiteRGB);
 			}
 		}
 		
-		// Setting the quadrants in the image to be black and white checkered
-		largeCheckeredBlackAndWhite = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
+		
+		// Setting quadrant 1 to be black
 		for(int x = 0; x < largeCheckeredBlackAndWhite.getWidth() / 2; x++) {
 			for(int y = 0; y < largeCheckeredBlackAndWhite.getHeight() / 2; y++) {
 				largeCheckeredBlackAndWhite.setRGB(x, y, blackRGB);
 			}
 		}
 		
+		// Setting quadrant 2 to be white
+		for(int x = largeCheckeredBlackAndWhite.getWidth() / 2; x < largeCheckeredBlackAndWhite.getWidth(); x++) {
+			for(int y = 0; y < largeCheckeredBlackAndWhite.getHeight() / 2; y++) {
+				largeCheckeredBlackAndWhite.setRGB(x, y, whiteRGB);
+			}
+		}
+		
+		// Setting quadrant 3 to be white
+		for(int x = 0; x < largeCheckeredBlackAndWhite.getWidth() / 2; x++) {
+			for(int y = largeCheckeredBlackAndWhite.getHeight() / 2; y < largeCheckeredBlackAndWhite.getHeight(); y++) {
+				largeCheckeredBlackAndWhite.setRGB(x, y, whiteRGB);
+			}
+		}
+		
+		// Setting quadrant 4 to be black
+		for(int x = largeCheckeredBlackAndWhite.getWidth() / 2; x < largeCheckeredBlackAndWhite.getWidth(); x++) {
+			for(int y = largeCheckeredBlackAndWhite.getHeight() / 2; y < largeCheckeredBlackAndWhite.getHeight(); y++) {
+				largeCheckeredBlackAndWhite.setRGB(x, y, blackRGB);
+			}
+		}
+		
+		
+		// An image with 'random' black and white pictures
+		for(int x = 0; x < randomBlackAndWhite.getWidth(); x++) {
+			for(int y = 0; y < randomBlackAndWhite.getHeight(); y++) {
+				if(x % 3 == 0 && y % 4 == 0) {
+					largeCheckeredBlackAndWhite.setRGB(x, y, blackRGB);
+				} else if(x % 2 != 0 && y % 6 == 0) {
+					largeCheckeredBlackAndWhite.setRGB(x, y, whiteRGB);
+				} else if(x % 4 == 0 && y % 3 == 0) {
+					largeCheckeredBlackAndWhite.setRGB(x, y, blackRGB);
+				} else if(x % 4 == 0 && y % 2 == 0) {
+					largeCheckeredBlackAndWhite.setRGB(x, y, whiteRGB);
+				} else if(x % 8 == 0 && y % 5 != 0) {
+					largeCheckeredBlackAndWhite.setRGB(x, y, blackRGB);
+				} else if(x % 7 == 0 && y % 4 != 0) {
+					largeCheckeredBlackAndWhite.setRGB(x, y, whiteRGB);
+				} else if (x % 2 == 0 && y % 9 == 0) {
+					largeCheckeredBlackAndWhite.setRGB(x, y, blackRGB);
+				} else if (x % 6 == 0 && y % 3 != 0) {
+					largeCheckeredBlackAndWhite.setRGB(x, y, whiteRGB);
+				} else {
+					largeCheckeredBlackAndWhite.setRGB(x, y, blackRGB);
+				}
+			}
+		}
 		
 	}
 
@@ -122,6 +183,9 @@ public class PictureFourQuadrantBrightnessBinLabelsTest {
 		// Testing a checkeredBlackAndWhite image
 		assertArrayEquals(new double[] {32,32,32,32}, PictureFourQuadrantBrightnessBinLabels.getQuadrantBehaviorCharacterization(checkeredBlackAndWhite), 0);
 		
+		// Testing a largeCheckeredBlackAndWhite image
+		assertArrayEquals(new double[] {0,64,64,0}, PictureFourQuadrantBrightnessBinLabels.getQuadrantBehaviorCharacterization(largeCheckeredBlackAndWhite), 0);
+		
 	}
 
 	@Test
@@ -143,18 +207,30 @@ public class PictureFourQuadrantBrightnessBinLabelsTest {
 		assertEquals(32.0, PictureFourQuadrantBrightnessBinLabels.sumQuadrantBrightnessValues(checkeredBlackAndWhite, checkeredBlackAndWhite.getWidth() / 2, 0, checkeredBlackAndWhite.getWidth(), checkeredBlackAndWhite.getHeight() / 2), 0);
 		assertEquals(32.0, PictureFourQuadrantBrightnessBinLabels.sumQuadrantBrightnessValues(checkeredBlackAndWhite, 0, checkeredBlackAndWhite.getHeight() / 2, checkeredBlackAndWhite.getWidth() / 2, checkeredBlackAndWhite.getHeight()), 0);
 		assertEquals(32.0, PictureFourQuadrantBrightnessBinLabels.sumQuadrantBrightnessValues(checkeredBlackAndWhite, checkeredBlackAndWhite.getWidth() / 2, checkeredBlackAndWhite.getHeight() / 2, checkeredBlackAndWhite.getWidth(), checkeredBlackAndWhite.getHeight()), 0);
+	
+		// Testing a largeCheckeredBlackAndWhite image
+		assertEquals(0.0, PictureFourQuadrantBrightnessBinLabels.sumQuadrantBrightnessValues(largeCheckeredBlackAndWhite, 0, 0, largeCheckeredBlackAndWhite.getWidth() / 2, largeCheckeredBlackAndWhite.getHeight() / 2), 0);
+		assertEquals(64.0, PictureFourQuadrantBrightnessBinLabels.sumQuadrantBrightnessValues(largeCheckeredBlackAndWhite, largeCheckeredBlackAndWhite.getWidth() / 2, 0, largeCheckeredBlackAndWhite.getWidth(), largeCheckeredBlackAndWhite.getHeight() / 2), 0);
+		assertEquals(64.0, PictureFourQuadrantBrightnessBinLabels.sumQuadrantBrightnessValues(largeCheckeredBlackAndWhite, 0, largeCheckeredBlackAndWhite.getHeight() / 2, largeCheckeredBlackAndWhite.getWidth() / 2, largeCheckeredBlackAndWhite.getHeight()), 0);
+		assertEquals(0.0, PictureFourQuadrantBrightnessBinLabels.sumQuadrantBrightnessValues(largeCheckeredBlackAndWhite, largeCheckeredBlackAndWhite.getWidth() / 2, largeCheckeredBlackAndWhite.getHeight() / 2, largeCheckeredBlackAndWhite.getWidth(), largeCheckeredBlackAndWhite.getHeight()), 0);
+		
 	}
 
 	@Test
 	public void testBinCoordinates() {
-		//assertEquals("[0,0,0,0]", smallLabels.binCoordinates(allBlack));
+		// Testing smallLabels against each image
 		assertArrayEquals(new int[] {0,0,0,0}, smallLabels.binCoordinates(allBlack));
 		assertArrayEquals(new int[] {1,1,1,1}, smallLabels.binCoordinates(allWhite));
 		assertArrayEquals(new int[] {1,1,1,1}, smallLabels.binCoordinates(checkeredBlackAndWhite));
+		assertArrayEquals(new int[] {0,1,1,0}, smallLabels.binCoordinates(largeCheckeredBlackAndWhite));
+		//assertArrayEquals(new int[] {0,0,0,0}, smallLabels.binCoordinates(randomBlackAndWhite));
 		
+		// Testing mediumLabels against each image
 		assertArrayEquals(new int[] {0,0,0,0}, mediumLabels.binCoordinates(allBlack));
 		assertArrayEquals(new int[] {9,9,9,9}, mediumLabels.binCoordinates(allWhite));
 		assertArrayEquals(new int[] {5,5,5,5}, mediumLabels.binCoordinates(checkeredBlackAndWhite));
+		assertArrayEquals(new int[] {0,9,9,0}, mediumLabels.binCoordinates(largeCheckeredBlackAndWhite));
+		
 	}
 }
 
