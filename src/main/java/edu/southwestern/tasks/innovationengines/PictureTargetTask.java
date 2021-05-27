@@ -273,7 +273,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		
 		
 		// For test runs
-		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
+		MMNEAT.main(new String[]{"runNumber:1","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
 				"log:TargetImage-QuadrantRMSESkull","saveTo:QuadrantRMSESkull","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
@@ -286,7 +286,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
 				"matchImageFile:skull64.jpg",
-				"fitnessSaveThreshold:0.75",		// Higher threshold for RMSE 
+				"fitnessSaveThreshold:0.71",		// Higher threshold for RMSE 
 				"includeSigmoidFunction:true", 	// In Brian Woolley paper
 				"includeTanhFunction:false",
 				"includeIdFunction:true",		// In Brian Woolley paper
