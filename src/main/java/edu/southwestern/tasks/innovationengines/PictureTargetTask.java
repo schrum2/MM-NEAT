@@ -144,15 +144,30 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
 		Network cppn = individual.getPhenotype();
 		BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, imageWidth, imageHeight);
 		TWEANNGenotype tweannIndividual = (TWEANNGenotype) individual;
-		// What if number of nodes or links exceeds 35? Need to cap the index
-		int nodes = Math.min(tweannIndividual.nodes.size(), CPPNComplexityBinMapping.MAX_NUM_NEURONS);
-		int links = Math.min(tweannIndividual.links.size(), CPPNComplexityBinMapping.MAX_NUM_LINKS);
-		int[] indicesMAPEliteBin = new int[] {nodes, links}; // Array of two values corresponding to bin label dimensions
+		
+		// Need to assign values
+		int[] indicesMAPEliteBin = null;
+		
+		if(MMNEAT.ea instanceof MAPElites) {
+			
+			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNComplexityBinMapping) {
+				// What if number of nodes or links exceeds 35? Need to cap the index
+				int nodes = Math.min(tweannIndividual.nodes.size(), CPPNComplexityBinMapping.MAX_NUM_NEURONS);
+				int links = Math.min(tweannIndividual.links.size(), CPPNComplexityBinMapping.MAX_NUM_LINKS);
+				indicesMAPEliteBin = new int[] {nodes, links}; // Array of two values corresponding to bin label dimensions
+			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof PictureFourQuadrantBrightnessBinLabels) {
+				PictureFourQuadrantBrightnessBinLabels labels = (PictureFourQuadrantBrightnessBinLabels) ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass();
+				indicesMAPEliteBin = labels.binCoordinates(image);
+			} else {
+				throw new IllegalStateException("No valid binning scheme provided for PictureTargetTask");
+			}
+		}
 		
 		double binScore = fitness(image);
 		
@@ -166,7 +181,6 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		}
 		if(CommonConstants.netio) {
 			//System.out.println("Save archive images");
-			@SuppressWarnings("unchecked")
 			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
 			List<String> binLabels = archive.getBinMapping().binLabels();
 			// Index in flattened bin array
@@ -261,11 +275,13 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		// For test runs
 		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
-				"log:TargetImage-RMSESkull","saveTo:RMSESkull","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
+				"log:TargetImage-QuadrantRMSESkull","saveTo:QuadrantRMSESkull","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping","fs:true",
+				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping",
+				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
+				"fs:true",
 				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
