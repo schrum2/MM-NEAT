@@ -188,6 +188,7 @@ public class PictureFourQuadrantBrightnessBinLabelsTest {
 		// Testing a largeCheckeredBlackAndWhite image
 		assertArrayEquals(new double[] {0,64,64,0}, PictureFourQuadrantBrightnessBinLabels.getQuadrantBehaviorCharacterization(largeCheckeredBlackAndWhite), 0);
 		
+		// Testing a randomBlackAndWhite image
 		assertArrayEquals(new double[] {40,41,44,45}, PictureFourQuadrantBrightnessBinLabels.getQuadrantBehaviorCharacterization(randomBlackAndWhite), 0);
 	}
 
