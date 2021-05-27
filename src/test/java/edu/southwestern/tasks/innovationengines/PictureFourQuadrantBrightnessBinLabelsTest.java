@@ -125,23 +125,25 @@ public class PictureFourQuadrantBrightnessBinLabelsTest {
 		for(int x = 0; x < randomBlackAndWhite.getWidth(); x++) {
 			for(int y = 0; y < randomBlackAndWhite.getHeight(); y++) {
 				if(x % 3 == 0 && y % 4 == 0) {
-					largeCheckeredBlackAndWhite.setRGB(x, y, blackRGB);
+					randomBlackAndWhite.setRGB(x, y, blackRGB);
 				} else if(x % 2 != 0 && y % 6 == 0) {
-					largeCheckeredBlackAndWhite.setRGB(x, y, whiteRGB);
+					randomBlackAndWhite.setRGB(x, y, blackRGB);
 				} else if(x % 4 == 0 && y % 3 == 0) {
-					largeCheckeredBlackAndWhite.setRGB(x, y, blackRGB);
+					randomBlackAndWhite.setRGB(x, y, blackRGB);
 				} else if(x % 4 == 0 && y % 2 == 0) {
-					largeCheckeredBlackAndWhite.setRGB(x, y, whiteRGB);
+					randomBlackAndWhite.setRGB(x, y, whiteRGB);
 				} else if(x % 8 == 0 && y % 5 != 0) {
-					largeCheckeredBlackAndWhite.setRGB(x, y, blackRGB);
+					randomBlackAndWhite.setRGB(x, y, whiteRGB);
 				} else if(x % 7 == 0 && y % 4 != 0) {
-					largeCheckeredBlackAndWhite.setRGB(x, y, whiteRGB);
-				} else if (x % 2 == 0 && y % 9 == 0) {
-					largeCheckeredBlackAndWhite.setRGB(x, y, blackRGB);
-				} else if (x % 6 == 0 && y % 3 != 0) {
-					largeCheckeredBlackAndWhite.setRGB(x, y, whiteRGB);
+					randomBlackAndWhite.setRGB(x, y, blackRGB);
+				} else if(x % 2 == 0 && y % 9 == 0) {
+					randomBlackAndWhite.setRGB(x, y, whiteRGB);
+				} else if(x % 6 == 0 && y % 3 != 0) {
+					randomBlackAndWhite.setRGB(x, y, whiteRGB);
+				} else if(x % 2 == 0 && y % 2 != 0) {
+					randomBlackAndWhite.setRGB(x, y, whiteRGB);
 				} else {
-					largeCheckeredBlackAndWhite.setRGB(x, y, blackRGB);
+					randomBlackAndWhite.setRGB(x, y, whiteRGB);
 				}
 			}
 		}
@@ -186,6 +188,7 @@ public class PictureFourQuadrantBrightnessBinLabelsTest {
 		// Testing a largeCheckeredBlackAndWhite image
 		assertArrayEquals(new double[] {0,64,64,0}, PictureFourQuadrantBrightnessBinLabels.getQuadrantBehaviorCharacterization(largeCheckeredBlackAndWhite), 0);
 		
+		assertArrayEquals(new double[] {40,41,44,45}, PictureFourQuadrantBrightnessBinLabels.getQuadrantBehaviorCharacterization(randomBlackAndWhite), 0);
 	}
 
 	@Test
@@ -214,6 +217,12 @@ public class PictureFourQuadrantBrightnessBinLabelsTest {
 		assertEquals(64.0, PictureFourQuadrantBrightnessBinLabels.sumQuadrantBrightnessValues(largeCheckeredBlackAndWhite, 0, largeCheckeredBlackAndWhite.getHeight() / 2, largeCheckeredBlackAndWhite.getWidth() / 2, largeCheckeredBlackAndWhite.getHeight()), 0);
 		assertEquals(0.0, PictureFourQuadrantBrightnessBinLabels.sumQuadrantBrightnessValues(largeCheckeredBlackAndWhite, largeCheckeredBlackAndWhite.getWidth() / 2, largeCheckeredBlackAndWhite.getHeight() / 2, largeCheckeredBlackAndWhite.getWidth(), largeCheckeredBlackAndWhite.getHeight()), 0);
 		
+		// Testing a randomBlackAndWhite image
+		assertEquals(40.0, PictureFourQuadrantBrightnessBinLabels.sumQuadrantBrightnessValues(randomBlackAndWhite, 0, 0, randomBlackAndWhite.getWidth() / 2, randomBlackAndWhite.getHeight() / 2), 0);
+		assertEquals(41.0, PictureFourQuadrantBrightnessBinLabels.sumQuadrantBrightnessValues(randomBlackAndWhite, randomBlackAndWhite.getWidth() / 2, 0, randomBlackAndWhite.getWidth(), randomBlackAndWhite.getHeight() / 2), 0);
+		assertEquals(44.0, PictureFourQuadrantBrightnessBinLabels.sumQuadrantBrightnessValues(randomBlackAndWhite, 0, randomBlackAndWhite.getHeight() / 2, randomBlackAndWhite.getWidth() / 2, randomBlackAndWhite.getHeight()), 0);
+		assertEquals(45.0, PictureFourQuadrantBrightnessBinLabels.sumQuadrantBrightnessValues(randomBlackAndWhite, randomBlackAndWhite.getWidth() / 2, randomBlackAndWhite.getHeight() / 2, randomBlackAndWhite.getWidth(), randomBlackAndWhite.getHeight()), 0);
+		
 	}
 
 	@Test
@@ -223,13 +232,14 @@ public class PictureFourQuadrantBrightnessBinLabelsTest {
 		assertArrayEquals(new int[] {1,1,1,1}, smallLabels.binCoordinates(allWhite));
 		assertArrayEquals(new int[] {1,1,1,1}, smallLabels.binCoordinates(checkeredBlackAndWhite));
 		assertArrayEquals(new int[] {0,1,1,0}, smallLabels.binCoordinates(largeCheckeredBlackAndWhite));
-		//assertArrayEquals(new int[] {0,0,0,0}, smallLabels.binCoordinates(randomBlackAndWhite));
+		assertArrayEquals(new int[] {1,1,1,1}, smallLabels.binCoordinates(randomBlackAndWhite));
 		
 		// Testing mediumLabels against each image
 		assertArrayEquals(new int[] {0,0,0,0}, mediumLabels.binCoordinates(allBlack));
 		assertArrayEquals(new int[] {9,9,9,9}, mediumLabels.binCoordinates(allWhite));
 		assertArrayEquals(new int[] {5,5,5,5}, mediumLabels.binCoordinates(checkeredBlackAndWhite));
 		assertArrayEquals(new int[] {0,9,9,0}, mediumLabels.binCoordinates(largeCheckeredBlackAndWhite));
+		assertArrayEquals(new int[] {6,6,6,7}, mediumLabels.binCoordinates(randomBlackAndWhite));
 		
 	}
 }
