@@ -8,7 +8,12 @@ import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
- * 
+ * This class creates a new binning scheme for images.  An image
+ * is broken up into four quadrants and the brightness of the pixels
+ * is summed and returned in an array of four numbers: the four brightness
+ * sums for the four quadrants.  These four numbers correspond to a 
+ * specific bin, thus creating a new binning scheme for the images
+ * produced by PictureTargetTask.
  * 
  * @author Anna Wicker
  *
@@ -120,9 +125,19 @@ public class PictureFourQuadrantBrightnessBinLabels implements BinLabels {
 		return binCoordinates;
 	}
 
+	/**
+	 * Calculates the index of the current bin in an array that 
+	 * holds all of the sets of coordinates for the different
+	 * bins for a given image.
+	 * 
+	 * @param multi A coordinate of the current bin
+	 * @return Returns the index of the current bin in the array 
+	 * 		   that holds all the sets of coordinates (i.e. first 
+	 * 		   bin has an index of 0, second bin has an index of
+	 * 		   1, etc.)
+	 */
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		// TODO Auto-generated method stub
-		return 0;
+		return BINS_PER_DIMENSION * (BINS_PER_DIMENSION * (BINS_PER_DIMENSION * multi[0] + multi[1]) + multi[2]) + multi[3];
 	}
 }
