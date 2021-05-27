@@ -5,10 +5,16 @@ import distance.kl.KLDiv;
 import distance.test.KLDivTest;
 import edu.southwestern.parameters.Parameters;
 
+/**
+ * Binning scheme for KL Divergence
+ * 
+ * @author Maxx Batterton
+ *
+ */
 public class KLDivergenceBinLabels extends MultiDimensionalRealValuedBinLabels {
 	
 	public KLDivergenceBinLabels() {
-		super(Parameters.parameters.integerParameter("klDivBinDimension"), Parameters.parameters.doubleParameter("klDivMaxValue"), 2);
+		super(Parameters.parameters.integerParameter("klDivBinDimension"), 0, Parameters.parameters.doubleParameter("klDivMaxValue"), 2, 1);
 	}
 	
 	/**

@@ -14,11 +14,12 @@ import edu.southwestern.evolution.mapelites.BinLabels;
  * @author Maxx Batterton
  *
  */
-public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
+public class MultiDimensionalRealValuedBinLabels implements BinLabels {
 
 	List<String> labels = null;
 	private int binsPerDimension; // number of bins in each dimension
-	private double maxPossibleValue; // max possible value, acts as the upper bound for the bins
+	private double minPossibleValue; // min possible value, lowest value an input could have and still be valid
+	private double maxPossibleValue; // max possible value, highest value an input could have and still be valid
 	private double segmentSize; // difference between two adjacent bins, the size of the bin
 	private int numDimensions; // number of dimensions overall
 	
@@ -28,13 +29,15 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	 * constructor of a derivative binning scheme.
 	 * 
 	 * @param binsPerDimension Amount of bins in each dimension
+	 * @param minPossibleValue Minimum value of bins, to bound the values to a certain point 
 	 * @param maxPossibleValue Maximum value of bins, to bound the values to a certain point
 	 * @param numDimensions Number of dimensions in the binning scheme
 	 */
-	public MultiDimensionalRealValuedBinLabels(int binsPerDimension, double maxPossibleValue, int numDimensions) {
+	public MultiDimensionalRealValuedBinLabels(int binsPerDimension, double minPossibleValue, double maxPossibleValue, int numDimensions, int vectorLength) {
 		this.binsPerDimension = binsPerDimension;
-		this.maxPossibleValue = maxPossibleValue;
-		this.segmentSize = (double) maxPossibleValue / binsPerDimension; // size divided up
+		this.minPossibleValue = minPossibleValue*vectorLength; // should be negated max value or zero
+		this.maxPossibleValue = maxPossibleValue*vectorLength;
+		this.segmentSize = (double) (((maxPossibleValue-minPossibleValue)*vectorLength) / binsPerDimension); // size divided up
 		this.numDimensions = numDimensions;
 	}
 	
@@ -44,7 +47,7 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 		if(labels == null) { // Create once and re-use, but wait until after Parameters are loaded	
 			int size = (int) Math.floor(Math.pow(binsPerDimension, numDimensions)); // get overall amount of bins
 			labels = new ArrayList<String>(size);
-			generateLabel("]", 0); // start recursive label generator
+			generateLabel(")", 0); // start recursive label generator
 		}
 		return labels;
 	}
@@ -60,14 +63,14 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	 */
 	private void generateLabel(String input, int step) {
 		if (step == numDimensions) {
-			labels.add("[" + input); // all dimensions added, cap the label
+			labels.add("(" + input); // all dimensions added, cap the label
 		} else {
-			for (int i = 0; i < binsPerDimension; i++) {
+			for (double i = 0; i < binsPerDimension; i++) {
 				String newInput = input;
 				if (step != 0) {
 					newInput = ", " + newInput; 
 				}
-				newInput = ("[" + i*segmentSize + " to " + (i+1)*segmentSize +"]") + newInput; // add dimension component to label
+				newInput = ("[" + ((i*segmentSize)+minPossibleValue) + " to " + (((i+1)*segmentSize)+minPossibleValue) +"]") + newInput; // add dimension component to label
 				generateLabel(newInput, step+1); // go to next dimension to add next part
 			}
 		}
@@ -95,8 +98,14 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	public int[] discretize(double[] behaviorCharacterization) {
 		int[] dbc = new int[numDimensions];
 		for (int i = 0; i < numDimensions; i++) {
-			if (behaviorCharacterization[i] > maxPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " exceeds KL Divergence maximum value specified ("+maxPossibleValue+")"); 
-			dbc[i] = (int) Math.floor(behaviorCharacterization[i] / segmentSize);
+			if (behaviorCharacterization[i] > maxPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " exceeds maximum value specified ("+maxPossibleValue+")"); 
+			if (behaviorCharacterization[i] < minPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " is below minimum value specified ("+minPossibleValue+")"); 
+			double scaledValue = (behaviorCharacterization[i]-minPossibleValue) / (maxPossibleValue-minPossibleValue);
+			if (behaviorCharacterization[i] == maxPossibleValue) {
+				dbc[i] = ((int) Math.floor(scaledValue * binsPerDimension)) - 1;
+			} else {
+				dbc[i] = (int) Math.floor(scaledValue * binsPerDimension);
+			}
 		}
 		//System.out.println("Discritizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
 		return dbc;
@@ -104,6 +113,5 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	
 	
 	// Behavior characterization depends on the specific binning scheme
-	
-	
+		
 }
