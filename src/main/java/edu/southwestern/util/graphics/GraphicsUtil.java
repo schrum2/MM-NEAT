@@ -574,10 +574,7 @@ public class GraphicsUtil {
 		int resultIndex = 0;
 		for(int x = 0; x < image.getWidth(); x++) {
 			for(int y = 0; y < image.getHeight();  y++) {
-				int pixelRGB = image.getRGB(x, y);
-				Color original = new Color(pixelRGB);
-				// Get HSB values (null means a new array is created)
-				float[] hsb = Color.RGBtoHSB(original.getRed(), original.getGreen(), original.getBlue(), null);
+				float[] hsb = getHSB(image, x, y);
 				// If the image is black and white use brightness
 				if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) {
 					result[resultIndex++] = hsb[BRIGHTNESS_INDEX];
@@ -592,6 +589,22 @@ public class GraphicsUtil {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * GEt HSB values at specific x/y coordinates in an image
+	 * 
+	 * @param image Image to get pixel from
+	 * @param x x-coordinate of pixel
+	 * @param y y-coordinate of pixel
+	 * @return three-element HSB array corresponding to pixel
+	 */
+	public static float[] getHSB(BufferedImage image, int x, int y) {
+		int pixelRGB = image.getRGB(x, y);
+		Color original = new Color(pixelRGB);
+		// Get HSB values (null means a new array is created)
+		float[] hsb = Color.RGBtoHSB(original.getRed(), original.getGreen(), original.getBlue(), null);
+		return hsb;
 	}
 	
 	/**

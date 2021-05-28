@@ -1,66 +1,90 @@
 package edu.southwestern.tasks.innovationengines;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
-import java.io.FileNotFoundException;
+import javax.imageio.ImageIO;
 
-import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
-import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
- * Creates an image that reflects the difference in 
+ * Creates an image that reflects the difference between each
+ * pixel in the observed image and the target image.  The image
+ * produced will essentially be a heat map which displays the 
+ * redisual values of each pixel.
  * 
  * @author Anna Wicker
  *
  */
 public class PictureTargetFitnessTroubleshoot {
 	
+	private static final int DISPLAY_SIDE_LENGTH = 800;
 	public static final int SIDE_LENGTH = 64;
+	public static final String IMAGE_MATCH_PATH = "data" + File.separator + "imagematch";
 
 	public BufferedImage observed;
 	public BufferedImage target;
 	
-	public BufferedImage differenceRGB;
-	
-	public PictureTargetFitnessTroubleshoot() {
 		
-	}
-	
 	/**
+	 * Creates the heatmap showing the degree of difference 
+	 * between each pixel in the observed and target image.
 	 * 
 	 * @param observed
 	 * @param target
 	 */
-	public static BufferedImage heatMapConstruction(BufferedImage observed, BufferedImage target) {
-		//assert candidateFeatures.length == targetFeatures.length: "Number of candidate and target features needs to match";
+	public static BufferedImage heatmapConstruction(BufferedImage observed, BufferedImage target) {
+		
 		assert observed.getWidth() == target.getWidth() && observed.getHeight() == target.getHeight(): "Image dimensions need to match";
 		
-		differenceRGB = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
-		
-		// Scaling error values for observed image
-		
-		
-		// Scaling error values for target image
+		BufferedImage differenceRGB = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
 		
 		for(int x = 0; x < observed.getWidth(); x++) {
 			for(int y = 0; y < observed.getHeight(); y++) {
-				int degreeOfDifference = observed.getRGB(x, y) - target.getRGB(x, y);
-				differenceRGB.setRGB(x, y, degreeOfDifference);
+				
+				float observedBrightness = GraphicsUtil.getHSB(observed, x, y)[GraphicsUtil.BRIGHTNESS_INDEX];
+				float targetBrightness = GraphicsUtil.getHSB(target, x, y)[GraphicsUtil.BRIGHTNESS_INDEX];
+				
+				double degreeOfDifference = PictureTargetTask.degreeOfDifference(observedBrightness, targetBrightness);
+				
+				
+				
+				System.out.println(x + "," + y +":" + degreeOfDifference);
+				Color c = new Color((float) degreeOfDifference, 0, 0);
+				differenceRGB.setRGB(x, y, c.getRGB());
 			}
 		}
+		
+		// Calculate and print Woolley fitness
+		
+		
+		return differenceRGB;
 	}
 	
 	
-	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		// TODO Auto-generated method stub
+	public static void main(String[] args) throws NoSuchMethodException, IOException {
+		
+		BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "failedskull.jpg"));
+		BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.jpg"));
+		
+		
+		//ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + filename));
+		BufferedImage differenceRGB = heatmapConstruction(skull, targetSkull);
+		Image img = differenceRGB.getScaledInstance(DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH, java.awt.Image.SCALE_DEFAULT);
+		
+	    BufferedImage bimage = convertToBufferedImage(img);
+		
+	    System.out.println("Woolley fitness = ");
 		
 //		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE, ArrayUtil.doubleOnes(network.numInputs()), 0, SCALE, ROTATION);
 //		DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", SIZE, SIZE);
 		
-		DrawingPanel heatMap = GraphicsUtil.drawImage(differenceRGB, "Difference in brightness at each pixel", SIDE_LENGTH, SIDE_LENGTH);
+		DrawingPanel heatmap = GraphicsUtil.drawImage(bimage, "Difference in brightness at each pixel", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
 
 		// For test runs
 //		MMNEAT.main(new String[]{"runNumber:1","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
@@ -95,6 +119,17 @@ public class PictureTargetFitnessTroubleshoot {
 //				"includeFullSawtoothFunction:false",
 //				"includeTriangleWaveFunction:false", 
 //				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:true"}); 
+	}
+
+
+	public static BufferedImage convertToBufferedImage(Image img) {
+		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+	    // Draw the image on to the buffered image
+	    Graphics2D bGr = bimage.createGraphics();
+	    bGr.drawImage(img, 0, 0, null);
+	    bGr.dispose();
+		return bimage;
 	}
 
 }

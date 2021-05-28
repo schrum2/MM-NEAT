@@ -111,11 +111,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		
 		double[] candidateFeatures = GraphicsUtil.flatFeatureArrayFromBufferedImage(candidateImage);
 		
-		// To Anna: Have an if/else if/else statement here.
-		// if useWoolleyImageMatchFitness then use the code you already have (need new command line parameter)
-		
-		// Using the fitness calculation from the Woolley paper
-		
+		// Using the fitness calculation from the Woolley paper		
 		if(Parameters.parameters.booleanParameter("useWoolleyImageMatchFitness")) {
 			double error = candidateVsTargetError(candidateFeatures, targetImageFeatures);
 			return 1 - error * error;
