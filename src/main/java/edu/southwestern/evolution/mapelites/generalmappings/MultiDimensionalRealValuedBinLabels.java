@@ -33,6 +33,7 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	 * @param minPossibleValue Minimum value of bins, to bound the values to a certain point 
 	 * @param maxPossibleValue Maximum value of bins, to bound the values to a certain point
 	 * @param numDimensions Number of dimensions in the binning scheme
+	 * @param vectorLength The length of the vector to be evolved
 	 */
 	public MultiDimensionalRealValuedBinLabels(int binsPerDimension, double minPossibleValue, double maxPossibleValue, int numDimensions, int vectorLength) {
 		this.binsPerDimension = binsPerDimension;

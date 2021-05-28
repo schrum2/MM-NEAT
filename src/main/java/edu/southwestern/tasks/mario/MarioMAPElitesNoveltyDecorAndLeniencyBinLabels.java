@@ -6,6 +6,13 @@ import java.util.List;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.Parameters;
 
+/**
+ * Binning scheme for Mario GAN using Level
+ * Novelty, Decoration Frequency, and Leniency
+ * 
+ * @author Maxx Batterton
+ *
+ */
 public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels {
 
 	List<String> labels = null;
@@ -39,7 +46,7 @@ public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels
 	
 	
 	
-//	public static void main(String[] args) {
+//	public static void main(String[] args) { // TODO: remove, just left it in in case it doesn't fully work
 //		MarioMAPElitesNoveltyDecorAndLeniencyBinLabels test = new MarioMAPElitesNoveltyDecorAndLeniencyBinLabels();
 //		List<String> labells = test.binLabels();
 //		for (String s : labells) {
