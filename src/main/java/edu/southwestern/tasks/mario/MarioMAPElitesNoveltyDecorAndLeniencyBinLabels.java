@@ -9,8 +9,8 @@ import edu.southwestern.parameters.Parameters;
 public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels {
 
 	List<String> labels = null;
-	private int levelBinsPerDimension;
-	private int noveltyBinsPerDimension;
+	private int levelBinsPerDimension; // amount of bins for the Decor and Leniency dimensions
+	private int noveltyBinsPerDimension; // amount of bins for the Novelty dimension
 	
 	@Override
 	public List<String> binLabels() {
@@ -39,7 +39,6 @@ public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels
 	
 	
 	
-	// 
 	public static void main(String[] args) {
 		MarioMAPElitesNoveltyDecorAndLeniencyBinLabels test = new MarioMAPElitesNoveltyDecorAndLeniencyBinLabels();
 		List<String> labells = test.binLabels();
@@ -47,8 +46,8 @@ public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels
 			System.out.println(s);
 		}
 		float novelty = 0.5f;
-		int noveltyIndex =  Math.min((int)(novelty*20), 20-1);
-		int oneDIndex = test.oneDimensionalIndex(new int[] {noveltyIndex, 5, 9});
+		int noveltyIndex =  Math.min((int)(novelty*20), 20-1); // 20 should be subbed for the noveltyBinAmount parameter
+		int oneDIndex = test.oneDimensionalIndex(new int[] {noveltyIndex, 5, 9}); /
 		String inde = labells.get(oneDIndex);
 		System.out.println(oneDIndex);
 		System.out.println(inde);
