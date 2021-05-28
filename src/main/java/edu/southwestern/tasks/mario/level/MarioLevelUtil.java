@@ -275,13 +275,13 @@ public class MarioLevelUtil {
 	 * @param segmentWidth the width of the segments/chunk
 	 * @return levelWithParsedSegments the level containing every segment
 	 */
-	public static ArrayList<ArrayList<List<Integer>>> getSegmentsFromLevel(ArrayList<List<Integer>> oneLevel, int segmentWidth){
+	public static List<List<List<Integer>>> getSegmentsFromLevel(ArrayList<List<Integer>> oneLevel, int segmentWidth){
 		if (oneLevel.get(0).size()%segmentWidth!=0){
             System.out.println("getLevelStats: Level not multiple of segment width");
             return null;
         }      
 		int height = oneLevel.size();
-        ArrayList<ArrayList<List<Integer>>> levelWithParsedSegments = new ArrayList<ArrayList<List<Integer>>>();
+        List<List<List<Integer>>> levelWithParsedSegments = new ArrayList<List<List<Integer>>>();
         // Loop through each segment
         int numSegments = oneLevel.get(0).size()/segmentWidth;
         for(int l=0; l<numSegments; l++){

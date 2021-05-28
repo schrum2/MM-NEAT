@@ -300,10 +300,10 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		double jumps = info == null ? 0 : info.jumpActionsPerformed;
 		int numDistinctSegments;
 		//put each segment into a HashSet to see if it's  distinct
-		HashSet<ArrayList<List<Integer>>> k = new HashSet<ArrayList<List<Integer>>>();
-        ArrayList<ArrayList<List<Integer>>> levelWithParsedSegments = MarioLevelUtil.getSegmentsFromLevel(oneLevel, SEGMENT_WIDTH_IN_BLOCKS);
+		HashSet<List<List<Integer>>> k = new HashSet<List<List<Integer>>>();
+        List<List<List<Integer>>> levelWithParsedSegments = MarioLevelUtil.getSegmentsFromLevel(oneLevel, SEGMENT_WIDTH_IN_BLOCKS);
         //int numSegments = 0;
-        for(ArrayList<List<Integer>> segment : levelWithParsedSegments) {
+        for(List<List<Integer>> segment : levelWithParsedSegments) {
         	k.add(segment);
         	//numSegments++;
         }
@@ -532,8 +532,8 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				int[][] oneLevelAs2DArray = ArrayUtil.int2DArrayFromListOfLists(oneLevel);
 				dims = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
 				
-			} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesNoveltyDecorAndLeniencyBinLabels) { // TODO
-				double novelty = 0; //LevelNovelty.averageSegmentNovelty(levelWithParsedSegments); // get novelty TODO
+			} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesNoveltyDecorAndLeniencyBinLabels) { 
+				double novelty = LevelNovelty.averageSegmentNovelty(levelWithParsedSegments); // get novelty
 				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
 				dims = new int[] {noveltyIndex, decorationBinIndex, leniencySumIndex};
 			} else {
