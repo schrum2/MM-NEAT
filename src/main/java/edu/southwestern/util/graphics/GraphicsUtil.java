@@ -817,4 +817,14 @@ public class GraphicsUtil {
 	    // Return the buffered image
 	    return bimage;
 	}
+
+	public static BufferedImage convertToBufferedImage(Image img) {
+		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+	    // Draw the image on to the buffered image
+	    Graphics2D bGr = bimage.createGraphics();
+	    bGr.drawImage(img, 0, 0, null);
+	    bGr.dispose();
+		return bimage;
+	}
 }
