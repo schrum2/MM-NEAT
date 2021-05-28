@@ -35,8 +35,9 @@ public class PictureTargetFitnessTroubleshoot {
 	 * Creates a pair of heatmaps showing the degree of difference 
 	 * between each pixel in the observed and target image.
 	 * 
-	 * @param observed
-	 * @param target
+	 * @param observed the image produced by PictureTargetTask
+	 * @param target Target image
+	 * @return A triple of BufferedImages (Woolley fitness, RMSE fitness, and both fitness functions)
 	 */
 	public static Triple<BufferedImage,BufferedImage,BufferedImage> heatmapConstruction(BufferedImage observed, BufferedImage target) {
 		

@@ -818,6 +818,12 @@ public class GraphicsUtil {
 	    return bimage;
 	}
 
+	/**
+	 * Converts an image to be a BufferedImage.
+	 * 
+	 * @param img The image to be converted
+	 * @return img as a BufferedImage
+	 */
 	public static BufferedImage convertToBufferedImage(Image img) {
 		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 
