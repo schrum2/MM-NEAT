@@ -6,7 +6,7 @@ import java.util.List;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.Parameters;
 
-public class MarioMAPElitesNoveltyDecorFrequencyAndLeniencyBinLabels implements BinLabels {
+public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels {
 
 	List<String> labels = null;
 	private int levelBinsPerDimension;
@@ -20,10 +20,10 @@ public class MarioMAPElitesNoveltyDecorFrequencyAndLeniencyBinLabels implements 
 			
 			int size = (levelBinsPerDimension+1)*levelBinsPerDimension*levelBinsPerDimension;
 			labels = new ArrayList<String>(size);
-			for(int i = 0; i <= noveltyBinsPerDimension; i++) { // Distinct Segments
+			for(int i = 0; i < noveltyBinsPerDimension; i++) { // Distinct Segments
 				for(int j = 0; j < levelBinsPerDimension; j++) { // Negative Space
 					for(int r = -(levelBinsPerDimension/2); r < levelBinsPerDimension/2; r++) { // Leniency allows negative range
-						labels.add("Novelty["+i+"]DecorFrequency["+j+"0-"+(j+1)+"0]Leniency["+r+"0-"+(r+1)+"0]");
+						labels.add("Novelty["+((double) i/noveltyBinsPerDimension)+"-"+((double) (i+1)/noveltyBinsPerDimension)+"]DecorFrequency["+j+"0-"+(j+1)+"0]Leniency["+r+"0-"+(r+1)+"0]");
 					}
 				}
 			}
@@ -33,17 +33,25 @@ public class MarioMAPElitesNoveltyDecorFrequencyAndLeniencyBinLabels implements 
 
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = (multi[0]*noveltyBinsPerDimension + multi[1])*levelBinsPerDimension + multi[2];
+		int binIndex = (int) ((multi[0]*0.5*noveltyBinsPerDimension)*levelBinsPerDimension + (multi[1])*levelBinsPerDimension + multi[2]);
 		return binIndex;
 	}
 	
 	
+	
+	// 
 	public static void main(String[] args) {
-		MarioMAPElitesNoveltyDecorFrequencyAndLeniencyBinLabels test = new MarioMAPElitesNoveltyDecorFrequencyAndLeniencyBinLabels();
-		test.binLabels();
-		for (String s : test.binLabels()) {
+		MarioMAPElitesNoveltyDecorAndLeniencyBinLabels test = new MarioMAPElitesNoveltyDecorAndLeniencyBinLabels();
+		List<String> labells = test.binLabels();
+		for (String s : labells) {
 			System.out.println(s);
 		}
+		float novelty = 0.5f;
+		int noveltyIndex =  Math.min((int)(novelty*20), 20-1);
+		int oneDIndex = test.oneDimensionalIndex(new int[] {noveltyIndex, 5, 9});
+		String inde = labells.get(oneDIndex);
+		System.out.println(oneDIndex);
+		System.out.println(inde);
 	}
 
 }

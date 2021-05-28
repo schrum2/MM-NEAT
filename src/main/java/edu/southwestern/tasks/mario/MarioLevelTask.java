@@ -524,12 +524,15 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				dims = new int[] {numDistinctSegments, negativeSpaceSumIndex, decorationBinIndex};
 				
 //				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];				
-			} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof KLDivergenceBinLabels) { // TODO
+			} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof KLDivergenceBinLabels) { 
 				KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass();
 				
 				int[][] oneLevelAs2DArray = ArrayUtil.int2DArrayFromListOfLists(oneLevel);
 				dims = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
 				
+			} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesNoveltyDecorAndLeniencyBinLabels) { // TODO
+				
+				dims = new int[] {0, decorationBinIndex, leniencySumIndex};
 			} else {
 				throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
 			}
