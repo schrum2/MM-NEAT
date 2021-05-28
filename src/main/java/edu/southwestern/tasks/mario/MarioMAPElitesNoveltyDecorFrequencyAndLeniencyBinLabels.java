@@ -15,8 +15,8 @@ public class MarioMAPElitesNoveltyDecorFrequencyAndLeniencyBinLabels implements 
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) { // Create once and re-use, but wait until after Parameters are loaded	
-			levelBinsPerDimension = Parameters.parameters.integerParameter("marioGANLevelChunks");
-			noveltyBinsPerDimension = Parameters.parameters.integerParameter("noveltyBinAmount");
+			levelBinsPerDimension = 10;//Parameters.parameters.integerParameter("marioGANLevelChunks");
+			noveltyBinsPerDimension = 20;//Parameters.parameters.integerParameter("noveltyBinAmount");
 			
 			int size = (levelBinsPerDimension+1)*levelBinsPerDimension*levelBinsPerDimension;
 			labels = new ArrayList<String>(size);
@@ -39,7 +39,11 @@ public class MarioMAPElitesNoveltyDecorFrequencyAndLeniencyBinLabels implements 
 	
 	
 	public static void main(String[] args) {
-		
+		MarioMAPElitesNoveltyDecorFrequencyAndLeniencyBinLabels test = new MarioMAPElitesNoveltyDecorFrequencyAndLeniencyBinLabels();
+		test.binLabels();
+		for (String s : test.binLabels()) {
+			System.out.println(s);
+		}
 	}
 
 }
