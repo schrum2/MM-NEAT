@@ -39,18 +39,18 @@ public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels
 	
 	
 	
-	public static void main(String[] args) {
-		MarioMAPElitesNoveltyDecorAndLeniencyBinLabels test = new MarioMAPElitesNoveltyDecorAndLeniencyBinLabels();
-		List<String> labells = test.binLabels();
-		for (String s : labells) {
-			System.out.println(s);
-		}
-		float novelty = 0.5f;
-		int noveltyIndex =  Math.min((int)(novelty*20), 20-1); // 20 should be subbed for the noveltyBinAmount parameter
-		int oneDIndex = test.oneDimensionalIndex(new int[] {noveltyIndex, 5, 9}); //
-		String inde = labells.get(oneDIndex);
-		System.out.println(oneDIndex);
-		System.out.println(inde);
-	}
+//	public static void main(String[] args) {
+//		MarioMAPElitesNoveltyDecorAndLeniencyBinLabels test = new MarioMAPElitesNoveltyDecorAndLeniencyBinLabels();
+//		List<String> labells = test.binLabels();
+//		for (String s : labells) {
+//			System.out.println(s);
+//		}
+//		float novelty = 0.5f;
+//		int noveltyIndex =  Math.min((int)(novelty*20), 20-1); // 20 should be subbed for the noveltyBinAmount parameter
+//		int oneDIndex = test.oneDimensionalIndex(new int[] {noveltyIndex, 5, 9}); //
+//		String inde = labells.get(oneDIndex);
+//		System.out.println(oneDIndex);
+//		System.out.println(inde);
+//	}
 
 }

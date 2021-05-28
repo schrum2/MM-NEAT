@@ -34,6 +34,7 @@ import edu.southwestern.tasks.mario.level.MarioLevelUtil;
 import edu.southwestern.tasks.mario.level.MarioState;
 import edu.southwestern.tasks.mario.level.MarioState.MarioAction;
 import edu.southwestern.tasks.mario.level.OldLevelParser;
+import edu.southwestern.tasks.megaman.LevelNovelty;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -486,6 +487,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			double NEGATIVE_SPACE_SCALE = 3;
 			// Scale scores so that we are less likely to overstep the bounds of the bins
 			final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("marioGANLevelChunks");
+			final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
 			double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
 			double negativeSpaceSum = sumStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
 			int leniencySumIndex = Math.min(Math.max((int)((leniencySum*(BINS_PER_DIMENSION/2)+0.5)*BINS_PER_DIMENSION),0), BINS_PER_DIMENSION-1); //LEANIENCY BIN INDEX
@@ -531,8 +533,9 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				dims = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
 				
 			} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesNoveltyDecorAndLeniencyBinLabels) { // TODO
-				
-				dims = new int[] {0, decorationBinIndex, leniencySumIndex};
+				double novelty = 0; //LevelNovelty.averageSegmentNovelty(levelWithParsedSegments); // get novelty TODO
+				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
+				dims = new int[] {noveltyIndex, decorationBinIndex, leniencySumIndex};
 			} else {
 				throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
 			}
