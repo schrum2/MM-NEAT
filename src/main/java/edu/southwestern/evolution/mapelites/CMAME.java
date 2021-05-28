@@ -162,7 +162,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		
 		printStream = new PrintStream(new FileOutputStream(severalLog, false));
 		
-		for (int run = 5; run <= 200; run+=5) {
+		for (int run = 10; run <= 200; run+=10) {
 			runSingleCMAME(run);
 			Scanner currentFile = new Scanner(new File(FOLDER+"/CMAMELambda"+run+"/mapelitesfunctionoptimizationSeveral-CMAMELambda"+run+"_Fill_log.txt"));
 			String line = "";
