@@ -288,6 +288,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		long parentId1 = parent1.getId(); // Parent Id comes from original genome
 		long parentId2 = NUM_CODE_EMPTY;
 		Genotype<T> child1 = parent1.copy(); // Copy with different Id (will be further modified below)
+		child1.addParent(parentId1);
 		
 		// Potentially mate with second individual
 		if (mating && RandomNumbers.randomGenerator.nextDouble() < crossoverRate) {
@@ -299,6 +300,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Replace child2 with a crossover result, and modify child1 in the process (two new children)
 			child2 = child1.crossover(child2);
 			child2.mutate(); // Probabilistic mutation of child
+			child2.addParent(parent2.getId());
+			child2.addParent(parent1.getId());
+			child1.addParent(parent2.getId());
 			EvolutionaryHistory.logLineageData(parentId1,parentId2,child2);
 			// Evaluate and add child to archive
 			Score<T> s2 = task.evaluate(child2);
