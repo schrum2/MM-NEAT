@@ -3,11 +3,25 @@ package edu.southwestern.tasks.mario.level;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.Set;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonStreamParser;
+import com.google.gson.stream.JsonReader;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
@@ -389,65 +403,137 @@ public class MarioLevelUtil {
 		return results;
 	}
 	
-	/**
-	 * For testing and debugging
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] 
-				{"runNumber:0","randomSeed:"+((int)(Math.random()*100)),"trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:true","includeSawtoothFunction:true"});
-		MMNEAT.loadClasses();
-				
-		////////////////////////////////////////////////////////
-//		String[] stringBlock = new String[] {
-//				"--------------------------------------------------------", 
-//				"--------------------------------------------------------", 
-//				"--------------------------------------------------------", 
-//				"---------ooooo------------------------------------------", 
-//				"--------------------------------------------------------", 
-//				"----?---S?S---------------------------------------------", 
-//				"------------------X-------------------------------------", 
-//				"-----------------XX---------------------E-----<>--------", 
-//				"---SSSS--<>-----XXX---------------------X-----[]--------", 
-//				"---------[]---XXXXX-------------------XXXXX---[]--------", 
-//				"---------[]-XXXXXXX----------EE-----XXXXXXXXXX[]--------", 
-//				"XXXXXXXXXXXXXXXXXXX-----XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-//			};
-				
-		// Instead of specifying the level, create it with a TWEANN	
-		TWEANNGenotype cppn = new TWEANNGenotype(3, 12, 0); // Archetype
-		// Randomize activation functions
-		new ActivationFunctionRandomReplacement().mutate(cppn);
-		
-		// Random mutations
-//		for(int i = 0; i < 50; i++) {
-//			cppn.mutate();
-//		}
-		
-		TWEANN net = cppn.getPhenotype();
-		DrawingPanel panel = new DrawingPanel(200,200, "Network");
-		net.draw(panel, true, false);
-
-		Level level = generateLevelFromCPPN(net, new double[] {1,1,1}, 60);
-		
-		Agent controller = new HumanKeyboardAgent(); //new SergeyKarakovskiy_JumpingAgent();
-		EvaluationOptions options = new CmdLineOptions(new String[]{});
-		options.setAgent(controller);
-		ProgressTask task = new ProgressTask(options);
-
-		// Added to change level
-        options.setLevel(level);
-
-		task.setOptions(options);
-
-		int relevantWidth = (level.width - (2*OldLevelParser.BUFFER_WIDTH)) * BLOCK_SIZE;
-		//System.out.println("level.width:"+level.width);
-		//System.out.println("relevantWidth:"+relevantWidth);
-		DrawingPanel levelPanel = new DrawingPanel(relevantWidth,LEVEL_HEIGHT*BLOCK_SIZE, "Level");
-		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, OldLevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, LEVEL_HEIGHT*BLOCK_SIZE);
-		
-		System.out.println ("Score: " + task.evaluate(options.getAgent())[0]);
-		
-				
-	}
+//	/**
+//	 * For testing and debugging
+//	 * @param args
+//	 */
+//	public static void main(String[] args) {
+//		Parameters.initializeParameterCollections(new String[] 
+//				{"runNumber:0","randomSeed:"+((int)(Math.random()*100)),"trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:true","includeSawtoothFunction:true"});
+//		MMNEAT.loadClasses();
+//				
+//		////////////////////////////////////////////////////////
+////		String[] stringBlock = new String[] {
+////				"--------------------------------------------------------", 
+////				"--------------------------------------------------------", 
+////				"--------------------------------------------------------", 
+////				"---------ooooo------------------------------------------", 
+////				"--------------------------------------------------------", 
+////				"----?---S?S---------------------------------------------", 
+////				"------------------X-------------------------------------", 
+////				"-----------------XX---------------------E-----<>--------", 
+////				"---SSSS--<>-----XXX---------------------X-----[]--------", 
+////				"---------[]---XXXXX-------------------XXXXX---[]--------", 
+////				"---------[]-XXXXXXX----------EE-----XXXXXXXXXX[]--------", 
+////				"XXXXXXXXXXXXXXXXXXX-----XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+////			};
+//				
+//		// Instead of specifying the level, create it with a TWEANN	
+//		TWEANNGenotype cppn = new TWEANNGenotype(3, 12, 0); // Archetype
+//		// Randomize activation functions
+//		new ActivationFunctionRandomReplacement().mutate(cppn);
+//		
+//		// Random mutations
+////		for(int i = 0; i < 50; i++) {
+////			cppn.mutate();
+////		}
+//		
+//		TWEANN net = cppn.getPhenotype();
+//		DrawingPanel panel = new DrawingPanel(200,200, "Network");
+//		net.draw(panel, true, false);
+//
+//		Level level = generateLevelFromCPPN(net, new double[] {1,1,1}, 60);
+//		
+//		Agent controller = new HumanKeyboardAgent(); //new SergeyKarakovskiy_JumpingAgent();
+//		EvaluationOptions options = new CmdLineOptions(new String[]{});
+//		options.setAgent(controller);
+//		ProgressTask task = new ProgressTask(options);
+//
+//		// Added to change level
+//        options.setLevel(level);
+//
+//		task.setOptions(options);
+//
+//		int relevantWidth = (level.width - (2*OldLevelParser.BUFFER_WIDTH)) * BLOCK_SIZE;
+//		//System.out.println("level.width:"+level.width);
+//		//System.out.println("relevantWidth:"+relevantWidth);
+//		DrawingPanel levelPanel = new DrawingPanel(relevantWidth,LEVEL_HEIGHT*BLOCK_SIZE, "Level");
+//		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, OldLevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, LEVEL_HEIGHT*BLOCK_SIZE);
+//		
+//		System.out.println ("Score: " + task.evaluate(options.getAgent())[0]);
+//		
+//				
+//	}
+   	
+   	
+   	public static void main(String[] args) throws FileNotFoundException {
+   		String inputFile1 = "src/main/python/GAN/Mario-overworlds-redo.json";
+   		String inputFile2 = "src/main/python/GAN/Mario-overworlds.json";
+   		FileReader file1 = new FileReader(inputFile1);
+   		FileReader file2 = new FileReader(inputFile2);
+   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile1 = new ArrayList<ArrayList<ArrayList<Integer>>>();
+   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile2 = new ArrayList<ArrayList<ArrayList<Integer>>>();
+   		
+   		JsonStreamParser jsonParser1 = new JsonStreamParser(file1);
+   		JsonArray parsed = (JsonArray) jsonParser1.next();
+   		for (JsonElement element : parsed) {
+   			ArrayList<ArrayList<Integer>> inner1 = new ArrayList<ArrayList<Integer>>();
+   			for (JsonElement element2 : (JsonArray) element) {
+   				ArrayList<Integer> inner2 = new ArrayList<Integer>();
+   				for (JsonElement element3 : (JsonArray) element2) {
+   					inner2.add(element3.getAsBigInteger().intValue());
+   	   	   		}
+   				inner1.add(inner2);
+   	   		}
+   			parsedFile1.add(inner1);
+   		}
+   		
+   		JsonStreamParser jsonParser2 = new JsonStreamParser(file2);
+   		JsonArray parsed2 = (JsonArray) jsonParser2.next();
+   		for (JsonElement element : parsed2) {
+   			ArrayList<ArrayList<Integer>> inner1 = new ArrayList<ArrayList<Integer>>();
+   			for (JsonElement element2 : (JsonArray) element) {
+   				ArrayList<Integer> inner2 = new ArrayList<Integer>();
+   				for (JsonElement element3 : (JsonArray) element2) {
+   					inner2.add(element3.getAsBigInteger().intValue());
+   	   	   		}
+   				inner1.add(inner2);
+   	   		}
+   			parsedFile2.add(inner1);
+   		}
+   		
+   		for (int i = 0; i < parsedFile1.size(); i++) {
+   			printLevelsSideBySide(parsedFile1.get(i), parsedFile2.get(i));
+   			System.out.println("\n\n");
+   			
+   		}
+   		
+   	}
+   	
+   	public static void printLevelsSideBySide(ArrayList<ArrayList<Integer>> level, ArrayList<ArrayList<Integer>> level2) {
+   		String visualLine;
+   		Set<Entry<Character, Integer>> tileset = LevelParser.tiles.entrySet();
+   		for (int i = 0; i < level.size(); i++) {
+   			visualLine = "";
+   			for (Integer integ : level.get(i)) {
+   				for (Entry<Character, Integer> e : tileset) {
+   					if (e.getValue() == integ) {
+   						visualLine += e.getKey();
+   					}
+   				}
+   				
+   			}
+   			visualLine += " | ";
+   			for (Integer integ : level2.get(i)) {
+   				for (Entry<Character, Integer> e : tileset) {
+   					if (e.getValue() == integ) {
+   						visualLine += e.getKey();
+   					}
+   				}
+   				
+   			}
+   			
+   			System.out.println(visualLine);
+   		}
+   	}
 }

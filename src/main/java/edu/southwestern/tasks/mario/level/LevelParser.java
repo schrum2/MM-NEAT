@@ -332,14 +332,13 @@ public class LevelParser {
      * in order to generate to convert Mario levels into a json file.
      */
     public static void main(String[] args) throws FileNotFoundException { // generate new json files
-    	
     	// All directories to pull from
-        String[] inputDirectories = new String[] {"data/VGLC/SuperMarioBrosNewEncoding/overworlds", "data/VGLC/SuperMarioBrosNewEncoding/underground", "data/VGLC/SuperMarioBrosNewEncoding/athletic2"};
+    	String[] inputDirectories = new String[] {"data/VGLC/SuperMarioBrosNewEncoding/underground"};
+    	//String[] inputDirectories = new String[] {"data/VGLC/SuperMarioBrosNewEncoding/overworlds"};
 
         // output file
-        String outputFile = "data/VGLC/SuperMarioBrosNewEncoding/Mario-all.json";
+        String outputFile = "data/VGLC/SuperMarioBrosNewEncoding/Mario-underground.json";
 
-        
         ArrayList<int[][]> examples = new ArrayList<>();
         
         File[] files = new File[inputDirectories.length];
