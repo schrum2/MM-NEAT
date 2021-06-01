@@ -533,6 +533,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				dims = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
 				
 			} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesNoveltyDecorAndLeniencyBinLabels) { 
+				LevelNovelty.setGame("mario");
 				double novelty = LevelNovelty.averageSegmentNovelty(levelWithParsedSegments); // get novelty
 				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
 				dims = new int[] {noveltyIndex, decorationBinIndex, leniencySumIndex};

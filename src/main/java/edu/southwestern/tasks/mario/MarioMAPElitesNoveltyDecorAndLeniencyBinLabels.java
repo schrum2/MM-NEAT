@@ -1,8 +1,10 @@
 package edu.southwestern.tasks.mario;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.Parameters;
 
@@ -22,8 +24,8 @@ public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) { // Create once and re-use, but wait until after Parameters are loaded	
-			levelBinsPerDimension = 10;//Parameters.parameters.integerParameter("marioGANLevelChunks");
-			noveltyBinsPerDimension = 20;//Parameters.parameters.integerParameter("noveltyBinAmount");
+			levelBinsPerDimension = Parameters.parameters.integerParameter("marioGANLevelChunks");
+			noveltyBinsPerDimension = Parameters.parameters.integerParameter("noveltyBinAmount");
 			
 			int size = (levelBinsPerDimension+1)*levelBinsPerDimension*levelBinsPerDimension;
 			labels = new ArrayList<String>(size);
@@ -46,7 +48,9 @@ public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels
 	
 	
 	
-//	public static void main(String[] args) { // TODO: remove, just left it in in case it doesn't fully work
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException { // TODO: remove, just left it in in case it doesn't fully work
+		int runNum = 80;
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:mariolevelsnoveltydecorleniency log:MarioLevelsNoveltyDecorLeniency-ME saveTo:ME marioGANLevelChunks:10 noveltyBinAmount:"+runNum+" marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 mu:100 maxGens:20000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesNoveltyDecorAndLeniencyBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000").split(" "));
 //		MarioMAPElitesNoveltyDecorAndLeniencyBinLabels test = new MarioMAPElitesNoveltyDecorAndLeniencyBinLabels();
 //		List<String> labells = test.binLabels();
 //		for (String s : labells) {
@@ -58,6 +62,6 @@ public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels
 //		String inde = labells.get(oneDIndex);
 //		System.out.println(oneDIndex);
 //		System.out.println(inde);
-//	}
+	}
 
 }
