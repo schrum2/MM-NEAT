@@ -81,12 +81,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					+ Parameters.parameters.integerParameter("runNumber");
 			String prefix = experimentPrefix + "_" + infix;
 			String fillPrefix = experimentPrefix + "_" + "Fill";
+			String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
 			String qdPrefix = experimentPrefix + "_" + "QD";
 			String maxPrefix = experimentPrefix + "_" + "Maximum";
 			String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 			directory += (directory.equals("") ? "" : "/");
 			String fullName = directory + prefix + "_log.plt";
 			String fullFillName = directory + fillPrefix + "_log.plt";
+			String fullFillDiscardedName = directory + fillDiscardedPrefix + "_log.plt";
 			String fullQDName = directory + qdPrefix + "_log.plt";
 			String maxFitnessName = directory + maxPrefix + "_log.plt";
 			File plot = new File(fullName); // for archive log plot file
@@ -115,14 +117,24 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 				ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration) +"]");
 				ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
-				ps.println("set output \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".pdf\"");
-				String name = fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.'));
+				ps.println("set output \"" + fullFillDiscardedName.substring(fullFillDiscardedName.lastIndexOf('/')+1, fullFillDiscardedName.lastIndexOf('.')) + ".pdf\"");
+				String name = fullFillDiscardedName.substring(fullFillDiscardedName.lastIndexOf('/')+1, fullFillDiscardedName.lastIndexOf('.'));
 				ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\", \\");
 				ps.println("     \"" + name + ".txt\" u 1:5 w linespoints t \"Discarded\"" + (cppnThenDirectLog != null ? ", \\" : ""));
 				if(cppnThenDirectLog != null) { // Print CPPN and direct counts on same plot
 					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
 					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
 				}
+				
+				ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
+				ps.println("set output \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".pdf\"");
+				name = fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.'));
+				ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\"" + (cppnThenDirectLog != null ? ", \\" : ""));
+				if(cppnThenDirectLog != null) { // Print CPPN and direct counts on same plot
+					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
+					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
+				}
+				
 				ps.println("set title \"" + experimentPrefix + " Archive QD Scores\"");
 				ps.println("set output \"" + fullQDName.substring(fullQDName.lastIndexOf('/')+1, fullQDName.lastIndexOf('.')) + ".pdf\"");
 				ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\"");
