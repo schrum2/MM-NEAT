@@ -1,6 +1,5 @@
 package edu.southwestern.evolution.mapelites.emitters;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import edu.southwestern.MMNEAT.MMNEAT;
