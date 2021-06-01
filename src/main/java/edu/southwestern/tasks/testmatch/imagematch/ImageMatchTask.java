@@ -255,7 +255,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		MMNEAT.clearClasses();
 		EvolutionaryHistory.setInnovation(0);
 		EvolutionaryHistory.setHighestGenotypeId(0);
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false" });
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false", "useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:false"});
 		MMNEAT.loadClasses();
 		randomCPPNimage(true, 200, 200, 200);
 	}
