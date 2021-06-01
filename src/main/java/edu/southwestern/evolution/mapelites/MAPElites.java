@@ -53,7 +53,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private boolean mating;
 	private double crossoverRate;
 	protected int iterations;
-	private int iterationsWintoutEliteCounter;
+	private int iterationsWithoutEliteCounter;
 	private int iterationsWithoutElite;
 	private int individualsPerGeneration;
 
@@ -67,6 +67,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		this.io = Parameters.parameters.booleanParameter("io"); // write logs
 		this.archive = new Archive<>(Parameters.parameters.booleanParameter("netio"));
 		if(io) {
+			int numLabels = archive.getBinMapping().binLabels().size();
 			String infix = "MAPElites";
 			// Logging in RAW mode so that can append to log file on experiment resume
 			archiveLog = new MMNEATLog(infix, false, false, false, true); 
@@ -82,6 +83,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			String prefix = experimentPrefix + "_" + infix;
 			String fillPrefix = experimentPrefix + "_" + "Fill";
 			String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
+			String fillPercentagePrefix = experimentPrefix + "_" + "FillPercentage";
 			String qdPrefix = experimentPrefix + "_" + "QD";
 			String maxPrefix = experimentPrefix + "_" + "Maximum";
 			String directory = FileUtilities.getSaveDirectory();// retrieves file directory
@@ -89,6 +91,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			String fullName = directory + prefix + "_log.plt";
 			String fullFillName = directory + fillPrefix + "_log.plt";
 			String fullFillDiscardedName = directory + fillDiscardedPrefix + "_log.plt";
+			String fullFillPercentageName = directory + fillPercentagePrefix + "_log.plt";
 			String fullQDName = directory + qdPrefix + "_log.plt";
 			String maxFitnessName = directory + maxPrefix + "_log.plt";
 			File plot = new File(fullName); // for archive log plot file
@@ -126,6 +129,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
 				}
 				
+				ps.println("set title \"" + experimentPrefix + " Archive Filled Bins Percentage\"");
+				ps.println("set output \"" + fullFillPercentageName.substring(fullFillPercentageName.lastIndexOf('/')+1, fullFillPercentageName.lastIndexOf('.')) + ".pdf\"");
+				ps.println("plot \"" + name + ".txt\" u 1:($2 / "+numLabels+") w linespoints t \"Total\"" + (cppnThenDirectLog != null ? ", \\" : ""));
+				if(cppnThenDirectLog != null) { // Print CPPN and direct counts on same plot
+					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
+					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
+				}
+				
 				ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
 				ps.println("set output \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".pdf\"");
 				ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\"" + (cppnThenDirectLog != null ? ", \\" : ""));
@@ -153,7 +164,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 		this.iterations = Parameters.parameters.integerParameter("lastSavedGeneration");
-		this.iterationsWintoutEliteCounter = 0;
+		this.iterationsWithoutEliteCounter = 0;
 		this.iterationsWithoutElite = 0; // Not accurate on resume		
 	}
 	
@@ -229,7 +240,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			final int numFilledBins = elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite);
 			// Get the QD Score for this elite
 			final double qdScore = calculateQDScore(elite);
-			fillLog.log(pseudoGeneration + "\t" + numFilledBins + "\t" + qdScore + "\t" + maximumFitness + "\t" + iterationsWintoutEliteCounter);
+			fillLog.log(pseudoGeneration + "\t" + numFilledBins + "\t" + qdScore + "\t" + maximumFitness + "\t" + iterationsWithoutEliteCounter);
 			if(cppnThenDirectLog!=null) {
 				Integer[] eliteProper = new Integer[elite.length];
 				int i = 0;
@@ -350,7 +361,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		if(newEliteProduced) {
 			iterationsWithoutElite = 0;
 		} else {
-			iterationsWintoutEliteCounter++;
+			iterationsWithoutEliteCounter++;
 			iterationsWithoutElite++;
 		}
 		System.out.println(iterations + "\t" + iterationsWithoutElite + "\t");
