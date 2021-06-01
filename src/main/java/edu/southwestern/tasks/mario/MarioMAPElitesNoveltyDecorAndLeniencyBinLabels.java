@@ -42,14 +42,14 @@ public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels
 
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = (int) ((multi[0]*0.5*noveltyBinsPerDimension)*levelBinsPerDimension + (multi[1])*levelBinsPerDimension + multi[2]);
+		int binIndex = (int) ((multi[0])*levelBinsPerDimension + (multi[1])*levelBinsPerDimension + multi[2]);
 		return binIndex;
 	}
 	
 	
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException { // TODO: remove, just left it in in case it doesn't fully work
-		int runNum = 80;
+		int runNum = 10;
 		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:mariolevelsnoveltydecorleniency log:MarioLevelsNoveltyDecorLeniency-ME saveTo:ME marioGANLevelChunks:10 noveltyBinAmount:"+runNum+" marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 mu:100 maxGens:20000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesNoveltyDecorAndLeniencyBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000").split(" "));
 //		MarioMAPElitesNoveltyDecorAndLeniencyBinLabels test = new MarioMAPElitesNoveltyDecorAndLeniencyBinLabels();
 //		List<String> labells = test.binLabels();
@@ -57,7 +57,7 @@ public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels
 //			System.out.println(s);
 //		}
 //		float novelty = 0.5f;
-//		int noveltyIndex =  Math.min((int)(novelty*20), 20-1); // 20 should be subbed for the noveltyBinAmount parameter
+//		int noveltyIndex =  Math.min((int)(novelty*160), 160-1); // 20 should be subbed for the noveltyBinAmount parameter
 //		int oneDIndex = test.oneDimensionalIndex(new int[] {noveltyIndex, 5, 9}); //
 //		String inde = labells.get(oneDIndex);
 //		System.out.println(oneDIndex);
