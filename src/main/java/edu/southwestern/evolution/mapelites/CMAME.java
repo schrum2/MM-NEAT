@@ -61,7 +61,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 				ps.println("set term pdf enhanced");
 				ps.println("set yrange [0:"+ (Parameters.parameters.integerParameter("lambda")) +"]"); // lambda will be maximum possible value, a perfect update
 				ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")) + "]"); // 
-				ps.println("set title \"" + experimentPrefix + " Number of Valid Parents when Distribution is Updated\"");
+				ps.println("set title \"" + experimentPrefix + " Number of Valid Parents\"");
 				ps.println("set output \"" + udName.substring(udName.lastIndexOf('/')+1, udName.lastIndexOf('.')) + ".pdf\"");
 				for (int i = 0; i < totalEmitters; i++) { // add line to plot each emitter
 					String shortName = logFiles[i].replace(experimentPrefix+"_", "").replace("_log.txt", "");
