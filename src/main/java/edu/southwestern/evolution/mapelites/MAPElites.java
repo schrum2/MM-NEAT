@@ -118,7 +118,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration) +"]");
 				ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
 				ps.println("set output \"" + fullFillDiscardedName.substring(fullFillDiscardedName.lastIndexOf('/')+1, fullFillDiscardedName.lastIndexOf('.')) + ".pdf\"");
-				String name = fullFillDiscardedName.substring(fullFillDiscardedName.lastIndexOf('/')+1, fullFillDiscardedName.lastIndexOf('.'));
+				String name = fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.'));
 				ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\", \\");
 				ps.println("     \"" + name + ".txt\" u 1:5 w linespoints t \"Discarded\"" + (cppnThenDirectLog != null ? ", \\" : ""));
 				if(cppnThenDirectLog != null) { // Print CPPN and direct counts on same plot
@@ -128,7 +128,6 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				
 				ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
 				ps.println("set output \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".pdf\"");
-				name = fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.'));
 				ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\"" + (cppnThenDirectLog != null ? ", \\" : ""));
 				if(cppnThenDirectLog != null) { // Print CPPN and direct counts on same plot
 					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
