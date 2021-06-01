@@ -25,7 +25,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  * @author Jacob Schrum
  */
 public class PicbreederConstructor {
-	public static final int SIZE = 500;
+	public static final int SIZE = 64;
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {		
 		Parameters.initializeParameterCollections(new String[] {"io:false","netio:false","allowMultipleFunctions:true", "fs:true","netChangeActivationRate:0.3",
 				"recurrency:false",
@@ -45,7 +45,8 @@ public class PicbreederConstructor {
 				"includeLeakyReLUFunction:false",
 				"includeFullSawtoothFunction:false",
 				"includeTriangleWaveFunction:false", 
-				"includeSquareWaveFunction:false"});
+				"includeSquareWaveFunction:false",
+				"blackAndWhitePicbreeder:true"});
 		MMNEAT.loadClasses();
 		ActivationFunctions.resetFunctionSet();
 		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, 0);
@@ -78,13 +79,13 @@ public class PicbreederConstructor {
 		tg.addLink(14, -6, 1.0, 17);
 		tg.addLink(-2, -7, 1.0, 18);
 
-		tg.spliceNode(ActivationFunctions.FTYPE_GAUSS, 19, -3, -7, 1.0, 1.0, 19, 20);
-		tg.addLink(19, -5, -1.0, 21);
-		tg.addLink(14, -5, 1.0, 22);
-
-		tg.spliceNode(ActivationFunctions.FTYPE_SIGMOID, 23, 19, -7, 1.0, 1.0, 24, 25);
-		tg.addLink(-3, 23, 1.0, 26);
-		
+//		tg.spliceNode(ActivationFunctions.FTYPE_GAUSS, 19, -3, -7, 1.0, 1.0, 19, 20);
+//		tg.addLink(19, -5, -1.0, 21);
+//		tg.addLink(14, -5, 1.0, 22);
+//
+//		tg.spliceNode(ActivationFunctions.FTYPE_SIGMOID, 23, 19, -7, 1.0, 1.0, 24, 25);
+//		tg.addLink(-3, 23, 1.0, 26);
+//		
 		for(String f : tg.getFunction()) {
 			System.out.println(f);
 		}
@@ -93,8 +94,8 @@ public class PicbreederConstructor {
 		TWEANN network = tg.getPhenotype();
 		network.draw(panel, true, false);
 
-		final double SCALE = 10.0;
-		final double ROTATION = 0.5;
+		final double SCALE = 1;
+		final double ROTATION = 0;
 		
 		// Now show the image
 		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE, ArrayUtil.doubleOnes(network.numInputs()), 0, SCALE, ROTATION);
