@@ -134,7 +134,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	 * @param targetFeatures an array of target features represented by T in the Woolley paper
 	 * @return the fitness of the candidateFeatures using root mean square error 
 	 */
-	public double rootMeanSquareErrorFitness(double[] candidateFeatures, double[] targetFeatures) {
+	public static double rootMeanSquareErrorFitness(double[] candidateFeatures, double[] targetFeatures) {
 		// 1 minus the error because we want to minimize the error
 		return 1 - StatisticsUtilities.rootMeanSquareError(targetFeatures, candidateFeatures);
 	}

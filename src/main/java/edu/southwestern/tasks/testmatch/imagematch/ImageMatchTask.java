@@ -15,6 +15,7 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -39,6 +40,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	private Network individual;
 	private BufferedImage img = null;
 	public int imageHeight, imageWidth;
+	private double[] targetImageFeatures; 
 
 	/**
 	 * Default task constructor
@@ -94,7 +96,32 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		// Too many outputs to print to console. Don't want to watch.
 		boolean temp = CommonConstants.watch;
 		CommonConstants.watch = false; // Prevent watching of console showing error energy
-		Score<T> result = super.evaluate(individual);// if watch=false
+		Score<T> result = null;
+		
+		double[] candidateFeatures = GraphicsUtil.flatFeatureArrayFromBufferedImage(img);
+		if(Parameters.parameters.booleanParameter("useWoolleyImageMatchFitness")) {
+			double error = PictureTargetTask.candidateVsTargetError(candidateFeatures, targetImageFeatures);
+			double fitness = 1 - error * error;
+			double[] resultScore = new double[]{fitness};
+			result = new Score<>(individual, resultScore);
+		} else if(Parameters.parameters.booleanParameter("useRMSEImageMatchFitness")) {
+			double fitness = PictureTargetTask.rootMeanSquareErrorFitness(candidateFeatures, targetImageFeatures);
+			double[] resultScore = new double[]{fitness};
+			result = new Score<>(individual, resultScore);
+		} else {
+			result = super.evaluate(individual);// if watch=false
+		}
+		
+//		if(Parameters.parameters.booleanParameter("useWoolleyImageMatchFitness")) {
+//			double error = candidateVsTargetError(candidateFeatures, targetImageFeatures);
+//			return 1 - error * error;
+//		} else if (Parameters.parameters.booleanParameter("useRMSEImageMatchFitness")) {
+//			return rootMeanSquareErrorFitness(candidateFeatures, targetImageFeatures);
+//		} else {
+//			throw new IllegalStateException("Proper fitness function for PictureTargetTask not specified");
+//		}
+//		
+		
 		CommonConstants.watch = temp;
 		this.individual = individual.getPhenotype();
 		result.giveBehaviorVector(getBehaviorVector());

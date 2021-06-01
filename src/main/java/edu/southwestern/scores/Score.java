@@ -69,6 +69,16 @@ public class Score<T> {
 	/**
 	 * Default constructor for Score object.
 	 * 
+	 * @param individual Genotype of the individual in question
+	 * @param scores array of all other scores of similar agents in the domain
+	 */
+	public Score(Genotype<T> individual, double[] scores) {
+		this(individual, scores, null, new double[0]);
+	}
+	
+	/**
+	 * Default constructor for Score object.
+	 * 
 	 * @param individual:
 	 *            Genotype of the individual in question
 	 * @param scores:
