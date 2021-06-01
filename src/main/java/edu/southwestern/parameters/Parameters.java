@@ -343,6 +343,7 @@ public class Parameters {
 		integerOptions.add("interactiveLodeRunnerPathType", 0, "Specifies the type of path to visualize in the level breeder");
 		integerOptions.add("lodeRunnerTSPBudget", 200, "Specifies the numbr of levels in the sequence of levels being eveolved for lode runner");
 		integerOptions.add("noveltyBinAmount", -1, "The number of bins that exist along the dimension for the Novelty binning scheme.");
+		integerOptions.add("solutionVectorSlices", 2, "The amount of slices to cut a solution vector into in a MAP Elites instance"); 
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");

@@ -22,7 +22,7 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	private double minPossibleValue; // min possible value, lowest value an input could have and still be valid
 	private double maxPossibleValue; // max possible value, highest value an input could have and still be valid
 	private double segmentSize; // difference between two adjacent bins, the size of the bin
-	private int numDimensions; // number of dimensions overall
+	private int numDimensions; //  number of dimensions overall
 	
 	/**
 	 * Sets up variables for use in other functions 
@@ -116,5 +116,5 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	
 	
 	// Behavior characterization depends on the specific binning scheme
-		
+	// public static double[] behaviorCharacterization(...);
 }

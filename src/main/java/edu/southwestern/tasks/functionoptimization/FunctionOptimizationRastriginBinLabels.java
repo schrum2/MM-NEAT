@@ -5,6 +5,7 @@ import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedBinLabels;
+import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedSlicedBinLabels;
 import edu.southwestern.parameters.Parameters;
 
 /**
@@ -14,15 +15,12 @@ import edu.southwestern.parameters.Parameters;
  * @author Maxx Batterton
  *
  */
-public class FunctionOptimizationRastriginBinLabels extends MultiDimensionalRealValuedBinLabels {
+public class FunctionOptimizationRastriginBinLabels extends MultiDimensionalRealValuedSlicedBinLabels {
 
-	List<String> labels = null;
-	private int solutionVectorLength;
 	private static final double RASTRIGIN_RANGE = 5.12;
 
 	public FunctionOptimizationRastriginBinLabels() {
-		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE/2, RASTRIGIN_RANGE/2, 2, Parameters.parameters.integerParameter("foVectorLength"));
-		solutionVectorLength = Parameters.parameters.integerParameter("foVectorLength");
+		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE/2, RASTRIGIN_RANGE/2, 2, MMNEAT.getLowerBounds().length);
 	}
 
 
@@ -49,26 +47,15 @@ public class FunctionOptimizationRastriginBinLabels extends MultiDimensionalReal
 //		}
 	}
 
-	/**
-	 * Gets the behavior characterization of a solution using the rastrigin
-	 * characterization described in https://arxiv.org/pdf/1912.02400.pdf
-	 * 
-	 * @param solution
-	 * @return
-	 */
-	public double[] behaviorCharacterization(double[] solution) {
-		double[] sums = new double[] { 0, 0 }; // create array for sums
-		for (int i = 0; i < solutionVectorLength / 2; i++) {
-			sums[0] += clip(solution[i]); // sum first half
-		}
-		for (int i = solutionVectorLength / 2; i < solutionVectorLength; i++) {
-			sums[1] += clip(solution[i]); // sum second half
-		}
-		return sums;
+	@Override
+	protected double process(double value) {
+		return clip(value);
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		int runNum = 0;
-		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true numImprovementEmitters:2 numOptimizingEmitters:0 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-2 saveTo:2 netio:false lambda:37 maxGens:5000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
+		int runNum = 4;
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true numImprovementEmitters:2 numOptimizingEmitters:0 solutionVectorSlices:2 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-2 saveTo:2 netio:false lambda:37 maxGens:5000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 	}
+
+
 }
