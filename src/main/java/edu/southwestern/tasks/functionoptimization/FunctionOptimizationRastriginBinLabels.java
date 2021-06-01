@@ -1,8 +1,11 @@
 package edu.southwestern.tasks.functionoptimization;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedBinLabels;
+import edu.southwestern.parameters.Parameters;
 
 /**
  * Binning scheme for Rastrigin function, based on the description from
@@ -18,9 +21,8 @@ public class FunctionOptimizationRastriginBinLabels extends MultiDimensionalReal
 	private static final double RASTRIGIN_RANGE = 5.12;
 
 	public FunctionOptimizationRastriginBinLabels() {
-		super(500, -RASTRIGIN_RANGE/2, RASTRIGIN_RANGE/2, 2, 20);
-		//Parameters.parameters.integerParameter("foBinDimension");
-		solutionVectorLength = 20;//Parameters.parameters.integerParameter("foVectorLength");
+		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE/2, RASTRIGIN_RANGE/2, 2, Parameters.parameters.integerParameter("foVectorLength"));
+		solutionVectorLength = Parameters.parameters.integerParameter("foVectorLength");
 	}
 
 
@@ -63,5 +65,10 @@ public class FunctionOptimizationRastriginBinLabels extends MultiDimensionalReal
 			sums[1] += clip(solution[i]); // sum second half
 		}
 		return sums;
+	}
+	
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		int runNum = 0;
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true numImprovementEmitters:2 numOptimizingEmitters:0 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-2 saveTo:2 netio:false lambda:37 maxGens:5000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 	}
 }
