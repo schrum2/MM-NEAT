@@ -278,6 +278,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				if(MMNEAT.ea instanceof MAPElites) {
 					// Hard coding bin score to be the percentage of reachable rooms traversed. May want to change this later.
 					mapElitesBinScore = (numRoomsTraversed*1.0)/numRoomsReachable;
+					final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
 					
 					if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesWallWaterRoomsBinLabels) {					
 						double wallTilePercentage = (wallTileCount*1.0)/(numRoomsReachable*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS);
@@ -293,8 +294,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						System.out.println("["+numDistinctRooms+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");
 					}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels) { //alternate binning scheme
 						double dungeonNovelty = DungeonNovelty.averageDungeonNovelty(dungeon);
-						int noveltyIndex =(int)((dungeonNovelty*ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.NUM_NOVELTY_BINS)/ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.MAX_EXPECTED_NOVELTY); //.7 is the guessed max novelty, magic number
-						noveltyIndex = Math.min(noveltyIndex, ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.NUM_NOVELTY_BINS - 1);
+						int noveltyIndex =(int)((dungeonNovelty*NOVELTY_BINS_PER_DIMENSION)/ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.MAX_EXPECTED_NOVELTY); //.7 is the guessed max novelty, magic number
+						noveltyIndex = Math.min(noveltyIndex, NOVELTY_BINS_PER_DIMENSION - 1);
 						mapElitesBinIndices = new int[] {noveltyIndex, numBackTrackRooms, numRoomsReachable};
 						System.out.println("["+noveltyIndex+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");						
 					} else {
