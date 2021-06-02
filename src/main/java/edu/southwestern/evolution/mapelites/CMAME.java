@@ -17,6 +17,15 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.util.file.FileUtilities;
 
+/**
+ * Implementation of CMA-ME as an extension
+ * of MAP Elites. Implementation is partially
+ * detailed in the original CMA-ME paper:
+ * https://arxiv.org/pdf/1912.02400.pdf
+ * 
+ * @author Maxx Batterton
+ *
+ */
 public class CMAME extends MAPElites<ArrayList<Double>> {
 	
 	private Emitter[] emitters; // array holding all emitters
@@ -26,6 +35,12 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	private int emitterCounter = 0;
 	private String[] logFiles;
 	
+	/**
+	 * Initializes CMA-ME, first by doing everything 
+	 * MAP-Elites does, then adding emitters based on 
+	 * parameters. Also creates log files for each 
+	 * emitter so that valid parents can be tracked.
+	 */
 	public void initialize(Genotype<ArrayList<Double>> example) {
 		super.initialize(example);
 		int dimension = MMNEAT.getLowerBounds().length;
@@ -44,10 +59,10 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		for (int i = 0; i < numOptimizingEmitters; i++) {
 			Emitter e = new OptimizingEmitter(dimension, archive, i+1); // create optimizing emitters
 			emitters[place+i] = e;
-			if (logFiles != null) logFiles[place+i] = e.individualLog.getFile().getName(); // add emitter log for later
+			if (logFiles != null) logFiles[place+i] = e.individualLog.getFile().getName(); // add emitter valid parent logs for later
 		}
 		
-		if (logFiles != null) {
+		if (logFiles != null) { // Creation of plot file for plotting valid parent logs of each emitter
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
 			String udPrefix = experimentPrefix + "_" + "UpdateDistribution";
@@ -60,7 +75,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 				PrintStream ps = new PrintStream(plot);
 				ps.println("set term pdf enhanced");
 				ps.println("set yrange [0:"+ (Parameters.parameters.integerParameter("lambda")) +"]"); // lambda will be maximum possible value, a perfect update
-				ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")) + "]"); // 
+				ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")) + "]"); // scale vertical to maximum possible
 				ps.println("set title \"" + experimentPrefix + " Number of Valid Parents\"");
 				ps.println("set output \"" + udName.substring(udName.lastIndexOf('/')+1, udName.lastIndexOf('.')) + ".pdf\"");
 				for (int i = 0; i < totalEmitters; i++) { // add line to plot each emitter
@@ -85,9 +100,9 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	 * afterwards
 	 */
 	public void newIndividual() {
-		incrementEmitterCounter();
+		incrementEmitterCounter(); // increment emitter counter
 		Emitter thisEmitter = emitters[emitterCounter]; // pick the lowest one
-		double[] rawIndividual = thisEmitter.sampleSingle();
+		double[] rawIndividual = thisEmitter.sampleSingle(); // sample an individual from current emitter
 		Genotype<ArrayList<Double>> individual = new BoundedRealValuedGenotype(rawIndividual);
 		
 		Score<ArrayList<Double>> individualScore = task.evaluate(individual); // evaluate score for individual
@@ -114,6 +129,12 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		emitterCounter = (emitterCounter + 1) % totalEmitters;
 	}
 	
+	/**
+	 * Update emitter log with valid parents.
+	 * 
+	 * @param mLog The log file to log into
+	 * @param validParents The number of valid parents to be logged
+	 */
 	public void updateEmitterLog(MMNEATLog mLog, int validParents) {
 		mLog.log(iterations + "\t" + validParents);
 	}
@@ -125,23 +146,20 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	// Test CMA-ME
 	public static void main(String[] args) throws NoSuchMethodException, IOException {
 		System.out.println("Testing CMA-ME");
-		//int runNum = 9999;
-		// Rastrigin test: 50 bin 		20 solution vector 		50000 gens
-		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true numImprovementEmitters:1 numOptimizingEmitters:0 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-CMAMERastrigin1ImprovementFunctionOptimization saveTo:CMAMERastrigin1ImprovementFunctionOptimization netio:false maxGens:50000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:50 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
-		
-		// Rastrigin 500 bin 20 vector 50000 gens
-		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true numImprovementEmitters:3 numOptimizingEmitters:0 lambda:100 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-CMAMETesting saveTo:CMAMETesting netio:false maxGens:10000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
-		//MMNEAT.main(("runNumber:"+100+" randomSeed:"+100+" io:true lambda:"+100+" base:mapelitesfunctionoptimizationseveral log:mapelitesfunctionoptimizationSeveral-MELambda saveTo:MELambda netio:false maxGens:"+50000+" ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
-		
-		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true mu:50 lambda:50 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-METesting saveTo:METesting netio:false maxGens:10000 ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
-		
 		runSeveralCMAME();
 	}
 	
-	private static final String FOLDER = "mapelitesfunctionoptimizationseveral";
-	private static File severalLog = new File(FOLDER+"/Several_Log.txt");
-	private static File severalLogPlot = new File(FOLDER+"/Several_Log.txt.plt");
+	private static final String FOLDER = "mapelitesfunctionoptimizationseveral"; // output for multiple runs
+	private static File severalLog = new File(FOLDER+"/Several_Log.txt"); // log file that takes data from each run
+	private static File severalLogPlot = new File(FOLDER+"/Several_Log.txt.plt"); // plot file for above log
 	
+	
+	/**
+	 * Method for running multiple CMAME in sequence
+	 * with variable lambda, and recording the final
+	 * results of each lambda run, to be able to see
+	 * what lambda works the best.
+	 */
 	private static void runSeveralCMAME() throws NoSuchMethodException, IOException {
 		new File(FOLDER+"/").mkdir();
 		severalLog.createNewFile();
@@ -162,7 +180,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		
 		printStream = new PrintStream(new FileOutputStream(severalLog, false));
 		
-		for (int run = 10; run <= 200; run+=10) {
+		for (int run = 10; run <= 200; run+=10) { // range of runs
 			runSingleCMAME(run);
 			Scanner currentFile = new Scanner(new File(FOLDER+"/CMAMELambda"+run+"/mapelitesfunctionoptimizationSeveral-CMAMELambda"+run+"_Fill_log.txt"));
 			String line = "";
@@ -173,6 +191,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		printStream.close();
 	}
 	
+	// run a single CMA-ME with provided lambda. Generations is specified here
 	private static void runSingleCMAME(int lambda) throws FileNotFoundException, NoSuchMethodException {
 		int emitterCount = 1;
 		int gens = 50000;
