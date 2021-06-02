@@ -1105,8 +1105,16 @@ public class CMAEvolutionStrategy implements java.io.Serializable {
 
     		// assign diagD to eigenvalue square roots
     		for (i = 0; i < N; ++i) {
-    			if (diagD[i] < 0) // numerical problem?
-    				error("an eigenvalue has become negative");
+    			if (diagD[i] < 0) { // numerical problem?
+    				// Added by Schrum: June 2 2021
+    				System.err.println("Negative eigenvalue: "+diagD[i]);
+    				if(Math.abs(diagD[i]) < 0.000001) {
+    					System.err.println("Small value. Assume numerical error and set to 0");
+    					diagD[i] = 0;
+    				} else {
+    					error("an eigenvalue has become negative: "+diagD[i]);
+    				}
+    			}
     			diagD[i] = Math.sqrt(diagD[i]);
     		}
     		countCupdatesSinceEigenupdate = 0;
