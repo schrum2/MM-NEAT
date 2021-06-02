@@ -471,11 +471,26 @@ public class MarioLevelUtil {
    		String inputFile2 = "src/main/python/GAN/Mario-overworlds.json";
    		FileReader file1 = new FileReader(inputFile1);
    		FileReader file2 = new FileReader(inputFile2);
-   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile1 = new ArrayList<ArrayList<ArrayList<Integer>>>();
-   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile2 = new ArrayList<ArrayList<ArrayList<Integer>>>();
+   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile1 = parseLevelJson(file1);
+   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile2 = parseLevelJson(file2);
    		
-   		JsonStreamParser jsonParser1 = new JsonStreamParser(file1);
-   		JsonArray parsed = (JsonArray) jsonParser1.next();
+//   		for (int i = 0; i < parsedFile1.size(); i++) {
+//   			printLevelsSideBySide(parsedFile1.get(i), parsedFile2.get(i));
+//   			System.out.println("\n\n");
+//   			
+//   		}
+   		System.out.println("Overall size:"+parsedFile1.size()+" | "+parsedFile2.size()+"\n");
+   		for (int i = 0; i < parsedFile1.size(); i++) {
+   			System.out.println(parsedFile1.get(i).size()+" | "+parsedFile2.get(i).size()+"\n");
+   		}
+   		System.out.println(parsedFile1.equals(parsedFile2));
+   		
+   	}
+   	
+   	public static ArrayList<ArrayList<ArrayList<Integer>>> parseLevelJson(FileReader file) {
+   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile = new ArrayList<ArrayList<ArrayList<Integer>>>();
+   		JsonStreamParser jsonParser = new JsonStreamParser(file);
+   		JsonArray parsed = (JsonArray) jsonParser.next();
    		for (JsonElement element : parsed) {
    			ArrayList<ArrayList<Integer>> inner1 = new ArrayList<ArrayList<Integer>>();
    			for (JsonElement element2 : (JsonArray) element) {
@@ -485,29 +500,9 @@ public class MarioLevelUtil {
    	   	   		}
    				inner1.add(inner2);
    	   		}
-   			parsedFile1.add(inner1);
+   			parsedFile.add(inner1);
    		}
-   		
-   		JsonStreamParser jsonParser2 = new JsonStreamParser(file2);
-   		JsonArray parsed2 = (JsonArray) jsonParser2.next();
-   		for (JsonElement element : parsed2) {
-   			ArrayList<ArrayList<Integer>> inner1 = new ArrayList<ArrayList<Integer>>();
-   			for (JsonElement element2 : (JsonArray) element) {
-   				ArrayList<Integer> inner2 = new ArrayList<Integer>();
-   				for (JsonElement element3 : (JsonArray) element2) {
-   					inner2.add(element3.getAsBigInteger().intValue());
-   	   	   		}
-   				inner1.add(inner2);
-   	   		}
-   			parsedFile2.add(inner1);
-   		}
-   		
-   		for (int i = 0; i < parsedFile1.size(); i++) {
-   			printLevelsSideBySide(parsedFile1.get(i), parsedFile2.get(i));
-   			System.out.println("\n\n");
-   			
-   		}
-   		
+   		return parsedFile;
    	}
    	
    	public static void printLevelsSideBySide(ArrayList<ArrayList<Integer>> level, ArrayList<ArrayList<Integer>> level2) {
