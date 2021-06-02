@@ -1,13 +1,16 @@
 package edu.southwestern.tasks.testmatch.imagematch;
 
 import java.awt.Color;
-import java.awt.image.*;
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import javax.imageio.*;
+
+import javax.imageio.ImageIO;
+
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.Network;
@@ -232,7 +235,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 
 	/**
 	 * gets behavior vector for behavioral diversity algorithm
-         * @return The H, S, and B values for each pixel in the image
+     * @return The H, S, and B values for each pixel in the image
 	 */
 	@Override
 	public ArrayList<Double> getBehaviorVector() {
@@ -264,11 +267,13 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		
 		// For test runs
 		MMNEAT.main(new String[]{
-				"runNumber:0","randomSeed:0", "base:failedskull4", "trials:1", "maxGens:1000", "mu:100", "io:true", "netio:true", 
-				"mating:true", "fs:false", "task:edu.southwestern.tasks.testmatch.imagematch.ImageMatchTask", "log:failedskull-Control", 
-				"saveTo:Control", "allowMultipleFunctions:true", "ftype:0", "watch:false", "netChangeActivationRate:0.3", "overrideImageSize:false", 
+				"runNumber:0","randomSeed:0", "base:imagematch", "trials:1", "maxGens:1000", "mu:100", "io:true", "netio:true", 
+				"mating:true", "fs:false", "task:edu.southwestern.tasks.testmatch.imagematch.ImageMatchTask", 
+				"log:ImageMatch-RMSE", 
+				"saveTo:RMSE", 
+				"allowMultipleFunctions:true", "ftype:0", "watch:false", "netChangeActivationRate:0.3", "overrideImageSize:false", 
 				"imageHeight:200", "imageWidth:300", "saveAllChampions:true",
-				"useWoolleyImageMatchFitness:true", "useRMSEImageMatchFitness:true", // Pick one or none
+				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one or none
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
 				"matchImageFile:failedskull.jpg",

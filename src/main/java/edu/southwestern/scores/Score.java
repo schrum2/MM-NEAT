@@ -347,9 +347,9 @@ public class Score<T> {
 
 	// allows behaviorVector to be printed and then set to a new behavoirVector
 	public void giveBehaviorVector(ArrayList<Double> behaviorVector) {
-		if (behaviorVector != null) {
-			System.out.println("Behavior ArrayList: " + behaviorVector);
-		}
+//		if (behaviorVector != null) {
+//			System.out.println("Behavior ArrayList: " + behaviorVector);
+//		}
 		this.behaviorVector = behaviorVector;
 	}
 	
