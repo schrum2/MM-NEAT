@@ -195,3 +195,4 @@ src/main/python/GAN/MegaManGAN/Thumbs.db
 src/main/python/GAN/CGANTwoClassTests/FINAL.pth
 src/main/python/AutoEncoder/data/MNIST
 failedskull*
+imagematch/
