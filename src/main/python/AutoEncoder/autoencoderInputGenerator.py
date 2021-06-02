@@ -8,7 +8,7 @@ from model import autoencoder
 
 if __name__ == '__main__':
     
-    modelToLoad = 'sim_autoencoder.pth'
+    modelToLoad = sys.argv[1] #'sim_autoencoder.pth'
     fixedModel = torch.load(modelToLoad)
 
     model = autoencoder().cuda()
