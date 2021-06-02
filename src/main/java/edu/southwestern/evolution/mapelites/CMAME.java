@@ -33,7 +33,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		int numOptimizingEmitters = Parameters.parameters.integerParameter("numOptimizingEmitters");
 		totalEmitters = numImprovementEmitters+numOptimizingEmitters;
 		emitters = new Emitter[totalEmitters];
-		if (((CMAME) MMNEAT.ea).io) logFiles = new String[totalEmitters];
+		if (io) logFiles = new String[totalEmitters];
 		int place = 0; // remember position in emitter array
 		for (int i = 0; i < numImprovementEmitters; i++) {
 			Emitter e = new ImprovementEmitter(dimension, archive, i+1); // create improvement emitters
@@ -168,6 +168,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 			String line = "";
 			while (currentFile.hasNextLine()) line = currentFile.nextLine();
 			printStream.println(run + "\t" + line.split("\t")[1] + "\t" + line.split("\t")[2]);
+			currentFile.close();
 		}
 		printStream.close();
 	}
