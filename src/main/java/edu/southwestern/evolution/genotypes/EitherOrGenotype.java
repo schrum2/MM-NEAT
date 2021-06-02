@@ -1,6 +1,6 @@
 package edu.southwestern.evolution.genotypes;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -18,7 +18,7 @@ import java.util.List;
  */
 @SuppressWarnings("rawtypes")
 public abstract class EitherOrGenotype<X,Y> implements Genotype {
-	private ArrayList<Long> parentIds;
+	protected LinkedList<Long> parentIds = new LinkedList<Long>();
 	protected Genotype current; // Could be X or Y
 	protected boolean firstForm;
 	
