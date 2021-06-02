@@ -11,6 +11,7 @@ from torchvision import transforms
 from torchvision.datasets import MNIST
 from torchvision.utils import save_image
 import mydata
+from model import autoencoder
 #from torch.data.utils import ImageFolder
 #ImageFolder from torch.data.utils library.
 
@@ -37,29 +38,6 @@ img_transform = transforms.Compose([
 dataset = mydata.DatasetLoader('PicbreederTargetTrainingSet')
 
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-
-
-class autoencoder(nn.Module):
-    def __init__(self):
-        super(autoencoder, self).__init__()
-        self.encoder = nn.Sequential(
-            nn.Linear(28 * 28, 128),
-            nn.ReLU(True),
-            nn.Linear(128, 64),
-            nn.ReLU(True), nn.Linear(64, 12), nn.ReLU(True), nn.Linear(12, 3))
-        self.decoder = nn.Sequential(
-            nn.Linear(3, 12),
-            nn.ReLU(True),
-            nn.Linear(12, 64),
-            nn.ReLU(True),
-            nn.Linear(64, 128),
-            nn.ReLU(True), nn.Linear(128, 28 * 28), nn.Tanh())
-
-    def forward(self, x):
-        x = self.encoder(x)
-        x = self.decoder(x)
-        return x
-
 
 model = autoencoder().cuda()
 criterion = nn.MSELoss()

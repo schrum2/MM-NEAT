@@ -196,3 +196,4 @@ src/main/python/GAN/CGANTwoClassTests/FINAL.pth
 src/main/python/AutoEncoder/data/MNIST
 failedskull*
 imagematch/
+src/main/python/AutoEncoder/sim_autoencoder.pth
