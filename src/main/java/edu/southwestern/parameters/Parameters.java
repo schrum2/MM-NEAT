@@ -38,7 +38,6 @@ import edu.southwestern.util.random.GaussianGenerator;
 import edu.southwestern.util.sound.SoundUtilExamples;
 import edu.southwestern.util.stats.Average;
 import edu.southwestern.util.stats.Max;
-import fr.inria.optimization.cmaes.fitness.FunctionCollector;
 import oldpacman.controllers.examples.Legacy;
 import oldpacman.controllers.examples.StarterPacMan;
 import oldpacman.game.Constants;
