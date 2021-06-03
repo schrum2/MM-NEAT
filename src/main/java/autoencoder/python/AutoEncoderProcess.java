@@ -12,12 +12,12 @@ import edu.southwestern.util.PythonUtil;
 
 public class AutoEncoderProcess extends Comm {
 	
-	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "autoencoder" + File.separator;
+	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "AutoEncoder" + File.separator;
 	// Program for converting a latent vector to a level via a GAN
-	public static final String AUTOENCODER_PATH = PYTHON_BASE_PATH + "MyAutoencoder.py";
+	public static final String AUTOENCODER_PATH = PYTHON_BASE_PATH + "autoencoderInputGenerator.py";
 	
-	public static String PYTHON_EXECUTABLE = "";
-
+	public static final String SAVED_AUTOENCODER = PYTHON_BASE_PATH + "sim_autoencoder.pth";
+		
 	
 	public AutoEncoderProcess() {
 		//TODO: Anything needed here?
@@ -58,7 +58,7 @@ public class AutoEncoderProcess extends Comm {
 		}
 
 		// Run program with model architecture and weights specified as parameters
-		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, AUTOENCODER_PATH);
+		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, AUTOENCODER_PATH, SAVED_AUTOENCODER);
 		builder.redirectError(Redirect.INHERIT); // Standard error will print to console
 		try {
 			System.out.println(builder.command());
@@ -68,8 +68,21 @@ public class AutoEncoderProcess extends Comm {
 		}
 	}
 	
-	public static void main (String[] args) {
-		PYTHON_EXECUTABLE = "my_python_path.txt";
+	public static void main (String[] args) throws IOException {
+		PythonUtil.PYTHON_EXECUTABLE = "C:\\ProgramData\\Anaconda3\\python.exe";
+		
+		AutoEncoderProcess p = new AutoEncoderProcess();
+		p.start();
+		
+		String s = p.commRecv();
+		System.out.println(s);
+		
+		for(int i = 0; i < 28 * 28; i++) {
+			p.commSend(Math.random() + "");
+		}
+		String output = p.commRecv();
+		System.out.println(output);
+		System.out.println("done");
 	}
 
 }
