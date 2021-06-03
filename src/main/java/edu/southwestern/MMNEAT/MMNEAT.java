@@ -702,18 +702,22 @@ public class MMNEAT {
 			}
 			setupTWEANNGenotypeDataTracking(multiPopulationCoevolution);
 			
-			// Create a pseudo archive for use with objective evolution TODO
-			pseudoArchive = new Archive<>(Parameters.parameters.booleanParameter("netio"));
-			int startSize = Parameters.parameters.integerParameter("mu");
-			ArrayList<Genotype> startingPopulation = PopulationUtil.initialPopulation(genotype.newInstance(), startSize);
-			for(Genotype g : startingPopulation) {
-				System.out.println("genotype: "+g);
-				Score s = ((LonerTask) task).evaluate(g);
-				System.out.println("score: "+s);
-				pseudoArchive.add(s); // Fill the archive with random starting individuals
+			usingDiversityBinningScheme = Parameters.parameters.booleanParameter("trackPseudoArchive");
+			if (usingDiversityBinningScheme) {
+				// Create a pseudo archive for use with objective evolution TODO
+				pseudoArchive = new Archive<>(Parameters.parameters.booleanParameter("netio"));
+				int startSize = Parameters.parameters.integerParameter("mu");
+				ArrayList<Genotype> startingPopulation = PopulationUtil.initialPopulation(genotype.newInstance(),
+						startSize);
+				for (Genotype g : startingPopulation) {
+					System.out.println("genotype: " + g);
+					Score s = ((LonerTask) task).evaluate(g);
+					System.out.println("score: " + s);
+					pseudoArchive.add(s); // Fill the archive with random starting individuals
+				}
+				if (ea instanceof MuLambda)
+					((MuLambda) ea).setUpPseudoArchive();
 			}
-			if (ea instanceof MuLambda) ((MuLambda) ea).setUpPseudoArchive();
-			
 			// An Experiment is always needed
 			System.out.println("Create Experiment");
 			experiment = (Experiment) ClassCreation.createObject("experiment");

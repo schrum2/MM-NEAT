@@ -752,6 +752,7 @@ public class Parameters {
 		booleanOptions.add("animateWithScaleAndRotation", false, "Animate with scale and rotation when true.");
 		booleanOptions.add("useWoolleyImageMatchFitness", false, "Use the fitness calculation from the Woolley paper if true.");
 		booleanOptions.add("useRMSEImageMatchFitness", false, "Use RMSE as the fitness calculation if true.");
+		booleanOptions.add("trackPseudoArchive", false, "Option to track the progress of an objective function with a binning scheme.");
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");

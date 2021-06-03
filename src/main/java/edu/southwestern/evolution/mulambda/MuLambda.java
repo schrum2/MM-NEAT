@@ -258,13 +258,13 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		// Get offspring from parents
 		ArrayList<Genotype<T>> children = performDeltaCoding(generation)
 				? PopulationUtil.getBestAndDeltaCode(parentScores) : generateChildren(lambda, parentScores);
-				// Evaluate the children
-				ArrayList<Score<T>> childrenScores = task.evaluateAll(children);
-				// Log child information to file
-				if (writeOutput && CommonConstants.logChildScores) {
-					childLog.log(childrenScores, generation);
-				}
-				return childrenScores;
+		// Evaluate the children
+		ArrayList<Score<T>> childrenScores = task.evaluateAll(children);
+		// Log child information to file
+		if (writeOutput && CommonConstants.logChildScores) {
+			childLog.log(childrenScores, generation);
+		}
+		return childrenScores;
 	}
 
 	/**
@@ -401,22 +401,24 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		System.out.println("Eval children: ");
 		ArrayList<Score<T>> childrenScores = processChildren(parentScores);
 		
-		// Add evaluated parent and child scores to pseudo archive if it is not null TODO
-		if (MMNEAT.pseudoArchive != null) {
-			for (Score<T> s : childrenScores) {
-				System.out.println("Adding score \""+s+"\" to pseudo-archive");
-				if (s != null) MMNEAT.pseudoArchive.add(s);
+		if (MMNEAT.usingDiversityBinningScheme) {
+			// Add evaluated parent and child scores to pseudo archive if it is not null TODO
+			if (MMNEAT.pseudoArchive != null) {
+				for (Score<T> s : childrenScores) {
+					System.out.println("Adding score \"" + s + "\" to pseudo-archive");
+					if (s != null)
+						MMNEAT.pseudoArchive.add(s);
+				}
 			}
+			Float[] elite = ArrayUtils.toObject(MMNEAT.pseudoArchive.getEliteScores());
+			archiveLog.log(generation + "\t" + StringUtils.join(elite, "\t"));
+			Float maximumFitness = StatisticsUtilities.maximum(elite);
+			// Exclude negative infinity to find out how many bins are filled
+			final int numFilledBins = elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite);
+			// Get the QD Score for this elite
+			final double qdScore = MAPElites.calculateQDScore(elite);
+			fillLog.log(generation + "\t" + numFilledBins + "\t" + qdScore + "\t" + maximumFitness + "\t" + 0.0);
 		}
-		Float[] elite = ArrayUtils.toObject(MMNEAT.pseudoArchive.getEliteScores());
-		archiveLog.log(generation + "\t" + StringUtils.join(elite, "\t"));
-		Float maximumFitness = StatisticsUtilities.maximum(elite);
-		// Exclude negative infinity to find out how many bins are filled
-		final int numFilledBins = elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite);
-		// Get the QD Score for this elite
-		final double qdScore = MAPElites.calculateQDScore(elite);
-		fillLog.log(generation + "\t" + numFilledBins + "\t" + qdScore + "\t" + maximumFitness + "\t" + 0.0);
-		
 		end = System.currentTimeMillis();
 		System.out.println("Done children: " + TimeUnit.MILLISECONDS.toMinutes(end - start) + " minutes");
 
