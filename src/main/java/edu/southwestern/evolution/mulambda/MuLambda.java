@@ -417,7 +417,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 			final int numFilledBins = elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite);
 			// Get the QD Score for this elite
 			final double qdScore = MAPElites.calculateQDScore(elite);
-			fillLog.log(generation + "\t" + numFilledBins + "\t" + qdScore + "\t" + maximumFitness + "\t" + 0.0);
+			fillLog.log(generation + "\t" + numFilledBins + "\t" + qdScore + "\t" + maximumFitness + "\t" + 1.0);
 		}
 		end = System.currentTimeMillis();
 		System.out.println("Done children: " + TimeUnit.MILLISECONDS.toMinutes(end - start) + " minutes");
