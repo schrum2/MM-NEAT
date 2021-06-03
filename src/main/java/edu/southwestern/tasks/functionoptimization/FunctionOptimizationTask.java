@@ -58,17 +58,15 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 	 * 
 	 * @return A Score that contains only one score, evaluated by the single function
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Score<ArrayList<Double>> evaluate(Genotype<ArrayList<Double>> individual) {
 		ArrayList<Double> pheno = individual.getPhenotype();
-		//System.out.println(pheno);
 		double[] vector = ArrayUtil.doubleArrayFromList(pheno); // Convert ArrayList into double array to give to function
 		double score = -function.valueOf(vector); // Must be negated to work since CMA-ES is a minimizer
 		double[] scores = new double[] {score}; 
 		Score<ArrayList<Double>> result =  new Score<>(individual, scores, null);
 		
-		if(MMNEAT.ea instanceof MAPElites) {
+		if(MMNEAT.usingDiversityBinningScheme) {
 			int dim1, dim2;
 			if(MMNEAT.getArchiveBinLabelsClass() instanceof FunctionOptimizationRastriginBinLabels) {
 				FunctionOptimizationRastriginBinLabels labels = (FunctionOptimizationRastriginBinLabels) MMNEAT.getArchiveBinLabelsClass();
@@ -83,7 +81,7 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 			oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {dim1, dim2}, -score);
 		}		
 		
-		if(MMNEAT.ea instanceof MAPElites)
+		if(MMNEAT.usingDiversityBinningScheme)
 			result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
 		
 		return result;
