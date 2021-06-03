@@ -12,7 +12,6 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.mapelites.Archive;
-import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.CommonConstants;
@@ -22,7 +21,6 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.util.MiscUtil;
-import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.stats.StatisticsUtilities;
@@ -227,24 +225,18 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	}
 	
 	/**
-	 * Saves all the images in the image archive in 
-	 * a new directory inside the experiment directory.
 	 * 
-	 * @param directoryName Name of the directory where the images
-	 *                      will be saved
+	 * 
+	 * @param directoryName
 	 */
 	@SuppressWarnings("unchecked")
 	public void saveAllArchiveImages(String directoryName) {
-		String snapshot = FileUtilities.getSaveDirectory() + File.separator + "snapshots";
-		File snapshotDir = new File(snapshot);
-		if(!snapshotDir.exists()) snapshotDir.mkdir();
-		
-		String subdir = snapshot + File.separator + directoryName;
-		File subdirFile = new File(subdir);
-		subdirFile.mkdir();
-		
 		Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
-		BinLabels labels = archive.getBinMapping();
+		List<String> binLabels = archive.getBinMapping().binLabels();
+		String archivePath = archive.getArchiveDirectory();
+		File archiveDir = new File(archivePath);
+		archiveDir.mkdir();
+		String archiveAllImages = archive.getArchiveDirectory() + File.separator + directoryName;
 		int saveWidth = Parameters.parameters.integerParameter("imageWidth"); 
 		int saveHeight = Parameters.parameters.integerParameter("imageHeight");
 		
@@ -253,7 +245,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				Network cppn = s.individual.getPhenotype();
 				BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, saveWidth, saveHeight);
 				//String fullName = finalArchive + File.separator + fileName;
-				String fullName = subdir + File.separator + labels.binLabels().get(labels.oneDimensionalIndex(s.MAPElitesBinIndex())) + ".jpg";
+				String fullName = archive.getArchiveDirectory() + directoryName;
 				GraphicsUtil.saveImage(image, fullName);
 			}
 		}
@@ -305,14 +297,14 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		
 		
 		// For test runs
-		MMNEAT.main(new String[]{"runNumber:1","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
+		MMNEAT.main(new String[]{"runNumber:2","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
 				"log:TargetImage-skull","saveTo:skull","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping",
-				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
+				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping",
+				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
 				"fs:true",
 				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
 				//"matchImageFile:TexasFlag.png",
