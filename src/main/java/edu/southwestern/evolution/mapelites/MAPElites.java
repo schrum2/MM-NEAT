@@ -92,7 +92,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		this.iterationsWithoutElite = 0; // Not accurate on resume		
 	}
 
-	private static void setUpLogging(int numLabels, String infix, String experimentPrefix, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
+	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
 		String prefix = experimentPrefix + "_" + infix;
 		String fillPrefix = experimentPrefix + "_" + "Fill";
 		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
