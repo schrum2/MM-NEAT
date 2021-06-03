@@ -195,7 +195,6 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			MMNEAT.registerFitnessFunction("Leniency-"+i,false);
 			MMNEAT.registerFitnessFunction("NegativeSpace-"+i,false);
 		}
-		setupKLDivLevelsForComparison();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -254,8 +253,10 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		if(!initialized) setupKLDivLevelsForComparison();
-		initialized = true;
+		if(!initialized) {
+			setupKLDivLevelsForComparison();
+			initialized = true;
+		}
 		EvaluationInfo info = null;
 		BufferedImage levelImage = null;
 		ArrayList<List<Integer>> oneLevel = getMarioLevelListRepresentationFromGenotype(individual);
