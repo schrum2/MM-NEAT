@@ -70,8 +70,8 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 		
 		if(MMNEAT.ea instanceof MAPElites) {
 			int dim1, dim2;
-			if(((MAPElites<ArrayList<Double>>) MMNEAT.ea).getBinLabelsClass() instanceof FunctionOptimizationRastriginBinLabels) {
-				FunctionOptimizationRastriginBinLabels labels = (FunctionOptimizationRastriginBinLabels) ((MAPElites<ArrayList<Double>>) MMNEAT.ea).getBinLabelsClass();
+			if(MMNEAT.getArchiveBinLabelsClass() instanceof FunctionOptimizationRastriginBinLabels) {
+				FunctionOptimizationRastriginBinLabels labels = (FunctionOptimizationRastriginBinLabels) MMNEAT.getArchiveBinLabelsClass();
 				double[] characteristic = labels.behaviorCharacterization(vector);
 				int[] dimensions = labels.discretize(characteristic);
 				dim1 = dimensions[0];

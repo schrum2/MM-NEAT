@@ -363,7 +363,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				// Combo of connectivity and A* overwhelms regular A*
 				binScore = comboFitness;
 			}
-
+			
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels) {
 				//Initializes bin dimensions 
 				dims = new int[] {connectedIndex, groundIndex, laddersIndex}; // connectivity, percent ground scaled, percent ladders scaled
