@@ -180,7 +180,7 @@ public class Score<T> {
 	@SuppressWarnings("unchecked")
 	public double behaviorIndexScore(int index) {
 		if(oneMAPEliteBinIndexScorePair != null) {
-			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1) != index)
+			if(MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1) != index)
 				throw new IllegalArgumentException("Should not ask for score associated with MAP Elites bin index that does not match: " + index + " != " + oneMAPEliteBinIndexScorePair.t1);
 			return oneMAPEliteBinIndexScorePair.t2;
 		} else {
@@ -352,10 +352,8 @@ public class Score<T> {
 	public ArrayList<Double> getTraditionalDomainSpecificBehaviorVector() {
 		if(this.behaviorVector == null) {
 			// Have to construct the behavior vector based on knowledge of bin index and score
-			@SuppressWarnings("unchecked")
-			MAPElites<T> ea = ((MAPElites<T>) MMNEAT.ea);
-			int vectorLength = ea.getBinLabelsClass().binLabels().size();
-			int oneDimensionalIndex = ea.getBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1);
+			int vectorLength = MMNEAT.getArchiveBinLabelsClass().binLabels().size();
+			int oneDimensionalIndex = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1);
 			ArrayList<Double> vector = new ArrayList<>(vectorLength);
 			for(int i = 0; i < oneDimensionalIndex; i++) {
 				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins
