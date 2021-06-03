@@ -63,6 +63,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	
 	@SuppressWarnings("unchecked")
 	public MAPElites() {
+		MMNEAT.usingDiversityBinningScheme = true;
 		this.task = (LonerTask<T>) MMNEAT.task;
 		this.io = Parameters.parameters.booleanParameter("io"); // write logs
 		this.archive = new Archive<>(Parameters.parameters.booleanParameter("netio"));

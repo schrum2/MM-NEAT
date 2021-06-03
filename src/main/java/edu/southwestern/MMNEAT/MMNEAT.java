@@ -24,6 +24,9 @@ import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
 import edu.southwestern.evolution.halloffame.HallOfFame;
 import edu.southwestern.evolution.lineage.Offspring;
+import edu.southwestern.evolution.mapelites.Archive;
+import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.evolution.metaheuristics.AntiMaxModuleUsageFitness;
 import edu.southwestern.evolution.metaheuristics.FavorXModulesFitness;
 import edu.southwestern.evolution.metaheuristics.LinkPenalty;
@@ -171,9 +174,23 @@ public class MMNEAT {
 	@SuppressWarnings("rawtypes")
 	public static HallOfFame hallOfFame;
 	public static SubstrateArchitectureDefinition substrateArchitectureDefinition;
-
+	@SuppressWarnings("rawtypes")
+	public static Archive pseudoArchive;
+	public static boolean usingDiversityBinningScheme = false;
+	
 	public static MMNEAT mmneat;
 
+	@SuppressWarnings("rawtypes")
+	public static BinLabels getArchiveBinLabelsClass() {
+		if (pseudoArchive != null) {
+			return pseudoArchive.getBinLabelsClass();
+		} else if (ea instanceof MAPElites) {
+			return ((MAPElites) ea).getBinLabelsClass();
+		}
+		throw new IllegalStateException("Attempted to get archive without using MAP Elites or a psuedo-archive");
+	}
+	
+	
 	@SuppressWarnings("rawtypes")
 	public static ArrayList<String> fitnessPlusMetaheuristics(int pop) {
 		@SuppressWarnings("unchecked")
@@ -681,6 +698,10 @@ public class MMNEAT {
 				seedExample = true;
 			}
 			setupTWEANNGenotypeDataTracking(multiPopulationCoevolution);
+			
+			// Create a pseudo archive for use with objective evolution
+			
+			
 			// An Experiment is always needed
 			System.out.println("Create Experiment");
 			experiment = (Experiment) ClassCreation.createObject("experiment");
