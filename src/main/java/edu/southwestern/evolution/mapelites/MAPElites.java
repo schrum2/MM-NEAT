@@ -74,99 +74,105 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			archiveLog = new MMNEATLog(infix, false, false, false, true); 
 			fillLog = new MMNEATLog("Fill", false, false, false, true);
 			// Can't check MMNEAT.genotype since MMNEAT.ea is initialized before MMNEAT.genotype
-			if(Parameters.parameters.classParameter("genotype").equals(CPPNOrDirectToGANGenotype.class)) {
+			boolean cppnDirLogging = Parameters.parameters.classParameter("genotype").equals(CPPNOrDirectToGANGenotype.class);
+			if(cppnDirLogging) {
 				cppnThenDirectLog = new MMNEATLog("cppnToDirect", false, false, false, true);
 				cppnVsDirectFitnessLog = new MMNEATLog("cppnVsDirectFitness", false, false, false, true);
 			}
 			// Create gnuplot file for archive log
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
-			String prefix = experimentPrefix + "_" + infix;
-			String fillPrefix = experimentPrefix + "_" + "Fill";
-			String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
-			String fillPercentagePrefix = experimentPrefix + "_" + "FillPercentage";
-			String qdPrefix = experimentPrefix + "_" + "QD";
-			String maxPrefix = experimentPrefix + "_" + "Maximum";
-			String directory = FileUtilities.getSaveDirectory();// retrieves file directory
-			directory += (directory.equals("") ? "" : "/");
-			String fullName = directory + prefix + "_log.plt";
-			String fullFillName = directory + fillPrefix + "_log.plt";
-			String fullFillDiscardedName = directory + fillDiscardedPrefix + "_log.plt";
-			String fullFillPercentageName = directory + fillPercentagePrefix + "_log.plt";
-			String fullQDName = directory + qdPrefix + "_log.plt";
-			String maxFitnessName = directory + maxPrefix + "_log.plt";
-			File plot = new File(fullName); // for archive log plot file
-			File fillPlot = new File(fullFillName);
-			// Write to file
-			try {
-				// Archive plot
-				this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
-				PrintStream ps = new PrintStream(plot);
-				ps.println("set term pdf enhanced");
-				ps.println("unset key");
-				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-				ps.println("set yrange [0:"+ (Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration) +"]");
-				ps.println("set xrange [0:"+ archive.getBinMapping().binLabels().size() + "]");
-				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
-				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
-				// The :1 is for skipping the "generation" number logged in the file
-				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
-				ps.close();
-				
-				// Fill percentage plot
-				ps = new PrintStream(fillPlot);
-				ps.println("set term pdf enhanced");
-				//ps.println("unset key");
-				ps.println("set key bottom right");
-				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-				ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration) +"]");
-				ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
-				ps.println("set output \"" + fullFillDiscardedName.substring(fullFillDiscardedName.lastIndexOf('/')+1, fullFillDiscardedName.lastIndexOf('.')) + ".pdf\"");
-				String name = fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.'));
-				ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\", \\");
-				ps.println("     \"" + name + ".txt\" u 1:5 w linespoints t \"Discarded\"" + (cppnThenDirectLog != null ? ", \\" : ""));
-				if(cppnThenDirectLog != null) { // Print CPPN and direct counts on same plot
-					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
-					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
-				}
-				
-				ps.println("set title \"" + experimentPrefix + " Archive Filled Bins Percentage\"");
-				ps.println("set output \"" + fullFillPercentageName.substring(fullFillPercentageName.lastIndexOf('/')+1, fullFillPercentageName.lastIndexOf('.')) + ".pdf\"");
-				ps.println("plot \"" + name + ".txt\" u 1:($2 / "+numLabels+") w linespoints t \"Total\"" + (cppnThenDirectLog != null ? ", \\" : ""));
-				if(cppnThenDirectLog != null) { // Print CPPN and direct counts on same plot
-					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
-					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
-				}
-				
-				ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
-				ps.println("set output \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".pdf\"");
-				ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\"" + (cppnThenDirectLog != null ? ", \\" : ""));
-				if(cppnThenDirectLog != null) { // Print CPPN and direct counts on same plot
-					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
-					ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
-				}
-				
-				ps.println("set title \"" + experimentPrefix + " Archive QD Scores\"");
-				ps.println("set output \"" + fullQDName.substring(fullQDName.lastIndexOf('/')+1, fullQDName.lastIndexOf('.')) + ".pdf\"");
-				ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\"");
-				
-				ps.println("set title \"" + experimentPrefix + " Maximum individual fitness score");
-				ps.println("set output \"" + maxFitnessName.substring(maxFitnessName.lastIndexOf('/')+1, maxFitnessName.lastIndexOf('.')) + ".pdf\"");
-				ps.println("plot \"" + name + ".txt\" u 1:4 w linespoints t \"Maximum fitness Score\"");
-				
-				ps.close();
-				
-			} catch (FileNotFoundException e) {
-				System.out.println("Could not create plot file: " + plot.getName());
-				e.printStackTrace();
-				System.exit(1);
-			}
+			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
+			setUpLogging(numLabels, infix, experimentPrefix, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
 		}
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 		this.iterations = Parameters.parameters.integerParameter("lastSavedGeneration");
 		this.iterationsWithoutEliteCounter = 0;
 		this.iterationsWithoutElite = 0; // Not accurate on resume		
+	}
+
+	private static void setUpLogging(int numLabels, String infix, String experimentPrefix, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
+		String prefix = experimentPrefix + "_" + infix;
+		String fillPrefix = experimentPrefix + "_" + "Fill";
+		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
+		String fillPercentagePrefix = experimentPrefix + "_" + "FillPercentage";
+		String qdPrefix = experimentPrefix + "_" + "QD";
+		String maxPrefix = experimentPrefix + "_" + "Maximum";
+		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+		directory += (directory.equals("") ? "" : "/");
+		String fullName = directory + prefix + "_log.plt";
+		String fullFillName = directory + fillPrefix + "_log.plt";
+		String fullFillDiscardedName = directory + fillDiscardedPrefix + "_log.plt";
+		String fullFillPercentageName = directory + fillPercentagePrefix + "_log.plt";
+		String fullQDName = directory + qdPrefix + "_log.plt";
+		String maxFitnessName = directory + maxPrefix + "_log.plt";
+		File plot = new File(fullName); // for archive log plot file
+		File fillPlot = new File(fullFillName);
+		// Write to file
+		try {
+			// Archive plot
+			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
+			PrintStream ps = new PrintStream(plot);
+			ps.println("set term pdf enhanced");
+			ps.println("unset key");
+			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+			ps.println("set yrange [0:"+ (Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration) +"]");
+			ps.println("set xrange [0:"+ archiveSize + "]");
+			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
+			ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+			// The :1 is for skipping the "generation" number logged in the file
+			ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+			ps.close();
+			
+			// Fill percentage plot
+			ps = new PrintStream(fillPlot);
+			ps.println("set term pdf enhanced");
+			//ps.println("unset key");
+			ps.println("set key bottom right");
+			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+			ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration) +"]");
+			ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
+			ps.println("set output \"" + fullFillDiscardedName.substring(fullFillDiscardedName.lastIndexOf('/')+1, fullFillDiscardedName.lastIndexOf('.')) + ".pdf\"");
+			String name = fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.'));
+			ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\", \\");
+			ps.println("     \"" + name + ".txt\" u 1:5 w linespoints t \"Discarded\"" + (cppnDirLogging ? ", \\" : ""));
+			if(cppnDirLogging) { // Print CPPN and direct counts on same plot
+				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
+				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
+			}
+			
+			ps.println("set title \"" + experimentPrefix + " Archive Filled Bins Percentage\"");
+			ps.println("set output \"" + fullFillPercentageName.substring(fullFillPercentageName.lastIndexOf('/')+1, fullFillPercentageName.lastIndexOf('.')) + ".pdf\"");
+			ps.println("plot \"" + name + ".txt\" u 1:($2 / "+numLabels+") w linespoints t \"Total\"" + (cppnDirLogging ? ", \\" : ""));
+			if(cppnDirLogging) { // Print CPPN and direct counts on same plot
+				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
+				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
+			}
+			
+			ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
+			ps.println("set output \"" + fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.')) + ".pdf\"");
+			ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Total\"" + (cppnDirLogging ? ", \\" : ""));
+			if(cppnDirLogging) { // Print CPPN and direct counts on same plot
+				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:2 w linespoints t \"CPPNs\", \\");
+				ps.println("     \"" + name.replace("Fill", "cppnToDirect") + ".txt\" u 1:3 w linespoints t \"Vectors\"");
+			}
+			
+			ps.println("set title \"" + experimentPrefix + " Archive QD Scores\"");
+			ps.println("set output \"" + fullQDName.substring(fullQDName.lastIndexOf('/')+1, fullQDName.lastIndexOf('.')) + ".pdf\"");
+			ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"QD Score\"");
+			
+			ps.println("set title \"" + experimentPrefix + " Maximum individual fitness score");
+			ps.println("set output \"" + maxFitnessName.substring(maxFitnessName.lastIndexOf('/')+1, maxFitnessName.lastIndexOf('.')) + ".pdf\"");
+			ps.println("plot \"" + name + ".txt\" u 1:4 w linespoints t \"Maximum fitness Score\"");
+			
+			ps.close();
+			
+		} catch (FileNotFoundException e) {
+			System.out.println("Could not create plot file: " + plot.getName());
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 	
 	/**
