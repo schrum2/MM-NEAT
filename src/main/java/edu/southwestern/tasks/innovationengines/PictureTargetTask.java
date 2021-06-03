@@ -225,6 +225,34 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	}
 	
 	/**
+	 * 
+	 * 
+	 * @param directoryName
+	 */
+	@SuppressWarnings("unchecked")
+	public void saveAllArchiveImages(String directoryName) {
+		Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+		List<String> binLabels = archive.getBinMapping().binLabels();
+		String archivePath = archive.getArchiveDirectory();
+		File archiveDir = new File(archivePath);
+		archiveDir.mkdir();
+		String archiveAllImages = archive.getArchiveDirectory() + File.separator + directoryName;
+		int saveWidth = Parameters.parameters.integerParameter("imageWidth"); 
+		int saveHeight = Parameters.parameters.integerParameter("imageHeight");
+		
+		for(Score<T> s : archive.getArchive()) {
+			if(s != null) {
+				Network cppn = s.individual.getPhenotype();
+				BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, saveWidth, saveHeight);
+				//String fullName = finalArchive + File.separator + fileName;
+				String fullName = archive.getArchiveDirectory() + directoryName;
+				GraphicsUtil.saveImage(image, fullName);
+			}
+		}
+	}
+	
+	
+	/**
 	 * Save fresh archive of only the final images
 	 */
 	public void finalCleanup() {
@@ -271,7 +299,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		// For test runs
 		MMNEAT.main(new String[]{"runNumber:2","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
-				"log:TargetImage-FailedSkull","saveTo:FailedSkull","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
+				"log:TargetImage-skull","saveTo:skull","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
@@ -281,7 +309,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
-				"matchImageFile:failedskull.jpg",
+				"matchImageFile:skull64.jpg",
 				"fitnessSaveThreshold:0.7",		// Higher threshold for RMSE 
 				"includeSigmoidFunction:true", 	// In Brian Woolley paper
 				"includeTanhFunction:false",
