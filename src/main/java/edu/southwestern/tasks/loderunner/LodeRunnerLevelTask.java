@@ -59,13 +59,14 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	private ArrayList<Double> behaviorVector;
 	private Pair<int[],Double> oneMAPEliteBinIndexScorePair;
 	private int[][][] klDivLevels;
+	
+	private boolean initialized = false; // become true on first evaluation
 
 	/**
 	 * Registers all fitness functions that are used, and other scores 
 	 */
 	public LodeRunnerLevelTask() {
 		this(true); // registers the fitness functions and other scores
-		setupKLDivLevelsForComparison();
 	}
 	
 	/**
@@ -215,7 +216,11 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 * @throws IOException 
 	 */
 	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num){
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+		if(!initialized) {
+			setupKLDivLevelsForComparison();
+			initialized = true;
+		}
 		List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromGenotype(individual); //gets a level 
 		double psuedoRandomSeed = getRandomSeedForSpawnPoint(individual); //creates the seed to be passed into the Random instance 
 		long genotypeId = individual.getId();
@@ -358,7 +363,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				// Combo of connectivity and A* overwhelms regular A*
 				binScore = comboFitness;
 			}
-
+			
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels) {
 				//Initializes bin dimensions 
 				dims = new int[] {connectedIndex, groundIndex, laddersIndex}; // connectivity, percent ground scaled, percent ladders scaled

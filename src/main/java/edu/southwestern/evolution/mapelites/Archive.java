@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.util.Vector;
 import java.util.stream.IntStream;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.scores.Score;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.file.FileUtilities;
@@ -220,5 +221,10 @@ public class Archive<T> {
 	 */
 	public int randomBinIndex() {
 		return RandomNumbers.randomGenerator.nextInt(archive.size());
+	}
+	
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		int runNum = 0;
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:nsga2test log:NSG2Test-Test saveTo:Test netio:true lambda:37 maxGens:200 task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 	}
 }

@@ -60,8 +60,10 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+/nsga2test/
 /loderunnerlevelsequences/
 /loderunnermapelites/
+/loderunnerkldivergence/
 /megamandistinctverticalandconnectivity/
 /loderunnerlevels/
 /loderunnerlevelscmaes/
