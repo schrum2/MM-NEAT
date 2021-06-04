@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.ClassCreation;
@@ -78,7 +77,7 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 				throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
 			}
 			// Row-major order lookup in 2D archive
-			oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {dim1, dim2}, -score);
+			oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {dim1, dim2}, score);
 		}		
 		
 		if(MMNEAT.usingDiversityBinningScheme)

@@ -466,24 +466,25 @@ public class MarioLevelUtil {
 //	}
    	
    	
-   	public static void main(String[] args) throws FileNotFoundException {
-   		String inputFile1 = "src/main/python/GAN/Mario-overworlds-redo.json";
-   		String inputFile2 = "src/main/python/GAN/Mario-overworlds.json";
+   	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
+   		String inputFile1 = "src/main/python/GAN/Mario-all.json";
+   		String inputFile2 = "src/main/python/GAN/Mario-all.json";
    		FileReader file1 = new FileReader(inputFile1);
    		FileReader file2 = new FileReader(inputFile2);
    		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile1 = parseLevelJson(file1);
    		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile2 = parseLevelJson(file2);
    		
-//   		for (int i = 0; i < parsedFile1.size(); i++) {
-//   			printLevelsSideBySide(parsedFile1.get(i), parsedFile2.get(i));
-//   			System.out.println("\n\n");
-//   			
-//   		}
-   		System.out.println("Overall size:"+parsedFile1.size()+" | "+parsedFile2.size()+"\n");
    		for (int i = 0; i < parsedFile1.size(); i++) {
-   			System.out.println(parsedFile1.get(i).size()+" | "+parsedFile2.get(i).size()+"\n");
+   			printLevelsSideBySide(parsedFile1.get(i), parsedFile2.get(i));
+   			Thread.sleep(50);
+   			System.out.println("\n\n");
    		}
-   		System.out.println(parsedFile1.equals(parsedFile2));
+   		
+//   		System.out.println("Overall size:"+parsedFile1.size()+" | "+parsedFile2.size()+"\n");
+//   		for (int i = 0; i < parsedFile1.size(); i++) {
+//   			System.out.println(parsedFile1.get(i).size()+" | "+parsedFile2.get(i).size()+"\n");
+//   		}
+//   		System.out.println(parsedFile1.equals(parsedFile2));
    		
    	}
    	
