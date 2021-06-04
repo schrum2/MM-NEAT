@@ -253,7 +253,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				Network cppn = s.individual.getPhenotype();
 				BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, saveWidth, saveHeight);
 				//String fullName = finalArchive + File.separator + fileName;
-				String fullName = subdir + File.separator + labels.binLabels().get(labels.oneDimensionalIndex(s.MAPElitesBinIndex()))+"-"+s.behaviorIndexScore()+".jpg";
+				String fullName = subdir + File.separator + s.behaviorIndexScore() + "-" + labels.binLabels().get(labels.oneDimensionalIndex(s.MAPElitesBinIndex()))+".jpg";
 				GraphicsUtil.saveImage(image, fullName);
 			}
 		}
@@ -342,7 +342,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		
 		
 		// For test runs
-		MMNEAT.main(new String[]{"runNumber:1","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
+		MMNEAT.main(new String[]{"runNumber:3","randomSeed:3","base:targetimage","mu:400","maxGens:10000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
 				"log:TargetImage-skull","saveTo:skull","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
@@ -356,7 +356,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				//"matchImageFile:cat.jpg",
 				"matchImageFile:skull64.jpg",
 				"fitnessSaveThreshold:1.0",		// Since we periodically save the whole archive, don't bother saving with threshold any more 
-				"imageArchiveSaveFrequency:10000",
+				"imageArchiveSaveFrequency:50000",
 				"includeSigmoidFunction:true", 	// In Brian Woolley paper
 				"includeTanhFunction:false",
 				"includeIdFunction:true",		// In Brian Woolley paper
