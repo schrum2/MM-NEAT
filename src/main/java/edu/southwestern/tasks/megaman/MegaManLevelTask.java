@@ -115,7 +115,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
 		Score<T> result = super.evaluate(individual);
-		if(MMNEAT.ea instanceof MAPElites)
+		if(MMNEAT.usingDiversityBinningScheme)
 			result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
 		return result;
 	}
@@ -313,11 +313,11 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			}
 			
 		}
-		if(MMNEAT.ea instanceof MAPElites) {
+		if(MMNEAT.usingDiversityBinningScheme) {
 			double binScore = simpleAStarDistance;
 			//int binIndex = 0;
 
-			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels) {
+			if(MMNEAT.getArchiveBinLabelsClass() instanceof MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels) {
 				//int maxNumSegments = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 
 				assert precentConnected <= 1;
@@ -338,7 +338,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			
 			if(CommonConstants.netio) {
 				System.out.println("Save archive images");
-				Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+				Archive<T> archive = MMNEAT.getArchive();
 				List<String> binLabels = archive.getBinMapping().binLabels();
 
 				// Index in flattened bin array

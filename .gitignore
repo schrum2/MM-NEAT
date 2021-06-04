@@ -60,7 +60,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-/nsga2test/
+/objectiveevolutionpseudoarchive/
 /mariolevelsnsga2/
 /loderunnerlevelsequences/
 /loderunnermapelites/
