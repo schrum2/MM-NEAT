@@ -118,7 +118,8 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		// Logging in RAW mode so that can append to log file on experiment resume
 		archiveLog = new MMNEATLog(infix, false, false, false, true); 
 		fillLog = new MMNEATLog("Fill", false, false, false, true);
-		MAPElites.setUpLogging(numLabels, infix, experimentPrefix, false, individualsPerGeneration, MMNEAT.pseudoArchive.getBinMapping().binLabels().size());
+		int yrange = Parameters.parameters.integerParameter("maxGens");
+		MAPElites.setUpLogging(numLabels, infix, experimentPrefix, yrange, false, individualsPerGeneration, Parameters.parameters.integerParameter("maxGens"));
 	}
 
 	/**

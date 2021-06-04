@@ -83,7 +83,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
 			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
-			setUpLogging(numLabels, infix, experimentPrefix, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
+			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
+			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
 		}
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
@@ -92,7 +93,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		this.iterationsWithoutElite = 0; // Not accurate on resume		
 	}
 
-	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
+	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
 		String prefix = experimentPrefix + "_" + infix;
 		String fillPrefix = experimentPrefix + "_" + "Fill";
 		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
@@ -117,7 +118,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("set term pdf enhanced");
 			ps.println("unset key");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-			ps.println("set yrange [0:"+ (Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration) +"]");
+			ps.println("set yrange [0:"+ yrange +"]");
 			ps.println("set xrange [0:"+ archiveSize + "]");
 			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 			ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
@@ -131,7 +132,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			//ps.println("unset key");
 			ps.println("set key bottom right");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
-			ps.println("set xrange [0:"+ (Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration) +"]");
+			ps.println("set xrange [0:"+ yrange +"]");
 			ps.println("set title \"" + experimentPrefix + " Archive Filled Bins\"");
 			ps.println("set output \"" + fullFillDiscardedName.substring(fullFillDiscardedName.lastIndexOf('/')+1, fullFillDiscardedName.lastIndexOf('.')) + ".pdf\"");
 			String name = fullFillName.substring(fullFillName.lastIndexOf('/')+1, fullFillName.lastIndexOf('.'));
