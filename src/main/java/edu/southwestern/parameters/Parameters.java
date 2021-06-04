@@ -38,7 +38,6 @@ import edu.southwestern.util.random.GaussianGenerator;
 import edu.southwestern.util.sound.SoundUtilExamples;
 import edu.southwestern.util.stats.Average;
 import edu.southwestern.util.stats.Max;
-import fr.inria.optimization.cmaes.fitness.FunctionCollector;
 import oldpacman.controllers.examples.Legacy;
 import oldpacman.controllers.examples.StarterPacMan;
 import oldpacman.game.Constants;
@@ -189,6 +188,7 @@ public class Parameters {
 	 */
 	public final void fillDefaults() {
 		// Integer parameters
+		integerOptions.add("imageArchiveSaveFrequency", 10000, "How often the PictureTargetTask saves all images in the archive");
 		integerOptions.add("HNProcessDepth", 1, "The number of processing layers in a HN substrate");
 		integerOptions.add("HNProcessWidth", 1, "The number of adjacent processing substrates per layer in a HN substrate");
 		integerOptions.add("bdArchiveSize", 0, "Maximum allowable size of archive for BD");
