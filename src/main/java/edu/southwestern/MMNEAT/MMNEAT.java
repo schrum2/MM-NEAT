@@ -403,7 +403,7 @@ public class MMNEAT {
 	 * variables of this class so they are easily accessible
 	 * from all parts of the code.
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void loadClasses() {
 		try {
 			ActivationFunctions.resetFunctionSet();
@@ -702,13 +702,12 @@ public class MMNEAT {
 			}
 			setupTWEANNGenotypeDataTracking(multiPopulationCoevolution);
 			
-			usingDiversityBinningScheme = Parameters.parameters.booleanParameter("trackPseudoArchive");
-			if (usingDiversityBinningScheme) {
+			if (Parameters.parameters.booleanParameter("trackPseudoArchive")) {
+				usingDiversityBinningScheme = true;
 				// Create a pseudo archive for use with objective evolution TODO
 				pseudoArchive = new Archive<>(Parameters.parameters.booleanParameter("netio"));
 				int startSize = Parameters.parameters.integerParameter("mu");
-				ArrayList<Genotype> startingPopulation = PopulationUtil.initialPopulation(genotype.newInstance(),
-						startSize);
+				ArrayList<Genotype> startingPopulation = PopulationUtil.initialPopulation(genotype.newInstance(),startSize);
 				for (Genotype g : startingPopulation) {
 					System.out.println("genotype: " + g);
 					Score s = ((LonerTask) task).evaluate(g);
