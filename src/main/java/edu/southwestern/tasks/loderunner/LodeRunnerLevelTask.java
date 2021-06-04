@@ -158,7 +158,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 
 	@SuppressWarnings("unchecked")
 	private void setupKLDivLevelsForComparison() {
-		if (MMNEAT.ea instanceof MAPElites && ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof KLDivergenceBinLabels) { // TODO
+		if (MMNEAT.usingDiversityBinningScheme && MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { // TODO
 			System.out.println("Instance of MAP Elites using KL Divergence Bin Labels");
 			String level1FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel1"); 
 			String level2FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel2"); 
@@ -203,7 +203,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
 		Score<T> result = super.evaluate(individual);
-		if(MMNEAT.ea instanceof MAPElites)
+		if(MMNEAT.usingDiversityBinningScheme)
 			result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
 		return result;
 	}
@@ -345,7 +345,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		}
 
 		// LodeRunnerLevelSequenceTask has it's own MAP Elites binning rules defined in LodeRunnerLevelSequenceTask
-		if(MMNEAT.ea instanceof MAPElites && !(MMNEAT.task instanceof LodeRunnerLevelSequenceTask)) {
+		if(MMNEAT.usingDiversityBinningScheme && !(MMNEAT.task instanceof LodeRunnerLevelSequenceTask)) {
 			int[] dims;
 			// Assign to the behavior vector before using MAP-Elites
 			//double[] archiveArray = null;
@@ -364,12 +364,12 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				binScore = comboFitness;
 			}
 			
-			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels) {
+			if(MMNEAT.getArchiveBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels) {
 				//Initializes bin dimensions 
 				dims = new int[] {connectedIndex, groundIndex, laddersIndex}; // connectivity, percent ground scaled, percent ladders scaled
 				//becomes the behavior vector 
 				//archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels) {
+			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels) {
 				double treasureScale = 5.0; //scales bins to be in groups of 5, [0-5][5-10]...
 				double enemyScale = 2.0; //scales bins to be in groups of 2, [0-2][2-4]...
 				//gets correct indices for treasure and enemies
@@ -378,7 +378,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				dims = new int[] {connectedIndex, treasureIndex, enemyIndex}; // connectivity, number of treasures scaled, number of enemies scaled
 				//becomes the behavior vector 
 				//archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentGroundNumGoldAndEnemiesBinLabels) {
+			} else if(MMNEAT.getArchiveBinLabelsClass() instanceof LodeRunnerMAPElitesPercentGroundNumGoldAndEnemiesBinLabels) {
 				double treasureScale = 5.0; //scales bins to be in groups of 5, [0-5][5-10]...
 				double enemyScale = 2.0; //scales bins to be in groups of 2, [0-2][2-4]...
 				//gets correct indices for treasure and enemies
@@ -387,8 +387,8 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				dims = new int[] {groundIndex, treasureIndex, enemyIndex}; // ground percentage, number of treasures scaled, number of enemies scaled
 				//becomes the behavior vector 
 				//archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-			} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof KLDivergenceBinLabels) { 
-				KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass();
+			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { 
+				KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) MMNEAT.getArchiveBinLabelsClass();
 				
 				int[][] oneLevelAs2DArray = ArrayUtil.int2DArrayFromListOfLists(level);
 				dims = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
@@ -440,7 +440,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		//saving images in bins 
 		if(CommonConstants.netio) {
 			System.out.println("Saving rendered level and solution path for level");
-			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+			Archive<T> archive = MMNEAT.getArchive();
 			List<String> binLabels = archive.getBinMapping().binLabels();
 			// Index in flattened bin array
 			Score<T> elite = archive.getElite(oneMAPEliteBinIndexScorePair.t1);
