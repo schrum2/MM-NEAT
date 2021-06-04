@@ -195,6 +195,12 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			return phenotypes;
 		}
 	}
+	
+	public static BufferedImage rotateBackgroundImage(BufferedImage image, double angle) {
+		BufferedImage doubleSize = new BufferedImage(image.getWidth() * 2, image.getHeight() * 2, imageType);	// image type needs to be altered
+		
+		
+	}
 
 	/**
 	 * Code from Sarah Friday, Anna Krolikowski, and Alice Quintanilla from their
