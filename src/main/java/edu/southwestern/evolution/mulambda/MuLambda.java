@@ -3,6 +3,9 @@ package edu.southwestern.evolution.mulambda;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SinglePopulationGenerationalEA;
@@ -10,7 +13,9 @@ import edu.southwestern.evolution.HybrIDUtil.HybrIDUtil;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.OffsetHybrIDGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.log.FitnessLog;
+import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.log.PlotLog;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.architecture.CascadeNetworks;
@@ -42,6 +47,9 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	public static final int MLTYPE_PLUS = 0;
 	public static final int MLTYPE_COMMA = 1;
 
+	private MMNEATLog archiveLog = null; // Archive elite scores
+	private MMNEATLog fillLog = null; // Archive fill amount
+	
 	private final int mltype;
 	public int mu;
 	public int lambda;
@@ -99,6 +107,18 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 				modeLog = new PlotLog("ModeUsage", labels);
 			}
 		}
+	}
+	
+	public void setUpPseudoArchive() {
+		int numLabels = MMNEAT.pseudoArchive.getBinMapping().binLabels().size();
+		String infix = "Objective";
+		String experimentPrefix = Parameters.parameters.stringParameter("log")
+				+ Parameters.parameters.integerParameter("runNumber");
+		int individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
+		// Logging in RAW mode so that can append to log file on experiment resume
+		archiveLog = new MMNEATLog(infix, false, false, false, true); 
+		fillLog = new MMNEATLog("Fill", false, false, false, true);
+		MAPElites.setUpLogging(numLabels, infix, experimentPrefix, false, individualsPerGeneration, MMNEAT.pseudoArchive.getBinMapping().binLabels().size());
 	}
 
 	/**
@@ -238,13 +258,13 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		// Get offspring from parents
 		ArrayList<Genotype<T>> children = performDeltaCoding(generation)
 				? PopulationUtil.getBestAndDeltaCode(parentScores) : generateChildren(lambda, parentScores);
-				// Evaluate the children
-				ArrayList<Score<T>> childrenScores = task.evaluateAll(children);
-				// Log child information to file
-				if (writeOutput && CommonConstants.logChildScores) {
-					childLog.log(childrenScores, generation);
-				}
-				return childrenScores;
+		// Evaluate the children
+		ArrayList<Score<T>> childrenScores = task.evaluateAll(children);
+		// Log child information to file
+		if (writeOutput && CommonConstants.logChildScores) {
+			childLog.log(childrenScores, generation);
+		}
+		return childrenScores;
 	}
 
 	/**
@@ -380,6 +400,25 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		start = System.currentTimeMillis();
 		System.out.println("Eval children: ");
 		ArrayList<Score<T>> childrenScores = processChildren(parentScores);
+		
+		if (MMNEAT.usingDiversityBinningScheme) {
+			// Add evaluated parent and child scores to pseudo archive if it is not null TODO
+			if (MMNEAT.pseudoArchive != null) {
+				for (Score<T> s : childrenScores) {
+					System.out.println("Adding score \"" + s + "\" to pseudo-archive");
+					if (s != null)
+						MMNEAT.pseudoArchive.add(s);
+				}
+			}
+			Float[] elite = ArrayUtils.toObject(MMNEAT.pseudoArchive.getEliteScores());
+			archiveLog.log(generation + "\t" + StringUtils.join(elite, "\t"));
+			Float maximumFitness = StatisticsUtilities.maximum(elite);
+			// Exclude negative infinity to find out how many bins are filled
+			final int numFilledBins = elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite);
+			// Get the QD Score for this elite
+			final double qdScore = MAPElites.calculateQDScore(elite);
+			fillLog.log(generation + "\t" + numFilledBins + "\t" + qdScore + "\t" + maximumFitness + "\t" + 1.0);
+		}
 		end = System.currentTimeMillis();
 		System.out.println("Done children: " + TimeUnit.MILLISECONDS.toMinutes(end - start) + " minutes");
 

@@ -33,6 +33,7 @@ import edu.southwestern.evolution.metaheuristics.LinkPenalty;
 import edu.southwestern.evolution.metaheuristics.MaxModulesFitness;
 import edu.southwestern.evolution.metaheuristics.Metaheuristic;
 import edu.southwestern.evolution.metaheuristics.SubstrateLinkPenalty;
+import edu.southwestern.evolution.mulambda.MuLambda;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.log.EvalLog;
 import edu.southwestern.log.MMNEATLog;
@@ -49,6 +50,7 @@ import edu.southwestern.networks.hyperneat.architecture.SubstrateArchitectureDef
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.MultiplePopulationTask;
 import edu.southwestern.tasks.Task;
 import edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask;
@@ -116,6 +118,7 @@ import edu.southwestern.tasks.zelda.ZeldaDungeonTask;
 import edu.southwestern.tasks.zelda.ZeldaGANDungeonTask;
 import edu.southwestern.tasks.zentangle.ZentangleTask;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomGenerator;
@@ -699,9 +702,22 @@ public class MMNEAT {
 			}
 			setupTWEANNGenotypeDataTracking(multiPopulationCoevolution);
 			
-			// Create a pseudo archive for use with objective evolution
-			
-			
+			usingDiversityBinningScheme = Parameters.parameters.booleanParameter("trackPseudoArchive");
+			if (usingDiversityBinningScheme) {
+				// Create a pseudo archive for use with objective evolution TODO
+				pseudoArchive = new Archive<>(Parameters.parameters.booleanParameter("netio"));
+				int startSize = Parameters.parameters.integerParameter("mu");
+				ArrayList<Genotype> startingPopulation = PopulationUtil.initialPopulation(genotype.newInstance(),
+						startSize);
+				for (Genotype g : startingPopulation) {
+					System.out.println("genotype: " + g);
+					Score s = ((LonerTask) task).evaluate(g);
+					System.out.println("score: " + s);
+					pseudoArchive.add(s); // Fill the archive with random starting individuals
+				}
+				if (ea instanceof MuLambda)
+					((MuLambda) ea).setUpPseudoArchive();
+			}
 			// An Experiment is always needed
 			System.out.println("Create Experiment");
 			experiment = (Experiment) ClassCreation.createObject("experiment");
