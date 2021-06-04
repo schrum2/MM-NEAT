@@ -342,7 +342,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		
 		
 		// For test runs
-		MMNEAT.main(new String[]{"runNumber:3","randomSeed:3","base:targetimage","mu:400","maxGens:10000000",
+		MMNEAT.main(new String[]{"runNumber:4","randomSeed:4","base:targetimage","mu:400","maxGens:10000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
 				"log:TargetImage-skull","saveTo:skull","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",

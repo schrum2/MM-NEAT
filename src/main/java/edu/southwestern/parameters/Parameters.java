@@ -254,6 +254,8 @@ public class Parameters {
 		integerOptions.add("maxGens", 500, "Maximum generations allowed for a LimitedGenerationalEAExperiment");
 		integerOptions.add("maxLairTime", 3 * Constants.COMMON_LAIR_TIME, "What lair time starts at from the beginning of evolution");
 		integerOptions.add("maxModes", 1000, "Mode mutation cannot add more than this many modes");
+		integerOptions.add("maxNumLinks", 100, "The maximum number of links to be used in the neurons/links binning scheme for PictureTargetTask.");
+		integerOptions.add("maxNumNeurons", 50, "The maximum number of neurons to be used in the neurons/links binning scheme for PictureTargetTask.");
 		integerOptions.add("maxPause", 500, "Maximum pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("maxRemixImageWindow", 100, "Maximum size of window being remixed by CPPN in Picture Remixer");
 		integerOptions.add("maxTrials", Integer.MAX_VALUE, "Max trials allowed by individual when using increasing trials");
