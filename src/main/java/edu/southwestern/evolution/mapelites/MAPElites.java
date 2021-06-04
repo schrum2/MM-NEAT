@@ -329,6 +329,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		if(saveImageArchives && iterations % Parameters.parameters.integerParameter("imageArchiveSaveFrequency") == 0) {
 			System.out.println("Save whole archive at iteration "+iterations);
 			((PictureTargetTask<?>) MMNEAT.task).saveAllArchiveImages("iteration"+iterations);
+			
+			// TODO: To Anna: If we are using the autoencoder, this is where we will need to re-train it.
+			//       Set up a command line
 		}
 		// Log to file
 		log();
