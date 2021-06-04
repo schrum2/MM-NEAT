@@ -199,7 +199,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 
 	@SuppressWarnings("unchecked")
 	private void setupKLDivLevelsForComparison() {
-		if (MMNEAT.ea instanceof MAPElites && ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof KLDivergenceBinLabels) { // TODO
+		if (MMNEAT.usingDiversityBinningScheme && MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { // TODO
 			System.out.println("Instance of MAP Elites using KL Divergence Bin Labels");
 			String level1FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel1"); 
 			String level2FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel2"); 
@@ -244,7 +244,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
 		Score<T> result = super.evaluate(individual);
-		if(MMNEAT.ea instanceof MAPElites)
+		if(MMNEAT.usingDiversityBinningScheme)
 			result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
 		return result;
 	}
@@ -274,7 +274,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			info = infos.get(0);
 		}
 		
-		if(MMNEAT.ea instanceof MAPElites || CommonConstants.watch) {
+		if(MMNEAT.usingDiversityBinningScheme || CommonConstants.watch) {
 			// View whole dungeon layout
 			levelImage = MarioLevelUtil.getLevelImage(level);
 			if(segmentFitness) { // Draw lines dividing the segments 
@@ -287,7 +287,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			}
 			
 			// MAP Elites images get saved later, in a different directory
-			if(!(MMNEAT.ea instanceof MAPElites)) {
+			if(!(MMNEAT.usingDiversityBinningScheme)) {
 				String saveDir = FileUtilities.getSaveDirectory();
 				int currentGen = ((GenerationalEA) MMNEAT.ea).currentGeneration();
 				GraphicsUtil.saveImage(levelImage, saveDir + File.separator + (currentGen == 0 ? "initial" : "gen"+ currentGen) + File.separator + "MarioLevel"+individual.getId()+".png");
@@ -436,7 +436,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				mostRecentVisited = ((AStarSearch<MarioAction, MarioState>) search).getVisited();
 			}
 
-			if(MMNEAT.ea instanceof MAPElites || (CommonConstants.netio && CommonConstants.watch)) {
+			if(MMNEAT.usingDiversityBinningScheme || (CommonConstants.netio && CommonConstants.watch)) {
 				// Add X marks to the original level image, which should exist if since watch saved it above
 				if(mostRecentVisited != null) {
 					Graphics2D g = (Graphics2D) levelImage.getGraphics();
@@ -462,7 +462,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 					}
 				}
 
-				if(!(MMNEAT.ea instanceof MAPElites)) {
+				if(!(MMNEAT.usingDiversityBinningScheme)) {
 					// View level with path
 					String saveDir = FileUtilities.getSaveDirectory();
 					int currentGen = ((GenerationalEA) MMNEAT.ea).currentGeneration();
@@ -478,7 +478,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			fitnesses.add(new Double(numDistinctSegments));
 		}
 		// Could conceivably also be used for behavioral diversity instead of map elites, but this would be a weird behavior vector from a BD perspective
-		if(MMNEAT.ea instanceof MAPElites) {
+		if(MMNEAT.usingDiversityBinningScheme) { // (MMNEAT.ea instanceof MAPElites) -> (MMNEAT.usingDiversityBinningScheme)
 			// Assign to the behavior vector before using MAP-Elites
 			//double[] archiveArray;
 			//int binIndex;
@@ -498,17 +498,17 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			double binScore = simpleAStarDistance;
 			
 
-			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDecorNSAndLeniencyBinLabels) {
+			if(MMNEAT.getArchiveBinLabelsClass() instanceof MarioMAPElitesDecorNSAndLeniencyBinLabels) {
 				dims = new int[] {decorationBinIndex, negativeSpaceSumIndex, leniencySumIndex};
 
 //				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels) {
+			}else if(MMNEAT.getArchiveBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels) {
 				//double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
 				dims = new int[] {numDistinctSegments, negativeSpaceSumIndex, leniencySumIndex};
 				// Row-major order lookup in 3D archive
 				
 //				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-			}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndDecorationBinLabels) {
+			}else if(MMNEAT.getArchiveBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndDecorationBinLabels) {
 				assert Parameters.parameters.integerParameter("marioGANLevelChunks") > 1 : "Can't have variation with MarioMAPElitesDistinctChunksNSAndDecorationBinLabels bin scheme if marioGANLevelChunks:1 is set!";
 				double decorationAlternating = alternatingStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
 				double negativeSpaceAlternating = alternatingStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
@@ -527,13 +527,13 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				dims = new int[] {numDistinctSegments, negativeSpaceSumIndex, decorationBinIndex};
 				
 //				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];				
-			} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof KLDivergenceBinLabels) { 
-				KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass();
+			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { 
+				KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) MMNEAT.getArchiveBinLabelsClass();
 				
 				int[][] oneLevelAs2DArray = ArrayUtil.int2DArrayFromListOfLists(oneLevel);
 				dims = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
 				
-			} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MarioMAPElitesNoveltyDecorAndLeniencyBinLabels) { 
+			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof MarioMAPElitesNoveltyDecorAndLeniencyBinLabels) { 
 				LevelNovelty.setGame("mario");
 				double novelty = LevelNovelty.averageSegmentNovelty(levelWithParsedSegments); // get novelty
 				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
@@ -578,7 +578,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		if(CommonConstants.netio) {
 			System.out.println("Save archive images");
 			@SuppressWarnings("unchecked")
-			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+			Archive<T> archive = MMNEAT.getArchive();
 			List<String> binLabels = archive.getBinMapping().binLabels();
 
 			// Index in flattened bin array
@@ -650,10 +650,10 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		int runNum = 31;
+		int runNum = 33;
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:mariolevelskldiv log:MarioLevelsKLDiv-test saveTo:test marioGANLevelChunks:5 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 lambda:50 mu:50 maxGens:5000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesKLDivLevel1:data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-8-1.txt mapElitesKLDivLevel2:data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-3-1.txt klDivBinDimension:100 klDivMaxValue:0.3").split(" "));
-		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:mariolevelskldiv log:MarioLevelsKLDiv-testCMAME saveTo:testCMAME marioGANLevelChunks:5 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 lambda:50 mu:10 maxGens:5000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesKLDivLevel1:data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-8-1.txt mapElitesKLDivLevel2:data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-3-1.txt klDivBinDimension:100 klDivMaxValue:0.3 numImprovementEmitters:3 numOptimizingEmitters:0").split(" "));
-		
+		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:mariolevelskldiv log:MarioLevelsKLDiv-testCMAME saveTo:testCMAME marioGANLevelChunks:5 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 lambda:50 mu:10 maxGens:5000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesKLDivLevel1:data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-8-1.txt mapElitesKLDivLevel2:data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-3-1.txt klDivBinDimension:100 klDivMaxValue:0.3 numImprovementEmitters:3 numOptimizingEmitters:0").split(" "));
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" base:mariolevelsnsga2 log:MarioLevelNSGA2-PseudoArchive saveTo:PseudoArchive trackPseudoArchive:true netio:true marioGANLevelChunks:5 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 lambda:50 mu:10 maxGens:200 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true mapElitesBinLabels:edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesKLDivLevel1:data\\\\VGLC\\\\SuperMarioBrosNewEncoding\\\\overworld\\\\mario-8-1.txt mapElitesKLDivLevel2:data\\\\VGLC\\\\SuperMarioBrosNewEncoding\\\\overworld\\\\mario-3-1.txt klDivBinDimension:100 klDivMaxValue:0.3").split(" "));
 	}
 
 }

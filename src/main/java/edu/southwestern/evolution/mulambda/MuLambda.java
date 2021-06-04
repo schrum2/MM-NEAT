@@ -119,7 +119,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		archiveLog = new MMNEATLog(infix, false, false, false, true); 
 		fillLog = new MMNEATLog("Fill", false, false, false, true);
 		int yrange = Parameters.parameters.integerParameter("maxGens");
-		MAPElites.setUpLogging(numLabels, infix, experimentPrefix, yrange, false, individualsPerGeneration, Parameters.parameters.integerParameter("maxGens"));
+		MAPElites.setUpLogging(numLabels, infix, experimentPrefix, yrange, false, individualsPerGeneration, MMNEAT.pseudoArchive.getBinMapping().binLabels().size());
 	}
 
 	/**
