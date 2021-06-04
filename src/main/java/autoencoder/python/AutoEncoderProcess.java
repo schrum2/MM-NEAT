@@ -87,8 +87,8 @@ public class AutoEncoderProcess extends Comm {
 		
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.71288Neurons[35]links[63]1788009.jpg"));
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.52723Neurons[15]links[58]143861.jpg"));
-		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.68266Neurons[14]links[62]1105464.jpg"));
-		BufferedImage img = ImageIO.read(new File("data" + File.separator + "imagematch" + File.separator + "skull64.png"));
+		BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.68266Neurons[14]links[62]1105464.jpg"));
+		//BufferedImage img = ImageIO.read(new File("data" + File.separator + "imagematch" + File.separator + "skull64.png"));
 		Image scaled = img.getScaledInstance(28, 28, BufferedImage.SCALE_DEFAULT);
 		img = GraphicsUtil.convertToBufferedImage(scaled);
 		DrawingPanel picture = GraphicsUtil.drawImage(img, "Before", img.getWidth(), img.getHeight());
