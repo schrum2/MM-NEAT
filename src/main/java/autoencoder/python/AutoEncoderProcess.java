@@ -19,6 +19,12 @@ import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
+/**
+ * Launches Python script for a previously trained autoencoder.
+ * 
+ * @author wickera
+ *
+ */
 public class AutoEncoderProcess extends Comm {
 	
 	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "AutoEncoder" + File.separator;
@@ -33,6 +39,9 @@ public class AutoEncoderProcess extends Comm {
 		//TODO: Anything needed here?
 	}
 	
+	/**
+	 * Initializes the process buffers.
+	 */
 	@Override
 	public void initBuffers() {
 		//Initialize input and output
@@ -45,7 +54,10 @@ public class AutoEncoderProcess extends Comm {
 		}
 	}
 
-	
+	/**
+	 * Launches the Python script and initializes the 
+	 * process buffers.
+	 */
 	@Override
 	public void start() {
 		try {
@@ -59,7 +71,9 @@ public class AutoEncoderProcess extends Comm {
 
 
 	/**
-	 * Launch the autoencoder.
+	 * Launches the autoencoder using the training 
+	 * set specified by AUTOENCODER_PATH and saves the
+	 * results in a .pth file specified by SAVED_AUTOENCODER.
 	 */
 	public void launchAutoEncoder() {
 		if(!(new File(PythonUtil.PYTHON_EXECUTABLE).exists())) {
