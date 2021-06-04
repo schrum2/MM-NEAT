@@ -193,6 +193,17 @@ public class MMNEAT {
 		throw new IllegalStateException("Attempted to get archive without using MAP Elites or a psuedo-archive");
 	}
 	
+	@SuppressWarnings("rawtypes")
+	public static Archive getArchive() {
+		if (pseudoArchive != null) {
+			return pseudoArchive;
+		} else if (ea instanceof MAPElites) {
+			return ((MAPElites) ea).getArchive();
+		}
+		throw new IllegalStateException("Attempted to get archive without using MAP Elites or a psuedo-archive");
+		
+	}
+	
 	
 	@SuppressWarnings("rawtypes")
 	public static ArrayList<String> fitnessPlusMetaheuristics(int pop) {
