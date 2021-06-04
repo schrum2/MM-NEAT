@@ -254,7 +254,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				Network cppn = s.individual.getPhenotype();
 				BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, saveWidth, saveHeight);
 				//String fullName = finalArchive + File.separator + fileName;
-				String fullName = subdir + File.separator + labels.binLabels().get(labels.oneDimensionalIndex(s.MAPElitesBinIndex())) + ".jpg";
+				String fullName = subdir + File.separator + labels.binLabels().get(labels.oneDimensionalIndex(s.MAPElitesBinIndex()))+"-"+s.behaviorIndexScore()+".jpg";
 				GraphicsUtil.saveImage(image, fullName);
 			}
 		}
@@ -356,7 +356,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
 				"matchImageFile:skull64.jpg",
-				"fitnessSaveThreshold:0.7",		// Higher threshold for RMSE 
+				"fitnessSaveThreshold:1.0",		// Since we periodically save the whole archive, don't bother saving with threshold any more 
+				"imageArchiveSaveFrequency:10000",
 				"includeSigmoidFunction:true", 	// In Brian Woolley paper
 				"includeTanhFunction:false",
 				"includeIdFunction:true",		// In Brian Woolley paper
