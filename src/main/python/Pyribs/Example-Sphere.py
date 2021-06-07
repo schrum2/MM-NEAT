@@ -279,7 +279,7 @@ def sphere_main(algorithm,
                 metrics["QD Score"]["y"].append(data['objective'].sum())
                 metrics["Archive Coverage"]["x"].append(itr)
                 metrics["Archive Coverage"]["y"].append(
-                    len(data)) #/ total_cells * 100)
+                    len(data)) #/ total_cells * 100) # Maxx: this can be added to chart percentage filled instead of actual filled
                 print(f"Iteration {itr} | Archive Coverage: "
                       f"{metrics['Archive Coverage']['y'][-1]:.3f}% "
                       f"QD Score: {metrics['QD Score']['y'][-1]:.3f}")
