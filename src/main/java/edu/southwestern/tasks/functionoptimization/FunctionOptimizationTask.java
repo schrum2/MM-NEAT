@@ -74,7 +74,7 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 				dim1 = dimensions[0];
 				dim2 = dimensions[1];			
 			} else {
-				throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
+				throw new RuntimeException("A Valid Binning Scheme For Function Optimization Was Not Specified");
 			}
 			// Row-major order lookup in 2D archive
 			oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {dim1, dim2}, score);
