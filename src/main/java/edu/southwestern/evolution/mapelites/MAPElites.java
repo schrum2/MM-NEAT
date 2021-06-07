@@ -63,10 +63,15 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	
 	@SuppressWarnings("unchecked")
 	public MAPElites() {
+		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public MAPElites(String archiveSubDirectoryName) {
 		MMNEAT.usingDiversityBinningScheme = true;
 		this.task = (LonerTask<T>) MMNEAT.task;
 		this.io = Parameters.parameters.booleanParameter("io"); // write logs
-		this.archive = new Archive<>(Parameters.parameters.booleanParameter("netio"), Parameters.parameters.stringParameter("archiveSubDirectoryName"));
+		this.archive = new Archive<>(Parameters.parameters.booleanParameter("netio"), archiveSubDirectoryName);
 		if(io) {
 			int numLabels = archive.getBinMapping().binLabels().size();
 			String infix = "MAPElites";
