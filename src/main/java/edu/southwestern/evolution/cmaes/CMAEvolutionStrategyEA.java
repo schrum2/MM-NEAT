@@ -24,7 +24,7 @@ public class CMAEvolutionStrategyEA extends MuLambda<ArrayList<Double>> {
 	public CMAEvolutionStrategyEA(int mltype, SinglePopulationTask<ArrayList<Double>> task, int mu, int lambda, boolean io) {
 		super(mltype, task, mu, lambda, io);
 		if (task.numObjectives() != 1) {
-			System.out.println("CMA-ES is meant to be used with only one objective, but "+task.numObjectives()+" were provided!");
+			System.out.println("CMA-ES is meant to be used with exclusively one objective, but "+task.numObjectives()+" were provided!");
 			System.exit(1);
 		}
 		cma.readProperties(); // read options, see file CMAEvolutionStrategy.properties
