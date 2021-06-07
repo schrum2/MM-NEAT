@@ -66,7 +66,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		MMNEAT.usingDiversityBinningScheme = true;
 		this.task = (LonerTask<T>) MMNEAT.task;
 		this.io = Parameters.parameters.booleanParameter("io"); // write logs
-		this.archive = new Archive<>(Parameters.parameters.booleanParameter("netio"));
+		this.archive = new Archive<>(Parameters.parameters.booleanParameter("netio"), Parameters.parameters.stringParameter("archiveSubDirectoryName"));
 		if(io) {
 			int numLabels = archive.getBinMapping().binLabels().size();
 			String infix = "MAPElites";

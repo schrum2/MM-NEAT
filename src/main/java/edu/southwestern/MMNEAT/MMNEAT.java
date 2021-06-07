@@ -716,7 +716,7 @@ public class MMNEAT {
 			if (Parameters.parameters.booleanParameter("trackPseudoArchive")) {
 				usingDiversityBinningScheme = true;
 				// Create a pseudo archive for use with objective evolution TODO
-				pseudoArchive = new Archive<>(Parameters.parameters.booleanParameter("netio"));
+				pseudoArchive = new Archive<>(Parameters.parameters.booleanParameter("netio"), Parameters.parameters.stringParameter("archiveSubDirectoryName"));
 				int startSize = Parameters.parameters.integerParameter("mu");
 				ArrayList<Genotype> startingPopulation = PopulationUtil.initialPopulation(genotype.newInstance(),startSize);
 				for (Genotype g : startingPopulation) {

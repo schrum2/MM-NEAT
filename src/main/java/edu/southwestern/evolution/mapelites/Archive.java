@@ -25,7 +25,7 @@ public class Archive<T> {
 		return mapping;
 	}
 	
-	public Archive(boolean saveElites) {
+	public Archive(boolean saveElites, String archiveDirectoryName) {
 		this.saveElites = saveElites;
 		// Initialize mapping
 		try {
@@ -40,7 +40,7 @@ public class Archive<T> {
 		occupiedBins = 0;
 		// Archive directory
 		String experimentDir = FileUtilities.getSaveDirectory();
-		archiveDir = experimentDir + File.separator + "archive";
+		archiveDir = experimentDir + File.separator + archiveDirectoryName;
 		if(saveElites) {
 			new File(archiveDir).mkdirs(); // make directory
 		}
