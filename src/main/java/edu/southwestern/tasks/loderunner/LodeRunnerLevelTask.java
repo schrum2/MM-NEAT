@@ -155,9 +155,8 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void setupKLDivLevelsForComparison() {
-		if (MMNEAT.usingDiversityBinningScheme && MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { // TODO
+		if (MMNEAT.usingDiversityBinningScheme && MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { 
 			System.out.println("Instance of MAP Elites using KL Divergence Bin Labels");
 			String level1FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel1"); 
 			String level2FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel2"); 
@@ -235,7 +234,6 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 * @param genotypeId
 	 * @return Pair holding the scores 
 	 */
-	@SuppressWarnings("unchecked")
 	protected Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, long genotypeId) {
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array  
 		Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed);

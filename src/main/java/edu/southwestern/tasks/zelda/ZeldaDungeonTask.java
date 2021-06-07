@@ -13,7 +13,6 @@ import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
-import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
@@ -89,9 +88,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		setupKLDivLevelsForComparison();
 	}
 
-	@SuppressWarnings("unchecked")
 	private void setupKLDivLevelsForComparison() {
-		if (MMNEAT.ea instanceof MAPElites && ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof KLDivergenceBinLabels) { // TODO
+		if (MMNEAT.usingDiversityBinningScheme && MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { // TODO
 			System.out.println("Instance of MAP Elites using KL Divergence Bin Labels");
 			String level1FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel1"); 
 			String level2FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel2"); 
@@ -149,9 +147,9 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		//final int ZELDA_FLOOR_SPACE_COLUMNS = 12; // Number of columns to look through
 
 		ArrayList<Double> behaviorVector = null; // Filled in later
-		Dungeon dungeon = getZeldaDungeonFromGenotype(individual); // TODO?
-		Level[][] levels = dungeon.getLevelArrays();
-		List<List<Integer>> firstLevel = levels[0][0].intLevel;
+		Dungeon dungeon = getZeldaDungeonFromGenotype(individual); // TODO may be part of KL Div
+		//Level[][] levels = dungeon.getLevelArrays();
+		//List<List<Integer>> firstLevel = levels[0][0].intLevel; // TODO may be part of KL Div
 		int distanceToTriforce = -100; // Very bad fitness if level is not beatable 
 		int numRooms = 0; //number of rooms
 		int searchStatesVisited = 0; //number of search states visited
@@ -297,12 +295,12 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				// Need to assign MAP Elites bins no matter what
 				
 				// Could conceivably also be used for behavioral diversity instead of map elites, but this would be a weird behavior vector from a BD perspective
-				if(MMNEAT.ea instanceof MAPElites) {
+				if(MMNEAT.usingDiversityBinningScheme) {
 					// Hard coding bin score to be the percentage of reachable rooms traversed. May want to change this later.
 					mapElitesBinScore = (numRoomsTraversed*1.0)/numRoomsReachable;
 					final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
 					
-					if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesWallWaterRoomsBinLabels) {					
+					if(MMNEAT.getArchiveBinLabelsClass() instanceof ZeldaMAPElitesWallWaterRoomsBinLabels) {					
 						double wallTilePercentage = (wallTileCount*1.0)/(numRoomsReachable*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS);
 						double waterTilePercentage = (waterTileCount*1.0)/(numRoomsReachable*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS);
 
@@ -312,19 +310,19 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						mapElitesBinIndices = new int[] {wallTileIndex,waterTileIndex,numRoomsReachable};
 						System.out.println("["+wallTileIndex+"]["+waterTileIndex+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");
 					
-					} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels) { //alternate binning scheme
+					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels) { //alternate binning scheme
 						mapElitesBinIndices = new int[] {numDistinctRooms,numBackTrackRooms,numRoomsReachable};
 						System.out.println("["+numDistinctRooms+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");
 					
-					} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels) { //alternate binning scheme
+					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels) { //alternate binning scheme
 						double dungeonNovelty = DungeonNovelty.averageDungeonNovelty(dungeon);
 						int noveltyIndex =(int)((dungeonNovelty*NOVELTY_BINS_PER_DIMENSION)/ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.MAX_EXPECTED_NOVELTY); //.7 is the guessed max novelty, magic number
 						noveltyIndex = Math.min(noveltyIndex, NOVELTY_BINS_PER_DIMENSION - 1);
 						mapElitesBinIndices = new int[] {noveltyIndex, numBackTrackRooms, numRoomsReachable};
 						System.out.println("["+noveltyIndex+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");						
 					
-					} else if (((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof KLDivergenceBinLabels) { // KL Divergence binning scheme
-						KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass();
+					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { // KL Divergence binning scheme
+						KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) MMNEAT.getArchiveBinLabelsClass();
 						// TODO
 						int[][] oneLevelAs2DArray = null; //ArrayUtil.int2DArrayFromListOfLists(oneLevel);
 						mapElitesBinIndices = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
@@ -338,7 +336,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					// Saving map elites bin images
 					if(CommonConstants.netio) {
 						System.out.println("Save archive images");
-						Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+						Archive<T> archive = MMNEAT.getArchive();
 						List<String> binLabels = archive.getBinMapping().binLabels();
 
 						// Index in flattened bin array
