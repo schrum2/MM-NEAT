@@ -14,7 +14,6 @@ import edu.southwestern.data.ResultSummaryUtilities;
 import edu.southwestern.evolution.EA;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.ScoreHistory;
-import edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA;
 import edu.southwestern.evolution.crossover.Crossover;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
@@ -25,12 +24,16 @@ import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
 import edu.southwestern.evolution.halloffame.HallOfFame;
 import edu.southwestern.evolution.lineage.Offspring;
+import edu.southwestern.evolution.mapelites.Archive;
+import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.evolution.metaheuristics.AntiMaxModuleUsageFitness;
 import edu.southwestern.evolution.metaheuristics.FavorXModulesFitness;
 import edu.southwestern.evolution.metaheuristics.LinkPenalty;
 import edu.southwestern.evolution.metaheuristics.MaxModulesFitness;
 import edu.southwestern.evolution.metaheuristics.Metaheuristic;
 import edu.southwestern.evolution.metaheuristics.SubstrateLinkPenalty;
+import edu.southwestern.evolution.mulambda.MuLambda;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.log.EvalLog;
 import edu.southwestern.log.MMNEATLog;
@@ -47,9 +50,10 @@ import edu.southwestern.networks.hyperneat.architecture.SubstrateArchitectureDef
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.MultiplePopulationTask;
 import edu.southwestern.tasks.Task;
-import edu.southwestern.tasks.functionoptimization.FunctionOptimization;
+import edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask;
 import edu.southwestern.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.southwestern.tasks.gridTorus.NNTorusPredPreyController;
 import edu.southwestern.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
@@ -114,6 +118,7 @@ import edu.southwestern.tasks.zelda.ZeldaDungeonTask;
 import edu.southwestern.tasks.zelda.ZeldaGANDungeonTask;
 import edu.southwestern.tasks.zentangle.ZentangleTask;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomGenerator;
@@ -172,9 +177,34 @@ public class MMNEAT {
 	@SuppressWarnings("rawtypes")
 	public static HallOfFame hallOfFame;
 	public static SubstrateArchitectureDefinition substrateArchitectureDefinition;
-
+	@SuppressWarnings("rawtypes")
+	public static Archive pseudoArchive;
+	public static boolean usingDiversityBinningScheme = false;
+	
 	public static MMNEAT mmneat;
 
+	@SuppressWarnings("rawtypes")
+	public static BinLabels getArchiveBinLabelsClass() {
+		if (pseudoArchive != null) {
+			return pseudoArchive.getBinLabelsClass();
+		} else if (ea instanceof MAPElites) {
+			return ((MAPElites) ea).getBinLabelsClass();
+		}
+		throw new IllegalStateException("Attempted to get archive without using MAP Elites or a psuedo-archive");
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static Archive getArchive() {
+		if (pseudoArchive != null) {
+			return pseudoArchive;
+		} else if (ea instanceof MAPElites) {
+			return ((MAPElites) ea).getArchive();
+		}
+		throw new IllegalStateException("Attempted to get archive without using MAP Elites or a psuedo-archive");
+		
+	}
+	
+	
 	@SuppressWarnings("rawtypes")
 	public static ArrayList<String> fitnessPlusMetaheuristics(int pop) {
 		@SuppressWarnings("unchecked")
@@ -384,7 +414,7 @@ public class MMNEAT {
 	 * variables of this class so they are easily accessible
 	 * from all parts of the code.
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void loadClasses() {
 		try {
 			ActivationFunctions.resetFunctionSet();
@@ -442,7 +472,7 @@ public class MMNEAT {
 			if(task instanceof MultipleFunctionOptimization) {
 				System.out.println("Setup Multiple Function Optimization");
 				// Already setup in setupFunctionOptimization();
-			} else if(task instanceof FunctionOptimization) {
+			} else if(task instanceof FunctionOptimizationTask) {
 					System.out.println("Setup Function Optimization");
 					// Anything to do?
 			} else if (task instanceof MsPacManTask) {
@@ -682,6 +712,22 @@ public class MMNEAT {
 				seedExample = true;
 			}
 			setupTWEANNGenotypeDataTracking(multiPopulationCoevolution);
+			
+			if (Parameters.parameters.booleanParameter("trackPseudoArchive")) {
+				usingDiversityBinningScheme = true;
+				// Create a pseudo archive for use with objective evolution TODO
+				pseudoArchive = new Archive<>(Parameters.parameters.booleanParameter("netio"), Parameters.parameters.stringParameter("archiveSubDirectoryName"));
+				int startSize = Parameters.parameters.integerParameter("mu");
+				ArrayList<Genotype> startingPopulation = PopulationUtil.initialPopulation(genotype.newInstance(),startSize);
+				for (Genotype g : startingPopulation) {
+					System.out.println("genotype: " + g);
+					Score s = ((LonerTask) task).evaluate(g);
+					System.out.println("score: " + s);
+					pseudoArchive.add(s); // Fill the archive with random starting individuals
+				}
+				if (ea instanceof MuLambda)
+					((MuLambda) ea).setUpPseudoArchive();
+			}
 			// An Experiment is always needed
 			System.out.println("Create Experiment");
 			experiment = (Experiment) ClassCreation.createObject("experiment");
@@ -960,7 +1006,7 @@ public class MMNEAT {
 			evolutionaryRun(args);
 		}
 		System.out.println("done: " + (((System.currentTimeMillis() - start) / 1000.0) / 60.0) + " minutes");
-		if (!(task instanceof MultipleFunctionOptimization)) {
+		if (!(task instanceof MultipleFunctionOptimization) && !(task instanceof FunctionOptimizationTask)) {
 			System.exit(1);
 		}
 	}
@@ -1069,7 +1115,7 @@ public class MMNEAT {
 	public static double[] getLowerBounds() {
 		// Function Optimization Tasks use these genotypes and know their lower bounds
 		if(fos != null) return fos.getLowerBounds();
-		else if (task instanceof FunctionOptimization) return ((CMAEvolutionStrategyEA) MMNEAT.ea).cma.LBound;
+		else if (task instanceof FunctionOptimizationTask) return ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foLowerBounds")); 
 		// For Mario GAN, the latent vector length determines the size, but the lower bounds are all zero
 		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask|| task instanceof MarioCPPNOrDirectToGANLevelTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all -1
 		// Similar for ZeldaGAN
@@ -1091,7 +1137,7 @@ public class MMNEAT {
 	 */
 	public static double[] getUpperBounds() {
 		if(fos != null) return fos.getUpperBounds();
-		else if (task instanceof FunctionOptimization) return ((CMAEvolutionStrategyEA) MMNEAT.ea).cma.UBound;
+		else if (task instanceof FunctionOptimizationTask) return ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foUpperBounds")); 
 		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask||task instanceof MarioCPPNOrDirectToGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
 		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength()); // all ones
 		else if(task instanceof ZeldaGANDungeonTask) return ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones

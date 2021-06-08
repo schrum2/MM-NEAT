@@ -23,13 +23,14 @@ public class LevelNovelty {
 	protected static GAME game = null;
 	protected static int getRows() {
 		// If Mario, return Mario dimension, if Mega Man, get Mega Man dimension, etc.
+		// should be 1 less than the actual height, ex: Mario is 14 high, range of 0-13
 		switch(game) {
 		case MARIO:
-			throw new UnsupportedOperationException("Still need to provide details for Mario");
+			return 13;
 		case ZELDA:
 			return 7;		
 		case LODE_RUNNER:
-			throw new UnsupportedOperationException("Still need to provide details for Lode Runner");
+			return 21;
 		case MEGA_MAN:
 			return 14; //default Mega Man
 		}
@@ -39,11 +40,11 @@ public class LevelNovelty {
 		// If Mario, return Mario dimension, if Mega Man, get Mega Man dimension, etc.
 		switch(game) {
 		case MARIO:
-			throw new UnsupportedOperationException("Still need to provide details for Mario");
+			return 28;
 		case ZELDA:
 			return 12;		
 		case LODE_RUNNER:
-			throw new UnsupportedOperationException("Still need to provide details for Lode Runner");
+			return 32;
 		case MEGA_MAN:
 			return 16; //default Mega Man
 		}
@@ -304,6 +305,24 @@ public class LevelNovelty {
 			copySegment.add(row);
 		}
 		return copySegment;
+	}
+	
+	public static boolean setGame(String gameIn) {
+		switch (gameIn) {
+			case ("mario"):
+				game = GAME.MARIO;
+				return true;
+			case ("zelda"):
+				game = GAME.ZELDA;
+				return true;
+			case ("lode_runner"):
+				game = GAME.LODE_RUNNER;
+				return true;
+			case ("mega_man"):
+				game = GAME.MEGA_MAN;
+				return true;
+		}
+		return false;
 	}
 	
 }

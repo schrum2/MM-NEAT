@@ -60,10 +60,14 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+/objectiveevolutionpseudoarchive/
+/mariolevelsnsga2/
 /loderunnerlevelsequences/
 /loderunnermapelites/
+/loderunnerkldivergence/
 /megamandistinctverticalandconnectivity/
 /loderunnerlevels/
+/loderunnerlevelscmaes/
 /loderunnerlevelsMAPElites/
 ZeldaDungeon01_5000_10*
 ZeldaDungeon02_5000_10*
@@ -73,6 +77,7 @@ ZeldaAllDungeons*
 /megamansinglegan/
 /mariolevelsdecoratensleniency/
 /mariolevelsdistinctnsdecorate/
+/mariolevelsnoveltydecorleniency/
 /zeldadungeonswallwaterrooms/
 /zeldadungeonsdistinctbtrooms/
 /zeldadungeons/
@@ -97,6 +102,7 @@ ZeldaAllDungeons*
 /pp/
 /mario/
 /mariolevel/
+/mariolevelskldivergence/
 /fbr/
 /checkers/
 /match/
@@ -130,7 +136,12 @@ ZeldaAllDungeons*
 /popacman/
 /zeldagan/
 /functionoptimization/
+/cmamefunctionoptimization/
+/mapelitesfunctionoptimization/
+/mapelitesfunctionoptimizationseveral/
 /src/main/python/MarioGAN/Zelda-30-5000
+/src/main/python/Pyribs/sphere_output*
+/src/main/python/Pyribs/dask-worker-space
 # Some of UT^2's log files end up with this naming convention
 *-null
 *.zds

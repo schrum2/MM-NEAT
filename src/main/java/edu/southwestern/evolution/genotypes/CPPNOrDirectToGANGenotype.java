@@ -45,11 +45,11 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 		sb.append(" ");
 		// Transition from CPPN to Direct, but keep identical expressed phenotype
 		if(GANProcess.type.equals(GAN_TYPE.ZELDA))
-		new ConvertZeldaCPPN2GANtoDirect2GANMutation().go(this, sb);
+			new ConvertZeldaCPPN2GANtoDirect2GANMutation().go(this, sb);
 		else if(GANProcess.type.equals(GAN_TYPE.MARIO))
 			new ConvertMarioCPPN2GANtoDirect2GANMutation().go(this, sb);
-		else if (GANProcess.type.equals(GAN_TYPE.LODE_RUNNER))
-			throw new UnsupportedOperationException();
+		else //if (GANProcess.type.equals(GAN_TYPE.LODE_RUNNER))
+			throw new UnsupportedOperationException(GANProcess.type.name() + " not supported yet");
 		// Now allow for slight changes
 		super.mutate();
 	}

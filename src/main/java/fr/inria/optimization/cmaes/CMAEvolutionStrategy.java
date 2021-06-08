@@ -416,7 +416,7 @@ public class CMAEvolutionStrategy implements java.io.Serializable {
     double sigma = 0.0;
     double[] typicalX; // eventually used to set initialX
     double[] initialX; // set in the end of init()
-    public double[] LBound, UBound;    // bounds // Made public to allow it to work with MM-NEAT
+    double[] LBound, UBound;    // bounds
     double[] xmean;
     double xmean_fit = Double.NaN;
     double[] pc;
@@ -1105,8 +1105,16 @@ public class CMAEvolutionStrategy implements java.io.Serializable {
 
     		// assign diagD to eigenvalue square roots
     		for (i = 0; i < N; ++i) {
-    			if (diagD[i] < 0) // numerical problem?
-    				error("an eigenvalue has become negative");
+    			if (diagD[i] < 0) { // numerical problem?
+    				// Added by Schrum: June 2 2021
+    				System.err.println("Negative eigenvalue: "+diagD[i]);
+    				if(Math.abs(diagD[i]) < 0.000001) {
+    					System.err.println("Small value. Assume numerical error and set to 0");
+    					diagD[i] = 0;
+    				} else {
+    					error("an eigenvalue has become negative: "+diagD[i]);
+    				}
+    			}
     			diagD[i] = Math.sqrt(diagD[i]);
     		}
     		countCupdatesSinceEigenupdate = 0;
@@ -1300,12 +1308,12 @@ public class CMAEvolutionStrategy implements java.io.Serializable {
           tst1 = Math.max(tst1,Math.abs(d[l]) + Math.abs(e[l]));
           int m = l;
           while (m < n) {
-             if (Math.abs(e[m]) <= eps*tst1) {
-                break;
-             }
-             m++;
-          }
-
+             if (Math.abs(e[m]) <= eps*tst1) { 	// Maxx: Potentially the cause of the crash that was happening with CMA-ME 
+                break;							// n in this case is the dimension, however I suspect that this break
+             }									// is always supposed to happen at one point, and never did for whatever
+             m++;								// reason. n is the dimension, m *should* be 0 to (n-1) by the loop with l
+          }										// above on line 1296. e should have n elements, but is populated by another
+          										// function I won't try to understand
           // If m == l, d[l] is an eigenvalue,
           // otherwise, iterate.
     

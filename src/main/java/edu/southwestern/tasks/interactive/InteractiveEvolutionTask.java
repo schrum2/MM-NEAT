@@ -723,6 +723,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		Parameters.parameters.setInteger("ftype", CommonConstants.ftype);
 		ArrayList<Genotype<T>> newPop = ((SinglePopulationGenerationalEA<T>) MMNEAT.ea).initialPopulation(scores.get(0).individual);
 		scores = new ArrayList<Score<T>>();
+		selectedItems.clear();
 		ActivationFunctionRandomReplacement frr = new ActivationFunctionRandomReplacement();
 		for(int i = 0; i < newPop.size(); i++) {
 			if(newPop.get(i) instanceof TWEANNGenotype) frr.mutate((Genotype<TWEANN>) newPop.get(i));

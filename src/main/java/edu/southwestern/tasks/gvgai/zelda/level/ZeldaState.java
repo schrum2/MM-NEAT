@@ -63,7 +63,7 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 	}
 
 	/**
-	 * Copying state but chaning location within room
+	 * Copying state but changing location within room
 	 * @param state State to copy
 	 * @param p Point to change to
 	 */

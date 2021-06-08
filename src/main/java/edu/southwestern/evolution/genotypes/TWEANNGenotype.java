@@ -475,7 +475,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	public int archetypeIndex;
 
 	// Added to allow tracking of who parents are for score history purposes
-	transient List<Long> parents = new LinkedList<Long>();
+	protected List<Long> parents = new LinkedList<Long>();
 
 	@Override
 	public void addParent(long id) {

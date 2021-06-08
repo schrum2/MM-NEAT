@@ -121,6 +121,22 @@ public class ArrayUtil {
 		}
 		return ones;
 	}
+	
+	/**
+	 * Return primitve double array of given size containing only
+	 * copies of the specified value.
+	 * 
+	 * @param size Desired size of array
+	 * @param num Specified number to fill array
+	 * @return Array of doubles of size 'size', all of which are 'num'
+	 */
+	public static double[] doubleSpecified(int size, double num) {
+		double[] spec = new double[size];
+		for (int i = 0; i < spec.length; i++) {
+			spec[i] = num;
+		}
+		return spec;
+	}
 
 	/**
 	 * Return primitive int array of given size containing all ones
@@ -137,18 +153,33 @@ public class ArrayUtil {
 	}
 
 	/**
-	 * creates a new array of primitive ints with the same contents as ArrayList<Integer> input
+	 * creates a new array of primitive ints with the same contents as List<Integer> input
 	 * 
-	 * @param path ArrayList of type Integer to be copied
-	 * @return an array with the same size and contents as input ArrayList
+	 * @param path List of type Integer to be copied
+	 * @return an array with the same size and contents as input List
 	 */
-	public static int[] intArrayFromArrayList(ArrayList<Integer> path) {
+	public static int[] intArrayFromArrayList(List<Integer> path) {
 		int[] arrayPath = new int[path.size()];
 		for (int i = 0; i < arrayPath.length; i++) {
 			arrayPath[i] = path.get(i);
 		}
 		return arrayPath;
 	}
+	
+	/**
+	 * Creates a new 2D array of primitive ints with the same 
+	 * contents as a List<List<Integer>> input
+	 * 
+	 * @param path List of lists of type Integer to be transformed
+	 * @return A 2D array with the same size and contents as input list of lists
+	 */
+	public static int[][] int2DArrayFromListOfLists(List<List<Integer>> path) {
+		int[][] arrayPath = new int[path.size()][path.get(0).size()];
+		for (int i = 0; i < arrayPath.length; i++) {
+			arrayPath[i] = intArrayFromArrayList(path.get(i));
+		}
+		return arrayPath;
+	}	
 
 	/**
 	 * returns a 1D double array from a 2D double array

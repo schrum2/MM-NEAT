@@ -24,11 +24,12 @@ public class CMAEvolutionStrategyEA extends MuLambda<ArrayList<Double>> {
 	public CMAEvolutionStrategyEA(int mltype, SinglePopulationTask<ArrayList<Double>> task, int mu, int lambda, boolean io) {
 		super(mltype, task, mu, lambda, io);
 		if (task.numObjectives() != 1) {
-			System.out.println("CMA-ES is meant to be used with only one objective, but "+task.numObjectives()+" were provided!");
+			System.out.println("CMA-ES is meant to be used with exclusively one objective, but "+task.numObjectives()+" were provided!");
 			System.exit(1);
 		}
 		cma.readProperties(); // read options, see file CMAEvolutionStrategy.properties
-		cma.setDimension(10); // overwrite some loaded properties
+		int dimension = MMNEAT.getLowerBounds().length;
+		cma.setDimension(dimension); // overwrite some loaded properties
 		cma.setInitialX(0.05); // in each dimension, also setTypicalX can be used
 		cma.setInitialStandardDeviation(0.2); // also a mandatory setting 
 		cma.options.stopFitness = -9999; //1e-14;       // optional setting
@@ -46,7 +47,10 @@ public class CMAEvolutionStrategyEA extends MuLambda<ArrayList<Double>> {
 	public ArrayList<Genotype<ArrayList<Double>>> generateChildren(int numChildren, ArrayList<Score<ArrayList<Double>>> parentScores) {
 		double[][] pop = cma.samplePopulation(); // get a new population of solutions, this is equivalent to getting children
 		assert pop.length == numChildren : "Length of population is not equal to the number of children specified!"; // ensure population is correct size
-		return PopulationUtil.genotypeArrayListFromDoubles(pop); // convert population to be usable like normal
+		assert pop[0].length == MMNEAT.getLowerBounds().length : "Genomes have incorrect number of values: "+pop[0].length+" vs "+MMNEAT.getLowerBounds().length;
+		ArrayList<Genotype<ArrayList<Double>>> newPopulation = PopulationUtil.genotypeArrayListFromDoubles(pop); // convert population to be usable like normal
+		assert newPopulation.get(0).getPhenotype().size() == parentScores.get(0).individual.getPhenotype().size() : "Parent and child lengths did not match!";
+		return newPopulation;
 	}
 
 	@Override
@@ -61,7 +65,23 @@ public class CMAEvolutionStrategyEA extends MuLambda<ArrayList<Double>> {
 		assert genotypes.size() == numParents : "Length of genotypes is not equal to the number of parents specified!";
 		return genotypes; // Just returns the input score genotypes to keep MM-NEAT happy, actual data is internal to CMA-ES
 	}
+	
+	/**
+	 * Before overriding the inital population, it was far too large and 
+	 * the graphs appeared blank because of the scaling. This replaces that
+	 * and samples the population through CMA-ES instead, giving a correctly
+	 * scaled initial population.
+	 */
+	@Override
+	public ArrayList<Genotype<ArrayList<Double>>> initialPopulation(Genotype<ArrayList<Double>> example) {
+		double[][] pop = cma.samplePopulation(); // get a new population of solutions
 
+		ArrayList<Genotype<ArrayList<Double>>> newPopulation = PopulationUtil.genotypeArrayListFromDoubles(pop);
+		while (newPopulation.size() > mu) { // trim down to size mu
+			newPopulation.remove(newPopulation.size()-1);
+		}
+		return newPopulation; // return
+	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		System.out.println("Testing CMA-ES");
