@@ -23,14 +23,13 @@ import edu.southwestern.MMNEAT.MMNEAT;
 //import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
-import edu.southwestern.evolution.mapelites.MAPElites;
+import edu.southwestern.evolution.mapelites.generalmappings.*;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
-import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -335,14 +334,14 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				System.out.println("["+numDistinctSegments+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
 //				archiveArray[binIndex] = binScore; // Percent rooms traversed
 //				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
-			} if(MMNEAT.getArchiveBinLabelsClass() instanceof /* TODO */ ) {
+			} if(MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels ) { // TODO
 				LevelNovelty.setGame("mega_man");
 				
 				List<List<List<Integer>>> levelSegments = LevelNovelty.partitionSegments(level, LevelNovelty.getRows(), LevelNovelty.getColumns());
 				double novelty = LevelNovelty.averageSegmentNovelty(levelSegments); // get novelty
 				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
 				
-				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {}, binScore);
+				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {noveltyIndex}, binScore);
 			} else {
 				throw new RuntimeException("A Valid Binning Scheme For Mega Man Was Not Specified");
 			}

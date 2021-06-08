@@ -21,6 +21,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels;
+import edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
@@ -31,6 +32,7 @@ import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.tasks.loderunner.mapelites.LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels;
 import edu.southwestern.tasks.loderunner.mapelites.LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels;
 import edu.southwestern.tasks.loderunner.mapelites.LodeRunnerMAPElitesPercentGroundNumGoldAndEnemiesBinLabels;
+import edu.southwestern.tasks.megaman.LevelNovelty;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -347,6 +349,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			// Assign to the behavior vector before using MAP-Elites
 			//double[] archiveArray = null;
 			final int BINS_PER_DIMENSION = LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels.BINS_PER_DIMENSION;
+			final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
 			double SCALE_GROUND_LADDERS = BINS_PER_DIMENSION/4.0; //scales by 1/4 of the dimension to go in steps of 4
 			//gets correct indices for all dimensions based on percent and multiplied by 10 to be a non decimal 
 			int connectedIndex = Math.min((int)(percentConnected*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); 
@@ -384,6 +387,14 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				dims = new int[] {groundIndex, treasureIndex, enemyIndex}; // ground percentage, number of treasures scaled, number of enemies scaled
 				//becomes the behavior vector 
 				//archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
+			} else if(MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels) {
+				LevelNovelty.setGame("lode_runner");
+
+				double novelty = LevelNovelty.averageSegmentNovelty(null); // get novelty TODO
+				
+				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
+				dims = new int[] {noveltyIndex}; // ground percentage, number of treasures scaled, number of enemies scaled
+
 			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { 
 				KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) MMNEAT.getArchiveBinLabelsClass();
 				
@@ -400,7 +411,6 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				levelSolution = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 				levelImage = LodeRunnerRenderUtil.createBufferedImage(level, LodeRunnerRenderUtil.RENDERED_IMAGE_WIDTH, LodeRunnerRenderUtil.RENDERED_IMAGE_HEIGHT);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				//e.printStackTrace();
 				System.out.println("Could not get image");
 			} 
