@@ -845,7 +845,7 @@ public class GraphicsUtil {
 	 * @param angle	Angle to be rotated by
 	 * @return Return the rotatted image
 	 */
-	public BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
+	public static BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
 	    double rads = Math.toRadians(angle);
 	    double sin = Math.abs(Math.sin(rads)), cos = Math.abs(Math.cos(rads));
 	    int w = img.getWidth();
@@ -863,11 +863,26 @@ public class GraphicsUtil {
 
 	    at.rotate(rads, x, y);
 	    g2d.setTransform(at);
-	    g2d.drawImage(img, 0, 0, (ImageObserver) this);
+	    // Changed the ImageObserver to null
+	    g2d.drawImage(img, 0, 0, null);
 	    g2d.setColor(Color.RED);
 	    g2d.drawRect(0, 0, newWidth - 1, newHeight - 1);
 	    g2d.dispose();
 
 	    return rotated;
+	}
+	
+	public static BufferedImage getTwoByTwoTiledImage(BufferedImage original) {
+		BufferedImage result = new BufferedImage(original.getWidth() * 2, original.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
+		for(int x = 0; x < original.getWidth(); x++) {
+			for(int y = 0; y < original.getHeight(); y++) {
+				int originalColor = original.getRGB(x, y);
+				result.setRGB(x, y, originalColor);
+				result.setRGB(x + original.getWidth(), y, originalColor);
+				result.setRGB(x, y + original.getWidth(), originalColor);
+				result.setRGB(x + original.getWidth(), y + original.getWidth(), originalColor);
+			}
+		}
+		return result;
 	}
 }

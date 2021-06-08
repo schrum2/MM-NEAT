@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.interactive.picbreeder;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -197,10 +198,17 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	}
 	
 	public static BufferedImage rotateBackgroundImage(BufferedImage image, double angle) {
-		BufferedImage doubleSize = new BufferedImage(image.getWidth() * 2, image.getHeight() * 2, imageType);	// image type needs to be altered
-		
-		
+		BufferedImage doubleSize = GraphicsUtil.getTwoByTwoTiledImage(image);
+		GraphicsUtil.rotateImageByDegrees(doubleSize, angle);
+		BufferedImage middleImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		for(int x = 0; x < middleImage.getWidth(); x++) {
+			for(int y = 0; y < middleImage.getHeight(); y++) {
+				middleImage.setRGB(x, y, doubleSize.getRGB(x + middleImage.getWidth() / 2, y + middleImage.getHeight() / 2));
+			}
+		}
+		return doubleSize;
 	}
+
 
 	/**
 	 * Code from Sarah Friday, Anna Krolikowski, and Alice Quintanilla from their
@@ -324,6 +332,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					// data.xml gets read in this next method
 					try {
 						patterns[zentangleNumber] = SimpleTiledZentangle.simpleTiledZentangle(directory, zentangleNumber, Parameters.parameters.integerParameter("zentanglePatternDim") / tempTileSizeList[zentangleNumber]);
+						patterns[zentangleNumber] = rotateBackgroundImage(patterns[zentangleNumber], RandomNumbers.randomGenerator.nextDouble() * 360);
 						zentangleNumber++;
 					} catch (Exception e) {
 						e.printStackTrace();
