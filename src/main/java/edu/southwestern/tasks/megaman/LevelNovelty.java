@@ -67,6 +67,7 @@ public class LevelNovelty {
 		return start;
 	}
 	public static double getAverageSolutionPathPercent(List<List<List<Integer>>> listOfSegments) {
+		if (game == GAME.LODE_RUNNER) { throw new IllegalStateException("Lode Runner does not support level novelty, becuase there is only one segment!"); }
 		double result = 0.00;
 		for(List<List<Integer>> segment:listOfSegments) {
 			for(int i = 0;i<segment.size();i++) {
@@ -87,6 +88,7 @@ public class LevelNovelty {
 	 * @return Real number between 0 and 1, 0 being non-novel and 1 being completely novel
 	 */
 	public static double segmentNovelty(List<List<List<Integer>>> segments, int focus) {
+		if (game == GAME.LODE_RUNNER) { throw new IllegalStateException("Lode Runner does not support level novelty, becuase there is only one segment!"); }
 		double novelty = 0;
 		
 		for(int i = 0; i < segments.size(); i++) { // For each other segment
@@ -203,6 +205,7 @@ public class LevelNovelty {
 	 * @return Real number between 0 and 1, 0 being non-novel and 1 being completely novel
 	 */
 	public static double averageSegmentNovelty(List<List<List<Integer>>> rooms) {
+		if (game == GAME.LODE_RUNNER) { throw new IllegalStateException("Lode Runner does not support level novelty, becuase there is only one segment!"); }
 		return StatisticsUtilities.average(segmentNovelties(rooms));
 	}
 
