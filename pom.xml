@@ -116,6 +116,11 @@
 	  <id>jitpack.io</id>
 	  <url>https://jitpack.io</url>
 	</repository>
+	
+     <repository>
+	  <id>jfrog</id>
+	  <url>https://repo.jfrog.org/artifactory/plugins-releases/</url>
+	</repository>	
 </repositories>
 
     <distributionManagement>
