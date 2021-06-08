@@ -29,7 +29,7 @@ public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels
 			
 			int size = (levelBinsPerDimension+1)*levelBinsPerDimension*levelBinsPerDimension;
 			labels = new ArrayList<String>(size);
-			for(int i = 0; i < noveltyBinsPerDimension; i++) { // Distinct Segments
+			for(int i = 0; i < noveltyBinsPerDimension; i++) { // Novelty Segments
 				for(int j = 0; j < levelBinsPerDimension; j++) { // Negative Space
 					for(int r = -(levelBinsPerDimension/2); r < levelBinsPerDimension/2; r++) { // Leniency allows negative range
 						labels.add("Novelty["+((double) i/noveltyBinsPerDimension)+"-"+((double) (i+1)/noveltyBinsPerDimension)+"]DecorFrequency["+j+"0-"+(j+1)+"0]Leniency["+r+"0-"+(r+1)+"0]");
