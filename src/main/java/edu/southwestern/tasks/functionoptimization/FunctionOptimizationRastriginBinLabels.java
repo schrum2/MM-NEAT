@@ -20,7 +20,7 @@ public class FunctionOptimizationRastriginBinLabels extends MultiDimensionalReal
 	private static final double RASTRIGIN_RANGE = 5.12;
 
 	public FunctionOptimizationRastriginBinLabels() {
-		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE/2, RASTRIGIN_RANGE/2, 2, MMNEAT.getLowerBounds().length);
+		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE/2, RASTRIGIN_RANGE/2, MMNEAT.getLowerBounds().length);
 	}
 
 

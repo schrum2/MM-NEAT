@@ -334,14 +334,25 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				System.out.println("["+numDistinctSegments+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
 //				archiveArray[binIndex] = binScore; // Percent rooms traversed
 //				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
-			} if(MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels ) { // TODO
-				LevelNovelty.setGame("mega_man");
 				
+			} if(MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels ) {
+				LevelNovelty.setGame("mega_man");
 				List<List<List<Integer>>> levelSegments = LevelNovelty.partitionSegments(level, LevelNovelty.getRows(), LevelNovelty.getColumns());
 				double novelty = LevelNovelty.averageSegmentNovelty(levelSegments); // get novelty
 				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
-				
 				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {noveltyIndex}, binScore);
+				System.out.println("["+numDistinctSegments+"] = "+binScore);
+				
+			} if(MMNEAT.getArchiveBinLabelsClass() instanceof MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels ) { // TODO
+				LevelNovelty.setGame("mega_man");
+				int indexConnected = (int) Math.min(precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS,9);
+				int numVertical = (int) (numUpSegments+numDownSegments);
+				List<List<List<Integer>>> levelSegments = LevelNovelty.partitionSegments(level, LevelNovelty.getRows(), LevelNovelty.getColumns());
+				double novelty = LevelNovelty.averageSegmentNovelty(levelSegments); // get novelty
+				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
+				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {noveltyIndex, numVertical, indexConnected}, binScore);
+				System.out.println("["+noveltyIndex+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
+				
 			} else {
 				throw new RuntimeException("A Valid Binning Scheme For Mega Man Was Not Specified");
 			}
