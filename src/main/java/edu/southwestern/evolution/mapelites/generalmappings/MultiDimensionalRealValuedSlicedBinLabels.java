@@ -1,6 +1,5 @@
 package edu.southwestern.evolution.mapelites.generalmappings;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 
 /**
