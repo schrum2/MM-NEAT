@@ -1,5 +1,6 @@
 package edu.southwestern.evolution.genotypes;
 
+import edu.southwestern.evolution.mapelites.mutations.MAPElitesLineMutation;
 import edu.southwestern.evolution.mutation.real.PerturbMutation;
 import edu.southwestern.evolution.mutation.real.PolynomialMutation;
 import edu.southwestern.util.random.RandomNumbers;
@@ -115,10 +116,15 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	 */
 	@Override
 	public void mutate() {
-		if (polynomialMutation) { // Specialized mutation operator slightly more complicated than simple perturbation
-			new PolynomialMutation().mutate(this);
-		} else { // Default
-			new PerturbMutation(getRange()).mutate(this);
+		MAPElitesLineMutation lineMutation = new MAPElitesLineMutation();
+		if (lineMutation.perform()) {
+			lineMutation.mutate(this);
+		} else {
+			if (polynomialMutation) { // Specialized mutation operator slightly more complicated than simple perturbation
+				new PolynomialMutation().mutate(this);
+			} else { // Default
+				new PerturbMutation(getRange()).mutate(this);
+			}
 		}
 		bound();
 	}

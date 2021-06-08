@@ -801,6 +801,7 @@ public class Parameters {
 		doubleOptions.add("preferenceNeuronFatigueUnit", 0.0, "Amount of fatigue from preference neuron use");
 		doubleOptions.add("probabilityThreshold", 1 / 256.0d, "Used in GhostPredictionsFast.java. Determines the smallest probability that we model ghost locations to.");
 		doubleOptions.add("realMutateRate", 0.3, "Mutation rate for modifying indexes in real-valued string");
+		doubleOptions.add("meLineMutationRate", 0.0, "Mutation rate of MAP Elites line mutation");
 		doubleOptions.add("redirectLinkRate", 0.0, "Mutation rate for redirecting network links");
 		doubleOptions.add("remainingTUGGoalRatio", 1.0,"What portion of TUG goal remains when objective is active (positive objectives only!)");
 		doubleOptions.add("rlEpsilon", 0.1, "Frequency of completely random actions during Reinforcement Learning");
