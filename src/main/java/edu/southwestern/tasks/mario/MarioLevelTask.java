@@ -542,7 +542,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				double novelty = LevelNovelty.averageSegmentNovelty(levelWithParsedSegments); // get novelty
 				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
 				dims = new int[] {noveltyIndex};
-			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {	
+			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
 				LatentVariablePartitionSumBinLabels labels = (LatentVariablePartitionSumBinLabels) MMNEAT.getArchiveBinLabelsClass();
 				@SuppressWarnings("unchecked")
 				ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();

@@ -14,6 +14,7 @@ import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels;
+import edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels;
 import edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
@@ -335,6 +336,11 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						
 						System.out.println("["+numDistinctRooms+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");
 					
+					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
+						LatentVariablePartitionSumBinLabels labels = (LatentVariablePartitionSumBinLabels) MMNEAT.getArchiveBinLabelsClass();
+						ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
+						double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
+						mapElitesBinIndices = labels.discretize(labels.behaviorCharacterization(latentVector));
 					} else {
 						throw new RuntimeException("A Valid Binning Scheme For Zelda Was Not Specified");
 					}
