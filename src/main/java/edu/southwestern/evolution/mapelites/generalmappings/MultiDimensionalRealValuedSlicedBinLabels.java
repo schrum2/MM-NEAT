@@ -20,6 +20,7 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 		super(binsPerDimension, minPossibleValue, maxPossibleValue, Parameters.parameters.integerParameter("solutionVectorSlices"), vectorLength);
 		solutionVectorLength = vectorLength;
 		solutionVectorSlices = Parameters.parameters.integerParameter("solutionVectorSlices");
+		if (!(solutionVectorSlices > 1)) {throw new IllegalStateException("MultiDimensionalRealValuedSlicedBinLabels must have more than 1 slice!");}
 	}
 	
 	public double[] behaviorCharacterization(double[] solution) {
