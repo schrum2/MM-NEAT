@@ -364,6 +364,12 @@
 		<artifactId>amis-path-finding</artifactId>
 		<version>3.7.0</version>
 	</dependency>
+
+	<dependency>
+		<groupId>cz.cuni.amis</groupId>
+		<artifactId>xmllist</artifactId>
+		<version>1.0.0</version>
+	</dependency>
 	
 	<dependency>
 		<groupId>cz.cuni.amis</groupId>
