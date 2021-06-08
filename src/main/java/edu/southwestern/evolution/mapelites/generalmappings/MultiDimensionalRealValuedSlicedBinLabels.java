@@ -16,9 +16,9 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 	private int solutionVectorLength;
 	private int solutionVectorSlices;
 	
-	public MultiDimensionalRealValuedSlicedBinLabels(int binsPerDimension, double minPossibleValue, double maxPossibleValue, int numDimensions, int vectorLength) {
-		super(binsPerDimension, minPossibleValue, maxPossibleValue, numDimensions, vectorLength);
-		solutionVectorLength = MMNEAT.getLowerBounds().length;
+	public MultiDimensionalRealValuedSlicedBinLabels(int binsPerDimension, double minPossibleValue, double maxPossibleValue, int vectorLength) {
+		super(binsPerDimension, minPossibleValue, maxPossibleValue, Parameters.parameters.integerParameter("solutionVectorSlices"), vectorLength);
+		solutionVectorLength = vectorLength;
 		solutionVectorSlices = Parameters.parameters.integerParameter("solutionVectorSlices");
 	}
 	
