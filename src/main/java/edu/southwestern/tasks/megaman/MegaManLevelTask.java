@@ -30,6 +30,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
+import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -144,6 +145,8 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		double simpleAStarDistance = aStarResults.t4;
 		//calculates the amount of the level that was covered in the search, connectivity.
 		double precentConnected = MegaManLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited)/MegaManLevelAnalysisUtil.findTotalPassableTiles(level);
+		
+		final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
 
 		HashMap<String, Integer> miscEnemyInfo = MegaManLevelAnalysisUtil.findMiscEnemies(level);
 		double numEnemies = miscEnemyInfo.get("numEnemies");
@@ -332,6 +335,14 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				System.out.println("["+numDistinctSegments+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
 //				archiveArray[binIndex] = binScore; // Percent rooms traversed
 //				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
+			} if(MMNEAT.getArchiveBinLabelsClass() instanceof /* TODO */ ) {
+				LevelNovelty.setGame("mega_man");
+				
+				List<List<List<Integer>>> levelSegments = LevelNovelty.partitionSegments(level, LevelNovelty.getRows(), LevelNovelty.getColumns());
+				double novelty = LevelNovelty.averageSegmentNovelty(levelSegments); // get novelty
+				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
+				
+				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {}, binScore);
 			} else {
 				throw new RuntimeException("A Valid Binning Scheme For Mega Man Was Not Specified");
 			}
