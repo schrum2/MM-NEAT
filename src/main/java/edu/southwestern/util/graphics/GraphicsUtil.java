@@ -843,7 +843,7 @@ public class GraphicsUtil {
 	 * 
 	 * @param img Image to be rotated
 	 * @param angle	Angle to be rotated by
-	 * @return Return the rotatted image
+	 * @return Return the rotated image
 	 */
 	public static BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
 	    double rads = Math.toRadians(angle);
@@ -872,6 +872,13 @@ public class GraphicsUtil {
 	    return rotated;
 	}
 	
+	/**
+	 * Creates a new image double the size of the original,
+	 * and built out of four of the original image.
+	 * 
+	 * @param original The original image
+	 * @return the new tile image
+	 */
 	public static BufferedImage getTwoByTwoTiledImage(BufferedImage original) {
 		BufferedImage result = new BufferedImage(original.getWidth() * 2, original.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
 		for(int x = 0; x < original.getWidth(); x++) {

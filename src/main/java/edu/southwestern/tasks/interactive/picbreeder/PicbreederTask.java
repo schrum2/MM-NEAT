@@ -197,16 +197,25 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		}
 	}
 	
+	/**
+	 * Rotates the background Zentangle image. Makes an image
+	 * double the size of the original containing a two by 
+	 * two of the original image.  Then takes the center of
+	 * the double size image to use as the background image.
+	 * 
+	 * @param image The original image
+	 * @param angle The angle by which to rotate the background image
+	 * @return the background image
+	 */
 	public static BufferedImage rotateBackgroundImage(BufferedImage image, double angle) {
-		BufferedImage doubleSize = GraphicsUtil.getTwoByTwoTiledImage(image);
-		GraphicsUtil.rotateImageByDegrees(doubleSize, angle);
+		BufferedImage rotated = GraphicsUtil.rotateImageByDegrees(GraphicsUtil.getTwoByTwoTiledImage(image), angle);
 		BufferedImage middleImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		for(int x = 0; x < middleImage.getWidth(); x++) {
 			for(int y = 0; y < middleImage.getHeight(); y++) {
-				middleImage.setRGB(x, y, doubleSize.getRGB(x + middleImage.getWidth() / 2, y + middleImage.getHeight() / 2));
+				middleImage.setRGB(x, y, rotated.getRGB(x + middleImage.getWidth() / 2, y + middleImage.getHeight() / 2));
 			}
 		}
-		return doubleSize;
+		return middleImage;
 	}
 
 
