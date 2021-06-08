@@ -23,7 +23,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 //import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
-import edu.southwestern.evolution.mapelites.MAPElites;
+import edu.southwestern.evolution.mapelites.generalmappings.*;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -115,7 +115,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
 		Score<T> result = super.evaluate(individual);
-		if(MMNEAT.ea instanceof MAPElites)
+		if(MMNEAT.usingDiversityBinningScheme)
 			result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
 		return result;
 	}
@@ -144,6 +144,8 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		double simpleAStarDistance = aStarResults.t4;
 		//calculates the amount of the level that was covered in the search, connectivity.
 		double precentConnected = MegaManLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited)/MegaManLevelAnalysisUtil.findTotalPassableTiles(level);
+		
+		final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
 
 		HashMap<String, Integer> miscEnemyInfo = MegaManLevelAnalysisUtil.findMiscEnemies(level);
 		double numEnemies = miscEnemyInfo.get("numEnemies");
@@ -313,11 +315,11 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			}
 			
 		}
-		if(MMNEAT.ea instanceof MAPElites) {
+		if(MMNEAT.usingDiversityBinningScheme) {
 			double binScore = simpleAStarDistance;
 			//int binIndex = 0;
 
-			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels) {
+			if(MMNEAT.getArchiveBinLabelsClass() instanceof MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels) {
 				//int maxNumSegments = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 
 				assert precentConnected <= 1;
@@ -332,13 +334,21 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				System.out.println("["+numDistinctSegments+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
 //				archiveArray[binIndex] = binScore; // Percent rooms traversed
 //				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
+			} if(MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels ) { // TODO
+				LevelNovelty.setGame("mega_man");
+				
+				List<List<List<Integer>>> levelSegments = LevelNovelty.partitionSegments(level, LevelNovelty.getRows(), LevelNovelty.getColumns());
+				double novelty = LevelNovelty.averageSegmentNovelty(levelSegments); // get novelty
+				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
+				
+				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {noveltyIndex}, binScore);
 			} else {
 				throw new RuntimeException("A Valid Binning Scheme For Mega Man Was Not Specified");
 			}
 			
 			if(CommonConstants.netio) {
 				System.out.println("Save archive images");
-				Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+				Archive<T> archive = MMNEAT.getArchive();
 				List<String> binLabels = archive.getBinMapping().binLabels();
 
 				// Index in flattened bin array

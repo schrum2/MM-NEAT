@@ -13,7 +13,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.file.NullPrintStream;
 
 
-public class MegaManLevelNovelty extends LevelNovelty{
+public class MegaManLevelNovelty extends LevelNovelty {
 	/**
 	 * Perform an analysis of the novelty of of various dungeons from the original game and
 	 * from the human subject study conducted in 2020 (published in GECCO 2021). Note that 

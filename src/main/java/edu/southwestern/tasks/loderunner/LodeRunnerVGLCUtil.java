@@ -66,9 +66,9 @@ public class LodeRunnerVGLCUtil {
 	 * @param fileName File that holds the VGLC of a lode runner level 
 	 * @return
 	 */
-	public static List<List<Integer>> convertLodeRunnerLevelFileVGLCtoListOfLevel(String fileName) {
+	public static ArrayList<List<Integer>> convertLodeRunnerLevelFileVGLCtoListOfLevel(String fileName) {
 		String[] level = new IO().readFile(fileName);
-		List<List<Integer>> complete = new ArrayList<>(LODE_RUNNER_ROWS);
+		ArrayList<List<Integer>> complete = new ArrayList<>(LODE_RUNNER_ROWS);
 		//loops through levels to get characters and convert them 
 		for(int i = 0; i < level.length; i++) { 
 			List<Integer> row = new ArrayList<>(LODE_RUNNER_COLUMNS);//creates new List to be a new row of the JSON 
