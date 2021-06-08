@@ -21,6 +21,7 @@ public class FunctionOptimizationRastriginBinLabels extends MultiDimensionalReal
 
 	public FunctionOptimizationRastriginBinLabels() {
 		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE/2, RASTRIGIN_RANGE/2, MMNEAT.getLowerBounds().length);
+		if (Parameters.parameters.integerParameter("solutionVectorSlices") != 2) {throw new IllegalStateException("FunctionOptimizationRastriginBinLabels can only have 2 slices!");}
 	}
 
 
