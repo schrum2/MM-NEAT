@@ -92,11 +92,13 @@
     </repository>
 
 	<!-- For Pogamut -->
+	<!--  
 	<repository>
     	<id>amis-artifactory</id>
 		<name>AMIS Artifactory</name>
 		<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
     </repository>
+    -->
     
     <!-- For DL4J and RL4J -->
     <repository>
@@ -333,7 +335,8 @@
 	<dependency>
 		<groupId>cz.cuni.amis.pogamut</groupId>
 		<artifactId>pogamut-ut2004</artifactId>
-		<version>3.7.0</version>
+		<version>3.6.2-SNAPSHOT</version>
+		<!-- <version>3.7.0</version> -->
 		<!-- <version>3.3.0</version> -->
 	</dependency>
     
@@ -350,7 +353,26 @@
 		<version>3.7.0</version>
 		<!-- <version>3.3.0</version> -->
 	</dependency>
-    
+
+	<dependency>
+		<groupId>cz.cuni.amis</groupId>
+		<artifactId>amis-path-finding</artifactId>
+		<version>3.7.0</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>cz.cuni.amis</groupId>
+		<artifactId>javageom</artifactId>
+		<version>3.7.0</version>
+	</dependency>
+
+	<dependency>
+		<groupId>cz.cuni.amis</groupId>
+		<artifactId>introspection</artifactId>
+		<version>1.0.0</version>
+	</dependency>
+
+	
 	<dependency>
 		<groupId>cz.cuni.amis</groupId>
 		<artifactId>amis-utils</artifactId>
