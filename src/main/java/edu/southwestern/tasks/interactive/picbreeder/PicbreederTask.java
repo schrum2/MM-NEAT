@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.interactive.picbreeder;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -53,12 +54,18 @@ import edu.southwestern.util.random.RandomNumbers;
  */
 public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
 
+	private static final int MAX_SELECTABLE_BEFORE_MIXING = 6;
+
+	private static final int MAX_TILE_SIZE_POWER = 5;
+
 	public static int runNumber = 0;
 
 	public static final int CPPN_NUM_INPUTS = 4;
 	public static final int CPPN_NUM_OUTPUTS = 3;
 
 	private static final int ZENTANGLE_BUTTON_INDEX = -8;
+
+	private static final int MAX_POSSIBLE_PATTERNS = 6; // Will this always be the max for Zentangles?
 
 	/**
 	 * Default constructor
@@ -148,7 +155,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 * @param inputMultipliers
 	 */
 
-	public static <T> void saveSingle(String filename, int dim, T phenotype, double[] inputMultipliers, boolean isBackground) {
+	public static <T> BufferedImage saveSingle(String filename, int dim, T phenotype, double[] inputMultipliers, boolean isBackground) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than
 		// is on the button
 		// Set starkPicbreeder to true
@@ -160,7 +167,8 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		String filename1 = filename + "1.bmp";
 		GraphicsUtil.saveImage(toSave1, filename1);
 
-		System.out.println("image " + filename1 + " was saved successfully");
+		System.out.println("image " + filename1 + " was saved successfully. Size: "+toSave1.getWidth()+" by "+toSave1.getHeight());
+		return toSave1; // return the image that was saved
 	}
 
 	/**
@@ -188,6 +196,19 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			return phenotypes;
 		}
 	}
+	
+	public static BufferedImage rotateBackgroundImage(BufferedImage image, double angle) {
+		BufferedImage doubleSize = GraphicsUtil.getTwoByTwoTiledImage(image);
+		GraphicsUtil.rotateImageByDegrees(doubleSize, angle);
+		BufferedImage middleImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		for(int x = 0; x < middleImage.getWidth(); x++) {
+			for(int y = 0; y < middleImage.getHeight(); y++) {
+				middleImage.setRGB(x, y, doubleSize.getRGB(x + middleImage.getWidth() / 2, y + middleImage.getHeight() / 2));
+			}
+		}
+		return doubleSize;
+	}
+
 
 	/**
 	 * Code from Sarah Friday, Anna Krolikowski, and Alice Quintanilla from their
@@ -216,7 +237,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					"Insufficient number of tiles chosen to zentangle. Select at least two.", "Information",
 					JOptionPane.INFORMATION_MESSAGE);
 		} else {
-			int numSelected = chosenTiles.size();
+			final int numSelected = chosenTiles.size();
 			runNumber++;
 			String waveFunctionSaveLocation = directory + "/";
 			File dir = new File(waveFunctionSaveLocation);
@@ -225,7 +246,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			}
 
 			String[] tileNames = new String[chosenTiles.size()];
-			int numSaved = 0;
+			int numTileImagesSaved = 0;
 			int numStored = 0;
 			int tileSize = Parameters.parameters.integerParameter("zentangleTileDim");
 			int backgroundSize = tileSize * Parameters.parameters.integerParameter("zentanglePatternDim");
@@ -235,33 +256,60 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			int[] bgIndices = RandomNumbers.randomDistinct(2, numSelected);
 			int bgIndex1 = bgIndices[0];
 			int bgIndex2 = bgIndices[1];
+			//int bgIndex3 = bgIndices[2];
 
+			BufferedImage bgImage1 = null;
+			BufferedImage bgImage2 = null;
+			
+			int[] tempTileSizeList = new int[numSelected];
+			
 			for (int i = 0; i < numSelected; i++) {
+				// If too many images are selected, then they will be combined into mixed tile sets, but this requires all tiles to be the same size (multiplier of 1)
+				int tileSizeMultiplier = numSelected > MAX_SELECTABLE_BEFORE_MIXING ? 1 : (int) Math.pow(2, RandomNumbers.randomGenerator.nextInt(MAX_TILE_SIZE_POWER));
+				
 				if (i == bgIndex1) {
 					// Represents a template pattern
-					saveSingle(waveFunctionSaveLocation + "background", backgroundSize, chosenTiles.get(i),
-							inputMultipliers, true);
+					bgImage1 = saveSingle(waveFunctionSaveLocation + "background", backgroundSize, chosenTiles.get(i),inputMultipliers, true);
+					System.out.println("one template pattern");
 					if (numSelected < 3) { // If there are only two images, one serves as a background pattern AND a
 											// tile pattern
-						String fullName = "tile" + numSaved + "_";
+						String fullName = "tile" + numTileImagesSaved + "_";
+						tempTileSizeList[numStored] = tileSizeMultiplier;
+						System.out.println("tileSizeMultiplier = "+tileSizeMultiplier+" -> pixels = "+tileSizeMultiplier*tileSize);
 						tileNames[numStored++] = fullName + "1";
-						saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers, false);
-						numSaved++;
+						saveSingle(waveFunctionSaveLocation + fullName, tileSizeMultiplier*tileSize, chosenTiles.get(i), inputMultipliers, false);
+						numTileImagesSaved++;
+						System.out.println("fewer than 3 selected");
 					}
 				} else if (i == bgIndex2) {
 					// A possible second template pattern
-					saveSingle(waveFunctionSaveLocation + "background2", backgroundSize, chosenTiles.get(i),
-							inputMultipliers, true);
-					String fullName = "tile" + numSaved + "_";
-					tileNames[numStored++] = fullName + "1";
-					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers, false);
-					numSaved++;
+					bgImage2 = saveSingle(waveFunctionSaveLocation + "background2", backgroundSize, chosenTiles.get(i),inputMultipliers, true);
+					System.out.println("second template pattern");
+					
+					if(numSelected != 5 && numSelected != 6) {
+						String fullName = "tile" + numTileImagesSaved + "_";
+						tempTileSizeList[numStored] = tileSizeMultiplier;
+						System.out.println("tileSizeMultiplier = "+tileSizeMultiplier+" -> pixels = "+tileSizeMultiplier*tileSize);
+						tileNames[numStored++] = fullName + "1";
+						saveSingle(waveFunctionSaveLocation + fullName, tileSizeMultiplier*tileSize, chosenTiles.get(i), inputMultipliers, false);
+						numTileImagesSaved++;
+					}
+//				} else if (i == bgIndex3) {
+//					saveSingle(waveFunctionSaveLocation + "background3", backgroundSize, chosenTiles.get(i), inputMultipliers, true);
+//					String fullName = "tile" + numSaved + "_";
+//					tileNames[numStored++] = fullName + "1";
+//					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers, false);
+//					numSaved++;
+//					System.out.println("third template pattern");
 				} else {
 					// All other images used to create background tiles with WFC
-					String fullName = "tile" + numSaved + "_";
+					String fullName = "tile" + numTileImagesSaved + "_";
+					tempTileSizeList[numStored] = tileSizeMultiplier;
+					System.out.println("tileSizeMultiplier = "+tileSizeMultiplier+" -> pixels = "+tileSizeMultiplier*tileSize);
 					tileNames[numStored++] = fullName + "1";
-					saveSingle(waveFunctionSaveLocation + fullName, tileSize, chosenTiles.get(i), inputMultipliers, false);
-					numSaved++;
+					saveSingle(waveFunctionSaveLocation + fullName, tileSizeMultiplier*tileSize, chosenTiles.get(i), inputMultipliers, false);
+					numTileImagesSaved++;
+					System.out.println("All other tiles selected are background tiles made with WFC");
 				}
 			}
 
@@ -270,21 +318,22 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			// some empty slots at the end which are null.
 
 			// use wfc to create final zentangle image, save it as zentangle.bmp
-
+			BufferedImage[] patterns = new BufferedImage[MAX_POSSIBLE_PATTERNS]; 
 			int numPartitions = 2;
 			int standardSize = numStored / numPartitions;
 			ArrayList<String> tilesToProcess = new ArrayList<>();
-			int zentangleNumber = 1;
+			int zentangleNumber = 0;
 			for (int i = 0; i < numStored; i++) {
 				tilesToProcess.add(tileNames[i]);
 				// The partition is full, create a zentangle with WFC
-				if (chosenTiles.size() <= 5 || (i + 1) % standardSize == 0) {
+				if (chosenTiles.size() <= MAX_SELECTABLE_BEFORE_MIXING || (i + 1) % standardSize == 0) {
 					// Writes data.xml
-					SimpleTiledZentangleWFCModel
-							.writeAdjacencyRules(directory, tilesToProcess.toArray(new String[tilesToProcess.size()]));
+					SimpleTiledZentangleWFCModel.writeAdjacencyRules(directory, tilesToProcess.toArray(new String[tilesToProcess.size()]), tempTileSizeList[zentangleNumber]*tileSize);
 					// data.xml gets read in this next method
 					try {
-						SimpleTiledZentangle.simpleTiledZentangle(directory, zentangleNumber++);
+						patterns[zentangleNumber] = SimpleTiledZentangle.simpleTiledZentangle(directory, zentangleNumber, Parameters.parameters.integerParameter("zentanglePatternDim") / tempTileSizeList[zentangleNumber]);
+						patterns[zentangleNumber] = rotateBackgroundImage(patterns[zentangleNumber], RandomNumbers.randomGenerator.nextDouble() * 360);
+						zentangleNumber++;
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -292,56 +341,41 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				}
 			}
 
-			BufferedImage bgImage1 = null;
-			BufferedImage bgImage2 = null;
-			BufferedImage firstImage = null;
-			BufferedImage secondImage = null;
-			BufferedImage thirdImage = null;
-			BufferedImage fourthImage = null;
+			// Different cases for how many images are selected:
+			// 1, 2, 3, 4, 5, 6, 7+ images are individual cases
 			BufferedImage zentangle = null;
-			try {
-				bgImage1 = ImageIO.read(new File(waveFunctionSaveLocation + "/background1.bmp"));
-			} catch (IOException e) {
-				e.printStackTrace();
+			switch(numSelected) {
+			// 2 or 3 images selected: one will be a background image,
+			// if 2 images, the background image will also be a pattern image
+			// if 3 images, one background image and the other two will be pattern images.
+			case 2:
+			case 3:
+				zentangle = GraphicsUtil.zentangleImages(bgImage1, patterns[0], patterns[1]);				
+				break;	
+			// 4 or 5 images selected: two will be background images
+			// if 4 images, two background images, one background image will double as one of three pattern images
+			// if 5 images, two background images, three completely different pattern images
+			case 4:
+			case 5:
+				zentangle = GraphicsUtil.zentangleImages(bgImage1, bgImage2, patterns[0], patterns[1], patterns[2]);								
+				break;
+			// if 6 images, two background images, four completely different pattern images
+			case 6:
+				zentangle = GraphicsUtil.zentangleImages(bgImage1, bgImage2, patterns[0], patterns[1], patterns[2], patterns[3]);												
+				break;
+			// if 7+ images, one background image, two pattern images with tiles from the excess images.
+			// essentially, half of the chosen images (not including the background image) will be used by 
+			// WFC to create the first pattern and the other half of the selected images will be used to create
+			// the second pattern.
+			default:
+				zentangle = GraphicsUtil.zentangleImages(bgImage1, patterns[0], patterns[1]);								
+				break;
 			}
-			try {
-				bgImage2 = ImageIO.read(new File(waveFunctionSaveLocation + "/background21.bmp"));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				firstImage = ImageIO.read(new File(waveFunctionSaveLocation + "/picbreederZentangle" + 1 + ".jpg"));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			try {
-				secondImage = ImageIO.read(new File(waveFunctionSaveLocation + "/picbreederZentangle" + 2 + ".jpg"));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			if (numSaved == 3) {
-				try {
-					thirdImage = ImageIO.read(new File(waveFunctionSaveLocation + "/picbreederZentangle" + 3 + ".jpg"));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				zentangle = GraphicsUtil.zentangleImages(bgImage1, bgImage2, firstImage, secondImage, thirdImage);
-			} else if (numSaved == 4) {
-				try {
-					thirdImage = ImageIO.read(new File(waveFunctionSaveLocation + "/picbreederZentangle" + 3 + ".jpg"));
-					fourthImage = ImageIO.read(new File(waveFunctionSaveLocation + "/picbreederZentangle" + 4 + ".jpg"));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				zentangle = GraphicsUtil.zentangleImages(bgImage1, bgImage2, secondImage, thirdImage, fourthImage);
-			} else {
-				zentangle = GraphicsUtil.zentangleImages(bgImage1, firstImage, secondImage);
-			}
+			
 			File outputfile = new File(waveFunctionSaveLocation + "/zentangle.png");
 			try {
 				ImageIO.write(zentangle, "png", outputfile);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

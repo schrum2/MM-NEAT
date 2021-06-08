@@ -20,6 +20,7 @@ import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -56,6 +57,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private int iterationsWithoutEliteCounter;
 	private int iterationsWithoutElite;
 	private int individualsPerGeneration;
+	private boolean saveImageArchives;
 
 	public BinLabels getBinLabelsClass() {
 		return archive.getBinLabelsClass();
@@ -196,6 +198,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 */
 	@Override
 	public void initialize(Genotype<T> example) {		
+		saveImageArchives = MMNEAT.task instanceof PictureTargetTask;
 		if(iterations > 0) {
 			int numLabels = archive.getBinMapping().binLabels().size();
 			// Loading from saved archive
@@ -365,6 +368,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * 							fill/replace a bin.
 	 */
 	public void fileUpdates(boolean newEliteProduced) {
+		if(saveImageArchives && iterations % Parameters.parameters.integerParameter("imageArchiveSaveFrequency") == 0) {
+			System.out.println("Save whole archive at iteration "+iterations);
+			((PictureTargetTask<?>) MMNEAT.task).saveAllArchiveImages("iteration"+iterations);
+			
+			// TODO: To Anna: If we are using the autoencoder, this is where we will need to re-train it.
+			//       Set up a command line
+		}
 		// Log to file
 		log();
 		Parameters.parameters.setInteger("lastSavedGeneration", iterations);

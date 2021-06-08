@@ -188,6 +188,7 @@ public class Parameters {
 	 */
 	public final void fillDefaults() {
 		// Integer parameters
+		integerOptions.add("imageArchiveSaveFrequency", 10000, "How often the PictureTargetTask saves all images in the archive");
 		integerOptions.add("HNProcessDepth", 1, "The number of processing layers in a HN substrate");
 		integerOptions.add("HNProcessWidth", 1, "The number of adjacent processing substrates per layer in a HN substrate");
 		integerOptions.add("bdArchiveSize", 0, "Maximum allowable size of archive for BD");
@@ -256,6 +257,8 @@ public class Parameters {
 		integerOptions.add("maxGens", 500, "Maximum generations allowed for a LimitedGenerationalEAExperiment");
 		integerOptions.add("maxLairTime", 3 * Constants.COMMON_LAIR_TIME, "What lair time starts at from the beginning of evolution");
 		integerOptions.add("maxModes", 1000, "Mode mutation cannot add more than this many modes");
+		integerOptions.add("maxNumLinks", 100, "The maximum number of links to be used in the neurons/links binning scheme for PictureTargetTask.");
+		integerOptions.add("maxNumNeurons", 50, "The maximum number of neurons to be used in the neurons/links binning scheme for PictureTargetTask.");
 		integerOptions.add("maxPause", 500, "Maximum pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("maxRemixImageWindow", 100, "Maximum size of window being remixed by CPPN in Picture Remixer");
 		integerOptions.add("maxTrials", Integer.MAX_VALUE, "Max trials allowed by individual when using increasing trials");
@@ -333,7 +336,7 @@ public class Parameters {
 		integerOptions.add("zeldaGANLevelWidthChunks", 4, "Number of rooms per row of CPPN-GAN generated dungeons.");
 		integerOptions.add("zeldaGANLevelHeightChunks", 4, "Number of rooms per column of CPPN-GAN generated dungeons.");
 		integerOptions.add("zentangleTileDim", 48 , "The width and height in pixels of tiles used in a Zentangle");
-		integerOptions.add("zentanglePatternDim", 30 , "The width and height in tiles of patterns used in a Zentangle");		
+		integerOptions.add("zentanglePatternDim", 32 , "The width and height in tiles of patterns used in a Zentangle");		
 		integerOptions.add("zeldaVGLCWaterPMapCode", 5 , "Int code for the character P in VGLC representation of Zelda");
 		integerOptions.add("cppn2ganWidth", null, "the CPPN to GAN width chunks");
 		integerOptions.add("cppn2ganHeight", null, "the CPPN to GAN height chunks");

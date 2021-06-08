@@ -77,6 +77,7 @@ public abstract class MatchDataTask<T extends Network> extends LonerTask<T> impl
 		for (Pair<double[], double[]> pattern : trainingSet) {
 			double[] inputs = pattern.t1;	// an array of doubles of the inputs
 			double[] desiredOutputs = pattern.t2;	// an array of doubles of the desired outputs
+			n.flush(); // If modeling a regression or classification function, recurrency should not be possible 
 			// find the actual outputs based on the given inputs
 			double[] actualOutputs = n.process(inputs);
 			if (CommonConstants.watch) {

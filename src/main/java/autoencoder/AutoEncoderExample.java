@@ -38,9 +38,11 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.AdaGrad;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 
@@ -92,14 +94,29 @@ public class AutoEncoderExample {
         List<INDArray> labelsTest = new ArrayList<>();
 
         Random r = new Random(12345);
+        int counter = 0;
         while(iter.hasNext()){
             DataSet ds = iter.next();
+            
+
+            
             SplitTestAndTrain split = ds.splitTestAndTrain(80, r);  //80/20 split (from miniBatch = 100)
             featuresTrain.add(split.getTrain().getFeatures());
             DataSet dsTest = split.getTest();
             featuresTest.add(dsTest.getFeatures());
             INDArray indexes = Nd4j.argMax(dsTest.getLabels(),1); //Convert from one-hot representation -> index
             labelsTest.add(indexes);
+            
+            
+            INDArray block = ds.getFeatures();
+            INDArray labels = ds.getLabels();
+            int nRows = block.rows();
+            for( int j=0; j<nRows; j++){
+                INDArray example = block.getRow(j, true);
+                int digit = (int)labels.getDouble(j);
+                BufferedImage bi = extractBWImageFromLinearINDArray(example);
+            	ImageIO.write(bi, "png", new File("MNIST/image"+digit+"_"+(counter++)+".png"));
+            }
         }
 
         //Train model:
@@ -126,9 +143,13 @@ public class AutoEncoderExample {
                 INDArray example = testData.getRow(j, true);
                 int digit = (int)labels.getDouble(j);
                 double score = net.score(new DataSet(example,example));
+                
+                INDArray output = net.output(example); // What autoencoder produces
+                
                 // Add (score, example) pair to the appropriate list
                 List digitAllPairs = listsByDigit.get(digit);
-                digitAllPairs.add(new ImmutablePair<>(score, example));
+                //digitAllPairs.add(new ImmutablePair<>(score, example));
+                digitAllPairs.add(new ImmutablePair<>(score, output)); // See what autoencoder produced instead of the input
             }
         }
 
@@ -166,7 +187,21 @@ public class AutoEncoderExample {
         }
     }
 
-    public static class MNISTVisualizer {
+    /**
+     * Creates an image out of an INDArray that lists the contents of a 28*28 MNIST training example
+     * in a linear sequence.
+     * @param arr INDArray with linear example of one digit
+     * @return BW image of digit
+     */
+    public static BufferedImage extractBWImageFromLinearINDArray(INDArray arr) {
+		BufferedImage bi = new BufferedImage(28,28,BufferedImage.TYPE_BYTE_GRAY);
+		for( int i=0; i<784; i++ ){
+		    bi.getRaster().setSample(i % 28, i / 28, 0, (int)(255*arr.getDouble(i)));
+		}
+		return bi;
+	}
+
+	public static class MNISTVisualizer {
         private double imageScale;
         private List<INDArray> digits;  //Digits (as row vectors), one per INDArray
         private String title;
@@ -204,10 +239,7 @@ public class AutoEncoderExample {
         private List<JLabel> getComponents(){
             List<JLabel> images = new ArrayList<>();
             for( INDArray arr : digits ){
-                BufferedImage bi = new BufferedImage(28,28,BufferedImage.TYPE_BYTE_GRAY);
-                for( int i=0; i<784; i++ ){
-                    bi.getRaster().setSample(i % 28, i / 28, 0, (int)(255*arr.getDouble(i)));
-                }
+                BufferedImage bi = extractBWImageFromLinearINDArray(arr);
                 ImageIcon orig = new ImageIcon(bi);
                 Image imageScaled = orig.getImage().getScaledInstance((int)(imageScale*28),(int)(imageScale*28),Image.SCALE_REPLICATE);
                 ImageIcon scaled = new ImageIcon(imageScaled);

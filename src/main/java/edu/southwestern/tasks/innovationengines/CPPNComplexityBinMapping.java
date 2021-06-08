@@ -6,6 +6,7 @@ import java.util.List;
 
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
 
 public class CPPNComplexityBinMapping<T extends Network> implements BinLabels {
 	
@@ -13,11 +14,16 @@ public class CPPNComplexityBinMapping<T extends Network> implements BinLabels {
 	public static final int BIN_INDEX_NODES = 0;
 	public static final int BIN_INDEX_LINKS = 1;
 	
-	public static final int MAX_NUM_NEURONS = 35;
-	public static final int MAX_NUM_LINKS = 70;
+	public static int MAX_NUM_NEURONS;
+	public static int MAX_NUM_LINKS;
 	public static final int MIN_NUM_NEURONS = 5;
 	public static final int MIN_NUM_LINKS = 3;
 
+	public CPPNComplexityBinMapping() {
+		MAX_NUM_NEURONS = Parameters.parameters.integerParameter("maxNumNeurons");
+		MAX_NUM_LINKS = Parameters.parameters.integerParameter("maxNumLinks");
+	}
+	
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {

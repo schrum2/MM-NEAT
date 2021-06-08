@@ -30,6 +30,8 @@ public class ObjectiveComparator<T> implements Comparator<Score<T>> {
 	 */
         @Override
 	public int compare(Score<T> o1, Score<T> o2) {
+        assert !Double.isNaN(o1.scores[objectiveIndex]) : "NaN at o1.scores["+objectiveIndex+"]";
+        assert !Double.isNaN(o2.scores[objectiveIndex]) : "NaN at o2.scores["+objectiveIndex+"]";
 		double diff = o1.scores[objectiveIndex] - o2.scores[objectiveIndex];
 		return (int) Math.signum(diff);
 	}

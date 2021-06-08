@@ -1,13 +1,16 @@
 package edu.southwestern.tasks.testmatch.imagematch;
 
 import java.awt.Color;
-import java.awt.image.*;
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import javax.imageio.*;
+
+import javax.imageio.ImageIO;
+
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.Network;
@@ -15,6 +18,7 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -39,6 +43,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	private Network individual;
 	private BufferedImage img = null;
 	public int imageHeight, imageWidth;
+	private double[] targetImageFeatures; 
 
 	/**
 	 * Default task constructor
@@ -62,6 +67,8 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		}
 		imageHeight = img.getHeight();
 		imageWidth = img.getWidth();
+		
+		targetImageFeatures = GraphicsUtil.flatFeatureArrayFromBufferedImage(img);
 	}
 
 	/**
@@ -73,7 +80,8 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	 */
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
-		if (CommonConstants.watch) {
+		double[] candidateFeatures = null;
+		if (CommonConstants.watch || Parameters.parameters.booleanParameter("useWoolleyImageMatchFitness") || Parameters.parameters.booleanParameter("useRMSEImageMatchFitness")) {
 			Network n = individual.getPhenotype();
 			BufferedImage child;
 			int drawWidth = imageWidth;
@@ -83,18 +91,46 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 				drawHeight = Parameters.parameters.integerParameter("imageHeight");
 			}
 			child = GraphicsUtil.imageFromCPPN(n, drawWidth, drawHeight);
-			// draws picture and network to JFrame
-			DrawingPanel parentPanel = GraphicsUtil.drawImage(img, "target", drawWidth, drawHeight);
-			DrawingPanel childPanel = GraphicsUtil.drawImage(child, "output", drawWidth, drawHeight);
-			childPanel.setLocation((img.getWidth() + IMAGE_PLACEMENT), 0);
-			considerSavingImage(childPanel);
-			parentPanel.dispose();
-			childPanel.dispose();
+			candidateFeatures = GraphicsUtil.flatFeatureArrayFromBufferedImage(child);
+			
+			if (CommonConstants.watch) {
+				// draws picture and network to JFrame
+				DrawingPanel parentPanel = GraphicsUtil.drawImage(img, "target", drawWidth, drawHeight);
+				DrawingPanel childPanel = GraphicsUtil.drawImage(child, "output", drawWidth, drawHeight);
+				childPanel.setLocation((img.getWidth() + IMAGE_PLACEMENT), 0);
+				considerSavingImage(childPanel);
+				parentPanel.dispose();
+				childPanel.dispose();
+			}
 		}
 		// Too many outputs to print to console. Don't want to watch.
 		boolean temp = CommonConstants.watch;
 		CommonConstants.watch = false; // Prevent watching of console showing error energy
-		Score<T> result = super.evaluate(individual);// if watch=false
+		Score<T> result = null;
+		
+		if(Parameters.parameters.booleanParameter("useWoolleyImageMatchFitness")) {
+			double error = PictureTargetTask.candidateVsTargetError(candidateFeatures, targetImageFeatures);
+			double fitness = 1 - error * error;
+			double[] resultScore = new double[]{fitness};
+			result = new Score<>(individual, resultScore);
+		} else if(Parameters.parameters.booleanParameter("useRMSEImageMatchFitness")) {
+			double fitness = PictureTargetTask.rootMeanSquareErrorFitness(candidateFeatures, targetImageFeatures);
+			double[] resultScore = new double[]{fitness};
+			result = new Score<>(individual, resultScore);
+		} else {
+			result = super.evaluate(individual);// if watch=false
+		}
+		
+//		if(Parameters.parameters.booleanParameter("useWoolleyImageMatchFitness")) {
+//			double error = candidateVsTargetError(candidateFeatures, targetImageFeatures);
+//			return 1 - error * error;
+//		} else if (Parameters.parameters.booleanParameter("useRMSEImageMatchFitness")) {
+//			return rootMeanSquareErrorFitness(candidateFeatures, targetImageFeatures);
+//		} else {
+//			throw new IllegalStateException("Proper fitness function for PictureTargetTask not specified");
+//		}
+//		
+		
 		CommonConstants.watch = temp;
 		this.individual = individual.getPhenotype();
 		result.giveBehaviorVector(getBehaviorVector());
@@ -199,7 +235,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 
 	/**
 	 * gets behavior vector for behavioral diversity algorithm
-         * @return The H, S, and B values for each pixel in the image
+     * @return The H, S, and B values for each pixel in the image
 	 */
 	@Override
 	public ArrayList<Double> getBehaviorVector() {
@@ -220,17 +256,55 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	}
 
 	/**
-	 * main method used to create a random CPPN image.
+	 * main method 
 	 *
 	 * @param args
+	 * @throws NoSuchMethodException 
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) {
-		MMNEAT.clearClasses();
-		EvolutionaryHistory.setInnovation(0);
-		EvolutionaryHistory.setHighestGenotypeId(0);
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false" });
-		MMNEAT.loadClasses();
-		randomCPPNimage(true, 200, 200, 200);
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		
+		
+		// For test runs
+		MMNEAT.main(new String[]{
+				"runNumber:0","randomSeed:0", "base:imagematch", "trials:1", "maxGens:1000", "mu:100", "io:true", "netio:true", 
+				"mating:true", "fs:false", "task:edu.southwestern.tasks.testmatch.imagematch.ImageMatchTask", 
+				"log:ImageMatch-RMSE", 
+				"saveTo:RMSE", 
+				"allowMultipleFunctions:true", "ftype:0", "watch:false", "netChangeActivationRate:0.3", "overrideImageSize:false", 
+				"imageHeight:200", "imageWidth:300", "saveAllChampions:true",
+				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one or none
+				//"matchImageFile:TexasFlag.png",
+				//"matchImageFile:cat.jpg",
+				"matchImageFile:failedskull.jpg",
+				"includeSigmoidFunction:true", 	// In Brian Woolley paper
+				"includeTanhFunction:false",
+				"includeIdFunction:true",		// In Brian Woolley paper
+				"includeFullApproxFunction:false",
+				"includeApproxFunction:false",
+				"includeGaussFunction:true", 	// In Brian Woolley paper
+				"includeSineFunction:true", 	// In Brian Woolley paper
+				"includeCosineFunction:true", 	// In Brian Woolley paper
+				"includeSawtoothFunction:false", 
+				"includeAbsValFunction:false", 
+				"includeHalfLinearPiecewiseFunction:false", 
+				"includeStretchedTanhFunction:false",
+				"includeReLUFunction:false",
+				"includeSoftplusFunction:false",
+				"includeLeakyReLUFunction:false",
+				"includeFullSawtoothFunction:false",
+				"includeTriangleWaveFunction:false", 
+				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:true"}); 
+		
+		
+		// used to create a random CPPN image. WHY?
+		
+//		MMNEAT.clearClasses();
+//		EvolutionaryHistory.setInnovation(0);
+//		EvolutionaryHistory.setHighestGenotypeId(0);
+//		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false", "useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:false"});
+//		MMNEAT.loadClasses();
+//		randomCPPNimage(true, 200, 200, 200);
 	}
 
 	public static void draw8RandomImages() {

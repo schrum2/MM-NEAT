@@ -6,7 +6,9 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -436,6 +438,11 @@ public class GraphicsUtil {
 		float[] HSB = Color.RGBtoHSB(r, g, b, null);
 		return HSB;
 	}
+	
+	public static float getBrightnessFromImage(BufferedImage image, int x, int y) {
+		float[] tempResult = getHSBFromImage(image, x, y);
+		return tempResult[BRIGHTNESS_INDEX];
+	}
 
 	/**
 	 * Gets HSB outputs from the CPPN in question from the CPPN
@@ -569,10 +576,7 @@ public class GraphicsUtil {
 		int resultIndex = 0;
 		for(int x = 0; x < image.getWidth(); x++) {
 			for(int y = 0; y < image.getHeight();  y++) {
-				int pixelRGB = image.getRGB(x, y);
-				Color original = new Color(pixelRGB);
-				// Get HSB values (null means a new array is created)
-				float[] hsb = Color.RGBtoHSB(original.getRed(), original.getGreen(), original.getBlue(), null);
+				float[] hsb = getHSB(image, x, y);
 				// If the image is black and white use brightness
 				if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) {
 					result[resultIndex++] = hsb[BRIGHTNESS_INDEX];
@@ -587,6 +591,22 @@ public class GraphicsUtil {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * GEt HSB values at specific x/y coordinates in an image
+	 * 
+	 * @param image Image to get pixel from
+	 * @param x x-coordinate of pixel
+	 * @param y y-coordinate of pixel
+	 * @return three-element HSB array corresponding to pixel
+	 */
+	public static float[] getHSB(BufferedImage image, int x, int y) {
+		int pixelRGB = image.getRGB(x, y);
+		Color original = new Color(pixelRGB);
+		// Get HSB values (null means a new array is created)
+		float[] hsb = Color.RGBtoHSB(original.getRed(), original.getGreen(), original.getBlue(), null);
+		return hsb;
 	}
 	
 	/**
@@ -798,5 +818,71 @@ public class GraphicsUtil {
 
 	    // Return the buffered image
 	    return bimage;
+	}
+
+	/**
+	 * Converts an image to be a BufferedImage.
+	 * 
+	 * @param img The image to be converted
+	 * @return img as a BufferedImage
+	 */
+	public static BufferedImage convertToBufferedImage(Image img) {
+		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+	    // Draw the image on to the buffered image
+	    Graphics2D bGr = bimage.createGraphics();
+	    bGr.drawImage(img, 0, 0, null);
+	    bGr.dispose();
+		return bimage;
+	}
+	
+	/**
+	 * Rotates the input image.
+	 * Source code taken from the following link:
+	 * https://stackoverflow.com/questions/37758061/rotate-a-buffered-image-in-java
+	 * 
+	 * @param img Image to be rotated
+	 * @param angle	Angle to be rotated by
+	 * @return Return the rotatted image
+	 */
+	public static BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
+	    double rads = Math.toRadians(angle);
+	    double sin = Math.abs(Math.sin(rads)), cos = Math.abs(Math.cos(rads));
+	    int w = img.getWidth();
+	    int h = img.getHeight();
+	    int newWidth = (int) Math.floor(w * cos + h * sin);
+	    int newHeight = (int) Math.floor(h * cos + w * sin);
+
+	    BufferedImage rotated = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g2d = rotated.createGraphics();
+	    AffineTransform at = new AffineTransform();
+	    at.translate((newWidth - w) / 2, (newHeight - h) / 2);
+
+	    int x = w / 2;
+	    int y = h / 2;
+
+	    at.rotate(rads, x, y);
+	    g2d.setTransform(at);
+	    // Changed the ImageObserver to null
+	    g2d.drawImage(img, 0, 0, null);
+	    g2d.setColor(Color.RED);
+	    g2d.drawRect(0, 0, newWidth - 1, newHeight - 1);
+	    g2d.dispose();
+
+	    return rotated;
+	}
+	
+	public static BufferedImage getTwoByTwoTiledImage(BufferedImage original) {
+		BufferedImage result = new BufferedImage(original.getWidth() * 2, original.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
+		for(int x = 0; x < original.getWidth(); x++) {
+			for(int y = 0; y < original.getHeight(); y++) {
+				int originalColor = original.getRGB(x, y);
+				result.setRGB(x, y, originalColor);
+				result.setRGB(x + original.getWidth(), y, originalColor);
+				result.setRGB(x, y + original.getWidth(), originalColor);
+				result.setRGB(x + original.getWidth(), y + original.getWidth(), originalColor);
+			}
+		}
+		return result;
 	}
 }
