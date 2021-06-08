@@ -24,6 +24,7 @@ import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels;
+import edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -535,6 +536,11 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				double novelty = LevelNovelty.averageSegmentNovelty(levelWithParsedSegments); // get novelty
 				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
 				dims = new int[] {noveltyIndex, decorationBinIndex, leniencySumIndex};
+			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels) { 
+				LevelNovelty.setGame("mario");
+				double novelty = LevelNovelty.averageSegmentNovelty(levelWithParsedSegments); // get novelty
+				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
+				dims = new int[] {noveltyIndex};
 			} else {
 				throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
 			}
