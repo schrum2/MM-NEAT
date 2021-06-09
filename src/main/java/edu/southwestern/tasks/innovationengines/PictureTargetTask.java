@@ -277,12 +277,14 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 			for(int i = 0; i < binLabels.size(); i++) {
 				String label = binLabels.get(i);
 				Score<T> score = archive.getElite(i);
-				Network cppn = score.individual.getPhenotype();
-				BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, saveWidth, saveHeight);	// not sure if this one should be deleted, (imageFromCPPN vs ImageNetClassification)
-				double binScore = score.behaviorIndexScore(i);
-				String fileName = String.format("%7.5f", binScore) + label + ".jpg";
-				String fullName = finalArchive + File.separator + fileName;
-				GraphicsUtil.saveImage(image, fullName);
+				if(score != null) {
+					Network cppn = score.individual.getPhenotype();
+					BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, saveWidth, saveHeight);	// not sure if this one should be deleted, (imageFromCPPN vs ImageNetClassification)
+					double binScore = score.behaviorIndexScore(i);
+					String fileName = String.format("%7.5f", binScore) + label + ".jpg";
+					String fullName = finalArchive + File.separator + fileName;
+					GraphicsUtil.saveImage(image, fullName);
+				}
 			}
 		}
 	}
