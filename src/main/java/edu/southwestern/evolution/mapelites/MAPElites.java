@@ -60,19 +60,18 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	public BinLabels getBinLabelsClass() {
 		return archive.getBinLabelsClass();
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public MAPElites() {
-		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"));
+		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"), true);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public MAPElites(String archiveSubDirectoryName) {
+	public MAPElites(String archiveSubDirectoryName, boolean ioOption, boolean netioOption, boolean createLogs) {
 		MMNEAT.usingDiversityBinningScheme = true;
 		this.task = (LonerTask<T>) MMNEAT.task;
-		this.io = Parameters.parameters.booleanParameter("io"); // write logs
-		this.archive = new Archive<>(Parameters.parameters.booleanParameter("netio"), archiveSubDirectoryName);
-		if(io) {
+		this.io = ioOption; // write logs
+		this.archive = new Archive<>(netioOption, archiveSubDirectoryName);
+		if(io && createLogs) {
 			int numLabels = archive.getBinMapping().binLabels().size();
 			String infix = "MAPElites";
 			// Logging in RAW mode so that can append to log file on experiment resume
