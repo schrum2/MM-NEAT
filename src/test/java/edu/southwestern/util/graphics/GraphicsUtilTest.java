@@ -161,14 +161,7 @@ public class GraphicsUtilTest {
 	// Write individual tests for a variety of coordinates not in a loop
 	@Test
 	public void testGet2DObjectCPPNInputsIntIntIntIntDouble() {
-		//fail("Not yet implemented");
-//		for(int x = 0; x < SIDE_LENGTH; x++) {
-//			for(int y = 0; y < SIDE_LENGTH; y++) {
-//				double[] cppnInputs = GraphicsUtil.get2DObjectCPPNInputs(x, y, SIDE_LENGTH, SIDE_LENGTH, 0);
-//				assertArrayEquals(new double[] {-1.0, -1.0, 2.0, 0.0, 1.0}, cppnInputs, 0.000000000001);
-//			}
-//		}
-		
+
 		double[] cppnInputs = GraphicsUtil.get2DObjectCPPNInputs(0, 0, SIDE_LENGTH, SIDE_LENGTH, 0);
 		assertArrayEquals(new double[] {-1.0, -1.0, 2.0, 0.0, 1.0}, cppnInputs, 0.000000000000001);
 		
@@ -199,13 +192,6 @@ public class GraphicsUtilTest {
 
 	@Test
 	public void testGet2DObjectCPPNInputsIntIntIntIntDoubleDoubleDouble() {
-		//fail("Not yet implemented");
-//		for(int x = 0; x < SIDE_LENGTH; x++) {
-//			for(int y = 0; y < SIDE_LENGTH; y++) {
-//				double[] cppnInputs = GraphicsUtil.get2DObjectCPPNInputs(x, y, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0);
-//				assertArrayEquals(new double[] {-1.0, -1.0, 2.0, 0.0, 1.0}, cppnInputs, 0.000000000001);
-//			}
-//		}
 		
 		double[] cppnInputs = GraphicsUtil.get2DObjectCPPNInputs(0, 0, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0);
 		assertArrayEquals(new double[] {-1.0, -1.0, 2.0, 0.0, 1.0}, cppnInputs, 0.000000000000001);
