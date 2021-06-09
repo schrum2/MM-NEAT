@@ -126,11 +126,11 @@ public class GraphicsUtilTest {
 //	@Test
 //	public void testRemixedImageFromCPPN() {
 //		//fail("Not yet implemented");
+//		
 //	}
-//
+
 	@Test
 	public void testGetBrightnessFromImage() {
-		//fail("Not yet implemented");
 		for(int x = 0; x < checkeredBlackAndWhite.getWidth(); x++) {
 			for(int y = 0; y < checkeredBlackAndWhite.getHeight(); y++) {
 				float firstPixel = GraphicsUtil.getBrightnessFromImage(checkeredBlackAndWhite, x, y);
@@ -157,16 +157,84 @@ public class GraphicsUtilTest {
 //		//fail("Not yet implemented");
 //	}
 //
-//	// AssertArrayEquals
-//	@Test
-//	public void testGet2DObjectCPPNInputsIntIntIntIntDouble() {
-//		//fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testGet2DObjectCPPNInputsIntIntIntIntDoubleDoubleDouble() {
-//		//fail("Not yet implemented");
-//	}
+	// AssertArrayEquals
+	// Write individual tests for a variety of coordinates not in a loop
+	@Test
+	public void testGet2DObjectCPPNInputsIntIntIntIntDouble() {
+		//fail("Not yet implemented");
+//		for(int x = 0; x < SIDE_LENGTH; x++) {
+//			for(int y = 0; y < SIDE_LENGTH; y++) {
+//				double[] cppnInputs = GraphicsUtil.get2DObjectCPPNInputs(x, y, SIDE_LENGTH, SIDE_LENGTH, 0);
+//				assertArrayEquals(new double[] {-1.0, -1.0, 2.0, 0.0, 1.0}, cppnInputs, 0.000000000001);
+//			}
+//		}
+		
+		double[] cppnInputs = GraphicsUtil.get2DObjectCPPNInputs(0, 0, SIDE_LENGTH, SIDE_LENGTH, 0);
+		assertArrayEquals(new double[] {-1.0, -1.0, 2.0, 0.0, 1.0}, cppnInputs, 0.000000000000001);
+		
+		double[] cppnInputs1 = GraphicsUtil.get2DObjectCPPNInputs(SIDE_LENGTH, 0, SIDE_LENGTH, SIDE_LENGTH, 0);
+		assertArrayEquals(new double[] {1.1333333333333333, -1.0, 2.13749593891752, 0.0, 1.0}, cppnInputs1, 0.000000000000001);
+		
+		double[] cppnInputs2 = GraphicsUtil.get2DObjectCPPNInputs(SIDE_LENGTH, SIDE_LENGTH, SIDE_LENGTH, SIDE_LENGTH, 0);
+		assertArrayEquals(new double[] {1.1333333333333333, 1.1333333333333333, 2.2666666666666666, 0.0, 1.0}, cppnInputs2, 0.000000000000001);
+		
+		double[] cppnInputs3 = GraphicsUtil.get2DObjectCPPNInputs(0, SIDE_LENGTH, SIDE_LENGTH, SIDE_LENGTH, 0);
+		assertArrayEquals(new double[] {-1.0, 1.1333333333333333, 2.13749593891752, 0.0, 1.0}, cppnInputs3, 0.000000000000001);
+		
+		double[] cppnInputs4 = GraphicsUtil.get2DObjectCPPNInputs(SIDE_LENGTH / 2, SIDE_LENGTH / 2, SIDE_LENGTH, SIDE_LENGTH, 0);
+		assertArrayEquals(new double[] {.06666666666666665, 0.06666666666666665, 0.1333333333333333, 0.0, 1.0}, cppnInputs4, 0.000000000000001);
+		
+		double[] cppnInputs5 = GraphicsUtil.get2DObjectCPPNInputs(12, 9, SIDE_LENGTH, SIDE_LENGTH, 0);
+		assertArrayEquals(new double[] {.6000000000000001, 0.1999999999999996, 0.894427190999916, 0.0, 1.0}, cppnInputs5, 0.000000000000001);
+		
+		double[] cppnInputs6 = GraphicsUtil.get2DObjectCPPNInputs(0, 11, SIDE_LENGTH, SIDE_LENGTH, 0);
+		assertArrayEquals(new double[] {-1.0, 0.4666666666666656, 1.5606266547626166, 0.0, 1.0}, cppnInputs6, 0.000000000000001);
+		
+		double[] cppnInputs7 = GraphicsUtil.get2DObjectCPPNInputs(7, 0, SIDE_LENGTH, SIDE_LENGTH, 0);
+		assertArrayEquals(new double[] {-0.06666666666666665, -1.0, 1.4173527750312869, 0.0, 1.0}, cppnInputs7, 0.000000000000001);
+	
+		double[] cppnInputs8 = GraphicsUtil.get2DObjectCPPNInputs(5, 7, SIDE_LENGTH, SIDE_LENGTH, 0);
+		assertArrayEquals(new double[] {-0.33333333333333337, -0.06666666666666665, 0.4807401700618653, 0.0, 1.0}, cppnInputs8, 0.000000000000001);
+	}
+
+	@Test
+	public void testGet2DObjectCPPNInputsIntIntIntIntDoubleDoubleDouble() {
+		//fail("Not yet implemented");
+//		for(int x = 0; x < SIDE_LENGTH; x++) {
+//			for(int y = 0; y < SIDE_LENGTH; y++) {
+//				double[] cppnInputs = GraphicsUtil.get2DObjectCPPNInputs(x, y, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0);
+//				assertArrayEquals(new double[] {-1.0, -1.0, 2.0, 0.0, 1.0}, cppnInputs, 0.000000000001);
+//			}
+//		}
+		
+		double[] cppnInputs = GraphicsUtil.get2DObjectCPPNInputs(0, 0, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0);
+		assertArrayEquals(new double[] {-1.0, -1.0, 2.0, 0.0, 1.0}, cppnInputs, 0.000000000000001);
+		
+		double[] cppnInputs1 = GraphicsUtil.get2DObjectCPPNInputs(SIDE_LENGTH, 0, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0);
+		assertArrayEquals(new double[] {1.1333333333333333, -1.0, 2.13749593891752, 0.0, 1.0}, cppnInputs1, 0.000000000000001);
+		
+		double[] cppnInputs2 = GraphicsUtil.get2DObjectCPPNInputs(SIDE_LENGTH, SIDE_LENGTH, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0);
+		assertArrayEquals(new double[] {1.1333333333333333, 1.1333333333333333, 2.2666666666666666, 0.0, 1.0}, cppnInputs2, 0.000000000000001);
+		
+		double[] cppnInputs3 = GraphicsUtil.get2DObjectCPPNInputs(0, SIDE_LENGTH, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0);
+		assertArrayEquals(new double[] {-1.0, 1.1333333333333333, 2.13749593891752, 0.0, 1.0}, cppnInputs3, 0.000000000000001);
+		
+		double[] cppnInputs4 = GraphicsUtil.get2DObjectCPPNInputs(SIDE_LENGTH / 2, SIDE_LENGTH / 2, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0);
+		assertArrayEquals(new double[] {.06666666666666665, 0.06666666666666665, 0.1333333333333333, 0.0, 1.0}, cppnInputs4, 0.000000000000001);
+		
+		double[] cppnInputs5 = GraphicsUtil.get2DObjectCPPNInputs(12, 9, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0);
+		assertArrayEquals(new double[] {.6000000000000001, 0.1999999999999996, 0.894427190999916, 0.0, 1.0}, cppnInputs5, 0.000000000000001);
+		
+		double[] cppnInputs6 = GraphicsUtil.get2DObjectCPPNInputs(0, 11, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0);
+		assertArrayEquals(new double[] {-1.0, 0.4666666666666656, 1.5606266547626166, 0.0, 1.0}, cppnInputs6, 0.000000000000001);
+		
+		double[] cppnInputs7 = GraphicsUtil.get2DObjectCPPNInputs(7, 0, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0);
+		assertArrayEquals(new double[] {-0.06666666666666665, -1.0, 1.4173527750312869, 0.0, 1.0}, cppnInputs7, 0.000000000000001);
+	
+		double[] cppnInputs8 = GraphicsUtil.get2DObjectCPPNInputs(5, 7, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0);
+		assertArrayEquals(new double[] {-0.33333333333333337, -0.06666666666666665, 0.4807401700618653, 0.0, 1.0}, cppnInputs8, 0.000000000000001);
+	
+	}
 
 	// Not testing things involving drawing panels
 //	@Test
@@ -244,16 +312,19 @@ public class GraphicsUtilTest {
 //		//fail("Not yet implemented");
 //	}
 
+	// Not testing things involving drawing panels
 //	@Test
 //	public void testLinePlotDrawingPanelDoubleDoubleArrayListOfDoubleColor() {
 //		fail("Not yet implemented");
 //	}
 //
+	// Not testing things involving drawing panels
 //	@Test
 //	public void testLinePlotImage() {
 //		fail("Not yet implemented");
 //	}
 //
+	// Not testing things involving drawing panels
 //	@Test
 //	public void testLinePlotGraphicsDoubleDoubleIntIntArrayListOfDoubleColor() {
 //		fail("Not yet implemented");
@@ -265,11 +336,14 @@ public class GraphicsUtilTest {
 //		fail("Not yet implemented");
 //	}
 //
+	// Currently too hard to test
 //	@Test
 //	public void testWavePlotFromDoubleArray() {
 //		fail("Not yet implemented");
 //	}
 //
+//	// hard code numbers, assert with numeric result
+//	// far left, far right, center
 //	@Test
 //	public void testScaleDoubleDoubleDouble() {
 //		//fail("Not yet implemented");
