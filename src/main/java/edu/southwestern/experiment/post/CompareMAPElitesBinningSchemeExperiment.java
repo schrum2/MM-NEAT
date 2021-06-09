@@ -3,7 +3,13 @@ package edu.southwestern.experiment.post;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -69,12 +75,44 @@ public class CompareMAPElitesBinningSchemeExperiment<T> implements Experiment {
                 return name.endsWith(".xml");
             }
         };
+        
         LonerTask task = (LonerTask) MMNEAT.task;
-		for (String oneFile : new File(dir).list(filter)) { // get each xml, evaluate it, and add it to the new archive
-			Genotype<T> geno = (Genotype<T>) Easy.load(dir+"\\"+oneFile);
-			Score<T> evalScore = task.evaluateOne(geno);
-			comparedArchive.add(evalScore);
-		}
+        String[] directoryFiles = new File(dir).list(filter);
+    	if(Parameters.parameters.booleanParameter("parallelEvaluations")) {
+    		
+    		ExecutorService poolExecutor = Executors.newFixedThreadPool(Parameters.parameters.integerParameter("threads"));
+    		ArrayList<Future<Score<T>>> futures = new ArrayList<Future<Score<T>>>(directoryFiles.length);
+			
+    		ArrayList<EvaluationThread> calls = new ArrayList<EvaluationThread>(directoryFiles.length);
+
+    		for (int i = 0; i < directoryFiles.length; i++) {
+    			String oneFile = directoryFiles[i];
+    			EvaluationThread callable = new EvaluationThread(task, dir, oneFile);
+    			calls.add(callable);
+    		}
+    		
+    		for (int i = 0; i < directoryFiles.length; i++) { // get each xml, evaluate it, and add it to the new archive
+    			Future<Score<T>> future = poolExecutor.submit(calls.get(i));
+    			futures.add(future);
+        	}
+    		
+    		for (int i = 0; i < directoryFiles.length; i++) { // get each xml, evaluate it, and add it to the new archive
+        		try {
+					comparedArchive.add(futures.get(i).get());
+				} catch (InterruptedException | ExecutionException ex) {
+					ex.printStackTrace();
+					System.exit(1);
+				}
+        	}
+        	
+        	
+        } else {
+        	for (String oneFile : directoryFiles) { // get each xml, evaluate it, and add it to the new archive
+        		Genotype<T> geno = (Genotype<T>) Easy.load(dir+"\\"+oneFile);
+        		Score<T> evalScore = task.evaluateOne(geno);
+        		comparedArchive.add(evalScore);
+        	}
+        }
 
 		Float[] elite = ArrayUtils.toObject(comparedArchive.getEliteScores());
 		MMNEATLog compareLog = new MMNEATLog(binLabelOutName, false, false, false, true, false);
@@ -94,6 +132,7 @@ public class CompareMAPElitesBinningSchemeExperiment<T> implements Experiment {
 		return true; // always
 	}
 	
+	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		String arg1 = "zeldadungeonsdistinctbtrooms";
 		String arg2 = "ZeldaDungeonsDistinctBTRooms";
@@ -102,7 +141,41 @@ public class CompareMAPElitesBinningSchemeExperiment<T> implements Experiment {
 		String arg5 = "1";
 		String arg6 = "edu.southwestern.tasks.zelda.ZeldaMAPElitesWallWaterRoomsBinLabels";
 		//MMNEAT.main(("runNumber:0 parallelEvaluations:false base:mariolevelsdecoratensleniency log:MarioLevelsDecorateNSLeniency-CPPNThenDirect2GAN saveTo:CPPNThenDirect2GAN trials:1 experiment:edu.southwestern.experiment.post.CompareMAPElitesBinningSchemeExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels").split(" "));
-		MMNEAT.main(("runNumber:"+arg4+" parallelEvaluations:false base:"+arg1+" log:"+arg2+"-"+arg3+" saveTo:"+arg3+" trials:"+arg5+" experiment:edu.southwestern.experiment.post.CompareMAPElitesBinningSchemeExperiment mapElitesBinLabels:"+arg6+" logLock:true io:false").split(" "));
+		MMNEAT.main(("runNumber:"+arg4+" parallelEvaluations:true threads:20 base:"+arg1+" log:"+arg2+"-"+arg3+" saveTo:"+arg3+" trials:"+arg5+" experiment:edu.southwestern.experiment.post.CompareMAPElitesBinningSchemeExperiment mapElitesBinLabels:"+arg6+" logLock:true io:false").split(" "));
 	}
 	
+	
+	/**
+	 * Evaluation thread for multithreaded
+	 * file reading and evaluation.
+	 * 
+	 * @author Maxx Batterton
+	 *
+	 */
+	public class EvaluationThread implements Callable<Score<T>> {
+
+		private final LonerTask<T> task;
+		private final String dir;
+		private final String fileName;
+
+		/**
+		 * a constructor for creating an evaluation thread
+		 * 
+		 * @param task
+		 * @param g
+		 */
+		public EvaluationThread(LonerTask<T> task, String dir, String fileName) {
+			this.task = task;
+			this.dir = dir;
+			this.fileName = fileName;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Score<T> call() throws Exception {
+			Genotype<T> geno = (Genotype<T>) Easy.load(dir+"\\"+fileName);
+    		Score<T> evalScore = task.evaluateOne(geno);
+			return evalScore;
+		}
+	}
 }
