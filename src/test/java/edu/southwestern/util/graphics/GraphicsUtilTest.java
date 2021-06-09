@@ -128,10 +128,24 @@ public class GraphicsUtilTest {
 //		//fail("Not yet implemented");
 //	}
 //
-//	@Test
-//	public void testGetBrightnessFromImage() {
-//		//fail("Not yet implemented");
-//	}
+	@Test
+	public void testGetBrightnessFromImage() {
+		//fail("Not yet implemented");
+		for(int x = 0; x < checkeredBlackAndWhite.getWidth(); x++) {
+			for(int y = 0; y < checkeredBlackAndWhite.getHeight(); y++) {
+				float firstPixel = GraphicsUtil.getBrightnessFromImage(checkeredBlackAndWhite, x, y);
+				if(x % 2 == y % 2) {
+					assertEquals(0.0, firstPixel, 0);
+				} else if (x % 2 != 0 && y % 2 == 0){
+					assertEquals(1.0, firstPixel, 0);
+				} else if (x % 2 == 0 && y % 2 != 0) {
+					assertEquals(1.0, firstPixel, 0);
+				} else {
+					assertEquals(0.0, firstPixel, 0);
+				}
+			}
+		}
+	}
 //
 //	@Test
 //	public void testGetHSBFromCPPN() {
