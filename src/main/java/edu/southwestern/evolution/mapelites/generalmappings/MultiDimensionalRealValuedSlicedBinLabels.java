@@ -15,20 +15,32 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 	private int solutionVectorLength;
 	private int solutionVectorSlices;
 	
+	/**
+	 * 
+	 * 
+	 * @param binsPerDimension
+	 * @param minPossibleValue
+	 * @param maxPossibleValue
+	 * @param vectorLength
+	 */
 	public MultiDimensionalRealValuedSlicedBinLabels(int binsPerDimension, double minPossibleValue, double maxPossibleValue, int vectorLength) {
 		super(binsPerDimension, minPossibleValue, maxPossibleValue, Parameters.parameters.integerParameter("solutionVectorSlices"), vectorLength);
 		solutionVectorLength = vectorLength;
 		solutionVectorSlices = Parameters.parameters.integerParameter("solutionVectorSlices");
-		if (!(solutionVectorSlices > 1)) {throw new IllegalStateException("MultiDimensionalRealValuedSlicedBinLabels must have more than 1 slice!");}
+		if (!(solutionVectorSlices > 1)) throw new IllegalStateException("MultiDimensionalRealValuedSlicedBinLabels must have more than 1 slice!");
 	}
 	
 	public double[] behaviorCharacterization(double[] solution) {
+		assert solution.length == solutionVectorLength : "Solution length ("+solution.length+") is incorrect: "+solutionVectorLength;
 		double[] sums = new double[solutionVectorSlices]; // create array for sums
 		int sliceRange = solutionVectorLength / solutionVectorSlices;
 		for (int i = 0; i < solutionVectorSlices; i++) {
+			assert sums[i] == 0;
 			for (int j = i*sliceRange; j < (i+1)*sliceRange; j++) {
 				sums[i] += process(solution[j]); // sum each segment
 			}
+			assert sums[i] >= -sliceRange : "sums["+i+"] = " + sums[i] + " is too small";
+			assert sums[i] <= sliceRange : "sums["+i+"] = " + sums[i] + " is too big";
 		}
 		return sums;
 	}

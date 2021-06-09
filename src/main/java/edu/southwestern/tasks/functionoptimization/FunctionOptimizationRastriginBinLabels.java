@@ -1,10 +1,8 @@
 package edu.southwestern.tasks.functionoptimization;
 
 import java.io.FileNotFoundException;
-import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedBinLabels;
 import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedSlicedBinLabels;
 import edu.southwestern.parameters.Parameters;
 
@@ -20,7 +18,7 @@ public class FunctionOptimizationRastriginBinLabels extends MultiDimensionalReal
 	private static final double RASTRIGIN_RANGE = 5.12;
 
 	public FunctionOptimizationRastriginBinLabels() {
-		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE/2, RASTRIGIN_RANGE/2, MMNEAT.getLowerBounds().length);
+		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE/2, RASTRIGIN_RANGE/2, MMNEAT.getLowerBounds().length/2);
 		if (Parameters.parameters.integerParameter("solutionVectorSlices") != 2) {throw new IllegalStateException("FunctionOptimizationRastriginBinLabels can only have 2 slices!");}
 	}
 

@@ -72,6 +72,7 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 					newInput = ", " + newInput; 
 				}
 				newInput = ("[" + ((i*segmentSize)+minPossibleValue) + " to " + (((i+1)*segmentSize)+minPossibleValue) +"]") + newInput; // add dimension component to label
+				//System.out.println("Made label \""+newInput+"\"");
 				generateLabel(newInput, step+1); // go to next dimension to add next part
 			}
 		}
@@ -109,7 +110,7 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 				dbc[i]--;
 			}
 		}
-		//System.out.println("Discritizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
+		//System.out.println("Discretizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
 		return dbc;
 	}
 	

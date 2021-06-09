@@ -22,9 +22,16 @@ import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import wox.serial.Easy;
 
+/**
+ * Experiment for comparing different MAP Elites 
+ * binning schemes post-experiment in order to see 
+ * how well a scheme actually does at filling an 
+ * archive.
+ * 
+ * @author Maxx Batterton
+ */
 public class CompareMAPElitesBinningSchemeExperiment<T> implements Experiment {
 
-	//private ArrayList<Score<T>> oldScores = new ArrayList<Score<T>>();
 	MAPElites<T> newMAPElites;
 	
 	@Override
