@@ -88,12 +88,12 @@ public class CompareMAPElitesBinningSchemeExperiment<T> implements Experiment {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		String arg1 = "mariolevelsdecoratensleniency";
-		String arg2 = "MarioLevelsDecorateNSLeniency";
+		String arg1 = "zeldadungeonsdistinctbtrooms";
+		String arg2 = "ZeldaDungeonsDistinctBTRooms";
 		String arg3 = "Direct2GAN";
 		String arg4 = "1";
 		String arg5 = "1";
-		String arg6 = "edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels";
+		String arg6 = "edu.southwestern.tasks.zelda.ZeldaMAPElitesWallWaterRoomsBinLabels";
 		//MMNEAT.main(("runNumber:0 parallelEvaluations:false base:mariolevelsdecoratensleniency log:MarioLevelsDecorateNSLeniency-CPPNThenDirect2GAN saveTo:CPPNThenDirect2GAN trials:1 experiment:edu.southwestern.experiment.post.CompareMAPElitesBinningSchemeExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels").split(" "));
 		MMNEAT.main(("runNumber:"+arg4+" parallelEvaluations:false base:"+arg1+" log:"+arg2+"-"+arg3+" saveTo:"+arg3+" trials:"+arg5+" experiment:edu.southwestern.experiment.post.CompareMAPElitesBinningSchemeExperiment mapElitesBinLabels:"+arg6+" logLock:true io:false").split(" "));
 	}
