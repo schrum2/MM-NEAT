@@ -865,8 +865,6 @@ public class GraphicsUtil {
 	    g2d.setTransform(at);
 	    // Changed the ImageObserver to null
 	    g2d.drawImage(img, 0, 0, null);
-	    g2d.setColor(Color.RED);
-	    g2d.drawRect(0, 0, newWidth - 1, newHeight - 1);
 	    g2d.dispose();
 
 	    return rotated;
@@ -892,4 +890,33 @@ public class GraphicsUtil {
 		}
 		return result;
 	}
+	
+	/**
+	 * Rotates the background Zentangle image. Makes an image
+	 * double the size of the original containing a two by 
+	 * two of the original image.  Then takes the center of
+	 * the double size image to use as the background image.
+	 * 
+	 * @param image The original image
+	 * @param angle The angle by which to rotate the background image
+	 * @return the background image
+	 */
+	public static BufferedImage extractCenterOfDoubledRotatedImage(BufferedImage image, double angle) {
+		BufferedImage doubleSize = GraphicsUtil.getTwoByTwoTiledImage(image);
+		BufferedImage rotated = GraphicsUtil.rotateImageByDegrees(doubleSize, angle);
+		BufferedImage middleImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		int doubleMidWidth = doubleSize.getWidth() / 2;
+		int doubleMidHeight = doubleSize.getHeight() / 2;
+		int halfFinalWidth = middleImage.getWidth() / 2;
+		int haldFinalHeight = middleImage.getHeight() / 2;
+		int startX = doubleMidWidth - halfFinalWidth;
+		int startY = doubleMidHeight - haldFinalHeight;
+		for(int x = 0; x < middleImage.getWidth(); x++) {
+			for(int y = 0; y < middleImage.getHeight(); y++) {
+				middleImage.setRGB(x, y, rotated.getRGB(x + startX, y + startY));
+			}
+		}
+		return middleImage;
+	}
+
 }
