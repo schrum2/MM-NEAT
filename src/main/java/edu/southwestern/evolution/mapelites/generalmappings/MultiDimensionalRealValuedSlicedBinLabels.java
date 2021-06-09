@@ -3,9 +3,11 @@ package edu.southwestern.evolution.mapelites.generalmappings;
 import edu.southwestern.parameters.Parameters;
 
 /**
- * Abstract binning scheme for anything
- * that needs to be sliced and summed. 
- * Default amount of slices is 2.
+ * Abstract binning scheme that divides 
+ * up a latent vector into a specfied 
+ * number of segments, summing them,
+ * and using that as the behavior
+ * characteristic.
  * 
  * @author Maxx Batterton
  *
@@ -16,12 +18,16 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 	private int solutionVectorSlices;
 	
 	/**
+	 * Constructor. Minimum possible value 
+	 * and max possible should be 
+	 * pre-divided based on the number of
+	 * dimensions, and so should the vector 
+	 * length.
 	 * 
-	 * 
-	 * @param binsPerDimension
-	 * @param minPossibleValue
-	 * @param maxPossibleValue
-	 * @param vectorLength
+	 * @param binsPerDimension Number of bins in each dimension
+	 * @param minPossibleValue Minimum possible value, scaled by the number of dimensions
+	 * @param maxPossibleValue Maximum possible value, scaled by the number of dimensions
+	 * @param vectorLength Latent vector length, scaled by the number of dimensions
 	 */
 	public MultiDimensionalRealValuedSlicedBinLabels(int binsPerDimension, double minPossibleValue, double maxPossibleValue, int vectorLength) {
 		super(binsPerDimension, minPossibleValue, maxPossibleValue, Parameters.parameters.integerParameter("solutionVectorSlices"), vectorLength);
@@ -31,16 +37,12 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 	}
 	
 	public double[] behaviorCharacterization(double[] solution) {
-		assert solution.length == solutionVectorLength : "Solution length ("+solution.length+") is incorrect: "+solutionVectorLength;
 		double[] sums = new double[solutionVectorSlices]; // create array for sums
-		int sliceRange = solutionVectorLength / solutionVectorSlices;
 		for (int i = 0; i < solutionVectorSlices; i++) {
 			assert sums[i] == 0;
-			for (int j = i*sliceRange; j < (i+1)*sliceRange; j++) {
+			for (int j = i*solutionVectorLength; j < (i+1)*solutionVectorLength; j++) {
 				sums[i] += process(solution[j]); // sum each segment
 			}
-			assert sums[i] >= -sliceRange : "sums["+i+"] = " + sums[i] + " is too small";
-			assert sums[i] <= sliceRange : "sums["+i+"] = " + sums[i] + " is too big";
 		}
 		return sums;
 	}
