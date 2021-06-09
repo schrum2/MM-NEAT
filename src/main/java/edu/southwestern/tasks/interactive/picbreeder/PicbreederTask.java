@@ -208,11 +208,18 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 * @return the background image
 	 */
 	public static BufferedImage rotateBackgroundImage(BufferedImage image, double angle) {
-		BufferedImage rotated = GraphicsUtil.rotateImageByDegrees(GraphicsUtil.getTwoByTwoTiledImage(image), angle);
+		BufferedImage doubleSize = GraphicsUtil.getTwoByTwoTiledImage(image);
+		BufferedImage rotated = GraphicsUtil.rotateImageByDegrees(doubleSize, angle);
 		BufferedImage middleImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		int doubleMidWidth = doubleSize.getWidth() / 2;
+		int doubleMidHeight = doubleSize.getHeight() / 2;
+		int halfFinalWidth = middleImage.getWidth() / 2;
+		int haldFinalHeight = middleImage.getHeight() / 2;
+		int startX = doubleMidWidth - halfFinalWidth;
+		int startY = doubleMidHeight - haldFinalHeight;
 		for(int x = 0; x < middleImage.getWidth(); x++) {
 			for(int y = 0; y < middleImage.getHeight(); y++) {
-				middleImage.setRGB(x, y, rotated.getRGB(x + middleImage.getWidth() / 2, y + middleImage.getHeight() / 2));
+				middleImage.setRGB(x, y, rotated.getRGB(x + startX, y + startY));
 			}
 		}
 		return middleImage;
