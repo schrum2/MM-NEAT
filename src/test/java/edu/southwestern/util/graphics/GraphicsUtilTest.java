@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -13,6 +14,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class GraphicsUtilTest {
@@ -70,7 +72,9 @@ public class GraphicsUtilTest {
 			for(int y = 1; y < checkeredBlackAndWhite.getHeight(); y += 2) {
 				checkeredBlackAndWhite.setRGB(x, y, whiteRGB);
 			}
-		}
+		}	
+//		GraphicsUtil.drawImage(checkeredBlackAndWhite, "checkered", SIDE_LENGTH, SIDE_LENGTH);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 
 //	@Test
@@ -169,20 +173,27 @@ public class GraphicsUtilTest {
 		}
 	}
 
-//	@Test
-//	public void testFlatFeatureArrayFromBufferedImage() {
-//		//fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testGetHSB() {
-//		//fail("Not yet implemented");
-//		Float[] checkeredHSB = new Float[]{};//GraphicsUtil.getHSB(checkeredBlackAndWhite, 0, 0);
-//		for(int i = 0; i < checkeredHSB.length; i++) {
-//			checkeredHSB[i] = GraphicsUtil.getHSB(checkeredBlackAndWhite, 0, 0)[i];
-//		}
-//		assertArrayEquals(new Float[]{1,1,1}, checkeredHSB);
-//	}
+	@Test
+	public void testFlatFeatureArrayFromBufferedImage() {
+		//fail("Not yet implemented");
+	}
+
+	@Test
+	public void testGetHSB() {
+		//fail("Not yet implemented");
+		for(int x = 0; x < checkeredBlackAndWhite.getWidth(); x++) {
+			for(int y = 0; y < checkeredBlackAndWhite.getHeight(); y++) {
+				float[] checkeredHSB = GraphicsUtil.getHSB(checkeredBlackAndWhite, x, y);
+				//int count = y * checkeredBlackAndWhite.getWidth() + x;
+				//System.out.println(x + "," + y + ":" + Arrays.toString(checkeredHSB) + "," + count);
+				if(x % 2 == y % 2) {
+					assertArrayEquals(new float[]{0.0f, 0.0f, 0.0f}, checkeredHSB, 0);
+				} else {
+					assertArrayEquals(new float[]{0.0f, 0.0f, 1.0f}, checkeredHSB, 0);
+				}
+			}
+		}
+	}
 //
 //	@Test
 //	public void testImageFromINDArray() {
@@ -260,33 +271,44 @@ public class GraphicsUtilTest {
 	// Test rotating 90, 180, 270, 360
 	@Test
 	public void testRotateImageByDegrees() {
-//		BufferedImage threeSixty = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
-//		BufferedImage rotatedCheckered = GraphicsUtil.rotateImageByDegrees(checkeredBlackAndWhite, 360.0);
-//		for(int x = 0; x < threeSixty.getWidth(); x++) {
-//			for(int y = 0; y < threeSixty.getHeight(); y++) {
-//				threeSixty.setRGB(x, y, checkeredBlackAndWhite.getRGB(x, y));
-//				assertEquals(threeSixty.getRGB(x, y), rotatedCheckered.getRGB(x, y));
-//			}
-//		}
-//		
-//		
-//		BufferedImage oneEighty = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
-//		for(int x = 0; x < oneEighty.getWidth(); x++) {
-//			for(int y = 0; y < oneEighty.getHeight(); y++) {
-//				oneEighty.setRGB(Math.abs(x - oneEighty.getWidth()), Math.abs(y - oneEighty.getHeight()), checkeredBlackAndWhite.getRGB(x, y));
-//				//assertEquals(oneEighty.getRGB(x, y), GraphicsUtil.rotateImageByDegrees(oneEighty, 180).getRGB(x, y));
-//			}
-//		}
-//		
-//		BufferedImage ninety = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
-//		for(int x = 0; x < ninety.getWidth(); x++) {
-//			for(int y = 0; y < ninety.getHeight(); y++) {
-//				ninety.setRGB(x, y, checkeredBlackAndWhite.getRGB(x, y));
-//			}
-//		}
-//		
-//		BufferedImage twoSeventy = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
-//		
+		BufferedImage threeSixty = GraphicsUtil.rotateImageByDegrees(checkeredBlackAndWhite, 360.0);
+//		GraphicsUtil.drawImage(threeSixty, "checkered", SIDE_LENGTH, SIDE_LENGTH);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		for(int x = 0; x < threeSixty.getWidth(); x++) {
+			for(int y = 0; y < threeSixty.getHeight(); y++) {
+				assertEquals(threeSixty.getRGB(x, y), checkeredBlackAndWhite.getRGB(x, y));
+			}
+		}
+		
+		
+		BufferedImage oneEighty = GraphicsUtil.rotateImageByDegrees(checkeredBlackAndWhite, 180);
+//		GraphicsUtil.drawImage(oneEighty, "checkered", SIDE_LENGTH, SIDE_LENGTH);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		for(int x = 0; x < oneEighty.getWidth(); x++) {
+			for(int y = 0; y < oneEighty.getHeight(); y++) {
+				assertEquals(oneEighty.getRGB(x, y), checkeredBlackAndWhite.getRGB(x, y));
+			}
+		}
+		
+		BufferedImage ninety = GraphicsUtil.rotateImageByDegrees(checkeredBlackAndWhite, 90);
+//		GraphicsUtil.drawImage(ninety, "checkered", SIDE_LENGTH, SIDE_LENGTH);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		for(int x = 0; x < ninety.getWidth(); x++) {
+			for(int y = 0; y < ninety.getHeight(); y++) {
+				assertEquals(ninety.getRGB(x, Math.abs(y - 1)), checkeredBlackAndWhite.getRGB(x, y));
+				assertEquals(ninety.getRGB(Math.abs(x - 1), y), checkeredBlackAndWhite.getRGB(x, y));
+			}
+		}
+		
+		BufferedImage twoSeventy = GraphicsUtil.rotateImageByDegrees(checkeredBlackAndWhite, 270);
+//		GraphicsUtil.drawImage(twoSeventy, "checkered", SIDE_LENGTH, SIDE_LENGTH);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		for(int x = 0; x < twoSeventy.getWidth(); x++) {
+			for(int y = 0; y < twoSeventy.getHeight(); y++) {
+				assertEquals(twoSeventy.getRGB(Math.abs(x - 1), y), checkeredBlackAndWhite.getRGB(x, y));
+				assertEquals(twoSeventy.getRGB(x, Math.abs(y - 1)), checkeredBlackAndWhite.getRGB(x, y));
+			}
+		}
 	}
 
 	@Test
@@ -326,6 +348,10 @@ public class GraphicsUtilTest {
 				assertEquals(checkeredTwoTiled.getRGB(x, y), GraphicsUtil.getTwoByTwoTiledImage(checkeredBlackAndWhite).getRGB(x, y));
 			}
 		}
+	}
+	
+	@Test
+	public void testextractCenterOfDoubledRotatedImage() {		
 	}
 
 }
