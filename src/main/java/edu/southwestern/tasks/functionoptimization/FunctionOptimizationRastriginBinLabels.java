@@ -18,7 +18,7 @@ public class FunctionOptimizationRastriginBinLabels extends MultiDimensionalReal
 	private static final double RASTRIGIN_RANGE = 5.12;
 
 	public FunctionOptimizationRastriginBinLabels() {
-		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE/2, RASTRIGIN_RANGE/2, MMNEAT.getLowerBounds().length/2);
+		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE, RASTRIGIN_RANGE, MMNEAT.getLowerBounds().length/2);
 		if (Parameters.parameters.integerParameter("solutionVectorSlices") != 2) {throw new IllegalStateException("FunctionOptimizationRastriginBinLabels can only have 2 slices!");}
 	}
 
@@ -52,7 +52,7 @@ public class FunctionOptimizationRastriginBinLabels extends MultiDimensionalReal
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		int runNum = 5;
+		int runNum = 6;
 		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true numImprovementEmitters:2 numOptimizingEmitters:0 solutionVectorSlices:2 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-2 saveTo:2 netio:false lambda:37 maxGens:5000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 	}
 

@@ -38,9 +38,10 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 	
 	public double[] behaviorCharacterization(double[] solution) {
 		double[] sums = new double[solutionVectorSlices]; // create array for sums
+		int sliceSize = solutionVectorLength/solutionVectorSlices;
 		for (int i = 0; i < solutionVectorSlices; i++) {
 			assert sums[i] == 0;
-			for (int j = i*solutionVectorLength; j < (i+1)*solutionVectorLength; j++) {
+			for (int j = i*sliceSize; j < (i+1)*sliceSize; j++) {
 				sums[i] += process(solution[j]); // sum each segment
 			}
 		}
