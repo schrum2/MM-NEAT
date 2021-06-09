@@ -7,17 +7,18 @@ import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalReal
 import edu.southwestern.parameters.Parameters;
 
 /**
- * Binning scheme for Rastrigin function, based on the description from
+ * Binning scheme for Rastrigin and Sphere function, 
+ * based on the description from this paper:
  * https://arxiv.org/pdf/1912.02400.pdf
  * 
  * @author Maxx Batterton
  *
  */
-public class FunctionOptimizationRastriginBinLabels extends MultiDimensionalRealValuedSlicedBinLabels {
+public class FunctionOptimizationRangeBinLabels extends MultiDimensionalRealValuedSlicedBinLabels {
 
 	private static final double RASTRIGIN_RANGE = 5.12;
 
-	public FunctionOptimizationRastriginBinLabels() {
+	public FunctionOptimizationRangeBinLabels() {
 		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE, RASTRIGIN_RANGE, MMNEAT.getLowerBounds().length/2);
 		if (Parameters.parameters.integerParameter("solutionVectorSlices") != 2) {throw new IllegalStateException("FunctionOptimizationRastriginBinLabels can only have 2 slices!");}
 	}
@@ -53,7 +54,7 @@ public class FunctionOptimizationRastriginBinLabels extends MultiDimensionalReal
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		int runNum = 6;
-		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true numImprovementEmitters:2 numOptimizingEmitters:0 solutionVectorSlices:2 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-2 saveTo:2 netio:false lambda:37 maxGens:5000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true numImprovementEmitters:2 numOptimizingEmitters:0 solutionVectorSlices:2 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-2 saveTo:2 netio:false lambda:37 maxGens:5000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRangeBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 	}
 
 
