@@ -36,10 +36,10 @@ public class FunctionOptimizationRangeBinLabelsTest {
 
 	@Test
 	public void testBehaviorCharacterization() {
-		assertArrayEquals(binLabels.behaviorCharacterization(allMax), sumHalves(allMax), 0.00000001);
-		assertArrayEquals(binLabels.behaviorCharacterization(allMin), sumHalves(allMin), 0.00000001);
-		assertArrayEquals(binLabels.behaviorCharacterization(doubleNums1), sumHalves(doubleNums1), 0.00000001);
-		assertArrayEquals(binLabels.behaviorCharacterization(doubleNums2), sumHalves(doubleNums2), 0.00000001);
+		assertArrayEquals(binLabels.behaviorCharacterization(allMax), new double[] {25.6, 25.6}, 0.00000001);
+		assertArrayEquals(binLabels.behaviorCharacterization(allMin), new double[] {-25.6, -25.6}, 0.00000001);
+		assertArrayEquals(binLabels.behaviorCharacterization(doubleNums1), new double[] {11.23, -12.96}, 0.00000001);
+		assertArrayEquals(binLabels.behaviorCharacterization(doubleNums2), new double[] {4.44, -6.45}, 0.00000001);
 		
 	}
 
@@ -171,11 +171,9 @@ public class FunctionOptimizationRangeBinLabelsTest {
 
 	@Test
 	public void testDiscretize() {
-		assertArrayEquals(binLabels.discretize(sumHalves(allMax)), new int[] {9, 9});
-	}
-
-	private static double[] sumHalves(double[] arr) {
-		return new double[] {Arrays.stream(Arrays.copyOfRange(arr, 0, 5)).sum(), Arrays.stream(Arrays.copyOfRange(arr, 5, 10)).sum()};
-	}
-	
+		assertArrayEquals(binLabels.discretize(new double[] {25.6, 25.6}), new int[] {9, 9});
+		assertArrayEquals(binLabels.discretize(new double[] {-25.6, -25.6}), new int[] {0, 0}); 
+		assertArrayEquals(binLabels.discretize(new double[] {11.23, -12.96}), new int[] {7, 2}); // floor ( ( ( <value> + 25.6 ) / 51.2 ) * 10 )
+		assertArrayEquals(binLabels.discretize(new double[] {4.44, -6.45}), new int[] {5, 3}); // above operation shows how calculation should work
+	}	
 }

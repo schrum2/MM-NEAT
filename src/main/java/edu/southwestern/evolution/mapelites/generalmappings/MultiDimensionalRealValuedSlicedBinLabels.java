@@ -1,6 +1,5 @@
 package edu.southwestern.evolution.mapelites.generalmappings;
 
-import cern.colt.Arrays;
 import edu.southwestern.parameters.Parameters;
 
 /**

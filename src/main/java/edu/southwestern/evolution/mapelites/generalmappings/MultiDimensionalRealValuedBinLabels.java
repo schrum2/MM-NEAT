@@ -5,7 +5,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import cern.colt.Arrays;
 import edu.southwestern.evolution.mapelites.BinLabels;
 
 /**
