@@ -157,8 +157,7 @@ public class GraphicsUtilTest {
 //		//fail("Not yet implemented");
 //	}
 //
-	// AssertArrayEquals
-	// Write individual tests for a variety of coordinates not in a loop
+
 	@Test
 	public void testGet2DObjectCPPNInputsIntIntIntIntDouble() {
 
