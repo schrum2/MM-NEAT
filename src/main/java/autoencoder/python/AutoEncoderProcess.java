@@ -31,12 +31,18 @@ public class AutoEncoderProcess extends Comm {
 	// Program for converting a latent vector to a level via a GAN
 	public static final String AUTOENCODER_PATH = PYTHON_BASE_PATH + "autoencoderInputGenerator.py";
 	
-	public static final String SAVED_AUTOENCODER = PYTHON_BASE_PATH + "sim_autoencoder.pth";
+	private String savedAutoencoder;
+	private AUTOENCODER_MODE mode;
 		
 	public static final int SIDE_LENGTH = 28;
 	
-	public AutoEncoderProcess() {
-		//TODO: Anything needed here?
+	public static enum AUTOENCODER_MODE {
+		LOSS, IMAGE
+	}
+	
+	public AutoEncoderProcess(String pthName, AUTOENCODER_MODE mode) {
+		savedAutoencoder = pthName;
+		this.mode = mode;
 	}
 	
 	/**
@@ -82,7 +88,7 @@ public class AutoEncoderProcess extends Comm {
 		}
 
 		// Run program with model architecture and weights specified as parameters
-		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, AUTOENCODER_PATH, SAVED_AUTOENCODER);
+		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, AUTOENCODER_PATH, savedAutoencoder, mode == AUTOENCODER_MODE.IMAGE ? "image" : "loss");
 		builder.redirectError(Redirect.INHERIT); // Standard error will print to console
 		try {
 			System.out.println(builder.command());
@@ -96,7 +102,8 @@ public class AutoEncoderProcess extends Comm {
 		Parameters.initializeParameterCollections(new String[] {"blackAndWhitePicbreeder:true"});
 		PythonUtil.PYTHON_EXECUTABLE = "C:\\ProgramData\\Anaconda3\\python.exe";
 		
-		AutoEncoderProcess p = new AutoEncoderProcess();
+		AUTOENCODER_MODE mode = AUTOENCODER_MODE.LOSS;
+		AutoEncoderProcess p = new AutoEncoderProcess("parentDir\\test.pth", mode);
 		p.start();
 		
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.71288Neurons[35]links[63]1788009.jpg"));
@@ -105,6 +112,7 @@ public class AutoEncoderProcess extends Comm {
 		//BufferedImage img = ImageIO.read(new File("data" + File.separator + "imagematch" + File.separator + "skull64.png"));
 		Image scaled = img.getScaledInstance(28, 28, BufferedImage.SCALE_DEFAULT);
 		img = GraphicsUtil.convertToBufferedImage(scaled);
+		@SuppressWarnings("unused")
 		DrawingPanel picture = GraphicsUtil.drawImage(img, "Before", img.getWidth(), img.getHeight());
 		
 		double[] imageInput =  GraphicsUtil.flatFeatureArrayFromBufferedImage(img);
@@ -118,31 +126,36 @@ public class AutoEncoderProcess extends Comm {
 		}
 		
 		String output = p.commRecv();
-		System.out.println("After:"+output);
 		
-		// Remove [ and ]
-		output = output.substring(1,output.length()-1);
-		String[] arrOutput = output.split(",");
-		double[] numOut = new double[arrOutput.length];
-		for(int i = 0; i < numOut.length; i++) {
-			numOut[i] = Double.parseDouble(arrOutput[i]);
-		}
-		
-		BufferedImage pythonOutput = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
-		int i = 0;
-		for(int y = 0; y < SIDE_LENGTH; y++) {
-			for(int x = 0; x < SIDE_LENGTH; x++) {
-				float gray = (float) numOut[i++];
-				gray = Math.max(gray, 0); // Why is negative possible!?
-				Color c = new Color(gray,gray,gray);
-				pythonOutput.setRGB(x, y, c.getRGB());	
+		if(mode == AUTOENCODER_MODE.IMAGE) {		
+			System.out.println("After:"+output);
+			
+			// Remove [ and ]
+			output = output.substring(1,output.length()-1);
+			String[] arrOutput = output.split(",");
+			double[] numOut = new double[arrOutput.length];
+			for(int i = 0; i < numOut.length; i++) {
+				numOut[i] = Double.parseDouble(arrOutput[i]);
 			}
+			
+			BufferedImage pythonOutput = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
+			int i = 0;
+			for(int y = 0; y < SIDE_LENGTH; y++) {
+				for(int x = 0; x < SIDE_LENGTH; x++) {
+					float gray = (float) numOut[i++];
+					gray = Math.max(gray, 0); // Why is negative possible!?
+					Color c = new Color(gray,gray,gray);
+					pythonOutput.setRGB(x, y, c.getRGB());	
+				}
+			}
+	
+			DrawingPanel outputImage = GraphicsUtil.drawImage(pythonOutput, "After", img.getWidth(), img.getHeight());
+			outputImage.getFrame().setLocation(100, 0);
+			
+			System.out.println("done");
+		} else {
+			System.out.println("Loss is:"+output);
 		}
-
-		DrawingPanel outputImage = GraphicsUtil.drawImage(pythonOutput, "After", img.getWidth(), img.getHeight());
-		outputImage.getFrame().setLocation(100, 0);
-		
-		System.out.println("done");
 	}
 
 }

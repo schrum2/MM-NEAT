@@ -28,9 +28,9 @@ public class TrainAutoEncoderProcess extends Comm {
 	public String pthFileName;
 	
 	
-	public TrainAutoEncoderProcess() {
-		trainingImagesDirectory = null;
-		pthFileName = null;
+	public TrainAutoEncoderProcess(String directoryName, String pthFileName) {
+		trainingImagesDirectory = directoryName;
+		this.pthFileName = pthFileName;
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class TrainAutoEncoderProcess extends Comm {
 		}
 
 		// Run program with model architecture and weights specified as parameters
-		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, PYTHON_BASE_PATH + "MyAutoencoder.py", PYTHON_BASE_PATH + "PicbreederTargetTrainingSet", PYTHON_BASE_PATH + "test.pth");
+		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, PYTHON_BASE_PATH + "MyAutoencoder.py", trainingImagesDirectory, pthFileName);
 		builder.redirectError(Redirect.INHERIT); // Standard error will print to console
 		try {
 			System.out.println(builder.command());
@@ -100,7 +100,7 @@ public class TrainAutoEncoderProcess extends Comm {
 		Parameters.initializeParameterCollections(new String[] {"blackAndWhitePicbreeder:true"});
 		PythonUtil.PYTHON_EXECUTABLE = "C:\\ProgramData\\Anaconda3\\python.exe";
 		
-		TrainAutoEncoderProcess p = new TrainAutoEncoderProcess();
+		TrainAutoEncoderProcess p = new TrainAutoEncoderProcess("parentDir\\PicbreederTargetTrainingSet", "parentDir\\test.pth");
 		p.start();
 		
 	} 
