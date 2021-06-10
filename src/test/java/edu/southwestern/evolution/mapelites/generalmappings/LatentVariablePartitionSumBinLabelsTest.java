@@ -2,7 +2,6 @@ package edu.southwestern.evolution.mapelites.generalmappings;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -11,7 +10,6 @@ import org.junit.Test;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.functionoptimization.FunctionOptimizationRangeBinLabels;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
 public class LatentVariablePartitionSumBinLabelsTest {
@@ -176,5 +174,16 @@ public class LatentVariablePartitionSumBinLabelsTest {
 		assertArrayEquals(binLabels.discretize(new double[] {-40, -40}), new int[] {0, 0}); 
 		assertArrayEquals(binLabels.discretize(new double[] {13.97, 13.49}), new int[] {6, 6}); // floor ( ( ( <value> + 40 ) / 80 ) * 10 )
 		assertArrayEquals(binLabels.discretize(new double[] {7.12, -15.66}), new int[] {5, 3}); // above operation shows how calculation should work
+	}
+	
+	@Test
+	public void testMultiDimensionalIndexToBinLabel() {
+		assertEquals("([-16.0 to -8.0], [-40.0 to -32.0])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-9.33, -36.0}))));
+		assertEquals("([-40.0 to -32.0], [32.0 to 40.0])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-40.0, 32.0}))));
+		assertEquals("([-16.0 to -8.0], [16.0 to 24.0])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-15.5, 17.23}))));
+		assertEquals("([0.0 to 8.0], [0.0 to 8.0])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {0.0, 7.99}))));
+		assertEquals("([-40.0 to -32.0], [-40.0 to -32.0])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-40.0, -40.0}))));
+		assertEquals("([32.0 to 40.0], [32.0 to 40.0])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {40.0, 40.0}))));
+
 	}
 }

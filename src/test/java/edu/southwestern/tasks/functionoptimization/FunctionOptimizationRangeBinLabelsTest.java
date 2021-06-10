@@ -2,8 +2,6 @@ package edu.southwestern.tasks.functionoptimization;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -22,7 +20,7 @@ public class FunctionOptimizationRangeBinLabelsTest {
 		MMNEAT.loadClasses();
 	}
 	
-	static final double RASTRIGIN_CONSTANT = 5.12;
+	static final double INTERVAL = 5.12;
 	FunctionOptimizationRangeBinLabels binLabels;
 	double[] allMax = new double[] {5.12, 5.12, 5.12, 5.12, 5.12, 5.12, 5.12, 5.12, 5.12, 5.12};
 	double[] allMin = new double[] {-5.12, -5.12, -5.12, -5.12, -5.12, -5.12, -5.12, -5.12, -5.12, -5.12};
@@ -50,7 +48,7 @@ public class FunctionOptimizationRangeBinLabelsTest {
 //		int counter = 0;
 //		for (double i = -5; i < 5; i++) {
 //			for (double j = -5; j < 5; j++) {
-//				String newLabel = "(["+j*RASTRIGIN_CONSTANT+" to "+(j+1)*RASTRIGIN_CONSTANT+"], ["+i*RASTRIGIN_CONSTANT+" to "+(i+1)*RASTRIGIN_CONSTANT+"])";
+//				String newLabel = "(["+j*INTERVAL+" to "+(j+1)*INTERVAL+"], ["+i*INTERVAL+" to "+(i+1)*INTERVAL+"])";
 //				System.out.println("assertEquals(stringLabels.get("+counter+"), \""+newLabel+"\");");
 //				counter++;
 //			}
@@ -176,4 +174,15 @@ public class FunctionOptimizationRangeBinLabelsTest {
 		assertArrayEquals(binLabels.discretize(new double[] {11.23, -12.96}), new int[] {7, 2}); // floor ( ( ( <value> + 25.6 ) / 51.2 ) * 10 )
 		assertArrayEquals(binLabels.discretize(new double[] {4.44, -6.45}), new int[] {5, 3}); // above operation shows how calculation should work
 	}	
+	
+	@Test
+	public void testMultiDimensionalIndexToBinLabel() {
+		assertEquals("([10.24 to 15.36], [-10.24 to -5.12])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {10.4, -6}))));
+		assertEquals("([-25.6 to -20.48], [20.48 to 25.6])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-23.1, 20.48}))));
+		assertEquals("([-15.36 to -10.24], [-5.12 to 0.0])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-13.72, -2.24}))));
+		assertEquals("([0.0 to 5.12], [0.0 to 5.12])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {0, 5.11}))));
+		assertEquals("([-25.6 to -20.48], [-25.6 to -20.48])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-25.6, -25.6}))));
+		assertEquals("([20.48 to 25.6], [20.48 to 25.6])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {25.6, 25.6}))));
+		
+	}
 }
