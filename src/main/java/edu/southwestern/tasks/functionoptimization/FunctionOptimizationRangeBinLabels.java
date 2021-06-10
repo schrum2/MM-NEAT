@@ -19,7 +19,7 @@ public class FunctionOptimizationRangeBinLabels extends MultiDimensionalRealValu
 	private static final double RASTRIGIN_RANGE = 5.12;
 
 	public FunctionOptimizationRangeBinLabels() {
-		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE, RASTRIGIN_RANGE, MMNEAT.getLowerBounds().length/2);
+		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE, RASTRIGIN_RANGE, MMNEAT.getLowerBounds().length);
 		if (Parameters.parameters.integerParameter("solutionVectorSlices") != 2) {throw new IllegalStateException("FunctionOptimizationRastriginBinLabels can only have 2 slices!");}
 	}
 

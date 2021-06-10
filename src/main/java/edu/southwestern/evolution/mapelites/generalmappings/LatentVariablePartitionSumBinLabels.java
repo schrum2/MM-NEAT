@@ -14,10 +14,10 @@ public class LatentVariablePartitionSumBinLabels extends MultiDimensionalRealVal
 	 * binsPerDimension 	From parameter "latentPartitionBinDimension"
 	 * minPossibleValue 	-1
 	 * maxPossibleValue 	1 
-	 * vectorLength 		From MMNEAT.getLowerBounds().length, divided by the number of slices
+	 * vectorLength 		From MMNEAT.getLowerBounds().length
 	 */
 	public LatentVariablePartitionSumBinLabels() {
-		super(Parameters.parameters.integerParameter("latentPartitionBinDimension"), -1.0, 1.0, MMNEAT.getLowerBounds().length/Parameters.parameters.integerParameter("solutionVectorSlices"));
+		super(Parameters.parameters.integerParameter("latentPartitionBinDimension"), -1.0, 1.0, MMNEAT.getLowerBounds().length);
 	}
 
 	@Override

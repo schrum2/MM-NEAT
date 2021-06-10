@@ -1,8 +1,11 @@
 package edu.southwestern.evolution.mapelites.generalmappings;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import cern.colt.Arrays;
 import edu.southwestern.evolution.mapelites.BinLabels;
 
 /**
@@ -65,14 +68,20 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	private void generateLabel(String input, int step) {
 		if (step == numDimensions) {
 			labels.add("(" + input); // all dimensions added, cap the label
+			//System.out.println("Made label \"("+input+"\"");
 		} else {
-			for (double i = 0; i < binsPerDimension; i++) {
+			for (int i = 0; i < binsPerDimension; i++) {
 				String newInput = input;
 				if (step != 0) {
 					newInput = ", " + newInput; 
 				}
-				newInput = ("[" + ((i*segmentSize)+minPossibleValue) + " to " + (((i+1)*segmentSize)+minPossibleValue) +"]") + newInput; // add dimension component to label
-				//System.out.println("Made label \""+newInput+"\"");
+				BigDecimal firstSegment = new BigDecimal(i); // More precise division
+				firstSegment = firstSegment.multiply(new BigDecimal(segmentSize));
+				firstSegment = firstSegment.add(new BigDecimal(minPossibleValue));
+				BigDecimal secondSegment = new BigDecimal(i+1); // More precise division
+				secondSegment = secondSegment.multiply(new BigDecimal(segmentSize));
+				secondSegment = secondSegment.add(new BigDecimal(minPossibleValue));
+				newInput = ("[" + firstSegment.setScale(4, RoundingMode.HALF_UP).doubleValue() + " to " + secondSegment.setScale(4, RoundingMode.HALF_UP).doubleValue() +"]") + newInput; // add dimension component to label
 				generateLabel(newInput, step+1); // go to next dimension to add next part
 			}
 		}

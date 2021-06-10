@@ -1,5 +1,6 @@
 package edu.southwestern.evolution.mapelites.generalmappings;
 
+import cern.colt.Arrays;
 import edu.southwestern.parameters.Parameters;
 
 /**
@@ -25,12 +26,12 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 	 * length.
 	 * 
 	 * @param binsPerDimension Number of bins in each dimension
-	 * @param minPossibleValue Minimum possible value, scaled by the number of dimensions
-	 * @param maxPossibleValue Maximum possible value, scaled by the number of dimensions
-	 * @param vectorLength Latent vector length, scaled by the number of dimensions
+	 * @param minPossibleValue Minimum possible value
+	 * @param maxPossibleValue Maximum possible value
+	 * @param vectorLength Latent vector length
 	 */
 	public MultiDimensionalRealValuedSlicedBinLabels(int binsPerDimension, double minPossibleValue, double maxPossibleValue, int vectorLength) {
-		super(binsPerDimension, minPossibleValue, maxPossibleValue, Parameters.parameters.integerParameter("solutionVectorSlices"), vectorLength);
+		super(binsPerDimension, minPossibleValue, maxPossibleValue, Parameters.parameters.integerParameter("solutionVectorSlices"), vectorLength/Parameters.parameters.integerParameter("solutionVectorSlices"));
 		solutionVectorLength = vectorLength;
 		solutionVectorSlices = Parameters.parameters.integerParameter("solutionVectorSlices");
 		if (!(solutionVectorSlices > 1)) throw new IllegalStateException("MultiDimensionalRealValuedSlicedBinLabels must have more than 1 slice!");
@@ -45,6 +46,7 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 				sums[i] += process(solution[j]); // sum each segment
 			}
 		}
+		//System.out.println("Characterized \""+Arrays.toString(solution)+"\" to \""+Arrays.toString(sums)+"\"");
 		return sums;
 	}
 	
