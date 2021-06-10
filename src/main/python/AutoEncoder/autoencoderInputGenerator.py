@@ -7,6 +7,7 @@ import json
 import numpy
 from model import autoencoder
 
+# Example (from MM-NEAT): python .\src\main\python\AutoEncoder\autoencoderInputGenerator.py targetimage\skull6\snapshots\iteration30000.pth image
 if __name__ == '__main__':
     
     modelToLoad = sys.argv[1] #'sim_autoencoder.pth'

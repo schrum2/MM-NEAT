@@ -11,6 +11,7 @@ import java.util.Vector;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import autoencoder.python.TrainAutoEncoderProcess;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
@@ -63,7 +64,6 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		return archive.getBinLabelsClass();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public MAPElites() {
 		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"));
 	}
@@ -370,10 +370,18 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	public void fileUpdates(boolean newEliteProduced) {
 		if(saveImageArchives && iterations % Parameters.parameters.integerParameter("imageArchiveSaveFrequency") == 0) {
 			System.out.println("Save whole archive at iteration "+iterations);
-			((PictureTargetTask<?>) MMNEAT.task).saveAllArchiveImages("iteration"+iterations);
+			// 28 is a magic number, and should be either a constant of a command line parameter.
+			// Fix later ... this is the standard image size for training our simple image autoencoder (based on MNIST)
+			((PictureTargetTask<?>) MMNEAT.task).saveAllArchiveImages("iteration"+iterations, 28, 28);
+
+			// If we are using the autoencoder (only use if "trainingAutoEncoder" == true), re-train it here
+			if(Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
+				String experimentDir = FileUtilities.getSaveDirectory()+File.separator+"snapshots";
+				Parameters.parameters.setString("mostRecentAutoEncoder", experimentDir+File.separator+ "iteration" + iterations + ".pth");
+				TrainAutoEncoderProcess training = new TrainAutoEncoderProcess(experimentDir+File.separator+"iteration" + iterations, Parameters.parameters.stringParameter("mostRecentAutoEncoder"));
+				training.start();
+			} 
 			
-			// TODO: To Anna: If we are using the autoencoder, this is where we will need to re-train it.
-			//       Set up a command line
 		}
 		// Log to file
 		log();

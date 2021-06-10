@@ -234,7 +234,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	 *                      will be saved
 	 */
 	@SuppressWarnings("unchecked")
-	public void saveAllArchiveImages(String directoryName) {
+	public void saveAllArchiveImages(String directoryName, int saveWidth, int saveHeight) {
 		String snapshot = FileUtilities.getSaveDirectory() + File.separator + "snapshots";
 		File snapshotDir = new File(snapshot);
 		if(!snapshotDir.exists()) snapshotDir.mkdir();
@@ -245,8 +245,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		
 		Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
 		BinLabels labels = archive.getBinMapping();
-		int saveWidth = Parameters.parameters.integerParameter("imageWidth"); 
-		int saveHeight = Parameters.parameters.integerParameter("imageHeight");
+//		int saveWidth = Parameters.parameters.integerParameter("imageWidth"); 
+//		int saveHeight = Parameters.parameters.integerParameter("imageHeight");
 		
 		for(Score<T> s : archive.getArchive()) {
 			if(s != null) {
@@ -343,7 +343,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		
 		// For test runs
-		MMNEAT.main(new String[]{"runNumber:5","randomSeed:4","base:targetimage","mu:400","maxGens:100000000",
+		MMNEAT.main(new String[]{"runNumber:6","randomSeed:4","base:targetimage","mu:400","maxGens:100000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
 				"log:TargetImage-skull","saveTo:skull","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
@@ -352,12 +352,14 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping",
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
 				"fs:true",
+				"trainingAutoEncoder:true",
 				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
 				"matchImageFile:skull64.jpg",
 				"fitnessSaveThreshold:1.0",		// Since we periodically save the whole archive, don't bother saving with threshold any more 
-				"imageArchiveSaveFrequency:50000",
+				//"imageArchiveSaveFrequency:50000",
+				"imageArchiveSaveFrequency:1000",
 				"includeSigmoidFunction:true", 	// In Brian Woolley paper
 				"includeTanhFunction:false",
 				"includeIdFunction:true",		// In Brian Woolley paper
