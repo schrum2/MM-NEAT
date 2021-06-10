@@ -21,12 +21,17 @@ import edu.southwestern.util.PythonUtil;
  */
 public class TrainAutoEncoderProcess extends Comm {
 	
-	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "AutoEncoder" + File.separator;
+	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "AutoEncoder" + File.separator;;
 	public static final String AUTOENCODER_PATH = PYTHON_BASE_PATH + "MyAutoencoder.py";
 	
-	public static String TRAINING_IMAGES_DIRECTORY = null;
-	public static String PTH_FILE_NAME = null;
+	public String trainingImagesDirectory;
+	public String pthFileName;
 	
+	
+	public TrainAutoEncoderProcess() {
+		trainingImagesDirectory = null;
+		pthFileName = null;
+	}
 
 	/**
 	 * Initializes the process buffers
