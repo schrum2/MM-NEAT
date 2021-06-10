@@ -146,12 +146,14 @@ public class GraphicsUtilTest {
 			}
 		}
 	}
-//
-//	@Test
-//	public void testGetHSBFromCPPN() {
-//		//fail("Not yet implemented");
-//	}
-//
+
+	@Test
+	public void testGetHSBFromCPPN() {
+		//fail("Not yet implemented");
+		//float[] cppnHSB = GraphicsUtil.getHSBFromCPPN(tg1, 0, 0, SIDE_LENGTH, SIDE_LENGTH, inputMultiples, 0, 1.0, 0.0);
+		
+	}
+
 //	@Test
 //	public void testRangeRestrictHSB() {
 //		//fail("Not yet implemented");
