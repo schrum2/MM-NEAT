@@ -29,6 +29,7 @@ public class TrainAutoEncoderProcess extends Comm {
 	
 	
 	public TrainAutoEncoderProcess(String directoryName, String pthFileName) {
+		PythonUtil.setPythonProgram();
 		trainingImagesDirectory = directoryName;
 		this.pthFileName = pthFileName;
 	}
@@ -79,7 +80,7 @@ public class TrainAutoEncoderProcess extends Comm {
 	public void launchTrainingScript() {
 		if(!(new File(PythonUtil.PYTHON_EXECUTABLE).exists())) {
 			throw new RuntimeException("Before launching this program, you need to place the path to your "+
-									   "Python executable in my_python_path.txt within the main MM-NEAT directory.");
+									   "Python executable in my_python_path.txt within the main MM-NEAT directory." + PythonUtil.PYTHON_EXECUTABLE);
 		}
 
 		// Run program with model architecture and weights specified as parameters
