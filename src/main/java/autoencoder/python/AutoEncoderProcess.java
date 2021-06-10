@@ -26,26 +26,94 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  *
  */
 public class AutoEncoderProcess extends Comm {
-	
+
 	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "AutoEncoder" + File.separator;
 	// Program for converting a latent vector to a level via a GAN
 	public static final String AUTOENCODER_PATH = PYTHON_BASE_PATH + "autoencoderInputGenerator.py";
-	
+
+	public static AutoEncoderProcess currentProcess = null;
+
 	private String savedAutoencoder;
 	private AUTOENCODER_MODE mode;
-		
+
 	public static final int SIDE_LENGTH = 28;
-	
+
 	public static enum AUTOENCODER_MODE {
 		LOSS, IMAGE
 	}
-	
+
+	/**
+	 * Initializes the path name, mode and Python script.
+	 * 
+	 * @param pthName Name of pth file to be saved
+	 * @param mode 
+	 */
 	public AutoEncoderProcess(String pthName, AUTOENCODER_MODE mode) {
 		PythonUtil.setPythonProgram();
 		savedAutoencoder = pthName;
 		this.mode = mode;
 	}
-	
+
+	/**
+	 * 
+	 * @param newProcess
+	 * @return
+	 */
+	public static AutoEncoderProcess getAutoEncoderProcess() {
+		if(currentProcess == null) {
+			PythonUtil.setPythonProgram();
+			currentProcess = new AutoEncoderProcess(Parameters.parameters.stringParameter("mostRecentAutoEncoder"), AUTOENCODER_MODE.LOSS);
+			currentProcess.start();
+			// consume all start-up messages that are not data responses
+			String response = "";
+			while(!response.equals("READY")) {
+				response = currentProcess.commRecv();
+			}
+		}
+		return currentProcess;
+	}
+
+	/**
+	 * Destroy an autoencoder process so a new one can be started
+	 */
+	public static void terminateAutoEncoderProcess() {
+		if(currentProcess != null) {
+			currentProcess.process.destroy();
+			currentProcess = null;
+		}
+	}
+
+	/**
+	 * 
+	 * @param nameNewPthFile
+	 * @return
+	 */
+	public static AutoEncoderProcess resetAutoEncoder(String nameNewPthFile, AUTOENCODER_MODE mode) {
+		terminateAutoEncoderProcess();
+		AutoEncoderProcess newProcess = new AutoEncoderProcess(nameNewPthFile, mode);
+		return newProcess;
+	}
+
+
+	public static double getReconstructionLoss(BufferedImage image) {
+		try {
+			AutoEncoderProcess p = getAutoEncoderProcess();
+			double[] imageInput =  GraphicsUtil.flatFeatureArrayFromBufferedImage(image);
+			for(int i = 0; i < imageInput.length; i++) {
+				p.commSend(imageInput[i] + "");
+
+			}
+			String output = p.commRecv();		
+			double result = Double.parseDouble(output);
+			return result;
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Failed to send to autoencoder");
+			System.exit(1);
+			return Double.NaN;
+		}
+	}
+
 	/**
 	 * Initializes the process buffers.
 	 */
@@ -60,6 +128,7 @@ public class AutoEncoderProcess extends Comm {
 			printErrorMsg("AutoEncoderProcess:initBuffers:Null process!");
 		}
 	}
+
 
 	/**
 	 * Launches the Python script and initializes the 
@@ -85,7 +154,7 @@ public class AutoEncoderProcess extends Comm {
 	public void launchAutoEncoder() {
 		if(!(new File(PythonUtil.PYTHON_EXECUTABLE).exists())) {
 			throw new RuntimeException("Before launching this program, you need to place the path to your "+
-									   "Python executable in my_python_path.txt within the main MM-NEAT directory.");
+					"Python executable in my_python_path.txt within the main MM-NEAT directory.");
 		}
 
 		// Run program with model architecture and weights specified as parameters
@@ -98,16 +167,16 @@ public class AutoEncoderProcess extends Comm {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void main (String[] args) throws IOException {
 		Parameters.initializeParameterCollections(new String[] {"blackAndWhitePicbreeder:true"});
 		PythonUtil.PYTHON_EXECUTABLE = "C:\\ProgramData\\Anaconda3\\python.exe";
-		
+
 		AUTOENCODER_MODE mode = AUTOENCODER_MODE.IMAGE;
 		//AutoEncoderProcess p = new AutoEncoderProcess("parentDir\\test.pth", mode);
 		AutoEncoderProcess p = new AutoEncoderProcess("targetimage\\skull6\\snapshots\\iteration30000.pth", mode);
 		p.start();
-		
+
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.71288Neurons[35]links[63]1788009.jpg"));
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.52723Neurons[15]links[58]143861.jpg"));
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.68266Neurons[14]links[62]1105464.jpg"));
@@ -117,22 +186,22 @@ public class AutoEncoderProcess extends Comm {
 		img = GraphicsUtil.convertToBufferedImage(scaled);
 		@SuppressWarnings("unused")
 		DrawingPanel picture = GraphicsUtil.drawImage(img, "Before", img.getWidth(), img.getHeight());
-		
+
 		double[] imageInput =  GraphicsUtil.flatFeatureArrayFromBufferedImage(img);
-		
+
 		String s = p.commRecv();
 		System.out.println(s);
 		System.out.println("Before:"+Arrays.toString(imageInput));
-		
+
 		for(int i = 0; i < imageInput.length; i++) {
 			p.commSend(imageInput[i] + "");
 		}
-		
+
 		String output = p.commRecv();
-		
+
 		if(mode == AUTOENCODER_MODE.IMAGE) {		
 			System.out.println("After:"+output);
-			
+
 			// Remove [ and ]
 			output = output.substring(1,output.length()-1);
 			String[] arrOutput = output.split(",");
@@ -140,7 +209,7 @@ public class AutoEncoderProcess extends Comm {
 			for(int i = 0; i < numOut.length; i++) {
 				numOut[i] = Double.parseDouble(arrOutput[i]);
 			}
-			
+
 			BufferedImage pythonOutput = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
 			int i = 0;
 			for(int y = 0; y < SIDE_LENGTH; y++) {
@@ -151,10 +220,10 @@ public class AutoEncoderProcess extends Comm {
 					pythonOutput.setRGB(x, y, c.getRGB());	
 				}
 			}
-	
+
 			DrawingPanel outputImage = GraphicsUtil.drawImage(pythonOutput, "After", img.getWidth(), img.getHeight());
 			outputImage.getFrame().setLocation(100, 0);
-			
+
 			System.out.println("done");
 		} else {
 			System.out.println("Loss is:"+output);
