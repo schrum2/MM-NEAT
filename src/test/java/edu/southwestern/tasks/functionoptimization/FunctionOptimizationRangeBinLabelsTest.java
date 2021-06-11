@@ -15,7 +15,7 @@ public class FunctionOptimizationRangeBinLabelsTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		String[] params = "foBinDimension:10 solutionVectorSlices:2 foVectorLength:10 foUpperBounds:5.12 foLowerBounds:-5.12 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-2 saveTo:2 io:false netio:false ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRangeBinLabels".split(" ");
+		String[] params = "foBinDimension:10 solutionVectorSlices:2 foVectorLength:10 foUpperBounds:5.12 foLowerBounds:-5.12 io:false netio:false ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRangeBinLabels".split(" ");
 		Parameters.initializeParameterCollections(params);
 		MMNEAT.loadClasses();
 	}
