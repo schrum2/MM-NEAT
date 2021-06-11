@@ -753,7 +753,7 @@ public class Parameters {
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingTreasureCount", false, "Adds linear increasing treasure count as a fitness function when true");
 		booleanOptions.add("allowWeirdLodeRunnerActions", false, "Allows the A* model to use weird side ways digging to be able to beat more levels");
 		booleanOptions.add("smartLodeRunnerEnemies", false, "Sets enhanced enemy AI for enemies in lode runner.");
-		booleanOptions.add("animateWithScaleAndRotation", false, "Animate with scale and rotation when true.");
+		booleanOptions.add("animateWithScaleRotationTranslation", false, "Animate with scale and rotation when true.");
 		booleanOptions.add("useWoolleyImageMatchFitness", false, "Use the fitness calculation from the Woolley paper if true.");
 		booleanOptions.add("useRMSEImageMatchFitness", false, "Use RMSE as the fitness calculation if true.");
 		booleanOptions.add("trackPseudoArchive", false, "Option to track the progress of an objective function with a binning scheme.");

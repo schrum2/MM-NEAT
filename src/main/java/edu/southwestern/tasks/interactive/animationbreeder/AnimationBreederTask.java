@@ -64,7 +64,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	private BufferedImage[] imagesFromCPPN(T cppn, int width, int height, int startFrame, int endFrame, double[] inputMultipliers) {
 		double scale = Parameters.parameters.doubleParameter("picbreederImageScale");
 		double rotation = Parameters.parameters.doubleParameter("picbreederImageRotation");
-		return AnimationUtil.imagesFromCPPN(cppn, width, height, startFrame, endFrame, inputMultipliers, scale, rotation);
+		return AnimationUtil.imagesFromCPPN(cppn, width, height, startFrame, endFrame, inputMultipliers, scale, rotation, Parameters.parameters.doubleParameter("picbreederImageTranslationX"), Parameters.parameters.doubleParameter("picbreederImageTranslationY"));
 	}
 
 
@@ -374,7 +374,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	public String[] outputLabels() {
 		// if animate scale and rotation, then return array with "scale" and "rotation" at the end
 		if(Parameters.parameters.booleanParameter("animateWithScaleAndRotation")) {
-			return new String[] { "hue-value", "saturation-value", "brightness-value", "scale", "rotation"};
+			return new String[] { "hue-value", "saturation-value", "brightness-value", "scale", "rotation", "deltaX", "deltaY"};
 		}else {
 			return new String[] { "hue-value", "saturation-value", "brightness-value" };
 		}
@@ -576,8 +576,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	@Override
 	public int numCPPNOutputs() {
 		// if animate rotation and scale, then add 2, otherwise just return BASE_CPPN_NUM_OUTPUTS
-		if(Parameters.parameters.booleanParameter("animateWithScaleAndRotation")) {
-			return BASE_CPPN_NUM_OUTPUTS + 2;
+		if(Parameters.parameters.booleanParameter("animateWithScaleRotationTranslation")) {
+			return BASE_CPPN_NUM_OUTPUTS + 4;
 		} else {
 			return BASE_CPPN_NUM_OUTPUTS;
 		}

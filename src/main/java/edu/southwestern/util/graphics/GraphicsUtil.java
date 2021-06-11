@@ -122,7 +122,8 @@ public class GraphicsUtil {
 	 * @param time For animated images, the frame number (just use 0 for still images)
 	 * @param scale scale factor by which to scale the image
 	 * @param rotation the degree in radians by which to rotate the image
-	 * 
+	 * @param deltaX X coordinate of the center of the box
+	 * @param deltaY Y coordinate of the center of the box
 	 * @return buffered image containing image drawn by network
 	 */
 	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time, double scale, double rotation, double deltaX, double deltaY) {
@@ -450,6 +451,8 @@ public class GraphicsUtil {
 	 * @param y y-coordinate of pixel
 	 * @param imageWidth width of image
 	 * @param imageHeight height of image
+	 * @param deltaX X coordinate of the center of the box
+	 * @param deltaY Y coordinate of the center of the box
 	 * @return double containing the HSB values
 	 */
 	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples, double time, double scale, double rotation, double deltaX, double deltaY) {
