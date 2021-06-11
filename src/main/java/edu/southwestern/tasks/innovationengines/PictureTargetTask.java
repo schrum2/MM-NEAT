@@ -24,6 +24,7 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
@@ -148,7 +149,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
 		Network cppn = individual.getPhenotype();
-		BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, imageWidth, imageHeight);
+		BufferedImage image = PicbreederTask.imageFromCPPN(cppn, imageWidth, imageHeight, ArrayUtil.doubleOnes(cppn.numInputs()));
 		TWEANNGenotype tweannIndividual = (individual instanceof TWEANNGenotype ? (TWEANNGenotype) individual : ((TWEANNPlusParametersGenotype<ArrayList<Double>>) individual).getTWEANNGenotype());
 		
 		// Need to assign values
@@ -361,8 +362,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				//"matchImageFile:cat.jpg",
 				"matchImageFile:skull64.jpg",
 				"fitnessSaveThreshold:1.0",		// Since we periodically save the whole archive, don't bother saving with threshold any more 
-				//"imageArchiveSaveFrequency:50000",
-				"imageArchiveSaveFrequency:1000",
+				"imageArchiveSaveFrequency:50000",
+				//"imageArchiveSaveFrequency:1000",
 				"includeSigmoidFunction:true", 	// In Brian Woolley paper
 				"includeTanhFunction:false",
 				"includeIdFunction:true",		// In Brian Woolley paper
