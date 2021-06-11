@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
@@ -147,7 +148,6 @@ public class GraphicsUtilTest {
 
 	@Test
 	public void testGetHSBFromCPPN() {
-		//fail("Not yet implemented");
 		//float[] cppnHSB = GraphicsUtil.getHSBFromCPPN(tg1, 0, 0, SIDE_LENGTH, SIDE_LENGTH, inputMultiples, 0, 1.0, 0.0);
 		
 	}
@@ -291,11 +291,13 @@ public class GraphicsUtilTest {
 			}
 		}
 	}
-//
-//	@Test
-//	public void testImageFromINDArray() {
-//		//fail("Not yet implemented");
-//	}
+
+	@Test
+	public void testImageFromINDArray() {
+		//fail("Not yet implemented");
+//		INDArray[] imageArray = new INDArray[] {(INDArray) checkeredBlackAndWhite.getData()};
+//		assertArrayEquals(new INDArray[] {}, imageArray, 0);
+	}
 
 	// Not testing things involving drawing panels
 //	@Test
