@@ -91,7 +91,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 	}
 
 	private void setupKLDivLevelsForComparison() {
-		if (MMNEAT.usingDiversityBinningScheme && MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { // TODO
+		if (MMNEAT.usingDiversityBinningScheme && (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels)) { // TODO
 			System.out.println("Instance of MAP Elites using KL Divergence Bin Labels");
 			String level1FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel1"); 
 			String level2FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel2"); 
