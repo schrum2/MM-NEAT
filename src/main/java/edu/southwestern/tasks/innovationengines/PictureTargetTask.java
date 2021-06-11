@@ -4,12 +4,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.mapelites.Archive;
@@ -148,7 +149,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	public Score<T> evaluate(Genotype<T> individual) {
 		Network cppn = individual.getPhenotype();
 		BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, imageWidth, imageHeight);
-		TWEANNGenotype tweannIndividual = (individual instanceof TWEANNGenotype ? (TWEANNGenotype) individual : ((EnhancedCPPNPictureGenotype) individual).getTWEANNGenotype());
+		TWEANNGenotype tweannIndividual = (individual instanceof TWEANNGenotype ? (TWEANNGenotype) individual : ((TWEANNPlusParametersGenotype<ArrayList<Double>>) individual).getTWEANNGenotype());
 		
 		// Need to assign values
 		int[] indicesMAPEliteBin = null;
@@ -354,7 +355,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
 				"fs:true",
 				"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
-				"trainingAutoEncoder:true",
+				"trainingAutoEncoder:false",
 				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
