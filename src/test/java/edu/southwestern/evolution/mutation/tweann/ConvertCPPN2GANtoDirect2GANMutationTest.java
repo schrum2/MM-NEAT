@@ -37,6 +37,9 @@ public class ConvertCPPN2GANtoDirect2GANMutationTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testZelda() {
+		MMNEAT.clearClasses();
+		Parameters.parameters = null;
+		MMNEAT.usingDiversityBinningScheme = false;
 		Parameters.initializeParameterCollections(
 				new String[] { "io:false", "netio:false", "recurrency:false", "indirectToDirectTransitionRate:1.0", "task:edu.southwestern.tasks.zelda.ZeldaCPPNOrDirectToGANDungeonTask", 
 						"zeldaGANUsesOriginalEncoding:false", /*"base:zeldagan", "log:ZeldaGAN-DistTraversed", "saveTo:DistTraversed",*/ 

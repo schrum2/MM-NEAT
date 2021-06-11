@@ -14,9 +14,9 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 
 public class LatentVariablePartitionSumBinLabelsTest {
 
-	//@BeforeClass
+	@BeforeClass
 	public static void setUpBeforeClass() throws Exception { // latent vector size is 80
-		String[] params = "solutionVectorSlices:2 latentPartitionBinDimension:10 randomSeed:1 megaManAllowsConnectivity:false megaManAllowsSimpleAStarPath:true watch:false trials:1 megaManGANLevelChunks:10 maxGens:1 io:false netio:false GANInputSize:5 mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask cleanOldNetworks:true useMultipleGANsMegaMan:true cleanFrequency:-1 recurrency:false saveAllChampions:true ea:edu.southwestern.evolution.mapelites.MAPElites mapElitesBinLabels:edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype".split(" ");
+		String[] params = "solutionVectorSlices:2 latentPartitionBinDimension:10 randomSeed:1 mu:1 experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment megaManAllowsConnectivity:false megaManAllowsSimpleAStarPath:true watch:false trials:1 megaManGANLevelChunks:10 maxGens:1 io:false netio:false GANInputSize:5 mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask cleanOldNetworks:true useMultipleGANsMegaMan:true cleanFrequency:-1 recurrency:false saveAllChampions:true ea:edu.southwestern.evolution.mapelites.MAPElites mapElitesBinLabels:edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype".split(" ");
 		Parameters.initializeParameterCollections(params);
 		MMNEAT.loadClasses();
 	}
@@ -29,12 +29,12 @@ public class LatentVariablePartitionSumBinLabelsTest {
 	double[] doubleNums1 = new double[] {0.46, 0.83, 0.73, -0.76, 0.13, 0.65, 0.32, 0.39, -0.11, -0.71, 0.09, 0.39, 0.11, 0.09, 0.52, 0.53, 0.75, 0.31, -0.32, -0.04, 0.05, 0.75, 0.28, 0.14, 0.28, 0.14, 0.60, 0.83, 0.64, 0.34, 0.61, 0.36, 0.91, 0.66, 0.26, 0.83, 0.33, 0.52, 0.62, 0.46, 0.66, 0.49, 0.84, 0.39, 0.90, 0.90, 0.95, 0.69, 1.00, 0.18, 0.76, 0.37, 0.20, 0.49, 0.94, 0.41, 0.22, 0.83, 0.07, 0.66, -0.73, -0.68, -0.40, 0.01, 0.64, 0.11, 0.84, 0.21, 0.47, 0.71, 0.09, -0.99, -0.82, -0.56, 0.92, 0.08, 0.61, 0.98, -0.90, 0.95};
 	double[] doubleNums2 = new double[] {-0.04, 0.58, -0.69, 0.63, -0.99, -0.55, 0.76, -0.53, 0.65, 0.29, 0.11, -0.99, -0.90, -1.00, 0.83, 0.08, 0.33, 0.50, 0.15, 0.86, 0.57, 0.69, 0.88, 0.87, 0.83, 0.20, -0.68, 0.12, -0.76, 0.82, 0.88, 0.10, 0.66, -0.99, -0.15, 0.71, 0.60, 0.66, 0.22, 0.81, 0.79, 0.06, 0.59, 0.98, 0.40, 0.79, 0.31, 0.30, 0.38, 0.60, 0.29, 0.30, 0.65, 0.14, 0.10, 0.07, 0.37, 0.75, 0.38, 0.83, 0.44, 0.84, 0.51, 0.95, -0.72, 0.00, 0.86, 0.42, 0.75, -0.71, 0.06, 0.83, 0.87, 1.00, 0.62, -0.18, -0.73, 0.80, -0.59, 0.56};
 	
-	//@Before
+	@Before
 	public void setUp() throws Exception {
 		binLabels = new LatentVariablePartitionSumBinLabels();
 	}
 	
-	//@Test
+	@Test
 	public void testBehaviorCharacterization() {
 		assertArrayEquals(binLabels.behaviorCharacterization(allMax), new double[] {40, 40}, 0.00000001);
 		assertArrayEquals(binLabels.behaviorCharacterization(allMin), new double[] {-40, -40}, 0.00000001);
@@ -43,7 +43,7 @@ public class LatentVariablePartitionSumBinLabelsTest {
 		
 	}
 
-	//@Test
+	@Test
 	public void testBinLabels() {
 		List<String> stringLabels = binLabels.binLabels();
 		
@@ -158,7 +158,7 @@ public class LatentVariablePartitionSumBinLabelsTest {
 		assertEquals(stringLabels.get(99), "([32.0 to 40.0], [32.0 to 40.0])");
 	}
 
-	//@Test
+	@Test
 	public void testOneDimensionalIndex() {
 		assertEquals(binLabels.oneDimensionalIndex(new int[] {9, 9}), 99);
 		assertEquals(binLabels.oneDimensionalIndex(new int[] {0, 0}), 0);
@@ -168,7 +168,7 @@ public class LatentVariablePartitionSumBinLabelsTest {
 		assertEquals(binLabels.oneDimensionalIndex(new int[] {7, 3}), 37);
 	}
 
-	//@Test
+	@Test
 	public void testDiscretize() {
 		assertArrayEquals(binLabels.discretize(new double[] {40, 40}), new int[] {9, 9});
 		assertArrayEquals(binLabels.discretize(new double[] {-40, -40}), new int[] {0, 0}); 
@@ -176,7 +176,7 @@ public class LatentVariablePartitionSumBinLabelsTest {
 		assertArrayEquals(binLabels.discretize(new double[] {7.12, -15.66}), new int[] {5, 3}); // above operation shows how calculation should work
 	}
 	
-	//@Test
+	@Test
 	public void testMultiDimensionalIndexToBinLabel() {
 		assertEquals("([-16.0 to -8.0], [-40.0 to -32.0])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-9.33, -36.0}))));
 		assertEquals("([-40.0 to -32.0], [32.0 to 40.0])", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-40.0, 32.0}))));
