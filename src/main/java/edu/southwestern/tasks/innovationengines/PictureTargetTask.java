@@ -9,6 +9,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.mapelites.Archive;
@@ -147,7 +148,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	public Score<T> evaluate(Genotype<T> individual) {
 		Network cppn = individual.getPhenotype();
 		BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, imageWidth, imageHeight);
-		TWEANNGenotype tweannIndividual = (TWEANNGenotype) individual;
+		TWEANNGenotype tweannIndividual = (individual instanceof TWEANNGenotype ? (TWEANNGenotype) individual : ((EnhancedCPPNPictureGenotype) individual).getTWEANNGenotype());
 		
 		// Need to assign values
 		int[] indicesMAPEliteBin = null;
@@ -343,15 +344,16 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		
 		// For test runs
-		MMNEAT.main(new String[]{"runNumber:6","randomSeed:4","base:targetimage","mu:400","maxGens:100000000",
+		MMNEAT.main(new String[]{"runNumber:1","randomSeed:4","base:targetimage","mu:400","maxGens:100000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
-				"log:TargetImage-skull","saveTo:skull","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
+				"log:TargetImage-skullWithEnhancedCPPNPictureGenotype","saveTo:skullWithEnhancedCPPNPictureGenotype","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping",
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
 				"fs:true",
+				"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
 				"trainingAutoEncoder:true",
 				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
 				//"matchImageFile:TexasFlag.png",
