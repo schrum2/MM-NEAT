@@ -328,14 +328,14 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						noveltyIndex = Math.min(noveltyIndex, NOVELTY_BINS_PER_DIMENSION - 1);
 						mapElitesBinIndices = new int[] {noveltyIndex};
 						System.out.println("["+noveltyIndex+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");						
-					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { // KL Divergence binning scheme
-						KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) MMNEAT.getArchiveBinLabelsClass();
-						// TODO
-						int[][] oneLevelAs2DArray = null; //ArrayUtil.int2DArrayFromListOfLists(oneLevel);
-						mapElitesBinIndices = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
-						
-						System.out.println("["+numDistinctRooms+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");
-					
+//					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { // KL Divergence binning scheme
+//						KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) MMNEAT.getArchiveBinLabelsClass();
+//						// TODO
+//						int[][] oneLevelAs2DArray = null; //ArrayUtil.int2DArrayFromListOfLists(oneLevel);
+//						mapElitesBinIndices = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
+//						
+//						System.out.println("["+numDistinctRooms+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");
+//					
 					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
 						LatentVariablePartitionSumBinLabels labels = (LatentVariablePartitionSumBinLabels) MMNEAT.getArchiveBinLabelsClass();
 						ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
