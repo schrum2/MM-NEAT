@@ -1,20 +1,18 @@
 package edu.southwestern.util.graphics;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class GraphicsUtilTest {
@@ -194,31 +192,31 @@ public class GraphicsUtilTest {
 	@Test
 	public void testGet2DObjectCPPNInputsIntIntIntIntDoubleDoubleDouble() {
 		
-		double[] cppnInputs = GraphicsUtil.get2DObjectCPPNInputs(0, 0, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange"));
+		double[] cppnInputs = GraphicsUtil.get2DObjectCPPNInputs(0, 0, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, 0, 0);
 		assertArrayEquals(new double[] {-1.0, -1.0, 2.0, 0.0, 1.0}, cppnInputs, 0.000000000000001);
 		
-		double[] cppnInputs1 = GraphicsUtil.get2DObjectCPPNInputs(SIDE_LENGTH, 0, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange"));
+		double[] cppnInputs1 = GraphicsUtil.get2DObjectCPPNInputs(SIDE_LENGTH, 0, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, 0, 0);
 		assertArrayEquals(new double[] {1.1333333333333333, -1.0, 2.13749593891752, 0.0, 1.0}, cppnInputs1, 0.000000000000001);
 		
-		double[] cppnInputs2 = GraphicsUtil.get2DObjectCPPNInputs(SIDE_LENGTH, SIDE_LENGTH, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange"));
+		double[] cppnInputs2 = GraphicsUtil.get2DObjectCPPNInputs(SIDE_LENGTH, SIDE_LENGTH, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, 0, 0);
 		assertArrayEquals(new double[] {1.1333333333333333, 1.1333333333333333, 2.2666666666666666, 0.0, 1.0}, cppnInputs2, 0.000000000000001);
 		
-		double[] cppnInputs3 = GraphicsUtil.get2DObjectCPPNInputs(0, SIDE_LENGTH, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange"));
+		double[] cppnInputs3 = GraphicsUtil.get2DObjectCPPNInputs(0, SIDE_LENGTH, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, 0, 0);
 		assertArrayEquals(new double[] {-1.0, 1.1333333333333333, 2.13749593891752, 0.0, 1.0}, cppnInputs3, 0.000000000000001);
 		
-		double[] cppnInputs4 = GraphicsUtil.get2DObjectCPPNInputs(SIDE_LENGTH / 2, SIDE_LENGTH / 2, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"),Parameters.parameters.doubleParameter("imageCenterTranslationRange"));
+		double[] cppnInputs4 = GraphicsUtil.get2DObjectCPPNInputs(SIDE_LENGTH / 2, SIDE_LENGTH / 2, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, 0, 0);
 		assertArrayEquals(new double[] {.06666666666666665, 0.06666666666666665, 0.1333333333333333, 0.0, 1.0}, cppnInputs4, 0.000000000000001);
 		
-		double[] cppnInputs5 = GraphicsUtil.get2DObjectCPPNInputs(12, 9, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange"));
+		double[] cppnInputs5 = GraphicsUtil.get2DObjectCPPNInputs(12, 9, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, 0, 0);
 		assertArrayEquals(new double[] {.6000000000000001, 0.1999999999999996, 0.894427190999916, 0.0, 1.0}, cppnInputs5, 0.000000000000001);
 		
-		double[] cppnInputs6 = GraphicsUtil.get2DObjectCPPNInputs(0, 11, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange"));
+		double[] cppnInputs6 = GraphicsUtil.get2DObjectCPPNInputs(0, 11, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, 0, 0);
 		assertArrayEquals(new double[] {-1.0, 0.4666666666666656, 1.5606266547626166, 0.0, 1.0}, cppnInputs6, 0.000000000000001);
 		
-		double[] cppnInputs7 = GraphicsUtil.get2DObjectCPPNInputs(7, 0, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"),Parameters.parameters.doubleParameter("imageCenterTranslationRange"));
+		double[] cppnInputs7 = GraphicsUtil.get2DObjectCPPNInputs(7, 0, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, 0, 0);
 		assertArrayEquals(new double[] {-0.06666666666666665, -1.0, 1.4173527750312869, 0.0, 1.0}, cppnInputs7, 0.000000000000001);
 	
-		double[] cppnInputs8 = GraphicsUtil.get2DObjectCPPNInputs(5, 7, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange"));
+		double[] cppnInputs8 = GraphicsUtil.get2DObjectCPPNInputs(5, 7, SIDE_LENGTH, SIDE_LENGTH, 0, 1.0, 0.0, 0, 0);
 		assertArrayEquals(new double[] {-0.33333333333333337, -0.06666666666666665, 0.4807401700618653, 0.0, 1.0}, cppnInputs8, 0.000000000000001);
 	
 	}

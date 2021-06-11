@@ -49,7 +49,8 @@ public class AnimationUtil {
 			// then query CPPN here with time i (other inputs are 0)
 			// check the scale and rotation outputs and change the scale and rotation values
 			if(Parameters.parameters.booleanParameter("animateWithScaleAndRotation")) {
-				double[] input = GraphicsUtil.get2DObjectCPPNInputs(0, 0, imageWidth, imageHeight, i/FRAMES_PER_SEC, 1, 0);
+				// Currently not allowing any center point translation, but would be cool to either have fixed translation or change over time
+				double[] input = GraphicsUtil.get2DObjectCPPNInputs(0, 0, imageWidth, imageHeight, i/FRAMES_PER_SEC, 1, 0, 0, 0);
 				// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
 				for(int j = 0; j < inputMultiples.length; j++) {
 					input[j] = input[j] * inputMultiples[j];
@@ -60,7 +61,8 @@ public class AnimationUtil {
 				scale = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_SCALE] * Parameters.parameters.doubleParameter("maxScale"); // TODO: Multiply by "maxScale"
 				rotation = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_ROTATION] * Math.PI; // Mult by Math.PI
 			}			
-			images[i-startTime] = GraphicsUtil.imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, i/FRAMES_PER_SEC, scale, rotation);
+			// Currently not allowing any center point translation, but would be cool to either have fixed translation or change over time
+			images[i-startTime] = GraphicsUtil.imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, i/FRAMES_PER_SEC, scale, rotation, 0, 0);
 		}
 		return images;
 	}		

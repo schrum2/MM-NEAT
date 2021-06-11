@@ -98,7 +98,7 @@ public class PicbreederConstructor {
 		final double ROTATION = 0;
 		
 		// Now show the image
-		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE, ArrayUtil.doubleOnes(network.numInputs()), 0, SCALE, ROTATION);
+		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE, ArrayUtil.doubleOnes(network.numInputs()), 0, SCALE, ROTATION, 0, 0);
 		DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", SIZE, SIZE);
 
 		picture.save("ComplexHSV.jpg");

@@ -8,7 +8,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -123,6 +122,7 @@ public class GraphicsUtil {
 	 * @param time For animated images, the frame number (just use 0 for still images)
 	 * @param scale scale factor by which to scale the image
 	 * @param rotation the degree in radians by which to rotate the image
+	 * 
 	 * @return buffered image containing image drawn by network
 	 */
 	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time, double scale, double rotation, double deltaX, double deltaY) {
@@ -496,7 +496,7 @@ public class GraphicsUtil {
 	 * @return array containing inputs for CPPN
 	 */
 	public static double[] get2DObjectCPPNInputs(int x, int y, int imageWidth, int imageHeight, double time) {
-		return get2DObjectCPPNInputs(x,y,imageWidth,imageHeight,time,1.0, 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange"));
+		return get2DObjectCPPNInputs(x,y,imageWidth,imageHeight,time,1.0, 0.0, 0.0, 0.0);
 	}
 	
 	/**
