@@ -335,7 +335,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 //				archiveArray[binIndex] = binScore; // Percent rooms traversed
 //				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 				
-			} if(MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels ) {
+			} else if(MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels ) {
 				LevelNovelty.setGame("mega_man");
 				List<List<List<Integer>>> levelSegments = LevelNovelty.partitionSegments(level, LevelNovelty.getRows(), LevelNovelty.getColumns());
 				double novelty = LevelNovelty.averageSegmentNovelty(levelSegments); // get novelty
@@ -343,7 +343,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {noveltyIndex}, binScore);
 				System.out.println("["+numDistinctSegments+"] = "+binScore);
 				
-			} if(MMNEAT.getArchiveBinLabelsClass() instanceof MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels ) {
+			} else if(MMNEAT.getArchiveBinLabelsClass() instanceof MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels ) {
 				LevelNovelty.setGame("mega_man");
 				int indexConnected = (int) Math.min(precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS,9);
 				int numVertical = (int) (numUpSegments+numDownSegments);
