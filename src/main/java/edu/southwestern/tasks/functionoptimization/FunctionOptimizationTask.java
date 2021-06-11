@@ -3,6 +3,7 @@ package edu.southwestern.tasks.functionoptimization;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.scores.Score;
@@ -66,23 +67,22 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 		Score<ArrayList<Double>> result =  new Score<>(individual, scores, null);
 		
 		if(MMNEAT.usingDiversityBinningScheme) {
-			int dim1, dim2;
+			int[] dimensions;
 			if(MMNEAT.getArchiveBinLabelsClass() instanceof FunctionOptimizationRangeBinLabels) {
 				FunctionOptimizationRangeBinLabels labels = (FunctionOptimizationRangeBinLabels) MMNEAT.getArchiveBinLabelsClass();
 				double[] characteristic = labels.behaviorCharacterization(vector);
-				int[] dimensions = labels.discretize(characteristic);
-				dim1 = dimensions[0];
-				dim2 = dimensions[1];			
+				dimensions = labels.discretize(characteristic);		
 			} else {
 				throw new RuntimeException("A Valid Binning Scheme For Function Optimization Was Not Specified");
 			}
 			// Row-major order lookup in 2D archive
-			oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {dim1, dim2}, score);
+			oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(dimensions, score);
 		}		
 		
 		if(MMNEAT.usingDiversityBinningScheme)
 			result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
 		
+		System.out.println("Bin and Score: "+Arrays.toString(oneMAPEliteBinIndexScorePair.t1) + oneMAPEliteBinIndexScorePair.t2);
 		return result;
 	}
 	

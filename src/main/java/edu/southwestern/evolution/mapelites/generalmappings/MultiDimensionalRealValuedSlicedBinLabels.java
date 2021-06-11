@@ -1,5 +1,7 @@
 package edu.southwestern.evolution.mapelites.generalmappings;
 
+import java.util.Arrays;
+
 import edu.southwestern.parameters.Parameters;
 
 /**
@@ -45,7 +47,7 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 				sums[i] += process(solution[j]); // sum each segment
 			}
 		}
-		//System.out.println("Characterized \""+Arrays.toString(solution)+"\" to \""+Arrays.toString(sums)+"\"");
+		System.out.println("Characterized \""+Arrays.toString(solution)+"\" to \""+Arrays.toString(sums)+"\"");
 		return sums;
 	}
 	

@@ -3,6 +3,7 @@ package edu.southwestern.evolution.mapelites.generalmappings;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import edu.southwestern.evolution.mapelites.BinLabels;
@@ -51,6 +52,7 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 			int size = (int) Math.floor(Math.pow(binsPerDimension, numDimensions)); // get overall amount of bins
 			labels = new ArrayList<String>(size);
 			generateLabel(")", 0); // start recursive label generator
+			System.out.println("bin total:" + size);
 		}
 		return labels;
 	}
@@ -67,7 +69,7 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	private void generateLabel(String input, int step) {
 		if (step == numDimensions) {
 			labels.add("(" + input); // all dimensions added, cap the label
-			//System.out.println("Made label \"("+input+"\"");
+			System.out.println("Made label \"("+input+"\"");
 		} else {
 			for (int i = 0; i < binsPerDimension; i++) {
 				String newInput = input;
@@ -113,12 +115,13 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 			if (behaviorCharacterization[i] > maxPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " exceeds maximum value specified ("+maxPossibleValue+")"); 
 			if (behaviorCharacterization[i] < minPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " is below minimum value specified ("+minPossibleValue+")"); 
 			double scaledValue = (behaviorCharacterization[i]-minPossibleValue) / (maxPossibleValue-minPossibleValue);
+			System.out.println("scaledValue = (" + behaviorCharacterization[i] + " - " + minPossibleValue + ") / ("+ (maxPossibleValue-minPossibleValue) +") = "+scaledValue);
 			dbc[i] = (int) Math.floor(scaledValue * binsPerDimension);
 			if (dbc[i] == binsPerDimension) {
 				dbc[i]--;
 			}
 		}
-		//System.out.println("Discretizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
+		System.out.println("Discretizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
 		return dbc;
 	}
 	
