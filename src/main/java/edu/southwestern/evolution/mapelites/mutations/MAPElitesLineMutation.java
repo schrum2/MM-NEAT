@@ -10,6 +10,15 @@ import edu.southwestern.evolution.mutation.real.RealMutation;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.random.RandomNumbers;
 
+/**
+ * MAP-Elites-Line mutation described by:
+ * https://arxiv.org/pdf/2003.04389.pdf
+ * and originally implemented in:
+ * https://arxiv.org/pdf/1804.03906v1.pdf
+ * 
+ * @author battertm
+ *
+ */
 public class MAPElitesLineMutation extends RealMutation {
 	
 	protected final double lineRate;
@@ -18,11 +27,12 @@ public class MAPElitesLineMutation extends RealMutation {
 	public ArrayList<Double> genotypeY;
 	public double normalDistribution2;
 	
-	
+	// Constructor initializes mutation rate
 	public MAPElitesLineMutation() {
 		this.lineRate = Parameters.parameters.doubleParameter("meLineMutationRate");
 	}
 	
+	// Mutation setup gets a random genotype to compare to, and gets a random number that remains the same the entire time
 	@Override
 	public void mutate(Genotype<ArrayList<Double>> genotype) {
 		@SuppressWarnings("unchecked")
@@ -35,6 +45,7 @@ public class MAPElitesLineMutation extends RealMutation {
 		}
 	}
 	
+	// Functionally performs vector multiplication and addition through the above for loop
 	@Override
 	public void mutateIndex(RealValuedGenotype genotypeX, int index) {
 		genotypeX.getPhenotype().set(index,
