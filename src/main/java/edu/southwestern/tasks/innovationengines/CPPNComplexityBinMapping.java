@@ -8,6 +8,14 @@ import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 
+/**
+ * This class creates a binning scheme based on the number
+ * of neurons and the number of links in a given image.
+ * 
+ * @author Anna Wicker
+ *
+ * @param <T>
+ */
 public class CPPNComplexityBinMapping<T extends Network> implements BinLabels {
 	
 	List<String> labels = null;
@@ -24,6 +32,12 @@ public class CPPNComplexityBinMapping<T extends Network> implements BinLabels {
 		MAX_NUM_LINKS = Parameters.parameters.integerParameter("maxNumLinks");
 	}
 	
+	/**
+	 * Creates the bin labels (coordinates corresponding
+	 * to the correct bin).
+	 * 
+	 * @return List of bin labels as strings
+	 */
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {
@@ -42,10 +56,16 @@ public class CPPNComplexityBinMapping<T extends Network> implements BinLabels {
 		return labels;
 	}
 
-
+	/**
+	 * Calculating the index of the correct bin label
+	 * in an int array multi.  
+	 * 
+	 * @param multi An array containing all of the possible bin labels
+	 * @return The index in multi containing the correct bin
+	 */
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = ( (multi[BIN_INDEX_NODES] - MIN_NUM_NEURONS) + (MAX_NUM_NEURONS - MIN_NUM_NEURONS + 1) * (multi[BIN_INDEX_LINKS] - MIN_NUM_LINKS));
+		int binIndex = ((multi[BIN_INDEX_NODES] - MIN_NUM_NEURONS) + (MAX_NUM_NEURONS - MIN_NUM_NEURONS + 1) * (multi[BIN_INDEX_LINKS] - MIN_NUM_LINKS));
 		assert binIndex >= 0 : "Negative index "+Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
 	}
