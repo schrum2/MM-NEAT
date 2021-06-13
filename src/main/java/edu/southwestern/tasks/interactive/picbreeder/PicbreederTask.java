@@ -131,6 +131,16 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		}
 	}
 
+	/**
+	 * Creates a buffered image from the CPPN.
+	 * 
+	 * @param <T>
+	 * @param phenotype Phenotype of the CPPN
+	 * @param imageWidth Width of the image
+	 * @param imageHeight Height of the image
+	 * @param inputMultiples array of multiples indicating whether to turn activation functions on or off
+	 * @return the newly created buffered image
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Network> BufferedImage imageFromCPPN(T phenotype, int imageWidth, int imageHeight, double[] inputMultiples) {
 		
@@ -149,10 +159,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 * zentangle method below, though I'm not sure it belongs in this class, or even
 	 * deserves its own method.
 	 * 
-	 * @param filename
-	 * @param dim
-	 * @param phenotype
-	 * @param inputMultipliers
+	 * @param filename name of file to be saved
+	 * @param dim dimensions of the image
+	 * @param phenotype phenotype of the CPPN
+	 * @param inputMultipliers array of multiples indicating whether to turn activation functions on or off
 	 */
 
 	public static <T> BufferedImage saveSingle(String filename, int dim, T phenotype, double[] inputMultipliers, boolean isBackground) {
@@ -176,7 +186,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 * by the zentangle method below.
 	 * 
 	 * @param <T>
-	 * @param scores
+	 * @param scores 
 	 * @param chosen 
 	 * @param selectedItems 
 	 * @return list of phenotypes
@@ -211,6 +221,15 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		zentangle(SimpleTiledZentangle.getSaveDirectory(), chosenTiles, inputMultipliers);
 	}
 
+	/**
+	 * Creates a zentangle image for different cases 
+	 * depending on the number of images selected.
+	 * 
+	 * @param <T>
+	 * @param directory directory to save the images to
+	 * @param chosenTiles Tiles chosen to make the zentangle image from
+	 * @param inputMultipliers array of multiples indicating whether to turn activation functions on or off
+	 */
 	public static <T> void zentangle(String directory, ArrayList<T> chosenTiles, double[] inputMultipliers) {
 		// Make sure zentangle directory exists
 		File d = new File(directory);

@@ -55,9 +55,10 @@ public class AutoEncoderProcess extends Comm {
 	}
 
 	/**
+	 * Initializes the current process if not
+	 * already initialized.
 	 * 
-	 * @param newProcess
-	 * @return
+	 * @return the current process
 	 */
 	public static AutoEncoderProcess getAutoEncoderProcess() {
 		if(currentProcess == null) {
@@ -85,8 +86,10 @@ public class AutoEncoderProcess extends Comm {
 
 	/**
 	 * 
+	 * 
 	 * @param nameNewPthFile
-	 * @return
+	 * @param mode
+	 * @return 
 	 */
 	public static AutoEncoderProcess resetAutoEncoder(String nameNewPthFile, AUTOENCODER_MODE mode) {
 		terminateAutoEncoderProcess();
