@@ -7,7 +7,6 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.ScoreHistory;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -177,7 +176,6 @@ public class Score<T> {
 	 * @param index Should be the one MAP Elites archive index corresponding to the behavior of the genotype
 	 * @return Fitness/behavior score associated with that bin
 	 */
-	@SuppressWarnings("unchecked")
 	public double behaviorIndexScore(int index) {
 		if(oneMAPEliteBinIndexScorePair != null) {
 			if(MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1) != index)
