@@ -166,7 +166,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				PictureFourQuadrantBrightnessBinLabels labels = (PictureFourQuadrantBrightnessBinLabels) ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass();
 				indicesMAPEliteBin = labels.binCoordinates(image);
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof GaierAutoencoderPictureBinningScheme) {
-				double loss = AutoEncoderProcess.getReconstructionLoss(image);
+				// If the AutoEncoder has not been initialized yet, then loss is 1.0
+				double loss = AutoEncoderProcess.neverInitialized ? 1.0 : AutoEncoderProcess.getReconstructionLoss(image);
 				int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinningScheme.numLossBins),GaierAutoencoderPictureBinningScheme.numLossBins - 1);
 				indicesMAPEliteBin = new int[]{nodes, lossIndex};
 			} else {
@@ -352,15 +353,16 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		// For test runs
 		MMNEAT.main(new String[]{"runNumber:1","randomSeed:4","base:targetimage","mu:400","maxGens:100000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
-				"log:TargetImage-skullWithEnhancedCPPNPictureGenotype","saveTo:skullWithEnhancedCPPNPictureGenotype","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
+				"log:TargetImage-skullAutoEncoder","saveTo:skullAutoEncoder","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping",
+				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping",
+				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.GaierAutoencoderPictureBinningScheme",
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
 				"fs:true",
-				"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
-				"trainingAutoEncoder:false",
+				//"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
+				"trainingAutoEncoder:true",
 				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",

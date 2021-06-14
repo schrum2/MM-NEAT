@@ -35,6 +35,9 @@ public class AutoEncoderProcess extends Comm {
 
 	private String savedAutoencoder;
 	private AUTOENCODER_MODE mode;
+	// When using an AutoEncoder with MAP-Elites, need to assign "novelty" before autoencoder
+	// is trained, so have a special case for calculating loss
+	public static boolean neverInitialized = true;
 
 	public static final int SIDE_LENGTH = 28;
 
