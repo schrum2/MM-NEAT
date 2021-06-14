@@ -20,10 +20,16 @@ but has not been updated since September 2017.
 Also, if you want to use Generative Adversarial Networks to produce video game levels, you will need:
 
 * Python 3.7.3
-* PyTorch 1.1.0
-* NumPy 1.16.2
+* PyTorch 1.8.1
+* NumPy 1.19.5
+* Pillow 7.0.0
 
 More recent versions may also work, but these are what was used to develop the code.
+To quickly install the required packages, run this in command prompt or anaconda:
+```
+pip install -r requirements.txt
+```
+
 
 ## INSTALLATION
 

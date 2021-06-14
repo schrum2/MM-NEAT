@@ -155,6 +155,7 @@ ZeldaAllDungeons*
 vizdoom/bin/vizdoom-He_Deceives.ini
 *.bmp
 *.txt
+!requirements.txt
 vizdoom.ini
 *.pdf
 *.plot
