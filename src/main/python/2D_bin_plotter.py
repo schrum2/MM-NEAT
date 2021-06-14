@@ -11,8 +11,11 @@ except:
     quit()
  
 try:
-    f = open(file_path, "r")
-    file_contents = f.read().split("\t")[1:]
+    opened_file = open(file_path, "r")
+    for line in opened_file:
+        pass
+    last_line = line
+    file_contents = last_line.split("\t")[1:]
 except:
     print("File could not be opened.")
     quit()
@@ -30,3 +33,8 @@ bins.resize(math.floor(math.sqrt(len(numeric_contents))), math.floor(math.sqrt(l
 
 plt.imshow(bins)
 plt.show()
+
+with open('filename.txt') as f:
+    for line in f:
+        pass
+    last_line = line
