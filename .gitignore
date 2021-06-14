@@ -145,6 +145,8 @@ ZeldaAllDungeons*
 /src/main/python/MarioGAN/Zelda-30-5000
 /src/main/python/Pyribs/sphere_output*
 /src/main/python/Pyribs/dask-worker-space
+/loderunner20gancomparebins/
+/mariocomparebins/
 # Some of UT^2's log files end up with this naming convention
 *-null
 *.zds
