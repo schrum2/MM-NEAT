@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import autoencoder.python.AutoEncoderProcess;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -156,15 +157,18 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		int[] indicesMAPEliteBin = null;
 		
 		if(MMNEAT.ea instanceof MAPElites) {
-			
+			int nodes = Math.min(tweannIndividual.nodes.size(), CPPNComplexityBinMapping.MAX_NUM_NEURONS);
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNComplexityBinMapping) {
 				// What if number of nodes or links exceeds 35? Need to cap the index
-				int nodes = Math.min(tweannIndividual.nodes.size(), CPPNComplexityBinMapping.MAX_NUM_NEURONS);
 				int links = Math.min(tweannIndividual.links.size(), CPPNComplexityBinMapping.MAX_NUM_LINKS);
 				indicesMAPEliteBin = new int[] {nodes, links}; // Array of two values corresponding to bin label dimensions
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof PictureFourQuadrantBrightnessBinLabels) {
 				PictureFourQuadrantBrightnessBinLabels labels = (PictureFourQuadrantBrightnessBinLabels) ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass();
 				indicesMAPEliteBin = labels.binCoordinates(image);
+			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof GaierAutoencoderPictureBinningScheme) {
+				double loss = AutoEncoderProcess.getReconstructionLoss(image);
+				int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinningScheme.numLossBins),GaierAutoencoderPictureBinningScheme.numLossBins - 1);
+				indicesMAPEliteBin = new int[]{nodes, lossIndex};
 			} else {
 				throw new IllegalStateException("No valid binning scheme provided for PictureTargetTask");
 			}
