@@ -1,6 +1,5 @@
 package edu.southwestern.tasks.innovationengines;
 
-import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -74,7 +73,7 @@ public class GaierAutoencoderPictureBinningScheme implements BinLabels  {
 	 */
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = ((multi[BIN_INDEX_NODES] - MIN_NUM_NEURONS) + (MAX_NUM_NEURONS - MIN_NUM_NEURONS + 1) * (multi[BIN_INDEX_LOSS]));
+		int binIndex = ((multi[BIN_INDEX_NODES] - MIN_NUM_NEURONS) * numLossBins + (multi[BIN_INDEX_LOSS]));
 		assert binIndex >= 0 : "Negative index " + Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
 	}
