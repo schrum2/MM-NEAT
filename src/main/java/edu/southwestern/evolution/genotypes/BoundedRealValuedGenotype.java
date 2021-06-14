@@ -56,7 +56,7 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 		this.upper = upper;
 		bound();
 	}
-	
+
 	/**
 	 * Creates evolvable genotype where genes are restricted to default bounds
 	 * @param genes Array of doubles corresponding to starting gene values
@@ -116,8 +116,8 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	 */
 	@Override
 	public void mutate() {
-		MAPElitesLineMutation lineMutation = new MAPElitesLineMutation();
-		if (lineMutation.perform()) {
+		MAPElitesLineMutation lineMutation = null;
+		if(Parameters.parameters.doubleParameter("meLineMutationRate") > 0.0 && (lineMutation = new MAPElitesLineMutation()).perform()) {		
 			lineMutation.mutate(this);
 		} else {
 			if (polynomialMutation) { // Specialized mutation operator slightly more complicated than simple perturbation

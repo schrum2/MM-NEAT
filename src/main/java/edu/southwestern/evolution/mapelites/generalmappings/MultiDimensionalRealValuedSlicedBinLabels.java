@@ -47,7 +47,7 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 				sums[i] += process(solution[j]); // sum each segment
 			}
 		}
-		System.out.println("Characterized \""+Arrays.toString(solution)+"\" to \""+Arrays.toString(sums)+"\"");
+		if (EXTRA_LOGGING) System.out.println("Characterized \""+Arrays.toString(solution)+"\" to \""+Arrays.toString(sums)+"\"");
 		return sums;
 	}
 	
