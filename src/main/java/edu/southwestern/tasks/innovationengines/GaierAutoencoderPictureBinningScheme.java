@@ -78,10 +78,4 @@ public class GaierAutoencoderPictureBinningScheme implements BinLabels  {
 		assert binIndex >= 0 : "Negative index " + Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
 	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
 }
