@@ -3,6 +3,7 @@ package edu.southwestern.evolution.mapelites;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Vector;
 import java.util.stream.IntStream;
 
@@ -171,7 +172,12 @@ public class Archive<T> {
 	 * @return elite individual score instance 
 	 */
 	public Score<T> getElite(int[] binIndices) {
-		return archive.get(mapping.oneDimensionalIndex(binIndices));
+		int oneD = mapping.oneDimensionalIndex(binIndices);
+		try {
+			return archive.get(oneD);
+		} catch(ArrayIndexOutOfBoundsException e) {
+			throw new IndexOutOfBoundsException(Arrays.toString(binIndices) + " -> " + oneD);
+		}
 	}
 
 	/**
