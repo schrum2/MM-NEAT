@@ -1,3 +1,10 @@
+"""
+    2D archive plotter
+    
+    Usage:
+    python 2D_bin_plotter.py <plot file to display>
+    python 2D_bin_plotter.py ...\MM-NEAT\mapelitesfunctionoptimization\MAPElitesSphereFunctionOptimization20\mapelitesfunctionoptimization-MAPElitesSphereFunctionOptimization20_MAPElites_log.txt
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
