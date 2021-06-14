@@ -27,9 +27,9 @@ except:
     print("File could not be opened.")
     quit()
     
-def to_number(string_in): # Function to convert strings into numbers, defaulting -Infinity to -400
+def to_number(string_in): # Function to convert strings into numbers
     if string_in == "-Infinity":
-        return -400
+        return np.NINF
     else:
         return float(string_in)
 

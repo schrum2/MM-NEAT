@@ -63,7 +63,7 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 	public Score<ArrayList<Double>> evaluate(Genotype<ArrayList<Double>> individual) {
 		ArrayList<Double> pheno = individual.getPhenotype();
 		double[] vector = ArrayUtil.doubleArrayFromList(pheno); // Convert ArrayList into double array to give to function
-		//double[] vector = ArrayUtil.doubleSpecified(20, 5.12);
+		//vector = ArrayUtil.doubleSpecified(20, 3.0);
 		double score = -function.valueOf(vector); // Must be negated to work since CMA-ES is a minimizer
 		double[] scores = new double[] {score}; 
 		Score<ArrayList<Double>> result =  new Score<>(individual, scores, null);
@@ -98,7 +98,7 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		int runNum = 3;
+		int runNum = 0;
 		// Test with MAP Elites and sphere function
 		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" polynomialMutation:false io:true base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-MAPElitesTEST saveTo:MAPElitesTEST netio:false maxGens:10000 ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:500 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRangeBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12 mapElitesQDBaseOffset:525").split(" "));
 		
