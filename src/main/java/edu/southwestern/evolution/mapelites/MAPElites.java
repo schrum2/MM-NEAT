@@ -11,6 +11,7 @@ import java.util.Vector;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import autoencoder.python.AutoEncoderProcess;
 import autoencoder.python.TrainAutoEncoderProcess;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
@@ -376,10 +377,16 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 
 			// If we are using the autoencoder (only use if "trainingAutoEncoder" == true), re-train it here
 			if(Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
+				if(AutoEncoderProcess.currentProcess != null) {
+					// Stop autoencoder inference when it is time to train a new one
+					AutoEncoderProcess.terminateAutoEncoderProcess(); 
+				}
 				String experimentDir = FileUtilities.getSaveDirectory()+File.separator+"snapshots";
 				Parameters.parameters.setString("mostRecentAutoEncoder", experimentDir+File.separator+ "iteration" + iterations + ".pth");
 				TrainAutoEncoderProcess training = new TrainAutoEncoderProcess(experimentDir+File.separator+"iteration" + iterations, Parameters.parameters.stringParameter("mostRecentAutoEncoder"));
 				training.start();
+				// Initialize process for newly trained autoencoder
+				AutoEncoderProcess.getAutoEncoderProcess(); // (sort of optional to initialize here)
 			} 
 			
 		}
