@@ -9,12 +9,12 @@ import edu.southwestern.parameters.Parameters;
 
 public class CPPNComplexityBinMappingTest {
 
-	CPPNComplexityBinMapping labels;
+	CPPNComplexityBinLabels labels;
 	
 	@Before
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"maxNumNeurons:100", "maxNumLinks:200"});
-		labels = new CPPNComplexityBinMapping();
+		labels = new CPPNComplexityBinLabels();
 	}
 
 	@Test

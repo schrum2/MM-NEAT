@@ -9,13 +9,13 @@ import edu.southwestern.parameters.Parameters;
 
 public class GaierAutoencoderPictureBinningSchemeTest {
 	
-	GaierAutoencoderPictureBinningScheme labels;
+	GaierAutoencoderPictureBinLabels labels;
 	public static final int NUM_LOSS_BINS = 10;
 
 	@Before
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"maxNumNeurons:100", "numReconstructionLossBins:"+NUM_LOSS_BINS});
-		labels = new GaierAutoencoderPictureBinningScheme();
+		labels = new GaierAutoencoderPictureBinLabels();
 	}
 
 	@Test

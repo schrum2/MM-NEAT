@@ -157,17 +157,18 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		int[] indicesMAPEliteBin = null;
 		
 		if(MMNEAT.ea instanceof MAPElites) {
-			int nodes = Math.min(tweannIndividual.nodes.size(), CPPNComplexityBinMapping.MAX_NUM_NEURONS);
-			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNComplexityBinMapping) {
+			int nodes = Math.min(tweannIndividual.nodes.size(), CPPNComplexityBinLabels.maxNumNeurons);
+			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNComplexityBinLabels) {
 				// What if number of nodes or links exceeds 35? Need to cap the index
-				int links = Math.min(tweannIndividual.links.size(), CPPNComplexityBinMapping.MAX_NUM_LINKS);
+				int links = Math.min(tweannIndividual.links.size(), CPPNComplexityBinLabels.maxNumLinks);
 				indicesMAPEliteBin = new int[] {nodes, links}; // Array of two values corresponding to bin label dimensions
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof PictureFourQuadrantBrightnessBinLabels) {
 				PictureFourQuadrantBrightnessBinLabels labels = (PictureFourQuadrantBrightnessBinLabels) ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass();
 				indicesMAPEliteBin = labels.binCoordinates(image);
-			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof GaierAutoencoderPictureBinningScheme) {
-				double loss = AutoEncoderProcess.getReconstructionLoss(image);
-				int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinningScheme.numLossBins),GaierAutoencoderPictureBinningScheme.numLossBins - 1);
+			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof GaierAutoencoderPictureBinLabels) {
+				// If the AutoEncoder has not been initialized yet, then loss is 1.0
+				double loss = AutoEncoderProcess.neverInitialized ? 1.0 : AutoEncoderProcess.getReconstructionLoss(image);
+				int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinLabels.numLossBins),GaierAutoencoderPictureBinLabels.numLossBins - 1);
 				indicesMAPEliteBin = new int[]{nodes, lossIndex};
 			} else {
 				throw new IllegalStateException("No valid binning scheme provided for PictureTargetTask");
@@ -314,7 +315,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 //				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 //				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 //				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-//				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping",
+//				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinLabels",
 //				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
 //				"fs:true",
 //				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
@@ -352,15 +353,16 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		// For test runs
 		MMNEAT.main(new String[]{"runNumber:1","randomSeed:4","base:targetimage","mu:400","maxGens:100000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
-				"log:TargetImage-skullWithEnhancedCPPNPictureGenotype","saveTo:skullWithEnhancedCPPNPictureGenotype","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
+				"log:TargetImage-skullAutoEncoder","saveTo:skullAutoEncoder","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping",
+				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinLabels",
+				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.GaierAutoencoderPictureBinLabels",
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
 				"fs:true",
-				"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
-				"trainingAutoEncoder:false",
+				//"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
+				"trainingAutoEncoder:true",
 				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",

@@ -21,18 +21,20 @@ import edu.southwestern.parameters.Parameters;
  *
  * @param <T>
  */
-public class GaierAutoencoderPictureBinningScheme implements BinLabels  {
+public class GaierAutoencoderPictureBinLabels implements BinLabels  {
 	
 	List<String> labels = null;
 	
 	public static final int BIN_INDEX_NODES = 0;
 	public static final int BIN_INDEX_LOSS = 1;
-	public static int MAX_NUM_NEURONS;
 	public static int numLossBins;
 	public static final int MIN_NUM_NEURONS = 5;
 	
-	public GaierAutoencoderPictureBinningScheme() {
-		MAX_NUM_NEURONS = Parameters.parameters.integerParameter("maxNumNeurons");
+	public GaierAutoencoderPictureBinLabels() {
+		if(!Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
+			throw new IllegalStateException("You can't use the GaierAutoencoderPictureBinLabels binning scheme without training an autoencoder");
+		}
+		CPPNComplexityBinLabels.maxNumNeurons = Parameters.parameters.integerParameter("maxNumNeurons");
 		numLossBins = Parameters.parameters.integerParameter("numReconstructionLossBins");
 	}
 
@@ -45,11 +47,11 @@ public class GaierAutoencoderPictureBinningScheme implements BinLabels  {
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {
-			int size = (MAX_NUM_NEURONS - MIN_NUM_NEURONS + 1) * numLossBins;
+			int size = (CPPNComplexityBinLabels.maxNumNeurons - MIN_NUM_NEURONS + 1) * numLossBins;
 			System.out.println("Archive Size: " + size);
 			labels = new ArrayList<String>(size);
 			int count = 0;
-			for(int i = MIN_NUM_NEURONS; i <= MAX_NUM_NEURONS; i++) {
+			for(int i = MIN_NUM_NEURONS; i <= CPPNComplexityBinLabels.maxNumNeurons; i++) {
 				for(int j = 0; j < numLossBins; j++) {
 					BigDecimal secondSegment = new BigDecimal(j);
 					BigDecimal thirdSegment = new BigDecimal(j + 1);

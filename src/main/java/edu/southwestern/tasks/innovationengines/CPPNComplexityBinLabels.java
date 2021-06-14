@@ -15,20 +15,20 @@ import edu.southwestern.parameters.Parameters;
  *
  * @param <T>
  */
-public class CPPNComplexityBinMapping implements BinLabels {
+public class CPPNComplexityBinLabels implements BinLabels {
 	
 	List<String> labels = null;
 	public static final int BIN_INDEX_NODES = 0;
 	public static final int BIN_INDEX_LINKS = 1;
 	
-	public static int MAX_NUM_NEURONS;
-	public static int MAX_NUM_LINKS;
+	public static int maxNumNeurons;
+	public static int maxNumLinks;
 	public static final int MIN_NUM_NEURONS = 5;
 	public static final int MIN_NUM_LINKS = 3;
 
-	public CPPNComplexityBinMapping() {
-		MAX_NUM_NEURONS = Parameters.parameters.integerParameter("maxNumNeurons");
-		MAX_NUM_LINKS = Parameters.parameters.integerParameter("maxNumLinks");
+	public CPPNComplexityBinLabels() {
+		maxNumNeurons = Parameters.parameters.integerParameter("maxNumNeurons");
+		maxNumLinks = Parameters.parameters.integerParameter("maxNumLinks");
 	}
 	
 	/**
@@ -40,12 +40,12 @@ public class CPPNComplexityBinMapping implements BinLabels {
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {
-			int size = (MAX_NUM_NEURONS - MIN_NUM_NEURONS + 1)*(MAX_NUM_LINKS - MIN_NUM_LINKS + 1);
+			int size = (maxNumNeurons - MIN_NUM_NEURONS + 1)*(maxNumLinks - MIN_NUM_LINKS + 1);
 			System.out.println("Archive Size: "+size);
 			labels = new ArrayList<String>(size);
 			int count = 0;
-			for(int i = MIN_NUM_LINKS; i <= MAX_NUM_LINKS; i++) {
-				for(int j = MIN_NUM_NEURONS; j <= MAX_NUM_NEURONS; j++) {
+			for(int i = MIN_NUM_LINKS; i <= maxNumLinks; i++) {
+				for(int j = MIN_NUM_NEURONS; j <= maxNumNeurons; j++) {
 					labels.add("Neurons[" + j + "]links[" + i + "]");
 					count++;
 				}
@@ -64,7 +64,7 @@ public class CPPNComplexityBinMapping implements BinLabels {
 	 */
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = ((multi[BIN_INDEX_NODES] - MIN_NUM_NEURONS) + (MAX_NUM_NEURONS - MIN_NUM_NEURONS + 1) * (multi[BIN_INDEX_LINKS] - MIN_NUM_LINKS));
+		int binIndex = ((multi[BIN_INDEX_NODES] - MIN_NUM_NEURONS) + (maxNumNeurons - MIN_NUM_NEURONS + 1) * (multi[BIN_INDEX_LINKS] - MIN_NUM_LINKS));
 		assert binIndex >= 0 : "Negative index "+Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
 	}

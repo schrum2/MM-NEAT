@@ -12,7 +12,18 @@ import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.util.random.RandomNumbers;
 
 /**
- *
+ * This class implements a polynomial mutation operator.
+ * 
+ * I based my implementation on code from jMetal, which is here:
+ * https://github.com/jMetal/jMetal/blob/master/jmetal-core/src/main/java/org/uma/jmetal/operator/mutation/impl/PolynomialMutation.java
+ * Their implementation is based on NSGA-II code available in
+ * http://www.iitk.ac.in/kangal/codes.shtml
+ * 
+ * The mutation operation is described in this paper:
+ * https://www.iitk.ac.in/kangal/papers/k2012016.pdf
+ * However, the connection between those formulas and the ones in the
+ * code below are confusing.
+ * 
  * @author Jacob Schrum
  */
 public class PolynomialMutation extends RealMutation {
