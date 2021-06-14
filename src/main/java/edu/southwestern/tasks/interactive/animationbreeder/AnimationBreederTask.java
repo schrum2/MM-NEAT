@@ -270,6 +270,41 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				}
 			});
 			
+			//AnimateRotation, AnimateScale, AnimateDeltaX, and AnimateDeltaY.
+			JCheckBox animateRotation = new JCheckBox("AnimateRotation", Parameters.parameters.booleanParameter("AnimateRotation"));
+			animateRotation.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Flip rotation");
+					Parameters.parameters.changeBoolean("AnimateRotation");
+					resetButtons(true);
+				}
+			});
+			
+			JCheckBox animateScale = new JCheckBox("AnimateScale", Parameters.parameters.booleanParameter("AnimateScale"));
+			animateScale.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Flip scale");
+					Parameters.parameters.changeBoolean("AnimateScale");
+					resetButtons(true);
+				}
+			});
+			
+			JCheckBox animateDeltaX = new JCheckBox("AnimateDeltaX", Parameters.parameters.booleanParameter("AnimateDeltaX"));
+			animateDeltaX.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Flip delta X");
+					Parameters.parameters.changeBoolean("AnimateDeltaX");
+				}
+			});
+			
+			JCheckBox animateDeltaY = new JCheckBox("AnimateDeltaY", Parameters.parameters.booleanParameter("AnimateDeltaY"));
+			animateDeltaY.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Flip delta Y");
+					Parameters.parameters.changeBoolean("AnimateDeltaY");
+				}
+			});
+			
 			JPanel imageTweaks = new JPanel();
 			imageTweaks.add(stark);
 			top.add(imageTweaks);
@@ -364,7 +399,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	@Override
 	public String[] sensorLabels() {
-		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "time", "bias" };
+		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "time", "bias", "rotation", "scale", "deltaX", "deltaY"};
 	}
 
 	/**
