@@ -165,10 +165,10 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof PictureFourQuadrantBrightnessBinLabels) {
 				PictureFourQuadrantBrightnessBinLabels labels = (PictureFourQuadrantBrightnessBinLabels) ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass();
 				indicesMAPEliteBin = labels.binCoordinates(image);
-			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof GaierAutoencoderPictureBinningScheme) {
+			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof GaierAutoencoderPictureBinLabels) {
 				// If the AutoEncoder has not been initialized yet, then loss is 1.0
 				double loss = AutoEncoderProcess.neverInitialized ? 1.0 : AutoEncoderProcess.getReconstructionLoss(image);
-				int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinningScheme.numLossBins),GaierAutoencoderPictureBinningScheme.numLossBins - 1);
+				int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinLabels.numLossBins),GaierAutoencoderPictureBinLabels.numLossBins - 1);
 				indicesMAPEliteBin = new int[]{nodes, lossIndex};
 			} else {
 				throw new IllegalStateException("No valid binning scheme provided for PictureTargetTask");
@@ -358,7 +358,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinLabels",
-				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.GaierAutoencoderPictureBinningScheme",
+				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.GaierAutoencoderPictureBinLabels",
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
 				"fs:true",
 				//"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",

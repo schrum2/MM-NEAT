@@ -21,7 +21,7 @@ import edu.southwestern.parameters.Parameters;
  *
  * @param <T>
  */
-public class GaierAutoencoderPictureBinningScheme implements BinLabels  {
+public class GaierAutoencoderPictureBinLabels implements BinLabels  {
 	
 	List<String> labels = null;
 	
@@ -30,9 +30,9 @@ public class GaierAutoencoderPictureBinningScheme implements BinLabels  {
 	public static int numLossBins;
 	public static final int MIN_NUM_NEURONS = 5;
 	
-	public GaierAutoencoderPictureBinningScheme() {
+	public GaierAutoencoderPictureBinLabels() {
 		if(!Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
-			throw new IllegalStateException("You can't use the GaierAutoencoderPictureBinningScheme binning scheme without training an autoencoder");
+			throw new IllegalStateException("You can't use the GaierAutoencoderPictureBinLabels binning scheme without training an autoencoder");
 		}
 		CPPNComplexityBinLabels.MAX_NUM_NEURONS = Parameters.parameters.integerParameter("maxNumNeurons");
 		numLossBins = Parameters.parameters.integerParameter("numReconstructionLossBins");
