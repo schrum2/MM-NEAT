@@ -4,11 +4,10 @@ import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import autoencoder.python.AutoEncoderProcess;
 import edu.southwestern.evolution.mapelites.BinLabels;
-import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 
 /**
@@ -23,16 +22,17 @@ import edu.southwestern.parameters.Parameters;
  *
  * @param <T>
  */
-public class GaierAutoencoderPictureBinningScheme<T extends Network> implements BinLabels  {
+public class GaierAutoencoderPictureBinningScheme implements BinLabels  {
 	
 	List<String> labels = null;
 	
+	public static final int BIN_INDEX_NODES = 0;
+	public static final int BIN_INDEX_LOSS = 1;
 	public static int MAX_NUM_NEURONS;
-	public static double lossValue;
 	public static int numLossBins;
 	public static final int MIN_NUM_NEURONS = 5;
 	
-	public GaierAutoencoderPictureBinningScheme(BufferedImage image) {
+	public GaierAutoencoderPictureBinningScheme() {
 		MAX_NUM_NEURONS = Parameters.parameters.integerParameter("maxNumNeurons");
 		numLossBins = Parameters.parameters.integerParameter("numReconstructionLossBins");
 	}
@@ -74,8 +74,9 @@ public class GaierAutoencoderPictureBinningScheme<T extends Network> implements 
 	 */
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		// TODO Auto-generated method stub
-		return 0;
+		int binIndex = ((multi[BIN_INDEX_NODES] - MIN_NUM_NEURONS) + (MAX_NUM_NEURONS - MIN_NUM_NEURONS + 1) * (multi[BIN_INDEX_LOSS]));
+		assert binIndex >= 0 : "Negative index " + Arrays.toString(multi) + " -> " + binIndex;
+		return binIndex;
 	}
 
 	public static void main(String[] args) {
