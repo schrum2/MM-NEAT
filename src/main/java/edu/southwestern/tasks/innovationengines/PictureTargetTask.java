@@ -157,10 +157,10 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		int[] indicesMAPEliteBin = null;
 		
 		if(MMNEAT.ea instanceof MAPElites) {
-			int nodes = Math.min(tweannIndividual.nodes.size(), CPPNComplexityBinMapping.MAX_NUM_NEURONS);
-			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNComplexityBinMapping) {
+			int nodes = Math.min(tweannIndividual.nodes.size(), CPPNComplexityBinLabels.MAX_NUM_NEURONS);
+			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNComplexityBinLabels) {
 				// What if number of nodes or links exceeds 35? Need to cap the index
-				int links = Math.min(tweannIndividual.links.size(), CPPNComplexityBinMapping.MAX_NUM_LINKS);
+				int links = Math.min(tweannIndividual.links.size(), CPPNComplexityBinLabels.MAX_NUM_LINKS);
 				indicesMAPEliteBin = new int[] {nodes, links}; // Array of two values corresponding to bin label dimensions
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof PictureFourQuadrantBrightnessBinLabels) {
 				PictureFourQuadrantBrightnessBinLabels labels = (PictureFourQuadrantBrightnessBinLabels) ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass();
@@ -315,7 +315,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 //				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 //				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 //				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-//				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping",
+//				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinLabels",
 //				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
 //				"fs:true",
 //				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
@@ -357,7 +357,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping",
+				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinLabels",
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.GaierAutoencoderPictureBinningScheme",
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
 				"fs:true",

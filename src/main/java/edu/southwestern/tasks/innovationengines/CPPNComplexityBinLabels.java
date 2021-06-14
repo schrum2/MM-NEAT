@@ -15,7 +15,7 @@ import edu.southwestern.parameters.Parameters;
  *
  * @param <T>
  */
-public class CPPNComplexityBinMapping implements BinLabels {
+public class CPPNComplexityBinLabels implements BinLabels {
 	
 	List<String> labels = null;
 	public static final int BIN_INDEX_NODES = 0;
@@ -26,7 +26,7 @@ public class CPPNComplexityBinMapping implements BinLabels {
 	public static final int MIN_NUM_NEURONS = 5;
 	public static final int MIN_NUM_LINKS = 3;
 
-	public CPPNComplexityBinMapping() {
+	public CPPNComplexityBinLabels() {
 		MAX_NUM_NEURONS = Parameters.parameters.integerParameter("maxNumNeurons");
 		MAX_NUM_LINKS = Parameters.parameters.integerParameter("maxNumLinks");
 	}
