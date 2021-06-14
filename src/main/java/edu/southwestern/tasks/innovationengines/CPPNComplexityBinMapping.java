@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import edu.southwestern.evolution.mapelites.BinLabels;
-import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 
 /**
@@ -16,7 +15,7 @@ import edu.southwestern.parameters.Parameters;
  *
  * @param <T>
  */
-public class CPPNComplexityBinMapping<T extends Network> implements BinLabels {
+public class CPPNComplexityBinMapping implements BinLabels {
 	
 	List<String> labels = null;
 	public static final int BIN_INDEX_NODES = 0;
@@ -60,7 +59,7 @@ public class CPPNComplexityBinMapping<T extends Network> implements BinLabels {
 	 * Calculating the index of the correct bin label
 	 * in an int array multi.  
 	 * 
-	 * @param multi An array containing all of the possible bin labels
+	 * @param multi An array containing two values: number of nodes, then number of links
 	 * @return The index in multi containing the correct bin
 	 */
 	@Override
