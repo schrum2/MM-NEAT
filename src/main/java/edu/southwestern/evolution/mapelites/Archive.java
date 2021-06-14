@@ -49,7 +49,55 @@ public class Archive<T> {
 			archive.add(null); // Place holder for first individual and future elites
 		}
 	}
+	
+	/**
+	 * Create a new archive by inserting the contents of another.
+	 * Sort of like copying, but involves reevaluation, so the new
+	 * one will only be identical if all evaluations come out the same.
+	 * 
+	 * @param other Archive to draw contents from
+	 */
+	public Archive(Archive<T> other) {
+		saveElites = false; // Don't save while reorganizing
+		mapping = other.mapping;
+		int numBins = mapping.binLabels().size();
+		archive = new Vector<Score<T>>(numBins);
+		occupiedBins = 0;
+		archiveDir = other.archiveDir; // Will save in the same place!
 
+		// Fill with null values before actually selecting individuals to copy over
+		for(int i = 0; i < numBins; i++) {
+			archive.add(null); // Place holder for first individual and future elites
+		}
+		// Loop through original archive
+		for(Score<T> s : other.getArchive()) {
+			if(s != null) { // Ignore empty cells
+				@SuppressWarnings("unchecked")
+				Score<T> newScore = ((MAPElites<T>) MMNEAT.ea).task.evaluate(s.individual);
+				this.add(newScore);
+			}
+		}
+		
+		// Ok to save moving forward
+		saveElites = other.saveElites;
+	}
+	
+	/**
+	 * Number of occupied bins (non null).
+	 * Note that this access is not synchronized.
+	 * Could be subject to race conditions.
+	 * 
+	 * @return number of occupied bins
+	 */
+	public int getNumberOfOccupiedBins() {
+		return occupiedBins;
+	}
+	
+	/**
+	 * The raw Vector of the archive, including many null slots.
+	 * The size of this exactly equals the number of cells that "could" be occupied.
+	 * @return Vector of Score instances in the archive
+	 */
 	public Vector<Score<T>> getArchive(){
 		return archive;
 	}
