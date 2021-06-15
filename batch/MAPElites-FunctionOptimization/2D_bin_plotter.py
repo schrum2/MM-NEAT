@@ -28,7 +28,7 @@ except:
     quit()
     
 def to_number(string_in): # Function to convert strings into numbers
-    if string_in == "X": #"-Infinity": # Schrum: Changed from -Infinity to conserve space from repeated characters
+    if string_in.strip() == "X": #"-Infinity": # Schrum: Changed from -Infinity to conserve space from repeated characters
         return np.NINF
     else:
         return float(string_in)
