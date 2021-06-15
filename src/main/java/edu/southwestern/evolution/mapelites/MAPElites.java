@@ -388,7 +388,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				training.start();
 				// Initialize process for newly trained autoencoder
 				AutoEncoderProcess.getAutoEncoderProcess(); // (sort of optional to initialize here)
-				
+				AutoEncoderProcess.neverInitialized = false;
 				// Now we need to dump the archive and replace it with a new one after re-evaluating all old contents.
 				int oldOccupied = this.archive.getNumberOfOccupiedBins();
 				this.archive = new Archive<T>(this.archive);

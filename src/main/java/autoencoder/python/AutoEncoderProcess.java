@@ -102,15 +102,23 @@ public class AutoEncoderProcess extends Comm {
 
 
 	public static double getReconstructionLoss(BufferedImage image) {
+		// Need to resize. Autoencoder must have 28x28 input
+		if(image.getWidth() != SIDE_LENGTH || image.getHeight() != SIDE_LENGTH) {
+			image = GraphicsUtil.convertToBufferedImage(image.getScaledInstance(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.SCALE_DEFAULT));
+		}
 		try {
+			//System.out.println("Get Loss: "+image.getWidth()+","+image.getHeight());
 			AutoEncoderProcess p = getAutoEncoderProcess();
 			double[] imageInput =  GraphicsUtil.flatFeatureArrayFromBufferedImage(image);
+			//System.out.println(imageInput.length);
 			String output = null;
 			synchronized(p) {
 				for(int i = 0; i < imageInput.length; i++) {
+					//System.out.println(i);
 					p.commSend(imageInput[i] + "");
 				}
 				output = p.commRecv();
+				//System.out.println(output);
 			}
 			double result = Double.parseDouble(output);
 			return result;
