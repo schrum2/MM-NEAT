@@ -150,6 +150,7 @@ ZeldaAllDungeons*
 /mariocomparebins/
 /zeldacomparebins/
 /megamanmultigancomparebins/
+/latentvariablepartition/
 # Some of UT^2's log files end up with this naming convention
 *-null
 *.zds
