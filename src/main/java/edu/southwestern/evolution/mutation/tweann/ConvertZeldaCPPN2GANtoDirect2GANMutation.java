@@ -2,7 +2,6 @@ package edu.southwestern.evolution.mutation.tweann;
 
 import java.util.ArrayList;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.EitherOrGenotype;
@@ -77,7 +76,7 @@ public class ConvertZeldaCPPN2GANtoDirect2GANMutation extends Mutation {
 				
 			}
 		}
-		BoundedRealValuedGenotype k = new BoundedRealValuedGenotype(longResult, MMNEAT.getLowerBounds(), MMNEAT.getUpperBounds());
+		BoundedRealValuedGenotype k = new BoundedRealValuedGenotype(longResult);
 		//k.newInstance();
 		((EitherOrGenotype<TWEANN, ArrayList<Double>>) cppnOrDirect2ganGenotype).switchForms(k);
 		

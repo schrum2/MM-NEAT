@@ -124,13 +124,12 @@ public abstract class LodeRunnerLevelSequenceTask<T> extends LodeRunnerLevelTask
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num){
 		ArrayList<List<List<Integer>>> levelSequence = getLevelSequence(individual, Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence"));//right now I set it to have 3 levels in the sequence
-		long genotypeId = individual.getId();
 		@SuppressWarnings("unchecked")
 		Pair<double[], double[]>[] scoreSequence = new Pair[levelSequence.size()];
 		for(int i = 0; i < levelSequence.size(); i++) {
 			//takes in the level it is on, i, and the length of the levelSequence
 			double psuedoRandomSeed = differentRandomSeedForEveryLevel(i, individual.getPhenotype()); //different random seed for every level in the sequence
-			scoreSequence[i] = evaluateOneLevel(levelSequence.get(i), psuedoRandomSeed, genotypeId);
+			scoreSequence[i] = evaluateOneLevel(levelSequence.get(i), psuedoRandomSeed, individual);
 		}
 		Pair<double[], double[]> finalScores; //declares variable to hold the final scores to be calculated
 		//calculate the otherScores

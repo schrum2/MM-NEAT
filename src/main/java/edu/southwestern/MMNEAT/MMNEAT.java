@@ -70,6 +70,7 @@ import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.innovationengines.ShapeInnovationTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
+import edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.loderunner.LodeRunnerGANLevelBreederTask;
@@ -78,6 +79,7 @@ import edu.southwestern.tasks.interactive.mario.MarioGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.mario.MarioLevelBreederTask;
 import edu.southwestern.tasks.interactive.megaman.MegaManCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.interactive.megaman.MegaManGANLevelBreederTask;
+import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANLevelSequenceTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANLevelTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
@@ -144,6 +146,10 @@ public class MMNEAT {
 	public static int modesToTrack = 0;
 	public static double[] lowerInputBounds;
 	public static double[] upperInputBounds;
+	// Real-valued bounds
+	public static double[] lower = null; // Lowest allowable value for each gene position
+	public static double[] upper = null; // Highest allowable value for each gene position
+	
 	public static int[] discreteCeilings;
 	public static Experiment experiment;
 	public static Task task;
@@ -806,6 +812,8 @@ public class MMNEAT {
 		genotype = null;
 		experiment = null;
 		performanceLog = null;
+		lower = null;
+		upper = null;
 		EvolutionaryHistory.archetypes = null;
 		Executor.close();
 	}
@@ -889,6 +897,9 @@ public class MMNEAT {
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Simple way of debugging using the profiler
+		//args = "runNumber:0 randomSeed:0 io:true numImprovementEmitters:1 numOptimizingEmitters:0 base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-CMAMERastrigin1ImprovementFunctionOptimization saveTo:CMAMERastrigin1ImprovementFunctionOptimization netio:false maxGens:2497500 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:10000 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRangeBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12 mapElitesQDBaseOffset:525".split(" ");
+		//args = "runNumber:0 randomSeed:0 io:true base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-MAPElitesRastriginFunctionOptimization saveTo:MAPElitesRastriginFunctionOptimization netio:false maxGens:2497500 ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:10000 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRangeBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12 mapElitesQDBaseOffset:525".split(" ");
+		//args = "runNumber:9 randomSeed:9 base:mariolevelsdecoratensleniency log:MarioLevelsDecorateNSLeniency-Direct2GAN saveTo:Direct2GAN marioGANLevelChunks:10 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 mu:100 maxGens:100000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDecorNSAndLeniencyBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000".split(" ");
 		//args = new String[]{"runNumber:1", "randomSeed:0", "base:tetris", "logPerformance:false", "logTWEANNData:false", "trials:1", "maxGens:300", "mu:50", "io:true", "netio:true", "mating:true", "task:edu.southwestern.tasks.rlglue.tetris.TetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "log:Tetris-moRawHNSeedFixedSplitInputs", "saveTo:moRawHNSeedFixedSplitInputs", "hyperNEATSeedTask:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "HNTTetrisProcessDepth:1", "netLinkRate:0.0", "netSpliceRate:0.0", "linkExpressionThreshold:-1"};
 		//args = "zeldaType:generated randomSeed:4 zeldaLevelLoader:edu.southwestern.tasks.gvgai.zelda.level.GANLoader".split(" ");
 		
@@ -1113,21 +1124,37 @@ public class MMNEAT {
 	 * @return
 	 */
 	public static double[] getLowerBounds() {
+		if(lower != null) return lower;
 		// Function Optimization Tasks use these genotypes and know their lower bounds
-		if(fos != null) return fos.getLowerBounds();
-		else if (task instanceof FunctionOptimizationTask) return ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foLowerBounds")); 
+		if(fos != null) 
+			lower = fos.getLowerBounds();
+		else if(task instanceof ShapeInnovationTask) 
+			lower = new double[]{0,0,0,0,0}; // Background color (first three) and pitch, heading
+		else if(task instanceof PictureTargetTask || task instanceof PicbreederTask || task instanceof AnimationBreederTask) 
+			lower = new double[] {0.1, 0, -Parameters.parameters.doubleParameter("imageCenterTranslationRange"), -Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
+		else if(task instanceof FunctionOptimizationTask) 
+			lower = ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foLowerBounds")); 
 		// For Mario GAN, the latent vector length determines the size, but the lower bounds are all zero
-		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask|| task instanceof MarioCPPNOrDirectToGANLevelTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all -1
+		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask|| task instanceof MarioCPPNOrDirectToGANLevelTask) 
+			lower = ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all -1
 		// Similar for ZeldaGAN
-		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength()); // all -1
-		else if(task instanceof ZeldaGANDungeonTask) return ArrayUtil.doubleNegativeOnes(ZeldaGANDungeonTask.genomeLength()); // all -1
-		else if(task instanceof ZeldaCPPNOrDirectToGANDungeonTask) return ArrayUtil.doubleNegativeOnes(ZeldaGANDungeonTask.genomeLength()); // all -1
-		else if(task instanceof LodeRunnerGANLevelBreederTask || task instanceof LodeRunnerGANLevelTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength());
-		else if(task instanceof LodeRunnerGANLevelSequenceTask) return ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")); 
-		else if(task instanceof MegaManGANLevelBreederTask || task instanceof MegaManGANLevelTask || task instanceof MegaManCPPNtoGANLevelBreederTask|| task instanceof MegaManCPPNtoGANLevelTask) return ArrayUtil.doubleNegativeOnes((Parameters.parameters.integerParameter("GANInputSize") + MegaManGANGenerator.numberOfAuxiliaryVariables()) * Parameters.parameters.integerParameter("megaManGANLevelChunks"));
+		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) 
+			lower = ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength()); // all -1
+		else if(task instanceof ZeldaGANDungeonTask) 
+			lower = ArrayUtil.doubleNegativeOnes(ZeldaGANDungeonTask.genomeLength()); // all -1
+		else if(task instanceof ZeldaCPPNOrDirectToGANDungeonTask) 
+			lower = ArrayUtil.doubleNegativeOnes(ZeldaGANDungeonTask.genomeLength()); // all -1
+		else if(task instanceof LodeRunnerGANLevelBreederTask || task instanceof LodeRunnerGANLevelTask) 
+			lower = ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength());
+		else if(task instanceof LodeRunnerGANLevelSequenceTask) 
+			lower = ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")); 
+		else if(task instanceof MegaManGANLevelBreederTask || task instanceof MegaManGANLevelTask || task instanceof MegaManCPPNtoGANLevelBreederTask|| task instanceof MegaManCPPNtoGANLevelTask) 
+			lower = ArrayUtil.doubleNegativeOnes((Parameters.parameters.integerParameter("GANInputSize") + MegaManGANGenerator.numberOfAuxiliaryVariables()) * Parameters.parameters.integerParameter("megaManGANLevelChunks"));
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda/LodeRuner/MegaMan GAN");
 		}
+		
+		return lower;
 	}
 
 	/**
@@ -1136,17 +1163,34 @@ public class MMNEAT {
 	 * @return
 	 */
 	public static double[] getUpperBounds() {
-		if(fos != null) return fos.getUpperBounds();
-		else if (task instanceof FunctionOptimizationTask) return ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foUpperBounds")); 
-		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask||task instanceof MarioCPPNOrDirectToGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
-		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength()); // all ones
-		else if(task instanceof ZeldaGANDungeonTask) return ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones
-		else if(task instanceof ZeldaCPPNOrDirectToGANDungeonTask) return ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones
-		else if(task instanceof LodeRunnerGANLevelBreederTask || task instanceof LodeRunnerGANLevelTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength());
-		else if(task instanceof LodeRunnerGANLevelSequenceTask) return ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")); 
-		else if(task instanceof MegaManGANLevelBreederTask || task instanceof MegaManGANLevelTask || task instanceof MegaManCPPNtoGANLevelBreederTask|| task instanceof MegaManCPPNtoGANLevelTask) return ArrayUtil.doubleOnes((Parameters.parameters.integerParameter("GANInputSize") + MegaManGANGenerator.numberOfAuxiliaryVariables()) * Parameters.parameters.integerParameter("megaManGANLevelChunks"));
+		if(upper != null) return upper;
+		
+		if(fos != null) 
+			upper = fos.getUpperBounds();
+		else if(task instanceof ShapeInnovationTask) 
+			upper = new double[]{1,1,1,1,1}; // Background color (first three) and pitch, heading
+		else if(task instanceof PictureTargetTask || task instanceof PicbreederTask || task instanceof AnimationBreederTask) 
+			upper = new double[] {Parameters.parameters.doubleParameter("maxScale"), 2*Math.PI, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
+		else if(task instanceof FunctionOptimizationTask) 
+			upper = ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foUpperBounds")); 
+		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask||task instanceof MarioCPPNOrDirectToGANLevelTask) 
+			upper = ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
+		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) 
+			upper = ArrayUtil.doubleOnes(GANProcess.latentVectorLength()); // all ones
+		else if(task instanceof ZeldaGANDungeonTask) 
+			upper = ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones
+		else if(task instanceof ZeldaCPPNOrDirectToGANDungeonTask) 
+			upper = ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones
+		else if(task instanceof LodeRunnerGANLevelBreederTask || task instanceof LodeRunnerGANLevelTask) 
+			upper = ArrayUtil.doubleOnes(GANProcess.latentVectorLength());
+		else if(task instanceof LodeRunnerGANLevelSequenceTask) 
+			upper = ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")); 
+		else if(task instanceof MegaManGANLevelBreederTask || task instanceof MegaManGANLevelTask || task instanceof MegaManCPPNtoGANLevelBreederTask|| task instanceof MegaManCPPNtoGANLevelTask) 
+			upper = ArrayUtil.doubleOnes((Parameters.parameters.integerParameter("GANInputSize") + MegaManGANGenerator.numberOfAuxiliaryVariables()) * Parameters.parameters.integerParameter("megaManGANLevelChunks"));
 		else {
 			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda/LodeRunner/MegaMan GAN");
 		}
+		
+		return upper;
 	}
 }

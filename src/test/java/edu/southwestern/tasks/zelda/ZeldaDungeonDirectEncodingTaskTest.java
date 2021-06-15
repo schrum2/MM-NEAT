@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.ContainerGenotype;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
@@ -23,8 +24,11 @@ public class ZeldaDungeonDirectEncodingTaskTest {
 
 	@Before
 	public void setUp() throws Exception {
+		MMNEAT.clearClasses();
+		Parameters.parameters = null;
+		MMNEAT.usingDiversityBinningScheme = false;
 		// TODO: Set the initial parameters here, as in the main method of ZeldaDungeonDirectEncodingTask
-		MMNEAT mmneat = new MMNEAT("runNumber:0 randomSeed:0 watch:false zeldaCPPN2GANSparseKeys:true zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:false zeldaPercentDungeonTraversedRoomFitness:false zeldaDungeonRandomFitness:false zeldaDungeonBackTrackRoomFitness:true trials:1 mu:10 io:false netio:false cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false task:edu.southwestern.tasks.zelda.ZeldaDungeonDirectEncodingTask".split(" "));
+		MMNEAT mmneat = new MMNEAT("runNumber:0 randomSeed:0 watch:false zeldaCPPN2GANSparseKeys:true trackPseudoArchive:false zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:false zeldaPercentDungeonTraversedRoomFitness:false zeldaDungeonRandomFitness:false zeldaDungeonBackTrackRoomFitness:true trials:1 mu:10 io:false netio:false cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false task:edu.southwestern.tasks.zelda.ZeldaDungeonDirectEncodingTask".split(" "));
 		
 		mmneat.loadClasses();
 //		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"});//TODO

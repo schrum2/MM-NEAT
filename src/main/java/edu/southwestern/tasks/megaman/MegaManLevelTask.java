@@ -124,8 +124,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {		
 		List<List<Integer>> level = getMegaManLevelListRepresentationFromGenotype(individual); //gets a level 
-		long genotypeId = individual.getId();
-		return evaluateOneLevel(level, genotypeId);
+		return evaluateOneLevel(level, individual);
 	}
 
 	/**
@@ -135,7 +134,8 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	 * @return Pair of fitness and other scores
 	 */
 	@SuppressWarnings("unchecked")
-	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, long genotypeId) {
+	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, Genotype<T> individual) {
+		long genotypeId = individual.getId();
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
 		Quad<HashSet<MegaManState>, ArrayList<MegaManAction>, MegaManState, Double> aStarResults = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level);
 		HashSet<MegaManState> mostRecentVisited = aStarResults.t1;
@@ -335,7 +335,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 //				archiveArray[binIndex] = binScore; // Percent rooms traversed
 //				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
 				
-			} if(MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels ) {
+			} else if(MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels ) {
 				LevelNovelty.setGame("mega_man");
 				List<List<List<Integer>>> levelSegments = LevelNovelty.partitionSegments(level, LevelNovelty.getRows(), LevelNovelty.getColumns());
 				double novelty = LevelNovelty.averageSegmentNovelty(levelSegments); // get novelty
@@ -343,7 +343,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {noveltyIndex}, binScore);
 				System.out.println("["+numDistinctSegments+"] = "+binScore);
 				
-			} if(MMNEAT.getArchiveBinLabelsClass() instanceof MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels ) { // TODO
+			} else if(MMNEAT.getArchiveBinLabelsClass() instanceof MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels ) {
 				LevelNovelty.setGame("mega_man");
 				int indexConnected = (int) Math.min(precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS,9);
 				int numVertical = (int) (numUpSegments+numDownSegments);
@@ -352,6 +352,13 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
 				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {noveltyIndex, numVertical, indexConnected}, binScore);
 				System.out.println("["+noveltyIndex+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
+				
+			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
+				LatentVariablePartitionSumBinLabels labels = (LatentVariablePartitionSumBinLabels) MMNEAT.getArchiveBinLabelsClass();
+				ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
+				double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
+				int[] dims = labels.discretize(labels.behaviorCharacterization(latentVector));
+				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(dims, binScore);
 				
 			} else {
 				throw new RuntimeException("A Valid Binning Scheme For Mega Man Was Not Specified");

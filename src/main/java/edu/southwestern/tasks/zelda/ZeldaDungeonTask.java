@@ -14,6 +14,7 @@ import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels;
+import edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels;
 import edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
@@ -90,7 +91,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 	}
 
 	private void setupKLDivLevelsForComparison() {
-		if (MMNEAT.usingDiversityBinningScheme && MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { // TODO
+		if (MMNEAT.usingDiversityBinningScheme && (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels)) { // TODO
 			System.out.println("Instance of MAP Elites using KL Divergence Bin Labels");
 			String level1FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel1"); 
 			String level2FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel2"); 
@@ -327,14 +328,19 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						noveltyIndex = Math.min(noveltyIndex, NOVELTY_BINS_PER_DIMENSION - 1);
 						mapElitesBinIndices = new int[] {noveltyIndex};
 						System.out.println("["+noveltyIndex+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");						
-					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { // KL Divergence binning scheme
-						KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) MMNEAT.getArchiveBinLabelsClass();
-						// TODO
-						int[][] oneLevelAs2DArray = null; //ArrayUtil.int2DArrayFromListOfLists(oneLevel);
-						mapElitesBinIndices = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
-						
-						System.out.println("["+numDistinctRooms+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");
-					
+//					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { // KL Divergence binning scheme
+//						KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) MMNEAT.getArchiveBinLabelsClass();
+//						// TODO
+//						int[][] oneLevelAs2DArray = null; //ArrayUtil.int2DArrayFromListOfLists(oneLevel);
+//						mapElitesBinIndices = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
+//						
+//						System.out.println("["+numDistinctRooms+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");
+//					
+					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
+						LatentVariablePartitionSumBinLabels labels = (LatentVariablePartitionSumBinLabels) MMNEAT.getArchiveBinLabelsClass();
+						ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
+						double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
+						mapElitesBinIndices = labels.discretize(labels.behaviorCharacterization(latentVector));
 					} else {
 						throw new RuntimeException("A Valid Binning Scheme For Zelda Was Not Specified");
 					}

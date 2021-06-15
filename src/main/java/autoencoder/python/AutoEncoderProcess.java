@@ -102,14 +102,24 @@ public class AutoEncoderProcess extends Comm {
 
 
 	public static double getReconstructionLoss(BufferedImage image) {
+		// Need to resize. Autoencoder must have 28x28 input
+		if(image.getWidth() != SIDE_LENGTH || image.getHeight() != SIDE_LENGTH) {
+			image = GraphicsUtil.convertToBufferedImage(image.getScaledInstance(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.SCALE_DEFAULT));
+		}
 		try {
+			//System.out.println("Get Loss: "+image.getWidth()+","+image.getHeight());
 			AutoEncoderProcess p = getAutoEncoderProcess();
 			double[] imageInput =  GraphicsUtil.flatFeatureArrayFromBufferedImage(image);
-			for(int i = 0; i < imageInput.length; i++) {
-				p.commSend(imageInput[i] + "");
-
+			//System.out.println(imageInput.length);
+			String output = null;
+			synchronized(p) {
+				for(int i = 0; i < imageInput.length; i++) {
+					//System.out.println(i);
+					p.commSend(imageInput[i] + "");
+				}
+				output = p.commRecv();
+				//System.out.println(output);
 			}
-			String output = p.commRecv();		
 			double result = Double.parseDouble(output);
 			return result;
 		} catch (IOException e) {
@@ -178,15 +188,18 @@ public class AutoEncoderProcess extends Comm {
 		Parameters.initializeParameterCollections(new String[] {"blackAndWhitePicbreeder:true"});
 		PythonUtil.PYTHON_EXECUTABLE = "C:\\ProgramData\\Anaconda3\\python.exe";
 
-		AUTOENCODER_MODE mode = AUTOENCODER_MODE.IMAGE;
+		AUTOENCODER_MODE mode = AUTOENCODER_MODE.LOSS;
 		//AutoEncoderProcess p = new AutoEncoderProcess("parentDir\\test.pth", mode);
-		AutoEncoderProcess p = new AutoEncoderProcess("targetimage\\skull6\\snapshots\\iteration30000.pth", mode);
+		//AutoEncoderProcess p = new AutoEncoderProcess("targetimage\\skull6\\snapshots\\iteration30000.pth", mode);
+		AutoEncoderProcess p = new AutoEncoderProcess("targetimage\\skullAutoEncoder20\\snapshots\\iteration4500000.pth", mode);
 		p.start();
 
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.71288Neurons[35]links[63]1788009.jpg"));
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.52723Neurons[15]links[58]143861.jpg"));
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.68266Neurons[14]links[62]1105464.jpg"));
-		BufferedImage img = ImageIO.read(new File("targetimage" + File.separator + "skull6" + File.separator + "snapshots" + File.separator + "iteration30000" + File.separator + "0.71623785656924-Neurons[30]links[37].jpg"));
+		//BufferedImage img = ImageIO.read(new File("targetimage" + File.separator + "skull6" + File.separator + "snapshots" + File.separator + "iteration30000" + File.separator + "0.71623785656924-Neurons[30]links[37].jpg"));
+		//BufferedImage img = ImageIO.read(new File("targetimage\\skullAutoEncoder20\\snapshots\\iteration4500000\\0.809899371158382-Neurons[45]loss[0.9,1.0].jpg"));
+		BufferedImage img = ImageIO.read(new File("targetimage\\skullAutoEncoder20\\snapshots\\iteration4500000\\0.7640251320574905-Neurons[9]loss[0.9,1.0].jpg"));
 		//BufferedImage img = ImageIO.read(new File("data" + File.separator + "imagematch" + File.separator + "skull64.png"));
 		Image scaled = img.getScaledInstance(28, 28, BufferedImage.SCALE_DEFAULT);
 		img = GraphicsUtil.convertToBufferedImage(scaled);

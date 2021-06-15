@@ -66,16 +66,16 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	}
 	
 	public MAPElites() {
-		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"));
+		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"), true);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public MAPElites(String archiveSubDirectoryName) {
+	public MAPElites(String archiveSubDirectoryName, boolean ioOption, boolean netioOption, boolean createLogs) {
 		MMNEAT.usingDiversityBinningScheme = true;
 		this.task = (LonerTask<T>) MMNEAT.task;
-		this.io = Parameters.parameters.booleanParameter("io"); // write logs
-		this.archive = new Archive<>(Parameters.parameters.booleanParameter("netio"), archiveSubDirectoryName);
-		if(io) {
+		this.io = ioOption; // write logs
+		this.archive = new Archive<>(netioOption, archiveSubDirectoryName);
+		if(io && createLogs) {
 			int numLabels = archive.getBinMapping().binLabels().size();
 			String infix = "MAPElites";
 			// Logging in RAW mode so that can append to log file on experiment resume
@@ -231,10 +231,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Start from scratch
 			int startSize = Parameters.parameters.integerParameter("mu");
 			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);
-			for(Genotype<T> g : startingPopulation) {
+			startingPopulation.parallelStream().forEach( (g) -> {
 				Score<T> s = task.evaluate(g);
 				archive.add(s); // Fill the archive with random starting individuals
-			}	
+			});
+				
 		}
 	}
 
@@ -251,7 +252,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Just log every "generation" instead
 			Float[] elite = ArrayUtils.toObject(archive.getEliteScores());
 			final int pseudoGeneration = iterations/individualsPerGeneration;
-			archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t"));
+			archiveLog.log(pseudoGeneration + "\t" + StringUtils.join(elite, "\t").replaceAll("-Infinity", "X"));
 			Float maximumFitness = StatisticsUtilities.maximum(elite);
 			// Exclude negative infinity to find out how many bins are filled
 			final int numFilledBins = elite.length - ArrayUtil.countOccurrences(Float.NEGATIVE_INFINITY, elite);
@@ -387,7 +388,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				training.start();
 				// Initialize process for newly trained autoencoder
 				AutoEncoderProcess.getAutoEncoderProcess(); // (sort of optional to initialize here)
-				
+				AutoEncoderProcess.neverInitialized = false;
 				// Now we need to dump the archive and replace it with a new one after re-evaluating all old contents.
 				int oldOccupied = this.archive.getNumberOfOccupiedBins();
 				this.archive = new Archive<T>(this.archive);

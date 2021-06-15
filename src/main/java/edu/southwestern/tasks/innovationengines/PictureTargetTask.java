@@ -351,7 +351,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		
 		// For test runs
-		MMNEAT.main(new String[]{"runNumber:2","randomSeed:4","base:targetimage","mu:400","maxGens:100000000",
+		MMNEAT.main(new String[]{"runNumber:30","randomSeed:30","base:targetimage","mu:400","maxGens:100000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
 				"log:TargetImage-skullAutoEncoderEnhancedCPPN","saveTo:skullAutoEncoderEnhancedCPPN","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
