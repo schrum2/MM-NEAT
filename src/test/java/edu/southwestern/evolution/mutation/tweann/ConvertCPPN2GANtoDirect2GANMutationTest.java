@@ -26,7 +26,7 @@ public class ConvertCPPN2GANtoDirect2GANMutationTest {
 	CPPNOrDirectToGANGenotype tg1;
 	@Before
 	public void setUp() throws Exception {
-		
+		MMNEAT.clearClasses();
 	}
 
 	@After

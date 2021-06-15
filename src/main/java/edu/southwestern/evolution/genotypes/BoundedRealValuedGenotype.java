@@ -17,9 +17,7 @@ import java.util.ArrayList;
  * @author Jacob Schrum
  */
 public class BoundedRealValuedGenotype extends RealValuedGenotype {
-
-	double[] lower; // Lowest allowable value for each gene position
-	double[] upper; // Highest allowable value for each gene position
+	
 	boolean polynomialMutation; // Whether or not polynomial mutation should be used
 
 	/**
@@ -27,64 +25,26 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	 * Populates the genotype with values between the default MMNEAT upper and lower bounds
 	 */
 	public BoundedRealValuedGenotype() {
-		// May need to change this if other tasks start using the real-coded genotype
-		this(MMNEAT.getLowerBounds(), MMNEAT.getUpperBounds());
-	}
-
-	/**
-	 * Creates evolvable genotype where genes are restricted to certain bounds
-	 * Populates the genotype with values between certain bounds
-	 * @param lower Array of lower bounds for each gene position
-	 * @param upper Array of upper bounds for each gene position
-	 */
-	public BoundedRealValuedGenotype(double[] lower, double[] upper) {
-		this(RandomNumbers.randomBoundedArray(lower, upper), lower, upper);
+		this(RandomNumbers.randomBoundedArray(MMNEAT.getLowerBounds(), MMNEAT.getUpperBounds()));
 	}
 
 	/**
 	 * Creates evolvable genotype where genes are restricted to certain bounds
 	 * @param genes Array of doubles corresponding to starting gene values
-	 * @param lower Array of lower bounds for each gene position
-	 * @param upper Array of upper bounds for each gene position
 	 */
-	public BoundedRealValuedGenotype(double[] genes, double[] lower, double[] upper) {
+	public BoundedRealValuedGenotype(double[] genes) {
 		super(genes);
 		// Specialized mutation operator slightly more complicated than simple perturbation
 		polynomialMutation = Parameters.parameters.booleanParameter("polynomialMutation");
-
-		this.lower = lower;
-		this.upper = upper;
 		bound();
 	}
 
 	/**
-	 * Creates evolvable genotype where genes are restricted to default bounds
-	 * @param genes Array of doubles corresponding to starting gene values
-	 */
-	public BoundedRealValuedGenotype(double[] genes) {
-		this(genes, MMNEAT.getLowerBounds(), MMNEAT.getUpperBounds());
-	}
-
-
-	/**
 	 * Creates evolvable genotype where genes are restricted to certain bounds
 	 * @param genes ArrayList of doubles corresponding to starting gene values
-	 * @param lower Array of lower bounds for each gene position
-	 * @param upper Array of upper bounds for each gene position
 	 */
-	public BoundedRealValuedGenotype(ArrayList<Double> genes, double[] lower, double[] upper) {
-		this(ArrayUtil.doubleArrayFromList(genes), lower, upper);
-	}
-
-	/**
-	 * Creates evolvable genotype where genes are restricted to certain bounds
-	 * @param genotype RealValuedGenotype to provide starting the genotype
-	 * @param lower Array of lower bounds for each gene position
-	 * @param upper Array of upper bounds for each gene position
-	 */
-	@SuppressWarnings("unused")
-	private BoundedRealValuedGenotype(RealValuedGenotype genotype, double[] lower, double[] upper) {
-		this(genotype.genes, lower, upper);
+	public BoundedRealValuedGenotype(ArrayList<Double> genes) {
+		this(ArrayUtil.doubleArrayFromList(genes));
 	}
 
 	/**
@@ -96,7 +56,7 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 		for (int i = 0; i < array.length; i++) {
 			array[i] = genes.get(i);
 		}
-		return new BoundedRealValuedGenotype(array, lower, upper);
+		return new BoundedRealValuedGenotype(array);
 	}
 
 	/**
@@ -104,9 +64,9 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	 * @return An array of doubles corresponding to the range of each gene
 	 */
 	public final double[] getRange() {
-		double[] magnitudes = new double[lower.length];
+		double[] magnitudes = new double[MMNEAT.lower.length];
 		for (int i = 0; i < magnitudes.length; i++) {
-			magnitudes[i] = upper[i] - lower[i];
+			magnitudes[i] = MMNEAT.upper[i] - MMNEAT.lower[i];
 		}
 		return magnitudes;
 	}
@@ -136,10 +96,10 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	public final void bound() {
 		for (int i = 0; i < genes.size(); i++) {
 			double x = genes.get(i);
-			if (x < lower[i]) {
-				x = lower[i];
-			} else if (x > upper[i]) {
-				x = upper[i];
+			if (x < MMNEAT.getLowerBounds()[i]) {
+				x = MMNEAT.getLowerBounds()[i];
+			} else if (x > MMNEAT.getUpperBounds()[i]) {
+				x = MMNEAT.getUpperBounds()[i];
 			}
 			genes.set(i, x);
 		}
@@ -151,20 +111,20 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	 */
 	@Override
 	public Genotype<ArrayList<Double>> newInstance() {
-		return new BoundedRealValuedGenotype(lower, upper);
+		return new BoundedRealValuedGenotype();
 	}
 
 	/**
 	 * Returns an array of doubles corresponding to the lower bounds of each gene
 	 */
 	public double[] lowerBounds() {
-		return lower;
+		return MMNEAT.lower;
 	}
 
 	/**
 	 * Returns an array of doubles corresponding to the upper bounds of each gene
 	 */
 	public double[] upperBounds() {
-		return upper;
+		return MMNEAT.upper;
 	}
 }

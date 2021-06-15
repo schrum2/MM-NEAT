@@ -1,8 +1,6 @@
 package edu.southwestern.evolution.genotypes;
 import java.util.ArrayList;
 
-import edu.southwestern.parameters.Parameters;
-
 /**
  * When used with Picbreeder, creates a new image with different scale
  * factors and rotation factors.  Since it implements the network 
@@ -27,7 +25,7 @@ public class EnhancedCPPNPictureGenotype extends TWEANNPlusParametersGenotype<Ar
 	 * rotated within the bounds set by the BoundedRealValuedGenotype.
 	 */
 	public EnhancedCPPNPictureGenotype() {
-		super(new TWEANNGenotype(), new BoundedRealValuedGenotype(new double[] {0.1, 0, -Parameters.parameters.doubleParameter("imageCenterTranslationRange"), -Parameters.parameters.doubleParameter("imageCenterTranslationRange")}, new double[] {Parameters.parameters.doubleParameter("maxScale"), 2*Math.PI, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange")}));	// Scale and rotation bounds
+		super(new TWEANNGenotype(), new BoundedRealValuedGenotype());
 	}
 	
 }

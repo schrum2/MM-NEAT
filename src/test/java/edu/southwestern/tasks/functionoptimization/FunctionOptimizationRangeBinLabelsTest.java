@@ -18,6 +18,7 @@ public class FunctionOptimizationRangeBinLabelsTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		MMNEAT.clearClasses();
 		String[] params;
 		if (BATCH_OPTIONS) {
 			params = "foBinDimension:500 solutionVectorSlices:2 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12 mapElitesQDBaseOffset:525 io:false netio:false ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRangeBinLabels".split(" ");
