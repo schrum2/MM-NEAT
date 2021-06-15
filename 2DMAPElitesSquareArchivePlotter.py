@@ -1,9 +1,9 @@
-"""
-    2D archive plotter
+""" 2D MAP-Elites archive plotter (Only for 2D archives with equal amount of bins in both dimensions)
     
     Usage:
     python 2D_bin_plotter.py <plot file to display>
     python 2D_bin_plotter.py ...\MM-NEAT\mapelitesfunctionoptimization\MAPElitesSphereFunctionOptimization20\mapelitesfunctionoptimization-MAPElitesSphereFunctionOptimization20_MAPElites_log.txt
+    
 """
 import numpy as np
 import matplotlib.pyplot as plt
