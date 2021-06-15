@@ -37,7 +37,7 @@ if __name__ == '__main__':
 
         for x in maxes:
             if x == float('-inf'):
-                target.write("-Infinity")
+                target.write("X") # Used to be "-Infinity" here
             else:    
                 target.write("{}".format(x))
             target.write("\t")

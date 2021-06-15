@@ -25,7 +25,7 @@ for(typePrefix in types) {
     names(archive) <- "PercentTraversed"
 
 
-    # Change -Infinity to 0
+    # Change X to 0? Used to be -Infinity, but doesn't seem to matter?
     archive[archive<0] <- 0
 
     if(i > 0) {

@@ -26,7 +26,7 @@ for(typePrefix in types) {
     archive <- data.frame(matrix(unlist(lastRow[2:length(lastRow)]), nrow=(length(lastRow)-1), byrow=T))
     names(archive) <- "SolutionSteps"
 
-    # Change -Infinity to 0
+    # Change X to 0? Used to be -Infinity, but doesn't seem to matter?
     archive[archive<0] <- 0
     
     if(i > 0) {
