@@ -11,6 +11,8 @@ import java.util.Vector;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import autoencoder.python.AutoEncoderProcess;
+import autoencoder.python.TrainAutoEncoderProcess;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
@@ -20,6 +22,7 @@ import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -56,11 +59,12 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private int iterationsWithoutEliteCounter;
 	private int iterationsWithoutElite;
 	private int individualsPerGeneration;
+	private boolean saveImageArchives;
 
 	public BinLabels getBinLabelsClass() {
 		return archive.getBinLabelsClass();
 	}
-
+	
 	public MAPElites() {
 		this(Parameters.parameters.stringParameter("archiveSubDirectoryName"), Parameters.parameters.booleanParameter("io"), Parameters.parameters.booleanParameter("netio"), true);
 	}
@@ -195,6 +199,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 */
 	@Override
 	public void initialize(Genotype<T> example) {		
+		saveImageArchives = MMNEAT.task instanceof PictureTargetTask;
 		if(iterations > 0) {
 			int numLabels = archive.getBinMapping().binLabels().size();
 			// Loading from saved archive
@@ -364,6 +369,33 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * 							fill/replace a bin.
 	 */
 	public void fileUpdates(boolean newEliteProduced) {
+		if(saveImageArchives && iterations % Parameters.parameters.integerParameter("imageArchiveSaveFrequency") == 0) {
+			System.out.println("Save whole archive at iteration "+iterations);
+			// 28 is a magic number, and should be either a constant of a command line parameter.
+			// Fix later ... this is the standard image size for training our simple image autoencoder (based on MNIST)
+			((PictureTargetTask<?>) MMNEAT.task).saveAllArchiveImages("iteration"+iterations, 28, 28);
+
+			// If we are using the autoencoder (only use if "trainingAutoEncoder" == true), re-train it here
+			if(Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
+				if(AutoEncoderProcess.currentProcess != null) {
+					// Stop autoencoder inference when it is time to train a new one
+					AutoEncoderProcess.terminateAutoEncoderProcess(); 
+				}
+				String experimentDir = FileUtilities.getSaveDirectory()+File.separator+"snapshots";
+				Parameters.parameters.setString("mostRecentAutoEncoder", experimentDir+File.separator+ "iteration" + iterations + ".pth");
+				TrainAutoEncoderProcess training = new TrainAutoEncoderProcess(experimentDir+File.separator+"iteration" + iterations, Parameters.parameters.stringParameter("mostRecentAutoEncoder"));
+				training.start();
+				// Initialize process for newly trained autoencoder
+				AutoEncoderProcess.getAutoEncoderProcess(); // (sort of optional to initialize here)
+				
+				// Now we need to dump the archive and replace it with a new one after re-evaluating all old contents.
+				int oldOccupied = this.archive.getNumberOfOccupiedBins();
+				this.archive = new Archive<T>(this.archive);
+				int newOccupied = this.archive.getNumberOfOccupiedBins();
+				System.out.println("Archive reorganized based on new AutoEncoder: Occupancy "+oldOccupied+" to "+newOccupied);
+			} 
+			
+		}
 		// Log to file
 		log();
 		Parameters.parameters.setInteger("lastSavedGeneration", iterations);

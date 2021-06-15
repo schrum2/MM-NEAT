@@ -26,6 +26,9 @@ public class AnimationUtil {
 	
 	public static final int CPPN_OUTPUT_INDEX_SCALE = 3;
 	public static final int CPPN_OUTPUT_INDEX_ROTATION = 4;
+	
+	public static final int CPPN_OUTPUT_INDEX_DELTA_X = 5;
+	public static final int CPPN_OUTPUT_INDEX_DELTA_Y = 6;
 
 	/**
 	 * Utility method that generates an array of images based on an input CPPN.
@@ -39,28 +42,46 @@ public class AnimationUtil {
 	 * @return Array of images that can be animated in a JApplet
 	 */
 	public static BufferedImage[] imagesFromCPPN(Network n, int imageWidth, int imageHeight, int startTime, int endTime, double[] inputMultiples) {
-		return imagesFromCPPN(n, imageWidth, imageHeight, startTime, endTime, inputMultiples, 1.0, 0.0);
+		return imagesFromCPPN(n, imageWidth, imageHeight, startTime, endTime, inputMultiples, 1.0, 0.0, 0.0, 0.0);
 	}
 
-	public static BufferedImage[] imagesFromCPPN(Network n, int imageWidth, int imageHeight, int startTime, int endTime, double[] inputMultiples, double scale, double rotation) {
+	/**
+	 * Utility method that generates an array of images based on an input CPPN.
+	 * 
+	 * @param n CPPN used to create image
+	 * @param imageWidth width of created image
+	 * @param imageHeight height of created image
+	 * @param startTime input time when animation begins
+	 * @param endTime input time when animation ends
+	 * @param inputMultiples array with inputs determining whether CPPN inputs are turned on or off
+	 * @param scale scale factor to scale the image by
+	 * @param rotation rotation factor to rotate the image by
+	 * @param deltaX X coordinate of the center of the box
+	 * @param deltaY Y coordinate of the center of the box
+	 * @return Array of images that can be animated in a JApplet
+	 */
+	public static BufferedImage[] imagesFromCPPN(Network n, int imageWidth, int imageHeight, int startTime, int endTime, double[] inputMultiples, double scale, double rotation, double deltaX, double deltaY) {
 		BufferedImage[] images = new BufferedImage[endTime-startTime];
 		for(int i = startTime; i < endTime; i++) {
 			// if animate scale and rotation (command line parameter)
 			// then query CPPN here with time i (other inputs are 0)
 			// check the scale and rotation outputs and change the scale and rotation values
-			if(Parameters.parameters.booleanParameter("animateWithScaleAndRotation")) {
-				double[] input = GraphicsUtil.get2DObjectCPPNInputs(0, 0, imageWidth, imageHeight, i/FRAMES_PER_SEC, 1, 0);
+			if(Parameters.parameters.booleanParameter("animateWithScaleRotationTranslation")) {
+				double[] input = GraphicsUtil.get2DObjectCPPNInputs(0, 0, imageWidth, imageHeight, i/FRAMES_PER_SEC, 1, 0, 0, 0);
 				// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
 				for(int j = 0; j < inputMultiples.length; j++) {
 					input[j] = input[j] * inputMultiples[j];
 				}
 				// Eliminate recurrent activation for consistent images at all resolutions
 				n.flush();
-				double[] scaleAndRotationOutputs = n.process(input);
+				double[] scaleAndRotationOutputs = n.process(input); // <-- rename this to include translation?
 				scale = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_SCALE] * Parameters.parameters.doubleParameter("maxScale"); // TODO: Multiply by "maxScale"
 				rotation = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_ROTATION] * Math.PI; // Mult by Math.PI
+				deltaX = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_DELTA_X] * Parameters.parameters.doubleParameter("imageCenterTranslationRange");
+				deltaY = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_DELTA_Y] * Parameters.parameters.doubleParameter("imageCenterTranslationRange");
 			}			
-			images[i-startTime] = GraphicsUtil.imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, i/FRAMES_PER_SEC, scale, rotation);
+			// Currently not allowing any center point translation, but would be cool to either have fixed translation or change over time
+			images[i-startTime] = GraphicsUtil.imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, i/FRAMES_PER_SEC, scale, rotation, deltaX, deltaY);
 		}
 		return images;
 	}		

@@ -64,7 +64,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	private BufferedImage[] imagesFromCPPN(T cppn, int width, int height, int startFrame, int endFrame, double[] inputMultipliers) {
 		double scale = Parameters.parameters.doubleParameter("picbreederImageScale");
 		double rotation = Parameters.parameters.doubleParameter("picbreederImageRotation");
-		return AnimationUtil.imagesFromCPPN(cppn, width, height, startFrame, endFrame, inputMultipliers, scale, rotation);
+		return AnimationUtil.imagesFromCPPN(cppn, width, height, startFrame, endFrame, inputMultipliers, scale, rotation, Parameters.parameters.doubleParameter("picbreederImageTranslationX"), Parameters.parameters.doubleParameter("picbreederImageTranslationY"));
 	}
 
 
@@ -270,6 +270,41 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				}
 			});
 			
+			//AnimateRotation, AnimateScale, AnimateDeltaX, and AnimateDeltaY.
+			JCheckBox animateRotation = new JCheckBox("AnimateRotation", Parameters.parameters.booleanParameter("AnimateRotation"));
+			animateRotation.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Flip rotation");
+					Parameters.parameters.changeBoolean("AnimateRotation");
+					resetButtons(true);
+				}
+			});
+			
+			JCheckBox animateScale = new JCheckBox("AnimateScale", Parameters.parameters.booleanParameter("AnimateScale"));
+			animateScale.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Flip scale");
+					Parameters.parameters.changeBoolean("AnimateScale");
+					resetButtons(true);
+				}
+			});
+			
+			JCheckBox animateDeltaX = new JCheckBox("AnimateDeltaX", Parameters.parameters.booleanParameter("AnimateDeltaX"));
+			animateDeltaX.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Flip delta X");
+					Parameters.parameters.changeBoolean("AnimateDeltaX");
+				}
+			});
+			
+			JCheckBox animateDeltaY = new JCheckBox("AnimateDeltaY", Parameters.parameters.booleanParameter("AnimateDeltaY"));
+			animateDeltaY.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					System.out.println("Flip delta Y");
+					Parameters.parameters.changeBoolean("AnimateDeltaY");
+				}
+			});
+			
 			JPanel imageTweaks = new JPanel();
 			imageTweaks.add(stark);
 			top.add(imageTweaks);
@@ -364,7 +399,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	@Override
 	public String[] sensorLabels() {
-		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "time", "bias" };
+		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "time", "bias", "rotation", "scale", "deltaX", "deltaY"};
 	}
 
 	/**
@@ -374,7 +409,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	public String[] outputLabels() {
 		// if animate scale and rotation, then return array with "scale" and "rotation" at the end
 		if(Parameters.parameters.booleanParameter("animateWithScaleAndRotation")) {
-			return new String[] { "hue-value", "saturation-value", "brightness-value", "scale", "rotation"};
+			return new String[] { "hue-value", "saturation-value", "brightness-value", "scale", "rotation", "deltaX", "deltaY"};
 		}else {
 			return new String[] { "hue-value", "saturation-value", "brightness-value" };
 		}
@@ -576,8 +611,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	@Override
 	public int numCPPNOutputs() {
 		// if animate rotation and scale, then add 2, otherwise just return BASE_CPPN_NUM_OUTPUTS
-		if(Parameters.parameters.booleanParameter("animateWithScaleAndRotation")) {
-			return BASE_CPPN_NUM_OUTPUTS + 2;
+		if(Parameters.parameters.booleanParameter("animateWithScaleRotationTranslation")) {
+			return BASE_CPPN_NUM_OUTPUTS + 4;
 		} else {
 			return BASE_CPPN_NUM_OUTPUTS;
 		}
@@ -589,7 +624,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","allowInteractiveSave:true","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true", "picbreederImageScale:1.0", "picbreederImageRotation:0.0", "starkPicbreeder:true", "animateWithScaleAndRotation:true"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","allowInteractiveSave:true","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true", "picbreederImageScale:1.0", "picbreederImageRotation:0.0", "starkPicbreeder:true", "animateWithScaleRotationTranslation:true"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

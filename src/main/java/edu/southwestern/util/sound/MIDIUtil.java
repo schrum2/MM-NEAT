@@ -56,6 +56,14 @@ public class MIDIUtil {
 
 	public static final double ALM_CONSTANT = 23.0; //constant used to derive correct amplitude length multiplier - not sure why it works
 
+	
+	public static void main(String[] args) {
+		for(int i = 0; i < NOTES.length; i++) {
+			System.out.println(i + ":" +noteToFreq(i));
+		}
+	}
+	
+	
 	/**
 	 * Method that calculates array lists of frequency, length, and start time data for all tracks in an array
 	 * of tracks in a MIDI file.

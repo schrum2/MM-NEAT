@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+import javax.swing.JCheckBox;
+
 import competition.cig.robinbaumgarten.AStarAgent;
 import edu.southwestern.evolution.crossover.network.TWEANNCrossover;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
@@ -188,6 +190,7 @@ public class Parameters {
 	 */
 	public final void fillDefaults() {
 		// Integer parameters
+		integerOptions.add("imageArchiveSaveFrequency", 10000, "How often the PictureTargetTask saves all images in the archive");
 		integerOptions.add("HNProcessDepth", 1, "The number of processing layers in a HN substrate");
 		integerOptions.add("HNProcessWidth", 1, "The number of adjacent processing substrates per layer in a HN substrate");
 		integerOptions.add("bdArchiveSize", 0, "Maximum allowable size of archive for BD");
@@ -256,6 +259,8 @@ public class Parameters {
 		integerOptions.add("maxGens", 500, "Maximum generations allowed for a LimitedGenerationalEAExperiment");
 		integerOptions.add("maxLairTime", 3 * Constants.COMMON_LAIR_TIME, "What lair time starts at from the beginning of evolution");
 		integerOptions.add("maxModes", 1000, "Mode mutation cannot add more than this many modes");
+		integerOptions.add("maxNumLinks", 100, "The maximum number of links to be used in the neurons/links binning scheme for PictureTargetTask.");
+		integerOptions.add("maxNumNeurons", 50, "The maximum number of neurons to be used in the neurons/links binning scheme for PictureTargetTask.");
 		integerOptions.add("maxPause", 500, "Maximum pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("maxRemixImageWindow", 100, "Maximum size of window being remixed by CPPN in Picture Remixer");
 		integerOptions.add("maxTrials", Integer.MAX_VALUE, "Max trials allowed by individual when using increasing trials");
@@ -333,7 +338,7 @@ public class Parameters {
 		integerOptions.add("zeldaGANLevelWidthChunks", 4, "Number of rooms per row of CPPN-GAN generated dungeons.");
 		integerOptions.add("zeldaGANLevelHeightChunks", 4, "Number of rooms per column of CPPN-GAN generated dungeons.");
 		integerOptions.add("zentangleTileDim", 48 , "The width and height in pixels of tiles used in a Zentangle");
-		integerOptions.add("zentanglePatternDim", 30 , "The width and height in tiles of patterns used in a Zentangle");		
+		integerOptions.add("zentanglePatternDim", 32 , "The width and height in tiles of patterns used in a Zentangle");		
 		integerOptions.add("zeldaVGLCWaterPMapCode", 5 , "Int code for the character P in VGLC representation of Zelda");
 		integerOptions.add("cppn2ganWidth", null, "the CPPN to GAN width chunks");
 		integerOptions.add("cppn2ganHeight", null, "the CPPN to GAN height chunks");
@@ -344,6 +349,7 @@ public class Parameters {
 		integerOptions.add("noveltyBinAmount", -1, "The number of bins that exist along the dimension for the Novelty binning scheme.");
 		integerOptions.add("solutionVectorSlices", 2, "The amount of slices to cut a solution vector into in a MAP Elites instance"); 
 		integerOptions.add("latentPartitionBinDimension", -1, "Bins in each dimension for LatentVariablePartitionSum");
+		integerOptions.add("numReconstructionLossBins", 10, "Divide 1 by this number to get the number of bins for loss.");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -750,10 +756,16 @@ public class Parameters {
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingTreasureCount", false, "Adds linear increasing treasure count as a fitness function when true");
 		booleanOptions.add("allowWeirdLodeRunnerActions", false, "Allows the A* model to use weird side ways digging to be able to beat more levels");
 		booleanOptions.add("smartLodeRunnerEnemies", false, "Sets enhanced enemy AI for enemies in lode runner.");
-		booleanOptions.add("animateWithScaleAndRotation", false, "Animate with scale and rotation when true.");
+		booleanOptions.add("animateWithScaleRotationTranslation", false, "Animate with scale and rotation when true.");
 		booleanOptions.add("useWoolleyImageMatchFitness", false, "Use the fitness calculation from the Woolley paper if true.");
 		booleanOptions.add("useRMSEImageMatchFitness", false, "Use RMSE as the fitness calculation if true.");
 		booleanOptions.add("trackPseudoArchive", false, "Option to track the progress of an objective function with a binning scheme.");
+		booleanOptions.add("trainingAutoEncoder", true, "If we are training the autoencoder");
+		booleanOptions.add("AnimateRotation", false, "If AnimationBreeder is going to animate using rotation");
+		booleanOptions.add("AnimateScale", false, "If AnimationBreeder is going to animate using scale.");
+		booleanOptions.add("AnimateDeltaX", false, "If AnimationBreeder is going to translate images horizontally.");
+		booleanOptions.add("AnimateDeltaY", false, "If Animationbreeder is going to translate images vertically");
+		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -832,6 +844,10 @@ public class Parameters {
 		doubleOptions.add("maxScale", 5.0, "The maximumm scale value for Picbreeder images to be scaled to.");
 		doubleOptions.add("picbreederImageScale", 1.0, "The scale factorfor Picbreeder to use when it is not using EnhnacedCPPNPictureGenotype.");
 		doubleOptions.add("picbreederImageRotation", 0.0, "The rotation factor for Picbreeder to use when it is not using EnhancedCPPNPictureGenotype.");
+		doubleOptions.add("imageCenterTranslationRange", 10.0, "The scale of the box (in other words, the range of deltaX and deltaY for a given Picbreeder image)");
+		doubleOptions.add("picbreederImageTranslationX", 0.0, "Maximum possible range (negative to positive) of the X value of the box.");
+		doubleOptions.add("picbreederImageTranslationY", 0.0, "Maximum possible range (negative to positive) of the Y value of the box.");
+
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
 		stringOptions.add("archetype", "", "Network that receives all mutations so as to keep other networks properly aligned");
@@ -877,6 +893,7 @@ public class Parameters {
 		stringOptions.add("LodeRunnerGANModel", "LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
 		stringOptions.add("MegaManGANModel", "MegaManOneGANWith12Tiles_5_Epoch5000.pth", "File name of GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("MegaManGANHorizontalModel", "MegaManSevenGANHorizontalWith12TileTypes_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("mostRecentAutoEncoder", "", "The full path to the most recently trained autoencoder for PictureTargetTask.");
 		
 		// See if it is safe to remove/delete MegaManGANVerticalModel
 		stringOptions.add("MegaManGANVerticalModel", "MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");

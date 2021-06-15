@@ -68,6 +68,16 @@ public class Score<T> {
 	/**
 	 * Default constructor for Score object.
 	 * 
+	 * @param individual Genotype of the individual in question
+	 * @param scores array of all other scores of similar agents in the domain
+	 */
+	public Score(Genotype<T> individual, double[] scores) {
+		this(individual, scores, null, new double[0]);
+	}
+	
+	/**
+	 * Default constructor for Score object.
+	 * 
 	 * @param individual:
 	 *            Genotype of the individual in question
 	 * @param scores:
@@ -335,9 +345,9 @@ public class Score<T> {
 
 	// allows behaviorVector to be printed and then set to a new behavoirVector
 	public void giveBehaviorVector(ArrayList<Double> behaviorVector) {
-		if (behaviorVector != null) {
-			System.out.println("Behavior ArrayList: " + behaviorVector);
-		}
+//		if (behaviorVector != null) {
+//			System.out.println("Behavior ArrayList: " + behaviorVector);
+//		}
 		this.behaviorVector = behaviorVector;
 	}
 	
