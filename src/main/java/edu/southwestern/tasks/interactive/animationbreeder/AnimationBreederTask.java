@@ -315,10 +315,12 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			JPanel imageTweaks = new JPanel();
 			imageTweaks.setLayout(new GridLayout(5, 1, 2, 2));
 			imageTweaks.add(stark);
-			imageTweaks.add(animateRotation);
-			imageTweaks.add(animateScale);
-			imageTweaks.add(animateDeltaX);
-			imageTweaks.add(animateDeltaY);
+			if(Parameters.parameters.booleanParameter("animateWithScaleRotationTranslation")) {
+				imageTweaks.add(animateRotation);
+				imageTweaks.add(animateScale);
+				imageTweaks.add(animateDeltaX);
+				imageTweaks.add(animateDeltaY);
+			}
 			top.add(imageTweaks);
 			
 			//Add all panels to interface
@@ -636,7 +638,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","allowInteractiveSave:true","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true", "picbreederImageScale:1.0", "picbreederImageRotation:0.0", "starkPicbreeder:true", "animateWithScaleRotationTranslation:true"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","allowInteractiveSave:true","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true", "picbreederImageScale:1.0", "picbreederImageRotation:0.0", "starkPicbreeder:true", "animateWithScaleRotationTranslation:true", "AnimateRotation:true","AnimateScale:true","AnimateDeltaX:true","AnimateDeltaY:true"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
