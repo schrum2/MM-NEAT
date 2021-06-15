@@ -2,18 +2,27 @@ package edu.southwestern.util.graphics;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.cpu.nativecpu.NDArray;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class GraphicsUtilTest {
@@ -80,12 +89,22 @@ public class GraphicsUtilTest {
 //	public void testGetConfiguration() {
 //		//fail("Not yet implemented");
 //	}
-//
-//	@Test
-//	public void testSaveImage() {
-//		//fail("Not yet implemented");
-//	}
-//
+
+	@Test
+	public void testSaveImage() {
+		GraphicsUtil.saveImage(checkeredBlackAndWhite, "TEMPTEST.jpg");
+		BufferedImage loaded = null;
+		File f = new File("TEMPTEST.jpg");
+		try {
+			loaded = ImageIO.read(f);
+		} catch (IOException e) {
+			fail("Crash while loading saved image");
+		} finally {
+			f.delete();
+		}
+		assertEquals(checkeredBlackAndWhite, loaded);
+	}
+
 //	@Test
 //	public void testImageFromCPPNNetworkIntInt() {
 //		//fail("Not yet implemented");
@@ -101,11 +120,13 @@ public class GraphicsUtilTest {
 //		//fail("Not yet implemented");
 //	}
 //
-//	@Test
-//	public void testImageFromCPPNNetworkIntIntDoubleArrayDoubleDoubleDouble() {
-//		//fail("Not yet implemented");
-//	}
-//
+	@Test
+	public void testImageFromCPPNNetworkIntIntDoubleArrayDoubleDoubleDouble() {
+		//fail("Not yet implemented");
+		BufferedImage result = GraphicsUtil.imageFromCPPN(tg1.getPhenotype(), SIDE_LENGTH, SIDE_LENGTH, ArrayUtil.doubleOnes(tg1.numInputs()), 0.0, 1.0, 0.0, 0.0, 0.0);
+		assertEquals(checkeredBlackAndWhite, result);
+	}
+
 //	@Test
 //	public void testZentangleImagesBufferedImageBufferedImageBufferedImage() {
 //		//fail("Not yet implemented");
@@ -294,9 +315,20 @@ public class GraphicsUtilTest {
 
 	@Test
 	public void testImageFromINDArray() {
+		// RGB of every pixel laid out linearly. Each goes from 0 to 255
+		double[] imageData = new double[SIDE_LENGTH*SIDE_LENGTH*3];
+		int count = 0;
+		// Loop to fill in imageData
+		for(int x = 0; x < checkeredBlackAndWhite.getWidth(); x++) {
+			for(int y = 0; y < checkeredBlackAndWhite.getHeight(); y++) {
+				imageData[count++] = checkeredBlackAndWhite.getRGB(x, y);
+			}
+		}
+		int[] shape = new int[] {1,3,SIDE_LENGTH,SIDE_LENGTH};
+		char order = 'c'; // Not sure what this means. Should it be 'c'?
 		//fail("Not yet implemented");
-//		INDArray[] imageArray = new INDArray[] {(INDArray) checkeredBlackAndWhite.getData()};
-//		assertArrayEquals(new INDArray[] {}, imageArray, 0);
+		INDArray imageArray = new NDArray(imageData, shape, order);
+		assertEquals(checkeredBlackAndWhite, GraphicsUtil.imageFromINDArray(imageArray));
 	}
 
 	// Not testing things involving drawing panels
@@ -331,28 +363,87 @@ public class GraphicsUtilTest {
 //
 //	// hard code numbers, assert with numeric result
 //	// far left, far right, center
-//	@Test
-//	public void testScaleDoubleDoubleDouble() {
-//		//fail("Not yet implemented");
-//	}
-//
-//	// hard code numbers, assert with numeric result
-//	// far left, far right, center
-//	@Test
-//	public void testScaleDoubleDoubleDoubleInt() {
-//		//fail("Not yet implemented");
-//	}
-//
-//	// hard code numbers, assert with numeric result
-//	@Test
-//	public void testInvertDoubleDoubleDouble() {
-//		//fail("Not yet implemented");
-//	}
+	@Test
+	public void testScaleDoubleDoubleDouble() {
+		//fail("Not yet implemented");
+		assertEquals(0, GraphicsUtil.scale(0, 100, 0));
+		assertEquals(130, GraphicsUtil.scale(50, 100, 0));
+		assertEquals(260, GraphicsUtil.scale(100, 100, 0));
+		assertEquals(215, GraphicsUtil.scale(83, 100, 0));
+		assertEquals(135, GraphicsUtil.scale(52, 100, 0));
+		assertEquals(122, GraphicsUtil.scale(47, 100, 0));
+		assertEquals(36, GraphicsUtil.scale(14, 100, 0));
+		assertEquals(257, GraphicsUtil.scale(99, 100, 0));
+		
+		assertEquals(0, GraphicsUtil.scale(25, 90, 25));
+		assertEquals(93, GraphicsUtil.scale(57.5, 90, 25));
+		assertEquals(187, GraphicsUtil.scale(90, 90, 25));
+		assertEquals(115, GraphicsUtil.scale(65, 90, 25));
+		assertEquals(20, GraphicsUtil.scale(32, 90, 25));
+		assertEquals(92, GraphicsUtil.scale(57, 90, 25));
+		assertEquals(176, GraphicsUtil.scale(86, 90, 25));
+		assertEquals(141, GraphicsUtil.scale(74, 90, 25));
+		
+	}
 
-//	@Test
-//	public void testInvertDoubleDoubleDoubleInt() {
-//		assertEquals(-24, GraphicsUtil.invert(5, 50, 5, SIDE_LENGTH));
-//	}
+	// hard code numbers, assert with numeric result
+	// far left, far right, center
+	@Test
+	public void testScaleDoubleDoubleDoubleInt() {
+		assertEquals(0, GraphicsUtil.scale(10, 30, 10, 25));
+		assertEquals(-5, GraphicsUtil.scale(20, 30, 10, 25));
+		assertEquals(-10, GraphicsUtil.scale(30, 30, 10, 25));
+		assertEquals(0, GraphicsUtil.scale(11, 30, 10, 25));
+		assertEquals(-9, GraphicsUtil.scale(29, 30, 10, 25));
+		assertEquals(-5, GraphicsUtil.scale(21, 30, 10, 25));
+		assertEquals(-4, GraphicsUtil.scale(18, 30, 10, 25));
+		assertEquals(-7, GraphicsUtil.scale(25, 30, 10, 25));
+		
+		assertEquals(0, GraphicsUtil.scale(0, 100, 0, 30));
+		assertEquals(-5, GraphicsUtil.scale(50, 100, 0, 30));
+		assertEquals(-10, GraphicsUtil.scale(100, 100, 0, 30));
+		assertEquals(-1, GraphicsUtil.scale(10, 100, 0, 30));
+		assertEquals(-5, GraphicsUtil.scale(57, 100, 0, 30));
+		assertEquals(-6, GraphicsUtil.scale(65, 100, 0, 30));
+		assertEquals(-3, GraphicsUtil.scale(38, 100, 0, 30));
+		assertEquals(-8, GraphicsUtil.scale(89, 100, 0, 30));
+	}
+
+	// hard code numbers, assert with numeric result
+	@Test
+	public void testInvertDoubleDoubleDouble() {
+//		assertEquals(0, GraphicsUtil.invert(0, 100, 0));
+//		assertEquals(0, GraphicsUtil.invert(50, 100, 0));
+//		assertEquals(0, GraphicsUtil.invert(100, 100, 0));
+//		assertEquals(0, GraphicsUtil.invert(42, 100, 0));
+//		assertEquals(0, GraphicsUtil.invert(73, 100, 0));
+//		assertEquals(0, GraphicsUtil.invert(98, 100, 0));
+//		assertEquals(0, GraphicsUtil.invert(34, 100, 0));
+//		assertEquals(0, GraphicsUtil.invert(15, 100, 0));
+//		
+	}
+
+	@Test
+	public void testInvertDoubleDoubleDoubleInt() {
+		assertEquals(-24, GraphicsUtil.invert(0, 100, 0, 16));
+		assertEquals(-12, GraphicsUtil.invert(50, 100, 0, 16));
+		assertEquals(0, GraphicsUtil.invert(100, 100, 0, 16));
+		assertEquals(-16, GraphicsUtil.invert(37, 100, 0, 16));
+		assertEquals(-21, GraphicsUtil.invert(14, 100, 0, 16));
+		assertEquals(-9, GraphicsUtil.invert(65, 100, 0, 16));
+		assertEquals(-1, GraphicsUtil.invert(97, 100, 0, 16));
+		assertEquals(-6, GraphicsUtil.invert(78, 100, 0, 16));
+		
+		assertEquals(-24, GraphicsUtil.invert(30, 120, 30, 16));
+		assertEquals(-15, GraphicsUtil.invert(75, 120, 30, 16));
+		assertEquals(-6, GraphicsUtil.invert(120, 120, 30, 16));
+		assertEquals(-19, GraphicsUtil.invert(56, 120, 30, 16));
+		assertEquals(-10, GraphicsUtil.invert(102, 120, 30, 16));
+		assertEquals(-12, GraphicsUtil.invert(91, 120, 30, 16));
+		assertEquals(-7, GraphicsUtil.invert(118, 120, 30, 16));
+		assertEquals(-22, GraphicsUtil.invert(43, 120, 30, 16));
+		
+	}
 
 	@Test
 	public void testToBufferedImage() {
