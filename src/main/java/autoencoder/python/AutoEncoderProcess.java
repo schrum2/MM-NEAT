@@ -105,11 +105,13 @@ public class AutoEncoderProcess extends Comm {
 		try {
 			AutoEncoderProcess p = getAutoEncoderProcess();
 			double[] imageInput =  GraphicsUtil.flatFeatureArrayFromBufferedImage(image);
-			for(int i = 0; i < imageInput.length; i++) {
-				p.commSend(imageInput[i] + "");
-
+			String output = null;
+			synchronized(p) {
+				for(int i = 0; i < imageInput.length; i++) {
+					p.commSend(imageInput[i] + "");
+				}
+				output = p.commRecv();
 			}
-			String output = p.commRecv();		
 			double result = Double.parseDouble(output);
 			return result;
 		} catch (IOException e) {

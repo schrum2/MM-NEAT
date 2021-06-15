@@ -231,10 +231,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Start from scratch
 			int startSize = Parameters.parameters.integerParameter("mu");
 			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);
-			for(Genotype<T> g : startingPopulation) {
+			startingPopulation.parallelStream().forEach( (g) -> {
 				Score<T> s = task.evaluate(g);
 				archive.add(s); // Fill the archive with random starting individuals
-			}	
+			});
+				
 		}
 	}
 
