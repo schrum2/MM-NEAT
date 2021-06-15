@@ -67,6 +67,8 @@ public class SoundToArrayTest {
 	@Test
 	public void testEightBitToSixteenBit() {
 		//fail("Not yet implemented");
+		double[] actual = SoundToArray.eightBitToSixteenBit(SoundUtilExamples.ALARM_WAV);
+		double[] expected = new double[] {};
 	}
 
 }
