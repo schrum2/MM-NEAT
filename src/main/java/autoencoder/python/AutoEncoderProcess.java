@@ -180,15 +180,18 @@ public class AutoEncoderProcess extends Comm {
 		Parameters.initializeParameterCollections(new String[] {"blackAndWhitePicbreeder:true"});
 		PythonUtil.PYTHON_EXECUTABLE = "C:\\ProgramData\\Anaconda3\\python.exe";
 
-		AUTOENCODER_MODE mode = AUTOENCODER_MODE.IMAGE;
+		AUTOENCODER_MODE mode = AUTOENCODER_MODE.LOSS;
 		//AutoEncoderProcess p = new AutoEncoderProcess("parentDir\\test.pth", mode);
-		AutoEncoderProcess p = new AutoEncoderProcess("targetimage\\skull6\\snapshots\\iteration30000.pth", mode);
+		//AutoEncoderProcess p = new AutoEncoderProcess("targetimage\\skull6\\snapshots\\iteration30000.pth", mode);
+		AutoEncoderProcess p = new AutoEncoderProcess("targetimage\\skullAutoEncoder20\\snapshots\\iteration4500000.pth", mode);
 		p.start();
 
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.71288Neurons[35]links[63]1788009.jpg"));
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.52723Neurons[15]links[58]143861.jpg"));
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.68266Neurons[14]links[62]1105464.jpg"));
-		BufferedImage img = ImageIO.read(new File("targetimage" + File.separator + "skull6" + File.separator + "snapshots" + File.separator + "iteration30000" + File.separator + "0.71623785656924-Neurons[30]links[37].jpg"));
+		//BufferedImage img = ImageIO.read(new File("targetimage" + File.separator + "skull6" + File.separator + "snapshots" + File.separator + "iteration30000" + File.separator + "0.71623785656924-Neurons[30]links[37].jpg"));
+		//BufferedImage img = ImageIO.read(new File("targetimage\\skullAutoEncoder20\\snapshots\\iteration4500000\\0.809899371158382-Neurons[45]loss[0.9,1.0].jpg"));
+		BufferedImage img = ImageIO.read(new File("targetimage\\skullAutoEncoder20\\snapshots\\iteration4500000\\0.7640251320574905-Neurons[9]loss[0.9,1.0].jpg"));
 		//BufferedImage img = ImageIO.read(new File("data" + File.separator + "imagematch" + File.separator + "skull64.png"));
 		Image scaled = img.getScaledInstance(28, 28, BufferedImage.SCALE_DEFAULT);
 		img = GraphicsUtil.convertToBufferedImage(scaled);
