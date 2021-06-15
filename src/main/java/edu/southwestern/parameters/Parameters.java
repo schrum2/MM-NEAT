@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import javax.swing.JCheckBox;
-
 import competition.cig.robinbaumgarten.AStarAgent;
 import edu.southwestern.evolution.crossover.network.TWEANNCrossover;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
@@ -760,11 +758,11 @@ public class Parameters {
 		booleanOptions.add("useWoolleyImageMatchFitness", false, "Use the fitness calculation from the Woolley paper if true.");
 		booleanOptions.add("useRMSEImageMatchFitness", false, "Use RMSE as the fitness calculation if true.");
 		booleanOptions.add("trackPseudoArchive", false, "Option to track the progress of an objective function with a binning scheme.");
-		booleanOptions.add("trainingAutoEncoder", true, "If we are training the autoencoder");
-		booleanOptions.add("AnimateRotation", false, "If AnimationBreeder is going to animate using rotation");
-		booleanOptions.add("AnimateScale", false, "If AnimationBreeder is going to animate using scale.");
-		booleanOptions.add("AnimateDeltaX", false, "If AnimationBreeder is going to translate images horizontally.");
-		booleanOptions.add("AnimateDeltaY", false, "If Animationbreeder is going to translate images vertically");
+		booleanOptions.add("trainingAutoEncoder", false, "If we are training the autoencoder");
+		booleanOptions.add("AnimateRotation", true, "If AnimationBreeder is going to animate using rotation");
+		booleanOptions.add("AnimateScale", true, "If AnimationBreeder is going to animate using scale.");
+		booleanOptions.add("AnimateDeltaX", true, "If AnimationBreeder is going to translate images horizontally.");
+		booleanOptions.add("AnimateDeltaY", true, "If Animationbreeder is going to translate images vertically");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
