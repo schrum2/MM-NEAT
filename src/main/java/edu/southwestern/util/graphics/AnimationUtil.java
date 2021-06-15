@@ -75,10 +75,22 @@ public class AnimationUtil {
 				// Eliminate recurrent activation for consistent images at all resolutions
 				n.flush();
 				double[] scaleAndRotationOutputs = n.process(input); // <-- rename this to include translation?
-				scale = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_SCALE] * Parameters.parameters.doubleParameter("maxScale"); // TODO: Multiply by "maxScale"
-				rotation = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_ROTATION] * Math.PI; // Mult by Math.PI
-				deltaX = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_DELTA_X] * Parameters.parameters.doubleParameter("imageCenterTranslationRange");
-				deltaY = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_DELTA_Y] * Parameters.parameters.doubleParameter("imageCenterTranslationRange");
+				if(Parameters.parameters.booleanParameter("AnimateScale")) {
+					scale = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_SCALE] * Parameters.parameters.doubleParameter("maxScale");		 // TODO: Multiply by "maxScale"
+				}
+				
+				if(Parameters.parameters.booleanParameter("AnimateRotation")) {
+					rotation = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_ROTATION] * Math.PI; // Mult by Math.PI
+				}
+				
+				if(Parameters.parameters.booleanParameter("AnimateDeltaX")) {
+					deltaX = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_DELTA_X] * Parameters.parameters.doubleParameter("imageCenterTranslationRange");
+				}
+				
+				if(Parameters.parameters.booleanParameter("AnimateDeltaY")) {
+					deltaY = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_DELTA_Y] * Parameters.parameters.doubleParameter("imageCenterTranslationRange");
+				}
+				
 			}			
 			// Currently not allowing any center point translation, but would be cool to either have fixed translation or change over time
 			images[i-startTime] = GraphicsUtil.imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, i/FRAMES_PER_SEC, scale, rotation, deltaX, deltaY);

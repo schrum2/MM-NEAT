@@ -2,6 +2,7 @@ package edu.southwestern.tasks.interactive.animationbreeder;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -271,8 +272,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			});
 			
 			//AnimateRotation, AnimateScale, AnimateDeltaX, and AnimateDeltaY.
-			JCheckBox animateRotation = new JCheckBox("AnimateRotation", Parameters.parameters.booleanParameter("AnimateRotation"));
+			JCheckBox animateRotation = new JCheckBox("rotation", Parameters.parameters.booleanParameter("AnimateRotation"));
 			animateRotation.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					System.out.println("Flip rotation");
 					Parameters.parameters.changeBoolean("AnimateRotation");
@@ -280,8 +282,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				}
 			});
 			
-			JCheckBox animateScale = new JCheckBox("AnimateScale", Parameters.parameters.booleanParameter("AnimateScale"));
+			JCheckBox animateScale = new JCheckBox("Scale", Parameters.parameters.booleanParameter("AnimateScale"));
 			animateScale.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					System.out.println("Flip scale");
 					Parameters.parameters.changeBoolean("AnimateScale");
@@ -289,24 +292,33 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				}
 			});
 			
-			JCheckBox animateDeltaX = new JCheckBox("AnimateDeltaX", Parameters.parameters.booleanParameter("AnimateDeltaX"));
+			JCheckBox animateDeltaX = new JCheckBox("deltaX", Parameters.parameters.booleanParameter("AnimateDeltaX"));
 			animateDeltaX.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					System.out.println("Flip delta X");
 					Parameters.parameters.changeBoolean("AnimateDeltaX");
+					resetButtons(true);
 				}
 			});
 			
-			JCheckBox animateDeltaY = new JCheckBox("AnimateDeltaY", Parameters.parameters.booleanParameter("AnimateDeltaY"));
+			JCheckBox animateDeltaY = new JCheckBox("deltaY", Parameters.parameters.booleanParameter("AnimateDeltaY"));
 			animateDeltaY.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					System.out.println("Flip delta Y");
 					Parameters.parameters.changeBoolean("AnimateDeltaY");
+					resetButtons(true);
 				}
 			});
 			
 			JPanel imageTweaks = new JPanel();
+			imageTweaks.setLayout(new GridLayout(5, 1, 2, 2));
 			imageTweaks.add(stark);
+			imageTweaks.add(animateRotation);
+			imageTweaks.add(animateScale);
+			imageTweaks.add(animateDeltaX);
+			imageTweaks.add(animateDeltaY);
 			top.add(imageTweaks);
 			
 			//Add all panels to interface
@@ -399,7 +411,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	@Override
 	public String[] sensorLabels() {
-		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "time", "bias", "rotation", "scale", "deltaX", "deltaY"};
+		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "time", "bias"};
 	}
 
 	/**
@@ -409,7 +421,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	public String[] outputLabels() {
 		// if animate scale and rotation, then return array with "scale" and "rotation" at the end
 		if(Parameters.parameters.booleanParameter("animateWithScaleAndRotation")) {
-			return new String[] { "hue-value", "saturation-value", "brightness-value", "scale", "rotation", "deltaX", "deltaY"};
+			return new String[] { "hue-value", "saturation-value", "brightness-value"};
 		}else {
 			return new String[] { "hue-value", "saturation-value", "brightness-value" };
 		}
@@ -624,7 +636,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","allowInteractiveSave:true","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true", "picbreederImageScale:1.0", "picbreederImageRotation:0.0", "starkPicbreeder:true", "animateWithScaleRotationTranslation:true"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","allowInteractiveSave:true","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true", "picbreederImageScale:1.0", "picbreederImageRotation:0.0", "starkPicbreeder:true", "animateWithScaleRotationTranslation:true", "AnimateRotation:true", "AnimateScale:true", "AnimateDeltaX:true", "AnimateDeltaY:true"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
