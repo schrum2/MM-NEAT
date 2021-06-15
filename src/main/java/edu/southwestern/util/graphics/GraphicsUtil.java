@@ -784,7 +784,8 @@ public class GraphicsUtil {
 	 * @return scaled x value
 	 */
 	public static int invert(double y, double max, double min) {
-		return invert(y,max,min);
+		throw new UnsupportedOperationException("This method lacks an appropriate definition");
+		//return invert(y,max,min);
 	}
 
 	/**
