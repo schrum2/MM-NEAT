@@ -47,6 +47,16 @@ public class ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels implements BinLabels
 		return mapElitesBinIndex;
 	}
 
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Novelty", "Backtracked Rooms", "Reachable Rooms"};
+	}
+	
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {noveltyBinsPerDimension, maxNumRooms+1, maxNumRooms+1};
+	}
+	
 	//"mapElitesBinLabels:edu.southwestern.tasks.zelda.ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels"
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException{
 

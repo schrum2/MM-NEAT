@@ -25,6 +25,7 @@ public class LatentVariablePartitionSumBinLabels extends MultiDimensionalRealVal
 		return value;
 	}
 
+
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Mario
 		//MMNEAT.main("runNumber:0 randomSeed:1 base:latentvariablepartition log:LatentVariablePartition-Mario saveTo:Mario marioGANLevelChunks:10 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 mu:100 maxGens:100000 io:true netio:false genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 solutionVectorSlices:2 latentPartitionBinDimension:100 ".split(" "));
@@ -35,4 +36,5 @@ public class LatentVariablePartitionSumBinLabels extends MultiDimensionalRealVal
 		// Lode Runner
 		MMNEAT.main("runNumber:0 randomSeed:1 base:latentvariablepartition log:LatentVariablePartition-LodeRunner saveTo:LodeRunner LodeRunnerGANModel:LodeRunnerAllGround100LevelsEpoch200000_10_7.pth watch:false GANInputSize:10 trials:1 mu:100 maxGens:100000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.loderunner.LodeRunnerGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesBinLabels:edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment allowWeirdLodeRunnerActions:false lodeRunnerMaximizeEnemies:false lodeRunnerTSPBudget:0 solutionVectorSlices:2 latentPartitionBinDimension:100 ".split(" "));
 	}
+
 }

@@ -13,6 +13,12 @@ public class MultiDimensionalRealValuedBinLabelsTest {
 		public AbstractExtended(int binsPerDimension, double minPossibleValue, double maxPossibleValue, int numDimensions, int vectorLength) {
 			super(binsPerDimension, minPossibleValue, maxPossibleValue, numDimensions, vectorLength);
 		}
+
+		@Override
+		public String[] dimensions() { return null; }
+	
+		@Override
+		public int[] dimensionSizes() { return null; }
 	}
 	
 	MultiDimensionalRealValuedBinLabels lab1;

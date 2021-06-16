@@ -35,4 +35,13 @@ public class MarioMAPElitesDecorNSAndLeniencyBinLabels implements BinLabels {
 		return binIndex;
 	}
 
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Decoration", "Negative Space", "Leniency"};
+	}
+	
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {binsPerDimension, binsPerDimension, binsPerDimension};
+	}
 }
