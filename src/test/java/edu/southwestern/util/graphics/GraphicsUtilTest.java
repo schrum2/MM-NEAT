@@ -328,17 +328,26 @@ public class GraphicsUtilTest {
 		}
 	}
 
-//	@Test
-//	public void testGetHSBFromCPPN() {
-//		//float[] cppnHSB = GraphicsUtil.getHSBFromCPPN(tg1, 0, 0, SIDE_LENGTH, SIDE_LENGTH, inputMultiples, 0, 1.0, 0.0);
-//		
-//	}
+	@Test
+	public void testGetHSBFromCPPN() {
+		for(int x = 0; x < checkeredBlackAndWhite.getWidth(); x++) {
+			for(int y = 0; y < checkeredBlackAndWhite.getHeight(); y++) {
+				if(x % 2 == y % 2) {
+					assertArrayEquals(new float[]{0.0f, 0.0f, 0.0f}, GraphicsUtil.getHSB(checkeredBlackAndWhite, x, y), 0);
+				} else {
+					assertArrayEquals(new float[]{0.0f, 0.0f, 1.0f}, GraphicsUtil.getHSB(checkeredBlackAndWhite, x, y), 0);
+				}
+			}
+		}
+	}
 
-//	@Test
-//	public void testRangeRestrictHSB() {
-//		//fail("Not yet implemented");
-//	}
-//
+	@Test
+	public void testRangeRestrictHSB() {
+		//fail("Not yet implemented");
+		assertArrayEquals(new float[] {0.0f, 0.0f, 0.0f}, GraphicsUtil.rangeRestrictHSB(new double[] {0.0, 0.0, 0.0}), 0);
+		assertArrayEquals(new float[] {0.0f, 0.0f, 1.0f}, GraphicsUtil.rangeRestrictHSB(new double[] {0.0, 0.0, 1.0}), 0);
+	}
+
 
 	@Test
 	public void testGet2DObjectCPPNInputsIntIntIntIntDouble() {
