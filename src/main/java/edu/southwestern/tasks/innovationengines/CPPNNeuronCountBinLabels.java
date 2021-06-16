@@ -50,7 +50,7 @@ public class CPPNNeuronCountBinLabels implements BinLabels{
 	 */
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = ((multi[BIN_INDEX_NODES] - MIN_NUM_NEURONS) + (maxNumNeurons - MIN_NUM_NEURONS + 1));
+		int binIndex = ((multi[BIN_INDEX_NODES] - MIN_NUM_NEURONS));
 		assert binIndex >= 0 : "Negative index "+Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
 	}
