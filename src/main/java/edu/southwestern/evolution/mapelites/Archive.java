@@ -156,6 +156,7 @@ public class Archive<T> {
 			int oneD = this.getBinMapping().oneDimensionalIndex(candidateBinIndices);
 			boolean result = false;
 			synchronized(this) { // Make sure elite at the index does not change while considering replacement
+				// Synchronizing on the whole archive seems unnecessary ... maybe just the index? How?
 				Score<T> currentBinOccupant = getElite(oneD);
 				result = replaceIfBetter(candidate, oneD, currentBinOccupant);
 			}
