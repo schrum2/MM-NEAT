@@ -476,22 +476,34 @@ public class GraphicsUtilTest {
 		}
 	}
 
-//	@Test
-//	public void testImageFromINDArray() {
-//		// RGB of every pixel laid out linearly. Each goes from 0 to 255
-//		double[] imageData = new double[SIDE_LENGTH*SIDE_LENGTH*3];
-//		int count = 0;
-//		// Loop to fill in imageData
-//		for(int x = 0; x < checkeredBlackAndWhite.getWidth(); x++) {
-//			for(int y = 0; y < checkeredBlackAndWhite.getHeight(); y++) {
-//				imageData[count++] = checkeredBlackAndWhite.getRGB(x, y);
-//			}
-//		}
-//		int[] shape = new int[] {1,3,SIDE_LENGTH,SIDE_LENGTH};
-//		char order = 'c'; // Not sure what this means. Should it be 'c'?
-//		INDArray imageArray = new NDArray(imageData, shape, order);
-//		assertEquals(checkeredBlackAndWhite, GraphicsUtil.imageFromINDArray(imageArray));
-//	}
+	@Test
+	public void testImageFromINDArray() {
+		// RGB of every pixel laid out linearly. Each goes from 0 to 255
+		double[] imageData = new double[SIDE_LENGTH*SIDE_LENGTH*3];
+		int count = 0;
+		// Loop to fill in imageData
+		for(int x = 0; x < checkeredBlackAndWhite.getWidth(); x++) {
+			for(int y = 0; y < checkeredBlackAndWhite.getHeight(); y++) {
+				int rgb = checkeredBlackAndWhite.getRGB(x, y);
+				Color c = new Color(rgb);
+				int red = c.getRed();
+				int green = c.getGreen();
+				int blue = c.getBlue();
+				imageData[count++] = red;
+				imageData[count++] = blue;
+				imageData[count++] = green;
+			}
+		}
+		int[] shape = new int[] {1,3,SIDE_LENGTH,SIDE_LENGTH};
+		char order = 'f'; // Not sure what this means. Should it be 'c'?
+		INDArray imageArray = new NDArray(imageData, shape, order);
+		
+		for(int x = 0; x < checkeredBlackAndWhite.getWidth(); x++) {
+			for(int y = 0; y < checkeredBlackAndWhite.getHeight(); y++) {
+				assertEquals(checkeredBlackAndWhite.getRGB(x, y), GraphicsUtil.imageFromINDArray(imageArray).getRGB(x, y));
+			}
+		}
+	}
 
 	// Not testing things involving drawing panels
 //	@Test
