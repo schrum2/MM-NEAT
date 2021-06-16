@@ -170,6 +170,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				double loss = AutoEncoderProcess.neverInitialized ? 1.0 : AutoEncoderProcess.getReconstructionLoss(image);
 				int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinLabels.numLossBins),GaierAutoencoderPictureBinLabels.numLossBins - 1);
 				indicesMAPEliteBin = new int[]{nodes, lossIndex};
+			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNNeuronCountBinLabels) {
+				indicesMAPEliteBin = new int[] {nodes};
 			} else {
 				throw new IllegalStateException("No valid binning scheme provided for PictureTargetTask");
 			}
@@ -360,6 +362,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinLabels",
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.GaierAutoencoderPictureBinLabels",
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
+				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNNeuronCountBinLabels",
 				"fs:true",
 				"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
 				"trainingAutoEncoder:true",

@@ -95,13 +95,14 @@ public class PictureTargetFitnessTroubleshoot {
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws NoSuchMethodException, IOException {
 		
-		BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "ScratchedSkull64.png"));
+		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "ScratchedSkull64.png"));
 		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "ScratchedSkull.jpg"));
 		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "failedskull.jpg"));
 		// BufferedImage skull = ImageIO.read(new File("targetimage\\WoolleySkull7\\archive\\Neurons[8]links[7]\\0.70830Neurons[8]links[7]1721290.jpg"));
 		//BufferedImage skull = ImageIO.read(new File("targetimage\\QuadrantRMSESkull1\\archive\\(4,4,4,4)\\0.71548(4,4,4,4)372085.jpg"));
 		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.jpg"));
 		//BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.jpg"));
+		BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skullWithAutoencoder.png"));
 		BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.png"));
 		
 		
