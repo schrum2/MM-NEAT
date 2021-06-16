@@ -1,7 +1,7 @@
 """ 2D MAP-Elites archive plotter (Only for 2D archives with equal amount of bins in both dimensions)
     
     Usage:
-    python 2D_bin_plotter.py <plot file to display> <first dimension size> <second dimension size>
+    python 2D_bin_plotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size>
     python 2D_bin_plotter.py ...\MM-NEAT\mapelitesfunctionoptimization\MAPElitesSphereFunctionOptimization20\mapelitesfunctionoptimization-MAPElitesSphereFunctionOptimization20_MAPElites_log.txt
     
 """
@@ -30,7 +30,8 @@ except:
     quit()
     
 try:
-    dimensions = [int(sys.argv[2]), int(sys.argv[3])]
+    dimension_names = [sys.argv[2], sys.argv[4]]
+    dimensions = [int(sys.argv[3]), int(sys.argv[5])]
 except:
     print("Dimensions were not specified!")
     quit()
@@ -47,7 +48,12 @@ bins = np.array(numeric_contents) # To array
 bins.resize(dimensions[0], dimensions[1]) # Resize 1D array to 2D array with dimensions based on the overall size (must be square)
 
 
-plt.text(dimensions[1]/2, -(dimensions[0]/20), title, horizontalalignment='center', verticalalignment='baseline')
+plt.text(dimensions[1]/2, (dimensions[0]/20)+dimensions[0], title, horizontalalignment='center', verticalalignment='baseline')
+plt.xlabel(dimension_names[0])
+plt.ylabel(dimension_names[1])
+plt.xlim(left=0.0, right=dimensions[0])
+plt.ylim(bottom=0.0, top=dimensions[1])
+
 plt.imshow(bins)
 
 plt.savefig(dir+title+".png")
