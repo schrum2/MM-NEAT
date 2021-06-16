@@ -23,8 +23,8 @@ try: # Get file itself
         pass
     last_line = line # get last one
     file_contents = last_line.split("\t")[1:] # Split last line into 1D bins
-    dir = file_path[:file_path.rfind("\\")+1]
-    title = file_path[file_path.rfind("\\")+1:file_path.rfind("_log.txt")]
+    dir = file_path[:file_path.rfind("/")+1]
+    title = file_path[file_path.rfind("/")+1:file_path.rfind("_log.txt")]
 except:
     print("File could not be opened.")
     quit()

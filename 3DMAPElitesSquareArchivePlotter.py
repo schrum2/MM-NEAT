@@ -24,8 +24,8 @@ try: # Get file itself
         pass
     last_line = line # get last one
     file_contents = last_line.split("\t")[1:] # Split last line into 1D bins
-    dir = file_path[:file_path.rfind("\\")+1]
-    title = file_path[file_path.rfind("\\")+1:file_path.rfind("_log.txt")]
+    dir = file_path[:file_path.rfind("/")+1]
+    title = file_path[file_path.rfind("/")+1:file_path.rfind("_log.txt")]
 except:
     print("File could not be opened.")
     quit()
@@ -65,12 +65,12 @@ archive_slice_arrays = [np.array(slice) for slice in archive_slices]
 for slice in archive_slice_arrays:
     slice.resize(dimensions[1], dimensions[2]) # Resize 1D array to 2D array with dimensions based on the overall size
 
-fig, axs = plt.subplots(nrows=2, ncols=math.ceil(dimensions[0]/2), tight_layout=True, figsize=(18, 6))
+fig, axs = plt.subplots(nrows=2, ncols=math.ceil(dimensions[0]/2), tight_layout=True, figsize=(18, 8))
 
 if dimensions[0] % 2 == 1:
     fig.delaxes(axs[1, math.ceil(dimensions[0]/2)-1])
 
-#text(dimensions[1]/2, -(dimensions[0]/20), title, horizontalalignment='center', verticalalignment='baseline')
+fig.suptitle(title, x=0.5, y=1  )
 
 counter = 0
 for ax, slice in zip(axs.flat, archive_slice_arrays):
