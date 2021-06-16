@@ -1,7 +1,7 @@
 """ 2D MAP-Elites archive plotter (Only for 2D archives with equal amount of bins in both dimensions)
     
     Usage:
-    python 2D_bin_plotter.py <plot file to display>
+    python 2D_bin_plotter.py <plot file to display> <first dimension size> <second dimension size>
     python 2D_bin_plotter.py ...\MM-NEAT\mapelitesfunctionoptimization\MAPElitesSphereFunctionOptimization20\mapelitesfunctionoptimization-MAPElitesSphereFunctionOptimization20_MAPElites_log.txt
     
 """
@@ -29,6 +29,12 @@ except:
     print("File could not be opened.")
     quit()
     
+try:
+    dimensions = [int(sys.argv[2]), int(sys.argv[3])]
+except:
+    print("Dimensions were not specified!")
+    quit()
+
 def to_number(string_in): # Function to convert strings into numbers
     if string_in == "-Infinity":
         return np.NINF
@@ -38,11 +44,10 @@ def to_number(string_in): # Function to convert strings into numbers
 numeric_contents = [to_number(i) for i in file_contents] # Strings to Floats
 
 bins = np.array(numeric_contents) # To array
-dim_size = math.floor(math.sqrt(len(numeric_contents)))
-bins.resize(dim_size, dim_size) # Resize 1D array to 2D array with dimensions based on the overall size (must be square)
+bins.resize(dimensions[0], dimensions[1]) # Resize 1D array to 2D array with dimensions based on the overall size (must be square)
 
 
-plt.text(dim_size/2, -(dim_size/20), title, horizontalalignment='center', verticalalignment='baseline')
+plt.text(dimensions[1]/2, -(dimensions[0]/20), title, horizontalalignment='center', verticalalignment='baseline')
 plt.imshow(bins)
 
 plt.savefig(dir+title+".png")
