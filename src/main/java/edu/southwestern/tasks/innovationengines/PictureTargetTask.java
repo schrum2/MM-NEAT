@@ -362,6 +362,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinLabels",
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.GaierAutoencoderPictureBinLabels",
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
+				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNNeuronCountBinLabels",
 				"fs:true",
 				"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
 				"trainingAutoEncoder:true",
