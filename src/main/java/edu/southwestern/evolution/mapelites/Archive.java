@@ -250,8 +250,8 @@ public class Archive<T> {
 	}
 	
 	/**
-	 * Random index, but the bin is guarranteed to be occupied
-	 * @return
+	 * Random index, but the bin is guaranteed to be occupied
+	 * @return Index in the 1D complete archive that contains an elite (not empty)
 	 */
 	public int randomOccupiedBinIndex() {
 		int steps = RandomNumbers.randomGenerator.nextInt(occupiedBins);
