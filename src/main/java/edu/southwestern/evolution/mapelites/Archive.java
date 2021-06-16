@@ -154,8 +154,12 @@ public class Archive<T> {
 		} else if(candidate.usesMAPElitesBinSpecification()) {
 			int[] candidateBinIndices = candidate.MAPElitesBinIndex();
 			int oneD = this.getBinMapping().oneDimensionalIndex(candidateBinIndices);
-			Score<T> currentBinOccupant = getElite(oneD);
-			return replaceIfBetter(candidate, oneD, currentBinOccupant);
+			boolean result = false;
+			synchronized(this) { // Make sure elite at the index does not change while considering replacement
+				Score<T> currentBinOccupant = getElite(oneD);
+				result = replaceIfBetter(candidate, oneD, currentBinOccupant);
+			}
+			return result;
 		} else {
 			// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
 			return false; // nothing added

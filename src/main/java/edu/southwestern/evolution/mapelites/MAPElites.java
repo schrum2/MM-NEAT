@@ -228,6 +228,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				archive.archive.set(i, score); // Directly set the bin contents
 			}
 		} else {
+			System.out.println("Fill up initial archive");
 			// Start from scratch
 			int startSize = Parameters.parameters.integerParameter("mu");
 			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);
