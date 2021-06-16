@@ -14,7 +14,7 @@ public class GaierAutoencoderPictureBinLabelsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[] {"maxNumNeurons:100", "numReconstructionLossBins:"+NUM_LOSS_BINS});
+		Parameters.initializeParameterCollections(new String[] {"maxNumNeurons:100", "numReconstructionLossBins:"+NUM_LOSS_BINS, "trainingAutoEncoder:true"});
 		labels = new GaierAutoencoderPictureBinLabels();
 	}
 
