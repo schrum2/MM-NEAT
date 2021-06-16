@@ -35,7 +35,7 @@ public class LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels imple
 
 	@Override
 	public String[] dimensions() {
-		return new String[] {"Connected %", "Treasures", "Enemies"};
+		return new String[] {"Connected Percent", "Treasures", "Enemies"};
 	}
 
 	@Override

@@ -43,7 +43,7 @@ public class LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels implem
 
 	@Override
 	public String[] dimensions() {
-		return new String[] {"Connected %", "Ground %", "Ladders %"};
+		return new String[] {"Connected Percent", "Ground Percent", "Ladders Percent"};
 	}
 
 	@Override

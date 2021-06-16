@@ -35,7 +35,7 @@ public class LodeRunnerMAPElitesPercentGroundNumGoldAndEnemiesBinLabels implemen
 	
 	@Override
 	public String[] dimensions() {
-		return new String[] {"Ground %", "Treasures", "Enemies"};
+		return new String[] {"Ground Percent", "Treasures", "Enemies"};
 	}
 
 	@Override
