@@ -81,8 +81,6 @@ public class GraphicsUtilTest {
 				checkeredBlackAndWhite.setRGB(x, y, whiteRGB);
 			}
 		}	
-//		GraphicsUtil.drawImage(checkeredBlackAndWhite, "checkered", SIDE_LENGTH, SIDE_LENGTH);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 
 //	@Test
@@ -113,7 +111,6 @@ public class GraphicsUtilTest {
 
 	@Test
 	public void testImageFromCPPNNetworkIntInt() {
-		//fail("Not yet implemented");
 		RandomNumbers.reset(50);
 		TWEANNGenotype tg2 = new TWEANNGenotype(4, MMNEAT.networkOutputs, 0);
 		
@@ -200,27 +197,118 @@ public class GraphicsUtilTest {
 		}
 	}
 
-//	@Test
-//	public void testZentangleImagesBufferedImageBufferedImageBufferedImage() {
-//		//fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testZentangleImagesBufferedImageBufferedImageBufferedImageBufferedImageBufferedImage() {
-//		//fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testZentangleImagesBufferedImageBufferedImageBufferedImageBufferedImageBufferedImageBufferedImage() {
-//		//fail("Not yet implemented");
-//	}
-//
-//	// Make random CPPN using tg1
-//	@Test
-//	public void testRemixedImageFromCPPN() {
-//		//fail("Not yet implemented");
-//		
-//	}
+	@Test
+	public void testZentangleImagesBufferedImageBufferedImageBufferedImage() {
+		Network cppn = tg1.getPhenotype();
+		BufferedImage loadedSkull = null;
+		BufferedImage loadedSunset = null;
+		try {
+			loadedSkull = ImageIO.read(new File("data" + File.separator + "imageMatch" + File.separator + "skull64.png"));
+			loadedSunset = ImageIO.read(new File("data" + File.separator + "imageMatch" + File.separator + "sunset2.png"));
+		} catch (IOException e) {
+			fail("Crash while loading saved images");
+		}
+		BufferedImage result = GraphicsUtil.zentangleImages(loadedSkull, loadedSkull, loadedSunset);
+		GraphicsUtil.saveImage(result, "tempZentangle.png");
+		BufferedImage loadedZentangle = null;
+		File z = new File("tempZentangle.png");
+		try {
+			loadedZentangle = ImageIO.read(z);
+		} catch (IOException e) {
+			fail("Crash while loading savedimag");
+		}
+		
+		for(int x = 0; x < loadedZentangle.getWidth(); x++) {
+			for(int y = 0; y < loadedZentangle.getHeight(); y++) {
+				assertEquals(loadedZentangle.getRGB(x, y), result.getRGB(x, y));
+			}
+		}
+		
+	}
+
+	@Test
+	public void testZentangleImagesBufferedImageBufferedImageBufferedImageBufferedImageBufferedImage() {
+		Network cppn = tg1.getPhenotype();
+		BufferedImage loadedSkull = null;
+		BufferedImage loadedSunset = null;
+		try {
+			loadedSkull = ImageIO.read(new File("data" + File.separator + "imageMatch" + File.separator + "skull64.png"));
+			loadedSunset = ImageIO.read(new File("data" + File.separator + "imageMatch" + File.separator + "sunset2.png"));
+		} catch (IOException e) {
+			fail("Crash while loading saved images");
+		}
+		BufferedImage result = GraphicsUtil.zentangleImages(loadedSkull, loadedSunset, loadedSkull, loadedSunset, loadedSunset);
+		GraphicsUtil.saveImage(result, "tempZentangle.png");
+		BufferedImage loadedZentangle = null;
+		File z = new File("tempZentangle.png");
+		try {
+			loadedZentangle = ImageIO.read(z);
+		} catch (IOException e) {
+			fail("Crash while loading savedimag");
+		}
+		
+		for(int x = 0; x < loadedZentangle.getWidth(); x++) {
+			for(int y = 0; y < loadedZentangle.getHeight(); y++) {
+				assertEquals(loadedZentangle.getRGB(x, y), result.getRGB(x, y));
+			}
+		}
+	}
+
+	@Test
+	public void testZentangleImagesBufferedImageBufferedImageBufferedImageBufferedImageBufferedImageBufferedImage() {
+		//fail("Not yet implemented");
+		Network cppn = tg1.getPhenotype();
+		BufferedImage loadedSkull = null;
+		BufferedImage loadedSunset = null;
+		try {
+			loadedSkull = ImageIO.read(new File("data" + File.separator + "imageMatch" + File.separator + "skull64.png"));
+			loadedSunset = ImageIO.read(new File("data" + File.separator + "imageMatch" + File.separator + "sunset2.png"));
+		} catch (IOException e) {
+			fail("Crash while loading saved images");
+		}
+		BufferedImage result = GraphicsUtil.zentangleImages(loadedSkull, loadedSunset, loadedSkull, loadedSkull, loadedSunset, loadedSunset);
+		GraphicsUtil.saveImage(result, "tempZentangle.png");
+		BufferedImage loadedZentangle = null;
+		File z = new File("tempZentangle.png");
+		try {
+			loadedZentangle = ImageIO.read(z);
+		} catch (IOException e) {
+			fail("Crash while loading savedimag");
+		}
+		
+		for(int x = 0; x < loadedZentangle.getWidth(); x++) {
+			for(int y = 0; y < loadedZentangle.getHeight(); y++) {
+				assertEquals(loadedZentangle.getRGB(x, y), result.getRGB(x, y));
+			}
+		}
+		
+	}
+
+	// Make random CPPN using tg1
+	@Test
+	public void testRemixedImageFromCPPN() {
+		RandomNumbers.reset(50);
+		TWEANNGenotype tg2 = new TWEANNGenotype(7, MMNEAT.networkOutputs, 0);
+		
+		Network cppn = tg2.getPhenotype();
+		BufferedImage result = GraphicsUtil.remixedImageFromCPPN(cppn, checkeredBlackAndWhite, ArrayUtil.doubleOnes(cppn.numInputs()), 5);
+//		GraphicsUtil.drawImage(result, "checkered", SIDE_LENGTH, SIDE_LENGTH);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		GraphicsUtil.saveImage(result, "temporary.png");
+		BufferedImage loaded = null;
+		File f = new File("temporary.png");
+		try {
+			loaded = ImageIO.read(f);
+		} catch (IOException e) {
+			fail("Crash while loading saved image");
+		}
+
+		for(int x = 0; x < result.getWidth(); x++) {
+			for(int y = 0; y < result.getHeight(); y++) {
+				assertEquals(loaded.getRGB(x, y), result.getRGB(x, y));
+			}
+		}
+	}
 
 	@Test
 	public void testGetBrightnessFromImage() {
@@ -240,11 +328,11 @@ public class GraphicsUtilTest {
 		}
 	}
 
-	@Test
-	public void testGetHSBFromCPPN() {
-		//float[] cppnHSB = GraphicsUtil.getHSBFromCPPN(tg1, 0, 0, SIDE_LENGTH, SIDE_LENGTH, inputMultiples, 0, 1.0, 0.0);
-		
-	}
+//	@Test
+//	public void testGetHSBFromCPPN() {
+//		//float[] cppnHSB = GraphicsUtil.getHSBFromCPPN(tg1, 0, 0, SIDE_LENGTH, SIDE_LENGTH, inputMultiples, 0, 1.0, 0.0);
+//		
+//	}
 
 //	@Test
 //	public void testRangeRestrictHSB() {
