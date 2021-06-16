@@ -199,7 +199,6 @@ public class GraphicsUtilTest {
 
 	@Test
 	public void testZentangleImagesBufferedImageBufferedImageBufferedImage() {
-		Network cppn = tg1.getPhenotype();
 		BufferedImage loadedSkull = null;
 		BufferedImage loadedSunset = null;
 		try {
@@ -228,7 +227,6 @@ public class GraphicsUtilTest {
 
 	@Test
 	public void testZentangleImagesBufferedImageBufferedImageBufferedImageBufferedImageBufferedImage() {
-		Network cppn = tg1.getPhenotype();
 		BufferedImage loadedSkull = null;
 		BufferedImage loadedSunset = null;
 		try {
@@ -256,8 +254,6 @@ public class GraphicsUtilTest {
 
 	@Test
 	public void testZentangleImagesBufferedImageBufferedImageBufferedImageBufferedImageBufferedImageBufferedImage() {
-		//fail("Not yet implemented");
-		Network cppn = tg1.getPhenotype();
 		BufferedImage loadedSkull = null;
 		BufferedImage loadedSunset = null;
 		try {
@@ -284,7 +280,7 @@ public class GraphicsUtilTest {
 		
 	}
 
-	// Make random CPPN using tg1
+	
 	@Test
 	public void testRemixedImageFromCPPN() {
 		RandomNumbers.reset(50);
@@ -292,8 +288,6 @@ public class GraphicsUtilTest {
 		
 		Network cppn = tg2.getPhenotype();
 		BufferedImage result = GraphicsUtil.remixedImageFromCPPN(cppn, checkeredBlackAndWhite, ArrayUtil.doubleOnes(cppn.numInputs()), 5);
-//		GraphicsUtil.drawImage(result, "checkered", SIDE_LENGTH, SIDE_LENGTH);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		GraphicsUtil.saveImage(result, "temporary.png");
 		BufferedImage loaded = null;
 		File f = new File("temporary.png");
@@ -343,7 +337,6 @@ public class GraphicsUtilTest {
 
 	@Test
 	public void testRangeRestrictHSB() {
-		//fail("Not yet implemented");
 		assertArrayEquals(new float[] {0.0f, 0.0f, 0.0f}, GraphicsUtil.rangeRestrictHSB(new double[] {0.0, 0.0, 0.0}), 0);
 		assertArrayEquals(new float[] {0.0f, 0.0f, 1.0f}, GraphicsUtil.rangeRestrictHSB(new double[] {0.0, 0.0, 1.0}), 0);
 	}
@@ -496,7 +489,6 @@ public class GraphicsUtilTest {
 //		}
 //		int[] shape = new int[] {1,3,SIDE_LENGTH,SIDE_LENGTH};
 //		char order = 'c'; // Not sure what this means. Should it be 'c'?
-//		//fail("Not yet implemented");
 //		INDArray imageArray = new NDArray(imageData, shape, order);
 //		assertEquals(checkeredBlackAndWhite, GraphicsUtil.imageFromINDArray(imageArray));
 //	}
