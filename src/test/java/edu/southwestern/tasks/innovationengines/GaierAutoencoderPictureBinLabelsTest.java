@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import edu.southwestern.parameters.Parameters;
 
-public class GaierAutoencoderPictureBinningSchemeTest {
+public class GaierAutoencoderPictureBinLabelsTest {
 	
 	GaierAutoencoderPictureBinLabels labels;
 	public static final int NUM_LOSS_BINS = 10;
