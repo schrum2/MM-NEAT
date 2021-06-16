@@ -139,7 +139,7 @@ public class GraphicsUtilTest {
 		//ArrayUtil.doubleOnes(MMNEAT.networkInputs)
 		Network cppn = tg1.getPhenotype();
 		BufferedImage result = GraphicsUtil.imageFromCPPN(cppn, SIDE_LENGTH, SIDE_LENGTH, ArrayUtil.doubleOnes(cppn.numInputs()), 0.0, 1.0, 0.0, 0.0, 0.0);
-		
+		// save the image, load it, compare it
 		//assertEquals(, result);
 	}
 
