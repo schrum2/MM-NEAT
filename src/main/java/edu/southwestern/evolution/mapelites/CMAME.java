@@ -111,7 +111,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		double individualBinScore = individualScore.behaviorIndexScore(); // extract new bin score
 		Score<ArrayList<Double>> currentOccupant = archive.getElite(individualScore.MAPElitesBinIndex());
 		// This will be a fitness score that is interpreted such that larger values are better
-		double currentBinScore = currentOccupant == null ? Double.NEGATIVE_INFINITY : currentOccupant.behaviorIndexScore(); // extract current bin score
+		double currentBinScore = currentOccupant == null ? Float.NEGATIVE_INFINITY : currentOccupant.behaviorIndexScore(); // extract current bin score
 
 		thisEmitter.addFitness(rawIndividual, individualBinScore, currentBinScore, archive); // potentially add new fitness
 		

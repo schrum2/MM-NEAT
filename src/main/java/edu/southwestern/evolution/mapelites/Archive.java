@@ -172,7 +172,7 @@ public class Archive<T> {
 	private boolean replaceIfBetter(Score<T> candidate, int binIndex, Score<T> currentOccupant) {
 		double candidateScore = candidate.behaviorIndexScore(binIndex);
 		// Score cannot be negative infinity. Next, check if the bin is empty, or the candidate is better than the elite for that bin's score
-		if(candidateScore > Double.NEGATIVE_INFINITY && (currentOccupant == null || candidateScore > currentOccupant.behaviorIndexScore(binIndex))) {
+		if(candidateScore > Float.NEGATIVE_INFINITY && (currentOccupant == null || candidateScore > currentOccupant.behaviorIndexScore(binIndex))) {
 			archive.set(binIndex, candidate.copy()); // Replace elite
 			if(currentOccupant == null) { // Size is actually increasing
 				synchronized(this) {
@@ -246,7 +246,7 @@ public class Archive<T> {
 	 */
 	public double getBinScore(int binIndex) {
 		Score<T> elite = getElite(binIndex);
-		return elite == null ? Double.NEGATIVE_INFINITY : elite.behaviorIndexScore(binIndex);
+		return elite == null ? Float.NEGATIVE_INFINITY : elite.behaviorIndexScore(binIndex);
 	}
 	
 	/**
