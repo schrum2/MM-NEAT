@@ -90,58 +90,115 @@ public class GraphicsUtilTest {
 //		//fail("Not yet implemented");
 //	}
 
-//	@Test
-//	public void testSaveImage() {
-//		GraphicsUtil.saveImage(checkeredBlackAndWhite, "TEMPTEST.jpg");
-//		BufferedImage loaded = null;
-//		File f = new File("TEMPTEST.jpg");
-//		try {
-//			loaded = ImageIO.read(f);
-//		} catch (IOException e) {
-//			fail("Crash while loading saved image");
-//		} finally {
-//			f.delete();
-//		}
-//		
-//		// Loop through all pixels and verify int rgb values match
-//		assertEquals(checkeredBlackAndWhite, loaded);
-//	}
-//
-//	@Test
-//	public void testImageFromCPPNNetworkIntInt() {
-//		//fail("Not yet implemented");
-//		RandomNumbers.reset(50);
-//		TWEANNGenotype tg2 = new TWEANNGenotype(4, MMNEAT.networkOutputs, 0);
-//		
-//		Network cppn = tg2.getPhenotype();
-//		BufferedImage result = GraphicsUtil.imageFromCPPN(cppn, SIDE_LENGTH, SIDE_LENGTH);
-//	}
-//
-//	@Test
-//	public void testImageFromCPPNNetworkIntIntDoubleArray() {
-//		//fail("Not yet implemented");
-//		RandomNumbers.reset(50);
-//		TWEANNGenotype tg2 = new TWEANNGenotype(4, MMNEAT.networkOutputs, 0);
-//
-//		Network cppn = tg2.getPhenotype();
-//		BufferedImage result = GraphicsUtil.imageFromCPPN(cppn, SIDE_LENGTH, SIDE_LENGTH, ArrayUtil.doubleOnes(cppn.numInputs()));
-//	}
-//
-//	@Test
-//	public void testImageFromCPPNNetworkIntIntDoubleArrayDouble() {
-//		//fail("Not yet implemented");
-//		Network cppn = tg1.getPhenotype();
-//		BufferedImage result = GraphicsUtil.imageFromCPPN(cppn, SIDE_LENGTH, SIDE_LENGTH, ArrayUtil.doubleOnes(cppn.numInputs()), 0.);
-//	}
-//
-//	@Test
-//	public void testImageFromCPPNNetworkIntIntDoubleArrayDoubleDoubleDouble() {
-//		//ArrayUtil.doubleOnes(MMNEAT.networkInputs)
-//		Network cppn = tg1.getPhenotype();
-//		BufferedImage result = GraphicsUtil.imageFromCPPN(cppn, SIDE_LENGTH, SIDE_LENGTH, ArrayUtil.doubleOnes(cppn.numInputs()), 0.0, 1.0, 0.0, 0.0, 0.0);
-//		// save the image, load it, compare it
-//		//assertEquals(, result);
-//	}
+	@Test
+	public void testSaveImage() {
+		GraphicsUtil.saveImage(checkeredBlackAndWhite, "TEMPTEST.png");
+		BufferedImage loaded = null;
+		File f = new File("TEMPTEST.png");
+		try {
+			loaded = ImageIO.read(f);
+		} catch (IOException e) {
+			fail("Crash while loading saved image");
+		} finally {
+			f.delete();
+		}
+		// Loop through all pixels and verify int rgb values match
+		for(int x = 0; x < checkeredBlackAndWhite.getWidth(); x++) {
+			for(int y = 0; y < checkeredBlackAndWhite.getHeight(); y++) {
+				//System.out.println(x+","+y+":"+checkeredBlackAndWhite.getRGB(x, y)+" vs "+loaded.getRGB(x, y));
+				assertEquals(checkeredBlackAndWhite.getRGB(x, y), loaded.getRGB(x, y));
+			}
+		}
+	}
+
+	@Test
+	public void testImageFromCPPNNetworkIntInt() {
+		//fail("Not yet implemented");
+		RandomNumbers.reset(50);
+		TWEANNGenotype tg2 = new TWEANNGenotype(4, MMNEAT.networkOutputs, 0);
+		
+		Network cppn = tg2.getPhenotype();
+		BufferedImage result = GraphicsUtil.imageFromCPPN(cppn, SIDE_LENGTH, SIDE_LENGTH);
+		
+		GraphicsUtil.saveImage(result, "temporary.png");
+		BufferedImage loaded = null;
+		File f = new File("temporary.png");
+		try {
+			loaded = ImageIO.read(f);
+		} catch (IOException e) {
+			fail("Crash while loading saved image");
+		}
+		
+		for(int x = 0; x < result.getWidth(); x++) {
+			for(int y = 0; y < result.getHeight(); y++) {
+				assertEquals(loaded.getRGB(x, y), result.getRGB(x, y));
+			}
+		}
+	}
+
+	@Test
+	public void testImageFromCPPNNetworkIntIntDoubleArray() {
+		RandomNumbers.reset(50);
+		TWEANNGenotype tg2 = new TWEANNGenotype(4, MMNEAT.networkOutputs, 0);
+
+		Network cppn = tg2.getPhenotype();
+		BufferedImage result = GraphicsUtil.imageFromCPPN(cppn, SIDE_LENGTH, SIDE_LENGTH, ArrayUtil.doubleOnes(cppn.numInputs()));
+		
+		GraphicsUtil.saveImage(result, "temporary.png");
+		BufferedImage loaded = null;
+		File f = new File("temporary.png");
+		try {
+			loaded = ImageIO.read(f);
+		} catch (IOException e) {
+			fail ("Crash while loading saved image");
+		}
+		
+		for(int x = 0; x < result.getWidth(); x++) {
+			for(int y = 0; y < result.getHeight(); y++) {
+				assertEquals(loaded.getRGB(x, y), result.getRGB(x, y));
+			}
+		}
+	}
+
+	@Test
+	public void testImageFromCPPNNetworkIntIntDoubleArrayDouble() {
+			Network cppn = tg1.getPhenotype();
+			BufferedImage result = GraphicsUtil.imageFromCPPN(cppn, SIDE_LENGTH, SIDE_LENGTH, ArrayUtil.doubleOnes(cppn.numInputs()), 0.);
+			GraphicsUtil.saveImage(result, "temporary.png");
+			BufferedImage loaded = null;
+			File f = new File("temporary.png");
+			try {
+				loaded = ImageIO.read(f);
+			} catch (IOException e) {
+				fail("Crash while loading saved image");
+			}
+			
+			for(int x = 0; x < result.getWidth(); x++) {
+				for(int y = 0; y < result.getHeight(); y++) {
+					assertEquals(loaded.getRGB(x, y), result.getRGB(x, y));
+				}
+			}
+		}
+
+	@Test
+	public void testImageFromCPPNNetworkIntIntDoubleArrayDoubleDoubleDouble() {
+		Network cppn = tg1.getPhenotype();
+		BufferedImage result = GraphicsUtil.imageFromCPPN(cppn, SIDE_LENGTH, SIDE_LENGTH, ArrayUtil.doubleOnes(cppn.numInputs()), 0.0, 1.0, 0.0, 0.0, 0.0);	
+		GraphicsUtil.saveImage(result, "temporary.png");
+		BufferedImage loaded = null;
+		File f = new File("temporary.png");
+		try {
+			loaded = ImageIO.read(f);
+		} catch (IOException e) {
+			fail("Crash while loading saved image");
+		}
+
+		for(int x = 0; x < result.getWidth(); x++) {
+			for(int y = 0; y < result.getHeight(); y++) {
+				assertEquals(loaded.getRGB(x, y), result.getRGB(x, y));
+			}
+		}
+	}
 
 //	@Test
 //	public void testZentangleImagesBufferedImageBufferedImageBufferedImage() {
