@@ -1,7 +1,7 @@
 """ 2D MAP-Elites archive plotter (Only for 2D archives with equal amount of bins in both dimensions)
     
     Usage:
-    python 2D_bin_plotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size>
+    python 2D_bin_plotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <max value> <min value>
     python 2D_bin_plotter.py ...\MM-NEAT\mapelitesfunctionoptimization\MAPElitesSphereFunctionOptimization20\mapelitesfunctionoptimization-MAPElitesSphereFunctionOptimization20_MAPElites_log.txt
     
 """
@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import math
+from matplotlib import colors, cm
 
 try: # Get the file path from arguments
     file_path = sys.argv[1]
@@ -35,15 +36,37 @@ try:
 except:
     print("Dimensions were not specified!")
     quit()
-
-def to_number(string_in): # Function to convert strings into numbers
-    if string_in == "-Infinity":
-        return np.NINF
+    
+try:
+    calc_minmax = False
+    vmax = int(sys.argv[6])
+    vmin = int(sys.argv[7])
+    print("Min and Max specified as: ("+str(vmin)+", "+str(vmax)+")")
+except:
+    print("Min and/or Max not specified, will be calculated")
+    calc_minmax = True
+    vmin = float("inf")
+    vmax = float("-inf")
+    
+numeric_contents = []
+for string_in in file_contents:
+    if "-Infinity" in string_in or "X" in string_in:
+        numeric_contents.append(np.NINF)
     else:
-        return float(string_in)
+        temp_value = float(string_in)
+        numeric_contents.append(temp_value)
+        if calc_minmax:
+            if vmin > temp_value and not math.isinf(temp_value):
+                vmin = temp_value
+            if vmax < temp_value and not math.isinf(temp_value):
+                vmax = temp_value
 
-numeric_contents = [to_number(i) for i in file_contents] # Strings to Floats
+if calc_minmax:
+    print("Calculated min and max values: ("+str(vmin)+", "+str(vmax)+")")
 
+norm = colors.Normalize(vmin=vmin, vmax=vmax) # normalize colors
+cmap = "viridis" # Colormap to use
+        
 bins = np.array(numeric_contents) # To array
 bins.resize(dimensions[0], dimensions[1]) # Resize 1D array to 2D array with dimensions based on the overall size (must be square)
 
@@ -54,7 +77,9 @@ plt.ylabel(dimension_names[1])
 plt.xlim(left=0.0, right=dimensions[0])
 plt.ylim(bottom=0.0, top=dimensions[1])
 
-plt.imshow(bins)
+plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
+        
+plt.imshow(bins, norm=norm, cmap=cmap)
 
 plt.savefig(dir+title+".png")
 
