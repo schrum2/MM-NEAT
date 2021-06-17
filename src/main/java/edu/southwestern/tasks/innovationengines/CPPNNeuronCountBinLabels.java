@@ -56,11 +56,11 @@ public class CPPNNeuronCountBinLabels implements BinLabels{
 	
 	@Override
 	public String[] dimensions() {
-		return new String[] {"Links", "Neurons"};
+		return new String[] {"Neurons"};
 	}
 	
 	@Override
 	public int[] dimensionSizes() {
-		return new int[] {MAX_NUM_LINKS - MIN_NUM_LINKS + 1, MAX_NUM_NEURONS - MIN_NUM_NEURONS + 1};
+		return new int[] {CPPNComplexityBinLabels.maxNumNeurons - MIN_NUM_NEURONS + 1};
 	}
 }
