@@ -33,31 +33,31 @@ except:
     print("File could not be opened.")
     quit()
     
-try:
+try: # Get dimension names and the relative sizes
     dimension_names = [sys.argv[2], sys.argv[4], sys.argv[6]]
     dimensions = [int(sys.argv[3]), int(sys.argv[5]), int(sys.argv[7])]
 except:
     print("Dimensions were not specified!")
     quit()
 
-try:
+try: # Get the desired number of rows
     rows = int(sys.argv[8])
 except:
     print("The number of rows was not specified!")
     quit()
 
-try:
+try: # Get the logging frequency
     logging_frequeny = int(sys.argv[9])
 except:
     print("Logging frequency was not specified, defaulting to 1")
     logging_frequeny = 1
     
-try:
+try: # Get the min and max
     calc_minmax = False
     vmax = float(sys.argv[10])
     vmin = float(sys.argv[11])
     print("Min and Max specified as: ("+str(vmin)+", "+str(vmax)+")")
-except:
+except: # If unspecified, calculates it
     print("Min and/or Max not specified, will be calculated")
     calc_minmax = True
     vmin = float("inf")
@@ -72,7 +72,7 @@ for line in lines:
         else:
             temp_value = float(string_in)
             numeric_contents.append(temp_value)
-            if calc_minmax:
+            if calc_minmax: # Change min or max if possible
                 if vmin > temp_value and not math.isinf(temp_value):
                     vmin = temp_value
                 if vmax < temp_value and not math.isinf(temp_value):
@@ -81,43 +81,43 @@ for line in lines:
 
 norm = colors.Normalize(vmin=vmin, vmax=vmax) # normalize colors
 
-Path(dir+"archive_animated/").mkdir(parents=True, exist_ok=True)
+Path(dir+"archive_animated/").mkdir(parents=True, exist_ok=True) # Make directory for output images / gif
 
 if calc_minmax:
     print("Calculated min and max values: ("+str(vmin)+", "+str(vmax)+")")
     
 print("Finished reading file, outputting images...")  
 for iteration in range(len(numeric_lines)):
-    if iteration % logging_frequeny == 0:
+    if iteration % logging_frequeny == 0: # If will log
     
         archive_slices = []
-        slice_size = dimensions[2] * dimensions[1]
+        slice_size = dimensions[2] * dimensions[1] # Slice size is the other 2 dimensions
         for i in range(dimensions[0]):
             archive_slices.append(numeric_lines[iteration][(i*slice_size):((i+1)*slice_size)])
     
-        archive_slice_arrays = [np.array(slice) for slice in archive_slices]
+        archive_slice_arrays = [np.array(slice) for slice in archive_slices] # convert slices to numpy arrays
 
         for slice in archive_slice_arrays:
             slice.resize(dimensions[1], dimensions[2]) # Resize 1D array to 2D array with dimensions based on the overall size
             
         cmap = "viridis" # Colormap to use
 
-        columns = math.ceil(dimensions[0]/rows)
+        columns = math.ceil(dimensions[0]/rows) # Calculate column amount
 
-        fig, axs = plt.subplots(nrows=rows, ncols=columns, constrained_layout=True, figsize=(columns*4, rows*3))
+        fig, axs = plt.subplots(nrows=rows, ncols=columns, constrained_layout=True, figsize=(columns*4, rows*3)) # Make subplots
         
-        fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs[:, :], location='right', aspect=50)
+        fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs[:, :], location='right', aspect=50) # Add color bar
         
         end = rows*columns
-        while end > dimensions[0]:
+        while end > dimensions[0]: # Remove extra subplots if uneven amount of bins for the number of rows/columns
             fig.delaxes(axs[rows-1, (columns - (rows*columns % end) - 1)])
             end -= 1
 
         fig.suptitle(title + " Step:"+str(iteration))
 
         counter = 0
-        for ax, slice in zip(axs.flat, archive_slice_arrays):
-            ax.imshow(slice, extent=[0, dimensions[2], dimensions[1], 0], cmap=cmap, norm=norm)
+        for ax, slice in zip(axs.flat, archive_slice_arrays): # Add each subplot and configure size and axis names
+            ax.imshow(slice, extent=[0, dimensions[2], dimensions[1], 0], cmap=cmap, norm=norm) 
             ax.set_ylim(bottom=0.0, top=dimensions[1])
             ax.set_xlim(left=0.0, right=dimensions[2])
             ax.set_xlabel(dimension_names[2])
@@ -126,19 +126,19 @@ for iteration in range(len(numeric_lines)):
             counter+=1
        
         
-        plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png")
-        plt.clf()
+        plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png") # Save Image
+        plt.clf() # Close plots to prevent memory issue
         plt.cla()
     
 
 print("Finished outputting images, creating GIF...")
 
 # filepaths
-fp_in = dir+"archive_animated/"+title+"*.png"
-fp_out = dir+"archive_animated/"+title+"_archive.gif"
+fp_in = dir+"archive_animated/"+title+"*.png" # Specify all generated images
+fp_out = dir+"archive_animated/"+title+"_archive.gif" # Output file name
 
 img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
 img.save(fp=fp_out, format='GIF', append_images=imgs,
-         save_all=True, duration=200, loop=0)
+         save_all=True, duration=200, loop=0) # Save gif from images
      
 print("All done!")

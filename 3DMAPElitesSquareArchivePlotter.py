@@ -31,7 +31,7 @@ except:
     print("File could not be opened.")
     quit()
     
-try:
+try: # Get dimensions and relative sizes
     dimension_names = [sys.argv[2], sys.argv[4], sys.argv[6]]
     dimensions = [int(sys.argv[3]), int(sys.argv[5]), int(sys.argv[7])]
 except:
@@ -39,18 +39,18 @@ except:
     quit()
 
 
-try:
+try: # Get number of rows
     rows = int(sys.argv[8])
 except:
     print("The number of rows was not specified!")
     quit()
     
-try:
+try: # Get min and max
     calc_minmax = False
     vmax = float(sys.argv[9])
     vmin = float(sys.argv[10])
     print("Min and Max specified as: ("+str(vmin)+", "+str(vmax)+")")
-except:
+except: # If unspecified, calculate them
     print("Min and/or Max not specified, will be calculated")
     calc_minmax = True
     vmin = float("inf")
@@ -89,9 +89,9 @@ cmap = "viridis" # Colormap to use
 
 columns = math.ceil(dimensions[0]/rows)
 
-fig, axs = plt.subplots(nrows=rows, ncols=columns, constrained_layout=True, figsize=(columns*4, rows*3))
+fig, axs = plt.subplots(nrows=rows, ncols=columns, constrained_layout=True, figsize=(columns*4, rows*3)) # Make subplots
 
-fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs[:, :], location='right', aspect=50)
+fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs[:, :], location='right', aspect=50) # Make colorbar
 
 end = rows*columns
 while end > dimensions[0]:
@@ -105,15 +105,15 @@ for ax, slice in zip(axs.flat, archive_slice_arrays):
     ax.imshow(slice, extent=[0, dimensions[2], dimensions[1], 0], norm=norm)
     ax.set_ylim(bottom=0.0, top=dimensions[1])
     ax.set_xlim(left=0.0, right=dimensions[2])
-    ax.set_xlabel(dimension_names[2])
+    ax.set_xlabel(dimension_names[2]) # Add labels
     ax.set_ylabel(dimension_names[1])
     ax.set_title(dimension_names[0]+": "+str(counter))
     counter+=1
 
-plt.savefig(dir+title+".png")
+plt.savefig(dir+title+".png") # Save file
 
 
-plt.show() # Show bins
+plt.show() # Show bins in window
 
 
 

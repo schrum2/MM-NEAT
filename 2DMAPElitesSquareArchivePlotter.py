@@ -31,25 +31,25 @@ except:
     print("File could not be opened.")
     quit()
     
-try:
+try: # Get dimensions and relative sizes
     dimension_names = [sys.argv[2], sys.argv[4]]
     dimensions = [int(sys.argv[3]), int(sys.argv[5])]
 except:
     print("Dimensions were not specified!")
     quit()
     
-try:
+try: # Get min and max
     calc_minmax = False
     vmax = int(sys.argv[6])
     vmin = int(sys.argv[7])
     print("Min and Max specified as: ("+str(vmin)+", "+str(vmax)+")")
-except:
+except: # If unspecified, calculate them
     print("Min and/or Max not specified, will be calculated")
     calc_minmax = True
     vmin = float("inf")
     vmax = float("-inf")
     
-numeric_contents = []
+numeric_contents = [] # Strings to Floats
 for string_in in file_contents:
     if "-Infinity" in string_in or "X" in string_in:
         numeric_contents.append(np.NINF)
@@ -73,16 +73,16 @@ bins.resize(dimensions[0], dimensions[1]) # Resize 1D array to 2D array with dim
 
 
 plt.text(dimensions[1]/2, (dimensions[0]/20)+dimensions[0], title, horizontalalignment='center', verticalalignment='baseline')
-plt.xlabel(dimension_names[0])
+plt.xlabel(dimension_names[0]) # Add labels
 plt.ylabel(dimension_names[1])
 plt.xlim(left=0.0, right=dimensions[0])
 plt.ylim(bottom=0.0, top=dimensions[1])
 
-plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
+plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap)) # Make colorbar
         
 plt.imshow(bins, norm=norm, cmap=cmap)
 
-plt.savefig(dir+title+".png")
+plt.savefig(dir+title+".png") # Save file
 
 
-plt.show() # Show bins
+plt.show() # Show bins in window
