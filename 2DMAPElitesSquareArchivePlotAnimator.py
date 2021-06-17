@@ -58,7 +58,7 @@ numeric_lines = []
 for line in lines:
     numeric_contents = [] # Strings to Floats
     for string_in in line:
-        if string_in == "-Infinity":
+        if "-Infinity" in string_in or "X" in string_in  :
             numeric_contents.append(np.NINF)
         else:
             temp_value = float(string_in)
@@ -79,7 +79,7 @@ for iteration in range(len(numeric_lines)):
         bins = np.array(numeric_lines[iteration]) # To array
         bins.resize(dimensions[0], dimensions[1]) # Resize 1D array to 2D array with dimensions based on the overall size (must be square)
 
-        plt.text(dimensions[1]/2, (dimensions[0]/20)+dimensions[0], title, horizontalalignment='center', verticalalignment='baseline')
+        plt.text(dimensions[1]/2, (dimensions[0]/20)+dimensions[0], (title + " Step:"+str(iteration)), horizontalalignment='center', verticalalignment='baseline')
         plt.xlabel(dimension_names[0])
         plt.ylabel(dimension_names[1])
         plt.xlim(left=0.0, right=dimensions[0])
@@ -88,6 +88,7 @@ for iteration in range(len(numeric_lines)):
         plt.imshow(bins, norm=norm)
         
         plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png")
+        plt.clf()
 
 print("Finished outputting images, creating GIF...")
 

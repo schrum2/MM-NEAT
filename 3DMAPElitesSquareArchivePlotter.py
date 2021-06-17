@@ -43,7 +43,7 @@ vmax = float("-inf")
 
 numeric_contents = [] # Strings to Floats
 for string_in in file_contents:
-    if string_in == "-Infinity":
+    if string_in == "-Infinity" or string_in == "X":
         numeric_contents.append(np.NINF)
     else:
         temp_value = float(string_in)
