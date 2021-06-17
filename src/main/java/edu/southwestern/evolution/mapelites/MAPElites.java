@@ -351,13 +351,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				}
 				((LodeRunnerLevelTask<?>)MMNEAT.task).beatable.log(pseudoGeneration + "\t" + numBeatenLevels + "\t" + ((1.0*numBeatenLevels)/(1.0*numFilledBins)));
 			}
-			if (emitterMeanLog != null) {
-				String newLine = "" + pseudoGeneration;
-				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
-					newLine += "\t" + mean[0];
-				}
-				emitterMeanLog.log(newLine);
-			}
+//			if (emitterMeanLog != null) {
+//				String newLine = "" + pseudoGeneration;
+//				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
+//					newLine += "\t" + mean[0];
+//				}
+//				emitterMeanLog.log(newLine);
+//			}
 		}
 	}
 
