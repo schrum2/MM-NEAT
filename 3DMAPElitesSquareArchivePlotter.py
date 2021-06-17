@@ -1,7 +1,7 @@
 """ 2D MAP-Elites archive plotter (Only for 2D archives with equal amount of bins in both dimensions)
     
     Usage:
-    python 2D_bin_plotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size>
+    python 2D_bin_plotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <max value> <min value>
     python 2D_bin_plotter.py ...\MM-NEAT\mapelitesfunctionoptimization\MAPElitesSphereFunctionOptimization20\mapelitesfunctionoptimization-MAPElitesSphereFunctionOptimization20_MAPElites_log.txt
     
 """
@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import math
-from matplotlib import colors
+from matplotlib import colors, cm
 
 try: # Get the file path from arguments
     file_path = sys.argv[1]
@@ -38,8 +38,23 @@ except:
     quit()
 
 
-vmin = float("inf")
-vmax = float("-inf")
+try:
+    rows = int(sys.argv[8])
+except:
+    print("The number of rows was not specified!")
+    quit()
+    
+try:
+    calc_minmax = False
+    vmax = int(sys.argv[9])
+    vmin = int(sys.argv[10])
+    print("Min and Max specified as: ("+str(vmin)+", "+str(vmax)+")")
+except:
+    print("Min and/or Max not specified, will be calculated")
+    calc_minmax = True
+    vmin = float("inf")
+    vmax = float("-inf")
+
 
 numeric_contents = [] # Strings to Floats
 for string_in in file_contents:
@@ -47,11 +62,15 @@ for string_in in file_contents:
         numeric_contents.append(np.NINF)
     else:
         temp_value = float(string_in)
-        if vmin > temp_value and not math.isinf(temp_value):
-            vmin = temp_value
-        if vmax < temp_value and not math.isinf(temp_value):
-            vmax = temp_value
         numeric_contents.append(temp_value)
+        if calc_minmax:
+            if vmin > temp_value and not math.isinf(temp_value):
+                vmin = temp_value
+            if vmax < temp_value and not math.isinf(temp_value):
+                vmax = temp_value
+
+if calc_minmax:
+    print("Calculated min and max values: ("+str(vmin)+", "+str(vmax)+")")
 
 archive_slices = []
 slice_size = dimensions[2] * dimensions[1]
@@ -65,12 +84,20 @@ archive_slice_arrays = [np.array(slice) for slice in archive_slices]
 for slice in archive_slice_arrays:
     slice.resize(dimensions[1], dimensions[2]) # Resize 1D array to 2D array with dimensions based on the overall size
 
-fig, axs = plt.subplots(nrows=2, ncols=math.ceil(dimensions[0]/2), tight_layout=True, figsize=(18, 8))
+cmap = "viridis" # Colormap to use
 
-if dimensions[0] % 2 == 1:
-    fig.delaxes(axs[1, math.ceil(dimensions[0]/2)-1])
+columns = math.ceil(dimensions[0]/rows)
 
-fig.suptitle(title, x=0.5, y=1  )
+fig, axs = plt.subplots(nrows=rows, ncols=columns, constrained_layout=True, figsize=(columns*4, rows*3))
+
+fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs[:, :], location='right', aspect=50)
+
+end = rows*columns
+while end > dimensions[0]:
+    fig.delaxes(axs[rows-1, (columns - (rows*columns % end) - 1)])
+    end -= 1
+
+fig.suptitle(title)
 
 counter = 0
 for ax, slice in zip(axs.flat, archive_slice_arrays):
