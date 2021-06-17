@@ -359,21 +359,18 @@ public class Score<T> {
 	 */
 	public ArrayList<Double> getTraditionalDomainSpecificBehaviorVector() {
 		if(this.behaviorVector == null) {
-			
-			throw new UnsupportedOperationException("Don't ask for a traditional behavior vector if you do not supply one to the Score instance");
-			
-//			// Have to construct the behavior vector based on knowledge of bin index and score
-//			int vectorLength = MMNEAT.getArchiveBinLabelsClass().binLabels().size();
-//			int oneDimensionalIndex = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1);
-//			ArrayList<Double> vector = new ArrayList<>(vectorLength);
-//			for(int i = 0; i < oneDimensionalIndex; i++) {
-//				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins. Problem with Double.NEGATIVE_INFINITY vs Float.NEGATIVE_INFINITY?
-//			}
-//			vector.add(oneMAPEliteBinIndexScorePair.t2); // The one occupied bin
-//			for(int i = oneDimensionalIndex+1; i < vectorLength; i++) {
-//				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins. Problem with Double.NEGATIVE_INFINITY vs Float.NEGATIVE_INFINITY?
-//			}
-//			return vector;
+			// Have to construct the behavior vector based on knowledge of bin index and score
+			int vectorLength = MMNEAT.getArchiveBinLabelsClass().binLabels().size();
+			int oneDimensionalIndex = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1);
+			ArrayList<Double> vector = new ArrayList<>(vectorLength);
+			for(int i = 0; i < oneDimensionalIndex; i++) {
+				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins. Problem with Double.NEGATIVE_INFINITY vs Float.NEGATIVE_INFINITY?
+			}
+			vector.add(oneMAPEliteBinIndexScorePair.t2); // The one occupied bin
+			for(int i = oneDimensionalIndex+1; i < vectorLength; i++) {
+				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins. Problem with Double.NEGATIVE_INFINITY vs Float.NEGATIVE_INFINITY?
+			}
+			return vector;
 		} else {
 			return this.behaviorVector;
 		}
