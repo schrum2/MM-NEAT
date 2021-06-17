@@ -46,6 +46,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	public boolean io;
 	private MMNEATLog archiveLog = null; // Archive elite scores
 	private MMNEATLog fillLog = null; // Archive fill amount
+	private MMNEATLog emitterMeanLog = null;
 	private MMNEATLog cppnThenDirectLog = null;
 	private MMNEATLog cppnVsDirectFitnessLog = null;
 	protected MMNEATLog[] emitterIndividualsLogs = null;
@@ -91,6 +92,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
 			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
+			if (this instanceof CMAME) {
+				emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
+			}
 		}
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
@@ -100,6 +104,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	}
 
 	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
+		
 		String prefix = experimentPrefix + "_" + infix;
 		String fillPrefix = experimentPrefix + "_" + "Fill";
 		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
@@ -292,7 +297,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			try {
 				setupArchiveVisualizer(archive.getBinMapping());
 			} catch (FileNotFoundException e) {
-				System.out.println("\n\n\n\nCould not create archive visualization file.");
+				System.out.println("Could not create archive visualization file.");
 				e.printStackTrace();
 				System.exit(1);
 			}
@@ -345,6 +350,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					}
 				}
 				((LodeRunnerLevelTask<?>)MMNEAT.task).beatable.log(pseudoGeneration + "\t" + numBeatenLevels + "\t" + ((1.0*numBeatenLevels)/(1.0*numFilledBins)));
+			}
+			if (emitterMeanLog != null) {
+				String newLine = "" + pseudoGeneration;
+				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
+					newLine += "\t" + mean[0];
+				}
+				emitterMeanLog.log(newLine);
 			}
 		}
 	}
