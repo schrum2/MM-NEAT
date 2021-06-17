@@ -32,5 +32,14 @@ public class LodeRunnerMAPElitesPercentGroundNumGoldAndEnemiesBinLabels implemen
 		int binIndex = (multi[0]*BINS_PER_DIMENSION + multi[1])*BINS_PER_DIMENSION + multi[2];
 		return binIndex;
 	}
+	
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Ground Percent", "Treasures", "Enemies"};
+	}
 
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {BINS_PER_DIMENSION, BINS_PER_DIMENSION, BINS_PER_DIMENSION};
+	}
 }

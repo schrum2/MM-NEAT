@@ -53,6 +53,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
 	private ArrayList<Double> behaviorVector;
 	private Pair<int[],Double> oneMAPEliteBinIndexScorePair;
+	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
 	
 	// Use of oneMAPEliteBinIndexScorePair is now favored for MAP Elites instead
 	public ArrayList<Double> getBehaviorVector() {
@@ -373,32 +374,34 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				Score<T> elite = archive.getElite(oneMAPEliteBinIndexScorePair.t1);
 				// If the bin is empty, or the candidate is better than the elite for that bin's score
 				if(elite == null || binScore > elite.behaviorIndexScore()) {
-					BufferedImage levelImage = null;
-					BufferedImage levelSolution = null;
-					try {
-						levelSolution = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
-						BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
-						levelImage = MegaManRenderUtil.createBufferedImage(level, MegaManRenderUtil.renderedImageWidth(level.get(0).size()), MegaManRenderUtil.renderedImageHeight(level.size()), images);
-					} catch (IOException e) {
-						e.printStackTrace();
+					if(binScore > fitnessSaveThreshold) {
+						BufferedImage levelImage = null;
+						BufferedImage levelSolution = null;
+						try {
+							levelSolution = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+							BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
+							levelImage = MegaManRenderUtil.createBufferedImage(level, MegaManRenderUtil.renderedImageWidth(level.get(0).size()), MegaManRenderUtil.renderedImageHeight(level.size()), images);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						
+						//sets the fileName, binPath, and fullName
+						String fileName = String.format("%7.5f", binScore) +"-"+ genotypeId + ".png";
+						//FOR CPPNThenDirect2GAN
+	//					if(individual instanceof CPPNOrDirectToGANGenotype) {
+	//						CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
+	//						if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
+	//						else fileName = "Direct-" + fileName;
+	//					}
+						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1));
+						String fullName = binPath + "-" + fileName;
+						System.out.println(fullName);
+						GraphicsUtil.saveImage(levelImage, fullName);	
+						fileName = String.format("%7.5f", binScore) +"-"+ genotypeId + "-solution.png";
+						fullName = binPath + "-" + fileName;
+						System.out.println(fullName);
+						GraphicsUtil.saveImage(levelSolution, fullName);	
 					}
-					
-					//sets the fileName, binPath, and fullName
-					String fileName = String.format("%7.5f", binScore) +"-"+ genotypeId + ".png";
-					//FOR CPPNThenDirect2GAN
-//					if(individual instanceof CPPNOrDirectToGANGenotype) {
-//						CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
-//						if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
-//						else fileName = "Direct-" + fileName;
-//					}
-					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1));
-					String fullName = binPath + "-" + fileName;
-					System.out.println(fullName);
-					GraphicsUtil.saveImage(levelImage, fullName);	
-					fileName = String.format("%7.5f", binScore) +"-"+ genotypeId + "-solution.png";
-					fullName = binPath + "-" + fileName;
-					System.out.println(fullName);
-					GraphicsUtil.saveImage(levelSolution, fullName);	
 				}
 			}
 		}

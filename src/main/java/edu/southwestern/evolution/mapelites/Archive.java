@@ -154,8 +154,13 @@ public class Archive<T> {
 		} else if(candidate.usesMAPElitesBinSpecification()) {
 			int[] candidateBinIndices = candidate.MAPElitesBinIndex();
 			int oneD = this.getBinMapping().oneDimensionalIndex(candidateBinIndices);
-			Score<T> currentBinOccupant = getElite(oneD);
-			return replaceIfBetter(candidate, oneD, currentBinOccupant);
+			boolean result = false;
+			synchronized(this) { // Make sure elite at the index does not change while considering replacement
+				// Synchronizing on the whole archive seems unnecessary ... maybe just the index? How?
+				Score<T> currentBinOccupant = getElite(oneD);
+				result = replaceIfBetter(candidate, oneD, currentBinOccupant);
+			}
+			return result;
 		} else {
 			// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
 			return false; // nothing added
@@ -172,7 +177,7 @@ public class Archive<T> {
 	private boolean replaceIfBetter(Score<T> candidate, int binIndex, Score<T> currentOccupant) {
 		double candidateScore = candidate.behaviorIndexScore(binIndex);
 		// Score cannot be negative infinity. Next, check if the bin is empty, or the candidate is better than the elite for that bin's score
-		if(candidateScore > Double.NEGATIVE_INFINITY && (currentOccupant == null || candidateScore > currentOccupant.behaviorIndexScore(binIndex))) {
+		if(candidateScore > Float.NEGATIVE_INFINITY && (currentOccupant == null || candidateScore > currentOccupant.behaviorIndexScore(binIndex))) {
 			archive.set(binIndex, candidate.copy()); // Replace elite
 			if(currentOccupant == null) { // Size is actually increasing
 				synchronized(this) {
@@ -246,12 +251,12 @@ public class Archive<T> {
 	 */
 	public double getBinScore(int binIndex) {
 		Score<T> elite = getElite(binIndex);
-		return elite == null ? Double.NEGATIVE_INFINITY : elite.behaviorIndexScore(binIndex);
+		return elite == null ? Float.NEGATIVE_INFINITY : elite.behaviorIndexScore(binIndex);
 	}
 	
 	/**
-	 * Random index, but the bin is guarranteed to be occupied
-	 * @return
+	 * Random index, but the bin is guaranteed to be occupied
+	 * @return Index in the 1D complete archive that contains an elite (not empty)
 	 */
 	public int randomOccupiedBinIndex() {
 		int steps = RandomNumbers.randomGenerator.nextInt(occupiedBins);

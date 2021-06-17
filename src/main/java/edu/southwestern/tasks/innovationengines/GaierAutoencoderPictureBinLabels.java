@@ -28,7 +28,6 @@ public class GaierAutoencoderPictureBinLabels implements BinLabels  {
 	public static final int BIN_INDEX_NODES = 0;
 	public static final int BIN_INDEX_LOSS = 1;
 	public static int numLossBins;
-	public static final int MIN_NUM_NEURONS = 5;
 	
 	public GaierAutoencoderPictureBinLabels() {
 		if(!Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
@@ -47,11 +46,11 @@ public class GaierAutoencoderPictureBinLabels implements BinLabels  {
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {
-			int size = (CPPNComplexityBinLabels.maxNumNeurons - MIN_NUM_NEURONS + 1) * numLossBins;
+			int size = (CPPNComplexityBinLabels.maxNumNeurons - CPPNComplexityBinLabels.MIN_NUM_NEURONS + 1) * numLossBins;
 			System.out.println("Archive Size: " + size);
 			labels = new ArrayList<String>(size);
 			int count = 0;
-			for(int i = MIN_NUM_NEURONS; i <= CPPNComplexityBinLabels.maxNumNeurons; i++) {
+			for(int i = CPPNComplexityBinLabels.MIN_NUM_NEURONS; i <= CPPNComplexityBinLabels.maxNumNeurons; i++) {
 				for(int j = 0; j < numLossBins; j++) {
 					BigDecimal secondSegment = new BigDecimal(j);
 					BigDecimal thirdSegment = new BigDecimal(j + 1);
@@ -75,8 +74,18 @@ public class GaierAutoencoderPictureBinLabels implements BinLabels  {
 	 */
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = ((multi[BIN_INDEX_NODES] - MIN_NUM_NEURONS) * numLossBins + (multi[BIN_INDEX_LOSS]));
+		int binIndex = ((multi[BIN_INDEX_NODES] - CPPNComplexityBinLabels.MIN_NUM_NEURONS) * numLossBins + (multi[BIN_INDEX_LOSS]));
 		assert binIndex >= 0 : "Negative index " + Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
+	}
+
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Neurons", "Reconstruction Loss"};
+	}
+
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {CPPNComplexityBinLabels.maxNumNeurons - CPPNComplexityBinLabels.MIN_NUM_NEURONS + 1, numLossBins};
 	}
 }

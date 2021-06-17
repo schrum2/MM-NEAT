@@ -16,6 +16,7 @@ import edu.southwestern.parameters.Parameters;
  */
 public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDimensionalRealValuedBinLabels {
 	
+	private int binsPerDimension;
 	private int solutionVectorLength;
 	private int solutionVectorSlices;
 	
@@ -33,6 +34,7 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 	 */
 	public MultiDimensionalRealValuedSlicedBinLabels(int binsPerDimension, double minPossibleValue, double maxPossibleValue, int vectorLength) {
 		super(binsPerDimension, minPossibleValue, maxPossibleValue, Parameters.parameters.integerParameter("solutionVectorSlices"), vectorLength/Parameters.parameters.integerParameter("solutionVectorSlices"));
+		this.binsPerDimension = binsPerDimension;
 		solutionVectorLength = vectorLength;
 		solutionVectorSlices = Parameters.parameters.integerParameter("solutionVectorSlices");
 		if (!(solutionVectorSlices > 1)) throw new IllegalStateException("MultiDimensionalRealValuedSlicedBinLabels must have more than 1 slice!");
@@ -59,4 +61,21 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 	 */
 	protected abstract double process(double value);
 	
+	@Override
+	public String[] dimensions() {
+		String[] dimensionNames = new String[solutionVectorSlices];
+		for (int i = 1; i <= solutionVectorSlices; i++) {
+			dimensionNames[i] = "Slice "+i;
+		}
+		return dimensionNames;
+	}	
+	
+	@Override
+	public int[] dimensionSizes() {
+		int[] dimensionSizes = new int[] {};
+		for (int i = 1; i <= solutionVectorSlices; i++) {
+			dimensionSizes[i] = binsPerDimension;
+		}
+		return dimensionSizes;
+	}
 }

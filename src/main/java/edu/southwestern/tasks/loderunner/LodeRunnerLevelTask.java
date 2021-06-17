@@ -59,6 +59,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	private ArrayList<Double> behaviorVector;
 	private Pair<int[],Double> oneMAPEliteBinIndexScorePair;
 	private int[][][] klDivLevels;
+	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
 	
 	private boolean initialized = false; // become true on first evaluation
 
@@ -449,17 +450,19 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			Score<T> elite = archive.getElite(oneMAPEliteBinIndexScorePair.t1);
 			//if that index is empty or the binScores is greater than what was there before
 			if(elite==null || binScore > elite.behaviorIndexScore()) {
-				//formats to be 7 digits before the decimal, and 5 digits after, %7.5f
-				//only doing direct right now, but will need to add CPPN label in addition, like in MarioLevelTask, if we start to use a CPPN
-				String fileNameImage =  "_Direct-"+String.format("%7.5f", binScore) +"_"+ genotypeId + "-LevelRender" +".png";
-				String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1));
-				String fullNameImage = binPath + "_" + fileNameImage;
-				System.out.println(fullNameImage);
-				GraphicsUtil.saveImage(levelImage, fullNameImage);// saves the rendered level without the solution path
-				String fileNameSolution = "_Direct-"+String.format("%7.5f", binScore) +"_"+ genotypeId + "-SolutionRender" +".png";
-				String fullNameSolution = binPath + "_" +fileNameSolution;
-				System.out.println(fullNameSolution);
-				GraphicsUtil.saveImage(levelSolution, fullNameSolution);// saves the rendered level with the solution path
+				if(binScore > fitnessSaveThreshold) {
+					//formats to be 7 digits before the decimal, and 5 digits after, %7.5f
+					//only doing direct right now, but will need to add CPPN label in addition, like in MarioLevelTask, if we start to use a CPPN
+					String fileNameImage =  "_Direct-"+String.format("%7.5f", binScore) +"_"+ genotypeId + "-LevelRender" +".png";
+					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1));
+					String fullNameImage = binPath + "_" + fileNameImage;
+					System.out.println(fullNameImage);
+					GraphicsUtil.saveImage(levelImage, fullNameImage);// saves the rendered level without the solution path
+					String fileNameSolution = "_Direct-"+String.format("%7.5f", binScore) +"_"+ genotypeId + "-SolutionRender" +".png";
+					String fullNameSolution = binPath + "_" +fileNameSolution;
+					System.out.println(fullNameSolution);
+					GraphicsUtil.saveImage(levelSolution, fullNameSolution);// saves the rendered level with the solution path
+				}
 			}
 		}
 	}

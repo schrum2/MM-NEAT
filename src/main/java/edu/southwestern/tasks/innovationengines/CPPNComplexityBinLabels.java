@@ -68,4 +68,14 @@ public class CPPNComplexityBinLabels implements BinLabels {
 		assert binIndex >= 0 : "Negative index "+Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
 	}
+	
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Links", "Neurons"};
+	}
+	
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {maxNumLinks - MIN_NUM_LINKS + 1, maxNumNeurons - MIN_NUM_NEURONS + 1};
+	}
 }

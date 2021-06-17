@@ -51,4 +51,9 @@ public class FunctionOptimizationRangeBinLabels extends MultiDimensionalRealValu
 	protected double process(double value) {
 		return clip(value);
 	}
+	
+	@Override
+	public String[] dimensions() {
+		return new String[] {"First Half Sum", "Second Half Sum"};
+	}
 }

@@ -98,7 +98,7 @@ public abstract class MegaManGANGenerator {
 						done = true;
 					}
 				} else {
-					System.out.println(proposed);
+					//System.out.println(proposed);
 					switch(proposed) {
 					case RIGHT:
 						if(previousPoint.y == currentPoint.y) // Keep moving right. Do nothing

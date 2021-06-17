@@ -45,6 +45,15 @@ public class MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels implements
 		return binIndex;
 	}
 
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Distinct Segments", "Vertical Segments", "Connectivity"};
+	}
+
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {maxNumSegments+1, maxNumSegments+1, TILE_GROUPS};
+	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException{
 

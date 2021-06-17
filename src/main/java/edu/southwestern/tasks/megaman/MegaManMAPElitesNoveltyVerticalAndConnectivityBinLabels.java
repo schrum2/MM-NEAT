@@ -43,10 +43,19 @@ public class MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels implements 
 		int binIndex =(novelty*(maxNumSegments+1) + numVertical)*TILE_GROUPS+indexConnected;
 		return binIndex;
 	}
+
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Novelty", "Vertical Segments", "Connectivity"};
+	}
+
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {noveltyBinsPerDimension, maxNumSegments+1, TILE_GROUPS};
+	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// MEGAMAN
 		MMNEAT.main(("runNumber:0 randomSeed:0 megaManAllowsConnectivity:false megaManAllowsSimpleAStarPath:true watch:false trials:1 mu:10 base:megamanTEST log:MegaManTEST-MegaManDirect2GAN saveTo:MegaManDirect2GAN megaManGANLevelChunks:10 maxGens:50000 io:true netio:true GANInputSize:5 mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask cleanOldNetworks:true useMultipleGANsMegaMan:false cleanFrequency:-1 recurrency:false saveAllChampions:true ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.megaman.MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype noveltyBinAmount:20").split(" "));
 	}
-
 }
