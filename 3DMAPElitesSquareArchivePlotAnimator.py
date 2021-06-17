@@ -1,9 +1,10 @@
 """ 2D MAP-Elites archive plotter (Only for 2D archives with equal amount of bins in both dimensions)
     
     Usage:
-    python 2D_bin_plotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <logging frequency> <max value> <min value>
-    python 2D_bin_plotter.py ...\MM-NEAT\mapelitesfunctionoptimization\MAPElitesSphereFunctionOptimization20\mapelitesfunctionoptimization-MAPElitesSphereFunctionOptimization20_MAPElites_log.txt
+    python 3DMAPElitesSquareArchivePlotAnimator.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <logging frequency> <max value> <min value>
+    python 3DMAPElitesSquareArchivePlotAnimator.py zeldadungeonswallwaterrooms/ME0/ZeldaDungeonsWallWaterRooms-ME0_MAPElites_log.txt "Wall Tile Percent" 10 "Water Tile Percent" 10 "Reachable Rooms" 26 2 5 1.0 0.0
     
+    Note: Min and Max do NOT need to be given, they will be calculated automatically
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -53,8 +54,8 @@ except:
     
 try:
     calc_minmax = False
-    vmax = int(sys.argv[10])
-    vmin = int(sys.argv[11])
+    vmax = float(sys.argv[10])
+    vmin = float(sys.argv[11])
     print("Min and Max specified as: ("+str(vmin)+", "+str(vmax)+")")
 except:
     print("Min and/or Max not specified, will be calculated")
