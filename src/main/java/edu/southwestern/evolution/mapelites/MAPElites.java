@@ -25,6 +25,7 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
 import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
@@ -59,6 +60,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private int iterationsWithoutEliteCounter;
 	private int iterationsWithoutElite;
 	private int individualsPerGeneration;
+	private boolean archiveFileCreated = false;
 	private boolean saveImageArchives;
 
 	public BinLabels getBinLabelsClass() {
@@ -184,6 +186,42 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 	}
 	
+	private static void checkPython() { // Checks that python is present and functional
+		PythonUtil.setPythonProgram();
+		if(PythonUtil.PYTHON_EXECUTABLE.equals("")) {
+			throw new RuntimeException("Before launching this program, you need to place the path to your "+
+					   "Python executable in my_python_path.txt within the main MM-NEAT directory." + PythonUtil.PYTHON_EXECUTABLE);			
+		} else if(!(new File(PythonUtil.PYTHON_EXECUTABLE).exists())) {
+			throw new RuntimeException("Before launching this program, you need to place the path to your "+
+									   "Python executable in my_python_path.txt within the main MM-NEAT directory. The current contents of this file are incorrect: "+
+									   PythonUtil.PYTHON_EXECUTABLE);
+		}
+	}
+
+	private void setupArchiveVisualizer(BinLabels bins) throws FileNotFoundException {
+		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+		directory += (directory.equals("") ? "" : "/");
+		String prefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber") + "_MAPElites";
+		String fullName = directory + prefix + "_log.plt";
+		checkPython();
+		
+		// Archive generator
+		String[] dimensionNames = bins.dimensions();
+		int[] dimensionSizes = bins.dimensionSizes();
+		String archiveBatchName = directory + "GenerateArchiveImage.bat";
+		
+		if (dimensionNames.length == 3 || dimensionNames.length == 2) {
+			PrintStream ps = new PrintStream(new File(archiveBatchName));
+			ps.println("cd ..");
+			ps.println("cd ..");
+			ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesSquareArchivePlotter.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
+			for (int i = 0; i < dimensionNames.length; i++) {
+				ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
+			}
+			ps.close();
+		}
+	}
+	
 	/**
 	 * Get the archive
 	 * @return
@@ -228,6 +266,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				archive.archive.set(i, score); // Directly set the bin contents
 			}
 		} else {
+			System.out.println("Fill up initial archive");
 			// Start from scratch
 			int startSize = Parameters.parameters.integerParameter("mu");
 			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);
@@ -244,6 +283,16 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * when number of iterations divisible by individualsPerGeneration. 
 	 */
 	private void log() {
+		if (!archiveFileCreated) {
+			try {
+				setupArchiveVisualizer(archive.getBinMapping());
+			} catch (FileNotFoundException e) {
+				System.out.println("\n\n\n\nCould not create archive visualization file.");
+				e.printStackTrace();
+				System.exit(1);
+			}
+			archiveFileCreated = true;
+		}
 		if(io && iterations % individualsPerGeneration == 0) {
 			int numCPPN = 0;
 			int numDirect = 0;

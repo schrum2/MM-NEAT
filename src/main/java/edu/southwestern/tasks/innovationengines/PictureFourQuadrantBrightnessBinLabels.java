@@ -140,4 +140,14 @@ public class PictureFourQuadrantBrightnessBinLabels implements BinLabels {
 	public int oneDimensionalIndex(int[] multi) {
 		return BINS_PER_DIMENSION * (BINS_PER_DIMENSION * (BINS_PER_DIMENSION * multi[0] + multi[1]) + multi[2]) + multi[3];
 	}
+
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Top-Left Quadrant Sum", "Top-Right Quadrant Sum", "Bottom-Left Quadrant Sum", "Bottom-Right Quadrant Sum"};
+	}
+
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {BINS_PER_DIMENSION,BINS_PER_DIMENSION,BINS_PER_DIMENSION,BINS_PER_DIMENSION};
+	}
 }

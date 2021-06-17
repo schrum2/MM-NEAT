@@ -20,4 +20,18 @@ public interface BinLabels {
 	 * @return Where the multiple indices map in row-major order to a 1D structure.
 	 */
 	public int oneDimensionalIndex(int[] multi);
+	
+	/**
+	 * Gets the names of each bin dimension
+	 * @return Array with a string name for each dimension
+	 */
+	public String[] dimensions();
+	
+	
+	/**
+	 * Gets the size of each archive dimension
+	 * @returnArray with an int for each dimension's size
+	 */
+	public int[] dimensionSizes();
+	
 }

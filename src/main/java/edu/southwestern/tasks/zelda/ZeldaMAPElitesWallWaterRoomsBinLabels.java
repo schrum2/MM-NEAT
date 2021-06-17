@@ -47,4 +47,13 @@ public class ZeldaMAPElitesWallWaterRoomsBinLabels implements BinLabels {
 		return mapElitesBinIndex;
 	}
 
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Wall Tile %", "Water Tile %", "Reachable Rooms"};
+	}
+
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {TILE_GROUPS, TILE_GROUPS, maxNumRooms+1};
+	}
 }

@@ -46,4 +46,13 @@ public class AllModelsImageNetBinMapping<T extends Network> implements BinLabels
 		return multi[0]; // 1D archive
 	}
 
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Model", "Image Category"}; // TODO Be tested
+	}
+	
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {3, 1000};
+	}
 }

@@ -79,6 +79,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
 	private ArrayList<Double> behaviorVector;
 	private Pair<int[],Double> oneMAPEliteBinIndexScorePair;
+	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
 	
 	public MarioLevelTask() {
 		// Replace this with a command line parameter
@@ -595,16 +596,18 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			Score<T> elite = archive.getElite(oneMAPEliteBinIndexScorePair.t1);
 			// If the bin is empty, or the candidate is better than the elite for that bin's score
 			if(elite == null || binScore > elite.behaviorIndexScore()) {
-				String fileName = String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
-				if(individual instanceof CPPNOrDirectToGANGenotype) {
-					CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
-					if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
-					else fileName = "Direct-" + fileName;
+				if(binScore > fitnessSaveThreshold) {
+					String fileName = String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
+					if(individual instanceof CPPNOrDirectToGANGenotype) {
+						CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
+						if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
+						else fileName = "Direct-" + fileName;
+					}
+					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1));
+					String fullName = binPath + "_" + fileName;
+					System.out.println(fullName);
+					GraphicsUtil.saveImage(levelImage, fullName);
 				}
-				String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1));
-				String fullName = binPath + "_" + fileName;
-				System.out.println(fullName);
-				GraphicsUtil.saveImage(levelImage, fullName);
 			}
 		}
 	}

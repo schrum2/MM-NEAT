@@ -44,5 +44,15 @@ public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels
 	public int oneDimensionalIndex(int[] multi) {
 		int binIndex = (int) ((multi[0])*levelBinsPerDimension + (multi[1])*levelBinsPerDimension + multi[2]);
 		return binIndex;
+	}	
+	
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Novelty", "Negative Space", "Leniency"};
+	}
+	
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {noveltyBinsPerDimension, levelBinsPerDimension, levelBinsPerDimension};
 	}
 }

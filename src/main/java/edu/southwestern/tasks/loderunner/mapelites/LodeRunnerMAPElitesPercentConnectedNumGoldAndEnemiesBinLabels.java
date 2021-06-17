@@ -33,4 +33,13 @@ public class LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels imple
 		return binIndex;
 	}
 
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Connected Percent", "Treasures", "Enemies"};
+	}
+
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {BINS_PER_DIMENSION, BINS_PER_DIMENSION, BINS_PER_DIMENSION};
+	}
 }

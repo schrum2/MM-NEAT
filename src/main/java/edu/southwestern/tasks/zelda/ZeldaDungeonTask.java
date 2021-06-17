@@ -13,7 +13,6 @@ import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
-import edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels;
 import edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels;
 import edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels;
 import edu.southwestern.parameters.CommonConstants;
@@ -21,11 +20,9 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.MultiObjectiveScore;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
-import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
-import edu.southwestern.tasks.gvgai.zelda.dungeon.ZeldaDungeon.Level;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
@@ -44,7 +41,7 @@ import me.jakerg.rougelike.Tile;
 public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 
 	private int numObjectives;
-	private int[][][] klDivLevels;
+	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
 	
 	public ZeldaDungeonTask() {
 		// Objective functions
@@ -86,23 +83,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		MMNEAT.registerFitnessFunction("NumSearchStatesVisited",false);
 		MMNEAT.registerFitnessFunction("NumBackTrackRooms",false);
 		MMNEAT.registerFitnessFunction("NumDistinctRooms",false);
-
-		setupKLDivLevelsForComparison();
-	}
-
-	private void setupKLDivLevelsForComparison() {
-		if (MMNEAT.usingDiversityBinningScheme && (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels)) { // TODO
-			System.out.println("Instance of MAP Elites using KL Divergence Bin Labels");
-			String level1FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel1"); 
-			String level2FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel2"); 
-			ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(level1FileName);
-			ZeldaVGLCUtil.convertZeldaLevelFileVGLCtoListOfRooms(level2FileName);
-			ArrayList<List<Integer>> level1List = null; //MarioLevelUtil.listLevelFromVGLCFile(level1FileName); // TODO
-			ArrayList<List<Integer>> level2List = null; //MarioLevelUtil.listLevelFromVGLCFile(level2FileName);
-			int[][] level1Array = ArrayUtil.int2DArrayFromListOfLists(level1List);
-			int[][] level2Array = ArrayUtil.int2DArrayFromListOfLists(level2List);
-			klDivLevels = new int[][][] {level1Array, level2Array};
-		}
 	}
 	
 	@Override
@@ -355,24 +335,26 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						Score<T> elite = archive.getElite(mapElitesBinIndices);
 						// If the bin is empty, or the candidate is better than the elite for that bin's score
 						if(elite == null || mapElitesBinScore > elite.behaviorIndexScore()) {
-							// CHANGE!
-							BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
-							BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
-							//sets the fileName, binPath, and fullName
-							String fileName = String.format("%7.5f", mapElitesBinScore) +"-"+ individual.getId() + ".png";
-							if(individual instanceof CPPNOrDirectToGANGenotype) {
-								CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
-								if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
-								else fileName = "Direct-" + fileName;
+							if(mapElitesBinScore > fitnessSaveThreshold) {
+								// CHANGE!
+								BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
+								BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
+								//sets the fileName, binPath, and fullName
+								String fileName = String.format("%7.5f", mapElitesBinScore) +"-"+ individual.getId() + ".png";
+								if(individual instanceof CPPNOrDirectToGANGenotype) {
+									CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
+									if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
+									else fileName = "Direct-" + fileName;
+								}
+								String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(mapElitesBinIndices));
+								String fullName = binPath + "-" + fileName;
+								System.out.println(fullName);
+								GraphicsUtil.saveImage(imagePlain, fullName);	
+								fileName = String.format("%7.5f", mapElitesBinScore) +"-"+ individual.getId() + "-solution.png";
+								fullName = binPath + "-" + fileName;
+								System.out.println(fullName);
+								GraphicsUtil.saveImage(imagePath, fullName);	
 							}
-							String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(mapElitesBinIndices));
-							String fullName = binPath + "-" + fileName;
-							System.out.println(fullName);
-							GraphicsUtil.saveImage(imagePlain, fullName);	
-							fileName = String.format("%7.5f", mapElitesBinScore) +"-"+ individual.getId() + "-solution.png";
-							fullName = binPath + "-" + fileName;
-							System.out.println(fullName);
-							GraphicsUtil.saveImage(imagePath, fullName);	
 						}
 					}
 				}
