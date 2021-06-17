@@ -41,4 +41,14 @@ public class LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels implem
 		return binIndex;
 	}
 
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Connected Percent", "Ground Percent", "Ladders Percent"};
+	}
+
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {BINS_PER_DIMENSION, BINS_PER_DIMENSION, BINS_PER_DIMENSION};
+	}
+
 }

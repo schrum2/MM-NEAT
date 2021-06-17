@@ -42,5 +42,14 @@ public class MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels implements BinLa
 		int binIndex = (multi[0]*binsPerDimension + multi[1])*binsPerDimension + multi[2];
 		return binIndex;
 	}
-
+	
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Distinct Segments", "Negative Space", "Leniency"};
+	}
+	
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {binsPerDimension+1, binsPerDimension, binsPerDimension};
+	}
 }

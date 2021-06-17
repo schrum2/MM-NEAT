@@ -32,6 +32,16 @@ public class TileNoveltyBinLabels implements BinLabels {
 		return multi[0];
 	}
 	
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Novelty"};
+	}
+	
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {noveltyBinsPerDimension};
+	}
+	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// MEGAMAN
 		//MMNEAT.main(("runNumber:0 randomSeed:0 megaManAllowsConnectivity:false megaManAllowsSimpleAStarPath:true watch:false trials:1 mu:10 base:megamanTEST log:MegaManTEST-MegaManDirect2GAN saveTo:MegaManDirect2GAN megaManGANLevelChunks:10 maxGens:50000 io:true netio:true GANInputSize:5 mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask cleanOldNetworks:true useMultipleGANsMegaMan:false cleanFrequency:-1 recurrency:false saveAllChampions:true ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype noveltyBinAmount:500").split(" "));

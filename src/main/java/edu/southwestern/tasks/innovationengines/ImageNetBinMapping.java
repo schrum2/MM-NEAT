@@ -23,5 +23,15 @@ public class ImageNetBinMapping<T extends Network> implements BinLabels {
 	public int oneDimensionalIndex(int[] multi) {
 		return multi[0]; // archive is 1D
 	}
+	
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Image Category"};
+	}
 
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {1000};
+	}
+	
 }
