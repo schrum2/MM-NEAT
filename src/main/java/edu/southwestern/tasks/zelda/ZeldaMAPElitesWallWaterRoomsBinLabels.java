@@ -49,7 +49,7 @@ public class ZeldaMAPElitesWallWaterRoomsBinLabels implements BinLabels {
 
 	@Override
 	public String[] dimensions() {
-		return new String[] {"Wall Tile %", "Water Tile %", "Reachable Rooms"};
+		return new String[] {"Wall Tile Percent", "Water Tile Percent", "Reachable Rooms"};
 	}
 
 	@Override
