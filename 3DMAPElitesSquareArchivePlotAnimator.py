@@ -1,7 +1,7 @@
 """ 2D MAP-Elites archive plotter (Only for 2D archives with equal amount of bins in both dimensions)
     
     Usage:
-    python 2D_bin_plotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <logging frequency>
+    python 2D_bin_plotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <logging frequency> <max value> <min value>
     python 2D_bin_plotter.py ...\MM-NEAT\mapelitesfunctionoptimization\MAPElitesSphereFunctionOptimization20\mapelitesfunctionoptimization-MAPElitesSphereFunctionOptimization20_MAPElites_log.txt
     
 """
@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import sys
 import math
 from pathlib import Path
-from matplotlib import colors
+from matplotlib import colors, cm
 import glob
 from PIL import Image
 
@@ -40,13 +40,27 @@ except:
     quit()
 
 try:
-    logging_frequeny = int(sys.argv[8])
+    rows = int(sys.argv[8])
+except:
+    print("The number of rows was not specified!")
+    quit()
+
+try:
+    logging_frequeny = int(sys.argv[9])
 except:
     print("Logging frequency was not specified, defaulting to 1")
     logging_frequeny = 1
-
-vmin = float("inf")
-vmax = float("-inf")
+    
+try:
+    calc_minmax = False
+    vmax = int(sys.argv[10])
+    vmin = int(sys.argv[11])
+    print("Min and Max specified as: ("+str(vmin)+", "+str(vmax)+")")
+except:
+    print("Min and/or Max not specified, will be calculated")
+    calc_minmax = True
+    vmin = float("inf")
+    vmax = float("-inf")
 
 numeric_lines = []
 for line in lines:
@@ -56,17 +70,21 @@ for line in lines:
             numeric_contents.append(np.NINF)
         else:
             temp_value = float(string_in)
-            if vmin > temp_value and not math.isinf(temp_value):
-                vmin = temp_value
-            if vmax < temp_value and not math.isinf(temp_value):
-                vmax = temp_value
             numeric_contents.append(temp_value)
+            if calc_minmax:
+                if vmin > temp_value and not math.isinf(temp_value):
+                    vmin = temp_value
+                if vmax < temp_value and not math.isinf(temp_value):
+                    vmax = temp_value
     numeric_lines.append(numeric_contents)
 
 norm = colors.Normalize(vmin=vmin, vmax=vmax) # normalize colors
 
 Path(dir+"archive_animated/").mkdir(parents=True, exist_ok=True)
 
+if calc_minmax:
+    print("Calculated min and max values: ("+str(vmin)+", "+str(vmax)+")")
+    
 print("Finished reading file, outputting images...")  
 for iteration in range(len(numeric_lines)):
     if iteration % logging_frequeny == 0:
@@ -80,24 +98,33 @@ for iteration in range(len(numeric_lines)):
 
         for slice in archive_slice_arrays:
             slice.resize(dimensions[1], dimensions[2]) # Resize 1D array to 2D array with dimensions based on the overall size
+            
+        cmap = "viridis" # Colormap to use
 
-        fig, axs = plt.subplots(nrows=2, ncols=math.ceil(dimensions[0]/2), tight_layout=True, figsize=(18, 8))
+        columns = math.ceil(dimensions[0]/rows)
 
-        if dimensions[0] % 2 == 1:
-            fig.delaxes(axs[1, math.ceil(dimensions[0]/2)-1])
+        fig, axs = plt.subplots(nrows=rows, ncols=columns, constrained_layout=True, figsize=(columns*4, rows*3))
+        
+        fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs[:, :], location='right', aspect=50)
+        
+        end = rows*columns
+        while end > dimensions[0]:
+            fig.delaxes(axs[rows-1, (columns - (rows*columns % end) - 1)])
+            end -= 1
 
-        fig.suptitle((title + " Step:"+str(iteration)), x=0.5, y=1  )
+        fig.suptitle(title + " Step:"+str(iteration))
 
         counter = 0
         for ax, slice in zip(axs.flat, archive_slice_arrays):
-            ax.imshow(slice, extent=[0, dimensions[2], dimensions[1], 0], norm=norm)
+            ax.imshow(slice, extent=[0, dimensions[2], dimensions[1], 0], cmap=cmap, norm=norm)
             ax.set_ylim(bottom=0.0, top=dimensions[1])
             ax.set_xlim(left=0.0, right=dimensions[2])
             ax.set_xlabel(dimension_names[2])
             ax.set_ylabel(dimension_names[1])
             ax.set_title(dimension_names[0]+": "+str(counter))
             counter+=1
-
+       
+        
         plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png")
         plt.clf()
         plt.cla()
