@@ -8,7 +8,6 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
-%matplotlib inline
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -93,7 +92,6 @@ device = get_device()
 print(device)
 model.to(device)
 
-Epochs
 n_epochs = 100
 
 for epoch in range(1, n_epochs+1):

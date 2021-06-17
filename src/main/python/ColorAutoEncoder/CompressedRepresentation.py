@@ -30,7 +30,6 @@ train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, nu
 test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size, num_workers=num_workers)
 
 import matplotlib.pyplot as plt
-%matplotlib inline
 
 # helper function to un-normalize and display an image
 def imshow(img):
