@@ -1,7 +1,7 @@
 """ 2D MAP-Elites archive plotter (Only for 2D archives with equal amount of bins in both dimensions)
     
     Usage:
-    python 2DMAPElitesSquareArchivePlotAnimator.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <logging frequency>
+    python 2DMAPElitesSquareArchivePlotAnimator.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <logging frequency> <max value> <min value>
     python 2DMAPElitesSquareArchivePlotAnimator.py latentvariablepartition/Mario0/LatentVariablePartition-Mario0_MAPElites_log.txt "Slice 1" 100 "Slice 2" 100 10
     
 """
@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import sys
 import math
 from pathlib import Path
-from matplotlib import colors
+from matplotlib import colors, cm
 import glob
 from PIL import Image
 
@@ -38,21 +38,25 @@ try:
 except:
     print("Dimensions were not specified!")
     quit()
-
+      
 try:
     logging_frequeny = int(sys.argv[6])
 except:
     print("Logging frequency was not specified, defaulting to 1")
     logging_frequeny = 1
+    
+try:
+    calc_minmax = False
+    vmax = int(sys.argv[7])
+    vmin = int(sys.argv[8])
+    print("Min and Max specified as: ("+str(vmin)+", "+str(vmax)+")")
+except:
+    print("Min and/or Max not specified, will be calculated")
+    calc_minmax = True
+    vmin = float("inf")
+    vmax = float("-inf")
 
-def to_number(string_in): # Function to convert strings into numbers
-    if string_in == "-Infinity":
-        return np.NINF
-    else:
-        return float(string_in)
 
-vmin = float("inf")
-vmax = float("-inf")
 
 numeric_lines = []
 for line in lines:
@@ -62,30 +66,37 @@ for line in lines:
             numeric_contents.append(np.NINF)
         else:
             temp_value = float(string_in)
-            if vmin > temp_value and not math.isinf(temp_value):
-                vmin = temp_value
-            if vmax < temp_value and not math.isinf(temp_value):
-                vmax = temp_value
             numeric_contents.append(temp_value)
+            if calc_minmax:
+                if vmin > temp_value and not math.isinf(temp_value):
+                    vmin = temp_value
+                if vmax < temp_value and not math.isinf(temp_value):
+                    vmax = temp_value            
     numeric_lines.append(numeric_contents)
 
 norm = colors.Normalize(vmin=vmin, vmax=vmax) # normalize colors
 
 Path(dir+"archive_animated/").mkdir(parents=True, exist_ok=True)
 
+if calc_minmax:
+    print("Calculated min and max values: ("+str(vmin)+", "+str(vmax)+")")
+    
 print("Finished reading file, outputting images...")
 for iteration in range(len(numeric_lines)):
     if iteration % logging_frequeny == 0:
         bins = np.array(numeric_lines[iteration]) # To array
         bins.resize(dimensions[0], dimensions[1]) # Resize 1D array to 2D array with dimensions based on the overall size (must be square)
-
+        
+        cmap = "viridis" # Colormap to use
+        
+        plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
         plt.text(dimensions[1]/2, (dimensions[0]/20)+dimensions[0], (title + " Step:"+str(iteration)), horizontalalignment='center', verticalalignment='baseline')
         plt.xlabel(dimension_names[0])
         plt.ylabel(dimension_names[1])
         plt.xlim(left=0.0, right=dimensions[0])
         plt.ylim(bottom=0.0, top=dimensions[1])
 
-        plt.imshow(bins, norm=norm)
+        plt.imshow(bins, cmap=cmap, norm=norm)
         
         plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png")
         plt.clf()
