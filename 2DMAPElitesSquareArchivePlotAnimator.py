@@ -11,6 +11,8 @@ import sys
 import math
 from pathlib import Path
 from matplotlib import colors
+import glob
+from PIL import Image
 
 try: # Get the file path from arguments
     file_path = sys.argv[1]
@@ -71,6 +73,7 @@ norm = colors.Normalize(vmin=vmin, vmax=vmax) # normalize colors
 
 Path(dir+"archive_animated/").mkdir(parents=True, exist_ok=True)
 
+print("Finished reading file, outputting images...")
 for iteration in range(len(numeric_lines)):
     if iteration % logging_frequeny == 0:
         bins = np.array(numeric_lines[iteration]) # To array
@@ -84,5 +87,16 @@ for iteration in range(len(numeric_lines)):
 
         plt.imshow(bins, norm=norm)
         
-        plt.savefig(dir+"archive_animated/"+title+str(iteration)+".png")
+        plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png")
 
+print("Finished outputting images, creating GIF...")
+
+# filepaths
+fp_in = dir+"archive_animated/"+title+"*.png"
+fp_out = dir+"archive_animated/"+title+"_archive.gif"
+
+img, *imgs = [Image.open(f) for f in sorted(glob.glob(fp_in))]
+img.save(fp=fp_out, format='GIF', append_images=imgs,
+         save_all=True, duration=200, loop=0)
+     
+print("All done!")
