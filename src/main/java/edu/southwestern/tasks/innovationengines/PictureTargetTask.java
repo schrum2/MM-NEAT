@@ -171,6 +171,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinLabels.numLossBins),GaierAutoencoderPictureBinLabels.numLossBins - 1);
 				indicesMAPEliteBin = new int[]{nodes, lossIndex};
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNNeuronCountBinLabels) {
+				assert nodes >= CPPNNeuronCountBinLabels.MIN_NUM_NEURONS : "Why so few neurons? " + nodes + "\n" + tweannIndividual;
 				indicesMAPEliteBin = new int[] {nodes};
 			} else {
 				throw new IllegalStateException("No valid binning scheme provided for PictureTargetTask");
@@ -355,22 +356,22 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		// For test runs
 		MMNEAT.main(new String[]{"runNumber:30","randomSeed:30","base:targetimage","mu:400","maxGens:100000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
-				"log:TargetImage-skullAutoEncoderEnhancedCPPN","saveTo:skullAutoEncoderEnhancedCPPN","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
+				"log:TargetImage-skullAutoEncoderNeuronBinningRegularGenotype","saveTo:skullAutoEncoderNeuronBinningRegularGenotype","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinLabels",
-				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.GaierAutoencoderPictureBinLabels",
+				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.GaierAutoencoderPictureBinLabels",
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
-				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNNeuronCountBinLabels",
+				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNNeuronCountBinLabels",
 				"fs:true",
-				"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
+				//"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
 				"trainingAutoEncoder:true",
 				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
 				"matchImageFile:skull64.jpg",
-				"fitnessSaveThreshold:1.0",		// Since we periodically save the whole archive, don't bother saving with threshold any more 
+				"fitnessSaveThreshold:0.8",		// Since we periodically save the whole archive, don't bother saving with threshold any more 
 				"imageArchiveSaveFrequency:50000",
 				//"imageArchiveSaveFrequency:1000",
 				"includeSigmoidFunction:true", 	// In Brian Woolley paper

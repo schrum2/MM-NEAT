@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import edu.southwestern.parameters.Parameters;
 
-public class CPPNComplexityBinMappingTest {
+public class CPPNComplexityBinLabelsTest {
 
 	CPPNComplexityBinLabels labels;
 	

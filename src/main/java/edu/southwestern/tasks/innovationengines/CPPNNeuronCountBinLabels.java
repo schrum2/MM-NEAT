@@ -11,11 +11,10 @@ public class CPPNNeuronCountBinLabels implements BinLabels{
 	List<String> labels = null;
 	public static final int BIN_INDEX_NODES = 0;
 	
-	public static int maxNumNeurons;
 	public static final int MIN_NUM_NEURONS = 5;
 
 	public CPPNNeuronCountBinLabels() {
-		maxNumNeurons = Parameters.parameters.integerParameter("maxNumNeurons");
+		CPPNComplexityBinLabels.maxNumNeurons = Parameters.parameters.integerParameter("maxNumNeurons");
 	}
 	
 	/**
@@ -27,11 +26,11 @@ public class CPPNNeuronCountBinLabels implements BinLabels{
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {
-			int size = (maxNumNeurons - MIN_NUM_NEURONS + 1);
+			int size = (CPPNComplexityBinLabels.maxNumNeurons - MIN_NUM_NEURONS + 1);
 			System.out.println("Archive Size: "+size);
 			labels = new ArrayList<String>(size);
 			int count = 0;
-			for(int j = MIN_NUM_NEURONS; j <= maxNumNeurons; j++) {
+			for(int j = MIN_NUM_NEURONS; j <= CPPNComplexityBinLabels.maxNumNeurons; j++) {
 				labels.add("Neurons[" + j + "]");
 				count++;
 
@@ -50,7 +49,7 @@ public class CPPNNeuronCountBinLabels implements BinLabels{
 	 */
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = ((multi[BIN_INDEX_NODES] - MIN_NUM_NEURONS) + (maxNumNeurons - MIN_NUM_NEURONS + 1));
+		int binIndex = ((multi[BIN_INDEX_NODES] - MIN_NUM_NEURONS));
 		assert binIndex >= 0 : "Negative index "+Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
 	}

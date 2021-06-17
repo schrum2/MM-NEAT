@@ -7,14 +7,14 @@ import org.junit.Test;
 
 import edu.southwestern.parameters.Parameters;
 
-public class GaierAutoencoderPictureBinningSchemeTest {
+public class GaierAutoencoderPictureBinLabelsTest {
 	
 	GaierAutoencoderPictureBinLabels labels;
 	public static final int NUM_LOSS_BINS = 10;
 
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[] {"maxNumNeurons:100", "numReconstructionLossBins:"+NUM_LOSS_BINS});
+		Parameters.initializeParameterCollections(new String[] {"maxNumNeurons:100", "numReconstructionLossBins:"+NUM_LOSS_BINS, "trainingAutoEncoder:true"});
 		labels = new GaierAutoencoderPictureBinLabels();
 	}
 
