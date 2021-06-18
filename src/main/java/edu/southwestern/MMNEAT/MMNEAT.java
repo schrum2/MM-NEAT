@@ -190,7 +190,7 @@ public class MMNEAT {
 		} else if (ea instanceof MAPElites) {
 			return ((MAPElites) ea).getBinLabelsClass();
 		}
-		throw new IllegalStateException("Attempted to get archive without using MAP Elites or a psuedo-archive");
+		throw new IllegalStateException("Attempted to get archive bin label class without using MAP Elites or a psuedo-archive");
 	}
 	
 	@SuppressWarnings("rawtypes")

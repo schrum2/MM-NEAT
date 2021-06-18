@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
@@ -93,7 +94,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
 			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
-			if (this instanceof CMAME && MMNEAT.getArchiveBinLabelsClass() instanceof MultiDimensionalRealValuedSlicedBinLabels) {
+			if (this instanceof CMAME) {
 				emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
 			}
 		}
@@ -368,13 +369,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				((LodeRunnerLevelTask<?>)MMNEAT.task).beatable.log(pseudoGeneration + "\t" + numBeatenLevels + "\t" + ((1.0*numBeatenLevels)/(1.0*numFilledBins)));
 			}
 			
-			if (emitterMeanLog != null) { // TODO
+			if (emitterMeanLog != null && MMNEAT.getArchiveBinLabelsClass() instanceof MultiDimensionalRealValuedSlicedBinLabels) { // TODO
 				MultiDimensionalRealValuedSlicedBinLabels dimensionSlices = (MultiDimensionalRealValuedSlicedBinLabels) MMNEAT.getArchiveBinLabelsClass();
 				String newLine = "" + pseudoGeneration;
 				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
-					dimensionSlices.discretize(mean);
-					for (double dub : mean) {
-						newLine += "\t" + dub;
+					int[] binCoords = dimensionSlices.discretize(mean);	
+					newLine += "\t";
+					for (int i = 0; i < binCoords.length; i++) {
+						if (i != 0) {
+							newLine += " ";
+						}
+						newLine += binCoords[i];
 					}
 				}
 				emitterMeanLog.log(newLine);
