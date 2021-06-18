@@ -183,4 +183,8 @@ public abstract class Emitter implements Comparable<Emitter> {
 		populationCounter++;
 		return newIndividual; 
 	}
+	
+	public double[] getMean() {
+		return CMAESInstance.getMeanX();
+	}
 }
