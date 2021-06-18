@@ -16,6 +16,7 @@ import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedSlicedBinLabels;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -92,7 +93,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
 			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
-			if (this instanceof CMAME) {
+			if (this instanceof CMAME && MMNEAT.getArchiveBinLabelsClass() instanceof MultiDimensionalRealValuedSlicedBinLabels) {
 				emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
 			}
 		}
@@ -366,13 +367,18 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				}
 				((LodeRunnerLevelTask<?>)MMNEAT.task).beatable.log(pseudoGeneration + "\t" + numBeatenLevels + "\t" + ((1.0*numBeatenLevels)/(1.0*numFilledBins)));
 			}
-//			if (emitterMeanLog != null) {
-//				String newLine = "" + pseudoGeneration;
-//				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
-//					newLine += "\t" + mean[0];
-//				}
-//				emitterMeanLog.log(newLine);
-//			}
+			
+			if (emitterMeanLog != null) { // TODO
+				MultiDimensionalRealValuedSlicedBinLabels dimensionSlices = (MultiDimensionalRealValuedSlicedBinLabels) MMNEAT.getArchiveBinLabelsClass();
+				String newLine = "" + pseudoGeneration;
+				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
+					dimensionSlices.discretize(mean);
+					for (double dub : mean) {
+						newLine += "\t" + dub;
+					}
+				}
+				emitterMeanLog.log(newLine);
+			}
 		}
 	}
 
