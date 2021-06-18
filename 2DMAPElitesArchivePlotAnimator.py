@@ -66,13 +66,13 @@ try:
         read_line = line.split("\t")[1:]
         seperated_emitters = []
         for each in read_line:
-            seperated_emitters.append(each.strip("\n").split(" "))
+            seperated_emitters.append([int(val) for val in each.strip("\n").split(" ")])
         emitter_means.append(seperated_emitters)
 except:
     print("Could not get emitter means from file.")
 
 
-emitter_symbols = ["o", "v", "^", "s", "P", "x", "D", "*"]
+emitter_symbols = ["o", "x", "^", "s", "P", "v", "D", "*"]
 emitter_colors = ["red", "blue", "black", "green"]
 
 numeric_lines = []
@@ -115,10 +115,25 @@ for iteration in range(len(numeric_lines)): # If will log
         plt.xlim(left=0.0, right=dimensions[0])
         plt.ylim(bottom=0.0, top=dimensions[1])
         
-        for e_mean in emitter_means[iteration]:
-            plt.plot(int(e_mean[0]), int(e_mean[1]), marker=emitter_symbols[(emitter_counter%len(emitter_means[iteration]))%8], color=emitter_colors[emitter_counter%4])
+        for e_step in range(len(emitter_means[iteration])):
+            x_values = []
+            y_values = []
+            counter = 0
+            while counter < iteration:
+                x_values.append(emitter_means[counter][e_step][0])
+                counter += logging_frequeny
+                
+            counter = 0
+            while counter < iteration:
+                y_values.append(emitter_means[counter][e_step][1])
+                counter += logging_frequeny
+                
+            for index in (range(len(x_values)-1)):
+                plt.plot(x_values[index:index+2], y_values[index:index+2], color=emitter_colors[emitter_counter%4], alpha=((index/iteration)**2))  
+            
+            plt.plot(emitter_means[iteration][e_step][0], emitter_means[iteration][e_step][1], marker=emitter_symbols[math.floor(emitter_counter/4)], color=emitter_colors[emitter_counter%4])
             emitter_counter += 1
-        
+            
         plt.imshow(bins, cmap=cmap, norm=norm) # Create image
         
         plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png")
