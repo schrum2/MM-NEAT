@@ -48,7 +48,7 @@ except: # If unspecified, calculate them
     calc_minmax = True
     vmin = float("inf")
     vmax = float("-inf")
-    
+
 numeric_contents = [] # Strings to Floats
 for string_in in file_contents:
     if "-Infinity" in string_in or "X" in string_in:
@@ -77,11 +77,11 @@ plt.xlabel(dimension_names[0]) # Add labels
 plt.ylabel(dimension_names[1])
 plt.xlim(left=0.0, right=dimensions[0])
 plt.ylim(bottom=0.0, top=dimensions[1])
-plt.plot(40, 40)
 
 plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap)) # Make colorbar
-        
+    
 plt.imshow(bins, norm=norm, cmap=cmap)
+
 
 plt.savefig(dir+title+".png") # Save file
 

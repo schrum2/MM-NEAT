@@ -57,13 +57,29 @@ except: # If unspecified, calculates it
     vmin = float("inf")
     vmax = float("-inf")
 
+emitter_means = []
+try:
+    emitter_log_path = file_path[:file_path.rfind("_log.txt")]
+    emitter_log_path = emitter_log_path[:emitter_log_path.rfind("_")] + "_EmitterMeans_log.txt"
+    opened_file = open(emitter_log_path, "r")
+    for line in opened_file: # iterate through lines
+        read_line = line.split("\t")[1:]
+        seperated_emitters = []
+        for each in read_line:
+            seperated_emitters.append(each.strip("\n").split(" "))
+        emitter_means.append(seperated_emitters)
+except:
+    print("Could not get emitter means from file.")
 
+
+emitter_symbols = ["o", "v", "^", "s", "P", "x", "D", "*"]
+emitter_colors = ["red", "blue", "black", "green"]
 
 numeric_lines = []
 for line in lines:
     numeric_contents = [] # Strings to Floats
     for string_in in line:
-        if "-Infinity" in string_in or "X" in string_in  :
+        if "-Infinity" in string_in or "X" in string_in:
             numeric_contents.append(np.NINF)
         else:
             temp_value = float(string_in)
@@ -83,8 +99,10 @@ if calc_minmax:
     print("Calculated min and max values: ("+str(vmin)+", "+str(vmax)+")")
     
 print("Finished reading file, outputting images...")
+
 for iteration in range(len(numeric_lines)): # If will log
     if iteration % logging_frequeny == 0:
+        emitter_counter = 0
         bins = np.array(numeric_lines[iteration]) # To array
         bins.resize(dimensions[0], dimensions[1]) # Resize 1D array to 2D array with dimensions based on the overall size (must be square)
         
@@ -96,6 +114,11 @@ for iteration in range(len(numeric_lines)): # If will log
         plt.ylabel(dimension_names[1])
         plt.xlim(left=0.0, right=dimensions[0])
         plt.ylim(bottom=0.0, top=dimensions[1])
+        
+        for e_mean in emitter_means[iteration]:
+            plt.plot(int(e_mean[0]), int(e_mean[1]), marker=emitter_symbols[(emitter_counter%len(emitter_means[iteration]))%8], color=emitter_colors[emitter_counter%4])
+            emitter_counter += 1
+        
         plt.imshow(bins, cmap=cmap, norm=norm) # Create image
         
         plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png")

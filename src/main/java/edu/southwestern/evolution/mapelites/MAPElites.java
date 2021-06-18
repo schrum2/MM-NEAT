@@ -373,7 +373,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				MultiDimensionalRealValuedSlicedBinLabels dimensionSlices = (MultiDimensionalRealValuedSlicedBinLabels) MMNEAT.getArchiveBinLabelsClass();
 				String newLine = "" + pseudoGeneration;
 				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
-					int[] binCoords = dimensionSlices.discretize(mean);	
+					int[] binCoords = dimensionSlices.discretize(dimensionSlices.behaviorCharacterization(mean));	
 					newLine += "\t";
 					for (int i = 0; i < binCoords.length; i++) {
 						if (i != 0) {
