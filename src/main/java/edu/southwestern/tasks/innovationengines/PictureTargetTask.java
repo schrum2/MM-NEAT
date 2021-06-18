@@ -372,7 +372,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
 				"matchImageFile:skull64.jpg",
-				"fitnessSaveThreshold:0.8",		// Since we periodically save the whole archive, don't bother saving with threshold any more 
+				"fitnessSaveThreshold:1.0",		// Since we periodically save the whole archive, don't bother saving with threshold any more 
 				"imageArchiveSaveFrequency:50000",
 				//"imageArchiveSaveFrequency:1000",
 				"includeSigmoidFunction:true", 	// In Brian Woolley paper
