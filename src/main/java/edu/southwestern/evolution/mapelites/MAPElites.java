@@ -49,6 +49,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	public boolean io;
 	private MMNEATLog archiveLog = null; // Archive elite scores
 	private MMNEATLog fillLog = null; // Archive fill amount
+	private MMNEATLog emitterMeanLog = null;
 	private MMNEATLog cppnThenDirectLog = null;
 	private MMNEATLog cppnVsDirectFitnessLog = null;
 	protected MMNEATLog[] emitterIndividualsLogs = null;
@@ -95,6 +96,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
 			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
+			if (this instanceof CMAME) {
+				emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
+			}
 		}
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
@@ -104,6 +108,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	}
 
 	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
+		
 		String prefix = experimentPrefix + "_" + infix;
 		String fillPrefix = experimentPrefix + "_" + "Fill";
 		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
@@ -212,11 +217,23 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		
 		if (dimensionNames.length == 3 || dimensionNames.length == 2) {
 			PrintStream ps = new PrintStream(new File(archiveBatchName));
+			if (dimensionNames.length == 3) { // add min/max batch params
+				ps.println("REM python 3DMAPElitesSquareArchivePlotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <max value> <min value>\r\n"
+						+ "REM The min and max values are not required, and instead will be calculated automatically"); // add description
+			} else {
+				ps.println("REM python 2DMAPElitesSquareArchivePlotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <max value> <min value>\r\n"
+						+ "REM The min and max values are not required, and instead will be calculated automatically");
+			}
 			ps.println("cd ..");
 			ps.println("cd ..");
 			ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesSquareArchivePlotter.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
 			for (int i = 0; i < dimensionNames.length; i++) {
 				ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
+			}
+			if (dimensionNames.length == 3) { // add min/max batch params
+				ps.print(" 2 %1 %2"); // add row param if 3
+			} else {
+				ps.print(" %1 %2");
 			}
 			ps.close();
 		}
@@ -287,7 +304,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			try {
 				setupArchiveVisualizer(archive.getBinMapping());
 			} catch (FileNotFoundException e) {
-				System.out.println("\n\n\n\nCould not create archive visualization file.");
+				System.out.println("Could not create archive visualization file.");
 				e.printStackTrace();
 				System.exit(1);
 			}
@@ -341,6 +358,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				}
 				((LodeRunnerLevelTask<?>)MMNEAT.task).beatable.log(pseudoGeneration + "\t" + numBeatenLevels + "\t" + ((1.0*numBeatenLevels)/(1.0*numFilledBins)));
 			}
+//			if (emitterMeanLog != null) {
+//				String newLine = "" + pseudoGeneration;
+//				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
+//					newLine += "\t" + mean[0];
+//				}
+//				emitterMeanLog.log(newLine);
+//			}
 		}
 	}
 
