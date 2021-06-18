@@ -117,19 +117,21 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		String maxPrefix = experimentPrefix + "_" + "Maximum";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
+		String fullPDFName = directory + prefix + "_pdf_log.plt";
 		String fullName = directory + prefix + "_log.plt";
 		String fullFillName = directory + fillPrefix + "_log.plt";
 		String fullFillDiscardedName = directory + fillDiscardedPrefix + "_log.plt";
 		String fullFillPercentageName = directory + fillPercentagePrefix + "_log.plt";
 		String fullQDName = directory + qdPrefix + "_log.plt";
 		String maxFitnessName = directory + maxPrefix + "_log.plt";
+		File pdfPlot = new File(fullPDFName);
 		File plot = new File(fullName); // for archive log plot file
 		File fillPlot = new File(fullFillName);
 		// Write to file
 		try {
-			// Archive plot
+			// Archive PDF plot
 			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
-			PrintStream ps = new PrintStream(plot);
+			PrintStream ps = new PrintStream(pdfPlot);
 			ps.println("set term pdf enhanced");
 			ps.println("unset key");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
@@ -140,6 +142,19 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// The :1 is for skipping the "generation" number logged in the file
 			ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 			ps.close();
+			
+			// Archive plot
+			ps = new PrintStream(plot);
+			ps.println("unset key");
+			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+			ps.println("set yrange [0:"+ yrange +"]");
+			ps.println("set xrange [0:"+ archiveSize + "]");
+			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
+			ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+			// The :1 is for skipping the "generation" number logged in the file
+			ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+			ps.close();
+			
 			
 			// Fill percentage plot
 			ps = new PrintStream(fillPlot);
