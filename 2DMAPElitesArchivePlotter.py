@@ -77,6 +77,7 @@ plt.xlabel(dimension_names[0]) # Add labels
 plt.ylabel(dimension_names[1])
 plt.xlim(left=0.0, right=dimensions[0])
 plt.ylim(bottom=0.0, top=dimensions[1])
+plt.plot(40, 40)
 
 plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap)) # Make colorbar
         
