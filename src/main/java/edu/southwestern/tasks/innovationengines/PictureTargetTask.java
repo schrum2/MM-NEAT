@@ -356,7 +356,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		// For test runs
 		MMNEAT.main(new String[]{"runNumber:30","randomSeed:30","base:targetimage","mu:400","maxGens:100000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
-				"log:TargetImage-PicbreederRainbowNeuronBinningRegularGenotype","saveTo:PicbreederRainbowNeuronBinningRegularGenotype",
+				"log:TargetImage-skullAutoEncoderNeuronBinningRegularGenotype","saveTo:skullAutoEncoderNeuronBinningRegularGenotype",
 				"allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
@@ -367,12 +367,11 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNNeuronCountBinLabels",
 				"fs:true",
 				//"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
-				"trainingAutoEncoder:false",
+				"trainingAutoEncoder:true",
 				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
 				//"matchImageFile:TexasFlag.png",
 				//"matchImageFile:cat.jpg",
-				//"matchImageFile:skull64.jpg",
-				"matchImageFile:PicbreederRainbow.jpg",
+				"matchImageFile:skull64.jpg",
 				"fitnessSaveThreshold:1.0",		// Since we periodically save the whole archive, don't bother saving with threshold any more 
 				"imageArchiveSaveFrequency:50000",
 				//"imageArchiveSaveFrequency:1000",
@@ -393,6 +392,6 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"includeLeakyReLUFunction:false",
 				"includeFullSawtoothFunction:false",
 				"includeTriangleWaveFunction:false", 
-				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:false"}); 
+				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:true"}); 
 	}
 }

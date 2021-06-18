@@ -273,12 +273,6 @@ public class PopulationUtil {
 					throw new IllegalArgumentException("Cannot change activation function of genotype that has no network: " + parents.get(0).getClass().getName());
 				}
 			}
-			
-			for(int i = 0; i < Parameters.parameters.integerParameter("randomInitialMutationChances"); i++) {
-				for(int j = 0; j < parents.size(); j++) {
-					parents.get(j).mutate();
-				}
-			}
 		}
 		return parents;
 	}    
