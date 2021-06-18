@@ -49,6 +49,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	public boolean io;
 	private MMNEATLog archiveLog = null; // Archive elite scores
 	private MMNEATLog fillLog = null; // Archive fill amount
+	private MMNEATLog emitterMeanLog = null;
 	private MMNEATLog cppnThenDirectLog = null;
 	private MMNEATLog cppnVsDirectFitnessLog = null;
 	protected MMNEATLog[] emitterIndividualsLogs = null;
@@ -95,6 +96,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
 			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
+			if (this instanceof CMAME) {
+				emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
+			}
 		}
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
@@ -104,6 +108,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	}
 
 	public static void setUpLogging(int numLabels, String infix, String experimentPrefix, int yrange, boolean cppnDirLogging, int individualsPerGeneration, int archiveSize) {
+		
 		String prefix = experimentPrefix + "_" + infix;
 		String fillPrefix = experimentPrefix + "_" + "Fill";
 		String fillDiscardedPrefix = experimentPrefix + "_" + "FillWithDiscarded";
@@ -112,19 +117,21 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		String maxPrefix = experimentPrefix + "_" + "Maximum";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
+		String fullPDFName = directory + prefix + "_pdf_log.plt";
 		String fullName = directory + prefix + "_log.plt";
 		String fullFillName = directory + fillPrefix + "_log.plt";
 		String fullFillDiscardedName = directory + fillDiscardedPrefix + "_log.plt";
 		String fullFillPercentageName = directory + fillPercentagePrefix + "_log.plt";
 		String fullQDName = directory + qdPrefix + "_log.plt";
 		String maxFitnessName = directory + maxPrefix + "_log.plt";
+		File pdfPlot = new File(fullPDFName);
 		File plot = new File(fullName); // for archive log plot file
 		File fillPlot = new File(fullFillName);
 		// Write to file
 		try {
-			// Archive plot
+			// Archive PDF plot
 			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
-			PrintStream ps = new PrintStream(plot);
+			PrintStream ps = new PrintStream(pdfPlot);
 			ps.println("set term pdf enhanced");
 			ps.println("unset key");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
@@ -135,6 +142,19 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// The :1 is for skipping the "generation" number logged in the file
 			ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 			ps.close();
+			
+			// Archive plot
+			ps = new PrintStream(plot);
+			ps.println("unset key");
+			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+			ps.println("set yrange [0:"+ yrange +"]");
+			ps.println("set xrange [0:"+ archiveSize + "]");
+			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
+			ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+			// The :1 is for skipping the "generation" number logged in the file
+			ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
+			ps.close();
+			
 			
 			// Fill percentage plot
 			ps = new PrintStream(fillPlot);
@@ -212,11 +232,23 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		
 		if (dimensionNames.length == 3 || dimensionNames.length == 2) {
 			PrintStream ps = new PrintStream(new File(archiveBatchName));
+			if (dimensionNames.length == 3) { // add min/max batch params
+				ps.println("REM python 3DMAPElitesSquareArchivePlotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <max value> <min value>\r\n"
+						+ "REM The min and max values are not required, and instead will be calculated automatically"); // add description
+			} else {
+				ps.println("REM python 2DMAPElitesSquareArchivePlotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <max value> <min value>\r\n"
+						+ "REM The min and max values are not required, and instead will be calculated automatically");
+			}
 			ps.println("cd ..");
 			ps.println("cd ..");
 			ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesSquareArchivePlotter.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
 			for (int i = 0; i < dimensionNames.length; i++) {
 				ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
+			}
+			if (dimensionNames.length == 3) { // add min/max batch params
+				ps.print(" 2 %1 %2"); // add row param if 3
+			} else {
+				ps.print(" %1 %2");
 			}
 			ps.close();
 		}
@@ -287,7 +319,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			try {
 				setupArchiveVisualizer(archive.getBinMapping());
 			} catch (FileNotFoundException e) {
-				System.out.println("\n\n\n\nCould not create archive visualization file.");
+				System.out.println("Could not create archive visualization file.");
 				e.printStackTrace();
 				System.exit(1);
 			}
@@ -341,6 +373,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				}
 				((LodeRunnerLevelTask<?>)MMNEAT.task).beatable.log(pseudoGeneration + "\t" + numBeatenLevels + "\t" + ((1.0*numBeatenLevels)/(1.0*numFilledBins)));
 			}
+//			if (emitterMeanLog != null) {
+//				String newLine = "" + pseudoGeneration;
+//				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
+//					newLine += "\t" + mean[0];
+//				}
+//				emitterMeanLog.log(newLine);
+//			}
 		}
 	}
 

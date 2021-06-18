@@ -65,16 +65,16 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 	public String[] dimensions() {
 		String[] dimensionNames = new String[solutionVectorSlices];
 		for (int i = 1; i <= solutionVectorSlices; i++) {
-			dimensionNames[i] = "Slice "+i;
+			dimensionNames[i-1] = "Slice "+i;
 		}
 		return dimensionNames;
 	}	
 	
 	@Override
 	public int[] dimensionSizes() {
-		int[] dimensionSizes = new int[] {};
+		int[] dimensionSizes = new int[solutionVectorSlices];
 		for (int i = 1; i <= solutionVectorSlices; i++) {
-			dimensionSizes[i] = binsPerDimension;
+			dimensionSizes[i-1] = binsPerDimension;
 		}
 		return dimensionSizes;
 	}
