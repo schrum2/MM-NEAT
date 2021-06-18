@@ -68,6 +68,7 @@ try:
         for each in read_line:
             seperated_emitters.append([int(val) for val in each.strip("\n").split(" ")])
         emitter_means.append(seperated_emitters)
+    print("Emitter means successfully read.")
 except:
     print("Could not get emitter means from file.")
 
