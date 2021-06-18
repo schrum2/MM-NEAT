@@ -96,7 +96,6 @@ for iteration in range(len(numeric_lines)): # If will log
         plt.ylabel(dimension_names[1])
         plt.xlim(left=0.0, right=dimensions[0])
         plt.ylim(bottom=0.0, top=dimensions[1])
-
         plt.imshow(bins, cmap=cmap, norm=norm) # Create image
         
         plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png")
