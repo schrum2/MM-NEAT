@@ -266,7 +266,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
 			}
 			if (dimensionNames.length == 3) { // add min/max batch params
-				ps.print(" 1 2 %1 %2"); // add row param if 3
+				ps.print(" 2 1 %1 %2"); // add row param if 3
 			} else {
 				ps.print(" 1 %1 %2");
 			}
