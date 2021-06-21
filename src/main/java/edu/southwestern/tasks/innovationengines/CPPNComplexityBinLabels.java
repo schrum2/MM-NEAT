@@ -46,7 +46,7 @@ public class CPPNComplexityBinLabels implements BinLabels {
 			int count = 0;
 			for(int i = MIN_NUM_LINKS; i <= maxNumLinks; i++) {
 				for(int j = MIN_NUM_NEURONS; j <= maxNumNeurons; j++) {
-					labels.add("Neurons[" + j + "]links[" + i + "]");
+					labels.add("Neurons" + j + "links" + i);
 					count++;
 				}
 			}

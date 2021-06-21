@@ -31,7 +31,7 @@ public class CPPNNeuronCountBinLabels implements BinLabels{
 			labels = new ArrayList<String>(size);
 			int count = 0;
 			for(int j = MIN_NUM_NEURONS; j <= CPPNComplexityBinLabels.maxNumNeurons; j++) {
-				labels.add("Neurons[" + j + "]");
+				labels.add("Neurons" + j);
 				count++;
 
 			}
