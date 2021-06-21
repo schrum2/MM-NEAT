@@ -30,11 +30,17 @@ public class CPPNNeuronScaleRotationDeltaXDeltaYBinLabels implements BinLabels{
 			System.out.println("Archive Size: "+size);
 			labels = new ArrayList<String>(size);
 			int count = 0;
-			for(int j = MIN_NUM_NEURONS; j <= CPPNComplexityBinLabels.maxNumNeurons; j++) {
-				
-				labels.add("Neurons" + j);
-				count++;
-
+			for(int i = MIN_NUM_NEURONS; i <= CPPNComplexityBinLabels.maxNumNeurons; i++) {
+				for(int j = 0; j < Parameters.parameters.doubleParameter("maxScale") / Parameters.parameters.integerParameter("scaleDivider"); j++) {
+					for(int k = 0; k < 360; k++) {
+						for(int m = 0; m < Parameters.parameters.doubleParameter("imageCenterTranslationRange"); m++) {
+							for(int n = 0; n < Parameters.parameters.doubleParameter("imageCenterTranslationRange"); n++){
+								labels.add("Neurons" + i + "-scale" + j + "-rotation" + k + "-deltaX" + m + "-deltaY" + n);
+								count++;
+							}
+						}
+					}
+				}
 			}
 			assert count == size : "Incorrect number of bins created in archive: " + count;
 		}
@@ -55,11 +61,17 @@ public class CPPNNeuronScaleRotationDeltaXDeltaYBinLabels implements BinLabels{
 		return binIndex;
 	}
 	
+	/**
+	 * Gets the names of each bin dimension
+	 */
 	@Override
 	public String[] dimensions() {
-		return new String[] {"Neurons"};
+		return new String[] {"Neurons, Scale, Rotation, DeltaX, DeltaY"};
 	}
 	
+	/**
+	 * Gets the size of each archive dimension
+	 */
 	@Override
 	public int[] dimensionSizes() {
 		return new int[] {CPPNComplexityBinLabels.maxNumNeurons - MIN_NUM_NEURONS + 1};
