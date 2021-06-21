@@ -24,7 +24,9 @@ import edu.southwestern.util.file.FileUtilities;
  * Implementation of CMA-ME as an extension
  * of MAP Elites. Implementation is partially
  * detailed in the original CMA-ME paper:
- * https://arxiv.org/pdf/1912.02400.pdf
+ * 
+ * Matthew C. Fontaine, Julian Togelius, Stefanos Nikolaidis, and Amy K. Hoover, "Covariance Matrix Adaptation for the Rapid Illumination of Behavior Space"
+ * in GECCO 2020. https://arxiv.org/pdf/1912.02400.pdf
  * 
  * @author Maxx Batterton
  *
