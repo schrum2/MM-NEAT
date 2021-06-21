@@ -29,7 +29,7 @@ public class MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels implements BinLa
 			for(int i = 0; i <= binsPerDimension; i++) { // Distinct Segments
 				for(int j = 0; j < binsPerDimension; j++) { // Negative Space
 					for(int r = -(binsPerDimension/2); r < binsPerDimension/2; r++) { // Leniency allows negative range
-						labels.add("DistinctSegments["+i+"]NS["+j+"0-"+(j+1)+"0]Leniency["+r+"0-"+(r+1)+"0]");
+						labels.add("DistinctSegments"+i+"NS"+j+"0-"+(j+1)+"0Leniency"+r+"0-"+(r+1)+"0");
 					}
 				}
 			}
