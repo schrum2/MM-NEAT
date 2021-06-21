@@ -349,8 +349,6 @@ public class Parameters {
 		integerOptions.add("latentPartitionBinDimension", -1, "Bins in each dimension for LatentVariablePartitionSum");
 		integerOptions.add("numReconstructionLossBins", 10, "Divide 1 by this number to get the number of bins for loss.");
 		integerOptions.add("randomInitialMutationChances", 0, "Determines the number of initial images in the iteration0 folder.");
-		integerOptions.add("minAutoencoderLoss", 0, "Minimum reconstruction loss across the whole archive.");
-		integerOptions.add("maxAutoencoderLoss", 1, "Maximum reconstruction loss across the whole archive.");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -850,7 +848,9 @@ public class Parameters {
 		doubleOptions.add("imageCenterTranslationRange", 10.0, "The scale of the box (in other words, the range of deltaX and deltaY for a given Picbreeder image)");
 		doubleOptions.add("picbreederImageTranslationX", 0.0, "Maximum possible range (negative to positive) of the X value of the box.");
 		doubleOptions.add("picbreederImageTranslationY", 0.0, "Maximum possible range (negative to positive) of the Y value of the box.");
-
+		doubleOptions.add("minAutoencoderLoss", 0.0, "Minimum reconstruction loss across the whole archive.");
+		doubleOptions.add("maxAutoencoderLoss", 1.0, "Maximum reconstruction loss across the whole archive.");
+		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
 		stringOptions.add("archetype", "", "Network that receives all mutations so as to keep other networks properly aligned");

@@ -40,7 +40,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 //	private static final int BRIGHTNESS_INDEX = 2;
 //	private Network individual;
 	private BufferedImage img = null;
-	public int imageHeight, imageWidth;
+	public static int imageHeight, imageWidth;
 	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
 	private double[] targetImageFeatures; 
 	
@@ -168,7 +168,10 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof GaierAutoencoderPictureBinLabels) {
 				// If the AutoEncoder has not been initialized yet, then loss is 1.0
 				double loss = AutoEncoderProcess.neverInitialized ? 1.0 : AutoEncoderProcess.getReconstructionLoss(image);
-				int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinLabels.numLossBins),GaierAutoencoderPictureBinLabels.numLossBins - 1);
+				
+				// TODO Change
+				//int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinLabels.numLossBins),GaierAutoencoderPictureBinLabels.numLossBins - 1);
+				int lossIndex = Math.min((int) Math.max(0, ((loss - Parameters.parameters.doubleParameter("minAutoencoderLoss")) / (Parameters.parameters.doubleParameter("maxAutoencoderLoss")) * GaierAutoencoderPictureBinLabels.numLossBins)), GaierAutoencoderPictureBinLabels.numLossBins - 1);
 				indicesMAPEliteBin = new int[]{nodes, lossIndex};
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNNeuronCountBinLabels) {
 				assert nodes >= CPPNNeuronCountBinLabels.MIN_NUM_NEURONS : "Why so few neurons? " + nodes + "\n" + tweannIndividual;

@@ -1,5 +1,6 @@
 package edu.southwestern.evolution.mapelites;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -20,10 +21,12 @@ import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedSlicedBinLabels;
 import edu.southwestern.log.MMNEATLog;
+import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.innovationengines.PictureTargetTask;
+import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
@@ -526,11 +529,23 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				AutoEncoderProcess.neverInitialized = false;
 				// Now we need to dump the archive and replace it with a new one after re-evaluating all old contents.
 				int oldOccupied = this.archive.getNumberOfOccupiedBins();
-				if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {
-					
-					Parameters.parameters.setInteger("minAutoencoderLoss", 0);
-					Parameters.parameters.setInteger("minAutoencoderLoss", 1);
+				if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
+					double minLoss = 1.0;
+					double maxLoss = 0.0;
+					for(Score<T> s : archive.getArchive()) {
+						if(s != null) { // Ignore empty cells
+							Network cppn = (Network) s.individual.getPhenotype();
+							BufferedImage image = PicbreederTask.imageFromCPPN(cppn, PictureTargetTask.imageWidth, PictureTargetTask.imageHeight, ArrayUtil.doubleOnes(cppn.numInputs()));
+							double loss = AutoEncoderProcess.getReconstructionLoss(image);
+							minLoss = Math.min(loss, minLoss);
+							maxLoss = Math.max(loss, maxLoss);
+						}
 					}
+					Parameters.parameters.setDouble("minAutoencoderLoss", minLoss);
+					Parameters.parameters.setDouble("minAutoencoderLoss", maxLoss);	
+
+				}
+
 				this.archive = new Archive<T>(this.archive);
 				int newOccupied = this.archive.getNumberOfOccupiedBins();
 				System.out.println("Archive reorganized based on new AutoEncoder: Occupancy "+oldOccupied+" to "+newOccupied);
