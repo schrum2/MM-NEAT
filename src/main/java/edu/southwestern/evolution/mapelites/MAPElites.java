@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
@@ -474,7 +473,19 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// 28 is a magic number, and should be either a constant of a command line parameter.
 			// Fix later ... this is the standard image size for training our simple image autoencoder (based on MNIST)
 			((PictureTargetTask<?>) MMNEAT.task).saveAllArchiveImages("iteration"+iterations, 28, 28);
-
+			
+			if(Parameters.parameters.booleanParameter("deleteOldArchives") && iterations != 0) {
+				String snapshot = FileUtilities.getSaveDirectory() + File.separator + "snapshots";
+				String toDelete = snapshot + File.separator + Parameters.parameters.stringParameter("latestIterationSaved");
+				File dir = new File(toDelete);
+				boolean result = FileUtilities.deleteDirectory(dir);
+				System.out.println("Deleted "+toDelete+": " + result);
+				
+				if(Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
+					// Delete old pth file
+				}
+			}
+			Parameters.parameters.setString("latestIterationSaved", "iteration" + iterations);
 			// If we are using the autoencoder (only use if "trainingAutoEncoder" == true), re-train it here
 			if(Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
 				if(AutoEncoderProcess.currentProcess != null) {
@@ -490,6 +501,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				AutoEncoderProcess.neverInitialized = false;
 				// Now we need to dump the archive and replace it with a new one after re-evaluating all old contents.
 				int oldOccupied = this.archive.getNumberOfOccupiedBins();
+				if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {
+					
+					Parameters.parameters.setInteger("minAutoencoderLoss", 0);
+					Parameters.parameters.setInteger("minAutoencoderLoss", 1);
+					}
 				this.archive = new Archive<T>(this.archive);
 				int newOccupied = this.archive.getNumberOfOccupiedBins();
 				System.out.println("Archive reorganized based on new AutoEncoder: Occupancy "+oldOccupied+" to "+newOccupied);

@@ -374,8 +374,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				//"matchImageFile:cat.jpg",
 				"matchImageFile:skull64.jpg",
 				"fitnessSaveThreshold:1.0",		// Since we periodically save the whole archive, don't bother saving with threshold any more 
-				"imageArchiveSaveFrequency:50000",
-				//"imageArchiveSaveFrequency:1000",
+				//"imageArchiveSaveFrequency:50000",
+				"imageArchiveSaveFrequency:1000",
 				"includeSigmoidFunction:true", 	// In Brian Woolley paper
 				"includeTanhFunction:false",
 				"includeIdFunction:true",		// In Brian Woolley paper
@@ -393,6 +393,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"includeLeakyReLUFunction:false",
 				"includeFullSawtoothFunction:false",
 				"includeTriangleWaveFunction:false", 
-				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:true"}); 
+				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:true",
+				"deleteOldArchives:true"}); 
 	}
 }

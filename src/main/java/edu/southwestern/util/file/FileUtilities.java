@@ -21,6 +21,24 @@ import wox.serial.Easy;
 public class FileUtilities {
 
 	/**
+	 * From: https://www.baeldung.com/java-delete-directory
+	 * 
+	 * Recursively deletes a directory and all contents/subdirs.
+	 * 
+	 * @param directoryToBeDeleted File representing a directory
+	 * @return Whether successful
+	 */
+	public static boolean deleteDirectory(File directoryToBeDeleted) {
+	    File[] allContents = directoryToBeDeleted.listFiles();
+	    if (allContents != null) {
+	        for (File file : allContents) {
+	            deleteDirectory(file);
+	        }
+	    }
+	    return directoryToBeDeleted.delete();
+	}
+	
+	/**
 	 * Return string holding path to base directory where files for current
 	 * experiment are saved
 	 *
@@ -35,8 +53,7 @@ public class FileUtilities {
 	 * Deletes all files in a given directory. Will not work if the directory
 	 * contains sub-directories
 	 *
-	 * @param dir
-	 *            file representing the directory to delete
+	 * @param dir file representing the directory to delete
 	 */
 	public static void deleteDirectoryContents(File dir) {
 		assert dir.isDirectory() : "File " + dir + " must be a directory";
@@ -70,8 +87,7 @@ public class FileUtilities {
 	/**
 	 * Read the entire contents of a file into a String and return the String.
 	 *
-	 * @param f
-	 *            file to read
+	 * @param f file to read
 	 * @return String of file contents
 	 * @throws java.io.FileNotFoundException
 	 */
@@ -86,8 +102,7 @@ public class FileUtilities {
 	/**
 	 * Draws a given TWEANN genotype directly from xml file
 	 * 
-	 * @param filename
-	 *            xml file containing TWEANN
+	 * @param filename xml file containing TWEANN
 	 */
 	public static void drawTWEANN(String filename) {
 		TWEANNGenotype genotype = (TWEANNGenotype) Easy.load(filename);
