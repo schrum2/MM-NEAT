@@ -61,7 +61,7 @@ public class GaierAutoencoderPictureBinLabels implements BinLabels  {
 					BigDecimal thirdSegment = new BigDecimal(j + 1);
 					secondSegment = secondSegment.divide(new BigDecimal(numLossBins));
 					thirdSegment = thirdSegment.divide(new BigDecimal(numLossBins));
-					labels.add("Neurons[" + i + "]loss[" + secondSegment.setScale(4, RoundingMode.HALF_UP).doubleValue() + ","+ thirdSegment.setScale(4, RoundingMode.HALF_UP).doubleValue()+"]");
+					labels.add("Neurons " + i + " loss " + secondSegment.setScale(4, RoundingMode.HALF_UP).doubleValue() + " "+ thirdSegment.setScale(4, RoundingMode.HALF_UP).doubleValue());
 					count++;
 				}
 			}
