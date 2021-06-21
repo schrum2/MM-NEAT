@@ -28,7 +28,7 @@ public class CPPNNeuronCountBinLabelsTest {
 		int[] allNeuronValues = new int[] {5,32,34,53,97,41,44,62,56,99,24,6,15,74,42,53,57,29,81,20,92,47,74,18,34,72,88,78,67};
 		
 		for(int i = 0; i < allNeuronValues.length; i++) {
-			assertEquals("Neurons[" + allNeuronValues[i] + "]", labels.binLabels().get(labels.oneDimensionalIndex(new int[] {allNeuronValues[i]})));
+			assertEquals("Neurons" + allNeuronValues[i], labels.binLabels().get(labels.oneDimensionalIndex(new int[] {allNeuronValues[i]})));
 		}
 	}
 
