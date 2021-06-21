@@ -482,7 +482,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				System.out.println("Deleted "+toDelete+": " + result);
 				
 				if(Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
-					// Delete old pth file
+					toDelete = toDelete + ".pth";
+					File pth = new File(toDelete);
+					pth.delete();
+					System.out.println("Deleted "+toDelete);
 				}
 			}
 			Parameters.parameters.setString("latestIterationSaved", "iteration" + iterations);
