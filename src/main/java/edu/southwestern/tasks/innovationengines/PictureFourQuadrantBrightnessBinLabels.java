@@ -51,7 +51,7 @@ public class PictureFourQuadrantBrightnessBinLabels implements BinLabels {
 							// (i,j,k,m) <-- the coordinate of the current bin
 							// (0,0,0,0) <-- should be the first bin
 							// (BINS_PER_DIMENSION - 1,BINS_PER_DIMENSION - 1,BINS_PER_DIMENSION - 1,BINS_PER_DIMENSION - 1) <-- should be the last bin
-							binLabels.add( + i + " " + j + " " + k + " " + m);
+							binLabels.add( + i + "-" + j + "-" + k + "-" + m);
 						}
 					}
 				}
