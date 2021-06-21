@@ -19,7 +19,7 @@ public class LodeRunnerMAPElitesPercentGroundNumGoldAndEnemiesBinLabels implemen
 			for(int i = 0; i < BINS_PER_DIMENSION; i++) { //ground percentage
 				for(int j = 0; j < BINS_PER_DIMENSION*SCALE_BY_FIVE; j+=SCALE_BY_FIVE) { //number of treasure
 					for(int k = 0; k < BINS_PER_DIMENSION*SCALE_BY_TWO; k+=SCALE_BY_TWO) { //number of enemies 
-						labels.add("Ground"+i+"0-"+(i+1)+"0Treasure"+j+"-"+(j+SCALE_BY_FIVE)+"Enemies"+k+"-"+(k+SCALE_BY_TWO)+"");
+						labels.add("Ground"+i+"0-"+(i+1)+"0Treasure"+j+"-"+(j+SCALE_BY_FIVE)+"Enemies"+k+"-"+(k+SCALE_BY_TWO));
 					}
 				}
 			}
