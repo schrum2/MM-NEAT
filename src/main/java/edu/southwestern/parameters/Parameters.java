@@ -349,6 +349,7 @@ public class Parameters {
 		integerOptions.add("latentPartitionBinDimension", -1, "Bins in each dimension for LatentVariablePartitionSum");
 		integerOptions.add("numReconstructionLossBins", 10, "Divide 1 by this number to get the number of bins for loss.");
 		integerOptions.add("randomInitialMutationChances", 0, "Determines the number of initial images in the iteration0 folder.");
+		integerOptions.add("scaleDivider", 5, "Determines by how much to divide the scale value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
