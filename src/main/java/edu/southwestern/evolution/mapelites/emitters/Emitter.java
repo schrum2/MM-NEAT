@@ -9,6 +9,7 @@ import edu.southwestern.evolution.mapelites.CMAME;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 
 public abstract class Emitter implements Comparable<Emitter> {
@@ -19,13 +20,15 @@ public abstract class Emitter implements Comparable<Emitter> {
 	int validParents = 0; // amount of non-failure valued parents, for calculating new mu and weights
 	double[][] parentPopulation = null; // stored parents
 	double[][] sampledPopulation = null; // current population to pull individuals from
-	double[] deltaIFitnesses = null;
+	private double[] deltaIFitnesses = null;
+	ArrayList<Pair<Double,SOLUTION_TYPE>> fitnessTypePairs = null;
 	public String emitterName; // name of the emitter
 	CMAEvolutionStrategy CMAESInstance; // internal instance of CMA-ES 
 	final int populationSize;
 	final int dimension;
 	public MMNEATLog individualLog;
 	
+	public enum SOLUTION_TYPE {NEW_BIN, IMPROVED_BIN, FAILURE};
 	
 	/**
 	 * Constructor that creates a new emitter
@@ -42,6 +45,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 		this.populationSize = CMAESInstance.parameters.getPopulationSize();
 		parentPopulation = new double[populationSize][CMAESInstance.getDimension()];
 		deltaIFitnesses = new double[populationSize];
+		fitnessTypePairs = new ArrayList<Pair<Double,SOLUTION_TYPE>>(populationSize);
 		
 	}
 
@@ -115,7 +119,8 @@ public abstract class Emitter implements Comparable<Emitter> {
 	 * @param archive The current archive
 	 */
 	public void addFitness(double[] parent, double newScore, double currentScore, Archive<ArrayList<Double>> archive) {
-		deltaIFitnesses[additionCounter] = calculateFitness(newScore, currentScore);
+		fitnessTypePairs.add(calculateFitness(newScore, currentScore));
+		//deltaIFitnesses[additionCounter] = calculateFitness(newScore, currentScore);
 		parentPopulation[additionCounter] = parent;
 		additionCounter++;
 		if (additionCounter == populationSize) {
@@ -125,13 +130,32 @@ public abstract class Emitter implements Comparable<Emitter> {
 				}
 				this.CMAESInstance = newCMAESInstance(archive);
 			} else {
+				int i = 0;
+				double minEncountered = Double.POSITIVE_INFINITY;
+				double maxEncountered = Double.NEGATIVE_INFINITY;
+				// Collect the data and determine score range (min/max)
+				for(Pair<Double,SOLUTION_TYPE> p : fitnessTypePairs) {
+					minEncountered = Math.min(minEncountered, p.t1);
+					maxEncountered = Math.max(maxEncountered, p.t1);
+					deltaIFitnesses[i++] = p.t1;
+				}
+				double badRange = maxEncountered - minEncountered; // Will be positive
+				badRange++; // Make slightly larger/worse (large values bad for minimizer)
+				// Now augment the FAILURE and IMPROVED_BIN scores to rank them worse 
+				for(i = 0; i < deltaIFitnesses.length; i++) {
+					if(fitnessTypePairs.get(i).t2.equals(SOLUTION_TYPE.IMPROVED_BIN)) {
+						deltaIFitnesses[i] += badRange; // Worse than the raw score of any NEW_BIN solution 
+					} else if(fitnessTypePairs.get(i).t2.equals(SOLUTION_TYPE.FAILURE)) {
+						deltaIFitnesses[i] += 2*badRange; // Worse than adjusted score of any IMPROVED_BIN solution
+					}
+				}
 				updateDistribution(parentPopulation, deltaIFitnesses); // logging happens inside this function
 			}
 			additionCounter = 0;
 		}
 	}
 	
-	public abstract double calculateFitness(double newScore, double currentScore);
+	public abstract Pair<Double,SOLUTION_TYPE> calculateFitness(double newScore, double currentScore);
 	
 	/**
 	 * Check if the current fitnesses are invalid, and restart the 
