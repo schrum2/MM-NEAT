@@ -28,7 +28,7 @@ public class ZeldaMAPElitesWallWaterRoomsBinLabels implements BinLabels {
 			for(int i = 0; i < TILE_GROUPS; i++) { // Wall tile percent
 				for(int j = 0; j < TILE_GROUPS; j++) { // Water tile percent
 					for(int r = 0; r <= maxNumRooms; r++) {
-						labels.add("Wall["+i+"0-"+(i+1)+"0]Water["+j+"0-"+(j+1)+"0]Rooms"+r);
+						labels.add("Wall"+i+"0-"+(i+1)+"0Water"+j+"0-"+(j+1)+"0Rooms"+r);
 					}
 				}
 			}
