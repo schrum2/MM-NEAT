@@ -397,6 +397,6 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"includeFullSawtoothFunction:false",
 				"includeTriangleWaveFunction:false", 
 				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:true",
-				"deleteOldArchives:true"}); 
+				"deleteOldArchives:true", "dynamicAutoencoderIntervals:true"}); 
 	}
 }
