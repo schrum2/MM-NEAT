@@ -178,6 +178,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				indicesMAPEliteBin = new int[] {nodes};
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNNeuronScaleRotationDeltaXDeltaYBinLabels) {
 				// TODO: Add the body here.
+				indicesMAPEliteBin = new int[] {nodes};
 			} else {
 				throw new IllegalStateException("No valid binning scheme provided for PictureTargetTask");
 			}

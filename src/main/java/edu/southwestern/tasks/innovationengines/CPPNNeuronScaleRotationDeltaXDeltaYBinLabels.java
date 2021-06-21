@@ -11,6 +11,10 @@ public class CPPNNeuronScaleRotationDeltaXDeltaYBinLabels implements BinLabels{
 	List<String> labels = null;
 	
 	public static final int BIN_INDEX_NODES = 0;
+	public static final int BIN_INDEX_SCALE = 1;
+	public static final int BIN_INDEX_ROTATION = 2;
+	public static final int BIN_INDEX_DELTA_X = 3;
+	public static final int BIN_INDEX_DELTA_Y = 4;
 	public static final int MIN_NUM_NEURONS = 5;
 
 	public CPPNNeuronScaleRotationDeltaXDeltaYBinLabels() {
@@ -26,7 +30,8 @@ public class CPPNNeuronScaleRotationDeltaXDeltaYBinLabels implements BinLabels{
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {
-			int size = (CPPNComplexityBinLabels.maxNumNeurons - MIN_NUM_NEURONS + 1);
+			int size = (int) ((CPPNComplexityBinLabels.maxNumNeurons - MIN_NUM_NEURONS + 1) * (Parameters.parameters.doubleParameter("maxScale") / Parameters.parameters.integerParameter("scaleDivider")
+					* 360 * Parameters.parameters.doubleParameter("imageCenterTranslationRange") * Parameters.parameters.doubleParameter("imageCenterTranslationRange")));
 			System.out.println("Archive Size: "+size);
 			labels = new ArrayList<String>(size);
 			int count = 0;
