@@ -182,7 +182,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		
 		Score<T> result = new Score<>(individual, new double[]{binScore}, indicesMAPEliteBin, binScore);
 		if(CommonConstants.watch) {
-			DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", imageWidth, imageHeight);
+			DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"));
 			System.out.println("Score: "+binScore);
 			// Wait for user
 			MiscUtil.waitForReadStringAndEnterKeyPress();
