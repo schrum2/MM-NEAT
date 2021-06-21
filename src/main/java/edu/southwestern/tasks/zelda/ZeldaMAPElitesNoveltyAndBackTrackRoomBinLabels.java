@@ -29,7 +29,7 @@ public class ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels implements BinLabels
 			for(int i = 0; i < noveltyBinsPerDimension; i++) { 
 				for(int j = 0; j <= maxNumRooms; j++) { 
 					for(int r = 0; r <= maxNumRooms; r++) {
-						labels.add("Novelty["+i+"]BackTrackedRooms["+j+"]Rooms["+r+"]");
+						labels.add("Novelty"+i+"BackTrackedRooms"+j+"Rooms"+r);
 						
 					}
 				}
