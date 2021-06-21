@@ -149,6 +149,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 						deltaIFitnesses[i] += 2*badRange; // Worse than adjusted score of any IMPROVED_BIN solution
 					}
 				}
+				fitnessTypePairs.clear(); // Empty out for next time.
 				updateDistribution(parentPopulation, deltaIFitnesses); // logging happens inside this function
 			}
 			additionCounter = 0;
