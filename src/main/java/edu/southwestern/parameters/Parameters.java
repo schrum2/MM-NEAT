@@ -349,6 +349,9 @@ public class Parameters {
 		integerOptions.add("latentPartitionBinDimension", -1, "Bins in each dimension for LatentVariablePartitionSum");
 		integerOptions.add("numReconstructionLossBins", 10, "Divide 1 by this number to get the number of bins for loss.");
 		integerOptions.add("randomInitialMutationChances", 0, "Determines the number of initial images in the iteration0 folder.");
+		integerOptions.add("minAutoencoderLoss", 0, "Minimum reconstruction loss across the whole archive.");
+		integerOptions.add("maxAutoencoderLoss", 1, "Maximum reconstruction loss across the whole archive.");
+		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
@@ -763,6 +766,8 @@ public class Parameters {
 		booleanOptions.add("AnimateScale", true, "If AnimationBreeder is going to animate using scale.");
 		booleanOptions.add("AnimateDeltaX", true, "If AnimationBreeder is going to translate images horizontally.");
 		booleanOptions.add("AnimateDeltaY", true, "If Animationbreeder is going to translate images vertically");
+		booleanOptions.add("dynamicAutoencoderIntervals", false, "If true the intervals in the archive change every time we train a new autoencoder.");
+		booleanOptions.add("deleteOldArchives", true, "If true, delete the old archives to save space, otherwise the archive fills to fast and we run out of storage.");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
@@ -905,6 +910,8 @@ public class Parameters {
 		stringOptions.add("mapElitesKLDivLevel2", "", "File name of the second level to compare to when using KL Divergence and MAPElites");
 		stringOptions.add("mapElitesArchiveFile", "", "File name of MAPElites level we want to look at from an experiment");
 		stringOptions.add("archiveSubDirectoryName", "archive", "Directory name to store archive files in a MAP Elites run");
+		stringOptions.add("latestIterationSaved", "iterationX", "The last iteration of PictureTargetTask to be saved.");
+		
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
 		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");
