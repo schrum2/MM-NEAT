@@ -93,7 +93,7 @@ print(device)
 model.to(device)
 
 #Epochs
-n_epochs = 100
+n_epochs = 200
 
 for epoch in range(1, n_epochs+1):
     # monitor training loss
@@ -121,10 +121,10 @@ images, labels = dataiter.next()
 output = model(images.to(device))
 images = images.numpy()
 
-batch_size = 10
+batch_size = 32
 
 output = output.view(batch_size, 3, 32, 32)
-output = output.detach().numpy()
+output = output.detach().cpu().numpy()
 
 #Original Images
 print("Original Images")
