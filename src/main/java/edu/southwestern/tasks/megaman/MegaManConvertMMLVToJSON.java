@@ -2,6 +2,7 @@ package edu.southwestern.tasks.megaman;
 
 import java.awt.Point;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,7 +11,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 /**
  * This class converts mmlv files to trainable JSON format
@@ -24,11 +29,52 @@ public class MegaManConvertMMLVToJSON {
 	public static int enemyNumber = -1;
 	public static String enemyString = null;
 	public static String bossString = null;
+	
+	
+	/**
+     * Modified from https://github.com/TheHedgeify/DagstuhlGAN/blob/master/marioaiDagstuhl/src/reader/MarioReader.java
+     * in order to generate to convert Mario levels into a json file.
+     */
+    public static void main(String[] args) throws FileNotFoundException { // generate new json files
+    	// All directories to pull from
+    	
+    	ArrayList<int[][]> levels = new ArrayList<>();
+    	for(int i = 1;i<=10;i++) {
+			maxX=0;
+			maxY=0;
+			visited.clear();
+			enemyNumber=-1;
+			enemyString = null;
+			bossString = null;
+			List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
+			levels.add(ArrayUtil.int2DArrayFromListOfLists(level));
+		}
+
+        // output file
+        String outputFile = "data/VGLC/MegaMan/NoWater9MegaMan.json";
+        
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        String out = gson.toJson(levels);
+        System.out.println("Created JSON String");
+        out = out.replace("\n", "").replace("      ", " ").replace(",  ", ", ").replace(",    ",", ").replace("    ","").replace("  ", "").replace("[ ", "[");
+
+        // System.out.println(out);
+
+        PrintWriter writer = new PrintWriter(outputFile);
+
+        writer.print(out);
+        writer.close();
+
+        System.out.println("Wrote file with " + levels.size() + " examples");
+    }    
+	
+	
 	/**
 	 * useful for testing
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void oldMain(String[] args) {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"
 				, "useThreeGANsMegaMan:true" });
 		for(int i = 11;i<=29;i++) {
