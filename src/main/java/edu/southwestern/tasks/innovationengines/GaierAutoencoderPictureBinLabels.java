@@ -15,7 +15,12 @@ import edu.southwestern.parameters.Parameters;
  * and the loss value, and was inspired by the link below
  * (from the 2019 GECCO conference).
  * 
+ * Adam Gaier, Alexander Asteroth, Jean-Baptiste Mouret, "Are quality diversity algorithms better at generating stepping stones than objective-based search?"
+ * GECCO '19: Proceedings of the Genetic and Evolutionary Computation Conference Companion, July 2019. Pages 115–116
  * https://dl.acm.org/doi/10.1145/3319619.3321897
+ * 
+ * And, more details are in chapter 4 of Adam Gaier's dissertation:
+ * https://hal.univ-lorraine.fr/tel-02964666/document
  * 
  * @author Anna Wicker
  *

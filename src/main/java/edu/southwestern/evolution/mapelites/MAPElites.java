@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
@@ -18,6 +19,7 @@ import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedSlicedBinLabels;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -233,15 +235,15 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		if (dimensionNames.length == 3 || dimensionNames.length == 2) {
 			PrintStream ps = new PrintStream(new File(archiveBatchName));
 			if (dimensionNames.length == 3) { // add min/max batch params
-				ps.println("REM python 3DMAPElitesSquareArchivePlotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <max value> <min value>\r\n"
+				ps.println("REM python 3DMAPElitesArchivePlotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <max value> <min value>\r\n"
 						+ "REM The min and max values are not required, and instead will be calculated automatically"); // add description
 			} else {
-				ps.println("REM python 2DMAPElitesSquareArchivePlotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <max value> <min value>\r\n"
+				ps.println("REM python 2DMAPElitesArchivePlotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <max value> <min value>\r\n"
 						+ "REM The min and max values are not required, and instead will be calculated automatically");
 			}
 			ps.println("cd ..");
 			ps.println("cd ..");
-			ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesSquareArchivePlotter.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
+			ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesArchivePlotter.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
 			for (int i = 0; i < dimensionNames.length; i++) {
 				ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
 			}
@@ -373,13 +375,22 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				}
 				((LodeRunnerLevelTask<?>)MMNEAT.task).beatable.log(pseudoGeneration + "\t" + numBeatenLevels + "\t" + ((1.0*numBeatenLevels)/(1.0*numFilledBins)));
 			}
-//			if (emitterMeanLog != null) {
-//				String newLine = "" + pseudoGeneration;
-//				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
-//					newLine += "\t" + mean[0];
-//				}
-//				emitterMeanLog.log(newLine);
-//			}
+			
+			if (emitterMeanLog != null && MMNEAT.getArchiveBinLabelsClass() instanceof MultiDimensionalRealValuedSlicedBinLabels) { // TODO
+				MultiDimensionalRealValuedSlicedBinLabels dimensionSlices = (MultiDimensionalRealValuedSlicedBinLabels) MMNEAT.getArchiveBinLabelsClass();
+				String newLine = "" + pseudoGeneration;
+				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
+					int[] binCoords = dimensionSlices.discretize(mean);	
+					newLine += "\t";
+					for (int i = 0; i < binCoords.length; i++) {
+						if (i != 0) {
+							newLine += " ";
+						}
+						newLine += binCoords[i];
+					}
+				}
+				emitterMeanLog.log(newLine);
+			}
 		}
 	}
 

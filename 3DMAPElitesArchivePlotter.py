@@ -59,7 +59,7 @@ except: # If unspecified, calculate them
 
 numeric_contents = [] # Strings to Floats
 for string_in in file_contents:
-    if string_in.strip() == "-Infinity" or string_in.strip() == "X":
+    if "-Infinity" in string_in or "X" in string_in:
         numeric_contents.append(np.NINF)
     else:
         temp_value = float(string_in)
