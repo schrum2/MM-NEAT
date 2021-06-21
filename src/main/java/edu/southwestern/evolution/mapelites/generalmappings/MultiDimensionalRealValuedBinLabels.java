@@ -53,7 +53,7 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 		if(labels == null) { // Create once and re-use, but wait until after Parameters are loaded	
 			int size = (int) Math.floor(Math.pow(binsPerDimension, numDimensions)); // get overall amount of bins
 			labels = new ArrayList<String>(size);
-			generateLabel(")", 0); // start recursive label generator
+			generateLabel("", 0); // start recursive label generator
 			if (EXTRA_LOGGING) System.out.println("bin total:" + size);
 		}
 		return labels;
@@ -70,13 +70,13 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	 */
 	private void generateLabel(String input, int step) {
 		if (step == numDimensions) {
-			labels.add("(" + input); // all dimensions added, cap the label
+			labels.add(input); // all dimensions added, cap the label
 			if (EXTRA_LOGGING) System.out.println("Made label \"("+input+"\"");
 		} else {
 			for (int i = 0; i < binsPerDimension; i++) {
 				String newInput = input;
 				if (step != 0) {
-					newInput = ", " + newInput; 
+					newInput = "-" + newInput; 
 				}
 				BigDecimal firstSegment = new BigDecimal(i); // More precise division
 				firstSegment = firstSegment.multiply(new BigDecimal(segmentSize));
@@ -84,7 +84,7 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 				BigDecimal secondSegment = new BigDecimal(i+1); // More precise division
 				secondSegment = secondSegment.multiply(new BigDecimal(segmentSize));
 				secondSegment = secondSegment.add(new BigDecimal(minPossibleValue));
-				newInput = ("[" + firstSegment.setScale(4, RoundingMode.HALF_UP).doubleValue() + " to " + secondSegment.setScale(4, RoundingMode.HALF_UP).doubleValue() +"]") + newInput; // add dimension component to label
+				newInput = (Double.toString(firstSegment.setScale(4, RoundingMode.HALF_UP).doubleValue()).replace('.', '_') + "to" + Double.toString(secondSegment.setScale(4, RoundingMode.HALF_UP).doubleValue()).replace('.', '_')) + newInput; // add dimension component to label
 				generateLabel(newInput, step+1); // go to next dimension to add next part
 			}
 		}

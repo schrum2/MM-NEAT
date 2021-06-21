@@ -129,9 +129,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		//final int ZELDA_FLOOR_SPACE_COLUMNS = 12; // Number of columns to look through
 
 		ArrayList<Double> behaviorVector = null; // Filled in later
-		Dungeon dungeon = getZeldaDungeonFromGenotype(individual); // TODO may be part of KL Div
-		//Level[][] levels = dungeon.getLevelArrays();
-		//List<List<Integer>> firstLevel = levels[0][0].intLevel; // TODO may be part of KL Div
+		Dungeon dungeon = getZeldaDungeonFromGenotype(individual);
 		int distanceToTriforce = -100; // Very bad fitness if level is not beatable 
 		int numRooms = 0; //number of rooms
 		int searchStatesVisited = 0; //number of search states visited
@@ -308,14 +306,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						noveltyIndex = Math.min(noveltyIndex, NOVELTY_BINS_PER_DIMENSION - 1);
 						mapElitesBinIndices = new int[] {noveltyIndex};
 						System.out.println("["+noveltyIndex+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");						
-//					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { // KL Divergence binning scheme
-//						KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) MMNEAT.getArchiveBinLabelsClass();
-//						// TODO
-//						int[][] oneLevelAs2DArray = null; //ArrayUtil.int2DArrayFromListOfLists(oneLevel);
-//						mapElitesBinIndices = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
-//						
-//						System.out.println("["+numDistinctRooms+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");
-//					
 					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
 						LatentVariablePartitionSumBinLabels labels = (LatentVariablePartitionSumBinLabels) MMNEAT.getArchiveBinLabelsClass();
 						ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();

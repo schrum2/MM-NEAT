@@ -27,7 +27,7 @@ public class MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels implements 
 			for(int i = 0; i < noveltyBinsPerDimension; i++) { // Novelty Segments
 				for(int j = 0; j <= maxNumSegments; j++) { 
 					for(int r = 0; r < TILE_GROUPS; r++) {
-						labels.add("Novelty["+((double) i/noveltyBinsPerDimension)+"-"+((double) (i+1)/noveltyBinsPerDimension)+"]VerticalSegments["+j+"]Connectivity["+r+"0-"+(r+1)+"0]");
+						labels.add("Novelty"+((double) i/noveltyBinsPerDimension)+"-"+((double) (i+1)/noveltyBinsPerDimension)+"VerticalSegments"+j+"Connectivity"+r+"0-"+(r+1)+"0");
 					}
 				}
 			}

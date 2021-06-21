@@ -23,7 +23,7 @@ public class MarioMAPElitesDecorNSAndLeniencyBinLabels implements BinLabels {
 			for(int i = 0; i < binsPerDimension; i++) { // Decoration
 				for(int j = 0; j < binsPerDimension; j++) { // Negative Space
 					for(int r = -(binsPerDimension/2); r < binsPerDimension/2; r++) { // Leniency allows negative range
-						labels.add("Decoration["+i+"0-"+(i+1)+"0]NS["+j+"0-"+(j+1)+"0]Leniency["+r+"0-"+(r+1)+"0]");
+						labels.add("Decoration"+i+"0-"+(i+1)+"0NS"+j+"0-"+(j+1)+"0Leniency"+r+"0-"+(r+1)+"0");
 					}
 				}
 			}

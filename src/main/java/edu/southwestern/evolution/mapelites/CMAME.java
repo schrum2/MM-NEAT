@@ -121,7 +121,6 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		
 		if (PRINT_DEBUG) {System.out.println("Emitter: \""+thisEmitter.emitterName+"\"\tSolutions: "+thisEmitter.solutionCount+"\t\tAmount of Parents: "+thisEmitter.additionCounter);}
 		fileUpdates(replacedBool); // log failure or success
-		System.out.println(Arrays.toString(thisEmitter.getMean()));
 	}	
 
 	/**

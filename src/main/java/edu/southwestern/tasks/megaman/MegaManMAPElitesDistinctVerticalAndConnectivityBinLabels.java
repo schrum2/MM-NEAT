@@ -27,7 +27,7 @@ public class MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels implements
 			for(int i = 0; i <= maxNumSegments; i++) { // Create labels based on the number of level segments and tile groups
 				for(int j = 0; j <= maxNumSegments; j++) { 
 					for(int r = 0; r < TILE_GROUPS; r++) {
-						labels.add("DistinctSegments["+i+"]VerticalSegments["+j+"]Connectivity["+r+"0-"+(r+1)+"0]");
+						labels.add("DistinctSegments"+i+"VerticalSegments"+j+"Connectivity"+r+"0-"+(r+1)+"0");
 						
 					}
 				}
