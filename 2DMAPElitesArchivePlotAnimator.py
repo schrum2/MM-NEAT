@@ -58,6 +58,7 @@ except: # If unspecified, calculates it
     vmax = float("-inf")
 
 emitter_means = []
+draw_emitters = False
 try:
     emitter_log_path = file_path[:file_path.rfind("_log.txt")]
     emitter_log_path = emitter_log_path[:emitter_log_path.rfind("_")] + "_EmitterMeans_log.txt"
@@ -68,6 +69,7 @@ try:
         for each in read_line:
             seperated_emitters.append([int(val) for val in each.strip("\n").split(" ")])
         emitter_means.append(seperated_emitters)
+    draw_emitters = True
     print("Emitter means successfully read.")
 except:
     print("Could not get emitter means from file.")
@@ -116,24 +118,25 @@ for iteration in range(len(numeric_lines)): # If will log
         plt.xlim(left=0.0, right=dimensions[0])
         plt.ylim(bottom=0.0, top=dimensions[1])
         
-        for e_step in range(len(emitter_means[iteration])):
-            x_values = []
-            y_values = []
-            counter = 0
-            while counter < iteration:
-                x_values.append(emitter_means[counter][e_step][0])
-                counter += logging_frequeny
+        if draw_emitters:
+            for e_step in range(len(emitter_means[iteration])):
+                x_values = []
+                y_values = []
+                counter = 0
+                while counter < iteration:
+                    x_values.append(emitter_means[counter][e_step][0])
+                    counter += logging_frequeny
+                    
+                counter = 0
+                while counter < iteration:
+                    y_values.append(emitter_means[counter][e_step][1])
+                    counter += logging_frequeny
+                    
+                for index in (range(len(x_values)-1)):
+                    plt.plot(x_values[index:index+2], y_values[index:index+2], color=emitter_colors[emitter_counter%4], alpha=((index/iteration)**2))  
                 
-            counter = 0
-            while counter < iteration:
-                y_values.append(emitter_means[counter][e_step][1])
-                counter += logging_frequeny
-                
-            for index in (range(len(x_values)-1)):
-                plt.plot(x_values[index:index+2], y_values[index:index+2], color=emitter_colors[emitter_counter%4], alpha=((index/iteration)**2))  
-            
-            plt.plot(emitter_means[iteration][e_step][0], emitter_means[iteration][e_step][1], marker=emitter_symbols[math.floor(emitter_counter/4)], color=emitter_colors[emitter_counter%4])
-            emitter_counter += 1
+                plt.plot(emitter_means[iteration][e_step][0], emitter_means[iteration][e_step][1], marker=emitter_symbols[math.floor(emitter_counter/4)], color=emitter_colors[emitter_counter%4])
+                emitter_counter += 1
             
         plt.imshow(bins, cmap=cmap, norm=norm) # Create image
         
