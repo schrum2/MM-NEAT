@@ -1,10 +1,8 @@
 package edu.southwestern.tasks.mario;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.Parameters;
 
@@ -32,7 +30,7 @@ public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels
 			for(int i = 0; i < noveltyBinsPerDimension; i++) { // Novelty Segments
 				for(int j = 0; j < levelBinsPerDimension; j++) { // Negative Space
 					for(int r = -(levelBinsPerDimension/2); r < levelBinsPerDimension/2; r++) { // Leniency allows negative range
-						labels.add("Novelty["+((double) i/noveltyBinsPerDimension)+"-"+((double) (i+1)/noveltyBinsPerDimension)+"]DecorFrequency["+j+"0-"+(j+1)+"0]Leniency["+r+"0-"+(r+1)+"0]");
+						labels.add("Novelty"+((double) i/noveltyBinsPerDimension)+"-"+((double) (i+1)/noveltyBinsPerDimension)+"DecorFrequency"+j+"0-"+(j+1)+"0Leniency"+r+"0-"+(r+1)+"0");
 					}
 				}
 			}

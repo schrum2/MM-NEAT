@@ -32,7 +32,7 @@ public class CPPNComplexityBinLabelsTest {
 		
 		for(int i = 0; i < allNeuronValues.length; i++) {
 			for(int j = 0; j < allLinkValues.length; j++) {
-				assertEquals("Neurons[" + allNeuronValues[i] + "]links[" + allLinkValues[j] + "]", labels.binLabels().get(labels.oneDimensionalIndex(new int[] {allNeuronValues[i],allLinkValues[j]})));
+				assertEquals("Neurons" + allNeuronValues[i] + "links" + allLinkValues[j], labels.binLabels().get(labels.oneDimensionalIndex(new int[] {allNeuronValues[i],allLinkValues[j]})));
 			}
 		}
 	

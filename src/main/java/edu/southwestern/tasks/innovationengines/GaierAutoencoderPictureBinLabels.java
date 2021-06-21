@@ -68,7 +68,9 @@ public class GaierAutoencoderPictureBinLabels implements BinLabels  {
 			assert count == size : "Incorrect number of bins created in archive: " + count;
 			
 			for(int i = 0; i < labels.size(); i++) {
-				labels.set(i, labels.get(i).replaceAll(".", "_"));
+				// The \\. is an escape sequence for \., which in a regex is an escape sequence for just .
+				// Replaces periods with underscores
+				labels.set(i, labels.get(i).replaceAll("\\.", "_"));
 			}
 		}
 		return labels;

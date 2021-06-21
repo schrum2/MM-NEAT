@@ -154,22 +154,22 @@ public class PictureFourQuadrantBrightnessBinLabelsTest {
 	public void testBinLabels() {
 		ArrayList<String> answer = new ArrayList<>();
 
-		answer.add("(0,0,0,0)");
-		answer.add("(0,0,0,1)");
-		answer.add("(0,0,1,0)");
-		answer.add("(0,0,1,1)");
-		answer.add("(0,1,0,0)");
-		answer.add("(0,1,0,1)");
-		answer.add("(0,1,1,0)");
-		answer.add("(0,1,1,1)");
-		answer.add("(1,0,0,0)");
-		answer.add("(1,0,0,1)");
-		answer.add("(1,0,1,0)");
-		answer.add("(1,0,1,1)");
-		answer.add("(1,1,0,0)");
-		answer.add("(1,1,0,1)");
-		answer.add("(1,1,1,0)");
-		answer.add("(1,1,1,1)");
+		answer.add("0-0-0-0");
+		answer.add("0-0-0-1");
+		answer.add("0-0-1-0");
+		answer.add("0-0-1-1");
+		answer.add("0-1-0-0");
+		answer.add("0-1-0-1");
+		answer.add("0-1-1-0");
+		answer.add("0-1-1-1");
+		answer.add("1-0-0-0");
+		answer.add("1-0-0-1");
+		answer.add("1-0-1-0");
+		answer.add("1-0-1-1");
+		answer.add("1-1-0-0");
+		answer.add("1-1-0-1");
+		answer.add("1-1-1-0");
+		answer.add("1-1-1-1");
 		
 		assertEquals(answer, smallLabels.binLabels());
 	}

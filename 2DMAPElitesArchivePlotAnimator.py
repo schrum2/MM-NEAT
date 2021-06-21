@@ -57,13 +57,32 @@ except: # If unspecified, calculates it
     vmin = float("inf")
     vmax = float("-inf")
 
+emitter_means = []
+draw_emitters = False
+try:
+    emitter_log_path = file_path[:file_path.rfind("_log.txt")]
+    emitter_log_path = emitter_log_path[:emitter_log_path.rfind("_")] + "_EmitterMeans_log.txt"
+    opened_file = open(emitter_log_path, "r")
+    for line in opened_file: # iterate through lines
+        read_line = line.split("\t")[1:]
+        seperated_emitters = []
+        for each in read_line:
+            seperated_emitters.append([int(val) for val in each.strip("\n").split(" ")])
+        emitter_means.append(seperated_emitters)
+    draw_emitters = True
+    print("Emitter means successfully read.")
+except:
+    print("Could not get emitter means from file.")
 
+
+emitter_symbols = ["o", "x", "^", "s", "P", "v", "D", "*"]
+emitter_colors = ["red", "blue", "black", "green"]
 
 numeric_lines = []
 for line in lines:
     numeric_contents = [] # Strings to Floats
     for string_in in line:
-        if "-Infinity" in string_in or "X" in string_in  :
+        if "-Infinity" in string_in or "X" in string_in:
             numeric_contents.append(np.NINF)
         else:
             temp_value = float(string_in)
@@ -83,8 +102,10 @@ if calc_minmax:
     print("Calculated min and max values: ("+str(vmin)+", "+str(vmax)+")")
     
 print("Finished reading file, outputting images...")
+
 for iteration in range(len(numeric_lines)): # If will log
     if iteration % logging_frequeny == 0:
+        emitter_counter = 0
         bins = np.array(numeric_lines[iteration]) # To array
         bins.resize(dimensions[0], dimensions[1]) # Resize 1D array to 2D array with dimensions based on the overall size (must be square)
         
@@ -96,6 +117,27 @@ for iteration in range(len(numeric_lines)): # If will log
         plt.ylabel(dimension_names[1])
         plt.xlim(left=0.0, right=dimensions[0])
         plt.ylim(bottom=0.0, top=dimensions[1])
+        
+        if draw_emitters:
+            for e_step in range(len(emitter_means[iteration])):
+                x_values = []
+                y_values = []
+                counter = 0
+                while counter < iteration:
+                    x_values.append(emitter_means[counter][e_step][0])
+                    counter += logging_frequeny
+                    
+                counter = 0
+                while counter < iteration:
+                    y_values.append(emitter_means[counter][e_step][1])
+                    counter += logging_frequeny
+                    
+                for index in (range(len(x_values)-1)):
+                    plt.plot(x_values[index:index+2], y_values[index:index+2], color=emitter_colors[emitter_counter%4], alpha=((index/iteration)**2))  
+                
+                plt.plot(emitter_means[iteration][e_step][0], emitter_means[iteration][e_step][1], marker=emitter_symbols[math.floor(emitter_counter/4)], color=emitter_colors[emitter_counter%4])
+                emitter_counter += 1
+            
         plt.imshow(bins, cmap=cmap, norm=norm) # Create image
         
         plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png")

@@ -21,7 +21,7 @@ public class TileNoveltyBinLabels implements BinLabels {
 			int size = noveltyBinsPerDimension;
 			labels = new ArrayList<String>(size);
 			for(int i = 0; i < noveltyBinsPerDimension; i++) { // Distinct Segments
-				labels.add("Novelty["+((double) i/noveltyBinsPerDimension)+"-"+((double) (i+1)/noveltyBinsPerDimension)+"]");
+				labels.add("Novelty"+Double.toString((double) i/noveltyBinsPerDimension).replace('.', '_')+"-"+Double.toString((double) (i+1)/noveltyBinsPerDimension).replace('.', '_'));
 			}
 		}
 		return labels;
