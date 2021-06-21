@@ -231,6 +231,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		String[] dimensionNames = bins.dimensions();
 		int[] dimensionSizes = bins.dimensionSizes();
 		String archiveBatchName = directory + "GenerateArchiveImage.bat";
+		String archiveAnimationBatchName = directory + "GenerateArchiveAnimation.bat";
 		
 		if (dimensionNames.length == 3 || dimensionNames.length == 2) {
 			PrintStream ps = new PrintStream(new File(archiveBatchName));
@@ -251,6 +252,27 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				ps.print(" 2 %1 %2"); // add row param if 3
 			} else {
 				ps.print(" %1 %2");
+			}
+			ps.close();
+			
+			ps = new PrintStream(new File(archiveAnimationBatchName));
+			if (dimensionNames.length == 3) { // add min/max batch params
+				ps.println("REM python 3DMAPElitesArchivePlotAnimator.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <max value> <min value>\r\n"
+						+ "REM The min and max values are not required, and instead will be calculated automatically"); // add description
+			} else {
+				ps.println("REM python 2DMAPElitesArchivePlottAnimator.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <max value> <min value>\r\n"
+						+ "REM The min and max values are not required, and instead will be calculated automatically");
+			}
+			ps.println("cd ..");
+			ps.println("cd ..");
+			ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesArchivePlotAnimator.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
+			for (int i = 0; i < dimensionNames.length; i++) {
+				ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
+			}
+			if (dimensionNames.length == 3) { // add min/max batch params
+				ps.print(" 2 1 %1 %2"); // add row param if 3
+			} else {
+				ps.print(" 1 %1 %2");
 			}
 			ps.close();
 		}
@@ -380,7 +402,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				MultiDimensionalRealValuedSlicedBinLabels dimensionSlices = (MultiDimensionalRealValuedSlicedBinLabels) MMNEAT.getArchiveBinLabelsClass();
 				String newLine = "" + pseudoGeneration;
 				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
-					int[] binCoords = dimensionSlices.discretize(mean);	
+					int[] binCoords = dimensionSlices.discretize(dimensionSlices.behaviorCharacterization(mean));	
 					newLine += "\t";
 					for (int i = 0; i < binCoords.length; i++) {
 						if (i != 0) {

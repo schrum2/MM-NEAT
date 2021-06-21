@@ -67,7 +67,7 @@ numeric_lines = []
 for line in lines:
     numeric_contents = [] # Strings to Floats
     for string_in in line:
-        if "-Infinity" in string_in or "X" in string_in  :
+        if "-Infinity" in string_in or "X" in string_in:
             numeric_contents.append(np.NINF)
         else:
             temp_value = float(string_in)
