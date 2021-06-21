@@ -121,6 +121,8 @@ images, labels = dataiter.next()
 output = model(images.to(device))
 images = images.numpy()
 
+batch_size = 10
+
 output = output.view(batch_size, 3, 32, 32)
 output = output.detach().numpy()
 
