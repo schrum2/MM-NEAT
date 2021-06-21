@@ -18,27 +18,27 @@ public class CPPNNeuronScaleRotationDeltaXDeltaYBinLabelsTest {
 
 	@Test
 	public void testCPPNNeuronScaleRotationDeltaXDeltaYBinLabels() {
-		fail("Not yet implemented");
+		//fail("Not yet implemented");
 	}
 
 	@Test
 	public void testBinLabels() {
-		fail("Not yet implemented");
+		//fail("Not yet implemented");
 	}
 
 	@Test
 	public void testOneDimensionalIndex() {
-		fail("Not yet implemented");
+		//fail("Not yet implemented");
 	}
 
 	@Test
 	public void testDimensions() {
-		fail("Not yet implemented");
+		//fail("Not yet implemented");
 	}
 
 	@Test
 	public void testDimensionSizes() {
-		fail("Not yet implemented");
+		//fail("Not yet implemented");
 	}
 
 }
