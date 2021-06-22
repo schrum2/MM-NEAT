@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Vector;
 import java.util.stream.IntStream;
 
+import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.scores.Score;
 import edu.southwestern.util.ClassCreation;

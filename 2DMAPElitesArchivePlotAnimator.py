@@ -1,8 +1,8 @@
 """ 2D MAP-Elites archive plotter (Only for 2D archives with equal amount of bins in both dimensions)
     
     Usage:
-    python 2DMAPElitesSquareArchivePlotAnimator.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <logging frequency> <max value> <min value>
-    python 2DMAPElitesSquareArchivePlotAnimator.py latentvariablepartition/Mario0/LatentVariablePartition-Mario0_MAPElites_log.txt "Slice 1" 100 "Slice 2" 100 10 420 -1
+    python 2DMAPElitesSquareArchivePlotAnimator.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <logging frequency> <max value> <min value> <plot emitters?>
+    python 2DMAPElitesSquareArchivePlotAnimator.py latentvariablepartition/Mario0/LatentVariablePartition-Mario0_MAPElites_log.txt "Slice 1" 100 "Slice 2" 100 10 420 -1 False
 
     Note: Min and Max do NOT need to be given, they will be calculated automatically
 """
@@ -29,6 +29,7 @@ try: # Get file itself
         lines.append(line.split("\t")[1:])
     dir = file_path[:file_path.rfind("/")+1]
     title = file_path[file_path.rfind("/")+1:file_path.rfind("_log.txt")]
+    print("Successfully Read File.")
 except:
     print("File could not be opened.")
     quit()
@@ -36,12 +37,14 @@ except:
 try: # Get dimension names and the relative sizes
     dimension_names = [sys.argv[2], sys.argv[4]]
     dimensions = [int(sys.argv[3]), int(sys.argv[5])]
+    print("Dimensions specified as: "+str(dimension_names)+" with sizes: "+str(dimensions))
 except:
     print("Dimensions were not specified!")
     quit()
       
 try: # Get the logging frequency
     logging_frequeny = int(sys.argv[6])
+    print("Logging Frequency set to: "+str(logging_frequeny))
 except:
     print("Logging frequency was not specified, defaulting to 1")
     logging_frequeny = 1
@@ -50,29 +53,41 @@ try: # Get the min and max
     calc_minmax = False
     vmax = int(sys.argv[7])
     vmin = int(sys.argv[8])
-    print("Min and Max specified as: ("+str(vmin)+", "+str(vmax)+")")
+    edges = [vmax, vmin]
+    print("Min and Max specified as: ("+str(min(edges))+", "+str(max(edges))+")")
 except: # If unspecified, calculates it
     print("Min and/or Max not specified, will be calculated")
     calc_minmax = True
     vmin = float("inf")
     vmax = float("-inf")
 
+try: # Get the min and max
+    emitter_parameter = sys.argv[9]
+    if emitter_parameter == "False" or emitter_parameter == "false":
+        emitter_parameter = False
+    else:
+        emitter_parameter = True
+except: # If unspecified, calculates it
+    print("Emitter parameter not specified, defaulting to True.")
+    emitter_parameter = True
+
 emitter_means = []
 draw_emitters = False
-try:
-    emitter_log_path = file_path[:file_path.rfind("_log.txt")]
-    emitter_log_path = emitter_log_path[:emitter_log_path.rfind("_")] + "_EmitterMeans_log.txt"
-    opened_file = open(emitter_log_path, "r")
-    for line in opened_file: # iterate through lines
-        read_line = line.split("\t")[1:]
-        seperated_emitters = []
-        for each in read_line:
-            seperated_emitters.append([int(val) for val in each.strip("\n").split(" ")])
-        emitter_means.append(seperated_emitters)
-    draw_emitters = True
-    print("Emitter means successfully read.")
-except:
-    print("Could not get emitter means from file.")
+if emitter_parameter:
+    try:
+        emitter_log_path = file_path[:file_path.rfind("_log.txt")]
+        emitter_log_path = emitter_log_path[:emitter_log_path.rfind("_")] + "_EmitterMeans_log.txt"
+        opened_file = open(emitter_log_path, "r")
+        for line in opened_file: # iterate through lines
+            read_line = line.split("\t")[1:]
+            seperated_emitters = []
+            for each in read_line:
+                seperated_emitters.append([int(val) for val in each.strip("\n").split(" ")])
+            emitter_means.append(seperated_emitters)
+        draw_emitters = True
+        print("Emitter means successfully read.")
+    except:
+        print("Could not get emitter means from file.")
 
 
 emitter_symbols = ["o", "x", "^", "s", "P", "v", "D", "*"]
@@ -131,11 +146,16 @@ for iteration in range(len(numeric_lines)): # If will log
                 while counter < iteration:
                     y_values.append(emitter_means[counter][e_step][1])
                     counter += logging_frequeny
-                    
-                for index in (range(len(x_values)-1)):
-                    plt.plot(x_values[index:index+2], y_values[index:index+2], color=emitter_colors[emitter_counter%4], alpha=((index/iteration)**2))  
                 
-                plt.plot(emitter_means[iteration][e_step][0], emitter_means[iteration][e_step][1], marker=emitter_symbols[math.floor(emitter_counter/4)], color=emitter_colors[emitter_counter%4])
+                
+                for index in (range(5)): # How long history is drawn
+                    adjusted_index = len(x_values) - index
+                    plt.plot(x_values[adjusted_index:adjusted_index+2], y_values[adjusted_index:adjusted_index+2], color=emitter_colors[emitter_counter%len(emitter_colors)], alpha=(((-index+5)/3)))
+                
+                if len(x_values) > 0: # Final connection
+                    plt.plot([x_values[-1], emitter_means[iteration][e_step][0]], [y_values[-1], emitter_means[iteration][e_step][1]], color=emitter_colors[emitter_counter%len(emitter_colors)], alpha=1)
+                
+                plt.plot(emitter_means[iteration][e_step][0], emitter_means[iteration][e_step][1], marker=emitter_symbols[math.floor(emitter_counter/len(emitter_colors))], color=emitter_colors[emitter_counter%len(emitter_colors)])
                 emitter_counter += 1
             
         plt.imshow(bins, cmap=cmap, norm=norm) # Create image
