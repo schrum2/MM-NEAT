@@ -763,6 +763,7 @@ public class Parameters {
 		booleanOptions.add("useRMSEImageMatchFitness", false, "Use RMSE as the fitness calculation if true.");
 		booleanOptions.add("trackPseudoArchive", false, "Option to track the progress of an objective function with a binning scheme.");
 		booleanOptions.add("trainingAutoEncoder", false, "If we are training the autoencoder");
+		booleanOptions.add("trainInitialAutoEncoder", false, "If an auto-encoder is trained on population BEFORE adding to MAP Elites archive");
 		booleanOptions.add("AnimateRotation", true, "If AnimationBreeder is going to animate using rotation");
 		booleanOptions.add("AnimateScale", true, "If AnimationBreeder is going to animate using scale.");
 		booleanOptions.add("AnimateDeltaX", true, "If AnimationBreeder is going to translate images horizontally.");

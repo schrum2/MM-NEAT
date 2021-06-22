@@ -326,7 +326,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			});
 			
 			// Special code if image auto-encoder is used
-			if(saveImageArchives && Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
+			if(Parameters.parameters.booleanParameter("trainInitialAutoEncoder") && saveImageArchives && Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
 				System.out.println("Train initial auto-encoder");
 				((PictureTargetTask) MMNEAT.task).saveAllArchiveImages("starting", AutoEncoderProcess.SIDE_LENGTH, AutoEncoderProcess.SIDE_LENGTH, evaluatedPopulation);
 				String experimentDir = FileUtilities.getSaveDirectory()+File.separator+"snapshots";
