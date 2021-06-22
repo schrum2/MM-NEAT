@@ -2,7 +2,6 @@ package edu.southwestern.tasks.megaman;
 
 import java.awt.Point;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +14,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.datastructures.ArrayUtil;
 
 /**
  * This class converts mmlv files to trainable JSON format
@@ -30,7 +28,10 @@ public class MegaManConvertMMLVToJSON {
 	public static String enemyString = null;
 	public static String bossString = null;
 	
-	
+	/**
+	 * Main method allows for json file generation from a selection of levels
+	 * 
+	 */
     public static void main(String[] args) throws FileNotFoundException { // generate new json files
     	// All directories to pull from
     	
