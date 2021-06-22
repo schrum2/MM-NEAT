@@ -495,9 +495,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	public void fileUpdates(boolean newEliteProduced) {
 		if(saveImageArchives && iterations % Parameters.parameters.integerParameter("imageArchiveSaveFrequency") == 0) {
 			System.out.println("Save whole archive at iteration "+iterations);
-			// 28 is a magic number, and should be either a constant of a command line parameter.
-			// Fix later ... this is the standard image size for training our simple image autoencoder (based on MNIST)
-			((PictureTargetTask<?>) MMNEAT.task).saveAllArchiveImages("iteration"+iterations, 28, 28);
+			((PictureTargetTask<?>) MMNEAT.task).saveAllArchiveImages("iteration"+iterations, AutoEncoderProcess.SIDE_LENGTH, AutoEncoderProcess.SIDE_LENGTH);
 			
 			if(Parameters.parameters.booleanParameter("deleteOldArchives") && iterations != 0) {
 				String snapshot = FileUtilities.getSaveDirectory() + File.separator + "snapshots";
