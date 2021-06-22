@@ -58,28 +58,32 @@ public class Archive<T> {
 	 * @param other Archive to draw contents from
 	 */
 	public Archive(Archive<T> other) {
+		this(other.getArchive(), other.mapping, other.archiveDir, other.saveElites);
+	}
+	
+	public Archive(Vector<Score<T>> other, BinLabels otherMapping, String otherDir, boolean otherSave) {
 		saveElites = false; // Don't save while reorganizing
-		mapping = other.mapping;
-		int numBins = mapping.binLabels().size();
+		mapping = otherMapping;
+		int numBins = otherMapping.binLabels().size();
 		archive = new Vector<Score<T>>(numBins);
 		occupiedBins = 0;
-		archiveDir = other.archiveDir; // Will save in the same place!
+		archiveDir = otherDir; // Will save in the same place!
 
 		// Fill with null values before actually selecting individuals to copy over
 		for(int i = 0; i < numBins; i++) {
 			archive.add(null); // Place holder for first individual and future elites
 		}
 		// Loop through original archive
-		for(Score<T> s : other.getArchive()) {
+		other.parallelStream().forEach( (s) -> {
 			if(s != null) { // Ignore empty cells
 				@SuppressWarnings("unchecked")
 				Score<T> newScore = ((MAPElites<T>) MMNEAT.ea).task.evaluate(s.individual);
 				this.add(newScore);
 			}
-		}
+		});
 		
 		// Ok to save moving forward
-		saveElites = other.saveElites;
+		saveElites = otherSave;
 	}
 	
 	/**

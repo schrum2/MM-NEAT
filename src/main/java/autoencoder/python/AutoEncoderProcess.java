@@ -100,7 +100,6 @@ public class AutoEncoderProcess extends Comm {
 		return newProcess;
 	}
 
-
 	public static double getReconstructionLoss(BufferedImage image) {
 		// Need to resize. Autoencoder must have 28x28 input
 		if(image.getWidth() != SIDE_LENGTH || image.getHeight() != SIDE_LENGTH) {

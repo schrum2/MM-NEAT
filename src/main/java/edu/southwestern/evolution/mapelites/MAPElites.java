@@ -22,6 +22,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedSlicedBinLabels;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
@@ -282,6 +283,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * according to where they best fit.
 	 * @param example Starting genotype used to derive new instances
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void initialize(Genotype<T> example) {		
 		saveImageArchives = MMNEAT.task instanceof PictureTargetTask;
@@ -293,7 +295,6 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Load each elite from xml file into archive
 			for(int i = 0; i < binLabels.size(); i++) {
 				String binDir = archiveDir + "/" + binLabels.get(i) + "/";
-				@SuppressWarnings("unchecked")
 				Genotype<T> elite = (Genotype<T>) Easy.load(binDir + "elite.xml"); // Load genotype
 				// Load behavior scores
 				ArrayList<Double> scores = new ArrayList<Double>(numLabels); 
@@ -317,11 +318,31 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Start from scratch
 			int startSize = Parameters.parameters.integerParameter("mu");
 			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);
+			Vector<Score<T>> evaluatedPopulation = new Vector<>(startingPopulation.size());
+			// Evaluate initial population
 			startingPopulation.parallelStream().forEach( (g) -> {
 				Score<T> s = task.evaluate(g);
-				archive.add(s); // Fill the archive with random starting individuals
+				evaluatedPopulation.add(s);
 			});
-				
+			
+			// Special code if image auto-encoder is used
+			if(saveImageArchives && Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
+				System.out.println("Train initial auto-encoder");
+				((PictureTargetTask) MMNEAT.task).saveAllArchiveImages("starting", AutoEncoderProcess.SIDE_LENGTH, AutoEncoderProcess.SIDE_LENGTH, evaluatedPopulation);
+				String experimentDir = FileUtilities.getSaveDirectory()+File.separator+"snapshots";
+				Parameters.parameters.setString("mostRecentAutoEncoder", experimentDir+File.separator+ "starting.pth");
+				String outputAutoEncoderFile = Parameters.parameters.stringParameter("mostRecentAutoEncoder");
+				String trainingDataDirectory = experimentDir+File.separator+"starting";
+
+				// This adds the population to the archive after training the auto-encoder
+				trainImageAutoEncoderAndSetLossBounds(outputAutoEncoderFile, trainingDataDirectory, evaluatedPopulation);
+				System.out.println("Initial occupancy: "+ this.archive.getNumberOfOccupiedBins());
+			} else {
+				// Add initial population to archive
+				evaluatedPopulation.parallelStream().forEach( (s) -> {
+					archive.add(s); // Fill the archive with random starting individuals
+				});	
+			}
 		}
 	}
 
@@ -481,10 +502,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * @param newEliteProduced Whether the latest individual was good enough to
 	 * 							fill/replace a bin.
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void fileUpdates(boolean newEliteProduced) {
 		if(saveImageArchives && iterations % Parameters.parameters.integerParameter("imageArchiveSaveFrequency") == 0) {
 			System.out.println("Save whole archive at iteration "+iterations);
-			((PictureTargetTask<?>) MMNEAT.task).saveAllArchiveImages("iteration"+iterations, AutoEncoderProcess.SIDE_LENGTH, AutoEncoderProcess.SIDE_LENGTH);
+			((PictureTargetTask) MMNEAT.task).saveAllArchiveImages("iteration"+iterations, AutoEncoderProcess.SIDE_LENGTH, AutoEncoderProcess.SIDE_LENGTH, archive.getArchive());
 			
 			if(Parameters.parameters.booleanParameter("deleteOldArchives") && iterations != 0) {
 				String snapshot = FileUtilities.getSaveDirectory() + File.separator + "snapshots";
@@ -503,37 +525,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Parameters.parameters.setString("latestIterationSaved", "iteration" + iterations);
 			// If we are using the autoencoder (only use if "trainingAutoEncoder" == true), re-train it here
 			if(Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
-				if(AutoEncoderProcess.currentProcess != null) {
-					// Stop autoencoder inference when it is time to train a new one
-					AutoEncoderProcess.terminateAutoEncoderProcess(); 
-				}
 				String experimentDir = FileUtilities.getSaveDirectory()+File.separator+"snapshots";
 				Parameters.parameters.setString("mostRecentAutoEncoder", experimentDir+File.separator+ "iteration" + iterations + ".pth");
-				TrainAutoEncoderProcess training = new TrainAutoEncoderProcess(experimentDir+File.separator+"iteration" + iterations, Parameters.parameters.stringParameter("mostRecentAutoEncoder"));
-				training.start();
-				// Initialize process for newly trained autoencoder
-				AutoEncoderProcess.getAutoEncoderProcess(); // (sort of optional to initialize here)
-				AutoEncoderProcess.neverInitialized = false;
-				// Now we need to dump the archive and replace it with a new one after re-evaluating all old contents.
+				String outputAutoEncoderFile = Parameters.parameters.stringParameter("mostRecentAutoEncoder");
+				String trainingDataDirectory = experimentDir+File.separator+"iteration" + iterations;
+				
 				int oldOccupied = this.archive.getNumberOfOccupiedBins();
-				if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
-					double minLoss = 1.0;
-					double maxLoss = 0.0;
-					for(Score<T> s : archive.getArchive()) {
-						if(s != null) { // Ignore empty cells
-							Network cppn = (Network) s.individual.getPhenotype();
-							BufferedImage image = PicbreederTask.imageFromCPPN(cppn, PictureTargetTask.imageWidth, PictureTargetTask.imageHeight, ArrayUtil.doubleOnes(cppn.numInputs()));
-							double loss = AutoEncoderProcess.getReconstructionLoss(image);
-							minLoss = Math.min(loss, minLoss);
-							maxLoss = Math.max(loss, maxLoss);
-						}
-					}
-					Parameters.parameters.setDouble("minAutoencoderLoss", minLoss);
-					Parameters.parameters.setDouble("minAutoencoderLoss", maxLoss);	
-
-				}
-
-				this.archive = new Archive<T>(this.archive);
+				trainImageAutoEncoderAndSetLossBounds(outputAutoEncoderFile, trainingDataDirectory, archive.getArchive());
 				int newOccupied = this.archive.getNumberOfOccupiedBins();
 				System.out.println("Archive reorganized based on new AutoEncoder: Occupancy "+oldOccupied+" to "+newOccupied);
 			} 
@@ -553,6 +551,46 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 		System.out.println(iterations + "\t" + iterationsWithoutElite + "\t");
 		
+	}
+
+	/**
+	 * Trains autoencoder using specified directory for source input and specified output file (pth extension).
+	 * Also, a collection of preexisting images is (optionally) used to determine bounds on the possible loss values.
+	 * 
+	 * @param outputAutoEncoderFile Full path for pth file to save
+	 * @param trainingDataDirectory Directory full of 28 by 28 images to train autoencoder on
+	 * @param previousImages Collection of Scores for CPPNs that generate images to calculate loss for after training
+	 */
+	private void trainImageAutoEncoderAndSetLossBounds(String outputAutoEncoderFile, String trainingDataDirectory, Vector<Score<T>> previousImages) {
+		if(AutoEncoderProcess.currentProcess != null) {
+			// Stop autoencoder inference when it is time to train a new one
+			AutoEncoderProcess.terminateAutoEncoderProcess(); 
+		}
+		TrainAutoEncoderProcess training = new TrainAutoEncoderProcess(trainingDataDirectory, outputAutoEncoderFile);
+		training.start();
+		// Initialize process for newly trained autoencoder
+		AutoEncoderProcess.getAutoEncoderProcess(); // (sort of optional to initialize here)
+		AutoEncoderProcess.neverInitialized = false;
+		// Now we need to dump the archive and replace it with a new one after re-evaluating all old contents.
+		if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
+			double minLoss = 1.0;
+			double maxLoss = 0.0;
+			// TODO: This can be made parallel with a stream, but the local vars for min and max need some special handling
+			for(Score<T> s : previousImages) {
+				if(s != null) { // Ignore empty cells
+					Network cppn = (Network) s.individual.getPhenotype();
+					BufferedImage image = PicbreederTask.imageFromCPPN(cppn, PictureTargetTask.imageWidth, PictureTargetTask.imageHeight, ArrayUtil.doubleOnes(cppn.numInputs()));
+					double loss = AutoEncoderProcess.getReconstructionLoss(image);
+					minLoss = Math.min(loss, minLoss);
+					maxLoss = Math.max(loss, maxLoss);
+				}
+			}
+			Parameters.parameters.setDouble("minAutoencoderLoss", minLoss);
+			Parameters.parameters.setDouble("minAutoencoderLoss", maxLoss);	
+			System.out.println("Loss ranges from "+minLoss+" to "+maxLoss);
+		}
+		// Will bin differently because autoencoder has changed, as have expected loss bounds. Images get re-evaluated
+		this.archive = new Archive<T>(previousImages, this.archive.getBinLabelsClass(), this.archive.getArchiveDirectory(), CommonConstants.netio); 
 	}
 	
 	/**
