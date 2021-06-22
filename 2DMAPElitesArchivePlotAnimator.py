@@ -131,9 +131,14 @@ for iteration in range(len(numeric_lines)): # If will log
                 while counter < iteration:
                     y_values.append(emitter_means[counter][e_step][1])
                     counter += logging_frequeny
-                    
-                for index in (range(len(x_values)-1)):
-                    plt.plot(x_values[index:index+2], y_values[index:index+2], color=emitter_colors[emitter_counter%4], alpha=((index/iteration)**2))  
+                
+                
+                for index in (range(5)): # How long history is drawn
+                    adjusted_index = len(x_values) - index
+                    plt.plot(x_values[adjusted_index:adjusted_index+2], y_values[adjusted_index:adjusted_index+2], color=emitter_colors[emitter_counter%4], alpha=(((-index+5)/3)))
+                
+                if len(x_values) > 0: # Final connection
+                    plt.plot([x_values[-1], emitter_means[iteration][e_step][0]], [y_values[-1], emitter_means[iteration][e_step][1]], color=emitter_colors[emitter_counter%4], alpha=1)
                 
                 plt.plot(emitter_means[iteration][e_step][0], emitter_means[iteration][e_step][1], marker=emitter_symbols[math.floor(emitter_counter/4)], color=emitter_colors[emitter_counter%4])
                 emitter_counter += 1
