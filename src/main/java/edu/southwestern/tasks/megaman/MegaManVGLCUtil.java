@@ -673,7 +673,7 @@ public class MegaManVGLCUtil {
 	 */
 	public static boolean canGoDown(List<List<Integer>> level, int rightScreenSide, int y1) {
 		//System.out.println(level.size()+" "+y1);
-		if(y1+14<level.size()&&level.get(y1+14).get(rightScreenSide)!=9) {
+		if( y1+14<level.size() && rightScreenSide < level.get(0).size() && level.get(y1+14).get(rightScreenSide) !=9 ) {
 			if(y1+20<level.size()&&level.get(y1+20).get(rightScreenSide)==9||y1+16>=level.size()||y1+25>=level.size()) return true;
 			boolean canMove = false;
 			for(int i = rightScreenSide-15;i<=rightScreenSide;i++) {
@@ -751,8 +751,9 @@ public class MegaManVGLCUtil {
 		}else if(canGoLeft(level,xcoord,ycoord)&&!previous.equals(Direction.RIGHT)) {
 			d = Direction.LEFT;
 		}
-		//System.out.println(d);
-		return d;
+		System.out.println(d + ": no new direction found!");
+		return null;
+		//return d;
 		
 	}
 /**

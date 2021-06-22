@@ -38,24 +38,31 @@ public class MegaManConvertMMLVToJSON {
     public static void main(String[] args) throws FileNotFoundException { // generate new json files
     	// All directories to pull from
     	
-    	ArrayList<int[][]> levels = new ArrayList<>();
+    	ArrayList<List<List<Integer>>> levels = new ArrayList<List<List<Integer>>>();
     	for(int i = 1;i<=10;i++) {
-			maxX=0;
-			maxY=0;
-			visited.clear();
-			enemyNumber=-1;
-			enemyString = null;
-			bossString = null;
-			List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
-			levels.add(ArrayUtil.int2DArrayFromListOfLists(level));
+    		if (i != 9) {
+    			maxX=0;
+    			maxY=0;
+    			visited.clear();
+    			enemyNumber=-1;
+    			enemyString = null;
+    			bossString = null;
+    			List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
+    			levels.add(level);
+    		}
 		}
 
         // output file
         String outputFile = "data/VGLC/MegaMan/NoWater9MegaMan.json";
         
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        String out = gson.toJson(levels);
+        
+        for (List<List<Integer>> level : levels) {
+        	MegaManVGLCUtil.upAndDownTrainingData(level);
+        }
+        
+        
+        String out = gson.toJson(MegaManVGLCUtil.json);
         System.out.println("Created JSON String");
         out = out.replace("\n", "").replace("      ", " ").replace(",  ", ", ").replace(",    ",", ").replace("    ","").replace("  ", "").replace("[ ", "[");
 
