@@ -751,7 +751,7 @@ public class MegaManVGLCUtil {
 		}else if(canGoLeft(level,xcoord,ycoord)&&!previous.equals(Direction.RIGHT)) {
 			d = Direction.LEFT;
 		}
-		System.out.println(d + ": no new direction found!");
+		//System.out.println(d + ": no new direction found!");
 		return null;
 		//return d;
 		

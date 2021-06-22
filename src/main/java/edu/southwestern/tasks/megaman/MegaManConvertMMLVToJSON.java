@@ -31,10 +31,6 @@ public class MegaManConvertMMLVToJSON {
 	public static String bossString = null;
 	
 	
-	/**
-     * Modified from https://github.com/TheHedgeify/DagstuhlGAN/blob/master/marioaiDagstuhl/src/reader/MarioReader.java
-     * in order to generate to convert Mario levels into a json file.
-     */
     public static void main(String[] args) throws FileNotFoundException { // generate new json files
     	// All directories to pull from
     	
@@ -65,8 +61,6 @@ public class MegaManConvertMMLVToJSON {
         String out = gson.toJson(MegaManVGLCUtil.json);
         System.out.println("Created JSON String");
         out = out.replace("\n", "").replace("      ", " ").replace(",  ", ", ").replace(",    ",", ").replace("    ","").replace("  ", "").replace("[ ", "[");
-
-        // System.out.println(out);
 
         PrintWriter writer = new PrintWriter(outputFile);
 
