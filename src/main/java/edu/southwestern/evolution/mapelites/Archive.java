@@ -172,13 +172,7 @@ public class Archive<T> {
 	 * @return elite individual score instance 
 	 */
 	public Score<T> getElite(int[] binIndices) {
-		try {
-			return archive.get(mapping.oneDimensionalIndex(binIndices));
-		} catch(ArrayIndexOutOfBoundsException e) {
-			System.out.println("Multi-dimensional indices led to 1D index being out of bounds: "+Arrays.toString(binIndices));
-			System.err.println("Multi-dimensional indices led to 1D index being out of bounds: "+Arrays.toString(binIndices));
-			throw e;
-		}
+		return archive.get(mapping.oneDimensionalIndex(binIndices));
 	}
 
 	/**

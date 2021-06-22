@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.megaman;
 
 import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -17,17 +16,15 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTask<T>{
 
 	private MegaManGANGenerator megaManGenerator;
-	private MegaManTrackSegmentType segmentCount;
 	
 	public MegaManCPPNtoGANLevelTask(){
 		super();
-		segmentCount = new MegaManTrackSegmentType();
 		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) megaManGenerator = new MegaManSevenGANGenerator();
 		else  megaManGenerator = new MegaManOneGANGenerator();
 	}
 	
 	@Override
-	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual) {
+	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual, MegaManTrackSegmentType segmentCount) {
 		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(megaManGenerator, individual.getPhenotype(), Parameters.parameters.integerParameter("megaManGANLevelChunks"), ArrayUtil.doubleOnes(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length), segmentCount);
 		return level;
 	}
@@ -50,10 +47,4 @@ public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTa
 			e.printStackTrace();
 		}
 	}
-	
-	@Override
-	public HashMap<String, Integer> findMiscSegments() {
-		return segmentCount.findMiscSegments();
-	}
-
 }
