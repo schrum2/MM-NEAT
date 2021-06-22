@@ -347,7 +347,7 @@ public class Parameters {
 		integerOptions.add("noveltyBinAmount", -1, "The number of bins that exist along the dimension for the Novelty binning scheme.");
 		integerOptions.add("solutionVectorSlices", 2, "The amount of slices to cut a solution vector into in a MAP Elites instance"); 
 		integerOptions.add("latentPartitionBinDimension", -1, "Bins in each dimension for LatentVariablePartitionSum");
-		integerOptions.add("numReconstructionLossBins", 10, "Divide 1 by this number to get the number of bins for loss.");
+		integerOptions.add("numReconstructionLossBins", 32, "Divide 1 by this number to get the number of bins for loss.");
 		integerOptions.add("randomInitialMutationChances", 0, "Determines the number of initial images in the iteration0 folder.");
 		integerOptions.add("numScaleIntervals", 5, "Determines by how much to divide the scale value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
 		integerOptions.add("numRotationIntervals", 5, "Determines by how much to divide the rotation value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
