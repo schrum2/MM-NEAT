@@ -129,6 +129,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 					((CMAME) MMNEAT.ea).updateEmitterLog(individualLog, 0); // log a zero
 				}
 				this.CMAESInstance = newCMAESInstance(archive);
+				fitnessTypePairs.clear(); // Empty out for next time.
 			} else {
 				int i = 0;
 				double minEncountered = Double.POSITIVE_INFINITY;
