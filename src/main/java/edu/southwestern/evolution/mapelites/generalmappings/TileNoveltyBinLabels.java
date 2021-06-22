@@ -21,7 +21,7 @@ public class TileNoveltyBinLabels implements BinLabels {
 			int size = noveltyBinsPerDimension;
 			labels = new ArrayList<String>(size);
 			for(int i = 0; i < noveltyBinsPerDimension; i++) { // Distinct Segments
-				labels.add("Novelty["+((double) i/noveltyBinsPerDimension)+"-"+((double) (i+1)/noveltyBinsPerDimension)+"]");
+				labels.add("Novelty"+Double.toString((double) i/noveltyBinsPerDimension).replace('.', '_')+"-"+Double.toString((double) (i+1)/noveltyBinsPerDimension).replace('.', '_'));
 			}
 		}
 		return labels;
@@ -30,6 +30,16 @@ public class TileNoveltyBinLabels implements BinLabels {
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
 		return multi[0];
+	}
+	
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Novelty"};
+	}
+	
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {noveltyBinsPerDimension};
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {

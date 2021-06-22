@@ -347,6 +347,9 @@ public class Parameters {
 		integerOptions.add("noveltyBinAmount", -1, "The number of bins that exist along the dimension for the Novelty binning scheme.");
 		integerOptions.add("solutionVectorSlices", 2, "The amount of slices to cut a solution vector into in a MAP Elites instance"); 
 		integerOptions.add("latentPartitionBinDimension", -1, "Bins in each dimension for LatentVariablePartitionSum");
+		integerOptions.add("numReconstructionLossBins", 10, "Divide 1 by this number to get the number of bins for loss.");
+		integerOptions.add("randomInitialMutationChances", 0, "Determines the number of initial images in the iteration0 folder.");
+		integerOptions.add("scaleDivider", 5, "Determines by how much to divide the scale value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -753,10 +756,18 @@ public class Parameters {
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingTreasureCount", false, "Adds linear increasing treasure count as a fitness function when true");
 		booleanOptions.add("allowWeirdLodeRunnerActions", false, "Allows the A* model to use weird side ways digging to be able to beat more levels");
 		booleanOptions.add("smartLodeRunnerEnemies", false, "Sets enhanced enemy AI for enemies in lode runner.");
-		booleanOptions.add("animateWithScaleAndRotation", false, "Animate with scale and rotation when true.");
+		booleanOptions.add("animateWithScaleRotationTranslation", false, "Animate with scale and rotation when true.");
 		booleanOptions.add("useWoolleyImageMatchFitness", false, "Use the fitness calculation from the Woolley paper if true.");
 		booleanOptions.add("useRMSEImageMatchFitness", false, "Use RMSE as the fitness calculation if true.");
 		booleanOptions.add("trackPseudoArchive", false, "Option to track the progress of an objective function with a binning scheme.");
+		booleanOptions.add("trainingAutoEncoder", false, "If we are training the autoencoder");
+		booleanOptions.add("AnimateRotation", true, "If AnimationBreeder is going to animate using rotation");
+		booleanOptions.add("AnimateScale", true, "If AnimationBreeder is going to animate using scale.");
+		booleanOptions.add("AnimateDeltaX", true, "If AnimationBreeder is going to translate images horizontally.");
+		booleanOptions.add("AnimateDeltaY", true, "If Animationbreeder is going to translate images vertically");
+		booleanOptions.add("dynamicAutoencoderIntervals", false, "If true the intervals in the archive change every time we train a new autoencoder.");
+		booleanOptions.add("deleteOldArchives", true, "If true, delete the old archives to save space, otherwise the archive fills to fast and we run out of storage.");
+		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
 		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
@@ -804,6 +815,7 @@ public class Parameters {
 		doubleOptions.add("preferenceNeuronFatigueUnit", 0.0, "Amount of fatigue from preference neuron use");
 		doubleOptions.add("probabilityThreshold", 1 / 256.0d, "Used in GhostPredictionsFast.java. Determines the smallest probability that we model ghost locations to.");
 		doubleOptions.add("realMutateRate", 0.3, "Mutation rate for modifying indexes in real-valued string");
+		doubleOptions.add("meLineMutationRate", 0.0, "Mutation rate of MAP Elites line mutation");
 		doubleOptions.add("redirectLinkRate", 0.0, "Mutation rate for redirecting network links");
 		doubleOptions.add("remainingTUGGoalRatio", 1.0,"What portion of TUG goal remains when objective is active (positive objectives only!)");
 		doubleOptions.add("rlEpsilon", 0.1, "Frequency of completely random actions during Reinforcement Learning");
@@ -834,6 +846,12 @@ public class Parameters {
 		doubleOptions.add("maxScale", 5.0, "The maximumm scale value for Picbreeder images to be scaled to.");
 		doubleOptions.add("picbreederImageScale", 1.0, "The scale factorfor Picbreeder to use when it is not using EnhnacedCPPNPictureGenotype.");
 		doubleOptions.add("picbreederImageRotation", 0.0, "The rotation factor for Picbreeder to use when it is not using EnhancedCPPNPictureGenotype.");
+		doubleOptions.add("imageCenterTranslationRange", 10.0, "The scale of the box (in other words, the range of deltaX and deltaY for a given Picbreeder image)");
+		doubleOptions.add("picbreederImageTranslationX", 0.0, "Maximum possible range (negative to positive) of the X value of the box.");
+		doubleOptions.add("picbreederImageTranslationY", 0.0, "Maximum possible range (negative to positive) of the Y value of the box.");
+		doubleOptions.add("minAutoencoderLoss", 0.0, "Minimum reconstruction loss across the whole archive.");
+		doubleOptions.add("maxAutoencoderLoss", 1.0, "Maximum reconstruction loss across the whole archive.");
+		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
 		stringOptions.add("archetype", "", "Network that receives all mutations so as to keep other networks properly aligned");
@@ -879,6 +897,7 @@ public class Parameters {
 		stringOptions.add("LodeRunnerGANModel", "LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
 		stringOptions.add("MegaManGANModel", "MegaManOneGANWith12Tiles_5_Epoch5000.pth", "File name of GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("MegaManGANHorizontalModel", "MegaManSevenGANHorizontalWith12TileTypes_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("mostRecentAutoEncoder", "", "The full path to the most recently trained autoencoder for PictureTargetTask.");
 		
 		// See if it is safe to remove/delete MegaManGANVerticalModel
 		stringOptions.add("MegaManGANVerticalModel", "MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
@@ -892,6 +911,8 @@ public class Parameters {
 		stringOptions.add("mapElitesKLDivLevel2", "", "File name of the second level to compare to when using KL Divergence and MAPElites");
 		stringOptions.add("mapElitesArchiveFile", "", "File name of MAPElites level we want to look at from an experiment");
 		stringOptions.add("archiveSubDirectoryName", "archive", "Directory name to store archive files in a MAP Elites run");
+		stringOptions.add("latestIterationSaved", "iterationX", "The last iteration of PictureTargetTask to be saved.");
+		
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
 		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");

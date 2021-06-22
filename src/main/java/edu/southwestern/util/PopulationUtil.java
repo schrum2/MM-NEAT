@@ -218,12 +218,9 @@ public class PopulationUtil {
 	/**
 	 * Generate initial parent population
 	 * 
-	 * @param <T>
-	 *            Type of phenotype evolved
-	 * @param example
-	 *            example genotype used to derive initial population
-	 * @param size
-	 *            Population size
+	 * @param <T> Type of phenotype evolved
+	 * @param example example genotype used to derive initial population
+	 * @param size Population size
 	 * @return List of genotypes for initial population
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })

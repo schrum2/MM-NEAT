@@ -1,12 +1,11 @@
 package edu.southwestern.tasks.innovationengines;
 
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -154,22 +153,22 @@ public class PictureFourQuadrantBrightnessBinLabelsTest {
 	public void testBinLabels() {
 		ArrayList<String> answer = new ArrayList<>();
 
-		answer.add("(0,0,0,0)");
-		answer.add("(0,0,0,1)");
-		answer.add("(0,0,1,0)");
-		answer.add("(0,0,1,1)");
-		answer.add("(0,1,0,0)");
-		answer.add("(0,1,0,1)");
-		answer.add("(0,1,1,0)");
-		answer.add("(0,1,1,1)");
-		answer.add("(1,0,0,0)");
-		answer.add("(1,0,0,1)");
-		answer.add("(1,0,1,0)");
-		answer.add("(1,0,1,1)");
-		answer.add("(1,1,0,0)");
-		answer.add("(1,1,0,1)");
-		answer.add("(1,1,1,0)");
-		answer.add("(1,1,1,1)");
+		answer.add("0-0-0-0");
+		answer.add("0-0-0-1");
+		answer.add("0-0-1-0");
+		answer.add("0-0-1-1");
+		answer.add("0-1-0-0");
+		answer.add("0-1-0-1");
+		answer.add("0-1-1-0");
+		answer.add("0-1-1-1");
+		answer.add("1-0-0-0");
+		answer.add("1-0-0-1");
+		answer.add("1-0-1-0");
+		answer.add("1-0-1-1");
+		answer.add("1-1-0-0");
+		answer.add("1-1-0-1");
+		answer.add("1-1-1-0");
+		answer.add("1-1-1-1");
 		
 		assertEquals(answer, smallLabels.binLabels());
 	}

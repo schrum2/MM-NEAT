@@ -3,11 +3,13 @@ package edu.southwestern.tasks.functionoptimization;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import fr.inria.optimization.cmaes.fitness.AbstractObjectiveFunction;
@@ -61,36 +63,50 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 	public Score<ArrayList<Double>> evaluate(Genotype<ArrayList<Double>> individual) {
 		ArrayList<Double> pheno = individual.getPhenotype();
 		double[] vector = ArrayUtil.doubleArrayFromList(pheno); // Convert ArrayList into double array to give to function
+		//vector = ArrayUtil.doubleSpecified(20, 3.0);
 		double score = -function.valueOf(vector); // Must be negated to work since CMA-ES is a minimizer
 		double[] scores = new double[] {score}; 
 		Score<ArrayList<Double>> result =  new Score<>(individual, scores, null);
 		
 		if(MMNEAT.usingDiversityBinningScheme) {
-			int dim1, dim2;
-			if(MMNEAT.getArchiveBinLabelsClass() instanceof FunctionOptimizationRastriginBinLabels) {
-				FunctionOptimizationRastriginBinLabels labels = (FunctionOptimizationRastriginBinLabels) MMNEAT.getArchiveBinLabelsClass();
+			int[] dimensions;
+			if(MMNEAT.getArchiveBinLabelsClass() instanceof FunctionOptimizationRangeBinLabels) {
+				FunctionOptimizationRangeBinLabels labels = (FunctionOptimizationRangeBinLabels) MMNEAT.getArchiveBinLabelsClass();
 				double[] characteristic = labels.behaviorCharacterization(vector);
-				int[] dimensions = labels.discretize(characteristic);
-				dim1 = dimensions[0];
-				dim2 = dimensions[1];			
+				dimensions = labels.discretize(characteristic);		
+//				for (int dim : dimensions) {
+//					if (dim > 375 || dim < 100) {
+//						System.out.println("\nvector: "+Arrays.toString(vector));
+//						System.out.println("score: "+score);
+//						System.out.println("characteristic: "+Arrays.toString(characteristic));
+//						System.out.println("dimensions: "+Arrays.toString(dimensions));
+//						MiscUtil.waitForReadStringAndEnterKeyPress();
+//					}
+//				}
 			} else {
 				throw new RuntimeException("A Valid Binning Scheme For Function Optimization Was Not Specified");
 			}
 			// Row-major order lookup in 2D archive
-			oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {dim1, dim2}, score);
+			oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(dimensions, score);
 		}		
 		
 		if(MMNEAT.usingDiversityBinningScheme)
 			result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
 		
+		//System.out.println("Bin and Score: "+Arrays.toString(oneMAPEliteBinIndexScorePair.t1) + oneMAPEliteBinIndexScorePair.t2);
 		return result;
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		int runNum = 60;
+		// Test with MAP Elites and sphere function
+		MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" io:true base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-MAPElitesTEST saveTo:MAPElitesTEST netio:false maxGens:100000 ea:edu.southwestern.evolution.mapelites.MAPElites task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:500 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRangeBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12 mapElitesQDBaseOffset:525").split(" "));
+		
+		// Test with CMA-ME and sphere function
+		//MMNEAT.main(("runNumber:"+runNum+" randomSeed:"+runNum+" polynomialMutation:false numImprovementEmitters:15 numOptimizingEmitters:0 io:true base:mapelitesfunctionoptimization log:mapelitesfunctionoptimization-CMAMETEST saveTo:CMAMETEST netio:false maxGens:10000 ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction lambda:37 steadyStateIndividualsPerGeneration:500 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRangeBinLabels foBinDimension:500 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12 mapElitesQDBaseOffset:525").split(" "));
+		
 		// Test with Rosenbrock, comparable to results from CMExample1
-		int runNum = 6;
-		MMNEAT.main(new String[] {"runNumber:"+runNum, "randomSeed:"+runNum, "io:true", "base:functionoptimization", "log:fo-FunctionOptimization", "saveTo:FunctionOptimization", "netio:false", "ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA", "watch:true", "task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask",
-				"foFunction:fr.inria.optimization.cmaes.fitness.RosenFunction", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "foVectorLength:10", "foUpperBounds:5", "foLowerBounds:-5"});
+		//MMNEAT.main(new String[] {"runNumber:"+runNum, "randomSeed:"+runNum, "io:true", "base:functionoptimization", "log:fo-FunctionOptimization", "saveTo:FunctionOptimization", "netio:false", "ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA", "watch:true", "task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask",
+		//		"foFunction:fr.inria.optimization.cmaes.fitness.RosenFunction", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "foVectorLength:10", "foUpperBounds:5", "foLowerBounds:-5"});
 	}
-
 }

@@ -3,6 +3,7 @@ package edu.southwestern.evolution.mapelites;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Vector;
 import java.util.stream.IntStream;
 
@@ -48,7 +49,55 @@ public class Archive<T> {
 			archive.add(null); // Place holder for first individual and future elites
 		}
 	}
+	
+	/**
+	 * Create a new archive by inserting the contents of another.
+	 * Sort of like copying, but involves reevaluation, so the new
+	 * one will only be identical if all evaluations come out the same.
+	 * 
+	 * @param other Archive to draw contents from
+	 */
+	public Archive(Archive<T> other) {
+		saveElites = false; // Don't save while reorganizing
+		mapping = other.mapping;
+		int numBins = mapping.binLabels().size();
+		archive = new Vector<Score<T>>(numBins);
+		occupiedBins = 0;
+		archiveDir = other.archiveDir; // Will save in the same place!
 
+		// Fill with null values before actually selecting individuals to copy over
+		for(int i = 0; i < numBins; i++) {
+			archive.add(null); // Place holder for first individual and future elites
+		}
+		// Loop through original archive
+		for(Score<T> s : other.getArchive()) {
+			if(s != null) { // Ignore empty cells
+				@SuppressWarnings("unchecked")
+				Score<T> newScore = ((MAPElites<T>) MMNEAT.ea).task.evaluate(s.individual);
+				this.add(newScore);
+			}
+		}
+		
+		// Ok to save moving forward
+		saveElites = other.saveElites;
+	}
+	
+	/**
+	 * Number of occupied bins (non null).
+	 * Note that this access is not synchronized.
+	 * Could be subject to race conditions.
+	 * 
+	 * @return number of occupied bins
+	 */
+	public int getNumberOfOccupiedBins() {
+		return occupiedBins;
+	}
+	
+	/**
+	 * The raw Vector of the archive, including many null slots.
+	 * The size of this exactly equals the number of cells that "could" be occupied.
+	 * @return Vector of Score instances in the archive
+	 */
 	public Vector<Score<T>> getArchive(){
 		return archive;
 	}
@@ -104,8 +153,14 @@ public class Archive<T> {
 			return newElites > 0;
 		} else if(candidate.usesMAPElitesBinSpecification()) {
 			int[] candidateBinIndices = candidate.MAPElitesBinIndex();
-			Score<T> currentBinOccupant = getElite(candidateBinIndices);
-			return replaceIfBetter(candidate, this.getBinMapping().oneDimensionalIndex(candidateBinIndices), currentBinOccupant);
+			int oneD = this.getBinMapping().oneDimensionalIndex(candidateBinIndices);
+			boolean result = false;
+			synchronized(this) { // Make sure elite at the index does not change while considering replacement
+				// Synchronizing on the whole archive seems unnecessary ... maybe just the index? How?
+				Score<T> currentBinOccupant = getElite(oneD);
+				result = replaceIfBetter(candidate, oneD, currentBinOccupant);
+			}
+			return result;
 		} else {
 			// In some domains, a flawed genotype can emerge which cannot produce a behavior vector. Obviously cannot be added to archive.
 			return false; // nothing added
@@ -122,7 +177,7 @@ public class Archive<T> {
 	private boolean replaceIfBetter(Score<T> candidate, int binIndex, Score<T> currentOccupant) {
 		double candidateScore = candidate.behaviorIndexScore(binIndex);
 		// Score cannot be negative infinity. Next, check if the bin is empty, or the candidate is better than the elite for that bin's score
-		if(candidateScore > Double.NEGATIVE_INFINITY && (currentOccupant == null || candidateScore > currentOccupant.behaviorIndexScore(binIndex))) {
+		if(candidateScore > Float.NEGATIVE_INFINITY && (currentOccupant == null || candidateScore > currentOccupant.behaviorIndexScore(binIndex))) {
 			archive.set(binIndex, candidate.copy()); // Replace elite
 			if(currentOccupant == null) { // Size is actually increasing
 				synchronized(this) {
@@ -171,7 +226,12 @@ public class Archive<T> {
 	 * @return elite individual score instance 
 	 */
 	public Score<T> getElite(int[] binIndices) {
-		return archive.get(mapping.oneDimensionalIndex(binIndices));
+		int oneD = mapping.oneDimensionalIndex(binIndices);
+		try {
+			return archive.get(oneD);
+		} catch(ArrayIndexOutOfBoundsException e) {
+			throw new IndexOutOfBoundsException(Arrays.toString(binIndices) + " -> " + oneD);
+		}
 	}
 
 	/**
@@ -191,12 +251,12 @@ public class Archive<T> {
 	 */
 	public double getBinScore(int binIndex) {
 		Score<T> elite = getElite(binIndex);
-		return elite == null ? Double.NEGATIVE_INFINITY : elite.behaviorIndexScore(binIndex);
+		return elite == null ? Float.NEGATIVE_INFINITY : elite.behaviorIndexScore(binIndex);
 	}
 	
 	/**
-	 * Random index, but the bin is guarranteed to be occupied
-	 * @return
+	 * Random index, but the bin is guaranteed to be occupied
+	 * @return Index in the 1D complete archive that contains an elite (not empty)
 	 */
 	public int randomOccupiedBinIndex() {
 		int steps = RandomNumbers.randomGenerator.nextInt(occupiedBins);

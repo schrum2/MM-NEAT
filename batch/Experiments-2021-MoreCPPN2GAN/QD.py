@@ -10,7 +10,7 @@ if __name__ == "__main__":
             gen = int(lineList[0])
             lineSum = 0
             for i in range(1, len(lineList)):
-                if lineList[i] != "-Infinity":
+                if lineList[i].strip() != "X" and lineList[i].strip() != "-Infinity":
                     lineSum += base+float(lineList[i])
 
             print("{}\t{}".format(gen,lineSum))

@@ -1,9 +1,11 @@
 package edu.southwestern.evolution.mapelites.generalmappings;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import cern.colt.Arrays;
 import edu.southwestern.evolution.mapelites.BinLabels;
 
 /**
@@ -17,6 +19,8 @@ import edu.southwestern.evolution.mapelites.BinLabels;
  */
 public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 
+	protected static final boolean EXTRA_LOGGING = false;
+	
 	List<String> labels = null;
 	private int binsPerDimension; // number of bins in each dimension
 	private double minPossibleValue; // min possible value, lowest value an input could have and still be valid
@@ -49,7 +53,8 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 		if(labels == null) { // Create once and re-use, but wait until after Parameters are loaded	
 			int size = (int) Math.floor(Math.pow(binsPerDimension, numDimensions)); // get overall amount of bins
 			labels = new ArrayList<String>(size);
-			generateLabel(")", 0); // start recursive label generator
+			generateLabel("", 0); // start recursive label generator
+			if (EXTRA_LOGGING) System.out.println("bin total:" + size);
 		}
 		return labels;
 	}
@@ -65,14 +70,21 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	 */
 	private void generateLabel(String input, int step) {
 		if (step == numDimensions) {
-			labels.add("(" + input); // all dimensions added, cap the label
+			labels.add(input); // all dimensions added, cap the label
+			if (EXTRA_LOGGING) System.out.println("Made label \"("+input+"\"");
 		} else {
-			for (double i = 0; i < binsPerDimension; i++) {
+			for (int i = 0; i < binsPerDimension; i++) {
 				String newInput = input;
 				if (step != 0) {
-					newInput = ", " + newInput; 
+					newInput = "-" + newInput; 
 				}
-				newInput = ("[" + ((i*segmentSize)+minPossibleValue) + " to " + (((i+1)*segmentSize)+minPossibleValue) +"]") + newInput; // add dimension component to label
+				BigDecimal firstSegment = new BigDecimal(i); // More precise division
+				firstSegment = firstSegment.multiply(new BigDecimal(segmentSize));
+				firstSegment = firstSegment.add(new BigDecimal(minPossibleValue));
+				BigDecimal secondSegment = new BigDecimal(i+1); // More precise division
+				secondSegment = secondSegment.multiply(new BigDecimal(segmentSize));
+				secondSegment = secondSegment.add(new BigDecimal(minPossibleValue));
+				newInput = (Double.toString(firstSegment.setScale(4, RoundingMode.HALF_UP).doubleValue()).replace('.', '_') + "to" + Double.toString(secondSegment.setScale(4, RoundingMode.HALF_UP).doubleValue()).replace('.', '_')) + newInput; // add dimension component to label
 				generateLabel(newInput, step+1); // go to next dimension to add next part
 			}
 		}
@@ -82,12 +94,12 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		//System.out.println("Multi-dimensional array: "+Arrays.toString(multi));
+		if (EXTRA_LOGGING) System.out.println("Multi-dimensional array: "+Arrays.toString(multi));
 		int index = 0;
 		for (int i = 0; i < numDimensions; i++) {
 			index += multi[i] * Math.pow(binsPerDimension, i); // get the 1D index of a bin
 		}
-		//System.out.println("One dimensional index: "+index);
+		if (EXTRA_LOGGING) System.out.println("One dimensional index: "+index);
 		return index;
 	}
 	
@@ -102,15 +114,18 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	public int[] discretize(double[] behaviorCharacterization) {
 		int[] dbc = new int[numDimensions];
 		for (int i = 0; i < numDimensions; i++) {
+			// Change to assertions eventually
 			if (behaviorCharacterization[i] > maxPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " exceeds maximum value specified ("+maxPossibleValue+")"); 
 			if (behaviorCharacterization[i] < minPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " is below minimum value specified ("+minPossibleValue+")"); 
 			double scaledValue = (behaviorCharacterization[i]-minPossibleValue) / (maxPossibleValue-minPossibleValue);
+			if (EXTRA_LOGGING) System.out.println("scaledValue = (" + behaviorCharacterization[i] + " - " + minPossibleValue + ") / ("+ (maxPossibleValue-minPossibleValue) +") = "+scaledValue);
 			dbc[i] = (int) Math.floor(scaledValue * binsPerDimension);
+			if (EXTRA_LOGGING) System.out.println("binsPerDimension = " + binsPerDimension);
 			if (dbc[i] == binsPerDimension) {
 				dbc[i]--;
 			}
 		}
-		//System.out.println("Discritizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
+		if (EXTRA_LOGGING) System.out.println("Discretizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
 		return dbc;
 	}
 	

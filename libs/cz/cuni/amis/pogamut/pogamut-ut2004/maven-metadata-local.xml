@@ -5,6 +5,7 @@
   <versioning>
     <versions>
       <version>3.6.2-SNAPSHOT</version>
+      <version>3.7.1-SNAPSHOT</version>
     </versions>
     <lastUpdated>20210608170320</lastUpdated>
   </versioning>

@@ -27,7 +27,7 @@ public class MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels implements
 			for(int i = 0; i <= maxNumSegments; i++) { // Create labels based on the number of level segments and tile groups
 				for(int j = 0; j <= maxNumSegments; j++) { 
 					for(int r = 0; r < TILE_GROUPS; r++) {
-						labels.add("DistinctSegments["+i+"]VerticalSegments["+j+"]Connectivity["+r+"0-"+(r+1)+"0]");
+						labels.add("DistinctSegments"+i+"VerticalSegments"+j+"Connectivity"+r+"0-"+(r+1)+"0");
 						
 					}
 				}
@@ -45,6 +45,15 @@ public class MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels implements
 		return binIndex;
 	}
 
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Distinct Segments", "Vertical Segments", "Connectivity"};
+	}
+
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {maxNumSegments+1, maxNumSegments+1, TILE_GROUPS};
+	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException{
 

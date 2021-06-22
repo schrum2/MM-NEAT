@@ -8,7 +8,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -107,7 +106,7 @@ public class GraphicsUtil {
 	 * @return buffered image containing image drawn by network
 	 */
 	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time) {
-		return imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, time, 1.0, 0.0);
+		return imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, time, 1.0, 0.0, 0.0, 0.0);
 	}
 	
 	/**
@@ -123,9 +122,11 @@ public class GraphicsUtil {
 	 * @param time For animated images, the frame number (just use 0 for still images)
 	 * @param scale scale factor by which to scale the image
 	 * @param rotation the degree in radians by which to rotate the image
+	 * @param deltaX X coordinate of the center of the box
+	 * @param deltaY Y coordinate of the center of the box
 	 * @return buffered image containing image drawn by network
 	 */
-	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time, double scale, double rotation) {
+	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time, double scale, double rotation, double deltaX, double deltaY) {
 		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
 		// Min and max brightness levels used for stark coloring
 		float maxB = 0;
@@ -133,7 +134,7 @@ public class GraphicsUtil {
 		for (int x = 0; x < imageWidth; x++) {// scans across whole image
 			for (int y = 0; y < imageHeight; y++) {				
 				// network outputs computed on hsb, not rgb scale because
-				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples, time, scale, rotation);
+				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples, time, scale, rotation, deltaX, deltaY);
 				maxB = Math.max(maxB, hsb[BRIGHTNESS_INDEX]);
 				minB = Math.min(minB, hsb[BRIGHTNESS_INDEX]);
 				if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) { // black and white
@@ -450,11 +451,13 @@ public class GraphicsUtil {
 	 * @param y y-coordinate of pixel
 	 * @param imageWidth width of image
 	 * @param imageHeight height of image
+	 * @param deltaX X coordinate of the center of the box
+	 * @param deltaY Y coordinate of the center of the box
 	 * @return double containing the HSB values
 	 */
-	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples, double time, double scale, double rotation) {
+	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples, double time, double scale, double rotation, double deltaX, double deltaY) {
 
-		double[] input = get2DObjectCPPNInputs(x, y, imageWidth, imageHeight, time, scale, rotation);
+		double[] input = get2DObjectCPPNInputs(x, y, imageWidth, imageHeight, time, scale, rotation, deltaX, deltaY);
 
 		// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
 		for(int i = 0; i < inputMultiples.length; i++) {
@@ -496,7 +499,7 @@ public class GraphicsUtil {
 	 * @return array containing inputs for CPPN
 	 */
 	public static double[] get2DObjectCPPNInputs(int x, int y, int imageWidth, int imageHeight, double time) {
-		return get2DObjectCPPNInputs(x,y,imageWidth,imageHeight,time,1.0, 0.0);
+		return get2DObjectCPPNInputs(x,y,imageWidth,imageHeight,time,1.0, 0.0, 0.0, 0.0);
 	}
 	
 	/**
@@ -513,13 +516,15 @@ public class GraphicsUtil {
 	 * @param time For animated images, the frame number (just use 0 for still images)
 	 * @param scale scale factor by which to scale the image
 	 * @param rotation the degree in radians by which to rotate the image
+	 * @param deltaX X coordinate of the center of the box
+	 * @param deltaY Y coordinate of the center of the box
 	 * @return array containing inputs for CPPN
 	 */
-	public static double[] get2DObjectCPPNInputs(int x, int y, int imageWidth, int imageHeight, double time, double scale, double rotation) {
+	public static double[] get2DObjectCPPNInputs(int x, int y, int imageWidth, int imageHeight, double time, double scale, double rotation, double deltaX, double deltaY) {
 		Tuple2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), imageWidth, imageHeight);
 		scaled = scaled.mult(scale);
 		scaled = scaled.rotate(rotation);
-		ILocated2D finalPoint = scaled;
+		ILocated2D finalPoint = scaled.add(new Tuple2D (deltaX, deltaY));
 		if(time == -1) { // default, single image. Do not care about time
 			return new double[] { finalPoint.getX(), finalPoint.getY(), finalPoint.distance(new Tuple2D(0, 0)) * SQRT2, BIAS };
 		} else { // TODO: May need to divide time by frame rate later
@@ -779,7 +784,8 @@ public class GraphicsUtil {
 	 * @return scaled x value
 	 */
 	public static int invert(double y, double max, double min) {
-		return invert(y,max,min);
+		throw new UnsupportedOperationException("This method lacks an appropriate definition");
+		//return invert(y,max,min);
 	}
 
 	/**
@@ -843,7 +849,7 @@ public class GraphicsUtil {
 	 * 
 	 * @param img Image to be rotated
 	 * @param angle	Angle to be rotated by
-	 * @return Return the rotatted image
+	 * @return Return the rotated image
 	 */
 	public static BufferedImage rotateImageByDegrees(BufferedImage img, double angle) {
 	    double rads = Math.toRadians(angle);
@@ -865,13 +871,18 @@ public class GraphicsUtil {
 	    g2d.setTransform(at);
 	    // Changed the ImageObserver to null
 	    g2d.drawImage(img, 0, 0, null);
-	    g2d.setColor(Color.RED);
-	    g2d.drawRect(0, 0, newWidth - 1, newHeight - 1);
 	    g2d.dispose();
 
 	    return rotated;
 	}
 	
+	/**
+	 * Creates a new image double the size of the original,
+	 * and built out of four of the original image.
+	 * 
+	 * @param original The original image
+	 * @return the new tile image
+	 */
 	public static BufferedImage getTwoByTwoTiledImage(BufferedImage original) {
 		BufferedImage result = new BufferedImage(original.getWidth() * 2, original.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
 		for(int x = 0; x < original.getWidth(); x++) {
@@ -885,4 +896,33 @@ public class GraphicsUtil {
 		}
 		return result;
 	}
+	
+	/**
+	 * Rotates the background Zentangle image. Makes an image
+	 * double the size of the original containing a two by 
+	 * two of the original image.  Then takes the center of
+	 * the double size image to use as the background image.
+	 * 
+	 * @param image The original image
+	 * @param angle The angle by which to rotate the background image
+	 * @return the background image
+	 */
+	public static BufferedImage extractCenterOfDoubledRotatedImage(BufferedImage image, double angle) {
+		BufferedImage doubleSize = GraphicsUtil.getTwoByTwoTiledImage(image);
+		BufferedImage rotated = GraphicsUtil.rotateImageByDegrees(doubleSize, angle);
+		BufferedImage middleImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		int doubleMidWidth = doubleSize.getWidth() / 2;
+		int doubleMidHeight = doubleSize.getHeight() / 2;
+		int halfFinalWidth = middleImage.getWidth() / 2;
+		int haldFinalHeight = middleImage.getHeight() / 2;
+		int startX = doubleMidWidth - halfFinalWidth;
+		int startY = doubleMidHeight - haldFinalHeight;
+		for(int x = 0; x < middleImage.getWidth(); x++) {
+			for(int y = 0; y < middleImage.getHeight(); y++) {
+				middleImage.setRGB(x, y, rotated.getRGB(x + startX, y + startY));
+			}
+		}
+		return middleImage;
+	}
+
 }

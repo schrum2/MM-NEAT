@@ -26,7 +26,7 @@ public class ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels implements BinLabe
 			for(int i = 0; i <= maxNumRooms; i++) { 
 				for(int j = 0; j <= maxNumRooms; j++) { 
 					for(int r = 0; r <= maxNumRooms; r++) {
-						labels.add("DistinctRooms["+i+"]BackTrackedRooms["+j+"]Rooms["+r+"]");
+						labels.add("DistinctRooms"+i+"BackTrackedRooms"+j+"Rooms"+r);
 						
 					}
 				}
@@ -42,6 +42,16 @@ public class ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels implements BinLabe
 		int numRoomsReachable = multi[2];
 		int mapElitesBinIndex = (numDistinctRooms*(maxNumRooms+1) + numBackTrackRooms)*(maxNumRooms+1) + numRoomsReachable;
 		return mapElitesBinIndex;
+	}
+	
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Distinct Rooms", "Backtracked Rooms", "Reachable Rooms"};
+	}
+	
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {maxNumRooms+1, maxNumRooms+1, maxNumRooms+1};
 	}
 	
 	//"mapElitesBinLabels:edu.southwestern.tasks.zelda.ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels"

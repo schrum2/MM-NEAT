@@ -6,12 +6,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.mapelites.emitters.*;
+import edu.southwestern.evolution.mapelites.emitters.Emitter;
+import edu.southwestern.evolution.mapelites.emitters.ImprovementEmitter;
+import edu.southwestern.evolution.mapelites.emitters.OptimizingEmitter;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -21,7 +24,9 @@ import edu.southwestern.util.file.FileUtilities;
  * Implementation of CMA-ME as an extension
  * of MAP Elites. Implementation is partially
  * detailed in the original CMA-ME paper:
- * https://arxiv.org/pdf/1912.02400.pdf
+ * 
+ * Matthew C. Fontaine, Julian Togelius, Stefanos Nikolaidis, and Amy K. Hoover, "Covariance Matrix Adaptation for the Rapid Illumination of Behavior Space"
+ * in GECCO 2020. https://arxiv.org/pdf/1912.02400.pdf
  * 
  * @author Maxx Batterton
  *
@@ -111,7 +116,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		double individualBinScore = individualScore.behaviorIndexScore(); // extract new bin score
 		Score<ArrayList<Double>> currentOccupant = archive.getElite(individualScore.MAPElitesBinIndex());
 		// This will be a fitness score that is interpreted such that larger values are better
-		double currentBinScore = currentOccupant == null ? Double.NEGATIVE_INFINITY : currentOccupant.behaviorIndexScore(); // extract current bin score
+		double currentBinScore = currentOccupant == null ? Float.NEGATIVE_INFINITY : currentOccupant.behaviorIndexScore(); // extract current bin score
 
 		thisEmitter.addFitness(rawIndividual, individualBinScore, currentBinScore, archive); // potentially add new fitness
 		
@@ -139,13 +144,24 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		mLog.log(iterations + "\t" + validParents);
 	}
 	
-	
-	
+	/**
+	 * Get emitter means
+	 * 
+	 * @return
+	 */
+	public List<double[]> getEmitterMeans() {
+		ArrayList<double[]> means = new ArrayList<>();
+		for (Emitter e : emitters) {
+			means.add(e.getMean());
+		}
+		return means;
+	}
 	
 	
 	// Test CMA-ME
 	public static void main(String[] args) throws NoSuchMethodException, IOException {
 		System.out.println("Testing CMA-ME");
+		//MMNEAT.main("runNumber:0 randomSeed:0 base:mariolevelsdecoratensleniency log:MarioLevelsDecorateNSLeniency-CMAME1Improvement saveTo:CMAME1Improvement marioGANLevelChunks:10 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 mu:50 lambda:100 maxGens:100000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDecorNSAndLeniencyBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 numImprovementEmitters:1 numOptimizingEmitters:0".split(" "));
 		runSeveralCMAME();
 	}
 	
@@ -180,7 +196,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		
 		printStream = new PrintStream(new FileOutputStream(severalLog, false));
 		
-		for (int run = 10; run <= 200; run+=10) { // range of runs
+		for (int run = 2; run <= 200; run+=10) { // range of runs
 			runSingleCMAME(run);
 			Scanner currentFile = new Scanner(new File(FOLDER+"/CMAMELambda"+run+"/mapelitesfunctionoptimizationSeveral-CMAMELambda"+run+"_Fill_log.txt"));
 			String line = "";
@@ -193,9 +209,9 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	
 	// run a single CMA-ME with provided lambda. Generations is specified here
 	private static void runSingleCMAME(int lambda) throws FileNotFoundException, NoSuchMethodException {
-		int emitterCount = 1;
+		int emitterCount = 3;
 		int gens = 50000;
-		MMNEAT.main(("runNumber:"+lambda+" randomSeed:"+lambda+" io:true numImprovementEmitters:"+emitterCount+" numOptimizingEmitters:0 lambda:"+lambda+" base:mapelitesfunctionoptimizationseveral log:mapelitesfunctionoptimizationSeveral-CMAMELambda saveTo:CMAMELambda netio:false maxGens:"+gens+" ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
+		MMNEAT.main(("runNumber:"+lambda+" randomSeed:"+lambda+" io:true numImprovementEmitters:"+emitterCount+" numOptimizingEmitters:0 lambda:"+lambda+" base:mapelitesfunctionoptimizationseveral log:mapelitesfunctionoptimizationSeveral-CMAMELambda saveTo:CMAMELambda netio:false maxGens:"+gens+" ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.RastriginFunction steadyStateIndividualsPerGeneration:1000 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRangeBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 		//MMNEAT.main(("runNumber:"+lambda+" randomSeed:"+lambda+" io:true numImprovementEmitters:"+emitterCount+" numOptimizingEmitters:0 lambda:"+lambda+" base:mapelitesfunctionoptimizationseveral log:mapelitesfunctionoptimizationSeveral-CMAMELambda saveTo:CMAMELambda netio:false maxGens:"+gens+" ea:edu.southwestern.evolution.mapelites.CMAME task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask foFunction:fr.inria.optimization.cmaes.fitness.SphereFunction steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.functionoptimization.FunctionOptimizationRastriginBinLabels foBinDimension:100 foVectorLength:20 foUpperBounds:5.12 foLowerBounds:-5.12").split(" "));
 		//MMNEAT.main(("runNumber:"+lambda+" randomSeed:"+lambda+" numImprovementEmitters:"+emitterCount+" numOptimizingEmitters:0 base:mariolevelsdecoratensleniency log:MarioLevelsDecorateNSLeniency-CMAME1Improvement saveTo:CMAME1Improvement marioGANLevelChunks:10 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 lambda:"+lambda+" maxGens:"+gens+" io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDecorNSAndLeniencyBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000").split(" "));
 	}

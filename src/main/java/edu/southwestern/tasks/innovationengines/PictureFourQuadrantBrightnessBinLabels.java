@@ -51,7 +51,7 @@ public class PictureFourQuadrantBrightnessBinLabels implements BinLabels {
 							// (i,j,k,m) <-- the coordinate of the current bin
 							// (0,0,0,0) <-- should be the first bin
 							// (BINS_PER_DIMENSION - 1,BINS_PER_DIMENSION - 1,BINS_PER_DIMENSION - 1,BINS_PER_DIMENSION - 1) <-- should be the last bin
-							binLabels.add("(" + i + "," + j + "," + k + "," + m + ")");
+							binLabels.add( + i + "-" + j + "-" + k + "-" + m);
 						}
 					}
 				}
@@ -139,5 +139,15 @@ public class PictureFourQuadrantBrightnessBinLabels implements BinLabels {
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
 		return BINS_PER_DIMENSION * (BINS_PER_DIMENSION * (BINS_PER_DIMENSION * multi[0] + multi[1]) + multi[2]) + multi[3];
+	}
+
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Top-Left Quadrant Sum", "Top-Right Quadrant Sum", "Bottom-Left Quadrant Sum", "Bottom-Right Quadrant Sum"};
+	}
+
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {BINS_PER_DIMENSION,BINS_PER_DIMENSION,BINS_PER_DIMENSION,BINS_PER_DIMENSION};
 	}
 }

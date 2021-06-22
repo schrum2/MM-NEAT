@@ -36,7 +36,7 @@ public abstract class Comm extends Thread {
      * @param msg message to send.
      */
     public void commSend(String msg) throws IOException {
-        //printInfoMsg("[" + this.threadName + "] Comm:commSend will send "+ msg);
+        //printInfoMsg("[" + this.threadName + "] Comm:commSend will send "+ msg + " to GAN");
         writer.println(msg);
         writer.flush();
     }

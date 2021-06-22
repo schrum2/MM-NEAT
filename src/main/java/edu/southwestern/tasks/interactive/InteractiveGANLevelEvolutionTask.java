@@ -33,7 +33,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import distance.convolution.ConvNTuple;
 import distance.kl.KLDiv;
 import distance.test.KLDivTest;
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
@@ -809,7 +808,7 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 				} else { // Possible when switching between different models with same latent vector length
 					throw new IllegalArgumentException("Should not be possible");
 				}
-				s.individual = new BoundedRealValuedGenotype(newPhenotype,MMNEAT.getLowerBounds(),MMNEAT.getUpperBounds());
+				s.individual = new BoundedRealValuedGenotype(newPhenotype);
 			}
 		}
 	}

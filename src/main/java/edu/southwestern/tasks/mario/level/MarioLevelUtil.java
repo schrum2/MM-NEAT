@@ -3,10 +3,8 @@ package edu.southwestern.tasks.mario.level;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,17 +12,11 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonStreamParser;
-import com.google.gson.stream.JsonReader;
 
 import ch.idsia.ai.agents.Agent;
-import ch.idsia.ai.agents.human.HumanKeyboardAgent;
 import ch.idsia.ai.tasks.ProgressTask;
 import ch.idsia.mario.engine.LevelRenderer;
 import ch.idsia.mario.engine.level.Level;
@@ -33,14 +25,9 @@ import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
 import ch.idsia.tools.Evaluator;
 import ch.idsia.tools.ToolsConfigurator;
-import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.genotypes.TWEANNGenotype;
-import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
 import edu.southwestern.networks.Network;
-import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class MarioLevelUtil {

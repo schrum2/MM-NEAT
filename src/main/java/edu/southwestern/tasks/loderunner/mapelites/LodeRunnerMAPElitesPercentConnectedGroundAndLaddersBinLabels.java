@@ -27,7 +27,7 @@ public class LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels implem
 			for(int i = 0; i < BINS_PER_DIMENSION; i++) {//Connected
 				for(int j = 0; j < BINS_PER_DIMENSION*SCALE_BY_FOUR; j+=SCALE_BY_FOUR) { //ground [0-4][4-8]...
 					for(int k = 0; k < BINS_PER_DIMENSION*SCALE_BY_FOUR; k+=SCALE_BY_FOUR) { //ladders [0-4][4-8]...
-						labels.add("Connected["+i+"0-"+(i+1)+"0]Ground["+j+"-"+(j+SCALE_BY_FOUR)+"]Ladders["+k+"-"+(k+SCALE_BY_FOUR)+"]");
+						labels.add("Connected"+i+"0-"+(i+1)+"0Ground"+j+"-"+(j+SCALE_BY_FOUR)+"Ladders"+k+"-"+(k+SCALE_BY_FOUR));
 					}
 				}
 			}
@@ -39,6 +39,16 @@ public class LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels implem
 	public int oneDimensionalIndex(int[] multi) {
 		int binIndex = (multi[0]*BINS_PER_DIMENSION + multi[1])*BINS_PER_DIMENSION + multi[2];
 		return binIndex;
+	}
+
+	@Override
+	public String[] dimensions() {
+		return new String[] {"Connected Percent", "Ground Percent", "Ladders Percent"};
+	}
+
+	@Override
+	public int[] dimensionSizes() {
+		return new int[] {BINS_PER_DIMENSION, BINS_PER_DIMENSION, BINS_PER_DIMENSION};
 	}
 
 }

@@ -190,9 +190,13 @@ public class GANProcess extends Comm {
 	 * Launch GAN, this should be called only once
 	 */
 	public void launchGAN() {
-		if(!(new File(PythonUtil.PYTHON_EXECUTABLE).exists())) {
+		if(PythonUtil.PYTHON_EXECUTABLE.equals("")) {
 			throw new RuntimeException("Before launching this program, you need to place the path to your "+
-									   "Python executable in my_python_path.txt within the main MM-NEAT directory.");
+					   "Python executable in my_python_path.txt within the main MM-NEAT directory." + PythonUtil.PYTHON_EXECUTABLE);			
+		} else if(!(new File(PythonUtil.PYTHON_EXECUTABLE).exists())) {
+			throw new RuntimeException("Before launching this program, you need to place the path to your "+
+									   "Python executable in my_python_path.txt within the main MM-NEAT directory. The current contents of this file are incorrect: "+
+									   PythonUtil.PYTHON_EXECUTABLE);
 		}
 
 		// Run program with model architecture and weights specified as parameters

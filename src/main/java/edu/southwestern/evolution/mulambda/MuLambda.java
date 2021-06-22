@@ -374,6 +374,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 *            = current parent population
 	 * @return = next parent population
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Genotype<T>> getNextGeneration(ArrayList<Genotype<T>> parents) {
 		evaluatingParents = true;

@@ -21,12 +21,18 @@ import edu.southwestern.util.PythonUtil;
  */
 public class TrainAutoEncoderProcess extends Comm {
 	
-	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "AutoEncoder" + File.separator;
+	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "AutoEncoder" + File.separator;;
 	public static final String AUTOENCODER_PATH = PYTHON_BASE_PATH + "MyAutoencoder.py";
 	
-	public static String TRAINING_IMAGES_DIRECTORY = null;
-	public static String PTH_FILE_NAME = null;
+	public String trainingImagesDirectory;
+	public String pthFileName;
 	
+	
+	public TrainAutoEncoderProcess(String directoryName, String pthFileName) {
+		PythonUtil.setPythonProgram();
+		trainingImagesDirectory = directoryName;
+		this.pthFileName = pthFileName;
+	}
 
 	/**
 	 * Initializes the process buffers
@@ -74,11 +80,11 @@ public class TrainAutoEncoderProcess extends Comm {
 	public void launchTrainingScript() {
 		if(!(new File(PythonUtil.PYTHON_EXECUTABLE).exists())) {
 			throw new RuntimeException("Before launching this program, you need to place the path to your "+
-									   "Python executable in my_python_path.txt within the main MM-NEAT directory.");
+									   "Python executable in my_python_path.txt within the main MM-NEAT directory." + PythonUtil.PYTHON_EXECUTABLE);
 		}
 
 		// Run program with model architecture and weights specified as parameters
-		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, PYTHON_BASE_PATH + "MyAutoencoder.py", PYTHON_BASE_PATH + "PicbreederTargetTrainingSet", PYTHON_BASE_PATH + "test.pth");
+		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, PYTHON_BASE_PATH + "MyAutoencoder.py", trainingImagesDirectory, pthFileName);
 		builder.redirectError(Redirect.INHERIT); // Standard error will print to console
 		try {
 			System.out.println(builder.command());
@@ -95,7 +101,7 @@ public class TrainAutoEncoderProcess extends Comm {
 		Parameters.initializeParameterCollections(new String[] {"blackAndWhitePicbreeder:true"});
 		PythonUtil.PYTHON_EXECUTABLE = "C:\\ProgramData\\Anaconda3\\python.exe";
 		
-		TrainAutoEncoderProcess p = new TrainAutoEncoderProcess();
+		TrainAutoEncoderProcess p = new TrainAutoEncoderProcess("parentDir\\PicbreederTargetTrainingSet", "parentDir\\test.pth");
 		p.start();
 		
 	} 

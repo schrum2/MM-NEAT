@@ -1,6 +1,5 @@
 package edu.southwestern.tasks.interactive.picbreeder;
 
-import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -11,7 +10,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -131,16 +131,26 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		}
 	}
 
+	/**
+	 * Creates a buffered image from the CPPN.
+	 * 
+	 * @param <T>
+	 * @param phenotype Phenotype of the CPPN
+	 * @param imageWidth Width of the image
+	 * @param imageHeight Height of the image
+	 * @param inputMultiples array of multiples indicating whether to turn activation functions on or off
+	 * @return the newly created buffered image
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Network> BufferedImage imageFromCPPN(T phenotype, int imageWidth, int imageHeight, double[] inputMultiples) {
 		
 		if(phenotype instanceof NetworkPlusParameters) { // CPPN with extra scale and rotation parameters
 			NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype;
-			ArrayList<Double> scaleAndRotation = npp.t2;
-			System.out.println("scaleAndRotation: " + scaleAndRotation);
-			return GraphicsUtil.imageFromCPPN(phenotype, imageWidth, imageHeight, inputMultiples, 0, scaleAndRotation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE), scaleAndRotation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION));
+			ArrayList<Double> scaleRotationTranslation = npp.t2;
+			//System.out.println("Scale, Rotation, and Translation (x,y): " + scaleRotationTranslation);
+			return GraphicsUtil.imageFromCPPN(phenotype, imageWidth, imageHeight, inputMultiples, -1, scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_X), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y));
 		} else { // Plain CPPN/TWEANGenotype
-			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageHeight, imageWidth, inputMultiples, 0, Parameters.parameters.doubleParameter("picbreederImageScale"), Parameters.parameters.doubleParameter("picbreederImageRotation"));
+			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageHeight, imageWidth, inputMultiples, -1, Parameters.parameters.doubleParameter("picbreederImageScale"), Parameters.parameters.doubleParameter("picbreederImageRotation"), Parameters.parameters.doubleParameter("picbreederImageTranslationX"), Parameters.parameters.doubleParameter("picbreederImageTranslationY"));
 		}
 	}
 	
@@ -149,10 +159,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 * zentangle method below, though I'm not sure it belongs in this class, or even
 	 * deserves its own method.
 	 * 
-	 * @param filename
-	 * @param dim
-	 * @param phenotype
-	 * @param inputMultipliers
+	 * @param filename name of file to be saved
+	 * @param dim dimensions of the image
+	 * @param phenotype phenotype of the CPPN
+	 * @param inputMultipliers array of multiples indicating whether to turn activation functions on or off
 	 */
 
 	public static <T> BufferedImage saveSingle(String filename, int dim, T phenotype, double[] inputMultipliers, boolean isBackground) {
@@ -176,7 +186,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 * by the zentangle method below.
 	 * 
 	 * @param <T>
-	 * @param scores
+	 * @param scores 
 	 * @param chosen 
 	 * @param selectedItems 
 	 * @return list of phenotypes
@@ -196,19 +206,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			return phenotypes;
 		}
 	}
-	
-	public static BufferedImage rotateBackgroundImage(BufferedImage image, double angle) {
-		BufferedImage doubleSize = GraphicsUtil.getTwoByTwoTiledImage(image);
-		GraphicsUtil.rotateImageByDegrees(doubleSize, angle);
-		BufferedImage middleImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		for(int x = 0; x < middleImage.getWidth(); x++) {
-			for(int y = 0; y < middleImage.getHeight(); y++) {
-				middleImage.setRGB(x, y, doubleSize.getRGB(x + middleImage.getWidth() / 2, y + middleImage.getHeight() / 2));
-			}
-		}
-		return doubleSize;
-	}
-
 
 	/**
 	 * Code from Sarah Friday, Anna Krolikowski, and Alice Quintanilla from their
@@ -224,6 +221,15 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		zentangle(SimpleTiledZentangle.getSaveDirectory(), chosenTiles, inputMultipliers);
 	}
 
+	/**
+	 * Creates a zentangle image for different cases 
+	 * depending on the number of images selected.
+	 * 
+	 * @param <T>
+	 * @param directory directory to save the images to
+	 * @param chosenTiles Tiles chosen to make the zentangle image from
+	 * @param inputMultipliers array of multiples indicating whether to turn activation functions on or off
+	 */
 	public static <T> void zentangle(String directory, ArrayList<T> chosenTiles, double[] inputMultipliers) {
 		// Make sure zentangle directory exists
 		File d = new File(directory);
@@ -332,7 +338,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					// data.xml gets read in this next method
 					try {
 						patterns[zentangleNumber] = SimpleTiledZentangle.simpleTiledZentangle(directory, zentangleNumber, Parameters.parameters.integerParameter("zentanglePatternDim") / tempTileSizeList[zentangleNumber]);
-						patterns[zentangleNumber] = rotateBackgroundImage(patterns[zentangleNumber], RandomNumbers.randomGenerator.nextDouble() * 360);
+						patterns[zentangleNumber] = GraphicsUtil.extractCenterOfDoubledRotatedImage(patterns[zentangleNumber], RandomNumbers.randomGenerator.nextDouble() * 360);
 						zentangleNumber++;
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -490,7 +496,8 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					"includeIdFunction:true", "includeTriangleWaveFunction:false", "includeSquareWaveFunction:false",
 					"includeFullSawtoothFunction:false", "includeSigmoidFunction:false", "includeAbsValFunction:false",
 					"includeSawtoothFunction:false", "allowInteractiveSave:true", 
-					"picbreederImageScale:1.0", "picbreederImageRotation:0.0"}); // <- Not relevant when EnhancedCPPNPictureGenotype is used
+					"picbreederImageScale:10.0", "picbreederImageRotation:0.0", // <- Not relevant when EnhancedCPPNPictureGenotype is used
+					"picbreederImageTranslationX:0.0", "picbreederImageTranslationY:0.0"});  // <- Not relevant when EnhancedCPPNPictureGenotype is used
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
