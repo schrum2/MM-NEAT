@@ -209,25 +209,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			System.exit(1);
 		}
 	}
-	
-	private static void checkPython() { // Checks that python is present and functional
-		PythonUtil.setPythonProgram();
-		if(PythonUtil.PYTHON_EXECUTABLE.equals("")) {
-			throw new RuntimeException("Before launching this program, you need to place the path to your "+
-					   "Python executable in my_python_path.txt within the main MM-NEAT directory." + PythonUtil.PYTHON_EXECUTABLE);			
-		} else if(!(new File(PythonUtil.PYTHON_EXECUTABLE).exists())) {
-			throw new RuntimeException("Before launching this program, you need to place the path to your "+
-									   "Python executable in my_python_path.txt within the main MM-NEAT directory. The current contents of this file are incorrect: "+
-									   PythonUtil.PYTHON_EXECUTABLE);
-		}
-	}
 
 	private void setupArchiveVisualizer(BinLabels bins) throws FileNotFoundException {
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
 		String prefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber") + "_MAPElites";
 		String fullName = directory + prefix + "_log.plt";
-		checkPython();
+		PythonUtil.setPythonProgram();
+		PythonUtil.checkPython();
 		
 		// Archive generator
 		String[] dimensionNames = bins.dimensions();

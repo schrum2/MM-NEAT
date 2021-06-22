@@ -168,11 +168,7 @@ public class AutoEncoderProcess extends Comm {
 	 * results in a .pth file specified by SAVED_AUTOENCODER.
 	 */
 	public void launchAutoEncoder() {
-		if(!(new File(PythonUtil.PYTHON_EXECUTABLE).exists())) {
-			throw new RuntimeException("Before launching this program, you need to place the path to your "+
-					"Python executable in my_python_path.txt within the main MM-NEAT directory.");
-		}
-
+		PythonUtil.checkPython();
 		// Run program with model architecture and weights specified as parameters
 		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, AUTOENCODER_PATH, savedAutoencoder, mode == AUTOENCODER_MODE.IMAGE ? "image" : "loss");
 		builder.redirectError(Redirect.INHERIT); // Standard error will print to console
