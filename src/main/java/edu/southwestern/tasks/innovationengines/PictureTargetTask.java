@@ -157,10 +157,10 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		int[] indicesMAPEliteBin = null;
 		
 		if(MMNEAT.ea instanceof MAPElites) {
-			int nodes = Math.min(tweannIndividual.nodes.size(), CPPNComplexityBinLabels.maxNumNeurons);
+			int nodes = Math.min(tweannIndividual.nodes.size(), Parameters.parameters.integerParameter("maxNumNeurons"));
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNComplexityBinLabels) {
 				// What if number of nodes or links exceeds 35? Need to cap the index
-				int links = Math.min(tweannIndividual.links.size(), CPPNComplexityBinLabels.maxNumLinks);
+				int links = Math.min(tweannIndividual.links.size(), Parameters.parameters.integerParameter("maxNumNeurons"));
 				indicesMAPEliteBin = new int[] {nodes, links}; // Array of two values corresponding to bin label dimensions
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof PictureFourQuadrantBrightnessBinLabels) {
 				PictureFourQuadrantBrightnessBinLabels labels = (PictureFourQuadrantBrightnessBinLabels) ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass();
@@ -168,7 +168,6 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof GaierAutoencoderPictureBinLabels) {
 				// If the AutoEncoder has not been initialized yet, then loss is 1.0
 				double loss = AutoEncoderProcess.neverInitialized ? 1.0 : AutoEncoderProcess.getReconstructionLoss(image);
-				
 				// TODO Change
 				//int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinLabels.numLossBins),GaierAutoencoderPictureBinLabels.numLossBins - 1);
 				int lossIndex = Math.min((int) Math.max(0, ((loss - Parameters.parameters.doubleParameter("minAutoencoderLoss")) / (Parameters.parameters.doubleParameter("maxAutoencoderLoss")) * GaierAutoencoderPictureBinLabels.numLossBins)), GaierAutoencoderPictureBinLabels.numLossBins - 1);
@@ -177,6 +176,9 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				assert nodes >= CPPNNeuronCountBinLabels.MIN_NUM_NEURONS : "Why so few neurons? " + nodes + "\n" + tweannIndividual;
 				indicesMAPEliteBin = new int[] {nodes};
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNNeuronScaleRotationDeltaXDeltaYBinLabels) {
+				// TODO: Add the body here.
+				indicesMAPEliteBin = new int[] {nodes};
+			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof GaierAutoencoderNeuronLossScaleRotationDeltaXDeltaYBinLabels) {
 				// TODO: Add the body here.
 				indicesMAPEliteBin = new int[] {nodes};
 			} else {
@@ -372,6 +374,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.GaierAutoencoderPictureBinLabels",
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNNeuronCountBinLabels",
+				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNNeuronScaleRotationDeltaXDeltaYBinLabels",
+				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.GaierAutoencoderNeuronLossScaleRotationDeltaXDeltaYBinLabels",
 				"fs:true",
 				//"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
 				"trainingAutoEncoder:true",

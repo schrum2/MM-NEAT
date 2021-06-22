@@ -6,15 +6,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class CPPNNeuronScaleRotationDeltaXDeltaYBinLabelsTest {
+public class GaierAutoencoderNeuronLossScaleRotationDeltaXDeltaYBinLabelsTest {
 
 	@Before
 	public void setUp() throws Exception {
-	}
-
-	@Test
-	public void testCPPNNeuronScaleRotationDeltaXDeltaYBinLabels() {
-		//fail("Not yet implemented");
 	}
 
 	@Test
