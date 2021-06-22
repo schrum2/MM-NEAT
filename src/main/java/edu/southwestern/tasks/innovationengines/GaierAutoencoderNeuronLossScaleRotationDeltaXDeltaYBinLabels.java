@@ -10,6 +10,7 @@ import edu.southwestern.parameters.Parameters;
 public class GaierAutoencoderNeuronLossScaleRotationDeltaXDeltaYBinLabels implements BinLabels {
 List<String> labels = null;
 	
+	// Call these from CPPNNeuronScaleRotationDeltaXDeltaYBinLabels?
 	public static final int BIN_INDEX_NODES = 0;
 	public static final int BIN_INDEX_LOSS = 1;
 	public static final int BIN_INDEX_SCALE = 2;
@@ -23,24 +24,24 @@ List<String> labels = null;
 		if(!Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
 			throw new IllegalStateException("You can't use the GaierAutoencoderPictureBinLabels binning scheme without training an autoencoder");
 		}
-		CPPNComplexityBinLabels.maxNumNeurons = Parameters.parameters.integerParameter("maxNumNeurons");
 		numLossBins = Parameters.parameters.integerParameter("numReconstructionLossBins");
 	}
 
 	/**
-	 * Creates the bin labels using the number of neurons and 
-	 * the number of loss bins (1 / numLossBins).
+	 * Creates the bin labels using the number of neurons, number
+	 * of loss bins, number of scale bins, number of rotation bins,
+	 * and number of translation bins for both deltaX and deltaY.
 	 * 
 	 * @return A String list of the bin labels
 	 */
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {
-			int size = (CPPNComplexityBinLabels.maxNumNeurons - CPPNComplexityBinLabels.MIN_NUM_NEURONS + 1) * numLossBins;
+			int size = (Parameters.parameters.integerParameter("maxNumNeurons") - CPPNComplexityBinLabels.MIN_NUM_NEURONS + 1) * numLossBins;
 			System.out.println("Archive Size: " + size);
 			labels = new ArrayList<String>(size);
 			int count = 0;
-			for(int i = CPPNComplexityBinLabels.MIN_NUM_NEURONS; i <= CPPNComplexityBinLabels.maxNumNeurons; i++) {
+			for(int i = CPPNComplexityBinLabels.MIN_NUM_NEURONS; i <= Parameters.parameters.integerParameter("maxNumNeurons"); i++) {
 				for(int j = 0; j < numLossBins; j++) {
 					for(int k = 0; k < Parameters.parameters.doubleParameter("maxScale") / Parameters.parameters.integerParameter("scaleDivider"); k++) {
 						for(int m = 0; m < 360; m++) {
@@ -77,11 +78,11 @@ List<String> labels = null;
 
 	@Override
 	public String[] dimensions() {
-		return new String[] {"Neurons", "Reconstruction Loss"};
+		return new String[] {"Neurons", "Reconstruction Loss", "Scale", "Rotation", "DeltaX", "DeltaY"};
 	}
 
 	@Override
 	public int[] dimensionSizes() {
-		return new int[] {CPPNComplexityBinLabels.maxNumNeurons - CPPNComplexityBinLabels.MIN_NUM_NEURONS + 1, numLossBins};
+		return new int[] {Parameters.parameters.integerParameter("maxNumNeurons") - CPPNComplexityBinLabels.MIN_NUM_NEURONS + 1, numLossBins};
 	}
 }
