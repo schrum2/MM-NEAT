@@ -57,21 +57,26 @@ public class GaierAutoencoderPictureBinLabels implements BinLabels  {
 			int count = 0;
 			for(int i = CPPNComplexityBinLabels.MIN_NUM_NEURONS; i <= CPPNComplexityBinLabels.maxNumNeurons; i++) {
 				for(int j = 0; j < numLossBins; j++) {
-					BigDecimal secondSegment = new BigDecimal(j);
-					BigDecimal thirdSegment = new BigDecimal(j + 1);
-					secondSegment = secondSegment.divide(new BigDecimal(numLossBins));
-					thirdSegment = thirdSegment.divide(new BigDecimal(numLossBins));
-					labels.add("Neurons" + i + "loss" + secondSegment.setScale(4, RoundingMode.HALF_UP).doubleValue() + "-"+ thirdSegment.setScale(4, RoundingMode.HALF_UP).doubleValue());
+//					BigDecimal secondSegment = new BigDecimal(j);
+//					BigDecimal thirdSegment = new BigDecimal(j + 1);
+//					secondSegment = secondSegment.divide(new BigDecimal(numLossBins));
+//					thirdSegment = thirdSegment.divide(new BigDecimal(numLossBins));
+//					labels.add("Neurons" + i + "loss" + secondSegment.setScale(4, RoundingMode.HALF_UP).doubleValue() + "-"+ thirdSegment.setScale(4, RoundingMode.HALF_UP).doubleValue());
+
+					
+					// Because the loss range can dynamically readjust, we just label each bin with an integer for simplicity
+					labels.add("Neurons" + i + "loss" + j);
 					count++;
 				}
 			}
 			assert count == size : "Incorrect number of bins created in archive: " + count;
 			
-			for(int i = 0; i < labels.size(); i++) {
-				// The \\. is an escape sequence for \., which in a regex is an escape sequence for just .
-				// Replaces periods with underscores
-				labels.set(i, labels.get(i).replaceAll("\\.", "_"));
-			}
+			// Not needed when bin labels associated with loss are simple integers
+//			for(int i = 0; i < labels.size(); i++) {
+//				// The \\. is an escape sequence for \., which in a regex is an escape sequence for just .
+//				// Replaces periods with underscores
+//				labels.set(i, labels.get(i).replaceAll("\\.", "_"));
+//			}
 		}
 		return labels;
 	}

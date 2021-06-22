@@ -40,7 +40,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 //	private static final int BRIGHTNESS_INDEX = 2;
 //	private Network individual;
 	private BufferedImage img = null;
-	public int imageHeight, imageWidth;
+	public static int imageHeight, imageWidth;
 	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
 	private double[] targetImageFeatures; 
 	
@@ -168,10 +168,16 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof GaierAutoencoderPictureBinLabels) {
 				// If the AutoEncoder has not been initialized yet, then loss is 1.0
 				double loss = AutoEncoderProcess.neverInitialized ? 1.0 : AutoEncoderProcess.getReconstructionLoss(image);
-				int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinLabels.numLossBins),GaierAutoencoderPictureBinLabels.numLossBins - 1);
+				
+				// TODO Change
+				//int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinLabels.numLossBins),GaierAutoencoderPictureBinLabels.numLossBins - 1);
+				int lossIndex = Math.min((int) Math.max(0, ((loss - Parameters.parameters.doubleParameter("minAutoencoderLoss")) / (Parameters.parameters.doubleParameter("maxAutoencoderLoss")) * GaierAutoencoderPictureBinLabels.numLossBins)), GaierAutoencoderPictureBinLabels.numLossBins - 1);
 				indicesMAPEliteBin = new int[]{nodes, lossIndex};
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNNeuronCountBinLabels) {
 				assert nodes >= CPPNNeuronCountBinLabels.MIN_NUM_NEURONS : "Why so few neurons? " + nodes + "\n" + tweannIndividual;
+				indicesMAPEliteBin = new int[] {nodes};
+			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNNeuronScaleRotationDeltaXDeltaYBinLabels) {
+				// TODO: Add the body here.
 				indicesMAPEliteBin = new int[] {nodes};
 			} else {
 				throw new IllegalStateException("No valid binning scheme provided for PictureTargetTask");
@@ -394,6 +400,6 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"includeFullSawtoothFunction:false",
 				"includeTriangleWaveFunction:false", 
 				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:true",
-				"deleteOldArchives:true"}); 
+				"deleteOldArchives:true", "dynamicAutoencoderIntervals:true"}); 
 	}
 }

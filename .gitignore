@@ -218,3 +218,5 @@ src/main/python/AutoEncoder/data/MNIST
 failedskull*
 imagematch/
 src/main/python/AutoEncoder/sim_autoencoder.pth
+src/main/python/ColorAutoEncoder/data/cifar-10-batches-py/
+src/main/python/ColorAutoEncoder/data/cifar-10-python.tar.gz
