@@ -11,7 +11,7 @@ public class GaierAutoencoderNeuronLossScaleRotationDeltaXDeltaYBinLabels implem
 List<String> labels = null;
 	
 	// Call these from CPPNNeuronScaleRotationDeltaXDeltaYBinLabels?
-	public static final int BIN_INDEX_NODES = 0;
+	public static final int BIN_INDEX_NEURONS = 0;
 	public static final int BIN_INDEX_LOSS = 1;
 	public static final int BIN_INDEX_SCALE = 2;
 	public static final int BIN_INDEX_ROTATION = 3;
@@ -37,27 +37,26 @@ List<String> labels = null;
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {
-			int size = (Parameters.parameters.integerParameter("maxNumNeurons") - CPPNComplexityBinLabels.MIN_NUM_NEURONS + 1) * numLossBins;
+			int size = ((Parameters.parameters.integerParameter("maxNumNeurons") - CPPNComplexityBinLabels.MIN_NUM_NEURONS + 1) * numLossBins * (Parameters.parameters.integerParameter("numScaleIntervals")
+					* Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")));
 			System.out.println("Archive Size: " + size);
 			labels = new ArrayList<String>(size);
 			int count = 0;
 			for(int i = CPPNComplexityBinLabels.MIN_NUM_NEURONS; i <= Parameters.parameters.integerParameter("maxNumNeurons"); i++) {
 				for(int j = 0; j < numLossBins; j++) {
-					for(int k = 0; k < Parameters.parameters.doubleParameter("maxScale") / Parameters.parameters.integerParameter("scaleDivider"); k++) {
-						for(int m = 0; m < 360; m++) {
-							for(int n = 0; n < Parameters.parameters.doubleParameter("imageCenterTranslationRange"); n++) {
-								for(int o = 0; o < Parameters.parameters.doubleParameter("imageCenterTranslationRange"); o++){
-									labels.add("Neurons" + i + "loss" + j + "-scale" + k + "-rotation" + m + "-deltaX" + n + "-deltaY" + o);
+					for(int k = 0; k < Parameters.parameters.integerParameter("numScaleIntervals"); k++) {
+						for(int m = 0; m < Parameters.parameters.integerParameter("numRotationIntervals"); m++) {
+							for(int n = 0; n < Parameters.parameters.integerParameter("numTranslationIntervals"); n++) {
+								for(int o = 0; o < Parameters.parameters.integerParameter("numTranslationIntervals"); o++){
+									labels.add("Neurons" + i + "-loss" + j + "-scale" + k + "-rotation" + m + "-deltaX" + n + "-deltaY" + o);
 									count++;
 								}
 							}
 						}
 					}
-					labels.add("Neurons" + i + "loss" + j);
-					count++;
 				}
 			}
-			assert count == size : "Incorrect number of bins created in archive: " + count;
+			assert count == size : "Incorrect number of bins created in archive: " + count + " size: " + size;
 		}
 		return labels;
 	}
@@ -71,7 +70,12 @@ List<String> labels = null;
 	 */
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = ((multi[BIN_INDEX_NODES] - CPPNComplexityBinLabels.MIN_NUM_NEURONS) * numLossBins + (multi[BIN_INDEX_LOSS]));
+		int binIndex = (((multi[BIN_INDEX_NEURONS] - CPPNComplexityBinLabels.MIN_NUM_NEURONS) * numLossBins * (Parameters.parameters.integerParameter("numScaleIntervals") * Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")) +
+				(multi[BIN_INDEX_LOSS] * (Parameters.parameters.integerParameter("numScaleIntervals") * Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")) + 
+				(multi[BIN_INDEX_SCALE] * Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") +
+				(multi[BIN_INDEX_ROTATION] * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")) + 
+				(multi[BIN_INDEX_DELTA_X] * Parameters.parameters.integerParameter("numTranslationIntervals") + 
+				(multi[BIN_INDEX_DELTA_Y]))))));
 		assert binIndex >= 0 : "Negative index " + Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
 	}
