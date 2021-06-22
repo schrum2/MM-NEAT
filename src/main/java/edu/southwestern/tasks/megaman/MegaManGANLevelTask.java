@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.megaman;
 
 import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -20,12 +19,9 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 
 	private MegaManGANGenerator megaManGenerator;
-	private MegaManTrackSegmentType segmentCount;
 
 	public MegaManGANLevelTask(){
 		super();
-		
-		segmentCount = new MegaManTrackSegmentType();
 
 		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) {
 			megaManGenerator = new MegaManSevenGANGenerator();
@@ -43,7 +39,7 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 	 * Extract real-valued latent vector from genotype and then send to GAN to get a MegaMan level
 	 */
 	@Override
-	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<List<Double>> individual) {
+	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<List<Double>> individual, MegaManTrackSegmentType segmentCount) {
 		List<Double> latentVector = individual.getPhenotype();
 		return getMegaManLevelListRepresentationFromStaticGenotype(megaManGenerator, latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
 	}
@@ -62,17 +58,9 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> {
 		return level;
 	}
 
-
-
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Uses original GECCO 2018 Mario GAN
 		MMNEAT.main("runNumber:0 randomSeed:0 base:megaManGAN log:MegaManGAN-Test saveTo:Test trials:1 GANInputSize:5 printFitness:true mu:50 maxGens:500 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask megaManGANLevelChunks:10 megaManAllowsSimpleAStarPath:true megaManAllowsConnectivity:true useMultipleGANsMegaMan:false saveAllChampions:false megaManAllowsLeftSegments:false megaManMaximizeEnemies:true cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false watch:true".split(" "));
-	}
-
-	@Override
-	public HashMap<String, Integer> findMiscSegments() {
-		// TODO Auto-generated method stub
-		return segmentCount.findMiscSegments();
 	}
 }

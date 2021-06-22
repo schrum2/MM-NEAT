@@ -49,7 +49,6 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	private int numFitnessFunctions = 0; 
 	private static final int NUM_OTHER_SCORES = 12;
 
-
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
 	private ArrayList<Double> behaviorVector;
 	private Pair<int[],Double> oneMAPEliteBinIndexScorePair;
@@ -123,9 +122,10 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 
 	
 	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {		
-		List<List<Integer>> level = getMegaManLevelListRepresentationFromGenotype(individual); //gets a level 
-		return evaluateOneLevel(level, individual);
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+		MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
+		List<List<Integer>> level = getMegaManLevelListRepresentationFromGenotype(individual, segmentCount); //gets a level 
+		return evaluateOneLevel(level, individual, segmentCount);
 	}
 
 	/**
@@ -135,7 +135,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	 * @return Pair of fitness and other scores
 	 */
 	@SuppressWarnings("unchecked")
-	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, Genotype<T> individual) {
+	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, Genotype<T> individual, MegaManTrackSegmentType segmentCount) {
 		long genotypeId = individual.getId();
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
 		Quad<HashSet<MegaManState>, ArrayList<MegaManAction>, MegaManState, Double> aStarResults = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level);
@@ -153,7 +153,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		double numWallEnemies = miscEnemyInfo.get("numWallEnemies");
 		double numGroundEnemies = miscEnemyInfo.get("numGroundEnemies");
 		double numFlyingEnemies = miscEnemyInfo.get("numFlyingEnemies");
-		HashMap<String,Integer> miscChunkInfo = findMiscSegments();
+		HashMap<String,Integer> miscChunkInfo = segmentCount.findMiscSegments();
 		double numRightSegments = miscChunkInfo.get("numRight");
 		double numLeftSegments = miscChunkInfo.get("numLeft");
 		double numUpSegments = miscChunkInfo.get("numUp");
@@ -410,13 +410,13 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	/**
 	 * Extract real-valued latent vector from genotype and then send to GAN to get a MegaMan level
 	 */
-	public abstract List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual);
-	/**
-	 * Finds miscellaneous information about the segments (up, down, horizontal, corner cases)
-	 * @param level - the level
-	 * @return HashMap<String,Integer> representing information about segments
-	 */
-	public abstract HashMap<String, Integer> findMiscSegments();
-
+	public abstract List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual, MegaManTrackSegmentType segmentCount);
+	
+	
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		// Test comparison that isn't working
+		MMNEAT.main("runNumber:0 parallelEvaluations:true threads:10 base:megamanmultigancomparebins log:MegaManMultiGANCompareBins-LineNoveltyVerticalAndConnectivity saveTo:LineNoveltyVerticalAndConnectivity trials:1 experiment:edu.southwestern.experiment.post.CompareMAPElitesBinningSchemeExperiment mapElitesBinLabels:edu.southwestern.tasks.megaman.MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels logLock:true io:false".split(" "));
+	}
+	
 
 }
