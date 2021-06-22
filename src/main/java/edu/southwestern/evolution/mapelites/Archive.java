@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.util.Vector;
 import java.util.stream.IntStream;
 
+import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.scores.Score;
 import edu.southwestern.util.ClassCreation;
@@ -171,7 +172,13 @@ public class Archive<T> {
 	 * @return elite individual score instance 
 	 */
 	public Score<T> getElite(int[] binIndices) {
-		return archive.get(mapping.oneDimensionalIndex(binIndices));
+		try {
+			return archive.get(mapping.oneDimensionalIndex(binIndices));
+		} catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("Multi-dimensional indices led to 1D index being out of bounds: "+Arrays.toString(binIndices));
+			System.err.println("Multi-dimensional indices led to 1D index being out of bounds: "+Arrays.toString(binIndices));
+			throw e;
+		}
 	}
 
 	/**
