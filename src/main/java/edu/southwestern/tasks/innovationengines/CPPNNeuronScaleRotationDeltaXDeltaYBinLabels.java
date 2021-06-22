@@ -27,17 +27,16 @@ public class CPPNNeuronScaleRotationDeltaXDeltaYBinLabels implements BinLabels{
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {
-			// change to int parameters below
 			int size = ((Parameters.parameters.integerParameter("maxNumNeurons") - CPPNComplexityBinLabels.MIN_NUM_NEURONS + 1) * (Parameters.parameters.integerParameter("numScaleIntervals")
 					* Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")));
 			System.out.println("Archive Size: "+size);
 			labels = new ArrayList<String>(size);
 			int count = 0;
 			for(int i = CPPNComplexityBinLabels.MIN_NUM_NEURONS; i <= Parameters.parameters.integerParameter("maxNumNeurons"); i++) {
-				for(int j = 0; j < Parameters.parameters.doubleParameter("maxScale") / Parameters.parameters.integerParameter("scaleDivider"); j++) {
-					for(int k = 0; k < 360; k++) {
-						for(int m = 0; m < Parameters.parameters.integerParameter("translationDivider"); m++) {
-							for(int n = 0; n < Parameters.parameters.integerParameter("translationDivider"); n++){
+				for(int j = 0; j < Parameters.parameters.integerParameter("numScaleIntervals"); j++) {
+					for(int k = 0; k < Parameters.parameters.integerParameter("numRotationIntervals"); k++) {
+						for(int m = 0; m < Parameters.parameters.integerParameter("numTranslationIntervals"); m++) {
+							for(int n = 0; n < Parameters.parameters.integerParameter("numTranslationIntervals"); n++){
 								labels.add("Neurons" + i + "-scale" + j + "-rotation" + k + "-deltaX" + m + "-deltaY" + n);
 								count++;
 							}
@@ -45,7 +44,8 @@ public class CPPNNeuronScaleRotationDeltaXDeltaYBinLabels implements BinLabels{
 					}
 				}
 			}
-			assert count == size : "Incorrect number of bins created in archive: " + count;
+			assert count == size : "Incorrect number of bins created in archive: " + count + " size: " + size;
+			
 		}
 		return labels;
 	}
@@ -59,10 +59,10 @@ public class CPPNNeuronScaleRotationDeltaXDeltaYBinLabels implements BinLabels{
 	 */
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = ((multi[BIN_INDEX_NEURONS] * (Parameters.parameters.integerParameter("numScaleIntervals") * Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")) * 
-						(multi[BIN_INDEX_SCALE] * Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * 
-						(multi[BIN_INDEX_ROTATION] * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")) * 
-						(multi[BIN_INDEX_DELTA_X] * Parameters.parameters.integerParameter("numTranslationIntervals") * 
+		int binIndex = (((multi[BIN_INDEX_NEURONS] - CPPNComplexityBinLabels.MIN_NUM_NEURONS) * (Parameters.parameters.integerParameter("numScaleIntervals") * Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")) + 
+						(multi[BIN_INDEX_SCALE] * Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") +
+						(multi[BIN_INDEX_ROTATION] * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")) + 
+						(multi[BIN_INDEX_DELTA_X] * Parameters.parameters.integerParameter("numTranslationIntervals") + 
 						(multi[BIN_INDEX_DELTA_Y])))));
 		assert binIndex >= 0 : "Negative index "+Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
