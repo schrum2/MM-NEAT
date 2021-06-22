@@ -78,11 +78,7 @@ public class TrainAutoEncoderProcess extends Comm {
 	 * saves the results to "test.pth".
 	 */
 	public void launchTrainingScript() {
-		if(!(new File(PythonUtil.PYTHON_EXECUTABLE).exists())) {
-			throw new RuntimeException("Before launching this program, you need to place the path to your "+
-									   "Python executable in my_python_path.txt within the main MM-NEAT directory." + PythonUtil.PYTHON_EXECUTABLE);
-		}
-
+		PythonUtil.checkPython();
 		// Run program with model architecture and weights specified as parameters
 		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, PYTHON_BASE_PATH + "MyAutoencoder.py", trainingImagesDirectory, pthFileName);
 		builder.redirectError(Redirect.INHERIT); // Standard error will print to console

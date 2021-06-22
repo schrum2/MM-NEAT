@@ -1,8 +1,8 @@
 """ 2D MAP-Elites archive plotter (Only for 2D archives with equal amount of bins in both dimensions)
     
     Usage:
-    python 2DMAPElitesSquareArchivePlotAnimator.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <logging frequency> <max value> <min value> <plot emitters?>
-    python 2DMAPElitesSquareArchivePlotAnimator.py latentvariablepartition/Mario0/LatentVariablePartition-Mario0_MAPElites_log.txt "Slice 1" 100 "Slice 2" 100 10 420 -1 False
+    python 2DMAPElitesSquareArchivePlotAnimatorShowDifference.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <logging frequency> <max value> <min value> <plot emitters?>
+    python 2DMAPElitesSquareArchivePlotAnimatorShowDifference.py latentvariablepartition/Mario0/LatentVariablePartition-Mario0_MAPElites_log.txt "Slice 1" 100 "Slice 2" 100 10 420 -1 False
 
     Note: Min and Max do NOT need to be given, they will be calculated automatically
 """
@@ -124,7 +124,7 @@ for iteration in range(len(numeric_lines)): # If will log
         bins = np.array(numeric_lines[iteration]) # To array
         bins.resize(dimensions[0], dimensions[1]) # Resize 1D array to 2D array with dimensions based on the overall size (must be square)
         
-        cmap = "viridis" # Colormap to use
+        cmap = "afmhot" # Colormap to use
         
         plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap)) # Add color bar
         plt.text(dimensions[1]/2, (dimensions[0]/20)+dimensions[0], (title + " Step:"+str(iteration)), horizontalalignment='center', verticalalignment='baseline')
@@ -146,8 +146,7 @@ for iteration in range(len(numeric_lines)): # If will log
                 while counter < iteration:
                     y_values.append(emitter_means[counter][e_step][1])
                     counter += logging_frequeny
-                
-                
+                    
                 for index in (range(5)): # How long history is drawn
                     adjusted_index = len(x_values) - index
                     plt.plot(x_values[adjusted_index:adjusted_index+2], y_values[adjusted_index:adjusted_index+2], color=emitter_colors[emitter_counter%len(emitter_colors)], alpha=(((-index+5)/3)))
@@ -159,6 +158,10 @@ for iteration in range(len(numeric_lines)): # If will log
                 emitter_counter += 1
             
         plt.imshow(bins, cmap=cmap, norm=norm) # Create image
+        if iteration > 0:
+            prev_bins = np.array(numeric_lines[iteration-logging_frequeny]) # To array
+            prev_bins.resize(dimensions[0], dimensions[1])
+            plt.imshow(prev_bins, cmap='gray', norm=norm) # Create image
         
         plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png")
         plt.clf() # Close plots to prevent memory issue

@@ -10,6 +10,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import edu.southwestern.parameters.Parameters;
 
 /**
@@ -24,11 +27,56 @@ public class MegaManConvertMMLVToJSON {
 	public static int enemyNumber = -1;
 	public static String enemyString = null;
 	public static String bossString = null;
+	
+	/**
+	 * Main method allows for json file generation from a selection of levels
+	 * 
+	 */
+    public static void main(String[] args) throws FileNotFoundException { // generate new json files
+    	// All directories to pull from
+    	
+    	ArrayList<List<List<Integer>>> levels = new ArrayList<List<List<Integer>>>();
+    	for(int i = 1;i<=10;i++) {
+    		if (i != 9) {
+    			maxX=0;
+    			maxY=0;
+    			visited.clear();
+    			enemyNumber=-1;
+    			enemyString = null;
+    			bossString = null;
+    			List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
+    			levels.add(level);
+    		}
+		}
+
+        // output file
+        String outputFile = "data/VGLC/MegaMan/NoWater9MegaMan.json";
+        
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        
+        for (List<List<Integer>> level : levels) {
+        	MegaManVGLCUtil.upAndDownTrainingData(level);
+        }
+        
+        
+        String out = gson.toJson(MegaManVGLCUtil.json);
+        System.out.println("Created JSON String");
+        out = out.replace("\n", "").replace("      ", " ").replace(",  ", ", ").replace(",    ",", ").replace("    ","").replace("  ", "").replace("[ ", "[");
+
+        PrintWriter writer = new PrintWriter(outputFile);
+
+        writer.print(out);
+        writer.close();
+
+        System.out.println("Wrote file with " + levels.size() + " examples");
+    }    
+	
+	
 	/**
 	 * useful for testing
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void oldMain(String[] args) {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"
 				, "useThreeGANsMegaMan:true" });
 		for(int i = 11;i<=29;i++) {

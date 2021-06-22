@@ -347,7 +347,7 @@ public class Parameters {
 		integerOptions.add("noveltyBinAmount", -1, "The number of bins that exist along the dimension for the Novelty binning scheme.");
 		integerOptions.add("solutionVectorSlices", 2, "The amount of slices to cut a solution vector into in a MAP Elites instance"); 
 		integerOptions.add("latentPartitionBinDimension", -1, "Bins in each dimension for LatentVariablePartitionSum");
-		integerOptions.add("numReconstructionLossBins", 10, "Divide 1 by this number to get the number of bins for loss.");
+		integerOptions.add("numReconstructionLossBins", 32, "Divide 1 by this number to get the number of bins for loss.");
 		integerOptions.add("randomInitialMutationChances", 0, "Determines the number of initial images in the iteration0 folder.");
 		integerOptions.add("numScaleIntervals", 10, "Determines by how much to divide the scale value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
 		integerOptions.add("numRotationIntervals", 10, "Determines by how much to divide the rotation value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
@@ -763,6 +763,7 @@ public class Parameters {
 		booleanOptions.add("useRMSEImageMatchFitness", false, "Use RMSE as the fitness calculation if true.");
 		booleanOptions.add("trackPseudoArchive", false, "Option to track the progress of an objective function with a binning scheme.");
 		booleanOptions.add("trainingAutoEncoder", false, "If we are training the autoencoder");
+		booleanOptions.add("trainInitialAutoEncoder", false, "If an auto-encoder is trained on population BEFORE adding to MAP Elites archive");
 		booleanOptions.add("AnimateRotation", true, "If AnimationBreeder is going to animate using rotation");
 		booleanOptions.add("AnimateScale", true, "If AnimationBreeder is going to animate using scale.");
 		booleanOptions.add("AnimateDeltaX", true, "If AnimationBreeder is going to translate images horizontally.");

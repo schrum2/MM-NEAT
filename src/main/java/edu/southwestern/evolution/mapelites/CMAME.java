@@ -9,11 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.mapelites.emitters.*;
+import edu.southwestern.evolution.mapelites.emitters.Emitter;
+import edu.southwestern.evolution.mapelites.emitters.ImprovementEmitter;
+import edu.southwestern.evolution.mapelites.emitters.OptimizingEmitter;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -23,7 +24,9 @@ import edu.southwestern.util.file.FileUtilities;
  * Implementation of CMA-ME as an extension
  * of MAP Elites. Implementation is partially
  * detailed in the original CMA-ME paper:
- * https://arxiv.org/pdf/1912.02400.pdf
+ * 
+ * Matthew C. Fontaine, Julian Togelius, Stefanos Nikolaidis, and Amy K. Hoover, "Covariance Matrix Adaptation for the Rapid Illumination of Behavior Space"
+ * in GECCO 2020. https://arxiv.org/pdf/1912.02400.pdf
  * 
  * @author Maxx Batterton
  *

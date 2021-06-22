@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
@@ -254,7 +255,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	 *                      will be saved
 	 */
 	@SuppressWarnings("unchecked")
-	public void saveAllArchiveImages(String directoryName, int saveWidth, int saveHeight) {
+	public void saveAllArchiveImages(String directoryName, int saveWidth, int saveHeight, Vector<Score<T>> collectionToSave) {
 		String snapshot = FileUtilities.getSaveDirectory() + File.separator + "snapshots";
 		File snapshotDir = new File(snapshot);
 		if(!snapshotDir.exists()) snapshotDir.mkdir();
@@ -267,8 +268,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		BinLabels labels = archive.getBinMapping();
 //		int saveWidth = Parameters.parameters.integerParameter("imageWidth"); 
 //		int saveHeight = Parameters.parameters.integerParameter("imageHeight");
-		
-		for(Score<T> s : archive.getArchive()) {
+
+		collectionToSave.parallelStream().forEach( (s) -> {
 			if(s != null) {
 				Network cppn = s.individual.getPhenotype();
 				BufferedImage image = PicbreederTask.imageFromCPPN(cppn, saveWidth, saveHeight, ArrayUtil.doubleOnes(cppn.numInputs()));
@@ -276,7 +277,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				String fullName = subdir + File.separator + s.behaviorIndexScore() + "-" + labels.binLabels().get(labels.oneDimensionalIndex(s.MAPElitesBinIndex()))+".jpg";
 				GraphicsUtil.saveImage(image, fullName);
 			}
-		}
+		});
 	}
 	
 	

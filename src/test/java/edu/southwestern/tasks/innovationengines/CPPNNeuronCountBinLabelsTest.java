@@ -13,7 +13,7 @@ public class CPPNNeuronCountBinLabelsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[] {"maxNumNeurons:100", "trainingAutoEncoder:true"});
+		Parameters.initializeParameterCollections(new String[] {"maxNumNeurons:100", "trainingAutoEncoder:false"});
 		labels = new CPPNNeuronCountBinLabels();
 	}
 	
