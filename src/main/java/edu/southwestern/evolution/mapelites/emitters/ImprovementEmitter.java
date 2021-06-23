@@ -6,6 +6,14 @@ import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.CMAME;
 import edu.southwestern.util.datastructures.Pair;
 
+/**
+ * Improvement Emitter described in https://arxiv.org/pdf/1912.02400.pdf,
+ * Ranks new bins above improved bins, with failed bins last. Because
+ * new bins are ranked higher, this type of emitter will prioritize 
+ * filling the archive.
+ * 
+ * @author Maxx Batterton
+ */
 public class ImprovementEmitter extends Emitter {
 
 	public ImprovementEmitter(int dimension, Archive<ArrayList<Double>> archive, int id) {
@@ -13,7 +21,7 @@ public class ImprovementEmitter extends Emitter {
 	}
 	
 	@Override
-	protected String getEmitterSuffix() {
+	protected String getEmitterPrefix() {
 		return "Improvement";
 	}
 	
@@ -25,12 +33,13 @@ public class ImprovementEmitter extends Emitter {
 		} else {
 			solutionCount++;
 			validParents++;
+			// Negate score because CMA-ES is a minimizer
 			if (Double.isInfinite(currentScore)) { // if bin was empty (infinite magnitude must be negative infinity)
 				if (CMAME.PRINT_DEBUG) {System.out.println("Added new bin ("+newScore+").");}
-				return new Pair<Double,SOLUTION_TYPE>(-newScore, Emitter.SOLUTION_TYPE.NEW_BIN); // Negate score because CMA-ES is a minimizer	
+				return new Pair<Double,SOLUTION_TYPE>(-newScore, Emitter.SOLUTION_TYPE.NEW_BIN); // Tags this solution as a new bin to sort it out in the base emitter class
 			} else { // if bin existed, but was worse than the new one
 				if (CMAME.PRINT_DEBUG) {System.out.println("Improved current bin ("+currentScore+") with new bin ("+newScore+")");}
-				return new Pair<Double,SOLUTION_TYPE>(-(newScore - currentScore), Emitter.SOLUTION_TYPE.IMPROVED_BIN);
+				return new Pair<Double,SOLUTION_TYPE>(-(newScore - currentScore), Emitter.SOLUTION_TYPE.IMPROVED_BIN); // Tags this solution improved to rank it lower
 			}
 		}	
 	}	
