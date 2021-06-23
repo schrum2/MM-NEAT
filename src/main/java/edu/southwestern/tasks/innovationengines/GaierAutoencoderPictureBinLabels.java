@@ -1,7 +1,7 @@
 package edu.southwestern.tasks.innovationengines;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+//import java.math.BigDecimal;
+//import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +39,7 @@ public class GaierAutoencoderPictureBinLabels implements BinLabels  {
 			throw new IllegalStateException("You can't use the GaierAutoencoderPictureBinLabels binning scheme without training an autoencoder");
 		}
 		numLossBins = Parameters.parameters.integerParameter("numReconstructionLossBins");
+		System.out.println("Number of Loss bins: "+ numLossBins);
 	}
 
 	/**

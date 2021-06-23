@@ -102,8 +102,11 @@ public class PictureTargetFitnessTroubleshoot {
 		//BufferedImage skull = ImageIO.read(new File("targetimage\\QuadrantRMSESkull1\\archive\\(4,4,4,4)\\0.71548(4,4,4,4)372085.jpg"));
 		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.jpg"));
 		//BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.jpg"));
-		BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skullWithAutoencoder.png"));
-		BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.png"));
+		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skullWithAutoencoder.png"));
+		//BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.png"));
+		
+		BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "ScreamAttempt.jpg"));
+		BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "theScream256.png"));
 		
 		
 		//ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + filename));

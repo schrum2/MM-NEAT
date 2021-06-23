@@ -2,6 +2,7 @@ package edu.southwestern.tasks.innovationengines;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,6 +17,11 @@ public class GaierAutoencoderPictureBinLabelsTest {
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"maxNumNeurons:100", "numReconstructionLossBins:"+NUM_LOSS_BINS, "trainingAutoEncoder:true"});
 		labels = new GaierAutoencoderPictureBinLabels();
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		Parameters.parameters = null; // Important that trainingAutoEncoder is not true for other tests
 	}
 
 	@Test
@@ -36,6 +42,7 @@ public class GaierAutoencoderPictureBinLabelsTest {
 		for(int i = 0; i < allNeuronValues.length; i++) {
 			assertEquals("Neurons" + allNeuronValues[i] + "loss" + labelEnds[i], labels.binLabels().get(labels.oneDimensionalIndex(new int[] {allNeuronValues[i],(int) (allLossValues[i]*NUM_LOSS_BINS)})));
 		}
+		Parameters.parameters.setBoolean("trainingAutoEncoder", false);
 	}
 
 }

@@ -333,11 +333,11 @@ public class LevelParser {
      */
     public static void main(String[] args) throws FileNotFoundException { // generate new json files
     	// All directories to pull from
-    	String[] inputDirectories = new String[] {"data/VGLC/SuperMarioBrosNewEncoding/underground"};
+    	String[] inputDirectories = new String[] {"data/VGLC/SuperMarioBrosNewEncoding/underground", "data/VGLC/SuperMarioBrosNewEncoding/overworlds"};
     	//String[] inputDirectories = new String[] {"data/VGLC/SuperMarioBrosNewEncoding/overworlds"};
 
         // output file
-        String outputFile = "data/VGLC/SuperMarioBrosNewEncoding/Mario-underground.json";
+        String outputFile = "data/VGLC/SuperMarioBrosNewEncoding/Mario-overworld-underground.json";
 
         ArrayList<int[][]> examples = new ArrayList<>();
         

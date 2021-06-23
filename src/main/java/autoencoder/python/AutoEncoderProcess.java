@@ -53,6 +53,7 @@ public class AutoEncoderProcess extends Comm {
 	 */
 	public AutoEncoderProcess(String pthName, AUTOENCODER_MODE mode) {
 		PythonUtil.setPythonProgram();
+		System.out.println("Loading AutoEncoder: "+pthName+" in "+mode.name()+" mode");
 		savedAutoencoder = pthName;
 		this.mode = mode;
 	}
@@ -99,7 +100,6 @@ public class AutoEncoderProcess extends Comm {
 		AutoEncoderProcess newProcess = new AutoEncoderProcess(nameNewPthFile, mode);
 		return newProcess;
 	}
-
 
 	public static double getReconstructionLoss(BufferedImage image) {
 		// Need to resize. Autoencoder must have 28x28 input
@@ -168,11 +168,7 @@ public class AutoEncoderProcess extends Comm {
 	 * results in a .pth file specified by SAVED_AUTOENCODER.
 	 */
 	public void launchAutoEncoder() {
-		if(!(new File(PythonUtil.PYTHON_EXECUTABLE).exists())) {
-			throw new RuntimeException("Before launching this program, you need to place the path to your "+
-					"Python executable in my_python_path.txt within the main MM-NEAT directory.");
-		}
-
+		PythonUtil.checkPython();
 		// Run program with model architecture and weights specified as parameters
 		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, AUTOENCODER_PATH, savedAutoencoder, mode == AUTOENCODER_MODE.IMAGE ? "image" : "loss");
 		builder.redirectError(Redirect.INHERIT); // Standard error will print to console
