@@ -149,14 +149,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 			ps.close();
 			
-			// Archive plot
+			// Archive plot: In default GNU Plot window
 			ps = new PrintStream(plot);
 			ps.println("unset key");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 			ps.println("set yrange [0:"+ yrange +"]");
 			ps.println("set xrange [0:"+ archiveSize + "]");
 			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
-			ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+			//ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 			// The :1 is for skipping the "generation" number logged in the file
 			ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 			ps.close();
