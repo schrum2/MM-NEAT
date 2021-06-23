@@ -87,10 +87,10 @@ def rastrigin(sol):
     """
     dim = sol.shape[1]
     
-    best_obj = 0.0
-    worst_obj = 10*dim + ((-5.12)**2 -10 * np.cos(2 * math.pi * -5.12))*dim
+#    best_obj = 0.0
+#    worst_obj = 10*dim + ((-5.12)**2 -10 * np.cos(2 * math.pi * -5.12))*dim
     raw_obj = np.add(10*dim, np.sum(np.add(np.square(sol), np.multiply(-10, np.cos(np.multiply(2 * math.pi, sol)))), axis=1))
-    objs = (raw_obj - worst_obj) / (best_obj - worst_obj) * 100
+#    objs = (raw_obj - worst_obj) / (best_obj - worst_obj) * 100
     
     clipped = sol.copy()
     clip_indices = np.where(np.logical_or(clipped > 5.12, clipped < -5.12))
@@ -103,7 +103,7 @@ def rastrigin(sol):
         axis=1,
     )
 
-    return objs, bcs
+    return -raw_obj, bcs
     
     
 
@@ -197,7 +197,7 @@ def create_optimizer(algorithm, dim, seed):
     return Optimizer(archive, emitters)
 
 
-def save_heatmap(archive, heatmap_path):
+def save_heatmap(archive, heatmap_path, minimum_value):
     """Saves a heatmap of the archive to the given path.
 
     Args:
@@ -206,12 +206,12 @@ def save_heatmap(archive, heatmap_path):
     """
     if isinstance(archive, GridArchive):
         plt.figure(figsize=(8, 6))
-        grid_archive_heatmap(archive, vmin=0, vmax=100)
+        grid_archive_heatmap(archive, vmin=minimum_value, vmax=0)
         plt.tight_layout()
         plt.savefig(heatmap_path)
     elif isinstance(archive, CVTArchive):
         plt.figure(figsize=(16, 12))
-        cvt_archive_heatmap(archive, vmin=0, vmax=100)
+        cvt_archive_heatmap(archive, vmin=minimum_value, vmax=0)
         plt.tight_layout()
         plt.savefig(heatmap_path)
     plt.close(plt.gcf())
@@ -254,7 +254,7 @@ def rastrigin_main(algorithm,
 
     non_logging_time = 0.0
     with alive_bar(itrs) as progress:
-        save_heatmap(archive, str(outdir / f"{name}_heatmap_{0:05d}.png"))
+        save_heatmap(archive, str(outdir / f"{name}_heatmap_{0:05d}.png"), -(10*dim + ((-5.12)**2 -10 * np.cos(2 * math.pi * -5.12))*dim))
 
         for itr in range(1, itrs + 1):
             itr_start = time.time()
@@ -284,7 +284,8 @@ def rastrigin_main(algorithm,
                       f"QD Score: {metrics['QD Score']['y'][-1]:.3f}")
 
                 save_heatmap(archive,
-                             str(outdir / f"{name}_heatmap_{itr:05d}.png"))
+                             str(outdir / f"{name}_heatmap_{itr:05d}.png"),
+                             -(10*dim + ((-5.12)**2 -10 * np.cos(2 * math.pi * -5.12))*dim))
 
     # Plot metrics.
     print(f"Algorithm Time (Excludes Logging and Setup): {non_logging_time}s")
