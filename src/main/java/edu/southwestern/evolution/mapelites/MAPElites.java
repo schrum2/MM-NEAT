@@ -29,7 +29,6 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
