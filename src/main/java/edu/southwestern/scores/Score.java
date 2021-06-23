@@ -441,6 +441,11 @@ public class Score<T> {
 		return oneMAPEliteMap != null;
 	}
 	
+	public void assignMAPElitesBehaviorMapAndScore(HashMap<String,Double> map, double score) {
+		oneMAPEliteMap = map;
+		mapElitesSoleBinQualityScore =	score;
+	}
+	
 	public void assignMAPElitesBinAndScore(int[] binIndices, double score) {
 		oneMAPEliteBinIndex = binIndices;
 		mapElitesSoleBinQualityScore =	score;

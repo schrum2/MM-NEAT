@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.loderunner.mapelites;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.evolution.mapelites.BinLabels;
@@ -49,6 +50,30 @@ public class LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels implem
 	@Override
 	public int[] dimensionSizes() {
 		return new int[] {BINS_PER_DIMENSION, BINS_PER_DIMENSION, BINS_PER_DIMENSION};
+	}
+
+	@Override
+	public int oneDimensionalIndex(HashMap<String, Double> keys) {
+		return oneDimensionalIndex(multiDimensionalIndices(keys));
+	}
+
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Double> keys) {
+		double percentConnected = keys.get("Connected Percent");
+		double percentGround = keys.get("Ground Percent");
+		double percentLadders = keys.get("Ladders Percent");
+		
+		double SCALE_GROUND_LADDERS = BINS_PER_DIMENSION/4.0; //scales by 1/4 of the dimension to go in steps of 4
+		//gets correct indices for all dimensions based on percent and multiplied by 10 to be a non decimal 
+		int connectedIndex = Math.min((int)(percentConnected*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); 		
+		// ground scaling is frustrating. percentGroundseems to land between 0.1 and 0.43. So, subtract 0.1 to get to
+		// 0.0 to 0.33, then multiply by 3 to get 0.0 to 0.99
+		int groundIndex = Math.max(0, Math.min((int)((percentGround-0.1)*3*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1));
+		int laddersIndex = Math.min((int)(percentLadders*SCALE_GROUND_LADDERS*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
+		
+		int[] dims = new int[] {connectedIndex, groundIndex, laddersIndex}; // connectivity, percent ground scaled, percent ladders scaled
+		
+		return dims;
 	}
 
 }
