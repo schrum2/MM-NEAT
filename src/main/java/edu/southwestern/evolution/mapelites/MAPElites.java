@@ -29,6 +29,7 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -586,9 +587,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				}
 			}
 			Parameters.parameters.setDouble("minAutoencoderLoss", minLoss);
-			Parameters.parameters.setDouble("minAutoencoderLoss", maxLoss);	
+			Parameters.parameters.setDouble("maxAutoencoderLoss", maxLoss);	
 			System.out.println("Loss ranges from "+minLoss+" to "+maxLoss);
-		}
+		}		
 		// Will bin differently because autoencoder has changed, as have expected loss bounds. Images get re-evaluated
 		this.archive = new Archive<T>(previousImages, this.archive.getBinLabelsClass(), this.archive.getArchiveDirectory(), CommonConstants.netio); 
 	}

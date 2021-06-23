@@ -53,6 +53,7 @@ public class AutoEncoderProcess extends Comm {
 	 */
 	public AutoEncoderProcess(String pthName, AUTOENCODER_MODE mode) {
 		PythonUtil.setPythonProgram();
+		System.out.println("Loading AutoEncoder: "+pthName+" in "+mode.name()+" mode");
 		savedAutoencoder = pthName;
 		this.mode = mode;
 	}
