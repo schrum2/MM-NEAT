@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.evolution.mapelites.BinLabels;
@@ -129,7 +130,8 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 		return dbc;
 	}
 	
-	
-	// Behavior characterization depends on the specific binning scheme
-	// public static double[] behaviorCharacterization(...);
+	@Override
+	public int oneDimensionalIndex(HashMap<String, Object> keys) {
+		return oneDimensionalIndex(multiDimensionalIndices(keys));
+	}
 }

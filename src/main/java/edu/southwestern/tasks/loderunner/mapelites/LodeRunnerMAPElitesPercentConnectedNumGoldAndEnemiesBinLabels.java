@@ -45,15 +45,15 @@ public class LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels imple
 	}
 
 	@Override
-	public int oneDimensionalIndex(HashMap<String, Double> keys) {
+	public int oneDimensionalIndex(HashMap<String, Object> keys) {
 		return oneDimensionalIndex(multiDimensionalIndices(keys));
 	}
 
 	@Override
-	public int[] multiDimensionalIndices(HashMap<String, Double> keys) {
-		double percentConnected = keys.get("Connected Percent");
-		double numTreasure = keys.get("Treasures");
-		double numEnemies = keys.get("Enemies");
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		double percentConnected = (Double) keys.get("Connected Percent");
+		double numTreasure = (Double) keys.get("Treasures");
+		double numEnemies = (Double) keys.get("Enemies");
 		
 		//gets correct indices for all dimensions based on percent and multiplied by 10 to be a non decimal 
 		int connectedIndex = Math.min((int)(percentConnected*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); 		

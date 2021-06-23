@@ -54,10 +54,9 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
 	private ArrayList<Double> behaviorVector;
-	private int[] oneMAPEliteBinIndex;
-	private HashMap<String,Double> behaviorCharacteristics;
+	private HashMap<String,Object> behaviorCharacteristics;
 	private double binScore;
-	private int[][][] klDivLevels;
+	private int[][][] klDivLevels; // Should this be here?
 	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
 	
 	private boolean initialized = false; // become true on first evaluation
@@ -206,10 +205,8 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			//result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
 			if(behaviorCharacteristics != null) {
 				result.assignMAPElitesBehaviorMapAndScore(behaviorCharacteristics, binScore);
-			} else if(oneMAPEliteBinIndex != null) {
-				result.assignMAPElitesBinAndScore(oneMAPEliteBinIndex, binScore);
 			} else {
-				throw new UnsupportedOperationException("Do not use a traditional behavior vector with Lode Runner. Specify either the dimensions or a map of behavior characteristics");
+				throw new UnsupportedOperationException("Specify a map of behavior characteristics");
 			}
 		}
 		return result;
@@ -359,32 +356,29 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				// Combo of connectivity and A* overwhelms regular A*
 				binScore = comboFitness;
 			}
-			int dim1D;
-			
+
+			// All possible behavior characterization information
+			HashMap<String, Object> behaviorMap = new HashMap<>();
+			behaviorMap.put("Connected Percent",percentConnected);
+			behaviorMap.put("Ground Percent", percentGround);
+			behaviorMap.put("Ladders Percent", percentLadders);
+			behaviorMap.put("Treasures", numTreasure+0.0);
+			behaviorMap.put("Enemies", numEnemies+0.0);
+			// These characteristics are costly to compute, so only compute if specific labels are being used
 			if (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { 
-				KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) MMNEAT.getArchiveBinLabelsClass();
 				int[][] oneLevelAs2DArray = ArrayUtil.int2DArrayFromListOfLists(level);
-				oneMAPEliteBinIndex = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
-				dim1D = klLabels.oneDimensionalIndex(oneMAPEliteBinIndex);
+				behaviorMap.put("2D Level", oneLevelAs2DArray);
+				behaviorMap.put("Comparison Levels", klDivLevels);
 			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
-				LatentVariablePartitionSumBinLabels labels = (LatentVariablePartitionSumBinLabels) MMNEAT.getArchiveBinLabelsClass();
 				@SuppressWarnings("unchecked")
 				ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
 				double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
-				oneMAPEliteBinIndex = labels.discretize(labels.behaviorCharacterization(latentVector));
-				dim1D = labels.oneDimensionalIndex(oneMAPEliteBinIndex);
-			} else {
-				HashMap<String, Double> behaviorMap = new HashMap<>();
-				behaviorMap.put("Connected Percent",percentConnected);
-				behaviorMap.put("Ground Percent", percentGround);
-				behaviorMap.put("Ladders Percent", percentLadders);
-				behaviorMap.put("Treasures", numTreasure+0.0);
-				behaviorMap.put("Enemies", numEnemies+0.0);
-				behaviorCharacteristics = behaviorMap;
-				
-				dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorCharacteristics);
+				behaviorMap.put("Solution Vector", latentVector);
 			}
-							
+			
+			behaviorCharacteristics = behaviorMap;			
+			int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorCharacteristics);
+
 			BufferedImage levelSolution = null;
 			BufferedImage levelImage = null;
 			try {

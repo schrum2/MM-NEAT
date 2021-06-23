@@ -53,7 +53,7 @@ public class Score<T> {
 	// If assigned, then can be used instead of the wasteful behavior vector
 	private int[] oneMAPEliteBinIndex;
 	// If assigned, then can be used instead of the wasteful behavior vector or the oneMAPEliteBinIndexScorePair
-	private HashMap<String,Double> oneMAPEliteMap;
+	private HashMap<String,Object> oneMAPEliteMap;
 	// If assigned, represents the score in the one bin actually being used in MAP Elites
 	private double mapElitesSoleBinQualityScore = Double.NaN;
 	
@@ -71,7 +71,7 @@ public class Score<T> {
 		mapElitesSoleBinQualityScore = score;
 	}
 
-	public Score(Genotype<T> individual, double[] scores, HashMap<String,Double> map, double score) {
+	public Score(Genotype<T> individual, double[] scores, HashMap<String,Object> map, double score) {
 		this(individual, scores, null, new double[0]);
 		oneMAPEliteMap = map;
 		mapElitesSoleBinQualityScore = score;
@@ -441,7 +441,7 @@ public class Score<T> {
 		return oneMAPEliteMap != null;
 	}
 	
-	public void assignMAPElitesBehaviorMapAndScore(HashMap<String,Double> map, double score) {
+	public void assignMAPElitesBehaviorMapAndScore(HashMap<String,Object> map, double score) {
 		oneMAPEliteMap = map;
 		mapElitesSoleBinQualityScore =	score;
 	}

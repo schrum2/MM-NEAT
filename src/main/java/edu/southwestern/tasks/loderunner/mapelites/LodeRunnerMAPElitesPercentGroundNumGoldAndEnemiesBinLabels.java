@@ -45,15 +45,15 @@ public class LodeRunnerMAPElitesPercentGroundNumGoldAndEnemiesBinLabels implemen
 	}
 
 	@Override
-	public int oneDimensionalIndex(HashMap<String, Double> keys) {
+	public int oneDimensionalIndex(HashMap<String, Object> keys) {
 		return oneDimensionalIndex(multiDimensionalIndices(keys));
 	}
 
 	@Override
-	public int[] multiDimensionalIndices(HashMap<String, Double> keys) {
-		double numTreasure = keys.get("Treasures");
-		double numEnemies = keys.get("Enemies");
-		double percentGround = keys.get("Ground Percent");
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		double numTreasure = (Double) keys.get("Treasures");
+		double numEnemies = (Double) keys.get("Enemies");
+		double percentGround = (Double) keys.get("Ground Percent");
 
 		int groundIndex = Math.max(0, Math.min((int)((percentGround-0.1)*3*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1));
 		

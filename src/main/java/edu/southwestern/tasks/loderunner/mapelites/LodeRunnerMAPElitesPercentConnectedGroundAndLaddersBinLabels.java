@@ -53,15 +53,15 @@ public class LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels implem
 	}
 
 	@Override
-	public int oneDimensionalIndex(HashMap<String, Double> keys) {
+	public int oneDimensionalIndex(HashMap<String, Object> keys) {
 		return oneDimensionalIndex(multiDimensionalIndices(keys));
 	}
 
 	@Override
-	public int[] multiDimensionalIndices(HashMap<String, Double> keys) {
-		double percentConnected = keys.get("Connected Percent");
-		double percentGround = keys.get("Ground Percent");
-		double percentLadders = keys.get("Ladders Percent");
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		double percentConnected = (Double) keys.get("Connected Percent");
+		double percentGround = (Double) keys.get("Ground Percent");
+		double percentLadders = (Double) keys.get("Ladders Percent");
 		
 		double SCALE_GROUND_LADDERS = BINS_PER_DIMENSION/4.0; //scales by 1/4 of the dimension to go in steps of 4
 		//gets correct indices for all dimensions based on percent and multiplied by 10 to be a non decimal 

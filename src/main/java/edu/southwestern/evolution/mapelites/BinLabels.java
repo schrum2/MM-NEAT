@@ -33,7 +33,7 @@ public interface BinLabels {
 	 * @param keys Dictionary associating labels with aspects of phenotype's behavior
 	 * @return 1D index in the bin labels array
 	 */
-	public int oneDimensionalIndex(HashMap<String,Double> keys);
+	public int oneDimensionalIndex(HashMap<String,Object> keys);
 	
 	/**
 	 * If a HashMap is provided, then the components are raw parts of a behavior
@@ -44,7 +44,7 @@ public interface BinLabels {
 	 * @param keys Dictionary associating labels with aspects of phenotype's behavior
 	 * @return Multi-dimensional index in the archive
 	 */
-	public int[] multiDimensionalIndices(HashMap<String,Double> keys);
+	public int[] multiDimensionalIndices(HashMap<String,Object> keys);
 	
 	/**
 	 * Gets the names of each bin dimension
