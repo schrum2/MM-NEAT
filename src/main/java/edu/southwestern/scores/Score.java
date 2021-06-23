@@ -2,15 +2,16 @@ package edu.southwestern.scores;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.ScoreHistory;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.Statistic;
 
 /**
@@ -50,8 +51,12 @@ public class Score<T> {
 	// A behavior characterization optionally used with Behavioral Diversity
 	private ArrayList<Double> behaviorVector;
 	// If assigned, then can be used instead of the wasteful behavior vector
-	private Pair<int[], Double> oneMAPEliteBinIndexScorePair;
-
+	private int[] oneMAPEliteBinIndex;
+	// If assigned, then can be used instead of the wasteful behavior vector or the oneMAPEliteBinIndexScorePair
+	private HashMap<String,Double> oneMAPEliteMap;
+	// If assigned, represents the score in the one bin actually being used in MAP Elites
+	private double mapElitesSoleBinQualityScore = Double.NaN;
+	
 	/**
 	 * Allows for more efficient MAP Elites implementation, because a large behavior
 	 * vector of mostly empty values is not needed.
@@ -62,7 +67,14 @@ public class Score<T> {
 	 */
 	public Score(Genotype<T> individual, double[] scores, int[] indicesMAPEliteBin, double score) {
 		this(individual, scores, null, new double[0]);
-		oneMAPEliteBinIndexScorePair = new Pair<int[],Double>(indicesMAPEliteBin, score);
+		oneMAPEliteBinIndex = indicesMAPEliteBin;
+		mapElitesSoleBinQualityScore = score;
+	}
+
+	public Score(Genotype<T> individual, double[] scores, HashMap<String,Double> map, double score) {
+		this(individual, scores, null, new double[0]);
+		oneMAPEliteMap = map;
+		mapElitesSoleBinQualityScore = score;
 	}
 	
 	/**
@@ -187,10 +199,16 @@ public class Score<T> {
 	 * @return Fitness/behavior score associated with that bin
 	 */
 	public double behaviorIndexScore(int index) {
-		if(oneMAPEliteBinIndexScorePair != null) {
-			if(MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1) != index)
-				throw new IllegalArgumentException("Should not ask for score associated with MAP Elites bin index that does not match: " + index + " != " + oneMAPEliteBinIndexScorePair.t1);
-			return oneMAPEliteBinIndexScorePair.t2;
+		if(oneMAPEliteBinIndex != null) {
+			// Change to assert for efficiency?
+			if(MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndex) != index)
+				throw new IllegalArgumentException("Should not ask for score associated with MAP Elites bin index that does not match: " + index + " != " + MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndex));
+			return mapElitesSoleBinQualityScore;
+		} else if(oneMAPEliteMap != null) {
+			// Change to assert for efficiency?
+			if(MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteMap) != index)
+				throw new IllegalArgumentException("Should not ask for score associated with MAP Elites bin index that does not match: " + index + " != " + MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteMap));
+			return mapElitesSoleBinQualityScore;
 		} else {
 			// Requires storing large, mostly empty ArrayLists
 			return behaviorVector.get(index);
@@ -203,8 +221,8 @@ public class Score<T> {
 	 * @return Bin fitness score
 	 */
 	public double behaviorIndexScore() {
-		if(oneMAPEliteBinIndexScorePair != null) {
-			return oneMAPEliteBinIndexScorePair.t2;
+		if(oneMAPEliteBinIndex != null || oneMAPEliteMap != null) {
+			return mapElitesSoleBinQualityScore;
 		} else {
 			throw new IllegalArgumentException("Need to specify bin index if using traditional behavior vector");
 		}
@@ -215,8 +233,10 @@ public class Score<T> {
 	 * @return array containing each index for the multidimensional archive
 	 */
 	public int[] MAPElitesBinIndex() {
-		if(oneMAPEliteBinIndexScorePair != null) {
-			return oneMAPEliteBinIndexScorePair.t1;
+		if(oneMAPEliteBinIndex != null) {
+			return oneMAPEliteBinIndex;
+		} else if(oneMAPEliteMap != null) {
+			return MMNEAT.getArchiveBinLabelsClass().multiDimensionalIndices(oneMAPEliteMap);
 		} else {
 			// Technically, I could scan the whole vector for a value that is not negative infinity, but this approach should not be used in that case
 			throw new IllegalArgumentException("Cannot simply ask for bin index when using traditional behavior vector");
@@ -295,8 +315,9 @@ public class Score<T> {
 	@SuppressWarnings("unchecked")
 	public Score<T> copy() {
 		Score<T> result =  new Score<T>(individual, Arrays.copyOf(scores, scores.length), behaviorVector == null ? null : (ArrayList<Double>) behaviorVector.clone(), Arrays.copyOf(otherStats, otherStats.length));
-		if(oneMAPEliteBinIndexScorePair != null) 
-			result.oneMAPEliteBinIndexScorePair = new Pair<int[],Double>(oneMAPEliteBinIndexScorePair.t1,oneMAPEliteBinIndexScorePair.t2);
+		result.oneMAPEliteBinIndex = oneMAPEliteBinIndex;
+		result.oneMAPEliteMap = oneMAPEliteMap;
+		result.mapElitesSoleBinQualityScore = mapElitesSoleBinQualityScore;
 		return result;
 	}
 
@@ -361,12 +382,13 @@ public class Score<T> {
 		if(this.behaviorVector == null) {
 			// Have to construct the behavior vector based on knowledge of bin index and score
 			int vectorLength = MMNEAT.getArchiveBinLabelsClass().binLabels().size();
-			int oneDimensionalIndex = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1);
+			BinLabels labels = MMNEAT.getArchiveBinLabelsClass();
+			int oneDimensionalIndex = oneMAPEliteBinIndex != null ? labels.oneDimensionalIndex(oneMAPEliteBinIndex) : labels.oneDimensionalIndex(oneMAPEliteMap);
 			ArrayList<Double> vector = new ArrayList<>(vectorLength);
 			for(int i = 0; i < oneDimensionalIndex; i++) {
 				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins. Problem with Double.NEGATIVE_INFINITY vs Float.NEGATIVE_INFINITY?
 			}
-			vector.add(oneMAPEliteBinIndexScorePair.t2); // The one occupied bin
+			vector.add(this.mapElitesSoleBinQualityScore); // The one occupied bin
 			for(int i = oneDimensionalIndex+1; i < vectorLength; i++) {
 				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins. Problem with Double.NEGATIVE_INFINITY vs Float.NEGATIVE_INFINITY?
 			}
@@ -412,10 +434,15 @@ public class Score<T> {
 	}
 	
 	public boolean usesMAPElitesBinSpecification() {
-		return oneMAPEliteBinIndexScorePair != null;
+		return oneMAPEliteBinIndex != null;
+	}
+	
+	public boolean usesMAPElitesMapSpecification() {
+		return oneMAPEliteMap != null;
 	}
 	
 	public void assignMAPElitesBinAndScore(int[] binIndices, double score) {
-		oneMAPEliteBinIndexScorePair = new Pair<>(binIndices, score);
+		oneMAPEliteBinIndex = binIndices;
+		mapElitesSoleBinQualityScore =	score;
 	}
 }
