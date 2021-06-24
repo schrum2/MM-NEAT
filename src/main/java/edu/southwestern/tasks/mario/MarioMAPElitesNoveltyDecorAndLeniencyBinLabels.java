@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels;
 import edu.southwestern.parameters.Parameters;
 
@@ -15,7 +15,7 @@ import edu.southwestern.parameters.Parameters;
  * @author Maxx Batterton
  *
  */
-public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels {
+public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels extends BaseBinLabels {
 
 	List<String> labels = null;
 	private int levelBinsPerDimension; // amount of bins for the Decor and Leniency dimensions
@@ -54,11 +54,6 @@ public class MarioMAPElitesNoveltyDecorAndLeniencyBinLabels implements BinLabels
 	@Override
 	public int[] dimensionSizes() {
 		return new int[] {noveltyBinsPerDimension, levelBinsPerDimension, levelBinsPerDimension};
-	}
-
-	@Override
-	public int oneDimensionalIndex(HashMap<String, Object> keys) {
-		return oneDimensionalIndex(multiDimensionalIndices(keys));
 	}
 
 	@Override

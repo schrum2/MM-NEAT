@@ -2,9 +2,10 @@ package edu.southwestern.tasks.innovationengines;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
@@ -19,7 +20,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  *
  */
 
-public class PictureFourQuadrantBrightnessBinLabels implements BinLabels {
+public class PictureFourQuadrantBrightnessBinLabels extends BaseBinLabels {
 	List<String> binLabels = null;
 	private final int BINS_PER_DIMENSION;
 
@@ -149,5 +150,11 @@ public class PictureFourQuadrantBrightnessBinLabels implements BinLabels {
 	@Override
 	public int[] dimensionSizes() {
 		return new int[] {BINS_PER_DIMENSION,BINS_PER_DIMENSION,BINS_PER_DIMENSION,BINS_PER_DIMENSION};
+	}
+
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		BufferedImage image = (BufferedImage) keys.get("Image");
+		return binCoordinates(image);
 	}
 }

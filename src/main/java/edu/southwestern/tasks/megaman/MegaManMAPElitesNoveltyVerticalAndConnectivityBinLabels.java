@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels;
 import edu.southwestern.parameters.Parameters;
 
-public class MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels implements BinLabels {
+public class MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels extends BaseBinLabels {
 
 	public static final int TILE_GROUPS = 10;
 
@@ -59,11 +59,6 @@ public class MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels implements 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// MEGAMAN
 		MMNEAT.main(("runNumber:0 randomSeed:0 megaManAllowsConnectivity:false megaManAllowsSimpleAStarPath:true watch:false trials:1 mu:10 base:megamanTEST log:MegaManTEST-MegaManDirect2GAN saveTo:MegaManDirect2GAN megaManGANLevelChunks:10 maxGens:50000 io:true netio:true GANInputSize:5 mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask cleanOldNetworks:true useMultipleGANsMegaMan:false cleanFrequency:-1 recurrency:false saveAllChampions:true ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.megaman.MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype noveltyBinAmount:20").split(" "));
-	}
-
-	@Override
-	public int oneDimensionalIndex(HashMap<String, Object> keys) {
-		return oneDimensionalIndex(multiDimensionalIndices(keys));
 	}
 
 	@Override

@@ -2,16 +2,17 @@ package edu.southwestern.tasks.innovationengines;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
 
-public class CPPNNeuronCountBinLabels implements BinLabels{
+public class CPPNNeuronCountBinLabels extends BaseBinLabels{
 	List<String> labels = null;
 	public static final int BIN_INDEX_NODES = 0;
 	
-	public static final int MIN_NUM_NEURONS = 5;
+	public static final int MIN_NUM_NEURONS = 7;
 	
 	/**
 	 * Creates the bin labels (coordinates corresponding
@@ -58,5 +59,12 @@ public class CPPNNeuronCountBinLabels implements BinLabels{
 	@Override
 	public int[] dimensionSizes() {
 		return new int[] {Parameters.parameters.integerParameter("maxNumNeurons") - MIN_NUM_NEURONS + 1};
+	}
+
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int nodes = (int) keys.get("Nodes");
+		int nodesIndex = Math.min(nodes, Parameters.parameters.integerParameter("maxNumNeurons"));
+		return new int[] {nodesIndex};
 	}
 }

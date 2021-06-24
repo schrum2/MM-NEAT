@@ -2,12 +2,13 @@ package edu.southwestern.tasks.innovationengines;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
 
-public class GaierAutoencoderNeuronLossScaleRotationDeltaXDeltaYBinLabels implements BinLabels {
+public class GaierAutoencoderNeuronLossScaleRotationDeltaXDeltaYBinLabels extends BaseBinLabels {
 List<String> labels = null;
 	
 	// Call these from CPPNNeuronScaleRotationDeltaXDeltaYBinLabels?
@@ -37,12 +38,12 @@ List<String> labels = null;
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {
-			int size = ((Parameters.parameters.integerParameter("maxNumNeurons") - CPPNComplexityBinLabels.MIN_NUM_NEURONS + 1) * numLossBins * (Parameters.parameters.integerParameter("numScaleIntervals")
+			int size = ((Parameters.parameters.integerParameter("maxNumNeurons") - CPPNNeuronCountBinLabels.MIN_NUM_NEURONS + 1) * numLossBins * (Parameters.parameters.integerParameter("numScaleIntervals")
 					* Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")));
 			System.out.println("Archive Size: " + size);
 			labels = new ArrayList<String>(size);
 			int count = 0;
-			for(int i = CPPNComplexityBinLabels.MIN_NUM_NEURONS; i <= Parameters.parameters.integerParameter("maxNumNeurons"); i++) {
+			for(int i = CPPNNeuronCountBinLabels.MIN_NUM_NEURONS; i <= Parameters.parameters.integerParameter("maxNumNeurons"); i++) {
 				for(int j = 0; j < numLossBins; j++) {
 					for(int k = 0; k < Parameters.parameters.integerParameter("numScaleIntervals"); k++) {
 						for(int m = 0; m < Parameters.parameters.integerParameter("numRotationIntervals"); m++) {
@@ -70,7 +71,7 @@ List<String> labels = null;
 	 */
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = (((multi[BIN_INDEX_NEURONS] - CPPNComplexityBinLabels.MIN_NUM_NEURONS) * numLossBins * (Parameters.parameters.integerParameter("numScaleIntervals") * Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")) +
+		int binIndex = (((multi[BIN_INDEX_NEURONS] - CPPNNeuronCountBinLabels.MIN_NUM_NEURONS) * numLossBins * (Parameters.parameters.integerParameter("numScaleIntervals") * Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")) +
 				(multi[BIN_INDEX_LOSS] * (Parameters.parameters.integerParameter("numScaleIntervals") * Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")) + 
 				(multi[BIN_INDEX_SCALE] * Parameters.parameters.integerParameter("numRotationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals") +
 				(multi[BIN_INDEX_ROTATION] * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")) + 
@@ -87,6 +88,36 @@ List<String> labels = null;
 
 	@Override
 	public int[] dimensionSizes() {
-		return new int[] {Parameters.parameters.integerParameter("maxNumNeurons") - CPPNComplexityBinLabels.MIN_NUM_NEURONS + 1, numLossBins};
+		return new int[] {Parameters.parameters.integerParameter("maxNumNeurons") - CPPNNeuronCountBinLabels.MIN_NUM_NEURONS + 1, numLossBins};
+	}
+
+	// This duplicates a lot of code from CPPNNeuronScaleRotationDeltaXDeltaYBinLabels
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int nodes = (int) keys.get("Nodes");
+		double scale = (double) keys.get("Scale");
+		double rotation = (double) keys.get("Rotation");
+		double deltaX = (double) keys.get("Horizontal Shift");
+		double deltaY = (double) keys.get("Vertical Shift");
+		
+		double imageTranslationRange = Parameters.parameters.doubleParameter("imageCenterTranslationRange");		
+		
+		double scaledScale =  (scale / Parameters.parameters.doubleParameter("maxScale"));
+		double scaledRotation = (rotation / CPPNNeuronScaleRotationDeltaXDeltaYBinLabels.MAX_ROTATION);
+		double scaledDeltaX = (deltaX + imageTranslationRange) / 2*imageTranslationRange; // Multiply range by 2 to account for extreme negative and extreme positive
+		double scaledDeltaY = (deltaY + imageTranslationRange) / 2*imageTranslationRange; // Multiply range by 2 to account for extreme negative and extreme positive;		
+		
+		int nodesIndex = Math.min(nodes, Parameters.parameters.integerParameter("maxNumNeurons"));
+		int scaleIndex = (int) Math.min(scaledScale * Parameters.parameters.integerParameter("numScaleIntervals"), Parameters.parameters.integerParameter("numScaleIntervals") - 1);
+		int rotationIndex = (int) Math.min(scaledRotation * Parameters.parameters.integerParameter("numRotationIntervals"), Parameters.parameters.integerParameter("numRotationIntervals") - 1);
+		int deltaXIndex = (int) Math.min(Math.max(0, scaledDeltaX * Parameters.parameters.integerParameter("numTranslationIntervals")), Parameters.parameters.integerParameter("numTranslationIntervals") - 1);
+		int deltaYIndex = (int) Math.min(Math.max(0, scaledDeltaY * Parameters.parameters.integerParameter("numTranslationIntervals")), Parameters.parameters.integerParameter("numTranslationIntervals") - 1);
+		
+		double loss = (double) keys.get("Reconstruction Loss");
+		double scaledLoss = (loss - Parameters.parameters.doubleParameter("minAutoencoderLoss")) / (Parameters.parameters.doubleParameter("maxAutoencoderLoss") - Parameters.parameters.doubleParameter("minAutoencoderLoss"));
+		int lossIndex = (int) Math.min(Math.max(0, scaledLoss * GaierAutoencoderPictureBinLabels.numLossBins), GaierAutoencoderPictureBinLabels.numLossBins - 1);
+		
+		return new int[] {nodesIndex, lossIndex, scaleIndex, rotationIndex, deltaXIndex, deltaYIndex};
+
 	}
 }

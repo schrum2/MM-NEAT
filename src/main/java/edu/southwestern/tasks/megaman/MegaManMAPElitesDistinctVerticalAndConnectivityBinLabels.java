@@ -6,14 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
 /**
  * Binning scheme for MAPelites
  * @author Benjamin Capps
  *
  */
-public class MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels implements BinLabels {
+public class MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels extends BaseBinLabels {
 	public static final int TILE_GROUPS = 10;
 
 	List<String> labels = null;
@@ -61,11 +61,6 @@ public class MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels implements
 		MMNEAT.main("runNumber:0 randomSeed:0 megaManAllowsConnectivity:false megaManAllowsSimpleAStarPath:true watch:false trials:1 mu:10 base:megamancppntogan log:MegaManCPPNToGAN-MAPElites saveTo:MAPElites megaManGANLevelChunks:10 maxGens:50000 io:true netio:true GANInputSize:5 mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelTask cleanOldNetworks:false useMultipleGANsMegaMan:true allowMultipleFunctions:true ftype:0 netChangeActivationRate:0.3 cleanFrequency:-1 recurrency:false saveAllChampions:true includeFullSigmoidFunction:true includeFullGaussFunction:true includeCosineFunction:true includeGaussFunction:false includeIdFunction:true includeTriangleWaveFunction:true includeSquareWaveFunction:true includeFullSawtoothFunction:true includeSigmoidFunction:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.megaman.MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels steadyStateIndividualsPerGeneration:100".split(" "));
 		
 
-	}
-
-	@Override
-	public int oneDimensionalIndex(HashMap<String, Object> keys) {
-		return oneDimensionalIndex(multiDimensionalIndices(keys));
 	}
 
 	@Override

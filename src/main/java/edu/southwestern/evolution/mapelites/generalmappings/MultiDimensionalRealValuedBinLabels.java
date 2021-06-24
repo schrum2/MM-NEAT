@@ -4,10 +4,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 
 /**
  * Basic abstract binning scheme with a range 
@@ -18,7 +17,7 @@ import edu.southwestern.evolution.mapelites.BinLabels;
  * @author Maxx Batterton
  *
  */
-public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
+public abstract class MultiDimensionalRealValuedBinLabels extends BaseBinLabels {
 
 	protected static final boolean EXTRA_LOGGING = false;
 	
@@ -129,9 +128,5 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 		if (EXTRA_LOGGING) System.out.println("Discretizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
 		return dbc;
 	}
-	
-	@Override
-	public int oneDimensionalIndex(HashMap<String, Object> keys) {
-		return oneDimensionalIndex(multiDimensionalIndices(keys));
-	}
+
 }

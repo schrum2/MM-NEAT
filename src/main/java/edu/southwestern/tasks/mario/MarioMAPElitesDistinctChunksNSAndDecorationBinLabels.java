@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
 /**
  * new binning scheme for distinct chunks, negative space, and decoration
  * 
  * Known as Distinct ASAD in ToG journal paper
  */
-public class MarioMAPElitesDistinctChunksNSAndDecorationBinLabels implements BinLabels {
+public class MarioMAPElitesDistinctChunksNSAndDecorationBinLabels extends BaseBinLabels {
 	List<String> labels = null;
 	private int binsPerDimension;
 	
@@ -50,11 +50,6 @@ public class MarioMAPElitesDistinctChunksNSAndDecorationBinLabels implements Bin
 	@Override
 	public int[] dimensionSizes() {
 		return new int[] {binsPerDimension+1, binsPerDimension, binsPerDimension};
-	}
-
-	@Override
-	public int oneDimensionalIndex(HashMap<String, Object> keys) {
-		return oneDimensionalIndex(multiDimensionalIndices(keys));
 	}
 
 	@Override

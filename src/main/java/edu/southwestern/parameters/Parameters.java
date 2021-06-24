@@ -850,9 +850,9 @@ public class Parameters {
 		doubleOptions.add("picbreederImageScale", 1.0, "The scale factorfor Picbreeder to use when it is not using EnhnacedCPPNPictureGenotype.");
 		doubleOptions.add("picbreederImageRotation", 0.0, "The rotation factor for Picbreeder to use when it is not using EnhancedCPPNPictureGenotype.");
 		doubleOptions.add("CMAMESigma", 0.5, "The starting standard deviation for a CMA-ME run.");
-		doubleOptions.add("imageCenterTranslationRange", 10.0, "The scale of the box (in other words, the range of deltaX and deltaY for a given Picbreeder image)");
-		doubleOptions.add("picbreederImageTranslationX", 0.0, "Maximum possible range (negative to positive) of the X value of the box.");
-		doubleOptions.add("picbreederImageTranslationY", 0.0, "Maximum possible range (negative to positive) of the Y value of the box.");
+		doubleOptions.add("imageCenterTranslationRange", 10.0, "The scale of the box (in other words, the range of deltaX and deltaY for a given Picbreeder image, if enhanced genotype is used)");
+		doubleOptions.add("picbreederImageTranslationX", 0.0, "Fixed horizontal shift for Picbreeder images.");
+		doubleOptions.add("picbreederImageTranslationY", 0.0, "Fixed vertical shift for Picbreeder images");
 		doubleOptions.add("minAutoencoderLoss", 0.0, "Minimum reconstruction loss across the whole archive.");
 		doubleOptions.add("maxAutoencoderLoss", 1.0, "Maximum reconstruction loss across the whole archive.");
 		

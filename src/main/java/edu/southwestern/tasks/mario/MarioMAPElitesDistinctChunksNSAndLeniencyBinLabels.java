@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
 /**
  * new binning scheme for Mario to include uniqueness of segments
@@ -12,7 +12,7 @@ import edu.southwestern.parameters.Parameters;
  *
  * Not used in any papers as of June 2021
  */
-public class MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels implements BinLabels {
+public class MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels extends BaseBinLabels {
 	
 	List<String> labels = null;
 	private int binsPerDimension;
@@ -52,11 +52,6 @@ public class MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels implements BinLa
 	@Override
 	public int[] dimensionSizes() {
 		return new int[] {binsPerDimension+1, binsPerDimension, binsPerDimension};
-	}
-
-	@Override
-	public int oneDimensionalIndex(HashMap<String, Object> keys) {
-		return oneDimensionalIndex(multiDimensionalIndices(keys));
 	}
 
 	@Override

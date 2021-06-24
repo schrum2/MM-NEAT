@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 
-public class LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels implements BinLabels{
+public class LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels extends BaseBinLabels {
 	List<String> labels = null;
 	public static final int BINS_PER_DIMENSION = 10; //[0%-10%][10%-20%].....[90%-100%]
 	public static final int SCALE_BY_FIVE = 5; //makes groups of 5
@@ -42,11 +42,6 @@ public class LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels imple
 	@Override
 	public int[] dimensionSizes() {
 		return new int[] {BINS_PER_DIMENSION, BINS_PER_DIMENSION, BINS_PER_DIMENSION};
-	}
-
-	@Override
-	public int oneDimensionalIndex(HashMap<String, Object> keys) {
-		return oneDimensionalIndex(multiDimensionalIndices(keys));
 	}
 
 	@Override
