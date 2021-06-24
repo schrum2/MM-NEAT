@@ -90,7 +90,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 		Genotype<ArrayList<Double>> elite = archive.getElite(archive.randomOccupiedBinIndex()).individual;
 		double[] phenod = ArrayUtil.doubleArrayFromList(elite.getPhenotype());
 		optEmitter.setInitialX(phenod); // start at random bin
-		optEmitter.setInitialStandardDeviation(0.5); // unsure if should be hardcoded or not
+		optEmitter.setInitialStandardDeviation(Parameters.parameters.doubleParameter("CMAMESigma")); // unsure if should be hardcoded or not
 		int lambda = Parameters.parameters.integerParameter("lambda"); 
 		// Realized that mu = lambda / 2 after extensively reviewing the pyribs code and walking through with Amy Hoover.
 		// Even in pyribs, there is apparently an option for mu to be set differently, but it is definitely fixed, and
