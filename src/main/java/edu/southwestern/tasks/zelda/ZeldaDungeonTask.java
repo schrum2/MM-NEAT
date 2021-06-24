@@ -15,10 +15,8 @@ import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels;
-import edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.scores.MultiObjectiveScore;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
@@ -27,7 +25,6 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
-import edu.southwestern.tasks.gvgai.zelda.study.DungeonNovelty;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -278,35 +275,17 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					behaviorMap.put("Backtracked Rooms",numBackTrackRooms);
 					behaviorMap.put("Dungeon", dungeon);
 					
-					// Hard coding bin score to be the percentage of reachable rooms traversed. May want to change this later.
-					mapElitesBinScore = (numRoomsTraversed*1.0)/numRoomsReachable;
-					final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
-					
+					if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
+						ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
+						double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
+						behaviorMap.put("Solution Vector", latentVector);
+					}
 					
 					int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
 					
+					// Hard coding bin score to be the percentage of reachable rooms traversed. May want to change this later.
+					mapElitesBinScore = (numRoomsTraversed*1.0)/numRoomsReachable;
 					
-					if (MMNEAT.getArchiveBinLabelsClass() instanceof ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels) { //alternate binning scheme
-						double dungeonNovelty = DungeonNovelty.averageDungeonNovelty(dungeon);
-						int noveltyIndex =(int)((dungeonNovelty*NOVELTY_BINS_PER_DIMENSION)/ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.MAX_EXPECTED_NOVELTY); //.7 is the guessed max novelty, magic number
-						noveltyIndex = Math.min(noveltyIndex, NOVELTY_BINS_PER_DIMENSION - 1);
-						mapElitesBinIndices = new int[] {noveltyIndex, numBackTrackRooms, numRoomsReachable};
-						System.out.println("["+noveltyIndex+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");						
-					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels) { //novelty binning scheme
-						double dungeonNovelty = DungeonNovelty.averageDungeonNovelty(dungeon);
-						int noveltyIndex =(int)((dungeonNovelty*NOVELTY_BINS_PER_DIMENSION)/ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.MAX_EXPECTED_NOVELTY); //.7 is the guessed max novelty, magic number
-						noveltyIndex = Math.min(noveltyIndex, NOVELTY_BINS_PER_DIMENSION - 1);
-						mapElitesBinIndices = new int[] {noveltyIndex};
-						System.out.println("["+noveltyIndex+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");						
-					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
-						LatentVariablePartitionSumBinLabels labels = (LatentVariablePartitionSumBinLabels) MMNEAT.getArchiveBinLabelsClass();
-						ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
-						double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
-						mapElitesBinIndices = labels.discretize(labels.behaviorCharacterization(latentVector));
-					} else {
-						throw new RuntimeException("A Valid Binning Scheme For Zelda Was Not Specified");
-					}
-
 					// Saving map elites bin images
 					if(CommonConstants.netio) {
 						System.out.println("Save archive images");

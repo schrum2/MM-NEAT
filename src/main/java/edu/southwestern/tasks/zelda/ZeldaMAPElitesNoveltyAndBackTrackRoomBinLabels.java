@@ -2,11 +2,14 @@ package edu.southwestern.tasks.zelda;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.study.DungeonNovelty;
 
 /**
  * New binning scheme for MAP-Elites
@@ -14,9 +17,10 @@ import edu.southwestern.parameters.Parameters;
  * @author Ben Capps
  *
  */
-public class ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels implements BinLabels {
+public class ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels extends BaseBinLabels {
 	private int noveltyBinsPerDimension;
-	public static final double MAX_EXPECTED_NOVELTY = .6;
+	// Don't use?
+	//public static final double MAX_EXPECTED_NOVELTY = .6;
 	List<String> labels = null;
 	private int maxNumRooms;
 		
@@ -64,6 +68,20 @@ public class ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels implements BinLabels
 		//MMNEAT.main("runNumber:0 randomSeed:0 zeldaDungeonBackTrackRoomFitness:true zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false zeldaDungeonBackTrackRoomFitness:true watch:true trials:1 mu:10 makeZeldaLevelsPlayable:false base:zeldagan log:ZeldaGAN-FitnessTemp saveTo:FitnessTemp zeldaGANLevelWidthChunks:10 zeldaGANLevelHeightChunks:10 zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth maxGens:5000000 io:true netio:true GANInputSize:10 mating:true fs:false task:edu.southwestern.tasks.zelda.ZeldaGANDungeonTask cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false cleanFrequency:-1 saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype".split(" "));	
 
 
+	}
+
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int numBackTrackRooms = (int) keys.get("Backtracked Rooms");
+		int numRoomsReachable = (int) keys.get("Reachable Rooms");
+
+		// Make global? Assign once?
+		final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
+
+		double novelty = DungeonNovelty.averageDungeonNovelty((Dungeon) keys.get("Dungeon"));
+		int noveltyIndex = Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
+
+		return new int[] {noveltyIndex, numBackTrackRooms, numRoomsReachable};
 	}
 }
 
