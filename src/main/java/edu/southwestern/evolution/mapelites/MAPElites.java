@@ -58,6 +58,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private MMNEATLog emitterMeanLog = null;
 	private MMNEATLog cppnThenDirectLog = null;
 	private MMNEATLog cppnVsDirectFitnessLog = null;
+	private MMNEATLog autoencoderLossRange = null;
 	protected MMNEATLog[] emitterIndividualsLogs = null;
 	protected LonerTask<T> task;
 	protected Archive<T> archive;
@@ -326,6 +327,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				evaluatedPopulation.add(s);
 			});
 			
+			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
+				autoencoderLossRange = new MMNEATLog("autoencoderLossRange", false, false, false, true);
+			}
+			
 			// Special code if image auto-encoder is used
 			if(Parameters.parameters.booleanParameter("trainInitialAutoEncoder") && saveImageArchives && Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
 				System.out.println("Train initial auto-encoder");
@@ -396,6 +401,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				//in archive class, archive variable (vector)
 				cppnThenDirectLog.log(pseudoGeneration+"\t"+numCPPN+"\t"+numDirect);
 				cppnVsDirectFitnessLog.log(pseudoGeneration +"\t"+ StringUtils.join(eliteProper, "\t"));
+				
 			}			
 			// Special code for Lode Runner
 			if(MMNEAT.task instanceof LodeRunnerLevelTask) {
@@ -588,6 +594,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			}
 			Parameters.parameters.setDouble("minAutoencoderLoss", minLoss);
 			Parameters.parameters.setDouble("maxAutoencoderLoss", maxLoss);	
+			if(autoencoderLossRange != null) {
+				final int pseudoGeneration = iterations/individualsPerGeneration;
+				autoencoderLossRange.log(pseudoGeneration + "\t" + minLoss + "\t" + maxLoss);
+			}
 			System.out.println("Loss ranges from "+minLoss+" to "+maxLoss);
 		}		
 		// Will bin differently because autoencoder has changed, as have expected loss bounds. Images get re-evaluated
