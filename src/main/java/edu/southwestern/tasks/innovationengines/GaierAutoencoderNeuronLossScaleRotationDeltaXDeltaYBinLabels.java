@@ -48,7 +48,7 @@ List<String> labels = null;
 						for(int m = 0; m < Parameters.parameters.integerParameter("numRotationIntervals"); m++) {
 							for(int n = 0; n < Parameters.parameters.integerParameter("numTranslationIntervals"); n++) {
 								for(int o = 0; o < Parameters.parameters.integerParameter("numTranslationIntervals"); o++){
-									labels.add("Neurons" + i + "-loss" + j + "-scale" + k + "-rotation" + m + "-deltaX" + n + "-deltaY" + o);
+									labels.add("N" + i + "L" + j + "S" + k + "R" + m + "X" + n + "Y" + o);
 									count++;
 								}
 							}

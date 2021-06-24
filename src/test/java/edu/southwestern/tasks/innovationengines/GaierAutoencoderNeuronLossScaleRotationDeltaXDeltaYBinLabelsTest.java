@@ -44,8 +44,8 @@ public class GaierAutoencoderNeuronLossScaleRotationDeltaXDeltaYBinLabelsTest {
 		for(int i = 0; i < allNeuronValues.length; i++) {
 			System.out.println("Neurons" + allNeuronValues[i]+ "-loss" + labelEnds[i] +"-scale" + allScaleValues[i] + "-rotation" + allRotationValues[i] + "-deltaX" + allDeltaXValues[i] + 
 					"-deltaY" + allDeltaYValues[i]);
-			assertEquals("Neurons" + allNeuronValues[i]+ "-loss" + labelEnds[i] +"-scale" + allScaleValues[i] + "-rotation" + allRotationValues[i] + "-deltaX" + allDeltaXValues[i] + 
-					"-deltaY" + allDeltaYValues[i], labels.binLabels().get(labels.oneDimensionalIndex(new int[] {allNeuronValues[i],(int) allLossValues[i]*NUM_LOSS_BINS,allScaleValues[i],allRotationValues[i],allDeltaXValues[i],allDeltaYValues[i]})));
+			assertEquals("N" + allNeuronValues[i]+ "L" + labelEnds[i] +"S" + allScaleValues[i] + "R" + allRotationValues[i] + "X" + allDeltaXValues[i] + 
+					"Y" + allDeltaYValues[i], labels.binLabels().get(labels.oneDimensionalIndex(new int[] {allNeuronValues[i],(int) allLossValues[i]*NUM_LOSS_BINS,allScaleValues[i],allRotationValues[i],allDeltaXValues[i],allDeltaYValues[i]})));
 		}
 		Parameters.parameters.setBoolean("trainingAutoEncoder", false);
 	}
