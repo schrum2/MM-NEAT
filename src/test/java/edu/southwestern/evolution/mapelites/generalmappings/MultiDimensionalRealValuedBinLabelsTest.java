@@ -3,6 +3,7 @@ package edu.southwestern.evolution.mapelites.generalmappings;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +20,9 @@ public class MultiDimensionalRealValuedBinLabelsTest {
 	
 		@Override
 		public int[] dimensionSizes() { return null; }
+
+		@Override
+		public int[] multiDimensionalIndices(HashMap<String, Object> keys) { return null; }
 	}
 	
 	MultiDimensionalRealValuedBinLabels lab1;
