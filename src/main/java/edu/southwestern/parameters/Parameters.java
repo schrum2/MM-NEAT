@@ -849,6 +849,7 @@ public class Parameters {
 		doubleOptions.add("maxScale", 5.0, "The maximumm scale value for Picbreeder images to be scaled to.");
 		doubleOptions.add("picbreederImageScale", 1.0, "The scale factorfor Picbreeder to use when it is not using EnhnacedCPPNPictureGenotype.");
 		doubleOptions.add("picbreederImageRotation", 0.0, "The rotation factor for Picbreeder to use when it is not using EnhancedCPPNPictureGenotype.");
+		doubleOptions.add("CMAMESigma", 0.5, "The starting standard deviation for a CMA-ME run.");
 		doubleOptions.add("imageCenterTranslationRange", 10.0, "The scale of the box (in other words, the range of deltaX and deltaY for a given Picbreeder image)");
 		doubleOptions.add("picbreederImageTranslationX", 0.0, "Maximum possible range (negative to positive) of the X value of the box.");
 		doubleOptions.add("picbreederImageTranslationY", 0.0, "Maximum possible range (negative to positive) of the Y value of the box.");

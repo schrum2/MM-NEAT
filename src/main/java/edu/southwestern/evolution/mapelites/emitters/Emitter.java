@@ -12,6 +12,16 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 
+/**
+ * Basic abstract emitter class which emitters
+ * should extend with their own calculateFitness
+ * methods. Emitters are described in this paper:
+ * https://arxiv.org/pdf/1912.02400.pdf
+ * and implemented in python with pyribs:
+ * https://docs.pyribs.org/en/stable/api/ribs.emitters.html
+ * 
+ * @author Maxx Batterton
+ */
 public abstract class Emitter implements Comparable<Emitter> {
 	
 	public int solutionCount = 0; // amount of solutions found by this emitter
@@ -28,7 +38,14 @@ public abstract class Emitter implements Comparable<Emitter> {
 	final int dimension;
 	public MMNEATLog individualLog;
 	
-	public enum SOLUTION_TYPE {NEW_BIN, IMPROVED_BIN, FAILURE};
+	/*
+	 * This Enum serves as a way to sort solutions and prioritize 
+	 * certain solutions over others. With an improvement emitter,
+	 * new bins are prioritized over improved bins. With an 
+	 * optimizing emitter, SUCCESSFUL_OPTIMIZING has equal priority,
+	 * and for all emitters, FAILURE solutions are last
+	 */
+	public enum SOLUTION_TYPE {NEW_BIN, IMPROVED_BIN, FAILURE, SUCCESSFUL_OPTIMIZING};
 	
 	/**
 	 * Constructor that creates a new emitter
@@ -40,7 +57,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 	public Emitter(int dimension, Archive<ArrayList<Double>> archive, int id) {
 		this.dimension = dimension;
 		this.CMAESInstance = newCMAESInstance(archive);
-		this.emitterName = getEmitterSuffix() + " Emitter " + id; 
+		this.emitterName = getEmitterPrefix() + " Emitter " + id; 
 		this.individualLog = new MMNEATLog(emitterName.replace(" ", ""), false, false, false, true);
 		this.populationSize = CMAESInstance.parameters.getPopulationSize();
 		parentPopulation = new double[populationSize][CMAESInstance.getDimension()];
@@ -51,12 +68,12 @@ public abstract class Emitter implements Comparable<Emitter> {
 
 	
 	/**
-	 * Get the suffix for the emitter, depends on the type;
+	 * Get the prefix for the emitter, depends on the type;
 	 * (Improvement, Optimization, etc)
 	 * 
 	 * @return Emitter suffix
 	 */
-	protected abstract String getEmitterSuffix();
+	protected abstract String getEmitterPrefix();
 	
 	
 	/**
@@ -73,7 +90,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 		Genotype<ArrayList<Double>> elite = archive.getElite(archive.randomOccupiedBinIndex()).individual;
 		double[] phenod = ArrayUtil.doubleArrayFromList(elite.getPhenotype());
 		optEmitter.setInitialX(phenod); // start at random bin
-		optEmitter.setInitialStandardDeviation(0.5); // unsure if should be hardcoded or not
+		optEmitter.setInitialStandardDeviation(Parameters.parameters.doubleParameter("CMAMESigma")); // unsure if should be hardcoded or not
 		int lambda = Parameters.parameters.integerParameter("lambda"); 
 		// Realized that mu = lambda / 2 after extensively reviewing the pyribs code and walking through with Amy Hoover.
 		// Even in pyribs, there is apparently an option for mu to be set differently, but it is definitely fixed, and
@@ -97,6 +114,7 @@ public abstract class Emitter implements Comparable<Emitter> {
 		if ( ((CMAME) MMNEAT.ea).io ) {
 			((CMAME) MMNEAT.ea).updateEmitterLog(individualLog, validParents); // log valid parents
 		}
+		// Old Parameter locking/unlocking testing with mu
 //		CMAESInstance.parameters.setMu(validParents);
 //		if (CMAME.PRINT_DEBUG) System.out.println("Changed mu to "+validParents+" with an unsafe unlock/lock");
 //		CMAESInstance.parameters.setWeights(validParents, CMAESInstance.parameters.getRecombinationType());
