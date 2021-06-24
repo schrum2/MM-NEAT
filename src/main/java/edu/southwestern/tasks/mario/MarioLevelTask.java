@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,6 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels;
 import edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels;
-import edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -78,10 +78,13 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
 	private ArrayList<Double> behaviorVector;
-	private Pair<int[],Double> oneMAPEliteBinIndexScorePair;
+	private HashMap<String,Object> behaviorCharacteristics;
+	private double binScore;
 	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
 	
 	public MarioLevelTask() {
+		LevelNovelty.setGame("mario"); //In case Novelty binning is used with MAP Elites
+		
 		// Replace this with a command line parameter
 		try {
 			agent = (Agent) ClassCreation.createObject("marioLevelAgent");
@@ -245,8 +248,13 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
 		Score<T> result = super.evaluate(individual);
-		if(MMNEAT.usingDiversityBinningScheme)
-			result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
+		if(MMNEAT.usingDiversityBinningScheme) { // Handing this here makes multi-threading impossible. BAD DESIGN!
+			if(behaviorCharacteristics != null) {
+				result.assignMAPElitesBehaviorMapAndScore(behaviorCharacteristics, binScore);
+			} else {
+				throw new UnsupportedOperationException("Specify a map of behavior characteristics");
+			}
+		}
 		return result;
 	}
 	
@@ -479,82 +487,32 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		}
 		// Could conceivably also be used for behavioral diversity instead of map elites, but this would be a weird behavior vector from a BD perspective
 		if(MMNEAT.usingDiversityBinningScheme) { // (MMNEAT.ea instanceof MAPElites) -> (MMNEAT.usingDiversityBinningScheme)
-			// Assign to the behavior vector before using MAP-Elites
-			//double[] archiveArray;
-			//int binIndex;
-			int[] dims;
-			double leniencySum = sumStatScore(lastLevelStats, LENIENCY_STAT_INDEX);
-			double DECORATION_SCALE = 3;
-			double NEGATIVE_SPACE_SCALE = 3;
-			// Scale scores so that we are less likely to overstep the bounds of the bins
-			final int BINS_PER_DIMENSION = Parameters.parameters.integerParameter("marioGANLevelChunks");
-			final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
-			double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
-			double negativeSpaceSum = sumStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
-			int leniencySumIndex = Math.min(Math.max((int)((leniencySum*(BINS_PER_DIMENSION/2)+0.5)*BINS_PER_DIMENSION),0), BINS_PER_DIMENSION-1); //LEANIENCY BIN INDEX
-			int decorationBinIndex =  Math.min((int)(decorationSum*DECORATION_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); //decorationBinIndex
-			int negativeSpaceSumIndex = Math.min((int)(negativeSpaceSum*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); //negative space index
+			
 			assert Parameters.parameters.booleanParameter("marioSimpleAStarDistance") : "Bin score will be -1 everywhere if you don't calculate the A* distance. Set marioSimpleAStarDistance:true";
 			double binScore = simpleAStarDistance;
 			
-
-			if(MMNEAT.getArchiveBinLabelsClass() instanceof MarioMAPElitesDecorNSAndLeniencyBinLabels) {
-				dims = new int[] {decorationBinIndex, negativeSpaceSumIndex, leniencySumIndex};
-
-//				archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-			}else if(MMNEAT.getArchiveBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels) {
-				//double decorationSum = sumStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
-				dims = new int[] {numDistinctSegments, negativeSpaceSumIndex, leniencySumIndex};
-				// Row-major order lookup in 3D archive
-				
-//				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-			}else if(MMNEAT.getArchiveBinLabelsClass() instanceof MarioMAPElitesDistinctChunksNSAndDecorationBinLabels) {
-				assert Parameters.parameters.integerParameter("marioGANLevelChunks") > 1 : "Can't have variation with MarioMAPElitesDistinctChunksNSAndDecorationBinLabels bin scheme if marioGANLevelChunks:1 is set!";
-				double decorationAlternating = alternatingStatScore(lastLevelStats, DECORATION_FREQUENCY_STAT_INDEX);
-				double negativeSpaceAlternating = alternatingStatScore(lastLevelStats, NEGATIVE_SPACE_STAT_INDEX);
-				
-				// Lower the scale when using alternating score
-				DECORATION_SCALE = 0.2;
-				NEGATIVE_SPACE_SCALE = 0.85;
-				
-				decorationBinIndex = Math.min((int)(decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10), BINS_PER_DIMENSION-1);
-				negativeSpaceSumIndex = Math.min((int)(negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
-				
-				// Do not assert: we allow the range to be broken sometimes
-				//assert (decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10) <= BINS_PER_DIMENSION : "Decorate too big: " +(BINS_PER_DIMENSION)+" < " + (decorationAlternating*DECORATION_SCALE*BINS_PER_DIMENSION*10);
-				//assert (negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION) <= BINS_PER_DIMENSION-1 : "NS too big: " +(BINS_PER_DIMENSION-1)+" < " + (negativeSpaceAlternating*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION);
-				
-				dims = new int[] {numDistinctSegments, negativeSpaceSumIndex, decorationBinIndex};
-				
-//				archiveArray = new double[(BINS_PER_DIMENSION+1)*BINS_PER_DIMENSION*BINS_PER_DIMENSION];				
-			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { 
-				KLDivergenceBinLabels klLabels = (KLDivergenceBinLabels) MMNEAT.getArchiveBinLabelsClass();
-				
+			// All possible behavior characterization information
+			HashMap<String, Object> behaviorMap = new HashMap<>();
+			behaviorMap.put("Level Stats",lastLevelStats);
+			behaviorMap.put("Distinct Segments",numDistinctSegments);
+			// It would be slightly more efficient to use levelWithParsedSegments here, but then Mario Novelty
+			// calculation would require distinct code in comparison with Mega Man, which makes the code a mess.
+			behaviorMap.put("Level", oneLevel); // Used to calculate Level Novelty
+			if (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { 
 				int[][] oneLevelAs2DArray = ArrayUtil.int2DArrayFromListOfLists(oneLevel);
-				dims = klLabels.discretize(KLDivergenceBinLabels.behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
-				
-			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof MarioMAPElitesNoveltyDecorAndLeniencyBinLabels) { 
-				LevelNovelty.setGame("mario");
-				double novelty = LevelNovelty.averageSegmentNovelty(levelWithParsedSegments); // get novelty
-				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
-				dims = new int[] {noveltyIndex, decorationBinIndex, leniencySumIndex};
-			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels) { 
-				LevelNovelty.setGame("mario");
-				double novelty = LevelNovelty.averageSegmentNovelty(levelWithParsedSegments); // get novelty
-				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
-				dims = new int[] {noveltyIndex};
+				behaviorMap.put("2D Level", oneLevelAs2DArray);
+				behaviorMap.put("Comparison Levels", klDivLevels);
 			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
-				LatentVariablePartitionSumBinLabels labels = (LatentVariablePartitionSumBinLabels) MMNEAT.getArchiveBinLabelsClass();
 				@SuppressWarnings("unchecked")
 				ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
 				double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
-				dims = labels.discretize(labels.behaviorCharacterization(latentVector));
-			} else {
-				throw new RuntimeException("A Valid Binning Scheme For Mario Was Not Specified");
+				behaviorMap.put("Solution Vector", latentVector);
 			}
-			// Row-major order lookup in 3D archive
-			//setBinsAndSaveMAPElitesImages(individual, levelImage, archiveArray, dim1, dim2, dim3, BINS_PER_DIMENSION, binScore);
-			setBinsAndSaveMAPElitesImages(individual, levelImage, dims, binScore);
+			
+			behaviorCharacteristics = behaviorMap;			
+			int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorCharacteristics);
+			
+			saveMAPElitesImages(individual, levelImage, dim1D, binScore);
 
 		}
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
@@ -565,26 +523,10 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	 * sets the bins and saves MAPElites images to archive
 	 * @param individual the genotype
 	 * @param levelImage the buffered image of the level
-	 * @param dims Array of dimensions corresponding to each bin
+	 * @param dim1D 1D index in bin labels
 	 * @param binScore the bin score
 	 */
-	private void setBinsAndSaveMAPElitesImages(Genotype<T> individual, BufferedImage levelImage,
-			int[] dims, double binScore) {
-		
-		oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(dims, binScore);
-		
-//		int binIndex = (dim1*BINS_PER_DIMENSION + dim2)*BINS_PER_DIMENSION + dim3;
-//		Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
-//		archiveArray[binIndex] = binScore; // Percent rooms traversed
-		
-		String binScoreString = "";
-		for (int dim : dims) {
-			binScoreString += ("["+dim+"]");
-		}
-		System.out.println(binScoreString + " = "+binScore);
-
-//		behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
-
+	private void saveMAPElitesImages(Genotype<T> individual, BufferedImage levelImage, int dim1D, double binScore) {
 		// Saving map elites bin images	
 		if(CommonConstants.netio) {
 			System.out.println("Save archive images");
@@ -593,7 +535,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			List<String> binLabels = archive.getBinMapping().binLabels();
 
 			// Index in flattened bin array
-			Score<T> elite = archive.getElite(oneMAPEliteBinIndexScorePair.t1);
+			Score<T> elite = archive.getElite(dim1D);
 			// If the bin is empty, or the candidate is better than the elite for that bin's score
 			if(elite == null || binScore > elite.behaviorIndexScore()) {
 				if(binScore > fitnessSaveThreshold) {
@@ -603,7 +545,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 						if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
 						else fileName = "Direct-" + fileName;
 					}
-					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1));
+					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(dim1D);
 					String fullName = binPath + "_" + fileName;
 					System.out.println(fullName);
 					GraphicsUtil.saveImage(levelImage, fullName);
@@ -612,7 +554,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		}
 	}
 
-	private double sumStatScore(ArrayList<double[]> levelStats, int statIndex) {
+	public static double sumStatScore(ArrayList<double[]> levelStats, int statIndex) {
 		double total = 0;
 		for(int i = 0; i < levelStats.size(); i++) {
 			total += levelStats.get(i)[statIndex];
@@ -620,7 +562,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		return total;
 	}
 
-	private double periodicStatScore(ArrayList<double[]> levelStats, int statIndex) {
+	public static double periodicStatScore(ArrayList<double[]> levelStats, int statIndex) {
 		double evenTotal = 0;
 		// even differences
 		for(int i = 2; i < levelStats.size(); i += 2) {
@@ -637,7 +579,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		return - (evenTotal + oddTotal);
 	}
 
-	private double symmetricStatScore(ArrayList<double[]> levelStats, int statIndex) {
+	public static double symmetricStatScore(ArrayList<double[]> levelStats, int statIndex) {
 		double total = 0;
 		for(int i = 0; i < levelStats.size()/2; i++) {
 			// Diff between symmetric segments
@@ -646,7 +588,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 		return - total; // Negative: Max symmetry means minimal difference in symmetric segments
 	}
 
-	private double alternatingStatScore(ArrayList<double[]> levelStats, int statIndex) {
+	public static double alternatingStatScore(ArrayList<double[]> levelStats, int statIndex) {
 		double total = 0;
 		for(int i = 1; i < levelStats.size(); i++) {
 			// Differences between adjacent segments
