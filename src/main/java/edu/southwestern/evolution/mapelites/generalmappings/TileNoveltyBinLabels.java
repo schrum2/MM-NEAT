@@ -8,6 +8,8 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.study.DungeonNovelty;
 import edu.southwestern.tasks.megaman.LevelNovelty;
 
 public class TileNoveltyBinLabels extends BaseBinLabels {
@@ -62,8 +64,7 @@ public class TileNoveltyBinLabels extends BaseBinLabels {
 		final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
 		
 		@SuppressWarnings("unchecked")
-		List<List<Integer>> level = (List<List<Integer>>) keys.get("Level");
-		double novelty = levelNovelty(level);
+		double novelty = keys.containsKey("Dungeon") ? DungeonNovelty.averageDungeonNovelty((Dungeon) keys.get("Dungeon")) : levelNovelty((List<List<Integer>>) keys.get("Level"));
 		int noveltyIndex = Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
 		return new int[] {noveltyIndex};
 	}
