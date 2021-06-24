@@ -13,12 +13,15 @@ import javax.imageio.ImageIO;
 import autoencoder.python.AutoEncoderProcess;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
+import edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkPlusParameters;
+import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -153,12 +156,13 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		Network cppn = individual.getPhenotype();
 		BufferedImage image = PicbreederTask.imageFromCPPN(cppn, imageWidth, imageHeight, ArrayUtil.doubleOnes(cppn.numInputs()));
 		TWEANNGenotype tweannIndividual = (individual instanceof TWEANNGenotype ? (TWEANNGenotype) individual : ((TWEANNPlusParametersGenotype<ArrayList<Double>>) individual).getTWEANNGenotype());
-		
+			
 		// Need to assign values
 		int[] indicesMAPEliteBin = null;
 		
 		if(MMNEAT.ea instanceof MAPElites) {
 			int nodes = Math.min(tweannIndividual.nodes.size(), Parameters.parameters.integerParameter("maxNumNeurons"));
+			
 			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNComplexityBinLabels) {
 				// What if number of nodes or links exceeds 35? Need to cap the index
 				int links = Math.min(tweannIndividual.links.size(), Parameters.parameters.integerParameter("maxNumNeurons"));
@@ -178,11 +182,42 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				assert nodes >= CPPNNeuronCountBinLabels.MIN_NUM_NEURONS : "Why so few neurons? " + nodes + "\n" + tweannIndividual;
 				indicesMAPEliteBin = new int[] {nodes};
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNNeuronScaleRotationDeltaXDeltaYBinLabels) {
-				// TODO: Add the body here.
-				indicesMAPEliteBin = new int[] {nodes};
+				NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) cppn;
+				ArrayList<Double> scaleRotationTranslation = npp.t2;
+			
+				double scaledScale =  ((scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE) / Parameters.parameters.doubleParameter("maxScale")) * Parameters.parameters.integerParameter("numScaleIntervals"));
+				int scaleIndex = (int) Math.min(Math.max(0, scaledScale * Parameters.parameters.integerParameter("numScaleIntervals")), Parameters.parameters.integerParameter("numScaleIntervals") - 1);
+				
+				double scaledRotation = (scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION) / Parameters.parameters.doubleParameter("picbreederImageRotation")) * Parameters.parameters.integerParameter("numRotationIntervals");
+				int rotationIndex = (int) Math.min(Math.max(0, scaledRotation * Parameters.parameters.integerParameter("numRotationIntervals")), Parameters.parameters.integerParameter("numRotationIntervals") - 1);
+				
+				double scaledDeltaX = (scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_X) / Parameters.parameters.doubleParameter("picbreederImageTranslationX")) * Parameters.parameters.integerParameter("numTranslationIntervals");
+				int deltaXIndex = (int) Math.min(Math.max(0, scaledDeltaX * Parameters.parameters.integerParameter("numTranslationIntervals")), Parameters.parameters.integerParameter("numTranslationIntervals") - 1);
+				
+				double scaledDeltaY = (scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y) / Parameters.parameters.doubleParameter("INDEX_DELTA_Y")) * Parameters.parameters.integerParameter("numTranslationIntervals");
+				int deltaYIndex = (int) Math.min(Math.max(0, scaledDeltaY * Parameters.parameters.integerParameter("numTranslationIntervals")), Parameters.parameters.integerParameter("numTranslationIntervals") - 1);
+				
+				indicesMAPEliteBin = new int[] {nodes, scaleIndex, rotationIndex, deltaXIndex, deltaYIndex};
 			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof GaierAutoencoderNeuronLossScaleRotationDeltaXDeltaYBinLabels) {
-				// TODO: Add the body here.
-				indicesMAPEliteBin = new int[] {nodes};
+				NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) cppn;
+				ArrayList<Double> scaleRotationTranslation = npp.t2;
+				double loss = AutoEncoderProcess.neverInitialized ? 1.0 : AutoEncoderProcess.getReconstructionLoss(image);
+				double scaledLoss = (loss - Parameters.parameters.doubleParameter("minAutoencoderLoss")) / (Parameters.parameters.doubleParameter("maxAutoencoderLoss") - Parameters.parameters.doubleParameter("minAutoencoderLoss"));
+				int lossIndex = (int) Math.min(Math.max(0, scaledLoss * GaierAutoencoderNeuronLossScaleRotationDeltaXDeltaYBinLabels.numLossBins), GaierAutoencoderNeuronLossScaleRotationDeltaXDeltaYBinLabels.numLossBins - 1);
+				
+				double scaledScale =  (scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE) / Parameters.parameters.doubleParameter("maxScale")) * Parameters.parameters.integerParameter("numScaleIntervals");
+				int scaleIndex = (int) Math.min(Math.max(0, scaledScale * Parameters.parameters.integerParameter("numScaleIntervals")), Parameters.parameters.integerParameter("numScaleIntervals") - 1);
+				
+				double scaledRotation = (scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION) / Parameters.parameters.doubleParameter("picbreederImageRotation")) * Parameters.parameters.integerParameter("numRotationIntervals");
+				int rotationIndex = (int) Math.min(Math.max(0, scaledRotation * Parameters.parameters.integerParameter("numRotationIntervals")), Parameters.parameters.integerParameter("numRotationIntervals") - 1);
+				
+				double scaledDeltaX = (scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_X) / Parameters.parameters.doubleParameter("picbreederImageTranslationX")) * Parameters.parameters.integerParameter("numTranslationIntervals");
+				int deltaXIndex = (int) Math.min(Math.max(0, scaledDeltaX * Parameters.parameters.integerParameter("numTranslationIntervals")), Parameters.parameters.integerParameter("numTranslationIntervals") - 1);
+				
+				double scaledDeltaY = (scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y) / Parameters.parameters.doubleParameter("INDEX_DELTA_Y")) * Parameters.parameters.integerParameter("numTranslationIntervals");
+				int deltaYIndex = (int) Math.min(Math.max(0, scaledDeltaY * Parameters.parameters.integerParameter("numTranslationIntervals")), Parameters.parameters.integerParameter("numTranslationIntervals") - 1);
+				
+				indicesMAPEliteBin = new int[] {nodes, lossIndex, scaleIndex, rotationIndex, deltaXIndex, deltaYIndex};
 			} else {
 				throw new IllegalStateException("No valid binning scheme provided for PictureTargetTask");
 			}
