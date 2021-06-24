@@ -12,73 +12,20 @@ import torch.nn as nn
 import torch.nn.functional as F
 import myColorData
 
-#if __name__ == '__main__':
-#    trainingImagesDirectory = sys.argv[1]
-#
-#    batch_size = 128
-
-#training_data = datasets.FashionMNIST(
-#    root="data",
-#    train=True,
-#    download=True,
-#    transform=ToTensor()
-#)
-
-#test_data = datasets.FashionMNIST(
-#    root="data",
-#    train=False,
-#    download=True,
-#    transform=ToTensor()
-#)
-
-
-
-# Display image and label.
-#train_features, train_labels = next(iter(train_dataloader))
-#print(f"Feature batch shape: {train_features.size()}")
-#print(f"Labels batch shape: {train_labels.size()}")
-#img = train_features[0].squeeze()
-#label = train_labels[0]
-#plt.imshow(img, cmap="gray")
-#plt.show()
-#print(f"Label: {label}")
-
 #Converting data to torch.FloatTensor
 transform = transforms.ToTensor()
 batch_size = 20
 
-# Download the training and test datasets
-#train_data = datasets.CIFAR10(root='data', train=True, download=True, transform=transform)
-
-#test_data = datasets.CIFAR10(root='data', train=False, download=True, transform=transform)
-
 train_data = myColorData.CustomImageDataSet("C:\\Users\\wickera\\GitHub\\MM-NEAT\\src\\main\\python\\ColorAutoEncoder\\ColorTrainingSet", transform)
-
-# Download the Picbreeder color images training set
-#dataset = mydata.DatasetLoader(trainingImagesDirectory)
-
-#dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-
-#train_dataloader = DataLoader(training_data, batch_size=128, shuffle=True)
 
 # Why does it want us to drop_last?
 #train_dataloader = DataLoader(train_data , batch_size=batch_size, shuffle=False, num_workers=4, drop_last=True)
 train_dataloader = DataLoader(train_data , batch_size=batch_size, shuffle=False, num_workers=0)
 
-#test_dataloader = DataLoader(test_data, batch_size=128, shuffle=True)
-
-#Prepare data loaders
-#train_loader = torch.utils.data.DataLoader(train_data, batch_size=32, num_workers=0)
-#test_loader = torch.utils.data.DataLoader(test_data, batch_size=32, num_workers=0)
-
 #Utility functions to un-normalize and display an image
 def imshow(img):
     img = img / 2 + 0.5  
     plt.imshow(np.transpose(img, (1, 2, 0))) 
-
- 
-#Define the image classes
-#classes = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
 #Obtain one batch of training images
 dataiter = iter(train_dataloader)
@@ -91,7 +38,6 @@ fig = plt.figure(figsize=(8, 8))
 for idx in np.arange(9):
     ax = fig.add_subplot(3, 3, idx+1, xticks=[], yticks=[])
     imshow(images[idx])
-    #ax.set_title(classes[labels[idx]])
 
 #Define the Convolutional Autoencoder
 class ConvAutoencoder(nn.Module):
@@ -141,7 +87,7 @@ print(device)
 model.to(device)
 
 #Epochs
-n_epochs = 200
+n_epochs = 50000
 
 for epoch in range(1, n_epochs+1):
     # monitor training loss
