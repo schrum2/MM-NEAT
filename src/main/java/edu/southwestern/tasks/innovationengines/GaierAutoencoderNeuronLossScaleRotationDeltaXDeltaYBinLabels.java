@@ -76,6 +76,7 @@ List<String> labels = null;
 				(multi[BIN_INDEX_ROTATION] * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")) + 
 				(multi[BIN_INDEX_DELTA_X] * Parameters.parameters.integerParameter("numTranslationIntervals") + 
 				(multi[BIN_INDEX_DELTA_Y]))))));
+		//System.out.println(Arrays.toString(multi) + "->" +binIndex);
 		assert binIndex >= 0 : "Negative index " + Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
 	}
