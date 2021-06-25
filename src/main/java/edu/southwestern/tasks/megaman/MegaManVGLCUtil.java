@@ -369,12 +369,12 @@ public class MegaManVGLCUtil {
 							if(d == Direction.DOWN) {
 								jsonUR.add(screen);
 								System.out.println("UPPER RIGHT");
-	//							printLevel(screen);
+								printLevel(screen);
 	//							MiscUtil.waitForReadStringAndEnterKeyPress();
 							} else if(d == Direction.UP) {
 								jsonLR.add(screen);
 								System.out.println("LOWER RIGHT");
-	//							printLevel(screen);
+								printLevel(screen);
 	//							MiscUtil.waitForReadStringAndEnterKeyPress();
 							}
 						}
@@ -399,7 +399,7 @@ public class MegaManVGLCUtil {
 //					conditionalJsonID.add(UPID);
 //					conditionalJson.add(screen);
 					System.out.println("UP");
-//					//printLevel(screen);
+					//printLevel(screen);
 //					//MiscUtil.waitForReadStringAndEnterKeyPress();
 
 				}else { //find new direction
@@ -412,12 +412,12 @@ public class MegaManVGLCUtil {
 							if(d == Direction.LEFT) {
 								jsonUR.add(screen);
 								System.out.println("UPPER RIGHT");
-	//							printLevel(screen);
+								printLevel(screen);
 	//							MiscUtil.waitForReadStringAndEnterKeyPress();
 							}else if(d == Direction.RIGHT) {
 								jsonUL.add(screen);
 								System.out.println("UPPER LEFT");
-	//							printLevel(screen);
+								printLevel(screen);
 	//							MiscUtil.waitForReadStringAndEnterKeyPress();
 							}
 						}
@@ -441,7 +441,7 @@ public class MegaManVGLCUtil {
 //					conditionalJsonID.add(DOWNID);
 //					conditionalJson.add(screen);
 					System.out.println("DOWN");
-//					//printLevel(screen);
+					//printLevel(screen);
 //					//MiscUtil.waitForReadStringAndEnterKeyPress();
 				}else { //find new direction
 					Direction previous = Direction.DOWN;
@@ -449,17 +449,17 @@ public class MegaManVGLCUtil {
 					if(previous!=d) {
 						upDownTimer = 14;
 						if(!firstRound) {
-						if(d == Direction.LEFT) {
-							jsonLR.add(screen);
-							System.out.println("LOWER RIGHT");
-//							printLevel(screen);
-//							MiscUtil.waitForReadStringAndEnterKeyPress();
-						}else if(d == Direction.RIGHT) {
-							jsonLL.add(screen);
-							System.out.println("LOWER LEFT");
-//							printLevel(screen);
-//							MiscUtil.waitForReadStringAndEnterKeyPress();
-						}
+							if(d == Direction.LEFT) {
+								jsonLR.add(screen);
+								System.out.println("LOWER RIGHT");
+								printLevel(screen);
+	//							MiscUtil.waitForReadStringAndEnterKeyPress();
+							}else if(d == Direction.RIGHT) {
+								jsonLL.add(screen);
+								System.out.println("LOWER LEFT");
+								printLevel(screen);
+	//							MiscUtil.waitForReadStringAndEnterKeyPress();
+							}
 						}
 					}
 
@@ -471,7 +471,7 @@ public class MegaManVGLCUtil {
 					//if(rightScreenSide+1<level.get(0).size()&&level.get(y1).get(rightScreenSide+1)!=9)
 						rightScreenSide--;
 					System.out.println("Horizontal");
-//					printLevel(screen);
+					printLevel(screen);
 //					MiscUtil.waitForReadStringAndEnterKeyPress();
 						
 
@@ -492,19 +492,17 @@ public class MegaManVGLCUtil {
 					if(previous!=d) {
 						rightLeftTimer = 16;
 						if(!firstRound) {
-							
-						
-						if(d == Direction.UP) {
-							jsonLL.add(screen);
-							System.out.println("LOWER LEFT");
-//							printLevel(screen);
-//							MiscUtil.waitForReadStringAndEnterKeyPress();
-						}else if(d == Direction.DOWN) {
-							jsonUL.add(screen);
-							System.out.println("UPPER LEFT");
-//							printLevel(screen);
-//							MiscUtil.waitForReadStringAndEnterKeyPress();
-						}
+							if(d == Direction.UP) {
+								jsonLL.add(screen);
+								System.out.println("LOWER LEFT");
+								printLevel(screen);
+	//							MiscUtil.waitForReadStringAndEnterKeyPress();
+							}else if(d == Direction.DOWN) {
+								jsonUL.add(screen);
+								System.out.println("UPPER LEFT");
+								printLevel(screen);
+	//							MiscUtil.waitForReadStringAndEnterKeyPress();
+							}
 						}
 					}
 				}
