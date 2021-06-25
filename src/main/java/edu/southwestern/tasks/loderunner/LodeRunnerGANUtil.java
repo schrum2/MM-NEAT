@@ -93,13 +93,16 @@ public class LodeRunnerGANUtil {
 	public static List<List<List<Integer>>> getLevelListRepresentationFromGAN(double[] latentVector){
 		latentVector = GANProcess.mapArrayToOne(latentVector); 
 		// Generate level from vector
-		try {
-			GANProcess.getGANProcess().commSend("[" + Arrays.toString(latentVector) + "]");
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1); // Cannot continue without the GAN process
+		String level;
+		synchronized(GANProcess.getGANProcess()) { // Make sure GAN response corresponds to provided latent vector
+			try {
+				GANProcess.getGANProcess().commSend("[" + Arrays.toString(latentVector) + "]");
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1); // Cannot continue without the GAN process
+			}
+			level = GANProcess.getGANProcess().commRecv(); // Response to command just sent
 		}
-		String level = GANProcess.getGANProcess().commRecv(); // Response to command just sent
 		level = "["+level+"]"; // Wrap level in another json array
 		List<List<List<Integer>>> levels = JsonReader.JsonToInt(level);
 		return levels;

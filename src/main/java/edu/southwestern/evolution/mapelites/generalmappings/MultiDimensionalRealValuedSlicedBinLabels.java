@@ -1,6 +1,7 @@
 package edu.southwestern.evolution.mapelites.generalmappings;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 import edu.southwestern.parameters.Parameters;
 
@@ -78,4 +79,10 @@ public abstract class MultiDimensionalRealValuedSlicedBinLabels extends MultiDim
 		}
 		return dimensionSizes;
 	}
+	
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		double[] latentVector = (double[]) keys.get("Solution Vector");
+		return discretize(behaviorCharacterization(latentVector));
+	}	
 }

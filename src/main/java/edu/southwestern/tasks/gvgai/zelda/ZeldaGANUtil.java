@@ -68,13 +68,16 @@ public class ZeldaGANUtil {
 		assert GANProcess.type.equals(GANProcess.GAN_TYPE.ZELDA);
 		latentVector = GANProcess.mapArrayToOne(latentVector); // Range restrict the values
 		// Generate room from vector
-		try {
-        	GANProcess.getGANProcess().commSend("[" + Arrays.toString(latentVector) + "]");
-        } catch (IOException e) {
-        	e.printStackTrace();
-        	System.exit(1); // Cannot continue without the GAN process
-        }
-        String oneRoom = GANProcess.getGANProcess().commRecv(); // Response to command just sent
+		String oneRoom;
+		synchronized(GANProcess.getGANProcess()) { // Make sure the response corresponds to the sent message
+			try {
+				GANProcess.getGANProcess().commSend("[" + Arrays.toString(latentVector) + "]");
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.exit(1); // Cannot continue without the GAN process
+			}
+			oneRoom = GANProcess.getGANProcess().commRecv(); // Response to command just sent
+		}
         oneRoom = "["+oneRoom+"]"; // Wrap room in another json array
         // Create one room in a list
         List<List<List<Integer>>> roomInList = JsonReader.JsonToInt(oneRoom);

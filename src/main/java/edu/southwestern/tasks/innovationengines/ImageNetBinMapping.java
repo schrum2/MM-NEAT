@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.innovationengines;
 
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.evolution.mapelites.BinLabels;
@@ -34,4 +35,14 @@ public class ImageNetBinMapping<T extends Network> implements BinLabels {
 		return new int[] {1000};
 	}
 	
+	@Override
+	public int oneDimensionalIndex(HashMap<String, Object> keys) {
+		throw new UnsupportedOperationException("One image can exist in all bins, so selecting one index with a HashMap is not supported");
+	}
+
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		throw new UnsupportedOperationException("One image can exist in all bins, so selecting one index with a HashMap is not supported");
+	}
+
 }

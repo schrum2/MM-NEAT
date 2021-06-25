@@ -49,21 +49,14 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	private int numFitnessFunctions = 0; 
 	private static final int NUM_OTHER_SCORES = 12;
 
-	// Calculated in oneEval, so it can be passed on the getBehaviorVector
-	private ArrayList<Double> behaviorVector;
-	private Pair<int[],Double> oneMAPEliteBinIndexScorePair;
 	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
 	
-	// Use of oneMAPEliteBinIndexScorePair is now favored for MAP Elites instead
-	public ArrayList<Double> getBehaviorVector() {
-		return behaviorVector;
-	}
-	
-	MegaManLevelTask(){
+	public MegaManLevelTask(){
 		this(true);
 	}
 	
 	protected MegaManLevelTask(boolean register) {
+		LevelNovelty.setGame("mega_man"); // If Novelty-based MAP Elites binning is used
 		if(register) {
 			numFitnessFunctions = 0;
 			if(Parameters.parameters.booleanParameter("megaManAllowsSimpleAStarPath")) {
@@ -113,19 +106,10 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	}
 
 	@Override
-	public Score<T> evaluate(Genotype<T> individual) {
-		Score<T> result = super.evaluate(individual);
-		if(MMNEAT.usingDiversityBinningScheme)
-			result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
-		return result;
-	}
-
-	
-	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String,Object> behaviorCharacteristics) {
 		MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
 		List<List<Integer>> level = getMegaManLevelListRepresentationFromGenotype(individual, segmentCount); //gets a level 
-		return evaluateOneLevel(level, individual, segmentCount);
+		return evaluateOneLevel(level, individual, segmentCount, behaviorCharacteristics);
 	}
 
 	/**
@@ -135,7 +119,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	 * @return Pair of fitness and other scores
 	 */
 	@SuppressWarnings("unchecked")
-	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, Genotype<T> individual, MegaManTrackSegmentType segmentCount) {
+	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, Genotype<T> individual, MegaManTrackSegmentType segmentCount, HashMap<String,Object> behaviorCharacteristics) {
 		long genotypeId = individual.getId();
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
 		Quad<HashSet<MegaManState>, ArrayList<MegaManAction>, MegaManState, Double> aStarResults = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level);
@@ -146,8 +130,6 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		//calculates the amount of the level that was covered in the search, connectivity.
 		double precentConnected = MegaManLevelAnalysisUtil.caluclateConnectivity(mostRecentVisited)/MegaManLevelAnalysisUtil.findTotalPassableTiles(level);
 		
-		final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
-
 		HashMap<String, Integer> miscEnemyInfo = MegaManLevelAnalysisUtil.findMiscEnemies(level);
 		double numEnemies = miscEnemyInfo.get("numEnemies");
 		double numWallEnemies = miscEnemyInfo.get("numWallEnemies");
@@ -317,53 +299,24 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			
 		}
 		if(MMNEAT.usingDiversityBinningScheme) {
-			double binScore = simpleAStarDistance;
-			//int binIndex = 0;
-
-			if(MMNEAT.getArchiveBinLabelsClass() instanceof MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels) {
-				//int maxNumSegments = Parameters.parameters.integerParameter("megaManGANLevelChunks");
-
-				assert precentConnected <= 1;
-				// 100% connectivity is possible, which leads to an index of 10 (out of bounds) if not adjusted using Math.min
-				int indexConnected = (int) Math.min(precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS,9);
-				int numVertical = (int) (numUpSegments+numDownSegments);
-				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {(int) numDistinctSegments, numVertical, indexConnected}, binScore);
-				
-//				binIndex =(((int) numDistinctSegments)*(maxNumSegments+1) + numVertical)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)+indexConnected;
-//				double[] archiveArray = new double[(maxNumSegments+1)*(maxNumSegments+1)*(MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS)];
-//				Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
-				System.out.println("["+numDistinctSegments+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
-//				archiveArray[binIndex] = binScore; // Percent rooms traversed
-//				behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
-				
-			} else if(MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels ) {
-				LevelNovelty.setGame("mega_man");
-				List<List<List<Integer>>> levelSegments = LevelNovelty.partitionSegments(level, LevelNovelty.getRows(), LevelNovelty.getColumns());
-				double novelty = LevelNovelty.averageSegmentNovelty(levelSegments); // get novelty
-				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
-				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {noveltyIndex}, binScore);
-				System.out.println("["+numDistinctSegments+"] = "+binScore);
-				
-			} else if(MMNEAT.getArchiveBinLabelsClass() instanceof MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels ) {
-				LevelNovelty.setGame("mega_man");
-				int indexConnected = (int) Math.min(precentConnected*MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels.TILE_GROUPS,9);
-				int numVertical = (int) (numUpSegments+numDownSegments);
-				List<List<List<Integer>>> levelSegments = LevelNovelty.partitionSegments(level, LevelNovelty.getRows(), LevelNovelty.getColumns());
-				double novelty = LevelNovelty.averageSegmentNovelty(levelSegments); // get novelty
-				int noveltyIndex =  Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
-				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {noveltyIndex, numVertical, indexConnected}, binScore);
-				System.out.println("["+noveltyIndex+"]["+numVertical+"]["+indexConnected+"] = "+binScore);
-				
-			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
-				LatentVariablePartitionSumBinLabels labels = (LatentVariablePartitionSumBinLabels) MMNEAT.getArchiveBinLabelsClass();
+			assert precentConnected <= 1;
+			
+			behaviorCharacteristics.put("Connectivity", precentConnected);
+			behaviorCharacteristics.put("Vertical Segments", numUpSegments+numDownSegments);
+			behaviorCharacteristics.put("Distinct Segments", numDistinctSegments);
+			behaviorCharacteristics.put("Level", level); // Used to calculate Level Novelty
+			// Takes some effort to compute, so only compute if needed.
+			if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
 				ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
 				double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
-				int[] dims = labels.discretize(labels.behaviorCharacterization(latentVector));
-				oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(dims, binScore);
-				
-			} else {
-				throw new RuntimeException("A Valid Binning Scheme For Mega Man Was Not Specified");
+				behaviorCharacteristics.put("Solution Vector", latentVector);
 			}
+			
+			double binScore = simpleAStarDistance;
+			behaviorCharacteristics.put("binScore", binScore); // Quality measure!
+			
+			int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorCharacteristics);
+			behaviorCharacteristics.put("dim1D", dim1D); // Save so it does not need to be computed again
 			
 			if(CommonConstants.netio) {
 				System.out.println("Save archive images");
@@ -371,7 +324,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 				List<String> binLabels = archive.getBinMapping().binLabels();
 
 				// Index in flattened bin array
-				Score<T> elite = archive.getElite(oneMAPEliteBinIndexScorePair.t1);
+				Score<T> elite = archive.getElite(dim1D);
 				// If the bin is empty, or the candidate is better than the elite for that bin's score
 				if(elite == null || binScore > elite.behaviorIndexScore()) {
 					if(binScore > fitnessSaveThreshold) {
@@ -393,7 +346,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	//						if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
 	//						else fileName = "Direct-" + fileName;
 	//					}
-						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1));
+						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(dim1D);
 						String fullName = binPath + "-" + fileName;
 						System.out.println(fullName);
 						GraphicsUtil.saveImage(levelImage, fullName);	

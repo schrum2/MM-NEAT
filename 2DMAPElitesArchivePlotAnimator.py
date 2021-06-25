@@ -128,10 +128,10 @@ for iteration in range(len(numeric_lines)): # If will log
         
         plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap)) # Add color bar
         plt.text(dimensions[1]/2, (dimensions[0]/20)+dimensions[0], (title + " Step:"+str(iteration)), horizontalalignment='center', verticalalignment='baseline')
-        plt.xlabel(dimension_names[0]) # Add labels
-        plt.ylabel(dimension_names[1])
-        plt.xlim(left=0.0, right=dimensions[0])
-        plt.ylim(bottom=0.0, top=dimensions[1])
+        plt.xlabel(dimension_names[1]) # Add labels
+        plt.ylabel(dimension_names[0])
+        plt.xlim(left=0.0, right=dimensions[1])
+        plt.ylim(bottom=0.0, top=dimensions[0])
         
         if draw_emitters:
             for e_step in range(len(emitter_means[iteration])):
@@ -158,7 +158,7 @@ for iteration in range(len(numeric_lines)): # If will log
                 plt.plot(emitter_means[iteration][e_step][0], emitter_means[iteration][e_step][1], marker=emitter_symbols[math.floor(emitter_counter/len(emitter_colors))], color=emitter_colors[emitter_counter%len(emitter_colors)])
                 emitter_counter += 1
             
-        plt.imshow(bins, cmap=cmap, norm=norm) # Create image
+        plt.imshow(bins, cmap=cmap, norm=norm, extent=[0, dimensions[1], dimensions[0], 0]) # Create image
         
         plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png")
         plt.clf() # Close plots to prevent memory issue

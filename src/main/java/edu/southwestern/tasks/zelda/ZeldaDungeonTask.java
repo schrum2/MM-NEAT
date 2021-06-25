@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -14,10 +15,8 @@ import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels;
-import edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.scores.MultiObjectiveScore;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
@@ -26,7 +25,6 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
-import edu.southwestern.tasks.gvgai.zelda.study.DungeonNovelty;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -122,13 +120,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 	 * @return score - the MultiObjectiveScore<T>(individual, scores, behaviorVector, other) of the dungeon
 	 */
 	public Score<T> evaluate(Genotype<T> individual) {
-		// Defines the floor space (excluding walls)
-		
-		// TODO: Move/rename to util class. Mention ZELDA_FLOOR_SPACE
-		//final int ZELDA_FLOOR_SPACE_ROWS = 7; // Number of rows to look through
-		//final int ZELDA_FLOOR_SPACE_COLUMNS = 12; // Number of columns to look through
-
-		ArrayList<Double> behaviorVector = null; // Filled in later
 		Dungeon dungeon = getZeldaDungeonFromGenotype(individual);
 		int distanceToTriforce = -100; // Very bad fitness if level is not beatable 
 		int numRooms = 0; //number of rooms
@@ -139,8 +130,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		int waterTileCount = 0; //the number of water tiles
 		int wallTileCount = 0; //the number of wall tiles
 		int numRoomsReachable = 0; //the number of reachable rooms
-		int[] mapElitesBinIndices = null;
-		double mapElitesBinScore = Double.NEGATIVE_INFINITY;
+		HashMap<String,Object> behaviorMap = null;
 		HashSet<ZeldaState> solutionPath = null; 
 		HashSet<ZeldaState> mostRecentVisited = null;
 		
@@ -276,45 +266,27 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				
 				// Could conceivably also be used for behavioral diversity instead of map elites, but this would be a weird behavior vector from a BD perspective
 				if(MMNEAT.usingDiversityBinningScheme) {
-					// Hard coding bin score to be the percentage of reachable rooms traversed. May want to change this later.
-					mapElitesBinScore = (numRoomsTraversed*1.0)/numRoomsReachable;
-					final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
+					behaviorMap = new HashMap<>();
+					behaviorMap.put("Wall Tiles",wallTileCount);
+					behaviorMap.put("Water Tiles",waterTileCount);
+					behaviorMap.put("Reachable Rooms",numRoomsReachable);
+					behaviorMap.put("Distinct Rooms",numDistinctRooms);
+					behaviorMap.put("Backtracked Rooms",numBackTrackRooms);
+					behaviorMap.put("Dungeon", dungeon);
 					
-					if(MMNEAT.getArchiveBinLabelsClass() instanceof ZeldaMAPElitesWallWaterRoomsBinLabels) {					
-						double wallTilePercentage = (wallTileCount*1.0)/(numRoomsReachable*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS);
-						double waterTilePercentage = (waterTileCount*1.0)/(numRoomsReachable*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS);
-
-						int wallTileIndex = (int)(wallTilePercentage*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
-						int waterTileIndex = (int)(waterTilePercentage*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
-
-						mapElitesBinIndices = new int[] {wallTileIndex,waterTileIndex,numRoomsReachable};
-						System.out.println("["+wallTileIndex+"]["+waterTileIndex+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");
-					
-					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels) { //alternate binning scheme
-						mapElitesBinIndices = new int[] {numDistinctRooms,numBackTrackRooms,numRoomsReachable};
-						System.out.println("["+numDistinctRooms+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");
-					
-					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels) { //alternate binning scheme
-						double dungeonNovelty = DungeonNovelty.averageDungeonNovelty(dungeon);
-						int noveltyIndex =(int)((dungeonNovelty*NOVELTY_BINS_PER_DIMENSION)/ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.MAX_EXPECTED_NOVELTY); //.7 is the guessed max novelty, magic number
-						noveltyIndex = Math.min(noveltyIndex, NOVELTY_BINS_PER_DIMENSION - 1);
-						mapElitesBinIndices = new int[] {noveltyIndex, numBackTrackRooms, numRoomsReachable};
-						System.out.println("["+noveltyIndex+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");						
-					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof TileNoveltyBinLabels) { //novelty binning scheme
-						double dungeonNovelty = DungeonNovelty.averageDungeonNovelty(dungeon);
-						int noveltyIndex =(int)((dungeonNovelty*NOVELTY_BINS_PER_DIMENSION)/ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.MAX_EXPECTED_NOVELTY); //.7 is the guessed max novelty, magic number
-						noveltyIndex = Math.min(noveltyIndex, NOVELTY_BINS_PER_DIMENSION - 1);
-						mapElitesBinIndices = new int[] {noveltyIndex};
-						System.out.println("["+noveltyIndex+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");						
-					} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
-						LatentVariablePartitionSumBinLabels labels = (LatentVariablePartitionSumBinLabels) MMNEAT.getArchiveBinLabelsClass();
+					if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
 						ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
 						double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
-						mapElitesBinIndices = labels.discretize(labels.behaviorCharacterization(latentVector));
-					} else {
-						throw new RuntimeException("A Valid Binning Scheme For Zelda Was Not Specified");
+						behaviorMap.put("Solution Vector", latentVector);
 					}
-
+					
+					int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
+					behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
+					
+					// Hard coding bin score to be the percentage of reachable rooms traversed. May want to change this later.
+					double mapElitesBinScore = (numRoomsTraversed*1.0)/numRoomsReachable;					
+					behaviorMap.put("binScore", mapElitesBinScore);
+					
 					// Saving map elites bin images
 					if(CommonConstants.netio) {
 						System.out.println("Save archive images");
@@ -322,7 +294,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						List<String> binLabels = archive.getBinMapping().binLabels();
 
 						// Index in flattened bin array
-						Score<T> elite = archive.getElite(mapElitesBinIndices);
+						Score<T> elite = archive.getElite(dim1D);
 						// If the bin is empty, or the candidate is better than the elite for that bin's score
 						if(elite == null || mapElitesBinScore > elite.behaviorIndexScore()) {
 							if(mapElitesBinScore > fitnessSaveThreshold) {
@@ -336,7 +308,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 									if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
 									else fileName = "Direct-" + fileName;
 								}
-								String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(mapElitesBinIndices));
+								String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(dim1D);
 								String fullName = binPath + "-" + fileName;
 								System.out.println(fullName);
 								GraphicsUtil.saveImage(imagePlain, fullName);	
@@ -376,9 +348,9 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		}
 
 		double[] other = new double[] {numRooms, numRoomsTraversed, numRoomsReachable, searchStatesVisited};
-		return mapElitesBinIndices == null ? 
-				new MultiObjectiveScore<T>(individual, scores, behaviorVector, other) : // Need whole behavior vector
-				new MultiObjectiveScore<T>(individual, scores, mapElitesBinIndices, mapElitesBinScore, other); // Just need score for one MAP Elites bin
+		Score<T> result = new Score<>(individual, scores, null, other);
+		result.assignMAPElitesBehaviorMapAndScore(behaviorMap);
+		return result;
 	}
 	
 	/**

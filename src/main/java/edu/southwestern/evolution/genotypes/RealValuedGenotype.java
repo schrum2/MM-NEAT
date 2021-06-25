@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mutation.real.PerturbMutation;
 import edu.southwestern.util.random.RandomNumbers;
 
@@ -16,6 +17,11 @@ import edu.southwestern.util.random.RandomNumbers;
  */
 public class RealValuedGenotype extends NumericArrayGenotype<Double> {
 
+	public RealValuedGenotype() {
+		// Not using bounds themselves, but using length of bounds array to know how many variables are in solution vector
+		this(MMNEAT.getLowerBounds().length);
+	}
+	
 	/**
 	 * New genotype derived from list of doubles
 	 * @param genes ArrayList of doubles

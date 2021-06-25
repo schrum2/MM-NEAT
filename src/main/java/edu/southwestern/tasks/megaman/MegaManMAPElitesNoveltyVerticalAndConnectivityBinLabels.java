@@ -2,13 +2,15 @@ package edu.southwestern.tasks.megaman;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
+import edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels;
 import edu.southwestern.parameters.Parameters;
 
-public class MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels implements BinLabels {
+public class MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels extends BaseBinLabels {
 
 	public static final int TILE_GROUPS = 10;
 
@@ -57,5 +59,22 @@ public class MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels implements 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// MEGAMAN
 		MMNEAT.main(("runNumber:0 randomSeed:0 megaManAllowsConnectivity:false megaManAllowsSimpleAStarPath:true watch:false trials:1 mu:10 base:megamanTEST log:MegaManTEST-MegaManDirect2GAN saveTo:MegaManDirect2GAN megaManGANLevelChunks:10 maxGens:50000 io:true netio:true GANInputSize:5 mating:true fs:false task:edu.southwestern.tasks.megaman.MegaManGANLevelTask cleanOldNetworks:true useMultipleGANsMegaMan:false cleanFrequency:-1 recurrency:false saveAllChampions:true ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.megaman.MegaManMAPElitesNoveltyVerticalAndConnectivityBinLabels steadyStateIndividualsPerGeneration:100 genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype noveltyBinAmount:20").split(" "));
+	}
+
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		double precentConnected = (Double) keys.get("Connectivity");
+		int numVertical = (int) keys.get("Vertical Segments");
+		// 100% connectivity is possible, which leads to an index of 10 (out of bounds) if not adjusted using Math.min
+		int indexConnected = (int) Math.min(precentConnected*TILE_GROUPS,9);
+
+		// Make global? Assign once?
+		final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
+		@SuppressWarnings("unchecked")
+		List<List<Integer>> level = (List<List<Integer>>) keys.get("Level");
+		double novelty = TileNoveltyBinLabels.levelNovelty(level);
+		int noveltyIndex = Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
+
+		return new int[] {noveltyIndex, numVertical, indexConnected};
 	}
 }

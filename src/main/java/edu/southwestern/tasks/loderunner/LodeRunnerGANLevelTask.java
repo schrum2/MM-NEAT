@@ -47,8 +47,7 @@ public class LodeRunnerGANLevelTask extends LodeRunnerLevelTask<List<Double>> {
 	 * @return List<List<Integer>> that represents a level 
 	 */
 	@Override
-	public List<List<Integer>> getLodeRunnerLevelListRepresentationFromGenotype(
-			Genotype<List<Double>> individual) {
+	public List<List<Integer>> getLodeRunnerLevelListRepresentationFromGenotype(Genotype<List<Double>> individual) {
 		List<Double> latentVector = individual.getPhenotype();
 		return getLodeRunnerLevelListRepresentationFromGenotypeStatic(latentVector);
 	}

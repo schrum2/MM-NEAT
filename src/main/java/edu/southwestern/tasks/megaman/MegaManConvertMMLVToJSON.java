@@ -32,11 +32,11 @@ public class MegaManConvertMMLVToJSON {
 	 * Main method allows for json file generation from a selection of levels
 	 * 
 	 */
-    public static void main(String[] args) throws FileNotFoundException { // generate new json files
+    public static void main(String[] args) { // generate new json files
     	// All directories to pull from
     	
     	ArrayList<List<List<Integer>>> levels = new ArrayList<List<List<Integer>>>();
-    	for(int i = 1;i<=10;i++) {
+    	for(int i = 1;i<=1;i++) {
     		if (i != 9) {
     			maxX=0;
     			maxY=0;
@@ -46,31 +46,89 @@ public class MegaManConvertMMLVToJSON {
     			bossString = null;
     			List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
     			levels.add(level);
+    			//MegaManVGLCUtil.printLevel(level);
     		}
 		}
+    	System.out.println("Read "+levels.size()+" levels.");
 
-        // output file
-        String outputFile = "data/VGLC/MegaMan/NoWater9MegaMan.json";
-        
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        
+    	
+    	//outputOneGAN(levels, "NoWater9");  
+    	outputSevenGAN(levels, "Only1");
+    }    
+	
+    
+    @SuppressWarnings("unused")
+	private static void outputOneGAN(List<List<List<Integer>>> levels, String outputFileName) {
+    	System.out.println("Starting one-GAN generator with "+levels.size()+" levels.");
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	System.out.println("Instantiated json");
+    	
         for (List<List<Integer>> level : levels) {
         	MegaManVGLCUtil.upAndDownTrainingData(level);
+        	System.out.println("TrainingData complete...");
         }
+        System.out.println("All training data done.");
         
+        List<List<List<Integer>>> allJson = new ArrayList<>();
+        for (List<List<List<Integer>>> jsonList : MegaManVGLCUtil.getJsons()) {
+        	for (List<List<Integer>> segment : jsonList) {
+        		allJson.add(segment);
+        	}
+        	System.out.println("JsonList completed...");
+        }
+    	System.out.println("All jsonLists completed.");
         
-        String out = gson.toJson(MegaManVGLCUtil.json);
-        System.out.println("Created JSON String");
+        String out = gson.toJson(allJson);
+        System.out.println("Created JSON String for all with size: " + allJson.size() + ".");
         out = out.replace("\n", "").replace("      ", " ").replace(",  ", ", ").replace(",    ",", ").replace("    ","").replace("  ", "").replace("[ ", "[");
 
-        PrintWriter writer = new PrintWriter(outputFile);
+        PrintWriter writer = null;
+		try {
+			writer = new PrintWriter("data/VGLC/MegaMan/MegaManOneGAN" + outputFileName + ".json");
+		} catch (FileNotFoundException e) {
+			System.err.println("Could not create json output file.");
+			e.printStackTrace();
+		}
 
         writer.print(out);
         writer.close();
 
         System.out.println("Wrote file with " + levels.size() + " examples");
-    }    
-	
+    }
+    
+    private static void outputSevenGAN(List<List<List<Integer>>> levels, String outputFileName) {
+    	System.out.println("Starting one-GAN generator with "+levels.size()+" levels.");
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	System.out.println("Instantiated json");
+    	
+        for (List<List<Integer>> level : levels) {
+        	MegaManVGLCUtil.upAndDownTrainingData(level);
+        	System.out.println("TrainingData complete...");
+        }
+        System.out.println("All training data done.");
+        
+        PrintWriter writer = null;
+        String out;
+        String[] filePrefixes = new String[] {"Horizontal", "Up", "Down", "LowerLeftCorner", "UpperLeftCorner", "LowerRightCorner", "UpperRightCorner"};
+        for (int i = 0; i < 7; i++) {
+        	out = gson.toJson(MegaManVGLCUtil.getJsons().get(i));
+            System.out.println("Created JSON String for " + filePrefixes[i] + " with size: " + MegaManVGLCUtil.getJsons().get(i).size() + ".");
+            out = out.replace("\n", "").replace("      ", " ").replace(",  ", ", ").replace(",    ",", ").replace("    ","").replace("  ", "").replace("[ ", "[");
+            writer = null;
+            try {
+    			writer = new PrintWriter("data/VGLC/MegaMan/MegaManSevenGAN" + filePrefixes[i] + outputFileName + ".json");
+    		} catch (FileNotFoundException e) {
+    			System.err.println("Could not create json output file for " + filePrefixes[i] + ".");
+    			e.printStackTrace();
+    		}
+
+            writer.print(out);
+            writer.close();
+        }
+
+        System.out.println("Wrote files with " + levels.size() + " examples");
+    }
+    
 	
 	/**
 	 * useful for testing

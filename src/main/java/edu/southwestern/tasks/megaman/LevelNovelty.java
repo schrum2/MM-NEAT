@@ -21,7 +21,7 @@ public class LevelNovelty {
 	protected enum GAME {MARIO, ZELDA, LODE_RUNNER, MEGA_MAN};
 	
 	protected static GAME game = null;
-	protected static int getRows() {
+	public static int getRows() {
 		// If Mario, return Mario dimension, if Mega Man, get Mega Man dimension, etc.
 		// should be 1 less than the actual height, ex: Mario is 14 high, range of 0-13
 		switch(game) {
@@ -36,7 +36,7 @@ public class LevelNovelty {
 		}
 		return -1;
 	}
-	protected static int getColumns() {
+	public static int getColumns() {
 		// If Mario, return Mario dimension, if Mega Man, get Mega Man dimension, etc.
 		switch(game) {
 		case MARIO:

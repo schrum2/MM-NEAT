@@ -155,6 +155,15 @@ public class Archive<T> {
 			//System.out.println(newElites + " elites were replaced");
 			// Whether any elites were replaced
 			return newElites > 0;
+		} else if(candidate.usesMAPElitesMapSpecification()) {
+			int oneD = this.getBinMapping().oneDimensionalIndex(candidate.MAPElitesBehaviorMap());
+			boolean result = false;
+			synchronized(this) { // Make sure elite at the index does not change while considering replacement
+				// Synchronizing on the whole archive seems unnecessary ... maybe just the index? How?
+				Score<T> currentBinOccupant = getElite(oneD);
+				result = replaceIfBetter(candidate, oneD, currentBinOccupant);
+			}
+			return result;
 		} else if(candidate.usesMAPElitesBinSpecification()) {
 			int[] candidateBinIndices = candidate.MAPElitesBinIndex();
 			int oneD = this.getBinMapping().oneDimensionalIndex(candidateBinIndices);
@@ -263,18 +272,24 @@ public class Archive<T> {
 	 * @return Index in the 1D complete archive that contains an elite (not empty)
 	 */
 	public int randomOccupiedBinIndex() {
-		int steps = RandomNumbers.randomGenerator.nextInt(occupiedBins);
-		int originalSteps = steps;
-		int occupiedCount = 0;
-		for(int i = 0; i < archive.size(); i++) {
-			if(archive.get(i) != null) {
-				occupiedCount++;
-				if(steps == 0) {
-					return i;
-				} else {
-					steps--;
+		int steps = -1, originalSteps = -1, occupiedCount= -1;
+		try {
+			steps = RandomNumbers.randomGenerator.nextInt(occupiedBins);
+			originalSteps = steps;
+			occupiedCount = 0;
+			for(int i = 0; i < archive.size(); i++) {
+				if(archive.get(i) != null) {
+					occupiedCount++;
+					if(steps == 0) {
+						return i;
+					} else {
+						steps--;
+					}
 				}
 			}
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException("Could not pick random occupied bin with occupiedBins = "+occupiedBins+"; "+steps+" steps left out of "+originalSteps +". occupiedCount = "+occupiedCount);
 		}
 		throw new IllegalStateException("The number of occupied bins ("+occupiedBins+") and the archive size ("+archive.size()+") have a problem. "+steps+" steps left out of "+originalSteps +". occupiedCount = "+occupiedCount);
 	}

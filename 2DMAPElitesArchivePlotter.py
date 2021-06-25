@@ -73,14 +73,14 @@ bins.resize(dimensions[0], dimensions[1]) # Resize 1D array to 2D array with dim
 
 
 plt.text(dimensions[1]/2, (dimensions[0]/20)+dimensions[0], title, horizontalalignment='center', verticalalignment='baseline')
-plt.xlabel(dimension_names[0]) # Add labels
-plt.ylabel(dimension_names[1])
-plt.xlim(left=0.0, right=dimensions[0])
-plt.ylim(bottom=0.0, top=dimensions[1])
+plt.xlabel(dimension_names[1]) # Add labels
+plt.ylabel(dimension_names[0])
+plt.xlim(left=0.0, right=dimensions[1])
+plt.ylim(bottom=0.0, top=dimensions[0])
 
 plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap)) # Make colorbar
     
-plt.imshow(bins, norm=norm, cmap=cmap)
+plt.imshow(bins, norm=norm, cmap=cmap, extent=[0, dimensions[1], dimensions[0], 0])
 
 
 plt.savefig(dir+title+".png") # Save file
