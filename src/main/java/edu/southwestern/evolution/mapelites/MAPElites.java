@@ -329,12 +329,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			int startSize = Parameters.parameters.integerParameter("mu");
 			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);
 			Vector<Score<T>> evaluatedPopulation = new Vector<>(startingPopulation.size());
-			// Evaluate initial population (attempt at parallelism causing problems in some domains)
-			//startingPopulation.parallelStream().forEach( (g) -> {
-			for(Genotype<T> g : startingPopulation) {
+			// Evaluate initial population
+			startingPopulation.parallelStream().forEach( (g) -> {
 				Score<T> s = task.evaluate(g);
 				evaluatedPopulation.add(s);
-			}//);
+			});
 			
 			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
 				autoencoderLossRange = new MMNEATLog("autoencoderLossRange", false, false, false, true);
@@ -353,11 +352,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				trainImageAutoEncoderAndSetLossBounds(outputAutoEncoderFile, trainingDataDirectory, evaluatedPopulation);
 				System.out.println("Initial occupancy: "+ this.archive.getNumberOfOccupiedBins());
 			} else {
-				// Add initial population to archive (attempt at parallelism causing problems in some domains)
-				//evaluatedPopulation.parallelStream().forEach( (s) -> {
-				for(Score<T> s : evaluatedPopulation) {
+				// Add initial population to archive
+				evaluatedPopulation.parallelStream().forEach( (s) -> {
 					archive.add(s); // Fill the archive with random starting individuals
-				}//);	
+				});	
 			}
 		}
 	}
