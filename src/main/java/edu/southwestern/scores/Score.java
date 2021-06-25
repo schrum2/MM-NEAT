@@ -244,6 +244,14 @@ public class Score<T> {
 	}
 	
 	/**
+	 * Could be null
+	 * @return Map of labels to behavior characteristics
+	 */
+	public HashMap<String,Object> MAPElitesBehaviorMap() {
+		return oneMAPEliteMap;
+	}
+	
+	/**
 	 * Given two Score instances from the same task, add the scores and other
 	 * stats of other to the scores and other stats of this score instance to
 	 * create a new Score instance (with this Genotype) which is returned.
@@ -361,7 +369,9 @@ public class Score<T> {
 
 	// Prints the contents of the agent's data to the console.
 	public String toString() {
-		return (individual == null ? "NULL" : individual.getId()) + ":N=" + evals + ":" + Arrays.toString(scores) + (otherStats != null && otherStats.length > 0 ? Arrays.toString(otherStats) : "");
+		return (individual == null ? "NULL" : individual.getId()) + ":N=" + evals + ":" + Arrays.toString(scores) + 
+				(otherStats != null && otherStats.length > 0 ? Arrays.toString(otherStats) : "") + 
+				(oneMAPEliteMap == null ? "" : oneMAPEliteMap);
 	}
 
 	// allows behaviorVector to be printed and then set to a new behavoirVector
@@ -402,7 +412,7 @@ public class Score<T> {
 	 * maxScores finds the largest score and other stats of both agents. If one
 	 * of the scores is null, it simply returns the other score. Else, it
 	 * returns a new Score object that contains the biggest score and otherStats
-	 * between the two agents. Finally, it incrememnts the number of evals
+	 * between the two agents. Finally, it increments the number of evals
 	 * performed on the specific agent.
 	 * 
 	 * @param other:

@@ -491,6 +491,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				behaviorMap.put("Solution Vector", latentVector);
 			}			
 			int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
+			behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
 			saveMAPElitesImages(individual, levelImage, dim1D, binScore);
 		}
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);

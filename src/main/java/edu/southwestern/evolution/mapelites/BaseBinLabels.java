@@ -11,6 +11,8 @@ public abstract class BaseBinLabels implements BinLabels {
 
 	@Override
 	public int oneDimensionalIndex(HashMap<String, Object> keys) {
-		return oneDimensionalIndex(multiDimensionalIndices(keys));
+		// Value is saved if previously computed, so that we don't need to do it again
+		if(keys.containsKey("dim1D")) return (int) keys.get("dim1D");
+		return oneDimensionalIndex(multiDimensionalIndices(keys)); // Else compute
 	}
 }
