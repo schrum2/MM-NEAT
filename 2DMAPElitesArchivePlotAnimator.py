@@ -1,8 +1,8 @@
 """ 2D MAP-Elites archive plotter (Only for 2D archives with equal amount of bins in both dimensions)
     
     Usage:
-    python 2DMAPElitesSquareArchivePlotAnimator.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <logging frequency> <max value> <min value> <plot emitters?>
-    python 2DMAPElitesSquareArchivePlotAnimator.py latentvariablepartition/Mario0/LatentVariablePartition-Mario0_MAPElites_log.txt "Slice 1" 100 "Slice 2" 100 10 420 -1 False
+    python 2DMAPElitesSquareArchivePlotAnimator.py <plot file to display> <plot display title> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <logging frequency> <max value> <min value> <plot emitters?>
+    python 2DMAPElitesSquareArchivePlotAnimator.py latentvariablepartition/Mario0/LatentVariablePartition-Mario0_MAPElites_log.txt "Plot" "Slice 1" 100 "Slice 2" 100 10 420 -1 False
 
     Note: Min and Max do NOT need to be given, they will be calculated automatically
 """
@@ -34,16 +34,22 @@ except:
     print("File could not be opened.")
     quit()
 
+try: # Get dimensions and relative sizes
+    plot_title = sys.argv[2]
+except:
+    print("Dimensions were not specified!")
+    quit()
+
 try: # Get dimension names and the relative sizes
-    dimension_names = [sys.argv[2], sys.argv[4]]
-    dimensions = [int(sys.argv[3]), int(sys.argv[5])]
+    dimension_names = [sys.argv[3], sys.argv[5]]
+    dimensions = [int(sys.argv[4]), int(sys.argv[6])]
     print("Dimensions specified as: "+str(dimension_names)+" with sizes: "+str(dimensions))
 except:
     print("Dimensions were not specified!")
     quit()
       
 try: # Get the logging frequency
-    logging_frequeny = int(sys.argv[6])
+    logging_frequeny = int(sys.argv[7])
     print("Logging Frequency set to: "+str(logging_frequeny))
 except:
     print("Logging frequency was not specified, defaulting to 1")
@@ -51,8 +57,8 @@ except:
     
 try: # Get the min and max
     calc_minmax = False
-    vmax = int(sys.argv[7])
-    vmin = int(sys.argv[8])
+    vmax = int(sys.argv[8])
+    vmin = int(sys.argv[9])
     edges = [vmax, vmin]
     print("Min and Max specified as: ("+str(min(edges))+", "+str(max(edges))+")")
 except: # If unspecified, calculates it
@@ -62,7 +68,7 @@ except: # If unspecified, calculates it
     vmax = float("-inf")
 
 try: # Get the min and max
-    emitter_parameter = sys.argv[9]
+    emitter_parameter = sys.argv[10]
     if emitter_parameter == "False" or emitter_parameter == "false":
         emitter_parameter = False
     else:
@@ -127,7 +133,7 @@ for iteration in range(len(numeric_lines)): # If will log
         cmap = "viridis" # Colormap to use
         
         plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap)) # Add color bar
-        plt.text(dimensions[1]/2, (dimensions[0]/20)+dimensions[0], (title + " Step:"+str(iteration)), horizontalalignment='center', verticalalignment='baseline')
+        plt.text(dimensions[1]/2, (dimensions[0]/20)+dimensions[0], (plot_title + " Step:"+str(iteration)), horizontalalignment='center', verticalalignment='baseline')
         plt.xlabel(dimension_names[1]) # Add labels
         plt.ylabel(dimension_names[0])
         plt.xlim(left=0.0, right=dimensions[1])
