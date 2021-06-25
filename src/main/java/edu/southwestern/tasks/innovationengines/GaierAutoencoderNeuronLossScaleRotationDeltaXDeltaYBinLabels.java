@@ -49,7 +49,7 @@ List<String> labels = null;
 						for(int m = 0; m < Parameters.parameters.integerParameter("numRotationIntervals"); m++) {
 							for(int n = 0; n < Parameters.parameters.integerParameter("numTranslationIntervals"); n++) {
 								for(int o = 0; o < Parameters.parameters.integerParameter("numTranslationIntervals"); o++){
-									labels.add("Neurons" + i + "-loss" + j + "-scale" + k + "-rotation" + m + "-deltaX" + n + "-deltaY" + o);
+									labels.add("N" + i + "L" + j + "S" + k + "R" + m + "X" + n + "Y" + o);
 									count++;
 								}
 							}
@@ -77,6 +77,7 @@ List<String> labels = null;
 				(multi[BIN_INDEX_ROTATION] * Parameters.parameters.integerParameter("numTranslationIntervals") * Parameters.parameters.integerParameter("numTranslationIntervals")) + 
 				(multi[BIN_INDEX_DELTA_X] * Parameters.parameters.integerParameter("numTranslationIntervals") + 
 				(multi[BIN_INDEX_DELTA_Y]))))));
+		//System.out.println(Arrays.toString(multi) + "->" +binIndex);
 		assert binIndex >= 0 : "Negative index " + Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
 	}

@@ -57,6 +57,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private MMNEATLog emitterMeanLog = null;
 	private MMNEATLog cppnThenDirectLog = null;
 	private MMNEATLog cppnVsDirectFitnessLog = null;
+	private MMNEATLog autoencoderLossRange = null;
 	protected MMNEATLog[] emitterIndividualsLogs = null;
 	protected LonerTask<T> task;
 	protected Archive<T> archive;
@@ -120,6 +121,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		String fillPercentagePrefix = experimentPrefix + "_" + "FillPercentage";
 		String qdPrefix = experimentPrefix + "_" + "QD";
 		String maxPrefix = experimentPrefix + "_" + "Maximum";
+		String lossPrefix = experimentPrefix + "_" + "ReconstructionLoss";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
 		String fullPDFName = directory + prefix + "_pdf_log.plt";
@@ -129,6 +131,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		String fullFillPercentageName = directory + fillPercentagePrefix + "_log.plt";
 		String fullQDName = directory + qdPrefix + "_log.plt";
 		String maxFitnessName = directory + maxPrefix + "_log.plt";
+		String reconstructionLossName = directory + lossPrefix + "_log.plt";
 		File pdfPlot = new File(fullPDFName);
 		File plot = new File(fullName); // for archive log plot file
 		File fillPlot = new File(fullFillName);
@@ -201,6 +204,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("set title \"" + experimentPrefix + " Maximum individual fitness score");
 			ps.println("set output \"" + maxFitnessName.substring(maxFitnessName.lastIndexOf('/')+1, maxFitnessName.lastIndexOf('.')) + ".pdf\"");
 			ps.println("plot \"" + name + ".txt\" u 1:4 w linespoints t \"Maximum fitness Score\"");
+			
+			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {
+				ps.println("set title \"" + experimentPrefix + " Reconstruction Loss Range");
+				ps.println("set output \"" + reconstructionLossName.substring(reconstructionLossName.lastIndexOf('/')+1, reconstructionLossName.lastIndexOf('.')) + ".pdf\"");
+				ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Min Loss\"");
+				ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"Max Loss\"");
+			}
 			
 			ps.close();
 			
@@ -325,6 +335,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				evaluatedPopulation.add(s);
 			});
 			
+			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
+				autoencoderLossRange = new MMNEATLog("autoencoderLossRange", false, false, false, true);
+			}
+			
 			// Special code if image auto-encoder is used
 			if(Parameters.parameters.booleanParameter("trainInitialAutoEncoder") && saveImageArchives && Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
 				System.out.println("Train initial auto-encoder");
@@ -395,6 +409,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				//in archive class, archive variable (vector)
 				cppnThenDirectLog.log(pseudoGeneration+"\t"+numCPPN+"\t"+numDirect);
 				cppnVsDirectFitnessLog.log(pseudoGeneration +"\t"+ StringUtils.join(eliteProper, "\t"));
+				
 			}			
 			// Special code for Lode Runner
 			if(MMNEAT.task instanceof LodeRunnerLevelTask) {
@@ -587,6 +602,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			}
 			Parameters.parameters.setDouble("minAutoencoderLoss", minLoss);
 			Parameters.parameters.setDouble("maxAutoencoderLoss", maxLoss);	
+			if(autoencoderLossRange != null) {
+				final int pseudoGeneration = iterations/individualsPerGeneration;
+				autoencoderLossRange.log(pseudoGeneration + "\t" + minLoss + "\t" + maxLoss);
+			}
 			System.out.println("Loss ranges from "+minLoss+" to "+maxLoss);
 		}		
 		// Will bin differently because autoencoder has changed, as have expected loss bounds. Images get re-evaluated

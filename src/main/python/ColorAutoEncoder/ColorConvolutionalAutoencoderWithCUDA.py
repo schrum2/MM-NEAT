@@ -11,130 +11,116 @@ import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.nn.functional as F
 import myColorData
+import sys
+# import ConvAutoencoder
+from ConvAutoencoder import ConvAutoencoder
 
-#Converting data to torch.FloatTensor
-transform = transforms.ToTensor()
-batch_size = 20
+if __name__ == '__main__':
 
-train_data = myColorData.CustomImageDataSet("C:\\Users\\wickera\\GitHub\\MM-NEAT\\src\\main\\python\\ColorAutoEncoder\\ColorTrainingSet", transform)
+    trainingImagesDirectory = sys.argv[1]
+    pthFileToSave = sys.argv[2]
 
-# Why does it want us to drop_last?
-#train_dataloader = DataLoader(train_data , batch_size=batch_size, shuffle=False, num_workers=4, drop_last=True)
-train_dataloader = DataLoader(train_data , batch_size=batch_size, shuffle=False, num_workers=0)
+    #Converting data to torch.FloatTensor
+    transform = transforms.ToTensor()
+    batch_size = 20
 
-#Utility functions to un-normalize and display an image
-def imshow(img):
-    img = img / 2 + 0.5  
-    plt.imshow(np.transpose(img, (1, 2, 0))) 
+    train_data = myColorData.CustomImageDataSet(trainingImagesDirectory, transform)
 
-#Obtain one batch of training images
-dataiter = iter(train_dataloader)
-images = dataiter.next()
-images = images.numpy() # convert images to numpy for display
+    # Why does it want us to drop_last?
+    #train_dataloader = DataLoader(train_data , batch_size=batch_size, shuffle=False, num_workers=4, drop_last=True)
+    train_dataloader = DataLoader(train_data , batch_size=batch_size, shuffle=False, num_workers=0)
 
-#Plot the images
-fig = plt.figure(figsize=(8, 8))
-# display 20 images
-for idx in np.arange(9):
-    ax = fig.add_subplot(3, 3, idx+1, xticks=[], yticks=[])
-    imshow(images[idx])
+    #Utility functions to un-normalize and display an image
+    def imshow(img):
+        img = img / 2 + 0.5  
+        plt.imshow(np.transpose(img, (1, 2, 0))) 
 
-#Define the Convolutional Autoencoder
-class ConvAutoencoder(nn.Module):
-    def __init__(self):
-        super(ConvAutoencoder, self).__init__()
-       
-        #Encoder
-        self.conv1 = nn.Conv2d(3, 16, 3, padding=1)  
-        self.conv2 = nn.Conv2d(16, 4, 3, padding=1)
-        self.pool = nn.MaxPool2d(2, 2)
-       
-        #Decoder
-        self.t_conv1 = nn.ConvTranspose2d(4, 16, 2, stride=2)
-        self.t_conv2 = nn.ConvTranspose2d(16, 3, 2, stride=2)
+    #Obtain one batch of training images
+    dataiter = iter(train_dataloader)
+    images = dataiter.next()
+    images = images.numpy() # convert images to numpy for display
 
+    #Plot the images
+    fig = plt.figure(figsize=(8, 8))
+    # display 20 images
+    for idx in np.arange(9):
+        ax = fig.add_subplot(3, 3, idx+1, xticks=[], yticks=[])
+        imshow(images[idx])
 
-    def forward(self, x):
-        x = F.relu(self.conv1(x))
-        x = self.pool(x)
-        x = F.relu(self.conv2(x))
-        x = self.pool(x)
-        x = F.relu(self.t_conv1(x))
-        x = F.sigmoid(self.t_conv2(x))
-              
-        return x
+    #Instantiate the model
+    model = ConvAutoencoder()
+    print(model)
 
+    #Loss function
+    criterion = nn.BCELoss()
 
-#Instantiate the model
-model = ConvAutoencoder()
-print(model)
+    #Optimizer
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-#Loss function
-criterion = nn.BCELoss()
+    def get_device():
+        if torch.cuda.is_available():
+            device = 'cuda:0'
+        else:
+            device = 'cpu'
+        return device
 
-#Optimizer
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    device = get_device()
+    print(device)
+    model.to(device)
 
-def get_device():
-    if torch.cuda.is_available():
-        device = 'cuda:0'
-    else:
-        device = 'cpu'
-    return device
+    #Epochs
+    n_epochs = 1000
 
-device = get_device()
-print(device)
-model.to(device)
+    for epoch in range(1, n_epochs+1):
+        # monitor training loss
+        train_loss = 0.0
 
-#Epochs
-n_epochs = 50000
-
-for epoch in range(1, n_epochs+1):
-    # monitor training loss
-    train_loss = 0.0
-
-    #Training
-    for data in train_dataloader:
-        images = data
-        images = images.to(device)
-        optimizer.zero_grad()
-        outputs = model(images)
-        loss = criterion(outputs, images)
-        loss.backward()
-        optimizer.step()
-        train_loss += loss.item()*images.size(0)
+        #Training
+        for data in train_dataloader:
+            images = data
+            images = images.to(device)
+            optimizer.zero_grad()
+            outputs = model(images)
+            loss = criterion(outputs, images)
+            loss.backward()
+            optimizer.step()
+            train_loss += loss.item()*images.size(0)
           
-    train_loss = train_loss/len(train_dataloader)
-    print('Epoch: {} \tTraining Loss: {:.6f}'.format(epoch, train_loss))
+        train_loss = train_loss/len(train_dataloader)
+        print('Epoch: {} \tTraining Loss: {:.6f}'.format(epoch, train_loss))
 
-# For now: Test on Training Data
-test_loader = train_dataloader
+    # For now: Test on Training Data
+    test_loader = train_dataloader
 
-#Batch of test images
-dataiter = iter(test_loader)
-images = dataiter.next()
+    #Batch of test images
+    dataiter = iter(test_loader)
+    images = dataiter.next()
 
-#Sample outputs
-output = model(images.to(device))
-images = images.numpy()
+    #Sample outputs
+    output = model(images.to(device))
+    images = images.numpy()
 
-output = output.view(batch_size, 3, 28, 28)
-output = output.detach().cpu().numpy()
+    output = output.view(batch_size, 3, 28, 28)
+    output = output.detach().cpu().numpy()
 
-#Original Images
-print("Original Images")
-fig, axes = plt.subplots(nrows=1, ncols=5, sharex=True, sharey=True, figsize=(12,4))
-for idx in np.arange(5):
-    ax = fig.add_subplot(1, 5, idx+1, xticks=[], yticks=[])
-    imshow(images[idx])
-    #ax.set_title(classes[labels[idx]])
-plt.show()
+    #Original Images
+    print("Original Images")
+    fig, axes = plt.subplots(nrows=1, ncols=5, sharex=True, sharey=True, figsize=(12,4))
+    for idx in np.arange(5):
+        ax = fig.add_subplot(1, 5, idx+1, xticks=[], yticks=[])
+        imshow(images[idx])
+        #ax.set_title(classes[labels[idx]])
+    plt.show()
 
-#Reconstructed Images
-print('Reconstructed Images')
-fig, axes = plt.subplots(nrows=1, ncols=5, sharex=True, sharey=True, figsize=(12,4))
-for idx in np.arange(5):
-    ax = fig.add_subplot(1, 5, idx+1, xticks=[], yticks=[])
-    imshow(output[idx])
-    #ax.set_title(classes[labels[idx]])
-plt.show() 
+    #Reconstructed Images
+    print('Reconstructed Images')
+    fig, axes = plt.subplots(nrows=1, ncols=5, sharex=True, sharey=True, figsize=(12,4))
+    for idx in np.arange(5):
+        ax = fig.add_subplot(1, 5, idx+1, xticks=[], yticks=[])
+        imshow(output[idx])
+        #ax.set_title(classes[labels[idx]])
+    plt.show() 
+
+    torch.save(model.state_dict(), pthFileToSave)
+
+    print("END")
