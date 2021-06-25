@@ -1,9 +1,8 @@
 package edu.southwestern.tasks.innovationengines;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import edu.southwestern.parameters.Parameters;
@@ -31,7 +30,7 @@ public class CPPNNeuronScaleRotationDeltaXDeltaYBinLabelsTest {
 
 	@Test
 	public void testOneDimensionalIndex() {
-		int[] allNeuronValues = new int[] {5,5,6,19,79,10,70,28,76,20,35,56,14,68,84,99,38,59};
+		int[] allNeuronValues = new int[] {7,7,8,19,79,10,70,28,76,20,35,56,14,68,84,99,38,59};
 		int[] allScaleValues = new int[] {1,3,8,7,9,4,1,3,9,5,4,6,2,3,4,9,2,4};
 		int[] allRotationValues = new int [] {9,8,2,3,2,1,5,2,4,7,1,5,8,7,6,5,8,7};
 		int[] allDeltaXValues = new int[] {0,1,2,3,4,5,6,7,8,9,2,8,7,5,4,1,3,7};

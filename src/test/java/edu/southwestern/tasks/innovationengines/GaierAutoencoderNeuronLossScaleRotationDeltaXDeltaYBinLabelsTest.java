@@ -26,7 +26,7 @@ public class GaierAutoencoderNeuronLossScaleRotationDeltaXDeltaYBinLabelsTest {
 	@Test
 	public void testOneDimensionalIndex() {
 		//fail("Not yet implemented");
-		int[] allNeuronValues = new int[] {5,5,6,19,79,10,70,28,76,20,35,56,14,68,84,99,38,59};
+		int[] allNeuronValues = new int[] {7,7,8,19,79,10,70,28,76,20,35,56,14,68,84,99,38,59};
 		double[] allLossValues = new double[] {0.01,0.11,0.53,0.24,0.48,0.18,0.10,0.01,0.29,0.04,0.99,0.35,0.85,0.82,0.57,0.95,0.73,0.64};
 		int[] labelEnds = new int[] {0,1,5,2,4,1,1,0,2,0,9,3,8,8,5,9,7,6};
 		int[] allScaleValues = new int[] {1,3,8,7,9,4,1,3,9,5,4,6,2,3,4,9,2,4};
