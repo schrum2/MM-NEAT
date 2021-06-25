@@ -102,7 +102,7 @@ fig.suptitle(title)
 
 counter = 0
 for ax, slice in zip(axs.flat, archive_slice_arrays):
-    ax.imshow(slice, extent=[0, dimensions[2], dimensions[1], 0], norm=norm)
+    ax.imshow(slice, extent=[0, dimensions[2], dimensions[1], 0], norm=norm, cmap=cmap)
     ax.set_ylim(bottom=0.0, top=dimensions[1])
     ax.set_xlim(left=0.0, right=dimensions[2])
     ax.set_xlabel(dimension_names[2]) # Add labels
