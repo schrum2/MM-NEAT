@@ -52,10 +52,6 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	// Is actually logged to in the MAPElites class
 	public MMNEATLog beatable;
 
-	// Calculated in oneEval, so it can be passed on the getBehaviorVector
-	private ArrayList<Double> behaviorVector;
-	private HashMap<String,Object> behaviorCharacteristics;
-	private double binScore;
 	private int[][][] klDivLevels; // Should this be here?
 	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
 	
@@ -196,22 +192,6 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		return 0; //not used 
 	}
 
-	// This might break the Level Sequence Task, but that isn't really used, so will fix later if necessary.
-	// In a pinch, this whole method can be commented out to make the level sequence work.
-	@Override
-	public Score<T> evaluate(Genotype<T> individual) {
-		Score<T> result = super.evaluate(individual);
-		if(MMNEAT.usingDiversityBinningScheme) { // Handing this here makes multi-threading impossible. BAD DESIGN!
-			//result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
-			if(behaviorCharacteristics != null) {
-				result.assignMAPElitesBehaviorMapAndScore(behaviorCharacteristics, binScore);
-			} else {
-				throw new UnsupportedOperationException("Specify a map of behavior characteristics");
-			}
-		}
-		return result;
-	}
-	
 	/**
 	 * Does one evaluation with the A* algorithm to see if the level is beatable 
 	 * @param Genotype<T> 
@@ -220,14 +200,14 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 * @throws IOException 
 	 */
 	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String,Object> behaviorCharacteristics) {
 		if(!initialized) {
 			setupKLDivLevelsForComparison();
 			initialized = true;
 		}
 		List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromGenotype(individual); //gets a level 
 		double psuedoRandomSeed = getRandomSeedForSpawnPoint(individual); //creates the seed to be passed into the Random instance 
-		return evaluateOneLevel(level, psuedoRandomSeed, individual);
+		return evaluateOneLevel(level, psuedoRandomSeed, individual, behaviorCharacteristics);
 	}
 
 	/**
@@ -239,7 +219,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 * @param genotypeId
 	 * @return Pair holding the scores 
 	 */
-	protected Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, Genotype<T> individual) {
+	protected Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, Genotype<T> individual, HashMap<String,Object> behaviorMap) {
 		long genotypeId = individual.getId();
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array  
 		Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed);
@@ -351,14 +331,14 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		if(MMNEAT.usingDiversityBinningScheme && !(MMNEAT.task instanceof LodeRunnerLevelSequenceTask)) {
 			
 			// Quality measure (designated in a manner distinct from the fitness score)
-			binScore = simpleAStarDistance;
+			double binScore = simpleAStarDistance;
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsAStarConnectivityCombo")) {
 				// Combo of connectivity and A* overwhelms regular A*
 				binScore = comboFitness;
 			}
+			behaviorMap.put("binScore", binScore);
 
 			// All possible behavior characterization information
-			HashMap<String, Object> behaviorMap = new HashMap<>();
 			behaviorMap.put("Connected Percent",percentConnected);
 			behaviorMap.put("Ground Percent", percentGround);
 			behaviorMap.put("Ladders Percent", percentLadders);
@@ -376,8 +356,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				behaviorMap.put("Solution Vector", latentVector);
 			}
 			
-			behaviorCharacteristics = behaviorMap;			
-			int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorCharacteristics);
+			int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
 
 			BufferedImage levelSolution = null;
 			BufferedImage levelImage = null;
@@ -431,15 +410,6 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Data calculated in oneEval and returned here
-	 * Meant to be used with MAPElites. It is an array of bins. Every level gets placed into a single bin 
-	 * @return behaviorVector
-	 */
-	public ArrayList<Double> getBehaviorVector() {
-		return behaviorVector;
 	}
 
 	/**

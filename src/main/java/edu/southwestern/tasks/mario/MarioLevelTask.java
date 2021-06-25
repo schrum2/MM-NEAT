@@ -77,9 +77,6 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	public static final int NUM_SEGMENT_STATS = 3;
 
 	// Calculated in oneEval, so it can be passed on the getBehaviorVector
-	private ArrayList<Double> behaviorVector;
-	private HashMap<String,Object> behaviorCharacteristics;
-	private double binScore;
 	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
 	
 	public MarioLevelTask() {
@@ -243,24 +240,9 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	 * @return
 	 */
 	public abstract double totalPassableDistance(EvaluationInfo info);
-
 	
 	@Override
-	public Score<T> evaluate(Genotype<T> individual) {
-		Score<T> result = super.evaluate(individual);
-		if(MMNEAT.usingDiversityBinningScheme) { // Handing this here makes multi-threading impossible. BAD DESIGN!
-			if(behaviorCharacteristics != null) {
-				result.assignMAPElitesBehaviorMapAndScore(behaviorCharacteristics, binScore);
-			} else {
-				throw new UnsupportedOperationException("Specify a map of behavior characteristics");
-			}
-		}
-		return result;
-	}
-	
-	
-	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorMap) {
 		if(!initialized) {
 			setupKLDivLevelsForComparison();
 			initialized = true;
@@ -490,9 +472,9 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			
 			assert Parameters.parameters.booleanParameter("marioSimpleAStarDistance") : "Bin score will be -1 everywhere if you don't calculate the A* distance. Set marioSimpleAStarDistance:true";
 			double binScore = simpleAStarDistance;
+			behaviorMap.put("binScore", binScore); // Quality Score!
 			
 			// All possible behavior characterization information
-			HashMap<String, Object> behaviorMap = new HashMap<>();
 			behaviorMap.put("Level Stats",lastLevelStats);
 			behaviorMap.put("Distinct Segments",numDistinctSegments);
 			// It would be slightly more efficient to use levelWithParsedSegments here, but then Mario Novelty
@@ -507,13 +489,9 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 				ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
 				double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
 				behaviorMap.put("Solution Vector", latentVector);
-			}
-			
-			behaviorCharacteristics = behaviorMap;			
-			int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorCharacteristics);
-			
+			}			
+			int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
 			saveMAPElitesImages(individual, levelImage, dim1D, binScore);
-
 		}
 		return new Pair<double[],double[]>(ArrayUtil.doubleArrayFromList(fitnesses), otherScores);
 		
@@ -529,7 +507,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 	private void saveMAPElitesImages(Genotype<T> individual, BufferedImage levelImage, int dim1D, double binScore) {
 		// Saving map elites bin images	
 		if(CommonConstants.netio) {
-			System.out.println("Save archive images");
+			//System.out.println("Save archive images");
 			@SuppressWarnings("unchecked")
 			Archive<T> archive = MMNEAT.getArchive();
 			List<String> binLabels = archive.getBinMapping().binLabels();
@@ -595,13 +573,6 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			total += Math.abs(levelStats.get(i-1)[statIndex] - levelStats.get(i)[statIndex]);
 		}
 		return total;
-	}
-
-	// It is assumed that the data needed to fill this is computed in oneEval, saved globally, and then returned here.
-	// This is primarily meant to be used with MAP Elites, so it is an unusual behavior vector. It is really a vector of bins, where
-	// the agent's score in each bin is set ... but a given Mario level should really only be in one of the bins.
-	public ArrayList<Double> getBehaviorVector() {
-		return behaviorVector;
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {

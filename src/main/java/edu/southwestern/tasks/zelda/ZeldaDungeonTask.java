@@ -130,7 +130,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		int waterTileCount = 0; //the number of water tiles
 		int wallTileCount = 0; //the number of wall tiles
 		int numRoomsReachable = 0; //the number of reachable rooms
-		double mapElitesBinScore = Double.NEGATIVE_INFINITY;
 		HashMap<String,Object> behaviorMap = null;
 		HashSet<ZeldaState> solutionPath = null; 
 		HashSet<ZeldaState> mostRecentVisited = null;
@@ -284,7 +283,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
 					
 					// Hard coding bin score to be the percentage of reachable rooms traversed. May want to change this later.
-					mapElitesBinScore = (numRoomsTraversed*1.0)/numRoomsReachable;
+					double mapElitesBinScore = (numRoomsTraversed*1.0)/numRoomsReachable;					
+					behaviorMap.put("binScore", mapElitesBinScore);
 					
 					// Saving map elites bin images
 					if(CommonConstants.netio) {
@@ -348,7 +348,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 
 		double[] other = new double[] {numRooms, numRoomsTraversed, numRoomsReachable, searchStatesVisited};
 		Score<T> result = new Score<>(individual, scores, null, other);
-		result.assignMAPElitesBehaviorMapAndScore(behaviorMap, mapElitesBinScore);
+		result.assignMAPElitesBehaviorMapAndScore(behaviorMap);
 		return result;
 	}
 	

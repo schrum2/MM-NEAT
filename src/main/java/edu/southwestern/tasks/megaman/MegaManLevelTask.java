@@ -49,16 +49,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	private int numFitnessFunctions = 0; 
 	private static final int NUM_OTHER_SCORES = 12;
 
-	// Calculated in oneEval, so it can be passed on the getBehaviorVector
-	private ArrayList<Double> behaviorVector;
-	private HashMap<String,Object> behaviorCharacteristics;
-	private double binScore;
 	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
-	
-	// Use of oneMAPEliteBinIndexScorePair is now favored for MAP Elites instead
-	public ArrayList<Double> getBehaviorVector() {
-		return behaviorVector;
-	}
 	
 	public MegaManLevelTask(){
 		this(true);
@@ -115,24 +106,10 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	}
 
 	@Override
-	public Score<T> evaluate(Genotype<T> individual) {
-		Score<T> result = super.evaluate(individual);
-		if(MMNEAT.usingDiversityBinningScheme) { // Handing this here makes multi-threading impossible. BAD DESIGN!
-			if(behaviorCharacteristics != null) {
-				result.assignMAPElitesBehaviorMapAndScore(behaviorCharacteristics, binScore);
-			} else {
-				throw new UnsupportedOperationException("Specify a map of behavior characteristics");
-			}
-		}
-		return result;
-	}
-
-	
-	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String,Object> behaviorCharacteristics) {
 		MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
 		List<List<Integer>> level = getMegaManLevelListRepresentationFromGenotype(individual, segmentCount); //gets a level 
-		return evaluateOneLevel(level, individual, segmentCount);
+		return evaluateOneLevel(level, individual, segmentCount, behaviorCharacteristics);
 	}
 
 	/**
@@ -142,7 +119,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	 * @return Pair of fitness and other scores
 	 */
 	@SuppressWarnings("unchecked")
-	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, Genotype<T> individual, MegaManTrackSegmentType segmentCount) {
+	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, Genotype<T> individual, MegaManTrackSegmentType segmentCount, HashMap<String,Object> behaviorCharacteristics) {
 		long genotypeId = individual.getId();
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
 		Quad<HashSet<MegaManState>, ArrayList<MegaManAction>, MegaManState, Double> aStarResults = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level);
@@ -324,20 +301,20 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 		if(MMNEAT.usingDiversityBinningScheme) {
 			assert precentConnected <= 1;
 			
-			HashMap<String,Object> map = new HashMap<String,Object>();
-			map.put("Connectivity", precentConnected);
-			map.put("Vertical Segments", numUpSegments+numDownSegments);
-			map.put("Distinct Segments", numDistinctSegments);
-			map.put("Level", level); // Used to calculate Level Novelty
+			behaviorCharacteristics.put("Connectivity", precentConnected);
+			behaviorCharacteristics.put("Vertical Segments", numUpSegments+numDownSegments);
+			behaviorCharacteristics.put("Distinct Segments", numDistinctSegments);
+			behaviorCharacteristics.put("Level", level); // Used to calculate Level Novelty
 			// Takes some effort to compute, so only compute if needed.
 			if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
 				ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
 				double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
-				map.put("Solution Vector", latentVector);
+				behaviorCharacteristics.put("Solution Vector", latentVector);
 			}
 			
-			binScore = simpleAStarDistance;
-			behaviorCharacteristics = map;
+			double binScore = simpleAStarDistance;
+			behaviorCharacteristics.put("binScore", binScore); // Quality measure!
+			
 			int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorCharacteristics);
 			
 			if(CommonConstants.netio) {

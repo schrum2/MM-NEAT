@@ -263,18 +263,24 @@ public class Archive<T> {
 	 * @return Index in the 1D complete archive that contains an elite (not empty)
 	 */
 	public int randomOccupiedBinIndex() {
-		int steps = RandomNumbers.randomGenerator.nextInt(occupiedBins);
-		int originalSteps = steps;
-		int occupiedCount = 0;
-		for(int i = 0; i < archive.size(); i++) {
-			if(archive.get(i) != null) {
-				occupiedCount++;
-				if(steps == 0) {
-					return i;
-				} else {
-					steps--;
+		int steps = -1, originalSteps = -1, occupiedCount= -1;
+		try {
+			steps = RandomNumbers.randomGenerator.nextInt(occupiedBins);
+			originalSteps = steps;
+			occupiedCount = 0;
+			for(int i = 0; i < archive.size(); i++) {
+				if(archive.get(i) != null) {
+					occupiedCount++;
+					if(steps == 0) {
+						return i;
+					} else {
+						steps--;
+					}
 				}
 			}
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException("Could not pick random occupied bin with occupiedBins = "+occupiedBins+"; "+steps+" steps left out of "+originalSteps +". occupiedCount = "+occupiedCount);
 		}
 		throw new IllegalStateException("The number of occupied bins ("+occupiedBins+") and the archive size ("+archive.size()+") have a problem. "+steps+" steps left out of "+originalSteps +". occupiedCount = "+occupiedCount);
 	}

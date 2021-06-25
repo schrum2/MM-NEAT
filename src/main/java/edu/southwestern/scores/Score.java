@@ -441,9 +441,18 @@ public class Score<T> {
 		return oneMAPEliteMap != null;
 	}
 	
-	public void assignMAPElitesBehaviorMapAndScore(HashMap<String,Object> map, double score) {
-		oneMAPEliteMap = map;
-		mapElitesSoleBinQualityScore =	score;
+	/**
+	 * In order to tell if a legitimate map of behavior characteristics was created,
+	 * first check that it is not null, then confirm that it actually contains
+	 * the special reserved "binScore" value. Only then did the task actually
+	 * intend to communicate behavior characteristic information via the HashMap.
+	 * @param map Maps String keys to various behavior details, one of which would be the quality score.
+	 */
+	public void assignMAPElitesBehaviorMapAndScore(HashMap<String,Object> map) {
+		if(map != null && map.containsKey("binScore")) {
+			oneMAPEliteMap = map;
+			mapElitesSoleBinQualityScore = (double) map.get("binScore");
+		}
 	}
 	
 	public void assignMAPElitesBinAndScore(int[] binIndices, double score) {
