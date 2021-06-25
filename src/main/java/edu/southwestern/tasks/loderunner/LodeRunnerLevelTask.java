@@ -357,6 +357,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 			}
 			
 			int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
+			behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
 
 			BufferedImage levelSolution = null;
 			BufferedImage levelImage = null;

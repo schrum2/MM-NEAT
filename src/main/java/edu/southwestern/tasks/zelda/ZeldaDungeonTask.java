@@ -281,6 +281,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					}
 					
 					int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
+					behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
 					
 					// Hard coding bin score to be the percentage of reachable rooms traversed. May want to change this later.
 					double mapElitesBinScore = (numRoomsTraversed*1.0)/numRoomsReachable;					

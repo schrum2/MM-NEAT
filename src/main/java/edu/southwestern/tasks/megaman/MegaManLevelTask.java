@@ -316,6 +316,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			behaviorCharacteristics.put("binScore", binScore); // Quality measure!
 			
 			int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorCharacteristics);
+			behaviorCharacteristics.put("dim1D", dim1D); // Save so it does not need to be computed again
 			
 			if(CommonConstants.netio) {
 				System.out.println("Save archive images");
