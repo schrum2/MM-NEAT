@@ -175,7 +175,10 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		}
 		
 		double binScore = fitness(image);
+		behaviorMap.put("binScore",binScore);
 		int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
+		behaviorMap.put("dim1D",dim1D);
+
 		
 		Score<T> result = new Score<>(individual, new double[]{binScore}, behaviorMap, binScore);
 		if(CommonConstants.watch) {
