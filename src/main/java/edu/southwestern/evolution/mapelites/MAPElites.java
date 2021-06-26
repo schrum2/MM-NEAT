@@ -247,6 +247,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("cd ..");
 			ps.println("cd ..");
 			ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesArchivePlotter.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
+			ps.print(" \""+prefix+"\"");
 			for (int i = 0; i < dimensionNames.length; i++) {
 				ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
 			}
@@ -268,6 +269,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("cd ..");
 			ps.println("cd ..");
 			ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesArchivePlotAnimator.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
+			ps.print(" \""+prefix+"\"");
 			for (int i = 0; i < dimensionNames.length; i++) {
 				ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
 			}

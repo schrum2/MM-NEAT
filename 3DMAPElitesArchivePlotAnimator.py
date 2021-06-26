@@ -1,8 +1,8 @@
 """ 2D MAP-Elites archive plotter (Only for 2D archives with equal amount of bins in both dimensions)
     
     Usage:
-    python 3DMAPElitesSquareArchivePlotAnimator.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <logging frequency> <max value> <min value>
-    python 3DMAPElitesSquareArchivePlotAnimator.py zeldadungeonswallwaterrooms/ME0/ZeldaDungeonsWallWaterRooms-ME0_MAPElites_log.txt "Wall Tile Percent" 10 "Water Tile Percent" 10 "Reachable Rooms" 26 2 5 1.0 0.0
+    python 3DMAPElitesSquareArchivePlotAnimator.py <plot file to display> <plot display title> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <logging frequency> <max value> <min value>
+    python 3DMAPElitesSquareArchivePlotAnimator.py zeldadungeonswallwaterrooms/ME0/ZeldaDungeonsWallWaterRooms-ME0_MAPElites_log.txt "Plot" "Wall Tile Percent" 10 "Water Tile Percent" 10 "Reachable Rooms" 26 2 5 1.0 0.0
     
     Note: Min and Max do NOT need to be given, they will be calculated automatically
 """
@@ -33,29 +33,35 @@ except:
     print("File could not be opened.")
     quit()
     
+try: # Get dimensions and relative sizes
+    plot_title = sys.argv[2]
+except:
+    print("Dimensions were not specified!")
+    quit()
+    
 try: # Get dimension names and the relative sizes
-    dimension_names = [sys.argv[2], sys.argv[4], sys.argv[6]]
-    dimensions = [int(sys.argv[3]), int(sys.argv[5]), int(sys.argv[7])]
+    dimension_names = [sys.argv[3], sys.argv[5], sys.argv[7]]
+    dimensions = [int(sys.argv[4]), int(sys.argv[6]), int(sys.argv[8])]
 except:
     print("Dimensions were not specified!")
     quit()
 
 try: # Get the desired number of rows
-    rows = int(sys.argv[8])
+    rows = int(sys.argv[9])
 except:
     print("The number of rows was not specified!")
     quit()
 
 try: # Get the logging frequency
-    logging_frequeny = int(sys.argv[9])
+    logging_frequeny = int(sys.argv[10])
 except:
     print("Logging frequency was not specified, defaulting to 1")
     logging_frequeny = 1
     
 try: # Get the min and max
     calc_minmax = False
-    vmax = float(sys.argv[10])
-    vmin = float(sys.argv[11])
+    vmax = float(sys.argv[11])
+    vmin = float(sys.argv[12])
     print("Min and Max specified as: ("+str(vmin)+", "+str(vmax)+")")
 except: # If unspecified, calculates it
     print("Min and/or Max not specified, will be calculated")
@@ -113,7 +119,7 @@ for iteration in range(len(numeric_lines)):
             fig.delaxes(axs[rows-1, (columns - (rows*columns % end) - 1)])
             end -= 1
 
-        fig.suptitle(title + " Step:"+str(iteration))
+        fig.suptitle(plot_title + " Step:"+str(iteration))
 
         counter = 0
         for ax, slice in zip(axs.flat, archive_slice_arrays): # Add each subplot and configure size and axis names
