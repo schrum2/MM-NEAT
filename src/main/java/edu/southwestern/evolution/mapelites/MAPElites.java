@@ -208,8 +208,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {
 				ps.println("set title \"" + experimentPrefix + " Reconstruction Loss Range");
 				ps.println("set output \"" + reconstructionLossName.substring(reconstructionLossName.lastIndexOf('/')+1, reconstructionLossName.lastIndexOf('.')) + ".pdf\"");
-				ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Min Loss\"");
-				ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"Max Loss\"");
+				ps.println("plot \"" + name.replace("_Fill_", "_autoencoderLossRange_") + ".txt\" u 1:2 w linespoints t \"Min Loss\", \\");
+				ps.println("     \"" + name.replace("_Fill_", "_autoencoderLossRange_") + ".txt\" u 1:3 w linespoints t \"Max Loss\"");
 			}
 			
 			ps.close();
