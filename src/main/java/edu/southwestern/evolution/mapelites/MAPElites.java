@@ -520,7 +520,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * 							fill/replace a bin.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void fileUpdates(boolean newEliteProduced) {
+	public synchronized void fileUpdates(boolean newEliteProduced) {
 		if(saveImageArchives && iterations % Parameters.parameters.integerParameter("imageArchiveSaveFrequency") == 0) {
 			System.out.println("Save whole archive at iteration "+iterations);
 			((PictureTargetTask) MMNEAT.task).saveAllArchiveImages("iteration"+iterations, AutoEncoderProcess.SIDE_LENGTH, AutoEncoderProcess.SIDE_LENGTH, archive.getArchive());

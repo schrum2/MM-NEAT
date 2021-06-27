@@ -273,11 +273,12 @@ public class Archive<T> {
 	 */
 	public int randomOccupiedBinIndex() {
 		int steps = -1, originalSteps = -1, occupiedCount= -1;
+		int archiveSize = archive.size();
 		try {
 			steps = RandomNumbers.randomGenerator.nextInt(occupiedBins);
 			originalSteps = steps;
 			occupiedCount = 0;
-			for(int i = 0; i < archive.size(); i++) {
+			for(int i = 0; i < archiveSize; i++) {
 				if(archive.get(i) != null) {
 					occupiedCount++;
 					if(steps == 0) {
@@ -291,7 +292,7 @@ public class Archive<T> {
 			e.printStackTrace();
 			throw new IllegalArgumentException("Could not pick random occupied bin with occupiedBins = "+occupiedBins+"; "+steps+" steps left out of "+originalSteps +". occupiedCount = "+occupiedCount);
 		}
-		throw new IllegalStateException("The number of occupied bins ("+occupiedBins+") and the archive size ("+archive.size()+") have a problem. "+steps+" steps left out of "+originalSteps +". occupiedCount = "+occupiedCount);
+		throw new IllegalStateException("The number of occupied bins ("+occupiedBins+") and the archive size ("+archiveSize+") have a problem. "+steps+" steps left out of "+originalSteps +". occupiedCount = "+occupiedCount);
 	}
 	
 	/**
