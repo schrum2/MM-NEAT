@@ -296,10 +296,10 @@ public class MegaManVGLCUtil {
 		corners = findSpawnScreen(level);
 		
 		List<List<Integer>> screen = new ArrayList<List<Integer>>();
-		for(int i = 0;i<14;i++) {
+		for(int i = 0;i<14;i++) { // Height?
 			List<Integer> k = new ArrayList<Integer>();
-			for(int j = 0;j<16;j++) {
-				k.add(9);
+			for(int j = 0;j<16;j++) { // Width?
+				k.add(9); // Null space
 			}
 			screen.add(k);
 		}
