@@ -27,6 +27,8 @@ if __name__ == '__main__':
     sys.stdout.flush() # Make sure Java can sense this output before Python blocks waiting for input
 
     inputImageDimension = 28
+    channels = 3
+    inputLength = inputImageDimension*inputImageDimension*channels
 
     while True:
         # Can't read one line at a time. Too long for console.
@@ -34,19 +36,19 @@ if __name__ == '__main__':
 
         inputList = []
         # Loop through each pixel of image, store in a flat list
-        for i in range(inputImageDimension*inputImageDimension):
+        for i in range(inputLength):
             inputList.append(float(sys.stdin.readline()))
 
         #print(len(inputList))
 
         lv = numpy.array(inputList)
         # Input is already a flat 1D array, so no new view needed
-        input = torch.FloatTensor( lv ).cuda()
+        input = torch.FloatTensor( lv ).reshape(1,channels,inputImageDimension,inputImageDimension).cuda()
         output = model(Variable(input))
         loss = criterion(output, input)
 
         if mode == "image":
-            print(json.dumps(output.tolist()))
+            print(json.dumps(output.reshape(1,-1).squeeze().tolist()))
         else: # should be "loss"
             print(loss.item())
         sys.stdout.flush() # Make Java sense output before blocking on next input

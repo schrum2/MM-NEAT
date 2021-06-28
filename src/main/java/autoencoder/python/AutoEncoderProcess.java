@@ -27,9 +27,9 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  */
 public class AutoEncoderProcess extends Comm {
 
-	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "AutoEncoder" + File.separator;
+	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python";
 	// Program for converting a latent vector to a level via a GAN
-	public static final String AUTOENCODER_PATH = PYTHON_BASE_PATH + "autoencoderInputGenerator.py";
+	public static String autoencoderPath;
 
 	public static AutoEncoderProcess currentProcess = null;
 
@@ -53,6 +53,11 @@ public class AutoEncoderProcess extends Comm {
 	 */
 	public AutoEncoderProcess(String pthName, AUTOENCODER_MODE mode) {
 		PythonUtil.setPythonProgram();
+		if(!Parameters.parameters.booleanParameter("convolutionalAutoencoder")) {
+			autoencoderPath = PYTHON_BASE_PATH + File.separator + "AutoEncoder" + File.separator + "autoencoderInputGenerator.py";
+		} else {
+			autoencoderPath = PYTHON_BASE_PATH + File.separator + "ColorAutoEncoder" + File.separator + "colorAutoencoderInputGenerator.py";
+		}
 		System.out.println("Loading AutoEncoder: "+pthName+" in "+mode.name()+" mode");
 		savedAutoencoder = pthName;
 		this.mode = mode;
@@ -170,7 +175,7 @@ public class AutoEncoderProcess extends Comm {
 	public void launchAutoEncoder() {
 		PythonUtil.checkPython();
 		// Run program with model architecture and weights specified as parameters
-		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, AUTOENCODER_PATH, savedAutoencoder, mode == AUTOENCODER_MODE.IMAGE ? "image" : "loss");
+		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, autoencoderPath, savedAutoencoder, mode == AUTOENCODER_MODE.IMAGE ? "image" : "loss");
 		builder.redirectError(Redirect.INHERIT); // Standard error will print to console
 		try {
 			System.out.println(builder.command());
@@ -181,13 +186,14 @@ public class AutoEncoderProcess extends Comm {
 	}
 
 	public static void main (String[] args) throws IOException {
-		Parameters.initializeParameterCollections(new String[] {"blackAndWhitePicbreeder:true"});
+		Parameters.initializeParameterCollections(new String[] {"blackAndWhitePicbreeder:false", "convolutionalAutoencoder:true"});
 		PythonUtil.PYTHON_EXECUTABLE = "C:\\ProgramData\\Anaconda3\\python.exe";
 
-		AUTOENCODER_MODE mode = AUTOENCODER_MODE.LOSS;
+		AUTOENCODER_MODE mode = AUTOENCODER_MODE.IMAGE;
 		//AutoEncoderProcess p = new AutoEncoderProcess("parentDir\\test.pth", mode);
 		//AutoEncoderProcess p = new AutoEncoderProcess("targetimage\\skull6\\snapshots\\iteration30000.pth", mode);
-		AutoEncoderProcess p = new AutoEncoderProcess("targetimage\\skullAutoEncoder20\\snapshots\\iteration4500000.pth", mode);
+		//AutoEncoderProcess p = new AutoEncoderProcess("targetimage\\skullDynamicGaierAutoencoderPictureBinLabelsRegularGenotype5\\snapshots\\iteration29500000.pth", mode);
+		AutoEncoderProcess p = new AutoEncoderProcess("src\\main\\python\\ColorAutoEncoder\\test2.pth", mode);
 		p.start();
 
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.71288Neurons[35]links[63]1788009.jpg"));
@@ -195,7 +201,8 @@ public class AutoEncoderProcess extends Comm {
 		//BufferedImage img = ImageIO.read(new File("parentDir" + File.separator + "PicbreederTargetTrainingSet" + File.separator + "0.68266Neurons[14]links[62]1105464.jpg"));
 		//BufferedImage img = ImageIO.read(new File("targetimage" + File.separator + "skull6" + File.separator + "snapshots" + File.separator + "iteration30000" + File.separator + "0.71623785656924-Neurons[30]links[37].jpg"));
 		//BufferedImage img = ImageIO.read(new File("targetimage\\skullAutoEncoder20\\snapshots\\iteration4500000\\0.809899371158382-Neurons[45]loss[0.9,1.0].jpg"));
-		BufferedImage img = ImageIO.read(new File("targetimage\\skullAutoEncoder20\\snapshots\\iteration4500000\\0.7640251320574905-Neurons[9]loss[0.9,1.0].jpg"));
+		//BufferedImage img = ImageIO.read(new File("targetimage\\skullDynamicGaierAutoencoderPictureBinLabelsRegularGenotype5\\snapshots\\iteration29500000\\0.8014778129556845-Neurons24loss0.jpg"));
+		BufferedImage img = ImageIO.read(new File("src\\main\\python\\ColorAutoEncoder\\ColorTrainingSet\\image2.jpg"));
 		//BufferedImage img = ImageIO.read(new File("data" + File.separator + "imagematch" + File.separator + "skull64.png"));
 		Image scaled = img.getScaledInstance(28, 28, BufferedImage.SCALE_DEFAULT);
 		img = GraphicsUtil.convertToBufferedImage(scaled);
@@ -206,7 +213,7 @@ public class AutoEncoderProcess extends Comm {
 
 		String s = p.commRecv();
 		System.out.println(s);
-		System.out.println("Before:"+Arrays.toString(imageInput));
+		System.out.println("Before:"+imageInput.length+":"+Arrays.toString(imageInput));
 
 		for(int i = 0; i < imageInput.length; i++) {
 			p.commSend(imageInput[i] + "");
@@ -227,12 +234,28 @@ public class AutoEncoderProcess extends Comm {
 
 			BufferedImage pythonOutput = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
 			int i = 0;
-			for(int y = 0; y < SIDE_LENGTH; y++) {
+			if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) {
+				for(int y = 0; y < SIDE_LENGTH; y++) {
+					for(int x = 0; x < SIDE_LENGTH; x++) {
+						float gray = (float) numOut[i++];
+						gray = Math.max(gray, 0); // Why is negative possible!?
+						Color c = new Color(gray,gray,gray);
+						pythonOutput.setRGB(x, y, c.getRGB());	
+					}
+				}
+			} else {
 				for(int x = 0; x < SIDE_LENGTH; x++) {
-					float gray = (float) numOut[i++];
-					gray = Math.max(gray, 0); // Why is negative possible!?
-					Color c = new Color(gray,gray,gray);
-					pythonOutput.setRGB(x, y, c.getRGB());	
+					for(int y = 0; y < SIDE_LENGTH; y++) {
+						float r = (float) numOut[i];
+						r = Math.max(r, 0); // Why is negative possible!?
+						float g = (float) numOut[i+(SIDE_LENGTH*SIDE_LENGTH)];
+						g = Math.max(g, 0); // Why is negative possible!?
+						float b = (float) numOut[i+(2*SIDE_LENGTH*SIDE_LENGTH)];
+						b = Math.max(b, 0); // Why is negative possible!?
+						Color c = new Color(r,g,b);
+						pythonOutput.setRGB(x, y, c.getRGB());
+						i++;
+					}
 				}
 			}
 
