@@ -331,11 +331,15 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			int startSize = Parameters.parameters.integerParameter("mu");
 			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);
 			Vector<Score<T>> evaluatedPopulation = new Vector<>(startingPopulation.size());
+
+			boolean backupNetIO = CommonConstants.netio;
+			CommonConstants.netio = false; // Some tasks require archive comparison to do this, but it does not exist yet.
 			// Evaluate initial population
 			startingPopulation.parallelStream().forEach( (g) -> {
 				Score<T> s = task.evaluate(g);
 				evaluatedPopulation.add(s);
 			});
+			CommonConstants.netio = backupNetIO;
 			
 			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
 				autoencoderLossRange = new MMNEATLog("autoencoderLossRange", false, false, false, true);
