@@ -202,7 +202,7 @@ public class AutoEncoderProcess extends Comm {
 		//BufferedImage img = ImageIO.read(new File("targetimage" + File.separator + "skull6" + File.separator + "snapshots" + File.separator + "iteration30000" + File.separator + "0.71623785656924-Neurons[30]links[37].jpg"));
 		//BufferedImage img = ImageIO.read(new File("targetimage\\skullAutoEncoder20\\snapshots\\iteration4500000\\0.809899371158382-Neurons[45]loss[0.9,1.0].jpg"));
 		//BufferedImage img = ImageIO.read(new File("targetimage\\skullDynamicGaierAutoencoderPictureBinLabelsRegularGenotype5\\snapshots\\iteration29500000\\0.8014778129556845-Neurons24loss0.jpg"));
-		BufferedImage img = ImageIO.read(new File("src\\main\\python\\ColorAutoEncoder\\ColorTrainingSet\\image2.jpg"));
+		BufferedImage img = ImageIO.read(new File("src\\main\\python\\ColorAutoEncoder\\ColorTrainingSet\\image6.jpg"));
 		//BufferedImage img = ImageIO.read(new File("data" + File.separator + "imagematch" + File.separator + "skull64.png"));
 		Image scaled = img.getScaledInstance(28, 28, BufferedImage.SCALE_DEFAULT);
 		img = GraphicsUtil.convertToBufferedImage(scaled);
@@ -215,7 +215,10 @@ public class AutoEncoderProcess extends Comm {
 		System.out.println(s);
 		System.out.println("Before:"+imageInput.length+":"+Arrays.toString(imageInput));
 
+		//PrintStream ps = new PrintStream(new File("TEMP.txt"));
+		
 		for(int i = 0; i < imageInput.length; i++) {
+			// ps.println(imageInput[i] + ""); // out to text file
 			p.commSend(imageInput[i] + "");
 		}
 
