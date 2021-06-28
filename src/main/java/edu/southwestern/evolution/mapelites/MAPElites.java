@@ -208,8 +208,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {
 				ps.println("set title \"" + experimentPrefix + " Reconstruction Loss Range");
 				ps.println("set output \"" + reconstructionLossName.substring(reconstructionLossName.lastIndexOf('/')+1, reconstructionLossName.lastIndexOf('.')) + ".pdf\"");
-				ps.println("plot \"" + name + ".txt\" u 1:2 w linespoints t \"Min Loss\"");
-				ps.println("plot \"" + name + ".txt\" u 1:3 w linespoints t \"Max Loss\"");
+				ps.println("plot \"" + name.replace("_Fill_", "_autoencoderLossRange_") + ".txt\" u 1:2 w linespoints t \"Min Loss\", \\");
+				ps.println("     \"" + name.replace("_Fill_", "_autoencoderLossRange_") + ".txt\" u 1:3 w linespoints t \"Max Loss\"");
 			}
 			
 			ps.close();
@@ -247,6 +247,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("cd ..");
 			ps.println("cd ..");
 			ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesArchivePlotter.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
+			ps.print(" \""+prefix+"\"");
 			for (int i = 0; i < dimensionNames.length; i++) {
 				ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
 			}
@@ -268,6 +269,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("cd ..");
 			ps.println("cd ..");
 			ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesArchivePlotAnimator.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
+			ps.print(" \""+prefix+"\"");
 			for (int i = 0; i < dimensionNames.length; i++) {
 				ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
 			}
@@ -518,7 +520,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * 							fill/replace a bin.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void fileUpdates(boolean newEliteProduced) {
+	public synchronized void fileUpdates(boolean newEliteProduced) {
 		if(saveImageArchives && iterations % Parameters.parameters.integerParameter("imageArchiveSaveFrequency") == 0) {
 			System.out.println("Save whole archive at iteration "+iterations);
 			((PictureTargetTask) MMNEAT.task).saveAllArchiveImages("iteration"+iterations, AutoEncoderProcess.SIDE_LENGTH, AutoEncoderProcess.SIDE_LENGTH, archive.getArchive());
