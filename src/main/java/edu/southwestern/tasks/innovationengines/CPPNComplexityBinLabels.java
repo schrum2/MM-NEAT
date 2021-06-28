@@ -78,7 +78,7 @@ public class CPPNComplexityBinLabels extends BaseBinLabels {
 		int links = (int) keys.get("Links");
 		
 		int nodesIndex = Math.min(nodes, Parameters.parameters.integerParameter("maxNumNeurons"));
-		int linksIndex = Math.min(links, Parameters.parameters.integerParameter("maxNumNeurons"));
+		int linksIndex = Math.min(links, Parameters.parameters.integerParameter("maxNumLinks"));
 
 		return new int[] {nodesIndex, linksIndex}; // Array of two values corresponding to bin label dimensions
 	}
