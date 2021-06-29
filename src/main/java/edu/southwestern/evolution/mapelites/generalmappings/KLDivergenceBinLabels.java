@@ -46,7 +46,7 @@ public class KLDivergenceBinLabels extends MultiDimensionalRealValuedBinLabels {
 	 * @param level2 The second level to compare
 	 * @return A double representing the KL divergence
 	 */
-	public static double getKLDivergence(int[][] level1, int[][] level2) {
+	private static double getKLDivergence(int[][] level1, int[][] level2) {
 		ConvNTuple c1 = KLDivTest.getConvNTuple(level1, Parameters.parameters.integerParameter("receptiveFieldWidth"), Parameters.parameters.integerParameter("receptiveFieldHeight"), Parameters.parameters.integerParameter("stride"));
 		ConvNTuple c2 = KLDivTest.getConvNTuple(level2, Parameters.parameters.integerParameter("receptiveFieldWidth"), Parameters.parameters.integerParameter("receptiveFieldHeight"), Parameters.parameters.integerParameter("stride"));
 

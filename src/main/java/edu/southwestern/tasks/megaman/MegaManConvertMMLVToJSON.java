@@ -36,7 +36,7 @@ public class MegaManConvertMMLVToJSON {
     	// All directories to pull from
     	
     	ArrayList<List<List<Integer>>> levels = new ArrayList<List<List<Integer>>>();
-    	for(int i = 1;i<=1;i++) {
+    	for(int i = 1;i<=10;i++) {
     		if (i != 9) {
     			maxX=0;
     			maxY=0;
@@ -52,8 +52,8 @@ public class MegaManConvertMMLVToJSON {
     	System.out.println("Read "+levels.size()+" levels.");
 
     	
-    	//outputOneGAN(levels, "NoWater9");  
-    	outputSevenGAN(levels, "Only1");
+    	outputOneGAN(levels, "NoWater9");  
+    	outputSevenGAN(levels, "NoWater9");
     }    
 	
     

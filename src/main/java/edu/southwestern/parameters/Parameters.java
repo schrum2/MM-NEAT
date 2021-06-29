@@ -352,6 +352,7 @@ public class Parameters {
 		integerOptions.add("numScaleIntervals", 3, "Determines by how much to divide the scale value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
 		integerOptions.add("numRotationIntervals", 3, "Determines by how much to divide the rotation value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
 		integerOptions.add("numTranslationIntervals", 3, "Determines by how much to divide the translation value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
+		integerOptions.add("marioStatBasedMEBinIntervals", 10, "Number of bins in Mario tasks related to Decoration, Negative Space, Leniency, and Distinct Chunks.");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
