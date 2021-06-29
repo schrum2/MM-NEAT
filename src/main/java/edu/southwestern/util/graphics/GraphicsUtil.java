@@ -569,8 +569,7 @@ public class GraphicsUtil {
 	
 	/**
 	 * Converts an image into a flat double array of features, where the features
-	 * are the HSB values of each pixel.
-	 * NOTE: Consider RGB instead?
+	 * are the HSB values of each pixel.  Uses RGB for colored images.
 	 * 
 	 * @param image A BufferedImage
 	 * @return double array of all HSB values of each pixel.
