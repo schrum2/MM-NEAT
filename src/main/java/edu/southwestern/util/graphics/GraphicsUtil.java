@@ -578,20 +578,24 @@ public class GraphicsUtil {
 		int numberOfChannels = Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")? 1: NUM_HSB;
 		double[] result = new double[image.getHeight() * image.getWidth() * numberOfChannels];
 		int resultIndex = 0;
-		for(int x = 0; x < image.getWidth(); x++) {
-			for(int y = 0; y < image.getHeight();  y++) {
-				// If the image is black and white use brightness
-				if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) {
+		// If the image is black and white use brightness
+		if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) {
+			for(int x = 0; x < image.getWidth(); x++) {
+				for(int y = 0; y < image.getHeight(); y++) {
 					float[] hsb = getHSB(image, x, y);
 					result[resultIndex++] = hsb[BRIGHTNESS_INDEX];
-				} else {
+				}
+			}
+		} else {
+			for(int y = 0; y < image.getHeight(); y++) {
+				for(int x = 0; x < image.getWidth(); x++) {
 					// Copy RGB values over as features
 					Color c = new Color(image.getRGB(x, y));
 					float[] rgb = c.getRGBColorComponents(null);
-					for(int i = 0; i < rgb.length; i++) {
-						result[resultIndex++] = rgb[i];
-					}
-				
+					result[resultIndex] = rgb[0]; // Magic number for red
+					result[resultIndex+(image.getWidth()*image.getHeight())] = rgb[1]; // Magic number for green
+					result[resultIndex+(2*image.getWidth()*image.getHeight())] = rgb[2]; // Magic number for blue
+					resultIndex++;
 				}
 			}
 		}

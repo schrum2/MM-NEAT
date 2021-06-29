@@ -202,7 +202,7 @@ public class AutoEncoderProcess extends Comm {
 		//BufferedImage img = ImageIO.read(new File("targetimage" + File.separator + "skull6" + File.separator + "snapshots" + File.separator + "iteration30000" + File.separator + "0.71623785656924-Neurons[30]links[37].jpg"));
 		//BufferedImage img = ImageIO.read(new File("targetimage\\skullAutoEncoder20\\snapshots\\iteration4500000\\0.809899371158382-Neurons[45]loss[0.9,1.0].jpg"));
 		//BufferedImage img = ImageIO.read(new File("targetimage\\skullDynamicGaierAutoencoderPictureBinLabelsRegularGenotype5\\snapshots\\iteration29500000\\0.8014778129556845-Neurons24loss0.jpg"));
-		BufferedImage img = ImageIO.read(new File("src\\main\\python\\ColorAutoEncoder\\ColorTrainingSet\\image6.jpg"));
+		BufferedImage img = ImageIO.read(new File("src\\main\\python\\ColorAutoEncoder\\ColorTrainingSet\\image15.jpg"));
 		//BufferedImage img = ImageIO.read(new File("data" + File.separator + "imagematch" + File.separator + "skull64.png"));
 		Image scaled = img.getScaledInstance(28, 28, BufferedImage.SCALE_DEFAULT);
 		img = GraphicsUtil.convertToBufferedImage(scaled);
@@ -247,8 +247,8 @@ public class AutoEncoderProcess extends Comm {
 					}
 				}
 			} else {
-				for(int x = 0; x < SIDE_LENGTH; x++) {
-					for(int y = 0; y < SIDE_LENGTH; y++) {
+				for(int y = 0; y < SIDE_LENGTH; y++) {
+					for(int x = 0; x < SIDE_LENGTH; x++) {
 						float r = (float) numOut[i];
 						r = Math.max(r, 0); // Why is negative possible!?
 						float g = (float) numOut[i+(SIDE_LENGTH*SIDE_LENGTH)];
