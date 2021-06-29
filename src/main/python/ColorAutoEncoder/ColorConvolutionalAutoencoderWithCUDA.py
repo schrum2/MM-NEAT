@@ -7,9 +7,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
-import matplotlib.pyplot as plt
 import torch.nn as nn
-import torch.nn.functional as F
 import myColorData
 import sys
 # import ConvAutoencoder

@@ -581,15 +581,16 @@ public class GraphicsUtil {
 		int resultIndex = 0;
 		for(int x = 0; x < image.getWidth(); x++) {
 			for(int y = 0; y < image.getHeight();  y++) {
-				float[] hsb = getHSB(image, x, y);
 				// If the image is black and white use brightness
 				if(Parameters.parameters.booleanParameter("blackAndWhitePicbreeder")) {
+					float[] hsb = getHSB(image, x, y);
 					result[resultIndex++] = hsb[BRIGHTNESS_INDEX];
 				} else {
-					// Copy HSB values over as features
-					// NOTE: Consider replacing this with RGB at some point
-					for(int i = 0; i < hsb.length; i++) {
-						result[resultIndex++] = hsb[i];
+					// Copy RGB values over as features
+					Color c = new Color(image.getRGB(x, y));
+					float[] rgb = c.getRGBColorComponents(null);
+					for(int i = 0; i < rgb.length; i++) {
+						result[resultIndex++] = rgb[i];
 					}
 				
 				}

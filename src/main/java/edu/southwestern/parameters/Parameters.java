@@ -771,6 +771,7 @@ public class Parameters {
 		booleanOptions.add("AnimateDeltaY", true, "If Animationbreeder is going to translate images vertically");
 		booleanOptions.add("dynamicAutoencoderIntervals", false, "If true the intervals in the archive change every time we train a new autoencoder.");
 		booleanOptions.add("deleteOldArchives", true, "If true, delete the old archives to save space, otherwise the archive fills to fast and we run out of storage.");
+		booleanOptions.add("convolutionalAutoencoder", false, "Determines whether to use the regular autoencoder or the convolutional autoencoder.");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
