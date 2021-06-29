@@ -17,8 +17,10 @@ import autoencoder.python.TrainAutoEncoderProcess;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
+import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedSlicedBinLabels;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.networks.Network;
@@ -102,9 +104,6 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
 			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
-			if (this instanceof CMAME) {
-				emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
-			}
 		}
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
@@ -297,7 +296,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void initialize(Genotype<T> example) {		
+	public void initialize(Genotype<T> example) {	
+		if (this instanceof CMAME && MMNEAT.genotype instanceof RealValuedGenotype) {
+			emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
+		}
 		saveImageArchives = MMNEAT.task instanceof PictureTargetTask;
 		if(iterations > 0) {
 			int numLabels = archive.getBinMapping().binLabels().size();
@@ -370,7 +372,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * Write one line of data to each of the active log files, but only periodically,
 	 * when number of iterations divisible by individualsPerGeneration. 
 	 */
-	private void log() {
+	@SuppressWarnings("unchecked")
+	protected void log() {
 		if (!archiveFileCreated) {
 			try {
 				setupArchiveVisualizer(archive.getBinMapping());
@@ -431,11 +434,16 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				((LodeRunnerLevelTask<?>)MMNEAT.task).beatable.log(pseudoGeneration + "\t" + numBeatenLevels + "\t" + ((1.0*numBeatenLevels)/(1.0*numFilledBins)));
 			}
 			
-			if (emitterMeanLog != null && MMNEAT.getArchiveBinLabelsClass() instanceof MultiDimensionalRealValuedSlicedBinLabels) { // TODO
-				MultiDimensionalRealValuedSlicedBinLabels dimensionSlices = (MultiDimensionalRealValuedSlicedBinLabels) MMNEAT.getArchiveBinLabelsClass();
+			if (emitterMeanLog != null) { 
+				boolean backupNetIO = CommonConstants.netio;
+				CommonConstants.netio = false; // Don't want to touch the archive when evaluating means
+				
+				BinLabels dimensionSlices = MMNEAT.getArchiveBinLabelsClass();
 				String newLine = "" + pseudoGeneration;
-				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
-					int[] binCoords = dimensionSlices.discretize(dimensionSlices.behaviorCharacterization(mean));	
+				for (double[] mean : ((CMAME)this).getEmitterMeans()) { 
+					
+					Score<T> s = task.evaluate((Genotype<T>) new RealValuedGenotype(mean));
+					int[] binCoords = dimensionSlices.multiDimensionalIndices(s.MAPElitesBehaviorMap());	
 					newLine += "\t";
 					for (int i = 0; i < binCoords.length; i++) {
 						if (i != 0) {
@@ -445,6 +453,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					}
 				}
 				emitterMeanLog.log(newLine);
+				
+				CommonConstants.netio = backupNetIO;
 			}
 		}
 	}
