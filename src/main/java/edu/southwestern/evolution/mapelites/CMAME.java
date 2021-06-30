@@ -18,6 +18,7 @@ import edu.southwestern.evolution.mapelites.emitters.OptimizingEmitter;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 
 /**
@@ -107,8 +108,13 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	public void newIndividual() {
 		incrementEmitterCounter(); // increment emitter counter
 		Emitter thisEmitter = emitters[emitterCounter]; // pick the lowest one
+		// rawIndividual may not be in bounds of BoundedRealValuedGenotype
 		double[] rawIndividual = thisEmitter.sampleSingle(); // sample an individual from current emitter
+		// individual will be bounded in each variable index
 		Genotype<ArrayList<Double>> individual = new BoundedRealValuedGenotype(rawIndividual);
+		
+		// Get bounded values from genotype to get passed to emitters down below
+		rawIndividual = ArrayUtil.doubleArrayFromList(individual.getPhenotype());
 		
 		Score<ArrayList<Double>> individualScore = task.evaluate(individual); // evaluate score for individual
 		assert individualScore.usesMAPElitesBinSpecification() || individualScore.usesMAPElitesMapSpecification() : "Cannot use a traditional behavior vector with CMA-ME";
