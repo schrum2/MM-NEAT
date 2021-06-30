@@ -21,7 +21,6 @@ import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
-import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedSlicedBinLabels;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.CommonConstants;
@@ -331,7 +330,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			System.out.println("Fill up initial archive");
 			// Start from scratch
 			int startSize = Parameters.parameters.integerParameter("mu");
-			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);
+			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);			
+			assert !(startingPopulation.get(0) instanceof BoundedRealValuedGenotype) || ((BoundedRealValuedGenotype) startingPopulation.get(0)).isBounded() : "Initial individual not bounded: "+startingPopulation.get(0);
 			Vector<Score<T>> evaluatedPopulation = new Vector<>(startingPopulation.size());
 
 			boolean backupNetIO = CommonConstants.netio;
