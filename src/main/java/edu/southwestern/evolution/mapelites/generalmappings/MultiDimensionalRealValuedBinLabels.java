@@ -96,7 +96,7 @@ public abstract class MultiDimensionalRealValuedBinLabels extends BaseBinLabels 
 	public int oneDimensionalIndex(int[] multi) {
 		if (EXTRA_LOGGING) System.out.println("Multi-dimensional array: "+Arrays.toString(multi));
 		int index = 0;
-		for (int i = 0; i < numDimensions; i++) {
+		for (int i = numDimensions-1; i >= 0; i--) {
 			index += multi[i] * Math.pow(binsPerDimension, i); // get the 1D index of a bin
 		}
 		if (EXTRA_LOGGING) System.out.println("One dimensional index: "+index);
