@@ -157,10 +157,10 @@ public class FunctionOptimizationRangeBinLabelsTest {
 	public void testOneDimensionalIndex() {
 		assertEquals(binLabels.oneDimensionalIndex(new int[] {9, 9}), 99);
 		assertEquals(binLabels.oneDimensionalIndex(new int[] {0, 0}), 0);
-		assertEquals(binLabels.oneDimensionalIndex(new int[] {9, 0}), 9);
-		assertEquals(binLabels.oneDimensionalIndex(new int[] {0, 9}), 90);
-		assertEquals(binLabels.oneDimensionalIndex(new int[] {5, 1}), 15);
-		assertEquals(binLabels.oneDimensionalIndex(new int[] {7, 3}), 37);
+		assertEquals(binLabels.oneDimensionalIndex(new int[] {9, 0}), 90);
+		assertEquals(binLabels.oneDimensionalIndex(new int[] {0, 9}), 9);
+		assertEquals(binLabels.oneDimensionalIndex(new int[] {5, 1}), 51);
+		assertEquals(binLabels.oneDimensionalIndex(new int[] {7, 3}), 73);
 	}
 
 	@Test
@@ -173,9 +173,9 @@ public class FunctionOptimizationRangeBinLabelsTest {
 	
 	@Test
 	public void testMultiDimensionalIndexToBinLabel() {
-		assertEquals("10_24to15_36--10_24to-5_12", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {10.4, -6}))));
-		assertEquals("-25_6to-20_48-20_48to25_6", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-23.1, 20.48}))));
-		assertEquals("-15_36to-10_24--5_12to0_0", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-13.72, -2.24}))));
+		assertEquals("-10_24to-5_12-10_24to15_36", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {10.4, -6}))));
+		assertEquals("20_48to25_6--25_6to-20_48", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-23.1, 20.48}))));
+		assertEquals("-5_12to0_0--15_36to-10_24", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-13.72, -2.24}))));
 		assertEquals("0_0to5_12-0_0to5_12", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {0, 5.11}))));
 		assertEquals("-25_6to-20_48--25_6to-20_48", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-25.6, -25.6}))));
 		assertEquals("20_48to25_6-20_48to25_6", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {25.6, 25.6}))));

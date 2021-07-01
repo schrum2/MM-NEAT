@@ -222,3 +222,4 @@ src/main/python/AutoEncoder/sim_autoencoder.pth
 src/main/python/ColorAutoEncoder/data/cifar-10-batches-py/
 src/main/python/ColorAutoEncoder/data/cifar-10-python.tar.gz
 LodeRunnerGAN-MAPElitesGroundTreasureEnemiesCAFit-On100Levels.jar
+LodeRunnerGAN-MAPElitesGroundTreasureEnemiesCAFit-On100Levels-HashMap.jar

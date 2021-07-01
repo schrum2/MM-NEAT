@@ -56,10 +56,10 @@ public class FunctionOptimizationRangeBinLabelsBatchTest {
 	public void testOneDimensionalIndex() {
 		assertEquals(binLabels.oneDimensionalIndex(new int[] {499, 499}), 249999);
 		assertEquals(binLabels.oneDimensionalIndex(new int[] {0, 0}), 0);
-		assertEquals(binLabels.oneDimensionalIndex(new int[] {499, 0}), 499);
-		assertEquals(binLabels.oneDimensionalIndex(new int[] {0, 499}), 249500);
-		assertEquals(binLabels.oneDimensionalIndex(new int[] {56, 11}), 5556);
-		assertEquals(binLabels.oneDimensionalIndex(new int[] {73, 308}), 154073);
+		assertEquals(binLabels.oneDimensionalIndex(new int[] {499, 0}), 249500);
+		assertEquals(binLabels.oneDimensionalIndex(new int[] {0, 499}), 499);
+		assertEquals(binLabels.oneDimensionalIndex(new int[] {56, 11}), 28011);
+		assertEquals(binLabels.oneDimensionalIndex(new int[] {73, 308}), 36808);
 	}
 
 	@Test
@@ -72,7 +72,7 @@ public class FunctionOptimizationRangeBinLabelsBatchTest {
 	
 	@Test
 	public void testMultiDimensionalIndexToBinLabel() {
-		assertEquals("34_816to35_0208--19_2512to-19_0464", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {34.9, -19.1}))));
+		assertEquals("-19_2512to-19_0464-34_816to35_0208", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {34.9, -19.1}))));
 		assertEquals("0_0to0_2048-0_0to0_2048", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {0, 0.2}))));
 		assertEquals("-51_2to-50_9952--51_2to-50_9952", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-51.2, -51.2}))));
 		assertEquals("50_9952to51_2-50_9952to51_2", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {51.2, 51.2}))));
