@@ -928,5 +928,29 @@ public class GraphicsUtil {
 		}
 		return middleImage;
 	}
+	
+	/**
+	 * Calculates the percent of matching pixels between 
+	 * two Buffered images.  Pixels are considered matching
+	 * if they contain the same RGB values.
+	 * 
+	 * @param firstImage first BufferedImage
+	 * @param secondImage second BufferedImage
+	 * @return the percent of matching pixels
+	 */
+	public static double percentMatchingPixels(BufferedImage firstImage, BufferedImage secondImage) {
+		double numMatching = 0;
+		assert firstImage.getWidth() == secondImage.getWidth() && firstImage.getHeight() == secondImage.getHeight(): "Image widths and heights need to match";
+		for(int x = 0; x < firstImage.getWidth(); x++) {
+			for(int y = 0; y < firstImage.getHeight(); y++) {
+				if(firstImage.getRGB(x, y) == secondImage.getRGB(x, y)) {
+					numMatching++;
+				}
+			}
+		}
+		double percentMatching = numMatching / (firstImage.getWidth() * firstImage.getHeight());
+		
+		return percentMatching;
+	}
 
 }
