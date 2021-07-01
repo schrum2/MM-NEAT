@@ -11,6 +11,7 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.SinglePopulationGenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.Network;
@@ -22,6 +23,7 @@ import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
@@ -44,6 +46,10 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	private BufferedImage img = null;
 	public int imageHeight, imageWidth;
 	private double[] targetImageFeatures; 
+	
+	private double bestFitnessSoFar = Double.NEGATIVE_INFINITY;
+	private BufferedImage bestImageSoFar = null;
+	private long bestIdSoFar;
 
 	/**
 	 * Default task constructor
@@ -81,9 +87,9 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
 		double[] candidateFeatures = null;
+		BufferedImage child = null;
 		if (CommonConstants.watch || Parameters.parameters.booleanParameter("useWoolleyImageMatchFitness") || Parameters.parameters.booleanParameter("useRMSEImageMatchFitness")) {
 			Network n = individual.getPhenotype();
-			BufferedImage child;
 			int drawWidth = imageWidth;
 			int drawHeight = imageHeight;
 			if (Parameters.parameters.booleanParameter("overrideImageSize")) {
@@ -101,7 +107,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 				considerSavingImage(childPanel);
 				parentPanel.dispose();
 				childPanel.dispose();
-			}
+			}			
 		}
 		// Too many outputs to print to console. Don't want to watch.
 		boolean temp = CommonConstants.watch;
@@ -134,6 +140,28 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		CommonConstants.watch = temp;
 		this.individual = individual.getPhenotype();
 		result.giveBehaviorVector(getBehaviorVector());
+		
+		// TODO: If fitness better than bestFitnessSoFar then save image
+		double fitness = result.scores[0];
+		if(child != null && fitness > bestFitnessSoFar) {
+			bestImageSoFar = child;
+			bestFitnessSoFar = fitness;
+			bestIdSoFar = individual.getId();
+		}
+		
+		return result;
+	}
+	
+	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
+		ArrayList<Score<T>> result = super.evaluateAll(population);
+		if(CommonConstants.netio) {
+			@SuppressWarnings("rawtypes")
+			int gen = ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration();
+			String filename1 = FileUtilities.getSaveDirectory() + File.separator + "gen" +gen+"fitness" + bestFitnessSoFar + "championId"+bestIdSoFar+".jpg";
+			GraphicsUtil.saveImage(bestImageSoFar, filename1);
+			System.out.println("save directory is: " + FileUtilities.getSaveDirectory());
+			System.out.println("image " + filename1 + " was saved successfully. Size: "+bestImageSoFar.getWidth()+" by "+bestImageSoFar.getHeight());
+		}
 		return result;
 	}
 
