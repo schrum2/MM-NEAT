@@ -4,6 +4,7 @@ package edu.southwestern.tasks.loderunner;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -103,10 +104,14 @@ public class LodeRunnerGANLevelTask extends LodeRunnerLevelTask<List<Double>> {
 
 			};
 			((LodeRunnerGANLevelTask) MMNEAT.task).evaluateOneLevel(level, psuedoRandomSeed, individual, behaviorCharacteristics);
-			int[] arhiveDimensions = MMNEAT.getArchiveBinLabelsClass().multiDimensionalIndices(behaviorCharacteristics);
+			int[] archiveDimensions = MMNEAT.getArchiveBinLabelsClass().multiDimensionalIndices(behaviorCharacteristics);
 			// Print to Python
-			System.out.println(Arrays.toString(arhiveDimensions)); // MAP Elites archive indices
-			System.out.println(behaviorCharacteristics.get("binScore")); // Quality score
+			System.out.println(Arrays.toString(archiveDimensions)); // MAP Elites archive indices
+			// The output order from this is unpredictable. Capture each of these lines using a dictionary in Python
+			for(Entry<String,Object> p : behaviorCharacteristics.entrySet()) { 
+				System.out.println(p.getKey() + " = " + p.getValue());
+			}
+			System.out.println("MAP DONE"); // You can check for this string in Python to know when the HashMap is done
 		}
 		consoleFromPython.close();
 	}
