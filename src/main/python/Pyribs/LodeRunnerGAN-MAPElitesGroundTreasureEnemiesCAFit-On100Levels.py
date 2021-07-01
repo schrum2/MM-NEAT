@@ -64,7 +64,7 @@ for (goodKey,ignore) in generator.state_dict().items():
 generator.load_state_dict(deprecatedModel)
 
 # Start running JAR
-jar = Popen(["java", "-jar", "LodeRunnerGAN-MAPElitesGroundTreasureEnemiesCAFit-On100Levels.jar"], encoding='ascii', stdin=PIPE, stdout=PIPE)
+jar = Popen(["java", "-jar", "LodeRunnerGAN-MAPElitesGroundTreasureEnemiesCAFit-On100Levels-HashMap.jar"], encoding='ascii', stdin=PIPE, stdout=PIPE)
 # Seek to end of JAR
 s = ""
 while s != "READY":
@@ -134,12 +134,18 @@ def get_level_from_latent_vector(latent_vector_array):
 
 
 # Using the JAR, get the bins and evaluated score from a provided level
-def get_bins_and_score_from_level(string_level):
+def get_data_from_level(string_level):
     jar.stdin.write((string_level+"\n"))
     jar.stdin.flush()
-    bin_coords = jar.stdout.readline().strip()
-    level_score = jar.stdout.readline().strip()
-    return (bin_coords, level_score)
+    coords = jar.stdout.readline().strip()
+    data_dict = {}
+    exec("data_dict[\"Bin Coordinates\"] = "+coords)
+    s = jar.stdout.readline().strip()
+    while s != "MAP DONE":
+        #print("<From JAR> " + s)
+        data_dict[s.split(" = ")[0]] = float(s.split(" = ")[1])
+        s = jar.stdout.readline().strip()
+    return data_dict
 
 
 ### MAIN
@@ -168,9 +174,8 @@ pyribs_main()
 
 while True:
     arr = np.array(json.loads("[0,0,0,0,0,0,0,0,0,0]"))
-    bins_out, score_out = get_bins_and_score_from_level(get_level_from_latent_vector(arr))
-    print(bins_out)
-    print(score_out)
+    data_out = get_data_from_level(get_level_from_latent_vector(arr))
+    print(data_out)
     input()
 
 
