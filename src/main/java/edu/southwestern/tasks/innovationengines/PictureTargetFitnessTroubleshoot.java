@@ -43,9 +43,9 @@ public class PictureTargetFitnessTroubleshoot {
 		
 		assert observed.getWidth() == target.getWidth() && observed.getHeight() == target.getHeight(): "Image dimensions need to match";
 		
-		BufferedImage differenceWoolley = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
-		BufferedImage differenceRMSE = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
-		BufferedImage errorDiff = new BufferedImage(SIDE_LENGTH, SIDE_LENGTH, BufferedImage.TYPE_INT_RGB);
+		BufferedImage differenceWoolley = new BufferedImage(observed.getWidth(), observed.getHeight(), BufferedImage.TYPE_INT_RGB);
+		BufferedImage differenceRMSE = new BufferedImage(observed.getWidth(), observed.getHeight(), BufferedImage.TYPE_INT_RGB);
+		BufferedImage errorDiff = new BufferedImage(observed.getWidth(), observed.getHeight(), BufferedImage.TYPE_INT_RGB);
 		
 		double sumDegreeOfDifference = 0;
 		double sumSquaredErrors = 0;
@@ -88,6 +88,9 @@ public class PictureTargetFitnessTroubleshoot {
 	    double rootMeanSquareError = Math.sqrt(sumSquaredErrors / (observed.getWidth() * observed.getHeight()));
 	    System.out.println("RMSE fitness = " + (1 - rootMeanSquareError));
 		
+	    double percentMatchingPixels = GraphicsUtil.percentMatchingPixels(observed, target);
+	    System.out.println("Percentage of pixels with identical RGB values = " + percentMatchingPixels);
+	    
 		return new Triple<>(differenceWoolley, differenceRMSE,errorDiff);
 	}
 	
@@ -98,15 +101,17 @@ public class PictureTargetFitnessTroubleshoot {
 		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "ScratchedSkull64.png"));
 		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "ScratchedSkull.jpg"));
 		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "failedskull.jpg"));
-		// BufferedImage skull = ImageIO.read(new File("targetimage\\WoolleySkull7\\archive\\Neurons[8]links[7]\\0.70830Neurons[8]links[7]1721290.jpg"));
+		//BufferedImage skull = ImageIO.read(new File("targetimage\\WoolleySkull7\\archive\\Neurons[8]links[7]\\0.70830Neurons[8]links[7]1721290.jpg"));
 		//BufferedImage skull = ImageIO.read(new File("targetimage\\QuadrantRMSESkull1\\archive\\(4,4,4,4)\\0.71548(4,4,4,4)372085.jpg"));
 		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.jpg"));
 		//BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.jpg"));
 		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skullWithAutoencoder.png"));
 		//BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.png"));
+		//BufferedImage skull = ImageIO.read(new File("targetimage\\SkullObjectiveRegular10\\gen7121fitness0.7961671220512823championId710555.jpg"));
+		BufferedImage skull = ImageIO.read(new File("0.81171Neurons39.jpg"));
 		
-		BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "ScreamAttempt.jpg"));
-		BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "theScream256.png"));
+		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.jpg"));
+		BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull.jpg"));
 		
 		
 		//ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + filename));
@@ -130,6 +135,9 @@ public class PictureTargetFitnessTroubleshoot {
 		img = targetSkull.getScaledInstance(DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH, java.awt.Image.SCALE_DEFAULT);		
 	    BufferedImage largeTargetSkull = GraphicsUtil.convertToBufferedImage(img);
 	    
+	   // img = skull.getScaledInstance(DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH, java.awt.Image.SCALE_DEFAULT);
+	   // BufferedImage percentageMatchingPixels = GraphicsUtil.convertToBufferedImage(img);
+	    
 		
 //		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE, ArrayUtil.doubleOnes(network.numInputs()), 0, SCALE, ROTATION);
 //		DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", SIZE, SIZE);
@@ -141,7 +149,8 @@ public class PictureTargetFitnessTroubleshoot {
 		DrawingPanel heatmapWoolley = GraphicsUtil.drawImage(largeWoolley, "Difference in brightness at each pixel (Woolley)", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
 		DrawingPanel heatmapRMSE = GraphicsUtil.drawImage(largeRMSE, "Difference in brightness at each pixel (RMSE)", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
 		DrawingPanel heatmapDiff = GraphicsUtil.drawImage(largeDiff, "Difference in brightness at each pixel (RMSE)", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
-
+		//DrawingPanel pixelMatching = GraphicsUtil.drawImage(percentageMatchingPixels, "Percent of pixels with identical RGB values", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
+		
 		// For test runs
 //		MMNEAT.main(new String[]{"runNumber:1","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
 //				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
