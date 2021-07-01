@@ -1,24 +1,3 @@
-"""
-from subprocess import Popen, PIPE, STDOUT
-
-jar = Popen(["java", "-jar", "LodeRunnerGAN-MAPElitesGroundTreasureEnemiesCAFit-On100Levels.jar"], encoding='ascii', stdin=PIPE, stdout=PIPE)
-
-s = "" # Output string
-while s != "READY":
-    s = jar.stdout.readline().strip()
-    print("<From JAR> " + s) #
-
-jar.stdin.write('[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4], [0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 4], [0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4], [2, 0, 2, 0, 0, 2, 0, 2, 2, 2, 2, 0, 0, 2, 0, 2, 2, 2, 2, 0, 0, 2, 0, 2, 2, 2, 2, 2, 2, 2, 0, 4], [0, 0, 2, 0, 0, 2, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4], [2, 0, 3, 2, 3, 2, 2, 3, 2, 2, 2, 2, 0, 0, 0, 3, 2, 2, 2, 2, 0, 0, 0, 3, 2, 3, 3, 3, 3, 3, 3, 4], [4, 0, 2, 0, 2, 0, 0, 2, 4, 2, 0, 0, 0, 0, 0, 2, 4, 2, 0, 0, 0, 0, 0, 2, 4, 0, 0, 6, 2, 3, 3, 4], [4, 0, 0, 0, 0, 0, 3, 3, 4, 6, 0, 0, 0, 0, 0, 3, 4, 6, 0, 0, 0, 0, 0, 3, 4, 3, 3, 3, 3, 3, 0, 4], [4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0], [0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3], [2, 0, 2, 0, 0, 2, 0, 2, 2, 2, 2, 0, 0, 2, 0, 2, 2, 2, 2, 0, 0, 2, 0, 2, 2, 2, 2, 2, 2, 0, 0, 2], [0, 0, 2, 0, 0, 2, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4], [2, 0, 3, 2, 3, 2, 2, 3, 2, 2, 2, 2, 0, 0, 0, 3, 2, 2, 2, 2, 0, 0, 0, 3, 2, 3, 3, 3, 3, 3, 3, 4], [4, 0, 2, 0, 2, 0, 0, 2, 4, 2, 0, 0, 0, 0, 0, 2, 4, 2, 0, 0, 0, 0, 0, 2, 4, 0, 0, 6, 2, 3, 3, 4], [4, 0, 0, 0, 0, 0, 3, 3, 4, 6, 0, 0, 0, 0, 0, 3, 4, 6, 0, 0, 0, 0, 0, 3, 4, 3, 3, 3, 3, 3, 0, 4], [4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0], [0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]]\n')
-print("Message sent")
-jar.stdin.flush()
-print("<From JAR> " + jar.stdout.readline().strip())
-print("<From JAR> " + jar.stdout.readline().strip())
-print("Message recieved")
-
-# Exit JAR and close stdout
-jar.stdin.write("exit")
-jar.stdout.close()
-"""
 
 import torch
 import torchvision.utils as vutils
@@ -41,13 +20,13 @@ from pathlib import Path
 
 import fire
 import matplotlib.pyplot as plt
+from matplotlib import colors, cm
 from alive_progress import alive_bar
 
 from ribs.archives import CVTArchive, GridArchive
-from ribs.emitters import (GaussianEmitter, ImprovementEmitter, IsoLineEmitter,
-                           OptimizingEmitter, RandomDirectionEmitter)
+from ribs.emitters import (GaussianEmitter, ImprovementEmitter, IsoLineEmitter, OptimizingEmitter, RandomDirectionEmitter)
 from ribs.optimizers import Optimizer
-from ribs.visualize import cvt_archive_heatmap, grid_archive_heatmap
+from ribs.visualize import grid_archive_heatmap
 
 ### INITALIZE GAN STUFF
 # Simulates these parameters   ->   .\src\main\python\GAN\LodeRunnerGAN\LodeRunnerAllGround20LevelsEpoch20000_10_7.pth 10 7 32 22
@@ -84,10 +63,11 @@ def create_optimizer(algorithm, dim, seed):
         Optimizer: A ribs Optimizer for running the algorithm.
     """
     max_bound = dim*10
-    bounds = [(0, max_bound), (0, max_bound), (0, max_bound)]
+    # Ground %, Gold, Enemies
+    bounds = [(0, dim*1), (0, dim*50), (0, dim*20)]
     initial_sol = np.zeros(dim)
-    batch_size = 37
-    num_emitters = 15
+    batch_size = 1
+    num_emitters = 1
 
     archive = GridArchive((10, 10, 10), bounds, seed=seed)
 
@@ -137,7 +117,9 @@ def get_level_from_latent_vector(latent_vector_array):
 def get_data_from_level(string_level):
     jar.stdin.write((string_level+"\n"))
     jar.stdin.flush()
-    coords = jar.stdout.readline().strip()
+    coords = ""
+    while "[" not in coords:
+        coords = jar.stdout.readline().strip()
     data_dict = {}
     exec("data_dict[\"Bin Coordinates\"] = "+coords)
     s = jar.stdout.readline().strip()
@@ -148,14 +130,56 @@ def get_data_from_level(string_level):
     return data_dict
 
 
+def save_heatmap(archive, heatmap_path, min_max):
+    """Saves a heatmap of the archive to the given path.
+
+    Args:
+        archive (GridArchive or CVTArchive): The archive to save.
+        heatmap_path: Image path for the heatmap.
+    """
+
+    norm = colors.Normalize(vmin=min_max[0], vmax=min_max[1]) # normalize colors
+        
+    archive_slice_arrays = archive._objective_values
+
+    cmap = "viridis" # Colormap to use
+
+    dimensions = [10, 10, 10]
+    columns = 5
+    rows = 2
+
+    fig, axs = plt.subplots(nrows=rows, ncols=columns, constrained_layout=True, figsize=(columns*4, rows*3)) # Make subplots
+
+    fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs[:, :], location='right', aspect=50) # Make colorbar
+
+    fig.suptitle("TITLE")
+
+    counter = 0
+    for ax, slice in zip(axs.flat, archive_slice_arrays):
+        ax.imshow(slice, extent=[0, dimensions[2], dimensions[1], 0], norm=norm, cmap=cmap)
+        ax.set_ylim(bottom=0.0, top=dimensions[1])
+        ax.set_xlim(left=0.0, right=dimensions[2])
+        #ax.set_xlabel(dimension_names[2]) # Add labels
+        #ax.set_ylabel(dimension_names[1])
+        #ax.set_title(dimension_names[0]+": "+str(counter))
+        counter+=1
+
+    plt.savefig(heatmap_path) # Save file
+
+
 ### MAIN
 
 def pyribs_main():
     algorithm = "map_elites"
     dim=10
-    itrs=4500,
-    outdir="sphere_output",
-    log_freq=250
+    iterations = 500
+    outdir="loderunner_output"
+    log_freq=20
+    name = f"{algorithm}_{dim}"
+    
+    outdir = Path(outdir)
+    if not outdir.is_dir():
+        outdir.mkdir()
     
     optimizer = create_optimizer(algorithm, dim, None)
     archive = optimizer.archive
@@ -169,16 +193,53 @@ def pyribs_main():
             "y": [0.0],
         },
     }
+    
+    non_logging_time = 0.0
+    with alive_bar(iterations) as progress:
+        #save_heatmap(archive, str(outdir / f"{name}_heatmap_{0:05d}.png"), -((-5.12 - (5.12 * 0.4))**2 * dim))
+        save_heatmap(archive, str(outdir / f"{name}_heatmap_{0:05d}.png"), [0, 500])
 
-pyribs_main()
+        for itr in range(1, iterations + 1):
+            itr_start = time.time()
+            sols = optimizer.ask()
+            #print(sols)
+            data_out = get_data_from_level(get_level_from_latent_vector(sols))
+            objs = [data_out["Ground Percent"], data_out["Treasures"], data_out["Enemies"]]
+            bcs = [data_out["Ground Percent"], data_out["Treasures"], data_out["Enemies"]]
+            optimizer.tell(objs, bcs)
+            non_logging_time += time.time() - itr_start
+            progress()
 
+            # Logging and output.
+            final_itr = itr == iterations
+            if itr % log_freq == 0 or final_itr:
+                data = archive.as_pandas(include_solutions=final_itr)
+                if final_itr:
+                    data.to_csv(str(outdir / f"{name}_archive.csv"))
+
+                # Record and display metrics.
+                total_cells = 500 * 500
+                metrics["QD Score"]["x"].append(itr)
+                metrics["QD Score"]["y"].append(data['objective'].sum())
+                metrics["Archive Coverage"]["x"].append(itr)
+                metrics["Archive Coverage"]["y"].append(len(data)) #/ total_cells * 100) # Maxx: this can be added to chart percentage filled instead of actual filled
+                print(f"Iteration {itr} | Archive Coverage: "
+                      f"{metrics['Archive Coverage']['y'][-1]:.3f}% "
+                      f"QD Score: {metrics['QD Score']['y'][-1]:.3f}")
+                
+                save_heatmap(archive, str(outdir / f"{name}_heatmap_{itr:05d}.png"), [0, 500])
+    
+
+"""
 while True:
     arr = np.array(json.loads("[0,0,0,0,0,0,0,0,0,0]"))
     data_out = get_data_from_level(get_level_from_latent_vector(arr))
     print(data_out)
     input()
+"""
 
-
+if __name__ == '__main__':
+    fire.Fire(pyribs_main)
 
 # Exit JAR and close stdout
 jar.stdin.write("exit")
