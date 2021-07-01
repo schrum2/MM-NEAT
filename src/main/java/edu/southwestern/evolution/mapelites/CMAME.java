@@ -113,7 +113,8 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		// individual will be bounded in each variable index
 		Genotype<ArrayList<Double>> individual = new BoundedRealValuedGenotype(rawIndividual);
 		
-		// Get bounded values from genotype to get passed to emitters down below
+		// Get bounded values from genotype to get passed to emitters down below.
+		// If resampleBadCMAMEGenomes is true, then the initial values will never exceed bounds, and thus rawIndividual will not change
 		rawIndividual = ArrayUtil.doubleArrayFromList(individual.getPhenotype());
 		
 		Score<ArrayList<Double>> individualScore = task.evaluate(individual); // evaluate score for individual
@@ -187,6 +188,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	 * results of each lambda run, to be able to see
 	 * what lambda works the best.
 	 */
+	@SuppressWarnings("unused")
 	private static void runSeveralCMAME() throws NoSuchMethodException, IOException {
 		new File(FOLDER+"/").mkdir();
 		severalLog.createNewFile();
