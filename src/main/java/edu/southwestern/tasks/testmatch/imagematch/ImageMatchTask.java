@@ -11,6 +11,7 @@ import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.SinglePopulationGenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.Network;
@@ -47,6 +48,8 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	private double[] targetImageFeatures; 
 	
 	private double bestFitnessSoFar = Double.NEGATIVE_INFINITY;
+	private BufferedImage bestImageSoFar = null;
+	private long bestIdSoFar;
 
 	/**
 	 * Default task constructor
@@ -141,12 +144,24 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		// TODO: If fitness better than bestFitnessSoFar then save image
 		double fitness = result.scores[0];
 		if(child != null && fitness > bestFitnessSoFar) {
-			String filename1 = FileUtilities.getSaveDirectory() + File.separator + fitness + "champion.jpg";
-			GraphicsUtil.saveImage(child, filename1);
-			System.out.println("save directory is: " + FileUtilities.getSaveDirectory());
-			System.out.println("image " + filename1 + " was saved successfully. Size: "+child.getWidth()+" by "+child.getHeight());
+			bestImageSoFar = child;
+			bestFitnessSoFar = fitness;
+			bestIdSoFar = individual.getId();
 		}
 		
+		return result;
+	}
+	
+	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
+		ArrayList<Score<T>> result = super.evaluateAll(population);
+		if(CommonConstants.netio) {
+			@SuppressWarnings("rawtypes")
+			int gen = ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration();
+			String filename1 = FileUtilities.getSaveDirectory() + File.separator + "gen" +gen+"fitness" + bestFitnessSoFar + "championId"+bestIdSoFar+".jpg";
+			GraphicsUtil.saveImage(bestImageSoFar, filename1);
+			System.out.println("save directory is: " + FileUtilities.getSaveDirectory());
+			System.out.println("image " + filename1 + " was saved successfully. Size: "+bestImageSoFar.getWidth()+" by "+bestImageSoFar.getHeight());
+		}
 		return result;
 	}
 
