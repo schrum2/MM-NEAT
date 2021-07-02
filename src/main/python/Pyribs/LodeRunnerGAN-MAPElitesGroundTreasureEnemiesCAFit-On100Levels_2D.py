@@ -41,12 +41,12 @@ def create_optimizer(algorithm, dim, seed):
     """
     max_bound = dim*10
     # Ground %, Gold, Enemies
-    bounds = [(0, dim*1), (0, dim*50), (0, dim*20)]
+    bounds = [(0, 0.5), (0, 5)]
     initial_sol = np.zeros(dim)
     batch_size = 1
     num_emitters = 1
 
-    archive = GridArchive((10, 10, 10), bounds, seed=seed)
+    archive = GridArchive((10, 10), bounds, seed=seed)
 
     # Create emitters. Each emitter needs a different seed, so that they do not all do the same thing.
     emitter_seeds = [None] * num_emitters if seed is None else list(range(seed, seed + num_emitters))
@@ -115,34 +115,10 @@ def save_heatmap(archive, heatmap_path, min_max):
         heatmap_path: Image path for the heatmap.
     """
 
-    norm = colors.Normalize(vmin=min_max[0], vmax=min_max[1]) # normalize colors
-    
-    archive_slice_arrays = archive._objective_values
-
-    cmap = "viridis" # Colormap to use
-
-    dimensions = [10, 10, 10]
-    columns = 5
-    rows = 2
-
-    fig, axs = plt.subplots(nrows=rows, ncols=columns, constrained_layout=True, figsize=(columns*4, rows*3)) # Make subplots
-
-    fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs[:, :], location='right', aspect=50) # Make colorbar
-
-    fig.suptitle("TITLE")
-
-    counter = 0
-    for ax, slice in zip(axs.flat, archive_slice_arrays):
-        ax.imshow(slice, extent=[0, dimensions[2], dimensions[1], 0], norm=norm, cmap=cmap)
-        ax.set_ylim(bottom=0.0, top=dimensions[1])
-        ax.set_xlim(left=0.0, right=dimensions[2])
-        #ax.set_xlabel(dimension_names[2]) # Add labels
-        #ax.set_ylabel(dimension_names[1])
-        #ax.set_title(dimension_names[0]+": "+str(counter))
-        counter+=1
-
-    plt.show()
-    plt.savefig(heatmap_path) # Save file
+    plt.figure(figsize=(8, 6))
+    grid_archive_heatmap(archive, vmin=min_max[0], vmax=min_max[1])
+    plt.tight_layout()
+    plt.savefig(heatmap_path)
 
 
 ### MAIN
@@ -150,9 +126,9 @@ def save_heatmap(archive, heatmap_path, min_max):
 def pyribs_main():
     algorithm = "map_elites"
     dim=10
-    iterations = 500
+    iterations = 5000
     outdir="loderunner_output"
-    log_freq=20
+    log_freq=50
     name = f"{algorithm}_{dim}"
     
     outdir = Path(outdir)
@@ -182,8 +158,8 @@ def pyribs_main():
             sols = optimizer.ask()
             #print(sols)
             data_out = get_data_from_level(get_level_from_latent_vector(sols))
-            objs = [data_out["Ground Percent"], data_out["Treasures"], data_out["Enemies"]]
-            bcs = [data_out["Ground Percent"], data_out["Treasures"], data_out["Enemies"]]
+            objs = [data_out["Ground Percent"]*500, data_out["Treasures"]*10]
+            bcs = [data_out["Ground Percent"], data_out["Treasures"]]
             optimizer.tell(objs, bcs)
             non_logging_time += time.time() - itr_start
             progress()
@@ -201,7 +177,7 @@ def pyribs_main():
                 metrics["QD Score"]["y"].append(data['objective'].sum())
                 metrics["Archive Coverage"]["x"].append(itr)
                 metrics["Archive Coverage"]["y"].append(len(data)) #/ total_cells * 100) # Maxx: this can be added to chart percentage filled instead of actual filled
-                print(f"Iteration {itr} | Archive Coverage: "
+                print(f"Iteration {itr}\t| Archive Coverage: "
                       f"{metrics['Archive Coverage']['y'][-1]:.3f}% "
                       f"QD Score: {metrics['QD Score']['y'][-1]:.3f}")
                 
