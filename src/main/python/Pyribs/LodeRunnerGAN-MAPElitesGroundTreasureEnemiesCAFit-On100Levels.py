@@ -23,33 +23,10 @@ import matplotlib.pyplot as plt
 from matplotlib import colors, cm
 from alive_progress import alive_bar
 
-from ribs.archives import CVTArchive, GridArchive
-from ribs.emitters import (GaussianEmitter, ImprovementEmitter, IsoLineEmitter, OptimizingEmitter, RandomDirectionEmitter)
+from ribs.archives import GridArchive
+from ribs.emitters import (ImprovementEmitter, GaussianEmitter)
 from ribs.optimizers import Optimizer
 from ribs.visualize import grid_archive_heatmap
-
-### INITALIZE GAN STUFF
-# Simulates these parameters   ->   .\src\main\python\GAN\LodeRunnerGAN\LodeRunnerAllGround20LevelsEpoch20000_10_7.pth 10 7 32 22
-
-nz = 10
-generator = dcgan.DCGAN_G(32, nz, 7, 64, 1, 0) # imageSize, nz, z_dims, ngf, ngpu, n_extra_layers
-deprecatedModel = torch.load(".\src\main\python\GAN\LodeRunnerGAN\LodeRunnerAllGround20LevelsEpoch20000_10_7.pth", map_location=lambda storage, loc: storage)
-fixedModel = OrderedDict()
-for (goodKey,ignore) in generator.state_dict().items():
-    badKey = goodKey.replace(":",".")
-    if badKey in deprecatedModel:
-        goodValue = deprecatedModel[badKey]
-        fixedModel[goodKey] = goodValue
-generator.load_state_dict(deprecatedModel)
-
-# Start running JAR
-jar = Popen(["java", "-jar", "LodeRunnerGAN-MAPElitesGroundTreasureEnemiesCAFit-On100Levels-HashMap.jar"], encoding='ascii', stdin=PIPE, stdout=PIPE)
-# Seek to end of JAR
-s = ""
-while s != "READY":
-    s = jar.stdout.readline().strip()
-    #print("<From JAR> " + s)
-
 
 ### FUNCTIONS
 def create_optimizer(algorithm, dim, seed):
@@ -139,7 +116,7 @@ def save_heatmap(archive, heatmap_path, min_max):
     """
 
     norm = colors.Normalize(vmin=min_max[0], vmax=min_max[1]) # normalize colors
-        
+    
     archive_slice_arrays = archive._objective_values
 
     cmap = "viridis" # Colormap to use
@@ -164,6 +141,7 @@ def save_heatmap(archive, heatmap_path, min_max):
         #ax.set_title(dimension_names[0]+": "+str(counter))
         counter+=1
 
+    plt.show()
     plt.savefig(heatmap_path) # Save file
 
 
@@ -239,8 +217,32 @@ while True:
 """
 
 if __name__ == '__main__':
-    fire.Fire(pyribs_main)
+    ### INITALIZE GAN STUFF
+    # Simulates these parameters   ->   .\src\main\python\GAN\LodeRunnerGAN\LodeRunnerAllGround20LevelsEpoch20000_10_7.pth 10 7 32 22
 
-# Exit JAR and close stdout
-jar.stdin.write("exit")
-jar.stdout.close()
+    nz = 10
+    generator = dcgan.DCGAN_G(32, nz, 7, 64, 1, 0) # imageSize, nz, z_dims, ngf, ngpu, n_extra_layers
+    deprecatedModel = torch.load(".\src\main\python\GAN\LodeRunnerGAN\LodeRunnerAllGround20LevelsEpoch20000_10_7.pth", map_location=lambda storage, loc: storage)
+    fixedModel = OrderedDict()
+    for (goodKey,ignore) in generator.state_dict().items():
+        badKey = goodKey.replace(":",".")
+        if badKey in deprecatedModel:
+            goodValue = deprecatedModel[badKey]
+            fixedModel[goodKey] = goodValue
+    generator.load_state_dict(deprecatedModel)
+
+    # Start running JAR
+    jar = Popen(["java", "-jar", "LodeRunnerGAN-MAPElitesGroundTreasureEnemiesCAFit-On100Levels-HashMap.jar"], encoding='ascii', stdin=PIPE, stdout=PIPE)
+    # Seek to end of JAR
+    s = ""
+    while s != "READY":
+        s = jar.stdout.readline().strip()
+        #print("<From JAR> " + s)
+        
+    fire.Fire(pyribs_main)
+    
+    # Exit JAR and close stdout
+    jar.stdin.write("exit")
+    jar.stdout.close()
+
+

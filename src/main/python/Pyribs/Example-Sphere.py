@@ -287,7 +287,8 @@ def sphere_main(algorithm,
                 save_heatmap(archive,
                              str(outdir / f"{name}_heatmap_{itr:05d}.png"),
                              -((-5.12 - (5.12 * 0.4))**2 * dim))
-
+                
+                
     # Plot metrics.
     print(f"Algorithm Time (Excludes Logging and Setup): {non_logging_time}s")
     for metric in metrics:
