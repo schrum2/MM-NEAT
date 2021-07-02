@@ -1,7 +1,5 @@
 package edu.southwestern.tasks.functionoptimization;
 
-import java.io.FileNotFoundException;
-
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedSlicedBinLabels;
 import edu.southwestern.parameters.Parameters;

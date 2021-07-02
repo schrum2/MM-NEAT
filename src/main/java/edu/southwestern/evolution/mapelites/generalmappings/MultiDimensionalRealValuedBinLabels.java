@@ -96,8 +96,11 @@ public abstract class MultiDimensionalRealValuedBinLabels extends BaseBinLabels 
 	public int oneDimensionalIndex(int[] multi) {
 		if (EXTRA_LOGGING) System.out.println("Multi-dimensional array: "+Arrays.toString(multi));
 		int index = 0;
+//		for (int i = 0; i < numDimensions; i++) {
+//			index += multi[i] * Math.pow(binsPerDimension, i); // get the 1D index of a bin
+//		}
 		for (int i = 0; i < numDimensions; i++) {
-			index += multi[i] * Math.pow(binsPerDimension, i); // get the 1D index of a bin
+			index += multi[i] * Math.pow(binsPerDimension, ((numDimensions-1)-i)); // get the 1D index of a bin
 		}
 		if (EXTRA_LOGGING) System.out.println("One dimensional index: "+index);
 		return index;
@@ -121,9 +124,7 @@ public abstract class MultiDimensionalRealValuedBinLabels extends BaseBinLabels 
 			if (EXTRA_LOGGING) System.out.println("scaledValue = (" + behaviorCharacterization[i] + " - " + minPossibleValue + ") / ("+ (maxPossibleValue-minPossibleValue) +") = "+scaledValue);
 			dbc[i] = (int) Math.floor(scaledValue * binsPerDimension);
 			if (EXTRA_LOGGING) System.out.println("binsPerDimension = " + binsPerDimension);
-			if (dbc[i] == binsPerDimension) {
-				dbc[i]--;
-			}
+			if (dbc[i] == binsPerDimension) { dbc[i]--;	}
 		}
 		if (EXTRA_LOGGING) System.out.println("Discretizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
 		return dbc;

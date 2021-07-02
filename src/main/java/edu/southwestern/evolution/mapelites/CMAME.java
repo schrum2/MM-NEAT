@@ -18,6 +18,7 @@ import edu.southwestern.evolution.mapelites.emitters.OptimizingEmitter;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 
 /**
@@ -107,11 +108,16 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	public void newIndividual() {
 		incrementEmitterCounter(); // increment emitter counter
 		Emitter thisEmitter = emitters[emitterCounter]; // pick the lowest one
+		// rawIndividual may not be in bounds of BoundedRealValuedGenotype
 		double[] rawIndividual = thisEmitter.sampleSingle(); // sample an individual from current emitter
+		// individual will be bounded in each variable index
 		Genotype<ArrayList<Double>> individual = new BoundedRealValuedGenotype(rawIndividual);
 		
+		// Get bounded values from genotype to get passed to emitters down below
+		rawIndividual = ArrayUtil.doubleArrayFromList(individual.getPhenotype());
+		
 		Score<ArrayList<Double>> individualScore = task.evaluate(individual); // evaluate score for individual
-		assert individualScore.usesMAPElitesBinSpecification() : "Cannot use a traditional behavior vector with CMA-ME";
+		assert individualScore.usesMAPElitesBinSpecification() || individualScore.usesMAPElitesMapSpecification() : "Cannot use a traditional behavior vector with CMA-ME";
 		
 		double individualBinScore = individualScore.behaviorIndexScore(); // extract new bin score
 		Score<ArrayList<Double>> currentOccupant = archive.getElite(individualScore.MAPElitesBinIndex());
@@ -157,12 +163,17 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		return means;
 	}
 	
+//	@Override
+//	protected void log() {
+//		
+//	}
 	
 	// Test CMA-ME
 	public static void main(String[] args) throws NoSuchMethodException, IOException {
 		System.out.println("Testing CMA-ME");
 		//MMNEAT.main("runNumber:0 randomSeed:0 base:mariolevelsdecoratensleniency log:MarioLevelsDecorateNSLeniency-CMAME1Improvement saveTo:CMAME1Improvement marioGANLevelChunks:10 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 mu:50 lambda:100 maxGens:100000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDecorNSAndLeniencyBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 numImprovementEmitters:1 numOptimizingEmitters:0".split(" "));
-		runSeveralCMAME();
+		MMNEAT.main("runNumber:7 randomSeed:7 base:mariolevelsdecorateleniency log:MarioLevelsDecorateLeniency-CMAME5Improvement saveTo:CMAME5Improvement marioGANLevelChunks:2 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 mu:37 lambda:100 maxGens:20000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDecorAndLeniencyBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 numImprovementEmitters:5 numOptimizingEmitters:0 CMAMESigma:0.5 marioStatBasedMEBinIntervals:200".split(" "));
+		//runSeveralCMAME();
 	}
 	
 	private static final String FOLDER = "mapelitesfunctionoptimizationseveral"; // output for multiple runs

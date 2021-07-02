@@ -21,7 +21,6 @@ import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.random.RandomNumbers;
 

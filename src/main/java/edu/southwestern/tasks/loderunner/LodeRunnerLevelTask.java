@@ -219,7 +219,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 * @param genotypeId
 	 * @return Pair holding the scores 
 	 */
-	protected Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, Genotype<T> individual, HashMap<String,Object> behaviorMap) {
+	public Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, Genotype<T> individual, HashMap<String,Object> behaviorMap) {
 		long genotypeId = individual.getId();
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array  
 		Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed);

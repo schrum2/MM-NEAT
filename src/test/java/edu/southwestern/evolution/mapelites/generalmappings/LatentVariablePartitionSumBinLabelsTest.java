@@ -164,10 +164,10 @@ public class LatentVariablePartitionSumBinLabelsTest {
 	public void testOneDimensionalIndex() {
 		assertEquals(binLabels.oneDimensionalIndex(new int[] {9, 9}), 99);
 		assertEquals(binLabels.oneDimensionalIndex(new int[] {0, 0}), 0);
-		assertEquals(binLabels.oneDimensionalIndex(new int[] {9, 0}), 9);
-		assertEquals(binLabels.oneDimensionalIndex(new int[] {0, 9}), 90);
-		assertEquals(binLabels.oneDimensionalIndex(new int[] {5, 1}), 15);
-		assertEquals(binLabels.oneDimensionalIndex(new int[] {7, 3}), 37);
+		assertEquals(binLabels.oneDimensionalIndex(new int[] {9, 0}), 90);
+		assertEquals(binLabels.oneDimensionalIndex(new int[] {0, 9}), 9);
+		assertEquals(binLabels.oneDimensionalIndex(new int[] {5, 1}), 51);
+		assertEquals(binLabels.oneDimensionalIndex(new int[] {7, 3}), 73);
 	}
 
 	@Test
@@ -180,9 +180,9 @@ public class LatentVariablePartitionSumBinLabelsTest {
 	
 	@Test
 	public void testMultiDimensionalIndexToBinLabel() {
-		assertEquals("-16_0to-8_0--40_0to-32_0", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-9.33, -36.0}))));
-		assertEquals("-40_0to-32_0-32_0to40_0", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-40.0, 32.0}))));
-		assertEquals("-16_0to-8_0-16_0to24_0", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-15.5, 17.23}))));
+		assertEquals("-40_0to-32_0--16_0to-8_0", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-9.33, -36.0}))));
+		assertEquals("32_0to40_0--40_0to-32_0", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-40.0, 32.0}))));
+		assertEquals("16_0to24_0--16_0to-8_0", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-15.5, 17.23}))));
 		assertEquals("0_0to8_0-0_0to8_0", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {0.0, 7.99}))));
 		assertEquals("-40_0to-32_0--40_0to-32_0", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {-40.0, -40.0}))));
 		assertEquals("32_0to40_0-32_0to40_0", binLabels.binLabels().get(binLabels.oneDimensionalIndex(binLabels.discretize(new double[] {40.0, 40.0}))));

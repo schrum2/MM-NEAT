@@ -39,7 +39,7 @@ public class MarioMAPElitesDecorAndLeniencyBinLabels extends BaseBinLabels {
 
 		@Override
 		public String[] dimensions() {
-			return new String[] {"Sum Decoration", "Sum Leniency"};
+			return new String[] {"Decoration Percent", "Leniency Percent"};
 		}
 		
 		@Override
