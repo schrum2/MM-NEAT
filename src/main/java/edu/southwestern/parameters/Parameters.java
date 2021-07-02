@@ -772,7 +772,7 @@ public class Parameters {
 		booleanOptions.add("dynamicAutoencoderIntervals", false, "If true the intervals in the archive change every time we train a new autoencoder.");
 		booleanOptions.add("deleteOldArchives", true, "If true, delete the old archives to save space, otherwise the archive fills to fast and we run out of storage.");
 		booleanOptions.add("convolutionalAutoencoder", false, "Determines whether to use the regular autoencoder or the convolutional autoencoder.");
-		booleanOptions.add("resampleBadCMAMEGenomes", true, "If genome out of bounds, then generate a new one without counting toward number of generated solutions.");
+		booleanOptions.add("resampleBadCMAMEGenomes", false, "If genome out of bounds, then generate a new one without counting toward number of generated solutions.");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
