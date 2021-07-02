@@ -241,7 +241,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				Network cppn = s.individual.getPhenotype();
 				BufferedImage image = PicbreederTask.imageFromCPPN(cppn, saveWidth, saveHeight, ArrayUtil.doubleOnes(cppn.numInputs()));
 				//String fullName = finalArchive + File.separator + fileName;
-				String fullName = subdir + File.separator + s.behaviorIndexScore() + "-" + labels.binLabels().get(labels.oneDimensionalIndex(s.MAPElitesBinIndex()))+".jpg";
+				double percentMatching = GraphicsUtil.percentMatchingPixels(image, img);
+				String fullName = subdir + File.separator + percentMatching+ "percent" +s.behaviorIndexScore() + "fitness-" + labels.binLabels().get(labels.oneDimensionalIndex(s.MAPElitesBinIndex()))+".jpg";
 				GraphicsUtil.saveImage(image, fullName);
 			}
 		});

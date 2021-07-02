@@ -154,13 +154,14 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		ArrayList<Score<T>> result = super.evaluateAll(population);
-		if(CommonConstants.netio) {
+		if(CommonConstants.netio && bestImageSoFar != null) {
 			@SuppressWarnings("rawtypes")
 			int gen = ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration();
 			String filename1 = FileUtilities.getSaveDirectory() + File.separator + "gen" +gen+"fitness" + bestFitnessSoFar + "championId"+bestIdSoFar+".jpg";
 			GraphicsUtil.saveImage(bestImageSoFar, filename1);
 			System.out.println("save directory is: " + FileUtilities.getSaveDirectory());
 			System.out.println("image " + filename1 + " was saved successfully. Size: "+bestImageSoFar.getWidth()+" by "+bestImageSoFar.getHeight());
+			bestImageSoFar = null; // Set null after saving so we don't re-save the same over and over
 		}
 		return result;
 	}
