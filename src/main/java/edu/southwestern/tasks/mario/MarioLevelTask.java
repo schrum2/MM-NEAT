@@ -30,6 +30,7 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.export.JsonLevelGenerationTask;
 import edu.southwestern.tasks.mario.level.LevelParser;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
 import edu.southwestern.tasks.mario.level.MarioState;
@@ -57,7 +58,7 @@ import edu.southwestern.util.search.Search;
  *
  * @param <T>
  */
-public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {	
+public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements JsonLevelGenerationTask<T> {	
 
 	private static final int SEGMENT_WIDTH_IN_BLOCKS = 28; // GAN training window
 	private static final int PIXEL_BLOCK_WIDTH = 16; // Is this right?
@@ -247,9 +248,13 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> {
 			setupKLDivLevelsForComparison();
 			initialized = true;
 		}
+		List<List<Integer>> oneLevel = getMarioLevelListRepresentationFromGenotype(individual);
+		return evaluateOneLevel(oneLevel, 0, individual, behaviorMap);
+	}
+	
+	public Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> oneLevel, double psuedoRandomSeed, Genotype<T> individual, HashMap<String,Object> behaviorMap) {
 		EvaluationInfo info = null;
-		BufferedImage levelImage = null;
-		ArrayList<List<Integer>> oneLevel = getMarioLevelListRepresentationFromGenotype(individual);
+		BufferedImage levelImage = null;		
 		Level level = Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding") ? OldLevelParser.createLevelJson(oneLevel) : LevelParser.createLevelJson(oneLevel);			
 		if(fitnessRequiresSimulation || CommonConstants.watch) {
 			agent.reset(); // Get ready to play a new level

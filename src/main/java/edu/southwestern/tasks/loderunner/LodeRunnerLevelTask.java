@@ -27,6 +27,7 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.export.JsonLevelGenerationTask;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
 import edu.southwestern.util.MiscUtil;
@@ -45,7 +46,7 @@ import icecreamyou.LodeRunner.LodeRunner;
  *
  * @param <T>
  */
-public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
+public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> implements JsonLevelGenerationTask<T> {
 
 	private int numFitnessFunctions = 0; 
 	protected static final int NUM_OTHER_SCORES = 9;
