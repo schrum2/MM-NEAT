@@ -249,9 +249,13 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements Jso
 			initialized = true;
 		}
 		List<List<Integer>> oneLevel = getMarioLevelListRepresentationFromGenotype(individual);
+		// 0 is because the pseudo random seed is not used
 		return evaluateOneLevel(oneLevel, 0, individual, behaviorMap);
 	}
-	
+
+	/**
+	 * Note that psuedoRandomSeed is completely ignored here
+	 */
 	public Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> oneLevel, double psuedoRandomSeed, Genotype<T> individual, HashMap<String,Object> behaviorMap) {
 		EvaluationInfo info = null;
 		BufferedImage levelImage = null;		
