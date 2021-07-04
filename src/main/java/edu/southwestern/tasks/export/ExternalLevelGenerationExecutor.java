@@ -3,14 +3,13 @@ package edu.southwestern.tasks.export;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Map.Entry;
+import java.util.Scanner;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.DummyGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.loderunner.LodeRunnerGANLevelTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 
@@ -32,6 +31,8 @@ public class ExternalLevelGenerationExecutor {
 		Parameters.initializeParameterCollections(args);
 		MMNEAT.loadClasses();
 		GANProcess.terminateGANProcess(); // Kill the Python GAN process that is spawned
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		JsonLevelGenerationTask<List<Double>> task = (JsonLevelGenerationTask) MMNEAT.task;
 		System.out.println("READY"); // Tell Python program we are ready to receive;
 		// Loop until Python program sends exit string
 		String input = "";
@@ -45,7 +46,7 @@ public class ExternalLevelGenerationExecutor {
 			double psuedoRandomSeed = level.hashCode(); //getRandomSeedForSpawnPoint(individual); //creates the seed to be passed into the Random instance 
 			HashMap<String,Object> behaviorCharacteristics = new HashMap<String,Object>();
 			Genotype<List<Double>> individual = new DummyGenotype<List<Double>>();
-			((LodeRunnerGANLevelTask) MMNEAT.task).evaluateOneLevel(level, psuedoRandomSeed, individual, behaviorCharacteristics);
+			task.evaluateOneLevel(level, psuedoRandomSeed, individual, behaviorCharacteristics);
 			int[] archiveDimensions = MMNEAT.getArchiveBinLabelsClass().multiDimensionalIndices(behaviorCharacteristics);
 			// Print to Python
 			System.out.println(Arrays.toString(archiveDimensions)); // MAP Elites archive indices
