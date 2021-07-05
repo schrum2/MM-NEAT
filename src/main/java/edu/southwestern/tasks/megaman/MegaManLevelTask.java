@@ -127,6 +127,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> implements J
 	 * @return Pair of fitness and other scores
 	 */
 	public Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, Genotype<T> individual, HashMap<String,Object> behaviorCharacteristics) {
+		if(!behaviorCharacteristics.containsKey("segmentTracker")) behaviorCharacteristics.put("segmentTracker", new MegaManTrackSegmentType());
 		MegaManTrackSegmentType segmentCount = (MegaManTrackSegmentType) behaviorCharacteristics.get("segmentTracker");
 		long genotypeId = individual.getId();
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 

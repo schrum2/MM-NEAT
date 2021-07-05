@@ -66,8 +66,8 @@ public class MegaManMAPElitesDistinctVerticalAndConnectivityBinLabels extends Ba
 	@Override
 	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
 		double precentConnected = (Double) keys.get("Connectivity");
-		int numVertical = (int) keys.get("Vertical Segments");
-		int numDistinctSegments = (int) keys.get("Distinct Segments");
+		int numVertical = (int) ((double) keys.get("Vertical Segments"));
+		int numDistinctSegments = (int) ((double) keys.get("Distinct Segments"));
 		// 100% connectivity is possible, which leads to an index of 10 (out of bounds) if not adjusted using Math.min
 		int indexConnected = (int) Math.min(precentConnected*TILE_GROUPS,9);
 		return new int[] {numDistinctSegments, numVertical, indexConnected};
