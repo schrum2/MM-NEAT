@@ -118,8 +118,13 @@ public abstract class MultiDimensionalRealValuedBinLabels extends BaseBinLabels 
 		int[] dbc = new int[numDimensions];
 		for (int i = 0; i < numDimensions; i++) {
 			// Change to assertions eventually
-			if (behaviorCharacterization[i] > maxPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " exceeds maximum value specified ("+maxPossibleValue+")"); 
-			if (behaviorCharacterization[i] < minPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " is below minimum value specified ("+minPossibleValue+")"); 
+			if (this instanceof KLDivergenceBinLabels) {
+				if (behaviorCharacterization[i] > maxPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " exceeds maximum KL Divergence value specified ("+maxPossibleValue+"), the \"klDivMaxValue\" parameter should be increased above this value"); 
+				if (behaviorCharacterization[i] < minPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " is below minimum value specified ("+minPossibleValue+"), this should not be possible."); 
+			} else {
+				if (behaviorCharacterization[i] > maxPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " exceeds maximum value specified ("+maxPossibleValue+")"); 
+				if (behaviorCharacterization[i] < minPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " is below minimum value specified ("+minPossibleValue+")"); 
+			}
 			double scaledValue = (behaviorCharacterization[i]-minPossibleValue) / (maxPossibleValue-minPossibleValue);
 			if (EXTRA_LOGGING) System.out.println("scaledValue = (" + behaviorCharacterization[i] + " - " + minPossibleValue + ") / ("+ (maxPossibleValue-minPossibleValue) +") = "+scaledValue);
 			dbc[i] = (int) Math.floor(scaledValue * binsPerDimension);
