@@ -1,4 +1,3 @@
-
 import torch
 import torchvision.utils as vutils
 from torch.autograd import Variable
@@ -111,10 +110,9 @@ def save_heatmap(archive, heatmap_path, min_max):
     """Saves a heatmap of the archive to the given path.
 
     Args:
-        archive (GridArchive or CVTArchive): The archive to save.
+        archive (GridArchive): The archive to save.
         heatmap_path: Image path for the heatmap.
     """
-
     plt.figure(figsize=(8, 6))
     grid_archive_heatmap(archive, vmin=min_max[0], vmax=min_max[1])
     plt.tight_layout()
@@ -150,7 +148,6 @@ def pyribs_main():
     
     non_logging_time = 0.0
     with alive_bar(iterations) as progress:
-        #save_heatmap(archive, str(outdir / f"{name}_heatmap_{0:05d}.png"), -((-5.12 - (5.12 * 0.4))**2 * dim))
         save_heatmap(archive, str(outdir / f"{name}_heatmap_{0:05d}.png"), [0, 500])
 
         for itr in range(1, iterations + 1):
@@ -182,15 +179,7 @@ def pyribs_main():
                       f"QD Score: {metrics['QD Score']['y'][-1]:.3f}")
                 
                 save_heatmap(archive, str(outdir / f"{name}_heatmap_{itr:05d}.png"), [0, 500])
-    
 
-"""
-while True:
-    arr = np.array(json.loads("[0,0,0,0,0,0,0,0,0,0]"))
-    data_out = get_data_from_level(get_level_from_latent_vector(arr))
-    print(data_out)
-    input()
-"""
 
 if __name__ == '__main__':
     ### INITALIZE GAN STUFF
@@ -213,7 +202,7 @@ if __name__ == '__main__':
     s = ""
     while s != "READY":
         s = jar.stdout.readline().strip()
-        #print("<From JAR> " + s)
+        #print("<From JAR> " + s) # DEBUG
         
     fire.Fire(pyribs_main)
     
