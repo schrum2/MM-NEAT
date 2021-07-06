@@ -89,7 +89,7 @@ plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap)) # Make colorbar
 plt.imshow(bins, norm=norm, cmap=cmap, extent=[0, dimensions[1], dimensions[0], 0])
 
 
-plt.savefig(dir+title+".png") # Save file
+plt.savefig(dir+title+".png", dpi=1000) # Save file
 
 
 plt.show() # Show bins in window
