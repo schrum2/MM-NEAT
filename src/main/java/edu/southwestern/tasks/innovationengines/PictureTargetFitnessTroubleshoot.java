@@ -108,7 +108,9 @@ public class PictureTargetFitnessTroubleshoot {
 		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skullWithAutoencoder.png"));
 		//BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.png"));
 		//BufferedImage skull = ImageIO.read(new File("targetimage\\SkullObjectiveRegular10\\gen7121fitness0.7961671220512823championId710555.jpg"));
-		BufferedImage skull = ImageIO.read(new File("0.81171Neurons39.jpg"));
+		//BufferedImage skull = ImageIO.read(new File("0.81171Neurons39.jpg"));
+		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "0.79469Neurons14.jpg"));
+		BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "0.81037Neurons50.jpg"));
 		
 		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.jpg"));
 		BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull.jpg"));
@@ -149,6 +151,7 @@ public class PictureTargetFitnessTroubleshoot {
 		DrawingPanel heatmapWoolley = GraphicsUtil.drawImage(largeWoolley, "Difference in brightness at each pixel (Woolley)", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
 		DrawingPanel heatmapRMSE = GraphicsUtil.drawImage(largeRMSE, "Difference in brightness at each pixel (RMSE)", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
 		DrawingPanel heatmapDiff = GraphicsUtil.drawImage(largeDiff, "Difference in brightness at each pixel (RMSE)", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
+		heatmapDiff.save("betterFitness.jpg");
 		//DrawingPanel pixelMatching = GraphicsUtil.drawImage(percentageMatchingPixels, "Percent of pixels with identical RGB values", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
 		
 		// For test runs
