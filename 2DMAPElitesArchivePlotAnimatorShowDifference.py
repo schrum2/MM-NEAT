@@ -169,7 +169,7 @@ for iteration in range(len(numeric_lines)): # If will log
             prev_bins.resize(dimensions[0], dimensions[1])
             plt.imshow(prev_bins, cmap='gray', norm=norm, extent=[0, dimensions[1], dimensions[0], 0]) # Create image
         
-        plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png")
+        plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png") # DPI can be specified, determines resolution of output images
         plt.clf() # Close plots to prevent memory issue
 
 print("Finished outputting images, creating GIF...")
