@@ -41,11 +41,11 @@ def create_optimizer(algorithm, dim, seed):
     """
     max_bound = dim*10
     # Ground %, Gold, Enemies
-    bounds = [(0, 0.5), (0, 5)]
+    bounds = [(0, 0.5), (0, 5)] # Scaling probably wrong TODO
     initial_sol = np.zeros(dim)
     batch_size = 1
     num_emitters = 1
-
+    # https://docs.pyribs.org/en/stable/api/ribs.archives.GridArchive.html#ribs.archives.GridArchive
     archive = GridArchive((10, 10), bounds, seed=seed)
 
     # Create emitters. Each emitter needs a different seed, so that they do not all do the same thing.
@@ -126,9 +126,9 @@ def save_heatmap(archive, heatmap_path, min_max):
 def pyribs_main():
     algorithm = "map_elites"
     dim=10
-    iterations = 5000
+    iterations = 50000
     outdir="loderunner_output"
-    log_freq=50
+    log_freq=500
     name = f"{algorithm}_{dim}"
     
     outdir = Path(outdir)
