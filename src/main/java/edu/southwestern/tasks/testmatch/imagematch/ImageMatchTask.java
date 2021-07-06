@@ -59,6 +59,10 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	public ImageMatchTask() {
 		this(Parameters.parameters.stringParameter("matchImageFile"));
 		MatchDataTask.pauseForEachCase = false;
+		
+		// if using min neuron fitness, then : 		MMNEAT.registerFitnessFunction("MinNeurons", null, true);
+		if(Parameters.parameters.booleanParameter("minNeuronFitness")) MMNEAT.registerFitnessFunction("MinNeurons", null, true);
+		
 	}
 
 	/**
@@ -128,16 +132,12 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		} else {
 			result = super.evaluate(individual);// if watch=false
 		}
-		
-//		if(Parameters.parameters.booleanParameter("useWoolleyImageMatchFitness")) {
-//			double error = candidateVsTargetError(candidateFeatures, targetImageFeatures);
-//			return 1 - error * error;
-//		} else if (Parameters.parameters.booleanParameter("useRMSEImageMatchFitness")) {
-//			return rootMeanSquareErrorFitness(candidateFeatures, targetImageFeatures);
-//		} else {
-//			throw new IllegalStateException("Proper fitness function for PictureTargetTask not specified");
-//		}
-//		
+
+		@SuppressWarnings("unchecked")
+		TWEANNGenotype tweannIndividual = (individual instanceof TWEANNGenotype ? (TWEANNGenotype) individual : ((TWEANNPlusParametersGenotype<ArrayList<Double>>) individual).getTWEANNGenotype());
+
+		// if min neuron fitness: then result.extraScore(min num neurons);
+		if(Parameters.parameters.booleanParameter("minNeuronFitness")) result.extraScore(-tweannIndividual.nodes.size());
 		
 		CommonConstants.watch = temp;
 		this.individual = individual.getPhenotype();
@@ -149,8 +149,6 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 			bestImageSoFar = child;
 			bestFitnessSoFar = fitness;
 			bestIdSoFar = individual.getId();
-			@SuppressWarnings("unchecked")
-			TWEANNGenotype tweannIndividual = (individual instanceof TWEANNGenotype ? (TWEANNGenotype) individual : ((TWEANNPlusParametersGenotype<ArrayList<Double>>) individual).getTWEANNGenotype());
 			neuronsOfBest = tweannIndividual.nodes.size();
 		}
 		
