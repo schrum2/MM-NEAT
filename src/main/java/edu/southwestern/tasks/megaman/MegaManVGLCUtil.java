@@ -135,126 +135,127 @@ public class MegaManVGLCUtil {
 		return all;
 	}
 	
-	public static void main(String[] args) {
-		int firstLevel = 1;
-		int lastLevel = 10;
-		int prevSize = 0;
-		int max = 0;
-		int min = 0;
-		String basePath = "megamanlevels/textLevels/AStarDistAndConnectivity";;
-		for(int i = 0; i < 30; i++) { //test 1-3
-			String path = basePath + "SevenGAN" + i + ".txt";
-			//System.out.println(path);
-			File file = new File(path);
-			List<List<Integer>> sevenGANlevel = convertLevelFromIntText(file);
-			//printLevel(sevenGANlevel);
-			upAndDownTrainingData(sevenGANlevel);
-		}
-		System.out.println(getLL().size()+" "+jsonLL.size());
-		System.out.println(jsonUL.size());
-		System.out.println(jsonUR.size());
-		System.out.println(jsonLR.size());
-
-		System.out.println("DONE");
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		for(int i = firstLevel;i<=lastLevel;i++) {
-			if(i==7) {
-				prevSize = jsonHorizontal.size();
-				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
-				//convertMegaManLevelToMMLV(level, i);
-				upAndDownTrainingData(level);
-				int newSize = jsonHorizontal.size()-prevSize;
-				if(newSize>max) max = newSize;
-				if(newSize<min||min==0)min = newSize;
-				//System.out.println("Level "+i+" number of segements: "+newSize);
-			
-			}
-		}
-		System.out.println("Max number of segments: "+max);
-		System.out.println("Min number of segments: "+min);
-
-//		System.out.println(conditionalJson.size());
-//		
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		System.out.println(conditionalJson.toString());
-//		
-//		
-//		
-//		
-//		
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		System.out.println(conditionalJsonID.size());
-//		
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		System.out.println(conditionalJsonID.toString());
-		
-		
-		
-		
-		
-		
-//		for(int i=11;i<=29;i++) {
-//			placed.clear();
-//			activatedScreens.clear();
-//			visited.clear();
-//			levelEnemies.clear();
-//			
-//			MegaManConvertMMLVToJSON.maxX=0;
-//			MegaManConvertMMLVToJSON.maxY=0;
-//			MegaManConvertMMLVToJSON.visited.clear();
-//			MegaManConvertMMLVToJSON.enemyNumber=-1;
-//			MegaManConvertMMLVToJSON.enemyString = null;
-//			MegaManConvertMMLVToJSON.bossString = null;
-//			//if(i!=7) {
-//				List<List<Integer>> level = MegaManConvertMMLVToJSON.convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
-//				printLevel(level);
-//				upAndDownTrainingData(level);
-//				//System.out.println(i);
-//				//MiscUtil.waitForReadStringAndEnterKeyPress();
-////				System.out.println("level" +i);
-////				MiscUtil.waitForReadStringAndEnterKeyPress();
-//
-//				//if(i!=3) convertMegaManLevelToJSONHorizontalScroll(level);
-//				
-//						
-//						
-//						
-//			//}
+//	public static void main(String[] args) {
+//		int firstLevel = 1;
+//		int lastLevel = 10;
+//		int prevSize = 0;
+//		int max = 0;
+//		int min = 0;
+//		String basePath = "megamanlevels/textLevels/AStarDistAndConnectivity";;
+//		for(int i = 0; i < 30; i++) { //test 1-3
+//			String path = basePath + "SevenGAN" + i + ".txt";
+//			//System.out.println(path);
+//			File file = new File(path);
+//			List<List<Integer>> sevenGANlevel = convertLevelFromIntText(file);
+//			//printLevel(sevenGANlevel);
+//			upAndDownTrainingData(sevenGANlevel);
 //		}
-//		//System.out.println(conditionalJson.size()+" "+conditionalJsonID.size());
+//		System.out.println(getLL().size()+" "+jsonLL.size());
+//		System.out.println(jsonUL.size());
+//		System.out.println(jsonUR.size());
+//		System.out.println(jsonLR.size());
+//
+//		System.out.println("DONE");
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		for(int i = firstLevel;i<=lastLevel;i++) {
+//			if(i==7) {
+//				prevSize = jsonHorizontal.size();
+//				List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+i+".txt");
+//				//convertMegaManLevelToMMLV(level, i);
+//				upAndDownTrainingData(level);
+//				int newSize = jsonHorizontal.size()-prevSize;
+//				if(newSize>max) max = newSize;
+//				if(newSize<min||min==0)min = newSize;
+//				//System.out.println("Level "+i+" number of segements: "+newSize);
+//			
+//			}
+//		}
+//		System.out.println("Max number of segments: "+max);
+//		System.out.println("Min number of segments: "+min);
+//
+////		System.out.println(conditionalJson.size());
+////		
+////		MiscUtil.waitForReadStringAndEnterKeyPress();
+////		System.out.println(conditionalJson.toString());
+////		
+////		
+////		
+////		
+////		
+////		MiscUtil.waitForReadStringAndEnterKeyPress();
+////		System.out.println(conditionalJsonID.size());
+////		
+////		MiscUtil.waitForReadStringAndEnterKeyPress();
+////		System.out.println(conditionalJsonID.toString());
+//		
+//		
+//		
+//		
+//		
+//		
+////		for(int i=11;i<=29;i++) {
+////			placed.clear();
+////			activatedScreens.clear();
+////			visited.clear();
+////			levelEnemies.clear();
+////			
+////			MegaManConvertMMLVToJSON.maxX=0;
+////			MegaManConvertMMLVToJSON.maxY=0;
+////			MegaManConvertMMLVToJSON.visited.clear();
+////			MegaManConvertMMLVToJSON.enemyNumber=-1;
+////			MegaManConvertMMLVToJSON.enemyString = null;
+////			MegaManConvertMMLVToJSON.bossString = null;
+////			//if(i!=7) {
+////				List<List<Integer>> level = MegaManConvertMMLVToJSON.convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
+////				printLevel(level);
+////				upAndDownTrainingData(level);
+////				//System.out.println(i);
+////				//MiscUtil.waitForReadStringAndEnterKeyPress();
+//////				System.out.println("level" +i);
+//////				MiscUtil.waitForReadStringAndEnterKeyPress();
+////
+////				//if(i!=3) convertMegaManLevelToJSONHorizontalScroll(level);
+////				
+////						
+////						
+////						
+////			//}
+////		}
+////		//System.out.println(conditionalJson.size()+" "+conditionalJsonID.size());
+////		//MiscUtil.waitForReadStringAndEnterKeyPress();
+////
+////		System.out.println(json);
+////
+////		MiscUtil.waitForReadStringAndEnterKeyPress();
+////		System.out.println(jsonUp);
+////		MiscUtil.waitForReadStringAndEnterKeyPress();
+////		System.out.println(jsonDown);
+////		MiscUtil.waitForReadStringAndEnterKeyPress();
+////		System.out.println(jsonLL);
+////		MiscUtil.waitForReadStringAndEnterKeyPress();
+////		System.out.println(jsonUL);
+////		MiscUtil.waitForReadStringAndEnterKeyPress();
+////		System.out.println(jsonLR);
+////		MiscUtil.waitForReadStringAndEnterKeyPress();
+////		System.out.println(jsonUR);
 //		//MiscUtil.waitForReadStringAndEnterKeyPress();
+//		//System.out.println(jsonUp);
+//		
+//		
+////		MiscUtil.waitForReadStringAndEnterKeyPress();
+////		MiscUtil.waitForReadStringAndEnterKeyPress();
+////		System.out.println(jsonUp);
 //
-//		System.out.println(json);
-//
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		System.out.println(jsonUp);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		System.out.println(jsonDown);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		System.out.println(jsonLL);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		System.out.println(jsonUL);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		System.out.println(jsonLR);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		System.out.println(jsonUR);
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
-		//System.out.println(jsonUp);
-		
-		
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		System.out.println(jsonUp);
-
-//		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt");
-//		printLevel(level);
-//		upAndDownTrainingData(level);
-//		convertMegaManLevelToMMLV(level, 2);
-//		convertMegaManLevelToJSONVerticalScroll(level);
-//		convertMegaManLevelToMMLV(level,5);
-//		System.out.println(json.toString());
-		
-	}
+////		List<List<Integer>> level = convertMegamanVGLCtoListOfLists(MEGAMAN_LEVEL_PATH+"megaman_1_"+1+".txt");
+////		printLevel(level);
+////		upAndDownTrainingData(level);
+////		convertMegaManLevelToMMLV(level, 2);
+////		convertMegaManLevelToJSONVerticalScroll(level);
+////		convertMegaManLevelToMMLV(level,5);
+////		System.out.println(json.toString());
+//		
+//	}
+	
 	public static List<List<Integer>> convertLevelFromIntText(File intText){
 		List<List<Integer>> level;
 		try {
@@ -316,18 +317,18 @@ public class MegaManVGLCUtil {
 			}
 		}
 		//printLevel(screen);
-		int x1 = (int) corners.get(0).getX();
+		int x1 = (int) corners.get(0).getX(); // Maxx: I think this is supposed to be the left x coordinate, but it's not actually used for anything so ?
 		int x2 = (int) corners.get(1).getX();
 		int y1 = (int) corners.get(0).getY();
-		int y2 = (int) corners.get(2).getY();
+		int y2 = (int) corners.get(2).getY(); // Maxx: same case as x1, I THINK this is the bottom y coordinate
 		int rightScreenSide = x2;
-		x2=15;
+		x2=15; // Maxx: This appears to be a constant, but I have no idea why this is set up like this and why rightScreenSide even exists
 
 		Direction d = start;
 		start = null;
 	//	int iteratio= 0;
 		boolean done = false;
-		int upDownTimer = -1;
+		int upDownTimer = -1; // Maxx: what are these timers actually for? I have no clue
 		int rightLeftTimer = -1;
 		if(d == Direction.DOWN)upDownTimer=-1; 
 		boolean firstRound = true;
@@ -342,11 +343,13 @@ public class MegaManVGLCUtil {
 				rightLeftTimer--;
 				
 				System.out.println("RIGHT? rightScreenSide = " + rightScreenSide);
-				if(canGoRight(level,rightScreenSide,y1)||rightLeftTimer>=0) {
-					System.out.println("because "+(rightLeftTimer>=0));
+				if(canGoRight(level,rightScreenSide,y1)) {
+				//if(canGoRight(level,rightScreenSide,y1)||rightLeftTimer>=0) { // Maxx: rightLeftTimer causes an issue at the end of scanning level 6, but does not have a problem without the check
+					System.out.println("because "+(rightLeftTimer>=0) + " " + rightLeftTimer);
 					//if(rightLeftTimer<0)rightLeftTimer = 15;
 					
-					screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
+					screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);					
+					
 					//if(rightScreenSide+1<level.get(0).size()&&level.get(y1).get(rightScreenSide+1)!=9)
 						rightScreenSide++;
 					System.out.println("Horizontal");
@@ -469,7 +472,7 @@ public class MegaManVGLCUtil {
 					}
 
 				}
-			}else if(d.equals(Direction.LEFT)) {
+			}else if(d.equals(Direction.LEFT)) { // Maxx: the right/left timer was not part of this check ?? what was it for?
 				if(canGoLeft(level,rightScreenSide,y1)) {
 						
 					screen = copyScreen(level, 16, 14, rightScreenSide-x2-1, y1, false);

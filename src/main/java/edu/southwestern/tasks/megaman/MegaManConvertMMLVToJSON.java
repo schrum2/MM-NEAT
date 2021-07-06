@@ -58,7 +58,7 @@ public class MegaManConvertMMLVToJSON {
     	
     	outputOneGAN(levels, "NoWater9");  
     	outputSevenGAN(levels, "NoWater9");
-    	//File testFile = new File("data\\VGLC\\MegaMan\\MegaManSevenGANUpNoWater9.json");
+    	//File testFile = new File("data\\VGLC\\MegaMan\\MegaManOneGANNoWater9.json");
     	//showJsonContents(testFile);
     }    
 	
@@ -142,10 +142,19 @@ public class MegaManConvertMMLVToJSON {
 			e.printStackTrace();
 		}
     	JsonArray fullJsonArray = new Gson().fromJson(fileContents, JsonArray.class);
-    	for (JsonElement val : fullJsonArray) {
+		boolean flagged = false;
+		for (JsonElement val : fullJsonArray) {
     		JsonArray innerArray = val.getAsJsonArray();
+    		System.out.println("innerArray length "+ innerArray.size());
+    		if (innerArray.size() != 14) {
+    			System.exit(0);
+    		}
     		for (JsonElement val2 : innerArray) {
     			JsonArray innerArray2 = val2.getAsJsonArray();
+    			System.out.println("innerArray2 length "+ innerArray2.size());
+    			if (innerArray2.size() != 16) {
+        			flagged = true;
+        		}
     			String lineString = "";
     			for (JsonElement val3 : innerArray2) {
     				lineString += val3.getAsInt();
@@ -155,8 +164,13 @@ public class MegaManConvertMMLVToJSON {
     					lineString += " ";
     				}
     			}
-    			System.out.println(lineString);
+    			//if (flagged) {
+    				System.out.println(lineString);
+    			//}
         	}
+    		if (flagged) {
+    			System.exit(0);
+    		}
     		System.out.println();
     	}
     }
