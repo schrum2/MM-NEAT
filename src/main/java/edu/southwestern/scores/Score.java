@@ -349,7 +349,12 @@ public class Score<T> {
 		return scores[0] < other.scores[0];
 	}
 
-	// Adds a new score to score array.
+	/**
+	 * Adds a score for an additional fitness/objective to the vector of fitness/objective values.
+	 * In other words, a score for a new fitness function is added on to the end of the existing
+	 * collection of fitness scores.
+	 * @param score Score to add
+	 */
 	public void extraScore(double score) {
 		double[] newScores = new double[scores.length + 1];
 		System.arraycopy(scores, 0, newScores, 0, scores.length);

@@ -14,6 +14,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.SinglePopulationGenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
@@ -50,6 +51,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	private double bestFitnessSoFar = Double.NEGATIVE_INFINITY;
 	private BufferedImage bestImageSoFar = null;
 	private long bestIdSoFar;
+	private int neuronsOfBest;
 
 	/**
 	 * Default task constructor
@@ -57,6 +59,10 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	public ImageMatchTask() {
 		this(Parameters.parameters.stringParameter("matchImageFile"));
 		MatchDataTask.pauseForEachCase = false;
+		
+		// if using min neuron fitness, then : 		MMNEAT.registerFitnessFunction("MinNeurons", null, true);
+		if(Parameters.parameters.booleanParameter("minNeuronFitness")) MMNEAT.registerFitnessFunction("MinNeurons", null, true);
+		
 	}
 
 	/**
@@ -126,16 +132,12 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		} else {
 			result = super.evaluate(individual);// if watch=false
 		}
-		
-//		if(Parameters.parameters.booleanParameter("useWoolleyImageMatchFitness")) {
-//			double error = candidateVsTargetError(candidateFeatures, targetImageFeatures);
-//			return 1 - error * error;
-//		} else if (Parameters.parameters.booleanParameter("useRMSEImageMatchFitness")) {
-//			return rootMeanSquareErrorFitness(candidateFeatures, targetImageFeatures);
-//		} else {
-//			throw new IllegalStateException("Proper fitness function for PictureTargetTask not specified");
-//		}
-//		
+
+		@SuppressWarnings("unchecked")
+		TWEANNGenotype tweannIndividual = (individual instanceof TWEANNGenotype ? (TWEANNGenotype) individual : ((TWEANNPlusParametersGenotype<ArrayList<Double>>) individual).getTWEANNGenotype());
+
+		// if min neuron fitness: then result.extraScore(min num neurons);
+		if(Parameters.parameters.booleanParameter("minNeuronFitness")) result.extraScore(-tweannIndividual.nodes.size());
 		
 		CommonConstants.watch = temp;
 		this.individual = individual.getPhenotype();
@@ -147,6 +149,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 			bestImageSoFar = child;
 			bestFitnessSoFar = fitness;
 			bestIdSoFar = individual.getId();
+			neuronsOfBest = tweannIndividual.nodes.size();
 		}
 		
 		return result;
@@ -157,7 +160,8 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		if(CommonConstants.netio && bestImageSoFar != null) {
 			@SuppressWarnings("rawtypes")
 			int gen = ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration();
-			String filename1 = FileUtilities.getSaveDirectory() + File.separator + "gen" +gen+"fitness" + bestFitnessSoFar + "championId"+bestIdSoFar+".jpg";
+			double percentMatching = GraphicsUtil.percentMatchingPixels(bestImageSoFar, img);
+			String filename1 = FileUtilities.getSaveDirectory() + File.separator + "gen" +gen+ "percentMatch" + percentMatching + "fitness" + bestFitnessSoFar + "Neurons" + neuronsOfBest +  "championId"+bestIdSoFar+".jpg";
 			GraphicsUtil.saveImage(bestImageSoFar, filename1);
 			System.out.println("save directory is: " + FileUtilities.getSaveDirectory());
 			System.out.println("image " + filename1 + " was saved successfully. Size: "+bestImageSoFar.getWidth()+" by "+bestImageSoFar.getHeight());
