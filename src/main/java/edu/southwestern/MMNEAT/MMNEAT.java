@@ -111,6 +111,7 @@ import edu.southwestern.tasks.rlglue.featureextractors.FeatureExtractor;
 import edu.southwestern.tasks.rlglue.init.RLGlueInitialization;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
+import edu.southwestern.tasks.testmatch.imagematch.ImageMatchTask;
 import edu.southwestern.tasks.ut2004.UT2004Task;
 import edu.southwestern.tasks.ut2004.UT2004Util;
 import edu.southwestern.tasks.ut2004.testing.HumanSubjectStudy2018TeammateServer;
@@ -1134,7 +1135,7 @@ public class MMNEAT {
 			lower = fos.getLowerBounds();
 		else if(task instanceof ShapeInnovationTask) 
 			lower = new double[]{0,0,0,0,0}; // Background color (first three) and pitch, heading
-		else if(task instanceof PictureTargetTask || task instanceof PicbreederTask || task instanceof AnimationBreederTask) 
+		else if(task instanceof ImageMatchTask || task instanceof PictureTargetTask || task instanceof PicbreederTask || task instanceof AnimationBreederTask) 
 			lower = new double[] {0.1, 0, -Parameters.parameters.doubleParameter("imageCenterTranslationRange"), -Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
 		else if(task instanceof FunctionOptimizationTask) 
 			lower = ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foLowerBounds")); 
@@ -1173,7 +1174,7 @@ public class MMNEAT {
 			upper = fos.getUpperBounds();
 		else if(task instanceof ShapeInnovationTask) 
 			upper = new double[]{1,1,1,1,1}; // Background color (first three) and pitch, heading
-		else if(task instanceof PictureTargetTask || task instanceof PicbreederTask || task instanceof AnimationBreederTask) 
+		else if(task instanceof ImageMatchTask || task instanceof PictureTargetTask || task instanceof PicbreederTask || task instanceof AnimationBreederTask) 
 			upper = new double[] {Parameters.parameters.doubleParameter("maxScale"), 2*Math.PI, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
 		else if(task instanceof FunctionOptimizationTask) 
 			upper = ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foUpperBounds")); 
