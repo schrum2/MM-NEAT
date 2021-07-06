@@ -380,6 +380,7 @@ public class MegaManVGLCUtil {
 								printLevel(screen);
 	//							MiscUtil.waitForReadStringAndEnterKeyPress();
 							}
+							jsonHorizontal.remove(jsonHorizontal.size()-1);
 						}
 					}
 				}
@@ -423,6 +424,7 @@ public class MegaManVGLCUtil {
 								printLevel(screen);
 	//							MiscUtil.waitForReadStringAndEnterKeyPress();
 							}
+							jsonUp.remove(jsonUp.size()-1);
 						}
 					}
 
@@ -439,7 +441,6 @@ public class MegaManVGLCUtil {
 						screen = copyScreen(level, 16, 14, rightScreenSide-x2, y1, false);
 					else screen = copyScreen(level, 16, 14, rightScreenSide-x2+1, y1, false);
 					//jsonHorizontal.add(screen);
-
 					jsonDown.add(screen);
 //					conditionalJsonID.add(DOWNID);
 //					conditionalJson.add(screen);
@@ -463,6 +464,7 @@ public class MegaManVGLCUtil {
 								printLevel(screen);
 	//							MiscUtil.waitForReadStringAndEnterKeyPress();
 							}
+							jsonDown.remove(jsonDown.size()-1);
 						}
 					}
 
@@ -506,6 +508,7 @@ public class MegaManVGLCUtil {
 								printLevel(screen);
 	//							MiscUtil.waitForReadStringAndEnterKeyPress();
 							}
+							jsonHorizontal.remove(jsonHorizontal.size()-1);
 						}
 					}
 				}

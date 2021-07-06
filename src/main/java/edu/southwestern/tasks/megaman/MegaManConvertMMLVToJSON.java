@@ -5,13 +5,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
+import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
 import edu.southwestern.parameters.Parameters;
 
@@ -54,10 +58,10 @@ public class MegaManConvertMMLVToJSON {
     	
     	outputOneGAN(levels, "NoWater9");  
     	outputSevenGAN(levels, "NoWater9");
+    	//File testFile = new File("data\\VGLC\\MegaMan\\MegaManSevenGANUpNoWater9.json");
+    	//showJsonContents(testFile);
     }    
 	
-    
-    @SuppressWarnings("unused")
 	private static void outputOneGAN(List<List<List<Integer>>> levels, String outputFileName) {
     	System.out.println("Starting one-GAN generator with "+levels.size()+" levels.");
     	Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -129,8 +133,38 @@ public class MegaManConvertMMLVToJSON {
         System.out.println("Wrote files with " + levels.size() + " examples");
     }
     
-	
+    @SuppressWarnings("unused")
+	private static void showJsonContents(File inputFile) {
+    	String fileContents = "";
+		try {
+			fileContents = Files.readFirstLine(inputFile, Charset.defaultCharset());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	JsonArray fullJsonArray = new Gson().fromJson(fileContents, JsonArray.class);
+    	for (JsonElement val : fullJsonArray) {
+    		JsonArray innerArray = val.getAsJsonArray();
+    		for (JsonElement val2 : innerArray) {
+    			JsonArray innerArray2 = val2.getAsJsonArray();
+    			String lineString = "";
+    			for (JsonElement val3 : innerArray2) {
+    				lineString += val3.getAsInt();
+    				if (val3.getAsInt() < 10) {
+    					lineString += "  ";
+    				} else {
+    					lineString += " ";
+    				}
+    			}
+    			System.out.println(lineString);
+        	}
+    		System.out.println();
+    	}
+    }
+    
+    
 	/**
+	 * Maxx: original main method for this class, not really needed anymore, but kept for reference
+	 * 
 	 * useful for testing
 	 * @param args
 	 */
