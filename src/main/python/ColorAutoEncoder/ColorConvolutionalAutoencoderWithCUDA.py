@@ -39,11 +39,11 @@ if __name__ == '__main__':
     images = images.numpy() # convert images to numpy for display
 
     #Plot the images
-    fig = plt.figure(figsize=(8, 8))
+    #fig = plt.figure(figsize=(8, 8))
     # display 20 images
-    for idx in np.arange(9):
-        ax = fig.add_subplot(3, 3, idx+1, xticks=[], yticks=[])
-        imshow(images[idx])
+    #for idx in np.arange(9):
+        #ax = fig.add_subplot(3, 3, idx+1, xticks=[], yticks=[])
+        #imshow(images[idx])
 
     #Instantiate the model
     model = ConvAutoencoder()
@@ -104,18 +104,18 @@ if __name__ == '__main__':
     #Original Images
     print("Original Images")
     fig, axes = plt.subplots(nrows=1, ncols=5, sharex=True, sharey=True, figsize=(12,4))
-    for idx in np.arange(5):
-        ax = fig.add_subplot(1, 5, idx+1, xticks=[], yticks=[])
-        imshow(images[idx])
+    #for idx in np.arange(5):
+        #ax = fig.add_subplot(1, 5, idx+1, xticks=[], yticks=[])
+        #imshow(images[idx])
         #ax.set_title(classes[labels[idx]])
     plt.show()
 
     #Reconstructed Images
     print('Reconstructed Images')
     fig, axes = plt.subplots(nrows=1, ncols=5, sharex=True, sharey=True, figsize=(12,4))
-    for idx in np.arange(5):
-        ax = fig.add_subplot(1, 5, idx+1, xticks=[], yticks=[])
-        imshow(output[idx])
+    #for idx in np.arange(5):
+        #ax = fig.add_subplot(1, 5, idx+1, xticks=[], yticks=[])
+        #imshow(output[idx])
         #ax.set_title(classes[labels[idx]])
     plt.show() 
 
