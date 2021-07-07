@@ -13,6 +13,20 @@ import sys
 # import ConvAutoencoder
 from ConvAutoencoder import ConvAutoencoder
 
+SHOW_IMAGES = False
+
+#Utility functions to un-normalize and display an image
+def imshow(img):
+    img = img / 2 + 0.5  
+    plt.imshow(np.transpose(img, (1, 2, 0))) 
+
+def get_device():
+    if torch.cuda.is_available():
+        device = 'cuda:0'
+    else:
+        device = 'cpu'
+    return device
+
 if __name__ == '__main__':
 
     trainingImagesDirectory = sys.argv[1]
@@ -28,26 +42,22 @@ if __name__ == '__main__':
     #train_dataloader = DataLoader(train_data , batch_size=batch_size, shuffle=False, num_workers=4, drop_last=True)
     train_dataloader = DataLoader(train_data , batch_size=batch_size, shuffle=False, num_workers=0)
 
-    #Utility functions to un-normalize and display an image
-    def imshow(img):
-        img = img / 2 + 0.5  
-        plt.imshow(np.transpose(img, (1, 2, 0))) 
-
     #Obtain one batch of training images
     dataiter = iter(train_dataloader)
     images = dataiter.next()
     images = images.numpy() # convert images to numpy for display
 
-    #Plot the images
-    fig = plt.figure(figsize=(8, 8))
-    # display 20 images
-    for idx in np.arange(9):
-        ax = fig.add_subplot(3, 3, idx+1, xticks=[], yticks=[])
-        imshow(images[idx])
+    if SHOW_IMAGES:
+        #Plot the images
+        fig = plt.figure(figsize=(8, 8))
+        # display 20 images
+        for idx in np.arange(9):
+            ax = fig.add_subplot(3, 3, idx+1, xticks=[], yticks=[])
+            imshow(images[idx])
 
     #Instantiate the model
     model = ConvAutoencoder()
-    print(model)
+    #print(model)
 
     #Loss function
     criterion = nn.BCELoss()
@@ -55,15 +65,8 @@ if __name__ == '__main__':
     #Optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-    def get_device():
-        if torch.cuda.is_available():
-            device = 'cuda:0'
-        else:
-            device = 'cpu'
-        return device
-
     device = get_device()
-    print(device)
+    #print(device)
     model.to(device)
 
     #Epochs
@@ -98,26 +101,27 @@ if __name__ == '__main__':
     output = model(images.to(device))
     images = images.numpy()
 
-    output = output.view(batch_size, 3, 28, 28)
-    output = output.detach().cpu().numpy()
+    if SHOW_IMAGES:
+        output = output.view(batch_size, 3, 28, 28)
+        output = output.detach().cpu().numpy()
 
-    #Original Images
-    print("Original Images")
-    fig, axes = plt.subplots(nrows=1, ncols=5, sharex=True, sharey=True, figsize=(12,4))
-    for idx in np.arange(5):
-        ax = fig.add_subplot(1, 5, idx+1, xticks=[], yticks=[])
-        imshow(images[idx])
-        #ax.set_title(classes[labels[idx]])
-    plt.show()
+        #Original Images
+        print("Original Images")
+        fig, axes = plt.subplots(nrows=1, ncols=5, sharex=True, sharey=True, figsize=(12,4))
+        for idx in np.arange(5):
+            ax = fig.add_subplot(1, 5, idx+1, xticks=[], yticks=[])
+            imshow(images[idx])
+            #ax.set_title(classes[labels[idx]])
+        plt.show()
 
-    #Reconstructed Images
-    print('Reconstructed Images')
-    fig, axes = plt.subplots(nrows=1, ncols=5, sharex=True, sharey=True, figsize=(12,4))
-    for idx in np.arange(5):
-        ax = fig.add_subplot(1, 5, idx+1, xticks=[], yticks=[])
-        imshow(output[idx])
-        #ax.set_title(classes[labels[idx]])
-    plt.show() 
+        #Reconstructed Images
+        print('Reconstructed Images')
+        fig, axes = plt.subplots(nrows=1, ncols=5, sharex=True, sharey=True, figsize=(12,4))
+        for idx in np.arange(5):
+            ax = fig.add_subplot(1, 5, idx+1, xticks=[], yticks=[])
+            imshow(output[idx])
+            #ax.set_title(classes[labels[idx]])
+        plt.show() 
 
     torch.save(model.state_dict(), pthFileToSave)
 
