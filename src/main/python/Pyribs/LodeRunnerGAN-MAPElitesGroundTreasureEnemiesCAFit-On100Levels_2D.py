@@ -38,7 +38,6 @@ def create_optimizer(algorithm, dim, seed):
     Returns:
         Optimizer: A ribs Optimizer for running the algorithm.
     """
-    max_bound = dim*10
     # Ground %, Gold, Enemies
     bounds = [(0, 0.5), (0, 5)] # Scaling probably wrong TODO
     initial_sol = np.zeros(dim)
