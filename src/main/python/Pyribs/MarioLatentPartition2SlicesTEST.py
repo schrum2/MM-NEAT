@@ -28,6 +28,30 @@ from ribs.optimizers import Optimizer
 from ribs.visualize import grid_archive_heatmap
 
 ### FUNCTIONS
+def sum_halves(sol):
+    dim = sol.shape[1]
+
+    # Normalize the objective to the range [0, 100] where 100 is optimal.
+#    best_obj = 0.0
+#    worst_obj = (-5.12 - sphere_shift)**2 * dim
+    #print("SOLUTION=")
+    #print(sol)
+#    objs = (raw_obj - worst_obj) / (best_obj - worst_obj) * 100
+
+    # Calculate BCs.
+    copied = sol.copy()
+    bcs = np.concatenate(
+        (
+            np.sum(copied[:, :dim // 2], axis=1, keepdims=True),
+            np.sum(copied[:, dim // 2:], axis=1, keepdims=True),
+        ),
+        axis=1,
+    )
+    #print("BC=")
+    #print(bcs)
+    return bcs
+
+
 def create_optimizer(algorithm, dim, seed):
     """Creates an optimizer based on the algorithm name.
 
@@ -41,6 +65,10 @@ def create_optimizer(algorithm, dim, seed):
     max_bound = dim / 2
     bounds = [(-max_bound, max_bound), (-max_bound, max_bound)]
     initial_sol = np.zeros(dim)
+    
+    emitter_bounds = []
+    for i in range(dim):
+        emitter_bounds.append((-1, 1))
     batch_size = 1
     num_emitters = 1
     # https://docs.pyribs.org/en/stable/api/ribs.archives.GridArchive.html#ribs.archives.GridArchive
@@ -53,6 +81,7 @@ def create_optimizer(algorithm, dim, seed):
             GaussianEmitter(archive,
                             initial_sol,
                             0.5,
+                            bounds=emitter_bounds,
                             batch_size=batch_size,
                             seed=s) for s in emitter_seeds
         ]
@@ -78,19 +107,11 @@ def create_optimizer(algorithm, dim, seed):
 
     return Optimizer(archive, emitters)
 
-# Using the GAN, processes a latent vector (as a numpy array) into a string representation of a level.
-def get_level_from_latent_vector(latent_vector_array):
-    latent_vector = torch.FloatTensor( latent_vector_array ).view(1, 10, 1, 1) 
-    levels = generator(Variable(latent_vector, volatile=True))
-    level = levels.data.cpu().numpy()
-    level = level[:,:,:22,:32] # HEIGHT 22, WIDTH 32
-    level = np.argmax( level, axis = 1)
-    return json.dumps(level[0].tolist())
-
 
 # Using the JAR, get the bins and evaluated score from a provided level
 def get_data_from_level(string_level):
-    jar.stdin.write((string_level+"\n"))
+    #print(str(string_level[0].tolist()))
+    jar.stdin.write(str(string_level[0].tolist())+ "\n")
     jar.stdin.flush()
     coords = ""
     while "[" not in coords:
@@ -100,8 +121,15 @@ def get_data_from_level(string_level):
     s = jar.stdout.readline().strip()
     while s != "MAP DONE":
         #print("<From JAR> " + s)
-        data_dict[s.split(" = ")[0]] = float(s.split(" = ")[1])
+        try:
+            exec("data_dict[\""+s.split(" = ")[0]+"\"] = "+s.split(" = ")[1])
+            #data_dict[s.split(" = ")[0]] = float(s.split(" = ")[1])
+        except:
+            data_dict[s.split(" = ")[0]] = s.split(" = ")[1]
         s = jar.stdout.readline().strip()
+    data_dict["stats"] = [data_dict["stats[0]"], data_dict["stats[1]"]]
+    del data_dict["stats[0]"]
+    del data_dict["stats[1]"]
     return data_dict
 
 
@@ -123,9 +151,9 @@ def save_heatmap(archive, heatmap_path, min_max):
 def pyribs_main():
     algorithm = "map_elites"
     dim=10
-    iterations = 50000
-    outdir="loderunner_output"
-    log_freq=500
+    iterations = 5000
+    outdir="mariolatentpartition2slices_pyribs"
+    log_freq=100
     name = f"{algorithm}_{dim}"
     
     outdir = Path(outdir)
@@ -147,16 +175,17 @@ def pyribs_main():
     
     non_logging_time = 0.0
     with alive_bar(iterations) as progress:
-        save_heatmap(archive, str(outdir / f"{name}_heatmap_{0:05d}.png"), [0, 500])
+        save_heatmap(archive, str(outdir / f"{name}_heatmap_{0:05d}.png"), [0, 400])
 
         for itr in range(1, iterations + 1):
             itr_start = time.time()
             sols = optimizer.ask()
             #print(sols)
-            data_out = get_data_from_level(get_level_from_latent_vector(sols))
-            objs = [data_out["Ground Percent"]*500, data_out["Treasures"]*10]
-            bcs = [data_out["Ground Percent"], data_out["Treasures"]]
-            optimizer.tell(objs, bcs)
+            data_out = get_data_from_level(sols)
+            #print(data_out)
+            bcs = sum_halves(sols)
+            #print("binScore= "+str([data_out["binScore"]]), "bc= "+str(bcs))
+            optimizer.tell([data_out["binScore"]], bcs)
             non_logging_time += time.time() - itr_start
             progress()
 
@@ -174,7 +203,7 @@ def pyribs_main():
                 metrics["Archive Coverage"]["x"].append(itr)
                 metrics["Archive Coverage"]["y"].append(len(data)) #/ total_cells * 100) # Maxx: this can be added to chart percentage filled instead of actual filled
                 print(f"Iteration {itr}\t| Archive Coverage: "
-                      f"{metrics['Archive Coverage']['y'][-1]:.3f}% "
+                      f"{metrics['Archive Coverage']['y'][-1]/100:.3f}% "
                       f"QD Score: {metrics['QD Score']['y'][-1]:.3f}")
                 
                 save_heatmap(archive, str(outdir / f"{name}_heatmap_{itr:05d}.png"), [0, 500])
@@ -182,7 +211,6 @@ def pyribs_main():
 
 if __name__ == '__main__':
     ### INITALIZE GAN STUFF
-    # C:\Users\battertm\Documents\github\MM-NEAT\ExternalMario-LatentPartition2Slices.bat 0
 
     # Start running JAR
     jar = Popen(["ExternalMario-LatentPartition2Slices.bat", "0"], encoding='ascii', stdin=PIPE, stdout=PIPE)
@@ -190,7 +218,7 @@ if __name__ == '__main__':
     s = ""
     while s != "READY":
         s = jar.stdout.readline().strip()
-        print("<From JAR> " + s) # DEBUG
+        #print("<From JAR> " + s) # DEBUG
         
     fire.Fire(pyribs_main)
     
