@@ -144,7 +144,7 @@ def pyribs_main():
     algorithm = "map_elites" # Algorithm
     dim=10 # Length of solution vector to be expected
     iterations = 5000 # Total number of iterations
-    outdir="mariolatentpartition2slices_pyribs_{algorithm}" # Output directory
+    outdir=f"mariolatentpartition2slices_pyribs_{algorithm}" # Output directory
     log_freq=100 # Logging frequency
     max_fitness = 120 # depends on number of segments (level chunks)
     name = f"{algorithm}_{dim}" # Name for output images and data
