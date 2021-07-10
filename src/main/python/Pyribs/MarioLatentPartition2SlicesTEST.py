@@ -144,8 +144,9 @@ def pyribs_main():
     algorithm = "map_elites" # Algorithm
     dim=10 # Length of solution vector to be expected
     iterations = 5000 # Total number of iterations
-    outdir="mariolatentpartition2slices_pyribs" # Output directory
+    outdir="mariolatentpartition2slices_pyribs_{algorithm}" # Output directory
     log_freq=100 # Logging frequency
+    max_fitness = 120 # depends on number of segments (level chunks)
     name = f"{algorithm}_{dim}" # Name for output images and data
     
     outdir = Path(outdir)
@@ -167,7 +168,7 @@ def pyribs_main():
     
     non_logging_time = 0.0
     with alive_bar(iterations) as progress:
-        save_heatmap(archive, str(outdir / f"{name}_heatmap_{0:05d}.png"), [0, 400])
+        save_heatmap(archive, str(outdir / f"{name}_heatmap_{0:05d}.png"), [0, max_fitness])
 
         for itr in range(1, iterations + 1):
             itr_start = time.time()
