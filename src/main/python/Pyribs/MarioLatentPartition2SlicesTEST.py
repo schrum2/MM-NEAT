@@ -141,7 +141,7 @@ def save_heatmap(archive, heatmap_path, min_max):
 ### MAIN
 
 def pyribs_main():
-    algorithm = "map_elites" # Algorithm
+    algorithm = "cma_me_imp" # "map_elites" # Algorithm
     dim=10 # Length of solution vector to be expected
     iterations = 5000 # Total number of iterations
     outdir=f"mariolatentpartition2slices_pyribs_{algorithm}" # Output directory
