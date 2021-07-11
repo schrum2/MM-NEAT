@@ -141,9 +141,9 @@ def save_heatmap(archive, heatmap_path, min_max):
 ### MAIN
 
 def pyribs_main():
-    algorithm = "cma_me_imp" # "map_elites" # Algorithm
+    algorithm = "map_elites"  #"cma_me_imp" # "map_elites" # Algorithm
     dim=10 # Length of solution vector to be expected
-    iterations = 10000 # Total number of iterations
+    iterations = 30000 # Total number of iterations
     outdir=f"mariolatentpartition2slices_pyribs_{algorithm}" # Output directory
     log_freq=100 # Logging frequency
     max_fitness = 120 # depends on number of segments (level chunks)
