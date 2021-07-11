@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.parameters.Parameters;
@@ -43,7 +44,8 @@ public class ExternalRealValuedGenotypeExecutor {
 			if(input.equals("exit")) break;
 			double[] genotype = JsonReader.JsonToDoubleArray(input);
 			HashMap<String,Object> behaviorCharacteristics = new HashMap<String,Object>();
-			Genotype individual = new RealValuedGenotype(genotype);
+			// Add potential to clip ranges on solution vector values
+			Genotype individual = MMNEAT.genotype instanceof BoundedRealValuedGenotype ? new BoundedRealValuedGenotype(genotype) : new RealValuedGenotype(genotype);
 			task.oneEval(individual, 0, behaviorCharacteristics); // Run number always 0
 			int[] archiveDimensions = MMNEAT.getArchiveBinLabelsClass().multiDimensionalIndices(behaviorCharacteristics);
 			// Print to Python
