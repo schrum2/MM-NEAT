@@ -141,9 +141,9 @@ def save_heatmap(archive, heatmap_path, min_max):
 ### MAIN
 
 def pyribs_main():
-    algorithm = "map_elites" # "cma_me_imp" # "map_elites" # Algorithm
+    algorithm = "cma_me_imp" # "map_elites" # Algorithm
     dim=10 # Length of solution vector to be expected
-    iterations = 5000 # Total number of iterations
+    iterations = 10000 # Total number of iterations
     outdir=f"mariolatentpartition2slices_pyribs_{algorithm}" # Output directory
     log_freq=100 # Logging frequency
     max_fitness = 120 # depends on number of segments (level chunks)
@@ -206,6 +206,17 @@ def pyribs_main():
                 
                 save_heatmap(archive, str(outdir / f"{name}_heatmap_{itr:05d}.png"), [0, max_fitness])
 
+    # Plot metrics.
+    print(f"Algorithm Time (Excludes Logging and Setup): {non_logging_time}s")
+    for metric in metrics:
+        plt.plot(metrics[metric]["x"], metrics[metric]["y"])
+        plt.title(metric)
+        plt.xlabel("Iteration")
+        plt.savefig(
+            str(outdir / f"{name}_{metric.lower().replace(' ', '_')}.png"))
+        plt.clf()
+    with (outdir / f"{name}_metrics.json").open("w") as file:
+        json.dump(metrics, file, indent=2)
 
 if __name__ == '__main__':
     ### INITALIZE GAN STUFF
