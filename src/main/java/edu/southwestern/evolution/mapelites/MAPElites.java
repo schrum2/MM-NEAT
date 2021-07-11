@@ -17,11 +17,13 @@ import autoencoder.python.TrainAutoEncoderProcess;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
+import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedSlicedBinLabels;
+import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
@@ -56,6 +58,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private MMNEATLog emitterMeanLog = null;
 	private MMNEATLog cppnThenDirectLog = null;
 	private MMNEATLog cppnVsDirectFitnessLog = null;
+	private MMNEATLog autoencoderLossRange = null;
 	protected MMNEATLog[] emitterIndividualsLogs = null;
 	protected LonerTask<T> task;
 	protected Archive<T> archive;
@@ -100,9 +103,6 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 			int yrange = Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration;
 			setUpLogging(numLabels, infix, experimentPrefix, yrange, cppnDirLogging, individualsPerGeneration, archive.getBinMapping().binLabels().size());
-			if (this instanceof CMAME) {
-				emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
-			}
 		}
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
@@ -119,6 +119,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		String fillPercentagePrefix = experimentPrefix + "_" + "FillPercentage";
 		String qdPrefix = experimentPrefix + "_" + "QD";
 		String maxPrefix = experimentPrefix + "_" + "Maximum";
+		String lossPrefix = experimentPrefix + "_" + "ReconstructionLoss";
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
 		String fullPDFName = directory + prefix + "_pdf_log.plt";
@@ -128,6 +129,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		String fullFillPercentageName = directory + fillPercentagePrefix + "_log.plt";
 		String fullQDName = directory + qdPrefix + "_log.plt";
 		String maxFitnessName = directory + maxPrefix + "_log.plt";
+		String reconstructionLossName = directory + lossPrefix + "_log.plt";
 		File pdfPlot = new File(fullPDFName);
 		File plot = new File(fullName); // for archive log plot file
 		File fillPlot = new File(fullFillName);
@@ -147,14 +149,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 			ps.close();
 			
-			// Archive plot
+			// Archive plot: In default GNU Plot window
 			ps = new PrintStream(plot);
 			ps.println("unset key");
 			// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
 			ps.println("set yrange [0:"+ yrange +"]");
 			ps.println("set xrange [0:"+ archiveSize + "]");
 			ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
-			ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+			//ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 			// The :1 is for skipping the "generation" number logged in the file
 			ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 			ps.close();
@@ -201,6 +203,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("set output \"" + maxFitnessName.substring(maxFitnessName.lastIndexOf('/')+1, maxFitnessName.lastIndexOf('.')) + ".pdf\"");
 			ps.println("plot \"" + name + ".txt\" u 1:4 w linespoints t \"Maximum fitness Score\"");
 			
+			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {
+				ps.println("set title \"" + experimentPrefix + " Reconstruction Loss Range");
+				ps.println("set output \"" + reconstructionLossName.substring(reconstructionLossName.lastIndexOf('/')+1, reconstructionLossName.lastIndexOf('.')) + ".pdf\"");
+				ps.println("plot \"" + name.replace("_Fill_", "_autoencoderLossRange_") + ".txt\" u 1:2 w linespoints t \"Min Loss\", \\");
+				ps.println("     \"" + name.replace("_Fill_", "_autoencoderLossRange_") + ".txt\" u 1:3 w linespoints t \"Max Loss\"");
+			}
+			
 			ps.close();
 			
 		} catch (FileNotFoundException e) {
@@ -209,25 +218,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			System.exit(1);
 		}
 	}
-	
-	private static void checkPython() { // Checks that python is present and functional
-		PythonUtil.setPythonProgram();
-		if(PythonUtil.PYTHON_EXECUTABLE.equals("")) {
-			throw new RuntimeException("Before launching this program, you need to place the path to your "+
-					   "Python executable in my_python_path.txt within the main MM-NEAT directory." + PythonUtil.PYTHON_EXECUTABLE);			
-		} else if(!(new File(PythonUtil.PYTHON_EXECUTABLE).exists())) {
-			throw new RuntimeException("Before launching this program, you need to place the path to your "+
-									   "Python executable in my_python_path.txt within the main MM-NEAT directory. The current contents of this file are incorrect: "+
-									   PythonUtil.PYTHON_EXECUTABLE);
-		}
-	}
 
 	private void setupArchiveVisualizer(BinLabels bins) throws FileNotFoundException {
 		String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 		directory += (directory.equals("") ? "" : "/");
 		String prefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber") + "_MAPElites";
 		String fullName = directory + prefix + "_log.plt";
-		checkPython();
+		PythonUtil.setPythonProgram();
+		PythonUtil.checkPython();
 		
 		// Archive generator
 		String[] dimensionNames = bins.dimensions();
@@ -247,6 +245,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("cd ..");
 			ps.println("cd ..");
 			ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesArchivePlotter.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
+			ps.print(" \""+prefix+"\"");
 			for (int i = 0; i < dimensionNames.length; i++) {
 				ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
 			}
@@ -268,13 +267,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			ps.println("cd ..");
 			ps.println("cd ..");
 			ps.print(PythonUtil.PYTHON_EXECUTABLE + " "+dimensionNames.length+"DMAPElitesArchivePlotAnimator.py "+directory+fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt");
+			ps.print(" \""+prefix+"\"");
 			for (int i = 0; i < dimensionNames.length; i++) {
 				ps.print(" \""+dimensionNames[i]+"\" "+dimensionSizes[i]);
 			}
 			if (dimensionNames.length == 3) { // add min/max batch params
-				ps.print(" 2 1 %1 %2"); // add row param if 3
+				ps.print(" 2 %1 %2 %3"); // add row param if 3
 			} else {
-				ps.print(" 1 %1 %2");
+				ps.print(" %1 %2 %3 %4");
 			}
 			ps.close();
 		}
@@ -293,8 +293,12 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * according to where they best fit.
 	 * @param example Starting genotype used to derive new instances
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void initialize(Genotype<T> example) {		
+	public void initialize(Genotype<T> example) {	
+		if (this instanceof CMAME && MMNEAT.genotype instanceof RealValuedGenotype) {
+			emitterMeanLog = new MMNEATLog("EmitterMeans", false, false, false, true);
+		}
 		saveImageArchives = MMNEAT.task instanceof PictureTargetTask;
 		if(iterations > 0) {
 			int numLabels = archive.getBinMapping().binLabels().size();
@@ -304,7 +308,6 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Load each elite from xml file into archive
 			for(int i = 0; i < binLabels.size(); i++) {
 				String binDir = archiveDir + "/" + binLabels.get(i) + "/";
-				@SuppressWarnings("unchecked")
 				Genotype<T> elite = (Genotype<T>) Easy.load(binDir + "elite.xml"); // Load genotype
 				// Load behavior scores
 				ArrayList<Double> scores = new ArrayList<Double>(numLabels); 
@@ -327,12 +330,41 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			System.out.println("Fill up initial archive");
 			// Start from scratch
 			int startSize = Parameters.parameters.integerParameter("mu");
-			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);
+			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);			
+			assert !(startingPopulation.get(0) instanceof BoundedRealValuedGenotype) || ((BoundedRealValuedGenotype) startingPopulation.get(0)).isBounded() : "Initial individual not bounded: "+startingPopulation.get(0);
+			Vector<Score<T>> evaluatedPopulation = new Vector<>(startingPopulation.size());
+
+			boolean backupNetIO = CommonConstants.netio;
+			CommonConstants.netio = false; // Some tasks require archive comparison to do this, but it does not exist yet.
+			// Evaluate initial population
 			startingPopulation.parallelStream().forEach( (g) -> {
 				Score<T> s = task.evaluate(g);
-				archive.add(s); // Fill the archive with random starting individuals
+				evaluatedPopulation.add(s);
 			});
-				
+			CommonConstants.netio = backupNetIO;
+			
+			if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
+				autoencoderLossRange = new MMNEATLog("autoencoderLossRange", false, false, false, true);
+			}
+			
+			// Special code if image auto-encoder is used
+			if(Parameters.parameters.booleanParameter("trainInitialAutoEncoder") && saveImageArchives && Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
+				System.out.println("Train initial auto-encoder");
+				((PictureTargetTask) MMNEAT.task).saveAllArchiveImages("starting", AutoEncoderProcess.SIDE_LENGTH, AutoEncoderProcess.SIDE_LENGTH, evaluatedPopulation);
+				String experimentDir = FileUtilities.getSaveDirectory()+File.separator+"snapshots";
+				Parameters.parameters.setString("mostRecentAutoEncoder", experimentDir+File.separator+ "starting.pth");
+				String outputAutoEncoderFile = Parameters.parameters.stringParameter("mostRecentAutoEncoder");
+				String trainingDataDirectory = experimentDir+File.separator+"starting";
+
+				// This adds the population to the archive after training the auto-encoder
+				trainImageAutoEncoderAndSetLossBounds(outputAutoEncoderFile, trainingDataDirectory, evaluatedPopulation);
+				System.out.println("Initial occupancy: "+ this.archive.getNumberOfOccupiedBins());
+			} else {
+				// Add initial population to archive
+				evaluatedPopulation.parallelStream().forEach( (s) -> {
+					archive.add(s); // Fill the archive with random starting individuals
+				});	
+			}
 		}
 	}
 
@@ -340,7 +372,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * Write one line of data to each of the active log files, but only periodically,
 	 * when number of iterations divisible by individualsPerGeneration. 
 	 */
-	private void log() {
+	@SuppressWarnings("unchecked")
+	protected void log() {
 		if (!archiveFileCreated) {
 			try {
 				setupArchiveVisualizer(archive.getBinMapping());
@@ -385,6 +418,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				//in archive class, archive variable (vector)
 				cppnThenDirectLog.log(pseudoGeneration+"\t"+numCPPN+"\t"+numDirect);
 				cppnVsDirectFitnessLog.log(pseudoGeneration +"\t"+ StringUtils.join(eliteProper, "\t"));
+				
 			}			
 			// Special code for Lode Runner
 			if(MMNEAT.task instanceof LodeRunnerLevelTask) {
@@ -400,11 +434,16 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				((LodeRunnerLevelTask<?>)MMNEAT.task).beatable.log(pseudoGeneration + "\t" + numBeatenLevels + "\t" + ((1.0*numBeatenLevels)/(1.0*numFilledBins)));
 			}
 			
-			if (emitterMeanLog != null && MMNEAT.getArchiveBinLabelsClass() instanceof MultiDimensionalRealValuedSlicedBinLabels) { // TODO
-				MultiDimensionalRealValuedSlicedBinLabels dimensionSlices = (MultiDimensionalRealValuedSlicedBinLabels) MMNEAT.getArchiveBinLabelsClass();
+			if (emitterMeanLog != null) { 
+				boolean backupNetIO = CommonConstants.netio;
+				CommonConstants.netio = false; // Don't want to touch the archive when evaluating means
+				
+				BinLabels dimensionSlices = MMNEAT.getArchiveBinLabelsClass();
 				String newLine = "" + pseudoGeneration;
-				for (double[] mean : ((CMAME)this).getEmitterMeans()) {
-					int[] binCoords = dimensionSlices.discretize(dimensionSlices.behaviorCharacterization(mean));	
+				for (double[] mean : ((CMAME)this).getEmitterMeans()) { 
+					
+					Score<T> s = task.evaluate((Genotype<T>) new RealValuedGenotype(mean));
+					int[] binCoords = dimensionSlices.multiDimensionalIndices(s.MAPElitesBehaviorMap());	
 					newLine += "\t";
 					for (int i = 0; i < binCoords.length; i++) {
 						if (i != 0) {
@@ -414,6 +453,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					}
 				}
 				emitterMeanLog.log(newLine);
+				
+				CommonConstants.netio = backupNetIO;
 			}
 		}
 	}
@@ -492,12 +533,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * @param newEliteProduced Whether the latest individual was good enough to
 	 * 							fill/replace a bin.
 	 */
-	public void fileUpdates(boolean newEliteProduced) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public synchronized void fileUpdates(boolean newEliteProduced) {
 		if(saveImageArchives && iterations % Parameters.parameters.integerParameter("imageArchiveSaveFrequency") == 0) {
 			System.out.println("Save whole archive at iteration "+iterations);
-			// 28 is a magic number, and should be either a constant of a command line parameter.
-			// Fix later ... this is the standard image size for training our simple image autoencoder (based on MNIST)
-			((PictureTargetTask<?>) MMNEAT.task).saveAllArchiveImages("iteration"+iterations, 28, 28);
+			((PictureTargetTask) MMNEAT.task).saveAllArchiveImages("iteration"+iterations, AutoEncoderProcess.SIDE_LENGTH, AutoEncoderProcess.SIDE_LENGTH, archive.getArchive());
 			
 			if(Parameters.parameters.booleanParameter("deleteOldArchives") && iterations != 0) {
 				String snapshot = FileUtilities.getSaveDirectory() + File.separator + "snapshots";
@@ -516,37 +556,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Parameters.parameters.setString("latestIterationSaved", "iteration" + iterations);
 			// If we are using the autoencoder (only use if "trainingAutoEncoder" == true), re-train it here
 			if(Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
-				if(AutoEncoderProcess.currentProcess != null) {
-					// Stop autoencoder inference when it is time to train a new one
-					AutoEncoderProcess.terminateAutoEncoderProcess(); 
-				}
 				String experimentDir = FileUtilities.getSaveDirectory()+File.separator+"snapshots";
 				Parameters.parameters.setString("mostRecentAutoEncoder", experimentDir+File.separator+ "iteration" + iterations + ".pth");
-				TrainAutoEncoderProcess training = new TrainAutoEncoderProcess(experimentDir+File.separator+"iteration" + iterations, Parameters.parameters.stringParameter("mostRecentAutoEncoder"));
-				training.start();
-				// Initialize process for newly trained autoencoder
-				AutoEncoderProcess.getAutoEncoderProcess(); // (sort of optional to initialize here)
-				AutoEncoderProcess.neverInitialized = false;
-				// Now we need to dump the archive and replace it with a new one after re-evaluating all old contents.
+				String outputAutoEncoderFile = Parameters.parameters.stringParameter("mostRecentAutoEncoder");
+				String trainingDataDirectory = experimentDir+File.separator+"iteration" + iterations;
+				
 				int oldOccupied = this.archive.getNumberOfOccupiedBins();
-				if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
-					double minLoss = 1.0;
-					double maxLoss = 0.0;
-					for(Score<T> s : archive.getArchive()) {
-						if(s != null) { // Ignore empty cells
-							Network cppn = (Network) s.individual.getPhenotype();
-							BufferedImage image = PicbreederTask.imageFromCPPN(cppn, PictureTargetTask.imageWidth, PictureTargetTask.imageHeight, ArrayUtil.doubleOnes(cppn.numInputs()));
-							double loss = AutoEncoderProcess.getReconstructionLoss(image);
-							minLoss = Math.min(loss, minLoss);
-							maxLoss = Math.max(loss, maxLoss);
-						}
-					}
-					Parameters.parameters.setDouble("minAutoencoderLoss", minLoss);
-					Parameters.parameters.setDouble("minAutoencoderLoss", maxLoss);	
-
-				}
-
-				this.archive = new Archive<T>(this.archive);
+				trainImageAutoEncoderAndSetLossBounds(outputAutoEncoderFile, trainingDataDirectory, archive.getArchive());
 				int newOccupied = this.archive.getNumberOfOccupiedBins();
 				System.out.println("Archive reorganized based on new AutoEncoder: Occupancy "+oldOccupied+" to "+newOccupied);
 			} 
@@ -566,6 +582,50 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 		System.out.println(iterations + "\t" + iterationsWithoutElite + "\t");
 		
+	}
+
+	/**
+	 * Trains autoencoder using specified directory for source input and specified output file (pth extension).
+	 * Also, a collection of preexisting images is (optionally) used to determine bounds on the possible loss values.
+	 * 
+	 * @param outputAutoEncoderFile Full path for pth file to save
+	 * @param trainingDataDirectory Directory full of 28 by 28 images to train autoencoder on
+	 * @param previousImages Collection of Scores for CPPNs that generate images to calculate loss for after training
+	 */
+	private void trainImageAutoEncoderAndSetLossBounds(String outputAutoEncoderFile, String trainingDataDirectory, Vector<Score<T>> previousImages) {
+		if(AutoEncoderProcess.currentProcess != null) {
+			// Stop autoencoder inference when it is time to train a new one
+			AutoEncoderProcess.terminateAutoEncoderProcess(); 
+		}
+		TrainAutoEncoderProcess training = new TrainAutoEncoderProcess(trainingDataDirectory, outputAutoEncoderFile);
+		training.start();
+		// Initialize process for newly trained autoencoder
+		AutoEncoderProcess.getAutoEncoderProcess(); // (sort of optional to initialize here)
+		AutoEncoderProcess.neverInitialized = false;
+		// Now we need to dump the archive and replace it with a new one after re-evaluating all old contents.
+		if(Parameters.parameters.booleanParameter("dynamicAutoencoderIntervals")) {					
+			double minLoss = 1.0;
+			double maxLoss = 0.0;
+			// TODO: This can be made parallel with a stream, but the local vars for min and max need some special handling
+			for(Score<T> s : previousImages) {
+				if(s != null) { // Ignore empty cells
+					Network cppn = (Network) s.individual.getPhenotype();
+					BufferedImage image = PicbreederTask.imageFromCPPN(cppn, PictureTargetTask.imageWidth, PictureTargetTask.imageHeight, ArrayUtil.doubleOnes(cppn.numInputs()));
+					double loss = AutoEncoderProcess.getReconstructionLoss(image);
+					minLoss = Math.min(loss, minLoss);
+					maxLoss = Math.max(loss, maxLoss);
+				}
+			}
+			Parameters.parameters.setDouble("minAutoencoderLoss", minLoss);
+			Parameters.parameters.setDouble("maxAutoencoderLoss", maxLoss);	
+			if(autoencoderLossRange != null) {
+				final int pseudoGeneration = iterations/individualsPerGeneration;
+				autoencoderLossRange.log(pseudoGeneration + "\t" + minLoss + "\t" + maxLoss);
+			}
+			System.out.println("Loss ranges from "+minLoss+" to "+maxLoss);
+		}		
+		// Will bin differently because autoencoder has changed, as have expected loss bounds. Images get re-evaluated
+		this.archive = new Archive<T>(previousImages, this.archive.getBinLabelsClass(), this.archive.getArchiveDirectory(), CommonConstants.netio); 
 	}
 	
 	/**

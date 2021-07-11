@@ -142,7 +142,15 @@ public class LevelParser {
 //        return createLevel(level);        
 //    }
     
-    public static ArrayList<double[]> getLevelStats(ArrayList<List<Integer>> oneLevel, int segmentWidth){
+    /**
+     * Collects information about decoration, leniency, and space coverage.
+     * Written by Vanessa.
+     * 
+     * @param oneLevel
+     * @param segmentWidth
+     * @return
+     */
+    public static ArrayList<double[]> getLevelStats(List<List<Integer>> oneLevel, int segmentWidth){
         if (oneLevel.get(0).size()%segmentWidth!=0){
             System.out.println("getLevelStats: Level not multiple of segment width");
             return null;
@@ -162,7 +170,7 @@ public class LevelParser {
                     vals[0] +=prettyTiles.get(code);
                     vals[1] +=leniencyTiles.get(code);
                     vals[2] +=negativeSpaceTiles.get(code);
-                    if(code==2 && i==height-1){
+                    if(code==2 && i==height-1){ // Magic numbers?
                         gapCount++;
                     }
                 }

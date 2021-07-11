@@ -276,7 +276,7 @@ public class MarioLevelUtil {
 	 * @param segmentWidth the width of the segments/chunk
 	 * @return levelWithParsedSegments the level containing every segment
 	 */
-	public static List<List<List<Integer>>> getSegmentsFromLevel(ArrayList<List<Integer>> oneLevel, int segmentWidth){
+	public static List<List<List<Integer>>> getSegmentsFromLevel(List<List<Integer>> oneLevel, int segmentWidth){
 		if (oneLevel.get(0).size()%segmentWidth!=0){
             System.out.println("getLevelStats: Level not multiple of segment width");
             return null;

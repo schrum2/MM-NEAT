@@ -1,12 +1,13 @@
 package edu.southwestern.tasks.innovationengines;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+//import java.math.BigDecimal;
+//import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
 
 /**
@@ -26,7 +27,7 @@ import edu.southwestern.parameters.Parameters;
  *
  * @param <T>
  */
-public class GaierAutoencoderPictureBinLabels implements BinLabels  {
+public class GaierAutoencoderPictureBinLabels extends BaseBinLabels  {
 	
 	List<String> labels = null;
 	
@@ -38,8 +39,8 @@ public class GaierAutoencoderPictureBinLabels implements BinLabels  {
 		if(!Parameters.parameters.booleanParameter("trainingAutoEncoder")) {
 			throw new IllegalStateException("You can't use the GaierAutoencoderPictureBinLabels binning scheme without training an autoencoder");
 		}
-		CPPNComplexityBinLabels.maxNumNeurons = Parameters.parameters.integerParameter("maxNumNeurons");
 		numLossBins = Parameters.parameters.integerParameter("numReconstructionLossBins");
+		System.out.println("Number of Loss bins: "+ numLossBins);
 	}
 
 	/**
@@ -51,11 +52,11 @@ public class GaierAutoencoderPictureBinLabels implements BinLabels  {
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {
-			int size = (CPPNComplexityBinLabels.maxNumNeurons - CPPNComplexityBinLabels.MIN_NUM_NEURONS + 1) * numLossBins;
+			int size = (Parameters.parameters.integerParameter("maxNumNeurons") - CPPNNeuronCountBinLabels.MIN_NUM_NEURONS + 1) * numLossBins;
 			System.out.println("Archive Size: " + size);
 			labels = new ArrayList<String>(size);
 			int count = 0;
-			for(int i = CPPNComplexityBinLabels.MIN_NUM_NEURONS; i <= CPPNComplexityBinLabels.maxNumNeurons; i++) {
+			for(int i = CPPNNeuronCountBinLabels.MIN_NUM_NEURONS; i <= Parameters.parameters.integerParameter("maxNumNeurons"); i++) {
 				for(int j = 0; j < numLossBins; j++) {
 //					BigDecimal secondSegment = new BigDecimal(j);
 //					BigDecimal thirdSegment = new BigDecimal(j + 1);
@@ -90,7 +91,7 @@ public class GaierAutoencoderPictureBinLabels implements BinLabels  {
 	 */
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = ((multi[BIN_INDEX_NODES] - CPPNComplexityBinLabels.MIN_NUM_NEURONS) * numLossBins + (multi[BIN_INDEX_LOSS]));
+		int binIndex = ((multi[BIN_INDEX_NODES] - CPPNNeuronCountBinLabels.MIN_NUM_NEURONS) * numLossBins + (multi[BIN_INDEX_LOSS]));
 		assert binIndex >= 0 : "Negative index " + Arrays.toString(multi) + " -> " + binIndex;
 		return binIndex;
 	}
@@ -102,6 +103,18 @@ public class GaierAutoencoderPictureBinLabels implements BinLabels  {
 
 	@Override
 	public int[] dimensionSizes() {
-		return new int[] {CPPNComplexityBinLabels.maxNumNeurons - CPPNComplexityBinLabels.MIN_NUM_NEURONS + 1, numLossBins};
+		return new int[] {Parameters.parameters.integerParameter("maxNumNeurons") - CPPNNeuronCountBinLabels.MIN_NUM_NEURONS + 1, numLossBins};
+	}
+
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int nodes = (int) keys.get("Nodes");
+		int nodesIndex = Math.min(nodes, Parameters.parameters.integerParameter("maxNumNeurons"));
+		
+		double loss = (double) keys.get("Reconstruction Loss");
+		double scaledLoss = (loss - Parameters.parameters.doubleParameter("minAutoencoderLoss")) / (Parameters.parameters.doubleParameter("maxAutoencoderLoss") - Parameters.parameters.doubleParameter("minAutoencoderLoss"));
+		int lossIndex = (int) Math.min(Math.max(0, scaledLoss * GaierAutoencoderPictureBinLabels.numLossBins), GaierAutoencoderPictureBinLabels.numLossBins - 1);
+
+		return new int[]{nodesIndex, lossIndex};
 	}
 }

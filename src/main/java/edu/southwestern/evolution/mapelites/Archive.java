@@ -58,28 +58,32 @@ public class Archive<T> {
 	 * @param other Archive to draw contents from
 	 */
 	public Archive(Archive<T> other) {
+		this(other.getArchive(), other.mapping, other.archiveDir, other.saveElites);
+	}
+	
+	public Archive(Vector<Score<T>> other, BinLabels otherMapping, String otherDir, boolean otherSave) {
 		saveElites = false; // Don't save while reorganizing
-		mapping = other.mapping;
-		int numBins = mapping.binLabels().size();
+		mapping = otherMapping;
+		int numBins = otherMapping.binLabels().size();
 		archive = new Vector<Score<T>>(numBins);
 		occupiedBins = 0;
-		archiveDir = other.archiveDir; // Will save in the same place!
+		archiveDir = otherDir; // Will save in the same place!
 
 		// Fill with null values before actually selecting individuals to copy over
 		for(int i = 0; i < numBins; i++) {
 			archive.add(null); // Place holder for first individual and future elites
 		}
 		// Loop through original archive
-		for(Score<T> s : other.getArchive()) {
+		other.parallelStream().forEach( (s) -> {
 			if(s != null) { // Ignore empty cells
 				@SuppressWarnings("unchecked")
 				Score<T> newScore = ((MAPElites<T>) MMNEAT.ea).task.evaluate(s.individual);
 				this.add(newScore);
 			}
-		}
+		});
 		
 		// Ok to save moving forward
-		saveElites = other.saveElites;
+		saveElites = otherSave;
 	}
 	
 	/**
@@ -151,6 +155,15 @@ public class Archive<T> {
 			//System.out.println(newElites + " elites were replaced");
 			// Whether any elites were replaced
 			return newElites > 0;
+		} else if(candidate.usesMAPElitesMapSpecification()) {
+			int oneD = this.getBinMapping().oneDimensionalIndex(candidate.MAPElitesBehaviorMap());
+			boolean result = false;
+			synchronized(this) { // Make sure elite at the index does not change while considering replacement
+				// Synchronizing on the whole archive seems unnecessary ... maybe just the index? How?
+				Score<T> currentBinOccupant = getElite(oneD);
+				result = replaceIfBetter(candidate, oneD, currentBinOccupant);
+			}
+			return result;
 		} else if(candidate.usesMAPElitesBinSpecification()) {
 			int[] candidateBinIndices = candidate.MAPElitesBinIndex();
 			int oneD = this.getBinMapping().oneDimensionalIndex(candidateBinIndices);
@@ -259,20 +272,27 @@ public class Archive<T> {
 	 * @return Index in the 1D complete archive that contains an elite (not empty)
 	 */
 	public int randomOccupiedBinIndex() {
-		int steps = RandomNumbers.randomGenerator.nextInt(occupiedBins);
-		int originalSteps = steps;
-		int occupiedCount = 0;
-		for(int i = 0; i < archive.size(); i++) {
-			if(archive.get(i) != null) {
-				occupiedCount++;
-				if(steps == 0) {
-					return i;
-				} else {
-					steps--;
+		int steps = -1, originalSteps = -1, occupiedCount= -1;
+		int archiveSize = archive.size();
+		try {
+			steps = RandomNumbers.randomGenerator.nextInt(occupiedBins);
+			originalSteps = steps;
+			occupiedCount = 0;
+			for(int i = 0; i < archiveSize; i++) {
+				if(archive.get(i) != null) {
+					occupiedCount++;
+					if(steps == 0) {
+						return i;
+					} else {
+						steps--;
+					}
 				}
 			}
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException("Could not pick random occupied bin with occupiedBins = "+occupiedBins+"; "+steps+" steps left out of "+originalSteps +". occupiedCount = "+occupiedCount);
 		}
-		throw new IllegalStateException("The number of occupied bins ("+occupiedBins+") and the archive size ("+archive.size()+") have a problem. "+steps+" steps left out of "+originalSteps +". occupiedCount = "+occupiedCount);
+		throw new IllegalStateException("The number of occupied bins ("+occupiedBins+") and the archive size ("+archiveSize+") have a problem. "+steps+" steps left out of "+originalSteps +". occupiedCount = "+occupiedCount);
 	}
 	
 	/**

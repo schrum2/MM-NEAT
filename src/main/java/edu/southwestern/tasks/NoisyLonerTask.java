@@ -16,6 +16,7 @@ import edu.southwestern.util.stats.Average;
 import edu.southwestern.util.stats.Statistic;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Any task in which multiple trials are needed because evaluations are noisy.
@@ -57,23 +58,43 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 	}
 
 	/**
-	 * All actions performed in a single evaluation of a genotype
+	 * All actions performed in a single evaluation of a genotype. Must override EITHER this method
+	 * or the version below that does NOT include the behaviorCharacteristics. If you want to use your
+	 * task with MAP-Elites, then override this version and fill the behaviorCharacteristics. Otherwise,
+	 * override the version below.
 	 *
-	 * @param individual
-	 *            genotype to be evaluated
-	 * @param num
-	 *            which evaluation is currently being performed
+	 * @param individual genotype to be evaluated
+	 * @param num which evaluation is currently being performed
+	 * @param behaviorCharacteristics Place to store various details about the behavior of resulting genotype (for MAP-Elites)
 	 * @return Combination of fitness scores (multiobjective possible), and
 	 *         other scores (for tracking non-fitness data)
 	 */
-	public abstract Pair<double[], double[]> oneEval(Genotype<T> individual, int num);
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
+		return oneEval(individual, num);
+	}
 
+	/**
+	 * This exists both for backwards compatibility, and for tasks that don't bother using MAP-Elites. Older tasks did not
+	 * make use of a HashMap of behavior characteristic data, so they already override this method. If this method is overridden
+	 * and the one above is not, then this one will be called and provide score information for traditional objective-based
+	 * evolution.
+	 * 
+	 * @param individual genotype to be evaluated
+	 * @param num which evaluation is currently being performed
+	 * @return Combination of fitness scores (multiobjective possible), and
+	 *         other scores (for tracking non-fitness data)
+	 */
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+		throw new UnsupportedOperationException("This task is supposed to define a behavior characteristic for MAP Elites using a HashMap. "+
+												"Call oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) instead.");
+	}
+
+	
 	/**
 	 * Evaluate an agent by subjecting it to several separate evaluations/trials
 	 * in the domain. Return the fitness score(s)
 	 *
-	 * @param individual
-	 *            Genotype of individual to be evaluated
+	 * @param individual Genotype of individual to be evaluated
 	 * @return score instance containing the fitness scores, and other necessary
 	 *         data
 	 */
@@ -96,12 +117,13 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 		double evalTimeSum = 0;
 		
 		// Carry out all trials and save all scores
+		HashMap<String,Object> behaviorMap = new HashMap<>();
 		for (int i = 0; i < numTrials; i++) {
 			long before = System.currentTimeMillis();
 			if (MMNEAT.evalReport != null) {
 				MMNEAT.evalReport.log("Eval " + i + ":");
 			}
-			Pair<double[], double[]> result = oneEval(individual, i);
+			Pair<double[], double[]> result = oneEval(individual, i, behaviorMap);
 			if (printFitness) {
 				System.out.println(Arrays.toString(result.t1) + Arrays.toString(result.t2));
 				if (individual instanceof TWEANNGenotype) {
@@ -185,6 +207,7 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 		cleanup();
 		// creates the score based off of the multiple objective score
 		Score<T> s = new MultiObjectiveScore<T>(individual, fitness, getBehaviorVector(), other);
+		s.assignMAPElitesBehaviorMapAndScore(behaviorMap);
 		// set the average time
 		s.averageEvalTime = averageEvalTime;
 		return s;

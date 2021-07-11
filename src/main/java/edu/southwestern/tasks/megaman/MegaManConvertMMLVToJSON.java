@@ -2,20 +2,22 @@ package edu.southwestern.tasks.megaman;
 
 import java.awt.Point;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
+import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.datastructures.ArrayUtil;
 
 /**
  * This class converts mmlv files to trainable JSON format
@@ -30,47 +32,153 @@ public class MegaManConvertMMLVToJSON {
 	public static String enemyString = null;
 	public static String bossString = null;
 	
-	
 	/**
-     * Modified from https://github.com/TheHedgeify/DagstuhlGAN/blob/master/marioaiDagstuhl/src/reader/MarioReader.java
-     * in order to generate to convert Mario levels into a json file.
-     */
-    public static void main(String[] args) throws FileNotFoundException { // generate new json files
+	 * Main method allows for json file generation from a selection of levels
+	 * 
+	 */
+    public static void main(String[] args) { // generate new json files
     	// All directories to pull from
     	
-    	ArrayList<int[][]> levels = new ArrayList<>();
+    	ArrayList<List<List<Integer>>> levels = new ArrayList<List<List<Integer>>>();
     	for(int i = 1;i<=10;i++) {
-			maxX=0;
-			maxY=0;
-			visited.clear();
-			enemyNumber=-1;
-			enemyString = null;
-			bossString = null;
-			List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
-			levels.add(ArrayUtil.int2DArrayFromListOfLists(level));
+    		if (i != 9) {
+    			maxX=0;
+    			maxY=0;
+    			visited.clear();
+    			enemyNumber=-1;
+    			enemyString = null;
+    			bossString = null;
+    			List<List<Integer>> level = convertMMLVtoInt(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManLevel"+i+".mmlv");
+    			levels.add(level);
+    			//MegaManVGLCUtil.printLevel(level);
+    		}
 		}
+    	System.out.println("Read "+levels.size()+" levels.");
 
-        // output file
-        String outputFile = "data/VGLC/MegaMan/NoWater9MegaMan.json";
+    	
+    	outputOneGAN(levels, "NoWater9");  
+    	outputSevenGAN(levels, "NoWater9");
+    	//File testFile = new File("data\\VGLC\\MegaMan\\MegaManOneGANNoWater9.json");
+    	//showJsonContents(testFile);
+    }    
+	
+	private static void outputOneGAN(List<List<List<Integer>>> levels, String outputFileName) {
+    	System.out.println("Starting one-GAN generator with "+levels.size()+" levels.");
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	System.out.println("Instantiated json");
+    	
+        for (List<List<Integer>> level : levels) {
+        	MegaManVGLCUtil.upAndDownTrainingData(level);
+        	System.out.println("TrainingData complete...");
+        }
+        System.out.println("All training data done.");
         
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        String out = gson.toJson(levels);
-        System.out.println("Created JSON String");
+        List<List<List<Integer>>> allJson = new ArrayList<>();
+        for (List<List<List<Integer>>> jsonList : MegaManVGLCUtil.getJsons()) {
+        	for (List<List<Integer>> segment : jsonList) {
+        		allJson.add(segment);
+        	}
+        	System.out.println("JsonList completed...");
+        }
+    	System.out.println("All jsonLists completed.");
+        
+        String out = gson.toJson(allJson);
+        System.out.println("Created JSON String for all with size: " + allJson.size() + ".");
         out = out.replace("\n", "").replace("      ", " ").replace(",  ", ", ").replace(",    ",", ").replace("    ","").replace("  ", "").replace("[ ", "[");
 
-        // System.out.println(out);
-
-        PrintWriter writer = new PrintWriter(outputFile);
+        PrintWriter writer = null;
+		try {
+			writer = new PrintWriter("data/VGLC/MegaMan/MegaManOneGAN" + outputFileName + ".json");
+		} catch (FileNotFoundException e) {
+			System.err.println("Could not create json output file.");
+			e.printStackTrace();
+		}
 
         writer.print(out);
         writer.close();
 
         System.out.println("Wrote file with " + levels.size() + " examples");
-    }    
-	
-	
+    }
+    
+    private static void outputSevenGAN(List<List<List<Integer>>> levels, String outputFileName) {
+    	System.out.println("Starting one-GAN generator with "+levels.size()+" levels.");
+    	Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    	System.out.println("Instantiated json");
+    	
+        for (List<List<Integer>> level : levels) {
+        	MegaManVGLCUtil.upAndDownTrainingData(level);
+        	System.out.println("TrainingData complete...");
+        }
+        System.out.println("All training data done.");
+        
+        PrintWriter writer = null;
+        String out;
+        String[] filePrefixes = new String[] {"Horizontal", "Up", "Down", "LowerLeftCorner", "UpperLeftCorner", "LowerRightCorner", "UpperRightCorner"};
+        for (int i = 0; i < 7; i++) {
+        	out = gson.toJson(MegaManVGLCUtil.getJsons().get(i));
+            System.out.println("Created JSON String for " + filePrefixes[i] + " with size: " + MegaManVGLCUtil.getJsons().get(i).size() + ".");
+            out = out.replace("\n", "").replace("      ", " ").replace(",  ", ", ").replace(",    ",", ").replace("    ","").replace("  ", "").replace("[ ", "[");
+            writer = null;
+            try {
+    			writer = new PrintWriter("data/VGLC/MegaMan/MegaManSevenGAN" + filePrefixes[i] + outputFileName + ".json");
+    		} catch (FileNotFoundException e) {
+    			System.err.println("Could not create json output file for " + filePrefixes[i] + ".");
+    			e.printStackTrace();
+    		}
+
+            writer.print(out);
+            writer.close();
+        }
+
+        System.out.println("Wrote files with " + levels.size() + " examples");
+    }
+    
+    @SuppressWarnings("unused")
+	private static void showJsonContents(File inputFile) {
+    	String fileContents = "";
+		try {
+			fileContents = Files.readFirstLine(inputFile, Charset.defaultCharset());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	JsonArray fullJsonArray = new Gson().fromJson(fileContents, JsonArray.class);
+		boolean flagged = false;
+		for (JsonElement val : fullJsonArray) {
+    		JsonArray innerArray = val.getAsJsonArray();
+    		System.out.println("innerArray length "+ innerArray.size());
+    		if (innerArray.size() != 14) {
+    			System.exit(0);
+    		}
+    		for (JsonElement val2 : innerArray) {
+    			JsonArray innerArray2 = val2.getAsJsonArray();
+    			System.out.println("innerArray2 length "+ innerArray2.size());
+    			if (innerArray2.size() != 16) {
+        			flagged = true;
+        		}
+    			String lineString = "";
+    			for (JsonElement val3 : innerArray2) {
+    				lineString += val3.getAsInt();
+    				if (val3.getAsInt() < 10) {
+    					lineString += "  ";
+    				} else {
+    					lineString += " ";
+    				}
+    			}
+    			//if (flagged) {
+    				System.out.println(lineString);
+    			//}
+        	}
+    		if (flagged) {
+    			System.exit(0);
+    		}
+    		System.out.println();
+    	}
+    }
+    
+    
 	/**
+	 * Maxx: original main method for this class, not really needed anymore, but kept for reference
+	 * 
 	 * useful for testing
 	 * @param args
 	 */

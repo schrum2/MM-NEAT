@@ -5,19 +5,24 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
 import autoencoder.python.AutoEncoderProcess;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
+import edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkPlusParameters;
+import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -34,11 +39,6 @@ import edu.southwestern.util.stats.StatisticsUtilities;
 public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	
 	public static final String IMAGE_MATCH_PATH = "data" + File.separator + "imagematch";
-//	private static final int IMAGE_PLACEMENT = 200;
-//	private static final int HUE_INDEX = 0;
-//	private static final int SATURATION_INDEX = 1;
-//	private static final int BRIGHTNESS_INDEX = 2;
-//	private Network individual;
 	private BufferedImage img = null;
 	public static int imageHeight, imageWidth;
 	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
@@ -152,41 +152,35 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		Network cppn = individual.getPhenotype();
 		BufferedImage image = PicbreederTask.imageFromCPPN(cppn, imageWidth, imageHeight, ArrayUtil.doubleOnes(cppn.numInputs()));
 		TWEANNGenotype tweannIndividual = (individual instanceof TWEANNGenotype ? (TWEANNGenotype) individual : ((TWEANNPlusParametersGenotype<ArrayList<Double>>) individual).getTWEANNGenotype());
-		
+			
 		// Need to assign values
-		int[] indicesMAPEliteBin = null;
+		HashMap<String,Object> behaviorMap = new HashMap<>();
 		
 		if(MMNEAT.ea instanceof MAPElites) {
-			int nodes = Math.min(tweannIndividual.nodes.size(), CPPNComplexityBinLabels.maxNumNeurons);
-			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNComplexityBinLabels) {
-				// What if number of nodes or links exceeds 35? Need to cap the index
-				int links = Math.min(tweannIndividual.links.size(), CPPNComplexityBinLabels.maxNumLinks);
-				indicesMAPEliteBin = new int[] {nodes, links}; // Array of two values corresponding to bin label dimensions
-			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof PictureFourQuadrantBrightnessBinLabels) {
-				PictureFourQuadrantBrightnessBinLabels labels = (PictureFourQuadrantBrightnessBinLabels) ((MAPElites<T>) MMNEAT.ea).getBinLabelsClass();
-				indicesMAPEliteBin = labels.binCoordinates(image);
-			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof GaierAutoencoderPictureBinLabels) {
-				// If the AutoEncoder has not been initialized yet, then loss is 1.0
-				double loss = AutoEncoderProcess.neverInitialized ? 1.0 : AutoEncoderProcess.getReconstructionLoss(image);
-				
-				// TODO Change
-				//int lossIndex = (int) Math.min(Math.floor(loss * GaierAutoencoderPictureBinLabels.numLossBins),GaierAutoencoderPictureBinLabels.numLossBins - 1);
-				int lossIndex = Math.min((int) Math.max(0, ((loss - Parameters.parameters.doubleParameter("minAutoencoderLoss")) / (Parameters.parameters.doubleParameter("maxAutoencoderLoss")) * GaierAutoencoderPictureBinLabels.numLossBins)), GaierAutoencoderPictureBinLabels.numLossBins - 1);
-				indicesMAPEliteBin = new int[]{nodes, lossIndex};
-			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNNeuronCountBinLabels) {
-				assert nodes >= CPPNNeuronCountBinLabels.MIN_NUM_NEURONS : "Why so few neurons? " + nodes + "\n" + tweannIndividual;
-				indicesMAPEliteBin = new int[] {nodes};
-			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof CPPNNeuronScaleRotationDeltaXDeltaYBinLabels) {
-				// TODO: Add the body here.
-				indicesMAPEliteBin = new int[] {nodes};
-			} else {
-				throw new IllegalStateException("No valid binning scheme provided for PictureTargetTask");
+			behaviorMap.put("Nodes", tweannIndividual.nodes.size());
+			behaviorMap.put("Links", tweannIndividual.links.size());
+			behaviorMap.put("Image", image);
+			double loss = AutoEncoderProcess.neverInitialized ? 1.0 : AutoEncoderProcess.getReconstructionLoss(image);
+			behaviorMap.put("Reconstruction Loss", loss);
+			// Has enhanced features
+			if(cppn instanceof NetworkPlusParameters) {
+				NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) cppn;
+				ArrayList<Double> scaleRotationTranslation = npp.t2;
+		
+				behaviorMap.put("Scale", scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE));
+				behaviorMap.put("Rotation", scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION));
+				behaviorMap.put("Horizontal Shift", scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_X));
+				behaviorMap.put("Vertical Shift", scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y));		
 			}
 		}
 		
 		double binScore = fitness(image);
+		behaviorMap.put("binScore",binScore);
+		int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
+		behaviorMap.put("dim1D",dim1D);
+
 		
-		Score<T> result = new Score<>(individual, new double[]{binScore}, indicesMAPEliteBin, binScore);
+		Score<T> result = new Score<>(individual, new double[]{binScore}, behaviorMap, binScore);
 		if(CommonConstants.watch) {
 			BufferedImage view = PicbreederTask.imageFromCPPN(cppn, Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), ArrayUtil.doubleOnes(cppn.numInputs()));
 			DrawingPanel picture = GraphicsUtil.drawImage(view, "Image", Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"));
@@ -200,46 +194,22 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
 			List<String> binLabels = archive.getBinMapping().binLabels();
 			// Index in flattened bin array
-			Score<T> elite = archive.getElite(indicesMAPEliteBin);
+			Score<T> elite = archive.getElite(dim1D);
 			// If the bin is empty, or the candidate is better than the elite for that bin's score
 			if(elite == null || binScore > elite.behaviorIndexScore()) {
 				if(binScore > fitnessSaveThreshold) {
-					String fileName = String.format("%7.5f", binScore) + binLabels.get(archive.getBinMapping().oneDimensionalIndex(indicesMAPEliteBin)) + individual.getId() + ".jpg";
+					String fileName = String.format("%7.5f", binScore) + binLabels.get(dim1D) + individual.getId() + ".jpg";
 					String archivePath = archive.getArchiveDirectory();
 					File archiveDir = new File(archivePath);
 					if(!archiveDir.exists()) archiveDir.mkdir();
-					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(indicesMAPEliteBin));
+					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(dim1D);
 					File bin = new File(binPath);
 					if(!bin.exists()) bin.mkdir();
 					String fullName = binPath + File.separator + fileName;
 					System.out.println(fullName);
 					GraphicsUtil.saveImage(image, fullName);
 				}
-			}
-			
-			
-			
-//			// Lot of duplication of computation from Archive. Can that be fixed?
-//			@SuppressWarnings("unchecked")
-//			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
-//				Score<T> elite = archive.getElite(i);
-//				// If the bin is empty, or the candidate is better than the elite for that bin's score
-//				binScore = result.getTraditionalDomainSpecificBehaviorVector().get(i);
-//				if(elite == null || binScore > elite.getTraditionalDomainSpecificBehaviorVector().get(i)) {  // Duplicate variable error, does this need to be different from the binScore in the evaluate method?
-//					if(binScore > fitnessSaveThreshold) {
-//						String fileName = String.format("%7.5f", binScore) + binLabels.get(i) + individual.getId() + ".jpg";						
-//						String archivePath = archive.getArchiveDirectory();
-//						File archiveDir = new File(archivePath);
-//						if(!archiveDir.exists()) archiveDir.mkdir();
-//						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(i);
-//						File bin = new File(binPath);
-//						if(!bin.exists()) bin.mkdir();
-//						String fullName = binPath + File.separator + fileName;
-//						System.out.println(fullName);
-//						GraphicsUtil.saveImage(image, fullName);
-//					}
-//				}
-			
+			}	
 		}
 		return result;
 	}
@@ -252,7 +222,7 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 	 *                      will be saved
 	 */
 	@SuppressWarnings("unchecked")
-	public void saveAllArchiveImages(String directoryName, int saveWidth, int saveHeight) {
+	public void saveAllArchiveImages(String directoryName, int saveWidth, int saveHeight, Vector<Score<T>> collectionToSave) {
 		String snapshot = FileUtilities.getSaveDirectory() + File.separator + "snapshots";
 		File snapshotDir = new File(snapshot);
 		if(!snapshotDir.exists()) snapshotDir.mkdir();
@@ -265,16 +235,17 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		BinLabels labels = archive.getBinMapping();
 //		int saveWidth = Parameters.parameters.integerParameter("imageWidth"); 
 //		int saveHeight = Parameters.parameters.integerParameter("imageHeight");
-		
-		for(Score<T> s : archive.getArchive()) {
+
+		collectionToSave.parallelStream().forEach( (s) -> {
 			if(s != null) {
 				Network cppn = s.individual.getPhenotype();
 				BufferedImage image = PicbreederTask.imageFromCPPN(cppn, saveWidth, saveHeight, ArrayUtil.doubleOnes(cppn.numInputs()));
 				//String fullName = finalArchive + File.separator + fileName;
-				String fullName = subdir + File.separator + s.behaviorIndexScore() + "-" + labels.binLabels().get(labels.oneDimensionalIndex(s.MAPElitesBinIndex()))+".jpg";
+				double percentMatching = GraphicsUtil.percentMatchingPixels(image, img);
+				String fullName = subdir + File.separator + percentMatching+ "percent" +s.behaviorIndexScore() + "fitness-" + labels.binLabels().get(labels.oneDimensionalIndex(s.MAPElitesBinIndex()))+".jpg";
 				GraphicsUtil.saveImage(image, fullName);
 			}
-		}
+		});
 	}
 	
 	
@@ -316,48 +287,6 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 		return PicbreederTask.CPPN_NUM_OUTPUTS;
 	}
 
-	
-//	@SuppressWarnings("unchecked")
-//	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-//		Parameters.initializeParameterCollections(new String[] {"runNumber:1","randomSeed:0","base:targetimage","mu:400","maxGens:2000000",
-//				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureTargetTask",
-//				"log:TargetImage-TESTING","saveTo:TESTING","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
-//				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
-//				"ea:edu.southwestern.evolution.mapelites.MAPElites",
-//				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-//				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNComplexityBinMapping",
-//				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
-//				"fs:true",
-//				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one
-//				//"matchImageFile:TexasFlag.png",
-//				//"matchImageFile:cat.jpg",
-//				"matchImageFile:skull64.jpg",
-//				"fitnessSaveThreshold:0.7",		// Higher threshold for RMSE 
-//				"includeSigmoidFunction:true", 	// In Brian Woolley paper
-//				"includeTanhFunction:false",
-//				"includeIdFunction:true",		// In Brian Woolley paper
-//				"includeFullApproxFunction:false",
-//				"includeApproxFunction:false",
-//				"includeGaussFunction:true", 	// In Brian Woolley paper
-//				"includeSineFunction:true", 	// In Brian Woolley paper
-//				"includeCosineFunction:true", 	// In Brian Woolley paper
-//				"includeSawtoothFunction:false", 
-//				"includeAbsValFunction:false", 
-//				"includeHalfLinearPiecewiseFunction:false", 
-//				"includeStretchedTanhFunction:false",
-//				"includeReLUFunction:false",
-//				"includeSoftplusFunction:false",
-//				"includeLeakyReLUFunction:false",
-//				"includeFullSawtoothFunction:false",
-//				"includeTriangleWaveFunction:false", 
-//				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:true"});
-//		MMNEAT.loadClasses();
-//		// TODO: Init the picture target task, create the initial archive, then save immediately (test saveAllArchiveImages)
-//		PictureTargetTask<TWEANN> skull = (PictureTargetTask<TWEANN>) MMNEAT.task;
-//		
-//		skull.saveAllArchiveImages("iteration");
-//	}	
-	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		
 		// For test runs
@@ -372,6 +301,8 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.GaierAutoencoderPictureBinLabels",
 				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.PictureFourQuadrantBrightnessBinLabels",
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNNeuronCountBinLabels",
+				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.CPPNNeuronScaleRotationDeltaXDeltaYBinLabels",
+				//"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.GaierAutoencoderNeuronLossScaleRotationDeltaXDeltaYBinLabels",
 				"fs:true",
 				//"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
 				"trainingAutoEncoder:true",
@@ -400,6 +331,6 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"includeFullSawtoothFunction:false",
 				"includeTriangleWaveFunction:false", 
 				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:true",
-				"deleteOldArchives:true", "dynamicAutoencoderIntervals:true"}); 
+				"deleteOldArchives:true", "dynamicAutoencoderIntervals:true", "convolutionalAutoencoder:false"}); 
 	}
 }

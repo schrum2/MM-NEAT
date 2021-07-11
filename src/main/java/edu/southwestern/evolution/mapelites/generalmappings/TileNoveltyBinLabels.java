@@ -2,13 +2,17 @@ package edu.southwestern.evolution.mapelites.generalmappings;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
+import edu.southwestern.tasks.gvgai.zelda.study.DungeonNovelty;
+import edu.southwestern.tasks.megaman.LevelNovelty;
 
-public class TileNoveltyBinLabels implements BinLabels {
+public class TileNoveltyBinLabels extends BaseBinLabels {
 	
 	List<String> labels = null;
 	private int noveltyBinsPerDimension; // amount of bins for the Novelty dimension
@@ -52,5 +56,27 @@ public class TileNoveltyBinLabels implements BinLabels {
 		// ZELDA
 		//MMNEAT.main(("runNumber:500 randomSeed:500 zeldaCPPN2GANSparseKeys:true zeldaALlowPuzzleDoorUglyHack:false zeldaCPPNtoGANAllowsRaft:true zeldaCPPNtoGANAllowsPuzzleDoors:true zeldaDungeonBackTrackRoomFitness:true zeldaDungeonDistinctRoomFitness:true zeldaDungeonDistanceFitness:false zeldaDungeonFewRoomFitness:false zeldaDungeonTraversedRoomFitness:true zeldaPercentDungeonTraversedRoomFitness:true zeldaDungeonRandomFitness:false watch:false trials:1 mu:100 makeZeldaLevelsPlayable:false base:zeldadungeonsdistinctbtrooms log:ZeldaDungeonsDistinctBTRooms-Direct2GAN saveTo:Direct2GAN zeldaGANLevelWidthChunks:5 zeldaGANLevelHeightChunks:5 zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth maxGens:100000 io:true netio:true GANInputSize:10 mating:true fs:false task:edu.southwestern.tasks.zelda.ZeldaGANDungeonTask cleanOldNetworks:false zeldaGANUsesOriginalEncoding:false cleanFrequency:-1 saveAllChampions:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.evolution.mapelites.generalmappings.TileNoveltyBinLabels steadyStateIndividualsPerGeneration:100 noveltyBinAmount:500").split(" "));
 
+	}
+
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		// Make global? Assign once?
+		final int NOVELTY_BINS_PER_DIMENSION = Parameters.parameters.integerParameter("noveltyBinAmount");
+		
+		@SuppressWarnings("unchecked")
+		double novelty = keys.containsKey("Dungeon") ? DungeonNovelty.averageDungeonNovelty((Dungeon) keys.get("Dungeon")) : levelNovelty((List<List<Integer>>) keys.get("Level"));
+		int noveltyIndex = Math.min((int)(novelty*NOVELTY_BINS_PER_DIMENSION), NOVELTY_BINS_PER_DIMENSION-1);
+		return new int[] {noveltyIndex};
+	}
+
+	/**
+	 * Compute Level Novelty, assuming that the appropriate level has been previously set using the setGame method.
+	 * @param level Level as a list of lists of integers (each sublist if a row)
+	 * @return Level Novelty
+	 */
+	public static double levelNovelty(List<List<Integer>> level) {
+		List<List<List<Integer>>> levelSegments = LevelNovelty.partitionSegments(level, LevelNovelty.getRows(), LevelNovelty.getColumns());
+		double novelty = LevelNovelty.averageSegmentNovelty(levelSegments); // get novelty
+		return novelty;
 	}
 }

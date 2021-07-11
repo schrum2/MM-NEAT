@@ -1,6 +1,7 @@
 package edu.southwestern.evolution.mapelites.generalmappings;
 
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 
 import distance.convolution.ConvNTuple;
 import distance.kl.KLDiv;
@@ -45,7 +46,7 @@ public class KLDivergenceBinLabels extends MultiDimensionalRealValuedBinLabels {
 	 * @param level2 The second level to compare
 	 * @return A double representing the KL divergence
 	 */
-	public static double getKLDivergence(int[][] level1, int[][] level2) {
+	private static double getKLDivergence(int[][] level1, int[][] level2) {
 		ConvNTuple c1 = KLDivTest.getConvNTuple(level1, Parameters.parameters.integerParameter("receptiveFieldWidth"), Parameters.parameters.integerParameter("receptiveFieldHeight"), Parameters.parameters.integerParameter("stride"));
 		ConvNTuple c2 = KLDivTest.getConvNTuple(level2, Parameters.parameters.integerParameter("receptiveFieldWidth"), Parameters.parameters.integerParameter("receptiveFieldHeight"), Parameters.parameters.integerParameter("stride"));
 
@@ -67,5 +68,12 @@ public class KLDivergenceBinLabels extends MultiDimensionalRealValuedBinLabels {
 	// test something here
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		MMNEAT.main(("runNumber:5 randomSeed:5 base:mariolevelskldivergence log:MarioLevelsKLDivergence-CMAME5Improvement saveTo:CMAME5Improvement marioGANLevelChunks:10 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 mu:100 lambda:100 maxGens:100000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.CMAME experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDecorNSAndLeniencyBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 mapElitesKLDivLevel1:data\\\\VGLC\\\\SuperMarioBrosNewEncoding\\\\overworld\\\\mario-8-1.txt mapElitesKLDivLevel2:data\\\\VGLC\\\\SuperMarioBrosNewEncoding\\\\overworld\\\\mario-3-1.txt klDivBinDimension:100 klDivMaxValue:0.3 numImprovementEmitters:5 numOptimizingEmitters:0").split(" "));
+	}
+
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int[][] oneLevelAs2DArray = (int[][]) keys.get("2D Level");
+		int[][][] klDivLevels = (int[][][]) keys.get("Comparison Levels");
+		return discretize(behaviorCharacterization(oneLevelAs2DArray, klDivLevels));
 	}	
 }

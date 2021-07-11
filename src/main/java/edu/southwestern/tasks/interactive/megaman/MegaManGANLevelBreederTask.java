@@ -649,7 +649,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	 */
 	public List<List<Integer>> levelListRepresentation(double[] doubleArray) {
 		List<List<Integer>> level;
-		System.out.println(doubleArray.length);
+		//System.out.println(doubleArray.length);
 		if (Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")){
 			level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
 		}

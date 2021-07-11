@@ -104,7 +104,35 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 			genes.set(i, x);
 		}
 	}
+	
+	/**
+	 * Check if the genotype already is bounded by the appropriate range.
+	 * @return true if all variables are appropriately bounded
+	 */
+	public final boolean isBounded() {
+		for (int i = 0; i < genes.size(); i++) {
+			double x = genes.get(i);
+			if (x < MMNEAT.getLowerBounds()[i]) {
+				return false;
+			} else if (x > MMNEAT.getUpperBounds()[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
 
+	public static final boolean isBounded(double[] genes) {
+		for (int i = 0; i < genes.length; i++) {
+			double x = genes[i];
+			if (x < MMNEAT.getLowerBounds()[i]) {
+				return false;
+			} else if (x > MMNEAT.getUpperBounds()[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * Gets a new instance of a BoundedRealValuedGenotype with the same bounds
 	 * @return Returns a new instance of a BoundedRealValuedGenotype with the same bounds

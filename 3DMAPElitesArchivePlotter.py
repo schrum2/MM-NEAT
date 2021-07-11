@@ -1,8 +1,8 @@
 """ 2D MAP-Elites archive plotter (Only for 2D archives with equal amount of bins in both dimensions)
     
     Usage:
-    python 3DMAPElitesSquareArchivePlotter.py <plot file to display> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <max value> <min value>
-    python 3DMAPElitesSquareArchivePlotter.py zeldadungeonswallwaterrooms/ME0/ZeldaDungeonsWallWaterRooms-ME0_MAPElites_log.txt "Wall Tile Percent" 10 "Water Tile Percent" 10 "Reachable Rooms" 26 2 1.0 0.0
+    python 3DMAPElitesSquareArchivePlotter.py <plot file to display> <plot display title> <first dimension name> <first dimension size> <second dimension name> <second dimension size> <third dimension name> <third dimension size> <row amount> <max value> <min value>
+    python 3DMAPElitesSquareArchivePlotter.py zeldadungeonswallwaterrooms/ME0/ZeldaDungeonsWallWaterRooms-ME0_MAPElites_log.txt "Plot" "Wall Tile Percent" 10 "Water Tile Percent" 10 "Reachable Rooms" 26 2 1.0 0.0
     
     Note: Min and Max do NOT need to be given, they will be calculated automatically
 """
@@ -30,25 +30,31 @@ try: # Get file itself
 except:
     print("File could not be opened.")
     quit()
-    
+
 try: # Get dimensions and relative sizes
-    dimension_names = [sys.argv[2], sys.argv[4], sys.argv[6]]
-    dimensions = [int(sys.argv[3]), int(sys.argv[5]), int(sys.argv[7])]
+    plot_title = sys.argv[2]
+except:
+    print("Dimensions were not specified!")
+    quit()
+
+try: # Get dimensions and relative sizes
+    dimension_names = [sys.argv[3], sys.argv[5], sys.argv[7]]
+    dimensions = [int(sys.argv[4]), int(sys.argv[6]), int(sys.argv[8])]
 except:
     print("Dimensions were not specified!")
     quit()
 
 
 try: # Get number of rows
-    rows = int(sys.argv[8])
+    rows = int(sys.argv[9])
 except:
     print("The number of rows was not specified!")
     quit()
     
 try: # Get min and max
     calc_minmax = False
-    vmax = float(sys.argv[9])
-    vmin = float(sys.argv[10])
+    vmax = float(sys.argv[10])
+    vmin = float(sys.argv[11])
     print("Min and Max specified as: ("+str(vmin)+", "+str(vmax)+")")
 except: # If unspecified, calculate them
     print("Min and/or Max not specified, will be calculated")
@@ -98,11 +104,11 @@ while end > dimensions[0]:
     fig.delaxes(axs[rows-1, (columns - (rows*columns % end) - 1)])
     end -= 1
 
-fig.suptitle(title)
+fig.suptitle(plot_title)
 
 counter = 0
 for ax, slice in zip(axs.flat, archive_slice_arrays):
-    ax.imshow(slice, extent=[0, dimensions[2], dimensions[1], 0], norm=norm)
+    ax.imshow(slice, extent=[0, dimensions[2], dimensions[1], 0], norm=norm, cmap=cmap)
     ax.set_ylim(bottom=0.0, top=dimensions[1])
     ax.set_xlim(left=0.0, right=dimensions[2])
     ax.set_xlabel(dimension_names[2]) # Add labels
@@ -110,7 +116,8 @@ for ax, slice in zip(axs.flat, archive_slice_arrays):
     ax.set_title(dimension_names[0]+": "+str(counter))
     counter+=1
 
-plt.savefig(dir+title+".png") # Save file
+plt.savefig(dir+title+".png", dpi=1000) # Save file, DPI can be specified, determines resolution of output image
+plt.savefig(dir+title+".pdf", dpi=1000) # Save file, DPI can be specified, determines resolution of output image
 
 
 plt.show() # Show bins in window

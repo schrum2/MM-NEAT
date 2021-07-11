@@ -21,8 +21,8 @@ import edu.southwestern.util.PythonUtil;
  */
 public class TrainAutoEncoderProcess extends Comm {
 	
-	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "AutoEncoder" + File.separator;;
-	public static final String AUTOENCODER_PATH = PYTHON_BASE_PATH + "MyAutoencoder.py";
+	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python";
+	public static String autoencoderPath;
 	
 	public String trainingImagesDirectory;
 	public String pthFileName;
@@ -30,6 +30,11 @@ public class TrainAutoEncoderProcess extends Comm {
 	
 	public TrainAutoEncoderProcess(String directoryName, String pthFileName) {
 		PythonUtil.setPythonProgram();
+		if(!Parameters.parameters.booleanParameter("convolutionalAutoencoder")) {
+			autoencoderPath = PYTHON_BASE_PATH + File.separator + "AutoEncoder" + File.separator + "autoencoderInputGenerator.py";
+		} else {
+			autoencoderPath = PYTHON_BASE_PATH + File.separator + "ColorAutoEncoder" + File.separator + "colorAutoencoderInputGenerator.py";
+		}
 		trainingImagesDirectory = directoryName;
 		this.pthFileName = pthFileName;
 	}
@@ -78,32 +83,36 @@ public class TrainAutoEncoderProcess extends Comm {
 	 * saves the results to "test.pth".
 	 */
 	public void launchTrainingScript() {
-		if(!(new File(PythonUtil.PYTHON_EXECUTABLE).exists())) {
-			throw new RuntimeException("Before launching this program, you need to place the path to your "+
-									   "Python executable in my_python_path.txt within the main MM-NEAT directory." + PythonUtil.PYTHON_EXECUTABLE);
-		}
-
+		PythonUtil.checkPython();
 		// Run program with model architecture and weights specified as parameters
-		ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, PYTHON_BASE_PATH + "MyAutoencoder.py", trainingImagesDirectory, pthFileName);
-		builder.redirectError(Redirect.INHERIT); // Standard error will print to console
-		try {
-			System.out.println(builder.command());
-			this.process = builder.start();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(!Parameters.parameters.booleanParameter("convolutionalAutoencoder")) {
+			ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, PYTHON_BASE_PATH + File.separator + "MyAutoencoder.py", trainingImagesDirectory, pthFileName);
+			builder.redirectError(Redirect.INHERIT); // Standard error will print to console
+			try {
+				System.out.println(builder.command());
+				this.process = builder.start();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			ProcessBuilder builder = new ProcessBuilder(PythonUtil.PYTHON_EXECUTABLE, PYTHON_BASE_PATH +  File.separator + "ColorAutoEncoder" + File.separator + "ColorConvolutionalAutoencoderWithCUDA.py", trainingImagesDirectory, pthFileName);
+			builder.redirectError(Redirect.INHERIT); // Standard error will print to console
+			try {
+				System.out.println(builder.command());
+				this.process = builder.start();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
-
 	
 	public static void main(String[] args) {
 		//TRAINING_IMAGES_DIRECTORY = PYTHON_BASE_PATH + "test.pth";
 		
-		Parameters.initializeParameterCollections(new String[] {"blackAndWhitePicbreeder:true"});
+		Parameters.initializeParameterCollections(new String[] {"blackAndWhitePicbreeder:false", "convolutionalAutoencoder:true"});
 		PythonUtil.PYTHON_EXECUTABLE = "C:\\ProgramData\\Anaconda3\\python.exe";
 		
-		TrainAutoEncoderProcess p = new TrainAutoEncoderProcess("parentDir\\PicbreederTargetTrainingSet", "parentDir\\test.pth");
-		p.start();
-		
-	} 
-
+		TrainAutoEncoderProcess p = new TrainAutoEncoderProcess("src\\main\\python\\ColorAutoEncoder\\ColorTrainingSet", "src\\main\\python\\ColorAutoEncoder\\test3.pth");
+		p.start();		
+	}
 }

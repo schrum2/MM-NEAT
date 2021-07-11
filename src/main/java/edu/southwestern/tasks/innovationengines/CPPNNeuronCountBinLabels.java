@@ -2,20 +2,17 @@ package edu.southwestern.tasks.innovationengines;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
 
-public class CPPNNeuronCountBinLabels implements BinLabels{
+public class CPPNNeuronCountBinLabels extends BaseBinLabels{
 	List<String> labels = null;
 	public static final int BIN_INDEX_NODES = 0;
 	
-	public static final int MIN_NUM_NEURONS = 5;
-
-	public CPPNNeuronCountBinLabels() {
-		CPPNComplexityBinLabels.maxNumNeurons = Parameters.parameters.integerParameter("maxNumNeurons");
-	}
+	public static final int MIN_NUM_NEURONS = 7;
 	
 	/**
 	 * Creates the bin labels (coordinates corresponding
@@ -26,11 +23,11 @@ public class CPPNNeuronCountBinLabels implements BinLabels{
 	@Override
 	public List<String> binLabels() {
 		if(labels ==  null) {
-			int size = (CPPNComplexityBinLabels.maxNumNeurons - MIN_NUM_NEURONS + 1);
+			int size = (Parameters.parameters.integerParameter("maxNumNeurons") - MIN_NUM_NEURONS + 1);
 			System.out.println("Archive Size: "+size);
 			labels = new ArrayList<String>(size);
 			int count = 0;
-			for(int j = MIN_NUM_NEURONS; j <= CPPNComplexityBinLabels.maxNumNeurons; j++) {
+			for(int j = MIN_NUM_NEURONS; j <= Parameters.parameters.integerParameter("maxNumNeurons"); j++) {
 				labels.add("Neurons" + j);
 				count++;
 
@@ -61,6 +58,13 @@ public class CPPNNeuronCountBinLabels implements BinLabels{
 	
 	@Override
 	public int[] dimensionSizes() {
-		return new int[] {CPPNComplexityBinLabels.maxNumNeurons - MIN_NUM_NEURONS + 1};
+		return new int[] {Parameters.parameters.integerParameter("maxNumNeurons") - MIN_NUM_NEURONS + 1};
+	}
+
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int nodes = (int) keys.get("Nodes");
+		int nodesIndex = Math.min(nodes, Parameters.parameters.integerParameter("maxNumNeurons"));
+		return new int[] {nodesIndex};
 	}
 }

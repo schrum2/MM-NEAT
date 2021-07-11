@@ -57,14 +57,17 @@ public class MarioGANUtil {
 		for(int i = 0; i < latentVector.length; i+=chunk_length){
 			double[] chunk = Arrays.copyOfRange(latentVector, i, i+chunk_length);
 			// Generate a level from the vector
-			// Brackets required since generator.py expects of list of multiple levels, though only one is being sent here
-			try {
-				GANProcess.getGANProcess().commSend("[" + Arrays.toString(chunk) + "]");
-			} catch (IOException e) {
-				e.printStackTrace();
-				System.exit(1); // Cannot continue without the GAN process
+			String oneLevelChunk;
+			synchronized(GANProcess.getGANProcess()) { // The received message must correspond to the sent message. No interruptions
+				// Brackets required since generator.py expects of list of multiple levels, though only one is being sent here
+				try {
+					GANProcess.getGANProcess().commSend("[" + Arrays.toString(chunk) + "]");
+				} catch (IOException e) {
+					e.printStackTrace();
+					System.exit(1); // Cannot continue without the GAN process
+				}
+				oneLevelChunk = GANProcess.getGANProcess().commRecv(); // Response to command just sent
 			}
-			String oneLevelChunk = GANProcess.getGANProcess().commRecv(); // Response to command just sent
 			levelString = levelString + ", " + oneLevelChunk;  
 		}
 		// These two lines remove the , from the first append to an empty string

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import edu.southwestern.evolution.mapelites.BinLabels;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 
 /**
  * Basic abstract binning scheme with a range 
@@ -17,7 +17,7 @@ import edu.southwestern.evolution.mapelites.BinLabels;
  * @author Maxx Batterton
  *
  */
-public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
+public abstract class MultiDimensionalRealValuedBinLabels extends BaseBinLabels {
 
 	protected static final boolean EXTRA_LOGGING = false;
 	
@@ -96,8 +96,11 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 	public int oneDimensionalIndex(int[] multi) {
 		if (EXTRA_LOGGING) System.out.println("Multi-dimensional array: "+Arrays.toString(multi));
 		int index = 0;
+//		for (int i = 0; i < numDimensions; i++) {
+//			index += multi[i] * Math.pow(binsPerDimension, i); // get the 1D index of a bin
+//		}
 		for (int i = 0; i < numDimensions; i++) {
-			index += multi[i] * Math.pow(binsPerDimension, i); // get the 1D index of a bin
+			index += multi[i] * Math.pow(binsPerDimension, ((numDimensions-1)-i)); // get the 1D index of a bin
 		}
 		if (EXTRA_LOGGING) System.out.println("One dimensional index: "+index);
 		return index;
@@ -115,21 +118,21 @@ public abstract class MultiDimensionalRealValuedBinLabels implements BinLabels {
 		int[] dbc = new int[numDimensions];
 		for (int i = 0; i < numDimensions; i++) {
 			// Change to assertions eventually
-			if (behaviorCharacterization[i] > maxPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " exceeds maximum value specified ("+maxPossibleValue+")"); 
-			if (behaviorCharacterization[i] < minPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " is below minimum value specified ("+minPossibleValue+")"); 
+			if (this instanceof KLDivergenceBinLabels) {
+				if (behaviorCharacterization[i] > maxPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " exceeds maximum KL Divergence value specified ("+maxPossibleValue+"), the \"klDivMaxValue\" parameter should be increased above this value"); 
+				if (behaviorCharacterization[i] < minPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " is below minimum value specified ("+minPossibleValue+"), this should not be possible."); 
+			} else {
+				if (behaviorCharacterization[i] > maxPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " exceeds maximum value specified ("+maxPossibleValue+")"); 
+				if (behaviorCharacterization[i] < minPossibleValue) throw new IllegalStateException(behaviorCharacterization[i]+ " is below minimum value specified ("+minPossibleValue+")"); 
+			}
 			double scaledValue = (behaviorCharacterization[i]-minPossibleValue) / (maxPossibleValue-minPossibleValue);
 			if (EXTRA_LOGGING) System.out.println("scaledValue = (" + behaviorCharacterization[i] + " - " + minPossibleValue + ") / ("+ (maxPossibleValue-minPossibleValue) +") = "+scaledValue);
 			dbc[i] = (int) Math.floor(scaledValue * binsPerDimension);
 			if (EXTRA_LOGGING) System.out.println("binsPerDimension = " + binsPerDimension);
-			if (dbc[i] == binsPerDimension) {
-				dbc[i]--;
-			}
+			if (dbc[i] == binsPerDimension) { dbc[i]--;	}
 		}
 		if (EXTRA_LOGGING) System.out.println("Discretizing \""+Arrays.toString(behaviorCharacterization)+"\" to bin \""+Arrays.toString(dbc)+"\"");
 		return dbc;
 	}
-	
-	
-	// Behavior characterization depends on the specific binning scheme
-	// public static double[] behaviorCharacterization(...);
+
 }

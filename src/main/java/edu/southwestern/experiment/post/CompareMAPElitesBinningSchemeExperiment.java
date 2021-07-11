@@ -32,7 +32,8 @@ import wox.serial.Easy;
  * Experiment for comparing different MAP Elites 
  * binning schemes post-experiment in order to see 
  * how well a scheme actually does at filling an 
- * archive.
+ * archive. Be careful when using multi-threading,
+ * see comment on line 83
  * 
  * @author Maxx Batterton
  */
@@ -79,7 +80,12 @@ public class CompareMAPElitesBinningSchemeExperiment<T> implements Experiment {
         LonerTask task = (LonerTask) MMNEAT.task;
         String[] directoryFiles = new File(dir).list(filter);
     	if(Parameters.parameters.booleanParameter("parallelEvaluations")) {
-    		
+    		/*
+    		 * WARNING: Some binning schemes and tasks have global variables that are
+    		 * passed around, and multi-threading will mess up these variables and 
+    		 * invalidate data, make sure the task and binning schemes do not use
+    		 * globals, or use this without multi-threading.
+    		 */
     		ExecutorService poolExecutor = Executors.newFixedThreadPool(Parameters.parameters.integerParameter("threads"));
     		ArrayList<Future<Score<T>>> futures = new ArrayList<Future<Score<T>>>(directoryFiles.length);
 			

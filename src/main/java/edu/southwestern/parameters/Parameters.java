@@ -347,9 +347,12 @@ public class Parameters {
 		integerOptions.add("noveltyBinAmount", -1, "The number of bins that exist along the dimension for the Novelty binning scheme.");
 		integerOptions.add("solutionVectorSlices", 2, "The amount of slices to cut a solution vector into in a MAP Elites instance"); 
 		integerOptions.add("latentPartitionBinDimension", -1, "Bins in each dimension for LatentVariablePartitionSum");
-		integerOptions.add("numReconstructionLossBins", 10, "Divide 1 by this number to get the number of bins for loss.");
+		integerOptions.add("numReconstructionLossBins", 32, "Divide 1 by this number to get the number of bins for loss.");
 		integerOptions.add("randomInitialMutationChances", 0, "Determines the number of initial images in the iteration0 folder.");
-		integerOptions.add("scaleDivider", 5, "Determines by how much to divide the scale value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
+		integerOptions.add("numScaleIntervals", 3, "Determines by how much to divide the scale value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
+		integerOptions.add("numRotationIntervals", 3, "Determines by how much to divide the rotation value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
+		integerOptions.add("numTranslationIntervals", 3, "Determines by how much to divide the translation value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
+		integerOptions.add("marioStatBasedMEBinIntervals", 10, "Number of bins in Mario tasks related to Decoration, Negative Space, Leniency, and Distinct Chunks.");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -761,12 +764,16 @@ public class Parameters {
 		booleanOptions.add("useRMSEImageMatchFitness", false, "Use RMSE as the fitness calculation if true.");
 		booleanOptions.add("trackPseudoArchive", false, "Option to track the progress of an objective function with a binning scheme.");
 		booleanOptions.add("trainingAutoEncoder", false, "If we are training the autoencoder");
+		booleanOptions.add("trainInitialAutoEncoder", false, "If an auto-encoder is trained on population BEFORE adding to MAP Elites archive");
 		booleanOptions.add("AnimateRotation", true, "If AnimationBreeder is going to animate using rotation");
 		booleanOptions.add("AnimateScale", true, "If AnimationBreeder is going to animate using scale.");
 		booleanOptions.add("AnimateDeltaX", true, "If AnimationBreeder is going to translate images horizontally.");
 		booleanOptions.add("AnimateDeltaY", true, "If Animationbreeder is going to translate images vertically");
 		booleanOptions.add("dynamicAutoencoderIntervals", false, "If true the intervals in the archive change every time we train a new autoencoder.");
 		booleanOptions.add("deleteOldArchives", true, "If true, delete the old archives to save space, otherwise the archive fills to fast and we run out of storage.");
+		booleanOptions.add("convolutionalAutoencoder", false, "Determines whether to use the regular autoencoder or the convolutional autoencoder.");
+		booleanOptions.add("resampleBadCMAMEGenomes", false, "If genome out of bounds, then generate a new one without counting toward number of generated solutions (may loop forever!).");
+		booleanOptions.add("minNeuronFitness", false, "Whether or not ImageMatchTask tries to minimize the number of neurons.");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
@@ -846,9 +853,10 @@ public class Parameters {
 		doubleOptions.add("maxScale", 5.0, "The maximumm scale value for Picbreeder images to be scaled to.");
 		doubleOptions.add("picbreederImageScale", 1.0, "The scale factorfor Picbreeder to use when it is not using EnhnacedCPPNPictureGenotype.");
 		doubleOptions.add("picbreederImageRotation", 0.0, "The rotation factor for Picbreeder to use when it is not using EnhancedCPPNPictureGenotype.");
-		doubleOptions.add("imageCenterTranslationRange", 10.0, "The scale of the box (in other words, the range of deltaX and deltaY for a given Picbreeder image)");
-		doubleOptions.add("picbreederImageTranslationX", 0.0, "Maximum possible range (negative to positive) of the X value of the box.");
-		doubleOptions.add("picbreederImageTranslationY", 0.0, "Maximum possible range (negative to positive) of the Y value of the box.");
+		doubleOptions.add("CMAMESigma", 0.5, "The starting standard deviation for a CMA-ME run.");
+		doubleOptions.add("imageCenterTranslationRange", 10.0, "The scale of the box (in other words, the range of deltaX and deltaY for a given Picbreeder image, if enhanced genotype is used)");
+		doubleOptions.add("picbreederImageTranslationX", 0.0, "Fixed horizontal shift for Picbreeder images.");
+		doubleOptions.add("picbreederImageTranslationY", 0.0, "Fixed vertical shift for Picbreeder images");
 		doubleOptions.add("minAutoencoderLoss", 0.0, "Minimum reconstruction loss across the whole archive.");
 		doubleOptions.add("maxAutoencoderLoss", 1.0, "Maximum reconstruction loss across the whole archive.");
 		
@@ -896,17 +904,15 @@ public class Parameters {
 		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
 		stringOptions.add("LodeRunnerGANModel", "LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
 		stringOptions.add("MegaManGANModel", "MegaManOneGANWith12Tiles_5_Epoch5000.pth", "File name of GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANHorizontalModel", "MegaManSevenGANHorizontalWith12TileTypes_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("mostRecentAutoEncoder", "", "The full path to the most recently trained autoencoder for PictureTargetTask.");
 		
-		// See if it is safe to remove/delete MegaManGANVerticalModel
-		stringOptions.add("MegaManGANVerticalModel", "MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANUpModel", "MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANDownModel", "MegaManSevenGANDownWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANUpperLeftModel", "MegaManSevenGANUpperLeftCornerWith12TileTypes_5_Epoch5000.pth", "File name of Upper Left GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANUpperRightModel", "MegaManSevenGANUpperRightCornerWith12TileTypes_5_Epoch5000.pth", "File name of Upper Right GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANLowerLeftModel", "MegaManSevenGANLowerLeftCornerWith12TileTypes_5_Epoch5000.pth", "File name of Lower Left GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANLowerRightModel", "MegaManSevenGANLowerRightCornerWith12TileTypes_5_Epoch5000.pth", "File name of Lower Right GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANHorizontalModel", "MegaManSevenGANHorizontalNoWater9_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpModel", "MegaManSevenGANUpNoWater9_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANDownModel", "MegaManSevenGANDownNoWater9_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpperLeftModel", "MegaManSevenGANUpperLeftCornerNoWater9_5_Epoch5000.pth", "File name of Upper Left GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpperRightModel", "MegaManSevenGANUpperRightCornerNoWater9_5_Epoch5000.pth", "File name of Upper Right GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANLowerLeftModel", "MegaManSevenGANLowerLeftCornerNoWater9_5_Epoch5000.pth", "File name of Lower Left GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANLowerRightModel", "MegaManSevenGANLowerRightCornerNoWater9_5_Epoch5000.pth", "File name of Lower Right GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("mapElitesKLDivLevel1", "", "File name of the first level to compare to when using KL Divergence and MAPElites");
 		stringOptions.add("mapElitesKLDivLevel2", "", "File name of the second level to compare to when using KL Divergence and MAPElites");
 		stringOptions.add("mapElitesArchiveFile", "", "File name of MAPElites level we want to look at from an experiment");

@@ -110,7 +110,7 @@ if __name__ == '__main__':
         lv = numpy.array(json.loads(line))
         latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) #torch.from_numpy(lv)# torch.FloatTensor( torch.from_numpy(lv) )
         #latent_vector = numpy.array(json.loads(line))
-        levels = generator(Variable(latent_vector, volatile=True))
+        levels = generator(latent_vector)
         im = levels.data.cpu().numpy()
         im = im[:,:,:out_height,:out_width] #Cut off rest to fit the 14x28 tile dimensions
         im = numpy.argmax( im, axis = 1)
@@ -140,11 +140,11 @@ if __name__ == '__main__':
             line = sys.stdin.readline() # This NEXT line should be the latent vector
             lv = numpy.array(json.loads(line))
             latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) 
-            levels = generator(Variable(latent_vector, volatile=True),Variable(classOneHot, volatile=True))
+            levels = generator(latent_vector, classOneHot)
         else: # Standard GAN. Input is just latent vector
             lv = numpy.array(json.loads(line))
             latent_vector = torch.FloatTensor( lv ).view(batchSize, nz, 1, 1) 
-            levels = generator(Variable(latent_vector, volatile=True))
+            levels = generator(latent_vector)
 
         #levels.data = levels.data[:,:,:14,:28] #Cut of rest to fit the 14x28 tile dimensions
 
