@@ -63,8 +63,8 @@ def create_optimizer(algorithm, dim, seed):
     emitter_bounds = [] 
     for i in range(dim):
         emitter_bounds.append((-1, 1)) # Bound each value in solution between -1 and 1
-    batch_size = 1 # Since we do one at a time there is only 1 in a "batch"
-    num_emitters = 1 
+    batch_size = 37 # Since we do one at a time there is only 1 in a "batch"
+    num_emitters = 5 
     # https://docs.pyribs.org/en/stable/api/ribs.archives.GridArchive.html#ribs.archives.GridArchive
     archive = GridArchive((100, 100), bounds, seed=seed)
 
