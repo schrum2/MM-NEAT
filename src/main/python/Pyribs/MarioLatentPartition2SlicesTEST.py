@@ -141,7 +141,7 @@ def save_heatmap(archive, heatmap_path, min_max):
 ### MAIN
 
 def pyribs_main():
-    algorithm = "cma_me_imp" # "map_elites" # Algorithm
+    algorithm = "map_elites" # "cma_me_imp" # "map_elites" # Algorithm
     dim=10 # Length of solution vector to be expected
     iterations = 5000 # Total number of iterations
     outdir=f"mariolatentpartition2slices_pyribs_{algorithm}" # Output directory
@@ -204,7 +204,7 @@ def pyribs_main():
                       f"{metrics['Archive Coverage']['y'][-1]/100:.3f}% "
                       f"QD Score: {metrics['QD Score']['y'][-1]:.3f}") # Console output
                 
-                save_heatmap(archive, str(outdir / f"{name}_heatmap_{itr:05d}.png"), [0, 400])
+                save_heatmap(archive, str(outdir / f"{name}_heatmap_{itr:05d}.png"), [0, max_fitness])
 
 
 if __name__ == '__main__':
