@@ -116,7 +116,8 @@ for ax, slice in zip(axs.flat, archive_slice_arrays):
     ax.set_title(dimension_names[0]+": "+str(counter))
     counter+=1
 
-plt.savefig(dir+title+".png") # Save file
+plt.savefig(dir+title+".png", dpi=1000) # Save file, DPI can be specified, determines resolution of output image
+plt.savefig(dir+title+".pdf", dpi=1000) # Save file, DPI can be specified, determines resolution of output image
 
 
 plt.show() # Show bins in window

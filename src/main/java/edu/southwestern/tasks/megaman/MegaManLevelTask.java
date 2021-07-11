@@ -28,6 +28,7 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.export.JsonLevelGenerationTask;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
 import edu.southwestern.util.MiscUtil;
@@ -45,7 +46,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  *
  *
  */
-public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
+public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> implements JsonLevelGenerationTask<T>{
 	private int numFitnessFunctions = 0; 
 	private static final int NUM_OTHER_SCORES = 12;
 
@@ -108,18 +109,26 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String,Object> behaviorCharacteristics) {
 		MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
+		// Passing this parameter inside the hash map instead of as a normal parameter is confusing, 
+		// but allows this class to conform to the JsonLevelGenerationTask easily.
+		behaviorCharacteristics.put("segmentTracker",segmentCount); 
 		List<List<Integer>> level = getMegaManLevelListRepresentationFromGenotype(individual, segmentCount); //gets a level 
-		return evaluateOneLevel(level, individual, segmentCount, behaviorCharacteristics);
+		// 0 represents the ignored pseudo-random seed
+		return evaluateOneLevel(level, 0, individual, behaviorCharacteristics);
 	}
 
 	/**
 	 * Evaluate the given List of Lists of Integers representation of the level
 	 * @param level List of lists of integers (each represents a tile)
-	 * @param genotypeId ID of genotype that generated the level
+	 * @param psuedoRandomSeed Ignored
+	 * @param individual Genotype, but mainly used for the ID
+	 * @param behaviorMap Map that will store behavior information, but also MUST contain a MegaManTrackSegmentType
+	 *                    as a sneakily passed parameter with the key "segmentTracker"
 	 * @return Pair of fitness and other scores
 	 */
-	@SuppressWarnings("unchecked")
-	private Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, Genotype<T> individual, MegaManTrackSegmentType segmentCount, HashMap<String,Object> behaviorCharacteristics) {
+	public Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, Genotype<T> individual, HashMap<String,Object> behaviorCharacteristics) {
+		if(!behaviorCharacteristics.containsKey("segmentTracker")) behaviorCharacteristics.put("segmentTracker", new MegaManTrackSegmentType());
+		MegaManTrackSegmentType segmentCount = (MegaManTrackSegmentType) behaviorCharacteristics.get("segmentTracker");
 		long genotypeId = individual.getId();
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array 
 		Quad<HashSet<MegaManState>, ArrayList<MegaManAction>, MegaManState, Double> aStarResults = MegaManLevelAnalysisUtil.performAStarSearchAndCalculateAStarDistance(level);
@@ -307,6 +316,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			behaviorCharacteristics.put("Level", level); // Used to calculate Level Novelty
 			// Takes some effort to compute, so only compute if needed.
 			if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
+				@SuppressWarnings("unchecked")
 				ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
 				double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
 				behaviorCharacteristics.put("Solution Vector", latentVector);
@@ -320,6 +330,7 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> {
 			
 			if(CommonConstants.netio) {
 				System.out.println("Save archive images");
+				@SuppressWarnings("unchecked")
 				Archive<T> archive = MMNEAT.getArchive();
 				List<String> binLabels = archive.getBinMapping().binLabels();
 

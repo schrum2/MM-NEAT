@@ -12,6 +12,7 @@ import java.util.Scanner;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.evolution.mapelites.emitters.Emitter;
 import edu.southwestern.evolution.mapelites.emitters.ImprovementEmitter;
 import edu.southwestern.evolution.mapelites.emitters.OptimizingEmitter;
@@ -111,9 +112,10 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 		// rawIndividual may not be in bounds of BoundedRealValuedGenotype
 		double[] rawIndividual = thisEmitter.sampleSingle(); // sample an individual from current emitter
 		// individual will be bounded in each variable index
-		Genotype<ArrayList<Double>> individual = new BoundedRealValuedGenotype(rawIndividual);
+		Genotype<ArrayList<Double>> individual = MMNEAT.genotype instanceof BoundedRealValuedGenotype ? new BoundedRealValuedGenotype(rawIndividual) : new RealValuedGenotype(rawIndividual);
 		
-		// Get bounded values from genotype to get passed to emitters down below
+		// Get bounded values from genotype to get passed to emitters down below.
+		// If resampleBadCMAMEGenomes is true, then the initial values will never exceed bounds, and thus rawIndividual will not change
 		rawIndividual = ArrayUtil.doubleArrayFromList(individual.getPhenotype());
 		
 		Score<ArrayList<Double>> individualScore = task.evaluate(individual); // evaluate score for individual
@@ -187,6 +189,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	 * results of each lambda run, to be able to see
 	 * what lambda works the best.
 	 */
+	@SuppressWarnings("unused")
 	private static void runSeveralCMAME() throws NoSuchMethodException, IOException {
 		new File(FOLDER+"/").mkdir();
 		severalLog.createNewFile();

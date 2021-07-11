@@ -3,6 +3,7 @@ package edu.southwestern.evolution.mapelites.emitters;
 import java.util.ArrayList;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.CMAME;
@@ -224,6 +225,12 @@ public abstract class Emitter implements Comparable<Emitter> {
 			resetSample();
 		}
 		double[] newIndividual = sampledPopulation[populationCounter];
+		// Infeasible solutions are not evaluated, and can thus be replaced without counting toward evaluation cost
+		if(Parameters.parameters.booleanParameter("resampleBadCMAMEGenomes")) {
+			while(!BoundedRealValuedGenotype.isBounded(newIndividual)) { // Try to replace as long as outside bounds
+				newIndividual = CMAESInstance.resampleSingle(populationCounter);
+			}
+		}
 		populationCounter++;
 		return newIndividual; 
 	}

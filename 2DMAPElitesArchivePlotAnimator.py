@@ -156,7 +156,7 @@ for iteration in range(len(numeric_lines)): # If will log
                 
                 for index in (range(5)): # How long history is drawn
                     adjusted_index = len(x_values) - index
-                    plt.plot(x_values[adjusted_index:adjusted_index+2], y_values[adjusted_index:adjusted_index+2], color=emitter_colors[emitter_counter%len(emitter_colors)], alpha=(((-index+5)/3)))
+                    plt.plot(x_values[adjusted_index:adjusted_index+2], y_values[adjusted_index:adjusted_index+2], color=emitter_colors[emitter_counter%len(emitter_colors)], alpha=(((-index+5)/5)))
                 
                 if len(x_values) > 0: # Final connection
                     plt.plot([x_values[-1], emitter_means[iteration][e_step][1]], [y_values[-1], emitter_means[iteration][e_step][0]], color=emitter_colors[emitter_counter%len(emitter_colors)], alpha=1)
@@ -166,7 +166,7 @@ for iteration in range(len(numeric_lines)): # If will log
             
         plt.imshow(bins, cmap=cmap, norm=norm, extent=[0, dimensions[1], dimensions[0], 0]) # Create image
         
-        plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png")
+        plt.savefig(dir+"archive_animated/"+title+(str(iteration).zfill(len(str(len(numeric_lines)))))+".png") # DPI can be specified, determines resolution of output images
         plt.clf() # Close plots to prevent memory issue
 
 print("Finished outputting images, creating GIF...")

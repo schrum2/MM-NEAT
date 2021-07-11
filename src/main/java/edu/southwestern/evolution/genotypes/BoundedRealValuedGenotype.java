@@ -121,6 +121,18 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 		return true;
 	}
 
+	public static final boolean isBounded(double[] genes) {
+		for (int i = 0; i < genes.length; i++) {
+			double x = genes[i];
+			if (x < MMNEAT.getLowerBounds()[i]) {
+				return false;
+			} else if (x > MMNEAT.getUpperBounds()[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * Gets a new instance of a BoundedRealValuedGenotype with the same bounds
 	 * @return Returns a new instance of a BoundedRealValuedGenotype with the same bounds

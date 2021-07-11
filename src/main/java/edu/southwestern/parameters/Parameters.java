@@ -772,6 +772,7 @@ public class Parameters {
 		booleanOptions.add("dynamicAutoencoderIntervals", false, "If true the intervals in the archive change every time we train a new autoencoder.");
 		booleanOptions.add("deleteOldArchives", true, "If true, delete the old archives to save space, otherwise the archive fills to fast and we run out of storage.");
 		booleanOptions.add("convolutionalAutoencoder", false, "Determines whether to use the regular autoencoder or the convolutional autoencoder.");
+		booleanOptions.add("resampleBadCMAMEGenomes", false, "If genome out of bounds, then generate a new one without counting toward number of generated solutions (may loop forever!).");
 		booleanOptions.add("minNeuronFitness", false, "Whether or not ImageMatchTask tries to minimize the number of neurons.");
 		
 		// Double parameters
@@ -903,17 +904,15 @@ public class Parameters {
 		stringOptions.add("zeldaType", "original", "Specify which type of dungeon to load: original, generated, tutorial");
 		stringOptions.add("LodeRunnerGANModel", "LodeRunnerAllGround100LevelsEpoch200000_10_7.pth", "File name of GAN model to use for LodeRunner GAN level evolution");
 		stringOptions.add("MegaManGANModel", "MegaManOneGANWith12Tiles_5_Epoch5000.pth", "File name of GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANHorizontalModel", "MegaManSevenGANHorizontalWith12TileTypes_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("mostRecentAutoEncoder", "", "The full path to the most recently trained autoencoder for PictureTargetTask.");
 		
-		// See if it is safe to remove/delete MegaManGANVerticalModel
-		stringOptions.add("MegaManGANVerticalModel", "MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANUpModel", "MegaManSevenGANUpWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANDownModel", "MegaManSevenGANDownWith12TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANUpperLeftModel", "MegaManSevenGANUpperLeftCornerWith12TileTypes_5_Epoch5000.pth", "File name of Upper Left GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANUpperRightModel", "MegaManSevenGANUpperRightCornerWith12TileTypes_5_Epoch5000.pth", "File name of Upper Right GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANLowerLeftModel", "MegaManSevenGANLowerLeftCornerWith12TileTypes_5_Epoch5000.pth", "File name of Lower Left GAN model to use for MegaMan GAN level evolution");
-		stringOptions.add("MegaManGANLowerRightModel", "MegaManSevenGANLowerRightCornerWith12TileTypes_5_Epoch5000.pth", "File name of Lower Right GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANHorizontalModel", "MegaManSevenGANHorizontalNoWater9_5_Epoch5000.pth", "File name of Horizontal GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpModel", "MegaManSevenGANUpNoWater9_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANDownModel", "MegaManSevenGANDownNoWater9_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpperLeftModel", "MegaManSevenGANUpperLeftCornerNoWater9_5_Epoch5000.pth", "File name of Upper Left GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANUpperRightModel", "MegaManSevenGANUpperRightCornerNoWater9_5_Epoch5000.pth", "File name of Upper Right GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANLowerLeftModel", "MegaManSevenGANLowerLeftCornerNoWater9_5_Epoch5000.pth", "File name of Lower Left GAN model to use for MegaMan GAN level evolution");
+		stringOptions.add("MegaManGANLowerRightModel", "MegaManSevenGANLowerRightCornerNoWater9_5_Epoch5000.pth", "File name of Lower Right GAN model to use for MegaMan GAN level evolution");
 		stringOptions.add("mapElitesKLDivLevel1", "", "File name of the first level to compare to when using KL Divergence and MAPElites");
 		stringOptions.add("mapElitesKLDivLevel2", "", "File name of the second level to compare to when using KL Divergence and MAPElites");
 		stringOptions.add("mapElitesArchiveFile", "", "File name of MAPElites level we want to look at from an experiment");
