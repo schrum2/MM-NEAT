@@ -90,6 +90,7 @@ public class PictureTargetFitnessTroubleshoot {
 		
 	    double percentMatchingPixels = GraphicsUtil.percentMatchingPixels(observed, target);
 	    System.out.println("Percentage of pixels with identical RGB values = " + percentMatchingPixels);
+	    System.out.println("Total pixels: " + (observed.getWidth() * observed.getHeight()));
 	    
 		return new Triple<>(differenceWoolley, differenceRMSE,errorDiff);
 	}
@@ -114,7 +115,19 @@ public class PictureTargetFitnessTroubleshoot {
 		
 		//BufferedImage skull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull64.jpg"));
 		BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull.jpg"));
+		//BufferedImage targetSkull = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + "skull28.jpg"));
+
+		// Determines whether or not to shrink the images
+		boolean shrink = false;
+		if(shrink) {
+			// Scaling the images before the percent matching pixels calculation
+			Image temp = null;
+			temp = skull.getScaledInstance(28, 28, java.awt.Image.SCALE_DEFAULT);
+			skull = GraphicsUtil.convertToBufferedImage(temp);
 		
+			temp = targetSkull.getScaledInstance(28, 28, java.awt.Image.SCALE_DEFAULT);
+			targetSkull = GraphicsUtil.convertToBufferedImage(temp);
+		}
 		
 		//ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + filename));
 		Triple<BufferedImage,BufferedImage,BufferedImage> differenceRGB = heatmapConstruction(skull, targetSkull);
@@ -127,7 +140,7 @@ public class PictureTargetFitnessTroubleshoot {
 
 		img = rmse.getScaledInstance(DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH, java.awt.Image.SCALE_DEFAULT);		
 	    BufferedImage largeRMSE = GraphicsUtil.convertToBufferedImage(img);
-
+	    
 		img = diff.getScaledInstance(DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH, java.awt.Image.SCALE_DEFAULT);		
 	    BufferedImage largeDiff = GraphicsUtil.convertToBufferedImage(img);
 
@@ -137,13 +150,13 @@ public class PictureTargetFitnessTroubleshoot {
 		img = targetSkull.getScaledInstance(DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH, java.awt.Image.SCALE_DEFAULT);		
 	    BufferedImage largeTargetSkull = GraphicsUtil.convertToBufferedImage(img);
 	    
-	   // img = skull.getScaledInstance(DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH, java.awt.Image.SCALE_DEFAULT);
-	   // BufferedImage percentageMatchingPixels = GraphicsUtil.convertToBufferedImage(img);
+	    img = skull.getScaledInstance(DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH, java.awt.Image.SCALE_DEFAULT);
+	    BufferedImage percentageMatchingPixels = GraphicsUtil.convertToBufferedImage(img);
 	    
 		
 //		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE, ArrayUtil.doubleOnes(network.numInputs()), 0, SCALE, ROTATION);
 //		DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", SIZE, SIZE);
-
+	    
 		DrawingPanel original = GraphicsUtil.drawImage(largeSkull, "Original Image", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
 		DrawingPanel target = GraphicsUtil.drawImage(largeTargetSkull, "Target Image", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
 
@@ -151,7 +164,27 @@ public class PictureTargetFitnessTroubleshoot {
 		DrawingPanel heatmapWoolley = GraphicsUtil.drawImage(largeWoolley, "Difference in brightness at each pixel (Woolley)", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
 		DrawingPanel heatmapRMSE = GraphicsUtil.drawImage(largeRMSE, "Difference in brightness at each pixel (RMSE)", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
 		DrawingPanel heatmapDiff = GraphicsUtil.drawImage(largeDiff, "Difference in brightness at each pixel (RMSE)", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
-		heatmapDiff.save("betterFitness.jpg");
+		
+		if(shrink) {
+			img = woolley.getScaledInstance(28, 28, java.awt.Image.SCALE_DEFAULT);		
+		    BufferedImage smallWoolley = GraphicsUtil.convertToBufferedImage(img);
+		    
+		    img = rmse.getScaledInstance(28, 28, java.awt.Image.SCALE_DEFAULT);		
+		    largeRMSE = GraphicsUtil.convertToBufferedImage(img);
+		    
+		    img = diff.getScaledInstance(28, 28, java.awt.Image.SCALE_DEFAULT);		
+		    largeDiff = GraphicsUtil.convertToBufferedImage(img);
+		    
+			original = GraphicsUtil.drawImage(skull, "Original Image", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
+			target = GraphicsUtil.drawImage(targetSkull, "Target Image", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
+			
+			//DrawingPanel heatmapWoolley = GraphicsUtil.drawImage(largeWoolley, "Difference in brightness at each pixel (Woolley)", 28, 28);
+			heatmapWoolley = GraphicsUtil.drawImage(smallWoolley, "Difference in brightness at each pixel (Woolley)", 28, 28);
+			heatmapRMSE = GraphicsUtil.drawImage(largeRMSE, "Difference in brightness at each pixel (RMSE)", 28, 28);
+			heatmapDiff = GraphicsUtil.drawImage(largeDiff, "Difference in brightness at each pixel (RMSE)", 28, 28);
+		}
+		
+		
 		//DrawingPanel pixelMatching = GraphicsUtil.drawImage(percentageMatchingPixels, "Percent of pixels with identical RGB values", DISPLAY_SIDE_LENGTH, DISPLAY_SIDE_LENGTH);
 		
 		// For test runs
