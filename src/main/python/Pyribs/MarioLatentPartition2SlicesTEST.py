@@ -36,6 +36,7 @@ def sum_halves(sol):
 
     # Calculate BCs.
     copied = sol.copy()
+    copied = np.clip(copied, -1, 1) # Bound values
     bcs = np.concatenate( # numpy functions work on 2D arrays, this is just to keep parity with summing despite the fact we only have 1 in the "batch"
         (
             np.sum(copied[:, :dim // 2], axis=1, keepdims=True),
@@ -141,7 +142,7 @@ def save_heatmap(archive, heatmap_path, min_max):
 ### MAIN
 
 def pyribs_main():
-    algorithm = "map_elites"  #"cma_me_imp" # "map_elites" # Algorithm
+    algorithm = "cma_me_imp" # "map_elites" # Algorithm
     dim=10 # Length of solution vector to be expected
     iterations = 30000 # Total number of iterations
     outdir=f"mariolatentpartition2slices_pyribs_{algorithm}" # Output directory
