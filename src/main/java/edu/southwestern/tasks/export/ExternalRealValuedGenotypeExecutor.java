@@ -13,6 +13,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 
 /**
@@ -67,6 +68,7 @@ public class ExternalRealValuedGenotypeExecutor {
 			}
 			System.out.println("MAP DONE"); // You can check for this string in Python to know when the HashMap is done
 		}
+		GANProcess.terminateGANProcess(); // Kill the Python GAN process that might be running
 		consoleFromPython.close();
 	}
 }
