@@ -170,7 +170,7 @@ def pyribs_main():
     iterations = 541
     
     outdir=f"marioDistinctASAD_pyribs_{algorithm}" # Output directory
-    log_freq=100 # Logging frequency
+    log_freq=50 # Logging frequency
     max_fitness = 500 # depends on number of segments (level chunks)
     name = f"{algorithm}_{dim}" # Name for output images and data
     
