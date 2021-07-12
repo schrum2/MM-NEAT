@@ -51,7 +51,11 @@ def behavior_characterization(data_out):
     #return [distinct, altSpace, altDecoration]
     
     coords = data_out['Bin Coordinates']
-    return [((distinct - 1)%5)*10 + coords[2], ((distinct - 1)%2)*10 + coords[1]]
+    
+    altSpaceIndex = coords[1]
+    altDecIndex = coords[2]
+    
+    return [((distinct - 1)%5)*10 + altDecIndex, (1 - int((distinct - 1)/5))*10 + altSpaceIndex]
 
 def create_optimizer(algorithm, dim, seed):
     """Creates an optimizer based on the algorithm name. (THIS TEXT FROM PYRIBS)
@@ -159,7 +163,12 @@ def save_heatmap(archive, heatmap_path, min_max):
 def pyribs_main():
     algorithm = "cma_me_imp" # "map_elites" # Algorithm
     dim=50 # 10 segments with 5 latent variables each
-    iterations = 100000 # Total number of iterations (change because of batch size?)
+    
+    # For comparison, I want to evaluate 100000 individuals.
+    # With 5 emitters and a batch size of 37, 185 are evaluated per iteration.
+    # 100000 / 185 is 540.5405405405405, so run for 541 iterations
+    iterations = 541
+    
     outdir=f"marioDistinctASAD_pyribs_{algorithm}" # Output directory
     log_freq=100 # Logging frequency
     max_fitness = 500 # depends on number of segments (level chunks)
