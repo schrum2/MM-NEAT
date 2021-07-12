@@ -28,27 +28,33 @@ from ribs.optimizers import Optimizer
 from ribs.visualize import grid_archive_heatmap
 
 ### FUNCTIONS
-def sum_halves(sol):
-    """
-        Calculates the behavior characterization by summing like normal
-    """
-    dim = sol.shape[1] # sol typically has more than one solution, so checks second dim of solution 2D array
 
-    # Calculate BCs.
-    copied = sol.copy()
-    copied = np.clip(copied, -1, 1) # Bound values
-    bcs = np.concatenate( # numpy functions work on 2D arrays, this is just to keep parity with summing despite the fact we only have 1 in the "batch"
-        (
-            np.sum(copied[:, :dim // 2], axis=1, keepdims=True),
-            np.sum(copied[:, dim // 2:], axis=1, keepdims=True),
-        ),
-        axis=1,
-    )
-    return bcs
-
+# Get behavior characterization from dictionary associated with a single solution
+def behavior_characterization(data_out):
+    # For now, assume Distinct ASAD in Mario
+    
+    distinct = float(data_out["Distinct Segments"])
+    #alternating = np.zeros(3)
+    #index = 1
+    #while index < len(data_out["stats"]):
+    #    stats0 = np.array(data_out["stats"][index-1]) 
+    #    stats1 = np.array(data_out["stats"][index])
+    #    alternating = alternating + abs(stats0 - stats1)
+    
+    # Magic numbers
+    #altDecoration = alternating[0]
+    #altSpace = alternating[2]
+        
+    #print("Compare Python {} to Java {}".format([distinct, altSpace, altDecoration],data_out['Bin Coordinates'])
+    
+    # Can't use 3D. Map to 2D
+    #return [distinct, altSpace, altDecoration]
+    
+    coords = data_out['Bin Coordinates']
+    return [((distinct - 1)%5)*10 + coords[2], ((distinct - 1)%2)*10 + coords[1]]
 
 def create_optimizer(algorithm, dim, seed):
-    """Creates an optimizer based on the algorithm name. (THIS TEXT FRM PYRIBS)
+    """Creates an optimizer based on the algorithm name. (THIS TEXT FROM PYRIBS)
     
     Args:
         algorithm (str): Name of the algorithm passed into sphere_main.
@@ -57,8 +63,10 @@ def create_optimizer(algorithm, dim, seed):
     Returns:
         Optimizer: A ribs Optimizer for running the algorithm.
     """
-    max_bound = dim / 2 # max bound for dim size of 10 is -5 to 5 in each dimension
-    bounds = [(-max_bound, max_bound), (-max_bound, max_bound)]
+    
+    # Project the 3D archive into a 2D archive.
+    # A 2 by 5 grid of 10 by 10 cells
+    bounds = [(0, 50), (0, 20)]
     initial_sol = np.zeros(dim) # Inital solution of zeros
     
     emitter_bounds = [] 
@@ -67,7 +75,8 @@ def create_optimizer(algorithm, dim, seed):
     batch_size = 37 # Since we do one at a time there is only 1 in a "batch"
     num_emitters = 5 
     # https://docs.pyribs.org/en/stable/api/ribs.archives.GridArchive.html#ribs.archives.GridArchive
-    archive = GridArchive((100, 100), bounds, seed=seed)
+    # Once again, mapping the 3D archive to 2D for display purposes
+    archive = GridArchive((50, 20), bounds, seed=seed)
 
     # Create emitters. Each emitter needs a different seed, so that they do not all do the same thing.
     emitter_seeds = [None] * num_emitters if seed is None else list(range(seed, seed + num_emitters))
@@ -104,11 +113,11 @@ def create_optimizer(algorithm, dim, seed):
 
 
 # Using the JAR, get the bins and evaluated score from a provided level
-def get_data_from_level(string_level):
-    jar.stdin.write(str(string_level[0].tolist())+ "\n") # Send vector to jar
+def get_data_from_level(one_sol):
+    jar.stdin.write(str(one_sol.tolist())+ "\n") # Send vector to jar
     jar.stdin.flush()
     coords = ""
-    while "[" not in coords:
+    while "[" not in coords: # Some domains produce additional garbage output. Wait for list of archive indices
         coords = jar.stdout.readline().strip()
     data_dict = {}
     exec("data_dict[\"Bin Coordinates\"] = "+coords) # Bin coords are first, and do not have a "____ = " prefix
@@ -120,9 +129,15 @@ def get_data_from_level(string_level):
         except:
             data_dict[s.split(" = ")[0]] = s.split(" = ")[1] # If unable, just send as string
         s = jar.stdout.readline().strip() # Read next line
-    data_dict["stats"] = [data_dict["stats[0]"], data_dict["stats[1]"]] # Put stats into array instead of separated
-    del data_dict["stats[0]"]
-    del data_dict["stats[1]"]
+    data_dict["stats"] = []
+    index = 0
+    while f"stats[{index}]" in data_dict:
+        data_dict["stats"].append(data_dict[f"stats[{index}]"])
+        del data_dict[f"stats[{index}]"]
+        index += 1    
+
+    #print(one_sol, "->", data_dict["binScore"], data_dict["Bin Coordinates"])
+
     return data_dict
 
 
@@ -143,11 +158,11 @@ def save_heatmap(archive, heatmap_path, min_max):
 
 def pyribs_main():
     algorithm = "cma_me_imp" # "map_elites" # Algorithm
-    dim=10 # Length of solution vector to be expected
-    iterations = 30000 # Total number of iterations
-    outdir=f"mariolatentpartition2slices_pyribs_{algorithm}" # Output directory
+    dim=50 # 10 segments with 5 latent variables each
+    iterations = 100000 # Total number of iterations (change because of batch size?)
+    outdir=f"marioDistinctASAD_pyribs_{algorithm}" # Output directory
     log_freq=100 # Logging frequency
-    max_fitness = 120 # depends on number of segments (level chunks)
+    max_fitness = 500 # depends on number of segments (level chunks)
     name = f"{algorithm}_{dim}" # Name for output images and data
     
     outdir = Path(outdir)
@@ -174,17 +189,14 @@ def pyribs_main():
         for itr in range(1, iterations + 1):
             itr_start = time.time()
             sols = optimizer.ask()
-            data_out = get_data_from_level(sols) # Get score (and other data) from jar
-            bcs = sum_halves(sols) # Get bcs
-            """
-                optimizer.tell() takes in two array-likes, one for scores 
-                and one for the behavior characterizations. Since out batch
-                size is only one, this function must be passed a list that
-                only contains a single value, either a score or a bc based
-                on which it is. I messed up the lode runner one because I
-                hadn't embedded either within another array so just make sure!
-            """
-            optimizer.tell([data_out["binScore"]], bcs) # Send optimizer (and archive) array of scores and bcs, however batch size of one means only one of each
+            scores = []
+            bcs = []
+            for s in sols:
+                data_out = get_data_from_level(s) # Get score (and other data) from jar
+                scores.append(data_out["binScore"])
+                bcs.append(behavior_characterization(data_out))
+            
+            optimizer.tell(scores, bcs) # Send optimizer (and archive) array of scores and bcs
             non_logging_time += time.time() - itr_start
             progress() # Progress bar stuff
 
@@ -196,7 +208,7 @@ def pyribs_main():
                     data.to_csv(str(outdir / f"{name}_archive.csv"))
 
                 # Record and display metrics.
-                total_cells = 500 * 500
+                total_cells = 10 * 10 * 10
                 metrics["QD Score"]["x"].append(itr)
                 metrics["QD Score"]["y"].append(data['objective'].sum())
                 metrics["Archive Coverage"]["x"].append(itr)
