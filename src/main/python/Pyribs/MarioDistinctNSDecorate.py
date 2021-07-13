@@ -1,13 +1,7 @@
-import torch
-import torchvision.utils as vutils
-from torch.autograd import Variable
-
 import sys
 import json
 import time
 import numpy as np
-import models.dcgan as dcgan
-import models.cdcgan as cdcgan
 import math
 
 import random
@@ -31,31 +25,19 @@ from ribs.visualize import grid_archive_heatmap
 
 # Get behavior characterization from dictionary associated with a single solution
 def behavior_characterization(data_out):
-    # For now, assume Distinct ASAD in Mario
+    global batch_file
+    if batch_file == "ExternalMario-DistinctNSDecorate.bat":
+        # Distinct ASAD in Mario
+        distinct = float(data_out["Distinct Segments"])
+        coords = data_out['Bin Coordinates']
+        altSpaceIndex = coords[1]
+        altDecIndex = coords[2]
     
-    distinct = float(data_out["Distinct Segments"])
-    #alternating = np.zeros(3)
-    #index = 1
-    #while index < len(data_out["stats"]):
-    #    stats0 = np.array(data_out["stats"][index-1]) 
-    #    stats1 = np.array(data_out["stats"][index])
-    #    alternating = alternating + abs(stats0 - stats1)
-    
-    # Magic numbers
-    #altDecoration = alternating[0]
-    #altSpace = alternating[2]
-        
-    #print("Compare Python {} to Java {}".format([distinct, altSpace, altDecoration],data_out['Bin Coordinates'])
-    
-    # Can't use 3D. Map to 2D
-    #return [distinct, altSpace, altDecoration]
-    
-    coords = data_out['Bin Coordinates']
-    
-    altSpaceIndex = coords[1]
-    altDecIndex = coords[2]
-    
-    return [((distinct - 1)%5)*10 + altDecIndex, (1 - int((distinct - 1)/5))*10 + altSpaceIndex]
+        return [((distinct - 1)%5)*10 + altDecIndex, (1 - int((distinct - 1)/5))*10 + altSpaceIndex]
+    elif batch_file == "ExternalMario-LatentPartition2Slices.bat":
+        return data_out['Bin Coordinates']
+    else:
+        raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
 
 def create_optimizer(algorithm, dim, seed):
     """Creates an optimizer based on the algorithm name. (THIS TEXT FROM PYRIBS)
@@ -67,10 +49,20 @@ def create_optimizer(algorithm, dim, seed):
     Returns:
         Optimizer: A ribs Optimizer for running the algorithm.
     """
+    global batch_file
     
-    # Project the 3D archive into a 2D archive.
-    # A 2 by 5 grid of 10 by 10 cells
-    bounds = [(0, 50), (0, 20)]
+    if batch_file == "ExternalMario-DistinctNSDecorate.bat":
+        # Project the 3D archive into a 2D archive.
+        # A 2 by 5 grid of 10 by 10 cells
+        bounds = [(0, 50), (0, 20)]
+        archive_size = (50, 20)
+    elif batch_file == "ExternalMario-LatentPartition2Slices.bat":
+        max_bound = dim / 2 # max bound for dim size of 10 is -5 to 5 in each dimension
+        bounds = [(-max_bound, max_bound), (-max_bound, max_bound)]
+        archive_size = (100, 100)
+    else:
+        raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
+        
     initial_sol = np.zeros(dim) # Inital solution of zeros
     
     emitter_bounds = [] 
@@ -80,7 +72,7 @@ def create_optimizer(algorithm, dim, seed):
     num_emitters = 5 
     # https://docs.pyribs.org/en/stable/api/ribs.archives.GridArchive.html#ribs.archives.GridArchive
     # Once again, mapping the 3D archive to 2D for display purposes
-    archive = GridArchive((50, 20), bounds, seed=seed)
+    archive = GridArchive(archive_size, bounds, seed=seed)
 
     # Create emitters. Each emitter needs a different seed, so that they do not all do the same thing.
     emitter_seeds = [None] * num_emitters if seed is None else list(range(seed, seed + num_emitters))
@@ -117,7 +109,7 @@ def create_optimizer(algorithm, dim, seed):
 
 
 # Using the JAR, get the bins and evaluated score from a provided level
-def get_data_from_level(one_sol):
+def get_data_from_solution(one_sol):
     jar.stdin.write(str(one_sol.tolist())+ "\n") # Send vector to jar
     jar.stdin.flush()
     coords = ""
@@ -133,15 +125,8 @@ def get_data_from_level(one_sol):
         except:
             data_dict[s.split(" = ")[0]] = s.split(" = ")[1] # If unable, just send as string
         s = jar.stdout.readline().strip() # Read next line
-    data_dict["stats"] = []
-    index = 0
-    while f"stats[{index}]" in data_dict:
-        data_dict["stats"].append(data_dict[f"stats[{index}]"])
-        del data_dict[f"stats[{index}]"]
-        index += 1    
-
+    
     #print(one_sol, "->", data_dict["binScore"], data_dict["Bin Coordinates"])
-
     return data_dict
 
 
@@ -161,17 +146,29 @@ def save_heatmap(archive, heatmap_path, min_max):
 ### MAIN
 
 def pyribs_main():
-    algorithm = "map_elites" #"cma_me_imp" # "map_elites" # Algorithm
-    dim=50 # 10 segments with 5 latent variables each
+    global batch_file
     
-    # For comparison, I want to evaluate 100000 individuals.
-    # With 5 emitters and a batch size of 37, 185 are evaluated per iteration.
-    # 100000 / 185 is 540.5405405405405, so run for 541 iterations
-    iterations = 541
+    if batch_file == "ExternalMario-DistinctNSDecorate.bat":
+        dim=50 # 10 segments with 5 latent variables each
+        # For comparison, I want to evaluate 100000 individuals.
+        # With 5 emitters and a batch size of 37, 185 are evaluated per iteration.
+        # 100000 / 185 is 540.5405405405405, so run for 541 iterations
+        iterations = 541
+        outdir=f"marioDistinctASAD_pyribs_{algorithm}" # Output directory
+        log_freq=50 # Logging frequency
+        max_fitness = 500 # depends on number of segments (level chunks)
+        total_cells = 10 * 10 * 10
+    elif batch_file == "ExternalMario-LatentPartition2Slices.bat":
+        dim=10 # Length of solution vector to be expected
+        iterations = 20000 # Total number of iterations
+        outdir=f"marioLatentPartition2Slices_pyribs_{algorithm}" # Output directory
+        log_freq=100 # Logging frequency
+        max_fitness = 120 # depends on number of segments (level chunks)
+        total_cells = 500 * 500
+    else:
+        raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
     
-    outdir=f"marioDistinctASAD_pyribs_{algorithm}" # Output directory
-    log_freq=50 # Logging frequency
-    max_fitness = 500 # depends on number of segments (level chunks)
+    
     name = f"{algorithm}_{dim}" # Name for output images and data
     
     outdir = Path(outdir)
@@ -201,7 +198,7 @@ def pyribs_main():
             scores = []
             bcs = []
             for s in sols:
-                data_out = get_data_from_level(s) # Get score (and other data) from jar
+                data_out = get_data_from_solution(s) # Get score (and other data) from jar
                 scores.append(data_out["binScore"])
                 bcs.append(behavior_characterization(data_out))
             
@@ -217,7 +214,6 @@ def pyribs_main():
                     data.to_csv(str(outdir / f"{name}_archive.csv"))
 
                 # Record and display metrics.
-                total_cells = 10 * 10 * 10
                 metrics["QD Score"]["x"].append(itr)
                 metrics["QD Score"]["y"].append(data['objective'].sum())
                 metrics["Archive Coverage"]["x"].append(itr)
@@ -241,10 +237,18 @@ def pyribs_main():
         json.dump(metrics, file, indent=2)
 
 if __name__ == '__main__':
+    global batch_file
+    global algorithm
     ### INITALIZE GAN STUFF
+    batch_file = sys.argv[1] # A batch file that launches evals for a specific domain with specific binning scheme, like ExternalMario-DistinctNSDecorate.bat
+    algorithm = sys.argv[2] # "map_elites" or "cma_me_imp"
+    if algorithm not in ["map_elites", "cma_me_imp"]:
+        print(f"Algorithm is not known: {algorithm}")
+        print("Use one of", ["map_elites", "cma_me_imp"])
+        quit()
 
     # Start running JAR
-    jar = Popen(["ExternalMario-DistinctNSDecorate.bat", "0"], encoding='ascii', stdin=PIPE, stdout=PIPE)
+    jar = Popen([batch_file, "0"], encoding='ascii', stdin=PIPE, stdout=PIPE)
     # Seek to end of JAR
     s = ""
     while s != "READY":
