@@ -37,7 +37,7 @@ def behavior_characterization(data_out):
         return [((distinct - 1)%5)*10 + altDecIndex, (1 - int((distinct - 1)/5))*10 + altSpaceIndex]
     elif batch_file == "ExternalMario-LatentPartition2Slices.bat":
         coords = data_out['Bin Coordinates']
-        offset = 50
+        offset = 250
         return [coords[0] - offset, coords[1] - offset]
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
@@ -60,8 +60,8 @@ def create_optimizer(algorithm, dim, seed):
         bounds = [(0, 50), (0, 20)]
         archive_size = (50, 20)
     elif batch_file == "ExternalMario-LatentPartition2Slices.bat":
-        bounds = [(-50, 50), (-50, 50)]
-        archive_size = (100, 100)
+        bounds = [(-250, 250), (-250, 250)]
+        archive_size = (500, 500)
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
         
@@ -163,11 +163,11 @@ def pyribs_main():
         total_cells = 10 * 10 * 10
     elif batch_file == "ExternalMario-LatentPartition2Slices.bat":
         dim=10 # Length of solution vector to be expected
-        iterations = 1000 # Total number of iterations
+        iterations = 20000 # Total number of iterations
         outdir=f"marioLatentPartition2Slices_pyribs_{algorithm}" # Output directory
         log_freq=100 # Logging frequency
         max_fitness = 120 # depends on number of segments (level chunks)
-        total_cells = 100 * 100
+        total_cells = 500 * 500
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
     
