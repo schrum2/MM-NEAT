@@ -26,6 +26,7 @@ from ribs.visualize import grid_archive_heatmap
 # Get behavior characterization from dictionary associated with a single solution
 def behavior_characterization(data_out):
     global batch_file
+    
     if batch_file == "ExternalMario-DistinctNSDecorate.bat":
         # Distinct ASAD in Mario
         distinct = float(data_out["Distinct Segments"])
@@ -35,7 +36,9 @@ def behavior_characterization(data_out):
     
         return [((distinct - 1)%5)*10 + altDecIndex, (1 - int((distinct - 1)/5))*10 + altSpaceIndex]
     elif batch_file == "ExternalMario-LatentPartition2Slices.bat":
-        return data_out['Bin Coordinates']
+        coords = data_out['Bin Coordinates']
+        offset = 50
+        return [coords[0] - offset, coords[1] - offset]
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
 
@@ -57,8 +60,7 @@ def create_optimizer(algorithm, dim, seed):
         bounds = [(0, 50), (0, 20)]
         archive_size = (50, 20)
     elif batch_file == "ExternalMario-LatentPartition2Slices.bat":
-        max_bound = dim / 2 # max bound for dim size of 10 is -5 to 5 in each dimension
-        bounds = [(-max_bound, max_bound), (-max_bound, max_bound)]
+        bounds = [(-50, 50), (-50, 50)]
         archive_size = (100, 100)
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
@@ -147,6 +149,7 @@ def save_heatmap(archive, heatmap_path, min_max):
 
 def pyribs_main():
     global batch_file
+    global dim
     
     if batch_file == "ExternalMario-DistinctNSDecorate.bat":
         dim=50 # 10 segments with 5 latent variables each
