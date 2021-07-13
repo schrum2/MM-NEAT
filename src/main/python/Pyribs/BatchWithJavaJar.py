@@ -163,11 +163,11 @@ def pyribs_main():
         total_cells = 10 * 10 * 10
     elif batch_file == "ExternalMario-LatentPartition2Slices.bat":
         dim=10 # Length of solution vector to be expected
-        iterations = 20000 # Total number of iterations
+        iterations = 1000 # Total number of iterations
         outdir=f"marioLatentPartition2Slices_pyribs_{algorithm}" # Output directory
         log_freq=100 # Logging frequency
         max_fitness = 120 # depends on number of segments (level chunks)
-        total_cells = 500 * 500
+        total_cells = 100 * 100
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
     
