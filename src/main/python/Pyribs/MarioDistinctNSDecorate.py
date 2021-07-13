@@ -161,7 +161,7 @@ def save_heatmap(archive, heatmap_path, min_max):
 ### MAIN
 
 def pyribs_main():
-    algorithm = "cma_me_imp" # "map_elites" # Algorithm
+    algorithm = "map_elites" #"cma_me_imp" # "map_elites" # Algorithm
     dim=50 # 10 segments with 5 latent variables each
     
     # For comparison, I want to evaluate 100000 individuals.
