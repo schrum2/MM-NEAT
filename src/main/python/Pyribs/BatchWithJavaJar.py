@@ -273,6 +273,7 @@ def pyribs_main():
 
     # Plot metrics.
     print(f"Algorithm Time (Excludes Logging and Setup): {non_logging_time}s")
+    plt.clf()
     for metric in metrics:
         plt.plot(metrics[metric]["x"], metrics[metric]["y"])
         plt.title(metric)
