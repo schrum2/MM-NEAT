@@ -12,7 +12,8 @@ import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 
@@ -35,7 +36,7 @@ public class ExternalRealValuedGenotypeExecutor {
 		// The script that calls this must specify all parameters associated with the desired task
 		Parameters.initializeParameterCollections(args);
 		MMNEAT.loadClasses();
-		NoisyLonerTask<List<Double>> task = (NoisyLonerTask) MMNEAT.task;
+		LonerTask<List<Double>> task = (LonerTask) MMNEAT.task;
 		System.out.println("READY"); // Tell Python program we are ready to receive;
 		// Loop until Python program sends exit string
 		String input = "";
@@ -44,10 +45,10 @@ public class ExternalRealValuedGenotypeExecutor {
 			input = consoleFromPython.nextLine(); // A json 1D array of doubles
 			if(input.equals("exit")) break;
 			double[] genotype = JsonReader.JsonToDoubleArray(input);
-			HashMap<String,Object> behaviorCharacteristics = new HashMap<String,Object>();
 			// Add potential to clip ranges on solution vector values
 			Genotype individual = MMNEAT.genotype instanceof BoundedRealValuedGenotype ? new BoundedRealValuedGenotype(genotype) : new RealValuedGenotype(genotype);
-			task.oneEval(individual, 0, behaviorCharacteristics); // Run number always 0
+			Score<List<Double>> s = task.evaluate(individual);
+			HashMap<String,Object> behaviorCharacteristics = s.MAPElitesBehaviorMap();
 			int[] archiveDimensions = MMNEAT.getArchiveBinLabelsClass().multiDimensionalIndices(behaviorCharacteristics);
 			// Print to Python
 			System.out.println(Arrays.toString(archiveDimensions)); // MAP Elites archive indices
