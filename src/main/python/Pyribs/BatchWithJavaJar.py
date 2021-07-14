@@ -187,7 +187,7 @@ def pyribs_main():
         # 50000 / 185 is 270.27027027, so run for 271 iterations
         iterations = 271
         outdir=f"lodeRunnerGroundGoldEnemies_pyribs_{algorithm}_{run_num}" # Output directory
-        log_freq=50 # Logging frequency
+        log_freq=25 # Logging frequency
         max_fitness = 650 
         total_cells = 10 * 10 * 10
     else:
