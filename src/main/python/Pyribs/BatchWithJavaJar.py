@@ -39,6 +39,13 @@ def behavior_characterization(data_out):
         coords = data_out['Bin Coordinates']
         offset = 250
         return [coords[0] - offset, coords[1] - offset]
+    elif batch_file == "ExternalLodeRunner-PercentGroundNumGoldAndEnemies.bat":
+        coords = data_out['Bin Coordinates'] # groundIndex, treasureIndex, enemyIndex
+        groundIndex = coords[0]
+        treasureIndex = coords[1]
+        enemyIndex = coords[2]
+        
+        return [enemyIndex, (9 - groundIndex)*10 + treasureIndex]
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
 
@@ -62,6 +69,11 @@ def create_optimizer(algorithm, dim, seed):
     elif batch_file == "ExternalMario-LatentPartition2Slices.bat":
         bounds = [(-250, 250), (-250, 250)]
         archive_size = (500, 500)
+    elif batch_file == "ExternalLodeRunner-PercentGroundNumGoldAndEnemies.bat":
+        # Project the 3D archive into a 2D archive.
+        # A 1 by 10 grid of 10 by 10 cells (vertical)
+        bounds = [(0, 10), (0, 100)]
+        archive_size = (10, 100)
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
         
@@ -157,17 +169,27 @@ def pyribs_main():
         # With 5 emitters and a batch size of 37, 185 are evaluated per iteration.
         # 100000 / 185 is 540.5405405405405, so run for 541 iterations
         iterations = 541
-        outdir=f"marioDistinctASAD_pyribs_{algorithm}" # Output directory
+        outdir=f"marioDistinctASAD_pyribs_{algorithm}_{run_num}" # Output directory
         log_freq=50 # Logging frequency
         max_fitness = 500 # depends on number of segments (level chunks)
         total_cells = 10 * 10 * 10
     elif batch_file == "ExternalMario-LatentPartition2Slices.bat":
         dim=10 # Length of solution vector to be expected
         iterations = 20000 # Total number of iterations
-        outdir=f"marioLatentPartition2Slices_pyribs_{algorithm}" # Output directory
+        outdir=f"marioLatentPartition2Slices_pyribs_{algorithm}_{run_num}" # Output directory
         log_freq=100 # Logging frequency
         max_fitness = 120 # depends on number of segments (level chunks)
         total_cells = 500 * 500
+    elif batch_file == "ExternalLodeRunner-PercentGroundNumGoldAndEnemies.bat":
+        dim=10 
+        # For comparison, I want to evaluate 50000 individuals.
+        # With 5 emitters and a batch size of 37, 185 are evaluated per iteration.
+        # 50000 / 185 is 270.27027027, so run for 271 iterations
+        iterations = 271
+        outdir=f"lodeRunnerGroundGoldEnemies_pyribs_{algorithm}_{run_num}" # Output directory
+        log_freq=50 # Logging frequency
+        max_fitness = 650 
+        total_cells = 10 * 10 * 10
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
     
@@ -242,16 +264,18 @@ def pyribs_main():
 if __name__ == '__main__':
     global batch_file
     global algorithm
+    global run_num
     ### INITALIZE GAN STUFF
     batch_file = sys.argv[1] # A batch file that launches evals for a specific domain with specific binning scheme, like ExternalMario-DistinctNSDecorate.bat
-    algorithm = sys.argv[2] # "map_elites" or "cma_me_imp"
+    run_num = sys.argv[2]
+    algorithm = sys.argv[3] # "map_elites" or "cma_me_imp"
     if algorithm not in ["map_elites", "cma_me_imp"]:
         print(f"Algorithm is not known: {algorithm}")
         print("Use one of", ["map_elites", "cma_me_imp"])
         quit()
 
     # Start running JAR
-    jar = Popen([batch_file, "0"], encoding='ascii', stdin=PIPE, stdout=PIPE)
+    jar = Popen([batch_file, run_num], encoding='ascii', stdin=PIPE, stdout=PIPE)
     # Seek to end of JAR
     s = ""
     while s != "READY":
