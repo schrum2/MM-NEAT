@@ -222,7 +222,7 @@ def pyribs_main():
                 metrics["Archive Coverage"]["x"].append(itr)
                 metrics["Archive Coverage"]["y"].append(len(data))
                 print(f"Iteration {itr}\t| Archive Coverage: "
-                      f"{metrics['Archive Coverage']['y'][-1]/100:.3f}% "
+                      f"{metrics['Archive Coverage']['y'][-1]/total_cells:.3f}% "
                       f"QD Score: {metrics['QD Score']['y'][-1]:.3f}") # Console output
                 
                 save_heatmap(archive, str(outdir / f"{name}_heatmap_{itr:05d}.png"), [0, max_fitness])
