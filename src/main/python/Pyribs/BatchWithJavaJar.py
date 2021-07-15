@@ -61,6 +61,14 @@ def behavior_characterization(data_out):
         numRoomsReachable = coords[2]
         # Project 3D onto 2D
         return [ ((numRoomsReachable - 1) % 5)*10 + waterTileIndex, (4 - int((numRoomsReachable - 1)/5))*10 + wallTileIndex]
+    elif batch_file == "ExternalZelda-DistinctBTRooms.bat":
+        coords = data_out['Bin Coordinates'] # {numDistinctRooms,numBackTrackRooms,numRoomsReachable}
+
+        indexDistinctRooms = coords[0] - 1
+        indexBackTrackRooms = coords[1] - 1
+        indexRoomsReachable = coords[2] - 1
+        
+        return [ (indexRoomsReachable % 5)*25 + indexBackTrackRooms, (4 - int(indexRoomsReachable/5))*25 + indexDistinctRooms]
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
 
@@ -99,6 +107,11 @@ def create_optimizer(algorithm, dim, seed):
         # 2D grid based on reachable rooms, and each cell is 10 by 10
         bounds = [(0, 50), (0, 50)]
         archive_size = (50, 50)
+    elif batch_file == "ExternalZelda-DistinctBTRooms.bat":
+        # Project the 3D archive into a 2D archive.
+        # 2D grid based on reachable rooms, and each cell is 25 by 25
+        bounds = [(0, 5*25), (0, 5*25)]
+        archive_size = (5*25, 5*25)
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
         
@@ -235,6 +248,16 @@ def pyribs_main():
         log_freq=50 # Logging frequency
         max_fitness = 1.0 
         total_cells = 5*5*10*10 # 5 by 5 dungeon with Wall and Water percent in 10 intervals each (though many unreachable)
+    elif batch_file == "ExternalZelda-DistinctBTRooms.bat":
+        dim= (10 + 7) * 5 * 5 # latent vectors of length 10 plus 7 aux variables per room, in 5 by 5 dungeons 
+        # For comparison, I want to evaluate 100000 individuals.
+        # With 5 emitters and a batch size of 37, 185 are evaluated per iteration.
+        # 100000 / 185 is 540.5405405405405, so run for 541 iterations
+        iterations = 541
+        outdir=f"zeldaDistinctBTR_pyribs_{algorithm}_{run_num}" # Output directory
+        log_freq=50 # Logging frequency
+        max_fitness = 1.0 
+        total_cells = 25*25*25 # 5 by 5 dungeon: 25 distinct * 25 backtracked * 25 reachable
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
     
@@ -289,7 +312,8 @@ def pyribs_main():
                 metrics["Archive Coverage"]["x"].append(itr)
                 metrics["Archive Coverage"]["y"].append(len(data))
                 print(f"Iteration {itr}\t| Archive Coverage: "
-                      f"{metrics['Archive Coverage']['y'][-1]/total_cells:.3f}% "
+                      #f"{metrics['Archive Coverage']['y'][-1]/total_cells:.3f}% " # These numbers always seem off
+                      f"{metrics['Archive Coverage']['y'][-1]} "
                       f"QD Score: {metrics['QD Score']['y'][-1]:.3f}") # Console output
                 
                 save_heatmap(archive, str(outdir / f"{name}_heatmap_{itr:05d}.png"), [0, max_fitness])
