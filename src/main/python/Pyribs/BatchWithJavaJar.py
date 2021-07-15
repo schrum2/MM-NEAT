@@ -35,6 +35,14 @@ def behavior_characterization(data_out):
         altDecIndex = coords[2]
     
         return [((distinct - 1)%5)*10 + altDecIndex, (1 - int((distinct - 1)/5))*10 + altSpaceIndex]
+    elif batch_file == "ExternalMario-DecorateNSLeniency.bat":
+        coords = data_out['Bin Coordinates'] # {decorationBinIndex, negativeSpaceSumIndex, leniencySumIndex}
+    
+        decorationBinIndex = coords[0]
+        negativeSpaceSumIndex = coords[1]
+        leniencySumIndex = coords[2]
+        
+        return [(leniencySumIndex%5)*10 + decorationBinIndex, (1 - int(leniencySumIndex/5))*10 + negativeSpaceSumIndex]
     elif batch_file == "ExternalMario-LatentPartition2Slices.bat":
         coords = data_out['Bin Coordinates']
         offset = 250
@@ -69,6 +77,11 @@ def create_optimizer(algorithm, dim, seed):
     global batch_file
     
     if batch_file == "ExternalMario-DistinctNSDecorate.bat":
+        # Project the 3D archive into a 2D archive.
+        # A 2 by 5 grid of 10 by 10 cells
+        bounds = [(0, 50), (0, 20)]
+        archive_size = (50, 20)
+    elif batch_file == "ExternalMario-DecorateNSLeniency.bat":
         # Project the 3D archive into a 2D archive.
         # A 2 by 5 grid of 10 by 10 cells
         bounds = [(0, 50), (0, 20)]
@@ -182,6 +195,16 @@ def pyribs_main():
         # 100000 / 185 is 540.5405405405405, so run for 541 iterations
         iterations = 541
         outdir=f"marioDistinctASAD_pyribs_{algorithm}_{run_num}" # Output directory
+        log_freq=50 # Logging frequency
+        max_fitness = 500 # depends on number of segments (level chunks)
+        total_cells = 10 * 10 * 10
+    elif batch_file == "ExternalMario-DecorateNSLeniency.bat":
+        dim=50 # 10 segments with 5 latent variables each
+        # For comparison, I want to evaluate 100000 individuals.
+        # With 5 emitters and a batch size of 37, 185 are evaluated per iteration.
+        # 100000 / 185 is 540.5405405405405, so run for 541 iterations
+        iterations = 541
+        outdir=f"marioSumDSL_pyribs_{algorithm}_{run_num}" # Output directory
         log_freq=50 # Logging frequency
         max_fitness = 500 # depends on number of segments (level chunks)
         total_cells = 10 * 10 * 10
