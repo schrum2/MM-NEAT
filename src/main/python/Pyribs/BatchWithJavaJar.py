@@ -175,7 +175,7 @@ def get_data_from_solution(one_sol):
     jar.stdin.write(str(one_sol.tolist())+ "\n") # Send vector to jar
     jar.stdin.flush()
     coords = ""
-    while "[" not in coords: # Some domains produce additional garbage output. Wait for list of archive indices
+    while "[" not in coords or "src" in coords or "INFO" in coords: # Some domains produce additional garbage output. Wait for list of archive indices
         coords = jar.stdout.readline().strip()
     data_dict = {}
     exec("data_dict[\"Bin Coordinates\"] = "+coords) # Bin coords are first, and do not have a "____ = " prefix
