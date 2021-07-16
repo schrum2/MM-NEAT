@@ -69,6 +69,13 @@ def behavior_characterization(data_out):
         indexRoomsReachable = coords[2] - 1
         
         return [ (indexRoomsReachable % 5)*25 + indexBackTrackRooms, (4 - int(indexRoomsReachable/5))*25 + indexDistinctRooms]
+    elif batch_file == "ExternalMegaMan-DistinctVerticalAndConnectivity.bat":
+        coords = data_out['Bin Coordinates'] # {numDistinctSegments, numVertical, indexConnected}
+        segmentIndex = coords[0] - 1
+        verticalIndex = coords[1] - 1
+        indexConnected = coords[2]
+        
+        return [indexConnected, (9 - verticalIndex)*10 + segmentIndex]
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
 
@@ -112,6 +119,9 @@ def create_optimizer(algorithm, dim, seed):
         # 2D grid based on reachable rooms, and each cell is 25 by 25
         bounds = [(0, 5*25), (0, 5*25)]
         archive_size = (5*25, 5*25)
+    elif batch_file == "ExternalMegaMan-DistinctVerticalAndConnectivity.bat":
+        bounds = [(0, 10), (0, 100)]
+        archive_size = (10, 100)
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
         
@@ -239,7 +249,7 @@ def pyribs_main():
         max_fitness = 650 
         total_cells = 10 * 10 * 10
     elif batch_file == "ExternalZelda-WallWaterRooms.bat":
-        dim= (10 + 7) * 5 * 5 # latent vectors of length 10 plus 7 aux variables per room, in 5 by 5 dungeons 
+        dim = (10 + 7) * 5 * 5 # latent vectors of length 10 plus 7 aux variables per room, in 5 by 5 dungeons 
         # For comparison, I want to evaluate 100000 individuals.
         # With 5 emitters and a batch size of 37, 185 are evaluated per iteration.
         # 100000 / 185 is 540.5405405405405, so run for 541 iterations
@@ -249,7 +259,7 @@ def pyribs_main():
         max_fitness = 1.0 
         total_cells = 5*5*10*10 # 5 by 5 dungeon with Wall and Water percent in 10 intervals each (though many unreachable)
     elif batch_file == "ExternalZelda-DistinctBTRooms.bat":
-        dim= (10 + 7) * 5 * 5 # latent vectors of length 10 plus 7 aux variables per room, in 5 by 5 dungeons 
+        dim = (10 + 7) * 5 * 5 # latent vectors of length 10 plus 7 aux variables per room, in 5 by 5 dungeons 
         # For comparison, I want to evaluate 100000 individuals.
         # With 5 emitters and a batch size of 37, 185 are evaluated per iteration.
         # 100000 / 185 is 540.5405405405405, so run for 541 iterations
@@ -258,6 +268,13 @@ def pyribs_main():
         log_freq=50 # Logging frequency
         max_fitness = 1.0 
         total_cells = 25*25*25 # 5 by 5 dungeon: 25 distinct * 25 backtracked * 25 reachable
+    elif batch_file == "ExternalMegaMan-DistinctVerticalAndConnectivity.bat":
+        dim = 90 # 10 segments and 5 latent variables plus 4 direction variables per segment 
+        iterations = 600
+        outdir=f"megaManDistinctVerticalConnectivity_pyribs_{algorithm}_{run_num}" # Output directory
+        log_freq=50 # Logging frequency
+        max_fitness = 350 
+        total_cells = 10*10*10
     else:
         raise ValueError(f"Batch file does not define recognized binning scheme: {batch_file}")
     
