@@ -348,7 +348,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				}
 			}
 		}
-		System.out.println(start.toString());
+		//System.out.println(start.toString());
 		return start;
 	}
 	/**
