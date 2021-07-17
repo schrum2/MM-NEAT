@@ -323,6 +323,11 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> implements J
 			}
 			
 			double binScore = simpleAStarDistance;
+			if(Parameters.parameters.booleanParameter("megaManAllowsAStarConnectivityCombo")) {
+				// Distance is 0 if unsolvable, but the percent connected will be positive (between 0 and 1) giving some
+				// indication of how easy it is to navigate the level.
+				binScore = Math.max(precentConnected, simpleAStarDistance); 
+			}
 			behaviorCharacteristics.put("binScore", binScore); // Quality measure!
 			
 			int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorCharacteristics);
