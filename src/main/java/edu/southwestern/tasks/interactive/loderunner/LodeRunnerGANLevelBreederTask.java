@@ -239,7 +239,7 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 	 */
 	@Override
 	public String getGANModelDirectory() {
-		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"LodeRunnerGAN";
+		return GANProcess.PYTHON_BASE_PATH+"LodeRunnerGAN";
 	}
 
 	/**

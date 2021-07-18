@@ -577,7 +577,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	
 	
 	public String getGANModelDirectory() {
-		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"MegaManGAN";
+		return GANProcess.PYTHON_BASE_PATH+"MegaManGAN";
 	}
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		try {

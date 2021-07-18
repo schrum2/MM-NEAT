@@ -468,7 +468,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	 * gets the GAN model directory
 	 */
 	public String getGANModelDirectory() {
-		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"MegaManGAN";
+		return GANProcess.PYTHON_BASE_PATH+"MegaManGAN";
 	}
 	
 	public void viewLevel() {
