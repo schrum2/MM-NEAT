@@ -2,7 +2,7 @@ package edu.southwestern.evolution.mutation.tweann;
 
 import java.util.ArrayList;
 
-import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
+import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.EitherOrGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -57,7 +57,7 @@ public class ConvertMarioCPPN2GANtoDirect2GANMutation extends Mutation {
 		Genotype cppnOrDirect2ganGenotype = (CPPNOrDirectToGANGenotype) genotype;
 		double[] longResult = MarioCPPNtoGANLevelBreederTask.createLatentVectorFromCPPN(cppn, ArrayUtil.doubleOnes(cppn.numInputs()), Parameters.parameters.integerParameter("marioGANLevelChunks"));
 
-		BoundedRealValuedGenotype k = new BoundedRealValuedGenotype(longResult);
+		RealValuedGenotype k = new RealValuedGenotype(longResult);
 		//k.newInstance();
 		((EitherOrGenotype<TWEANN, ArrayList<Double>>) cppnOrDirect2ganGenotype).switchForms(k);
 		
