@@ -143,6 +143,8 @@ for(i in 1:numBins) { # 1000 bins
 
 # Re-order the factors
 overlapData$PercentTraversed <- factor(overlapData$PercentTraversed, levels=c("CPPN2GAN","CPPNThenDirect2GAN","Direct2GAN","CPPN Tie","Direct Tie","Not Hybrid Tie","All Tie","None"))
+namedcolors        <- c("#B4E956" ,"#000EEE"           ,"#F040AA"   ,"#56B4E9" ,"#A52A2A"   ,"#EEE000"       ,"#E69F00","#999999")
+names(namedcolors) <- c("CPPN2GAN","CPPNThenDirect2GAN","Direct2GAN","CPPN Tie","Direct Tie","Not Hybrid Tie","All Tie","None")
 
 outputFile <- paste("ZeldaDungeonsWallWaterRooms-BEST.",nameEnd,".heat.pdf",sep="")
 #outputFile <- str_replace(args[1],"txt","heat.pdf")
@@ -152,7 +154,7 @@ result <- ggplot(overlapData, aes(x=waterBin, y=wallBin, fill=factor(PercentTrav
   facet_wrap(~roomBin) +
   #scale_fill_gradient(low="white", high="orange") +
   scale_fill_viridis(discrete=FALSE) +
-  scale_fill_manual(values=c("#B4E956", "#000EEE", "#F040AA","#56B4E9", "#EEE000", "#E69F00", "#999999")) +
+  scale_fill_manual(values=namedcolors) +
   xlab("Water Percentage Bin") +
   ylab("Wall Percentage Bin") +
   labs(fill = "Highest Quality: ") +

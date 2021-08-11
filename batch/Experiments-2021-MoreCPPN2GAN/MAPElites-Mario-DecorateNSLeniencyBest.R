@@ -140,6 +140,8 @@ for(i in 1:numBins) { # 1000 bins
 
 # Re-order the factors
 overlapData$SolutionSteps <- factor(overlapData$SolutionSteps, levels=c("CPPN2GAN","CPPNThenDirect2GAN","Direct2GAN","CPPN Tie","Direct Tie","Not Hybrid Tie","All Tie","None"))
+namedcolors        <- c("#B4E956" ,"#000EEE"           ,"#F040AA"   ,"#56B4E9" ,"#A52A2A"   ,"#EEE000"       ,"#E69F00","#999999")
+names(namedcolors) <- c("CPPN2GAN","CPPNThenDirect2GAN","Direct2GAN","CPPN Tie","Direct Tie","Not Hybrid Tie","All Tie","None")
 
 outputFile <- paste("MarioLevelsDecorateNSLeniency-BEST.",nameEnd,".heat.pdf",sep="")
 pdf(outputFile,height=3.5)  
@@ -148,7 +150,7 @@ result <- ggplot(overlapData, aes(x=decorationBin, y=nsBin, fill=factor(Solution
   facet_wrap(~leniencyBin, ncol=5, labeller = labeller(leniencyBin = leniencyLabals)) +
   #scale_fill_gradient(low="white", high="orange") +
   #scale_fill_viridis(discrete=FALSE, limits = c(0,500), oob = squish) +
-  scale_fill_manual(values=c("#B4E956", "#000EEE", "#56B4E9", "#999999")) +
+  scale_fill_manual(values=namedcolors) +
   xlab("Decoration Frequency Bin") +
   ylab("Space Coverage Bin") +
   labs(fill = "Highest Quality: ") +
