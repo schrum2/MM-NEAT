@@ -1,3 +1,5 @@
+# Should no longer be necessary to use this because QD is logged directly
+
 import sys
 
 if __name__ == "__main__":

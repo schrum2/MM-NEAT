@@ -27,7 +27,7 @@ library(stringr)
 
 #setwd(paste("./",resultDir,sep=""))
 # Get log prefix
-scoreIndex <- 2
+scoreIndex <- 3
 # Determine the different experimental conditions
 types <- list("Direct2GAN","CPPN2GAN","CPPNThenDirect2GAN")
 # Initialize empty data
@@ -38,7 +38,7 @@ for(t in types) {
   directories <- list.files("./",pattern=paste("^",t,"\\d*", sep = ""))
   for(d in directories) {
     # Read each individual file
-    temp <- read.table(file = paste("./",d,"/QD.txt", sep = ""), sep = '\t', header = FALSE)
+    temp <- read.table(file = paste("./",d,"/",game,"-",d,"_Fill_log.txt", sep = ""), sep = '\t', header = FALSE)
     # Rename relevant column
     colnames(temp)[scoreIndex] <- "score"
     
