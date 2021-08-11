@@ -7,9 +7,10 @@ if (length(args)==0) {
 #setwd("E:\\Users\\he_de\\workspace\\GameGAN")
 print("Load data")
 #map <- read.table("zeldacppntogan/MAPElites3/ZeldaCPPNtoGAN-MAPElites3_MAPElites_log.txt")
-map <- read.table(args[1])
+map <- read.table(args[1], na.strings = c("X"))
 # Only the final archive matters
 lastRow <- map[map$V1 == nrow(map) - 1, ]
+lastRow[ is.na(lastRow) ] <- -Inf
 archive <- data.frame(matrix(unlist(lastRow[2:length(lastRow)]), nrow=(length(lastRow)-1), byrow=T))
 names(archive) <- "PercentTraversed"
 
