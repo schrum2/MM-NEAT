@@ -15,7 +15,7 @@ for(typePrefix in types) {
   
   for(i in 0:29) {
     dataFile <- paste(typePrefix,i,"/MarioLevelsDistinctNSDecorate-",typePrefix,i,"_MAPElites_log.txt",sep="")
-    map <- read.table(dataFile)
+    map <- read.table(dataFile, na.strings = c("X"))
     print(dataFile)
     #map <- read.table(args[1])
     if (length(args)==0) {
@@ -26,10 +26,11 @@ for(typePrefix in types) {
       lastRow <- map[map$V1 == strtoi(args[1], base = 0L) - 1, ]
       nameEnd <- paste("Gen",args[1],sep="")
     }
+	lastRow[ is.na(lastRow) ] <- -Inf
     archive <- data.frame(matrix(unlist(lastRow[2:length(lastRow)]), nrow=(length(lastRow)-1), byrow=T))
     names(archive) <- "SolutionSteps"
 
-    # Change X to 0? Used to be -Infinity, but doesn't seem to matter?
+    # Change -Infinity to 0
     archive[archive<0] <- 0
     
     if(i > 0) {
