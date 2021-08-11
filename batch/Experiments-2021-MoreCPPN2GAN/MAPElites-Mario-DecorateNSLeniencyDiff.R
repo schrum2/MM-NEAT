@@ -140,6 +140,8 @@ for(i in 1:numBins) { # 1000 bins
 
 # Re-order the factors
 overlapData$SolutionSteps <- factor(overlapData$SolutionSteps, levels=c("All","No CPPNThenDirect2GAN","No CPPN2GAN","No Direct2GAN","Only CPPNThenDirect2GAN","Only CPPN2GAN","Only Direct2GAN","None"))
+namedcolors        <- c("#E69F00","#EEE000"              ,"#A52A2A"    ,"#56B4E9"      ,"#000EEE"                ,"#B4E956"      ,"#F040AA"        ,"#999999")
+names(namedcolors) <- c("All"    ,"No CPPNThenDirect2GAN","No CPPN2GAN","No Direct2GAN","Only CPPNThenDirect2GAN","Only CPPN2GAN","Only Direct2GAN","None")
 
 outputFile <- paste("MarioLevelsDecorateNSLeniency-DIFF.",nameEnd,".heat.pdf",sep="")
 pdf(outputFile,height=3.5)  
@@ -148,7 +150,7 @@ result <- ggplot(overlapData, aes(x=decorationBin, y=nsBin, fill=factor(Solution
   facet_wrap(~leniencyBin, ncol=5, labeller = labeller(leniencyBin = leniencyLabals)) +
   #scale_fill_gradient(low="white", high="orange") +
   #scale_fill_viridis(discrete=FALSE, limits = c(0,500), oob = squish) +
-  scale_fill_manual(values=c("#E69F00", "#56B4E9", "#000EEE", "#B4E956", "#999999")) +
+  scale_fill_manual(values=namedcolors) +
   xlab("Decoration Frequency Bin") +
   ylab("Space Coverage Bin") +
   labs(fill = "Occupied by: ") +
