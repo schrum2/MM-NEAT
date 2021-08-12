@@ -348,7 +348,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				}
 			}
 		}
-		System.out.println(start.toString());
+		//System.out.println(start.toString());
 		return start;
 	}
 	/**
@@ -467,14 +467,14 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				level.size()*MegaManRenderUtil.MEGA_MAN_TILE_Y);
 		if(mostRecentVisited != null) {
 			Graphics2D g = (Graphics2D) visualPath.getGraphics();
-//			g.setColor(Color.WHITE);
-//			for(MegaManState s : mostRecentVisited) {
-//				int x = s.currentX;
-//				int y = s.currentY;
-//				g.setStroke(new BasicStroke(3));
-//				g.drawLine(x*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y,(x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
-//				g.drawLine((x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y, x*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
-//			}
+			g.setColor(Color.WHITE);
+			for(MegaManState s : mostRecentVisited) {
+				int x = s.currentX;
+				int y = s.currentY;
+				g.setStroke(new BasicStroke(3));
+				g.drawLine(x*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y,(x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
+				g.drawLine((x+1)*MegaManRenderUtil.MEGA_MAN_TILE_X,y*MegaManRenderUtil.MEGA_MAN_TILE_Y, x*MegaManRenderUtil.MEGA_MAN_TILE_X,(y+1)*MegaManRenderUtil.MEGA_MAN_TILE_Y);
+			}
 			if(actionSequence != null) {
 				g.setColor(Color.RED);
 				MegaManState current = start;

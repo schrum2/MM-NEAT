@@ -21,29 +21,30 @@ public class LevelNovelty {
 	protected enum GAME {MARIO, ZELDA, LODE_RUNNER, MEGA_MAN};
 	
 	protected static GAME game = null;
-	protected static int getRows() {
+	public static int getRows() {
 		// If Mario, return Mario dimension, if Mega Man, get Mega Man dimension, etc.
+		// should be 1 less than the actual height, ex: Mario is 14 high, range of 0-13
 		switch(game) {
 		case MARIO:
-			throw new UnsupportedOperationException("Still need to provide details for Mario");
+			return 13;
 		case ZELDA:
 			return 7;		
 		case LODE_RUNNER:
-			throw new UnsupportedOperationException("Still need to provide details for Lode Runner");
+			return 21;
 		case MEGA_MAN:
 			return 14; //default Mega Man
 		}
 		return -1;
 	}
-	protected static int getColumns() {
+	public static int getColumns() {
 		// If Mario, return Mario dimension, if Mega Man, get Mega Man dimension, etc.
 		switch(game) {
 		case MARIO:
-			throw new UnsupportedOperationException("Still need to provide details for Mario");
+			return 28;
 		case ZELDA:
 			return 12;		
 		case LODE_RUNNER:
-			throw new UnsupportedOperationException("Still need to provide details for Lode Runner");
+			return 32;
 		case MEGA_MAN:
 			return 16; //default Mega Man
 		}
@@ -66,6 +67,7 @@ public class LevelNovelty {
 		return start;
 	}
 	public static double getAverageSolutionPathPercent(List<List<List<Integer>>> listOfSegments) {
+		if (game == GAME.LODE_RUNNER) { throw new IllegalStateException("Lode Runner does not support level novelty, becuase there is only one segment!"); }
 		double result = 0.00;
 		for(List<List<Integer>> segment:listOfSegments) {
 			for(int i = 0;i<segment.size();i++) {
@@ -86,6 +88,7 @@ public class LevelNovelty {
 	 * @return Real number between 0 and 1, 0 being non-novel and 1 being completely novel
 	 */
 	public static double segmentNovelty(List<List<List<Integer>>> segments, int focus) {
+		if (game == GAME.LODE_RUNNER) { throw new IllegalStateException("Lode Runner does not support level novelty, becuase there is only one segment!"); }
 		double novelty = 0;
 		
 		for(int i = 0; i < segments.size(); i++) { // For each other segment
@@ -202,6 +205,7 @@ public class LevelNovelty {
 	 * @return Real number between 0 and 1, 0 being non-novel and 1 being completely novel
 	 */
 	public static double averageSegmentNovelty(List<List<List<Integer>>> rooms) {
+		if (game == GAME.LODE_RUNNER) { throw new IllegalStateException("Lode Runner does not support level novelty, becuase there is only one segment!"); }
 		return StatisticsUtilities.average(segmentNovelties(rooms));
 	}
 
@@ -304,6 +308,24 @@ public class LevelNovelty {
 			copySegment.add(row);
 		}
 		return copySegment;
+	}
+	
+	public static boolean setGame(String gameIn) {
+		switch (gameIn) {
+			case ("mario"):
+				game = GAME.MARIO;
+				return true;
+			case ("zelda"):
+				game = GAME.ZELDA;
+				return true;
+			case ("lode_runner"):
+				game = GAME.LODE_RUNNER;
+				return true;
+			case ("mega_man"):
+				game = GAME.MEGA_MAN;
+				return true;
+		}
+		return false;
 	}
 	
 }

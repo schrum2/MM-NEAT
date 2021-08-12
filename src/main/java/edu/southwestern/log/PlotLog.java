@@ -19,7 +19,7 @@ public class PlotLog extends MMNEATLog {
 
 	public final void createPlotFile(ArrayList<String> labels) {
 		if (labels != null) {
-			File plotFile = new File(directory + prefix + "_log.plot");
+			File plotFile = new File(directory + prefix + "_log.plt");
 			if (!plotFile.exists()) {
 				try {
 					PrintStream plotStream = new PrintStream(new FileOutputStream(plotFile));

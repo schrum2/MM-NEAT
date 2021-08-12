@@ -17,6 +17,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.data.SaveThread;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.GenerationalEA;
+import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -24,6 +25,7 @@ import edu.southwestern.evolution.genotypes.HyperNEATCPPNAndSubstrateArchitectur
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
 import edu.southwestern.evolution.lineage.Offspring;
 import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
 import edu.southwestern.evolution.mutation.tweann.CauchyDeltaCodeMutation;
@@ -216,12 +218,9 @@ public class PopulationUtil {
 	/**
 	 * Generate initial parent population
 	 * 
-	 * @param <T>
-	 *            Type of phenotype evolved
-	 * @param example
-	 *            example genotype used to derive initial population
-	 * @param size
-	 *            Population size
+	 * @param <T> Type of phenotype evolved
+	 * @param example example genotype used to derive initial population
+	 * @param size Population size
 	 * @return List of genotypes for initial population
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -246,9 +245,14 @@ public class PopulationUtil {
 			if(CommonConstants.netChangeActivationRate > 0) {
 				ActivationFunctionRandomReplacement afrr = new ActivationFunctionRandomReplacement();
 				if(parents.get(0) instanceof CombinedGenotype) {
-					// If a combined genotye, assume the first of the pair is a network
+					// If a combined genotype, assume the first of the pair is a network
 					for (int i = 0; i < size; i++) {
 						afrr.mutate((Genotype<TWEANN>) ((Pair) parents.get(i)).t1);
+					}	
+				} else if (parents.get(0) instanceof TWEANNPlusParametersGenotype) {
+					// If a combined genotype, assume the first of the pair is a network
+					for (int i = 0; i < size; i++) {
+						afrr.mutate(((TWEANNPlusParametersGenotype) parents.get(i)).getTWEANNGenotype());
 					}	
 				} else if(parents.get(0) instanceof TWEANNGenotype) {
 					// TWEANNGenotype is standard network genotype
@@ -266,7 +270,7 @@ public class PopulationUtil {
 						afrr.mutate(((HyperNEATCPPNforDL4JGenotype) parents.get(i)).getCPPN());
 					}	
 				} else {
-					throw new IllegalArgumentException("Cannot change activation function of genotype that has no network");
+					throw new IllegalArgumentException("Cannot change activation function of genotype that has no network: " + parents.get(0).getClass().getName());
 				}
 			}
 		}
@@ -889,5 +893,18 @@ public class PopulationUtil {
 			substrateGenotypes.add((Genotype<T>) genotype);
 		}
 		return substrateGenotypes;
+	}
+	
+	/**
+	 * Converts a double[][] population into an ArrayList<Genotype<ArrayList<Double>>>
+	 * @param Population to be converted
+	 * @return A converted population
+	 */
+	public static ArrayList<Genotype<ArrayList<Double>>> genotypeArrayListFromDoubles(double[][] population) {
+		ArrayList<Genotype<ArrayList<Double>>> children = new ArrayList<Genotype<ArrayList<Double>>>(population.length);
+		for (double[] geneSet : population) {
+			children.add(new BoundedRealValuedGenotype(geneSet));
+		}
+		return children;
 	}
 }

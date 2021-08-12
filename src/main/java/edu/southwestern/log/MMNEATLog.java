@@ -76,11 +76,23 @@ public class MMNEATLog {
 	 * @param raw Overrides other settings: Do not reload old log, just append to it
 	 */
 	public MMNEATLog(String infix, boolean batches, boolean unlimited, boolean restricted, boolean raw) {
+		this(infix, batches, unlimited, restricted, raw, Parameters.parameters.booleanParameter("logLock"));
+	}
+	
+	/**
+	 * Most general log constructor.
+	 * @param infix Part of file name
+	 * @param batches Whether logging is in batches
+	 * @param unlimited Whether there is no limit on how much is expected to be logged
+	 * @param restricted true if there may be an unusually small number of entries per generation
+	 * @param raw Overrides other settings: Do not reload old log, just append to it
+	 * @param logLock Overrides logLock parameter to enable logging on specific files.
+	 */
+	public MMNEATLog(String infix, boolean batches, boolean unlimited, boolean restricted, boolean raw, boolean logLock) {
 		if(raw) System.out.println(infix + " allows raw logging"); // Just resumes where it left off: no re-load ()
 		if(unlimited) System.out.println(infix + " allows unlimited logging");
 		if(restricted) System.out.println(infix + " restricted logging");
-		if (Parameters.parameters.booleanParameter("logLock")) {
-			// Don't do any file reading
+		if (logLock) { // Don't do any file reading
 			return;
 		}
 		String experimentPrefix = Parameters.parameters.stringParameter("log")

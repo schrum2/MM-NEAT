@@ -9,7 +9,7 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.file.FileUtilities;
 import wox.serial.Easy;
 
-public class ExploreMAPElitesExperiment<T> implements Experiment{
+public class ExploreMAPElitesExperiment<T> implements Experiment {
 	
 	private Genotype<T> genotype;
 

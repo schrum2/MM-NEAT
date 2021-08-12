@@ -13,7 +13,7 @@ for(typePrefix in types) {
   
   for(i in 0:29) {
     dataFile <- paste(typePrefix,i,"/ZeldaDungeonsWallWaterRooms-",typePrefix,i,"_MAPElites_log.txt",sep="")
-    map <- read.table(dataFile)
+    map <- read.table(dataFile, na.strings = c("X"))
     print(dataFile)
     #map <- read.table(args[1])
     if (length(args)==0) {
@@ -24,6 +24,7 @@ for(typePrefix in types) {
       lastRow <- map[map$V1 == strtoi(args[1], base = 0L) - 1, ]
       nameEnd <- paste("Gen",args[1],sep="")
     }
+	lastRow[ is.na(lastRow) ] <- -Inf
     archive <- data.frame(matrix(unlist(lastRow[2:length(lastRow)]), nrow=(length(lastRow)-1), byrow=T))
     names(archive) <- "PercentTraversed"
 
@@ -142,6 +143,8 @@ for(i in 1:numBins) { # 1000 bins
 
 # Re-order the factors
 overlapData$PercentTraversed <- factor(overlapData$PercentTraversed, levels=c("All","No CPPNThenDirect2GAN","No CPPN2GAN","No Direct2GAN","Only CPPNThenDirect2GAN","Only CPPN2GAN","Only Direct2GAN","None"))
+namedcolors        <- c("#E69F00","#EEE000"              ,"#A52A2A"    ,"#56B4E9"      ,"#000EEE"                ,"#B4E956"      ,"#F040AA"        ,"#999999")
+names(namedcolors) <- c("All"    ,"No CPPNThenDirect2GAN","No CPPN2GAN","No Direct2GAN","Only CPPNThenDirect2GAN","Only CPPN2GAN","Only Direct2GAN","None")
 
 outputFile <- paste("ZeldaDungeonsWallWaterRooms-DIFF.",nameEnd,".heat.pdf",sep="")
 #outputFile <- str_replace(args[1],"txt","heat.pdf")
@@ -151,7 +154,7 @@ result <- ggplot(overlapData, aes(x=waterBin, y=wallBin, fill=factor(PercentTrav
   facet_wrap(~roomBin) +
   #scale_fill_gradient(low="white", high="orange") +
   scale_fill_viridis(discrete=FALSE) +
-  scale_fill_manual(values=c("#E69F00", "#EEE000","#56B4E9", "#B4E956", "#F040AA", "#999999")) +
+  scale_fill_manual(values=namedcolors) +
   xlab("Water Percentage Bin") +
   ylab("Wall Percentage Bin") +
   labs(fill = "Occupied by: ") +

@@ -1,0 +1,1 @@
+python main.py --niter 5000 --nz 10 --json Mario-underground-redo.json --experiment Mario1_Underground_10_Epoch5000 --tiles 13 --cuda

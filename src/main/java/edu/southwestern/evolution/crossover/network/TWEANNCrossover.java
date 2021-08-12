@@ -52,12 +52,12 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	 * Perform crossover between two TWEANN genotypes.
 	 *
 	 * @param toModify
-	 *            = Copy of parent genotype. Is actually modified by the
+	 *            Copy of parent genotype. Is actually modified by the
 	 *            crossover, to be one of the offspring. It is modified via
 	 *            side-effects because it is not returned.
 	 * @param toReturn
-	 *            = The other parent. Is modified and returned.
-	 *              Should be a copy of a member from a parent population.
+	 *            The other parent. Is modified and returned.
+	 *            Should be a copy of a member from a parent population.
 	 * @return One of the offspring of crossover is returned (the other 
 	 *          is only modified via side-effects)
 	 */
@@ -133,14 +133,10 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	 * whatever manner is appropriate). The alignment may have introduced null
 	 * slots into the lists, where the two parents do not align.
 	 *
-	 * @param <G>
-	 *            Will be either a NodeGene or LinkGene
-	 * @param left
-	 *            One list of parent Genes
-	 * @param right
-	 *            Other list of parent Genes
-	 * @return ArrayList containing both lists of offspring Genes (with no
-	 *         nulls)
+	 * @param <G> Will be either a NodeGene or LinkGene
+	 * @param left One list of parent Genes
+	 * @param right Other list of parent Genes
+	 * @return ArrayList containing both lists of offspring Genes (with no nulls)
 	 */
 	@SuppressWarnings("unchecked")
 	public <G extends Gene> ArrayList<ArrayList<G>> cross(ArrayList<G> left, ArrayList<G> right) {
@@ -185,16 +181,11 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	 * being constructed accordingly. The offspring lists are modified via
 	 * side-effects.
 	 *
-	 * @param <G>
-	 *            LinkGene or NodeGene
-	 * @param leftGene
-	 *            gene from one parent
-	 * @param rightGene
-	 *            gene from other parent
-	 * @param crossedLeft
-	 *            partially finished list of genes for offspring 1
-	 * @param crossedRight
-	 *            partially finished list of genes for offspring 2
+	 * @param <G> LinkGene or NodeGene
+	 * @param leftGene gene from one parent
+	 * @param rightGene gene from other parent
+	 * @param crossedLeft partially finished list of genes for offspring 1
+	 * @param crossedRight partially finished list of genes for offspring 2
 	 */
 	public <G extends Gene> void crossIndex(G leftGene, G rightGene, ArrayList<G> crossedLeft, ArrayList<G> crossedRight) {
 		boolean swap = RandomNumbers.randomGenerator.nextBoolean();
@@ -212,10 +203,8 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	 * list) in order to align the list to the archetype list of nodes, which
 	 * tracks the universal ordering of nodes across all networks.
 	 *
-	 * @param list
-	 *            = list of node genes to be aligned
-	 * @return aligned list with nulls in the slots that don't match with
-	 *         archetype.
+	 * @param list list of node genes to be aligned
+	 * @return aligned list with nulls in the slots that don't match with archetype.
 	 */
 	private static ArrayList<NodeGene> alignNodesToArchetype(ArrayList<NodeGene> list, int archetypeIndex) {
 		ArrayList<NodeGene> archetype = EvolutionaryHistory.archetypes[archetypeIndex];
@@ -262,11 +251,9 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	 * Method for printing nodes in columns to visually determine if they are
 	 * aligned
 	 * 
-	 * @param list
-	 *            array list of genes to be printed
-	 * @param archetypeIndex
-	 *            index of the archetype that corresponds with the correct
-	 *            generation from the evolutionary history
+	 * @param list array list of genes to be printed
+	 * @param archetypeIndex index of the archetype that corresponds with the correct 
+	 * 						 generation from the evolutionary history
 	 */
 	public static void printNodeAlignmentColumns(ArrayList<NodeGene> list, int archetypeIndex) {
 		ArrayList<NodeGene> archetype = EvolutionaryHistory.archetypes[archetypeIndex];
@@ -309,12 +296,9 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	/**
 	 * Index in list of genes where innovation number is found
 	 *
-	 * @param <G>
-	 *            LinkGene or NodeGene
-	 * @param genes
-	 *            = list of genes
-	 * @param innovation
-	 *            = innovation number to search for
+	 * @param <G> LinkGene or NodeGene
+	 * @param genes list of genes
+	 * @param innovation innovation number to search for
 	 * @return index in "list" where gene with innovation was found
 	 */
 	private static <G extends Gene> Integer containsInnovationAt(ArrayList<G> genes, long innovation) {
@@ -331,10 +315,8 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	 * case because no ordering is required for correct network execution.
 	 * Therefore, links are simply sorted by their innovation numbers.
 	 *
-	 * @param left
-	 *            = list of parent link genes
-	 * @param right
-	 *            = list of other parent's link genes
+	 * @param left list of parent link genes
+	 * @param right list of other parent's link genes
 	 * @return ArrayList of two lists: the aligned link genes of each offspring,
 	 *         with nulls where genes don't align.
 	 */
@@ -411,10 +393,8 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	 * the same two nodes. This method merges those links into one by changing
 	 * innovation numbers
 	 *
-	 * @param left
-	 *            link genes of parent 1
-	 * @param right
-	 *            link genes of parent 2
+	 * @param left link genes of parent 1
+	 * @param right link genes of parent 2
 	 */
 	private static void mergeDuplicates(ArrayList<LinkGene> left, ArrayList<LinkGene> right) {
 		for (LinkGene lg : left) {

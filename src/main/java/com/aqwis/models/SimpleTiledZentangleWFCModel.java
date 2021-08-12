@@ -416,9 +416,10 @@ public class SimpleTiledZentangleWFCModel extends WFCModel {
      * the cardinality is L.
      * @param String[] patternNames names of the tiles
      * @param int numElements the number of tiles
+     * @param int tileSize width and height of the square tiles in pixels
      */
     // found info on how to write an XML file here: https://crunchify.com/java-simple-way-to-write-xml-dom-file-in-java/
-    public static void writeAdjacencyRules(String directory, String[] patternNames) {
+    public static void writeAdjacencyRules(String directory, String[] patternNames, int tileSize) {
     	System.out.println(Arrays.toString(patternNames));
         DocumentBuilderFactory icFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder icBuilder;
@@ -427,7 +428,7 @@ public class SimpleTiledZentangleWFCModel extends WFCModel {
             Document doc = icBuilder.newDocument();
             Element mainRootElement = doc.createElement("set");
             // WFC default tile size apparently 48. This can be overridden.
-            mainRootElement.setAttribute("size", Parameters.parameters == null ? "48" : Parameters.parameters.integerParameter("zentangleTileDim")+"");
+            mainRootElement.setAttribute("size", Parameters.parameters == null ? "48" : tileSize+"");
             doc.appendChild(mainRootElement);
  
             Element tilesElement = doc.createElement("tiles");

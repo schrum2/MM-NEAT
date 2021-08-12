@@ -24,8 +24,8 @@ if __name__ == '__main__':
         tokens1 = line1.split()
         tokens2 = line2.split()
 
-        nums1 = list(map(float,tokens1))
-        nums2 = list(map(float,tokens2))
+        nums1 = list(map(lambda x: float('-inf') if x.strip() == "X" else float(x),tokens1))
+        nums2 = list(map(lambda x: float('-inf') if x.strip() == "X" else float(x),tokens2))
 
         zipped = list(zip(nums1,nums2))
         maxes = list(map(max,zipped))
@@ -37,7 +37,7 @@ if __name__ == '__main__':
 
         for x in maxes:
             if x == float('-inf'):
-                target.write("-Infinity")
+                target.write("X") # Used to be "-Infinity" here
             else:    
                 target.write("{}".format(x))
             target.write("\t")

@@ -2,10 +2,19 @@ package edu.southwestern.tasks.mario.level;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.level.SpriteTemplate;
 import ch.idsia.mario.engine.sprites.Enemy;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -133,7 +142,15 @@ public class LevelParser {
 //        return createLevel(level);        
 //    }
     
-    public static ArrayList<double[]> getLevelStats(ArrayList<List<Integer>> oneLevel, int segmentWidth){
+    /**
+     * Collects information about decoration, leniency, and space coverage.
+     * Written by Vanessa.
+     * 
+     * @param oneLevel
+     * @param segmentWidth
+     * @return
+     */
+    public static ArrayList<double[]> getLevelStats(List<List<Integer>> oneLevel, int segmentWidth){
         if (oneLevel.get(0).size()%segmentWidth!=0){
             System.out.println("getLevelStats: Level not multiple of segment width");
             return null;
@@ -153,7 +170,7 @@ public class LevelParser {
                     vals[0] +=prettyTiles.get(code);
                     vals[1] +=leniencyTiles.get(code);
                     vals[2] +=negativeSpaceTiles.get(code);
-                    if(code==2 && i==height-1){
+                    if(code==2 && i==height-1){ // Magic numbers?
                         gapCount++;
                     }
                 }
@@ -270,7 +287,7 @@ public class LevelParser {
   
     /**
      * Get type of enemy based on code and whether they're flying or not
-     * @param code Int code of enemey
+     * @param code Int code of enemy
      * @param flying Boolean whether they're flying or not
      * @return SpriteTemplate representing the enemy
      */
@@ -295,7 +312,7 @@ public class LevelParser {
     }
     
     
-       public Level test(){
+    public Level test(){
         Level level = new Level(202,14);
         level.setBlock(1, 13, (byte) 9);
         level.setBlock(2, 13, (byte) 9);
@@ -315,5 +332,119 @@ public class LevelParser {
         level.setBlock(5, 10, (byte) 23);
         
         return level;
+    }
+    
+    
+    /**
+     * Modified from https://github.com/TheHedgeify/DagstuhlGAN/blob/master/marioaiDagstuhl/src/reader/MarioReader.java
+     * in order to generate to convert Mario levels into a json file.
+     */
+    public static void main(String[] args) throws FileNotFoundException { // generate new json files
+    	// All directories to pull from
+    	String[] inputDirectories = new String[] {"data/VGLC/SuperMarioBrosNewEncoding/underground", "data/VGLC/SuperMarioBrosNewEncoding/overworlds"};
+    	//String[] inputDirectories = new String[] {"data/VGLC/SuperMarioBrosNewEncoding/overworlds"};
+
+        // output file
+        String outputFile = "data/VGLC/SuperMarioBrosNewEncoding/Mario-overworld-underground.json";
+
+        ArrayList<int[][]> examples = new ArrayList<>();
+        
+        File[] files = new File[inputDirectories.length];
+        ArrayList<String> fileList = new ArrayList<String>();
+        
+        for (int i = 0; i < inputDirectories.length; i++) { // get directories as files
+        	files[i] = new File(inputDirectories[i]);
+        }
+
+        for (File dir : files) {
+        	for (String file : dir.list()) {
+        		if (file.endsWith("txt")) fileList.add(dir.getPath() + "/" + file); // add file path string for each level
+        	}
+        }
+        
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        for (String inputFile : fileList) {
+            try {
+                System.out.println("Reading: " + inputFile);
+                int[][] level = readLevel(new Scanner(new FileInputStream(inputFile)));
+                addData(examples, level);
+                System.out.println("Read: " + inputFile);
+                
+                ArrayList<int[][]> examplesTmp = new ArrayList<>();
+                addData(examplesTmp, level);
+                String outTmp = gson.toJson(examplesTmp);
+                System.out.println("Created JSON String");
+                outTmp = outTmp.replace("\n", "").replace(" ", "");
+                
+                PrintWriter writerTmp = new PrintWriter(inputFile + ".json");
+                writerTmp.print(outTmp);
+                writerTmp.close();
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+        System.out.println("Processed examples");
+
+        String out = gson.toJson(examples);
+        System.out.println("Created JSON String");
+        out = out.replace("\n", "").replace("      ", " ").replace(",  ", ", ").replace(",    ",", ").replace("    ","").replace("  ", "").replace("[ ", "[");
+
+        // System.out.println(out);
+
+        PrintWriter writer = new PrintWriter(outputFile);
+
+        writer.print(out);
+        writer.close();
+
+        System.out.println("Wrote file with " + examples.size() + " examples");
+    }
+    
+    static int targetWidth = 28;
+    static void addData(ArrayList<int[][]> examples, int[][] level) { // add data to given list (from: https://github.com/TheHedgeify/DagstuhlGAN/blob/master/marioaiDagstuhl/src/reader/MarioReader.java)
+        int h = level.length;
+
+        for (int offset = 0; offset < level[0].length - 1 - targetWidth; offset++) {
+            int[][] example = new int[h][28];
+            for (int y = 0; y < h; y++) {
+                for (int x = 0; x < targetWidth; x++) {
+                    example[y][x] = level[y][x + offset];
+                }
+            }
+            examples.add(example);
+        }
+    }
+    
+    static int[][] readLevel(Scanner scanner) throws Exception { // read level into 2D int array (from: https://github.com/TheHedgeify/DagstuhlGAN/blob/master/marioaiDagstuhl/src/reader/MarioReader.java)
+        String line;
+        ArrayList<String> lines = new ArrayList<>();
+        int width = 0;
+        while (scanner.hasNext()) {
+            line = scanner.nextLine();
+            width = line.length();
+            lines.add(line);
+            // System.out.println(line);
+        }
+
+        int[][] a = new int[lines.size()][width];
+        System.out.println("Arrays length: " + a.length);
+        for (int y = 0; y < lines.size(); y++) {
+            System.out.println("Processing line: " + lines.get(y));
+            for (int x = 0; x < width; x++) {
+            	try { // Added error checking to deal with unrecognized tile types
+                a[y][x] = tiles.get(lines.get(y).charAt(x));
+            	} catch(Exception e) {
+            		System.out.println("Problem on ");
+            		System.out.println("\ty = " + y);
+            		System.out.println("\tx = " + x);
+            		System.out.println("\tlines.get(y).charAt(x) = " + lines.get(y).charAt(x));
+            		System.exit(1);
+            	}
+            }
+        }
+
+        return a;
     }
 }

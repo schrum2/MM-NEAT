@@ -180,6 +180,8 @@ public class ActivationFunctions {
 	 * @return activation of node
 	 */
 	public static double activation(int ftype, double sum) {
+		assert!Double.isInfinite(sum) : "Function input is infinite " + sum;
+		assert!Double.isNaN(sum) : "Function input is NaN " + sum;
 		double activation = functionMap.get(ftype).f(sum);
 		assert!Double.isNaN(activation) : activationName(ftype) + " returns NaN on " + sum + " from " + activation;
 		assert!Double.isInfinite(activation) : activationName(ftype) + " is infinite on " + sum + " from " + activation;

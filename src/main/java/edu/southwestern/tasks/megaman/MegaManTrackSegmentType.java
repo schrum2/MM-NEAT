@@ -4,15 +4,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator.SEGMENT_TYPE;
 
 public class MegaManTrackSegmentType {
-	public static int numRight = 0;
-	public static int numLeft = 0;
-	public static int numUp = 0;
-	public static int numDown = 0;
-	public static int numCorner = 0;
-	public static int numDistinctSegments = 0;
+	private int numRight;
+	private int numLeft;
+	private int numUp;
+	private int numDown;
+	private int numCorner;
+	private int numDistinctSegments;
+	
+	public MegaManTrackSegmentType() {
+		numRight = 0;
+		numLeft = 0;
+		numUp = 0;
+		numDown = 0;
+		numCorner = 0;
+		numDistinctSegments = 0;
+	}
 	
 	/**
 	 * takes in a single segment type and adds to the total of that type
@@ -50,7 +60,19 @@ public class MegaManTrackSegmentType {
 			numCorner++;
 			break;
 		default: throw new IllegalArgumentException("Valid SEGMENT_TYPE not specified");
+		}		
+		assert countIntegrityCheck();
+	}
+	
+	private boolean countIntegrityCheck() {
+		
+		int[] segmentTypes = new int[] {numUp, numDown, numRight, numLeft, numCorner};
+		String[] segmentNames = new String[] {"numUp", "numDown", "numRight", "numLeft", "numCorner"};
+		
+		for (int i = 0; i < segmentTypes.length; i++) {
+			assert segmentTypes[i] <= Parameters.parameters.integerParameter("megaManGANLevelChunks") : (segmentNames[i] + " (" + segmentTypes[i] + ") exceeded max level chunks of " + Parameters.parameters.integerParameter("megaManGANLevelChunks"));
 		}
+		return true;
 	}
 	
 	public HashMap<String, Integer> findMiscSegments(){

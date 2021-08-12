@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
@@ -24,6 +25,7 @@ public class DungeonNoveltyTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		MMNEAT.clearClasses();
 		// P now maps to 5, but was 2 when the text was developed
 		Parameters.initializeParameterCollections(new String[] {"zeldaVGLCWaterPMapCode:2","randomSeed:2"});
 		originalFour = LoadOriginalDungeon.loadOriginalDungeon("tloz4_1_flip");

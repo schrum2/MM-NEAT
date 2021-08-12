@@ -1,23 +1,30 @@
 package edu.southwestern.tasks.testmatch.imagematch;
 
 import java.awt.Color;
-import java.awt.image.*;
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
-import javax.imageio.*;
+
+import javax.imageio.ImageIO;
+
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.SinglePopulationGenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
@@ -35,9 +42,16 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	private static final int HUE_INDEX = 0;
 	private static final int SATURATION_INDEX = 1;
 	private static final int BRIGHTNESS_INDEX = 2;
+	private static final int NUM_CPPN_OUTPUTS = 3;
 	private Network individual;
 	private BufferedImage img = null;
 	public int imageHeight, imageWidth;
+	private double[] targetImageFeatures; 
+	
+	private double bestFitnessSoFar = Double.NEGATIVE_INFINITY;
+	private BufferedImage bestImageSoFar = null;
+	private long bestIdSoFar;
+	private int neuronsOfBest;
 
 	/**
 	 * Default task constructor
@@ -45,6 +59,10 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	public ImageMatchTask() {
 		this(Parameters.parameters.stringParameter("matchImageFile"));
 		MatchDataTask.pauseForEachCase = false;
+		
+		// if using min neuron fitness, then : 		MMNEAT.registerFitnessFunction("MinNeurons", null, true);
+		if(Parameters.parameters.booleanParameter("minNeuronFitness")) MMNEAT.registerFitnessFunction("MinNeurons", null, true);
+		
 	}
 
 	/**
@@ -61,6 +79,8 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		}
 		imageHeight = img.getHeight();
 		imageWidth = img.getWidth();
+		
+		targetImageFeatures = GraphicsUtil.flatFeatureArrayFromBufferedImage(img);
 	}
 
 	/**
@@ -72,9 +92,10 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	 */
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
-		if (CommonConstants.watch) {
+		double[] candidateFeatures = null;
+		BufferedImage child = null;
+		if (CommonConstants.watch || Parameters.parameters.booleanParameter("useWoolleyImageMatchFitness") || Parameters.parameters.booleanParameter("useRMSEImageMatchFitness")) {
 			Network n = individual.getPhenotype();
-			BufferedImage child;
 			int drawWidth = imageWidth;
 			int drawHeight = imageHeight;
 			if (Parameters.parameters.booleanParameter("overrideImageSize")) {
@@ -82,21 +103,70 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 				drawHeight = Parameters.parameters.integerParameter("imageHeight");
 			}
 			child = GraphicsUtil.imageFromCPPN(n, drawWidth, drawHeight);
-			// draws picture and network to JFrame
-			DrawingPanel parentPanel = GraphicsUtil.drawImage(img, "target", drawWidth, drawHeight);
-			DrawingPanel childPanel = GraphicsUtil.drawImage(child, "output", drawWidth, drawHeight);
-			childPanel.setLocation((img.getWidth() + IMAGE_PLACEMENT), 0);
-			considerSavingImage(childPanel);
-			parentPanel.dispose();
-			childPanel.dispose();
+			candidateFeatures = GraphicsUtil.flatFeatureArrayFromBufferedImage(child);
+			
+			if (CommonConstants.watch) {
+				// draws picture and network to JFrame
+				DrawingPanel parentPanel = GraphicsUtil.drawImage(img, "target", drawWidth, drawHeight);
+				DrawingPanel childPanel = GraphicsUtil.drawImage(child, "output", drawWidth, drawHeight);
+				childPanel.setLocation((img.getWidth() + IMAGE_PLACEMENT), 0);
+				considerSavingImage(childPanel);
+				parentPanel.dispose();
+				childPanel.dispose();
+			}			
 		}
 		// Too many outputs to print to console. Don't want to watch.
 		boolean temp = CommonConstants.watch;
 		CommonConstants.watch = false; // Prevent watching of console showing error energy
-		Score<T> result = super.evaluate(individual);// if watch=false
+		Score<T> result = null;
+		
+		if(Parameters.parameters.booleanParameter("useWoolleyImageMatchFitness")) {
+			double error = PictureTargetTask.candidateVsTargetError(candidateFeatures, targetImageFeatures);
+			double fitness = 1 - error * error;
+			double[] resultScore = new double[]{fitness};
+			result = new Score<>(individual, resultScore);
+		} else if(Parameters.parameters.booleanParameter("useRMSEImageMatchFitness")) {
+			double fitness = PictureTargetTask.rootMeanSquareErrorFitness(candidateFeatures, targetImageFeatures);
+			double[] resultScore = new double[]{fitness};
+			result = new Score<>(individual, resultScore);
+		} else {
+			result = super.evaluate(individual);// if watch=false
+		}
+
+		@SuppressWarnings("unchecked")
+		TWEANNGenotype tweannIndividual = (individual instanceof TWEANNGenotype ? (TWEANNGenotype) individual : ((TWEANNPlusParametersGenotype<ArrayList<Double>>) individual).getTWEANNGenotype());
+
+		// if min neuron fitness: then result.extraScore(min num neurons);
+		if(Parameters.parameters.booleanParameter("minNeuronFitness")) result.extraScore(-tweannIndividual.nodes.size());
+		
 		CommonConstants.watch = temp;
 		this.individual = individual.getPhenotype();
 		result.giveBehaviorVector(getBehaviorVector());
+		
+		// TODO: If fitness better than bestFitnessSoFar then save image
+		double fitness = result.scores[0];
+		if(child != null && fitness > bestFitnessSoFar) {
+			bestImageSoFar = child;
+			bestFitnessSoFar = fitness;
+			bestIdSoFar = individual.getId();
+			neuronsOfBest = tweannIndividual.nodes.size();
+		}
+		
+		return result;
+	}
+	
+	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
+		ArrayList<Score<T>> result = super.evaluateAll(population);
+		if(CommonConstants.netio && bestImageSoFar != null) {
+			@SuppressWarnings("rawtypes")
+			int gen = ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration();
+			double percentMatching = GraphicsUtil.percentMatchingPixels(bestImageSoFar, img);
+			String filename1 = FileUtilities.getSaveDirectory() + File.separator + "gen" +gen+ "percentMatch" + percentMatching + "fitness" + bestFitnessSoFar + "Neurons" + neuronsOfBest +  "championId"+bestIdSoFar+".jpg";
+			GraphicsUtil.saveImage(bestImageSoFar, filename1);
+			System.out.println("save directory is: " + FileUtilities.getSaveDirectory());
+			System.out.println("image " + filename1 + " was saved successfully. Size: "+bestImageSoFar.getWidth()+" by "+bestImageSoFar.getHeight());
+			bestImageSoFar = null; // Set null after saving so we don't re-save the same over and over
+		}
 		return result;
 	}
 
@@ -154,7 +224,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	 */
 	@Override
 	public int numOutputs() {
-		return 3;
+		return NUM_CPPN_OUTPUTS;
 	}
 
 	/**
@@ -165,23 +235,40 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	 */
 	@Override
 	public ArrayList<Pair<double[], double[]>> getTrainingPairs() {
-		ArrayList<Pair<double[], double[]>> pairs = new ArrayList<Pair<double[], double[]>>();
-		for (int x = 0; x < imageWidth; x++) {
-			for (int y = 0; y < imageHeight; y++) {
-				Color color = new Color(img.getRGB(x, y));
-				float[] hsb = new float[numOutputs()];
+		return getImageMatchTrainingPairs(img);
+	}
+
+	/**
+	 * Gets the expected input and output from picture for network to compare
+	 * against.  Specifically gathering training data about that image.  The
+	 * inputs correspond to the coordinates and the outputs correspond to 
+	 * a specific color (determined by hue, saturation and brightness).
+	 * 
+	 * @param img the image being evaluated
+	 * @return returns the 2D array of pairs (inputs and outputs)
+	 */
+	public static ArrayList<Pair<double[], double[]>> getImageMatchTrainingPairs(BufferedImage img) {
+		ArrayList<Pair<double[], double[]>> pairs = new ArrayList<Pair<double[], double[]>>();	// creating a new 2D ArrayList of doubles
+		// looks at each pixel in the image
+		for (int x = 0; x < img.getWidth(); x++) {
+			for (int y = 0; y < img.getHeight(); y++) {
+				Color color = new Color(img.getRGB(x, y));	// Find the rgb color at the coordinates x and y and store them in a new color
+				// 
+				float[] hsb = new float[NUM_CPPN_OUTPUTS];
+				// Converting the color to the corresponding hue, saturation, and brightness indeces
 				Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
 				// -1 input is used as default so that time is not taken into account
-				pairs.add(new Pair<double[], double[]>(GraphicsUtil.get2DObjectCPPNInputs(x, y, imageWidth, imageHeight, -1),
+				// Add the coordinates and the corresponding color into the 2D array
+				pairs.add(new Pair<double[], double[]>(GraphicsUtil.get2DObjectCPPNInputs(x, y, img.getWidth(), img.getHeight(), -1),
 						new double[] { hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX] }));
 			}
 		}
-		return pairs;
+		return pairs;	// return the 2D ArrayList containing all of the pairs
 	}
 
 	/**
 	 * gets behavior vector for behavioral diversity algorithm
-         * @return The H, S, and B values for each pixel in the image
+     * @return The H, S, and B values for each pixel in the image
 	 */
 	@Override
 	public ArrayList<Double> getBehaviorVector() {
@@ -202,17 +289,55 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	}
 
 	/**
-	 * main method used to create a random CPPN image.
+	 * main method 
 	 *
 	 * @param args
+	 * @throws NoSuchMethodException 
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) {
-		MMNEAT.clearClasses();
-		EvolutionaryHistory.setInnovation(0);
-		EvolutionaryHistory.setHighestGenotypeId(0);
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false" });
-		MMNEAT.loadClasses();
-		randomCPPNimage(true, 200, 200, 200);
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		
+		
+		// For test runs
+		MMNEAT.main(new String[]{
+				"runNumber:0","randomSeed:0", "base:imagematch", "trials:1", "maxGens:1000", "mu:100", "io:true", "netio:true", 
+				"mating:true", "fs:false", "task:edu.southwestern.tasks.testmatch.imagematch.ImageMatchTask", 
+				"log:ImageMatch-RMSE", 
+				"saveTo:RMSE", 
+				"allowMultipleFunctions:true", "ftype:0", "watch:false", "netChangeActivationRate:0.3", "overrideImageSize:false", 
+				"imageHeight:200", "imageWidth:300", "saveAllChampions:true",
+				"useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:true", // Pick one or none
+				//"matchImageFile:TexasFlag.png",
+				//"matchImageFile:cat.jpg",
+				"matchImageFile:failedskull.jpg",
+				"includeSigmoidFunction:true", 	// In Brian Woolley paper
+				"includeTanhFunction:false",
+				"includeIdFunction:true",		// In Brian Woolley paper
+				"includeFullApproxFunction:false",
+				"includeApproxFunction:false",
+				"includeGaussFunction:true", 	// In Brian Woolley paper
+				"includeSineFunction:true", 	// In Brian Woolley paper
+				"includeCosineFunction:true", 	// In Brian Woolley paper
+				"includeSawtoothFunction:false", 
+				"includeAbsValFunction:false", 
+				"includeHalfLinearPiecewiseFunction:false", 
+				"includeStretchedTanhFunction:false",
+				"includeReLUFunction:false",
+				"includeSoftplusFunction:false",
+				"includeLeakyReLUFunction:false",
+				"includeFullSawtoothFunction:false",
+				"includeTriangleWaveFunction:false", 
+				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:true"}); 
+		
+		
+		// used to create a random CPPN image. WHY?
+		
+//		MMNEAT.clearClasses();
+//		EvolutionaryHistory.setInnovation(0);
+//		EvolutionaryHistory.setHighestGenotypeId(0);
+//		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false", "useWoolleyImageMatchFitness:false", "useRMSEImageMatchFitness:false"});
+//		MMNEAT.loadClasses();
+//		randomCPPNimage(true, 200, 200, 200);
 	}
 
 	public static void draw8RandomImages() {

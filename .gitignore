@@ -60,17 +60,25 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+/objectiveevolutionpseudoarchive/
+/mariolevelsnsga2/
 /loderunnerlevelsequences/
 /loderunnermapelites/
+/loderunnerkldivergence/
 /megamandistinctverticalandconnectivity/
 /loderunnerlevels/
+/loderunnerlevelscmaes/
 /loderunnerlevelsMAPElites/
 ZeldaDungeon01_5000_10*
 ZeldaDungeon02_5000_10*
 ZeldaAllDungeons*
 /megamanlevels/
+/megamanmultigan/
+/megamansinglegan/
 /mariolevelsdecoratensleniency/
+/mariolevelsdecorateleniency/
 /mariolevelsdistinctnsdecorate/
+/mariolevelsnoveltydecorleniency/
 /zeldadungeonswallwaterrooms/
 /zeldadungeonsdistinctbtrooms/
 /zeldadungeons/
@@ -81,6 +89,7 @@ ZeldaAllDungeons*
 /interactivezeldagan/
 /interactivemariogan/
 /animationbreeder/
+/targetimage/
 /picbreeder/
 /build/
 /dist/
@@ -94,6 +103,10 @@ ZeldaAllDungeons*
 /pp/
 /mario/
 /mariolevel/
+/mariolevelskldivergence/
+/marioTEST/
+/mariolevelsTEST/
+/megamanTEST/
 /fbr/
 /checkers/
 /match/
@@ -119,17 +132,33 @@ ZeldaAllDungeons*
 /mariogan/
 /zentangle/
 /mariocppn/
+/loderunnermapelites10batches/
+/loderunnermapelitestenpercentbatches/
+/loderunnermapelitestwentypercentbatches/
 /coghosts/
 /poghosts/
 /popacman/
 /zeldagan/
+/functionoptimization/
+/cmamefunctionoptimization/
+/mapelitesfunctionoptimization/
+/mapelitesfunctionoptimizationseveral/
 /src/main/python/MarioGAN/Zelda-30-5000
+/src/main/python/Pyribs/sphere_output*
+/src/main/python/Pyribs/rastrigin_output*
+/src/main/python/Pyribs/dask-worker-space
+/loderunner20gancomparebins/
+/mariocomparebins/
+/zeldacomparebins/
+/megamanmultigancomparebins/
+/latentvariablepartition/
 # Some of UT^2's log files end up with this naming convention
 *-null
 *.zds
 vizdoom/bin/vizdoom-He_Deceives.ini
 *.bmp
 *.txt
+!requirements.txt
 vizdoom.ini
 *.pdf
 *.plot
@@ -140,6 +169,7 @@ vizdoom.ini
 *.png
 *.gif
 *.wav
+*.dat
 _vizdoom.ini
 
 .svn
@@ -185,3 +215,12 @@ src/main/python/GAN/MegaManGAN/Thumbs.db
 /megamancppntogan/
 /MegaManGAN/
 src/main/python/GAN/CGANTwoClassTests/FINAL.pth
+src/main/python/AutoEncoder/data/MNIST
+failedskull*
+imagematch/
+src/main/python/AutoEncoder/sim_autoencoder.pth
+src/main/python/ColorAutoEncoder/data/cifar-10-batches-py/
+src/main/python/ColorAutoEncoder/data/cifar-10-python.tar.gz
+LodeRunnerGAN-MAPElitesGroundTreasureEnemiesCAFit-On100Levels.jar
+LodeRunnerGAN-MAPElitesGroundTreasureEnemiesCAFit-On100Levels-HashMap.jar
+ExternalRealValuedGenotypeTask.jar

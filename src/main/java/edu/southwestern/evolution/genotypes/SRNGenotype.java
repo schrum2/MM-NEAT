@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.evolution.genotypes;
 
 import edu.southwestern.parameters.Parameters;
@@ -11,7 +7,8 @@ import edu.southwestern.networks.SRN;
 import java.util.Arrays;
 
 /**
- *
+ * Genotype for Simple Recurrent Network with Multi-Layer Perceptron base.
+ * 
  * @author Jacob Schrum
  */
 public class SRNGenotype extends MLPGenotype {

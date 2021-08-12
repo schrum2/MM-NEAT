@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -13,10 +14,9 @@ import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
-import edu.southwestern.evolution.mapelites.MAPElites;
+import edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.scores.MultiObjectiveScore;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
@@ -25,8 +25,8 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
-import edu.southwestern.tasks.gvgai.zelda.study.DungeonNovelty;
 import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.GraphicsUtil;
@@ -39,6 +39,7 @@ import me.jakerg.rougelike.Tile;
 public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 
 	private int numObjectives;
+	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
 	
 	public ZeldaDungeonTask() {
 		// Objective functions
@@ -80,11 +81,8 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		MMNEAT.registerFitnessFunction("NumSearchStatesVisited",false);
 		MMNEAT.registerFitnessFunction("NumBackTrackRooms",false);
 		MMNEAT.registerFitnessFunction("NumDistinctRooms",false);
-
-
-		// More?
 	}
-
+	
 	@Override
 	/**
 	 * returns the number of objectives
@@ -122,13 +120,6 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 	 * @return score - the MultiObjectiveScore<T>(individual, scores, behaviorVector, other) of the dungeon
 	 */
 	public Score<T> evaluate(Genotype<T> individual) {
-		// Defines the floor space (excluding walls)
-		
-		// TODO: Move/rename to util class. Mention ZELDA_FLOOR_SPACE
-		//final int ZELDA_FLOOR_SPACE_ROWS = 7; // Number of rows to look through
-		//final int ZELDA_FLOOR_SPACE_COLUMNS = 12; // Number of columns to look through
-
-		ArrayList<Double> behaviorVector = null; // Filled in later
 		Dungeon dungeon = getZeldaDungeonFromGenotype(individual);
 		int distanceToTriforce = -100; // Very bad fitness if level is not beatable 
 		int numRooms = 0; //number of rooms
@@ -139,8 +130,9 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		int waterTileCount = 0; //the number of water tiles
 		int wallTileCount = 0; //the number of wall tiles
 		int numRoomsReachable = 0; //the number of reachable rooms
-		int[] mapElitesBinIndices = null;
-		double mapElitesBinScore = Double.NEGATIVE_INFINITY;
+		HashMap<String,Object> behaviorMap = null;
+		HashSet<ZeldaState> solutionPath = null; 
+		HashSet<ZeldaState> mostRecentVisited = null;
 		
 		if(dungeon != null) {
 			try {
@@ -171,9 +163,7 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 				//MiscUtil.waitForReadStringAndEnterKeyPress();
 				numRooms = dungeon.getLevels().size();
 				// A* should already have been run during creation to assure beat-ability, but it is run again here to get the action sequence.
-				ArrayList<GridAction> actionSequence;
-				HashSet<ZeldaState> solutionPath = null; 
-				HashSet<ZeldaState> mostRecentVisited; // the last room visited
+				ArrayList<GridAction> actionSequence; 
 				//actionSequence = DungeonUtil.makeDungeonPlayable(dungeon);
 				Search<GridAction,ZeldaState> search = new AStarSearch<>(ZeldaLevelUtil.manhattan);
 				ZeldaState startState = new ZeldaState(5, 5, 0, dungeon);
@@ -267,67 +257,69 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 					}
 				}
 
+			} catch(IllegalStateException e) {
+				// Sometimes this exception occurs from A*. Not sure why, but we can take this to mean the level has a problem and deserves bad fitness.
+				System.out.println("A* failure");
+			} finally {
+
+				// Need to assign MAP Elites bins no matter what
+				
 				// Could conceivably also be used for behavioral diversity instead of map elites, but this would be a weird behavior vector from a BD perspective
-				if(MMNEAT.ea instanceof MAPElites) {
-					// Hard coding bin score to be the percentage of reachable rooms traversed. May want to change this later.
-					mapElitesBinScore = (numRoomsTraversed*1.0)/numRoomsReachable;
+				if(MMNEAT.usingDiversityBinningScheme) {
+					behaviorMap = new HashMap<>();
+					behaviorMap.put("Wall Tiles",wallTileCount);
+					behaviorMap.put("Water Tiles",waterTileCount);
+					behaviorMap.put("Reachable Rooms",numRoomsReachable);
+					behaviorMap.put("Distinct Rooms",numDistinctRooms);
+					behaviorMap.put("Backtracked Rooms",numBackTrackRooms);
+					behaviorMap.put("Dungeon", dungeon);
 					
-					if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesWallWaterRoomsBinLabels) {					
-						double wallTilePercentage = (wallTileCount*1.0)/(numRoomsReachable*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS);
-						double waterTilePercentage = (waterTileCount*1.0)/(numRoomsReachable*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_ROWS*ZeldaLevelUtil.ZELDA_FLOOR_SPACE_COLUMNS);
-
-						int wallTileIndex = (int)(wallTilePercentage*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
-						int waterTileIndex = (int)(waterTilePercentage*ZeldaMAPElitesWallWaterRoomsBinLabels.TILE_GROUPS); // [0,10), [10,20), [20,30), ... , [80,90), [90,100] <-- Assume 100% of one tile type is impossible
-
-						mapElitesBinIndices = new int[] {wallTileIndex,waterTileIndex,numRoomsReachable};
-						System.out.println("["+wallTileIndex+"]["+waterTileIndex+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");
-					} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesDistinctAndBackTrackRoomsBinLabels) { //alternate binning scheme
-						mapElitesBinIndices = new int[] {numDistinctRooms,numBackTrackRooms,numRoomsReachable};
-						System.out.println("["+numDistinctRooms+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");
-					}else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels) { //alternate binning scheme
-						double dungeonNovelty = DungeonNovelty.averageDungeonNovelty(dungeon);
-						int noveltyIndex =(int)((dungeonNovelty*ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.NUM_NOVELTY_BINS)/ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.MAX_EXPECTED_NOVELTY); //.7 is the guessed max novelty, magic number
-						noveltyIndex = Math.min(noveltyIndex, ZeldaMAPElitesNoveltyAndBackTrackRoomBinLabels.NUM_NOVELTY_BINS - 1);
-						mapElitesBinIndices = new int[] {noveltyIndex, numBackTrackRooms, numRoomsReachable};
-						System.out.println("["+noveltyIndex+"]["+numBackTrackRooms+"]["+numRoomsReachable+"] = "+mapElitesBinScore+" ("+numRoomsTraversed+" rooms)");						
-					} else {
-						throw new RuntimeException("A Valid Binning Scheme For Zelda Was Not Specified");
+					if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
+						ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
+						double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
+						behaviorMap.put("Solution Vector", latentVector);
 					}
-
+					
+					int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
+					behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
+					
+					// Hard coding bin score to be the percentage of reachable rooms traversed. May want to change this later.
+					double mapElitesBinScore = (numRoomsTraversed*1.0)/numRoomsReachable;					
+					behaviorMap.put("binScore", mapElitesBinScore);
+					
 					// Saving map elites bin images
 					if(CommonConstants.netio) {
 						System.out.println("Save archive images");
-						Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+						Archive<T> archive = MMNEAT.getArchive();
 						List<String> binLabels = archive.getBinMapping().binLabels();
 
 						// Index in flattened bin array
-						Score<T> elite = archive.getElite(mapElitesBinIndices);
+						Score<T> elite = archive.getElite(dim1D);
 						// If the bin is empty, or the candidate is better than the elite for that bin's score
 						if(elite == null || mapElitesBinScore > elite.behaviorIndexScore()) {
-							// CHANGE!
-							BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
-							BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
-							//sets the fileName, binPath, and fullName
-							String fileName = String.format("%7.5f", mapElitesBinScore) +"-"+ individual.getId() + ".png";
-							if(individual instanceof CPPNOrDirectToGANGenotype) {
-								CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
-								if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
-								else fileName = "Direct-" + fileName;
+							if(mapElitesBinScore > fitnessSaveThreshold) {
+								// CHANGE!
+								BufferedImage imagePath = DungeonUtil.imageOfDungeon(dungeon, mostRecentVisited, solutionPath);
+								BufferedImage imagePlain = DungeonUtil.imageOfDungeon(dungeon, null, null);
+								//sets the fileName, binPath, and fullName
+								String fileName = String.format("%7.5f", mapElitesBinScore) +"-"+ individual.getId() + ".png";
+								if(individual instanceof CPPNOrDirectToGANGenotype) {
+									CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;
+									if(temp.getFirstForm()) fileName = "CPPN-" + fileName;
+									else fileName = "Direct-" + fileName;
+								}
+								String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(dim1D);
+								String fullName = binPath + "-" + fileName;
+								System.out.println(fullName);
+								GraphicsUtil.saveImage(imagePlain, fullName);	
+								fileName = String.format("%7.5f", mapElitesBinScore) +"-"+ individual.getId() + "-solution.png";
+								fullName = binPath + "-" + fileName;
+								System.out.println(fullName);
+								GraphicsUtil.saveImage(imagePath, fullName);	
 							}
-							String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(mapElitesBinIndices));
-							String fullName = binPath + "-" + fileName;
-							System.out.println(fullName);
-							GraphicsUtil.saveImage(imagePlain, fullName);	
-							fileName = String.format("%7.5f", mapElitesBinScore) +"-"+ individual.getId() + "-solution.png";
-							fullName = binPath + "-" + fileName;
-							System.out.println(fullName);
-							GraphicsUtil.saveImage(imagePath, fullName);	
 						}
 					}
 				}
-
-			} catch(IllegalStateException e) {
-				// Sometimes this exception occurs from A*. Not sure why, but we can take this to mean the level has a problem and deserves bad fitness.
 			}
 		}
 
@@ -356,9 +348,9 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		}
 
 		double[] other = new double[] {numRooms, numRoomsTraversed, numRoomsReachable, searchStatesVisited};
-		return mapElitesBinIndices == null ? 
-				new MultiObjectiveScore<T>(individual, scores, behaviorVector, other) : // Need whole behavior vector
-				new MultiObjectiveScore<T>(individual, scores, mapElitesBinIndices, mapElitesBinScore, other); // Just need score for one MAP Elites bin
+		Score<T> result = new Score<>(individual, scores, null, other);
+		result.assignMAPElitesBehaviorMapAndScore(behaviorMap);
+		return result;
 	}
 	
 	/**

@@ -4,13 +4,19 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.Set;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonStreamParser;
 
 import ch.idsia.ai.agents.Agent;
-import ch.idsia.ai.agents.human.HumanKeyboardAgent;
 import ch.idsia.ai.tasks.ProgressTask;
 import ch.idsia.mario.engine.LevelRenderer;
 import ch.idsia.mario.engine.level.Level;
@@ -19,14 +25,9 @@ import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
 import ch.idsia.tools.Evaluator;
 import ch.idsia.tools.ToolsConfigurator;
-import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.genotypes.TWEANNGenotype;
-import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
 import edu.southwestern.networks.Network;
-import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class MarioLevelUtil {
@@ -275,13 +276,13 @@ public class MarioLevelUtil {
 	 * @param segmentWidth the width of the segments/chunk
 	 * @return levelWithParsedSegments the level containing every segment
 	 */
-	public static ArrayList<ArrayList<List<Integer>>> getSegmentsFromLevel(ArrayList<List<Integer>> oneLevel, int segmentWidth){
+	public static List<List<List<Integer>>> getSegmentsFromLevel(List<List<Integer>> oneLevel, int segmentWidth){
 		if (oneLevel.get(0).size()%segmentWidth!=0){
             System.out.println("getLevelStats: Level not multiple of segment width");
             return null;
         }      
 		int height = oneLevel.size();
-        ArrayList<ArrayList<List<Integer>>> levelWithParsedSegments = new ArrayList<ArrayList<List<Integer>>>();
+        List<List<List<Integer>>> levelWithParsedSegments = new ArrayList<List<List<Integer>>>();
         // Loop through each segment
         int numSegments = oneLevel.get(0).size()/segmentWidth;
         for(int l=0; l<numSegments; l++){
@@ -389,65 +390,133 @@ public class MarioLevelUtil {
 		return results;
 	}
 	
-	/**
-	 * For testing and debugging
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] 
-				{"runNumber:0","randomSeed:"+((int)(Math.random()*100)),"trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:true","includeSawtoothFunction:true"});
-		MMNEAT.loadClasses();
-				
-		////////////////////////////////////////////////////////
-//		String[] stringBlock = new String[] {
-//				"--------------------------------------------------------", 
-//				"--------------------------------------------------------", 
-//				"--------------------------------------------------------", 
-//				"---------ooooo------------------------------------------", 
-//				"--------------------------------------------------------", 
-//				"----?---S?S---------------------------------------------", 
-//				"------------------X-------------------------------------", 
-//				"-----------------XX---------------------E-----<>--------", 
-//				"---SSSS--<>-----XXX---------------------X-----[]--------", 
-//				"---------[]---XXXXX-------------------XXXXX---[]--------", 
-//				"---------[]-XXXXXXX----------EE-----XXXXXXXXXX[]--------", 
-//				"XXXXXXXXXXXXXXXXXXX-----XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-//			};
-				
-		// Instead of specifying the level, create it with a TWEANN	
-		TWEANNGenotype cppn = new TWEANNGenotype(3, 12, 0); // Archetype
-		// Randomize activation functions
-		new ActivationFunctionRandomReplacement().mutate(cppn);
-		
-		// Random mutations
-//		for(int i = 0; i < 50; i++) {
-//			cppn.mutate();
-//		}
-		
-		TWEANN net = cppn.getPhenotype();
-		DrawingPanel panel = new DrawingPanel(200,200, "Network");
-		net.draw(panel, true, false);
-
-		Level level = generateLevelFromCPPN(net, new double[] {1,1,1}, 60);
-		
-		Agent controller = new HumanKeyboardAgent(); //new SergeyKarakovskiy_JumpingAgent();
-		EvaluationOptions options = new CmdLineOptions(new String[]{});
-		options.setAgent(controller);
-		ProgressTask task = new ProgressTask(options);
-
-		// Added to change level
-        options.setLevel(level);
-
-		task.setOptions(options);
-
-		int relevantWidth = (level.width - (2*OldLevelParser.BUFFER_WIDTH)) * BLOCK_SIZE;
-		//System.out.println("level.width:"+level.width);
-		//System.out.println("relevantWidth:"+relevantWidth);
-		DrawingPanel levelPanel = new DrawingPanel(relevantWidth,LEVEL_HEIGHT*BLOCK_SIZE, "Level");
-		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, OldLevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, LEVEL_HEIGHT*BLOCK_SIZE);
-		
-		System.out.println ("Score: " + task.evaluate(options.getAgent())[0]);
-		
-				
-	}
+//	/**
+//	 * For testing and debugging
+//	 * @param args
+//	 */
+//	public static void main(String[] args) {
+//		Parameters.initializeParameterCollections(new String[] 
+//				{"runNumber:0","randomSeed:"+((int)(Math.random()*100)),"trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:true","includeSawtoothFunction:true"});
+//		MMNEAT.loadClasses();
+//				
+//		////////////////////////////////////////////////////////
+////		String[] stringBlock = new String[] {
+////				"--------------------------------------------------------", 
+////				"--------------------------------------------------------", 
+////				"--------------------------------------------------------", 
+////				"---------ooooo------------------------------------------", 
+////				"--------------------------------------------------------", 
+////				"----?---S?S---------------------------------------------", 
+////				"------------------X-------------------------------------", 
+////				"-----------------XX---------------------E-----<>--------", 
+////				"---SSSS--<>-----XXX---------------------X-----[]--------", 
+////				"---------[]---XXXXX-------------------XXXXX---[]--------", 
+////				"---------[]-XXXXXXX----------EE-----XXXXXXXXXX[]--------", 
+////				"XXXXXXXXXXXXXXXXXXX-----XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+////			};
+//				
+//		// Instead of specifying the level, create it with a TWEANN	
+//		TWEANNGenotype cppn = new TWEANNGenotype(3, 12, 0); // Archetype
+//		// Randomize activation functions
+//		new ActivationFunctionRandomReplacement().mutate(cppn);
+//		
+//		// Random mutations
+////		for(int i = 0; i < 50; i++) {
+////			cppn.mutate();
+////		}
+//		
+//		TWEANN net = cppn.getPhenotype();
+//		DrawingPanel panel = new DrawingPanel(200,200, "Network");
+//		net.draw(panel, true, false);
+//
+//		Level level = generateLevelFromCPPN(net, new double[] {1,1,1}, 60);
+//		
+//		Agent controller = new HumanKeyboardAgent(); //new SergeyKarakovskiy_JumpingAgent();
+//		EvaluationOptions options = new CmdLineOptions(new String[]{});
+//		options.setAgent(controller);
+//		ProgressTask task = new ProgressTask(options);
+//
+//		// Added to change level
+//        options.setLevel(level);
+//
+//		task.setOptions(options);
+//
+//		int relevantWidth = (level.width - (2*OldLevelParser.BUFFER_WIDTH)) * BLOCK_SIZE;
+//		//System.out.println("level.width:"+level.width);
+//		//System.out.println("relevantWidth:"+relevantWidth);
+//		DrawingPanel levelPanel = new DrawingPanel(relevantWidth,LEVEL_HEIGHT*BLOCK_SIZE, "Level");
+//		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, OldLevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, LEVEL_HEIGHT*BLOCK_SIZE);
+//		
+//		System.out.println ("Score: " + task.evaluate(options.getAgent())[0]);
+//		
+//				
+//	}
+   	
+   	
+   	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
+   		String inputFile1 = "src/main/python/GAN/Mario-all.json";
+   		String inputFile2 = "src/main/python/GAN/Mario-all.json";
+   		FileReader file1 = new FileReader(inputFile1);
+   		FileReader file2 = new FileReader(inputFile2);
+   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile1 = parseLevelJson(file1);
+   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile2 = parseLevelJson(file2);
+   		
+   		for (int i = 0; i < parsedFile1.size(); i++) {
+   			printLevelsSideBySide(parsedFile1.get(i), parsedFile2.get(i));
+   			Thread.sleep(50);
+   			System.out.println("\n\n");
+   		}
+   		
+//   		System.out.println("Overall size:"+parsedFile1.size()+" | "+parsedFile2.size()+"\n");
+//   		for (int i = 0; i < parsedFile1.size(); i++) {
+//   			System.out.println(parsedFile1.get(i).size()+" | "+parsedFile2.get(i).size()+"\n");
+//   		}
+//   		System.out.println(parsedFile1.equals(parsedFile2));
+   		
+   	}
+   	
+   	public static ArrayList<ArrayList<ArrayList<Integer>>> parseLevelJson(FileReader file) {
+   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile = new ArrayList<ArrayList<ArrayList<Integer>>>();
+   		JsonStreamParser jsonParser = new JsonStreamParser(file);
+   		JsonArray parsed = (JsonArray) jsonParser.next();
+   		for (JsonElement element : parsed) {
+   			ArrayList<ArrayList<Integer>> inner1 = new ArrayList<ArrayList<Integer>>();
+   			for (JsonElement element2 : (JsonArray) element) {
+   				ArrayList<Integer> inner2 = new ArrayList<Integer>();
+   				for (JsonElement element3 : (JsonArray) element2) {
+   					inner2.add(element3.getAsBigInteger().intValue());
+   	   	   		}
+   				inner1.add(inner2);
+   	   		}
+   			parsedFile.add(inner1);
+   		}
+   		return parsedFile;
+   	}
+   	
+   	public static void printLevelsSideBySide(ArrayList<ArrayList<Integer>> level, ArrayList<ArrayList<Integer>> level2) {
+   		String visualLine;
+   		Set<Entry<Character, Integer>> tileset = LevelParser.tiles.entrySet();
+   		for (int i = 0; i < level.size(); i++) {
+   			visualLine = "";
+   			for (Integer integ : level.get(i)) {
+   				for (Entry<Character, Integer> e : tileset) {
+   					if (e.getValue() == integ) {
+   						visualLine += e.getKey();
+   					}
+   				}
+   				
+   			}
+   			visualLine += " | ";
+   			for (Integer integ : level2.get(i)) {
+   				for (Entry<Character, Integer> e : tileset) {
+   					if (e.getValue() == integ) {
+   						visualLine += e.getKey();
+   					}
+   				}
+   				
+   			}
+   			
+   			System.out.println(visualLine);
+   		}
+   	}
 }

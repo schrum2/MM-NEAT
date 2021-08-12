@@ -368,7 +368,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 	 * @returns String path to GAN model
 	 */
 	public String getGANModelDirectory() {
-		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"ZeldaGAN";
+		return GANProcess.PYTHON_BASE_PATH+"ZeldaGAN";
 	}
 
 	/**
@@ -433,7 +433,7 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 		double presenceThreshold = 0;
 		int numTries = 1;
 		do {
-			System.out.println("Generate for CPPN: try: " + numTries);
+			System.out.println("Generate dungeon: try: " + numTries);
 			unbeatable = false;
 			try {
 				List<List<Integer>>[][] levelAsListsGrid = levelGridFromLatentVectorGrid(latentVectorGrid,auxiliaryInformation,presenceThreshold);

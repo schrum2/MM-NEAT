@@ -2,16 +2,16 @@ package edu.southwestern.scores;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.ScoreHistory;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.mapelites.MAPElites;
+import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.Statistic;
 
 /**
@@ -51,8 +51,12 @@ public class Score<T> {
 	// A behavior characterization optionally used with Behavioral Diversity
 	private ArrayList<Double> behaviorVector;
 	// If assigned, then can be used instead of the wasteful behavior vector
-	private Pair<int[], Double> oneMAPEliteBinIndexScorePair;
-
+	private int[] oneMAPEliteBinIndex;
+	// If assigned, then can be used instead of the wasteful behavior vector or the oneMAPEliteBinIndexScorePair
+	private HashMap<String,Object> oneMAPEliteMap;
+	// If assigned, represents the score in the one bin actually being used in MAP Elites
+	private double mapElitesSoleBinQualityScore = Double.NaN;
+	
 	/**
 	 * Allows for more efficient MAP Elites implementation, because a large behavior
 	 * vector of mostly empty values is not needed.
@@ -63,7 +67,24 @@ public class Score<T> {
 	 */
 	public Score(Genotype<T> individual, double[] scores, int[] indicesMAPEliteBin, double score) {
 		this(individual, scores, null, new double[0]);
-		oneMAPEliteBinIndexScorePair = new Pair<int[],Double>(indicesMAPEliteBin, score);
+		oneMAPEliteBinIndex = indicesMAPEliteBin;
+		mapElitesSoleBinQualityScore = score;
+	}
+
+	public Score(Genotype<T> individual, double[] scores, HashMap<String,Object> map, double score) {
+		this(individual, scores, null, new double[0]);
+		oneMAPEliteMap = map;
+		mapElitesSoleBinQualityScore = score;
+	}
+	
+	/**
+	 * Default constructor for Score object.
+	 * 
+	 * @param individual Genotype of the individual in question
+	 * @param scores array of all other scores of similar agents in the domain
+	 */
+	public Score(Genotype<T> individual, double[] scores) {
+		this(individual, scores, null, new double[0]);
 	}
 	
 	/**
@@ -177,12 +198,17 @@ public class Score<T> {
 	 * @param index Should be the one MAP Elites archive index corresponding to the behavior of the genotype
 	 * @return Fitness/behavior score associated with that bin
 	 */
-	@SuppressWarnings("unchecked")
 	public double behaviorIndexScore(int index) {
-		if(oneMAPEliteBinIndexScorePair != null) {
-			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1) != index)
-				throw new IllegalArgumentException("Should not ask for score associated with MAP Elites bin index that does not match: " + index + " != " + oneMAPEliteBinIndexScorePair.t1);
-			return oneMAPEliteBinIndexScorePair.t2;
+		if(oneMAPEliteBinIndex != null) {
+			// Change to assert for efficiency?
+			if(MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndex) != index)
+				throw new IllegalArgumentException("Should not ask for score associated with MAP Elites bin index that does not match: " + index + " != " + MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndex));
+			return mapElitesSoleBinQualityScore;
+		} else if(oneMAPEliteMap != null) {
+			// Change to assert for efficiency?
+			if(MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteMap) != index)
+				throw new IllegalArgumentException("Should not ask for score associated with MAP Elites bin index that does not match: " + index + " != " + MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(oneMAPEliteMap));
+			return mapElitesSoleBinQualityScore;
 		} else {
 			// Requires storing large, mostly empty ArrayLists
 			return behaviorVector.get(index);
@@ -195,8 +221,8 @@ public class Score<T> {
 	 * @return Bin fitness score
 	 */
 	public double behaviorIndexScore() {
-		if(oneMAPEliteBinIndexScorePair != null) {
-			return oneMAPEliteBinIndexScorePair.t2;
+		if(oneMAPEliteBinIndex != null || oneMAPEliteMap != null) {
+			return mapElitesSoleBinQualityScore;
 		} else {
 			throw new IllegalArgumentException("Need to specify bin index if using traditional behavior vector");
 		}
@@ -207,12 +233,22 @@ public class Score<T> {
 	 * @return array containing each index for the multidimensional archive
 	 */
 	public int[] MAPElitesBinIndex() {
-		if(oneMAPEliteBinIndexScorePair != null) {
-			return oneMAPEliteBinIndexScorePair.t1;
+		if(oneMAPEliteBinIndex != null) {
+			return oneMAPEliteBinIndex;
+		} else if(oneMAPEliteMap != null) {
+			return MMNEAT.getArchiveBinLabelsClass().multiDimensionalIndices(oneMAPEliteMap);
 		} else {
 			// Technically, I could scan the whole vector for a value that is not negative infinity, but this approach should not be used in that case
 			throw new IllegalArgumentException("Cannot simply ask for bin index when using traditional behavior vector");
 		}
+	}
+	
+	/**
+	 * Could be null
+	 * @return Map of labels to behavior characteristics
+	 */
+	public HashMap<String,Object> MAPElitesBehaviorMap() {
+		return oneMAPEliteMap;
 	}
 	
 	/**
@@ -287,8 +323,9 @@ public class Score<T> {
 	@SuppressWarnings("unchecked")
 	public Score<T> copy() {
 		Score<T> result =  new Score<T>(individual, Arrays.copyOf(scores, scores.length), behaviorVector == null ? null : (ArrayList<Double>) behaviorVector.clone(), Arrays.copyOf(otherStats, otherStats.length));
-		if(oneMAPEliteBinIndexScorePair != null) 
-			result.oneMAPEliteBinIndexScorePair = new Pair<int[],Double>(oneMAPEliteBinIndexScorePair.t1,oneMAPEliteBinIndexScorePair.t2);
+		result.oneMAPEliteBinIndex = oneMAPEliteBinIndex;
+		result.oneMAPEliteMap = oneMAPEliteMap;
+		result.mapElitesSoleBinQualityScore = mapElitesSoleBinQualityScore;
 		return result;
 	}
 
@@ -312,7 +349,12 @@ public class Score<T> {
 		return scores[0] < other.scores[0];
 	}
 
-	// Adds a new score to score array.
+	/**
+	 * Adds a score for an additional fitness/objective to the vector of fitness/objective values.
+	 * In other words, a score for a new fitness function is added on to the end of the existing
+	 * collection of fitness scores.
+	 * @param score Score to add
+	 */
 	public void extraScore(double score) {
 		double[] newScores = new double[scores.length + 1];
 		System.arraycopy(scores, 0, newScores, 0, scores.length);
@@ -332,14 +374,16 @@ public class Score<T> {
 
 	// Prints the contents of the agent's data to the console.
 	public String toString() {
-		return (individual == null ? "NULL" : individual.getId()) + ":N=" + evals + ":" + Arrays.toString(scores) + (otherStats != null && otherStats.length > 0 ? Arrays.toString(otherStats) : "");
+		return (individual == null ? "NULL" : individual.getId()) + ":N=" + evals + ":" + Arrays.toString(scores) + 
+				(otherStats != null && otherStats.length > 0 ? Arrays.toString(otherStats) : "") + 
+				(oneMAPEliteMap == null ? "" : oneMAPEliteMap);
 	}
 
 	// allows behaviorVector to be printed and then set to a new behavoirVector
 	public void giveBehaviorVector(ArrayList<Double> behaviorVector) {
-		if (behaviorVector != null) {
-			System.out.println("Behavior ArrayList: " + behaviorVector);
-		}
+//		if (behaviorVector != null) {
+//			System.out.println("Behavior ArrayList: " + behaviorVector);
+//		}
 		this.behaviorVector = behaviorVector;
 	}
 	
@@ -352,17 +396,16 @@ public class Score<T> {
 	public ArrayList<Double> getTraditionalDomainSpecificBehaviorVector() {
 		if(this.behaviorVector == null) {
 			// Have to construct the behavior vector based on knowledge of bin index and score
-			@SuppressWarnings("unchecked")
-			MAPElites<T> ea = ((MAPElites<T>) MMNEAT.ea);
-			int vectorLength = ea.getBinLabelsClass().binLabels().size();
-			int oneDimensionalIndex = ea.getBinLabelsClass().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1);
+			int vectorLength = MMNEAT.getArchiveBinLabelsClass().binLabels().size();
+			BinLabels labels = MMNEAT.getArchiveBinLabelsClass();
+			int oneDimensionalIndex = oneMAPEliteBinIndex != null ? labels.oneDimensionalIndex(oneMAPEliteBinIndex) : labels.oneDimensionalIndex(oneMAPEliteMap);
 			ArrayList<Double> vector = new ArrayList<>(vectorLength);
 			for(int i = 0; i < oneDimensionalIndex; i++) {
-				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins
+				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins. Problem with Double.NEGATIVE_INFINITY vs Float.NEGATIVE_INFINITY?
 			}
-			vector.add(oneMAPEliteBinIndexScorePair.t2); // The one occupied bin
+			vector.add(this.mapElitesSoleBinQualityScore); // The one occupied bin
 			for(int i = oneDimensionalIndex+1; i < vectorLength; i++) {
-				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins
+				vector.add(Double.NEGATIVE_INFINITY); // Unoccupied bins. Problem with Double.NEGATIVE_INFINITY vs Float.NEGATIVE_INFINITY?
 			}
 			return vector;
 		} else {
@@ -374,7 +417,7 @@ public class Score<T> {
 	 * maxScores finds the largest score and other stats of both agents. If one
 	 * of the scores is null, it simply returns the other score. Else, it
 	 * returns a new Score object that contains the biggest score and otherStats
-	 * between the two agents. Finally, it incrememnts the number of evals
+	 * between the two agents. Finally, it increments the number of evals
 	 * performed on the specific agent.
 	 * 
 	 * @param other:
@@ -406,10 +449,29 @@ public class Score<T> {
 	}
 	
 	public boolean usesMAPElitesBinSpecification() {
-		return oneMAPEliteBinIndexScorePair != null;
+		return oneMAPEliteBinIndex != null;
+	}
+	
+	public boolean usesMAPElitesMapSpecification() {
+		return oneMAPEliteMap != null;
+	}
+	
+	/**
+	 * In order to tell if a legitimate map of behavior characteristics was created,
+	 * first check that it is not null, then confirm that it actually contains
+	 * the special reserved "binScore" value. Only then did the task actually
+	 * intend to communicate behavior characteristic information via the HashMap.
+	 * @param map Maps String keys to various behavior details, one of which would be the quality score.
+	 */
+	public void assignMAPElitesBehaviorMapAndScore(HashMap<String,Object> map) {
+		if(map != null && map.containsKey("binScore")) {
+			oneMAPEliteMap = map;
+			mapElitesSoleBinQualityScore = (double) map.get("binScore");
+		}
 	}
 	
 	public void assignMAPElitesBinAndScore(int[] binIndices, double score) {
-		oneMAPEliteBinIndexScorePair = new Pair<>(binIndices, score);
+		oneMAPEliteBinIndex = binIndices;
+		mapElitesSoleBinQualityScore =	score;
 	}
 }

@@ -27,8 +27,8 @@ public class SimpleTiledZentangle {
 		return FileUtilities.getSaveDirectory() + "/run" + PicbreederTask.runNumber;
 	}
 	
-	public static void simpleTiledZentangle(String directory, int index) throws Exception {
-
+	public static BufferedImage simpleTiledZentangle(String directory, int index, int patternDim) throws Exception {
+		System.out.println("WFC pattern "+index+" with "+patternDim+" by "+patternDim+" tiles");
 		Random random = new Random(index);
 		
 		// Only support simpletiled for now
@@ -49,8 +49,8 @@ public class SimpleTiledZentangle {
 					directory,
 					"picbreeder", // name (the save directory?)
 					null, // subset
-					30,   // width
-					30,   // height
+					patternDim,   // width
+					patternDim,   // height
 					false,// periodic?
 					false // black?
 					);
@@ -74,12 +74,15 @@ public class SimpleTiledZentangle {
 					e.printStackTrace();
 					System.exit(1);
 				}
-				break;
+				return graphics;
 			} else {
 				System.out.println("CONTRADICTION");
 			}
 		}
 
-
+		System.out.println("No WFC output produced?");
+		new NullPointerException().printStackTrace();
+		System.exit(1);
+		return null; // This should not happen
 	}
 }

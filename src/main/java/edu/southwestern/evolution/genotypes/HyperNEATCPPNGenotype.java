@@ -24,7 +24,6 @@ import edu.southwestern.util.util2D.Tuple2D;
  * Genotype for a hyperNEAT CPPN network
  *
  * @author Lauren Gillespie
- *
  */
 public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
@@ -69,14 +68,10 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * Constructor for hyperNEATCPPNGenotype. Uses super constructor from
 	 * TWEANNGenotype
 	 * 
-	 * @param archetypeIndex
-	 * 			  which archetype to refer to for crossover
-	 * @param links
-	 *            list of links between genes
-	 * @param genes
-	 *            list of nodes in genotype
-	 * @param outputNeurons
-	 *            number of output neurons
+	 * @param archetypeIndex which archetype to refer to for crossover
+	 * @param links list of links between genes
+	 * @param genes list of nodes in genotype
+	 * @param outputNeurons number of output neurons
 	 */
 	public HyperNEATCPPNGenotype(int archetypeIndex, ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons) {
 		super(genes, links, outputNeurons, false, archetypeIndex);
@@ -85,12 +80,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	/**
 	 * Constructor for random hyperNEATCPPNGenotype.
 	 * 
-	 * @param networkInputs
-	 *            number of network inputs
-	 * @param networkOutputs
-	 *            number of network outputs
-	 * @param archetypeIndex
-	 *            index of genotype in archetype
+	 * @param networkInputs number of network inputs
+	 * @param networkOutputs number of network outputs
+	 * @param archetypeIndex index of genotype in archetype
 	 */
 	public HyperNEATCPPNGenotype(int networkInputs, int networkOutputs, int archetypeIndex) {
 		// Construct new CPPN with random weights
@@ -279,10 +271,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	/**
 	 * creates an array list containing all the nodes from all the substrates
 	 *
-	 * @param cppn
-	 *             CPPN that produces phenotype network
-	 * @param subs
-	 *            list of substrates extracted from domain
+	 * @param cppn CPPN that produces phenotype network
+	 * @param subs list of substrates extracted from domain
 	 * @return array list of NodeGenes from substrates
 	 */
 	public ArrayList<NodeGene> createSubstrateNodes(HyperNEATTask hnt, TWEANN cppn, List<Substrate> subs, int layersWidth, int layersHeight) {
@@ -411,16 +401,11 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * creates an array list of links between substrates as dictated by
 	 * connections parameter
 	 *
-	 * @param cppn
-	 *            used to evolve link weight
-	 * @param connections
-	 *            list of different connections between substrates
-	 * @param subs
-	 *            list of substrates in question
-	 * @param sIMap
-	 *            hashmap that maps the substrate in question to its index in
-	 *            the substrate list
-	 *
+	 * @param cppn used to evolve link weight
+	 * @param connections list of different connections between substrates
+	 * @param subs list of substrates in question
+	 * @param sIMap hashmap that maps the substrate in question to its index in
+	 *              the substrate list
 	 * @return array list containing all the links between substrates
 	 */
 	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<SubstrateConnectivity> connections, List<Substrate> subs, HashMap<String, Integer> sIMap, int layersWidth, int layersHeight) {
@@ -483,7 +468,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @param substrateHorizontalCoordinate Used by global coordinates
 	 * @param substrateVerticalCoordinate Used by global coordinates
 	 * @param receptiveFieldWidth the width of the receptive field window
-	 * @param receptiveFieldHeight the hieght of the receptive field window
+	 * @param receptiveFieldHeight the height of the receptive field window
 	 */
 	void convolutionalLoopThroughLinks(HyperNEATTask hnt, ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex,
 			Substrate s1, Substrate s2, int s1Index, int s2Index,
@@ -603,23 +588,14 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * Link is only created if CPPN output reaches a certain threshold that is
 	 * dictated via command line parameter.
 	 *
-	 * @param linksSoFar
-	 * 			  All added links are accumulated in this list
-	 * @param cppn
-	 *            used to evolve link weight
-	 * @param outputIndex
-	 *            index from cppn outputs to be used as weight in creating link
-	 * @param s1
-	 *            first substrate to be linked
-	 * @param s2
-	 *            second substrate to be linked
-	 * @param s1Index
-	 *            index of first substrate in substrate list
-	 * @param s2Index
-	 *            index of second substrate in substrate list
-	 * @param subs
-	 *            list of substrates
-	 *
+	 * @param linksSoFar All added links are accumulated in this list
+	 * @param cppn used to evolve link weight
+	 * @param outputIndex index from cppn outputs to be used as weight in creating link
+	 * @param s1 first substrate to be linked
+	 * @param s2 second substrate to be linked
+	 * @param s1Index index of first substrate in substrate list
+	 * @param s2Index index of second substrate in substrate list
+	 * @param subs list of substrates
 	 */
 	void loopThroughLinks(HyperNEATTask hnt, ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex, Substrate s1, Substrate s2, int s1Index, int s2Index, List<Substrate> subs, int layersWidth, int layersHeight) {
 
@@ -706,14 +682,10 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	/**
 	 * returns the innovation id of the node in question
 	 *
-	 * @param x
-	 *            x-coordinate of node
-	 * @param y
-	 *            y-coordinate of node
-	 * @param sIndex
-	 *            index of substrate in question
-	 * @param subs
-	 *            list of substrates available
+	 * @param x x-coordinate of node
+	 * @param y y-coordinate of node
+	 * @param sIndex index of substrate in question
+	 * @param subs list of substrates available
 	 *
 	 * @return innovationID of link in question
 	 */

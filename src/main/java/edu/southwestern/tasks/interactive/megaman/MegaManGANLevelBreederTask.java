@@ -468,8 +468,9 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	 * gets the GAN model directory
 	 */
 	public String getGANModelDirectory() {
-		return "src"+File.separator+"main"+File.separator+"python"+File.separator+"GAN"+File.separator+"MegaManGAN";
+		return GANProcess.PYTHON_BASE_PATH+"MegaManGAN";
 	}
+	
 	public void viewLevel() {
 		ArrayList<Double> phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
@@ -480,17 +481,18 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			return; // Nothing to explore
 		}
 		try {
-			if(selectedItems.size() != 1) {
-				JOptionPane.showMessageDialog(null, "Select exactly one level to save.");
-				return; // Nothing to explore
+//			List<List<List<Integer>>> levelInList = MegaManGANUtil.getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), doubleArray);
+			int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
+			int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
+			BufferedImage levelImage = getStaticButtonImage(phenotype, width1, height1, level);
+			if(Parameters.parameters.booleanParameter("interactiveMegaManAStarPaths")) {
+				MegaManRenderUtil.displayBufferedImage(level, levelImage);
+			} else {
+				BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
+				MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
 			}
-			//List<List<List<Integer>>> levelInList = MegaManGANUtil.getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), doubleArray);
-//			int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
-//			int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
-			BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
-			MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} //puts the final rendered level into a buffered image
 		//int levelNumber = 2020;
@@ -620,7 +622,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			//get all of the visited states, all of the x's are in this set but the white ones are not part of solution path 
 			mostRecentVisited = ((AStarSearch<MegaManAction, MegaManState>) search).getVisited();
 			try {
-				image = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start);
+				image = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start); //TODO
 			}catch(IOException e) {
 				e.printStackTrace();
 	
@@ -647,7 +649,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	 */
 	public List<List<Integer>> levelListRepresentation(double[] doubleArray) {
 		List<List<Integer>> level;
-		System.out.println(doubleArray.length);
+		//System.out.println(doubleArray.length);
 		if (Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")){
 			level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
 		}
@@ -754,7 +756,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","megaManGANLevelChunks:10","bigInteractiveButtons:false","megaManUsesUniqueEnemies:false","GANInputSize:5","useMultipleGANsMegaMan:true","showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.megaman.MegaManGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","megaManGANLevelChunks:10","bigInteractiveButtons:false","megaManUsesUniqueEnemies:false","GANInputSize:5","useMultipleGANsMegaMan:false","showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.megaman.MegaManGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

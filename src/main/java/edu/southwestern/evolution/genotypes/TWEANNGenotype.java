@@ -81,11 +81,11 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		/**
 		 * New node gene
 		 *
-		 * @param ftype = type of activation function
-		 * @param ntype = type of node (input, hidden, output)
-		 * @param innovation = unique innovation number for node
-		 * @param frozen = false if node can accept new inputs
-		 * @param bias = bias offset to sum of this node before activation
+		 * @param ftype type of activation function
+		 * @param ntype type of node (input, hidden, output)
+		 * @param innovation unique innovation number for node
+		 * @param frozen false if node can accept new inputs
+		 * @param bias bias offset to sum of this node before activation
 		 */
 		private NodeGene(int ftype, int ntype, double bias, long innovation) {
 			super(innovation);
@@ -114,7 +114,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		 * Nodes are equal if they have the same innovation number
 		 *
 		 * @param o another node gene
-		 * @return
+		 * @return Whether both are equal (NodeGenes with same innovation number)
 		 */
 		@Override
 		public boolean equals(Object o) {
@@ -125,7 +125,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		/**
 		 * Clones given node
 		 *
-		 * @return
+		 * @return Copy of the NodeGene
 		 */
 		@Override
 		public NodeGene clone() {
@@ -175,11 +175,11 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		/**
 		 * New node gene
 		 *
-		 * @param ftype = type of activation function
-		 * @param ntype = type of node (input, hidden, output)
-		 * @param innovation = unique innovation number for node
-		 * @param frozen = false if node can accept new inputs
-		 * @param bias = bias offset to sum of this node before activation
+		 * @param ftype type of activation function
+		 * @param ntype type of node (input, hidden, output)
+		 * @param innovation unique innovation number for node
+		 * @param frozen false if node can accept new inputs
+		 * @param bias bias offset to sum of this node before activation
 		 */
 		protected FullNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
 			super(ftype, ntype, bias, innovation);
@@ -187,16 +187,25 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 			this.bias = bias;
 		}
 
+		/**
+		 * Prevent future modifications to the gene.
+		 */
 		@Override
 		public void freeze() {
 			frozen = true;
 		}
 
+		/**
+		 * Re-enable modifications after a freeze.
+		 */
 		@Override
 		public void melt() {
 			frozen = false;
 		}
 
+		/**
+		 * Whether frozen.
+		 */
 		@Override
 		public boolean isFrozen() {
 			return frozen;
@@ -219,6 +228,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 
 	/**
 	 * Used for "batch" normalization.
+	 * [This type of genotype has not been fully utilized]
 	 * 
 	 * @author Devon Fulcher
 	 */
@@ -262,7 +272,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		 * New link gene in which it needs to be specified whether or not it is
 		 * active
 		 *
-		 * @param sourceInnovation = innovation of node of origin 
+		 * @param sourceInnovation innovation of node of origin 
 		 * @param targetInnovation Innovation number of node that the link points to
 		 * @param weight Synaptic weight
 		 * @param innovation Innovation number of link gene
@@ -327,6 +337,14 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		}
 	}
 
+	/**
+	 * A LinkGene with all possible extended features.
+	 * Fills up memory faster, and also takes more space when
+	 * serialized and saved to disk.
+	 * 
+	 * @author Jacob Schrum
+	 *
+	 */
 	public static class FullLinkGene extends LinkGene {
 
 		protected boolean active;
@@ -338,7 +356,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		 * New link gene in which it needs to be specified whether or not it is
 		 * active
 		 *
-		 * @param sourceInnovation = innovation of node of origin 
+		 * @param sourceInnovation innovation of node of origin 
 		 * @param targetInnovation Innovation number of node that the link points to
 		 * @param weight Synaptic weight
 		 * @param innovation Innovation number of link gene
@@ -457,7 +475,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	public int archetypeIndex;
 
 	// Added to allow tracking of who parents are for score history purposes
-	transient List<Long> parents = new LinkedList<Long>();
+	protected List<Long> parents = new LinkedList<Long>();
 
 	@Override
 	public void addParent(long id) {
@@ -587,10 +605,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	/**
 	 * New starting genotype with a given number of input and output neurons
 	 *
-	 * @param numIn = actual number of input sensors
-	 * @param numOut = number of actuators (in multitask case, #actuations times
-	 * num tasks. For module mutation, # of policy neurons per module)
-	 * @param archetypeIndex = which archetype to reference for crossover
+	 * @param numIn actual number of input sensors
+	 * @param numOut number of actuators (in multitask case, #actuations times
+	 * 				 num tasks. For module mutation, # of policy neurons per module)
+	 * @param archetypeIndex which archetype to reference for crossover
 	 */
 	public TWEANNGenotype(int numIn, int numOut, int archetypeIndex) {
 		this(numIn, numOut, CommonConstants.fs, CommonConstants.ftype, CommonConstants.multitaskModules, archetypeIndex);
@@ -599,14 +617,14 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	/**
 	 * New starting genotype with a given number of input and output neurons
 	 *
-	 * @param numIn = actual number of input sensors
-	 * @param numOut = number of actuators (in multitask case, #actuations times
-	 * num tasks. For module mutation, # of policy neurons per module)
-	 * @param featureSelective = whether initial network is sparsely connected
-	 * @param ftype = activation function to use on neurons
-	 * @param numModules = number of MULTITASK modules (does not apply for
-	 * multiple modules with preference neurons)
-	 * @param archetypeIndex = which archetype to reference for crossover
+	 * @param numIn actual number of input sensors
+	 * @param numOut number of actuators (in multitask case, #actuations times
+	 * 				 num tasks. For module mutation, # of policy neurons per module)
+	 * @param featureSelective whether initial network is sparsely connected
+	 * @param ftype activation function to use on neurons
+	 * @param numModules number of MULTITASK modules (does not apply for
+	 * 					 multiple modules with preference neurons)
+	 * @param archetypeIndex which archetype to reference for crossover
 	 */
 	public TWEANNGenotype(int numIn, int numOut, boolean featureSelective, int ftype, int numModules, int archetypeIndex) {
 		this(new TWEANN(numIn, numOut, featureSelective, ftype, numModules, archetypeIndex));
@@ -757,9 +775,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * Adds new output mode to network
 	 *
 	 * @param randomSources true if new mode is connected to random sources.
-	 * false if mode is connected to old mode.
-	 * @param numLinks = number of links going in to each new output neuron
-	 * return the number of links actually added
+	 * 						false if mode is connected to old mode.
+	 * @param numLinks number of links going in to each new output neuron
+	 * 				   return the number of links actually added
 	 * @return Number of new links created to connect to new module
 	 */
 	public int moduleMutation(boolean randomSources, int numLinks) {
@@ -834,7 +852,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	/**
 	 * Remove specified output mode from network.
 	 *
-	 * @param modeNum = mode to delete
+	 * @param modeNum mode to delete
 	 */
 	private void deleteMode(int modeNum) {
 		/*
@@ -864,8 +882,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * Delete single output neuron from network. Links into and out of the node
 	 * are deleted as well.
 	 *
-	 * @param nodeNum = index in "nodes" of neuron to delete (must be an output
-	 * node)
+	 * @param nodeNum index in "nodes" of neuron to delete (must be an output node)
 	 */
 	private void deleteOutputNeuron(int nodeNum) {
 		/*
@@ -897,8 +914,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	/**
 	 * Mutation involving a chance of each weight being perturbed
 	 *
-	 * @param rand = Random number generator to use
-	 * @param rate = Chance for each individual link mutation
+	 * @param rand Random number generator to use
+	 * @param rate Chance for each individual link mutation
 	 */
 	public void allWeightMutation(RandomGenerator rand, double rate) {
 		for (LinkGene l : links) {
@@ -947,8 +964,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	/**
 	 * Perturb a given linkIndex by delta
 	 *
-	 * @param linkIndex = index of link in links. Cannot be frozen
-	 * @param delta = amount to change weight by
+	 * @param linkIndex index of link in links. Cannot be frozen
+	 * @param delta amount to change weight by
 	 */
 	public void perturbLink(int linkIndex, double delta) {
 		LinkGene lg = links.get(linkIndex);
@@ -995,9 +1012,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * Returns LinkGene for newNode between nodes with the given linkInnovations
 	 * numbers
 	 *
-	 * @param sourceInnovation = linkInnovations of nodeInnovation node
-	 * @param targetInnovation = linkInnovations of sourceInnovation node
-	 * @return = null on failure, LinkGene otherwise
+	 * @param sourceInnovation linkInnovations of nodeInnovation node
+	 * @param targetInnovation linkInnovations of sourceInnovation node
+	 * @return null on failure, LinkGene otherwise
 	 */
 	public LinkGene getLinkBetween(long sourceInnovation, long targetInnovation) {
 		for (LinkGene l : links) {
@@ -1020,8 +1037,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * adds a new mutated link to TWEANN genotype from the node with "source"
 	 * innovation number to a random target node.
 	 *
-	 * @param source: the starting node innovation number
-	 * @param weight: the weight of the added link
+	 * @param source the starting node innovation number
+	 * @param weight the weight of the added link
 	 */
 	public void linkMutation(long source, double weight) {
 		long target = getRandomAlterableConnectedNodeInnovationNumber(source, CommonConstants.connectToInputs);
@@ -1035,8 +1052,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @return any node innovation number in network
 	 */
 	private long getRandomLinkSourceNodeInnovationNumber() {
-		return nodes.get(
-				RandomNumbers.randomGenerator.nextInt(nodes.size() + (CommonConstants.recurrency ? 0 : -1))).innovation;
+		return nodes.get(RandomNumbers.randomGenerator.nextInt(nodes.size() + (CommonConstants.recurrency ? 0 : -1))).innovation;
 	}
 
 	/**
@@ -1055,7 +1071,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * that they control network output. Input neurons can optionally be
 	 * excluded as well.
 	 *
-	 * @param includeInputs = true if input neurons can potentially be selected
+	 * @param includeInputs true if input neurons can potentially be selected
 	 * @return innovation number of chosen random node (under restrictions)
 	 */
 	private long getRandomAlterableConnectedNodeInnovationNumber(long source, boolean includeInputs) {
@@ -1114,10 +1130,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	/**
 	 * Add a new new link between existing nodes
 	 *
-	 * @param sourceInnovation = linkInnovations number of nodeInnovation node
-	 * @param targetInnovation = linkInnovations number of sourceInnovation node
-	 * @param weight = weight of new link
-	 * @param innovation = innovation number of new new link
+	 * @param sourceInnovation linkInnovations number of nodeInnovation node
+	 * @param targetInnovation linkInnovations number of sourceInnovation node
+	 * @param weight weight of new link
+	 * @param innovation innovation number of new new link
 	 */
 	public void addLink(long sourceInnovation, long targetInnovation, double weight, long innovation) {
 		if (getLinkBetween(sourceInnovation, targetInnovation) == null) {
@@ -1160,18 +1176,16 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 *
 	 * Splice a new node between two connected nodes along the newNode
 	 *
-	 * @param ftype = activation function type of new node
-	 * @param newNodeInnovation = linkInnovations number of new node
-	 * @param sourceInnovation = linkInnovations of nodeInnovation node for
-	 * splice
-	 * @param targetInnovation = linkInnovations of sourceInnovation node for
-	 * splice
-	 * @param weight1 = Weight on link entering newly spliced neuron
-	 * @param weight2 = Weight on link exiting newly spliced neuron
-	 * @param toLinkInnovation = new linkInnovations number for newNode between
-	 * nodeInnovation and new node
-	 * @param fromLinkInnovation = new linkInnovations number for newNode
-	 * between new node and sourceInnovation
+	 * @param ftype activation function type of new node
+	 * @param newNodeInnovation linkInnovations number of new node
+	 * @param sourceInnovation linkInnovations of nodeInnovation node for splice
+	 * @param targetInnovation linkInnovations of sourceInnovation node for splice
+	 * @param weight1 Weight on link entering newly spliced neuron
+	 * @param weight2 Weight on link exiting newly spliced neuron
+	 * @param toLinkInnovation new linkInnovations number for newNode between
+	 * 						   nodeInnovation and new node
+	 * @param fromLinkInnovation new linkInnovations number for newNode
+	 * 						     between new node and sourceInnovation
 	 */
 	public void spliceNode(int ftype, long newNodeInnovation, long sourceInnovation, long targetInnovation,
 			double weight1, double weight2, long toLinkInnovation, long fromLinkInnovation) {
@@ -1191,7 +1205,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	/**
 	 * Create a String describing the mathematical function defined by each output node.
 	 * Only works for non-recurrent networks.
-	 * @return
+	 * @return List of strings describing function for each output neuron
 	 */
 	public List<String> getFunction() {
 		ArrayList<String> result = new ArrayList<>(this.numOut);
@@ -1228,8 +1242,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 
 	/**
 	 * Return the NodeGene with the given innovation number
-	 * @param innovation
-	 * @return
+	 * @param innovation Gene innovation number
+	 * @return NodeGene with matching number
 	 */
 	private NodeGene getNodeWithInnovation(long innovation) {
 		for(NodeGene ng : nodes) {
@@ -1272,7 +1286,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * Decrease the weights going into a given preference neuron so that its
 	 * module will keep the same behavior, but be less likely to be chosen.
 	 *
-	 * @param module = module to weaken
+	 * @param module module to weaken
 	 * @param portion should be between 0 and 1: Fraction to reduce weight by
 	 */
 	public void weakenModulePreference(int module, double portion) {
@@ -1301,11 +1315,11 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * This default version of the method always adds the new output neuron at
 	 * the end of the list of output neurons.
 	 *
-	 * @param ftype = Activation function type
-	 * @param sourceInnovations = list of neurons that will link to the new one
-	 * @param weights = weights for the synapses linking the sourceInnovations
-	 * to this new node
-	 * @param linkInnovations = innovation numbers for each of the new synapses
+	 * @param ftype Activation function type
+	 * @param sourceInnovations list of neurons that will link to the new one
+	 * @param weights weights for the synapses linking the sourceInnovations
+	 * 					to this new node
+	 * @param linkInnovations innovation numbers for each of the new synapses
 	 * @return number of links actually added
 	 */
 	private int addOutputNode(int ftype, long[] sourceInnovations, double[] weights, long[] linkInnovations) {
@@ -1448,7 +1462,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * Copies the TWEANNGenotype via the trick of generating a TWEANN, then
 	 * using it to generate a new Genotype
 	 *
-	 * @return = copy of genotype
+	 * @return copy of genotype
 	 */
 	@Override
 	public Genotype<TWEANN> copy() {
@@ -1547,8 +1561,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	/**
 	 * A generic toString method
 	 *
-	 * @return String with ID, number of modules, and list of node and link
-	 * genes
+	 * @return String with ID, number of modules, and list of node and link genes
 	 */
 	@Override
 	public String toString() {
@@ -1586,7 +1599,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	/**
 	 * Duplicate each individual neuron of an output module
 	 *
-	 * @param module = module to duplicate
+	 * @param module module to duplicate
 	 */
 	private void duplicateModule(int module) {
 		// One-module network is missing first preference neuron
@@ -1611,8 +1624,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 *
 	 * Adds a new preference neuron randomly in network
 	 *
-	 * @param numInputs: number of inputs from network in which to randomly
-	 * place neuron
+	 * @param numInputs number of inputs from network in which to randomly
+	 * 					place neuron
 	 */
 	public void addRandomPreferenceNeuron(int numInputs) {
 		// Randomize the preference neuron
@@ -1635,7 +1648,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * numbers sorted in decreasing negative order, the innovation numbers of
 	 * the policy neurons need to be shifted.
 	 *
-	 * @param moduleIndex = index of mode to give preference neuron
+	 * @param moduleIndex index of mode to give preference neuron
 	 */
 	public void insertPreferenceNeuron(int moduleIndex) {
 		int outputStart = outputStartIndex();
@@ -1694,7 +1707,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * Duplication means copying all links that go into the node, including the
 	 * weights.
 	 *
-	 * @param neuronIndex = index in nodes of neuron to duplicate
+	 * @param neuronIndex index in nodes of neuron to duplicate
 	 */
 	private void duplicateOutputNeuron(int neuronIndex) {
 		NodeGene n = nodes.get(neuronIndex);

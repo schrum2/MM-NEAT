@@ -136,7 +136,7 @@ public class MegaManLevelAnalysisUtil {
 					boolean right =  MegaManVGLCUtil.canGoRight(level,rightScreenSide,y1);
 					boolean down =  MegaManVGLCUtil.canGoDown(level,rightScreenSide,y1);
 					boolean up =  MegaManVGLCUtil.canGoUp(level,rightScreenSide,y1);
-					System.out.println(new Point(rightScreenSide-x2,y1));
+					//System.out.println(new Point(rightScreenSide-x2,y1));
 					Point point = new Point(rightScreenSide-x2,y1);
 					if((up&&left&&!right&&!down&&!segmentPoints.contains(point))||
 							(up&&right&&!left&&!down&&!segmentPoints.contains(point))||

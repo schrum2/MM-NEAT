@@ -13,7 +13,7 @@ for(typePrefix in types) {
 
 for(i in 0:29) {
   dataFile <- paste(typePrefix,i,"/MarioLevelsDecorateNSLeniency-",typePrefix,i,"_MAPElites_log.txt",sep="")
-  map <- read.table(dataFile)
+  map <- read.table(dataFile, na.strings = c("X"))
   print(dataFile)
   if (length(args)==0) {
     # Only the final archive matters
@@ -23,6 +23,7 @@ for(i in 0:29) {
     lastRow <- map[map$V1 == strtoi(args[1], base = 0L) - 1, ]
     nameEnd <- paste("Gen",args[1],sep="")
   }
+  lastRow[ is.na(lastRow) ] <- -Inf
   archive <- data.frame(matrix(unlist(lastRow[2:length(lastRow)]), nrow=(length(lastRow)-1), byrow=T))
   names(archive) <- "SolutionSteps"
   

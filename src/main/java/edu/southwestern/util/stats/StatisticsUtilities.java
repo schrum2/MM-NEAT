@@ -392,6 +392,15 @@ public class StatisticsUtilities {
 		}
 		return max; // Returns the maximum value in the given Array
 	}
+	
+	
+	public static Float maximum(Float[] xs) {
+		Float max = xs[0];
+		for(int i = 1; i < xs.length; i++) {
+			max = Math.max(max, xs[i]);
+		}
+		return max;
+	}
 
 
 	/**
@@ -562,6 +571,24 @@ public class StatisticsUtilities {
 			squares[i] *= squares[i]; // Multiplies the newly stored value by itself to store the Square of that value at the same Index
 		}
 		return sum(squares); // Returns the sum of the newly created Array
+	}
+	
+	/**
+	 * Computes the root mean square error between two different
+	 * arrays of doubles.
+	 * 
+	 * @param xs first array 
+	 * @param xs2 second array
+	 * @return root mean square error of first and second array
+	 */
+	public static double rootMeanSquareError(double[] xs, double[] xs2) {
+		assert xs.length == xs2.length : "Both feature vectors must be same length";
+		double sumSquaredErrors = 0; // Will add up squared errors
+		for(int i = 0; i < xs.length; i++){
+			double error = xs[i] - xs2[i]; // Error between target and expected
+			sumSquaredErrors += error*error; // accumulate squared error
+		}
+		return Math.sqrt(sumSquaredErrors / xs.length); // root of mean-squared error
 	}
 
 	/**

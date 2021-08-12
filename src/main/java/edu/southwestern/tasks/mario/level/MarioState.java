@@ -99,7 +99,7 @@ public class MarioState extends State<MarioState.MarioAction> {
 	 * @param level List of lists representation
 	 * @return List of lists representation with buffer and fixed elements.
 	 */
-	public static ArrayList<List<Integer>> preprocessLevel(ArrayList<List<Integer>> level){
+	public static ArrayList<List<Integer>> preprocessLevel(List<List<Integer>> level){
 		int extraStones = BUFFER_WIDTH;
 		int height = level.size();
 		int width = level.get(0).size();

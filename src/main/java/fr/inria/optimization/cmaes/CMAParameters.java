@@ -82,6 +82,19 @@ public class CMAParameters implements java.io.Serializable {
 		ccov = -1; 
 	}
 
+	
+	// TODO Maxx's unlocking/locking functions
+	public void unsafeUnlock() {
+		if (locked == 0) error("Attempted unsafe unlock while already unlocked!");
+		locked = 0;
+	}
+	
+	public void unsafeLock() {
+		if (locked == 1) error("Attempted unsafe lock while already locked!");
+		locked = 1;
+	}
+	
+	
 	/**
 	 *  Checks strategy parameter setting with respect to principle 
 	 *  consistency. Returns a string with description of the first
@@ -279,7 +292,12 @@ public class CMAParameters implements java.io.Serializable {
 	}
 	
 	public enum RecombinationType {superlinear, linear, equal};
-	RecombinationType recombinationType = RecombinationType.superlinear; // otherwise null
+	RecombinationType recombinationType = RecombinationType.superlinear; // otherwise null 
+	
+	public RecombinationType getRecombinationType() { // Maxx: Made this so we can get it for Emitters
+		return recombinationType;
+	}
+	
 	/**
 	 * Getter for property weights.
 	 * 
@@ -326,7 +344,7 @@ public class CMAParameters implements java.io.Serializable {
 	 *
 	 * @param mu is the number of parents, number of weights > 0 
 	 */
-	private void setWeights(int mu, RecombinationType recombinationType) {
+	public void setWeights(int mu, RecombinationType recombinationType) { // Maxx: Made this public so we can access it in emitters
 		double[] w = new double[mu];
 		if (recombinationType == RecombinationType.equal)
 			for (int i = 0; i < mu; ++i) 
@@ -335,15 +353,18 @@ public class CMAParameters implements java.io.Serializable {
 			for (int i = 0; i < mu; ++i) 
 				w[i] = mu - i;
 		else // default, seems as enums can be null
-		for (int i = 0; i < mu; ++i) 	
-			w[i] = (Math.log(mu + 1) - Math.log(i + 1));
+			for (int i = 0; i < mu; ++i) 	
+				w[i] = (Math.log(mu + 1) - Math.log(i + 1));
 
 		setWeights(w);
 	}
 
 	/** normalizes recombination weights vector and sets mueff **/
 	protected void setWeights(double[] weights) {
-		assert locked == 0;
+		// Maxx: I looked around in this file and in CMAEvolutionStrategy, this line always seems to fail, since this code is run through  
+		// supplementRemainders() which sets 'locked' equal to 1 before running this method. In CMAEvolutionStrategy locked is set to 1 after 
+		// running the parameter supplementing code, so I suspect that the place in supplementRemainders() is an error.
+		//assert locked == 0;
 		double sum = 0;
 		for (int i = 0; i < weights.length; ++i)
 			sum += weights[i];

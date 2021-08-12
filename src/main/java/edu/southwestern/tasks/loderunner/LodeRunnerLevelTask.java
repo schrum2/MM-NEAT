@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -19,17 +20,16 @@ import javax.swing.SwingUtilities;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
-import edu.southwestern.evolution.mapelites.MAPElites;
+import edu.southwestern.evolution.mapelites.generalmappings.KLDivergenceBinLabels;
+import edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.export.JsonLevelGenerationTask;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
-import edu.southwestern.tasks.loderunner.mapelites.LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels;
-import edu.southwestern.tasks.loderunner.mapelites.LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels;
-import edu.southwestern.tasks.loderunner.mapelites.LodeRunnerMAPElitesPercentGroundNumGoldAndEnemiesBinLabels;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -46,16 +46,17 @@ import icecreamyou.LodeRunner.LodeRunner;
  *
  * @param <T>
  */
-public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
+public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> implements JsonLevelGenerationTask<T> {
 
 	private int numFitnessFunctions = 0; 
 	protected static final int NUM_OTHER_SCORES = 9;
 	// Is actually logged to in the MAPElites class
 	public MMNEATLog beatable;
 
-	// Calculated in oneEval, so it can be passed on the getBehaviorVector
-	private ArrayList<Double> behaviorVector;
-	private Pair<int[],Double> oneMAPEliteBinIndexScorePair;
+	private int[][][] klDivLevels; // Should this be here?
+	private double fitnessSaveThreshold = Parameters.parameters.doubleParameter("fitnessSaveThreshold");
+	
+	private boolean initialized = false; // become true on first evaluation
 
 	/**
 	 * Registers all fitness functions that are used, and other scores 
@@ -117,7 +118,7 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				String beatablePrefix = experimentPrefix + "_" + "Beatable";
 				String directory = FileUtilities.getSaveDirectory();// retrieves file directory
 				directory += (directory.equals("") ? "" : "/");
-				String fullFillName = directory + beatablePrefix + "_log.plot";
+				String fullFillName = directory + beatablePrefix + "_log.plt";
 				File beatablePlot = new File(fullFillName);
 				// Write to file
 				try {
@@ -151,6 +152,19 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		}
 	}
 
+	private void setupKLDivLevelsForComparison() {
+		if (MMNEAT.usingDiversityBinningScheme && MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { 
+			System.out.println("Instance of MAP Elites using KL Divergence Bin Labels");
+			String level1FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel1"); 
+			String level2FileName = Parameters.parameters.stringParameter("mapElitesKLDivLevel2"); 
+			ArrayList<List<Integer>> level1List = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevel(level1FileName);
+			ArrayList<List<Integer>> level2List = LodeRunnerVGLCUtil.convertLodeRunnerLevelFileVGLCtoListOfLevel(level2FileName);
+			int[][] level1Array = ArrayUtil.int2DArrayFromListOfLists(level1List);
+			int[][] level2Array = ArrayUtil.int2DArrayFromListOfLists(level2List);
+			klDivLevels = new int[][][] {level1Array, level2Array};
+		}
+	}
+	
 	/**
 	 * @return The number of fitness functions 
 	 */
@@ -179,16 +193,6 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		return 0; //not used 
 	}
 
-	// This might break the Level Sequence Task, but that isn't really used, so will fix later if necessary.
-	// In a pinch, this whole method can be commented out to make the level sequence work.
-	@Override
-	public Score<T> evaluate(Genotype<T> individual) {
-		Score<T> result = super.evaluate(individual);
-		if(MMNEAT.ea instanceof MAPElites)
-			result.assignMAPElitesBinAndScore(oneMAPEliteBinIndexScorePair.t1, oneMAPEliteBinIndexScorePair.t2);
-		return result;
-	}
-	
 	/**
 	 * Does one evaluation with the A* algorithm to see if the level is beatable 
 	 * @param Genotype<T> 
@@ -197,11 +201,14 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 * @throws IOException 
 	 */
 	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num){
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String,Object> behaviorCharacteristics) {
+		if(!initialized) {
+			setupKLDivLevelsForComparison();
+			initialized = true;
+		}
 		List<List<Integer>> level = getLodeRunnerLevelListRepresentationFromGenotype(individual); //gets a level 
 		double psuedoRandomSeed = getRandomSeedForSpawnPoint(individual); //creates the seed to be passed into the Random instance 
-		long genotypeId = individual.getId();
-		return evaluateOneLevel(level, psuedoRandomSeed, genotypeId);
+		return evaluateOneLevel(level, psuedoRandomSeed, individual, behaviorCharacteristics);
 	}
 
 	/**
@@ -213,8 +220,8 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	 * @param genotypeId
 	 * @return Pair holding the scores 
 	 */
-	@SuppressWarnings("unchecked")
-	protected Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, long genotypeId) {
+	public Pair<double[], double[]> evaluateOneLevel(List<List<Integer>> level, double psuedoRandomSeed, Genotype<T> individual, HashMap<String,Object> behaviorMap) {
+		long genotypeId = individual.getId();
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions); //initializes the fitness function array  
 		Triple<HashSet<LodeRunnerState>, ArrayList<LodeRunnerAction>, LodeRunnerState> aStarInfo = LodeRunnerLevelAnalysisUtil.performAStarSearch(level, psuedoRandomSeed);
 		HashSet<LodeRunnerState> mostRecentVisited = aStarInfo.t1;
@@ -322,57 +329,37 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 		}
 
 		// LodeRunnerLevelSequenceTask has it's own MAP Elites binning rules defined in LodeRunnerLevelSequenceTask
-		if(MMNEAT.ea instanceof MAPElites && !(MMNEAT.task instanceof LodeRunnerLevelSequenceTask)) {
-			// Assign to the behavior vector before using MAP-Elites
-			//double[] archiveArray = null;
-			final int BINS_PER_DIMENSION = LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels.BINS_PER_DIMENSION;
-			int dim1, dim2, dim3; //declares bin dimensions 
-			double SCALE_GROUND_LADDERS = BINS_PER_DIMENSION/4.0; //scales by 1/4 of the dimension to go in steps of 4
-			//gets correct indices for all dimensions based on percent and multiplied by 10 to be a non decimal 
-			int connectedIndex = Math.min((int)(percentConnected*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); 
+		if(MMNEAT.usingDiversityBinningScheme && !(MMNEAT.task instanceof LodeRunnerLevelSequenceTask)) {
 			
-			// ground scaling is frustrating. percentGroundseems to land between 0.1 and 0.43. So, subtract 0.1 to get to
-			// 0.0 to 0.33, then multiply by 3 to get 0.0 to 0.99
-			int groundIndex = Math.max(0, Math.min((int)((percentGround-0.1)*3*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1));
-			int laddersIndex = Math.min((int)(percentLadders*SCALE_GROUND_LADDERS*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1);
+			// Quality measure (designated in a manner distinct from the fitness score)
 			double binScore = simpleAStarDistance;
 			if(Parameters.parameters.booleanParameter("lodeRunnerAllowsAStarConnectivityCombo")) {
 				// Combo of connectivity and A* overwhelms regular A*
 				binScore = comboFitness;
 			}
+			behaviorMap.put("binScore", binScore);
 
-			if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedGroundAndLaddersBinLabels) {
-				//Initializes bin dimensions 
-				dim1 = connectedIndex; //connectivity
-				dim2 = groundIndex; //percent ground scaled
-				dim3 = laddersIndex; //percent ladders scaled
-				//becomes the behavior vector 
-				//archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentConnectedNumGoldAndEnemiesBinLabels) {
-				double treasureScale = 5.0; //scales bins to be in groups of 5, [0-5][5-10]...
-				double enemyScale = 2.0; //scales bins to be in groups of 2, [0-2][2-4]...
-				//gets correct indices for treasure and enemies
-				int treasureIndex = (int) Math.min(numTreasure/treasureScale, BINS_PER_DIMENSION-1);
-				int enemyIndex = (int) Math.min(numEnemies/enemyScale, BINS_PER_DIMENSION-1);
-				dim1 = connectedIndex; //connectivity
-				dim2 = treasureIndex;//number of treasures scaled 
-				dim3 = enemyIndex; //number of enemies scaled
-				//becomes the behavior vector 
-				//archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-			} else if(((MAPElites<T>) MMNEAT.ea).getBinLabelsClass() instanceof LodeRunnerMAPElitesPercentGroundNumGoldAndEnemiesBinLabels) {
-				double treasureScale = 5.0; //scales bins to be in groups of 5, [0-5][5-10]...
-				double enemyScale = 2.0; //scales bins to be in groups of 2, [0-2][2-4]...
-				//gets correct indices for treasure and enemies
-				int treasureIndex = (int) Math.min(numTreasure/treasureScale, BINS_PER_DIMENSION-1);
-				int enemyIndex = (int) Math.min(numEnemies/enemyScale, BINS_PER_DIMENSION-1);
-				dim1 = groundIndex; //ground percentage
-				dim2 = treasureIndex;//number of treasures scaled 
-				dim3 = enemyIndex; //number of enemies scaled
-				//becomes the behavior vector 
-				//archiveArray = new double[BINS_PER_DIMENSION*BINS_PER_DIMENSION*BINS_PER_DIMENSION];
-			} else {
-				throw new RuntimeException("A Valid Binning Scheme For Lode Runner Was Not Specified");
+			// All possible behavior characterization information
+			behaviorMap.put("Connected Percent",percentConnected);
+			behaviorMap.put("Ground Percent", percentGround);
+			behaviorMap.put("Ladders Percent", percentLadders);
+			behaviorMap.put("Treasures", numTreasure+0.0);
+			behaviorMap.put("Enemies", numEnemies+0.0);
+			// These characteristics are costly to compute, so only compute if specific labels are being used
+			if (MMNEAT.getArchiveBinLabelsClass() instanceof KLDivergenceBinLabels) { 
+				int[][] oneLevelAs2DArray = ArrayUtil.int2DArrayFromListOfLists(level);
+				behaviorMap.put("2D Level", oneLevelAs2DArray);
+				behaviorMap.put("Comparison Levels", klDivLevels);
+			} else if (MMNEAT.getArchiveBinLabelsClass() instanceof LatentVariablePartitionSumBinLabels) {
+				@SuppressWarnings("unchecked")
+				ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
+				double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
+				behaviorMap.put("Solution Vector", latentVector);
 			}
+			
+			int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
+			behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
+
 			BufferedImage levelSolution = null;
 			BufferedImage levelImage = null;
 			try {
@@ -380,12 +367,11 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 				levelSolution = LodeRunnerState.vizualizePath(level,mostRecentVisited,actionSequence,start);
 				levelImage = LodeRunnerRenderUtil.createBufferedImage(level, LodeRunnerRenderUtil.RENDERED_IMAGE_WIDTH, LodeRunnerRenderUtil.RENDERED_IMAGE_HEIGHT);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				//e.printStackTrace();
 				System.out.println("Could not get image");
 			} 
-			//this method makes the bins and saves the level images in the archive directory 
-			setBinsAndSaveLevelImages(genotypeId, levelImage, levelSolution, dim1, dim2, dim3, binScore);
+			//this method saves the level images in the archive directory 
+			setBinsAndSaveLevelImages(genotypeId, levelImage, levelSolution, dim1D, binScore);
 		}
 
 
@@ -393,62 +379,39 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> {
 	}
 
 	/**
-	 * This method makes the bins for levels to be placed in and then saves 
-	 * the images of the level, both a standard render and a render with the solution path
+	 * This method  saves the images of the level, both a standard render and a render with the solution path
 	 * @param genotypeId Genotype ID
 	 * @param levelImage Standard render level
 	 * @param levelSolution Solution path of rendered level
-	 * @param dim1 Dimension of connectivity
-	 * @param dim2 Dimension of ground 
-	 * @param dim3 Dimension of ladders 
+	 * @param dim1D 1D index of new solution within archive
 	 * @param binScore AStarPath length 
 	 */
-	@SuppressWarnings("unchecked")
-	private void setBinsAndSaveLevelImages(long genotypeId, BufferedImage levelImage,
-			BufferedImage levelSolution, int dim1, int dim2, int dim3,
-			double binScore) {
-		
-		oneMAPEliteBinIndexScorePair = new Pair<int[], Double>(new int[] {dim1, dim2, dim3}, binScore);
-
-		//gets the index in the one dimensional array 
-//		int binIndex = (dimConnected*BINS_PER_DIMENSION + dimGround)*BINS_PER_DIMENSION + dimLadders;
-//		Arrays.fill(archiveArray, Double.NEGATIVE_INFINITY); // Worst score in all dimensions
-//		archiveArray[binIndex] = binScore; //adds binScore at binIndex 
-		
-		System.out.println("["+dim1+"]["+dim2+"]["+dim3+"] = "+binScore);
-		
-//		behaviorVector = ArrayUtil.doubleVectorFromArray(archiveArray);
+	private void setBinsAndSaveLevelImages(long genotypeId, BufferedImage levelImage, BufferedImage levelSolution, int dim1D, double binScore) {		
 		//saving images in bins 
 		if(CommonConstants.netio) {
 			System.out.println("Saving rendered level and solution path for level");
-			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+			@SuppressWarnings("unchecked")
+			Archive<T> archive = MMNEAT.getArchive();
 			List<String> binLabels = archive.getBinMapping().binLabels();
 			// Index in flattened bin array
-			Score<T> elite = archive.getElite(oneMAPEliteBinIndexScorePair.t1);
+			Score<T> elite = archive.getElite(dim1D);
 			//if that index is empty or the binScores is greater than what was there before
 			if(elite==null || binScore > elite.behaviorIndexScore()) {
-				//formats to be 7 digits before the decimal, and 5 digits after, %7.5f
-				//only doing direct right now, but will need to add CPPN label in addition, like in MarioLevelTask, if we start to use a CPPN
-				String fileNameImage =  "_Direct-"+String.format("%7.5f", binScore) +"_"+ genotypeId + "-LevelRender" +".png";
-				String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(archive.getBinMapping().oneDimensionalIndex(oneMAPEliteBinIndexScorePair.t1));
-				String fullNameImage = binPath + "_" + fileNameImage;
-				System.out.println(fullNameImage);
-				GraphicsUtil.saveImage(levelImage, fullNameImage);// saves the rendered level without the solution path
-				String fileNameSolution = "_Direct-"+String.format("%7.5f", binScore) +"_"+ genotypeId + "-SolutionRender" +".png";
-				String fullNameSolution = binPath + "_" +fileNameSolution;
-				System.out.println(fullNameSolution);
-				GraphicsUtil.saveImage(levelSolution, fullNameSolution);// saves the rendered level with the solution path
+				if(binScore > fitnessSaveThreshold) {
+					//formats to be 7 digits before the decimal, and 5 digits after, %7.5f
+					//only doing direct right now, but will need to add CPPN label in addition, like in MarioLevelTask, if we start to use a CPPN
+					String fileNameImage =  "_Direct-"+String.format("%7.5f", binScore) +"_"+ genotypeId + "-LevelRender" +".png";
+					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(dim1D);
+					String fullNameImage = binPath + "_" + fileNameImage;
+					System.out.println(fullNameImage);
+					GraphicsUtil.saveImage(levelImage, fullNameImage);// saves the rendered level without the solution path
+					String fileNameSolution = "_Direct-"+String.format("%7.5f", binScore) +"_"+ genotypeId + "-SolutionRender" +".png";
+					String fullNameSolution = binPath + "_" +fileNameSolution;
+					System.out.println(fullNameSolution);
+					GraphicsUtil.saveImage(levelSolution, fullNameSolution);// saves the rendered level with the solution path
+				}
 			}
 		}
-	}
-
-	/**
-	 * Data calculated in oneEval and returned here
-	 * Meant to be used with MAPElites. It is an array of bins. Every level gets placed into a single bin 
-	 * @return behaviorVector
-	 */
-	public ArrayList<Double> getBehaviorVector() {
-		return behaviorVector;
 	}
 
 	/**

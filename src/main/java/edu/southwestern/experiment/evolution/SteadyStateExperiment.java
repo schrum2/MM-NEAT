@@ -7,6 +7,7 @@ import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.parameters.Parameters;
 
@@ -15,6 +16,7 @@ public class SteadyStateExperiment<T> implements Experiment {
 	private SteadyStateEA<T> ea;
 	private int maxIterations;
 	private boolean cleanArchetype;
+	private boolean plainTWEANNGenotype;
 
 	@SuppressWarnings("unchecked")
 	public SteadyStateExperiment() {
@@ -26,7 +28,8 @@ public class SteadyStateExperiment<T> implements Experiment {
 		this.ea.initialize(example);
 		// Overriding the meaning of maxGens to treat it like maxIterations
 		maxIterations = Parameters.parameters.integerParameter("maxGens");
-		this.cleanArchetype = MMNEAT.genotype instanceof TWEANNGenotype;
+		this.plainTWEANNGenotype = MMNEAT.genotype instanceof TWEANNGenotype;
+		this.cleanArchetype = plainTWEANNGenotype || MMNEAT.genotype instanceof TWEANNPlusParametersGenotype;
 	}
 	
 	@Override
@@ -34,6 +37,7 @@ public class SteadyStateExperiment<T> implements Experiment {
 		// Init of EA was called in constructor instead
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void run() {
 		while(!shouldStop()) { // Until done
@@ -45,7 +49,7 @@ public class SteadyStateExperiment<T> implements Experiment {
 			if(cleanArchetype) { // Periodically clean extinct genes from the archetype
 				ArrayList<Genotype<T>> pop = ea.getPopulation();
 				ArrayList<TWEANNGenotype> tweannPop = new ArrayList<TWEANNGenotype>(pop.size());
-				for(Genotype<T> g : pop) tweannPop.add((TWEANNGenotype) g);
+				for(Genotype<T> g : pop) tweannPop.add(plainTWEANNGenotype ? (TWEANNGenotype) g : ((TWEANNPlusParametersGenotype) g).getTWEANNGenotype());
 				EvolutionaryHistory.cleanArchetype(0, tweannPop, ea.currentIteration());
 			}
 		}
