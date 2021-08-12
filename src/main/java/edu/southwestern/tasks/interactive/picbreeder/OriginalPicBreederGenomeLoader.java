@@ -16,9 +16,11 @@ import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.southwestern.networks.ActivationFunctions;
+import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
@@ -33,7 +35,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  * @author Jacob Schrum
  */
 public class OriginalPicBreederGenomeLoader {
-	public static final int SIZE = 64;
+	public static final int SIZE = 600; //64;
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {		
 		Parameters.initializeParameterCollections(new String[] {"io:false","netio:false","allowMultipleFunctions:true","finalPassOnOutputActivation:true"});
 		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, -1);
@@ -120,7 +122,9 @@ public class OriginalPicBreederGenomeLoader {
 		network.draw(panel, true, false);
 		
         // Now show the image
-		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE);
+		//BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE);
+		double scale = 5.0;
+		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE, ArrayUtil.doubleOnes(network.numInputs()), -1, scale, 0, 0, 0);
 		DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", SIZE, SIZE);
 		// Wait for user
 		String result = MiscUtil.waitForReadStringAndEnterKeyPress();
