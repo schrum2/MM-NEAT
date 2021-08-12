@@ -37,7 +37,8 @@ public class PolynomialMutation extends RealMutation {
 		double y = g.getPhenotype().get(var);
 		double yl = g.lowerBounds()[var];
 		double yu = g.upperBounds()[var];
-		((BoundedRealValuedGenotype) genotype).setValue(var, newValue(y, yl, yu));
+		// An index can be locked by setting upper and lower bounds the same. Do not mutate to avoid NaN
+		if(yl != yu) ((BoundedRealValuedGenotype) genotype).setValue(var, newValue(y, yl, yu));
 	}
 
 	public double newValue(double y, double yl, double yu) {

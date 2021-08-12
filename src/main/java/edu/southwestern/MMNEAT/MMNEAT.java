@@ -1136,7 +1136,7 @@ public class MMNEAT {
 		else if(task instanceof ShapeInnovationTask) 
 			lower = new double[]{0,0,0,0,0}; // Background color (first three) and pitch, heading
 		else if(task instanceof ImageMatchTask || task instanceof PictureTargetTask || task instanceof PicbreederTask || task instanceof AnimationBreederTask) 
-			lower = new double[] {0.1, 0, -Parameters.parameters.doubleParameter("imageCenterTranslationRange"), -Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
+			lower = new double[] {Parameters.parameters.doubleParameter("minScale"), 0, -Parameters.parameters.doubleParameter("imageCenterTranslationRange"), -Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
 		else if(task instanceof FunctionOptimizationTask) 
 			lower = ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foLowerBounds")); 
 		// For Mario GAN, the latent vector length determines the size, but the lower bounds are all zero
@@ -1175,7 +1175,7 @@ public class MMNEAT {
 		else if(task instanceof ShapeInnovationTask) 
 			upper = new double[]{1,1,1,1,1}; // Background color (first three) and pitch, heading
 		else if(task instanceof ImageMatchTask || task instanceof PictureTargetTask || task instanceof PicbreederTask || task instanceof AnimationBreederTask) 
-			upper = new double[] {Parameters.parameters.doubleParameter("maxScale"), 2*Math.PI, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
+			upper = new double[] {Parameters.parameters.doubleParameter("maxScale"), Parameters.parameters.booleanParameter("enhancedCPPNCanRotate") ? 2*Math.PI : 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
 		else if(task instanceof FunctionOptimizationTask) 
 			upper = ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foUpperBounds")); 
 		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask||task instanceof MarioCPPNOrDirectToGANLevelTask) 

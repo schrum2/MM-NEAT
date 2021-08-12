@@ -775,6 +775,7 @@ public class Parameters {
 		booleanOptions.add("convolutionalAutoencoder", false, "Determines whether to use the regular autoencoder or the convolutional autoencoder.");
 		booleanOptions.add("resampleBadCMAMEGenomes", false, "If genome out of bounds, then generate a new one without counting toward number of generated solutions (may loop forever!).");
 		booleanOptions.add("minNeuronFitness", false, "Whether or not ImageMatchTask tries to minimize the number of neurons.");
+		booleanOptions.add("enhancedCPPNCanRotate", true, "Whether enhanced CPPN picture genotype can change the image rotation.");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
@@ -851,6 +852,7 @@ public class Parameters {
 		doubleOptions.add("fitnessSaveThreshold", 0.0, "Threshold for whether or not to save an image");
 		doubleOptions.add("mapElitesQDBaseOffset", 0.0, "Small amount added to each MAP Elites bin score when calculating QD");
 		doubleOptions.add("klDivMaxValue", -1.0, "Maximum possible value of a bin when using a KL Divergence binning scheme");
+		doubleOptions.add("minScale", 0.1, "The minimumm scale value for Picbreeder images to be scaled to.");
 		doubleOptions.add("maxScale", 5.0, "The maximumm scale value for Picbreeder images to be scaled to.");
 		doubleOptions.add("picbreederImageScale", 1.0, "The scale factorfor Picbreeder to use when it is not using EnhnacedCPPNPictureGenotype.");
 		doubleOptions.add("picbreederImageRotation", 0.0, "The rotation factor for Picbreeder to use when it is not using EnhancedCPPNPictureGenotype.");

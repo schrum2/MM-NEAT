@@ -147,6 +147,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		if(phenotype instanceof NetworkPlusParameters) { // CPPN with extra scale and rotation parameters
 			NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype;
 			ArrayList<Double> scaleRotationTranslation = npp.t2;
+			System.out.println(scaleRotationTranslation);
 			//System.out.println("Scale, Rotation, and Translation (x,y): " + scaleRotationTranslation);
 			return GraphicsUtil.imageFromCPPN(phenotype, imageWidth, imageHeight, inputMultiples, -1, scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_X), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y));
 		} else { // Plain CPPN/TWEANGenotype
@@ -486,7 +487,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:16", "maxGens:500",
 					"zentangleTileDim:100", 
 					"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
-					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:true",
+					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:false",
+					//"imageCenterTranslationRange:0.0", // Uncomment to turn off evolution of translation 
+					//"minScale:1.0", "maxScale:1.0", // Uncomment to turn off evolution of scale
+					//"enhancedCPPNCanRotate:false", // Uncomment to turn off evolution of rotation
 					"task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:true", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"simplifiedInteractiveInterface:false", "recurrency:false", "saveAllChampions:true",
@@ -496,7 +500,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					"includeIdFunction:true", "includeTriangleWaveFunction:false", "includeSquareWaveFunction:false",
 					"includeFullSawtoothFunction:false", "includeSigmoidFunction:false", "includeAbsValFunction:false",
 					"includeSawtoothFunction:false", "allowInteractiveSave:true", 
-					"picbreederImageScale:10.0", "picbreederImageRotation:0.0", // <- Not relevant when EnhancedCPPNPictureGenotype is used
+					//"picbreederImageScale:10.0", "picbreederImageRotation:0.0", // <- Not relevant when EnhancedCPPNPictureGenotype is used
 					"picbreederImageTranslationX:0.0", "picbreederImageTranslationY:0.0"});  // <- Not relevant when EnhancedCPPNPictureGenotype is used
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
