@@ -81,7 +81,6 @@ import edu.southwestern.tasks.mario.MarioTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.megaman.MegaManLevelTask;
 import edu.southwestern.tasks.motests.MultipleFunctionOptimization;
-import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
 import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.tasks.mspacman.facades.ExecutorFacade;
 import edu.southwestern.tasks.mspacman.init.MsPacManInitialization;
@@ -141,7 +140,6 @@ public class MMNEAT {
 	public static ArrayList<Genotype> genotypeExamples;
 	@SuppressWarnings("rawtypes") // can crossover any type, depending on command line
 	public static Crossover crossoverOperator;
-	public static FunctionOptimizationSet fos;
 	public static RLGlueEnvironment rlGlueEnvironment;
 	@SuppressWarnings("rawtypes") // depends on genotypes
 	public static ArrayList<Metaheuristic> metaheuristics;
@@ -222,14 +220,6 @@ public class MMNEAT {
 		// Crossover operator
 		if (Parameters.parameters.booleanParameter("mating")) {
 			crossoverOperator = (Crossover) ClassCreation.createObject("crossover");
-		}
-	}
-
-	private static void setupFunctionOptimization() throws NoSuchMethodException {
-		// Function minimization benchmarks, if they are used
-		fos = (FunctionOptimizationSet) ClassCreation.createObject("fos");
-		if (Parameters.parameters.booleanParameter("lengthDependentMutationRate") && fos != null) {
-			Parameters.parameters.setDouble("realMutateRate", 1.0 / fos.getLowerBounds().length);
 		}
 	}
 
@@ -418,7 +408,6 @@ public class MMNEAT {
 
 			setupCrossover();
 			RLGlueInitialization.setupRLGlue();
-			setupFunctionOptimization();
 
 			// A task is always required
 			System.out.println("Set Task");
@@ -784,7 +773,6 @@ public class MMNEAT {
 	public static void clearClasses() {
 		rlGlueEnvironment = null;
 		task = null;
-		fos = null;
 		metaheuristics = null;
 		fitnessFunctions = null;
 		aggregationOverrides = null;

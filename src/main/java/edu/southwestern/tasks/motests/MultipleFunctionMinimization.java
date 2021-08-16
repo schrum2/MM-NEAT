@@ -1,6 +1,5 @@
 package edu.southwestern.tasks.motests;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
 
 /**
@@ -10,7 +9,7 @@ import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
 public class MultipleFunctionMinimization extends MultipleFunctionOptimization {
 
 	public MultipleFunctionMinimization() {
-		this(MMNEAT.fos);
+		this(MultipleFunctionOptimization.setupFunctionOptimization());
 	}
 
 	public MultipleFunctionMinimization(FunctionOptimizationSet fos) {
