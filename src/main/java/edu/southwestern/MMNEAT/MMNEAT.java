@@ -8,8 +8,6 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
-
 import edu.southwestern.data.ResultSummaryUtilities;
 import edu.southwestern.evolution.EA;
 import edu.southwestern.evolution.EvolutionaryHistory;
@@ -91,10 +89,7 @@ import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBloc
 import edu.southwestern.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
 import edu.southwestern.tasks.mspacman.sensors.ghosts.mediators.GhostsCheckEachDirectionMediator;
 import edu.southwestern.tasks.pinball.PinballTask;
-import edu.southwestern.tasks.rlglue.RLGlueEnvironment;
 import edu.southwestern.tasks.rlglue.RLGlueTask;
-import edu.southwestern.tasks.rlglue.featureextractors.FeatureExtractor;
-import edu.southwestern.tasks.rlglue.init.RLGlueInitialization;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.tasks.ut2004.UT2004Task;
@@ -140,13 +135,10 @@ public class MMNEAT {
 	public static ArrayList<Genotype> genotypeExamples;
 	@SuppressWarnings("rawtypes") // can crossover any type, depending on command line
 	public static Crossover crossoverOperator;
-	public static RLGlueEnvironment rlGlueEnvironment;
 	@SuppressWarnings("rawtypes") // depends on genotypes
 	public static ArrayList<Metaheuristic> metaheuristics;
 	public static ArrayList<ArrayList<String>> fitnessFunctions;
 	public static ArrayList<Statistic> aggregationOverrides;
-	public static TaskSpec tso;
-	public static FeatureExtractor rlGlueExtractor;
 	@SuppressWarnings("rawtypes") // applies to any population type
 	public static PerformanceLog performanceLog;
 	public static MsPacManControllerInputOutputMediator pacmanInputOutputMediator;
@@ -407,7 +399,6 @@ public class MMNEAT {
 			weightPerturber = (RandomGenerator) ClassCreation.createObject("weightPerturber");
 
 			setupCrossover();
-			RLGlueInitialization.setupRLGlue();
 
 			// A task is always required
 			System.out.println("Set Task");
@@ -471,7 +462,7 @@ public class MMNEAT {
 					}
 				}
 			} else if (task instanceof RLGlueTask) {
-				setNNInputParameters(rlGlueExtractor.numFeatures(), RLGlueTask.agent.getNumberOutputs());
+				setNNInputParameters(RLGlueTask.rlGlueExtractor.numFeatures(), RLGlueTask.agent.getNumberOutputs());
 			} else if (task instanceof PinballTask) {
 				PinballTask temp = (PinballTask) task;
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
@@ -771,7 +762,6 @@ public class MMNEAT {
 	 * Resets the classes used in MMNEAT and and sets them to null.
 	 */
 	public static void clearClasses() {
-		rlGlueEnvironment = null;
 		task = null;
 		metaheuristics = null;
 		fitnessFunctions = null;

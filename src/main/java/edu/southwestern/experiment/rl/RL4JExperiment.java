@@ -18,6 +18,7 @@ import edu.southwestern.experiment.Experiment;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.EncodableObservation;
 import edu.southwestern.tasks.rlglue.RLGlueMDP;
+import edu.southwestern.tasks.rlglue.RLGlueTask;
 
 public class RL4JExperiment implements Experiment {
 
@@ -37,7 +38,8 @@ public class RL4JExperiment implements Experiment {
 	}
 
 	// Should these all be command line parameters?
-    public static QLearning.QLConfiguration QL =
+    @SuppressWarnings("deprecation")
+	public static QLearning.QLConfiguration QL =
             new QLearning.QLConfiguration(
                     123,    //Random seed
                     200,    //Max step By epoch
@@ -55,7 +57,8 @@ public class RL4JExperiment implements Experiment {
             );
 
 	// Should these all be command line parameters?
-    public static DQNFactoryStdDense.Configuration QNET =
+    @SuppressWarnings("deprecation")
+	public static DQNFactoryStdDense.Configuration QNET =
         DQNFactoryStdDense.Configuration.builder()
             .l2(0.001)
             .updater(new Adam(0.0005))
@@ -66,7 +69,7 @@ public class RL4JExperiment implements Experiment {
 	@Override
 	public void run() {
 		try {
-			mdp = new RLGlueMDP(MMNEAT.rlGlueEnvironment);
+			mdp = new RLGlueMDP(RLGlueTask.environment);
 			trainAndSave();
 //			loadAndWatch();
 		} catch (IOException e1) {
@@ -80,6 +83,7 @@ public class RL4JExperiment implements Experiment {
 	 * Assumes global mdp has been initialized
 	 * @throws IOException
 	 */
+	@SuppressWarnings("deprecation")
 	public void trainAndSave() throws IOException {
 		DataManager manager = new DataManager(false); // false = do not save to rl4j-data
 		//define the training

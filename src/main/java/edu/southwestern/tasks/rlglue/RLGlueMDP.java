@@ -29,7 +29,7 @@ public class RLGlueMDP implements MDP<EncodableObservation, Integer, DiscreteSpa
 		// Assume one output per possible action
 		this.discreteActionSpace = new DiscreteSpace(MMNEAT.networkOutputs);
 		// Assume each feature is one aspect of an observation
-		this.observationSpace = new ArrayObservationSpace<>(new int[] {MMNEAT.rlGlueExtractor.numFeatures()});
+		this.observationSpace = new ArrayObservationSpace<>(new int[] {RLGlueTask.rlGlueExtractor.numFeatures()});
 		this.done = false;
 		this.steps = 0;
 		this.maxStepsPerEpisode = Parameters.parameters.integerParameter("steps");
