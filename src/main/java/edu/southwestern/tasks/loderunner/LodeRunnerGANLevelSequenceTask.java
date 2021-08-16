@@ -7,8 +7,15 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.BoundedTask;
+import edu.southwestern.tasks.mario.gan.GANProcess;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
-public class LodeRunnerGANLevelSequenceTask extends LodeRunnerLevelSequenceTask<List<Double>> {
+public class LodeRunnerGANLevelSequenceTask extends LodeRunnerLevelSequenceTask<List<Double>> implements BoundedTask {
+	// I think this will work, but if it causes problems, then see how it is done in the plain LodeRunnerGANLevelTask instead
+	private double[] lower = ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")); 
+	private double[] upper = ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")); 
+	
 
 	public static void main(String[] args) {
 		try {
@@ -73,5 +80,15 @@ public class LodeRunnerGANLevelSequenceTask extends LodeRunnerLevelSequenceTask<
 	 */
 	public static List<List<Integer>> getLodeRunnerLevelListRepresentationFromStaticGenotype(List<Double> phenotype) {
 		return LodeRunnerGANLevelTask.getLodeRunnerLevelListRepresentationFromGenotypeStatic(phenotype);
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return upper;
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return lower;
 	}
 }

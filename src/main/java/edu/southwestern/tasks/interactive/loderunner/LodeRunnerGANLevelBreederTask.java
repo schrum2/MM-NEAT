@@ -28,6 +28,7 @@ import javax.swing.SwingUtilities;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
+import edu.southwestern.tasks.loderunner.LodeRunnerGANLevelTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANUtil;
 import edu.southwestern.tasks.loderunner.LodeRunnerRenderUtil;
 import edu.southwestern.tasks.loderunner.LodeRunnerTSPUtil;
@@ -359,6 +360,16 @@ public class LodeRunnerGANLevelBreederTask extends InteractiveGANLevelEvolutionT
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return LodeRunnerGANLevelTask.getStaticUpperBounds();
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return LodeRunnerGANLevelTask.getStaticLowerBounds();
 	}
 
 }

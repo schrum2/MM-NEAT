@@ -5,6 +5,7 @@ import edu.southwestern.evolution.mutation.real.PerturbMutation;
 import edu.southwestern.evolution.mutation.real.PolynomialMutation;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
@@ -25,7 +26,7 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	 * Populates the genotype with values between the default MMNEAT upper and lower bounds
 	 */
 	public BoundedRealValuedGenotype() {
-		this(RandomNumbers.randomBoundedArray(MMNEAT.getLowerBounds(), MMNEAT.getUpperBounds()));
+		this(RandomNumbers.randomBoundedArray(((BoundedTask) MMNEAT.task).getLowerBounds(), ((BoundedTask) MMNEAT.task).getUpperBounds()));
 	}
 
 	/**
@@ -64,9 +65,13 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	 * @return An array of doubles corresponding to the range of each gene
 	 */
 	public final double[] getRange() {
-		double[] magnitudes = new double[MMNEAT.lower.length];
+		BoundedTask t = ((BoundedTask) MMNEAT.task);
+		double[] lower = t.getLowerBounds();
+		double[] upper = t.getUpperBounds();
+		
+		double[] magnitudes = new double[lower.length];
 		for (int i = 0; i < magnitudes.length; i++) {
-			magnitudes[i] = MMNEAT.upper[i] - MMNEAT.lower[i];
+			magnitudes[i] = upper[i] - lower[i];
 		}
 		return magnitudes;
 	}
@@ -94,12 +99,16 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	 * to the particular bound they crossed.
 	 */
 	public final void bound() {
+		BoundedTask t = ((BoundedTask) MMNEAT.task);
+		double[] lower = t.getLowerBounds();
+		double[] upper = t.getUpperBounds();
+		
 		for (int i = 0; i < genes.size(); i++) {
 			double x = genes.get(i);
-			if (x < MMNEAT.getLowerBounds()[i]) {
-				x = MMNEAT.getLowerBounds()[i];
-			} else if (x > MMNEAT.getUpperBounds()[i]) {
-				x = MMNEAT.getUpperBounds()[i];
+			if (x < lower[i]) {
+				x = lower[i];
+			} else if (x > upper[i]) {
+				x = upper[i];
 			}
 			genes.set(i, x);
 		}
@@ -110,11 +119,15 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	 * @return true if all variables are appropriately bounded
 	 */
 	public final boolean isBounded() {
+		BoundedTask t = ((BoundedTask) MMNEAT.task);
+		double[] lower = t.getLowerBounds();
+		double[] upper = t.getUpperBounds();
+		
 		for (int i = 0; i < genes.size(); i++) {
 			double x = genes.get(i);
-			if (x < MMNEAT.getLowerBounds()[i]) {
+			if (x < lower[i]) {
 				return false;
-			} else if (x > MMNEAT.getUpperBounds()[i]) {
+			} else if (x > upper[i]) {
 				return false;
 			}
 		}
@@ -122,11 +135,15 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	}
 
 	public static final boolean isBounded(double[] genes) {
+		BoundedTask t = ((BoundedTask) MMNEAT.task);
+		double[] lower = t.getLowerBounds();
+		double[] upper = t.getUpperBounds();
+		
 		for (int i = 0; i < genes.length; i++) {
 			double x = genes[i];
-			if (x < MMNEAT.getLowerBounds()[i]) {
+			if (x < lower[i]) {
 				return false;
-			} else if (x > MMNEAT.getUpperBounds()[i]) {
+			} else if (x > upper[i]) {
 				return false;
 			}
 		}
@@ -146,13 +163,13 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 	 * Returns an array of doubles corresponding to the lower bounds of each gene
 	 */
 	public double[] lowerBounds() {
-		return MMNEAT.lower;
+		return ((BoundedTask) MMNEAT.task).getLowerBounds();
 	}
 
 	/**
 	 * Returns an array of doubles corresponding to the upper bounds of each gene
 	 */
 	public double[] upperBounds() {
-		return MMNEAT.upper;
+		return ((BoundedTask) MMNEAT.task).getUpperBounds();
 	}
 }

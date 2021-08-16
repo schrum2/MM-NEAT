@@ -6,7 +6,9 @@ import java.util.HashMap;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -19,9 +21,11 @@ import fr.inria.optimization.cmaes.fitness.AbstractObjectiveFunction;
  *
  * @author Maxx Batterton
  */
-public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
+public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> implements BoundedTask {
 
 	AbstractObjectiveFunction function;
+	private double[] upper;
+	private double[] lower; 
 	
 	/**
 	 * Initializes with the function specified by the 
@@ -29,6 +33,8 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 	 * the function.
 	 */
 	public FunctionOptimizationTask() {
+		upper = ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foUpperBounds"));
+		lower = ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foLowerBounds")); 
 		try {
 			this.function = (AbstractObjectiveFunction) ClassCreation.createObject("foFunction");
 		} catch (NoSuchMethodException e) {
@@ -97,5 +103,15 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> {
 		// Test with Rosenbrock, comparable to results from CMExample1
 		//MMNEAT.main(new String[] {"runNumber:"+runNum, "randomSeed:"+runNum, "io:true", "base:functionoptimization", "log:fo-FunctionOptimization", "saveTo:FunctionOptimization", "netio:false", "ea:edu.southwestern.evolution.cmaes.CMAEvolutionStrategyEA", "watch:true", "task:edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask",
 		//		"foFunction:fr.inria.optimization.cmaes.fitness.RosenFunction", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype", "foVectorLength:10", "foUpperBounds:5", "foLowerBounds:-5"});
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return upper;
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return lower;
 	}
 }

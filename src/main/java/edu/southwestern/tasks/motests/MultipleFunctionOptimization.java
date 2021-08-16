@@ -7,6 +7,7 @@ import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.scores.MultiObjectiveScore;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
  *
  * @author Jacob Schrum
  */
-public class MultipleFunctionOptimization extends LonerTask<ArrayList<Double>> {
+public class MultipleFunctionOptimization extends LonerTask<ArrayList<Double>> implements BoundedTask {
 
 	@SuppressWarnings("rawtypes")
 	FitnessFunction[] functions;
@@ -96,5 +97,15 @@ public class MultipleFunctionOptimization extends LonerTask<ArrayList<Double>> {
 
 	public double getTimeStamp() {
 		return 0;
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return MMNEAT.fos.getUpperBounds();
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return MMNEAT.fos.getLowerBounds();
 	}
 }

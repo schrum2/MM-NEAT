@@ -37,6 +37,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
+import edu.southwestern.tasks.megaman.MegaManGANLevelTask;
 import edu.southwestern.tasks.megaman.MegaManRenderUtil;
 import edu.southwestern.tasks.megaman.MegaManTrackSegmentType;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
@@ -51,7 +52,7 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
 
-public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask{
+public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	public static final int LEVEL_MIN_CHUNKS = 1;
 	public static final int LEVEL_MAX_CHUNKS = 10;
 	public static final int SAVE_BUTTON_INDEX = -19; 
@@ -760,6 +761,16 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return MegaManGANLevelTask.getStaticUpperBounds();
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return MegaManGANLevelTask.getStaticLowerBounds();
 	}
 
 }

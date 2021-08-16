@@ -3,6 +3,7 @@ package edu.southwestern.tasks.functionoptimization;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.generalmappings.MultiDimensionalRealValuedSlicedBinLabels;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.BoundedTask;
 
 /**
  * Binning scheme for Rastrigin and Sphere function, 
@@ -17,7 +18,7 @@ public class FunctionOptimizationRangeBinLabels extends MultiDimensionalRealValu
 	private static final double RASTRIGIN_RANGE = 5.12;
 
 	public FunctionOptimizationRangeBinLabels() {
-		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE, RASTRIGIN_RANGE, MMNEAT.getLowerBounds().length);
+		super(Parameters.parameters.integerParameter("foBinDimension"), -RASTRIGIN_RANGE, RASTRIGIN_RANGE, ((BoundedTask) MMNEAT.task).getLowerBounds().length);
 		if (Parameters.parameters.integerParameter("solutionVectorSlices") != 2) {throw new IllegalStateException("FunctionOptimizationRastriginBinLabels can only have 2 slices!");}
 	}
 

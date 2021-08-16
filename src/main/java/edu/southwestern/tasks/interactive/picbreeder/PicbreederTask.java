@@ -32,6 +32,7 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.util.BooleanUtil;
 import edu.southwestern.util.graphics.GraphicsUtil;
@@ -52,8 +53,12 @@ import edu.southwestern.util.random.RandomNumbers;
  *
  * @param <T>
  */
-public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
+public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<T> implements BoundedTask {
 
+	// These upper and lower bounds are for enhanced CPPN genotypes only (encoding scale, rotation, and translation)
+	private static double[] lower;
+	private static double[] upper;
+	
 	private static final int MAX_SELECTABLE_BEFORE_MIXING = 6;
 
 	private static final int MAX_TILE_SIZE_POWER = 5;
@@ -521,5 +526,24 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	@Override
 	protected String getFileExtension() {
 		return "bmp";
+	}
+
+	public static double[] getStaticUpperBounds() {
+		if(upper == null) upper = new double[] {Parameters.parameters.doubleParameter("maxScale"), Parameters.parameters.booleanParameter("enhancedCPPNCanRotate") ? 2*Math.PI : 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange")};		
+		return upper;
+	}
+
+	public static double[] getStaticLowerBounds() {
+		if(lower == null) lower = new double[] {Parameters.parameters.doubleParameter("minScale"), 0, -Parameters.parameters.doubleParameter("imageCenterTranslationRange"), -Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
+		return lower;
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return getStaticUpperBounds();
+	}
+
+	public double[] getLowerBounds() {
+		return getStaticLowerBounds();
 	}
 }
