@@ -53,6 +53,9 @@ import edu.southwestern.tasks.mspacman.objectives.RawTimeScore;
 import edu.southwestern.tasks.mspacman.objectives.RemainingLivesScore;
 import edu.southwestern.tasks.mspacman.objectives.SurvivalAndSpeedTimeScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeToEatAllGhostsScore;
+import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
+import edu.southwestern.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
 import edu.southwestern.tasks.popacman.controllers.OldToNewPacManIntermediaryController;
 import edu.southwestern.tasks.popacman.ghosts.controllers.OldToNewGhostIntermediaryController;
 import edu.southwestern.util.ClassCreation;
@@ -81,6 +84,12 @@ import popacman.CustomExecutor;
  */
 public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements TUGTask, NetworkTask, HyperNEATTask {
 
+	// Global variables that used to be in the MMNEAT class
+	public static MsPacManControllerInputOutputMediator pacmanInputOutputMediator;
+	public static GhostControllerInputOutputMediator ghostsInputOutputMediator;
+	public static MsPacManModeSelector pacmanMultitaskScheme = null;
+	public static VariableDirectionBlock directionalSafetyFunction;
+	
 	// Approximate size of Ms. Pac-Man screen in terms of nodes
 	public static final int MS_PAC_MAN_NODE_WIDTH = 112;
 	public static final int MS_PAC_MAN_NODE_HEIGHT = 120;
@@ -640,12 +649,12 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 
 	@Override
 	public String[] sensorLabels() {
-		return MMNEAT.pacmanInputOutputMediator.sensorLabels();
+		return pacmanInputOutputMediator.sensorLabels();
 	}
 
 	@Override
 	public String[] outputLabels() {
-		return MMNEAT.pacmanInputOutputMediator.outputLabels();
+		return pacmanInputOutputMediator.outputLabels();
 	}
 
 	@Override

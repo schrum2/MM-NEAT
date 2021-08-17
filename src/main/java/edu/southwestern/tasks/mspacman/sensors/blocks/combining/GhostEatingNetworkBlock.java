@@ -68,7 +68,7 @@ public class GhostEatingNetworkBlock<T extends Network> extends SubNetworkBlock<
 		MsPacManTask task = new MsPacManTask(true);
 
 		MsPacManControllerInputOutputMediator ghostMediator = new GhostTaskMediator();
-		MMNEAT.pacmanInputOutputMediator = ghostMediator;
+		MsPacManTask.pacmanInputOutputMediator = ghostMediator;
 		TWEANN ghostNet = new TWEANN(ghostMediator.numIn(), ghostMediator.numOut(), false, 0, 1, 0);
 		TWEANNGenotype ghostGenotype = new TWEANNGenotype(ghostNet);
 		for (int i = 0; i < 25; i++) {
@@ -79,7 +79,7 @@ public class GhostEatingNetworkBlock<T extends Network> extends SubNetworkBlock<
 
 		BlockLoadedInputOutputMediator subsumptionMediator = new BlockLoadedInputOutputMediator();
 		subsumptionMediator.blocks.add(new GhostEatingNetworkBlock(ghostGenotype.getPhenotype(), false));
-		MMNEAT.pacmanInputOutputMediator = subsumptionMediator;
+		MsPacManTask.pacmanInputOutputMediator = subsumptionMediator;
 		TWEANN subsumptionNet = new TWEANN(subsumptionMediator.numIn(), subsumptionMediator.numOut(), false, 0, 1, -1);
 		TWEANNGenotype subsumptionGenotype = new TWEANNGenotype(subsumptionNet);
 

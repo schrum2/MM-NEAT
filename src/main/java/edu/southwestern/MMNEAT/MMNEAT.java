@@ -86,7 +86,6 @@ import edu.southwestern.tasks.mspacman.multitask.MsPacManModeSelector;
 import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
 import edu.southwestern.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
 import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
-import edu.southwestern.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
 import edu.southwestern.tasks.mspacman.sensors.ghosts.mediators.GhostsCheckEachDirectionMediator;
 import edu.southwestern.tasks.pinball.PinballTask;
 import edu.southwestern.tasks.rlglue.RLGlueTask;
@@ -141,11 +140,7 @@ public class MMNEAT {
 	public static ArrayList<Statistic> aggregationOverrides;
 	@SuppressWarnings("rawtypes") // applies to any population type
 	public static PerformanceLog performanceLog;
-	public static MsPacManControllerInputOutputMediator pacmanInputOutputMediator;
-	public static GhostControllerInputOutputMediator ghostsInputOutputMediator;
 	private static ArrayList<Integer> actualFitnessFunctions;
-	public static MsPacManModeSelector pacmanMultitaskScheme = null;
-	public static VariableDirectionBlock directionalSafetyFunction;
 	public static EvalLog evalReport = null;
 	public static RandomGenerator weightPerturber = null;
 	public static MMNEATLog ghostLocationsOnPowerPillEaten = null;
@@ -446,19 +441,19 @@ public class MMNEAT {
 				//TODO: Allow for evolution of ghost teams
 				if(Parameters.parameters.booleanParameter("evolveGhosts")){
 					System.out.println("we are evolving a ghost!");
-					ghostsInputOutputMediator = new GhostsCheckEachDirectionMediator();
-					setNNInputParameters(ghostsInputOutputMediator.numIn(), ghostsInputOutputMediator.numOut());
+					MsPacManTask.ghostsInputOutputMediator = new GhostsCheckEachDirectionMediator();
+					setNNInputParameters(MsPacManTask.ghostsInputOutputMediator.numIn(), MsPacManTask.ghostsInputOutputMediator.numOut());
 				} else {
 					System.out.println("Setup Ms. Pac-Man Task");
-					pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
-					if (MMNEAT.pacmanInputOutputMediator instanceof VariableDirectionBlockLoadedInputOutputMediator) {
-						directionalSafetyFunction = (VariableDirectionBlock) ClassCreation.createObject("directionalSafetyFunction");
+					MsPacManTask.pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
+					if (MsPacManTask.pacmanInputOutputMediator instanceof VariableDirectionBlockLoadedInputOutputMediator) {
+						MsPacManTask.directionalSafetyFunction = (VariableDirectionBlock) ClassCreation.createObject("directionalSafetyFunction");
 					}
 					// Regular Check-Each-Direction networks
-					setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
+					setNNInputParameters(MsPacManTask.pacmanInputOutputMediator.numIn(), MsPacManTask.pacmanInputOutputMediator.numOut());
 					MsPacManInitialization.setupMsPacmanParameters();
 					if (CommonConstants.multitaskModules > 1) {
-						pacmanMultitaskScheme = (MsPacManModeSelector) ClassCreation.createObject("pacmanMultitaskScheme");
+						MsPacManTask.pacmanMultitaskScheme = (MsPacManModeSelector) ClassCreation.createObject("pacmanMultitaskScheme");
 					}
 				}
 			} else if (task instanceof RLGlueTask) {
