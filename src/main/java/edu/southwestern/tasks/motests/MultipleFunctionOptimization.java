@@ -127,4 +127,9 @@ public class MultipleFunctionOptimization extends LonerTask<ArrayList<Double>> i
 		return fos;
 	}
 
+	@Override
+	public void postConstructionInitialization() {
+		// Nothing needed
+	}
+
 }

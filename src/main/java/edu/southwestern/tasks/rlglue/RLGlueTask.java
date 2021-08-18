@@ -203,4 +203,9 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 		}
 		return labels;
 	}
+
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(RLGlueTask.rlGlueExtractor.numFeatures(), RLGlueTask.agent.getNumberOutputs());
+	}
 }

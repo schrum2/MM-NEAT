@@ -233,4 +233,9 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 	public double[] getLowerBounds() {
 		return lower;
 	}
+
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(numCPPNInputs(), numCPPNOutputs());
+	}
 }

@@ -114,4 +114,9 @@ public class FunctionOptimizationTask extends LonerTask<ArrayList<Double>> imple
 	public double[] getLowerBounds() {
 		return lower;
 	}
+
+	@Override
+	public void postConstructionInitialization() {
+		// Nothing needed
+	}
 }

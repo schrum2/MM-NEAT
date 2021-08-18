@@ -29,6 +29,8 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.export.JsonLevelGenerationTask;
+import edu.southwestern.tasks.interactive.megaman.MegaManCPPNtoGANLevelBreederTask;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.megaman.astar.MegaManState;
 import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
 import edu.southwestern.util.MiscUtil;
@@ -381,6 +383,12 @@ public abstract class MegaManLevelTask<T> extends NoisyLonerTask<T> implements J
 	 */
 	public abstract List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual, MegaManTrackSegmentType segmentCount);
 	
+	@Override
+	public void postConstructionInitialization() {
+		GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
+		// Ok to set the CPPN input parameters even if they are not used
+		MMNEAT.setNNInputParameters(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, MegaManCPPNtoGANLevelBreederTask.staticNumCPPNOutputs());
+	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Test comparison that isn't working

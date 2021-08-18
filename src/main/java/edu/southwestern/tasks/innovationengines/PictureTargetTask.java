@@ -344,4 +344,9 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> implement
 	public double[] getLowerBounds() {
 		return PicbreederTask.getStaticLowerBounds();
 	}
+
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(numCPPNInputs(), numCPPNOutputs());
+	}
 }
