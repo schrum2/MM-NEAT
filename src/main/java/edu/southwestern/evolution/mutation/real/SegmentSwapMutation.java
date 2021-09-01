@@ -2,9 +2,6 @@ package edu.southwestern.evolution.mutation.real;
 
 import java.util.ArrayList;
 
-import com.sun.tools.javac.util.List;
-
-import cern.colt.Arrays;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.parameters.Parameters;
