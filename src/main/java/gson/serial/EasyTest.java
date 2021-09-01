@@ -8,7 +8,7 @@ public class EasyTest {
         System.out.println(ob.inc());
         Easy.save(ob, "test.xml");
         MiscUtil.waitForReadStringAndEnterKeyPress();
-        Object back = Easy.load("test.xml");
+        TestObject back = Easy.load("test.xml", TestObject.class);
         System.out.println("Loaded object back in");
         Easy.save(back, "back.xml");
         System.out.println(((TestObject) back).inc());
