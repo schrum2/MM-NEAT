@@ -24,7 +24,8 @@ public class SegmentSwapMutationTest {
 				"io:false", "netio:false",
 				"trials:1", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
 				"task:edu.southwestern.tasks.mario.MarioGANLevelTask", "marioGANLevelChunks:3",
-				"marioGANModel:Mario1_Overworld_5_Epoch5000.pth", "GANInputSize:5"
+				"marioGANModel:Mario1_Overworld_5_Epoch5000.pth", "GANInputSize:5",
+				"marioGANUsesOriginalEncoding:false"
 				});
 		GANProcess.type = GANProcess.GAN_TYPE.MARIO;
 		GANProcess.getGANProcess();
