@@ -3,6 +3,7 @@ package edu.southwestern.evolution.mutation.real;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import org.junit.Test;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mario.MarioGANLevelTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 
 public class SegmentSwapMutationTest {
@@ -33,16 +35,18 @@ public class SegmentSwapMutationTest {
 		geno = new ArrayList<>(15);
 		for (double num : new double[] {0.3, 0.6, 0.9}) {
 			for (int i = 0; i < 5; i++) {
-				System.out.println("Adding " + num);
+				//System.out.println("Adding " + num);
 				geno.add(num);
 			}
 		}
-		System.out.println(geno);
+		//System.out.println(geno);
 	}
 	
 	@Test
 	public void test() {
 		System.out.println("Genotype at start: " + geno);
+		ArrayList<List<Integer>> levelRepresentation = MarioGANLevelTask.getMarioLevelListRepresentationFromStaticGenotype(geno);
+		
 		//fail("Not yet implemented");
 	}
 
