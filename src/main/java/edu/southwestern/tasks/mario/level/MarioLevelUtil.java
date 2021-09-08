@@ -519,4 +519,21 @@ public class MarioLevelUtil {
    			System.out.println(visualLine);
    		}
    	}
+   	
+   	public static void printSingleLevel(ArrayList<List<Integer>> level) {
+   		String visualLine;
+   		Set<Entry<Character, Integer>> tileset = LevelParser.tiles.entrySet();
+   		for (int i = 0; i < level.size(); i++) {
+   			visualLine = "";
+   			for (Integer integ : level.get(i)) {
+   				for (Entry<Character, Integer> e : tileset) {
+   					if (e.getValue() == integ) {
+   						visualLine += e.getKey();
+   					}
+   				}
+   				
+   			}
+   			System.out.println(visualLine);
+   		}
+   	}
 }

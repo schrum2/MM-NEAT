@@ -22,22 +22,24 @@ public class SegmentSwapMutation extends RealMutation {
 	protected ArrayList<Double> storedSegment;
 	
 	public SegmentSwapMutation() {
-		this.segmentSize = 448; //Parameters.parameters.integerParameter(""); // Maxx: temporarily set to 448 for mario length testing
+		this.segmentSize = 5; //Parameters.parameters.integerParameter(""); // Maxx: temporarily set to 448 for mario length testing
 		this.segmentAmount = Parameters.parameters.integerParameter("marioGANLevelChunks"); // temp, change to new param for usability in other games
 		this.rate = 1.0; //Parameters.parameters.doubleParameter(""); // Maxx: temporarily set to 100% for testing
-		
+		this.storedSegment = new ArrayList<Double>(this.segmentSize);
 		}
 	
 	@Override
 	public void mutate(Genotype<ArrayList<Double>> genotype) {
 		if (segmentAmount >= 2) {
-			System.out.println(genotype.getPhenotype().toString()); // display genotype
-			int randSegment1 = RandomNumbers.randomGenerator.nextInt(segmentAmount) + 1; // get first segment
+			//System.out.println(genotype.getPhenotype().toString()); // display genotype
+			int randSegment1 = RandomNumbers.randomGenerator.nextInt(segmentAmount); // get first segment
 			int randSegment2 = randSegment1;
 			while (randSegment2 == randSegment1) {
-				randSegment2 = RandomNumbers.randomGenerator.nextInt(segmentAmount) + 1; // get second segment different than first
+				randSegment2 = RandomNumbers.randomGenerator.nextInt(segmentAmount); // get second segment different than first
 			}
 			storedSegment.clear();
+			System.out.println("Swapping segments " + randSegment1 + " and " + randSegment2);
+			
 			storedSegment.addAll(genotype.getPhenotype().subList(randSegment1*segmentSize, randSegment1*segmentSize+segmentSize));
 			for (int i = 0; i < segmentSize; i++) {
 				mutateIndex((RealValuedGenotype) genotype, randSegment2*segmentSize+i); // change second segment values to first segment
