@@ -13,6 +13,7 @@ import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.MarioGANLevelTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
+import edu.southwestern.tasks.mario.level.MarioLevelUtil;
 
 public class SegmentSwapMutationTest {
 	
@@ -33,21 +34,79 @@ public class SegmentSwapMutationTest {
 		GANProcess.getGANProcess();
 		MMNEAT.loadClasses();
 		geno = new ArrayList<>(15);
-		for (double num : new double[] {0.3, 0.6, 0.9}) {
+		for (double num : new double[] {0.0, 0.6, -0.5}) {
 			for (int i = 0; i < 5; i++) {
 				//System.out.println("Adding " + num);
 				geno.add(num);
 			}
 		}
 		//System.out.println(geno);
+		//geno = ArrayUtil.doubleVectorFromArray(new double[] {0,0,0,0,0,0.3,0.3,0.3,0.3,0.3,0.432,1,1,-1,-0.23});
 	}
 	
 	@Test
-	public void test() {
-		System.out.println("Genotype at start: " + geno);
-		ArrayList<List<Integer>> levelRepresentation = MarioGANLevelTask.getMarioLevelListRepresentationFromStaticGenotype(geno);
+	public void testMario() {
+		System.out.println("Genotype at start: " + geno); // print genotype
+		ArrayList<List<Integer>> levelRepresentation = MarioGANLevelTask.getMarioLevelListRepresentationFromStaticGenotype(geno); // get level
+		MarioLevelUtil.printSingleLevel(levelRepresentation); // print level
+		List<List<List<Integer>>> originalLevelSegments = MarioLevelUtil.getSegmentsFromLevel(levelRepresentation); // get segments
 		
-		//fail("Not yet implemented");
+		RealValuedGenotype realGeno = new RealValuedGenotype(geno);
+		SegmentSwapMutation mutation = new SegmentSwapMutation();
+		mutation.mutate(realGeno);
+		
+		System.out.println("Genotype after mutation: " + realGeno.getPhenotype()); // print genotype
+		ArrayList<List<Integer>> mutatedLevelRepresentation = MarioGANLevelTask.getMarioLevelListRepresentationFromStaticGenotype(realGeno.getPhenotype()); // get level
+		MarioLevelUtil.printSingleLevel(mutatedLevelRepresentation); // print level
+		List<List<List<Integer>>> mutatedLevelSegments = MarioLevelUtil.getSegmentsFromLevel(mutatedLevelRepresentation); // get segments
+		
+		// Should be swapping segment 0 and segment 1 with randomSeed of 0
+		assertEquals(originalLevelSegments.get(0), mutatedLevelSegments.get(0));
+		assertEquals(originalLevelSegments.get(1), mutatedLevelSegments.get(2));
+		assertEquals(originalLevelSegments.get(2), mutatedLevelSegments.get(1));
+
+		////////////////////////////
+		
+		Parameters.parameters.setInteger("randomSeed", 1);
+		
+		System.out.println("Genotype at start: " + geno); // print genotype
+		MarioLevelUtil.printSingleLevel(levelRepresentation); // print level
+
+		realGeno = new RealValuedGenotype(geno); // phenotype -> genotype
+		mutation = new SegmentSwapMutation(); // make mutation
+		mutation.mutate(realGeno); // mutate genotype
+		
+		System.out.println("Genotype after mutation: " + realGeno.getPhenotype()); // print genotype
+		mutatedLevelRepresentation = MarioGANLevelTask.getMarioLevelListRepresentationFromStaticGenotype(realGeno.getPhenotype()); // get level
+		MarioLevelUtil.printSingleLevel(mutatedLevelRepresentation); // print level
+		mutatedLevelSegments = MarioLevelUtil.getSegmentsFromLevel(mutatedLevelRepresentation); // get segments
+		
+		// Should be swapping segment 1 and segment 2 with randomSeed of 1
+		assertEquals(originalLevelSegments.get(0), mutatedLevelSegments.get(2));
+		assertEquals(originalLevelSegments.get(1), mutatedLevelSegments.get(1));
+		assertEquals(originalLevelSegments.get(2), mutatedLevelSegments.get(0));
+
+		////////////////////////////
+		
+		Parameters.parameters.setInteger("randomSeed", 2);
+		
+		System.out.println("Genotype at start: " + geno); // print genotype
+		MarioLevelUtil.printSingleLevel(levelRepresentation); // print level
+
+		realGeno = new RealValuedGenotype(geno); // phenotype -> genotype
+		mutation = new SegmentSwapMutation(); // make mutation
+		mutation.mutate(realGeno); // mutate genotype
+		
+		System.out.println("Genotype after mutation: " + realGeno.getPhenotype()); // print genotype
+		mutatedLevelRepresentation = MarioGANLevelTask.getMarioLevelListRepresentationFromStaticGenotype(realGeno.getPhenotype()); // get level
+		MarioLevelUtil.printSingleLevel(mutatedLevelRepresentation); // print level
+		mutatedLevelSegments = MarioLevelUtil.getSegmentsFromLevel(mutatedLevelRepresentation); // get segments
+		
+		// Should be swapping segment 2 and segment 0 with randomSeed of 2
+		assertEquals(originalLevelSegments.get(0), mutatedLevelSegments.get(1));
+		assertEquals(originalLevelSegments.get(1), mutatedLevelSegments.get(0));
+		assertEquals(originalLevelSegments.get(2), mutatedLevelSegments.get(2));
+		
 	}
 
 }

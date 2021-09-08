@@ -312,6 +312,11 @@ public class MarioLevelUtil {
         }
 		return levelWithParsedSegments;
 	}
+	
+	public static List<List<List<Integer>>> getSegmentsFromLevel(List<List<Integer>> oneLevel){
+		return getSegmentsFromLevel(oneLevel, 28);
+	}
+	
 	/**
 	 * Convert from String representation to list of lists
 	 * @param stringLevel

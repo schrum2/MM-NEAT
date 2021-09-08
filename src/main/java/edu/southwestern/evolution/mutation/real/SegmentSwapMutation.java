@@ -2,6 +2,7 @@ package edu.southwestern.evolution.mutation.real;
 
 import java.util.ArrayList;
 
+import cern.colt.Arrays;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.parameters.Parameters;
@@ -31,14 +32,13 @@ public class SegmentSwapMutation extends RealMutation {
 	@Override
 	public void mutate(Genotype<ArrayList<Double>> genotype) {
 		if (segmentAmount >= 2) {
-			//System.out.println(genotype.getPhenotype().toString()); // display genotype
-			int randSegment1 = RandomNumbers.randomGenerator.nextInt(segmentAmount); // get first segment
-			int randSegment2 = randSegment1;
-			while (randSegment2 == randSegment1) {
-				randSegment2 = RandomNumbers.randomGenerator.nextInt(segmentAmount); // get second segment different than first
-			}
+			int[] randomValues = RandomNumbers.randomDistinct(2, segmentAmount);
+			System.out.println(Arrays.toString(randomValues));
+			int randSegment1 = randomValues[0];
+			int randSegment2 = randomValues[1];
+			
 			storedSegment.clear();
-			System.out.println("Swapping segments " + randSegment1 + " and " + randSegment2);
+			// System.out.println("Swapping segments " + randSegment1 + " and " + randSegment2); // DEBUG
 			
 			storedSegment.addAll(genotype.getPhenotype().subList(randSegment1*segmentSize, randSegment1*segmentSize+segmentSize));
 			for (int i = 0; i < segmentSize; i++) {
