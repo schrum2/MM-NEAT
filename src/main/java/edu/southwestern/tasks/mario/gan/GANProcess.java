@@ -47,6 +47,23 @@ public class GANProcess extends Comm {
 	}
 	
 	/**
+	 * method to determine the number of variables associated with each segment
+	 * @return num variables in each segment
+	 */
+	public static int evolvedSegmentLength() {
+		switch(type) {
+		case MARIO:
+			return Parameters.parameters.integerParameter("GANInputSize");
+		case ZELDA:
+			throw new UnsupportedOperationException("FIX THIS, HOW MANY AUX VARIABLES FOR ZELDA");
+		case LODE_RUNNER:
+			return Parameters.parameters.integerParameter("GANInputSize");
+		case MEGA_MAN:
+			return Parameters.parameters.booleanParameter("megaManAllowsLeftSegments") ? Parameters.parameters.integerParameter("GANInputSize") + 4 : Parameters.parameters.integerParameter("GANInputSize") + 3;
+		}
+		return -1;
+	}
+	/**
 	 * Destroy GAN process so a new one can be started
 	 */
 	public static void terminateGANProcess() {
