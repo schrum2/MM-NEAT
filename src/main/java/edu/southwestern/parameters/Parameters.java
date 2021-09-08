@@ -862,6 +862,8 @@ public class Parameters {
 		doubleOptions.add("picbreederImageTranslationY", 0.0, "Fixed vertical shift for Picbreeder images");
 		doubleOptions.add("minAutoencoderLoss", 0.0, "Minimum reconstruction loss across the whole archive.");
 		doubleOptions.add("maxAutoencoderLoss", 1.0, "Maximum reconstruction loss across the whole archive.");
+		doubleOptions.add("GANSegmentSwapMutationRate", 0.0, "segment swap mutation rate.");
+
 		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
