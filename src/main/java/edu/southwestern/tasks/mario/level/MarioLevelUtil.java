@@ -525,7 +525,7 @@ public class MarioLevelUtil {
    		}
    	}
    	
-   	public static void printSingleLevel(ArrayList<List<Integer>> level) {
+   	public static void printSingleLevel(List<List<Integer>> level) {
    		String visualLine;
    		Set<Entry<Character, Integer>> tileset = LevelParser.tiles.entrySet();
    		for (int i = 0; i < level.size(); i++) {

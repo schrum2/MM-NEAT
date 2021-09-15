@@ -862,7 +862,8 @@ public class Parameters {
 		doubleOptions.add("picbreederImageTranslationY", 0.0, "Fixed vertical shift for Picbreeder images");
 		doubleOptions.add("minAutoencoderLoss", 0.0, "Minimum reconstruction loss across the whole archive.");
 		doubleOptions.add("maxAutoencoderLoss", 1.0, "Maximum reconstruction loss across the whole archive.");
-		doubleOptions.add("GANSegmentSwapMutationRate", 0.0, "segment swap mutation rate.");
+		doubleOptions.add("GANSegmentSwapMutationRate", 0.0, "Segment swap mutation rate.");
+		doubleOptions.add("GANSegmentCopyMutationRate", 0.0, "Segment copy mutation rate.");
 
 		
 		// String parameters
