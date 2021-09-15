@@ -40,8 +40,7 @@ public class SegmentCopyMutation extends RealMutation {
 		default:
 			throw new UnsupportedOperationException("Pick a game");
 		}
-		//this.segmentAmount = Parameters.parameters.integerParameter("marioGANLevelChunks"); // temp, change to new param for usability in other games
-		this.rate = Parameters.parameters.doubleParameter("GANSegmentCopyMutationRate"); //Parameters.parameters.doubleParameter(""); // Maxx: temporarily set to 100% for testing
+		this.rate = Parameters.parameters.doubleParameter("GANSegmentCopyMutationRate");
 		this.storedSegment = new ArrayList<Double>(this.segmentSize);
 		}
 	
@@ -49,12 +48,12 @@ public class SegmentCopyMutation extends RealMutation {
 	public void mutate(Genotype<ArrayList<Double>> genotype) {
 		if (segmentAmount >= 2) {
 			int[] randomValues = RandomNumbers.randomDistinct(2, segmentAmount);
-			System.out.println(Arrays.toString(randomValues));
+			//System.out.println(Arrays.toString(randomValues));
 			int randSegment1 = randomValues[0];
 			int randSegment2 = randomValues[1];
 			
 			storedSegment.clear();
-			System.out.println("Copying segment " + randSegment1 + " to segment " + randSegment2); // DEBUG
+			//System.out.println("Copying segment " + randSegment1 + " to segment " + randSegment2); // DEBUG
 			
 			storedSegment.addAll(genotype.getPhenotype().subList(randSegment1*segmentSize, randSegment1*segmentSize+segmentSize)); // Stores segment 1
 			for (int i = 0; i < segmentSize; i++) {

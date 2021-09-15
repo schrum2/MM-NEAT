@@ -49,7 +49,7 @@ public class SegmentSwapMutation extends RealMutation {
 	public void mutate(Genotype<ArrayList<Double>> genotype) {
 		if (segmentAmount >= 2) {
 			int[] randomValues = RandomNumbers.randomDistinct(2, segmentAmount);
-			System.out.println(Arrays.toString(randomValues));
+			//System.out.println(Arrays.toString(randomValues));
 			int randSegment1 = randomValues[0];
 			int randSegment2 = randomValues[1];
 			
