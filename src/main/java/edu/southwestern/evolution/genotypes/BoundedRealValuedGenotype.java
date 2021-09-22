@@ -1,8 +1,11 @@
 package edu.southwestern.evolution.genotypes;
 
+import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.mapelites.mutations.MAPElitesLineMutation;
 import edu.southwestern.evolution.mutation.real.PerturbMutation;
 import edu.southwestern.evolution.mutation.real.PolynomialMutation;
+import edu.southwestern.evolution.mutation.real.SegmentCopyMutation;
+import edu.southwestern.evolution.mutation.real.SegmentSwapMutation;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.BoundedTask;
@@ -91,6 +94,17 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 				new PerturbMutation(getRange()).mutate(this);
 			}
 		}
+
+		// Should probably be logging the mutations above too, but will worry about that later
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.getId());
+		sb.append(" ");
+
+		new SegmentSwapMutation().go(this, sb);
+		new SegmentCopyMutation().go(this, sb);
+		
+		EvolutionaryHistory.logMutationData(sb.toString());
+		
 		bound();
 	}
 

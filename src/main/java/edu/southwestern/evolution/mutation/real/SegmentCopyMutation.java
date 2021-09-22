@@ -24,6 +24,7 @@ public class SegmentCopyMutation extends RealMutation {
 	protected ArrayList<Double> storedSegment;
 	
 	public SegmentCopyMutation() {
+		super("GANSegmentCopyMutationRate");
 		this.segmentSize = GANProcess.evolvedSegmentLength();
 		switch(GANProcess.type) {
 		case MARIO:

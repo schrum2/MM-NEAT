@@ -19,11 +19,11 @@ public class SegmentSwapMutation extends RealMutation {
 	
 	protected final int segmentSize;
 	protected final int segmentAmount;
-	protected final double rate;
 	
 	protected ArrayList<Double> storedSegment;
 	
 	public SegmentSwapMutation() {
+		super("GANSegmentSwapMutationRate");
 		this.segmentSize = GANProcess.evolvedSegmentLength(); //Parameters.parameters.integerParameter(""); // Maxx: temporarily set to 448 for mario length testing
 		switch(GANProcess.type) {
 		case MARIO:
@@ -41,9 +41,8 @@ public class SegmentSwapMutation extends RealMutation {
 			throw new UnsupportedOperationException("Pick a game");
 		}
 		//this.segmentAmount = Parameters.parameters.integerParameter("marioGANLevelChunks"); // temp, change to new param for usability in other games
-		this.rate = Parameters.parameters.doubleParameter("GANSegmentSwapMutationRate"); //Parameters.parameters.doubleParameter(""); // Maxx: temporarily set to 100% for testing
 		this.storedSegment = new ArrayList<Double>(this.segmentSize);
-		}
+	}
 	
 	@Override
 	public void mutate(Genotype<ArrayList<Double>> genotype) {
