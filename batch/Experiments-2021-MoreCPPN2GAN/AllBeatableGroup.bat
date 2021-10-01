@@ -1,0 +1,4 @@
+CALL AllBeatable.bat 29 mariolevelsdecoratensleniency MarioLevelsDecorateNSLeniency
+CALL AllBeatable.bat 29 mariolevelsdistinctnsdecorate MarioLevelsDistinctNSDecorate
+CALL AllBeatable.bat 29 zeldadungeonsdistinctbtrooms ZeldaDungeonsDistinctBTRooms
+CALL AllBeatable.bat 29 zeldadungeonswallwaterrooms ZeldaDungeonsWallWaterRooms
