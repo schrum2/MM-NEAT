@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.megaman;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -17,7 +18,7 @@ import edu.southwestern.util.datastructures.ArrayUtil;
  * @author Benjamin Capps
  *
  */
-public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> implements BoundedTask {
+public class MegaManGANLevelTask extends MegaManLevelTask<ArrayList<Double>> implements BoundedTask {
 
 	private MegaManGANGenerator megaManGenerator;
 	// Bounds used for GAN-based solutions
@@ -43,7 +44,7 @@ public class MegaManGANLevelTask extends MegaManLevelTask<List<Double>> implemen
 	 * Extract real-valued latent vector from genotype and then send to GAN to get a MegaMan level
 	 */
 	@Override
-	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<List<Double>> individual, MegaManTrackSegmentType segmentCount) {
+	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<ArrayList<Double>> individual, MegaManTrackSegmentType segmentCount) {
 		List<Double> latentVector = individual.getPhenotype();
 		return getMegaManLevelListRepresentationFromStaticGenotype(megaManGenerator, latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
 	}

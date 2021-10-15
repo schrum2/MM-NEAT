@@ -1,14 +1,21 @@
 package edu.southwestern.evolution.mutation.real;
 
-import java.io.FileNotFoundException;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import edu.southwestern.tasks.mario.gan.GANProcess;
-import cern.colt.Arrays;
+import edu.southwestern.tasks.megaman.MegaManTrackSegmentType;
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.tasks.megaman.MegaManGANLevelTask;
+import edu.southwestern.tasks.megaman.MegaManRenderUtil;
+import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 
 /**
 * Segment Swap Mutation
@@ -79,7 +86,85 @@ public class SegmentSwapMutation extends RealMutation {
 		genotype.getPhenotype().set(i, storedSegment.get(i%segmentSize)); // change from stored value
 		storedSegment.set(i%segmentSize, val); // put original in stored for second swap
 	}
-	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main("runNumber:97 randomSeed:97 base:extendedmariolevelsdistinctnsdecorate log:ExtendedMarioLevelsDistinctNSDecorate-Direct2GANSwapOnly saveTo:Direct2GANSwapOnly marioGANLevelChunks:10 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 mu:100 maxGens:100000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.RealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 GANSegmentSwapMutationRate:1.0 GANSegmentCopyMutationRate:1.0 logMutationAndLineage:true".split(" "));		
+
+	public static void main(String[] args) {
+		Parameters.initializeParameterCollections(new String[] { //default for mega man
+				"runNumber:0", "randomSeed:0", 
+				"io:false", "netio:false",
+				"trials:1", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
+				"task:edu.southwestern.tasks.megaman.MegaManGANLevelTask", "megaManGANLevelChunks:10",
+				"MegaManGANModel:MegaManOneGANWith12Tiles_5_Epoch5000.pth", "GANInputSize:5",
+				"GANSegmentSwapMutationRate:1.0", "megaManAllowsLeftSegments:true"
+				});
+		GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
+		GANProcess.getGANProcess();
+		MMNEAT.loadClasses();
+		
+		
+		ArrayList<Double> geno;
+		
+		geno = new ArrayList<>(90);
+		for (double num : new double[] {0.12, 0.612, -0.5123, 0.53123, 0.7123, -0.7421, -1, 0.45324, 0.12123, -0.12123}) {
+			geno.add(0.0);
+			geno.add(0.0);
+			geno.add(1.0); // right
+			geno.add(0.0);
+			for (int i = 0; i < 5; i++) {
+				//System.out.println("Adding " + num);
+				geno.add(num);
+				
+			}
+			
+
+		}
+		
+		Genotype<ArrayList<Double>> realGeno = new BoundedRealValuedGenotype(geno);
+		MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
+		// Passing this parameter inside the hash map instead of as a normal parameter is confusing, 
+		// but allows this class to conform to the JsonLevelGenerationTask easily.
+		
+		
+		
+		System.out.println("Before: ");
+		System.out.println(realGeno.getPhenotype());
+		List<List<Integer>> level = ((MegaManGANLevelTask) MMNEAT.task).getMegaManLevelListRepresentationFromGenotype(realGeno, segmentCount); //gets a level 
+		MegaManVGLCUtil.printLevel(level);
+		
+		BufferedImage image;
+		BufferedImage[] images;
+		try {
+			//
+			int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
+			int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
+
+			images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH); //7 different tiles to display 
+			image = MegaManRenderUtil.createBufferedImage(level,width1,height1, images);
+			MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("After: ");
+		SegmentSwapMutation mutation = new SegmentSwapMutation();
+		mutation.mutate(realGeno);
+		System.out.println(realGeno.getPhenotype());
+		MegaManTrackSegmentType segmentCount1 = new MegaManTrackSegmentType();
+		List<List<Integer>> level1 = ((MegaManGANLevelTask) MMNEAT.task).getMegaManLevelListRepresentationFromGenotype(realGeno, segmentCount1); //gets a level
+		MegaManVGLCUtil.printLevel(level1);
+		
+		System.out.println(level.size() + " " + level1.get(0).size());
+		System.out.println(level.size()%14 + " " + level1.get(0).size()%16);
+		System.out.println(level.size()%14 + " " + level1.get(0).size()/16);
+		try {
+			//
+			int width1 = MegaManRenderUtil.renderedImageWidth(level1.get(0).size());
+			int height1 = MegaManRenderUtil.renderedImageHeight(level1.size());
+
+			images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH); //7 different tiles to display 
+			image = MegaManRenderUtil.createBufferedImage(level1,width1,height1, images);
+			MegaManRenderUtil.getBufferedImageWithRelativeRendering(level1, images);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
