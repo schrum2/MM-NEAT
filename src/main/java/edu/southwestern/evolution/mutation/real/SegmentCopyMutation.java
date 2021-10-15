@@ -47,6 +47,7 @@ public class SegmentCopyMutation extends RealMutation {
 	
 	@Override
 	public void mutate(Genotype<ArrayList<Double>> genotype) {
+		//System.out.println("SegmentCopyMutation mutate triggered!");
 		if (segmentAmount >= 2) {
 			int[] randomValues = RandomNumbers.randomDistinct(2, segmentAmount);
 			//System.out.println(Arrays.toString(randomValues));

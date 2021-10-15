@@ -87,24 +87,12 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 		MAPElitesLineMutation lineMutation = null;
 		if(Parameters.parameters.doubleParameter("meLineMutationRate") > 0.0 && (lineMutation = new MAPElitesLineMutation()).perform()) {		
 			lineMutation.mutate(this);
-		} else {
-			if (polynomialMutation) { // Specialized mutation operator slightly more complicated than simple perturbation
-				new PolynomialMutation().mutate(this);
-			} else { // Default
-				new PerturbMutation(getRange()).mutate(this);
-			}
+		} else if (polynomialMutation) { // Specialized mutation operator slightly more complicated than simple perturbation
+			new PolynomialMutation().mutate(this);
+		} else { // Default
+			new PerturbMutation(getRange()).mutate(this);
 		}
-
-		// Should probably be logging the mutations above too, but will worry about that later
-		StringBuilder sb = new StringBuilder();
-		sb.append(this.getId());
-		sb.append(" ");
-
-		new SegmentSwapMutation().go(this, sb);
-		new SegmentCopyMutation().go(this, sb);
-		
-		EvolutionaryHistory.logMutationData(sb.toString());
-		
+		genotypeMutations();
 		bound();
 	}
 

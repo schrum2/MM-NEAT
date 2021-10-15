@@ -7,7 +7,10 @@ import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.mutation.real.PerturbMutation;
+import edu.southwestern.evolution.mutation.real.SegmentCopyMutation;
+import edu.southwestern.evolution.mutation.real.SegmentSwapMutation;
 import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.util.random.RandomNumbers;
 
@@ -70,6 +73,20 @@ public class RealValuedGenotype extends NumericArrayGenotype<Double> {
 	 */
 	public void mutate() {
 		new PerturbMutation(genes.size()).mutate(this);
+		genotypeMutations();
+		
+	}
+	
+	/**
+	 * Executes mutations meant to be directly applied to the genotype
+	 */
+	protected void genotypeMutations() {
+		// Should probably be logging the mutations above too, but will worry about that later
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.getId()+" ");
+		new SegmentSwapMutation().go(this, sb);
+		new SegmentCopyMutation().go(this, sb);
+		EvolutionaryHistory.logMutationData(sb.toString());
 	}
 	
 	// Stores parent IDs for tacking lineage. Not serialized.

@@ -1,5 +1,6 @@
 package edu.southwestern.evolution.mutation.real;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import cern.colt.Arrays;
@@ -46,6 +47,7 @@ public class SegmentSwapMutation extends RealMutation {
 	
 	@Override
 	public void mutate(Genotype<ArrayList<Double>> genotype) {
+		//System.out.println("SegmentSwapMutation mutate triggered!");
 		if (segmentAmount >= 2) {
 			int[] randomValues = RandomNumbers.randomDistinct(2, segmentAmount);
 			//System.out.println(Arrays.toString(randomValues));
@@ -77,38 +79,7 @@ public class SegmentSwapMutation extends RealMutation {
 		genotype.getPhenotype().set(i, storedSegment.get(i%segmentSize)); // change from stored value
 		storedSegment.set(i%segmentSize, val); // put original in stored for second swap
 	}
-	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] { //default for mega man
-				"runNumber:0", "randomSeed:0", 
-				"io:false", "netio:false",
-				"trials:1", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
-				"task:edu.southwestern.tasks.megaman.MegaManGANLevelTask", "megaManGANLevelChunks:10",
-				"MegaManGANModel:MegaManOneGANWith12Tiles_5_Epoch5000.pth", "GANInputSize:5",
-				"GANSegmentSwapMutationRate:1.0"
-				});
-		GANProcess.type = GANProcess.GAN_TYPE.MARIO;
-		GANProcess.getGANProcess();
-		MMNEAT.loadClasses();
-		
-		
-		ArrayList<Double> geno;
-
-		geno = new ArrayList<>(90);
-		for (double num : new double[] {0.0, 0.6, -0.5, 0.5, 0.7, -0.7, -0.4, 0.4, 0.12, -0.12}) {
-			for (int i = 0; i < 5; i++) {
-				//System.out.println("Adding " + num);
-				geno.add(num);
-				
-			}
-			geno.add(0.0);
-			geno.add(1.0);
-			geno.add(0.0);
-			geno.add(0.0);
-			
-		}
-		
-		
-		
-		
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		MMNEAT.main("runNumber:97 randomSeed:97 base:extendedmariolevelsdistinctnsdecorate log:ExtendedMarioLevelsDistinctNSDecorate-Direct2GANSwapOnly saveTo:Direct2GANSwapOnly marioGANLevelChunks:10 marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_5_Epoch5000.pth GANInputSize:5 trials:1 mu:100 maxGens:100000 io:true netio:true genotype:edu.southwestern.evolution.genotypes.RealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:true cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioSimpleAStarDistance:true ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels steadyStateIndividualsPerGeneration:100 aStarSearchBudget:100000 GANSegmentSwapMutationRate:1.0 GANSegmentCopyMutationRate:1.0 logMutationAndLineage:true".split(" "));		
 	}
 }
