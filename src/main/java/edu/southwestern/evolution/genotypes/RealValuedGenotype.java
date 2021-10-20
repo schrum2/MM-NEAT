@@ -12,6 +12,7 @@ import edu.southwestern.evolution.mutation.real.PerturbMutation;
 import edu.southwestern.evolution.mutation.real.SegmentCopyMutation;
 import edu.southwestern.evolution.mutation.real.SegmentSwapMutation;
 import edu.southwestern.tasks.BoundedTask;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.random.RandomNumbers;
 
 /**
@@ -84,8 +85,10 @@ public class RealValuedGenotype extends NumericArrayGenotype<Double> {
 		// Should probably be logging the mutations above too, but will worry about that later
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.getId()+" ");
-		new SegmentSwapMutation().go(this, sb);
-		new SegmentCopyMutation().go(this, sb);
+		if(GANProcess.type != null) { // Only use these mutations if using a GAN
+			new SegmentSwapMutation().go(this, sb);
+			new SegmentCopyMutation().go(this, sb);
+		}
 		EvolutionaryHistory.logMutationData(sb.toString());
 	}
 	
