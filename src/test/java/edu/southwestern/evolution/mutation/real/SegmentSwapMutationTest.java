@@ -29,6 +29,7 @@ public class SegmentSwapMutationTest {
 
 	@Test
 	public void testMario() {
+		GANProcess.terminateGANProcess(); // Do before just in case
 		Parameters.parameters = null;
 		MMNEAT.clearClasses();
 		Parameters.initializeParameterCollections(new String[] { "runNumber:0", "randomSeed:0", "io:false",
@@ -120,6 +121,7 @@ public class SegmentSwapMutationTest {
 	
 	@Test
 	public void testMegaMan() {
+		GANProcess.terminateGANProcess(); // Do before just in case
 		Parameters.parameters = null;
 		MMNEAT.clearClasses();
 		Parameters.initializeParameterCollections(new String[] { //default for mega man

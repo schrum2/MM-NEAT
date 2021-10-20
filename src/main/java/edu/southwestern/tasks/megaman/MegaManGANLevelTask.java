@@ -25,9 +25,14 @@ public class MegaManGANLevelTask extends MegaManLevelTask<ArrayList<Double>> imp
 	private static double[] upper;
 	private static double[] lower;
 	
+	private static void resetStaticSettings() {
+		upper = null;
+		lower = null;
+	}
+	
 	public MegaManGANLevelTask(){
 		super();
-
+		resetStaticSettings();
 		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) {
 			megaManGenerator = new MegaManSevenGANGenerator();
 		}

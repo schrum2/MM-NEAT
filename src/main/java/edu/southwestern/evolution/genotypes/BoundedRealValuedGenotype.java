@@ -104,6 +104,9 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 		BoundedTask t = ((BoundedTask) MMNEAT.task);
 		double[] lower = t.getLowerBounds();
 		double[] upper = t.getUpperBounds();
+
+		assert lower.length == upper.length : "Upper and lower lengths differ! " + upper.length + " vs " + lower.length;
+		assert lower.length == genes.size() : "bounds length and genes length differ! " + lower.length + " vs " + genes.size();
 		
 		for (int i = 0; i < genes.size(); i++) {
 			double x = genes.get(i);
