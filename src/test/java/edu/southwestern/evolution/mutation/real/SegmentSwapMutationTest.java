@@ -29,6 +29,8 @@ public class SegmentSwapMutationTest {
 
 	@Test
 	public void testMario() {
+		Parameters.parameters = null;
+		MMNEAT.clearClasses();
 		Parameters.initializeParameterCollections(new String[] { "runNumber:0", "randomSeed:0", "io:false",
 				"netio:false", "trials:1", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
 				"task:edu.southwestern.tasks.mario.MarioGANLevelTask", "marioGANLevelChunks:3",
@@ -118,6 +120,8 @@ public class SegmentSwapMutationTest {
 	
 	@Test
 	public void testMegaMan() {
+		Parameters.parameters = null;
+		MMNEAT.clearClasses();
 		Parameters.initializeParameterCollections(new String[] { //default for mega man
 				"runNumber:0", "randomSeed:0", 
 				"io:false", "netio:false",
