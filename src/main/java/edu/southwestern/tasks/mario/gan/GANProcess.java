@@ -10,6 +10,7 @@ import java.lang.ProcessBuilder.Redirect;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANUtil;
 import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.PythonUtil;
 
 // For the three possible tile counts in Zelda
@@ -75,10 +76,11 @@ public class GANProcess extends Comm {
 	
 	/**
 	 * Start the GAN process running in Python if it has not started already.
-	 * Otherwise, just return the reference to the process.
-	 * @return Process running the Mario GAN
+	 * Otherwise, just return the reference to the process. The method is synchronized
+	 * so that only one thread can attempt booting up the GAN at a time.
+	 * @return Process running the Mario GAN, and othetr Game GANs
 	 */
-	public static GANProcess getGANProcess() {
+	public static synchronized GANProcess getGANProcess() {
 		// This code comes from the constructor for MarioEvalFunction in the MarioGAN project
 		if(ganProcess == null) {
 			PythonUtil.setPythonProgram();
