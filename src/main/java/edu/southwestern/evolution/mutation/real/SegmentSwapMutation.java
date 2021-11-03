@@ -43,8 +43,7 @@ public class SegmentSwapMutation extends RealMutation {
 			this.segmentAmount = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 			break;
 		case LODE_RUNNER:
-			this.segmentAmount = 1;
-			break;
+			throw new UnsupportedOperationException("Lode Runner levels only have a single segment, thus swap mutations make no sense");
 		default:
 			throw new UnsupportedOperationException("Pick a game");
 		}

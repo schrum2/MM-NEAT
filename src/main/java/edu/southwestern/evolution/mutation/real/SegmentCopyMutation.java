@@ -34,8 +34,7 @@ public class SegmentCopyMutation extends RealMutation {
 			this.segmentAmount = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 			break;
 		case LODE_RUNNER:
-			this.segmentAmount = 1;
-			break;
+			throw new UnsupportedOperationException("Lode Runner levels only have a single segment, thus copy mutations make no sense");
 		default:
 			throw new UnsupportedOperationException("Pick a game");
 		}
@@ -61,7 +60,7 @@ public class SegmentCopyMutation extends RealMutation {
 			}			
 			
 		} else {
-			throw new IllegalArgumentException("Cannot swap segments if there are fewer than 2!");
+			throw new IllegalArgumentException("Cannot copy segments if there are fewer than 2!");
 		}
 		
 		
