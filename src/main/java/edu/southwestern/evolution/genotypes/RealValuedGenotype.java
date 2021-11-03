@@ -11,6 +11,7 @@ import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.mutation.real.PerturbMutation;
 import edu.southwestern.evolution.mutation.real.SegmentCopyMutation;
 import edu.southwestern.evolution.mutation.real.SegmentSwapMutation;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.random.RandomNumbers;
@@ -73,7 +74,9 @@ public class RealValuedGenotype extends NumericArrayGenotype<Double> {
 	 * Mutates genotype through perturbation
 	 */
 	public void mutate() {
-		new PerturbMutation(genes.size()).mutate(this);
+		if (RandomNumbers.randomGenerator.nextDouble() <= Parameters.parameters.doubleParameter("anyRealVectorModificationRate")) {
+			new PerturbMutation(genes.size()).mutate(this);
+		}
 		genotypeMutations();
 		
 	}

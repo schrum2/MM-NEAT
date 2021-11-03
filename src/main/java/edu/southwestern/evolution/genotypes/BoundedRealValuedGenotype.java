@@ -1,11 +1,8 @@
 package edu.southwestern.evolution.genotypes;
 
-import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.mapelites.mutations.MAPElitesLineMutation;
 import edu.southwestern.evolution.mutation.real.PerturbMutation;
 import edu.southwestern.evolution.mutation.real.PolynomialMutation;
-import edu.southwestern.evolution.mutation.real.SegmentCopyMutation;
-import edu.southwestern.evolution.mutation.real.SegmentSwapMutation;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.BoundedTask;
@@ -87,10 +84,12 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 		MAPElitesLineMutation lineMutation = null;
 		if(Parameters.parameters.doubleParameter("meLineMutationRate") > 0.0 && (lineMutation = new MAPElitesLineMutation()).perform()) {		
 			lineMutation.mutate(this);
-		} else if (polynomialMutation) { // Specialized mutation operator slightly more complicated than simple perturbation
-			new PolynomialMutation().mutate(this);
-		} else { // Default
-			new PerturbMutation(getRange()).mutate(this);
+		} else if (RandomNumbers.randomGenerator.nextDouble() <= Parameters.parameters.doubleParameter("anyRealVectorModificationRate")) {
+			if (polynomialMutation) { // Specialized mutation operator slightly more complicated than simple perturbation
+				new PolynomialMutation().mutate(this);
+			} else { // Default
+				new PerturbMutation(getRange()).mutate(this);
+			}
 		}
 		genotypeMutations();
 		bound();

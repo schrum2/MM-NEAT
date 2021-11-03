@@ -2,8 +2,6 @@ package edu.southwestern.evolution.mutation.real;
 
 import java.util.ArrayList;
 import edu.southwestern.tasks.mario.gan.GANProcess;
-import cern.colt.Arrays;
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.parameters.Parameters;

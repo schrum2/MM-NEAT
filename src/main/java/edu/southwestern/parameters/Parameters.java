@@ -864,6 +864,7 @@ public class Parameters {
 		doubleOptions.add("maxAutoencoderLoss", 1.0, "Maximum reconstruction loss across the whole archive.");
 		doubleOptions.add("GANSegmentSwapMutationRate", 0.0, "Segment swap mutation rate.");
 		doubleOptions.add("GANSegmentCopyMutationRate", 0.0, "Segment copy mutation rate.");
+		doubleOptions.add("anyRealVectorModificationRate", 1.0, "The chance to use either perturb or polynomial mutation");
 
 		
 		// String parameters
