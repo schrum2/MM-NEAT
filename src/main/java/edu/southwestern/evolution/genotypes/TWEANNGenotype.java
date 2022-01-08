@@ -16,6 +16,7 @@ import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -24,8 +25,10 @@ import java.util.*;
  *
  * @author Jacob Schrum
  */
-public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
+public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	// If this is true, then plain Node and Link genes are used instead 
 	// of full genes with extra fields. 
 	public static boolean smallerGenotypes = false;
@@ -35,9 +38,14 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 *
 	 * @author Jacob Schrum
 	 */
-	public static abstract class Gene {
+	public static abstract class Gene implements Serializable {
+		private static final long serialVersionUID = 1L;
 		public long innovation; // unique number for each gene
 
+		protected Gene() {
+			// For serialization only
+		}
+		
 		private Gene(long innovation) {
 			this.innovation = innovation;
 		}
@@ -74,6 +82,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @author Jacob Schrum
 	 */
 	public static class NodeGene extends Gene {
+
+		private static final long serialVersionUID = 1L;
 		public int ntype;
 		public int ftype;
 		protected double bias;
@@ -169,6 +179,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @author Jacob Schrum
 	 */
 	public static class FullNodeGene extends NodeGene {
+
+		private static final long serialVersionUID = 1L;
 		protected boolean fromCombiningCrossover = false;
 		protected boolean frozen;
 
@@ -233,6 +245,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 * @author Devon Fulcher
 	 */
 	public static class NormalizedMemoryNodeGene extends FullNodeGene{
+
+		private static final long serialVersionUID = 1L;
 		private double gamma;
 		private double beta;
 
@@ -264,6 +278,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 */
 	public static class LinkGene extends Gene {
 
+		private static final long serialVersionUID = 1L;
 		public long sourceInnovation;
 		public long targetInnovation;
 		public double weight;
@@ -347,6 +362,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 */
 	public static class FullLinkGene extends LinkGene {
 
+		private static final long serialVersionUID = 1L;
 		protected boolean active;
 		protected boolean recurrent;
 		protected boolean frozen;
