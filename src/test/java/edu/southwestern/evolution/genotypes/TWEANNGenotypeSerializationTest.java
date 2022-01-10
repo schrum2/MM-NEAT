@@ -73,7 +73,7 @@ public class TWEANNGenotypeSerializationTest {
 			Serialization.save(tgBefore, TWEANN_GENOTYPE+"2");
 			tgAfter = (TWEANNGenotype) Serialization.load(TWEANN_GENOTYPE+"2");
 		} finally {
-			File ser = new File(TWEANN_GENOTYPE+"2.ser");
+			File ser = new File(TWEANN_GENOTYPE+"2." + (Parameters.parameters.booleanParameter("useWoxSerialization") ? "xml" : "ser"));
 			if(ser.exists()) {
 				ser.delete();
 			}
