@@ -54,7 +54,7 @@ public class TWEANNGenotypeSerializationTest {
 			tgAfter = (TWEANNGenotype) objectInputStream.readObject();
 			objectInputStream.close(); 
 		} finally {
-			File ser = new File(TWEANN_GENOTYPE);
+			File ser = new File(TWEANN_GENOTYPE+"1");
 			if(ser.exists()) {
 				ser.delete();
 			}
@@ -73,7 +73,7 @@ public class TWEANNGenotypeSerializationTest {
 			Serialization.save(tgBefore, TWEANN_GENOTYPE+"2");
 			tgAfter = (TWEANNGenotype) Serialization.load(TWEANN_GENOTYPE+"2");
 		} finally {
-			File ser = new File(TWEANN_GENOTYPE+".ser");
+			File ser = new File(TWEANN_GENOTYPE+"2");
 			if(ser.exists()) {
 				ser.delete();
 			}
