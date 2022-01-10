@@ -1092,6 +1092,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 	 */
 	private long getRandomAlterableConnectedNodeInnovationNumber(long source, boolean includeInputs) {
 		int sourceIndex = indexOfNodeInnovation(source);
+		assert sourceIndex != -1 : "Could not find source innovation: " + sourceIndex + "\n" + this;
 		// Use of set prevents duplicates, insuring fair random choice
 		HashSet<Long> sourceInnovationNumbers = new HashSet<Long>();
 		for (LinkGene l : links) {
@@ -1155,6 +1156,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 		if (getLinkBetween(sourceInnovation, targetInnovation) == null) {
 			int target = indexOfNodeInnovation(targetInnovation);
 			int source = indexOfNodeInnovation(sourceInnovation);
+			assert target != -1 : "Target node innovation does not exist: " + target + "\n" + this;
+			assert source != -1 : "Source node innovation does not exist: " + source + "\n" + this;
 			// System.out.println(nodeInnovation + "->" + sourceInnovation);
 			LinkGene lg = newLinkGene(sourceInnovation, targetInnovation, weight, innovation, target <= source);
 			links.add(lg);
