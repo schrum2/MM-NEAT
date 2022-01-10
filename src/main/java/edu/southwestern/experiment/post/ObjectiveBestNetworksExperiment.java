@@ -34,7 +34,7 @@ public class ObjectiveBestNetworksExperiment<T> implements Experiment {
 			genotypes = new ArrayList<Genotype<T>>();
 			for(int i = 0; i < MMNEAT.task.numObjectives(); i++) {
 				int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
-				String file = FileUtilities.getSaveDirectory() + "/bestObjectives/gen" + lastGen + "_bestIn"+i+".xml";
+				String file = FileUtilities.getSaveDirectory() + "/bestObjectives/gen" + lastGen + "_bestIn"+i;
 				genotypes.add((Genotype<T>) PopulationUtil.extractGenotype(file));
 			}
 		} else {

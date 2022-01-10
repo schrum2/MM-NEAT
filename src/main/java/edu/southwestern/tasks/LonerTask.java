@@ -28,6 +28,7 @@ import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.graphics.DrawingPanel;
 import wox.serial.Easy;
 
@@ -242,7 +243,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 			} else {
 				bestDir.mkdir();
 			}
-			Easy.save(bestPacMan, bestPacManDir + "/bestPacMan.xml");
+			Serialization.save(bestPacMan, bestPacManDir + "/bestPacMan");
 			// System.out.println("Saved best Ms. Pac-Man agent with score of "+maxPacManScore);
 			FileUtilities.simpleFileWrite(bestPacManDir + "/score.txt", bestScoreSet.toString());
 		}

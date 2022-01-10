@@ -58,11 +58,11 @@ import edu.southwestern.tasks.ut2004.testing.HumanSubjectStudy2018TeammateServer
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.Statistic;
 import oldpacman.Executor;
-import wox.serial.Easy;
 
 /**
  * Modular Multiobjective Neuro-Evolution of Augmenting Topologies.
@@ -437,7 +437,7 @@ public class MMNEAT {
 			} else {
 				// Copy assures a fresh genotype id
 				System.out.println("Loading seed genotype: " + seedGenotype);
-				genotype = ((Genotype) Easy.load(seedGenotype)).copy();
+				genotype = ((Genotype) Serialization.load(seedGenotype)).copy();
 				// System.out.println(genotype);
 				seedExample = true;
 			}

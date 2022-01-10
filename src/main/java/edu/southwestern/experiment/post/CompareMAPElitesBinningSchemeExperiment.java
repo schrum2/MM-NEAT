@@ -25,8 +25,8 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.stats.StatisticsUtilities;
-import wox.serial.Easy;
 
 /**
  * Experiment for comparing different MAP Elites 
@@ -114,7 +114,7 @@ public class CompareMAPElitesBinningSchemeExperiment<T> implements Experiment {
         	
         } else {
         	for (String oneFile : directoryFiles) { // get each xml, evaluate it, and add it to the new archive
-        		Genotype<T> geno = (Genotype<T>) Easy.load(dir+"\\"+oneFile);
+        		Genotype<T> geno = (Genotype<T>) Serialization.load(dir+"\\"+oneFile);
         		Score<T> evalScore = task.evaluateOne(geno);
         		comparedArchive.add(evalScore);
         	}
@@ -179,7 +179,7 @@ public class CompareMAPElitesBinningSchemeExperiment<T> implements Experiment {
 		@SuppressWarnings("unchecked")
 		@Override
 		public Score<T> call() throws Exception {
-			Genotype<T> geno = (Genotype<T>) Easy.load(dir+"\\"+fileName);
+			Genotype<T> geno = (Genotype<T>) Serialization.load(dir+"\\"+fileName);
     		Score<T> evalScore = task.evaluateOne(geno);
 			return evalScore;
 		}

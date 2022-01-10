@@ -282,7 +282,7 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 			if (!filename.equals("")) {
 				filename = filename + "/";
 			}
-			filename += prefix + i + ".xml";
+			filename += prefix + i;
 			// System.out.println("Saving " + population.get(i).getId());
 			saves.add(new SaveThread<Genotype<T>>(population.get(i), filename));
 		}

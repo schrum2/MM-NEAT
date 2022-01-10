@@ -1,22 +1,15 @@
 package edu.southwestern.tasks.gvgai.zelda;
 
 import java.awt.Point;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import wox.serial.Easy;
 
 public class ZeldaGANUtil {
 
@@ -93,39 +86,40 @@ public class ZeldaGANUtil {
 	
 	
 	/**
-	 * For quick tests
+	 * Whatever was being tested here won't work any more because the serialziation method has changed.
+	 * So, the xml files from the original study cannot be loaded.
 	 * @param args
 	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) throws FileNotFoundException {
-		int size = 10;
-		GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
-		Parameters.initializeParameterCollections(new String[] {"zeldaGANUsesOriginalEncoding:false","GANInputSize:"+size,"zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth"});
-		//MMNEAT.loadClasses();
-		
-		String path = "G:\\My Drive\\Research\\2020-GECCO-InteractiveGAN-Dagstuhl\\UserData\\zelda-vv-modl-23-01-20\\Evolve14\\bestObjectives"; // <--- Change this to the specific directory you want to check
-		File dir = new File(path);
-		File[] xmlGenotypes = dir.listFiles(new FileFilter() {
-			@Override
-			public boolean accept(File pathname) {
-				return pathname.getName().endsWith(".xml");
-			}
-		});
-		
-		for(File f: xmlGenotypes) {
-			@SuppressWarnings("unchecked")
-			Score<ArrayList<Double>> s = (Score<ArrayList<Double>>) Easy.load(f.getAbsolutePath());
-			ArrayList<Double> list = s.individual.getPhenotype();
-			double[] latent = ArrayUtil.doubleArrayFromList(list);
-			List<List<List<Integer>>> listLevel = getRoomListRepresentationFromGAN(latent);
-			
-			// Do whatever you want with this list representation
-			PrintStream ps = new PrintStream(new File(path+"\\"+f.getName()+"level.txt"));
-			ps.println(listLevel);
-		}
-		
-		GANProcess.terminateGANProcess();
-	}		
+//	public static void main(String[] args) throws FileNotFoundException {
+//		int size = 10;
+//		GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
+//		Parameters.initializeParameterCollections(new String[] {"zeldaGANUsesOriginalEncoding:false","GANInputSize:"+size,"zeldaGANModel:ZeldaDungeonsAll3Tiles_10000_10.pth"});
+//		//MMNEAT.loadClasses();
+//		
+//		String path = "G:\\My Drive\\Research\\2020-GECCO-InteractiveGAN-Dagstuhl\\UserData\\zelda-vv-modl-23-01-20\\Evolve14\\bestObjectives"; // <--- Change this to the specific directory you want to check
+//		File dir = new File(path);
+//		File[] xmlGenotypes = dir.listFiles(new FileFilter() {
+//			@Override
+//			public boolean accept(File pathname) {
+//				return pathname.getName().endsWith(".xml");
+//			}
+//		});
+//		
+//		for(File f: xmlGenotypes) {
+//			@SuppressWarnings("unchecked")
+//			Score<ArrayList<Double>> s = (Score<ArrayList<Double>>) Easy.load(f.getAbsolutePath());
+//			ArrayList<Double> list = s.individual.getPhenotype();
+//			double[] latent = ArrayUtil.doubleArrayFromList(list);
+//			List<List<List<Integer>>> listLevel = getRoomListRepresentationFromGAN(latent);
+//			
+//			// Do whatever you want with this list representation
+//			PrintStream ps = new PrintStream(new File(path+"\\"+f.getName()+"level.txt"));
+//			ps.println(listLevel);
+//		}
+//		
+//		GANProcess.terminateGANProcess();
+//	}		
 
 	
 //	public static void main(String[] args) throws FileNotFoundException {

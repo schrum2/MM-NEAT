@@ -1,12 +1,12 @@
 package edu.southwestern.util.file;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.parameters.Parameters;
+import wox.serial.Easy;
 
 /**
  * This class is meant to replace the Easy class that was part of the wox
@@ -33,18 +33,21 @@ public class Serialization {
 	 * @param filename Filename with no extension
 	 */
 	public static void save(Object ob, String filename) {
-		
-		FileOutputStream fileOutputStream;
-		try {
-			// A .ser extension is automatically added to all files being saved
-			fileOutputStream = new FileOutputStream(filename + ".ser");
-
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-			objectOutputStream.writeObject(ob);
-			objectOutputStream.flush();
-			objectOutputStream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		// During transition, allow use of old wox serialization
+		if(Parameters.parameters.booleanParameter("useWoxSerialization")) Easy.save(ob, filename+".xml");
+		else {
+			FileOutputStream fileOutputStream;
+			try {
+				// A .ser extension is automatically added to all files being saved
+				fileOutputStream = new FileOutputStream(filename + ".ser");
+	
+				ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+				objectOutputStream.writeObject(ob);
+				objectOutputStream.flush();
+				objectOutputStream.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -59,9 +62,16 @@ public class Serialization {
 	 * @return Object that was loaded, or null on failure
 	 */
 	public static Object load(String filename) {
+		// During transition, allow use of old wox serialization
+		if(Parameters.parameters.booleanParameter("useWoxSerialization")) {
+			if(!filename.endsWith(".xml")) filename = filename + ".xml";
+			return Easy.load(filename);
+		}
+		
 		try {
-			// A .ser extension is automatically added to all files being loaded
-			FileInputStream fileInputStream = new FileInputStream(filename + ".ser");
+			// A .ser extension is automatically added to all files being loaded, unless it is already there
+			if(!filename.endsWith(".ser")) filename = filename + ".ser";
+			FileInputStream fileInputStream = new FileInputStream(filename);
 			ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
 			Object result = objectInputStream.readObject();
 			objectInputStream.close(); 
