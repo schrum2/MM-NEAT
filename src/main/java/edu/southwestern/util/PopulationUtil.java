@@ -41,6 +41,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.file.SERFilter;
 import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.file.XMLFilter;
 import edu.southwestern.util.random.RandomNumbers;
@@ -443,7 +444,7 @@ public class PopulationUtil {
 	public static <T> ArrayList<Genotype<T>> load(String directory) {
 		System.out.println("Attempting to load from: " + directory);
 
-		FilenameFilter filter = new XMLFilter();
+		FilenameFilter filter = (Parameters.parameters.booleanParameter("useWoxSerialization")) ? new XMLFilter() : new SERFilter();
 
 		ArrayList<Genotype<T>> population = new ArrayList<Genotype<T>>(Parameters.parameters.integerParameter("mu"));
 

@@ -30,7 +30,6 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.graphics.DrawingPanel;
-import wox.serial.Easy;
 
 /**
  * A task for which an individual's fitness depends only on itself. In other
