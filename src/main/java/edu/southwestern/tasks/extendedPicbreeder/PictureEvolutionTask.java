@@ -48,6 +48,10 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
+		
+		// TODO: Replace every GraphicsUtil.imageFromCPPN call with PicbreederTask.imageFromCPPN
+		
+		
 		Network n = individual.getPhenotype();
 		if (CommonConstants.watch) {
 			BufferedImage child;
@@ -161,8 +165,10 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 			seed = Integer.parseInt(args[0]);
 		}
 		try {
-			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:16", "maxGens:50",
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:20", "maxGens:100",
 					"base:extendedPicbreeder", "log:ExtendedPicbreeder-Random", "saveTo:Random",
+					// Uncomment this to have extended genotypes. May need other parameters used in PicbreederTask too
+					//"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
 					"io:true", "netio:true", "mating:true", "fs:false", "starkPicbreeder:false",
 					"task:edu.southwestern.tasks.extendedPicbreeder.PictureEvolutionTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
