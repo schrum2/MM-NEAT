@@ -1068,6 +1068,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 	 * @return any node innovation number in network
 	 */
 	private long getRandomLinkSourceNodeInnovationNumber() {
+		assert nodes.size() != 0 : "Network somehow has no nodes";
 		return nodes.get(RandomNumbers.randomGenerator.nextInt(nodes.size() + (CommonConstants.recurrency ? 0 : -1))).innovation;
 	}
 
