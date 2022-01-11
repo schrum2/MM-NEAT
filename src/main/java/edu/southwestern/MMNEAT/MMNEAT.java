@@ -144,6 +144,7 @@ public class MMNEAT {
 			for (Metaheuristic m : metaheuristics) {
 				meta.add(m.getClass().getSimpleName());
 			}
+			assert actualFitnessFunctions != null : "Why is this null?";
 			result.addAll(actualFitnessFunctions.get(pop), meta);
 		}
 		return result;

@@ -42,6 +42,7 @@ public class ZentangleTask<T extends Network> extends LonerTask<T> implements Ne
 	public ZentangleTask() {
 		try {
 			fitnessFunction = (ImageFitness) ClassCreation.createObject("imageFitness");
+			MMNEAT.registerFitnessFunction(fitnessFunction.getClass().getName());
 		} catch (NoSuchMethodException e) {
 			System.out.println("imageFitness not properly defined");
 			System.exit(1);

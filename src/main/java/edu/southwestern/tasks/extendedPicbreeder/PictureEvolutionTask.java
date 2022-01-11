@@ -38,6 +38,7 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 	public PictureEvolutionTask() {
 		try {
 			fitnessFunction = (ImageFitness) ClassCreation.createObject("imageFitness");
+			MMNEAT.registerFitnessFunction(fitnessFunction.getClass().getName());
 		} catch (NoSuchMethodException e) {
 			System.out.println("imageFitness not properly defined");
 			System.exit(1);
