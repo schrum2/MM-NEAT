@@ -180,5 +180,10 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 			e.printStackTrace();
 		}	
 	}
+
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(numInputs(), numOutputs());
+	}
 				
 }
