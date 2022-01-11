@@ -53,6 +53,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.MultiplePopulationTask;
 import edu.southwestern.tasks.Task;
+import edu.southwestern.tasks.extendedPicbreeder.PictureEvolutionTask;
 import edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask;
 import edu.southwestern.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.southwestern.tasks.gridTorus.NNTorusPredPreyController;
@@ -617,6 +618,10 @@ public class MMNEAT {
 			} else if (task instanceof ZentangleTask) {
 				System.out.println("Setup Zentangle Task");
 				ZentangleTask t = (ZentangleTask) task;
+				setNNInputParameters(t.numInputs(), t.numOutputs());
+			} else if (task instanceof PictureEvolutionTask) {
+				System.out.println("Setup PictureEvolutionTask Task");
+				PictureEvolutionTask t = (PictureEvolutionTask) task;
 				setNNInputParameters(t.numInputs(), t.numOutputs());
 			} else if(task instanceof PictureInnovationTask) {
 				System.out.println("set up Innovation Engine Task");
