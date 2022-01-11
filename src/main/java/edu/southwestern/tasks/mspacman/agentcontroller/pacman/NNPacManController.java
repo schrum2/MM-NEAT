@@ -5,6 +5,7 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.tasks.mspacman.data.ScentPath;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.multitask.MsPacManModeSelector;
@@ -51,13 +52,13 @@ public abstract class NNPacManController extends NewPacManController {
 		nn = n;
 		maxLevel = Parameters.parameters.integerParameter("pacmanMaxLevel");
 
-		inputMediator = MMNEAT.pacmanInputOutputMediator;
+		inputMediator = MsPacManTask.pacmanInputOutputMediator;
 		if (inputMediator != null) {
 			inputMediator.reset();
 		}
 
 		if (nn != null && nn.isMultitask()) {
-			ms = MMNEAT.pacmanMultitaskScheme;
+			ms = MsPacManTask.pacmanMultitaskScheme;
 		}
 	}
 

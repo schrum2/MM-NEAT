@@ -34,9 +34,9 @@ import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
-import wox.serial.Easy;
 
 /**
  * My version of Multi-dimensional Archive of Phenotypic Elites (MAP-Elites), the quality diversity (QD)
@@ -308,7 +308,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Load each elite from xml file into archive
 			for(int i = 0; i < binLabels.size(); i++) {
 				String binDir = archiveDir + "/" + binLabels.get(i) + "/";
-				Genotype<T> elite = (Genotype<T>) Easy.load(binDir + "elite.xml"); // Load genotype
+				Genotype<T> elite = (Genotype<T>) Serialization.load(binDir + "elite"); // Load genotype
 				// Load behavior scores
 				ArrayList<Double> scores = new ArrayList<Double>(numLabels); 
 				try {

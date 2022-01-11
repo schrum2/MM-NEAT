@@ -164,4 +164,9 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 		return evalResults; // Returns the Fitness of the individual's Genotype<T>
 	}
 
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(sensorLabels().length, outputLabels().length);
+	}
+
 }

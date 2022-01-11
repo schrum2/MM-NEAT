@@ -26,6 +26,7 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
@@ -36,7 +37,7 @@ import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
-public class PictureTargetTask<T extends Network> extends LonerTask<T> {
+public class PictureTargetTask<T extends Network> extends LonerTask<T> implements BoundedTask {
 	
 	public static final String IMAGE_MATCH_PATH = "data" + File.separator + "imagematch";
 	private BufferedImage img = null;
@@ -332,5 +333,20 @@ public class PictureTargetTask<T extends Network> extends LonerTask<T> {
 				"includeTriangleWaveFunction:false", 
 				"includeSquareWaveFunction:false", "blackAndWhitePicbreeder:true",
 				"deleteOldArchives:true", "dynamicAutoencoderIntervals:true", "convolutionalAutoencoder:false"}); 
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return PicbreederTask.getStaticUpperBounds();
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return PicbreederTask.getStaticLowerBounds();
+	}
+
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(numCPPNInputs(), numCPPNOutputs());
 	}
 }

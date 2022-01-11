@@ -19,6 +19,7 @@ import edu.southwestern.evolution.mapelites.emitters.OptimizingEmitter;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 
@@ -50,7 +51,7 @@ public class CMAME extends MAPElites<ArrayList<Double>> {
 	 */
 	public void initialize(Genotype<ArrayList<Double>> example) {
 		super.initialize(example);
-		int dimension = MMNEAT.getLowerBounds().length;
+		int dimension = ((BoundedTask) MMNEAT.task).getLowerBounds().length;
 		int numImprovementEmitters = Parameters.parameters.integerParameter("numImprovementEmitters");
 		int numOptimizingEmitters = Parameters.parameters.integerParameter("numOptimizingEmitters");
 		totalEmitters = numImprovementEmitters+numOptimizingEmitters;

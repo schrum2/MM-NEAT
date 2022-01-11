@@ -5,3 +5,4 @@ AllAverageHeatMaps.bat
 AllBestHeatMaps.bat
 AllFillCounts.bat
 AllQD.bat
+AllBeatableGroup.bat

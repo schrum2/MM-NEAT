@@ -57,7 +57,7 @@ public class ObjectiveBestTeamsExperiment implements Experiment {
 					//go for the number of objectives for this population
 					for(int j = 0; j < ((GroupTask) MMNEAT.task).objectivesPerPopulation()[i]; j++) {
 						int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
-						String file = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives/gen" + lastGen + "_bestIn"+j+".xml";
+						String file = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives/gen" + lastGen + "_bestIn"+j;
 						genotypes.get(i).add((Genotype) PopulationUtil.extractGenotype(file));
 					}
 				}

@@ -184,4 +184,9 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				"includeTriangleWaveFunction:false", 
 				"includeSquareWaveFunction:false"}); 
 	}
+
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(numCPPNInputs(), numCPPNOutputs());
+	}
 }

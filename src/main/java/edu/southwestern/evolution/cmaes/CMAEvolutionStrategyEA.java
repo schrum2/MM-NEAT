@@ -8,6 +8,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mulambda.MuLambda;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.util.PopulationUtil;
 import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
@@ -28,7 +29,7 @@ public class CMAEvolutionStrategyEA extends MuLambda<ArrayList<Double>> {
 			System.exit(1);
 		}
 		cma.readProperties(); // read options, see file CMAEvolutionStrategy.properties
-		int dimension = MMNEAT.getLowerBounds().length;
+		int dimension = ((BoundedTask) MMNEAT.task).getLowerBounds().length;
 		cma.setDimension(dimension); // overwrite some loaded properties
 		cma.setInitialX(0.05); // in each dimension, also setTypicalX can be used
 		cma.setInitialStandardDeviation(0.2); // also a mandatory setting 
@@ -47,7 +48,7 @@ public class CMAEvolutionStrategyEA extends MuLambda<ArrayList<Double>> {
 	public ArrayList<Genotype<ArrayList<Double>>> generateChildren(int numChildren, ArrayList<Score<ArrayList<Double>>> parentScores) {
 		double[][] pop = cma.samplePopulation(); // get a new population of solutions, this is equivalent to getting children
 		assert pop.length == numChildren : "Length of population is not equal to the number of children specified!"; // ensure population is correct size
-		assert pop[0].length == MMNEAT.getLowerBounds().length : "Genomes have incorrect number of values: "+pop[0].length+" vs "+MMNEAT.getLowerBounds().length;
+		assert pop[0].length == ((BoundedTask) MMNEAT.task).getLowerBounds().length : "Genomes have incorrect number of values: "+pop[0].length+" vs "+((BoundedTask) MMNEAT.task).getLowerBounds().length;
 		ArrayList<Genotype<ArrayList<Double>>> newPopulation = PopulationUtil.genotypeArrayListFromDoubles(pop); // convert population to be usable like normal
 		assert newPopulation.get(0).getPhenotype().size() == parentScores.get(0).individual.getPhenotype().size() : "Parent and child lengths did not match!";
 		return newPopulation;

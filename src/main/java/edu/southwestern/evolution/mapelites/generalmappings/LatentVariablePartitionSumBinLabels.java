@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.BoundedTask;
 
 public class LatentVariablePartitionSumBinLabels extends MultiDimensionalRealValuedSlicedBinLabels {
 
@@ -17,7 +18,7 @@ public class LatentVariablePartitionSumBinLabels extends MultiDimensionalRealVal
 	 * vectorLength 		From MMNEAT.getLowerBounds().length
 	 */
 	public LatentVariablePartitionSumBinLabels() {
-		super(Parameters.parameters.integerParameter("latentPartitionBinDimension"), -1.0, 1.0, MMNEAT.getLowerBounds().length);
+		super(Parameters.parameters.integerParameter("latentPartitionBinDimension"), -1.0, 1.0, ((BoundedTask) MMNEAT.task).getLowerBounds().length);
 	}
 
 	@Override

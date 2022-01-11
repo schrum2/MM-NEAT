@@ -20,7 +20,9 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.innovationengines.PictureTargetTask;
+import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -35,7 +37,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  * @param <T>
  *            Phenotype must be a Network (Should be a CPPN)
  */
-public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
+public class ImageMatchTask<T extends Network> extends MatchDataTask<T> implements BoundedTask {
 
 	public static final String IMAGE_MATCH_PATH = "data" + File.separator + "imagematch";
 	private static final int IMAGE_PLACEMENT = 200;
@@ -424,5 +426,15 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 			System.exit(0);
 		}
 		return childPanel;
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return PicbreederTask.getStaticUpperBounds();
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return PicbreederTask.getStaticLowerBounds();
 	}
 }

@@ -30,6 +30,7 @@ import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.export.JsonLevelGenerationTask;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState;
 import edu.southwestern.tasks.loderunner.astar.LodeRunnerState.LodeRunnerAction;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -421,4 +422,8 @@ public abstract class LodeRunnerLevelTask<T> extends NoisyLonerTask<T> implement
 	 */
 	public abstract double getRandomSeedForSpawnPoint(Genotype<T> individual);
 
+	@Override
+	public void postConstructionInitialization() {
+		GANProcess.type = GANProcess.GAN_TYPE.LODE_RUNNER;
+	}
 }

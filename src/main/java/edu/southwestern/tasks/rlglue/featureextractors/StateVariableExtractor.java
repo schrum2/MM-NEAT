@@ -1,8 +1,9 @@
 package edu.southwestern.tasks.rlglue.featureextractors;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.types.Observation;
+
+import edu.southwestern.tasks.rlglue.RLGlueTask;
 
 /**
  * Simple default feature extractor for RL-Glue that uses the raw state
@@ -18,7 +19,7 @@ public class StateVariableExtractor implements FeatureExtractor {
 	 * Sets the current StateVariableExtractor
 	 */
 	public StateVariableExtractor() {
-		this(MMNEAT.tso);
+		this(RLGlueTask.tso);
 	}
 
 	/**

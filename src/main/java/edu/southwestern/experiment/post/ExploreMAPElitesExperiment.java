@@ -7,7 +7,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.file.FileUtilities;
-import wox.serial.Easy;
+import edu.southwestern.util.file.Serialization;
 
 public class ExploreMAPElitesExperiment<T> implements Experiment {
 	
@@ -17,7 +17,7 @@ public class ExploreMAPElitesExperiment<T> implements Experiment {
 	@Override
 	public void init() {
 		String dir = FileUtilities.getSaveDirectory() + "/archive/" + Parameters.parameters.stringParameter("mapElitesArchiveFile");
-		genotype = (Genotype<T>) Easy.load(dir);
+		genotype = (Genotype<T>) Serialization.load(dir);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

@@ -22,6 +22,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
+import edu.southwestern.tasks.gvgai.zelda.ZeldaGANLevelTask;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaGANUtil;
 import edu.southwestern.tasks.gvgai.zelda.ZeldaVGLCUtil;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
@@ -409,5 +410,15 @@ public class ZeldaGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	@Override
 	public List<List<Integer>> levelListRepresentation(double[] latentVector) {
 		return ZeldaGANUtil.generateOneRoomListRepresentationFromGAN(latentVector);
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return ZeldaGANLevelTask.getStaticUpperBounds();
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return ZeldaGANLevelTask.getStaticLowerBounds();
 	}
 }

@@ -1077,4 +1077,10 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 			return (TWEANN) phenotype;
 		}
 	}
+	
+	@Override
+	public void postConstructionInitialization() {
+		// Since these tasks use real-vector genotypes, do not set the NN params
+		if(!(MMNEAT.task instanceof InteractiveGANLevelEvolutionTask)) MMNEAT.setNNInputParameters(numCPPNInputs(), numCPPNOutputs());
+	}
 }

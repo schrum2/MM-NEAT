@@ -2,7 +2,6 @@ package edu.southwestern.tasks.rlglue;
 
 import edu.southwestern.evolution.Organism;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.Network;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import org.rlcommunity.rlglue.codec.AgentInterface;
@@ -34,7 +33,7 @@ public class RLGlueAgent<T extends Network> extends Organism<T> implements Agent
 	 * @return action range max - action range min + 1
 	 */
 	public int getNumberOutputs() {
-		return MMNEAT.tso.getDiscreteActionRange(0).getMax() - MMNEAT.tso.getDiscreteActionRange(0).getMin() + 1;
+		return RLGlueTask.tso.getDiscreteActionRange(0).getMax() - RLGlueTask.tso.getDiscreteActionRange(0).getMin() + 1;
 	}
 
 	/**
@@ -110,9 +109,9 @@ public class RLGlueAgent<T extends Network> extends Organism<T> implements Agent
 	 * @return
 	 */
 	public Action getAction(double reward, Observation o) {
-		Action action = new Action(MMNEAT.tso.getNumDiscreteActionDims(), MMNEAT.tso.getNumContinuousActionDims());
+		Action action = new Action(RLGlueTask.tso.getNumDiscreteActionDims(), RLGlueTask.tso.getNumContinuousActionDims());
 
-		double[] inputs = MMNEAT.rlGlueExtractor.extract(o);
+		double[] inputs = RLGlueTask.rlGlueExtractor.extract(o);
 		double[] outputs = this.consultPolicy(inputs);
 
 		// A lot of limiting assumptions are being made about the types of

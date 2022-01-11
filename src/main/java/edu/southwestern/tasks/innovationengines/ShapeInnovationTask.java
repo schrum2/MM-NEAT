@@ -19,6 +19,7 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask;
 import edu.southwestern.util.MiscUtil;
@@ -31,7 +32,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.graphics.ImageNetClassification;
 import edu.southwestern.util.graphics.ThreeDimensionalUtil;
 
-public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double>>> {
+public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double>>> implements BoundedTask {
 	
 	public static final int INDEX_RED = 0;
 	public static final int INDEX_GREEN = 1;
@@ -47,6 +48,8 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 	
 	private int numImageSamples = Parameters.parameters.integerParameter("numShapeInnovationSamples");
 	private boolean vertical = false;
+	private double[] lower = new double[]{0,0,0,0,0}; // Background color (first three) and pitch, heading
+	private double[] upper = new double[]{1,1,1,1,1}; // Background color (first three) and pitch, heading
 	
 	@Override
 	public int numObjectives() {
@@ -219,5 +222,20 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 				"includeFullSawtoothFunction:false",
 				"includeTriangleWaveFunction:false", 
 				"includeSquareWaveFunction:false"}); 
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return upper;
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return lower;
+	}
+
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(numCPPNInputs(), numCPPNOutputs());
 	}
 }

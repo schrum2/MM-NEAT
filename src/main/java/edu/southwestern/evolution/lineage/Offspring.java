@@ -16,6 +16,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.graphics.Plot;
@@ -1263,7 +1264,7 @@ public class Offspring {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Genotype<? extends Network> getGenotype(String xml) {
-		return (Genotype<? extends Network>) Easy.load(xml);
+		return (Genotype<? extends Network>) Serialization.load(xml);
 	}
 
 	/**

@@ -25,6 +25,8 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
+import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -351,6 +353,15 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		Score<T> result = new Score<>(individual, scores, null, other);
 		result.assignMAPElitesBehaviorMapAndScore(behaviorMap);
 		return result;
+	}
+	
+	@Override
+	public void postConstructionInitialization() {
+		GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
+		if(MMNEAT.task instanceof ZeldaCPPNtoGANDungeonTask || MMNEAT.task instanceof ZeldaCPPNOrDirectToGANDungeonTask) {
+			// Evolving CPPNs that create latent vectors that are sent to a GAN
+			MMNEAT.setNNInputParameters(ZeldaCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
+		}
 	}
 	
 	/**

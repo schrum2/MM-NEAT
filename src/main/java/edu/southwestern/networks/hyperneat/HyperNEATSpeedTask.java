@@ -28,7 +28,6 @@ public class HyperNEATSpeedTask implements HyperNEATTask, Task, SinglePopulation
 
 	}
 
-
 	@Override
 	public int numCPPNInputs() {
 		return HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;
@@ -84,9 +83,13 @@ public class HyperNEATSpeedTask implements HyperNEATTask, Task, SinglePopulation
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-
 	@Override
 	public void flushSubstrateMemory() {
 		// Does nothing: This task does not cache substrate information
+	}
+
+	@Override
+	public void postConstructionInitialization() {
+		System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
 	}
 }

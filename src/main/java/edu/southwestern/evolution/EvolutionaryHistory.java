@@ -1,5 +1,12 @@
 package edu.southwestern.evolution;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.crossover.network.CombiningTWEANNCrossover;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
@@ -8,23 +15,14 @@ import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.southwestern.evolution.genotypes.TWEANNPlusParametersGenotype;
+import edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.log.TWEANNLog;
-import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA;
-import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.file.FileUtilities;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-
-import wox.serial.Easy;
+import edu.southwestern.util.file.Serialization;
 
 /**
  * Stores and tracks information about a population of networks. Uses an
@@ -57,30 +55,6 @@ public class EvolutionaryHistory {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static HashMap<String, Genotype> loadedNetworks = new HashMap<String, Genotype>();
-
-	/**
-	 * Assure that each repeatedly used subnetwork is only loaded once
-	 *
-	 * @param <T>
-	 *            Phenotype that the genotype encodes
-	 * @param xml
-	 *            File path of xml genotype file
-	 * @return the decoded genotype instance
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T extends Network> Genotype<T> getSubnetwork(String xml) {
-		if (xml.isEmpty()) {
-			// Return a dummy genotype to be ignored later
-			return null;
-		}
-		// makes sure it's not a commonly shared architecture already found in
-		// loadedNetworks hashmap
-		if (!loadedNetworks.containsKey(xml)) {
-			System.out.println("Added to subnetworks: " + xml);
-			loadedNetworks.put(xml, (Genotype<T>) Easy.load(xml));
-		}
-		return loadedNetworks.get(xml).copy();
-	}
 
 	/**
 	 * Sets up tracker for previously used innovation numbers.
@@ -172,7 +146,7 @@ public class EvolutionaryHistory {
 	public static void initArchetype(int populationIndex) {
 		String base = Parameters.parameters.stringParameter("base");
 		String xml = Parameters.parameters.stringParameter("archetype");
-		String file = xml + populationIndex + ".xml";
+		String file = xml + populationIndex;
 		if (base.equals("") || !(new File(file).exists())) {
 			file = null;
 		}
@@ -235,7 +209,7 @@ public class EvolutionaryHistory {
 			// The loaded archetype might not simply be from a resume, the seed
 			// could be from elsewhere
 			System.out.println("Loading archetype: " + loadedArchetype);
-			archetypes[populationIndex] = (ArrayList<NodeGene>) Easy.load(loadedArchetype);
+			archetypes[populationIndex] = (ArrayList<NodeGene>) Serialization.load(loadedArchetype);
 			String combiningCrossoverFile = Parameters.parameters.stringParameter("combiningCrossoverMapping");
 			// implement for multimodal behavior. Allows for combining of two separate subpopulations to create a multimodal network
 			if (!combiningCrossoverFile.isEmpty()) {
@@ -287,8 +261,8 @@ public class EvolutionaryHistory {
 			System.out.println("Saving archetype");
 			String file = FileUtilities.getSaveDirectory() + "/" + "archetype";
 			Parameters.parameters.setString("archetype", file);
-			file += populationIndex + ".xml";
-			Easy.save(archetypes[populationIndex], file);
+			file += populationIndex;
+			Serialization.save(archetypes[populationIndex], file);
 			System.out.println("Done saving " + file);
 			// Could make more explicit using
 			// CommonConstants.trackCombiningCrossover

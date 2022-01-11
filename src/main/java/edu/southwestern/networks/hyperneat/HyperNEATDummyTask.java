@@ -105,4 +105,10 @@ public class HyperNEATDummyTask<T> implements HyperNEATTask, Task, SinglePopulat
 		// Does nothing: This task does not cache substrate information
 	}
 
+
+	@Override
+	public void postConstructionInitialization() {
+		System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
+	}
+
 }

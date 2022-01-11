@@ -1,12 +1,12 @@
 package edu.southwestern.tasks.mspacman.agentcontroller.pacman;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.Organism;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.tasks.mspacman.sensors.ActionBlockLoadedInputOutputMediator;
 import edu.southwestern.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
 
@@ -42,10 +42,10 @@ public class NNMsPacMan<T extends Network> extends Organism<T> {
 			controller = new NNHyperNEATPacManController((HyperNEATCPPNGenotype) genotype);
 		} else {
 			Network net = (Network) this.getGenotype().getPhenotype();
-			if (MMNEAT.pacmanInputOutputMediator instanceof ActionBlockLoadedInputOutputMediator) {
+			if (MsPacManTask.pacmanInputOutputMediator instanceof ActionBlockLoadedInputOutputMediator) {
 				controller = new NNActionPacManController(net);
-			} else if (MMNEAT.pacmanInputOutputMediator instanceof VariableDirectionBlockLoadedInputOutputMediator) {
-				controller = new NNCheckEachDirectionPacManController(genotype, MMNEAT.directionalSafetyFunction);
+			} else if (MsPacManTask.pacmanInputOutputMediator instanceof VariableDirectionBlockLoadedInputOutputMediator) {
+				controller = new NNCheckEachDirectionPacManController(genotype, MsPacManTask.directionalSafetyFunction);
 			} else if (Parameters.parameters.booleanParameter("afterStates")) {
 				controller = new ImmediateAfterStateNNPacManController(net);
 			} else {

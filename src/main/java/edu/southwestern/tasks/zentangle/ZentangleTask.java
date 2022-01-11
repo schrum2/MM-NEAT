@@ -233,5 +233,10 @@ public class ZentangleTask<T extends Network> extends LonerTask<T> implements Ne
 			e.printStackTrace();
 		}	
 	}
+
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(numInputs(), numOutputs());
+	}
 				
 }

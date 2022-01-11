@@ -30,9 +30,11 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.megaman.MegaManCPPNtoGANUtil;
+import edu.southwestern.tasks.megaman.MegaManGANLevelTask;
 import edu.southwestern.tasks.megaman.MegaManRenderUtil;
 import edu.southwestern.tasks.megaman.MegaManTrackSegmentType;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
@@ -40,7 +42,7 @@ import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManOneGANGenerator;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManSevenGANGenerator;
 
-public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWEANN>{
+public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWEANN> implements BoundedTask {
 	public static final String[] SENSOR_LABELS = new String[] {"x-coordinate", "y-coordinate", "bias"};
 
 	public static final int VIEW_BUTTON_INDEX = -19; 
@@ -599,5 +601,13 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 //		stringOptions.add("MegaManGANUpModel", "VERTICALONLYUPUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
 //		stringOptions.add("MegaManGANDownModel", "VERTICALONLYDOWNUniqueEnemiesMegaManAllLevelsBut7With30TileTypes_5_Epoch5000.pth", "File name of Vertical GAN model to use for MegaMan GAN level evolution");
 
+	}
+	@Override
+	public double[] getUpperBounds() {
+		return MegaManGANLevelTask.getStaticUpperBounds();
+	}
+	@Override
+	public double[] getLowerBounds() {
+		return MegaManGANLevelTask.getStaticLowerBounds();
 	}
 }
