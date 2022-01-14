@@ -12,10 +12,13 @@ import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.zentangle.ImageFitness;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
@@ -26,11 +29,14 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  * @param <T>
  *            Phenotype must be a Network (Should be a CPPN)
  */
-public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implements NetworkTask {
+public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implements NetworkTask, BoundedTask {
 
 	private static final int IMAGE_PLACEMENT = 200;
 	public int imageHeight, imageWidth;
 	private ImageFitness fitnessFunction = null;
+	
+	private static double[] lower;
+	private static double[] upper;
 
 	/**
 	 * Default task constructor
@@ -53,6 +59,7 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 		
 		
 		Network n = individual.getPhenotype();
+		double[] inputMultiples = ArrayUtil.doubleOnes(n.numInputs());
 		if (CommonConstants.watch) {
 			BufferedImage child;
 			int drawWidth = imageWidth;
@@ -61,7 +68,7 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 				drawWidth = Parameters.parameters.integerParameter("imageWidth");
 				drawHeight = Parameters.parameters.integerParameter("imageHeight");
 			}
-			child = GraphicsUtil.imageFromCPPN(n, drawWidth, drawHeight);
+			child = PicbreederTask.imageFromCPPN(n, drawWidth, drawHeight, inputMultiples);
 			// draws picture and network to JFrame
 			DrawingPanel childPanel = GraphicsUtil.drawImage(child, "output", drawWidth, drawHeight);
 			childPanel.setLocation(IMAGE_PLACEMENT, 0);
@@ -69,7 +76,7 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 			childPanel.dispose();
 		}
 		// Reduce evaluation time by creating small images
-		BufferedImage smallImage = GraphicsUtil.imageFromCPPN(n, 50, 50);
+		BufferedImage smallImage = PicbreederTask.imageFromCPPN(n, 50, 50, inputMultiples);
 		// Random fitness score
 		Score<T> result = new Score<>(individual, fitness(smallImage), getBehaviorVector());
 		if(CommonConstants.watch) {
@@ -106,7 +113,7 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 	 */
 	@Override
 	public String[] sensorLabels() {
-		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "bias" };
+		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "bias"};
 	}
 
 	/**
@@ -160,7 +167,7 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 	
 	public static void main(String[] args) {
 		// args[0] is the random seed
-		int seed = (int)(Math.random()*100);
+		int seed = 11; //(int)(Math.random()*100);
 		if (args.length == 1) {
 			seed = Integer.parseInt(args[0]);
 		}
@@ -168,10 +175,10 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:20", "maxGens:100",
 					"base:extendedPicbreeder", "log:ExtendedPicbreeder-Random", "saveTo:Random",
 					// Uncomment this to have extended genotypes. May need other parameters used in PicbreederTask too
-					//"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
+					"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
 					"io:true", "netio:true", "mating:true", "fs:false", "starkPicbreeder:false",
 					"task:edu.southwestern.tasks.extendedPicbreeder.PictureEvolutionTask", "allowMultipleFunctions:true",
-					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
+					"ftype:0", "watch:true", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"simplifiedInteractiveInterface:false", "recurrency:false", "saveAllChampions:true",
 					"cleanOldNetworks:false", "ea:edu.southwestern.evolution.nsga2.NSGA2",
 					"imageWidth:2000", "imageHeight:2000", "imageSize:200", "includeFullSigmoidFunction:true",
@@ -179,7 +186,9 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 					"includeIdFunction:true", "includeTriangleWaveFunction:false", "includeSquareWaveFunction:false",
 					"includeFullSawtoothFunction:false", "includeSigmoidFunction:false", "includeAbsValFunction:false",
 					"includeSawtoothFunction:false","overrideImageSize:true","imageWidth:500","imageHeight:500",
-					"imageFitness:edu.southwestern.tasks.zentangle.RandomImageFitness"});
+					"imageFitness:edu.southwestern.tasks.zentangle.RandomImageFitness",
+					"picbreederImageScale:10.0", "picbreederImageRotation:5.0", // <- Not relevant when EnhancedCPPNPictureGenotype is used
+					"picbreederImageTranslationX:0.0", "picbreederImageTranslationY:0.0"});
 					//"imageFitness:edu.southwestern.tasks.zentangle.HalfBlackAndColorsInLightPortionImageFitness"});
 					//"imageFitness:edu.southwestern.tasks.zentangle.HalfBlackAndColorsImageFitness"});
 					//"imageFitness:edu.southwestern.tasks.zentangle.HalfBlackImageFitness"});
@@ -191,6 +200,24 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 	@Override
 	public void postConstructionInitialization() {
 		MMNEAT.setNNInputParameters(numInputs(), numOutputs());
+	}
+	public static double[] getStaticUpperBounds() {
+		if(upper == null) upper = new double[] {Parameters.parameters.doubleParameter("maxScale"), Parameters.parameters.booleanParameter("enhancedCPPNCanRotate") ? 2*Math.PI : 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange")};		
+		return upper;
+	}
+
+	public static double[] getStaticLowerBounds() {
+		if(lower == null) lower = new double[] {Parameters.parameters.doubleParameter("minScale"), 0, -Parameters.parameters.doubleParameter("imageCenterTranslationRange"), -Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
+		return lower;
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return getStaticUpperBounds();
+	}
+
+	public double[] getLowerBounds() {
+		return getStaticLowerBounds();
 	}
 				
 }
