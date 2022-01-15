@@ -173,15 +173,16 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 		}
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:20", "maxGens:100",
-					//"base:extendedPicbreeder", "log:ExtendedPicbreeder-RandomEnhanced", "saveTo:RandomEnhanced",
-					"base:extendedPicbreeder", "log:ExtendedPicbreeder-RandomNoScaleEnhanced", "saveTo:RandomNoScaleEnhanced",
+					"base:extendedPicbreeder", "log:ExtendedPicbreeder-RandomEnhanced", "saveTo:RandomEnhanced",
+					//"base:extendedPicbreeder", "log:ExtendedPicbreeder-RandomNoScaleEnhanced", "saveTo:RandomNoScaleEnhanced",
 					//"base:extendedPicbreeder", "log:ExtendedPicbreeder-RandomStandard", "saveTo:RandomStandard",
 					// Uncomment this to have extended genotypes. May need other parameters used in PicbreederTask too
 					"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
-					"minScale:1.0", "maxScale:1.0", // Uncomment to turn off evolution of scale
+					//"minScale:1.0", "maxScale:1.0", // Uncomment to turn off evolution of scale
+					"minScale:1.0", "maxScale:2.0", // Fixed scale range
 					"io:true", "netio:true", "mating:true", "fs:false", "starkPicbreeder:false",
 					"task:edu.southwestern.tasks.extendedPicbreeder.PictureEvolutionTask", "allowMultipleFunctions:true",
-					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
+					"ftype:0", "watch:true", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"simplifiedInteractiveInterface:false", "recurrency:false", "saveAllChampions:true",
 					"cleanOldNetworks:false", "ea:edu.southwestern.evolution.nsga2.NSGA2",
 					"imageWidth:2000", "imageHeight:2000", "imageSize:200", "includeFullSigmoidFunction:true",
