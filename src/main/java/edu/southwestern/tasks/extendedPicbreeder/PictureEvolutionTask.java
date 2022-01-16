@@ -14,6 +14,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.zentangle.ImageFitness;
 import edu.southwestern.util.ClassCreation;
@@ -69,11 +70,15 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 				drawHeight = Parameters.parameters.integerParameter("imageHeight");
 			}
 			child = PicbreederTask.imageFromCPPN(n, drawWidth, drawHeight, inputMultiples);
+			BufferedImage netPic = InteractiveEvolutionTask.getTWEANNComponent(n).getNetworkImage(drawWidth, drawHeight, false, false);
 			// draws picture and network to JFrame
 			DrawingPanel childPanel = GraphicsUtil.drawImage(child, "output", drawWidth, drawHeight);
 			childPanel.setLocation(IMAGE_PLACEMENT, 0);
+			DrawingPanel netPanel = GraphicsUtil.drawImage(netPic, "Network", drawWidth, drawHeight);
+			netPanel.setLocation(IMAGE_PLACEMENT, child.getHeight() + 10);
 			considerSavingImage(childPanel);
 			childPanel.dispose();
+			netPanel.dispose();
 		}
 		// Reduce evaluation time by creating small images
 		BufferedImage smallImage = PicbreederTask.imageFromCPPN(n, 50, 50, inputMultiples);

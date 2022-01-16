@@ -1070,7 +1070,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	public abstract int numCPPNOutputs();
 	
 	@SuppressWarnings("unchecked")
-	public <E> TWEANN getTWEANNComponent(T phenotype) {
+	public static <E,F> TWEANN getTWEANNComponent(F phenotype) {
 		if(phenotype instanceof NetworkPlusParameters) {
 			return ((NetworkPlusParameters<TWEANN,E>) phenotype).t1;
 		} else {
