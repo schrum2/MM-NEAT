@@ -93,6 +93,20 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				resetButtons(true);
 			}
 		});
+		
+		// A check box that switches the HSB filter method
+		JCheckBox standardHSB = new JCheckBox("standardHSB",
+				Parameters.parameters.booleanParameter("standardPicBreederHSBRestriction"));
+		standardHSB.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Change HSB Restrictions");
+				// Switch to opposite of current setting
+				Parameters.parameters.changeBoolean("standardPicBreederHSBRestriction");
+				// Need to change all images and re-load
+				resetButtons(true);
+			}
+		});
 
 		// A check box that switches the output between two brightness levels and
 		// continuous
@@ -112,6 +126,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		imageTweaks.setLayout(new GridLayout(2, 1, 2, 2));
 		imageTweaks.add(blackAndWhite);
 		imageTweaks.add(stark);
+		imageTweaks.add(standardHSB);
 		top.add(imageTweaks);
 
 		// Add the Zentangle button

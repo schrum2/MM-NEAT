@@ -18,7 +18,6 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.activationfunctions.FullLinearPiecewiseFunction;
 import edu.southwestern.networks.activationfunctions.HalfLinearPiecewiseFunction;
-import edu.southwestern.networks.activationfunctions.SawtoothFunction;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.util.CartesianGeometricUtilities;
@@ -485,21 +484,23 @@ public class GraphicsUtil {
 	 * @return scaled HSB information in float array
 	 */
 	public static float[] rangeRestrictHSB(double[] hsb) {
-		// This is the original Picbreeder code that I have used for a while, but even the comment
-		// above (from long ago) indicates problems with saturation. These are exacerbated with the
-		// enhanced genotypes (especially when scale change is allowed), hence the alternative below.
-		return new float[] { (float) FullLinearPiecewiseFunction.fullLinear(hsb[HUE_INDEX]),
-				(float) HalfLinearPiecewiseFunction.halfLinear(hsb[SATURATION_INDEX]),
-				(float) Math.abs(FullLinearPiecewiseFunction.fullLinear(hsb[BRIGHTNESS_INDEX])) };
-
-		// This new code is a possible alternative, but I'm not ready to commit to it.
-		// At the very least, we need an option to choose between the two (from command line).
-		// However, even though this version is better, it still produces plain color images.
-		// Could this be easily fixed with a non-random fitness function?
-//		return new float[] { 
-//				(float) ActivationFunctions.fullSawtooth(hsb[HUE_INDEX],1),
-//				(float) new SawtoothFunction().f(hsb[SATURATION_INDEX]),
-//				(float) Math.abs(ActivationFunctions.fullSawtooth(hsb[BRIGHTNESS_INDEX],1)) };
+		if(Parameters.parameters.booleanParameter("standardPicBreederHSBRestriction")) {
+			// This is the original Picbreeder code that I have used for a while, but even the comment
+			// above (from long ago) indicates problems with saturation. These are exacerbated with the
+			// enhanced genotypes (especially when scale change is allowed), hence the alternative below.
+			return new float[] { 
+					(float) FullLinearPiecewiseFunction.fullLinear(hsb[HUE_INDEX]),
+					(float) HalfLinearPiecewiseFunction.halfLinear(hsb[SATURATION_INDEX]),
+					(float) Math.abs(FullLinearPiecewiseFunction.fullLinear(hsb[BRIGHTNESS_INDEX])) 
+			};
+		} else {
+			// This new code is a possible alternative for enhanced genotypes
+			return new float[] { 
+					(float) ActivationFunctions.fullSawtooth(hsb[HUE_INDEX],2),	// Wraps around the Hue cylinder
+					(float) Math.abs(FullLinearPiecewiseFunction.fullLinear(hsb[SATURATION_INDEX])), // Smooth out transition from positive to negative
+					(float) Math.abs(FullLinearPiecewiseFunction.fullLinear(hsb[BRIGHTNESS_INDEX])) // No change
+			};
+		}
 	}
 
 	/**
