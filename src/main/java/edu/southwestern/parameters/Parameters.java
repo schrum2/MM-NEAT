@@ -777,7 +777,7 @@ public class Parameters {
 		booleanOptions.add("resampleBadCMAMEGenomes", false, "If genome out of bounds, then generate a new one without counting toward number of generated solutions (may loop forever!).");
 		booleanOptions.add("minNeuronFitness", false, "Whether or not ImageMatchTask tries to minimize the number of neurons.");
 		booleanOptions.add("enhancedCPPNCanRotate", true, "Whether enhanced CPPN picture genotype can change the image rotation.");
-		booleanOptions.add("standardPicBreederHSBRestriction", false, "Restrict CPPN output HSB values as in original Picbreeder (false mode is better for enhanced genotypes).");
+		booleanOptions.add("standardPicBreederHSBRestriction", true, "Restrict CPPN output HSB values as in original Picbreeder (false mode is better for enhanced genotypes).");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");

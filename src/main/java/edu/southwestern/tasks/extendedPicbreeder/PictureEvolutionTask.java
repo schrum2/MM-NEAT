@@ -177,19 +177,20 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 			seed = Integer.parseInt(args[0]);
 		}
 		try {
-			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:20", "maxGens:100",
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:20", "maxGens:100", 
+					"standardPicBreederHSBRestriction:false",
 					//"base:extendedPicbreeder", "log:ExtendedPicbreeder-RandomEnhanced", "saveTo:RandomEnhanced",
-					"base:extendedPicbreeder", "log:ExtendedPicbreeder-HBCEnhanced", "saveTo:HBCEnhanced",
+					//"base:extendedPicbreeder", "log:ExtendedPicbreeder-HB3ColorEnhanced", "saveTo:HB3ColorEnhanced",
 					//"base:extendedPicbreeder", "log:ExtendedPicbreeder-RandomNoScaleEnhanced", "saveTo:RandomNoScaleEnhanced",
 					//"base:extendedPicbreeder", "log:ExtendedPicbreeder-RandomStandard", "saveTo:RandomStandard",
-					//"base:extendedPicbreeder", "log:ExtendedPicbreeder-HBCStandard", "saveTo:HBCStandard",
+					"base:extendedPicbreeder", "log:ExtendedPicbreeder-HB3ColorStandard", "saveTo:HB3ColorStandard",
 					// Uncomment this to have extended genotypes. May need other parameters used in PicbreederTask too
-					"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
+					//"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
 					//"minScale:1.0", "maxScale:1.0", // Uncomment to turn off evolution of scale
 					"minScale:1.0", "maxScale:2.0", // Fixed scale range
 					"io:true", "netio:true", "mating:true", "fs:false", "starkPicbreeder:false",
 					"task:edu.southwestern.tasks.extendedPicbreeder.PictureEvolutionTask", "allowMultipleFunctions:true",
-					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
+					"ftype:0", "watch:true", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"simplifiedInteractiveInterface:false", "recurrency:false", "saveAllChampions:true",
 					"cleanOldNetworks:false", "ea:edu.southwestern.evolution.nsga2.NSGA2",
 					"imageWidth:2000", "imageHeight:2000", "imageSize:200", "includeFullSigmoidFunction:true",
@@ -200,8 +201,8 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 					//"picbreederImageScale:10.0", "picbreederImageRotation:5.0", // <- Not relevant when EnhancedCPPNPictureGenotype is used
 					//"picbreederImageTranslationX:0.0", "picbreederImageTranslationY:0.0"});
 					//"imageFitness:edu.southwestern.tasks.zentangle.RandomImageFitness"});
-					//"imageFitness:edu.southwestern.tasks.zentangle.HalfBlackAndColorsInLightPortionImageFitness"});
-					"imageFitness:edu.southwestern.tasks.zentangle.HalfBlackAndColorsImageFitness"});
+					"imageFitness:edu.southwestern.tasks.zentangle.HalfBlackAndColorsInLightPortionImageFitness"});
+					//"imageFitness:edu.southwestern.tasks.zentangle.HalfBlackAndColorsImageFitness"});
 					//"imageFitness:edu.southwestern.tasks.zentangle.HalfBlackImageFitness"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
