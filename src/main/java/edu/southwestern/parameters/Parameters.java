@@ -241,6 +241,8 @@ public class Parameters {
 		integerOptions.add("GANInputSize", 32, "Latent vector input size for GAN level evolution");
 		integerOptions.add("marioGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MarioGAN");
 		integerOptions.add("megaManGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MegaManGAN");
+		integerOptions.add("megaManAuxVarsStart", 0, "whether or not we're maximizing enemies");
+		integerOptions.add("megaManAuxVarsEnd", 3, "whether or not we're maximizing enemies");
 		integerOptions.add("marioInputHeight", 3, "The height for a Mario input section");
 		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputStartY", -1, "The y coordinate offset for Mario inputs grid");
@@ -776,6 +778,8 @@ public class Parameters {
 		booleanOptions.add("resampleBadCMAMEGenomes", false, "If genome out of bounds, then generate a new one without counting toward number of generated solutions (may loop forever!).");
 		booleanOptions.add("minNeuronFitness", false, "Whether or not ImageMatchTask tries to minimize the number of neurons.");
 		booleanOptions.add("enhancedCPPNCanRotate", true, "Whether enhanced CPPN picture genotype can change the image rotation.");
+		booleanOptions.add("segmentSwapAuxiliaryVarialbes", true, "Whether to swap aux variables in SegmentSwapMutation.");
+
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");

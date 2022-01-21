@@ -27,20 +27,29 @@ public class SegmentSwapMutation extends RealMutation {
 	
 	protected final int segmentSize;
 	protected final int segmentAmount;
+	protected final int auxVariableStartLocation;
+	protected final int auxVariableEndLocation;
+	protected final boolean segmentSwapAuxiliaryVarialbes;
+
 	
 	protected ArrayList<Double> storedSegment;
 	
 	public SegmentSwapMutation() {
 		super("GANSegmentSwapMutationRate");
 		this.segmentSize = GANProcess.evolvedSegmentLength(); //Parameters.parameters.integerParameter(""); // Maxx: temporarily set to 448 for mario length testing
+		this.segmentSwapAuxiliaryVarialbes = Parameters.parameters.booleanParameter("segmentSwapAuxiliaryVarialbes");
 		switch(GANProcess.type) {
 		case MARIO:
 			this.segmentAmount = Parameters.parameters.integerParameter("marioGANLevelChunks");
+			this.auxVariableStartLocation = -1;
+			this.auxVariableEndLocation = -1;
 			break;
 		case ZELDA:
 			throw new UnsupportedOperationException("figure this out later");
 		case MEGA_MAN:
 			this.segmentAmount = Parameters.parameters.integerParameter("megaManGANLevelChunks");
+			this.auxVariableStartLocation = Parameters.parameters.integerParameter("megaManAuxVarsStart");
+			this.auxVariableEndLocation = Parameters.parameters.integerParameter("megaManAuxVarsEnd");
 			break;
 		case LODE_RUNNER:
 			throw new UnsupportedOperationException("Lode Runner levels only have a single segment, thus swap mutations make no sense");
@@ -65,10 +74,12 @@ public class SegmentSwapMutation extends RealMutation {
 			
 			storedSegment.addAll(genotype.getPhenotype().subList(randSegment1*segmentSize, randSegment1*segmentSize+segmentSize));
 			for (int i = 0; i < segmentSize; i++) {
-				mutateIndex((RealValuedGenotype) genotype, randSegment2*segmentSize+i); // change second segment values to first segment
+				if((i < auxVariableStartLocation || i > auxVariableEndLocation) || segmentSwapAuxiliaryVarialbes) // only swap outside of auxiliary variable range if feature flag is on
+					mutateIndex((RealValuedGenotype) genotype, randSegment2*segmentSize+i); // change second segment values to first segment
 			}
 			for (int i = 0; i < segmentSize; i++) {
-				mutateIndex((RealValuedGenotype) genotype, randSegment1*segmentSize+i); // change first segment values to second segment
+				if((i < auxVariableStartLocation || i > auxVariableEndLocation) || segmentSwapAuxiliaryVarialbes) // only swap outside of auxiliary variable range if feature flag is on
+					mutateIndex((RealValuedGenotype) genotype, randSegment1*segmentSize+i); // change first segment values to second segment
 			}
 			
 			
@@ -129,15 +140,15 @@ public class SegmentSwapMutation extends RealMutation {
 		List<List<Integer>> level = ((MegaManGANLevelTask) MMNEAT.task).getMegaManLevelListRepresentationFromGenotype(realGeno, segmentCount); //gets a level 
 		MegaManVGLCUtil.printLevel(level);
 		
-		BufferedImage image;
+//		BufferedImage image;
 		BufferedImage[] images;
 		try {
 			//
-			int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
-			int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
+//			int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
+//			int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
 
 			images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH); //7 different tiles to display 
-			image = MegaManRenderUtil.createBufferedImage(level,width1,height1, images);
+//			image = MegaManRenderUtil.createBufferedImage(level,width1,height1, images);
 			MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -156,11 +167,10 @@ public class SegmentSwapMutation extends RealMutation {
 		System.out.println(level.size()%14 + " " + level1.get(0).size()/16);
 		try {
 			//
-			int width1 = MegaManRenderUtil.renderedImageWidth(level1.get(0).size());
-			int height1 = MegaManRenderUtil.renderedImageHeight(level1.size());
+//			int width1 = MegaManRenderUtil.renderedImageWidth(level1.get(0).size());
+//			int height1 = MegaManRenderUtil.renderedImageHeight(level1.size());
 
 			images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH); //7 different tiles to display 
-			image = MegaManRenderUtil.createBufferedImage(level1,width1,height1, images);
 			MegaManRenderUtil.getBufferedImageWithRelativeRendering(level1, images);
 		} catch (IOException e) {
 			e.printStackTrace();

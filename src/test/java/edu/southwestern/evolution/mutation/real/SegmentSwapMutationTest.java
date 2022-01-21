@@ -120,7 +120,7 @@ public class SegmentSwapMutationTest {
 	
 	
 	@Test
-	public void testMegaMan() {
+	public void testMegaManWithAuxiliarySwap() {
 		GANProcess.terminateGANProcess(); // Do before just in case
 		Parameters.parameters = null;
 		MMNEAT.clearClasses();
@@ -178,6 +178,75 @@ public class SegmentSwapMutationTest {
 		assertEquals(beforeMutation.get(7), afterMutation.get(7));
 		assertEquals(beforeMutation.get(8), afterMutation.get(8));
 		assertEquals(beforeMutation.get(9), afterMutation.get(9));
+
+	}
+	@Test
+	public void testMegaManWithoutAuxiliarySwap() {
+		GANProcess.terminateGANProcess(); // Do before just in case
+		Parameters.parameters = null;
+		MMNEAT.clearClasses();
+		Parameters.initializeParameterCollections(new String[] { //default for mega man
+				"runNumber:0", "randomSeed:0", 
+				"io:false", "netio:false",
+				"trials:1", "genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
+				"task:edu.southwestern.tasks.megaman.MegaManGANLevelTask", "megaManGANLevelChunks:10",
+				"MegaManGANModel:MegaManOneGANWith12Tiles_5_Epoch5000.pth", "GANInputSize:5",
+				"GANSegmentSwapMutationRate:1.0", "megaManAllowsLeftSegments:true", "segmentSwapAuxiliaryVarialbes:false"
+				});
+		GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
+		GANProcess.getGANProcess();
+		MMNEAT.loadClasses();
+		
+		
+		ArrayList<Double> geno = new ArrayList<>(90);
+		for (double num : new double[] {0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9}) {
+			geno.add(num);
+			geno.add(num);
+			geno.add(1.0); // right
+			geno.add(num);
+			for (int i = 0; i < 5; i++) {
+				geno.add(num);
+				
+			}
+			
+
+		}
+		
+		Genotype<ArrayList<Double>> realGeno = new BoundedRealValuedGenotype(geno);
+		ArrayList<Double> originalPhenotype = realGeno.getPhenotype();
+		// Passing this parameter inside the hash map instead of as a normal parameter is confusing, 
+		// but allows this class to conform to the JsonLevelGenerationTask easily.
+		int iteration = 0;
+		for(int i = 0; i < 90; i ++) {
+			if(i % 9 == 0) {
+				System.out.println();
+				System.out.print(iteration+"segment: ");
+				iteration++;
+			}
+			System.out.print(originalPhenotype.get(i)+", ");
+
+		}		
+		SegmentSwapMutation mutation = new SegmentSwapMutation();
+		mutation.mutate(realGeno);
+		ArrayList<Double> mutatedPhenotype = realGeno.getPhenotype();
+		System.out.println("\n--------------------\n");
+		
+		iteration = 0;
+		System.out.println("\n--------------------\n");
+		for(int i = 0; i < 90; i ++) {
+			if(i % 9 == 0) {
+				System.out.println();
+				System.out.print(iteration+" segment: ");
+				iteration++;
+			}
+			System.out.print(mutatedPhenotype.get(i)+", ");
+
+		}
+		for(int i = 0; i < 90; i+=9) {
+			if(i != 36 && i != 72) assertEquals(mutatedPhenotype.get(i), mutatedPhenotype.get(i+8));
+		}
+		assertEquals(mutatedPhenotype.get(36), mutatedPhenotype.get(80));
+		assertEquals(mutatedPhenotype.get(44), mutatedPhenotype.get(72));
 
 	}
 
