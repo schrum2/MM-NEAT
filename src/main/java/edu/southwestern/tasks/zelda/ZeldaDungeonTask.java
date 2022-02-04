@@ -15,6 +15,7 @@ import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels;
+import edu.southwestern.evolution.mapelites.generalmappings.LevelTraversalPathBinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -280,6 +281,10 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						ArrayList<Double> rawVector = (ArrayList<Double>) individual.getPhenotype();
 						double[] latentVector = ArrayUtil.doubleArrayFromList(rawVector);
 						behaviorMap.put("Solution Vector", latentVector);
+					}
+					
+					if (MMNEAT.getArchiveBinLabelsClass() instanceof LevelTraversalPathBinLabels) {
+						behaviorMap.put("Level Path", mostRecentVisited);
 					}
 					
 					int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
