@@ -3,11 +3,13 @@ package edu.southwestern.tasks.zentangle;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
+import edu.southwestern.util.random.RandomNumbers;
+
 /**
  * Three fitness functions, each if max - min for each
  * color: RGB
  */
-public class ColorRangeFitness implements ImageFitness {
+public class RandomPlusColorRangeFitness implements ImageFitness {
 	
 	@Override
 	public double[] fitness(BufferedImage image) {
@@ -41,12 +43,12 @@ public class ColorRangeFitness implements ImageFitness {
 		double greenRange = greenMax - greenMin;
 		double blueRange = blueMax - blueMin;
 		// returns an array of doubles containing the range for red, green and blue
-		return new double[] {redRange, greenRange, blueRange};
+		return new double[] {redRange, greenRange, blueRange, RandomNumbers.randomGenerator.nextDouble()};
 	}
 
 	@Override
 	public int numberObjectives() {
-		return 3; 
+		return 4; 
 	}
 
 }
