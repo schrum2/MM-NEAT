@@ -699,9 +699,11 @@ public class ZeldaCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<TWE
 			for(int x = 0; x < width; x++) {
 				double[] vector = builder.latentVectorAndMiscDataForPosition(width, height, x, y);
 				double[] latentVector = new double[GANProcess.latentVectorLength()]; // Shorter
+				// Actual latent vector comes AFTER aux variables
 				System.arraycopy(vector, numberOfNonLatentVariables(), latentVector, 0, latentVector.length);
 				latentVectorGrid[y][x] = latentVector;
 
+				// Auxiliary variables are at the START of each segment
 				double[] auxiliaryInformation = new double[numberOfNonLatentVariables()];
 				System.arraycopy(vector, 0, auxiliaryInformation, 0, numberOfNonLatentVariables());
 				presenceAndTriforceGrid[y][x] = auxiliaryInformation;
