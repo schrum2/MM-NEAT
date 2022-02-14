@@ -190,7 +190,7 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 					"minScale:1.0", "maxScale:2.0", // Fixed scale range
 					"io:true", "netio:true", "mating:true", "fs:false", "starkPicbreeder:false",
 					"task:edu.southwestern.tasks.extendedPicbreeder.PictureEvolutionTask", "allowMultipleFunctions:true",
-					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
+					"ftype:0", "watch:true", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"simplifiedInteractiveInterface:false", "recurrency:false", "saveAllChampions:true",
 					"cleanOldNetworks:false", "ea:edu.southwestern.evolution.nsga2.NSGA2",
 					"imageWidth:2000", "imageHeight:2000", "imageSize:200", 
@@ -211,7 +211,8 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 					"overrideImageSize:true","imageWidth:500","imageHeight:500",
 					//"picbreederImageScale:10.0", "picbreederImageRotation:5.0", // <- Not relevant when EnhancedCPPNPictureGenotype is used
 					//"picbreederImageTranslationX:0.0", "picbreederImageTranslationY:0.0"});
-					"imageFitness:edu.southwestern.tasks.zentangle.ColorsImageFitness"});
+					//"imageFitness:edu.southwestern.tasks.zentangle.ColorsImageFitness"});
+					"imageFitness:edu.southwestern.tasks.zentangle.ColorRangeAndSumFitness"});
 					//"imageFitness:edu.southwestern.tasks.zentangle.ColorRangeFitness"});
 					//"imageFitness:edu.southwestern.tasks.zentangle.RandomPlusColorRangeFitness"});
 					//"imageFitness:edu.southwestern.tasks.zentangle.RandomImageFitness"});
