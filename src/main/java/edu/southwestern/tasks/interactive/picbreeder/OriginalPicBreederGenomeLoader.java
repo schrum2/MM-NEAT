@@ -123,7 +123,7 @@ public class OriginalPicBreederGenomeLoader {
 		
         // Now show the image
 		//BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE);
-		double scale = 5.0;
+		double scale = 1.0;
 		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE, ArrayUtil.doubleOnes(network.numInputs()), -1, scale, 0, 0, 0);
 		DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", SIZE, SIZE);
 		// Wait for user
