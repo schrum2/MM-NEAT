@@ -212,7 +212,7 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 					//"picbreederImageScale:10.0", "picbreederImageRotation:5.0", // <- Not relevant when EnhancedCPPNPictureGenotype is used
 					//"picbreederImageTranslationX:0.0", "picbreederImageTranslationY:0.0"});
 					//"imageFitness:edu.southwestern.tasks.zentangle.ColorsImageFitness"});
-					"imageFitness:edu.southwestern.tasks.zentangle.ColorRangeAndSumFitness"});
+					"imageFitness:edu.southwestern.tasks.zentangle.ColorRangeAndSumRandomFitness"});
 					//"imageFitness:edu.southwestern.tasks.zentangle.ColorRangeFitness"});
 					//"imageFitness:edu.southwestern.tasks.zentangle.RandomPlusColorRangeFitness"});
 					//"imageFitness:edu.southwestern.tasks.zentangle.RandomImageFitness"});

@@ -9,7 +9,7 @@ import edu.southwestern.util.random.RandomNumbers;
  * Three fitness functions, each if max - min for each
  * color: RGB
  */
-public class ColorRangeAndSumFitness implements ImageFitness {
+public class ColorRangeAndSumRandomFitness implements ImageFitness {
 	
 	@Override
 	public double[] fitness(BufferedImage image) {
@@ -56,14 +56,14 @@ public class ColorRangeAndSumFitness implements ImageFitness {
 		int greenWithoutOthers = greenSum - redSum - blueSum;
 		
 		// returns an array of doubles containing the range for red, green and blue
-		//return new double[] {redRange, greenRange, blueRange, redWithoutOthers, blueWithoutOthers, greenWithoutOthers};
-		return new double[] {redRange, greenRange, blueRange, redWithoutOthers,blueWithoutOthers,greenWithoutOthers, RandomNumbers.randomGenerator.nextDouble()};
+		return new double[] {redRange, greenRange, blueRange, redWithoutOthers, blueWithoutOthers, greenWithoutOthers};
+		//return new double[] {redRange, greenRange, blueRange, redWithoutOthers,blueWithoutOthers,greenWithoutOthers, RandomNumbers.randomGenerator.nextDouble()};
 	}
 
 	@Override
 	public int numberObjectives() {
-		//return 6; 
-		return 7;
+		return 6; 
+		//return 7;
 	}
 
 }
