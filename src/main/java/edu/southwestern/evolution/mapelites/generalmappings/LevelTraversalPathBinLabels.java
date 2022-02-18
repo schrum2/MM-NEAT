@@ -1,12 +1,10 @@
 package edu.southwestern.evolution.mapelites.generalmappings;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
@@ -35,19 +33,24 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 				default:
 					throw new UnsupportedOperationException("Pick a game");
 			}
-			labels = new ArrayList<String>();
-			generateBinLabels(25, "");
+			labels = new ArrayList<String>((int)Math.pow(2, verticalCoarseness*horizontalCoarseness));
+			generateBinLabels(verticalCoarseness*horizontalCoarseness, "");
 		}
 		return labels;
 	}
 	
 	private void generateBinLabels(int maxSize, String previous) {
-		if (previous.length() < maxSize) {
-			generateBinLabels(maxSize, previous+"0");
-			generateBinLabels(maxSize, previous+"1");
-		} else {
-			labels.add(previous);
+		for (int i = 0; i < Math.pow(2, maxSize); i++) {
+			String binString = padStringTo(maxSize, Integer.toBinaryString(i));
+			labels.add(binString);
 		}
+	}
+	
+	private String padStringTo(int length, String s) {
+		while (s.length() < length) {
+			s = "0"+s;
+		}
+		return s;
 	}
 
 	@Override
@@ -95,8 +98,14 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 		return new int[] {horizontalCoarseness * verticalCoarseness};
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main("".split(" "));
-	}
+//	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+//		//MMNEAT.main("".split(" "));
+//		GANProcess.type = GAN_TYPE.ZELDA;
+//		Parameters.initializeParameterCollections(args);
+//		Parameters.parameters.setInteger("zeldaGANLevelWidthChunks", 4);
+//		Parameters.parameters.setInteger("zeldaGANLevelHeightChunks", 4);
+//		LevelTraversalPathBinLabels lablers = new LevelTraversalPathBinLabels();
+//		lablers.binLabels();
+//	}
 
 }
