@@ -506,8 +506,9 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:16", "maxGens:500",
 					"zentangleTileDim:100", 
+					"base:extendedPicbreeder", "log:ExtendedPicbreeder-Interactive", "saveTo:Interactive",
 					"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
-					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:false",
+					"io:true", "netio:true", "mating:true", "fs:false", "starkPicbreeder:false",
 					//"imageCenterTranslationRange:0.0", // Uncomment to turn off evolution of translation 
 					//"minScale:1.0", "maxScale:1.0", // Uncomment to turn off evolution of scale
 					//"enhancedCPPNCanRotate:false", // Uncomment to turn off evolution of rotation
