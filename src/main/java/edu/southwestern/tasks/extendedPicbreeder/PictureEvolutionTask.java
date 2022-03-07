@@ -54,32 +54,76 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 	}
 
 	@Override
+	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
+		ArrayList<Score<T>> result = super.evaluateAll(population);
+		if (CommonConstants.watch) {
+			int drawWidth = 200;
+			int drawHeight = 200;
+
+			int imagesAcross = 5;
+			int imagesVertical = 4;
+			
+			BufferedImage full = new BufferedImage(imagesAcross*drawWidth, imagesVertical*drawHeight, BufferedImage.TYPE_INT_RGB);
+			
+			int imageX = 0;
+			int imageY = 0;
+			for(Genotype<T> s: population) {
+				Network n = s.getPhenotype();
+				double[] inputMultiples = ArrayUtil.doubleOnes(n.numInputs());
+				BufferedImage child = PicbreederTask.imageFromCPPN(n, drawWidth, drawHeight, inputMultiples);
+				//DrawingPanel childPanel = GraphicsUtil.drawImage(child, "output", imagesAcross*drawWidth, imagesVertical*drawHeight);
+				//BufferedImage netPic = InteractiveEvolutionTask.getTWEANNComponent(n).getNetworkImage(drawWidth, drawHeight, false, false);
+				
+				for(int x = 0; x < drawWidth; x++) {
+					for(int y = 0; y < drawHeight; y++) {
+						full.setRGB(imageX*drawWidth + x, imageY*drawHeight + y, child.getRGB(x, y));
+					}
+				}
+				
+				imageX = (imageX + 1) % imagesAcross;
+				if(imageX == 0) imageY++;
+			}
+			
+			
+			
+			// draws picture and network to JFrame
+			DrawingPanel childPanel = GraphicsUtil.drawImage(full, "output", imagesAcross*drawWidth, imagesVertical*drawHeight);
+//			childPanel.setLocation(IMAGE_PLACEMENT, 0);
+//			DrawingPanel netPanel = GraphicsUtil.drawImage(netPic, "Network", drawWidth, drawHeight);
+//			netPanel.setLocation(IMAGE_PLACEMENT, child.getHeight() + 10);
+			considerSavingImage(childPanel);
+			childPanel.dispose();
+//			netPanel.dispose();
+		}
+		return result;
+	}
+	
+	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
-		
 		// TODO: Replace every GraphicsUtil.imageFromCPPN call with PicbreederTask.imageFromCPPN
 		
 		
 		Network n = individual.getPhenotype();
 		double[] inputMultiples = ArrayUtil.doubleOnes(n.numInputs());
-		if (CommonConstants.watch) {
-			BufferedImage child;
-			int drawWidth = imageWidth;
-			int drawHeight = imageHeight;
-			if (Parameters.parameters.booleanParameter("overrideImageSize")) {
-				drawWidth = Parameters.parameters.integerParameter("imageWidth");
-				drawHeight = Parameters.parameters.integerParameter("imageHeight");
-			}
-			child = PicbreederTask.imageFromCPPN(n, drawWidth, drawHeight, inputMultiples);
-			BufferedImage netPic = InteractiveEvolutionTask.getTWEANNComponent(n).getNetworkImage(drawWidth, drawHeight, false, false);
-			// draws picture and network to JFrame
-			DrawingPanel childPanel = GraphicsUtil.drawImage(child, "output", drawWidth, drawHeight);
-			childPanel.setLocation(IMAGE_PLACEMENT, 0);
-			DrawingPanel netPanel = GraphicsUtil.drawImage(netPic, "Network", drawWidth, drawHeight);
-			netPanel.setLocation(IMAGE_PLACEMENT, child.getHeight() + 10);
-			considerSavingImage(childPanel);
-			childPanel.dispose();
-			netPanel.dispose();
-		}
+//		if (CommonConstants.watch) {
+//			BufferedImage child;
+//			int drawWidth = imageWidth;
+//			int drawHeight = imageHeight;
+//			if (Parameters.parameters.booleanParameter("overrideImageSize")) {
+//				drawWidth = Parameters.parameters.integerParameter("imageWidth");
+//				drawHeight = Parameters.parameters.integerParameter("imageHeight");
+//			}
+//			child = PicbreederTask.imageFromCPPN(n, drawWidth, drawHeight, inputMultiples);
+//			BufferedImage netPic = InteractiveEvolutionTask.getTWEANNComponent(n).getNetworkImage(drawWidth, drawHeight, false, false);
+//			// draws picture and network to JFrame
+//			DrawingPanel childPanel = GraphicsUtil.drawImage(child, "output", drawWidth, drawHeight);
+//			childPanel.setLocation(IMAGE_PLACEMENT, 0);
+//			DrawingPanel netPanel = GraphicsUtil.drawImage(netPic, "Network", drawWidth, drawHeight);
+//			netPanel.setLocation(IMAGE_PLACEMENT, child.getHeight() + 10);
+//			considerSavingImage(childPanel);
+//			childPanel.dispose();
+//			netPanel.dispose();
+//		}
 		// Reduce evaluation time by creating small images
 		BufferedImage smallImage = PicbreederTask.imageFromCPPN(n, 50, 50, inputMultiples);
 		// Random fitness score
