@@ -93,6 +93,20 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				resetButtons(true);
 			}
 		});
+		
+		// A check box that switches the HSB filter method
+		JCheckBox standardHSB = new JCheckBox("standardHSB",
+				Parameters.parameters.booleanParameter("standardPicBreederHSBRestriction"));
+		standardHSB.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Change HSB Restrictions");
+				// Switch to opposite of current setting
+				Parameters.parameters.changeBoolean("standardPicBreederHSBRestriction");
+				// Need to change all images and re-load
+				resetButtons(true);
+			}
+		});
 
 		// A check box that switches the output between two brightness levels and
 		// continuous
@@ -112,6 +126,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		imageTweaks.setLayout(new GridLayout(2, 1, 2, 2));
 		imageTweaks.add(blackAndWhite);
 		imageTweaks.add(stark);
+		imageTweaks.add(standardHSB);
 		top.add(imageTweaks);
 
 		// Add the Zentangle button
@@ -152,7 +167,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		if(phenotype instanceof NetworkPlusParameters) { // CPPN with extra scale and rotation parameters
 			NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype;
 			ArrayList<Double> scaleRotationTranslation = npp.t2;
-			System.out.println(scaleRotationTranslation);
+			System.out.println("Enhanced:"+scaleRotationTranslation);
 			//System.out.println("Scale, Rotation, and Translation (x,y): " + scaleRotationTranslation);
 			return GraphicsUtil.imageFromCPPN(phenotype, imageWidth, imageHeight, inputMultiples, -1, scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_X), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y));
 		} else { // Plain CPPN/TWEANGenotype
@@ -491,8 +506,9 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:16", "maxGens:500",
 					"zentangleTileDim:100", 
+					"base:extendedPicbreeder", "log:ExtendedPicbreeder-Interactive", "saveTo:Interactive",
 					"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
-					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:false",
+					"io:true", "netio:true", "mating:true", "fs:false", "starkPicbreeder:false",
 					//"imageCenterTranslationRange:0.0", // Uncomment to turn off evolution of translation 
 					//"minScale:1.0", "maxScale:1.0", // Uncomment to turn off evolution of scale
 					//"enhancedCPPNCanRotate:false", // Uncomment to turn off evolution of rotation

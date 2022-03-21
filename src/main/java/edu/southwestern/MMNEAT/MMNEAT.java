@@ -48,6 +48,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.MultiplePopulationTask;
 import edu.southwestern.tasks.Task;
+import edu.southwestern.tasks.extendedPicbreeder.PictureEvolutionTask;
 import edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask;
 import edu.southwestern.tasks.gvgai.zelda.study.HumanSubjectStudy2019Zelda;
 import edu.southwestern.tasks.mario.gan.GANProcess;
@@ -143,6 +144,7 @@ public class MMNEAT {
 			for (Metaheuristic m : metaheuristics) {
 				meta.add(m.getClass().getSimpleName());
 			}
+			assert actualFitnessFunctions != null : "Why is this null?";
 			result.addAll(actualFitnessFunctions.get(pop), meta);
 		}
 		return result;
