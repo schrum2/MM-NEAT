@@ -397,12 +397,12 @@ public class ZeldaState extends State<ZeldaState.GridAction> implements ILocated
 
 	@Override
 	public double getX() {
-		return dX;
+		return dX*16 + x;
 	}
 
 	@Override
 	public double getY() {
-		return dY;
+		return dY*11 + y;
 	}
 
 }

@@ -15,6 +15,8 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 	List<String> labels = null;
 	private int verticalCoarseness;
 	private int horizontalCoarseness;
+	private int sizeX;
+	private int sizeY;
 
 	@Override
 	public List<String> binLabels() {
@@ -25,6 +27,8 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 				case ZELDA:
 					this.verticalCoarseness = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks");
 					this.horizontalCoarseness = Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
+					this.sizeX = 16; // Magic numbers for the size of a zelda room
+					this.sizeY = 11; 
 					break;
 				case MEGA_MAN:
 					throw new UnsupportedOperationException("MegaMan does not work with LevelTraversalPathBinLabels.");
@@ -61,21 +65,22 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 	@SuppressWarnings("unchecked")
 	@Override
 	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
-		
+		// Create the path from the Level Path that is reported
 		HashSet<ILocated2D> path = new HashSet<>();
 		if (keys.containsKey("Level Path")) {
 			path = (HashSet<ILocated2D>) keys.get("Level Path");
 		}
-		
+		// Map each room to an index in the visited tiles
 		boolean[][] visitedTiles = new boolean[verticalCoarseness][horizontalCoarseness];
 		int tileX;
 		int tileY;
+		// Traverse path and mark bins if visited
 		for (ILocated2D location : path) {
-			tileX = (int) location.getX() / horizontalCoarseness;
-			tileY = (int) location.getY() / verticalCoarseness;
+			tileX = (int) location.getX() / sizeX;
+			tileY = (int) location.getY() / sizeY;
 			visitedTiles[tileX][tileY] = true;
 		}
-		
+		// based on what bins were visited, assemble a bit string
 		int locationSum = 0;
 		for (int y = 0; y < verticalCoarseness; y++) {
 			for (int x = 0; x < horizontalCoarseness; x++) {
@@ -84,7 +89,7 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 				}
 			}
 		}
-		
+		// then return the bitstring as the the single bin for this scheme
 		return new int[] {locationSum};
 	}
 
