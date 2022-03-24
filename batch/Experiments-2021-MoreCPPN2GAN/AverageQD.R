@@ -24,6 +24,7 @@ library(tidyr)
 library(plyr)
 library(dplyr)
 library(stringr)
+library(scales)
 
 #setwd(paste("./",resultDir,sep=""))
 # Get log prefix
@@ -114,6 +115,7 @@ v <- ggplot(evolutionStats, aes(x = generation, y = avgScore, color = type)) +
   #scale_shape_discrete(guide = guide_legend(reverse=TRUE)) +
   #scale_linetype_manual(guide = guide_legend(reverse=TRUE)) +
   ylab("QD Score") +
+  scale_y_continuous(labels = function(x) format(x, scientific = FALSE)) +
   xlab("Generated Individuals") +
   theme(
     plot.title = element_text(size=7, face="bold"),
