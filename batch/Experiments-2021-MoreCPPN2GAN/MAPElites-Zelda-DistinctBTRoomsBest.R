@@ -151,8 +151,9 @@ result <- ggplot(overlapData, aes(x=backTrackBin, y=distinctBin, fill=factor(Per
   ggtitle("Highest Quality:") +
   labs(fill = "") + # Made lengend too big
   # Puts room count in the plot for each bin
-  geom_text(aes(label = ifelse(distinctBin == 20 & backTrackBin == 0, roomBin, NA)), 
-            nudge_x = 28,nudge_y = 3) +
+  geom_text(aes(label = ifelse(distinctBin == 20 & backTrackBin == roomBin - 1, roomBin, NA)), 
+            nudge_x = 4.6,nudge_y = 3, hjust = "inward") +
+  coord_cartesian(clip = "off") +
   #annotation_custom(grob) +
   theme(strip.background = element_blank(),
         strip.text = element_blank(),
