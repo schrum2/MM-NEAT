@@ -41,7 +41,7 @@ public class OriginalPicBreederGenomeLoader {
 		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, -1);
 		//System.out.println(tg);
 		// Now, load TWEANN structure from file
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\5736_ShinyRedApple.xml"); // Crash from loop?
+		File inputFile = new File("data\\picbreeder\\originalGenomes\\5736_ShinyRedApple.xml"); // Crash from loop?
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4547_Face.xml"); // Crash from loop?
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4376_ButterflyColor.xml"); // Output loops back to hidden neuron
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\3674_Mystic.xml"); // Infinite loop?
@@ -50,7 +50,7 @@ public class OriginalPicBreederGenomeLoader {
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\1009_ButterflyGreyscale.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\765_PlaneOnRunway.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\745_LetterG.xml"); // PERFECT
-		File inputFile = new File("data\\picbreeder\\originalGenomes\\576_Skull.xml"); // PERFECT
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\576_Skull.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\542_GhostFaceSpooky.xml"); // Unsure: looks good
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\409_Moonlight.xml");
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\395_SpotlightCastingShadow.xml"); // PERFECT
@@ -67,12 +67,12 @@ public class OriginalPicBreederGenomeLoader {
         NodeList nList = doc.getElementsByTagName("node");
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node nNode = nList.item(temp);
-            //System.out.println("\nCurrent Element :" + nNode.getNodeName() + ":" + nNode.getAttributes().getNamedItem("type").getNodeValue());
+            System.out.println("\nCurrent Element :" + nNode.getNodeName() + ":" + nNode.getAttributes().getNamedItem("type").getNodeValue());
             String type = nNode.getAttributes().getNamedItem("type").getNodeValue();
             NodeList subList = nNode.getChildNodes();
             long innovation = Long.parseLong(subList.item(1).getAttributes().getNamedItem("id").getNodeValue());
             String activation = subList.item(3).getFirstChild().getNodeValue();
-            //System.out.println(type + ":" + innovation + ":" + activation);
+            System.out.println(type + ":" + innovation + ":" + activation);
             if(type.equals("in")) {
             	NodeGene n = tg.nodes.get(inputs++);
             	n.innovation = innovation;
@@ -80,6 +80,7 @@ public class OriginalPicBreederGenomeLoader {
             } else if(type.equals("hidden")) {
             	NodeGene newGene = TWEANNGenotype.newNodeGene(getFType(activation), TWEANN.Node.NTYPE_HIDDEN, innovation);
             	// Adding the gene here may not be the right order
+            	System.out.println("Adding "+activation+":hidden:"+innovation+ " at "+tg.outputStartIndex());
             	tg.nodes.add(tg.outputStartIndex(), newGene);
             } else if(type.equals("out")) {
             	String label = nNode.getAttributes().getNamedItem("label").getNodeValue();
@@ -95,7 +96,7 @@ public class OriginalPicBreederGenomeLoader {
             	n.ftype = getFType(activation);
             }
         }
-        
+                
         tg.links.clear();
         NodeList linkList = doc.getElementsByTagName("link");
         for (int temp = 0; temp < linkList.getLength(); temp++) {
@@ -113,6 +114,7 @@ public class OriginalPicBreederGenomeLoader {
         System.out.println("BEFORE");
         System.out.println(tg.toString());
         // Get nodes in right order according to the links
+        // deleting specific nodes??? 
         TWEANNGenotype.sortNodeGenesByLinkConnectivity(tg);
         System.out.println("AFTER");
         System.out.println(tg.toString());

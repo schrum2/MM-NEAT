@@ -2050,14 +2050,14 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 	 */
 	public static void sortNodeGenesByLinkConnectivity(TWEANNGenotype tg) {
 		// First remove links from output layer to hidden layer (why do these exist?)
-		//    	Iterator<LinkGene> itr = tg.links.iterator();
-		//    	while(itr.hasNext()) {
-		//    		LinkGene lg = itr.next();
-		//    		if(tg.getNodeWithInnovation(lg.sourceInnovation).ntype == TWEANN.Node.NTYPE_OUTPUT && 
-		//    		   tg.getNodeWithInnovation(lg.targetInnovation).ntype == TWEANN.Node.NTYPE_HIDDEN) {
-		//    			itr.remove(); // No more cycle
-		//    		}
-		//    	}
+		Iterator<LinkGene> itr = tg.links.iterator();
+		while(itr.hasNext()) {
+			LinkGene lg = itr.next();
+			if(tg.getNodeWithInnovation(lg.sourceInnovation).ntype == TWEANN.Node.NTYPE_OUTPUT && 
+					tg.getNodeWithInnovation(lg.targetInnovation).ntype == TWEANN.Node.NTYPE_HIDDEN) {
+				itr.remove(); // No more cycle
+			}
+		}
 		// Key = target innovation number, value = set of innovation numbers for all source nodes with a link to this target
 		HashMap<Long, Set<Long>> incoming = new HashMap<>();
 		for(NodeGene n : tg.nodes) {
