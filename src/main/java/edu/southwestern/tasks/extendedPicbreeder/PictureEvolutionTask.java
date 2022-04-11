@@ -64,6 +64,7 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 			int imagesVertical = 4;
 			
 			BufferedImage full = new BufferedImage(imagesAcross*drawWidth, imagesVertical*drawHeight, BufferedImage.TYPE_INT_RGB);
+			BufferedImage fullNetwork = new BufferedImage(imagesAcross*drawWidth, imagesVertical*drawHeight, BufferedImage.TYPE_INT_RGB);
 			
 			int imageX = 0;
 			int imageY = 0;
@@ -72,14 +73,14 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 				double[] inputMultiples = ArrayUtil.doubleOnes(n.numInputs());
 				BufferedImage child = PicbreederTask.imageFromCPPN(n, drawWidth, drawHeight, inputMultiples);
 				//DrawingPanel childPanel = GraphicsUtil.drawImage(child, "output", imagesAcross*drawWidth, imagesVertical*drawHeight);
-				//BufferedImage netPic = InteractiveEvolutionTask.getTWEANNComponent(n).getNetworkImage(drawWidth, drawHeight, false, false);
+				BufferedImage netPic = InteractiveEvolutionTask.getTWEANNComponent(n).getNetworkImage(drawWidth, drawHeight, false, false);
 				
 				for(int x = 0; x < drawWidth; x++) {
 					for(int y = 0; y < drawHeight; y++) {
 						full.setRGB(imageX*drawWidth + x, imageY*drawHeight + y, child.getRGB(x, y));
+						fullNetwork.setRGB(imageX*drawWidth + x, imageY*drawHeight + y, netPic.getRGB(x, y));
 					}
 				}
-				
 				imageX = (imageX + 1) % imagesAcross;
 				if(imageX == 0) imageY++;
 			}
@@ -89,10 +90,12 @@ public class PictureEvolutionTask<T extends Network> extends LonerTask<T> implem
 			// draws picture and network to JFrame
 			DrawingPanel childPanel = GraphicsUtil.drawImage(full, "output", imagesAcross*drawWidth, imagesVertical*drawHeight);
 //			childPanel.setLocation(IMAGE_PLACEMENT, 0);
+			DrawingPanel network = GraphicsUtil.drawImage(fullNetwork, "network output", imagesAcross*drawWidth, imagesVertical*drawHeight);
 //			DrawingPanel netPanel = GraphicsUtil.drawImage(netPic, "Network", drawWidth, drawHeight);
 //			netPanel.setLocation(IMAGE_PLACEMENT, child.getHeight() + 10);
 			considerSavingImage(childPanel);
 			childPanel.dispose();
+			network.dispose();
 //			netPanel.dispose();
 		}
 		return result;
