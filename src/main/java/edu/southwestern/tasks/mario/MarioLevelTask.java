@@ -424,6 +424,8 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements Jso
 			HashSet<MarioState> mostRecentVisited = null;
 			ArrayList<MarioAction> actionSequence = null;
 			try{
+				// TODO: Somehow extract/recreate the sequence of locations from the search
+				
 				actionSequence = ((AStarSearch<MarioAction, MarioState>) search).search(start, true, Parameters.parameters.integerParameter("aStarSearchBudget"));
 				if(actionSequence == null) {
 					fitnesses.add(-1.0); // failed search 				

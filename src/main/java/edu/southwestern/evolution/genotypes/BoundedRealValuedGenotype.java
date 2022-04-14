@@ -84,13 +84,14 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 		MAPElitesLineMutation lineMutation = null;
 		if(Parameters.parameters.doubleParameter("meLineMutationRate") > 0.0 && (lineMutation = new MAPElitesLineMutation()).perform()) {		
 			lineMutation.mutate(this);
-		} else {
+		} else if (RandomNumbers.randomGenerator.nextDouble() <= Parameters.parameters.doubleParameter("anyRealVectorModificationRate")) {
 			if (polynomialMutation) { // Specialized mutation operator slightly more complicated than simple perturbation
 				new PolynomialMutation().mutate(this);
 			} else { // Default
 				new PerturbMutation(getRange()).mutate(this);
 			}
 		}
+		genotypeMutations();
 		bound();
 	}
 
@@ -102,6 +103,9 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 		BoundedTask t = ((BoundedTask) MMNEAT.task);
 		double[] lower = t.getLowerBounds();
 		double[] upper = t.getUpperBounds();
+
+		assert lower.length == upper.length : "Upper and lower lengths differ! " + upper.length + " vs " + lower.length;
+		assert lower.length == genes.size() : "bounds length and genes length differ! " + lower.length + " vs " + genes.size();
 		
 		for (int i = 0; i < genes.size(); i++) {
 			double x = genes.get(i);

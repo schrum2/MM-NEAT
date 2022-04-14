@@ -241,6 +241,8 @@ public class Parameters {
 		integerOptions.add("GANInputSize", 32, "Latent vector input size for GAN level evolution");
 		integerOptions.add("marioGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MarioGAN");
 		integerOptions.add("megaManGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MegaManGAN");
+		integerOptions.add("megaManAuxVarsStart", 0, "whether or not we're maximizing enemies");
+		integerOptions.add("megaManAuxVarsEnd", 3, "whether or not we're maximizing enemies");
 		integerOptions.add("marioInputHeight", 3, "The height for a Mario input section");
 		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputStartY", -1, "The y coordinate offset for Mario inputs grid");
@@ -778,6 +780,7 @@ public class Parameters {
 		booleanOptions.add("minNeuronFitness", false, "Whether or not ImageMatchTask tries to minimize the number of neurons.");
 		booleanOptions.add("enhancedCPPNCanRotate", true, "Whether enhanced CPPN picture genotype can change the image rotation.");
 		booleanOptions.add("standardPicBreederHSBRestriction", true, "Restrict CPPN output HSB values as in original Picbreeder (false mode is better for enhanced genotypes).");
+		booleanOptions.add("segmentSwapAuxiliaryVarialbes", true, "Whether to swap aux variables in SegmentSwapMutation.");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
@@ -864,6 +867,10 @@ public class Parameters {
 		doubleOptions.add("picbreederImageTranslationY", 0.0, "Fixed vertical shift for Picbreeder images");
 		doubleOptions.add("minAutoencoderLoss", 0.0, "Minimum reconstruction loss across the whole archive.");
 		doubleOptions.add("maxAutoencoderLoss", 1.0, "Maximum reconstruction loss across the whole archive.");
+		doubleOptions.add("GANSegmentSwapMutationRate", 0.0, "Segment swap mutation rate.");
+		doubleOptions.add("GANSegmentCopyMutationRate", 0.0, "Segment copy mutation rate.");
+		doubleOptions.add("anyRealVectorModificationRate", 1.0, "The chance to use either perturb or polynomial mutation");
+
 		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");

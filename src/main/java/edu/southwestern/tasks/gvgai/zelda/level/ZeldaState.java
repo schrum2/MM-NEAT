@@ -12,10 +12,12 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon.Node;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.search.Action;
 import edu.southwestern.util.search.State;
+import edu.southwestern.util.util2D.ILocated2D;
+import edu.southwestern.util.util2D.Tuple2D;
 import me.jakerg.rougelike.Ladder;
 import me.jakerg.rougelike.Tile;
 
-public class ZeldaState extends State<ZeldaState.GridAction>{
+public class ZeldaState extends State<ZeldaState.GridAction> implements ILocated2D {
 	
 	// Coordinates of agent in room
 	public int x;
@@ -381,6 +383,26 @@ public class ZeldaState extends State<ZeldaState.GridAction>{
 
 	public Dungeon getDungeon() {
 		return dungeon;
+	}
+
+	@Override
+	public Tuple2D getPosition() {
+		return new Tuple2D(dX, dY);
+	}
+
+	@Override
+	public double distance(ILocated2D other) {
+		throw new UnsupportedOperationException("Distance shouldn't be calculated between two ZeldaStates!");
+	}
+
+	@Override
+	public double getX() {
+		return dX*16 + x;
+	}
+
+	@Override
+	public double getY() {
+		return dY*11 + y;
 	}
 
 }
