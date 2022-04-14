@@ -21,7 +21,8 @@ public class SegmentCopyMutationTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		
+		MMNEAT.clearClasses();
+		GANProcess.terminateGANProcess();
 		Parameters.initializeParameterCollections(new String[] {
 				"runNumber:0", "randomSeed:0", 
 				"io:false", "netio:false",
