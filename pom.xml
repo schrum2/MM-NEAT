@@ -113,11 +113,6 @@
 	  <id>jitpack.io</id>
 	  <url>https://jitpack.io</url>
 	</repository>
-	
-     <repository>
-	  <id>jfrog</id>
-	  <url>https://repo.jfrog.org/artifactory/plugins-releases/</url>
-	</repository>	
 </repositories>
 
     <distributionManagement>
@@ -250,14 +245,6 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
-
-<!-- https://mvnrepository.com/artifact/org.reflections/reflections-maven -->
-<!-- This is part of Java, but the latest versions restrict it as "not API" -->
-<dependency>
-    <groupId>org.reflections</groupId>
-    <artifactId>reflections-maven</artifactId>
-    <version>0.9.8</version>
-</dependency>
 
 <!-- This is part of Java, but the latest versions restrict it as "not API" -->
         <dependency>
