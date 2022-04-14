@@ -36,8 +36,6 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import wox.serial.Easy;
-
 /**
  * This complicated, clunky file is used to browse the lineage of an evolved
  * population. Networks possessed by individuals can be viewed, and the genotype

@@ -39,7 +39,7 @@ public class HumanRetraceBot extends BaseBot {
     private boolean initialized = false;
 
     @Override
-    public void prepareBot(UT2004Bot bot) throws PogamutException {
+    public void prepareBot(@SuppressWarnings("rawtypes") UT2004Bot bot) throws PogamutException {
         super.prepareBot(bot);
     }
 
@@ -141,7 +141,8 @@ public class HumanRetraceBot extends BaseBot {
         lastTime = levelTime;
     }
 
-    public static void main(String args[]) throws PogamutException {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void main(String args[]) throws PogamutException {
         new UT2004BotRunner(HumanRetraceBot.class, "HumanRetraceBot").setMain(true).startAgent();
     }
 }

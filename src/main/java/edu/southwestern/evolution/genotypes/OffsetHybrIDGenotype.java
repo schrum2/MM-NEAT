@@ -12,6 +12,7 @@ import edu.southwestern.util.datastructures.Pair;
 
 public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 
+	private static final long serialVersionUID = -5225778407949434613L;
 	RealValuedGenotype rvg;
 
 	/**

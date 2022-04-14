@@ -8,6 +8,8 @@ import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.util.datastructures.Pair;
 
 public class NormalizedNodesHyperNEATCPPNGenotype extends HyperNEATCPPNGenotype{
+
+	private static final long serialVersionUID = 2981137241389828468L;
 	RealValuedGenotype gammaValues;
 	RealValuedGenotype betaValues;
 	int numInputNodes;

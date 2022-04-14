@@ -24,6 +24,8 @@ import edu.southwestern.util.datastructures.Triple;
  * @author Devon Fulcher
  */
 public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPNGenotype {
+
+	private static final long serialVersionUID = 6414177465555914122L;
 	// Describes the sequence of hidden layers. The input and output layers are still provided by the HyperNEATTask.
 	// List of triples that specifies each substrate with the index of each triple being its layer.
 	// Each triple looks like (width of layer, width of substrate, height of substrate)

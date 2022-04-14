@@ -3,10 +3,7 @@ package edu.southwestern.tasks.loderunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.SwingUtilities;
-
 import gvgai.tools.IO;
-import icecreamyou.LodeRunner.LodeRunner;
 
 /**
  * This class converts VGLC Lode Runner levels into JSON files 

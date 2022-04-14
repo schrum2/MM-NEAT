@@ -13,7 +13,6 @@ import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
-import wox.serial.Easy;
 
 public class Archive<T> {
 	

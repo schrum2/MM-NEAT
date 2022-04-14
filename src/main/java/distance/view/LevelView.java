@@ -15,7 +15,9 @@ import java.util.Random;
 
 public class LevelView extends JPanel {
 
-    public static void main(String[] args) {
+	private static final long serialVersionUID = -8493799749766860966L;
+
+	public static void main(String[] args) {
         int[][] randRect = randomRect(40, 25);
         showMaze(randRect, "Random Test of LevelView");
     }
