@@ -41,21 +41,21 @@ public class OriginalPicBreederGenomeLoader {
 		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, -1);
 		//System.out.println(tg);
 		// Now, load TWEANN structure from file
-		File inputFile = new File("data\\picbreeder\\originalGenomes\\5736_ShinyRedApple.xml"); // Crash from loop?
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4547_Face.xml"); // Crash from loop?
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4376_ButterflyColor.xml"); // Output loops back to hidden neuron
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\5736_ShinyRedApple.xml"); // works, wrong colors
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4547_Face.xml"); // PERFECT
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4376_ButterflyColor.xml"); // works, wrong colors
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\3674_Mystic.xml"); // Infinite loop?
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\3257_Quadravision.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\3257_Quadravision.xml"); // nothing connected to the output neurons???
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\2914_Firefly.xml"); // Infinite loop?
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\1009_ButterflyGreyscale.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\765_PlaneOnRunway.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\745_LetterG.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\576_Skull.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\542_GhostFaceSpooky.xml"); // Unsure: looks good
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\409_Moonlight.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\409_Moonlight.xml"); // weak image?
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\395_SpotlightCastingShadow.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\121_ShortSDCoif.xml"); // PERFECT
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4041_Doplhin.xml");
+		File inputFile = new File("data\\picbreeder\\originalGenomes\\4041_Doplhin.xml");  // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\simple.xml"); // PERFECT
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
