@@ -2050,14 +2050,15 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 	 */
 	public static void sortNodeGenesByLinkConnectivity(TWEANNGenotype tg) {
 		// First remove links from output layer to hidden layer (why do these exist?)
-		//    	Iterator<LinkGene> itr = tg.links.iterator();
-		//    	while(itr.hasNext()) {
-		//    		LinkGene lg = itr.next();
-		//    		if(tg.getNodeWithInnovation(lg.sourceInnovation).ntype == TWEANN.Node.NTYPE_OUTPUT && 
-		//    		   tg.getNodeWithInnovation(lg.targetInnovation).ntype == TWEANN.Node.NTYPE_HIDDEN) {
-		//    			itr.remove(); // No more cycle
-		//    		}
-		//    	}
+		Iterator<LinkGene> itr = tg.links.iterator();
+		while(itr.hasNext()) {
+			LinkGene lg = itr.next();
+			if(tg.getNodeWithInnovation(lg.sourceInnovation).ntype == TWEANN.Node.NTYPE_OUTPUT && 
+					tg.getNodeWithInnovation(lg.targetInnovation).ntype == TWEANN.Node.NTYPE_HIDDEN) {
+				//System.out.println("Removing link from output to hidden: "+lg);
+				itr.remove(); // No more cycle
+			}
+		}
 		// Key = target innovation number, value = set of innovation numbers for all source nodes with a link to this target
 		HashMap<Long, Set<Long>> incoming = new HashMap<>();
 		for(NodeGene n : tg.nodes) {
@@ -2068,6 +2069,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 			// Add innovation for each source neuron with a link to the target
 			incoming.get(lg.targetInnovation).add(lg.sourceInnovation);
 		}
+		
+		//System.out.println("DEBUG 596: "+incoming.get(596L));
 
 		ArrayList<NodeGene> newNodes = new ArrayList<>(tg.nodes.size());
 		LinkedList<NodeGene> noIncoming = new LinkedList<>();
@@ -2081,18 +2084,18 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 			//System.out.println("Consider: " + first);
 			// Don't add output neurons. They must be added at the end
 			//if(first.ntype != TWEANN.Node.NTYPE_OUTPUT) {
-			//System.out.println("Add newNodes: " + first);
+			//System.out.println("\tAdd newNodes: " + first);
 			newNodes.add(first); // Node appears at end of new node list
 			//}
 			for(LinkGene lg : tg.links) { // Bit inefficient
 				if(lg.sourceInnovation == first.innovation) { // A link from the node aded to the list
-					//System.out.println("Remove link: " + lg);
+					//System.out.println("\tRemove link: " + lg);
 					incoming.get(lg.targetInnovation).remove(lg.sourceInnovation); // Remove that link
 					if(incoming.get(lg.targetInnovation).isEmpty()) { // No more incoming links
 						// Add to noIncoming list
 						for(NodeGene ng : tg.nodes) {
 							if(ng.innovation == lg.targetInnovation && ng.ntype != TWEANN.Node.NTYPE_OUTPUT) {
-								//System.out.println("Add noIncoming: " + ng);
+								//System.out.println("\tAdd noIncoming: " + ng);
 								noIncoming.add(ng);
 								break;
 							}
@@ -2107,7 +2110,36 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 		}
 		// Replace nodes with sorted nodes
 		tg.nodes = newNodes;
+
+		// Loop through tg.links and remove any link whose source or target innovation number
+		// does not have a corresponding node in tg.nodes
+		itr = tg.links.iterator();
+		while(itr.hasNext()) {
+			LinkGene lg = itr.next();
+			NodeGene ngSource = getNodeGene(lg.sourceInnovation, tg.nodes);
+			NodeGene ngTarget = getNodeGene(lg.targetInnovation, tg.nodes);
+			if(ngSource == null || ngTarget == null) {
+				itr.remove(); // No more cycle
+			}
+		}
+		
 	}
+	
+	/**
+	 * Return given NodeGene in nodes list if it exists, or null otherwise
+	 * @param innovation Innovation number
+	 * @return NodeGene or null if absent
+	 */
+	public static NodeGene getNodeGene(long innovation, List<NodeGene> nodes) {
+		//this.nodes;
+		for(int i = 0; i < nodes.size(); i++) {
+			if(innovation == nodes.get(i).innovation) {
+				return nodes.get(i);
+			}
+		}
+		return null;
+	}
+	
 
 	/**
 	 * Indicates whether there is any path from one node gene to another.
