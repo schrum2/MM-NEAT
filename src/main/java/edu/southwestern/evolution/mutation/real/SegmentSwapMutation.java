@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.megaman.MegaManTrackSegmentType;
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -41,11 +43,15 @@ public class SegmentSwapMutation extends RealMutation {
 		switch(GANProcess.type) {
 		case MARIO:
 			this.segmentAmount = Parameters.parameters.integerParameter("marioGANLevelChunks");
-			this.auxVariableStartLocation = -1;
-			this.auxVariableEndLocation = -1;
+			// -1 because Mario has no aux variables
+			this.auxVariableStartLocation = -1; 
+			this.auxVariableEndLocation = -1; 
 			break;
 		case ZELDA:
-			throw new UnsupportedOperationException("figure this out later");
+			this.segmentAmount = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks")*Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
+			this.auxVariableStartLocation = 0;
+			this.auxVariableEndLocation = ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables()-1; // inclusive index 
+			break;
 		case MEGA_MAN:
 			this.segmentAmount = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 			this.auxVariableStartLocation = Parameters.parameters.integerParameter("megaManAuxVarsStart");

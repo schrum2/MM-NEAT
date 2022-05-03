@@ -241,8 +241,8 @@ public class Parameters {
 		integerOptions.add("GANInputSize", 32, "Latent vector input size for GAN level evolution");
 		integerOptions.add("marioGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MarioGAN");
 		integerOptions.add("megaManGANLevelChunks", 1, "Number of level segments to combine into one level when evolving MegaManGAN");
-		integerOptions.add("megaManAuxVarsStart", 0, "whether or not we're maximizing enemies");
-		integerOptions.add("megaManAuxVarsEnd", 3, "whether or not we're maximizing enemies");
+		integerOptions.add("megaManAuxVarsStart", 0, "whether or not we're maximizing enemies"); // Better as final constant than param?
+		integerOptions.add("megaManAuxVarsEnd", 3, "whether or not we're maximizing enemies"); // Better as final constant than param?
 		integerOptions.add("marioInputHeight", 3, "The height for a Mario input section");
 		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputStartY", -1, "The y coordinate offset for Mario inputs grid");

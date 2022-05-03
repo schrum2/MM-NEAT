@@ -43,18 +43,17 @@ public class ZeldaCPPNtoGANVectorMatrixBuilder implements ZeldaGANVectorMatrixBu
 	}
 	
 	/**
-	 * TODO
-	 * Sets a point in 2D space
-	 * creates a vector of inputs
-	 * sends that vector through the CPPN to get a latent vector
-	 * returns a latent vector to be passed into the GAN from the CPPN
+	 * Given a point in the 2D layout of the dungeon, feed coordinates to the CPPN to
+	 * produce outputs. Those outputs consists of both the latent inputs to the GAN,
+	 * and the non-latent auxiliary variables.
+	 * 
 	 * @param width the width of a map/level
 	 * @param height the height of a map/level
 	 * @param x x coordinate
 	 * @param y y coordinate
 	 * @param inputMultipliers Can remove inputs with 0 values, or include them with values of 1
 	 * @param cppn the cppn
-	 * @return vector the latent vector
+	 * @return CPPN outputs consisting of latent GAN inputs and auxiliary (non-latent) variables
 	 */
 	public static double[] latentVectorAndMiscDataForPosition(int width, int height, int x, int y, double[] inputMultipliers, Network cppn) {
 		ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), width, height); // sets a point in 2D space 
