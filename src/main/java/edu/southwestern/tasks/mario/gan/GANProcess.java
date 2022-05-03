@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerGANUtil;
 import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.util.MiscUtil;
@@ -56,7 +57,7 @@ public class GANProcess extends Comm {
 		case MARIO:
 			return Parameters.parameters.integerParameter("GANInputSize");
 		case ZELDA:
-			throw new UnsupportedOperationException("FIX THIS, HOW MANY AUX VARIABLES FOR ZELDA");
+			return Parameters.parameters.integerParameter("GANInputSize")+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables();
 		case LODE_RUNNER:
 			return Parameters.parameters.integerParameter("GANInputSize");
 		case MEGA_MAN:
