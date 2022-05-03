@@ -131,11 +131,11 @@ public class LevelTraversalPathBinLabelsTest {
 		HashMap<String, Object> behaviorMap = new HashMap<String, Object>();
 		behaviorMap.put("Level Path", mostRecentVisited);
 		
-		// view dungeon graphically to confirm
+//		// view dungeon graphically to confirm
 //		DungeonUtil.viewDungeon(dungeon, mostRecentVisited, solutionPath);
 //		//DrawingPanel childPanel = GraphicsUtil.drawImage(image, "output", image.getWidth(), image.getHeight());
 //		//childPanel.setLocation(200, 0);
-//		MiscUtil.CONSOLE.next();
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 //		//childPanel.dispose();
 		
 		return behaviorMap;
