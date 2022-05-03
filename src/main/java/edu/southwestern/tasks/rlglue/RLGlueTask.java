@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.rlcommunity.rlglue.codec.LocalGlue;
 import org.rlcommunity.rlglue.codec.RLGlue;
+import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -12,6 +13,7 @@ import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.rlglue.featureextractors.FeatureExtractor;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Pair;
 
@@ -26,7 +28,10 @@ import edu.southwestern.util.datastructures.Pair;
  */
 public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask {
 
-	protected static RLGlueEnvironment environment;
+	public static RLGlueEnvironment environment;
+	public static TaskSpec tso;
+	public static FeatureExtractor rlGlueExtractor;
+
 	@SuppressWarnings("rawtypes") // Needs static access, and type T isn't known yet
 	public static RLGlueAgent agent;
 	protected int[] rlNumSteps;
@@ -40,7 +45,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 	 * MMNEAT.rlGlueEnvironment that it needs as a parameter
 	 */
 	public RLGlueTask() {
-		this(MMNEAT.rlGlueEnvironment);
+		this(setupRLGlue());
 	}
 
 	/**
@@ -65,6 +70,25 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 		}
 		// The local glue codec does not need any network connectivity
 		RLGlue.setGlue(new LocalGlue(environment, agent));
+	}
+
+	public static RLGlueEnvironment setupRLGlue() {
+		// RL-Glue environment, if RL-Glue is being used
+		try {
+			environment = (RLGlueEnvironment) ClassCreation.createObject("rlGlueEnvironment");
+			if (environment != null) {
+				System.out.println("Define RL-Glue Task Spec");
+				tso = environment.makeTaskSpec();
+				rlGlueExtractor = (FeatureExtractor) ClassCreation.createObject("rlGlueExtractor");
+			}
+			return environment;
+		} catch (NoSuchMethodException e) {
+			System.out.println("RL Glue environment or extractor not properly specified.");
+			System.out.println("Environment: " + environment);
+			System.out.println("Extractor: " + rlGlueExtractor);
+			System.exit(1);
+		}
+		return null;
 	}
 
 	/**
@@ -162,7 +186,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 	 */
 	@Override
 	public String[] sensorLabels() {
-		return MMNEAT.rlGlueExtractor.featureLabels();
+		return rlGlueExtractor.featureLabels();
 	}
 
 	/**
@@ -178,5 +202,10 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 			labels[i] = "Action " + i; // There is a distinct label for each action
 		}
 		return labels;
+	}
+
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(RLGlueTask.rlGlueExtractor.numFeatures(), RLGlueTask.agent.getNumberOutputs());
 	}
 }

@@ -18,6 +18,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.random.RandomNumbers;
 import wox.serial.Easy;
@@ -193,7 +194,7 @@ public abstract class GroupTask implements MultiplePopulationTask {
 				}
 				// save all of the best objectives for this population
 				for (int j = 0; j < bestObjectives[i].length; j++) {
-					Easy.save(bestGenotypes[i][j], bestDir + "/" + filePrefix + "bestIn" + j + ".xml");
+					Serialization.save(bestGenotypes[i][j], bestDir + "/" + filePrefix + "bestIn" + j);
 					FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "score" + j + ".txt", bestScores[i][j].toString());
 				}
 			}

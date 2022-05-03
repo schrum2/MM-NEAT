@@ -4,11 +4,15 @@ import edu.southwestern.evolution.Organism;
 import edu.southwestern.evolution.fitness.FitnessFunction;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.scores.MultiObjectiveScore;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
+import edu.southwestern.util.ClassCreation;
+
 import java.util.ArrayList;
 
 /**
@@ -19,12 +23,13 @@ import java.util.ArrayList;
  *
  * @author Jacob Schrum
  */
-public class MultipleFunctionOptimization extends LonerTask<ArrayList<Double>> {
+public class MultipleFunctionOptimization extends LonerTask<ArrayList<Double>> implements BoundedTask {
 
 	@SuppressWarnings("rawtypes")
 	FitnessFunction[] functions;
 	double sign;
 	OptimizationDisplay display;
+	private static FunctionOptimizationSet fos;
 	/**
 	 * Used to make sure that only parent point updates are shown *
 	 */
@@ -97,4 +102,34 @@ public class MultipleFunctionOptimization extends LonerTask<ArrayList<Double>> {
 	public double getTimeStamp() {
 		return 0;
 	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return fos.getUpperBounds();
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return fos.getLowerBounds();
+	}
+	
+	protected static FunctionOptimizationSet setupFunctionOptimization() {
+		// Function minimization benchmarks, if they are used
+		try {
+			fos = (FunctionOptimizationSet) ClassCreation.createObject("fos");
+		} catch (NoSuchMethodException e) {
+			System.out.println("Could not initialized Function Optimization Set. Undefined?");
+			System.exit(1);
+		}
+		if (Parameters.parameters.booleanParameter("lengthDependentMutationRate") && fos != null) {
+			Parameters.parameters.setDouble("realMutateRate", 1.0 / fos.getLowerBounds().length);
+		}
+		return fos;
+	}
+
+	@Override
+	public void postConstructionInitialization() {
+		// Nothing needed
+	}
+
 }

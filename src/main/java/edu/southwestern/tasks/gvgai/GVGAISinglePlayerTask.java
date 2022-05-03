@@ -194,4 +194,9 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 	public void flushSubstrateMemory() {
 		// Does nothing: This task does not cache substrate information
 	}
+
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(sensorLabels().length, outputLabels().length);
+	}
 }

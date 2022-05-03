@@ -31,6 +31,9 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.export.JsonLevelGenerationTask;
+import edu.southwestern.tasks.interactive.mario.MarioCPPNtoGANLevelBreederTask;
+import edu.southwestern.tasks.interactive.mario.MarioLevelBreederTask;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.level.LevelParser;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
 import edu.southwestern.tasks.mario.level.MarioState;
@@ -421,6 +424,8 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements Jso
 			HashSet<MarioState> mostRecentVisited = null;
 			ArrayList<MarioAction> actionSequence = null;
 			try{
+				// TODO: Somehow extract/recreate the sequence of locations from the search
+				
 				actionSequence = ((AStarSearch<MarioAction, MarioState>) search).search(start, true, Parameters.parameters.integerParameter("aStarSearchBudget"));
 				if(actionSequence == null) {
 					fitnesses.add(-1.0); // failed search 				
@@ -583,6 +588,18 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements Jso
 			total += Math.abs(levelStats.get(i-1)[statIndex] - levelStats.get(i)[statIndex]);
 		}
 		return total;
+	}
+	
+	@Override
+	public void postConstructionInitialization() {
+		GANProcess.type = GANProcess.GAN_TYPE.MARIO;
+		if(MMNEAT.task instanceof MarioCPPNtoGANLevelTask|| MMNEAT.task instanceof MarioCPPNOrDirectToGANLevelTask) {
+			// Evolving CPPNs that create latent vectors that are sent to a GAN
+			MMNEAT.setNNInputParameters(MarioCPPNtoGANLevelBreederTask.UPDATED_INPUTS.length, GANProcess.latentVectorLength());
+		} else {
+			// This line only matters for the CPPN version of the task, but doesn't hurt the GAN version, which does not evolve networks
+			MMNEAT.setNNInputParameters(MarioLevelBreederTask.INPUTS.length, MarioLevelBreederTask.OUTPUTS.length);
+		}
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {

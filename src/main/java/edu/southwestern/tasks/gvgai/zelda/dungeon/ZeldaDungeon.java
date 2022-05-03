@@ -47,7 +47,8 @@ import me.jakerg.rougelike.TileUtil;
 
 
 public abstract class ZeldaDungeon<T> {
-
+	
+	// Only used for visualization in this class
 	private static final int ZELDA_HEIGHT = (176/11)*16;//Parameters.parameters.integerParameter("zeldaImageHeight");
 	private static final int ZELDA_WIDTH = 176;//Parameters.parameters.integerParameter("zeldaImageWidth");\
 

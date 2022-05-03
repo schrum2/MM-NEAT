@@ -67,6 +67,7 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 		} else {
 			loaded = this.load(lastSavedDir);
 		}
+		assert this.population.size() > 0 : "Empty population";
 		// Immediate changes that can be made to the initial population
 		if (Parameters.parameters.booleanParameter("initMMD")) {
 			// Perform MMD on each member, but maintain common innovation numbers
@@ -282,7 +283,7 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 			if (!filename.equals("")) {
 				filename = filename + "/";
 			}
-			filename += prefix + i + ".xml";
+			filename += prefix + i;
 			// System.out.println("Saving " + population.get(i).getId());
 			saves.add(new SaveThread<Genotype<T>>(population.get(i), filename));
 		}

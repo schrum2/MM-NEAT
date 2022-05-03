@@ -15,6 +15,7 @@ import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.generalmappings.LatentVariablePartitionSumBinLabels;
+import edu.southwestern.evolution.mapelites.generalmappings.LevelTraversalPathBinLabels;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -25,6 +26,8 @@ import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaLevelUtil;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaState.GridAction;
+import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -280,6 +283,10 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 						behaviorMap.put("Solution Vector", latentVector);
 					}
 					
+					if (MMNEAT.getArchiveBinLabelsClass() instanceof LevelTraversalPathBinLabels) {
+						behaviorMap.put("Level Path", mostRecentVisited);
+					}
+					
 					int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
 					behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
 					
@@ -351,6 +358,15 @@ public abstract class ZeldaDungeonTask<T> extends LonerTask<T> {
 		Score<T> result = new Score<>(individual, scores, null, other);
 		result.assignMAPElitesBehaviorMapAndScore(behaviorMap);
 		return result;
+	}
+	
+	@Override
+	public void postConstructionInitialization() {
+		GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
+		if(MMNEAT.task instanceof ZeldaCPPNtoGANDungeonTask || MMNEAT.task instanceof ZeldaCPPNOrDirectToGANDungeonTask) {
+			// Evolving CPPNs that create latent vectors that are sent to a GAN
+			MMNEAT.setNNInputParameters(ZeldaCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
+		}
 	}
 	
 	/**

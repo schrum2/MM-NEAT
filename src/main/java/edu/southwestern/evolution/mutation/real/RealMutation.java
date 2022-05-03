@@ -23,6 +23,14 @@ public abstract class RealMutation extends Mutation<ArrayList<Double>> {
 		this.rate = Parameters.parameters.doubleParameter("realMutateRate");
 	}
 
+	protected RealMutation(String paramLabel) {
+		this(Parameters.parameters.doubleParameter(paramLabel));
+	}
+	
+	protected RealMutation(double rate) {
+		this.rate = rate;
+	}
+	
 	/*
 	 * Each index is checked to see if mutation should be performed
 	 */

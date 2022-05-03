@@ -8,8 +8,6 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
-
 import edu.southwestern.data.ResultSummaryUtilities;
 import edu.southwestern.evolution.EA;
 import edu.southwestern.evolution.EvolutionaryHistory;
@@ -39,10 +37,7 @@ import edu.southwestern.log.EvalLog;
 import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.log.PerformanceLog;
 import edu.southwestern.networks.ActivationFunctions;
-import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.hyperneat.Bottom1DSubstrateMapping;
-import edu.southwestern.networks.hyperneat.HyperNEATDummyTask;
-import edu.southwestern.networks.hyperneat.HyperNEATSpeedTask;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.SubstrateCoordinateMapping;
@@ -53,82 +48,22 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.MultiplePopulationTask;
 import edu.southwestern.tasks.Task;
+import edu.southwestern.tasks.extendedPicbreeder.PictureEvolutionTask;
 import edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask;
-import edu.southwestern.tasks.gridTorus.GroupTorusPredPreyTask;
-import edu.southwestern.tasks.gridTorus.NNTorusPredPreyController;
-import edu.southwestern.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
-import edu.southwestern.tasks.gridTorus.TorusPredPreyTask;
-import edu.southwestern.tasks.gridTorus.competitive.CompetitiveHomogeneousPredatorsVsPreyTask;
-import edu.southwestern.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPreyTask;
-import edu.southwestern.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAndCooperativePredatorsVsPreyTask;
-import edu.southwestern.tasks.gvgai.GVGAISinglePlayerTask;
-import edu.southwestern.tasks.gvgai.zelda.ZeldaGANLevelTask;
-import edu.southwestern.tasks.gvgai.zelda.ZeldaLevelTask;
 import edu.southwestern.tasks.gvgai.zelda.study.HumanSubjectStudy2019Zelda;
-import edu.southwestern.tasks.innovationengines.PictureInnovationTask;
-import edu.southwestern.tasks.innovationengines.PictureTargetTask;
-import edu.southwestern.tasks.innovationengines.ShapeInnovationTask;
-import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
-import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
-import edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask;
-import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
-import edu.southwestern.tasks.interactive.gvgai.ZeldaGANLevelBreederTask;
-import edu.southwestern.tasks.interactive.loderunner.LodeRunnerGANLevelBreederTask;
-import edu.southwestern.tasks.interactive.mario.MarioCPPNtoGANLevelBreederTask;
-import edu.southwestern.tasks.interactive.mario.MarioGANLevelBreederTask;
-import edu.southwestern.tasks.interactive.mario.MarioLevelBreederTask;
-import edu.southwestern.tasks.interactive.megaman.MegaManCPPNtoGANLevelBreederTask;
-import edu.southwestern.tasks.interactive.megaman.MegaManGANLevelBreederTask;
-import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
-import edu.southwestern.tasks.loderunner.LodeRunnerGANLevelSequenceTask;
-import edu.southwestern.tasks.loderunner.LodeRunnerGANLevelTask;
-import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
-import edu.southwestern.tasks.mario.MarioCPPNOrDirectToGANLevelTask;
-import edu.southwestern.tasks.mario.MarioCPPNtoGANLevelTask;
-import edu.southwestern.tasks.mario.MarioGANLevelTask;
-import edu.southwestern.tasks.mario.MarioLevelTask;
-import edu.southwestern.tasks.mario.MarioTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
-import edu.southwestern.tasks.megaman.MegaManCPPNtoGANLevelTask;
-import edu.southwestern.tasks.megaman.MegaManGANLevelTask;
-import edu.southwestern.tasks.megaman.MegaManLevelTask;
-import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
 import edu.southwestern.tasks.motests.MultipleFunctionOptimization;
-import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
-import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.tasks.mspacman.facades.ExecutorFacade;
-import edu.southwestern.tasks.mspacman.init.MsPacManInitialization;
-import edu.southwestern.tasks.mspacman.multitask.MsPacManModeSelector;
-import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
-import edu.southwestern.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
-import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
-import edu.southwestern.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
-import edu.southwestern.tasks.mspacman.sensors.ghosts.mediators.GhostsCheckEachDirectionMediator;
-import edu.southwestern.tasks.pinball.PinballTask;
-import edu.southwestern.tasks.rlglue.RLGlueEnvironment;
-import edu.southwestern.tasks.rlglue.RLGlueTask;
-import edu.southwestern.tasks.rlglue.featureextractors.FeatureExtractor;
-import edu.southwestern.tasks.rlglue.init.RLGlueInitialization;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
-import edu.southwestern.tasks.testmatch.MatchDataTask;
-import edu.southwestern.tasks.testmatch.imagematch.ImageMatchTask;
-import edu.southwestern.tasks.ut2004.UT2004Task;
-import edu.southwestern.tasks.ut2004.UT2004Util;
 import edu.southwestern.tasks.ut2004.testing.HumanSubjectStudy2018TeammateServer;
-import edu.southwestern.tasks.zelda.ZeldaCPPNOrDirectToGANDungeonTask;
-import edu.southwestern.tasks.zelda.ZeldaCPPNtoGANDungeonTask;
-import edu.southwestern.tasks.zelda.ZeldaDungeonTask;
-import edu.southwestern.tasks.zelda.ZeldaGANDungeonTask;
-import edu.southwestern.tasks.zentangle.ZentangleTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.PopulationUtil;
-import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.Statistic;
 import oldpacman.Executor;
-import wox.serial.Easy;
 
 /**
  * Modular Multiobjective Neuro-Evolution of Augmenting Topologies.
@@ -140,17 +75,13 @@ import wox.serial.Easy;
  * @author Jacob Schrum
  */
 public class MMNEAT {
-
+	public static boolean multiPopulationCoevolution = false;
 	public static boolean seedExample = false;
 	public static int networkInputs = 0;
 	public static int networkOutputs = 0;
 	public static int modesToTrack = 0;
 	public static double[] lowerInputBounds;
-	public static double[] upperInputBounds;
-	// Real-valued bounds
-	public static double[] lower = null; // Lowest allowable value for each gene position
-	public static double[] upper = null; // Highest allowable value for each gene position
-	
+	public static double[] upperInputBounds;	
 	public static int[] discreteCeilings;
 	public static Experiment experiment;
 	public static Task task;
@@ -161,21 +92,13 @@ public class MMNEAT {
 	public static ArrayList<Genotype> genotypeExamples;
 	@SuppressWarnings("rawtypes") // can crossover any type, depending on command line
 	public static Crossover crossoverOperator;
-	public static FunctionOptimizationSet fos;
-	public static RLGlueEnvironment rlGlueEnvironment;
 	@SuppressWarnings("rawtypes") // depends on genotypes
 	public static ArrayList<Metaheuristic> metaheuristics;
 	public static ArrayList<ArrayList<String>> fitnessFunctions;
 	public static ArrayList<Statistic> aggregationOverrides;
-	public static TaskSpec tso;
-	public static FeatureExtractor rlGlueExtractor;
 	@SuppressWarnings("rawtypes") // applies to any population type
 	public static PerformanceLog performanceLog;
-	public static MsPacManControllerInputOutputMediator pacmanInputOutputMediator;
-	public static GhostControllerInputOutputMediator ghostsInputOutputMediator;
 	private static ArrayList<Integer> actualFitnessFunctions;
-	public static MsPacManModeSelector pacmanMultitaskScheme = null;
-	public static VariableDirectionBlock directionalSafetyFunction;
 	public static EvalLog evalReport = null;
 	public static RandomGenerator weightPerturber = null;
 	public static MMNEATLog ghostLocationsOnPowerPillEaten = null;
@@ -221,6 +144,7 @@ public class MMNEAT {
 			for (Metaheuristic m : metaheuristics) {
 				meta.add(m.getClass().getSimpleName());
 			}
+			assert actualFitnessFunctions != null : "Why is this null?";
 			result.addAll(actualFitnessFunctions.get(pop), meta);
 		}
 		return result;
@@ -242,14 +166,6 @@ public class MMNEAT {
 		// Crossover operator
 		if (Parameters.parameters.booleanParameter("mating")) {
 			crossoverOperator = (Crossover) ClassCreation.createObject("crossover");
-		}
-	}
-
-	private static void setupFunctionOptimization() throws NoSuchMethodException {
-		// Function minimization benchmarks, if they are used
-		fos = (FunctionOptimizationSet) ClassCreation.createObject("fos");
-		if (Parameters.parameters.booleanParameter("lengthDependentMutationRate") && fos != null) {
-			Parameters.parameters.setDouble("realMutateRate", 1.0 / fos.getLowerBounds().length);
 		}
 	}
 
@@ -437,8 +353,6 @@ public class MMNEAT {
 			weightPerturber = (RandomGenerator) ClassCreation.createObject("weightPerturber");
 
 			setupCrossover();
-			RLGlueInitialization.setupRLGlue();
-			setupFunctionOptimization();
 
 			// A task is always required
 			System.out.println("Set Task");
@@ -450,7 +364,7 @@ public class MMNEAT {
 			
 			task = (Task) ClassCreation.createObject("task");
 			System.out.println("Load task: " + task);
-			boolean multiPopulationCoevolution = false;
+			
 			// For all types of Ms Pac-Man tasks
 			if (Parameters.parameters.booleanParameter("scalePillsByGen")
 					&& Parameters.parameters.stringParameter("lastSavedDirectory").equals("")
@@ -476,205 +390,16 @@ public class MMNEAT {
 			if(Parameters.parameters.booleanParameter("hallOfFame")){
 				hallOfFame = new HallOfFame();
 			}
-			if(task instanceof MultipleFunctionOptimization) {
-				System.out.println("Setup Multiple Function Optimization");
-				// Already setup in setupFunctionOptimization();
-			} else if(task instanceof FunctionOptimizationTask) {
-					System.out.println("Setup Function Optimization");
-					// Anything to do?
-			} else if (task instanceof MsPacManTask) {
-				//TODO: Allow for evolution of ghost teams
-				if(Parameters.parameters.booleanParameter("evolveGhosts")){
-					System.out.println("we are evolving a ghost!");
-					ghostsInputOutputMediator = new GhostsCheckEachDirectionMediator();
-					setNNInputParameters(ghostsInputOutputMediator.numIn(), ghostsInputOutputMediator.numOut());
-				} else {
-					System.out.println("Setup Ms. Pac-Man Task");
-					pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
-					if (MMNEAT.pacmanInputOutputMediator instanceof VariableDirectionBlockLoadedInputOutputMediator) {
-						directionalSafetyFunction = (VariableDirectionBlock) ClassCreation.createObject("directionalSafetyFunction");
-					}
-					// Regular Check-Each-Direction networks
-					setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
-					MsPacManInitialization.setupMsPacmanParameters();
-					if (CommonConstants.multitaskModules > 1) {
-						pacmanMultitaskScheme = (MsPacManModeSelector) ClassCreation.createObject("pacmanMultitaskScheme");
-					}
-				}
-			} else if (task instanceof RLGlueTask) {
-				setNNInputParameters(rlGlueExtractor.numFeatures(), RLGlueTask.agent.getNumberOutputs());
-			} else if (task instanceof PinballTask) {
-				PinballTask temp = (PinballTask) task;
-				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
-			} else if (task instanceof GVGAISinglePlayerTask) {
-				GVGAISinglePlayerTask temp = (GVGAISinglePlayerTask) task;
-				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
-			} else if (task instanceof TorusPredPreyTask) {
-				System.out.println("Setup Torus Predator/Prey Task");
-				int numInputs = determineNumPredPreyInputs();
-				NetworkTask t = (NetworkTask) task;
-				setNNInputParameters(numInputs, t.outputLabels().length);
-			} else if (task instanceof CompetitiveHomogeneousPredatorsVsPreyTask || task instanceof CompetitiveAndCooperativePredatorsVsPreyTask) { // must appear before GroupTorusPredPreyTask
-				System.out.println("Setup Competitive Torus Predator/Prey Task");
-				multiPopulationCoevolution = true;
-				int numPredInputs = determineNumPredPreyInputs(true);
-				int numPreyInputs = determineNumPredPreyInputs(false);
-
-				int numPredOutputs = TorusPredPreyTask.outputLabels(true).length;
-				int numPreyOutputs = TorusPredPreyTask.outputLabels(false).length;
-
-				// Setup genotype early
-				if(task instanceof CompetitiveHomogeneousPredatorsVsPreyTask){
-					genotypeExamples = new ArrayList<Genotype>(2); // one pred pop, one prey pop
-				} else if(task instanceof CompetitiveAndCooperativePredatorsVsPreyTask){
-					genotypeExamples = new ArrayList<Genotype>(Parameters.parameters.integerParameter("torusPredators") + 
-							Parameters.parameters.integerParameter("torusPreys"));
-				}
-
-				// Is this valid for multiple populations?
-
-				// Setup pred population
-				setNNInputParameters(numPredInputs, numPredOutputs);
-				genotype = (Genotype) ClassCreation.createObject("genotype");
-				//add one for each pred if cooperative and competitive coevolution
-				if(task instanceof CompetitiveAndCooperativePredatorsVsPreyTask){ 
-					for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
-						Genotype temp = genotype.newInstance();
-						if(genotype instanceof TWEANNGenotype) {
-							((TWEANNGenotype) temp).archetypeIndex = i;
-						}
-						genotypeExamples.add(temp);
-					}
-				} else{ //just one pred pop
-					if(genotype instanceof TWEANNGenotype) {
-						((TWEANNGenotype) genotype).archetypeIndex = 0;
-					}
-					genotypeExamples.add(genotype.newInstance());
-				}
-
-				// Setup prey population
-				setNNInputParameters(numPreyInputs, numPreyOutputs);
-				genotype = (Genotype) ClassCreation.createObject("genotype");
-				if(genotype instanceof TWEANNGenotype) {
-					((TWEANNGenotype) genotype).archetypeIndex = 1;
-				}
-				//add one for each prey if cooperative and competitive coevolution
-				if(task instanceof CompetitiveAndCooperativePredatorsVsPreyTask){ 
-					for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
-						Genotype temp = genotype.newInstance();
-						if(genotype instanceof TWEANNGenotype) {
-							((TWEANNGenotype) temp).archetypeIndex = i + Parameters.parameters.integerParameter("torusPredators");
-						}
-						genotypeExamples.add(temp);
-					}
-				} else{ //just one prey pop
-					if(genotype instanceof TWEANNGenotype) {
-						((TWEANNGenotype) genotype).archetypeIndex = 1;
-					}
-					genotypeExamples.add(genotype.newInstance());
-				}
-
-				prepareCoevolutionArchetypes();
-			} else if (task instanceof GroupTorusPredPreyTask) { // Technically, the competitive task also overrides this
-				System.out.println("Setup Cooperative Torus Predator/Prey Task");
-				multiPopulationCoevolution = true;
-				int numInputs = determineNumPredPreyInputs();
-				NetworkTask t = (NetworkTask) task;
-				setNNInputParameters(numInputs, t.outputLabels().length);
-				// Setup genotype early
-				genotype = (Genotype) ClassCreation.createObject("genotype");
-				int numAgents = (task instanceof CooperativePredatorsVsStaticPreyTask) ? Parameters.parameters.integerParameter("torusPredators") : Parameters.parameters.integerParameter("torusPreys");
-				System.out.println("There will be " + numAgents + " evolved agents");
-				genotypeExamples = new ArrayList<Genotype>(numAgents);
-				for(int i = 0; i < numAgents; i++) {
-					if(genotype instanceof TWEANNGenotype) {
-						((TWEANNGenotype) genotype).archetypeIndex = i;
-					}
-					genotypeExamples.add(genotype.newInstance());
-				}
-				prepareCoevolutionArchetypes();
-			} else if (task instanceof UT2004Task) {
-				if(Parameters.parameters.booleanParameter("overwriteGameBots")) {
-					if(Parameters.parameters.booleanParameter("botprizeMod")) {
-						UT2004Util.copyBotPrizeVersionOfGameBots();
-					} else {
-						UT2004Util.copyDefaultVersionOfGameBots();
-					}
-				}
-				System.out.println("Setup UT2004 Task");
-				UT2004Task utTask = (UT2004Task) task;
-				setNNInputParameters(utTask.sensorModel.numberOfSensors(), utTask.outputModel.numberOfOutputs());
-			} else if (task instanceof MatchDataTask) {
-				System.out.println("Setup Match Data Task");
-				MatchDataTask t = (MatchDataTask) task;
-				setNNInputParameters(t.numInputs(), t.numOutputs());
-			} else if(task instanceof InteractiveEvolutionTask) {
-				System.out.println("set up Interactive Evolution Task");
-				InteractiveEvolutionTask temp = (InteractiveEvolutionTask) task;
-				// Since these tasks use real-vector genotypes, to not set the NN params
-				//if(!(temp instanceof MarioGANLevelBreederTask) && !(temp instanceof ZeldaGANLevelBreederTask)) setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
-				if(!(temp instanceof InteractiveGANLevelEvolutionTask)) setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
-			} else if (task instanceof ZentangleTask) {
-				System.out.println("Setup Zentangle Task");
-				ZentangleTask t = (ZentangleTask) task;
-				setNNInputParameters(t.numInputs(), t.numOutputs());
-			} else if(task instanceof PictureInnovationTask) {
-				System.out.println("set up Innovation Engine Task");
-				PictureInnovationTask temp = (PictureInnovationTask) task;
-				setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
-			} else if(task instanceof ShapeInnovationTask) {
-				System.out.println("set up Innovation Engine Task");
-				ShapeInnovationTask temp = (ShapeInnovationTask) task;
-				setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
-			} else if(task instanceof PictureTargetTask) {
-				System.out.println("set up Picture Target Task");
-				PictureTargetTask temp = (PictureTargetTask) task;
-				setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
-			} else if (task instanceof MarioTask) {
-				setNNInputParameters(((Parameters.parameters.integerParameter("marioInputWidth") * Parameters.parameters.integerParameter("marioInputHeight")) * 2) + 1, MarioTask.MARIO_OUTPUTS); //hard coded for now, 5 button outputs
-				System.out.println("Set up Mario Task");
-			} else if (task instanceof MarioLevelTask) {
-				GANProcess.type = GANProcess.GAN_TYPE.MARIO;
-				if(task instanceof MarioCPPNtoGANLevelTask|| task instanceof MarioCPPNOrDirectToGANLevelTask) {
-					// Evolving CPPNs that create latent vectors that are sent to a GAN
-					setNNInputParameters(MarioCPPNtoGANLevelBreederTask.UPDATED_INPUTS.length, GANProcess.latentVectorLength());
-				} else {
-					// This line only matters for the CPPN version of the task, but doesn't hurt the GAN version, which does not evolve networks
-					setNNInputParameters(MarioLevelBreederTask.INPUTS.length, MarioLevelBreederTask.OUTPUTS.length);
-				}
-				System.out.println("Set up Mario Level Task");
-			} else if (task instanceof ZeldaDungeonTask) { // Full dungeons using the Rogue-like engine
-				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
-				if(task instanceof ZeldaCPPNtoGANDungeonTask || task instanceof ZeldaCPPNOrDirectToGANDungeonTask) {
-					// Evolving CPPNs that create latent vectors that are sent to a GAN
-					setNNInputParameters(ZeldaCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, GANProcess.latentVectorLength()+ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables());
-				}
-			} else if (task instanceof ZeldaLevelTask){ // For evolving Zelda levels in GVG-AI ... not well developed
-				GANProcess.type = GANProcess.GAN_TYPE.ZELDA;
-				System.out.println("Set up Zelda Level Task");
-			} else if (task instanceof MegaManLevelTask){
-				GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
-				// Ok to set the CPPN input parameters even if they are not used
-				setNNInputParameters(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length, MegaManCPPNtoGANLevelBreederTask.staticNumCPPNOutputs());
-				System.out.println("Set up Mega Man Task");
-			} else if(task instanceof LodeRunnerLevelTask) {
-				GANProcess.type = GANProcess.GAN_TYPE.LODE_RUNNER;
-				System.out.println("Set up Lode Runner Task");
-			} else if(task instanceof HyperNEATDummyTask) {
-				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
-			} else if(task instanceof HyperNEATSpeedTask) {
-				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
-			} else if (task == null) {
+			if (task == null) {
 				// this else statement should only happen for JUnit testing cases.
 				// Some default network setup is needed.
 				System.out.println("No task defined! It is assumed that this is part of a JUnit test.");
 				setNNInputParameters(5, 3);
 			} else {
-				System.out.println("A valid task must be specified!");
-				System.out.println(task);
-				System.exit(1);
+				System.out.println("Setup "+task.getClass().getName());
+				task.postConstructionInitialization();
 			}
-
+			
 			// Only loads if settings indicate that this should be used
 			ScoreHistory.load();
 
@@ -714,7 +439,7 @@ public class MMNEAT {
 			} else {
 				// Copy assures a fresh genotype id
 				System.out.println("Loading seed genotype: " + seedGenotype);
-				genotype = ((Genotype) Easy.load(seedGenotype)).copy();
+				genotype = ((Genotype) Serialization.load(seedGenotype)).copy();
 				// System.out.println(genotype);
 				seedExample = true;
 			}
@@ -778,33 +503,10 @@ public class MMNEAT {
 	}
 
 	/**
-	 * Finds the number of inputs for the predPrey task, which is based on the
-	 * type of agent that is being evolved's sensor inputs defined in its
-	 * controller This has to be done to prevent a null pointer exception when
-	 * first getting the sensor labels/number of sensors
-	 * 
-	 * @return numInputs
-	 */
-	private static int determineNumPredPreyInputs() {
-		//this is probably covering all the cases, but this must cover all cases for all types
-		//of predators tasks. 
-		boolean isPredator = task instanceof TorusEvolvedPredatorsVsStaticPreyTask || 
-				task instanceof CooperativePredatorsVsStaticPreyTask;
-		return determineNumPredPreyInputs(isPredator);
-	}
-
-	private static int determineNumPredPreyInputs(boolean isPredator) {
-		NNTorusPredPreyController temp = new NNTorusPredPreyController(null, isPredator);
-		return temp.getNumInputs();
-	}
-
-	/**
 	 * Resets the classes used in MMNEAT and and sets them to null.
 	 */
 	public static void clearClasses() {
-		rlGlueEnvironment = null;
 		task = null;
-		fos = null;
 		metaheuristics = null;
 		fitnessFunctions = null;
 		aggregationOverrides = null;
@@ -812,8 +514,6 @@ public class MMNEAT {
 		genotype = null;
 		experiment = null;
 		performanceLog = null;
-		lower = null;
-		upper = null;
 		EvolutionaryHistory.archetypes = null;
 		Executor.close();
 	}
@@ -1121,81 +821,5 @@ public class MMNEAT {
 	public static <T> void logPerformanceInformation(ArrayList<Score<T>> combined, int generation) {
 		if (performanceLog != null)
 			performanceLog.log(combined, generation);
-	}
-
-	/**
-	 * This method only applies to bounded real-valued genotypes.
-	 * Bounded real-valued genotypes are currently only used in two types of domains.
-	 * @return
-	 */
-	public static double[] getLowerBounds() {
-		if(lower != null) return lower;
-		// Function Optimization Tasks use these genotypes and know their lower bounds
-		if(fos != null) 
-			lower = fos.getLowerBounds();
-		else if(task instanceof ShapeInnovationTask) 
-			lower = new double[]{0,0,0,0,0}; // Background color (first three) and pitch, heading
-		else if(task instanceof ImageMatchTask || task instanceof PictureTargetTask || task instanceof PicbreederTask || task instanceof AnimationBreederTask) 
-			lower = new double[] {0.1, 0, -Parameters.parameters.doubleParameter("imageCenterTranslationRange"), -Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
-		else if(task instanceof FunctionOptimizationTask) 
-			lower = ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foLowerBounds")); 
-		// For Mario GAN, the latent vector length determines the size, but the lower bounds are all zero
-		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask|| task instanceof MarioCPPNOrDirectToGANLevelTask) 
-			lower = ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all -1
-		// Similar for ZeldaGAN
-		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) 
-			lower = ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength()); // all -1
-		else if(task instanceof ZeldaGANDungeonTask) 
-			lower = ArrayUtil.doubleNegativeOnes(ZeldaGANDungeonTask.genomeLength()); // all -1
-		else if(task instanceof ZeldaCPPNOrDirectToGANDungeonTask) 
-			lower = ArrayUtil.doubleNegativeOnes(ZeldaGANDungeonTask.genomeLength()); // all -1
-		else if(task instanceof LodeRunnerGANLevelBreederTask || task instanceof LodeRunnerGANLevelTask) 
-			lower = ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength());
-		else if(task instanceof LodeRunnerGANLevelSequenceTask) 
-			lower = ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")); 
-		else if(task instanceof MegaManGANLevelBreederTask || task instanceof MegaManGANLevelTask || task instanceof MegaManCPPNtoGANLevelBreederTask|| task instanceof MegaManCPPNtoGANLevelTask) 
-			lower = ArrayUtil.doubleNegativeOnes((Parameters.parameters.integerParameter("GANInputSize") + MegaManGANGenerator.numberOfAuxiliaryVariables()) * Parameters.parameters.integerParameter("megaManGANLevelChunks"));
-		else {
-			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda/LodeRuner/MegaMan GAN");
-		}
-		
-		return lower;
-	}
-
-	/**
-	 * Similar to the lower bounds method above. Only used
-	 * for two domains, currently.
-	 * @return
-	 */
-	public static double[] getUpperBounds() {
-		if(upper != null) return upper;
-		
-		if(fos != null) 
-			upper = fos.getUpperBounds();
-		else if(task instanceof ShapeInnovationTask) 
-			upper = new double[]{1,1,1,1,1}; // Background color (first three) and pitch, heading
-		else if(task instanceof ImageMatchTask || task instanceof PictureTargetTask || task instanceof PicbreederTask || task instanceof AnimationBreederTask) 
-			upper = new double[] {Parameters.parameters.doubleParameter("maxScale"), 2*Math.PI, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
-		else if(task instanceof FunctionOptimizationTask) 
-			upper = ArrayUtil.doubleSpecified(Parameters.parameters.integerParameter("foVectorLength"), Parameters.parameters.doubleParameter("foUpperBounds")); 
-		else if(task instanceof MarioGANLevelTask || task instanceof MarioGANLevelBreederTask||task instanceof MarioCPPNOrDirectToGANLevelTask) 
-			upper = ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
-		else if(task instanceof ZeldaGANLevelBreederTask || task instanceof ZeldaGANLevelTask) 
-			upper = ArrayUtil.doubleOnes(GANProcess.latentVectorLength()); // all ones
-		else if(task instanceof ZeldaGANDungeonTask) 
-			upper = ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones
-		else if(task instanceof ZeldaCPPNOrDirectToGANDungeonTask) 
-			upper = ArrayUtil.doubleOnes(ZeldaGANDungeonTask.genomeLength()); // all ones
-		else if(task instanceof LodeRunnerGANLevelBreederTask || task instanceof LodeRunnerGANLevelTask) 
-			upper = ArrayUtil.doubleOnes(GANProcess.latentVectorLength());
-		else if(task instanceof LodeRunnerGANLevelSequenceTask) 
-			upper = ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("lodeRunnerNumOfLevelsInSequence")); 
-		else if(task instanceof MegaManGANLevelBreederTask || task instanceof MegaManGANLevelTask || task instanceof MegaManCPPNtoGANLevelBreederTask|| task instanceof MegaManCPPNtoGANLevelTask) 
-			upper = ArrayUtil.doubleOnes((Parameters.parameters.integerParameter("GANInputSize") + MegaManGANGenerator.numberOfAuxiliaryVariables()) * Parameters.parameters.integerParameter("megaManGANLevelChunks"));
-		else {
-			throw new IllegalArgumentException("BoundedRealValuedGenotypes only supported for Function Optimization and Mario/Zelda/LodeRunner/MegaMan GAN");
-		}
-		
-		return upper;
 	}
 }

@@ -1,6 +1,7 @@
 package edu.southwestern.evolution.crossover.real;
 
 import edu.southwestern.evolution.crossover.ArrayCrossover;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.util.datastructures.Pair;
@@ -17,7 +18,7 @@ public class SBX extends ArrayCrossover<Double> {
 	private final double[] lowerBounds;
 
 	public SBX() {
-		this(MMNEAT.fos.getLowerBounds(), MMNEAT.fos.getUpperBounds());
+		this(((BoundedTask) MMNEAT.task).getLowerBounds(), ((BoundedTask) MMNEAT.task).getUpperBounds());
 	}
 
 	public SBX(double[] upperBounds, double[] lowerBounds) {

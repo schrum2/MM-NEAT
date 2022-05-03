@@ -8,6 +8,7 @@ import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.Dungeon;
 import edu.southwestern.tasks.gvgai.zelda.dungeon.DungeonUtil;
 import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
@@ -15,7 +16,7 @@ import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
 @SuppressWarnings("rawtypes")
-public class ZeldaCPPNOrDirectToGANDungeonTask extends ZeldaDungeonTask {
+public class ZeldaCPPNOrDirectToGANDungeonTask extends ZeldaDungeonTask implements BoundedTask {
 
 	private int segmentLength;
 
@@ -54,6 +55,16 @@ public class ZeldaCPPNOrDirectToGANDungeonTask extends ZeldaDungeonTask {
 //		} catch (FileNotFoundException | NoSuchMethodException e) {
 //			e.printStackTrace();
 //		}
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return ZeldaGANDungeonTask.getStaticUpperBounds();
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return ZeldaGANDungeonTask.getStaticLowerBounds();
 	}
 
 }

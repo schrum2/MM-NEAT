@@ -8,6 +8,8 @@ import ch.idsia.tools.EvaluationInfo;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.BoundedTask;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.MarioGANUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
@@ -21,8 +23,11 @@ import edu.southwestern.util.datastructures.ArrayUtil;
  *
  * @param <T> real vector
  */
-public class MarioGANLevelTask extends MarioLevelTask<ArrayList<Double>> {
+public class MarioGANLevelTask extends MarioLevelTask<ArrayList<Double>> implements BoundedTask {
 
+	private static double[] lower;
+	private static double[] upper;
+	
 	// This is the length of one GAN level segment excluding starting and ending areas
 	public static final int BASE_LEVEL_LENGTH = 448;
 	// This is how much traversable area is added to the start and end of each level produced by the GAN
@@ -70,5 +75,25 @@ public class MarioGANLevelTask extends MarioLevelTask<ArrayList<Double>> {
 
 		// Trying to evolve to match a level target
 		MMNEAT.main("runNumber:0 randomSeed:0 marioGANLevelChunks:6 mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDistinctChunksNSAndDecorationBinLabels marioGANUsesOriginalEncoding:false marioGANModel:Mario1_Overworld_30_Epoch5000.pth GANInputSize:30 printFitness:true trials:1 mu:10 maxGens:500 io:false netio:false genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype mating:true fs:false task:edu.southwestern.tasks.mario.MarioGANLevelTask cleanFrequency:-1 saveAllChampions:false cleanOldNetworks:false logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:false marioProgressPlusJumpsFitness:false marioRandomFitness:false marioLevelMatchFitness:true".split(" "));
+	}
+
+	public static double[] getStaticUpperBounds() {
+		if(upper == null) upper = ArrayUtil.doubleOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all ones
+		return upper;
+	}
+
+	public static double[] getStaticLowerBounds() {
+		if(lower == null) lower = ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all -1
+		return lower;
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return getStaticUpperBounds();
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return getStaticLowerBounds();
 	}
 }

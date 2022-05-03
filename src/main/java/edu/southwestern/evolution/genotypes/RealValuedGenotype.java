@@ -7,7 +7,13 @@ import java.util.List;
 import org.apache.commons.lang3.ArrayUtils;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.mutation.real.PerturbMutation;
+import edu.southwestern.evolution.mutation.real.SegmentCopyMutation;
+import edu.southwestern.evolution.mutation.real.SegmentSwapMutation;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.BoundedTask;
+import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.random.RandomNumbers;
 
 /**
@@ -19,7 +25,7 @@ public class RealValuedGenotype extends NumericArrayGenotype<Double> {
 
 	public RealValuedGenotype() {
 		// Not using bounds themselves, but using length of bounds array to know how many variables are in solution vector
-		this(MMNEAT.getLowerBounds().length);
+		this(((BoundedTask) MMNEAT.task).getLowerBounds().length);
 	}
 	
 	/**
@@ -68,7 +74,25 @@ public class RealValuedGenotype extends NumericArrayGenotype<Double> {
 	 * Mutates genotype through perturbation
 	 */
 	public void mutate() {
-		new PerturbMutation(genes.size()).mutate(this);
+		if (RandomNumbers.randomGenerator.nextDouble() <= Parameters.parameters.doubleParameter("anyRealVectorModificationRate")) {
+			new PerturbMutation(genes.size()).mutate(this);
+		}
+		genotypeMutations();
+		
+	}
+	
+	/**
+	 * Executes mutations meant to be directly applied to the genotype
+	 */
+	protected void genotypeMutations() {
+		// Should probably be logging the mutations above too, but will worry about that later
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.getId()+" ");
+		if(GANProcess.type != null) { // Only use these mutations if using a GAN
+			new SegmentSwapMutation().go(this, sb);
+			new SegmentCopyMutation().go(this, sb);
+		}
+		EvolutionaryHistory.logMutationData(sb.toString());
 	}
 	
 	// Stores parent IDs for tacking lineage. Not serialized.

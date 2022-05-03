@@ -16,6 +16,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.graphics.Plot;
@@ -34,8 +35,6 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import wox.serial.Easy;
 
 /**
  * This complicated, clunky file is used to browse the lineage of an evolved
@@ -1263,7 +1262,7 @@ public class Offspring {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Genotype<? extends Network> getGenotype(String xml) {
-		return (Genotype<? extends Network>) Easy.load(xml);
+		return (Genotype<? extends Network>) Serialization.load(xml);
 	}
 
 	/**

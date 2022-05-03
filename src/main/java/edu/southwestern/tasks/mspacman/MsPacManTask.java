@@ -28,6 +28,7 @@ import edu.southwestern.tasks.mspacman.facades.ExecutorFacade;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.facades.GhostControllerFacade;
 import edu.southwestern.tasks.mspacman.facades.PacManControllerFacade;
+import edu.southwestern.tasks.mspacman.init.MsPacManInitialization;
 import edu.southwestern.tasks.mspacman.multitask.MsPacManModeSelector;
 import edu.southwestern.tasks.mspacman.objectives.AvoidDeadSpaceScore;
 import edu.southwestern.tasks.mspacman.objectives.ClearTimeScore;
@@ -53,6 +54,11 @@ import edu.southwestern.tasks.mspacman.objectives.RawTimeScore;
 import edu.southwestern.tasks.mspacman.objectives.RemainingLivesScore;
 import edu.southwestern.tasks.mspacman.objectives.SurvivalAndSpeedTimeScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeToEatAllGhostsScore;
+import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
+import edu.southwestern.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.ghosts.mediators.GhostsCheckEachDirectionMediator;
 import edu.southwestern.tasks.popacman.controllers.OldToNewPacManIntermediaryController;
 import edu.southwestern.tasks.popacman.ghosts.controllers.OldToNewGhostIntermediaryController;
 import edu.southwestern.util.ClassCreation;
@@ -81,6 +87,12 @@ import popacman.CustomExecutor;
  */
 public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements TUGTask, NetworkTask, HyperNEATTask {
 
+	// Global variables that used to be in the MMNEAT class
+	public static MsPacManControllerInputOutputMediator pacmanInputOutputMediator;
+	public static GhostControllerInputOutputMediator ghostsInputOutputMediator;
+	public static MsPacManModeSelector pacmanMultitaskScheme = null;
+	public static VariableDirectionBlock directionalSafetyFunction;
+	
 	// Approximate size of Ms. Pac-Man screen in terms of nodes
 	public static final int MS_PAC_MAN_NODE_WIDTH = 112;
 	public static final int MS_PAC_MAN_NODE_HEIGHT = 120;
@@ -640,12 +652,12 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 
 	@Override
 	public String[] sensorLabels() {
-		return MMNEAT.pacmanInputOutputMediator.sensorLabels();
+		return pacmanInputOutputMediator.sensorLabels();
 	}
 
 	@Override
 	public String[] outputLabels() {
-		return MMNEAT.pacmanInputOutputMediator.outputLabels();
+		return pacmanInputOutputMediator.outputLabels();
 	}
 
 	@Override
@@ -788,5 +800,31 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	@Override
 	public void flushSubstrateMemory() {
 		// Does nothing: This task does not cache substrate information
-	}	
-}
+	}
+
+	@Override
+	public void postConstructionInitialization() {
+		try {
+			//TODO: Allow for evolution of ghost teams
+			if(Parameters.parameters.booleanParameter("evolveGhosts")){
+				MsPacManTask.ghostsInputOutputMediator = new GhostsCheckEachDirectionMediator();
+				MMNEAT.setNNInputParameters(MsPacManTask.ghostsInputOutputMediator.numIn(), MsPacManTask.ghostsInputOutputMediator.numOut());
+			} else {
+				MsPacManTask.pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
+				if (MsPacManTask.pacmanInputOutputMediator instanceof VariableDirectionBlockLoadedInputOutputMediator) {
+					MsPacManTask.directionalSafetyFunction = (VariableDirectionBlock) ClassCreation.createObject("directionalSafetyFunction");
+				}
+				// Regular Check-Each-Direction networks
+				MMNEAT.setNNInputParameters(MsPacManTask.pacmanInputOutputMediator.numIn(), MsPacManTask.pacmanInputOutputMediator.numOut());
+				MsPacManInitialization.setupMsPacmanParameters();
+				if (CommonConstants.multitaskModules > 1) {
+					MsPacManTask.pacmanMultitaskScheme = (MsPacManModeSelector) ClassCreation.createObject("pacmanMultitaskScheme");
+				}
+			}
+		} catch (NoSuchMethodException e) {
+			System.out.println("Failure to initialize classes in MsPacManTask");
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+}	

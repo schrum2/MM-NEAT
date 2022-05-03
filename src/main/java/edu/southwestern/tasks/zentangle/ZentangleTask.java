@@ -12,6 +12,7 @@ import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.util.ClassCreation;
@@ -29,7 +30,7 @@ import edu.southwestern.evolution.SinglePopulationGenerationalEA;
  * @param <T>
  *            Phenotype must be a Network (Should be a CPPN)
  */
-public class ZentangleTask<T extends Network> extends LonerTask<T> implements NetworkTask {
+public class ZentangleTask<T extends Network> extends LonerTask<T> implements NetworkTask, BoundedTask {
 
 	private static final int IMAGE_PLACEMENT = 200;
 	private static final int ZENTANGLES_PER_GENERATION = 3; // Make command line param?
@@ -42,6 +43,7 @@ public class ZentangleTask<T extends Network> extends LonerTask<T> implements Ne
 	public ZentangleTask() {
 		try {
 			fitnessFunction = (ImageFitness) ClassCreation.createObject("imageFitness");
+			MMNEAT.registerFitnessFunction(fitnessFunction.getClass().getName());
 		} catch (NoSuchMethodException e) {
 			System.out.println("imageFitness not properly defined");
 			System.exit(1);
@@ -208,14 +210,18 @@ public class ZentangleTask<T extends Network> extends LonerTask<T> implements Ne
 	
 	public static void main(String[] args) {
 		// args[0] is the random seed
-		int seed = (int)(Math.random()*100);
+		int seed = 50; //(int)(Math.random()*100);
 		if (args.length == 1) {
 			seed = Integer.parseInt(args[0]);
 		}
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:16", "maxGens:50",
-					//"base:zentangles", "log:Zentangles-HalfBlack", "saveTo:HalfBlack",
-					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:true",
+					//"base:zentangles", "log:Zentangles-HB3C", "saveTo:HB3C",
+					
+					"base:zentangles", "log:Zentangles-EnhancedHB3C", "saveTo:EnhancedHB3C",
+					"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
+					
+					"io:true", "netio:true", "mating:true", "fs:false", "starkPicbreeder:true",
 					"task:edu.southwestern.tasks.zentangle.ZentangleTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"simplifiedInteractiveInterface:false", "recurrency:false", "saveAllChampions:true",
@@ -232,6 +238,33 @@ public class ZentangleTask<T extends Network> extends LonerTask<T> implements Ne
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}	
+	}
+
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(numInputs(), numOutputs());
+	}
+	
+	private static double[] lower;
+	private static double[] upper;
+	
+	public static double[] getStaticUpperBounds() {
+		if(upper == null) upper = new double[] {Parameters.parameters.doubleParameter("maxScale"), Parameters.parameters.booleanParameter("enhancedCPPNCanRotate") ? 2*Math.PI : 0.0, Parameters.parameters.doubleParameter("imageCenterTranslationRange"), Parameters.parameters.doubleParameter("imageCenterTranslationRange")};		
+		return upper;
+	}
+
+	public static double[] getStaticLowerBounds() {
+		if(lower == null) lower = new double[] {Parameters.parameters.doubleParameter("minScale"), 0, -Parameters.parameters.doubleParameter("imageCenterTranslationRange"), -Parameters.parameters.doubleParameter("imageCenterTranslationRange")};
+		return lower;
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return getStaticUpperBounds();
+	}
+
+	public double[] getLowerBounds() {
+		return getStaticLowerBounds();
 	}
 				
 }

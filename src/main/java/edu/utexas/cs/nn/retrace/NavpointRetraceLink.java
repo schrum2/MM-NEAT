@@ -7,8 +7,10 @@ import edu.utexas.cs.nn.Point;
  */
 public class NavpointRetraceLink {
 
-    private VoronoiRegion from;
-    private VoronoiRegion to;
+    @SuppressWarnings("unused")
+	private VoronoiRegion from;
+    @SuppressWarnings("unused")
+	private VoronoiRegion to;
     private PoseSequence path;
     private Point startingPoint;
     private Point endPoint;

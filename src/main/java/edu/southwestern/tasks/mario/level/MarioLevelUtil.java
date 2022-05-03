@@ -312,6 +312,11 @@ public class MarioLevelUtil {
         }
 		return levelWithParsedSegments;
 	}
+	
+	public static List<List<List<Integer>>> getSegmentsFromLevel(List<List<Integer>> oneLevel){
+		return getSegmentsFromLevel(oneLevel, 28);
+	}
+	
 	/**
 	 * Convert from String representation to list of lists
 	 * @param stringLevel
@@ -516,6 +521,23 @@ public class MarioLevelUtil {
    				
    			}
    			
+   			System.out.println(visualLine);
+   		}
+   	}
+   	
+   	public static void printSingleLevel(List<List<Integer>> level) {
+   		String visualLine;
+   		Set<Entry<Character, Integer>> tileset = LevelParser.tiles.entrySet();
+   		for (int i = 0; i < level.size(); i++) {
+   			visualLine = "";
+   			for (Integer integ : level.get(i)) {
+   				for (Entry<Character, Integer> e : tileset) {
+   					if (e.getValue() == integ) {
+   						visualLine += e.getKey();
+   					}
+   				}
+   				
+   			}
    			System.out.println(visualLine);
    		}
    	}

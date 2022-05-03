@@ -23,6 +23,7 @@ import edu.southwestern.networks.hyperneat.SubstrateConnectivity;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPreyTask;
 import edu.southwestern.tasks.gridTorus.objectives.GridTorusObjective;
 import edu.southwestern.tasks.gridTorus.objectives.PredatorCatchCloseObjective;
 import edu.southwestern.tasks.gridTorus.objectives.PredatorCatchCloseQuickObjective;
@@ -933,5 +934,33 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public void flushSubstrateMemory() {
 		substrateConnectivity = null;
 		substrateInformation = null;
+	}
+	
+	@Override
+	public void postConstructionInitialization() {
+		int numInputs = determineNumPredPreyInputs();
+		MMNEAT.setNNInputParameters(numInputs, outputLabels().length);
+	}
+
+	/**
+	 * Finds the number of inputs for the predPrey task, which is based on the
+	 * type of agent that is being evolved's sensor inputs defined in its
+	 * controller This has to be done to prevent a null pointer exception when
+	 * first getting the sensor labels/number of sensors
+	 * 
+	 * @return numInputs
+	 */
+	public static int determineNumPredPreyInputs() {
+		//this is probably covering all the cases, but this must cover all cases for all types
+		//of predators tasks. 
+		boolean isPredator = 
+				MMNEAT.task instanceof TorusEvolvedPredatorsVsStaticPreyTask || 
+				MMNEAT.task instanceof CooperativePredatorsVsStaticPreyTask;
+		return determineNumPredPreyInputs(isPredator);
+	}
+
+	public static int determineNumPredPreyInputs(boolean isPredator) {
+		NNTorusPredPreyController temp = new NNTorusPredPreyController(null, isPredator);
+		return temp.getNumInputs();
 	}
 }

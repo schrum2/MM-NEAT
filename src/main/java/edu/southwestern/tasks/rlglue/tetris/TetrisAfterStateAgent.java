@@ -18,6 +18,7 @@ import edu.southwestern.networks.dl4j.DL4JNetworkWrapper;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.RLGlueAgent;
+import edu.southwestern.tasks.rlglue.RLGlueTask;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
@@ -98,7 +99,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 			TetrisState tempState = observationToTetrisState(o);
 			// For TD: network inputs in the current state.
 			// Not used for decision making ... only for learning updates with backprop.
-			double[] inputsInS = MMNEAT.rlGlueExtractor.extract(tempState.get_observation(false));
+			double[] inputsInS = RLGlueTask.rlGlueExtractor.extract(tempState.get_observation(false));
 			
 			// System.out.println("Start state");
 			// System.out.println(tempState);
@@ -172,7 +173,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 			currentActionList.add(TetrisState.NONE); 
 		}
 
-		Action action = new Action(MMNEAT.tso.getNumDiscreteActionDims(), MMNEAT.tso.getNumContinuousActionDims()); 
+		Action action = new Action(RLGlueTask.tso.getNumDiscreteActionDims(), RLGlueTask.tso.getNumContinuousActionDims()); 
 		// Current action is next one in list
 		action.intArray[0] = currentActionList.get(0);
 		currentActionList.remove(0);
@@ -188,9 +189,9 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 	 */
 	private double valueOfState(TetrisState s) {
 		// Basic features
-		double[] inputs = MMNEAT.rlGlueExtractor.extract(s.get_observation(false));
+		double[] inputs = RLGlueTask.rlGlueExtractor.extract(s.get_observation(false));
 		// Scaled to range [0,1] for the neural network
-		double[] inputsScaled = MMNEAT.rlGlueExtractor.scaleInputs(inputs);
+		double[] inputsScaled = RLGlueTask.rlGlueExtractor.scaleInputs(inputs);
 		if(Parameters.parameters.booleanParameter("rememberObservations")) {
 			((RemembersObservations) MMNEAT.task).addObservation(inputsScaled);
 		}

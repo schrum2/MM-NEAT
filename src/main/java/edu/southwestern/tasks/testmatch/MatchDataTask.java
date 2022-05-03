@@ -157,4 +157,8 @@ public abstract class MatchDataTask<T extends Network> extends LonerTask<T> impl
 	 */
 	public abstract ArrayList<Pair<double[], double[]>> getTrainingPairs();
 
+	@Override
+	public void postConstructionInitialization() {
+		MMNEAT.setNNInputParameters(numInputs(), numOutputs());
+	}
 }

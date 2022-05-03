@@ -27,6 +27,7 @@ import edu.southwestern.util.util2D.Tuple2D;
  */
 public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
+	private static final long serialVersionUID = 3835485139248960787L;
 	// For each substrate layer pairing, there can be multiple output neurons in the CPPN
 	public static int numCPPNOutputsPerLayerPair = -1; // Set in MMNEAT
 	// Number of output neurons needed to designate bias values across all substrates

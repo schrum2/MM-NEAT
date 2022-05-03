@@ -1,7 +1,7 @@
 package edu.southwestern.tasks.mspacman.multitask;
 
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
@@ -22,7 +22,7 @@ public class NetworkModeSelector<T extends Network> extends MsPacManModeSelector
 	 *            network
 	 */
 	public NetworkModeSelector(T n) {
-		this(n, MMNEAT.pacmanInputOutputMediator);
+		this(n, MsPacManTask.pacmanInputOutputMediator);
 	}
 
 	/**

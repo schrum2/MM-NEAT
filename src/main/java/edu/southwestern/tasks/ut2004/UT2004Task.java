@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.ut2004;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -508,5 +509,23 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		System.out.println("Other Scores:" + Arrays.toString(otherScores));
 
 		return new Pair<double[], double[]>(fitnessScores, otherScores);
+	}
+	
+	@Override
+	public void postConstructionInitialization() {
+		try {
+			if(Parameters.parameters.booleanParameter("overwriteGameBots")) {
+				if(Parameters.parameters.booleanParameter("botprizeMod")) {
+					UT2004Util.copyBotPrizeVersionOfGameBots();
+				} else {
+					UT2004Util.copyDefaultVersionOfGameBots();
+				}
+			}
+		} catch(IOException e) {
+			System.out.println("Problem setting up GameBots");
+			e.printStackTrace();
+			System.exit(1);
+		}
+		MMNEAT.setNNInputParameters(sensorModel.numberOfSensors(), outputModel.numberOfOutputs());
 	}
 }
