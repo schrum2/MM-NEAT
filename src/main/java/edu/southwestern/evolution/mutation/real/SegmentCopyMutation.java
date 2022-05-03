@@ -1,6 +1,8 @@
 package edu.southwestern.evolution.mutation.real;
 
 import java.util.ArrayList;
+
+import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
@@ -35,7 +37,10 @@ public class SegmentCopyMutation extends RealMutation {
 			this.auxVariableEndLocation = -1;
 			break;
 		case ZELDA:
-			throw new UnsupportedOperationException("figure this out later");
+			this.segmentAmount = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks")*Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
+			this.auxVariableStartLocation = 0;
+			this.auxVariableEndLocation = ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables()-1; // inclusive index 
+			break;
 		case MEGA_MAN:
 			this.segmentAmount = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 			this.auxVariableStartLocation = Parameters.parameters.integerParameter("megaManAuxVarsStart");
