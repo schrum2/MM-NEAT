@@ -46,6 +46,10 @@ public class TWEANNGenotypeSerializationTest {
 	@After
 	public void tearDown() throws Exception {
 		MMNEAT.clearClasses();
+		File f = new File(ARCHETYPE_NAME+".xml");
+		if(f.exists()) {
+			f.delete();
+		}
 	}
 	
 	@Test 
