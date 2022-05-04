@@ -52,6 +52,11 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
 
+/**
+ * For evolving Mega Man levels interactively using a GAN.
+ * 
+ * @author Ben Capps
+ */
 public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 	public static final int LEVEL_MIN_CHUNKS = 1;
 	public static final int LEVEL_MAX_CHUNKS = 10;
@@ -61,14 +66,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	MegaManGANGenerator megaManGenerator;
 	MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
 
-	
+
 	//public static GANProcess ganProcessDown = null;
 	private boolean initializationComplete = false;
 	protected JSlider levelChunksSlider;
 	public MegaManGANLevelBreederTask() throws IllegalAccessException {
 		super(false);
 		//save button
-		
+
 		JPanel bottom = new JPanel();
 		bottom.setLayout(new BoxLayout(bottom, BoxLayout.Y_AXIS));
 
@@ -86,9 +91,9 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
 			launchMegaManMaker.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
 		}
-		
+
 		bottom.add(launchMegaManMaker);
-		
+
 		JButton save = new JButton("SaveMMLV");
 		save.setAlignmentX(Component.CENTER_ALIGNMENT);
 		// Name is first available numeric label after the input disablers
@@ -100,14 +105,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				saveLevel();
 			}
 		});
-		
+
 		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
 			save.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
 		}
-		
+
 		bottom.add(save);
-		
-		
+
+
 		//frame.add(bottom);
 		//topper.add(bottom);
 		JButton view = new JButton("View");
@@ -124,7 +129,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
 			view.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
 		}
-		
+
 		bottom.add(view);
 		top.add(bottom);
 
@@ -156,7 +161,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				// get value
 				JSlider source = (JSlider)e.getSource();
 				if(!source.getValueIsAdjusting()) {
-					
+
 					int oldValue = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 					int newValue = (int) source.getValue();
 					Parameters.parameters.setInteger("megaManGANLevelChunks", newValue);
@@ -165,7 +170,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 					if(oldValue != newValue) {
 						int oldLength = oldValue * (GANProcess.latentVectorLength()+MegaManGANGenerator.numberOfAuxiliaryVariables());
 						int newLength = newValue * (GANProcess.latentVectorLength()+MegaManGANGenerator.numberOfAuxiliaryVariables());
-				
+
 						resizeGenotypeVectors(oldLength, newLength);
 						resetButtons(true);
 
@@ -180,12 +185,12 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		}
 
 		initializationComplete = true;
-		
-		
+
+
 		//adds the ability to show the solution path
-		
+
 		JPanel effectsCheckboxes = new JPanel();
-		
+
 		JPanel aSTAR = new JPanel();
 		aSTAR.setLayout(new BoxLayout(aSTAR, BoxLayout.Y_AXIS));
 		JCheckBox showSolutionPath = new JCheckBox("ShowSolutionPath", Parameters.parameters.booleanParameter("interactiveMegaManAStarPaths"));
@@ -200,9 +205,9 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			}
 		});
 		aSTAR.add(showSolutionPath);
-		
+
 		//JTextField aStLb = new JTextField();
-		
+
 		JPanel AStarBudget = new JPanel();
 		AStarBudget.setLayout(new BoxLayout(AStarBudget, BoxLayout.Y_AXIS));
 
@@ -233,8 +238,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		//top.add(AStarBudget);
 		aSTAR.add(AStarBudget);
 		top.add(aSTAR);
-		
-		
+
+
 		JPanel platformAndBreak = new JPanel();
 		platformAndBreak.setLayout(new BoxLayout(platformAndBreak, BoxLayout.Y_AXIS));
 		JCheckBox allowLeftGeneration = new JCheckBox("AllowLeftGeneration", Parameters.parameters.booleanParameter("megaManAllowsLeftSegments"));
@@ -248,9 +253,9 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 					int oldLength = Parameters.parameters.integerParameter("megaManGANLevelChunks") * (GANProcess.latentVectorLength()+MegaManGANGenerator.numberOfAuxiliaryVariables());
 
 					Parameters.parameters.changeBoolean("megaManAllowsLeftSegments");
-					
+
 					int newLength = Parameters.parameters.integerParameter("megaManGANLevelChunks") * (GANProcess.latentVectorLength()+MegaManGANGenerator.numberOfAuxiliaryVariables());
-				
+
 					resizeGenotypeVectors(oldLength, newLength);
 					resetButtons(true);
 
@@ -259,13 +264,13 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 					if(allowLeftGeneration.isSelected()) changeTo=false;
 					allowLeftGeneration.setSelected(changeTo);
 				}
-				
+
 			}
 		});
 		platformAndBreak.add(allowLeftGeneration);
-		
-		
-		
+
+
+
 		JCheckBox allowPlatformGun = new JCheckBox("AllowPlatformGun", Parameters.parameters.booleanParameter("megaManAllowsPlatformGun"));
 		allowPlatformGun.setName("allowPlatformGun");
 		allowPlatformGun.getAccessibleContext();
@@ -278,8 +283,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		});
 		platformAndBreak.add(allowPlatformGun);
 
-		
-		
+
+
 		JCheckBox allowBlockBreaker = new JCheckBox("AllowBlockBreaker", Parameters.parameters.booleanParameter("megaManAllowsBlockBreaker"));
 		allowBlockBreaker.setName("allowBlockBreaker");
 		allowBlockBreaker.getAccessibleContext();
@@ -292,9 +297,9 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		});
 		platformAndBreak.add(allowBlockBreaker);
 		top.add(platformAndBreak);
-		
-		
-		
+
+
+
 		JPanel MultipleGANs = new JPanel();
 		MultipleGANs.setLayout(new BoxLayout(MultipleGANs, BoxLayout.Y_AXIS));
 		JButton fileLoadButton = new JButton();
@@ -310,14 +315,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				openGANModelPanel(modelName);
 			}
 
-			
-			
+
+
 		});
 		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
 			fileLoadButton.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
 		}
 		MultipleGANs.add(fileLoadButton);
-		
+
 		JButton fileLoadButton1 = new JButton();
 		fileLoadButton1.setAlignmentX(Component.CENTER_ALIGNMENT);
 		fileLoadButton1.setText("SetGANModelUp");
@@ -331,7 +336,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				openGANModelPanel(modelName);
 
 			}
-			
+
 		});
 		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
 			fileLoadButton1.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
@@ -350,15 +355,15 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				openGANModelPanel(modelName);
 
 			}
-			
+
 		});
-		
+
 		if(Parameters.parameters.booleanParameter("bigInteractiveButtons")) {
 			fileLoadButton2.setFont(new Font("Arial", Font.PLAIN, BIG_BUTTON_FONT_SIZE));
 		}
 		MultipleGANs.add(fileLoadButton2);
 		MultipleGANs.setVisible(false);
-//		top.add(MultipleGANs);
+		//		top.add(MultipleGANs);
 		//whether or not to use both GANs **NOTE** need to change initialization for when there are more tile types
 		JCheckBox useMultipleGANs = new JCheckBox("UseMultipleGANs", Parameters.parameters.booleanParameter("useMultipleGANsMegaMan"));
 		useMultipleGANs.setName("useMultipleGANsMegaMan");
@@ -370,11 +375,11 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				Parameters.parameters.changeBoolean("showInteractiveGANModelLoader");
 				top.getComponent(3).setVisible(Parameters.parameters.booleanParameter("showInteractiveGANModelLoader"));
 				if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) {
-					
+
 					GANProcess.terminateGANProcess();
-				
+
 					megaManGenerator = new MegaManSevenGANGenerator();
-				
+
 					MultipleGANs.setVisible(true);
 
 				}else {
@@ -383,26 +388,26 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 					MultipleGANs.setVisible(false);
 
 				}
-				
-				
+
+
 				resetButtons(true);
 			}
 		});
-		
+
 		effectsCheckboxes.add(useMultipleGANs);
 		top.add(effectsCheckboxes);
-		
-		
+
+
 		//if(!Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")){
-			
-			
-			
-		}
-		
-		//Ability to change A* budget
-		
-	
-	
+
+
+
+	}
+
+	//Ability to change A* budget
+
+
+
 	//}
 
 	@Override
@@ -413,7 +418,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
 		megaManGenerator = new MegaManOneGANGenerator();
 
-		
+
 	}
 	private void openGANModelPanel(String modelName) {
 		JFileChooser chooser = new JFileChooser();//used to get new file
@@ -456,14 +461,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		int megaManGANLevelChunks = Parameters.parameters.integerParameter("megaManGANLevelChunks");
 		int oldLength = megaManGANLevelChunks * GANProcess.latentVectorLength();
 		Parameters.parameters.setInteger("GANInputSize", 5); // Default latent vector size
-		
+
 		GANProcess.terminateGANProcess();
 		// Because Python process was terminated, latentVectorLength will reinitialize with the new params
 		int newLength = megaManGANLevelChunks * GANProcess.latentVectorLength(); // new model
 		return new Pair<>(oldLength,newLength);
 	}
-	
-	
+
+
 	@Override
 	/**
 	 * gets the GAN model directory
@@ -471,18 +476,18 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	public String getGANModelDirectory() {
 		return GANProcess.PYTHON_BASE_PATH+"MegaManGAN";
 	}
-	
+
 	public void viewLevel() {
 		ArrayList<Double> phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 		List<List<Integer>> level = levelListRepresentation(doubleArray);
-		 //Initializes the array that hold the tile images 
+		//Initializes the array that hold the tile images 
 		if(selectedItems.size() != 1) {
 			JOptionPane.showMessageDialog(null, "Select exactly one level to view.");
 			return; // Nothing to explore
 		}
 		try {
-//			List<List<List<Integer>>> levelInList = MegaManGANUtil.getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), doubleArray);
+			//			List<List<List<Integer>>> levelInList = MegaManGANUtil.getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), doubleArray);
 			int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
 			int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
 			BufferedImage levelImage = getStaticButtonImage(phenotype, width1, height1, level);
@@ -492,7 +497,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
 				MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
 			}
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} //puts the final rendered level into a buffered image
@@ -507,7 +512,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	public void saveLevel() {
 		File mmlvFilePath = new File("MegaManMakerLevelPath.txt"); //file containing the path
 
-		
+
 		Scanner scan;
 		//When the button is pushed, ask for the name input
 		try {
@@ -532,16 +537,16 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			//Files.copy(mmlvFile, mmlvFileFromEvolution); //copies over
 			//mmlvFile.delete(); //deletes MMNEAT file
 			JOptionPane.showMessageDialog(frame, "Level saved to: "+mmlvPath);
-			
-			
+
+
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
 			String errorMessage = "You need to create a local text file in the MMNEAT directory called \n MegaManMakerLevelPath.txt which contains the path to where MegaManMaker stores levels on your device. \n It will likely look like this: C:\\Users\\[Insert User Name]\\AppData\\Local\\MegaMaker\\Levels\\";
 			JOptionPane.showMessageDialog(frame, errorMessage);
 		}
-		
-		
+
+
 	}
 	@Override
 	//Will eventually launch megamanmaker
@@ -551,25 +556,25 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 
 	public static void launchMegaManStatic(JFrame frame) {
 		File mmlvFilePath = new File("MegaManMakerPath.txt"); //file containing the path
-//		if(selectedItems.size() != 1) {
-//			JOptionPane.showMessageDialog(null, "Save exactly one level to play.");
-//			return; // Nothing to explore
-//		}
-		
+		//		if(selectedItems.size() != 1) {
+		//			JOptionPane.showMessageDialog(null, "Save exactly one level to play.");
+		//			return; // Nothing to explore
+		//		}
+
 		Scanner scan;
 		//When the button is pushed, ask for the name input
 		try {
 			scan = new Scanner(mmlvFilePath);
-			
-			
+
+
 			String mmlvPath = scan.nextLine();
 			scan.close();
-			
+
 			Runtime runTime = Runtime.getRuntime();
 			@SuppressWarnings("unused")
 			Process process = runTime.exec(mmlvPath);
-			
-			
+
+
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			//e.printStackTrace();
@@ -626,22 +631,20 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				image = MegaManState.vizualizePath(level,mostRecentVisited,actionSequence,start); //TODO
 			}catch(IOException e) {
 				e.printStackTrace();
-	
+
 			}
 		}else {
-		try {
-			//
-
-			images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH); //7 different tiles to display 
-			image = MegaManRenderUtil.createBufferedImage(level,width1,height1, images);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			try {
+				images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH); //7 different tiles to display 
+				image = MegaManRenderUtil.createBufferedImage(level,width1,height1, images);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return image;
 	}
-	
-	
+
+
 	@Override
 	/**
 	 * takes in a double array from the GAN and uses it to generate a level based on which GAN model is being used
@@ -687,8 +690,6 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			if(placed) {
 				break;
 			}
-			
-		
 		}
 		for(int i = 0; i<level.get(0).size();i++) {
 			if(!placed) {
@@ -704,7 +705,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 					level.get(y-1).set(x, 7);
 					placed=true;
 					break;
-					
+
 				}else if(y-1>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0) {
 					level.get(y-1).set(x, 7);
 					placed=true;
@@ -734,8 +735,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				break;
 			}
 		}
-		
-		
+
+
 		for(int x = level.get(0).size()-1;x>=0; x--) {
 			for(int y = 0; y<level.size();y++) {
 				if(y-1>=0&&level.get(y).get(x)==1&&level.get(y-1).get(x)==0) {
