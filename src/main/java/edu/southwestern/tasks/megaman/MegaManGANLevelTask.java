@@ -83,6 +83,14 @@ public class MegaManGANLevelTask extends MegaManLevelTask<ArrayList<Double>> imp
 		if(lower == null) lower = ArrayUtil.doubleNegativeOnes((Parameters.parameters.integerParameter("GANInputSize") + MegaManGANGenerator.numberOfAuxiliaryVariables()) * Parameters.parameters.integerParameter("megaManGANLevelChunks"));
 		return lower;
 	}
+	
+	/**
+	 * If the bounds need to change, then setting them to null will cause them to be properly reinitialized the next time they are requested.
+	 */
+	public static void forgetStaticLowerUpperBounds() {
+		lower = null;
+		upper = null;
+	}
 
 	@Override
 	public double[] getUpperBounds() {
