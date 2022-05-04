@@ -47,7 +47,12 @@ public class SegmentCopyMutation extends RealMutation {
 			this.auxVariableEndLocation = Parameters.parameters.integerParameter("megaManAuxVarsEnd");
 			break;
 		case LODE_RUNNER:
-			throw new UnsupportedOperationException("Lode Runner levels only have a single segment, thus copy mutations make no sense");
+			// swapping not possible with Lode Runner since each level is just one segment
+			Parameters.parameters.setDouble("GANSegmentCopyMutationRate", 0.0);
+			this.segmentAmount = 1;
+			this.auxVariableStartLocation = -1;
+			this.auxVariableEndLocation = -1;
+			break;
 		default:
 			throw new UnsupportedOperationException("Pick a game");
 		}
