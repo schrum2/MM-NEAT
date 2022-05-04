@@ -86,6 +86,14 @@ public class MarioGANLevelTask extends MarioLevelTask<ArrayList<Double>> impleme
 		if(lower == null) lower = ArrayUtil.doubleNegativeOnes(GANProcess.latentVectorLength() * Parameters.parameters.integerParameter("marioGANLevelChunks")); // all -1
 		return lower;
 	}
+	
+	/**
+	 * If the bounds need to change, then setting them to null will cause them to be properly reinitialized the next time they are requested.
+	 */
+	public static void forgetStaticLowerUpperBounds() {
+		lower = null;
+		upper = null;
+	}
 
 	@Override
 	public double[] getUpperBounds() {

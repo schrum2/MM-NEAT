@@ -79,7 +79,7 @@ public class MarioGANLevelBreederTask extends InteractiveGANLevelEvolutionTask {
 					int oldValue = Parameters.parameters.integerParameter("marioGANLevelChunks");
 					int newValue = (int) source.getValue();
 					Parameters.parameters.setInteger("marioGANLevelChunks", newValue);
-
+					MarioGANLevelTask.forgetStaticLowerUpperBounds();
 					if(oldValue != newValue) {
 						int oldLength = oldValue * GANProcess.latentVectorLength();
 						int newLength = newValue * GANProcess.latentVectorLength();
