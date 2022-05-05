@@ -40,7 +40,6 @@
 		<!-- Change these below? -->
         <datavec.version>1.0.0-beta7</datavec.version>
         <arbiter.version>1.0.0-beta7</arbiter.version>
-        <rl4j.version>1.0.0-beta7</rl4j.version>
 
   </properties>
 
@@ -188,6 +187,16 @@
     	<version>2.7.1</version>
 	</dependency>
   
+<dependency>
+    <groupId>org.datavec</groupId>
+    <artifactId>datavec-api</artifactId>
+    <version>${datavec.version}</version>
+</dependency>
+<dependency>
+    <groupId>org.datavec</groupId>
+    <artifactId>datavec-data-image</artifactId>
+    <version>${datavec.version}</version>
+</dependency>
   
   	<!-- DL4J and RL4J -->
         <dependency>
@@ -196,15 +205,10 @@
             <version>${nd4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>rl4j-core</artifactId>
-            <version>${rl4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.deeplearning4j</groupId>
-            <artifactId>rl4j-gym</artifactId>
-            <version>${rl4j.version}</version>
-        </dependency>
+    <groupId>org.deeplearning4j</groupId>
+    	<artifactId>deeplearning4j-datasets</artifactId>
+    	<version>${dl4j.version}</version>
+	</dependency>
 		<dependency>
     		<groupId>org.deeplearning4j</groupId>
     		<artifactId>deeplearning4j-zoo</artifactId>
