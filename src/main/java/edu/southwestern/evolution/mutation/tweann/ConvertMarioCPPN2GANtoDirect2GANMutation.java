@@ -6,13 +6,11 @@ import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.evolution.genotypes.CPPNOrDirectToGANGenotype;
 import edu.southwestern.evolution.genotypes.EitherOrGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.evolution.mutation.Mutation;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.mario.MarioCPPNtoGANLevelBreederTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.random.RandomNumbers;
 /**
  * Converts CPPN to GAN to Direct to GAN.
  * 
@@ -20,26 +18,16 @@ import edu.southwestern.util.random.RandomNumbers;
  *
  */
 @SuppressWarnings("rawtypes")
-public class ConvertMarioCPPN2GANtoDirect2GANMutation extends Mutation {
-	protected double rate;
-	//public static final int MARIO_CPPN_TO_GAN_HEIGHT = 1;
+public class ConvertMarioCPPN2GANtoDirect2GANMutation extends ConvertCPPN2GANtoDirect2GANMutation {
 	/**
 	 * Construct that defines the rate (0.1) and tells if it's out of bounds
 	 */
 	public ConvertMarioCPPN2GANtoDirect2GANMutation() {
+		super();
 		double rate = Parameters.parameters.doubleParameter("indirectToDirectTransitionRate");
 		assert 0 <= rate && rate <= 1 : "Mutation rate out of range: " + rate;
 		this.rate = rate;
 	}
-	@Override
-	/**
-	 * checks if it can perform the action 
-	 * (random number < rate (0.1))
-	 */
-	public boolean perform() {
-		return (RandomNumbers.randomGenerator.nextDouble() < rate);
-	}
-
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	/**

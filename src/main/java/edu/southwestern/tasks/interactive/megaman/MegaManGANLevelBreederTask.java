@@ -412,7 +412,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 
 	@Override
 	/**
-	 * configures the GAN to the MegaMan type
+	 * Configures the GAN to the MegaMan type
 	 */
 	public void configureGAN() { //sets GAN to megaman
 		GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
@@ -438,7 +438,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	}
 	@Override
 	/**
-	 * returns the command line parameter associated with the MegaMan GAN model
+	 * Returns the command line parameter associated with the MegaMan GAN model
 	 * @return command line parameter associated with the MegaMan GAN model
 	 */
 	public String getGANModelParameterName() { 
@@ -474,7 +474,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 
 	@Override
 	/**
-	 * gets the GAN model directory
+	 * Gets the GAN model directory
 	 * @return the GAN model directory
 	 */
 	public String getGANModelDirectory() {
@@ -482,7 +482,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	}
 
 	/**
-	 * initializes an array of tile images and ensures only one
+	 * Initializes an array of tile images and ensures only one
 	 * level is selected. It then renders the the selected image,
 	 * or throws an exception if it is unable to do so
 	 * @exception IOException e, which calls printStackTrace
