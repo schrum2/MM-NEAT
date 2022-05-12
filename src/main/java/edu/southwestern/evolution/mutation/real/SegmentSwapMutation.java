@@ -1,12 +1,10 @@
 package edu.southwestern.evolution.mutation.real;
 
-
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.megaman.MegaManTrackSegmentType;
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -25,50 +23,12 @@ import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 *
 * @author Maxx Batterton
 */
-public class SegmentSwapMutation extends RealMutation {
-	
-	protected final int segmentSize;
-	protected final int segmentAmount;
-	protected final int auxVariableStartLocation;
-	protected final int auxVariableEndLocation;
-	protected final boolean segmentSwapAuxiliaryVarialbes;
-
+public class SegmentSwapMutation extends SegmentMutation {
 	
 	protected ArrayList<Double> storedSegment;
 	
 	public SegmentSwapMutation() {
 		super("GANSegmentSwapMutationRate");
-		this.segmentSize = GANProcess.evolvedSegmentLength(); //Parameters.parameters.integerParameter(""); // Maxx: temporarily set to 448 for mario length testing
-		this.segmentSwapAuxiliaryVarialbes = Parameters.parameters.booleanParameter("segmentSwapAuxiliaryVarialbes");
-		switch(GANProcess.type) {
-		case MARIO:
-			this.segmentAmount = Parameters.parameters.integerParameter("marioGANLevelChunks");
-			// -1 because Mario has no aux variables
-			this.auxVariableStartLocation = -1; 
-			this.auxVariableEndLocation = -1; 
-			break;
-		case ZELDA:
-			this.segmentAmount = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks")*Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
-			this.auxVariableStartLocation = 0;
-			this.auxVariableEndLocation = ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables()-1; // inclusive index 
-			break;
-		case MEGA_MAN:
-			this.segmentAmount = Parameters.parameters.integerParameter("megaManGANLevelChunks");
-			this.auxVariableStartLocation = Parameters.parameters.integerParameter("megaManAuxVarsStart");
-			this.auxVariableEndLocation = Parameters.parameters.integerParameter("megaManAuxVarsEnd");
-			break;
-		case LODE_RUNNER:
-			// swapping not possible with Lode Runner since each level is just one segment
-			Parameters.parameters.setDouble("GANSegmentSwapMutationRate", 0.0);
-			this.segmentAmount = 1;
-			this.auxVariableStartLocation = -1;
-			this.auxVariableEndLocation = -1;
-			break;
-		default:
-			throw new UnsupportedOperationException("Pick a game");
-		}
-		//this.segmentAmount = Parameters.parameters.integerParameter("marioGANLevelChunks"); // temp, change to new param for usability in other games
-		this.storedSegment = new ArrayList<Double>(this.segmentSize);
 	}
 	
 	@Override
