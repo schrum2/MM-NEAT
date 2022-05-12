@@ -16,6 +16,9 @@ public abstract class ConvertCPPN2GANtoDirect2GANMutation extends Mutation {
 
 	protected double rate;
 
+	/**
+	 * Constructor, calls super from Mutation
+	 */
 	public ConvertCPPN2GANtoDirect2GANMutation() {
 		super();
 	}
@@ -40,7 +43,7 @@ public abstract class ConvertCPPN2GANtoDirect2GANMutation extends Mutation {
 		// Save to assume phenotype is a network at this point
 		Network cppn = (Network) genotype.getPhenotype();
 		Genotype cppnOrDirect2ganGenotype = (CPPNOrDirectToGANGenotype) genotype;
-		double[] longResult = getLongVectorResultFromCPPN(cppn);
+		double[] longResult = getLongVectorResultFromCPPN(cppn); //Helper method call
 
 		RealValuedGenotype k = new RealValuedGenotype(longResult);
 		//k.newInstance();
@@ -49,6 +52,12 @@ public abstract class ConvertCPPN2GANtoDirect2GANMutation extends Mutation {
 	
 	}
 
+	/**
+	 * Gets the long vector result from the CPPN. Differs
+	 * for each type of conversion
+	 * @param cppn Network, interface for neural network controllers
+	 * @return longResult, array of doubles which is the long vector result
+	 */
 	protected abstract double[] getLongVectorResultFromCPPN(Network cppn);
 	
 }

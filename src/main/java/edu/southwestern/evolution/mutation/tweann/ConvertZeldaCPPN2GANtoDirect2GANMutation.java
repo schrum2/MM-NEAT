@@ -16,6 +16,7 @@ public class ConvertZeldaCPPN2GANtoDirect2GANMutation extends ConvertCPPN2GANtoD
 	 * Construct that defines the rate (0.1) and tells if it's out of bounds
 	 */
 	public ConvertZeldaCPPN2GANtoDirect2GANMutation() {
+		super();
 		double rate = Parameters.parameters.doubleParameter("indirectToDirectTransitionRate");
 		assert 0 <= rate && rate <= 1 : "Mutation rate out of range: " + rate;
 		this.rate = rate;
