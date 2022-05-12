@@ -27,7 +27,7 @@ public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTa
 	
 	@Override
 	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual, MegaManTrackSegmentType segmentCount) {
-		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), individual.getPhenotype(), Parameters.parameters.integerParameter("megaManGANLevelChunks"), ArrayUtil.doubleOnes(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length), segmentCount);
+		List<List<Integer>> level = MegaManGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), individual.getPhenotype(), Parameters.parameters.integerParameter("megaManGANLevelChunks"), ArrayUtil.doubleOnes(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length), segmentCount);
 		return level;
 	}
 	

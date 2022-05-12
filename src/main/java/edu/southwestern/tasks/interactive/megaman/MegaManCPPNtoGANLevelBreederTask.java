@@ -33,7 +33,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
-import edu.southwestern.tasks.megaman.MegaManCPPNtoGANUtil;
+//import edu.southwestern.tasks.megaman.MegaManCPPNtoGANUtil;
 import edu.southwestern.tasks.megaman.MegaManGANLevelTask;
 import edu.southwestern.tasks.megaman.MegaManRenderUtil;
 import edu.southwestern.tasks.megaman.MegaManTrackSegmentType;
@@ -428,7 +428,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	
 	private void viewLevel(TWEANN phenotype) {
 		// TODO Auto-generated method stub
-		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers, segmentCount);
+		List<List<Integer>> level = MegaManGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers, segmentCount);
 
 		if(selectedItems.size() != 1) {
 			JOptionPane.showMessageDialog(null, "Select exactly one level to view.");
@@ -474,7 +474,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 			}
 
 			TWEANN phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
-			List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers, segmentCount);
+			List<List<Integer>> level = MegaManGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers, segmentCount);
 
 //			double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 //			List<List<Integer>> level = levelListRepresentation(doubleArray);
@@ -522,7 +522,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	@Override
 	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		// TODO Auto-generated method stub
-		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers, segmentCount);
+		List<List<Integer>> level = MegaManGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers, segmentCount);
 		return MegaManGANLevelBreederTask.getStaticButtonImage(null, width, height, level);
 
 	}

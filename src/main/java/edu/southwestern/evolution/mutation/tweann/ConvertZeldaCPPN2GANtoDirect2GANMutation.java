@@ -22,6 +22,10 @@ public class ConvertZeldaCPPN2GANtoDirect2GANMutation extends ConvertCPPN2GANtoD
 		this.rate = rate;
 	}
 	
+	/**
+	 * Gets the Long Vector Result 
+	 * @return longResult An array of doubles containing the Long Vector Result
+	 */
 	protected double[] getLongVectorResultFromCPPN(Network cppn) {
 		double[] inputMultipliers = new double[cppn.numInputs()];
 		for(int i = 0;i<cppn.numInputs();i++) {
