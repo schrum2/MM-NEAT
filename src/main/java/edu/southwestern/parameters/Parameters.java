@@ -762,7 +762,7 @@ public class Parameters {
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingEnemyCount", false, "Adds linear increasing enemy count as a fitness function when true");
 		booleanOptions.add("lodeRunnerAllowsLinearIncreasingTreasureCount", false, "Adds linear increasing treasure count as a fitness function when true");
 		booleanOptions.add("allowWeirdLodeRunnerActions", false, "Allows the A* model to use weird side ways digging to be able to beat more levels");
-		booleanOptions.add("smartLodeRunnerEnemies", false, "Sets enhanced enemy AI for enemies in lode runner.");
+		booleanOptions.add("smartLodeRunnerEnemies", false, "Sets enhanced enemy AI for enemies in lode runner (does not really work).");
 		booleanOptions.add("animateWithScaleRotationTranslation", false, "Animate with scale and rotation when true.");
 		booleanOptions.add("useWoolleyImageMatchFitness", false, "Use the fitness calculation from the Woolley paper if true.");
 		booleanOptions.add("useRMSEImageMatchFitness", false, "Use RMSE as the fitness calculation if true.");
@@ -781,6 +781,7 @@ public class Parameters {
 		booleanOptions.add("enhancedCPPNCanRotate", true, "Whether enhanced CPPN picture genotype can change the image rotation.");
 		booleanOptions.add("standardPicBreederHSBRestriction", true, "Restrict CPPN output HSB values as in original Picbreeder (false mode is better for enhanced genotypes).");
 		booleanOptions.add("segmentSwapAuxiliaryVarialbes", true, "Whether to swap aux variables in SegmentSwapMutation.");
+		booleanOptions.add("parallelMAPElitesInitialize", false, "Initial archive members are evaluated in parallel for MAP Elites.");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
