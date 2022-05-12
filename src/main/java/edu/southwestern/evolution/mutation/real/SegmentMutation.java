@@ -6,6 +6,12 @@ import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.parameters.Parameters;
 
+/**
+ * A common partent class for the two segment based 
+ * 
+ * @author medina4
+ *
+ */
 public abstract class SegmentMutation extends RealMutation {
 	protected final int segmentSize;
 	protected final int segmentAmount;
@@ -16,6 +22,7 @@ public abstract class SegmentMutation extends RealMutation {
 	protected ArrayList<Double> storedSegment;
 	
 	public SegmentMutation(String rateLabel) {
+		super(rateLabel);
 		this.segmentSize = GANProcess.evolvedSegmentLength();
 		this.segmentSwapAuxiliaryVarialbes = Parameters.parameters.booleanParameter("segmentSwapAuxiliaryVarialbes");
 		switch(GANProcess.type) {

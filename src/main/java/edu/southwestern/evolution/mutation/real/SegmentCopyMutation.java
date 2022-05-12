@@ -17,8 +17,6 @@ public class SegmentCopyMutation extends SegmentMutation {
 	
 	protected final double rate;
 	
-	protected ArrayList<Double> storedSegment;
-	
 	public SegmentCopyMutation() {
 		super("GANSegmentCopyMutationRate");
 		this.rate = Parameters.parameters.doubleParameter("GANSegmentCopyMutationRate");

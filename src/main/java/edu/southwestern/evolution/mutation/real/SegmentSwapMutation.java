@@ -25,8 +25,6 @@ import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
 */
 public class SegmentSwapMutation extends SegmentMutation {
 	
-	protected ArrayList<Double> storedSegment;
-	
 	public SegmentSwapMutation() {
 		super("GANSegmentSwapMutationRate");
 	}
