@@ -149,8 +149,10 @@ public class Archive<T> {
 			// When using the whole behavior vector, have to wastefully check every index
 			IntStream stream = IntStream.range(0, archive.size());
 			long newElites = stream.parallel().filter((i) -> {
-				Score<T> elite = archive.get(i);
-				return replaceIfBetter(candidate, i, elite);
+				synchronized(this) { // Don't want some other elite to be added after retrieving a null elite
+					Score<T> elite = archive.get(i);
+					return replaceIfBetter(candidate, i, elite);
+				}
 			}).count(); // Number of bins whose elite was replaced
 			//System.out.println(newElites + " elites were replaced");
 			// Whether any elites were replaced
