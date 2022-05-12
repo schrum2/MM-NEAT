@@ -7,9 +7,11 @@ import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.parameters.Parameters;
 
 /**
- * A common partent class for the two segment based 
+ * A common parent class for the two segment based mutation classes 
+ * (SegmentCopyMutation and SegmentSwapMutation) used to eliminate repeated
+ * code in the constructors. 
  * 
- * @author medina4
+ * @author Alejandro Medina
  *
  */
 public abstract class SegmentMutation extends RealMutation {
@@ -52,6 +54,5 @@ public abstract class SegmentMutation extends RealMutation {
 			throw new UnsupportedOperationException("Pick a game");
 		}
 		this.storedSegment = new ArrayList<Double>(this.segmentSize);
-		
 	}
 }
