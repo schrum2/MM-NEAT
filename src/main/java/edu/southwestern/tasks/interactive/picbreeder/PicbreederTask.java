@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -69,6 +70,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	public static final int CPPN_NUM_OUTPUTS = 3;
 
 	private static final int ZENTANGLE_BUTTON_INDEX = -8;
+	private static final int EDITPIC_BUTTON_INDEX = -9;
 
 	private static final int MAX_POSSIBLE_PATTERNS = 6; // Will this always be the max for Zentangles?
 
@@ -145,10 +147,43 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			}
 
 		});
+		
+		ImageIcon editPic = new ImageIcon("Edit-Pic");
+		Image editPic1 = editPic.getImage().getScaledInstance(getActionButtonWidth(), getActionButtonHeight(), 1);
+		JButton editPicButton = new JButton(new ImageIcon(editPic1));
+		editPicButton.setPreferredSize(new Dimension(getActionButtonWidth(), getActionButtonHeight()));
+		editPicButton.setText("Edit-Pic");
+		editPicButton.setName("" + EDITPIC_BUTTON_INDEX);
+		editPicButton.setToolTipText("Rotate, scale, or translate in the x or y direction");
+		editPicButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg1) {
+				System.out.print("Hi");
+				editPic(arg1);
+			}
+
+			private void editPic(ActionEvent itemID) {
+				
+					if(selectedItems.size() == 0) {
+						JOptionPane.showMessageDialog(null, "Must select an individual to edit.");
+					}
+					if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface") && selectedItems.size() != 1) {
+						JOptionPane.showMessageDialog(null, "Select only one individual to modify.");
+					}
+					JFrame explorer = new JFrame("Edit Pic");
+					
+					explorer.pack();
+					explorer.setVisible(true);
+			}
+		});
+		top.add(editPicButton);
 
 		if (!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(zentangleButton);
 		}
+		
+		
 	}
 
 	/**
@@ -419,6 +454,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			}
 		}
 	}
+	
 
 	/**
 	 * X and Y input labels, distance from center is useful for radial distance,
