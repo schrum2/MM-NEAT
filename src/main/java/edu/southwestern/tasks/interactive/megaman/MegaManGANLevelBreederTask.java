@@ -63,7 +63,6 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	public static final int SAVE_BUTTON_INDEX = -19; 
 	public static final int VIEW_BUTTON_INDEX = -19; 
 	public static final int GANS_BUTTON_INDEX = -18; 
-	MegaManGANGenerator megaManGenerator;
 	MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
 
 
@@ -378,12 +377,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 
 					GANProcess.terminateGANProcess();
 
-					megaManGenerator = new MegaManSevenGANGenerator();
+					MegaManGANUtil.setMegaManGANGenerator(new MegaManSevenGANGenerator());
+					//megaManGenerator = new MegaManSevenGANGenerator();
 
 					MultipleGANs.setVisible(true);
 
 				}else {
-					megaManGenerator = new MegaManOneGANGenerator();
+					MegaManGANUtil.setMegaManGANGenerator(new MegaManOneGANGenerator());
+					//megaManGenerator = new MegaManOneGANGenerator();
 
 					MultipleGANs.setVisible(false);
 
@@ -416,7 +417,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	 */
 	public void configureGAN() { //sets GAN to megaman
 		GANProcess.type = GANProcess.GAN_TYPE.MEGA_MAN;
-		megaManGenerator = new MegaManOneGANGenerator();
+		MegaManGANUtil.setMegaManGANGenerator(new MegaManOneGANGenerator());
+		//megaManGenerator = new MegaManOneGANGenerator();
 
 
 	}
@@ -696,7 +698,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		List<List<Integer>> level;
 		//System.out.println(doubleArray.length);
 		if (Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")){
-			level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
+			level = MegaManGANUtil.longVectorToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), doubleArray, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
 		}
 		else if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) { //if horiontal GAN model
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANHorizontal(doubleArray);
@@ -705,7 +707,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
 			placeSpawnAndLevelOrbVertical(level);
 		}else {
-			level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
+			level = MegaManGANUtil.longVectorToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), doubleArray, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
 			//placeSpawnAndLevelOrbHorizontal(level);			
 		}
 		if(!Parameters.parameters.booleanParameter("megaManUsesUniqueEnemies")) {

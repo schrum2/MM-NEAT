@@ -18,6 +18,10 @@ import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
 import edu.southwestern.util.datastructures.Pair;
 
 public class MegaManGANUtil {
+	
+	private static MegaManGANGenerator megaManGenerator;
+	
+	
 	public static final int MEGA_MAN_ALL_TERRAIN = 7; //number of tiles in MegaMan
 	//public static final int MEGA_MAN_TILES_WITH_ENEMIES = 30; //number of tiles in MegaMan
 	//public static final int MEGA_MAN_FIRST_LEVEL_ALL_TILES = 21; //number of tiles in MegaMan
@@ -48,7 +52,6 @@ public class MegaManGANUtil {
 //		MegaManRenderUtil.getBufferedImage(oneLevel,images);//rendered level and displays it in a window 
 //		GANProcess.terminateGANProcess(); //ends GAN process 
 //	}
-	
 	public static GANProcess initializeGAN(String modelType) {
 		GANProcess newGAN = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter(modelType), 
 				Parameters.parameters.integerParameter("GANInputSize"), 
@@ -56,6 +59,22 @@ public class MegaManGANUtil {
 				GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
 		return newGAN;
 	}
+	/**
+	 * Gets megaManGenerator
+	 * @return megaManGenerator The MegaManGANGenerator
+	 */
+	public static MegaManGANGenerator getMegaManGANGenerator() {
+		return megaManGenerator;
+	}
+	
+	/**
+	 * sets megaManGenerator to newMegaManGenerator
+	 * @param newMegaManGenerator new MegaManGANGenerator to set megaManGenerator to
+	 */
+	public static void setMegaManGANGenerator(MegaManGANGenerator newMegaManGenerator) {
+		megaManGenerator = newMegaManGenerator;
+	}
+	
 	public static void postProcessingPlaceProperEnemies(List<List<Integer>> level) {
 		for(int y=0;y<level.size();y++) {
 			for(int x=0;x<level.get(0).size();x++) {
@@ -952,6 +971,8 @@ public class MegaManGANUtil {
 		}
 		
 	}
+
+
 
 //	public static List<List<Integer>> wholeVectorToMegaManLevel(GANProcess ganProcessHorizontal,
 //			GANProcess ganProcessDown, GANProcess ganProcessUp, GANProcess lowerLeftGAN, 

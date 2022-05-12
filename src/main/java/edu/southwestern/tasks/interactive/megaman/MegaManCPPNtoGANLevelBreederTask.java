@@ -38,6 +38,7 @@ import edu.southwestern.tasks.megaman.MegaManGANLevelTask;
 import edu.southwestern.tasks.megaman.MegaManRenderUtil;
 import edu.southwestern.tasks.megaman.MegaManTrackSegmentType;
 import edu.southwestern.tasks.megaman.MegaManVGLCUtil;
+import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManOneGANGenerator;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManSevenGANGenerator;
@@ -66,7 +67,6 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	
 	private String[] outputLabels;
 
-	MegaManGANGenerator megaManGenerator;
 	MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
 	
 	private boolean initializationComplete = false;
@@ -80,8 +80,10 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 //		fileLoadButton5.setName("" + FILE_LOADER_BUTTON_INDEX);
 //		fileLoadButton5.addActionListener(this);
 //		top.add(fileLoadButton5);
-		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) megaManGenerator = new MegaManSevenGANGenerator();
-		else  megaManGenerator = new MegaManOneGANGenerator();
+		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan"))  MegaManGANUtil.setMegaManGANGenerator(new MegaManSevenGANGenerator());
+			//megaManGenerator = new MegaManSevenGANGenerator();
+		else  MegaManGANUtil.setMegaManGANGenerator(new MegaManSevenGANGenerator());
+			//megaManGenerator = new MegaManOneGANGenerator();
 
 		
 		JPanel bottom = new JPanel();
@@ -394,12 +396,14 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 					
 					GANProcess.terminateGANProcess();
 				
-					megaManGenerator = new MegaManSevenGANGenerator();
+					MegaManGANUtil.setMegaManGANGenerator(new MegaManSevenGANGenerator());
+					//megaManGenerator = new MegaManSevenGANGenerator();
 				
 //					MultipleGANs.setVisible(true);
 
 				}else {
-					megaManGenerator = new MegaManOneGANGenerator();
+					MegaManGANUtil.setMegaManGANGenerator(new MegaManOneGANGenerator());
+					//megaManGenerator = new MegaManOneGANGenerator();
 
 //					MultipleGANs.setVisible(false);
 
@@ -424,7 +428,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	
 	private void viewLevel(TWEANN phenotype) {
 		// TODO Auto-generated method stub
-		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(megaManGenerator, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers, segmentCount);
+		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers, segmentCount);
 
 		if(selectedItems.size() != 1) {
 			JOptionPane.showMessageDialog(null, "Select exactly one level to view.");
@@ -470,7 +474,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 			}
 
 			TWEANN phenotype = scores.get(selectedItems.get(selectedItems.size() - 1)).individual.getPhenotype();
-			List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(megaManGenerator, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers, segmentCount);
+			List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers, segmentCount);
 
 //			double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 //			List<List<Integer>> level = levelListRepresentation(doubleArray);
@@ -518,7 +522,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 	@Override
 	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		// TODO Auto-generated method stub
-		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(megaManGenerator, phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers, segmentCount);
+		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), phenotype, Parameters.parameters.integerParameter("megaManGANLevelChunks"), inputMultipliers, segmentCount);
 		return MegaManGANLevelBreederTask.getStaticButtonImage(null, width, height, level);
 
 	}
