@@ -57,10 +57,7 @@ public class OriginalPicBreederGenomeLoader {
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\121_ShortSDCoif.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4041_Doplhin.xml");  // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\simple.xml"); // PERFECT
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(inputFile);
-        doc.getDocumentElement().normalize();
+        Document doc = render(inputFile);
 		
         int inputs = 0;
         
@@ -136,7 +133,28 @@ public class OriginalPicBreederGenomeLoader {
 		}
 		picture.dispose();
 	}
+
+	/**
+	 * Given an existing inputFile, this method will render the image that
+	 * is stored within the file
+	 * 
+	 * @return Document with the rendered image
+	 */
+	private static Document render(File inputFile) throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(inputFile);
+        doc.getDocumentElement().normalize();
+		return doc;
+	}
 	
+	/**
+	 * Given a string with the name of an activation function, it returns
+	 * the corresponding activation function
+	 * 
+	 * @param name String that contains the name of the activation function
+	 * @return Corresponding activation type
+	 */
 	public static int getFType(String name) {
 		switch(name) {
 		case "identity(x)":
