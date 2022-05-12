@@ -18,6 +18,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -159,7 +160,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 			@Override
 			public void actionPerformed(ActionEvent arg1) {
-				System.out.print("Hi");
+				//System.out.print("Hi");
 				editPic(arg1);
 			}
 
@@ -173,9 +174,26 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					}
 					JFrame explorer = new JFrame("Edit Pic");
 					
+					int picToEdit = selectedItems.get(selectedItems.size() - 1);
+					
+					JPanel main = new JPanel(new GridLayout(1,2));
+					ImageIcon image = new ImageIcon(getButtonImage(scores.get(picToEdit).individual.getPhenotype(), buttonWidth, buttonHeight, inputMultipliers));
+					JLabel imageButton = new JLabel(image);
+					main.add(imageButton);
+					
+					JPanel values = new JPanel(new GridLayout(4,2));
+					
+					JLabel scale = new JLabel("scale");
+					values.add(scale);
+					
+					main.add(values);
+					
+					explorer.add(main);
+					
 					explorer.pack();
 					explorer.setVisible(true);
 			}
+
 		});
 		top.add(editPicButton);
 
