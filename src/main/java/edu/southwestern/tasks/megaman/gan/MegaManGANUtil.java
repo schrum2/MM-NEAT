@@ -20,6 +20,7 @@ import edu.southwestern.util.datastructures.Pair;
 
 public class MegaManGANUtil {
 	
+	//Static MegaManGenerator across all files
 	private static MegaManGANGenerator megaManGenerator;
 	
 	
@@ -53,6 +54,12 @@ public class MegaManGANUtil {
 //		MegaManRenderUtil.getBufferedImage(oneLevel,images);//rendered level and displays it in a window 
 //		GANProcess.terminateGANProcess(); //ends GAN process 
 //	}
+	
+	/**
+	 * Initializes a GAN of the type specified
+	 * @param modelType The type of model the GAN will be
+	 * @return newGAN A new GANProcess
+	 */
 	public static GANProcess initializeGAN(String modelType) {
 		GANProcess newGAN = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter(modelType), 
 				Parameters.parameters.integerParameter("GANInputSize"), 
@@ -69,7 +76,7 @@ public class MegaManGANUtil {
 	}
 	
 	/**
-	 * sets megaManGenerator to newMegaManGenerator
+	 * sets megaManGenerator to the newMegaManGenerator
 	 * @param newMegaManGenerator new MegaManGANGenerator to set megaManGenerator to
 	 */
 	public static void setMegaManGANGenerator(MegaManGANGenerator newMegaManGenerator) {
@@ -615,27 +622,27 @@ public class MegaManGANUtil {
 	 * Kick off for longVectorOrCPPNToMegaManLevel. For Long Vectors to 
 	 * MegaMan Level, has nulls in place to ensure Long Vector version
 	 * @param megaManGANGenerator the megaManGANGenerator
-	 * @param wholeVector
-	 * @param chunks
-	 * @param segmentCount
+	 * @param wholeVector The whole latent vector
+	 * @param chunks The number of chunks
+	 * @param segmentTypeTracker Type tracker of type MegaManTrackSegmentType
 	 * @return call to longVectorOrCPPNToMegaManLevel
 	 */
-	public static List<List<Integer>> longVectorToMegaManLevel(MegaManGANGenerator megaManGANGenerator, double[] wholeVector, int chunks, MegaManTrackSegmentType segmentCount){
-		return longVectorOrCPPNToMegaManLevel(megaManGANGenerator, null, wholeVector, chunks, segmentCount, null);
+	public static List<List<Integer>> longVectorToMegaManLevel(MegaManGANGenerator megaManGANGenerator, double[] wholeVector, int chunks, MegaManTrackSegmentType segmentTypeTracker){
+		return longVectorOrCPPNToMegaManLevel(megaManGANGenerator, null, wholeVector, chunks, segmentTypeTracker, null);
 	}	
 
 	/**
 	 * Kick off for longVectorOrCPPNToMegaManLevel. For CPPN to 
 	 * MegaMan Level, has nulls in place to ensure CPPN version
-	 * @param megaManGANGenerator
-	 * @param cppn
-	 * @param chunks
-	 * @param inputMultipliers
-	 * @param segmentCount
+	 * @param megaManGANGenerator the megaManGANGenerator
+	 * @param cppn the CPPN
+	 * @param chunks The number of chunks
+	 * @param inputMultipliers Array of Doubles
+	 * @param segmentTypeTracker Type tracker of type MegaManTrackSegmentType
 	 * @return call to longVectorOrCPPNToMegaManLevel
 	 */
-	public static List<List<Integer>> cppnToMegaManLevel(MegaManGANGenerator megaManGANGenerator, Network cppn,  int chunks, double[] inputMultipliers, MegaManTrackSegmentType segmentCount){
-		return longVectorOrCPPNToMegaManLevel(megaManGANGenerator,cppn,null,chunks, segmentCount, inputMultipliers);
+	public static List<List<Integer>> cppnToMegaManLevel(MegaManGANGenerator megaManGANGenerator, Network cppn,  int chunks, double[] inputMultipliers, MegaManTrackSegmentType segmentTypeTracker){
+		return longVectorOrCPPNToMegaManLevel(megaManGANGenerator,cppn,null,chunks, segmentTypeTracker, inputMultipliers);
 	}	
 	
 	// For CPPN2GAN
@@ -643,8 +650,42 @@ public class MegaManGANUtil {
 	public static final int YPREF = 1;
 	public static final int BIASPREF = 2;	
 	
-	public static List<List<Integer>> longVectorOrCPPNToMegaManLevel(MegaManGANGenerator megaManGANGenerator, Network cppn, double[] wholeVector, int chunks, MegaManTrackSegmentType segmentCount, double[] inputMultipliers){
+	/**
+	 * Takes in info from either a long Vector or a CPPN and converts it to a 
+	 * MegaMan level.
+	 * @param megaManGANGenerator the megaManGANGenerator
+	 * @param cppn the CPPN
+	 * @param wholeVector The whole latent vector
+	 * @param chunks The number of chunks
+	 * @param segmentTypeTracker Type tracker of type MegaManTrackSegmentType
+	 * @param inputMultipliers Array of Doubles
+	 * @return the MegaMan level 
+	 */
+	public static List<List<Integer>> longVectorOrCPPNToMegaManLevel(MegaManGANGenerator megaManGANGenerator, Network cppn, double[] wholeVector, int chunks, MegaManTrackSegmentType segmentTypeTracker, double[] inputMultipliers){
 		
+		Pair<List<List<Integer>>, double[]> levelAndWholeLatentVector = longVectorOrCPPNtoMegaManLevelAndVector(
+				megaManGANGenerator, cppn, wholeVector, chunks, segmentTypeTracker, inputMultipliers);
+		
+		postProcessingPlaceProperEnemies(levelAndWholeLatentVector.t1);
+		return levelAndWholeLatentVector.t1; //t1 refers to the level in the pair
+		
+	}
+	
+	/**
+	 * Converts either a long vector or a CPPN into a pair containing
+	 * both a MegaMan level, and also the whole latent vector. Helper
+	 * method of longVectorOrCPPNToMegaManLevel.
+	 * @param megaManGANGenerator the megaManGANGenerator
+	 * @param cppn the CPPN
+	 * @param wholeVector The whole latent vector
+	 * @param chunks The number of chunks
+	 * @param segmentTypeTracker Type tracker of type MegaManTrackSegmentType
+	 * @param inputMultipliers Array of Doubles
+	 * @return levelAndWholeLatentVector A pair containing both the level and the latent vector
+	 */
+	public static Pair<List<List<Integer>>, double[]> longVectorOrCPPNtoMegaManLevelAndVector(
+			MegaManGANGenerator megaManGANGenerator, Network cppn, double[] wholeVector, int chunks,
+			MegaManTrackSegmentType segmentTypeTracker, double[] inputMultipliers) {
 		HashSet<Point> previousPoints = new HashSet<>();
 		Point currentPoint  = new Point(0,0);
 		Point previousPoint = null;
@@ -652,20 +693,34 @@ public class MegaManGANUtil {
 		List<List<Integer>> level = new ArrayList<>();
 		List<List<Integer>> segment = new ArrayList<>();
 		HashSet<List<List<Integer>>> distinct = new HashSet<>();
+		
+		int oneSegmentLength = Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables();
+		
+		// Level is being generated based on the CPPN. Store the latent vectors into one
+		// big vector as the components are generated.
+		if(cppn != null && wholeVector == null) {
+			wholeVector = new double[chunks * oneSegmentLength];
+		}
+		
 		for(int i = 0;i<chunks;i++) {
 			double[] oneSegmentData = cppn == null ?
-					latentVectorAndMiscDataForPosition(i, Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables(), wholeVector) :
+					latentVectorAndMiscDataForPosition(i, oneSegmentLength, wholeVector) :
 					cppn.process(new double[] {
 								inputMultipliers[XPREF] * currentPoint.x/(1.0*chunks),
 								inputMultipliers[YPREF] * currentPoint.y/(1.0*chunks),
 								inputMultipliers[BIASPREF] * 1.0});
+			
+			// If CPPN is generating level, copy each segment of variables into one big vector
+			if(cppn != null && wholeVector == null) {
+				System.arraycopy(oneSegmentData, 0, wholeVector, i*oneSegmentLength, oneSegmentLength);
+			}
 			
 			Pair<List<List<Integer>>, Point> segmentAndPoint = megaManGANGenerator.generateSegmentFromVariables(oneSegmentData, previousPoint, previousPoints, currentPoint);
 			if(segmentAndPoint==null) {
 				break; //NEEDS TO BE FIXED!! ORB WILL NOT BE PLACED
 			}
 			segment = segmentAndPoint.t1;
-			segmentCount.findSegmentData(megaManGANGenerator.getSegmentType(), segment, distinct);
+			segmentTypeTracker.findSegmentData(megaManGANGenerator.getSegmentType(), segment, distinct);
 
 			previousPoint = currentPoint; // backup previous
 			currentPoint = segmentAndPoint.t2;
@@ -675,9 +730,8 @@ public class MegaManGANUtil {
 
 		}
 		
-		postProcessingPlaceProperEnemies(level);
-		return level;
-		
+		Pair<List<List<Integer>>, double[]> levelAndWholeLatentVector = new Pair<>(level,wholeVector);
+		return levelAndWholeLatentVector;
 	}
 
 	public static Point placeMegaManSegment(List<List<Integer>> level,List<List<Integer>> segment, Point current, Point prev, Point placementPoint) {

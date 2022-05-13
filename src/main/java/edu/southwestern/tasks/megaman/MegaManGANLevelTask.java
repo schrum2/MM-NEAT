@@ -50,9 +50,9 @@ public class MegaManGANLevelTask extends MegaManLevelTask<ArrayList<Double>> imp
 	 * Extract real-valued latent vector from genotype and then send to GAN to get a MegaMan level
 	 */
 	@Override
-	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<ArrayList<Double>> individual, MegaManTrackSegmentType segmentCount) {
+	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<ArrayList<Double>> individual, MegaManTrackSegmentType segmentTypeTracker) {
 		List<Double> latentVector = individual.getPhenotype();
-		return getMegaManLevelListRepresentationFromStaticGenotype(MegaManGANUtil.getMegaManGANGenerator(), latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
+		return getMegaManLevelListRepresentationFromStaticGenotype(MegaManGANUtil.getMegaManGANGenerator(), latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentTypeTracker);
 	}
 	/**
 	 * static version of method above
@@ -63,9 +63,9 @@ public class MegaManGANLevelTask extends MegaManLevelTask<ArrayList<Double>> imp
 	 * @return
 	 */
 	private List<List<Integer>> getMegaManLevelListRepresentationFromStaticGenotype(
-			MegaManGANGenerator megaManGenerator, List<Double> latentVector, int chunks, MegaManTrackSegmentType segmentCount) {
+			MegaManGANGenerator megaManGenerator, List<Double> latentVector, int chunks, MegaManTrackSegmentType segmentTypeTracker) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
-		List<List<Integer>> level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, chunks, segmentCount);
+		List<List<Integer>> level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, chunks, segmentTypeTracker);
 		return level;
 	}
 
