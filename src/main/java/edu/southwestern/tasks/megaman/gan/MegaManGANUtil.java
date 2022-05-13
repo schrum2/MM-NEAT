@@ -67,6 +67,7 @@ public class MegaManGANUtil {
 				GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
 		return newGAN;
 	}
+	
 	/**
 	 * Gets megaManGenerator
 	 * @return megaManGenerator The MegaManGANGenerator
@@ -83,6 +84,10 @@ public class MegaManGANUtil {
 		megaManGenerator = newMegaManGenerator;
 	}
 	
+	/**
+	 * Places enemies in proper locations after the level has processed
+	 * @param level The MegaMan level
+	 */
 	public static void postProcessingPlaceProperEnemies(List<List<Integer>> level) {
 		for(int y=0;y<level.size();y++) {
 			for(int x=0;x<level.get(0).size();x++) {
@@ -94,22 +99,26 @@ public class MegaManGANUtil {
 					}else {
 						level.get(y).set(x, MegaManVGLCUtil.ONE_ENEMY_FLYING_ENEMY);
 					}
-					}
+				}
 			}
 		}
 	}
+	
+	/**
+	 * Starts the GAN process
+	 * @param gan GANProcess Specific GAN model to use as a generator
+	 */
 	public static void startGAN(GANProcess gan) {
 		gan.start();
 		String response = "";
 		while(!response.equals("READY")) {
-
 			response = gan.commRecv();
 		}
 	}
 	/**
 	 * Gets a set of all of the levels from the latent vector 
-	 * @param gan Specific GAN model to use as a generator
-	 * @param latentVector
+	 * @param gan GANProcess Specific GAN model to use as a generator
+	 * @param latentVector Array of doubles to store chunks
 	 * @return Set of all the levels
 	 */
 	public static List<List<List<Integer>>> getLevelListRepresentationFromGAN(GANProcess gan, double[] latentVector){
@@ -118,8 +127,7 @@ public class MegaManGANUtil {
 		int chunk_length = Integer.valueOf(gan.GANDim);
 		String levelString = "";
 		for(int i = 0; i < latentVector.length; i+=chunk_length){
-			double[] chunk = Arrays.copyOfRange(latentVector, i, i+chunk_length);
-			// Generate a level from the vector
+			double[] chunk = Arrays.copyOfRange(latentVector, i, i+chunk_length); // Generate a level from the vector
 			String oneLevelChunk;
 			synchronized(gan) { // Make sure GAN response corresponds to message
 				// Brackets required since generator.py expects of list of multiple levels, though only one is being sent here
@@ -158,24 +166,18 @@ public class MegaManGANUtil {
 
 	/**
 	 * Gets one level from the list of levels, chooses the first one in the list  
-	 * @param latentVector
-	 * @return A single level 
+	 * @param latentVector Array of doubles to store chunks
+	 * @return A single level, the first one in the list
 	 */
 	public static List<List<Integer>> generateOneLevelListRepresentationFromGANHorizontal(double[] latentVector) {
 		// Since only one model is needed, using the standard getGANProcess
 		List<List<List<Integer>>> levelInList = getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), latentVector);
 		List<List<Integer>> oneLevel = levelInList.get(0); // gets first level in the set 
-		//List<List<Integer>> fullLevel = new ArrayList<List<Integer>>();
 		for(int level = 1;level<levelInList.size();level++) {
 			for(int i = 0;i<oneLevel.size();i++) {
-				//for(int integer = 0; integer<oneLevel.get(0).size();integer++) {
 				oneLevel.get(i).addAll(levelInList.get(level).get(i));
-
-				
 			}
 		}
-		
-		
 		return oneLevel;
 	}
 	
