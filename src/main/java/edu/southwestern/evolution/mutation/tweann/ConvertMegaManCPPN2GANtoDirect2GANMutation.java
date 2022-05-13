@@ -4,9 +4,11 @@ import java.util.List;
 
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.interactive.megaman.MegaManCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.megaman.MegaManTrackSegmentType;
 import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 /**
  * Converts CPPN to GAN to Direct to GAN.
@@ -43,7 +45,7 @@ public class ConvertMegaManCPPN2GANtoDirect2GANMutation extends ConvertCPPN2GANt
 		//Calls longVectorOrCPPNtoMegaManLevelAndVector to get a Pair (level and whole latent vector)
 		Pair<List<List<Integer>>, double[]> levelAndWholeLatentVector = MegaManGANUtil.longVectorOrCPPNtoMegaManLevelAndVector(
 				MegaManGANUtil.getMegaManGANGenerator(),cppn,null,Parameters.parameters.integerParameter("megaManGANLevelChunks")
-				,segmentTypeTracker,null);
+				,segmentTypeTracker,ArrayUtil.doubleOnes(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length));
 
 		//Assigns the second part of the pair (the WholeLatentVector) to longResult
 		longResult = levelAndWholeLatentVector.t2;

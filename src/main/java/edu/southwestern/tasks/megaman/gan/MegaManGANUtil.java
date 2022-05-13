@@ -703,6 +703,7 @@ public class MegaManGANUtil {
 		}
 		
 		for(int i = 0;i<chunks;i++) {
+			assert currentPoint != null : "START: i="+i;
 			double[] oneSegmentData = cppn == null ?
 					latentVectorAndMiscDataForPosition(i, oneSegmentLength, wholeVector) :
 					cppn.process(new double[] {
@@ -714,7 +715,6 @@ public class MegaManGANUtil {
 			if(cppn != null && wholeVector == null) {
 				System.arraycopy(oneSegmentData, 0, wholeVector, i*oneSegmentLength, oneSegmentLength);
 			}
-			
 			Pair<List<List<Integer>>, Point> segmentAndPoint = megaManGANGenerator.generateSegmentFromVariables(oneSegmentData, previousPoint, previousPoints, currentPoint);
 			if(segmentAndPoint==null) {
 				break; //NEEDS TO BE FIXED!! ORB WILL NOT BE PLACED
@@ -728,6 +728,7 @@ public class MegaManGANUtil {
 			
 			placementPoint = placeMegaManSegment(level, segment,  currentPoint, previousPoint, placementPoint);
 
+			assert currentPoint != null : "Iteration "+i+", \n"+segment+"\npreviousPoint = "+previousPoint;
 		}
 		
 		Pair<List<List<Integer>>, double[]> levelAndWholeLatentVector = new Pair<>(level,wholeVector);

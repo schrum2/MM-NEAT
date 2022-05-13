@@ -24,7 +24,7 @@ public class MegaManGANLevelTask extends MegaManLevelTask<ArrayList<Double>> imp
 	private static double[] upper;
 	private static double[] lower;
 	
-	private static void resetStaticSettings() {
+	public static void resetStaticSettings() {
 		upper = null;
 		lower = null;
 	}

@@ -11,11 +11,21 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.interactive.megaman.MegaManCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
+import edu.southwestern.tasks.megaman.levelgenerators.MegaManOneGANGenerator;
+import edu.southwestern.tasks.megaman.levelgenerators.MegaManSevenGANGenerator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
 @SuppressWarnings("rawtypes")
 public class MegaManCPPNOrDirectToGANLevelTask extends MegaManLevelTask implements BoundedTask{
 
+	public MegaManCPPNOrDirectToGANLevelTask(){
+		super();
+		MegaManGANLevelTask.resetStaticSettings();
+		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) MegaManGANUtil.setMegaManGANGenerator(new MegaManSevenGANGenerator());
+		else MegaManGANUtil.setMegaManGANGenerator(new MegaManOneGANGenerator());
+	}
+
+	
 	@Override
 	public List getMegaManLevelListRepresentationFromGenotype(Genotype individual,
 			MegaManTrackSegmentType segmentTypeTracker) {
