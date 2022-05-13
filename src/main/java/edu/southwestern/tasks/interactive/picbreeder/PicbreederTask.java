@@ -21,6 +21,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
 
 import com.aqwis.SimpleTiledZentangle;
 import com.aqwis.models.SimpleTiledZentangleWFCModel;
@@ -160,38 +162,112 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 			@Override
 			public void actionPerformed(ActionEvent arg1) {
-				//System.out.print("Hi");
-				editPic(arg1);
+				editPic();
 			}
 
-			private void editPic(ActionEvent itemID) {
+			private void editPic() {
 				
-					if(selectedItems.size() == 0) {
-						JOptionPane.showMessageDialog(null, "Must select an individual to edit.");
-					}
-					if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface") && selectedItems.size() != 1) {
-						JOptionPane.showMessageDialog(null, "Select only one individual to modify.");
-					}
-					JFrame explorer = new JFrame("Edit Pic");
-					
-					int picToEdit = selectedItems.get(selectedItems.size() - 1);
-					
-					JPanel main = new JPanel(new GridLayout(1,2));
-					ImageIcon image = new ImageIcon(getButtonImage(scores.get(picToEdit).individual.getPhenotype(), buttonWidth, buttonHeight, inputMultipliers));
-					JLabel imageButton = new JLabel(image);
-					main.add(imageButton);
-					
-					JPanel values = new JPanel(new GridLayout(4,2));
-					
-					JLabel scale = new JLabel("scale");
-					values.add(scale);
-					
-					main.add(values);
-					
-					explorer.add(main);
-					
-					explorer.pack();
-					explorer.setVisible(true);
+				// Error messages if the user selects either none or more than one image
+				if(selectedItems.size() == 0) {
+					JOptionPane.showMessageDialog(null, "Must select an individual to edit.");
+				}
+				if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface") && selectedItems.size() != 1) {
+					JOptionPane.showMessageDialog(null, "Select only one individual to modify.");
+				}
+
+
+				JFrame explorer = new JFrame("Edit Pic");
+
+				int picToEdit = selectedItems.get(selectedItems.size() - 1);
+
+
+				JPanel main = new JPanel(new GridLayout(1,2));
+
+
+				// Labels for each of the modifiers
+				JPanel values = new JPanel(new GridLayout(4,2));
+
+				JPanel sliders = new JPanel(new GridLayout(4,2));
+				
+				JPanel textBox = new JPanel(new GridLayout(4,1));
+
+				// Label for scale
+				JLabel scale = new JLabel("scale");
+				values.add(scale);
+				// Slider for scale
+				JSlider scaleSlider = new JSlider(JSlider.HORIZONTAL, -100, 100, 0);
+				sliders.add(scaleSlider);
+				//System.out.println("You are here");
+
+				// Label for rotation
+				JLabel rotation = new JLabel("rotation");
+				values.add(rotation);
+				// Slider for rotation
+				JSlider rotationSlider = new JSlider(JSlider.HORIZONTAL, -360, 360, 0);
+				sliders.add(rotationSlider);
+
+				// Label for translation in the x axis
+				JLabel translationX = new JLabel("x translation");
+				values.add(translationX);
+				// Slider for translation in the x axis
+				JSlider transXSlider = new JSlider(JSlider.HORIZONTAL, -100, 100, 0);
+				sliders.add(transXSlider);
+
+				// Label for translation in the y axis
+				JLabel translationY = new JLabel("y translation");
+				values.add(translationY);
+				// Slider for the translation in y axis
+				JSlider transYSlider = new JSlider(JSlider.HORIZONTAL, -100, 100, 0);
+				sliders.add(transYSlider);
+
+				// Adds the labels to the window
+				main.add(values);
+				main.add(sliders);
+
+				T phenotype = scores.get(picToEdit).individual.getPhenotype();
+				double rotationValue, scaleValue, xTranslationValue, yTranslationValue;
+				if(phenotype instanceof NetworkPlusParameters) {
+					// Settings come from specific phenotype
+					@SuppressWarnings("unchecked")
+					NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype;
+					ArrayList<Double> scaleRotationTranslation = npp.t2;
+					scaleValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE);
+					rotationValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION); 
+					xTranslationValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_X); 
+					yTranslationValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y);					
+				} else {
+					// Settings are the generic ones applied to all the images
+					throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
+				}
+				
+				JTextField scaleBox = new JTextField(0);
+				scaleBox.setText(String.format("%.2f", scaleValue));
+				textBox.add(scaleBox);
+				
+				JTextField rotationBox = new JTextField(0);
+				rotationBox.setText(String.format("%.2f", rotationValue));
+				textBox.add(rotationBox);
+				
+				JTextField xTransBox = new JTextField(0);
+				xTransBox.setText(String.format("%.2f", xTranslationValue));
+				textBox.add(xTransBox);
+				
+				JTextField yTransBox = new JTextField(0);
+				yTransBox.setText(String.format("%.2f", yTranslationValue));
+				textBox.add(yTransBox);
+				
+				main.add(textBox);
+				
+				// Picture of the image that was selected to change
+				ImageIcon image = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
+				JLabel imageButton = new JLabel(image);
+				main.add(imageButton);
+
+
+				// Makes all the labels visible
+				explorer.add(main);
+				explorer.pack();
+				explorer.setVisible(true);
 			}
 
 		});
