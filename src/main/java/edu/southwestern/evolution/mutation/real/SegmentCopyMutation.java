@@ -2,8 +2,6 @@ package edu.southwestern.evolution.mutation.real;
 
 import java.util.ArrayList;
 
-import edu.southwestern.tasks.interactive.gvgai.ZeldaCPPNtoGANLevelBreederTask;
-import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.RealValuedGenotype;
 import edu.southwestern.parameters.Parameters;
@@ -15,50 +13,14 @@ import edu.southwestern.util.random.RandomNumbers;
 *
 * @author Maxx Batterton
 */
-public class SegmentCopyMutation extends RealMutation {
+public class SegmentCopyMutation extends SegmentMutation {
 	
-	protected final int segmentSize;
-	protected final int segmentAmount;
 	protected final double rate;
-	protected final int auxVariableStartLocation;
-	protected final int auxVariableEndLocation;
-	protected final boolean segmentSwapAuxiliaryVarialbes;
-	
-	protected ArrayList<Double> storedSegment;
 	
 	public SegmentCopyMutation() {
 		super("GANSegmentCopyMutationRate");
-		this.segmentSize = GANProcess.evolvedSegmentLength();
-		this.segmentSwapAuxiliaryVarialbes = Parameters.parameters.booleanParameter("segmentSwapAuxiliaryVarialbes");
-		switch(GANProcess.type) {
-		case MARIO:
-			this.segmentAmount = Parameters.parameters.integerParameter("marioGANLevelChunks");
-			this.auxVariableStartLocation = -1;
-			this.auxVariableEndLocation = -1;
-			break;
-		case ZELDA:
-			this.segmentAmount = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks")*Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
-			this.auxVariableStartLocation = 0;
-			this.auxVariableEndLocation = ZeldaCPPNtoGANLevelBreederTask.numberOfNonLatentVariables()-1; // inclusive index 
-			break;
-		case MEGA_MAN:
-			this.segmentAmount = Parameters.parameters.integerParameter("megaManGANLevelChunks");
-			this.auxVariableStartLocation = Parameters.parameters.integerParameter("megaManAuxVarsStart");
-			this.auxVariableEndLocation = Parameters.parameters.integerParameter("megaManAuxVarsEnd");
-			break;
-		case LODE_RUNNER:
-			// swapping not possible with Lode Runner since each level is just one segment
-			Parameters.parameters.setDouble("GANSegmentCopyMutationRate", 0.0);
-			this.segmentAmount = 1;
-			this.auxVariableStartLocation = -1;
-			this.auxVariableEndLocation = -1;
-			break;
-		default:
-			throw new UnsupportedOperationException("Pick a game");
-		}
 		this.rate = Parameters.parameters.doubleParameter("GANSegmentCopyMutationRate");
-		this.storedSegment = new ArrayList<Double>(this.segmentSize);
-		}
+	}
 	
 	@Override
 	public void mutate(Genotype<ArrayList<Double>> genotype) {
