@@ -62,7 +62,7 @@ public class MegaManGANLevelTask extends MegaManLevelTask<ArrayList<Double>> imp
 	 * @param latentVector
 	 * @return
 	 */
-	private List<List<Integer>> getMegaManLevelListRepresentationFromStaticGenotype(
+	public static List<List<Integer>> getMegaManLevelListRepresentationFromStaticGenotype(
 			MegaManGANGenerator megaManGenerator, List<Double> latentVector, int chunks, MegaManTrackSegmentType segmentTypeTracker) {
 		double[] doubleArray = ArrayUtil.doubleArrayFromList(latentVector);
 		List<List<Integer>> level = MegaManGANUtil.longVectorToMegaManLevel(megaManGenerator, doubleArray, chunks, segmentTypeTracker);

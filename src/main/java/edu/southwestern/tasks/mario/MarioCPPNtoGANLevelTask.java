@@ -13,25 +13,8 @@ import edu.southwestern.tasks.interactive.mario.MarioCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.mario.gan.MarioGANUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
-/**
- * 
- * Evolve Mario levels with CPPNs and GAN using an agent,
- * like the Mario A* Agent, as a means of evaluating
- * 
- * @author Jacob Schrum
- *
- * @param <T> A NN that can generate levels as a CPPN
- */
-public class MarioCPPNtoGANLevelTask<T extends Network> extends MarioLevelTask<T> {
-	
-	// This is the length of one GAN level segment excluding starting and ending areas
-	public static final int BASE_LEVEL_LENGTH = 448;
-	// This is how much traversable area is added to the start and end of each level produced by the GAN
-	public static final int BUFFER_LENGTH = 240;
-	
-	public MarioCPPNtoGANLevelTask() {
-		super();
-	}
+@SuppressWarnings("rawtypes")
+public class MarioCPPNOrDirectToGANLevelTask extends MarioLevelTask implements BoundedTask {
 
 	@Override
 	public double totalPassableDistance(EvaluationInfo info) {
