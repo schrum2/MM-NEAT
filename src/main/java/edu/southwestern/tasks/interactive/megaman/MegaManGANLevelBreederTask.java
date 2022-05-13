@@ -549,6 +549,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 			List<List<Integer>> level = levelListRepresentation(doubleArray);
 			//int levelNumber = 2020;
+			
+			// May need to create the directory
+			File dir = new File(mmlvPath);
+			if(!dir.exists()) {
+				dir.mkdir();
+				System.out.println("Made directory "+mmlvPath);
+			}
+			
 			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, mmlvFileName, mmlvPath);
 			//Files.copy(mmlvFile, mmlvFileFromEvolution); //copies over
 			//mmlvFile.delete(); //deletes MMNEAT file
