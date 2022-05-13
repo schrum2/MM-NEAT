@@ -358,6 +358,8 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					@SuppressWarnings("unchecked")
 					@Override
 					public void stateChanged(ChangeEvent e) {
+						
+						 
 						// get value
 						JSlider source = (JSlider)e.getSource();
 						if(!source.getValueIsAdjusting()) {
@@ -366,7 +368,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							xTransBox.setText(String.valueOf(transXValue));
 							// Actually change the value of the phenotype in the population
 							if(phenotype instanceof NetworkPlusParameters) {
-								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_X, xTranslationValue);
+								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_X, transXValue);
 							} else {
 								// Settings are the generic ones applied to all the images
 								throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
@@ -394,7 +396,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							yTransBox.setText(String.valueOf(transYValue));
 							// Actually change the value of the phenotype in the population
 							if(phenotype instanceof NetworkPlusParameters) {
-								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y, yTranslationValue);
+								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y, transYValue);
 							} else {
 								// Settings are the generic ones applied to all the images
 								throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
