@@ -318,7 +318,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
 							// Genotype references the phenotype, so it is changed by the modifications above
-							resetButton(scores.get(picToEdit).individual, picToEdit,true);
+							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 						}	
 					}
 						
@@ -338,7 +338,9 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							rotationBox.setText(String.valueOf(rotationValue));
 							// Actually change the value of the phenotype in the population
 							if(phenotype instanceof NetworkPlusParameters) {
-								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_ROTATION, rotationValue);
+								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_ROTATION, rotationValue);					
+//								System.out.println("phenotype:" + ((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2);
+//								System.out.println("genotype: " + ((NetworkPlusParameters<TWEANN,ArrayList<Double>>) scores.get(picToEdit).individual.getPhenotype()).t2);							
 							} else {
 								// Settings are the generic ones applied to all the images
 								throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
@@ -347,7 +349,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
 							// Genotype references the phenotype, so it is changed by the modifications above
-							resetButton(scores.get(picToEdit).individual, picToEdit,true);
+							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 						}	
 					}
 						
@@ -377,7 +379,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
 							// Genotype references the phenotype, so it is changed by the modifications above
-							resetButton(scores.get(picToEdit).individual, picToEdit,true);
+							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 						}	
 					}
 						
@@ -405,7 +407,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
 							// Genotype references the phenotype, so it is changed by the modifications above
-							resetButton(scores.get(picToEdit).individual, picToEdit,true);
+							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 						}	
 					}
 						
