@@ -20,7 +20,6 @@ import edu.southwestern.util.datastructures.ArrayUtil;
  */
 public class MegaManGANLevelTask extends MegaManLevelTask<ArrayList<Double>> implements BoundedTask {
 
-	private MegaManGANGenerator megaManGenerator;
 	// Bounds used for GAN-based solutions
 	private static double[] upper;
 	private static double[] lower;
@@ -34,15 +33,17 @@ public class MegaManGANLevelTask extends MegaManLevelTask<ArrayList<Double>> imp
 		super();
 		resetStaticSettings();
 		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) {
-			megaManGenerator = new MegaManSevenGANGenerator();
+			MegaManGANUtil.setMegaManGANGenerator(new MegaManSevenGANGenerator());
+			//megaManGenerator = new MegaManSevenGANGenerator();
 		}
 		else {
-			megaManGenerator = new MegaManOneGANGenerator();
+			MegaManGANUtil.setMegaManGANGenerator(new MegaManOneGANGenerator());
+			//megaManGenerator = new MegaManOneGANGenerator();
 		}
 	}
 	
 	public void finalCleanup() {
-		megaManGenerator.finalCleanup();
+		MegaManGANUtil.getMegaManGANGenerator().finalCleanup();
 	}
 	
 	/**
@@ -51,7 +52,7 @@ public class MegaManGANLevelTask extends MegaManLevelTask<ArrayList<Double>> imp
 	@Override
 	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<ArrayList<Double>> individual, MegaManTrackSegmentType segmentCount) {
 		List<Double> latentVector = individual.getPhenotype();
-		return getMegaManLevelListRepresentationFromStaticGenotype(megaManGenerator, latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
+		return getMegaManLevelListRepresentationFromStaticGenotype(MegaManGANUtil.getMegaManGANGenerator(), latentVector, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
 	}
 	/**
 	 * static version of method above
