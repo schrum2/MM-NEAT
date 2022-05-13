@@ -9,6 +9,7 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.interactive.megaman.MegaManCPPNtoGANLevelBreederTask;
+import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManOneGANGenerator;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManSevenGANGenerator;
@@ -16,17 +17,17 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 
 public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTask<T> implements BoundedTask {
 
-	private MegaManGANGenerator megaManGenerator;
-	
 	public MegaManCPPNtoGANLevelTask(){
 		super();
-		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) megaManGenerator = new MegaManSevenGANGenerator();
-		else  megaManGenerator = new MegaManOneGANGenerator();
+		if(Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")) MegaManGANUtil.setMegaManGANGenerator(new MegaManSevenGANGenerator());
+			//megaManGenerator = new MegaManSevenGANGenerator();
+		else  MegaManGANUtil.setMegaManGANGenerator(new MegaManOneGANGenerator());
+			//megaManGenerator = new MegaManOneGANGenerator();
 	}
 	
 	@Override
 	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual, MegaManTrackSegmentType segmentCount) {
-		List<List<Integer>> level = MegaManCPPNtoGANUtil.cppnToMegaManLevel(megaManGenerator, individual.getPhenotype(), Parameters.parameters.integerParameter("megaManGANLevelChunks"), ArrayUtil.doubleOnes(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length), segmentCount);
+		List<List<Integer>> level = MegaManGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), individual.getPhenotype(), Parameters.parameters.integerParameter("megaManGANLevelChunks"), ArrayUtil.doubleOnes(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length), segmentCount);
 		return level;
 	}
 	
