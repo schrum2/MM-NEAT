@@ -41,23 +41,62 @@ public class OriginalPicBreederGenomeLoader {
 		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, -1);
 		//System.out.println(tg);
 		// Now, load TWEANN structure from file
-		File inputFile = new File("data\\picbreeder\\originalGenomes\\5736_ShinyRedApple.xml"); // works, wrong colors
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4547_Face.xml"); // PERFECT
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4376_ButterflyColor.xml"); // works, wrong colors
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\3674_Mystic.xml"); // Infinite loop?
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\3257_Quadravision.xml"); // nothing connected to the output neurons???
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\2914_Firefly.xml"); // Infinite loop?
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\1009_ButterflyGreyscale.xml"); // PERFECT
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\765_PlaneOnRunway.xml"); // PERFECT
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\745_LetterG.xml"); // PERFECT
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\576_Skull.xml"); // PERFECT
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\542_GhostFaceSpooky.xml"); // Unsure: looks good
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\409_Moonlight.xml"); // weak image?
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\395_SpotlightCastingShadow.xml"); // PERFECT
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\121_ShortSDCoif.xml"); // PERFECT
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4041_Doplhin.xml");  // PERFECT
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\simple.xml"); // PERFECT
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		String[] fileNames = {"5736_ShinyRedApple.xml","4547_Face.xml","4376_ButterflyColor.xml",
+				//"3674_Mystic.xml", //infinite loop???
+				"3257_Quadravision.xml",// nothing connected to the output neurons???
+				//"2914_Firefly.xml",// Infinite loop?
+				"1009_ButterflyGreyscale.xml","765_PlaneOnRunway.xml","745_LetterG.xml","576_Skull.xml","542_GhostFaceSpooky.xml",
+				"409_Moonlight.xml","395_SpotlightCastingShadow.xml","121_ShortSDCoif.xml","4041_Doplhin.xml","simple.xml"};
+		
+		for(int i = 0 ; i < fileNames.length; i++) {
+			render(tg, fileNames[i]);
+		}
+	}
+
+	/**
+	 * Kick-off method to the kick-off method that creates a String called
+	 * defaultPath that represents the beginning of the File path before 
+	 * getting to xml. 
+	 * 
+	 * @param tg Neural network that represents a CPPN
+	 * @param xml Name of the file with xml extension
+	 * @throws ParserConfigurationException xml File not configured correctly
+	 * @throws SAXException
+	 * @throws IOException File not found
+	 */
+	private static void render(TWEANNGenotype tg, String xml) throws ParserConfigurationException, SAXException, IOException {
+		String defaultPath = "data\\\\picbreeder\\\\originalGenomes";
+		render(tg, defaultPath, xml);
+	}
+	
+	/**
+	 * Kick-off method to render that creates a new File with the path to 
+	 * the desired xml file
+	 * 
+	 * @param tg Neural network that represents a CPPN
+	 * @param path String of the path to where the xml is stored
+	 * @param xml Name of the file with xml extension
+	 * @throws ParserConfigurationException xml File not configured correctly
+	 * @throws SAXException
+	 * @throws IOException File not found
+	 */
+	private static void render(TWEANNGenotype tg, String path, String xml) throws ParserConfigurationException, SAXException, IOException {
+		render(tg, new File(path + "\\\\" + xml));
+	}	
+	
+	/**
+	 * Given a valid input File, this method will render an image based on
+	 * the one stored in the file
+	 * 
+	 * @param tg Neural network that represents a CPPN
+	 * @param inputFile File that corresponds with the path to the xml file
+	 * @throws ParserConfigurationException xml file was not configured correctly
+	 * @throws SAXException 
+	 * @throws IOException File not found
+	 */
+	private static void render(TWEANNGenotype tg, File inputFile)
+			throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(inputFile);
         doc.getDocumentElement().normalize();
@@ -135,8 +174,19 @@ public class OriginalPicBreederGenomeLoader {
 			GraphicsUtil.saveImage(image, result.trim());
 		}
 		picture.dispose();
+		panel.dispose();
 	}
 	
+	/**
+	 * Given a string with a valid activation function name, return the
+	 * activation function that corresponds with the string. If it is invalid,
+	 * it will throw an IllegalArgumentException.
+	 * 
+	 * @param name String that contains the valid 
+	 * @return Activation function that corresponds with the String name
+	 * @throws IllegalArgumentException if the String does not contain valid
+	 * 				activation function
+	 */
 	public static int getFType(String name) {
 		switch(name) {
 		case "identity(x)":

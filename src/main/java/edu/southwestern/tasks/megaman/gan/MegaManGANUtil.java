@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.tasks.mario.gan.reader.JsonReader;
@@ -18,6 +19,10 @@ import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
 import edu.southwestern.util.datastructures.Pair;
 
 public class MegaManGANUtil {
+	
+	private static MegaManGANGenerator megaManGenerator;
+	
+	
 	public static final int MEGA_MAN_ALL_TERRAIN = 7; //number of tiles in MegaMan
 	//public static final int MEGA_MAN_TILES_WITH_ENEMIES = 30; //number of tiles in MegaMan
 	//public static final int MEGA_MAN_FIRST_LEVEL_ALL_TILES = 21; //number of tiles in MegaMan
@@ -48,7 +53,6 @@ public class MegaManGANUtil {
 //		MegaManRenderUtil.getBufferedImage(oneLevel,images);//rendered level and displays it in a window 
 //		GANProcess.terminateGANProcess(); //ends GAN process 
 //	}
-	
 	public static GANProcess initializeGAN(String modelType) {
 		GANProcess newGAN = new GANProcess(GANProcess.PYTHON_BASE_PATH+"MegaManGAN"+ File.separator + Parameters.parameters.stringParameter(modelType), 
 				Parameters.parameters.integerParameter("GANInputSize"), 
@@ -56,6 +60,22 @@ public class MegaManGANUtil {
 				GANProcess.MEGA_MAN_OUT_WIDTH, GANProcess.MEGA_MAN_OUT_HEIGHT);
 		return newGAN;
 	}
+	/**
+	 * Gets megaManGenerator
+	 * @return megaManGenerator The MegaManGANGenerator
+	 */
+	public static MegaManGANGenerator getMegaManGANGenerator() {
+		return megaManGenerator;
+	}
+	
+	/**
+	 * sets megaManGenerator to newMegaManGenerator
+	 * @param newMegaManGenerator new MegaManGANGenerator to set megaManGenerator to
+	 */
+	public static void setMegaManGANGenerator(MegaManGANGenerator newMegaManGenerator) {
+		megaManGenerator = newMegaManGenerator;
+	}
+	
 	public static void postProcessingPlaceProperEnemies(List<List<Integer>> level) {
 		for(int y=0;y<level.size();y++) {
 			for(int x=0;x<level.get(0).size();x++) {
@@ -591,18 +611,39 @@ public class MegaManGANUtil {
 	
 	
 	
-	
-	
-	
-//	
-//	public static HashSet<List<List<Integer>>> distinct;
-//	public static int x = 0;
-//	public static int y = 0;
-//	public static Point previousMove;
-	
-//	public static Direction d;
-	
+	/**
+	 * Kick off for longVectorOrCPPNToMegaManLevel. For Long Vectors to 
+	 * MegaMan Level, has nulls in place to ensure Long Vector version
+	 * @param megaManGANGenerator the megaManGANGenerator
+	 * @param wholeVector
+	 * @param chunks
+	 * @param segmentCount
+	 * @return call to longVectorOrCPPNToMegaManLevel
+	 */
 	public static List<List<Integer>> longVectorToMegaManLevel(MegaManGANGenerator megaManGANGenerator, double[] wholeVector, int chunks, MegaManTrackSegmentType segmentCount){
+		return longVectorOrCPPNToMegaManLevel(megaManGANGenerator, null, wholeVector, chunks, segmentCount, null);
+	}	
+
+	/**
+	 * Kick off for longVectorOrCPPNToMegaManLevel. For CPPN to 
+	 * MegaMan Level, has nulls in place to ensure CPPN version
+	 * @param megaManGANGenerator
+	 * @param cppn
+	 * @param chunks
+	 * @param inputMultipliers
+	 * @param segmentCount
+	 * @return call to longVectorOrCPPNToMegaManLevel
+	 */
+	public static List<List<Integer>> cppnToMegaManLevel(MegaManGANGenerator megaManGANGenerator, Network cppn,  int chunks, double[] inputMultipliers, MegaManTrackSegmentType segmentCount){
+		return longVectorOrCPPNToMegaManLevel(megaManGANGenerator,cppn,null,chunks, segmentCount, inputMultipliers);
+	}	
+	
+	// For CPPN2GAN
+	public static final int XPREF  = 0;
+	public static final int YPREF = 1;
+	public static final int BIASPREF = 2;	
+	
+	public static List<List<Integer>> longVectorOrCPPNToMegaManLevel(MegaManGANGenerator megaManGANGenerator, Network cppn, double[] wholeVector, int chunks, MegaManTrackSegmentType segmentCount, double[] inputMultipliers){
 		
 		HashSet<Point> previousPoints = new HashSet<>();
 		Point currentPoint  = new Point(0,0);
@@ -612,7 +653,13 @@ public class MegaManGANUtil {
 		List<List<Integer>> segment = new ArrayList<>();
 		HashSet<List<List<Integer>>> distinct = new HashSet<>();
 		for(int i = 0;i<chunks;i++) {
-			double[] oneSegmentData = latentVectorAndMiscDataForPosition(i, Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables(), wholeVector);
+			double[] oneSegmentData = cppn == null ?
+					latentVectorAndMiscDataForPosition(i, Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables(), wholeVector) :
+					cppn.process(new double[] {
+								inputMultipliers[XPREF] * currentPoint.x/(1.0*chunks),
+								inputMultipliers[YPREF] * currentPoint.y/(1.0*chunks),
+								inputMultipliers[BIASPREF] * 1.0});
+			
 			Pair<List<List<Integer>>, Point> segmentAndPoint = megaManGANGenerator.generateSegmentFromVariables(oneSegmentData, previousPoint, previousPoints, currentPoint);
 			if(segmentAndPoint==null) {
 				break; //NEEDS TO BE FIXED!! ORB WILL NOT BE PLACED
@@ -671,8 +718,16 @@ public class MegaManGANUtil {
 		}
 		return placementPoint;
 	}
-
 	
+	/**
+	 * Seems to scale the coordinates of segments within the grid to the coordinates of tiles within
+	 * the grid of tiles when all segments are batched together.
+	 * 
+	 * @param prev SHOULD NOT EXIST!? Gets immediately overwritten ... probably safe to remove as parameter
+	 * @param current Current Point in the grid coordinate system
+	 * @param placementPoint Point corresponding to current in the tile coordinate system
+	 * @return Point in the tile coordinate system where new level segment should be placed (upper left corner?)
+	 */
 	private static Point findInitialPlacementPoint(Point prev, Point current, Point placementPoint) {
 		prev = new Point(0,0);
 		if(current.equals(new Point(prev.x+1, prev.y))) {
@@ -952,6 +1007,8 @@ public class MegaManGANUtil {
 		}
 		
 	}
+
+
 
 //	public static List<List<Integer>> wholeVectorToMegaManLevel(GANProcess ganProcessHorizontal,
 //			GANProcess ganProcessDown, GANProcess ganProcessUp, GANProcess lowerLeftGAN, 
