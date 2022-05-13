@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
@@ -23,6 +24,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import com.aqwis.SimpleTiledZentangle;
 import com.aqwis.models.SimpleTiledZentangleWFCModel;
@@ -165,6 +168,14 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				editPic();
 			}
 
+			private int scaleUpToInt(double scale) {
+				return (int) (scale * 100);
+			}
+			
+			private double scaleBackToDouble(int scale) {
+				return scale / 100.0;
+			}
+			
 			private void editPic() {
 				
 				// Error messages if the user selects either none or more than one image
@@ -191,38 +202,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				
 				JPanel textBox = new JPanel(new GridLayout(4,1));
 
-				// Label for scale
-				JLabel scale = new JLabel("scale");
-				values.add(scale);
-				// Slider for scale
-				JSlider scaleSlider = new JSlider(JSlider.HORIZONTAL, -100, 100, 0);
-				sliders.add(scaleSlider);
-				//System.out.println("You are here");
-
-				// Label for rotation
-				JLabel rotation = new JLabel("rotation");
-				values.add(rotation);
-				// Slider for rotation
-				JSlider rotationSlider = new JSlider(JSlider.HORIZONTAL, -360, 360, 0);
-				sliders.add(rotationSlider);
-
-				// Label for translation in the x axis
-				JLabel translationX = new JLabel("x translation");
-				values.add(translationX);
-				// Slider for translation in the x axis
-				JSlider transXSlider = new JSlider(JSlider.HORIZONTAL, -100, 100, 0);
-				sliders.add(transXSlider);
-
-				// Label for translation in the y axis
-				JLabel translationY = new JLabel("y translation");
-				values.add(translationY);
-				// Slider for the translation in y axis
-				JSlider transYSlider = new JSlider(JSlider.HORIZONTAL, -100, 100, 0);
-				sliders.add(transYSlider);
-
-				// Adds the labels to the window
-				main.add(values);
-				main.add(sliders);
 
 				T phenotype = scores.get(picToEdit).individual.getPhenotype();
 				double rotationValue, scaleValue, xTranslationValue, yTranslationValue;
@@ -239,6 +218,59 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					// Settings are the generic ones applied to all the images
 					throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
 				}
+				
+				// Label for scale
+				JLabel scale = new JLabel("scale");
+				values.add(scale);
+				// Slider for scale
+				Hashtable<Integer,JLabel> scaleLabels = new Hashtable<>();
+				scaleLabels.put(scaleUpToInt(Parameters.parameters.doubleParameter("minScale")), new JLabel(""+Parameters.parameters.doubleParameter("minScale")));
+				scaleLabels.put(scaleUpToInt(Parameters.parameters.doubleParameter("maxScale")), new JLabel(""+Parameters.parameters.doubleParameter("maxScale")));
+				JSlider scaleSlider = new JSlider(JSlider.HORIZONTAL, scaleUpToInt(Parameters.parameters.doubleParameter("minScale")), scaleUpToInt(Parameters.parameters.doubleParameter("maxScale")), scaleUpToInt(scaleValue));
+				scaleSlider.setLabelTable(scaleLabels);
+				scaleSlider.setPaintLabels(true);
+				sliders.add(scaleSlider);
+
+				// Label for rotation
+				JLabel rotation = new JLabel("rotation");
+				values.add(rotation);
+				// Slider for rotation
+				Hashtable<Integer,JLabel> rotationLabels = new Hashtable<>();
+				rotationLabels.put(0, new JLabel(""+ 0));
+				rotationLabels.put(scaleUpToInt(2*Math.PI), new JLabel(""+ 2*Math.PI));
+				JSlider rotationSlider = new JSlider(JSlider.HORIZONTAL, 0, scaleUpToInt(2*Math.PI), scaleUpToInt(rotationValue));
+				rotationSlider.setLabelTable(scaleLabels);
+				rotationSlider.setPaintLabels(true);
+				sliders.add(rotationSlider);
+
+				// Label for translation in the x axis
+				JLabel translationX = new JLabel("x translation");
+				values.add(translationX);
+				// Slider for translation in the x axis
+				Hashtable<Integer,JLabel> transXLabels = new Hashtable<>();
+				transXLabels.put(scaleUpToInt(-Parameters.parameters.doubleParameter("imageCenterTranslationRange")), new JLabel(""+(-Parameters.parameters.doubleParameter("imageCenterTranslationRange"))));
+				transXLabels.put(scaleUpToInt(Parameters.parameters.doubleParameter("imageCenterTranslationRange")), new JLabel(""+Parameters.parameters.doubleParameter("imageCenterTranslationRange")));
+				JSlider transXSlider = new JSlider(JSlider.HORIZONTAL, scaleUpToInt(-Parameters.parameters.doubleParameter("imageCenterTranslationRange")), scaleUpToInt(Parameters.parameters.doubleParameter("imageCenterTranslationRange")), scaleUpToInt(xTranslationValue));
+				transXSlider.setLabelTable(transXLabels);
+				transXSlider.setPaintLabels(true);
+				sliders.add(transXSlider);
+
+				// Label for translation in the y axis
+				JLabel translationY = new JLabel("y translation");
+				values.add(translationY);
+				// Slider for the translation in y axis
+				Hashtable<Integer,JLabel> transYLabels = new Hashtable<>();
+				transYLabels.put(scaleUpToInt(-Parameters.parameters.doubleParameter("imageCenterTranslationRange")), new JLabel(""+(-Parameters.parameters.doubleParameter("imageCenterTranslationRange"))));
+				transYLabels.put(scaleUpToInt(Parameters.parameters.doubleParameter("maxScale")), new JLabel(""+Parameters.parameters.doubleParameter("maxScale")));
+				JSlider transYSlider =  new JSlider(JSlider.HORIZONTAL, scaleUpToInt(-Parameters.parameters.doubleParameter("imageCenterTranslationRange")), scaleUpToInt(Parameters.parameters.doubleParameter("imageCenterTranslationRange")), scaleUpToInt(yTranslationValue));
+				transYSlider.setLabelTable(transYLabels);
+				transYSlider.setPaintLabels(true);
+				sliders.add(transYSlider);
+
+				// Adds the labels to the window
+				main.add(values);
+				main.add(sliders);
+
 				
 				JTextField scaleBox = new JTextField(0);
 				scaleBox.setText(String.format("%.2f", scaleValue));
@@ -258,12 +290,125 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				
 				main.add(textBox);
 				
+				
 				// Picture of the image that was selected to change
 				ImageIcon image = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 				JLabel imageButton = new JLabel(image);
 				main.add(imageButton);
 
+				scaleSlider.addChangeListener(new ChangeListener() {
 
+					@SuppressWarnings("unchecked")
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						// get value
+						JSlider source = (JSlider)e.getSource();
+						if(!source.getValueIsAdjusting()) {
+							int newValue = (int) source.getValue();
+							double scaledValue = scaleBackToDouble(newValue);
+							scaleBox.setText(String.valueOf(scaledValue));
+							// Actually change the value of the phenotype in the population
+							if(phenotype instanceof NetworkPlusParameters) {
+								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_SCALE, scaledValue);
+							} else {
+								// Settings are the generic ones applied to all the images
+								throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
+							}
+							// Update image
+							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
+							imageButton.setIcon(img);
+							// Genotype references the phenotype, so it is changed by the modifications above
+							resetButton(scores.get(picToEdit).individual, picToEdit,true);
+						}	
+					}
+						
+				});
+				
+				
+				rotationSlider.addChangeListener(new ChangeListener() {
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						// get value
+						JSlider source = (JSlider)e.getSource();
+						if(!source.getValueIsAdjusting()) {
+							int newValue = (int) source.getValue();
+							double rotationValue = scaleBackToDouble(newValue);
+							rotationBox.setText(String.valueOf(rotationValue));
+							// Actually change the value of the phenotype in the population
+							if(phenotype instanceof NetworkPlusParameters) {
+								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_ROTATION, rotationValue);
+							} else {
+								// Settings are the generic ones applied to all the images
+								throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
+							}
+							// Update image
+							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
+							imageButton.setIcon(img);
+							// Genotype references the phenotype, so it is changed by the modifications above
+							resetButton(scores.get(picToEdit).individual, picToEdit,true);
+						}	
+					}
+						
+				});
+
+				transXSlider.addChangeListener(new ChangeListener() {
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						// get value
+						JSlider source = (JSlider)e.getSource();
+						if(!source.getValueIsAdjusting()) {
+							int newValue = (int) source.getValue();
+							double transXValue = scaleBackToDouble(newValue);
+							xTransBox.setText(String.valueOf(transXValue));
+							// Actually change the value of the phenotype in the population
+							if(phenotype instanceof NetworkPlusParameters) {
+								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_X, xTranslationValue);
+							} else {
+								// Settings are the generic ones applied to all the images
+								throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
+							}
+							// Update image
+							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
+							imageButton.setIcon(img);
+							// Genotype references the phenotype, so it is changed by the modifications above
+							resetButton(scores.get(picToEdit).individual, picToEdit,true);
+						}	
+					}
+						
+				});
+				
+				transYSlider.addChangeListener(new ChangeListener() {
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public void stateChanged(ChangeEvent e) {
+						// get value
+						JSlider source = (JSlider)e.getSource();
+						if(!source.getValueIsAdjusting()) {
+							int newValue = (int) source.getValue();
+							double transYValue = scaleBackToDouble(newValue);
+							yTransBox.setText(String.valueOf(transYValue));
+							// Actually change the value of the phenotype in the population
+							if(phenotype instanceof NetworkPlusParameters) {
+								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y, yTranslationValue);
+							} else {
+								// Settings are the generic ones applied to all the images
+								throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
+							}
+							// Update image
+							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
+							imageButton.setIcon(img);
+							// Genotype references the phenotype, so it is changed by the modifications above
+							resetButton(scores.get(picToEdit).individual, picToEdit,true);
+						}	
+					}
+						
+				});
+				
 				// Makes all the labels visible
 				explorer.add(main);
 				explorer.pack();
