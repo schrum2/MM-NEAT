@@ -140,7 +140,7 @@ public class MegaManGANUtil {
 	/**
 	 * Gets one level from the list of levels, chooses the first one in the list  
 	 * @param latentVector Array of doubles to store chunks
-	 * @return A single level, the first one in the list
+	 * @return oneLevel A single level, the first one in the list
 	 */
 	public static List<List<Integer>> generateOneLevelListRepresentationFromGANHorizontal(double[] latentVector) {
 		// Since only one model is needed, using the standard getGANProcess
@@ -156,8 +156,8 @@ public class MegaManGANUtil {
 	
 	/**
 	 * Generates level segments from GAN, but stitches them together vertically rather than horizontally
-	 * @param latentVector
-	 * @return
+	 * @param latentVector Array of doubles to store chunks
+	 * @return oneLevel A single level
 	 */
 	public static List<List<Integer>> generateOneLevelListRepresentationFromGANVertical(double[] latentVector) {
 		// Since only one model is needed, using the standard getGANProcess
@@ -169,6 +169,10 @@ public class MegaManGANUtil {
 		return oneLevel;
 	}
 
+	/**
+	 * Places the spawn point for MegaMan
+	 * @param level The level
+	 */
 	public static void placeSpawn(List<List<Integer>> level) {
 		boolean placed = false;
 		for(int x = 0;x<level.get(0).size();x++) {
@@ -181,9 +185,7 @@ public class MegaManGANUtil {
 			}
 			if(placed) {
 				break;
-			}
-			
-		
+			}	
 		}
 		for(int i = 0; i<level.get(0).size();i++) {
 			if(!placed) {
@@ -195,6 +197,8 @@ public class MegaManGANUtil {
 		}
 
 	}
+	
+	
 	public static void placeOrb(List<List<Integer>> level) {
 		boolean placed = false;
 		
