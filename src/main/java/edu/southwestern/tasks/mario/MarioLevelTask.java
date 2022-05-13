@@ -301,26 +301,29 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements Jso
 		double percentLevelPassed = info == null ? 0 : distancePassed / totalPassableDistance(info);
 		double time = info == null ? 0 : info.timeSpentOnLevel;
 		double jumps = info == null ? 0 : info.jumpActionsPerformed;
-		int numDistinctSegments;
+		int numDistinctSegments = -1; // If not used, value will be -1
+		
+		double[] otherScores = new double[] {distancePassed, percentLevelPassed, time, jumps};
+		
 		//put each segment into a HashSet to see if it's  distinct
 		HashSet<List<List<Integer>>> k = new HashSet<List<List<Integer>>>();
         List<List<List<Integer>>> levelWithParsedSegments = MarioLevelUtil.getSegmentsFromLevel(oneLevel, SEGMENT_WIDTH_IN_BLOCKS);
+        ArrayList<double[]> lastLevelStats = null;
         //int numSegments = 0;
-        for(List<List<Integer>> segment : levelWithParsedSegments) {
-        	k.add(segment);
-        	//numSegments++;
-        }
-//		int numSegments = levelWithParsedSegments.size();
-		numDistinctSegments = k.size();
+        if(levelWithParsedSegments != null) {
+        	// The concept of segments really only applies to GAN-generated levels, but not levels from MarioCPPNLevelTask
+        	for(List<List<Integer>> segment : levelWithParsedSegments) {
+        		k.add(segment);
+        		//numSegments++;
+        	}
+        	numDistinctSegments = k.size();
 
-		
-		
-		double[] otherScores = new double[] {distancePassed, percentLevelPassed, time, jumps};
-		// Adds Vanessa's Mario stats: Decoration Frequency, Leniency, Negative Space
-		ArrayList<double[]> lastLevelStats = LevelParser.getLevelStats(oneLevel, SEGMENT_WIDTH_IN_BLOCKS);
-		for(double[] stats:lastLevelStats){
-			otherScores = ArrayUtils.addAll(otherScores, stats);
-		}
+        	// Adds Vanessa's Mario stats: Decoration Frequency, Leniency, Negative Space
+        	lastLevelStats = LevelParser.getLevelStats(oneLevel, SEGMENT_WIDTH_IN_BLOCKS);
+        	for(double[] stats:lastLevelStats){
+        		otherScores = ArrayUtils.addAll(otherScores, stats);
+        	}
+        }
 
 		ArrayList<Double> fitnesses = new ArrayList<>(numFitnessFunctions);
 		if(Parameters.parameters.booleanParameter("marioProgressPlusJumpsFitness")) {

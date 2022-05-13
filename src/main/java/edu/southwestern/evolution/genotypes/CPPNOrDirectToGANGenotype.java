@@ -48,6 +48,7 @@ public class CPPNOrDirectToGANGenotype extends EitherOrGenotype<TWEANN,ArrayList
 			new ConvertZeldaCPPN2GANtoDirect2GANMutation().go(this, sb);
 		else if(GANProcess.type.equals(GAN_TYPE.MARIO))
 			new ConvertMarioCPPN2GANtoDirect2GANMutation().go(this, sb);
+		// TODO: Add case for Mega Man
 		else //if (GANProcess.type.equals(GAN_TYPE.LODE_RUNNER))
 			throw new UnsupportedOperationException(GANProcess.type.name() + " not supported yet");
 		// Now allow for slight changes
