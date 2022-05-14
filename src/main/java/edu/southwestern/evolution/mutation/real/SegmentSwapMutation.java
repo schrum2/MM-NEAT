@@ -98,7 +98,7 @@ public class SegmentSwapMutation extends SegmentMutation {
 		}
 		
 		Genotype<ArrayList<Double>> realGeno = new BoundedRealValuedGenotype(geno);
-		MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
+		MegaManTrackSegmentType segmentTypeTracker = new MegaManTrackSegmentType();
 		// Passing this parameter inside the hash map instead of as a normal parameter is confusing, 
 		// but allows this class to conform to the JsonLevelGenerationTask easily.
 		
@@ -106,7 +106,7 @@ public class SegmentSwapMutation extends SegmentMutation {
 		
 		System.out.println("Before: ");
 		System.out.println(realGeno.getPhenotype());
-		List<List<Integer>> level = ((MegaManGANLevelTask) MMNEAT.task).getMegaManLevelListRepresentationFromGenotype(realGeno, segmentCount); //gets a level 
+		List<List<Integer>> level = ((MegaManGANLevelTask) MMNEAT.task).getMegaManLevelListRepresentationFromGenotype(realGeno, segmentTypeTracker); //gets a level 
 		MegaManVGLCUtil.printLevel(level);
 		
 //		BufferedImage image;
@@ -127,8 +127,8 @@ public class SegmentSwapMutation extends SegmentMutation {
 		SegmentSwapMutation mutation = new SegmentSwapMutation();
 		mutation.mutate(realGeno);
 		System.out.println(realGeno.getPhenotype());
-		MegaManTrackSegmentType segmentCount1 = new MegaManTrackSegmentType();
-		List<List<Integer>> level1 = ((MegaManGANLevelTask) MMNEAT.task).getMegaManLevelListRepresentationFromGenotype(realGeno, segmentCount1); //gets a level
+		MegaManTrackSegmentType segmentTypeTracker1 = new MegaManTrackSegmentType();
+		List<List<Integer>> level1 = ((MegaManGANLevelTask) MMNEAT.task).getMegaManLevelListRepresentationFromGenotype(realGeno, segmentTypeTracker1); //gets a level
 		MegaManVGLCUtil.printLevel(level1);
 		
 		System.out.println(level.size() + " " + level1.get(0).size());
