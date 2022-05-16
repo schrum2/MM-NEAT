@@ -188,7 +188,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 
 		//adds the ability to show the solution path
 
-		//Reformats where the checkmarks are
+		//Reformats where the check marks are
 		JPanel effectsCheckboxes = new JPanel(new GridLayout(2,1));
 
 		JPanel aSTAR = new JPanel();
@@ -395,7 +395,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				resetButtons(true);
 			}
 		});
-//------------------------------------------------------------------------------------------------------------------------------------- new code
+		
+		//Creates check box to toggle searchContinuesAfterSuccess
 		JCheckBox searchContinuesAfterSuccess = new JCheckBox("SearchContinuesAfterSuccess", Parameters.parameters.booleanParameter("searchContinuesAfterSuccess"));
 		searchContinuesAfterSuccess.setName("SearchContinuesAfterSuccess");
 		searchContinuesAfterSuccess.getAccessibleContext();
@@ -406,8 +407,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				resetButtons(true);
 			}
 			
-//------------------------------------------------------------------------------------------------------------------------------------- new code
 		});
+		//adds check boxes to the UI
 		effectsCheckboxes.add(useMultipleGANs);
 		effectsCheckboxes.add(searchContinuesAfterSuccess);
 		top.add(effectsCheckboxes);
