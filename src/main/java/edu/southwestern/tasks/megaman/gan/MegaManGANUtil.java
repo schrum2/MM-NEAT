@@ -206,8 +206,14 @@ public class MegaManGANUtil {
 	public static void placeOrb(List<List<Integer>> level) {
 		boolean placed = false;
 		//Preliminary loop to add orb
-			for(int x = level.get(0).size()-1;x>=0; x--) {
-				for(int y = level.size()-1; y>=0;y--) {
+		
+		//loops adding to the right side
+		//for(int x = level.get(0).size()-1;x>=0; x--)
+		
+		//loops adding to the left side
+		
+		for(int x = level.get(0).size()-1;x>=0; x--) {
+			for(int y = level.size()-1; y>=0;y--) {
 				if(y-2>=0&&(level.get(y).get(x)==2||level.get(y).get(x)==1||level.get(y).get(x)==5)&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
 					level.get(y-1).set(x, 7);
 					level.get(y-2).set(x,  MegaManVGLCUtil.ONE_ENEMY_AIR);
@@ -230,7 +236,38 @@ public class MegaManGANUtil {
 			}
 	}
 	
-	
+	public static void placeOrbLeft(List<List<Integer>> level) {
+		boolean placed = false;
+		//Preliminary loop to add orb
+		
+		//loops adding to the right side
+		//for(int x = level.get(0).size()-1;x>=0; x--)
+		
+		//loops adding to the left side
+		
+		for(int x =0;x<=level.get(0).size()-1; x++) {
+			for(int y = level.size()-1; y>=0;y--) {
+				if(y-2>=0&&(level.get(y).get(x)==2||level.get(y).get(x)==1||level.get(y).get(x)==5)&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
+					level.get(y-1).set(x, 7);
+					level.get(y-2).set(x,  MegaManVGLCUtil.ONE_ENEMY_AIR);
+					placed=true;
+					break;
+					
+				}
+			}
+			//If the orb is placed through the first loop, it stops,
+			//otherwise, runs through second loop
+			if(placed) break;
+		}
+			for(int i = 0; i<level.get(0).size();i++) {
+				if(!placed) {
+					level.get(level.size()-1).set(0, MegaManVGLCUtil.ONE_ENEMY_SOLID);
+					level.get(level.size()-2).set(0, MegaManVGLCUtil.ONE_ENEMY_ORB);
+					level.get(level.size()-3).set(0, MegaManVGLCUtil.ONE_ENEMY_AIR);
+					placed = true;
+				}
+			}
+	}
 	/**
 	 * Gets all of the sgement's data and adds it to a latent vector
 	 * @param width Number of segments
@@ -323,7 +360,7 @@ public class MegaManGANUtil {
 		List<List<Integer>> segment = new ArrayList<>();
 		HashSet<List<List<Integer>>> distinct = new HashSet<>();
 		
-		//Computes the length of one segment, whihc is the GAN input size and the number of aux. variables
+		//Computes the length of one segment, which is the GAN input size and the number of aux. variables
 		int oneSegmentLength = Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables();
 		
 		// Level is being generated based on the CPPN. Store the latent vectors into one
@@ -352,9 +389,16 @@ public class MegaManGANUtil {
 			segment = segmentAndPoint.t1;
 			segmentTypeTracker.findSegmentData(megaManGANGenerator.getSegmentType(), segment, distinct);
 
+			if(i==chunks-1) {	
+				if(previousPoint.x-currentPoint.x==1) {
+					placeOrbLeft(segment);
+					System.out.println("-----------------------------happens");
+				}
+				else placeOrb(segment);
+			}
 			previousPoint = currentPoint; // backup previous
 			currentPoint = segmentAndPoint.t2;
-			if(i==chunks-1) placeOrb(segment);
+			
 			
 			placementPoint = placeMegaManSegment(level, segment,  currentPoint, previousPoint, placementPoint);
 
