@@ -6,6 +6,8 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -278,18 +280,129 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				
 				JTextField scaleBox = new JTextField(0);
 				scaleBox.setText(String.format("%.2f", scaleValue));
+				scaleBox.addKeyListener(new KeyListener() {
+
+					@Override
+					public void keyTyped(KeyEvent e) {
+						
+					}
+
+					@Override
+					public void keyPressed(KeyEvent e) {
+						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+							String typed = scaleBox.getText();
+							scaleSlider.setValue(0);
+							if(!typed.matches("-*\\d+(\\.\\d*)?")) {
+								return;
+							}
+							double value = Double.parseDouble(typed)*100;
+							scaleSlider.setValue((int)value);
+						}
+					}
+
+					@Override
+					public void keyReleased(KeyEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+				});
 				textBox.add(scaleBox);
 				
 				JTextField rotationBox = new JTextField(0);
 				rotationBox.setText(String.format("%.2f", rotationValue));
+				rotationBox.addKeyListener(new KeyListener() {
+
+					@Override
+					public void keyTyped(KeyEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void keyPressed(KeyEvent e) {
+						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+							String typed = rotationBox.getText();
+							rotationSlider.setValue(0);
+							if(!typed.matches("-*\\d+(\\.\\d*)?")) {
+								return;
+							}
+							double value = Double.parseDouble(typed)*100;
+							rotationSlider.setValue((int)value);
+						}
+					}
+
+					@Override
+					public void keyReleased(KeyEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+				});
 				textBox.add(rotationBox);
 				
 				JTextField xTransBox = new JTextField(0);
 				xTransBox.setText(String.format("%.2f", xTranslationValue));
+				xTransBox.addKeyListener(new KeyListener() {
+
+					@Override
+					public void keyTyped(KeyEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void keyPressed(KeyEvent e) {
+						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+							String typed = xTransBox.getText();
+							transXSlider.setValue(0);
+							if(!typed.matches("-*\\d+(\\.\\d*)?")) {
+								return;
+							}
+							double value = Double.parseDouble(typed)*100;
+							transXSlider.setValue((int)value);
+						}
+					}
+
+					@Override
+					public void keyReleased(KeyEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+				});
 				textBox.add(xTransBox);
 				
 				JTextField yTransBox = new JTextField(0);
 				yTransBox.setText(String.format("%.2f", yTranslationValue));
+				yTransBox.addKeyListener(new KeyListener() {
+
+					@Override
+					public void keyTyped(KeyEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void keyPressed(KeyEvent e) {
+						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+							String typed = yTransBox.getText();
+							transYSlider.setValue(0);
+							if(!typed.matches("-*\\d+(\\.\\d*)?")) {
+								return;
+							}
+							double value = Double.parseDouble(typed)*100;
+							transYSlider.setValue((int)value);
+						}
+					}
+
+					@Override
+					public void keyReleased(KeyEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+				});
 				textBox.add(yTransBox);
 				
 				main.add(textBox);
