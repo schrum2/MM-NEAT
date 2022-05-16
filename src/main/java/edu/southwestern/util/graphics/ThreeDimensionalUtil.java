@@ -256,13 +256,18 @@ public class ThreeDimensionalUtil {
 	public static double[] get3DObjectCPPNInputs(int x, int y, int z, int width, int height, int depth, double time, boolean distanceInEachPlane) {
 		Vertex v = new Vertex(x, y, z);
 		Vertex newV = CartesianGeometricUtilities.centerAndScale(v, width, height, depth);
+		Vertex zero = new Vertex(0, 0, 0);
+		double distanceFromOrigin = newV.distance(zero) * GraphicsUtil.SQRT2;
 		if(distanceInEachPlane) {
-			throw new UnsupportedOperationException("distanceInEachPlane is not supported yet");
+			double XY = zero.distance(new Vertex(x, y, 0)) * GraphicsUtil.SQRT2;
+			double YZ = zero.distance(new Vertex(0, y, z)) * GraphicsUtil.SQRT2;
+			double XZ = zero.distance(new Vertex(x, 0, z)) * GraphicsUtil.SQRT2;
+			return new double[]{newV.x, newV.y, newV.z, distanceFromOrigin, XY, YZ, XZ, GraphicsUtil.BIAS};
 		} else {
 			if(time == -1) {
-				return new double[]{newV.x, newV.y, newV.z, newV.distance(new Vertex(0, 0, 0)) * GraphicsUtil.SQRT2, GraphicsUtil.BIAS};
+				return new double[]{newV.x, newV.y, newV.z, distanceFromOrigin, GraphicsUtil.BIAS};
 			} else {
-				return new double[]{newV.x, newV.y, newV.z, newV.distance(new Vertex(0, 0, 0)) * GraphicsUtil.SQRT2, GraphicsUtil.BIAS, time};
+				return new double[]{newV.x, newV.y, newV.z, distanceFromOrigin, GraphicsUtil.BIAS, time};
 			}
 		}
 	}

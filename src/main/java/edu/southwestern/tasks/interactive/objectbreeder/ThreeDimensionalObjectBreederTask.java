@@ -334,7 +334,11 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	 * @return the sensorLabels
 	 */
 	public String[] sensorLabels() {
-		return new String[] { "X-coordinate", "Y-coordinate", "Z-coordinate", "distance from center", "bias" };
+		if(Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane")) {
+			return new String[] { "X-coordinate", "Y-coordinate", "Z-coordinate", "distance from center", "distance from center in XY", "distance from center in YZ", "distance from center in XZ", "bias" };
+		} else {
+			return new String[] { "X-coordinate", "Y-coordinate", "Z-coordinate", "distance from center", "bias" };
+		}
 	}
 
 	@Override
@@ -361,7 +365,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	 * @return CPPN_NUM_INPUTS - the number of CPPN inputs
 	 */
 	public int numCPPNInputs() {
-		return CPPN_NUM_INPUTS;
+		// Possibly add distances in three planes
+		return CPPN_NUM_INPUTS + (Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane") ? 3 : 0);
 	}
 
 	@Override
