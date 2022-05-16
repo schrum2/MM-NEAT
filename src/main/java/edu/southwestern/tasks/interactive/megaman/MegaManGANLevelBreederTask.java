@@ -679,7 +679,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		if(Parameters.parameters.booleanParameter("interactiveMegaManAStarPaths")) {
 			MegaManState start = new MegaManState(level);
-			Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
+			Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.orbHeuristic);
 			HashSet<MegaManState> mostRecentVisited = null;
 			ArrayList<MegaManAction> actionSequence = null;
 			try {

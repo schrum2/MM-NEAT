@@ -51,25 +51,38 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	
 	private List<List<Integer>> level;
 	private Point orb; 
-	//private HashSet<Point> dugHoles; // Too expensive to track the dug up spaces in the state. Just allow the agent to move downward through diggable blocks
 	public int currentX; 
 	public int currentY;
 	private int jumpVelocity;
 	private int fallHorizontalModInt;
-	//private boolean climbing;
 	//the distance to the level orb
-	public static Heuristic<MegaManAction,MegaManState> manhattanToOrb = new Heuristic<MegaManAction,MegaManState>(){
+	public static Heuristic<MegaManAction,MegaManState> orbHeuristic = new Heuristic<MegaManAction,MegaManState>(){
 
 		@Override
 		public double h(MegaManState s) {
 			Point orb = s.orb;
 			int xDistance = Math.abs(s.currentX - orb.x);
 			int yDistance = Math.abs(s.currentY - orb.y);
-			double maxDistance = xDistance+yDistance;
+			double maxDistance = Math.max(xDistance,yDistance);
 			return maxDistance;
 		}
 	
 	};
+	
+//Original Manhattan distance to the orb. It has been replaced, as the Manhattan distance is not admissible
+//	
+//	public static Heuristic<MegaManAction,MegaManState> manhattanToOrb = new Heuristic<MegaManAction,MegaManState>(){
+//
+//		@Override
+//		public double h(MegaManState s) {
+//			Point orb = s.orb;
+//			int xDistance = Math.abs(s.currentX - orb.x);
+//			int yDistance = Math.abs(s.currentY - orb.y);
+//			double maxDistance = xDistance+yDistance;
+//			return maxDistance;
+//		}
+//	
+//	};
 
 	
 	public  static class MegaManAction implements Action{
@@ -153,15 +166,9 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 * @param start The spawn point 
 	 */
 	public MegaManState(List<List<Integer>> level, Point start) {
-		this(level, getJumpVelocity(), getOrb(level), start.x, start.y, getFallHorizontalModInt());
+		this(level, 0, getOrb(level), start.x, start.y, 0);
 	}
-	private static int getFallHorizontalModInt() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	private static int getJumpVelocity() {
-		return 0;
-	}
+
 	public MegaManState(List<List<Integer>> level, int jumpVelocity, Point orb, int currentX, int currentY, int fallHorizontalModInt) {
 		this.level = level;
 		this.orb = orb;
@@ -534,7 +541,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				, "megaManAStarJumpHeight:4" });
 		MegaManVGLCUtil.printLevel(level);
 		MegaManState start = new MegaManState(level);
-		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.orbHeuristic);
 		HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence = null;
 		try {

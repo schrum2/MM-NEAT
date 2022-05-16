@@ -184,7 +184,7 @@ public class MegaManLevelAnalysisUtil {
 		MegaManState start;
 		List<List<Integer>> levelCopy = ListUtil.deepCopyListOfLists(level);
 		start = new MegaManState(levelCopy);
-		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.manhattanToOrb); //initializes a search based on the heuristic 
+		Search<MegaManAction,MegaManState> search = new AStarSearch<>(MegaManState.orbHeuristic); //initializes a search based on the heuristic 
 		HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence = null;
 		double simpleAStarDistance = -1; //intialized to hold distance of solution path, or -1 if search fails
