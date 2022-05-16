@@ -175,6 +175,7 @@ public class MegaManGANUtil {
 	 */
 	public static void placeSpawn(List<List<Integer>> level) {
 		boolean placed = false;
+		//Preliminary loop to add spawn
 		for(int x = 0;x<level.get(0).size();x++) {
 			for(int y = 0;y<level.size();y++) {
 				if(y-2>=0&&(level.get(y).get(x)==1||level.get(y).get(x)==2)&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)&&(level.get(y-2).get(x)==0||level.get(y-1).get(x)==10)) {
@@ -183,9 +184,9 @@ public class MegaManGANUtil {
 					break;
 				}
 			}
-			if(placed) {
-				break;
-			}	
+			//If the spawn is placed through the first loop, it stops,
+			//otherwise, runs through second loop
+			if(placed) break;	
 		}
 		for(int i = 0; i<level.get(0).size();i++) {
 			if(!placed) {
@@ -198,10 +199,13 @@ public class MegaManGANUtil {
 
 	}
 	
-	
+	/**
+	 * Places the orb MegaMan will have to reach
+	 * @param level The level
+	 */
 	public static void placeOrb(List<List<Integer>> level) {
 		boolean placed = false;
-		
+		//Preliminary loop to add orb
 			for(int x = level.get(0).size()-1;x>=0; x--) {
 				for(int y = level.size()-1; y>=0;y--) {
 				if(y-2>=0&&(level.get(y).get(x)==2||level.get(y).get(x)==1||level.get(y).get(x)==5)&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
@@ -212,6 +216,8 @@ public class MegaManGANUtil {
 					
 				}
 			}
+			//If the orb is placed through the first loop, it stops,
+			//otherwise, runs through second loop
 			if(placed) break;
 		}
 			for(int i = 0; i<level.get(0).size();i++) {
@@ -226,11 +232,11 @@ public class MegaManGANUtil {
 	
 	
 	/**
-	 * 
-	 * @param width how many segments
-	 * @param segmentLength - the length of one segment
-	 * @param wholeVector - the entire vector from realvaluedgenotype
-	 * @return portion of vector corresponding to one segment
+	 * Gets all of the sgement's data and adds it to a latent vector
+	 * @param width Number of segments
+	 * @param segmentLength The length of one segment
+	 * @param wholeVector The entire vector from realValuedGenotype
+	 * @return result Portion of vector corresponding to one segment
 	 */
 	public static double[] latentVectorAndMiscDataForPosition(int width,int segmentLength, double[] wholeVector) { 
 		int startIndex = segmentLength*(width);
@@ -238,12 +244,6 @@ public class MegaManGANUtil {
 		System.arraycopy(wholeVector, startIndex, result, 0, segmentLength);
 		return result;
 	}
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * Kick off for longVectorOrCPPNToMegaManLevel. For Long Vectors to 
@@ -272,14 +272,9 @@ public class MegaManGANUtil {
 		return longVectorOrCPPNToMegaManLevel(megaManGANGenerator,cppn,null,chunks, segmentTypeTracker, inputMultipliers);
 	}	
 	
-	// For CPPN2GAN
-	public static final int XPREF  = 0;
-	public static final int YPREF = 1;
-	public static final int BIASPREF = 2;	
-	
 	/**
 	 * Takes in info from either a long Vector or a CPPN and converts it to a 
-	 * MegaMan level.
+	 * MegaMan level. 
 	 * @param megaManGANGenerator the megaManGANGenerator
 	 * @param cppn the CPPN
 	 * @param wholeVector The whole latent vector
@@ -298,10 +293,17 @@ public class MegaManGANUtil {
 		
 	}
 	
+	// For CPPN2GAN
+	public static final int XPREF  = 0;
+	public static final int YPREF = 1;
+	public static final int BIASPREF = 2;	
+	
 	/**
 	 * Converts either a long vector or a CPPN into a pair containing
 	 * both a MegaMan level, and also the whole latent vector. Helper
-	 * method of longVectorOrCPPNToMegaManLevel.
+	 * method of longVectorOrCPPNToMegaManLevel. Using this method, you
+	 * can return the pair, which gives you access to both the level 
+	 * and the whole latent vector
 	 * @param megaManGANGenerator the megaManGANGenerator
 	 * @param cppn the CPPN
 	 * @param wholeVector The whole latent vector
@@ -321,6 +323,7 @@ public class MegaManGANUtil {
 		List<List<Integer>> segment = new ArrayList<>();
 		HashSet<List<List<Integer>>> distinct = new HashSet<>();
 		
+		//Computes the length of one segment, whihc is the GAN input size and the number of aux. variables
 		int oneSegmentLength = Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables();
 		
 		// Level is being generated based on the CPPN. Store the latent vectors into one
@@ -358,11 +361,23 @@ public class MegaManGANUtil {
 			assert currentPoint != null : "Iteration "+i+", \n"+segment+"\npreviousPoint = "+previousPoint;
 		}
 		
+		// t1 is the level, t2 is the Whole vector
 		Pair<List<List<Integer>>, double[]> levelAndWholeLatentVector = new Pair<>(level,wholeVector);
 		return levelAndWholeLatentVector;
 	}
 
-	public static Point placeMegaManSegment(List<List<Integer>> level,List<List<Integer>> segment, Point current, Point prev, Point placementPoint) {
+	/**
+	 * Places the MegaMan segment based on where the current 
+	 * points are and 
+	 * @param level
+	 * @param segment
+	 * @param current
+	 * @param prev
+	 * @param placementPoint
+	 * @return
+	 */
+	public static Point placeMegaManSegment(List<List<Integer>> level,List<List<Integer>> segment, 
+			Point current, Point prev, Point placementPoint) {
 		if(level.isEmpty()) { // First segment
 			for(List<Integer> row : segment) {
 				ArrayList<Integer> newRow = new ArrayList<>(row.size());
