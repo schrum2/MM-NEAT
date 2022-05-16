@@ -3,7 +3,7 @@ package edu.southwestern.tasks.interactive.megaman;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -188,7 +188,8 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 
 		//adds the ability to show the solution path
 
-		JPanel effectsCheckboxes = new JPanel();
+		//Reformats where the checkmarks are
+		JPanel effectsCheckboxes = new JPanel(new GridLayout(2,1));
 
 		JPanel aSTAR = new JPanel();
 		aSTAR.setLayout(new BoxLayout(aSTAR, BoxLayout.Y_AXIS));
@@ -394,8 +395,21 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 				resetButtons(true);
 			}
 		});
-
+//------------------------------------------------------------------------------------------------------------------------------------- new code
+		JCheckBox searchContinuesAfterSuccess = new JCheckBox("SearchContinuesAfterSuccess", Parameters.parameters.booleanParameter("searchContinuesAfterSuccess"));
+		searchContinuesAfterSuccess.setName("SearchContinuesAfterSuccess");
+		searchContinuesAfterSuccess.getAccessibleContext();
+		searchContinuesAfterSuccess.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("searchContinuesAfterSuccess");
+				resetButtons(true);
+			}
+			
+//------------------------------------------------------------------------------------------------------------------------------------- new code
+		});
 		effectsCheckboxes.add(useMultipleGANs);
+		effectsCheckboxes.add(searchContinuesAfterSuccess);
 		top.add(effectsCheckboxes);
 
 
@@ -814,7 +828,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","megaManGANLevelChunks:10","bigInteractiveButtons:false","megaManUsesUniqueEnemies:false","GANInputSize:5","useMultipleGANsMegaMan:false","showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.megaman.MegaManGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","megaManGANLevelChunks:10","bigInteractiveButtons:false","megaManUsesUniqueEnemies:false","GANInputSize:5","useMultipleGANsMegaMan:false","showKLOptions:false","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.megaman.MegaManGANLevelBreederTask","watch:true","cleanFrequency:-1","genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype","simplifiedInteractiveInterface:false","saveAllChampions:true","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","searchContinuesAfterSuccess:true"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

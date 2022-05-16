@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Queue;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.Triple;
 
 public abstract class GraphSearch<A extends Action, S extends State<A>> implements Search<A,S> {
@@ -27,14 +28,17 @@ public abstract class GraphSearch<A extends Action, S extends State<A>> implemen
 		pq.add(new Triple<S,ArrayList<A>,Double>(start, new ArrayList<A>(), new Double(0)));
 		if(reset) visited = new HashSet<>();
 		int count = 0;
-		while(!pq.isEmpty()) {
+		boolean found = false;
+		ArrayList<A> solution=null;
+		while(!pq.isEmpty() && (!found || Parameters.parameters.booleanParameter("searchContinuesAfterSuccess"))) {
 			// Each state includes the path that led to it, and cost of that path
 			Triple<S,ArrayList<A>,Double> current = pq.poll();
 			S s = current.t1;
 			ArrayList<A> actions = current.t2;
 			double cost = current.t3;
-			if(s.isGoal()) {
-				return actions; // SUCCESS!
+			if(s.isGoal() && !found) {
+				solution = actions; // SUCCESS!
+				found=true;
 			} else if(!visited.contains(s)) {
 				count++;
 				if(count > budget) {
@@ -60,7 +64,7 @@ public abstract class GraphSearch<A extends Action, S extends State<A>> implemen
 		// TODO: Even when we fail, we might want to return some indication of the amount of
 		//       work done. This could be relevant for a fitness function, since we might want
 		//       to know how close we were to succeeding, or how much we explored. Fix later.
-		return null;
+		return solution;
 	}
 
 	/**
