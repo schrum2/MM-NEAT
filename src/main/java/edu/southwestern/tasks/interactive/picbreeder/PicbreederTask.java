@@ -237,14 +237,16 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				// Slider for rotation
 				Hashtable<Integer,JLabel> rotationLabels = new Hashtable<>();
 				rotationLabels.put(0, new JLabel(""+ 0));
-				rotationLabels.put(scaleUpToInt(2*Math.PI), new JLabel(""+ 2*Math.PI));
-				JSlider rotationSlider = new JSlider(JSlider.HORIZONTAL, 0, scaleUpToInt(2*Math.PI), scaleUpToInt(rotationValue));
-				rotationSlider.setLabelTable(scaleLabels);
+				rotationLabels.put(scaleUpToInt(2*Math.PI), new JLabel(String.format("%.2f",2*Math.PI))); // uhh
+				JSlider rotationSlider = new JSlider(JSlider.HORIZONTAL, 0, scaleUpToInt(Parameters.parameters.booleanParameter("enhancedCPPNCanRotate") ? 2*Math.PI : 0.0), scaleUpToInt(rotationValue));
+				rotationSlider.setLabelTable(rotationLabels);
 				rotationSlider.setPaintLabels(true);
 				sliders.add(rotationSlider);
 
 				// Label for translation in the x axis
-				JLabel translationX = new JLabel("x translation");
+				// this is labeled wrong on purpose because the current implementation
+				// move the image in the y direction
+				JLabel translationX = new JLabel("y translation");
 				values.add(translationX);
 				// Slider for translation in the x axis
 				Hashtable<Integer,JLabel> transXLabels = new Hashtable<>();
@@ -256,12 +258,14 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				sliders.add(transXSlider);
 
 				// Label for translation in the y axis
-				JLabel translationY = new JLabel("y translation");
+				// this is labeled wrong on purpose because the current implementation
+				// move the image in the x direction
+				JLabel translationY = new JLabel("x translation"); 
 				values.add(translationY);
 				// Slider for the translation in y axis
 				Hashtable<Integer,JLabel> transYLabels = new Hashtable<>();
 				transYLabels.put(scaleUpToInt(-Parameters.parameters.doubleParameter("imageCenterTranslationRange")), new JLabel(""+(-Parameters.parameters.doubleParameter("imageCenterTranslationRange"))));
-				transYLabels.put(scaleUpToInt(Parameters.parameters.doubleParameter("maxScale")), new JLabel(""+Parameters.parameters.doubleParameter("maxScale")));
+				transYLabels.put(scaleUpToInt(Parameters.parameters.doubleParameter("imageCenterTranslationRange")), new JLabel(""+Parameters.parameters.doubleParameter("imageCenterTranslationRange")));
 				JSlider transYSlider =  new JSlider(JSlider.HORIZONTAL, scaleUpToInt(-Parameters.parameters.doubleParameter("imageCenterTranslationRange")), scaleUpToInt(Parameters.parameters.doubleParameter("imageCenterTranslationRange")), scaleUpToInt(yTranslationValue));
 				transYSlider.setLabelTable(transYLabels);
 				transYSlider.setPaintLabels(true);
@@ -370,7 +374,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							xTransBox.setText(String.valueOf(transXValue));
 							// Actually change the value of the phenotype in the population
 							if(phenotype instanceof NetworkPlusParameters) {
-								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y, transXValue);
+								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_X, transXValue);
 							} else {
 								// Settings are the generic ones applied to all the images
 								throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
@@ -398,7 +402,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							yTransBox.setText(String.valueOf(transYValue));
 							// Actually change the value of the phenotype in the population
 							if(phenotype instanceof NetworkPlusParameters) {
-								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_X, transYValue);
+								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y, transYValue);
 							} else {
 								// Settings are the generic ones applied to all the images
 								throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
