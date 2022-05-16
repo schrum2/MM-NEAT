@@ -782,6 +782,7 @@ public class Parameters {
 		booleanOptions.add("standardPicBreederHSBRestriction", true, "Restrict CPPN output HSB values as in original Picbreeder (false mode is better for enhanced genotypes).");
 		booleanOptions.add("segmentSwapAuxiliaryVarialbes", true, "Whether to swap aux variables in SegmentSwapMutation.");
 		booleanOptions.add("parallelMAPElitesInitialize", false, "Initial archive members are evaluated in parallel for MAP Elites.");
+		booleanOptions.add("objectBreederDistanceInEachPlane", false, "CPPN inputs for object breeder include distances projected to each 2D plane.");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");

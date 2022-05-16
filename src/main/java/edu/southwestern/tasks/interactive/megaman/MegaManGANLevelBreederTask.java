@@ -63,7 +63,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 	public static final int SAVE_BUTTON_INDEX = -19; 
 	public static final int VIEW_BUTTON_INDEX = -19; 
 	public static final int GANS_BUTTON_INDEX = -18; 
-	MegaManTrackSegmentType segmentCount = new MegaManTrackSegmentType();
+	MegaManTrackSegmentType segmentTypeTracker = new MegaManTrackSegmentType();
 
 
 	//public static GANProcess ganProcessDown = null;
@@ -549,6 +549,14 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			double[] doubleArray = ArrayUtil.doubleArrayFromList(phenotype);
 			List<List<Integer>> level = levelListRepresentation(doubleArray);
 			//int levelNumber = 2020;
+			
+			// May need to create the directory
+			File dir = new File(mmlvPath);
+			if(!dir.exists()) {
+				dir.mkdir();
+				System.out.println("Made directory "+mmlvPath);
+			}
+			
 			mmlvFile = MegaManVGLCUtil.convertMegaManLevelToMMLV(level, mmlvFileName, mmlvPath);
 			//Files.copy(mmlvFile, mmlvFileFromEvolution); //copies over
 			//mmlvFile.delete(); //deletes MMNEAT file
@@ -698,7 +706,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 		List<List<Integer>> level;
 		//System.out.println(doubleArray.length);
 		if (Parameters.parameters.booleanParameter("useMultipleGANsMegaMan")){
-			level = MegaManGANUtil.longVectorToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), doubleArray, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
+			level = MegaManGANUtil.longVectorToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), doubleArray, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentTypeTracker);
 		}
 		else if(Parameters.parameters.stringParameter("MegaManGANModel").startsWith("HORIZONTALONLY")) { //if horiontal GAN model
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANHorizontal(doubleArray);
@@ -707,7 +715,7 @@ public class MegaManGANLevelBreederTask extends InteractiveGANLevelEvolutionTask
 			level = MegaManGANUtil.generateOneLevelListRepresentationFromGANVertical(doubleArray);
 			placeSpawnAndLevelOrbVertical(level);
 		}else {
-			level = MegaManGANUtil.longVectorToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), doubleArray, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentCount);
+			level = MegaManGANUtil.longVectorToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), doubleArray, Parameters.parameters.integerParameter("megaManGANLevelChunks"), segmentTypeTracker);
 			//placeSpawnAndLevelOrbHorizontal(level);			
 		}
 		if(!Parameters.parameters.booleanParameter("megaManUsesUniqueEnemies")) {

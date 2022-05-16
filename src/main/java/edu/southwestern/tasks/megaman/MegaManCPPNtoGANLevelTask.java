@@ -10,7 +10,6 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.interactive.megaman.MegaManCPPNtoGANLevelBreederTask;
 import edu.southwestern.tasks.megaman.gan.MegaManGANUtil;
-import edu.southwestern.tasks.megaman.levelgenerators.MegaManGANGenerator;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManOneGANGenerator;
 import edu.southwestern.tasks.megaman.levelgenerators.MegaManSevenGANGenerator;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -26,8 +25,8 @@ public class MegaManCPPNtoGANLevelTask<T extends Network> extends MegaManLevelTa
 	}
 	
 	@Override
-	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual, MegaManTrackSegmentType segmentCount) {
-		List<List<Integer>> level = MegaManGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), individual.getPhenotype(), Parameters.parameters.integerParameter("megaManGANLevelChunks"), ArrayUtil.doubleOnes(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length), segmentCount);
+	public List<List<Integer>> getMegaManLevelListRepresentationFromGenotype(Genotype<T> individual, MegaManTrackSegmentType segmentTypeTracker) {
+		List<List<Integer>> level = MegaManGANUtil.cppnToMegaManLevel(MegaManGANUtil.getMegaManGANGenerator(), individual.getPhenotype(), Parameters.parameters.integerParameter("megaManGANLevelChunks"), ArrayUtil.doubleOnes(MegaManCPPNtoGANLevelBreederTask.SENSOR_LABELS.length), segmentTypeTracker);
 		return level;
 	}
 	

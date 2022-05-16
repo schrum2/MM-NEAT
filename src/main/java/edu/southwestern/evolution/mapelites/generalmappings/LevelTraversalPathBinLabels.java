@@ -10,14 +10,26 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mario.gan.GANProcess;
 import edu.southwestern.util.util2D.ILocated2D;
 
+/**
+ * This class is a new binning scheme that can apply to any game where
+ * an A* agent charts a path through the level. To avoid having too many
+ * bins, a level is discretized at a coarser level (where it can be parameterizable).
+ * The paths are stored as bit strings with 0's to represent rooms that will not
+ * be used and 1's to represent rooms that are necessary to complete the dungeon.
+ * 
+ * @author Maxx Batterton
+ *
+ */
 public class LevelTraversalPathBinLabels extends BaseBinLabels {
 	
 	List<String> labels = null;
-	private int verticalCoarseness;
-	private int horizontalCoarseness;
-	private int sizeX;
-	private int sizeY;
-
+	private int verticalCoarseness; // height of a level
+	private int horizontalCoarseness; // width of a level
+	private int sizeX; // width of a room
+	private int sizeY; // height of a room
+	private int maxSize; // used so the value of verticalCoarseness * horizontalCoarseness is not repeated multiple times.
+	private int numOfBins; // used so the value of Math.pow(2, veriticalCoarseness * horizontalCoarseness) is not repeated multiple times.
+	
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) { // Create once and re-use, but wait until after Parameters are loaded	
@@ -25,10 +37,12 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 				case MARIO:
 					throw new UnsupportedOperationException("Mario does not work with LevelTraversalPathBinLabels.");
 				case ZELDA:
-					this.verticalCoarseness = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks");
-					this.horizontalCoarseness = Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
+					this.verticalCoarseness = Parameters.parameters.integerParameter("zeldaGANLevelHeightChunks");
+					this.horizontalCoarseness = Parameters.parameters.integerParameter("zeldaGANLevelWidthChunks");
 					this.sizeX = 16; // Magic numbers for the size of a zelda room
 					this.sizeY = 11; 
+					this.maxSize = verticalCoarseness * horizontalCoarseness;
+					this.numOfBins = (int) Math.pow(2, maxSize); 
 					break;
 				case MEGA_MAN:
 					throw new UnsupportedOperationException("MegaMan does not work with LevelTraversalPathBinLabels.");
@@ -37,23 +51,22 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 				default:
 					throw new UnsupportedOperationException("Pick a game");
 			}
-			labels = new ArrayList<String>((int)Math.pow(2, verticalCoarseness*horizontalCoarseness));
-			generateBinLabels(verticalCoarseness*horizontalCoarseness, "");
+			labels = new ArrayList<String>(numOfBins);
+			generateBinLabels(maxSize, "");
 		}
 		return labels;
 	}
 	
 	private void generateBinLabels(int maxSize, String previous) {
-		for (int i = 0; i < Math.pow(2, maxSize); i++) {
+		for (int i = 0; i < numOfBins; i++) {
 			String binString = padStringTo(maxSize, Integer.toBinaryString(i));
 			labels.add(binString);
 		}
 	}
 	
 	private String padStringTo(int length, String s) {
-		while (s.length() < length) {
-			s = "0"+s;
-		}
+		while (s.length() < length) s = "0" + s;
+		
 		return s;
 	}
 
@@ -67,9 +80,8 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
 		// Create the path from the Level Path that is reported
 		HashSet<ILocated2D> path = new HashSet<>();
-		if (keys.containsKey("Level Path")) {
-			path = (HashSet<ILocated2D>) keys.get("Level Path");
-		}
+		if (keys.containsKey("Level Path"))	path = (HashSet<ILocated2D>) keys.get("Level Path");
+		
 		// Map each room to an index in the visited tiles
 		boolean[][] visitedTiles = new boolean[verticalCoarseness][horizontalCoarseness];
 		int tileX;
@@ -84,8 +96,8 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 		int locationSum = 0;
 		for (int y = 0; y < verticalCoarseness; y++) {
 			for (int x = 0; x < horizontalCoarseness; x++) {
-				if (visitedTiles[verticalCoarseness-1-x][horizontalCoarseness-1-y]) {
-					locationSum += Math.pow(2d, x+verticalCoarseness*y);
+				if (visitedTiles[verticalCoarseness - 1 - x][horizontalCoarseness - 1 - y]) {
+					locationSum += Math.pow(2d, x + verticalCoarseness * y);
 				}
 			}
 		}
@@ -94,13 +106,13 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 	}
 
 	@Override
-	public String[] dimensions() {
+	public String[] dimensions() {  
 		return new String[] {"Level Path"};
 	}
 
 	@Override
-	public int[] dimensionSizes() {
-		return new int[] {horizontalCoarseness * verticalCoarseness};
+	public int[] dimensionSizes() { 
+		return new int[] {maxSize};
 	}
 	
 //	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
