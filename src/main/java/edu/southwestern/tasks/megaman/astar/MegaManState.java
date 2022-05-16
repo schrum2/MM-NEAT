@@ -55,6 +55,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public int currentY;
 	private int jumpVelocity;
 	private int fallHorizontalModInt;
+	
 	//the distance to the level orb
 	public static Heuristic<MegaManAction,MegaManState> orbHeuristic = new Heuristic<MegaManAction,MegaManState>(){
 
@@ -85,7 +86,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 //	};
 
 	
-	public  static class MegaManAction implements Action{
+	public static class MegaManAction implements Action{
 		public enum MOVE {RIGHT,LEFT,UP,DOWN, JUMP};
 		private MOVE movement;
 		/**
@@ -120,17 +121,12 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		 */
 		public String toString() {
 			return movement.toString();
-		}
-		
-		
-		
-		
-		
+		}	
 	}
 	
 	/**
-	 * Fills a set with points, to keep a reference of where the gold is in the level
-	 * then removes them and makes them emtpy spaces 
+	 * Fills a set with points, to keep a reference of where the goal is in the level
+	 * then removes them and makes them empty spaces 
 	 * @param level A level 
 	 * @return Set of points 
 	 */
@@ -161,7 +157,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	}
 	/**
 	 * Constructor that takes a level and a start point. 
-	 * This construct is can be used to specify a starting point for easier testing 
+	 * This construct can be used to specify a starting point for easier testing 
 	 * @param level Level in JSON form 
 	 * @param start The spawn point 
 	 */
@@ -347,7 +343,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		for(int i = 0; !done && i < level.size(); i++) {
 			for(int j = 0; !done && j < level.get(i).size(); j++){
 				tile = level.get(i).get(j);
-				//System.out.println("The tile at " + j + "," + i + " = " +tile);
 				if(tile == MEGA_MAN_TILE_SPAWN) {//7 maps to spawn point  
 					start = new Point(j, i);
 					level.get(i).set(j, MEGA_MAN_TILE_EMPTY);//removes spawn point and places an empty tile 
@@ -355,7 +350,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 				}
 			}
 		}
-		//System.out.println(start.toString());
 		return start;
 	}
 	/**
@@ -378,11 +372,8 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 			if(s.getSuccessor(new MegaManAction(move)) != null) {
 				vaildActions.add(new MegaManAction(move));
 			}
-//			MegaManAction a = new MegaManAction(move);
-//			System.out.println(s+"\t"+move+"\t"+s.getSuccessor(a));
 		}
-		return vaildActions;
-		
+		return vaildActions;	
 	}
 
 	@Override
@@ -390,7 +381,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	 * checks if the current position is the level orb
 	 */
 	public boolean isGoal() {
-		// TODO Auto-generated method stub
 		return currentX==orb.x&&currentY==orb.y;
 	}
 	@Override
@@ -413,7 +403,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	public double stepCost(State<MegaManAction> s, MegaManAction a) {
 		return 1;
 	}
-	
 	
 	@Override
 	/**
@@ -469,7 +458,6 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 		fullLevel.get(start.currentY).set(start.currentX, MEGA_MAN_TILE_SPAWN);// puts the spawn back into the visualization
 		//for(Point p : start.orb) { //puts all the gold back 
 			fullLevel.get(getOrb(level).y).set(getOrb(level).x, MEGA_MAN_TILE_ORB);
-		//!!
 		BufferedImage visualPath = MegaManRenderUtil.createBufferedImage(fullLevel, level.get(0).size()*MegaManRenderUtil.MEGA_MAN_TILE_X, 
 				level.size()*MegaManRenderUtil.MEGA_MAN_TILE_Y);
 		if(mostRecentVisited != null) {
