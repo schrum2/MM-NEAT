@@ -56,7 +56,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 	private int jumpVelocity;
 	private int fallHorizontalModInt;
 	
-	//the distance to the level orb
+	//the distance to the level orb, anonymous class
 	public static Heuristic<MegaManAction,MegaManState> orbHeuristic = new Heuristic<MegaManAction,MegaManState>(){
 
 		@Override
