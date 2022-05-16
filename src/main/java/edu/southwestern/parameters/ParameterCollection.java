@@ -52,6 +52,7 @@ public class ParameterCollection<T> {
 	 *            New value of parameter
 	 */
 	public void change(String label, T value) {
+		if(!options.containsKey(label)) throw new IllegalArgumentException("Label "+label+" does not exist!");
 		options.put(label, value);
 	}
 
