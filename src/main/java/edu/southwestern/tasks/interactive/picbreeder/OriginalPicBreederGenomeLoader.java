@@ -42,11 +42,12 @@ public class OriginalPicBreederGenomeLoader {
 		//System.out.println(tg);
 		// Now, load TWEANN structure from file
 		String[] fileNames = {"5736_ShinyRedApple.xml","4547_Face.xml","4376_ButterflyColor.xml",
-				//"3674_Mystic.xml", //infinite loop???
-				"3257_Quadravision.xml",// nothing connected to the output neurons???
-				//"2914_Firefly.xml",// Infinite loop?
+				"3674_Mystic.xml", //infinite loop???
+				"3257_Quadravision.xml",//, nothing connected to the output neurons???
+				"2914_Firefly.xml",// Infinite loop?
 				"1009_ButterflyGreyscale.xml","765_PlaneOnRunway.xml","745_LetterG.xml","576_Skull.xml","542_GhostFaceSpooky.xml",
-				"409_Moonlight.xml","395_SpotlightCastingShadow.xml","121_ShortSDCoif.xml","4041_Doplhin.xml","simple.xml"};
+				"409_Moonlight.xml","395_SpotlightCastingShadow.xml","121_ShortSDCoif.xml","4041_Doplhin.xml","simple.xml"
+				};
 		
 		for(int i = 0 ; i < fileNames.length; i++) {
 			render(tg, fileNames[i]);
@@ -152,11 +153,27 @@ public class OriginalPicBreederGenomeLoader {
 
         System.out.println("BEFORE");
         System.out.println(tg.toString());
+        
+        for(LinkGene lg: tg.links) {
+        	System.out.println("Source = " + lg.sourceInnovation);
+        	System.out.println("Target = " + lg.targetInnovation);
+        }
+       
         // Get nodes in right order according to the links
         // deleting specific nodes??? 
-        TWEANNGenotype.sortNodeGenesByLinkConnectivity(tg);
+        //TWEANNGenotype.sortNodeGenesByLinkConnectivity(tg);
+       
+        //moveInputToEnd(tg);
+        
         System.out.println("AFTER");
         System.out.println(tg.toString());
+        
+        System.out.println("-------------------------------------------------");
+        
+        for(LinkGene lg: tg.links) {
+        	System.out.println("Source = " + lg.sourceInnovation);
+        	System.out.println("Target = " + lg.targetInnovation);
+        }
         
         DrawingPanel panel = new DrawingPanel(800, 800, "Network");
 		TWEANN network = tg.getPhenotype();
@@ -176,6 +193,21 @@ public class OriginalPicBreederGenomeLoader {
 		picture.dispose();
 		panel.dispose();
 	}
+	
+	/**
+	 * Moves all output nodes to the end of the list
+	 * @param t Neural network that represents a CPPN
+	 */
+	public static void moveInputToEnd(TWEANNGenotype t) {
+		int numberOfNodesMoved = 0;
+		for(int i = 0; i < t.nodes.size() - numberOfNodesMoved; i++) { // not sure about the num of nodes moved...
+			if(t.nodes.get(i).ntype == TWEANN.Node.NTYPE_OUTPUT) { // if t is an output node, move to the end
+				NodeGene removed = t.nodes.remove(i); // removes the one in that position
+				t.nodes.add(removed); // adds this to the end of the list
+				numberOfNodesMoved++; // increment counter
+			}
+		}
+    }
 	
 	/**
 	 * Given a string with a valid activation function name, return the
