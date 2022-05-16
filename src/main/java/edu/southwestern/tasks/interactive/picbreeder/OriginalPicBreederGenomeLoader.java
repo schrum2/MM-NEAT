@@ -41,12 +41,20 @@ public class OriginalPicBreederGenomeLoader {
 		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, -1);
 		//System.out.println(tg);
 		// Now, load TWEANN structure from file
-		String[] fileNames = {"5736_ShinyRedApple.xml","4547_Face.xml","4376_ButterflyColor.xml",
-				"3674_Mystic.xml", //infinite loop???
-				"3257_Quadravision.xml",//, nothing connected to the output neurons???
-				"2914_Firefly.xml",// Infinite loop?
-				"1009_ButterflyGreyscale.xml","765_PlaneOnRunway.xml","745_LetterG.xml","576_Skull.xml","542_GhostFaceSpooky.xml",
-				"409_Moonlight.xml","395_SpotlightCastingShadow.xml","121_ShortSDCoif.xml","4041_Doplhin.xml","simple.xml"
+		String[] fileNames = {"5736_ShinyRedApple.xml","4547_Face.xml",
+				"4376_ButterflyColor.xml", // looks like eyes before the extra neurons, looks like a wonky butterfly with them
+				//"3674_Mystic.xml", //infinite loop???
+				"3257_Quadravision.xml",// black screen before extra neurons, 4 wonky squares with them
+				//"2914_Firefly.xml",// Infinite loop?
+				"1009_ButterflyGreyscale.xml","765_PlaneOnRunway.xml",
+				"745_LetterG.xml", // slightly different in color with the extra neurons
+				"576_Skull.xml", // skull is darker / more black with the extra neurons
+				"542_GhostFaceSpooky.xml",
+				"409_Moonlight.xml", // more is visible with the extra
+				"395_SpotlightCastingShadow.xml",
+				"121_ShortSDCoif.xml", // nothing shows up with the extra
+				"4041_Doplhin.xml", // dolphin is warped with extra
+				"simple.xml"
 				};
 		
 		for(int i = 0 ; i < fileNames.length; i++) {
@@ -161,7 +169,7 @@ public class OriginalPicBreederGenomeLoader {
        
         // Get nodes in right order according to the links
         // deleting specific nodes??? 
-        //TWEANNGenotype.sortNodeGenesByLinkConnectivity(tg);
+        TWEANNGenotype.sortNodeGenesByLinkConnectivity(tg);
        
         //moveInputToEnd(tg);
         
