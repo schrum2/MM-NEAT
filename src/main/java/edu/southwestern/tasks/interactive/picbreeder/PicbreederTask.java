@@ -218,7 +218,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 					yTranslationValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y);					
 				} else {
 					// Settings are the generic ones applied to all the images
-					throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
+					scaleValue = Parameters.parameters.doubleParameter("picbreederImageScale");
+					rotationValue = Parameters.parameters.doubleParameter("picbreederImageRotation");
+					xTranslationValue = Parameters.parameters.doubleParameter("picbreederImageTranslationX");
+					yTranslationValue = Parameters.parameters.doubleParameter("picbreederImageTranslationY");
 				}
 				
 				// Label for scale
@@ -281,12 +284,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				JTextField scaleBox = new JTextField(0);
 				scaleBox.setText(String.format("%.2f", scaleValue));
 				scaleBox.addKeyListener(new KeyListener() {
-
-					@Override
-					public void keyTyped(KeyEvent e) {
-						
-					}
-
+					
 					@Override
 					public void keyPressed(KeyEvent e) {
 						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -302,7 +300,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 					@Override
 					public void keyReleased(KeyEvent e) {
-						// TODO Auto-generated method stub
+					}
+					
+					@Override
+					public void keyTyped(KeyEvent e) {
 						
 					}
 					
@@ -312,12 +313,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				JTextField rotationBox = new JTextField(0);
 				rotationBox.setText(String.format("%.2f", rotationValue));
 				rotationBox.addKeyListener(new KeyListener() {
-
-					@Override
-					public void keyTyped(KeyEvent e) {
-						// TODO Auto-generated method stub
-						
-					}
 
 					@Override
 					public void keyPressed(KeyEvent e) {
@@ -334,22 +329,18 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 					@Override
 					public void keyReleased(KeyEvent e) {
-						// TODO Auto-generated method stub
-						
 					}
 					
+					@Override
+					public void keyTyped(KeyEvent e) {
+					}
+
 				});
 				textBox.add(rotationBox);
 				
 				JTextField xTransBox = new JTextField(0);
 				xTransBox.setText(String.format("%.2f", xTranslationValue));
 				xTransBox.addKeyListener(new KeyListener() {
-
-					@Override
-					public void keyTyped(KeyEvent e) {
-						// TODO Auto-generated method stub
-						
-					}
 
 					@Override
 					public void keyPressed(KeyEvent e) {
@@ -366,22 +357,18 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 					@Override
 					public void keyReleased(KeyEvent e) {
-						// TODO Auto-generated method stub
-						
 					}
 					
+					@Override
+					public void keyTyped(KeyEvent e) {
+					}
+
 				});
 				textBox.add(xTransBox);
 				
 				JTextField yTransBox = new JTextField(0);
 				yTransBox.setText(String.format("%.2f", yTranslationValue));
 				yTransBox.addKeyListener(new KeyListener() {
-
-					@Override
-					public void keyTyped(KeyEvent e) {
-						// TODO Auto-generated method stub
-						
-					}
 
 					@Override
 					public void keyPressed(KeyEvent e) {
@@ -398,9 +385,12 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 					@Override
 					public void keyReleased(KeyEvent e) {
-						// TODO Auto-generated method stub
-						
 					}
+					
+					@Override
+					public void keyTyped(KeyEvent e) {
+					}
+
 					
 				});
 				textBox.add(yTransBox);
@@ -429,7 +419,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_SCALE, scaledValue);
 							} else {
 								// Settings are the generic ones applied to all the images
-								throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
+								Parameters.parameters.setDouble("picbreederImageScale", scaledValue);
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
@@ -460,7 +450,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 //								System.out.println("genotype: " + ((NetworkPlusParameters<TWEANN,ArrayList<Double>>) scores.get(picToEdit).individual.getPhenotype()).t2);							
 							} else {
 								// Settings are the generic ones applied to all the images
-								throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
+								Parameters.parameters.setDouble("picbreederImageRotation", rotationValue);
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
@@ -490,7 +480,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_X, transXValue);
 							} else {
 								// Settings are the generic ones applied to all the images
-								throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
+								Parameters.parameters.setDouble("picbreederTranslationX", xTranslationValue);
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
@@ -518,7 +508,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y, transYValue);
 							} else {
 								// Settings are the generic ones applied to all the images
-								throw new UnsupportedOperationException("Does not work for simple CPPNs yet");
+								Parameters.parameters.setDouble("picbreederTranslationY", yTranslationValue);
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
@@ -902,9 +892,9 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:16", "maxGens:500",
 					"zentangleTileDim:100", 
-					"base:extendedPicbreeder", "log:ExtendedPicbreeder-Interactive", "saveTo:Interactive",
-					"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
-					"io:true", "netio:true", "mating:true", "fs:false", "starkPicbreeder:false",
+					//"base:extendedPicbreeder", "log:ExtendedPicbreeder-Interactive", "saveTo:Interactive",
+					//"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
+					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:false",
 					//"imageCenterTranslationRange:0.0", // Uncomment to turn off evolution of translation 
 					//"minScale:1.0", "maxScale:1.0", // Uncomment to turn off evolution of scale
 					//"enhancedCPPNCanRotate:false", // Uncomment to turn off evolution of rotation
