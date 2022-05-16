@@ -415,9 +415,6 @@ public class ThreeDimensionalUtil {
 	
 	public static List<Triangle> trianglesFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double[] inputMultipliers, double time, boolean distanceInEachPlane) {
 		Pair<List<Vertex>, List<Color>> result = getVertexesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, inputMultipliers, color, time, distanceInEachPlane);
-		if(distanceInEachPlane) {
-			throw new UnsupportedOperationException("distanceInEachPlane is not supported yet");
-		} 
 		List<Vertex> cubeVertexes = result.t1;
 		List<Color> colors = result.t2;
 		List<Triangle> tris = getShape(cubeVertexes, imageWidth, imageHeight, sideLength, inputMultipliers, colors);

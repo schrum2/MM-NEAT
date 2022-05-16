@@ -335,9 +335,9 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	 */
 	public String[] sensorLabels() {
 		if(Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane")) {
-			return new String[] { "X-coordinate", "Y-coordinate", "Z-coordinate", "distance from center", "distance from center in XY", "distance from center in YZ", "distance from center in XZ", "bias" };
+			return new String[] { "X", "Y", "Z", "R", "R-XY", "R-YZ", "R-XZ", "bias" };
 		} else {
-			return new String[] { "X-coordinate", "Y-coordinate", "Z-coordinate", "distance from center", "bias" };
+			return new String[] { "X", "Y", "Z", "R", "bias" };
 		}
 	}
 
@@ -417,7 +417,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "allowCubeDisplacement:true", "simplifiedInteractiveInterface:false","fs:false", "task:edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","defaultFramePause:50","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","objectBreederDistanceInEachPlane:true","io:false","netio:false","mating:true", "allowCubeDisplacement:true", "simplifiedInteractiveInterface:false","fs:false", "task:edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","defaultFramePause:50","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
