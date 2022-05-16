@@ -200,74 +200,81 @@ public class MegaManGANUtil {
 	}
 	
 	/**
-	 * Places the orb MegaMan will have to reach
-	 * @param level The level
+	 * Places the orb for MegaMan on the right side of the specified segment
+	 * @param level The segment
 	 */
-	public static void placeOrb(List<List<Integer>> level) {
+	public static void placeOrbRight(List<List<Integer>> level) {
 		boolean placed = false;
-		//Preliminary loop to add orb
-		
-		//loops adding to the right side
-		//for(int x = level.get(0).size()-1;x>=0; x--)
-		
-		//loops adding to the left side
-		
+		//Preliminary loop to add orb, goes right to left, then calls method to 
+		//loop through Y's until a location is found
 		for(int x = level.get(0).size()-1;x>=0; x--) {
-			for(int y = level.size()-1; y>=0;y--) {
-				if(y-2>=0&&(level.get(y).get(x)==2||level.get(y).get(x)==1||level.get(y).get(x)==5)&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
-					level.get(y-1).set(x, 7);
-					level.get(y-2).set(x,  MegaManVGLCUtil.ONE_ENEMY_AIR);
-					placed=true;
-					break;
-					
-				}
-			}
-			//If the orb is placed through the first loop, it stops,
-			//otherwise, runs through second loop
+			placed = placeOrblLoopForYValues(level, placed, x);
+			
+			//If it the orb is placed, the method stops
 			if(placed) break;
 		}
-			for(int i = 0; i<level.get(0).size();i++) {
-				if(!placed) {
-					level.get(level.size()-1).set(0, MegaManVGLCUtil.ONE_ENEMY_SOLID);
-					level.get(level.size()-2).set(0, MegaManVGLCUtil.ONE_ENEMY_ORB);
-					level.get(level.size()-3).set(0, MegaManVGLCUtil.ONE_ENEMY_AIR);
-					placed = true;
-				}
-			}
+		//If no location was found, this method is called to make sure one is placed
+		placeOrbForced(level, placed);
 	}
 	
+	/**
+	 * Places the orb for MegaMan on the left side of the specified segment
+	 * @param level The segment
+	 */
 	public static void placeOrbLeft(List<List<Integer>> level) {
 		boolean placed = false;
-		//Preliminary loop to add orb
-		
-		//loops adding to the right side
-		//for(int x = level.get(0).size()-1;x>=0; x--)
-		
-		//loops adding to the left side
-		
+		//Preliminary loop to add orb, goes right to left, then calls method to 
+		//loop through Y's until a location is found
 		for(int x =0;x<=level.get(0).size()-1; x++) {
-			for(int y = level.size()-1; y>=0;y--) {
-				if(y-2>=0&&(level.get(y).get(x)==2||level.get(y).get(x)==1||level.get(y).get(x)==5)&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
-					level.get(y-1).set(x, 7);
-					level.get(y-2).set(x,  MegaManVGLCUtil.ONE_ENEMY_AIR);
-					placed=true;
-					break;
-					
-				}
-			}
-			//If the orb is placed through the first loop, it stops,
-			//otherwise, runs through second loop
+			placed = placeOrblLoopForYValues(level, placed, x);
+			
+			//If it the orb is placed, the method stops
 			if(placed) break;
 		}
-			for(int i = 0; i<level.get(0).size();i++) {
-				if(!placed) {
-					level.get(level.size()-1).set(0, MegaManVGLCUtil.ONE_ENEMY_SOLID);
-					level.get(level.size()-2).set(0, MegaManVGLCUtil.ONE_ENEMY_ORB);
-					level.get(level.size()-3).set(0, MegaManVGLCUtil.ONE_ENEMY_AIR);
-					placed = true;
-				}
-			}
+		//If no location was found, this method is called to make sure one is placed
+		placeOrbForced(level, placed);
 	}
+	
+	/**
+	 * Helper for placeOrb methods. Inner loop goes from bottom to top of the
+	 * segment to find a suitable location for the orb. Once it is found, the
+	 * orb is place. This loop controls the Y's in the segment
+	 * @param level The segment
+	 * @param placed Boolean flag to track if the orb was placed
+	 * @param x Specified value of X the loop should run for
+	 * @return placed Whether or not the orb was placed
+	 */
+	private static boolean placeOrblLoopForYValues(List<List<Integer>> level, boolean placed, int x) {
+		for(int y = level.size()-1; y>=0;y--) { //Bottom to top
+			if(y-2>=0&&(level.get(y).get(x)==2||level.get(y).get(x)==1||level.get(y).get(x)==5)&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
+				level.get(y-1).set(x, 7);
+				level.get(y-2).set(x,  MegaManVGLCUtil.ONE_ENEMY_AIR);
+				placed=true;
+				break; //Break to ensure only one orb is placed
+			}
+		}
+		return placed;
+	}
+	
+	/**
+	 * If no place was suitable within the segment, this loop modifies the 
+	 * segment to find a suitable location.
+	 * @param level The segment
+	 * @param placed placed Boolean flag to track if the orb was placed
+	 */
+	private static void placeOrbForced(List<List<Integer>> level, boolean placed) {
+		for(int i = 0; i<level.get(0).size();i++) {
+			if(!placed) {
+				level.get(level.size()-1).set(0, MegaManVGLCUtil.ONE_ENEMY_SOLID);
+				level.get(level.size()-2).set(0, MegaManVGLCUtil.ONE_ENEMY_ORB);
+				level.get(level.size()-3).set(0, MegaManVGLCUtil.ONE_ENEMY_AIR);
+				placed = true;
+			}
+		}
+	}
+
+	
+
 	/**
 	 * Gets all of the sgement's data and adds it to a latent vector
 	 * @param width Number of segments
@@ -389,12 +396,13 @@ public class MegaManGANUtil {
 			segment = segmentAndPoint.t1;
 			segmentTypeTracker.findSegmentData(megaManGANGenerator.getSegmentType(), segment, distinct);
 
+			// If it is the last segment, place the orb
 			if(i==chunks-1) {	
-				if(previousPoint.x-currentPoint.x==1) {
-					placeOrbLeft(segment);
-					System.out.println("-----------------------------happens");
-				}
-				else placeOrb(segment);
+				// If the last segment is to the left, place on left side 
+				if(previousPoint.x-currentPoint.x==1) placeOrbLeft(segment);
+				
+				//Otherwise, place the orb on the right side
+				else placeOrbRight(segment);
 			}
 			previousPoint = currentPoint; // backup previous
 			currentPoint = segmentAndPoint.t2;
