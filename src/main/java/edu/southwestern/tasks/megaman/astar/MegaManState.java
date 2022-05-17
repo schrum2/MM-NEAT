@@ -86,6 +86,15 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 //	};
 
 	
+////New heuristic; both are here for trouble shooting
+	
+//	Point orb = s.orb;
+//	int xDistance = Math.abs(s.currentX - orb.x);
+//	int yDistance = Math.abs(s.currentY - orb.y);
+//	double maxDistance = Math.max(xDistance,yDistance);
+//	return maxDistance;
+//	
+	
 	public static class MegaManAction implements Action{
 		public enum MOVE {RIGHT,LEFT,UP,DOWN, JUMP};
 		private MOVE movement;

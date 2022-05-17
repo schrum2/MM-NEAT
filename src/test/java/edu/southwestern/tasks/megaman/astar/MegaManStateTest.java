@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,10 +17,20 @@ import edu.southwestern.tasks.megaman.astar.MegaManState.MegaManAction;
 import edu.southwestern.util.search.AStarSearch;
 import edu.southwestern.util.search.Search;
 
+// Imports for debugging
+//import java.util.HashSet;
+//import java.awt.image.BufferedImage;
+//import edu.southwestern.tasks.interactive.InteractiveGANLevelEvolutionTask;
+//import edu.southwestern.tasks.interactive.megaman.MegaManGANLevelBreederTask;
+//import edu.southwestern.tasks.megaman.MegaManRenderUtil;
+//import edu.southwestern.util.MiscUtil;
+
+
+
 public class MegaManStateTest {
 
 	@Test
-	public void test() {
+	public void test() throws IOException {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"
 				, "megaManAStarJumpHeight:4" });
 		
@@ -221,6 +232,7 @@ public class MegaManStateTest {
 		MegaManVGLCUtil.printLevel(level4);
 		MegaManState start4 = new MegaManState(level4);
 		Search<MegaManAction,MegaManState> search4 = new AStarSearch<>(MegaManState.orbHeuristic);
+		//Used for debugging, specifically for image creation
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence4 = null;
 		try {
@@ -232,12 +244,18 @@ public class MegaManStateTest {
 			System.out.println("failed search");
 			e.printStackTrace();
 		}
+		//Also used for debugging, with previous Hashset
+		//mostRecentVisited = ((AStarSearch<MegaManAction, MegaManState>) search4).getVisited();
+		
 //		assertTrue(actionSequence2 != null);
 		if(actionSequence4 != null)
 			for(MegaManAction a : actionSequence4) {
 				System.out.println(a.getMove().toString());
 			}
 		//System.out.println(actionSequence);
+		
+		
+		
 		Iterator<MegaManAction> itr3 = actionSequence4.iterator();
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
@@ -250,7 +268,7 @@ public class MegaManStateTest {
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
 
 		assertFalse(itr3.hasNext());
@@ -397,7 +415,8 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence8!=null);
-		
+			
+
 		
 		Iterator<MegaManAction> itr8 = actionSequence8.iterator();
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
@@ -407,15 +426,15 @@ public class MegaManStateTest {
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr8.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr8.next());
+
+		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr8.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
-
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
-		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
+		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr8.next());
 
 		assertEquals(new MegaManAction(MegaManAction.MOVE.LEFT), itr8.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
@@ -428,6 +447,7 @@ public class MegaManStateTest {
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 		assertFalse(itr8.hasNext());
 		
+
 		
 		
 		
@@ -1249,3 +1269,12 @@ public class MegaManStateTest {
 	}
 
 }
+
+
+//FOR TROUBLESHOOTING:
+//Will generate an image with the solution path. Also will wait for key press to continue the code to ensure correct spot is looked at.
+//For this to work, like 6 things need to be imported, all of them are with the imports, commented out
+
+//BufferedImage level4Image = MegaManState.vizualizePath(level4,mostRecentVisited,actionSequence4,start4);
+//MegaManRenderUtil.displayBufferedImage(level4, level4Image);
+//MiscUtil.waitForReadStringAndEnterKeyPress();
