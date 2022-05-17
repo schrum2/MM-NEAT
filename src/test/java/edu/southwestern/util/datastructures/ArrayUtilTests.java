@@ -49,7 +49,14 @@ public class ArrayUtilTests {
 		
 	}
 	
-	
+	@Test
+	public void range_test()  {
+		assertArrayEquals(new int[] {0,1,2,3,4,5}, ArrayUtil.range(0, 6, 1));
+		assertArrayEquals(new int[] {3,4,5}, ArrayUtil.range(3, 6, 1));
+		assertArrayEquals(new int[] {0,2,4}, ArrayUtil.range(0, 6, 2));
+		assertArrayEquals(new int[] {0,3}, ArrayUtil.range(0, 6, 3));
+		assertArrayEquals(new int[] {5,12,19,26,33,40}, ArrayUtil.range(5, 41, 7));
+	}
 	
 	/**
 	 * Tests that the given number of "1"s is returned in a int[]
