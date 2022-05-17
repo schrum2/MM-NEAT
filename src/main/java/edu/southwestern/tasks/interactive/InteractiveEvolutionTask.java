@@ -427,7 +427,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		for(int i = 1; i <= numRows; i++) {
 			for(int j = 0; j < NUM_COLUMNS; j++) {
 				if(x < numButtonOptions) {
-					JButton image = getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, buttonWidth, buttonHeight), "x");
+					JButton image = getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, Parameters.parameters.integerParameter("imageSize"), Parameters.parameters.integerParameter("imageSize")), "x");
 					image.setName("" + x);
 					image.addActionListener(this);
 					panels.get(i).add(image);
@@ -516,7 +516,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		if(stretchToFitButtons) {
 			width = frame.getWidth() / NUM_COLUMNS;
 		}
-		ImageIcon img = new ImageIcon(gmi.getScaledInstance(width,height,Image.SCALE_DEFAULT));
+		ImageIcon img = new ImageIcon(gmi.getScaledInstance(Parameters.parameters.integerParameter("imageSize"),Parameters.parameters.integerParameter("imageSize"),Image.SCALE_DEFAULT));
 		buttons.get(buttonIndex).setName("" + buttonIndex);
 		buttons.get(buttonIndex).setIcon(img);
 
@@ -582,7 +582,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	
 	protected void resetButton(Genotype<T> individual, int x, boolean selected, boolean allowCachedImages) { 
 		if(!selected) scores.add(new Score<T>(individual, new double[]{0}, null));
-		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(allowCachedImages, individual.getPhenotype(), buttonWidth, buttonHeight, inputMultipliers), x);
+		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(allowCachedImages, individual.getPhenotype(), Parameters.parameters.integerParameter("imageSize"), Parameters.parameters.integerParameter("imageSize"), inputMultipliers), x);
 		if(!selected) chosen[x] = false;
 		buttons.get(x).setBorder(BorderFactory.createLineBorder(selected ? Color.BLUE : Color.lightGray, BORDER_THICKNESS));
 	}
@@ -639,7 +639,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 */
 	private BufferedImage getNetwork(Genotype<T> tg) {
 		T pheno = tg.getPhenotype();
-		return getTWEANNComponent(pheno).getNetworkImage(buttonWidth, buttonHeight, false, false);
+		return getTWEANNComponent(pheno).getNetworkImage(Parameters.parameters.integerParameter("imageSize"), Parameters.parameters.integerParameter("imageSize"), false, false);
 	}
 
 	/**
@@ -657,7 +657,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		}	
 		// Because image loading may take a while, blank all images first so that it is clear
 		// when the images have loaded.
-		BufferedImage blank = new BufferedImage(buttonWidth, buttonHeight, BufferedImage.TYPE_INT_RGB);
+		BufferedImage blank = new BufferedImage(Parameters.parameters.integerParameter("imageSize"), Parameters.parameters.integerParameter("imageSize"), BufferedImage.TYPE_INT_RGB);
 		for(int i = 0; i < buttons.size(); i++) {
 			setButtonImage(blank, i);
 		}	
@@ -769,7 +769,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		if(showNetwork) {//puts images back on buttons
 			showNetwork = false;
 			for(int i = 0; i < scores.size(); i++) {
-				setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(), buttonWidth, buttonHeight, inputMultipliers), i);
+				setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageSize"), Parameters.parameters.integerParameter("imageSize"), inputMultipliers), i);
 			}
 		} else {//puts networks on buttons
 			showNetwork = true;
@@ -825,7 +825,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		}
 		for(int i = 0; i < scores.size(); i++) {
 			// If not doing hard reset, there is a chance to load from cache
-			setButtonImage(getButtonImage(!hardReset, scores.get(i).individual.getPhenotype(),  buttonWidth, buttonHeight, inputMultipliers), i);
+			setButtonImage(getButtonImage(!hardReset, scores.get(i).individual.getPhenotype(),  Parameters.parameters.integerParameter("imageSize"), Parameters.parameters.integerParameter("imageSize"), inputMultipliers), i);
 		}		
 	}
 
