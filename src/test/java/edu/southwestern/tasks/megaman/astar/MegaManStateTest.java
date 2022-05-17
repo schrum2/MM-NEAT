@@ -97,6 +97,7 @@ public class MegaManStateTest {
 		 */
 		List<List<Integer>> level1 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTest.txt"); 
 		MegaManState start1 = new MegaManState(level1);
+		System.out.println(MegaManState.orbHeuristic.h(start1));
 		Search<MegaManAction,MegaManState> search1 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence1 = null;
@@ -114,6 +115,8 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence1==null);
+		//Testing the heuristic
+		assertEquals(MegaManState.orbHeuristic.h(start1),13.0,.0000001);
 		
 		
 		
@@ -173,6 +176,8 @@ public class MegaManStateTest {
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr2.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr2.next());
 		assertFalse(itr2.hasNext());
+		
+		assertEquals(MegaManState.orbHeuristic.h(start2),13.0,.0000001);
 
 		
 		//Level format, should fail
@@ -209,6 +214,8 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence3==null);
+		
+		assertEquals(MegaManState.orbHeuristic.h(start3),11.0,.0000001);
 		
 		
 		//Level format, should pass
@@ -270,6 +277,8 @@ public class MegaManStateTest {
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.JUMP), itr3.next());
+		
+		assertEquals(MegaManState.orbHeuristic.h(start4),11.0,.0000001);
 
 		assertFalse(itr3.hasNext());
 		
@@ -313,6 +322,7 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence5==null);
+		assertEquals(MegaManState.orbHeuristic.h(start5),13.0,.0000001);
 		
 		
 		
@@ -337,6 +347,7 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence6==null);
+		assertEquals(MegaManState.orbHeuristic.h(start6),13.0,.0000001);
 		
 		
 		
@@ -375,6 +386,7 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence7==null);
+		assertEquals(MegaManState.orbHeuristic.h(start7),15.0,.0000001);
 		
 		
 		
@@ -446,6 +458,7 @@ public class MegaManStateTest {
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 		assertEquals(new MegaManAction(MegaManAction.MOVE.RIGHT), itr8.next());
 		assertFalse(itr8.hasNext());
+		assertEquals(MegaManState.orbHeuristic.h(start8),15.0,.0000001);
 		
 
 		
@@ -486,6 +499,7 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence9==null);
+		assertEquals(MegaManState.orbHeuristic.h(start9),13.0,.0000001);
 		
 		
 //		----------------
@@ -522,6 +536,7 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence10==null);
+		assertEquals(MegaManState.orbHeuristic.h(start10),13.0,.0000001);
 		
 		
 		
@@ -559,6 +574,7 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence11==null);
+		assertEquals(MegaManState.orbHeuristic.h(start11),13.0,.0000001);
 		
 		
 		
@@ -596,6 +612,7 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence12==null);
+		assertEquals(MegaManState.orbHeuristic.h(start12),13.0,.0000001);
 		//MegaManCannotJumpThroughBreakableBlocks
 		
 		
@@ -636,6 +653,7 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence13==null);
+		assertEquals(MegaManState.orbHeuristic.h(start13),13.0,.0000001);
 		
 		
 		
@@ -658,6 +676,7 @@ public class MegaManStateTest {
 				System.out.println(a.getMove().toString());
 			}
 		assertTrue(actionSequence14==null);
+		assertEquals(MegaManState.orbHeuristic.h(start14),15.0,.0000001);
 		
 		//MegaManStateTestNoHazardSlidingBug.txt
 //		MegaManCannotSlideFromLadder

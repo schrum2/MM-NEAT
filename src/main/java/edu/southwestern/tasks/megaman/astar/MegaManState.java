@@ -86,7 +86,7 @@ public class MegaManState extends State<MegaManState.MegaManAction>{
 //	};
 
 	
-////New heuristic; both are here for trouble shooting
+////New heuristic; both are here for trouble shooting, only difference is maxDistance
 	
 //	Point orb = s.orb;
 //	int xDistance = Math.abs(s.currentX - orb.x);
