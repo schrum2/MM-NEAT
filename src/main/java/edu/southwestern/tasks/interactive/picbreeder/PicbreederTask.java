@@ -417,18 +417,18 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							// Actually change the value of the phenotype in the population
 							if(phenotype instanceof NetworkPlusParameters) {
 								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_SCALE, scaledValue);
+								// Genotype references the phenotype, so it is changed by the modifications above
+								resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 							} else {
 								// Settings are the generic ones applied to all the images
 								Parameters.parameters.setDouble("picbreederImageScale", scaledValue);
+								resetAllButtons();
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
-							// Genotype references the phenotype, so it is changed by the modifications above
-							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 						}	
 					}
-						
 				});
 				
 				
@@ -448,15 +448,16 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_ROTATION, rotationValue);					
 //								System.out.println("phenotype:" + ((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2);
 //								System.out.println("genotype: " + ((NetworkPlusParameters<TWEANN,ArrayList<Double>>) scores.get(picToEdit).individual.getPhenotype()).t2);							
+								// Genotype references the phenotype, so it is changed by the modifications above
+								resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 							} else {
 								// Settings are the generic ones applied to all the images
 								Parameters.parameters.setDouble("picbreederImageRotation", rotationValue);
+								resetAllButtons();
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
-							// Genotype references the phenotype, so it is changed by the modifications above
-							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 						}	
 					}
 						
@@ -478,15 +479,16 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							// Actually change the value of the phenotype in the population
 							if(phenotype instanceof NetworkPlusParameters) {
 								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_X, transXValue);
+								// Genotype references the phenotype, so it is changed by the modifications above
+								resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 							} else {
 								// Settings are the generic ones applied to all the images
 								Parameters.parameters.setDouble("picbreederImageTranslationX", transXValue);
+								resetAllButtons();
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
-							// Genotype references the phenotype, so it is changed by the modifications above
-							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 						}	
 					}
 						
@@ -506,21 +508,22 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							// Actually change the value of the phenotype in the population
 							if(phenotype instanceof NetworkPlusParameters) {
 								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y, transYValue);
+								// Genotype references the phenotype, so it is changed by the modifications above
+								resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 							} else {
 								// Settings are the generic ones applied to all the images
 								Parameters.parameters.setDouble("picbreederImageTranslationY", transYValue);
-								
+								resetAllButtons();
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
-							// Genotype references the phenotype, so it is changed by the modifications above
-							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
-							resetAllButtons();
 						}	
 					}
 						
 				});
+				
+				
 				
 				// Makes all the labels visible
 				explorer.add(main);
