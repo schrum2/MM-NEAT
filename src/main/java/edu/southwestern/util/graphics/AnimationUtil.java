@@ -80,7 +80,7 @@ public class AnimationUtil {
 				}
 				
 				if(Parameters.parameters.booleanParameter("AnimateRotation")) {
-					rotation = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_ROTATION] * Math.PI; // Mult by Math.PI
+					rotation = scaleAndRotationOutputs[CPPN_OUTPUT_INDEX_ROTATION] * Math.PI; // Multiply by Math.PI
 				}
 				
 				if(Parameters.parameters.booleanParameter("AnimateDeltaX")) {
