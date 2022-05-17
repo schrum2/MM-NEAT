@@ -783,7 +783,7 @@ public class Parameters {
 		booleanOptions.add("segmentSwapAuxiliaryVarialbes", true, "Whether to swap aux variables in SegmentSwapMutation.");
 		booleanOptions.add("parallelMAPElitesInitialize", false, "Initial archive members are evaluated in parallel for MAP Elites.");
 		booleanOptions.add("objectBreederDistanceInEachPlane", false, "CPPN inputs for object breeder include distances projected to each 2D plane.");
-		booleanOptions.add("animate3DRotation", false, "Whether or not the rotation of the shapes in ThreeDimensionalAnimationBreederTask changes as part of the animation.");
+		booleanOptions.add("searchContinuesAfterSuccess", false, "Graph search algorithms will keep searching even after a solution is found (collecting set of all reachable locations).");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");

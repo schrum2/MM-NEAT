@@ -2108,6 +2108,16 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 		for(int i = 0; i < tg.numOut; i++) {
 			newNodes.add(tg.nodes.get(tg.outputStartIndex() + i));
 		}
+		
+		// Loops through to add back any nodes that went missing after topological sort
+		// they are added after all the hidden neurons and before the output neurons
+//		for(int i = 0; i < tg.nodes.size(); i++) {
+//			if(getNodeGene(tg.nodes.get(i).innovation,newNodes) == null) {
+//				newNodes.add(newNodes.size() - tg.numOut, tg.nodes.get(i));
+//			}
+//		}
+		
+		
 		// Replace nodes with sorted nodes
 		tg.nodes = newNodes;
 

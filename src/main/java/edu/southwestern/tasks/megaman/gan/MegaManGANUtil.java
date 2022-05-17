@@ -175,6 +175,7 @@ public class MegaManGANUtil {
 	 */
 	public static void placeSpawn(List<List<Integer>> level) {
 		boolean placed = false;
+		//Preliminary loop to add spawn
 		for(int x = 0;x<level.get(0).size();x++) {
 			for(int y = 0;y<level.size();y++) {
 				if(y-2>=0&&(level.get(y).get(x)==1||level.get(y).get(x)==2)&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)&&(level.get(y-2).get(x)==0||level.get(y-1).get(x)==10)) {
@@ -183,9 +184,9 @@ public class MegaManGANUtil {
 					break;
 				}
 			}
-			if(placed) {
-				break;
-			}	
+			//If the spawn is placed through the first loop, it stops,
+			//otherwise, runs through second loop
+			if(placed) break;	
 		}
 		for(int i = 0; i<level.get(0).size();i++) {
 			if(!placed) {
@@ -198,39 +199,88 @@ public class MegaManGANUtil {
 
 	}
 	
-	
-	public static void placeOrb(List<List<Integer>> level) {
+	/**
+	 * Places the orb for MegaMan on the right side of the specified segment
+	 * @param level The segment
+	 */
+	public static void placeOrbRight(List<List<Integer>> level) {
 		boolean placed = false;
-		
-			for(int x = level.get(0).size()-1;x>=0; x--) {
-				for(int y = level.size()-1; y>=0;y--) {
-				if(y-2>=0&&(level.get(y).get(x)==2||level.get(y).get(x)==1||level.get(y).get(x)==5)&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
-					level.get(y-1).set(x, 7);
-					level.get(y-2).set(x,  MegaManVGLCUtil.ONE_ENEMY_AIR);
-					placed=true;
-					break;
-					
-				}
-			}
+		//Preliminary loop to add orb, goes right to left, then calls method to 
+		//loop through Y's until a location is found
+		for(int x = level.get(0).size()-1;x>=0; x--) {
+			placed = placeOrblLoopForYValues(level, placed, x);
+			
+			//If it the orb is placed, the method stops
 			if(placed) break;
 		}
-			for(int i = 0; i<level.get(0).size();i++) {
-				if(!placed) {
-					level.get(level.size()-1).set(0, MegaManVGLCUtil.ONE_ENEMY_SOLID);
-					level.get(level.size()-2).set(0, MegaManVGLCUtil.ONE_ENEMY_ORB);
-					level.get(level.size()-3).set(0, MegaManVGLCUtil.ONE_ENEMY_AIR);
-					placed = true;
-				}
-			}
+		//If no location was found, this method is called to make sure one is placed
+		placeOrbForced(level, placed);
 	}
 	
+	/**
+	 * Places the orb for MegaMan on the left side of the specified segment
+	 * @param level The segment
+	 */
+	public static void placeOrbLeft(List<List<Integer>> level) {
+		boolean placed = false;
+		//Preliminary loop to add orb, goes right to left, then calls method to 
+		//loop through Y's until a location is found
+		for(int x =0;x<=level.get(0).size()-1; x++) {
+			placed = placeOrblLoopForYValues(level, placed, x);
+			
+			//If it the orb is placed, the method stops
+			if(placed) break;
+		}
+		//If no location was found, this method is called to make sure one is placed
+		placeOrbForced(level, placed);
+	}
 	
 	/**
-	 * 
-	 * @param width how many segments
-	 * @param segmentLength - the length of one segment
-	 * @param wholeVector - the entire vector from realvaluedgenotype
-	 * @return portion of vector corresponding to one segment
+	 * Helper for placeOrb methods. Inner loop goes from bottom to top of the
+	 * segment to find a suitable location for the orb. Once it is found, the
+	 * orb is place. This loop controls the Y's in the segment
+	 * @param level The segment
+	 * @param placed Boolean flag to track if the orb was placed
+	 * @param x Specified value of X the loop should run for
+	 * @return placed Whether or not the orb was placed
+	 */
+	private static boolean placeOrblLoopForYValues(List<List<Integer>> level, boolean placed, int x) {
+		for(int y = level.size()-1; y>=0;y--) { //Bottom to top
+			if(y-2>=0&&(level.get(y).get(x)==2||level.get(y).get(x)==1||level.get(y).get(x)==5)&&(level.get(y-1).get(x)==0||level.get(y-1).get(x)==10)) {
+				level.get(y-1).set(x, 7);
+				level.get(y-2).set(x,  MegaManVGLCUtil.ONE_ENEMY_AIR);
+				placed=true;
+				break; //Break to ensure only one orb is placed
+			}
+		}
+		return placed;
+	}
+	
+	/**
+	 * If no place was suitable within the segment, this loop modifies the 
+	 * segment to find a suitable location.
+	 * @param level The segment
+	 * @param placed placed Boolean flag to track if the orb was placed
+	 */
+	private static void placeOrbForced(List<List<Integer>> level, boolean placed) {
+		for(int i = 0; i<level.get(0).size();i++) {
+			if(!placed) {
+				level.get(level.size()-1).set(0, MegaManVGLCUtil.ONE_ENEMY_SOLID);
+				level.get(level.size()-2).set(0, MegaManVGLCUtil.ONE_ENEMY_ORB);
+				level.get(level.size()-3).set(0, MegaManVGLCUtil.ONE_ENEMY_AIR);
+				placed = true;
+			}
+		}
+	}
+
+	
+
+	/**
+	 * Gets all of the sgement's data and adds it to a latent vector
+	 * @param width Number of segments
+	 * @param segmentLength The length of one segment
+	 * @param wholeVector The entire vector from realValuedGenotype
+	 * @return result Portion of vector corresponding to one segment
 	 */
 	public static double[] latentVectorAndMiscDataForPosition(int width,int segmentLength, double[] wholeVector) { 
 		int startIndex = segmentLength*(width);
@@ -238,12 +288,6 @@ public class MegaManGANUtil {
 		System.arraycopy(wholeVector, startIndex, result, 0, segmentLength);
 		return result;
 	}
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * Kick off for longVectorOrCPPNToMegaManLevel. For Long Vectors to 
@@ -272,14 +316,9 @@ public class MegaManGANUtil {
 		return longVectorOrCPPNToMegaManLevel(megaManGANGenerator,cppn,null,chunks, segmentTypeTracker, inputMultipliers);
 	}	
 	
-	// For CPPN2GAN
-	public static final int XPREF  = 0;
-	public static final int YPREF = 1;
-	public static final int BIASPREF = 2;	
-	
 	/**
 	 * Takes in info from either a long Vector or a CPPN and converts it to a 
-	 * MegaMan level.
+	 * MegaMan level. 
 	 * @param megaManGANGenerator the megaManGANGenerator
 	 * @param cppn the CPPN
 	 * @param wholeVector The whole latent vector
@@ -298,10 +337,17 @@ public class MegaManGANUtil {
 		
 	}
 	
+	// For CPPN2GAN
+	public static final int XPREF  = 0;
+	public static final int YPREF = 1;
+	public static final int BIASPREF = 2;	
+	
 	/**
 	 * Converts either a long vector or a CPPN into a pair containing
 	 * both a MegaMan level, and also the whole latent vector. Helper
-	 * method of longVectorOrCPPNToMegaManLevel.
+	 * method of longVectorOrCPPNToMegaManLevel. Using this method, you
+	 * can return the pair, which gives you access to both the level 
+	 * and the whole latent vector
 	 * @param megaManGANGenerator the megaManGANGenerator
 	 * @param cppn the CPPN
 	 * @param wholeVector The whole latent vector
@@ -321,6 +367,7 @@ public class MegaManGANUtil {
 		List<List<Integer>> segment = new ArrayList<>();
 		HashSet<List<List<Integer>>> distinct = new HashSet<>();
 		
+		//Computes the length of one segment, which is the GAN input size and the number of aux. variables
 		int oneSegmentLength = Parameters.parameters.integerParameter("GANInputSize")+MegaManGANGenerator.numberOfAuxiliaryVariables();
 		
 		// Level is being generated based on the CPPN. Store the latent vectors into one
@@ -349,20 +396,40 @@ public class MegaManGANUtil {
 			segment = segmentAndPoint.t1;
 			segmentTypeTracker.findSegmentData(megaManGANGenerator.getSegmentType(), segment, distinct);
 
+			// If it is the last segment, place the orb
+			if(i==chunks-1) {	
+				// If the last segment is to the left, place on left side 
+				if(previousPoint.x-currentPoint.x==1) placeOrbLeft(segment);
+				
+				//Otherwise, place the orb on the right side
+				else placeOrbRight(segment);
+			}
 			previousPoint = currentPoint; // backup previous
 			currentPoint = segmentAndPoint.t2;
-			if(i==chunks-1) placeOrb(segment);
+			
 			
 			placementPoint = placeMegaManSegment(level, segment,  currentPoint, previousPoint, placementPoint);
 
 			assert currentPoint != null : "Iteration "+i+", \n"+segment+"\npreviousPoint = "+previousPoint;
 		}
 		
+		// t1 is the level, t2 is the Whole vector
 		Pair<List<List<Integer>>, double[]> levelAndWholeLatentVector = new Pair<>(level,wholeVector);
 		return levelAndWholeLatentVector;
 	}
 
-	public static Point placeMegaManSegment(List<List<Integer>> level,List<List<Integer>> segment, Point current, Point prev, Point placementPoint) {
+	/**
+	 * Places the MegaMan segment based on where the current 
+	 * points are and 
+	 * @param level
+	 * @param segment
+	 * @param current
+	 * @param prev
+	 * @param placementPoint
+	 * @return
+	 */
+	public static Point placeMegaManSegment(List<List<Integer>> level,List<List<Integer>> segment, 
+			Point current, Point prev, Point placementPoint) {
 		if(level.isEmpty()) { // First segment
 			for(List<Integer> row : segment) {
 				ArrayList<Integer> newRow = new ArrayList<>(row.size());
