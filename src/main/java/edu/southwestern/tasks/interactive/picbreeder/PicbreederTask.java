@@ -206,20 +206,20 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 
 				T phenotype = scores.get(picToEdit).individual.getPhenotype();
-				double rotationValue, scaleValue, xTranslationValue, yTranslationValue;
+				double rotationalValue, scaleValue, xTranslationValue, yTranslationValue;
 				if(phenotype instanceof NetworkPlusParameters) {
 					// Settings come from specific phenotype
 					@SuppressWarnings("unchecked")
 					NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype;
 					ArrayList<Double> scaleRotationTranslation = npp.t2;
 					scaleValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE);
-					rotationValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION); 
+					rotationalValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION); 
 					xTranslationValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_X); 
 					yTranslationValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y);					
 				} else {
 					// Settings are the generic ones applied to all the images
 					scaleValue = Parameters.parameters.doubleParameter("picbreederImageScale");
-					rotationValue = Parameters.parameters.doubleParameter("picbreederImageRotation");
+					rotationalValue = Parameters.parameters.doubleParameter("picbreederImageRotation");
 					xTranslationValue = Parameters.parameters.doubleParameter("picbreederImageTranslationX");
 					yTranslationValue = Parameters.parameters.doubleParameter("picbreederImageTranslationY");
 				}
@@ -242,8 +242,8 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				// Slider for rotation
 				Hashtable<Integer,JLabel> rotationLabels = new Hashtable<>();
 				rotationLabels.put(0, new JLabel(""+ 0));
-				rotationLabels.put(scaleUpToInt(2*Math.PI), new JLabel(String.format("%.2f",2*Math.PI))); // uhh
-				JSlider rotationSlider = new JSlider(JSlider.HORIZONTAL, 0, scaleUpToInt(Parameters.parameters.booleanParameter("enhancedCPPNCanRotate") ? 2*Math.PI : 0.0), scaleUpToInt(rotationValue));
+				rotationLabels.put(scaleUpToInt(2*Math.PI), new JLabel(String.format("%.2f",2*Math.PI))); 
+				JSlider rotationSlider = new JSlider(JSlider.HORIZONTAL, 0, scaleUpToInt(Parameters.parameters.booleanParameter("enhancedCPPNCanRotate") ? 2*Math.PI : 0.0), scaleUpToInt(rotationalValue));
 				rotationSlider.setLabelTable(rotationLabels);
 				rotationSlider.setPaintLabels(true);
 				sliders.add(rotationSlider);
@@ -311,7 +311,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				textBox.add(scaleBox);
 				
 				JTextField rotationBox = new JTextField(0);
-				rotationBox.setText(String.format("%.2f", rotationValue));
+				rotationBox.setText(String.format("%.2f", rotationalValue));
 				rotationBox.addKeyListener(new KeyListener() {
 
 					@Override
@@ -480,7 +480,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_X, transXValue);
 							} else {
 								// Settings are the generic ones applied to all the images
-								Parameters.parameters.setDouble("picbreederTranslationX", xTranslationValue);
+								Parameters.parameters.setDouble("picbreederImageTranslationX", transXValue);
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
@@ -508,13 +508,15 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y, transYValue);
 							} else {
 								// Settings are the generic ones applied to all the images
-								Parameters.parameters.setDouble("picbreederTranslationY", yTranslationValue);
+								Parameters.parameters.setDouble("picbreederImageTranslationY", transYValue);
+								
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
 							// Genotype references the phenotype, so it is changed by the modifications above
 							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
+							resetAllButtons();
 						}	
 					}
 						
