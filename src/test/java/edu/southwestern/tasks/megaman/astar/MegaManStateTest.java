@@ -47,7 +47,7 @@ public class MegaManStateTest {
 		 */
 		List<List<Integer>> level0 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestHitsHead.txt"); 
 		MegaManState start0 = new MegaManState(level0);
-		Search<MegaManAction,MegaManState> search0 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search0 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence0 = null;
 		try {
@@ -86,7 +86,7 @@ public class MegaManStateTest {
 		 */
 		List<List<Integer>> level1 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTest.txt"); 
 		MegaManState start1 = new MegaManState(level1);
-		Search<MegaManAction,MegaManState> search1 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search1 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence1 = null;
 		try {
@@ -129,7 +129,7 @@ public class MegaManStateTest {
 		List<List<Integer>> level2 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestTrue.txt"); 
 		MegaManVGLCUtil.printLevel(level2);
 		MegaManState start2 = new MegaManState(level2);
-		Search<MegaManAction,MegaManState> search2 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search2 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence2 = null;
 		try {
@@ -181,7 +181,7 @@ public class MegaManStateTest {
 //		----------------
 		List<List<Integer>> level3 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestFalling.txt"); 
 		MegaManState start3 = new MegaManState(level3);
-		Search<MegaManAction,MegaManState> search3 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search3 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence3 = null;
 		try {
@@ -220,7 +220,7 @@ public class MegaManStateTest {
 		List<List<Integer>> level4 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestFallingTrue.txt"); 
 		MegaManVGLCUtil.printLevel(level4);
 		MegaManState start4 = new MegaManState(level4);
-		Search<MegaManAction,MegaManState> search4 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search4 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence4 = null;
 		try {
@@ -278,7 +278,7 @@ public class MegaManStateTest {
 		 */
 		List<List<Integer>> level5 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestJumpDuck.txt"); 
 		MegaManState start5 = new MegaManState(level5);
-		Search<MegaManAction,MegaManState> search5 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search5 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence5 = null;
 		try {
@@ -302,7 +302,7 @@ public class MegaManStateTest {
 		
 		List<List<Integer>> level6 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestJumpOnEnemies.txt"); 
 		MegaManState start6 = new MegaManState(level6);
-		Search<MegaManAction,MegaManState> search6 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search6 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence6 = null;
 		try {
@@ -340,7 +340,7 @@ public class MegaManStateTest {
 		
 		List<List<Integer>> level7 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestOddLadderPlacementWhy.txt"); 
 		MegaManState start7 = new MegaManState(level7);
-		Search<MegaManAction,MegaManState> search7 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search7 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence7 = null;
 		try {
@@ -380,7 +380,7 @@ public class MegaManStateTest {
 		List<List<Integer>> level8 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestProperJumpingWithSomethingAboveMegaMan.txt");
 		//MegaManVGLCUtil.printLevel(level8);
 		MegaManState start8 = new MegaManState(level8);
-		Search<MegaManAction,MegaManState> search8 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search8 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence8 = null;
 		try {
@@ -449,7 +449,7 @@ public class MegaManStateTest {
 		
 		List<List<Integer>> level9 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManOddLadderUpBug.txt"); 
 		MegaManState start9 = new MegaManState(level9);
-		Search<MegaManAction,MegaManState> search9 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search9 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence9 = null;
 		try {
@@ -485,7 +485,7 @@ public class MegaManStateTest {
 
 		List<List<Integer>> level10 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestNoClimbAndSlide.txt"); 
 		MegaManState start10 = new MegaManState(level10);
-		Search<MegaManAction,MegaManState> search10 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search10 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence10 = null;
 		try {
@@ -522,7 +522,7 @@ public class MegaManStateTest {
 //		
 		List<List<Integer>> level11 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestNoSlideAndCatchLadder.txt"); 
 		MegaManState start11 = new MegaManState(level11);
-		Search<MegaManAction,MegaManState> search11 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search11 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence11 = null;
 		try {
@@ -559,7 +559,7 @@ public class MegaManStateTest {
 		
 		List<List<Integer>> level12 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManCannotJumpThroughBreakableBlocks.txt"); 
 		MegaManState start12 = new MegaManState(level12);
-		Search<MegaManAction,MegaManState> search12 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search12 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence12 = null;
 		try {
@@ -599,7 +599,7 @@ public class MegaManStateTest {
 		
 		List<List<Integer>> level13 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManCannotSlideFromLadder.txt"); 
 		MegaManState start13 = new MegaManState(level13);
-		Search<MegaManAction,MegaManState> search13 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search13 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence13 = null;
 		try {
@@ -621,7 +621,7 @@ public class MegaManStateTest {
 		
 		List<List<Integer>> level14 = MegaManVGLCUtil.convertMegamanVGLCtoListOfLists(MegaManVGLCUtil.MEGAMAN_MMLV_PATH+"MegaManStateTestNoHazardSlidingBug.txt"); 
 		MegaManState start14 = new MegaManState(level14);
-		Search<MegaManAction,MegaManState> search14 = new AStarSearch<>(MegaManState.manhattanToOrb);
+		Search<MegaManAction,MegaManState> search14 = new AStarSearch<>(MegaManState.orbHeuristic);
 		//HashSet<MegaManState> mostRecentVisited = null;
 		ArrayList<MegaManAction> actionSequence14 = null;
 		try {

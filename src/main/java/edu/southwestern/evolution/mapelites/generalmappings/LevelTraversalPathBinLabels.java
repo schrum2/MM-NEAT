@@ -1,5 +1,6 @@
 package edu.southwestern.evolution.mapelites.generalmappings;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -22,7 +23,10 @@ import edu.southwestern.util.util2D.ILocated2D;
  */
 public class LevelTraversalPathBinLabels extends BaseBinLabels {
 	
-	List<String> labels = null;
+	private List<String> labels = null;
+	
+	private HashMap<String,Integer> labelToIndex;
+	
 	private int verticalCoarseness; // height of a level
 	private int horizontalCoarseness; // width of a level
 	private int sizeX; // width of a room
@@ -51,7 +55,8 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 				default:
 					throw new UnsupportedOperationException("Pick a game");
 			}
-			labels = new ArrayList<String>(numOfBins);
+			labels = new ArrayList<String>(numOfBins); // TODO: Change to make smaller
+			labelToIndex = new HashMap<>();  // TODO: Need to have a sensible size
 			generateBinLabels(maxSize, "");
 		}
 		return labels;
@@ -60,10 +65,73 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 	private void generateBinLabels(int maxSize, String previous) {
 		for (int i = 0; i < numOfBins; i++) {
 			String binString = padStringTo(maxSize, Integer.toBinaryString(i));
+			if(binStringConnected(binString)) { // Check the string and only add it if it is connected
+				labelToIndex.put(binString, labels.size()); // Size is the next index filled
+			}
 			labels.add(binString);
 		}
 	}
 	
+	private boolean binStringConnected(String binString) {
+		// fill 2d array to then search
+		boolean[][] boolDungeon = new boolean[verticalCoarseness][horizontalCoarseness];
+		Point startingPoint = new Point();
+		boolean startingPointFound = false;
+		int binStringCounter = 0;
+		
+		for(int i = 0; i < verticalCoarseness; i++) { // go through rows in one level before going down vertically
+			for(int j = 0; j < horizontalCoarseness; j++) {
+				if(binString.charAt(binStringCounter) == '1') { // fill booleanDungeon with true at [i][j]
+					if(!startingPointFound) {
+						startingPointFound = true;
+						startingPoint.setLocation(i, j);
+					}
+					boolDungeon[i][j] = true;
+				} else { // fill booleanDungeon with false at [i][j]
+					boolDungeon[i][j] = false;
+				}
+				binStringCounter++;
+			}
+		}
+		explore(boolDungeon, startingPoint); // explore connected rooms
+		return isConnected(boolDungeon); 
+	}
+
+	// dungeon is disconnected if any true's are found since all connected ones from starting point were explored and changed to false
+	private boolean isConnected(boolean[][] boolDungeon) {
+		boolean connected = true; // assuming connected unless otherwise 
+		for(int i = 0; connected && i < verticalCoarseness; i++) { // go through rows in one level before going down vertically
+			for(int j = 0; connected && j < horizontalCoarseness; j++) {
+				if(boolDungeon[i][j] == true) connected = false; // disconnected because true exists in the array after exploration
+			}
+		}
+		return connected;
+	}
+
+	// kick-off method for recursive explore method
+	private void explore(boolean[][] boolDungeon, Point startingPoint) {
+		int x = startingPoint.x;
+		int y = startingPoint.y;
+		explore(boolDungeon, x, y); 
+	}
+
+	// recursive explore method, if the location at [x][y] is true, the adjacent rooms will be explored given they exist
+	private void explore(boolean[][] boolDungeon, int x, int y) { 
+		if(boolDungeon[x][y]) { // true, which is the same as having 1, explore this point's adjacent tiles
+			boolDungeon[x][y] = false; // change current location to false since it has just been explored
+			if(inBounds(x, y - 1)) explore(boolDungeon, x, y - 1); // explore upper adjacent if it exists
+		    if(inBounds(x, y + 1)) explore(boolDungeon, x, y + 1); // explore lower adjacent if it exists
+	 		if(inBounds(x - 1, y)) explore(boolDungeon, x - 1, y); // explore left adjacent if it exists
+			if(inBounds(x + 1, y)) explore(boolDungeon, x + 1, y); // explore right adjacent if it exists
+		} 
+	}
+	
+	// checks if a position in an array is out of bounds either horizontally or vertically
+	private boolean inBounds(int x, int y) {
+		return x > 0 && x < horizontalCoarseness 
+				&& y > 0 && y < verticalCoarseness; // x and y out of bounds if this returns false
+	}
+
 	private String padStringTo(int length, String s) {
 		while (s.length() < length) s = "0" + s;
 		
