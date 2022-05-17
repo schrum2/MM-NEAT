@@ -581,9 +581,6 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	}	
 	
 	protected void resetButton(Genotype<T> individual, int x, boolean selected, boolean allowCachedImages) { 
-		
-		System.out.println("Reset button "+x);
-		
 		if(!selected) scores.add(new Score<T>(individual, new double[]{0}, null));
 		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(allowCachedImages, individual.getPhenotype(), buttonWidth, buttonHeight, inputMultipliers), x);
 		if(!selected) chosen[x] = false;
