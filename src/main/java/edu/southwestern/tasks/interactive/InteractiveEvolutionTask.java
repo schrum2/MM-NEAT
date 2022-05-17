@@ -35,8 +35,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.fossgalaxy.object.annotations.Parameter;
-
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.SinglePopulationGenerationalEA;
@@ -737,19 +735,6 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		}	
 	}
 	
-	/**
-	 * Modifies the images of ALL the buttons on the
-	 * main PicBreeder screen as changes are being made to the main image,
-	 * specifically for plain CPPNs/TWEANNS 
-	 */
-	protected void resetAllButtons() {
-		for(int i = 0; i < scores.size(); i++) {
-			//System.out.println("index "+i);
-			//System.out.println("scores size: "+ scores.size());
-			resetButton(scores.get(i).individual, i, true, false);
-		}	
-	}
-
 	/**
 	 * Saves all currently clicked images
 	 */
