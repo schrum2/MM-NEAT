@@ -187,7 +187,7 @@ public abstract class InteractiveGANLevelEvolutionTask extends InteractiveEvolut
 					System.exit(1);
 				}
 				
-				BufferedImage image = getButtonImage(false, vector, Parameters.parameters.integerParameter("imageSize"), Parameters.parameters.integerParameter("imageSize"), inputMultipliers);
+				BufferedImage image = getButtonImage(false, vector, buttonWidth, buttonHeight, inputMultipliers);
 				GraphicsUtil.saveImage(image, saveDir + File.separator + "level"+i+".png");
 
 			}

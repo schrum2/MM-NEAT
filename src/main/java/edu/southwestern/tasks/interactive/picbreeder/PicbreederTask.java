@@ -194,13 +194,13 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				int picToEdit = selectedItems.get(selectedItems.size() - 1);
 
 
-				JPanel main = new JPanel(new GridLayout(1,4));
+				JPanel main = new JPanel(new GridLayout(1,2));
 
 
 				// Labels for each of the modifiers
-				JPanel values = new JPanel(new GridLayout(4,1));
+				JPanel values = new JPanel(new GridLayout(4,2));
 
-				JPanel sliders = new JPanel(new GridLayout(4,1));
+				JPanel sliders = new JPanel(new GridLayout(4,2));
 				
 				JPanel textBox = new JPanel(new GridLayout(4,1));
 
@@ -251,7 +251,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				// Label for translation in the x axis
 				// this is labeled wrong on purpose because the current implementation
 				// move the image in the y direction
-				JLabel translationX = new JLabel("x translation");
+				JLabel translationX = new JLabel("y translation");
 				values.add(translationX);
 				// Slider for translation in the x axis
 				Hashtable<Integer,JLabel> transXLabels = new Hashtable<>();
@@ -265,7 +265,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				// Label for translation in the y axis
 				// this is labeled wrong on purpose because the current implementation
 				// move the image in the x direction
-				JLabel translationY = new JLabel("y translation"); 
+				JLabel translationY = new JLabel("x translation"); 
 				values.add(translationY);
 				// Slider for the translation in y axis
 				Hashtable<Integer,JLabel> transYLabels = new Hashtable<>();
@@ -276,7 +276,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				transYSlider.setPaintLabels(true);
 				sliders.add(transYSlider);
 
-				
+				// Adds the labels to the window
+				main.add(values);
+				main.add(sliders);
+
 				
 				JTextField scaleBox = new JTextField(0);
 				scaleBox.setText(String.format("%.2f", scaleValue));
@@ -392,15 +395,14 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				});
 				textBox.add(yTransBox);
 				
+				main.add(textBox);
 				
 				
 				// Picture of the image that was selected to change
-				BufferedImage tempImage = getButtonImage(phenotype, Parameters.parameters.integerParameter("imageSize"), Parameters.parameters.integerParameter("imageSize"), inputMultipliers);
-				ImageIcon image = new ImageIcon(tempImage);
+				ImageIcon image = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 				JLabel imageButton = new JLabel(image);
-				imageButton.setSize(Parameters.parameters.integerParameter("imageSize"), Parameters.parameters.integerParameter("imageSize"));
-				
-				
+				main.add(imageButton);
+
 				scaleSlider.addChangeListener(new ChangeListener() {
 
 					@SuppressWarnings("unchecked")
@@ -420,7 +422,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 								Parameters.parameters.setDouble("picbreederImageScale", scaledValue);
 							}
 							// Update image
-							ImageIcon img = new ImageIcon(getButtonImage(phenotype, Parameters.parameters.integerParameter("imageSize"), Parameters.parameters.integerParameter("imageSize"), inputMultipliers));
+							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
 							// Genotype references the phenotype, so it is changed by the modifications above
 							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
@@ -451,7 +453,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 								Parameters.parameters.setDouble("picbreederImageRotation", rotationValue);
 							}
 							// Update image
-							ImageIcon img = new ImageIcon(getButtonImage(phenotype, Parameters.parameters.integerParameter("imageSize"), Parameters.parameters.integerParameter("imageSize"), inputMultipliers));
+							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
 							// Genotype references the phenotype, so it is changed by the modifications above
 							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
@@ -481,7 +483,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 								Parameters.parameters.setDouble("picbreederTranslationX", xTranslationValue);
 							}
 							// Update image
-							ImageIcon img = new ImageIcon(getButtonImage(phenotype, Parameters.parameters.integerParameter("imageSize"), Parameters.parameters.integerParameter("imageSize"), inputMultipliers));
+							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
 							// Genotype references the phenotype, so it is changed by the modifications above
 							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
@@ -509,7 +511,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 								Parameters.parameters.setDouble("picbreederTranslationY", yTranslationValue);
 							}
 							// Update image
-							ImageIcon img = new ImageIcon(getButtonImage(phenotype, Parameters.parameters.integerParameter("imageSize"), Parameters.parameters.integerParameter("imageSize"), inputMultipliers));
+							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
 							// Genotype references the phenotype, so it is changed by the modifications above
 							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
@@ -518,15 +520,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 						
 				});
 				
-				
-				
-				// Adds the labels to the window
-				main.add(values);
-				main.add(sliders);
-				main.add(textBox);
-				main.add(imageButton);
-
-				// Makes all GUI elements visible
+				// Makes all the labels visible
 				explorer.add(main);
 				explorer.pack();
 				explorer.setVisible(true);
@@ -562,7 +556,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			//System.out.println("Scale, Rotation, and Translation (x,y): " + scaleRotationTranslation);
 			return GraphicsUtil.imageFromCPPN(phenotype, imageWidth, imageHeight, inputMultiples, -1, scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_X), scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y));
 		} else { // Plain CPPN/TWEANGenotype
-			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageWidth, imageHeight, inputMultiples, -1, Parameters.parameters.doubleParameter("picbreederImageScale"), Parameters.parameters.doubleParameter("picbreederImageRotation"), Parameters.parameters.doubleParameter("picbreederImageTranslationX"), Parameters.parameters.doubleParameter("picbreederImageTranslationY"));
+			return GraphicsUtil.imageFromCPPN((Network) phenotype, imageHeight, imageWidth, inputMultiples, -1, Parameters.parameters.doubleParameter("picbreederImageScale"), Parameters.parameters.doubleParameter("picbreederImageRotation"), Parameters.parameters.doubleParameter("picbreederImageTranslationX"), Parameters.parameters.doubleParameter("picbreederImageTranslationY"));
 		}
 	}
 	
