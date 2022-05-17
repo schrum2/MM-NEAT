@@ -54,7 +54,6 @@ import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.util.BooleanUtil;
 import edu.southwestern.util.CombinatoricUtilities;
 import edu.southwestern.util.PopulationUtil;
-import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
@@ -736,17 +735,6 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 		}	
 	}
 	
-	/**
-	 * Modifies the images of ALL the buttons on the
-	 * main PicBreeder screen as changes are being made to the main image,
-	 * specifically for plain CPPNs/TWEANNS 
-	 */
-	protected void resetAllButtons() {
-		ArrayUtil.intListFromArray(ArrayUtil.range(0, scores.size(), 1)).parallelStream().forEach( i -> {
-			resetButton(scores.get(i).individual, i, true, false);
-		});
-	}
-
 	/**
 	 * Saves all currently clicked images
 	 */

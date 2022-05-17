@@ -185,16 +185,20 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				// Error messages if the user selects either none or more than one image
 				if(selectedItems.size() == 0) {
 					JOptionPane.showMessageDialog(null, "Must select an individual to edit.");
+					return; // Do not edit image
 				}
 				if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface") && selectedItems.size() != 1) {
 					JOptionPane.showMessageDialog(null, "Select only one individual to modify.");
+					return; // Do not edit image
 				}
 
 
 				JFrame explorer = new JFrame("Edit Pic");
 				explorer.addWindowListener(new WindowAdapter() {
+					// When the Edit-Pic window closes
 					public void windowClosing(WindowEvent e) {
-						resetAllButtons();
+						// For plain CPPNs, update all images based on the changed rotate, scale, and translation
+						resetButtons(true);
 					}
 				});
 
