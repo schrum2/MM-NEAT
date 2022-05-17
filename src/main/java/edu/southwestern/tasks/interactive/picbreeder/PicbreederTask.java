@@ -285,6 +285,11 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				scaleBox.setText(String.format("%.2f", scaleValue));
 				scaleBox.addKeyListener(new KeyListener() {
 					
+					/**
+					 * Detects if the user has pressed enter to then
+					 * update the slider for the scaling and therefore the image
+					 * @param e Event that indicate a key stroke occurred
+					 */
 					@Override
 					public void keyPressed(KeyEvent e) {
 						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -314,6 +319,11 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				rotationBox.setText(String.format("%.2f", rotationalValue));
 				rotationBox.addKeyListener(new KeyListener() {
 
+					/**
+					 * Detects if the user has pressed enter to then
+					 * update the slider for the rotation and therefore the image
+					 * @param e Event that indicate a key stroke occurred
+					 */
 					@Override
 					public void keyPressed(KeyEvent e) {
 						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -342,6 +352,11 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				xTransBox.setText(String.format("%.2f", xTranslationValue));
 				xTransBox.addKeyListener(new KeyListener() {
 
+					/**
+					 * Detects if the user has pressed enter to then
+					 * update the slider for the x translation and therefore the image
+					 * @param e Event that indicate a key stroke occurred
+					 */
 					@Override
 					public void keyPressed(KeyEvent e) {
 						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -370,6 +385,11 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				yTransBox.setText(String.format("%.2f", yTranslationValue));
 				yTransBox.addKeyListener(new KeyListener() {
 
+					/**
+					 * Detects if the user has pressed enter to then
+					 * update the slider for the y translation and therefore the image
+					 * @param e Event that indicate a key stroke occurred
+					 */
 					@Override
 					public void keyPressed(KeyEvent e) {
 						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
