@@ -35,8 +35,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.fossgalaxy.object.annotations.Parameter;
-
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.SinglePopulationGenerationalEA;
@@ -56,6 +54,7 @@ import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.util.BooleanUtil;
 import edu.southwestern.util.CombinatoricUtilities;
 import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
@@ -743,11 +742,9 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 	 * specifically for plain CPPNs/TWEANNS 
 	 */
 	protected void resetAllButtons() {
-		for(int i = 0; i < scores.size(); i++) {
-			//System.out.println("index "+i);
-			//System.out.println("scores size: "+ scores.size());
+		ArrayUtil.intListFromArray(ArrayUtil.range(0, scores.size(), 1)).parallelStream().forEach( i -> {
 			resetButton(scores.get(i).individual, i, true, false);
-		}	
+		});
 	}
 
 	/**

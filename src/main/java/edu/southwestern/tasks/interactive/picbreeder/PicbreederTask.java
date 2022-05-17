@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -190,6 +192,11 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 
 				JFrame explorer = new JFrame("Edit Pic");
+				explorer.addWindowListener(new WindowAdapter() {
+					public void windowClosing(WindowEvent e) {
+						resetAllButtons();
+					}
+				});
 
 				int picToEdit = selectedItems.get(selectedItems.size() - 1);
 
@@ -442,7 +449,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							} else {
 								// Settings are the generic ones applied to all the images
 								Parameters.parameters.setDouble("picbreederImageScale", scaledValue);
-								resetAllButtons();
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
@@ -473,7 +479,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							} else {
 								// Settings are the generic ones applied to all the images
 								Parameters.parameters.setDouble("picbreederImageRotation", rotationValue);
-								resetAllButtons();
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
@@ -504,7 +509,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							} else {
 								// Settings are the generic ones applied to all the images
 								Parameters.parameters.setDouble("picbreederImageTranslationX", transXValue);
-								resetAllButtons();
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
@@ -533,7 +537,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							} else {
 								// Settings are the generic ones applied to all the images
 								Parameters.parameters.setDouble("picbreederImageTranslationY", transYValue);
-								resetAllButtons();
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
