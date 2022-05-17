@@ -41,6 +41,7 @@ public class OriginalPicBreederGenomeLoader {
 		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, -1);
 		//System.out.println(tg);
 		// Now, load TWEANN structure from file
+		// Note: extra neurons refer to the neurons that are being added back after being lost from topological sort
 		String[] fileNames = {"5736_ShinyRedApple.xml","4547_Face.xml",
 				"4376_ButterflyColor.xml", // looks like eyes before the extra neurons, looks like a wonky butterfly with them
 				//"3674_Mystic.xml", //infinite loop???
@@ -169,9 +170,9 @@ public class OriginalPicBreederGenomeLoader {
        
         // Get nodes in right order according to the links
         // deleting specific nodes??? 
-        TWEANNGenotype.sortNodeGenesByLinkConnectivity(tg);
+        //TWEANNGenotype.sortNodeGenesByLinkConnectivity(tg);
        
-        //moveInputToEnd(tg);
+        moveInputToEnd(tg);
         
         System.out.println("AFTER");
         System.out.println(tg.toString());
