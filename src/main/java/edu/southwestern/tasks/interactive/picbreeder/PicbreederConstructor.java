@@ -25,7 +25,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  * @author Jacob Schrum
  */
 public class PicbreederConstructor {
-	public static final int SIZE = 64;
+	public static final int SIZE = 800;
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {		
 		Parameters.initializeParameterCollections(new String[] {"io:false","netio:false","allowMultipleFunctions:true", "fs:true","netChangeActivationRate:0.3",
 				"recurrency:false",
@@ -101,10 +101,13 @@ public class PicbreederConstructor {
 		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE, ArrayUtil.doubleOnes(network.numInputs()), 0, SCALE, ROTATION, 0, 0);
 		DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", SIZE, SIZE);
 
-		picture.save("ComplexHSV.jpg");
-		panel.save("ComplexHSVNet.jpg");
+		System.out.println("If you press enter, the network image and the generated image will be saved as jpg files.");
 		// Wait for user
 		MiscUtil.waitForReadStringAndEnterKeyPress();
+
+		picture.save("ComplexHSV.jpg");
+		panel.save("ComplexHSVNet.jpg");
+
 		picture.dispose();
 		panel.dispose();
 
