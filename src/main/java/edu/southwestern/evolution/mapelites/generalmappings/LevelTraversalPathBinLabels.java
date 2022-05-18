@@ -70,7 +70,7 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 			if(binStringConnected(binString)) { // Check the string and only add it if it is connected
 				labelToIndex.put(binString, labels.size()); // Size is the next index filled
 			}
-			labels.add(binString);
+			labels.add(binString); // This should be moved inside the if-statement above
 		}
 	}
 	
