@@ -734,7 +734,7 @@ public abstract class InteractiveEvolutionTask<T> implements SinglePopulationTas
 			resetButton(newPop.get(i), i, false);
 		}	
 	}
-
+	
 	/**
 	 * Saves all currently clicked images
 	 */

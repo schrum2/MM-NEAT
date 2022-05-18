@@ -153,6 +153,24 @@ public class ArrayUtil {
 	}
 
 	/**
+	 * Return an array of numbers from start (inclusive) to 
+	 * end (exclusive) with the given step size between elements.
+	 * Modeled after the Python range function.
+	 * 
+	 * @param start first value in result array
+	 * @param end no value in result array is greater than or equal to this
+	 * @param step difference between adjacent array elements
+	 * @return array of start, start+step, start+2*step, ... for values less than end
+	 */
+	public static int[] range(int start, int end, int step) {
+		int[] result = new int[(int) Math.ceil((end - start)/(1.0 * step))];
+		for(int i = 0; i < result.length; i++) {
+			result[i] = start + i*step;
+		}
+		return result;
+	}
+	
+	/**
 	 * creates a new array of primitive ints with the same contents as List<Integer> input
 	 * 
 	 * @param path List of type Integer to be copied

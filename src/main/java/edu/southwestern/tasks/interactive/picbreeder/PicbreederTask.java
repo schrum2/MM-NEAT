@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -183,13 +185,22 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				// Error messages if the user selects either none or more than one image
 				if(selectedItems.size() == 0) {
 					JOptionPane.showMessageDialog(null, "Must select an individual to edit.");
+					return; // Do not edit image
 				}
 				if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface") && selectedItems.size() != 1) {
 					JOptionPane.showMessageDialog(null, "Select only one individual to modify.");
+					return; // Do not edit image
 				}
 
 
 				JFrame explorer = new JFrame("Edit Pic");
+				explorer.addWindowListener(new WindowAdapter() {
+					// When the Edit-Pic window closes
+					public void windowClosing(WindowEvent e) {
+						// For plain CPPNs, update all images based on the changed rotate, scale, and translation
+						resetButtons(true);
+					}
+				});
 
 				int picToEdit = selectedItems.get(selectedItems.size() - 1);
 
@@ -206,20 +217,20 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 
 
 				T phenotype = scores.get(picToEdit).individual.getPhenotype();
-				double rotationValue, scaleValue, xTranslationValue, yTranslationValue;
+				double rotationalValue, scaleValue, xTranslationValue, yTranslationValue;
 				if(phenotype instanceof NetworkPlusParameters) {
 					// Settings come from specific phenotype
 					@SuppressWarnings("unchecked")
 					NetworkPlusParameters<TWEANN,ArrayList<Double>> npp = (NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype;
 					ArrayList<Double> scaleRotationTranslation = npp.t2;
 					scaleValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_SCALE);
-					rotationValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION); 
+					rotationalValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_ROTATION); 
 					xTranslationValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_X); 
 					yTranslationValue = scaleRotationTranslation.get(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y);					
 				} else {
 					// Settings are the generic ones applied to all the images
 					scaleValue = Parameters.parameters.doubleParameter("picbreederImageScale");
-					rotationValue = Parameters.parameters.doubleParameter("picbreederImageRotation");
+					rotationalValue = Parameters.parameters.doubleParameter("picbreederImageRotation");
 					xTranslationValue = Parameters.parameters.doubleParameter("picbreederImageTranslationX");
 					yTranslationValue = Parameters.parameters.doubleParameter("picbreederImageTranslationY");
 				}
@@ -242,8 +253,8 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				// Slider for rotation
 				Hashtable<Integer,JLabel> rotationLabels = new Hashtable<>();
 				rotationLabels.put(0, new JLabel(""+ 0));
-				rotationLabels.put(scaleUpToInt(2*Math.PI), new JLabel(String.format("%.2f",2*Math.PI))); // uhh
-				JSlider rotationSlider = new JSlider(JSlider.HORIZONTAL, 0, scaleUpToInt(Parameters.parameters.booleanParameter("enhancedCPPNCanRotate") ? 2*Math.PI : 0.0), scaleUpToInt(rotationValue));
+				rotationLabels.put(scaleUpToInt(2*Math.PI), new JLabel(String.format("%.2f",2*Math.PI))); 
+				JSlider rotationSlider = new JSlider(JSlider.HORIZONTAL, 0, scaleUpToInt(Parameters.parameters.booleanParameter("enhancedCPPNCanRotate") ? 2*Math.PI : 0.0), scaleUpToInt(rotationalValue));
 				rotationSlider.setLabelTable(rotationLabels);
 				rotationSlider.setPaintLabels(true);
 				sliders.add(rotationSlider);
@@ -285,6 +296,11 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				scaleBox.setText(String.format("%.2f", scaleValue));
 				scaleBox.addKeyListener(new KeyListener() {
 					
+					/**
+					 * Detects if the user has pressed enter to then
+					 * update the slider for the scaling and therefore the image
+					 * @param e Event that indicate a key stroke occurred
+					 */
 					@Override
 					public void keyPressed(KeyEvent e) {
 						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -311,9 +327,14 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				textBox.add(scaleBox);
 				
 				JTextField rotationBox = new JTextField(0);
-				rotationBox.setText(String.format("%.2f", rotationValue));
+				rotationBox.setText(String.format("%.2f", rotationalValue));
 				rotationBox.addKeyListener(new KeyListener() {
 
+					/**
+					 * Detects if the user has pressed enter to then
+					 * update the slider for the rotation and therefore the image
+					 * @param e Event that indicate a key stroke occurred
+					 */
 					@Override
 					public void keyPressed(KeyEvent e) {
 						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -342,6 +363,11 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				xTransBox.setText(String.format("%.2f", xTranslationValue));
 				xTransBox.addKeyListener(new KeyListener() {
 
+					/**
+					 * Detects if the user has pressed enter to then
+					 * update the slider for the x translation and therefore the image
+					 * @param e Event that indicate a key stroke occurred
+					 */
 					@Override
 					public void keyPressed(KeyEvent e) {
 						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -370,6 +396,11 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 				yTransBox.setText(String.format("%.2f", yTranslationValue));
 				yTransBox.addKeyListener(new KeyListener() {
 
+					/**
+					 * Detects if the user has pressed enter to then
+					 * update the slider for the y translation and therefore the image
+					 * @param e Event that indicate a key stroke occurred
+					 */
 					@Override
 					public void keyPressed(KeyEvent e) {
 						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -424,11 +455,8 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
-							// Genotype references the phenotype, so it is changed by the modifications above
-							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 						}	
 					}
-						
 				});
 				
 				
@@ -446,8 +474,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							// Actually change the value of the phenotype in the population
 							if(phenotype instanceof NetworkPlusParameters) {
 								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_ROTATION, rotationValue);					
-//								System.out.println("phenotype:" + ((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2);
-//								System.out.println("genotype: " + ((NetworkPlusParameters<TWEANN,ArrayList<Double>>) scores.get(picToEdit).individual.getPhenotype()).t2);							
 							} else {
 								// Settings are the generic ones applied to all the images
 								Parameters.parameters.setDouble("picbreederImageRotation", rotationValue);
@@ -455,8 +481,6 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
-							// Genotype references the phenotype, so it is changed by the modifications above
-							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 						}	
 					}
 						
@@ -480,13 +504,11 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_X, transXValue);
 							} else {
 								// Settings are the generic ones applied to all the images
-								Parameters.parameters.setDouble("picbreederTranslationX", xTranslationValue);
+								Parameters.parameters.setDouble("picbreederImageTranslationX", transXValue);
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
-							// Genotype references the phenotype, so it is changed by the modifications above
-							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 						}	
 					}
 						
@@ -508,17 +530,17 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 								((NetworkPlusParameters<TWEANN,ArrayList<Double>>) phenotype).t2.set(EnhancedCPPNPictureGenotype.INDEX_DELTA_Y, transYValue);
 							} else {
 								// Settings are the generic ones applied to all the images
-								Parameters.parameters.setDouble("picbreederTranslationY", yTranslationValue);
+								Parameters.parameters.setDouble("picbreederImageTranslationY", transYValue);
 							}
 							// Update image
 							ImageIcon img = new ImageIcon(getButtonImage(phenotype, buttonWidth, buttonHeight, inputMultipliers));
 							imageButton.setIcon(img);
-							// Genotype references the phenotype, so it is changed by the modifications above
-							resetButton(scores.get(picToEdit).individual, picToEdit,true,false);
 						}	
 					}
 						
 				});
+				
+				
 				
 				// Makes all the labels visible
 				explorer.add(main);
@@ -893,7 +915,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:16", "maxGens:500",
 					"zentangleTileDim:100", 
 					//"base:extendedPicbreeder", "log:ExtendedPicbreeder-Interactive", "saveTo:Interactive",
-					//"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
+					"genotype:edu.southwestern.evolution.genotypes.EnhancedCPPNPictureGenotype",
 					"io:false", "netio:false", "mating:true", "fs:false", "starkPicbreeder:false",
 					//"imageCenterTranslationRange:0.0", // Uncomment to turn off evolution of translation 
 					//"minScale:1.0", "maxScale:1.0", // Uncomment to turn off evolution of scale

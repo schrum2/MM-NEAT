@@ -55,9 +55,11 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 				default:
 					throw new UnsupportedOperationException("Pick a game");
 			}
-			labels = new ArrayList<String>(numOfBins); // TODO: Change to make smaller
-			labelToIndex = new HashMap<>();  // TODO: Need to have a sensible size
+			labels = new ArrayList<String>(); // Starts small and will grow in capacity as needed
+			labelToIndex = new HashMap<>();  // Will be small and grow in capacity as needed
 			generateBinLabels(maxSize, "");
+			((ArrayList<String>) labels).trimToSize(); // eliminate unused space in array
+			System.out.println("Number of LevelTraversalPathBinLabels: "+ labels.size());
 		}
 		return labels;
 	}
@@ -68,7 +70,7 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 			if(binStringConnected(binString)) { // Check the string and only add it if it is connected
 				labelToIndex.put(binString, labels.size()); // Size is the next index filled
 			}
-			labels.add(binString);
+			labels.add(binString); // This should be moved inside the if-statement above
 		}
 	}
 	
