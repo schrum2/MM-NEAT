@@ -72,7 +72,6 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 				labelToIndex.put(binString, labels.size()); // Size is the next index filled
 				labels.add(binString);
 			}
-			//labels.add(binString); // This should be moved inside the if-statement above
 		}
 	}
 	
@@ -91,14 +90,14 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 			for(int j = 0; j < horizontalCoarseness; j++) {
 				if(binString.charAt(binStringCounter) == '1') { // fill booleanDungeon with true at [i][j]
 					if(!startingPointFound) {
-						startingPointFound = true;
+						startingPointFound = true; // starting point is first location where value of "1" is found
 						startingPoint.setLocation(i, j);
 					}
 					boolDungeon[i][j] = true;
 				} else { // fill booleanDungeon with false at [i][j]
 					boolDungeon[i][j] = false;
 				}
-				binStringCounter++;
+				binStringCounter++; // binStringCounter increases so the binString advances
 			}
 		}
 		explore(boolDungeon, startingPoint,verticalCoarseness,horizontalCoarseness); // explore connected rooms
@@ -112,7 +111,7 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 		boolean connected = true; // assuming connected unless otherwise 
 		for(int i = 0; connected && i < verticalCoarseness; i++) { // go through rows in one level before going down vertically
 			for(int j = 0; connected && j < horizontalCoarseness; j++) {
-				if(boolDungeon[i][j]) connected = false; // disconnected because true exists in the array after exploration
+				if(boolDungeon[i][j]) connected = false; // disconnected because true exists in the array after connected rooms were explored
 			}
 		}
 		return connected;
@@ -125,7 +124,16 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 		explore(boolDungeon, x, y,verticalCoarseness,horizontalCoarseness); 
 	}
 
-	// recursive explore method, if the location at [x][y] is true, the adjacent rooms will be explored given they exist
+	/**
+	 * This method recursively explores connected rooms when they exist
+	 * in bounds. Locations where boolDungeon[x][y] are true will be explored.
+	 * 
+	 * @param boolDungeon 2D Array of boolean values where true represents something to explore and false otherwise
+	 * @param x Integer representation of horizontal positioning
+	 * @param y Integer representation of vertical positioning
+	 * @param verticalCoarseness Integer vertical coarseness of the 2D array
+	 * @param horizontalCoarseness Integer horizontal coarseness of the 2D array
+	 */
 	private static void explore(boolean[][] boolDungeon, int x, int y, int verticalCoarseness, int horizontalCoarseness) { 
 		if(boolDungeon[x][y]) { // true, which is the same as having 1, explore this point's adjacent tiles
 			boolDungeon[x][y] = false; // change current location to false since it has just been explored
@@ -142,6 +150,7 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 				&& secondIndex >= 0 && secondIndex < verticalCoarseness; // x and y out of bounds if this returns false
 	}
 
+	// pads string with 0s when necessary
 	private String padStringTo(int length, String s) {
 		while (s.length() < length) s = "0" + s;
 		
@@ -204,9 +213,9 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 		for (int y = 0; y < verticalCoarseness; y++) {
 			for (int x = 0; x < horizontalCoarseness; x++) {
 				if (visitedTiles[y][x]) {
-					binKey += "1";
+					binKey += "1"; // Concatenate "1" if true at location
 				} else {
-					binKey += "0";
+					binKey += "0"; // Concatenate "0" otherwise 
 				}
 			}
 		}

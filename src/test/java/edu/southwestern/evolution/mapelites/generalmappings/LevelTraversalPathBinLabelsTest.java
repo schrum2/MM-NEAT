@@ -172,6 +172,7 @@ public class LevelTraversalPathBinLabelsTest {
 		HashMap<String, Object> behaviorMap1 = genotypeIntoBehaviorMap(geno);
 		String bitStr1 = bitStringFromBehaviorMap(behaviorMap1);
 		
+		// print out visual representation of dungeon (using the binary string)
 		System.out.println("dungeon layout:\n "+bitStr1.substring(0, 4));
 		System.out.println(" "+bitStr1.substring(4, 8));
 		System.out.println(" "+bitStr1.substring(8, 12));
