@@ -2,6 +2,7 @@ package edu.southwestern.evolution.mapelites.generalmappings;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -69,12 +70,17 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 			String binString = padStringTo(maxSize, Integer.toBinaryString(i));
 			if(binStringConnected(binString)) { // Check the string and only add it if it is connected
 				labelToIndex.put(binString, labels.size()); // Size is the next index filled
+				labels.add(binString);
 			}
-			labels.add(binString); // This should be moved inside the if-statement above
+			//labels.add(binString); // This should be moved inside the if-statement above
 		}
 	}
 	
 	private boolean binStringConnected(String binString) {
+		return binStringConnected(binString,verticalCoarseness,horizontalCoarseness);
+	}
+	
+	public static boolean binStringConnected(String binString, int verticalCoarseness, int horizontalCoarseness) {
 		// fill 2d array to then search
 		boolean[][] boolDungeon = new boolean[verticalCoarseness][horizontalCoarseness];
 		Point startingPoint = new Point();
@@ -95,43 +101,45 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 				binStringCounter++;
 			}
 		}
-		explore(boolDungeon, startingPoint); // explore connected rooms
-		return isConnected(boolDungeon); 
+		explore(boolDungeon, startingPoint,verticalCoarseness,horizontalCoarseness); // explore connected rooms
+		boolean result = isConnected(boolDungeon,verticalCoarseness,horizontalCoarseness); 
+		assert !binString.equals("1000100000000000") || result : "1000100000000000 should be connected: "+startingPoint+" in "+Arrays.deepToString(boolDungeon);
+		return result;
 	}
 
 	// dungeon is disconnected if any true's are found since all connected ones from starting point were explored and changed to false
-	private boolean isConnected(boolean[][] boolDungeon) {
+	private static boolean isConnected(boolean[][] boolDungeon, int verticalCoarseness, int horizontalCoarseness) {
 		boolean connected = true; // assuming connected unless otherwise 
 		for(int i = 0; connected && i < verticalCoarseness; i++) { // go through rows in one level before going down vertically
 			for(int j = 0; connected && j < horizontalCoarseness; j++) {
-				if(boolDungeon[i][j] == true) connected = false; // disconnected because true exists in the array after exploration
+				if(boolDungeon[i][j]) connected = false; // disconnected because true exists in the array after exploration
 			}
 		}
 		return connected;
 	}
 
 	// kick-off method for recursive explore method
-	private void explore(boolean[][] boolDungeon, Point startingPoint) {
+	private static void explore(boolean[][] boolDungeon, Point startingPoint, int verticalCoarseness, int horizontalCoarseness) {
 		int x = startingPoint.x;
 		int y = startingPoint.y;
-		explore(boolDungeon, x, y); 
+		explore(boolDungeon, x, y,verticalCoarseness,horizontalCoarseness); 
 	}
 
 	// recursive explore method, if the location at [x][y] is true, the adjacent rooms will be explored given they exist
-	private void explore(boolean[][] boolDungeon, int x, int y) { 
+	private static void explore(boolean[][] boolDungeon, int x, int y, int verticalCoarseness, int horizontalCoarseness) { 
 		if(boolDungeon[x][y]) { // true, which is the same as having 1, explore this point's adjacent tiles
 			boolDungeon[x][y] = false; // change current location to false since it has just been explored
-			if(inBounds(x, y - 1)) explore(boolDungeon, x, y - 1); // explore upper adjacent if it exists
-		    if(inBounds(x, y + 1)) explore(boolDungeon, x, y + 1); // explore lower adjacent if it exists
-	 		if(inBounds(x - 1, y)) explore(boolDungeon, x - 1, y); // explore left adjacent if it exists
-			if(inBounds(x + 1, y)) explore(boolDungeon, x + 1, y); // explore right adjacent if it exists
+			if(inBounds(x, y - 1,verticalCoarseness,horizontalCoarseness)) explore(boolDungeon, x, y - 1,verticalCoarseness,horizontalCoarseness); // explore upper adjacent if it exists
+		    if(inBounds(x, y + 1,verticalCoarseness,horizontalCoarseness)) explore(boolDungeon, x, y + 1,verticalCoarseness,horizontalCoarseness); // explore lower adjacent if it exists
+	 		if(inBounds(x - 1, y,verticalCoarseness,horizontalCoarseness)) explore(boolDungeon, x - 1, y,verticalCoarseness,horizontalCoarseness); // explore left adjacent if it exists
+			if(inBounds(x + 1, y,verticalCoarseness,horizontalCoarseness)) explore(boolDungeon, x + 1, y,verticalCoarseness,horizontalCoarseness); // explore right adjacent if it exists
 		} 
 	}
 	
 	// checks if a position in an array is out of bounds either horizontally or vertically
-	private boolean inBounds(int x, int y) {
-		return x > 0 && x < horizontalCoarseness 
-				&& y > 0 && y < verticalCoarseness; // x and y out of bounds if this returns false
+	private static boolean inBounds(int firstIndex, int secondIndex, int verticalCoarseness, int horizontalCoarseness) {
+		return firstIndex >= 0 && firstIndex < horizontalCoarseness 
+				&& secondIndex >= 0 && secondIndex < verticalCoarseness; // x and y out of bounds if this returns false
 	}
 
 	private String padStringTo(int length, String s) {
@@ -145,9 +153,21 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 		return multi[0];
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		String binKey = getBitStringLabel(keys);
+		
+		//System.out.println(binKey);
+		
+		assert labelToIndex.containsKey(binKey) : "Does not contain "+binKey+" in "+horizontalCoarseness+" by "+verticalCoarseness+" dungeon. HashMap:"+labelToIndex;
+		// Use HashMap to find index in bins
+		int binIndex = labelToIndex.get(binKey);
+		return new int[] {binIndex};
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	public String getBitStringLabel(HashMap<String, Object> keys) {
 		// Create the path from the Level Path that is reported
 		HashSet<ILocated2D> path = new HashSet<>();
 		if (keys.containsKey("Level Path"))	path = (HashSet<ILocated2D>) keys.get("Level Path");
@@ -160,19 +180,37 @@ public class LevelTraversalPathBinLabels extends BaseBinLabels {
 		for (ILocated2D location : path) {
 			tileX = (int) location.getX() / sizeX;
 			tileY = (int) location.getY() / sizeY;
-			visitedTiles[tileX][tileY] = true;
+			visitedTiles[tileY][tileX] = true;
 		}
+		
+		//System.out.println(Arrays.deepToString(visitedTiles));
+		
+		// Old approach that assumes we have a bin for every binary number, and could thus convert binary to decimal to find the index.
+		// Does not work if we do not maintain superfluous bins.
 		// based on what bins were visited, assemble a bit string
-		int locationSum = 0;
+//		int locationSum = 0;
+//		for (int y = 0; y < verticalCoarseness; y++) {
+//			for (int x = 0; x < horizontalCoarseness; x++) {
+//				if (visitedTiles[verticalCoarseness - 1 - x][horizontalCoarseness - 1 - y]) {
+//					locationSum += Math.pow(2d, x + verticalCoarseness * y);
+//				}
+//			}
+//		}
+//		// then return the bitstring as the the single bin for this scheme
+//		return new int[] {locationSum};
+		
+		// Compute String of the binary sequence
+		String binKey = "";
 		for (int y = 0; y < verticalCoarseness; y++) {
 			for (int x = 0; x < horizontalCoarseness; x++) {
-				if (visitedTiles[verticalCoarseness - 1 - x][horizontalCoarseness - 1 - y]) {
-					locationSum += Math.pow(2d, x + verticalCoarseness * y);
+				if (visitedTiles[y][x]) {
+					binKey += "1";
+				} else {
+					binKey += "0";
 				}
 			}
 		}
-		// then return the bitstring as the the single bin for this scheme
-		return new int[] {locationSum};
+		return binKey;
 	}
 
 	@Override
