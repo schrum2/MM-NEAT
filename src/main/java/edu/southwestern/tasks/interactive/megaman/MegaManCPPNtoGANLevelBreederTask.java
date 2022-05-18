@@ -414,7 +414,20 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 			}
 		});
 		
+		JCheckBox searchContinuesAfterSuccess = new JCheckBox("SearchContinuesAfterSuccess", Parameters.parameters.booleanParameter("searchContinuesAfterSuccess"));
+		searchContinuesAfterSuccess.setName("SearchContinuesAfterSuccess");
+		searchContinuesAfterSuccess.getAccessibleContext();
+		searchContinuesAfterSuccess.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("searchContinuesAfterSuccess");
+				resetButtons(true);
+			}
+			
+		});
+		
 		effectsCheckboxes.add(useMultipleGANs);
+		effectsCheckboxes.add(searchContinuesAfterSuccess);
 		top.add(effectsCheckboxes);
 		resetLatentVectorAndOutputs();
 
