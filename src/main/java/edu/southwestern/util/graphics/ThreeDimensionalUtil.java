@@ -259,9 +259,14 @@ public class ThreeDimensionalUtil {
 		Vertex zero = new Vertex(0, 0, 0);
 		double distanceFromOrigin = newV.distance(zero) * GraphicsUtil.SQRT2;
 		if(distanceInEachPlane) {
-			double XY = zero.distance(new Vertex(x, y, 0)) * GraphicsUtil.SQRT2;
-			double YZ = zero.distance(new Vertex(0, y, z)) * GraphicsUtil.SQRT2;
-			double XZ = zero.distance(new Vertex(x, 0, z)) * GraphicsUtil.SQRT2;
+			Vertex newXY = CartesianGeometricUtilities.centerAndScale(new Vertex(x, y, 0), width, height, depth); // vertex centered and scaled for XY
+			Vertex newYZ = CartesianGeometricUtilities.centerAndScale(new Vertex(0, y, z), width, height, depth); // vertex centered and scaled for YZ
+			Vertex newXZ = CartesianGeometricUtilities.centerAndScale(new Vertex(x, 0, z), width, height, depth); // vertex centered and scaled for XZ
+			
+			double XY = newXY.distance(zero) * GraphicsUtil.SQRT2; // distance from XY and zero
+			double YZ = newYZ.distance(zero) * GraphicsUtil.SQRT2; // distance from YZ and zero
+			double XZ = newXZ.distance(zero) * GraphicsUtil.SQRT2; // distance from XZ and zero
+			
 			return new double[]{newV.x, newV.y, newV.z, distanceFromOrigin, XY, YZ, XZ, GraphicsUtil.BIAS};
 		} else {
 			if(time == -1) {
