@@ -453,11 +453,15 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 				JOptionPane.showMessageDialog(null, "Select exactly one level to save.");
 				return; // Nothing to explore
 			}
-			//List<List<List<Integer>>> levelInList = MegaManGANUtil.getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), doubleArray);
-//			int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
-//			int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
-			BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
-			MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
+			if(Parameters.parameters.booleanParameter("interactiveMegaManAStarPaths")) {
+				int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
+				int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
+				BufferedImage levelImage = getButtonImage(phenotype, width1, height1, inputMultipliers);
+				MegaManRenderUtil.displayBufferedImage(level, levelImage);
+			} else {
+				BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
+				MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);			
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
