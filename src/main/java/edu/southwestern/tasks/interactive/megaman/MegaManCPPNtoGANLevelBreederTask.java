@@ -3,6 +3,7 @@ package edu.southwestern.tasks.interactive.megaman;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -207,7 +208,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 		
 		//adds the ability to show the solution path
 		
-		JPanel effectsCheckboxes = new JPanel();
+		JPanel effectsCheckboxes = new JPanel(new GridLayout(2,1));
 		
 		JPanel aSTAR = new JPanel();
 		aSTAR.setLayout(new BoxLayout(aSTAR, BoxLayout.Y_AXIS));
