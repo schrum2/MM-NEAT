@@ -3,6 +3,7 @@ package edu.southwestern.tasks.interactive.megaman;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -207,7 +208,7 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 		
 		//adds the ability to show the solution path
 		
-		JPanel effectsCheckboxes = new JPanel();
+		JPanel effectsCheckboxes = new JPanel(new GridLayout(2,1));
 		
 		JPanel aSTAR = new JPanel();
 		aSTAR.setLayout(new BoxLayout(aSTAR, BoxLayout.Y_AXIS));
@@ -414,7 +415,20 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 			}
 		});
 		
+		JCheckBox searchContinuesAfterSuccess = new JCheckBox("SearchContinuesAfterSuccess", Parameters.parameters.booleanParameter("searchContinuesAfterSuccess"));
+		searchContinuesAfterSuccess.setName("SearchContinuesAfterSuccess");
+		searchContinuesAfterSuccess.getAccessibleContext();
+		searchContinuesAfterSuccess.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Parameters.parameters.changeBoolean("searchContinuesAfterSuccess");
+				resetButtons(true);
+			}
+			
+		});
+		
 		effectsCheckboxes.add(useMultipleGANs);
+		effectsCheckboxes.add(searchContinuesAfterSuccess);
 		top.add(effectsCheckboxes);
 		resetLatentVectorAndOutputs();
 
@@ -439,11 +453,15 @@ public class MegaManCPPNtoGANLevelBreederTask extends InteractiveEvolutionTask<T
 				JOptionPane.showMessageDialog(null, "Select exactly one level to save.");
 				return; // Nothing to explore
 			}
-			//List<List<List<Integer>>> levelInList = MegaManGANUtil.getLevelListRepresentationFromGAN(GANProcess.getGANProcess(), doubleArray);
-//			int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
-//			int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
-			BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
-			MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);
+			if(Parameters.parameters.booleanParameter("interactiveMegaManAStarPaths")) {
+				int width1 = MegaManRenderUtil.renderedImageWidth(level.get(0).size());
+				int height1 = MegaManRenderUtil.renderedImageHeight(level.size());
+				BufferedImage levelImage = getButtonImage(phenotype, width1, height1, inputMultipliers);
+				MegaManRenderUtil.displayBufferedImage(level, levelImage);
+			} else {
+				BufferedImage[] images = MegaManRenderUtil.loadImagesForASTAR(MegaManRenderUtil.MEGA_MAN_TILE_PATH);
+				MegaManRenderUtil.getBufferedImageWithRelativeRendering(level, images);			
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
