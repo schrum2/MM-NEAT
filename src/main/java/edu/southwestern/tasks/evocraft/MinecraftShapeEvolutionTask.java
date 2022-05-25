@@ -41,14 +41,16 @@ public class MinecraftShapeEvolutionTask<T> implements SinglePopulationTask<T>, 
 
 	@Override
 	public double[] minScores() {
-		// TODO Auto-generated method stub
-		return null;
+		double[] scores = new double[fitnessFunctions.size()];
+		for(int i = 0; i < scores.length; i++) {
+			scores[i] = fitnessFunctions.get(i).minFitness();
+		}
+		return scores;
 	}
 
 	@Override
 	public double getTimeStamp() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 0; // Not used
 	}
 
 	@Override
