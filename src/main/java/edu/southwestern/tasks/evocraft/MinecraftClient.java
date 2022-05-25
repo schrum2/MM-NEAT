@@ -38,7 +38,7 @@ public class MinecraftClient extends Comm {
 		}
 	}
 
-	public MinecraftClient getMinecraftServerClient() {
+	public static MinecraftClient getMinecraftClient() {
 		if(client == null) {
 			PythonUtil.setPythonProgram();
 			client = new MinecraftClient();
@@ -353,6 +353,11 @@ public class MinecraftClient extends Comm {
 		YELLOW_SHULKER_BOX		
 	}
 
+	/**
+	 * Coordinates for blocks in Minecraft are int-based: (x,y,z)
+	 * @author schrum2
+	 *
+	 */
 	public static class MineCraftCoordinates extends Triple<Integer,Integer,Integer> {
 		public MineCraftCoordinates(int x, int y, int z) {
 			super(x, y, z);
@@ -361,8 +366,25 @@ public class MinecraftClient extends Comm {
 		public int x() { return t1; }
 		public int y() { return t2; }
 		public int z() { return t3; }
+		
+		/**
+		 * Add two vectors together (component-wise)
+		 * @param other Coordinates to add to this one.
+		 * @return Result of adding the vectors
+		 */
+		public MineCraftCoordinates add(MineCraftCoordinates other) {
+			return new MineCraftCoordinates(x() + other.x(), y() + other.y(), z() + other.z());
+		}
 	}
 	
+	/**
+	 * A Minecraft Block has position, type, and orientation,
+	 * though the EvoCraft interface does not read orientation
+	 * information, so that may be null sometimes.
+	 * 
+	 * @author schrum2
+	 *
+	 */
 	public static class Block {
 		MineCraftCoordinates position;
 		BlockType type;
