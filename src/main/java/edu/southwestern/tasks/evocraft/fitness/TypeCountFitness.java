@@ -6,6 +6,11 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.*;
 
+/**
+ * Fitness score is the number of occurrences of a block of a specific type within the bounds of the generated shape.
+ * @author schrum2
+ *
+ */
 public class TypeCountFitness extends MinecraftFitnessFunction {
 
 	@Override
@@ -25,6 +30,16 @@ public class TypeCountFitness extends MinecraftFitnessFunction {
 		}
 		
 		return total;
+	}
+
+	@Override
+	public double minFitness() {
+		return 0;
+	}
+
+	@Override
+	public double maxFitness() {
+		return Parameters.parameters.integerParameter("minecraftXRange") * Parameters.parameters.integerParameter("minecraftYRange") * Parameters.parameters.integerParameter("minecraftZRange");
 	}
 
 }

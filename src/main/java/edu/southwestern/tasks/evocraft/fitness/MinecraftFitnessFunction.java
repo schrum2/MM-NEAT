@@ -34,4 +34,16 @@ public abstract class MinecraftFitnessFunction {
 	 * @return Fitness score for shape
 	 */
 	public abstract double fitnessScore(MinecraftClient.MineCraftCoordinates corner);
+	
+	/**
+	 * Minimum possible fitness
+	 * @return Minimum possible fitness
+	 */
+	public abstract double minFitness();
+	
+	/**
+	 * Maximum possible fitness
+	 * @return Maximum possible fitness
+	 */
+	public abstract double maxFitness();
 }
