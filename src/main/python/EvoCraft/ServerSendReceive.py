@@ -56,9 +56,17 @@ if __name__ == '__main__':
                 result = client.readCube(Cube(min=Point(x=xmin, y=ymin, z=zmin), max=Point(x=xmax, y=ymax, z=zmax) )) 
 
                 # print response to console (to be read by Java code)
-                print(result)
+                for block in result.blocks:
+                    # Print format: x y z type
+                    # All results printed on a single line
+                    x = block.position.x
+                    y = block.position.y
+                    z = block.position.z
+                    type = block.type
+                    print("{} {} {} {} ".format(x,y,z,type),end="")
+                
+                print()
                 sys.stdout.flush() # Make Java sense output before blocking on next input
-
 
             elif command == "fillCube":      
                 # client.fillCube(FillCubeRequest(cube=Cube(min=Point(x=xmin, y=ymin, z=zmin), max=Point(x=xmax, y=ymax, z=zmax) ), type=filltype )) 
@@ -75,6 +83,9 @@ if __name__ == '__main__':
                 
                 client.fillCube(FillCubeRequest(cube=Cube(min=Point(x=xmin, y=ymin, z=zmin), max=Point(x=xmax, y=ymax, z=zmax) ), type=type ))
 
+            elif command == "quit":
+                # Gracefully quit
+                quit()
             else:
                 print("Illegal command. Only spawnBlocks, readCube, and fillCube are recognized. Not {}".format(command))
                 quit()
