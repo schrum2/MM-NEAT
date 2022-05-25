@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
+import java.util.List;
 
 import edu.southwestern.tasks.mario.gan.Comm;
 import edu.southwestern.util.PythonUtil;
@@ -351,11 +352,144 @@ public class MinecraftServerClient extends Comm {
 		YELLOW_SHULKER_BOX		
 	}
 
+	public static class MineCraftCoordinates extends Triple<Integer,Integer,Integer> {
+		public MineCraftCoordinates(int x, int y, int z) {
+			super(x, y, z);
+		}
+		
+		public int x() { return t1; }
+		public int y() { return t2; }
+		public int z() { return t3; }
+	}
+	
 	public static class Block {
-		Triple<Integer,Integer,Integer> position;
+		MineCraftCoordinates position;
+		BlockType type;
+		Orientation orientation;
+		
+		/**
+		 * New block at given coordinates with given type.
+		 * @param x x-coordinate
+		 * @param y y-coordinate (up and down). Minimum value allowed is 0.
+		 * @param z z-coordinate
+		 * @param type From BlockType enum above
+		 * @param orientation From Orientation enum above
+		 */
+		public Block(int x, int y, int z, BlockType type, Orientation orientation) {
+			position = new MineCraftCoordinates(x,y,z);
+			this.type = type;
+			this.orientation = o;
+		}
+		
+		/**
+		 * New block at given coordinates with type specified as index within enum.
+		 * @param x x-coordinate
+		 * @param y y-coordinate (up and down). Minimum value allowed is 0.
+		 * @param z z-coordinate
+		 * @param typeIndex index in enum values of the desired block type
+		 * @param orientationIndex index in enum values of the desired orientation
+		 */
+		public Block(int x, int y, int z, int typeIndex, int orientationIndex) {
+			position = new MineCraftCoordinates(x,y,z);
+			this.type = BlockType.values()[typeIndex];
+			this.orientation = Orientation.values()[orientationIndex];
+		}
+
+		/**
+		 * x-coordinate of Block
+		 * @return x-coordinate
+		 */
+		public int x() {
+			return position.x();
+		}
+		
+		/**
+		 * y-coordinate of Block
+		 * @return y-coordinate
+		 */
+		public int y() {
+			return position.y();
+		}
+
+		/**
+		 * z-coordinate of Block
+		 * @return z-coordinate
+		 */
+		public int z() {
+			return position.z();
+		}
+
+		/**
+		 * Get type index of the type that will be recognized by Python
+		 * @return Type index/number for type
+		 */
+		public int type() {
+			return type.ordinal();
+		}
+		
+		/**
+		 * Get orientation index of the orientation that will be recognized by Python
+		 * @return index/number for orientation
+		 */
+		public int orientation() {
+			return orientation.ordinal();
+		}
 	}
 
-	public void spawnBlocks(List<>) {
-
+	/**
+	 * Spawn the given list of Block objects in the Minecraft server
+	 * @param blocks List of Blocks to spawn
+	 */
+	public void spawnBlocks(List<Block> blocks) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("spawnBlocks ");
+		for(Block b: blocks) {
+			sb.append(b.x() + " " + b.y() + " " + b.z() + " " + b.type() + " " + b.orientation() + " ");
+		}
+		try {
+			commSend(sb.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Minecraft failed on command "+sb);
+			System.exit(1);
+		}
 	}
+	
+	/**
+	 * Fill all space in the specified range with the provided type. The
+	 * rectangular prism defined in the world spawns from the min coordinates to the max coordinates.
+	 * 
+	 * @param min Minimal coordinates in each dimension (each min coordinate must be <= max coordinate)
+	 * @param max Maximal coordinates in each dimension
+	 * @param type Type to fill the space with
+	 */
+	public void fillCube(MineCraftCoordinates min, MineCraftCoordinates max, BlockType type) {
+		fillCube(min.x(), min.y(), min.z(), max.x(), max.y(), max.z(), type);
+	}
+
+	/**
+	 * Fill all space in the specified range with the provided type. The
+	 * rectangular prism defined in the world spawns from the
+	 * (xmin,ymin,zmin) coordinates to the (xmax,ymax,zmax) coordinates.
+	 * 
+	 * @param xmin Minimal x coordinate. xmin <= xmax
+	 * @param ymin Minimal y coordinate. ymin <= ymax
+	 * @param zmin Minimal z coordinate. zmin <= zmax
+	 * @param xmax Maximal x coordinate
+	 * @param ymax Maximal y coordinate
+	 * @param zmax Maximal z coordinate
+	 * @param type Type to fill the space with
+	 */
+	public void fillCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax, BlockType type) {
+		String message = "fillCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" "+type+" "+type.ordinal()+" ";
+		try {
+			commSend(message);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Minecraft failed on command "+message);
+			System.exit(1);
+		}
+	}
+	
+	
 }
