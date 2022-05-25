@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.ProcessBuilder.Redirect;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.tasks.mario.gan.Comm;
@@ -378,7 +379,7 @@ public class MinecraftServerClient extends Comm {
 		public Block(int x, int y, int z, BlockType type, Orientation orientation) {
 			position = new MineCraftCoordinates(x,y,z);
 			this.type = type;
-			this.orientation = o;
+			this.orientation = orientation;
 		}
 		
 		/**
@@ -387,12 +388,12 @@ public class MinecraftServerClient extends Comm {
 		 * @param y y-coordinate (up and down). Minimum value allowed is 0.
 		 * @param z z-coordinate
 		 * @param typeIndex index in enum values of the desired block type
-		 * @param orientationIndex index in enum values of the desired orientation
 		 */
-		public Block(int x, int y, int z, int typeIndex, int orientationIndex) {
+		public Block(int x, int y, int z, int typeIndex) {
 			position = new MineCraftCoordinates(x,y,z);
 			this.type = BlockType.values()[typeIndex];
-			this.orientation = Orientation.values()[orientationIndex];
+			// Meant for use with readCube, which does not provide orientation
+			this.orientation = null;
 		}
 
 		/**
@@ -481,7 +482,7 @@ public class MinecraftServerClient extends Comm {
 	 * @param type Type to fill the space with
 	 */
 	public void fillCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax, BlockType type) {
-		String message = "fillCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" "+type+" "+type.ordinal()+" ";
+		String message = "fillCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" "+type.ordinal()+" ";
 		try {
 			commSend(message);
 		} catch (IOException e) {
@@ -490,6 +491,48 @@ public class MinecraftServerClient extends Comm {
 			System.exit(1);
 		}
 	}
+
+	/**
+	 * Retrieve list of all Blocks (types and positions) found in the given region.
+	 * Note that when blocks are read, their orientation is not known.
+	 * 
+	 * @param min Minimal coordinates in each dimension (each min coordinate must be <= max coordinate)
+	 * @param max Maximal coordinates in each dimension
+	 * @return List of Blocks between the min and max coordinates (inclusive)
+	 */
+	public ArrayList<Block> readCube(MineCraftCoordinates min, MineCraftCoordinates max) {
+		return readCube(min.x(), min.y(), min.z(), max.x(), max.y(), max.z());
+	}
 	
-	
+	/**
+	 * Retrieve list of all Blocks (types and positions) found in the given region.
+	 * Note that when blocks are read, their orientation is not known.
+	 * 
+	 * @param xmin Minimal x coordinate. xmin <= xmax
+	 * @param ymin Minimal y coordinate. ymin <= ymax
+	 * @param zmin Minimal z coordinate. zmin <= zmax
+	 * @param xmax Maximal x coordinate
+	 * @param ymax Maximal y coordinate
+	 * @param zmax Maximal z coordinate
+	 * @return List of Blocks between the min and max coordinates (inclusive)
+	 */
+	public ArrayList<Block> readCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
+		String message = "readCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" ";
+		try {
+			commSend(message);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Minecraft failed on command "+message);
+			System.exit(1);
+		}
+		String response = commRecv();
+		String[] tokens = response.split(" ");
+		ArrayList<Block> result = new ArrayList<Block>(tokens.length / 4);
+		// Each Block is 4 numbers: x y z type
+		for(int i = 0; i < tokens.length; i += 4) {
+			Block b = new Block(Integer.parseInt(tokens[i]),Integer.parseInt(tokens[i+1]),Integer.parseInt(tokens[i+2]),Integer.parseInt(tokens[i+3]));
+			result.add(b);
+		}
+		return result;
+	}
 }
