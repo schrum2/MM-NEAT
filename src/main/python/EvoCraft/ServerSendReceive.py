@@ -18,9 +18,68 @@ if __name__ == '__main__':
         # Read input command from console (Java code sends commands here)
         line = sys.stdin.readline()
 
-        # TODO: Commands
+        tokens = line.split()
+        command = tokens[0]
+        parameters = list(map(int,tokens[1:]))
+        parameters_copy = parameters.copy()
+        try:
+            # Commands
+            if command == "spawnBlocks":
+                # client.spawnBlocks(Blocks(blocks=shape)) where shape is a list of Blocks
+                # Each block is a sequence of 5 integers: x y z type orientation
+                # Use pop() to get the values, but they will be in reverse
+                shape = []
+                while parameters != []:
+                    orientation = parameters.pop()
+                    type = parameters.pop()
+                    z = parameters.pop()
+                    y = parameters.pop()
+                    x = parameters.pop()
+                    shape.append(Block(position=Point(x=x, y=y, z=z), type=type, orientation=orientation))
+                    # Will crash with an error if there are not 5 ints per block in the input stream
+
+                client.spawnBlocks(Blocks(blocks=shape))
+
+            elif command == "readCube":
+                # client.readCube(Cube(min=Point(x=xmin, y=ymin, z=zmin), max=Point(x=xmax, y=ymax, z=zmax) )) 
+                # where (xmin,ymin,zmin) and (xmax,ymax,zmax) bound the Cube
+                # The parameters are: xmin ymin zmin xmax ymax zmax
+                # Read in reverse using pop()
+
+                zmax = parameters.pop()
+                ymax = parameters.pop()
+                xmax = parameters.pop()
+                zmin = parameters.pop()
+                ymin = parameters.pop()
+                xmin = parameters.pop()
+
+                result = client.readCube(Cube(min=Point(x=xmin, y=ymin, z=zmin), max=Point(x=xmax, y=ymax, z=zmax) )) 
+
+                # print response to console (to be read by Java code)
+                print(result)
+                sys.stdout.flush() # Make Java sense output before blocking on next input
 
 
-        # print response to console (to be read by Java code)
-        print("TODO")
-        sys.stdout.flush() # Make Java sense output before blocking on next input
+            elif command == "fillCube":      
+                # client.fillCube(FillCubeRequest(cube=Cube(min=Point(x=xmin, y=ymin, z=zmin), max=Point(x=xmax, y=ymax, z=zmax) ), type=filltype )) 
+                # where (xmin,ymin,zmin) and (xmax,ymax,zmax) bound the Cube and filltype is the type
+                # The parameters are: xmin ymin zmin xmax ymax zmax type
+                # Read in reverse using pop()
+                type = parameters.pop()
+                zmax = parameters.pop()
+                ymax = parameters.pop()
+                xmax = parameters.pop()
+                zmin = parameters.pop()
+                ymin = parameters.pop()
+                xmin = parameters.pop()
+                
+                client.fillCube(FillCubeRequest(cube=Cube(min=Point(x=xmin, y=ymin, z=zmin), max=Point(x=xmax, y=ymax, z=zmax) ), type=type ))
+
+            else:
+                print("Illegal command. Only spawnBlocks, readCube, and fillCube are recognized. Not {}".format(command))
+                quit()
+
+        except IndexError:
+            print("Wrong number of parameters sent to the command {}. Only sent {}".format(command,parameters_copy))
+            quit()
+
