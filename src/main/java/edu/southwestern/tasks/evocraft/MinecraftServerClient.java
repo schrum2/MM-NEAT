@@ -1,4 +1,4 @@
-package edu.southwestern.evocraft;
+package edu.southwestern.tasks.evocraft;
 
 import java.io.BufferedReader;
 import java.io.File;
