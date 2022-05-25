@@ -13,15 +13,15 @@ import edu.southwestern.tasks.mario.gan.Comm;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.Triple;
 
-public class MinecraftServerClient extends Comm {
+public class MinecraftClient extends Comm {
 
-	private static MinecraftServerClient client = null;
+	private static MinecraftClient client = null;
 
 	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "EvoCraft" + File.separator;
 	// Python script to interact with a Minecraft server on the localhost
 	public static final String CLIENT_PATH = PYTHON_BASE_PATH + "ServerSendReceive.py";
 
-	public MinecraftServerClient() {
+	public MinecraftClient() {
 		super();
 		// More?
 	}
@@ -38,10 +38,10 @@ public class MinecraftServerClient extends Comm {
 		}
 	}
 
-	public MinecraftServerClient getMinecraftServerClient() {
+	public MinecraftClient getMinecraftServerClient() {
 		if(client == null) {
 			PythonUtil.setPythonProgram();
-			client = new MinecraftServerClient();
+			client = new MinecraftClient();
 			client.start();
 			// consume all start-up messages that are not data responses
 			String response = "";
