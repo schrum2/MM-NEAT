@@ -20,9 +20,9 @@ public abstract class MinecraftFitnessFunction {
 	 * @param corners List of corner locations
 	 * @return List of corresponding fitness values
 	 */
-	public List<Double> fitnessScores(List<MinecraftClient.MineCraftCoordinates> corners){
+	public List<Double> fitnessScores(List<MinecraftClient.MinecraftCoordinates> corners){
 		ArrayList<Double> fitnessScores = new ArrayList<>(corners.size());
-		for(MinecraftClient.MineCraftCoordinates c : corners) {
+		for(MinecraftClient.MinecraftCoordinates c : corners) {
 			fitnessScores.add(fitnessScore(c));
 		}
 		return fitnessScores;
@@ -33,7 +33,7 @@ public abstract class MinecraftFitnessFunction {
 	 * @param corner Minimal coordinates of shape
 	 * @return Fitness score for shape
 	 */
-	public abstract double fitnessScore(MinecraftClient.MineCraftCoordinates corner);
+	public abstract double fitnessScore(MinecraftClient.MinecraftCoordinates corner);
 	
 	/**
 	 * Minimum possible fitness

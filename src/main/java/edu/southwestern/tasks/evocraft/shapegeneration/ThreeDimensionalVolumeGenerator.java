@@ -7,7 +7,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
-import edu.southwestern.tasks.evocraft.MinecraftClient.MineCraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.util.graphics.ThreeDimensionalUtil;
@@ -16,10 +16,10 @@ import edu.southwestern.util.stats.StatisticsUtilities;
 public class ThreeDimensionalVolumeGenerator<T extends Network> implements ShapeGenerator<T> {
 
 	@Override
-	public List<Block> generateShape(Genotype<T> genome, MineCraftCoordinates corner, BlockSet blockSet) {
+	public List<Block> generateShape(Genotype<T> genome, MinecraftCoordinates corner, BlockSet blockSet) {
 		List<Block> blocks = new ArrayList<>();
 		Network net = genome.getPhenotype();
-		MineCraftCoordinates ranges = new MineCraftCoordinates(
+		MinecraftCoordinates ranges = new MinecraftCoordinates(
 				Parameters.parameters.integerParameter("minecraftXRange"),
 				Parameters.parameters.integerParameter("minecraftYRange"),
 				Parameters.parameters.integerParameter("minecraftZRange"));
@@ -39,7 +39,7 @@ public class ThreeDimensionalVolumeGenerator<T extends Network> implements Shape
 						int typeIndex = StatisticsUtilities.argmax(blockPreferences);
 						// TODO: Add way to evolve orientation
 						Orientation blockOrientation = Orientation.NORTH;
-						Block b = new Block(corner.add(new MineCraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[typeIndex], blockOrientation);
+						Block b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[typeIndex], blockOrientation);
 						blocks.add(b);
 					}
 				}

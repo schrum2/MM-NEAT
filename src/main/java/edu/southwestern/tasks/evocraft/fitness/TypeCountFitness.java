@@ -14,9 +14,9 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.*;
 public class TypeCountFitness extends MinecraftFitnessFunction {
 
 	@Override
-	public double fitnessScore(MineCraftCoordinates corner) {
+	public double fitnessScore(MinecraftCoordinates corner) {
 		MinecraftClient client = MinecraftClient.getMinecraftClient();
-		MineCraftCoordinates ranges = new MineCraftCoordinates(
+		MinecraftCoordinates ranges = new MinecraftCoordinates(
 				Parameters.parameters.integerParameter("minecraftXRange") - 1,
 				Parameters.parameters.integerParameter("minecraftYRange") - 1,
 				Parameters.parameters.integerParameter("minecraftZRange") - 1);

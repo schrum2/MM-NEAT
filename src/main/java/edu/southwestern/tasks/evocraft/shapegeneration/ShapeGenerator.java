@@ -4,7 +4,7 @@ import java.util.List;
 
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
-import edu.southwestern.tasks.evocraft.MinecraftClient.MineCraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 
 /**
@@ -29,6 +29,6 @@ public interface ShapeGenerator<T> {
 	 * @param blockSet possible blocks that can be generated
 	 * @return List of Blocks to generate
 	 */
-	public List<Block> generateShape(Genotype<T> genome, MineCraftCoordinates corner, BlockSet blockSet);
+	public List<Block> generateShape(Genotype<T> genome, MinecraftCoordinates corner, BlockSet blockSet);
 	
 }

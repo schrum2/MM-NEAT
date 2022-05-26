@@ -11,7 +11,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
-import edu.southwestern.tasks.evocraft.MinecraftClient.MineCraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
@@ -30,7 +30,7 @@ public class MinecraftShapeEvolutionTask<T> implements SinglePopulationTask<T>, 
 	private ArrayList<MinecraftFitnessFunction> fitnessFunctions;
 	private BlockSet blockSet;
 	private ShapeGenerator<T> shapeGenerator;
-	private ArrayList<MineCraftCoordinates> corners;
+	private ArrayList<MinecraftCoordinates> corners;
 	
 	public MinecraftShapeEvolutionTask() {
 		fitnessFunctions = new ArrayList<MinecraftFitnessFunction>();
@@ -109,13 +109,13 @@ public class MinecraftShapeEvolutionTask<T> implements SinglePopulationTask<T>, 
 			int startingX = 0;
 			int startingZ = 0;
 			int count = 0;
-			MineCraftCoordinates ranges = new MineCraftCoordinates(
+			MinecraftCoordinates ranges = new MinecraftCoordinates(
 					Parameters.parameters.integerParameter("minecraftXRange"),
 					Parameters.parameters.integerParameter("minecraftYRange"),
 					Parameters.parameters.integerParameter("minecraftZRange"));
 			corners = new ArrayList<>(population.size());
 			for(int i = 0; i < population.size(); i++) {
-				MineCraftCoordinates corner = new MineCraftCoordinates(startingX + count*(ranges.x() + SPACE_BETWEEN), GROUND_LEVEL+1, startingZ);
+				MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + SPACE_BETWEEN), GROUND_LEVEL+1, startingZ);
 				corners.add(corner);
 			}
 			count++;
@@ -124,7 +124,7 @@ public class MinecraftShapeEvolutionTask<T> implements SinglePopulationTask<T>, 
 		// Generate and evaluate shapes in parallel
 		IntStream stream = IntStream.range(0, corners.size());
 		ArrayList<Score<T>> scores = stream.parallel().mapToObj( i -> {
-			MineCraftCoordinates corner = corners.get(i);
+			MinecraftCoordinates corner = corners.get(i);
 			Genotype<T> genome = population.get(i);
 			List<Block> blocks = shapeGenerator.generateShape(genome, corner, blockSet);
 			client.spawnBlocks(blocks);

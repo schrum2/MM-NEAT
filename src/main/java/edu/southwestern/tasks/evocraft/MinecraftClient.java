@@ -358,8 +358,8 @@ public class MinecraftClient extends Comm {
 	 * @author schrum2
 	 *
 	 */
-	public static class MineCraftCoordinates extends Triple<Integer,Integer,Integer> {
-		public MineCraftCoordinates(int x, int y, int z) {
+	public static class MinecraftCoordinates extends Triple<Integer,Integer,Integer> {
+		public MinecraftCoordinates(int x, int y, int z) {
 			super(x, y, z);
 		}
 		
@@ -372,8 +372,8 @@ public class MinecraftClient extends Comm {
 		 * @param other Coordinates to add to this one.
 		 * @return Result of adding the vectors
 		 */
-		public MineCraftCoordinates add(MineCraftCoordinates other) {
-			return new MineCraftCoordinates(x() + other.x(), y() + other.y(), z() + other.z());
+		public MinecraftCoordinates add(MinecraftCoordinates other) {
+			return new MinecraftCoordinates(x() + other.x(), y() + other.y(), z() + other.z());
 		}
 	}
 	
@@ -386,7 +386,7 @@ public class MinecraftClient extends Comm {
 	 *
 	 */
 	public static class Block {
-		MineCraftCoordinates position;
+		MinecraftCoordinates position;
 		BlockType type;
 		Orientation orientation;
 		
@@ -398,7 +398,7 @@ public class MinecraftClient extends Comm {
 		 * @param type From BlockType enum above
 		 * @param orientation From Orientation enum above
 		 */
-		public Block(MineCraftCoordinates pos, BlockType type, Orientation orientation) {
+		public Block(MinecraftCoordinates pos, BlockType type, Orientation orientation) {
 			this(pos.x(), pos.y(), pos.z(), type, orientation);
 		}
 		
@@ -411,7 +411,7 @@ public class MinecraftClient extends Comm {
 		 * @param orientation From Orientation enum above
 		 */
 		public Block(int x, int y, int z, BlockType type, Orientation orientation) {
-			position = new MineCraftCoordinates(x,y,z);
+			position = new MinecraftCoordinates(x,y,z);
 			this.type = type;
 			this.orientation = orientation;
 		}
@@ -496,7 +496,7 @@ public class MinecraftClient extends Comm {
 	 * @param max Maximal coordinates in each dimension
 	 * @param type Type to fill the space with
 	 */
-	public synchronized void fillCube(MineCraftCoordinates min, MineCraftCoordinates max, BlockType type) {
+	public synchronized void fillCube(MinecraftCoordinates min, MinecraftCoordinates max, BlockType type) {
 		fillCube(min.x(), min.y(), min.z(), max.x(), max.y(), max.z(), type);
 	}
 
@@ -532,7 +532,7 @@ public class MinecraftClient extends Comm {
 	 * @param max Maximal coordinates in each dimension
 	 * @return List of Blocks between the min and max coordinates (inclusive)
 	 */
-	public ArrayList<Block> readCube(MineCraftCoordinates min, MineCraftCoordinates max) {
+	public ArrayList<Block> readCube(MinecraftCoordinates min, MinecraftCoordinates max) {
 		return readCube(min.x(), min.y(), min.z(), max.x(), max.y(), max.z());
 	}
 	
