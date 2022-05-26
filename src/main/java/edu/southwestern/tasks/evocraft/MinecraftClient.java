@@ -15,6 +15,12 @@ import edu.southwestern.util.datastructures.Triple;
 
 public class MinecraftClient extends Comm {
 
+	public static final int GROUND_LEVEL = 4;
+	// TODO: Command line param?
+	public static final int SPACE_BETWEEN = 5;
+
+	public static final int BUFFER = 10;
+
 	private static MinecraftClient client = null;
 
 	public static final String PYTHON_BASE_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator + "EvoCraft" + File.separator;
@@ -575,5 +581,18 @@ public class MinecraftClient extends Comm {
 			result.add(b);
 		}
 		return result;
+	}
+	
+	/**
+	 * Clear a large enough space in the world for a population of shapes.
+	 * 
+	 * @param start Start coordinates where shapes are generated
+	 * @param ranges Size of each shape space
+	 * @param numShapes Number of generated shapes
+	 */
+	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes) {
+		MinecraftCoordinates groundStart = new MinecraftCoordinates(start.x()-BUFFER, GROUND_LEVEL, start.z()-BUFFER);
+		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + SPACE_BETWEEN) + BUFFER, start.y() + ranges.y() + BUFFER, start.z() + ranges.z() + BUFFER);
+		fillCube(groundStart, end, BlockType.AIR);
 	}
 }

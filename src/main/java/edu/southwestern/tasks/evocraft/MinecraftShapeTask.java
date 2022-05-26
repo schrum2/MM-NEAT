@@ -23,11 +23,6 @@ import edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGen
 
 
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask {
-
-	public static final int GROUND_LEVEL = 4;
-	
-	// TODO: Command line param?
-	private static final int SPACE_BETWEEN = 5;
 	
 	private ArrayList<MinecraftFitnessFunction> fitnessFunctions;
 	private BlockSet blockSet;
@@ -112,23 +107,28 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	@Override
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		MinecraftClient client = MinecraftClient.getMinecraftClient();
+		
+		int startingX = 0;
+		int startingZ = 0;
+		int count = 0;
+		MinecraftCoordinates ranges = new MinecraftCoordinates(
+				Parameters.parameters.integerParameter("minecraftXRange"),
+				Parameters.parameters.integerParameter("minecraftYRange"),
+				Parameters.parameters.integerParameter("minecraftZRange"));
+		
 		// Avoid recalculating the same corners every time
 		if(corners == null) {
-			int startingX = 0;
-			int startingZ = 0;
-			int count = 0;
-			MinecraftCoordinates ranges = new MinecraftCoordinates(
-					Parameters.parameters.integerParameter("minecraftXRange"),
-					Parameters.parameters.integerParameter("minecraftYRange"),
-					Parameters.parameters.integerParameter("minecraftZRange"));
 			corners = new ArrayList<>(population.size());
 			for(int i = 0; i < population.size(); i++) {
-				MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + SPACE_BETWEEN), GROUND_LEVEL+1, startingZ);
+				MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + MinecraftClient.SPACE_BETWEEN), MinecraftClient.GROUND_LEVEL+1, startingZ);
 				corners.add(corner);
 				count++;
 			}
 		}
 
+		// Must clear the space where shapes are placed
+		client.clearSpaceForShapes(new MinecraftCoordinates(startingX,MinecraftClient.GROUND_LEVEL+1,startingZ), ranges, population.size());
+		
 		// Generate and evaluate shapes in parallel
 		IntStream stream = IntStream.range(0, corners.size());
 		ArrayList<Score<T>> scores = stream.parallel().mapToObj( i -> {
