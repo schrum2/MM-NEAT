@@ -467,6 +467,15 @@ public class MinecraftClient extends Comm {
 		public int orientation() {
 			return orientation.ordinal();
 		}
+		
+		/**
+		 * Display block information
+		 */
+		public String toString() {
+			String name = type.name();
+			String pos = position.toString();
+			return name + " at " + pos + " oriented " + (orientation == null ? "null" : orientation.name());
+		}
 	}
 
 	/**
