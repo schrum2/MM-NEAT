@@ -125,8 +125,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			for(int i = 0; i < population.size(); i++) {
 				MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + SPACE_BETWEEN), GROUND_LEVEL+1, startingZ);
 				corners.add(corner);
+				count++;
 			}
-			count++;
 		}
 
 		// Generate and evaluate shapes in parallel
