@@ -106,7 +106,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 	@Override
 	public void postConstructionInitialization() {
-		// Nothing
+		MMNEAT.setNNInputParameters(sensorLabels().length, outputLabels().length);
 	}
 
 	@Override
