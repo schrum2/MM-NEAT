@@ -33,6 +33,8 @@ public class MinecraftShapeEvolutionTask<T> implements SinglePopulationTask<T>, 
 	private ArrayList<MinecraftCoordinates> corners;
 	
 	public MinecraftShapeEvolutionTask() {
+		MinecraftServer.launchServer();
+		
 		fitnessFunctions = new ArrayList<MinecraftFitnessFunction>();
 
 		// TODO: Control via parameters later
@@ -93,7 +95,8 @@ public class MinecraftShapeEvolutionTask<T> implements SinglePopulationTask<T>, 
 
 	@Override
 	public void finalCleanup() {
-		// Nothing
+		// Close Minecraft server after all evolution is done
+		MinecraftServer.terminateServer();
 	}
 
 	@Override

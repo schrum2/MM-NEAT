@@ -22,9 +22,15 @@ public class MinecraftServer {
 		try {
 			System.out.println(pb.command());
 			server = pb.start();
+			Thread.sleep(30000); // Give server chance to launch
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Exception setting up the Minecraft process:");
 			e.printStackTrace();
+			System.exit(1);
+		} catch (InterruptedException e) {
+			System.out.println("Exception waiting for server to launch. Not enough time?");
+			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 	
@@ -50,9 +56,9 @@ public class MinecraftServer {
 		return server != null;
 	}
 	
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) {
 		launchServer();
-		Thread.sleep(30000); // Give server chance to launch
+		//Thread.sleep(30000); // Give server chance to launch
 		MinecraftClient client = MinecraftClient.getMinecraftClient();
 		List<Block> blocks = client.readCube(114, 9, 114, 120, 16, 120);
 		System.out.println("Size: "+blocks.size());
