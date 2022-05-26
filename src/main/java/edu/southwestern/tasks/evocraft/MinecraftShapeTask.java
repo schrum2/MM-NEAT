@@ -46,6 +46,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// TODO: Command line parameter: this one only works for Network phenotypes
 		shapeGenerator = new ThreeDimensionalVolumeGenerator();
 		
+		for(MinecraftFitnessFunction ff : fitnessFunctions) {
+			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName());
+		}
 	}
 	
 	/**
