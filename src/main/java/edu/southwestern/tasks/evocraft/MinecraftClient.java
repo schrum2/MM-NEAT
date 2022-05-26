@@ -398,6 +398,18 @@ public class MinecraftClient extends Comm {
 		 * @param type From BlockType enum above
 		 * @param orientation From Orientation enum above
 		 */
+		public Block(MineCraftCoordinates pos, BlockType type, Orientation orientation) {
+			this(pos.x(), pos.y(), pos.z(), type, orientation);
+		}
+		
+		/**
+		 * New block at given coordinates with given type.
+		 * @param x x-coordinate
+		 * @param y y-coordinate (up and down). Minimum value allowed is 0.
+		 * @param z z-coordinate
+		 * @param type From BlockType enum above
+		 * @param orientation From Orientation enum above
+		 */
 		public Block(int x, int y, int z, BlockType type, Orientation orientation) {
 			position = new MineCraftCoordinates(x,y,z);
 			this.type = type;
@@ -412,10 +424,8 @@ public class MinecraftClient extends Comm {
 		 * @param typeIndex index in enum values of the desired block type
 		 */
 		public Block(int x, int y, int z, int typeIndex) {
-			position = new MineCraftCoordinates(x,y,z);
-			this.type = BlockType.values()[typeIndex];
 			// Meant for use with readCube, which does not provide orientation
-			this.orientation = null;
+			this(x,y,z,BlockType.values()[typeIndex],null);
 		}
 
 		/**
