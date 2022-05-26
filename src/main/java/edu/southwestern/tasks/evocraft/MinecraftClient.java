@@ -473,7 +473,7 @@ public class MinecraftClient extends Comm {
 	 * Spawn the given list of Block objects in the Minecraft server
 	 * @param blocks List of Blocks to spawn
 	 */
-	public void spawnBlocks(List<Block> blocks) {
+	public synchronized void spawnBlocks(List<Block> blocks) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("spawnBlocks ");
 		for(Block b: blocks) {
@@ -496,7 +496,7 @@ public class MinecraftClient extends Comm {
 	 * @param max Maximal coordinates in each dimension
 	 * @param type Type to fill the space with
 	 */
-	public void fillCube(MineCraftCoordinates min, MineCraftCoordinates max, BlockType type) {
+	public synchronized void fillCube(MineCraftCoordinates min, MineCraftCoordinates max, BlockType type) {
 		fillCube(min.x(), min.y(), min.z(), max.x(), max.y(), max.z(), type);
 	}
 
@@ -513,7 +513,7 @@ public class MinecraftClient extends Comm {
 	 * @param zmax Maximal z coordinate
 	 * @param type Type to fill the space with
 	 */
-	public void fillCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax, BlockType type) {
+	public synchronized void fillCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax, BlockType type) {
 		String message = "fillCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" "+type.ordinal()+" ";
 		try {
 			commSend(message);

@@ -1,22 +1,36 @@
 package edu.southwestern.tasks.evocraft;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.SinglePopulationTask;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MineCraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
+import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
+import edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator;
 
 
 public class MinecraftShapeEvolutionTask<T> implements SinglePopulationTask<T>, NetworkTask {
 
+	public static final int GROUND_LEVEL = 4;
+	
+	// TODO: Command line param?
+	private static final int SPACE_BETWEEN = 5;
+	
 	private ArrayList<MinecraftFitnessFunction> fitnessFunctions;
 	private BlockSet blockSet;
+	private ShapeGenerator<T> shapeGenerator;
+	private ArrayList<MineCraftCoordinates> corners;
 	
 	public MinecraftShapeEvolutionTask() {
 		fitnessFunctions = new ArrayList<MinecraftFitnessFunction>();
@@ -25,6 +39,9 @@ public class MinecraftShapeEvolutionTask<T> implements SinglePopulationTask<T>, 
 		fitnessFunctions.add(new TypeCountFitness());
 		// TODO: Command line parameter
 		blockSet = new MachineBlockSet();
+		// TODO: Command line parameter: this one only works for Network phenotypes
+		shapeGenerator = new ThreeDimensionalVolumeGenerator();
+		
 	}
 	
 	/**
@@ -87,15 +104,39 @@ public class MinecraftShapeEvolutionTask<T> implements SinglePopulationTask<T>, 
 	@Override
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		MinecraftClient client = MinecraftClient.getMinecraftClient();
-		ArrayList<Score<T>> scores = new ArrayList<Score<T>>();
-		
-		for(Genotype<T> g : population) {
-			
-			
+		// Avoid recalculating the same corners every time
+		if(corners == null) {
+			int startingX = 0;
+			int startingZ = 0;
+			int count = 0;
+			MineCraftCoordinates ranges = new MineCraftCoordinates(
+					Parameters.parameters.integerParameter("minecraftXRange"),
+					Parameters.parameters.integerParameter("minecraftYRange"),
+					Parameters.parameters.integerParameter("minecraftZRange"));
+			corners = new ArrayList<>(population.size());
+			for(int i = 0; i < population.size(); i++) {
+				MineCraftCoordinates corner = new MineCraftCoordinates(startingX + count*(ranges.x() + SPACE_BETWEEN), GROUND_LEVEL+1, startingZ);
+				corners.add(corner);
+			}
+			count++;
 		}
+
+		// Generate and evaluate shapes in parallel
+		IntStream stream = IntStream.range(0, corners.size());
+		ArrayList<Score<T>> scores = stream.parallel().mapToObj( i -> {
+			MineCraftCoordinates corner = corners.get(i);
+			Genotype<T> genome = population.get(i);
+			List<Block> blocks = shapeGenerator.generateShape(genome, corner, blockSet);
+			client.spawnBlocks(blocks);
+			double[] fitnessScores = new double[fitnessFunctions.size()];
+			int scoreIndex = 0;
+			for(MinecraftFitnessFunction ff : fitnessFunctions) {
+				fitnessScores[scoreIndex++] = ff.fitnessScore(corner);
+			}
+			return new Score<T>(genome, fitnessScores);
+		}).collect(Collectors.toCollection(ArrayList::new));
 		
-		// TODO Auto-generated method stub
-		return null;
+		return scores;
 	}
 
 }
