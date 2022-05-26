@@ -1,10 +1,12 @@
 package edu.southwestern.tasks.evocraft;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.Parameters;
@@ -20,7 +22,7 @@ import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator;
 
 
-public class MinecraftShapeEvolutionTask<T> implements SinglePopulationTask<T>, NetworkTask {
+public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask {
 
 	public static final int GROUND_LEVEL = 4;
 	
@@ -32,7 +34,7 @@ public class MinecraftShapeEvolutionTask<T> implements SinglePopulationTask<T>, 
 	private ShapeGenerator<T> shapeGenerator;
 	private ArrayList<MinecraftCoordinates> corners;
 	
-	public MinecraftShapeEvolutionTask() {
+	public MinecraftShapeTask() {
 		MinecraftServer.launchServer();
 		
 		fitnessFunctions = new ArrayList<MinecraftFitnessFunction>();
@@ -142,4 +144,21 @@ public class MinecraftShapeEvolutionTask<T> implements SinglePopulationTask<T>, 
 		return scores;
 	}
 
+	public static void main(String[] args) {
+		int seed = 0;
+		try {
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:10", "maxGens:100",
+					"base:minecraft", "log:Minecraft-TypeCount", "saveTo:typecount",
+					"io:true", "netio:true", "mating:true", "fs:false", 
+					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
+					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
+					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",
+					"includeFullSigmoidFunction:true", "includeFullGaussFunction:true", "includeCosineFunction:true", 
+					"includeGaussFunction:false", "includeIdFunction:true", "includeTriangleWaveFunction:false", 
+					"includeSquareWaveFunction:false", "includeFullSawtoothFunction:false", "includeSigmoidFunction:false", 
+					"includeAbsValFunction:false", "includeSawtoothFunction:false"}); 
+		} catch (FileNotFoundException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+	}
 }
