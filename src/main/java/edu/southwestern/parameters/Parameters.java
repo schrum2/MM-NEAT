@@ -20,6 +20,7 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator;
 import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
 import edu.southwestern.tasks.gvgai.zelda.level.SimpleLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar;
@@ -974,7 +975,6 @@ public class Parameters {
 		classOptions.add("rlGlueEnvironment", null, "Environment/domain for an RL-Glue problem");
 		classOptions.add("rlGlueExtractor", StateVariableExtractor.class, "Feature extractor to get input features from RL-Glue observations");
 		classOptions.add("staticPacMan", StarterPacMan.class, "Pac-Man used to evolve ghosts against");
-		//popacman.examples.StarterPacMan.MyPacMan.class 
 		classOptions.add("staticPacManPO", popacman.examples.StarterPacMan.MyPacMan.class, "Pac-Man used to evolve PO ghosts against");
 		classOptions.add("staticPredatorController", AggressivePredatorController.class, "This parameter specifies the predator controller that prey evolve against");
 		classOptions.add("staticPreyController", PreyFleeClosestPredatorController.class, "This parameter specifies the prey controller that predators evolve against");
@@ -989,6 +989,7 @@ public class Parameters {
 		classOptions.add("utWeaponManager", SimpleWeaponManager.class, "Weapon management for UT2004 bot");
 		classOptions.add("weightPerturber", GaussianGenerator.class, "Random generator used to perturb mutated weights");
 		classOptions.add("zeldaLevelLoader", SimpleLoader.class, "Loader to use when the dungeon is picking levels");
+		classOptions.add("minecraftShapeGenerator", ThreeDimensionalVolumeGenerator.class, "Defines the manner in which shapes are generated from genomes in Minecraft");
 	}
 
 	/**

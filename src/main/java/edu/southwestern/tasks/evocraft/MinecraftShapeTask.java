@@ -20,7 +20,7 @@ import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
-import edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator;
+import edu.southwestern.util.ClassCreation;
 
 
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask {
@@ -30,6 +30,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	private ShapeGenerator<T> shapeGenerator;
 	private ArrayList<MinecraftCoordinates> corners;
 	
+	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
 		MinecraftServer.launchServer();
 		
@@ -42,13 +43,17 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftOccupiedCountFitness")) {
 			fitnessFunctions.add(new OccupiedCountFitness());
 		}
-
 		
 		// TODO: Command line parameter
 		blockSet = new MachineBlockSet();
-		// TODO: Command line parameter: this one only works for Network phenotypes
-		shapeGenerator = new ThreeDimensionalVolumeGenerator();
-		
+
+		try {
+			shapeGenerator = (ShapeGenerator<T>) ClassCreation.createObject("minecraftShapeGenerator");
+		} catch (NoSuchMethodException e) {
+			System.out.println("Could not instantiate shape generator for Minecraft");
+			e.printStackTrace();
+			System.exit(1);
+		}
 		for(MinecraftFitnessFunction ff : fitnessFunctions) {
 			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName());
 		}
