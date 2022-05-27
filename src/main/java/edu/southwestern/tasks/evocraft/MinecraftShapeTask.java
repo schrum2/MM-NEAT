@@ -162,6 +162,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					"base:minecraft", "log:Minecraft-TypeCount", "saveTo:TypeCount",
 					"io:true", "netio:true", "mating:true", "fs:false", 
 					"minecraftTypeCountFitness:true",
+					//"minecraftOccupiedCountFitness:true",
 					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",
