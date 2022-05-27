@@ -4,20 +4,21 @@ import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 
 /**
- * Fitness score is the number of occurrences of a block of a specific type within the bounds of the generated shape.
+ * Number of non-AIR blocks in the space
+ * 
  * @author schrum2
  *
  */
-public class TypeCountFitness extends CheckBlocksInSpaceFitness {
+public class OccupiedCount extends CheckBlocksInSpaceFitness {
 
 	@Override
 	public double fitnessFromBlocks(List<Block> blocks) {
-		int desiredType = Parameters.parameters.integerParameter("minecraftDesiredBlockType");
 		int total = 0;
 		for(Block b : blocks) {
-			if(b.type() == desiredType) {
+			if(b.type() != BlockType.AIR.ordinal()) {
 				total++;
 			}
 		}
@@ -27,6 +28,7 @@ public class TypeCountFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
 	public double maxFitness() {
+		// TODO: Might not be appropriate when evolving snakes
 		return Parameters.parameters.integerParameter("minecraftXRange") * Parameters.parameters.integerParameter("minecraftYRange") * Parameters.parameters.integerParameter("minecraftZRange");
 	}
 
