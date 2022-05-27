@@ -359,7 +359,7 @@ public class Parameters {
 		integerOptions.add("minecraftXRange", 10, "Units in x-dimension for evolved Minecraft shapes");
 		integerOptions.add("minecraftYRange", 10, "Units in y-dimension for evolved Minecraft shapes");
 		integerOptions.add("minecraftZRange", 10, "Units in z-dimension for evolved Minecraft shapes");
-		integerOptions.add("minecraftDesiredBlockType", MinecraftClient.BlockType.RED_SANDSTONE.ordinal(), "Type desired by TypeCountFitness");
+		integerOptions.add("minecraftDesiredBlockType", MinecraftClient.BlockType.REDSTONE_BLOCK.ordinal(), "Type desired by TypeCountFitness");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
