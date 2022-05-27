@@ -789,6 +789,8 @@ public class Parameters {
 		booleanOptions.add("parallelMAPElitesInitialize", false, "Initial archive members are evaluated in parallel for MAP Elites.");
 		booleanOptions.add("objectBreederDistanceInEachPlane", false, "CPPN inputs for object breeder include distances projected to each 2D plane.");
 		booleanOptions.add("searchContinuesAfterSuccess", false, "Graph search algorithms will keep searching even after a solution is found (collecting set of all reachable locations).");
+		booleanOptions.add("minecraftTypeCountFitness", false, "Minecraft shapes try to maximize number of occurrences of a particular block type");
+		booleanOptions.add("minecraftOccupiedCountFitness", false, "Minecraft shapes try to maximize number of non-AIR blocks");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");

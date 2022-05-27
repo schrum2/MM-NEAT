@@ -12,7 +12,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
  * @author schrum2
  *
  */
-public class OccupiedCount extends CheckBlocksInSpaceFitness {
+public class OccupiedCountFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
 	public double fitnessFromBlocks(List<Block> blocks) {
