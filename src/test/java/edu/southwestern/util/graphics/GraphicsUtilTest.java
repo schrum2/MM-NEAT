@@ -221,6 +221,7 @@ public class GraphicsUtilTest {
 				assertEquals(loadedZentangle.getRGB(x, y), result.getRGB(x, y));
 			}
 		}
+		z.delete();
 		
 	}
 
@@ -301,6 +302,7 @@ public class GraphicsUtilTest {
 				assertEquals(loaded.getRGB(x, y), result.getRGB(x, y));
 			}
 		}
+		f.delete();
 	}
 
 	@Test

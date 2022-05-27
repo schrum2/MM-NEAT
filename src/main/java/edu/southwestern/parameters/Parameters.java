@@ -19,6 +19,7 @@ import edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController;
 import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
+import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
 import edu.southwestern.tasks.gvgai.zelda.level.SimpleLoader;
 import edu.southwestern.tasks.gvgai.zelda.level.ZeldaHumanSubjectStudy2019GraphGrammar;
@@ -355,6 +356,10 @@ public class Parameters {
 		integerOptions.add("numRotationIntervals", 3, "Determines by how much to divide the rotation value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
 		integerOptions.add("numTranslationIntervals", 3, "Determines by how much to divide the translation value in the CPPNNeuronScaleRotationDeltaXDeltaY binning scheme.");
 		integerOptions.add("marioStatBasedMEBinIntervals", 10, "Number of bins in Mario tasks related to Decoration, Negative Space, Leniency, and Distinct Chunks.");
+		integerOptions.add("minecraftXRange", 10, "Units in x-dimension for evolved Minecraft shapes");
+		integerOptions.add("minecraftYRange", 10, "Units in y-dimension for evolved Minecraft shapes");
+		integerOptions.add("minecraftZRange", 10, "Units in z-dimension for evolved Minecraft shapes");
+		integerOptions.add("minecraftDesiredBlockType", MinecraftClient.BlockType.REDSTONE_BLOCK.ordinal(), "Type desired by TypeCountFitness");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");

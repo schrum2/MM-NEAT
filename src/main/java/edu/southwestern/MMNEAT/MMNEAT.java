@@ -48,7 +48,6 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.MultiplePopulationTask;
 import edu.southwestern.tasks.Task;
-import edu.southwestern.tasks.extendedPicbreeder.PictureEvolutionTask;
 import edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask;
 import edu.southwestern.tasks.gvgai.zelda.study.HumanSubjectStudy2019Zelda;
 import edu.southwestern.tasks.mario.gan.GANProcess;
