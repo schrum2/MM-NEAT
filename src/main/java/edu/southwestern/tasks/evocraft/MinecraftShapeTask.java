@@ -123,7 +123,6 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		
 		int startingX = 0;
 		int startingZ = 0;
-		int count = 0;
 		MinecraftCoordinates ranges = new MinecraftCoordinates(
 				Parameters.parameters.integerParameter("minecraftXRange"),
 				Parameters.parameters.integerParameter("minecraftYRange"),
@@ -131,12 +130,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		
 		// Avoid recalculating the same corners every time
 		if(corners == null) {
-			corners = new ArrayList<>(population.size());
-			for(int i = 0; i < population.size(); i++) {
-				MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + MinecraftClient.SPACE_BETWEEN), MinecraftClient.GROUND_LEVEL+1, startingZ);
-				corners.add(corner);
-				count++;
-			}
+			corners = getShapeCorners(population.size(), startingX, startingZ, ranges);
 		}
 
 		// Must clear the space where shapes are placed
@@ -158,6 +152,26 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}).collect(Collectors.toCollection(ArrayList::new));
 		
 		return scores;
+	}
+
+	/**
+	 * Generate a given number of spawn corners for shapes based on given starting x/z coordinates
+	 * (starting y is assumed to be relative to the ground), and x/y/z-ranges for shape generation.
+	 * 
+	 * @param size Size of population, and thus number of corners to create
+	 * @param startingX x-coordinate of corner for first shape
+	 * @param startingZ z-coordinate of corner for first shape
+	 * @param ranges size of generated shapes in x/y/z dimensions
+	 */
+	public static ArrayList<MinecraftCoordinates> getShapeCorners(int size, int startingX, int startingZ, MinecraftCoordinates ranges) {
+		ArrayList<MinecraftCoordinates> corners = new ArrayList<>(size);
+		int count = 0;
+		for(int i = 0; i < size; i++) {
+			MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + MinecraftClient.SPACE_BETWEEN), MinecraftClient.GROUND_LEVEL+1, startingZ);
+			corners.add(corner);
+			count++;
+		}
+		return corners;
 	}
 
 	public static void main(String[] args) {
