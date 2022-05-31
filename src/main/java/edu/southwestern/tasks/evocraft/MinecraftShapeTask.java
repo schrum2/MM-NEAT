@@ -175,15 +175,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	private double[] calculateFitnessScores(MinecraftCoordinates corner) {
 		double[] fitnessScores = new double[fitnessFunctions.size()];
 		int scoreIndex = 0;
-		List<Block> readBlocks = null; // Read these just once
+		List<Block> readBlocks = CheckBlocksInSpaceFitness.readBlocksFromClient(corner); // Read these just once
 		for(MinecraftFitnessFunction ff : fitnessFunctions) {
-			boolean blocksInSpace = ff instanceof CheckBlocksInSpaceFitness;
-			// Just read the blocks once since client calls are costly
-			if(readBlocks == null && blocksInSpace) {
-				readBlocks = ((CheckBlocksInSpaceFitness) ff).readBlocksFromClient(corner);
-			}
-			
-			if(blocksInSpace) {
+			if(ff instanceof CheckBlocksInSpaceFitness) {
 				// All fitness functions of this type can just use the previously computed readBlocks list
 				fitnessScores[scoreIndex++] = ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(readBlocks);
 			} else {
