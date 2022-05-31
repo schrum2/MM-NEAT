@@ -17,6 +17,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
+import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
@@ -144,11 +145,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			Genotype<T> genome = population.get(i);
 			List<Block> blocks = shapeGenerator.generateShape(genome, corner, blockSet);
 			client.spawnBlocks(blocks);
-			double[] fitnessScores = new double[fitnessFunctions.size()];
-			int scoreIndex = 0;
-			for(MinecraftFitnessFunction ff : fitnessFunctions) {
-				fitnessScores[scoreIndex++] = ff.fitnessScore(corner);
-			}
+			double[] fitnessScores = calculateFitnessScores(corner);
 			Score<T> score = new Score<T>(genome, fitnessScores);
 			if(MMNEAT.usingDiversityBinningScheme) {
 				HashMap<String,Object> behaviorMap = new HashMap<>();
@@ -167,6 +164,33 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}).collect(Collectors.toCollection(ArrayList::new));
 		
 		return scores;
+	}
+
+	/**
+	 * Calculate all fitness scores for a shape at a given corner
+	 * 
+	 * @param corner Minimal corner from which shape is generated
+	 * @return double array of all fitness values in order
+	 */
+	private double[] calculateFitnessScores(MinecraftCoordinates corner) {
+		double[] fitnessScores = new double[fitnessFunctions.size()];
+		int scoreIndex = 0;
+		List<Block> readBlocks = null; // Read these just once
+		for(MinecraftFitnessFunction ff : fitnessFunctions) {
+			boolean blocksInSpace = ff instanceof CheckBlocksInSpaceFitness;
+			// Just read the blocks once since client calls are costly
+			if(readBlocks == null && blocksInSpace) {
+				readBlocks = ((CheckBlocksInSpaceFitness) ff).readBlocksFromClient(corner);
+			}
+			
+			if(blocksInSpace) {
+				// All fitness functions of this type can just use the previously computed readBlocks list
+				fitnessScores[scoreIndex++] = ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(readBlocks);
+			} else {
+				fitnessScores[scoreIndex++] = ff.fitnessScore(corner);
+			}
+		}
+		return fitnessScores;
 	}
 
 	/**

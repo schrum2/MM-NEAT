@@ -22,13 +22,25 @@ public abstract class CheckBlocksInSpaceFitness extends MinecraftFitnessFunction
 	 */
 	@Override
 	public double fitnessScore(MinecraftCoordinates corner) {
+		List<Block> blocks = readBlocksFromClient(corner);
+		return fitnessFromBlocks(blocks);
+	}
+
+	/**
+	 * Use EvoCraft client code to call readCube and determine blocks that are
+	 * present in the world.
+	 * 
+	 * @param corner minimal coordinate of shape being checked
+	 * @return List of blocks occupying the space for the given shape
+	 */
+	public List<Block> readBlocksFromClient(MinecraftCoordinates corner) {
 		MinecraftClient client = MinecraftClient.getMinecraftClient();
 		MinecraftCoordinates ranges = new MinecraftCoordinates(
 				Parameters.parameters.integerParameter("minecraftXRange") - 1,
 				Parameters.parameters.integerParameter("minecraftYRange") - 1,
 				Parameters.parameters.integerParameter("minecraftZRange") - 1);
 		List<Block> blocks = client.readCube(corner, corner.add(ranges));
-		return fitnessFromBlocks(blocks);
+		return blocks;
 	}
 
 	/**
