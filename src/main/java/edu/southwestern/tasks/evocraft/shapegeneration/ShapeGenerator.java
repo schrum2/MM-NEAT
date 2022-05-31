@@ -83,8 +83,10 @@ public interface ShapeGenerator<T> {
 		} 
 		
 		if(MMNEAT.shapeGenerator instanceof SnakeGenerator) {
-			double[] directionPreferences = ArrayUtil.portion(outputs,numBlockTypes + 1 , numBlockTypes + 1 + NUM_DIRECTIONS);
-			assert directionPreferences.length == 6 : "Should have 6 possible directions: " + Arrays.toString(directionPreferences);
+			int startIndex = numBlockTypes + 1;
+			int endIndex = numBlockTypes + NUM_DIRECTIONS;
+			double[] directionPreferences = ArrayUtil.portion(outputs, startIndex, endIndex);
+			assert directionPreferences.length == 6 : "Should have 6 possible directions: " + Arrays.toString(directionPreferences) + " from "+ startIndex +" to " + endIndex + " of " + Arrays.toString(outputs);
 			int directionIndex = StatisticsUtilities.argmax(directionPreferences);
 			int[] possibleDirection = nextDirection(directionIndex);
 			MinecraftCoordinates minecraftDirection = new MinecraftCoordinates(Integer.valueOf(possibleDirection[0]),Integer.valueOf(possibleDirection[1]),Integer.valueOf(possibleDirection[2]));

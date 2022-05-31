@@ -10,6 +10,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 /**
  * 
@@ -44,7 +45,7 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 		
 		while(!done) {
 			numberOfIterations++;
-			
+			//System.out.println(numberOfIterations);
 			MinecraftCoordinates direction = ShapeGenerator.generateBlock(corner, blockSet, snake, net, ranges, distanceInEachPlane, xi, yi, zi);
 			
 			if(direction == null || numberOfIterations == 100) { // the 100 should be a command line parameter (maxSnakeLength)
@@ -55,6 +56,8 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 				zi += direction.z();
 			}
 		}
+		assert numberOfIterations < 101;
+		//System.out.println("return snake: " + snake);
 		return snake;
 	}
 
@@ -62,19 +65,7 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 	public String[] getNetworkOutputLabels() {
 		String[] firstPart = ShapeGenerator.defaultNetworkOutputLabels(MMNEAT.blockSet);
 		String[] secondPart = {"-X","-Y","-Z","+X","+Y","+Z","continue"};
-		
-		int finalLength = firstPart.length + secondPart.length;
-		
-		String[] result = new String[finalLength];
-		
-		for(int i = 0; i < finalLength; i++) {
-			if(i < firstPart.length) {
-				result[i] = firstPart[i];
-			} else {
-				assert(i >= finalLength);
-				result[i] = secondPart[i-firstPart.length];
-			}
-		}
+		String[] result = ArrayUtil.combineArrays(firstPart,secondPart);
 		return result;
 	}
 

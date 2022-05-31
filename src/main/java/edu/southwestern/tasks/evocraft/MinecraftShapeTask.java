@@ -136,6 +136,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			@SuppressWarnings("unchecked")
 			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
 			client.spawnBlocks(blocks);
+			System.out.println("Spawned: "+blocks);
 			double[] fitnessScores = new double[fitnessFunctions.size()];
 			int scoreIndex = 0;
 			for(MinecraftFitnessFunction ff : fitnessFunctions) {
@@ -157,7 +158,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			}
 			return score;
 		}).collect(Collectors.toCollection(ArrayList::new));
-		
+		System.out.println("Finished collecting");
 		return scores;
 	}
 
@@ -186,7 +187,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:10", "maxGens:100",
 					"base:minecraft", "log:Minecraft-TypeCount", "saveTo:TypeCount",
-					"io:true", "netio:true", "mating:true", "fs:false", 
+					//"io:true", "netio:true", 
+					"io:false", "netio:false", 
+					"mating:true", "fs:false", 
 					"minecraftTypeCountFitness:true",
 					//"minecraftOccupiedCountFitness:true",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
