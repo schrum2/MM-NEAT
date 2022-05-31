@@ -8,15 +8,10 @@ public class TypeTargetFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
 	public double fitnessFromBlocks(List<Block> blocks) {
-		int desiredType = Parameters.parameters.integerParameter("minecraftDesiredBlockType");
+		// total that is being evolved to match
 		int desiredTotal = Parameters.parameters.integerParameter("minecraftDesiredBlockCount");
-		//double blockCount = use type count to get total?
-		int blockCount = 0;
-		for(Block b : blocks) {
-			if(b.type() == desiredType) {
-				blockCount++;
-			}
-		}
+		// count of current total number of desired blocks
+		double blockCount = TypeCountFitness.typeCount(blocks);
 		
 		return desiredTotal - Math.abs(desiredTotal - blockCount);
 	}

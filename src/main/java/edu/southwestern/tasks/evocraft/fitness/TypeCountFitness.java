@@ -14,6 +14,10 @@ public class TypeCountFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
 	public double fitnessFromBlocks(List<Block> blocks) {
+		return typeCount(blocks);
+	}
+
+	public static double typeCount(List<Block> blocks) {
 		int desiredType = Parameters.parameters.integerParameter("minecraftDesiredBlockType");
 		int total = 0;
 		for(Block b : blocks) {
