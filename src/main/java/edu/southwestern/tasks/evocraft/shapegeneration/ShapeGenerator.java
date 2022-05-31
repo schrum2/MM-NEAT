@@ -24,6 +24,8 @@ public interface ShapeGenerator<T> {
 
 	public static final int OUTPUT_INDEX_PRESENCE = 0;
 	public static final double VOXEL_EXPRESSION_THRESHOLD = 0.1;
+	public static final double SNAKE_CONTINUATION_THRESHOLD = 0.1;
+	
 	
 	/**
 	 * Take an evolved genome and generate a shape at a location relative
@@ -37,16 +39,25 @@ public interface ShapeGenerator<T> {
 	public List<Block> generateShape(Genotype<T> genome, MinecraftCoordinates corner, BlockSet blockSet);
 	
 	/**
+	 * Array of the names of the CPPN output neurons
+	 * @return Array of output labels
+	 */
+	public String[] getNetworkOutputLabels();
+	
+	/**
+	 * Returns a MinecraftCoordinate that indicates the next direction
+	 * to place a block. For snakes, if the value of null is returned,
+	 * that means that the snake will stop generating. 
 	 * 
-	 * @param corner
-	 * @param blockSet
+	 * @param corner Location in world to generate the shape
+	 * @param blockSet possible blocks that can be generated
 	 * @param blocks List of blocks to add each generated block to
 	 * @param net CPPN that is queried to generate blocks
-	 * @param ranges
+	 * @param ranges Ranges for the x, y, and z direction where blocks can be placed
 	 * @param distanceInEachPlane Whether CPPN takes additional center distance inputs for each plane
-	 * @param xi
-	 * @param yi
-	 * @param zi
+	 * @param xi Initial x coordinate
+	 * @param yi Initial y coordinate
+	 * @param zi Initial z coordinate
 	 * @return Coordinates that indicate the direction to move in next for snake generation, where a null result indicates
 	 * 			that shape generation should stop. This is not used for standard 3D volume generation.
 	 */
@@ -65,9 +76,27 @@ public interface ShapeGenerator<T> {
 			Orientation blockOrientation = Orientation.NORTH;
 			Block b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[typeIndex], blockOrientation);
 			blocks.add(b);
-		}
+		} 
 		
 		return null; // null result means to stop generation when used to evolve snakes
+	}
+
+	/**
+	 * Returns a string array of labels that represents all the presence outputs,
+	 * output for each block type, output for the next direction in the negative
+	 * and positive x, y, and z directions, and the output for continuation.
+	 * 
+	 * @param blockSet Possible blocks that can be generated
+	 * @return String array that contains the labels for the outputs
+	 */
+	public static String[] defaultNetworkOutputLabels(BlockSet blockSet) {
+		// Presence output and an output for each block type
+		String[] labels = new String[1 + blockSet.getPossibleBlocks().length];
+		labels[0] = "Presence";
+		for(int i = 1; i < labels.length; i++) {
+			labels[i] = blockSet.getPossibleBlocks()[i-1].name();
+		}
+		return labels;
 	}
 
 }

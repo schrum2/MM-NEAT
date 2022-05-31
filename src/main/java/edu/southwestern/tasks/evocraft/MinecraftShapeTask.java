@@ -15,7 +15,6 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
@@ -27,7 +26,6 @@ import edu.southwestern.util.ClassCreation;
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask {
 	
 	private ArrayList<MinecraftFitnessFunction> fitnessFunctions;
-	private BlockSet blockSet;
 	private ShapeGenerator<T> shapeGenerator;
 	private ArrayList<MinecraftCoordinates> corners;
 	
@@ -46,7 +44,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 		
 		// TODO: Command line parameter
-		blockSet = new MachineBlockSet();
+		MMNEAT.blockSet = new MachineBlockSet();
 
 		try {
 			shapeGenerator = (ShapeGenerator<T>) ClassCreation.createObject("minecraftShapeGenerator");
@@ -79,13 +77,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 */
 	@Override
 	public String[] outputLabels() {
-		// Presence output and an output for each block type
-		String[] labels = new String[1 + blockSet.getPossibleBlocks().length];
-		labels[0] = "Presence";
-		for(int i = 1; i < labels.length; i++) {
-			labels[i] = blockSet.getPossibleBlocks()[i-1].name();
-		}
-		return labels;
+		return this.shapeGenerator.getNetworkOutputLabels();
 	}
 
 	@Override
@@ -142,7 +134,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		ArrayList<Score<T>> scores = stream.parallel().mapToObj( i -> {
 			MinecraftCoordinates corner = corners.get(i);
 			Genotype<T> genome = population.get(i);
-			List<Block> blocks = shapeGenerator.generateShape(genome, corner, blockSet);
+			List<Block> blocks = shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
 			client.spawnBlocks(blocks);
 			double[] fitnessScores = new double[fitnessFunctions.size()];
 			int scoreIndex = 0;
@@ -197,6 +189,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					"io:true", "netio:true", "mating:true", "fs:false", 
 					"minecraftTypeCountFitness:true",
 					//"minecraftOccupiedCountFitness:true",
+					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",

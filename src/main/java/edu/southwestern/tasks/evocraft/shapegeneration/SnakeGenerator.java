@@ -3,15 +3,15 @@ package edu.southwestern.tasks.evocraft.shapegeneration;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
-import edu.southwestern.util.graphics.ThreeDimensionalUtil;
 
-public class SnakeGeneration<T extends Network> implements ShapeGenerator<T> {
+public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 
 	@Override
 	public List<Block> generateShape(Genotype<T> genome, MinecraftCoordinates corner, BlockSet blockSet) {
@@ -39,17 +39,37 @@ public class SnakeGeneration<T extends Network> implements ShapeGenerator<T> {
 		while(!done) {
 			numberOfIterations++;
 			
-			double[] inputs = ThreeDimensionalUtil.get3DObjectCPPNInputs(xi, yi, zi, ranges.x(), ranges.y(), ranges.z(), -1, distanceInEachPlane);
-			double[] outputs = net.process(inputs);
+			MinecraftCoordinates direction = ShapeGenerator.generateBlock(corner, blockSet, snake, net, ranges, distanceInEachPlane, xi, yi, zi);
 			
-			//List<Integer> direction = nextDirection();
-			if(numberOfIterations == 100) { // the 100 should be a command line parameter (maxSnakeLength)
+			if(direction == null || numberOfIterations == 100) { // the 100 should be a command line parameter (maxSnakeLength)
 				done = true;
 			} else {
-				
+				xi += direction.x();
+				yi += direction.y();
+				zi += direction.z();
 			}
 		}
 		return snake;
+	}
+
+	@Override
+	public String[] getNetworkOutputLabels() {
+		String[] firstPart = ShapeGenerator.defaultNetworkOutputLabels(MMNEAT.blockSet);
+		String[] secondPart = {"-X","-Y","-Z","+X","+Y","+Z","continue"};
+		
+		int finalLength = firstPart.length + secondPart.length;
+		
+		String[] result = new String[finalLength];
+		
+		for(int i = 0; i < finalLength; i++) {
+			if(i < firstPart.length) {
+				result[i] = firstPart[i];
+			} else {
+				assert(i >= finalLength);
+				result[i] = secondPart[i-firstPart.length];
+			}
+		}
+		return result;
 	}
 
 }
