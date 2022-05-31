@@ -2,6 +2,7 @@ package edu.southwestern.tasks.evocraft;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -148,7 +149,21 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			for(MinecraftFitnessFunction ff : fitnessFunctions) {
 				fitnessScores[scoreIndex++] = ff.fitnessScore(corner);
 			}
-			return new Score<T>(genome, fitnessScores);
+			Score<T> score = new Score<T>(genome, fitnessScores);
+			if(MMNEAT.usingDiversityBinningScheme) {
+				HashMap<String,Object> behaviorMap = new HashMap<>();
+				
+				double binScore = 0; // TODO: CHANGE THIS!
+				behaviorMap.put("binScore", binScore); // Quality Score!
+				
+				// TODO: Use behaviorMap.put for relevant information associated with the bin labels
+				
+				// Do this last
+				int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
+				behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
+				score.assignMAPElitesBehaviorMapAndScore(behaviorMap);
+			}
+			return score;
 		}).collect(Collectors.toCollection(ArrayList::new));
 		
 		return scores;
