@@ -26,7 +26,6 @@ import edu.southwestern.util.ClassCreation;
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask {
 	
 	private ArrayList<MinecraftFitnessFunction> fitnessFunctions;
-	private ShapeGenerator<T> shapeGenerator;
 	private ArrayList<MinecraftCoordinates> corners;
 	
 	@SuppressWarnings("unchecked")
@@ -47,7 +46,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		MMNEAT.blockSet = new MachineBlockSet();
 
 		try {
-			shapeGenerator = (ShapeGenerator<T>) ClassCreation.createObject("minecraftShapeGenerator");
+			MMNEAT.shapeGenerator = (ShapeGenerator<T>) ClassCreation.createObject("minecraftShapeGenerator");
 		} catch (NoSuchMethodException e) {
 			System.out.println("Could not instantiate shape generator for Minecraft");
 			e.printStackTrace();
@@ -77,7 +76,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 */
 	@Override
 	public String[] outputLabels() {
-		return this.shapeGenerator.getNetworkOutputLabels();
+		return MMNEAT.shapeGenerator.getNetworkOutputLabels();
 	}
 
 	@Override
@@ -134,7 +133,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		ArrayList<Score<T>> scores = stream.parallel().mapToObj( i -> {
 			MinecraftCoordinates corner = corners.get(i);
 			Genotype<T> genome = population.get(i);
-			List<Block> blocks = shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
+			@SuppressWarnings("unchecked")
+			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
 			client.spawnBlocks(blocks);
 			double[] fitnessScores = new double[fitnessFunctions.size()];
 			int scoreIndex = 0;

@@ -3,12 +3,15 @@ package edu.southwestern.tasks.evocraft.shapegeneration;
 import java.util.ArrayList;
 import java.util.List;
 
+import cern.colt.Arrays;
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.ThreeDimensionalUtil;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
@@ -25,6 +28,7 @@ public interface ShapeGenerator<T> {
 	public static final int OUTPUT_INDEX_PRESENCE = 0;
 	public static final double VOXEL_EXPRESSION_THRESHOLD = 0.1;
 	public static final double SNAKE_CONTINUATION_THRESHOLD = 0.1;
+	public static final int NUM_DIRECTIONS = 6;
 	
 	
 	/**
@@ -78,7 +82,28 @@ public interface ShapeGenerator<T> {
 			blocks.add(b);
 		} 
 		
-		return null; // null result means to stop generation when used to evolve snakes
+		if(MMNEAT.shapeGenerator instanceof SnakeGenerator) {
+			double[] directionPreferences = ArrayUtil.portion(outputs,numBlockTypes + 1 , numBlockTypes + 1 + NUM_DIRECTIONS);
+			assert directionPreferences.length == 6 : "Should have 6 possible directions: " + Arrays.toString(directionPreferences);
+			int directionIndex = StatisticsUtilities.argmax(directionPreferences);
+			int[] possibleDirection = nextDirection(directionIndex);
+			MinecraftCoordinates minecraftDirection = new MinecraftCoordinates(Integer.valueOf(possibleDirection[0]),Integer.valueOf(possibleDirection[1]),Integer.valueOf(possibleDirection[2]));
+			return minecraftDirection;	
+		} else {
+			return null; // null result means to stop generation when used to evolve snakes
+		}
+	}
+
+	/**
+	 * Vector direction associated with given index in direction preferences.
+	 * 
+	 * @param directionIndex index in collection of direction preferences from CPPN
+	 * @return length-3-array representing the movement direction in (x,y,z) coordinates for the given index.
+	 */
+	public static int[] nextDirection(int directionIndex) {
+		int[] direction = {0,0,0};
+		direction[directionIndex % 3] = directionIndex < 3 ?  -1 : 1;
+		return direction;
 	}
 
 	/**

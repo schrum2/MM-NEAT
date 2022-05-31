@@ -11,6 +11,12 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 
+/**
+ * 
+ * @author richey2
+ *
+ * @param <T>
+ */
 public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 
 	@Override
