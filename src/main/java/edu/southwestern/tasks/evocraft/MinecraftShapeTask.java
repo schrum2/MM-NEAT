@@ -20,6 +20,7 @@ import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
+import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
 
@@ -39,6 +40,10 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 		if(Parameters.parameters.booleanParameter("minecraftTypeCountFitness")) {
 			fitnessFunctions.add(new TypeCountFitness());
+		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftTypeTargetFitness")) {
+			fitnessFunctions.add(new TypeTargetFitness());
 		}
 		
 		if(Parameters.parameters.booleanParameter("minecraftOccupiedCountFitness")) {
@@ -195,7 +200,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:10", "maxGens:100",
 					"base:minecraft", "log:Minecraft-TypeCount", "saveTo:TypeCount",
 					"io:true", "netio:true", "mating:true", "fs:false", 
-					"minecraftTypeCountFitness:true",
+					"minecraftTypeTargetFitness:true",
+					//"minecraftTypeCountFitness:true",
 					//"minecraftOccupiedCountFitness:true",
 					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",

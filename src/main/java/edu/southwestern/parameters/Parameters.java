@@ -792,6 +792,7 @@ public class Parameters {
 		booleanOptions.add("searchContinuesAfterSuccess", false, "Graph search algorithms will keep searching even after a solution is found (collecting set of all reachable locations).");
 		booleanOptions.add("minecraftTypeCountFitness", false, "Minecraft shapes try to maximize number of occurrences of a particular block type");
 		booleanOptions.add("minecraftOccupiedCountFitness", false, "Minecraft shapes try to maximize number of non-AIR blocks");
+		booleanOptions.add("minecraftTypeTargetFitness", false, "Minecraft shapes try to match a desired number");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
