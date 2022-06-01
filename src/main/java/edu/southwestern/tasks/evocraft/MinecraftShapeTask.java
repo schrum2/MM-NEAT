@@ -16,6 +16,7 @@ import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
+import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
@@ -62,7 +63,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 		for(MinecraftFitnessFunction ff : fitnessFunctions) {
 			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName());
-		}
+		}		
 	}
 	
 	/**
@@ -149,15 +150,17 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions);
 			Score<T> score = new Score<T>(genome, fitnessScores);
 			if(MMNEAT.usingDiversityBinningScheme) {
-				HashMap<String,Object> behaviorMap = new HashMap<>();
+				MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+				// It is important to note that the original blocks from the CPPN are used here rather than the blocks
+				// read from the world. So, any properties collected will be before movement due to machine parts.
+				double[] propertyScores = calculateFitnessScores(corner,minecraftBinLabels.properties(),blocks);
+				// Map contains all required properties now
+				HashMap<String,Object> behaviorMap = minecraftBinLabels.behaviorMapFromScores(propertyScores);
 				
 				double binScore = 0; // TODO: CHANGE THIS!
-				behaviorMap.put("binScore", binScore); // Quality Score!
-				
-				// TODO: Use behaviorMap.put for relevant information associated with the bin labels
-				
+				behaviorMap.put("binScore", binScore); // Quality Score!				
 				// Do this last
-				int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
+				int dim1D = minecraftBinLabels.oneDimensionalIndex(behaviorMap);
 				behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
 				score.assignMAPElitesBehaviorMapAndScore(behaviorMap);
 			}
@@ -175,7 +178,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param fitnessFunctions the shape properties to calculate
 	 * @return double array of all fitness values in order
 	 */
-	private static double[] calculateFitnessScores(MinecraftCoordinates corner, ArrayList<MinecraftFitnessFunction> fitnessFunctions) {
+	private static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions) {
 		List<Block> readBlocks = CheckBlocksInSpaceFitness.readBlocksFromClient(corner); // Read these just once
 		return calculateFitnessScores(corner, fitnessFunctions, readBlocks);
 	}
@@ -188,7 +191,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param readBlocks Minecraft blocks that are part of the shape
 	 * @return double array of all fitness values in order
 	 */
-	private static double[] calculateFitnessScores(MinecraftCoordinates corner, ArrayList<MinecraftFitnessFunction> fitnessFunctions, List<Block> readBlocks) {
+	private static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> readBlocks) {
 		// Parallelize fitness calculation
 		double[] fitnessScores = fitnessFunctions.parallelStream().mapToDouble(ff -> {
 			if(ff instanceof CheckBlocksInSpaceFitness) {
