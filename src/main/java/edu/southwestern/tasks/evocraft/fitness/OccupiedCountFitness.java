@@ -5,6 +5,7 @@ import java.util.List;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 
 /**
  * Number of non-AIR blocks in the space
@@ -15,7 +16,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 public class OccupiedCountFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
-	public double fitnessFromBlocks(List<Block> blocks) {
+	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
 		int total = 0;
 		for(Block b : blocks) {
 			if(b.type() != BlockType.AIR.ordinal()) {

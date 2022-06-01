@@ -168,7 +168,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	}
 
 	/**
-	 * Calculate all fitness scores for a shape at a given corner
+	 * Calculate all fitness scores for a shape at a given corner.
+	 * This makes sure that the blocks actually come from the Minecraft world.
 	 * 
 	 * @param corner Minimal corner from which shape is generated
 	 * @param fitnessFunctions the shape properties to calculate
@@ -176,6 +177,18 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 */
 	private static double[] calculateFitnessScores(MinecraftCoordinates corner, ArrayList<MinecraftFitnessFunction> fitnessFunctions) {
 		List<Block> readBlocks = CheckBlocksInSpaceFitness.readBlocksFromClient(corner); // Read these just once
+		return calculateFitnessScores(corner, fitnessFunctions, readBlocks);
+	}
+
+	/**
+	 * Calculate all fitness scores for a shape at a given corner
+	 * 
+	 * @param corner Minimal corner from which shape is generated
+	 * @param fitnessFunctions the shape properties to calculate
+	 * @param readBlocks Minecraft blocks that are part of the shape
+	 * @return double array of all fitness values in order
+	 */
+	private static double[] calculateFitnessScores(MinecraftCoordinates corner, ArrayList<MinecraftFitnessFunction> fitnessFunctions, List<Block> readBlocks) {
 		// Parallelize fitness calculation
 		double[] fitnessScores = fitnessFunctions.parallelStream().mapToDouble(ff -> {
 			if(ff instanceof CheckBlocksInSpaceFitness) {
