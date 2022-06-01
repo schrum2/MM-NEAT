@@ -795,6 +795,9 @@ public class Parameters {
 		booleanOptions.add("minecraftTypeCountFitness", false, "Minecraft shapes try to maximize number of occurrences of a particular block type");
 		booleanOptions.add("minecraftOccupiedCountFitness", false, "Minecraft shapes try to maximize number of non-AIR blocks");
 		booleanOptions.add("minecraftTypeTargetFitness", false, "Minecraft shapes try to match a desired number");
+		booleanOptions.add("minecraftEvolveOrientation", false, "Evolves the orientation of the blocks being generated");
+		booleanOptions.add("minecraftRedirectConfinedSnakes", false, "Confines the snakes to a given area and will redirect the snake when the next direction is out of bounds");
+		booleanOptions.add("minecraftStopConfinedSnakes", false, "Confines the snakes to a given area and will stop the snake when the next direction is out of bounds");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
