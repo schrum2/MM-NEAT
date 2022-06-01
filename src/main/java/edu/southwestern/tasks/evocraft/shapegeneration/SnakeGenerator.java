@@ -48,7 +48,7 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 			//System.out.println(numberOfIterations);
 			MinecraftCoordinates direction = ShapeGenerator.generateBlock(corner, blockSet, snake, net, ranges, distanceInEachPlane, xi, yi, zi);
 			
-			if(direction == null || numberOfIterations == Parameters.parameters.integerParameter("minecraftMaxSnakeLength")) {
+			if(direction == null || numberOfIterations >= Parameters.parameters.integerParameter("minecraftMaxSnakeLength")) {
 				done = true;
 			} else {
 				xi += direction.x();
@@ -59,7 +59,7 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 			// Never allowed to generate beneath absolute y=0. Out of bounds.
 			if(yi < 0) done = true;
 		}
-		assert numberOfIterations < 101;
+		assert numberOfIterations <= Parameters.parameters.integerParameter("minecraftMaxSnakeLength");
 		//System.out.println("return snake: " + snake);
 		return snake;
 	}
