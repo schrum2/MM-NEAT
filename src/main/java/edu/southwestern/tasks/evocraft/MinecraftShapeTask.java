@@ -13,9 +13,9 @@ import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.SinglePopulationTask;
+import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
@@ -51,9 +51,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 		
 		try {
-			MMNEAT.blockSet = (MachineBlockSet) ClassCreation.createObject("minecraftBlockSet");
+			MMNEAT.blockSet = (BlockSet) ClassCreation.createObject("minecraftBlockSet");
 		} catch (NoSuchMethodException e1) {
-			System.out.println("Could not instantiate shape generator for Minecraft");
+			System.out.println("Could not instantiate block set for Minecraft");
 			e1.printStackTrace();
 			System.exit(1);
 		}
