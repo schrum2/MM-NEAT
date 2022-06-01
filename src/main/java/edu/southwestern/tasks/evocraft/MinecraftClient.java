@@ -547,7 +547,7 @@ public class MinecraftClient extends Comm {
 	 * @param max Maximal coordinates in each dimension
 	 * @return List of Blocks between the min and max coordinates (inclusive)
 	 */
-	public ArrayList<Block> readCube(MinecraftCoordinates min, MinecraftCoordinates max) {
+	public synchronized ArrayList<Block> readCube(MinecraftCoordinates min, MinecraftCoordinates max) {
 		return readCube(min.x(), min.y(), min.z(), max.x(), max.y(), max.z());
 	}
 	
@@ -563,7 +563,7 @@ public class MinecraftClient extends Comm {
 	 * @param zmax Maximal z coordinate
 	 * @return List of Blocks between the min and max coordinates (inclusive)
 	 */
-	public ArrayList<Block> readCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
+	public synchronized ArrayList<Block> readCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
 		String message = "readCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" ";
 		try {
 			commSend(message);
