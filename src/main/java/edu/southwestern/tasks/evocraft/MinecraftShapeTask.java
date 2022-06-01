@@ -33,7 +33,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
-		MinecraftServer.launchServer();
+		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
+			MinecraftServer.launchServer();
+		}
 		// Launches the client script before the parallel code to assure that only one client script exists
 		MinecraftClient.getMinecraftClient();
 		
@@ -110,7 +112,10 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	@Override
 	public void finalCleanup() {
 		// Close Minecraft server after all evolution is done
-		MinecraftServer.terminateServer();
+		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
+			// If the server was watched from Java, then it should be terminated from Java as well
+			MinecraftServer.terminateServer();
+		}
 	}
 
 	@Override
@@ -166,7 +171,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			}
 			return score;
 		}).collect(Collectors.toCollection(ArrayList::new));
-		System.out.println("Finished collecting");
+		
 		return scores;
 	}
 
@@ -231,6 +236,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:1000",
 					"base:minecraft", "log:Minecraft-LongSnake", "saveTo:LongSnake",
 					"io:true", "netio:true", 
+					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
 					//"minecraftTypeCountFitness:true",
