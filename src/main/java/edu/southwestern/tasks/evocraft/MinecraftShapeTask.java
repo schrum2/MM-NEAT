@@ -146,7 +146,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			@SuppressWarnings("unchecked")
 			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
 			client.spawnBlocks(blocks);
-			double[] fitnessScores = calculateFitnessScores(corner);
+			double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions);
 			Score<T> score = new Score<T>(genome, fitnessScores);
 			if(MMNEAT.usingDiversityBinningScheme) {
 				HashMap<String,Object> behaviorMap = new HashMap<>();
@@ -171,9 +171,10 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * Calculate all fitness scores for a shape at a given corner
 	 * 
 	 * @param corner Minimal corner from which shape is generated
+	 * @param fitnessFunctions the shape properties to calculate
 	 * @return double array of all fitness values in order
 	 */
-	private double[] calculateFitnessScores(MinecraftCoordinates corner) {
+	private static double[] calculateFitnessScores(MinecraftCoordinates corner, ArrayList<MinecraftFitnessFunction> fitnessFunctions) {
 		List<Block> readBlocks = CheckBlocksInSpaceFitness.readBlocksFromClient(corner); // Read these just once
 		// Parallelize fitness calculation
 		double[] fitnessScores = fitnessFunctions.parallelStream().mapToDouble(ff -> {
