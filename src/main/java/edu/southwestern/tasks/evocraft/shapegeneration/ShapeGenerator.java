@@ -77,7 +77,6 @@ public interface ShapeGenerator<T> {
 				blockPreferences.add(outputs[i]);
 			}
 			int typeIndex = StatisticsUtilities.argmax(blockPreferences);
-			// TODO: Add way to evolve orientation
 			Orientation blockOrientation = Orientation.NORTH;
 			if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")){
 				double[] orientationPreferences;
@@ -98,14 +97,52 @@ public interface ShapeGenerator<T> {
 			int startIndex = numBlockTypes + 1;
 			int endIndex = numBlockTypes + NUM_DIRECTIONS;
 			double[] directionPreferences = ArrayUtil.portion(outputs, startIndex, endIndex);
-			assert directionPreferences.length == 6 : "Should have 6 possible directions: " + Arrays.toString(directionPreferences) + " from "+ startIndex +" to " + endIndex + " of " + Arrays.toString(outputs);
+	//		assert directionPreferences.length == 6 : "Should have 6 possible directions: " + Arrays.toString(directionPreferences) + " from "+ startIndex +" to " + endIndex + " of " + Arrays.toString(outputs);
+			
+			// If redirecting snakes when confining
+			if(Parameters.parameters.booleanParameter("minecraftRedirectConfinedSnakes")) {
+				for(int i = 0; i < NUM_DIRECTIONS; i++) {
+					int[] possibleDirection = nextDirection(i);
+					if(checkOutOfBounds(possibleDirection, ranges, xi, yi, zi)) {
+						directionPreferences[i] = 1.0/-0.0;
+					}
+				}
+			}
+			
+			
+			
 			int directionIndex = StatisticsUtilities.argmax(directionPreferences);
-			int[] possibleDirection = nextDirection(directionIndex);
-			MinecraftCoordinates minecraftDirection = new MinecraftCoordinates(Integer.valueOf(possibleDirection[0]),Integer.valueOf(possibleDirection[1]),Integer.valueOf(possibleDirection[2]));
+			int[] direction = nextDirection(directionIndex);
+			
+			// If stopping the snakes when confining
+			if(Parameters.parameters.booleanParameter("minecraftStopConfinedSnakes")){
+				if(checkOutOfBounds(direction, ranges, xi, yi, zi)) {
+					return null;
+				}
+			}
+			
+			MinecraftCoordinates minecraftDirection = new MinecraftCoordinates(Integer.valueOf(direction[0]),Integer.valueOf(direction[1]),Integer.valueOf(direction[2]));
 			return minecraftDirection;	
 		} else {
 			return null; // null result means to stop generation when used to evolve snakes
 		}
+	}
+
+	/**
+	 * Checks to see if the new possible position relative to the initial position is still
+	 * in bounds
+	 * 
+	 * @param possibleDirection The next possible direction a block can be placed in
+	 * @param ranges The ranges of the x, y, and z direction that confines a shape
+	 * @param xi Initial x coordinate
+	 * @param yi Initial y coordinate
+	 * @param zi Initial z coordinate
+	 * @return True if out of bounds, false otherwise
+	 */
+	public static boolean checkOutOfBounds(int[] possibleDirection, MinecraftCoordinates ranges, int xi, int yi, int zi) {
+		return xi + possibleDirection[0] >= ranges.x() || xi + possibleDirection[0] < 0 ||
+				yi + possibleDirection[1] >= ranges.y() || yi + possibleDirection[1] < 0 ||
+				zi + possibleDirection[2] >= ranges.z() || zi + possibleDirection[2] < 0;
 	}
 
 	/**
