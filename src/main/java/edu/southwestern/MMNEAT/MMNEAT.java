@@ -48,6 +48,8 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.MultiplePopulationTask;
 import edu.southwestern.tasks.Task;
+import edu.southwestern.tasks.evocraft.blocks.BlockSet;
+import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.tasks.functionoptimization.FunctionOptimizationTask;
 import edu.southwestern.tasks.gvgai.zelda.study.HumanSubjectStudy2019Zelda;
 import edu.southwestern.tasks.mario.gan.GANProcess;
@@ -109,6 +111,9 @@ public class MMNEAT {
 	@SuppressWarnings("rawtypes")
 	public static Archive pseudoArchive;
 	public static boolean usingDiversityBinningScheme = false;
+	public static BlockSet blockSet; // Possible blocks in Minecraft
+	@SuppressWarnings("rawtypes")
+	public static ShapeGenerator shapeGenerator; // Way shapes are generated in Minecraft
 	
 	public static MMNEAT mmneat;
 
