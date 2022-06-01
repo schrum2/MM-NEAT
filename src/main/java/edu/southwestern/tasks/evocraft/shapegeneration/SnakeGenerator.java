@@ -55,6 +55,9 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 				yi += direction.y();
 				zi += direction.z();
 			}
+			
+			// Never allowed to generate beneath absolute y=0. Out of bounds.
+			if(yi < 0) done = true;
 		}
 		assert numberOfIterations < 101;
 		//System.out.println("return snake: " + snake);
