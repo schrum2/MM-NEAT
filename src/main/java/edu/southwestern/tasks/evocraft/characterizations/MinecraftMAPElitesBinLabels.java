@@ -18,8 +18,9 @@ public abstract class MinecraftMAPElitesBinLabels extends BaseBinLabels {
 	
 	@Override
 	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
-		// Assumes the keys for objects in the map are derived from the fitness function names, which dimensions() also uses
-		return Arrays.stream(dimensions()).parallel().mapToInt(name -> (int) keys.get(name)).toArray();
+		// Assumes the keys for objects in the map are derived from the fitness function names, which dimensions() also uses.
+		// Also assumes every fitness function returns a double which is stored as a Double, and has to be cast to double before being cast to int.
+		return Arrays.stream(dimensions()).parallel().mapToInt(name -> (int) ((double) keys.get(name))).toArray();
 	}
 
 	@Override
