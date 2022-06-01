@@ -362,6 +362,7 @@ public class Parameters {
 		integerOptions.add("minecraftZRange", 10, "Units in z-dimension for evolved Minecraft shapes");
 		integerOptions.add("minecraftDesiredBlockType", MinecraftClient.BlockType.REDSTONE_BLOCK.ordinal(), "Type desired by TypeCountFitness");
 		integerOptions.add("minecraftDesiredBlockCount", 0, "Count desired by TypeTargetFitness");
+		integerOptions.add("minecraftMaxSnakeLength", 100, "Maximum length that a generated snake can be");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
