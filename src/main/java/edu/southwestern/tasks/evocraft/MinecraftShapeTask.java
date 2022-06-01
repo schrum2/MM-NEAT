@@ -193,7 +193,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		double[] fitnessScores = fitnessFunctions.parallelStream().mapToDouble(ff -> {
 			if(ff instanceof CheckBlocksInSpaceFitness) {
 				// All fitness functions of this type can just use the previously computed readBlocks list
-				return ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(readBlocks);
+				return ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner, readBlocks);
 			} else {
 				return ff.fitnessScore(corner);
 			}
