@@ -33,6 +33,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
 		MinecraftServer.launchServer();
+		// Launches the client script before the parallel code to assure that only one client script exists
+		MinecraftClient.getMinecraftClient();
 		
 		fitnessFunctions = new ArrayList<MinecraftFitnessFunction>();
 
@@ -137,6 +139,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// Generate and evaluate shapes in parallel
 		IntStream stream = IntStream.range(0, corners.size());
 		ArrayList<Score<T>> scores = stream.parallel().mapToObj( i -> {
+			//System.out.println("Calculate " + i);
 			MinecraftCoordinates corner = corners.get(i);
 			Genotype<T> genome = population.get(i);
 			@SuppressWarnings("unchecked")
@@ -212,9 +215,10 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					//"io:true", "netio:true", 
 					"io:false", "netio:false", 
 					"mating:true", "fs:false", 
-					"minecraftTypeCountFitness:true",
-					"minecraftTypeTargetFitness:true", 
-					//"minecraftOccupiedCountFitness:true",
+					//"minecraftTypeCountFitness:true",
+					//"minecraftTypeTargetFitness:true", 
+					//"minecraftDesiredBlockCount:40",
+					"minecraftOccupiedCountFitness:true",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
