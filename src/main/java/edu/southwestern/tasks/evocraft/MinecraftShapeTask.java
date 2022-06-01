@@ -220,6 +220,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					//"minecraftTypeTargetFitness:true", 
 					//"minecraftDesiredBlockCount:40",
 					"minecraftOccupiedCountFitness:true",
+					"minecraftEvolveOrientation:true",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",

@@ -795,6 +795,7 @@ public class Parameters {
 		booleanOptions.add("minecraftTypeCountFitness", false, "Minecraft shapes try to maximize number of occurrences of a particular block type");
 		booleanOptions.add("minecraftOccupiedCountFitness", false, "Minecraft shapes try to maximize number of non-AIR blocks");
 		booleanOptions.add("minecraftTypeTargetFitness", false, "Minecraft shapes try to match a desired number");
+		booleanOptions.add("minecraftEvolveOrientation", false, "Evolves the orientation of the blocks being generated");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
