@@ -50,8 +50,13 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			fitnessFunctions.add(new OccupiedCountFitness());
 		}
 		
-		// TODO: Command line parameter
-		MMNEAT.blockSet = new MachineBlockSet();
+		try {
+			MMNEAT.blockSet = (MachineBlockSet) ClassCreation.createObject("minecraftBlockSet");
+		} catch (NoSuchMethodException e1) {
+			System.out.println("Could not instantiate shape generator for Minecraft");
+			e1.printStackTrace();
+			System.exit(1);
+		}
 
 		try {
 			MMNEAT.shapeGenerator = (ShapeGenerator<T>) ClassCreation.createObject("minecraftShapeGenerator");
