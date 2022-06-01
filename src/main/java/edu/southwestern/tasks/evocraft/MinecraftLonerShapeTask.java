@@ -89,9 +89,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
-					"minecraftTypeCountFitness:true", // Need some kind of fitness function?
-					//"minecraftTypeTargetFitness:true", 
-					//"minecraftDesiredBlockCount:40",
+					//"minecraftTypeCountFitness:true",
+					"minecraftTypeTargetFitness:true", 
+					"minecraftDesiredBlockCount:40",
 					//"minecraftOccupiedCountFitness:true",
 					//"minecraftEvolveOrientation:true",
 					"minecraftRedirectConfinedSnakes:true",

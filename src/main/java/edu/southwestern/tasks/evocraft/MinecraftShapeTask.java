@@ -196,7 +196,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			// Map contains all required properties now
 			HashMap<String,Object> behaviorMap = minecraftBinLabels.behaviorMapFromScores(propertyScores);
 			
-			double binScore = 0; // TODO: CHANGE THIS!
+			double binScore = fitnessScores[0]; // TODO: CHANGE THIS!
 			behaviorMap.put("binScore", binScore); // Quality Score!				
 			// Do this last
 			int dim1D = minecraftBinLabels.oneDimensionalIndex(behaviorMap);
