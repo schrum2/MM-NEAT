@@ -16,13 +16,12 @@ import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
-import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
+import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
 
@@ -34,9 +33,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
-		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
-			MinecraftServer.launchServer();
-		}
+		MinecraftServer.launchServer();
 		// Launches the client script before the parallel code to assure that only one client script exists
 		MinecraftClient.getMinecraftClient();
 		
@@ -52,6 +49,10 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		
 		if(Parameters.parameters.booleanParameter("minecraftOccupiedCountFitness")) {
 			fitnessFunctions.add(new OccupiedCountFitness());
+		}
+		
+		if(Parameters.parameters.booleanParameter("minecraftDiversityBlockFitness")) {
+			fitnessFunctions.add(new DiversityBlockFitness());
 		}
 		
 		try {
@@ -71,7 +72,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 		for(MinecraftFitnessFunction ff : fitnessFunctions) {
 			MMNEAT.registerFitnessFunction(ff.getClass().getSimpleName());
-		}		
+		}
 	}
 	
 	/**
@@ -118,10 +119,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	@Override
 	public void finalCleanup() {
 		// Close Minecraft server after all evolution is done
-		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
-			// If the server was watched from Java, then it should be terminated from Java as well
-			MinecraftServer.terminateServer();
-		}
+		MinecraftServer.terminateServer();
 	}
 
 	@Override
@@ -158,56 +156,40 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			@SuppressWarnings("unchecked")
 			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
 			client.spawnBlocks(blocks);
-			double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions);
+			double[] fitnessScores = calculateFitnessScores(corner);
 			Score<T> score = new Score<T>(genome, fitnessScores);
 			if(MMNEAT.usingDiversityBinningScheme) {
-				MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
-				// It is important to note that the original blocks from the CPPN are used here rather than the blocks
-				// read from the world. So, any properties collected will be before movement due to machine parts.
-				double[] propertyScores = calculateFitnessScores(corner,minecraftBinLabels.properties(),blocks);
-				// Map contains all required properties now
-				HashMap<String,Object> behaviorMap = minecraftBinLabels.behaviorMapFromScores(propertyScores);
+				HashMap<String,Object> behaviorMap = new HashMap<>();
 				
 				double binScore = 0; // TODO: CHANGE THIS!
-				behaviorMap.put("binScore", binScore); // Quality Score!				
+				behaviorMap.put("binScore", binScore); // Quality Score!
+				
+				// TODO: Use behaviorMap.put for relevant information associated with the bin labels
+				
 				// Do this last
-				int dim1D = minecraftBinLabels.oneDimensionalIndex(behaviorMap);
+				int dim1D = MMNEAT.getArchiveBinLabelsClass().oneDimensionalIndex(behaviorMap);
 				behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
 				score.assignMAPElitesBehaviorMapAndScore(behaviorMap);
 			}
 			return score;
 		}).collect(Collectors.toCollection(ArrayList::new));
-		
+		System.out.println("Finished collecting");
 		return scores;
-	}
-
-	/**
-	 * Calculate all fitness scores for a shape at a given corner.
-	 * This makes sure that the blocks actually come from the Minecraft world.
-	 * 
-	 * @param corner Minimal corner from which shape is generated
-	 * @param fitnessFunctions the shape properties to calculate
-	 * @return double array of all fitness values in order
-	 */
-	private static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions) {
-		List<Block> readBlocks = CheckBlocksInSpaceFitness.readBlocksFromClient(corner); // Read these just once
-		return calculateFitnessScores(corner, fitnessFunctions, readBlocks);
 	}
 
 	/**
 	 * Calculate all fitness scores for a shape at a given corner
 	 * 
 	 * @param corner Minimal corner from which shape is generated
-	 * @param fitnessFunctions the shape properties to calculate
-	 * @param readBlocks Minecraft blocks that are part of the shape
 	 * @return double array of all fitness values in order
 	 */
-	private static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> readBlocks) {
+	private double[] calculateFitnessScores(MinecraftCoordinates corner) {
+		List<Block> readBlocks = CheckBlocksInSpaceFitness.readBlocksFromClient(corner); // Read these just once
 		// Parallelize fitness calculation
 		double[] fitnessScores = fitnessFunctions.parallelStream().mapToDouble(ff -> {
 			if(ff instanceof CheckBlocksInSpaceFitness) {
 				// All fitness functions of this type can just use the previously computed readBlocks list
-				return ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner, readBlocks);
+				return ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks);
 			} else {
 				return ff.fitnessScore(corner);
 			}
@@ -239,20 +221,20 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public static void main(String[] args) {
 		int seed = 0;
 		try {
-			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:1000",
-					"base:minecraft", "log:Minecraft-LongSnake", "saveTo:LongSnake",
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:10", "maxGens:100",
+					"base:minecraft", "log:Minecraft-TypeCount", "saveTo:TypeCount",
 					"io:true", "netio:true", 
-					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
 					//"minecraftTypeCountFitness:true",
 					//"minecraftTypeTargetFitness:true", 
 					//"minecraftDesiredBlockCount:40",
-					"minecraftOccupiedCountFitness:true",
+					//"minecraftOccupiedCountFitness:true",
+					"minecraftDiversityBlockFitness:true",
 					//"minecraftEvolveOrientation:true",
-					"minecraftRedirectConfinedSnakes:true",
+					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true",
-					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
+					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",
