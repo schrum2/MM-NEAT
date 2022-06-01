@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 
 /**
  * Fitness score is the number of occurrences of a block of a specific type within the bounds of the generated shape.
@@ -13,7 +14,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 public class TypeCountFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
-	public double fitnessFromBlocks(List<Block> blocks) {
+	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
 		return typeCount(blocks);
 	}
 
