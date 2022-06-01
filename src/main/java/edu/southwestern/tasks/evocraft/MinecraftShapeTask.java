@@ -134,7 +134,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		}
 
 		// Must clear the space where shapes are placed
-		client.clearSpaceForShapes(new MinecraftCoordinates(startingX,MinecraftClient.GROUND_LEVEL+1,startingZ), ranges, population.size());
+		// TODO: Replace one of the BUFFER values with the max snake length
+		client.clearSpaceForShapes(new MinecraftCoordinates(startingX,MinecraftClient.GROUND_LEVEL+1,startingZ), ranges, population.size(), Math.max(MinecraftClient.BUFFER, MinecraftClient.BUFFER));
 		
 		// Generate and evaluate shapes in parallel
 		IntStream stream = IntStream.range(0, corners.size());
