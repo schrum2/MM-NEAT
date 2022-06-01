@@ -1,7 +1,11 @@
 package edu.southwestern.tasks.evocraft;
 
+import java.util.HashMap;
+
+import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.util.datastructures.Pair;
 
 /**
  * MAPElites only works with LonerTasks because it is a steady-state algorithm.
@@ -20,6 +24,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	
 	public MinecraftLonerShapeTask() {
 		internalMinecraftShapeTask = new MinecraftShapeTask<T>();
+	}
+	
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
+		
 	}
 	
 	@Override
@@ -47,4 +55,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		return internalMinecraftShapeTask.outputLabels();
 	}
 
+    @Override
+	public void finalCleanup() {
+    	internalMinecraftShapeTask.finalCleanup();
+	}
 }

@@ -146,33 +146,46 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// Generate and evaluate shapes in parallel
 		IntStream stream = IntStream.range(0, corners.size());
 		ArrayList<Score<T>> scores = stream.parallel().mapToObj( i -> {
-			//System.out.println("Calculate " + i);
 			MinecraftCoordinates corner = corners.get(i);
 			Genotype<T> genome = population.get(i);
-			@SuppressWarnings("unchecked")
-			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
-			client.spawnBlocks(blocks);
-			double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions);
-			Score<T> score = new Score<T>(genome, fitnessScores);
-			if(MMNEAT.usingDiversityBinningScheme) {
-				MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
-				// It is important to note that the original blocks from the CPPN are used here rather than the blocks
-				// read from the world. So, any properties collected will be before movement due to machine parts.
-				double[] propertyScores = calculateFitnessScores(corner,minecraftBinLabels.properties(),blocks);
-				// Map contains all required properties now
-				HashMap<String,Object> behaviorMap = minecraftBinLabels.behaviorMapFromScores(propertyScores);
-				
-				double binScore = 0; // TODO: CHANGE THIS!
-				behaviorMap.put("binScore", binScore); // Quality Score!				
-				// Do this last
-				int dim1D = minecraftBinLabels.oneDimensionalIndex(behaviorMap);
-				behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
-				score.assignMAPElitesBehaviorMapAndScore(behaviorMap);
-			}
-			return score;
+			return evaluateOneShape(genome, client, corner, fitnessFunctions);
 		}).collect(Collectors.toCollection(ArrayList::new));
 		
 		return scores;
+	}
+
+	/**
+	 * For one genome at one corner location, spawn the blocks and calculate the fitness before returning the Score
+	 * 
+	 * @param <T>
+	 * @param genome Evolved individual that generates a shape
+	 * @param client Controls communication with Minecraft
+	 * @param corner Location to generate shape at: minimal coordinate
+	 * @param fitnessFunctions List of fitness functions to evaluate the shape on
+	 * @return Score instance containing evaluation information
+	 */
+	public static <T> Score<T> evaluateOneShape(Genotype<T> genome, MinecraftClient client, MinecraftCoordinates corner, ArrayList<MinecraftFitnessFunction> fitnessFunctions) {
+		@SuppressWarnings("unchecked")
+		List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
+		client.spawnBlocks(blocks);
+		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions);
+		Score<T> score = new Score<T>(genome, fitnessScores);
+		if(MMNEAT.usingDiversityBinningScheme) {
+			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+			// It is important to note that the original blocks from the CPPN are used here rather than the blocks
+			// read from the world. So, any properties collected will be before movement due to machine parts.
+			double[] propertyScores = calculateFitnessScores(corner,minecraftBinLabels.properties(),blocks);
+			// Map contains all required properties now
+			HashMap<String,Object> behaviorMap = minecraftBinLabels.behaviorMapFromScores(propertyScores);
+			
+			double binScore = 0; // TODO: CHANGE THIS!
+			behaviorMap.put("binScore", binScore); // Quality Score!				
+			// Do this last
+			int dim1D = minecraftBinLabels.oneDimensionalIndex(behaviorMap);
+			behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
+			score.assignMAPElitesBehaviorMapAndScore(behaviorMap);
+		}
+		return score;
 	}
 
 	/**
@@ -183,7 +196,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param fitnessFunctions the shape properties to calculate
 	 * @return double array of all fitness values in order
 	 */
-	private static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions) {
+	public static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions) {
 		List<Block> readBlocks = CheckBlocksInSpaceFitness.readBlocksFromClient(corner); // Read these just once
 		return calculateFitnessScores(corner, fitnessFunctions, readBlocks);
 	}
@@ -196,7 +209,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * @param readBlocks Minecraft blocks that are part of the shape
 	 * @return double array of all fitness values in order
 	 */
-	private static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> readBlocks) {
+	public static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> readBlocks) {
 		// Parallelize fitness calculation
 		double[] fitnessScores = fitnessFunctions.parallelStream().mapToDouble(ff -> {
 			if(ff instanceof CheckBlocksInSpaceFitness) {
