@@ -7,6 +7,7 @@ import java.util.function.ToIntFunction;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 
 /**
  * Size along a given axis
@@ -17,7 +18,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 public abstract class RangeFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
-	public double fitnessFromBlocks(List<Block> blocks) {
+	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
 		return coordinateRange(blocks, dimension());
 	}
 

@@ -23,7 +23,7 @@ public abstract class CheckBlocksInSpaceFitness extends MinecraftFitnessFunction
 	@Override
 	public double fitnessScore(MinecraftCoordinates corner) {
 		List<Block> blocks = readBlocksFromClient(corner);
-		return fitnessFromBlocks(blocks);
+		return fitnessFromBlocks(corner, blocks);
 	}
 
 	/**
@@ -45,10 +45,11 @@ public abstract class CheckBlocksInSpaceFitness extends MinecraftFitnessFunction
 
 	/**
 	 * Details of how the list is processed determine the actual fitness value.
+	 * @param corner Minimal coordinates of space that the shape is generated inside of
 	 * @param blocks Blocks occupying the space reserved for the shape.
 	 * @return A fitness score
 	 */
-	public abstract double fitnessFromBlocks(List<Block> blocks);
+	public abstract double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks);
 
 	@Override
 	public double minFitness() {

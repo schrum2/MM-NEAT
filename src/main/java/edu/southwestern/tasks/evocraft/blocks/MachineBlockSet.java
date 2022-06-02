@@ -11,7 +11,7 @@ public class MachineBlockSet implements BlockSet {
 
 	@Override
 	public BlockType[] getPossibleBlocks() {
-		return new BlockType[] {BlockType.QUARTZ_BLOCK, BlockType.SLIME, BlockType.REDSTONE_BLOCK, BlockType.PISTON, BlockType.STICKY_PISTON};
+		return new BlockType[] {BlockType.QUARTZ_BLOCK, BlockType.SLIME, BlockType.REDSTONE_BLOCK, BlockType.PISTON, BlockType.STICKY_PISTON, BlockType.OBSERVER};
 	}
 
 }

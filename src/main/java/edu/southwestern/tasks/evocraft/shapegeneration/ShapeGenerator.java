@@ -7,6 +7,7 @@ import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
@@ -76,24 +77,72 @@ public interface ShapeGenerator<T> {
 				blockPreferences.add(outputs[i]);
 			}
 			int typeIndex = StatisticsUtilities.argmax(blockPreferences);
-			// TODO: Add way to evolve orientation
 			Orientation blockOrientation = Orientation.NORTH;
+			if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")){
+				double[] orientationPreferences;
+				if(MMNEAT.shapeGenerator instanceof SnakeGenerator) {
+					orientationPreferences = ArrayUtil.portion(outputs, numBlockTypes + NUM_DIRECTIONS + 1, numBlockTypes + NUM_DIRECTIONS*2);
+					assert orientationPreferences.length == 6 : "Should have 6 possible directions: " + Arrays.toString(orientationPreferences) + " from "+ (numBlockTypes + NUM_DIRECTIONS + 1) +" to " + (numBlockTypes + NUM_DIRECTIONS*2) + " of " + Arrays.toString(outputs);
+				} else {
+					orientationPreferences = ArrayUtil.portion(outputs,numBlockTypes + 1, numBlockTypes + NUM_DIRECTIONS);
+				}
+				int orientationPreferenceIndex = StatisticsUtilities.argmax(orientationPreferences);
+				blockOrientation = Orientation.values()[orientationPreferenceIndex];
+			}
 			Block b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[typeIndex], blockOrientation);
 			blocks.add(b);
 		} 
-		
+			
 		if(MMNEAT.shapeGenerator instanceof SnakeGenerator) {
 			int startIndex = numBlockTypes + 1;
 			int endIndex = numBlockTypes + NUM_DIRECTIONS;
 			double[] directionPreferences = ArrayUtil.portion(outputs, startIndex, endIndex);
-			assert directionPreferences.length == 6 : "Should have 6 possible directions: " + Arrays.toString(directionPreferences) + " from "+ startIndex +" to " + endIndex + " of " + Arrays.toString(outputs);
+	//		assert directionPreferences.length == 6 : "Should have 6 possible directions: " + Arrays.toString(directionPreferences) + " from "+ startIndex +" to " + endIndex + " of " + Arrays.toString(outputs);
+			
+			// If redirecting snakes when confining
+			if(Parameters.parameters.booleanParameter("minecraftRedirectConfinedSnakes")) {
+				for(int i = 0; i < NUM_DIRECTIONS; i++) {
+					int[] possibleDirection = nextDirection(i);
+					if(checkOutOfBounds(possibleDirection, ranges, xi, yi, zi)) {
+						directionPreferences[i] = 1.0/-0.0;
+					}
+				}
+			}
+			
+			
+			
 			int directionIndex = StatisticsUtilities.argmax(directionPreferences);
-			int[] possibleDirection = nextDirection(directionIndex);
-			MinecraftCoordinates minecraftDirection = new MinecraftCoordinates(Integer.valueOf(possibleDirection[0]),Integer.valueOf(possibleDirection[1]),Integer.valueOf(possibleDirection[2]));
+			int[] direction = nextDirection(directionIndex);
+			
+			// If stopping the snakes when confining
+			if(Parameters.parameters.booleanParameter("minecraftStopConfinedSnakes")){
+				if(checkOutOfBounds(direction, ranges, xi, yi, zi)) {
+					return null;
+				}
+			}
+			
+			MinecraftCoordinates minecraftDirection = new MinecraftCoordinates(Integer.valueOf(direction[0]),Integer.valueOf(direction[1]),Integer.valueOf(direction[2]));
 			return minecraftDirection;	
 		} else {
 			return null; // null result means to stop generation when used to evolve snakes
 		}
+	}
+
+	/**
+	 * Checks to see if the new possible position relative to the initial position is still
+	 * in bounds
+	 * 
+	 * @param possibleDirection The next possible direction a block can be placed in
+	 * @param ranges The ranges of the x, y, and z direction that confines a shape
+	 * @param xi Initial x coordinate
+	 * @param yi Initial y coordinate
+	 * @param zi Initial z coordinate
+	 * @return True if out of bounds, false otherwise
+	 */
+	public static boolean checkOutOfBounds(int[] possibleDirection, MinecraftCoordinates ranges, int xi, int yi, int zi) {
+		return xi + possibleDirection[0] >= ranges.x() || xi + possibleDirection[0] < 0 ||
+				yi + possibleDirection[1] >= ranges.y() || yi + possibleDirection[1] < 0 ||
+				zi + possibleDirection[2] >= ranges.z() || zi + possibleDirection[2] < 0;
 	}
 
 	/**
@@ -117,12 +166,29 @@ public interface ShapeGenerator<T> {
 	 * @return String array that contains the labels for the outputs
 	 */
 	public static String[] defaultNetworkOutputLabels(BlockSet blockSet) {
-		// Presence output and an output for each block type
-		String[] labels = new String[1 + blockSet.getPossibleBlocks().length];
-		labels[0] = "Presence";
-		for(int i = 1; i < labels.length; i++) {
-			labels[i] = blockSet.getPossibleBlocks()[i-1].name();
+		String[] labels;
+		if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
+			
+			labels = new String[1 + blockSet.getPossibleBlocks().length + NUM_DIRECTIONS];
+			labels[0] = "Presence";
+			
+			for(int i = 1; i < blockSet.getPossibleBlocks().length; i++) {
+				labels[i] = blockSet.getPossibleBlocks()[i-1].name();
+			}
+			
+			for(int i = blockSet.getPossibleBlocks().length, j = 0; i < labels.length-1; i++, j++) {
+				labels[i] = Orientation.values()[j].toString();
+			}
+
+		} else {
+			// Presence output and an output for each block type
+			labels = new String[1 + blockSet.getPossibleBlocks().length];
+			labels[0] = "Presence";
+			for(int i = 1; i < labels.length; i++) {
+				labels[i] = blockSet.getPossibleBlocks()[i-1].name();
+			}
 		}
+		
 		return labels;
 	}
 

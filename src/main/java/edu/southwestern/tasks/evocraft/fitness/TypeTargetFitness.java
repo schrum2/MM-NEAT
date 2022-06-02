@@ -3,11 +3,12 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.List;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 
 public class TypeTargetFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
-	public double fitnessFromBlocks(List<Block> blocks) {
+	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
 		// total that is being evolved to match
 		int desiredTotal = Parameters.parameters.integerParameter("minecraftDesiredBlockCount");
 		// count of current total number of desired blocks
