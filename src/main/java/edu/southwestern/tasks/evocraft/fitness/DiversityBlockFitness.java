@@ -3,6 +3,7 @@ package edu.southwestern.tasks.evocraft.fitness;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
@@ -13,21 +14,7 @@ public class DiversityBlockFitness extends CheckBlocksInSpaceFitness{
 	@Override
 	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
 		
-		int[][][] shape= new int[Parameters.parameters.integerParameter("minecraftXRange")+2][Parameters.parameters.integerParameter("minecraftYRange")+2][Parameters.parameters.integerParameter("minecraftZRange")+2];
-		
-		// Initialize everything in the 3D array to be air
-		for(int i = 0; i < shape.length; i++) {
-			for(int j = 0; j < shape[i].length; j++) {
-				for(int k = 0; k < shape[i][j].length; k++) {
-					shape[i][j][k] = BlockType.AIR.ordinal();
-				}
-			}
-		}
-		
-		// Places the blocks from the list into the 3D array in the right spot
-		for(Block b : blocks) {
-			shape[b.x() - corner.x() + 1][b.y() - corner.y() + 1][b.z() - corner.z() + 1] = b.type();
-		}
+		int[][][] shape = MinecraftClient.blockListTo3DArray(corner, blocks, 1);
 		
 		// For all blocks in the list of blocks
 		int counter = 0;

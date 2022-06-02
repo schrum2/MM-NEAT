@@ -9,6 +9,10 @@ import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.mario.gan.Comm;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.Triple;
@@ -594,5 +598,33 @@ public class MinecraftClient extends Comm {
 		MinecraftCoordinates groundStart = new MinecraftCoordinates(start.x()-buffer, GROUND_LEVEL, start.z()-buffer);
 		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + SPACE_BETWEEN) + buffer, start.y() + ranges.y() + buffer, start.z() + ranges.z() + buffer);
 		fillCube(groundStart, end, BlockType.AIR);
+	}
+	
+	/**
+	 * Represent a list of Minecraft blocks as a 3D array where the given corner is the
+	 * start of the 3D array, but potentially with padding added.
+	 * 
+	 * @param corner Location in Minecraft where shape was generated (minimal coordinates)
+	 * @param blocks List of blocks generated at that position
+	 * @param padding How much empty space to have around the shape
+	 * @return 3D array with block types organized as they appear in the world
+	 */
+	public static int[][][] blockListTo3DArray(MinecraftCoordinates corner, List<Block> blocks, int padding) {
+		int[][][] shape= new int[Parameters.parameters.integerParameter("minecraftXRange")+2*padding][Parameters.parameters.integerParameter("minecraftYRange")+2*padding][Parameters.parameters.integerParameter("minecraftZRange")+2*padding];
+		
+		// Initialize everything in the 3D array to be air
+		for(int i = 0; i < shape.length; i++) {
+			for(int j = 0; j < shape[i].length; j++) {
+				for(int k = 0; k < shape[i][j].length; k++) {
+					shape[i][j][k] = BlockType.AIR.ordinal();
+				}
+			}
+		}
+		
+		// Places the blocks from the list into the 3D array in the right spot
+		for(Block b : blocks) {
+			shape[b.x() - corner.x() + padding][b.y() - corner.y() + padding][b.z() - corner.z() + padding] = b.type();
+		}
+		return shape;
 	}
 }
