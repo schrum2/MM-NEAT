@@ -37,7 +37,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
-		MinecraftServer.launchServer();
+		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
+			MinecraftServer.launchServer();
+		}
 		// Launches the client script before the parallel code to assure that only one client script exists
 		MinecraftClient.getMinecraftClient();
 		
@@ -136,7 +138,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	@Override
 	public void finalCleanup() {
 		// Close Minecraft server after all evolution is done
-		MinecraftServer.terminateServer();
+		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
+			MinecraftServer.terminateServer();
+		}
 	}
 
 	@Override
