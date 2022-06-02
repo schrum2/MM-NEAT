@@ -13,15 +13,15 @@ import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.SinglePopulationTask;
+import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
-import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
+import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
 
@@ -36,9 +36,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
-		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
-			MinecraftServer.launchServer();
-		}
+		MinecraftServer.launchServer();
 		// Launches the client script before the parallel code to assure that only one client script exists
 		MinecraftClient.getMinecraftClient();
 		
@@ -56,8 +54,17 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			fitnessFunctions.add(new OccupiedCountFitness());
 		}
 		
-		// TODO: Command line parameter
-		MMNEAT.blockSet = new MachineBlockSet();
+		if(Parameters.parameters.booleanParameter("minecraftDiversityBlockFitness")) {
+			fitnessFunctions.add(new DiversityBlockFitness());
+		}
+		
+		try {
+			MMNEAT.blockSet = (BlockSet) ClassCreation.createObject("minecraftBlockSet");
+		} catch (NoSuchMethodException e1) {
+			System.out.println("Could not instantiate block set for Minecraft");
+			e1.printStackTrace();
+			System.exit(1);
+		}
 
 		try {
 			MMNEAT.shapeGenerator = (ShapeGenerator<T>) ClassCreation.createObject("minecraftShapeGenerator");
@@ -128,10 +135,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	@Override
 	public void finalCleanup() {
 		// Close Minecraft server after all evolution is done
-		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
-			// If the server was watched from Java, then it should be terminated from Java as well
-			MinecraftServer.terminateServer();
-		}
+		MinecraftServer.terminateServer();
 	}
 
 	@Override
@@ -157,7 +161,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			Genotype<T> genome = population.get(i);
 			return evaluateOneShape(genome, corner, fitnessFunctions);
 		}).collect(Collectors.toCollection(ArrayList::new));
-		
+		System.out.println("Finished collecting");
 		return scores;
 	}
 	
@@ -223,8 +227,6 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	 * Calculate all fitness scores for a shape at a given corner
 	 * 
 	 * @param corner Minimal corner from which shape is generated
-	 * @param fitnessFunctions the shape properties to calculate
-	 * @param readBlocks Minecraft blocks that are part of the shape
 	 * @return double array of all fitness values in order
 	 */
 	public static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> readBlocks) {
@@ -232,7 +234,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		double[] fitnessScores = fitnessFunctions.parallelStream().mapToDouble(ff -> {
 			if(ff instanceof CheckBlocksInSpaceFitness) {
 				// All fitness functions of this type can just use the previously computed readBlocks list
-				return ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner, readBlocks);
+				return ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks);
 			} else {
 				return ff.fitnessScore(corner);
 			}
@@ -264,20 +266,20 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public static void main(String[] args) {
 		int seed = 0;
 		try {
-			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:1000",
-					"base:minecraft", "log:Minecraft-LongSnake", "saveTo:LongSnake",
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:10", "maxGens:100",
+					"base:minecraft", "log:Minecraft-TypeCount", "saveTo:TypeCount",
 					"io:true", "netio:true", 
-					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
 					//"minecraftTypeCountFitness:true",
 					//"minecraftTypeTargetFitness:true", 
 					//"minecraftDesiredBlockCount:40",
-					"minecraftOccupiedCountFitness:true",
+					//"minecraftOccupiedCountFitness:true",
+					"minecraftDiversityBlockFitness:true",
 					//"minecraftEvolveOrientation:true",
-					"minecraftRedirectConfinedSnakes:true",
+					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true",
-					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
+					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",

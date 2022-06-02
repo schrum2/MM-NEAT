@@ -20,6 +20,7 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator;
 import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
 import edu.southwestern.tasks.gvgai.zelda.level.SimpleLoader;
@@ -796,6 +797,7 @@ public class Parameters {
 		booleanOptions.add("minecraftOccupiedCountFitness", false, "Minecraft shapes try to maximize number of non-AIR blocks");
 		booleanOptions.add("minecraftTypeTargetFitness", false, "Minecraft shapes try to match a desired number");
 		booleanOptions.add("minecraftEvolveOrientation", true, "Evolves the orientation of the blocks being generated");
+		booleanOptions.add("minecraftDiversityBlockFitness", false, "Minecraft shapes try to maximize the amount of block types in each structure");
 		booleanOptions.add("minecraftRedirectConfinedSnakes", false, "Confines the snakes to a given area and will redirect the snake when the next direction is out of bounds");
 		booleanOptions.add("minecraftStopConfinedSnakes", false, "Confines the snakes to a given area and will stop the snake when the next direction is out of bounds");
 		booleanOptions.add("launchMinecraftServerFromJava", true, "The Java code can launch a server, or it can simply join whatever server is already running on the localhost");
@@ -949,6 +951,7 @@ public class Parameters {
 		stringOptions.add("archiveSubDirectoryName", "archive", "Directory name to store archive files in a MAP Elites run");
 		stringOptions.add("latestIterationSaved", "iterationX", "The last iteration of PictureTargetTask to be saved.");
 		
+		
 		// Class options
 		classOptions.add("zeldaGrammarRules", ZeldaHumanSubjectStudy2019GraphGrammar.class, "Determines what ruleset we're using");
 		classOptions.add("zeldaGraphBackBone", HumanSubjectStudy2019Graph.class, "Constructs the graph for the rules of the ZeldaGraphGrammar");
@@ -997,6 +1000,7 @@ public class Parameters {
 		classOptions.add("weightPerturber", GaussianGenerator.class, "Random generator used to perturb mutated weights");
 		classOptions.add("zeldaLevelLoader", SimpleLoader.class, "Loader to use when the dungeon is picking levels");
 		classOptions.add("minecraftShapeGenerator", ThreeDimensionalVolumeGenerator.class, "Defines the manner in which shapes are generated from genomes in Minecraft");
+		classOptions.add("minecraftBlockSet", MachineBlockSet.class, "Sets block set to be machine block set");
 	}
 
 	/**
