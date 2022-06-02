@@ -610,8 +610,8 @@ public class MinecraftClient extends Comm {
 	 * @return 3D array with block types organized as they appear in the world
 	 */
 	public static int[][][] blockListTo3DArray(MinecraftCoordinates corner, List<Block> blocks, int padding) {
+		assert corner != null : "Corner is null!";
 		int[][][] shape= new int[Parameters.parameters.integerParameter("minecraftXRange")+2*padding][Parameters.parameters.integerParameter("minecraftYRange")+2*padding][Parameters.parameters.integerParameter("minecraftZRange")+2*padding];
-		
 		// Initialize everything in the 3D array to be air
 		for(int i = 0; i < shape.length; i++) {
 			for(int j = 0; j < shape[i].length; j++) {
@@ -620,9 +620,9 @@ public class MinecraftClient extends Comm {
 				}
 			}
 		}
-		
 		// Places the blocks from the list into the 3D array in the right spot
 		for(Block b : blocks) {
+			assert b != null : "Block b null in "+blocks;
 			shape[b.x() - corner.x() + padding][b.y() - corner.y() + padding][b.z() - corner.z() + padding] = b.type();
 		}
 		return shape;
