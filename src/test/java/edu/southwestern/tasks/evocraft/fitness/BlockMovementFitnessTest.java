@@ -27,13 +27,9 @@ public class BlockMovementFitnessTest {
 	MinecraftCoordinates cornerEx;
 	
 	List<Block> simplePiston1Redstone;
-	
 	List<Block> simplePiston2Redstone;
-	
 	List<Block> simplePiston2Redstone2;
-	
 	List<Block> exampleFlyingMachine;
-	
 	List<Block> pistonPushingBlocks; 
 	
 	
@@ -56,15 +52,21 @@ public class BlockMovementFitnessTest {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		// TODO: Add a pause here
+		// The default is about 10 seconds (10 000 milliseconds)
+		long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
+		Thread.sleep(waitTime);
 		
-		//MinecraftClient.terminateClientScriptProcess();
-		//MinecraftServer.terminateServer();
+		MinecraftClient.terminateClientScriptProcess();
+		MinecraftServer.terminateServer();
 	}
 
 	@Test
 	public void testMaxFitness() {
-		fail("Not yet implemented");
+		int xrange = Parameters.parameters.integerParameter("minecraftXRange");
+		int yrange = Parameters.parameters.integerParameter("minecraftYRange");
+		int zrange = Parameters.parameters.integerParameter("minecraftZRange");
+		
+		assertEquals(xrange*yrange*zrange, ff.maxFitness(),0.0);
 	}
 
 	@Test
