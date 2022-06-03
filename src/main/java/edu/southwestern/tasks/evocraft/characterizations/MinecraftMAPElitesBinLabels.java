@@ -26,7 +26,7 @@ public abstract class MinecraftMAPElitesBinLabels extends BaseBinLabels {
 	@Override
 	public String[] dimensions() {
 		// Names of the fitness functions are the dimensions
-		return properties().parallelStream().map(ff -> ff.getClass().getName()).toArray(String[]::new);
+		return properties().parallelStream().map(ff -> ff.getClass().getSimpleName()).toArray(String[]::new);
 	}
 	
 	/**
