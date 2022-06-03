@@ -368,7 +368,7 @@ public class Parameters {
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
-		longOptions.add("minecraftMandatoryWaitTime", 10l, "The mandatory amount of time that the block movement fitness function should wait before reading in the corner again");
+		longOptions.add("minecraftMandatoryWaitTime", 100000l, "The mandatory amount of time that the block movement fitness function should wait before reading in the corner again");
 
 		// Boolean parameters 
 		booleanOptions.add("useWoxSerialization", true, "Use the deprecated Wox serialization. I hope to phase this out, but the setting is useful during transition");

@@ -24,6 +24,7 @@ public class BlockMovementFitnessTest {
 															Parameters.parameters.integerParameter("minecraftYRange"),
 															Parameters.parameters.integerParameter("minecraftZRange"));		
 	MinecraftCoordinates corner;
+	MinecraftCoordinates cornerEx;
 	
 	List<Block> simplePiston1Redstone;
 	
@@ -67,33 +68,9 @@ public class BlockMovementFitnessTest {
 	}
 
 	@Test
-	public void fly() {
-		
-		corner = new MinecraftCoordinates(0,5,0);
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 1, 0);
-		
-		exampleFlyingMachine = new ArrayList<>();
-		// Bottom layer
-		exampleFlyingMachine.add(new Block(1,5,1,BlockType.PISTON,Orientation.NORTH));
-		exampleFlyingMachine.add(new Block(1,5,0,BlockType.SLIME,Orientation.NORTH));
-		exampleFlyingMachine.add(new Block(1,5,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
-		exampleFlyingMachine.add(new Block(1,5,-2,BlockType.PISTON,Orientation.NORTH));
-		exampleFlyingMachine.add(new Block(1,5,-4,BlockType.SLIME,Orientation.NORTH));
-		// Top layer
-		exampleFlyingMachine.add(new Block(1,6,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
-		exampleFlyingMachine.add(new Block(1,6,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
-		// Activate
-		exampleFlyingMachine.add(new Block(1,6,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
-		
-		MinecraftClient.getMinecraftClient().spawnBlocks(exampleFlyingMachine);
-		
-		System.out.println("DONE!");
-	}
-	
-	@Test
 	public void testFitnessFromBlocks() {
 		
-		corner = new MinecraftCoordinates(-6,7,-38);
+		corner = new MinecraftCoordinates(-6,5,-38);
 		
 		// One piston with one redstone block activating it
 		simplePiston1Redstone = new ArrayList<>();
@@ -150,24 +127,25 @@ public class BlockMovementFitnessTest {
 		// Based off the example flying machine from Evocraft
 		// Moves slightly upon spawning in, seems to be considering anything moved
 		// by the piston is part of the piston? Also does not include new air blocks
+		cornerEx = new MinecraftCoordinates(0,5,-4);
 		exampleFlyingMachine = new ArrayList<>();
 		// Bottom layer
-		exampleFlyingMachine.add(new Block(-5,7,-37,BlockType.PISTON,Orientation.EAST));
-		exampleFlyingMachine.add(new Block(-4,7,-37,BlockType.SLIME,Orientation.WEST));
-		exampleFlyingMachine.add(new Block(-3,7,-37,BlockType.STICKY_PISTON,Orientation.WEST));
-		exampleFlyingMachine.add(new Block(-2,7,-37,BlockType.PISTON,Orientation.EAST));
-		exampleFlyingMachine.add(new Block(-1,7,-37,BlockType.SLIME,Orientation.WEST));
+		exampleFlyingMachine.add(new Block(1,5,1,BlockType.PISTON,Orientation.NORTH));
+		exampleFlyingMachine.add(new Block(1,5,0,BlockType.SLIME,Orientation.NORTH));
+		exampleFlyingMachine.add(new Block(1,5,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
+		exampleFlyingMachine.add(new Block(1,5,-2,BlockType.PISTON,Orientation.NORTH));
+		exampleFlyingMachine.add(new Block(1,5,-4,BlockType.SLIME,Orientation.NORTH));
 		// Top layer
-		exampleFlyingMachine.add(new Block(-4,8,-37,BlockType.REDSTONE_BLOCK,Orientation.WEST));
-		exampleFlyingMachine.add(new Block(-1,8,-37,BlockType.REDSTONE_BLOCK,Orientation.WEST));
+		exampleFlyingMachine.add(new Block(1,6,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		exampleFlyingMachine.add(new Block(1,6,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
 		// Activate
-		exampleFlyingMachine.add(new Block(-3,8,-37,BlockType.QUARTZ_BLOCK,Orientation.WEST));
+		exampleFlyingMachine.add(new Block(1,6,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
 		
 		MinecraftClient.getMinecraftClient().spawnBlocks(exampleFlyingMachine);
 		
-		assertEquals(11.0, ff.fitnessFromBlocks(corner, exampleFlyingMachine), 0.0);
+		assertEquals(11.0, ff.fitnessFromBlocks(cornerEx, exampleFlyingMachine), 0.0);
 		
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 1, 0);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerEx, ranges, 1, 0);
 	}
 
 	@Test
