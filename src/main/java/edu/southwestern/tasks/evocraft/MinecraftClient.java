@@ -10,9 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
-import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
-import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.mario.gan.Comm;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.Triple;
