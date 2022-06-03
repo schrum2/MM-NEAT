@@ -47,7 +47,7 @@ public class BlockMovementFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
 	public double maxFitness() {
-		return 0;
+		return Parameters.parameters.integerParameter("minecraftXRange")*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange");
 	}
 
 }
