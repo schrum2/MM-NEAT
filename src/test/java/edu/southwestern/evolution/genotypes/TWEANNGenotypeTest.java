@@ -267,4 +267,21 @@ public class TWEANNGenotypeTest {
 		assertEquals(hncasag.nodes.get(37).innovation, -13);
 		assertEquals(hncasag.nodes.get(37).ntype, 2);
 	}
+	
+	@Test
+	public void test_toGraphViz() {
+		Parameters.initializeParameterCollections(
+				new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "recurrency:false" });
+		MMNEAT.loadClasses();
+
+		TWEANNGenotype tg1 = new TWEANNGenotype(3, 2, 0);
+		MMNEAT.genotype = tg1.copy();
+		EvolutionaryHistory.initArchetype(0);
+		
+		System.out.println(tg1.nodes);
+		
+		System.out.println(tg1.toGraphViz(new String[] {"in1","in2","in3"}, new String[]{"out1","out2"}));
+		
+		assertTrue(false);
+	}
 }

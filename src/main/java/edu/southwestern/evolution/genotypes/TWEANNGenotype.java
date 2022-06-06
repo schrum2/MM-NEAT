@@ -2208,17 +2208,23 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 		StringBuilder string = new StringBuilder();
 		string.append("digraph {\nnode[fontsize=9 height=0.2 shape=circle width=0.2]");
 		
-		for(NodeGene ng: nodes) {
-			string.append("\n" + ng.innovation);
-			if(ng.ntype == TWEANN.Node.NTYPE_HIDDEN) {
-				string.append("[fillcolor=white style=filled]");
+		for(int i=0; i < nodes.size(); i++) {
+			if(i >= nodes.size() - numOut) {
+				assert nodes.get(i).ntype == TWEANN.Node.NTYPE_OUTPUT;
+				string.append("\n" + outputs[i - (nodes.size() - numOut)]);
+				string.append("[fillcolor=lightblue style=filled]");
 			}
-			else if(ng.ntype == TWEANN.Node.NTYPE_INPUT) {
+			else if(i < numIn) {
+				assert nodes.get(i).ntype == TWEANN.Node.NTYPE_INPUT;
+				string.append("\n" + inputs[i]);
 				string.append("[fillcolor=lightgray shape=box style=filled]");
 			}
 			else {
-				assert ng.ntype == TWEANN.Node.NTYPE_OUTPUT;
-				string.append("[fillcolor=lightblue style=filled]");
+				assert i >= numIn;
+				assert i < nodes.size() - numOut;
+				assert nodes.get(i).ntype == TWEANN.Node.NTYPE_HIDDEN;
+				string.append("\n" + nodes.get(i).innovation);
+				string.append("[fillcolor=white style=filled]");
 			}
 		}
 	
