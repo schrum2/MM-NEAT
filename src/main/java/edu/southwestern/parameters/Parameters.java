@@ -364,6 +364,7 @@ public class Parameters {
 		integerOptions.add("minecraftDesiredBlockType", MinecraftClient.BlockType.REDSTONE_BLOCK.ordinal(), "Type desired by TypeCountFitness");
 		integerOptions.add("minecraftDesiredBlockCount", 0, "Count desired by TypeTargetFitness");
 		integerOptions.add("minecraftMaxSnakeLength", 100, "Maximum length that a generated snake can be");
+		integerOptions.add("spaceBetweenMinecraftShapes", 5, "The space in blocks that are in between each of the generated minecraft structures");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
