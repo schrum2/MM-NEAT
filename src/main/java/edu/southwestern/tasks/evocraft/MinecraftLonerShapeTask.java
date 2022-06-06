@@ -8,6 +8,7 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
+import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -62,6 +63,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		
 		// Start position for regenerating shapes
 		int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
+		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
+		@SuppressWarnings("unchecked")
+		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
 		
 		MinecraftCoordinates startPosition = new MinecraftCoordinates(ranges.x()*oneDimIndex+MinecraftClient.BUFFER,5,0);
 		System.out.println(startPosition.x());
@@ -77,6 +81,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		// This result will be ignored when using MAP Elites
 		return new Pair<>(score.scores, score.otherStats);
 	}
+	
+//	public static int[] worldArchiveCoordinates(HashMap<String, Object> behaviorCharacteristics) {
+//		
+//	}
 	
 	@Override
 	public int numObjectives() {
@@ -124,11 +132,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"minecraftOccupiedCountFitness:true",
 					//"minecraftEvolveOrientation:true",
 					"minecraftRedirectConfinedSnakes:true",
-					//"minecraftStopConfinedSnakes:true",
+					//"minecraftStopConfinedSnakes:true", 
 					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-					"steadyStateIndividualsPerGeneration:100",
+					"steadyStateIndividualsPerGeneration:100", 
+					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
