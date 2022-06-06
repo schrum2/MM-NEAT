@@ -7,6 +7,7 @@ import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -55,15 +56,22 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		}
 		System.out.println("==================================================================================================");
 		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
-		System.out.println(behaviorCharacteristics);
+		
+		System.out.println(behaviorCharacteristics.get("WidthFitness"));
 		System.out.println(minecraftBinLabels.dimensionSizes().length);
 		
-		MinecraftCoordinates startPosition = new MinecraftCoordinates(0,5,0);
-//		System.out.println(startPosition.y());
+		// Start position for regenerating shapes
+		int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
+		
+		MinecraftCoordinates startPosition = new MinecraftCoordinates(ranges.x()*oneDimIndex+MinecraftClient.BUFFER,5,0);
+		System.out.println(startPosition.x());
 		
 		@SuppressWarnings("unchecked")
 		List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
 		MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(startPosition.x(),MinecraftClient.GROUND_LEVEL+1,startPosition.z()), ranges, 1, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
+		
 		// TODO: If placing the archive in the Minecraft work, then use the contents of behaviorCharacteristics and BinLabel shape info to re-generate the shape at the right coordinates
 		
 		// This result will be ignored when using MAP Elites
