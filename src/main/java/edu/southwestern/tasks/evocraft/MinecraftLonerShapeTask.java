@@ -29,7 +29,11 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	private MinecraftShapeTask<T> internalMinecraftShapeTask;
 	
 	public MinecraftLonerShapeTask() {
-		internalMinecraftShapeTask = new MinecraftShapeTask<T>();
+		internalMinecraftShapeTask = new MinecraftShapeTask<T>() {
+			public int getStartingX() { return - getRanges().x() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
+			
+			public int getStartingZ() { return - getRanges().z() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }			
+		};
 	}
 	
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
@@ -46,6 +50,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		for(HashMap.Entry<String,Object> entry : score.MAPElitesBehaviorMap().entrySet()) {
 			behaviorCharacteristics.put(entry.getKey(), entry.getValue());
 		}
+		
+		// TODO: If placing the archive in the Minecraft work, then use the contents of behaviorCharacteristics and BinLabel shape info to re-generate the shape at the right coordinates
+		
 		// This result will be ignored when using MAP Elites
 		return new Pair<>(score.scores, score.otherStats);
 	}
