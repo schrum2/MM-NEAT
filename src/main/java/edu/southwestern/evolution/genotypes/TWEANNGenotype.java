@@ -2197,6 +2197,49 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 	public int outputStartIndex() {
 		return nodes.size() - numOut;
 	}
+	
+	/**
+	 * Returns a string of the contents of the GraphViz file that
+	 * would draw a network
+	 * 
+	 * @return String of the contents in GraphViz file
+	 */
+	public String toGraphViz(String[] inputs, String[] outputs) {
+		StringBuilder string = new StringBuilder();
+		string.append("digraph {\nnode[fontsize=9 height=0.2 shape=circle width=0.2]");
+		
+		for(NodeGene ng: nodes) {
+			string.append("\n" + ng.innovation);
+			if(ng.ntype == TWEANN.Node.NTYPE_HIDDEN) {
+				string.append("[fillcolor=white style=filled]");
+			}
+			else if(ng.ntype == TWEANN.Node.NTYPE_INPUT) {
+				string.append("[fillcolor=lightgray shape=box style=filled]");
+			}
+			else {
+				assert ng.ntype == TWEANN.Node.NTYPE_OUTPUT;
+				string.append("[fillcolor=lightblue style=filled]");
+			}
+		}
+	
+		for(LinkGene lg : links) {
+			string.append("\n" + lg.sourceInnovation + "->" + lg.targetInnovation);
+			
+			String color;
+			if(lg.weight < 0) {
+				color = "red";
+			} else {
+				assert lg.weight > 0;
+				color = "green";
+			}
+			
+			string.append("[color="+color+" penwidth="+Math.abs(lg.weight)+" style=solid]");
+		}
+		
+		string.append("}");
+		
+		return string.toString();
+	}
 
 	/**
 	 * Equals method that compares memory addresses of two TWEANNGenotypes
