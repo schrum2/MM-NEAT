@@ -368,6 +368,8 @@ public class Parameters {
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
+		longOptions.add("minecraftMandatoryWaitTime", 10000l, "The mandatory amount of time that the block movement fitness function should wait before reading in the corner again");
+
 		// Boolean parameters 
 		booleanOptions.add("useWoxSerialization", true, "Use the deprecated Wox serialization. I hope to phase this out, but the setting is useful during transition");
 		booleanOptions.add("drawMarioOverlayText", true, "When playing Mario, lots of useful debugging text is displayed");
@@ -890,7 +892,6 @@ public class Parameters {
 		doubleOptions.add("GANSegmentSwapMutationRate", 0.0, "Segment swap mutation rate.");
 		doubleOptions.add("GANSegmentCopyMutationRate", 0.0, "Segment copy mutation rate.");
 		doubleOptions.add("anyRealVectorModificationRate", 1.0, "The chance to use either perturb or polynomial mutation");
-
 		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");

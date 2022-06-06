@@ -137,6 +137,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 	@Override
 	public void finalCleanup() {
+		MinecraftClient.terminateClientScriptProcess();
 		// Close Minecraft server after all evolution is done
 		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
 			MinecraftServer.terminateServer();
