@@ -56,25 +56,27 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		for(HashMap.Entry<String,Object> entry : score.MAPElitesBehaviorMap().entrySet()) {
 			behaviorCharacteristics.put(entry.getKey(), entry.getValue());
 		}
-		//System.out.println("==================================================================================================");
+		System.out.println("==================================================================================================");
 		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 		
-		System.out.println(behaviorCharacteristics.get("WidthFitness"));
-		System.out.println(minecraftBinLabels.dimensionSizes().length);
+//		System.out.println(behaviorCharacteristics.get("WidthFitness"));
+//		System.out.println(minecraftBinLabels.dimensionSizes().length);
 		
 		// Start position for regenerating shapes
 		int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
 		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
 		@SuppressWarnings("unchecked")
 		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
-		
+		System.out.println("1D index: "+oneDimIndex);
 		MinecraftCoordinates startPosition = new MinecraftCoordinates(ranges.x()*oneDimIndex+MinecraftClient.BUFFER,5,0);
-		System.out.println(startPosition.x());
-		
-		@SuppressWarnings("unchecked")
-		List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
-		MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
-
+		System.out.println("Starting position: "+startPosition);
+		if(scoreOfCurrentElite>scoreOfPreviousElite) {
+			System.out.println("CURRENT: "+scoreOfCurrentElite+" |PREVIOUS: "+scoreOfPreviousElite);
+			MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, MinecraftClient.BUFFER);
+			@SuppressWarnings("unchecked")
+			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
+			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+		}
 		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(startPosition.x(),MinecraftClient.GROUND_LEVEL+1,startPosition.z()), ranges, 1, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
 		
 		// TODO: If placing the archive in the Minecraft work, then use the contents of behaviorCharacteristics and BinLabel shape info to re-generate the shape at the right coordinates

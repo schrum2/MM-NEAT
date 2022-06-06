@@ -19,11 +19,10 @@ public abstract class MinecraftMAPElitesBinLabels extends BaseBinLabels {
 		
 		// Putting clearing here because bin labels and other aspects need to be initialized first in the constructor before clearing can occur
 		List<String> binSize = binLabels();
+		// Gets ranges for all coordinates
 		MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
-		System.out.println("==================================================================================================");
-		System.out.println(binSize.size());
+		// Clears the area
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, binSize.size(), Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
-	
 	}
 	
 	/**
