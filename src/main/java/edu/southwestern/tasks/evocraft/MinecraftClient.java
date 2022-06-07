@@ -364,6 +364,10 @@ public class MinecraftClient extends Comm {
 	 *
 	 */
 	public static class MinecraftCoordinates extends Triple<Integer,Integer,Integer> {
+		public MinecraftCoordinates(int size) {
+			this(size,size,size);
+		}
+		
 		public MinecraftCoordinates(int x, int y, int z) {
 			super(x, y, z);
 		}
@@ -380,6 +384,16 @@ public class MinecraftClient extends Comm {
 		public MinecraftCoordinates add(MinecraftCoordinates other) {
 			return new MinecraftCoordinates(x() + other.x(), y() + other.y(), z() + other.z());
 		}
+		
+		/**
+		 * subtract two vectors together (component-wise)
+		 * @param other Coordinates to subtract from this one.
+		 * @return Result of subtracting the vectors
+		 */
+		public MinecraftCoordinates sub(MinecraftCoordinates other) {
+			return new MinecraftCoordinates(x() - other.x(), y() - other.y(), z() - other.z());
+		}
+
 	}
 	
 	/**
