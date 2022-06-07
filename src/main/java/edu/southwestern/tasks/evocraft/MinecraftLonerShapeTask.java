@@ -61,42 +61,43 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		for(HashMap.Entry<String,Object> entry : score.MAPElitesBehaviorMap().entrySet()) {
 			behaviorCharacteristics.put(entry.getKey(), entry.getValue());
 		}
-		System.out.println("==================================================================================================");
-		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 		
-//		System.out.println(behaviorCharacteristics.get("WidthFitness"));
-//		System.out.println(minecraftBinLabels.dimensionSizes().length);
-		
-		// Start position for regenerating shapes
-		int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
-		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
-		@SuppressWarnings("unchecked")
-		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
-		System.out.println("1D index: "+oneDimIndex);
-		MinecraftCoordinates startPosition = new MinecraftCoordinates(oneDimIndex*MinecraftClient.BUFFER+oneDimIndex*ranges.x(),5,0);
-		System.out.println("Starting position: "+startPosition);
-		System.out.println("CURRENT: "+scoreOfCurrentElite+" |PREVIOUS: "+scoreOfPreviousElite);
-		if(scoreOfCurrentElite>scoreOfPreviousElite) {
-			MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, MinecraftClient.BUFFER);
+		if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive")) {
+			System.out.println("==================================================================================================");
+			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+			// Start position for regenerating shapes
 			
-//			List<Block> test = new ArrayList<>();
-//			test.add(new Block(startPosition.x(),5,0,BlockType.GLOWSTONE, Orientation.WEST));
-//			test.add(new Block(startPosition.x()+1,5,0,BlockType.GLOWSTONE, Orientation.WEST));
-//			test.add(new Block(startPosition.x()+1,6,0,BlockType.GLOWSTONE, Orientation.WEST));
-//			test.add(new Block(startPosition.x()+1,6,1,BlockType.GLOWSTONE, Orientation.WEST));
-//			test.add(new Block(startPosition.x(),6,0,BlockType.GLOWSTONE, Orientation.WEST));
-//			test.add(new Block(startPosition.x(),6,1,BlockType.GLOWSTONE, Orientation.WEST));
-//			test.add(new Block(startPosition.x()+1,5,1,BlockType.GLOWSTONE, Orientation.WEST));
-//			test.add(new Block(startPosition.x(),5,1,BlockType.GLOWSTONE, Orientation.WEST));
-			@SuppressWarnings("unchecked")
-			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
-			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
-		}
-		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(startPosition.x(),MinecraftClient.GROUND_LEVEL+1,startPosition.z()), ranges, 1, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
-		
-		// TODO: If placing the archive in the Minecraft work, then use the contents of behaviorCharacteristics and BinLabel shape info to re-generate the shape at the right coordinates
-		
-		// This result will be ignored when using MAP Elites
+			if(minecraftBinLabels.dimensionSizes().length==1 ||minecraftBinLabels.dimensionSizes().length>=4||Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
+				System.out.println(minecraftBinLabels.dimensionSizes().length);
+				int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
+				double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
+				@SuppressWarnings("unchecked")
+				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
+				System.out.println("1D index: "+oneDimIndex);
+				MinecraftCoordinates startPosition = new MinecraftCoordinates(oneDimIndex*MinecraftClient.BUFFER+oneDimIndex*ranges.x(),5,0);
+				System.out.println("Starting position: "+startPosition);
+				System.out.println("CURRENT: "+scoreOfCurrentElite+" |PREVIOUS: "+scoreOfPreviousElite);
+				if(scoreOfCurrentElite>scoreOfPreviousElite) {
+					MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, MinecraftClient.BUFFER);
+//					List<Block> test = new ArrayList<>();
+//					test.add(new Block(startPosition.x(),5,0,BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x()+1,5,0,BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x()+1,6,0,BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x()+1,6,1,BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x(),6,0,BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x(),6,1,BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x()+1,5,1,BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x(),5,1,BlockType.GLOWSTONE, Orientation.WEST));
+					@SuppressWarnings("unchecked")
+					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
+					MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+				}
+			}
+			// TODO: If placing the archive in the Minecraft work, then use the contents of behaviorCharacteristics and BinLabel shape info to re-generate the shape at the right coordinates
+			
+			// This result will be ignored when using MAP Elites
+			}
+			
 		return new Pair<>(score.scores, score.otherStats);
 	}
 	
@@ -139,7 +140,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesWHD", "saveTo:MAPElitesWHD",
-					"io:true", "netio:true", 
+					"io:true", "netio:true",
+					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:true",
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
