@@ -1,9 +1,11 @@
 package edu.southwestern.tasks.evocraft.characterizations;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
@@ -47,4 +49,37 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 		return properties;
 	}
 
+	public static void main(String[] args) {
+		int seed = 0;
+		try {
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
+					"base:minecraft", "log:Minecraft-MAPElitesBlockCount", "saveTo:MAPElitesBlockCount",
+					"io:true", "netio:true", 
+					"launchMinecraftServerFromJava:false",
+					//"io:false", "netio:false", 
+					"mating:true", "fs:false", 
+					//"minecraftTypeCountFitness:true",
+					"minecraftDiversityBlockFitness:true",
+					//"minecraftTypeTargetFitness:true", 
+					//"minecraftDesiredBlockCount:40",
+					//"minecraftOccupiedCountFitness:true",
+					//"minecraftEvolveOrientation:true",
+					"minecraftRedirectConfinedSnakes:true",
+					//"minecraftStopConfinedSnakes:true",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels",
+					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
+					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
+					"steadyStateIndividualsPerGeneration:100",
+					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
+					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
+					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
+					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",
+					"includeFullSigmoidFunction:true", "includeFullGaussFunction:true", "includeCosineFunction:true", 
+					"includeGaussFunction:false", "includeIdFunction:true", "includeTriangleWaveFunction:false", 
+					"includeSquareWaveFunction:false", "includeFullSawtoothFunction:false", "includeSigmoidFunction:false", 
+					"includeAbsValFunction:false", "includeSawtoothFunction:false"}); 
+		} catch (FileNotFoundException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+	}
 }
