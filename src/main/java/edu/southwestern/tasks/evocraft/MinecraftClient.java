@@ -591,7 +591,7 @@ public class MinecraftClient extends Comm {
 	 */
 	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer) {
 		MinecraftCoordinates groundStart = new MinecraftCoordinates(start.x()-buffer, GROUND_LEVEL, start.z()-buffer);
-		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftStructures")) + buffer, start.y() + ranges.y() + buffer, start.z() + ranges.z() + buffer);
+		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) + buffer, start.y() + ranges.y() + buffer, start.z() + ranges.z() + buffer);
 		fillCube(groundStart, end, BlockType.AIR);
 	}
 	

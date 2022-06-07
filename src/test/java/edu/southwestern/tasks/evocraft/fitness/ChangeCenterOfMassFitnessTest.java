@@ -10,12 +10,19 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
+import edu.southwestern.util.datastructures.Vertex;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 
 public class ChangeCenterOfMassFitnessTest {
+	
+	MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"), 
+															Parameters.parameters.integerParameter("minecraftYRange"),
+															Parameters.parameters.integerParameter("minecraftZRange"));
 	
 	List<Block> blockSet1;
 	List<Block> blockSet2;
@@ -24,6 +31,8 @@ public class ChangeCenterOfMassFitnessTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		Parameters.initializeParameterCollections(new String[] {});
+		MinecraftClient.getMinecraftClient();
 	}
 
 	@Before
@@ -47,21 +56,22 @@ public class ChangeCenterOfMassFitnessTest {
 
 	@Test
 	public void testFitnessScoreMinecraftCoordinates() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testGetCenterOfMass() {
-		// Small list of blocks
-		// This should have a center of mass of (-5 + (-4) / 2, 7+7/2 , -35 - 35 /2 ) = (-9/2, 7, -35) = (-4, 7, -35)
+		// Small list of blocks that don't move
+		// Should have a fitness of 0
 		blockSet1 = new ArrayList<>();
 		blockSet1.add(new Block(-5,7,-35,BlockType.REDSTONE_BLOCK, Orientation.WEST));
 		blockSet1.add(new Block(-4,7,-35,BlockType.PISTON, Orientation.EAST));
 		
-		assertEquals(new MinecraftCoordinates(-4,7,-35), ff.getCenterOfMass(blockSet1));
+		MinecraftCoordinates cornerBS1 = new MinecraftCoordinates(-6,7,-35);
 		
-		// List of flying machine blocks
-		// COM = (1, 25 + 18 / 8, ) = (1, 5, -1)
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
+	
+		assertEquals(0.0, ff.fitnessScore(cornerBS1),0.0);
+		
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 0);
+		
+		// List of flying machine blocks that should move
+		// Not really sure what the fitness would be after 10 seconds
 		blockSet2 = new ArrayList<>();
 		// Bottom layer
 		blockSet2.add(new Block(1,5,1,BlockType.PISTON,Orientation.NORTH));
@@ -75,7 +85,43 @@ public class ChangeCenterOfMassFitnessTest {
 		// Activate
 		blockSet2.add(new Block(1,6,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
 		
-		assertEquals(new MinecraftCoordinates(1,5,-1), ff.getCenterOfMass(blockSet2));
+		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,5,-5);
+		
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
+		
+		// This is a guess for right now
+		// Says there is a fitness of 0
+		assertEquals(18.0, ff.fitnessScore(cornerBS2),0.5);
+		
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 0);
+	}
+
+	@Test
+	public void testGetCenterOfMass() {
+		// Small list of blocks
+		blockSet1 = new ArrayList<>();
+		blockSet1.add(new Block(-5,7,-35,BlockType.REDSTONE_BLOCK, Orientation.WEST));
+		blockSet1.add(new Block(-4,7,-35,BlockType.PISTON, Orientation.EAST));
+		
+		
+		assertEquals(new Vertex(-4.5,7.0,-35.0), ff.getCenterOfMass(blockSet1));
+		
+		
+		// List of flying machine blocks
+		blockSet2 = new ArrayList<>();
+		// Bottom layer
+		blockSet2.add(new Block(1,5,1,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,5,0,BlockType.SLIME,Orientation.NORTH));
+		blockSet2.add(new Block(1,5,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
+		blockSet2.add(new Block(1,5,-2,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,5,-4,BlockType.SLIME,Orientation.NORTH));
+		// Top layer
+		blockSet2.add(new Block(1,6,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		blockSet2.add(new Block(1,6,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		// Activate
+		blockSet2.add(new Block(1,6,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
+		
+		assertEquals(new Vertex(1.0,5.375,-1.375), ff.getCenterOfMass(blockSet2));
 	}
 
 }
