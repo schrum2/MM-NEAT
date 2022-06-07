@@ -71,7 +71,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			// Creates the bin labels
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 			
-			//Checks if the bin either 1S 4d+ or if command line param for linear archive is true. If any are, Generates them in 1 dimension
+			//Checks if the bin either 1D, 4D+ or if command line param for linear archive is true. If any are, Generates them in 1 dimension
 			if(minecraftBinLabels.dimensionSizes().length==1 ||minecraftBinLabels.dimensionSizes().length>=4||Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
 				
 				// Get the one dimensional index of the shape
@@ -156,7 +156,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesWHD", "saveTo:MAPElitesWHD",
 					"io:true", "netio:true",
-					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
+					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:true",
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
