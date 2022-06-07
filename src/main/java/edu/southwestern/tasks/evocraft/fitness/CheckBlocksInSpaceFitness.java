@@ -34,11 +34,15 @@ public abstract class CheckBlocksInSpaceFitness extends MinecraftFitnessFunction
 	 * @return List of blocks occupying the space for the given shape
 	 */
 	public static List<Block> readBlocksFromClient(MinecraftCoordinates corner) {
-		MinecraftClient client = MinecraftClient.getMinecraftClient();
 		MinecraftCoordinates ranges = new MinecraftCoordinates(
 				Parameters.parameters.integerParameter("minecraftXRange") - 1,
 				Parameters.parameters.integerParameter("minecraftYRange") - 1,
 				Parameters.parameters.integerParameter("minecraftZRange") - 1);
+		return readBlocksFromClient(corner, ranges);
+	}
+	
+	public static List<Block> readBlocksFromClient(MinecraftCoordinates corner, MinecraftCoordinates ranges) {
+		MinecraftClient client = MinecraftClient.getMinecraftClient();
 		List<Block> blocks = client.readCube(corner, corner.add(ranges));
 		return blocks;
 	}
