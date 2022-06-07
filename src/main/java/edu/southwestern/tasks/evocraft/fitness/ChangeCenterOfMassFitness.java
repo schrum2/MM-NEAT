@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
@@ -28,17 +29,25 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		//int yrange = Parameters.parameters.integerParameter("minecraftYRange");
 		int zrange = Parameters.parameters.integerParameter("minecraftZRange");
 		
+		assert xrange > 0 : "xrange must be positive: " + xrange;
+		assert zrange > 0 : "zrange must be positive: " + zrange;
+		
 		// Setting the space in between to be large and storing it
 		// Might need to be bigger!
 		int inBetween = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
 		
 		// Shifts over the corner to the new range with the large space in between shapes
 		int shift = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes") / 2;
-		corner = new MinecraftCoordinates(corner.x() - shift, corner.y(), corner.z()- shift);
+		corner = new MinecraftCoordinates(corner.x() - shift, corner.y(), corner.z() - shift);
 		MinecraftCoordinates end = corner.add(new MinecraftCoordinates(xrange + inBetween, 0, zrange + inBetween));
 		
+		assert corner.x() <= end.x() && corner.y() <= end.y() && corner.z() <= end.z(): "corner should be less than end in each coordinate: corner = "+corner+ ", max = "+end; 
+		
+//		System.out.println("corner:"+corner);
+//		System.out.println("end:"+end);
+		
 		// List of blocks in the area based on the corner
-		List<Block> blocks = CheckBlocksInSpaceFitness.readBlocksFromClient(corner,end);
+		List<Block> blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
 		
 		//System.out.println("List of blocks before movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
 		
@@ -58,7 +67,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		}
 		
 		// Read in again to update the list
-		blocks = CheckBlocksInSpaceFitness.readBlocksFromClient(corner,end);
+		blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
 		
 		//System.out.println("List of blocks after movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
 		
