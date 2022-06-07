@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.data.SaveThread;
@@ -411,7 +412,10 @@ public class PopulationUtil {
 	 *            How many layers to keep
 	 */
 	public static <T> void pruneDownToTopParetoLayers(ArrayList<Genotype<T>> population, NSGA2Score<T>[] scores, int layers) {
+		assert layers > 0;
+		assert scores.length > 0;
 		ArrayList<ArrayList<NSGA2Score<T>>> fronts = NSGA2.getParetoLayers(scores);		
+		assert fronts.size() > 0;
 		// Reduce population to only contain top Pareto layers
 		Iterator<Genotype<T>> itr = population.iterator();
 		System.out.println("Reducing to top " + layers + " Pareto layers");
@@ -430,6 +434,7 @@ public class PopulationUtil {
 			}
 			if (!found) {
 				itr.remove();
+				assert population.size() > 0 : Arrays.stream(scores).map( s -> Arrays.toString(s.scores)).collect(Collectors.toList());
 			}
 		}
 	}
@@ -544,7 +549,8 @@ public class PopulationUtil {
 		int i = 0;
 		while (s.hasNextLine()) {
 			Scanner line = new Scanner(s.nextLine());
-			//int withinGen = line.nextInt();
+			@SuppressWarnings("unused")
+			int withinGen = line.nextInt(); // Not used, but must be read from file
 			long offspringId = line.nextLong();
 			ArrayList<Double> scores = new ArrayList<Double>();
 			while (line.hasNext()) {
