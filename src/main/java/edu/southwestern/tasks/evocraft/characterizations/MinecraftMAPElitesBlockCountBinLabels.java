@@ -43,7 +43,7 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 
 	@Override
 	public int[] dimensionSizes() {
-		return new int[] {Parameters.parameters.integerParameter("minecraftXRange")+1, Parameters.parameters.integerParameter("minecraftYRange")+1, Parameters.parameters.integerParameter("minecraftZRange")+1};
+		return new int[] {Parameters.parameters.integerParameter("minecraftXRange")*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange")+1};
 	}
 
 	@Override
