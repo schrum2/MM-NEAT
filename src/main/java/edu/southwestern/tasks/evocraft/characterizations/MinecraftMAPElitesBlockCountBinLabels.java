@@ -29,7 +29,7 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 			
 			labels = new ArrayList<String>(size);
 			
-			// go through all possible bins+1 since both 0 and 1000 are both possibilities (i < size would just give a range of 0-999)
+			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities (i < size would just give a range of 0-999)
 			for(int i = 0; i < size + 1; i++) labels.add(i + " Blocks"); 
 		}
 		return labels;

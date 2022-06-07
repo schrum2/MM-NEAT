@@ -51,6 +51,9 @@ public final class LoadAndWatchExperiment<T> implements Experiment {
 				PopulationUtil.pruneDownToParetoFront(population, scores);
 			}
 		}
+		
+		PopulationUtil.saveGraphVizNetworks(population);
+
 	}
 
 	/**

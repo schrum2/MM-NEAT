@@ -2,6 +2,7 @@ package edu.southwestern.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,7 @@ import edu.southwestern.evolution.mutation.tweann.CauchyDeltaCodeMutation;
 import edu.southwestern.evolution.mutation.tweann.WeightRandomReplacement;
 import edu.southwestern.evolution.nsga2.NSGA2;
 import edu.southwestern.evolution.nsga2.NSGA2Score;
+import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.parameters.CommonConstants;
@@ -908,4 +910,42 @@ public class PopulationUtil {
 		}
 		return children;
 	}
+	
+	/**
+	 * Saves the text necessary to view the genotypes neural network via graphviz.
+	 * 
+	 * @param <T> Generic type T
+	 * @param genotypes that will have their neural networks saved in a text file.
+	 */
+	public static <T> void saveGraphVizNetworks(ArrayList<Genotype<T>> genotypes) {
+		// check
+		// check if the first genome is a TWEANNGenotype
+		if(genotypes.get(0) instanceof TWEANNGenotype) {
+			// make new sub-dir "GraphVizNetworks"
+			File f = new File(FileUtilities.getSaveDirectory() +"/GraphVizNetworks");
+			if (!f.exists()) f.mkdirs();
+			
+			// loop through all genotypes and create a file for each one containing toGraphViz method result
+			String[] inputs = ((NetworkTask) MMNEAT.task).sensorLabels(); // get input labels
+			String[] outputs = ((NetworkTask) MMNEAT.task).outputLabels(); // get output labels
+			for(int i = 0; i < genotypes.size(); i++) {
+				// use ((NetworkTask) MMNEAT.task)
+				String nnString = ((TWEANNGenotype) genotypes.get(i)).toGraphViz(inputs, outputs);
+				//String nnString = TWEANNGenotype.toGraphViz(inputs, outputs);
+				File newNeuralNetowrkFile = new File(FileUtilities.getSaveDirectory() + "/GraphVizNetworks/neuralnetwork"+genotypes.get(i).getId()+".txt");
+				
+				// write to new file the output of toGraphViz method
+				try {
+					FileWriter fw = new FileWriter(newNeuralNetowrkFile);
+					fw.write(nnString);
+					fw.close();
+				} catch(Exception e) {
+					System.out.println(e);
+				}
+				
+			}
+
+		}
+	}
+
 }

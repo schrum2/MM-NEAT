@@ -2213,13 +2213,13 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 		for(int i=0; i < nodes.size(); i++) {
 			if(i >= nodes.size() - numOut) {
 				assert nodes.get(i).ntype == TWEANN.Node.NTYPE_OUTPUT;
-				string.append("\n" + outputs[i - (nodes.size() - numOut)]);
+				string.append("\n" + "\"" + outputs[i - (nodes.size() - numOut)]+ "\"");
 				string.append("[fillcolor=lightblue style=filled]");
 				innovationToLabel.put(nodes.get(i).innovation,outputs[i - (nodes.size() - numOut)]);
 			}
 			else if(i < numIn) {
 				assert nodes.get(i).ntype == TWEANN.Node.NTYPE_INPUT;
-				string.append("\n" + inputs[i]);
+				string.append("\n" + "\"" + inputs[i] + "\"");
 				string.append("[fillcolor=lightgray shape=box style=filled]");
 				innovationToLabel.put(nodes.get(i).innovation,inputs[i]);
 			}
@@ -2234,12 +2234,12 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN>, Serializable {
 	
 		for(LinkGene lg : links) {
 			if(innovationToLabel.containsKey(lg.sourceInnovation))
-				string.append("\n" + innovationToLabel.get(lg.sourceInnovation));
+				string.append("\n" + "\""  + innovationToLabel.get(lg.sourceInnovation)+ "\"");
 			else
 				string.append("\n"+ lg.sourceInnovation);
 			
 			if(innovationToLabel.containsKey(lg.targetInnovation))
-				string.append("->" + innovationToLabel.get(lg.targetInnovation));
+				string.append("->" + "\"" + innovationToLabel.get(lg.targetInnovation)+ "\"");
 			else
 				string.append("->"+ lg.targetInnovation);
 			
