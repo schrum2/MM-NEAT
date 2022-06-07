@@ -28,7 +28,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		int zrange = Parameters.parameters.integerParameter("minecraftZRange");
 		
 		// Setting the space in between to be large and storing it
-		Parameters.parameters.setInteger("spaceBetweenMinecraftShapes", 50);
+		Parameters.parameters.setInteger("spaceBetweenMinecraftShapes", 20);
 		int inBetween = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
 		
 		// Changing the size of the ranges with space in between
