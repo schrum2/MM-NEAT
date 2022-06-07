@@ -97,19 +97,17 @@ public interface ShapeGenerator<T> {
 			int startIndex = numBlockTypes + 1;
 			int endIndex = numBlockTypes + NUM_DIRECTIONS;
 			double[] directionPreferences = ArrayUtil.portion(outputs, startIndex, endIndex);
-	//		assert directionPreferences.length == 6 : "Should have 6 possible directions: " + Arrays.toString(directionPreferences) + " from "+ startIndex +" to " + endIndex + " of " + Arrays.toString(outputs);
+			assert directionPreferences.length == 6 : "Should have 6 possible directions: " + Arrays.toString(directionPreferences) + " from "+ startIndex +" to " + endIndex + " of " + Arrays.toString(outputs);
 			
 			// If redirecting snakes when confining
 			if(Parameters.parameters.booleanParameter("minecraftRedirectConfinedSnakes")) {
 				for(int i = 0; i < NUM_DIRECTIONS; i++) {
 					int[] possibleDirection = nextDirection(i);
 					if(checkOutOfBounds(possibleDirection, ranges, xi, yi, zi)) {
-						directionPreferences[i] = 1.0/-0.0;
+						directionPreferences[i] = Double.NEGATIVE_INFINITY;
 					}
 				}
 			}
-			
-			
 			
 			int directionIndex = StatisticsUtilities.argmax(directionPreferences);
 			int[] direction = nextDirection(directionIndex);

@@ -588,10 +588,28 @@ public class MinecraftClient extends Comm {
 	 * @param start Start coordinates where shapes are generated
 	 * @param ranges Size of each shape space
 	 * @param numShapes Number of generated shapes
+	 * @param buffer Buffer distance between shapes
 	 */
 	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer) {
-		MinecraftCoordinates groundStart = new MinecraftCoordinates(start.x()-buffer, GROUND_LEVEL, start.z()-buffer);
+		clearSpaceForShapes(start, ranges, numShapes, buffer, true);
+	}
+	
+	/**(
+	 * Clear a large enough space in the world for up to a population of shapes. This
+	 * is a separate method that is called by a method of the same name, however, this 
+	 * method allows for toggling whether or not the y is set at ground level
+	 * 
+	 * @param start Start coordinates where shapes are generated
+	 * @param ranges Size of each shape space
+	 * @param numShapes Number of generated shapes
+	 * @param buffer Buffer distance between shapes
+	 * @param stopAtGround Whether or not the y axis is set at ground level
+	 */
+	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer, boolean stopAtGround) {
+		MinecraftCoordinates groundStart = new MinecraftCoordinates(start.x()-buffer, stopAtGround ? GROUND_LEVEL : start.y()-buffer, start.z()-buffer);
+		System.out.println("Starts:"+groundStart);
 		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) + buffer, start.y() + ranges.y() + buffer, start.z() + ranges.z() + buffer);
+		System.out.println("ENDS:"+end);
 		fillCube(groundStart, end, BlockType.AIR);
 	}
 	
