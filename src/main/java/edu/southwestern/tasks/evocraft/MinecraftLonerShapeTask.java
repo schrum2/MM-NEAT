@@ -105,7 +105,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			else {
 				assert minecraftBinLabels.dimensionSizes().length== 3;
 				int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
-				MinecraftCoordinates startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
+				MinecraftCoordinates startPosition = new MinecraftCoordinates(multiDimIndex[0]*MinecraftClient.BUFFER+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*MinecraftClient.BUFFER+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*MinecraftClient.BUFFER+multiDimIndex[2]*ranges.z());
 				System.out.println(startPosition);
 				
 				int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
@@ -114,20 +114,20 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
 				
 				if(scoreOfCurrentElite>scoreOfPreviousElite) {
-					MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes"), 1,false);
-					List<Block> test = new ArrayList<>();
-					test.add(new Block(startPosition.x(),startPosition.y(),startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x()+1,startPosition.y(),startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x()+1,startPosition.y()+1,startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x()+1,startPosition.y()+1,startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x(),startPosition.y()+1,startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x(),startPosition.y()+1,startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x(),startPosition.y(),startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x()+1,startPosition.y(),startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
+					MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, 1,false);
+//					List<Block> test = new ArrayList<>();
+//					test.add(new Block(startPosition.x(),startPosition.y(),startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x()+1,startPosition.y(),startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x()+1,startPosition.y()+1,startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x()+1,startPosition.y()+1,startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x(),startPosition.y()+1,startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x(),startPosition.y()+1,startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x(),startPosition.y(),startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
+//					test.add(new Block(startPosition.x()+1,startPosition.y(),startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
 					
-//					@SuppressWarnings("unchecked")
-//					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
-					MinecraftClient.getMinecraftClient().spawnBlocks(test);
+					@SuppressWarnings("unchecked")
+					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
+					MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 				}
 			}
 			// TODO: If placing the archive in the Minecraft work, then use the contents of behaviorCharacteristics and BinLabel shape info to re-generate the shape at the right coordinates
@@ -179,7 +179,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"base:minecraft", "log:Minecraft-MAPElitesWHD", "saveTo:MAPElitesWHD",
 					"io:true", "netio:true",
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
-					"launchMinecraftServerFromJava:false","spaceBetweenMinecraftShapes:5",
+					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
 					//"minecraftTypeCountFitness:true",
@@ -195,7 +195,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
-					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
+					"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
