@@ -14,7 +14,9 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.util.datastructures.Pair;
 
@@ -68,14 +70,23 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		@SuppressWarnings("unchecked")
 		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
 		System.out.println("1D index: "+oneDimIndex);
-		MinecraftCoordinates startPosition = new MinecraftCoordinates(ranges.x()*oneDimIndex+MinecraftClient.BUFFER,5,0);
+		MinecraftCoordinates startPosition = new MinecraftCoordinates(oneDimIndex*MinecraftClient.BUFFER+oneDimIndex*ranges.x(),5,0);
 		System.out.println("Starting position: "+startPosition);
 		if(scoreOfCurrentElite>scoreOfPreviousElite) {
 			System.out.println("CURRENT: "+scoreOfCurrentElite+" |PREVIOUS: "+scoreOfPreviousElite);
 			MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, MinecraftClient.BUFFER);
 			@SuppressWarnings("unchecked")
-			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
-			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+			List<Block> test = new ArrayList<>();
+			test.add(new Block(startPosition.x(),5,0,BlockType.GLOWSTONE, Orientation.WEST));
+			test.add(new Block(startPosition.x()+1,5,0,BlockType.GLOWSTONE, Orientation.WEST));
+			test.add(new Block(startPosition.x()+1,6,0,BlockType.GLOWSTONE, Orientation.WEST));
+			test.add(new Block(startPosition.x()+1,6,1,BlockType.GLOWSTONE, Orientation.WEST));
+			test.add(new Block(startPosition.x(),6,0,BlockType.GLOWSTONE, Orientation.WEST));
+			test.add(new Block(startPosition.x(),6,1,BlockType.GLOWSTONE, Orientation.WEST));
+			test.add(new Block(startPosition.x()+1,5,1,BlockType.GLOWSTONE, Orientation.WEST));
+			test.add(new Block(startPosition.x(),5,1,BlockType.GLOWSTONE, Orientation.WEST));
+//			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
+			MinecraftClient.getMinecraftClient().spawnBlocks(test);
 		}
 		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(startPosition.x(),MinecraftClient.GROUND_LEVEL+1,startPosition.z()), ranges, 1, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
 		
