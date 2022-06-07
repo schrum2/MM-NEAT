@@ -71,13 +71,11 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			// Creates the bin labels
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 			
-			//Checks if the bin either 1S 4d+ or if command line param for linear archive is true. If any are, Generates them in 1 dimension
+			//Checks if the bin either 1D, 4D+ or if command line param for linear archive is true. If any are, Generates them in 1 dimension
 			if(minecraftBinLabels.dimensionSizes().length==1 ||minecraftBinLabels.dimensionSizes().length>=4||Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
 				
-				System.out.println("==================================================================================================");
 				// Get the one dimensional index of the shape
 				int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
-				System.out.println("1D index: "+oneDimIndex);
 				
 				// Gets the bin scores to compare them 
 				double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
@@ -85,61 +83,67 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
 				
 				MinecraftCoordinates startPosition = new MinecraftCoordinates(oneDimIndex*MinecraftClient.BUFFER+oneDimIndex*ranges.x(),5,0);
-				System.out.println("Starting position: "+startPosition);
-				System.out.println("CURRENT: "+scoreOfCurrentElite+" |PREVIOUS: "+scoreOfPreviousElite);
+				
+				// If the new shape is better than the previous, it gets replaced
 				if(scoreOfCurrentElite>scoreOfPreviousElite) {
 					MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, MinecraftClient.BUFFER);
-//					List<Block> test = new ArrayList<>();
-//					test.add(new Block(startPosition.x(),5,0,BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x()+1,5,0,BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x()+1,6,0,BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x()+1,6,1,BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x(),6,0,BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x(),6,1,BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x()+1,5,1,BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x(),5,1,BlockType.GLOWSTONE, Orientation.WEST));
 					@SuppressWarnings("unchecked")
 					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
 					MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 				}
-			}
-			else {
-				assert minecraftBinLabels.dimensionSizes().length== 3;
-				int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
-				MinecraftCoordinates startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
-				System.out.println(startPosition);
 				
+			// If archive is 2D
+			}else if(minecraftBinLabels.dimensionSizes().length==2) {
+				// Gets the multi-dimensional index for starting points
+				int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
+				MinecraftCoordinates startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),5,multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
+				
+				// Gets the bin scores to compare them
 				int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
 				double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
 				@SuppressWarnings("unchecked")
 				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
 				
+				// If the new shape is better than the previous, it gets replaced
 				if(scoreOfCurrentElite>scoreOfPreviousElite) {
-//					MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, 1,false);
 					MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
 					MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
 					MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
 					MinecraftClient.getMinecraftClient().fillCube(clearStart, clearEnd, BlockType.AIR);
-					System.out.println("AAAAAAAAAAAAAAAAAAAAA"+clearEnd);
 					
-//					List<Block> test = new ArrayList<>();
-//					test.add(new Block(startPosition.x(),startPosition.y(),startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x()+1,startPosition.y(),startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x()+1,startPosition.y()+1,startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x()+1,startPosition.y()+1,startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x(),startPosition.y()+1,startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x(),startPosition.y()+1,startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x(),startPosition.y(),startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
-//					test.add(new Block(startPosition.x()+1,startPosition.y(),startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
-//					
+					@SuppressWarnings("unchecked")
+					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
+					MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+				}
+				
+			// If archive is 3D
+			}else {
+				assert minecraftBinLabels.dimensionSizes().length== 3;
+				
+				// Gets the multi-dimensional index for starting points
+				int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
+				MinecraftCoordinates startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
+				
+				// Gets the bin scores to compare them
+				int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
+				double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
+				@SuppressWarnings("unchecked")
+				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
+				
+				// If the new shape is better than the previous, it gets replaced
+				if(scoreOfCurrentElite>scoreOfPreviousElite) {
+					MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
+					MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
+					MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
+					MinecraftClient.getMinecraftClient().fillCube(clearStart, clearEnd, BlockType.AIR);
+					
 					@SuppressWarnings("unchecked")
 					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
 					MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 				}
 			}			
-			// This result will be ignored when using MAP Elites
-			}
-			
+		}
+		// This result will be ignored when using MAP Elites	
 		return new Pair<>(score.scores, score.otherStats);
 	}
 	
@@ -183,7 +187,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesWHD", "saveTo:MAPElitesWHD",
 					"io:true", "netio:true",
-					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
+					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:true",
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
@@ -200,7 +204,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
-					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
+					"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
