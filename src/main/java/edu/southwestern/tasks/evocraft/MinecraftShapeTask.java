@@ -278,7 +278,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		int seed = 0;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:10", "maxGens:100",
-					"base:minecraft", "log:Minecraft-DiverseBlocks", "saveTo:DiverseBlocks",
+					"base:minecraft", "log:Minecraft-CenterOfMass", "saveTo:CenterOfMass",
 					"io:true", "netio:true", 
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 

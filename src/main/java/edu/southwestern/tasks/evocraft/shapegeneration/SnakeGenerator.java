@@ -48,9 +48,9 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 		int zi = ranges.z()/2;
 		
 		MinecraftCoordinates occupiedCoordinate = new MinecraftCoordinates(xi,yi,zi);
-		occupied.add(occupiedCoordinate);
 		
 		while(!done) {
+			occupied.add(occupiedCoordinate);
 			numberOfIterations++;
 			//System.out.println(numberOfIterations);
 			MinecraftCoordinates direction = ShapeGenerator.generateBlock(corner, blockSet, snake, net, ranges, distanceInEachPlane, xi, yi, zi);
