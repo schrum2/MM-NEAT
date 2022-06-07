@@ -25,17 +25,19 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 			int yDim = Parameters.parameters.integerParameter("minecraftYRange")+1;
 			int zDim = Parameters.parameters.integerParameter("minecraftZRange")+1;
 			
-			int size = xDim*yDim*zDim;
+			int size = xDim*yDim*zDim; // size is the total possible volume
 			
 			labels = new ArrayList<String>(size);
-			for(int i = 0; i < size + 1; i++) labels.add(i + " Blocks");
+			
+			// go through all possible bins+1 since both 0 and 1000 are both possibilities (i < size would just give a range of 0-999)
+			for(int i = 0; i < size + 1; i++) labels.add(i + " Blocks"); 
 		}
 		return labels;
 	}
 
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = multi[0];
+		int binIndex = multi[0]; // the value of multi[0] correlates to the appropriate bin index.
 		return binIndex;
 	}
 
@@ -46,7 +48,7 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 
 	@Override
 	public List<MinecraftFitnessFunction> properties() {
-		return properties;
+		return properties; //fitness function being used is OccupiedCountFitness
 	}
 
 	public static void main(String[] args) {
