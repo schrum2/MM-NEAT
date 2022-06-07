@@ -60,6 +60,7 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
+					"minecraftContainsWholeMAPElitesArchive:true",
 					//"minecraftTypeCountFitness:true",
 					"minecraftDiversityBlockFitness:true",
 					//"minecraftTypeTargetFitness:true", 
