@@ -262,7 +262,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		ArrayList<MinecraftCoordinates> corners = new ArrayList<>(size);
 		int count = 0;
 		for(int i = 0; i < size; i++) {
-			MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftStructures")), MinecraftClient.GROUND_LEVEL+1, startingZ);
+			MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), MinecraftClient.GROUND_LEVEL+1, startingZ);
 			corners.add(corner);
 			count++;
 		}
