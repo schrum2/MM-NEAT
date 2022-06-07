@@ -83,23 +83,54 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
 				
 				MinecraftCoordinates startPosition = new MinecraftCoordinates(oneDimIndex*MinecraftClient.BUFFER+oneDimIndex*ranges.x(),5,0);
+				
+				// If the new shape is better than the previous, it gets replaced
 				if(scoreOfCurrentElite>scoreOfPreviousElite) {
 					MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, MinecraftClient.BUFFER);
 					@SuppressWarnings("unchecked")
 					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
 					MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 				}
-			}
-			else {
-				assert minecraftBinLabels.dimensionSizes().length== 3;
-				int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
-				MinecraftCoordinates startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
 				
+			// If archive is 2D
+			}else if(minecraftBinLabels.dimensionSizes().length==2) {
+				// Gets the multi-dimensional index for starting points
+				int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
+				MinecraftCoordinates startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),5,multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
+				
+				// Gets the bin scores to compare them
 				int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
 				double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
 				@SuppressWarnings("unchecked")
 				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
 				
+				// If the new shape is better than the previous, it gets replaced
+				if(scoreOfCurrentElite>scoreOfPreviousElite) {
+					MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
+					MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
+					MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
+					MinecraftClient.getMinecraftClient().fillCube(clearStart, clearEnd, BlockType.AIR);
+					
+					@SuppressWarnings("unchecked")
+					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
+					MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+				}
+				
+			// If archive is 3D
+			}else {
+				assert minecraftBinLabels.dimensionSizes().length== 3;
+				
+				// Gets the multi-dimensional index for starting points
+				int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
+				MinecraftCoordinates startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
+				
+				// Gets the bin scores to compare them
+				int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
+				double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
+				@SuppressWarnings("unchecked")
+				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
+				
+				// If the new shape is better than the previous, it gets replaced
 				if(scoreOfCurrentElite>scoreOfPreviousElite) {
 					MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
 					MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
