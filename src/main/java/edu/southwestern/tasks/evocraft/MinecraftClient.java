@@ -17,8 +17,6 @@ import edu.southwestern.util.datastructures.Triple;
 public class MinecraftClient extends Comm {
 
 	public static final int GROUND_LEVEL = 4;
-	// TODO: Command line param?
-	public static final int SPACE_BETWEEN = 5;
 
 	public static final int BUFFER = 10;
 
@@ -610,7 +608,7 @@ public class MinecraftClient extends Comm {
 	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer, boolean stopAtGround) {
 		MinecraftCoordinates groundStart = new MinecraftCoordinates(start.x()-buffer, stopAtGround ? GROUND_LEVEL : start.y()-buffer, start.z()-buffer);
 		System.out.println("Starts:"+groundStart);
-		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + SPACE_BETWEEN) + buffer, start.y() + ranges.y() + buffer, start.z() + ranges.z() + buffer);
+		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) + buffer, start.y() + ranges.y() + buffer, start.z() + ranges.z() + buffer);
 		System.out.println("ENDS:"+end);
 		fillCube(groundStart, end, BlockType.AIR);
 	}

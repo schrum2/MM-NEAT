@@ -36,6 +36,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	private MinecraftShapeTask<T> internalMinecraftShapeTask;
 	
 	public MinecraftLonerShapeTask() {
+		/**
+		 * Default shape generation location is shifted away a bit so that the archive can populate the world starting around (0,5,0) 
+		 */
 		internalMinecraftShapeTask = new MinecraftShapeTask<T>() {
 			public int getStartingX() { return - getRanges().x() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
 			
