@@ -67,18 +67,19 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		}
 		
 		// Read in again to update the list
-		blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
+		List<Block> afterBlocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
 		
 		//System.out.println("List of blocks after movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
 		
 		// Final center of mass is where it ends up after the wait time
-		Vertex finalCenterOfMass = getCenterOfMass(blocks);
+		Vertex finalCenterOfMass = getCenterOfMass(afterBlocks);
 		
 		//System.out.println(finalCenterOfMass);
 		
 		// Change in position could be in any of these directions (I believe)
 		//double changeInPosition = (Math.sqrt(Math.pow(finalCenterOfMass.x()-initialCenterOfMass.x(),2)) + Math.pow(finalCenterOfMass.y()-initialCenterOfMass.y(),2) + Math.pow(finalCenterOfMass.z()-initialCenterOfMass.z(),2));
 		double changeInPosition = finalCenterOfMass.distance(initialCenterOfMass);
+		assert !Double.isNaN(changeInPosition) : "Before: " + blocks + ", After:" + afterBlocks;
 		return changeInPosition;
 	}
 	
