@@ -45,40 +45,10 @@ public class ObjectiveBestNetworksExperiment<T> implements Experiment {
 			genotypes = PopulationUtil.load(dir);
 		}
 		
-		// check
-		// check if the first genome is a TWEANNGenotype
-		if(genotypes.get(0) instanceof TWEANNGenotype) {
-		
-			// base directory where the sub-directory will be made.
-			String base = Parameters.parameters.stringParameter("base");
-			
-			// make new sub-dir "GraphVizNetworks"
-			File f = new File(base + "/" + Parameters.parameters.stringParameter("saveTo") +"/GraphVizNetworks");
-			if (!f.exists()) f.mkdirs();
-			
-			// loop through all genotypes and create a file for each one containing toGraphViz method result
-			String[] inputs = ((NetworkTask) MMNEAT.task).sensorLabels(); // get input labels
-			String[] outputs = ((NetworkTask) MMNEAT.task).outputLabels(); // get output labels
-			for(int i = 0; i < genotypes.size(); i++) {
-				// use ((NetworkTask) MMNEAT.task)
-				String nnString = ((TWEANNGenotype) MMNEAT.task).toGraphViz(inputs, outputs);
-				//String nnString = TWEANNGenotype.toGraphViz(inputs, outputs);
-				File newNeuralNetowrkFile = new File(base + "/" + Parameters.parameters.stringParameter("saveTo") + "/GraphVizNetworks/" + i + " nueralnetwork.txt");
-				
-				// write to new file the output of toGraphViz method
-				try {
-					FileWriter fw = new FileWriter(newNeuralNetowrkFile);
-					fw.write(nnString);
-					fw.close();
-				} catch(Exception e) {
-					System.out.println(e);
-				}
-				
-			}
-
-		}
+		PopulationUtil.saveGraphVizNetworks(genotypes);
 	}
 
+	
 	/**
 	 * Evaluate each individual. Only works for Loner Tasks
 	 */
