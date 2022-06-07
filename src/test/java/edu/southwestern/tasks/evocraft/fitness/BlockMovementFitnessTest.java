@@ -145,7 +145,7 @@ public class BlockMovementFitnessTest {
 		
 		MinecraftClient.getMinecraftClient().spawnBlocks(exampleFlyingMachine);
 		
-		assertEquals(11.0, ff.fitnessFromBlocks(cornerEx, exampleFlyingMachine), 0.0);
+		assertEquals(8.0, ff.fitnessFromBlocks(cornerEx, exampleFlyingMachine), 0.0);
 		
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerEx, ranges, 1, 0);
 	}

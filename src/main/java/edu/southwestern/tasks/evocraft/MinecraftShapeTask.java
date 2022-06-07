@@ -262,7 +262,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		ArrayList<MinecraftCoordinates> corners = new ArrayList<>(size);
 		int count = 0;
 		for(int i = 0; i < size; i++) {
-			MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + MinecraftClient.SPACE_BETWEEN), MinecraftClient.GROUND_LEVEL+1, startingZ);
+			MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftStructures")), MinecraftClient.GROUND_LEVEL+1, startingZ);
 			corners.add(corner);
 			count++;
 		}
@@ -286,7 +286,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					//"minecraftEvolveOrientation:true",
 					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true",
-					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
+					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",
