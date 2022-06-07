@@ -21,9 +21,9 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) { // Create once and re-use, but wait until after Parameters are loaded	
-			int xDim = Parameters.parameters.integerParameter("minecraftXRange")+1;
-			int yDim = Parameters.parameters.integerParameter("minecraftYRange")+1;
-			int zDim = Parameters.parameters.integerParameter("minecraftZRange")+1;
+			int xDim = Parameters.parameters.integerParameter("minecraftXRange");
+			int yDim = Parameters.parameters.integerParameter("minecraftYRange");
+			int zDim = Parameters.parameters.integerParameter("minecraftZRange");
 			
 			int size = xDim*yDim*zDim;
 			
