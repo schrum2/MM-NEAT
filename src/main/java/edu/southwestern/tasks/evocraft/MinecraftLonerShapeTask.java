@@ -62,18 +62,24 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			behaviorCharacteristics.put(entry.getKey(), entry.getValue());
 		}
 		
+		// Checks command line param on whether or not to generate shapes in archive
 		if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive")) {
-			System.out.println("==================================================================================================");
-			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
-			// Start position for regenerating shapes
 			
+			// Creates the bin labels
+			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+			
+			//Checks if the bin either 1S 4d+ or if command line param for linear archive is true. If any are, Generates them in 1 dimension
 			if(minecraftBinLabels.dimensionSizes().length==1 ||minecraftBinLabels.dimensionSizes().length>=4||Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
-				System.out.println(minecraftBinLabels.dimensionSizes().length);
+				
+				System.out.println("==================================================================================================");
+				
 				int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
+				System.out.println("1D index: "+oneDimIndex);
+				
 				double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
 				@SuppressWarnings("unchecked")
 				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
-				System.out.println("1D index: "+oneDimIndex);
+				
 				MinecraftCoordinates startPosition = new MinecraftCoordinates(oneDimIndex*MinecraftClient.BUFFER+oneDimIndex*ranges.x(),5,0);
 				System.out.println("Starting position: "+startPosition);
 				System.out.println("CURRENT: "+scoreOfCurrentElite+" |PREVIOUS: "+scoreOfPreviousElite);
@@ -92,6 +98,15 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
 					MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 				}
+			}
+			else {
+				assert minecraftBinLabels.dimensionSizes().length== 3;
+				int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
+				MinecraftCoordinates startPosition = new MinecraftCoordinates(multiDimIndex[0]*MinecraftClient.BUFFER+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*MinecraftClient.BUFFER+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*MinecraftClient.BUFFER+multiDimIndex[2]*ranges.z());
+				System.out.println(startPosition);
+				@SuppressWarnings("unchecked")
+				List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
+				MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 			}
 			// TODO: If placing the archive in the Minecraft work, then use the contents of behaviorCharacteristics and BinLabel shape info to re-generate the shape at the right coordinates
 			
@@ -141,7 +156,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesWHD", "saveTo:MAPElitesWHD",
 					"io:true", "netio:true",
-					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:true",
+					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
