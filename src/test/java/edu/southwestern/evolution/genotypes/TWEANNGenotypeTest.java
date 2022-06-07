@@ -267,4 +267,84 @@ public class TWEANNGenotypeTest {
 		assertEquals(hncasag.nodes.get(37).innovation, -13);
 		assertEquals(hncasag.nodes.get(37).ntype, 2);
 	}
+	
+	@Test
+	public void test_toGraphViz() {
+		Parameters.initializeParameterCollections(
+				new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "recurrency:false" });
+		MMNEAT.loadClasses();
+
+		TWEANNGenotype tg1 = new TWEANNGenotype(3, 2, 0);
+		MMNEAT.genotype = tg1.copy();
+		EvolutionaryHistory.initArchetype(0);
+		
+		//System.out.println(tg1.nodes);
+		StringBuilder sb = new StringBuilder();
+		for(int source = 0; source < 3; source++) {
+			for(int target = 0; target < 2; target++) {
+				double weight = tg1.links.get(source*2 + target).weight;
+				sb.append("\nin"+(source+1)+"->out"+(target+1)+"[color="+(weight <= 0 ? "red" : "green")+" penwidth="+Math.abs(weight)+" style=solid]");
+			}
+		}
+		
+		//System.out.println(tg1.toGraphViz(new String[] {"in1","in2","in3"}, new String[]{"out1","out2"}));
+		
+		assertEquals("digraph {"
+				+ "\nnode[fontsize=9 height=0.2 shape=circle width=0.2]"
+				+ "\nin1[fillcolor=lightgray shape=box style=filled]"
+				+ "\nin2[fillcolor=lightgray shape=box style=filled]"
+				+ "\nin3[fillcolor=lightgray shape=box style=filled]"
+				+ "\nout1[fillcolor=lightblue style=filled]"
+				+ "\nout2[fillcolor=lightblue style=filled]"
+				+ sb
+				+ "}", tg1.toGraphViz(new String[] {"in1","in2","in3"}, new String[]{"out1","out2"}));
+		
+		
+		for(int links = 0; links < tg1.links.size(); links++) {
+			tg1.links.get(links).weight = 0.5; 
+		}
+		
+		tg1.spliceNode(1, 1, -1, -4, 0.75, -0.77, 2, 7);
+		//System.out.println(tg1.toGraphViz(new String[] {"in1","in2","in3"}, new String[]{"out1","out2"}));
+		
+		assertEquals("digraph {"
+				+ "\nnode[fontsize=9 height=0.2 shape=circle width=0.2]"
+				+ "\nin1[fillcolor=lightgray shape=box style=filled]"
+				+ "\nin2[fillcolor=lightgray shape=box style=filled]"
+				+ "\nin3[fillcolor=lightgray shape=box style=filled]"
+				+ "\n1[fillcolor=white style=filled]"
+				+ "\nout1[fillcolor=lightblue style=filled]"
+				+ "\nout2[fillcolor=lightblue style=filled]"
+				+ "\nin1->out1[color=green penwidth=0.5 style=solid]"
+				+ "\nin1->out2[color=green penwidth=0.5 style=solid]"
+				+ "\nin2->out1[color=green penwidth=0.5 style=solid]"
+				+ "\nin2->out2[color=green penwidth=0.5 style=solid]"
+				+ "\nin3->out1[color=green penwidth=0.5 style=solid]"
+				+ "\nin3->out2[color=green penwidth=0.5 style=solid]"
+				+ "\nin1->1[color=green penwidth=0.75 style=solid]"
+				+ "\n1->out1[color=red penwidth=0.77 style=solid]}", tg1.toGraphViz(new String[] {"in1","in2","in3"}, new String[]{"out1","out2"}));
+		
+		tg1.spliceNode(1, 8, -3, -4, -0.0063918, 0.8675309, 6, 9);
+		//System.out.println(tg1.toGraphViz(new String[] {"in1","in2","in3"}, new String[]{"out1","out2"}));
+		
+		assertEquals("digraph {"
+				+ "\nnode[fontsize=9 height=0.2 shape=circle width=0.2]"
+				+ "\nin1[fillcolor=lightgray shape=box style=filled]"
+				+ "\nin2[fillcolor=lightgray shape=box style=filled]"
+				+ "\nin3[fillcolor=lightgray shape=box style=filled]"
+				+ "\n8[fillcolor=white style=filled]"
+				+ "\n1[fillcolor=white style=filled]"
+				+ "\nout1[fillcolor=lightblue style=filled]"
+				+ "\nout2[fillcolor=lightblue style=filled]"
+				+ "\nin1->out1[color=green penwidth=0.5 style=solid]"
+				+ "\nin1->out2[color=green penwidth=0.5 style=solid]"
+				+ "\nin2->out1[color=green penwidth=0.5 style=solid]"
+				+ "\nin2->out2[color=green penwidth=0.5 style=solid]"
+				+ "\nin3->out1[color=green penwidth=0.5 style=solid]"
+				+ "\nin3->out2[color=green penwidth=0.5 style=solid]"
+				+ "\nin1->1[color=green penwidth=0.75 style=solid]"
+				+ "\n1->out1[color=red penwidth=0.77 style=solid]"
+				+ "\nin3->8[color=red penwidth=0.0063918 style=solid]"
+				+ "\n8->out1[color=green penwidth=0.8675309 style=solid]}",tg1.toGraphViz(new String[] {"in1","in2","in3"}, new String[]{"out1","out2"}));
+	}
 }

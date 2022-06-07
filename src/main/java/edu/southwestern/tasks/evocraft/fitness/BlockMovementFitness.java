@@ -8,7 +8,19 @@ import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-
+/**
+ * This seems to work, but may not measure what we want it to.
+ * It tracks how much the space for the shape changes, but if
+ * the whole shape moves over one space, the score might not
+ * really be as good as it needs to be. For example, most of the
+ * shape could be made up of redstone, but if a redstone block
+ * moves into a spot where a redstone block was formerly, then
+ * that movement does not receive credit for moving since the
+ * block is the same.
+ * 
+ * @author richey2
+ *
+ */
 public class BlockMovementFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
