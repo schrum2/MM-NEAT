@@ -31,7 +31,7 @@ public class ChangeCenterOfMassFitnessTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Parameters.initializeParameterCollections(new String[] {});
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6"});
 		MinecraftClient.getMinecraftClient();
 	}
 

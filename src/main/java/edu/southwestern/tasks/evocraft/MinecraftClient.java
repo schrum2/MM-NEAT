@@ -547,6 +547,7 @@ public class MinecraftClient extends Comm {
 	 * @return List of Blocks between the min and max coordinates (inclusive)
 	 */
 	public synchronized ArrayList<Block> readCube(MinecraftCoordinates min, MinecraftCoordinates max) {
+		assert min.x() <= max.x() && min.y() <= max.y() && min.z() <= max.z(): "Min should be less than max in each coordinate: min = "+min+ ", max = "+max; 
 		return readCube(min.x(), min.y(), min.z(), max.x(), max.y(), max.z());
 	}
 	
