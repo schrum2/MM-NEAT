@@ -75,10 +75,11 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			if(minecraftBinLabels.dimensionSizes().length==1 ||minecraftBinLabels.dimensionSizes().length>=4||Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
 				
 				System.out.println("==================================================================================================");
-				
+				// Get the one dimensional index of the shape
 				int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
 				System.out.println("1D index: "+oneDimIndex);
 				
+				// Gets the bin scores to compare them 
 				double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
 				@SuppressWarnings("unchecked")
 				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
@@ -105,7 +106,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			else {
 				assert minecraftBinLabels.dimensionSizes().length== 3;
 				int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
-				MinecraftCoordinates startPosition = new MinecraftCoordinates(multiDimIndex[0]*MinecraftClient.BUFFER+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*MinecraftClient.BUFFER+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*MinecraftClient.BUFFER+multiDimIndex[2]*ranges.z());
+				MinecraftCoordinates startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
 				System.out.println(startPosition);
 				
 				int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
@@ -114,7 +115,13 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
 				
 				if(scoreOfCurrentElite>scoreOfPreviousElite) {
-					MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, 1,false);
+//					MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, 1,false);
+					MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
+					MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
+					MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
+					MinecraftClient.getMinecraftClient().fillCube(clearStart, clearEnd, BlockType.AIR);
+					System.out.println("AAAAAAAAAAAAAAAAAAAAA"+clearEnd);
+					
 //					List<Block> test = new ArrayList<>();
 //					test.add(new Block(startPosition.x(),startPosition.y(),startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
 //					test.add(new Block(startPosition.x()+1,startPosition.y(),startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
@@ -124,14 +131,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 //					test.add(new Block(startPosition.x(),startPosition.y()+1,startPosition.z(),BlockType.GLOWSTONE, Orientation.WEST));
 //					test.add(new Block(startPosition.x(),startPosition.y(),startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
 //					test.add(new Block(startPosition.x()+1,startPosition.y(),startPosition.z()+1,BlockType.GLOWSTONE, Orientation.WEST));
-					
+//					
 					@SuppressWarnings("unchecked")
 					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
 					MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 				}
-			}
-			// TODO: If placing the archive in the Minecraft work, then use the contents of behaviorCharacteristics and BinLabel shape info to re-generate the shape at the right coordinates
-			
+			}			
 			// This result will be ignored when using MAP Elites
 			}
 			
@@ -195,7 +200,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
-					"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5",
+					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
