@@ -187,7 +187,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesWHD", "saveTo:MAPElitesWHD",
 					"io:true", "netio:true",
-					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:true",
+					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
