@@ -45,6 +45,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 	
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
+		// It would be good to change the evaluation scheme so this is not true
+		assert !Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") : "Since all shapes are evaluated at the same location, they cannot be evaluated in parallel";
+		
 		int startingX = internalMinecraftShapeTask.getStartingX();
 		int startingZ = internalMinecraftShapeTask.getStartingZ();
 		MinecraftCoordinates ranges = internalMinecraftShapeTask.getRanges();
@@ -72,21 +75,22 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		System.out.println("1D index: "+oneDimIndex);
 		MinecraftCoordinates startPosition = new MinecraftCoordinates(oneDimIndex*MinecraftClient.BUFFER+oneDimIndex*ranges.x(),5,0);
 		System.out.println("Starting position: "+startPosition);
+		System.out.println("CURRENT: "+scoreOfCurrentElite+" |PREVIOUS: "+scoreOfPreviousElite);
 		if(scoreOfCurrentElite>scoreOfPreviousElite) {
-			System.out.println("CURRENT: "+scoreOfCurrentElite+" |PREVIOUS: "+scoreOfPreviousElite);
 			MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, MinecraftClient.BUFFER);
+			
+//			List<Block> test = new ArrayList<>();
+//			test.add(new Block(startPosition.x(),5,0,BlockType.GLOWSTONE, Orientation.WEST));
+//			test.add(new Block(startPosition.x()+1,5,0,BlockType.GLOWSTONE, Orientation.WEST));
+//			test.add(new Block(startPosition.x()+1,6,0,BlockType.GLOWSTONE, Orientation.WEST));
+//			test.add(new Block(startPosition.x()+1,6,1,BlockType.GLOWSTONE, Orientation.WEST));
+//			test.add(new Block(startPosition.x(),6,0,BlockType.GLOWSTONE, Orientation.WEST));
+//			test.add(new Block(startPosition.x(),6,1,BlockType.GLOWSTONE, Orientation.WEST));
+//			test.add(new Block(startPosition.x()+1,5,1,BlockType.GLOWSTONE, Orientation.WEST));
+//			test.add(new Block(startPosition.x(),5,1,BlockType.GLOWSTONE, Orientation.WEST));
 			@SuppressWarnings("unchecked")
-			List<Block> test = new ArrayList<>();
-			test.add(new Block(startPosition.x(),5,0,BlockType.GLOWSTONE, Orientation.WEST));
-			test.add(new Block(startPosition.x()+1,5,0,BlockType.GLOWSTONE, Orientation.WEST));
-			test.add(new Block(startPosition.x()+1,6,0,BlockType.GLOWSTONE, Orientation.WEST));
-			test.add(new Block(startPosition.x()+1,6,1,BlockType.GLOWSTONE, Orientation.WEST));
-			test.add(new Block(startPosition.x(),6,0,BlockType.GLOWSTONE, Orientation.WEST));
-			test.add(new Block(startPosition.x(),6,1,BlockType.GLOWSTONE, Orientation.WEST));
-			test.add(new Block(startPosition.x()+1,5,1,BlockType.GLOWSTONE, Orientation.WEST));
-			test.add(new Block(startPosition.x(),5,1,BlockType.GLOWSTONE, Orientation.WEST));
-//			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
-			MinecraftClient.getMinecraftClient().spawnBlocks(test);
+			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
+			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 		}
 		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(startPosition.x(),MinecraftClient.GROUND_LEVEL+1,startPosition.z()), ranges, 1, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
 		
