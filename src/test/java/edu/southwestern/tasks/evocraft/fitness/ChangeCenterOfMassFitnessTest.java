@@ -89,11 +89,11 @@ public class ChangeCenterOfMassFitnessTest {
 		
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
 		
-		// This is a guess for right now
-		// Says there is a fitness of 0
+		// Rounded the fitness score up. If it's decimal is 0.5 or higher,
+		// then it should round up and find the answer
 		assertEquals(18.0, ff.fitnessScore(cornerBS2),0.5);
 		
-		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 0);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 0);
 	}
 
 	@Test
