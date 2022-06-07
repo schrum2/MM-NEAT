@@ -4,11 +4,27 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 
 public abstract class MinecraftMAPElitesBinLabels extends BaseBinLabels {
 
+	public MinecraftMAPElitesBinLabels() {
+		// if populating the world with the archive, clear it all here
+		// call List<String> binLabels() and dimensionSizes()
+		
+		// Putting clearing here because bin labels and other aspects need to be initialized first in the constructor before clearing can occur
+		List<String> binSize = binLabels();
+		// Gets ranges for all coordinates
+		MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
+		// Clears the area
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, binSize.size(), Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
+	}
+	
 	/**
 	 * Collection of fitness functions that calculate scores to based the
 	 * behavior characterization on.

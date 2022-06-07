@@ -3,14 +3,19 @@ package edu.southwestern.tasks.evocraft;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.BaseBinLabels;
+import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.util.datastructures.Pair;
 
 /**
@@ -29,7 +34,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	private MinecraftShapeTask<T> internalMinecraftShapeTask;
 	
 	public MinecraftLonerShapeTask() {
-		internalMinecraftShapeTask = new MinecraftShapeTask<T>();
+		internalMinecraftShapeTask = new MinecraftShapeTask<T>() {
+			public int getStartingX() { return - getRanges().x() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
+			
+			public int getStartingZ() { return - getRanges().z() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
+			
+		};
 	}
 	
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
@@ -46,9 +56,38 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		for(HashMap.Entry<String,Object> entry : score.MAPElitesBehaviorMap().entrySet()) {
 			behaviorCharacteristics.put(entry.getKey(), entry.getValue());
 		}
+		System.out.println("==================================================================================================");
+		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+		
+//		System.out.println(behaviorCharacteristics.get("WidthFitness"));
+//		System.out.println(minecraftBinLabels.dimensionSizes().length);
+		
+		// Start position for regenerating shapes
+		int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
+		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
+		@SuppressWarnings("unchecked")
+		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
+		System.out.println("1D index: "+oneDimIndex);
+		MinecraftCoordinates startPosition = new MinecraftCoordinates(ranges.x()*oneDimIndex+MinecraftClient.BUFFER,5,0);
+		System.out.println("Starting position: "+startPosition);
+		if(scoreOfCurrentElite>scoreOfPreviousElite) {
+			System.out.println("CURRENT: "+scoreOfCurrentElite+" |PREVIOUS: "+scoreOfPreviousElite);
+			MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, MinecraftClient.BUFFER);
+			@SuppressWarnings("unchecked")
+			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
+			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+		}
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(startPosition.x(),MinecraftClient.GROUND_LEVEL+1,startPosition.z()), ranges, 1, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
+		
+		// TODO: If placing the archive in the Minecraft work, then use the contents of behaviorCharacteristics and BinLabel shape info to re-generate the shape at the right coordinates
+		
 		// This result will be ignored when using MAP Elites
 		return new Pair<>(score.scores, score.otherStats);
 	}
+	
+//	public static int[] worldArchiveCoordinates(HashMap<String, Object> behaviorCharacteristics) {
+//		
+//	}
 	
 	@Override
 	public int numObjectives() {
@@ -96,11 +135,13 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"minecraftOccupiedCountFitness:true",
 					//"minecraftEvolveOrientation:true",
 					"minecraftRedirectConfinedSnakes:true",
-					//"minecraftStopConfinedSnakes:true",
+					//"minecraftStopConfinedSnakes:true", 
 					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-					"steadyStateIndividualsPerGeneration:100",
+					"steadyStateIndividualsPerGeneration:100", 
+					//FOR TESTING
+					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
