@@ -63,6 +63,9 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 				zi += direction.z();
 			}
 			
+			assert !(Parameters.parameters.booleanParameter("minecraftRedirectConfinedSnakes") || Parameters.parameters.booleanParameter("minecraftStopConfinedSnakes")) ||
+					snake.size() <= ranges.x() * ranges.y() * ranges.z() : ranges + ":" + snake;
+			
 			// Never allowed to generate beneath absolute y=0. Out of bounds.
 			if(yi < 0) done = true;
 			
