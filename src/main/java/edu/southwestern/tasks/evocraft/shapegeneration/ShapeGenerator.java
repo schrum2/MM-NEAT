@@ -30,8 +30,8 @@ public interface ShapeGenerator<T> {
 	public static final double VOXEL_EXPRESSION_THRESHOLD = 0.1;
 	public static final double SNAKE_CONTINUATION_THRESHOLD = 0.1;
 	public static final int NUM_DIRECTIONS = 6;
-	
-	
+
+
 	/**
 	 * Take an evolved genome and generate a shape at a location relative
 	 * to the coordinates in the corner parameter.
@@ -42,13 +42,13 @@ public interface ShapeGenerator<T> {
 	 * @return List of Blocks to generate
 	 */
 	public List<Block> generateShape(Genotype<T> genome, MinecraftCoordinates corner, BlockSet blockSet);
-	
+
 	/**
 	 * Array of the names of the CPPN output neurons
 	 * @return Array of output labels
 	 */
 	public String[] getNetworkOutputLabels();
-	
+
 	/**
 	 * Returns a MinecraftCoordinate that indicates the next direction
 	 * to place a block. For snakes, if the value of null is returned,
@@ -92,13 +92,13 @@ public interface ShapeGenerator<T> {
 			Block b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[typeIndex], blockOrientation);
 			blocks.add(b);
 		} 
-			
+
 		if(MMNEAT.shapeGenerator instanceof SnakeGenerator) {
 			int startIndex = numBlockTypes + 1;
 			int endIndex = numBlockTypes + NUM_DIRECTIONS;
 			double[] directionPreferences = ArrayUtil.portion(outputs, startIndex, endIndex);
 			assert directionPreferences.length == 6 : "Should have 6 possible directions: " + Arrays.toString(directionPreferences) + " from "+ startIndex +" to " + endIndex + " of " + Arrays.toString(outputs);
-			
+
 			// If redirecting snakes when confining
 			if(Parameters.parameters.booleanParameter("minecraftRedirectConfinedSnakes")) {
 				for(int i = 0; i < NUM_DIRECTIONS; i++) {
@@ -108,17 +108,17 @@ public interface ShapeGenerator<T> {
 					}
 				}
 			}
-			
+
 			int directionIndex = StatisticsUtilities.argmax(directionPreferences);
 			int[] direction = nextDirection(directionIndex);
-			
+
 			// If stopping the snakes when confining
 			if(Parameters.parameters.booleanParameter("minecraftStopConfinedSnakes")){
 				if(checkOutOfBounds(direction, ranges, xi, yi, zi)) {
 					return null;
 				}
 			}
-			
+
 			MinecraftCoordinates minecraftDirection = new MinecraftCoordinates(Integer.valueOf(direction[0]),Integer.valueOf(direction[1]),Integer.valueOf(direction[2]));
 			return minecraftDirection;	
 		} else {
@@ -165,29 +165,22 @@ public interface ShapeGenerator<T> {
 	 */
 	public static String[] defaultNetworkOutputLabels(BlockSet blockSet) {
 		String[] labels;
+
+		// Presence output and an output for each block type
+		labels = new String[1 + blockSet.getPossibleBlocks().length];
+		labels[0] = "Presence";
+		for(int i = 1; i < labels.length; i++) {
+			labels[i] = blockSet.getPossibleBlocks()[i-1].name();
+		}
 		if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
-			
-			labels = new String[1 + blockSet.getPossibleBlocks().length + NUM_DIRECTIONS];
-			labels[0] = "Presence";
-			
-			for(int i = 1; i < blockSet.getPossibleBlocks().length; i++) {
-				labels[i] = blockSet.getPossibleBlocks()[i-1].name();
-			}
-			
-			for(int i = blockSet.getPossibleBlocks().length, j = 0; i < labels.length-1; i++, j++) {
-				labels[i] = Orientation.values()[j].toString();
+			String[] orientationLabels = new String[NUM_DIRECTIONS];
+
+			for(int i = 0; i < orientationLabels.length; i++) {
+				orientationLabels[i] = Orientation.values()[i].toString();
 			}
 
-		} else {
-			// Presence output and an output for each block type
-			labels = new String[1 + blockSet.getPossibleBlocks().length];
-			labels[0] = "Presence";
-			for(int i = 1; i < labels.length; i++) {
-				labels[i] = blockSet.getPossibleBlocks()[i-1].name();
-			}
+			labels = ArrayUtil.combineArrays(labels,orientationLabels);
 		}
-		
 		return labels;
 	}
-
 }
