@@ -1,6 +1,5 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,20 +66,25 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		}
 		
 		// Read in again to update the list
-		List<Block> afterBlocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
-		
-		//System.out.println("List of blocks after movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
-		
-		// Final center of mass is where it ends up after the wait time
-		Vertex finalCenterOfMass = getCenterOfMass(afterBlocks);
-		
-		//System.out.println(finalCenterOfMass);
-		
-		// Change in position could be in any of these directions (I believe)
-		//double changeInPosition = (Math.sqrt(Math.pow(finalCenterOfMass.x()-initialCenterOfMass.x(),2)) + Math.pow(finalCenterOfMass.y()-initialCenterOfMass.y(),2) + Math.pow(finalCenterOfMass.z()-initialCenterOfMass.z(),2));
-		double changeInPosition = finalCenterOfMass.distance(initialCenterOfMass);
-		assert !Double.isNaN(changeInPosition) : "Before: " + blocks + ", After:" + afterBlocks;
-		return changeInPosition;
+		List<Block> afterBlocks = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
+		if (afterBlocks.isEmpty()) return maxFitness();
+		else {
+
+			//System.out.println("List of blocks after movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
+
+			// Final center of mass is where it ends up after the wait time
+			Vertex finalCenterOfMass = getCenterOfMass(afterBlocks);
+
+			//System.out.println(finalCenterOfMass);
+
+			// Change in position could be in any of these directions (I believe)
+			//double changeInPosition = (Math.sqrt(Math.pow(finalCenterOfMass.x()-initialCenterOfMass.x(),2)) + Math.pow(finalCenterOfMass.y()-initialCenterOfMass.y(),2) + Math.pow(finalCenterOfMass.z()-initialCenterOfMass.z(),2));
+
+			double changeInPosition = finalCenterOfMass.distance(initialCenterOfMass);
+			assert !Double.isNaN(changeInPosition) : "Before: " + filterOutAirDirtGrass(blocks) + ", After:" + filterOutAirDirtGrass(afterBlocks);
+
+			return changeInPosition;
+		}
 	}
 	
 	public static Vertex getCenterOfMass(List<Block> blocks) {
@@ -88,9 +92,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		double y = 0;
 		double z = 0;
 		
-		List<Block> filteredBlocks = blocks.stream().
-				filter( b -> b.type() != BlockType.AIR.ordinal() && b.type() != BlockType.DIRT.ordinal() && b.type() != BlockType.GRASS.ordinal()).
-				collect(Collectors.toList());
+		List<Block> filteredBlocks = filterOutAirDirtGrass(blocks);
 		
 		for(Block b : filteredBlocks) {
 			x += b.x();
@@ -105,6 +107,12 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		Vertex centerOfMass = new Vertex(avgX,avgY,avgZ);
 		
 		return centerOfMass;
+	}
+
+	private static List<Block> filterOutAirDirtGrass(List<Block> blocks) {
+		return blocks.stream().
+				filter( b -> b.type() != BlockType.AIR.ordinal() && b.type() != BlockType.DIRT.ordinal() && b.type() != BlockType.GRASS.ordinal()).
+				collect(Collectors.toList());
 	}
 
 	@Override
