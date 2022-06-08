@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.evocraft.shapegeneration;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -28,6 +29,9 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 		// List of blocks that make up snake
 		List<Block> snake = new ArrayList<>();
 		
+		// Stores all the coordinates that are already occupied with a block
+		HashSet<MinecraftCoordinates> occupied = new HashSet<>();
+		
 		// Ranges for the x, y, and z direction
 		MinecraftCoordinates ranges = new MinecraftCoordinates(
 				Parameters.parameters.integerParameter("minecraftXRange"),
@@ -43,7 +47,11 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 		int yi = ranges.y()/2;
 		int zi = ranges.z()/2;
 		
+		MinecraftCoordinates coordinatesToAdd = new MinecraftCoordinates(xi,yi,zi);
+		
 		while(!done) {
+			//System.out.println("num itr:"+ numberOfIterations);
+			occupied.add(coordinatesToAdd);
 			numberOfIterations++;
 			//System.out.println(numberOfIterations);
 			MinecraftCoordinates direction = ShapeGenerator.generateBlock(corner, blockSet, snake, net, ranges, distanceInEachPlane, xi, yi, zi);
@@ -54,10 +62,23 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 				xi += direction.x();
 				yi += direction.y();
 				zi += direction.z();
+
+				assert !(Parameters.parameters.booleanParameter("minecraftRedirectConfinedSnakes") || Parameters.parameters.booleanParameter("minecraftStopConfinedSnakes")) ||
+				snake.size() <= ranges.x() * ranges.y() * ranges.z() : ranges + ":\n" + snake + ":\n" + occupied;
+
+				// Never allowed to generate beneath absolute y=0. Out of bounds.
+				if(yi < 0) {
+					done = true;
+				} else {
+					// Could be in there after saving
+					coordinatesToAdd = new MinecraftCoordinates(xi,yi,zi);
+					//System.out.println(numberOfIterations+ ": Does "+occupied+" contain "+coordinatesToAdd);
+					if(occupied.contains(coordinatesToAdd)) {
+						//System.out.println("\tYES");
+						done = true;
+					}
+				}
 			}
-			
-			// Never allowed to generate beneath absolute y=0. Out of bounds.
-			if(yi < 0) done = true;
 		}
 		assert numberOfIterations <= Parameters.parameters.integerParameter("minecraftMaxSnakeLength");
 		//System.out.println("return snake: " + snake);

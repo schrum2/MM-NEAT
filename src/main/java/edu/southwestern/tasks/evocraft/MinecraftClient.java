@@ -561,6 +561,7 @@ public class MinecraftClient extends Comm {
 	 * @return List of Blocks between the min and max coordinates (inclusive)
 	 */
 	public synchronized ArrayList<Block> readCube(MinecraftCoordinates min, MinecraftCoordinates max) {
+		assert min.x() <= max.x() && min.y() <= max.y() && min.z() <= max.z(): "Min should be less than max in each coordinate: min = "+min+ ", max = "+max; 
 		return readCube(min.x(), min.y(), min.z(), max.x(), max.y(), max.z());
 	}
 	
@@ -621,7 +622,9 @@ public class MinecraftClient extends Comm {
 	 */
 	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer, boolean stopAtGround) {
 		MinecraftCoordinates groundStart = new MinecraftCoordinates(start.x()-buffer, stopAtGround ? GROUND_LEVEL : start.y()-buffer, start.z()-buffer);
+		//System.out.println("Starts:"+groundStart);
 		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) + buffer, start.y() + ranges.y() + buffer, start.z() + ranges.z() + buffer);
+		//System.out.println("ENDS:"+end);
 		fillCube(groundStart, end, BlockType.AIR);
 	}
 	
