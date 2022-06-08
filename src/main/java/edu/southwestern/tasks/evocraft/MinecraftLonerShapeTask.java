@@ -129,31 +129,45 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			}else {
 				assert minecraftBinLabels.dimensionSizes().length== 3;
 				
-				// Gets the multi-dimensional index for starting points
-				int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
-				MinecraftCoordinates startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
-				
-				// Gets the bin scores to compare them
-				int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
-				double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
-				@SuppressWarnings("unchecked")
-				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
-				
-				// If the new shape is better than the previous, it gets replaced
-				if(scoreOfCurrentElite>scoreOfPreviousElite && scoreOfPreviousElite>0) {
-					MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
-					MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
-					MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
-					MinecraftClient.getMinecraftClient().fillCube(clearStart, clearEnd, BlockType.AIR);
-					
-					@SuppressWarnings("unchecked")
-					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
-					MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
-				}
+				worldArchiveCoordinates(minecraftBinLabels.dimensionSizes().length,individual, behaviorCharacteristics, ranges, minecraftBinLabels);
 			}			
 		}
 		// This result will be ignored when using MAP Elites	
 		return new Pair<>(score.scores, score.otherStats);
+	}
+
+	public void worldArchiveCoordinates(int dimSize,Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics,
+			MinecraftCoordinates ranges, MinecraftMAPElitesBinLabels minecraftBinLabels) {
+		// Gets the multi-dimensional index for starting points
+		int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
+		
+		MinecraftCoordinates startPosition;
+		if (dimSize==3){
+			int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
+			startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
+		}else if(dimSize==2){
+			int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
+			startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),5,multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
+		}else {
+			startPosition = new MinecraftCoordinates(oneDimIndex*MinecraftClient.BUFFER+oneDimIndex*ranges.x(),5,0);
+		}
+		
+		// Gets the bin scores to compare them
+		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
+		@SuppressWarnings("unchecked")
+		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
+		
+		// If the new shape is better than the previous, it gets replaced
+		if(scoreOfCurrentElite>scoreOfPreviousElite && scoreOfPreviousElite>0) {
+			MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
+			MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
+			MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
+			MinecraftClient.getMinecraftClient().fillCube(clearStart, clearEnd, BlockType.AIR);
+			
+			@SuppressWarnings("unchecked")
+			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
+			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+		}
 	}
 	
 //	public static int[] worldArchiveCoordinates(HashMap<String, Object> behaviorCharacteristics) {
@@ -196,7 +210,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesWHD", "saveTo:MAPElitesWHD",
 					"io:true", "netio:true",
-					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:true",
+					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
@@ -208,12 +222,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"minecraftEvolveOrientation:true",
 					"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true", 
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
-					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
+					"minecraftXRange:4","minecraftYRange:4","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
