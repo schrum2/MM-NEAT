@@ -92,14 +92,14 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MinecraftCoordinates ranges, MinecraftMAPElitesBinLabels minecraftBinLabels) {
 		// Gets the multi-dimensional index for starting points and score calculation
 		int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
-		
+		int[] multiDimIndex = null;
+		if (dimSize==3 || dimSize==1) multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
+		System.out.println(multiDimIndex.length);
 		// Starting position is different for each dimension size, 2 and 3D use multidimensional, otherwise 1D
 		MinecraftCoordinates startPosition;
 		if (dimSize==3 && !Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")){
-			int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
 			startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
 		}else if(dimSize==2 && !Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")){
-			int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
 			startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),5,multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
 		}else {
 			startPosition = new MinecraftCoordinates(oneDimIndex*MinecraftClient.BUFFER+oneDimIndex*ranges.x(),5,0);
@@ -192,7 +192,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"minecraftEvolveOrientation:true",
 					"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true", 
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
