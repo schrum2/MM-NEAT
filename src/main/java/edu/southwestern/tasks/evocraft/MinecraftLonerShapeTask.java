@@ -86,7 +86,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				MinecraftCoordinates startPosition = new MinecraftCoordinates(oneDimIndex*MinecraftClient.BUFFER+oneDimIndex*ranges.x(),5,0);
 				
 				// If the new shape is better than the previous, it gets replaced
-				if(scoreOfCurrentElite>scoreOfPreviousElite) {
+				if(scoreOfCurrentElite>scoreOfPreviousElite && scoreOfPreviousElite>0) {
 					MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, MinecraftClient.BUFFER);
 					@SuppressWarnings("unchecked")
 					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
@@ -106,7 +106,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
 				
 				// If the new shape is better than the previous, it gets replaced
-				if(scoreOfCurrentElite>scoreOfPreviousElite) {
+				if(scoreOfCurrentElite>scoreOfPreviousElite && scoreOfPreviousElite>0) {
 					MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
 					MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
 					MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
@@ -132,7 +132,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
 				
 				// If the new shape is better than the previous, it gets replaced
-				if(scoreOfCurrentElite>scoreOfPreviousElite) {
+				if(scoreOfCurrentElite>scoreOfPreviousElite && scoreOfPreviousElite>0) {
 					MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
 					MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
 					MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
