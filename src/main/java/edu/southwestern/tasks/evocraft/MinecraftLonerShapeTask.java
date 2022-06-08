@@ -94,14 +94,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
 		System.out.println(multiDimIndex.length);
 		// Starting position is different for each dimension size, 2 and 3D use multidimensional, otherwise 1D
-		MinecraftCoordinates startPosition;
-		if (dimSize==3 && !Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")){
-			startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
-		}else if(dimSize==2 && !Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")){
-			startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),5,multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
-		}else {
-			startPosition = new MinecraftCoordinates(multiDimIndex[0]*MinecraftClient.BUFFER+multiDimIndex[0]*ranges.x(),5,0);
-		}
+		MinecraftCoordinates startPosition = configureStartPosition(dimSize, ranges, multiDimIndex);
 		
 		// Gets the bin scores to compare them
 		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
@@ -118,6 +111,18 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
 			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 		}
+	}
+
+	public static MinecraftCoordinates configureStartPosition(int dimSize, MinecraftCoordinates ranges, int[] multiDimIndex) {
+		MinecraftCoordinates startPosition;
+		if (dimSize==3 && !Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")){
+			startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),multiDimIndex[1]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[1]*ranges.y(),multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
+		}else if(dimSize==2 && !Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")){
+			startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),5,multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
+		}else {
+			startPosition = new MinecraftCoordinates(multiDimIndex[0]*MinecraftClient.BUFFER+multiDimIndex[0]*ranges.x(),5,0);
+		}
+		return startPosition;
 	}
 
 	/**
@@ -190,12 +195,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"minecraftEvolveOrientation:true",
 					"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true", 
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
-					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
+					"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
