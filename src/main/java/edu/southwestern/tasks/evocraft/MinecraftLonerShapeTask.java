@@ -71,7 +71,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			
 			// Creates the bin labels
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
-			System.out.println(minecraftBinLabels.dimensionSizes().length);
 			// Places the shapes in the world based on their position
 			placeArchiveInWorld(minecraftBinLabels.dimensionSizes().length,individual, behaviorCharacteristics, ranges, minecraftBinLabels);	
 		}
@@ -80,19 +79,21 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	/**
+	 * Generates the starting coordinates for spawning in the archived shapes. Then also checks if 
+	 * the shapes should be added based on their score
 	 * 
-	 * @param dimSize
-	 * @param individual
-	 * @param behaviorCharacteristics
-	 * @param ranges
-	 * @param minecraftBinLabels
+	 * @param dimSize Determines if the archive is 1D, 2D, or 3D
+	 * @param individual specified genome of shape
+	 * @param behaviorCharacteristics dictionary of values used for placing at the right index
+	 * @param ranges specified range of each shape
+	 * @param minecraftBinLabels used to convert hash map into usable indices 
 	 */
 	public void placeArchiveInWorld(int dimSize,Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics,
 			MinecraftCoordinates ranges, MinecraftMAPElitesBinLabels minecraftBinLabels) {
-		// Gets the multi-dimensional index for starting points
+		// Gets the multi-dimensional index for starting points and score calculation
 		int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
 		
-		// Starting position is different for each dimension size
+		// Starting position is different for each dimension size, 2 and 3D use multidimensional, otherwise 1D
 		MinecraftCoordinates startPosition;
 		if (dimSize==3 && !Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")){
 			int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
@@ -111,8 +112,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		
 		// If the new shape is better than the previous, it gets replaced
 		if(scoreOfCurrentElite>scoreOfPreviousElite && scoreOfPreviousElite>0) {
+			// Clears old shape
 			clearBlocksInArchive(dimSize, ranges, startPosition);
 			
+			// Generates the new shape
 			@SuppressWarnings("unchecked")
 			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
 			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
@@ -120,18 +123,23 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	/**
+	 * Clears the an area for a specified shape 
 	 * 
-	 * @param dimSize
-	 * @param ranges
-	 * @param startPosition
+	 * @param dimSize Determines if the archive is 1D, 2D, or 3D
+	 * @param ranges specified range of each shape
+	 * @param startPosition Starting indices of a specific shape
 	 */
 	public void clearBlocksInArchive(int dimSize,MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
+		// Makes the buffer space between coordinates
 		MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1,1,Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
-		
+		// Clearing space needs to include buffer space
 		MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
+		
+		// If not 3D, need to ensure the ground isn't cleared out also
 		if(dimSize!=3 || Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
 			bufferDist = bufferDist.add(new MinecraftCoordinates(0,3,0));
 		}
+		// End coordinate is based on buffer distance. Then shape is cleared
 		MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
 		MinecraftClient.getMinecraftClient().fillCube(clearStart, clearEnd, BlockType.AIR);
 	}
@@ -172,7 +180,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesWHD", "saveTo:MAPElitesWHD",
 					"io:true", "netio:true",
-					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:true",
+					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
@@ -184,7 +192,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"minecraftEvolveOrientation:true",
 					"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true", 
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
