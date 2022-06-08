@@ -369,27 +369,28 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				trainImageAutoEncoderAndSetLossBounds(outputAutoEncoderFile, trainingDataDirectory, evaluatedPopulation);
 				System.out.println("Initial occupancy: "+ this.archive.getNumberOfOccupiedBins());
 			} else {
-				// Initializes the population size and ranges for clearing
-				int pop_size = Parameters.parameters.integerParameter("minecraftXRange")*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange");
-				MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
-				
 				// Clears space for incoming archive
-				if(archive.getBinLabelsClass() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive")) { //then clear world
+				boolean minecraftInit = archive.getBinLabelsClass() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive");
+				final int xRange = Parameters.parameters.integerParameter("minecraftXRange");
+				if(minecraftInit) { //then clear world
+					// Initializes the population size and ranges for clearing
+					int pop_size = xRange*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange");
+					MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
 					MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, pop_size, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
-					
-					// Add initial population to archive, if add is true
-					evaluatedPopulation.parallelStream().forEach( (s) -> {
-						
-						boolean result = archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
-						if(archive.getBinLabelsClass() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive")&&result) {
-							// Generates shape in world when specified 
-							MinecraftCoordinates startPosition = new MinecraftCoordinates(s.MAPElitesBinIndex()[0]*MinecraftClient.BUFFER+s.MAPElitesBinIndex()[0]*ranges.x(),5,0);
-							List<Block> blocks = MMNEAT.shapeGenerator.generateShape(s.individual, startPosition, MMNEAT.blockSet);
-							MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
-						}
-					});
 				}
-				
+					
+				// Add initial population to archive, if add is true
+				evaluatedPopulation.parallelStream().forEach( (s) -> {
+					boolean result = archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
+					
+					// Minecraft shapes have to be re-generated and added to the world
+					if(minecraftInit && result) {
+						// Generates shape in world when specified 
+						MinecraftCoordinates startPosition = new MinecraftCoordinates(s.MAPElitesBinIndex()[0]*MinecraftClient.BUFFER+s.MAPElitesBinIndex()[0]*xRange,5,0);
+						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(s.individual, startPosition, MMNEAT.blockSet);
+						MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+					}
+				});
 			}
 		}
 	}
