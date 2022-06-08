@@ -37,6 +37,7 @@ public class Archive<T> {
 			System.exit(1);
 		}
 		int numBins = mapping.binLabels().size();
+		System.out.println("Archive contains "+numBins+" number of bins");
 		archive = new Vector<Score<T>>(numBins);
 		occupiedBins = 0;
 		// Archive directory

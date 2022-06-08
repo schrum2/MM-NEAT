@@ -55,7 +55,7 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 		int seed = 0;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
-					"base:minecraft", "log:Minecraft-MAPElitesBlockCountVolume", "saveTo:MAPElitesBlockCountVolume",
+					"base:minecraft", "log:Minecraft-MAPElitesBlockCountSnake", "saveTo:MAPElitesBlockCountSnake",
 					"io:true", "netio:true", 
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
@@ -74,8 +74,9 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100",
 					"minecraftXRange:1","minecraftYRange:2","minecraftZRange:5",
-					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
-					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
+					"minecraftStopConfinedSnakes:true",
+					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
+					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
 					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",
