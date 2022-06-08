@@ -374,19 +374,21 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				if(archive.getBinLabelsClass() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive")) { //then clear world
 					MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, pop_size, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
 					// Add initial population to archive
-					System.out.println("AYOOOOOOOOOOOO");
 					evaluatedPopulation.parallelStream().forEach( (s) -> {
 						boolean result = archive.add(s); // Fill the archive with random starting individuals
 					
 						if(archive.getBinLabelsClass() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive")&&result) {
-							System.out.println(s.MAPElitesBinIndex()[0]);
+							
 							MinecraftCoordinates startPosition = new MinecraftCoordinates(s.MAPElitesBinIndex()[0]*MinecraftClient.BUFFER+s.MAPElitesBinIndex()[0]*ranges.x(),5,0);
+							System.out.println(startPosition);
+							//System.out.println(s.individual.toString());
 							// if keeping minecraft shapes in world and the result is true, 
 							// base corner on s.MAPElitesBinIndex()
 							// List<Block> blocks = MMNEAT.shapeGenerator.generateShape(s.individual, corner, MMNEAT.blockSet);
 							// MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 							
 							List<Block> blocks = MMNEAT.shapeGenerator.generateShape(s.individual, startPosition, MMNEAT.blockSet);
+							//System.out.println(blocks.toString());
 							MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 						}
 					});

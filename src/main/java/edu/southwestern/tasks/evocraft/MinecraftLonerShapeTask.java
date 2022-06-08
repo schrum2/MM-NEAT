@@ -76,7 +76,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				
 				// Get the one dimensional index of the shape
 				int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
-				System.out.println(oneDimIndex);
+				// System.out.println(oneDimIndex);
 				
 				// Gets the bin scores to compare them 
 				double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
@@ -87,10 +87,31 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				
 				// If the new shape is better than the previous, it gets replaced
 				if(scoreOfCurrentElite>scoreOfPreviousElite && scoreOfPreviousElite>0) {
-					MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, MinecraftClient.BUFFER);
+					System.out.println("CURRENT: "+scoreOfCurrentElite+" |PREVIOUS: "+scoreOfPreviousElite);
+					
+					MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1,1,Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
+					MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
+					bufferDist = bufferDist.add(new MinecraftCoordinates(0,3,0));
+					MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
+					MinecraftClient.getMinecraftClient().fillCube(clearStart, clearEnd, BlockType.AIR);
+					
+					//MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, MinecraftClient.BUFFER);
+					
 					@SuppressWarnings("unchecked")
 					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
-					MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+					//System.out.println(blocks.toString());
+					
+					List<Block> test = new ArrayList<>();
+					test.add(new Block(startPosition.x(),5,0,BlockType.GLOWSTONE, Orientation.WEST));
+					test.add(new Block(startPosition.x()+1,5,0,BlockType.GLOWSTONE, Orientation.WEST));
+					test.add(new Block(startPosition.x()+1,6,0,BlockType.GLOWSTONE, Orientation.WEST));
+					test.add(new Block(startPosition.x()+1,6,1,BlockType.GLOWSTONE, Orientation.WEST));
+					test.add(new Block(startPosition.x(),6,0,BlockType.GLOWSTONE, Orientation.WEST));
+					test.add(new Block(startPosition.x(),6,1,BlockType.GLOWSTONE, Orientation.WEST));
+					test.add(new Block(startPosition.x()+1,5,1,BlockType.GLOWSTONE, Orientation.WEST));
+					test.add(new Block(startPosition.x(),5,1,BlockType.GLOWSTONE, Orientation.WEST));
+					
+					MinecraftClient.getMinecraftClient().spawnBlocks(test);
 				}
 				
 			// If archive is 2D
