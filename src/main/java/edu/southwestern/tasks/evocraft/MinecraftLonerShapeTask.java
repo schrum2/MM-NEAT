@@ -71,42 +71,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			// Creates the bin labels
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 			System.out.println(minecraftBinLabels.dimensionSizes().length);
-			//Checks if the bin either 1D, 4D+ or if command line param for linear archive is true. If any are, Generates them in 1 dimension
-			if(minecraftBinLabels.dimensionSizes().length==1 ||minecraftBinLabels.dimensionSizes().length>=4||Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
-				worldArchiveCoordinates(minecraftBinLabels.dimensionSizes().length,individual, behaviorCharacteristics, ranges, minecraftBinLabels);
-				
-			// If archive is 2D
-			}else if(minecraftBinLabels.dimensionSizes().length==2) {
-				// Gets the multi-dimensional index for starting points
-				int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
-				MinecraftCoordinates startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),5,multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
-				
-				// Gets the bin scores to compare them
-				int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
-				double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
-				@SuppressWarnings("unchecked")
-				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
-				
-				// If the new shape is better than the previous, it gets replaced
-				if(scoreOfCurrentElite>scoreOfPreviousElite && scoreOfPreviousElite>0) {
-					MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1,1,Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
-					MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
-					// need to add buffer distance above, not below because of the ground
-					bufferDist = bufferDist.add(new MinecraftCoordinates(0,3,0));
-					MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
-					MinecraftClient.getMinecraftClient().fillCube(clearStart, clearEnd, BlockType.AIR);
-					
-					@SuppressWarnings("unchecked")
-					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
-					MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
-				}
-				
-			// If archive is 3D
-			}else {
-				assert minecraftBinLabels.dimensionSizes().length== 3;
-				
-				worldArchiveCoordinates(minecraftBinLabels.dimensionSizes().length,individual, behaviorCharacteristics, ranges, minecraftBinLabels);
-			}			
+			
+			worldArchiveCoordinates(minecraftBinLabels.dimensionSizes().length,individual, behaviorCharacteristics, ranges, minecraftBinLabels);		
 		}
 		// This result will be ignored when using MAP Elites	
 		return new Pair<>(score.scores, score.otherStats);
