@@ -87,31 +87,16 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				
 				// If the new shape is better than the previous, it gets replaced
 				if(scoreOfCurrentElite>scoreOfPreviousElite && scoreOfPreviousElite>0) {
-					System.out.println("CURRENT: "+scoreOfCurrentElite+" |PREVIOUS: "+scoreOfPreviousElite);
-					
 					MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1,1,Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
 					MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
+					// need to add buffer distance above, not below because of the ground
 					bufferDist = bufferDist.add(new MinecraftCoordinates(0,3,0));
 					MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
 					MinecraftClient.getMinecraftClient().fillCube(clearStart, clearEnd, BlockType.AIR);
 					
-					//MinecraftClient.getMinecraftClient().clearSpaceForShapes(startPosition, ranges, 1, MinecraftClient.BUFFER);
-					
 					@SuppressWarnings("unchecked")
 					List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
-					//System.out.println(blocks.toString());
-					
-					List<Block> test = new ArrayList<>();
-					test.add(new Block(startPosition.x(),5,0,BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x()+1,5,0,BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x()+1,6,0,BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x()+1,6,1,BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x(),6,0,BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x(),6,1,BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x()+1,5,1,BlockType.GLOWSTONE, Orientation.WEST));
-					test.add(new Block(startPosition.x(),5,1,BlockType.GLOWSTONE, Orientation.WEST));
-					
-					MinecraftClient.getMinecraftClient().spawnBlocks(test);
+					MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 				}
 				
 			// If archive is 2D
