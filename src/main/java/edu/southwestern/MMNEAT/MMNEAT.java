@@ -120,7 +120,7 @@ public class MMNEAT {
 	@SuppressWarnings("rawtypes")
 	public static BinLabels getArchiveBinLabelsClass() {
 		if (pseudoArchive != null) {
-			return pseudoArchive.getBinLabelsClass();
+			return pseudoArchive.getBinMapping();
 		} else if (ea instanceof MAPElites) {
 			return ((MAPElites) ea).getBinLabelsClass();
 		}

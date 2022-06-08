@@ -47,10 +47,11 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 		int yi = ranges.y()/2;
 		int zi = ranges.z()/2;
 		
-		MinecraftCoordinates occupiedCoordinate = new MinecraftCoordinates(xi,yi,zi);
+		MinecraftCoordinates coordinatesToAdd = new MinecraftCoordinates(xi,yi,zi);
 		
 		while(!done) {
-			occupied.add(occupiedCoordinate);
+			//System.out.println("num itr:"+ numberOfIterations);
+			occupied.add(coordinatesToAdd);
 			numberOfIterations++;
 			//System.out.println(numberOfIterations);
 			MinecraftCoordinates direction = ShapeGenerator.generateBlock(corner, blockSet, snake, net, ranges, distanceInEachPlane, xi, yi, zi);
@@ -61,14 +62,23 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 				xi += direction.x();
 				yi += direction.y();
 				zi += direction.z();
+
+				assert !(Parameters.parameters.booleanParameter("minecraftRedirectConfinedSnakes") || Parameters.parameters.booleanParameter("minecraftStopConfinedSnakes")) ||
+				snake.size() <= ranges.x() * ranges.y() * ranges.z() : ranges + ":\n" + snake + ":\n" + occupied;
+
+				// Never allowed to generate beneath absolute y=0. Out of bounds.
+				if(yi < 0) {
+					done = true;
+				} else {
+					// Could be in there after saving
+					coordinatesToAdd = new MinecraftCoordinates(xi,yi,zi);
+					//System.out.println(numberOfIterations+ ": Does "+occupied+" contain "+coordinatesToAdd);
+					if(occupied.contains(coordinatesToAdd)) {
+						//System.out.println("\tYES");
+						done = true;
+					}
+				}
 			}
-			
-			// Never allowed to generate beneath absolute y=0. Out of bounds.
-			if(yi < 0) done = true;
-			
-			// Could be in there after saving
-			MinecraftCoordinates possiblyOccupied = new MinecraftCoordinates(xi,yi,zi);
-			if(occupied.contains(possiblyOccupied)) done = true;
 		}
 		assert numberOfIterations <= Parameters.parameters.integerParameter("minecraftMaxSnakeLength");
 		//System.out.println("return snake: " + snake);
