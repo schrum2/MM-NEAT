@@ -370,7 +370,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				System.out.println("Initial occupancy: "+ this.archive.getNumberOfOccupiedBins());
 			} else {
 				// Clears space for incoming archive
-				boolean minecraftInit = archive.getBinLabelsClass() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive");
+				boolean minecraftInit = archive.getBinMapping() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive");
 				final int xRange = Parameters.parameters.integerParameter("minecraftXRange");
 				if(minecraftInit) { //then clear world
 					// Initializes the population size and ranges for clearing
