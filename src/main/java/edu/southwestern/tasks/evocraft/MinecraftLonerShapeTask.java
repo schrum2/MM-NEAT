@@ -72,7 +72,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 			System.out.println(minecraftBinLabels.dimensionSizes().length);
 			
-			worldArchiveCoordinates(minecraftBinLabels.dimensionSizes().length,individual, behaviorCharacteristics, ranges, minecraftBinLabels);		
+			// Places the shapes in the world based on their position
+			placeArchiveInWorld(minecraftBinLabels.dimensionSizes().length,individual, behaviorCharacteristics, ranges, minecraftBinLabels);		
 		}
 		// This result will be ignored when using MAP Elites	
 		return new Pair<>(score.scores, score.otherStats);
@@ -86,7 +87,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 * @param ranges
 	 * @param minecraftBinLabels
 	 */
-	public void worldArchiveCoordinates(int dimSize,Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics,
+	public void placeArchiveInWorld(int dimSize,Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics,
 			MinecraftCoordinates ranges, MinecraftMAPElitesBinLabels minecraftBinLabels) {
 		// Gets the multi-dimensional index for starting points
 		int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
