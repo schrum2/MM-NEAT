@@ -73,7 +73,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private boolean saveImageArchives;
 
 	public BinLabels getBinLabelsClass() {
-		return archive.getBinLabelsClass();
+		return archive.getBinMapping();
 	}
 	
 	public MAPElites() {
@@ -629,7 +629,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			System.out.println("Loss ranges from "+minLoss+" to "+maxLoss);
 		}		
 		// Will bin differently because autoencoder has changed, as have expected loss bounds. Images get re-evaluated
-		this.archive = new Archive<T>(previousImages, this.archive.getBinLabelsClass(), this.archive.getArchiveDirectory(), CommonConstants.netio); 
+		this.archive = new Archive<T>(previousImages, this.archive.getBinMapping(), this.archive.getArchiveDirectory(), CommonConstants.netio); 
 	}
 	
 	/**

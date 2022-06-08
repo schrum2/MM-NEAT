@@ -7,6 +7,7 @@ import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.NetworkTask;
@@ -80,7 +81,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				// Gets the bin scores to compare them 
 				double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
 				@SuppressWarnings("unchecked")
-				double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
+				Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+				assert oneDimIndex < archive.getBinMapping().binLabels().size() : behaviorCharacteristics;
+				double scoreOfPreviousElite = archive.getBinScore(oneDimIndex);
 				
 				MinecraftCoordinates startPosition = new MinecraftCoordinates(oneDimIndex*MinecraftClient.BUFFER+oneDimIndex*ranges.x(),5,0);
 				

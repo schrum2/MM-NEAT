@@ -55,7 +55,7 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 		int seed = 0;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
-					"base:minecraft", "log:Minecraft-MAPElitesBlockCountSnake", "saveTo:MAPElitesBlockCountSnake",
+					"base:minecraft", "log:Minecraft-MAPElitesBlockCountSnek", "saveTo:MAPElitesBlockCountSnek",
 					"io:true", "netio:true", 
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
@@ -68,7 +68,7 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 					//"minecraftOccupiedCountFitness:true",
 					//"minecraftEvolveOrientation:true",
 					//"minecraftRedirectConfinedSnakes:true",
-					//"minecraftStopConfinedSnakes:true",
+					"minecraftStopConfinedSnakes:true",
 					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
