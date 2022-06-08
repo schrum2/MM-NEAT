@@ -79,13 +79,8 @@ public interface ShapeGenerator<T> {
 			int typeIndex = StatisticsUtilities.argmax(blockPreferences);
 			Orientation blockOrientation = Orientation.NORTH;
 			if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")){
-				double[] orientationPreferences;
-				if(MMNEAT.shapeGenerator instanceof SnakeGenerator) {
-					orientationPreferences = ArrayUtil.portion(outputs, numBlockTypes + NUM_DIRECTIONS + 1, numBlockTypes + NUM_DIRECTIONS*2);
-					assert orientationPreferences.length == 6 : "Should have 6 possible directions: " + Arrays.toString(orientationPreferences) + " from "+ (numBlockTypes + NUM_DIRECTIONS + 1) +" to " + (numBlockTypes + NUM_DIRECTIONS*2) + " of " + Arrays.toString(outputs);
-				} else {
-					orientationPreferences = ArrayUtil.portion(outputs,numBlockTypes + 1, numBlockTypes + NUM_DIRECTIONS);
-				}
+				double[] orientationPreferences = ArrayUtil.portion(outputs,numBlockTypes + 1, numBlockTypes + NUM_DIRECTIONS);
+				assert orientationPreferences.length == NUM_DIRECTIONS;
 				int orientationPreferenceIndex = StatisticsUtilities.argmax(orientationPreferences);
 				blockOrientation = Orientation.values()[orientationPreferenceIndex];
 			}
@@ -94,10 +89,10 @@ public interface ShapeGenerator<T> {
 		} 
 
 		if(MMNEAT.shapeGenerator instanceof SnakeGenerator) {
-			int startIndex = numBlockTypes + 1;
-			int endIndex = numBlockTypes + NUM_DIRECTIONS;
+			int startIndex = outputs.length - NUM_DIRECTIONS - 1;
+			int endIndex = outputs.length - 2;
 			double[] directionPreferences = ArrayUtil.portion(outputs, startIndex, endIndex);
-			assert directionPreferences.length == 6 : "Should have 6 possible directions: " + Arrays.toString(directionPreferences) + " from "+ startIndex +" to " + endIndex + " of " + Arrays.toString(outputs);
+			assert directionPreferences.length == NUM_DIRECTIONS : "Should have 6 possible directions: " + Arrays.toString(directionPreferences) + " from "+ startIndex +" to " + endIndex + " of " + Arrays.toString(outputs);
 
 			// If redirecting snakes when confining
 			if(Parameters.parameters.booleanParameter("minecraftRedirectConfinedSnakes")) {
@@ -117,6 +112,11 @@ public interface ShapeGenerator<T> {
 				if(checkOutOfBounds(direction, ranges, xi, yi, zi)) {
 					return null;
 				}
+			}
+			
+			// If the "continue" spot at the end is less than or equal the snake continuation threshold, STOP!
+			if(outputs[outputs.length-1] <= SNAKE_CONTINUATION_THRESHOLD) {
+				return null;
 			}
 
 			MinecraftCoordinates minecraftDirection = new MinecraftCoordinates(Integer.valueOf(direction[0]),Integer.valueOf(direction[1]),Integer.valueOf(direction[2]));
