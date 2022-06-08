@@ -70,7 +70,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			
 			// Creates the bin labels
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
-			
+			System.out.println(minecraftBinLabels.dimensionSizes().length);
 			//Checks if the bin either 1D, 4D+ or if command line param for linear archive is true. If any are, Generates them in 1 dimension
 			if(minecraftBinLabels.dimensionSizes().length==1 ||minecraftBinLabels.dimensionSizes().length>=4||Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
 				
@@ -113,8 +113,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				
 				// If the new shape is better than the previous, it gets replaced
 				if(scoreOfCurrentElite>scoreOfPreviousElite && scoreOfPreviousElite>0) {
-					MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
+					MinecraftCoordinates bufferDist = new MinecraftCoordinates(Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1,1,Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")-1);
 					MinecraftCoordinates clearStart = startPosition.sub(bufferDist);
+					// need to add buffer distance above, not below because of the ground
+					bufferDist = bufferDist.add(new MinecraftCoordinates(0,3,0));
 					MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
 					MinecraftClient.getMinecraftClient().fillCube(clearStart, clearEnd, BlockType.AIR);
 					
