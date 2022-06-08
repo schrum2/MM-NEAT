@@ -91,9 +91,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	public void placeArchiveInWorld(int dimSize,Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics,
 			MinecraftCoordinates ranges, MinecraftMAPElitesBinLabels minecraftBinLabels) {
 		// Gets the multi-dimensional index for starting points and score calculation
-		int oneDimIndex = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
-		int[] multiDimIndex = null;
-		if (dimSize==3 || dimSize==1) multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
+		int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
 		System.out.println(multiDimIndex.length);
 		// Starting position is different for each dimension size, 2 and 3D use multidimensional, otherwise 1D
 		MinecraftCoordinates startPosition;
@@ -102,13 +100,13 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		}else if(dimSize==2 && !Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")){
 			startPosition = new MinecraftCoordinates(multiDimIndex[0]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[0]*ranges.x(),5,multiDimIndex[2]*Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")+multiDimIndex[2]*ranges.z());
 		}else {
-			startPosition = new MinecraftCoordinates(oneDimIndex*MinecraftClient.BUFFER+oneDimIndex*ranges.x(),5,0);
+			startPosition = new MinecraftCoordinates(multiDimIndex[0]*MinecraftClient.BUFFER+multiDimIndex[0]*ranges.x(),5,0);
 		}
 		
 		// Gets the bin scores to compare them
 		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
 		@SuppressWarnings("unchecked")
-		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(oneDimIndex);
+		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(multiDimIndex[0]);
 		
 		// If the new shape is better than the previous, it gets replaced
 		if(scoreOfCurrentElite>scoreOfPreviousElite && scoreOfPreviousElite>0) {
