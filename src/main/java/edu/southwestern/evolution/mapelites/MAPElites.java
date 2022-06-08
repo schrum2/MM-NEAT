@@ -28,6 +28,10 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.innovationengines.PictureTargetTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
@@ -38,6 +42,7 @@ import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
+
 
 /**
  * My version of Multi-dimensional Archive of Phenotypic Elites (MAP-Elites), the quality diversity (QD)
@@ -364,10 +369,28 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				trainImageAutoEncoderAndSetLossBounds(outputAutoEncoderFile, trainingDataDirectory, evaluatedPopulation);
 				System.out.println("Initial occupancy: "+ this.archive.getNumberOfOccupiedBins());
 			} else {
-				// Add initial population to archive
+				// Clears space for incoming archive
+				boolean minecraftInit = archive.getBinLabelsClass() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive");
+				final int xRange = Parameters.parameters.integerParameter("minecraftXRange");
+				if(minecraftInit) { //then clear world
+					// Initializes the population size and ranges for clearing
+					int pop_size = xRange*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange");
+					MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
+					MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, pop_size, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
+				}
+					
+				// Add initial population to archive, if add is true
 				evaluatedPopulation.parallelStream().forEach( (s) -> {
-					archive.add(s); // Fill the archive with random starting individuals
-				});	
+					boolean result = archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
+					
+					// Minecraft shapes have to be re-generated and added to the world
+					if(minecraftInit && result) {
+						// Generates shape in world when specified 
+						MinecraftCoordinates startPosition = new MinecraftCoordinates(s.MAPElitesBinIndex()[0]*MinecraftClient.BUFFER+s.MAPElitesBinIndex()[0]*xRange,5,0);
+						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(s.individual, startPosition, MMNEAT.blockSet);
+						MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+					}
+				});
 			}
 		}
 	}
