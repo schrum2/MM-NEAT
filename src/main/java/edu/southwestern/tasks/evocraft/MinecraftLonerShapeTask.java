@@ -167,7 +167,20 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	public static void placeFencesAroundArchive(MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
 		List<Block> test = new ArrayList<>();
 		startPosition=startPosition.sub(new MinecraftCoordinates(1,1,1));
-		test.add(new Block(startPosition,BlockType.DARK_OAK_FENCE, Orientation.WEST));
+		
+		MinecraftCoordinates fencePlacer = startPosition;
+//		test.add(new Block(fencePlacer.x(),fencePlacer.y(),fencePlacer.z(),BlockType.GLOWSTONE, Orientation.WEST));
+//		test.add(new Block(fencePlacer.x(),fencePlacer.y(),fencePlacer.z()+ranges.z()+1,BlockType.DARK_OAK_FENCE, Orientation.WEST));
+		for(int i =0;i<=ranges.x()+1;i++) {
+			test.add(new Block(fencePlacer.x()+i,fencePlacer.y(),fencePlacer.z(),BlockType.DARK_OAK_FENCE, Orientation.WEST));
+			test.add(new Block(fencePlacer.x()+i,fencePlacer.y(),fencePlacer.z()+ranges.z()+1,BlockType.DARK_OAK_FENCE, Orientation.WEST));
+
+		}
+		for(int i =0;i<=ranges.z();i++) {
+			test.add(new Block(fencePlacer.x(),fencePlacer.y(),fencePlacer.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));
+			test.add(new Block(fencePlacer.x()+ranges.x()+1,fencePlacer.y(),fencePlacer.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));
+
+		}
 		MinecraftClient.getMinecraftClient().spawnBlocks(test);
 	}
 
