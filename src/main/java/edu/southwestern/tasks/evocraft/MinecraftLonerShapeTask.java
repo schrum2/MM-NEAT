@@ -71,9 +71,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
-		// It would be good to change the evaluation scheme so this is not true
-		//assert !Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") : "Since all shapes are evaluated at the same location, they cannot be evaluated in parallel";
-
 		MinecraftCoordinates ranges = internalMinecraftShapeTask.getRanges();
 		// Clears space for one shape
 		// List of 1 corner
