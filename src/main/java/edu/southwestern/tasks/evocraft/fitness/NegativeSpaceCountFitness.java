@@ -23,10 +23,12 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 			if(b.x()>maxZ) maxX=b.z();
 			if(b.x()<minZ) minX=b.z();
 			
+			// Total keeps track of all of the blocks that are not air within the shape
 			if(b.type() != BlockType.AIR.ordinal()) {
 				total++;
 			}
 		}
+		// Computes size of the shape based on the coordinates, then subtracts the non-air blocks to get negative space
 		int sizeOfShape = (maxX-minX)*(maxY-minY)*(maxZ-minZ);
 		int negativeBlocks = sizeOfShape-total;
 		
@@ -35,7 +37,7 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
 	public double maxFitness() {
-		
+		// The max fitness here is the largest possible cube -2 because to get that designated negative space, there must be at least 2 cubes
 		return Parameters.parameters.integerParameter("minecraftXRange") * Parameters.parameters.integerParameter("minecraftYRange") * Parameters.parameters.integerParameter("minecraftZRange")-2;
 	}
 	
