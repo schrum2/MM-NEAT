@@ -118,11 +118,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	public static <T> void placeArchiveInWorld(Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics, MinecraftCoordinates ranges) {
 		// Creates the bin labels
 		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
-		int dimSize = minecraftBinLabels.dimensions().length;
 		int index1D = (int) behaviorCharacteristics.get("dim1D");
-		// Starting position is different for each dimension size, 2 and 3D use multidimensional, otherwise 1D
-		Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
-
 		// Gets the bin scores to compare them
 		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
 		@SuppressWarnings("unchecked")
@@ -130,6 +126,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 		// If the new shape is better than the previous, it gets replaced
 		if(scoreOfCurrentElite > scoreOfPreviousElite && spawnShapesInWorld) {
+			int dimSize = minecraftBinLabels.dimensions().length;
+			// Starting position is different for each dimension size, 2 and 3D use multidimensional, otherwise 1D
+			Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
 			if(!(Double.isInfinite(scoreOfPreviousElite) && scoreOfPreviousElite < 0)) {
 				// Clears old shape, but only if a shape was there (score was not negative infinity)
 				Pair<MinecraftCoordinates,MinecraftCoordinates> cleared = clearBlocksInArchive(dimSize, ranges, corners.t1);
