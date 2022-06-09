@@ -116,7 +116,7 @@ public interface ShapeGenerator<T> {
 			
 			// If the "continue" spot at the end is less than or equal the snake continuation threshold, STOP!
 			if(outputs[outputs.length-1] <= SNAKE_CONTINUATION_THRESHOLD) {
-				System.out.println("Continue? " + outputs[outputs.length-1]);
+				//System.out.println("Continue? " + outputs[outputs.length-1]);
 				return null;
 			}
 

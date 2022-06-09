@@ -53,14 +53,14 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 		while(!done) {
 			//System.out.println("num itr:"+ numberOfIterations);
 			occupied.add(coordinatesToAdd);
-			System.out.println(occupied);
+			//System.out.println(occupied);
 			numberOfIterations++;
 			//System.out.println(numberOfIterations);
 			MinecraftCoordinates direction = ShapeGenerator.generateBlock(corner, blockSet, snake, net, ranges, distanceInEachPlane, xi, yi, zi);
 			
 			if(direction == null || numberOfIterations >= Parameters.parameters.integerParameter("minecraftMaxSnakeLength")) {
-				System.out.println("Direction: " + direction + "Number of its: " + numberOfIterations);
-				System.out.println("Something is either null or too many");
+				//System.out.println("Direction: " + direction + "Number of its: " + numberOfIterations);
+				//System.out.println("Something is either null or too many");
 				done = true;
 			} else {
 				xi += direction.x();
@@ -72,12 +72,12 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 
 				// Never allowed to generate beneath absolute y=0. Out of bounds.
 				if(yi < 0) {
-					System.out.println("Goes below the y");
+					//System.out.println("Goes below the y");
 					done = true;
 				} else {
 					// Could be in there after saving
 					coordinatesToAdd = new MinecraftCoordinates(xi,yi,zi);
-					System.out.println(numberOfIterations+ ": Does "+occupied+" contain "+coordinatesToAdd);
+					//System.out.println(numberOfIterations+ ": Does "+occupied+" contain "+coordinatesToAdd);
 					if(occupied.contains(coordinatesToAdd)) {
 						//System.out.println("\tYES");
 						done = true;

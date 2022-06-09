@@ -1,16 +1,23 @@
 package edu.southwestern.tasks.evocraft.shapegeneration;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 
@@ -168,9 +175,13 @@ public class SnakeGeneratorTest {
 		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0);
 		MMNEAT.shapeGenerator = generator;
 		
-		System.out.println(generator.generateShape(netGen,corner,blockSet));
+		//System.out.println(generator.generateShape(netGen,corner,blockSet));
 		
-		//assertEquals(,generator.generateShape(netGen,corner,blockSet));
+		List<Block> result = new ArrayList<>();
+		result.add(new Block(5,10,5,BlockType.QUARTZ_BLOCK,Orientation.DOWN));
+		result.add(new Block(5,10,6,BlockType.QUARTZ_BLOCK,Orientation.SOUTH));
+		
+		assertEquals(result,generator.generateShape(netGen,corner,blockSet));
 	}
 
 }
