@@ -35,17 +35,20 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 	private MinecraftShapeTask<T> internalMinecraftShapeTask;
 	private static boolean spawnShapesInWorld=false;
+	private static ArrayList<MinecraftCoordinates> parallelShapeCorners;
 
-	public MinecraftLonerShapeTask() {
+	public MinecraftLonerShapeTask() 	{
 		/**
 		 * Default shape generation location is shifted away a bit so that the archive can populate the world starting around (0,5,0) 
 		 */
+		
 		internalMinecraftShapeTask = new MinecraftShapeTask<T>() {
 			public int getStartingX() { return - getRanges().x() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
 
 			public int getStartingZ() { return - getRanges().z() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
-
 		};
+		
+		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelMinecraftSlots"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),internalMinecraftShapeTask.getRanges());
 	}
 
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
