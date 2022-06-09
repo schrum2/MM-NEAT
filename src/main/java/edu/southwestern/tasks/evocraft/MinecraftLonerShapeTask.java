@@ -166,7 +166,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	
 	public static void placeFencesAroundArchive(MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
 		List<Block> test = new ArrayList<>();
-		startPosition=startPosition.sub(new MinecraftCoordinates(1,1,1));
+		startPosition=startPosition.sub(new MinecraftCoordinates(1,startPosition.y(),1));
+		startPosition=startPosition.add(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL,0));
 		
 		MinecraftCoordinates fencePlacer = startPosition;
 //		test.add(new Block(fencePlacer.x(),fencePlacer.y(),fencePlacer.z(),BlockType.GLOWSTONE, Orientation.WEST));
@@ -220,7 +221,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesWHDSimple", "saveTo:MAPElitesWHDSimple",
 					"io:true", "netio:true",
-					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:true",
+					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false",
@@ -239,7 +240,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
 					"spaceBetweenMinecraftShapes:10",
-					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
+					"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
