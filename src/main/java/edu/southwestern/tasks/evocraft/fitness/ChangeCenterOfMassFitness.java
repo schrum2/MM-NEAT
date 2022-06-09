@@ -67,6 +67,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		
 		// Read in again to update the list
 		List<Block> afterBlocks = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
+		System.out.println(afterBlocks);
 		if (afterBlocks.isEmpty()) return maxFitness();
 		else {
 

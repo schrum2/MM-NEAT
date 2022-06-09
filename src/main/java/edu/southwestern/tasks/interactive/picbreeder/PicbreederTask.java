@@ -834,6 +834,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 */
 	@Override
 	public String[] sensorLabels() {
+		return staticSensorLabels();
+	}
+	
+	public static String[] staticSensorLabels() {
 		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "bias" };
 	}
 
@@ -842,6 +846,11 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	 */
 	@Override
 	public String[] outputLabels() {
+		return staticOutputLabels();
+	}
+	
+	
+	public static String[] staticOutputLabels() {
 		return new String[] { "hue-value", "saturation-value", "brightness-value" };
 	}
 

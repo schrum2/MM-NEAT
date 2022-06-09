@@ -13,10 +13,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.southwestern.networks.ActivationFunctions;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.MiscUtil;
@@ -161,27 +164,31 @@ public class OriginalPicBreederGenomeLoader {
         }
 
         System.out.println("BEFORE");
-        System.out.println(tg.toString());
+     //   System.out.println(tg.toString());
         
         for(LinkGene lg: tg.links) {
-        	System.out.println("Source = " + lg.sourceInnovation);
-        	System.out.println("Target = " + lg.targetInnovation);
+//        	System.out.println("Source = " + lg.sourceInnovation);
+//        	System.out.println("Target = " + lg.targetInnovation);
         }
-       
+               
+        System.out.println(tg.toGraphViz(PicbreederTask.staticSensorLabels(), PicbreederTask.staticOutputLabels()));
+        
         // Get nodes in right order according to the links
         // deleting specific nodes??? 
-        //TWEANNGenotype.sortNodeGenesByLinkConnectivity(tg);
+        TWEANNGenotype.sortNodeGenesByLinkConnectivity(tg);
        
-        moveInputToEnd(tg);
+        //moveInputToEnd(tg);
         
         System.out.println("AFTER");
-        System.out.println(tg.toString());
+      //  System.out.println(tg.toString());
         
         System.out.println("-------------------------------------------------");
         
+        System.out.println(tg.toGraphViz(PicbreederTask.staticSensorLabels(), PicbreederTask.staticOutputLabels()));
+        
         for(LinkGene lg: tg.links) {
-        	System.out.println("Source = " + lg.sourceInnovation);
-        	System.out.println("Target = " + lg.targetInnovation);
+//        	System.out.println("Source = " + lg.sourceInnovation);
+//        	System.out.println("Target = " + lg.targetInnovation);
         }
         
         DrawingPanel panel = new DrawingPanel(800, 800, "Network");
