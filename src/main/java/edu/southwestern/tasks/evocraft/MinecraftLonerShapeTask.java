@@ -34,6 +34,7 @@ import edu.southwestern.util.datastructures.Pair;
 public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements NetworkTask {
 
 	private MinecraftShapeTask<T> internalMinecraftShapeTask;
+	private static boolean spawnShapesInWorld=false;
 
 	public MinecraftLonerShapeTask() {
 		/**
@@ -190,7 +191,20 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		}
 		MinecraftClient.getMinecraftClient().spawnBlocks(fences); // Spawns them in
 	}
-
+	/**
+	 * Sets spawnShapesInWorld to true
+	 */
+	public void spawnShapesInWorldTrue() {
+		spawnShapesInWorld=true;
+	}
+	
+	/**
+	 * Sets spawnShapesInWorld to false
+	 */
+	public void spawnShapesInWorldFalse() {
+		spawnShapesInWorld=false;
+	}
+	
 	@Override
 	public int numObjectives() {
 		return internalMinecraftShapeTask.numObjectives();
