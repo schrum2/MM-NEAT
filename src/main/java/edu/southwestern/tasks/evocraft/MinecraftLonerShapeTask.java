@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -36,8 +38,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	private MinecraftShapeTask<T> internalMinecraftShapeTask;
 	private static boolean spawnShapesInWorld=false;
 	private static ArrayList<MinecraftCoordinates> parallelShapeCorners;
+	
+	private BlockingQueue<MinecraftCoordinates> coordinateQueue;
 
-	public MinecraftLonerShapeTask() 	{
+	public MinecraftLonerShapeTask() throws InterruptedException 	{
 		/**
 		 * Default shape generation location is shifted away a bit so that the archive can populate the world starting around (0,5,0) 
 		 */
@@ -48,7 +52,16 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			public int getStartingZ() { return - getRanges().z() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
 		};
 		
+		BlockingQueue<MinecraftCoordinates> coordinateQueue = new ArrayBlockingQueue<>(Parameters.parameters.integerParameter("parallelMinecraftSlots"));
+		
 		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelMinecraftSlots"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),internalMinecraftShapeTask.getRanges());
+		//System.out.println("==================================================");
+		//System.out.println(parallelShapeCorners.get(4));
+		for(int i =0;i<parallelShapeCorners.size();i++) {
+			System.out.println(i);
+			coordinateQueue.put(parallelShapeCorners.get(i));
+		}
+		//System.out.println("SIZE"+coordinateQueue.size());
 	}
 
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
