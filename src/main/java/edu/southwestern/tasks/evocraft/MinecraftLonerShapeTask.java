@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -36,6 +38,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	private MinecraftShapeTask<T> internalMinecraftShapeTask;
 	private static boolean spawnShapesInWorld=false;
 	private static ArrayList<MinecraftCoordinates> parallelShapeCorners;
+	
+	private BlockingQueue<MinecraftCoordinates> coordinateQueue;
 
 	public MinecraftLonerShapeTask() 	{
 		/**
@@ -45,30 +49,58 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		internalMinecraftShapeTask = new MinecraftShapeTask<T>() {
 			public int getStartingX() { return - getRanges().x() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
 
-			public int getStartingZ() { return - getRanges().z() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
+			public int getStartingZ() { return - getRanges().z() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength")*2, MinecraftClient.BUFFER); }
 		};
 		
+		coordinateQueue = new ArrayBlockingQueue<>(Parameters.parameters.integerParameter("parallelMinecraftSlots"));
+		
 		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelMinecraftSlots"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),internalMinecraftShapeTask.getRanges());
+		//System.out.println("==================================================");
+		//System.out.println(parallelShapeCorners.get(4));
+		for(int i =0;i<parallelShapeCorners.size();i++) {
+			System.out.println(i);
+			try {
+				coordinateQueue.put(parallelShapeCorners.get(i));
+			} catch (InterruptedException e) {
+				System.out.println("Error with queue");
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+		//System.out.println("SIZE"+coordinateQueue.size());
 	}
 
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
 		// It would be good to change the evaluation scheme so this is not true
-		assert !Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") : "Since all shapes are evaluated at the same location, they cannot be evaluated in parallel";
+		//assert !Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") : "Since all shapes are evaluated at the same location, they cannot be evaluated in parallel";
 
-		int startingX = internalMinecraftShapeTask.getStartingX();
-		int startingZ = internalMinecraftShapeTask.getStartingZ();
 		MinecraftCoordinates ranges = internalMinecraftShapeTask.getRanges();
 		// Clears space for one shape
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(startingX,MinecraftClient.GROUND_LEVEL+1,startingZ), ranges, 1, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
 		// List of 1 corner
-		ArrayList<MinecraftCoordinates> corner = MinecraftShapeTask.getShapeCorners(1, startingX, startingZ, ranges);
+		//ArrayList<MinecraftCoordinates> corner = MinecraftShapeTask.getShapeCorners(1, startingX, startingZ, ranges);
+		MinecraftCoordinates corner=null;
+		try {
+			corner = coordinateQueue.take();
+		} catch (InterruptedException e) {
+			System.out.println("Error with queue");
+			e.printStackTrace();
+			System.exit(1);
+		}
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 1, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
 
-		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, corner.get(0));
+		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, corner);
+		try {
+			coordinateQueue.put(corner);
+		} catch (InterruptedException e) {
+			System.out.println("Error with queue");
+			e.printStackTrace();
+			System.exit(1);
+		}
 		// Copy over one HashMap to another (is there an easier way?)
 		for(HashMap.Entry<String,Object> entry : score.MAPElitesBehaviorMap().entrySet()) {
 			behaviorCharacteristics.put(entry.getKey(), entry.getValue());
 		}
-
+		
 		// Checks command line param on whether or not to generate shapes in archive
 		if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive")) {
 			// Places the shapes in the world based on their position
@@ -277,7 +309,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
-					"spaceBetweenMinecraftShapes:10",
+					"spaceBetweenMinecraftShapes:10","parallelMAPElitesInitialize:true",
 					"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
