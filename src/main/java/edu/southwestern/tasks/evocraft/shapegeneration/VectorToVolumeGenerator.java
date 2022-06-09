@@ -28,7 +28,10 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 		for(double d = 0.0; d < blockSet.getPossibleBlocks().length; d++) {
 			doubles.add(d); // add the possible double values from the block list (0 to block list length)
 		}
-		System.out.println("genome.getPhenotype() looks like: " + genome.getPhenotype());
+		// index of counter of list for genome.getPhenotype() will determine block
+		ArrayList<Double> phenotype = genome.getPhenotype();
+		
+		System.out.println("phenotype looks like: " + phenotype.size());
 		//boolean distanceInEachPlane = Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane");
 		MinecraftCoordinates ranges = new MinecraftCoordinates(
 				Parameters.parameters.integerParameter("minecraftXRange"),
@@ -39,9 +42,13 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 		for(int xi = 0; xi < ranges.x(); xi++) {
 			for(int yi = 0; yi < ranges.y(); yi++) {
 				for(int zi = 0; zi < ranges.z(); zi++) {
-					
-					Block b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[1], blockOrientation);
+					// intValue is used to cast from Double
+					int blockTypeIndex = phenotype.get(counter).intValue(); // blockType is index used to determine blocktype
+					Block b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 					blocks.add(b);
+					System.out.println("added block of block type " + blockSet.getPossibleBlocks()[1]);
+					System.out.println("counter: " + counter);
+					
 					counter++;
 				}
 			}
