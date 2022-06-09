@@ -164,25 +164,31 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, clearEnd);
 	}
 	
-	public static void placeFencesAroundArchive(MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
-		List<Block> test = new ArrayList<>();
-		startPosition=startPosition.sub(new MinecraftCoordinates(1,startPosition.y(),1));
-		startPosition=startPosition.add(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL,0));
+	/**
+	 * Places fences around all specified shapes
+	 * 
+	 * @param ranges Size of blocks, used to generate fences
+	 * @param fencePlacePosition Position where fences are added in from
+	 */
+	public static void placeFencesAroundArchive(MinecraftCoordinates ranges, MinecraftCoordinates fencePlacePosition) {
+		List<Block> fences = new ArrayList<>();
+		// Places first fences based on starting point
+		fencePlacePosition=fencePlacePosition.sub(new MinecraftCoordinates(1,fencePlacePosition.y(),1));
+		fencePlacePosition=fencePlacePosition.add(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL,0));
 		
-		MinecraftCoordinates fencePlacer = startPosition;
-//		test.add(new Block(fencePlacer.x(),fencePlacer.y(),fencePlacer.z(),BlockType.GLOWSTONE, Orientation.WEST));
-//		test.add(new Block(fencePlacer.x(),fencePlacer.y(),fencePlacer.z()+ranges.z()+1,BlockType.DARK_OAK_FENCE, Orientation.WEST));
+		// Places all fences in the x direction
 		for(int i =0;i<=ranges.x()+1;i++) {
-			test.add(new Block(fencePlacer.x()+i,fencePlacer.y(),fencePlacer.z(),BlockType.DARK_OAK_FENCE, Orientation.WEST));
-			test.add(new Block(fencePlacer.x()+i,fencePlacer.y(),fencePlacer.z()+ranges.z()+1,BlockType.DARK_OAK_FENCE, Orientation.WEST));
+			fences.add(new Block(fencePlacePosition.x()+i,fencePlacePosition.y(),fencePlacePosition.z(),BlockType.DARK_OAK_FENCE, Orientation.WEST));
+			fences.add(new Block(fencePlacePosition.x()+i,fencePlacePosition.y(),fencePlacePosition.z()+ranges.z()+1,BlockType.DARK_OAK_FENCE, Orientation.WEST));
 
 		}
+		// Places all fences in the z direction
 		for(int i =0;i<=ranges.z();i++) {
-			test.add(new Block(fencePlacer.x(),fencePlacer.y(),fencePlacer.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));
-			test.add(new Block(fencePlacer.x()+ranges.x()+1,fencePlacer.y(),fencePlacer.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));
+			fences.add(new Block(fencePlacePosition.x(),fencePlacePosition.y(),fencePlacePosition.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));
+			fences.add(new Block(fencePlacePosition.x()+ranges.x()+1,fencePlacePosition.y(),fencePlacePosition.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));
 
 		}
-		MinecraftClient.getMinecraftClient().spawnBlocks(test);
+		MinecraftClient.getMinecraftClient().spawnBlocks(fences); // Spawns them in
 	}
 
 	@Override
