@@ -1,15 +1,37 @@
 package edu.southwestern.tasks.evocraft.characterizations;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
+import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
+import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 
 public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends MinecraftMAPElitesBinLabels {
 
+	private List<String> labels = null;
+	private List<MinecraftFitnessFunction> properties = Arrays.asList(new OccupiedCountFitness(), new NegativeSpaceCountFitness());
+	
 	@Override
 	public List<String> binLabels() {
-		// TODO Auto-generated method stub
-		return null;
+		if(labels == null) { 
+			int xDim = Parameters.parameters.integerParameter("minecraftXRange");
+			int yDim = Parameters.parameters.integerParameter("minecraftYRange");
+			int zDim = Parameters.parameters.integerParameter("minecraftZRange");
+			
+			int size = xDim*yDim*zDim*10 +1; // size blocks count times 10 for each possible % category
+			
+			labels = new ArrayList<String>(size);
+			
+			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities (i < size would just give a range of 0-999)
+			for(int i = 0; i < size; i++) {
+				for(int j = 0; j < 100; j+=10)
+				labels.add(i + "Blocks"+j+"%"); 
+			}
+		}
+		return labels;
 	}
 
 	@Override
