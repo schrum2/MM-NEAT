@@ -395,6 +395,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 						MinecraftLonerShapeTask.placeFencesAroundArchive(ranges,corners.t2);
 					}
 				});
+				MinecraftLonerShapeTask.spawnShapesInWorldTrue();
 			}
 		}
 	}

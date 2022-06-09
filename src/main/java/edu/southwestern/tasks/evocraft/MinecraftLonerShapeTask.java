@@ -97,7 +97,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
 
 		// If the new shape is better than the previous, it gets replaced
-		if(scoreOfCurrentElite > scoreOfPreviousElite) {
+		if(scoreOfCurrentElite > scoreOfPreviousElite && spawnShapesInWorld) {
 			if(!(Double.isInfinite(scoreOfPreviousElite) && scoreOfPreviousElite < 0)) {
 				// Clears old shape, but only if a shape was there (score was not negative infinity)
 				Pair<MinecraftCoordinates,MinecraftCoordinates> cleared = clearBlocksInArchive(dimSize, ranges, corners.t1);
@@ -194,14 +194,14 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	/**
 	 * Sets spawnShapesInWorld to true
 	 */
-	public void spawnShapesInWorldTrue() {
+	public static void spawnShapesInWorldTrue() {
 		spawnShapesInWorld=true;
 	}
 	
 	/**
 	 * Sets spawnShapesInWorld to false
 	 */
-	public void spawnShapesInWorldFalse() {
+	public static void spawnShapesInWorldFalse() {
 		spawnShapesInWorld=false;
 	}
 	
