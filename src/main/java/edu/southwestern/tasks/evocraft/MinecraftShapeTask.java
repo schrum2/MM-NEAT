@@ -14,6 +14,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
+import edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
@@ -246,12 +247,16 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> readBlocks) {
 		// Parallelize fitness calculation
 		double[] fitnessScores = fitnessFunctions.parallelStream().mapToDouble(ff -> {
+			
+			assert !(ff instanceof OccupiedCountFitness && MMNEAT.blockSet instanceof SimpleSolidBlockSet) || ff.fitnessScore(corner) == ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks) : 
+				"corner:"+corner+",readBlocks:"+readBlocks;
+			
 			if(ff instanceof CheckBlocksInSpaceFitness) {
 				// All fitness functions of this type can just use the previously computed readBlocks list
 				return ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks);
 			} else {
 				return ff.fitnessScore(corner);
-			}
+			}			
 		}).toArray();
 		
 		return fitnessScores;
