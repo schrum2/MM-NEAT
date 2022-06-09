@@ -39,6 +39,7 @@ import edu.southwestern.tasks.loderunner.LodeRunnerLevelTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.PythonUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 import edu.southwestern.util.random.RandomNumbers;
@@ -388,8 +389,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					// Minecraft shapes have to be re-generated and added to the world
 					if(minecraftInit && result) {
 						// Generates shape in world when specified 
-						MinecraftCoordinates startPosition = MinecraftLonerShapeTask.configureStartPosition(ranges, s.MAPElitesBehaviorMap());
-						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(s.individual, startPosition, MMNEAT.blockSet);
+						Pair<MinecraftCoordinates,MinecraftCoordinates> corners = MinecraftLonerShapeTask.configureStartPosition(ranges, s.MAPElitesBehaviorMap());
+						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(s.individual, corners.t2, MMNEAT.blockSet);
 						MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 					}
 				});

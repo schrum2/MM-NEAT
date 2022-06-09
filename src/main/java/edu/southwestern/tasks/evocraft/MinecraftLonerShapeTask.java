@@ -87,7 +87,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		int dimSize = minecraftBinLabels.dimensions().length;
 		int index1D = (int) behaviorCharacteristics.get("dim1D");
 		// Starting position is different for each dimension size, 2 and 3D use multidimensional, otherwise 1D
-		MinecraftCoordinates startPosition = configureStartPosition(ranges, behaviorCharacteristics);
+		Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
 
 		// Gets the bin scores to compare them
 		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
@@ -98,11 +98,13 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		if(scoreOfCurrentElite > scoreOfPreviousElite) {
 			if(!(Double.isInfinite(scoreOfPreviousElite) && scoreOfPreviousElite < 0)) {
 				// Clears old shape, but only if a shape was there (score was not negative infinity)
-				clearBlocksInArchive(dimSize, ranges, startPosition);
+				Pair<MinecraftCoordinates,MinecraftCoordinates> cleared = clearBlocksInArchive(dimSize, ranges, corners.t1);
+				assert cleared.t1.equals(corners.t1) : "Cleared space does not start at right location: "+cleared.t1+" vs "+corners.t1;
+				// Could do more checking here
 			}
 			// Generates the new shape
 			@SuppressWarnings("unchecked")
-			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, startPosition, MMNEAT.blockSet);
+			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corners.t2, MMNEAT.blockSet);
 			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 		}
 	}
@@ -112,12 +114,13 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 * 
 	 * @param ranges x/y/z sizes taken up by each shape
 	 * @param behaviorCharacteristics characteristics of the shape that help determine its location in the archive
-	 * @return Corner to build shape at in world
+	 * @return Pair of the corner of the space to clear followed by the corner within that space to place the shape
 	 */
-	public static MinecraftCoordinates configureStartPosition(MinecraftCoordinates ranges, HashMap<String,Object> behaviorCharacteristics) {
+	public static Pair<MinecraftCoordinates,MinecraftCoordinates> configureStartPosition(MinecraftCoordinates ranges, HashMap<String,Object> behaviorCharacteristics) {
 		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 		final int SPACE_BETWEEN = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
 		MinecraftCoordinates startPosition;
+		MinecraftCoordinates offset;
 		int xOffset = (int) (((ranges.x() + SPACE_BETWEEN) / 2.0) - (ranges.x()/2.0)); 
 		int yOffset = (int) (((ranges.y() + SPACE_BETWEEN) / 2.0) - (ranges.y()/2.0)); 
 		int zOffset = (int) (((ranges.z() + SPACE_BETWEEN) / 2.0) - (ranges.z()/2.0)); 
@@ -126,16 +129,19 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		if(multiDimIndex.length==1 || multiDimIndex.length > 3 || Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
 			// Derive 1D location from multi-dimensional location
 			int index = (int) behaviorCharacteristics.get("dim1D");
-			startPosition = new MinecraftCoordinates(index*(SPACE_BETWEEN+ranges.x()) + xOffset,MinecraftClient.GROUND_LEVEL+1,0);				
+			startPosition = new MinecraftCoordinates(index*(SPACE_BETWEEN+ranges.x()),MinecraftClient.GROUND_LEVEL+1,0);				
+			offset = new MinecraftCoordinates(xOffset,0,0);				
 		} else if(multiDimIndex.length==2){
 			// Ground level fixed, but expand second coordinate in z dimension
-			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(SPACE_BETWEEN+ranges.x()) + xOffset,MinecraftClient.GROUND_LEVEL+1,multiDimIndex[1]*(SPACE_BETWEEN+ranges.z()) + zOffset);
+			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(SPACE_BETWEEN+ranges.x()),MinecraftClient.GROUND_LEVEL+1,multiDimIndex[1]*(SPACE_BETWEEN+ranges.z()));
+			offset = new MinecraftCoordinates(xOffset,0,zOffset);
 		} else if(multiDimIndex.length==3) {
-			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(SPACE_BETWEEN+ranges.x()) + xOffset,MinecraftClient.GROUND_LEVEL+1+multiDimIndex[1]*(SPACE_BETWEEN+ranges.y()) + yOffset,multiDimIndex[2]*(SPACE_BETWEEN+ranges.z()) + zOffset);
+			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(SPACE_BETWEEN+ranges.x()),MinecraftClient.GROUND_LEVEL+1+multiDimIndex[1]*(SPACE_BETWEEN+ranges.y()),multiDimIndex[2]*(SPACE_BETWEEN+ranges.z()));
+			offset = new MinecraftCoordinates(xOffset,yOffset,zOffset);
 		} else {
 			throw new IllegalArgumentException("This should be impossible to reach: "+Arrays.toString(multiDimIndex));
 		}
-		return startPosition;
+		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, startPosition.add(offset));
 	}
 
 	/**
@@ -144,14 +150,16 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 * @param dimSize Determines if the archive is 1D, 2D, or 3D
 	 * @param ranges specified range of each shape
 	 * @param startPosition Starting indices of a specific shape
+	 * @return start and end coordinates of area that was cleared
 	 */
-	public static void clearBlocksInArchive(int dimSize,MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
+	public static Pair<MinecraftCoordinates,MinecraftCoordinates> clearBlocksInArchive(int dimSize,MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
 		final int SPACE_BETWEEN = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
 		// Makes the buffer space between coordinates
 		MinecraftCoordinates bufferDist = new MinecraftCoordinates(SPACE_BETWEEN,SPACE_BETWEEN,SPACE_BETWEEN);
 		// End coordinate is based on buffer distance. Then shape is cleared
 		MinecraftCoordinates clearEnd = startPosition.add(bufferDist).add(ranges);
 		MinecraftClient.getMinecraftClient().fillCube(startPosition, clearEnd, BlockType.AIR);
+		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, clearEnd);
 	}
 
 	@Override
