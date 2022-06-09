@@ -218,12 +218,13 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		int seed = 0;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
-					"base:minecraft", "log:Minecraft-MAPElitesWHD", "saveTo:MAPElitesWHD",
+					"base:minecraft", "log:Minecraft-MAPElitesWHDSimple", "saveTo:MAPElitesWHDSimple",
 					"io:true", "netio:true",
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:true",
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
-					"mating:true", "fs:false", 
+					"mating:true", "fs:false",
+					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet",
 					//"minecraftTypeCountFitness:true",
 					"minecraftDiversityBlockFitness:true",
 					//"minecraftTypeTargetFitness:true", 
