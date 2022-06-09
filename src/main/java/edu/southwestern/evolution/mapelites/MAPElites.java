@@ -388,10 +388,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					// Minecraft shapes have to be re-generated and added to the world
 					if(minecraftInit && result) {
 						// Generates shape in world when specified 
-						MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
-						int dimSize = minecraftBinLabels.dimensionSizes().length;
-						MinecraftCoordinates startPosition = MinecraftLonerShapeTask.configureStartPosition(dimSize, ranges, s.MAPElitesBinIndex());
-						//MinecraftCoordinates startPosition = new MinecraftCoordinates(s.MAPElitesBinIndex()[0]*MinecraftClient.BUFFER+s.MAPElitesBinIndex()[0]*xRange,5,0);
+						MinecraftCoordinates startPosition = MinecraftLonerShapeTask.configureStartPosition(ranges, s.MAPElitesBehaviorMap());
 						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(s.individual, startPosition, MMNEAT.blockSet);
 						MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 					}
