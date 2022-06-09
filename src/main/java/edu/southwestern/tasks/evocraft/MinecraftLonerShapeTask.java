@@ -52,11 +52,11 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			public int getStartingZ() { return - getRanges().z() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength")*2, MinecraftClient.BUFFER); }
 		};
 		
+		// Creates a new blocking queue to use with parallelism
 		coordinateQueue = new ArrayBlockingQueue<>(Parameters.parameters.integerParameter("parallelMinecraftSlots"));
 		
+		// Generates the corners for all of the shapes and then adds them into the blocking queue
 		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelMinecraftSlots"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),internalMinecraftShapeTask.getRanges());
-		//System.out.println("==================================================");
-		//System.out.println(parallelShapeCorners.get(4));
 		for(int i =0;i<parallelShapeCorners.size();i++) {
 			System.out.println(i);
 			try {
@@ -67,17 +67,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				System.exit(1);
 			}
 		}
-		//System.out.println("SIZE"+coordinateQueue.size());
 	}
 
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
-		// It would be good to change the evaluation scheme so this is not true
-		//assert !Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") : "Since all shapes are evaluated at the same location, they cannot be evaluated in parallel";
-
 		MinecraftCoordinates ranges = internalMinecraftShapeTask.getRanges();
-		// Clears space for one shape
-		// List of 1 corner
-		//ArrayList<MinecraftCoordinates> corner = MinecraftShapeTask.getShapeCorners(1, startingX, startingZ, ranges);
+
+		// Corner to clear and then place is taken from the queue. If the queue is empty, it waits until something is added in
 		MinecraftCoordinates corner=null;
 		try {
 			corner = coordinateQueue.take();
@@ -86,8 +81,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			e.printStackTrace();
 			System.exit(1);
 		}
+		// Clears specified space for new shape
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 1, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
-
+		
+		// Evaluates the shape, and then adds the corner back to the queue
 		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, corner);
 		try {
 			coordinateQueue.put(corner);
