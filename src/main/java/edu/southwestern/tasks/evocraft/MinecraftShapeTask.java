@@ -15,6 +15,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
+import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
@@ -217,6 +218,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			int dim1D = minecraftBinLabels.oneDimensionalIndex(behaviorMap);
 			behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
 			score.assignMAPElitesBehaviorMapAndScore(behaviorMap);
+			
+			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || ((Integer) behaviorMap.get("dim1D")).intValue() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap;
 		}
 		return score;
 	}
