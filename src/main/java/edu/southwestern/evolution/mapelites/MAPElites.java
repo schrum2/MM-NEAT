@@ -392,6 +392,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 						Pair<MinecraftCoordinates,MinecraftCoordinates> corners = MinecraftLonerShapeTask.configureStartPosition(ranges, s.MAPElitesBehaviorMap());
 						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(s.individual, corners.t2, MMNEAT.blockSet);
 						MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+						MinecraftLonerShapeTask.placeFencesAroundArchive(ranges,corners.t2);
 					}
 				});
 			}
