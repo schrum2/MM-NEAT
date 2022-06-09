@@ -49,7 +49,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		internalMinecraftShapeTask = new MinecraftShapeTask<T>() {
 			public int getStartingX() { return - getRanges().x() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
 
-			public int getStartingZ() { return - getRanges().z() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
+			public int getStartingZ() { return - getRanges().z() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength")*2, MinecraftClient.BUFFER); }
 		};
 		
 		coordinateQueue = new ArrayBlockingQueue<>(Parameters.parameters.integerParameter("parallelMinecraftSlots"));
@@ -74,11 +74,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		// It would be good to change the evaluation scheme so this is not true
 		assert !Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") : "Since all shapes are evaluated at the same location, they cannot be evaluated in parallel";
 
-		int startingX = internalMinecraftShapeTask.getStartingX();
-		int startingZ = internalMinecraftShapeTask.getStartingZ();
 		MinecraftCoordinates ranges = internalMinecraftShapeTask.getRanges();
 		// Clears space for one shape
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(startingX,MinecraftClient.GROUND_LEVEL+1,startingZ), ranges, 1, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
 		// List of 1 corner
 		//ArrayList<MinecraftCoordinates> corner = MinecraftShapeTask.getShapeCorners(1, startingX, startingZ, ranges);
 		MinecraftCoordinates corner=null;
@@ -89,6 +86,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			e.printStackTrace();
 			System.exit(1);
 		}
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 1, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
+
 		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, corner);
 		try {
 			coordinateQueue.put(corner);
