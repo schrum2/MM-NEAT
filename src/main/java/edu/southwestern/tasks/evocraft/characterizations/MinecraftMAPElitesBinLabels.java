@@ -2,6 +2,7 @@ package edu.southwestern.tasks.evocraft.characterizations;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
@@ -10,7 +11,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 
-public abstract class MinecraftMAPElitesBinLabels extends BaseBinLabels {
+public abstract class MinecraftMAPElitesBinLabels extends BaseBinLabels implements Iterable<int[]> {
 
 	public MinecraftMAPElitesBinLabels() {
 		// if populating the world with the archive, clear it all here
@@ -59,5 +60,51 @@ public abstract class MinecraftMAPElitesBinLabels extends BaseBinLabels {
 			behaviorMap.put(functionNames[i], fitnessScores[i]);
 		}
 		return behaviorMap;
+	}
+	
+	@Override
+	public Iterator<int[]> iterator() {
+		return new MultidimensionalIndexIterator();
+	}
+	
+	/**
+	 * Can iterate through all of the multidimensional indices in row-major order.
+	 * Will visit every 1D index in the archive.
+	 * 
+	 * @author schrum2
+	 *
+	 */
+	private class MultidimensionalIndexIterator implements Iterator<int[]> {
+
+		private int[] current;
+		private int[] sizes;
+		private boolean finished;
+		
+		public MultidimensionalIndexIterator() {
+			finished = false;
+			sizes = dimensionSizes();
+			// All 0s to start
+			current = new int[sizes.length];
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return !finished;
+		}
+
+		@Override
+		public int[] next() {
+			// Result is already known
+			int[] result = Arrays.copyOf(current, current.length);
+			// Pre-calculate next in line
+			int i = current.length;
+			do {
+				i--;
+				current[i] = (current[i] + 1) % sizes[i];				
+			} while(i > 0 && current[i] == 0);
+			if(i == 0 && current[i] == 0) finished = true;
+			return result;
+		}
+		
 	}
 }

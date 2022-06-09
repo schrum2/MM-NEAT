@@ -495,6 +495,20 @@ public class MinecraftClient extends Comm {
 			String pos = position.toString();
 			return name + " at " + pos + " oriented " + (orientation == null ? "null" : orientation.name());
 		}
+		
+		public boolean equals(Object other) {
+			boolean result = false;
+			if(other instanceof Block) {
+				Block otherBlock = (Block) other;
+				result = otherBlock.x() == this.x() && 
+						 otherBlock.y() == this.y() && 
+						 otherBlock.z() == this.z() &&
+						 otherBlock.type() == this.type() &&
+						 ((otherBlock.orientation == null && this.orientation == null) || 
+						  (otherBlock.orientation() == this.orientation()));
+			}
+			return result;
+		}
 	}
 
 	/**

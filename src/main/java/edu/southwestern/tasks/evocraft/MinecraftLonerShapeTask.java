@@ -143,12 +143,14 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			@SuppressWarnings("unchecked")
 			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corners.t2, MMNEAT.blockSet);
 			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
-			placeFencesAroundArchive(ranges,corners.t2);
+			// Fences placed at initialization now
+			//placeFencesAroundArchive(ranges,corners.t2);
 		}
 	}
 
 	/**
 	 * Figure out the corner in the world to place the shape at in the representation of the archive.
+	 * Both the corner of the large space that the shape reserves, and the actual corner of where it will be generated.
 	 * 
 	 * @param ranges x/y/z sizes taken up by each shape
 	 * @param behaviorCharacteristics characteristics of the shape that help determine its location in the archive
@@ -156,6 +158,21 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 */
 	public static Pair<MinecraftCoordinates,MinecraftCoordinates> configureStartPosition(MinecraftCoordinates ranges, HashMap<String,Object> behaviorCharacteristics) {
 		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+		int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
+		int dim1D = (int) behaviorCharacteristics.get("dim1D");
+		return configureStartPosition(ranges, multiDimIndex, dim1D);
+	}		
+		
+	/**
+	 * Figure out the corner in the world to place the shape at in the representation of the archive.
+	 * Both the corner of the large space that the shape reserves, and the actual corner of where it will be generated.
+
+	 * @param ranges x/y/z sizes taken up by each shape
+	 * @param multiDimIndex Multi-dimensional location in archive
+	 * @param dim1D one-dimensional location in archive
+	 * @return Pair of the corner of the space to clear followed by the corner within that space to place the shape
+	 */
+	public static Pair<MinecraftCoordinates,MinecraftCoordinates> configureStartPosition(MinecraftCoordinates ranges, int[] multiDimIndex, int dim1D) {
 		final int SPACE_BETWEEN = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
 		MinecraftCoordinates startPosition;
 		MinecraftCoordinates offset;
@@ -163,11 +180,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		int yOffset = (int) (((ranges.y() + SPACE_BETWEEN) / 2.0) - (ranges.y()/2.0)); 
 		int zOffset = (int) (((ranges.z() + SPACE_BETWEEN) / 2.0) - (ranges.z()/2.0)); 
 		// Location in multi-dimensional archive
-		int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
 		if(multiDimIndex.length==1 || multiDimIndex.length > 3 || Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
 			// Derive 1D location from multi-dimensional location
-			int index = (int) behaviorCharacteristics.get("dim1D");
-			startPosition = new MinecraftCoordinates(index*(SPACE_BETWEEN+ranges.x()),MinecraftClient.GROUND_LEVEL+1,0);				
+			startPosition = new MinecraftCoordinates(dim1D*(SPACE_BETWEEN+ranges.x()),MinecraftClient.GROUND_LEVEL+1,0);				
 			offset = new MinecraftCoordinates(xOffset,0,0);				
 		} else if(multiDimIndex.length==2){
 			// Ground level fixed, but expand second coordinate in z dimension
