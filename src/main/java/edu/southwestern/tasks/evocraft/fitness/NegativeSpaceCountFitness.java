@@ -14,17 +14,16 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 		// Initializes all variables to 0, need min and max coordinates to calculate the space the shape takes up
 		int total=0, maxX=0, maxY=0, maxZ=0, minX=0, minY=0, minZ=0;
 		for(Block b : blocks) {
-			
-			// If any new min or max, change to it. (There is definitely a better way to do this)
-			if(b.x()>maxX) maxX=b.x();
-			if(b.x()<minX) minX=b.x();
-			if(b.x()>maxY) maxX=b.y();
-			if(b.x()<minY) minX=b.y();
-			if(b.x()>maxZ) maxX=b.z();
-			if(b.x()<minZ) minX=b.z();
-			
-			// Total keeps track of all of the blocks that are not air within the shape
 			if(b.type() != BlockType.AIR.ordinal()) {
+				// If any new min or max, change to it. Air blocks cannot be included in these coordinates (There is definitely a better way to do this)
+				if(b.x()>maxX) maxX=b.x();
+				if(b.x()<minX) minX=b.x();
+				if(b.x()>maxY) maxX=b.y();
+				if(b.x()<minY) minX=b.y();
+				if(b.x()>maxZ) maxX=b.z();
+				if(b.x()<minZ) minX=b.z();
+			
+				// Total keeps track of all of the blocks that are not air within the shape
 				total++;
 			}
 		}
