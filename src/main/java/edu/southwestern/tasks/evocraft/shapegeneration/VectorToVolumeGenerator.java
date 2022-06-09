@@ -19,9 +19,11 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 	public List<Block> generateShape(Genotype<ArrayList<Double>> genome, MinecraftCoordinates corner,
 			BlockSet blockSet) {
 	
-		
+//		System.out.println("fine here.");
 		
 		List<Block> blocks = new ArrayList<>();
+		
+//		System.out.println("new list blocks was created.");
 		
 		// TODO: make double list/array to correspond to every block in the block list
 		List<Double> doubles = new ArrayList<>();
@@ -29,7 +31,16 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 			doubles.add(d); // add the possible double values from the block list (0 to block list length)
 		}
 		// index of counter of list for genome.getPhenotype() will determine block
-		ArrayList<Double> phenotype = genome.getPhenotype();
+//		System.out.println("doubles array was also made");
+		
+		//System.out.println("genotype position 0: " + genome.getPhenotype().get(0).intValue());
+		ArrayList<Double> phenotype = null;
+		try {
+			phenotype = genome.getPhenotype();	
+		} catch(Exception e) {
+			System.out.println("genome.getPhenotype() caused crash");
+			System.exit(1);
+		}
 		
 		System.out.println("phenotype looks like: " + phenotype.size());
 		//boolean distanceInEachPlane = Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane");
