@@ -16,6 +16,7 @@ import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.util.datastructures.Pair;
 
@@ -33,17 +34,21 @@ import edu.southwestern.util.datastructures.Pair;
 public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements NetworkTask {
 
 	private MinecraftShapeTask<T> internalMinecraftShapeTask;
+	private static boolean spawnShapesInWorld=false;
+	private static ArrayList<MinecraftCoordinates> parallelShapeCorners;
 
-	public MinecraftLonerShapeTask() {
+	public MinecraftLonerShapeTask() 	{
 		/**
 		 * Default shape generation location is shifted away a bit so that the archive can populate the world starting around (0,5,0) 
 		 */
+		
 		internalMinecraftShapeTask = new MinecraftShapeTask<T>() {
 			public int getStartingX() { return - getRanges().x() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
 
 			public int getStartingZ() { return - getRanges().z() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
-
 		};
+		
+		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelMinecraftSlots"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),internalMinecraftShapeTask.getRanges());
 	}
 
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
@@ -95,7 +100,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
 
 		// If the new shape is better than the previous, it gets replaced
-		if(scoreOfCurrentElite > scoreOfPreviousElite) {
+		if(scoreOfCurrentElite > scoreOfPreviousElite && spawnShapesInWorld) {
 			if(!(Double.isInfinite(scoreOfPreviousElite) && scoreOfPreviousElite < 0)) {
 				// Clears old shape, but only if a shape was there (score was not negative infinity)
 				Pair<MinecraftCoordinates,MinecraftCoordinates> cleared = clearBlocksInArchive(dimSize, ranges, corners.t1);
@@ -106,6 +111,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			@SuppressWarnings("unchecked")
 			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corners.t2, MMNEAT.blockSet);
 			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+			placeFencesAroundArchive(ranges,corners.t2);
 		}
 	}
 
@@ -161,7 +167,47 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		MinecraftClient.getMinecraftClient().fillCube(startPosition, clearEnd, BlockType.AIR);
 		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, clearEnd);
 	}
+	
+	/**
+	 * Places fences around all specified shapes
+	 * 
+	 * @param ranges Size of blocks, used to generate fences
+	 * @param fencePlacePosition Position where fences are added in from
+	 */
+	public static void placeFencesAroundArchive(MinecraftCoordinates ranges, MinecraftCoordinates fencePlacePosition) {
+		List<Block> fences = new ArrayList<>();
+		// Places first fences based on starting point
+		fencePlacePosition=fencePlacePosition.sub(new MinecraftCoordinates(1,fencePlacePosition.y(),1));
+		fencePlacePosition=fencePlacePosition.add(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL,0));
+		
+		// Places all fences in the x direction
+		for(int i =0;i<=ranges.x()+1;i++) {
+			fences.add(new Block(fencePlacePosition.x()+i,fencePlacePosition.y(),fencePlacePosition.z(),BlockType.DARK_OAK_FENCE, Orientation.WEST));
+			fences.add(new Block(fencePlacePosition.x()+i,fencePlacePosition.y(),fencePlacePosition.z()+ranges.z()+1,BlockType.DARK_OAK_FENCE, Orientation.WEST));
 
+		}
+		// Places all fences in the z direction
+		for(int i =0;i<=ranges.z();i++) {
+			fences.add(new Block(fencePlacePosition.x(),fencePlacePosition.y(),fencePlacePosition.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));
+			fences.add(new Block(fencePlacePosition.x()+ranges.x()+1,fencePlacePosition.y(),fencePlacePosition.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));
+
+		}
+		MinecraftClient.getMinecraftClient().spawnBlocks(fences); // Spawns them in
+	}
+	/**
+	 * Sets spawnShapesInWorld to true
+	 */
+	public static void spawnShapesInWorldTrue() {
+		spawnShapesInWorld=true;
+	}
+	
+	/**
+	 * Sets spawnShapesInWorld to false
+	 */
+	public static void spawnShapesInWorldFalse() {
+		spawnShapesInWorld=false;
+	}
+	
 	@Override
 	public int numObjectives() {
 		return internalMinecraftShapeTask.numObjectives();

@@ -365,6 +365,7 @@ public class Parameters {
 		integerOptions.add("minecraftDesiredBlockCount", 0, "Count desired by TypeTargetFitness");
 		integerOptions.add("minecraftMaxSnakeLength", 100, "Maximum length that a generated snake can be");
 		integerOptions.add("spaceBetweenMinecraftShapes", 5, "The space in blocks that are in between each of the generated minecraft structures");
+		integerOptions.add("parallelMinecraftSlots", 5, "The ammount of minecraft shapes that can be generated at once");
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
