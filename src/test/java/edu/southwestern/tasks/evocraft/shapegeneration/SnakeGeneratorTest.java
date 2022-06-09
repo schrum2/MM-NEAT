@@ -21,7 +21,8 @@ public class SnakeGeneratorTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Parameters.initializeParameterCollections(new String[] {"objectBreederDistanceInEachPlane:false"});
+		Parameters.initializeParameterCollections(new String[] {"objectBreederDistanceInEachPlane:false","minecraftEvolveOrientation:true","minecraftRedirectConfinedSnakes:true",
+				"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator"});
 		//MMNEAT.loadClasses();
 		generator = new SnakeGenerator<Network>();
 		
@@ -165,7 +166,7 @@ public class SnakeGeneratorTest {
 		BlockSet blockSet = new MachineBlockSet();
 		MMNEAT.blockSet = blockSet;
 		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0);
-		double[] input = new double[netGen.getPhenotype().numInputs()];
+		MMNEAT.shapeGenerator = generator;
 		
 		System.out.println(generator.generateShape(netGen,corner,blockSet));
 		
