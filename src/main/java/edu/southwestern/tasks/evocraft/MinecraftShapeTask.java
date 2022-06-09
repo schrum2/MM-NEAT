@@ -31,12 +31,12 @@ import edu.southwestern.util.ClassCreation;
 
 
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask {
-	
-	private ArrayList<MinecraftFitnessFunction> fitnessFunctions;
+	// Visible within package
+	ArrayList<MinecraftFitnessFunction> fitnessFunctions;
+	MinecraftCoordinates ranges;
 	private ArrayList<MinecraftCoordinates> corners;
 	private int startingX;
 	private int startingZ;
-	private MinecraftCoordinates ranges;
 	
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
@@ -213,7 +213,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			// Map contains all required properties now
 			HashMap<String,Object> behaviorMap = minecraftBinLabels.behaviorMapFromScores(propertyScores);
 			
-			double binScore = fitnessScores[0]; // TODO: CHANGE THIS!
+			double binScore = qualityScore(fitnessScores); 
 			behaviorMap.put("binScore", binScore); // Quality Score!				
 			// Do this last
 			int dim1D = minecraftBinLabels.oneDimensionalIndex(behaviorMap);
@@ -223,6 +223,17 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || ((Integer) behaviorMap.get("dim1D")).intValue() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap;
 		}
 		return score;
+	}
+
+	/**
+	 * Gets quality score used by MAP Elites. Is currently
+	 * just the first fitness score, but we may want a more sophisticated way
+	 * to designate this in the future
+	 * @param fitnessScores All calculated fitness scores
+	 * @return Single quality score
+	 */
+	public static double qualityScore(double[] fitnessScores) {
+		return fitnessScores[0]; // TODO: CHANGE THIS?
 	}
 
 	/**

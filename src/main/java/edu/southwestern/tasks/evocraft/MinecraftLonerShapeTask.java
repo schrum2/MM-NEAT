@@ -20,6 +20,9 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
+import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
+import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
+import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.util.datastructures.Pair;
 
 /**
@@ -115,6 +118,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 * @param behaviorCharacteristics dictionary of values used for placing at the right index
 	 * @param ranges specified range of each shape
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> void placeArchiveInWorld(Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics, MinecraftCoordinates ranges) {
 		// Creates the bin labels
 		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
@@ -136,11 +140,17 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				// Could do more checking here
 			}
 			// Generates the new shape
-			@SuppressWarnings("unchecked")
 			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corners.t2, MMNEAT.blockSet);
 			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 			// Fences placed at initialization now
 			//placeFencesAroundArchive(ranges,corners.t2);
+			
+			double testScore = 0;
+			MinecraftCoordinates testCorner = null;
+			assert MinecraftShapeTask.qualityScore(new double[] {testScore = ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2)}) == ((Double) behaviorCharacteristics.get("binScore")).doubleValue() : 
+				behaviorCharacteristics + ":testScore="+testScore+":" + blocks;
+			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || new OccupiedCountFitness().fitnessScore(testCorner) == (testScore = ((Double) behaviorCharacteristics.get("OccupiedCountFitness")).doubleValue()) : 
+				testCorner+":occupied count="+testScore+":"+ blocks + ":" + CheckBlocksInSpaceFitness.readBlocksFromClient(testCorner);
 		}
 	}
 
