@@ -373,13 +373,26 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			} else {
 				// Clears space for incoming archive
 				boolean minecraftInit = archive.getBinMapping() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive");
-				final int xRange = Parameters.parameters.integerParameter("minecraftXRange");
+				//final int xRange = Parameters.parameters.integerParameter("minecraftXRange");
 				MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
 				if(minecraftInit) { //then clear world
 					// Initializes the population size and ranges for clearing
 					int pop_size = Parameters.parameters.integerParameter("mu");
 					//MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),Parameters.parameters.integerParameter("minecraftYRange"),Parameters.parameters.integerParameter("minecraftZRange"));
 					MinecraftClient.getMinecraftClient().clearSpaceForShapes(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL+1,0), ranges, pop_size, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
+				
+					// Place fences around all areas where a shape from the archive could be placed
+					MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+					int dim1D = 0;
+					for(int[] multiIndices : minecraftBinLabels) {
+						//System.out.println(Arrays.toString(multiIndices));
+						Pair<MinecraftCoordinates, MinecraftCoordinates> corners = MinecraftLonerShapeTask.configureStartPosition(ranges, multiIndices, dim1D++);
+						// Only place on ground
+						if(corners.t1.y() == MinecraftClient.GROUND_LEVEL+1) {
+							//System.out.println("YES GROUND");
+							MinecraftLonerShapeTask.placeFencesAroundArchive(ranges,corners.t2);
+						}
+					}
 				}
 					
 				// Add initial population to archive, if add is true
@@ -392,7 +405,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 						Pair<MinecraftCoordinates,MinecraftCoordinates> corners = MinecraftLonerShapeTask.configureStartPosition(ranges, s.MAPElitesBehaviorMap());
 						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(s.individual, corners.t2, MMNEAT.blockSet);
 						MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
-						MinecraftLonerShapeTask.placeFencesAroundArchive(ranges,corners.t2);
+						//MinecraftLonerShapeTask.placeFencesAroundArchive(ranges,corners.t2);
 					}
 				});
 				MinecraftLonerShapeTask.spawnShapesInWorldTrue();

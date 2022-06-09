@@ -25,12 +25,12 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 			int yDim = Parameters.parameters.integerParameter("minecraftYRange");
 			int zDim = Parameters.parameters.integerParameter("minecraftZRange");
 			
-			int size = xDim*yDim*zDim; // size is the total possible volume
+			int size = xDim*yDim*zDim+1; // size is the total possible volume
 			
 			labels = new ArrayList<String>(size);
 			
 			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities (i < size would just give a range of 0-999)
-			for(int i = 0; i < size + 1; i++) labels.add(i + " Blocks"); 
+			for(int i = 0; i < size; i++) labels.add(i + "Blocks"); 
 		}
 		return labels;
 	}
@@ -61,6 +61,7 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false", 
 					"minecraftContainsWholeMAPElitesArchive:true",
+					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet",
 					//"minecraftTypeCountFitness:true",
 					"minecraftDiversityBlockFitness:true",
 					//"minecraftTypeTargetFitness:true", 
