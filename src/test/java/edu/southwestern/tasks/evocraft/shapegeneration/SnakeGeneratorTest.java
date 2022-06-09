@@ -5,10 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -63,6 +61,7 @@ public class SnakeGeneratorTest {
 				return null;
 			}
 
+			// A fake neural network that generates the responses we want for testing
 			@Override
 			public Network getPhenotype() {
 				// Return a fake Network that behaves the way we want
@@ -164,10 +163,7 @@ public class SnakeGeneratorTest {
 		};
 	}
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-
+	// Tries to make the snake loop back on itself, but the generation terminates with just two blocks
 	@Test
 	public void testGenerateShape() throws NoSuchMethodException {
 		BlockSet blockSet = new MachineBlockSet();

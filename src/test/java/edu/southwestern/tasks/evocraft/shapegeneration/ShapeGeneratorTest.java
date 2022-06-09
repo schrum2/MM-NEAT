@@ -1,11 +1,10 @@
 package edu.southwestern.tasks.evocraft.shapegeneration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -19,7 +18,6 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
-import edu.southwestern.util.ClassCreation;
 
 public class ShapeGeneratorTest {
 
@@ -29,9 +27,6 @@ public class ShapeGeneratorTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		
-		
-		
 		generator = new SnakeGenerator<Network>();
 		
 		netGen = new Genotype<Network>() {
@@ -65,7 +60,7 @@ public class ShapeGeneratorTest {
 				return null;
 			}
 
-			
+			// A fake neural network that generates the responses we want for testing
 			private int counter = 0;
 			@Override
 			public Network getPhenotype() {
@@ -195,10 +190,6 @@ public class ShapeGeneratorTest {
 			}
 			
 		};
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
 	}
 
 	@Test
