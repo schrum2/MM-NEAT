@@ -125,7 +125,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		int index1D = (int) behaviorCharacteristics.get("dim1D");
 		// Gets the bin scores to compare them
 		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
-		@SuppressWarnings("unchecked")
 		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
 
 		// If the new shape is better than the previous, it gets replaced
