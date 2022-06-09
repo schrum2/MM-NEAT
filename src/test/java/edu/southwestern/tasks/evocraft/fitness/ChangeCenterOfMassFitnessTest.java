@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.MinecraftServer;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
@@ -29,32 +30,28 @@ public class ChangeCenterOfMassFitnessTest {
 
 	ChangeCenterOfMassFitness ff;
 	
-	//@BeforeClass
+	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6"});
+		MinecraftServer.launchServer();
 		MinecraftClient.getMinecraftClient();
 	}
 
-	//@Before
+	@Before
 	public void setUp() throws Exception {
 		ff = new ChangeCenterOfMassFitness();
 	}
 	
-	//@AfterClass
+	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
+		Thread.sleep(waitTime);
+		
+		MinecraftClient.terminateClientScriptProcess();
+		MinecraftServer.terminateServer();
 	}
 
-	//@Test
-	public void testMinFitness() {
-		fail("Not yet implemented");
-	}
-
-	//@Test
-	public void testMaxFitness() {
-		fail("Not yet implemented");
-	}
-
-	//@Test
+	@Test
 	public void testFitnessScoreMinecraftCoordinates() {
 		// Small list of blocks that don't move
 		// Should have a fitness of 0
@@ -68,7 +65,7 @@ public class ChangeCenterOfMassFitnessTest {
 	
 		assertEquals(0.0, ff.fitnessScore(cornerBS1),0.0);
 		
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 0);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
 		
 		// List of flying machine blocks that should move
 		// Not really sure what the fitness would be after 10 seconds
@@ -91,12 +88,16 @@ public class ChangeCenterOfMassFitnessTest {
 		
 		// Since it is moving out completely, and all the ranges are the same value (10)
 		// That means the max fitness is 10 + 6 / 2 = 8
-		assertEquals(8.0, ff.fitnessScore(cornerBS2),0.0);
+		// However, the movement speed of the flying machine depends on the speed of the independently
+		// executing Minecraft server, which is subject to variation. The main point is that the ship
+		// flies for a bit, but the exact amount is hard to pin down. Thus, we only assert that the amount
+		// is 6.0 or more
+		assertTrue(6.0 <= ff.fitnessScore(cornerBS2));
 		
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 0);
 	}
 
-	//@Test
+	@Test
 	public void testGetCenterOfMass() {
 		// Small list of blocks
 		blockSet1 = new ArrayList<>();
