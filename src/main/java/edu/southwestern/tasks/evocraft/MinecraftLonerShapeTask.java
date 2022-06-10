@@ -46,8 +46,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	private MinecraftShapeTask<T> internalMinecraftShapeTask;
 	private static boolean spawnShapesInWorld=false;
 	private static ArrayList<MinecraftCoordinates> parallelShapeCorners;
-	
+	private static int spaceBetween;
+
 	private BlockingQueue<MinecraftCoordinates> coordinateQueue;
+	private static int xOffset;
+	private static int yOffset;
+	private static int zOffset;
 
 	public MinecraftLonerShapeTask() 	{
 		/**
@@ -75,6 +79,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				System.exit(1);
 			}
 		}
+		
+		MinecraftCoordinates ranges = internalMinecraftShapeTask.getRanges();
+		spaceBetween = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
+		xOffset = (int) (((ranges.x() + spaceBetween) / 2.0) - (ranges.x()/2.0)); 
+		yOffset = (int) (((ranges.y() + spaceBetween) / 2.0) - (ranges.y()/2.0)); 
+		zOffset = (int) (((ranges.z() + spaceBetween) / 2.0) - (ranges.z()/2.0)); 
 	}
 
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
@@ -90,10 +100,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			System.exit(1);
 		}
 		// Clears specified space for new shape
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 1, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
-		
-		// Evaluates the shape, and then adds the corner back to the queue
-		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, corner);
+		clearBlocksInArchive(ranges, corner);		
+		MinecraftCoordinates middle = corner.add(new MinecraftCoordinates(xOffset,yOffset,zOffset));
+		// Evaluates the shape at the middle of the space defined by the corner, and then adds the corner back to the queue
+		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, middle);
 		try {
 			coordinateQueue.put(corner);
 		} catch (InterruptedException e) {
@@ -230,23 +240,19 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 * @return Pair of the corner of the space to clear followed by the corner within that space to place the shape
 	 */
 	public static Pair<MinecraftCoordinates,MinecraftCoordinates> configureStartPosition(MinecraftCoordinates ranges, int[] multiDimIndex, int dim1D) {
-		final int SPACE_BETWEEN = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
 		MinecraftCoordinates startPosition;
 		MinecraftCoordinates offset;
-		int xOffset = (int) (((ranges.x() + SPACE_BETWEEN) / 2.0) - (ranges.x()/2.0)); 
-		int yOffset = (int) (((ranges.y() + SPACE_BETWEEN) / 2.0) - (ranges.y()/2.0)); 
-		int zOffset = (int) (((ranges.z() + SPACE_BETWEEN) / 2.0) - (ranges.z()/2.0)); 
 		// Location in multi-dimensional archive
 		if(multiDimIndex.length==1 || multiDimIndex.length > 3 || Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
 			// Derive 1D location from multi-dimensional location
-			startPosition = new MinecraftCoordinates(dim1D*(SPACE_BETWEEN+ranges.x()),MinecraftClient.GROUND_LEVEL+1,0);				
+			startPosition = new MinecraftCoordinates(dim1D*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,0);				
 			offset = new MinecraftCoordinates(xOffset,0,0);				
 		} else if(multiDimIndex.length==2){
 			// Ground level fixed, but expand second coordinate in z dimension
-			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(SPACE_BETWEEN+ranges.x()),MinecraftClient.GROUND_LEVEL+1,multiDimIndex[1]*(SPACE_BETWEEN+ranges.z()));
+			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,multiDimIndex[1]*(spaceBetween+ranges.z()));
 			offset = new MinecraftCoordinates(xOffset,0,zOffset);
 		} else if(multiDimIndex.length==3) {
-			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(SPACE_BETWEEN+ranges.x()),MinecraftClient.GROUND_LEVEL+1+multiDimIndex[1]*(SPACE_BETWEEN+ranges.y()),multiDimIndex[2]*(SPACE_BETWEEN+ranges.z()));
+			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1+multiDimIndex[1]*(spaceBetween+ranges.y()),multiDimIndex[2]*(spaceBetween+ranges.z()));
 			offset = new MinecraftCoordinates(xOffset,yOffset,zOffset);
 		} else {
 			throw new IllegalArgumentException("This should be impossible to reach: "+Arrays.toString(multiDimIndex));
