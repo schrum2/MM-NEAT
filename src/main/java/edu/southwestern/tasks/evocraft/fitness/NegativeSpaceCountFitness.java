@@ -28,13 +28,13 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 		int minX = (int) StatisticsUtilities.minimum(blockArrX);
 		int minY = (int) StatisticsUtilities.minimum(blockArrY);
 		int minZ = (int) StatisticsUtilities.minimum(blockArrZ);
-		//System.out.println("X:"+minX+"Y:"+minY+"Z:"+minZ);
+		System.out.println("X:"+minX+"Y:"+minY+"Z:"+minZ);
 		
 		// Gets maxes from the arrays
 		int maxX = (int) StatisticsUtilities.maximum(blockArrX);
 		int maxY = (int) StatisticsUtilities.maximum(blockArrY);
 		int maxZ = (int) StatisticsUtilities.maximum(blockArrZ);
-		//System.out.println("X:"+maxX+"Y:"+maxY+"Z:"+maxZ);
+		System.out.println("blocks"+blocks);
 		
 		int negativeBlocks = 0;
 		
@@ -50,7 +50,9 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 				}
 			}
 		}
+		System.out.println("X:"+maxX+"Y:"+maxY+"Z:"+maxZ);
 		//System.out.println("NegativeBlocks:"+negativeBlocks);
+		System.out.println("negativeBlocks:"+negativeBlocks);
 		return negativeBlocks;
 	}
 
