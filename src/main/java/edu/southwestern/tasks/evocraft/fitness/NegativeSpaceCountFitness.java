@@ -13,7 +13,6 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
 	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
-		System.out.println("first");
 		// Makes arrays from the coordinates of the streams
 		Stream<Block> blocklessX = blocks.parallelStream().filter(b -> b.type() != BlockType.AIR.ordinal());
 		double[] blockArrX = blocklessX.mapToDouble(b -> b.x()).toArray();
@@ -22,6 +21,9 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 		Stream<Block> blocklessZ = blocks.parallelStream().filter(b -> b.type() != BlockType.AIR.ordinal());
 		double[] blockArrZ = blocklessZ.mapToDouble(b -> b.z()).toArray();
 		
+		// If only air, returns max value
+		if(blockArrX.length==0) return Integer.MIN_VALUE;
+			
 		// Gets mins from the arrays
 		int minX = (int) StatisticsUtilities.minimum(blockArrX);
 		int minY = (int) StatisticsUtilities.minimum(blockArrY);
@@ -34,9 +36,20 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 		int maxZ = (int) StatisticsUtilities.maximum(blockArrZ);
 		System.out.println("X:"+maxX+"Y:"+maxY+"Z:"+maxZ);
 		
-//		// Initializes all variables to 0, need min and max coordinates to calculate the space the shape takes up
-//		int total=0, maxX=0, maxY=0, maxZ=0, 
-//				minZ=1000;
+		int negativeBlocks = 0;
+		for(Block b : blocks) {
+			if(b.type() == BlockType.AIR.ordinal()) {
+				if(b.x()>=minX && b.x()<=maxX) {
+					if(b.y()>=minY && b.y()<=maxY) {
+						if(b.z()>=minZ && b.z()<=maxZ) {
+							negativeBlocks++;
+						}
+					}
+				}
+			}
+		}
+		System.out.println("NegativeBlocks:"+negativeBlocks);
+		return negativeBlocks;
 //		for(Block b : blocks) {
 //			if(b.type() != BlockType.AIR.ordinal()) {
 //				// If any new min or max, change to it. Air blocks cannot be included in these coordinates (There is definitely a better way to do this)
@@ -69,7 +82,7 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 //		System.out.println("Size of shape = "+sizeOfShape+" Total = "+total);
 //		System.out.println("Negative Blocks:"+negativeBlocks);
 //		if(negativeBlocks<0) System.exit(1);
-		return 0;
+		//return 0;
 	}
 
 	@Override
