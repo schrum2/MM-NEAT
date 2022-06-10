@@ -4,13 +4,12 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.networks.TWEANN;
 /**
  * 
  * @author richey2
  *
  */
-public class MinecraftCustomBlocksGenotype extends CombinedGenotype<TWEANN, ArrayList<Integer>>{
+public class MinecraftCustomBlocksGenotype extends TWEANNPlusParametersGenotype<ArrayList<Integer>>{
 
 	public MinecraftCustomBlocksGenotype() {
 		super(new TWEANNGenotype(), new BoundedIntegerValuedGenotype());
