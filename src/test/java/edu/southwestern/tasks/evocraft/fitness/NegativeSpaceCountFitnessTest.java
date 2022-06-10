@@ -55,8 +55,18 @@ public class NegativeSpaceCountFitnessTest {
 		
 		blockSet1 = new ArrayList<>();
 		blockSet1.add(new Block(0,5,0,BlockType.GLOWSTONE, Orientation.WEST));
+		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0);
 		blockSet1.add(new Block(1,5,0,BlockType.GLOWSTONE, Orientation.WEST));
 		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(1,5,1,BlockType.GLOWSTONE, Orientation.WEST));
+		blockSet1.add(new Block(0,5,1,BlockType.AIR, Orientation.WEST));
+		
+		
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
+		
+		
+		assertEquals(1,ff.fitnessFromBlocks(corner,blockSet1),0);
+		
 	}
 	
 	@Test
