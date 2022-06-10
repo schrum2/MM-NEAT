@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
@@ -29,7 +30,6 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
-import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
@@ -395,20 +395,21 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					}
 				}
 					
+				MinecraftLonerShapeTask.spawnShapesInWorldTrue();
 				// Add initial population to archive, if add is true
 				evaluatedPopulation.parallelStream().forEach( (s) -> {
 					boolean result = archive.add(s); // Fill the archive with random starting individuals, only when this flag is true
 					
 					// Minecraft shapes have to be re-generated and added to the world
-					if(minecraftInit && result) {
-						// Generates shape in world when specified 
-						Pair<MinecraftCoordinates,MinecraftCoordinates> corners = MinecraftLonerShapeTask.configureStartPosition(ranges, s.MAPElitesBehaviorMap());
-						List<Block> blocks = MMNEAT.shapeGenerator.generateShape(s.individual, corners.t2, MMNEAT.blockSet);
-						MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
-						//MinecraftLonerShapeTask.placeFencesAroundArchive(ranges,corners.t2);
+					synchronized(archive) {
+						if(minecraftInit && result) {
+							//System.out.println("Put "+s.individual.getId()+":"+s.MAPElitesBehaviorMap());
+							int index1D = (int) s.MAPElitesBehaviorMap().get("dim1D");
+							double scoreOfCurrentElite = s.behaviorIndexScore();
+							MinecraftLonerShapeTask.clearAndSpawnShape(s.individual, s.MAPElitesBehaviorMap(), ranges, index1D, scoreOfCurrentElite);
+						}
 					}
 				});
-				MinecraftLonerShapeTask.spawnShapesInWorldTrue();
 			}
 		}
 	}

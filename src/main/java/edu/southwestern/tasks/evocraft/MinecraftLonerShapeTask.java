@@ -124,57 +124,85 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> void placeArchiveInWorld(Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics, MinecraftCoordinates ranges) {
-		// Creates the bin labels
-		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 		int index1D = (int) behaviorCharacteristics.get("dim1D");
 		// Gets the bin scores to compare them
 		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
 		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
-
+		//System.out.println(individual.getId()+"Index "+index1D +": Compare: "+scoreOfCurrentElite+" > "+scoreOfPreviousElite);
 		// If the new shape is better than the previous, it gets replaced
 		if(scoreOfCurrentElite > scoreOfPreviousElite) {
-			int dimSize = minecraftBinLabels.dimensions().length;
-			// Starting position is different for each dimension size, 2 and 3D use multidimensional, otherwise 1D
-			Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
-			if(!(Double.isInfinite(scoreOfPreviousElite) && scoreOfPreviousElite < 0)) {
-				// Clears old shape, but only if a shape was there (score was not negative infinity)
-				Pair<MinecraftCoordinates,MinecraftCoordinates> cleared = clearBlocksInArchive(dimSize, ranges, corners.t1);
-				assert cleared.t1.equals(corners.t1) : "Cleared space does not start at right location: "+cleared.t1+" vs "+corners.t1;
-				// Could do more checking here
-			}
-			// Generates the new shape
-			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corners.t2, MMNEAT.blockSet);
-			
-			// Spawning shapes is disabled during initialization
-			if(spawnShapesInWorld) {
-				MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
-				// Fences placed at initialization now
-				//placeFencesAroundArchive(ranges,corners.t2);
+			clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
+		}
+	}
 
-				double testScore = 0;
-				MinecraftCoordinates testCorner = null;
-				assert MinecraftShapeTask.qualityScore(new double[] {testScore = ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2)}) == ((Double) behaviorCharacteristics.get("binScore")).doubleValue() : 
-					behaviorCharacteristics + ":testScore="+testScore+":" + blocks;
-				assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || new OccupiedCountFitness().fitnessScore(testCorner) == (testScore = ((Double) behaviorCharacteristics.get("OccupiedCountFitness")).doubleValue()) : 
-					testCorner+":occupied count="+testScore+":"+ blocks + ":" + CheckBlocksInSpaceFitness.readBlocksFromClient(testCorner);
-			}
-			
-			if(CommonConstants.netio) {
-				Archive<T> archive = MMNEAT.getArchive();
-				String fileName = String.format("%7.5f", scoreOfCurrentElite) + "_" + individual.getId() + ".txt";
-				int dim1D = (int) behaviorCharacteristics.get("dim1D");
-				String binPath = archive.getArchiveDirectory() + File.separator + minecraftBinLabels.binLabels().get(dim1D);
-				String fullName = binPath + "_" + fileName;
-				System.out.println(fullName);
-				try {
-					PrintStream outputFile = new PrintStream(new File(fullName));
-					outputFile.println(blocks);
-					outputFile.close();
-				} catch (FileNotFoundException e) {
-					System.out.println("Error writing file "+fullName);
-					e.printStackTrace();
-					System.exit(1);
-				}
+	/**
+	 * Clear a space for the shape and then generate it. Also, save block list to archive.
+	 * 
+	 * @param <T>
+	 * @param individual specified genome of shape
+	 * @param behaviorCharacteristics dictionary of values used for placing at the right index
+	 * @param ranges bounds of generated shape
+	 * @param index1D index in 1D archive
+	 * @param scoreOfCurrentElite quality score
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> void clearAndSpawnShape(Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics,
+			MinecraftCoordinates ranges, int index1D, double scoreOfCurrentElite) {
+		// Creates the bin labels
+		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+		int dimSize = minecraftBinLabels.dimensions().length;
+		Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
+		// Clears old shape if there was one
+		Pair<MinecraftCoordinates,MinecraftCoordinates> cleared = clearBlocksInArchive(dimSize, ranges, corners.t1);
+		assert cleared.t1.equals(corners.t1) : "Cleared space does not start at right location: "+cleared.t1+" vs "+corners.t1;
+		// Could do more checking here
+		
+		// Generates the new shape
+		List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corners.t2, MMNEAT.blockSet);
+		
+		// Spawning shapes is disabled during initialization
+		if(spawnShapesInWorld) {
+			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+			// Fences placed at initialization now
+			//placeFencesAroundArchive(ranges,corners.t2);
+
+			double testScore = 0;
+			MinecraftCoordinates testCorner = null;
+			assert MinecraftShapeTask.qualityScore(new double[] {testScore = ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2)}) == ((Double) behaviorCharacteristics.get("binScore")).doubleValue() : 
+				behaviorCharacteristics + ":testScore="+testScore+":" + blocks;
+			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || new OccupiedCountFitness().fitnessScore(testCorner) == (testScore = ((Double) behaviorCharacteristics.get("OccupiedCountFitness")).doubleValue()) : 
+				testCorner+":occupied count="+testScore+":"+ blocks + ":" + CheckBlocksInSpaceFitness.readBlocksFromClient(testCorner);
+		}
+		
+		saveBlockListToMAPElitesArchive(individual.getId(), index1D, scoreOfCurrentElite, blocks);
+	}
+
+	/**
+	 * Save a test list of the blocks in the generated shape to the archive directory for MAP Elites
+	 * 
+	 * @param <T>
+	 * @param genomeId ID of genome being written
+	 * @param dim1D location of genome in 1D archive
+	 * @param scoreOfCurrentElite genome's score
+	 * @param blocks blocks of the shape generated by genome
+	 */
+	public static <T> void saveBlockListToMAPElitesArchive(long genomeId, int dim1D, double scoreOfCurrentElite, List<Block> blocks) {
+		if(CommonConstants.netio) {
+			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+			@SuppressWarnings("unchecked")
+			Archive<T> archive = MMNEAT.getArchive();
+			String fileName = String.format("%7.5f", scoreOfCurrentElite) + "_" + genomeId + ".txt";
+			String binPath = archive.getArchiveDirectory() + File.separator + minecraftBinLabels.binLabels().get(dim1D);
+			String fullName = binPath + "_" + fileName;
+			System.out.println(fullName);
+			try {
+				PrintStream outputFile = new PrintStream(new File(fullName));
+				outputFile.println(blocks);
+				outputFile.close();
+			} catch (FileNotFoundException e) {
+				System.out.println("Error writing file "+fullName);
+				e.printStackTrace();
+				System.exit(1);
 			}
 		}
 	}
