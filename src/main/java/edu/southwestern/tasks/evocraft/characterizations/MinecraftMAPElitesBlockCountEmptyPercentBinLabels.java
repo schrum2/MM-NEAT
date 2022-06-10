@@ -21,12 +21,12 @@ public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends Minecraft
 			int yDim = Parameters.parameters.integerParameter("minecraftYRange");
 			int zDim = Parameters.parameters.integerParameter("minecraftZRange");
 			
-			int size = xDim*yDim*zDim*10 +1; // size blocks count times 10 for each possible % category
-			
-			labels = new ArrayList<String>(size);
+			int sizeBlockCount = xDim*yDim*zDim+1; // size blocks count times 10 for each possible % category
+			int sizeNegativeSpace = xDim*yDim*zDim-1; // Max possible 
+			labels = new ArrayList<String>(sizeBlockCount);
 			
 			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities (i < size would just give a range of 0-999)
-			for(int i = 0; i < size; i++) {
+			for(int i = 0; i < sizeBlockCount; i++) {
 				for(int j = 0; j < 100; j+=10)
 				labels.add(i + "Blocks"+j+"%"); 
 			}

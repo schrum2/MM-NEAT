@@ -21,8 +21,8 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 		Stream<Block> blocklessZ = blocks.parallelStream().filter(b -> b.type() != BlockType.AIR.ordinal());
 		double[] blockArrZ = blocklessZ.mapToDouble(b -> b.z()).toArray();
 		
-		// If only air, in the array, returns the minimum value (least fit)
-		if(blockArrX.length==0) return Integer.MIN_VALUE;
+		// If only air, in the array, returns -1 (not fit, compared to max fitness)
+		if(blockArrX.length==0) return -1;
 			
 		// Gets mins from the arrays
 		int minX = (int) StatisticsUtilities.minimum(blockArrX);
