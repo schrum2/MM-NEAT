@@ -18,7 +18,7 @@ public class ThreeDimensionalVolumeGenerator<T extends Network> implements Shape
 	@Override
 	public List<Block> generateShape(Genotype<T> genome, MinecraftCoordinates corner, BlockSet blockSet) {
 		List<Block> blocks = new ArrayList<>();
-		Network net = genome.getPhenotype();
+		T net = genome.getPhenotype();
 		MinecraftCoordinates ranges = new MinecraftCoordinates(
 				Parameters.parameters.integerParameter("minecraftXRange"),
 				Parameters.parameters.integerParameter("minecraftYRange"),

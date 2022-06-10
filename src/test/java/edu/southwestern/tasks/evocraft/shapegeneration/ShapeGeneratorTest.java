@@ -3,6 +3,7 @@ package edu.southwestern.tasks.evocraft.shapegeneration;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -206,6 +207,7 @@ public class ShapeGeneratorTest {
 		// Using the machine blockSet
 		BlockSet blockSet = new MachineBlockSet();
 		MMNEAT.blockSet = blockSet;
+		List<BlockType> bs = Arrays.asList(blockSet.getPossibleBlocks());
 		// Ranges
 		MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"),
 				Parameters.parameters.integerParameter("minecraftYRange"),
@@ -213,7 +215,7 @@ public class ShapeGeneratorTest {
 		
 		//System.out.println(ShapeGenerator.generateBlock(corner,blockSet, b, netGen.getPhenotype(), ranges, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"), 0, 0, 0));
 
-		assertEquals(null,ShapeGenerator.generateBlock(corner,blockSet, b, netGen.getPhenotype(), ranges, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"), 0, 0, 0));
+		assertEquals(null,ShapeGenerator.generateBlock(corner,bs, b, netGen.getPhenotype(), ranges, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"), 0, 0, 0));
 		
 		// Second Test: redirect snakes and evolve orientation
 		Parameters.initializeParameterCollections(new String[] {"objectBreederDistanceInEachPlane:false","minecraftEvolveOrientation:true","minecraftRedirectConfinedSnakes:true",
@@ -222,19 +224,19 @@ public class ShapeGeneratorTest {
 		// For this test, the shape generator is a snake one
 		MMNEAT.shapeGenerator = generator;
 
-		assertEquals(new MinecraftCoordinates(1,0,0),ShapeGenerator.generateBlock(corner,blockSet, b, netGen.getPhenotype(), ranges, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"), 0, 0, 0));
+		assertEquals(new MinecraftCoordinates(1,0,0),ShapeGenerator.generateBlock(corner,bs, b, netGen.getPhenotype(), ranges, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"), 0, 0, 0));
 	
 		// Third test: evolve orientation and stop snakes
 		Parameters.initializeParameterCollections(new String[] {"objectBreederDistanceInEachPlane:false","minecraftEvolveOrientation:true","minecraftRedirectConfinedSnakes:false","minecraftStopConfinedSnakes:true",
 		"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator"});
 		
-		assertEquals(new MinecraftCoordinates(0,1,0),ShapeGenerator.generateBlock(corner,blockSet, b, netGen.getPhenotype(), ranges, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"), 0, 0, 0));
+		assertEquals(new MinecraftCoordinates(0,1,0),ShapeGenerator.generateBlock(corner,bs, b, netGen.getPhenotype(), ranges, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"), 0, 0, 0));
 
 		// Fourth test: no evolve orientation and stop snakes
 		Parameters.initializeParameterCollections(new String[] {"objectBreederDistanceInEachPlane:false","minecraftEvolveOrientation:false","minecraftRedirectConfinedSnakes:false","minecraftStopConfinedSnakes:true",
 		"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator"});
 		
-		assertEquals(new MinecraftCoordinates(1,0,0),ShapeGenerator.generateBlock(corner,blockSet, b, netGen.getPhenotype(), ranges, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"), 0, 0, 0));
+		assertEquals(new MinecraftCoordinates(1,0,0),ShapeGenerator.generateBlock(corner,bs, b, netGen.getPhenotype(), ranges, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"), 0, 0, 0));
 
 		//System.out.println(ShapeGenerator.generateBlock(corner,blockSet, b, netGen.getPhenotype(), ranges, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"), 0, 0, 0));
 	
@@ -242,7 +244,7 @@ public class ShapeGeneratorTest {
 		Parameters.initializeParameterCollections(new String[] {"objectBreederDistanceInEachPlane:false","minecraftEvolveOrientation:false","minecraftRedirectConfinedSnakes:true","minecraftStopConfinedSnakes:false",
 		"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator"});
 		
-		assertEquals(new MinecraftCoordinates(0,1,0),ShapeGenerator.generateBlock(corner,blockSet, b, netGen.getPhenotype(), ranges, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"), 0, 0, 0));
+		assertEquals(new MinecraftCoordinates(0,1,0),ShapeGenerator.generateBlock(corner,bs, b, netGen.getPhenotype(), ranges, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"), 0, 0, 0));
 		
 		//System.out.println(ShapeGenerator.generateBlock(corner,blockSet, b, netGen.getPhenotype(), ranges, Parameters.parameters.booleanParameter("objectBreederDistanceInEachPlane"), 0, 0, 0));
 
