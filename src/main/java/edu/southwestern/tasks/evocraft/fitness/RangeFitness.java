@@ -19,6 +19,7 @@ public abstract class RangeFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
 	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
+		if(blocks.size() == 0) return 0; // upcoming calculations do not work well on empty list
 		return coordinateRange(blocks, dimension());
 	}
 

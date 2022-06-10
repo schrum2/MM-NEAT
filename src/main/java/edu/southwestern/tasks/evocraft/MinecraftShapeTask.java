@@ -241,7 +241,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			double binScore = qualityScore(fitnessScores); 
 			behaviorMap.put("binScore", binScore); // Quality Score!				
 
-			assert !behaviorMap.containsKey("WidthFitness") || ((Double) behaviorMap.get("WidthFitness")).doubleValue() <= Parameters.parameters.integerParameter("minecraftXRange") : behaviorMap + ":" + blocks + ":" + corner;
+			assert !behaviorMap.containsKey("WidthFitness") || ((Double) behaviorMap.get("WidthFitness")).doubleValue() <= Parameters.parameters.integerParameter("minecraftXRange") : genome.getId() +":"+ behaviorMap + ":" + blocks + ":" + corner;
 
 			// Do this last
 			int dim1D = minecraftBinLabels.oneDimensionalIndex(behaviorMap);
