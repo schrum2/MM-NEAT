@@ -10,8 +10,10 @@ import java.util.stream.IntStream;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.NetworkTask;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet;
@@ -22,6 +24,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
+import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
@@ -31,7 +34,7 @@ import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
 
-public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask {
+public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask, BoundedTask {
 	// Visible within package
 	ArrayList<MinecraftFitnessFunction> fitnessFunctions;
 	MinecraftCoordinates ranges;
@@ -39,8 +42,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	private int startingX;
 	private int startingZ;
 	
+	private static double[] upper = null;
+	private static double[] lower = null;
+	
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
+		// Cannot allow random tie breaking since some generated shapes would be different
+		Parameters.parameters.setBoolean("randomArgMaxTieBreak", false);
+		CommonConstants.randomArgMaxTieBreak = false;
+		
 		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
 			MinecraftServer.launchServer();
 		}
@@ -69,6 +79,12 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			fitnessFunctions.add(new ChangeCenterOfMassFitness());
 		}
 		
+		if(Parameters.parameters.booleanParameter("NegativeSpaceCountFitness")) {
+			fitnessFunctions.add(new NegativeSpaceCountFitness());
+		}
+		
+		
+		
 		try {
 			MMNEAT.blockSet = (BlockSet) ClassCreation.createObject("minecraftBlockSet");
 		} catch (NoSuchMethodException e1) {
@@ -96,6 +112,11 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 				Parameters.parameters.integerParameter("minecraftXRange"),
 				Parameters.parameters.integerParameter("minecraftYRange"),
 				Parameters.parameters.integerParameter("minecraftZRange"));
+		
+		int numBlocks = ranges.x() * ranges.y() * ranges.z();
+		double possibilities = MMNEAT.blockSet.getPossibleBlocks().length + 1; // length+1 to generate air blocks
+		upper = ArrayUtil.doubleSpecified(numBlocks, possibilities);
+		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0);
 	}
 	
 	public int getStartingX() { return startingX; }
@@ -223,7 +244,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
 			score.assignMAPElitesBehaviorMapAndScore(behaviorMap);
 			
-			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || ((Integer) behaviorMap.get("dim1D")).intValue() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap;
+			//if(genome.getId()  == 91) System.out.println(genome.getId() + ":" + blocks + ":" + behaviorMap);
+			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || ((Integer) behaviorMap.get("dim1D")).intValue() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap + ":" + blocks;
+			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || blocks.size() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap + ":" + blocks;
 		}
 		return score;
 	}
@@ -297,9 +320,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	}
 
 	public static void main(String[] args) {
-		int seed = 0;
+		int seed = 1;
 		try {
-			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:10", "maxGens:100",
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:20", "maxGens:100",
 					"base:minecraft", "log:Minecraft-CenterOfMass", "saveTo:CenterOfMass",
 					"io:true", "netio:true", 
 					//"io:false", "netio:false", 
@@ -309,12 +332,13 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					//"minecraftTypeTargetFitness:true", 
 					//"minecraftDesiredBlockCount:40",
 					//"minecraftOccupiedCountFitness:true",
-					"minecraftChangeCenterOfMassFitness:true",
+					//"minecraftChangeCenterOfMassFitness:true",
+					"NegativeSpaceCountFitness:true",
 					//"minecraftDiversityBlockFitness:true",
 					//"minecraftEvolveOrientation:true",
 					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true",
-					"minecraftXRange:1", "minecraftYRange:2", "minecraftZRange:5",
+					"minecraftXRange:5", "minecraftYRange:5", "minecraftZRange:5",
 					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
@@ -326,5 +350,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return upper;
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return lower;
 	}
 }

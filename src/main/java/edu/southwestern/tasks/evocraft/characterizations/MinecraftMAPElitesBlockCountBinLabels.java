@@ -56,6 +56,7 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesBlockCountSnek", "saveTo:MAPElitesBlockCountSnek",
+					"parallelMAPElitesInitialize:false",
 					"io:true", "netio:true", 
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
