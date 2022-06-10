@@ -346,6 +346,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Stream<Genotype<T>> evaluateStream = Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") ? 
 													startingPopulation.parallelStream() :
 													startingPopulation.stream();
+			if(Parameters.parameters.booleanParameter("parallelMAPElitesInitialize"))
+				System.out.println("Initialize archive in parallel");
 			// Evaluate initial population
 			evaluateStream.forEach( (g) -> {
 				Score<T> s = task.evaluate(g);
@@ -402,7 +404,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					// Minecraft shapes have to be re-generated and added to the world
 					synchronized(archive) {
 						if(minecraftInit && result) {
-							//System.out.println("Put "+s.individual.getId()+":"+s.MAPElitesBehaviorMap());
+							System.out.println("Put "+s.individual.getId()+":"+s.MAPElitesBehaviorMap());
 							int index1D = (int) s.MAPElitesBehaviorMap().get("dim1D");
 							double scoreOfCurrentElite = s.behaviorIndexScore();
 							MinecraftLonerShapeTask.clearAndSpawnShape(s.individual, s.MAPElitesBehaviorMap(), ranges, index1D, scoreOfCurrentElite);
