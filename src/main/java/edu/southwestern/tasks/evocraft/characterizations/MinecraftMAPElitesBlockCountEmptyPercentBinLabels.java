@@ -21,11 +21,11 @@ public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends Minecraft
 			int yDim = Parameters.parameters.integerParameter("minecraftYRange");
 			int zDim = Parameters.parameters.integerParameter("minecraftZRange");
 			
-			int sizeBlockCount = xDim*yDim*zDim+1; // size blocks count times 10 for each possible % category
-			int sizeNegativeSpace = xDim*yDim*zDim-1; // Max possible 
+			int sizeBlockCount = xDim*yDim*zDim+1; 
+			int sizeNegativeSpace = xDim*yDim*zDim; // Max possible 
 			labels = new ArrayList<String>(sizeBlockCount*sizeNegativeSpace);
 			
-			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities (i < size would just give a range of 0-999)
+			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities , -1 for negative space(j < size would just give a range of 0-999)
 			for(int i = 0; i < sizeBlockCount; i++) {
 				for(int j = 0; j < sizeNegativeSpace; j++)
 				labels.add("BlockCount"+i+"NegativeSpace"+j); 
@@ -36,15 +36,17 @@ public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends Minecraft
 
 	@Override
 	public int oneDimensionalIndex(int[] multi) { // Based on 2d archive
-		int zDim = Parameters.parameters.integerParameter("minecraftZRange")+1;
-		int binIndex = multi[0]*zDim + multi[1];
+		//int zDim = Parameters.parameters.integerParameter("minecraftZRange")+1;
+		multi[1]++;
+		int binIndex = multi[0]*dimensionSizes()[1] + multi[1];
+		System.out.println("BinIndex:"+binIndex+"  multi[0]"+multi[0]+"  multi[1]"+multi[1]);
 		return binIndex;
 	}
 
 	@Override
 	public int[] dimensionSizes() {
 		int xtimesYtimez = Parameters.parameters.integerParameter("minecraftXRange")*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange");
-		return new int[] {xtimesYtimez+1,xtimesYtimez-1};
+		return new int[] {xtimesYtimez+1,xtimesYtimez};
 	}
 
 	@Override
