@@ -22,6 +22,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
+import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
@@ -67,6 +68,12 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness")) {
 			fitnessFunctions.add(new ChangeCenterOfMassFitness());
 		}
+		
+		if(Parameters.parameters.booleanParameter("NegativeSpaceCountFitness")) {
+			fitnessFunctions.add(new NegativeSpaceCountFitness());
+		}
+		
+		
 		
 		try {
 			MMNEAT.blockSet = (BlockSet) ClassCreation.createObject("minecraftBlockSet");
@@ -306,7 +313,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					//"minecraftTypeTargetFitness:true", 
 					//"minecraftDesiredBlockCount:40",
 					//"minecraftOccupiedCountFitness:true",
-					"minecraftChangeCenterOfMassFitness:true",
+					//"minecraftChangeCenterOfMassFitness:true",
+					"NegativeSpaceCountFitness:true",
 					//"minecraftDiversityBlockFitness:true",
 					//"minecraftEvolveOrientation:true",
 					//"minecraftRedirectConfinedSnakes:true",
