@@ -10,6 +10,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.fossgalaxy.object.annotations.Parameter;
+
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftServer;
@@ -54,6 +56,7 @@ public class NegativeSpaceCountFitnessTest {
 		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0); //Initializes corner for testing
 		
 		blockSet1 = new ArrayList<>();
+		blockSet2 = new ArrayList<>();
 		blockSet1.add(new Block(10,15,10,BlockType.AIR, Orientation.WEST));
 		assertEquals(Integer.MIN_VALUE,ff.fitnessFromBlocks(corner,blockSet1),0); // Test when nothing
 		
@@ -102,9 +105,20 @@ public class NegativeSpaceCountFitnessTest {
 
 		assertEquals(30,ff.fitnessFromBlocks(corner,blockSet1),0);
 		
-		
-		
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1); // Spawns in just for verification
+		
+		MinecraftCoordinates corner2 = new MinecraftCoordinates(15,5,0); //Initializes another corner for testing
+		// Makes a cube
+		for(int x=0;x<ranges.x();x++) {
+			for(int y=0;y<ranges.y();y++) {
+				for(int z=0;z<ranges.z();z++) {
+					if((x+y+z)%2==1) blockSet2.add(new Block(15+x,5+y,0+z,BlockType.LAPIS_BLOCK, Orientation.WEST));
+					else blockSet2.add(new Block(15+x,5+y,0+z,BlockType.AIR, Orientation.WEST));
+				}
+			}
+		}
+		assertEquals(500,ff.fitnessFromBlocks(corner,blockSet2),0);
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2); // Spawns in just for verification
 	}
 	
 	@Test
