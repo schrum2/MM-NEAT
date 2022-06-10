@@ -808,6 +808,8 @@ public class Parameters {
 		booleanOptions.add("minecraftContainsWholeMAPElitesArchive", true, "Spawns in the MAP Elite archive in the Minecraft world");
 		booleanOptions.add("forceLinearArchiveLayoutInMinecraft", false, "minecraftContainsWholeMAPElitesArchive must be true for this. Generates shape in a linear fashion, as opposed to in 2D or 3D");
 		booleanOptions.add("minecraftChangeCenterOfMassFitness", false, "Calculates the change in position of a shapes center of mass.");
+		booleanOptions.add("NegativeSpaceCountFitness", false, "Tries to maximixe the negative space in a shape that i generated");
+		
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");

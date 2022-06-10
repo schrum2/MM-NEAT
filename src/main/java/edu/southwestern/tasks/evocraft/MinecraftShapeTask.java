@@ -23,6 +23,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
+import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
@@ -72,6 +73,12 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		if(Parameters.parameters.booleanParameter("minecraftChangeCenterOfMassFitness")) {
 			fitnessFunctions.add(new ChangeCenterOfMassFitness());
 		}
+		
+		if(Parameters.parameters.booleanParameter("NegativeSpaceCountFitness")) {
+			fitnessFunctions.add(new NegativeSpaceCountFitness());
+		}
+		
+		
 		
 		try {
 			MMNEAT.blockSet = (BlockSet) ClassCreation.createObject("minecraftBlockSet");
@@ -301,9 +308,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	}
 
 	public static void main(String[] args) {
-		int seed = 0;
+		int seed = 1;
 		try {
-			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:10", "maxGens:100",
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:20", "maxGens:100",
 					"base:minecraft", "log:Minecraft-CenterOfMass", "saveTo:CenterOfMass",
 					"io:true", "netio:true", 
 					//"io:false", "netio:false", 
@@ -313,12 +320,13 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					//"minecraftTypeTargetFitness:true", 
 					//"minecraftDesiredBlockCount:40",
 					//"minecraftOccupiedCountFitness:true",
-					"minecraftChangeCenterOfMassFitness:true",
+					//"minecraftChangeCenterOfMassFitness:true",
+					"NegativeSpaceCountFitness:true",
 					//"minecraftDiversityBlockFitness:true",
 					//"minecraftEvolveOrientation:true",
 					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true",
-					"minecraftXRange:1", "minecraftYRange:2", "minecraftZRange:5",
+					"minecraftXRange:5", "minecraftYRange:5", "minecraftZRange:5",
 					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
