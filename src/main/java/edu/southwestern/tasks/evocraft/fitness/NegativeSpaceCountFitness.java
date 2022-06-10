@@ -18,19 +18,20 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 				// If any new min or max, change to it. Air blocks cannot be included in these coordinates (There is definitely a better way to do this)
 				if(b.x()>maxX) maxX=b.x();
 				if(b.x()<minX) minX=b.x();
-				if(b.x()>maxY) maxX=b.y();
-				if(b.x()<minY) minX=b.y();
-				if(b.x()>maxZ) maxX=b.z();
-				if(b.x()<minZ) minX=b.z();
+				if(b.y()>maxY) maxY=b.y();
+				if(b.y()<minY) minY=b.y();
+				if(b.z()>maxZ) maxZ=b.z();
+				if(b.z()<minZ) minZ=b.z();
 			
 				// Total keeps track of all of the blocks that are not air within the shape
 				total++;
 			}
 		}
 		// Computes size of the shape based on the coordinates, then subtracts the non-air blocks to get negative space
+		System.out.println("X:"+(maxX-minX)+" Y:"+(maxY-minY)+" Z:"+(maxZ-minZ));
 		int sizeOfShape = (maxX-minX)*(maxY-minY)*(maxZ-minZ);
 		int negativeBlocks = sizeOfShape-total;
-		
+		//System.out.println("Size of shape = "+sizeOfShape+" Total = "+total);
 		return negativeBlocks;
 	}
 

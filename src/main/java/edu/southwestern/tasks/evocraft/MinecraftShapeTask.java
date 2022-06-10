@@ -319,7 +319,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 					//"minecraftEvolveOrientation:true",
 					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true",
-					"minecraftXRange:1", "minecraftYRange:2", "minecraftZRange:5",
+					"minecraftXRange:5", "minecraftYRange:5", "minecraftZRange:5",
 					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.SnakeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
