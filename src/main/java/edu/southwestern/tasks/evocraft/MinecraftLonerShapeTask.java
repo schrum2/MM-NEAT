@@ -64,10 +64,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		
 		// Generates the corners for all of the shapes and then adds them into the blocking queue
 		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelMinecraftSlots"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),internalMinecraftShapeTask.getRanges());
-		for(int i =0;i<parallelShapeCorners.size();i++) {
-			System.out.println(i);
+		for(MinecraftCoordinates corner : parallelShapeCorners) {
+			//System.out.println(corner);
 			try {
-				coordinateQueue.put(parallelShapeCorners.get(i));
+				coordinateQueue.put(corner);
 			} catch (InterruptedException e) {
 				System.out.println("Error with queue");
 				e.printStackTrace();
@@ -169,9 +169,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			double testScore = 0;
 			MinecraftCoordinates testCorner = null;
 			assert MinecraftShapeTask.qualityScore(new double[] {testScore = ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2)}) == ((Double) behaviorCharacteristics.get("binScore")).doubleValue() : 
-				behaviorCharacteristics + ":testScore="+testScore+":" + blocks;
+				individual.getId() + ":" + behaviorCharacteristics + ":testScore="+testScore+":" + blocks;
 			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || new OccupiedCountFitness().fitnessScore(testCorner) == (testScore = ((Double) behaviorCharacteristics.get("OccupiedCountFitness")).doubleValue()) : 
-				testCorner+":occupied count="+testScore+":"+ blocks + ":" + CheckBlocksInSpaceFitness.readBlocksFromClient(testCorner);
+				individual.getId() + ":" + testCorner+":occupied count="+testScore+":"+ blocks + ":" + CheckBlocksInSpaceFitness.readBlocksFromClient(testCorner);
 		}
 		
 		saveBlockListToMAPElitesArchive(individual.getId(), index1D, scoreOfCurrentElite, blocks);
