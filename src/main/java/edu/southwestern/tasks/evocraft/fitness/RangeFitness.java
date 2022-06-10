@@ -19,7 +19,6 @@ public abstract class RangeFitness extends CheckBlocksInSpaceFitness {
 
 	@Override
 	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
-		if(blocks.size() == 0) return 0; // upcoming calculations do not work well on empty list
 		return coordinateRange(blocks, dimension());
 	}
 
@@ -45,9 +44,12 @@ public abstract class RangeFitness extends CheckBlocksInSpaceFitness {
 				.mapToInt(dimensionMethod)
 				.summaryStatistics();
 
+		// Can't compute mins and maxes across empty list!
+		if(stats.getCount() == 0) return 0;
+		
 		int min = stats.getMin();
 		int max = stats.getMax();
-
+		//System.out.println(this.getClass().getSimpleName() + ":" + min + ":" + max);
 		return max - min + 1;
 	}
 

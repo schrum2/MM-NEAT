@@ -138,7 +138,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		int index1D = (int) behaviorCharacteristics.get("dim1D");
 		// Gets the bin scores to compare them
 		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
-		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
+		assert index1D < ((MAPElites<T>) MMNEAT.ea).getArchive().getBinMapping().binLabels().size() : individual.getId() + ":" + behaviorCharacteristics;
+		double scoreOfPreviousElite = 0;
+		scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
+		
 		//System.out.println(individual.getId()+"Index "+index1D +": Compare: "+scoreOfCurrentElite+" > "+scoreOfPreviousElite);
 		// If the new shape is better than the previous, it gets replaced
 		if(scoreOfCurrentElite > scoreOfPreviousElite) {
@@ -352,9 +355,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesWHDSimple", "saveTo:MAPElitesWHDSimple",
-					"io:true", "netio:true",
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
+					"io:true", "netio:true",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false",
 					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet",
@@ -371,7 +374,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
-					"spaceBetweenMinecraftShapes:10","parallelMAPElitesInitialize:true",
+					"spaceBetweenMinecraftShapes:10","parallelMAPElitesInitialize:false",
 					"minecraftXRange:1","minecraftYRange:2","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",

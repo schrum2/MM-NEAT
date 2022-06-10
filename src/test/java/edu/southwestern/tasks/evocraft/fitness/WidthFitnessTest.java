@@ -1,20 +1,17 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
-import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
-import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
-
 
 import org.junit.Before;
 import org.junit.Test;
 
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 
 public class WidthFitnessTest {
 

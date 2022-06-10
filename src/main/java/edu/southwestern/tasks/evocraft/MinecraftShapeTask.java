@@ -2,6 +2,7 @@ package edu.southwestern.tasks.evocraft;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +17,7 @@ import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet;
@@ -225,6 +227,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public static <T> Score<T> evaluateOneShape(Genotype<T> genome, MinecraftCoordinates corner, ArrayList<MinecraftFitnessFunction> fitnessFunctions) {
 		@SuppressWarnings("unchecked")
 		List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
+		//System.out.println(genome.getId() + ":" + blocks);
 		MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions);
 		Score<T> score = new Score<T>(genome, fitnessScores);
@@ -292,7 +295,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			assert !(ff instanceof OccupiedCountFitness && MMNEAT.blockSet instanceof SimpleSolidBlockSet) || (score = ff.fitnessScore(corner)) == ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks) : 
 				"OccupiedCountFitness:corner:"+corner+",readBlocks:"+readBlocks+",world score = "+score;
 			assert !(ff instanceof WidthFitness && MMNEAT.blockSet instanceof SimpleSolidBlockSet) || (score = ff.fitnessScore(corner)) == ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks) : 
-				"WidthFitness:corner:"+corner+",readBlocks:"+readBlocks+",world score = "+score;
+				"WidthFitness:corner:"+corner+",readBlocks:"+readBlocks+",world score = "+score+": "+Arrays.toString(CheckBlocksInSpaceFitness.readBlocksFromClient(corner).stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray());
 			
 			if(ff instanceof CheckBlocksInSpaceFitness) {
 				// All fitness functions of this type can just use the previously computed readBlocks list
