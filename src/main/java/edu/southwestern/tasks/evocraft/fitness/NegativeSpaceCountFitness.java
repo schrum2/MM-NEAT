@@ -14,7 +14,7 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 	@Override
 	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
 		System.out.println("first");
-		// Needs refactoring
+		// Makes arrays from the coordinates of the streams
 		Stream<Block> blocklessX = blocks.parallelStream().filter(b -> b.type() != BlockType.AIR.ordinal());
 		double[] blockArrX = blocklessX.mapToDouble(b -> b.x()).toArray();
 		Stream<Block> blocklessY = blocks.parallelStream().filter(b -> b.type() != BlockType.AIR.ordinal());
@@ -22,18 +22,16 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 		Stream<Block> blocklessZ = blocks.parallelStream().filter(b -> b.type() != BlockType.AIR.ordinal());
 		double[] blockArrZ = blocklessZ.mapToDouble(b -> b.z()).toArray();
 		
-		
+		// Gets mins from the arrays
 		int minX = (int) StatisticsUtilities.minimum(blockArrX);
 		int minY = (int) StatisticsUtilities.minimum(blockArrY);
 		int minZ = (int) StatisticsUtilities.minimum(blockArrZ);
 		System.out.println("X:"+minX+"Y:"+minY+"Z:"+minZ);
 		
-		Stream<Block> blockless4 = blocks.parallelStream().filter(b -> b.type() != BlockType.AIR.ordinal());
-		int maxX = (int) StatisticsUtilities.maximum(blockless4.mapToDouble(b -> b.x()).toArray());
-		Stream<Block> blockless5 = blocks.parallelStream().filter(b -> b.type() != BlockType.AIR.ordinal());
-		int maxY = (int) StatisticsUtilities.maximum(blockless5.mapToDouble(b -> b.y()).toArray());
-		Stream<Block> blockless6 = blocks.parallelStream().filter(b -> b.type() != BlockType.AIR.ordinal());
-		int maxZ = (int) StatisticsUtilities.maximum(blockless6.mapToDouble(b -> b.z()).toArray());
+		// Gets maxes from the arrays
+		int maxX = (int) StatisticsUtilities.maximum(blockArrX);
+		int maxY = (int) StatisticsUtilities.maximum(blockArrY);
+		int maxZ = (int) StatisticsUtilities.maximum(blockArrZ);
 		System.out.println("X:"+maxX+"Y:"+maxY+"Z:"+maxZ);
 		
 //		// Initializes all variables to 0, need min and max coordinates to calculate the space the shape takes up
