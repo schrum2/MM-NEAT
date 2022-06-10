@@ -40,6 +40,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
+		// Cannot allow random tie breaking since some generated shapes would be different
+		Parameters.parameters.setBoolean("randomArgMaxTieBreak", false);
+		
 		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
 			MinecraftServer.launchServer();
 		}
@@ -220,7 +223,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
 			score.assignMAPElitesBehaviorMapAndScore(behaviorMap);
 			
-			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || ((Integer) behaviorMap.get("dim1D")).intValue() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap;
+			//if(genome.getId()  == 91) System.out.println(genome.getId() + ":" + blocks + ":" + behaviorMap);
+			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || ((Integer) behaviorMap.get("dim1D")).intValue() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap + ":" + blocks;
+			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || blocks.size() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap + ":" + blocks;
 		}
 		return score;
 	}
