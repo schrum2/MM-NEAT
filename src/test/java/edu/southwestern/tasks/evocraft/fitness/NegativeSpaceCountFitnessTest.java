@@ -2,8 +2,11 @@ package edu.southwestern.tasks.evocraft.fitness;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -11,7 +14,9 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftServer;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 
 public class NegativeSpaceCountFitnessTest {
 	MinecraftCoordinates ranges = new MinecraftCoordinates(Parameters.parameters.integerParameter("minecraftXRange"), 
@@ -30,9 +35,33 @@ public class NegativeSpaceCountFitnessTest {
 		MinecraftClient.getMinecraftClient();
 	}
 	
+	@Before
+	public void setUp() throws Exception {
+		ff = new NegativeSpaceCountFitness();
+	}
+	
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
+		Thread.sleep(waitTime);
+		
+		MinecraftClient.terminateClientScriptProcess();
+		MinecraftServer.terminateServer();
+	}
+	
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void testFitnessFromBlocks() {
+		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0); //Initializes corner for testing
+		
+		blockSet1 = new ArrayList<>();
+		blockSet1.add(new Block(0,5,0,BlockType.GLOWSTONE, Orientation.WEST));
+		blockSet1.add(new Block(1,5,0,BlockType.GLOWSTONE, Orientation.WEST));
+		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0);
+	}
+	
+	@Test
+	public void testMaximumFitness() {
+		assertEquals(998,ff.maxFitness(),0);
 	}
 
 }
