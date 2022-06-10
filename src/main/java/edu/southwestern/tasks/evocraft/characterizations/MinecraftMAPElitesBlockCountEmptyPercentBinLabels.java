@@ -43,14 +43,13 @@ public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends Minecraft
 
 	@Override
 	public int[] dimensionSizes() {
-		// TODO Auto-generated method stub
-		return null;
+		int xtimesYtimez = Parameters.parameters.integerParameter("minecraftXRange")*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange");
+		return new int[] {xtimesYtimez+1,xtimesYtimez-1};
 	}
 
 	@Override
 	public List<MinecraftFitnessFunction> properties() {
-		// TODO Auto-generated method stub
-		return null;
+		return properties;
 	}
 
 }
