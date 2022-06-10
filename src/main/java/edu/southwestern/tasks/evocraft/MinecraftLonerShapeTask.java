@@ -1,6 +1,8 @@
 package edu.southwestern.tasks.evocraft;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,8 +12,10 @@ import java.util.concurrent.BlockingQueue;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.NetworkTask;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.NoisyLonerTask;
@@ -128,7 +132,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
 
 		// If the new shape is better than the previous, it gets replaced
-		if(scoreOfCurrentElite > scoreOfPreviousElite && spawnShapesInWorld) {
+		if(scoreOfCurrentElite > scoreOfPreviousElite) {
 			int dimSize = minecraftBinLabels.dimensions().length;
 			// Starting position is different for each dimension size, 2 and 3D use multidimensional, otherwise 1D
 			Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
@@ -140,16 +144,38 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			}
 			// Generates the new shape
 			List<Block> blocks = MMNEAT.shapeGenerator.generateShape(individual, corners.t2, MMNEAT.blockSet);
-			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
-			// Fences placed at initialization now
-			//placeFencesAroundArchive(ranges,corners.t2);
 			
-			double testScore = 0;
-			MinecraftCoordinates testCorner = null;
-			assert MinecraftShapeTask.qualityScore(new double[] {testScore = ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2)}) == ((Double) behaviorCharacteristics.get("binScore")).doubleValue() : 
-				behaviorCharacteristics + ":testScore="+testScore+":" + blocks;
-			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || new OccupiedCountFitness().fitnessScore(testCorner) == (testScore = ((Double) behaviorCharacteristics.get("OccupiedCountFitness")).doubleValue()) : 
-				testCorner+":occupied count="+testScore+":"+ blocks + ":" + CheckBlocksInSpaceFitness.readBlocksFromClient(testCorner);
+			// Spawning shapes is disabled during initialization
+			if(spawnShapesInWorld) {
+				MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+				// Fences placed at initialization now
+				//placeFencesAroundArchive(ranges,corners.t2);
+
+				double testScore = 0;
+				MinecraftCoordinates testCorner = null;
+				assert MinecraftShapeTask.qualityScore(new double[] {testScore = ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2)}) == ((Double) behaviorCharacteristics.get("binScore")).doubleValue() : 
+					behaviorCharacteristics + ":testScore="+testScore+":" + blocks;
+				assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || new OccupiedCountFitness().fitnessScore(testCorner) == (testScore = ((Double) behaviorCharacteristics.get("OccupiedCountFitness")).doubleValue()) : 
+					testCorner+":occupied count="+testScore+":"+ blocks + ":" + CheckBlocksInSpaceFitness.readBlocksFromClient(testCorner);
+			}
+			
+			if(CommonConstants.netio) {
+				Archive<T> archive = MMNEAT.getArchive();
+				String fileName = String.format("%7.5f", scoreOfCurrentElite) + "_" + individual.getId() + ".txt";
+				int dim1D = (int) behaviorCharacteristics.get("dim1D");
+				String binPath = archive.getArchiveDirectory() + File.separator + minecraftBinLabels.binLabels().get(dim1D);
+				String fullName = binPath + "_" + fileName;
+				System.out.println(fullName);
+				try {
+					PrintStream outputFile = new PrintStream(new File(fullName));
+					outputFile.println(blocks);
+					outputFile.close();
+				} catch (FileNotFoundException e) {
+					System.out.println("Error writing file "+fullName);
+					e.printStackTrace();
+					System.exit(1);
+				}
+			}
 		}
 	}
 
