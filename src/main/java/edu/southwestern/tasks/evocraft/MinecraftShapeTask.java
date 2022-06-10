@@ -10,8 +10,10 @@ import java.util.stream.IntStream;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.NetworkTask;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet;
@@ -29,9 +31,10 @@ import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 
-public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask {
+public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask, BoundedTask {
 	// Visible within package
 	ArrayList<MinecraftFitnessFunction> fitnessFunctions;
 	MinecraftCoordinates ranges;
@@ -39,8 +42,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	private int startingX;
 	private int startingZ;
 	
+	private static double[] upper = null;
+	private static double[] lower = null;
+	
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
+		// Cannot allow random tie breaking since some generated shapes would be different
+		Parameters.parameters.setBoolean("randomArgMaxTieBreak", false);
+		CommonConstants.randomArgMaxTieBreak = false;
+		
 		if(Parameters.parameters.booleanParameter("launchMinecraftServerFromJava")) {
 			MinecraftServer.launchServer();
 		}
@@ -100,6 +110,11 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 				Parameters.parameters.integerParameter("minecraftXRange"),
 				Parameters.parameters.integerParameter("minecraftYRange"),
 				Parameters.parameters.integerParameter("minecraftZRange"));
+		
+		int numBlocks = ranges.x() * ranges.y() * ranges.z();
+		double possibilities = MMNEAT.blockSet.getPossibleBlocks().length + 1; // length+1 to generate air blocks
+		upper = ArrayUtil.doubleSpecified(numBlocks, possibilities);
+		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0);
 	}
 	
 	public int getStartingX() { return startingX; }
@@ -227,7 +242,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
 			score.assignMAPElitesBehaviorMapAndScore(behaviorMap);
 			
-			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || ((Integer) behaviorMap.get("dim1D")).intValue() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap;
+			//if(genome.getId()  == 91) System.out.println(genome.getId() + ":" + blocks + ":" + behaviorMap);
+			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || ((Integer) behaviorMap.get("dim1D")).intValue() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap + ":" + blocks;
+			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || blocks.size() == (int) ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() : behaviorMap + ":" + blocks;
 		}
 		return score;
 	}
@@ -331,5 +348,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return upper;
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return lower;
 	}
 }

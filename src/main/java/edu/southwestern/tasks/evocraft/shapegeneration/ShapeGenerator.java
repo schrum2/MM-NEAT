@@ -25,7 +25,7 @@ import edu.southwestern.util.stats.StatisticsUtilities;
  * @param <T>
  */
 public interface ShapeGenerator<T> {
-
+	
 	public static final int OUTPUT_INDEX_PRESENCE = 0;
 	public static final double VOXEL_EXPRESSION_THRESHOLD = 0.1;
 	public static final double SNAKE_CONTINUATION_THRESHOLD = 0.1;
@@ -69,7 +69,9 @@ public interface ShapeGenerator<T> {
 	public static MinecraftCoordinates generateBlock(MinecraftCoordinates corner, BlockSet blockSet, List<Block> blocks, Network net,
 			MinecraftCoordinates ranges, boolean distanceInEachPlane, int xi, int yi, int zi) {
 		double[] inputs = ThreeDimensionalUtil.get3DObjectCPPNInputs(xi, yi, zi, ranges.x(), ranges.y(), ranges.z(), -1, distanceInEachPlane);
+		net.flush(); // There should not be any left over recurrent activation, but clear each time just in case
 		double[] outputs = net.process(inputs);
+		//if(SnakeGenerator.debug) System.out.println("("+xi+","+yi+","+zi+"):" + Arrays.toString(inputs) + " -> " + Arrays.toString(outputs));
 		int numBlockTypes = blockSet.getPossibleBlocks().length;
 		if(outputs[OUTPUT_INDEX_PRESENCE] > VOXEL_EXPRESSION_THRESHOLD) {
 			ArrayList<Double> blockPreferences = new ArrayList<Double>(numBlockTypes);
