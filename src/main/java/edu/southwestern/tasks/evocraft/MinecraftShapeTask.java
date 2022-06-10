@@ -28,6 +28,7 @@ import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask {
@@ -75,6 +76,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			e1.printStackTrace();
 			System.exit(1);
 		}
+		
+		MMNEAT.discreteCeilings = ArrayUtil.intSpecified(Parameters.parameters.integerParameter("minecraftAmountOfBlocksToEvolve"),MMNEAT.blockSet.getPossibleBlocks().length);
 
 		try {
 			MMNEAT.shapeGenerator = (ShapeGenerator<T>) ClassCreation.createObject("minecraftShapeGenerator");

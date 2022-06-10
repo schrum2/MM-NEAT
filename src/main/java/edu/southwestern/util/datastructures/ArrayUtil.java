@@ -151,6 +151,21 @@ public class ArrayUtil {
 		}
 		return ones;
 	}
+	
+	/**
+	 * Returns primitive int array of a given size containing only
+	 * copies of the specified number
+	 * @param size Desired size of array
+	 * @param num Specified integer to fill array
+	 * @return Array of ints of size 'size' where every value equals num
+	 */
+	public static int[] intSpecified(int size, int num) {
+		int[] ones = new int[size];
+		for (int i = 0; i < ones.length; i++) {
+			ones[i] = num;
+		}
+		return ones;
+	}
 
 	/**
 	 * Return an array of numbers from start (inclusive) to 
