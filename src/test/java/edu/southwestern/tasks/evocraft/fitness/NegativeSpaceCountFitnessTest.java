@@ -54,6 +54,7 @@ public class NegativeSpaceCountFitnessTest {
 	@Test
 	public void testFitnessFromBlocks() {
 		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0); //Initializes corner for testing
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 2, 100);
 		
 		blockSet1 = new ArrayList<>();
 		blockSet2 = new ArrayList<>();
@@ -78,7 +79,7 @@ public class NegativeSpaceCountFitnessTest {
 		blockSet1.add(new Block(1,7,0,BlockType.AIR, Orientation.WEST));
 		blockSet1.add(new Block(0,7,1,BlockType.AIR, Orientation.WEST));
 		assertEquals(7,ff.fitnessFromBlocks(corner,blockSet1),0);
-		blockSet1.add(new Block(3,7,2,BlockType.WOOL, Orientation.WEST));
+		blockSet1.add(new Block(3,7,2,BlockType.WOOL, Orientation.WEST)); // Adding in air blocks
 		blockSet1.add(new Block(3,7,1,BlockType.AIR, Orientation.WEST));
 		blockSet1.add(new Block(3,7,0,BlockType.AIR, Orientation.WEST));
 		blockSet1.add(new Block(3,6,2,BlockType.AIR, Orientation.WEST));
@@ -117,8 +118,9 @@ public class NegativeSpaceCountFitnessTest {
 				}
 			}
 		}
-		assertEquals(500,ff.fitnessFromBlocks(corner,blockSet2),0);
+		assertEquals(500,ff.fitnessFromBlocks(corner2,blockSet2),0);
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2); // Spawns in just for verification
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 2, 0);
 	}
 	
 	@Test
