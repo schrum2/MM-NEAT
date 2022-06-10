@@ -21,22 +21,24 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 		Stream<Block> blocklessZ = blocks.parallelStream().filter(b -> b.type() != BlockType.AIR.ordinal());
 		double[] blockArrZ = blocklessZ.mapToDouble(b -> b.z()).toArray();
 		
-		// If only air, returns max value
+		// If only air, in the array, returns the minimum value (least fit)
 		if(blockArrX.length==0) return Integer.MIN_VALUE;
 			
 		// Gets mins from the arrays
 		int minX = (int) StatisticsUtilities.minimum(blockArrX);
 		int minY = (int) StatisticsUtilities.minimum(blockArrY);
 		int minZ = (int) StatisticsUtilities.minimum(blockArrZ);
-		System.out.println("X:"+minX+"Y:"+minY+"Z:"+minZ);
+		//System.out.println("X:"+minX+"Y:"+minY+"Z:"+minZ);
 		
 		// Gets maxes from the arrays
 		int maxX = (int) StatisticsUtilities.maximum(blockArrX);
 		int maxY = (int) StatisticsUtilities.maximum(blockArrY);
 		int maxZ = (int) StatisticsUtilities.maximum(blockArrZ);
-		System.out.println("X:"+maxX+"Y:"+maxY+"Z:"+maxZ);
+		//System.out.println("X:"+maxX+"Y:"+maxY+"Z:"+maxZ);
 		
 		int negativeBlocks = 0;
+		
+		// Checks if air block is within the coordinate constraints, if it is, adds to negativeBlocks
 		for(Block b : blocks) {
 			if(b.type() == BlockType.AIR.ordinal()) {
 				if(b.x()>=minX && b.x()<=maxX) {
@@ -48,46 +50,13 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 				}
 			}
 		}
-		System.out.println("NegativeBlocks:"+negativeBlocks);
+		//System.out.println("NegativeBlocks:"+negativeBlocks);
 		return negativeBlocks;
-//		for(Block b : blocks) {
-//			if(b.type() != BlockType.AIR.ordinal()) {
-//				// If any new min or max, change to it. Air blocks cannot be included in these coordinates (There is definitely a better way to do this)
-//				if(b.x()>maxX) maxX=(b.x()-corner.x())+1;
-//				if(b.x()<minX) minX=(b.x()-corner.x());
-//				if(b.y()>maxY) maxY=(b.y()-corner.y())+1;
-//				if(b.y()<minY) minY=(b.y()-corner.y());
-//				if(b.z()>maxZ) {
-//					
-//					maxZ=(b.z()-corner.z())+1;
-//					System.out.println("MAX=========================="+b.z());
-//					System.out.println("MAX=========================="+corner.z());
-//				}
-//				if(b.z()<minZ) {
-//					
-//					minZ=(b.z()-corner.z());
-//					System.out.println("MIN=========================="+minZ);
-//				}
-//			
-//				// Total keeps track of all of the blocks that are not air within the shape
-//				total++;
-//			}
-//			
-//			
-//		}
-//		// Computes size of the shape based on the coordinates, then subtracts the non-air blocks to get negative space
-//		System.out.println("X:"+(maxX-minX)+" Y:"+(maxY-minY)+" Z:"+(maxZ-minZ));
-//		int sizeOfShape = (maxX-minX)*(maxY-minY)*(maxZ-minZ);
-//		int negativeBlocks = sizeOfShape-total;
-//		System.out.println("Size of shape = "+sizeOfShape+" Total = "+total);
-//		System.out.println("Negative Blocks:"+negativeBlocks);
-//		if(negativeBlocks<0) System.exit(1);
-		//return 0;
 	}
 
 	@Override
 	public double maxFitness() {
-		// The max fitness here is the largest possible cube -2 because to get that designated negative space, there must be at least 2 cubes
+		// The max fitness here is the largest possible cube -2 because to get that designated negative space, there must be at least 2 blocks
 		return Parameters.parameters.integerParameter("minecraftXRange") * Parameters.parameters.integerParameter("minecraftYRange") * Parameters.parameters.integerParameter("minecraftZRange")-2;
 	}
 	
