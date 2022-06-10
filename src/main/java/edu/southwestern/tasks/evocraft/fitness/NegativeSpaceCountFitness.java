@@ -20,7 +20,6 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 		double[] blockArrY = blocklessY.mapToDouble(b -> b.y()).toArray();
 		Stream<Block> blocklessZ = blocks.parallelStream().filter(b -> b.type() != BlockType.AIR.ordinal());
 		double[] blockArrZ = blocklessZ.mapToDouble(b -> b.z()).toArray();
-		System.out.println(blockArrX[0]);
 		
 		// If only air, in the array, returns the minimum value (least fit)
 		if(blockArrX.length==0) return Integer.MIN_VALUE;

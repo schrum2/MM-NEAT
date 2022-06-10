@@ -54,19 +54,57 @@ public class NegativeSpaceCountFitnessTest {
 		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0); //Initializes corner for testing
 		
 		blockSet1 = new ArrayList<>();
+		blockSet1.add(new Block(10,15,10,BlockType.AIR, Orientation.WEST));
+		assertEquals(Integer.MIN_VALUE,ff.fitnessFromBlocks(corner,blockSet1),0); // Test when nothing
+		
 		blockSet1.add(new Block(0,5,0,BlockType.GLOWSTONE, Orientation.WEST));
 		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0);
 		blockSet1.add(new Block(1,5,0,BlockType.GLOWSTONE, Orientation.WEST));
 		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0);
 		blockSet1.add(new Block(1,5,1,BlockType.GLOWSTONE, Orientation.WEST));
 		blockSet1.add(new Block(0,5,1,BlockType.AIR, Orientation.WEST));
-		
-		
-		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
-		
-		
 		assertEquals(1,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(0,6,1,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(0,6,0,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(1,6,0,BlockType.AIR, Orientation.WEST));
+		assertEquals(1,ff.fitnessFromBlocks(corner,blockSet1),0); // Air above blocks does not effect the negative space
+		blockSet1.add(new Block(1,6,1,BlockType.CRAFTING_TABLE, Orientation.WEST));
+		assertEquals(4,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(1,7,1,BlockType.CRAFTING_TABLE, Orientation.WEST));
+		blockSet1.add(new Block(0,7,0,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(1,7,0,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(0,7,1,BlockType.AIR, Orientation.WEST));
+		assertEquals(7,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(3,7,2,BlockType.WOOL, Orientation.WEST));
+		blockSet1.add(new Block(3,7,1,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(3,7,0,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(3,6,2,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(3,6,1,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(3,6,0,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(3,5,2,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(3,5,1,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(3,5,0,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(2,7,2,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(2,7,1,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(2,7,0,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(2,6,2,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(2,6,1,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(2,6,0,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(2,5,2,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(2,5,1,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(2,5,0,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(1,7,2,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(1,6,2,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(1,5,2,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(0,7,2,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(0,6,2,BlockType.AIR, Orientation.WEST));
+		blockSet1.add(new Block(0,5,2,BlockType.AIR, Orientation.WEST));
+
+		assertEquals(30,ff.fitnessFromBlocks(corner,blockSet1),0);
 		
+		
+		
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1); // Spawns in just for verification
 	}
 	
 	@Test
