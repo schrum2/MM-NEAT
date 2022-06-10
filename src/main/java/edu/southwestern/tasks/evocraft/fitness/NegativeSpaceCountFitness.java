@@ -34,22 +34,18 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 		int maxX = (int) StatisticsUtilities.maximum(blockArrX);
 		int maxY = (int) StatisticsUtilities.maximum(blockArrY);
 		int maxZ = (int) StatisticsUtilities.maximum(blockArrZ);
-		System.out.println("blocks"+blocks);
+		// System.out.println("blocks"+blocks);
 		
-		int negativeBlocks = 0;
+		int nonNegativeBlocks = 0;
 		
 		// Checks if air block is within the coordinate constraints, if it is, adds to negativeBlocks
 		for(Block b : blocks) {
-			if(b.type() == BlockType.AIR.ordinal()) {
-				if(b.x()>=minX && b.x()<=maxX) {
-					if(b.y()>=minY && b.y()<=maxY) {
-						if(b.z()>=minZ && b.z()<=maxZ) {
-							negativeBlocks++;
-						}
-					}
-				}
-			}
+
+			nonNegativeBlocks++;
+
 		}
+		int maxShapeSize = (maxX-minX)*(maxY-minY)*(maxZ-minZ);
+		int negativeBlocks = maxShapeSize-nonNegativeBlocks;
 		System.out.println("X:"+maxX+"Y:"+maxY+"Z:"+maxZ);
 		//System.out.println("NegativeBlocks:"+negativeBlocks);
 		System.out.println("negativeBlocks:"+negativeBlocks);

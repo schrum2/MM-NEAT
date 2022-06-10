@@ -59,7 +59,7 @@ public class NegativeSpaceCountFitnessTest {
 		blockSet1 = new ArrayList<>();
 		blockSet2 = new ArrayList<>();
 		blockSet1.add(new Block(10,15,10,BlockType.AIR, Orientation.WEST));
-		assertEquals(Integer.MIN_VALUE,ff.fitnessFromBlocks(corner,blockSet1),0); // Test when nothing
+		assertEquals(-1,ff.fitnessFromBlocks(corner,blockSet1),0); // Test when nothing
 		
 		blockSet1.add(new Block(0,5,0,BlockType.GLOWSTONE, Orientation.WEST));
 		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0);
