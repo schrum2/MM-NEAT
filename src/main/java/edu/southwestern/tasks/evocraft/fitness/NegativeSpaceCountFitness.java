@@ -12,27 +12,28 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 	@Override
 	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
 		// Initializes all variables to 0, need min and max coordinates to calculate the space the shape takes up
-		int total=0, maxX=0, maxY=0, maxZ=0, minX=0, minY=0, minZ=0;
+		int total=0, maxX=0, maxY=0, maxZ=0, 
+				minX=1000, minY=1000, minZ=1000;
 		for(Block b : blocks) {
 			if(b.type() != BlockType.AIR.ordinal()) {
 				// If any new min or max, change to it. Air blocks cannot be included in these coordinates (There is definitely a better way to do this)
-				if(b.x()>maxX) maxX=b.x() % Parameters.parameters.integerParameter("minecraftXRange");
-				if(b.x()<minX) minX=b.x() % Parameters.parameters.integerParameter("minecraftXRange");
-				if(b.y()>maxY) maxY=b.y() % Parameters.parameters.integerParameter("minecraftYRange");
-				if(b.y()<minY) minY=b.y() % Parameters.parameters.integerParameter("minecraftYRange");
-				if(b.z()>maxZ) maxZ=b.z() % Parameters.parameters.integerParameter("minecraftZRange");
-				if(b.z()<minZ) minZ=b.z() % Parameters.parameters.integerParameter("minecraftZRange");
+				if(b.x()>maxX) maxX=b.x() % Parameters.parameters.integerParameter("minecraftXRange")+1;
+				if(b.x()<minX) minX=b.x() % Parameters.parameters.integerParameter("minecraftXRange")+1;
+				if(b.y()>maxY) maxY=b.y() % Parameters.parameters.integerParameter("minecraftYRange")+1;
+				if(b.y()<minY) minY=b.y() % Parameters.parameters.integerParameter("minecraftYRange")+1;
+				if(b.z()>maxZ) maxZ=b.z() % Parameters.parameters.integerParameter("minecraftZRange")+1;
+				if(b.z()<minZ) minZ=b.z() % Parameters.parameters.integerParameter("minecraftZRange")+1;
 			
 				// Total keeps track of all of the blocks that are not air within the shape
 				total++;
 			}
 		}
 		// Computes size of the shape based on the coordinates, then subtracts the non-air blocks to get negative space
-		//System.out.println("X:"+(maxX-minX)+" Y:"+(maxY-minY)+" Z:"+(maxZ-minZ));
+		System.out.println("X:"+(maxX-minX)+" Y:"+(maxY-minY)+" Z:"+(maxZ-minZ));
 		int sizeOfShape = (maxX-minX)*(maxY-minY)*(maxZ-minZ);
 		int negativeBlocks = sizeOfShape-total;
 		System.out.println("Size of shape = "+sizeOfShape+" Total = "+total);
-		System.out.print("Negative Blocks:"+negativeBlocks);
+		System.out.println("Negative Blocks:"+negativeBlocks);
 		return negativeBlocks;
 	}
 
