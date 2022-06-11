@@ -14,6 +14,7 @@ import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
@@ -36,7 +37,7 @@ import edu.southwestern.util.datastructures.Pair;
  *
  * @param <T>
  */
-public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements NetworkTask {
+public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements NetworkTask, BoundedTask {
 
 	private MinecraftShapeTask<T> internalMinecraftShapeTask;
 	private static boolean spawnShapesInWorld=false;
@@ -327,5 +328,15 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return internalMinecraftShapeTask.getUpperBounds();
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return internalMinecraftShapeTask.getLowerBounds();
 	}
 }

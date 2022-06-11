@@ -12,6 +12,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet;
@@ -28,15 +29,19 @@ import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 
-public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask {
+public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask, BoundedTask {
 	// Visible within package
 	ArrayList<MinecraftFitnessFunction> fitnessFunctions;
 	MinecraftCoordinates ranges;
 	private ArrayList<MinecraftCoordinates> corners;
 	private int startingX;
 	private int startingZ;
+	
+	private static double[] upper = null;
+	private static double[] lower = null;
 	
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
@@ -93,6 +98,11 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 				Parameters.parameters.integerParameter("minecraftXRange"),
 				Parameters.parameters.integerParameter("minecraftYRange"),
 				Parameters.parameters.integerParameter("minecraftZRange"));
+		
+		int numBlocks = ranges.x() * ranges.y() * ranges.z();
+		double possibilities = MMNEAT.blockSet.getPossibleBlocks().length + 1; // length+1 to generate air blocks
+		upper = ArrayUtil.doubleSpecified(numBlocks, possibilities);
+		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0);
 	}
 	
 	public int getStartingX() { return startingX; }
@@ -323,5 +333,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public double[] getUpperBounds() {
+		return upper;
+	}
+
+	@Override
+	public double[] getLowerBounds() {
+		return lower;
 	}
 }
