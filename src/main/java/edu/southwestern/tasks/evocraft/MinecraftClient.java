@@ -519,6 +519,11 @@ public class MinecraftClient extends Comm {
 		StringBuilder sb = new StringBuilder();
 		sb.append("spawnBlocks ");
 		for(Block b: blocks) {
+			if(b.y() < 0 || b.y() > 255) {
+				System.out.println("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.");
+				System.out.println("Therefore, these blocks cannot be generated: "+blocks);
+				throw new IllegalArgumentException("Problem block: "+b+"\nThis version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.\nTherefore, these blocks cannot be generated: "+blocks);
+			}
 			sb.append(b.x() + " " + b.y() + " " + b.z() + " " + b.type() + " " + b.orientation() + " ");
 		}
 		try {
@@ -556,6 +561,11 @@ public class MinecraftClient extends Comm {
 	 * @param type Type to fill the space with
 	 */
 	public synchronized void fillCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax, BlockType type) {
+		if(ymin < 0 || ymin > 255 || ymax < 0 || ymax > 255) {
+			System.out.println("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.");
+			System.out.println("Therefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
+			throw new IllegalArgumentException("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.\nTherefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
+		}
 		String message = "fillCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" "+type.ordinal()+" ";
 		try {
 			commSend(message);
