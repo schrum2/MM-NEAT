@@ -52,6 +52,22 @@ public class EvolutionaryHistory {
 	public static MMNEATLog mutationLog = null;
 	public static MMNEATLog lineageLog = null;
 
+	// Once a certain number of generations is surpassed, this is set to true, but the clean may not happen immediately
+	private static boolean archetypeCleanPending = false;
+	private static int nextCleanGeneration;
+	
+	/**
+	 * Given the current generation, see if it is time to clean the archetype
+	 * @param generation Current generation
+	 * @return Whether archetype should be cleaned soon
+	 */
+	public static boolean timeToClean(int generation) {
+		if(generation > nextCleanGeneration) {
+			archetypeCleanPending = true;
+		}
+		return archetypeCleanPending;
+	}
+	
 	/**
 	 * Commonly used/shared networks (hierarchical architectures). Raw types are
 	 * allowed for greater flexibility (different types of phenotypes may be
@@ -258,6 +274,8 @@ public class EvolutionaryHistory {
 				archetypeOut[populationIndex]++;
 			}
 		}
+		// Can clean archetype after this point
+		nextCleanGeneration = Parameters.parameters.integerParameter("lastSavedGeneration") + Parameters.parameters.integerParameter("cleanFrequency");
 	}
 
 	/**
@@ -405,8 +423,7 @@ public class EvolutionaryHistory {
 	public static void cleanArchetype(int populationIndex, ArrayList<TWEANNGenotype> population, int generation) {
 		synchronized (archetypeMonitor) {
 			// command line parameter that tells how often archetype needs to be cleaned
-			int freq = Parameters.parameters.integerParameter("cleanFrequency");
-			if (freq > 0 && archetypes[populationIndex] != null && generation % freq == 0) {
+			if (archetypes[populationIndex] != null && timeToClean(generation)) {
 				System.out.println("Cleaning archetype");
 				HashSet<Long> activeNodeInnovations = new HashSet<Long>();
 				// Get all node innovation numbers still in use by population
@@ -438,6 +455,9 @@ public class EvolutionaryHistory {
 						archetypeOut[populationIndex]++;
 					}
 				}
+				int freq = Parameters.parameters.integerParameter("cleanFrequency");
+				nextCleanGeneration = generation + freq;
+				archetypeCleanPending = false;
 			}
 		}
 	}
