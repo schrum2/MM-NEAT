@@ -95,6 +95,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			e1.printStackTrace();
 			System.exit(1);
 		}
+		
+		MMNEAT.discreteCeilings = ArrayUtil.intSpecified(Parameters.parameters.integerParameter("minecraftAmountOfBlocksToEvolve"),MMNEAT.blockSet.getPossibleBlocks().length);
 
 		try {
 			MMNEAT.shapeGenerator = (ShapeGenerator<T>) ClassCreation.createObject("minecraftShapeGenerator");

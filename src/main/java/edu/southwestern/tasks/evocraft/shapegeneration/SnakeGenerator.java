@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.evocraft.shapegeneration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -56,7 +58,8 @@ public class SnakeGenerator<T extends Network> implements ShapeGenerator<T> {
 			//System.out.println(occupied);
 			numberOfIterations++;
 			//System.out.println(numberOfIterations);
-			MinecraftCoordinates direction = ShapeGenerator.generateBlock(corner, blockSet, snake, net, ranges, distanceInEachPlane, xi, yi, zi);
+			List<BlockType> bs = Arrays.asList(blockSet.getPossibleBlocks());
+			MinecraftCoordinates direction = ShapeGenerator.generateBlock(corner, bs, snake, net, ranges, distanceInEachPlane, xi, yi, zi);
 			
 			if(direction == null || numberOfIterations >= Parameters.parameters.integerParameter("minecraftMaxSnakeLength")) {
 				//System.out.println("Direction: " + direction + "Number of its: " + numberOfIterations);

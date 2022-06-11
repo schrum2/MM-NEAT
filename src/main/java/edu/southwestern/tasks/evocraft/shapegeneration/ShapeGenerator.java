@@ -9,6 +9,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
@@ -66,13 +67,13 @@ public interface ShapeGenerator<T> {
 	 * @return Coordinates that indicate the direction to move in next for snake generation, where a null result indicates
 	 * 			that shape generation should stop. This is not used for standard 3D volume generation.
 	 */
-	public static MinecraftCoordinates generateBlock(MinecraftCoordinates corner, BlockSet blockSet, List<Block> blocks, Network net,
+	public static MinecraftCoordinates generateBlock(MinecraftCoordinates corner, List<BlockType> blockSet, List<Block> blocks, Network net,
 			MinecraftCoordinates ranges, boolean distanceInEachPlane, int xi, int yi, int zi) {
 		double[] inputs = ThreeDimensionalUtil.get3DObjectCPPNInputs(xi, yi, zi, ranges.x(), ranges.y(), ranges.z(), -1, distanceInEachPlane);
 		net.flush(); // There should not be any left over recurrent activation, but clear each time just in case
 		double[] outputs = net.process(inputs);
 		//if(SnakeGenerator.debug) System.out.println("("+xi+","+yi+","+zi+"):" + Arrays.toString(inputs) + " -> " + Arrays.toString(outputs));
-		int numBlockTypes = blockSet.getPossibleBlocks().length;
+		int numBlockTypes = blockSet.size();
 		if(outputs[OUTPUT_INDEX_PRESENCE] > VOXEL_EXPRESSION_THRESHOLD) {
 			ArrayList<Double> blockPreferences = new ArrayList<Double>(numBlockTypes);
 			for(int i = 1; i <= numBlockTypes; i++) {
@@ -86,7 +87,7 @@ public interface ShapeGenerator<T> {
 				int orientationPreferenceIndex = StatisticsUtilities.argmax(orientationPreferences);
 				blockOrientation = Orientation.values()[orientationPreferenceIndex];
 			}
-			Block b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[typeIndex], blockOrientation);
+			Block b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.get(typeIndex), blockOrientation);
 			blocks.add(b);
 		} 
 
