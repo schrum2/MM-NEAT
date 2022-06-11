@@ -44,9 +44,11 @@ public class SteadyStateExperiment<T> implements Experiment {
 			ea.newIndividual(); // Make new individuals
 			Parameters.parameters.saveParameters(); // Save the parameters and the archetype
 			if(Parameters.parameters.booleanParameter("steadyStateArchetypeSaving") && ea.populationChanged()) { // In steady state, not every individual is added to the population
-				EvolutionaryHistory.saveArchetype(0);
+				synchronized(this) {
+					EvolutionaryHistory.saveArchetype(0);
+				}
 			}
-			if(cleanArchetype) { // Periodically clean extinct genes from the archetype
+			if(cleanArchetype && EvolutionaryHistory.timeToClean(ea.currentIteration())) { // Periodically clean extinct genes from the archetype
 				synchronized(this) {
 					ArrayList<Genotype<T>> pop = ea.getPopulation();
 					ArrayList<TWEANNGenotype> tweannPop = new ArrayList<TWEANNGenotype>(pop.size());
