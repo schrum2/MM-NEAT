@@ -45,6 +45,7 @@ public class MinecraftMAPElitesWidthHeightDepthBinLabels extends MinecraftMAPEli
 		int yDim = Parameters.parameters.integerParameter("minecraftYRange")+1;
 		int zDim = Parameters.parameters.integerParameter("minecraftZRange")+1;
 		int binIndex = multi[0]*yDim*zDim + multi[1]*zDim + multi[2];
+		assert binIndex < labels.size() : binIndex + " from " + Arrays.toString(multi) + ":yDim="+yDim+":zDim="+zDim;
 		return binIndex;
 	}
 
