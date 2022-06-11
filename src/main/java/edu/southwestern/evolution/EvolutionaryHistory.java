@@ -62,7 +62,10 @@ public class EvolutionaryHistory {
 	 * @return Whether archetype should be cleaned soon
 	 */
 	public static boolean timeToClean(int generation) {
-		if(generation > nextCleanGeneration) {
+		// Special case where archetype is never cleaned
+		if(Parameters.parameters.integerParameter("cleanFrequency") == -1) {
+			return false;
+		} else if(generation > nextCleanGeneration) {
 			archetypeCleanPending = true;
 		}
 		return archetypeCleanPending;
@@ -457,6 +460,7 @@ public class EvolutionaryHistory {
 				}
 				int freq = Parameters.parameters.integerParameter("cleanFrequency");
 				nextCleanGeneration = generation + freq;
+				System.out.println("Next archetype cleaning generation is "+nextCleanGeneration);
 				archetypeCleanPending = false;
 			}
 		}
