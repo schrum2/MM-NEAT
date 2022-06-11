@@ -152,7 +152,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 					//FOR TESTING
 					"spaceBetweenMinecraftShapes:10","parallelMAPElitesInitialize:true",
 					//"minecraftXRange:9","minecraftYRange:9","minecraftZRange:9",
-					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:5",
+					"minecraftXRange:3","minecraftYRange:3","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
