@@ -46,12 +46,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	private MinecraftShapeTask<T> internalMinecraftShapeTask;
 	private static boolean spawnShapesInWorld=false;
 	private static ArrayList<MinecraftCoordinates> parallelShapeCorners;
-	private static int spaceBetween;
-
 	private BlockingQueue<MinecraftCoordinates> coordinateQueue;
-	private static int xOffset;
-	private static int yOffset;
-	private static int zOffset;
 
 	public MinecraftLonerShapeTask() 	{
 		/**
@@ -59,16 +54,16 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		 */
 		
 		internalMinecraftShapeTask = new MinecraftShapeTask<T>() {
-			public int getStartingX() { return - getRanges().x() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
+			public int getStartingX() { return - Parameters.parameters.integerParameter("minecraftXRange") - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER); }
 
-			public int getStartingZ() { return - getRanges().z() - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength")*2, MinecraftClient.BUFFER); }
+			public int getStartingZ() { return - Parameters.parameters.integerParameter("minecraftZRange") - Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength")*2, MinecraftClient.BUFFER); }
 		};
 		
 		// Creates a new blocking queue to use with parallelism
 		coordinateQueue = new ArrayBlockingQueue<>(Parameters.parameters.integerParameter("parallelMinecraftSlots"));
 		
 		// Generates the corners for all of the shapes and then adds them into the blocking queue
-		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelMinecraftSlots"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),internalMinecraftShapeTask.getRanges());
+		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelMinecraftSlots"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),MinecraftUtilClass.getRanges());
 		for(MinecraftCoordinates corner : parallelShapeCorners) {
 			//System.out.println(corner);
 			try {
@@ -79,16 +74,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				System.exit(1);
 			}
 		}
-		
-		MinecraftCoordinates ranges = internalMinecraftShapeTask.getRanges();
-		spaceBetween = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
-		xOffset = (int) (((ranges.x() + spaceBetween) / 2.0) - (ranges.x()/2.0)); 
-		yOffset = (int) (((ranges.y() + spaceBetween) / 2.0) - (ranges.y()/2.0)); 
-		zOffset = (int) (((ranges.z() + spaceBetween) / 2.0) - (ranges.z()/2.0)); 
 	}
 
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
-		MinecraftCoordinates ranges = internalMinecraftShapeTask.getRanges();
+		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 
 		// Corner to clear and then place is taken from the queue. If the queue is empty, it waits until something is added in
 		MinecraftCoordinates corner=null;
@@ -101,7 +90,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		}
 		// Clears specified space for new shape
 		clearBlocksInArchive(ranges, corner);		
-		MinecraftCoordinates middle = corner.add(new MinecraftCoordinates(xOffset,yOffset,zOffset));
+		MinecraftCoordinates middle = corner.add(MinecraftUtilClass.emptySpaceOffsets());
 		// Evaluates the shape at the middle of the space defined by the corner, and then adds the corner back to the queue
 		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, middle);
 		try {
@@ -246,18 +235,19 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	public static Pair<MinecraftCoordinates,MinecraftCoordinates> configureStartPosition(MinecraftCoordinates ranges, int[] multiDimIndex, int dim1D) {
 		MinecraftCoordinates startPosition;
 		MinecraftCoordinates offset;
+		int spaceBetween = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
 		// Location in multi-dimensional archive
 		if(multiDimIndex.length==1 || multiDimIndex.length > 3 || Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
 			// Derive 1D location from multi-dimensional location
 			startPosition = new MinecraftCoordinates(dim1D*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,0);				
-			offset = new MinecraftCoordinates(xOffset,0,0);				
+			offset = new MinecraftCoordinates(MinecraftUtilClass.emptySpaceOffsetX(),0,0);				
 		} else if(multiDimIndex.length==2){
 			// Ground level fixed, but expand second coordinate in z dimension
 			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,multiDimIndex[1]*(spaceBetween+ranges.z()));
-			offset = new MinecraftCoordinates(xOffset,0,zOffset);
+			offset = new MinecraftCoordinates(MinecraftUtilClass.emptySpaceOffsetX(),0,MinecraftUtilClass.emptySpaceOffsetZ());
 		} else if(multiDimIndex.length==3) {
 			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1+multiDimIndex[1]*(spaceBetween+ranges.y()),multiDimIndex[2]*(spaceBetween+ranges.z()));
-			offset = new MinecraftCoordinates(xOffset,yOffset,zOffset);
+			offset = MinecraftUtilClass.emptySpaceOffsets();
 		} else {
 			throw new IllegalArgumentException("This should be impossible to reach: "+Arrays.toString(multiDimIndex));
 		}
