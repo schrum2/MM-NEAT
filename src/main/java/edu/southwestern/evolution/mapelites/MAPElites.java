@@ -404,7 +404,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 					// Minecraft shapes have to be re-generated and added to the world
 					synchronized(archive) {
 						if(minecraftInit && result) {
-							System.out.println("Put "+s.individual.getId()+":"+s.MAPElitesBehaviorMap());
+							//System.out.println("Put "+s.individual.getId()+":"+s.MAPElitesBehaviorMap());
 							int index1D = (int) s.MAPElitesBehaviorMap().get("dim1D");
 							double scoreOfCurrentElite = s.behaviorIndexScore();
 							MinecraftLonerShapeTask.clearAndSpawnShape(s.individual, s.MAPElitesBehaviorMap(), ranges, index1D, scoreOfCurrentElite);
