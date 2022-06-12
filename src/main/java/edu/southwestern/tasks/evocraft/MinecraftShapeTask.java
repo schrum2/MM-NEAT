@@ -192,8 +192,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		IntStream stream = IntStream.range(0, corners.size());
 		ArrayList<Score<T>> scores = stream.parallel().mapToObj( i -> {
 			MinecraftCoordinates corner = corners.get(i);
+			MinecraftCoordinates middle = corner.add(MinecraftUtilClass.emptySpaceOffsets());
 			Genotype<T> genome = population.get(i);
-			return evaluateOneShape(genome, corner, fitnessFunctions);
+			return evaluateOneShape(genome, middle, fitnessFunctions);
 		}).collect(Collectors.toCollection(ArrayList::new));
 		System.out.println("Finished collecting");
 		return scores;
