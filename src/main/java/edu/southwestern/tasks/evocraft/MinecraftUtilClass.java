@@ -29,10 +29,19 @@ public class MinecraftUtilClass {
 		return (int) (((range + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) / 2.0) - (range/2.0));
 	}
 	
+	/**
+	 * How far away in each coordinate the minimal corner of where the shape is generated is
+	 * from the minimal corner of cleared out space reserved for the shape.
+	 * @return Coordinates of distance between minimal corner of empty space and minimal corner of where shape is generated
+	 */
 	public static MinecraftCoordinates emptySpaceOffsets() {
 		return new MinecraftCoordinates(emptySpaceOffsetX(),emptySpaceOffsetY(),emptySpaceOffsetZ());
 	}
 	
+	/**
+	 * Size of space reserved for shape in each coordinate
+	 * @return Size of space shape is generated within
+	 */
 	public static MinecraftCoordinates getRanges() { 
 		return new MinecraftCoordinates(
 				Parameters.parameters.integerParameter("minecraftXRange"),
@@ -40,4 +49,15 @@ public class MinecraftUtilClass {
 				Parameters.parameters.integerParameter("minecraftZRange"));
 	}
 
+	/**
+	 * Size of space around each shape, which includes all the empty space between shapes
+	 * @return Save of space including empty space between shapes
+	 */
+	public static MinecraftCoordinates reservedSpace() {
+		final int SPACE_BETWEEN = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
+		// Makes the buffer space between coordinates
+		MinecraftCoordinates bufferDist = new MinecraftCoordinates(SPACE_BETWEEN,SPACE_BETWEEN,SPACE_BETWEEN);
+		// End coordinate is based on buffer distance. Then shape is cleared
+		return bufferDist.add(getRanges());
+	}
 }

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
+import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
@@ -33,14 +34,9 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		assert xrange > 0 : "xrange must be positive: " + xrange;
 		assert zrange > 0 : "zrange must be positive: " + zrange;
 		
-		// Setting the space in between to be large and storing it
-		// Might need to be bigger!
-		int inBetween = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
-		
 		// Shifts over the corner to the new range with the large space in between shapes
-		int shift = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes") / 2;
-		corner = new MinecraftCoordinates(corner.x() - shift, corner.y(), corner.z() - shift);
-		MinecraftCoordinates end = corner.add(new MinecraftCoordinates(xrange + inBetween, 0, zrange + inBetween));
+		corner = corner.sub(MinecraftUtilClass.emptySpaceOffsets());
+		MinecraftCoordinates end = corner.add(MinecraftUtilClass.reservedSpace());
 		
 		assert corner.x() <= end.x() && corner.y() <= end.y() && corner.z() <= end.z(): "corner should be less than end in each coordinate: corner = "+corner+ ", max = "+end; 
 		
