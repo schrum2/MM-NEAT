@@ -25,6 +25,13 @@ public class MinecraftUtilClass {
 		return emptySpaceOffset(Parameters.parameters.integerParameter("minecraftZRange"));
 	}
 	
+	/**
+	 * For a given dimension, the empty space offset is half the total space between shapes, 
+	 * but minus half the space that the shape could actually occupy.
+	 * 
+	 * @param range number of blocks a shape could actually occupy in some direction
+	 * @return number of blocks between reserved space start and possible shape start
+	 */
 	public static int emptySpaceOffset(int range) {
 		return (int) (((range + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) / 2.0) - (range/2.0));
 	}
