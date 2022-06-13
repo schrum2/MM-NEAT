@@ -421,7 +421,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	protected void log() {
 		if (!archiveFileCreated) {
 			try {
-				setupArchiveVisualizer(archive.getBinMapping());
+				if(Parameters.parameters.booleanParameter("io")) setupArchiveVisualizer(archive.getBinMapping());
 			} catch (FileNotFoundException e) {
 				System.out.println("Could not create archive visualization file.");
 				e.printStackTrace();

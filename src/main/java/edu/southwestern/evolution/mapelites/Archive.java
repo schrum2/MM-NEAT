@@ -252,6 +252,7 @@ public class Archive<T> {
 	 * @return elite individual score instance
 	 */
 	public Score<T> getElite(int binIndex) {
+		assert binIndex < archive.size() : binIndex + " of "+ archive.size()+":" +this.getBinMapping().binLabels();
 		return archive.get(binIndex);
 	}
 	

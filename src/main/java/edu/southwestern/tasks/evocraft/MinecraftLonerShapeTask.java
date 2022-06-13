@@ -46,8 +46,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	private MinecraftShapeTask<T> internalMinecraftShapeTask;
 	private static boolean spawnShapesInWorld=false;
 	private static ArrayList<MinecraftCoordinates> parallelShapeCorners;
-	
+	private static int spaceBetween;
+
 	private BlockingQueue<MinecraftCoordinates> coordinateQueue;
+	private static int xOffset;
+	private static int yOffset;
+	private static int zOffset;
 
 	public MinecraftLonerShapeTask() 	{
 		/**
@@ -75,6 +79,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				System.exit(1);
 			}
 		}
+		
+		MinecraftCoordinates ranges = internalMinecraftShapeTask.getRanges();
+		spaceBetween = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
+		xOffset = (int) (((ranges.x() + spaceBetween) / 2.0) - (ranges.x()/2.0)); 
+		yOffset = (int) (((ranges.y() + spaceBetween) / 2.0) - (ranges.y()/2.0)); 
+		zOffset = (int) (((ranges.z() + spaceBetween) / 2.0) - (ranges.z()/2.0)); 
 	}
 
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num, HashMap<String, Object> behaviorCharacteristics) {
@@ -90,10 +100,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			System.exit(1);
 		}
 		// Clears specified space for new shape
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 1, Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
-		
-		// Evaluates the shape, and then adds the corner back to the queue
-		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, corner);
+		clearBlocksInArchive(ranges, corner);		
+		MinecraftCoordinates middle = corner.add(new MinecraftCoordinates(xOffset,yOffset,zOffset));
+		// Evaluates the shape at the middle of the space defined by the corner, and then adds the corner back to the queue
+		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, middle);
 		try {
 			coordinateQueue.put(corner);
 		} catch (InterruptedException e) {
@@ -128,7 +138,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		int index1D = (int) behaviorCharacteristics.get("dim1D");
 		// Gets the bin scores to compare them
 		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
-		double scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
+		assert index1D < ((MAPElites<T>) MMNEAT.ea).getArchive().getBinMapping().binLabels().size() : individual.getId() + ":" + behaviorCharacteristics;
+		double scoreOfPreviousElite = 0;
+		scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
+		
 		//System.out.println(individual.getId()+"Index "+index1D +": Compare: "+scoreOfCurrentElite+" > "+scoreOfPreviousElite);
 		// If the new shape is better than the previous, it gets replaced
 		if(scoreOfCurrentElite > scoreOfPreviousElite) {
@@ -149,12 +162,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	@SuppressWarnings("unchecked")
 	public static <T> void clearAndSpawnShape(Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics,
 			MinecraftCoordinates ranges, int index1D, double scoreOfCurrentElite) {
-		// Creates the bin labels
-		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
-		int dimSize = minecraftBinLabels.dimensions().length;
 		Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
 		// Clears old shape if there was one
-		Pair<MinecraftCoordinates,MinecraftCoordinates> cleared = clearBlocksInArchive(dimSize, ranges, corners.t1);
+		Pair<MinecraftCoordinates,MinecraftCoordinates> cleared = clearBlocksInArchive(ranges, corners.t1);
 		assert cleared.t1.equals(corners.t1) : "Cleared space does not start at right location: "+cleared.t1+" vs "+corners.t1;
 		// Could do more checking here
 		
@@ -171,7 +181,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MinecraftCoordinates testCorner = null;
 			assert MinecraftShapeTask.qualityScore(new double[] {testScore = ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2)}) == ((Double) behaviorCharacteristics.get("binScore")).doubleValue() : 
 				individual.getId() + ":" + behaviorCharacteristics + ":testScore="+testScore+":" + blocks;
-			assert !(minecraftBinLabels instanceof MinecraftMAPElitesBlockCountBinLabels) || new OccupiedCountFitness().fitnessScore(testCorner) == (testScore = ((Double) behaviorCharacteristics.get("OccupiedCountFitness")).doubleValue()) : 
+			assert !(MMNEAT.getArchiveBinLabelsClass() instanceof MinecraftMAPElitesBlockCountBinLabels) || new OccupiedCountFitness().fitnessScore(testCorner) == (testScore = ((Double) behaviorCharacteristics.get("OccupiedCountFitness")).doubleValue()) : 
 				individual.getId() + ":" + testCorner+":occupied count="+testScore+":"+ blocks + ":" + CheckBlocksInSpaceFitness.readBlocksFromClient(testCorner);
 		}
 		
@@ -233,23 +243,19 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 * @return Pair of the corner of the space to clear followed by the corner within that space to place the shape
 	 */
 	public static Pair<MinecraftCoordinates,MinecraftCoordinates> configureStartPosition(MinecraftCoordinates ranges, int[] multiDimIndex, int dim1D) {
-		final int SPACE_BETWEEN = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
 		MinecraftCoordinates startPosition;
 		MinecraftCoordinates offset;
-		int xOffset = (int) (((ranges.x() + SPACE_BETWEEN) / 2.0) - (ranges.x()/2.0)); 
-		int yOffset = (int) (((ranges.y() + SPACE_BETWEEN) / 2.0) - (ranges.y()/2.0)); 
-		int zOffset = (int) (((ranges.z() + SPACE_BETWEEN) / 2.0) - (ranges.z()/2.0)); 
 		// Location in multi-dimensional archive
 		if(multiDimIndex.length==1 || multiDimIndex.length > 3 || Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
 			// Derive 1D location from multi-dimensional location
-			startPosition = new MinecraftCoordinates(dim1D*(SPACE_BETWEEN+ranges.x()),MinecraftClient.GROUND_LEVEL+1,0);				
+			startPosition = new MinecraftCoordinates(dim1D*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,0);				
 			offset = new MinecraftCoordinates(xOffset,0,0);				
 		} else if(multiDimIndex.length==2){
 			// Ground level fixed, but expand second coordinate in z dimension
-			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(SPACE_BETWEEN+ranges.x()),MinecraftClient.GROUND_LEVEL+1,multiDimIndex[1]*(SPACE_BETWEEN+ranges.z()));
+			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,multiDimIndex[1]*(spaceBetween+ranges.z()));
 			offset = new MinecraftCoordinates(xOffset,0,zOffset);
 		} else if(multiDimIndex.length==3) {
-			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(SPACE_BETWEEN+ranges.x()),MinecraftClient.GROUND_LEVEL+1+multiDimIndex[1]*(SPACE_BETWEEN+ranges.y()),multiDimIndex[2]*(SPACE_BETWEEN+ranges.z()));
+			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1+multiDimIndex[1]*(spaceBetween+ranges.y()),multiDimIndex[2]*(spaceBetween+ranges.z()));
 			offset = new MinecraftCoordinates(xOffset,yOffset,zOffset);
 		} else {
 			throw new IllegalArgumentException("This should be impossible to reach: "+Arrays.toString(multiDimIndex));
@@ -260,12 +266,11 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	/**
 	 * Clears the an area for a specified shape 
 	 * 
-	 * @param dimSize Determines if the archive is 1D, 2D, or 3D
 	 * @param ranges specified range of each shape
 	 * @param startPosition Starting indices of a specific shape
 	 * @return start and end coordinates of area that was cleared
 	 */
-	public static Pair<MinecraftCoordinates,MinecraftCoordinates> clearBlocksInArchive(int dimSize,MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
+	public static Pair<MinecraftCoordinates,MinecraftCoordinates> clearBlocksInArchive(MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
 		final int SPACE_BETWEEN = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes");
 		// Makes the buffer space between coordinates
 		MinecraftCoordinates bufferDist = new MinecraftCoordinates(SPACE_BETWEEN,SPACE_BETWEEN,SPACE_BETWEEN);
@@ -350,9 +355,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesWHDSimple", "saveTo:MAPElitesWHDSimple",
-					"io:true", "netio:true",
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
+					"io:true", "netio:true",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false",
 					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet",
@@ -364,12 +369,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"minecraftEvolveOrientation:true",
 					"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true", 
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
-					"spaceBetweenMinecraftShapes:10","parallelMAPElitesInitialize:true",
+					"spaceBetweenMinecraftShapes:10","parallelMAPElitesInitialize:false",
 					"minecraftXRange:1","minecraftYRange:2","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",

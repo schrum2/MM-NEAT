@@ -2,6 +2,7 @@ package edu.southwestern.tasks.evocraft;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,20 +16,22 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.BoundedTask;
 import edu.southwestern.tasks.SinglePopulationTask;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
-import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
-import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.fitness.ChangeCenterOfMassFitness;
 import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
+import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
-import edu.southwestern.tasks.evocraft.fitness.DiversityBlockFitness;
+import edu.southwestern.tasks.evocraft.fitness.WidthFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -226,10 +229,13 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public static <T> Score<T> evaluateOneShape(Genotype<T> genome, MinecraftCoordinates corner, ArrayList<MinecraftFitnessFunction> fitnessFunctions) {
 		@SuppressWarnings("unchecked")
 		List<Block> blocks = MMNEAT.shapeGenerator.generateShape(genome, corner, MMNEAT.blockSet);
+		//System.out.println(genome.getId() + ":" + blocks);
 		MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 		double[] fitnessScores = calculateFitnessScores(corner,fitnessFunctions);
 		Score<T> score = new Score<T>(genome, fitnessScores);
 		if(MMNEAT.usingDiversityBinningScheme) {
+			//System.out.println("evaluate "+genome.getId() + " at " + corner + ": scores = "+ Arrays.toString(fitnessScores));
+			
 			MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 			// It is important to note that the original blocks from the CPPN are used here rather than the blocks
 			// read from the world. So, any properties collected will be before movement due to machine parts.
@@ -239,6 +245,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 			
 			double binScore = qualityScore(fitnessScores); 
 			behaviorMap.put("binScore", binScore); // Quality Score!				
+
+			assert !behaviorMap.containsKey("WidthFitness") || ((Double) behaviorMap.get("WidthFitness")).doubleValue() <= Parameters.parameters.integerParameter("minecraftXRange") : genome.getId() +":"+ behaviorMap + ":" + blocks + ":" + corner;
+
 			// Do this last
 			int dim1D = minecraftBinLabels.oneDimensionalIndex(behaviorMap);
 			behaviorMap.put("dim1D", dim1D); // Save so it does not need to be computed again
@@ -284,16 +293,19 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public static double[] calculateFitnessScores(MinecraftCoordinates corner, List<MinecraftFitnessFunction> fitnessFunctions, List<Block> readBlocks) {
 		// Parallelize fitness calculation
 		double[] fitnessScores = fitnessFunctions.parallelStream().mapToDouble(ff -> {
-			
-			assert !(ff instanceof OccupiedCountFitness && MMNEAT.blockSet instanceof SimpleSolidBlockSet) || ff.fitnessScore(corner) == ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks) : 
-				"corner:"+corner+",readBlocks:"+readBlocks;
+			double score;
+			assert !(ff instanceof OccupiedCountFitness && MMNEAT.blockSet instanceof SimpleSolidBlockSet) || (score = ff.fitnessScore(corner)) == ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks) : 
+				"OccupiedCountFitness:corner:"+corner+",readBlocks:"+readBlocks+",world score = "+score;
+			assert !(ff instanceof WidthFitness && MMNEAT.blockSet instanceof SimpleSolidBlockSet) || (score = ff.fitnessScore(corner)) == ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks) : 
+				"WidthFitness:corner:"+corner+",readBlocks:"+readBlocks+",world score = "+score+": "+Arrays.toString(CheckBlocksInSpaceFitness.readBlocksFromClient(corner).stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray());
 			
 			if(ff instanceof CheckBlocksInSpaceFitness) {
 				// All fitness functions of this type can just use the previously computed readBlocks list
-				return ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks);
+				score = ((CheckBlocksInSpaceFitness) ff).fitnessFromBlocks(corner,readBlocks);
 			} else {
-				return ff.fitnessScore(corner);
+				score = ff.fitnessScore(corner);
 			}			
+			return score;
 		}).toArray();
 		
 		return fitnessScores;
