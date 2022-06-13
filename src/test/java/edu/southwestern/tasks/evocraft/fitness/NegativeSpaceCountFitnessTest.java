@@ -149,7 +149,6 @@ public class NegativeSpaceCountFitnessTest {
 		
 		blockSet3.add(new Block(32,5,0,BlockType.DIAMOND_ORE, Orientation.WEST));// Add one extra block to double check
 		assertEquals(17,ff.fitnessFromBlocks(corner3,blockSet3),0); 
-		// blockSet3.add(new Block(29999970,5,0,BlockType.DIAMOND_ORE, Orientation.WEST));// tests if out of bounds
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet3); // Spawns in just for verification
 		
 		
