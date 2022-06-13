@@ -28,7 +28,6 @@ import edu.southwestern.util.stats.StatisticsUtilities;
 public interface ShapeGenerator<T> {
 	
 	public static final int OUTPUT_INDEX_PRESENCE = 0;
-	public static final double VOXEL_EXPRESSION_THRESHOLD = 0.1;
 	public static final double SNAKE_CONTINUATION_THRESHOLD = 0.1;
 	public static final int NUM_DIRECTIONS = 6;
 
@@ -74,7 +73,7 @@ public interface ShapeGenerator<T> {
 		double[] outputs = net.process(inputs);
 		//if(SnakeGenerator.debug) System.out.println("("+xi+","+yi+","+zi+"):" + Arrays.toString(inputs) + " -> " + Arrays.toString(outputs));
 		int numBlockTypes = blockSet.size();
-		if(outputs[OUTPUT_INDEX_PRESENCE] > VOXEL_EXPRESSION_THRESHOLD) {
+		if(outputs[OUTPUT_INDEX_PRESENCE] > Parameters.parameters.doubleParameter("voxelExpressionThreshold")) {
 			ArrayList<Double> blockPreferences = new ArrayList<Double>(numBlockTypes);
 			for(int i = 1; i <= numBlockTypes; i++) {
 				blockPreferences.add(outputs[i]);

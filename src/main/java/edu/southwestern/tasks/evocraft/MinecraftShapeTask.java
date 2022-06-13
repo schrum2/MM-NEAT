@@ -33,6 +33,7 @@ import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.WidthFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
+import edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
@@ -43,9 +44,6 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	private ArrayList<MinecraftCoordinates> corners;
 	private int startingX;
 	private int startingZ;
-	
-	private static double[] upper = null;
-	private static double[] lower = null;
 	
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
@@ -112,10 +110,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		startingZ = 0;
 		
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
-		int numBlocks = ranges.x() * ranges.y() * ranges.z();
-		double possibilities = MMNEAT.blockSet.getPossibleBlocks().length + 1; // length+1 to generate air blocks
-		upper = ArrayUtil.doubleSpecified(numBlocks, possibilities);
-		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0);
+	
 	}
 	
 	public int getStartingX() { return startingX; }
@@ -361,11 +356,12 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 	@Override
 	public double[] getUpperBounds() {
-		return upper;
+		return ((VectorToVolumeGenerator) MMNEAT.shapeGenerator).getUpperBounds(); // calling getUpperBounds from VectorToVolumeGenerator class
+	
 	}
 
 	@Override
 	public double[] getLowerBounds() {
-		return lower;
+		return ((VectorToVolumeGenerator) MMNEAT.shapeGenerator).getLowerBounds(); // calling getlowerBounds from VectorToVolumeGenerator class
 	}
 }
