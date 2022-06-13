@@ -63,16 +63,52 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		
 		//System.out.println(initialCenterOfMass);
 		
+		boolean stop = false;
+		long timeElapsed = 0l;
 		// Wait for the machine to move some (if at all)
-		long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
-		try {
-			Thread.sleep(waitTime);
-		} catch (InterruptedException e) {
-			System.out.print("Thread was interrupted");
-			e.printStackTrace();
-			System.exit(1);
+		while(!stop) {
+			
+			long shortWaitTime = 5000l;
+			try {
+				Thread.sleep(shortWaitTime);
+			} catch (InterruptedException e) {
+				System.out.print("Thread was interrupted");
+				e.printStackTrace();
+				System.exit(1);
+			}
+			timeElapsed += shortWaitTime;
+			System.out.println("Time passed: " + timeElapsed);
+			
+			List<Block> shortWaitTimeUpdate = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
+			Vertex x1CenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
+			System.out.println("Updated center of mass (x1): "+x1CenterOfMass);
+			if(initialCenterOfMass.equals(x1CenterOfMass)) {
+				// This means that it hasn't moved, so move on to the next
+				stop = true;
+			} else {
+				long longWaitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime") + 25000l;
+				List<Block> nextUpdate = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
+				Vertex x2CenterOfMass = getCenterOfMass(nextUpdate);
+				System.out.println("Next update (x2): " + x2CenterOfMass);
+				if(x1CenterOfMass.equals(x2CenterOfMass) || timeElapsed >= longWaitTime) {
+					stop = true;
+				} else {
+					try {
+						Thread.sleep(shortWaitTime);
+					} catch (InterruptedException e) {
+						System.out.print("Thread was interrupted");
+						e.printStackTrace();
+						System.exit(1);
+					}
+					timeElapsed += shortWaitTime;
+					System.out.println("Time passed when still moving: " + timeElapsed);
+					
+					if(timeElapsed >= longWaitTime) {
+						stop = true;
+					}
+				}
+			}
 		}
-		
 		// Read in again to update the list
 		List<Block> afterBlocks = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
 		//System.out.println(afterBlocks);
