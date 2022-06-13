@@ -811,6 +811,7 @@ public class Parameters {
 		booleanOptions.add("forceLinearArchiveLayoutInMinecraft", false, "minecraftContainsWholeMAPElitesArchive must be true for this. Generates shape in a linear fashion, as opposed to in 2D or 3D");
 		booleanOptions.add("minecraftChangeCenterOfMassFitness", false, "Calculates the change in position of a shapes center of mass.");
 		booleanOptions.add("NegativeSpaceCountFitness", false, "Tries to maximixe the negative space in a shape that i generated");
+		booleanOptions.add("vectorPresenceThresholdForEachBlock", false, "Determines whether the vector presence will be normal, or two times larger");
 		
 		
 		// Double parameters
