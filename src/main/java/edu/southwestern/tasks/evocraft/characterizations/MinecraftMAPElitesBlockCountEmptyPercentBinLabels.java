@@ -2,6 +2,7 @@ package edu.southwestern.tasks.evocraft.characterizations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
@@ -51,6 +52,11 @@ public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends Minecraft
 	@Override
 	public List<MinecraftFitnessFunction> properties() {
 		return properties;
+	}
+	
+	@Override
+	public boolean discard(HashMap<String, Object> behaviorMap) {
+		return ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() == 0;
 	}
 
 }

@@ -49,7 +49,7 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 		int negativeBlocks = maxShapeSize-nonNegativeBlocks;
 		//System.out.println("X:"+maxX+"Y:"+maxY+"Z:"+maxZ);
 		//System.out.println("NegativeBlocks:"+negativeBlocks);
-		System.out.println("negativeBlocks:"+negativeBlocks);
+		//System.out.println("negativeBlocks:"+negativeBlocks);
 		return negativeBlocks;
 	}
 
