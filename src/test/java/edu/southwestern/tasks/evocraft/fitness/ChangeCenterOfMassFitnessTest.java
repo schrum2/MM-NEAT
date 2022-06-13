@@ -93,8 +93,13 @@ public class ChangeCenterOfMassFitnessTest {
 		// flies for a bit, but the exact amount is hard to pin down. Thus, we only assert that the amount
 		// is 6.0 or more
 		assertTrue(6.0 <= ff.fitnessScore(cornerBS2));
-		
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 0);
+		
+		// Test to see if the max fitness is awarded when all the 
+		// blocks move out of the area
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
+		assertEquals(ff.maxFitness(),ff.fitnessScore(cornerBS2),0.0);
+		
 	}
 
 	@Test

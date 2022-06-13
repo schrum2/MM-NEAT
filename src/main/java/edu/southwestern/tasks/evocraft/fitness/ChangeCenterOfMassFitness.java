@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
 import java.io.FileNotFoundException;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,7 +13,15 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.util.datastructures.Vertex;
-
+/**
+ * Calculates the changes in the center of mass of
+ * a given structure. If the structure is a flying machine
+ * then it will have a positive non-zero fitness score (which is
+ * dependent on the mandatory wait time parameter). Otherwise, the
+ * structure is stagnant, meaning it has a fitness of 0.
+ * @author Melanie Richey
+ *
+ */
 public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 
@@ -54,16 +63,55 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		
 		//System.out.println(initialCenterOfMass);
 		
+		boolean stop = false;
+		long timeElapsed = 0l;
 		// Wait for the machine to move some (if at all)
-		long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
-		try {
-			Thread.sleep(waitTime);
-		} catch (InterruptedException e) {
-			System.out.print("Thread was interrupted");
-			e.printStackTrace();
-			System.exit(1);
+		while(!stop) {
+			
+			long shortWaitTime = 5000l;
+			try {
+				Thread.sleep(shortWaitTime);
+			} catch (InterruptedException e) {
+				System.out.print("Thread was interrupted");
+				e.printStackTrace();
+				System.exit(1);
+			}
+			timeElapsed += shortWaitTime;
+			//System.out.println("Time passed: " + timeElapsed);
+			
+			List<Block> shortWaitTimeUpdate = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
+			Vertex x1CenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
+			//System.out.println("Updated center of mass (x1): "+x1CenterOfMass);
+			if(initialCenterOfMass.equals(x1CenterOfMass)) {
+				// This means that it hasn't moved, so move on to the next
+				stop = true;
+			} else {
+				long longWaitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime") + 25000l;
+				List<Block> nextUpdate = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
+				Vertex x2CenterOfMass = getCenterOfMass(nextUpdate);
+				//System.out.println("Next update (x2): " + x2CenterOfMass);
+				//System.out.println("Is the first update empty? "+ shortWaitTimeUpdate.isEmpty());
+				//System.out.println("Is the second update empty? "+ nextUpdate.isEmpty());
+				if(x1CenterOfMass.equals(x2CenterOfMass) || timeElapsed >= longWaitTime || nextUpdate.isEmpty() || shortWaitTimeUpdate.isEmpty()){
+					
+					stop = true;
+				} else {
+					try {
+						Thread.sleep(shortWaitTime);
+					} catch (InterruptedException e) {
+						System.out.print("Thread was interrupted");
+						e.printStackTrace();
+						System.exit(1);
+					}
+					timeElapsed += shortWaitTime;
+					//System.out.println("Time passed when still moving: " + timeElapsed);
+					
+					if(timeElapsed >= longWaitTime) {
+						stop = true;
+					}
+				}
+			}
 		}
-		
 		// Read in again to update the list
 		List<Block> afterBlocks = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
 		//System.out.println(afterBlocks);
