@@ -22,8 +22,9 @@ public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends Minecraft
 			int yDim = Parameters.parameters.integerParameter("minecraftYRange");
 			int zDim = Parameters.parameters.integerParameter("minecraftZRange");
 			
+			// everything from block count is from OccupiedCountFitness
 			int sizeBlockCount = xDim*yDim*zDim; 
-			int sizeNegativeSpace = xDim*yDim*zDim-1; // Max possible 
+			int sizeNegativeSpace = xDim*yDim*zDim-1; // Max possible negative space
 			labels = new ArrayList<String>(sizeBlockCount*sizeNegativeSpace);
 			
 			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities , -1 for negative space(j < size would just give a range of 0-999)
