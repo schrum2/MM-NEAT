@@ -33,6 +33,7 @@ import edu.southwestern.tasks.evocraft.fitness.TypeCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.TypeTargetFitness;
 import edu.southwestern.tasks.evocraft.fitness.WidthFitness;
 import edu.southwestern.tasks.evocraft.shapegeneration.ShapeGenerator;
+import edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
@@ -44,8 +45,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	private int startingX;
 	private int startingZ;
 	
-	private static double[] upper = null;
-	private static double[] lower = null;
+	//private static double[] upper = null;
+	//private static double[] lower = null;
 	
 	@SuppressWarnings("unchecked")
 	public MinecraftShapeTask() {
@@ -113,15 +114,18 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		
-		int numBlocks = ranges.x() * ranges.y() * ranges.z();
+		//int numBlocks;
+		// vectorPresenceThresholdForEachBlock changes the number of blocks 
+		//if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) numBlocks = 2*(ranges.x() * ranges.y() * ranges.z());
+		//else numBlocks = ranges.x() * ranges.y() * ranges.z();
 
 		// Old way for the upper range is the length of the block set + 1
 		//double possibilities = MMNEAT.blockSet.getPossibleBlocks().length + 1; // length+1 to generate air blocks
 		//upper = ArrayUtil.doubleSpecified(numBlocks, possibilities);
 		
 		// New way will just be a range of 0.0-1.0
-		upper = ArrayUtil.doubleSpecified(numBlocks, 1.0);
-		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0);
+		//upper = ArrayUtil.doubleSpecified(numBlocks, 1.0);
+		//lower = ArrayUtil.doubleSpecified(numBlocks, 0.0);
 	}
 	
 	public int getStartingX() { return startingX; }
@@ -367,11 +371,12 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 
 	@Override
 	public double[] getUpperBounds() {
-		return upper;
+		return ((VectorToVolumeGenerator) MMNEAT.shapeGenerator).getUpperBounds(); // calling getUpperBounds from VectorToVolumeGenerator class
+	
 	}
 
 	@Override
 	public double[] getLowerBounds() {
-		return lower;
+		return ((VectorToVolumeGenerator) MMNEAT.shapeGenerator).getLowerBounds(); // calling getlowerBounds from VectorToVolumeGenerator class
 	}
 }
