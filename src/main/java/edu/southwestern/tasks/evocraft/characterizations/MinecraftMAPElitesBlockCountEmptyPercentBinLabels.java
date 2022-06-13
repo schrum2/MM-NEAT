@@ -38,9 +38,17 @@ public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends Minecraft
 	@Override
 	public int oneDimensionalIndex(int[] multi) { // Based on 2d archive
 		multi[1]++;
-		int binIndex = (multi[0]-1)*dimensionSizes()[1] + multi[1];
+		int binIndex = (multi[0])*dimensionSizes()[1] + multi[1];
 		//System.out.println("BinIndex:"+binIndex+"  multi[0]"+multi[0]+"  multi[1]"+multi[1]);
 		return binIndex;
+	}
+	
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int[] result = super.multiDimensionalIndices(keys);
+		// Actual block count could be 0, but such shapes are discarded
+		result[0]--;
+		return result;
 	}
 
 	@Override
