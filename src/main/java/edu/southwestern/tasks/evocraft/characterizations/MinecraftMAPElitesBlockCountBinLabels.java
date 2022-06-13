@@ -38,8 +38,16 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int binIndex = multi[0]-1; // the value of multi[0] correlates to the appropriate bin index.
+		int binIndex = multi[0]; // the value of multi[0] correlates to the appropriate bin index.
 		return binIndex;
+	}
+	
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int[] result = super.multiDimensionalIndices(keys);
+		// Actual block count could be 0, but such shapes are discarded
+		result[0]--;
+		return result;
 	}
 
 	@Override

@@ -45,13 +45,20 @@ public class MinecraftMAPElitesWidthHeightDepthBinLabels extends MinecraftMAPEli
 	public int oneDimensionalIndex(int[] multi) {
 		int yDim = Parameters.parameters.integerParameter("minecraftYRange");
 		int zDim = Parameters.parameters.integerParameter("minecraftZRange");
-		int binIndex = (multi[0]-1)*yDim*zDim + (multi[1]-1)*zDim + (multi[2]-1);
+		int binIndex = multi[0]*yDim*zDim + multi[1]*zDim + multi[2];
 		assert binIndex < labels.size() : binIndex + " from " + Arrays.toString(multi) + ":yDim="+yDim+":zDim="+zDim;
-		// Not safe to assert this here. Sometimes, the illegal index will be calculated, even though it should never be used
-		//assert binIndex >= 0 : binIndex + " from " + Arrays.toString(multi) + ":yDim="+yDim+":zDim="+zDim;
 		return binIndex;
 	}
-
+	
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int[] result = super.multiDimensionalIndices(keys);
+		// Original results give real width,height,depth. However, values of 0 are discarded, which shifts all values over
+		result[0]--;
+		result[1]--;
+		result[2]--;
+		return result;
+	}
 
 	@Override
 	public int[] dimensionSizes() {
