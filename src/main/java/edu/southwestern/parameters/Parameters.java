@@ -902,6 +902,7 @@ public class Parameters {
 		doubleOptions.add("GANSegmentSwapMutationRate", 0.0, "Segment swap mutation rate.");
 		doubleOptions.add("GANSegmentCopyMutationRate", 0.0, "Segment copy mutation rate.");
 		doubleOptions.add("anyRealVectorModificationRate", 1.0, "The chance to use either perturb or polynomial mutation");
+		doubleOptions.add("voxelExpressionThreshold", 0.1, "The value that determines the presence of a block");
 		
 		// String parameters
 		stringOptions.add("marioTargetLevel", "data\\VGLC\\SuperMarioBrosNewEncoding\\overworld\\mario-1-1.txt", "Relative path to json file with Mario level to target");
