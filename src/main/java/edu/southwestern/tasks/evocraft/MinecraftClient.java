@@ -570,11 +570,7 @@ public class MinecraftClient extends Comm {
 	 * @param type Type to fill the space with
 	 */
 	public synchronized void fillCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax, BlockType type) {
-		if(ymin < 0 || ymin > 255 || ymax < 0 || ymax > 255) {
-			System.out.println("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.");
-			System.out.println("Therefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
-			throw new IllegalArgumentException("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.\nTherefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
-		}
+		checkBlockBounds(xmin, ymin, zmin, xmax, ymax, zmax);
 		String message = "fillCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" "+type.ordinal()+" ";
 		try {
 			commSend(message);
@@ -582,6 +578,19 @@ public class MinecraftClient extends Comm {
 			e.printStackTrace();
 			System.out.println("Minecraft failed on command "+message);
 			System.exit(1);
+		}
+	}
+
+	public void checkBlockBounds(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
+		// Max and min based on not being able to place blocks after coordinate 29999983. Added a buffer to it
+		if(xmin < -29999960 || xmin > 29999960 || xmax < -29999960 || xmax > 29999960 ||
+		   ymin < 0 || ymin > 255 || ymax < 0 || ymax > 255|| 
+		   zmin < -29999960 || zmin > 29999960 || zmax < -29999960 || zmax > 29999960) {
+			System.out.println("This version of Minecraft only allows blocks to be generated with x-coordinates between -29999983 and 29999983.");
+			System.out.println("y-coordinates between 0 and 255,");
+			System.out.println("and z-coordinates between -29999983 and 29999983, all inclusive.");
+			System.out.println("Therefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
+			throw new IllegalArgumentException("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.\nTherefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
 		}
 	}
 
