@@ -15,4 +15,11 @@ public abstract class BaseBinLabels implements BinLabels {
 		if(keys.containsKey("dim1D")) return (int) keys.get("dim1D");
 		return oneDimensionalIndex(multiDimensionalIndices(keys)); // Else compute
 	}
+	
+	@Override
+	public boolean discard(HashMap<String, Object> behaviorMap) {
+		// By default do not discard anything, but bin representations can be more efficient if
+		// irrelevant bins are not stored.
+		return false;
+	}
 }

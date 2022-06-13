@@ -124,18 +124,22 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> void placeArchiveInWorld(Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics, MinecraftCoordinates ranges) {
-		int index1D = (int) behaviorCharacteristics.get("dim1D");
-		// Gets the bin scores to compare them
-		double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
-		assert index1D >= 0 : individual.getId() + ":" + behaviorCharacteristics;
-		assert index1D < ((MAPElites<T>) MMNEAT.ea).getArchive().getBinMapping().binLabels().size() : individual.getId() + ":" + behaviorCharacteristics;
-		double scoreOfPreviousElite = 0;
-		scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
-		
-		//System.out.println(individual.getId()+"Index "+index1D +": Compare: "+scoreOfCurrentElite+" > "+scoreOfPreviousElite);
-		// If the new shape is better than the previous, it gets replaced
-		if(scoreOfCurrentElite > scoreOfPreviousElite) {
-			clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
+		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+		// Don't try to place shapes that have no place to go
+		if(!minecraftBinLabels.discard(behaviorCharacteristics)) {
+			int index1D = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
+			// Gets the bin scores to compare them
+			double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
+			assert index1D >= 0 : individual.getId() + ":" + behaviorCharacteristics;
+			assert index1D < ((MAPElites<T>) MMNEAT.ea).getArchive().getBinMapping().binLabels().size() : individual.getId() + ":" + behaviorCharacteristics;
+			double scoreOfPreviousElite = 0;
+			scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
+
+			//System.out.println(individual.getId()+"Index "+index1D +": Compare: "+scoreOfCurrentElite+" > "+scoreOfPreviousElite);
+			// If the new shape is better than the previous, it gets replaced
+			if(scoreOfCurrentElite > scoreOfPreviousElite) {
+				clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
+			}
 		}
 	}
 
