@@ -8,30 +8,43 @@ import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>> {
+	
+	private static double[] upper = null;
+	private static double[] lower = null;
+	private static MinecraftCoordinates ranges = null;
+	
+	public VectorToVolumeGenerator() {
+		ranges = MinecraftUtilClass.getRanges();
+		
+		int numBlocks;
+		if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) numBlocks = 2*(ranges.x() * ranges.y() * ranges.z());
+		else numBlocks = ranges.x() * ranges.y() * ranges.z();
+
+		upper = ArrayUtil.doubleSpecified(numBlocks, 1.0);
+		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0);
+
+	}
+	
 	@Override
 	public List<Block> generateShape(Genotype<ArrayList<Double>> genome, MinecraftCoordinates corner,
 			BlockSet blockSet) {
 		
 		List<Block> blocks = new ArrayList<>();
-		
 		List<Double> doubles = new ArrayList<>();
+		
 		for(double d = 0.0; d < blockSet.getPossibleBlocks().length; d++) {
 			doubles.add(d); // add the possible double values from the block list (0 to block list length)
 		}
-		
 		ArrayList<Double> phenotype = genome.getPhenotype();	
-		MinecraftCoordinates ranges = new MinecraftCoordinates(
-				Parameters.parameters.integerParameter("minecraftXRange"),
-				Parameters.parameters.integerParameter("minecraftYRange"),
-				Parameters.parameters.integerParameter("minecraftZRange"));
-		
 		Orientation blockOrientation = Orientation.NORTH; // all blocks will have orientation of north for now
 		int counter= 0; // used to count the number of blocks added
 		for(int xi = 0; xi < ranges.x(); xi++) {
@@ -46,10 +59,14 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					else b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 					
 					blocks.add(b);
-					//System.out.println(Arrays.toString(blockSet.getPossibleBlocks()));
-					//System.out.println(b);
+					System.out.println(Arrays.toString(blockSet.getPossibleBlocks()));
+					System.out.println(b);
 					
+					//counter++;
+					
+					// Increment by 2 instead of one
 					counter++;
+					
 				}
 			}
 		}
@@ -59,6 +76,15 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 	@Override
 	public String[] getNetworkOutputLabels() {
 		return ShapeGenerator.defaultNetworkOutputLabels(MMNEAT.blockSet);
+	}
+	
+	public double[] getUpperBounds() {
+		return upper;
+	
+	}
+
+	public double[] getLowerBounds() {
+		return lower;
 	}
 	
 	public static void main(String[] args) {
