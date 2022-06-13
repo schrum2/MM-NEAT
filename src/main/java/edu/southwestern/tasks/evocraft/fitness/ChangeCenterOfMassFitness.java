@@ -45,6 +45,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		
 		// List of blocks in the area based on the corner
 		List<Block> blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
+		if(blocks.isEmpty()) return minFitness();
 		
 		//System.out.println("List of blocks before movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
 		
@@ -66,7 +67,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		// Read in again to update the list
 		List<Block> afterBlocks = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
 		//System.out.println(afterBlocks);
-		if (afterBlocks.isEmpty()) return maxFitness();
+		if (!blocks.isEmpty() && afterBlocks.isEmpty()) return maxFitness();
 		else {
 
 			//System.out.println("List of blocks after movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
