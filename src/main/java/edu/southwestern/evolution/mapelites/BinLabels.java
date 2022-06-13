@@ -59,4 +59,11 @@ public interface BinLabels {
 	 */
 	public int[] dimensionSizes();
 	
+	/**
+	 * A rule for discarding invalid individuals who do not fit in the binning scheme
+	 * @param behaviorMap HashMap of behavior characterization information
+	 * @return Whether individual should be discarded (because it does not fit anywhere in the archive)
+	 */
+	public boolean discard(HashMap<String, Object> behaviorMap);
+	
 }
