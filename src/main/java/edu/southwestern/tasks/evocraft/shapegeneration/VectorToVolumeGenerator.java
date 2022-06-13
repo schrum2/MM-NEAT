@@ -38,7 +38,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 			for(int yi = 0; yi < ranges.y(); yi++) {
 				for(int zi = 0; zi < ranges.z(); zi++) {
 					// intValue is used to cast from Double
-					int blockTypeIndex = phenotype.get(counter).intValue(); // blockType is index used to determine blocktype					
+					int blockTypeIndex = (int)(phenotype.get(counter)*(blockSet.getPossibleBlocks().length+1)); // blockType is index used to determine blocktype					
 					
 					Block b = null;
 					// if the block is the last index in the list, then it is an AIRBLOCK, otherwise, it can be any other block in the list.
@@ -46,8 +46,8 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					else b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 					
 					blocks.add(b);
-					System.out.println(Arrays.toString(blockSet.getPossibleBlocks()));
-					System.out.println(b);
+					//System.out.println(Arrays.toString(blockSet.getPossibleBlocks()));
+					//System.out.println(b);
 					
 					counter++;
 				}
@@ -73,7 +73,8 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					"minecraftContainsWholeMAPElitesArchive:true",
 					"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
 					//"minecraftTypeCountFitness:true",
-					"minecraftDiversityBlockFitness:true",
+					//"minecraftDiversityBlockFitness:true",
+					"minecraftChangeCenterOfMassFitness:true",
 					//"minecraftTypeTargetFitness:true", 
 					//"minecraftDesiredBlockCount:40",
 					//"minecraftOccupiedCountFitness:true",
@@ -84,7 +85,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100",
-					"minecraftXRange:1","minecraftYRange:2","minecraftZRange:5",
+					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:5",
 					"minecraftStopConfinedSnakes:true",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", 
