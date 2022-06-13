@@ -219,7 +219,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	public static Pair<MinecraftCoordinates,MinecraftCoordinates> configureStartPosition(MinecraftCoordinates ranges, HashMap<String,Object> behaviorCharacteristics) {
 		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 		int[] multiDimIndex = minecraftBinLabels.multiDimensionalIndices(behaviorCharacteristics);
-		int dim1D = (int) behaviorCharacteristics.get("dim1D");
+		int dim1D = minecraftBinLabels.oneDimensionalIndex(behaviorCharacteristics);
 		return configureStartPosition(ranges, multiDimIndex, dim1D);
 	}		
 		
