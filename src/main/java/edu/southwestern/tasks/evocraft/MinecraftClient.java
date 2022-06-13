@@ -528,11 +528,7 @@ public class MinecraftClient extends Comm {
 		StringBuilder sb = new StringBuilder();
 		sb.append("spawnBlocks ");
 		for(Block b: blocks) {
-			if(b.y() < 0 || b.y() > 255) {
-				System.out.println("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.");
-				System.out.println("Therefore, these blocks cannot be generated: "+blocks);
-				throw new IllegalArgumentException("Problem block: "+b+"\nThis version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.\nTherefore, these blocks cannot be generated: "+blocks);
-			}
+			checkBlockBounds(b.x(),b.y(),b.z());
 			sb.append(b.x() + " " + b.y() + " " + b.z() + " " + b.type() + " " + b.orientation() + " ");
 		}
 		try {
@@ -580,7 +576,29 @@ public class MinecraftClient extends Comm {
 			System.exit(1);
 		}
 	}
-
+	
+	/**
+	 * Over loaded method. Calls method of same name, but without min and max, just 
+	 * checking if current coordinates are legal
+	 * @param x x coordinate
+	 * @param y y coordinate
+	 * @param z z coordinate
+	 */
+	public void checkBlockBounds(int x, int y, int z) {
+		checkBlockBounds(x,y,z,x,y,z);
+	}
+	
+	/**
+	 * Checks the x,y, and z coordinates to ensure they are within bounds
+	 * and won't crash the world by placing something out of bounds
+	 * 
+	 * @param xmin Minimal x coordinate. xmin <= xmax
+	 * @param ymin Minimal y coordinate. ymin <= ymax
+	 * @param zmin Minimal z coordinate. zmin <= zmax
+	 * @param xmax Maximal x coordinate
+	 * @param ymax Maximal y coordinate
+	 * @param zmax Maximal z coordinate
+	 */
 	public void checkBlockBounds(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
 		// Max and min based on not being able to place blocks after coordinate 29999983. Added a buffer to it
 		if(xmin < -29999960 || xmin > 29999960 || xmax < -29999960 || xmax > 29999960 ||
