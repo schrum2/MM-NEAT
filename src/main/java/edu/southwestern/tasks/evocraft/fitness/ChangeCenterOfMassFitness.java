@@ -77,11 +77,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				System.exit(1);
 			}
 			timeElapsed += shortWaitTime;
-			System.out.println("Time passed: " + timeElapsed);
+			//System.out.println("Time passed: " + timeElapsed);
 			
 			List<Block> shortWaitTimeUpdate = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
 			Vertex x1CenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
-			System.out.println("Updated center of mass (x1): "+x1CenterOfMass);
+			//System.out.println("Updated center of mass (x1): "+x1CenterOfMass);
 			if(initialCenterOfMass.equals(x1CenterOfMass)) {
 				// This means that it hasn't moved, so move on to the next
 				stop = true;
@@ -89,8 +89,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				long longWaitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime") + 25000l;
 				List<Block> nextUpdate = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
 				Vertex x2CenterOfMass = getCenterOfMass(nextUpdate);
-				System.out.println("Next update (x2): " + x2CenterOfMass);
-				if(x1CenterOfMass.equals(x2CenterOfMass) || timeElapsed >= longWaitTime) {
+				//System.out.println("Next update (x2): " + x2CenterOfMass);
+				//System.out.println("Is the first update empty? "+ shortWaitTimeUpdate.isEmpty());
+				//System.out.println("Is the second update empty? "+ nextUpdate.isEmpty());
+				if(x1CenterOfMass.equals(x2CenterOfMass) || timeElapsed >= longWaitTime || nextUpdate.isEmpty() || shortWaitTimeUpdate.isEmpty()){
+					
 					stop = true;
 				} else {
 					try {
@@ -101,7 +104,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 						System.exit(1);
 					}
 					timeElapsed += shortWaitTime;
-					System.out.println("Time passed when still moving: " + timeElapsed);
+					//System.out.println("Time passed when still moving: " + timeElapsed);
 					
 					if(timeElapsed >= longWaitTime) {
 						stop = true;
