@@ -2,6 +2,7 @@ package edu.southwestern.tasks.evocraft.characterizations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
@@ -23,15 +24,15 @@ public class MinecraftMAPElitesWidthHeightDepthBinLabels extends MinecraftMAPEli
 	@Override
 	public List<String> binLabels() {
 		if(labels == null) { // Create once and re-use, but wait until after Parameters are loaded	
-			int xDim = Parameters.parameters.integerParameter("minecraftXRange")+1;
-			int yDim = Parameters.parameters.integerParameter("minecraftYRange")+1;
-			int zDim = Parameters.parameters.integerParameter("minecraftZRange")+1;
+			int xDim = Parameters.parameters.integerParameter("minecraftXRange");
+			int yDim = Parameters.parameters.integerParameter("minecraftYRange");
+			int zDim = Parameters.parameters.integerParameter("minecraftZRange");
 			
 			int size = xDim*yDim*zDim;
 			labels = new ArrayList<String>(size);
-			for(int i = 0; i < xDim; i++) {
-				for(int j = 0; j < yDim; j++) {
-					for(int k = 0; k < zDim; k++) {
+			for(int i = 1; i <= xDim; i++) {
+				for(int j = 1; j <= yDim; j++) {
+					for(int k = 1; k <= zDim; k++) {
 						labels.add("W"+i+"H"+j+"D"+k);
 					}
 				}	
@@ -42,17 +43,26 @@ public class MinecraftMAPElitesWidthHeightDepthBinLabels extends MinecraftMAPEli
 
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		int yDim = Parameters.parameters.integerParameter("minecraftYRange")+1;
-		int zDim = Parameters.parameters.integerParameter("minecraftZRange")+1;
+		int yDim = Parameters.parameters.integerParameter("minecraftYRange");
+		int zDim = Parameters.parameters.integerParameter("minecraftZRange");
 		int binIndex = multi[0]*yDim*zDim + multi[1]*zDim + multi[2];
 		assert binIndex < labels.size() : binIndex + " from " + Arrays.toString(multi) + ":yDim="+yDim+":zDim="+zDim;
 		return binIndex;
 	}
-
+	
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int[] result = super.multiDimensionalIndices(keys);
+		// Original results give real width,height,depth. However, values of 0 are discarded, which shifts all values over
+		result[0]--;
+		result[1]--;
+		result[2]--;
+		return result;
+	}
 
 	@Override
 	public int[] dimensionSizes() {
-		return new int[] {Parameters.parameters.integerParameter("minecraftXRange")+1, Parameters.parameters.integerParameter("minecraftYRange")+1, Parameters.parameters.integerParameter("minecraftZRange")+1};
+		return new int[] {Parameters.parameters.integerParameter("minecraftXRange"), Parameters.parameters.integerParameter("minecraftYRange"), Parameters.parameters.integerParameter("minecraftZRange")};
 	}
 
 	/**
@@ -63,5 +73,13 @@ public class MinecraftMAPElitesWidthHeightDepthBinLabels extends MinecraftMAPEli
 	@Override
 	public List<MinecraftFitnessFunction> properties() {
 		return properties;
+	}
+
+	@Override
+	public boolean discard(HashMap<String, Object> behaviorMap) {
+		// Checking one should be sufficient, but check all just in case
+		return ((Double) behaviorMap.get("WidthFitness")).doubleValue() == 0 ||
+			   ((Double) behaviorMap.get("HeightFitness")).doubleValue() == 0 ||
+			   ((Double) behaviorMap.get("DepthFitness")).doubleValue() == 0;
 	}
 }
