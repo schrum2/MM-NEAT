@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
 import java.io.FileNotFoundException;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,7 +13,15 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.util.datastructures.Vertex;
-
+/**
+ * Calculates the changes in the center of mass of
+ * a given structure. If the structure is a flying machine
+ * then it will have a positive non-zero fitness score (which is
+ * dependent on the mandatory wait time parameter). Otherwise, the
+ * structure is stagnant, meaning it has a fitness of 0.
+ * @author Melanie Richey
+ *
+ */
 public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 
