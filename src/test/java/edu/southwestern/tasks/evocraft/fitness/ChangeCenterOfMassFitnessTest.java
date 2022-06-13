@@ -95,6 +95,21 @@ public class ChangeCenterOfMassFitnessTest {
 		assertTrue(6.0 <= ff.fitnessScore(cornerBS2));
 		
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 0);
+		
+		
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
+		
+		long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime") + 25000l;
+		try {
+			Thread.sleep(waitTime);
+		} catch (InterruptedException e) {
+			System.out.println("Thread was interrupted");
+			e.printStackTrace();
+			System.exit(1);
+		}
+		
+		assertEquals(ff.maxFitness(),ff.fitnessScore(cornerBS2),0.0);
+		
 	}
 
 	@Test
