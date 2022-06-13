@@ -34,41 +34,45 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 	@Override
 	public double fitnessScore(MinecraftCoordinates corner) {
-		
+
 		// Ranges before the change of space in between
 		int xrange = Parameters.parameters.integerParameter("minecraftXRange");
 		//int yrange = Parameters.parameters.integerParameter("minecraftYRange");
 		int zrange = Parameters.parameters.integerParameter("minecraftZRange");
-		
+
 		assert xrange > 0 : "xrange must be positive: " + xrange;
 		assert zrange > 0 : "zrange must be positive: " + zrange;
-		
+
 		// Shifts over the corner to the new range with the large space in between shapes
 		corner = corner.sub(MinecraftUtilClass.emptySpaceOffsets());
 		MinecraftCoordinates end = corner.add(MinecraftUtilClass.reservedSpace());
-		
+
 		assert corner.x() <= end.x() && corner.y() <= end.y() && corner.z() <= end.z(): "corner should be less than end in each coordinate: corner = "+corner+ ", max = "+end; 
-		
-//		System.out.println("corner:"+corner);
-//		System.out.println("end:"+end);
-		
+
+		//		System.out.println("corner:"+corner);
+		//		System.out.println("end:"+end);
+
+		double totalChangeDistance = 0.0;
+
 		// List of blocks in the area based on the corner
 		List<Block> blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
 		if(blocks.isEmpty()) return minFitness();
-		
+
 		//System.out.println("List of blocks before movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
-		
+
 		// Initial center of mass is where it starts
 		Vertex initialCenterOfMass = getCenterOfMass(blocks);
-		
+		Vertex lastCenterOfMass = new Vertex(initialCenterOfMass); // Copy constructor (not a copy of reference)
+		System.out.println("Init center of mass: " + initialCenterOfMass);
+		//System.out.println("total change vertex: " + totalChangeVertex);
 		//System.out.println(initialCenterOfMass);
-		
+
 		boolean stop = false;
 		long timeElapsed = 0l;
 		// Wait for the machine to move some (if at all)
 		while(!stop) {
-			
-			long shortWaitTime = 5000l;
+
+			long shortWaitTime = 5000L;
 			try {
 				Thread.sleep(shortWaitTime);
 			} catch (InterruptedException e) {
@@ -76,84 +80,61 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				e.printStackTrace();
 				System.exit(1);
 			}
+			// Should we check the actual time? Or is this fine?
 			timeElapsed += shortWaitTime;
-			//System.out.println("Time passed: " + timeElapsed);
-			
+
+
 			List<Block> shortWaitTimeUpdate = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
-			Vertex x1CenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
-			//System.out.println("Updated center of mass (x1): "+x1CenterOfMass);
-			if(initialCenterOfMass.equals(x1CenterOfMass)) {
-				// This means that it hasn't moved, so move on to the next
+			if(shortWaitTimeUpdate.isEmpty()) {
+				// Ship flew so far away that we award max fitness
+				return maxFitness();
+			}
+			Vertex nextCenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
+			//			temp = totalChangeVertex;
+			//			System.out.println("First update (before add)" + temp);
+			//			totalChangeVertex = totalChangeVertex.add(x1CenterOfMass);
+			//			System.out.println("First update (after add)" + totalChangeVertex);
+			//			totalChangeDistance = totalChangeVertex.distance(temp);
+			//			System.out.println("First update total distance" + totalChangeDistance);
+			if(lastCenterOfMass.equals(nextCenterOfMass)) {
+				// This means that it hasn't moved, so move on to the next.
+				// BUT What if it moves back and forth and returned to its original position?
+				totalChangeDistance = 0;
 				stop = true;
 			} else {
-				long longWaitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime") + 25000l;
-				List<Block> nextUpdate = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
-				Vertex x2CenterOfMass = getCenterOfMass(nextUpdate);
-				//System.out.println("Next update (x2): " + x2CenterOfMass);
-				//System.out.println("Is the first update empty? "+ shortWaitTimeUpdate.isEmpty());
-				//System.out.println("Is the second update empty? "+ nextUpdate.isEmpty());
-				if(x1CenterOfMass.equals(x2CenterOfMass) || timeElapsed >= longWaitTime || nextUpdate.isEmpty() || shortWaitTimeUpdate.isEmpty()){
-					
+				totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
+				lastCenterOfMass = nextCenterOfMass;
+				if(timeElapsed > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
 					stop = true;
-				} else {
-					try {
-						Thread.sleep(shortWaitTime);
-					} catch (InterruptedException e) {
-						System.out.print("Thread was interrupted");
-						e.printStackTrace();
-						System.exit(1);
-					}
-					timeElapsed += shortWaitTime;
-					//System.out.println("Time passed when still moving: " + timeElapsed);
-					
-					if(timeElapsed >= longWaitTime) {
-						stop = true;
-					}
 				}
 			}
 		}
-		// Read in again to update the list
-		List<Block> afterBlocks = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
-		//System.out.println(afterBlocks);
-		if (!blocks.isEmpty() && afterBlocks.isEmpty()) return maxFitness();
-		else {
 
-			//System.out.println("List of blocks after movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
-
-			// Final center of mass is where it ends up after the wait time
-			Vertex finalCenterOfMass = getCenterOfMass(afterBlocks);
-
-			//System.out.println(finalCenterOfMass);
-
-			// Change in position could be in any of these directions (I believe)
-			//double changeInPosition = (Math.sqrt(Math.pow(finalCenterOfMass.x()-initialCenterOfMass.x(),2)) + Math.pow(finalCenterOfMass.y()-initialCenterOfMass.y(),2) + Math.pow(finalCenterOfMass.z()-initialCenterOfMass.z(),2));
-
-			double changeInPosition = finalCenterOfMass.distance(initialCenterOfMass);
-			assert !Double.isNaN(changeInPosition) : "Before: " + filterOutAirDirtGrass(blocks) + ", After:" + filterOutAirDirtGrass(afterBlocks);
-
-			return changeInPosition;
-		}
+		double changeInPosition = lastCenterOfMass.distance(initialCenterOfMass);
+		assert !Double.isNaN(changeInPosition) : "Before: " + filterOutAirDirtGrass(blocks);
+		if(Parameters.parameters.booleanParameter("minecraftAccumulateInCenterOfMass")) return totalChangeDistance;
+		else return changeInPosition;
 	}
-	
+
 	public static Vertex getCenterOfMass(List<Block> blocks) {
 		double x = 0;
 		double y = 0;
 		double z = 0;
-		
+
 		List<Block> filteredBlocks = filterOutAirDirtGrass(blocks);
-		
+
 		for(Block b : filteredBlocks) {
 			x += b.x();
 			y += b.y();
 			z += b.z();
 		}
-		
+
 		double avgX = x/filteredBlocks.size();
 		double avgY = y/filteredBlocks.size();
 		double avgZ = z/filteredBlocks.size();
-		
+
 		Vertex centerOfMass = new Vertex(avgX,avgY,avgZ);
-		
+
 		return centerOfMass;
 	}
 
@@ -167,7 +148,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	public double minFitness() {
 		return 0;
 	}
-	
+
 	public static void main(String[] args) {
 		int seed = 1;
 		try {
