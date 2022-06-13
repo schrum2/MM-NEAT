@@ -374,6 +374,7 @@ public class Parameters {
 		longOptions.add("minecraftMandatoryWaitTime", 10000l, "The mandatory amount of time that the block movement fitness function should wait before reading in the corner again");
 
 		// Boolean parameters 
+		booleanOptions.add("steadyStateArchetypeSaving", true, "Steady state evolution updates the NN archetype. Turn off to increase speed, but lose ability to resume from crash.");
 		booleanOptions.add("useWoxSerialization", true, "Use the deprecated Wox serialization. I hope to phase this out, but the setting is useful during transition");
 		booleanOptions.add("drawMarioOverlayText", true, "When playing Mario, lots of useful debugging text is displayed");
 		booleanOptions.add("marioSimpleAStarDistance", false, "Length of a simple A* path through level (not actual simulation)");

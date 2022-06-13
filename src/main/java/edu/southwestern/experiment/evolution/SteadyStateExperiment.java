@@ -22,7 +22,7 @@ public class SteadyStateExperiment<T> implements Experiment {
 	public SteadyStateExperiment() {
 		this((SteadyStateEA<T>) MMNEAT.ea, MMNEAT.genotype);
 	}
-	
+
 	public SteadyStateExperiment(SteadyStateEA<T> ea, Genotype<T> example) {
 		this.ea = ea;
 		this.ea.initialize(example);
@@ -31,7 +31,7 @@ public class SteadyStateExperiment<T> implements Experiment {
 		this.plainTWEANNGenotype = MMNEAT.genotype instanceof TWEANNGenotype;
 		this.cleanArchetype = plainTWEANNGenotype || MMNEAT.genotype instanceof TWEANNPlusParametersGenotype;
 	}
-	
+
 	@Override
 	public void init() {
 		// Init of EA was called in constructor instead
@@ -42,15 +42,18 @@ public class SteadyStateExperiment<T> implements Experiment {
 	public void run() {
 		while(!shouldStop()) { // Until done
 			ea.newIndividual(); // Make new individuals
-			Parameters.parameters.saveParameters(); // Save the parameters and the archetype
-			if(ea.populationChanged()) { // In steady state, not every individual is added to the population
-				EvolutionaryHistory.saveArchetype(0);
-			}
-			if(cleanArchetype) { // Periodically clean extinct genes from the archetype
-				ArrayList<Genotype<T>> pop = ea.getPopulation();
-				ArrayList<TWEANNGenotype> tweannPop = new ArrayList<TWEANNGenotype>(pop.size());
-				for(Genotype<T> g : pop) tweannPop.add(plainTWEANNGenotype ? (TWEANNGenotype) g : ((TWEANNPlusParametersGenotype) g).getTWEANNGenotype());
-				EvolutionaryHistory.cleanArchetype(0, tweannPop, ea.currentIteration());
+			synchronized(this) {
+				Parameters.parameters.saveParameters(); // Save the parameters and the archetype
+				if(Parameters.parameters.booleanParameter("steadyStateArchetypeSaving") && ea.populationChanged()) { // In steady state, not every individual is added to the population
+					EvolutionaryHistory.saveArchetype(0);
+
+				}
+				if(cleanArchetype && EvolutionaryHistory.timeToClean(ea.currentIteration())) { // Periodically clean extinct genes from the archetype
+					ArrayList<Genotype<T>> pop = ea.getPopulation();
+					ArrayList<TWEANNGenotype> tweannPop = new ArrayList<TWEANNGenotype>(pop.size());
+					for(Genotype<T> g : pop) tweannPop.add(plainTWEANNGenotype ? (TWEANNGenotype) g : ((TWEANNPlusParametersGenotype) g).getTWEANNGenotype());
+					EvolutionaryHistory.cleanArchetype(0, tweannPop, ea.currentIteration());
+				}
 			}
 		}
 		ea.finalCleanup();

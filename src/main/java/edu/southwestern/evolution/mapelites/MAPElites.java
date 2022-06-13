@@ -346,6 +346,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Stream<Genotype<T>> evaluateStream = Parameters.parameters.booleanParameter("parallelMAPElitesInitialize") ? 
 													startingPopulation.parallelStream() :
 													startingPopulation.stream();
+			if(Parameters.parameters.booleanParameter("parallelMAPElitesInitialize"))
+				System.out.println("Initialize archive in parallel");
 			// Evaluate initial population
 			evaluateStream.forEach( (g) -> {
 				Score<T> s = task.evaluate(g);

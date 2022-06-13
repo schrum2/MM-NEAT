@@ -40,7 +40,6 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTask, BoundedTask {
 	// Visible within package
 	ArrayList<MinecraftFitnessFunction> fitnessFunctions;
-	MinecraftCoordinates ranges;
 	private ArrayList<MinecraftCoordinates> corners;
 	private int startingX;
 	private int startingZ;
@@ -111,11 +110,8 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		
 		startingX = 0;
 		startingZ = 0;
-		ranges = new MinecraftCoordinates(
-				Parameters.parameters.integerParameter("minecraftXRange"),
-				Parameters.parameters.integerParameter("minecraftYRange"),
-				Parameters.parameters.integerParameter("minecraftZRange"));
 		
+		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		int numBlocks = ranges.x() * ranges.y() * ranges.z();
 		double possibilities = MMNEAT.blockSet.getPossibleBlocks().length + 1; // length+1 to generate air blocks
 		upper = ArrayUtil.doubleSpecified(numBlocks, possibilities);
@@ -125,9 +121,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public int getStartingX() { return startingX; }
 	
 	public int getStartingZ() { return startingZ; }
-	
-	public MinecraftCoordinates getRanges() { return ranges; }
-	
+		
 	/**
 	 * returns the sensorLabels
 	 * @return the sensorLabels
@@ -188,18 +182,19 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		MinecraftClient client = MinecraftClient.getMinecraftClient();		
 		// Avoid recalculating the same corners every time
 		if(corners == null) {
-			corners = getShapeCorners(population.size(), startingX, startingZ, ranges);
+			corners = getShapeCorners(population.size(), startingX, startingZ, MinecraftUtilClass.getRanges());
 		}
 
 		// Must clear the space where shapes are placed
-		client.clearSpaceForShapes(new MinecraftCoordinates(startingX,MinecraftClient.GROUND_LEVEL+1,startingZ), ranges, population.size(), Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
+		client.clearSpaceForShapes(new MinecraftCoordinates(startingX,MinecraftClient.GROUND_LEVEL+1,startingZ), MinecraftUtilClass.getRanges(), population.size(), Math.max(Parameters.parameters.integerParameter("minecraftMaxSnakeLength"), MinecraftClient.BUFFER));
 		
 		// Generate and evaluate shapes in parallel
 		IntStream stream = IntStream.range(0, corners.size());
 		ArrayList<Score<T>> scores = stream.parallel().mapToObj( i -> {
 			MinecraftCoordinates corner = corners.get(i);
+			MinecraftCoordinates middle = corner.add(MinecraftUtilClass.emptySpaceOffsets());
 			Genotype<T> genome = population.get(i);
-			return evaluateOneShape(genome, corner, fitnessFunctions);
+			return evaluateOneShape(genome, middle, fitnessFunctions);
 		}).collect(Collectors.toCollection(ArrayList::new));
 		System.out.println("Finished collecting");
 		return scores;
@@ -332,9 +327,9 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	}
 
 	public static void main(String[] args) {
-		int seed = 1;
+		int seed = 4;
 		try {
-			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:20", "maxGens:100",
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:20", "maxGens:150",
 					"base:minecraft", "log:Minecraft-CenterOfMass", "saveTo:CenterOfMass",
 					"io:true", "netio:true", 
 					//"io:false", "netio:false", 
