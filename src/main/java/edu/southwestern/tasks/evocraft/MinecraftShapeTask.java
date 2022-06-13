@@ -112,9 +112,15 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		startingZ = 0;
 		
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
+		
 		int numBlocks = ranges.x() * ranges.y() * ranges.z();
-		double possibilities = MMNEAT.blockSet.getPossibleBlocks().length + 1; // length+1 to generate air blocks
-		upper = ArrayUtil.doubleSpecified(numBlocks, possibilities);
+
+		// Old way for the upper range is the length of the block set + 1
+		//double possibilities = MMNEAT.blockSet.getPossibleBlocks().length + 1; // length+1 to generate air blocks
+		//upper = ArrayUtil.doubleSpecified(numBlocks, possibilities);
+		
+		// New way will just be a range of 0.0-1.0
+		upper = ArrayUtil.doubleSpecified(numBlocks, 1.0);
 		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0);
 	}
 	
