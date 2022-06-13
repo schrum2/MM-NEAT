@@ -28,13 +28,11 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 		int minX = (int) StatisticsUtilities.minimum(blockArrX);
 		int minY = (int) StatisticsUtilities.minimum(blockArrY);
 		int minZ = (int) StatisticsUtilities.minimum(blockArrZ);
-		//System.out.println("X:"+minX+"Y:"+minY+"Z:"+minZ);
 		
 		// Gets maxes from the arrays
 		int maxX = (int) StatisticsUtilities.maximum(blockArrX);
 		int maxY = (int) StatisticsUtilities.maximum(blockArrY);
 		int maxZ = (int) StatisticsUtilities.maximum(blockArrZ);
-		// System.out.println("blocks"+blocks);
 		
 		int nonNegativeBlocks = 0;
 		
@@ -45,11 +43,9 @@ public class NegativeSpaceCountFitness extends CheckBlocksInSpaceFitness {
 			}
 
 		}
+		// Finds max volume of shape, then subtracts how many blocks are in the shape
 		int maxShapeSize = (maxX-minX+1)*(maxY-minY+1)*(maxZ-minZ+1);
 		int negativeBlocks = maxShapeSize-nonNegativeBlocks;
-		//System.out.println("X:"+maxX+"Y:"+maxY+"Z:"+maxZ);
-		//System.out.println("NegativeBlocks:"+negativeBlocks);
-		System.out.println("negativeBlocks:"+negativeBlocks);
 		return negativeBlocks;
 	}
 

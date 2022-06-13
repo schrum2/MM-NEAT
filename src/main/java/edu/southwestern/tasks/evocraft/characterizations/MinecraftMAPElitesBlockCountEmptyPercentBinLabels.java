@@ -2,6 +2,7 @@ package edu.southwestern.tasks.evocraft.characterizations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
@@ -21,8 +22,9 @@ public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends Minecraft
 			int yDim = Parameters.parameters.integerParameter("minecraftYRange");
 			int zDim = Parameters.parameters.integerParameter("minecraftZRange");
 			
-			int sizeBlockCount = xDim*yDim*zDim+1; 
-			int sizeNegativeSpace = xDim*yDim*zDim; // Max possible 
+			// everything from block count is from OccupiedCountFitness
+			int sizeBlockCount = xDim*yDim*zDim; 
+			int sizeNegativeSpace = xDim*yDim*zDim-1; // Max possible negative space
 			labels = new ArrayList<String>(sizeBlockCount*sizeNegativeSpace);
 			
 			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities , -1 for negative space(j < size would just give a range of 0-999)
@@ -36,21 +38,33 @@ public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends Minecraft
 
 	@Override
 	public int oneDimensionalIndex(int[] multi) { // Based on 2d archive
-		multi[1]++;
-		int binIndex = multi[0]*dimensionSizes()[1] + multi[1];
-		//System.out.println("BinIndex:"+binIndex+"  multi[0]"+multi[0]+"  multi[1]"+multi[1]);
+		multi[1]++; // Needs to be done so no negative indexes
+		int binIndex = (multi[0])*dimensionSizes()[1] + multi[1];
 		return binIndex;
+	}
+	
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int[] result = super.multiDimensionalIndices(keys);
+		// Actual block count could be 0, but such shapes are discarded, only for block Count
+		result[0]--;
+		return result;
 	}
 
 	@Override
 	public int[] dimensionSizes() {
 		int xtimesYtimez = Parameters.parameters.integerParameter("minecraftXRange")*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange");
-		return new int[] {xtimesYtimez+1,xtimesYtimez};
+		return new int[] {xtimesYtimez,xtimesYtimez-1}; // Makes sure no empty fences are placed
 	}
 
 	@Override
 	public List<MinecraftFitnessFunction> properties() {
 		return properties;
+	}
+	
+	@Override
+	public boolean discard(HashMap<String, Object> behaviorMap) {
+		return ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() == 0; // IF empty, discards it (mostly first row of blockCount
 	}
 
 }

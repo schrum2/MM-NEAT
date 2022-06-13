@@ -151,6 +151,7 @@ public class NegativeSpaceCountFitnessTest {
 		assertEquals(17,ff.fitnessFromBlocks(corner3,blockSet3),0); 
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet3); // Spawns in just for verification
 		
+		
 		//Clears space, comment out if need to do testing to see blocks be generated
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 2, 0);
 	}
