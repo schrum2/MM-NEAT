@@ -393,6 +393,15 @@ public class MinecraftClient extends Comm {
 		public MinecraftCoordinates sub(MinecraftCoordinates other) {
 			return new MinecraftCoordinates(x() - other.x(), y() - other.y(), z() - other.z());
 		}
+		
+		/**
+		 * multiply two vectors together (component-wise)
+		 * @param other Coordinates to multiplying to this one.
+		 * @return Product of the vectors
+		 */
+		public MinecraftCoordinates mult(MinecraftCoordinates other) {
+			return new MinecraftCoordinates(x() * other.x(), y() * other.y(), z() * other.z());
+		}
 
 	}
 	
