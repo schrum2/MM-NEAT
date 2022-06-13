@@ -38,16 +38,15 @@ public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends Minecraft
 
 	@Override
 	public int oneDimensionalIndex(int[] multi) { // Based on 2d archive
-		multi[1]++;
+		multi[1]++; // Needs to be done so no negative indexes
 		int binIndex = (multi[0])*dimensionSizes()[1] + multi[1];
-		//System.out.println("BinIndex:"+binIndex+"  multi[0]"+multi[0]+"  multi[1]"+multi[1]);
 		return binIndex;
 	}
 	
 	@Override
 	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
 		int[] result = super.multiDimensionalIndices(keys);
-		// Actual block count could be 0, but such shapes are discarded
+		// Actual block count could be 0, but such shapes are discarded, only for block Count
 		result[0]--;
 		return result;
 	}
@@ -55,7 +54,7 @@ public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends Minecraft
 	@Override
 	public int[] dimensionSizes() {
 		int xtimesYtimez = Parameters.parameters.integerParameter("minecraftXRange")*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange");
-		return new int[] {xtimesYtimez,xtimesYtimez-1};
+		return new int[] {xtimesYtimez,xtimesYtimez-1}; // Makes sure no empty fences are placed
 	}
 
 	@Override
@@ -65,7 +64,7 @@ public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends Minecraft
 	
 	@Override
 	public boolean discard(HashMap<String, Object> behaviorMap) {
-		return ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() == 0;
+		return ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() == 0; // IF empty, discards it (mostly first row of blockCount
 	}
 
 }
