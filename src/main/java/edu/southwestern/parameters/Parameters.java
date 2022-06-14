@@ -815,6 +815,7 @@ public class Parameters {
 		booleanOptions.add("minecraftAccumulateInCenterOfMass", false, "Adds up the changes in center of mass instead of calculating the difference");
 		booleanOptions.add("vectorPresenceThresholdForEachBlock", false, "Determines whether the vector presence will be normal, or two times larger");
 		booleanOptions.add("minecraftEndEvalNoMovement", false, "Change center of mass fitness function ends evaluation of a structure when no movement is detected");
+		booleanOptions.add("oneOutputLabelForBlockTypeCPPN", false, "Determines whether CPPN will use only one output for determining the block type.");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
