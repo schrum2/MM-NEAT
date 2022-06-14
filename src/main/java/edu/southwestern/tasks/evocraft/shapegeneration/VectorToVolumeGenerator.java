@@ -126,13 +126,14 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					"minecraftContainsWholeMAPElitesArchive:true",
 					"spaceBetweenMinecraftShapes:10","parallelMAPElitesInitialize:true",
 					
-					
-					
-					
 					"vectorPresenceThresholdForEachBlock:true",
 					"voxelExpressionThreshold:0.5",
-					
 					//"minecraftEvolveOrientation:false",
+					
+					
+					
+					"oneOutputLabelForBlockTypeCPPN:true",
+					
 					
 					
 					

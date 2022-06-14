@@ -7,6 +7,7 @@ import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.activationfunctions.HalfLinearPiecewiseFunction;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
@@ -78,7 +79,14 @@ public interface ShapeGenerator<T> {
 			for(int i = 1; i <= numBlockTypes; i++) {
 				blockPreferences.add(outputs[i]);
 			}
-			int typeIndex = StatisticsUtilities.argmax(blockPreferences);
+			
+			int typeIndex;
+			if(Parameters.parameters.booleanParameter("oneOutputLabelForBlockTypeCPPN")) { // only one output will be used for the blocks
+				typeIndex = (int) HalfLinearPiecewiseFunction.halfLinear(outputs[OUTPUT_INDEX_PRESENCE+1]) * numBlockTypes; 
+			} else {
+				typeIndex = StatisticsUtilities.argmax(blockPreferences); // different outputs for each block type will be used
+			}
+			
 			Orientation blockOrientation = Orientation.NORTH;
 			if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")){
 				double[] orientationPreferences = ArrayUtil.portion(outputs,numBlockTypes + 1, numBlockTypes + NUM_DIRECTIONS);
@@ -169,12 +177,17 @@ public interface ShapeGenerator<T> {
 	public static String[] defaultNetworkOutputLabels(BlockSet blockSet) {
 		String[] labels;
 
-		// Presence output and an output for each block type
-		labels = new String[1 + blockSet.getPossibleBlocks().length];
-		labels[0] = "Presence";
-		for(int i = 1; i < labels.length; i++) {
-			labels[i] = blockSet.getPossibleBlocks()[i-1].name();
+		if(Parameters.parameters.booleanParameter("oneOutputLabelForBlockTypeCPPN")) {
+			labels = new String[2]; // only one label for block type
+			labels[1] = "BlockType"; 
+		} else { // presence output and an output for each block type
+			labels = new String[1 + blockSet.getPossibleBlocks().length];	
+			for(int i = 1; i < labels.length; i++) {
+				labels[i] = blockSet.getPossibleBlocks()[i-1].name();
+			}
 		}
+		labels[0] = "Presence"; // regardless Presence will be the first index
+		
 		if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
 			String[] orientationLabels = new String[NUM_DIRECTIONS];
 
