@@ -93,8 +93,15 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						currentElements = diamondBlocksToMonitor.toArray(currentElements);
 						
 						for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
-							System.out.println("--------------------------");
-							System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t1,pair.t1));
+							if(MinecraftClient.getMinecraftClient().readCube(pair.t1,pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
+								System.out.println("--------------------------");
+								System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t1,pair.t1));
+								@SuppressWarnings("unchecked")
+								Score<T> s = MMNEAT.getArchive().getElite(pair.t2);
+								
+								placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
+							}
+							
 						}
 						
 					}
@@ -150,8 +157,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 * @param behaviorCharacteristics dictionary of values used for placing at the right index
 	 * @param ranges specified range of each shape
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> void placeArchiveInWorld(Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics, MinecraftCoordinates ranges) {
+		placeArchiveInWorld(individual, behaviorCharacteristics, ranges, false); // By default, do not force placement of new shape
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> void placeArchiveInWorld(Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics, MinecraftCoordinates ranges, boolean forcePlacement) {
 		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 		// Don't try to place shapes that have no place to go
 		if(!minecraftBinLabels.discard(behaviorCharacteristics)) {
@@ -164,7 +175,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
 
 			// If the new shape is better than the previous, it gets replaced
-			if(scoreOfCurrentElite > scoreOfPreviousElite) {
+			if(forcePlacement || scoreOfCurrentElite > scoreOfPreviousElite) {
 				clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
 			}
 		}
@@ -209,7 +220,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			double testScore = 0;
 			MinecraftCoordinates testCorner = null;
 			assert !(((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0) instanceof CheckBlocksInSpaceFitness) || MinecraftShapeTask.qualityScore(new double[] {testScore = ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2)}) == ((Double) behaviorCharacteristics.get("binScore")).doubleValue() : 
-				individual.getId() + ":" + behaviorCharacteristics + ":testScore="+testScore+":" + blocks;
+				individual.getId() + ":" + testCorner + ":" + behaviorCharacteristics + ":testScore="+testScore+":\n" + ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).getClass().getSimpleName() + ":\n" + blocks;
 			assert !(MMNEAT.getArchiveBinLabelsClass() instanceof MinecraftMAPElitesBlockCountBinLabels) || new OccupiedCountFitness().fitnessScore(testCorner) == (testScore = ((Double) behaviorCharacteristics.get("OccupiedCountFitness")).doubleValue()) : 
 				individual.getId() + ":" + testCorner+":occupied count="+testScore+":"+ blocks + ":" + CheckBlocksInSpaceFitness.readBlocksFromClient(testCorner);
 		}
@@ -384,6 +395,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					"io:true", "netio:true",
+					"interactWithMapElitesInWorld:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false",
 					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet",
