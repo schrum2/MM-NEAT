@@ -1,17 +1,15 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
 import java.io.FileNotFoundException;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
-import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.util.datastructures.Vertex;
 /**
  * Calculates the changes in the center of mass of
@@ -56,6 +54,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 		// List of blocks in the area based on the corner
 		List<Block> blocks = MinecraftClient.getMinecraftClient().readCube(corner,end);
+		blocks = MinecraftUtilClass.filterOutBlock(blocks, BlockType.AIR);
 		if(blocks.isEmpty()) return minFitness();
 
 		//System.out.println("List of blocks before movement: "+ Arrays.toString(blocks.stream().filter(b -> b.type() != BlockType.AIR.ordinal()).toArray()));
@@ -85,7 +84,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 //			timeElapsed += shortWaitTime;
 
 
-			List<Block> shortWaitTimeUpdate = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
+			List<Block> shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
 			if(shortWaitTimeUpdate.isEmpty()) {
 				// Ship flew so far away that we award max fitness
 				return maxFitness();
@@ -108,7 +107,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		}
 
 		double changeInPosition = lastCenterOfMass.distance(initialCenterOfMass);
-		assert !Double.isNaN(changeInPosition) : "Before: " + filterOutAirDirtGrass(blocks);
+		assert !Double.isNaN(changeInPosition) : "Before: " + MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
 		if(Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) return totalChangeDistance;
 		else return changeInPosition;
 	}
@@ -118,7 +117,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		double y = 0;
 		double z = 0;
 
-		List<Block> filteredBlocks = filterOutAirDirtGrass(blocks);
+		List<Block> filteredBlocks = MinecraftUtilClass.filterOutBlock(blocks,BlockType.AIR);
 
 		for(Block b : filteredBlocks) {
 			x += b.x();
@@ -133,12 +132,6 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		Vertex centerOfMass = new Vertex(avgX,avgY,avgZ);
 
 		return centerOfMass;
-	}
-
-	private static List<Block> filterOutAirDirtGrass(List<Block> blocks) {
-		return blocks.stream().
-				filter( b -> b.type() != BlockType.AIR.ordinal() && b.type() != BlockType.DIRT.ordinal() && b.type() != BlockType.GRASS.ordinal()).
-				collect(Collectors.toList());
 	}
 
 	@Override

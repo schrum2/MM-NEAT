@@ -1,6 +1,11 @@
 package edu.southwestern.tasks.evocraft;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 
 /**
@@ -95,5 +100,15 @@ public class MinecraftUtilClass {
 	public static int volume(MinecraftCoordinates min, MinecraftCoordinates max) {
 		int volume = (max.x()-min.x()+1)*(max.y()-min.y()+1)*(max.z()-min.z()+1);
 		return volume;
+	}
+	
+	/**
+	 * Remove all blocks of a given type from a list of blocks
+	 * @param blocks Original blocks
+	 * @param type Type to remove
+	 * @return List with blocks removed
+	 */
+	public static List<Block> filterOutBlock(List<Block> blocks, BlockType type) {
+		return blocks.stream().filter(b -> b.type() != type.ordinal()).collect(Collectors.toList());
 	}
 }
