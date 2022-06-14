@@ -546,7 +546,6 @@ public class MinecraftClient extends Comm {
 				System.exit(1);
 			}
 		}
-		System.out.println(blocks);
 	}
 	
 	/**
