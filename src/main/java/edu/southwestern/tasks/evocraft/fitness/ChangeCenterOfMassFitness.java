@@ -63,7 +63,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		// Initial center of mass is where it starts
 		Vertex initialCenterOfMass = getCenterOfMass(blocks);
 		Vertex lastCenterOfMass = new Vertex(initialCenterOfMass); // Copy constructor (not a copy of reference)
-		System.out.println("Init center of mass: " + initialCenterOfMass);
+		//System.out.println("Init center of mass: " + initialCenterOfMass);
 		//System.out.println("total change vertex: " + totalChangeVertex);
 		//System.out.println(initialCenterOfMass);
 

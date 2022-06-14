@@ -4,15 +4,14 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
+import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
@@ -51,7 +50,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 		for(int xi = 0; xi < ranges.x(); xi++) {
 			for(int yi = 0; yi < ranges.y(); yi++) {
 				for(int zi = 0; zi < ranges.z(); zi++) {
-					System.out.println(phenotype);
+					//System.out.println(phenotype);
 					Block b = null;
 					
 					// Increment by 2 instead of one since two numbers correspond to 1 block
@@ -71,8 +70,8 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 						counter++; // one number per block
 					}
 					blocks.add(b);
-					System.out.println(Arrays.toString(blockSet.getPossibleBlocks()));
-					System.out.println(b);
+					//System.out.println(Arrays.toString(blockSet.getPossibleBlocks()));
+					//System.out.println(b);
 				}
 			}
 		}
@@ -104,14 +103,14 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					"minecraftChangeCenterOfMassFitness:true",
 					//"minecraftTypeTargetFitness:true", 
 					//"minecraftDesiredBlockCount:40",
+					"minecraftContainsWholeMAPElitesArchive:true",
 					
 					
 					
 					
 					
-					
-					//"vectorPresenceThresholdForEachBlock:true",
-					//"voxelExpressionThreshold:0.5",
+					"vectorPresenceThresholdForEachBlock:true",
+					"voxelExpressionThreshold:0.5",
 					
 					
 					
@@ -119,12 +118,12 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					//"minecraftOccupiedCountFitness:true",
 					//"minecraftEvolveOrientation:true",
 					//"minecraftRedirectConfinedSnakes:true",
-					"minecraftStopConfinedSnakes:true",
+					//"minecraftStopConfinedSnakes:true",
 					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100",
-					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:5",
+					"minecraftXRange:3","minecraftYRange:3","minecraftZRange:5",
 					"minecraftStopConfinedSnakes:true",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", 
