@@ -109,7 +109,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 						}
 						
-						
+						try {
+							Thread.sleep(Parameters.parameters.integerParameter("interactiveSleepTimer"));
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 
 					}
 				}
