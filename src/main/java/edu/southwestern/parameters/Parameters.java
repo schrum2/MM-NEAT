@@ -816,6 +816,9 @@ public class Parameters {
 		booleanOptions.add("vectorPresenceThresholdForEachBlock", false, "Determines whether the vector presence will be normal, or two times larger");
 		booleanOptions.add("interactWithMapElitesInWorld", true, "Ability to reset or delete map elites in the archive");
 		booleanOptions.add("minecraftEndEvalNoMovement", false, "Change center of mass fitness function ends evaluation of a structure when no movement is detected");
+		booleanOptions.add("oneOutputLabelForBlockTypeCPPN", false, "Determines whether CPPN will use only one output for determining the block type.");
+		booleanOptions.add("oneOutputLabelForBlockOrientationCPPN", false, "Determines whether CPPN will use only one output for determining the block orientation.");
+		booleanOptions.add("minecraftNorthSouthOnly", false, "Determines whether only the North and South orientations will be used.");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");

@@ -27,7 +27,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 	private static double[] upper = null;
 	private static double[] lower = null;
 	private static int numBlocks = 0;
-	private static int numOrientations = 6;
+	private static int numOrientations = 0;
 	
 	public VectorToVolumeGenerator() {
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
@@ -37,7 +37,8 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 		if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) numbersPerBlock++; // presence is true, number of corresponding numbers per block should be increased by 1 
 		
 		numBlocks = numbersPerBlock * (ranges.x() * ranges.y() * ranges.z()); // one or more numbers per block depending on command line parameters
-
+		numOrientations = MinecraftUtilClass.getnumOrientationDirections();
+		
 		upper = ArrayUtil.doubleSpecified(numBlocks, 1.0); // upper bounds
 		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0); // lower bounds
 	}
@@ -69,7 +70,9 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 							
 							if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
 								final int ORIENTATION_INDEX = counter+2;
-								blockOrientation = Orientation.values()[(int) (phenotype.get(ORIENTATION_INDEX) * numOrientations)];
+								//blockOrientation = MinecraftUtilClass.getOrientations()[(int) (phenotype.get(ORIENTATION_INDEX) * numOrientations)];
+								blockOrientation = MinecraftUtilClass.getOrientations()[(int) (phenotype.get(ORIENTATION_INDEX) * numOrientations)];
+		
 								counter++; // increase counter because there are three numbers per block in this case
 							}
 								
@@ -82,7 +85,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 							
 							if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
 								final int ORIENTATION_INDEX = counter+1;
-								blockOrientation = Orientation.values()[(int) (phenotype.get(ORIENTATION_INDEX) * numOrientations)];
+								blockOrientation = MinecraftUtilClass.getOrientations()[(int) (phenotype.get(ORIENTATION_INDEX) * numOrientations)];
 								counter++; // increase counter because there are two numbers per block in this case
 							}
 							
@@ -126,15 +129,17 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					"minecraftContainsWholeMAPElitesArchive:true",
 					"spaceBetweenMinecraftShapes:10","parallelMAPElitesInitialize:true",
 					
-					
-					
-					
 					"vectorPresenceThresholdForEachBlock:true",
 					"voxelExpressionThreshold:0.5",
-					
 					//"minecraftEvolveOrientation:false",
 					
 					
+					
+					"oneOutputLabelForBlockTypeCPPN:true",
+					"oneOutputLabelForBlockOrientationCPPN:true",
+					
+					
+					"minecraftNorthSouthOnly:true",
 					
 					//"minecraftOccupiedCountFitness:true",
 					//"minecraftEvolveOrientation:true",
