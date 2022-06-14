@@ -1,6 +1,6 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,16 +10,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.fossgalaxy.object.annotations.Parameter;
-
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
-import edu.southwestern.tasks.evocraft.MinecraftServer;
-import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
+import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 
 public class NegativeSpaceCountFitnessTest {
 	
@@ -29,12 +26,13 @@ public class NegativeSpaceCountFitnessTest {
 	
 	NegativeSpaceCountFitness ff;
 	
-	// Uncomment when it works! Might need to set a specific value of minecraftMandatoryWaitTime here
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6"});
-		MinecraftServer.launchServer();
-		MinecraftClient.getMinecraftClient();
+		
+		// Uncomment out everything with client to see in Minecraft world. However, does not Maven build when not commented out!
+		//MinecraftServer.launchServer();
+		//MinecraftClient.getMinecraftClient();
 	}
 	
 	@Before
@@ -42,18 +40,16 @@ public class NegativeSpaceCountFitnessTest {
 		ff = new NegativeSpaceCountFitness();
 	}
 	
-	// Uncomment when it works!
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
-		Thread.sleep(waitTime);
+		//long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
+		//Thread.sleep(waitTime);
 		
-		MinecraftClient.terminateClientScriptProcess();
-		MinecraftServer.terminateServer();
+		//MinecraftClient.terminateClientScriptProcess();
+		//MinecraftServer.terminateServer();
 	}
 	
 	
-	// Uncomment when it works!
 	@Test
 	public void testFitnessFromBlocks() {
 		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0); //Initializes corner for testing
@@ -110,7 +106,7 @@ public class NegativeSpaceCountFitnessTest {
 
 		assertEquals(30,ff.fitnessFromBlocks(corner,blockSet1),0);
 		
-		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1); // Spawns in just for verification
+		//MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1); // Spawns in just for verification
 		
 		MinecraftCoordinates corner2 = new MinecraftCoordinates(15,5,0); //Initializes another corner for testing
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
@@ -124,7 +120,7 @@ public class NegativeSpaceCountFitnessTest {
 			}
 		}
 		assertEquals(500,ff.fitnessFromBlocks(corner2,blockSet2),0);
-		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2); // Spawns in just for verification
+		//MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2); // Spawns in just for verification
 		
 		MinecraftCoordinates corner3 = new MinecraftCoordinates(26,5,0); //Initializes another corner for testing
 		
@@ -149,11 +145,11 @@ public class NegativeSpaceCountFitnessTest {
 		
 		blockSet3.add(new Block(32,5,0,BlockType.DIAMOND_ORE, Orientation.WEST));// Add one extra block to double check
 		assertEquals(17,ff.fitnessFromBlocks(corner3,blockSet3),0); 
-		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet3); // Spawns in just for verification
+		//MinecraftClient.getMinecraftClient().spawnBlocks(blockSet3); // Spawns in just for verification
 		
 		
 		//Clears space, comment out if need to do testing to see blocks be generated
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 2, 0);
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 2, 0);
 	}
 	
 	@Test
