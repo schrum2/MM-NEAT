@@ -812,8 +812,9 @@ public class Parameters {
 		booleanOptions.add("forceLinearArchiveLayoutInMinecraft", false, "minecraftContainsWholeMAPElitesArchive must be true for this. Generates shape in a linear fashion, as opposed to in 2D or 3D");
 		booleanOptions.add("minecraftChangeCenterOfMassFitness", false, "Calculates the change in position of a shapes center of mass.");
 		booleanOptions.add("NegativeSpaceCountFitness", false, "Tries to maximixe the negative space in a shape that i generated");
-		booleanOptions.add("minecraftAccumulateInCenterOfMass", false, "Adds up the changes in center of mass instead of calculating the difference");
+		booleanOptions.add("minecraftAccumulateChangeInCenterOfMass", false, "Adds up the changes in center of mass instead of calculating the difference");
 		booleanOptions.add("vectorPresenceThresholdForEachBlock", false, "Determines whether the vector presence will be normal, or two times larger");
+		booleanOptions.add("interactWithMapElitesInWorld", true, "Ability to reset or delete map elites in the archive");
 		booleanOptions.add("minecraftEndEvalNoMovement", false, "Change center of mass fitness function ends evaluation of a structure when no movement is detected");
 		booleanOptions.add("oneOutputLabelForBlockTypeCPPN", false, "Determines whether CPPN will use only one output for determining the block type.");
 		booleanOptions.add("oneOutputLabelForBlockOrientationCPPN", false, "Determines whether CPPN will use only one output for determining the block orientation.");

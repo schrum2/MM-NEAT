@@ -68,7 +68,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		//System.out.println(initialCenterOfMass);
 
 		boolean stop = false;
-		long timeElapsed = 0l;
+		
 		long startTime = System.currentTimeMillis();
 		// Wait for the machine to move some (if at all)
 		while(!stop) {
@@ -109,7 +109,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 		double changeInPosition = lastCenterOfMass.distance(initialCenterOfMass);
 		assert !Double.isNaN(changeInPosition) : "Before: " + filterOutAirDirtGrass(blocks);
-		if(Parameters.parameters.booleanParameter("minecraftAccumulateInCenterOfMass")) return totalChangeDistance;
+		if(Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) return totalChangeDistance;
 		else return changeInPosition;
 	}
 
@@ -150,7 +150,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		int seed = 1;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
-					"base:minecraft", "log:Minecraft-MAPElitesWHDFlyingMachineBig", "saveTo:MAPElitesWHDFlyingMachineBig",
+					"base:minecraft", "log:Minecraft-MAPElitesCountNegativeAccumulateChange", "saveTo:MAPElitesCountNegativeAccumulateChange",
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					"io:true", "netio:true",
@@ -160,22 +160,25 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
 					//"minecraftTypeCountFitness:true",
 					"minecraftChangeCenterOfMassFitness:true",
+					"minecraftAccumulateChangeInCenterOfMass:false",
+					"shortTimeBetweenMinecraftReads:500",
 					"minecraftMandatoryWaitTime:1000",
 					//"minecraftDiversityBlockFitness:true",
 					//"minecraftTypeTargetFitness:true", 
 					//"minecraftDesiredBlockCount:40",
 					//"minecraftOccupiedCountFitness:true",
 					//"minecraftEvolveOrientation:true",
-					"minecraftRedirectConfinedSnakes:true",
+					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true", 
 					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
+					//"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountEmptyCountBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
 					"spaceBetweenMinecraftShapes:10","parallelMAPElitesInitialize:true",
 					//"minecraftXRange:9","minecraftYRange:9","minecraftZRange:9",
-					"minecraftXRange:6","minecraftYRange:4","minecraftZRange:6",
+					"minecraftXRange:3","minecraftYRange:3","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
