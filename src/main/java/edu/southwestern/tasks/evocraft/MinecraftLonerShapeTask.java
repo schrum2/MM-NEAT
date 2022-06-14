@@ -168,7 +168,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 			if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) {
 				List<Block> interactive = new ArrayList<>();
-				interactive.add(new Block(corners.t2,BlockType.DIAMOND_BLOCK, Orientation.WEST));
+				interactive.add(new Block(corners.t1.add(new MinecraftCoordinates(0,0,MinecraftUtilClass.getRanges().x()+1)),BlockType.DIAMOND_BLOCK, Orientation.WEST));
+				interactive.add(new Block(corners.t1,BlockType.EMERALD_BLOCK, Orientation.WEST));
 				MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
 			}
 			
@@ -369,7 +370,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
 					"spaceBetweenMinecraftShapes:3","parallelMAPElitesInitialize:false",
-					"minecraftXRange:8","minecraftYRange:8","minecraftZRange:8",
+					"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
