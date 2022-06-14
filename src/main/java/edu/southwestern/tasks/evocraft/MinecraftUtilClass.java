@@ -77,11 +77,12 @@ public class MinecraftUtilClass {
 	 * @param xmax Maximal x coordinate
 	 * @param ymax Maximal y coordinate
 	 * @param zmax Maximal z coordinate
+	 * @return 
 	 */
-	public static void volume(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
+	public static int volume(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
 		MinecraftCoordinates max = new MinecraftCoordinates(xmax,ymax,zmax);
 		MinecraftCoordinates min = new MinecraftCoordinates(xmin,ymin,zmin);
-		volume(min,max);
+		return volume(min,max);
 	}
 	
 	/**
