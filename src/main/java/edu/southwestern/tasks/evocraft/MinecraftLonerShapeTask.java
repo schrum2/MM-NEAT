@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -80,15 +81,21 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			}
 		}
 		
-		if(TODO) {
+		if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) {
 			diamondBlocksToMonitor = Collections.synchronizedSet(new HashSet<Pair<MinecraftCoordinates,Integer>>());
 			interactionThread = new Thread() {
 				@Override
 				public void run() {
 					// Loop as long as evolution is running
 					while(true) {
+						@SuppressWarnings("unchecked")
+						Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[diamondBlocksToMonitor.size()];
+						currentElements = diamondBlocksToMonitor.toArray(currentElements);
 						
-						
+						for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
+							System.out.println("--------------------------");
+							System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t1,pair.t1));
+						}
 						
 					}
 				}
