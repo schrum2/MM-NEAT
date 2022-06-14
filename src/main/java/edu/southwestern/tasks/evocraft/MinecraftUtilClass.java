@@ -99,7 +99,8 @@ public class MinecraftUtilClass {
 		return volume;
 	}
 	
-	/** This static method will either return a restricted array of orientations, or
+	/** 
+	 * This static method will either return a restricted array of orientations, or
 	 * it will return an array of orientations with all 6 orientations.
 	 * 
 	 * @return Array of orientations used for shape generation
@@ -114,5 +115,14 @@ public class MinecraftUtilClass {
 			orientations = Orientation.values();
 		}
 		return orientations;
+	}
+	
+	/** 
+	 * Returns the integer value 2 if the command line parameter "minecraftNorthSouthOnly" is true, otherwise returns 6.
+	 *
+	 * @return int Number of orientation directions (either restricted or not restricted)
+	 */
+	public static int getnumOrientationDirections() { 
+		return Parameters.parameters.booleanParameter("minecraftNorthSouthOnly") ? 2:6; 
 	}
 }
