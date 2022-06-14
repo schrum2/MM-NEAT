@@ -2,6 +2,7 @@ package edu.southwestern.tasks.evocraft;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 
 /**
  * Some commonly used methods for dealing with the Minecraft world
@@ -69,6 +70,7 @@ public class MinecraftUtilClass {
 	}
 	
 	/**
+<<<<<<< Updated upstream
 	 * Overloaded method. Takes 6 ints and makes them into minecraft coordinates to call volume
 	 * 
 	 * @param xmin Minimal x coordinate. xmin <= xmax
@@ -95,5 +97,22 @@ public class MinecraftUtilClass {
 	public static int volume(MinecraftCoordinates min, MinecraftCoordinates max) {
 		int volume = (max.x()-min.x()+1)*(max.y()-min.y()+1)*(max.z()-min.z()+1);
 		return volume;
+	}
+	
+	/** This static method will either return a restricted array of orientations, or
+	 * it will return an array of orientations with all 6 orientations.
+	 * 
+	 * @return Array of orientations used for shape generation
+	 */
+	public static Orientation[] getOrientations() {
+		Orientation[] orientations;
+		if(Parameters.parameters.booleanParameter("minecraftNorthSouthOnly")) { // only use north and south orientations
+			orientations = new Orientation[2];
+			orientations[0] = Orientation.NORTH;
+			orientations[1] = Orientation.SOUTH;
+		} else { // use normal orientation array
+			orientations = Orientation.values();
+		}
+		return orientations;
 	}
 }
