@@ -33,8 +33,8 @@ public class ChangeCenterOfMassFitnessTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateInCenterOfMass:true"});
-		//MinecraftServer.launchServer();
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true"});
+		MinecraftServer.launchServer();
 		MinecraftClient.getMinecraftClient();
 	}
 
@@ -49,7 +49,7 @@ public class ChangeCenterOfMassFitnessTest {
 		Thread.sleep(waitTime);
 		
 		MinecraftClient.terminateClientScriptProcess();
-		//MinecraftServer.terminateServer();
+		MinecraftServer.terminateServer();
 	}
 
 	@Test
