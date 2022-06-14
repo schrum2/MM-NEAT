@@ -112,7 +112,7 @@ public class ChangeCenterOfMassFitnessTest {
 		
 		// When the time is small (50L) then the score becomes large
 		MinecraftClient.getMinecraftClient().spawnBlocks(oscillatingMachine);
-		assertEquals(47,ff.fitnessScore(cornerBS2),0.5);
+		assertTrue(47 <= ff.fitnessScore(cornerBS2));
 	}
 
 	@Test
