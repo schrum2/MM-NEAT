@@ -528,7 +528,6 @@ public class MinecraftClient extends Comm {
 	 * @param blocks List of Blocks to spawn
 	 */
 	public synchronized void spawnBlocks(List<Block> blocks) {
-		System.out.println(blocks);
 		// Only spawns a block if there are blocks to spawn
 		if(blocks.size()>0) {
 			StringBuilder sb = new StringBuilder();
