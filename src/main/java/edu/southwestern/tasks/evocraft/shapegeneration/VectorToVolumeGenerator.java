@@ -104,7 +104,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					//"minecraftTypeTargetFitness:true", 
 					//"minecraftDesiredBlockCount:40",
 					"minecraftContainsWholeMAPElitesArchive:true",
-					
+					"spaceBetweenMinecraftShapes:10","parallelMAPElitesInitialize:true",
 					
 					
 					
