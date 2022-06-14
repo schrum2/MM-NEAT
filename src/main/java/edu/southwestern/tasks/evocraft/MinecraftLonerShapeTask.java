@@ -5,8 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -47,6 +51,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	private static boolean spawnShapesInWorld=false;
 	private static ArrayList<MinecraftCoordinates> parallelShapeCorners;
 	private BlockingQueue<MinecraftCoordinates> coordinateQueue;
+	// Each diamond block refers to one shape, and the int is the associated 1D archive index
+	private static Set<Pair<MinecraftCoordinates,Integer>> diamondBlocksToMonitor;
+	private static Thread interactionThread;
 
 	public MinecraftLonerShapeTask() 	{
 		/**
@@ -72,6 +79,35 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				e.printStackTrace();
 				System.exit(1);
 			}
+		}
+		
+		if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) {
+			diamondBlocksToMonitor = Collections.synchronizedSet(new HashSet<Pair<MinecraftCoordinates,Integer>>());
+			interactionThread = new Thread() {
+				@Override
+				public void run() {
+					// Loop as long as evolution is running
+					while(true) {
+						@SuppressWarnings("unchecked")
+						Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[diamondBlocksToMonitor.size()];
+						currentElements = diamondBlocksToMonitor.toArray(currentElements);
+						
+						for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
+							if(MinecraftClient.getMinecraftClient().readCube(pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
+								System.out.println("--------------------------");
+								System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t1,pair.t1));
+								@SuppressWarnings("unchecked")
+								Score<T> s = MMNEAT.getArchive().getElite(pair.t2);
+								
+								placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
+							}
+							
+						}
+						
+					}
+				}
+			};
+			interactionThread.start();
 		}
 	}
 
@@ -121,8 +157,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 * @param behaviorCharacteristics dictionary of values used for placing at the right index
 	 * @param ranges specified range of each shape
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> void placeArchiveInWorld(Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics, MinecraftCoordinates ranges) {
+		placeArchiveInWorld(individual, behaviorCharacteristics, ranges, false); // By default, do not force placement of new shape
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> void placeArchiveInWorld(Genotype<T> individual, HashMap<String, Object> behaviorCharacteristics, MinecraftCoordinates ranges, boolean forcePlacement) {
 		MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 		// Don't try to place shapes that have no place to go
 		if(!minecraftBinLabels.discard(behaviorCharacteristics)) {
@@ -135,7 +175,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
 
 			// If the new shape is better than the previous, it gets replaced
-			if(scoreOfCurrentElite > scoreOfPreviousElite) {
+			if(forcePlacement || scoreOfCurrentElite > scoreOfPreviousElite) {
 				clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
 			}
 		}
@@ -168,18 +208,19 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 			if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) {
 				List<Block> interactive = new ArrayList<>();
-				interactive.add(new Block(corners.t1.add(new MinecraftCoordinates(0,0,MinecraftUtilClass.getRanges().x()+1)),BlockType.DIAMOND_BLOCK, Orientation.WEST));
-				interactive.add(new Block(corners.t1,BlockType.EMERALD_BLOCK, Orientation.WEST));
+				MinecraftCoordinates diamondBlock = corners.t2.sub(new MinecraftCoordinates(1,1,1));
+				diamondBlocksToMonitor.add(new Pair<>(diamondBlock,index1D));
+				interactive.add(new Block(diamondBlock,BlockType.DIAMOND_BLOCK, Orientation.WEST));
+				interactive.add(new Block(corners.t2.add(new MinecraftCoordinates(MinecraftUtilClass.getRanges().x(),-1,-1)),BlockType.EMERALD_BLOCK, Orientation.WEST));
 				MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
 			}
-			
 			
 			// Fences placed at initialization now
 
 			double testScore = 0;
 			MinecraftCoordinates testCorner = null;
 			assert !(((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0) instanceof CheckBlocksInSpaceFitness) || MinecraftShapeTask.qualityScore(new double[] {testScore = ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2)}) == ((Double) behaviorCharacteristics.get("binScore")).doubleValue() : 
-				individual.getId() + ":" + behaviorCharacteristics + ":testScore="+testScore+":" + blocks;
+				individual.getId() + ":" + testCorner + ":" + behaviorCharacteristics + ":testScore="+testScore+":\n" + ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).getClass().getSimpleName() + ":\n" + blocks;
 			assert !(MMNEAT.getArchiveBinLabelsClass() instanceof MinecraftMAPElitesBlockCountBinLabels) || new OccupiedCountFitness().fitnessScore(testCorner) == (testScore = ((Double) behaviorCharacteristics.get("OccupiedCountFitness")).doubleValue()) : 
 				individual.getId() + ":" + testCorner+":occupied count="+testScore+":"+ blocks + ":" + CheckBlocksInSpaceFitness.readBlocksFromClient(testCorner);
 		}
@@ -272,6 +313,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 */
 	public static Pair<MinecraftCoordinates,MinecraftCoordinates> clearBlocksInArchive(MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
 		MinecraftCoordinates clearEnd = startPosition.add(MinecraftUtilClass.reservedSpace());
+		// Sub 1 to not delete interactive blocks
+		if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) clearEnd = clearEnd.sub(new MinecraftCoordinates(1)); 
 		MinecraftClient.getMinecraftClient().fillCube(startPosition, clearEnd, BlockType.AIR);
 		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, clearEnd);
 	}
@@ -352,6 +395,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					"io:true", "netio:true",
+					"interactWithMapElitesInWorld:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false",
 					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet",

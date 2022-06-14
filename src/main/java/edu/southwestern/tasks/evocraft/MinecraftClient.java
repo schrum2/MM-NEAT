@@ -590,7 +590,17 @@ public class MinecraftClient extends Comm {
 			System.exit(1);
 		}
 	}
-
+	
+	/**
+	 * Over loaded method, retreives list of singular block at a specified coordinate
+	 * 
+	 * @param pos Singular coordinate to read in from
+	 * @return List of Blocks at the singular coordinate
+	 */
+	public synchronized ArrayList<Block> readCube(MinecraftCoordinates pos) {
+		return readCube(pos.x(), pos.y(), pos.z(), pos.x(), pos.y(), pos.z());
+	}
+	
 	/**
 	 * Retrieve list of all Blocks (types and positions) found in the given region.
 	 * Note that when blocks are read, their orientation is not known.
