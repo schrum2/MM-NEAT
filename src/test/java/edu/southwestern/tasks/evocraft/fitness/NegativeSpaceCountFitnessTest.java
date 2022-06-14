@@ -25,11 +25,12 @@ public class NegativeSpaceCountFitnessTest {
 	
 	List<Block> blockSet1;
 	List<Block> blockSet2;
+	List<Block> blockSet3;
 	
 	NegativeSpaceCountFitness ff;
 	
 	// Uncomment when it works! Might need to set a specific value of minecraftMandatoryWaitTime here
-	//@BeforeClass
+	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6"});
 		MinecraftServer.launchServer();
@@ -42,7 +43,7 @@ public class NegativeSpaceCountFitnessTest {
 	}
 	
 	// Uncomment when it works!
-	//@AfterClass
+	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
 		Thread.sleep(waitTime);
@@ -53,13 +54,14 @@ public class NegativeSpaceCountFitnessTest {
 	
 	
 	// Uncomment when it works!
-	//@Test
+	@Test
 	public void testFitnessFromBlocks() {
 		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0); //Initializes corner for testing
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, MinecraftUtilClass.getRanges(), 2, 100);
 		
 		blockSet1 = new ArrayList<>();
 		blockSet2 = new ArrayList<>();
+		blockSet3 = new ArrayList<>();
 		blockSet1.add(new Block(10,15,10,BlockType.AIR, Orientation.WEST));
 		assertEquals(-1,ff.fitnessFromBlocks(corner,blockSet1),0); // Test when nothing
 		
@@ -123,6 +125,34 @@ public class NegativeSpaceCountFitnessTest {
 		}
 		assertEquals(500,ff.fitnessFromBlocks(corner2,blockSet2),0);
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2); // Spawns in just for verification
+		
+		MinecraftCoordinates corner3 = new MinecraftCoordinates(26,5,0); //Initializes another corner for testing
+		
+		// Generates a 10x10x10 block of air
+		for(int x=0;x<ranges.x();x++) {
+			for(int y=0;y<ranges.y();y++) {
+				for(int z=0;z<ranges.z();z++) {
+					blockSet3.add(new Block(25+x,5+y,0+z,BlockType.AIR, Orientation.WEST)); // Has some display issues when adding to minecraft world
+				}
+			}
+		}
+		
+		// Generates a 4x2x3 block in the air blocks created
+		for(int x=0;x<4;x++) {
+			for(int y=0;y<2;y++) {
+				for(int z=0;z<3;z++) {
+					blockSet3.add(new Block(26+x,5+y,0+z,BlockType.GOLD_ORE, Orientation.WEST));
+				}
+			}
+		}
+		assertEquals(0,ff.fitnessFromBlocks(corner3,blockSet3),0);
+		
+		blockSet3.add(new Block(32,5,0,BlockType.DIAMOND_ORE, Orientation.WEST));// Add one extra block to double check
+		assertEquals(17,ff.fitnessFromBlocks(corner3,blockSet3),0); 
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet3); // Spawns in just for verification
+		
+		
+		//Clears space, comment out if need to do testing to see blocks be generated
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, ranges, 2, 0);
 	}
 	

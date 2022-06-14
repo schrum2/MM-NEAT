@@ -32,7 +32,7 @@ public class ChangeCenterOfMassFitnessTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6"});
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateInCenterOfMass:true"});
 		MinecraftServer.launchServer();
 		MinecraftClient.getMinecraftClient();
 	}
@@ -92,9 +92,15 @@ public class ChangeCenterOfMassFitnessTest {
 		// executing Minecraft server, which is subject to variation. The main point is that the ship
 		// flies for a bit, but the exact amount is hard to pin down. Thus, we only assert that the amount
 		// is 6.0 or more
+		System.out.println(ff.fitnessScore(cornerBS2));
 		assertTrue(6.0 <= ff.fitnessScore(cornerBS2));
-		
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 0);
+		
+		// Test to see if the max fitness is awarded when all the 
+		// blocks move out of the area
+		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
+		assertEquals(ff.maxFitness(),ff.fitnessScore(cornerBS2),0.0);
+		
 	}
 
 	@Test

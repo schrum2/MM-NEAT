@@ -65,7 +65,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		// Generates the corners for all of the shapes and then adds them into the blocking queue
 		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelMinecraftSlots"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),MinecraftUtilClass.getRanges());
 		for(MinecraftCoordinates corner : parallelShapeCorners) {
-			//System.out.println(corner);
 			try {
 				coordinateQueue.put(corner);
 			} catch (InterruptedException e) {
@@ -135,7 +134,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			double scoreOfPreviousElite = 0;
 			scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
 
-			//System.out.println(individual.getId()+"Index "+index1D +": Compare: "+scoreOfCurrentElite+" > "+scoreOfPreviousElite);
 			// If the new shape is better than the previous, it gets replaced
 			if(scoreOfCurrentElite > scoreOfPreviousElite) {
 				clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
@@ -169,7 +167,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		if(spawnShapesInWorld) {
 			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 			// Fences placed at initialization now
-			//placeFencesAroundArchive(ranges,corners.t2);
 
 			double testScore = 0;
 			MinecraftCoordinates testCorner = null;
@@ -293,7 +290,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		for(int i =0;i<=ranges.z();i++) {
 			fences.add(new Block(fencePlacePosition.x(),fencePlacePosition.y(),fencePlacePosition.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));
 			fences.add(new Block(fencePlacePosition.x()+ranges.x()+1,fencePlacePosition.y(),fencePlacePosition.z()+i,BlockType.DARK_OAK_FENCE, Orientation.WEST));
-
 		}
 		MinecraftClient.getMinecraftClient().spawnBlocks(fences); // Spawns them in
 	}
@@ -360,13 +356,13 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"minecraftEvolveOrientation:true",
 					"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true", 
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountEmptyPercentBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
 					"spaceBetweenMinecraftShapes:3","parallelMAPElitesInitialize:true",
-					"minecraftXRange:9","minecraftYRange:9","minecraftZRange:9",
+					"minecraftXRange:3","minecraftYRange:3","minecraftZRange:3",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",

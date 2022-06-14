@@ -393,6 +393,15 @@ public class MinecraftClient extends Comm {
 		public MinecraftCoordinates sub(MinecraftCoordinates other) {
 			return new MinecraftCoordinates(x() - other.x(), y() - other.y(), z() - other.z());
 		}
+		
+		/**
+		 * multiply two vectors together (component-wise)
+		 * @param other Coordinates to multiplying to this one.
+		 * @return Product of the vectors
+		 */
+		public MinecraftCoordinates mult(MinecraftCoordinates other) {
+			return new MinecraftCoordinates(x() * other.x(), y() * other.y(), z() * other.z());
+		}
 
 	}
 	
@@ -519,11 +528,7 @@ public class MinecraftClient extends Comm {
 		StringBuilder sb = new StringBuilder();
 		sb.append("spawnBlocks ");
 		for(Block b: blocks) {
-			if(b.y() < 0 || b.y() > 255) {
-				System.out.println("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.");
-				System.out.println("Therefore, these blocks cannot be generated: "+blocks);
-				throw new IllegalArgumentException("Problem block: "+b+"\nThis version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.\nTherefore, these blocks cannot be generated: "+blocks);
-			}
+			checkBlockBounds(b.x(),b.y(),b.z());
 			sb.append(b.x() + " " + b.y() + " " + b.z() + " " + b.type() + " " + b.orientation() + " ");
 		}
 		try {
@@ -561,11 +566,7 @@ public class MinecraftClient extends Comm {
 	 * @param type Type to fill the space with
 	 */
 	public synchronized void fillCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax, BlockType type) {
-		if(ymin < 0 || ymin > 255 || ymax < 0 || ymax > 255) {
-			System.out.println("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.");
-			System.out.println("Therefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
-			throw new IllegalArgumentException("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.\nTherefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
-		}
+		checkBlockBounds(xmin, ymin, zmin, xmax, ymax, zmax);
 		String message = "fillCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" "+type.ordinal()+" ";
 		try {
 			commSend(message);
@@ -603,6 +604,7 @@ public class MinecraftClient extends Comm {
 	 */
 	public synchronized ArrayList<Block> readCube(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
 		String message = "readCube "+xmin+" "+ymin+" "+zmin+" "+xmax+" "+ymax+" "+zmax+" ";
+		checkBlockBounds(xmin, ymin, zmin, xmax, ymax, zmax);
 		try {
 			commSend(message);
 		} catch (IOException e) {
@@ -647,9 +649,9 @@ public class MinecraftClient extends Comm {
 	public void clearSpaceForShapes(MinecraftCoordinates start, MinecraftCoordinates ranges, int numShapes, int buffer, boolean stopAtGround) {
 		MinecraftCoordinates groundStart = new MinecraftCoordinates(start.x()-buffer, stopAtGround ? GROUND_LEVEL : start.y()-buffer, start.z()-buffer);
 		//System.out.println("Starts:"+groundStart);
-		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) + buffer, start.y() + ranges.y() + buffer, start.z() + ranges.z() + buffer);
+		MinecraftCoordinates end = new MinecraftCoordinates(start.x() + numShapes*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")) + buffer, start.y() + ranges.y() + buffer, start.z() + (int)(ranges.z()*Math.sqrt(numShapes)) + buffer);
 		//System.out.println("ENDS:"+end);
-		fillCube(groundStart, end, BlockType.AIR);
+		fillCube(groundStart, end, BlockType.AIR); // Calls clear cube, which checks coordinates
 	}
 	
 	/**
@@ -678,5 +680,40 @@ public class MinecraftClient extends Comm {
 			shape[b.x() - corner.x() + padding][b.y() - corner.y() + padding][b.z() - corner.z() + padding] = b.type();
 		}
 		return shape;
+	}
+	
+	/**
+	 * Overloaded method. Calls method of same name, but without min and max, just 
+	 * checking if current coordinates are legal
+	 * @param x x coordinate
+	 * @param y y coordinate
+	 * @param z z coordinate
+	 */
+	public void checkBlockBounds(int x, int y, int z) {
+		checkBlockBounds(x,y,z,x,y,z);
+	}
+	
+	/**
+	 * Checks the x,y, and z coordinates to ensure they are within bounds
+	 * and won't crash the world by placing something out of bounds
+	 * 
+	 * @param xmin Minimal x coordinate. xmin <= xmax
+	 * @param ymin Minimal y coordinate. ymin <= ymax
+	 * @param zmin Minimal z coordinate. zmin <= zmax
+	 * @param xmax Maximal x coordinate
+	 * @param ymax Maximal y coordinate
+	 * @param zmax Maximal z coordinate
+	 */
+	public void checkBlockBounds(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
+		// Max and min based on not being able to place blocks after coordinate 29999983. Added a buffer to it
+		if(xmin < -29999960 || xmin > 29999960 || xmax < -29999960 || xmax > 29999960 ||
+		   ymin < 0 || ymin > 255 || ymax < 0 || ymax > 255|| 
+		   zmin < -29999960 || zmin > 29999960 || zmax < -29999960 || zmax > 29999960) {
+			System.out.println("This version of Minecraft only allows blocks to be generated with x-coordinates between -29999983 and 29999983.");
+			System.out.println("y-coordinates between 0 and 255,");
+			System.out.println("and z-coordinates between -29999983 and 29999983, all inclusive.");
+			System.out.println("Therefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
+			throw new IllegalArgumentException("This version of Minecraft only allows blocks to be generated with y-coordinates between 0 and 255 inclusive.\nTherefore, cannot generate in this range: "+xmin+", "+ymin+", "+zmin+", "+xmax+", "+ymax+", "+zmax);
+		}
 	}
 }
