@@ -777,6 +777,6 @@ public class MinecraftClient extends Comm {
 //		}
 ////		blockSet1.add(new Block(0,5,0,BlockType.DIAMOND_BLOCK, Orientation.WEST));
 ////		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet1);
-		
-	}
+//		
+//	}
 }
