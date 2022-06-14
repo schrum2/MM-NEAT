@@ -285,8 +285,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	public static void placeFencesAroundArchive(MinecraftCoordinates ranges, MinecraftCoordinates fencePlacePosition) {
 		List<Block> fences = new ArrayList<>();
 		// Places first fences based on starting point
-		fencePlacePosition=fencePlacePosition.sub(new MinecraftCoordinates(1,fencePlacePosition.y(),1));
-		fencePlacePosition=fencePlacePosition.add(new MinecraftCoordinates(0,MinecraftClient.GROUND_LEVEL,0));
+		fencePlacePosition=fencePlacePosition.sub(new MinecraftCoordinates(1,fencePlacePosition.y()-MinecraftClient.GROUND_LEVEL,1));
 		
 		// Places all fences in the x direction
 		for(int i =0;i<=ranges.x()+1;i++) {
