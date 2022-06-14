@@ -93,7 +93,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						currentElements = diamondBlocksToMonitor.toArray(currentElements);
 						
 						for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
-							if(MinecraftClient.getMinecraftClient().readCube(pair.t1,pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
+							if(MinecraftClient.getMinecraftClient().readCube(pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
 								System.out.println("--------------------------");
 								System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t1,pair.t1));
 								@SuppressWarnings("unchecked")
