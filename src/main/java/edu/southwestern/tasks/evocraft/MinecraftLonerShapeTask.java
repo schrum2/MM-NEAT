@@ -173,7 +173,6 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
 			}
 			
-			
 			// Fences placed at initialization now
 
 			double testScore = 0;
@@ -272,6 +271,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	 */
 	public static Pair<MinecraftCoordinates,MinecraftCoordinates> clearBlocksInArchive(MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
 		MinecraftCoordinates clearEnd = startPosition.add(MinecraftUtilClass.reservedSpace());
+		// Sub 1 to not delete interactive blocks
+		if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) clearEnd = clearEnd.sub(new MinecraftCoordinates(1)); 
 		MinecraftClient.getMinecraftClient().fillCube(startPosition, clearEnd, BlockType.AIR);
 		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, clearEnd);
 	}
