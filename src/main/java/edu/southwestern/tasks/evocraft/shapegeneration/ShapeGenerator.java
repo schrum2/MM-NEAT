@@ -196,7 +196,7 @@ public interface ShapeGenerator<T> {
 		labels[0] = "Presence"; // regardless Presence will be the first index
 		
 		if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
-			String[] orientationLabels = new String[NUM_DIRECTIONS];
+			String[] orientationLabels;
 
 			if(Parameters.parameters.booleanParameter("oneOutputLabelForBlockOrientationCPPN")) {
 				orientationLabels = new String[1]; // only use one label for block orientation
