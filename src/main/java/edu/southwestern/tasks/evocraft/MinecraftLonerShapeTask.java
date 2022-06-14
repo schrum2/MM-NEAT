@@ -88,7 +88,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			System.exit(1);
 		}
 		// Clears specified space for new shape
-		clearBlocksInArchive(ranges, corner);		
+		clearBlocksInArchive(ranges, corner);
 		MinecraftCoordinates middle = corner.add(MinecraftUtilClass.emptySpaceOffsets());
 		// Evaluates the shape at the middle of the space defined by the corner, and then adds the corner back to the queue
 		Score<T> score = internalMinecraftShapeTask.evaluateOneShape(individual, middle);
@@ -99,11 +99,11 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			e.printStackTrace();
 			System.exit(1);
 		}
+
 		// Copy over one HashMap to another (is there an easier way?)
 		for(HashMap.Entry<String,Object> entry : score.MAPElitesBehaviorMap().entrySet()) {
 			behaviorCharacteristics.put(entry.getKey(), entry.getValue());
 		}
-		
 		// Checks command line param on whether or not to generate shapes in archive
 		if(Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive")) {
 			// Places the shapes in the world based on their position
@@ -166,6 +166,14 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		// Spawning shapes is disabled during initialization
 		if(spawnShapesInWorld) {
 			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
+			if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) {
+				List<Block> interactive = new ArrayList<>();
+				interactive.add(new Block(corners.t1.add(new MinecraftCoordinates(0,0,MinecraftUtilClass.getRanges().x()+1)),BlockType.DIAMOND_BLOCK, Orientation.WEST));
+				interactive.add(new Block(corners.t1,BlockType.EMERALD_BLOCK, Orientation.WEST));
+				MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
+			}
+			
+			
 			// Fences placed at initialization now
 
 			double testScore = 0;
@@ -356,13 +364,13 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"minecraftEvolveOrientation:true",
 					"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true", 
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountEmptyPercentBinLabels",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
-					"spaceBetweenMinecraftShapes:3","parallelMAPElitesInitialize:true",
-					"minecraftXRange:3","minecraftYRange:3","minecraftZRange:3",
+					"spaceBetweenMinecraftShapes:3","parallelMAPElitesInitialize:false",
+					"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
