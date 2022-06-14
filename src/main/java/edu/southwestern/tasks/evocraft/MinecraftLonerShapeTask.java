@@ -5,8 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -47,6 +50,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	private static boolean spawnShapesInWorld=false;
 	private static ArrayList<MinecraftCoordinates> parallelShapeCorners;
 	private BlockingQueue<MinecraftCoordinates> coordinateQueue;
+	// Each diamond block refers to one shape, and the int is the associated 1D archive index
+	private static Set<Pair<MinecraftCoordinates,Integer>> diamondBlocksToMonitor;
+	private static Thread interactionThread;
 
 	public MinecraftLonerShapeTask() 	{
 		/**
@@ -72,6 +78,22 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				e.printStackTrace();
 				System.exit(1);
 			}
+		}
+		
+		if(TODO) {
+			diamondBlocksToMonitor = Collections.synchronizedSet(new HashSet<Pair<MinecraftCoordinates,Integer>>());
+			interactionThread = new Thread() {
+				@Override
+				public void run() {
+					// Loop as long as evolution is running
+					while(true) {
+						
+						
+						
+					}
+				}
+			};
+			interactionThread.start();
 		}
 	}
 
@@ -168,7 +190,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 			if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) {
 				List<Block> interactive = new ArrayList<>();
-				interactive.add(new Block(corners.t2.sub(new MinecraftCoordinates(1,1,1)),BlockType.DIAMOND_BLOCK, Orientation.WEST));
+				MinecraftCoordinates diamondBlock = corners.t2.sub(new MinecraftCoordinates(1,1,1));
+				diamondBlocksToMonitor.add(new Pair<>(diamondBlock,index1D));
+				interactive.add(new Block(diamondBlock,BlockType.DIAMOND_BLOCK, Orientation.WEST));
 				interactive.add(new Block(corners.t2.add(new MinecraftCoordinates(MinecraftUtilClass.getRanges().x(),-1,-1)),BlockType.EMERALD_BLOCK, Orientation.WEST));
 				MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
 			}
