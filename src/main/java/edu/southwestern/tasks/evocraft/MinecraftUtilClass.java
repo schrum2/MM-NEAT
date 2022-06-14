@@ -111,6 +111,7 @@ public class MinecraftUtilClass {
 	 */
 	public static List<Block> filterOutBlock(List<Block> blocks, BlockType type) {
 		return blocks.stream().filter(b -> b.type() != type.ordinal()).collect(Collectors.toList());
+	}
 
 	/** 
 	 * This static method will either return a restricted array of orientations, or
