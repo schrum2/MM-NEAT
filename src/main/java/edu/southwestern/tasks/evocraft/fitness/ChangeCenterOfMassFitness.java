@@ -69,10 +69,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 		boolean stop = false;
 		long timeElapsed = 0l;
+		long startTime = System.currentTimeMillis();
 		// Wait for the machine to move some (if at all)
 		while(!stop) {
 
-			long shortWaitTime = 5000L;
+			long shortWaitTime = Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
 			try {
 				Thread.sleep(shortWaitTime);
 			} catch (InterruptedException e) {
@@ -81,7 +82,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				System.exit(1);
 			}
 			// Should we check the actual time? Or is this fine?
-			timeElapsed += shortWaitTime;
+//			timeElapsed += shortWaitTime;
 
 
 			List<Block> shortWaitTimeUpdate = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
@@ -90,21 +91,17 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				return maxFitness();
 			}
 			Vertex nextCenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
-			//			temp = totalChangeVertex;
-			//			System.out.println("First update (before add)" + temp);
-			//			totalChangeVertex = totalChangeVertex.add(x1CenterOfMass);
-			//			System.out.println("First update (after add)" + totalChangeVertex);
-			//			totalChangeDistance = totalChangeVertex.distance(temp);
-			//			System.out.println("First update total distance" + totalChangeDistance);
-			if(lastCenterOfMass.equals(nextCenterOfMass)) {
+			//System.out.println("Does last equals next? " + lastCenterOfMass + " and " + nextCenterOfMass);
+			if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && lastCenterOfMass.equals(nextCenterOfMass)) {
 				// This means that it hasn't moved, so move on to the next.
 				// BUT What if it moves back and forth and returned to its original position?
+				//System.out.println("Detected no movement");
 				totalChangeDistance = 0;
 				stop = true;
 			} else {
 				totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
 				lastCenterOfMass = nextCenterOfMass;
-				if(timeElapsed > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
+				if(System.currentTimeMillis() - startTime > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
 					stop = true;
 				}
 			}
