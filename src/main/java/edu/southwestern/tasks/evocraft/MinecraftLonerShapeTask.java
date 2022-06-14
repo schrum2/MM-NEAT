@@ -168,8 +168,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			MinecraftClient.getMinecraftClient().spawnBlocks(blocks);
 			if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) {
 				List<Block> interactive = new ArrayList<>();
-				interactive.add(new Block(corners.t1.add(new MinecraftCoordinates(0,0,MinecraftUtilClass.getRanges().x()+1)),BlockType.DIAMOND_BLOCK, Orientation.WEST));
-				interactive.add(new Block(corners.t1,BlockType.EMERALD_BLOCK, Orientation.WEST));
+				interactive.add(new Block(corners.t2.sub(new MinecraftCoordinates(1,1,1)),BlockType.DIAMOND_BLOCK, Orientation.WEST));
+				interactive.add(new Block(corners.t2.add(new MinecraftCoordinates(MinecraftUtilClass.getRanges().x(),-1,-1)),BlockType.EMERALD_BLOCK, Orientation.WEST));
 				MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
 			}
 			
