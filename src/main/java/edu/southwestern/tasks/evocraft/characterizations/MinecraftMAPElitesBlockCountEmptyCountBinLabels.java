@@ -10,7 +10,7 @@ import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 
-public class MinecraftMAPElitesBlockCountEmptyPercentBinLabels extends MinecraftMAPElitesBinLabels {
+public class MinecraftMAPElitesBlockCountEmptyCountBinLabels extends MinecraftMAPElitesBinLabels {
 
 	private List<String> labels = null;
 	private List<MinecraftFitnessFunction> properties = Arrays.asList(new OccupiedCountFitness(), new NegativeSpaceCountFitness());
