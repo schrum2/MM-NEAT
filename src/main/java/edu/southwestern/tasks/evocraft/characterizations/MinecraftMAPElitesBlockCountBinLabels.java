@@ -3,6 +3,7 @@ package edu.southwestern.tasks.evocraft.characterizations;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -25,12 +26,12 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 			int yDim = Parameters.parameters.integerParameter("minecraftYRange");
 			int zDim = Parameters.parameters.integerParameter("minecraftZRange");
 			
-			int size = xDim*yDim*zDim+1; // size is the total possible volume
+			int size = xDim*yDim*zDim; // size is the total possible volume
 			
 			labels = new ArrayList<String>(size);
 			
 			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities (i < size would just give a range of 0-999)
-			for(int i = 0; i < size; i++) labels.add(i + "Blocks"); 
+			for(int i = 1; i <= size; i++) labels.add(i + "Blocks"); 
 		}
 		return labels;
 	}
@@ -40,10 +41,18 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 		int binIndex = multi[0]; // the value of multi[0] correlates to the appropriate bin index.
 		return binIndex;
 	}
+	
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int[] result = super.multiDimensionalIndices(keys);
+		// Actual block count could be 0, but such shapes are discarded
+		result[0]--;
+		return result;
+	}
 
 	@Override
 	public int[] dimensionSizes() {
-		return new int[] {Parameters.parameters.integerParameter("minecraftXRange")*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange")+1};
+		return new int[] {Parameters.parameters.integerParameter("minecraftXRange")*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange")};
 	}
 
 	@Override
@@ -51,6 +60,12 @@ public class MinecraftMAPElitesBlockCountBinLabels extends MinecraftMAPElitesBin
 		return properties; //fitness function being used is OccupiedCountFitness
 	}
 
+
+	@Override
+	public boolean discard(HashMap<String, Object> behaviorMap) {
+		return ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() == 0;
+	}
+	
 	public static void main(String[] args) {
 		int seed = 0;
 		try {

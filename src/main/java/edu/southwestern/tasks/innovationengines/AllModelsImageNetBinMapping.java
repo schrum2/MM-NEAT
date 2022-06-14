@@ -66,4 +66,9 @@ public class AllModelsImageNetBinMapping<T extends Network> implements BinLabels
 	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
 		throw new UnsupportedOperationException("One image can exist in all bins, so selecting one index with a HashMap is not supported");
 	}
+
+	@Override
+	public boolean discard(HashMap<String, Object> behaviorMap) {
+		return false;
+	}
 }

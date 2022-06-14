@@ -154,8 +154,8 @@ public class Archive<T> {
 			//System.out.println(newElites + " elites were replaced");
 			// Whether any elites were replaced
 			return newElites > 0;
-		} else if(candidate.usesMAPElitesMapSpecification()) {
-			int oneD = this.getBinMapping().oneDimensionalIndex(candidate.MAPElitesBehaviorMap());
+		} else if(candidate.usesMAPElitesMapSpecification() && !getBinMapping().discard(candidate.MAPElitesBehaviorMap())) {
+			int oneD = getBinMapping().oneDimensionalIndex(candidate.MAPElitesBehaviorMap());
 			boolean result = false;
 			synchronized(this) { // Make sure elite at the index does not change while considering replacement
 				// Synchronizing on the whole archive seems unnecessary ... maybe just the index? How?
