@@ -86,14 +86,21 @@ public interface ShapeGenerator<T> {
 			} else {
 				typeIndex = StatisticsUtilities.argmax(blockPreferences); // different outputs for each block type will be used
 			}
-			
-			Orientation blockOrientation = Orientation.NORTH;
+	
+			Orientation blockOrientation = Orientation.NORTH; // default orientation is North
 			if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")){
-				double[] orientationPreferences = ArrayUtil.portion(outputs,numBlockTypes + 1, numBlockTypes + NUM_DIRECTIONS);
-				assert orientationPreferences.length == NUM_DIRECTIONS;
-				int orientationPreferenceIndex = StatisticsUtilities.argmax(orientationPreferences);
+				
+				int orientationPreferenceIndex;
+				if(Parameters.parameters.booleanParameter("oneOutputLabelForBlockOrientationCPPN")) { // only one output will be used for the orientation
+					orientationPreferenceIndex = (int) HalfLinearPiecewiseFunction.halfLinear(outputs[OUTPUT_INDEX_PRESENCE+2]) * NUM_DIRECTIONS;
+				} else { // different outputs for each orientation direction will be used
+					double[] orientationPreferences = ArrayUtil.portion(outputs,numBlockTypes + 1, numBlockTypes + NUM_DIRECTIONS);
+					assert orientationPreferences.length == NUM_DIRECTIONS;
+					orientationPreferenceIndex = StatisticsUtilities.argmax(orientationPreferences);	
+				}
 				blockOrientation = Orientation.values()[orientationPreferenceIndex];
 			}
+			
 			Block b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.get(typeIndex), blockOrientation);
 			blocks.add(b);
 		} 
@@ -191,8 +198,14 @@ public interface ShapeGenerator<T> {
 		if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
 			String[] orientationLabels = new String[NUM_DIRECTIONS];
 
-			for(int i = 0; i < orientationLabels.length; i++) {
-				orientationLabels[i] = Orientation.values()[i].toString();
+			if(Parameters.parameters.booleanParameter("oneOutputLabelForBlockOrientationCPPN")) {
+				orientationLabels = new String[1]; // only use one label for block orientation
+				orientationLabels[0] = "Orientation";
+			} else { // orientation label for each direction
+				orientationLabels = new String[NUM_DIRECTIONS];
+				for(int i = 0; i < orientationLabels.length; i++) {
+					orientationLabels[i] = Orientation.values()[i].toString();
+				}
 			}
 
 			labels = ArrayUtil.combineArrays(labels,orientationLabels);
