@@ -27,13 +27,14 @@ public class ChangeCenterOfMassFitnessTest {
 	
 	List<Block> blockSet1;
 	List<Block> blockSet2;
+	List<Block> oscillatingMachine;
 
 	ChangeCenterOfMassFitness ff;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateInCenterOfMass:true"});
-		MinecraftServer.launchServer();
+		//MinecraftServer.launchServer();
 		MinecraftClient.getMinecraftClient();
 	}
 
@@ -48,7 +49,7 @@ public class ChangeCenterOfMassFitnessTest {
 		Thread.sleep(waitTime);
 		
 		MinecraftClient.terminateClientScriptProcess();
-		MinecraftServer.terminateServer();
+		//MinecraftServer.terminateServer();
 	}
 
 	@Test
@@ -101,6 +102,17 @@ public class ChangeCenterOfMassFitnessTest {
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
 		assertEquals(ff.maxFitness(),ff.fitnessScore(cornerBS2),0.0);
 		
+		cornerBS2 = new MinecraftCoordinates(0,5,-1);
+		// Machine that moves back and forth (in the same spot)
+		oscillatingMachine = new ArrayList<>();
+		oscillatingMachine.add(new Block(1,6,1,BlockType.STICKY_PISTON,Orientation.NORTH));
+		oscillatingMachine.add(new Block(1,6,0,BlockType.SLIME,Orientation.NORTH));
+		oscillatingMachine.add(new Block(1,5,1,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		oscillatingMachine.add(new Block(1,5,0,BlockType.SLIME,Orientation.NORTH));
+		
+		// When the time is small (50L) then the score becomes large
+		MinecraftClient.getMinecraftClient().spawnBlocks(oscillatingMachine);
+		assertEquals(47,ff.fitnessScore(cornerBS2),0.5);
 	}
 
 	@Test
