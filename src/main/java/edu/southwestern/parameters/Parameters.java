@@ -372,6 +372,7 @@ public class Parameters {
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("minecraftMandatoryWaitTime", 10000L, "The mandatory amount of time that the block movement fitness function should wait before reading in the corner again");
+		longOptions.add("shortTimeBetweenMinecraftReads", 50L, "The amount of time that change center of mass fitness function waits before reading in the area again");
 
 		// Boolean parameters 
 		booleanOptions.add("steadyStateArchetypeSaving", true, "Steady state evolution updates the NN archetype. Turn off to increase speed, but lose ability to resume from crash.");
@@ -811,9 +812,10 @@ public class Parameters {
 		booleanOptions.add("forceLinearArchiveLayoutInMinecraft", false, "minecraftContainsWholeMAPElitesArchive must be true for this. Generates shape in a linear fashion, as opposed to in 2D or 3D");
 		booleanOptions.add("minecraftChangeCenterOfMassFitness", false, "Calculates the change in position of a shapes center of mass.");
 		booleanOptions.add("NegativeSpaceCountFitness", false, "Tries to maximixe the negative space in a shape that i generated");
-		booleanOptions.add("minecraftAccumulateInCenterOfMass", false, "Adds up the changes in center of mass instead of calculating the difference");
+		booleanOptions.add("minecraftAccumulateChangeInCenterOfMass", false, "Adds up the changes in center of mass instead of calculating the difference");
 		booleanOptions.add("vectorPresenceThresholdForEachBlock", false, "Determines whether the vector presence will be normal, or two times larger");
 		booleanOptions.add("interactWithMapElitesInWorld", true, "Ability to reset or delete map elites in the archive");
+		booleanOptions.add("minecraftEndEvalNoMovement", false, "Change center of mass fitness function ends evaluation of a structure when no movement is detected");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");

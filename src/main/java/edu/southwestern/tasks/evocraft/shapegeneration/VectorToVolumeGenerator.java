@@ -14,20 +14,32 @@ import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
+/**
+ * This shape generator uses vectors to translate double values from an ArrayList into 
+ * corresponding Minecraft block types. Depending on the command line parameters, there can 
+ * be either one, two, or three numbers that correspond to a single block. 
+ * 
+ * @author Alejandro Medina
+ *
+ */
 public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>> {
 	
 	private static double[] upper = null;
 	private static double[] lower = null;
 	private static int numBlocks = 0;
+	private static int numOrientations = 6;
 	
 	public VectorToVolumeGenerator() {
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		
-		if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) numBlocks = 2*(ranges.x() * ranges.y() * ranges.z());
-		else numBlocks = ranges.x() * ranges.y() * ranges.z();
+		int numbersPerBlock = 1; // 1 is the lowest number of numbers corresponding to a block
+		if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) numbersPerBlock++; // evolve orientation is true, number of corresponding numbers per block should be increased by 1
+		if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) numbersPerBlock++; // presence is true, number of corresponding numbers per block should be increased by 1 
+		
+		numBlocks = numbersPerBlock * (ranges.x() * ranges.y() * ranges.z()); // one or more numbers per block depending on command line parameters
 
-		upper = ArrayUtil.doubleSpecified(numBlocks, 1.0);
-		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0);
+		upper = ArrayUtil.doubleSpecified(numBlocks, 1.0); // upper bounds
+		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0); // lower bounds
 	}
 	
 	@Override
@@ -37,7 +49,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 		
 		List<Block> blocks = new ArrayList<Block>();
 		ArrayList<Double> phenotype = genome.getPhenotype();	
-		Orientation blockOrientation = Orientation.NORTH; // all blocks will have orientation of north for now
+		Orientation blockOrientation = Orientation.NORTH; // all blocks will have orientation of north by default
 		int counter= 0; // used to count the number of blocks added
 		int numBlockTypes = blockSet.getPossibleBlocks().length;
 		for(int xi = 0; xi < ranges.x(); xi++) {
@@ -46,22 +58,37 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					//System.out.println(phenotype);
 					Block b = null;
 					
-					// Increment by 2 instead of one since two numbers correspond to 1 block
+					// there woll either be two or three numbers corresponding to 1 block depending on if orientation is being evolved
 					if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) {
 						final int PRESENCE_INDEX = counter;
 						final int TYPE_INDEX = counter+1;
+						
 						if(phenotype.get(PRESENCE_INDEX) >= Parameters.parameters.doubleParameter("voxelExpressionThreshold")) {
 							int blockTypeIndex = (int)(phenotype.get(TYPE_INDEX)*numBlockTypes); // length because there are no AIR blocks in list for this case (presence takes care of this)		
 							if(blockTypeIndex == numBlockTypes) blockTypeIndex--; // Rare case
+							
+							if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
+								final int ORIENTATION_INDEX = counter+2;
+								blockOrientation = Orientation.values()[(int) (phenotype.get(ORIENTATION_INDEX) * numOrientations)];
+								counter++; // increase counter because there are three numbers per block in this case
+							}
+								
 							b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 						} // else do not place any block
-						counter+=2; // two numbers per block
-					} else { 
+						counter+=2; // two numbers per block (unless evolve orientation is true)
+					} else { // there will either be one or two numbers per block depending on if orientation is being evolved
 						int blockTypeIndex = (int)(phenotype.get(counter)*(numBlockTypes+1)); // length+1 because there could be airblocks
 						if(blockTypeIndex != numBlockTypes) { // Corresponds to empty/AIR block
+							
+							if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
+								final int ORIENTATION_INDEX = counter+1;
+								blockOrientation = Orientation.values()[(int) (phenotype.get(ORIENTATION_INDEX) * numOrientations)];
+								counter++; // increase counter because there are two numbers per block in this case
+							}
+							
 							b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.getPossibleBlocks()[blockTypeIndex], blockOrientation);
 						}
-						counter++; // one number per block
+						counter++; // one number per block (unless evolve orientation is true)
 					}
 					// Will be null if empty/AIR
 					if(b!=null) blocks.add(b);
@@ -84,7 +111,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 		int seed = 0;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
-					"base:minecraft", "log:Minecraft-VectorToVolumeTest", "saveTo:VectorToVolumeTest",
+					"base:minecraft", "log:Minecraft-VectorToVolumeTestAllThree", "saveTo:VectorToVolumeTestAllThree",
 					"io:true", "netio:true", 
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
@@ -105,6 +132,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					"vectorPresenceThresholdForEachBlock:true",
 					"voxelExpressionThreshold:0.5",
 					
+					//"minecraftEvolveOrientation:false",
 					
 					
 					
@@ -116,7 +144,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100",
-					"minecraftXRange:3","minecraftYRange:3","minecraftZRange:5",
+					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:5",
 					"minecraftStopConfinedSnakes:true",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", 

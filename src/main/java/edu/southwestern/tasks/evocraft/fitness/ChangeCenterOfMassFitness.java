@@ -68,11 +68,12 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		//System.out.println(initialCenterOfMass);
 
 		boolean stop = false;
-		long timeElapsed = 0l;
+		
+		long startTime = System.currentTimeMillis();
 		// Wait for the machine to move some (if at all)
 		while(!stop) {
 
-			long shortWaitTime = 5000L;
+			long shortWaitTime = Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads");
 			try {
 				Thread.sleep(shortWaitTime);
 			} catch (InterruptedException e) {
@@ -81,7 +82,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				System.exit(1);
 			}
 			// Should we check the actual time? Or is this fine?
-			timeElapsed += shortWaitTime;
+//			timeElapsed += shortWaitTime;
 
 
 			List<Block> shortWaitTimeUpdate = filterOutAirDirtGrass(MinecraftClient.getMinecraftClient().readCube(corner,end));
@@ -90,21 +91,17 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 				return maxFitness();
 			}
 			Vertex nextCenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
-			//			temp = totalChangeVertex;
-			//			System.out.println("First update (before add)" + temp);
-			//			totalChangeVertex = totalChangeVertex.add(x1CenterOfMass);
-			//			System.out.println("First update (after add)" + totalChangeVertex);
-			//			totalChangeDistance = totalChangeVertex.distance(temp);
-			//			System.out.println("First update total distance" + totalChangeDistance);
-			if(lastCenterOfMass.equals(nextCenterOfMass)) {
+			//System.out.println("Does last equals next? " + lastCenterOfMass + " and " + nextCenterOfMass);
+			if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && lastCenterOfMass.equals(nextCenterOfMass)) {
 				// This means that it hasn't moved, so move on to the next.
 				// BUT What if it moves back and forth and returned to its original position?
+				//System.out.println("Detected no movement");
 				totalChangeDistance = 0;
 				stop = true;
 			} else {
 				totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
 				lastCenterOfMass = nextCenterOfMass;
-				if(timeElapsed > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
+				if(System.currentTimeMillis() - startTime > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
 					stop = true;
 				}
 			}
@@ -112,7 +109,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 		double changeInPosition = lastCenterOfMass.distance(initialCenterOfMass);
 		assert !Double.isNaN(changeInPosition) : "Before: " + filterOutAirDirtGrass(blocks);
-		if(Parameters.parameters.booleanParameter("minecraftAccumulateInCenterOfMass")) return totalChangeDistance;
+		if(Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) return totalChangeDistance;
 		else return changeInPosition;
 	}
 
@@ -153,7 +150,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		int seed = 1;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
-					"base:minecraft", "log:Minecraft-MAPElitesWHDFlyingMachineBig", "saveTo:MAPElitesWHDFlyingMachineBig",
+					"base:minecraft", "log:Minecraft-MAPElitesCountNegativeAccumulateChange", "saveTo:MAPElitesCountNegativeAccumulateChange",
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					"io:true", "netio:true",
@@ -163,22 +160,25 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
 					//"minecraftTypeCountFitness:true",
 					"minecraftChangeCenterOfMassFitness:true",
+					"minecraftAccumulateChangeInCenterOfMass:false",
+					"shortTimeBetweenMinecraftReads:500",
 					"minecraftMandatoryWaitTime:1000",
 					//"minecraftDiversityBlockFitness:true",
 					//"minecraftTypeTargetFitness:true", 
 					//"minecraftDesiredBlockCount:40",
 					//"minecraftOccupiedCountFitness:true",
 					//"minecraftEvolveOrientation:true",
-					"minecraftRedirectConfinedSnakes:true",
+					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true", 
 					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
+					//"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountEmptyCountBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
 					"spaceBetweenMinecraftShapes:10","parallelMAPElitesInitialize:true",
 					//"minecraftXRange:9","minecraftYRange:9","minecraftZRange:9",
-					"minecraftXRange:6","minecraftYRange:4","minecraftZRange:6",
+					"minecraftXRange:3","minecraftYRange:3","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
