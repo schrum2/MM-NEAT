@@ -813,6 +813,7 @@ public class Parameters {
 		booleanOptions.add("NegativeSpaceCountFitness", false, "Tries to maximixe the negative space in a shape that i generated");
 		booleanOptions.add("minecraftAccumulateInCenterOfMass", false, "Adds up the changes in center of mass instead of calculating the difference");
 		booleanOptions.add("vectorPresenceThresholdForEachBlock", false, "Determines whether the vector presence will be normal, or two times larger");
+		booleanOptions.add("interactWithMapElitesInWorld", true, "Ability to reset or delete map elites in the archive");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
