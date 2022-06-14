@@ -13,6 +13,7 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
+import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.ThreeDimensionalUtil;
@@ -89,16 +90,16 @@ public interface ShapeGenerator<T> {
 	
 			Orientation blockOrientation = Orientation.NORTH; // default orientation is North
 			if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")){
-				
+				int numOrientations = MinecraftUtilClass.getnumOrientationDirections(); // will either be 2 or 6
 				int orientationPreferenceIndex;
 				if(Parameters.parameters.booleanParameter("oneOutputLabelForBlockOrientationCPPN")) { // only one output will be used for the orientation
-					orientationPreferenceIndex = (int) HalfLinearPiecewiseFunction.halfLinear(outputs[OUTPUT_INDEX_PRESENCE+2]) * NUM_DIRECTIONS;
+					orientationPreferenceIndex = (int) HalfLinearPiecewiseFunction.halfLinear(outputs[OUTPUT_INDEX_PRESENCE+2]) * numOrientations;
 				} else { // different outputs for each orientation direction will be used
-					double[] orientationPreferences = ArrayUtil.portion(outputs,numBlockTypes + 1, numBlockTypes + NUM_DIRECTIONS);
-					assert orientationPreferences.length == NUM_DIRECTIONS;
+					double[] orientationPreferences = ArrayUtil.portion(outputs,numBlockTypes + 1, numBlockTypes + numOrientations);
+					assert orientationPreferences.length == numOrientations;
 					orientationPreferenceIndex = StatisticsUtilities.argmax(orientationPreferences);	
 				}
-				blockOrientation = Orientation.values()[orientationPreferenceIndex];
+				blockOrientation = MinecraftUtilClass.getOrientations()[orientationPreferenceIndex];
 			}
 			
 			Block b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.get(typeIndex), blockOrientation);
