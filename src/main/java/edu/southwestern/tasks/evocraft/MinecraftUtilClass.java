@@ -67,4 +67,32 @@ public class MinecraftUtilClass {
 		// End coordinate is based on buffer distance. Then shape is cleared
 		return bufferDist.add(getRanges());
 	}
+	
+	/**
+	 * Overloaded method. Takes 6 ints and makes them into minecraft coordinates to call volume
+	 * 
+	 * @param xmin Minimal x coordinate. xmin <= xmax
+	 * @param ymin Minimal y coordinate. ymin <= ymax
+	 * @param zmin Minimal z coordinate. zmin <= zmax
+	 * @param xmax Maximal x coordinate
+	 * @param ymax Maximal y coordinate
+	 * @param zmax Maximal z coordinate
+	 */
+	public static void volume(int xmin, int ymin, int zmin, int xmax, int ymax, int zmax) {
+		MinecraftCoordinates max = new MinecraftCoordinates(xmax,ymax,zmax);
+		MinecraftCoordinates min = new MinecraftCoordinates(xmin,ymin,zmin);
+		volume(min,max);
+	}
+	
+	/**
+	 * Computes the volume of two minecraft coordinates
+	 * 
+	 * @param min Coordinate containing the min values
+	 * @param max Coordinate containing the min values
+	 * @return The volume computed from these values
+	 */
+	public static int volume(MinecraftCoordinates min, MinecraftCoordinates max) {
+		int volume = (max.x()-min.x()+1)*(max.y()-min.y()+1)*(max.z()-min.z()+1);
+		return volume;
+	}
 }
