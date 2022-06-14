@@ -14,6 +14,14 @@ import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.util.datastructures.ArrayUtil;
 
+/**
+ * This shape generator uses vectors to translate double values from an ArrayList into 
+ * corresponding Minecraft block types. Depending on the command line parameters, there can 
+ * be either one, two, or three numbers that correspond to a single block. 
+ * 
+ * @author Alejandro Medina
+ *
+ */
 public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>> {
 	
 	private static double[] upper = null;
@@ -23,11 +31,11 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 	public VectorToVolumeGenerator() {
 		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
 		
-		if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) numBlocks = 2*(ranges.x() * ranges.y() * ranges.z());
-		else numBlocks = ranges.x() * ranges.y() * ranges.z();
+		if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) numBlocks = 2*(ranges.x() * ranges.y() * ranges.z()); // two numbers per block
+		else numBlocks = ranges.x() * ranges.y() * ranges.z(); // one number per block
 
-		upper = ArrayUtil.doubleSpecified(numBlocks, 1.0);
-		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0);
+		upper = ArrayUtil.doubleSpecified(numBlocks, 1.0); // upper bounds
+		lower = ArrayUtil.doubleSpecified(numBlocks, 0.0); // lower bounds
 	}
 	
 	@Override

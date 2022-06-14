@@ -372,6 +372,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				trainImageAutoEncoderAndSetLossBounds(outputAutoEncoderFile, trainingDataDirectory, evaluatedPopulation);
 				System.out.println("Initial occupancy: "+ this.archive.getNumberOfOccupiedBins());
 			} else {
+				
+				//long startTime = System.currentTimeMillis();
+				
 				// Clears space for incoming archive
 				boolean minecraftInit = archive.getBinMapping() instanceof MinecraftMAPElitesBinLabels && Parameters.parameters.booleanParameter("minecraftContainsWholeMAPElitesArchive");
 				//final int xRange = Parameters.parameters.integerParameter("minecraftXRange");
@@ -411,6 +414,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 						}
 					}
 				});
+				//long endTime = System.currentTimeMillis();
+				//System.out.println("TIME TAKEN:" + (endTime - startTime));
+				
+				
 			}
 		}
 	}
