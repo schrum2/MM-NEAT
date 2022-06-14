@@ -7,6 +7,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 
 /**
  * Some commonly used methods for dealing with the Minecraft world
@@ -110,5 +111,21 @@ public class MinecraftUtilClass {
 	 */
 	public static List<Block> filterOutBlock(List<Block> blocks, BlockType type) {
 		return blocks.stream().filter(b -> b.type() != type.ordinal()).collect(Collectors.toList());
+
+	/** This static method will either return a restricted array of orientations, or
+	 * it will return an array of orientations with all 6 orientations.
+	 * 
+	 * @return Array of orientations used for shape generation
+	 */
+	public static Orientation[] getOrientations() {
+		Orientation[] orientations;
+		if(Parameters.parameters.booleanParameter("minecraftNorthSouthOnly")) { // only use north and south orientations
+			orientations = new Orientation[2];
+			orientations[0] = Orientation.NORTH;
+			orientations[1] = Orientation.SOUTH;
+		} else { // use normal orientation array
+			orientations = Orientation.values();
+		}
+		return orientations;
 	}
 }
