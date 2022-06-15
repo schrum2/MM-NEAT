@@ -90,19 +90,20 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					// Loop as long as evolution is running
 					while(true) {
 						@SuppressWarnings("unchecked")
-						Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[blocksToMonitor.size()];
+						Triple<MinecraftCoordinates,MinecraftCoordinates,Integer>[] currentElements = new Triple[blocksToMonitor.size()];
 						currentElements = blocksToMonitor.toArray(currentElements);
 
-						for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
+						// t1 is the diamond blocks, t2 is the emerald, and t3 is the 1D index
+						for(Triple<MinecraftCoordinates,MinecraftCoordinates,Integer> pair : currentElements) {
 							// Initial check
 							if(MinecraftClient.getMinecraftClient().readCube(pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
 								synchronized(blocksToMonitor) {
 									// Verify that it is actually missing
 									if(MinecraftClient.getMinecraftClient().readCube(pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
-										//System.out.println("--------------------------");
-										//System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t1,pair.t1));
+										System.out.println("--------------------------");
+										System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t1,pair.t1)); // Fix, overloaded method
 										@SuppressWarnings("unchecked")
-										Score<T> s = MMNEAT.getArchive().getElite(pair.t2);
+										Score<T> s = MMNEAT.getArchive().getElite(pair.t3);
 
 										placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 									}
