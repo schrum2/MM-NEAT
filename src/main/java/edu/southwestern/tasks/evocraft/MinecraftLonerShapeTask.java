@@ -55,7 +55,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	// Each diamond block refers to one shape, and the int is the associated 1D archive index
 	private static Set<Triple<MinecraftCoordinates,MinecraftCoordinates,Integer>> blocksToMonitor = new HashSet<>();
 	private static Thread interactionThread;
-	private int highestFitness;
+	private static double highestFitness;
+	private static Set<Pair<MinecraftCoordinates,Integer>> championCoords = new HashSet<>();
 
 	public MinecraftLonerShapeTask() 	{
 		/**
@@ -70,7 +71,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 		// Creates a new blocking queue to use with parallelism
 		coordinateQueue = new ArrayBlockingQueue<>(Parameters.parameters.integerParameter("parallelMinecraftSlots"));
+		
 		highestFitness=0;
+		championCoords = new HashSet<Pair<MinecraftCoordinates,Integer>>();
+		
 		// Generates the corners for all of the shapes and then adds them into the blocking queue
 		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelMinecraftSlots"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),MinecraftUtilClass.getRanges());
 		for(MinecraftCoordinates corner : parallelShapeCorners) {
@@ -207,7 +211,15 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			if(forcePlacement || scoreOfCurrentElite > scoreOfPreviousElite) {
 				clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
 			}
-			
+			if(scoreOfPreviousElite>=highestFitness) {
+				Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
+				
+				List<Block> champions = new ArrayList<>();
+				MinecraftCoordinates goldBlock = corners.t2.add(new MinecraftCoordinates(-1, ranges.y(),-1));
+				champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
+				MinecraftClient.getMinecraftClient().spawnBlocks(champions);
+				highestFitness= scoreOfPreviousElite;
+			}
 		}
 	}
 
