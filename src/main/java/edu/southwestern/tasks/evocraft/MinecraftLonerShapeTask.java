@@ -85,6 +85,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) {
 			blocksToMonitor = Collections.synchronizedSet(new HashSet<Triple<MinecraftCoordinates,MinecraftCoordinates,Integer>>());
 			interactionThread = new Thread() {
+				@SuppressWarnings("unchecked")
 				@Override
 				public void run() {
 					// Loop as long as evolution is running
@@ -95,7 +96,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 						// t1 is the diamond blocks, t2 is the emerald, and t3 is the 1D index
 						for(Triple<MinecraftCoordinates,MinecraftCoordinates,Integer> pair : currentElements) {
+							// RENAME pair <- remove this item from SET when emerald is broken
+							
+							
 							// Initial check
+							// Read here
+							
 							if(MinecraftClient.getMinecraftClient().readCube(pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK || 
 							   MinecraftClient.getMinecraftClient().readCube(pair.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
 								synchronized(blocksToMonitor) {
@@ -114,8 +120,20 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 										System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t2)); 
 //										@SuppressWarnings("unchecked")
 //										Score<T> s = MMNEAT.getArchive().getElite(pair.t3);
+										int oneDIndex = pair.t3;
+
 										
-										((MAPElites<T>) MMNEAT.ea).getArchive().removeElite(pair.t3);
+										
+										// CALL AND USE
+										//Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
+										
+										
+										
+										MinecraftCoordinates tempCoord = pair.t2.sub(new MinecraftCoordinates(MinecraftUtilClass.getRanges().x()+1,0,0));
+										clearBlocksInArchive(MinecraftUtilClass.getRanges(),tempCoord);
+										((MAPElites<T>) MMNEAT.ea).getArchive().removeElite(oneDIndex);
+										blocksToMonitor.remove(pair);
+										System.out.println("deleted");
 									}
 									
 									
