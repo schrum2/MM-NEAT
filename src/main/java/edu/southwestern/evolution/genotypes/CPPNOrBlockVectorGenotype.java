@@ -37,7 +37,13 @@ public class CPPNOrBlockVectorGenotype extends EitherOrGenotype<TWEANN,ArrayList
 	//@SuppressWarnings("unchecked")
 	@Override
 	public void mutate() {
-		// TODO: mutate method
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.getId());
+		sb.append(" ");
+		
+		// TODO: create new mutate type ConvertMinecraftCPPNtoBlockVectorMutation
+		
+		super.mutate();
 	}
 	
 	@SuppressWarnings("rawtypes")
