@@ -85,22 +85,26 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 
 			List<Block> shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
+			//System.out.println("Short wait time Update list: " + shortWaitTimeUpdate);
 			if(shortWaitTimeUpdate.isEmpty()) {
 				// Ship flew so far away that we award max fitness
 				return maxFitness();
 			}
 			Vertex nextCenterOfMass = getCenterOfMass(shortWaitTimeUpdate);
+			//System.out.println("Next COM: "+nextCenterOfMass);
 			//System.out.println("Does last equals next? " + lastCenterOfMass + " and " + nextCenterOfMass);
 			if(Parameters.parameters.booleanParameter("minecraftEndEvalNoMovement") && lastCenterOfMass.equals(nextCenterOfMass)) {
 				// This means that it hasn't moved, so move on to the next.
 				// BUT What if it moves back and forth and returned to its original position?
 				//System.out.println("Detected no movement");
-				totalChangeDistance = 0;
+				//System.out.println("Not moving, next");
 				stop = true;
 			} else {
 				totalChangeDistance += lastCenterOfMass.distance(nextCenterOfMass);
+				//System.out.println("After adding: "+totalChangeDistance);
 				lastCenterOfMass = nextCenterOfMass;
 				if(System.currentTimeMillis() - startTime > Parameters.parameters.longParameter("minecraftMandatoryWaitTime")) {
+					//System.out.println("Next structure");
 					stop = true;
 				}
 			}

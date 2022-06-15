@@ -13,6 +13,7 @@ import org.junit.Test;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient;
 import edu.southwestern.tasks.evocraft.MinecraftServer;
+import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
@@ -33,8 +34,8 @@ public class ChangeCenterOfMassFitnessTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true"});
-		MinecraftServer.launchServer();
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 150L});
+		//MinecraftServer.launchServer();
 		MinecraftClient.getMinecraftClient();
 	}
 
@@ -49,11 +50,12 @@ public class ChangeCenterOfMassFitnessTest {
 		Thread.sleep(waitTime);
 		
 		MinecraftClient.terminateClientScriptProcess();
-		MinecraftServer.terminateServer();
+		//MinecraftServer.terminateServer();
 	}
 
+	// Passes
 	@Test
-	public void testFitnessScoreMinecraftCoordinates() {
+	public void testStagnantStructureQuickly() {
 		// Small list of blocks that don't move
 		// Should have a fitness of 0
 		blockSet1 = new ArrayList<>();
@@ -68,51 +70,91 @@ public class ChangeCenterOfMassFitnessTest {
 		
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS1, ranges, 1, 100); // Larger buffer is important
 		
+	}
+	
+	// Passes
+	@Test
+	public void testChangeInTotalDistance() {
+	
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L});
+		
 		// List of flying machine blocks that should move
 		// Not really sure what the fitness would be after 10 seconds
 		blockSet2 = new ArrayList<>();
 		// Bottom layer
-		blockSet2.add(new Block(1,5,1,BlockType.PISTON,Orientation.NORTH));
-		blockSet2.add(new Block(1,5,0,BlockType.SLIME,Orientation.NORTH));
-		blockSet2.add(new Block(1,5,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
-		blockSet2.add(new Block(1,5,-2,BlockType.PISTON,Orientation.NORTH));
-		blockSet2.add(new Block(1,5,-4,BlockType.SLIME,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,1,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
+		blockSet2.add(new Block(1,11,-2,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,-4,BlockType.SLIME,Orientation.NORTH));
 		// Top layer
-		blockSet2.add(new Block(1,6,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
-		blockSet2.add(new Block(1,6,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		blockSet2.add(new Block(1,12,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		blockSet2.add(new Block(1,12,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
 		// Activate
-		blockSet2.add(new Block(1,6,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
-		
-		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,5,-5);
-		
+		blockSet2.add(new Block(1,12,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
+
+		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
+
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
-		
+
 		// Since it is moving out completely, and all the ranges are the same value (10)
 		// That means the max fitness is 10 + 6 / 2 = 8
 		// However, the movement speed of the flying machine depends on the speed of the independently
 		// executing Minecraft server, which is subject to variation. The main point is that the ship
 		// flies for a bit, but the exact amount is hard to pin down. Thus, we only assert that the amount
 		// is 6.0 or more
-		System.out.println(ff.fitnessScore(cornerBS2));
+		//System.out.println("Fitness for the blockSet 2: "+ ff.fitnessScore(cornerBS2));
 		assertTrue(6.0 <= ff.fitnessScore(cornerBS2));
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 0);
+	}
+	
+	// Passes
+	@Test
+	public void testChangeInPosition() {
 		
-		// Test to see if the max fitness is awarded when all the 
-		// blocks move out of the area
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:false","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 1000L});
+		
+		// List of flying machine blocks that should move
+		// Not really sure what the fitness would be after 10 seconds
+		blockSet2 = new ArrayList<>();
+		// Bottom layer
+		blockSet2.add(new Block(1,11,1,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,-1,BlockType.STICKY_PISTON,Orientation.SOUTH));
+		blockSet2.add(new Block(1,11,-2,BlockType.PISTON,Orientation.NORTH));
+		blockSet2.add(new Block(1,11,-4,BlockType.SLIME,Orientation.NORTH));
+		// Top layer
+		blockSet2.add(new Block(1,12,0,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		blockSet2.add(new Block(1,12,-4,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		// Activate
+		blockSet2.add(new Block(1,12,-1,BlockType.QUARTZ_BLOCK,Orientation.NORTH));
+
+		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
+
 		MinecraftClient.getMinecraftClient().spawnBlocks(blockSet2);
-		assertEquals(ff.maxFitness(),ff.fitnessScore(cornerBS2),0.0);
+		//System.out.println("Second flying machine fitness: " + ff.fitnessScore(cornerBS2));
+		assertTrue(ff.maxFitness() <= ff.fitnessScore(cornerBS2));
 		
-		cornerBS2 = new MinecraftCoordinates(0,5,-1);
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 0);
+	}
+	
+	@Test
+	public void testOscillatingMachine() {
+		
+		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6","minecraftAccumulateChangeInCenterOfMass:true","minecraftEndEvalNoMovement:true","shortTimeBetweenMinecraftReads:" + 100L});
+		
+		MinecraftCoordinates cornerBS2 = new MinecraftCoordinates(0,11,-5);
 		// Machine that moves back and forth (in the same spot)
 		oscillatingMachine = new ArrayList<>();
-		oscillatingMachine.add(new Block(1,6,1,BlockType.STICKY_PISTON,Orientation.NORTH));
-		oscillatingMachine.add(new Block(1,6,0,BlockType.SLIME,Orientation.NORTH));
-		oscillatingMachine.add(new Block(1,5,1,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
-		oscillatingMachine.add(new Block(1,5,0,BlockType.SLIME,Orientation.NORTH));
-		
+		oscillatingMachine.add(new Block(1,12,1,BlockType.STICKY_PISTON,Orientation.NORTH));
+		oscillatingMachine.add(new Block(1,12,0,BlockType.SLIME,Orientation.NORTH));
+		oscillatingMachine.add(new Block(1,11,1,BlockType.REDSTONE_BLOCK,Orientation.NORTH));
+		oscillatingMachine.add(new Block(1,11,0,BlockType.SLIME,Orientation.NORTH));
+
 		// When the time is small (50L) then the score becomes large
 		MinecraftClient.getMinecraftClient().spawnBlocks(oscillatingMachine);
 		assertTrue(47 <= ff.fitnessScore(cornerBS2));
+		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 0);
 	}
 
 	@Test
