@@ -103,22 +103,23 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 								synchronized(blocksToMonitor) {
 									// Verify that it is actually missing
 									if(interactiveBlocks.get(0).type!=BlockType.DIAMOND_BLOCK) {
+										// Gets score and uses it to place to clear and replace the shape
 										@SuppressWarnings("unchecked")
 										Score<T> s = MMNEAT.getArchive().getElite(triple.t3);
-
 										placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 									}
 									
 									if(interactiveBlocks.get(interactiveBlocks.size()-1).type!=BlockType.EMERALD_BLOCK) {
+										// Uses score to clear the correct area
 										@SuppressWarnings("unchecked")
 										Score<T> s = MMNEAT.getArchive().getElite(triple.t3);
 										Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(MinecraftUtilClass.getRanges(), s.MAPElitesBehaviorMap());
 										clearBlocksInArchive(MinecraftUtilClass.getRanges(),corners.t1);
+										
+										//Removes from the archive, and then the set
 										((MAPElites<T>) MMNEAT.ea).getArchive().removeElite(triple.t3);
-										blocksToMonitor.remove(triple); // Removes from set 
+										blocksToMonitor.remove(triple);
 									}
-									
-									
 								}
 							}
 							
