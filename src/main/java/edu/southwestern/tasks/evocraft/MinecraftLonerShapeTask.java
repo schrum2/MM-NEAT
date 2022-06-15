@@ -112,8 +112,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 									if(MinecraftClient.getMinecraftClient().readCube(pair.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
 										System.out.println("--------------------------");
 										System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t2)); 
-										@SuppressWarnings("unchecked")
-										Score<T> s = MMNEAT.getArchive().getElite(pair.t3);
+//										@SuppressWarnings("unchecked")
+//										Score<T> s = MMNEAT.getArchive().getElite(pair.t3);
+										
+										((MAPElites<T>) MMNEAT.ea).getArchive().removeElite(pair.t3);
 									}
 									
 									
