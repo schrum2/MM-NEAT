@@ -202,6 +202,20 @@ public class Archive<T> {
 			return false;
 		}
 	}
+	
+	/**
+	 * Remove an elite from the archive
+	 * @param binIndex 1D index of elite in archive
+	 * @return Element that was removed
+	 */
+	public synchronized Score<T> removeElite(int binIndex) {
+		Score<T> current = archive.get(binIndex);
+		archive.set(binIndex, null);
+		if(current != null) {
+			occupiedBins--;
+		}
+		return current;
+	}
 
 	/**
 	 * Save the candidate to disk since since it replaced the former bin occupant (or was first)
