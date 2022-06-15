@@ -96,22 +96,32 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						// t1 is the diamond blocks, t2 is the emerald, and t3 is the 1D index
 						for(Triple<MinecraftCoordinates,MinecraftCoordinates,Integer> pair : currentElements) {
 							// Initial check
-							if(MinecraftClient.getMinecraftClient().readCube(pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
+							if(MinecraftClient.getMinecraftClient().readCube(pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK || 
+							   MinecraftClient.getMinecraftClient().readCube(pair.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
 								synchronized(blocksToMonitor) {
 									// Verify that it is actually missing
 									if(MinecraftClient.getMinecraftClient().readCube(pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
-										System.out.println("--------------------------");
-										System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t1,pair.t1)); // Fix, overloaded method
+										System.out.println("--------------------------"+pair.t1+"  "+pair.t2);
+										System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t1));
 										@SuppressWarnings("unchecked")
 										Score<T> s = MMNEAT.getArchive().getElite(pair.t3);
 
 										placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 									}
+									
+									if(MinecraftClient.getMinecraftClient().readCube(pair.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
+										System.out.println("--------------------------");
+										System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t2)); 
+										@SuppressWarnings("unchecked")
+										Score<T> s = MMNEAT.getArchive().getElite(pair.t3);
+									}
+									
+									
 								}
 							}
+							
 
-						}
-						
+						}		
 						try {
 							Thread.sleep(Parameters.parameters.integerParameter("interactiveSleepTimer"));
 						} catch (InterruptedException e) {
