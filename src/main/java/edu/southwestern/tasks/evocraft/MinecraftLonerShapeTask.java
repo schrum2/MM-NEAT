@@ -55,6 +55,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	// Each diamond block refers to one shape, and the int is the associated 1D archive index
 	private static Set<Triple<MinecraftCoordinates,MinecraftCoordinates,Integer>> blocksToMonitor = new HashSet<>();
 	private static Thread interactionThread;
+	private int highestFitness;
 
 	public MinecraftLonerShapeTask() 	{
 		/**
@@ -69,7 +70,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 		// Creates a new blocking queue to use with parallelism
 		coordinateQueue = new ArrayBlockingQueue<>(Parameters.parameters.integerParameter("parallelMinecraftSlots"));
-
+		highestFitness=0;
 		// Generates the corners for all of the shapes and then adds them into the blocking queue
 		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelMinecraftSlots"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),MinecraftUtilClass.getRanges());
 		for(MinecraftCoordinates corner : parallelShapeCorners) {
@@ -206,6 +207,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			if(forcePlacement || scoreOfCurrentElite > scoreOfPreviousElite) {
 				clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
 			}
+			
 		}
 	}
 
@@ -447,7 +449,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
 					"spaceBetweenMinecraftShapes:3","parallelMAPElitesInitialize:false",
-					"minecraftXRange:3","minecraftYRange:3","minecraftZRange:3",
+					"minecraftXRange:4","minecraftYRange:4","minecraftZRange:3",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
