@@ -98,12 +98,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						for(Triple<MinecraftCoordinates,MinecraftCoordinates,Integer> triple : currentElements) {
 							// Initial check
 							// Read here
-							
-							if(MinecraftClient.getMinecraftClient().readCube(triple.t1).get(0).type!=BlockType.DIAMOND_BLOCK || 
-							   MinecraftClient.getMinecraftClient().readCube(triple.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
+							ArrayList<Block> interactiveBlocks = MinecraftClient.getMinecraftClient().readCube(triple.t1,triple.t2);
+							if(interactiveBlocks.get(0).type!=BlockType.DIAMOND_BLOCK || 
+							   interactiveBlocks.get(interactiveBlocks.size()-1).type!=BlockType.EMERALD_BLOCK) {
 								synchronized(blocksToMonitor) {
 									// Verify that it is actually missing
-									if(MinecraftClient.getMinecraftClient().readCube(triple.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
+									if(interactiveBlocks.get(0).type!=BlockType.DIAMOND_BLOCK) {
 										System.out.println("--------------------------"+triple.t1+"  "+triple.t2);
 										System.out.println(MinecraftClient.getMinecraftClient().readCube(triple.t1));
 										@SuppressWarnings("unchecked")
@@ -112,14 +112,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 										placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 									}
 									
-									if(MinecraftClient.getMinecraftClient().readCube(triple.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
+									if(interactiveBlocks.get(interactiveBlocks.size()-1).type!=BlockType.EMERALD_BLOCK) {
 										System.out.println("--------------------------");
 										System.out.println(MinecraftClient.getMinecraftClient().readCube(triple.t2)); 
 										@SuppressWarnings("unchecked")
 										Score<T> s = MMNEAT.getArchive().getElite(triple.t3);
-
 										Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(MinecraftUtilClass.getRanges(), s.MAPElitesBehaviorMap());
-
 										clearBlocksInArchive(MinecraftUtilClass.getRanges(),corners.t1);
 										((MAPElites<T>) MMNEAT.ea).getArchive().removeElite(triple.t3);
 										blocksToMonitor.remove(triple); // Removes from set 
@@ -454,7 +452,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
 					"spaceBetweenMinecraftShapes:3","parallelMAPElitesInitialize:false",
-					"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5",
+					"minecraftXRange:3","minecraftYRange:3","minecraftZRange:3",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
