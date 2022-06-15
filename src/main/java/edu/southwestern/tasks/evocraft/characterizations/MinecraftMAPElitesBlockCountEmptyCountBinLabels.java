@@ -73,7 +73,7 @@ public class MinecraftMAPElitesBlockCountEmptyCountBinLabels extends MinecraftMA
 		int seed = 1;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
-					"base:minecraft", "log:Minecraft-MAPElitesCountEmptyFlyingMachine", "saveTo:MAPElitesCountEmptyFlyingMachine",
+					"base:minecraft", "log:Minecraft-MAPElitesCountEmptyFlyingMachineVectorNS", "saveTo:MAPElitesCountEmptyFlyingMachineVectorNS",
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					"io:true", "netio:true",
@@ -88,6 +88,7 @@ public class MinecraftMAPElitesBlockCountEmptyCountBinLabels extends MinecraftMA
 					//"minecraftDesiredBlockCount:40",
 					//"minecraftOccupiedCountFitness:true",
 					"minecraftEvolveOrientation:true",
+					"minecraftNorthSouthOnly:true",
 					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true", 
 					//"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
@@ -98,9 +99,15 @@ public class MinecraftMAPElitesBlockCountEmptyCountBinLabels extends MinecraftMA
 					//FOR TESTING
 					"spaceBetweenMinecraftShapes:8","parallelMAPElitesInitialize:false",
 					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:5",
-					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
+					//"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
+					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
+					"vectorPresenceThresholdForEachBlock:true",
+					"voxelExpressionThreshold:0.5",
+					"genotype:edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype",
+					"netChangeActivationRate:0.0",
+					
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
-					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
+					"ftype:0", "watch:false", "cleanFrequency:-1",
 					"recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false",
 					"includeFullSigmoidFunction:true", "includeFullGaussFunction:true", "includeCosineFunction:true", 
 					"includeGaussFunction:false", "includeIdFunction:true", "includeTriangleWaveFunction:false", 
