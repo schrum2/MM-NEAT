@@ -232,8 +232,18 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				}
 				else if(scoreOfCurrentElite>highestFitness) {
 					System.out.println("Different, clearing out");
+					Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
+					currentElements = championCoords.toArray(currentElements);
+
+					
+					
+					for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
+						champions.add(new Block(pair.t1,BlockType.AIR, Orientation.WEST));
+						System.out.println(championCoords.size());
+					}
 					championCoords.clear();
 					championCoords.add(new Pair<>(goldBlock,index1D));
+					MinecraftClient.getMinecraftClient().spawnBlocks(champions);
 					champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
 				}
 				MinecraftClient.getMinecraftClient().spawnBlocks(champions);
