@@ -12,6 +12,14 @@ import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.file.Serialization;
 
+/**
+ * Launch a single elite from MAP Elites and observe it. This is launched by
+ * the postMAPElitesWatch.bat batch file.
+ * 
+ * @author schrum2
+ *
+ * @param <T>
+ */
 public class ExploreMAPElitesExperiment<T> implements Experiment {
 	
 	private Genotype<T> genotype;
@@ -38,7 +46,6 @@ public class ExploreMAPElitesExperiment<T> implements Experiment {
 
 	@Override
 	public boolean shouldStop() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 

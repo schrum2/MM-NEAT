@@ -27,11 +27,13 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
+import edu.southwestern.tasks.evocraft.blocks.MachineBlockSet;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBinLabels;
 import edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels;
 import edu.southwestern.tasks.evocraft.fitness.CheckBlocksInSpaceFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
 
 /**
  * MAPElites only works with LonerTasks because it is a steady-state algorithm.
@@ -51,7 +53,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	private static ArrayList<MinecraftCoordinates> parallelShapeCorners;
 	private BlockingQueue<MinecraftCoordinates> coordinateQueue;
 	// Each diamond block refers to one shape, and the int is the associated 1D archive index
-	private static Set<Pair<MinecraftCoordinates,Integer>> diamondBlocksToMonitor = new HashSet<>();
+	private static Set<Triple<MinecraftCoordinates,MinecraftCoordinates,Integer>> blocksToMonitor = new HashSet<>();
 	private static Thread interactionThread;
 
 	public MinecraftLonerShapeTask() 	{
@@ -81,34 +83,55 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		}
 
 		if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) {
-			diamondBlocksToMonitor = Collections.synchronizedSet(new HashSet<Pair<MinecraftCoordinates,Integer>>());
+			blocksToMonitor = Collections.synchronizedSet(new HashSet<Triple<MinecraftCoordinates,MinecraftCoordinates,Integer>>());
 			interactionThread = new Thread() {
+				@SuppressWarnings("unchecked")
 				@Override
 				public void run() {
 					// Loop as long as evolution is running
 					while(true) {
 						@SuppressWarnings("unchecked")
-						Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[diamondBlocksToMonitor.size()];
-						currentElements = diamondBlocksToMonitor.toArray(currentElements);
+						Triple<MinecraftCoordinates,MinecraftCoordinates,Integer>[] currentElements = new Triple[blocksToMonitor.size()];
+						currentElements = blocksToMonitor.toArray(currentElements);
 
-						for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
+						// t1 is the diamond blocks, t2 is the emerald, and t3 is the 1D index
+						for(Triple<MinecraftCoordinates,MinecraftCoordinates,Integer> triple : currentElements) {
 							// Initial check
-							if(MinecraftClient.getMinecraftClient().readCube(pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
-								synchronized(diamondBlocksToMonitor) {
+							// Read here
+							
+							if(MinecraftClient.getMinecraftClient().readCube(triple.t1).get(0).type!=BlockType.DIAMOND_BLOCK || 
+							   MinecraftClient.getMinecraftClient().readCube(triple.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
+								synchronized(blocksToMonitor) {
 									// Verify that it is actually missing
-									if(MinecraftClient.getMinecraftClient().readCube(pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
-										//System.out.println("--------------------------");
-										//System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t1,pair.t1));
+									if(MinecraftClient.getMinecraftClient().readCube(triple.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
+										System.out.println("--------------------------"+triple.t1+"  "+triple.t2);
+										System.out.println(MinecraftClient.getMinecraftClient().readCube(triple.t1));
 										@SuppressWarnings("unchecked")
-										Score<T> s = MMNEAT.getArchive().getElite(pair.t2);
+										Score<T> s = MMNEAT.getArchive().getElite(triple.t3);
 
 										placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 									}
+									
+									if(MinecraftClient.getMinecraftClient().readCube(triple.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
+										System.out.println("--------------------------");
+										System.out.println(MinecraftClient.getMinecraftClient().readCube(triple.t2)); 
+										@SuppressWarnings("unchecked")
+										Score<T> s = MMNEAT.getArchive().getElite(triple.t3);
+
+										Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(MinecraftUtilClass.getRanges(), s.MAPElitesBehaviorMap());
+
+										clearBlocksInArchive(MinecraftUtilClass.getRanges(),corners.t1);
+										((MAPElites<T>) MMNEAT.ea).getArchive().removeElite(triple.t3);
+										blocksToMonitor.remove(triple); // Removes from set 
+										System.out.println("deleted");
+									}
+									
+									
 								}
 							}
+							
 
-						}
-						
+						}		
 						try {
 							Thread.sleep(Parameters.parameters.integerParameter("interactiveSleepTimer"));
 						} catch (InterruptedException e) {
@@ -209,7 +232,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		
 		List<Block> blocks = null;
 		Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
-		synchronized(diamondBlocksToMonitor) {
+		synchronized(blocksToMonitor) {
 
 			// Clears old shape if there was one
 			Pair<MinecraftCoordinates,MinecraftCoordinates> cleared = clearBlocksInArchive(ranges, corners.t1);
@@ -225,9 +248,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) {
 					List<Block> interactive = new ArrayList<>();
 					MinecraftCoordinates diamondBlock = corners.t2.sub(new MinecraftCoordinates(1,1,1));
-					diamondBlocksToMonitor.add(new Pair<>(diamondBlock,index1D));
 					interactive.add(new Block(diamondBlock,BlockType.DIAMOND_BLOCK, Orientation.WEST));
-					interactive.add(new Block(corners.t2.add(new MinecraftCoordinates(MinecraftUtilClass.getRanges().x(),-1,-1)),BlockType.EMERALD_BLOCK, Orientation.WEST));
+					MinecraftCoordinates emeraldBlock = corners.t2.add(new MinecraftCoordinates(MinecraftUtilClass.getRanges().x(),-1,-1));
+					interactive.add(new Block(emeraldBlock,BlockType.EMERALD_BLOCK, Orientation.WEST));
+					blocksToMonitor.add(new Triple<>(diamondBlock,emeraldBlock,index1D));
 					MinecraftClient.getMinecraftClient().spawnBlocks(interactive);
 				}
 
@@ -235,7 +259,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 				double testScore = 0;
 				MinecraftCoordinates testCorner = null;
-				assert !(((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0) instanceof CheckBlocksInSpaceFitness) || MinecraftShapeTask.qualityScore(new double[] {testScore = ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2)}) == ((Double) behaviorCharacteristics.get("binScore")).doubleValue() : 
+				assert !(((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0) instanceof CheckBlocksInSpaceFitness && !(MMNEAT.blockSet instanceof MachineBlockSet)) || MinecraftShapeTask.qualityScore(new double[] {testScore = ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).fitnessScore(testCorner = configureStartPosition(ranges, behaviorCharacteristics).t2)}) == ((Double) behaviorCharacteristics.get("binScore")).doubleValue() : 
 					individual.getId() + ":" + testCorner + ":" + behaviorCharacteristics + ":testScore="+testScore+":\n" + ((MinecraftLonerShapeTask<T>) MMNEAT.task).internalMinecraftShapeTask.fitnessFunctions.get(0).getClass().getSimpleName() + ":\n" + blocks;
 				assert !(MMNEAT.getArchiveBinLabelsClass() instanceof MinecraftMAPElitesBlockCountBinLabels) || new OccupiedCountFitness().fitnessScore(testCorner) == (testScore = ((Double) behaviorCharacteristics.get("OccupiedCountFitness")).doubleValue()) : 
 					individual.getId() + ":" + testCorner+":occupied count="+testScore+":"+ blocks + ":" + CheckBlocksInSpaceFitness.readBlocksFromClient(testCorner);
@@ -415,7 +439,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"interactWithMapElitesInWorld:true",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false",
-					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.SimpleSolidBlockSet",
+					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
 					//"minecraftTypeCountFitness:true",
 					"minecraftDiversityBlockFitness:true",
 					//"minecraftTypeTargetFitness:true", 
