@@ -29,6 +29,12 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 		return overestimatedDistanceToEdge();
 	}
 
+	/**
+	 * About the distance from the center of the area the shape is generated in to
+	 * the edge of the space the shape is generated in.
+	 * 
+	 * @return Overestimate of distance from center to edge
+	 */
 	public double overestimatedDistanceToEdge() {
 		double oneDir = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes") + Math.max(Math.max(Parameters.parameters.integerParameter("minecraftXRange"), Parameters.parameters.integerParameter("minecraftYRange")),Parameters.parameters.integerParameter("minecraftZRange"));
 		return oneDir / 2;
