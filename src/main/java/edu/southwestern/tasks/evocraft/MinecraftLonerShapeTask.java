@@ -210,25 +210,35 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			// If the new shape is better than the previous, it gets replaced
 			if(forcePlacement || scoreOfCurrentElite > scoreOfPreviousElite) {
 				clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
+				System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness);
 			}
-			if(scoreOfPreviousElite>=highestFitness) {
+			if(scoreOfCurrentElite>=highestFitness) {
 				Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
-				if(scoreOfPreviousElite==highestFitness) {
-					MinecraftCoordinates goldBlock = corners.t2.add(new MinecraftCoordinates(-1, ranges.y(),-1));
+				MinecraftCoordinates goldBlock = corners.t2.add(new MinecraftCoordinates(-1, ranges.y(),-1));
+				List<Block> champions = new ArrayList<>();
+				if(scoreOfCurrentElite==highestFitness) {
+					System.out.println("Same");
 					championCoords.add(new Pair<>(goldBlock,index1D));
 					
 					Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
 					currentElements = championCoords.toArray(currentElements);
 
-					List<Block> champions = new ArrayList<>();
+					
 					
 					for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
 						champions.add(new Block(pair.t1,BlockType.GOLD_BLOCK, Orientation.WEST));
+						System.out.println(championCoords.size());
 					}
-					MinecraftClient.getMinecraftClient().spawnBlocks(champions);
 				}
-				System.out.println("Current:"+scoreOfPreviousElite+"  Highest:"+highestFitness);
-				highestFitness= scoreOfPreviousElite;
+				else if(scoreOfCurrentElite>highestFitness) {
+					System.out.println("Different, clearing out");
+					championCoords.clear();
+					championCoords.add(new Pair<>(goldBlock,index1D));
+					champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
+				}
+				MinecraftClient.getMinecraftClient().spawnBlocks(champions);
+				System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness);
+				if(spawnShapesInWorld) highestFitness= scoreOfCurrentElite;
 			}
 		}
 	}
