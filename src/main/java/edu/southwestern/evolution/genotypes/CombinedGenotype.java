@@ -40,7 +40,6 @@ public class CombinedGenotype<X, Y> extends Pair<Genotype<X>, Genotype<Y>> imple
 
 	public Genotype<Pair<X, Y>> crossover(Genotype<Pair<X, Y>> g) {
 		// Assume it will be a combined genotype
-		@SuppressWarnings("unchecked")
 		CombinedGenotype<X, Y> other = (CombinedGenotype<X, Y>) g;
 		Genotype<X> result1 = t1.crossover(other.t1);
 		Genotype<Y> result2 = t2.crossover(other.t2);
