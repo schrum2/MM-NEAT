@@ -55,6 +55,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	// Each diamond block refers to one shape, and the int is the associated 1D archive index
 	private static Set<Triple<MinecraftCoordinates,MinecraftCoordinates,Integer>> blocksToMonitor = new HashSet<>();
 	private static Thread interactionThread;
+	private static double highestFitness;
+	private static Set<Pair<MinecraftCoordinates,Integer>> championCoords = new HashSet<>();
 
 	public MinecraftLonerShapeTask() 	{
 		/**
@@ -69,7 +71,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 		// Creates a new blocking queue to use with parallelism
 		coordinateQueue = new ArrayBlockingQueue<>(Parameters.parameters.integerParameter("parallelMinecraftSlots"));
-
+		
+		highestFitness=0;
+		championCoords = new HashSet<Pair<MinecraftCoordinates,Integer>>();
+		
 		// Generates the corners for all of the shapes and then adds them into the blocking queue
 		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelMinecraftSlots"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),MinecraftUtilClass.getRanges());
 		for(MinecraftCoordinates corner : parallelShapeCorners) {
@@ -96,37 +101,30 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 						// t1 is the diamond blocks, t2 is the emerald, and t3 is the 1D index
 						for(Triple<MinecraftCoordinates,MinecraftCoordinates,Integer> triple : currentElements) {
-							// Initial check
-							// Read here
-							
-							if(MinecraftClient.getMinecraftClient().readCube(triple.t1).get(0).type!=BlockType.DIAMOND_BLOCK || 
-							   MinecraftClient.getMinecraftClient().readCube(triple.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
+							// Initial check, reads in blocks once and comapres from there
+							ArrayList<Block> interactiveBlocks = MinecraftClient.getMinecraftClient().readCube(triple.t1,triple.t2);
+							if(interactiveBlocks.get(0).type!=BlockType.DIAMOND_BLOCK || 
+							   interactiveBlocks.get(interactiveBlocks.size()-1).type!=BlockType.EMERALD_BLOCK) { // If either diamond or emerald is different
 								synchronized(blocksToMonitor) {
 									// Verify that it is actually missing
-									if(MinecraftClient.getMinecraftClient().readCube(triple.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
-										System.out.println("--------------------------"+triple.t1+"  "+triple.t2);
-										System.out.println(MinecraftClient.getMinecraftClient().readCube(triple.t1));
+									if(interactiveBlocks.get(0).type!=BlockType.DIAMOND_BLOCK) {
+										// Gets score and uses it to place to clear and replace the shape
 										@SuppressWarnings("unchecked")
 										Score<T> s = MMNEAT.getArchive().getElite(triple.t3);
-
 										placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 									}
 									
-									if(MinecraftClient.getMinecraftClient().readCube(triple.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
-										System.out.println("--------------------------");
-										System.out.println(MinecraftClient.getMinecraftClient().readCube(triple.t2)); 
+									if(interactiveBlocks.get(interactiveBlocks.size()-1).type!=BlockType.EMERALD_BLOCK) {
+										// Uses score to clear the correct area
 										@SuppressWarnings("unchecked")
 										Score<T> s = MMNEAT.getArchive().getElite(triple.t3);
-
 										Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(MinecraftUtilClass.getRanges(), s.MAPElitesBehaviorMap());
-
 										clearBlocksInArchive(MinecraftUtilClass.getRanges(),corners.t1);
+										
+										//Removes from the archive, and then the set
 										((MAPElites<T>) MMNEAT.ea).getArchive().removeElite(triple.t3);
-										blocksToMonitor.remove(triple); // Removes from set 
-										System.out.println("deleted");
+										blocksToMonitor.remove(triple);
 									}
-									
-									
 								}
 							}
 							
@@ -212,6 +210,15 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			// If the new shape is better than the previous, it gets replaced
 			if(forcePlacement || scoreOfCurrentElite > scoreOfPreviousElite) {
 				clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
+			}
+			if(scoreOfPreviousElite>=highestFitness) {
+				Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
+				
+				List<Block> champions = new ArrayList<>();
+				MinecraftCoordinates goldBlock = corners.t2.add(new MinecraftCoordinates(-1, ranges.y(),-1));
+				champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
+				MinecraftClient.getMinecraftClient().spawnBlocks(champions);
+				highestFitness= scoreOfPreviousElite;
 			}
 		}
 	}
@@ -454,7 +461,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
 					"spaceBetweenMinecraftShapes:3","parallelMAPElitesInitialize:false",
-					"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5",
+					"minecraftXRange:4","minecraftYRange:4","minecraftZRange:3",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",

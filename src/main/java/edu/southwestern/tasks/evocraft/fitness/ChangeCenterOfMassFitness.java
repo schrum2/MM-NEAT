@@ -26,6 +26,10 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	@Override
 	public double maxFitness() {
 		// Probably overshoots a bit
+		return overestimatedDistanceToEdge();
+	}
+
+	public double overestimatedDistanceToEdge() {
 		double oneDir = Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes") + Math.max(Math.max(Parameters.parameters.integerParameter("minecraftXRange"), Parameters.parameters.integerParameter("minecraftYRange")),Parameters.parameters.integerParameter("minecraftZRange"));
 		return oneDir / 2;
 	}
