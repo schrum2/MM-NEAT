@@ -95,44 +95,34 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						currentElements = blocksToMonitor.toArray(currentElements);
 
 						// t1 is the diamond blocks, t2 is the emerald, and t3 is the 1D index
-						for(Triple<MinecraftCoordinates,MinecraftCoordinates,Integer> pair : currentElements) {
-							// RENAME pair <- remove this item from SET when emerald is broken
-							
-							
+						for(Triple<MinecraftCoordinates,MinecraftCoordinates,Integer> triple : currentElements) {
 							// Initial check
 							// Read here
 							
-							if(MinecraftClient.getMinecraftClient().readCube(pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK || 
-							   MinecraftClient.getMinecraftClient().readCube(pair.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
+							if(MinecraftClient.getMinecraftClient().readCube(triple.t1).get(0).type!=BlockType.DIAMOND_BLOCK || 
+							   MinecraftClient.getMinecraftClient().readCube(triple.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
 								synchronized(blocksToMonitor) {
 									// Verify that it is actually missing
-									if(MinecraftClient.getMinecraftClient().readCube(pair.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
-										System.out.println("--------------------------"+pair.t1+"  "+pair.t2);
-										System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t1));
+									if(MinecraftClient.getMinecraftClient().readCube(triple.t1).get(0).type!=BlockType.DIAMOND_BLOCK) {
+										System.out.println("--------------------------"+triple.t1+"  "+triple.t2);
+										System.out.println(MinecraftClient.getMinecraftClient().readCube(triple.t1));
 										@SuppressWarnings("unchecked")
-										Score<T> s = MMNEAT.getArchive().getElite(pair.t3);
+										Score<T> s = MMNEAT.getArchive().getElite(triple.t3);
 
 										placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 									}
 									
-									if(MinecraftClient.getMinecraftClient().readCube(pair.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
+									if(MinecraftClient.getMinecraftClient().readCube(triple.t2).get(0).type!=BlockType.EMERALD_BLOCK) {
 										System.out.println("--------------------------");
-										System.out.println(MinecraftClient.getMinecraftClient().readCube(pair.t2)); 
-//										@SuppressWarnings("unchecked")
-//										Score<T> s = MMNEAT.getArchive().getElite(pair.t3);
-										int oneDIndex = pair.t3;
+										System.out.println(MinecraftClient.getMinecraftClient().readCube(triple.t2)); 
+										@SuppressWarnings("unchecked")
+										Score<T> s = MMNEAT.getArchive().getElite(triple.t3);
 
-										
-										
-										// CALL AND USE
-										//Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
-										
-										
-										
-										MinecraftCoordinates tempCoord = pair.t2.sub(new MinecraftCoordinates(MinecraftUtilClass.getRanges().x()+1,0,0));
-										clearBlocksInArchive(MinecraftUtilClass.getRanges(),tempCoord);
-										((MAPElites<T>) MMNEAT.ea).getArchive().removeElite(oneDIndex);
-										blocksToMonitor.remove(pair);
+										Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(MinecraftUtilClass.getRanges(), s.MAPElitesBehaviorMap());
+
+										clearBlocksInArchive(MinecraftUtilClass.getRanges(),corners.t1);
+										((MAPElites<T>) MMNEAT.ea).getArchive().removeElite(triple.t3);
+										blocksToMonitor.remove(triple); // Removes from set 
 										System.out.println("deleted");
 									}
 									
