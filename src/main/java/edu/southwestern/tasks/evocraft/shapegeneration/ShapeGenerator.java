@@ -7,11 +7,13 @@ import cern.colt.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.activationfunctions.HalfLinearPiecewiseFunction;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
+import edu.southwestern.tasks.evocraft.MinecraftUtilClass;
 import edu.southwestern.tasks.evocraft.blocks.BlockSet;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.ThreeDimensionalUtil;
@@ -78,14 +80,28 @@ public interface ShapeGenerator<T> {
 			for(int i = 1; i <= numBlockTypes; i++) {
 				blockPreferences.add(outputs[i]);
 			}
-			int typeIndex = StatisticsUtilities.argmax(blockPreferences);
-			Orientation blockOrientation = Orientation.NORTH;
-			if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")){
-				double[] orientationPreferences = ArrayUtil.portion(outputs,numBlockTypes + 1, numBlockTypes + NUM_DIRECTIONS);
-				assert orientationPreferences.length == NUM_DIRECTIONS;
-				int orientationPreferenceIndex = StatisticsUtilities.argmax(orientationPreferences);
-				blockOrientation = Orientation.values()[orientationPreferenceIndex];
+			
+			int typeIndex;
+			if(Parameters.parameters.booleanParameter("oneOutputLabelForBlockTypeCPPN")) { // only one output will be used for the blocks
+				typeIndex = (int) HalfLinearPiecewiseFunction.halfLinear(outputs[OUTPUT_INDEX_PRESENCE+1]) * numBlockTypes; 
+			} else {
+				typeIndex = StatisticsUtilities.argmax(blockPreferences); // different outputs for each block type will be used
 			}
+	
+			Orientation blockOrientation = Orientation.NORTH; // default orientation is North
+			if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")){
+				int numOrientations = MinecraftUtilClass.getnumOrientationDirections(); // will either be 2 or 6
+				int orientationPreferenceIndex;
+				if(Parameters.parameters.booleanParameter("oneOutputLabelForBlockOrientationCPPN")) { // only one output will be used for the orientation
+					orientationPreferenceIndex = (int) HalfLinearPiecewiseFunction.halfLinear(outputs[OUTPUT_INDEX_PRESENCE+2]) * numOrientations;
+				} else { // different outputs for each orientation direction will be used
+					double[] orientationPreferences = ArrayUtil.portion(outputs,numBlockTypes + 1, numBlockTypes + numOrientations);
+					assert orientationPreferences.length == numOrientations;
+					orientationPreferenceIndex = StatisticsUtilities.argmax(orientationPreferences);	
+				}
+				blockOrientation = MinecraftUtilClass.getOrientations()[orientationPreferenceIndex];
+			}
+			
 			Block b = new Block(corner.add(new MinecraftCoordinates(xi,yi,zi)), blockSet.get(typeIndex), blockOrientation);
 			blocks.add(b);
 		} 
@@ -169,17 +185,28 @@ public interface ShapeGenerator<T> {
 	public static String[] defaultNetworkOutputLabels(BlockSet blockSet) {
 		String[] labels;
 
-		// Presence output and an output for each block type
-		labels = new String[1 + blockSet.getPossibleBlocks().length];
-		labels[0] = "Presence";
-		for(int i = 1; i < labels.length; i++) {
-			labels[i] = blockSet.getPossibleBlocks()[i-1].name();
+		if(Parameters.parameters.booleanParameter("oneOutputLabelForBlockTypeCPPN")) {
+			labels = new String[2]; // only one label for block type
+			labels[1] = "BlockType"; 
+		} else { // presence output and an output for each block type
+			labels = new String[1 + blockSet.getPossibleBlocks().length];	
+			for(int i = 1; i < labels.length; i++) {
+				labels[i] = blockSet.getPossibleBlocks()[i-1].name();
+			}
 		}
+		labels[0] = "Presence"; // regardless Presence will be the first index
+		
 		if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
-			String[] orientationLabels = new String[NUM_DIRECTIONS];
+			String[] orientationLabels;
 
-			for(int i = 0; i < orientationLabels.length; i++) {
-				orientationLabels[i] = Orientation.values()[i].toString();
+			if(Parameters.parameters.booleanParameter("oneOutputLabelForBlockOrientationCPPN")) {
+				orientationLabels = new String[1]; // only use one label for block orientation
+				orientationLabels[0] = "Orientation";
+			} else { // orientation label for each direction
+				orientationLabels = new String[NUM_DIRECTIONS];
+				for(int i = 0; i < orientationLabels.length; i++) {
+					orientationLabels[i] = Orientation.values()[i].toString();
+				}
 			}
 
 			labels = ArrayUtil.combineArrays(labels,orientationLabels);
