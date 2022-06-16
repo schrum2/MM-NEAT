@@ -122,34 +122,23 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 										((MAPElites<T>) MMNEAT.ea).getArchive().removeElite(triple.t3);
 										blocksToMonitor.remove(triple);
 										
+										// When emerald clears out champion, new champion needs to be found, gets the champ(s) in archive
 										Set<Score<T>> champs = MMNEAT.getArchive().getChampions();
 										List<Block> champions = new ArrayList<>();
 										
+										// For all champions, spawn a new gold block
 										for(Score<T> champion : champs) {
-											// Change to just place gold block
 											Pair<MinecraftCoordinates,MinecraftCoordinates> goldCorner = configureStartPosition(MinecraftUtilClass.getRanges(), champion.MAPElitesBehaviorMap());
 											MinecraftCoordinates goldBlock = goldCorner.t2.add(new MinecraftCoordinates(-1, MinecraftUtilClass.getRanges().y(),-1));
 											champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
 											MinecraftClient.getMinecraftClient().spawnBlocks(champions);
+											
+											// Updates global vaiables
 											MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
 											int index1D = minecraftBinLabels.oneDimensionalIndex( champion.MAPElitesBehaviorMap());
-											
 											championCoords.add(new Pair<>(goldBlock,index1D));
 											highestFitness = (double) champion.MAPElitesBehaviorMap().get("binScore");
-											//placeArchiveInWorld(champion.individual, champion.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 										}
-										
-										
-										
-										
-										
-//										Score<T>[] champions = (Score<T>[]) champs.toArray();
-////										Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
-////										currentElements = championCoords.toArray(currentElements);
-////
-//										for(Score<T> score : champions) {
-//										System.out.println("!!!!!");
-//										}
 									}
 								}
 							}
