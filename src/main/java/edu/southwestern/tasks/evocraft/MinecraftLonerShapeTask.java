@@ -130,10 +130,16 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 										blocksToMonitor.remove(triple);
 										
 										Set<Score<T>> champs = MMNEAT.getArchive().getChampions();
+										List<Block> champions = new ArrayList<>();
 										
 										for(Score<T> champion : champs) {
 											// Change to just place gold block
-											placeArchiveInWorld(champion.individual, champion.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
+											Pair<MinecraftCoordinates,MinecraftCoordinates> goldCorner = configureStartPosition(MinecraftUtilClass.getRanges(), champion.MAPElitesBehaviorMap());
+											MinecraftCoordinates goldBlock = goldCorner.t2.add(new MinecraftCoordinates(-1, MinecraftUtilClass.getRanges().y(),-1));
+											champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
+											MinecraftClient.getMinecraftClient().spawnBlocks(champions);
+											
+											//placeArchiveInWorld(champion.individual, champion.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 										}
 										
 										
@@ -235,11 +241,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
 				System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness);
 			}
+			// Needs refactoring
 			if(scoreOfCurrentElite>=highestFitness) {
 				Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
 				MinecraftCoordinates goldBlock = corners.t2.add(new MinecraftCoordinates(-1, ranges.y(),-1));
 				List<Block> champions = new ArrayList<>();
-				List<Block> newChampion = new ArrayList<>();
+				List<Block> newChampion = new ArrayList<>(); // Combine into one list, and clear contents
 				if(scoreOfCurrentElite==highestFitness) {
 					System.out.println("Same");
 					championCoords.add(new Pair<>(goldBlock,index1D));
