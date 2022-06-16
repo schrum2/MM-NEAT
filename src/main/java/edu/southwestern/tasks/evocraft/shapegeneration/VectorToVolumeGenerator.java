@@ -56,10 +56,9 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 		for(int xi = 0; xi < ranges.x(); xi++) {
 			for(int yi = 0; yi < ranges.y(); yi++) {
 				for(int zi = 0; zi < ranges.z(); zi++) {
-					//System.out.println(phenotype);
 					Block b = null;
 					
-					// there woll either be two or three numbers corresponding to 1 block depending on if orientation is being evolved
+					// there will either be two or three numbers corresponding to 1 block depending on if orientation is being evolved
 					if(Parameters.parameters.booleanParameter("vectorPresenceThresholdForEachBlock")) {
 						final int PRESENCE_INDEX = counter;
 						final int TYPE_INDEX = counter+1;
@@ -70,7 +69,6 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 							
 							if(Parameters.parameters.booleanParameter("minecraftEvolveOrientation")) {
 								final int ORIENTATION_INDEX = counter+2;
-								//blockOrientation = MinecraftUtilClass.getOrientations()[(int) (phenotype.get(ORIENTATION_INDEX) * numOrientations)];
 								blockOrientation = MinecraftUtilClass.getOrientations()[(int) (phenotype.get(ORIENTATION_INDEX) * numOrientations)];
 		
 								counter++; // increase counter because there are three numbers per block in this case
@@ -149,7 +147,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100",
-					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:5",
+					"minecraftXRange:1","minecraftYRange:2","minecraftZRange:5",
 					"minecraftStopConfinedSnakes:true",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", 
