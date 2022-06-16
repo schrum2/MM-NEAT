@@ -139,6 +139,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 											champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
 											MinecraftClient.getMinecraftClient().spawnBlocks(champions);
 											
+											highestFitness = (double) champion.MAPElitesBehaviorMap().get("binScore");
 											//placeArchiveInWorld(champion.individual, champion.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 										}
 										
