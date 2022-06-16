@@ -138,7 +138,10 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 											MinecraftCoordinates goldBlock = goldCorner.t2.add(new MinecraftCoordinates(-1, MinecraftUtilClass.getRanges().y(),-1));
 											champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
 											MinecraftClient.getMinecraftClient().spawnBlocks(champions);
+											MinecraftMAPElitesBinLabels minecraftBinLabels = (MinecraftMAPElitesBinLabels) MMNEAT.getArchiveBinLabelsClass();
+											int index1D = minecraftBinLabels.oneDimensionalIndex( champion.MAPElitesBehaviorMap());
 											
+											championCoords.add(new Pair<>(goldBlock,index1D));
 											highestFitness = (double) champion.MAPElitesBehaviorMap().get("binScore");
 											//placeArchiveInWorld(champion.individual, champion.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 										}
