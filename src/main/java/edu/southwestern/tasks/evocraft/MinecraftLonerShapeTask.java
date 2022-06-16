@@ -216,6 +216,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
 				MinecraftCoordinates goldBlock = corners.t2.add(new MinecraftCoordinates(-1, ranges.y(),-1));
 				List<Block> champions = new ArrayList<>();
+				List<Block> newChampion = new ArrayList<>();
 				if(scoreOfCurrentElite==highestFitness) {
 					System.out.println("Same");
 					championCoords.add(new Pair<>(goldBlock,index1D));
@@ -243,11 +244,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					}
 					championCoords.clear();
 					championCoords.add(new Pair<>(goldBlock,index1D));
-					MinecraftClient.getMinecraftClient().spawnBlocks(champions);
-					champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
+					//MinecraftClient.getMinecraftClient().spawnBlocks(champions);
+					newChampion.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
 				}
 				MinecraftClient.getMinecraftClient().spawnBlocks(champions);
-				System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness);
+				MinecraftClient.getMinecraftClient().spawnBlocks(newChampion);
+				//System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness);
 				if(spawnShapesInWorld) highestFitness= scoreOfCurrentElite;
 			}
 		}
