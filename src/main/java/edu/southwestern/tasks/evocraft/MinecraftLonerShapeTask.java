@@ -236,7 +236,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			// If the new shape is better than the previous, it gets replaced
 			if(forcePlacement || scoreOfCurrentElite > scoreOfPreviousElite) {
 				clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
-				System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness);
+				//System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness);
 			}
 			// Needs refactoring
 			if(scoreOfCurrentElite>=highestFitness) {
@@ -245,33 +245,24 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				List<Block> champions = new ArrayList<>();
 				List<Block> newChampion = new ArrayList<>(); // Combine into one list, and clear contents
 				if(scoreOfCurrentElite==highestFitness) {
-					System.out.println("Same");
 					championCoords.add(new Pair<>(goldBlock,index1D));
 					
 					Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
 					currentElements = championCoords.toArray(currentElements);
 
-					
-					
 					for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
 						champions.add(new Block(pair.t1,BlockType.GOLD_BLOCK, Orientation.WEST));
-						System.out.println(championCoords.size());
 					}
 				}
 				else if(scoreOfCurrentElite>highestFitness) {
-					System.out.println("Different, clearing out");
 					Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
 					currentElements = championCoords.toArray(currentElements);
 
-					
-					
 					for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
 						champions.add(new Block(pair.t1,BlockType.AIR, Orientation.WEST));
-						System.out.println(championCoords.size());
 					}
 					championCoords.clear();
 					championCoords.add(new Pair<>(goldBlock,index1D));
-					//MinecraftClient.getMinecraftClient().spawnBlocks(champions);
 					newChampion.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
 				}
 				MinecraftClient.getMinecraftClient().spawnBlocks(champions);
