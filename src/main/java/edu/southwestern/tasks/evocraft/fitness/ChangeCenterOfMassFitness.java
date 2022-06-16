@@ -26,7 +26,8 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 	@Override
 	public double maxFitness() {
 		// Probably overshoots a bit
-		return overestimatedDistanceToEdge();
+		if(Parameters.parameters.booleanParameter("minecraftAccumulateChangeInCenterOfMass")) return ((Parameters.parameters.longParameter("minecraftMandatoryWaitTime")/Parameters.parameters.longParameter("shortTimeBetweenMinecraftReads")) + 1) * overestimatedDistanceToEdge();
+		else return overestimatedDistanceToEdge();
 	}
 
 	/**
