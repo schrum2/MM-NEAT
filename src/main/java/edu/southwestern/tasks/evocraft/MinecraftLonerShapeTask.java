@@ -394,7 +394,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	public static Pair<MinecraftCoordinates,MinecraftCoordinates> clearBlocksInArchive(MinecraftCoordinates ranges, MinecraftCoordinates startPosition) {
 		MinecraftCoordinates clearEnd = startPosition.add(MinecraftUtilClass.reservedSpace());
 		// Sub 1 to not delete interactive blocks
-		if(Parameters.parameters.booleanParameter("interactWithMapElitesInWorld")) clearEnd = clearEnd.sub(new MinecraftCoordinates(1)); 
+		//startPosition = startPosition.sub(new MinecraftCoordinates(1));
+		clearEnd = clearEnd.sub(new MinecraftCoordinates(1));
 		MinecraftClient.getMinecraftClient().fillCube(startPosition, clearEnd, BlockType.AIR);
 		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, clearEnd);
 	}
@@ -468,14 +469,14 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	public static void main(String[] args) {
-		int seed = 1;
+		int seed = 3;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesWHDSimple", "saveTo:MAPElitesWHDSimple",
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					"io:true", "netio:true",
-					"interactWithMapElitesInWorld:true",
+					"interactWithMapElitesInWorld:false",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false",
 					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
@@ -492,8 +493,8 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
-					"spaceBetweenMinecraftShapes:3","parallelMAPElitesInitialize:false",
-					"minecraftXRange:4","minecraftYRange:4","minecraftZRange:3",
+					"spaceBetweenMinecraftShapes:5","parallelMAPElitesInitialize:false",
+					"minecraftXRange:5","minecraftYRange:4","minecraftZRange:3",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
