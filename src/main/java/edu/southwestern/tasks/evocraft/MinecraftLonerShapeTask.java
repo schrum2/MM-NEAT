@@ -227,12 +227,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
 				//System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness);
 			}
-			// Needs refactoring
+			
+			// If the shape has a fitness greater than or equal to the previous champion's
 			if(scoreOfCurrentElite>=highestFitness) {
 				Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
 				MinecraftCoordinates goldBlock = corners.t2.add(new MinecraftCoordinates(-1, ranges.y(),-1));
 				List<Block> champions = new ArrayList<>();
-				List<Block> newChampion = new ArrayList<>(); // Combine into one list, and clear contents
 				if(scoreOfCurrentElite==highestFitness) {
 					championCoords.add(new Pair<>(goldBlock,index1D));
 					
@@ -252,10 +252,11 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					}
 					championCoords.clear();
 					championCoords.add(new Pair<>(goldBlock,index1D));
-					newChampion.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
+					MinecraftClient.getMinecraftClient().spawnBlocks(champions);
+					champions.clear();
+					champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
 				}
 				MinecraftClient.getMinecraftClient().spawnBlocks(champions);
-				MinecraftClient.getMinecraftClient().spawnBlocks(newChampion);
 				//System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness);
 				if(spawnShapesInWorld) highestFitness= scoreOfCurrentElite;
 			}
@@ -499,7 +500,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
 					"spaceBetweenMinecraftShapes:5","parallelMAPElitesInitialize:false",
-					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
+					"minecraftXRange:5","minecraftYRange:5","minecraftZRange:5",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",
