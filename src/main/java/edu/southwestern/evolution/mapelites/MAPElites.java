@@ -542,7 +542,17 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	@Override
 	public void newIndividual() {
 		int index = archive.randomOccupiedBinIndex();
-		Genotype<T> parent1 = archive.getElite(index).individual;
+		newIndividual(index);
+	}
+
+	/**
+	 * Generate a new individual (possibly two) that have a specific individual
+	 * as one of the parents. Individual is designated by its index in the 1D archive.
+	 * 
+	 * @param parentIndex
+	 */
+	public void newIndividual(int parentIndex) {
+		Genotype<T> parent1 = archive.getElite(parentIndex).individual;
 		long parentId1 = parent1.getId(); // Parent Id comes from original genome
 		long parentId2 = NUM_CODE_EMPTY;
 		Genotype<T> child1 = parent1.copy(); // Copy with different Id (will be further modified below)
