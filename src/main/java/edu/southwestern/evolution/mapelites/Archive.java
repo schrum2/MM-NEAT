@@ -4,8 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.Set;
 import java.util.Vector;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.scores.Score;
@@ -201,6 +206,26 @@ public class Archive<T> {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Return set of Scores that are tied for highest fitness
+	 * across the whole archive.
+	 * 
+	 * @return Set of champion Score instances containing genotypes
+	 */
+	public synchronized Set<Score<T>> getChampions() {
+		// Filter out null entries
+		Stream<Score<T>> nonNullStream = archive.parallelStream().filter(s -> s != null);
+		// Find one of the max scores (at least one should exist)
+		Optional<Score<T>> maxScore = nonNullStream.max(new Comparator<Score<T>>(){
+			@Override
+			public int compare(Score<T> o1, Score<T> o2) {
+				return (int) Math.signum(o1.behaviorIndexScore() - o2.behaviorIndexScore());
+			}
+		});
+		// Get the set of all max scores
+		return nonNullStream.filter(s -> s.behaviorIndexScore() == maxScore.get().behaviorIndexScore()).collect(Collectors.toSet());
 	}
 	
 	/**
