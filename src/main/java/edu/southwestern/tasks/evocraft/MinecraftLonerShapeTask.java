@@ -236,7 +236,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			// If the new shape is better than the previous, it gets replaced
 			if(forcePlacement || scoreOfCurrentElite > scoreOfPreviousElite) {
 				clearAndSpawnShape(individual, behaviorCharacteristics, ranges, index1D, scoreOfCurrentElite);
-				System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness);
+				//System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness);
 			}
 			// Needs refactoring
 			if(scoreOfCurrentElite>=highestFitness) {
@@ -245,33 +245,24 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				List<Block> champions = new ArrayList<>();
 				List<Block> newChampion = new ArrayList<>(); // Combine into one list, and clear contents
 				if(scoreOfCurrentElite==highestFitness) {
-					System.out.println("Same");
 					championCoords.add(new Pair<>(goldBlock,index1D));
 					
 					Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
 					currentElements = championCoords.toArray(currentElements);
 
-					
-					
 					for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
 						champions.add(new Block(pair.t1,BlockType.GOLD_BLOCK, Orientation.WEST));
-						System.out.println(championCoords.size());
 					}
 				}
 				else if(scoreOfCurrentElite>highestFitness) {
-					System.out.println("Different, clearing out");
 					Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
 					currentElements = championCoords.toArray(currentElements);
 
-					
-					
 					for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
 						champions.add(new Block(pair.t1,BlockType.AIR, Orientation.WEST));
-						System.out.println(championCoords.size());
 					}
 					championCoords.clear();
 					championCoords.add(new Pair<>(goldBlock,index1D));
-					//MinecraftClient.getMinecraftClient().spawnBlocks(champions);
 					newChampion.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST));
 				}
 				MinecraftClient.getMinecraftClient().spawnBlocks(champions);
@@ -397,17 +388,15 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		if(multiDimIndex.length==1 || multiDimIndex.length > 3 || Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
 			// Derive 1D location from multi-dimensional location
 			startPosition = new MinecraftCoordinates(dim1D*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,0);				
-			offset = new MinecraftCoordinates(MinecraftUtilClass.emptySpaceOffsetX(),MinecraftUtilClass.emptySpaceOffsetY(),0);				
 		} else if(multiDimIndex.length==2){
 			// Ground level fixed, but expand second coordinate in z dimension
 			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,multiDimIndex[1]*(spaceBetween+ranges.z()));
-			offset = MinecraftUtilClass.emptySpaceOffsets();
 		} else if(multiDimIndex.length==3) {
 			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1+multiDimIndex[1]*(spaceBetween+ranges.y()),multiDimIndex[2]*(spaceBetween+ranges.z()));
-			offset = MinecraftUtilClass.emptySpaceOffsets();
 		} else {
 			throw new IllegalArgumentException("This should be impossible to reach: "+Arrays.toString(multiDimIndex));
 		}
+		offset = MinecraftUtilClass.emptySpaceOffsets();
 		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, startPosition.add(offset));
 	}
 
@@ -515,13 +504,13 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"minecraftEvolveOrientation:true",
 					"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true", 
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountBinLabels",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
 					//FOR TESTING
 					"spaceBetweenMinecraftShapes:5","parallelMAPElitesInitialize:false",
-					"minecraftXRange:5","minecraftYRange:4","minecraftZRange:3",
+					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:2",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", "allowMultipleFunctions:true",
 					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1",

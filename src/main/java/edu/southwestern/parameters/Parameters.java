@@ -373,7 +373,7 @@ public class Parameters {
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("minecraftMandatoryWaitTime", 10000L, "The mandatory amount of time that the block movement fitness function should wait before reading in the corner again");
-		longOptions.add("shortTimeBetweenMinecraftReads", 50L, "The amount of time that change center of mass fitness function waits before reading in the area again");
+		longOptions.add("shortTimeBetweenMinecraftReads", 100L, "The amount of time that change center of mass fitness function waits before reading in the area again");
 
 		// Boolean parameters 
 		booleanOptions.add("steadyStateArchetypeSaving", true, "Steady state evolution updates the NN archetype. Turn off to increase speed, but lose ability to resume from crash.");
