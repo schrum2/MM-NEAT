@@ -397,17 +397,15 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		if(multiDimIndex.length==1 || multiDimIndex.length > 3 || Parameters.parameters.booleanParameter("forceLinearArchiveLayoutInMinecraft")) {
 			// Derive 1D location from multi-dimensional location
 			startPosition = new MinecraftCoordinates(dim1D*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,0);				
-			offset = new MinecraftCoordinates(MinecraftUtilClass.emptySpaceOffsetX(),MinecraftUtilClass.emptySpaceOffsetY(),0);				
 		} else if(multiDimIndex.length==2){
 			// Ground level fixed, but expand second coordinate in z dimension
 			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1,multiDimIndex[1]*(spaceBetween+ranges.z()));
-			offset = MinecraftUtilClass.emptySpaceOffsets();
 		} else if(multiDimIndex.length==3) {
 			startPosition = new MinecraftCoordinates(multiDimIndex[0]*(spaceBetween+ranges.x()),MinecraftClient.GROUND_LEVEL+1+multiDimIndex[1]*(spaceBetween+ranges.y()),multiDimIndex[2]*(spaceBetween+ranges.z()));
-			offset = MinecraftUtilClass.emptySpaceOffsets();
 		} else {
 			throw new IllegalArgumentException("This should be impossible to reach: "+Arrays.toString(multiDimIndex));
 		}
+		offset = MinecraftUtilClass.emptySpaceOffsets();
 		return new Pair<MinecraftCoordinates,MinecraftCoordinates>(startPosition, startPosition.add(offset));
 	}
 
