@@ -103,7 +103,7 @@ public class ChangeCenterOfMassFitnessTest {
 		// flies for a bit, but the exact amount is hard to pin down. Thus, we only assert that the amount
 		// is 6.0 or more
 		//System.out.println("Fitness for the blockSet 2: "+ ff.fitnessScore(cornerBS2));
-		assertTrue(6.0 <= ff.fitnessScore(cornerBS2));
+		assertEquals(ff.maxFitness(), ff.fitnessScore(cornerBS2),0.0);
 		MinecraftClient.getMinecraftClient().clearSpaceForShapes(cornerBS2, ranges, 1, 100);
 	}
 	
