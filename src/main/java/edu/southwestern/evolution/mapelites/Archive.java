@@ -225,7 +225,7 @@ public class Archive<T> {
 			}
 		});
 		// Get the set of all max scores
-		return nonNullStream.filter(s -> s.behaviorIndexScore() == maxScore.get().behaviorIndexScore()).collect(Collectors.toSet());
+		return archive.parallelStream().filter(s -> s != null).filter(s -> s.behaviorIndexScore() == maxScore.get().behaviorIndexScore()).collect(Collectors.toSet());
 	}
 	
 	/**

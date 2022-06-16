@@ -8,10 +8,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+
+import com.google.common.base.Optional;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -117,6 +120,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 									if(interactiveBlocks.get(interactiveBlocks.size()-1).type!=BlockType.EMERALD_BLOCK) {
 										// Uses score to clear the correct area
 										@SuppressWarnings("unchecked")
+
 										Score<T> s = MMNEAT.getArchive().getElite(triple.t3);
 										Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(MinecraftUtilClass.getRanges(), s.MAPElitesBehaviorMap());
 										clearBlocksInArchive(MinecraftUtilClass.getRanges(),corners.t1);
@@ -124,6 +128,25 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 										//Removes from the archive, and then the set
 										((MAPElites<T>) MMNEAT.ea).getArchive().removeElite(triple.t3);
 										blocksToMonitor.remove(triple);
+										
+										Set<Score<T>> champs = MMNEAT.getArchive().getChampions();
+										
+										for(Score<T> champion : champs) {
+											// Change to just place gold block
+											placeArchiveInWorld(champion.individual, champion.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
+										}
+										
+										
+										
+										
+										
+//										Score<T>[] champions = (Score<T>[]) champs.toArray();
+////										Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
+////										currentElements = championCoords.toArray(currentElements);
+////
+//										for(Score<T> score : champions) {
+//										System.out.println("!!!!!");
+//										}
 									}
 								}
 							}
@@ -469,14 +492,14 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	public static void main(String[] args) {
-		int seed = 3;
+		int seed = 4;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesWHDSimple", "saveTo:MAPElitesWHDSimple",
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					"io:true", "netio:true",
-					"interactWithMapElitesInWorld:false",
+					"interactWithMapElitesInWorld:true",
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false",
 					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
