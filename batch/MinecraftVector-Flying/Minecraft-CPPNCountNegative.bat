@@ -1,3 +1,0 @@
-cd..
-cd..
-java -jar mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesBlockCountEmptyCountBinLabels minecraftXRange:6 minecraftYRange:6 minecraftZRange:6 minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator minecraftChangeCenterOfMassFitness:true minecraftBlockSet:MachineBlockSet.class
