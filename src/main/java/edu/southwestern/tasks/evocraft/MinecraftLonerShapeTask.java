@@ -231,43 +231,45 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			
 			// If the shape has a fitness greater than or equal to the previous champion's
 			if(scoreOfCurrentElite>=highestFitness) {
-				// Sets up coordinates for the new block, and the array list for spawning
-				Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
-				MinecraftCoordinates goldBlock = corners.t2.add(new MinecraftCoordinates(-1, ranges.y(),-1));
-				List<Block> champions = new ArrayList<>();
-				
-				// If the shape has the same fitness, add it to the set and spawn all of them again
-				if(scoreOfCurrentElite==highestFitness) {
-					championCoords.add(new Pair<>(goldBlock,index1D)); // Add to global set
-					
-					// Sets up the for each loop, loops through all champions and adds gold block at correct place
-					Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
-					currentElements = championCoords.toArray(currentElements);
-					for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
-						champions.add(new Block(pair.t1,BlockType.GOLD_BLOCK, Orientation.WEST));
+				synchronized(championCoords) {
+					// Sets up coordinates for the new block, and the array list for spawning
+					Pair<MinecraftCoordinates,MinecraftCoordinates> corners = configureStartPosition(ranges, behaviorCharacteristics);
+					MinecraftCoordinates goldBlock = corners.t2.add(new MinecraftCoordinates(-1, ranges.y(),-1));
+					List<Block> champions = new ArrayList<>();
+
+					// If the shape has the same fitness, add it to the set and spawn all of them again
+					if(scoreOfCurrentElite==highestFitness) {
+						championCoords.add(new Pair<>(goldBlock,index1D)); // Add to global set
+
+						// Sets up the for each loop, loops through all champions and adds gold block at correct place
+						Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
+						currentElements = championCoords.toArray(currentElements);
+						for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
+							champions.add(new Block(pair.t1,BlockType.GOLD_BLOCK, Orientation.WEST));
+						}
 					}
-				}
-				
-				// If the shape has a greater fitness, clears all gold blocks and blacks a new one
-				else if(scoreOfCurrentElite>highestFitness) {
-					// For loop replaces all gold blocks in overworld with air
-					Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
-					currentElements = championCoords.toArray(currentElements);
-					for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
-						champions.add(new Block(pair.t1,BlockType.AIR, Orientation.WEST));
+
+					// If the shape has a greater fitness, clears all gold blocks and blacks a new one
+					else if(scoreOfCurrentElite>highestFitness) {
+						// For loop replaces all gold blocks in overworld with air
+						Pair<MinecraftCoordinates,Integer>[] currentElements = new Pair[championCoords.size()];
+						currentElements = championCoords.toArray(currentElements);
+						for(Pair<MinecraftCoordinates,Integer> pair : currentElements) {
+							champions.add(new Block(pair.t1,BlockType.AIR, Orientation.WEST));
+						}
+						// Clears the global set and adds the new pair in
+						championCoords.clear();
+						championCoords.add(new Pair<>(goldBlock,index1D));
+
+						// Spawns blocks then clears the list, as there are issues when there are two blocks spawned at the same place
+						MinecraftClient.getMinecraftClient().spawnBlocks(champions);
+						champions.clear();
+						champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST)); // Adds new gold block
 					}
-					// Clears the global set and adds the new pair in
-					championCoords.clear();
-					championCoords.add(new Pair<>(goldBlock,index1D));
-					
-					// Spawns blocks then clears the list, as there are issues when there are two blocks spawned at the same place
-					MinecraftClient.getMinecraftClient().spawnBlocks(champions);
-					champions.clear();
-					champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST)); // Adds new gold block
+					MinecraftClient.getMinecraftClient().spawnBlocks(champions); // Spawns shapes in
+					//System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness); // For debugging
+					if(spawnShapesInWorld) highestFitness = scoreOfCurrentElite; // increases the best fitness if needed
 				}
-				MinecraftClient.getMinecraftClient().spawnBlocks(champions); // Spawns shapes in
-				//System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness); // For debugging
-				if(spawnShapesInWorld) highestFitness= scoreOfCurrentElite; // increases the best fitness if needed
 			}
 		}
 	}
