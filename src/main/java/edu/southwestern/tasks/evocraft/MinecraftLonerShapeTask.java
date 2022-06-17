@@ -57,7 +57,9 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	private static Thread interactionThread;
 	private static double highestFitness;
 	private static Set<Pair<MinecraftCoordinates,Integer>> championCoords = new HashSet<>();
-
+	private boolean running = true; // for loop that allows interacting with the archive
+	private boolean interactiveLoopFinished = false;
+	
 	public MinecraftLonerShapeTask() 	{
 		/**
 		 * Default shape generation location is shifted away a bit so that the archive can populate the world starting around (0,5,0) 
@@ -94,7 +96,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 				@Override
 				public void run() {
 					// Loop as long as evolution is running
-					while(true) {
+					while(running) {
 						Triple<MinecraftCoordinates,MinecraftCoordinates,Integer>[] currentElements = new Triple[blocksToMonitor.size()];
 						currentElements = blocksToMonitor.toArray(currentElements);
 
@@ -151,6 +153,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						}
 
 					}
+					interactiveLoopFinished = true;
 				}
 			};
 			interactionThread.start();
@@ -476,6 +479,15 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 
 	@Override
 	public void finalCleanup() {
+		running = false; // Stop the interactive loop
+		while(!interactiveLoopFinished) {
+			// Let interactive loop finish
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		internalMinecraftShapeTask.finalCleanup();
 	}
 

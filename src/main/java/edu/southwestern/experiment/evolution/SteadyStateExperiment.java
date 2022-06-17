@@ -97,11 +97,11 @@ public class SteadyStateExperiment<T> implements Experiment {
 
 	// Benchmark the parallelism using Minecraft
 	public static void main(String[] args) {
-		int seed = 0;
+		int seed = 1;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:50", "maxGens:1000",
-					"base:minecraft", "log:Minecraft-SingleTest", "saveTo:SingleTest",
-					//"base:minecraft", "log:Minecraft-ParallelTest", "saveTo:ParallelTest",
+					//"base:minecraft", "log:Minecraft-SingleTest", "saveTo:SingleTest",
+					"base:minecraft", "log:Minecraft-ParallelTest", "saveTo:ParallelTest",
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
 					"launchMinecraftServerFromJava:false",
 					"io:true", "netio:true",
@@ -120,9 +120,9 @@ public class SteadyStateExperiment<T> implements Experiment {
 					"steadyStateIndividualsPerGeneration:100", 
 					"spaceBetweenMinecraftShapes:5",
 					// Parallelism
-					"parallelEvaluations:false",
+					"parallelEvaluations:true",
 					"threads:10", // Only matters if parallelEvaluations is true
-					"parallelMAPElitesInitialize:false", 
+					"parallelMAPElitesInitialize:true", 
 					
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", 
 					"allowMultipleFunctions:true", 
