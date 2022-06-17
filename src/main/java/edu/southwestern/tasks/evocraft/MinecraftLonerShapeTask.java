@@ -70,13 +70,13 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 		};
 
 		// Creates a new blocking queue to use with parallelism
-		coordinateQueue = new ArrayBlockingQueue<>(Parameters.parameters.integerParameter("parallelMinecraftSlots"));
+		coordinateQueue = new ArrayBlockingQueue<>(Parameters.parameters.integerParameter("parallelSteadyStateThreads"));
 		
 		highestFitness=0;
 		championCoords = new HashSet<Pair<MinecraftCoordinates,Integer>>();
 		
 		// Generates the corners for all of the shapes and then adds them into the blocking queue
-		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelMinecraftSlots"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),MinecraftUtilClass.getRanges());
+		parallelShapeCorners = MinecraftShapeTask.getShapeCorners(Parameters.parameters.integerParameter("parallelSteadyStateThreads"),internalMinecraftShapeTask.getStartingX(),internalMinecraftShapeTask.getStartingZ(),MinecraftUtilClass.getRanges());
 		for(MinecraftCoordinates corner : parallelShapeCorners) {
 			try {
 				coordinateQueue.put(corner);

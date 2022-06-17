@@ -365,7 +365,7 @@ public class Parameters {
 		integerOptions.add("minecraftDesiredBlockCount", 0, "Count desired by TypeTargetFitness");
 		integerOptions.add("minecraftMaxSnakeLength", 100, "Maximum length that a generated snake can be");
 		integerOptions.add("spaceBetweenMinecraftShapes", 5, "The space in blocks that are in between each of the generated minecraft structures");
-		integerOptions.add("parallelMinecraftSlots", 10, "The ammount of minecraft shapes that can be generated at once");
+		integerOptions.add("parallelSteadyStateThreads", 10, "Number of concurrent threads for MAP Elites, if parallelism is enabled");
 		integerOptions.add("minecraftAmountOfBlocksToEvolve", 5, "The ammount of possible blocks that can be evolved by CPPN");
 		integerOptions.add("interactiveSleepTimer", 1000, "The ammount of time the interactive thread sleeps for");
 		
