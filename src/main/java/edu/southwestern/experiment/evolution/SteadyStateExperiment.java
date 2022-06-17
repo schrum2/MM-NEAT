@@ -1,5 +1,6 @@
 package edu.southwestern.experiment.evolution;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -40,22 +41,52 @@ public class SteadyStateExperiment<T> implements Experiment {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void run() {
-		while(!shouldStop()) { // Until done
-			ea.newIndividual(); // Make new individuals
-			synchronized(this) {
-				Parameters.parameters.saveParameters(); // Save the parameters and the archetype
-				if(Parameters.parameters.booleanParameter("steadyStateArchetypeSaving") && ea.populationChanged()) { // In steady state, not every individual is added to the population
-					EvolutionaryHistory.saveArchetype(0);
-
+		int numThreads = Parameters.parameters.booleanParameter("parallelEvaluations") ? Parameters.parameters.integerParameter("threads") : 1;
+		Thread[] threads = new Thread[numThreads];
+		for(int i = 0; i < numThreads; i++) {
+			threads[i] = new Thread() {
+				@Override
+				public void run() {
+					while(!shouldStop()) { // Until done
+						ea.newIndividual(); // Make new individuals
+						synchronized(SteadyStateExperiment.this) {
+							Parameters.parameters.saveParameters(); // Save the parameters and the archetype
+							if(Parameters.parameters.booleanParameter("steadyStateArchetypeSaving") && ea.populationChanged()) { // In steady state, not every individual is added to the population
+								EvolutionaryHistory.saveArchetype(0);
+							}
+							if(cleanArchetype && EvolutionaryHistory.timeToClean(ea.currentIteration())) { // Periodically clean extinct genes from the archetype
+								ArrayList<Genotype<T>> pop = ea.getPopulation();
+								ArrayList<TWEANNGenotype> tweannPop = new ArrayList<TWEANNGenotype>(pop.size());
+								for(Genotype<T> g : pop) tweannPop.add(plainTWEANNGenotype ? (TWEANNGenotype) g : ((TWEANNPlusParametersGenotype) g).getTWEANNGenotype());
+								EvolutionaryHistory.cleanArchetype(0, tweannPop, ea.currentIteration());
+							}
+						}
+					}
 				}
-				if(cleanArchetype && EvolutionaryHistory.timeToClean(ea.currentIteration())) { // Periodically clean extinct genes from the archetype
-					ArrayList<Genotype<T>> pop = ea.getPopulation();
-					ArrayList<TWEANNGenotype> tweannPop = new ArrayList<TWEANNGenotype>(pop.size());
-					for(Genotype<T> g : pop) tweannPop.add(plainTWEANNGenotype ? (TWEANNGenotype) g : ((TWEANNPlusParametersGenotype) g).getTWEANNGenotype());
-					EvolutionaryHistory.cleanArchetype(0, tweannPop, ea.currentIteration());
+			};
+		}
+		
+		// There is only one thread. Just run it
+		if(!Parameters.parameters.booleanParameter("parallelEvaluations")) {
+			System.out.println("SteadyStateExperiment with 1 thread");
+			threads[0].run();
+		} else {
+			// Launch all the threads in parallel
+			System.out.println("SteadyStateExperiment with "+numThreads+" threads");
+			for(Thread t : threads) {
+				t.start();
+			}
+			
+			// Make sure all of them stop
+			for(Thread t : threads) {
+				try {
+					t.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 		}
+		
 		ea.finalCleanup();
 	}
 
@@ -64,4 +95,44 @@ public class SteadyStateExperiment<T> implements Experiment {
 		return ea.currentIteration() >= maxIterations;
 	}
 
+	// Benchmark the parallelism using Minecraft
+	public static void main(String[] args) {
+		int seed = 0;
+		try {
+			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:50", "maxGens:1000",
+					"base:minecraft", "log:Minecraft-SingleTest", "saveTo:SingleTest",
+					//"base:minecraft", "log:Minecraft-ParallelTest", "saveTo:ParallelTest",
+					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
+					"launchMinecraftServerFromJava:false",
+					"io:true", "netio:true",
+					"interactWithMapElitesInWorld:true",
+					//"io:false", "netio:false", 
+					"mating:true", "fs:false",
+					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesWidthHeightDepthBinLabels", 
+					"minecraftXRange:6", "minecraftYRange:6", "minecraftZRange:6", 
+					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.ThreeDimensionalVolumeGenerator", 
+					"minecraftChangeCenterOfMassFitness:true", 
+					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet", 
+					"mating:true", "fs:false", 
+					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
+					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment", 
+					"steadyStateIndividualsPerGeneration:100", 
+					"spaceBetweenMinecraftShapes:5",
+					// Parallelism
+					"parallelEvaluations:false",
+					"threads:10", // Only matters if parallelEvaluations is true
+					"parallelMAPElitesInitialize:false", 
+					
+					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", 
+					"allowMultipleFunctions:true", 
+					"ftype:0", "watch:false", "netChangeActivationRate:0.3", "cleanFrequency:-1", "recurrency:false", "saveAllChampions:true", "cleanOldNetworks:false", 
+					"includeFullSigmoidFunction:true", "includeFullGaussFunction:true", "includeCosineFunction:true", "includeGaussFunction:false",
+					"includeIdFunction:true", "includeTriangleWaveFunction:false", "includeSquareWaveFunction:false", "includeFullSawtoothFunction:false", 
+					"includeSigmoidFunction:false", "includeAbsValFunction:false", "includeSawtoothFunction:false", 
+					"minecraftNorthSouthOnly:true"}); 
+		} catch (FileNotFoundException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+	}
 }
