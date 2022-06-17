@@ -318,7 +318,7 @@ public class Parameters {
 		integerOptions.add("substrateWeightSize", 1, "dimension of individual weights in substrate visualization");
 		integerOptions.add("syllabusSize", 10, "Number of examples in BD syllabus");
 		integerOptions.add("teams", 1, "Number of teams each individual is evaluated in for coevolution");
-		integerOptions.add("threads", 4, "Number of threads if evaluating in parallel");
+		integerOptions.add("threads", 10, "Number of threads if evaluating in parallel");
 		integerOptions.add("aStarSearchBudget", 100000, "Number of iterations after which A* gives up with exception");
 		integerOptions.add("dungeonGenerationFailChances", 10, "If dungeon cannot be created in 10 tries, then assign worst fitness.");
 		integerOptions.add("tickLimit", 4000, "used in customExecutor. Number of ticks permitted?");
@@ -365,7 +365,6 @@ public class Parameters {
 		integerOptions.add("minecraftDesiredBlockCount", 0, "Count desired by TypeTargetFitness");
 		integerOptions.add("minecraftMaxSnakeLength", 100, "Maximum length that a generated snake can be");
 		integerOptions.add("spaceBetweenMinecraftShapes", 5, "The space in blocks that are in between each of the generated minecraft structures");
-		integerOptions.add("parallelSteadyStateThreads", 10, "Number of concurrent threads for MAP Elites, if parallelism is enabled");
 		integerOptions.add("minecraftAmountOfBlocksToEvolve", 5, "The ammount of possible blocks that can be evolved by CPPN");
 		integerOptions.add("interactiveSleepTimer", 1000, "The ammount of time the interactive thread sleeps for");
 		
