@@ -819,6 +819,7 @@ public class Parameters {
 		booleanOptions.add("oneOutputLabelForBlockTypeCPPN", false, "Determines whether CPPN will use only one output for determining the block type.");
 		booleanOptions.add("oneOutputLabelForBlockOrientationCPPN", false, "Determines whether CPPN will use only one output for determining the block orientation.");
 		booleanOptions.add("minecraftNorthSouthOnly", false, "Determines whether only the North and South orientations will be used.");
+		booleanOptions.add("displayDiagnolly", false, "Displays the archive diagonally");
 		
 		// Double parameters
 		doubleOptions.add("aggressiveGhostConsistency", 0.9, "How often aggressive ghosts pursue pacman");
