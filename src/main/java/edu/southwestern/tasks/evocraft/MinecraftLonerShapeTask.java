@@ -494,12 +494,12 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 	}
 
 	public static void main(String[] args) {
-		int seed = 4;
+		int seed = 5;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
 					"base:minecraft", "log:Minecraft-MAPElitesWHDSimple", "saveTo:MAPElitesWHDSimple",
 					"minecraftContainsWholeMAPElitesArchive:true","forceLinearArchiveLayoutInMinecraft:false",
-					"launchMinecraftServerFromJava:false",
+					"launchMinecraftServerFromJava:false", "displayDiagonally:true",
 					"io:true", "netio:true",
 					"interactWithMapElitesInWorld:true",
 					//"io:false", "netio:false", 

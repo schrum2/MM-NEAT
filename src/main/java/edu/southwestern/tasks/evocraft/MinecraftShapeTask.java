@@ -313,11 +313,23 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 	public static ArrayList<MinecraftCoordinates> getShapeCorners(int size, int startingX, int startingZ, MinecraftCoordinates ranges) {
 		ArrayList<MinecraftCoordinates> corners = new ArrayList<>(size);
 		int count = 0;
-		for(int i = 0; i < size; i++) {
-			MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), MinecraftClient.GROUND_LEVEL+1, startingZ);
-			corners.add(corner);
-			count++;
+		
+		// If placing diagonally, decrease the z coordinate
+		if(Parameters.parameters.booleanParameter("displayDiagonally")) {
+			for(int i = 0; i < size; i++) {
+				MinecraftCoordinates corner = new MinecraftCoordinates(startingX - count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), MinecraftClient.GROUND_LEVEL+1, startingZ - count*(ranges.z() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")));
+				corners.add(corner);
+				count++;
+			}
+		// Otherwise, generate in line
+		}else {
+			for(int i = 0; i < size; i++) {
+				MinecraftCoordinates corner = new MinecraftCoordinates(startingX + count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), MinecraftClient.GROUND_LEVEL+1, startingZ);
+				corners.add(corner);
+				count++;
+			}
 		}
+		
 		return corners;
 	}
 
