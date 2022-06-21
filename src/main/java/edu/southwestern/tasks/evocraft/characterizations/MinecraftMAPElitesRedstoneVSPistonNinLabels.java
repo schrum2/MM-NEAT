@@ -13,7 +13,7 @@ import edu.southwestern.tasks.evocraft.fitness.NumRedstoneFitness;
 public class MinecraftMAPElitesRedstoneVSPistonNinLabels extends MinecraftMAPElitesBinLabels{
 
 	private List<String> labels = null;
-	private List<MinecraftFitnessFunction> properties = Arrays.asList(new NumRedstoneFitness(), new NumPistonsFitness());
+	private List<MinecraftFitnessFunction> properties = Arrays.asList(new NumPistonsFitness(), new NumRedstoneFitness());
 	
 	@Override
 	public List<String> binLabels() {
@@ -26,8 +26,8 @@ public class MinecraftMAPElitesRedstoneVSPistonNinLabels extends MinecraftMAPEli
 			labels = new ArrayList<String>(sizeBlockCount*sizeBlockCount);
 			
 			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities , -1 for negative space(j < size would just give a range of 0-999)
-			for(int i = 0; i < sizeBlockCount; i++) {
-				for(int j = 0; j < sizeBlockCount; j++)
+			for(int i = 0; i <= sizeBlockCount; i++) {
+				for(int j = 0; j <= sizeBlockCount; j++)
 				labels.add("BlockCountRedstone"+i+"NegativeSpacePistons"+j); 
 			}
 		}
@@ -37,7 +37,7 @@ public class MinecraftMAPElitesRedstoneVSPistonNinLabels extends MinecraftMAPEli
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
 		//multi[1]++; // Needs to be done so no negative indexes
-		int binIndex = (multi[0])*dimensionSizes()[1] + multi[1];
+		int binIndex = (multi[0])*dimensionSizes()[1] + multi[1];		
 		return binIndex;
 	}
 
@@ -51,8 +51,8 @@ public class MinecraftMAPElitesRedstoneVSPistonNinLabels extends MinecraftMAPEli
 	
 	@Override
 	public int[] dimensionSizes() {
-		int xtimesYtimez = Parameters.parameters.integerParameter("minecraftXRange")*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange");
-		return new int[] {xtimesYtimez+1,xtimesYtimez+1}; // Makes sure no empty fences are placed
+		int xtimesYtimez = Parameters.parameters.integerParameter("minecraftXRange")*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange")+1;
+		return new int[] {xtimesYtimez,xtimesYtimez}; // Makes sure no empty fences are placed
 	}
 
 	@Override

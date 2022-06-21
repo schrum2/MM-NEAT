@@ -219,6 +219,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			// Gets the bin scores to compare them
 			double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
 			assert index1D >= 0 : individual.getId() + ":" + behaviorCharacteristics;
+			System.out.println(index1D+"          "+((MAPElites<T>) MMNEAT.ea).getArchive().getBinMapping().binLabels().size());
 			assert index1D < ((MAPElites<T>) MMNEAT.ea).getArchive().getBinMapping().binLabels().size() : individual.getId() + ":" + behaviorCharacteristics;
 			double scoreOfPreviousElite = 0;
 			scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
