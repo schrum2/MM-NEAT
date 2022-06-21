@@ -11,7 +11,11 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
-
+/**
+ * Binning scheme based on block count and negative space in shapes
+ * @author MuellMar
+ *
+ */
 public class MinecraftMAPElitesBlockCountEmptyCountBinLabels extends MinecraftMAPElitesBinLabels {
 
 	private List<String> labels = null;
@@ -66,7 +70,7 @@ public class MinecraftMAPElitesBlockCountEmptyCountBinLabels extends MinecraftMA
 	
 	@Override
 	public boolean discard(HashMap<String, Object> behaviorMap) {
-		return ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() == 0; // IF empty, discards it (mostly first row of blockCount
+		return ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() == 0; // IF empty, discards it (mostly first row of blockCount)
 	}
 
 	public static void main(String[] args) {
