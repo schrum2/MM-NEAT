@@ -368,6 +368,8 @@ public class Parameters {
 		integerOptions.add("minecraftAmountOfBlocksToEvolve", 5, "The ammount of possible blocks that can be evolved by CPPN");
 		integerOptions.add("interactiveSleepTimer", 1000, "The ammount of time the interactive thread sleeps for");
 		integerOptions.add("extraSpaceBetweenMinecraftShapes", 1000, "The extra space that will be in between the shapes being evaluated");
+		integerOptions.add("leftoverMinecraftBlocksAllowed", 0, "The amount of blocks that will be allowed to be left behind by the flying machine and still get max fitness for the change in center of mass fitness function");
+
 		
 		// Long parameters
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
