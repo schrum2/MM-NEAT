@@ -51,14 +51,17 @@ public class MinecraftMAPElitesRedstoneVSPistonNinLabels extends MinecraftMAPEli
 	
 	@Override
 	public int[] dimensionSizes() {
-		// TODO Auto-generated method stub
-		return null;
+		int xtimesYtimez = Parameters.parameters.integerParameter("minecraftXRange")*Parameters.parameters.integerParameter("minecraftYRange")*Parameters.parameters.integerParameter("minecraftZRange");
+		return new int[] {xtimesYtimez,xtimesYtimez}; // Makes sure no empty fences are placed
 	}
 
 	@Override
 	public List<MinecraftFitnessFunction> properties() {
-		// TODO Auto-generated method stub
-		return null;
+		return properties;
 	}
 
+	@Override
+	public boolean discard(HashMap<String, Object> behaviorMap) {
+		return ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() == 0; // IF empty, discards it (mostly first row of blockCount)
+	}
 }

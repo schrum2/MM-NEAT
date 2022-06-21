@@ -70,7 +70,7 @@ public class MinecraftMAPElitesBlockCountEmptyCountBinLabels extends MinecraftMA
 	
 	@Override
 	public boolean discard(HashMap<String, Object> behaviorMap) {
-		return ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() == 0; // IF empty, discards it (mostly first row of blockCount
+		return ((Double) behaviorMap.get("OccupiedCountFitness")).doubleValue() == 0; // IF empty, discards it (mostly first row of blockCount)
 	}
 
 	public static void main(String[] args) {
