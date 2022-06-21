@@ -11,7 +11,11 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.fitness.MinecraftFitnessFunction;
 import edu.southwestern.tasks.evocraft.fitness.NegativeSpaceCountFitness;
 import edu.southwestern.tasks.evocraft.fitness.OccupiedCountFitness;
-
+/**
+ * Binning scheme based on block count and negative space in shapes
+ * @author MuellMar
+ *
+ */
 public class MinecraftMAPElitesBlockCountEmptyCountBinLabels extends MinecraftMAPElitesBinLabels {
 
 	private List<String> labels = null;
