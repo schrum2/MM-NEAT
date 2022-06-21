@@ -2,7 +2,6 @@ package edu.southwestern.tasks.evocraft.fitness;
 
 import java.util.List;
 
-import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
 import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
 import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
