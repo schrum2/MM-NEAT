@@ -2,6 +2,7 @@ package edu.southwestern.tasks.evocraft.characterizations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.southwestern.parameters.Parameters;
@@ -35,10 +36,19 @@ public class MinecraftMAPElitesRedstoneVSPistonNinLabels extends MinecraftMAPEli
 
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		// TODO Auto-generated method stub
-		return 0;
+		multi[1]++; // Needs to be done so no negative indexes
+		int binIndex = (multi[0])*dimensionSizes()[1] + multi[1];
+		return binIndex;
 	}
 
+	@Override
+	public int[] multiDimensionalIndices(HashMap<String, Object> keys) {
+		int[] result = super.multiDimensionalIndices(keys);
+		// Actual block count could be 0, but such shapes are discarded, only for block Count
+		result[0]--;
+		return result;
+	}
+	
 	@Override
 	public int[] dimensionSizes() {
 		// TODO Auto-generated method stub
