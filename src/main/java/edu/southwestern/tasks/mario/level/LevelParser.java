@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.level.SpriteTemplate;
 import ch.idsia.mario.engine.sprites.Enemy;
+import edu.southwestern.parameters.Parameters;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -152,8 +153,13 @@ public class LevelParser {
      */
     public static ArrayList<double[]> getLevelStats(List<List<Integer>> oneLevel, int segmentWidth){
         if (oneLevel.get(0).size()%segmentWidth!=0){
-            System.out.println("getLevelStats: Level not multiple of segment width");
-            return null;
+        	if(Parameters.parameters.integerParameter("marioGANLevelChunks") == 1) {
+        		// Treat whole level as one big segment
+        		segmentWidth = oneLevel.get(0).size();
+        	} else {
+        		System.out.println("getLevelStats: Level not multiple of segment width!");
+            	return null;
+        	}
         }      
         ArrayList<double[]> statList = new ArrayList<>();
         int height = oneLevel.size();
@@ -417,7 +423,7 @@ public class LevelParser {
         }
     }
     
-    static int[][] readLevel(Scanner scanner) throws Exception { // read level into 2D int array (from: https://github.com/TheHedgeify/DagstuhlGAN/blob/master/marioaiDagstuhl/src/reader/MarioReader.java)
+    public static int[][] readLevel(Scanner scanner) throws Exception { // read level into 2D int array (from: https://github.com/TheHedgeify/DagstuhlGAN/blob/master/marioaiDagstuhl/src/reader/MarioReader.java)
         String line;
         ArrayList<String> lines = new ArrayList<>();
         int width = 0;
