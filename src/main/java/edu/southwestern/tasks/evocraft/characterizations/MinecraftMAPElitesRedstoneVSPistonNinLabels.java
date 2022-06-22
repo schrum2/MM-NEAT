@@ -39,7 +39,7 @@ public class MinecraftMAPElitesRedstoneVSPistonNinLabels extends MinecraftMAPEli
 		multi[1]++; // Needs to be done so no negative indexes
 		
 		int binIndex = (multi[0])*dimensionSizes()[1] + multi[1];	
-		System.out.println("multi 0:"+multi[0]+"  dimSize:"+dimensionSizes()[1]+"  multi[1]:"+multi[1]+"  bin"+binIndex);
+		//System.out.println("multi 0:"+multi[0]+"  dimSize:"+dimensionSizes()[1]+"  multi[1]:"+multi[1]+"  bin"+binIndex);
 		return binIndex;
 	}
 

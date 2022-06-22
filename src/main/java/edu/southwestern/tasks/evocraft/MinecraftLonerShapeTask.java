@@ -268,7 +268,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST)); // Adds new gold block
 					}
 					MinecraftClient.getMinecraftClient().spawnBlocks(champions); // Spawns shapes in
-					//System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness); // For debugging
+					System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness); // For debugging
 					if(spawnShapesInWorld) highestFitness = scoreOfCurrentElite; // increases the best fitness if needed
 				}
 			}
