@@ -317,7 +317,7 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		// If placing diagonally, decrease the z coordinate
 		if(Parameters.parameters.booleanParameter("displayDiagonally")) {
 			for(int i = 0; i < size; i++) {
-				MinecraftCoordinates corner = new MinecraftCoordinates(startingX - count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), MinecraftClient.GROUND_LEVEL+1, startingZ - count*(ranges.z() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")));
+				MinecraftCoordinates corner = new MinecraftCoordinates(startingX - count*(ranges.x() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), MinecraftClient.GROUND_LEVEL+1+count*(ranges.y() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")), startingZ - count*(ranges.z() + Parameters.parameters.integerParameter("spaceBetweenMinecraftShapes")));
 				corners.add(corner);
 				count++;
 			}
