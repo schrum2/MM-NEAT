@@ -24,10 +24,6 @@ public class NumPistonsFitnessTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		Parameters.initializeParameterCollections(new String[] {"minecraftXRange:10","minecraftYRange:10","minecraftZRange:10","spaceBetweenMinecraftShapes:6"});
-		
-		// Uncomment out everything with client to see in Minecraft world. However, does not Maven build when not commented out!
-		//MinecraftServer.launchServer();
-		//MinecraftClient.getMinecraftClient();
 	}
 	
 	@Before
@@ -35,20 +31,11 @@ public class NumPistonsFitnessTest {
 		ff = new NumPistonsFitness();
 	}
 	
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		//long waitTime = Parameters.parameters.longParameter("minecraftMandatoryWaitTime");
-		//Thread.sleep(waitTime);
-		
-		//MinecraftClient.terminateClientScriptProcess();
-		//MinecraftServer.terminateServer();
-	}
 	
 	@Test
 	public void testFitnessFromBlocks() {
 		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0); //Initializes corner for testing
-		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, MinecraftUtilClass.getRanges(), 2, 100);
-		
+
 		blockSet1 = new ArrayList<>();
 		blockSet1.add(new Block(1,5,1,BlockType.AIR, Orientation.WEST));
 		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0); // Test when nothing
