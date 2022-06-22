@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.evocraft.fitness;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -79,7 +80,7 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 		boolean stop = false;
 		
-		List<Block> shortWaitTimeUpdate = null;
+		List<Block> shortWaitTimeUpdate = new ArrayList<>();
 		
 		long startTime = System.currentTimeMillis();
 		// Wait for the machine to move some (if at all)
@@ -96,10 +97,10 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 			// Should we check the actual time? Or is this fine?
 //			timeElapsed += shortWaitTime;
 
-
+			List<Block> previousCheck = shortWaitTimeUpdate;
 			shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
 			//System.out.println("Short wait time Update list: " + shortWaitTimeUpdate);
-			if(shortWaitTimeUpdate.isEmpty() || blocks.size() - shortWaitTimeUpdate.size() <= Parameters.parameters.integerParameter("leftoverMinecraftBlocksAllowed")) {
+			if(shortWaitTimeUpdate.isEmpty() || shortWaitTimeUpdate.size() <= Parameters.parameters.integerParameter("leftoverMinecraftBlocksAllowed") || previousCheck.size() > Parameters.parameters.integerParameter("leftoverMinecraftBlocksAllowed")) {
 				// Ship flew so far away that we award max fitness
 				System.out.println("Where fitness");
 				return maxFitness();
