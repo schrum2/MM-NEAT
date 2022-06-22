@@ -15,7 +15,7 @@ public class NumPistonsFitness extends TypeCountFitness{
 		//TypeCountFitness stickyPiston = new TypeCountFitness(BlockType.STICKY_PISTON.ordinal());
 		double total = piston.fitnessFromBlocks(corner,blocks);
 		//total += stickyPiston.fitnessFromBlocks(corner,blocks);
-		System.out.println("Piss"+piston.fitnessFromBlocks(corner,blocks));
+		System.out.println("Piston"+piston.fitnessFromBlocks(corner,blocks));
 		return total;
 		
 //		int pistonCount = 0;
