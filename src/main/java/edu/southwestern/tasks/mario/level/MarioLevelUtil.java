@@ -28,6 +28,7 @@ import ch.idsia.tools.Evaluator;
 import ch.idsia.tools.ToolsConfigurator;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.Archive;
+import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -500,16 +501,22 @@ public class MarioLevelUtil {
    	 */
    	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void main(String[] args) throws FileNotFoundException, Exception {
+   		
+   		String binningSchemeClassName = "MarioMAPElitesDecorAndLeniencyBinLabels";
+   		String binningSchemeName = binningSchemeClassName.substring(14, binningSchemeClassName.length() - 9);
+   		
    		Parameters.initializeParameterCollections(new String[] {
-   				"base:dagstuhl","log:Dagstuhl-Mario","saveTo:Mario",
+   				"base:dagstuhlmario","log:DagstuhlMario-"+binningSchemeName,"saveTo:"+binningSchemeName,
    				"task:edu.southwestern.tasks.mario.FakeMarioLevelTask",
    				"marioGANLevelChunks:1", "mu:0",
+   				"io:true","netio:true",
    				"ea:edu.southwestern.evolution.mapelites.MAPElites", 
    				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-   				"mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDecorAndLeniencyBinLabels"});
+   				"mapElitesBinLabels:edu.southwestern.tasks.mario."+binningSchemeClassName});
    		MMNEAT.loadClasses();
    		
    		MarioLevelTask<ArrayList<Double>> marioLevelTask = (MarioLevelTask<ArrayList<Double>>) MMNEAT.task;
+   		MAPElites me = (MAPElites) MMNEAT.ea;
    		String dir = "data/VGLC/SuperMarioBrosNewEncoding/overworld";
    		File dirFile = new File(dir);
    		for(File levelFile : dirFile.listFiles()) {
@@ -529,7 +536,7 @@ public class MarioLevelUtil {
    	   			System.out.println(Arrays.toString(archive.getBinMapping().multiDimensionalIndices(map)));
    	   			// No genotype or scores
 				Score score = new Score(null,new double[0],map,0);
-   	   			archive.add(score);
+   	   			me.fileUpdates(archive.add(score));
    			}   		
    		}   		
    	}
