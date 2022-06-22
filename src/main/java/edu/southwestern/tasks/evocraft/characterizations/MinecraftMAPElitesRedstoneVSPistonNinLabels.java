@@ -22,12 +22,12 @@ public class MinecraftMAPElitesRedstoneVSPistonNinLabels extends MinecraftMAPEli
 			int yDim = Parameters.parameters.integerParameter("minecraftYRange");
 			int zDim = Parameters.parameters.integerParameter("minecraftZRange");
 			
-			int sizeBlockCount = xDim*yDim*zDim+1; 
+			int sizeBlockCount = xDim*yDim*zDim+1; // Right size for having 0's
 			labels = new ArrayList<String>(sizeBlockCount*sizeBlockCount);
-			
+
 			// go through all possible bins+1 since both 0 and 1000 blocks are both possibilities , -1 for negative space(j < size would just give a range of 0-999)
-			for(int i = 0; i <= sizeBlockCount; i++) {
-				for(int j = 0; j <= sizeBlockCount; j++)
+			for(int i = 0; i < sizeBlockCount; i++) {
+				for(int j = 0; j < sizeBlockCount; j++)
 				labels.add("BlockCountRedstone"+i+"NegativeSpacePistons"+j); 
 			}
 		}
@@ -36,8 +36,10 @@ public class MinecraftMAPElitesRedstoneVSPistonNinLabels extends MinecraftMAPEli
 
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
-		//multi[1]++; // Needs to be done so no negative indexes
-		int binIndex = (multi[0])*dimensionSizes()[1] + multi[1];		
+		multi[1]++; // Needs to be done so no negative indexes
+		
+		int binIndex = (multi[0])*dimensionSizes()[1] + multi[1];	
+		System.out.println("multi 0:"+multi[0]+"  dimSize:"+dimensionSizes()[1]+"  multi[1]:"+multi[1]+"  bin"+binIndex);
 		return binIndex;
 	}
 
