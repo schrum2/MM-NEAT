@@ -2,6 +2,7 @@ package edu.southwestern.tasks.evocraft.fitness;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -11,6 +12,9 @@ import org.junit.Test;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.evocraft.MinecraftClient.Block;
+import edu.southwestern.tasks.evocraft.MinecraftClient.BlockType;
+import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
+import edu.southwestern.tasks.evocraft.MinecraftClient.Orientation;
 
 public class NumPistonsFitnessTest {
 
@@ -42,11 +46,22 @@ public class NumPistonsFitnessTest {
 	
 	@Test
 	public void testFitnessFromBlocks() {
-		fail("Not yet implemented");
+		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0); //Initializes corner for testing
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, MinecraftUtilClass.getRanges(), 2, 100);
+		
+		blockSet1 = new ArrayList<>();
+		blockSet1.add(new Block(1,5,1,BlockType.AIR, Orientation.WEST));
+		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0); // Test when nothing
+		blockSet1.add(new Block(2,5,1,BlockType.EMERALD_BLOCK, Orientation.WEST));
+		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(3,5,1,BlockType.PISTON, Orientation.WEST));
+		assertEquals(1,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(4,5,1,BlockType.STICKY_PISTON, Orientation.WEST));
+		assertEquals(2,ff.fitnessFromBlocks(corner,blockSet1),0);
 	}
 
 	@Test
 	public void testMaxFitness() {
-		fail("Not yet implemented");
+		assertEquals(1000,ff.maxFitness(),0);
 	}
 }

@@ -12,10 +12,10 @@ public class NumPistonsFitness extends TypeCountFitness{
 	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
 		
 		TypeCountFitness piston = new TypeCountFitness(BlockType.PISTON.ordinal());
-		//TypeCountFitness stickyPiston = new TypeCountFitness(BlockType.STICKY_PISTON.ordinal());
 		double total = piston.fitnessFromBlocks(corner,blocks);
-		//total += stickyPiston.fitnessFromBlocks(corner,blocks);
-		System.out.println("Piston"+piston.fitnessFromBlocks(corner,blocks));
+		TypeCountFitness stickyPiston = new TypeCountFitness(BlockType.STICKY_PISTON.ordinal());
+		total += stickyPiston.fitnessFromBlocks(corner,blocks);
+		System.out.println("Piston"+total);
 		return total;
 		
 //		int pistonCount = 0;
