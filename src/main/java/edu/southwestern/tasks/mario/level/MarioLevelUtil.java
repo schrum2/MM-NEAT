@@ -28,6 +28,7 @@ import ch.idsia.tools.Evaluator;
 import ch.idsia.tools.ToolsConfigurator;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.Archive;
+import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -283,13 +284,8 @@ public class MarioLevelUtil {
 	 */
 	public static List<List<List<Integer>>> getSegmentsFromLevel(List<List<Integer>> oneLevel, int segmentWidth){
 		if (oneLevel.get(0).size()%segmentWidth!=0){
-        	if(Parameters.parameters.integerParameter("marioGANLevelChunks") == 1) {
-        		// Treat whole level as one big segment
-        		segmentWidth = oneLevel.get(0).size();
-        	} else {
-        		System.out.println("getLevelStats: Level not multiple of segment width!");
-            	return null;
-        	}
+        	System.out.println("getLevelStats: Level not multiple of segment width!");
+            return null;
         }      
 		int height = oneLevel.size();
         List<List<List<Integer>>> levelWithParsedSegments = new ArrayList<List<List<Integer>>>();
@@ -348,6 +344,9 @@ public class MarioLevelUtil {
 		return result;
 	}
 	
+	// Evaluated levels have buffers added to the start and end that later need to be removed
+	public static boolean removeMarioLevelBuffer = true;
+	
 	/**
 	 * Return an image of the level, excluding the buffer zones at the
 	 * beginning and end of every CPPN generated level. Also excludes
@@ -362,7 +361,7 @@ public class MarioLevelUtil {
         options.setLevel(level);
 		task.setOptions(options);
 
-		int relevantWidth = (level.width - (2*OldLevelParser.BUFFER_WIDTH)) * MarioLevelUtil.BLOCK_SIZE;
+		int relevantWidth = (level.width - (removeMarioLevelBuffer ? (2*OldLevelParser.BUFFER_WIDTH) : 0)) * MarioLevelUtil.BLOCK_SIZE;
 		BufferedImage image = new BufferedImage(relevantWidth, (1+level.height)*MarioLevelUtil.BLOCK_SIZE, BufferedImage.TYPE_INT_ARGB);
 		// Skips buffer zones at start and end of level
 		LevelRenderer.renderArea((Graphics2D) image.getGraphics(), level, 0, 0, OldLevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, (1+level.height)*BLOCK_SIZE);
@@ -500,38 +499,61 @@ public class MarioLevelUtil {
    	 */
    	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void main(String[] args) throws FileNotFoundException, Exception {
+   		removeMarioLevelBuffer = false;
+   		//String binningSchemeClassName = "MarioMAPElitesDecorAndLeniencyBinLabels";
+   		//String binningSchemeClassName = "MarioMAPElitesDecorNSAndLeniencyBinLabels";
+   		String binningSchemeClassName = "MarioMAPElitesDistinctChunksNSAndDecorationBinLabels";
+   		String binningSchemeName = binningSchemeClassName.substring(14, binningSchemeClassName.length() - 9);
+   		int marioGANLevelChunks = 10; // This is what we used with MarioGAN
    		Parameters.initializeParameterCollections(new String[] {
-   				"base:dagstuhl","log:Dagstuhl-Mario","saveTo:Mario",
+   				"base:dagstuhlmario","log:DagstuhlMario-"+binningSchemeName,"saveTo:"+binningSchemeName,
    				"task:edu.southwestern.tasks.mario.FakeMarioLevelTask",
-   				"marioGANLevelChunks:1", "mu:0",
+   				"marioGANLevelChunks:"+marioGANLevelChunks, "mu:0",
+   				"io:true","netio:true",
+   				"marioSimpleAStarDistance:true",
+   				//"marioGANUsesOriginalEncoding:true",
+   				"steadyStateIndividualsPerGeneration:1",
    				"ea:edu.southwestern.evolution.mapelites.MAPElites", 
    				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-   				"mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDecorAndLeniencyBinLabels"});
+   				"mapElitesBinLabels:edu.southwestern.tasks.mario."+binningSchemeClassName});
    		MMNEAT.loadClasses();
+   		// Actual levels do not have chunks. Value was initially 10 to assure proper binning scheme
+   		// but it is now 1 as a hack to assure correct calculation of level stats
+   		//Parameters.parameters.setInteger("marioGANLevelChunks", 1);
    		
    		MarioLevelTask<ArrayList<Double>> marioLevelTask = (MarioLevelTask<ArrayList<Double>>) MMNEAT.task;
+   		MAPElites me = (MAPElites) MMNEAT.ea;
    		String dir = "data/VGLC/SuperMarioBrosNewEncoding/overworld";
    		File dirFile = new File(dir);
    		for(File levelFile : dirFile.listFiles()) {
    			if(levelFile.getName().endsWith(".txt")) {
    	   			System.out.println(levelFile);
+   	   			//int[][] grid = OldLevelParser.readLevel(new Scanner(levelFile));
    	   			int[][] grid = LevelParser.readLevel(new Scanner(levelFile));
    	   			//System.out.println(Arrays.deepToString(grid));
    	   			List<List<Integer>> levelAsLists = new ArrayList<>();
    	   			for(int[] row: grid) {
-   	   				List<Integer> rowList = ArrayUtil.intListFromArray(row);
+   	   				int numSegments = row.length / MarioLevelTask.SEGMENT_WIDTH_IN_BLOCKS; 
+   	   				int choppedLength = numSegments * MarioLevelTask.SEGMENT_WIDTH_IN_BLOCKS;
+   	   				System.out.println("Chop "+row.length+" down to "+choppedLength);
+   	   				int[] chopped = new int[choppedLength];
+   	   				System.arraycopy(row, 0, chopped, 0, choppedLength);
+   	   				List<Integer> rowList = ArrayUtil.intListFromArray(chopped);
    	   				//System.out.println(rowList);
    	   				levelAsLists.add(rowList);
    	   			}
    	   			HashMap<String,Object> map = new HashMap<>();
-   	   			marioLevelTask.evaluateOneLevel(levelAsLists, 0, null, map);
+   	   			marioLevelTask.evaluateOneLevel(levelAsLists, 0, MMNEAT.genotype, map);
    	   			Archive archive = MMNEAT.getArchive();
    	   			System.out.println(Arrays.toString(archive.getBinMapping().multiDimensionalIndices(map)));
+   	   			System.out.println(map);
+   	   			System.out.println(Arrays.toString( (((ArrayList<double[]>) map.get("Level Stats"))).get(0)));
    	   			// No genotype or scores
-				Score score = new Score(null,new double[0],map,0);
-   	   			archive.add(score);
+				Score score = new Score(map,MMNEAT.genotype,new double[0]);
+   	   			me.fileUpdates(archive.add(score));
    			}   		
-   		}   		
+   		}   
+   		me.finalCleanup();
    	}
    	
    	public static ArrayList<ArrayList<ArrayList<Integer>>> parseLevelJson(FileReader file) {
