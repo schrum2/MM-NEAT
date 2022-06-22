@@ -53,7 +53,7 @@ public class NegativeSpaceCountFitnessTest {
 	@Test
 	public void testFitnessFromBlocks() {
 		MinecraftCoordinates corner = new MinecraftCoordinates(0,5,0); //Initializes corner for testing
-		MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, MinecraftUtilClass.getRanges(), 2, 100);
+		//MinecraftClient.getMinecraftClient().clearSpaceForShapes(corner, MinecraftUtilClass.getRanges(), 2, 100);
 		
 		blockSet1 = new ArrayList<>();
 		blockSet2 = new ArrayList<>();

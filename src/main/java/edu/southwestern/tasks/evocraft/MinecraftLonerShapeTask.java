@@ -111,6 +111,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 									if(interactiveBlocks.get(0).type!=BlockType.DIAMOND_BLOCK) {
 										// Gets score and uses it to place to clear and replace the shape
 										Score<T> s = MMNEAT.getArchive().getElite(triple.t3);
+										System.out.println(s.MAPElitesBehaviorMap().get("binScore"));
 										placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 									}
 									
@@ -219,7 +220,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 			// Gets the bin scores to compare them
 			double scoreOfCurrentElite = (double) behaviorCharacteristics.get("binScore");
 			assert index1D >= 0 : individual.getId() + ":" + behaviorCharacteristics;
-			System.out.println(index1D+"          "+((MAPElites<T>) MMNEAT.ea).getArchive().getBinMapping().binLabels().size());
+			//System.out.println(index1D+"          "+((MAPElites<T>) MMNEAT.ea).getArchive().getBinMapping().binLabels().size());
 			assert index1D < ((MAPElites<T>) MMNEAT.ea).getArchive().getBinMapping().binLabels().size() : individual.getId() + ":" + behaviorCharacteristics;
 			double scoreOfPreviousElite = 0;
 			scoreOfPreviousElite = ((MAPElites<T>) MMNEAT.ea).getArchive().getBinScore(index1D);
@@ -268,7 +269,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 						champions.add(new Block(goldBlock,BlockType.GOLD_BLOCK, Orientation.WEST)); // Adds new gold block
 					}
 					MinecraftClient.getMinecraftClient().spawnBlocks(champions); // Spawns shapes in
-					//System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness); // For debugging
+					System.out.println("Current:"+scoreOfCurrentElite+"  Highest:"+highestFitness); // For debugging
 					if(spawnShapesInWorld) highestFitness = scoreOfCurrentElite; // increases the best fitness if needed
 				}
 			}
@@ -506,15 +507,15 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 					//"io:false", "netio:false", 
 					"mating:true", "fs:false",
 					"minecraftBlockSet:edu.southwestern.tasks.evocraft.blocks.MachineBlockSet",
-					"minecraftTypeCountFitness:true",
-					//"minecraftDiversityBlockFitness:true",
+					//"minecraftTypeCountFitness:true",
+					"minecraftDiversityBlockFitness:true",
 					//"minecraftTypeTargetFitness:true", 
 					//"minecraftDesiredBlockCount:40",
 					//"minecraftOccupiedCountFitness:true",
 					//"minecraftEvolveOrientation:true",
-					"minecraftRedirectConfinedSnakes:true",
+					//"minecraftRedirectConfinedSnakes:true",
 					//"minecraftStopConfinedSnakes:true", 
-					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesRedstoneVSPistonNinLabels",
+					"mapElitesBinLabels:edu.southwestern.tasks.evocraft.characterizations.MinecraftMAPElitesRedstoneVSPistonBinLabels",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100", 
