@@ -111,6 +111,7 @@ public class MinecraftLonerShapeTask<T> extends NoisyLonerTask<T> implements Net
 									if(interactiveBlocks.get(0).type!=BlockType.DIAMOND_BLOCK) {
 										// Gets score and uses it to place to clear and replace the shape
 										Score<T> s = MMNEAT.getArchive().getElite(triple.t3);
+										System.out.println(s.MAPElitesBehaviorMap().get("binScore"));
 										placeArchiveInWorld(s.individual, s.MAPElitesBehaviorMap(), MinecraftUtilClass.getRanges(),true);
 									}
 									
