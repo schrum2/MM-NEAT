@@ -13,7 +13,7 @@ import edu.southwestern.tasks.evocraft.fitness.NumRedstoneFitness;
 public class MinecraftMAPElitesRedstoneVSPistonNinLabels extends MinecraftMAPElitesBinLabels{
 
 	private List<String> labels = null;
-	private List<MinecraftFitnessFunction> properties = Arrays.asList(new NumPistonsFitness(), new NumRedstoneFitness());
+	private List<MinecraftFitnessFunction> properties = Arrays.asList(new NumRedstoneFitness(), new NumPistonsFitness());
 	
 	@Override
 	public List<String> binLabels() {
