@@ -367,7 +367,7 @@ public class Parameters {
 		integerOptions.add("spaceBetweenMinecraftShapes", 5, "The space in blocks that are in between each of the generated minecraft structures");
 		integerOptions.add("minecraftAmountOfBlocksToEvolve", 5, "The ammount of possible blocks that can be evolved by CPPN");
 		integerOptions.add("interactiveSleepTimer", 1000, "The ammount of time the interactive thread sleeps for");
-		integerOptions.add("extraSpaceBetweenMinecraftShapes", 1000, "The extra space that will be in between the shapes being evaluated");
+		integerOptions.add("extraSpaceBetweenMinecraftShapes", 50, "The extra space that will be in between the shapes being evaluated");
 		integerOptions.add("leftoverMinecraftBlocksAllowed", 0, "The amount of blocks that will be allowed to be left behind by the flying machine and still get max fitness for the change in center of mass fitness function");
 
 		
