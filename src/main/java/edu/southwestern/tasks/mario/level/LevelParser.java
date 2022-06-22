@@ -423,6 +423,8 @@ public class LevelParser {
         }
     }
     
+    public static boolean DEBUG = false;
+    
     public static int[][] readLevel(Scanner scanner) throws Exception { // read level into 2D int array (from: https://github.com/TheHedgeify/DagstuhlGAN/blob/master/marioaiDagstuhl/src/reader/MarioReader.java)
         String line;
         ArrayList<String> lines = new ArrayList<>();
@@ -435,12 +437,12 @@ public class LevelParser {
         }
 
         int[][] a = new int[lines.size()][width];
-        System.out.println("Arrays length: " + a.length);
+        if(DEBUG) System.out.println("Arrays length: " + a.length);
         for (int y = 0; y < lines.size(); y++) {
-            System.out.println("Processing line: " + lines.get(y));
+        	if(DEBUG) System.out.println("Processing line: " + lines.get(y));
             for (int x = 0; x < width; x++) {
             	try { // Added error checking to deal with unrecognized tile types
-                a[y][x] = tiles.get(lines.get(y).charAt(x));
+            		a[y][x] = tiles.get(lines.get(y).charAt(x));
             	} catch(Exception e) {
             		System.out.println("Problem on ");
             		System.out.println("\ty = " + y);

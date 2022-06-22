@@ -30,10 +30,9 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.mario.MarioGANLevelTask;
+import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.mario.MarioLevelTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.stats.Statistic;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class MarioLevelUtil {
@@ -499,7 +498,8 @@ public class MarioLevelUtil {
    	 * @throws Exception 
    	 * @throws FileNotFoundException 
    	 */
-   	public static void main(String[] args) throws FileNotFoundException, Exception {
+   	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void main(String[] args) throws FileNotFoundException, Exception {
    		Parameters.initializeParameterCollections(new String[] {
    				"base:dagstuhl","log:Dagstuhl-Mario","saveTo:Mario",
    				"task:edu.southwestern.tasks.mario.FakeMarioLevelTask",
@@ -509,8 +509,7 @@ public class MarioLevelUtil {
    				"mapElitesBinLabels:edu.southwestern.tasks.mario.MarioMAPElitesDecorAndLeniencyBinLabels"});
    		MMNEAT.loadClasses();
    		
-   		@SuppressWarnings("unchecked")
-		MarioLevelTask<ArrayList<Double>> marioLevelTask = (MarioLevelTask<ArrayList<Double>>) MMNEAT.task;
+   		MarioLevelTask<ArrayList<Double>> marioLevelTask = (MarioLevelTask<ArrayList<Double>>) MMNEAT.task;
    		String dir = "data/VGLC/SuperMarioBrosNewEncoding/overworld";
    		File dirFile = new File(dir);
    		for(File levelFile : dirFile.listFiles()) {
@@ -526,7 +525,11 @@ public class MarioLevelUtil {
    	   			}
    	   			HashMap<String,Object> map = new HashMap<>();
    	   			marioLevelTask.evaluateOneLevel(levelAsLists, 0, null, map);
-   	   			System.out.println(map);
+   	   			Archive archive = MMNEAT.getArchive();
+   	   			System.out.println(Arrays.toString(archive.getBinMapping().multiDimensionalIndices(map)));
+   	   			// No genotype or scores
+				Score score = new Score(null,new double[0],map,0);
+   	   			archive.add(score);
    			}   		
    		}   		
    	}
