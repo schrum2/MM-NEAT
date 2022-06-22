@@ -501,7 +501,8 @@ public class MarioLevelUtil {
 	public static void main(String[] args) throws FileNotFoundException, Exception {
    		removeMarioLevelBuffer = false;
    		//String binningSchemeClassName = "MarioMAPElitesDecorAndLeniencyBinLabels";
-   		String binningSchemeClassName = "MarioMAPElitesDecorNSAndLeniencyBinLabels";
+   		//String binningSchemeClassName = "MarioMAPElitesDecorNSAndLeniencyBinLabels";
+   		String binningSchemeClassName = "MarioMAPElitesDistinctChunksNSAndDecorationBinLabels";
    		String binningSchemeName = binningSchemeClassName.substring(14, binningSchemeClassName.length() - 9);
    		int marioGANLevelChunks = 10; // This is what we used with MarioGAN
    		Parameters.initializeParameterCollections(new String[] {
