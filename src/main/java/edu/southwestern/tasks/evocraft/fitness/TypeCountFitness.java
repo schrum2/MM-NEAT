@@ -12,14 +12,23 @@ import edu.southwestern.tasks.evocraft.MinecraftClient.MinecraftCoordinates;
  *
  */
 public class TypeCountFitness extends CheckBlocksInSpaceFitness {
-
+	
+	static int desiredType;
+	
+	public TypeCountFitness(int type) {
+		desiredType = type;
+	}
+	
+	public TypeCountFitness() {
+		desiredType = Parameters.parameters.integerParameter("minecraftDesiredBlockType");;
+	}
+	
 	@Override
 	public double fitnessFromBlocks(MinecraftCoordinates corner, List<Block> blocks) {
 		return typeCount(blocks);
 	}
 
 	public static double typeCount(List<Block> blocks) {
-		int desiredType = Parameters.parameters.integerParameter("minecraftDesiredBlockType");
 		int total = 0;
 		for(Block b : blocks) {
 			if(b.type() == desiredType) {

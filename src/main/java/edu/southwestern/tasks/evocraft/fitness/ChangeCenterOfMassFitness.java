@@ -79,6 +79,8 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 
 		boolean stop = false;
 		
+		List<Block> shortWaitTimeUpdate = null;
+		
 		long startTime = System.currentTimeMillis();
 		// Wait for the machine to move some (if at all)
 		while(!stop) {
@@ -95,10 +97,11 @@ public class ChangeCenterOfMassFitness extends MinecraftFitnessFunction{
 //			timeElapsed += shortWaitTime;
 
 
-			List<Block> shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
+			shortWaitTimeUpdate = MinecraftUtilClass.filterOutBlock(MinecraftClient.getMinecraftClient().readCube(corner,end),BlockType.AIR);
 			//System.out.println("Short wait time Update list: " + shortWaitTimeUpdate);
-			if(shortWaitTimeUpdate.isEmpty()) {
+			if(shortWaitTimeUpdate.isEmpty() || blocks.size() - shortWaitTimeUpdate.size() <= Parameters.parameters.integerParameter("leftoverMinecraftBlocksAllowed")) {
 				// Ship flew so far away that we award max fitness
+				System.out.println("Where fitness");
 				return maxFitness();
 			}
 			Vertex nextCenterOfMass = getCenterOfMass(shortWaitTimeUpdate);

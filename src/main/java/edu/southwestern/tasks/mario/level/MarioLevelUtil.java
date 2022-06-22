@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Scanner;
@@ -25,8 +26,13 @@ import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
 import ch.idsia.tools.Evaluator;
 import ch.idsia.tools.ToolsConfigurator;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.mapelites.Archive;
+import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.mario.MarioLevelTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
@@ -278,8 +284,13 @@ public class MarioLevelUtil {
 	 */
 	public static List<List<List<Integer>>> getSegmentsFromLevel(List<List<Integer>> oneLevel, int segmentWidth){
 		if (oneLevel.get(0).size()%segmentWidth!=0){
-            System.out.println("getLevelStats: Level not multiple of segment width");
-            return null;
+        	if(Parameters.parameters.integerParameter("marioGANLevelChunks") == 1) {
+        		// Treat whole level as one big segment
+        		segmentWidth = oneLevel.get(0).size();
+        	} else {
+        		System.out.println("getLevelStats: Level not multiple of segment width!");
+            	return null;
+        	}
         }      
 		int height = oneLevel.size();
         List<List<List<Integer>>> levelWithParsedSegments = new ArrayList<List<List<Integer>>>();
@@ -458,26 +469,76 @@ public class MarioLevelUtil {
 //	}
    	
    	
-   	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
-   		String inputFile1 = "src/main/python/GAN/Mario-all.json";
-   		String inputFile2 = "src/main/python/GAN/Mario-all.json";
-   		FileReader file1 = new FileReader(inputFile1);
-   		FileReader file2 = new FileReader(inputFile2);
-   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile1 = parseLevelJson(file1);
-   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile2 = parseLevelJson(file2);
-   		
-   		for (int i = 0; i < parsedFile1.size(); i++) {
-   			printLevelsSideBySide(parsedFile1.get(i), parsedFile2.get(i));
-   			Thread.sleep(50);
-   			System.out.println("\n\n");
-   		}
-   		
-//   		System.out.println("Overall size:"+parsedFile1.size()+" | "+parsedFile2.size()+"\n");
+//   	public static void main(String[] args) throws FileNotFoundException, InterruptedException {
+//   		String inputFile1 = "src/main/python/GAN/Mario-all.json";
+//   		String inputFile2 = "src/main/python/GAN/Mario-all.json";
+//   		FileReader file1 = new FileReader(inputFile1);
+//   		FileReader file2 = new FileReader(inputFile2);
+//   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile1 = parseLevelJson(file1);
+//   		ArrayList<ArrayList<ArrayList<Integer>>> parsedFile2 = parseLevelJson(file2);
+//   		
 //   		for (int i = 0; i < parsedFile1.size(); i++) {
-//   			System.out.println(parsedFile1.get(i).size()+" | "+parsedFile2.get(i).size()+"\n");
+//   			printLevelsSideBySide(parsedFile1.get(i), parsedFile2.get(i));
+//   			Thread.sleep(50);
+//   			System.out.println("\n\n");
 //   		}
-//   		System.out.println(parsedFile1.equals(parsedFile2));
+//   		
+////   		System.out.println("Overall size:"+parsedFile1.size()+" | "+parsedFile2.size()+"\n");
+////   		for (int i = 0; i < parsedFile1.size(); i++) {
+////   			System.out.println(parsedFile1.get(i).size()+" | "+parsedFile2.get(i).size()+"\n");
+////   		}
+////   		System.out.println(parsedFile1.equals(parsedFile2));
+//   		
+//   	}
+   	
+   	/**
+   	 * Loop through the original Mario levels and put them in each possible
+   	 * MAP Elites archive.
+   	 * 
+   	 * @param args
+   	 * @throws Exception 
+   	 * @throws FileNotFoundException 
+   	 */
+   	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void main(String[] args) throws FileNotFoundException, Exception {
    		
+   		String binningSchemeClassName = "MarioMAPElitesDecorAndLeniencyBinLabels";
+   		String binningSchemeName = binningSchemeClassName.substring(14, binningSchemeClassName.length() - 9);
+   		
+   		Parameters.initializeParameterCollections(new String[] {
+   				"base:dagstuhlmario","log:DagstuhlMario-"+binningSchemeName,"saveTo:"+binningSchemeName,
+   				"task:edu.southwestern.tasks.mario.FakeMarioLevelTask",
+   				"marioGANLevelChunks:1", "mu:0",
+   				"io:true","netio:true",
+   				"ea:edu.southwestern.evolution.mapelites.MAPElites", 
+   				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
+   				"mapElitesBinLabels:edu.southwestern.tasks.mario."+binningSchemeClassName});
+   		MMNEAT.loadClasses();
+   		
+   		MarioLevelTask<ArrayList<Double>> marioLevelTask = (MarioLevelTask<ArrayList<Double>>) MMNEAT.task;
+   		MAPElites me = (MAPElites) MMNEAT.ea;
+   		String dir = "data/VGLC/SuperMarioBrosNewEncoding/overworld";
+   		File dirFile = new File(dir);
+   		for(File levelFile : dirFile.listFiles()) {
+   			if(levelFile.getName().endsWith(".txt")) {
+   	   			System.out.println(levelFile);
+   	   			int[][] grid = LevelParser.readLevel(new Scanner(levelFile));
+   	   			//System.out.println(Arrays.deepToString(grid));
+   	   			List<List<Integer>> levelAsLists = new ArrayList<>();
+   	   			for(int[] row: grid) {
+   	   				List<Integer> rowList = ArrayUtil.intListFromArray(row);
+   	   				//System.out.println(rowList);
+   	   				levelAsLists.add(rowList);
+   	   			}
+   	   			HashMap<String,Object> map = new HashMap<>();
+   	   			marioLevelTask.evaluateOneLevel(levelAsLists, 0, null, map);
+   	   			Archive archive = MMNEAT.getArchive();
+   	   			System.out.println(Arrays.toString(archive.getBinMapping().multiDimensionalIndices(map)));
+   	   			// No genotype or scores
+				Score score = new Score(null,new double[0],map,0);
+   	   			me.fileUpdates(archive.add(score));
+   			}   		
+   		}   		
    	}
    	
    	public static ArrayList<ArrayList<ArrayList<Integer>>> parseLevelJson(FileReader file) {
