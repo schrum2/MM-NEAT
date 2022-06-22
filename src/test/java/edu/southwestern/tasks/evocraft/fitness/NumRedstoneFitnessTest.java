@@ -39,8 +39,32 @@ public class NumRedstoneFitnessTest {
 		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0); // Test when nothing
 		blockSet1.add(new Block(2,5,1,BlockType.EMERALD_BLOCK, Orientation.WEST));
 		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0);
-		blockSet1.add(new Block(3,5,1,BlockType.PISTON, Orientation.WEST));
-		assertEquals(0,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(3,5,1,BlockType.REDSTONE_BLOCK, Orientation.WEST));
+		assertEquals(1,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(4,5,1,BlockType.GOLD_BLOCK, Orientation.WEST));
+		assertEquals(1,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(5,5,1,BlockType.REDSTONE_BLOCK, Orientation.WEST));
+		assertEquals(2,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(2,6,1,BlockType.AIR, Orientation.WEST));
+		assertEquals(2,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(3,6,1,BlockType.AIR, Orientation.WEST));
+		assertEquals(2,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(4,6,1,BlockType.AIR, Orientation.WEST));
+		assertEquals(2,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(5,6,1,BlockType.PISTON, Orientation.WEST));
+		assertEquals(2,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(6,6,1,BlockType.STICKY_PISTON, Orientation.WEST));
+		assertEquals(2,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(7,6,1,BlockType.REDSTONE_BLOCK, Orientation.WEST));
+		assertEquals(3,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(4,6,2,BlockType.AIR, Orientation.WEST));
+		assertEquals(3,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(5,6,2,BlockType.PISTON, Orientation.WEST));
+		assertEquals(3,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(6,6,2,BlockType.STICKY_PISTON, Orientation.WEST));
+		assertEquals(3,ff.fitnessFromBlocks(corner,blockSet1),0);
+		blockSet1.add(new Block(7,6,2,BlockType.REDSTONE_BLOCK, Orientation.WEST));
+		assertEquals(4,ff.fitnessFromBlocks(corner,blockSet1),0);
 	}
 
 	@Test
