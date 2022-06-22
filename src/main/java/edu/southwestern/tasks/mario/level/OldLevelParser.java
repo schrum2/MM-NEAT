@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * This level parser is used by the original version of Mario GAN presented in our GECCO 2018
@@ -286,7 +287,7 @@ public class OldLevelParser {
 	 * @param code String representation of a tile
 	 * @return int representing a block in the level
 	 */
-	public int codeParserASCII(String code){
+	public static int codeParserASCII(String code){
 		int output = 0;
 		switch(code){
 		case "X": output = 9; break; //rocks
@@ -305,5 +306,39 @@ public class OldLevelParser {
 		}
 		return output;
 	}
+
+	public static final boolean DEBUG = false;
+	
+    public static int[][] readLevel(Scanner scanner) throws Exception { // read level into 2D int array (from: https://github.com/TheHedgeify/DagstuhlGAN/blob/master/marioaiDagstuhl/src/reader/MarioReader.java)
+        String line;
+        ArrayList<String> lines = new ArrayList<>();
+        int width = 0;
+        while (scanner.hasNext()) {
+            line = scanner.nextLine();
+            width = line.length();
+            lines.add(line);
+            // System.out.println(line);
+        }
+
+        int[][] a = new int[lines.size()][width];
+        if(DEBUG) System.out.println("Arrays length: " + a.length);
+        for (int y = 0; y < lines.size(); y++) {
+        	if(DEBUG) System.out.println("Processing line: " + lines.get(y));
+            for (int x = 0; x < width; x++) {
+            	try { // Added error checking to deal with unrecognized tile types
+            		a[y][x] = codeParserASCII(""+lines.get(y).charAt(x));
+            	} catch(Exception e) {
+            		System.out.println("Problem on ");
+            		System.out.println("\ty = " + y);
+            		System.out.println("\tx = " + x);
+            		System.out.println("\tlines.get(y).charAt(x) = " + lines.get(y).charAt(x));
+            		System.exit(1);
+            	}
+            }
+        }
+
+        return a;
+    }
+
 
 }

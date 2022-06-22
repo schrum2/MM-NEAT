@@ -63,7 +63,7 @@ import edu.southwestern.util.search.Search;
  */
 public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements JsonLevelGenerationTask<T> {	
 
-	private static final int SEGMENT_WIDTH_IN_BLOCKS = 28; // GAN training window
+	public static final int SEGMENT_WIDTH_IN_BLOCKS = 28; // GAN training window
 	private static final int PIXEL_BLOCK_WIDTH = 16; // Is this right?
 
 	private Agent agent;
@@ -535,6 +535,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements Jso
 			// If the bin is empty, or the candidate is better than the elite for that bin's score
 			if(elite == null || binScore > elite.behaviorIndexScore()) {
 				if(binScore > fitnessSaveThreshold) {
+					assert individual != null : "null individual";
 					String fileName = String.format("%7.5f", binScore) + "_" + individual.getId() + ".png";
 					if(individual instanceof CPPNOrDirectToGANGenotype) {
 						CPPNOrDirectToGANGenotype temp = (CPPNOrDirectToGANGenotype) individual;

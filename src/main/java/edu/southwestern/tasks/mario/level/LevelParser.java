@@ -1,5 +1,10 @@
 package edu.southwestern.tasks.mario.level;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -10,13 +15,6 @@ import com.google.gson.GsonBuilder;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.level.SpriteTemplate;
 import ch.idsia.mario.engine.sprites.Enemy;
-import edu.southwestern.parameters.Parameters;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 
 /**
  * This is the upgraded version of LevelParser that allows for more expressivity
@@ -153,13 +151,8 @@ public class LevelParser {
      */
     public static ArrayList<double[]> getLevelStats(List<List<Integer>> oneLevel, int segmentWidth){
         if (oneLevel.get(0).size()%segmentWidth!=0){
-        	if(Parameters.parameters.integerParameter("marioGANLevelChunks") == 1) {
-        		// Treat whole level as one big segment
-        		segmentWidth = oneLevel.get(0).size();
-        	} else {
-        		System.out.println("getLevelStats: Level not multiple of segment width!");
-            	return null;
-        	}
+        	System.out.println("getLevelStats: Level not multiple of segment width!");
+            return null;
         }      
         ArrayList<double[]> statList = new ArrayList<>();
         int height = oneLevel.size();
