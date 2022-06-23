@@ -319,7 +319,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements Jso
         	numDistinctSegments = k.size();
 
         	// Adds Vanessa's Mario stats: Decoration Frequency, Leniency, Negative Space
-        	lastLevelStats = LevelParser.getLevelStats(oneLevel, SEGMENT_WIDTH_IN_BLOCKS);
+        	lastLevelStats = Parameters.parameters.booleanParameter("marioGANUsesOriginalEncoding") ? OldLevelParser.getLevelStats(oneLevel, SEGMENT_WIDTH_IN_BLOCKS) : LevelParser.getLevelStats(oneLevel, SEGMENT_WIDTH_IN_BLOCKS);
         	for(double[] stats:lastLevelStats){
         		otherScores = ArrayUtils.addAll(otherScores, stats);
         	}

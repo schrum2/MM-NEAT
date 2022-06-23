@@ -33,6 +33,7 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.mario.MarioLevelTask;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
@@ -526,9 +527,15 @@ public class MarioLevelUtil {
 					int[] chopped = new int[choppedLength];
 					System.arraycopy(row, 0, chopped, 0, choppedLength);
 					List<Integer> rowList = ArrayUtil.intListFromArray(chopped);
-					//System.out.println(rowList);
+					System.out.println(rowList);
 					levelAsLists.add(rowList);
 				}
+				
+//				for(List<Integer> row : levelAsLists) {
+//					System.out.println(row);
+//				}
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
+				
 				levelCollection.add(levelAsLists);
 			}
 		}
@@ -541,7 +548,7 @@ public class MarioLevelUtil {
 					"base:dagstuhlmario","log:DagstuhlMario-"+binningSchemeName,"saveTo:"+binningSchemeName,
 					"task:edu.southwestern.tasks.mario.FakeMarioLevelTask",
 					"marioGANLevelChunks:"+marioGANLevelChunks, "mu:0",
-					"io:true","netio:true",
+					"io:true","netio:true","watch:true",
 					"marioSimpleAStarDistance:true",
 					"marioGANUsesOriginalEncoding:true",
 					"steadyStateIndividualsPerGeneration:1",
@@ -553,11 +560,12 @@ public class MarioLevelUtil {
 			MarioLevelTask<ArrayList<Double>> marioLevelTask = (MarioLevelTask<ArrayList<Double>>) MMNEAT.task;
 			MAPElites me = (MAPElites) MMNEAT.ea;
 
+			System.out.println(binningSchemeName);
 			for(List<List<Integer>> levelAsLists : levelCollection) {
 				HashMap<String,Object> map = new HashMap<>();
+				System.out.println("Evaluate level");
 				marioLevelTask.evaluateOneLevel(levelAsLists, 0, MMNEAT.genotype, map);
 				Archive archive = MMNEAT.getArchive();
-				System.out.println(binningSchemeName);
 				System.out.println(Arrays.toString(archive.getBinMapping().multiDimensionalIndices(map)));
 				System.out.println(map);
 				System.out.println(Arrays.toString( (((ArrayList<double[]>) map.get("Level Stats"))).get(0)));
