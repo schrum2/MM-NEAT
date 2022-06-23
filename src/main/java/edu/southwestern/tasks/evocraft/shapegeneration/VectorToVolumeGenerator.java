@@ -112,7 +112,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 		int seed = 0;
 		try {
 			MMNEAT.main(new String[] { "runNumber:" + seed, "randomSeed:" + seed, "trials:1", "mu:100", "maxGens:100000",
-					"base:minecraft", "log:Minecraft-VectorToVolumeTestAllThree", "saveTo:VectorToVolumeTestAllThree",
+					"base:minecraft", "log:Minecraft-VectorToVolumeUpDown", "saveTo:VectorToVolumeUpDown",
 					"io:true", "netio:true", 
 					"launchMinecraftServerFromJava:false",
 					//"io:false", "netio:false", 
@@ -137,7 +137,10 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					"oneOutputLabelForBlockOrientationCPPN:true",
 					
 					
-					"minecraftNorthSouthOnly:true",
+					//"minecraftNorthSouthOnly:true",
+					
+					"minecraftUpDownOnly:true",
+					
 					
 					//"minecraftOccupiedCountFitness:true",
 					//"minecraftEvolveOrientation:true",
@@ -147,7 +150,7 @@ public class VectorToVolumeGenerator implements ShapeGenerator<ArrayList<Double>
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"steadyStateIndividualsPerGeneration:100",
-					"minecraftXRange:1","minecraftYRange:2","minecraftZRange:5",
+					"minecraftXRange:2","minecraftYRange:2","minecraftZRange:4",
 					"minecraftStopConfinedSnakes:true",
 					"minecraftShapeGenerator:edu.southwestern.tasks.evocraft.shapegeneration.VectorToVolumeGenerator",
 					"task:edu.southwestern.tasks.evocraft.MinecraftLonerShapeTask", 
