@@ -108,9 +108,6 @@ public class MinecraftShapeTask<T> implements SinglePopulationTask<T>, NetworkTa
 		
 		startingX = 0;
 		startingZ = 0;
-		
-		MinecraftCoordinates ranges = MinecraftUtilClass.getRanges();
-	
 	}
 	
 	public int getStartingX() { return startingX; }
