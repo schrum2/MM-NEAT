@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import java.util.Arrays;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.mapelites.BaseBinLabels;
 import edu.southwestern.parameters.Parameters;
@@ -41,6 +42,7 @@ public class MarioMAPElitesDecorNSAndLeniencyBinLabels extends BaseBinLabels {
 	@Override
 	public int oneDimensionalIndex(int[] multi) {
 		int binIndex = (multi[0]*binsPerDimension + multi[1])*binsPerDimension + multi[2];
+		assert binIndex < labels.size() : binIndex+":"+Arrays.toString(multi)+":"+binsPerDimension;
 		return binIndex;
 	}
 
@@ -76,6 +78,10 @@ public class MarioMAPElitesDecorNSAndLeniencyBinLabels extends BaseBinLabels {
 		int decorationBinIndex =  Math.min((int)(decorationSum*DECORATION_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); //decorationBinIndex
 		int negativeSpaceSumIndex = Math.min((int)(negativeSpaceSum*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); //negative space index
 
+		assert decorationBinIndex < dimensionSizes()[0] : decorationBinIndex+":"+keys;
+		assert negativeSpaceSumIndex < dimensionSizes()[1] : negativeSpaceSumIndex+":"+keys;
+		assert leniencySumIndex < dimensionSizes()[2] : leniencySumIndex+":"+keys;
+		
 		return new int[] {decorationBinIndex, negativeSpaceSumIndex, leniencySumIndex};
 	}
 }

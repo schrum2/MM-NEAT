@@ -70,6 +70,9 @@ public class MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels extends BaseBinL
 		int leniencySumIndex = Math.min(Math.max((int)((leniencySum*(BINS_PER_DIMENSION/2)+0.5)*BINS_PER_DIMENSION),0), BINS_PER_DIMENSION-1); //LEANIENCY BIN INDEX
 		int negativeSpaceSumIndex = Math.min((int)(negativeSpaceSum*NEGATIVE_SPACE_SCALE*BINS_PER_DIMENSION), BINS_PER_DIMENSION-1); //negative space index
 
+		assert numDistinctSegments < dimensionSizes()[0] : numDistinctSegments+":"+keys;
+		assert negativeSpaceSumIndex < dimensionSizes()[1] : negativeSpaceSumIndex+":"+keys;
+		assert leniencySumIndex < dimensionSizes()[2] : leniencySumIndex+":"+keys;
 	
 		return new int[] {numDistinctSegments, negativeSpaceSumIndex, leniencySumIndex};
 	}
