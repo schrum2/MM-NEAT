@@ -505,8 +505,8 @@ public class MarioLevelUtil {
 				"MarioMAPElitesDecorAndLeniencyBinLabels", // Never used in publication
 				"MarioMAPElitesDecorNSAndLeniencyBinLabels", // Original CPPN2GAN paper
 				"MarioMAPElitesDistinctChunksNSAndDecorationBinLabels", // CPPN2GAN ToG article
-				"MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels", // Never used in publication
-				"MarioMAPElitesNoveltyDecorAndLeniencyBinLabels" // Never used in publication
+				"MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels"//, // Never used in publication
+				//"MarioMAPElitesNoveltyDecorAndLeniencyBinLabels" // Never used in publication
 		};
 		// Load all levels
 		List<List<List<Integer>>> levelCollection = new ArrayList<>();
