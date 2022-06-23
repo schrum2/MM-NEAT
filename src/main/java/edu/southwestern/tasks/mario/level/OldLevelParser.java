@@ -303,7 +303,7 @@ public class OldLevelParser {
 					//System.out.println("j: "+j+" i:"+i);
 					//set passable tile: everything not set is passable
 				}else{
-					int encoded = code; // Old version already has correct numbers?
+					int encoded = codeParser( code ); 
 					if(encoded !=0){
 						level.setBlock(j+BUFFER_WIDTH, i, (byte) encoded);
 						//System.out.println("j: "+j+" i:"+i+" encoded: "+encoded);
@@ -391,7 +391,7 @@ public class OldLevelParser {
             for (int x = 0; x < width; x++) {
             	try { // Added error checking to deal with unrecognized tile types
             		//a[y][x] = codeParserASCII(""+lines.get(y).charAt(x));
-            		a[y][x] = map.get(lines.get(y).charAt(x));
+            		a[y][x] = indexOfBlock(lines.get(y).charAt(x));
                 } catch(Exception e) {
             		System.out.println("Problem on ");
             		System.out.println("\ty = " + y);
