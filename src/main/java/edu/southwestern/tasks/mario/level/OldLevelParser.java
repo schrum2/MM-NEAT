@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -378,14 +379,20 @@ public class OldLevelParser {
             // System.out.println(line);
         }
 
+        HashMap<Character,Integer> map = new HashMap<>();
+        for(int i = 0; i < BLOCK_INDEX.length; i++) {
+        	map.put(BLOCK_INDEX[i], i);
+        }
+        
         int[][] a = new int[lines.size()][width];
         if(DEBUG) System.out.println("Arrays length: " + a.length);
         for (int y = 0; y < lines.size(); y++) {
         	if(DEBUG) System.out.println("Processing line: " + lines.get(y));
             for (int x = 0; x < width; x++) {
             	try { // Added error checking to deal with unrecognized tile types
-            		a[y][x] = codeParserASCII(""+lines.get(y).charAt(x));
-            	} catch(Exception e) {
+            		//a[y][x] = codeParserASCII(""+lines.get(y).charAt(x));
+            		a[y][x] = map.get(lines.get(y).charAt(x));
+                } catch(Exception e) {
             		System.out.println("Problem on ");
             		System.out.println("\ty = " + y);
             		System.out.println("\tx = " + x);
