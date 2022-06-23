@@ -57,6 +57,8 @@ public class MarioMAPElitesDistinctChunksNSAndDecorationBinLabels extends BaseBi
 		@SuppressWarnings("unchecked")
 		ArrayList<double[]> lastLevelStats = (ArrayList<double[]>) keys.get("Level Stats");		
 		int numDistinctSegments = (int) keys.get("Distinct Segments");
+		// If the level has too many segments, then simply put it at the maximum possible value for that dimension.
+		if(numDistinctSegments > binsPerDimension) numDistinctSegments = binsPerDimension;
 		
 		assert Parameters.parameters.integerParameter("marioGANLevelChunks") > 1 : "Can't have variation with MarioMAPElitesDistinctChunksNSAndDecorationBinLabels bin scheme if marioGANLevelChunks:1 is set!";
 		double decorationAlternating = MarioLevelTask.alternatingStatScore(lastLevelStats, MarioLevelTask.DECORATION_FREQUENCY_STAT_INDEX);

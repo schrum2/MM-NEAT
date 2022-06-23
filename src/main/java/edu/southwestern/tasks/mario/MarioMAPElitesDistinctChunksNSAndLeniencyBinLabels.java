@@ -59,6 +59,8 @@ public class MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels extends BaseBinL
 		@SuppressWarnings("unchecked")
 		ArrayList<double[]> lastLevelStats = (ArrayList<double[]>) keys.get("Level Stats");		
 		int numDistinctSegments = (int) keys.get("Distinct Segments");
+		// If the level has too many segments, then simply put it at the maximum possible value for that dimension.
+		if(numDistinctSegments > binsPerDimension) numDistinctSegments = binsPerDimension;
 		
 		double leniencySum = MarioLevelTask.sumStatScore(lastLevelStats, MarioLevelTask.LENIENCY_STAT_INDEX);
 		double negativeSpaceSum = MarioLevelTask.sumStatScore(lastLevelStats, MarioLevelTask.NEGATIVE_SPACE_STAT_INDEX);
