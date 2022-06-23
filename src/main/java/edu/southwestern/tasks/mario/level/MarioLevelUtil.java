@@ -507,7 +507,33 @@ public class MarioLevelUtil {
 				"MarioMAPElitesDistinctChunksNSAndLeniencyBinLabels", // Never used in publication
 				"MarioMAPElitesNoveltyDecorAndLeniencyBinLabels" // Never used in publication
 		};
+		// Load all levels
+		List<List<List<Integer>>> levelCollection = new ArrayList<>();
+		//String dir = "data/VGLC/SuperMarioBrosNewEncoding/overworld";
+		String dir = "data/VGLC/SuperMarioBros";
+		File dirFile = new File(dir);
+		for(File levelFile : dirFile.listFiles()) {
+			if(levelFile.getName().endsWith(".txt")) {
+				System.out.println(levelFile);
+				int[][] grid = OldLevelParser.readLevel(new Scanner(levelFile));
+				//int[][] grid = LevelParser.readLevel(new Scanner(levelFile));
+				//System.out.println(Arrays.deepToString(grid));
+				List<List<Integer>> levelAsLists = new ArrayList<>();
+				for(int[] row: grid) {
+					int numSegments = row.length / MarioLevelTask.SEGMENT_WIDTH_IN_BLOCKS; 
+					int choppedLength = numSegments * MarioLevelTask.SEGMENT_WIDTH_IN_BLOCKS;
+					System.out.println("Chop "+row.length+" down to "+choppedLength);
+					int[] chopped = new int[choppedLength];
+					System.arraycopy(row, 0, chopped, 0, choppedLength);
+					List<Integer> rowList = ArrayUtil.intListFromArray(chopped);
+					//System.out.println(rowList);
+					levelAsLists.add(rowList);
+				}
+				levelCollection.add(levelAsLists);
+			}
+		}
 
+		// Apply each binning scheme
 		for(String binningSchemeClassName : binningSchemes) {
 			String binningSchemeName = binningSchemeClassName.substring(14, binningSchemeClassName.length() - 9);
 			int marioGANLevelChunks = 10; // This is what we used with MarioGAN
@@ -517,48 +543,27 @@ public class MarioLevelUtil {
 					"marioGANLevelChunks:"+marioGANLevelChunks, "mu:0",
 					"io:true","netio:true",
 					"marioSimpleAStarDistance:true",
-					//"marioGANUsesOriginalEncoding:true",
+					"marioGANUsesOriginalEncoding:true",
 					"steadyStateIndividualsPerGeneration:1",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"mapElitesBinLabels:edu.southwestern.tasks.mario."+binningSchemeClassName});
 			MMNEAT.loadClasses();
-			// Actual levels do not have chunks. Value was initially 10 to assure proper binning scheme
-			// but it is now 1 as a hack to assure correct calculation of level stats
-			//Parameters.parameters.setInteger("marioGANLevelChunks", 1);
 
 			MarioLevelTask<ArrayList<Double>> marioLevelTask = (MarioLevelTask<ArrayList<Double>>) MMNEAT.task;
 			MAPElites me = (MAPElites) MMNEAT.ea;
-			//String dir = "data/VGLC/SuperMarioBrosNewEncoding/overworld";
-			String dir = "data/VGLC/SuperMarioBros";
-			File dirFile = new File(dir);
-			for(File levelFile : dirFile.listFiles()) {
-				if(levelFile.getName().endsWith(".txt")) {
-					System.out.println(levelFile);
-					int[][] grid = OldLevelParser.readLevel(new Scanner(levelFile));
-					//int[][] grid = LevelParser.readLevel(new Scanner(levelFile));
-					//System.out.println(Arrays.deepToString(grid));
-					List<List<Integer>> levelAsLists = new ArrayList<>();
-					for(int[] row: grid) {
-						int numSegments = row.length / MarioLevelTask.SEGMENT_WIDTH_IN_BLOCKS; 
-						int choppedLength = numSegments * MarioLevelTask.SEGMENT_WIDTH_IN_BLOCKS;
-						System.out.println("Chop "+row.length+" down to "+choppedLength);
-						int[] chopped = new int[choppedLength];
-						System.arraycopy(row, 0, chopped, 0, choppedLength);
-						List<Integer> rowList = ArrayUtil.intListFromArray(chopped);
-						//System.out.println(rowList);
-						levelAsLists.add(rowList);
-					}
-					HashMap<String,Object> map = new HashMap<>();
-					marioLevelTask.evaluateOneLevel(levelAsLists, 0, MMNEAT.genotype, map);
-					Archive archive = MMNEAT.getArchive();
-					System.out.println(Arrays.toString(archive.getBinMapping().multiDimensionalIndices(map)));
-					System.out.println(map);
-					System.out.println(Arrays.toString( (((ArrayList<double[]>) map.get("Level Stats"))).get(0)));
-					// No genotype or scores
-					Score score = new Score(map,MMNEAT.genotype,new double[0]);
-					me.fileUpdates(archive.add(score));
-				}   		
+
+			for(List<List<Integer>> levelAsLists : levelCollection) {
+				HashMap<String,Object> map = new HashMap<>();
+				marioLevelTask.evaluateOneLevel(levelAsLists, 0, MMNEAT.genotype, map);
+				Archive archive = MMNEAT.getArchive();
+				System.out.println(binningSchemeName);
+				System.out.println(Arrays.toString(archive.getBinMapping().multiDimensionalIndices(map)));
+				System.out.println(map);
+				System.out.println(Arrays.toString( (((ArrayList<double[]>) map.get("Level Stats"))).get(0)));
+				// No genotype or scores
+				Score score = new Score(map,MMNEAT.genotype,new double[0]);
+				me.fileUpdates(archive.add(score));
 			}   
 			me.finalCleanup();
 			MMNEAT.clearClasses();
