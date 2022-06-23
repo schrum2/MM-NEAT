@@ -95,7 +95,7 @@ public abstract class MarioLevelTask<T> extends NoisyLonerTask<T> implements Jso
 			System.exit(1);
 		}
 
-		// Fitness
+		// FitnessfitnessRequiresSimulation
 		numFitnessFunctions = 0;
 		fitnessRequiresSimulation = false; // Until proven otherwise
 		segmentFitness = false;

@@ -548,10 +548,12 @@ public class MarioLevelUtil {
 					"base:dagstuhlmario","log:DagstuhlMario-"+binningSchemeName,"saveTo:"+binningSchemeName,
 					"task:edu.southwestern.tasks.mario.FakeMarioLevelTask",
 					"marioGANLevelChunks:"+marioGANLevelChunks, "mu:0",
-					"io:true","netio:true","watch:true",
+					"io:true","netio:true","watch:false",
 					"marioSimpleAStarDistance:true",
 					"marioGANUsesOriginalEncoding:true",
 					"steadyStateIndividualsPerGeneration:1",
+					"marioProgressPlusJumpsFitness:false",
+					"marioProgressPlusTimeFitness:false",
 					"ea:edu.southwestern.evolution.mapelites.MAPElites", 
 					"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 					"mapElitesBinLabels:edu.southwestern.tasks.mario."+binningSchemeClassName});
