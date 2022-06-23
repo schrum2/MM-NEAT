@@ -824,6 +824,7 @@ public class Parameters {
 		booleanOptions.add("minecraftNorthSouthOnly", false, "Determines whether only the North and South orientations will be used.");
 		booleanOptions.add("displayDiagonally", true, "Displays the archive diagonally");
 		booleanOptions.add("bedrockTestChambers", false, "Places walls made of bedrock around the flying machines");
+		booleanOptions.add("minecraftUpDownOnly", false, "Determines whether only the Up and Down orientations will be used.");
 
 		
 		// Double parameters
