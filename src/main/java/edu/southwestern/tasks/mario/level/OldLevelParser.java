@@ -69,14 +69,14 @@ public class OldLevelParser {
         leniencyTiles.put(2, 0.0); //passable
         leniencyTiles.put(3, 1.0); //question with coin
         leniencyTiles.put(4, 1.0); //question with power up
-        leniencyTiles.put(5, 0.0); //coin
+        leniencyTiles.put(5, -1.0); //goomba
         leniencyTiles.put(6, -0.5); //tube
-        leniencyTiles.put(7, -0.5); //piranha plant tube
-        leniencyTiles.put(8, -0.5); //bullet bill
-        leniencyTiles.put(9, -1.0); //goomba
-        leniencyTiles.put(10, -1.0); //green koopas + paratroopas
-        leniencyTiles.put(11, -1.0); //red koopas + paratroopas
-        leniencyTiles.put(12, -1.0); //spiny + winged spiny
+        leniencyTiles.put(7, -0.5); //tube
+        leniencyTiles.put(8, -0.5); //pipe
+        leniencyTiles.put(9, -0.5); //pipe
+        leniencyTiles.put(10, 0.0); //coin
+        leniencyTiles.put(11, -0.5); //bullet bill
+        leniencyTiles.put(12, -0.5); //bullet bill
     }
     
     public static final java.util.Map<Integer, Integer> negativeSpaceTiles = new HashMap<>();
