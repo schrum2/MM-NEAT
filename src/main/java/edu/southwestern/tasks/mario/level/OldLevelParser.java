@@ -87,14 +87,14 @@ public class OldLevelParser {
         negativeSpaceTiles.put(2, 0); //passable
         negativeSpaceTiles.put(3, 1); //question with coin
         negativeSpaceTiles.put(4, 1); //question with power up
-        negativeSpaceTiles.put(5, 0); //coin
+        negativeSpaceTiles.put(5, 0); //goomba
         negativeSpaceTiles.put(6, 1); //tube
-        negativeSpaceTiles.put(7, 1); //piranha plant tube
-        negativeSpaceTiles.put(8, 1); //bullet bill
-        negativeSpaceTiles.put(9, 0); //goomba
-        negativeSpaceTiles.put(10, 0); //green koopas + paratroopas
-        negativeSpaceTiles.put(11, 0); //red koopas + paratroopas
-        negativeSpaceTiles.put(12, 0); //spiny + winged spiny
+        negativeSpaceTiles.put(7, 1); //tube
+        negativeSpaceTiles.put(8, 1); //pipe
+        negativeSpaceTiles.put(9, 1); //pipe
+        negativeSpaceTiles.put(10, 0); //coin
+        negativeSpaceTiles.put(11, 1); //bullet bill
+        negativeSpaceTiles.put(12, 1); //bullet bill
     }
     	
 	
